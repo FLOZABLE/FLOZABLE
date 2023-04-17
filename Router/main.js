@@ -4,7 +4,7 @@ const fs = require("fs");
 
 Router.get("/", async (req, res) => {
   
-  res.render('index')
+  res.render('index');
 })
 
 Router.get("/about", async (req, res) => {
