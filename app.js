@@ -12,7 +12,7 @@ const helmet = require("helmet");
 const http = require('http');
 const crypto = require("crypto");
 const dotenv = require("dotenv");
-dotenv.config({path: ".env.production"});
+dotenv.config({path: ".env.development"});
 var server = http.createServer(app);
 var io = require('socket.io')(server);
 
@@ -47,6 +47,7 @@ const cspOptions = {
 app.use(helmet.contentSecurityPolicy(cspOptions))  */
 
 const mainRouter = require("./Router/main");
+const emailRouter = require("./Router/email");
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -75,7 +76,7 @@ app.use(session({
 }))
 
 app.use('/', mainRouter);
-
+app.use('/email', emailRouter);
 
 // error handler
 app.use(function (err, req, res, next) {

@@ -2586,8 +2586,8 @@ a {
 .u-form-horizontal .u-form-group.u-form-submit {
   margin-right: 0;
 }
-.u-form div.u-form-send-error,
-.u-form div.u-form-send-success {
+.u-form div.u-form-send-errors,
+.u-form div.u-form-send-successes {
   display: none;
   position: absolute;
   bottom: 0px;
@@ -2643,10 +2643,10 @@ a {
 .u-form-send-message {
   z-index: 1;
 }
-.u-form-send-error {
+.u-form-send-errors {
   background: #F95D51;
 }
-.u-form-send-success {
+.u-form-send-successes {
   background: #62C584;
 }
 .u-form {
