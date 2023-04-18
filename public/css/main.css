@@ -57226,3 +57226,7 @@ html { font-size: 16px; }
 .u-custom-font.u-font-montserrat.u-text.u-text-body-alt-color.u-text-default.u-text-2 {
  color: #000 !important;
 }
+
+.u-form-send-message-close:hover {
+  cursor: pointer;
+}
