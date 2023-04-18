@@ -1,6 +1,7 @@
 const submitbtn = document.querySelector(".u-btn-submit");
 const success_msg = document.querySelector(".u-form-send-successes");
 const err_msg = document.querySelector(".u-form-send-errors");
+const closebtn = document.querySelectorAll(".u-form-send-message-close");
 
 submitbtn.addEventListener("click", () => {
   const name = document.querySelector("input#name-2137").value;
@@ -33,4 +34,14 @@ submitbtn.addEventListener("click", () => {
         .catch(error => console.error(error)); */
     })();
   }
+})
+
+closebtn[0].addEventListener('click', () => {
+  success_msg.style = "display: none";
+  err_msg.style = "display: none";
+})
+
+closebtn[1].addEventListener('click', () => {
+  success_msg.style = "display: none";
+  err_msg.style = "display: none";
 })
