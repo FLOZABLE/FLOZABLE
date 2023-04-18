@@ -57219,7 +57219,7 @@ html { font-size: 16px; }
  color: #000 !important;
 }
 
-.u-text.u-text-body-alt-color.u-text-3 {
+h2.u-text.u-text-body-alt-color.u-text-3 {
  color: #000 !important;
 }
 
@@ -57229,4 +57229,41 @@ html { font-size: 16px; }
 
 .u-form-send-message-close:hover {
   cursor: pointer;
+}
+
+#carousel_aafb .u-icon .material-symbols-outlined {
+  font-size: 60px !important;
+  position: relative;
+  left: -10px;
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 100
+}
+
+a.u-nav-link {
+	color: #18272F;
+  position: relative;
+  text-decoration: none;
+}
+
+a.u-nav-link::before {
+  content: '';
+  position: absolute;
+  width: 110%;
+  height: 4px;
+  border-radius: 4px;
+  background-color: #18272F;
+  bottom: 0;
+  left: 0;
+  margin-left: -5%;
+  transform-origin: right;
+  transform: scaleX(0);
+  transition: transform .2s ease-in-out;
+}
+
+a.u-nav-link:hover::before {
+  transform-origin: left;
+  transform: scaleX(1);
 }

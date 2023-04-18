@@ -26,11 +26,17 @@ Router.post("/post-register", async(req, res) => {
   }
   if(exist == false){
     console.log("new email")
-    const subscribe = await connection.query("INSERT INTO subscribers set ?", [{name: name, email: email}]);
-    res.send({result: "success"})
+    try {
+      const subscribe = await connection.query("INSERT INTO subscribers set ?", [{name: name, email: email}]);
+      console.log("Subscriber added successfully!");
+      res.send({result: "success"})
+    } catch (err) {
+      console.log("Error while adding subscriber:", err);
+      res.send({result: "Error while adding your email"});
+    }
   } else {
     console.log("exist")
-    res.send({result: "err"})
+    res.send({result: "This email is already registered"})
   }
   connection.release();
 })
