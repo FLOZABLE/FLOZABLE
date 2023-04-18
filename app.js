@@ -48,6 +48,7 @@ app.use(helmet.contentSecurityPolicy(cspOptions))  */
 
 const mainRouter = require("./Router/main");
 const emailRouter = require("./Router/email");
+const accountRouter = require("./Router/account");
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -77,6 +78,7 @@ app.use(session({
 
 app.use('/', mainRouter);
 app.use('/email', emailRouter);
+app.use('/account', accountRouter);
 
 // error handler
 app.use(function (err, req, res, next) {

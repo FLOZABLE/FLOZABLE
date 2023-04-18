@@ -27,6 +27,7 @@ submitbtn.addEventListener("click", () => {
         err_msg.style = "display: none";
       } else {
         success_msg.style = "display: none";
+        err_msg.textContent = result.result;
         err_msg.style = "display: block";
       }
         /* .then()
