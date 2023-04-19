@@ -57267,3 +57267,7 @@ a.u-nav-link:hover::before {
   transform-origin: left;
   transform: scaleX(1);
 }
+
+p.u-text.u-text-body-alt-color.u-text-3 {
+  color: #000 !important;
+}
