@@ -85,6 +85,10 @@ app.use(function (err, req, res, next) {
   console.log(err.message, err.status)
 });
 
+app.get('*',function(req,res){
+  res.redirect('/');
+});
+
 server.listen(port, "127.0.0.1", () => {
   console.log(`Server running ${port}`);
 });
