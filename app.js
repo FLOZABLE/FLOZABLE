@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const port = 80;
 const ejs = require("ejs");
 const createError = require("http-errors");
 const path = require("path");
@@ -14,6 +13,7 @@ const crypto = require("crypto");
 const dotenv = require("dotenv");
 dotenv.config({path: ".env.development"});
 var server = http.createServer(app);
+const port = process.env.PORT;
 var io = require('socket.io')(server);
 
 /* app.use(helmet.permittedCrossDomainPolicies());
@@ -89,7 +89,7 @@ app.get('*',function(req,res){
   res.redirect('/');
 });
 
-server.listen(port, "127.0.0.1", () => {
+server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);
 });
 
