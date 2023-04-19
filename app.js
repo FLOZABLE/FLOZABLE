@@ -76,6 +76,12 @@ app.use(session({
   //store: new fileStore(),
 }))
 
+app.get('/', (req, res) => {
+  if (req.ip === process.env.SERVER) {
+    res.redirect(301, process.env.DOMAIN);
+  }
+});
+
 app.use('/', mainRouter);
 app.use('/email', emailRouter);
 app.use('/account', accountRouter);
