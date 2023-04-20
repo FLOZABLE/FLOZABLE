@@ -7422,7 +7422,7 @@ section.u-image:not(.u-hover-box),
 .u-valign-middle,
 .u-valign-top,
 .u-valign-bottom {
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
 }
 @media (min-width: 1400px) {
