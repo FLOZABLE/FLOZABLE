@@ -27,11 +27,10 @@
                       <a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="#about" style="padding: 10px 20px;">About</a>
                   </li>
                   <li class="u-nav-item">
-                    <% if(loggedin != true){ %>
-                        <a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="/account" style="padding: 10px 20px;">Sign Up</a>
-                    <% } else { %>
+                    <% if(loggedin == true){ %>
                         <a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="/myaccount" style="padding: 10px 20px;">My Account</a>
-                      
+                    <% } else { %>
+                      <a class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="/account" style="padding: 10px 20px;">Sign Up</a>
                     <%}%>
                   </li>
                   <li class="u-nav-item">
