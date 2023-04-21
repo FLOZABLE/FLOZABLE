@@ -14,7 +14,11 @@ Router.get('/', (req, res) => {
   } else {
     req.session.error_msg = ""
   }
-  res.render("account", {error_msg: req.session.error_msg})
+  if(req.session.loggedin == true){
+    res.render("account", {loggedin: "true", error_msg: req.session.error_msg});
+  } else {
+    res.render("account", {loggedin: "false", error_msg: req.session.error_msg});
+  }
 })
 
 Router.post('/signin-authentication', async(req, res, next) => {
