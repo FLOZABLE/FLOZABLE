@@ -1,0 +1,45 @@
+
+
+
+#myinfo.frame {
+  background-color: #fff;
+}
+
+#myinfo .padded {
+  padding: 0 2rem !important;
+}
+
+#myinfo .level.fill-height {
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+#myinfo .col-6:first-child {
+  padding-left: 0;
+}
+
+#myinfo .col-6:last-child {
+  padding-right: 0;
+}
+
+#myinfo ul {
+  display: flex;
+  list-style: none;
+}
+
+#myinfo li {
+  padding: 0 0.5rem;
+}
+
+#myinfo .btn-info {
+  margin-left: 1rem;
+}
+
+
+.u-clearfix.u-image.u-section-1 {
+  background-image: url(/img/mountain.jpg);
+  height: 100vh;
+}

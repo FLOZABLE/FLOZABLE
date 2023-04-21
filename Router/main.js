@@ -4,17 +4,17 @@ const fs = require("fs");
 
 Router.get("/", async (req, res) => {
   if(req.session.loggedin == true){
-    res.render("index", {loggedin: "true"});
+    res.render("index", {loggedin: true});
   } else {
-    res.render("index", {loggedin: "false"});
+    res.render("index", {loggedin: false});
   }
 })
 
 Router.get("/myaccount", async (req, res) => {
   if(req.session.loggedin == true){
-    res.render("myaccount", {loggedin: "true"});
+    res.render("myaccount", {loggedin: true, account: {name: req.session.name, email: req.session.email, myinfo: req.session.myinfo, picture: req.session.picture}});
   } else {
-    res.render("myaccount", {loggedin: "false"});
+    res.redirect("/account")
   }
 })
 
