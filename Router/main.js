@@ -3,29 +3,19 @@ const Router = express.Router();
 const fs = require("fs");
 
 Router.get("/", async (req, res) => {
-  
-  res.render('index');
+  if(req.session.loggedin == true){
+    res.render("index", {loggedin: "true"});
+  } else {
+    res.render("index", {loggedin: "false"});
+  }
 })
 
-Router.get("/about", async (req, res) => {
-  
-  res.render('about')
-})
-
-
-Router.post("/subscribe/:email", async (req, res) => {
-  const connection = await (await pool).getConnection();
-  const email = req.params.email;
-  console.log(email)
-  let subscibe = await connection.query("INSERT INTO subscribers set ?", [{email: email}])
-})
-
-Router.get('/about-us', async(req, res) => {
-  res.render("about");
-})
-
-Router.get('/work', async(req, res) => {
-  res.render("work");
+Router.get("/myaccount", async (req, res) => {
+  if(req.session.loggedin == true){
+    res.render("myaccount", {loggedin: "true"});
+  } else {
+    res.render("myaccount", {loggedin: "false"});
+  }
 })
 
 Router.get('/privacy-policy', async(req, res) => {
