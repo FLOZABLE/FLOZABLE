@@ -16,6 +16,8 @@ var server = http.createServer(app);
 const port = process.env.PORT;
 var io = require('socket.io')(server);
 
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 /* app.use(helmet.permittedCrossDomainPolicies());
 app.use(helmet.referrerPolicy());
 app.use(helmet.xssFilter());
@@ -49,6 +51,7 @@ app.use(helmet.contentSecurityPolicy(cspOptions))  */
 const mainRouter = require("./Router/main");
 const emailRouter = require("./Router/email");
 const accountRouter = require("./Router/account");
+const myAccount = require("./Router/myaccount");
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -57,7 +60,6 @@ app.set('socketio', io);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.SECRET_ID));
 app.use(express.static(path.join(__dirname, '/public')));
 app.disable('etag');
@@ -79,6 +81,7 @@ app.use(session({
 app.use('/', mainRouter);
 app.use('/email', emailRouter);
 app.use('/account', accountRouter);
+app.use('/myaccount', myAccount);
 
 // error handler
 app.use(function (err, req, res, next) {

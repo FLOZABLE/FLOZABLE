@@ -58,9 +58,6 @@ Router.post('/signin-authentication', async(req, res, next) => {
       httpOnly: true,
     });
     req.session.email = email;
-    req.session.name = matching_email[0].name;
-    req.session.myinfo = matching_email[0].myinfo;
-    req.session.picture = matching_email[0].profile_picture;
     req.session.loggedin = true;
     console.log("login success")
     res.redirect('/');

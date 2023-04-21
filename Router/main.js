@@ -1,20 +1,13 @@
 const express = require("express");
 const Router = express.Router();
 const fs = require("fs");
+const pool = require('../model/pool');
 
 Router.get("/", async (req, res) => {
   if(req.session.loggedin == true){
     res.render("index", {loggedin: true});
   } else {
     res.render("index", {loggedin: false});
-  }
-})
-
-Router.get("/myaccount", async (req, res) => {
-  if(req.session.loggedin == true){
-    res.render("myaccount", {loggedin: true, account: {name: req.session.name, email: req.session.email, myinfo: req.session.myinfo, picture: req.session.picture}});
-  } else {
-    res.redirect("/account")
   }
 })
 
