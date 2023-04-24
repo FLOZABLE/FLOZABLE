@@ -40,6 +40,8 @@ Router.post('/signin-authentication', async(req, res, next) => {
 
   const matching_email = await connection.query('SELECT * FROM users WHERE email = ?', email);
 
+  connection.release();
+  
   if (typeof matching_email[0] == 'undefined') {
     console.log("no email")
     req.session.error_msg = 'NO SUCH USER';
