@@ -1,0 +1,2 @@
+programming_language_skill.querySelector("input").style.filter = 'hue-rotate(-' + programming_language_skills[i][Object.keys(programming_language_skills[i])[0]] + 'deg)';
+document.querySelector(`#programming-language-skills #${Object.keys(programming_language_skills[i])[0]} h4`).style.cssText = 'transform: translateX(-50%) scale(' + (1+(programming_language_skills[i][Object.keys(programming_language_skills[i])[0]]/100)) + '); left: ' + programming_language_skills[i][Object.keys(programming_language_skills[i])[0]] + '%;';

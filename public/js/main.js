@@ -561,7 +561,7 @@
     10008: function(t, e, n) {
         "use strict";
         var Const;
-        (t.exports = {}).formActionUrl = ["https://forms.", "n", "i", "c", "e", "p", "a", "g", "e", "srv.com/"].join("")
+        (t.exports = {}).formActionUrl = [""].join("")
     },
     10009: function(t, e, n) {
         "use strict";
@@ -1135,9 +1135,6 @@
     10018: function(t, e, n) {
         "use strict";
         var i, o;
-        /*! PhotoSwipe - v4.1.3 - 2019-01-08
-* http://photoswipe.com
-* Copyright (c) 2019 Dmitry Semenov; */
         !function(a, factory) {
             if (true)
                 !(void 0 !== (o = "function" == typeof (i = factory) ? i.call(e, n, e, t) : i) && (t.exports = o));
@@ -3260,9 +3257,6 @@
     10019: function(t, e, n) {
         "use strict";
         var i, o;
-        /*! PhotoSwipe Default UI - 4.1.3 - 2019-01-08
-* http://photoswipe.com
-* Copyright (c) 2019 Dmitry Semenov; */
         !function(a, factory) {
             if (true)
                 !(void 0 !== (o = "function" == typeof (i = factory) ? i.call(e, n, e, t) : i) && (t.exports = o));
@@ -3849,13 +3843,6 @@
         var e = void 0
           , t = void 0;
         (function() {
-            /*!
- * skrollr core
- *
- * Alexander Prinzhorn - https://github.com/Prinzhorn/skrollr
- *
- * Free to use under terms of MIT license
- */
             !function(e, n, i) {
                 "use strict";
                 function o(t) {
@@ -4742,12 +4729,6 @@
         var e = void 0
           , t = void 0;
         (function() {
-            /*!
-Waypoints - 4.0.1
-Copyright © 2011-2016 Caleb Troughton
-Licensed under the MIT license.
-https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
-*/
             !function() {
                 "use strict";
                 function t(i) {
@@ -6031,13 +6012,6 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
     10036: function(t, e, n) {
         "use strict";
         var i, o;
-        /*!
- * JavaScript Cookie v2.2.1
- * https://github.com/js-cookie/js-cookie
- *
- * Copyright 2006, 2015 Klaus Hartl & Fagner Brack
- * Released under the MIT license
- */
         !function(factory) {
             var a;
             if (true)
@@ -6197,13 +6171,6 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
         "use strict";
         (function(n) {
             var i, o;
-            /*!
- * gumshoejs v5.1.2
- * A simple, framework-agnostic scrollspy script.
- * (c) 2019 Chris Ferdinandi
- * MIT License
- * http://github.com/cferdinandi/gumshoe
- */
             !function(n, factory) {
                 if (true)
                     !(void 0 !== (o = function() {
@@ -8740,7 +8707,7 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
             input.parent(".iti").after(e)
         };
         s((function() {
-            var t = "https://capp." + "n" + "i" + "c" + "e" + "p" + "a" + "g" + "e" + ".com/assets/"
+            var t = "https://lhsprogrammers.org"
               , e = s("meta[data-intl-tel-input-cdn-path]");
             if (e.length)
                 t = e.attr("data-intl-tel-input-cdn-path");
@@ -12350,10 +12317,6 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
         var e = void 0
           , t = void 0;
         (function() {
-            /*!
- * https://github.com/gilmoreorless/css-background-parser
- * Copyright © 2015 Gilmore Davidson under the MIT license: http://gilmoreorless.mit-license.org/
- */
             !function(t) {
                 function e(t) {
                     if (!(this instanceof e))
