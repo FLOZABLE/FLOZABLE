@@ -7,7 +7,6 @@
   console.log(skills);
   const programming_skills = JSON.parse(skills.programming_skills);
   const programming_language_skills = JSON.parse(skills.programming_language_skills);
-  console.log(programming_skills, programming_language_skills, Object.keys(programming_skills[0])[0]);
   const programmingCardBody = document.querySelector('.col-sm-6.mb-3#programming-skills .card-body');
   const programminglangCardBody = document.querySelector('.col-sm-6.mb-3#programming-language-skills .card-body');
   
@@ -116,7 +115,6 @@
     `;
     div.querySelector("input").setAttribute("value", programming_skills[i][div_id]);
     div.querySelector("input").style.filter = 'hue-rotate(-' + programming_skills[i][div_id] + 'deg)';
-    console.log(programming_skills[i][div_id], div_id.split('-')[1])
     programmingCardBody.appendChild(div);
     document.querySelector(`#programming-skills #${div_id} h4`).style.cssText = 'transform: translateX(-50%) scale(' + (1+(programming_skills[i][div_id]/100)) + '); left: ' + programming_skills[i][div_id] + '%;';
   }
@@ -132,7 +130,6 @@
     `;
     div.querySelector("input").setAttribute("value", programming_language_skills[i][div_id]);
     div.querySelector("input").style.filter = 'hue-rotate(-' + programming_language_skills[i][div_id] + 'deg)';
-    console.log(programming_language_skills[i][div_id], div_id.split('-')[1])
     programminglangCardBody.appendChild(div);
     document.querySelector(`#programming-language-skills #${div_id} h4`).style.cssText = 'transform: translateX(-50%) scale(' + (1+(programming_language_skills[i][div_id]/100)) + '); left: ' + programming_language_skills[i][div_id] + '%;';
   }
