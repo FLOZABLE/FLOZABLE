@@ -414,7 +414,6 @@ save_btn.addEventListener("click", () => {
   console.log(skills);
   const programming_skills = JSON.parse(skills.programming_skills);
   const programming_language_skills = JSON.parse(skills.programming_language_skills);
-  console.log(programming_skills, programming_language_skills, Object.keys(programming_skills[0])[0]);
 
   const programmingCardBody = document.querySelector('.col-sm-6.mb-3#programming-skills .card-body');
   const programminglangCardBody = document.querySelector('.col-sm-6.mb-3#programming-language-skills .card-body');
