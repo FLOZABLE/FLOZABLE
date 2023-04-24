@@ -8,7 +8,17 @@ Router.get("/", async (req, res) => {
     const connection = await (await pool).getConnection();
     let user_info = await connection.query('SELECT * FROM users WHERE email = ?', req.session.email);
     user_info = user_info[0]
-    res.render("myaccount", {loggedin: true, account: {name: user_info.name, email: user_info.email, myinfo: user_info.myinfo, picture: user_info.profile_picture}});
+    let binaryData = user_info.profile_picture
+    let base64Image
+    console.log(binaryData, typeof binaryData)
+    if(binaryData === null){
+      console.log("null detected")
+      binaryData = fs.readFileSync('./public/img/default_profile.jpg');
+    }
+
+    base64Image = binaryData.toString('base64');
+
+    res.render("myaccount", {loggedin: true, account: {name: user_info.name, email: user_info.email, myinfo: user_info.myinfo, image: base64Image}});
   } else {
     res.redirect("/account")
   }
@@ -38,17 +48,33 @@ Router.get("/edit", async (req, res) => {
 Router.post("/update", async (req, res) => {
   if(req.session.loggedin == true){
     const connection = await (await pool).getConnection();
-    const { picture } = req.body;
-    const binaryData = Buffer.from(picture, 'base64');
-    console.log(binaryData)
-    // insert the image data into the database
-    /* const sql = 'INSERT INTO profile_pics (user_id, picture) VALUES (?, ?)';
-    const values = [userId, binaryData]; */
-    const updateProfile = await connection.query("UPDATE users SET profile_picture = ? WHERE email = ?", [binaryData, req.session.email]);
-
+    const picture = req.body.picture;
+    let binaryData;
+    if(picture != null){
+      binaryData = Buffer.from(picture, 'base64');
+    }
+    const name = req.body.name
+    const email = req.body.email
+    const aboutme = req.body.aboutme
+    const programming_skills = JSON.stringify(req.body.programming_skills);
+    const programming_lang_skills = JSON.stringify(req.body.programming_lang_skills);
+    console.log(name, email, aboutme, programming_skills, programming_lang_skills)
+    const update_info = [{name: name, email: email, myinfo: aboutme, profile_picture: binaryData, programming_skills: programming_skills, programming_language_skills: programming_lang_skills}, req.session.email];
+    const updateProfile = await connection.query("UPDATE users SET ? WHERE email=?", update_info);
+    
   } else {
     res.redirect("/account")
   }
 })
 
+Router.post("/skills", async (req, res) => {
+  if(req.session.loggedin == true){
+    const connection = await (await pool).getConnection();
+    let user_info = await connection.query('SELECT * FROM users WHERE email = ?', req.session.email);
+    user_info = user_info[0]
+    res.send({programming_skills: user_info.programming_skills, programming_language_skills: user_info.programming_language_skills});
+  } else {
+    res.redirect("/account")
+  }
+})
 module.exports = Router;
