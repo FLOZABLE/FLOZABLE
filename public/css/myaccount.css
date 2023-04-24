@@ -53,3 +53,12 @@
     margin-left: 10vw;
   }
 }
+
+.col-sm-6.mb-3 {
+  min-height: 200px;
+}
+
+.col-sm-6.mb-3 .not-selected{
+  font-style: italic;
+  color: rgba(0,0,0,.125)
+}

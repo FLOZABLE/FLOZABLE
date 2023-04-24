@@ -407,3 +407,12 @@ input[type="radio"]{
 #option-2:checked:checked ~ .option-2 span{
   color: #fff;
 }
+
+.col-sm-6.mb-3 {
+  min-height: 200px;
+}
+
+.programming-language-skills.skills {
+  max-height: 500px;
+  overflow-y: scroll;
+}

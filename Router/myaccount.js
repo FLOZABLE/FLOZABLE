@@ -19,6 +19,8 @@ Router.get("/", async (req, res) => {
     base64Image = binaryData.toString('base64');
 
     res.render("myaccount", {loggedin: true, account: {name: user_info.name, email: user_info.email, myinfo: user_info.myinfo, image: base64Image}});
+
+    connection.release();
   } else {
     res.redirect("/account")
   }
@@ -40,6 +42,7 @@ Router.get("/edit", async (req, res) => {
     base64Image = binaryData.toString('base64');
 
     res.render("edit", {loggedin: true, account: {name: user_info.name, email: user_info.email, myinfo: user_info.myinfo, image: base64Image}});
+    connection.release();
   } else {
     res.redirect("/account")
   }
@@ -62,6 +65,7 @@ Router.post("/update", async (req, res) => {
     const update_info = [{name: name, email: email, myinfo: aboutme, profile_picture: binaryData, programming_skills: programming_skills, programming_language_skills: programming_lang_skills}, req.session.email];
     const updateProfile = await connection.query("UPDATE users SET ? WHERE email=?", update_info);
     
+    connection.release();
   } else {
     res.redirect("/account")
   }
@@ -73,6 +77,19 @@ Router.post("/skills", async (req, res) => {
     let user_info = await connection.query('SELECT * FROM users WHERE email = ?', req.session.email);
     user_info = user_info[0]
     res.send({programming_skills: user_info.programming_skills, programming_language_skills: user_info.programming_language_skills});
+    connection.release();
+  } else {
+    res.redirect("/account")
+  }
+})
+
+Router.get("/chat", async (req, res) => {
+  if(req.session.loggedin == true){
+    const connection = await (await pool).getConnection();
+    let user_info = await connection.query('SELECT * FROM users WHERE email = ?', req.session.email);
+    user_info = user_info[0]
+    res.render("chat", {loggedin: true});
+    connection.release();
   } else {
     res.redirect("/account")
   }
