@@ -368,7 +368,6 @@ save_btn.addEventListener("click", () => {
   for(let i = 0; i < programming_lang_skills_el.length; i++){
     programming_lang_skills.push({[programming_lang_skills_el[i].id]: programming_lang_skills_el[i].querySelector('input').value});
   }
-  console.log(name, email, aboutme, programming_skills, programming_lang_skills)
   
   if (profile_picture.files.length > 0) {
     // If an image file is selected, read it and upload it
