@@ -51,7 +51,10 @@ app.use(helmet.contentSecurityPolicy(cspOptions))  */
 const mainRouter = require("./Router/main");
 const emailRouter = require("./Router/email");
 const accountRouter = require("./Router/account");
-const myAccount = require("./Router/myaccount");
+const myAccountRouter = require("./Router/myaccount");
+const chatRouter = require("./Router/chat")(io);
+const projectRouter = require("./Router/project");
+const githubRouter = require("./Router/github");
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -81,8 +84,10 @@ app.use(session({
 app.use('/', mainRouter);
 app.use('/email', emailRouter);
 app.use('/account', accountRouter);
-app.use('/myaccount', myAccount);
-
+app.use('/myaccount', myAccountRouter);
+app.use('/chat', chatRouter);
+app.use('/projects', projectRouter);
+app.use('/github', githubRouter)
 // error handler
 app.use(function (err, req, res, next) {
   console.log(err.message, err.status)
