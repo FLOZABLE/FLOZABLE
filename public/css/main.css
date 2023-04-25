@@ -53325,9 +53325,9 @@ a.u-button-style.u-button-style.active > .u-text-active-palette-1-base[class*="u
 .u-text-hover-palette-1-base .u-language-url:hover,
 .u-text-hover-palette-1-base.u-carousel-control:hover,
 .u-popupmenu-items.u-text-hover-palette-1-base .u-nav-link:hover,
-.u-popupmenu-items.u-popupmenu-items.u-text-active-palette-1-base .u-nav-link.active {
+/* .u-popupmenu-items.u-popupmenu-items.u-text-active-palette-1-base .u-nav-link.active {
   color: #478ac9 !important;
-}
+} */
 .u-text-palette-1-base .u-svg-link,
 .u-text-hover-palette-1-base:hover .u-svg-link,
 .u-button-style:hover > .u-text-hover-palette-1-base .u-svg-link,

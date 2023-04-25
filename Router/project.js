@@ -2,15 +2,12 @@ const express = require("express");
 const Router = express.Router();
 const fs = require("fs");
 const pool = require('../model/pool');
-const axios = require("axios");
 
 Router.get("/", async (req, res) => {
   if(req.session.loggedin == true){
     const connection = await (await pool).getConnection();
     let user_info = await connection.query('SELECT * FROM users WHERE email = ?', req.session.email);
     user_info = user_info[0]
-    const accessToken = user_info.github_access_token;
-
     let binaryData = user_info.profile_picture
     let base64Image
     console.log(binaryData, typeof binaryData)
@@ -21,16 +18,7 @@ Router.get("/", async (req, res) => {
 
     base64Image = binaryData.toString('base64');
 
-    axios.get('https://api.github.com/user', {
-      headers: {
-        Authorization: `token ${accessToken}`
-      }
-    }).then(response => {
-      console.log(response.data);
-      res.render("myaccount", {loggedin: true, account: {name: user_info.name, email: user_info.email, myinfo: user_info.myinfo, image: base64Image, github_info: response.data}});
-    }).catch(error => {
-      console.error(error);
-    });
+    res.render("myaccount", {loggedin: true, account: {name: user_info.name, email: user_info.email, myinfo: user_info.myinfo, image: base64Image}});
 
     connection.release();
   } else {
