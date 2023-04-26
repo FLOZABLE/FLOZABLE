@@ -3,40 +3,108 @@ const Router = express.Router();
 const fs = require("fs");
 const pool = require('../model/pool');
 const axios = require("axios");
+const NodeCache = require('node-cache');
+const cache = new NodeCache();
 
 Router.get("/", async (req, res) => {
-  if(req.session.loggedin == true){
-    const connection = await (await pool).getConnection();
-    let user_info = await connection.query('SELECT * FROM users WHERE email = ?', req.session.email);
-    user_info = user_info[0]
-    const accessToken = user_info.github_access_token;
+  if(!req.session.loggedin){
+    return res.redirect("/account");
+  }
 
-    let binaryData = user_info.profile_picture
-    let base64Image
-    console.log(binaryData, typeof binaryData)
-    if(binaryData === null){
-      console.log("null detected")
-      binaryData = fs.readFileSync('./public/img/default_profile.jpg');
+  const connection = await (await pool).getConnection();
+  const user_info = await connection.query('SELECT * FROM users WHERE email = ?', req.session.email);
+  const accessToken = user_info[0].github_access_token;
+
+  let binaryData = user_info[0].profile_picture;
+  let base64Image;
+
+  if(!binaryData){
+    binaryData = fs.readFileSync('./public/img/default_profile.jpg');
+  }
+
+  base64Image = binaryData.toString('base64');
+  
+  const response = await axios.get('https://api.github.com/user', {
+    headers: {
+      Authorization: `token ${accessToken}`
     }
-
-    base64Image = binaryData.toString('base64');
-
-    axios.get('https://api.github.com/user', {
+  });
+  
+  const getRepoList = async (accessToken, reposUrl, refreshTime = 60 * 10) => {
+    const cacheKey = `repoList:${reposUrl}`;
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      console.log("cached")
+      return cachedData;
+    }
+  
+    const reposResponse = await axios.get(reposUrl, {
       headers: {
         Authorization: `token ${accessToken}`
       }
-    }).then(response => {
-      console.log(response.data);
-      res.render("myaccount", {loggedin: true, account: {name: user_info.name, email: user_info.email, myinfo: user_info.myinfo, image: base64Image, github_info: response.data}});
-    }).catch(error => {
-      console.error(error);
     });
+  
+    const repoList = [];
+  
+    const promises = reposResponse.data.map(async repo => {
+      const [topicsResponse, languagesResponse, contributorsResponse] = await Promise.all([
+        axios.get(`https://api.github.com/repos/${repo.full_name}/topics`, {
+          headers: {
+            Accept: "application/vnd.github.mercy-preview+json",
+            Authorization: `token ${accessToken}`
+          }
+        }),
+        axios.get(`https://api.github.com/repos/${repo.full_name}/languages`, {
+          headers: {
+            Authorization: `token ${accessToken}`
+          }
+        }),
+        axios.get(`https://api.github.com/repos/${repo.full_name}/contributors`, {
+          headers: {
+            Authorization: `token ${accessToken}`
+          }
+        })
+      ]);
+      const contributorList = Array.isArray(contributorsResponse.data) ? contributorsResponse.data.map(c => c.login) : [contributorsResponse.data.login];
+      const repoData = {
+        name: repo.name,
+        url: repo.html_url,
+        topics: topicsResponse.data.names,
+        languages: Object.entries(languagesResponse.data).map(([key, value]) => ({name: key, percentage: ((value / Object.values(languagesResponse.data).reduce((a,b) => a + b, 0)) * 100).toFixed(2)})),
+        contributors: contributorList
+      };
+      if (repoData.topics.includes('lhs-programmers')) {
+        repoList.push(repoData);
+      }
+    });
+  
+    await Promise.all(promises);
+  
+    cache.set(cacheKey, repoList, refreshTime);
+  
+    return repoList;
+  };
+  
+  const repoList = await getRepoList(accessToken, response.data.repos_url);
 
-    connection.release();
-  } else {
-    res.redirect("/account")
-  }
+  console.log(repoList)
+  
+  res.render("myaccount", {
+    loggedin: true, 
+    account: {
+      name: user_info[0].name,
+      email: user_info[0].email,
+      myinfo: user_info[0].myinfo,
+      image: base64Image,
+      github_info: response.data,
+      repoList: repoList
+    }
+  });
+  
+
+  connection.release();
 })
+
 
 Router.get("/edit", async (req, res) => {
   if(req.session.loggedin == true){

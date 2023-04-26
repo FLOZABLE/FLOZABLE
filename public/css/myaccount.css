@@ -62,3 +62,7 @@
   font-style: italic;
   color: rgba(0,0,0,.125)
 }
+
+.col-sm-6.mb-3.repos .card{
+  width: calc(200% + 16px) !important;
+}

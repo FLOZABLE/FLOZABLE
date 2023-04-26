@@ -57,7 +57,7 @@ Router.get(
   function(req, res) {
     // Successful authentication, redirect home.
     console.log("success");
-    res.redirect("/");
+    res.redirect("/myaccount");
   }
 );
 
