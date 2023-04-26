@@ -11,7 +11,7 @@ const helmet = require("helmet");
 const http = require('http');
 const crypto = require("crypto");
 const dotenv = require("dotenv");
-dotenv.config({path: ".env.development"});
+dotenv.config({path: ".env.production"});
 var server = http.createServer(app);
 const port = process.env.PORT;
 var io = require('socket.io')(server);
