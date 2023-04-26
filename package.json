@@ -31,11 +31,13 @@
     "helmet": "^6.0.0",
     "mailgun.js": "^8.1.0",
     "morgan": "^1.10.0",
+    "node-cache": "^5.1.2",
     "nodemon": "^2.0.22",
     "passport": "^0.6.0",
     "passport-github": "^1.1.0",
     "promise-mysql": "^5.2.0",
     "react-scripts": "^5.0.1",
+    "redis": "^4.6.5",
     "socket.io": "^4.5.4"
   }
 }
