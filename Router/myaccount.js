@@ -95,15 +95,4 @@ Router.post("/skills", async (req, res) => {
   }
 })
 
-Router.get("/chat", async (req, res) => {
-  if(req.session.loggedin == true){
-    const connection = await (await pool).getConnection();
-    let user_info = await connection.query('SELECT * FROM users WHERE email = ?', req.session.email);
-    user_info = user_info[0]
-    res.render("chat", {loggedin: true});
-    connection.release();
-  } else {
-    res.redirect("/account")
-  }
-})
 module.exports = Router;
