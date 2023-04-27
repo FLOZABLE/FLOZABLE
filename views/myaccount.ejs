@@ -138,20 +138,26 @@
                     </div>
                   </div>
                 </div>
+                <% if(account.repoList != null) {%>
                 <div class="row gutters-sm">
                   <div class="col-sm-6 mb-3 repos">
                     <div class="card h-100">
                       <div class="card-body">
                         <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2">Repos with tag "lhs-programmers"</i></h6>
-                        <% for(let i = 0; i < account.repoList.length; i++) { %>
-                          <div>
-                            <p><%- account.repoList[i].name %></p>
-                          </div>
-                        <% } %>
+                          <% for(let i = 0; i < account.repoList.length; i++) { %>
+                            <div>
+                              <p><%- account.repoList[i].name %></p>
+                              <p><%- account.repoList[i].description %></p>
+                              <% for(let j = 0; j < account.repoList[i].languages.length; j++) {%>
+                                <p><%- account.repoList[i].languages[j].name %>: <%- account.repoList[i].languages[j].percentage %></p>
+                              <% } %>
+                            </div>
+                          <% } %>
                       </div>
                     </div>
                   </div>
                 </div>
+                <% } %>
               </div>
           </div>
       </div>
