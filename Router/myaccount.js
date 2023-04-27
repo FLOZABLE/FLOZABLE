@@ -10,7 +10,7 @@ Router.get("/", async (req, res) => {
   if(!req.session.loggedin){
     return res.redirect("/account");
   }
-
+  const t0 = performance.now();
   const connection = await (await pool).getConnection();
   const user_info = await connection.query('SELECT * FROM users WHERE email = ?', req.session.email);
   const accessToken = user_info[0].github_access_token;
@@ -24,11 +24,26 @@ Router.get("/", async (req, res) => {
 
   base64Image = binaryData.toString('base64');
   
-  const response = await axios.get('https://api.github.com/user', {
-    headers: {
-      Authorization: `token ${accessToken}`
-    }
-  });
+  try {
+    var response = await axios.get('https://api.github.com/user', {
+      headers: {
+        Authorization: `token ${accessToken}`
+      }
+    });
+  } catch (error){
+    res.render("myaccount", {
+      loggedin: true, 
+      account: {
+        name: user_info[0].name,
+        email: user_info[0].email,
+        myinfo: user_info[0].myinfo,
+        image: base64Image,
+        github_info: null,
+        repoList: null
+      }
+    });
+    return 0
+  }
   
   const getRepoList = async (accessToken, reposUrl, refreshTime = 60 * 10) => {
     const cacheKey = `repoList:${reposUrl}`;
@@ -47,7 +62,10 @@ Router.get("/", async (req, res) => {
     const repoList = [];
   
     const promises = reposResponse.data.map(async repo => {
-      const [topicsResponse, languagesResponse, contributorsResponse] = await Promise.all([
+      if (!repo.topics.includes('lhs-programmers')) {
+        return null;
+      }
+      const [topicsResponse, languagesResponse, contributorsResponse, repoResponse] = await Promise.all([
         axios.get(`https://api.github.com/repos/${repo.full_name}/topics`, {
           headers: {
             Accept: "application/vnd.github.mercy-preview+json",
@@ -63,12 +81,18 @@ Router.get("/", async (req, res) => {
           headers: {
             Authorization: `token ${accessToken}`
           }
+        }),
+        axios.get(`https://api.github.com/repos/${repo.full_name}`, {
+          headers: {
+            Authorization: `token ${accessToken}`
+          }
         })
       ]);
       const contributorList = Array.isArray(contributorsResponse.data) ? contributorsResponse.data.map(c => c.login) : [contributorsResponse.data.login];
       const repoData = {
         name: repo.name,
         url: repo.html_url,
+        description: repoResponse.data.description,
         topics: topicsResponse.data.names,
         languages: Object.entries(languagesResponse.data).map(([key, value]) => ({name: key, percentage: ((value / Object.values(languagesResponse.data).reduce((a,b) => a + b, 0)) * 100).toFixed(2)})),
         contributors: contributorList
@@ -100,6 +124,8 @@ Router.get("/", async (req, res) => {
       repoList: repoList
     }
   });
+  const t1 = performance.now();
+  console.log(`Time taken: ${t1 - t0} milliseconds`);
   
 
   connection.release();
