@@ -145,12 +145,18 @@
                       <div class="card-body">
                         <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2">Repos with tag "lhs-programmers"</i></h6>
                           <% for(let i = 0; i < account.repoList.length; i++) { %>
-                            <div>
+                            <div class = "repos">
                               <p><%- account.repoList[i].name %></p>
                               <p><%- account.repoList[i].description %></p>
-                              <% for(let j = 0; j < account.repoList[i].languages.length; j++) {%>
-                                <p><%- account.repoList[i].languages[j].name %>: <%- account.repoList[i].languages[j].percentage %></p>
-                              <% } %>
+                              <p>Used Languages</p>
+                              <div class="row repo">
+                                <div class="bar-container">
+                                  <% for(let j = 0; j < account.repoList[i].languages.length; j++) {%>
+                                    <div class = "<%- `bar val-${j}`%>" style = "<%- 'flex-basis:' + account.repoList[i].languages[j].percentage + '%' %>"><%- account.repoList[i].languages[j].name %></div>
+                                  <% } %>
+                                </div>
+                              </div>
+                              <p><%- account.repoList[i].readme %></p>
                             </div>
                           <% } %>
                       </div>
