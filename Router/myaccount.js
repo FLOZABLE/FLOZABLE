@@ -65,7 +65,7 @@ Router.get("/", async (req, res) => {
       if (!repo.topics.includes('lhs-programmers')) {
         return null;
       }
-      const [topicsResponse, languagesResponse, contributorsResponse, repoResponse] = await Promise.all([
+      const [topicsResponse, languagesResponse, contributorsResponse, repoResponse, readmeResponse] = await Promise.all([
         axios.get(`https://api.github.com/repos/${repo.full_name}/topics`, {
           headers: {
             Accept: "application/vnd.github.mercy-preview+json",
@@ -86,6 +86,11 @@ Router.get("/", async (req, res) => {
           headers: {
             Authorization: `token ${accessToken}`
           }
+        }),
+        axios.get(`https://api.github.com/repos/${repo.full_name}/readme`, {
+          headers: {
+            Authorization: `token ${accessToken}`
+          }
         })
       ]);
       const contributorList = Array.isArray(contributorsResponse.data) ? contributorsResponse.data.map(c => c.login) : [contributorsResponse.data.login];
@@ -95,7 +100,8 @@ Router.get("/", async (req, res) => {
         description: repoResponse.data.description,
         topics: topicsResponse.data.names,
         languages: Object.entries(languagesResponse.data).map(([key, value]) => ({name: key, percentage: ((value / Object.values(languagesResponse.data).reduce((a,b) => a + b, 0)) * 100).toFixed(2)})),
-        contributors: contributorList
+        contributors: contributorList,
+        readme: readmeResponse.data.content ? Buffer.from(readmeResponse.data.content, 'base64').toString() : null
       };
       if (repoData.topics.includes('lhs-programmers')) {
         repoList.push(repoData);
@@ -121,7 +127,7 @@ Router.get("/", async (req, res) => {
       myinfo: user_info[0].myinfo,
       image: base64Image,
       github_info: response.data,
-      repoList: repoList
+      repoList: repoList,
     }
   });
   const t1 = performance.now();
