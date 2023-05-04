@@ -33,6 +33,7 @@
     "morgan": "^1.10.0",
     "node-cache": "^5.1.2",
     "nodemon": "^2.0.22",
+    "openai": "^3.2.1",
     "passport": "^0.6.0",
     "passport-github": "^1.1.0",
     "promise-mysql": "^5.2.0",
