@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include("./elements/head");%>
+  <link rel="stylesheet" href="css/elements/header.css">
+  <link rel="stylesheet" href="css/search.css">
+  <script defer src = "js/search.js"></script>
+  <script defer src = "../../js/header.js"></script>
+  <script defer src = "../../js/footer.js"></script>
+  <title>FLOZABLE | Search result for <%= query%></title>
+</head>
+<body>
+  <%- include("./elements/header");%>
+  <div class="main">
+    <div class="inner">
+      <div class="top">
+        <h2>Search Result for "<strong id = "query"><%= query%></strong>"</h2>
+      </div>
+      <ul class = "articles_wrapper">
+        
+      </ul>
+    </div>
+  </div>
+  <footer>
+    <%- include("./elements/footer");%>
+  </footer>
+</body>
+</html>

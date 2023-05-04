@@ -15,9 +15,9 @@ Router.get('/', (req, res) => {
     req.session.error_msg = ""
   }
   if(req.session.loggedin == true){
-    res.render("account", {loggedin: "true", error_msg: req.session.error_msg});
+    res.render("account/account", {loggedin: "true", error_msg: req.session.error_msg});
   } else {
-    res.render("account", {loggedin: "false", error_msg: req.session.error_msg});
+    res.render("account/account", {loggedin: "false", error_msg: req.session.error_msg});
   }
 })
 
@@ -120,7 +120,7 @@ Router.get('/signup', function (req, res) {
   req.session.error_msg = "";
 
   if (req.session.loggedin) {
-    res.render('register', {
+    res.render('account/register', {
       title: 'Registration Page',
       name: '',
       email: '',
@@ -130,7 +130,7 @@ Router.get('/signup', function (req, res) {
       error: req.session.r_error_msg,
     })
   } else {
-    res.render('register', {
+    res.render('account/register', {
       title: 'Registration Page',
       name: '',
       email: '',

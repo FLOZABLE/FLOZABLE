@@ -17,12 +17,11 @@ Router.get('/article', async(req, res) => {
     return 0
   }
   if(req.session.loggedin){
-    res.render("admin")
+    res.render("blog/admin")
   } else {
-    res.render("login")
+    res.render("account/account")
   }
   console.log(req.session.loggedin)
-  res.render('admin/manage/article');
 })
 
 Router.get('/category', async(req, res) => {
