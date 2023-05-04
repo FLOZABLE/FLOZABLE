@@ -55,6 +55,11 @@ const myAccountRouter = require("./Router/myaccount");
 const chatRouter = require("./Router/chat")(io);
 const projectRouter = require("./Router/project");
 const githubRouter = require("./Router/github");
+const adminRouter = require("./Router/admin/main");
+const articleRouter = require('./Router/article');
+const categoryRouter = require('./Router/article');
+const searchRouter = require('./Router/search');
+const groupsRouter = require("./Router/groups");
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -87,7 +92,12 @@ app.use('/account', accountRouter);
 app.use('/myaccount', myAccountRouter);
 app.use('/chat', chatRouter);
 app.use('/projects', projectRouter);
-app.use('/github', githubRouter)
+app.use('/github', githubRouter);
+app.use('/admin', adminRouter);
+app.use('/article', articleRouter);
+app.use('/category', categoryRouter);
+app.use('/search', searchRouter);
+app.use('/groups', groupsRouter);
 // error handler
 app.use(function (err, req, res, next) {
   console.log(err.message, err.status)
