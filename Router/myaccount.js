@@ -31,7 +31,7 @@ Router.get("/", async (req, res) => {
       }
     });
   } catch (error){
-    res.render("myaccount", {
+    res.render("account/myaccount", {
       loggedin: true, 
       account: {
         name: user_info[0].name,
@@ -119,7 +119,7 @@ Router.get("/", async (req, res) => {
 
   console.log(repoList)
   
-  res.render("myaccount", {
+  res.render("account/myaccount", {
     loggedin: true, 
     account: {
       name: user_info[0].name,
@@ -153,7 +153,7 @@ Router.get("/edit", async (req, res) => {
 
     base64Image = binaryData.toString('base64');
 
-    res.render("edit", {loggedin: true, account: {name: user_info.name, email: user_info.email, myinfo: user_info.myinfo, image: base64Image}});
+    res.render("account/edit", {loggedin: true, account: {name: user_info.name, email: user_info.email, myinfo: user_info.myinfo, image: base64Image}});
     connection.release();
   } else {
     res.redirect("/account")
