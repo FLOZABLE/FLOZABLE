@@ -2,11 +2,27 @@
   position: absolute;
   left: 20px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
-  border-radius: 5px; 
+  border-radius: 5px;
+  z-index: 2;
+  background-color: #fff;
+}
+
+@keyframes timer-hide {
+  100% {
+    transform: translate(-600, 0px);
+  }
+}
+
+.timer-hide {
+  position: relative;
+  animation: 2s timer-hide forwards;
 }
 
 .timer .container {
   margin: 0px 0px 10px 10px;
+}
+.timer .order {
+  display: none;
 }
 
 .SW{
@@ -28,8 +44,8 @@
 }
 #digits{
   font-size: 50px;
-  padding: 0px 100px 0px 100px;
-  margin-bottom: 10px;
+  padding: 0px 20px 0px 20px;
+  margin-bottom: 5px;
 }
 .subject {
   font-size: 25px;
@@ -46,17 +62,16 @@
   justify-content: left;
   margin: 0px;
   padding: 0px;
-
-  width: 110px;
+  width: 65px;
 
 }
 #buttons>div{
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
   border: 2px gray solid;
   background-color: rgb(48, 56, 56);
   border-radius: 36px;
-  margin: 0px 20px 0px 20px;
+  margin: 0px 10px 0px 10px;
   position: absolute;
   top: 40px;
 }
@@ -72,8 +87,8 @@
 #buttons span{
   color: rgb(185, 185, 185);
   position: relative;
-  left: 15px;
-  top: 15px;
+  left: 5px;
+  top: 5px;
 }
 .material-symbols-outlined {
   font-size: 35px !important;
@@ -463,4 +478,82 @@ input[type="color"]::-webkit-color-swatch::after {
   color: black;
   box-shadow: 0 0 10px gray;
   z-index: 2;
+}
+
+@keyframes moveTop {
+  100% {
+    transform: translate(0, -1000px);
+  }
+}
+
+.move-top {
+  position: relative;
+  animation: 2s moveTop forwards;
+}
+
+/* graph */
+.chart-container {
+  display: inline-block;
+}
+
+.timer .hide-button {
+  width: calc(100%);
+}
+@import url("https://fonts.googleapis.com/css?family=Ubuntu:300,400");
+
+.menu-container {
+  float:right;  
+}
+
+#menu {
+  position: absolute;
+  z-index: 3;
+}
+#menu.open .top-bar {
+  transform-origin: 40px;
+  transform: translateX(-4px) rotate(-45deg);
+  transition: all 0.75s cubic-bezier(1, -1.5, 0.5, 2);
+}
+#menu.open .btm-bar {
+  transform-origin: 40px;
+  transform: translateX(-4px) rotate(45deg);
+  transition: all 0.75s cubic-bezier(1, -1.5, 0.5, 2);
+}
+#menu.open .mid-bar {
+  stroke-dasharray: 0 120 251 251;
+  stroke-dashoffset: 1;
+}
+
+.top-bar, .btm-bar {
+  position: absolute;
+  width: 43px;
+  height: 4px;
+  background: #000;
+  left: 20px;
+  top: 27px;
+  border-radius: 10px;
+  transition: all 500ms cubic-bezier(1, -1, 0.5, 2);
+}
+
+.btm-bar {
+  top: 53px;
+}
+
+.mid-bar {
+  stroke-linecap: round;
+  stroke: #000;
+  stroke-dasharray: 0 100 40 400;
+  stroke-dashoffset: 101;
+  transition: all 750ms ease;
+}
+
+h5, a {
+  color: #00630d;
+  font-family: "Ubuntu", sans-serif;
+  text-decoration: none;
+  text-align: center;
+}
+
+a:hover {
+  color: white;
 }
