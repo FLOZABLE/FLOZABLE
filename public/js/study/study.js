@@ -171,6 +171,20 @@ function toggleTimer(index) {
     timer.timer = setInterval(function() { count(index); }, 10);
     timer.playBtn.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
     timer.run = true;
+    const activatedBtn = document.querySelectorAll(".SW")[index];
+    console.log(activatedBtn);
+    const subjectContainer = document.querySelector(".timer .container");
+    subjectContainer.insertBefore(activatedBtn, subjectContainer.firstChild);
+    /* activatedBtn.style.top = subjectContainer.offsetTop - activatedBtn.offsetTop + "px";
+    activatedBtn.classList.add('move-top'); */
+    const subjects = document.querySelectorAll('.SW');
+    for(let i = 0; i < subjects.length; i++) {
+      if(i == index){
+        break;
+      } else if(timers[i].run) {
+        toggleTimer(i);
+      }
+    }
   }
 }
 
@@ -321,4 +335,46 @@ addSubjectSubmitBtn.addEventListener('click', () => {
       toggleTimer(index);
     }
   })(subjects.length));
+})
+
+
+//graphing
+
+// Define the data for the chart
+var data = {
+  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+  series: [{
+    name: 'Sales',
+    data: [20, 30, 25, 40, 35, 50]
+  }, {
+    name: 'Expenses',
+    data: [10, 15, 20, 25, 30, 35]
+  }, {
+    name: 'Profit',
+    data: [10, 15, 5, 15, 5, 15]
+  }]
+};
+
+// Create a new Highcharts chart object
+Highcharts.chart('chart-container', {
+  chart: {
+    type: 'line'
+  },
+  title: {
+    text: 'Sales Report'
+  },
+  xAxis: {
+    categories: data.categories
+  },
+  yAxis: {
+    title: {
+      text: 'Sales (in thousands)'
+    }
+  },
+  series: data.series
+});
+
+let menuBtn = document.getElementById('menu');
+menu.addEventListener('click', () => {
+	menuBtn.classList.toggle('open');
 })
