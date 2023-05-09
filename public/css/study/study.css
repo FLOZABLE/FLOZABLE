@@ -15,7 +15,6 @@
   width: 100%;
   margin-bottom: 20px;
   position: relative;
-  box-shadow: rgba(240, 46, 170, 0.4) -5px 5px, rgba(240, 46, 170, 0.3) -10px 10px, rgba(240, 46, 170, 0.2) -15px 15px, rgba(240, 46, 170, 0.1) -20px 20px, rgba(240, 46, 170, 0.05) -25px 25px;
 }
 #disp{
   background-color: #FFFFFF;
@@ -456,4 +455,12 @@ input[type="color"]::-webkit-color-swatch::after {
   .blob-btn:hover .blob-btn__blob {
     transform: translateZ(0) scale(2);
   }
+}
+
+.item-dragged {
+  border: 2px dashed #C0C0C0;
+  background: wheat;
+  color: black;
+  box-shadow: 0 0 10px gray;
+  z-index: 2;
 }

@@ -1,6 +1,6 @@
 function createSubjects(subject_number, subject, subjectColor){
   const div = document.createElement("div");
-  div.setAttribute("class", "SW d-1 list-item");
+  div.setAttribute("class", "SW d-1 item");
   div.setAttribute("id", "SW"+subject_number);
   div.setAttribute("draggable", "true");
   div.innerHTML=`<div id="disp">
@@ -24,6 +24,80 @@ function createSubjects(subject_number, subject, subjectColor){
 `
 const timerContainer = document.querySelector(".timer .container");
 timerContainer.appendChild(div);
+div.addEventListener("dragstart", drag);
+div.addEventListener("drag", dragged);
+div.addEventListener("dragover", dragover);
+div.addEventListener("drop", drop);
+div.addEventListener("dragend", dragend);
+
+div.id = 'drag-item-' + subject_number;
+}
+
+function drag(e) {
+  console.log('drag')
+  console.log(e)
+  // hide gohst element
+  e.target.classList.remove('d-1');
+  e.dataTransfer.setDragImage(this.cloneNode(true), 0, 0);
+  
+  currPosY = e.clientY-e.target.offsetTop - 20;
+  origPosY = e.target.offsetTop;
+  e.target.style.position = 'relative';
+
+  e.target.classList.add('item-dragged');
+  //e.target.style.top = e.offsetY - currPosY + 'px';
+};
+
+function dragover(e) {
+  //e.preventDefault();
+}
+
+function drop(e) {
+  //e.preventDefault();
+  /* var el = document.getElementById('info');
+  var text = e.target.parentElement.innerText.replace(/\n/g,'<br>');
+  el.innerHTML=text; */
+}
+
+function dragend(e) {
+  e.preventDefault();
+  e.target.classList.remove('item-dragged');
+  e.target.style=null;
+  e.target.classList.add('d-1');
+};
+
+function dragged(e) {
+  e.preventDefault();
+  var dropArea = e.target.parentNode;
+  
+  if (e.target.offsetTop < dropArea.offsetTop ) {
+    e.target.style.top = dropArea.offsetTop + 'px';
+  } else if (e.target.offsetTop + e.target.offsetHeight > dropArea.offsetTop + dropArea.offsetHeight) {
+    e.target.style.top=dropArea.offsetTop+dropArea.offsetHeight-e.target.offsetHeight + 'px';
+  }
+  
+  elNextY = (e.target.nextElementSibling != null)? 
+    e.target.nextElementSibling.offsetTop + e.target.nextElementSibling.offsetHeight / 2 : 0;
+  elPrevY = (e.target.previousElementSibling != null)? 
+    e.target.previousElementSibling.offsetTop : e.target.parentElement.offsetHeight;
+
+  // reorder elements based on dragged item position
+  if (e.clientY - currPosY + e.target.offsetHeight / 2 > elNextY && e.clientY - currPosY < elNextY + e.target.offsetHeight) 
+  {
+    if (e.target.nextElementSibling){
+      e.target.parentElement.insertBefore(e.target.nextElementSibling, e.target);
+      origPosY = e.target.offsetTop - e.target.offsetHeight;
+    }
+  } 
+  else if (e.clientY - currPosY < elPrevY + e.target.offsetHeight / 2 && e.clientY - currPosY > elPrevY) 
+  {
+    if (e.target.previousElementSibling) {
+      origPosY = e.target.previousElementSibling.offsetTop;
+      e.target.parentElement.insertBefore(e.target, e.target.previousElementSibling);
+    }
+  }
+
+  e.target.style.top = e.clientY-origPosY-currPosY+'px';
 }
 
 var timers = [];
@@ -68,103 +142,21 @@ var timers = [];
     })(i));
   }
 
-
-  console.log(document.querySelectorAll(".SW.d-1.list-item")[0]);
-  var rowSize = document.querySelector(".timer .container").clientHeight / document.querySelectorAll('.SW')[0].clientHeight; // => container height / number of items
-  var container = document.querySelector(".timer .container");
-  var listItems = Array.from(document.querySelectorAll(".list-item")); // Array of elements
-  var sortables = listItems.map(Sortable); // Array of sortables
-  var total = sortables.length;
-  console.log(rowSize, Draggable);
-  container.style.opacity = 1;
+  var dropArea = document.getElementsByClassName(".timer .container");
+  var currPosY = -1,
+      origPosY = -1;
   
-  function changeIndex(item, to) {
-    // Change position in array
-    arrayMove(sortables, item.index, to);
+  var draggable = document.getElementsByClassName("item");
   
-    // Change element's position in DOM. Not always necessary. Just showing how.
-    if (to === total - 1) {
-      container.appendChild(item.element);
-    } else {
-      var i = item.index > to ? to : to + 1;
-      container.insertBefore(item.element, container.children[i]);
-    }
+  [].forEach.call(draggable, function(el, i){
+    el.addEventListener("dragstart", drag);
+    el.addEventListener("drag", dragged);
+    el.addEventListener("dragover", dragover);
+    el.addEventListener("drop", drop);
+    el.addEventListener("dragend", dragend);
   
-    // Set index for each sortable
-    sortables.forEach(function (sortable, index) {
-      return sortable.setIndex(index);
-    });
-  }
-  
-  function Sortable(element, index) {
-    var content = element.querySelector(".item-content");
-    var order = element.querySelector(".order");
-  
-    var animation = content.style.boxShadow = "rgba(0,0,0,0.2) 0px 16px 32px 0px";
-    content.style.transform = "scale(1.1)";
-    var dragger = new Draggable.Draggable(element, {
-      onDragStart: downAction,
-      onRelease: upAction,
-      onDrag: dragAction,
-      cursor: "inherit",
-      type: "y"
-    });
-  
-    // Public properties and methods
-    var sortable = {
-      dragger: dragger,
-      element: element,
-      index: index,
-      setIndex: setIndex
-    };
-  
-    element.style.transform = "translateY(" + index * rowSize + "px)";
-    order.textContent = index + 1;
-  
-    function setIndex(index) {
-      sortable.index = index;
-      order.textContent = index + 1;
-  
-      // Don't layout if you're dragging
-      if (!dragger.isDragging) layout();
-    }
-  
-    function downAction() {
-      animation = content.style.boxShadow = "rgba(0,0,0,0.2) 0px 16px 32px 0px";
-      this.update();
-    }
-  
-    function dragAction() {
-      // Calculate the current index based on element's position
-      var index = clamp(Math.round(this.y / rowSize), 0, total - 1);
-  
-      if (index !== sortable.index) {
-        changeIndex(sortable, index);
-      }
-    }
-  
-    function upAction() {
-      animation = content.style.boxShadow = "none";
-      content.style.transform = "scale(1)";
-      layout();
-    }
-  
-    function layout() {
-      element.style.transform = "translateY(" + sortable.index * rowSize + "px)";
-    }
-  
-    return sortable;
-  }
-  
-  // Changes an elements's position in array
-  function arrayMove(array, from, to) {
-    array.splice(to, 0, array.splice(from, 1)[0]);
-  }
-  
-  // Clamps a value to a min/max
-  function clamp(value, a, b) {
-    return value < a ? a : value > b ? b : value;
-  }  
+    el.id = 'drag-item-' + i;
+  });
 })();
 
 
@@ -303,4 +295,30 @@ addSubjectSubmitBtn.addEventListener('click', () => {
   name.value = "";
   recommendedColorsIndex += 1;
   color.value = recommendedColors[recommendedColorsIndex];
+
+  timers.push({
+    hundredth: 0,
+    seconds: 0,
+    minutes: 0,
+    hours: 0,
+    run: false,
+    timer: null,
+    secDisp: null,
+    minDisp: null,
+    hrDisp: null,
+    playBtn: null
+  });
+
+  // Initialize the timer object
+  timers[subjects.length].secDisp = document.getElementById('sec' + subjects.length);
+  timers[subjects.length].minDisp = document.getElementById('min' + subjects.length);
+  timers[subjects.length].hrDisp = document.getElementById('hr' + subjects.length);
+  timers[subjects.length].playBtn = document.getElementById('playBtn' + subjects.length);
+
+  // Add a click event listener to the play button
+  timers[subjects.length].playBtn.addEventListener('click', (function(index) {
+    return function() {
+      toggleTimer(index);
+    }
+  })(subjects.length));
 })
