@@ -9,7 +9,7 @@
 
 @keyframes timer-hide {
   100% {
-    transform: translate(-405px, 0px);
+    transform: translate(-445px, 0px);
   }
 }
 
@@ -510,7 +510,7 @@ input[type="color"]::-webkit-color-swatch::after {
 #menu {
   position: absolute;
   z-index: 3;
-  margin-left: 390px;
+  margin-left: 420px;
 }
 #menu.open .top-bar {
   transform-origin: 10px;
