@@ -2,7 +2,8 @@ const express = require("express");
 const Router = express.Router();
 const fs = require("fs");
 const pool = require('../model/pool');
-const axios = require("axios")
+const axios = require("axios");
+const { stringify } = require("querystring");
 
 Router.get("/", async (req, res) => {
   if(req.session.loggedin == true){
@@ -20,22 +21,15 @@ Router.post('/add-subject', async(req, res) => {
   if(req.session.loggedin == true) {
     const connection = await (await pool).getConnection();
     const subject = req.body;
-    
-    // convert the object to a JSON string
-    const subjectJson = JSON.stringify(subject);
-    
-    // prepare the select statement to get the existing JSON array
+    subject.today = 0;
+    subject.total = 0;
+    subject.start = 0;
+    subject.end = 0;
     const selectQuery = "SELECT subjects FROM users WHERE email = ?";
     const selectParams = [req.session.email];
-    
-    // execute the select statement and get the existing JSON array
     const select = await connection.query(selectQuery, selectParams);
     const subjects = JSON.parse(select[0].subjects || "[]");
-    
-    // add the new JSON object to the existing array
     subjects.push(subject);
-    
-    // convert the updated array back to a JSON string
     const updatedJson = JSON.stringify(subjects);
     
     // prepare the update statement to update the subjects column
@@ -50,6 +44,30 @@ Router.post('/add-subject', async(req, res) => {
   }
   res.sendStatus(200);
 });
+
+Router.post('/start', async(req, res) => {
+  const connection = await (await pool).getConnection();
+  const information = req.body;
+  information.start =  new Date().setMilliseconds(0);
+  const selectQuery = "SELECT subjects FROM users WHERE email = ?";
+  const selectParams = [req.session.email];
+  const select = await connection.query(selectQuery, selectParams);
+  const subjects = JSON.parse(select[0].subjects || "[]");
+  subjects.push(information);
+  const updatedJson = JSON.stringify(subjects);
+  console.log(information);
+  const update = await connection.query( "UPDATE users SET subjects = ? WHERE email = ?", [JSON.stringify(information),req.session.email]);
+
+  connection.release();
+})
+
+Router.post('/stop', async(req, res) => {
+  const connection = await (await pool).getConnection();
+
+  const information = JSON.stringify(req.body);
+  console.log(information);
+  connection.release();
+})
 
 Router.post('/bring-subjects', async(req, res) => {
   if(req.session.loggedin == true) {

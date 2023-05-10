@@ -34,8 +34,6 @@ div.id = 'drag-item-' + subject_number;
 }
 
 function drag(e) {
-  console.log('drag')
-  console.log(e)
   // hide gohst element
   e.target.classList.remove('d-1');
   e.dataTransfer.setDragImage(this.cloneNode(true), 0, 0);
@@ -111,7 +109,6 @@ var timers = [];
   })
   
   const subjects = await response.json();
-  console.log(subjects);
 
   for(let i = 0; i < subjects.length; i++){
     createSubjects(i, subjects[i].name, subjects[i].color);
@@ -125,7 +122,9 @@ var timers = [];
       secDisp: null,
       minDisp: null,
       hrDisp: null,
-      playBtn: null
+      playBtn: null,
+      name: subjects[i].name,
+      color: subjects[i].color
     });
   
     // Initialize the timer object
@@ -162,7 +161,6 @@ var timers = [];
 
 function toggleTimer(index) {
   var timer = timers[index];
-  console.log(timer, index)
   if (timer.run) {
     clearInterval(timer.timer);
     timer.playBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
@@ -171,20 +169,30 @@ function toggleTimer(index) {
     timer.timer = setInterval(function() { count(index); }, 10);
     timer.playBtn.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
     timer.run = true;
-    const activatedBtn = document.querySelectorAll(".SW")[index];
-    console.log(activatedBtn);
+    const activatedBtn = document.querySelector(`#drag-item-${index}`);
     const subjectContainer = document.querySelector(".timer .container");
     subjectContainer.insertBefore(activatedBtn, subjectContainer.firstChild);
+    console.log(subjectContainer.firstChild);
     /* activatedBtn.style.top = subjectContainer.offsetTop - activatedBtn.offsetTop + "px";
     activatedBtn.classList.add('move-top'); */
     const subjects = document.querySelectorAll('.SW');
     for(let i = 0; i < subjects.length; i++) {
-      if(i == index){
-        break;
-      } else if(timers[i].run) {
+      if(timers[i].run == true && i != index){
         toggleTimer(i);
+        console.log(timers[i], timers[i].run);
       }
     }
+    
+    (async() => {
+      const start = await fetch('/study/start', {
+        method: 'post',
+        body: JSON.stringify({ name: timer.name}),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      // handle the response as needed
+    })();
   }
 }
 
@@ -236,7 +244,7 @@ function disp(hun, sec, min, hr, index) {
 
 const main = document.querySelector('.main');
 const addSubjectBtn = document.querySelector(".add-subject");
-const addSubjectModal = document.querySelector(".modal#subject-adder");
+const addSubjectModal = document.querySelector(".subject-modal#subject-adder");
 
 const recommendedColors = [
   '#3423BF',
@@ -276,7 +284,6 @@ addSubjectBtn.addEventListener('click', () => {
   const color = document.querySelector("input.subject-color");
   recommendedColorsIndex = document.querySelectorAll(".SW").length;
   color.value =recommendedColors[recommendedColorsIndex];
-  console.log(color.value);
   main.classList.add('blur');
 });
 
@@ -291,7 +298,6 @@ const addSubjectSubmitBtn = document.querySelector(".blob-btn");
 addSubjectSubmitBtn.addEventListener('click', () => {
   const name = document.querySelector("input.subject-name");
   const color = document.querySelector("input.subject-color");
-  console.log(name, color);
   (async() => {
     const response = await fetch('/study/add-subject', {
       method: 'post',
@@ -303,13 +309,6 @@ addSubjectSubmitBtn.addEventListener('click', () => {
     // handle the response as needed
   })();
 
-  const subjects = document.querySelectorAll(".SW");
-  console.log(subjects.length);
-  createSubjects(subjects.length, name.value, color.value);
-  name.value = "";
-  recommendedColorsIndex += 1;
-  color.value = recommendedColors[recommendedColorsIndex];
-
   timers.push({
     hundredth: 0,
     seconds: 0,
@@ -320,8 +319,17 @@ addSubjectSubmitBtn.addEventListener('click', () => {
     secDisp: null,
     minDisp: null,
     hrDisp: null,
-    playBtn: null
+    playBtn: null,
+    name: name,
+    color: color,
   });
+
+
+  const subjects = document.querySelectorAll(".SW");
+  createSubjects(subjects.length, name.value, color.value);
+  name.value = "";
+  recommendedColorsIndex += 1;
+  color.value = recommendedColors[recommendedColorsIndex];
 
   // Initialize the timer object
   timers[subjects.length].secDisp = document.getElementById('sec' + subjects.length);
@@ -375,6 +383,38 @@ Highcharts.chart('chart-container', {
 });
 
 let menuBtn = document.getElementById('menu');
+const subjects = document.querySelector(".timer");
 menu.addEventListener('click', () => {
 	menuBtn.classList.toggle('open');
-})
+  subjects.classList.toggle('timer-hide');
+});
+
+//calendar
+var selectedDateEl = null; // variable to store previously selected date element
+
+var calendarEl = document.getElementById('calendar');
+var calendar = new FullCalendar.Calendar(calendarEl, {
+  initialView: 'dayGridMonth',
+  themeSystem: 'bootstrap5',
+  headerToolbar: {
+    left: 'prev,next today',
+    center: 'title',
+    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+  },
+  events: [
+    // your events data here
+  ],
+  dateClick: function(info) {
+    console.log('Clicked date: ' + info.dateStr, info.dayEl);
+    
+    // reset background color of previously selected date
+    if (selectedDateEl) {
+      selectedDateEl.style.backgroundColor = '';
+    }
+    
+    // change background color of selected date
+    selectedDateEl = info.dayEl;
+    selectedDateEl.style.backgroundColor = 'rgba(255, 220, 40, .15)';
+  }
+});
+calendar.render();
