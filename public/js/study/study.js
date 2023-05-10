@@ -1,4 +1,4 @@
-function createSubjects(subject_number, subject, subjectColor){
+function createSubjects(subject_number, subject, subjectColor, savedTime){
   const div = document.createElement("div");
   div.setAttribute("class", "SW d-1 item");
   div.setAttribute("id", "SW"+subject_number);
@@ -8,9 +8,9 @@ function createSubjects(subject_number, subject, subjectColor){
   <span class="order">1</span>
 </div>
   <div id="digits">
-    <span id="hr${subject_number}">00:</span>
-    <span id="min${subject_number}">00:</span>
-    <span id="sec${subject_number}">00</span>
+    <span id="hr${subject_number}">${timers[subject_number].hours.toString().padStart(2, '0')}:</span>
+    <span id="min${subject_number}">${timers[subject_number].minutes.toString().padStart(2, '0')}:</span>
+    <span id="sec${subject_number}">${timers[subject_number].seconds.toString().padStart(2, '0')}</span>
   </div>
   <div class = "subject">
     <span>${subject}</span>
@@ -108,15 +108,28 @@ var timers = [];
     }
   })
   
-  const subjects = await response.json();
-
+  let subjects = await response.json();
+  var data = {
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    series: [{
+      name: 'Total Study Rate',
+      data: [20, 30, 25, 40, 35, 50,20, 30, 25, 40, 35, 50,20, 30, 25, 40, 35, 50,20, 30, 25, 40, 35, 50,20, 30, 25, 40, 35, 50,20, 30, 25, 40, 35, 50]
+    }, {
+      name: 'Expenses',
+      data: [10, 15, 20, 25, 30, 35]
+    }, {
+      name: 'Profit',
+      data: [10, 15, 5, 15, 5, 15]
+    }]
+  };
   for(let i = 0; i < subjects.length; i++){
-    createSubjects(i, subjects[i].name, subjects[i].color);
+    console.log(subjects)
+    const time = subjects[i].today;
     timers.push({
       hundredth: 0,
-      seconds: 0,
-      minutes: 0,
-      hours: 0,
+      seconds: Math.floor((time / 1000) % 60),
+      minutes: Math.floor((time / (1000 * 60)) % 60),
+      hours: Math.floor((time / (1000 * 60 * 60))),
       run: false,
       timer: null,
       secDisp: null,
@@ -124,9 +137,10 @@ var timers = [];
       hrDisp: null,
       playBtn: null,
       name: subjects[i].name,
-      color: subjects[i].color
+      color: subjects[i].color,
     });
-  
+    data.series.push({name: timers[i].name, data: })
+    createSubjects(i, subjects[i].name, subjects[i].color, time);
     // Initialize the timer object
     timers[i].secDisp = document.getElementById('sec' + i);
     timers[i].minDisp = document.getElementById('min' + i);
@@ -156,6 +170,27 @@ var timers = [];
   
     el.id = 'drag-item-' + i;
   });
+
+  //graph
+  
+  // Create a new Highcharts chart object
+  Highcharts.chart('chart-container', {
+    chart: {
+      type: 'column'
+    },
+    title: {
+      text: 'Daily Report'
+    },
+    xAxis: {
+      categories: data.categories
+    },
+    yAxis: {
+      title: {
+        text: 'Study Rate (in thousands)'
+      }
+    },
+    series: data.series
+  });
 })();
 
 
@@ -165,6 +200,18 @@ function toggleTimer(index) {
     clearInterval(timer.timer);
     timer.playBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
     timer.run = false;
+
+    (async() => {
+      const start = await fetch('/study/stop', {
+        method: 'post',
+        body: JSON.stringify({ name: timer.name, index: index}),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      // handle the response as needed
+    })();
+
   } else {
     timer.timer = setInterval(function() { count(index); }, 10);
     timer.playBtn.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
@@ -186,7 +233,7 @@ function toggleTimer(index) {
     (async() => {
       const start = await fetch('/study/start', {
         method: 'post',
-        body: JSON.stringify({ name: timer.name}),
+        body: JSON.stringify({ name: timer.name, index: index}),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -201,9 +248,9 @@ function resetTimer(index) {
 
   clearInterval(timer.timer);
   timer.playBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
-  timer.secDisp.innerHTML = "00";
-  timer.minDisp.innerHTML = "00:";
-  timer.hrDisp.innerHTML = "00:";
+  timer.secDisp.innerHTML = timer.seconds.toString().padStart(2, '0');
+  timer.minDisp.innerHTML = timer.minutes.toString().padStart(2, '0') + ":";
+  timer.hrDisp.innerHTML = timer.hours.toString().padStart(2, '0') + ":";
   timer.hundredth = 0;
   timer.seconds = 0;
   timer.minutes = 0;
@@ -344,43 +391,6 @@ addSubjectSubmitBtn.addEventListener('click', () => {
     }
   })(subjects.length));
 })
-
-
-//graphing
-
-// Define the data for the chart
-var data = {
-  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-  series: [{
-    name: 'Sales',
-    data: [20, 30, 25, 40, 35, 50]
-  }, {
-    name: 'Expenses',
-    data: [10, 15, 20, 25, 30, 35]
-  }, {
-    name: 'Profit',
-    data: [10, 15, 5, 15, 5, 15]
-  }]
-};
-
-// Create a new Highcharts chart object
-Highcharts.chart('chart-container', {
-  chart: {
-    type: 'line'
-  },
-  title: {
-    text: 'Sales Report'
-  },
-  xAxis: {
-    categories: data.categories
-  },
-  yAxis: {
-    title: {
-      text: 'Sales (in thousands)'
-    }
-  },
-  series: data.series
-});
 
 let menuBtn = document.getElementById('menu');
 const subjects = document.querySelector(".timer");

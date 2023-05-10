@@ -23,8 +23,8 @@ Router.post('/add-subject', async(req, res) => {
     const subject = req.body;
     subject.today = 0;
     subject.total = 0;
-    subject.start = 0;
-    subject.end = 0;
+    subject.start = null;
+    subject.end = null;
     const selectQuery = "SELECT subjects FROM users WHERE email = ?";
     const selectParams = [req.session.email];
     const select = await connection.query(selectQuery, selectParams);
@@ -47,25 +47,35 @@ Router.post('/add-subject', async(req, res) => {
 
 Router.post('/start', async(req, res) => {
   const connection = await (await pool).getConnection();
-  const information = req.body;
-  information.start =  new Date().setMilliseconds(0);
+  const index = req.body.index;
   const selectQuery = "SELECT subjects FROM users WHERE email = ?";
   const selectParams = [req.session.email];
   const select = await connection.query(selectQuery, selectParams);
   const subjects = JSON.parse(select[0].subjects || "[]");
-  subjects.push(information);
+  subjects[index].start = new Date().getTime();
+  //subjects[index].stop = null;
   const updatedJson = JSON.stringify(subjects);
-  console.log(information);
-  const update = await connection.query( "UPDATE users SET subjects = ? WHERE email = ?", [JSON.stringify(information),req.session.email]);
+  console.log(subjects);
+  const update = await connection.query( "UPDATE users SET subjects = ? WHERE email = ?", [updatedJson,req.session.email]);
 
   connection.release();
 })
 
 Router.post('/stop', async(req, res) => {
   const connection = await (await pool).getConnection();
+  const index = req.body.index;
+  const selectQuery = "SELECT subjects FROM users WHERE email = ?";
+  const selectParams = [req.session.email];
+  const select = await connection.query(selectQuery, selectParams);
+  const subjects = JSON.parse(select[0].subjects || "[]");
+  subjects[index].stop = new Date().getTime();
+  subjects[index].today = subjects[index].today + subjects[index].stop - subjects[index].start;
+  subjects[index].total = subjects[index].total + subjects[index].stop - subjects[index].start;
+  //subjects[index].start = null
+  const updatedJson = JSON.stringify(subjects);
+  console.log(subjects);
+  const update = await connection.query( "UPDATE users SET subjects = ? WHERE email = ?", [updatedJson,req.session.email]);
 
-  const information = JSON.stringify(req.body);
-  console.log(information);
   connection.release();
 })
 
