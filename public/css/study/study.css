@@ -1,5 +1,5 @@
 .timer {
-  position: absolute;
+  position: fixed;
   left: 20px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
   border-radius: 5px;
@@ -9,17 +9,18 @@
 
 @keyframes timer-hide {
   100% {
-    transform: translate(-600, 0px);
+    transform: translate(-405px, 0px);
   }
 }
 
 .timer-hide {
-  position: relative;
-  animation: 2s timer-hide forwards;
+  animation: 1s timer-hide forwards;
 }
 
 .timer .container {
   margin: 0px 0px 10px 10px;
+  overflow-y: scroll;
+  max-height:70vh;
 }
 .timer .order {
   display: none;
@@ -47,7 +48,7 @@
   padding: 0px 20px 0px 20px;
   margin-bottom: 5px;
 }
-.subject {
+.timer .subject {
   font-size: 25px;
 }
 #captions{
@@ -84,7 +85,7 @@
   border-color: rgb(80, 79, 79);
   background-color: rgb(49, 56, 56);;
 }
-#buttons span{
+.timer #buttons span{
   color: rgb(185, 185, 185);
   position: relative;
   left: 5px;
@@ -98,25 +99,25 @@
   'GRAD' 0,
   'opsz' 72
 }
-#records{
+.timer #records{
   color: rgb(230, 230, 230);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 14px;
   height: 250px;
   overflow: auto;
 }
-table{
+.timer table{
   border-collapse: collapse;
   margin: 20px auto 0;
   width: 90%;
   visibility: hidden;
   text-align: left;
 }
-td,th{
+.timer td, .timer th{
   padding: 10px 0px 10px;
   width: 33%;
 }
-thead{
+.timer thead{
   border-bottom: solid rgb(88, 88, 88) 2px;
   font-weight: bold;
 }
@@ -138,7 +139,7 @@ thead{
   background-color: rgb(136, 136, 136);
 }
 
-.add-subject {
+.timer .add-subject {
   --b:4px;   /* border length*/
   --c:20px;  /* the cube perspective */
   
@@ -207,7 +208,7 @@ thead{
     0% 100%,0% 100%);
 }
 
-.modal {
+.subject-modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -221,23 +222,24 @@ thead{
   display: none;
 }
 
-.modal .container {
+.subject-modal .container {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
+  width: 70%;
 }
 
-.modal label {
+.subject-modal label {
   white-space: nowrap;
 }
 
-.modal .subject-color-modal {
+.subject-modal .subject-color-modal {
   font-size: 25px;
 }
 
-.modal .subject-color {
+.subject-modal .subject-color {
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -247,11 +249,11 @@ thead{
   filter: blur(5px);
 }
 
-.modal:target {
+.subject-modal:target {
   display: block;
 }
 
-.modal:target + .overlay {
+.subject-modal:target + .overlay {
   pointer-events: auto;
 }
 
@@ -497,26 +499,27 @@ input[type="color"]::-webkit-color-swatch::after {
 }
 
 .timer .hide-button {
-  width: calc(100%);
+/*   width: calc(100%); */
 }
 @import url("https://fonts.googleapis.com/css?family=Ubuntu:300,400");
 
-.menu-container {
-  float:right;  
-}
+/* .menu-container {
+  margin-left: 400px; 
+} */
 
 #menu {
   position: absolute;
   z-index: 3;
+  margin-left: 390px;
 }
 #menu.open .top-bar {
-  transform-origin: 40px;
-  transform: translateX(-4px) rotate(-45deg);
+  transform-origin: 10px;
+  transform: translateX(1.5px) translateY(6.5px) rotate(-45deg);
   transition: all 0.75s cubic-bezier(1, -1.5, 0.5, 2);
 }
 #menu.open .btm-bar {
-  transform-origin: 40px;
-  transform: translateX(-4px) rotate(45deg);
+  transform-origin: 10px;
+  transform: translateX(1.5px) translateY(-6.5px) rotate(45deg);
   transition: all 0.75s cubic-bezier(1, -1.5, 0.5, 2);
 }
 #menu.open .mid-bar {
@@ -526,17 +529,17 @@ input[type="color"]::-webkit-color-swatch::after {
 
 .top-bar, .btm-bar {
   position: absolute;
-  width: 43px;
-  height: 4px;
+  width: 20px;
+  height: 2px;
   background: #000;
-  left: 20px;
-  top: 27px;
+  left: 9px;
+  top: 13px;
   border-radius: 10px;
   transition: all 500ms cubic-bezier(1, -1, 0.5, 2);
 }
 
 .btm-bar {
-  top: 53px;
+  top: 27px;
 }
 
 .mid-bar {
@@ -547,7 +550,7 @@ input[type="color"]::-webkit-color-swatch::after {
   transition: all 750ms ease;
 }
 
-h5, a {
+/* h5, a {
   color: #00630d;
   font-family: "Ubuntu", sans-serif;
   text-decoration: none;
@@ -556,4 +559,16 @@ h5, a {
 
 a:hover {
   color: white;
+} */
+
+#calendar {
+  width: 80vw;
+  margin-left: 10vw;
+  max-height: 100vh;
+  padding: 50px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.fc-license-message {
+  display: none;
 }
