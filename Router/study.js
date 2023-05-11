@@ -23,8 +23,7 @@ Router.post('/add-subject', async(req, res) => {
     const subject = req.body;
     subject.today = 0;
     subject.total = 0;
-    subject.start = null;
-    subject.end = null;
+    subject.timeline = [];
     const selectQuery = "SELECT subjects FROM users WHERE email = ?";
     const selectParams = [req.session.email];
     const select = await connection.query(selectQuery, selectParams);
@@ -52,7 +51,7 @@ Router.post('/start', async(req, res) => {
   const selectParams = [req.session.email];
   const select = await connection.query(selectQuery, selectParams);
   const subjects = JSON.parse(select[0].subjects || "[]");
-  subjects[index].start = new Date().getTime();
+  subjects[index].timeline.push([new Date().getTime()]);
   //subjects[index].stop = null;
   const updatedJson = JSON.stringify(subjects);
   console.log(subjects);
@@ -68,9 +67,10 @@ Router.post('/stop', async(req, res) => {
   const selectParams = [req.session.email];
   const select = await connection.query(selectQuery, selectParams);
   const subjects = JSON.parse(select[0].subjects || "[]");
-  subjects[index].stop = new Date().getTime();
-  subjects[index].today = subjects[index].today + subjects[index].stop - subjects[index].start;
-  subjects[index].total = subjects[index].total + subjects[index].stop - subjects[index].start;
+  subjects[index].timeline[subjects[index].timeline.length - 1].push(new Date().getTime());
+  subjects[index].today = subjects[index].today + subjects[index].timeline[subjects[index].timeline.length - 1][1] - subjects[index].timeline[subjects[index].timeline.length - 1][0];
+  console.log(subjects[index].timeline[subjects[index].timeline.length - 1][0])
+  subjects[index].total = subjects[index].total + subjects[index].today;
   //subjects[index].start = null
   const updatedJson = JSON.stringify(subjects);
   console.log(subjects);

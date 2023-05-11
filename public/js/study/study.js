@@ -109,22 +109,39 @@ var timers = [];
   })
   
   let subjects = await response.json();
-  var data = {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    series: [{
-      name: 'Total Study Rate',
-      data: [20, 30, 25, 40, 35, 50,20, 30, 25, 40, 35, 50,20, 30, 25, 40, 35, 50,20, 30, 25, 40, 35, 50,20, 30, 25, 40, 35, 50,20, 30, 25, 40, 35, 50]
-    }, {
-      name: 'Expenses',
-      data: [10, 15, 20, 25, 30, 35]
-    }, {
-      name: 'Profit',
-      data: [10, 15, 5, 15, 5, 15]
-    }]
-  };
+
+  let data = [/* {
+    name: 'Task 1',
+    start: Date.UTC(2023, 4, 10),
+    end: Date.UTC(2023, 4, 12),
+    completed: 0.25
+}, {
+    name: 'Task 2',
+    start: Date.UTC(2023, 4, 12),
+    end: Date.UTC(2023, 4, 16),
+    completed: 0.5
+}, {
+    name: 'Task 3',
+    start: Date.UTC(2023, 4, 16),
+    end: Date.UTC(2023, 4, 20),
+    completed: 0.75
+}, {
+    name: 'Task 4',
+    start: Date.UTC(2023, 4, 20),
+    end: Date.UTC(2023, 4, 24),
+    completed: 1
+} */];
+
+const startTime = new Date().setHours(0, 0, 0, 0);
+const endTime = new Date().setHours(12, 0, 0, 0);
   for(let i = 0; i < subjects.length; i++){
     console.log(subjects)
     const time = subjects[i].today;
+    const filteredTimeline = subjects[i].timeline.filter(period => {
+      const [start, end] = period;
+      return start >= startTime && end <= endTime;
+    });
+    console.log(startTime, endTime, filteredTimeline)
     timers.push({
       hundredth: 0,
       seconds: Math.floor((time / 1000) % 60),
@@ -139,7 +156,9 @@ var timers = [];
       name: subjects[i].name,
       color: subjects[i].color,
     });
-    data.series.push({name: timers[i].name, data: })
+    for(let j = 0; j < filteredTimeline.length; j++){
+      data.push({name: timers[i].name, start: new Date(filteredTimeline[j][0]).getTime(), end: new Date(filteredTimeline[j][1]).getTime(), completed: 1, color: 'blue', linkedTo: 'task0'})
+    }
     createSubjects(i, subjects[i].name, subjects[i].color, time);
     // Initialize the timer object
     timers[i].secDisp = document.getElementById('sec' + i);
@@ -154,7 +173,7 @@ var timers = [];
       }
     })(i));
   }
-
+  console.log(data)
   var dropArea = document.getElementsByClassName(".timer .container");
   var currPosY = -1,
       origPosY = -1;
@@ -170,27 +189,56 @@ var timers = [];
   
     el.id = 'drag-item-' + i;
   });
-
-  //graph
+  navigator.geolocation.getCurrentPosition(function (position) {
+    // Get the user's timezone.
+    const timezone = moment.tz.guess(position.coords.latitude, position.coords.longitude);
   
-  // Create a new Highcharts chart object
-  Highcharts.chart('chart-container', {
-    chart: {
-      type: 'column'
-    },
-    title: {
-      text: 'Daily Report'
-    },
-    xAxis: {
-      categories: data.categories
-    },
-    yAxis: {
+    // Set the timezone offset in the Highcharts options.
+    Highcharts.setOptions({
+      time: {
+        timezone: timezone,
+        useUTC: false
+      },
+    });
+    
+    // Update the start and end times in the xAxis options.
+    const startPT = new Date(startTime).toLocaleString('en-US', {
+      timeZone: timezone,
+      timeZoneOffset: -7
+    });
+    const endPT = new Date(endTime).toLocaleString('en-US', {
+      timeZone: timezone,
+      timeZoneOffset: -7
+    });
+    
+    Highcharts.ganttChart('chart-container', {
       title: {
-        text: 'Study Rate (in thousands)'
-      }
-    },
-    series: data.series
+        text: 'Gantt Chart Example'
+      },
+      xAxis: {
+        type: 'datetime',
+        currentDateIndicator: true,
+        min: new Date(startPT).getTime(),
+        max: new Date(endPT).getTime()
+      },
+      series: [{
+        name: 'Tasks',
+        data: data,
+        tooltip: {
+          pointFormatter: function () {
+            const start = Highcharts.dateFormat('%Y-%m-%d', this.start);
+            const end = Highcharts.dateFormat('%Y-%m-%d', this.end);
+            const completed = this.completed * 100 + '%';
+            return `${this.name}: ${start} - ${end} (${completed} completed)`;
+          }
+        },
+        linkToTop: 'Math' // group tasks with the same name and parent together on the same row
+      }],
+      connectNulls: false
+    });
+    
   });
+
 })();
 
 
