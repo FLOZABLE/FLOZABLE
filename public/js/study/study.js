@@ -96,7 +96,27 @@ function dragged(e) {
   e.target.style.top = e.clientY - origPosY - currPosY + 'px';
 }
 
+if (typeof document.visibilityState !== "undefined") {
+  document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === "visible") {
+      console.log("Page is visible.");
+    } else {
+      console.log("Page is hidden.");
+      for (let i = 0; i < timers.length; i++) {
+        if (timers[i].run == true) {
+          toggleTimer(i);
+          console.log(timers[i], timers[i].run);
+          
+        }
+      }
+    }
+  });
+}
+
+
 var timers = [];
+const main = document.querySelector(".main");
+main.classList.add('blur');
 
 (async () => {
   const response = await fetch('/study/bring-subjects', {
@@ -108,32 +128,11 @@ var timers = [];
 
   let subjects = await response.json();
 
-  let data = [/* {
-    name: 'Task 1',
-    start: Date.UTC(2023, 4, 10),
-    end: Date.UTC(2023, 4, 12),
-    completed: 0.25
-}, {
-    name: 'Task 2',
-    start: Date.UTC(2023, 4, 12),
-    end: Date.UTC(2023, 4, 16),
-    completed: 0.5
-}, {
-    name: 'Task 3',
-    start: Date.UTC(2023, 4, 16),
-    end: Date.UTC(2023, 4, 20),
-    completed: 0.75
-}, {
-    name: 'Task 4',
-    start: Date.UTC(2023, 4, 20),
-    end: Date.UTC(2023, 4, 24),
-    completed: 1
-} */];
+  let data = [];
 
   const startTime = new Date().setHours(0, 0, 0, 0);
   const endTime = new Date().setHours(23, 59, 59, 999);
   for (let i = 0; i < subjects.length; i++) {
-    console.log(subjects)
     const time = subjects[i].today;
     const filteredTimeline = subjects[i].timeline.filter(period => {
       const [start, end] = period;
@@ -154,6 +153,15 @@ var timers = [];
       name: subjects[i].name,
       color: subjects[i].color,
     });
+    //modal asking subject
+    const label = document.createElement("label");
+    label.setAttribute("for", `option${i}`);
+    label.setAttribute("class", "l-radio");
+    label.innerHTML = `
+    <input type="radio" id="option${i}" name="subject-selector" tabindex="${i + 1}" class = "${i}">
+    <span>${timers[i].name} (${timers[i].hours}h${timers[i].minutes}m ${timers[i].seconds}s)</span>
+    `
+    document.querySelector(".modal-ask-subject .container .wrapper-1").appendChild(label);
     for (let j = 0; j < filteredTimeline.length; j++) {
       const diffTime = new Date(filteredTimeline[j][1]) - new Date(filteredTimeline[j][0]);
       console.log(diffTime)
@@ -218,6 +226,7 @@ var timers = [];
     title: {
       text: 'Gantt Chart Example'
     },
+    
     xAxis: {
       type: 'datetime',
       currentDateIndicator: true,
@@ -229,11 +238,10 @@ var timers = [];
     },
     rangeSelector: {
       enabled: true,
-      selected: 3, // default to YPD
       buttons: [{
         type: 'day',
         count: 1,
-        text: 'D'
+        text: 'D',
       }, {
         type: 'week',
         count: 1,
@@ -249,7 +257,13 @@ var timers = [];
       }, {
         type: 'ytd',
         text: 'YPD'
-      }]
+      },{
+        type: 'all',
+        text: 'All'
+      }
+    
+    ],
+      selected: 4, // default to YPD
     },
     
     series: [{
@@ -297,6 +311,11 @@ function toggleTimer(index) {
 
   } else {
     timer.timer = setInterval(function () { count(index); }, 10);
+    setInterval(() => {
+      if(checkState == 'hidden'){
+        console.log('deactivated');
+      }
+    }, 1000 * 60);
     timer.playBtn.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
     timer.run = true;
     const activatedBtn = document.querySelector(`#drag-item-${index}`);
@@ -372,8 +391,7 @@ function disp(hun, sec, min, hr, index) {
   timer.hrDisp.innerHTML = hr.toLocaleString(undefined, { minimumIntegerDigits: 2 }) + ':';
 }
 
-const main = document.querySelector('.main');
-const addSubjectBtn = document.querySelector(".add-subject");
+const addSubjectBtn = document.querySelectorAll(".add-subject");
 const addSubjectModal = document.querySelector(".subject-modal#subject-adder");
 
 const recommendedColors = [
@@ -409,7 +427,16 @@ const recommendedColors = [
 ];
 
 let recommendedColorsIndex = 0;
-addSubjectBtn.addEventListener('click', () => {
+addSubjectBtn[0].addEventListener('click', () => {
+  addSubjectModal.style.display = "block";
+  const color = document.querySelector("input.subject-color");
+  recommendedColorsIndex = document.querySelectorAll(".SW").length;
+  color.value = recommendedColors[recommendedColorsIndex];
+  main.classList.add('blur');
+});
+
+addSubjectBtn[1].addEventListener('click', () => {
+  document.querySelector('.modal-ask-subject').style = "display: none";
   addSubjectModal.style.display = "block";
   const color = document.querySelector("input.subject-color");
   recommendedColorsIndex = document.querySelectorAll(".SW").length;
@@ -422,9 +449,15 @@ addSubjectModal.querySelector('.close-btn').addEventListener('click', () => {
   main.classList.remove('blur');
 });
 
+document.querySelector('.modal-ask-subject').querySelector('.close-btn').addEventListener('click', () => {
+  document.querySelector('.modal-ask-subject').style.display = "none";
+  main.classList.remove('blur');
+});
 
-const addSubjectSubmitBtn = document.querySelector(".blob-btn");
 
+
+const addSubjectSubmitBtn = document.querySelector(".blob-btn#add");
+const startSubjectBtn = document.querySelector(".blob-btn#start");
 addSubjectSubmitBtn.addEventListener('click', () => {
   const name = document.querySelector("input.subject-name");
   const color = document.querySelector("input.subject-color");
@@ -473,6 +506,12 @@ addSubjectSubmitBtn.addEventListener('click', () => {
       toggleTimer(index);
     }
   })(subjects.length));
+})
+
+startSubjectBtn.addEventListener("click", () => {
+  const selectedSubject = document.querySelector(".wrapper-1 input[name='subject-selector']:checked");
+  console.log(selectedSubject.classList[0]);
+  toggleTimer(selectedSubject.classList[0])
 })
 
 let menuBtn = document.getElementById('menu');

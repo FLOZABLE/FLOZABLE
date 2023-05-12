@@ -15,7 +15,20 @@ Router.get("/", async (req, res) => {
       loggedin: false, 
     });
   }
-})
+});
+
+Router.get("/", async (req, res) => {
+  if(req.session.loggedin == true){
+    res.render("study/study", {
+      loggedin: true, 
+    });
+  } else {
+    res.render("study/study", {
+      loggedin: false, 
+    });
+  }
+});
+
 
 Router.post('/add-subject', async(req, res) => {
   if(req.session.loggedin == true) {

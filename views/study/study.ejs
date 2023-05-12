@@ -25,7 +25,7 @@
       </head>
     <body data-home-page="" data-home-page-title="Contact 1" class="u-body u-xl-mode" data-lang="en">
       <div class="main">
-        <%- include("../elements/header");%>
+        <!-- <%- include("../elements/header");%> -->
         <div class="timer">
           <div class="hide-button">
             <div class="menu-container">
@@ -51,8 +51,53 @@
           </section>
           <div class="add-subject"> Add Subject </div>
         </div>
+        <div class="mainviewer-container">
+          <div class="viewer-selection">
+            <label for="f-option" class="l-radio">
+              <input type="radio" id="f-option" name="selector" tabindex="1" checked>
+              <span>Groups</span>
+            </label>
+            <label for="s-option" class="l-radio">
+              <input type="radio" id="s-option" name="selector" tabindex="2">
+              <span>Analysis</span>
+            </label>
+              <label for="t-option" class="l-radio">
+              <input type="radio" id="t-option" name="selector" tabindex="3">
+              <span>Goal</span>
+          </label>
+          </div>
+          <div class="mainviewer">
+            <div class="groups">
+              
+            </div>
+          </div>
+        </div>
         <div id="calendar"></div>
         <div id="chart-container"></div>
+      </div>
+      <div class="modal-ask-subject">
+        <div class="close-btn">
+          <span class="material-symbols-outlined">
+            close
+          </span>
+        </div>
+        <div class="container">
+          <h4>Choose Subject to Study from here!</h4>
+          <div class="wrapper-1"></div>
+          <h4>Or Add new Subject!</h4>
+          <div class="add-subject"> Add Subject </div>
+        </div>
+        <button class="blob-btn" id = "start">
+          START
+          <span class="blob-btn__inner">
+            <span class="blob-btn__blobs">
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+            </span>
+          </span>
+        </button>
       </div>
       <div class="subject-modal" id="subject-adder">
         <div class="close-btn">
@@ -70,7 +115,7 @@
           <label for="subject-color" class="subject-color-modal"> Choose Subject Color: </label>
           <input type="color" name="subject-color" class="subject-color">
         </div>
-        <button class="blob-btn">
+        <button class="blob-btn" id = "add">
           ADD
           <span class="blob-btn__inner">
             <span class="blob-btn__blobs">

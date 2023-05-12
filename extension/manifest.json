@@ -1,0 +1,10 @@
+{
+  "name": "Tab Domain Viewer",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "Get the domain of all open tabs",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["tabs"]
+}
