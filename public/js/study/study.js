@@ -1,9 +1,9 @@
-function createSubjects(subject_number, subject, subjectColor, savedTime){
+function createSubjects(subject_number, subject, subjectColor, savedTime) {
   const div = document.createElement("div");
   div.setAttribute("class", "SW d-1 item");
-  div.setAttribute("id", "SW"+subject_number);
+  div.setAttribute("id", "SW" + subject_number);
   div.setAttribute("draggable", "true");
-  div.innerHTML=`<div id="disp">
+  div.innerHTML = `<div id="disp">
   <div class="item-content">
   <span class="order">1</span>
 </div>
@@ -22,23 +22,23 @@ function createSubjects(subject_number, subject, subjectColor, savedTime){
   </div>
 </div>
 `
-const timerContainer = document.querySelector(".timer .container");
-timerContainer.appendChild(div);
-div.addEventListener("dragstart", drag);
-div.addEventListener("drag", dragged);
-div.addEventListener("dragover", dragover);
-div.addEventListener("drop", drop);
-div.addEventListener("dragend", dragend);
+  const timerContainer = document.querySelector(".timer .container");
+  timerContainer.appendChild(div);
+  div.addEventListener("dragstart", drag);
+  div.addEventListener("drag", dragged);
+  div.addEventListener("dragover", dragover);
+  div.addEventListener("drop", drop);
+  div.addEventListener("dragend", dragend);
 
-div.id = 'drag-item-' + subject_number;
+  div.id = 'drag-item-' + subject_number;
 }
 
 function drag(e) {
   // hide gohst element
   e.target.classList.remove('d-1');
   e.dataTransfer.setDragImage(this.cloneNode(true), 0, 0);
-  
-  currPosY = e.clientY-e.target.offsetTop - 20;
+
+  currPosY = e.clientY - e.target.offsetTop - 20;
   origPosY = e.target.offsetTop;
   e.target.style.position = 'relative';
 
@@ -60,54 +60,52 @@ function drop(e) {
 function dragend(e) {
   e.preventDefault();
   e.target.classList.remove('item-dragged');
-  e.target.style=null;
+  e.target.style = null;
   e.target.classList.add('d-1');
 };
 
 function dragged(e) {
   e.preventDefault();
   var dropArea = e.target.parentNode;
-  
-  if (e.target.offsetTop < dropArea.offsetTop ) {
+
+  if (e.target.offsetTop < dropArea.offsetTop) {
     e.target.style.top = dropArea.offsetTop + 'px';
   } else if (e.target.offsetTop + e.target.offsetHeight > dropArea.offsetTop + dropArea.offsetHeight) {
-    e.target.style.top=dropArea.offsetTop+dropArea.offsetHeight-e.target.offsetHeight + 'px';
+    e.target.style.top = dropArea.offsetTop + dropArea.offsetHeight - e.target.offsetHeight + 'px';
   }
-  
-  elNextY = (e.target.nextElementSibling != null)? 
+
+  elNextY = (e.target.nextElementSibling != null) ?
     e.target.nextElementSibling.offsetTop + e.target.nextElementSibling.offsetHeight / 2 : 0;
-  elPrevY = (e.target.previousElementSibling != null)? 
+  elPrevY = (e.target.previousElementSibling != null) ?
     e.target.previousElementSibling.offsetTop : e.target.parentElement.offsetHeight;
 
   // reorder elements based on dragged item position
-  if (e.clientY - currPosY + e.target.offsetHeight / 2 > elNextY && e.clientY - currPosY < elNextY + e.target.offsetHeight) 
-  {
-    if (e.target.nextElementSibling){
+  if (e.clientY - currPosY + e.target.offsetHeight / 2 > elNextY && e.clientY - currPosY < elNextY + e.target.offsetHeight) {
+    if (e.target.nextElementSibling) {
       e.target.parentElement.insertBefore(e.target.nextElementSibling, e.target);
       origPosY = e.target.offsetTop - e.target.offsetHeight;
     }
-  } 
-  else if (e.clientY - currPosY < elPrevY + e.target.offsetHeight / 2 && e.clientY - currPosY > elPrevY) 
-  {
+  }
+  else if (e.clientY - currPosY < elPrevY + e.target.offsetHeight / 2 && e.clientY - currPosY > elPrevY) {
     if (e.target.previousElementSibling) {
       origPosY = e.target.previousElementSibling.offsetTop;
       e.target.parentElement.insertBefore(e.target, e.target.previousElementSibling);
     }
   }
 
-  e.target.style.top = e.clientY-origPosY-currPosY+'px';
+  e.target.style.top = e.clientY - origPosY - currPosY + 'px';
 }
 
 var timers = [];
 
-(async() => {
+(async () => {
   const response = await fetch('/study/bring-subjects', {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
     }
   })
-  
+
   let subjects = await response.json();
 
   let data = [/* {
@@ -132,9 +130,9 @@ var timers = [];
     completed: 1
 } */];
 
-const startTime = new Date().setHours(0, 0, 0, 0);
-const endTime = new Date().setHours(12, 0, 0, 0);
-  for(let i = 0; i < subjects.length; i++){
+  const startTime = new Date().setHours(0, 0, 0, 0);
+  const endTime = new Date().setHours(23, 59, 59, 999);
+  for (let i = 0; i < subjects.length; i++) {
     console.log(subjects)
     const time = subjects[i].today;
     const filteredTimeline = subjects[i].timeline.filter(period => {
@@ -156,8 +154,17 @@ const endTime = new Date().setHours(12, 0, 0, 0);
       name: subjects[i].name,
       color: subjects[i].color,
     });
-    for(let j = 0; j < filteredTimeline.length; j++){
-      data.push({name: timers[i].name, start: new Date(filteredTimeline[j][0]).getTime(), end: new Date(filteredTimeline[j][1]).getTime(), completed: 1, color: 'blue', linkedTo: 'task0'})
+    for (let j = 0; j < filteredTimeline.length; j++) {
+      const diffTime = new Date(filteredTimeline[j][1]) - new Date(filteredTimeline[j][0]);
+      console.log(diffTime)
+      console.log(`${Math.floor(diffTime / 1000 / 60 / 60)} hr ${Math.floor((diffTime / 1000 / 60)) % 60} min ${Math.floor((diffTime / 1000) % 60)} sec`)
+      data.push({
+        name: timers[i].name,
+        start: new Date(filteredTimeline[j][0]).getTime(),
+        end: new Date(filteredTimeline[j][1]).getTime(),
+        text: `${Math.floor(diffTime / 1000 / 60 / 60)} hr ${Math.floor((diffTime / 1000 / 60)) % 60} min ${Math.floor((diffTime / 1000) % 60)} sec`,
+        color: subjects[i].color,
+      })
     }
     createSubjects(i, subjects[i].name, subjects[i].color, time);
     // Initialize the timer object
@@ -165,10 +172,10 @@ const endTime = new Date().setHours(12, 0, 0, 0);
     timers[i].minDisp = document.getElementById('min' + i);
     timers[i].hrDisp = document.getElementById('hr' + i);
     timers[i].playBtn = document.getElementById('playBtn' + i);
-  
+
     // Add a click event listener to the play button
-    timers[i].playBtn.addEventListener('click', (function(index) {
-      return function() {
+    timers[i].playBtn.addEventListener('click', (function (index) {
+      return function () {
         toggleTimer(index);
       }
     })(i));
@@ -176,68 +183,96 @@ const endTime = new Date().setHours(12, 0, 0, 0);
   console.log(data)
   var dropArea = document.getElementsByClassName(".timer .container");
   var currPosY = -1,
-      origPosY = -1;
-  
+    origPosY = -1;
+
   var draggable = document.getElementsByClassName("item");
-  
-  [].forEach.call(draggable, function(el, i){
+
+  [].forEach.call(draggable, function (el, i) {
     el.addEventListener("dragstart", drag);
     el.addEventListener("drag", dragged);
     el.addEventListener("dragover", dragover);
     el.addEventListener("drop", drop);
     el.addEventListener("dragend", dragend);
-  
+
     el.id = 'drag-item-' + i;
   });
-  navigator.geolocation.getCurrentPosition(function (position) {
-    // Get the user's timezone.
-    const timezone = moment.tz.guess(position.coords.latitude, position.coords.longitude);
-  
-    // Set the timezone offset in the Highcharts options.
-    Highcharts.setOptions({
-      time: {
-        timezone: timezone,
-        useUTC: false
-      },
-    });
-    
-    // Update the start and end times in the xAxis options.
-    const startPT = new Date(startTime).toLocaleString('en-US', {
-      timeZone: timezone,
-      timeZoneOffset: -7
-    });
-    const endPT = new Date(endTime).toLocaleString('en-US', {
-      timeZone: timezone,
-      timeZoneOffset: -7
-    });
-    
-    Highcharts.ganttChart('chart-container', {
-      title: {
-        text: 'Gantt Chart Example'
-      },
-      xAxis: {
-        type: 'datetime',
-        currentDateIndicator: true,
-        min: new Date(startPT).getTime(),
-        max: new Date(endPT).getTime()
-      },
-      series: [{
-        name: 'Tasks',
-        data: data,
-        tooltip: {
-          pointFormatter: function () {
-            const start = Highcharts.dateFormat('%Y-%m-%d', this.start);
-            const end = Highcharts.dateFormat('%Y-%m-%d', this.end);
-            const completed = this.completed * 100 + '%';
-            return `${this.name}: ${start} - ${end} (${completed} completed)`;
-          }
-        },
-        linkToTop: 'Math' // group tasks with the same name and parent together on the same row
-      }],
-      connectNulls: false
-    });
-    
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  Highcharts.setOptions({
+    time: {
+      timezone: timezone,
+      useUTC: false
+    },
   });
+  
+  const startPT = new Date(startTime).toLocaleString('en-US', {
+    timeZone: timezone,
+    timeZoneOffset: -7
+  });
+  const endPT = new Date(endTime).toLocaleString('en-US', {
+    timeZone: timezone,
+    timeZoneOffset: -7
+  });
+  
+  Highcharts.ganttChart('chart-container', {
+    title: {
+      text: 'Gantt Chart Example'
+    },
+    xAxis: {
+      type: 'datetime',
+      currentDateIndicator: true,
+      min: new Date(startPT).getTime(),
+      max: new Date(endPT).getTime()
+    },
+    yAxis: {
+      uniqueNames: true
+    },
+    rangeSelector: {
+      enabled: true,
+      selected: 3, // default to YPD
+      buttons: [{
+        type: 'day',
+        count: 1,
+        text: 'D'
+      }, {
+        type: 'week',
+        count: 1,
+        text: 'W'
+      }, {
+        type: 'month',
+        count: 1,
+        text: 'M'
+      }, {
+        type: 'year',
+        count: 1,
+        text: 'Y'
+      }, {
+        type: 'ytd',
+        text: 'YPD'
+      }]
+    },
+    
+    series: [{
+      name: 'Tasks',
+      data: data,
+      tooltip: {
+        pointFormatter: function () {
+          const start = Highcharts.dateFormat('%Y-%m-%d', this.start);
+          const end = Highcharts.dateFormat('%Y-%m-%d', this.end);
+          const text = this.text;
+          return `${this.name}: ${start} - ${end} (${text} completed)`;
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function () {
+          return this.point.options.text;
+        }
+      }
+    }],
+    connectNulls: false
+  });
+  
 
 })();
 
@@ -249,10 +284,10 @@ function toggleTimer(index) {
     timer.playBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>`;
     timer.run = false;
 
-    (async() => {
+    (async () => {
       const start = await fetch('/study/stop', {
         method: 'post',
-        body: JSON.stringify({ name: timer.name, index: index}),
+        body: JSON.stringify({ name: timer.name, index: index }),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -261,7 +296,7 @@ function toggleTimer(index) {
     })();
 
   } else {
-    timer.timer = setInterval(function() { count(index); }, 10);
+    timer.timer = setInterval(function () { count(index); }, 10);
     timer.playBtn.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
     timer.run = true;
     const activatedBtn = document.querySelector(`#drag-item-${index}`);
@@ -271,17 +306,17 @@ function toggleTimer(index) {
     /* activatedBtn.style.top = subjectContainer.offsetTop - activatedBtn.offsetTop + "px";
     activatedBtn.classList.add('move-top'); */
     const subjects = document.querySelectorAll('.SW');
-    for(let i = 0; i < subjects.length; i++) {
-      if(timers[i].run == true && i != index){
+    for (let i = 0; i < subjects.length; i++) {
+      if (timers[i].run == true && i != index) {
         toggleTimer(i);
         console.log(timers[i], timers[i].run);
       }
     }
-    
-    (async() => {
+
+    (async () => {
       const start = await fetch('/study/start', {
         method: 'post',
-        body: JSON.stringify({ name: timer.name, index: index}),
+        body: JSON.stringify({ name: timer.name, index: index }),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -378,7 +413,7 @@ addSubjectBtn.addEventListener('click', () => {
   addSubjectModal.style.display = "block";
   const color = document.querySelector("input.subject-color");
   recommendedColorsIndex = document.querySelectorAll(".SW").length;
-  color.value =recommendedColors[recommendedColorsIndex];
+  color.value = recommendedColors[recommendedColorsIndex];
   main.classList.add('blur');
 });
 
@@ -393,10 +428,10 @@ const addSubjectSubmitBtn = document.querySelector(".blob-btn");
 addSubjectSubmitBtn.addEventListener('click', () => {
   const name = document.querySelector("input.subject-name");
   const color = document.querySelector("input.subject-color");
-  (async() => {
+  (async () => {
     const response = await fetch('/study/add-subject', {
       method: 'post',
-      body: JSON.stringify({ name: name.value, color:color.value }),
+      body: JSON.stringify({ name: name.value, color: color.value }),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -433,8 +468,8 @@ addSubjectSubmitBtn.addEventListener('click', () => {
   timers[subjects.length].playBtn = document.getElementById('playBtn' + subjects.length);
 
   // Add a click event listener to the play button
-  timers[subjects.length].playBtn.addEventListener('click', (function(index) {
-    return function() {
+  timers[subjects.length].playBtn.addEventListener('click', (function (index) {
+    return function () {
       toggleTimer(index);
     }
   })(subjects.length));
@@ -443,7 +478,7 @@ addSubjectSubmitBtn.addEventListener('click', () => {
 let menuBtn = document.getElementById('menu');
 const subjects = document.querySelector(".timer");
 menu.addEventListener('click', () => {
-	menuBtn.classList.toggle('open');
+  menuBtn.classList.toggle('open');
   subjects.classList.toggle('timer-hide');
 });
 
@@ -462,14 +497,14 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
   events: [
     // your events data here
   ],
-  dateClick: function(info) {
+  dateClick: function (info) {
     console.log('Clicked date: ' + info.dateStr, info.dayEl);
-    
+
     // reset background color of previously selected date
     if (selectedDateEl) {
       selectedDateEl.style.backgroundColor = '';
     }
-    
+
     // change background color of selected date
     selectedDateEl = info.dayEl;
     selectedDateEl.style.backgroundColor = 'rgba(255, 220, 40, .15)';
