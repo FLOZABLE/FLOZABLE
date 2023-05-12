@@ -117,7 +117,7 @@ if (typeof document.visibilityState !== "undefined") {
 var timers = [];
 const main = document.querySelector(".main");
 main.classList.add('blur');
-
+const askSubjectModal = document.querySelector(".modal-ask-subject .container .wrapper-1");
 (async () => {
   const response = await fetch('/study/bring-subjects', {
     method: 'post',
@@ -311,11 +311,6 @@ function toggleTimer(index) {
 
   } else {
     timer.timer = setInterval(function () { count(index); }, 10);
-    setInterval(() => {
-      if(checkState == 'hidden'){
-        console.log('deactivated');
-      }
-    }, 1000 * 60);
     timer.playBtn.innerHTML = `<span class="material-symbols-outlined">pause</span>`;
     timer.run = true;
     const activatedBtn = document.querySelector(`#drag-item-${index}`);
@@ -510,7 +505,8 @@ addSubjectSubmitBtn.addEventListener('click', () => {
 
 startSubjectBtn.addEventListener("click", () => {
   const selectedSubject = document.querySelector(".wrapper-1 input[name='subject-selector']:checked");
-  console.log(selectedSubject.classList[0]);
+  document.querySelector(".modal-ask-subject").style = "display: none";
+  main.classList.remove('blur');
   toggleTimer(selectedSubject.classList[0])
 })
 
