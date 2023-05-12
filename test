@@ -1,0 +1,55 @@
+
+.modal-ask-subject {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f0ecec;
+  width: 500px;
+  height: 500px;
+  z-index: 3;
+  backdrop-filter: blur(5px);
+  border-radius: 5px;
+  display: none;
+}
+
+.modal-ask-subject .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 70%;
+}
+
+.modal-ask-subject label {
+  white-space: nowrap;
+}
+
+.modal-ask-subject .subject-color-modal {
+  font-size: 25px;
+}
+
+.modal-ask-subject .subject-color {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+
+.blur {
+  filter: blur(5px);
+}
+
+.modal-ask-subject:target {
+  display: block;
+}
+
+.modal-ask-subject:target + .overlay {
+  pointer-events: auto;
+}
+
+.mainviewer-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
