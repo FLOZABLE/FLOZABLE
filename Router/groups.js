@@ -68,7 +68,17 @@ Router.post('/create-validate', async(req, res) => {
 })
 
 Router.post('/join/:id', async(req, res) => {
-  console.log(req.session.loggedin)
+  console.log(req.session.loggedin);
+  const sessionDataHeader = req.headers['x-session-data'];
+  if (sessionDataHeader) {
+    const sessionData = JSON.parse(sessionDataHeader);
+    console.log(sessionData);
+    if (sessionData.email && sessionData.loggedin) {
+      req.session.email = sessionData.email;
+      req.session.loggedin = sessionData.loggedin;
+    }
+  }
+  
   if(req.session.loggedin == true) {
     const groupId = req.params.id;
     const connection = await (await pool).getConnection();
