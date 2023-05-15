@@ -5,6 +5,8 @@
   flex-direction: row;
   justify-content: space-around;
   flex-wrap: wrap;
+  width: 80vw;
+  left: 10vw;
 }
 .groups-container .group {
   font-family: 'Poppins', sans-serif;
