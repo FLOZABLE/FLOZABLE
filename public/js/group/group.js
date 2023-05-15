@@ -35,7 +35,7 @@ function changeBrightness(hex, percent) {
 
   console.log(groupList);
 
-  groupList.forEach(group => {
+  groupList.forEach((group, index) => {
     
     const div = document.createElement('div');
     div.setAttribute('class', 'group');
@@ -93,22 +93,33 @@ function changeBrightness(hex, percent) {
           </span>
         </span>
       </button>
-      <a href = "${'/groups/join/' + group.group_id}">
-        <button class="blob-btn submit" id = "start">
-          Join Group
-          <span class="blob-btn__inner">
-            <span class="blob-btn__blobs">
-              <span class="blob-btn__blob"></span>
-              <span class="blob-btn__blob"></span>
-              <span class="blob-btn__blob"></span>
-              <span class="blob-btn__blob"></span>
-            </span>
-          </span>
-        </button>
-      </a>
+      <button class="blob-btn submit" id = "join${index}">
+      Join Group
+      <span class="blob-btn__inner">
+        <span class="blob-btn__blobs">
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+        </span>
+      </span>
+    </button>
     </div>
   </div>
     `
     groupsWrapper.appendChild(div);
+    const joinButton = document.querySelector(`button#join${index}`);
+    joinButton.addEventListener('click', () => {
+      (async() => {
+        let response = await fetch(`/groups/join/${group.group_id}`, {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        response = await response.json();
+        console.log(response);
+      })()
+    })
   })
 })();

@@ -66,7 +66,7 @@ Router.post('/create-validate', async(req, res) => {
   connection.release();
 })
 
-Router.get('/join/:id', async(req, res) => {
+Router.post('/join/:id', async(req, res) => {
   if(req.session.loggedin == true) {
     const groupId = req.params.id;
     const connection = await (await pool).getConnection();
@@ -84,9 +84,10 @@ Router.get('/join/:id', async(req, res) => {
                   WHERE email = '${req.session.email}'`);
 
     }
+    res.send({status: 200})
     
   } else {
-    res.render('group/create', {loggedin: false});
+    res.send({status: 400})
   }
 })
 
