@@ -56,6 +56,7 @@ Router.post('/create-validate', async(req, res) => {
     color: group.color,
     goal_hr: group.goal_hr
   };
+  res.send(200);
   
   connection.query(query, values, (error, results, fields) => {
     if (error) throw error;
@@ -67,6 +68,7 @@ Router.post('/create-validate', async(req, res) => {
 })
 
 Router.post('/join/:id', async(req, res) => {
+  console.log(req.session.loggedin)
   if(req.session.loggedin == true) {
     const groupId = req.params.id;
     const connection = await (await pool).getConnection();
@@ -93,7 +95,7 @@ Router.post('/join/:id', async(req, res) => {
 
 Router.post('/bring-groups', async(req, res) => {
   const connection = await (await pool).getConnection();
-  const groupList = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr FROM GROUPS");
+  const groupList = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr FROM GROUPS");
 
   res.send(groupList);
   connection.release();

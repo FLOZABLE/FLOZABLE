@@ -17,7 +17,7 @@
       <%- include("../elements/header");%>
       <div class="container-f" id="container">
         <div class="form-container sign-up-container">
-          <form action="/account/signup-authentication" method = "POST">
+          <div class = "form-wrapper signup">
             <h1>Create Account</h1>
             <!-- <div class="social-container">
               <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -25,14 +25,14 @@
               <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
             </div> -->
             <span>or use your email for registration</span>
-            <input type="text" placeholder="Name" name = "name"/>
+            <input type="text" placeholder="Name" name = "name" maxlength="10" minlength="1"/>
             <input type="email" placeholder="Email" name = "email"/>
-            <input type="password" placeholder="Password" name = "password"/>
-            <button>Sign Up</button>
-          </form>
+            <input type="password" placeholder="Password" name = "password" maxlength="15" minlength="4"/>
+            <button id = "signup-submit">Sign Up</button>
+          </div>
         </div>
         <div class="form-container sign-in-container">
-          <form action="/account/signin-authentication" method="POST">
+          <div class = "form-wrapper signin">
             <h1>Sign in</h1>
             <!-- <div class="social-container">
               <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -44,8 +44,8 @@
             <input type="email" placeholder="Email" name = "email"/>
             <input type="password" placeholder="Password" name = "password"/>
             <a href="#">Forgot your password?</a>
-            <button>Sign In</button>
-          </form>
+            <button id = "signin-submit">Sign In</button>
+          </div>
         </div>
         <div class="overlay-container">
           <div class="overlay">

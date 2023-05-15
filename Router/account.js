@@ -32,7 +32,7 @@ Router.post('/signin-authentication', async(req, res, next) => {
   //filter invalid words
   if(password != newPassword || email != newEmail){
     req.session.error_msg = 'INVALID WORD DETECTED';
-    res.redirect('/account');
+    res.send({status: 400});
     return 0;
   }
 
@@ -45,7 +45,7 @@ Router.post('/signin-authentication', async(req, res, next) => {
   if (typeof matching_email[0] == 'undefined') {
     console.log("no email")
     req.session.error_msg = 'NO SUCH USER';
-    res.redirect('/account');
+    res.send({status: 200});
     return 0;
   }
 
@@ -61,13 +61,14 @@ Router.post('/signin-authentication', async(req, res, next) => {
     });
     req.session.email = email;
     req.session.loggedin = true;
-    console.log("login success")
-    res.redirect('/');
+    console.log("login success");
+    console.log(req.session.email, req.session.loggedin)
+    res.send({status: 200})
     return 0;
   }
   else {
     req.session.error_msg = 'NO SUCH USER';
-    res.redirect('/account');
+    res.send({status: 400})
     return 0;
   }
 })
@@ -78,6 +79,7 @@ Router.post('/signup-authentication', async (req, res, next) => {
   let email = req.body.email;
   let name = req.body.name;
   let password = req.body.password;
+  let redirectUrl = req.body.redirectUrl;
 
   let newEmail = email.replace(/[^a-z 0-9 ! ? @ .]/gi,'');
   let newName = name.replace(/[^a-z 0-9 ! ? @ .]/gi,'');
@@ -85,7 +87,7 @@ Router.post('/signup-authentication', async (req, res, next) => {
 
   if(email != newEmail || name != newName || password != newPassword){
     req.session.r_error_msg = 'INVALID WORD DETECTED';
-    res.redirect('/account');
+    res.send({status: 400});
     return 0;
   }
   
@@ -101,7 +103,7 @@ Router.post('/signup-authentication', async (req, res, next) => {
     console.log("not new");
     req.session.r_error_msg = 'ALREADY EXIST';
     connection.release();
-    res.redirect('/account');
+    res.send({status: 400});
   } else {
     console.log("new");
     var user = {
@@ -112,7 +114,9 @@ Router.post('/signup-authentication', async (req, res, next) => {
     }
     connection.query('INSERT INTO users SET ?', user);
     connection.release();
-    res.redirect('/account');
+    req.session.email = email;
+    req.session.loggedin = true;
+    res.send({status: 200});
   }
 })
 

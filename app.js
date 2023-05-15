@@ -60,6 +60,7 @@ const articleRouter = require('./Router/article');
 const categoryRouter = require('./Router/article');
 const searchRouter = require('./Router/search');
 const groupsRouter = require("./Router/groups");
+const linksRouter = require('./Router/links');
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -98,14 +99,16 @@ app.use('/article', articleRouter);
 app.use('/category', categoryRouter);
 app.use('/search', searchRouter);
 app.use('/groups', groupsRouter);
+app.use('/links', linksRouter);
+
 // error handler
 app.use(function (err, req, res, next) {
   console.log(err.message, err.status)
 });
 
-app.get('*',function(req,res){
+/* app.get('*',function(req,res){
   res.redirect('/');
-});
+}); */
 
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);
