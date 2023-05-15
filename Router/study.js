@@ -97,6 +97,7 @@ Router.post('/bring-subjects', async(req, res) => {
     const connection = await (await pool).getConnection();
     const subjects = await connection.query("SELECT subjects FROM USERS WHERE email = ?", [req.session.email]);
     console.log(subjects[0]);
+    connection.release();
     res.send(subjects[0].subjects);
   } else {
     res.send("not loggedin");
