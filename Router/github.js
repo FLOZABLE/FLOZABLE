@@ -66,7 +66,7 @@ Router.post("/user", async(req, res) => {
     const connection = await (await pool).getConnection();
     const user_info = connection.query('SELECT * FROM users WHERE email = ?',[req.session.email]);
     const accessToken = user_info[0].github_access_token;
-
+    connection.release();
     axios.get('https://api.github.com/user', {
       headers: {
         Authorization: `token ${accessToken}`

@@ -79,19 +79,132 @@ submitbtn.addEventListener("click", () => {
   
   const name = document.querySelector("input.name").value;
   const explanation = document.querySelector("input.explanation").value;
-  const tags = document.querySelector("input.tags").value;
+  const tags = []
   const max_people = document.querySelector("input.max-people").value;
-  const passwordtrue = document.querySelector("input.passwordtrue").value;
+  const visibility = document.querySelector("input.visibility:checked").value;
   const password = document.querySelector("input.password").value;
-  console.log(name, explanation, tags, max_people, passwordtrue, password);
+  const color = document.querySelector("input.color").value;
+  const goal = document.querySelector("input.goal").value;
+  console.log(name, explanation, tags, max_people, visibility, password);
+  document.querySelector("ul.tags").querySelectorAll("li").forEach((li) => tags.push(li.querySelector("p").innerText));
   (async() => {
     const response = await fetch('/groups/create-validate', {
       method: 'post',
-      body: JSON.stringify({ name: name, explanation:explanation, tags:tags, max_people:max_people, passwordtrue:passwordtrue, password:password }),
+      body: JSON.stringify({ name: name, explanation:explanation, tags:tags, max_people:max_people, visibility:visibility, password:password, color: color, goal_hr: goal }),
       headers: {
         'Content-Type': 'application/json'
       }
     })
     // handle the response as needed
   })();
+});
+
+const public = document.querySelector("input#public");
+const private = document.querySelector("input#private");
+const password = document.querySelector("div#password");
+
+public.addEventListener('click', () => {
+  password.style = "display: none";
 })
+
+private.addEventListener('click', () => {
+  password.style = "display: block";
+})
+
+const ul = document.querySelector("ul.tags"),
+  input = document.querySelector("input.tags"),
+  tagNumb = document.querySelector(".details span");
+
+let maxTags = 10,
+  tags = [];
+
+countTags();
+createTag();
+
+function countTags() {
+  input.focus();
+  tagNumb.innerText = maxTags - tags.length;
+}
+
+function createTag() {
+  ul.querySelectorAll("li").forEach((li) => li.remove());
+  tags
+    .slice()
+    .reverse()
+    .forEach((tag) => {
+      let liTag = `<li><p class = "tags">${tag}</p> <i class="uit uit-multiply" onclick="remove(this, '${tag}')"></i></li>`;
+      ul.insertAdjacentHTML("afterbegin", liTag);
+    });
+  countTags();
+}
+
+function remove(element, tag) {
+  let index = tags.indexOf(tag);
+  tags = [...tags.slice(0, index), ...tags.slice(index + 1)];
+  element.parentElement.remove();
+  countTags();
+}
+
+function addTag(e) {
+  if (e.key == "Enter") {
+    let tag = e.target.value.replace(/\s+/g, " ");
+    if (tag.length > 1 && !tags.includes(tag)) {
+      if (tags.length < 10) {
+        tag.split(",").forEach((tag) => {
+          tags.push(tag);
+          createTag();
+        });
+      }
+    }
+    e.target.value = "";
+  }
+}
+
+input.addEventListener("keyup", addTag);
+
+const removeBtn = document.querySelector(".details button");
+removeBtn.addEventListener("click", () => {
+  tags.length = 0;
+  ul.querySelectorAll("li").forEach((li) => li.remove());
+  countTags();
+});
+
+
+const recommendedColors = [
+  '#3423BF',
+  '#377CE0',
+  '#E0BE44',
+  '#F3ECDD',
+  '#B7183F',
+  '#F0D3C7',
+  '#F7F0E1',
+  '#0176BE',
+  '#BB2D21',
+  '#F3F3F3',
+  '#F7E9C4',
+  '#7D98A9',
+  '#8E5870',
+  '#363233',
+  '#FEC8E0',
+  '#5C728A',
+  '#457278',
+  '#A2424E',
+  '#EE6E61',
+  '#EA7639',
+  '#F9D790',
+  '#B8C37F',
+  '#C4DFB6',
+  '#BEDCE7',
+  '#455D77',
+  '#9D3246',
+  '#32425C',
+];
+
+const recommendedColorsIndex = Math.floor(Math.random() * (recommendedColors.length));;
+const colorSelector = document.querySelector("input.color");
+const colorDisplay = document.querySelector(".fa-solid.fa-palette");
+colorSelector.value = recommendedColors[recommendedColorsIndex];
+colorDisplay.style = `color: ${recommendedColors[recommendedColorsIndex]}`;
+colorSelector.addEventListener('input', () => {
+  colorDisplay.style = `color: ${colorSelector.value}`;
+});
