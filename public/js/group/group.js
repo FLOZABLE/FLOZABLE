@@ -22,7 +22,7 @@ function changeBrightness(hex, percent) {
 
 
 (async() => {
-  const response = await fetch('/groups/bring-groups',
+  let response = await fetch('/groups/bring-groups',
   {
     method: 'post',
     headers: {
@@ -30,9 +30,11 @@ function changeBrightness(hex, percent) {
     }
   }
   );
-  const groupList = await response.json();
-
-  console.log(groupList, groupList.email);
+  response = await response.json();
+  const groupList = response[0];
+  const email = response[1];
+  const groupWithUser = response[2]
+  console.log(groupList, email, groupWithUser);
 
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text)
@@ -49,20 +51,29 @@ function changeBrightness(hex, percent) {
     
     const div = document.createElement('div');
     div.setAttribute('class', 'group');
-    div.style = `background: linear-gradient(to right, ${changeBrightness(group.color, 80)}, ${group.color});    `
+    div.style = `background: linear-gradient(to right, ${changeBrightness(group.color, 80)}, ${group.color});`;
+    div.setAttribute('id', group.group_id);
     let lock = ``
     if(group.visibility == "private") {
       lock = `<i class="fa-solid fa-lock"></i>`;
     }
     let tags = '';
     group.tags = JSON.parse(group.tags);
-    group.members = JSON.parse(group.members)
     for(let i = 0; i < group.tags.length; i++){
       tags += '<li>'+group.tags[i] + '</li>'
     }
     if(tags == ''){
       tags = '<li>No tags</li>'
     }
+    if(group.members == null) {
+      group.members = ''
+    }
+    let joinButtonText = "Join Group";
+    if(groupWithUser.includes(group.group_id)){
+      joinButtonText = "Leave Group"
+    }
+    group.members = group.members.split(',').map(item => item.trim());
+    
     div.innerHTML = `
     <div class="group-inner">
     <div class="name">${lock}<p> ${group.name}</p></div>
@@ -103,7 +114,7 @@ function changeBrightness(hex, percent) {
         </span>
       </button>
       <button class="blob-btn submit" id = "join${index}">
-      Join Group
+      ${joinButtonText}
       <span class="blob-btn__inner">
         <span class="blob-btn__blobs">
           <span class="blob-btn__blob"></span>
@@ -128,7 +139,7 @@ function changeBrightness(hex, percent) {
     
       if(response.status == 200) {
         joinButton.innerHTML = `
-        GO TO GROUP
+        LEAVE GROUP
       <span class="blob-btn__inner">
         <span class="blob-btn__blobs">
           <span class="blob-btn__blob"></span>
@@ -140,17 +151,47 @@ function changeBrightness(hex, percent) {
         joinButton.removeEventListener('click', joinButtonEvent)
       }
     }
+
+    //leave session event
+
+    const joinButtonLeaveEvent = async() => {
+      let response = await fetch(`/groups/leave/${group.group_id}`, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      response = await response.json();
+    
+      if(response.status == 200) {
+        joinButton.innerHTML = `
+        LEAVE GROUP
+      <span class="blob-btn__inner">
+        <span class="blob-btn__blobs">
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+        </span>
+        `;
+        joinButton.removeEventListener('click', joinButtonLeaveEvent);
+        joinButton.addEventListener('click', joinButtonEvent);
+      }
+    }
     groupsWrapper.appendChild(div);
     const joinButton = document.querySelector(`button#join${index}`);
-    joinButton.addEventListener('click', joinButtonEvent);
+    if(!groupWithUser.includes(group.group_id)){
+      joinButton.addEventListener('click', joinButtonEvent);
+    } else {
+      joinButton.addEventListener('click', joinButtonLeaveEvent);
+    }
 
     const shareButton = document.querySelector(`button#share${index}`);
     shareButton.addEventListener('click', () => {
       copyToClipboard(window.location.protocol + window.location.hostname + '/links/join/' + group.group_id);
     })
-  })
+  });
 })();
-
 
 
 

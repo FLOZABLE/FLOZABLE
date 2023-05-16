@@ -38,7 +38,6 @@ Router.post('/create-validate', async(req, res) => {
 
   const connection = await (await pool).getConnection();
   let hashed = hashing(req.body['password']);
-  console.log(req.body);
   let group = req.body;
   const query = 'INSERT INTO groups SET ?';
   const values = {
@@ -52,7 +51,7 @@ Router.post('/create-validate', async(req, res) => {
     date: new Date().getTime(),
     group_id: generateGroupId(),
     leader: req.session.email,
-    members: JSON.stringify([req.session.email]),
+    members: req.session.email,
     color: group.color,
     goal_hr: group.goal_hr
   };
@@ -68,11 +67,9 @@ Router.post('/create-validate', async(req, res) => {
 })
 
 Router.post('/join/:id', async(req, res) => {
-  console.log(req.session.loggedin);
   const sessionDataHeader = req.headers['x-session-data'];
   if (sessionDataHeader) {
     const sessionData = JSON.parse(sessionDataHeader);
-    console.log(sessionData);
     if (sessionData.email && sessionData.loggedin) {
       req.session.email = sessionData.email;
       req.session.loggedin = sessionData.loggedin;
@@ -85,15 +82,54 @@ Router.post('/join/:id', async(req, res) => {
     let userInfo = await connection.query("SELECT groups from users where email = ?", [req.session.email]);
     //userInfo = JSON.parse(userInfo);
     userInfo = userInfo[0];
-    console.log(userInfo, userInfo.groups)
     if (!userInfo.groups || !userInfo.groups.includes(groupId)) {
-      console.log("asdasdsa")
       connection.query(`UPDATE users SET groups = CASE
                       WHEN groups IS NULL THEN '${groupId}'
                       WHEN groups = '' THEN '${groupId}'
                       ELSE CONCAT(groups, ',', '${groupId}')
                   END
                   WHERE email = '${req.session.email}'`);
+
+      connection.query(`UPDATE groups SET members = CASE
+                  WHEN members IS NULL THEN '${req.session.email}'
+                  WHEN members = '' THEN '${req.session.email}'
+                  ELSE CONCAT(members, ',', '${req.session.email}')
+              END
+              WHERE group_id = '${groupId}'`);
+      console.log('inserted')
+      res.send({status: 200})
+
+    } else {
+      res.send({status: 400})
+    }
+    
+  } else {
+    res.send({status: 400})
+  }
+})
+
+Router.post('/leave/:id', async(req, res) => {
+/*   const sessionDataHeader = req.headers['x-session-data'];
+  if (sessionDataHeader) {
+    const sessionData = JSON.parse(sessionDataHeader);
+    if (sessionData.email && sessionData.loggedin) {
+      req.session.email = sessionData.email;
+      req.session.loggedin = sessionData.loggedin;
+    }
+  } */
+  
+  if(req.session.loggedin == true) {
+    const groupId = req.params.id;
+    const connection = await (await pool).getConnection();
+    let userInfo = await connection.query("SELECT groups from users where email = ?", [req.session.email]);
+    //userInfo = JSON.parse(userInfo);
+    userInfo = userInfo[0];
+    console.log(userInfo.groups)
+    if (userInfo.groups.includes(groupId)) {
+      console.log('includes')
+      connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${req.session.email}', '')) WHERE email = '${req.session.email}'`);
+      connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
+      console.log('inserted')
       res.send({status: 200})
 
     } else {
@@ -108,9 +144,14 @@ Router.post('/join/:id', async(req, res) => {
 Router.post('/bring-groups', async(req, res) => {
   const connection = await (await pool).getConnection();
   const groupList = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr FROM GROUPS");
-  groupList.email = {email: req.session.email};
-  console.log(groupList)
-  res.send(groupList);
+  let groupWithUser = [];
+  groupList.forEach((group, index) => {
+    if(group.members && group.members.includes(req.session.email)) {
+      groupWithUser.push(group.group_id);
+    }
+  })
+  console.log(groupWithUser)
+  res.send([groupList, req.session.email, groupWithUser]);
   connection.release();
 })
 
