@@ -94,9 +94,11 @@ Router.post('/join/:id', async(req, res) => {
                       ELSE CONCAT(groups, ',', '${groupId}')
                   END
                   WHERE email = '${req.session.email}'`);
+      res.send({status: 200})
 
+    } else {
+      res.send({status: 400})
     }
-    res.send({status: 200})
     
   } else {
     res.send({status: 400})
@@ -106,7 +108,8 @@ Router.post('/join/:id', async(req, res) => {
 Router.post('/bring-groups', async(req, res) => {
   const connection = await (await pool).getConnection();
   const groupList = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr FROM GROUPS");
-
+  groupList.email = {email: req.session.email};
+  console.log(groupList)
   res.send(groupList);
   connection.release();
 })
