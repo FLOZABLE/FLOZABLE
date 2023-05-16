@@ -20,7 +20,6 @@ function changeBrightness(hex, percent) {
   return newHex;
 }
 
-// usage example
 
 (async() => {
   const response = await fetch('/groups/bring-groups',
@@ -33,7 +32,7 @@ function changeBrightness(hex, percent) {
   );
   const groupList = await response.json();
 
-  console.log(groupList);
+  console.log(groupList, groupList.email);
 
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text)
@@ -64,10 +63,9 @@ function changeBrightness(hex, percent) {
     if(tags == ''){
       tags = '<li>No tags</li>'
     }
-    console.log(group)
     div.innerHTML = `
     <div class="group-inner">
-    <div class="name">${lock} ${group.name}</div>
+    <div class="name">${lock}<p> ${group.name}</p></div>
     <div class="middle">
       <div class="subinfo">
       ${group.members.length + '/' + group.max_members} <i class="fa-solid fa-people-group"></i>, 
@@ -118,20 +116,33 @@ function changeBrightness(hex, percent) {
     </div>
   </div>
     `
+
+    const joinButtonEvent = async() => {
+      let response = await fetch(`/groups/join/${group.group_id}`, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      response = await response.json();
+    
+      if(response.status == 200) {
+        joinButton.innerHTML = `
+        GO TO GROUP
+      <span class="blob-btn__inner">
+        <span class="blob-btn__blobs">
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+        </span>
+        `;
+        joinButton.removeEventListener('click', joinButtonEvent)
+      }
+    }
     groupsWrapper.appendChild(div);
     const joinButton = document.querySelector(`button#join${index}`);
-    joinButton.addEventListener('click', () => {
-      (async() => {
-        let response = await fetch(`/groups/join/${group.group_id}`, {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        response = await response.json();
-        console.log(response);
-      })()
-    });
+    joinButton.addEventListener('click', joinButtonEvent);
 
     const shareButton = document.querySelector(`button#share${index}`);
     shareButton.addEventListener('click', () => {
@@ -139,3 +150,91 @@ function changeBrightness(hex, percent) {
     })
   })
 })();
+
+
+
+
+const ul = document.querySelector("ul.tags"),
+  input = document.querySelector("input.tags"),
+  tagNumb = document.querySelector(".details span");
+
+let maxTags = 10,
+  tags = [];
+
+countTags();
+createTag();
+
+function countTags() {
+  input.focus();
+  tagNumb.innerText = maxTags - tags.length;
+}
+
+function createTag() {
+  ul.querySelectorAll("li").forEach((li) => li.remove());
+  tags
+    .slice()
+    .reverse()
+    .forEach((tag) => {
+      let liTag = `<li><p class = "tags">${tag}</p> <i class="uit uit-multiply" onclick="remove(this, '${tag}')"></i></li>`;
+      ul.insertAdjacentHTML("afterbegin", liTag);
+    });
+  countTags();
+}
+
+function remove(element, tag) {
+  let index = tags.indexOf(tag);
+  tags = [...tags.slice(0, index), ...tags.slice(index + 1)];
+  element.parentElement.remove();
+  countTags();
+}
+
+function addTag(e) {
+  if (e.key == "Enter") {
+    let tag = e.target.value.replace(/\s+/g, " ");
+    if (tag.length > 1 && !tags.includes(tag)) {
+      if (tags.length < 10) {
+        tag.split(",").forEach((tag) => {
+          tags.push(tag);
+          createTag();
+        });
+      }
+    }
+    e.target.value = "";
+  }
+}
+
+input.addEventListener("keyup", addTag);
+
+const removeBtn = document.querySelector(".details button");
+removeBtn.addEventListener("click", () => {
+  tags.length = 0;
+  ul.querySelectorAll("li").forEach((li) => li.remove());
+  countTags();
+});
+
+const searchQuery = document.querySelector("input.input-search");
+
+
+searchQuery.addEventListener("input", () => {
+  const groups = document.querySelectorAll(".group");
+  const groupNames = document.querySelectorAll(".group .name p");
+  const groupExplanations = document.querySelectorAll(".group .explanation");
+  let groupValue = [];
+
+  groupNames.forEach((name, index) => {
+    groupValue[index] = {name: '', explanation: ''};
+    groupValue[index].name = name.innerText;
+  })
+
+  groupExplanations.forEach((explanation, index) => {
+    groupValue[index].explanation = explanation.innerText;
+  });
+
+  groupValue.forEach((group, index) => {
+    if(!group.name.includes(searchQuery.value) && !group.explanation.includes(searchQuery.value)) {
+      groups[index].style.cssText += "display: none";
+    } else {
+      groups[index].style.cssText += "display: block";
+    }
+  })
+})
