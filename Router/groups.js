@@ -120,6 +120,7 @@ Router.post('/leave/:id', async(req, res) => {
   
   if(req.session.loggedin == true) {
     const groupId = req.params.id;
+    console.log(groupId)
     const connection = await (await pool).getConnection();
     let userInfo = await connection.query("SELECT groups from users where email = ?", [req.session.email]);
     //userInfo = JSON.parse(userInfo);
@@ -127,7 +128,7 @@ Router.post('/leave/:id', async(req, res) => {
     console.log(userInfo.groups)
     if (userInfo.groups.includes(groupId)) {
       console.log('includes')
-      connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${req.session.email}', '')) WHERE email = '${req.session.email}'`);
+      connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId}', '')) WHERE email = '${req.session.email}'`);
       connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
       console.log('inserted')
       res.send({status: 200})
