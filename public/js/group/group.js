@@ -1,4 +1,5 @@
 const groupsWrapper = document.querySelector(".groups-container");
+const pwAskingModal = document.querySelector(".pw-modal");
 
 function changeBrightness(hex, percent) {
   // remove the # symbol if it's present
@@ -41,14 +42,39 @@ const joinButtonEvent = async(joinLeaveButton, groupId) => {
     </span>
     `;
     joinLeaveButton.removeEventListener('click', () => joinButtonEvent(joinLeaveButton, group.group_id));
+    joinLeaveButton.addEventListener('click', () => DelayModalEvent());
     setTimeout(() => {
       joinLeaveButton.addEventListener('click', () => leaveButtonEvent(joinLeaveButton, groupId));
+      joinLeaveButton.removeEventListener('click', () => DelayModalEvent());
     }, 1000 * 60 * 10);
+  } else if(response.reason == 'pw_required'){
+    pwAskingModal.style = 'display: block';
+    const groupPw = pwAskingModal.querySelector("input").value;
+    const groupPwSubmitBtn = pwAskingModal.querySelector("button#join-pw");
+    /* groupPwSubmitBtn.addEventListener('click', () => {
+      (async() => {
+        const response = await fetch('/') => {
+          
+        }
+      })
+    }) */
   }
 }
 
-const delayModalEvent = () => {
+const closeBtn = document.querySelector(".close-btn");
+const modal = document.querySelector('.subject-modal');
+
+const DelayModalEvent = () => {
+  modal.style = 'display: block';
 }
+
+closeBtn.addEventListener('click', () => {
+  modal.style =  "display: none";
+});
+
+
+
+
 //leave session event
 
 const leaveButtonEvent = async(joinLeaveButton, groupId) => {
@@ -72,8 +98,10 @@ const leaveButtonEvent = async(joinLeaveButton, groupId) => {
     </span>
     `;
     joinLeaveButton.removeEventListener('click', () => leaveButtonEvent(joinLeaveButton, group.group_id));
+    joinLeaveButton.addEventListener('click', () => DelayModalEvent());
     setTimeout(() => {
       joinLeaveButton.addEventListener('click', () => joinButtonEvent(joinLeaveButton, groupId));
+      joinLeaveButton.removeEventListener('click', () => DelayModalEvent());
     }, 1000 * 60 * 10)
   }
 }
@@ -275,13 +303,3 @@ searchQuery.addEventListener("input", () => {
     }
   })
 })
-
-//modal close button
-
-const closeBtn = document.querySelector(".close-btn");
-const modal = document.querySelector('.subject-modal');
-
-closeBtn.addEventListener('click', () => {
-  closeBtn.classList.toggle('.subject-modal-hidden');
-});
-
