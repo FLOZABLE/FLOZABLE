@@ -55,14 +55,19 @@ Router.post('/create-validate', async(req, res) => {
     color: group.color,
     goal_hr: group.goal_hr
   };
-  res.send(200);
+  res.send(true);
   
   connection.query(query, values, (error, results, fields) => {
     if (error) throw error;
     console.log(results);
   });
   
-  connection.query(`UPDATE users set groups = '${values.group_id}'`);
+  connection.query(`UPDATE users SET groups = CASE
+  WHEN groups IS NULL THEN '${values.group_id}'
+  WHEN groups = '' THEN '${values.group_id}'
+  ELSE CONCAT(groups, ',', '${values.group_id}')
+END
+WHERE email = '${req.session.email}'`);
   
   connection.release();
 })
@@ -98,14 +103,14 @@ Router.post('/join/:id', async(req, res) => {
               END
               WHERE group_id = '${groupId}'`);
       console.log('inserted')
-      res.send({status: 200})
+      res.send({success: true})
 
     } else {
-      res.send({status: 400})
+      res.send({success: false})
     }
     
   } else {
-    res.send({status: 400})
+    res.send({success: false})
   }
 })
 
@@ -127,19 +132,17 @@ Router.post('/leave/:id', async(req, res) => {
     //userInfo = JSON.parse(userInfo);
     userInfo = userInfo[0];
     console.log([userInfo.groups].includes(groupId), [userInfo.groups], groupId)
-    if ([userInfo.groups].includes(groupId)) {
-      console.log('includes')
+    if (userInfo.groups.includes(groupId)) {
       connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId}', '')) WHERE email = '${req.session.email}'`);
       connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
-      console.log('inserted')
-      res.send({status: 200})
+      res.send({success: true})
 
     } else {
-      res.send({status: 400})
+      res.send({success: false})
     }
     
   } else {
-    res.send({status: 400})
+    res.send({success: false})
   }
 })
 

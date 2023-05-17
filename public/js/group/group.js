@@ -137,7 +137,7 @@ function changeBrightness(hex, percent) {
       });
       response = await response.json();
     
-      if(response.status == 200) {
+      if(response.success == true) {
         joinButton.innerHTML = `
         LEAVE GROUP
       <span class="blob-btn__inner">
@@ -163,9 +163,9 @@ function changeBrightness(hex, percent) {
       });
       response = await response.json();
     
-      if(response.status == 200) {
+      if(response.success == true) {
         joinButton.innerHTML = `
-        LEAVE GROUP
+        JOIN GROUP
       <span class="blob-btn__inner">
         <span class="blob-btn__blobs">
           <span class="blob-btn__blob"></span>
