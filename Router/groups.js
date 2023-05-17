@@ -108,6 +108,7 @@ Router.post('/join/:id', async(req, res) => {
     } else {
       res.send({success: false})
     }
+    connection.release()
     
   } else {
     res.send({success: false})
@@ -133,10 +134,12 @@ Router.post('/leave/:id', async(req, res) => {
     userInfo = userInfo[0];
     console.log([userInfo.groups].includes(groupId), [userInfo.groups], groupId)
     if (userInfo.groups.includes(groupId)) {
+      connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, ',${groupId}', '')) WHERE email = '${req.session.email}'`);
       connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId}', '')) WHERE email = '${req.session.email}'`);
+      connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, ',${req.session.email}', '')) WHERE group_id = '${groupId}'`);
       connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
       res.send({success: true})
-
+      connection.release()
     } else {
       res.send({success: false})
     }
