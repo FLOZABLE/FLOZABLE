@@ -25,7 +25,8 @@
               <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
             </div> -->
             <span>or use your email for registration</span>
-            <input type="text" placeholder="Name" name = "name" maxlength="10" minlength="1"/>
+            <span id = "error_msg"></span>
+            <input type="text" placeholder="Name" name = "name" maxlength="20" minlength="1"/>
             <input type="email" placeholder="Email" name = "email"/>
             <input type="password" placeholder="Password" name = "password" maxlength="15" minlength="4"/>
             <button id = "signup-submit">Sign Up</button>
@@ -40,7 +41,7 @@
               <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
             </div> -->
             <span>or use your account</span>
-            <span id = "error_msg"><%- error_msg%></span>
+            <span id = "error_msg"></span>
             <input type="email" placeholder="Email" name = "email"/>
             <input type="password" placeholder="Password" name = "password"/>
             <a href="#">Forgot your password?</a>

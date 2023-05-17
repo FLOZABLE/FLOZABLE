@@ -15,7 +15,7 @@ signInButton.addEventListener('click', () => {
 
 const signUpSubmitBtn = document.querySelector('#signup-submit');
 const signInSubmitBtn = document.querySelector('#signin-submit');
-
+const errPrintArea = document.querySelectorAll('span#error_msg');
 signUpSubmitBtn.addEventListener('click', async() => {
   const name = document.querySelector(".signup input[name='name']").value;
   const email = document.querySelector(".signup input[name='email']").value;
@@ -35,13 +35,16 @@ signUpSubmitBtn.addEventListener('click', async() => {
       'Content-Type': 'application/json'
     }
   });
-  const status  = await response.json();
-  console.log(status);
+  response  = await response.json();
+  console.log(response);
 
-  if(status.status == 200){
+  if(response.success == true){
     setTimeout(function() {
       window.location.href = redirectUrl;
-    }, 2000); 
+    }, 500); 
+  } else {
+    errPrintArea[0].innerText = response.signup_err_msg;
+    errPrintArea[1].innerText = response.signin_err_msg;
   }
 });
 
@@ -65,12 +68,15 @@ signInSubmitBtn.addEventListener('click', async() => {
       'Content-Type': 'application/json'
     }
   });
-  const status  = await response.json();
-  console.log(status);
+  response  = await response.json();
+  console.log(response);
 
-  if(status.status == 200){
+  if(response.success == true){
     setTimeout(function() {
       window.location.href = redirectUrl;
-    }, 2000); 
+    }, 500); 
+  } else {
+    errPrintArea[0].innerText = response.signup_err_msg;
+    errPrintArea[1].innerText = response.signin_err_msg;
   }
 })

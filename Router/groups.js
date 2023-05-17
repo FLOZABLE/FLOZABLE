@@ -62,6 +62,7 @@ Router.post('/create-validate', async(req, res) => {
     console.log(results);
   });
   
+  connection.query(`UPDATE users set groups = '${values.group_id}'`);
   
   connection.release();
 })
@@ -125,8 +126,8 @@ Router.post('/leave/:id', async(req, res) => {
     let userInfo = await connection.query("SELECT groups from users where email = ?", [req.session.email]);
     //userInfo = JSON.parse(userInfo);
     userInfo = userInfo[0];
-    console.log(userInfo.groups)
-    if (userInfo.groups.includes(groupId)) {
+    console.log([userInfo.groups].includes(groupId), [userInfo.groups], groupId)
+    if ([userInfo.groups].includes(groupId)) {
       console.log('includes')
       connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId}', '')) WHERE email = '${req.session.email}'`);
       connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);

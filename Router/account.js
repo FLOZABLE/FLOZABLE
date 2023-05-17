@@ -9,15 +9,10 @@ function hashing(password) {
 }
 
 Router.get('/', (req, res) => {
-  if(typeof req.session.error_msg != "undefined"){
-    console.log(req.session.error_msg)
-  } else {
-    req.session.error_msg = ""
-  }
   if(req.session.loggedin == true){
-    res.render("account/account", {loggedin: "true", error_msg: req.session.error_msg});
+    res.render("account/account", {loggedin: "true"});
   } else {
-    res.render("account/account", {loggedin: "false", error_msg: req.session.error_msg});
+    res.render("account/account", {loggedin: "false"});
   }
 })
 
@@ -31,8 +26,7 @@ Router.post('/signin-authentication', async(req, res, next) => {
 
   //filter invalid words
   if(password != newPassword || email != newEmail){
-    req.session.error_msg = 'INVALID WORD DETECTED';
-    res.send({status: 400});
+    res.send({success: false, signin_err_msg: 'INVALID WORD', signup_err_msg: ""});
     return 0;
   }
 
@@ -44,8 +38,7 @@ Router.post('/signin-authentication', async(req, res, next) => {
   
   if (typeof matching_email[0] == 'undefined') {
     console.log("no email")
-    req.session.error_msg = 'NO SUCH USER';
-    res.send({status: 200});
+    res.send({success: false, signin_err_msg: "NO SUCH USERS", signup_err_msg: ""});
     return 0;
   }
 
@@ -63,12 +56,11 @@ Router.post('/signin-authentication', async(req, res, next) => {
     req.session.loggedin = true;
     console.log("login success");
     console.log(req.session.email, req.session.loggedin)
-    res.send({status: 200})
+    res.send({success: true})
     return 0;
   }
   else {
-    req.session.error_msg = 'NO SUCH USER';
-    res.send({status: 400})
+    res.send({success: false, signin_err_msg: "NO SUCH USERS", signup_err_msg: ""})
     return 0;
   }
 })
@@ -79,15 +71,13 @@ Router.post('/signup-authentication', async (req, res, next) => {
   let email = req.body.email;
   let name = req.body.name;
   let password = req.body.password;
-  let redirectUrl = req.body.redirectUrl;
 
   let newEmail = email.replace(/[^a-z 0-9 ! ? @ .]/gi,'');
   let newName = name.replace(/[^a-z 0-9 ! ? @ .]/gi,'');
   let newPassword = password.replace(/[^a-z 0-9 ! ? @ .]/gi,'');
 
   if(email != newEmail || name != newName || password != newPassword){
-    req.session.r_error_msg = 'INVALID WORD DETECTED';
-    res.send({status: 400});
+    res.send({success: false, signup_err_msg: "INVALID WORD DETECTED", signin_err_msg: ""});
     return 0;
   }
   
@@ -96,14 +86,11 @@ Router.post('/signup-authentication', async (req, res, next) => {
 
   const connection = await (await pool).getConnection();
 
-  let email_exist = false
   let check_email = await connection.query("SELECT * FROM users WHERE email = ?", email);
 
   if(typeof check_email[0] != 'undefined') {
     console.log("not new");
-    req.session.r_error_msg = 'ALREADY EXIST';
-    connection.release();
-    res.send({status: 400});
+    res.send({success: false, signup_err_msg: "EMAIL ALREADY IN USE", signin_err_msg: ""});
   } else {
     console.log("new");
     var user = {
@@ -113,15 +100,14 @@ Router.post('/signup-authentication', async (req, res, next) => {
       salt: hashed[0],
     }
     connection.query('INSERT INTO users SET ?', user);
-    connection.release();
     req.session.email = email;
     req.session.loggedin = true;
-    res.send({status: 200});
+    res.send({success: true});
   }
+  connection.release();
 })
 
 Router.get('/signup', function (req, res) {
-  req.session.error_msg = "";
 
   if (req.session.loggedin) {
     res.render('account/register', {
@@ -131,7 +117,6 @@ Router.get('/signup', function (req, res) {
       password: '',
       button: "SIGN IN",
       path: "/account",
-      error: req.session.r_error_msg,
     })
   } else {
     res.render('account/register', {
@@ -141,7 +126,6 @@ Router.get('/signup', function (req, res) {
       password: '',
       button: "SIGN IN",
       path: "/account",
-      error: req.session.r_error_msg,
     })
   }
 })
