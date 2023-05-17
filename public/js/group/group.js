@@ -20,8 +20,77 @@ function changeBrightness(hex, percent) {
   return newHex;
 }
 
+const joinButtonEvent = async(joinLeaveButton, groupId) => {
+  let response = await fetch(`/groups/join/${groupId}`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  response = await response.json();
+
+  if(response.success == true) {
+    joinLeaveButton.innerHTML = `
+    LEAVE GROUP
+  <span class="blob-btn__inner">
+    <span class="blob-btn__blobs">
+      <span class="blob-btn__blob"></span>
+      <span class="blob-btn__blob"></span>
+      <span class="blob-btn__blob"></span>
+      <span class="blob-btn__blob"></span>
+    </span>
+    `;
+    joinLeaveButton.removeEventListener('click', () => joinButtonEvent(joinLeaveButton, group.group_id));
+    setTimeout(() => {
+      joinLeaveButton.addEventListener('click', () => leaveButtonEvent(joinLeaveButton, groupId));
+    }, 1000 * 60 * 10);
+  }
+}
+
+const delayModalEvent = () => {
+}
+//leave session event
+
+const leaveButtonEvent = async(joinLeaveButton, groupId) => {
+  let response = await fetch(`/groups/leave/${groupId}`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  response = await response.json();
+
+  if(response.success == true) {
+    joinLeaveButton.innerHTML = `
+    JOIN GROUP
+  <span class="blob-btn__inner">
+    <span class="blob-btn__blobs">
+      <span class="blob-btn__blob"></span>
+      <span class="blob-btn__blob"></span>
+      <span class="blob-btn__blob"></span>
+      <span class="blob-btn__blob"></span>
+    </span>
+    `;
+    joinLeaveButton.removeEventListener('click', () => leaveButtonEvent(joinLeaveButton, group.group_id));
+    setTimeout(() => {
+      joinLeaveButton.addEventListener('click', () => joinButtonEvent(joinLeaveButton, groupId));
+    }, 1000 * 60 * 10)
+  }
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      console.log('Text copied to clipboard');
+    })
+    .catch((error) => {
+      console.error('Error copying text to clipboard:', error);
+    });
+}
+
 
 (async() => {
+  const startTime = performance.now();
   let response = await fetch('/groups/bring-groups',
   {
     method: 'post',
@@ -35,16 +104,6 @@ function changeBrightness(hex, percent) {
   const email = response[1];
   const groupWithUser = response[2]
   console.log(groupList, email, groupWithUser);
-
-  function copyToClipboard(text) {
-    navigator.clipboard.writeText(text)
-      .then(() => {
-        console.log('Text copied to clipboard');
-      })
-      .catch((error) => {
-        console.error('Error copying text to clipboard:', error);
-      });
-  }
   
 
   groupList.forEach((group, index) => {
@@ -53,25 +112,10 @@ function changeBrightness(hex, percent) {
     div.setAttribute('class', 'group');
     div.style = `background: linear-gradient(to right, ${changeBrightness(group.color, 80)}, ${group.color});`;
     div.setAttribute('id', group.group_id);
-    let lock = ``
-    if(group.visibility == "private") {
-      lock = `<i class="fa-solid fa-lock"></i>`;
-    }
-    let tags = '';
+    const lock = (group.visibility === "private") ? `<i class="fa-solid fa-lock"></i>` : '';
     group.tags = JSON.parse(group.tags);
-    for(let i = 0; i < group.tags.length; i++){
-      tags += '<li>'+group.tags[i] + '</li>'
-    }
-    if(tags == ''){
-      tags = '<li>No tags</li>'
-    }
-    if(group.members == null) {
-      group.members = ''
-    }
-    let joinButtonText = "Join Group";
-    if(groupWithUser.includes(group.group_id)){
-      joinButtonText = "Leave Group"
-    }
+    const tags = group.tags.map(tag => `<li>${tag}</li>`).join('');
+    let joinButtonText = (groupWithUser.includes(group.group_id)) ? "Leave Group" : "Join Group";
     group.members = group.members.split(',').map(item => item.trim());
     
     div.innerHTML = `
@@ -127,63 +171,12 @@ function changeBrightness(hex, percent) {
     </div>
   </div>
     `
-
-    const joinButtonEvent = async() => {
-      let response = await fetch(`/groups/join/${group.group_id}`, {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      response = await response.json();
-    
-      if(response.success == true) {
-        joinButton.innerHTML = `
-        LEAVE GROUP
-      <span class="blob-btn__inner">
-        <span class="blob-btn__blobs">
-          <span class="blob-btn__blob"></span>
-          <span class="blob-btn__blob"></span>
-          <span class="blob-btn__blob"></span>
-          <span class="blob-btn__blob"></span>
-        </span>
-        `;
-        joinButton.removeEventListener('click', joinButtonEvent)
-      }
-    }
-
-    //leave session event
-
-    const joinButtonLeaveEvent = async() => {
-      let response = await fetch(`/groups/leave/${group.group_id}`, {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      response = await response.json();
-    
-      if(response.success == true) {
-        joinButton.innerHTML = `
-        JOIN GROUP
-      <span class="blob-btn__inner">
-        <span class="blob-btn__blobs">
-          <span class="blob-btn__blob"></span>
-          <span class="blob-btn__blob"></span>
-          <span class="blob-btn__blob"></span>
-          <span class="blob-btn__blob"></span>
-        </span>
-        `;
-        joinButton.removeEventListener('click', joinButtonLeaveEvent);
-        joinButton.addEventListener('click', joinButtonEvent);
-      }
-    }
     groupsWrapper.appendChild(div);
-    const joinButton = document.querySelector(`button#join${index}`);
+    const joinLeaveButton = document.querySelector(`button#join${index}`);
     if(!groupWithUser.includes(group.group_id)){
-      joinButton.addEventListener('click', joinButtonEvent);
+      joinLeaveButton.addEventListener('click', () => joinButtonEvent(joinLeaveButton, group.group_id));
     } else {
-      joinButton.addEventListener('click', joinButtonLeaveEvent);
+      joinLeaveButton.addEventListener('click', () => leaveButtonEvent(joinLeaveButton, group.group_id));
     }
 
     const shareButton = document.querySelector(`button#share${index}`);
@@ -191,6 +184,9 @@ function changeBrightness(hex, percent) {
       copyToClipboard(window.location.protocol + window.location.hostname + '/links/join/' + group.group_id);
     })
   });
+  const endTime = performance.now();
+const executionTime = endTime - startTime;
+console.log(`Execution time: ${executionTime} milliseconds`);
 })();
 
 
@@ -279,3 +275,13 @@ searchQuery.addEventListener("input", () => {
     }
   })
 })
+
+//modal close button
+
+const closeBtn = document.querySelector(".close-btn");
+const modal = document.querySelector('.subject-modal');
+
+closeBtn.addEventListener('click', () => {
+  closeBtn.classList.toggle('.subject-modal-hidden');
+});
+
