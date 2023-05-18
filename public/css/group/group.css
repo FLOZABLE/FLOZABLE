@@ -487,3 +487,7 @@ p.tags {
 .mygroup-container .title {
   margin-left: 50px;
 }
+
+.blob-btn.submit {
+  background-color: #fff;;
+}
