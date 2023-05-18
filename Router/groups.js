@@ -47,7 +47,7 @@ Router.post('/create-validate', async (req, res) => {
     max_members: group.max_people,
     visibility: group.visibility,
     hashed_password: hashed[1],
-    salt: hashed[1],
+    salt: hashed[0],
     date: new Date().getTime(),
     group_id: generateGroupId(),
     leader: req.session.email,
@@ -108,8 +108,25 @@ Router.post('/join/:id', async (req, res) => {
       WHERE group_id = '${groupId}'`);
           console.log('inserted')
           res.send({ success: true })
-        } else if(req.body['group-pw'] == selectedGroup.password){
-
+        } else if(crypto.pbkdf2Sync(req.body['group-pw'], selectedGroup.salt, 99097, 32, 'sha512').toString('hex') == selectedGroup.hashed_password){
+          connection.query(`UPDATE users SET groups = CASE
+          WHEN groups IS NULL THEN '${groupId}'
+          WHEN groups = '' THEN '${groupId}'
+          ELSE CONCAT(groups, ',', '${groupId}')
+      END
+      WHERE email = '${req.session.email}'`);
+  
+          connection.query(`UPDATE groups SET members = CASE
+          WHEN members IS NULL THEN '${req.session.email}'
+          WHEN members = '' THEN '${req.session.email}'
+          ELSE CONCAT(members, ',', '${req.session.email}')
+      END
+      WHERE group_id = '${groupId}'`);
+          console.log('inserted')
+          res.send({ success: true })
+        } else {
+          console.log(req.body['group-pw'], selectedGroup.salt, crypto.pbkdf2Sync(req.body['group-pw'], selectedGroup.salt, 99097, 32, 'sha512').toString('hex'), selectedGroup.hashed_password)
+          res.send({success: false, reason: 'password wrong'})
         }
       } else {
         res.send({ success: false, reason: 'no such room' })
@@ -124,56 +141,6 @@ Router.post('/join/:id', async (req, res) => {
     res.send({ success: false, reason: 'no session' })
   }
 })
-
-/* Router.post('/join-private/:id', async (req, res) => {
-  const sessionDataHeader = req.headers['x-session-data'];
-  if (sessionDataHeader) {
-    const sessionData = JSON.parse(sessionDataHeader);
-    if (sessionData.email && sessionData.loggedin) {
-      req.session.email = sessionData.email;
-      req.session.loggedin = sessionData.loggedin;
-    }
-  }
-
-  if (req.session.loggedin == true) {
-    const groupId = req.params.id;
-    const connection = await (await pool).getConnection();
-    let userInfo = await connection.query("SELECT groups from users where email = ?", [req.session.email]);
-    //userInfo = JSON.parse(userInfo);
-    userInfo = userInfo[0];
-    if (!userInfo.groups.includes(groupId)) {
-      let selectedGroup = await connection.query(`SELECT * FROM groups where group_id = '${groupId}'`);
-      selectedGroup = selectedGroup[0];
-      if (selectedGroup) {
-        connection.query(`UPDATE users SET groups = CASE
-        WHEN groups IS NULL THEN '${groupId}'
-        WHEN groups = '' THEN '${groupId}'
-        ELSE CONCAT(groups, ',', '${groupId}')
-    END
-    WHERE email = '${req.session.email}'`);
-
-        connection.query(`UPDATE groups SET members = CASE
-        WHEN members IS NULL THEN '${req.session.email}'
-        WHEN members = '' THEN '${req.session.email}'
-        ELSE CONCAT(members, ',', '${req.session.email}')
-    END
-    WHERE group_id = '${groupId}'`);
-        console.log('inserted')
-        res.send({ success: true })
-      } else {
-        res.send({ success: false, reason: 'no such room' })
-      }
-
-    } else {
-      res.send({ success: false, reason: 'already joined' })
-    }
-    connection.release()
-
-  } else {
-    res.send({ success: false, reason: 'no session' })
-  }
-})
- */
 
 Router.post('/leave/:id', async (req, res) => {
   /*   const sessionDataHeader = req.headers['x-session-data'];
@@ -194,9 +161,9 @@ Router.post('/leave/:id', async (req, res) => {
     userInfo = userInfo[0];
     console.log([userInfo.groups].includes(groupId), [userInfo.groups], groupId)
     if (userInfo.groups.includes(groupId)) {
-      connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, ',${groupId}', '')) WHERE email = '${req.session.email}'`);
+      connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId},', '')) WHERE email = '${req.session.email}'`);
       connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId}', '')) WHERE email = '${req.session.email}'`);
-      connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, ',${req.session.email}', '')) WHERE group_id = '${groupId}'`);
+      connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.email},', '')) WHERE group_id = '${groupId}'`);
       connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
       res.send({ success: true })
       connection.release()
@@ -211,16 +178,46 @@ Router.post('/leave/:id', async (req, res) => {
 
 Router.post('/bring-groups', async (req, res) => {
   const connection = await (await pool).getConnection();
-  const groupList = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr FROM GROUPS");
+  const groupList = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM GROUPS");
   let groupWithUser = [];
+  let likedList = []
   groupList.forEach((group, index) => {
-    if (group.members && group.members.includes(req.session.email)) {
+    if(group.members && group.members.includes(req.session.email)) {
       groupWithUser.push(group.group_id);
     }
+
+    if(group.likes && group.likes.includes(req.session.email)){
+      likedList.push(group.group_id);
+    }
   })
-  console.log(groupWithUser)
+  console.log(likedList)
   res.send([groupList, req.session.email, groupWithUser]);
   connection.release();
+})
+
+Router.post('/like/:id', async(req, res) => {
+  if(req.session.loggedin) {
+    const groupId = req.params.id;
+    const connection = await (await pool).getConnection();
+    let groupInfo = await connection.query(`SELECT likes from groups where group_id = '${groupId}'`);
+    groupInfo = groupInfo[0];
+    console.log(groupInfo)
+    console.log(groupInfo.likes)
+    if(!groupInfo.likes ||!groupInfo.likes.includes(req.session.email)){
+      connection.query(`UPDATE groups SET likes = CASE
+      WHEN likes IS NULL THEN '${req.session.email}'
+      WHEN likes = '' THEN '${req.session.email}'
+      ELSE CONCAT(likes, ',', '${req.session.email}')
+      END
+      WHERE group_id = '${groupId}'`);
+      res.send({success: true, state: 'liked'})
+    } else {
+      connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email},', '')) WHERE group_id = '${groupId}'`);
+      connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
+      res.send({success: true, state: 'unliked'})
+    }
+    connection.release();
+  }
 })
 
 module.exports = Router;

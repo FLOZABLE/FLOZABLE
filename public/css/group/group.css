@@ -323,8 +323,10 @@ p.tags {
   flex-wrap: wrap;
   width: 80vw;
   left: 10vw;
+  border-radius: 10px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }
-.groups-container .group {
+.groups-container .group, .mygroup-container .group {
   font-family: 'Poppins', sans-serif;
   margin: 20px 0px;
   width: 300px;
@@ -332,14 +334,14 @@ p.tags {
   border-radius: 10px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
-.groups-container .group .group-inner {
+.group .group-inner {
   padding: 10px;
   height: 100%;
   text-align: center;
   position: relative;
 }
 
-.groups-container .group .subinfo {
+.group .subinfo {
   text-align: left;
   background-color: bisque;
   border-radius: 15px;
@@ -349,23 +351,48 @@ p.tags {
   position: absolute
 }
 
-.groups-container .group .explanation {
+.group .explanation {
   padding-top: 33px;
 }
 
-.groups-container .group .name {
+.group .name {
   font-size: 30px;
   padding: 20px;
   height: 30%;
 }
 
 
-.groups-container .group .middle {
+.group .middle {
   height: 50%;
   background-color: #fff;
   margin-bottom: 10px;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
   border-radius: 5px;
+}
+
+
+#style-7::-webkit-scrollbar-track
+{
+
+	background-color: transparent;
+	border-radius: 10px;
+}
+
+#style-7::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: transparent;
+}
+
+#style-7::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-image: -webkit-gradient(linear,
+									   left bottom,
+									   left top,
+									   color-stop(0.44, rgb(122,153,217)),
+									   color-stop(0.72, rgb(73,125,189)),
+									   color-stop(0.86, rgb(28,58,148)));
 }
 
 /* modal */
@@ -439,4 +466,24 @@ p.tags {
   bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.mygroup-container {
+  width: 80vw;
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-left: 10vw;
+  margin-bottom: 50px;
+  border-radius: 10px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+.mygroup-container .group {
+  display: inline-block;
+  margin: 0px 20px 20px 20px;
+  width: 300px !important;
+}
+
+.mygroup-container .title {
+  margin-left: 50px;
 }
