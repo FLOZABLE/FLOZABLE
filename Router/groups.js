@@ -210,11 +210,13 @@ Router.post('/like/:id', async(req, res) => {
       ELSE CONCAT(likes, ',', '${req.session.email}')
       END
       WHERE group_id = '${groupId}'`);
-      res.send({success: true, state: 'liked'})
+      res.send({success: 'liked'})
     } else {
-      connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email},', '')) WHERE group_id = '${groupId}'`);
-      connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
-      res.send({success: true, state: 'unliked'})
+      const query1 = await connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email},', '')) WHERE group_id = '${groupId}'`);
+      const query2 = await connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
+      /* if(query.affectedRows) */
+      console.log(query1.affectedRows, query2.affectedRows)
+      res.send({success:'unliked'})
     }
     connection.release();
   }
