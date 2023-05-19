@@ -204,20 +204,23 @@ Router.post('/like/:id', async(req, res) => {
     console.log(groupInfo)
     console.log(groupInfo.likes)
     if(!groupInfo.likes ||!groupInfo.likes.includes(req.session.email)){
-      const query1 = connection.query(`UPDATE groups SET likes = CASE
+      const query1 = await connection.query(`UPDATE groups SET likes = CASE
       WHEN likes IS NULL THEN '${req.session.email}'
       WHEN likes = '' THEN '${req.session.email}'
       ELSE CONCAT(likes, ',', '${req.session.email}')
       END
       WHERE group_id = '${groupId}'`);
-      res.send({state: 'liked'})
-      console.log(query1.affectedRows);
+      if(query1.affectedRows >= 1) {
+        res.send({state: 'liked'})
+      }
     } else if(groupInfo.likes && groupInfo.likes.includes(req.session.email)){
       const query1 = await connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email},', '')) WHERE group_id = '${groupId}'`);
       const query2 = await connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
       /* if(query.affectedRows) */
+      if(query1.affectedRows + query2.affectedRows >= 1) {
+        res.send({state:'unliked'})
+      }
       console.log(query1.affectedRows, query2.affectedRows);
-      res.send({state:'unliked'})
     } else {
       res.send({state: 'fail'})
     }
