@@ -153,7 +153,7 @@ function copyToClipboard(text) {
 
 (async() => {
   const startTime = performance.now();
-  let response = await fetch('/groups/bring-groups',
+  var response = await fetch('/groups/bring-groups',
   {
     method: 'post',
     headers: {
@@ -319,6 +319,7 @@ function addTag(e) {
       }
     }
     e.target.value = "";
+
   }
 }
 
