@@ -25,16 +25,35 @@ Router.get('/create', (req, res) => {
   }
 })
 
+Router.get('/:id', async(req, res) => {
+  const groupId = req.params.id;
+})
+
+Router.post('/create/retriveProgress', (req, res) => {
+  console.log(req.session)
+  res.send({ retrivedProgress: req.session.retrivedProgress });
+})
+
 Router.post('/create-validate', async (req, res) => {
-  /* if(!req.session.loggedin){
-    return res.redirect("/account");
-  } */
+  if (!req.session.loggedin) {
+    console.log('not logged in')
+    req.session.retrivedProgress = req.body;
+    return res.send({ success: false, reason: 'not loggedin' });
+  }
 
   function generateGroupId() {
-    const timestamp = Date.now();
-    const randomNum = Math.floor(Math.random() * 1000000);
-    return `${timestamp}-${randomNum}`;
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const length = 8;
+    let groupId = '';
+  
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      groupId += characters.charAt(randomIndex);
+    }
+  
+    return groupId;
   }
+  
 
   const connection = await (await pool).getConnection();
   let hashed = hashing(req.body['password']);
@@ -55,19 +74,22 @@ Router.post('/create-validate', async (req, res) => {
     color: group.color,
     goal_hr: group.goal_hr
   };
-  res.send(true);
 
-  connection.query(query, values, (error, results, fields) => {
-    if (error) throw error;
-    console.log(results);
-  });
-
-  connection.query(`UPDATE users SET groups = CASE
+  const query1 = await connection.query(query, values);
+  const query2 = await connection.query(`UPDATE users SET groups = CASE
   WHEN groups IS NULL THEN '${values.group_id}'
   WHEN groups = '' THEN '${values.group_id}'
   ELSE CONCAT(groups, ',', '${values.group_id}')
-END
-WHERE email = '${req.session.email}'`);
+  END
+  WHERE email = '${req.session.email}'`);
+  if (query1.affectedRows + query2.affectedRows >= 1) {
+    res.send({ success: true });
+    delete req.session.retrivedProgress;
+    req.session.save();
+    console.log(req.session, 'affected')
+  } else {
+    res.send({ success: false });
+  }
 
   connection.release();
 })
@@ -92,14 +114,14 @@ Router.post('/join/:id', async (req, res) => {
       let selectedGroup = await connection.query(`SELECT * FROM groups where group_id = '${groupId}'`);
       selectedGroup = selectedGroup[0];
       if (selectedGroup) {
-        if(selectedGroup.visibility == 'public') {
+        if (selectedGroup.visibility == 'public') {
           connection.query(`UPDATE users SET groups = CASE
           WHEN groups IS NULL THEN '${groupId}'
           WHEN groups = '' THEN '${groupId}'
           ELSE CONCAT(groups, ',', '${groupId}')
       END
       WHERE email = '${req.session.email}'`);
-  
+
           connection.query(`UPDATE groups SET members = CASE
           WHEN members IS NULL THEN '${req.session.email}'
           WHEN members = '' THEN '${req.session.email}'
@@ -108,14 +130,14 @@ Router.post('/join/:id', async (req, res) => {
       WHERE group_id = '${groupId}'`);
           console.log('inserted')
           res.send({ success: true })
-        } else if(crypto.pbkdf2Sync(req.body['group-pw'], selectedGroup.salt, 99097, 32, 'sha512').toString('hex') == selectedGroup.hashed_password){
+        } else if (crypto.pbkdf2Sync(req.body['group-pw'], selectedGroup.salt, 99097, 32, 'sha512').toString('hex') == selectedGroup.hashed_password) {
           connection.query(`UPDATE users SET groups = CASE
           WHEN groups IS NULL THEN '${groupId}'
           WHEN groups = '' THEN '${groupId}'
           ELSE CONCAT(groups, ',', '${groupId}')
       END
       WHERE email = '${req.session.email}'`);
-  
+
           connection.query(`UPDATE groups SET members = CASE
           WHEN members IS NULL THEN '${req.session.email}'
           WHEN members = '' THEN '${req.session.email}'
@@ -126,7 +148,7 @@ Router.post('/join/:id', async (req, res) => {
           res.send({ success: true })
         } else {
           console.log(req.body['group-pw'], selectedGroup.salt, crypto.pbkdf2Sync(req.body['group-pw'], selectedGroup.salt, 99097, 32, 'sha512').toString('hex'), selectedGroup.hashed_password)
-          res.send({success: false, reason: 'password wrong'})
+          res.send({ success: false, reason: 'password wrong' })
         }
       } else {
         res.send({ success: false, reason: 'no such room' })
@@ -182,11 +204,11 @@ Router.post('/bring-groups', async (req, res) => {
   let groupWithUser = [];
   let likedList = []
   groupList.forEach((group, index) => {
-    if(group.members && group.members.includes(req.session.email)) {
+    if (group.members && group.members.includes(req.session.email)) {
       groupWithUser.push(group.group_id);
     }
 
-    if(group.likes && group.likes.includes(req.session.email)){
+    if (group.likes && group.likes.includes(req.session.email)) {
       likedList.push(group.group_id);
     }
   })
@@ -195,34 +217,34 @@ Router.post('/bring-groups', async (req, res) => {
   connection.release();
 })
 
-Router.post('/like/:id', async(req, res) => {
-  if(req.session.loggedin) {
+Router.post('/like/:id', async (req, res) => {
+  if (req.session.loggedin) {
     const groupId = req.params.id;
     const connection = await (await pool).getConnection();
     let groupInfo = await connection.query(`SELECT likes from groups where group_id = '${groupId}'`);
     groupInfo = groupInfo[0];
     console.log(groupInfo)
     console.log(groupInfo.likes)
-    if(!groupInfo.likes ||!groupInfo.likes.includes(req.session.email)){
+    if (!groupInfo.likes || !groupInfo.likes.includes(req.session.email)) {
       const query1 = await connection.query(`UPDATE groups SET likes = CASE
       WHEN likes IS NULL THEN '${req.session.email}'
       WHEN likes = '' THEN '${req.session.email}'
       ELSE CONCAT(likes, ',', '${req.session.email}')
       END
       WHERE group_id = '${groupId}'`);
-      if(query1.affectedRows >= 1) {
-        res.send({state: 'liked'})
+      if (query1.affectedRows >= 1) {
+        res.send({ state: 'liked' })
       }
-    } else if(groupInfo.likes && groupInfo.likes.includes(req.session.email)){
+    } else if (groupInfo.likes && groupInfo.likes.includes(req.session.email)) {
       const query1 = await connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email},', '')) WHERE group_id = '${groupId}'`);
       const query2 = await connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
       /* if(query.affectedRows) */
-      if(query1.affectedRows + query2.affectedRows >= 1) {
-        res.send({state:'unliked'})
+      if (query1.affectedRows + query2.affectedRows >= 1) {
+        res.send({ state: 'unliked' })
       }
       console.log(query1.affectedRows, query2.affectedRows);
     } else {
-      res.send({state: 'fail'})
+      res.send({ state: 'fail' })
     }
     connection.release();
   }

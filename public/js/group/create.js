@@ -73,101 +73,21 @@ let animationInterval = setInterval(function() {
 });
 });
 
-const submitbtn = document.querySelector("button.submit");
-
-submitbtn.addEventListener("click", () => {
-  
-  const name = document.querySelector("input.name").value;
-  const explanation = document.querySelector("input.explanation").value;
-  const tags = []
-  const max_people = document.querySelector("input.max-people").value;
-  const visibility = document.querySelector("input.visibility:checked").value;
-  const password = document.querySelector("input.password").value;
-  const color = document.querySelector("input.color").value;
-  const goal = document.querySelector("input.goal").value;
-  console.log(name, explanation, tags, max_people, visibility, password);
-  document.querySelector("ul.tags").querySelectorAll("li").forEach((li) => tags.push(li.querySelector("p").innerText));
-  (async() => {
-    const response = await fetch('/groups/create-validate', {
-      method: 'post',
-      body: JSON.stringify({ name: name, explanation:explanation, tags:tags, max_people:max_people, visibility:visibility, password:password, color: color, goal_hr: goal }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    // handle the response as needed
-  })();
-});
-
 const public = document.querySelector("input#public");
 const private = document.querySelector("input#private");
-const password = document.querySelector("div#password");
+const passwordArea = document.querySelector("div#password");
 
 public.addEventListener('click', () => {
-  password.style = "display: none";
+  passwordArea.style = "display: none";
 })
 
 private.addEventListener('click', () => {
-  password.style = "display: block";
+  passwordArea.style = "display: block";
 })
 
 const ul = document.querySelector("ul.tags"),
   input = document.querySelector("input.tags"),
   tagNumb = document.querySelector(".details span");
-
-let maxTags = 10,
-  tags = [];
-
-countTags();
-createTag();
-
-function countTags() {
-  input.focus();
-  tagNumb.innerText = maxTags - tags.length;
-}
-
-function createTag() {
-  ul.querySelectorAll("li").forEach((li) => li.remove());
-  tags
-    .slice()
-    .reverse()
-    .forEach((tag) => {
-      let liTag = `<li><p class = "tags">${tag}</p> <i class="uit uit-multiply" onclick="remove(this, '${tag}')"></i></li>`;
-      ul.insertAdjacentHTML("afterbegin", liTag);
-    });
-  countTags();
-}
-
-function remove(element, tag) {
-  let index = tags.indexOf(tag);
-  tags = [...tags.slice(0, index), ...tags.slice(index + 1)];
-  element.parentElement.remove();
-  countTags();
-}
-
-function addTag(e) {
-  if (e.key == "Enter") {
-    let tag = e.target.value.replace(/\s+/g, " ");
-    if (tag.length > 1 && !tags.includes(tag)) {
-      if (tags.length < 10) {
-        tag.split(",").forEach((tag) => {
-          tags.push(tag);
-          createTag();
-        });
-      }
-    }
-    e.target.value = "";
-  }
-}
-
-input.addEventListener("keyup", addTag);
-
-const removeBtn = document.querySelector(".details button");
-removeBtn.addEventListener("click", () => {
-  tags.length = 0;
-  ul.querySelectorAll("li").forEach((li) => li.remove());
-  countTags();
-});
 
 
 const recommendedColors = [
@@ -207,4 +127,117 @@ colorSelector.value = recommendedColors[recommendedColorsIndex];
 colorDisplay.style = `color: ${recommendedColors[recommendedColorsIndex]}`;
 colorSelector.addEventListener('input', () => {
   colorDisplay.style = `color: ${colorSelector.value}`;
+});
+
+
+const submitbtn = document.querySelector("button.submit");
+const groupName = document.querySelector("input.name");
+const explanation = document.querySelector("input.explanation");
+const tags = []
+const max_people = document.querySelector("input.max-people");
+const password = document.querySelector("input.password");
+const color = document.querySelector("input.color");
+const goal = document.querySelector("input.goal");
+//check if there is data to retrive
+let Createtags = [];
+(async() => {
+  let response = await fetch('/groups/create/retriveProgress', {
+    method: 'post',
+    headers: {
+      'Content-type': 'application/json'
+    }
+  });
+  response = await response.json();
+
+  console.log(response, response.retrivedProgress);
+  if(response.retrivedProgress){
+    groupName.value = response.retrivedProgress.name;
+    explanation.value = response.retrivedProgress.explanation;
+    response.retrivedProgress.tags.forEach((tag) => Createtags.push(tag));
+    max_people.value = response.retrivedProgress.max_people;
+    if(response.retrivedProgress.visibility == 'private'){
+      document.querySelector("input.visibility#private").checked = true;
+      passwordArea.style = "display: block";
+    }
+    password.value = response.retrivedProgress.password
+    color.value = response.retrivedProgress.color;
+    colorDisplay.style = `color: ${response.retrivedProgress.color}`;
+    goal.value = response.retrivedProgress.goal_hr;
+  }
+  
+  let maxTags = 10;
+  
+  countTags();
+  createTag();
+  
+  function countTags() {
+    input.focus();
+    tagNumb.innerText = maxTags - Createtags.length;
+  }
+  
+  function createTag() {
+    ul.querySelectorAll("li").forEach((li) => li.remove());
+    Createtags
+      .slice()
+      .reverse()
+      .forEach((tag) => {
+        let liTag = `<li><p class = "tags">${tag}</p> <i class="uit uit-multiply" onclick="remove(this, '${tag}')"></i></li>`;
+        ul.insertAdjacentHTML("afterbegin", liTag);
+      });
+    countTags();
+  }
+  
+  function remove(element, tag) {
+    let index = Createtags.indexOf(tag);
+    Createtags = [...Createtags.slice(0, index), ...Createtags.slice(index + 1)];
+    element.parentElement.remove();
+    countTags();
+  }
+  
+  function addTag(e) {
+    if (e.key == "Enter") {
+      let tag = e.target.value.replace(/\s+/g, " ");
+      if (tag.length > 1 && !Createtags.includes(tag)) {
+        if (Createtags.length < 10) {
+          tag.split(",").forEach((tag) => {
+            Createtags.push(tag);
+            createTag();
+          });
+        }
+      }
+      e.target.value = "";
+    }
+  }
+  
+  input.addEventListener("keyup", addTag);
+  
+  const removeBtn = document.querySelector(".details button");
+  removeBtn.addEventListener("click", () => {
+    Createtags.length = 0;
+    ul.querySelectorAll("li").forEach((li) => li.remove());
+    countTags();
+  });
+})();
+
+submitbtn.addEventListener("click", () => {
+  const visibility = document.querySelector("input.visibility:checked").value;
+  console.log(groupName.value, explanation.value, tags.value, max_people.value, visibility, password.value);
+  document.querySelector("ul.tags").querySelectorAll("li").forEach((li) => tags.push(li.querySelector("p").innerText));
+  (async() => {
+    let response = await fetch('/groups/create-validate', {
+      method: 'post',
+      body: JSON.stringify({ name: groupName.value, explanation:explanation.value, tags:tags, max_people:max_people.value, visibility:visibility, password:password.value, color: color.value, goal_hr: goal.value }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    response = await response.json();
+    if(response.success == true){
+      console.log(response)
+    } else if(response.reason == 'not loggedin') {
+      let redirectUrl = window.location.protocol + '//' + window.location.hostname + '/account?redirect=groups/create';
+      window.location.href = redirectUrl;
+    }
+  })();
 });
