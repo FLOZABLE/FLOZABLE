@@ -120,7 +120,7 @@ const recommendedColors = [
   '#32425C',
 ];
 
-const recommendedColorsIndex = Math.floor(Math.random() * (recommendedColors.length));;
+const recommendedColorsIndex = Math.floor(Math.random() * (recommendedColors.length));
 const colorSelector = document.querySelector("input.color");
 const colorDisplay = document.querySelector(".fa-solid.fa-palette");
 colorSelector.value = recommendedColors[recommendedColorsIndex];
@@ -129,6 +129,10 @@ colorSelector.addEventListener('input', () => {
   colorDisplay.style = `color: ${colorSelector.value}`;
 });
 
+const randomFontIndex  = Math.floor(Math.random() * 13);
+const randomFont = document.querySelector(`.font-selection input#font-${randomFontIndex}`)
+console.log(randomFont, randomFontIndex);
+randomFont.checked = true;
 
 const submitbtn = document.querySelector("button.submit");
 const groupName = document.querySelector("input.name");
@@ -163,6 +167,7 @@ let Createtags = [];
     color.value = response.retrivedProgress.color;
     colorDisplay.style = `color: ${response.retrivedProgress.color}`;
     goal.value = response.retrivedProgress.goal_hr;
+    document.querySelector(`.font-selection input#font-${response.retrivedProgress.font}`).checked = true;
   }
   
   let maxTags = 10;
@@ -218,26 +223,41 @@ let Createtags = [];
     countTags();
   });
 })();
-
+const errModal = document.querySelector('.err-modal');
+const mainContainer = document.querySelector('.main.container');
+const errModalCloseBtn = errModal.querySelector('.close-btn');
 submitbtn.addEventListener("click", () => {
   const visibility = document.querySelector("input.visibility:checked").value;
-  console.log(groupName.value, explanation.value, tags.value, max_people.value, visibility, password.value);
+  const font = document.querySelector(".font-selection input:checked").value;
+
   document.querySelector("ul.tags").querySelectorAll("li").forEach((li) => tags.push(li.querySelector("p").innerText));
   (async() => {
     let response = await fetch('/groups/create-validate', {
       method: 'post',
-      body: JSON.stringify({ name: groupName.value, explanation:explanation.value, tags:tags, max_people:max_people.value, visibility:visibility, password:password.value, color: color.value, goal_hr: goal.value }),
+      body: JSON.stringify({ name: groupName.value, explanation:explanation.value, tags:tags, max_people:max_people.value, visibility:visibility, password:password.value, color: color.value, goal_hr: goal.value, font: font }),
       headers: {
         'Content-Type': 'application/json'
       }
     })
 
     response = await response.json();
+    console.log(response.reason, response)
     if(response.success == true){
-      console.log(response)
+      let redirectUrl = window.location.protocol + '//' + window.location.hostname + '/groups';
+      window.location.href = redirectUrl;
     } else if(response.reason == 'not loggedin') {
       let redirectUrl = window.location.protocol + '//' + window.location.hostname + '/account?redirect=groups/create';
       window.location.href = redirectUrl;
+    } else if(response.reason == 'err'){
+      errModal.style = 'display: block';
+      errModal.querySelector('.textcontainer').innerHTML = `<p>${response.msg}</p>`;
+      console.log('err', response.msg)
+      mainContainer.classList.add('blur');
     }
   })();
 });
+
+errModalCloseBtn.addEventListener('click', () => {
+  mainContainer.classList.remove('blur');
+  errModal.style = 'display: none'
+})

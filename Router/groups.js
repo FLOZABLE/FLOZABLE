@@ -58,6 +58,11 @@ Router.post('/create-validate', async (req, res) => {
   const connection = await (await pool).getConnection();
   let hashed = hashing(req.body['password']);
   let group = req.body;
+  if(!group.name || !group.explanation){
+    console.log('null');
+    res.send({success: false, reason: 'err', msg: 'Fill out the form'})
+    return 0
+  }
   const query = 'INSERT INTO groups SET ?';
   const values = {
     name: group.name,
@@ -72,7 +77,8 @@ Router.post('/create-validate', async (req, res) => {
     leader: req.session.email,
     members: req.session.email,
     color: group.color,
-    goal_hr: group.goal_hr
+    goal_hr: group.goal_hr,
+    font: group.font
   };
 
   const query1 = await connection.query(query, values);
@@ -200,7 +206,7 @@ Router.post('/leave/:id', async (req, res) => {
 
 Router.post('/bring-groups', async (req, res) => {
   const connection = await (await pool).getConnection();
-  const groupList = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM GROUPS");
+  const groupList = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM GROUPS");
   let groupWithUser = [];
   let likedList = []
   groupList.forEach((group, index) => {

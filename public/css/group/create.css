@@ -484,3 +484,174 @@ input[type="color"]::-webkit-color-swatch::after {
 .fa-solid.fa-palette {
   font-size: 40px;
 }
+
+.filter-switch label {
+  cursor: pointer;
+}
+.filter-switch-item input:checked + label {
+  color: inherit;
+}
+.filter-switch-item input:not(:checked) + label {
+  --bg-opacity: 0;
+  box-shadow: none;
+}
+
+
+.font-selection form {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.font-selection label {
+  display: flex;
+  cursor: pointer;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 0.375em;
+  display: inline-block
+  /* Accessible outline */
+  /* Remove comment to use */
+  /*
+  	&:focus-within {
+  			outline: .125em solid $primary-color;
+  	}
+  */
+}
+.font-selection label input {
+  position: absolute;
+  left: -9999px;
+}
+.font-selection label input:checked + span {
+  background-color: #d6d6e5;
+}
+.font-selection label input:checked + span:before {
+  box-shadow: inset 0 0 0 0.4375em #00005c;
+}
+.font-selection label span {
+  display: flex;
+  align-items: center;
+  padding: 0.375em 0.75em 0.375em 0.375em;
+  border-radius: 99em;
+  transition: 0.25s ease;
+}
+.font-selection label span:hover {
+  background-color: #d6d6e5;
+}
+.font-selection label span:before {
+  display: flex;
+  flex-shrink: 0;
+  content: "";
+  background-color: #fff;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  margin-right: 0.375em;
+  transition: 0.25s ease;
+  box-shadow: inset 0 0 0 0.125em #00005c;
+}
+
+.font-selection.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.font-selection span {
+  font-size: 23px;
+}
+.font-selection .font-0 {
+  font-family: 'Lobster', cursive;
+}
+
+.font-selection .font-1 {
+  font-family: 'Pangolin', cursive;
+}
+
+.font-selection .font-2 {
+  font-family: 'IM Fell English SC', serif;
+}
+
+.font-selection .font-3 {
+  font-family: 'Mogra', cursive;
+}
+
+.font-selection .font-4 {
+  font-family: 'Shadows Into Light', cursive;
+}
+
+.font-selection .font-5 {
+  font-family: 'Great Vibes', cursive;
+}
+
+.font-selection .font-6 {
+  font-family: 'Concert One', cursive;
+}
+
+
+
+
+.font-selection .font-7 {
+  font-family: 'Sedgwick Ave', cursive;
+}
+
+.font-selection .font-8 {
+  font-family: 'Bungee Shade', cursive;
+}
+
+.font-selection .font-9 {
+  font-family: 'Sansita Swashed', cursive;
+}
+
+.font-selection .font-10 {
+  font-family: 'Pirata One', cursive;
+}
+
+.font-selection .font-11 {
+  font-family: 'Limelight', cursive;
+}
+
+.font-selection .font-12 {
+  font-family: 'Sigmar One', cursive;
+}
+.err-modal {
+  z-index: 4;
+  width: 350px;
+  height: 100px;
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #dfdfdf;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+.err-modal .textcontainer {
+  position: absolute;
+  color: red;
+  top: 50%;
+  left: 50%;
+  font-weight: 400;
+  transform: translate(-50%, -50%);
+}
+
+.err-modal .textcontainer p {
+  font-size: 25px;
+  white-space: nowrap;
+  line-height: normal;
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Bungee Shade', cursive;
+  color: red;
+}
+
+.err-modal .close-btn {
+  float: right;
+}
+
+.blur {
+  filter: blur(5px);
+}

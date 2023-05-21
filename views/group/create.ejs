@@ -9,8 +9,21 @@
         <link rel="stylesheet" href="../css/group/create.css">
         <script class="u-script" type="text/javascript" src="../js/main.js" defer=""></script>
         <meta name="referrer" content="origin">
-        <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
-        <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|Montserrat:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pangolin&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Mogra&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Sedgwick+Ave&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Sansita+Swashed&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Limelight&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Sigmar+One&display=swap" rel="stylesheet">
         <meta name="theme-color" content="#478ac9">
         <script defer src = "../js/group/create.js"></script>
         <script src="https://kit.fontawesome.com/12bf9cc698.js" crossorigin="anonymous"></script>
@@ -20,9 +33,9 @@
       <%- include("../elements/header");%>
       <!-- multistep form -->
 
-      <div class="container">
+      <div class="main container">
         <div class="row">
-          <h4>Account</h4>
+          <h4>Create your group!</h4>
           <div class="input-group input-group-icon">
             <input type="text" placeholder="Group Name" class = "name"/>
             <div class="input-icon"><i class="fa-solid fa-signature"></i></div>
@@ -91,6 +104,64 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="container font-selection">
+            <form>
+              <label>
+                <input type="radio" name="font" id = "font-0"value = "0"/>
+                <span class = "font-0">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-1" value = "1"/>
+                <span class = "font-1">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-2" value = "2"/>
+                <span class = "font-2">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-3" value = "3"/>
+                <span class = "font-3">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-4" value = "4"/>
+                <span class = "font-4">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-5" value = "5"/>
+                <span class = "font-5">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-6" value = "6"/>
+                <span class = "font-6">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-7" value = "7"/>
+                <span class = "font-7">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-8" value = "8"/>
+                <span class = "font-8">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-9" value = "9"/>
+                <span class = "font-9">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-10" value = "10"/>
+                <span class = "font-10">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-11" value = "11"/>
+                <span class = "font-11">ABCDE</span>
+              </label>
+              <label>
+                <input type="radio" name="font" id = "font-12" value = "12"/>
+                <span class = "font-12">ABCDE</span>
+              </label>
+            </form>
+          </div>
+        </div>
         <!-- <div class="row">
           <h4>Payment Details</h4>
           <div class="input-group">
@@ -143,6 +214,16 @@
               </span>
             </button>
           </div>
+        </div>
+      </div>
+      <div class="err-modal">
+        <div class="close-btn">
+          <span class="material-symbols-outlined">
+            close
+          </span>
+        </div>
+        <div class="textcontainer">
+
         </div>
       </div>
     </body>
