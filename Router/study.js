@@ -58,6 +58,10 @@ Router.post('/add-subject', async(req, res) => {
 });
 
 Router.post('/start', async(req, res) => {
+  const io = req.app.get('socketio');
+
+  const groupId = 'my-group';
+  io.to(groupId).emit('message', { text: 'Hello group!' });
   const connection = await (await pool).getConnection();
   const index = req.body.index;
   const selectQuery = "SELECT subjects FROM users WHERE email = ?";
