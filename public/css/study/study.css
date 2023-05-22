@@ -1,3 +1,60 @@
+
+.mainviewer-container .viewer-selection {
+  width: 100%;
+  text-align: right;
+}
+
+.mainviewer-container .mainviewer {
+  height: 100vh;
+}
+
+swiper-container {
+  width: 80%;
+  margin-left: 10%;
+  height: 100vh;
+}
+
+swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+}
+
+swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+}
+
+.groups .group-name {
+  font-size: 30px;
+}
+
+.mainviewer-container {
+  margin-top: 50px;
+  width: 100%;
+  height: 80vh;
+  position: relative;
+}
+
+.members ul {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.members ul li {
+  list-style: none;
+  display: inline-block;
+  margin: 10px;
+  width: 200px;
+  background-color: #999;
+  border-radius: 10px;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+}
+
+
 .timer {
   position: fixed;
   left: 20px;
@@ -663,15 +720,3 @@ a:hover {
   line-height: 20px;
   padding: 0 8px;
 }
-
-.mainviewer-container {
-  width: 100%;
-  height: 100vh;
-  position: relative;
-}
-
-.mainviewer-container .viewer-selection {
-  width: 100%;
-  text-align: right;
-}
-

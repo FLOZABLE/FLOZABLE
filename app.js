@@ -47,7 +47,10 @@ const cspOptions = {
 }
 
 app.use(helmet.contentSecurityPolicy(cspOptions))  */
-
+io.on('connection', (socket) => {
+  const groupId = 'my-group';
+  socket.join(groupId);
+})
 const mainRouter = require("./Router/main");
 const emailRouter = require("./Router/email");
 const accountRouter = require("./Router/account");
