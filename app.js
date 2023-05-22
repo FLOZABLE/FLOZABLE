@@ -48,8 +48,15 @@ const cspOptions = {
 
 app.use(helmet.contentSecurityPolicy(cspOptions))  */
 io.on('connection', (socket) => {
-  const groupId = 'my-group';
-  socket.join(groupId);
+  socket.on('joinRoom', (room, email) => {
+    socket.join(room); // Join the specified room
+    console.log(`User joined room: ${room}`);
+    console.log(email, room)
+  });
+
+  socket.on('timerStarted', (socketRooms, email) => {
+    socket.to(socketRooms).emit('timerStarted', email);
+  })
 })
 const mainRouter = require("./Router/main");
 const emailRouter = require("./Router/email");

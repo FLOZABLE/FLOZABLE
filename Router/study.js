@@ -58,22 +58,25 @@ Router.post('/add-subject', async(req, res) => {
 });
 
 Router.post('/start', async(req, res) => {
+  if(req.session.loggedin != true){
+    return res.send({success: false, reason: 'not auth'});
+  }
   const io = req.app.get('socketio');
-
-  const groupId = 'my-group';
-  io.to(groupId).emit('message', { text: 'Hello group!' });
+  const socket = io.of('timerToggle');
   const connection = await (await pool).getConnection();
   const index = req.body.index;
-  const selectQuery = "SELECT subjects FROM users WHERE email = ?";
+  const selectQuery = "SELECT subjects, groups FROM users WHERE email = ?";
   const selectParams = [req.session.email];
   const select = await connection.query(selectQuery, selectParams);
   const subjects = JSON.parse(select[0].subjects || "[]");
+  const groups = select[0].groups ? select[0].groups.split(",") : [];
+  console.log(groups)
   subjects[index].timeline.push([new Date().getTime()]);
   //subjects[index].stop = null;
   const updatedJson = JSON.stringify(subjects);
   console.log(subjects);
   const update = await connection.query( "UPDATE users SET subjects = ? WHERE email = ?", [updatedJson,req.session.email]);
-
+  socket.to(groups).emit('studying', req.session.email);
   connection.release();
 })
 
