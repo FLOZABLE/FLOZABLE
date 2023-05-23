@@ -133,9 +133,13 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
   const startTime = new Date().setHours(0, 0, 0, 0);
   const endTime = new Date().setHours(23, 59, 59, 999);
   for (let i = 0; i < subjects.length; i++) {
-    const time = subjects[i].today;
+    const time = subjects[i].today * 1000;
+    const datumPoint = subjects[i].datum_point;
     const filteredTimeline = subjects[i].timeline.filter(period => {
-      const [start, end] = period;
+      let [start, end] = period;
+      start = 1000 * (start + datumPoint);
+      end = 1000 * (end + datumPoint);
+      console.log(start, end);
       return start >= startTime && end <= endTime;
     });
     timers.push({
