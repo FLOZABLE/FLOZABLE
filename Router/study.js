@@ -62,7 +62,6 @@ Router.post('/start', async(req, res) => {
     return res.send({success: false, reason: 'not auth'});
   }
   const io = req.app.get('socketio');
-  const socket = io.of('timerToggle');
   const connection = await (await pool).getConnection();
   const index = req.body.index;
   const selectQuery = "SELECT subjects, groups FROM users WHERE email = ?";
@@ -74,10 +73,10 @@ Router.post('/start', async(req, res) => {
   subjects[index].timeline.push([new Date().getTime()]);
   //subjects[index].stop = null;
   const updatedJson = JSON.stringify(subjects);
-  console.log(subjects);
   const update = await connection.query( "UPDATE users SET subjects = ? WHERE email = ?", [updatedJson,req.session.email]);
-  socket.to(groups).emit('studying', req.session.email);
+  groups.length != 0 && io.to(groups).emit('studying', req.session.email);
   connection.release();
+  res.send({success: true})
 })
 
 Router.post('/stop', async(req, res) => {
@@ -89,11 +88,9 @@ Router.post('/stop', async(req, res) => {
   const subjects = JSON.parse(select[0].subjects || "[]");
   subjects[index].timeline[subjects[index].timeline.length - 1].push(new Date().getTime());
   subjects[index].today = subjects[index].today + subjects[index].timeline[subjects[index].timeline.length - 1][1] - subjects[index].timeline[subjects[index].timeline.length - 1][0];
-  console.log(subjects[index].timeline[subjects[index].timeline.length - 1][0])
   subjects[index].total = subjects[index].total + subjects[index].today;
   //subjects[index].start = null
   const updatedJson = JSON.stringify(subjects);
-  console.log(subjects);
   const update = await connection.query( "UPDATE users SET subjects = ? WHERE email = ?", [updatedJson,req.session.email]);
 
   connection.release();
