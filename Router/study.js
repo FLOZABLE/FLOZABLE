@@ -36,6 +36,7 @@ Router.post('/add-subject', async(req, res) => {
     const subject = req.body;
     subject.today = 0;
     subject.total = 0;
+    subject.datum_point = new Date().getTime();
     subject.timeline = [];
     const selectQuery = "SELECT subjects FROM users WHERE email = ?";
     const selectParams = [req.session.email];
@@ -66,11 +67,16 @@ Router.post('/start', async(req, res) => {
   const index = req.body.index;
   const selectQuery = "SELECT subjects, groups FROM users WHERE email = ?";
   const selectParams = [req.session.email];
-  const select = await connection.query(selectQuery, selectParams);
-  const subjects = JSON.parse(select[0].subjects || "[]");
-  const groups = select[0].groups ? select[0].groups.split(",") : [];
-  console.log(groups)
-  subjects[index].timeline.push([new Date().getTime()]);
+  let select = await connection.query(selectQuery, selectParams);
+  select = select[0];
+  const subjects = JSON.parse(select.subjects || "[]");
+  const groups = select.groups ? select.groups.split(",") : [];
+  const startTime = new Date().getTime();
+  const previousTimeline = subjects[index].timeline[subjects[index].timeline.length - 1];
+  const datumPoint = previousTimeline ? previousTimeline[1]: subjects[index].datum_point;
+  console.log(startTime, datumPoint)
+  subjects[index].timeline.push([startTime - datumPoint]);
+  console.log(subjects[index].timeline[subjects[index].timeline.length - 1]);
   //subjects[index].stop = null;
   const updatedJson = JSON.stringify(subjects);
   const update = await connection.query( "UPDATE users SET subjects = ? WHERE email = ?", [updatedJson,req.session.email]);
@@ -84,9 +90,13 @@ Router.post('/stop', async(req, res) => {
   const index = req.body.index;
   const selectQuery = "SELECT subjects FROM users WHERE email = ?";
   const selectParams = [req.session.email];
-  const select = await connection.query(selectQuery, selectParams);
-  const subjects = JSON.parse(select[0].subjects || "[]");
-  subjects[index].timeline[subjects[index].timeline.length - 1].push(new Date().getTime());
+  let select = await connection.query(selectQuery, selectParams);
+  select = select[0];
+  const subjects = JSON.parse(select.subjects || "[]");
+  const stopTime = new Date().getTime();
+  const previousTimeline = subjects[index].timeline[subjects[index].timeline.length - 1];
+  const datumPoint = previousTimeline[1] ? previousTimeline[1]: subjects[index].datum_point;
+  subjects[index].timeline[subjects[index].timeline.length - 1].push(stopTime - datumPoint);
   subjects[index].today = subjects[index].today + subjects[index].timeline[subjects[index].timeline.length - 1][1] - subjects[index].timeline[subjects[index].timeline.length - 1][0];
   subjects[index].total = subjects[index].total + subjects[index].today;
   //subjects[index].start = null
