@@ -138,7 +138,6 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
       const [start, end] = period;
       return start >= startTime && end <= endTime;
     });
-    console.log(startTime, endTime, filteredTimeline)
     timers.push({
       hundredth: 0,
       seconds: Math.floor((time / 1000) % 60),
@@ -164,8 +163,6 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
     document.querySelector(".modal-ask-subject .container .wrapper-1").appendChild(label);
     for (let j = 0; j < filteredTimeline.length; j++) {
       const diffTime = new Date(filteredTimeline[j][1]) - new Date(filteredTimeline[j][0]);
-      console.log(diffTime)
-      console.log(`${Math.floor(diffTime / 1000 / 60 / 60)} hr ${Math.floor((diffTime / 1000 / 60)) % 60} min ${Math.floor((diffTime / 1000) % 60)} sec`)
       data.push({
         name: timers[i].name,
         start: new Date(filteredTimeline[j][0]).getTime(),
@@ -188,7 +185,6 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
       }
     })(i));
   }
-  console.log(data)
   var dropArea = document.getElementsByClassName(".timer .container");
   var currPosY = -1,
     origPosY = -1;
@@ -309,7 +305,6 @@ var socketRooms = [];
   email = response[1];
   const groupWithUser = response[2];
 
-  console.log(groupWithUser);
   groupList.forEach((group) => {
     if(groupWithUser.includes(group.group_id)){
       socketRooms.push(group.group_id);
@@ -374,14 +369,12 @@ function toggleTimer(index) {
     const activatedBtn = document.querySelector(`#drag-item-${index}`);
     const subjectContainer = document.querySelector(".timer .container");
     subjectContainer.insertBefore(activatedBtn, subjectContainer.firstChild);
-    console.log(subjectContainer.firstChild);
     /* activatedBtn.style.top = subjectContainer.offsetTop - activatedBtn.offsetTop + "px";
     activatedBtn.classList.add('move-top'); */
     const subjects = document.querySelectorAll('.SW');
     for (let i = 0; i < subjects.length; i++) {
       if (timers[i].run == true && i != index) {
         toggleTimer(i);
-        console.log(timers[i], timers[i].run);
       }
     }
 
