@@ -8,6 +8,19 @@ function hashing(password) {
   return [salt, crypto.pbkdf2Sync(password, salt, 99097, 32, 'sha512').toString('hex')]
 }
 
+function generateId() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const length = 8;
+  let groupId = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    groupId += characters.charAt(randomIndex);
+  }
+
+  return groupId;
+}
+
 Router.get('/', (req, res) => {
   if(req.session.loggedin == true){
     res.render("account/account", {loggedin: "true"});
@@ -98,6 +111,7 @@ Router.post('/signup-authentication', async (req, res, next) => {
       email: email,
       hashed_password: hashed[1],
       salt: hashed[0],
+      user_id: 
     }
     connection.query('INSERT INTO users SET ?', user);
     req.session.email = email;

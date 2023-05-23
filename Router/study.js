@@ -36,7 +36,7 @@ Router.post('/add-subject', async(req, res) => {
     const subject = req.body;
     subject.today = 0;
     subject.total = 0;
-    subject.datum_point = new Date().getTime();
+    subject.datum_point = Math.floor(new Date().getTime() / 1000);
     subject.timeline = [];
     const selectQuery = "SELECT subjects FROM users WHERE email = ?";
     const selectParams = [req.session.email];
@@ -71,11 +71,11 @@ Router.post('/start', async(req, res) => {
   select = select[0];
   const subjects = JSON.parse(select.subjects || "[]");
   const groups = select.groups ? select.groups.split(",") : [];
-  const startTime = new Date().getTime();
+  const startTime = Math.floor(new Date().getTime() / 1000);
   const previousTimeline = subjects[index].timeline[subjects[index].timeline.length - 1];
-  const datumPoint = previousTimeline ? previousTimeline[1]: subjects[index].datum_point;
-  console.log(startTime, datumPoint)
-  subjects[index].timeline.push([startTime - datumPoint]);
+  const storedTime = startTime - subjects[index].datum_point;
+  console.log(startTime, storedTime)
+  subjects[index].timeline.push([storedTime]);
   console.log(subjects[index].timeline[subjects[index].timeline.length - 1]);
   //subjects[index].stop = null;
   const updatedJson = JSON.stringify(subjects);
@@ -86,6 +86,9 @@ Router.post('/start', async(req, res) => {
 })
 
 Router.post('/stop', async(req, res) => {
+  if(req.session.loggedin != true){
+    return res.send({success: false, reason: 'not auth'});
+  }
   const connection = await (await pool).getConnection();
   const index = req.body.index;
   const selectQuery = "SELECT subjects FROM users WHERE email = ?";
@@ -93,16 +96,17 @@ Router.post('/stop', async(req, res) => {
   let select = await connection.query(selectQuery, selectParams);
   select = select[0];
   const subjects = JSON.parse(select.subjects || "[]");
-  const stopTime = new Date().getTime();
+  const stopTime = Math.floor(new Date().getTime() / 1000);
   const previousTimeline = subjects[index].timeline[subjects[index].timeline.length - 1];
-  const datumPoint = previousTimeline[1] ? previousTimeline[1]: subjects[index].datum_point;
-  subjects[index].timeline[subjects[index].timeline.length - 1].push(stopTime - datumPoint);
+  const storedTime = stopTime - subjects[index].datum_point;
+  console.log(storedTime, stopTime, subjects[index].datum_point)
+  subjects[index].timeline[subjects[index].timeline.length - 1].push(storedTime);
   subjects[index].today = subjects[index].today + subjects[index].timeline[subjects[index].timeline.length - 1][1] - subjects[index].timeline[subjects[index].timeline.length - 1][0];
   subjects[index].total = subjects[index].total + subjects[index].today;
   //subjects[index].start = null
   const updatedJson = JSON.stringify(subjects);
   const update = await connection.query( "UPDATE users SET subjects = ? WHERE email = ?", [updatedJson,req.session.email]);
-
+  res.send({success: true})
   connection.release();
 })
 
