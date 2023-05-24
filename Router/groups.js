@@ -9,6 +9,20 @@ function hashing(password) {
   return [salt, crypto.pbkdf2Sync(password, salt, 99097, 32, 'sha512').toString('hex')]
 }
 
+function generateGroupId() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const length = 8;
+  let groupId = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    groupId += characters.charAt(randomIndex);
+  }
+
+  return groupId;
+}
+
+
 Router.get("/", async (req, res) => {
   if (req.session.loggedin == true) {
     res.render("group/groups", { loggedin: true });
@@ -41,20 +55,6 @@ Router.post('/create-validate', async (req, res) => {
     return res.send({ success: false, reason: 'not loggedin' });
   }
 
-  function generateGroupId() {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const length = 8;
-    let groupId = '';
-  
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      groupId += characters.charAt(randomIndex);
-    }
-  
-    return groupId;
-  }
-  
-
   const connection = await (await pool).getConnection();
   let hashed = hashing(req.body['password']);
   let group = req.body;
@@ -63,6 +63,7 @@ Router.post('/create-validate', async (req, res) => {
     res.send({success: false, reason: 'err', msg: 'Fill out the form'})
     return 0
   }
+
   const query = 'INSERT INTO groups SET ?';
   const values = {
     name: group.name,
@@ -74,8 +75,8 @@ Router.post('/create-validate', async (req, res) => {
     salt: hashed[0],
     date: new Date().getTime(),
     group_id: generateGroupId(),
-    leader: req.session.email,
-    members: req.session.email,
+    leader: req.session.user_id,
+    members: JSON.stringify([req.session.user_id, req.session.name]),
     color: group.color,
     goal_hr: group.goal_hr,
     font: group.font
@@ -87,7 +88,7 @@ Router.post('/create-validate', async (req, res) => {
   WHEN groups = '' THEN '${values.group_id}'
   ELSE CONCAT(groups, ',', '${values.group_id}')
   END
-  WHERE email = '${req.session.email}'`);
+  WHERE user_id = '${req.session.user_id}'`);
   if (query1.affectedRows + query2.affectedRows >= 1) {
     res.send({ success: true });
     delete req.session.retrivedProgress;
@@ -104,8 +105,8 @@ Router.post('/join/:id', async (req, res) => {
   const sessionDataHeader = req.headers['x-session-data'];
   if (sessionDataHeader) {
     const sessionData = JSON.parse(sessionDataHeader);
-    if (sessionData.email && sessionData.loggedin) {
-      req.session.email = sessionData.email;
+    if (sessionData.user_id && sessionData.loggedin) {
+      req.session.user_id = sessionData.user_id;
       req.session.loggedin = sessionData.loggedin;
     }
   }
@@ -113,10 +114,10 @@ Router.post('/join/:id', async (req, res) => {
   if (req.session.loggedin == true) {
     const groupId = req.params.id;
     const connection = await (await pool).getConnection();
-    let userInfo = await connection.query("SELECT groups from users where email = ?", [req.session.email]);
+    let userInfo = await connection.query("SELECT groups from users where user_id = ?", [req.session.user_id]);
     //userInfo = JSON.parse(userInfo);
     userInfo = userInfo[0];
-    if (!userInfo.groups.includes(groupId)) {
+    if (!userInfo.grouos || !userInfo.groups.includes(groupId)) {
       let selectedGroup = await connection.query(`SELECT * FROM groups where group_id = '${groupId}'`);
       selectedGroup = selectedGroup[0];
       if (selectedGroup) {
@@ -126,12 +127,12 @@ Router.post('/join/:id', async (req, res) => {
           WHEN groups = '' THEN '${groupId}'
           ELSE CONCAT(groups, ',', '${groupId}')
       END
-      WHERE email = '${req.session.email}'`);
+      WHERE user_id = '${req.session.user_id}'`);
 
           connection.query(`UPDATE groups SET members = CASE
-          WHEN members IS NULL THEN '${req.session.email}'
-          WHEN members = '' THEN '${req.session.email}'
-          ELSE CONCAT(members, ',', '${req.session.email}')
+          WHEN members IS NULL THEN '${JSON.stringify([req.session.user_id, req.session.name])}'
+          WHEN members = '' THEN '${JSON.stringify([req.session.user_id, req.session.name])}'
+          ELSE CONCAT(members, ',', '${JSON.stringify([req.session.user_id, req.session.name])}')
       END
       WHERE group_id = '${groupId}'`);
           console.log('inserted')
@@ -142,12 +143,12 @@ Router.post('/join/:id', async (req, res) => {
           WHEN groups = '' THEN '${groupId}'
           ELSE CONCAT(groups, ',', '${groupId}')
       END
-      WHERE email = '${req.session.email}'`);
+      WHERE user_id = '${req.session.user_id}'`);
 
           connection.query(`UPDATE groups SET members = CASE
-          WHEN members IS NULL THEN '${req.session.email}'
-          WHEN members = '' THEN '${req.session.email}'
-          ELSE CONCAT(members, ',', '${req.session.email}')
+          WHEN members IS NULL THEN '${req.session.user_id}'
+          WHEN members = '' THEN '${req.session.user_id}'
+          ELSE CONCAT(members, ',', '${req.session.user_id}')
       END
       WHERE group_id = '${groupId}'`);
           console.log('inserted')
@@ -174,8 +175,8 @@ Router.post('/leave/:id', async (req, res) => {
   /*   const sessionDataHeader = req.headers['x-session-data'];
     if (sessionDataHeader) {
       const sessionData = JSON.parse(sessionDataHeader);
-      if (sessionData.email && sessionData.loggedin) {
-        req.session.email = sessionData.email;
+      if (sessionData.user_id && sessionData.loggedin) {
+        req.session.user_id = sessionData.user_id;
         req.session.loggedin = sessionData.loggedin;
       }
     } */
@@ -184,15 +185,15 @@ Router.post('/leave/:id', async (req, res) => {
     const groupId = req.params.id;
     console.log(groupId)
     const connection = await (await pool).getConnection();
-    let userInfo = await connection.query("SELECT groups from users where email = ?", [req.session.email]);
+    let userInfo = await connection.query("SELECT groups from users where user_id = ?", [req.session.user_id]);
     //userInfo = JSON.parse(userInfo);
     userInfo = userInfo[0];
     console.log([userInfo.groups].includes(groupId), [userInfo.groups], groupId)
     if (userInfo.groups.includes(groupId)) {
-      connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId},', '')) WHERE email = '${req.session.email}'`);
-      connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId}', '')) WHERE email = '${req.session.email}'`);
-      connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.email},', '')) WHERE group_id = '${groupId}'`);
-      connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
+      connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId},', '')) WHERE user_id = '${req.session.user_id}'`);
+      connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId}', '')) WHERE user_id = '${req.session.user_id}'`);
+      connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.user_id},', '')) WHERE group_id = '${groupId}'`);
+      connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.user_id}', '')) WHERE group_id = '${groupId}'`);
       res.send({ success: true })
       connection.release()
     } else {
@@ -210,16 +211,16 @@ Router.post('/bring-groups', async (req, res) => {
   let groupWithUser = [];
   let likedList = []
   groupList.forEach((group, index) => {
-    if (group.members && group.members.includes(req.session.email)) {
+    if (group.members && group.members.includes(req.session.user_id)) {
       groupWithUser.push(group.group_id);
     }
 
-    if (group.likes && group.likes.includes(req.session.email)) {
+    if (group.likes && group.likes.includes(req.session.user_id)) {
       likedList.push(group.group_id);
     }
   })
   console.log(likedList)
-  res.send([groupList, req.session.email, groupWithUser]);
+  res.send([groupList, req.session.user_id, groupWithUser]);
   connection.release();
 })
 
@@ -231,19 +232,19 @@ Router.post('/like/:id', async (req, res) => {
     groupInfo = groupInfo[0];
     console.log(groupInfo)
     console.log(groupInfo.likes)
-    if (!groupInfo.likes || !groupInfo.likes.includes(req.session.email)) {
+    if (!groupInfo.likes || !groupInfo.likes.includes(req.session.user_id)) {
       const query1 = await connection.query(`UPDATE groups SET likes = CASE
-      WHEN likes IS NULL THEN '${req.session.email}'
-      WHEN likes = '' THEN '${req.session.email}'
-      ELSE CONCAT(likes, ',', '${req.session.email}')
+      WHEN likes IS NULL THEN '${req.session.user_id}'
+      WHEN likes = '' THEN '${req.session.user_id}'
+      ELSE CONCAT(likes, ',', '${req.session.user_id}')
       END
       WHERE group_id = '${groupId}'`);
       if (query1.affectedRows >= 1) {
         res.send({ state: 'liked' })
       }
-    } else if (groupInfo.likes && groupInfo.likes.includes(req.session.email)) {
-      const query1 = await connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email},', '')) WHERE group_id = '${groupId}'`);
-      const query2 = await connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.email}', '')) WHERE group_id = '${groupId}'`);
+    } else if (groupInfo.likes && groupInfo.likes.includes(req.session.user_id)) {
+      const query1 = await connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.user_id},', '')) WHERE group_id = '${groupId}'`);
+      const query2 = await connection.query(`UPDATE groups set likes = CONCAT_WS(',', REPLACE(likes, '${req.session.user_id}', '')) WHERE group_id = '${groupId}'`);
       /* if(query.affectedRows) */
       if (query1.affectedRows + query2.affectedRows >= 1) {
         res.send({ state: 'unliked' })

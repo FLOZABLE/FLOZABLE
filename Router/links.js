@@ -9,7 +9,7 @@ Router.get('/join/:id', async(req, res) => {
   const groupId = req.params.id;
   if(req.session.loggedin == true){
     const sessionData = {
-      email: req.session.email,
+      group_id: req.session.group_id,
       loggedin: req.session.loggedin,
     };
     

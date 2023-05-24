@@ -10,7 +10,7 @@ function hashing(password) {
 
 function generateId() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const length = 8;
+  const length = 15;
   let groupId = '';
 
   for (let i = 0; i < length; i++) {
@@ -57,7 +57,7 @@ Router.post('/signin-authentication', async(req, res, next) => {
 
 
   if (crypto.pbkdf2Sync(password, matching_email[0].salt, 99097, 32, 'sha512').toString('hex') == matching_email[0].hashed_password) {
-    res.cookie("names", email, {
+    res.cookie("userId", matching_email[0].user_id, {
       maxAge: 1000 * 60 * 10,
       secure: true,
       httpOnly: true,
@@ -65,10 +65,11 @@ Router.post('/signin-authentication', async(req, res, next) => {
       authorized: true,
       httpOnly: true,
     });
-    req.session.email = email;
+    req.session.user_id = matching_email[0].user_id;
+    req.session.name = matching_email[0].name;
     req.session.loggedin = true;
     console.log("login success");
-    console.log(req.session.email, req.session.loggedin)
+    console.log(req.session.user_id, req.session.loggedin)
     res.send({success: true})
     return 0;
   }
@@ -106,17 +107,19 @@ Router.post('/signup-authentication', async (req, res, next) => {
     res.send({success: false, signup_err_msg: "EMAIL ALREADY IN USE", signin_err_msg: ""});
   } else {
     console.log("new");
+    const userId = generateId();
     var user = {
       name: name,
       email: email,
       hashed_password: hashed[1],
       salt: hashed[0],
-      user_id: 
+      user_id: userId
     }
     connection.query('INSERT INTO users SET ?', user);
-    req.session.email = email;
+    req.session.user_id = userId;
     req.session.loggedin = true;
     res.send({success: true});
+    req.session.name = name;
   }
   connection.release();
 })
