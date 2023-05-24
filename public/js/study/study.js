@@ -349,6 +349,14 @@ var socketRooms = [];
     groups.forEach((group) => {
       //document.querySelector
     })
+  });
+
+  socket,on('stopstudy', (userId, groups) => {
+    console.log(userId, groups);
+    groups.forEach((group) => {
+      console.log(group);
+      
+    })
   })
 })();
 

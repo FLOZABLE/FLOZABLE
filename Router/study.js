@@ -89,12 +89,15 @@ Router.post('/stop', async(req, res) => {
   if(req.session.loggedin != true){
     return res.send({success: false, reason: 'not auth'});
   }
+  const io = req.app.get('socketio');
   const connection = await (await pool).getConnection();
   const index = req.body.index;
-  const selectQuery = "SELECT subjects FROM users WHERE user_id = ?";
+  const selectQuery = "SELECT subjects, groups FROM users WHERE user_id = ?";
   const selectParams = [req.session.user_id];
   let select = await connection.query(selectQuery, selectParams);
   select = select[0];
+  const groups = select.groups ? select.groups.split(",") : [];
+  groups.length != 0 && io.to(groups).emit('stopstudying', req.session.user_id, groups);
   const subjects = JSON.parse(select.subjects || "[]");
   const stopTime = Math.floor(new Date().getTime() / 1000);
   const previousTimeline = subjects[index].timeline[subjects[index].timeline.length - 1];
