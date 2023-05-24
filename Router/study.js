@@ -38,16 +38,16 @@ Router.post('/add-subject', async(req, res) => {
     subject.total = 0;
     subject.datum_point = Math.floor(new Date().getTime() / 1000);
     subject.timeline = [];
-    const selectQuery = "SELECT subjects FROM users WHERE email = ?";
-    const selectParams = [req.session.email];
+    const selectQuery = "SELECT subjects FROM users WHERE user_id = ?";
+    const selectParams = [req.session.user_id];
     const select = await connection.query(selectQuery, selectParams);
     const subjects = JSON.parse(select[0].subjects || "[]");
     subjects.push(subject);
     const updatedJson = JSON.stringify(subjects);
     
     // prepare the update statement to update the subjects column
-    const updateQuery = "UPDATE users SET subjects = ? WHERE email = ?";
-    const updateParams = [updatedJson, req.session.email];
+    const updateQuery = "UPDATE users SET subjects = ? WHERE user_id = ?";
+    const updateParams = [updatedJson, req.session.user_id];
     
     // execute the update statement
     const update = await connection.query(updateQuery, updateParams);
@@ -65,8 +65,8 @@ Router.post('/start', async(req, res) => {
   const io = req.app.get('socketio');
   const connection = await (await pool).getConnection();
   const index = req.body.index;
-  const selectQuery = "SELECT subjects, groups FROM users WHERE email = ?";
-  const selectParams = [req.session.email];
+  const selectQuery = "SELECT subjects, groups FROM users WHERE user_id = ?";
+  const selectParams = [req.session.user_id];
   let select = await connection.query(selectQuery, selectParams);
   select = select[0];
   const subjects = JSON.parse(select.subjects || "[]");
@@ -79,8 +79,8 @@ Router.post('/start', async(req, res) => {
   console.log(subjects[index].timeline[subjects[index].timeline.length - 1]);
   //subjects[index].stop = null;
   const updatedJson = JSON.stringify(subjects);
-  const update = await connection.query( "UPDATE users SET subjects = ? WHERE email = ?", [updatedJson,req.session.email]);
-  groups.length != 0 && io.to(groups).emit('studying', req.session.email);
+  const update = await connection.query( "UPDATE users SET subjects = ? WHERE user_id = ?", [updatedJson,req.session.user_id]);
+  groups.length != 0 && io.to(groups).emit('studying', req.session.user_id, groups);
   connection.release();
   res.send({success: true})
 })
@@ -91,8 +91,8 @@ Router.post('/stop', async(req, res) => {
   }
   const connection = await (await pool).getConnection();
   const index = req.body.index;
-  const selectQuery = "SELECT subjects FROM users WHERE email = ?";
-  const selectParams = [req.session.email];
+  const selectQuery = "SELECT subjects FROM users WHERE user_id = ?";
+  const selectParams = [req.session.user_id];
   let select = await connection.query(selectQuery, selectParams);
   select = select[0];
   const subjects = JSON.parse(select.subjects || "[]");
@@ -105,7 +105,7 @@ Router.post('/stop', async(req, res) => {
   subjects[index].total = subjects[index].total + subjects[index].today;
   //subjects[index].start = null
   const updatedJson = JSON.stringify(subjects);
-  const update = await connection.query( "UPDATE users SET subjects = ? WHERE email = ?", [updatedJson,req.session.email]);
+  const update = await connection.query( "UPDATE users SET subjects = ? WHERE user_id = ?", [updatedJson,req.session.user_id]);
   res.send({success: true})
   connection.release();
 })
@@ -113,7 +113,7 @@ Router.post('/stop', async(req, res) => {
 Router.post('/bring-subjects', async(req, res) => {
   if(req.session.loggedin == true) {
     const connection = await (await pool).getConnection();
-    const subjects = await connection.query("SELECT subjects FROM USERS WHERE email = ?", [req.session.email]);
+    const subjects = await connection.query("SELECT subjects FROM USERS WHERE user_id = ?", [req.session.user_id]);
     console.log(subjects[0]);
     connection.release();
     res.send(subjects[0].subjects);

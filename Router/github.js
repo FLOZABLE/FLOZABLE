@@ -27,7 +27,7 @@ passport.use(
     },
     async function(req, accessToken, refreshToken, profile, done) {
       const connection = await (await pool).getConnection();
-      connection.query('UPDATE users SET github_access_token = ? WHERE email = ?',[accessToken, req.session.email]);
+      connection.query('UPDATE users SET github_access_token = ? WHERE user_id = ?',[accessToken, req.session.user_id]);
       connection.release();
       done(null, profile);
     }
@@ -64,7 +64,7 @@ Router.get(
 Router.post("/user", async(req, res) => {
   if(req.session.loggedin == true) {
     const connection = await (await pool).getConnection();
-    const user_info = connection.query('SELECT * FROM users WHERE email = ?',[req.session.email]);
+    const user_info = connection.query('SELECT * FROM users WHERE user_id = ?',[req.session.user_id]);
     const accessToken = user_info[0].github_access_token;
     connection.release();
     axios.get('https://api.github.com/user', {
