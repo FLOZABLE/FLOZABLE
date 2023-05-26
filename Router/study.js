@@ -2,7 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const pool = require('../model/pool');
 
-Router.get("/", (req, res) => {
+Router.get("/", async(req, res) => {
   res.render("study/study", {
     loggedin: req.session.loggedin || false,
   });

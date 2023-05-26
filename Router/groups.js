@@ -209,10 +209,15 @@ Router.post('/bring-groups', async (req, res) => {
   const connection = await (await pool).getConnection();
   const groupList = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM GROUPS");
   let groupWithUser = [];
-  let likedList = []
+  let likedList = [];
+  const io = req.app.get('socketio');
   groupList.forEach((group, index) => {
     if (group.members && group.members.includes(req.session.user_id)) {
       groupWithUser.push(group.group_id);
+    }
+
+    if (groupWithUser.length !== 0) {
+      io.to(groupWithUser).emit('sendCurrentTime', req.session.user_id);
     }
 
     if (group.likes && group.likes.includes(req.session.user_id)) {
