@@ -295,7 +295,7 @@ const socket = io(window.location.protocol + '//' + window.location.hostname);
 // Listen for messages in the group
 
 
-const swiperContainer = document.querySelector('.swiper-container');
+const swiperWrapper = document.querySelector('.swiper-wrapper');
 let userId;
 var socketRooms = [];
 (async() => {
@@ -328,7 +328,7 @@ var socketRooms = [];
       
       `})
       const swiperSlide = document.createElement('div');
-      swiperSlide.setAttribute('class', 'swiper-wrapper');
+      swiperSlide.setAttribute('class', 'swiper-slide');
       swiperSlide.innerHTML = `
       <div class="group-inner">
       <div class="group-name">${group.name}</div>
@@ -339,11 +339,16 @@ var socketRooms = [];
       </div>
     </div>
       `
-      swiperContainer.appendChild(swiperSlide);
+      swiperWrapper.appendChild(swiperSlide);
       socket.emit('joinRoom', group.group_id, userId);
     }
   });
-    initializeSlider();
+  swiperWrapper.innerHTML += `
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-pagination"></div>
+  `
+  initializeSlider();
   socket.on('studying', (userId, groups) => {
     console.log(userId, groups);
     groups.forEach((group) => {
@@ -357,6 +362,11 @@ var socketRooms = [];
       console.log(group);
       
     })
+  })
+
+  socket.on('sendCurrentTime', (userId) => {
+    console.log(`to ${userId}`);
+    /* socket.emit('sentTime', ()) */
   })
 })();
 
@@ -618,16 +628,25 @@ calendar.render();
 
 function initializeSlider() {
   // Initialize the Swiper slider
-  new Swiper('.swiper-container', {
+  const swiper = new Swiper('.swiper-container', {
+    // Optional parameters
+    loop: true,
+    slidesPerView: 1,
+    /* autoplay: { 
+      disableOnInteraction: false,
+      delay: 3000 
+    }, */
+    centeredSlides: true,
+    // If we need pagination
+    pagination: {
+      el: '.swiper-pagination',
+    },
+  
+    // Navigation arrows
     navigation: {
       nextEl: '.swiper-button-next',
       prevEl: '.swiper-button-prev',
-    },
-    // Configuration options
-    slidesPerView: 1,
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true
     }
+  
   });
 }
