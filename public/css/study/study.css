@@ -139,16 +139,9 @@
   color: rgb(185, 185, 185);
   position: relative;
   left: 5px;
-  top: 5px;
+  top: -2px;
 }
-.material-symbols-outlined {
-  font-size: 35px !important;
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 72
-}
+
 .timer #records{
   color: rgb(230, 230, 230);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
