@@ -294,6 +294,30 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
 const socket = io(window.location.protocol + '//' + window.location.hostname);
 // Listen for messages in the group
 
+socket.on('sendstatus', (userId) => {
+  console.log("test")
+  /* socket.emit('sentTime', ()) */
+})
+
+socket.on('studying', (userId, groups) => {
+  console.log(userId, groups);
+  groups.forEach((group) => {
+    //document.querySelector
+  })
+});
+
+socket.on('stopstudy', (userId, groups) => {
+  console.log(userId, groups);
+  groups.forEach((group) => {
+    console.log(group);
+    
+  })
+});
+
+socket.on('sendTime', (userId) => {
+  console.log(userId, timers)
+})
+
 
 const swiperWrapper = document.querySelector('.swiper-wrapper');
 let userId;
@@ -341,33 +365,16 @@ var socketRooms = [];
       `
       swiperWrapper.appendChild(swiperSlide);
       socket.emit('joinRoom', group.group_id, userId);
+      console.log(group.group_id)
     }
   });
+  socket.emit('getMembersTime', groupWithUser, userId);
   swiperWrapper.innerHTML += `
   <div class="swiper-button-next"></div>
   <div class="swiper-button-prev"></div>
   <div class="swiper-pagination"></div>
   `
   initializeSlider();
-  socket.on('studying', (userId, groups) => {
-    console.log(userId, groups);
-    groups.forEach((group) => {
-      //document.querySelector
-    })
-  });
-
-  socket.on('stopstudy', (userId, groups) => {
-    console.log(userId, groups);
-    groups.forEach((group) => {
-      console.log(group);
-      
-    })
-  })
-
-  socket.on('sendCurrentTime', (userId) => {
-    console.log(`to ${userId}`);
-    /* socket.emit('sentTime', ()) */
-  })
 })();
 
 function toggleTimer(index) {
