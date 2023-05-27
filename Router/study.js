@@ -62,7 +62,8 @@ Router.post('/start', async (req, res) => {
   const update = await connection.query(updateQuery, updateParams);
 
   if (groups.length !== 0) {
-    io.to(groups).emit('studying', req.session.user_id, groups);
+    console.log(`send signals to ${groups}`)
+    io.to().emit('studying', req.session.user_id, groups);
   }
 
   connection.release();

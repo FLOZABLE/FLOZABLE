@@ -15,6 +15,7 @@ dotenv.config({path: ".env.production"});
 var server = http.createServer(app);
 const port = process.env.PORT;
 var io = require('socket.io')(server);
+const pool = require('./model/pool');
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
@@ -54,8 +55,9 @@ io.on('connection', (socket) => {
     console.log(email, room)
   });
 
-  socket.on('timerStarted', (socketRooms, email) => {
-    socket.to(socketRooms).emit('timerStarted', email);
+  socket.on('getMembersTime', (groups, userId) => {
+    socket.to(groups).emit('sendTime', userId);
+    console.log('members in group',groups, userId)
   })
 })
 const mainRouter = require("./Router/main");
