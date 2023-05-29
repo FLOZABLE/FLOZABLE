@@ -63,7 +63,7 @@ Router.post('/start', async (req, res) => {
 
   if (groups.length !== 0) {
     console.log(`send signals to ${groups}`)
-    io.to().emit('studying', req.session.user_id, groups);
+    io.to(groups).emit('studying', req.session.user_id, groups);
   }
 
   connection.release();
@@ -115,4 +115,70 @@ Router.post('/bring-subjects', async (req, res) => {
   res.send(subjects[0].subjects);
 });
 
+Router.post('/bring-members-info', async (req, res) => {
+  if (!req.session.loggedin) {
+    return res.send({ success: false, reason: 'not auth' });
+  }
+  
+  const connection = await (await pool).getConnection();
+  const userId = req.session.user_id;
+  let groups = await connection.query('SELECT groups FROM users WHERE user_id = ?', [userId]);
+  groups = groups[0].groups;
+  
+  if (groups.length == 0) {
+    return res.send({ success: false, reason: 'no groups' });
+  }
+  
+  const groupsInfo = await connection.query('SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM groups WHERE group_id IN (?)', [groups]);
+  let membersInfo = [];
+  
+  await Promise.all(groupsInfo.map(async (group, group_index) => {
+    group.members = group.members ? JSON.parse(`[${group.members}]`) : [];
+    const membersId = group.members.flat().filter((value, index) => index % 2 === 0);
+    const members = await connection.query(`SELECT user_id, name, subjects, timezone from users where user_id in (?)`, [membersId]);
+    membersInfo.push(groupsInfo[group_index]);
+    membersInfo[group_index].members = [];
+  
+    await Promise.all(members.map(async (member, member_index) => {
+      member.subjects = JSON.parse(member.subjects);
+      const date = new Date().toLocaleDateString('en-US', { timeZone: member.timezone });
+      const startTime = new Date(`${date} 00:00:00`).getTime();
+      const endTime = new Date(`${date} 24:00:00`).getTime();
+  
+      if (member.subjects == null) {
+        return 0;
+      }
+      console.log(membersInfo[group_index].members)
+  
+      membersInfo[group_index].members.push({ userId: member.user_id, name: member.name, subjects: member.subjects, timezone: member.timezone, filteredTimeline: [], today: 0 });
+  
+      await Promise.all(member.subjects.map(async (subject, index) => {
+        const datum_point = member.subjects[index].datum_point;
+        let today = 0;
+        let study = false;
+        const filteredTimeline = subject.timeline.filter((period, index) => {
+          let [start, end] = period;
+          start = (start + datum_point) * 1000;
+          if (end == null) {
+            console.log('studying');
+            study = true;
+          }
+          end = (end + datum_point) * 1000;
+          if(start >= startTime && end <= endTime){
+            today += (end - start);
+          }
+          return start >= startTime && end <= endTime;
+        });
+        console.log('filtered time', filteredTimeline, membersInfo[group_index]);
+        membersInfo[group_index].members[member_index].today = today;
+        membersInfo[group_index].members[member_index].study = study;
+        membersInfo[group_index].members[member_index].filteredTimeline.push(filteredTimeline);
+      }));
+    }));
+  }));
+  
+  console.log('mem info', membersInfo);
+  res.send([groupsInfo, req.session.user_id, groups, membersInfo]);
+  
+})
 module.exports = Router;

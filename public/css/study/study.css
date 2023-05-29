@@ -706,3 +706,6 @@ a:hover {
   line-height: 20px;
   padding: 0 8px;
 }
+.member .member-time #digits {
+  font-size: 1.125rem;
+}

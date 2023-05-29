@@ -28,9 +28,10 @@ signUpSubmitBtn.addEventListener('click', async() => {
   if(parameterValue){
     redirectUrl += '/' + parameterValue;
   }
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   let response = await fetch('/account/signup-authentication', {
     method: 'post',
-    body: JSON.stringify({ name: name, email: email, password: password, redirectUrl: redirectUrl}),
+    body: JSON.stringify({ name: name, email: email, password: password, redirectUrl: redirectUrl, timezone: userTimezone}),
     headers: {
       'Content-Type': 'application/json'
     }
