@@ -86,6 +86,7 @@ Router.post('/signup-authentication', async (req, res, next) => {
   let email = req.body.email;
   let name = req.body.name;
   let password = req.body.password;
+  const timezone = req.body.timezone;
 
   // Sanitize inputs
   let sanitizedEmail = email.replace(/[^a-z0-9!?@.]/gi, '');
@@ -110,7 +111,8 @@ Router.post('/signup-authentication', async (req, res, next) => {
     email: sanitizedEmail,
     hashed_password: hashed[1],
     salt: hashed[0],
-    user_id: userId
+    user_id: userId,
+    timezone: timezone
   };
 
   connection.query('INSERT INTO users SET ?', user);

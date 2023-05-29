@@ -121,7 +121,7 @@ Router.post('/join/:id', async (req, res) => {
       let selectedGroup = await connection.query(`SELECT * FROM groups where group_id = '${groupId}'`);
       selectedGroup = selectedGroup[0];
       if (selectedGroup) {
-        if (selectedGroup.visibility == 'public') {
+        if (selectedGroup.visibility == 'public' || (crypto.pbkdf2Sync(req.body['group-pw'], selectedGroup.salt, 99097, 32, 'sha512').toString('hex') == selectedGroup.hashed_password)) {
           connection.query(`UPDATE users SET groups = CASE
           WHEN groups IS NULL THEN '${groupId}'
           WHEN groups = '' THEN '${groupId}'
@@ -133,22 +133,6 @@ Router.post('/join/:id', async (req, res) => {
           WHEN members IS NULL THEN '${JSON.stringify([req.session.user_id, req.session.name])}'
           WHEN members = '' THEN '${JSON.stringify([req.session.user_id, req.session.name])}'
           ELSE CONCAT(members, ',', '${JSON.stringify([req.session.user_id, req.session.name])}')
-      END
-      WHERE group_id = '${groupId}'`);
-          console.log('inserted')
-          res.send({ success: true })
-        } else if (crypto.pbkdf2Sync(req.body['group-pw'], selectedGroup.salt, 99097, 32, 'sha512').toString('hex') == selectedGroup.hashed_password) {
-          connection.query(`UPDATE users SET groups = CASE
-          WHEN groups IS NULL THEN '${groupId}'
-          WHEN groups = '' THEN '${groupId}'
-          ELSE CONCAT(groups, ',', '${groupId}')
-      END
-      WHERE user_id = '${req.session.user_id}'`);
-
-          connection.query(`UPDATE groups SET members = CASE
-          WHEN members IS NULL THEN '${req.session.user_id}'
-          WHEN members = '' THEN '${req.session.user_id}'
-          ELSE CONCAT(members, ',', '${req.session.user_id}')
       END
       WHERE group_id = '${groupId}'`);
           console.log('inserted')
@@ -219,7 +203,7 @@ Router.post('/bring-groups', async (req, res) => {
       likedList.push(group.group_id);
     }
   });
-  console.log(likedList)
+  console.log([groupList, req.session.user_id, groupWithUser])
   res.send([groupList, req.session.user_id, groupWithUser]);
   connection.release();
 })
