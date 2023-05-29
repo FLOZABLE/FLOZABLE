@@ -291,6 +291,49 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
 
 })();
 
+const restSvg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" viewBox="0 0 460 460" xml:space="preserve" width="78px" height="78px" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="XMLID_1326_"> <path id="XMLID_1324_" style="fill:#CBB57A;" d="M285,295h50l-90,120h-10L285,295z"></path> <path id="XMLID_1325_" style="fill:#9E8E60;" d="M385,415h-10l-90-120h50L385,415z"></path> <path id="XMLID_1298_" style="fill:#4D4337;" d="M410,285L410,285c0,11.046-8.954,20-20,20H230c-11.046,0-20-8.954-20-20v0 c0-11.046,8.954-20,20-20h0.87l13.933-160.226C247.743,70.956,276.054,45,310,45h0c33.946,0,62.257,25.956,65.198,59.774 L389.13,265H390C401.046,265,410,273.954,410,285z"></path> <path id="XMLID_1295_" style="fill:#635547;" d="M370,270c0,2.761-2.239,5-5,5H255c-2.761,0-5-2.239-5-5s2.239-5,5-5h10 l8.326-95.752c1.654-19.023,17.579-33.623,36.674-33.623h0c19.095,0,35.02,14.6,36.674,33.623L355,265h10 C367.761,265,370,267.239,370,270z"></path> <path id="XMLID_1136_" style="fill:#9E8E60;" d="M120,415H0V225h120V415z M460,225h-20v190h20V225z"></path> <path id="XMLID_338_" style="fill:#766A54;" d="M100,315H20v-60h80V315z M100,335H20v60h80V335z"></path> <path id="XMLID_337_" style="fill:#D6CFBA;" d="M100,255v60H20v-60h20v10c0,5.523,4.477,10,10,10h20c5.523,0,10-4.477,10-10v-10 H100z M80,335v10c0,5.523-4.477,10-10,10H50c-5.523,0-10-4.477-10-10v-10H20v60h80v-60H80z"></path> <path id="XMLID_307_" style="fill:#833428;" d="M60,137v66c0,1.105-0.895,2-2,2H42c-1.105,0-2-0.895-2-2v-66c0-1.105,0.895-2,2-2 h16C59.105,135,60,135.895,60,137z"></path> <path id="XMLID_334_" style="fill:#374145;" d="M79.308,135.522l18.132,63.461c0.303,1.062-0.312,2.169-1.374,2.472l-15.384,4.396 c-1.062,0.303-2.169-0.312-2.472-1.374l-18.132-63.461c-0.303-1.062,0.312-2.169,1.374-2.472l15.384-4.396 C77.898,133.845,79.004,134.46,79.308,135.522z"></path> <path id="XMLID_308_" style="fill:#64757C;" d="M89.747,172.06l-19.23,5.494l-8.242-28.846l19.23-5.494L89.747,172.06z"></path> <path id="XMLID_245_" style="fill:#AC8428;" d="M60,155H40v-10h20V155z"></path> <path id="XMLID_1276_" style="fill:#374145;" d="M128.243,207.095c-1.617,0.359-3.22-0.661-3.579-2.278l-15.185-68.333 c-0.359-1.617,0.66-3.22,2.278-3.579c1.617-0.359,3.22,0.661,3.579,2.278l15.185,68.333 C130.881,205.133,129.861,206.736,128.243,207.095z"></path> <path id="XMLID_1297_" style="fill:#DDA333;" d="M141.114,128.651l-15.185,68.333c-0.359,1.617-1.962,2.637-3.579,2.278 c-1.617-0.359-2.637-1.962-2.278-3.579l15.185-68.333c0.359-1.617,1.962-2.637,3.579-2.278S141.474,127.034,141.114,128.651z"></path> <path id="XMLID_1817_" style="fill:#E0CFA6;" d="M130,187v36c0,1.105-0.895,2-2,2H32c-1.105,0-2-0.895-2-2v-36c0-1.105,0.895-2,2-2 h96C129.105,185,130,185.895,130,187z"></path> <path id="XMLID_1816_" style="fill:#D66A40;" d="M140,167v56c0,1.105-0.895,2-2,2h-26c-1.105,0-2-0.895-2-2v-56 c0-1.105,0.895-2,2-2h26C139.105,165,140,165.895,140,167z"></path> <path id="XMLID_1808_" style="fill:#CBB175;" d="M250,210v10h-40h-40v-10c0-5.523,4.477-10,10-10h20c5.523,0,10,4.477,10,10 c0-5.523,4.477-10,10-10h20C245.523,200,250,204.477,250,210z"></path> <path id="XMLID_1813_" style="fill:#E9CC85;" d="M250,210v10h-40v-10c0-5.523,4.477-10,10-10h20C245.523,200,250,204.477,250,210z"></path> <path id="XMLID_1807_" style="fill:#833428;" d="M254.833,211v6c0,1.105-0.895,2-2,2h-85.667c-1.105,0-2-0.895-2-2v-6 c0-1.105,0.895-2,2-2h85.667C253.938,209,254.833,209.895,254.833,211z"></path> <path id="XMLID_1805_" style="fill:#3F0900;" d="M216,215v2c0,1.105-0.895,2-2,2h-8c-1.105,0-2-0.895-2-2v-2c0-3.314,2.686-6,6-6 l0,0C213.314,209,216,211.686,216,215z"></path> <path id="XMLID_1747_" style="fill:#CBB57A;" d="M460,235H0v-20h460V235z"></path> </g> </g></svg>`
+const createMemberTimer = (membersWrapper, member) => {
+  const membersli = document.createElement('li');
+  membersli.setAttribute('id', member.userId);
+  membersli.innerHTML = `
+  <div class="member">
+    <div class="member-name">${member.name}</div>
+    <div class="svg-area">${restSvg}</div>
+    <div class="member-time">
+      <div id="digits">
+        <span class ="m-hr"></span>
+        <span class="m-min"></span>
+        <span class="m-sec"></span>
+      </div>
+    </div>
+  </div>
+  
+  `;
+  membersWrapper.appendChild(membersli)
+  setTimeout(() => {
+    member.timer = {
+      hundredth: 0,
+      seconds: Math.floor((member.today / 1000) % 60),
+      minutes: Math.floor((member.today / (1000 * 60)) % 60),
+      hours: Math.floor((member.today / (1000 * 60 * 60))),
+      run: true,
+      timer: null,
+      secDisp: document.querySelectorAll(`#${member.userId} .m-sec`),
+      minDisp: document.querySelectorAll(`#${member.userId} .m-min`),
+      hrDisp: document.querySelectorAll(`#${member.userId} .m-hr`),
+      playBtn: null,
+    }
+    member.timer.secDisp.forEach(el => {
+      el.innerHTML = member.timer.seconds.toString().padStart(2, '0');
+    })
+    member.timer.minDisp.forEach(el => {
+      el.innerHTML = member.timer.minutes.toString().padStart(2, '0') + ":";
+    })
+    member.timer.hrDisp.forEach(el => {
+      el.innerHTML = member.timer.hours.toString().padStart(2, '0') + ":";
+    })
+  }, 0)
+}
 const socket = io(window.location.protocol + '//' + window.location.hostname);
 // Listen for messages in the group
 
@@ -305,7 +348,7 @@ socket.on('studying', (userId, groups) => {
     const memberInfo = groupInfo.members.find(member => member.userId === userId);
     memberInfo.timer.run = true;
     console.log('timer', memberInfo.timer)
-    memberInfo.timer.timer = setInterval(function () {countMember(memberInfo.timer);}, 10);
+    memberInfo.timer.timer = setInterval(function () {countMember(memberInfo.timer);}, 1000);
     //document.querySelector
     const memberSliders = document.querySelectorAll(`.swiper-slide#${group} ul li#${userId}`);
     memberSliders.forEach((slider) => {
@@ -342,8 +385,24 @@ socket.on('sendTime', (userId) => {
     }
   });
   //socket.emit('timeResponse', )
+});
+
+socket.on('addUser', (group, userId) => {
+  const roomWrapper = document.querySelectorAll(`.swiper-slide#${userId} .members ul`);
+  const groupInfo = groupList.find(groupObj => groupObj.group_id == group);
+  const memberInfo = groupInfo.members.find(member => member.userId === userId);
+  console.log(roomWrapper, memberInfo, groupInfo, userId)
+  roomWrapper.forEach(roomEl => {
+    createMemberTimer(roomEl, memberInfo)
+  })
 })
-console.log(document.querySelector('span'))
+
+socket.on('removeUser', (room, userId) => {
+  const roomWrapper = document.querySelectorAll(`.swiper-slide#${userId} .members ul`);
+  roomWrapper.forEach(roomEl => {
+    roomEl.appendChild()
+  })
+})
 
 
 const swiperWrapper = document.querySelector('.swiper-wrapper');
@@ -379,66 +438,14 @@ var groupList;
     </div>
       `
       swiperWrapper.appendChild(swiperSlide);
-      //group.members = JSON.parse(`[${group.members}]`) || [];
       group.members.forEach((member, member_index) => {
         const membersWrapper = swiperSlide.querySelector('ul');
-        const membersli = document.createElement('li');
-        membersli.setAttribute('id', member.userId);
-        membersli.innerHTML = `
-        <div class="member">
-          <div class="member-name">${member.name}</div>
-          <div class="svg-area">
-          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" viewBox="0 0 460 460" xml:space="preserve" width="78px" height="78px" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="XMLID_1326_"> <path id="XMLID_1324_" style="fill:#CBB57A;" d="M285,295h50l-90,120h-10L285,295z"></path> <path id="XMLID_1325_" style="fill:#9E8E60;" d="M385,415h-10l-90-120h50L385,415z"></path> <path id="XMLID_1298_" style="fill:#4D4337;" d="M410,285L410,285c0,11.046-8.954,20-20,20H230c-11.046,0-20-8.954-20-20v0 c0-11.046,8.954-20,20-20h0.87l13.933-160.226C247.743,70.956,276.054,45,310,45h0c33.946,0,62.257,25.956,65.198,59.774 L389.13,265H390C401.046,265,410,273.954,410,285z"></path> <path id="XMLID_1295_" style="fill:#635547;" d="M370,270c0,2.761-2.239,5-5,5H255c-2.761,0-5-2.239-5-5s2.239-5,5-5h10 l8.326-95.752c1.654-19.023,17.579-33.623,36.674-33.623h0c19.095,0,35.02,14.6,36.674,33.623L355,265h10 C367.761,265,370,267.239,370,270z"></path> <path id="XMLID_1136_" style="fill:#9E8E60;" d="M120,415H0V225h120V415z M460,225h-20v190h20V225z"></path> <path id="XMLID_338_" style="fill:#766A54;" d="M100,315H20v-60h80V315z M100,335H20v60h80V335z"></path> <path id="XMLID_337_" style="fill:#D6CFBA;" d="M100,255v60H20v-60h20v10c0,5.523,4.477,10,10,10h20c5.523,0,10-4.477,10-10v-10 H100z M80,335v10c0,5.523-4.477,10-10,10H50c-5.523,0-10-4.477-10-10v-10H20v60h80v-60H80z"></path> <path id="XMLID_307_" style="fill:#833428;" d="M60,137v66c0,1.105-0.895,2-2,2H42c-1.105,0-2-0.895-2-2v-66c0-1.105,0.895-2,2-2 h16C59.105,135,60,135.895,60,137z"></path> <path id="XMLID_334_" style="fill:#374145;" d="M79.308,135.522l18.132,63.461c0.303,1.062-0.312,2.169-1.374,2.472l-15.384,4.396 c-1.062,0.303-2.169-0.312-2.472-1.374l-18.132-63.461c-0.303-1.062,0.312-2.169,1.374-2.472l15.384-4.396 C77.898,133.845,79.004,134.46,79.308,135.522z"></path> <path id="XMLID_308_" style="fill:#64757C;" d="M89.747,172.06l-19.23,5.494l-8.242-28.846l19.23-5.494L89.747,172.06z"></path> <path id="XMLID_245_" style="fill:#AC8428;" d="M60,155H40v-10h20V155z"></path> <path id="XMLID_1276_" style="fill:#374145;" d="M128.243,207.095c-1.617,0.359-3.22-0.661-3.579-2.278l-15.185-68.333 c-0.359-1.617,0.66-3.22,2.278-3.579c1.617-0.359,3.22,0.661,3.579,2.278l15.185,68.333 C130.881,205.133,129.861,206.736,128.243,207.095z"></path> <path id="XMLID_1297_" style="fill:#DDA333;" d="M141.114,128.651l-15.185,68.333c-0.359,1.617-1.962,2.637-3.579,2.278 c-1.617-0.359-2.637-1.962-2.278-3.579l15.185-68.333c0.359-1.617,1.962-2.637,3.579-2.278S141.474,127.034,141.114,128.651z"></path> <path id="XMLID_1817_" style="fill:#E0CFA6;" d="M130,187v36c0,1.105-0.895,2-2,2H32c-1.105,0-2-0.895-2-2v-36c0-1.105,0.895-2,2-2 h96C129.105,185,130,185.895,130,187z"></path> <path id="XMLID_1816_" style="fill:#D66A40;" d="M140,167v56c0,1.105-0.895,2-2,2h-26c-1.105,0-2-0.895-2-2v-56 c0-1.105,0.895-2,2-2h26C139.105,165,140,165.895,140,167z"></path> <path id="XMLID_1808_" style="fill:#CBB175;" d="M250,210v10h-40h-40v-10c0-5.523,4.477-10,10-10h20c5.523,0,10,4.477,10,10 c0-5.523,4.477-10,10-10h20C245.523,200,250,204.477,250,210z"></path> <path id="XMLID_1813_" style="fill:#E9CC85;" d="M250,210v10h-40v-10c0-5.523,4.477-10,10-10h20C245.523,200,250,204.477,250,210z"></path> <path id="XMLID_1807_" style="fill:#833428;" d="M254.833,211v6c0,1.105-0.895,2-2,2h-85.667c-1.105,0-2-0.895-2-2v-6 c0-1.105,0.895-2,2-2h85.667C253.938,209,254.833,209.895,254.833,211z"></path> <path id="XMLID_1805_" style="fill:#3F0900;" d="M216,215v2c0,1.105-0.895,2-2,2h-8c-1.105,0-2-0.895-2-2v-2c0-3.314,2.686-6,6-6 l0,0C213.314,209,216,211.686,216,215z"></path> <path id="XMLID_1747_" style="fill:#CBB57A;" d="M460,235H0v-20h460V235z"></path> </g> </g></svg>
-        </div>
-          <div class="member-time">
-            <div id="digits">
-              <span class ="m-hr"></span>
-              <span class="m-min"></span>
-              <span class="m-sec"></span>
-            </div>
-          </div>
-        </div>
-        
-        `;
-        membersWrapper.appendChild(membersli)
-        setTimeout(() => {
-          member.timer = {
-            hundredth: 0,
-            seconds: Math.floor((member.today / 1000) % 60),
-            minutes: Math.floor((member.today / (1000 * 60)) % 60),
-            hours: Math.floor((member.today / (1000 * 60 * 60))),
-            run: true,
-            timer: null,
-            secDisp: document.querySelectorAll(`#${member.userId} .m-sec`),
-            minDisp: document.querySelectorAll(`#${member.userId} .m-min`),
-            hrDisp: document.querySelectorAll(`#${member.userId} .m-hr`),
-            playBtn: null,
-          }
-          console.log(membersWrapper, membersli)
-          console.log(member.timer.secDisp, member.timer.minDisp, member.timer.hrDisp)
-          member.timer.secDisp.forEach(el => {
-            el.innerHTML = member.timer.seconds.toString().padStart(2, '0');
-          })
-          member.timer.minDisp.forEach(el => {
-            el.innerHTML = member.timer.minutes.toString().padStart(2, '0') + ":";
-          })
-          member.timer.hrDisp.forEach(el => {
-            el.innerHTML = member.timer.hours.toString().padStart(2, '0') + ":";
-          })
-          /* member.timer.secDisp.innerHTML = member.timer.seconds.toString().padStart(2, '0');
-          member.timer.minDisp.innerHTML = member.timer.minutes.toString().padStart(2, '0') + ":";
-          member.timer.hrDisp.innerHTML = member.timer.hours.toString().padStart(2, '0') + ":"; */
-          console.log(member.timer.secDisp, member.timer.minDisp, member.timer.hrDisp)
-          console.log(document.querySelector('span'))
-          console.log(member.timer.secDisp)
-        }, 0)
+        createMemberTimer(membersWrapper, member)
         
 
       })
       socket.emit('joinRoom', group.group_id, userId);
-      console.log(group.group_id)
   });
-  console.log(groupList)
   swiperWrapper.innerHTML += `
   <div class="swiper-button-next"></div>
   <div class="swiper-button-prev"></div>
@@ -469,8 +476,7 @@ function toggleTimer(index) {
     })();
 
   } else {
-    timer.timer = setInterval(function () { count(index); }, 10);
-    console.log(timer)
+    timer.timer = setInterval(function () { count(index); }, 1000);
     timer.playBtn.innerHTML = `<span class="material-symbols-outlined"><svg fill="#000000" width="40px" height="40px" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M46.677 64.652c0-9.362 7.132-17.387 16.447-17.394 9.315-.007 24.677.007 34.55.007 9.875 0 17.138 7.594 17.138 16.998 0 9.403-.083 119.094-.083 127.82 0 8.726-7.58 16.895-16.554 16.837-8.975-.058-25.349.115-34.963.058-9.614-.058-16.646-7.74-16.646-17.254 0-9.515.11-117.71.11-127.072zm14.759.818s-.09 118.144-.09 123.691c0 5.547 3.124 5.315 6.481 5.832 3.358.518 21.454.47 24.402.47 2.947 0 7.085-1.658 7.167-6.14.08-4.483-.082-119.507-.082-123.249 0-3.742-4.299-4.264-7.085-4.66-2.787-.395-25.796 0-25.796 0l-4.997 4.056zm76.664-.793c.027-9.804 7.518-17.541 17.125-17.689 9.606-.147 25.283.148 35.004.148 9.72 0 17.397 8.52 17.397 17.77s-.178 117.809-.178 127c0 9.192-7.664 17.12-16.323 17.072-8.66-.05-26.354 0-34.991.048-8.638.05-17.98-8.582-18.007-17.783-.027-9.201-.055-116.763-.027-126.566zm16.917.554s-.089 118.145-.089 123.692c0 5.547 3.123 5.314 6.48 5.832 3.359.518 21.455.47 24.402.47 2.948 0 7.086-1.659 7.167-6.141.081-4.482-.08-119.506-.08-123.248 0-3.742-4.3-4.265-7.087-4.66-2.786-.396-25.796 0-25.796 0l-4.997 4.055z" fill-rule="evenodd"></path> </g></svg></span>`;
     timer.run = true;
     const activatedBtn = document.querySelector(`#drag-item-${index}`);
@@ -518,10 +524,7 @@ function count(index) {
 
   timer.hundredth += 1;
 
-  if (timer.hundredth == 100) {
-    timer.hundredth = 0;
-    timer.seconds += 1;
-  }
+  timer.seconds += 1;
 
   if (timer.seconds == 60) {
     timer.seconds = 0;
@@ -540,10 +543,7 @@ function countMember(membertimer) {
   
   membertimer.hundredth += 1;
 
-  if (membertimer.hundredth == 100) {
-    membertimer.hundredth = 0;
-    membertimer.seconds += 1;
-  }
+  membertimer.seconds += 1;
 
   if (membertimer.seconds == 60) {
     membertimer.seconds = 0;
