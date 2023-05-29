@@ -49,10 +49,10 @@ const cspOptions = {
 
 app.use(helmet.contentSecurityPolicy(cspOptions))  */
 io.on('connection', (socket) => {
-  socket.on('joinRoom', (room, email) => {
+  socket.on('joinRoom', (room, userId) => {
     socket.join(room); // Join the specified room
     console.log(`User joined room: ${room}`);
-    console.log(email, room)
+    console.log(userId, room)
   });
 
   socket.on('getMembersTime', async(groups, userId) => {
@@ -99,6 +99,10 @@ io.on('connection', (socket) => {
     })
     //io.to(groups).emit('sendTime', userId);
     console.log('members in group',groups, userId)
+  });
+
+  socket.on('addUser', (room, userId) => {
+    io.to(room).emit('addUser', room, userId);
   })
 })
 const mainRouter = require("./Router/main");

@@ -136,6 +136,8 @@ Router.post('/join/:id', async (req, res) => {
       END
       WHERE group_id = '${groupId}'`);
           console.log('inserted')
+          const io = req.app.get('socketio');
+          io.emit('addUser', groupId, req.session.user_id)
           res.send({ success: true })
         } else {
           console.log(req.body['group-pw'], selectedGroup.salt, crypto.pbkdf2Sync(req.body['group-pw'], selectedGroup.salt, 99097, 32, 'sha512').toString('hex'), selectedGroup.hashed_password)
