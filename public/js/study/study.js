@@ -389,7 +389,11 @@ socket.on('sendTime', (userId) => {
 
 socket.on('addUser', async(group, userId) => {
   let response = await fetch('/study/update-members-info', {
-    method: 'post'
+    method: 'post',
+    body: JSON.stringify({ userId: userId }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
   });
   response = await response.json();
   console.log(response)
