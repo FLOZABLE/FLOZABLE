@@ -188,7 +188,7 @@ Router.post('/update-members-info', async(req, res) => {
   }
   
   const connection = await (await pool).getConnection();
-  const userId = req.session.user_id;
+  const userId = req.body.userId;
   
   let member = await connection.query(`SELECT user_id, name, subjects, timezone from users where user_id  = ?`, [userId]);
   member = member[0];
