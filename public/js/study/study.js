@@ -387,10 +387,16 @@ socket.on('sendTime', (userId) => {
   //socket.emit('timeResponse', )
 });
 
-socket.on('addUser', (group, userId) => {
+socket.on('addUser', async(group, userId) => {
+  let response = await fetch('/study/update-members-info', {
+    method: 'post'
+  });
+  response = await response.json();
+  console.log(response)
   const roomWrapper = document.querySelectorAll(`.swiper-slide#${userId} .members ul`);
   const groupInfo = groupList.find(groupObj => groupObj.group_id == group);
-  const memberInfo = groupInfo.members.find(member => member.userId === userId);
+  groupInfo.members.push(response);
+  const memberInfo = response;
   console.log(roomWrapper, memberInfo, groupInfo, userId)
   roomWrapper.forEach(roomEl => {
     createMemberTimer(roomEl, memberInfo)
