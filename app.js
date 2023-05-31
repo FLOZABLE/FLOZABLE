@@ -102,7 +102,12 @@ io.on('connection', (socket) => {
   });
 
   socket.on('addUser', (room, userId) => {
+    console.log('adduser:', room, userId)
     io.to(room).emit('addUser', room, userId);
+  });
+
+  socket.on('removeUser', (room, userId) => {
+    io.to(room).emit('removeUser', room, userId)
   })
 })
 const mainRouter = require("./Router/main");

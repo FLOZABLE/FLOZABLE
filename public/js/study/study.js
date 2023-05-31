@@ -388,6 +388,7 @@ socket.on('sendTime', (userId) => {
 });
 
 socket.on('addUser', async(group, userId) => {
+  console.log(userId)
   let response = await fetch('/study/update-members-info', {
     method: 'post',
     body: JSON.stringify({ userId: userId }),
@@ -397,7 +398,7 @@ socket.on('addUser', async(group, userId) => {
   });
   response = await response.json();
   console.log(response)
-  const roomWrapper = document.querySelectorAll(`.swiper-slide#${userId} .members ul`);
+  const roomWrapper = document.querySelectorAll(`.swiper-slide#${group} ul `);
   const groupInfo = groupList.find(groupObj => groupObj.group_id == group);
   groupInfo.members.push(response);
   const memberInfo = response;
@@ -407,11 +408,15 @@ socket.on('addUser', async(group, userId) => {
   })
 })
 
-socket.on('removeUser', (room, userId) => {
-  const roomWrapper = document.querySelectorAll(`.swiper-slide#${userId} .members ul`);
+socket.on('removeUser', (group, userId) => {
+  const roomWrapper = document.querySelectorAll(`.swiper-slide#${group} ul`);
+  const groupInfo = groupList.find(groupObj => groupObj.group_id == group);
+  //const memberInfo = groupInfo.members.find(member => member.userId === userId);
   roomWrapper.forEach(roomEl => {
-    roomEl.appendChild()
-  })
+    roomEl.removeChild(roomEl.querySelector(`li#${userId}`));
+  });
+  groupInfo.members = groupInfo.members.filter(member => member.userId != userId);
+  console.log(groupList);
 })
 
 
