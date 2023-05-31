@@ -192,10 +192,10 @@ Router.post('/update-members-info', async(req, res) => {
   
   let member = await connection.query(`SELECT user_id, name, subjects, timezone from users where user_id  = ?`, [userId]);
   member = member[0];
-  console.log(member, userId)
+  console.log(member, userId, req.body)
 
   
-  member.subjects = JSON.parse(member.subjects);
+  member.subjects = member.subjects ? JSON.parse(member.subjects): [];
   const date = new Date().toLocaleDateString('en-US', { timeZone: member.timezone });
   const startTime = new Date(`${date} 00:00:00`).getTime();
   const endTime = new Date(`${date} 24:00:00`).getTime();

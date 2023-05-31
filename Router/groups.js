@@ -117,7 +117,7 @@ Router.post('/join/:id', async (req, res) => {
     let userInfo = await connection.query("SELECT groups from users where user_id = ?", [req.session.user_id]);
     //userInfo = JSON.parse(userInfo);
     userInfo = userInfo[0];
-    if (!userInfo.grouos || !userInfo.groups.includes(groupId)) {
+    if (!userInfo.groups || !userInfo.groups.includes(groupId)) {
       let selectedGroup = await connection.query(`SELECT * FROM groups where group_id = '${groupId}'`);
       selectedGroup = selectedGroup[0];
       if (selectedGroup) {
@@ -171,17 +171,19 @@ Router.post('/leave/:id', async (req, res) => {
     const groupId = req.params.id;
     console.log(groupId)
     const connection = await (await pool).getConnection();
-    let userInfo = await connection.query("SELECT groups from users where user_id = ?", [req.session.user_id]);
+    let userInfo = await connection.query("SELECT groups, name from users where user_id = ?", [req.session.user_id]);
     //userInfo = JSON.parse(userInfo);
     userInfo = userInfo[0];
     console.log([userInfo.groups].includes(groupId), [userInfo.groups], groupId)
     if (userInfo.groups.includes(groupId)) {
       connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId},', '')) WHERE user_id = '${req.session.user_id}'`);
       connection.query(`UPDATE users set groups = CONCAT_WS(',', REPLACE(groups, '${groupId}', '')) WHERE user_id = '${req.session.user_id}'`);
-      connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.user_id},', '')) WHERE group_id = '${groupId}'`);
-      connection.query(`UPDATE groups set members = CONCAT_WS(',', REPLACE(members, '${req.session.user_id}', '')) WHERE group_id = '${groupId}'`);
+      connection.query(`UPDATE groups SET members = CONCAT_WS(',', REPLACE(members, '[\\"${req.session.user_id}\\",\\"${userInfo.name}\\"],', '')) WHERE group_id = '${groupId}'`);
+      connection.query(`UPDATE groups SET members = CONCAT_WS(',', REPLACE(members, '[\\"${req.session.user_id}\\",\\"${userInfo.name}\\"]', '')) WHERE group_id = '${groupId}'`);
       res.send({ success: true })
-      connection.release()
+      connection.release();
+      const io = req.app.get('socketio');
+      io.emit('removeUser', groupId, req.session.user_id)
     } else {
       res.send({ success: false })
     }
