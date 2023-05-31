@@ -1,0 +1,27 @@
+{
+  "user_id": "12345",
+  "previous_activities": [
+    {
+      "activity": "Work",
+      "duration_minutes": 120
+    },
+    {
+      "activity": "Exercise",
+      "duration_minutes": 60
+    },
+    {
+      "activity": "Sleep",
+      "duration_minutes": 480
+    }
+  ],
+  "todays_tasks": [
+    {
+      "task": "Meeting",
+      "duration_minutes": 60
+    },
+    {
+      "task": "Study",
+      "duration_minutes": 120
+    }
+  ]
+}
