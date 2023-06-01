@@ -123,6 +123,7 @@ const categoryRouter = require('./Router/article');
 const searchRouter = require('./Router/search');
 const groupsRouter = require("./Router/groups");
 const linksRouter = require('./Router/links');
+const aiRouter = require('./Router/ai');
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -162,6 +163,7 @@ app.use('/category', categoryRouter);
 app.use('/search', searchRouter);
 app.use('/groups', groupsRouter);
 app.use('/links', linksRouter);
+app.use('/ai', aiRouter);
 
 // error handler
 app.use(function (err, req, res, next) {
