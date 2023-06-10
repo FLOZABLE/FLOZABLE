@@ -1,53 +1,87 @@
-let maxTags = 10,
-  Createtags = [];
-
-countTags();
-createTag();
-
-function countTags() {
-  input.focus();
-  tagNumb.innerText = maxTags - Createtags.length;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-function createTag() {
-  ul.querySelectorAll("li").forEach((li) => li.remove());
-  Createtags
-    .slice()
-    .reverse()
-    .forEach((tag) => {
-      let liTag = `<li><p class = "Createtags">${tag}</p> <i class="uit uit-multiply" onclick="remove(this, '${tag}')"></i></li>`;
-      ul.insertAdjacentHTML("afterbegin", liTag);
-    });
-  countTags();
+body {
+  background-color: rgba(0, 0, 0, 0.04);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-function remove(element, tag) {
-  let index = Createtags.indexOf(tag);
-  Createtags = [...Createtags.slice(0, index), ...Createtags.slice(index + 1)];
-  element.parentElement.remove();
-  countTags();
+.date-form-container {
+  align-items: center;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
 }
-
-function addTag(e) {
-  if (e.key == "Enter") {
-    let tag = e.target.value.replace(/\s+/g, " ");
-    if (tag.length > 1 && !Createtags.includes(tag)) {
-      if (Createtags.length < 10) {
-        tag.split(",").forEach((tag) => {
-          Createtags.push(tag);
-          createTag();
-        });
-      }
-    }
-    e.target.value = "";
-  }
+.date-form-container form {
+  background-color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  position: relative;
 }
-
-input.addEventListener("keyup", addTag);
-
-const removeBtn = document.querySelector(".details button");
-removeBtn.addEventListener("click", () => {
-  Createtags.length = 0;
-  ul.querySelectorAll("li").forEach((li) => li.remove());
-  countTags();
-});
+.date-form-container form.open .calendar-popup {
+  opacity: 1;
+}
+.date-form-container form i {
+  padding: 0 10px 0 15px;
+}
+.date-form-container form input {
+  background-color: transparent !important;
+  border: none;
+  border-left: 1px solid #eee;
+  padding: 15px 25px;
+}
+.date-form-container .calendar-popup {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  padding: 10px;
+  position: absolute;
+  top: calc(100% + 5px);
+  transition: all 0.1s linear;
+  width: 100%;
+}
+.date-form-container .calendar-popup .month-and-year {
+  align-items: center;
+  display: flex;
+  text-align: center;
+  text-transform: uppercase;
+}
+.date-form-container .calendar-popup .month-and-year h4 {
+  width: 100%;
+}
+.date-form-container .calendar-popup .button {
+  background-color: transparent;
+  border: none;
+  font-weight: bold;
+  outline: none;
+  position: absolute;
+  top: 15px;
+}
+.date-form-container .calendar-popup .button:hover {
+  cursor: pointer;
+}
+.date-form-container .calendar-popup .button.prev {
+  left: 10px;
+}
+.date-form-container .calendar-popup .button.next {
+  right: 10px;
+}
+.date-form-container .calendar-popup table {
+  font-size: 12px;
+  width: 100%;
+}
+.date-form-container .calendar-popup table tr {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 5px 0;
+}
+.date-form-container .calendar-popup table tr th,
+.date-form-container .calendar-popup table tr td {
+  text-align: center;
+}
+.date-form-container .calendar-popup table .day:hover {
+  cursor: pointer;
+}
