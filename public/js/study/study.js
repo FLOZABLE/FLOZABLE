@@ -446,8 +446,8 @@ var groupList;
   
     // Navigation arrows
     navigation: {
-      nextEl: '#plan-next',
-      prevEl: '#plan-prev',
+      nextEl: '.calendar-btn.nextday',
+      prevEl: '.calendar-btn.prevday',
     }
   
   });
@@ -1580,11 +1580,13 @@ function createPlan(x, y) {
   div.classList.add('plan');
   div.draggable = true;
   div.innerHTML = `
+  <div class = "plan-display-zone">
   <div class = "plan-name">
     <span>test</span>  
   </div>
   <div>
     <span>1:15 - 5:50am</span>
+  </div>
   </div>
   `;
   div.addEventListener("dragstart", planDrag);
@@ -1592,48 +1594,89 @@ function createPlan(x, y) {
   div.addEventListener("dragover", planDragover);
   div.addEventListener("drop", planDrop);
   div.addEventListener("dragend", planDragend);
-  div.style = `top: ${y - planDragZone.getBoundingClientRect().top}px`;
+  div.addEventListener("dragenter", planDragEnter);
+  //div.addEventListener("wheel", scrollDuDrag)
+
   planDragZone.appendChild(div);
+
+  let dropArea = planDragZone;
+  let parentRect = dropArea.getBoundingClientRect();
+  let elementRect = div.getBoundingClientRect();
+  
+  // Calculate the correct top position relative to the parent container
+  let topPosition = y - parentRect.top + dropArea.scrollTop ;
+  
+  // Apply the top position to the dragged element
+  div.style.top = topPosition + 'px';
 }
 planDragZone.addEventListener('click', (event) => {
   console.log(event.clientX, event.clientY);
   addPlanModal.classList.remove('modal-closed');
-  if(event.target == planDragZone){
-    createPlan(event.clientX, event.clientY)
-  }
-})
-
+  createPlan(event.clientX, event.clientY)
+});
 
 function planDrag(e) {
+  /* e.preventDefault();
+  e.stopPropagation(); */
   e.dataTransfer.setDragImage(this.cloneNode(false), 0, 0);
   e.target.classList.add('item-dragged');
   console.log(e, 'sdfsdfsdfsdfsdf')
-  setTimeout(() => {
-  e.preventDefault()
-  }, 1)
+  e.target.style.cursor = 'move';
 };
 
 function planDragover(e) {
   e.preventDefault();
-  console.log('as')
+  e.target.style.cursor = 'move';
+  e.dataTransfer.dropEffect = 'move';
 }
 
 function planDrop(e) {
   e.preventDefault();
+  console.log('drop')
 }
 
 function planDragend(e) {
   e.preventDefault();
   e.target.classList.remove('item-dragged');
-  e.target.style = null;
+  
   let dropArea = e.target.parentNode;
-  e.target.style.top = e.clientY - dropArea.getBoundingClientRect().top + 'px';
+  let parentRect = dropArea.getBoundingClientRect();
+  let elementRect = e.target.getBoundingClientRect();
+  
+  // Calculate the correct top position relative to the parent container
+  let topPosition = e.clientY - parentRect.top + dropArea.scrollTop - 60;
+  
+  // Apply the top position to the dragged element
+  e.target.style.top = topPosition + 'px';
+  e.target.style.cursor = 'move';
+  
+  //console.log(e.target.style.top, e.clientY, elementRect.top, e.target.offsetTop, dropArea.scrollTop);
 };
-
 function planDragged(e) {
   e.preventDefault();
+  
   let dropArea = e.target.parentNode;
-  e.target.style.top = e.clientY - dropArea.getBoundingClientRect().top + 'px';
-  console.log(e.target.style.top, e.clientY, e.target.getBoundingClientRect().top);
+  let parentRect = dropArea.getBoundingClientRect();
+  let elementRect = e.target.getBoundingClientRect();
+  
+  // Calculate the correct top position relative to the parent container
+  let topPosition = e.clientY - parentRect.top + dropArea.scrollTop - 60;
+  
+  // Apply the top position to the dragged element
+  e.target.style.top = topPosition + 'px';
+  e.target.style.cursor = 'move';
+  console.log(e.clientY, window.innerHeight)
+  if(window.innerHeight - e.clientY > window.innerHeight / 2){
+    console.log('sdfsdf')
+    dropArea.scrollTop -= 15;
+  } else {
+    dropArea.scrollTop += 15;
+  }
+  //console.log(e.target.style.top, e.clientY, elementRect.top, e.target.offsetTop, dropArea.scrollTop, dropArea);
+}
+
+function planDragEnter(e) {
   e.preventDefault();
+  e.target.style.cursor = 'move';
+  e.stopPropagation()
 }
