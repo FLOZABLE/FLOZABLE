@@ -113,189 +113,138 @@ if (typeof document.visibilityState !== "undefined") {
   });
 }
 
-
+function getOppositeHex(hex) {
+  const dec = parseInt(hex.replace('#', ''), 16);
+  const oppositeDec = parseInt(16777216 - dec);
+  const oppositeHex = '#' + oppositeDec.toString(16);
+  console.log(dec, oppositeDec, oppositeHex, hex)
+  return oppositeHex
+}
 var timers = [];
 const main = document.querySelector("main");
 //main.classList.add('blur');
 const askSubjectModal = document.querySelector(".modal-ask-subject .container .wrapper-1");
 (async () => {
-  const response = await fetch('/study/bring-subjects', {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-
-  let subjects = await response.json();
-
-  let data = [];
-  let subjectOptions = '<option value="others" selected>others</option>';
-  const startTime = new Date().setHours(0, 0, 0, 0);
-  const endTime = new Date().setHours(23, 59, 59, 999);
-  for (let i = 0; i < subjects.length; i++) {
-    subjectOptions += `<option value = "${subjects[i].name}">${subjects[i].name}</option>`
-    const time = subjects[i].today * 1000;
-    const datumPoint = subjects[i].datum_point;
-    const filteredTimeline = subjects[i].timeline.filter(period => {
-      let [start, end] = period;
-      start = 1000 * (start + datumPoint);
-      end = 1000 * (end + datumPoint);
-      console.log(start, end);
-      return start >= startTime && end <= endTime;
-    });
-    timers.push({
-      hundredth: 0,
-      seconds: Math.floor((time / 1000) % 60),
-      minutes: Math.floor((time / (1000 * 60)) % 60),
-      hours: Math.floor((time / (1000 * 60 * 60))),
-      run: false,
-      timer: null,
-      secDisp: null,
-      minDisp: null,
-      hrDisp: null,
-      playBtn: null,
-      name: subjects[i].name,
-      color: subjects[i].color,
-    });
-    //modal asking subject
-    const label = document.createElement("label");
-    label.setAttribute("for", `option${i}`);
-    label.setAttribute("class", "l-radio");
-    label.innerHTML = `
-    <input type="radio" id="option${i}" name="subject-selector" tabindex="${i + 1}" class = "${i}">
-    <span>${timers[i].name} (${timers[i].hours}h${timers[i].minutes}m ${timers[i].seconds}s)</span>
-    `
-    document.querySelector(".modal-ask-subject .container .wrapper-1").appendChild(label);
-    for (let j = 0; j < filteredTimeline.length; j++) {
-      const diffTime = new Date(filteredTimeline[j][1]) - new Date(filteredTimeline[j][0]);
-      data.push({
-        name: timers[i].name,
-        start: new Date(filteredTimeline[j][0]).getTime(),
-        end: new Date(filteredTimeline[j][1]).getTime(),
-        text: `${Math.floor(diffTime / 1000 / 60 / 60)} hr ${Math.floor((diffTime / 1000 / 60)) % 60} min ${Math.floor((diffTime / 1000) % 60)} sec`,
-        color: subjects[i].color,
-      })
-    }
-    createSubjects(i, subjects[i].name, subjects[i].color, time);
-    // Initialize the timer object
-    timers[i].secDisp = document.getElementById('sec' + i);
-    timers[i].minDisp = document.getElementById('min' + i);
-    timers[i].hrDisp = document.getElementById('hr' + i);
-    timers[i].playBtn = document.getElementById('playBtn' + i);
-
-    // Add a click event listener to the play button
-    timers[i].playBtn.addEventListener('click', (function (index) {
-      return function () {
-        toggleTimer(index);
+  try {
+    const response = await fetch('/study/bring-subjects', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
       }
-    })(i));
+    });
+    const subjects = await response.json();
+
+    let data = [];
+    let subjectOptions = '<option value="others" selected>others</option>';
+    let subjectsList = '';
+    const startTime = new Date().setHours(0, 0, 0, 0);
+    const endTime = new Date().setHours(23, 59, 59, 999);
+
+    subjects.forEach((subject, i) => {
+      const { name, today, datum_point, timeline, color } = subject;
+      subjectsList += `
+        <div class="subject-calendar" id="${name}-calendar">
+          <div class="checkbox-wrapper-4">
+            <input class="inp-cbx" id="${name}-inp" type="checkbox"/>
+            <label class="cbx" for="${name}-inp">
+              <span>
+                <svg width="12px" height="10px">
+                  <use xlink:href="#check-4"></use>
+                </svg>
+              </span>
+              <span>${name}</span>
+            </label>
+            <svg class="inline-svg">
+              <symbol id="check-4" viewbox="0 0 12 10">
+                <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+              </symbol>
+            </svg>
+          </div>
+        </div>`;
+
+      subjectOptions += `<option value="${name}">${name}</option>`;
+
+      const time = today * 1000;
+      const filteredTimeline = timeline.filter(period => {
+        const [start, end] = period.map(time => 1000 * (time + datum_point));
+        return start >= startTime && end <= endTime;
+      });
+
+      timers.push({
+        hundredth: 0,
+        seconds: Math.floor((time / 1000) % 60),
+        minutes: Math.floor((time / (1000 * 60)) % 60),
+        hours: Math.floor(time / (1000 * 60 * 60)),
+        run: false,
+        timer: null,
+        secDisp: null,
+        minDisp: null,
+        hrDisp: null,
+        playBtn: null,
+        name,
+        color,
+      });
+
+      const label = document.createElement('label');
+      label.setAttribute('for', `option${i}`);
+      label.setAttribute('class', 'l-radio');
+      label.innerHTML = `
+        <input type="radio" id="option${i}" name="subject-selector" tabindex="${i + 1}" class="${i}">
+        <span>${timers[i].name} (${timers[i].hours}h${timers[i].minutes}m ${timers[i].seconds}s)</span>
+      `;
+
+      document.querySelector('.modal-ask-subject .container .wrapper-1').appendChild(label);
+
+      filteredTimeline.forEach(period => {
+        const diffTime = new Date(period[1]) - new Date(period[0]);
+        data.push({
+          name: timers[i].name,
+          start: new Date(period[0]).getTime(),
+          end: new Date(period[1]).getTime(),
+          text: `${Math.floor(diffTime / 1000 / 60 / 60)} hr ${Math.floor((diffTime / 1000 / 60)) % 60} min ${Math.floor((diffTime / 1000) % 60)} sec`,
+          color,
+        });
+      });
+
+      createSubjects(i, name, color, time);
+
+      timers[i].secDisp = document.getElementById('sec' + i);
+      timers[i].minDisp = document.getElementById('min' + i);
+      timers[i].hrDisp = document.getElementById('hr' + i);
+      timers[i].playBtn = document.getElementById('playBtn' + i);
+
+      timers[i].playBtn.addEventListener('click', (function (index) {
+        return function () {
+          toggleTimer(index);
+        };
+      })(i));
+    });
+
+    const subjectsCalendarArea = document.querySelector('.planner .subjects-list');
+    subjectsCalendarArea.innerHTML = subjectsList;
+
+    subjects.forEach(subject => {
+      const subjectRadioBtn = document.querySelector(`#${subject.name}-calendar .checkbox-wrapper-4 .inp-cbx`);
+      console.log(subjectRadioBtn)
+      subjectRadioBtn.addEventListener('change', (event) => {
+        const cbxbox = event.target.parentElement.querySelector(`#${subject.name}-calendar label.cbx span`);
+        if(event.target.checked) {
+          cbxbox.style = `background-color: ${subject.color};`;
+        } else {
+          cbxbox.style = `background-color: transparent;`;
+        }
+        console.log(event.target, getOppositeHex(subject.color));
+
+      });
+    });
+
+    const planSubjectsArea = document.querySelector('.add-plan-modal select#subject-type');
+    planSubjectsArea.innerHTML = subjectOptions;
+  } catch (error) {
+    console.error(error);
   }
-
-  var dropArea = document.getElementsByClassName(".timer .container");
-  var currPosY = -1,
-    origPosY = -1;
-
-  var draggable = document.getElementsByClassName("item");
-
-  [].forEach.call(draggable, function (el, i) {
-    el.addEventListener("dragstart", drag);
-    el.addEventListener("drag", dragged);
-    el.addEventListener("dragover", dragover);
-    el.addEventListener("drop", drop);
-    el.addEventListener("dragend", dragend);
-
-    el.id = 'drag-item-' + i;
-  });
-
-  //add subjects to plan area
-  const planSubjectsArea = document.querySelector('.add-plan-modal select#subject-type');
-  planSubjectsArea.innerHTML = subjectOptions;
-  console.log(subjectOptions)
-  /*   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  Highcharts.setOptions({
-    time: {
-      timezone: timezone,
-      useUTC: false
-    },
-  });
-  
-  const startPT = new Date(startTime).toLocaleString('en-US', {
-    timeZone: timezone,
-    timeZoneOffset: -7
-  });
-  const endPT = new Date(endTime).toLocaleString('en-US', {
-    timeZone: timezone,
-    timeZoneOffset: -7
-  });
-  
-  Highcharts.ganttChart('chart-container', {
-    title: {
-      text: 'Gantt Chart Example'
-    },
-    
-    xAxis: {
-      type: 'datetime',
-      currentDateIndicator: true,
-      min: new Date(startPT).getTime(),
-      max: new Date(endPT).getTime()
-    },
-    yAxis: {
-      uniqueNames: true
-    },
-    rangeSelector: {
-      enabled: true,
-      buttons: [{
-        type: 'day',
-        count: 1,
-        text: 'D',
-      }, {
-        type: 'week',
-        count: 1,
-        text: 'W'
-      }, {
-        type: 'month',
-        count: 1,
-        text: 'M'
-      }, {
-        type: 'year',
-        count: 1,
-        text: 'Y'
-      }, {
-        type: 'ytd',
-        text: 'YPD'
-      },{
-        type: 'all',
-        text: 'All'
-      }
-    
-    ],
-      selected: 4, // default to YPD
-    },
-    
-    series: [{
-      name: 'Tasks',
-      data: data,
-      tooltip: {
-        pointFormatter: function () {
-          const start = Highcharts.dateFormat('%Y-%m-%d', this.start);
-          const end = Highcharts.dateFormat('%Y-%m-%d', this.end);
-          const text = this.text;
-          return `${this.name}: ${start} - ${end} (${text} completed)`;
-        }
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: function () {
-          return this.point.options.text;
-        }
-      }
-    }],
-    connectNulls: false
-  }); */
-  
-
 })();
+
 
 const restSvg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" viewBox="0 0 460 460" xml:space="preserve" width="78px" height="78px" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="XMLID_1326_"> <path id="XMLID_1324_" style="fill:#CBB57A;" d="M285,295h50l-90,120h-10L285,295z"></path> <path id="XMLID_1325_" style="fill:#9E8E60;" d="M385,415h-10l-90-120h50L385,415z"></path> <path id="XMLID_1298_" style="fill:#4D4337;" d="M410,285L410,285c0,11.046-8.954,20-20,20H230c-11.046,0-20-8.954-20-20v0 c0-11.046,8.954-20,20-20h0.87l13.933-160.226C247.743,70.956,276.054,45,310,45h0c33.946,0,62.257,25.956,65.198,59.774 L389.13,265H390C401.046,265,410,273.954,410,285z"></path> <path id="XMLID_1295_" style="fill:#635547;" d="M370,270c0,2.761-2.239,5-5,5H255c-2.761,0-5-2.239-5-5s2.239-5,5-5h10 l8.326-95.752c1.654-19.023,17.579-33.623,36.674-33.623h0c19.095,0,35.02,14.6,36.674,33.623L355,265h10 C367.761,265,370,267.239,370,270z"></path> <path id="XMLID_1136_" style="fill:#9E8E60;" d="M120,415H0V225h120V415z M460,225h-20v190h20V225z"></path> <path id="XMLID_338_" style="fill:#766A54;" d="M100,315H20v-60h80V315z M100,335H20v60h80V335z"></path> <path id="XMLID_337_" style="fill:#D6CFBA;" d="M100,255v60H20v-60h20v10c0,5.523,4.477,10,10,10h20c5.523,0,10-4.477,10-10v-10 H100z M80,335v10c0,5.523-4.477,10-10,10H50c-5.523,0-10-4.477-10-10v-10H20v60h80v-60H80z"></path> <path id="XMLID_307_" style="fill:#833428;" d="M60,137v66c0,1.105-0.895,2-2,2H42c-1.105,0-2-0.895-2-2v-66c0-1.105,0.895-2,2-2 h16C59.105,135,60,135.895,60,137z"></path> <path id="XMLID_334_" style="fill:#374145;" d="M79.308,135.522l18.132,63.461c0.303,1.062-0.312,2.169-1.374,2.472l-15.384,4.396 c-1.062,0.303-2.169-0.312-2.472-1.374l-18.132-63.461c-0.303-1.062,0.312-2.169,1.374-2.472l15.384-4.396 C77.898,133.845,79.004,134.46,79.308,135.522z"></path> <path id="XMLID_308_" style="fill:#64757C;" d="M89.747,172.06l-19.23,5.494l-8.242-28.846l19.23-5.494L89.747,172.06z"></path> <path id="XMLID_245_" style="fill:#AC8428;" d="M60,155H40v-10h20V155z"></path> <path id="XMLID_1276_" style="fill:#374145;" d="M128.243,207.095c-1.617,0.359-3.22-0.661-3.579-2.278l-15.185-68.333 c-0.359-1.617,0.66-3.22,2.278-3.579c1.617-0.359,3.22,0.661,3.579,2.278l15.185,68.333 C130.881,205.133,129.861,206.736,128.243,207.095z"></path> <path id="XMLID_1297_" style="fill:#DDA333;" d="M141.114,128.651l-15.185,68.333c-0.359,1.617-1.962,2.637-3.579,2.278 c-1.617-0.359-2.637-1.962-2.278-3.579l15.185-68.333c0.359-1.617,1.962-2.637,3.579-2.278S141.474,127.034,141.114,128.651z"></path> <path id="XMLID_1817_" style="fill:#E0CFA6;" d="M130,187v36c0,1.105-0.895,2-2,2H32c-1.105,0-2-0.895-2-2v-36c0-1.105,0.895-2,2-2 h96C129.105,185,130,185.895,130,187z"></path> <path id="XMLID_1816_" style="fill:#D66A40;" d="M140,167v56c0,1.105-0.895,2-2,2h-26c-1.105,0-2-0.895-2-2v-56 c0-1.105,0.895-2,2-2h26C139.105,165,140,165.895,140,167z"></path> <path id="XMLID_1808_" style="fill:#CBB175;" d="M250,210v10h-40h-40v-10c0-5.523,4.477-10,10-10h20c5.523,0,10,4.477,10,10 c0-5.523,4.477-10,10-10h20C245.523,200,250,204.477,250,210z"></path> <path id="XMLID_1813_" style="fill:#E9CC85;" d="M250,210v10h-40v-10c0-5.523,4.477-10,10-10h20C245.523,200,250,204.477,250,210z"></path> <path id="XMLID_1807_" style="fill:#833428;" d="M254.833,211v6c0,1.105-0.895,2-2,2h-85.667c-1.105,0-2-0.895-2-2v-6 c0-1.105,0.895-2,2-2h85.667C253.938,209,254.833,209.895,254.833,211z"></path> <path id="XMLID_1805_" style="fill:#3F0900;" d="M216,215v2c0,1.105-0.895,2-2,2h-8c-1.105,0-2-0.895-2-2v-2c0-3.314,2.686-6,6-6 l0,0C213.314,209,216,211.686,216,215z"></path> <path id="XMLID_1747_" style="fill:#CBB57A;" d="M460,235H0v-20h460V235z"></path> </g> </g></svg>`
 const createMemberTimer = (membersWrapper, member) => {
@@ -476,6 +425,32 @@ var groupList;
 
   })
   initializeSlider();
+  new Swiper('.planner .swiper-container#planner', {
+    // Optional parameters
+    loop: true,
+    allowTouchMove: false,
+    mouse: {
+      // Disable mouse interactions
+      enabled: false,
+    },
+    slidesPerView: 1,
+    /* autoplay: { 
+      disableOnInteraction: false,
+      delay: 3000 
+    }, */
+    centeredSlides: true,
+    // If we need pagination
+    pagination: {
+      el: '.planner .swiper-pagination',
+    },
+  
+    // Navigation arrows
+    navigation: {
+      nextEl: '#plan-next',
+      prevEl: '#plan-prev',
+    }
+  
+  });
 })();
 
 function toggleTimer(index) {
@@ -915,7 +890,6 @@ function toggleSidebar() {
 const sidebarButton = document.querySelectorAll(".side-button");
 console.log(sidebarButton);
 sidebarButton[0].addEventListener("click", function() {
-  console.log('d')
   toggleSidebar();
 });
 
@@ -954,32 +928,207 @@ plannerButton.addEventListener('change', () => {
   if(plannerButton.checked){
     groupsViewer.style = 'display: none';
     analysisViewer.style = "display: none";
-    plannerViewer.style = "display: block";
+    plannerViewer.style = "display: flex";
   }
 })
 
-const plannerSwiper = new Swiper('.planner .swiper-container', {
-  // Optional parameters
-  loop: true,
-  slidesPerView: 1,
-  /* autoplay: { 
-    disableOnInteraction: false,
-    delay: 3000 
-  }, */
-  centeredSlides: true,
-  // If we need pagination
-  pagination: {
-    el: '.planner .swiper-pagination',
-  },
 
-  // Navigation arrows
-  navigation: {
-    nextEl: '.planner .swiper-button-next',
-    prevEl: '.planner .swiper-button-prev',
+
+
+console.log(document.querySelector('.planner .swiper-container'))
+
+//calendar for sidebar
+
+const months = [
+'January', 
+'February', 
+'March', 
+'April', 
+'May', 
+'June', 
+'July', 
+'August', 
+'September', 
+'October', 
+'November', 
+'December'
+];
+
+const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+
+
+let date = new Date();
+
+function getCurrentDate(element, asString) {
+  if (element) {
+      if (asString) {
+          return element.textContent = months[date.getMonth()] + ' ' +date.getDate();
+      }
+      return element.value = date.toISOString().substr(0, 10);
+  }
+  return date;
+}
+
+function generateCalendar() {
+
+  const calendar = document.getElementById('calendar');
+  if (calendar) {
+      calendar.remove();
   }
 
-});
+  const table = document.createElement("table");
+  table.id = "calendar";
 
+  const trHeader = document.createElement('tr');
+  trHeader.className = 'weekends';
+  weekdays.map(week => {
+      const th = document.createElement('th');
+      const w = document.createTextNode(week.substring(0, 3));
+      th.appendChild(w);
+      trHeader.appendChild(th);
+  });
+
+  table.appendChild(trHeader);
+
+  const weekDay = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      1
+  ).getDay();
+
+  const lastDay = new Date(
+      date.getFullYear(),
+      date.getMonth() + 1,
+      0
+  ).getDate();
+
+  let tr = document.createElement("tr");
+  let td = '';
+  let empty = '';
+  let btn = document.createElement('button');
+  let week = 0;
+
+
+  while (week < weekDay) {
+      td = document.createElement("td");
+      empty = document.createTextNode(' ');
+      td.appendChild(empty);
+      tr.appendChild(td);
+      week++;
+  }
+
+  for (let i = 1; i <= lastDay;) {
+      while (week < 7) {
+          td = document.createElement('td');
+          let text = document.createTextNode(i);
+          btn = document.createElement('button');
+          btn.className = "btn-day";
+          btn.addEventListener('click', function () { changeDate(this) });
+          week++;
+
+          if (i <= lastDay) {
+              i++;
+              btn.appendChild(text);
+              td.appendChild(btn)
+          } else {
+              text = document.createTextNode(' ');
+              td.appendChild(text);
+          }
+          tr.appendChild(td);
+      }
+      table.appendChild(tr);
+
+      tr = document.createElement("tr");
+
+      week = 0;
+  }
+  const content = document.getElementById('table');
+  content.appendChild(table);
+  changeActive();
+  changeHeader(date);
+  document.getElementById('date').textContent = date;
+  getCurrentDate(document.getElementById("currentDate"), true);
+  getCurrentDate(document.getElementById("date"), false);
+}
+
+function setDate(form) {
+  let newDate = new Date(form.date.value);
+  date = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1);
+  generateCalendar();
+  return false;
+}
+
+function changeHeader(dateHeader) {
+  const month = document.getElementById("month-header");
+  if (month.childNodes[0]) {
+      month.removeChild(month.childNodes[0]);
+  }
+  const headerMonth = document.createElement("h1");
+  const textMonth = document.createTextNode(months[dateHeader.getMonth()].substring(0, 3) + " " + dateHeader.getFullYear());
+  headerMonth.appendChild(textMonth);
+  month.appendChild(headerMonth);
+}
+
+function changeActive() {
+  let btnList = document.querySelectorAll('button.active');
+  btnList.forEach(btn => {
+      btn.classList.remove('active');
+  });
+  btnList = document.getElementsByClassName('btn-day');
+  for (let i = 0; i < btnList.length; i++) {
+      const btn = btnList[i];
+      if (btn.textContent === (date.getDate()).toString()) {
+          btn.classList.add('active');
+      }
+  }
+}
+
+function resetDate() {
+  date = new Date();
+  generateCalendar();
+}
+
+function changeDate(button) {
+  let newDay = parseInt(button.textContent);
+  date = new Date(date.getFullYear(), date.getMonth(), newDay);
+  generateCalendar();
+}
+
+function nextMonth() {
+  date = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+  generateCalendar(date);
+}
+
+function prevMonth() {
+  date = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+  generateCalendar(date);
+}
+
+
+function prevDay() {
+  date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
+  generateCalendar();
+}
+
+function nextDay() {
+  date = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+  generateCalendar();
+}
+
+document.onload = generateCalendar(date);
+
+
+const addPlanModal = document.querySelector('.add-plan-modal');
+const addPlanModalCloseBtn = document.querySelector('.add-plan-modal .close');
+const addPlanModalOpenBtn = document.querySelector('#create-plan');
+addPlanModalCloseBtn.addEventListener('click', () => {
+  addPlanModal.classList.add('modal-closed')
+})
+
+addPlanModalOpenBtn.addEventListener('click', () => {
+  addPlanModal.classList.remove('modal-closed');
+})
 class Calendar {
   constructor(inputSelector) {
       this.input = document.querySelector(inputSelector);
@@ -1157,7 +1306,6 @@ class Calendar {
 }
 
 const calendar = new Calendar(".date-input");
-
 
 //time selection
 const planStartTime = document.querySelector('.start-time select#timepicker');
@@ -1378,12 +1526,114 @@ bulletedLiBtn.addEventListener('click', () => {
 //plan save
 
 const planSaveBtn = document.querySelector(".end-btn #plan-save-btn");
-planSaveBtn.addEventListener('click', () => {
-  const planName =  document.querySelector("input[name='plan-name']").value;
+planSaveBtn.addEventListener('click', async() => {
+  const name =  document.querySelector("input[name='plan-name']").value;
   const date = [calendar.input.value, planEndTime.value, planStartTime.value];
   const repeat = document.querySelector("select[name='repeat']").value;
   const description = descriptionInput.innerHTML;
   const subject = document.querySelector("select[name='subject-type']").value;
   const notification = document.querySelector("select[name='notification']").value;
-  console.log(planName, date, repeat, description, subject, notification)
+  console.log(name, date, repeat, description, subject, notification);
+  
+  let response = await fetch('/study/add-plan', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({name: name, date: date, repeat: repeat, description: description, subject: subject, notification: notification})
+  });
+
+  response = await response.json();
+
+  console.log(response)
+  if(response.success){
+    name = '';
+    description = '';
+    addPlanModal.classList.add('modal-closed');
+  }
 })
+
+const sidebarSubjectsShowBtn = document.querySelector(".subjects-show-btn");
+sidebarSubjectsShowBtn.status = true;
+const dropdownArrow1 = `<svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L6.29289 9.70711C5.90237 9.31658 5.90237 8.68342 6.29289 8.29289C6.68342 7.90237 7.31658 7.90237 7.70711 8.29289L12 12.5858L16.2929 8.29289C16.6834 7.90237 17.3166 7.90237 17.7071 8.29289C18.0976 8.68342 18.0976 9.31658 17.7071 9.70711L12.7071 14.7071Z" fill="#5F6368"></path> </g></svg>`;
+const dropdownArrow2 = `<svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(180)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L6.29289 9.70711C5.90237 9.31658 5.90237 8.68342 6.29289 8.29289C6.68342 7.90237 7.31658 7.90237 7.70711 8.29289L12 12.5858L16.2929 8.29289C16.6834 7.90237 17.3166 7.90237 17.7071 8.29289C18.0976 8.68342 18.0976 9.31658 17.7071 9.70711L12.7071 14.7071Z" fill="#5F6368"></path> </g></svg>`;
+sidebarSubjectsShowBtn.addEventListener('click', () => {
+  if(sidebarSubjectsShowBtn.status){
+    sidebarSubjectsShowBtn.querySelector('.svg-wrapper').innerHTML = dropdownArrow2;
+    sidebarSubjectsShowBtn.status = false;
+    sidebarSubjectsShowBtn.parentElement.querySelector('.subjects-list').classList.add('closed');
+    sidebarSubjectsShowBtn.parentElement.querySelector('.subjects-list').classList.remove('open');
+  } else {
+    sidebarSubjectsShowBtn.querySelector('.svg-wrapper').innerHTML = dropdownArrow1;
+    sidebarSubjectsShowBtn.status = true;
+    sidebarSubjectsShowBtn.parentElement.querySelector('.subjects-list').classList.remove('closed');
+    sidebarSubjectsShowBtn.parentElement.querySelector('.subjects-list').classList.add('open');
+  }
+})
+
+//plan drag zone
+
+const planDragZone = document.querySelector(".plan-drag-zone");
+
+function createPlan(x, y) {
+  const div = document.createElement('div');
+  div.classList.add('plan');
+  div.draggable = true;
+  div.innerHTML = `
+  <div class = "plan-name">
+    <span>test</span>  
+  </div>
+  <div>
+    <span>1:15 - 5:50am</span>
+  </div>
+  `;
+  div.addEventListener("dragstart", planDrag);
+  div.addEventListener("drag", planDragged);
+  div.addEventListener("dragover", planDragover);
+  div.addEventListener("drop", planDrop);
+  div.addEventListener("dragend", planDragend);
+  div.style = `top: ${y - planDragZone.getBoundingClientRect().top}px`;
+  planDragZone.appendChild(div);
+}
+planDragZone.addEventListener('click', (event) => {
+  console.log(event.clientX, event.clientY);
+  addPlanModal.classList.remove('modal-closed');
+  if(event.target == planDragZone){
+    createPlan(event.clientX, event.clientY)
+  }
+})
+
+
+function planDrag(e) {
+  e.dataTransfer.setDragImage(this.cloneNode(false), 0, 0);
+  e.target.classList.add('item-dragged');
+  console.log(e, 'sdfsdfsdfsdfsdf')
+  setTimeout(() => {
+  e.preventDefault()
+  }, 1)
+};
+
+function planDragover(e) {
+  e.preventDefault();
+  console.log('as')
+}
+
+function planDrop(e) {
+  e.preventDefault();
+}
+
+function planDragend(e) {
+  e.preventDefault();
+  e.target.classList.remove('item-dragged');
+  e.target.style = null;
+  let dropArea = e.target.parentNode;
+  e.target.style.top = e.clientY - dropArea.getBoundingClientRect().top + 'px';
+};
+
+function planDragged(e) {
+  e.preventDefault();
+  let dropArea = e.target.parentNode;
+  e.target.style.top = e.clientY - dropArea.getBoundingClientRect().top + 'px';
+  console.log(e.target.style.top, e.clientY, e.target.getBoundingClientRect().top);
+  e.preventDefault();
+}

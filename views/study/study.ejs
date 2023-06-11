@@ -23,8 +23,8 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
         <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
         <script defer src="/socket.io/socket.io.js"></script>
-        <link rel="stylesheet" href="https://unpkg.com/swiper@6.8.4/swiper-bundle.min.css" />
-        <script defer src="https://unpkg.com/swiper@6.8.4/swiper-bundle.min.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/swiper@7.4.1/swiper-bundle.min.css" />
+        <script defer src="https://unpkg.com/swiper@7.4.1/swiper-bundle.min.js"></script>
         <script defer src="../js/study/study.js"></script>
       </head>
     <body data-home-page="" data-home-page-title="Contact 1" class="u-body u-xl-mode" data-lang="en">
@@ -79,37 +79,238 @@
 
               </div>
               <div class="planner">
-                <div class="swiper-container">
+                <div class="planner-sidebar">
+                  <div class="planner-sidebar-inner">
+                    <div class="create-btn-wrapper">
+                      <button class="blob-btn" id = "create-plan">
+                        <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.048"></g><g id="SVGRepo_iconCarrier"> <path d="M18.5882 16.2941L16.7059 14.4118M9 11H4M20 9V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V19C4 20.1046 4.89543 21 6 21H9M15 3V7M9 3V7M12 21V19.1176L18.1176 13L20 14.8824L13.8824 21H12Z" stroke="#5F6368" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                        CREATE
+                        <span class="blob-btn__inner">
+                          <span class="blob-btn__blobs">
+                            <span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span>
+                            <span class="blob-btn__blob"></span>
+                          </span>
+                        </span>
+                      </button>
+                    </div>
+                    <div class="sidebar-calendar">
+                      <div class="container">
+                        <div class="calendar-assets">
+                            <div class="field">
+                                <label for="date">Pesquisa por data</label>
+                                <form class="form-input" id="date-search" onsubmit="return setDate(this)">
+                                    <input type="date" class="text-field" name="date" id="date" required>
+                                    <button type="submit" class="btn btn-small" title="Pesquisar"><i class="fas fa-search"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="calendar" id="table">
+                            <div class="header">
+                                <!-- Aqui é onde ficará o h1 com o mês e o ano -->
+                                <div class="month" id="month-header">
+                
+                                </div>
+                                <div class="buttons">
+                                    <button class="icon" onclick="prevMonth()" title="Mês anterior"><i class="fas fa-chevron-left"></i></button>
+                                    <button class="icon" onclick="nextMonth()" title="Próximo mês"><i class="fas fa-chevron-right "></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <script src="https://kit.fontawesome.com/812e771e48.js" crossorigin="anonymous"></script>
+                    </div>
+                    <span draggable="true">asdasd</span>
+                    <div class="subjects-wrapper">
+                      <div class="subjects-show-btn">
+                        <div class="show-btn-wrapper">
+                          <span>My subjects</span>
+                          <div class="svg-wrapper">
+                            <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L6.29289 9.70711C5.90237 9.31658 5.90237 8.68342 6.29289 8.29289C6.68342 7.90237 7.31658 7.90237 7.70711 8.29289L12 12.5858L16.2929 8.29289C16.6834 7.90237 17.3166 7.90237 17.7071 8.29289C18.0976 8.68342 18.0976 9.31658 17.7071 9.70711L12.7071 14.7071Z" fill="#5F6368"></path> </g></svg>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="subjects-list">
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="swiper-container" id = "planner">
+                  <div class="planner-header">
+                    <div class="inner">
+                      <div class="today-btn-wrapper">
+                        <button class="blob-btn" onclick="resetDate()" id = "start">
+                          TODAY
+                          <span class="blob-btn__inner">
+                            <span class="blob-btn__blobs">
+                              <span class="blob-btn__blob"></span>
+                              <span class="blob-btn__blob"></span>
+                              <span class="blob-btn__blob"></span>
+                              <span class="blob-btn__blob"></span>
+                            </span>
+                          </span>
+                        </button>
+                      </div>
+                      <div class="day-assets">
+                        <button class="calendar-btn" onclick="prevDay()" title="Dia anterior"><i class="fas fa-chevron-left"></i> </button>
+                        <button class="calendar-btn" onclick="nextDay()" title="Próximo dia"><i class="fas fa-chevron-right"></i> </button>
+                      </div>
+                      <div class="date-view">
+                        <h1 id="currentDate"></h1>
+                      </div>
+                      <div class="view-options-wrpper">
+                        <select name="view-options" id="view-options">
+                          <option value="">Day</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
                   <div class="swiper-wrapper">
                     <div class="swiper-slide">
-                      <h3>Daily Planner</h3>
                       <div class="planner-wrapper">
                         <div class="daily-planner">
-                          <div class="hour">0AM</div>
-                          <div class="hour">1AM</div>
-                          <div class="hour">2AM</div>
-                          <div class="hour">3AM</div>
-                          <div class="hour">4AM</div>
-                          <div class="hour">5AM</div>
-                          <div class="hour">6AM</div>
-                          <div class="hour">7AM</div>
-                          <div class="hour">8AM</div>
-                          <div class="hour">9AM</div>
-                          <div class="hour">10AM</div>
-                          <div class="hour">11AM</div>
-                          <div class="hour">12AM</div>
-                          <div class="hour">1PM</div>
-                          <div class="hour">2PM</div>
-                          <div class="hour">3PM</div>
-                          <div class="hour">4PM</div>
-                          <div class="hour">5PM</div>
-                          <div class="hour">6PM</div>
-                          <div class="hour">7PM</div>
-                          <div class="hour">8PM</div>
-                          <div class="hour">9PM</div>
-                          <div class="hour">10PM</div>
-                          <div class="hour">11PM</div>
-                          <div class="hour">12PM</div>
+                          <div class="plan-drag-zone">
+                            <div class="plan" draggable="true" style="top: 142.8px;">
+    <div class="plan-name">
+      <span>test</span>  
+    </div>
+    <div>
+      <span>1:15 - 5:50am</span>
+    </div>
+    </div></div>
+                          <div class="grid-wrapper">
+                            <table>
+                              <tr>
+                                <th>Hours</th>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">1AM</td>
+                                <td class="block">
+                                
+                                </td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">2AM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">3AM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">4AM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">5AM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">6AM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">7AM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">8AM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">9AM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">10AM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">11AM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">12AM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">1PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">2PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">3PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">4PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">5PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">6PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">7PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">8PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">9PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">10PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">11PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                              <tr>
+                                <td class="hours">12PM</td>
+                                <td class="block"></td>
+                              </tr>
+                              <tr class = "line"></tr>
+                            </table>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -117,44 +318,25 @@
                       <h3>Daily Planner</h3>
                       <div class="planner-wrapper">
                         <div class="daily-planner">
-                          <div class="hour">0AM</div>
-                          <div class="hour">1AM</div>
-                          <div class="hour">2AM</div>
-                          <div class="hour">3AM</div>
-                          <div class="hour">4AM</div>
-                          <div class="hour">5AM</div>
-                          <div class="hour">6AM</div>
-                          <div class="hour">7AM</div>
-                          <div class="hour">8AM</div>
-                          <div class="hour">9AM</div>
-                          <div class="hour">10AM</div>
-                          <div class="hour">11AM</div>
-                          <div class="hour">12AM</div>
-                          <div class="hour">1PM</div>
-                          <div class="hour">2PM</div>
-                          <div class="hour">3PM</div>
-                          <div class="hour">4PM</div>
-                          <div class="hour">5PM</div>
-                          <div class="hour">6PM</div>
-                          <div class="hour">7PM</div>
-                          <div class="hour">8PM</div>
-                          <div class="hour">9PM</div>
-                          <div class="hour">10PM</div>
-                          <div class="hour">11PM</div>
-                          <div class="hour">12PM</div>
+                          
+                          <div class="hours">6PM</div>
+                          <div class="hours">7PM</div>
+                          <div class="hours">8PM</div>
+                          <div class="hours">9PM</div>
+                          <div class="hours">10PM</div>
+                          <div class="hours">11PM</div>
+                          <div class="hours">12PM</div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div class="swiper-button-next"></div>
-                  <div class="swiper-button-prev"></div>
+                  <div class="swiper-button-next" id = "plan-next"></div>
+                  <div class="swiper-button-prev" id = "plan-prev"></div>
                   <div class="swiper-pagination"></div>
                 </div>
               </div>
             </div>
           </div>
-          <div id="calendar"></div>
-          <div id="chart-container"></div>
         <nav>
           <div class="nav-right hidden-xs">
             <div class="side-button" id="btn">
@@ -165,10 +347,6 @@
           </div>
           <!-- nav-right -->
         </nav>
-      
-        <a href="https://codepen.io/tonkec/" class="ua" target="_blank">
-          <i class="fa fa-user"></i>
-        </a>
       </main>
       
       <div class="sidebar">
@@ -253,7 +431,7 @@
           </span>
         </button>
       </div>
-      <div class="add-plan-modal">
+      <div class="add-plan-modal modal-closed">
         <div class="modal-header">
           <div class="close">
             <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Menu / Close_LG"> <path id="Vector" d="M21 21L12 12M12 12L3 3M12 12L21.0001 3M12 12L3 21.0001" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g> </g></svg>
@@ -366,12 +544,12 @@
             </div>
             <div class="input-area">
               <select name="notification" id="notification">
-                <option value="">1 minute before</option>
-                <option value="">5 minutes before</option>
-                <option value="">10 minutes before</option>
-                <option value="">15 minutes before</option>
-                <option value="">1 hour before</option>
-                <option value="">1 day before</option>
+                <option value="0.01">1 minute before</option>
+                <option value="0.05">5 minutes before</option>
+                <option value="0.10">10 minutes before</option>
+                <option value="0.15">15 minutes before</option>
+                <option value="1">1 hour before</option>
+                <option value="24">1 day before</option>
               </select>
             </div>
           </div>

@@ -230,4 +230,34 @@ Router.post('/update-members-info', async(req, res) => {
 
 res.send(member);
 })
+
+Router.post('/add-plan', async(req, res) => {
+  try {
+    const userId = req.session.user_id;
+    if (!userId) {
+      return res.send({ success: false, reason: 'not auth' });
+    }
+  
+    console.log(req.body);
+  
+    const connection = await (await pool).getConnection();
+    const plan = JSON.stringify(req.body);
+    
+    try {
+      const addPlan = await connection.query(`UPDATE users SET plan = CASE
+        WHEN plan IS NULL THEN '${plan}'
+        WHEN plan = '' THEN '${plan}'
+        ELSE CONCAT(plan, ',', '${plan}')
+        END
+        WHERE user_id = '${userId}'`);
+      res.send({ success: true });
+    } catch (error) {
+      console.error('MySQL error:', error);
+      res.send({ success: false, reason: 'MySQL error' });
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+    res.send({ success: false, reason: 'An error occurred' });
+  }
+})
 module.exports = Router;
