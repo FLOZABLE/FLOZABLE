@@ -122,7 +122,6 @@
                 
                     <script src="https://kit.fontawesome.com/812e771e48.js" crossorigin="anonymous"></script>
                     </div>
-                    <span draggable="true">asdasd</span>
                     <div class="subjects-wrapper">
                       <div class="subjects-show-btn">
                         <div class="show-btn-wrapper">
@@ -155,8 +154,10 @@
                         </button>
                       </div>
                       <div class="day-assets">
-                        <button class="calendar-btn" onclick="prevDay()" title="Dia anterior"><i class="fas fa-chevron-left"></i> </button>
-                        <button class="calendar-btn" onclick="nextDay()" title="Próximo dia"><i class="fas fa-chevron-right"></i> </button>
+                        <!-- <div class="swiper-button-next" id = "plan-next"></div>
+                        <div class="swiper-button-prev" id = "plan-prev"></div> -->
+                        <button class="calendar-btn prevday" onclick="prevDay()" title="prevDay"><i class="fas fa-chevron-left"></i> </button>
+                        <button class="calendar-btn nextday" onclick="nextDay()" title="nextDay"><i class="fas fa-chevron-right"></i> </button>
                       </div>
                       <div class="date-view">
                         <h1 id="currentDate"></h1>
@@ -172,7 +173,7 @@
                     <div class="swiper-slide">
                       <div class="planner-wrapper">
                         <div class="daily-planner">
-                          <div class="plan-drag-zone">
+                          <!-- <div class="plan-drag-zone">
                             <div class="plan" draggable="true" style="top: 142.8px;">
     <div class="plan-name">
       <span>test</span>  
@@ -180,8 +181,8 @@
     <div>
       <span>1:15 - 5:50am</span>
     </div>
-    </div></div>
-                          <div class="grid-wrapper">
+    </div></div> -->
+                          <div class="grid-wrapper plan-drag-zone">
                             <table>
                               <tr>
                                 <th>Hours</th>
@@ -330,9 +331,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="swiper-button-next" id = "plan-next"></div>
-                  <div class="swiper-button-prev" id = "plan-prev"></div>
-                  <div class="swiper-pagination"></div>
                 </div>
               </div>
             </div>
