@@ -2071,7 +2071,8 @@ font-size:20px;
 
 .plan-drag-zone .plan{
   position: absolute;
-  width: 100%;
+  width: calc(100% - 100px);
+  left: 100px;
   height: 60px;
   z-index: 4;
   pointer-events: auto;
@@ -2080,6 +2081,7 @@ font-size:20px;
 
 .plan-drag-zone .plan-display-zone {
   background-color: #07f;
+  height: 60px;
 }
 
 .plan-drag-zone .item-dragged {

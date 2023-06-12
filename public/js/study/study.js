@@ -117,7 +117,6 @@ function getOppositeHex(hex) {
   const dec = parseInt(hex.replace('#', ''), 16);
   const oppositeDec = parseInt(16777216 - dec);
   const oppositeHex = '#' + oppositeDec.toString(16);
-  console.log(dec, oppositeDec, oppositeHex, hex)
   return oppositeHex
 }
 var timers = [];
@@ -225,7 +224,6 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
 
     subjects.forEach(subject => {
       const subjectRadioBtn = document.querySelector(`#${subject.name}-calendar .checkbox-wrapper-4 .inp-cbx`);
-      console.log(subjectRadioBtn)
       subjectRadioBtn.addEventListener('change', (event) => {
         const cbxbox = event.target.parentElement.querySelector(`#${subject.name}-calendar label.cbx span`);
         if(event.target.checked) {
@@ -233,7 +231,6 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
         } else {
           cbxbox.style = `background-color: transparent;`;
         }
-        console.log(event.target, getOppositeHex(subject.color));
 
       });
     });
@@ -293,7 +290,6 @@ const socket = io(window.location.protocol + '//' + window.location.hostname);
 // Listen for messages in the group
 
 socket.on('sendstatus', (userId) => {
-  console.log("test")
   /* socket.emit('sentTime', ()) */
 })
 
@@ -302,7 +298,6 @@ socket.on('studying', (userId, groups) => {
     const groupInfo = groupList.find(groupObj => groupObj.group_id == group);
     const memberInfo = groupInfo.members.find(member => member.userId === userId);
     memberInfo.timer.run = true;
-    console.log('timer', memberInfo.timer)
     memberInfo.timer.timer = setInterval(function () {countMember(memberInfo.timer);}, 1000);
     //document.querySelector
     const memberSliders = document.querySelectorAll(`.groups .swiper-slide#${group} ul li#${userId}`);
@@ -316,7 +311,6 @@ socket.on('studying', (userId, groups) => {
 });
 
 socket.on('stopstudying', (userId, groups) => {
-  console.log(userId, groups);
   groups.forEach((group) => {
     const groupInfo = groupList.find(groupObj => groupObj.group_id == group);
     const memberInfo = groupInfo.members.find(member => member.userId === userId);
@@ -332,7 +326,6 @@ socket.on('stopstudying', (userId, groups) => {
 });
 
 socket.on('sendTime', (userId) => {
-  console.log('send time to', userId, timers);
   let subject = ''
   timers.forEach((timer) => {
     if(timer.run){
@@ -343,7 +336,6 @@ socket.on('sendTime', (userId) => {
 });
 
 socket.on('addUser', async(group, userId) => {
-  console.log(userId)
   let response = await fetch('/study/update-members-info', {
     method: 'post',
     body: JSON.stringify({ userId: userId }),
@@ -352,12 +344,10 @@ socket.on('addUser', async(group, userId) => {
     }
   });
   response = await response.json();
-  console.log(response)
   const roomWrapper = document.querySelectorAll(`.groups .swiper-slide#${group} ul `);
   const groupInfo = groupList.find(groupObj => groupObj.group_id == group);
   groupInfo.members.push(response);
   const memberInfo = response;
-  console.log(roomWrapper, memberInfo, groupInfo, userId)
   roomWrapper.forEach(roomEl => {
     createMemberTimer(roomEl, memberInfo)
   })
@@ -371,7 +361,6 @@ socket.on('removeUser', (group, userId) => {
     roomEl.removeChild(roomEl.querySelector(`li#${userId}`));
   });
   groupInfo.members = groupInfo.members.filter(member => member.userId != userId);
-  console.log(groupList);
 })
 
 
@@ -387,7 +376,6 @@ var groupList;
     }
   });
   response = await response.json();
-  console.log(response)
   groupList = response[3];
   userId = response[1];
   const groupWithUser = response[2];
@@ -451,6 +439,19 @@ var groupList;
     }
   
   });
+  planDragZones = document.querySelectorAll(".plan-drag-zone");
+  planDragZones.forEach((planDragZone) => {
+    planDragZone.addEventListener('click', (event) => {
+      //console.log(event.clientX, event.clientY);
+      //addPlanModal.classList.remove('modal-closed');
+      console.log(event.target)
+      if(event.target == planDragZone || event.target.classList.contains('block')){
+        console.log(true)
+        addPlanModal.classList.remove('modal-closed');
+        createPlan(event.clientX, event.clientY, planDragZone)
+      }
+    });
+  })
 })();
 
 function toggleTimer(index) {
@@ -876,11 +877,8 @@ taskInput.addEventListener("keyup", (e) => {
 function toggleSidebar() {
   document.getElementsByClassName("side-button")[0].classList.toggle("active");
   if(!main.classList.contains('move-to-right') && !main.classList.contains('move-to-left')){
-    main.classList.toggle("move-to-left"); 
-    console.log('t')
   } else {
     main.classList.toggle("move-to-right");
-    console.log('t2')
   }
   var sidebarItems = document.getElementsByClassName("sidebar-item");
   for (var i = 0; i < sidebarItems.length; i++) {
@@ -888,7 +886,6 @@ function toggleSidebar() {
   }
 }
 const sidebarButton = document.querySelectorAll(".side-button");
-console.log(sidebarButton);
 sidebarButton[0].addEventListener("click", function() {
   toggleSidebar();
 });
@@ -933,9 +930,6 @@ plannerButton.addEventListener('change', () => {
 })
 
 
-
-
-console.log(document.querySelector('.planner .swiper-container'))
 
 //calendar for sidebar
 
@@ -1087,6 +1081,7 @@ function changeActive() {
 function resetDate() {
   date = new Date();
   generateCalendar();
+  updatePlanner();
 }
 
 function changeDate(button) {
@@ -1109,11 +1104,13 @@ function prevMonth() {
 function prevDay() {
   date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
   generateCalendar();
+  updatePlanner();
 }
 
 function nextDay() {
   date = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
   generateCalendar();
+  updatePlanner();
 }
 
 document.onload = generateCalendar(date);
@@ -1122,6 +1119,7 @@ document.onload = generateCalendar(date);
 const addPlanModal = document.querySelector('.add-plan-modal');
 const addPlanModalCloseBtn = document.querySelector('.add-plan-modal .close');
 const addPlanModalOpenBtn = document.querySelector('#create-plan');
+
 addPlanModalCloseBtn.addEventListener('click', () => {
   addPlanModal.classList.add('modal-closed')
 })
@@ -1129,6 +1127,10 @@ addPlanModalCloseBtn.addEventListener('click', () => {
 addPlanModalOpenBtn.addEventListener('click', () => {
   addPlanModal.classList.remove('modal-closed');
 })
+
+//update calendar plan as user change values
+
+
 class Calendar {
   constructor(inputSelector) {
       this.input = document.querySelector(inputSelector);
@@ -1322,7 +1324,6 @@ if (expectedMinute === 60) {
   expectedHour += 1;
 }
 
-console.log(expectedMinute);
 
 for (let hour = 0; hour <= 23; hour++) {
   for (let minute = 0; minute <= 45; minute += 15) {
@@ -1334,7 +1335,6 @@ for (let hour = 0; hour <= 23; hour++) {
 
     if (hour === expectedHour && minute === expectedMinute) {
       option.selected = true;
-      console.log('eds', hour, minute);
     }
   }
 }
@@ -1474,12 +1474,17 @@ function createOption(value, text) {
 
 const descriptionContainer = document.querySelector('.add-plan-modal .description .form-group');
 const descriptionInput = document.querySelector('.add-plan-modal .description .textarea');
+const planName =  document.querySelector("input[name='plan-name']")
 const descriptionOpts = document.querySelector('.description .text-options');
 const boldBtn = document.querySelector('.add-plan-modal .description #bold');
 const italicBtn = document.querySelector('.add-plan-modal .description #italic');
 const underlineBtn = document.querySelector('.add-plan-modal .description #underline');
 const numberedLiBtn = document.querySelector('.add-plan-modal .description #numbered-li');
 const bulletedLiBtn = document.querySelector('.add-plan-modal .description #bulleted-li');
+
+planName.addEventListener('change', () => {
+  generatedPlan.querySelector('.plan-name span').innerText = planName.value;
+})
 //const insertLinkBtn = document.querySelector('.add-plan-modal .description #insert-link');
 //const removeFormattingBtn = document.querySelector('.add-plan-modal .description #remove-formatting');
 let typeStyle = [];
@@ -1527,14 +1532,13 @@ bulletedLiBtn.addEventListener('click', () => {
 
 const planSaveBtn = document.querySelector(".end-btn #plan-save-btn");
 planSaveBtn.addEventListener('click', async() => {
-  const name =  document.querySelector("input[name='plan-name']").value;
+  const name =  planName.value;
   const date = [calendar.input.value, planEndTime.value, planStartTime.value];
   const repeat = document.querySelector("select[name='repeat']").value;
   const description = descriptionInput.innerHTML;
   const subject = document.querySelector("select[name='subject-type']").value;
   const notification = document.querySelector("select[name='notification']").value;
-  console.log(name, date, repeat, description, subject, notification);
-  
+
   let response = await fetch('/study/add-plan', {
     method: 'post',
     headers: {
@@ -1545,7 +1549,6 @@ planSaveBtn.addEventListener('click', async() => {
 
   response = await response.json();
 
-  console.log(response)
   if(response.success){
     name = '';
     description = '';
@@ -1570,170 +1573,110 @@ sidebarSubjectsShowBtn.addEventListener('click', () => {
     sidebarSubjectsShowBtn.parentElement.querySelector('.subjects-list').classList.add('open');
   }
 })
-
-//plan drag zone
-const planDragZone = document.querySelector(".plan-drag-zone");
-
-let previousScrollPosition = 0;
-
-function checkScrolling() {
-  const currentScrollPosition = planDragZone.scrollTop;
-
-  if (currentScrollPosition !== previousScrollPosition) {
-    // Element is being scrolled
-    //console.log('Element is being scrolled');
-    return true
-  } else {
-    // Element is not being scrolled
-    //console.log('Element is not being scrolled');
-    return false
+let generatedPlan;
+let binded = null;
+let initialMouseY = -1;
+let planDragged = false;
+function mouseUp(target, e) {
+  target.style.opacity = "1";
+  console.log('up')
+  target.parentNode.removeEventListener('mousemove', binded);
+  planDragged = false;
+  if(initialMouseY == -1){
+    console.log('not dragged');
   }
-
-  previousScrollPosition = currentScrollPosition;
 }
 
+function mouseDown(target, e) {
+  target.style.opacity = "0.8";
+  console.log('down')
+  binded = divMove.bind(null, target);
+  target.parentNode.addEventListener('mousemove', binded);
+  generatedPlan = target;
+  planDragged = true;
+  //target.addEventListener('mouseup', mouseUp.bind(null, target), false);
+}
 
-function createPlan(x, y) {
+function divMove(target, e) {
+  e.preventDefault();
+  let dropArea = target.parentNode;
+  let parentRect = dropArea.getBoundingClientRect();
+  let elementRect = target.getBoundingClientRect();
+  initialMouseY = e.clientY;
+
+  // Calculate the correct top position relative to the parent container
+  let topPosition = e.clientY - parentRect.top + dropArea.scrollTop - 30;
+  updatePlannerTime(topPosition, 60, target);
+
+
+  // Apply the top position to the dragged element
+  target.style.position = 'absolute';
+  target.style.top = topPosition + 'px';
+  target.style.cursor = 'move';
+  //console.log(e.target.style.top, e.clientY, elementRect.top, target.offsetTop, dropArea.scrollTop, topPosition);
+}
+
+let planDragZones = document.querySelectorAll(".plan-drag-zone");
+const planDragZone = planDragZones[0];
+
+function createPlan(x, y, planDragZone) {
+  console.log('create')
+  let dropArea = planDragZone;
+  let parentRect = dropArea.getBoundingClientRect();
+  let topPosition = y - parentRect.top + dropArea.scrollTop;
   const div = document.createElement('div');
   div.classList.add('plan');
-  div.draggable = true;
+
   div.innerHTML = `
-  <div class = "plan-display-zone">
-  <div class = "plan-name">
-    <span>test</span>  
+  <div class="plan-display-zone">
+  <div class="plan-name">
+    <span>(no title)</span>  
   </div>
-  <div>
-    <span>1:15 - 5:50am</span>
+  <div class = "plan-time-info">
+    <span></span>
   </div>
   </div>
   `;
-  div.addEventListener("dragstart", planDrag);
-  div.addEventListener("drag", planDragged);
-  div.addEventListener("dragover", planDragover);
-  div.addEventListener("drop", planDrop);
-  div.addEventListener("dragend", planDragend);
-  div.addEventListener("dragenter", planDragEnter);
-  //div.addEventListener("wheel", scrollDuDrag)
+
+  div.addEventListener('mousedown', mouseDown.bind(null, div), false);
+  div.addEventListener('mouseup', mouseUp.bind(null, div), false);
 
   planDragZone.appendChild(div);
-
-  let dropArea = planDragZone;
-  let parentRect = dropArea.getBoundingClientRect();
-  let elementRect = div.getBoundingClientRect();
-  
-  // Calculate the correct top position relative to the parent container
-  let topPosition = y - parentRect.top + dropArea.scrollTop ;
-  
-  // Apply the top position to the dragged element
+  generatedPlan = div;
+  updatePlannerTime(topPosition, 60, div);
   div.style.top = topPosition + 'px';
 }
-planDragZone.addEventListener('click', (event) => {
-  console.log(event.clientX, event.clientY);
-  addPlanModal.classList.remove('modal-closed');
-  createPlan(event.clientX, event.clientY)
-});
 
-function planDrag(e) {
-  e.dataTransfer.setDragImage(this.cloneNode(false), 0, 0);
-  e.target.classList.add('item-dragged');
-  console.log(e, 'sdfsdfsdfsdfsdf')
-  e.target.style.cursor = 'move';
-};
-
-function planDragover(e) {
-  e.preventDefault();
-  e.target.style.cursor = 'move';
-  e.dataTransfer.dropEffect = 'move';
-}
-
-function planDrop(e) {
-  e.preventDefault();
-  console.log('drop')
-}
-
-function planDragend(e) {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = "move";
-  e.target.classList.remove('item-dragged');
-  
-  let dropArea = e.target.parentNode;
-  let parentRect = dropArea.getBoundingClientRect();
-  let elementRect = e.target.getBoundingClientRect();
-  
-  // Calculate the correct top position relative to the parent container
-  let topPosition = e.clientY - parentRect.top + dropArea.scrollTop - 60;
-  
-  // Apply the top position to the dragged element
-  e.target.style.top = topPosition + 'px';
-  e.target.style.cursor = 'move';
-  
-  //console.log(e.target.style.top, e.clientY, elementRect.top, e.target.offsetTop, dropArea.scrollTop);
-};
-function planDragged(e) {
-  e.preventDefault();
-  
-  let dropArea = e.target.parentNode;
-  let parentRect = dropArea.getBoundingClientRect();
-  let elementRect = e.target.getBoundingClientRect();
-  
-  // Calculate the correct top position relative to the parent container
-  let topPosition = e.clientY - parentRect.top + dropArea.scrollTop - 60;
-  
-  // Apply the top position to the dragged element
-  e.target.style.top = topPosition + 'px';
-  e.target.style.cursor = 'move';
-  //console.log(e.clientY, window.innerHeight, checkScrolling())
-  const scrollThreshold = window.innerHeight / 2 - parentRect.top;
-  const scrollBuffer = 50; // Adjust the buffer size as needed
-  const scrollSpeed = 10;
-  console.log(isMouseWheelActive())
-  if (window.innerHeight - e.clientY > scrollThreshold + scrollBuffer) {
-    scrollUp(dropArea, scrollSpeed);
-  } else if (e.clientY > scrollThreshold - scrollBuffer) {
-    scrollDown(dropArea, scrollSpeed);
+planDragZone.addEventListener('scroll', (e) => {
+  if(planDragged){
+    e.preventDefault()
+    let dropArea = generatedPlan.parentNode;
+    let parentRect = dropArea.getBoundingClientRect();
+    
+    // Calculate the correct top position relative to the parent container
+    let topPosition = initialMouseY - parentRect.top + dropArea.scrollTop - 30;
+    // Apply the top position to the dragged element
+    generatedPlan.style.position = 'absolute';
+    generatedPlan.style.top = topPosition + 'px';
+    console.log(generatedPlan, topPosition, initialMouseY, parentRect.top, dropArea.scrollTop)
+    generatedPlan.style.cursor = 'move';
   }
-  //console.log(e.target.style.top, e.clientY, elementRect.top, e.target.offsetTop, dropArea.scrollTop, dropArea);
+})
+
+
+
+function updatePlanner() {
+  const plans = document.querySelectorAll('.plan-display-zone');
+  plans.forEach((plan) => {
+    plan.style = 'display: none';
+    console.log(plan)
+  })
 }
 
-function planDragEnter(e) {
-  e.preventDefault();
-  e.target.style.cursor = 'move';
-  //e.stopPropagation()
-}
-
-function scrollUp(element, speed) {
-  const scrollStep = speed / 2;
-  let scrollAmount = 0;
-
-  function animateScroll() {
-    element.scrollTop -= scrollStep;
-    scrollAmount += scrollStep;
-
-    if (scrollAmount < speed) {
-      requestAnimationFrame(animateScroll);
-    }
-  }
-
-  animateScroll();
-}
-
-function scrollDown(element, speed) {
-  const scrollStep = speed / 2;
-  let scrollAmount = 0;
-
-  function animateScroll() {
-    element.scrollTop += scrollStep;
-    scrollAmount += scrollStep;
-
-    if (scrollAmount < speed) {
-      requestAnimationFrame(animateScroll);
-    }
-  }
-
-  animateScroll();
-}
-
-function isMouseWheelActive() {
-  console.log(document.onwheel)
-  return (document.onwheel != null && document.onwheel !== 'undefined');
+function updatePlannerTime(topPosition, duration, div) {
+  const startTime = Math.floor((topPosition / 60 - 0.5) * 100 + 3) / 100;
+  const endTime = Math.floor(((topPosition + 60) / 60 - 0.5) * 100 + 3) / 100;
+  const startHr = parseInt(startTime.toString().split('.')[0]) == 0 ? 12 : parseInt(startTime.toString().split('.')[0]);
+  const startMin = startTime % 1 !== 0 ? Math.round(parseInt(startTime.toString().split('.')[1]) / 10 * 6) : 0;
+  div.querySelector('.plan-time-info span').innerText = `${startHr}:${startMin.toString().padStart(2, '0')}`;
 }
