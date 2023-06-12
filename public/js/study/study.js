@@ -1572,8 +1572,26 @@ sidebarSubjectsShowBtn.addEventListener('click', () => {
 })
 
 //plan drag zone
-
 const planDragZone = document.querySelector(".plan-drag-zone");
+
+let previousScrollPosition = 0;
+
+function checkScrolling() {
+  const currentScrollPosition = planDragZone.scrollTop;
+
+  if (currentScrollPosition !== previousScrollPosition) {
+    // Element is being scrolled
+    //console.log('Element is being scrolled');
+    return true
+  } else {
+    // Element is not being scrolled
+    //console.log('Element is not being scrolled');
+    return false
+  }
+
+  previousScrollPosition = currentScrollPosition;
+}
+
 
 function createPlan(x, y) {
   const div = document.createElement('div');
@@ -1616,8 +1634,6 @@ planDragZone.addEventListener('click', (event) => {
 });
 
 function planDrag(e) {
-  /* e.preventDefault();
-  e.stopPropagation(); */
   e.dataTransfer.setDragImage(this.cloneNode(false), 0, 0);
   e.target.classList.add('item-dragged');
   console.log(e, 'sdfsdfsdfsdfsdf')
@@ -1637,6 +1653,7 @@ function planDrop(e) {
 
 function planDragend(e) {
   e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
   e.target.classList.remove('item-dragged');
   
   let dropArea = e.target.parentNode;
@@ -1665,12 +1682,15 @@ function planDragged(e) {
   // Apply the top position to the dragged element
   e.target.style.top = topPosition + 'px';
   e.target.style.cursor = 'move';
-  console.log(e.clientY, window.innerHeight)
-  if(window.innerHeight - e.clientY > window.innerHeight / 2){
-    console.log('sdfsdf')
-    dropArea.scrollTop -= 15;
-  } else {
-    dropArea.scrollTop += 15;
+  //console.log(e.clientY, window.innerHeight, checkScrolling())
+  const scrollThreshold = window.innerHeight / 2 - parentRect.top;
+  const scrollBuffer = 50; // Adjust the buffer size as needed
+  const scrollSpeed = 10;
+  console.log(isMouseWheelActive())
+  if (window.innerHeight - e.clientY > scrollThreshold + scrollBuffer) {
+    scrollUp(dropArea, scrollSpeed);
+  } else if (e.clientY > scrollThreshold - scrollBuffer) {
+    scrollDown(dropArea, scrollSpeed);
   }
   //console.log(e.target.style.top, e.clientY, elementRect.top, e.target.offsetTop, dropArea.scrollTop, dropArea);
 }
@@ -1678,5 +1698,42 @@ function planDragged(e) {
 function planDragEnter(e) {
   e.preventDefault();
   e.target.style.cursor = 'move';
-  e.stopPropagation()
+  //e.stopPropagation()
+}
+
+function scrollUp(element, speed) {
+  const scrollStep = speed / 2;
+  let scrollAmount = 0;
+
+  function animateScroll() {
+    element.scrollTop -= scrollStep;
+    scrollAmount += scrollStep;
+
+    if (scrollAmount < speed) {
+      requestAnimationFrame(animateScroll);
+    }
+  }
+
+  animateScroll();
+}
+
+function scrollDown(element, speed) {
+  const scrollStep = speed / 2;
+  let scrollAmount = 0;
+
+  function animateScroll() {
+    element.scrollTop += scrollStep;
+    scrollAmount += scrollStep;
+
+    if (scrollAmount < speed) {
+      requestAnimationFrame(animateScroll);
+    }
+  }
+
+  animateScroll();
+}
+
+function isMouseWheelActive() {
+  console.log(document.onwheel)
+  return (document.onwheel != null && document.onwheel !== 'undefined');
 }
