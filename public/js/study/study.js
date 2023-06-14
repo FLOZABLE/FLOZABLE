@@ -442,10 +442,8 @@ var groupList;
   planDragZones = document.querySelectorAll(".plan-drag-zone");
   planDragZones.forEach((planDragZone) => {
     planDragZone.addEventListener('click', (event) => {
-      //console.log(event.clientX, event.clientY);
-      //addPlanModal.classList.remove('modal-closed');
       console.log(event.target)
-      if(event.target == planDragZone || event.target.classList.contains('block')){
+      if(event.target == planDragZone || event.target.classList.contains('block') || event.target.classList.contains('line')){
         console.log(true)
         addPlanModal.classList.remove('modal-closed');
         createPlan(event.clientX, event.clientY, planDragZone)
@@ -1130,6 +1128,7 @@ addPlanModalOpenBtn.addEventListener('click', () => {
 
 //update calendar plan as user change values
 
+let selectedPlan = {};
 
 class Calendar {
   constructor(inputSelector) {
@@ -1264,6 +1263,7 @@ class Calendar {
       const formattedDate = date.toLocaleDateString('en-US', options);
 
       this.input.value = formattedDate;
+      selectedPlan.date = formattedDate;
   }
 
   updateMonth(month) {
@@ -1307,9 +1307,9 @@ class Calendar {
   }
 }
 
-const calendar = new Calendar(".date-input");
 
 //time selection
+const planDate = document.querySelector('input.date-input');
 const planStartTime = document.querySelector('.start-time select#timepicker');
 const planEndTime = document.querySelector('.end-time select#timepicker');
 
@@ -1324,17 +1324,19 @@ if (expectedMinute === 60) {
   expectedHour += 1;
 }
 
-
-for (let hour = 0; hour <= 23; hour++) {
-  for (let minute = 0; minute <= 45; minute += 15) {
-    const timeValue = `${hour}.${minute}`;
-    const timeText = formatTime(hour, minute);
-
-    const option = createOption(timeValue, timeText);
-    planStartTime.appendChild(option);
-
-    if (hour === expectedHour && minute === expectedMinute) {
-      option.selected = true;
+function createStartTimeOptions() {
+  for (let hour = 0; hour <= 23; hour++) {
+    for (let minute = 0; minute <= 45; minute += 15) {
+      const timeValue = `${hour}.${minute}`;
+      const timeText = formatTime(hour, minute);
+  
+      const option = createOption(timeValue, timeText);
+      planStartTime.appendChild(option);
+  
+      if (hour === expectedHour && minute === expectedMinute) {
+        option.selected = true;
+        prevStartTime = [expectedHour, expectedMinute];
+      }
     }
   }
 }
@@ -1347,7 +1349,6 @@ function formatTime(hour, minute) {
 }
 
 let prevStartTime = planStartTime.value.split('.');
-updateEndTimeOptions();
 
 planStartTime.addEventListener('change', (event) => {
   const updatedStartTime = planStartTime.value.split('.');
@@ -1377,13 +1378,57 @@ planStartTime.addEventListener('change', (event) => {
   }
 
   const updatedEndTime = [updatedHr, updatedMin];
-  console.log(updatedEndTime);
+  console.log(updatedEndTime, 'sdfsdf', expectedHour);
   const selectedEndInput = document.querySelector(`.end-time option[value="${updatedEndTime[0]}.${updatedEndTime[1]}"]`);
   console.log(`.end-time option[value="${updatedEndTime[0]}.${updatedEndTime[1]}"]`);
   selectedEndInput.selected = true;
+  //expectedHour = updatedHr;
+  //expectedMinute = updatedMin;
+  
+  selectedPlan.el.style.top = parseInt(updatedStartTime[0]) * 60 - 30 + parseInt(updatedStartTime[1]) + 'px';
+  console.log('height = ', selectedPlan.el.style.height)
+  selectedPlan.startTimeDis.innerText = `${parseInt(updatedStartTime[0]) == 0 ? 12 : updatedStartTime[0]}:${updatedStartTime[1].padStart(2, 0)} - ${updatedHr}:${updatedMin.toString().padStart(2, 0)}`;
+  selectedPlan.startHr = parseInt(updatedStartTime[0]);
+  selectedPlan.startMin = parseInt(updatedStartTime[1]);
+  selectedPlan.planDragZone.scrollTo({behavior: 'smooth', top: selectedPlan.el.offsetTop - 100})
 });
 
+planEndTime.addEventListener('change', () => {
+  const updatedStartTime = planStartTime.value.split('.');
+  const prevEndTime = planEndTime.value.split('.');
+  const duration = `${prevEndTime[0] - prevStartTime[0]}.${prevEndTime[1] - prevStartTime[1]}`;
+  let hrDiff = prevEndTime[0] - prevStartTime[0];
+  let minDiff = prevEndTime[1] - prevStartTime[1];
+  prevStartTime = updatedStartTime;
+  if (minDiff < 0) {
+    minDiff += 60;
+    hrDiff -= 1;
+  }
+
+  if (minDiff === 60) {
+    minDiff = 0;
+  }
+
+  console.log(duration, hrDiff, minDiff);
+  let updatedHr = parseInt(updatedStartTime[0]) + hrDiff;
+  let updatedMin = parseInt(updatedStartTime[1]) + minDiff;
+
+  if (updatedMin >= 60) {
+    updatedMin -= 60;
+    updatedHr += 1;
+  }
+
+  const updatedEndTime = [updatedHr, updatedMin];
+  console.log(updatedEndTime, 'sdfsdf', expectedHour);
+  const selectedEndInput = document.querySelector(`.end-time option[value="${updatedEndTime[0]}.${updatedEndTime[1]}"]`);
+  console.log(`.end-time option[value="${updatedEndTime[0]}.${updatedEndTime[1]}"]`);
+  selectedEndInput.selected = true;
+  selectedPlan.el.querySelector('.plan-display-zone').style.height = (hrDiff + Math.round(minDiff / 60 * 100)/ 100) * 60 + 'px';
+  selectedPlan.startTimeDis.innerText = `${parseInt(updatedStartTime[0]) == 0 ? 12 : updatedStartTime[0]}:${updatedStartTime[1].padStart(2, 0)} - ${updatedHr}:${updatedMin.toString().padStart(2, 0)}`;
+})
+
 function updateEndTimeOptions() {
+  console.log(expectedHour, expectedMinute, prevStartTime)
   planEndTime.innerHTML = '';
   let duration1 = 0;
 
@@ -1482,6 +1527,9 @@ const underlineBtn = document.querySelector('.add-plan-modal .description #under
 const numberedLiBtn = document.querySelector('.add-plan-modal .description #numbered-li');
 const bulletedLiBtn = document.querySelector('.add-plan-modal .description #bulleted-li');
 
+const subjectType = document.querySelector("select[name='subject-type']");
+const subjectRepeat = document.querySelector("select[name='repeat']");
+const subjectNotification = document.querySelector("select[name='notification']");
 planName.addEventListener('change', () => {
   generatedPlan.querySelector('.plan-name span').innerText = planName.value;
 })
@@ -1493,6 +1541,23 @@ descriptionContainer.addEventListener('focusin', () => {
   descriptionInput.style = 'height: 100px;'
   descriptionInput.setAttribute('rows', 3);
   descriptionOpts.classList.add('visible');
+});
+
+descriptionInput.addEventListener('input', () => {
+  console.log('tes')
+  selectedPlan.description = descriptionInput.innerHTML;
+});
+
+subjectType.addEventListener('change', () => {
+  selectedPlan.type = subjectType.value;
+});
+
+subjectRepeat.addEventListener('change', () => {
+  selectedPlan.repeat = subjectRepeat.value;
+});
+
+subjectNotification.addEventListener('change', () => {
+  selectedPlan.notification = subjectNotification.value;
 })
 
 /* descriptionContainer.addEventListener('focusout', (event) => {
@@ -1534,10 +1599,10 @@ const planSaveBtn = document.querySelector(".end-btn #plan-save-btn");
 planSaveBtn.addEventListener('click', async() => {
   const name =  planName.value;
   const date = [calendar.input.value, planEndTime.value, planStartTime.value];
-  const repeat = document.querySelector("select[name='repeat']").value;
+  const repeat = subjectRepeat.value;
   const description = descriptionInput.innerHTML;
-  const subject = document.querySelector("select[name='subject-type']").value;
-  const notification = document.querySelector("select[name='notification']").value;
+  const subject = subjectType.value;
+  const notification = subjectNotification.value;
 
   let response = await fetch('/study/add-plan', {
     method: 'post',
@@ -1556,6 +1621,8 @@ planSaveBtn.addEventListener('click', async() => {
   }
 })
 
+const plans = [];
+
 const sidebarSubjectsShowBtn = document.querySelector(".subjects-show-btn");
 sidebarSubjectsShowBtn.status = true;
 const dropdownArrow1 = `<svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L6.29289 9.70711C5.90237 9.31658 5.90237 8.68342 6.29289 8.29289C6.68342 7.90237 7.31658 7.90237 7.70711 8.29289L12 12.5858L16.2929 8.29289C16.6834 7.90237 17.3166 7.90237 17.7071 8.29289C18.0976 8.68342 18.0976 9.31658 17.7071 9.70711L12.7071 14.7071Z" fill="#5F6368"></path> </g></svg>`;
@@ -1573,6 +1640,7 @@ sidebarSubjectsShowBtn.addEventListener('click', () => {
     sidebarSubjectsShowBtn.parentElement.querySelector('.subjects-list').classList.add('open');
   }
 })
+
 let generatedPlan;
 let binded = null;
 let initialMouseY = -1;
@@ -1583,8 +1651,19 @@ function mouseUp(target, e) {
   target.parentNode.removeEventListener('mousemove', binded);
   planDragged = false;
   if(initialMouseY == -1){
-    console.log('not dragged');
+    const plan = plans.find(plan => plan.planId == target.id);
+    console.log(plan);
+    selectedPlan = plan;
+    addPlanModal.classList.remove('modal-closed');
+    planName.value = target.querySelector('.plan-name span').innerText;
+    console.log(plan.startHr, plan.startMin, plan.endHr, plan.endMin);
+    const startOption = planStartTime.querySelector(`option[value="${plan.startHr}.${plan.startMin}"]`);
+    const endOption = planEndTime.querySelector(`option[value="${plan.endHr}.${plan.endMin}"]`);
+    console.log(startOption, endOption);
+    startOption.selected = true;
+    //endOption.selected = true;
   }
+  initialMouseY = -1;
 }
 
 function mouseDown(target, e) {
@@ -1605,7 +1684,7 @@ function divMove(target, e) {
   initialMouseY = e.clientY;
 
   // Calculate the correct top position relative to the parent container
-  let topPosition = e.clientY - parentRect.top + dropArea.scrollTop - 30;
+  let topPosition = e.clientY - parentRect.top + dropArea.scrollTop;
   updatePlannerTime(topPosition, 60, target);
 
 
@@ -1620,12 +1699,14 @@ let planDragZones = document.querySelectorAll(".plan-drag-zone");
 const planDragZone = planDragZones[0];
 
 function createPlan(x, y, planDragZone) {
-  console.log('create')
+  console.log('create');
+  const planId = generateRandomPlanId(10);
   let dropArea = planDragZone;
   let parentRect = dropArea.getBoundingClientRect();
   let topPosition = y - parentRect.top + dropArea.scrollTop;
   const div = document.createElement('div');
   div.classList.add('plan');
+  div.id = planId;
 
   div.innerHTML = `
   <div class="plan-display-zone">
@@ -1643,8 +1724,28 @@ function createPlan(x, y, planDragZone) {
 
   planDragZone.appendChild(div);
   generatedPlan = div;
-  updatePlannerTime(topPosition, 60, div);
   div.style.top = topPosition + 'px';
+  const planInfo =  {
+    planId: planId,
+    el: div,
+    date: null,
+    startTimeDis: div.querySelector('.plan-time-info span'),
+    planDragZone: planDragZone,
+    startHr: null,
+    startMin: null,
+    endHr: null,
+    endMin: null,
+    description: null,
+    subject: 'others',
+    repeat: false,
+    notification: 0.01
+  };
+
+  plans.push(
+    planInfo
+  );
+  selectedPlan = planInfo
+  updatePlannerTime(topPosition, 60, div);
 }
 
 planDragZone.addEventListener('scroll', (e) => {
@@ -1654,7 +1755,7 @@ planDragZone.addEventListener('scroll', (e) => {
     let parentRect = dropArea.getBoundingClientRect();
     
     // Calculate the correct top position relative to the parent container
-    let topPosition = initialMouseY - parentRect.top + dropArea.scrollTop - 30;
+    let topPosition = initialMouseY - parentRect.top + dropArea.scrollTop;
     // Apply the top position to the dragged element
     generatedPlan.style.position = 'absolute';
     generatedPlan.style.top = topPosition + 'px';
@@ -1666,17 +1767,57 @@ planDragZone.addEventListener('scroll', (e) => {
 
 
 function updatePlanner() {
-  const plans = document.querySelectorAll('.plan-display-zone');
   plans.forEach((plan) => {
-    plan.style = 'display: none';
-    console.log(plan)
+    plan.el.style = 'display: none';
   })
 }
 
 function updatePlannerTime(topPosition, duration, div) {
+  const plan = plans.find(plan => plan.planId == div.id);
+  const interval = 15;
   const startTime = Math.floor((topPosition / 60 - 0.5) * 100 + 3) / 100;
   const endTime = Math.floor(((topPosition + 60) / 60 - 0.5) * 100 + 3) / 100;
-  const startHr = parseInt(startTime.toString().split('.')[0]) == 0 ? 12 : parseInt(startTime.toString().split('.')[0]);
-  const startMin = startTime % 1 !== 0 ? Math.round(parseInt(startTime.toString().split('.')[1]) / 10 * 6) : 0;
-  div.querySelector('.plan-time-info span').innerText = `${startHr}:${startMin.toString().padStart(2, '0')}`;
+  let startHr = parseInt(startTime.toString().split('.')[0]);
+  let startMin = startTime % 1 !== 0 ? Math.round(parseInt(startTime.toString().split('.')[1]) / 10 * 6) : 0;
+  let endHr = parseInt(endTime.toString().split('.')[0]);
+  let endMin = endTime % 1 !== 0 ? Math.round(parseInt(endTime.toString().split('.')[1]) / 10 * 6) : 0;
+  
+  startMin = Math.round(startMin / interval) * interval;
+  endMin = Math.round(endMin / interval) * interval;
+  
+  if (startMin >= 60) {
+    startHr += 1;
+    startMin = 0;
+  }
+
+  if(endMin >= 60) {
+    endHr += 1;
+    endMin = 0;
+  }
+  
+  div.querySelector('.plan-time-info span').innerText = `${startHr == 0 ? 12 : startHr}:${startMin.toString().padStart(2, '0')} - ${endHr == 0 ? 12 : endHr}:${endMin.toString().padStart(2, 0)}`;
+  plan.startHr = startHr;
+  plan.startMin = startMin;
+  plan.endHr = endHr;
+  plan.endMin = endMin;
+  expectedHour = plan.startHr;
+  expectedMinute = plan.startMin;
+  createStartTimeOptions();
+  updateEndTimeOptions();
+  console.log('updated', expectedHour)
+  return {startHr: startHr, startMin: startMin, endHr: endHr, endMin: endMin};
 }
+
+function generateRandomPlanId(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+
+  return result;
+}
+
+const calendar = new Calendar(".date-input");
