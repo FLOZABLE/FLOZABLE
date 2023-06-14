@@ -244,12 +244,12 @@ Router.post('/add-plan', async(req, res) => {
     const plan = JSON.stringify(req.body);
     
     try {
-      const addPlan = await connection.query(`UPDATE users SET plan = CASE
+      /* const addPlan = await connection.query(`UPDATE users SET plan = CASE
         WHEN plan IS NULL THEN '${plan}'
         WHEN plan = '' THEN '${plan}'
         ELSE CONCAT(plan, ',', '${plan}')
         END
-        WHERE user_id = '${userId}'`);
+        WHERE user_id = '${userId}'`); */
       res.send({ success: true });
     } catch (error) {
       console.error('MySQL error:', error);
