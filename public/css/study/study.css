@@ -24,7 +24,7 @@ main {
   top: 0;
   z-index: 1;
   right: 0;
-  background-color: #EF8354;
+  background-color: #fff;
 }
 
 main .bar {
@@ -338,7 +338,7 @@ nav {
 }
 
 .mainviewer-container {
-  margin-top: 50px;
+  margin-top: 0px;
   width: 100%;
   height: 80vh;
   position: relative;
@@ -477,7 +477,7 @@ tr.line {
   border: none;
   border-left: 1px solid #eee;
   padding: 15px 0px 15px 5px;
-  width: 150px;
+  width: 170px;
 }
 .date-form-container .calendar-popup {
   background-color: #fff;
@@ -2073,7 +2073,6 @@ font-size:20px;
   position: absolute;
   width: calc(100% - 100px);
   left: 100px;
-  height: 60px;
   z-index: 4;
   pointer-events: auto;
   touch-action: pan-y;
@@ -2082,10 +2081,24 @@ font-size:20px;
 .plan-drag-zone .plan-display-zone {
   background-color: #07f;
   height: 60px;
+  border-radius: 7px;
+  color: #fff;
+  text-align: left;
 }
 
+.plan-name, .plan-time-info {
+  margin-left: 15px;
+}
 .plan-drag-zone .item-dragged {
   height: 130px;
   background-color: #6743ee;
   cursor: move !important;
+}
+
+.planner-timebar {
+  position: absolute;
+  width: 100%;
+  height: 0px;
+  border: 1px solid red;
+  top: 30px;
 }
