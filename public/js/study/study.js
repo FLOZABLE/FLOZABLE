@@ -99,14 +99,10 @@ function dragged(e) {
 if (typeof document.visibilityState !== "undefined") {
   document.addEventListener("visibilitychange", function() {
     if (document.visibilityState === "visible") {
-      console.log("Page is visible.");
     } else {
-      console.log("Page is hidden.");
       for (let i = 0; i < timers.length; i++) {
         if (timers[i].run == true) {
           toggleTimer(i);
-          console.log(timers[i], timers[i].run);
-          
         }
       }
     }
@@ -121,6 +117,7 @@ function getOppositeHex(hex) {
 }
 var timers = [];
 const main = document.querySelector("main");
+let subjects = []
 //main.classList.add('blur');
 const askSubjectModal = document.querySelector(".modal-ask-subject .container .wrapper-1");
 (async () => {
@@ -131,14 +128,16 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
         'Content-Type': 'application/json'
       }
     });
-    const subjects = await response.json();
+    subjects = await response.json();
 
     let data = [];
     let subjectOptions = '<option value="others" selected>others</option>';
     let subjectsList = '';
     const startTime = new Date().setHours(0, 0, 0, 0);
     const endTime = new Date().setHours(23, 59, 59, 999);
-
+    if(!subjects){
+      return 0
+    }
     subjects.forEach((subject, i) => {
       const { name, today, datum_point, timeline, color } = subject;
       subjectsList += `
@@ -240,6 +239,97 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
   } catch (error) {
     console.error(error);
   }
+
+  //bring plans
+  let bringPlans = await fetch('/study/bring-plans', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  bringPlans = await bringPlans.json();
+  const storedPlansArray = JSON.parse(bringPlans);
+  createCurrentTimeBar(planDragZone);
+  if(storedPlansArray[0] == null){
+    return 0
+  }
+  storedPlansArray.forEach((storedPlan) => {
+    const startTime = storedPlan.startTime.split('.');
+    const endTime = storedPlan.endTime.split('.');
+    const startHr = parseInt(startTime[0]);
+    const startMin = parseInt(startTime[1]);
+    const endHr = endTime[0];
+    const endMin = endTime[1];
+    let hrDiff = endHr - startHr;
+    let minDiff = endMin - startMin;
+    const planY = (startHr + Math.round(startMin / 60 * 100) / 100 + 0.5) * 60 ;
+    const planId = storedPlan.planId;
+    let dropArea = planDragZone;
+    let parentRect = dropArea.getBoundingClientRect();
+    let topPosition = planY - parentRect.top + dropArea.scrollTop;
+    const div = document.createElement('div');
+    const subject = subjects.find(subject => subject.name == storedPlan.subject) ? subjects.find(subject => subject.name == storedPlan.subject) : {name: 'default',color: '#07f'};
+    div.classList.add('plan');
+    div.classList.add(`subject-${subject.name}`);
+    div.id = planId;
+    div.classList.add(`planId${planId}`);
+  
+    div.innerHTML = `
+    <div class="plan-display-zone">
+    <div class="plan-name">
+      <span>${storedPlan.name}</span>  
+    </div>
+    <div class = "plan-time-info">
+      <span>${startHr}:${startMin.toString().padStart(2, 0)} - ${endHr}:${endMin.toString().padStart(2, 0)}</span>
+    </div>
+    </div>
+    `;
+  
+    div.addEventListener('mousedown', mouseDown.bind(null, div), false);
+    div.addEventListener('mouseup', mouseUp.bind(null, div), false);
+  
+    planDragZone.appendChild(div);
+    generatedPlan = div;
+    div.style.top = topPosition + 'px';
+    const planInfo =  {
+      planId: planId,
+      name: storedPlan.name,
+      el: div,
+      date: storedPlan.date,
+      startTimeDis: div.querySelector('.plan-time-info span'),
+      planDragZone: planDragZone,
+      startHr: startHr,
+      startMin: startMin,
+      endHr: endHr,
+      endMin: endMin,
+      description: storedPlan.description,
+      subject: storedPlan.subject,
+      repeat: storedPlan.repeat,
+      notification: storedPlan.notification,
+      prevStartTime: [startHr, startMin],
+      prevEndTime: [endHr, endMin],
+    };
+    div.querySelector('.plan-display-zone').style.backgroundColor = subject.color;
+  
+    plans.push(
+      planInfo
+    );
+    if (minDiff < 0) {
+      minDiff += 60;
+      hrDiff -= 1;
+    }
+  
+    if (minDiff === 60) {
+      minDiff = 0;
+    }
+    div.querySelector('.plan-display-zone').style.height = (hrDiff + Math.round(minDiff / 60 * 100)/ 100) * 60 + 'px';
+    selectedPlan = planInfo;
+    createStartTimeOptions();
+    //updatePlannerTime(topPosition, div);
+  });
+
+  updatePlanner(date)
 })();
 
 
@@ -306,7 +396,6 @@ socket.on('studying', (userId, groups) => {
       <svg height="77px" width="77px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path style="fill:#F4FFF9;" d="M500.87,22.261v467.478c0,6.147-4.983,11.13-11.13,11.13H22.261c-6.147,0-11.13-4.983-11.13-11.13 V22.261c0-6.147,4.983-11.13,11.13-11.13h467.478C495.886,11.13,500.87,16.114,500.87,22.261z"></path> <path style="fill:#A89B80;" d="M489.739,467.478v33.391c0,6.147-4.983,11.13-11.13,11.13H11.13C4.983,512,0,507.017,0,500.87 v-33.391c0-6.147,4.983-11.13,11.13-11.13h467.478C484.756,456.348,489.739,461.331,489.739,467.478z"></path> <path style="fill:#90B5BF;" d="M228.174,322.783v111.304H27.826V322.783c0-36.883,29.9-66.783,66.783-66.783h66.783 C198.274,256,228.174,285.9,228.174,322.783z"></path> <path style="fill:#769CA5;" d="M128,434.087H27.826V322.783c0-36.883,29.9-66.783,66.783-66.783H128V434.087z"></path> <path style="fill:#EFDDAB;" d="M250.435,512H150.261C137.966,512,128,502.034,128,489.739V345.043 c0-12.295,9.966-22.261,22.261-22.261h100.174c12.295,0,22.261,9.966,22.261,22.261v144.696 C272.696,502.034,262.729,512,250.435,512z"></path> <path style="fill:#C1B291;" d="M164.174,367.304c0-4.61,3.738-8.348,8.348-8.348h66.783c4.61,0,8.348,3.738,8.348,8.348 c0,4.61-3.738,8.348-8.348,8.348h-66.783C167.912,375.652,164.174,371.915,164.174,367.304z M239.304,392.348h-66.783 c-4.61,0-8.348,3.738-8.348,8.348c0,4.61,3.738,8.348,8.348,8.348h66.783c4.61,0,8.348-3.738,8.348-8.348 C247.652,396.085,243.915,392.348,239.304,392.348z M239.304,459.13h-66.783c-4.61,0-8.348,3.738-8.348,8.348 s3.738,8.348,8.348,8.348h66.783c4.61,0,8.348-3.738,8.348-8.348S243.915,459.13,239.304,459.13z M239.304,425.739h-44.522 c-4.61,0-8.348,3.738-8.348,8.348s3.738,8.348,8.348,8.348h44.522c4.61,0,8.348-3.738,8.348-8.348S243.915,425.739,239.304,425.739z "></path> <path style="fill:#F4C064;" d="M172.522,178.087c0,24.588-19.933,44.522-44.522,44.522s-44.522-19.933-44.522-44.522 s19.933-44.522,44.522-44.522C152.589,133.565,172.522,153.499,172.522,178.087z M128,422.957H72.348v-66.783 c0-6.147-4.983-11.13-11.13-11.13H27.826v100.174c0,12.295,9.966,22.261,22.261,22.261H128c12.295,0,22.261-9.966,22.261-22.261l0,0 C150.261,432.923,140.295,422.957,128,422.957z"></path> <path style="fill:#F4AB53;" d="M128,133.565v89.043c-24.588,0-44.522-19.933-44.522-44.522S103.412,133.565,128,133.565z"></path> <path style="fill:#B28D5B;" d="M484.174,189.217v111.304c0,6.147-4.983,11.13-11.13,11.13h-33.391h-33.391 c-6.147,0-11.13-4.983-11.13-11.13V189.217c0-6.147,4.983-11.13,11.13-11.13h22.261c6.147,0,11.13,4.983,11.13,11.13 c0-6.147,4.983-11.13,11.13-11.13h22.261C479.191,178.087,484.174,183.07,484.174,189.217z"></path> <path style="fill:#7F5D3B;" d="M461.913,178.087v133.565h-11.13c-6.147,0-11.13-4.983-11.13-11.13c0,6.147-4.983,11.13-11.13,11.13 h-22.261c-6.147,0-11.13-4.983-11.13-11.13V189.217c0-6.147,4.983-11.13,11.13-11.13h22.261c6.147,0,11.13,4.983,11.13,11.13 c0-6.147,4.983-11.13,11.13-11.13H461.913z"></path> <path style="fill:#FF8355;" d="M384,11.13v111.304c0,6.147-4.983,11.13-11.13,11.13h-33.391h-33.391 c-6.147,0-11.13-4.983-11.13-11.13V11.13c0-6.147,4.983-11.13,11.13-11.13h22.261c6.147,0,11.13,4.983,11.13,11.13 c0-6.147,4.983-11.13,11.13-11.13h22.261C379.017,0,384,4.983,384,11.13z"></path> <path style="fill:#E55D30;" d="M361.739,0v133.565h-22.261h-33.391c-6.147,0-11.13-4.983-11.13-11.13V11.13 c0-6.147,4.983-11.13,11.13-11.13h22.261c6.147,0,11.13,4.983,11.13,11.13c0-6.147,4.983-11.13,11.13-11.13H361.739z"></path> <path style="fill:#B28D5B;" d="M339.478,133.565h-33.391c-6.147,0-11.13-4.983-11.13-11.13V11.13c0-6.147,4.983-11.13,11.13-11.13 h22.261c6.147,0,11.13,4.983,11.13,11.13V133.565z"></path> <path style="fill:#7F5D3B;" d="M317.217,133.565h-11.13c-6.147,0-11.13-4.983-11.13-11.13V11.13c0-6.147,4.983-11.13,11.13-11.13 h11.13V133.565z"></path> <path style="fill:#769CA5;" d="M475.628,118.066l-19.278,11.13c-5.324,3.073-12.131,1.25-15.204-4.074L385.494,28.73 c-3.073-5.324-1.25-12.131,4.074-15.204l19.278-11.13c5.324-3.073,12.131-1.25,15.204,4.074l55.652,96.393 C482.776,108.184,480.952,114.992,475.628,118.066z"></path> <path style="fill:#5B7A7F;" d="M465.989,123.631l-9.639,5.565c-5.324,3.073-12.131,1.25-15.204-4.074L385.494,28.73 c-3.073-5.324-1.25-12.131,4.074-15.204l9.639-5.565L465.989,123.631z"></path> <path style="fill:#FFA233;" d="M428.522,311.652h-22.261c-6.147,0-11.13-4.983-11.13-11.13V189.217c0-6.147,4.983-11.13,11.13-11.13 h22.261c6.147,0,11.13,4.983,11.13,11.13v111.304C439.652,306.669,434.669,311.652,428.522,311.652z"></path> <path style="fill:#FF7E1D;" d="M417.391,311.652h-11.13c-6.147,0-11.13-4.983-11.13-11.13V189.217c0-6.147,4.983-11.13,11.13-11.13 h11.13V311.652z"></path> <path style="fill:#A89B80;" d="M503.652,141.913H269.913c-4.61,0-8.348-3.738-8.348-8.348c0-4.61,3.738-8.348,8.348-8.348h233.739 c4.61,0,8.348,3.738,8.348,8.348C512,138.175,508.262,141.913,503.652,141.913z M503.652,303.304H325.565 c-4.61,0-8.348,3.738-8.348,8.348s3.738,8.348,8.348,8.348h178.087c4.61,0,8.348-3.738,8.348-8.348S508.262,303.304,503.652,303.304 z"></path> <path style="fill:#C1B291;" d="M367.304,456.348H500.87c6.147,0,11.13,4.983,11.13,11.13v33.391c0,6.147-4.983,11.13-11.13,11.13 H367.304c-6.147,0-11.13-4.983-11.13-11.13v-33.391C356.174,461.331,361.157,456.348,367.304,456.348z"></path> <path style="fill:#DBCBA1;" d="M367.304,422.957H500.87c6.147,0,11.13,4.983,11.13,11.13v33.391c0,6.147-4.983,11.13-11.13,11.13 H367.304c-6.147,0-11.13-4.983-11.13-11.13v-33.391C356.174,427.94,361.157,422.957,367.304,422.957z"></path> <path style="fill:#EFDDAB;" d="M367.304,389.565H500.87c6.147,0,11.13,4.983,11.13,11.13v33.391c0,6.147-4.983,11.13-11.13,11.13 H367.304c-6.147,0-11.13-4.983-11.13-11.13v-33.391C356.174,394.548,361.157,389.565,367.304,389.565z"></path> <path style="fill:#DBCBA1;" d="M486.957,389.565v22.261c0,4.61-3.738,8.348-8.348,8.348s-8.348-3.738-8.348-8.348v-22.261H486.957z M436.87,411.826c0,4.61,3.738,8.348,8.348,8.348s8.348-3.738,8.348-8.348v-22.261H436.87V411.826z M403.478,411.826 c0,4.61,3.738,8.348,8.348,8.348c4.61,0,8.348-3.738,8.348-8.348v-22.261h-16.696V411.826z"></path> </g></svg>
       `
     })
-    console.log(groupList, memberInfo.timer);
   })
 });
 
@@ -365,6 +454,7 @@ socket.on('removeUser', (group, userId) => {
 
 
 const swiperWrapper = document.querySelector('.groups .swiper-wrapper');
+let dailyPlanCalendar;
 let userId;
 var socketRooms = [];
 var groupList;
@@ -413,7 +503,7 @@ var groupList;
 
   })
   initializeSlider();
-  new Swiper('.planner .swiper-container#planner', {
+  dailyPlanCalendar = new Swiper('.planner .swiper-container#planner', {
     // Optional parameters
     loop: true,
     allowTouchMove: false,
@@ -442,11 +532,9 @@ var groupList;
   planDragZones = document.querySelectorAll(".plan-drag-zone");
   planDragZones.forEach((planDragZone) => {
     planDragZone.addEventListener('click', (event) => {
-      console.log(event.target)
       if(event.target == planDragZone || event.target.classList.contains('block') || event.target.classList.contains('line')){
-        console.log(true)
         addPlanModal.classList.remove('modal-closed');
-        createPlan(event.clientX, event.clientY, planDragZone)
+        createPlan(event.clientX, event.clientY, planDragZone);
       }
     });
   })
@@ -716,7 +804,6 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
     // your events data here
   ],
   dateClick: function (info) {
-    console.log('Clicked date: ' + info.dateStr, info.dayEl);
 
     // reset background color of previously selected date
     if (selectedDateEl) {
@@ -875,6 +962,7 @@ taskInput.addEventListener("keyup", (e) => {
 function toggleSidebar() {
   document.getElementsByClassName("side-button")[0].classList.toggle("active");
   if(!main.classList.contains('move-to-right') && !main.classList.contains('move-to-left')){
+    main.classList.toggle("move-to-left");
   } else {
     main.classList.toggle("move-to-right");
   }
@@ -948,10 +1036,10 @@ const months = [
 
 const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-
-
+let calendarSlideDir = 1;
+const today = new Date();
 let date = new Date();
-
+console.log(date, date.toISOString().substr(0, 10))
 function getCurrentDate(element, asString) {
   if (element) {
       if (asString) {
@@ -1079,13 +1167,16 @@ function changeActive() {
 function resetDate() {
   date = new Date();
   generateCalendar();
-  updatePlanner();
+  updatePlanner(date);
+  const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[1];
+  createCurrentTimeBar(planDragZone)
 }
 
 function changeDate(button) {
   let newDay = parseInt(button.textContent);
   date = new Date(date.getFullYear(), date.getMonth(), newDay);
   generateCalendar();
+  updatePlanner(date)
 }
 
 function nextMonth() {
@@ -1102,13 +1193,19 @@ function prevMonth() {
 function prevDay() {
   date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
   generateCalendar();
-  updatePlanner();
+  calendarSlideDir = 0;
+  updatePlanner(date);
+  const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[0];
+  createCurrentTimeBar(planDragZone)
 }
 
 function nextDay() {
   date = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
   generateCalendar();
-  updatePlanner();
+  calendarSlideDir = 2;
+  updatePlanner(date);
+  const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[2];
+  createCurrentTimeBar(planDragZone)
 }
 
 document.onload = generateCalendar(date);
@@ -1117,9 +1214,18 @@ document.onload = generateCalendar(date);
 const addPlanModal = document.querySelector('.add-plan-modal');
 const addPlanModalCloseBtn = document.querySelector('.add-plan-modal .close');
 const addPlanModalOpenBtn = document.querySelector('#create-plan');
-
+let isPlannerDefault = true;
 addPlanModalCloseBtn.addEventListener('click', () => {
-  addPlanModal.classList.add('modal-closed')
+  addPlanModal.classList.add('modal-closed');
+  if(!planSaved){
+    console.log('not planSaved');
+    plans = plans.filter(planObj => {
+      return planObj.planId != selectedPlan.planId;
+    })
+    selectedPlan.el.remove();
+    selectedPlan = null;
+    planSaved = true;
+  }
 })
 
 addPlanModalOpenBtn.addEventListener('click', () => {
@@ -1252,7 +1358,7 @@ class Calendar {
       const newMonth = parseInt(dateParts[0]) - 1;
       const newDay = parseInt(dateParts[1]);
 
-      const date = new Date(newYear, newMonth, newDay);
+      const date1 = new Date(newYear, newMonth, newDay);
 
       const options = {
         weekday: 'long',
@@ -1260,10 +1366,20 @@ class Calendar {
         day: 'numeric'
       };
 
-      const formattedDate = date.toLocaleDateString('en-US', options);
+      const formattedDate = date1.toLocaleDateString('en-US', options);
 
       this.input.value = formattedDate;
-      selectedPlan.date = formattedDate;
+      selectedPlan.date = [new Date(date1).toISOString().substr(0, 10), date1.setHours(0, 0, 0, 0) / 1000];
+      console.log(date.getFullYear(), date.getMonth(), date.getDate(), new Date(selectedPlan.date[0]))
+      //date = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      if(!isPlannerDefault){
+        const newDate = new Date(selectedPlan.date[0]);
+        console.log(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1)
+        date = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1);
+      }
+      isPlannerDefault = false
+      generateCalendar();
+      updatePlanner(date)
   }
 
   updateMonth(month) {
@@ -1313,18 +1429,18 @@ const planDate = document.querySelector('input.date-input');
 const planStartTime = document.querySelector('.start-time select#timepicker');
 const planEndTime = document.querySelector('.end-time select#timepicker');
 
-const currentDateTime = new Date();
-const currentHour = currentDateTime.getHours();
-const currentMinute = currentDateTime.getMinutes();
-
-let expectedHour = currentHour;
-let expectedMinute = Math.round(currentMinute / 15) * 15;
-if (expectedMinute === 60) {
-  expectedMinute = 0;
-  expectedHour += 1;
-}
 
 function createStartTimeOptions() {
+  const plan = plans.find((plan) => plan.planId == selectedPlan.planId);
+  const currentDateTime = new Date();
+  const currentHour = currentDateTime.getHours();
+  const currentMinute = currentDateTime.getMinutes();
+  plan.startHr == null ? currentHour : plan.startHr; 
+  plan.startMin == null ? Math.round(currentMinute / 15) * 15 : plan.startMin;
+  if (plan.startMin === 60) {
+    plan.startMin = 0;
+    plan.startHr += 1;
+  }
   for (let hour = 0; hour <= 23; hour++) {
     for (let minute = 0; minute <= 45; minute += 15) {
       const timeValue = `${hour}.${minute}`;
@@ -1333,9 +1449,9 @@ function createStartTimeOptions() {
       const option = createOption(timeValue, timeText);
       planStartTime.appendChild(option);
   
-      if (hour === expectedHour && minute === expectedMinute) {
+      if (hour === plan.startHr && minute === plan.startMin) {
         option.selected = true;
-        prevStartTime = [expectedHour, expectedMinute];
+        //plan.prevStartTime = [plan.startHr, plan.startMin];
       }
     }
   }
@@ -1348,16 +1464,16 @@ function formatTime(hour, minute) {
   return `${hour12}:${minuteText} ${period}`;
 }
 
-let prevStartTime = planStartTime.value.split('.');
 
 planStartTime.addEventListener('change', (event) => {
+  const plan = plans.find((plan) => plan.planId == selectedPlan.planId);
+  let prevStartTime = plan.prevStartTime;
   const updatedStartTime = planStartTime.value.split('.');
-  const prevEndTime = planEndTime.value.split('.');
+  const prevEndTime = plan.prevEndTime;
   const duration = `${prevEndTime[0] - prevStartTime[0]}.${prevEndTime[1] - prevStartTime[1]}`;
   let hrDiff = prevEndTime[0] - prevStartTime[0];
   let minDiff = prevEndTime[1] - prevStartTime[1];
-  prevStartTime = updatedStartTime;
-  updateEndTimeOptions();
+  plan.prevStartTime = updatedStartTime;
 
   if (minDiff < 0) {
     minDiff += 60;
@@ -1368,7 +1484,6 @@ planStartTime.addEventListener('change', (event) => {
     minDiff = 0;
   }
 
-  console.log(duration, hrDiff, minDiff);
   let updatedHr = parseInt(updatedStartTime[0]) + hrDiff;
   let updatedMin = parseInt(updatedStartTime[1]) + minDiff;
 
@@ -1378,28 +1493,40 @@ planStartTime.addEventListener('change', (event) => {
   }
 
   const updatedEndTime = [updatedHr, updatedMin];
-  console.log(updatedEndTime, 'sdfsdf', expectedHour);
-  const selectedEndInput = document.querySelector(`.end-time option[value="${updatedEndTime[0]}.${updatedEndTime[1]}"]`);
-  console.log(`.end-time option[value="${updatedEndTime[0]}.${updatedEndTime[1]}"]`);
-  selectedEndInput.selected = true;
-  //expectedHour = updatedHr;
-  //expectedMinute = updatedMin;
+
+  //startHr = updatedHr;
+  //startMin = updatedMin;
   
-  selectedPlan.el.style.top = parseInt(updatedStartTime[0]) * 60 - 30 + parseInt(updatedStartTime[1]) + 'px';
-  console.log('height = ', selectedPlan.el.style.height)
-  selectedPlan.startTimeDis.innerText = `${parseInt(updatedStartTime[0]) == 0 ? 12 : updatedStartTime[0]}:${updatedStartTime[1].padStart(2, 0)} - ${updatedHr}:${updatedMin.toString().padStart(2, 0)}`;
-  selectedPlan.startHr = parseInt(updatedStartTime[0]);
-  selectedPlan.startMin = parseInt(updatedStartTime[1]);
-  selectedPlan.planDragZone.scrollTo({behavior: 'smooth', top: selectedPlan.el.offsetTop - 100})
+  plan.el.style.top = parseInt(updatedStartTime[0]) * 60  + parseInt(updatedStartTime[1]) + 'px';
+  plan.startTimeDis.innerText = `${parseInt(updatedStartTime[0]) == 0 ? 12 : updatedStartTime[0]}:${updatedStartTime[1].padStart(2, 0)} - ${updatedHr}:${updatedMin.toString().padStart(2, 0)}`;
+  plan.startHr = parseInt(updatedStartTime[0]);
+  plan.startMin = parseInt(updatedStartTime[1]);
+  plan.endHr = parseInt(updatedEndTime[0]);
+  plan.endMin = parseInt(updatedEndTime[1]);
+  plan.prevEndTime = updatedEndTime;
+  plan.planDragZone.scrollTo({behavior: 'smooth', top: plan.el.offsetTop - 100})
+  updateEndTimeOptions();
+  const selectedEndInput = document.querySelector(`.end-time option[value="${updatedEndTime[0]}.${updatedEndTime[1]}"]`);
+  selectedEndInput.selected = true;
 });
 
 planEndTime.addEventListener('change', () => {
+  const plan = plans.find((plan) => plan.planId == selectedPlan.planId);
+  const startHr = plan.startHr;
+  const startMin = plan.startMin;
   const updatedStartTime = planStartTime.value.split('.');
-  const prevEndTime = planEndTime.value.split('.');
-  const duration = `${prevEndTime[0] - prevStartTime[0]}.${prevEndTime[1] - prevStartTime[1]}`;
-  let hrDiff = prevEndTime[0] - prevStartTime[0];
-  let minDiff = prevEndTime[1] - prevStartTime[1];
-  prevStartTime = updatedStartTime;
+  const updatedEndTime = planEndTime.value.split('.');
+  const endHr = updatedEndTime[0];
+  const endMin =  updatedEndTime[1];
+  plan.startTimeDis.innerText = `${startHr == 0 ? 12 : startHr}:${startMin.toString().padStart(2, 0)} - ${endHr}:${endMin.toString().padStart(2, 0)}`;
+  plan.endHr = parseInt(endHr);
+  plan.endMin = parseInt(endMin);
+  plan.prevEndTime = updatedEndTime;
+  const selectedEndInput = document.querySelector(`.end-time option[value="${endHr}.${endMin}"]`);
+  //selectedEndInput.selected = true;
+  let hrDiff = endHr - startHr;
+  let minDiff = endMin - startMin;
+
   if (minDiff < 0) {
     minDiff += 60;
     hrDiff -= 1;
@@ -1409,26 +1536,16 @@ planEndTime.addEventListener('change', () => {
     minDiff = 0;
   }
 
-  console.log(duration, hrDiff, minDiff);
-  let updatedHr = parseInt(updatedStartTime[0]) + hrDiff;
-  let updatedMin = parseInt(updatedStartTime[1]) + minDiff;
-
-  if (updatedMin >= 60) {
-    updatedMin -= 60;
-    updatedHr += 1;
-  }
-
-  const updatedEndTime = [updatedHr, updatedMin];
-  console.log(updatedEndTime, 'sdfsdf', expectedHour);
-  const selectedEndInput = document.querySelector(`.end-time option[value="${updatedEndTime[0]}.${updatedEndTime[1]}"]`);
-  console.log(`.end-time option[value="${updatedEndTime[0]}.${updatedEndTime[1]}"]`);
-  selectedEndInput.selected = true;
-  selectedPlan.el.querySelector('.plan-display-zone').style.height = (hrDiff + Math.round(minDiff / 60 * 100)/ 100) * 60 + 'px';
-  selectedPlan.startTimeDis.innerText = `${parseInt(updatedStartTime[0]) == 0 ? 12 : updatedStartTime[0]}:${updatedStartTime[1].padStart(2, 0)} - ${updatedHr}:${updatedMin.toString().padStart(2, 0)}`;
+  plan.el.querySelector('.plan-display-zone').style.height = (hrDiff + Math.round(minDiff / 60 * 100)/ 100) * 60 + 'px';
+  plan.startTimeDis.innerText = `${parseInt(startHr) == 0 ? 12 : startHr}:${startMin.toString().padStart(2, 0)} - ${endHr}:${endMin.toString().padStart(2, 0)}`;
 })
 
 function updateEndTimeOptions() {
-  console.log(expectedHour, expectedMinute, prevStartTime)
+  const plan = plans.find((plan) => plan.planId == selectedPlan.planId);
+  let prevStartTime = plan.prevStartTime;
+  let startHr = plan.startHr;
+  let startMin = plan.startMin;
+
   planEndTime.innerHTML = '';
   let duration1 = 0;
 
@@ -1453,9 +1570,8 @@ function updateEndTimeOptions() {
     const option = createOption(timeValue, timeText + `  (${duration1}min)`);
     planEndTime.appendChild(option);
 
-    if (hour === expectedHour + 1 && minute === expectedMinute) {
+    if (hour === startHr + 1 && minute === startMin) {
       option.selected = true;
-      console.log('eds', hour, minute);
     }
 
     duration1 += 15;
@@ -1489,6 +1605,7 @@ function updateEndTimeOptions() {
 
       if (minDiff === 60) {
         minDiff = 0;
+        hrDiff -= 1;
       }
 
 
@@ -1500,9 +1617,8 @@ function updateEndTimeOptions() {
 
       planEndTime.appendChild(option);
 
-      if (hour === expectedHour + 1 && minute === expectedMinute) {
+      if (hour === startHr + 1 && minute === startMin) {
         option.selected = true;
-        console.log('eds', hour, minute);
       }
     }
   }
@@ -1530,7 +1646,7 @@ const bulletedLiBtn = document.querySelector('.add-plan-modal .description #bull
 const subjectType = document.querySelector("select[name='subject-type']");
 const subjectRepeat = document.querySelector("select[name='repeat']");
 const subjectNotification = document.querySelector("select[name='notification']");
-planName.addEventListener('change', () => {
+planName.addEventListener('input', () => {
   generatedPlan.querySelector('.plan-name span').innerText = planName.value;
 })
 //const insertLinkBtn = document.querySelector('.add-plan-modal .description #insert-link');
@@ -1544,12 +1660,14 @@ descriptionContainer.addEventListener('focusin', () => {
 });
 
 descriptionInput.addEventListener('input', () => {
-  console.log('tes')
   selectedPlan.description = descriptionInput.innerHTML;
 });
 
 subjectType.addEventListener('change', () => {
+  const subject = subjects.find(subject => subject.name == subjectType.value);
   selectedPlan.type = subjectType.value;
+  selectedPlan.el.classList.add(`subject-${subjectType.value}`);
+  selectedPlan.el.querySelector('.plan-display-zone').style.backgroundColor = subject.color;
 });
 
 subjectRepeat.addEventListener('change', () => {
@@ -1596,32 +1714,40 @@ bulletedLiBtn.addEventListener('click', () => {
 //plan save
 
 const planSaveBtn = document.querySelector(".end-btn #plan-save-btn");
-planSaveBtn.addEventListener('click', async() => {
-  const name =  planName.value;
-  const date = [calendar.input.value, planEndTime.value, planStartTime.value];
-  const repeat = subjectRepeat.value;
-  const description = descriptionInput.innerHTML;
-  const subject = subjectType.value;
-  const notification = subjectNotification.value;
 
-  let response = await fetch('/study/add-plan', {
+planSaveBtn.addEventListener('click', async() => {
+  let name =  planName.value;
+  let date = selectedPlan.date;
+  let startTime = `${selectedPlan.startHr}.${selectedPlan.startMin}`;
+  let endTime = `${selectedPlan.endHr}.${selectedPlan.endMin}`;
+  let repeat = subjectRepeat.value;
+  let description = /^\s*$/.test(descriptionInput.innerHTML) ? '' : descriptionInput.innerHTML;
+  let subject = subjectType.value;
+  let notification = subjectNotification.value;
+  const planSaveUrl = updatePlan ? '/study/update-plan' : '/study/add-plan';
+  console.log(planSaveUrl);
+  let response = await fetch(planSaveUrl, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({name: name, date: date, repeat: repeat, description: description, subject: subject, notification: notification})
+    body: JSON.stringify({name: name, date: date, startTime: startTime, endTime: endTime, repeat: repeat, description: description, subject: subject, notification: notification, planId: selectedPlan.planId})
   });
 
   response = await response.json();
-
+  
   if(response.success){
-    name = '';
-    description = '';
+    planName.value = '';
+    description.innerHTML = '';
+    subjectType.querySelector(`option[value="others"]`).selected = true;
+    subjectRepeat.querySelector(`option[value="false"]`).selected = true;
     addPlanModal.classList.add('modal-closed');
+    subjectNotification.querySelector(`option[value="0.01"]`).selected = true;
   }
+  planSaved = true;
 })
 
-const plans = [];
+let plans = [];
 
 const sidebarSubjectsShowBtn = document.querySelector(".subjects-show-btn");
 sidebarSubjectsShowBtn.status = true;
@@ -1645,30 +1771,35 @@ let generatedPlan;
 let binded = null;
 let initialMouseY = -1;
 let planDragged = false;
+let updatePlan = false;
 function mouseUp(target, e) {
+  const plan = plans.find(plan => plan.planId == target.id);
   target.style.opacity = "1";
-  console.log('up')
   target.parentNode.removeEventListener('mousemove', binded);
   planDragged = false;
   if(initialMouseY == -1){
-    const plan = plans.find(plan => plan.planId == target.id);
-    console.log(plan);
+    updatePlan = true;
     selectedPlan = plan;
     addPlanModal.classList.remove('modal-closed');
     planName.value = target.querySelector('.plan-name span').innerText;
-    console.log(plan.startHr, plan.startMin, plan.endHr, plan.endMin);
-    const startOption = planStartTime.querySelector(`option[value="${plan.startHr}.${plan.startMin}"]`);
-    const endOption = planEndTime.querySelector(`option[value="${plan.endHr}.${plan.endMin}"]`);
-    console.log(startOption, endOption);
-    startOption.selected = true;
-    //endOption.selected = true;
+    updateEndTimeOptions();
+    console.log(new Date(plan.date[1] * 1000))
+    planDate.value = new Date(plan.date[1] * 1000).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    planStartTime.querySelector(`option[value="${plan.startHr}.${plan.startMin}"]`).selected = true;
+    planEndTime.querySelector(`option[value="${plan.endHr}.${plan.endMin}"]`).selected = true;
+    subjectType.querySelector(`option[value="${plan.subject}"]`).selected = true;
+    subjectRepeat.querySelector(`option[value="${plan.repeat}"]`).selected = true;
+    subjectNotification.querySelector(`option[value="${plan.notification}"]`).selected = true;
+    descriptionInput.innerHTML = plan.description;
+  } else {
+    movePlanner215(plan);
+    updatePlanInfo(plan)
   }
   initialMouseY = -1;
 }
 
 function mouseDown(target, e) {
   target.style.opacity = "0.8";
-  console.log('down')
   binded = divMove.bind(null, target);
   target.parentNode.addEventListener('mousemove', binded);
   generatedPlan = target;
@@ -1680,33 +1811,34 @@ function divMove(target, e) {
   e.preventDefault();
   let dropArea = target.parentNode;
   let parentRect = dropArea.getBoundingClientRect();
-  let elementRect = target.getBoundingClientRect();
   initialMouseY = e.clientY;
+  const plan = plans.find(plan => plan.planId == target.id);
 
   // Calculate the correct top position relative to the parent container
-  let topPosition = e.clientY - parentRect.top + dropArea.scrollTop;
-  updatePlannerTime(topPosition, 60, target);
+  let topPosition = e.clientY - parentRect.top + dropArea.scrollTop - 7;
+  updatePlannerTime(topPosition, target);
 
 
   // Apply the top position to the dragged element
   target.style.position = 'absolute';
   target.style.top = topPosition + 'px';
   target.style.cursor = 'move';
-  //console.log(e.target.style.top, e.clientY, elementRect.top, target.offsetTop, dropArea.scrollTop, topPosition);
 }
 
 let planDragZones = document.querySelectorAll(".plan-drag-zone");
 const planDragZone = planDragZones[0];
 
+let planSaved = true;
 function createPlan(x, y, planDragZone) {
-  console.log('create');
+  updatePlan = false;
   const planId = generateRandomPlanId(10);
   let dropArea = planDragZone;
   let parentRect = dropArea.getBoundingClientRect();
-  let topPosition = y - parentRect.top + dropArea.scrollTop;
+  let topPosition = y - parentRect.top + dropArea.scrollTop - 7;
   const div = document.createElement('div');
   div.classList.add('plan');
   div.id = planId;
+  div.classList.add(`planId${planId}`);
 
   div.innerHTML = `
   <div class="plan-display-zone">
@@ -1728,7 +1860,7 @@ function createPlan(x, y, planDragZone) {
   const planInfo =  {
     planId: planId,
     el: div,
-    date: null,
+    date: [new Date(date).toISOString().substr(0, 10), new Date().setHours(0, 0, 0, 0) / 1000],
     startTimeDis: div.querySelector('.plan-time-info span'),
     planDragZone: planDragZone,
     startHr: null,
@@ -1738,14 +1870,27 @@ function createPlan(x, y, planDragZone) {
     description: null,
     subject: 'others',
     repeat: false,
-    notification: 0.01
+    notification: 0.01,
+    prevStartTime: null,
+    prevEndTime: null,
   };
 
   plans.push(
     planInfo
   );
-  selectedPlan = planInfo
-  updatePlannerTime(topPosition, 60, div);
+  selectedPlan = planInfo;
+  const times = updatePlannerTime(topPosition, div);
+  const plan = plans.find(plan => plan.planId == div.id);
+  movePlanner215(plan);
+  createStartTimeOptions();
+  plan.startHr = times.startHr;
+  plan.startMin = times.startMin;
+  plan.endHr = times.endHr;
+  plan.endMin = times.endMin;
+  planDate.value = new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const selectedStartInput = document.querySelector(`.start-time option[value="${times.startHr}.${times.startMin}"]`);
+  selectedStartInput.selected = true;
+  planSaved = false;
 }
 
 planDragZone.addEventListener('scroll', (e) => {
@@ -1759,38 +1904,48 @@ planDragZone.addEventListener('scroll', (e) => {
     // Apply the top position to the dragged element
     generatedPlan.style.position = 'absolute';
     generatedPlan.style.top = topPosition + 'px';
-    console.log(generatedPlan, topPosition, initialMouseY, parentRect.top, dropArea.scrollTop)
     generatedPlan.style.cursor = 'move';
   }
 })
 
-
-
-function updatePlanner() {
-  plans.forEach((plan) => {
-    plan.el.style = 'display: none';
-  })
+function updatePlanner(date) {
+  const viewOption = document.querySelector('#view-options').value;
+  if(viewOption == 'day') {
+    plans.forEach((plan) => {
+      if(plan.repeat == 'daily' || plan.date[1] == new Date(date).getTime() / 1000) {
+        //console.log(plan.date, new Date(date).getTime() / 1000, plan.name, plan.repeat)
+        const activeSlide = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[calendarSlideDir];
+        activeSlide.appendChild(plan.el)
+      } else {
+        //console.log('remove', plan.date, new Date(date).getTime() / 1000, plan.name, plan.repeat)
+        plan.el.remove();
+        const planEls = document.querySelectorAll(`.planId${plan.planId}`);
+        planEls.forEach((planEl) => {
+          planEl.remove();
+        })
+      }
+    })
+  }
 }
 
-function updatePlannerTime(topPosition, duration, div) {
+function updatePlannerTime(topPosition, div) {
   const plan = plans.find(plan => plan.planId == div.id);
   const interval = 15;
-  const startTime = Math.floor((topPosition / 60 - 0.5) * 100 + 3) / 100;
-  const endTime = Math.floor(((topPosition + 60) / 60 - 0.5) * 100 + 3) / 100;
+  let startTime = (Math.round((topPosition / 60 - 0.5) * 100 + 3) / 100).toFixed(2);
+  let endTime = (Math.round(((topPosition + div.offsetHeight) / 60 - 0.5) * 100 + 3) / 100).toFixed(2);
   let startHr = parseInt(startTime.toString().split('.')[0]);
-  let startMin = startTime % 1 !== 0 ? Math.round(parseInt(startTime.toString().split('.')[1]) / 10 * 6) : 0;
+  let startMin = Math.floor(parseInt(startTime.toString().split('.')[1]) / 10 * 6);
   let endHr = parseInt(endTime.toString().split('.')[0]);
-  let endMin = endTime % 1 !== 0 ? Math.round(parseInt(endTime.toString().split('.')[1]) / 10 * 6) : 0;
-  
-  startMin = Math.round(startMin / interval) * interval;
-  endMin = Math.round(endMin / interval) * interval;
-  
-  if (startMin >= 60) {
+  let endMin = endTime % 1 !== 0 ? Math.floor(parseInt(endTime.toString().split('.')[1]) / 10 * 6) : 0;
+  endMin = typeof endMin == 'number' ? parseFloat(endMin.toString().padStart(2, 0)) : endMin;
+  startMin = Math.floor(startMin / interval) * interval;
+  endMin = Math.floor(endMin / interval) * interval;
+  if (startMin == 60) {
     startHr += 1;
     startMin = 0;
   }
 
-  if(endMin >= 60) {
+  if(endMin == 60) {
     endHr += 1;
     endMin = 0;
   }
@@ -1800,12 +1955,16 @@ function updatePlannerTime(topPosition, duration, div) {
   plan.startMin = startMin;
   plan.endHr = endHr;
   plan.endMin = endMin;
-  expectedHour = plan.startHr;
-  expectedMinute = plan.startMin;
-  createStartTimeOptions();
+  plan.prevStartTime = [startHr, startMin];
+  plan.prevEndTime = [endHr, endMin]
   updateEndTimeOptions();
-  console.log('updated', expectedHour)
   return {startHr: startHr, startMin: startMin, endHr: endHr, endMin: endMin};
+}
+
+function movePlanner215(plan) {
+  const hr = plan.startHr;
+  const min = plan.startMin;
+  plan.el.style.top = hr * 60  + min + 30 + 'px';
 }
 
 function generateRandomPlanId(length) {
@@ -1818,6 +1977,44 @@ function generateRandomPlanId(length) {
   }
 
   return result;
+}
+
+async function updatePlanInfo(plan){
+  let name =  plan.name;
+  let date = plan.date;
+  let startTime = `${plan.startHr}.${plan.startMin}`;
+  let endTime = `${plan.endHr}.${plan.endMin}`;
+  let repeat = plan.repeat;
+  let description = plan.description;
+  let subject = plan.subject;
+  let notification = plan.notification;
+  let planId = plan.planId
+  const response = await fetch('/study/update-plan', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({name: name, date: date, startTime: startTime, endTime: endTime, repeat: repeat, description: description, subject: subject, notification: notification, planId: planId})
+  })
+}
+let currentTimeBarInterval = false
+function createCurrentTimeBar(displayZone) {
+  clearInterval(currentTimeBarInterval)
+  let div;
+  if(document.querySelector('.planner-timebar')){
+    document.querySelector('.planner-timebar').remove()
+  }
+  div = document.createElement('div');
+  div.classList.add('planner-timebar')
+  if(date.setHours(0, 0, 0, 0).toString() == today.setHours(0, 0, 0, 0).toString()) {
+    div = document.createElement('div');
+    div.classList.add('planner-timebar');
+    displayZone.appendChild(div);
+    div.style.top = new Date().getHours() * 60 + new Date().getMinutes() + 30 + 'px';
+    currentTimeBarInterval = setInterval(() => {
+      div.style.top = new Date().getHours() * 60 + new Date().getMinutes() + 30 + 'px';
+    }, 10000);
+  }
 }
 
 const calendar = new Calendar(".date-input");

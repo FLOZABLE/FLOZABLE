@@ -2,6 +2,18 @@ const express = require("express");
 const Router = express.Router();
 const pool = require('../model/pool');
 
+function generateRandomId(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+
+  return result;
+}
+
 Router.get("/", async(req, res) => {
   res.render("study/study", {
     loggedin: req.session.loggedin || false,
@@ -20,6 +32,7 @@ Router.post('/add-subject', async (req, res) => {
     total: 0,
     datum_point: Math.floor(new Date().getTime() / 1000),
     timeline: [],
+    id: generateRandomId(10)
   };
 
   const selectQuery = "SELECT subjects FROM users WHERE user_id = ?";
@@ -179,7 +192,7 @@ Router.post('/bring-members-info', async (req, res) => {
   
   console.log('mem info', membersInfo);
   res.send([groupsInfo, req.session.user_id, groups, membersInfo]);
-  
+  connection.release();
 })
 
 Router.post('/update-members-info', async(req, res) => {
@@ -227,8 +240,8 @@ Router.post('/update-members-info', async(req, res) => {
     member.study = study;
     member.filteredTimeline.push(filteredTimeline);
   }));
-
-res.send(member);
+  connection.release();
+  res.send(member);
 })
 
 Router.post('/add-plan', async(req, res) => {
@@ -244,12 +257,54 @@ Router.post('/add-plan', async(req, res) => {
     const plan = JSON.stringify(req.body);
     
     try {
-      /* const addPlan = await connection.query(`UPDATE users SET plan = CASE
+      const addPlan = await connection.query(`UPDATE users SET plan = CASE
         WHEN plan IS NULL THEN '${plan}'
         WHEN plan = '' THEN '${plan}'
         ELSE CONCAT(plan, ',', '${plan}')
         END
-        WHERE user_id = '${userId}'`); */
+        WHERE user_id = '${userId}'`);
+        connection.release();
+      res.send({ success: true });
+    } catch (error) {
+      console.error('MySQL error:', error);
+      res.send({ success: false, reason: 'MySQL error' });
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+    res.send({ success: false, reason: 'An error occurred' });
+  }
+})
+
+Router.post('/bring-plans', async(req, res) => {
+  if(!req.session.loggedin){
+    return res.send({success: false});
+  }
+  const connection = await (await pool).getConnection();
+
+  let plans = await connection.query(`SELECT plan from users where user_id = "${req.session.user_id}"`);
+  plans = JSON.stringify(`[${plans[0].plan}]`);
+  res.send(plans);
+  console.log(plans);
+  connection.release();
+});
+
+Router.post('/update-plan', async(req, res) => {
+  try {
+    const userId = req.session.user_id;
+    if (!userId) {
+      return res.send({ success: false, reason: 'not auth' });
+    }
+  
+    const connection = await (await pool).getConnection();
+    const planInfo = req.body;
+    console.log(planInfo);
+    try {
+      let plans = await connection.query(`SELECT plan from users where user_id = "${userId}"`);
+      plans = JSON.parse(`[${plans[0].plan}]`);
+      let plan = plans.find(plan => planInfo.planId == plan.planId);
+      console.log(plan, 'updated', plans)
+      connection.query(`UPDATE users set plan = CONCAT_WS(',', REPLACE(plan, '${JSON.stringify(plan)}', '${JSON.stringify(planInfo)}')) WHERE user_id = '${userId}'`);
+      connection.release();
       res.send({ success: true });
     } catch (error) {
       console.error('MySQL error:', error);
