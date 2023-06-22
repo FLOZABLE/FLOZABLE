@@ -128,7 +128,10 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
         'Content-Type': 'application/json'
       }
     });
-    subjects = await response.json();
+
+    if(response.length != 0) {
+      subjects = await response.json();
+    }
 
     let data = [];
     let subjectOptions = '<option value="others" selected>others</option>';
@@ -263,11 +266,7 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
     const endMin = endTime[1];
     let hrDiff = endHr - startHr;
     let minDiff = endMin - startMin;
-    const planY = (startHr + Math.round(startMin / 60 * 100) / 100 + 0.5) * 60 ;
     const planId = storedPlan.planId;
-    let dropArea = planDragZone;
-    let parentRect = dropArea.getBoundingClientRect();
-    let topPosition = planY - parentRect.top + dropArea.scrollTop;
     const div = document.createElement('div');
     const subject = subjects.find(subject => subject.name == storedPlan.subject) ? subjects.find(subject => subject.name == storedPlan.subject) : {name: 'default',color: '#07f'};
     div.classList.add('plan');
@@ -291,7 +290,6 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
   
     planDragZone.appendChild(div);
     generatedPlan = div;
-    div.style.top = topPosition + 'px';
     const planInfo =  {
       planId: planId,
       name: storedPlan.name,
@@ -323,13 +321,14 @@ const askSubjectModal = document.querySelector(".modal-ask-subject .container .w
     if (minDiff === 60) {
       minDiff = 0;
     }
+    div.style.top = startHr * 60 + startMin + 30 +'px';
     div.querySelector('.plan-display-zone').style.height = (hrDiff + Math.round(minDiff / 60 * 100)/ 100) * 60 + 'px';
     selectedPlan = planInfo;
     createStartTimeOptions();
     //updatePlannerTime(topPosition, div);
   });
 
-  updatePlanner(date)
+  //updatePlanner(date)
 })();
 
 
@@ -455,9 +454,12 @@ socket.on('removeUser', (group, userId) => {
 
 const swiperWrapper = document.querySelector('.groups .swiper-wrapper');
 let dailyPlanCalendar;
+let weeklyPlanCalendar;
+let monthlyPlanCalendar;
 let userId;
 var socketRooms = [];
 var groupList;
+
 (async() => {
   let response = await fetch('/study/bring-members-info', {
     method: 'post',
@@ -489,7 +491,6 @@ var groupList;
       group.members.forEach((member, member_index) => {
         const membersWrapper = swiperSlide.querySelector('ul');
         createMemberTimer(membersWrapper, member)
-        
 
       })
       socket.emit('joinRoom', group.group_id, userId);
@@ -502,8 +503,82 @@ var groupList;
   groupMembers.forEach((member) => {
 
   })
-  initializeSlider();
-  dailyPlanCalendar = new Swiper('.planner .swiper-container#planner', {
+  const groupsSwiper = new Swiper('.groups .swiper-container', {
+    // Optional parameters
+    loop: true,
+    slidesPerView: 1,
+    /* autoplay: { 
+      disableOnInteraction: false,
+      delay: 3000 
+    }, */
+    centeredSlides: true,
+    // If we need pagination
+    pagination: {
+      el: '.groups .swiper-pagination',
+    },
+  
+    // Navigation arrows
+    navigation: {
+      nextEl: '.groups .swiper-button-next',
+      prevEl: '.groups .swiper-button-prev',
+    }
+  
+  });
+  dailyPlanCalendar = new Swiper('.planner .swiper-container#daily-planner', {
+    // Optional parameters
+    loop: true,
+    allowTouchMove: false,
+    mouse: {
+      // Disable mouse interactions
+      enabled: false,
+    },
+    slidesPerView: 1,
+    /* autoplay: { 
+      disableOnInteraction: false,
+      delay: 3000 
+    }, */
+    centeredSlides: true,
+    // If we need pagination
+    pagination: {
+      el: '.planner .swiper-pagination',
+    },
+  
+    // Navigation arrows
+    navigation: {
+      nextEl: '.calendar-btn.nextday',
+      prevEl: '.calendar-btn.prevday',
+    }
+  
+  });
+
+  weeklyPlanCalendar = new Swiper('.planner .swiper-container#weekly-planner', {
+    // Optional parameters
+    loop: true,
+    allowTouchMove: false,
+    mouse: {
+      // Disable mouse interactions
+      enabled: false,
+    },
+    slidesPerView: 1,
+    /* autoplay: { 
+      disableOnInteraction: false,
+      delay: 3000 
+    }, */
+    centeredSlides: true,
+    // If we need pagination
+    pagination: {
+      el: '.planner .swiper-pagination',
+    },
+  
+    // Navigation arrows
+    navigation: {
+      nextEl: '.calendar-btn.nextday',
+      prevEl: '.calendar-btn.prevday',
+    }
+  
+  });
+
+  monthlyPlanCalendar = new Swiper('.planner .swiper-container#monthly-planner', {
     // Optional parameters
     loop: true,
     allowTouchMove: false,
@@ -818,31 +893,64 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
 calendar.render();
  */
 
+//calendar zone
 
-function initializeSlider() {
-  // Initialize the Swiper slider
-  const swiper = new Swiper('.groups .swiper-container', {
-    // Optional parameters
-    loop: true,
-    slidesPerView: 1,
-    /* autoplay: { 
-      disableOnInteraction: false,
-      delay: 3000 
-    }, */
-    centeredSlides: true,
-    // If we need pagination
-    pagination: {
-      el: '.groups .swiper-pagination',
-    },
-  
-    // Navigation arrows
-    navigation: {
-      nextEl: '.groups .swiper-button-next',
-      prevEl: '.groups .swiper-button-prev',
-    }
-  
-  });
-}
+
+let dailyCalendarSlideDir = 1;
+let planDragZone = document.querySelector('.planner #daily-planner .plan-drag-zone');
+const today = new Date();
+let date = new Date();
+
+const dailyCalendarContainer = document.querySelector('.calendar-container #daily-planner');
+const weeklyCalendarContainer = document.querySelector('.calendar-container #weekly-planner');
+const monthlyCalendarContainer = document.querySelector('.calendar-container #monthly-planner');
+const planViewOption = document.querySelector('#view-options');
+let plannerHeader = document.querySelector('.daily-planner-header');
+
+planViewOption.addEventListener('change', () => {
+  console.log(planViewOption.value);
+  if(planViewOption.value == 'day'){
+    dailyCalendarContainer.style.display = 'block';
+    weeklyCalendarContainer.style.display = 'none';
+    monthlyCalendarContainer.style.display = 'none';
+    plannerHeader = document.querySelector('.daily-planner-header');
+    planDragZone = document.querySelectorAll('#daily-planner .planner-drag-zone')[dailyCalendarSlideDir];
+  } else if(planViewOption.value == 'week'){
+    dailyCalendarContainer.style.display = 'none';
+    weeklyCalendarContainer.style.display = 'block';
+    monthlyCalendarContainer.style.display = 'none';
+    updateWeek(dailyCalendarSlideDir)
+    plannerHeader = document.querySelectorAll('.weekly-planner-header')[dailyCalendarSlideDir];
+    planDragZone = document.querySelectorAll('#weekly-planner .planner-drag-zone')[dailyCalendarSlideDir];
+    console.log(dailyCalendarSlideDir)
+  } else if(planViewOption.value == 'month'){
+    dailyCalendarContainer.style.display = 'none';
+    weeklyCalendarContainer.style.display = 'none';
+    monthlyCalendarContainer.style.display = 'block';
+    plannerHeader = document.querySelector('.monthly-planner-header');
+    planDragZone = document.querySelectorAll('#monthly-planner .planner-drag-zone')[monthlyCalendarSlideDir];
+  }
+  updatePlanner(date);
+})
+
+const prevPlanBtn = document.querySelector('.calendar-btn.prevday');
+const nextPlanBtn = document.querySelector('.calendar-btn.nextday');
+
+prevPlanBtn.addEventListener('click', () => {
+  if(planViewOption.value == 'day') {
+    prevDay();
+  } else if(planViewOption.value == 'week') {
+    prevWeek();
+  }
+})
+
+nextPlanBtn.addEventListener('click', () => {
+  if(planViewOption.value == 'day') {
+    nextDay();
+  } else if(planViewOption.value == 'week') {
+    nextWeek();
+  }
+})
 
 //todo 
 
@@ -1036,10 +1144,6 @@ const months = [
 
 const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-let calendarSlideDir = 1;
-const today = new Date();
-let date = new Date();
-console.log(date, date.toISOString().substr(0, 10))
 function getCurrentDate(element, asString) {
   if (element) {
       if (asString) {
@@ -1193,7 +1297,7 @@ function prevMonth() {
 function prevDay() {
   date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
   generateCalendar();
-  calendarSlideDir = 0;
+  dailyCalendarSlideDir = 0;
   updatePlanner(date);
   const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[0];
   createCurrentTimeBar(planDragZone)
@@ -1202,14 +1306,53 @@ function prevDay() {
 function nextDay() {
   date = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
   generateCalendar();
-  calendarSlideDir = 2;
+  dailyCalendarSlideDir = 2;
   updatePlanner(date);
   const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[2];
   createCurrentTimeBar(planDragZone)
 }
 
-document.onload = generateCalendar(date);
+function prevWeek() {
+  date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 7);
+  generateCalendar();
+  dailyCalendarSlideDir = 0;
+  updatePlanner(date);
+  const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[0];
+  createCurrentTimeBar(planDragZone)
+  updateWeek(0)
+}
 
+function nextWeek() {
+  date = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7);
+  generateCalendar();
+  dailyCalendarSlideDir = 2;
+  updatePlanner(date);
+  const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[2];
+  createCurrentTimeBar(planDragZone)
+  updateWeek(2)
+}
+
+function updateWeek(index) {
+  const today = new Date(date);
+  const currentDay = today.getDay(); // 0 (Sunday) to 6 (Saturday)
+  const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - currentDay);
+  const week = [];
+
+  const weeklyPlannerHeader =  document.querySelectorAll('.weekly-planner-header')[index];
+  let headerDates = weeklyPlannerHeader.querySelectorAll('th .table-h')
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
+    week.push(date);
+    headerDates[i].innerHTML = `
+      <p class = "day">${date.toLocaleString('en-US', {weekday: 'short'})}</p>
+      <p class = "date">${date.getDate()}</p>
+    `
+  }
+
+  return week;
+}
+
+document.onload = generateCalendar(date);
 
 const addPlanModal = document.querySelector('.add-plan-modal');
 const addPlanModalCloseBtn = document.querySelector('.add-plan-modal .close');
@@ -1370,11 +1513,9 @@ class Calendar {
 
       this.input.value = formattedDate;
       selectedPlan.date = [new Date(date1).toISOString().substr(0, 10), date1.setHours(0, 0, 0, 0) / 1000];
-      console.log(date.getFullYear(), date.getMonth(), date.getDate(), new Date(selectedPlan.date[0]))
       //date = new Date(date.getFullYear(), date.getMonth(), date.getDate());
       if(!isPlannerDefault){
         const newDate = new Date(selectedPlan.date[0]);
-        console.log(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1)
         date = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1);
       }
       isPlannerDefault = false
@@ -1431,6 +1572,7 @@ const planEndTime = document.querySelector('.end-time select#timepicker');
 
 
 function createStartTimeOptions() {
+  planStartTime.innerHTML = '';
   const plan = plans.find((plan) => plan.planId == selectedPlan.planId);
   const currentDateTime = new Date();
   const currentHour = currentDateTime.getHours();
@@ -1725,7 +1867,6 @@ planSaveBtn.addEventListener('click', async() => {
   let subject = subjectType.value;
   let notification = subjectNotification.value;
   const planSaveUrl = updatePlan ? '/study/update-plan' : '/study/add-plan';
-  console.log(planSaveUrl);
   let response = await fetch(planSaveUrl, {
     method: 'post',
     headers: {
@@ -1777,13 +1918,29 @@ function mouseUp(target, e) {
   target.style.opacity = "1";
   target.parentNode.removeEventListener('mousemove', binded);
   planDragged = false;
+  if(planViewOption.value == 'week') {
+    let parentRect = target.parentNode.getBoundingClientRect();
+    let leftPosition = e.clientX - parentRect.left;
+    console.log(leftPosition, Math.floor((leftPosition - 100 )/ (target.offsetWidth)) * (target.offsetWidth) + 100 + 'px')
+    target.style.left = Math.floor((leftPosition - 100 )/ (target.offsetWidth)) * (target.offsetWidth) + 100 + 'px';
+    const clickedDate = Math.floor((leftPosition - 100) / target.offsetWidth);
+    
+    console.log(clickedDate)
+    date = new Date(updateWeek(dailyCalendarSlideDir)[clickedDate]);
+    planDate.value = new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    plan.date = [new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }), date.setHours(0, 0, 0, 0) / 1000];
+    console.log(plan.date)
+    generateCalendar();
+    dailyCalendarSlideDir = 0;
+    //updatePlanner(date);
+    //target.style.left = Math.floor((leftPosition - 100 )/ (target.offsetWidth)) * (target.offsetWidth) + 100 + 'px';
+  }
   if(initialMouseY == -1){
     updatePlan = true;
     selectedPlan = plan;
     addPlanModal.classList.remove('modal-closed');
     planName.value = target.querySelector('.plan-name span').innerText;
     updateEndTimeOptions();
-    console.log(new Date(plan.date[1] * 1000))
     planDate.value = new Date(plan.date[1] * 1000).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     planStartTime.querySelector(`option[value="${plan.startHr}.${plan.startMin}"]`).selected = true;
     planEndTime.querySelector(`option[value="${plan.endHr}.${plan.endMin}"]`).selected = true;
@@ -1800,46 +1957,43 @@ function mouseUp(target, e) {
 
 function mouseDown(target, e) {
   target.style.opacity = "0.8";
-  binded = divMove.bind(null, target);
+  binded = divMove.bind(null, target, planViewOption.value);
   target.parentNode.addEventListener('mousemove', binded);
   generatedPlan = target;
   planDragged = true;
   //target.addEventListener('mouseup', mouseUp.bind(null, target), false);
 }
 
-function divMove(target, e) {
+function divMove(target, planViewOption, e) {
   e.preventDefault();
   let dropArea = target.parentNode;
   let parentRect = dropArea.getBoundingClientRect();
   initialMouseY = e.clientY;
   const plan = plans.find(plan => plan.planId == target.id);
 
-  // Calculate the correct top position relative to the parent container
   let topPosition = e.clientY - parentRect.top + dropArea.scrollTop - 7;
   updatePlannerTime(topPosition, target);
-
-
-  // Apply the top position to the dragged element
+  if(planViewOption == 'week') {
+    let leftPosition = e.clientX - parentRect.left;
+    target.style.left = leftPosition - 10 + 'px';
+  }
   target.style.position = 'absolute';
   target.style.top = topPosition + 'px';
   target.style.cursor = 'move';
 }
 
-let planDragZones = document.querySelectorAll(".plan-drag-zone");
-const planDragZone = planDragZones[0];
 
 let planSaved = true;
 function createPlan(x, y, planDragZone) {
   updatePlan = false;
   const planId = generateRandomPlanId(10);
-  let dropArea = planDragZone;
-  let parentRect = dropArea.getBoundingClientRect();
-  let topPosition = y - parentRect.top + dropArea.scrollTop - 7;
+  let parentRect = planDragZone.getBoundingClientRect();
+  let topPosition = y - parentRect.top + planDragZone.scrollTop - 7;
+  let leftPosition = x - parentRect.left;
   const div = document.createElement('div');
   div.classList.add('plan');
   div.id = planId;
   div.classList.add(`planId${planId}`);
-
   div.innerHTML = `
   <div class="plan-display-zone">
   <div class="plan-name">
@@ -1853,14 +2007,21 @@ function createPlan(x, y, planDragZone) {
 
   div.addEventListener('mousedown', mouseDown.bind(null, div), false);
   div.addEventListener('mouseup', mouseUp.bind(null, div), false);
-
   planDragZone.appendChild(div);
   generatedPlan = div;
   div.style.top = topPosition + 'px';
+  if(planViewOption.value == 'week') {
+    div.style.left = Math.floor(leftPosition / div.offsetWidth) * div.offsetWidth + 100 + 'px';
+    const clickedDate = Math.floor(leftPosition / div.offsetWidth);
+    date = new Date(updateWeek(dailyCalendarSlideDir)[clickedDate]);
+    //date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
+    generateCalendar();
+    updatePlanner(date);
+  }
   const planInfo =  {
     planId: planId,
     el: div,
-    date: [new Date(date).toISOString().substr(0, 10), new Date().setHours(0, 0, 0, 0) / 1000],
+    date: [new Date(date).toISOString().substr(0, 10), new Date(date).setHours(0, 0, 0, 0) / 1000],
     startTimeDis: div.querySelector('.plan-time-info span'),
     planDragZone: planDragZone,
     startHr: null,
@@ -1889,7 +2050,7 @@ function createPlan(x, y, planDragZone) {
   plan.endMin = times.endMin;
   planDate.value = new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   const selectedStartInput = document.querySelector(`.start-time option[value="${times.startHr}.${times.startMin}"]`);
-  selectedStartInput.selected = true;
+
   planSaved = false;
 }
 
@@ -1909,15 +2070,35 @@ planDragZone.addEventListener('scroll', (e) => {
 })
 
 function updatePlanner(date) {
-  const viewOption = document.querySelector('#view-options').value;
-  if(viewOption == 'day') {
+  if(planViewOption.value == 'day') {
     plans.forEach((plan) => {
       if(plan.repeat == 'daily' || plan.date[1] == new Date(date).getTime() / 1000) {
-        //console.log(plan.date, new Date(date).getTime() / 1000, plan.name, plan.repeat)
-        const activeSlide = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[calendarSlideDir];
+        const activeSlide = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[dailyCalendarSlideDir];
         activeSlide.appendChild(plan.el)
+        plan.el.style.left = '100px';
+        movePlanner215(plan)
       } else {
-        //console.log('remove', plan.date, new Date(date).getTime() / 1000, plan.name, plan.repeat)
+        plan.el.remove();
+        const planEls = document.querySelectorAll(`.planId${plan.planId}`);
+        planEls.forEach((planEl) => {
+          planEl.remove();
+        })
+      }
+    })
+  }
+
+  if(planViewOption.value == 'week') {
+    let week = updateWeek(dailyCalendarSlideDir);
+    week = week.map((day) => {
+      return day.getTime() / 1000;
+    })
+    plans.forEach((plan) => {
+      if(plan.repeat == 'daily' || plan.repeat == 'weekly' || week.includes(plan.date[1])) {
+        const activeSlide = document.querySelectorAll('.planner #weekly-planner .swiper-slide .plan-drag-zone')[dailyCalendarSlideDir];
+        activeSlide.appendChild(plan.el);
+        move2Date(plan)
+        movePlanner215(plan)
+      } else {
         plan.el.remove();
         const planEls = document.querySelectorAll(`.planId${plan.planId}`);
         planEls.forEach((planEl) => {
@@ -1931,8 +2112,8 @@ function updatePlanner(date) {
 function updatePlannerTime(topPosition, div) {
   const plan = plans.find(plan => plan.planId == div.id);
   const interval = 15;
-  let startTime = (Math.round((topPosition / 60 - 0.5) * 100 + 3) / 100).toFixed(2);
-  let endTime = (Math.round(((topPosition + div.offsetHeight) / 60 - 0.5) * 100 + 3) / 100).toFixed(2);
+  let startTime = (Math.round((topPosition / 60 - plannerHeader.offsetHeight / 60) * 100 + 3) / 100).toFixed(2);
+  let endTime = (Math.round(((topPosition + div.offsetHeight) / 60 - plannerHeader.offsetHeight / 60) * 100 + 3) / 100).toFixed(2);
   let startHr = parseInt(startTime.toString().split('.')[0]);
   let startMin = Math.floor(parseInt(startTime.toString().split('.')[1]) / 10 * 6);
   let endHr = parseInt(endTime.toString().split('.')[0]);
@@ -1958,13 +2139,14 @@ function updatePlannerTime(topPosition, div) {
   plan.prevStartTime = [startHr, startMin];
   plan.prevEndTime = [endHr, endMin]
   updateEndTimeOptions();
+  createStartTimeOptions();
   return {startHr: startHr, startMin: startMin, endHr: endHr, endMin: endMin};
 }
 
 function movePlanner215(plan) {
   const hr = plan.startHr;
   const min = plan.startMin;
-  plan.el.style.top = hr * 60  + min + 30 + 'px';
+  plan.el.style.top = hr * 60  + min + plannerHeader.offsetHeight + 'px';
 }
 
 function generateRandomPlanId(length) {
@@ -2010,11 +2192,17 @@ function createCurrentTimeBar(displayZone) {
     div = document.createElement('div');
     div.classList.add('planner-timebar');
     displayZone.appendChild(div);
-    div.style.top = new Date().getHours() * 60 + new Date().getMinutes() + 30 + 'px';
+    div.style.top = new Date().getHours() * 60 + new Date().getMinutes() + plannerHeader.offsetHeight + 'px';
     currentTimeBarInterval = setInterval(() => {
-      div.style.top = new Date().getHours() * 60 + new Date().getMinutes() + 30 + 'px';
+      div.style.top = new Date().getHours() * 60 + new Date().getMinutes() + plannerHeader.offsetHeight + 'px';
     }, 10000);
   }
 }
 
+//week part
+function move2Date(plan) {
+  const day = new Date(plan.date[1] * 1000).getDay();
+  const planWidth = (plan.el.parentNode.offsetWidth - 100) / 7 - 1;
+  plan.el.style.left = planWidth * day + 100 + 'px';
+}
 const calendar = new Calendar(".date-input");

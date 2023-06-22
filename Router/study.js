@@ -158,13 +158,8 @@ Router.post('/bring-members-info', async (req, res) => {
       const startTime = new Date(`${date} 00:00:00`).getTime();
       const endTime = new Date(`${date} 24:00:00`).getTime();
   
-      if (member.subjects == null) {
-        return 0;
-      }
-      console.log(membersInfo[group_index].members)
-  
       membersInfo[group_index].members.push({ userId: member.user_id, name: member.name, subjects: member.subjects, timezone: member.timezone, filteredTimeline: [], today: 0 });
-  
+      member.subjects = member.subjects ? member.subjects : [];
       await Promise.all(member.subjects.map(async (subject, index) => {
         const datum_point = member.subjects[index].datum_point;
         let today = 0;
