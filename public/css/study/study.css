@@ -370,41 +370,42 @@ nav {
   display: none;
 }
 
-.planner .swiper-container {
+.planner .calendar-container {
   width: 80%;
   display: inline-block;
   position: relative;
 }
 
 /* 
-.daily-planner {
+.calendar-container {
   display: block;
   max-height: 90vh;
   overflow-y: scroll;
 } */
 
-.daily-planner .grid-wrapper {
+.calendar-container .grid-wrapper {
   width: 100%;
   display: block;
-  max-height: calc(100vh - 300px);
+  max-height: calc(100vh - 200px);
   overflow-y: scroll;
   position: relative;
+  overflow-x: hidden;
 }
 
-.daily-planner .grid-wrapper table {
+.calendar-container .grid-wrapper table {
   border-collapse: collapse;
   width: 100%;
   position: relative;
 }
 
-.daily-planner .grid-wrapper table td.hours {
+.calendar-container .grid-wrapper table td.hours {
   width: 100px;
   height: 60px;
   position: relative;
   top: 25px;
 }
 
-.daily-planner .grid-wrapper table td.block {
+.calendar-container .grid-wrapper table td.block {
   width: calc(100% - 100px);
   border: 1px solid #c2c2c2;
   height: 60px;
@@ -1816,21 +1817,28 @@ li {
 .planner-sidebar {
   width: 20%;
   z-index: 2;
+  overflow-y: auto;
+  position: relative;
+  height: calc(100vh - 200px)
 }
-.swiper-container .planner-header .inner {
+.planner-sidebar .create-btn-wrapper {
+  margin-top: 30px;
+  margin-left: 40px;
+}
+.calendar-container .planner-header .inner {
   width: 90%;
   margin: 10px 0px 10px 5%;
 }
 
-.swiper-container .planner-header .inner > div {
+.calendar-container .planner-header .inner > div {
   display: inline-block;
 }
 
-.swiper-container .planner-header .day-assets > button{
+.calendar-container .planner-header .day-assets > button{
   display: inline-block;
 }
 
-.swiper-container .planner-header select {
+.calendar-container .planner-header select {
   height:50px;
   outline: none;
   border: 1px #bfbfbf solid;
@@ -1839,7 +1847,7 @@ li {
   font-size: 30px;
 }
 
-.swiper-container .planner-header .view-options-wrpper {
+.calendar-container .planner-header .view-options-wrpper {
   float: right;
 }
 
@@ -2102,3 +2110,75 @@ font-size:20px;
   border: 1px solid red;
   top: 30px;
 }
+
+.calendar-container #weekly-planner {
+  display: none;
+}
+
+.calendar-container #monthly-planner {
+  display: none;
+}
+
+.calendar-container #weekly-planner td:nth-child(-n + 8){
+  border-top: none;
+}
+
+.calendar-container #weekly-planner td:nth-child(1){
+  width: 100px;
+}
+
+.calendar-container #weekly-planner p {
+  padding: 0px;
+  margin: 0px;
+}
+
+.calendar-container #weekly-planner p.date {
+  font-size: 25px;
+}
+
+.calendar-container #weekly-planner p.day {
+  font-size: 20px;
+}
+
+.calendar-container #weekly-planner .weekly-planner-header {
+  height: fit-content;
+}
+
+.calendar-container #weekly-planner tbody {
+  table-layout: fixed;
+  width: 100%;
+  position: relative
+}
+
+.calendar-container #weekly-planner tr {
+  display: flex;
+  position: relative;
+}
+
+.calendar-container #weekly-planner tr.weekly-planner-header th:nth-child(-n + 8){
+  width: calc((100% - 100px) / 7);
+}
+
+.calendar-container #weekly-planner tr.weekly-planner-header th:nth-child(1){
+  width: 100px;
+}
+
+.calendar-container #weekly-planner td.block {
+  width: calc((100% - 100px) / 7);
+}
+
+.calendar-container td.hours {
+  width: 100px;
+  position: relative;
+  padding-top: 15px;
+}
+
+.calendar-container #weekly-planner .plan-drag-zone .plan{
+  position: absolute;
+  width:calc((100% - 100px) / 7);
+  left: 100px;
+  z-index: 4;
+  pointer-events: auto;
+  touch-action: pan-y;
+}
+

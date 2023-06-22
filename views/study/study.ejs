@@ -135,7 +135,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="swiper-container" id = "planner">
+                <div class="calendar-container">
                   <div class="planner-header">
                     <div class="inner">
                       <div class="today-btn-wrapper">
@@ -154,8 +154,8 @@
                       <div class="day-assets">
                         <!-- <div class="swiper-button-next" id = "plan-next"></div>
                         <div class="swiper-button-prev" id = "plan-prev"></div> -->
-                        <button class="calendar-btn prevday" onclick="prevDay()" title="prevDay"><svg fill="#000000" height="30px" width="30px" version="1.1" id="XMLID_54_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="previous"> <g> <polygon points="17.2,23.7 5.4,12 17.2,0.3 18.5,1.7 8.4,12 18.5,22.3 "></polygon> </g> </g> </g></svg> </button>
-                        <button class="calendar-btn nextday" onclick="nextDay()" title="nextDay"><svg fill="#000000" height="30px" width="30px" version="1.1" id="XMLID_287_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="next"> <g> <polygon points="6.8,23.7 5.4,22.3 15.7,12 5.4,1.7 6.8,0.3 18.5,12 "></polygon> </g> </g> </g></svg> </button>
+                        <button class="calendar-btn prevday" title="prevDay"><svg fill="#000000" height="30px" width="30px" version="1.1" id="XMLID_54_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="previous"> <g> <polygon points="17.2,23.7 5.4,12 17.2,0.3 18.5,1.7 8.4,12 18.5,22.3 "></polygon> </g> </g> </g></svg> </button>
+                        <button class="calendar-btn nextday" title="nextDay"><svg fill="#000000" height="30px" width="30px" version="1.1" id="XMLID_287_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="next"> <g> <polygon points="6.8,23.7 5.4,22.3 15.7,12 5.4,1.7 6.8,0.3 18.5,12 "></polygon> </g> </g> </g></svg> </button>
                       </div>
                       <div class="date-view">
                         <h1 id="currentDate"></h1>
@@ -169,143 +169,759 @@
                       </div>
                     </div>
                   </div>
-                  <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                      <div class="planner-wrapper">
-                        <div class="daily-planner">
-                          <div class="grid-wrapper plan-drag-zone">
-                            <table>
-                              <tr>
-                                <th>Hours</th>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">1AM</td>
-                                <td class="block">
-                                
-                                </td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">2AM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">3AM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">4AM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">5AM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">6AM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">7AM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">8AM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">9AM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">10AM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">11AM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">12AM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">1PM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">2PM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">3PM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">4PM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">5PM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">6PM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">7PM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">8PM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">9PM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">10PM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours">11PM</td>
-                                <td class="block"></td>
-                              </tr>
-                              <tr class = "line"></tr>
-                              <tr>
-                                <td class="hours"></td>
-                                <td class="block"></td>
-                              </tr>
-                            </table>
+                  <div class="swiper-container" id = "daily-planner">
+                    <div class="swiper-wrapper">
+                      <div class="swiper-slide">
+                        <div class="planner-wrapper">
+                          <div class="daily-planner">
+                            <div class="grid-wrapper plan-drag-zone">
+                              <table>
+                                <tr class = "daily-planner-header">
+                                  <th>Hours</th>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">1AM</td>
+                                  <td class="block">
+                                  
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">2AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">3AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">4AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">5AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">6AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">7AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">8AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">9AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">10AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">11AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">12AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">1PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">2PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">3PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">4PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">5PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">6PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">7PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">8PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">9PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">10PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">11PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours"></td>
+                                  <td class="block"></td>
+                                </tr>
+                              </table>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-
+                  </div>
+                  <div class="swiper-container" id = "weekly-planner">
+                    <div class="swiper-wrapper">
+                      <div class="swiper-slide">
+                        <div class="planner-wrapper">
+                          <div class="weekly-planner">
+                            <div class="grid-wrapper plan-drag-zone">
+                              <table>
+                                <tr class = "weekly-planner-header">
+                                  <th>Hours</th>
+                                  <th>
+                                    <div class="table-h">
+                                    </div>
+                                  </th>
+                                  <th>
+                                    <div class="table-h">
+                                    </div>
+                                  </th>
+                                  <th>
+                                    <div class="table-h">
+                                    </div>
+                                  </th>
+                                  <th>
+                                    <div class="table-h">
+                                    </div>
+                                  </th>
+                                  <th>
+                                    <div class="table-h">
+                                    </div>
+                                  </th>
+                                  <th>
+                                    <div class="table-h">
+                                    </div>
+                                  </th>
+                                  <th>
+                                    <div class="table-h">
+                                    </div>
+                                  </th>
+                                </tr>
+                                <tr>
+                                  <td class="hours">1AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">2AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">3AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">4AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">5AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">6AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">7AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">8AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">9AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">10AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">11AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">12AM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">1PM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">2PM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">3PM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">4PM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">5PM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">6PM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">7PM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">8PM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">9PM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">10PM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">11PM</td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours"></td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                  <td class="block">
+                                  </td>
+                                </tr>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="swiper-container" id = "monthly-planner">
+                    <div class="swiper-wrapper">
+                      <div class="swiper-slide">
+                        <div class="planner-wrapper">
+                          <div class="daily-planner">
+                            <div class="grid-wrapper plan-drag-zone">
+                              <table>
+                                <tr class = "monthly-planner-header">
+                                  <th>Hours</th>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">1AM</td>
+                                  <td class="block">
+                                  
+                                  </td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">2AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">3AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">4AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">5AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">6AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">7AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">8AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">9AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">10AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">11AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">12AM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">1PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">2PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">3PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">4PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">5PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">6PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">7PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">8PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">9PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">10PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours">11PM</td>
+                                  <td class="block"></td>
+                                </tr>
+                                <tr class = "line"></tr>
+                                <tr>
+                                  <td class="hours"></td>
+                                  <td class="block"></td>
+                                </tr>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
