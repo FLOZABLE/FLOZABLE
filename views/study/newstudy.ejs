@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>DASHMIN - Bootstrap Admin Template</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+
+  <!-- Favicon -->
+  <link href="img/favicon.ico" rel="icon">
+
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icon Font Stylesheet -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Libraries Stylesheet -->
+  <link href="../lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+  <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+  <!-- Customized Bootstrap Stylesheet -->
+  <link href="../css/bootstrap.min.css" rel="stylesheet">
+  <link href="../css/study/newstudy.css" rel="stylesheet">
+
+  <!-- Template Stylesheet -->
+  <link href="../css/dashboard.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/dashboard/myaccount.css">
+  <!-- JavaScript Libraries -->
+  <script defer src="/socket.io/socket.io.js"></script>
+  <script defer src="https://www.youtube.com/iframe_api"></script>
+  <link rel="stylesheet" href="https://unpkg.com/swiper@7.4.1/swiper-bundle.min.css" />
+  <script defer src="https://unpkg.com/swiper@7.4.1/swiper-bundle.min.js"></script>
+  <script defer src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script defer src="../js/dashboard/main.js"></script>
+  <script defer src="../js/study/newstudy.js"></script>
+  <script src="https://kit.fontawesome.com/12bf9cc698.js" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pangolin&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Mogra&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sedgwick+Ave&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sansita+Swashed&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Limelight&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sigmar+One&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="modal closed" id = "background-setting">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <i class="fa-regular fa-image"></i>
+        <p>Background</p>
+        <button class = "modal-close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="examples">
+        <div class="example" onclick = "changeVideo(`https://www.youtube.com/watch?v=KZ2m7L9xWJ4`)">
+          <img src="https://i.ytimg.com/vi/KZ2m7L9xWJ4/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB1u9d3sy2P2bO8QV_dEfqb9gaL_A" alt="">
+        </div>
+        <div class="example" onclick = "changeVideo(`https://www.youtube.com/watch?v=YQc4WT0yDH4`)">
+          <img src="https://i.ytimg.com/vi/YQc4WT0yDH4/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDDHIhG56CbuabWfmm3UVScUQI4xg" alt="">
+        </div>
+        <div class="example" onclick = "changeVideo(`https://www.youtube.com/watch?v=QZTDZFtbrec`)">
+          <img src="https://i.ytimg.com/vi/QZTDZFtbrec/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBscOPnvpk5trc1l9pwbJxnympGnw" alt="">
+        </div>
+        <div class="example" onclick = "changeVideo(`https://www.youtube.com/watch?v=E8fiyj1hNwk`)">
+          <img src="https://i.ytimg.com/vi/E8fiyj1hNwk/hq720.jpg?sqp=-oaymwE2CNAFEJQDSFXyq4qpAygIARUAAIhCGAFwAcABBvABAfgB1AaAAuADigIMCAAQARgdIEgofzAP&rs=AOn4CLDnsFICTCxUMbD051YPSmAZBOhCYg" alt="">
+        </div>
+        <div class="example" onclick = "changeVideo(`https://www.youtube.com/watch?v=DXT9dF-WK-I&pp=ygUQc3R1ZHkgYmFja2dyb3VuZA%3D%3D`)">
+          <img src="https://i.ytimg.com/vi/DXT9dF-WK-I/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAdePlBeHzhNbZox8uwTEnoCpXLOA" alt="">
+        </div>
+        <div class="example" onclick = "changeVideo(`https://www.youtube.com/watch?v=CHFif_y2TyM&pp=ygUQc3R1ZHkgYmFja2dyb3VuZA%3D%3D`)">
+          <img src="https://i.ytimg.com/vi/CHFif_y2TyM/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBvCy3ay2FzHLPjY-bClvG-I1enJQ" alt="">
+        </div>
+      </div>
+      <div class="youtube-video">
+        <svg width="34px" height="34px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="red" d="M14.712 4.633a1.754 1.754 0 00-1.234-1.234C12.382 3.11 8 3.11 8 3.11s-4.382 0-5.478.289c-.6.161-1.072.634-1.234 1.234C1 5.728 1 8 1 8s0 2.283.288 3.367c.162.6.635 1.073 1.234 1.234C3.618 12.89 8 12.89 8 12.89s4.382 0 5.478-.289a1.754 1.754 0 001.234-1.234C15 10.272 15 8 15 8s0-2.272-.288-3.367z"></path><path fill="#ffffff" d="M6.593 10.11l3.644-2.098-3.644-2.11v4.208z"></path></g></svg>
+        <p>Youtube Video</p>
+        <div class="form-group">
+          <span>https://</span>
+          <input class="form-field" type="text" placeholder="domain.tld" id = "youtube-link">
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id = "timer-setting">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <svg height="34px" width="34px" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" fill="#fff" stroke="#fff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <style type="text/css"> .st0{fill:#FFFFFF;} </style> <path d="M28.9,9.4C28.9,9.4,28.9,9.4,28.9,9.4C28.9,9.3,29,9.2,29,9.1c0,0,0,0,0-0.1c0,0,0,0,0-0.1c0-0.1,0-0.2,0-0.3c0,0,0,0,0-0.1 c0-0.1-0.1-0.2-0.1-0.3c0,0,0,0,0,0c-0.1-0.1-0.1-0.1-0.2-0.2l-11-7c-0.3-0.2-0.8-0.2-1.1,0l-13,9c0,0-0.1,0.1-0.1,0.1 c0,0,0,0-0.1,0c-0.1,0.1-0.1,0.2-0.2,0.3c0,0,0,0,0,0.1C3,10.8,3,10.9,3,11c0,0,0,0,0,0v6v6c0,0.3,0.2,0.7,0.5,0.8l11,7 c0.2,0.1,0.4,0.2,0.5,0.2c0.2,0,0.4-0.1,0.6-0.2l13-9c0.2-0.2,0.4-0.4,0.4-0.7s-0.1-0.6-0.3-0.8c-0.9-0.9-1.1-2.2-0.5-3.4l0.7-1.5 c0-0.1,0.1-0.2,0.1-0.3c0,0,0-0.1,0-0.1c0,0,0,0,0,0c0-0.1,0-0.3-0.1-0.4c0,0,0-0.1,0-0.1c0-0.1-0.1-0.2-0.2-0.3c0,0,0,0,0,0 c-0.9-0.9-1.1-2.2-0.5-3.4L28.9,9.4z M26.6,14.8l-11.6,8L5,16.5v-3.6l9.5,6c0.2,0.1,0.4,0.2,0.5,0.2c0.2,0,0.4-0.1,0.6-0.2l10.3-7.1 C25.8,12.8,26,13.8,26.6,14.8z M15,28.8L5,22.5v-3.6l9.5,6c0.2,0.1,0.4,0.2,0.5,0.2c0.2,0,0.4-0.1,0.6-0.2l10.3-7.1 c-0.1,1.1,0.1,2.2,0.7,3.1L15,28.8z"></path> </g></svg>
+        <p>Subjects</p>
+        <button class = "modal-close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="timers">
+      </div>
+      <div class="add-subject-modal-btn">
+        <button class="blob-btn">
+          Or add a new subject
+          <span class="blob-btn__inner">
+            <span class="blob-btn__blobs">
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+            </span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal closed" id = "add-subject">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <p>Add Subject</p>
+        <button class = "modal-close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="middle">
+        <div class="form-group">
+          <span><svg height="24px" width="24px" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <style type="text/css"> .st0{fill:#FFFFFF;} </style> <path d="M28.9,9.4C28.9,9.4,28.9,9.4,28.9,9.4C28.9,9.3,29,9.2,29,9.1c0,0,0,0,0-0.1c0,0,0,0,0-0.1c0-0.1,0-0.2,0-0.3c0,0,0,0,0-0.1 c0-0.1-0.1-0.2-0.1-0.3c0,0,0,0,0,0c-0.1-0.1-0.1-0.1-0.2-0.2l-11-7c-0.3-0.2-0.8-0.2-1.1,0l-13,9c0,0-0.1,0.1-0.1,0.1 c0,0,0,0-0.1,0c-0.1,0.1-0.1,0.2-0.2,0.3c0,0,0,0,0,0.1C3,10.8,3,10.9,3,11c0,0,0,0,0,0v6v6c0,0.3,0.2,0.7,0.5,0.8l11,7 c0.2,0.1,0.4,0.2,0.5,0.2c0.2,0,0.4-0.1,0.6-0.2l13-9c0.2-0.2,0.4-0.4,0.4-0.7s-0.1-0.6-0.3-0.8c-0.9-0.9-1.1-2.2-0.5-3.4l0.7-1.5 c0-0.1,0.1-0.2,0.1-0.3c0,0,0-0.1,0-0.1c0,0,0,0,0,0c0-0.1,0-0.3-0.1-0.4c0,0,0-0.1,0-0.1c0-0.1-0.1-0.2-0.2-0.3c0,0,0,0,0,0 c-0.9-0.9-1.1-2.2-0.5-3.4L28.9,9.4z M26.6,14.8l-11.6,8L5,16.5v-3.6l9.5,6c0.2,0.1,0.4,0.2,0.5,0.2c0.2,0,0.4-0.1,0.6-0.2l10.3-7.1 C25.8,12.8,26,13.8,26.6,14.8z M15,28.8L5,22.5v-3.6l9.5,6c0.2,0.1,0.4,0.2,0.5,0.2c0.2,0,0.4-0.1,0.6-0.2l10.3-7.1 c-0.1,1.1,0.1,2.2,0.7,3.1L15,28.8z"></path> </g></svg></span>
+          <input class="form-field" type="text" placeholder="Subject" id = "subject">
+      </div>
+      <p>Choose subject color</p>
+      <div class="picker">
+        <input type="color" value="#FFB61A" id = "hexselection" class = "hexselection"/>
+        <input type="text" autocomplete="off" spellcheck="false" id = "colorselection" class = "colorselection" />
+      </div>
+      </div>
+      </div>
+      <div class="add-new-subject">
+        <button class="blob-btn" id = "add-new-subject">
+          SAVE
+          <span class="blob-btn__inner">
+            <span class="blob-btn__blobs">
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+            </span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid position-relative bg-white d-flex p-0">
+    <div class="sidebar pe-4 pb-3">
+      <nav class="navbar bg-light navbar-light">
+        <!--           <a href="/" class="navbar-brand mx-4 mb-3">
+              <h3 class="text-primary"><i class="fa fa-hashtag me-2"></i>Return Home</h3>
+          </a> -->
+        <div class="navbar-nav w-100">
+          <a href="/dashboard" class="nav-item nav-link main"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+          <a href="/dashboard/groups" class="nav-item nav-link groups"><i class="fa fa-th me-2"></i>Groups</a>
+          <a href="widget.html" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Widgets</a>
+          <a href="form.html" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Forms</a>
+          <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
+          <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
+        </div>
+      </nav>
+    </div>
+    <!-- Content Start -->
+    <div class="content">
+      <div class="container">
+        <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
+          <a href="#" class="sidebar-toggler flex-shrink-0">
+            <i class="fa fa-bars"></i>
+          </a>
+          <div class="nav-item header">
+            <button class="nav-link" id = "timer-activate">
+              <i><svg height="24px" width="24px" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" fill="#4294E3" stroke="#4294E3"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <style type="text/css"> .st0{fill:#FFFFFF;} </style> <path d="M28.9,9.4C28.9,9.4,28.9,9.4,28.9,9.4C28.9,9.3,29,9.2,29,9.1c0,0,0,0,0-0.1c0,0,0,0,0-0.1c0-0.1,0-0.2,0-0.3c0,0,0,0,0-0.1 c0-0.1-0.1-0.2-0.1-0.3c0,0,0,0,0,0c-0.1-0.1-0.1-0.1-0.2-0.2l-11-7c-0.3-0.2-0.8-0.2-1.1,0l-13,9c0,0-0.1,0.1-0.1,0.1 c0,0,0,0-0.1,0c-0.1,0.1-0.1,0.2-0.2,0.3c0,0,0,0,0,0.1C3,10.8,3,10.9,3,11c0,0,0,0,0,0v6v6c0,0.3,0.2,0.7,0.5,0.8l11,7 c0.2,0.1,0.4,0.2,0.5,0.2c0.2,0,0.4-0.1,0.6-0.2l13-9c0.2-0.2,0.4-0.4,0.4-0.7s-0.1-0.6-0.3-0.8c-0.9-0.9-1.1-2.2-0.5-3.4l0.7-1.5 c0-0.1,0.1-0.2,0.1-0.3c0,0,0-0.1,0-0.1c0,0,0,0,0,0c0-0.1,0-0.3-0.1-0.4c0,0,0-0.1,0-0.1c0-0.1-0.1-0.2-0.2-0.3c0,0,0,0,0,0 c-0.9-0.9-1.1-2.2-0.5-3.4L28.9,9.4z M26.6,14.8l-11.6,8L5,16.5v-3.6l9.5,6c0.2,0.1,0.4,0.2,0.5,0.2c0.2,0,0.4-0.1,0.6-0.2l10.3-7.1 C25.8,12.8,26,13.8,26.6,14.8z M15,28.8L5,22.5v-3.6l9.5,6c0.2,0.1,0.4,0.2,0.5,0.2c0.2,0,0.4-0.1,0.6-0.2l10.3-7.1 c-0.1,1.1,0.1,2.2,0.7,3.1L15,28.8z"></path> </g></svg></i>
+            </button>
+          </div>
+          <div class="navbar-nav align-items-center ms-auto">
+            <div class="nav-item">
+              <button class="nav-link" id = "background-activate">
+                <i class="fa-regular fa-image"></i>
+              </button>
+            </div>
+            <div class="nav-item">
+              <button class="nav-link" id = "groups-activate">
+                <i class="fa-solid fa-user-group"></i>
+              </button>
+            </div>
+            <div class="nav-item dropdown">
+              <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                <a href="/dashboard/myaccount" class="dropdown-item">My Profile</a>
+                <a href="#" class="dropdown-item">Settings</a>
+                <a href="#" class="dropdown-item">Log Out</a>
+              </div>
+            </div>
+          </div>
+        </nav>
+        <div id="player">
+        </div>
+        <div class="groups-container">
+          <div class="swiper-container">
+            <div class="swiper-wrapper">
+              
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

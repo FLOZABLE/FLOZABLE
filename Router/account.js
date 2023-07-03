@@ -65,6 +65,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
       req.session.user_id = userId;
       req.session.name = matching_email[0].name;
       req.session.loggedin = true;
+      req.session.userInfo = {userId: userId, name: matching_email[0].name, loggedin: true, email: email, myinfo: matching_email[0].myinfo};
       console.log("login success");
       console.log(req.session.user_id, req.session.loggedin);
 
@@ -127,6 +128,7 @@ Router.post('/signup-authentication', async (req, res, next) => {
     req.session.user_id = userId;
     req.session.loggedin = true;
     req.session.name = sanitizedName;
+    req.session.userInfo = {userId: userId, name: sanitizedName, loggedin: true, email: email}
 
     res.send({ success: true });
     console.log(req.session)
@@ -167,4 +169,22 @@ Router.get('/logout', function (req, res) {
   });
 });
 
+Router.post('/bring-my-info', async(req, res) => {
+  if(!req.session.loggedin) {
+    return res.send({success: false, reason: 'no session'})
+  }
+
+  const connection = await (await pool).getConnection();
+
+  let userInfo = await connection.query(`SELECT name, myinfo, groups, user_id, plan, subjects from users WHERE user_id = "${req.session.user_id}"`);
+  userInfo = userInfo[0];
+  let base64Image;
+  let binaryData = userInfo.profile_picture;
+
+  if(binaryData){
+    base64Image = binaryData.toString('base64');
+    userInfo.profile_picture = base64Image;
+  }
+  res.send({success: true, userInfo: userInfo});
+})
 module.exports = Router;

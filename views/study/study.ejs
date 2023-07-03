@@ -26,6 +26,7 @@
         <link rel="stylesheet" href="https://unpkg.com/swiper@7.4.1/swiper-bundle.min.css" />
         <script defer src="https://unpkg.com/swiper@7.4.1/swiper-bundle.min.js"></script>
         <script defer src="../js/study/study.js"></script>
+        <script defer src="../js/study/analysis.js"></script>
       </head>
     <body data-home-page="" data-home-page-title="Contact 1" class="u-body u-xl-mode" data-lang="en">
       <div class="nav-right visible-xs">
@@ -76,7 +77,45 @@
                 </div>
               </div>
               <div class="analysis">
-
+                <div class="analysis-header">
+                  <div class="view-options-wrpper">
+                    <select name="analysis-view-options" id="analysis-view-options">
+                      <option value="day">Day</option>
+                      <option value="week">Week</option>
+                      <option value="month">Month</option>
+                      <option value="month">VS</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="analysis-viewer">
+                  <div class="analysis-calendar-container">
+                    <div class="calendar-wrapper">
+                      <div class="container">
+                        <div class="calendar-assets">
+                            <div class="field">
+                                <label for="date">Pesquisa por data</label>
+                                <form class="form-input" id="date-search" onsubmit="return setDate(this)">
+                                    <input type="date" class="text-field" name="date" id="date" required>
+                                    <button type="submit" class="btn btn-small" title="Pesquisar"><i class="fas fa-search"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="calendar" id="analysisCalendarWrapper">
+                            <div class="header">
+                                <!-- Aqui é onde ficará o h1 com o mês e o ano -->
+                                <div class="month" id="month-header">
+                
+                                </div>
+                                <div class="buttons">
+                                    <button class="icon" onclick="prevMonth()" title="Mês anterior"><i class="fas fa-chevron-left"></i></button>
+                                    <button class="icon" onclick="nextMonth()" title="Próximo mês"><i class="fas fa-chevron-right "></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="planner">
                 <div class="planner-sidebar">
@@ -96,29 +135,31 @@
                       </button>
                     </div>
                     <div class="sidebar-calendar">
-                      <div class="container">
-                        <div class="calendar-assets">
-                            <div class="field">
-                                <label for="date">Pesquisa por data</label>
-                                <form class="form-input" id="date-search" onsubmit="return setDate(this)">
-                                    <input type="date" class="text-field" name="date" id="date" required>
-                                    <button type="submit" class="btn btn-small" title="Pesquisar"><i class="fas fa-search"></i></button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="calendar" id="table">
-                            <div class="header">
-                                <!-- Aqui é onde ficará o h1 com o mês e o ano -->
-                                <div class="month" id="month-header">
-                
-                                </div>
-                                <div class="buttons">
-                                    <button class="icon" onclick="prevMonth()" title="Mês anterior"><i class="fas fa-chevron-left"></i></button>
-                                    <button class="icon" onclick="nextMonth()" title="Próximo mês"><i class="fas fa-chevron-right "></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                      <div class="calendar-wrapper">
+                        <div class="container">
+                          <div class="calendar-assets">
+                              <div class="field">
+                                  <label for="date">Pesquisa por data</label>
+                                  <form class="form-input" id="date-search" onsubmit="return setDate(this)">
+                                      <input type="date" class="text-field" name="date" id="date" required>
+                                      <button type="submit" class="btn btn-small" title="Pesquisar"><i class="fas fa-search"></i></button>
+                                  </form>
+                              </div>
+                          </div>
+                          <div class="calendar" id="sidebarCalendarWrapper">
+                              <div class="header">
+                                  <!-- Aqui é onde ficará o h1 com o mês e o ano -->
+                                  <div class="month" id="month-header">
+                  
+                                  </div>
+                                  <div class="buttons">
+                                      <button class="icon" onclick="prevMonth()" title="Mês anterior"><i class="fas fa-chevron-left"></i></button>
+                                      <button class="icon" onclick="nextMonth()" title="Próximo mês"><i class="fas fa-chevron-right "></i></button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      </div>
                     </div>
                     <div class="subjects-wrapper">
                       <div class="subjects-show-btn">

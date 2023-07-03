@@ -110,6 +110,7 @@ io.on('connection', (socket) => {
     io.to(room).emit('removeUser', room, userId)
   })
 })
+
 const mainRouter = require("./Router/main");
 const emailRouter = require("./Router/email");
 const accountRouter = require("./Router/account");
@@ -124,12 +125,17 @@ const searchRouter = require('./Router/search');
 const groupsRouter = require("./Router/groups");
 const linksRouter = require('./Router/links');
 const aiRouter = require('./Router/ai');
+const dashboardRouter = require('./Router/dashboard');
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
 app.set('socketio', io);
 
-
+app.get('/public/img/profiles/:profile', (req, res) => {
+  console.log('sdssdf')
+  const profile = req.params.profile;
+  console.log(profile);
+})
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.SECRET_ID));
@@ -164,15 +170,16 @@ app.use('/search', searchRouter);
 app.use('/groups', groupsRouter);
 app.use('/links', linksRouter);
 app.use('/ai', aiRouter);
+app.use('/dashboard', dashboardRouter);
 
 // error handler
 app.use(function (err, req, res, next) {
   console.log(err.message, err.status)
 });
 
-/* app.get('*',function(req,res){
+app.get('*',function(req,res){
   res.redirect('/');
-}); */
+});
 
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);

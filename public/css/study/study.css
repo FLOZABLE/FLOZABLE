@@ -1942,7 +1942,7 @@ li {
 
 /* Calendar */
 
-.sidebar-calendar .container {
+.calendar-wrapper .container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1950,7 +1950,7 @@ li {
   width: 100%;
 }
 
-.sidebar-calendar .calendar-assets {
+.calendar-wrapper .calendar-assets {
   display: none;
   /* display: flex;
   justify-content: center;
@@ -1960,12 +1960,12 @@ li {
   padding: 10px; */
 }
 
-.sidebar-calendar #currentDate{
+.calendar-wrapper #currentDate{
 text-align:center;
 font-size:20px;
 }
 
-.sidebar-calendar .field {
+.calendar-wrapper .field {
   display: flex;
   width: auto;
   flex-direction: column;
@@ -1974,18 +1974,18 @@ font-size:20px;
   margin: 20px 0;
 }
 
-.sidebar-calendar .field label {
+.calendar-wrapper .field label {
   margin: 2px;
 }
 
-.sidebar-calendar .form-input {
+.calendar-wrapper .form-input {
   display: flex;
   width: 100%;
   align-items: center;
   justify-content: center;
 }
 
-.sidebar-calendar .day-assets {
+.calendar-wrapper .day-assets {
   display: flex;
   justify-content: space-between;
   width: 324px;
@@ -1993,11 +1993,11 @@ font-size:20px;
 
 
 
-.sidebar-calendar .day-assets .btn:nth-child(2) i {
+.calendar-wrapper .day-assets .btn:nth-child(2) i {
   padding: 0 10px 0 0 !important;
 }
 
-.sidebar-calendar .calendar {
+.calendar-wrapper .calendar {
   height: 370px;
   width: 324px;
   border-radius: 18px;
@@ -2009,7 +2009,7 @@ font-size:20px;
 
 }
 
-.sidebar-calendar .header {
+.calendar-wrapper .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2020,11 +2020,14 @@ font-size:20px;
   color: #262626;
 }
 
-.sidebar-calendar .month {
+.calendar-wrapper table{
+  width: 100%;
+}
+.calendar-wrapper .month {
   font-size: 0.7em;
 }
 
-.sidebar-calendar .icon {
+.calendar-wrapper .icon {
   padding: 10px;
   font-size: 1em;
   margin: 0 0 0 5px;
@@ -2035,15 +2038,15 @@ font-size:20px;
   outline: 0;
 }
 
-.sidebar-calendar .icon:hover {
+.calendar-wrapper .icon:hover {
   cursor: pointer;
 }
 
-.sidebar-calendar #calendar {
+.calendar-wrapper .calendar {
   width: 100%;
 }
 
-.sidebar-calendar .weekends th {
+.calendar-wrapper .weekends th {
   font-size: 1em;
   color: gray;
   font-weight: 400;
@@ -2051,7 +2054,7 @@ font-size:20px;
   margin: 10px 0;
 }
 
-.sidebar-calendar #calendar tr {
+.calendar-wrapper .calendar tr {
   display: flex;
   width: 100%;
   justify-content: space-between;
@@ -2060,7 +2063,7 @@ font-size:20px;
   margin: 3px;
 }
 
-.sidebar-calendar #calendar td {
+.calendar-wrapper .calendar td {
   display: flex;
   height: 40px;
   width: 40px;
@@ -2182,3 +2185,17 @@ font-size:20px;
   touch-action: pan-y;
 }
 
+.analysis .calendar-wrapper .calendar th{
+  flex: 1;
+}
+.analysis .calendar-wrapper .calendar td{
+  flex: 1;
+  background-color: #455AF7;
+  text-align: left;
+  display: block;
+}
+
+.analysis .calendar-wrapper .calendar button{
+  text-align: left;
+  display: block;
+}

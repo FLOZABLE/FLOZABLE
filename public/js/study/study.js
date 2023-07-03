@@ -863,35 +863,6 @@ startSubjectBtn.addEventListener("click", () => {
 })
 
 
-/* //calendar
-var selectedDateEl = null; // variable to store previously selected date element
-
-var calendarEl = document.getElementById('calendar');
-var calendar = new FullCalendar.Calendar(calendarEl, {
-  initialView: 'dayGridMonth',
-  themeSystem: 'bootstrap5',
-  headerToolbar: {
-    left: 'prev,next today',
-    center: 'title',
-    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-  },
-  events: [
-    // your events data here
-  ],
-  dateClick: function (info) {
-
-    // reset background color of previously selected date
-    if (selectedDateEl) {
-      selectedDateEl.style.backgroundColor = '';
-    }
-
-    // change background color of selected date
-    selectedDateEl = info.dayEl;
-    selectedDateEl.style.backgroundColor = 'rgba(255, 220, 40, .15)';
-  }
-});
-calendar.render();
- */
 
 //calendar zone
 
@@ -919,10 +890,9 @@ planViewOption.addEventListener('change', () => {
     dailyCalendarContainer.style.display = 'none';
     weeklyCalendarContainer.style.display = 'block';
     monthlyCalendarContainer.style.display = 'none';
-    updateWeek(dailyCalendarSlideDir)
+    sidebarCalendar.updateWeek(dailyCalendarSlideDir)
     plannerHeader = document.querySelectorAll('.weekly-planner-header')[dailyCalendarSlideDir];
     planDragZone = document.querySelectorAll('#weekly-planner .planner-drag-zone')[dailyCalendarSlideDir];
-    console.log(dailyCalendarSlideDir)
   } else if(planViewOption.value == 'month'){
     dailyCalendarContainer.style.display = 'none';
     weeklyCalendarContainer.style.display = 'none';
@@ -930,7 +900,7 @@ planViewOption.addEventListener('change', () => {
     plannerHeader = document.querySelector('.monthly-planner-header');
     planDragZone = document.querySelectorAll('#monthly-planner .planner-drag-zone')[monthlyCalendarSlideDir];
   }
-  updatePlanner(date);
+  updatePlanner(sidebarCalendar.date);
 })
 
 const prevPlanBtn = document.querySelector('.calendar-btn.prevday');
@@ -938,17 +908,17 @@ const nextPlanBtn = document.querySelector('.calendar-btn.nextday');
 
 prevPlanBtn.addEventListener('click', () => {
   if(planViewOption.value == 'day') {
-    prevDay();
+    sidebarCalendar.prevDay();
   } else if(planViewOption.value == 'week') {
-    prevWeek();
+    sidebarCalendar.prevWeek();
   }
 })
 
 nextPlanBtn.addEventListener('click', () => {
   if(planViewOption.value == 'day') {
-    nextDay();
+    sidebarCalendar.nextDay();
   } else if(planViewOption.value == 'week') {
-    nextWeek();
+    sidebarCalendar.nextWeek();
   }
 })
 
@@ -1127,232 +1097,234 @@ plannerButton.addEventListener('change', () => {
 
 //calendar for sidebar
 
-const months = [
-'January', 
-'February', 
-'March', 
-'April', 
-'May', 
-'June', 
-'July', 
-'August', 
-'September', 
-'October', 
-'November', 
-'December'
-];
+class Calendar {
+  constructor(calendarContainer, calendarName) {
+    this.calendarName = calendarName;
+    this.calendarContainer = calendarContainer;
+    this.months = [
+      'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    this.weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    this.date = new Date();
+    this.generateCalendar();
+  }
 
-const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-function getCurrentDate(element, asString) {
-  if (element) {
+  getCurrentDate(element, asString) {
+    const date = this.date;
+    if (element) {
       if (asString) {
-          return element.textContent = months[date.getMonth()] + ' ' +date.getDate();
+        element.textContent = this.months[date.getMonth()] + ' ' + date.getDate();
+      } else {
+        element.value = date.toISOString().substr(0, 10);
       }
-      return element.value = date.toISOString().substr(0, 10);
+    }
+    return date;
   }
-  return date;
-}
 
-function generateCalendar() {
-
-  const calendar = document.getElementById('calendar');
-  if (calendar) {
+  generateCalendar() {
+    const calendar = document.getElementById(this.calendarName);
+    console.log(calendar)
+    if (calendar) {
       calendar.remove();
-  }
+    }
 
-  const table = document.createElement("table");
-  table.id = "calendar";
+    const table = document.createElement('table');
+    table.id = this.calendarName;
+    table.class = 'calendar'
 
-  const trHeader = document.createElement('tr');
-  trHeader.className = 'weekends';
-  weekdays.map(week => {
+    const trHeader = document.createElement('tr');
+    trHeader.className = 'weekends';
+
+    this.weekdays.map(week => {
       const th = document.createElement('th');
       const w = document.createTextNode(week.substring(0, 3));
       th.appendChild(w);
       trHeader.appendChild(th);
-  });
+    });
 
-  table.appendChild(trHeader);
+    table.appendChild(trHeader);
 
-  const weekDay = new Date(
-      date.getFullYear(),
-      date.getMonth(),
+    const weekDay = new Date(
+      this.date.getFullYear(),
+      this.date.getMonth(),
       1
-  ).getDay();
+    ).getDay();
 
-  const lastDay = new Date(
-      date.getFullYear(),
-      date.getMonth() + 1,
+    const lastDay = new Date(
+      this.date.getFullYear(),
+      this.date.getMonth() + 1,
       0
-  ).getDate();
+    ).getDate();
 
-  let tr = document.createElement("tr");
-  let td = '';
-  let empty = '';
-  let btn = document.createElement('button');
-  let week = 0;
+    let tr = document.createElement('tr');
+    let td = '';
+    let empty = '';
+    let btn = document.createElement('button');
+    let week = 0;
 
-
-  while (week < weekDay) {
-      td = document.createElement("td");
+    while (week < weekDay) {
+      td = document.createElement('td');
       empty = document.createTextNode(' ');
       td.appendChild(empty);
       tr.appendChild(td);
       week++;
-  }
+    }
 
-  for (let i = 1; i <= lastDay;) {
+    for (let i = 1; i <= lastDay;) {
       while (week < 7) {
-          td = document.createElement('td');
-          let text = document.createTextNode(i);
-          btn = document.createElement('button');
-          btn.className = "btn-day";
-          btn.addEventListener('click', function () { changeDate(this) });
-          week++;
+        td = document.createElement('td');
+        let text = document.createTextNode(i);
+        let btn = document.createElement('button');
+        btn.className = 'btn-day';
+        btn.addEventListener('click', () => this.changeDate(btn));
+        week++;
 
-          if (i <= lastDay) {
-              i++;
-              btn.appendChild(text);
-              td.appendChild(btn)
-          } else {
-              text = document.createTextNode(' ');
-              td.appendChild(text);
-          }
-          tr.appendChild(td);
+        if (i <= lastDay) {
+          i++;
+          btn.appendChild(text);
+          td.appendChild(btn);
+        } else {
+          text = document.createTextNode(' ');
+          td.appendChild(text);
+        }
+        tr.appendChild(td);
       }
       table.appendChild(tr);
 
-      tr = document.createElement("tr");
+      tr = document.createElement('tr');
 
       week = 0;
+    }
+
+    const content = document.getElementById(this.calendarContainer);
+    content.appendChild(table);
+    this.changeActive();
+    this.changeHeader(this.date);
+    document.getElementById('date').textContent = this.date;
+    this.getCurrentDate(document.getElementById('currentDate'), true);
+    this.getCurrentDate(document.getElementById('date'), false);
   }
-  const content = document.getElementById('table');
-  content.appendChild(table);
-  changeActive();
-  changeHeader(date);
-  document.getElementById('date').textContent = date;
-  getCurrentDate(document.getElementById("currentDate"), true);
-  getCurrentDate(document.getElementById("date"), false);
-}
 
-function setDate(form) {
-  let newDate = new Date(form.date.value);
-  date = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1);
-  generateCalendar();
-  return false;
-}
+  setDate(form) {
+    let newDate = new Date(form.date.value);
+    this.date = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1);
+    this.generateCalendar();
+    return false;
+  }
 
-function changeHeader(dateHeader) {
-  const month = document.getElementById("month-header");
-  if (month.childNodes[0]) {
+  changeHeader(dateHeader) {
+    const month = document.getElementById('month-header');
+    if (month.childNodes[0]) {
       month.removeChild(month.childNodes[0]);
+    }
+    const headerMonth = document.createElement('h1');
+    const textMonth = document.createTextNode(this.months[dateHeader.getMonth()].substring(0, 3) + ' ' + dateHeader.getFullYear());
+    headerMonth.appendChild(textMonth);
+    month.appendChild(headerMonth);
   }
-  const headerMonth = document.createElement("h1");
-  const textMonth = document.createTextNode(months[dateHeader.getMonth()].substring(0, 3) + " " + dateHeader.getFullYear());
-  headerMonth.appendChild(textMonth);
-  month.appendChild(headerMonth);
-}
 
-function changeActive() {
-  let btnList = document.querySelectorAll('button.active');
-  btnList.forEach(btn => {
+  changeActive() {
+    let btnList = document.querySelectorAll('button.active');
+    btnList.forEach(btn => {
       btn.classList.remove('active');
-  });
-  btnList = document.getElementsByClassName('btn-day');
-  for (let i = 0; i < btnList.length; i++) {
+    });
+    btnList = document.getElementsByClassName('btn-day');
+    for (let i = 0; i < btnList.length; i++) {
       const btn = btnList[i];
-      if (btn.textContent === (date.getDate()).toString()) {
-          btn.classList.add('active');
+      if (btn.textContent === this.date.getDate().toString()) {
+        btn.classList.add('active');
       }
+    }
+  }
+
+  resetDate() {
+    this.date = new Date();
+    this.generateCalendar();
+    updatePlanner(this.date);
+    const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[1];
+    createCurrentTimeBar(planDragZone);
+  }
+
+  changeDate(button) {
+    let newDay = parseInt(button.textContent);
+    this.date = new Date(this.date.getFullYear(), this.date.getMonth(), newDay);
+    this.generateCalendar();
+    updatePlanner(this.date);
+  }
+
+  nextMonth() {
+    this.date = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 1);
+    this.generateCalendar();
+  }
+
+  prevMonth() {
+    this.date = new Date(this.date.getFullYear(), this.date.getMonth() - 1, 1);
+    this.generateCalendar();
+  }
+
+  prevDay() {
+    this.date = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() - 1);
+    this.generateCalendar();
+    dailyCalendarSlideDir = 0;
+    updatePlanner(this.date);
+    const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[0];
+    createCurrentTimeBar(planDragZone);
+  }
+
+  nextDay() {
+    this.date = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
+    this.generateCalendar();
+    dailyCalendarSlideDir = 2;
+    updatePlanner(this.date);
+    const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[2];
+    createCurrentTimeBar(planDragZone);
+  }
+
+  prevWeek() {
+    this.date = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() - 7);
+    this.generateCalendar();
+    dailyCalendarSlideDir = 0;
+    updatePlanner(this.date);
+    const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[0];
+    createCurrentTimeBar(planDragZone);
+    this.updateWeek(0);
+  }
+
+  nextWeek() {
+    this.date = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 7);
+    this.generateCalendar();
+    dailyCalendarSlideDir = 2;
+    updatePlanner(this.date);
+    const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[2];
+    createCurrentTimeBar(planDragZone);
+    this.updateWeek(2);
+  }
+
+  updateWeek(index) {
+    const today = new Date(this.date);
+    const currentDay = today.getDay(); // 0 (Sunday) to 6 (Saturday)
+    const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - currentDay);
+    const week = [];
+
+    const weeklyPlannerHeader = document.querySelectorAll('.weekly-planner-header')[index];
+    let headerDates = weeklyPlannerHeader.querySelectorAll('th .table-h');
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
+      week.push(date);
+      headerDates[i].innerHTML = `
+        <p class="day">${date.toLocaleString('en-US', { weekday: 'short' })}</p>
+        <p class="date">${date.getDate()}</p>
+      `;
+    }
+
+    return week;
   }
 }
 
-function resetDate() {
-  date = new Date();
-  generateCalendar();
-  updatePlanner(date);
-  const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[1];
-  createCurrentTimeBar(planDragZone)
-}
 
-function changeDate(button) {
-  let newDay = parseInt(button.textContent);
-  date = new Date(date.getFullYear(), date.getMonth(), newDay);
-  generateCalendar();
-  updatePlanner(date)
-}
+const sidebarCalendar = new Calendar('sidebarCalendarWrapper', 'sidebarCalendar')
 
-function nextMonth() {
-  date = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-  generateCalendar(date);
-}
-
-function prevMonth() {
-  date = new Date(date.getFullYear(), date.getMonth() - 1, 1);
-  generateCalendar(date);
-}
-
-
-function prevDay() {
-  date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
-  generateCalendar();
-  dailyCalendarSlideDir = 0;
-  updatePlanner(date);
-  const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[0];
-  createCurrentTimeBar(planDragZone)
-}
-
-function nextDay() {
-  date = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
-  generateCalendar();
-  dailyCalendarSlideDir = 2;
-  updatePlanner(date);
-  const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[2];
-  createCurrentTimeBar(planDragZone)
-}
-
-function prevWeek() {
-  date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 7);
-  generateCalendar();
-  dailyCalendarSlideDir = 0;
-  updatePlanner(date);
-  const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[0];
-  createCurrentTimeBar(planDragZone)
-  updateWeek(0)
-}
-
-function nextWeek() {
-  date = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7);
-  generateCalendar();
-  dailyCalendarSlideDir = 2;
-  updatePlanner(date);
-  const planDragZone = document.querySelectorAll('.planner .swiper-slide .plan-drag-zone')[2];
-  createCurrentTimeBar(planDragZone)
-  updateWeek(2)
-}
-
-function updateWeek(index) {
-  const today = new Date(date);
-  const currentDay = today.getDay(); // 0 (Sunday) to 6 (Saturday)
-  const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - currentDay);
-  const week = [];
-
-  const weeklyPlannerHeader =  document.querySelectorAll('.weekly-planner-header')[index];
-  let headerDates = weeklyPlannerHeader.querySelectorAll('th .table-h')
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
-    week.push(date);
-    headerDates[i].innerHTML = `
-      <p class = "day">${date.toLocaleString('en-US', {weekday: 'short'})}</p>
-      <p class = "date">${date.getDate()}</p>
-    `
-  }
-
-  return week;
-}
-
-document.onload = generateCalendar(date);
+document.onload = sidebarCalendar.generateCalendar(date);
 
 const addPlanModal = document.querySelector('.add-plan-modal');
 const addPlanModalCloseBtn = document.querySelector('.add-plan-modal .close');
@@ -1379,7 +1351,7 @@ addPlanModalOpenBtn.addEventListener('click', () => {
 
 let selectedPlan = {};
 
-class Calendar {
+class inputCalendar {
   constructor(inputSelector) {
       this.input = document.querySelector(inputSelector);
       this.form = this.input.parentElement;
@@ -1515,12 +1487,12 @@ class Calendar {
       selectedPlan.date = [new Date(date1).toISOString().substr(0, 10), date1.setHours(0, 0, 0, 0) / 1000];
       //date = new Date(date.getFullYear(), date.getMonth(), date.getDate());
       if(!isPlannerDefault){
-        const newDate = new Date(selectedPlan.date[0]);
-        date = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1);
+        const newDate = new Date(selectedPlan.date[1]);
+        sidebarCalendar.date = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1);
       }
       isPlannerDefault = false
-      generateCalendar();
-      updatePlanner(date)
+      sidebarCalendar.generateCalendar();
+      updatePlanner(sidebarCalendar.date)
   }
 
   updateMonth(month) {
@@ -1921,16 +1893,13 @@ function mouseUp(target, e) {
   if(planViewOption.value == 'week') {
     let parentRect = target.parentNode.getBoundingClientRect();
     let leftPosition = e.clientX - parentRect.left;
-    console.log(leftPosition, Math.floor((leftPosition - 100 )/ (target.offsetWidth)) * (target.offsetWidth) + 100 + 'px')
     target.style.left = Math.floor((leftPosition - 100 )/ (target.offsetWidth)) * (target.offsetWidth) + 100 + 'px';
     const clickedDate = Math.floor((leftPosition - 100) / target.offsetWidth);
     
-    console.log(clickedDate)
-    date = new Date(updateWeek(dailyCalendarSlideDir)[clickedDate]);
-    planDate.value = new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-    plan.date = [new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }), date.setHours(0, 0, 0, 0) / 1000];
-    console.log(plan.date)
-    generateCalendar();
+    sidebarCalendar.date = new Date(sidebarCalendar.updateWeek(dailyCalendarSlideDir)[clickedDate]);
+    planDate.value = new Date(sidebarCalendar.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    plan.date = [new Date(sidebarCalendar.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }), sidebarCalendar.date.setHours(0, 0, 0, 0) / 1000];
+    sidebarCalendar.generateCalendar();
     dailyCalendarSlideDir = 0;
     //updatePlanner(date);
     //target.style.left = Math.floor((leftPosition - 100 )/ (target.offsetWidth)) * (target.offsetWidth) + 100 + 'px';
@@ -2013,15 +1982,15 @@ function createPlan(x, y, planDragZone) {
   if(planViewOption.value == 'week') {
     div.style.left = Math.floor(leftPosition / div.offsetWidth) * div.offsetWidth + 100 + 'px';
     const clickedDate = Math.floor(leftPosition / div.offsetWidth);
-    date = new Date(updateWeek(dailyCalendarSlideDir)[clickedDate]);
+    sidebarCalendar.date = new Date(updateWeek(dailyCalendarSlideDir)[clickedDate]);
     //date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
     generateCalendar();
-    updatePlanner(date);
+    updatePlanner(sidebarCalendar.date);
   }
   const planInfo =  {
     planId: planId,
     el: div,
-    date: [new Date(date).toISOString().substr(0, 10), new Date(date).setHours(0, 0, 0, 0) / 1000],
+    date: [new Date(sidebarCalendar.date).toISOString().substr(0, 10), new Date(sidebarCalendar.date).setHours(0, 0, 0, 0) / 1000],
     startTimeDis: div.querySelector('.plan-time-info span'),
     planDragZone: planDragZone,
     startHr: null,
@@ -2048,7 +2017,7 @@ function createPlan(x, y, planDragZone) {
   plan.startMin = times.startMin;
   plan.endHr = times.endHr;
   plan.endMin = times.endMin;
-  planDate.value = new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  planDate.value = new Date(sidebarCalendar.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   const selectedStartInput = document.querySelector(`.start-time option[value="${times.startHr}.${times.startMin}"]`);
 
   planSaved = false;
@@ -2088,7 +2057,7 @@ function updatePlanner(date) {
   }
 
   if(planViewOption.value == 'week') {
-    let week = updateWeek(dailyCalendarSlideDir);
+    let week = sidebarCalendar.updateWeek(dailyCalendarSlideDir);
     week = week.map((day) => {
       return day.getTime() / 1000;
     })
@@ -2188,7 +2157,7 @@ function createCurrentTimeBar(displayZone) {
   }
   div = document.createElement('div');
   div.classList.add('planner-timebar')
-  if(date.setHours(0, 0, 0, 0).toString() == today.setHours(0, 0, 0, 0).toString()) {
+  if(sidebarCalendar.date.setHours(0, 0, 0, 0).toString() == today.setHours(0, 0, 0, 0).toString()) {
     div = document.createElement('div');
     div.classList.add('planner-timebar');
     displayZone.appendChild(div);
@@ -2205,4 +2174,4 @@ function move2Date(plan) {
   const planWidth = (plan.el.parentNode.offsetWidth - 100) / 7 - 1;
   plan.el.style.left = planWidth * day + 100 + 'px';
 }
-const calendar = new Calendar(".date-input");
+const calendar = new inputCalendar(".date-input");
