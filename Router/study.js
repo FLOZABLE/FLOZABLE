@@ -15,8 +15,8 @@ function generateRandomId(length) {
 }
 
 Router.get("/", async(req, res) => {
-  res.render("study/study", {
-    loggedin: req.session.loggedin || false,
+  res.render("study/newstudy", {
+    userInfo: req.session.userInfo
   });
 });
 
@@ -28,7 +28,6 @@ Router.post('/add-subject', async (req, res) => {
   const connection = await (await pool).getConnection();
   const subject = {
     ...req.body,
-    today: 0,
     total: 0,
     datum_point: Math.floor(new Date().getTime() / 1000),
     timeline: [],
@@ -47,9 +46,8 @@ Router.post('/add-subject', async (req, res) => {
   const update = await connection.query(updateQuery, updateParams);
   connection.release();
 
-  console.log(`Updated ${update.affectedRows} row(s)`);
 
-  res.sendStatus(200);
+  res.send({success: true, id: subject.id});
 });
 
 Router.post('/start', async (req, res) => {
@@ -59,20 +57,18 @@ Router.post('/start', async (req, res) => {
 
   const io = req.app.get('socketio');
   const connection = await (await pool).getConnection();
-  const index = req.body.index;
+  const subjectId = req.body.id;
 
-  const selectQuery = "SELECT subjects, groups FROM users WHERE user_id = ?";
-  const selectParams = [req.session.user_id];
-  const select = await connection.query(selectQuery, selectParams);
+  const select = await connection.query(`SELECT subjects, groups FROM users WHERE user_id = "${req.session.user_id}"`);
   const subjects = JSON.parse(select[0].subjects || "[]");
   const groups = select[0].groups ? select[0].groups.split(",") : [];
   const startTime = Math.floor(new Date().getTime() / 1000);
-  const storedTime = startTime - subjects[index].datum_point;
-  subjects[index].timeline.push([storedTime]);
+  const subject = subjects.find(subject => subject.id == subjectId);
+  console.log(subject, subjectId, req.body)
+  const storedTime = startTime - subject.datum_point;
+  subject.timeline.push([storedTime]);
   const updatedJson = JSON.stringify(subjects);
-  const updateQuery = "UPDATE users SET subjects = ? WHERE user_id = ?";
-  const updateParams = [updatedJson, req.session.user_id];
-  const update = await connection.query(updateQuery, updateParams);
+  const update = await connection.query("UPDATE users SET subjects = ? WHERE user_id = ?", [updatedJson, req.session.user_id]);
 
   if (groups.length !== 0) {
     console.log(`send signals to ${groups}`)
@@ -90,11 +86,9 @@ Router.post('/stop', async (req, res) => {
 
   const io = req.app.get('socketio');
   const connection = await (await pool).getConnection();
-  const index = req.body.index;
+  const subjectId = req.body.id;
 
-  const selectQuery = "SELECT subjects, groups FROM users WHERE user_id = ?";
-  const selectParams = [req.session.user_id];
-  const select = await connection.query(selectQuery, selectParams);
+  const select = await connection.query(`SELECT subjects, groups FROM users WHERE user_id = "${req.session.user_id}"`);
   const groups = select[0].groups ? select[0].groups.split(",") : [];
 
   if (groups.length !== 0) {
@@ -103,14 +97,13 @@ Router.post('/stop', async (req, res) => {
 
   const subjects = JSON.parse(select[0].subjects || "[]");
   const stopTime = Math.floor(new Date().getTime() / 1000);
-  const storedTime = stopTime - subjects[index].datum_point;
-  subjects[index].timeline[subjects[index].timeline.length - 1].push(storedTime);
-  subjects[index].today += subjects[index].timeline[subjects[index].timeline.length - 1][1] - subjects[index].timeline[subjects[index].timeline.length - 1][0];
-  subjects[index].total += subjects[index].today;
+  const subject = subjects.find(subject => subject.id == subjectId);
+  const storedTime = stopTime - subject.datum_point;
+  subject.timeline[subject.timeline.length - 1].push(storedTime);
+  subject.total += subject.timeline[subject.timeline.length - 1][1] - subject.timeline[subject.timeline.length - 1][0];
   const updatedJson = JSON.stringify(subjects);
-  const updateQuery = "UPDATE users SET subjects = ? WHERE user_id = ?";
   const updateParams = [updatedJson, req.session.user_id];
-  const update = await connection.query(updateQuery, updateParams);
+  const update = await connection.query(`UPDATE users SET subjects = ? WHERE user_id = ?`, updateParams);
 
   res.send({ success: true });
   connection.release();
@@ -135,8 +128,8 @@ Router.post('/bring-members-info', async (req, res) => {
   
   const connection = await (await pool).getConnection();
   const userId = req.session.user_id;
-  let groups = await connection.query('SELECT groups FROM users WHERE user_id = ?', [userId]);
-  groups = groups[0].groups;
+  let userInfo = await connection.query('SELECT groups FROM users WHERE user_id = ?', [userId]);
+  groups = userInfo[0].groups ? userInfo[0].groups.split(',') : null;
   
   if (!groups) {
     return res.send({ success: false, reason: 'no groups' });
@@ -157,18 +150,16 @@ Router.post('/bring-members-info', async (req, res) => {
       const date = new Date().toLocaleDateString('en-US', { timeZone: member.timezone });
       const startTime = new Date(`${date} 00:00:00`).getTime();
       const endTime = new Date(`${date} 24:00:00`).getTime();
-  
+      let today = 0;
       membersInfo[group_index].members.push({ userId: member.user_id, name: member.name, subjects: member.subjects, timezone: member.timezone, filteredTimeline: [], today: 0 });
       member.subjects = member.subjects ? member.subjects : [];
       await Promise.all(member.subjects.map(async (subject, index) => {
         const datum_point = member.subjects[index].datum_point;
-        let today = 0;
         let study = false;
         const filteredTimeline = subject.timeline.filter((period, index) => {
           let [start, end] = period;
           start = (start + datum_point) * 1000;
           if (end == null) {
-            console.log('studying');
             study = true;
           }
           end = (end + datum_point) * 1000;
@@ -177,7 +168,6 @@ Router.post('/bring-members-info', async (req, res) => {
           }
           return start >= startTime && end <= endTime;
         });
-        console.log('filtered time', filteredTimeline, membersInfo[group_index]);
         membersInfo[group_index].members[member_index].today = today;
         membersInfo[group_index].members[member_index].study = study;
         membersInfo[group_index].members[member_index].filteredTimeline.push(filteredTimeline);
@@ -185,7 +175,6 @@ Router.post('/bring-members-info', async (req, res) => {
     }));
   }));
   
-  console.log('mem info', membersInfo);
   res.send([groupsInfo, req.session.user_id, groups, membersInfo]);
   connection.release();
 })
@@ -200,7 +189,6 @@ Router.post('/update-members-info', async(req, res) => {
   
   let member = await connection.query(`SELECT user_id, name, subjects, timezone from users where user_id  = ?`, [userId]);
   member = member[0];
-  console.log(member, userId, req.body)
 
   
   member.subjects = member.subjects ? JSON.parse(member.subjects): [];
@@ -213,16 +201,14 @@ Router.post('/update-members-info', async(req, res) => {
   }
 
   member = { userId: member.user_id, name: member.name, subjects: member.subjects, timezone: member.timezone, filteredTimeline: [], today: 0 };
-
+  let today = 0;
   await Promise.all(member.subjects.map(async (subject, index) => {
     const datum_point = member.subjects[index].datum_point;
-    let today = 0;
     let study = false;
     const filteredTimeline = subject.timeline.filter((period, index) => {
       let [start, end] = period;
       start = (start + datum_point) * 1000;
       if (end == null) {
-        console.log('studying');
         study = true;
       }
       end = (end + datum_point) * 1000;
@@ -245,8 +231,6 @@ Router.post('/add-plan', async(req, res) => {
     if (!userId) {
       return res.send({ success: false, reason: 'not auth' });
     }
-  
-    console.log(req.body);
   
     const connection = await (await pool).getConnection();
     const plan = JSON.stringify(req.body);
@@ -279,7 +263,6 @@ Router.post('/bring-plans', async(req, res) => {
   let plans = await connection.query(`SELECT plan from users where user_id = "${req.session.user_id}"`);
   plans = JSON.stringify(`[${plans[0].plan}]`);
   res.send(plans);
-  console.log(plans);
   connection.release();
 });
 
@@ -292,12 +275,10 @@ Router.post('/update-plan', async(req, res) => {
   
     const connection = await (await pool).getConnection();
     const planInfo = req.body;
-    console.log(planInfo);
     try {
       let plans = await connection.query(`SELECT plan from users where user_id = "${userId}"`);
       plans = JSON.parse(`[${plans[0].plan}]`);
       let plan = plans.find(plan => planInfo.planId == plan.planId);
-      console.log(plan, 'updated', plans)
       connection.query(`UPDATE users set plan = CONCAT_WS(',', REPLACE(plan, '${JSON.stringify(plan)}', '${JSON.stringify(planInfo)}')) WHERE user_id = '${userId}'`);
       connection.release();
       res.send({ success: true });
