@@ -186,5 +186,6 @@ Router.post('/bring-my-info', async(req, res) => {
     userInfo.profile_picture = base64Image;
   }
   res.send({success: true, userInfo: userInfo});
+  connection.release();
 })
 module.exports = Router;
