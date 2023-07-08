@@ -3,11 +3,67 @@ const Router = express.Router();
 const fs = require("fs");
 const pool = require('../model/pool');
 
-Router.get("/", async (req, res) => {
-  if(!req.session.loggedin) {
+Router.get("/stats", async (req, res) => {
+  /* if(!req.session.loggedin) {
     return res.redirect('/myaccount');
-  }
-  res.render("dashboard/dashboard", {userInfo: req.session.userInfo});
+  } */
+  res.render("dashboards/stats.ejs", {userInfo: req.session.userInfo});
+})
+
+Router.get("/groups", async (req, res) => {
+  /* if(!req.session.loggedin) {
+    return res.redirect('/myaccount');
+  } */
+  res.render("dashboards/groups.ejs", {userInfo: req.session.userInfo});
+})
+
+Router.get("/planner", async (req, res) => {
+  /* if(!req.session.loggedin) {
+    return res.redirect('/myaccount');
+  } */
+  res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
+})
+
+Router.get("/leaderboard", async (req, res) => {
+  /* if(!req.session.loggedin) {
+    return res.redirect('/myaccount');
+  } */
+  res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
+})
+
+Router.get("/analytics", async (req, res) => {
+  /* if(!req.session.loggedin) {
+    return res.redirect('/myaccount');
+  } */
+  res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
+})
+
+Router.get("/analytics", async (req, res) => {
+  /* if(!req.session.loggedin) {
+    return res.redirect('/myaccount');
+  } */
+  res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
+})
+
+Router.get("/analytics", async (req, res) => {
+  /* if(!req.session.loggedin) {
+    return res.redirect('/myaccount');
+  } */
+  res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
+})
+
+Router.get("/analytics", async (req, res) => {
+  /* if(!req.session.loggedin) {
+    return res.redirect('/myaccount');
+  } */
+  res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
+})
+
+Router.get("/analytics", async (req, res) => {
+  /* if(!req.session.loggedin) {
+    return res.redirect('/myaccount');
+  } */
+  res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
 })
 
 Router.get("/groups", async (req, res) => {

@@ -1,0 +1,38 @@
+.calendar-time {
+  opacity: 1 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-time .fc-event-title{
+  font-style: normal !important;
+}
+
+.level-0 {
+  background-color: rgb(255, 255, 255) !important;
+}
+
+.level-1 {
+  background-color: rgb(182, 181, 181) !important;
+}
+
+.level-2 {
+  background-color: rgb(129, 127, 127) !important;
+}
+
+.level-3 {
+  background-color: rgb(93, 92, 92) !important;
+}
+
+.level-4 {
+  background-color: rgb(49, 49, 49) !important;
+}
+
+.level-5 {
+  background-color: black !important;
+}
+
+.fc-daygrid-day.fc-day.fc-day-today .calendar-time {
+  opacity: .5 !important;
+}
