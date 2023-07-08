@@ -15,7 +15,7 @@ function generateRandomId(length) {
 }
 
 Router.get("/", async(req, res) => {
-  res.render("study/newstudy", {
+  res.render("study", {
     userInfo: req.session.userInfo
   });
 });

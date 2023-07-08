@@ -21,11 +21,11 @@ function generateId() {
   return groupId;
 }
 
-Router.get('/', (req, res) => {
+Router.get('/signin', (req, res) => {
   if (req.session.loggedin) {
-    res.render("account/account", { loggedin: true });
+    res.render("authentication/signin/illustration", { loggedin: true });
   } else {
-    res.render("account/account", { loggedin: false });
+    res.render("authentication/signin/illustration", { loggedin: false });
   }
 });
 
@@ -139,7 +139,7 @@ Router.post('/signup-authentication', async (req, res, next) => {
 
 Router.get('/signup', function (req, res) {
   if (req.session.loggedin) {
-    res.render('account/register', {
+    res.render('authentication/signup/illustration', {
       title: 'Registration Page',
       name: '',
       email: '',
@@ -148,7 +148,7 @@ Router.get('/signup', function (req, res) {
       path: "/account",
     });
   } else {
-    res.render('account/register', {
+    res.render('authentication/signup/illustration', {
       title: 'Registration Page',
       name: '',
       email: '',
