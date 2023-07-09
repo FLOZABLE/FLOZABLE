@@ -33,15 +33,13 @@ let subjects;
 
       const date = new Date(datum_point * 1000);
       subject.daily = {};
-      subject.daily.grouped = timelinesplit(timeline, 1000 * 60 * 60 * 24, datum_point, datum_point);
+      subject.daily.grouped = dailyTimelineSplit(timeline, datum_point);
       subject.daily.total = totalRangeTime(subject.daily.grouped);
       subject.monthly = {};
       subject.monthly.grouped = timelinesplit(timeline, 'month', datum_point, new Date(new Date(datum_point * 1000).setDate(1)).getTime() / 1000, 'month');
       subject.monthly.total = totalRangeTime(subject.monthly.grouped);
-
-      const firstDayOfWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
       subject.weekly = {};
-      subject.weekly.grouped = timelinesplit(timeline, 1000 * 60 * 60 * 24 * 7, datum_point, firstDayOfWeek.getTime() / 1000);
+      subject.weekly.grouped = weeklyTimelineSplit(timeline, datum_point);
       subject.weekly.total = totalRangeTime(subject.weekly.grouped);
       //subject.daily.total.max = subject.daily.total.max < subject.daily.total.length ? subject.daily.total.length : subject.daily.total.max;
       //subject.daily.total.max = subject.daily.total.max < subject.daily.total.length || subject.daily.total.max == undefined ? subject.daily.total.length : subject.daily.total.max;
@@ -336,6 +334,86 @@ function timelinesplit(timeline, length, datum_point, duration_point, type = '')
   return splitTime;
 }
 
+function dailyTimelineSplit(timeline, datum_point) {
+  let dayStart = new Date(datum_point * 1000).setHours(0, 0, 0, 0);
+  let dayStop = new Date(datum_point * 1000).setHours(23, 59, 59, 999);
+  let cut = false;
+  const dailyTimeline = [[]];
+  let date = new Date((datum_point + timeline[0][1]) * 1000).setHours(0, 0, 0, 0);
+  timeline.forEach(([start, stop]) => {
+    const acStart = new Date((datum_point + start) * 1000).getTime();
+    const acStop = new Date((datum_point + stop) * 1000).getTime();
+
+    while(dayStart < new Date(acStart).setHours(0, 0, 0, 0) && cut) {
+      dayStart += 1000 * 60 * 60 * 24;
+      dayStop += 1000 * 60 * 60 * 24;
+      dailyTimeline.push([[date, date]]);
+    }
+
+
+    if(dayStart <= acStart && dayStop >= acStop) {
+      dailyTimeline[dailyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
+      cut = false;
+    } else if(dayStop > acStart && dayStop < acStop) {
+      dailyTimeline[dailyTimeline.length - 1].push([acStart / 1000, (dayStop + 1) / 1000]);
+      dailyTimeline.push([])
+      dailyTimeline[dailyTimeline.length - 1].push([(dayStop + 1) / 1000, acStop / 1000]);
+      dayStart += 1000 * 60 * 60 * 24;
+      dayStop += 1000 * 60 * 60 * 24;
+      cut = true;
+    } else {
+      dailyTimeline.push([]);
+      dailyTimeline[dailyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
+      dayStart += 1000 * 60 * 60 * 24;
+      dayStop += 1000 * 60 * 60 * 24;
+      cut = true;
+    }
+    date = new Date(acStop).setHours(0, 0, 0, 0);
+  })
+
+
+  return dailyTimeline
+}
+
+function weeklyTimelineSplit(timeline, datum_point) {
+  let date = new Date(datum_point * 1000);
+  let weekStart = date.setHours(0, 0, 0, 0) - date.getDay() * 24 * 60 * 60 * 1000;
+  let weekStop = date.setHours(23,59, 59, 999) + (6 - date.getDay()) * 24 * 60 * 60 * 1000 + 999;
+  let cut = false;
+  const weeklyTimeline = [[]];
+  timeline.forEach(([start, stop]) => {
+    const acStart = new Date((datum_point + start) * 1000).getTime();
+    const acStop = new Date((datum_point + stop) * 1000).getTime();
+
+    while(weekStart < new Date(acStart).setHours(0, 0, 0, 0) && cut) {
+      weekStart += 1000 * 60 * 60 * 24 * 7;
+      weekStop += 1000 * 60 * 60 * 24 * 7;
+      weeklyTimeline.push([[0, 0]]);
+    }
+
+
+    if(weekStart <= acStart && weekStop >= acStop) {
+      weeklyTimeline[weeklyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
+      cut = false;
+    } else if(weekStop > acStart && weekStop < acStop) {
+      weeklyTimeline[weeklyTimeline.length - 1].push([acStart / 1000, (weekStop + 1) / 1000]);
+      weeklyTimeline.push([])
+      weeklyTimeline[weeklyTimeline.length - 1].push([(weekStop + 1) / 1000, acStop / 1000]);
+      weekStart += 1000 * 60 * 60 * 24 * 7;
+      weekStop += 1000 * 60 * 60 * 24 * 7;
+      cut = true;
+    } else {
+      weeklyTimeline.push([]);
+      weeklyTimeline[weeklyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
+      weekStart += 1000 * 60 * 60 * 24 * 7;
+      weekStop += 1000 * 60 * 60 * 24 * 7;
+      cut = true;
+    }
+  })
+
+  return weeklyTimeline
+}
+
 
 function totalRangeTime(timeline) {
   let times = [];
@@ -367,6 +445,8 @@ function updateDoughnutChart() {
   } else if (graphViewOpt == 'week') {
     DoughnutChart.data.datasets[0].data = subjects.map(subject => {
       const index = Math.floor((calendarDate.setHours(0, 0, 0, 0) / 1000 - subject.datum_point + 60 * 60 * 24) / (60 * 60 * 24 * 7));
+      //let data = subject.weekly.total;
+      //data = Array(subjects.daily.maxlength - date.length).fill(0).concat(data);
       return subject.weekly.total[index] ? subject.weekly.total[index] : 0
     });
     DoughnutChart.update();

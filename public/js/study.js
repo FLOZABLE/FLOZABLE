@@ -142,7 +142,7 @@ function count(timer) {
   }
 
   if (timer.min == 60) {
-    timer.min == 0;
+    timer.min = 0;
     timer.hr += 1;
   }
   disp(timer);
