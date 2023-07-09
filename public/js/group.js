@@ -201,7 +201,7 @@ let groupWithUser;
     if(groupWithUser.includes(group.group_id)){
       const div = document.createElement("div")
     }
-    group.members = group.members.split(',').map(item => item.trim());
+    group.members = JSON.parse(`[${group.members}]`)
     const likeBtnText = (group.likes?.includes(userEmail)) ? likeBtnSvg1 : likeBtnSvg2;
     const likeArr = group.likes ? [group.likes] : [];
     div.innerHTML = `

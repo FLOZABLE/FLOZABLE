@@ -228,6 +228,9 @@ select option {
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.06);
   border: 1px solid #e5e5e5;
 }
+.tags-wrapper {
+  min-width: 50%;
+}
 .wrapper :where(.title, li, li i, .details) {
   display: flex;
   align-items: center;
@@ -273,6 +276,9 @@ select option {
   border-radius: 50%;
   background: #dfdfdf;
   justify-content: center;
+  text-align: center;
+  display: flex;
+  align-items: center;
 }
 .content ul input {
   flex: 1;
@@ -652,6 +658,6 @@ input[type="color"]::-webkit-color-swatch::after {
   float: right;
 }
 
-.blur {
+/* .blur {
   filter: blur(5px);
-}
+} */
