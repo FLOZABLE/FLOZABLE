@@ -36,13 +36,11 @@ let subjects;
       subject.daily.grouped = dailyTimelineSplit(timeline, datum_point);
       subject.daily.total = totalRangeTime(subject.daily.grouped);
       subject.monthly = {};
-      subject.monthly.grouped = timelinesplit(timeline, 'month', datum_point, new Date(new Date(datum_point * 1000).setDate(1)).getTime() / 1000, 'month');
+      subject.monthly.grouped = monthlyTimelineSplit(timeline, datum_point);
       subject.monthly.total = totalRangeTime(subject.monthly.grouped);
       subject.weekly = {};
       subject.weekly.grouped = weeklyTimelineSplit(timeline, datum_point);
       subject.weekly.total = totalRangeTime(subject.weekly.grouped);
-      //subject.daily.total.max = subject.daily.total.max < subject.daily.total.length ? subject.daily.total.length : subject.daily.total.max;
-      //subject.daily.total.max = subject.daily.total.max < subject.daily.total.length || subject.daily.total.max == undefined ? subject.daily.total.length : subject.daily.total.max;
       const dailyAvg = getAvg(timeline);
       subject.today = today[1];
       subject.todayTimeline = today[0];
@@ -414,6 +412,59 @@ function weeklyTimelineSplit(timeline, datum_point) {
   return weeklyTimeline
 }
 
+function monthlyTimelineSplit(timeline, datum_point) {
+  let date = new Date(datum_point * 1000);
+  let startYear = date.getFullYear();
+  let startMonth = date.getMonth();
+  let [monthStart, monthStop] = [new Date(startYear, startMonth, 1).setHours(0, 0, 0, 0), new Date(startYear, startMonth + 1, 0).setHours(23, 59, 59, 999)];
+  console.log(monthStart, monthStop)
+  let cut = false;
+  const monthlyTimeline = [[]];
+  timeline.forEach(([start, stop]) => {
+    const acStart = new Date((datum_point + start) * 1000).getTime();
+    const acStop = new Date((datum_point + stop) * 1000).getTime();
+
+    while(monthStart < new Date(acStart).setHours(0, 0, 0, 0) && cut) {
+      startMonth += 1
+      if(startMonth >= 11) {
+        startMonth = 0;
+        startYear += 1;
+      }
+      [monthStart, monthStop] = [new Date(startYear, startMonth, 1).setHours(0, 0, 0, 0), new Date(startYear, startMonth + 1, 0).setHours(23, 59, 59, 999)];
+      monthlyTimeline.push([[0, 0]]);
+    }
+
+
+    if(monthStart <= acStart && monthStop >= acStop) {
+      monthlyTimeline[monthlyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
+      cut = false;
+    } else if(monthStop > acStart && monthStop < acStop) {
+      monthlyTimeline[monthlyTimeline.length - 1].push([acStart / 1000, (monthStop + 1) / 1000]);
+      monthlyTimeline.push([])
+      monthlyTimeline[monthlyTimeline.length - 1].push([(monthStop + 1) / 1000, acStop / 1000]);
+      startMonth += 1;
+      if(startMonth >= 11) {
+        startMonth = 0;
+        startYear += 1;
+      }
+      [monthStart, monthStop] = [new Date(startYear, startMonth, 1).setHours(0, 0, 0, 0), new Date(startYear, startMonth + 1, 0).setHours(23, 59, 59, 999)];
+      cut = true;
+    } else {
+      monthlyTimeline.push([]);
+      monthlyTimeline[monthlyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
+      startMonth += 1;
+      if(startMonth >= 11) {
+        startMonth = 0;
+        startYear += 1;
+      }
+      [monthStart, monthStop] = [new Date(startYear, startMonth, 1).setHours(0, 0, 0, 0), new Date(startYear, startMonth + 1, 0).setHours(23, 59, 59, 999)];
+      cut = true;
+    }
+  })
+
+  return monthlyTimeline
+}
+
 
 function totalRangeTime(timeline) {
   let times = [];
@@ -444,15 +495,21 @@ function updateDoughnutChart() {
     DoughnutChart.update();
   } else if (graphViewOpt == 'week') {
     DoughnutChart.data.datasets[0].data = subjects.map(subject => {
-      const index = Math.floor((calendarDate.setHours(0, 0, 0, 0) / 1000 - subject.datum_point + 60 * 60 * 24) / (60 * 60 * 24 * 7));
-      //let data = subject.weekly.total;
-      //data = Array(subjects.daily.maxlength - date.length).fill(0).concat(data);
+      const calendarWeekStart = calendarDate - calendarDate.getDay() * 24 * 60 * 60 * 1000;
+      const timelineStart = subject.weekly.grouped[0][0][0] ? new Date(subject.weekly.grouped[0][0][0] * 1000) : new Date(subject.datum_point * 1000);
+      const timelineWeekStart = timelineStart.setHours(0, 0, 0, 0) - timelineStart.getDay() * 24 * 60 * 60 * 1000;
+     const index = (calendarWeekStart - timelineWeekStart) / (1000 * 60 * 60 * 24 * 7)
       return subject.weekly.total[index] ? subject.weekly.total[index] : 0
     });
     DoughnutChart.update();
   } else {
     DoughnutChart.data.datasets[0].data = subjects.map(subject => {
-      const index = Math.floor((calendarDate.setHours(0, 0, 0, 0) / 1000 - subject.datum_point + 60 * 60 * 24) / (60 * 60 * 24 * 30)) + 1;
+      const calendarYear = calendarDate.getFullYear();
+      const calendarMonth = calendarDate.getMonth();
+      const timelineStart = subject.monthly.grouped[0][0][0] ? new Date(subject.monthly.grouped[0][0][0] * 1000) : new Date(subject.datum_point * 1000);
+      const timelineYear = timelineStart.getFullYear();
+      const timelineMonth = timelineStart.getMonth();
+      const index = (calendarYear - timelineYear) * 12 + calendarMonth - timelineMonth;
       return subject.monthly.total[index] ? subject.monthly.total[index] : 0
     });
     DoughnutChart.update();
