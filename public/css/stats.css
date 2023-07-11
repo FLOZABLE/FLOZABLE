@@ -5,6 +5,13 @@
   justify-content: center;
 }
 
+.calendar-time .fc-event-title {
+  background-color: white;
+  height: 20px;
+  border-radius: 10px;
+  padding: 0px 5px;
+}
+
 .calendar-time .fc-event-title{
   font-style: normal !important;
 }
@@ -35,4 +42,54 @@
 
 .fc-daygrid-day.fc-day.fc-day-today .calendar-time {
   opacity: .5 !important;
+}
+
+#matrix-chart {
+  width: 100%;
+  display: block;
+  max-height: calc(100vh - 200px);
+  overflow-y: scroll;
+  position: relative;
+  overflow-x: hidden;
+}
+
+#matrix-chart table {
+  border-collapse: collapse;
+  width: 100%;
+  position: relative;
+}
+
+#matrix-chart table td.hours {
+  width: 100px;
+  height: 30px;
+  position: relative;
+  top: 12px;
+}
+
+#matrix-chart table td.block {
+  border: 1px solid #c2c2c2;
+  height: 30px;
+}
+
+tr.line {
+  height: 1px;
+  width: calc(100% - 80px);
+  position: absolute;
+  left: 80px;
+  border: #c2c2c2 solid 1px;
+  background-color: #c2c2c2;
+  margin-top: -1px;
+}
+
+#matrix-chart .activity {
+  position: absolute;
+  width: 100px;
+  height: 30px;
+  background-color: black;
+  top: 0px;
+  left: 0px;
+}
+
+.linegraph-label:hover {
+  cursor: pointer;
 }
