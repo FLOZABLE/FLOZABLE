@@ -92,8 +92,8 @@ let subjects;
         const month = date.getMonth() + 1;
         const day = date.getDate();
         const startTime = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-        let hr = Math.floor(sec / 3600);
-        let min = Math.floor(sec / 60);
+        let hr = Math.floor(sec / 3600) % 60;
+        let min = Math.floor(sec / 60) % 60;
         const disp = `${hr.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
         const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         return { title: disp, start: startTime, end: startTime, classNames: ['calendar-time', `level-${hr}`], display: 'background',eventTimezone: userTimezone }
@@ -122,7 +122,7 @@ let subjects;
       },
       dateClick: function(info) {
         calendarDate = info.date;
-        updateDoughnutChart();
+        updateCharts();
       }
     });
 
@@ -150,18 +150,33 @@ let subjects;
 
   // Line chart
   const lineGraphLabel = document.getElementById('line-graph-label');
-  subjects.map((subject) => {
-    lineGraphLabel.innerHTML += `<span class="badge badge-md badge-dot me-4">
+  subjects.map((subject, i) => {
+    const div = document.createElement('div');
+    div.id = `sid-${subject.id}`;
+    div.classList.add("linegraph-label");
+    div.innerHTML = `
+    <span class="badge badge-md badge-dot me-4">
     <i style = "background-color: ${subject.color}"></i>
     <span class="text-dark text-xs">${subject.name}</span>
-  </span>`
+    </span>
+    `
+    lineGraphLabel.appendChild(div);
+    div.addEventListener('click', () => {
+      if(lineChart.isDatasetVisible(i)){
+        lineChart.hide(i);
+        div.getElementsByClassName('text-dark')[0].innerHTML = `<del>${div.getElementsByClassName('text-dark')[0].innerText}</del>`
+      } else {
+        lineChart.show(i);
+        div.getElementsByClassName('text-dark')[0].innerText = div.querySelector('.text-dark del').innerText;
+      }
+    })
   })
   lineChart = new Chart(ctx1, {
     type: "line",
     data: {
       labels: subjects.daily.groupedTotal.map((dailyTotal, i) => {
         const date = new Date(subjects.daily.datum_point * 1000 + i * 1000 * 60 * 60 * 24);
-        return `${date.getMonth() + 1}/${date.getDate() + 1}`
+        return `${date.getMonth() + 1}/${date.getDate()}`
       }),
       datasets: subjects.map(subject => {
         const data = Array(subjects.daily.maxlength - subject.daily.total.length).fill(0).concat(subject.daily.total);
@@ -270,6 +285,10 @@ let subjects;
     },
   });
 
+  //heatmap
+ 
+  
+
 })();
 
 function filterTimeline(timeline, startTime, endTime, datum_point) {
@@ -337,7 +356,6 @@ function dailyTimelineSplit(timeline, datum_point) {
   let dayStop = new Date(datum_point * 1000).setHours(23, 59, 59, 999);
   let cut = false;
   const dailyTimeline = [[]];
-  let date = new Date((datum_point + timeline[0][1]) * 1000).setHours(0, 0, 0, 0);
   timeline.forEach(([start, stop]) => {
     const acStart = new Date((datum_point + start) * 1000).getTime();
     const acStop = new Date((datum_point + stop) * 1000).getTime();
@@ -345,13 +363,13 @@ function dailyTimelineSplit(timeline, datum_point) {
     while(dayStart < new Date(acStart).setHours(0, 0, 0, 0) && cut) {
       dayStart += 1000 * 60 * 60 * 24;
       dayStop += 1000 * 60 * 60 * 24;
-      dailyTimeline.push([[date, date]]);
+      dailyTimeline.push([[0, 0]]);
     }
 
 
     if(dayStart <= acStart && dayStop >= acStop) {
       dailyTimeline[dailyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
-      cut = false;
+      cut = true;
     } else if(dayStop > acStart && dayStop < acStop) {
       dailyTimeline[dailyTimeline.length - 1].push([acStart / 1000, (dayStop + 1) / 1000]);
       dailyTimeline.push([])
@@ -366,9 +384,13 @@ function dailyTimelineSplit(timeline, datum_point) {
       dayStop += 1000 * 60 * 60 * 24;
       cut = true;
     }
-    date = new Date(acStop).setHours(0, 0, 0, 0);
   })
 
+  const now = new Date().setHours(0, 0, 0, 0);
+  while(dayStop <= now) {
+    dailyTimeline.push([[0, 0]]);
+    dayStop += 1000 * 60 * 60 * 24;
+  }
 
   return dailyTimeline
 }
@@ -392,7 +414,7 @@ function weeklyTimelineSplit(timeline, datum_point) {
 
     if(weekStart <= acStart && weekStop >= acStop) {
       weeklyTimeline[weeklyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
-      cut = false;
+      cut = true;
     } else if(weekStop > acStart && weekStop < acStop) {
       weeklyTimeline[weeklyTimeline.length - 1].push([acStart / 1000, (weekStop + 1) / 1000]);
       weeklyTimeline.push([])
@@ -409,6 +431,13 @@ function weeklyTimelineSplit(timeline, datum_point) {
     }
   })
 
+  const now = new Date().setHours(0, 0, 0, 0) - new Date().getDay() * 24 * 60 * 60 * 1000;
+  weekStop = Math.floor(weekStop / 1000) * 1000;
+  while(weekStop <= now) {
+    weeklyTimeline.push([[0, 0]]);
+    weekStop += 1000 * 60 * 60 * 24 * 7;
+  }
+
   return weeklyTimeline
 }
 
@@ -417,7 +446,6 @@ function monthlyTimelineSplit(timeline, datum_point) {
   let startYear = date.getFullYear();
   let startMonth = date.getMonth();
   let [monthStart, monthStop] = [new Date(startYear, startMonth, 1).setHours(0, 0, 0, 0), new Date(startYear, startMonth + 1, 0).setHours(23, 59, 59, 999)];
-  console.log(monthStart, monthStop)
   let cut = false;
   const monthlyTimeline = [[]];
   timeline.forEach(([start, stop]) => {
@@ -437,7 +465,7 @@ function monthlyTimelineSplit(timeline, datum_point) {
 
     if(monthStart <= acStart && monthStop >= acStop) {
       monthlyTimeline[monthlyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
-      cut = false;
+      cut = true;
     } else if(monthStop > acStart && monthStop < acStop) {
       monthlyTimeline[monthlyTimeline.length - 1].push([acStart / 1000, (monthStop + 1) / 1000]);
       monthlyTimeline.push([])
@@ -461,6 +489,19 @@ function monthlyTimelineSplit(timeline, datum_point) {
       cut = true;
     }
   })
+
+  const now = new Date();
+  const nowMonth = new Date(now.getFullYear(), now.getMonth(), 1).setHours(0, 0, 0, 0);
+  monthStop = Math.floor(monthStop / 1000) * 1000;
+  while(monthStop <= nowMonth) {
+    monthlyTimeline.push([[0, 0]]);
+    startMonth += 1;
+    if(startMonth >= 11) {
+      startMonth = 0;
+      startYear += 1;
+    }
+    monthStop = new Date(startYear, startMonth + 1, 0).setHours(23, 59, 59, 999);
+  }
 
   return monthlyTimeline
 }
@@ -486,12 +527,21 @@ function getAvg(timeline, length) {
   })
 }
 
-function updateDoughnutChart() {
+function updateCharts() {
   if(graphViewOpt == 'day') {
     DoughnutChart.data.datasets[0].data = subjects.map(subject => {
       const index = Math.floor((calendarDate.setHours(0, 0, 0, 0) / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
       return subject.daily.total[index] ? subject.daily.total[index] : 0
     });
+    const hourlyTimeline = subjects.map(subject => {
+      const index = Math.floor((calendarDate.setHours(0, 0, 0, 0) / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
+      return subject.daily.grouped[index] ? subject.daily.grouped[index] : [[0, 0], [0, 0]]
+    });
+
+    const hourlyTimelineInfo = subjects.map(subject => {
+      return [subject.name, subject.color]
+    })
+    updateHourlyMatrix(hourlyTimeline, hourlyTimelineInfo)
     DoughnutChart.update();
   } else if (graphViewOpt == 'week') {
     DoughnutChart.data.datasets[0].data = subjects.map(subject => {
@@ -544,6 +594,55 @@ function updateDoughnutPercentage() {
     </tr>`
   })
 }
+const matrixChart = document.getElementById('matrix-chart');
+const matrixActivities = document.getElementById("activities")
+function updateHourlyMatrix(subjects, subjectInfo) {
+  matrixActivities.innerHTML = ''
+  subjects.map((subject, i) => {
+    subject.map(([start, stop]) => {
+      let startTimeHr = new Date(start * 1000).getHours();
+      let startTimeMin = new Date(start * 1000).getMinutes();
+      let stopTimeHr = new Date(stop * 1000).getHours();
+      let stopTimeMin = new Date(stop * 1000).getMinutes();
+      if(stopTimeMin - startTimeMin && (startTimeHr == stopTimeHr)) {
+        const div1 = document.createElement('div');
+        div1.style.top = 27 + startTimeHr * 30 + 'px';
+        div1.style.left = 100 + (matrixChart.clientWidth - 100) / 60 * startTimeMin + 'px';
+        div1.style.width = (matrixChart.clientWidth - 100) / 60 * (stopTimeMin - startTimeMin) + 'px';
+        div1.style.backgroundColor = subjectInfo[i][1];
+        div1.classList.add('activity');
+        matrixActivities.appendChild(div1);
+      } else if(stopTimeMin - startTimeMin){
+        console.log(startTimeHr, startTimeMin, stopTimeHr, stopTimeMin)
+        const div1 = document.createElement('div');
+        div1.style.top = 27 + startTimeHr * 30 + 'px';
+        div1.style.left = 100 + (matrixChart.clientWidth - 100) / 60 * startTimeMin + 'px';
+        div1.style.width = (matrixChart.clientWidth - 100 - ((matrixChart.clientWidth - 100) / 60 * startTimeMin))+ 'px';
+        div1.style.backgroundColor = subjectInfo[i][1];
+        div1.classList.add('activity');
+        matrixActivities.appendChild(div1);
+        while(startTimeHr < stopTimeHr - 1) {
+          startTimeHr ++;
+          const divs = document.createElement('div');
+          divs.style.top = 27 + startTimeHr * 30 + 'px';
+          divs.style.left = matrixChart.clientWidth - 100 + 'px';
+          divs.style.width = matrixChart.clientWidth - 100 + 'px';
+          divs.style.backgroundColor = subjectInfo[i][1];
+          divs.classList.add('activity');
+          matrixActivities.appendChild(divs);
+        }
+        startTimeHr ++;
+        const div2 = document.createElement('div');
+        div2.style.top = 27 + startTimeHr * 30 + 'px';
+        div2.style.left = 100 + 'px';
+        div2.style.width = (matrixChart.clientWidth - 100) / 60 * stopTimeMin + 'px';
+        div2.style.backgroundColor = subjectInfo[i][1];
+        div2.classList.add('activity');
+        matrixActivities.appendChild(div2);
+      }
+    })
+  })
+}
 
 let graphViewOpt = 'day';
 const graphViewOptContainer = document.getElementById('view-opt');
@@ -554,17 +653,17 @@ const graphViewOptMonth = document.getElementById('view-opt-month');
 graphViewOptDay.addEventListener('click', () => {
   graphViewOptContainer.innerText = 'DAY';
   graphViewOpt = 'day';
-  updateDoughnutChart();
+  updateCharts();
 })
 
 graphViewOptWeek.addEventListener('click', () => {
   graphViewOptContainer.innerText = 'WEEK';
   graphViewOpt = 'week';
-  updateDoughnutChart();
+  updateCharts();
 })
 
 graphViewOptMonth.addEventListener('click', () => {
   graphViewOptContainer.innerText = 'MONTH';
   graphViewOpt = 'month';
-  updateDoughnutChart();
+  updateCharts();
 })
