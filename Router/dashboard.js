@@ -24,13 +24,6 @@ Router.get("/groups/create", async (req, res) => {
   res.render("dashboards/groups-create.ejs", {userInfo: req.session.userInfo});
 })
 
-Router.get("/planner", async (req, res) => {
-  if(!req.session.loggedin) {
-    return res.redirect('/account/signin');
-  }
-  res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
-})
-
 Router.get("/leaderboard", async (req, res) => {
   if(!req.session.loggedin) {
     return res.redirect('/account/signin');
@@ -38,11 +31,11 @@ Router.get("/leaderboard", async (req, res) => {
   res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
 })
 
-Router.get("/analytics", async (req, res) => {
-  /* if(!req.session.loggedin) {
+Router.get("/planner", async (req, res) => {
+  if(!req.session.loggedin) {
     return res.redirect('/account/signin');
-  } */
-  res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
+  }
+  res.render("dashboards/planner.ejs", {userInfo: req.session.userInfo});
 })
 
 Router.get("/analytics", async (req, res) => {

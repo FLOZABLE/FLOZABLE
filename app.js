@@ -11,14 +11,19 @@ const helmet = require("helmet");
 const http = require('http');
 const crypto = require("crypto");
 const dotenv = require("dotenv");
+const cors = require('cors');
 dotenv.config({path: ".env.production"});
 var server = http.createServer(app);
 const port = process.env.PORT;
+//const WebSocketToken = process.env.WEBSOCKET_TOKEN;
+//const WebSocket = require('ws');
+//const wsServer =  new WebSocket.Server({ server });
 var io = require('socket.io')(server);
 const pool = require('./model/pool');
 
 app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(cors({origin: 'chrome-extension://dalobnhjngmjgnkdjkeonfnbbkaclcpm'}))
 /* app.use(helmet.permittedCrossDomainPolicies());
 app.use(helmet.referrerPolicy());
 app.use(helmet.xssFilter());
@@ -48,7 +53,10 @@ const cspOptions = {
 }
 
 app.use(helmet.contentSecurityPolicy(cspOptions))  */
+
+
 io.on('connection', (socket) => {
+  console.log('test')
   socket.on('joinRoom', (room, userId) => {
     socket.join(room); // Join the specified room
     console.log(`User joined room: ${room}`);
@@ -109,7 +117,32 @@ io.on('connection', (socket) => {
   socket.on('removeUser', (room, userId) => {
     io.to(room).emit('removeUser', room, userId)
   })
+
+  socket.on('send-signal', () => {
+    io.emit('start')
+    console.log('test')
+  })
 })
+
+/* wsServer.on('connection', (socket, req) => {
+  socket.on('message', (message) => {
+    const data = JSON.parse(message);
+    if (data.type === 'authorization') {
+      if (WebSocketToken == data.token) {
+        console.log(req.headers.origin)
+      } else {
+        console.log('Client unauthorized:', req.headers.origin);
+        socket.close();
+      }
+    } else {
+    }
+  });
+
+  socket.on('close', () => {
+    console.log('WebSocket client disconnected.');
+  });
+}); */
+
 
 const mainRouter = require("./Router/main");
 const emailRouter = require("./Router/email");
@@ -126,6 +159,8 @@ const groupsRouter = require("./Router/groups");
 const linksRouter = require('./Router/links');
 const aiRouter = require('./Router/ai');
 const dashboardRouter = require('./Router/dashboard');
+const rankingRouter = require('./Router/ranking');
+const extensionRouter = require('./Router/api');
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -171,6 +206,8 @@ app.use('/groups', groupsRouter);
 app.use('/links', linksRouter);
 app.use('/ai', aiRouter);
 app.use('/dashboard', dashboardRouter);
+app.use('/ranking', rankingRouter);
+app.use('/api', extensionRouter);
 
 // error handler
 app.use(function (err, req, res, next) {

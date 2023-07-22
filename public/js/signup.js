@@ -1,4 +1,4 @@
-const signUpButton = document.getElementById('signUp');
+/* const signUpButton = document.getElementById('signUp');
 const signInButton = document.getElementById('signIn');
 const container = document.getElementById('container');
 console.log(signUpButton)
@@ -65,6 +65,46 @@ signInSubmitBtn.addEventListener('click', async() => {
   let response = await fetch('/account/signin-authentication', {
     method: 'post',
     body: JSON.stringify({email: email, password: password, redirectUrl: redirectUrl}),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  response  = await response.json();
+  console.log(response);
+
+  if(response.success == true){
+    setTimeout(function() {
+      window.location.href = redirectUrl;
+    }, 500); 
+  } else {
+    errPrintArea[0].innerText = response.signup_err_msg;
+    errPrintArea[1].innerText = response.signin_err_msg;
+  }
+}) */
+
+
+
+
+
+const signUpSubmitBtn = document.querySelector('#signup-submit');
+
+const nameContainer = document.querySelector("input#name");
+const emailContainer = document.querySelector("input#email");
+const passwordContainer = document.querySelector("input#password");
+
+const errPrintArea = document.querySelectorAll('span#error_msg');
+
+signUpSubmitBtn.addEventListener('click', async() => {
+  let redirectUrl = window.location.protocol + '//' + window.location.hostname;
+  const match = window.location.href.match(/[\?&]redirect=([^&#]*)/);
+  const parameterValue = match ? match[1] : null;
+  console.log(parameterValue);
+  if(parameterValue){
+    redirectUrl += '/' + parameterValue;
+  }
+  let response = await fetch('/account/signup-authentication', {
+    method: 'post',
+    body: JSON.stringify({name: nameContainer.value, email: emailContainer.value, password: passwordContainer.value, redirectUrl: redirectUrl}),
     headers: {
       'Content-Type': 'application/json'
     }

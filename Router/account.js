@@ -87,8 +87,10 @@ Router.post('/signup-authentication', async (req, res, next) => {
   let email = req.body.email;
   let name = req.body.name;
   let password = req.body.password;
-  const timezone = req.body.timezone;
-
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;;
+  const date = new Date();
+  date.toLocaleString("en-US", { timeZone });
+  date.setHours(0, 0, 0, 0);
   // Sanitize inputs
   let sanitizedEmail = email.replace(/[^a-z0-9!?@.]/gi, '');
   let sanitizedName = name.replace(/[^a-z0-9!?@.]/gi, '');
@@ -113,7 +115,8 @@ Router.post('/signup-authentication', async (req, res, next) => {
     hashed_password: hashed[1],
     salt: hashed[0],
     user_id: userId,
-    timezone: timezone
+    timezone: timeZone,
+    datum_point: date / 1000,
   };
 
   connection.query('INSERT INTO users SET ?', user);

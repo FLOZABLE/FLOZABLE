@@ -1,10 +1,30 @@
 {
-  "name": "Tab Domain Viewer",
+  "name": "My Extension",
   "version": "1.0",
   "manifest_version": 3,
-  "description": "Get the domain of all open tabs",
+  "description": "My extension description",
+  "permissions": [
+    "tabs",
+    "cookies",
+    "scripting",
+    "activeTab",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["tabs"]
+  "content_scripts": [
+    {
+      "matches": ["http://localhost/study", "https://flozable/study"],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript2.js"]
+    }
+  ]
 }

@@ -3,24 +3,39 @@ const thisWeekTotalContainer = document.getElementById("thisweek-total");
 const thisMonthTotalContainer = document.getElementById("thismonth-total");
 const dailyAvgContainer = document.getElementById("avg-daily");
 
+let rankingGraph;
 let DoughnutChart;
+let histogram;
 let lineChart;
 let calendarDate = new Date();
 let subjects;
+let compareGraph;
+const usersList = [];
+const myRanking = {
+  daily: [],
+  weekly: [],
+  monthly: []
+};
 (async () => {
-  let response = await fetch('/account/bring-my-info', {
+  let myInfo = await fetch('/account/bring-my-info', {
     method: 'post',
   });
 
-  response = await response.json();
-  const userInfo = response.userInfo;
+  let ranking = await fetch('/ranking', {
+    method: 'post',
+  })
+
+  myInfo = await myInfo.json();
+  const userInfo = myInfo.userInfo;
   let todayTotal = 0;
   let thisWeekTotal = 0;
   let thisMonthTotal = 0;
   let dailyAvg = 0;
   const now = new Date();
   const currentDay = now.getDay();
-  if (response.success) {
+  const userId = userInfo.user_id;
+
+  if (myInfo.success) {
     subjects = JSON.parse(userInfo.subjects);
     if (!subjects) {
       return 0
@@ -127,6 +142,91 @@ let subjects;
     });
 
     calendar.render();
+  }
+
+  ranking = await ranking.json();
+  if(ranking.success) {
+    console.log(ranking)
+    const today = new Date().setHours(0, 0, 0, 0);
+
+    const dailyRanking = ranking.dailyRanking;
+    const weeklyRanking = ranking.weeklyRanking;
+    const monthlyRanking = ranking.monthlyRanking;
+    
+    dailyRanking.map(dayRanking => {
+      dayRanking.map((user, rank) => {
+        if(user.user_id == userId) {
+          myRanking.daily.push(rank + 1);
+        }
+      })
+    })
+
+    weeklyRanking.map(weekRanking => {
+      weekRanking.map((user, rank) => {
+        if(user.user_id == userId) {
+          myRanking.weekly.push(rank + 1);
+        }
+      })
+    })
+
+    monthlyRanking.map(monthRanking => {
+      monthRanking.map((user, rank) => {
+        if(user.user_id == userId) {
+          myRanking.monthly.push(rank + 1);
+        }
+      })
+    })
+
+    myRanking.daily.reverse();
+    myRanking.weekly.reverse();
+    myRanking.monthly.reverse();
+
+    const rankingGraphContainer = document.getElementById("ranking-graph");
+    rankingGraph = new Chart(rankingGraphContainer, {
+      type: "scatter",
+      data: {
+        labels: myRanking.daily.map((day, index) => {
+          const date = new Date(today - (myRanking.daily.length - index - 1) * 1000 * 60 * 60 * 24);
+          return `${date.getMonth() + 1}/${date.getDate()}`
+        }),
+        datasets: [
+          /* {
+            type: 'bar',
+            label: 'Bar',
+            data: myRanking.daily,
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)'
+          }, */
+          {
+            type: 'line',
+            label: 'Line',
+            data: myRanking.daily,
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            tension: 0.4, 
+            borderWidth: 2, 
+            pointRadius: 2, 
+            pointBackgroundColor: 'rgba(255, 99, 132, 0.2)',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            reverse: true,
+            ticks: {
+              stepSize: 1,
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      },
+    })
   }
 
 
@@ -285,10 +385,149 @@ let subjects;
     },
   });
 
-  //heatmap
- 
-  
+  //histogram
 
+  let histogramContainer = document.getElementById('histogram');
+
+  histogram = new Chart(histogramContainer, {
+    type: 'bar',
+    data: {
+      labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+      datasets: [
+        {
+          label: 'label',
+          data: [],
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        },
+        x: {
+          grid: {
+            display: false
+          }
+        }
+      }
+    }
+  })
+
+  updateDoughnutPercentage();
+  updateCharts();
+
+  //user search
+
+  const usersWrapper = document.getElementById("userSearchWrapper");
+  
+  ranking.usersInfo.map(user => {
+    const tr = document.createElement('tr');
+    let dailyRanking = 'no data';
+    ranking.dailyRanking[0].map((users, ranking) => {if(users.user_id == user.userId){dailyRanking = ranking + 1}})
+    tr.innerHTML = `
+    <td>
+      <div class="d-flex px-2 py-1">
+        <div>
+          <img src="profile-images/${user.userId}.jpeg" class="avatar avatar-sm me-3 profile"
+            alt="avatar image" onerror="replaceImg()">
+        </div>
+        <div class="d-flex flex-column justify-content-center">
+          <h6 class="mb-0 font-weight-normal text-sm">${user.name}</h6>
+        </div>
+      </div>
+    </td>
+    <td>
+      <span class="badge badge-dot me-4">
+        <i class="bg-info"></i>
+        <span class="text-dark text-xs">active now</span>
+      </span>
+    </td>
+    <td class="align-middle text-center">
+      <p class="text-sm font-weight-normal mb-0">${dailyRanking}</p>
+    </td>
+    <td class="align-middle text-center">
+      <p class="text-sm font-weight-normal mb-0">
+        <a href="">VIEW PROFILE</a>
+      </p>
+    </td>
+    `
+    usersWrapper.appendChild(tr);
+    tr.addEventListener('click', () => {
+      const prevSelectedUser = document.getElementById('selected-user');
+      if(prevSelectedUser) {
+        prevSelectedUser.id = '';
+      }
+      tr.id = 'selected-user';
+      compareUserselected = user;
+      compareActivateBtn.innerHTML = `
+      COMPARE
+      <span class="blob-btn__inner">
+        <span class="blob-btn__blobs">
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+          <span class="blob-btn__blob"></span>
+        </span>
+      </span>
+      `
+    })
+    usersList.push({name: user.name, el: tr});
+  })
+
+  const compareActivateBtn = document.getElementById('compare-activate-btn');
+  compareActivateBtn.addEventListener('click', () => {
+    if(compareUserselected) {
+      const myData = ranking.usersInfo.find(user => {
+        return user.userId == userId
+      });
+
+      const myDatumPoint = new Date(myData.datumPoint * 1000);
+      const labels = [];
+      for(let i = 0; i < myData.daily.length; i++) {
+        labels.push(myDatumPoint.getTime() + i * 1000 * 60 * 60 * 24)
+      }
+
+      while(myData.daily.length > compareUserselected.daily.length) {
+        compareUserselected.daily.push(0)
+      }
+
+      while(myData.daily.length < compareUserselected.daily.length) {
+        myData.daily.pop();
+      }
+
+      console.log(myData, compareUserselected, labels);
+
+      compareGraph.data.labels = labels.map(date => {return `${new Date(date).getMonth() + 1}/${new Date(date).getDate()}`});
+      compareGraph.data.datasets = [
+        {
+          label: 'me', 
+          tension: 0.4, 
+          borderWidth: 0, 
+          pointRadius: 2, 
+          pointBackgroundColor: '#FF6666', 
+          borderColor: '#FF6666', 
+          backgroundColor: '#FF6666',
+          borderWidth: 3, 
+          data: myData.daily.slice().reverse(), 
+        },
+        {
+          label: compareUserselected.name, 
+          tension: 0.4, 
+          borderWidth: 0, 
+          pointRadius: 2, 
+          pointBackgroundColor: '#3b44ed', 
+          borderColor: '#3b44ed', 
+          backgroundColor: '#3b44ed',
+          borderWidth: 3, 
+          data: compareUserselected.daily.slice().reverse(), 
+        } 
+      ]
+      compareGraph.update();
+      addCompareTargetModal.classList.add('closed-modal');
+      docmain.classList.remove('blurbg');
+    }
+  })
 })();
 
 function filterTimeline(timeline, startTime, endTime, datum_point) {
@@ -527,12 +766,21 @@ function getAvg(timeline, length) {
   })
 }
 
+const todayTime = new Date().setHours(0, 0, 0, 0);
+
+const rankingType = document.getElementById('ranking-type');
+const ranking = document.getElementById('ranking');
+const rankingDiff = document.getElementById('ranking-diff');
+
 function updateCharts() {
   if(graphViewOpt == 'day') {
+
+    //update doughnut chart
     DoughnutChart.data.datasets[0].data = subjects.map(subject => {
       const index = Math.floor((calendarDate.setHours(0, 0, 0, 0) / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
       return subject.daily.total[index] ? subject.daily.total[index] : 0
     });
+
     const hourlyTimeline = subjects.map(subject => {
       const index = Math.floor((calendarDate.setHours(0, 0, 0, 0) / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
       return subject.daily.grouped[index] ? subject.daily.grouped[index] : [[0, 0], [0, 0]]
@@ -541,9 +789,43 @@ function updateCharts() {
     const hourlyTimelineInfo = subjects.map(subject => {
       return [subject.name, subject.color]
     })
-    updateHourlyMatrix(hourlyTimeline, hourlyTimelineInfo)
     DoughnutChart.update();
+
+
+    //ranking graph
+    rankingGraph.data.labels = myRanking.daily.map((day, index) => {
+      const date = new Date(todayTime - (myRanking.daily.length - index - 1) * 1000 * 60 * 60 * 24);
+      return `${date.getMonth() + 1}/${date.getDate()}`
+    })
+    rankingGraph.data.datasets[0].data = myRanking.daily;
+    rankingGraph.update();
+    rankingType.innerText = 'Daily Ranking';
+    ranking.innerText = `#${myRanking.daily[myRanking.daily.length - 1]}`;
+    if(myRanking.daily.length > 1) {
+      const todayRanking = myRanking.daily[myRanking.daily.length - 1];
+      const yesterdayRanking = myRanking.daily[myRanking.daily.length - 2];
+      if(todayRanking < yesterdayRanking) {
+        rankingDiff.innerHTML = `
+        <span class="text-success text-sm font-weight-bolder">${todayRanking - yesterdayRanking} </span>than yesterday
+        `
+      } else if (todayRanking > yesterdayRanking) {
+        rankingDiff.innerHTML = `
+        <span class="text-danger text-sm font-weight-bolder">+${todayRanking - yesterdayRanking} </span>than yesterday
+        `
+      }
+    } else {
+      rankingDiff.innerHTML = ``
+    }
+
+    //timeline
+    updateHourlyMatrix(hourlyTimeline, hourlyTimelineInfo);
+
+    //histogram
+    updateHistogram(hourlyTimeline)
+
   } else if (graphViewOpt == 'week') {
+
+    //update doughnut chart
     DoughnutChart.data.datasets[0].data = subjects.map(subject => {
       const calendarWeekStart = calendarDate - calendarDate.getDay() * 24 * 60 * 60 * 1000;
       const timelineStart = subject.weekly.grouped[0][0][0] ? new Date(subject.weekly.grouped[0][0][0] * 1000) : new Date(subject.datum_point * 1000);
@@ -552,7 +834,35 @@ function updateCharts() {
       return subject.weekly.total[index] ? subject.weekly.total[index] : 0
     });
     DoughnutChart.update();
+
+    //ranking graph
+    rankingGraph.data.labels = myRanking.weekly.map((day, index) => {
+      const date = new Date(todayTime - (myRanking.weekly.length - index - 1) * 1000 * 60 * 60 * 24 * 7);
+      return `${date.getMonth() + 1}/${date.getDate()}`
+    })
+    rankingGraph.data.datasets[0].data = myRanking.weekly;
+    rankingGraph.update();
+
+    rankingType.innerText = 'Weekly Ranking';
+    ranking.innerText = `#${myRanking.weekly[myRanking.weekly.length - 1]}`;
+    if(myRanking.weekly.length > 1) {
+      const thisWeekRanking = myRanking.weekly[myRanking.weekly.length - 1];
+      const lastWeekRanking = myRanking.weekly[myRanking.weekly.length - 2];
+      if(thisWeekRanking < lastWeekRanking) {
+        rankingDiff.innerHTML = `
+        <span class="text-success text-sm font-weight-bolder">${thisWeekRanking - lastWeekRanking} </span>than last week
+        `
+      } else if (thisWeekRanking > lastWeekRanking) {
+        rankingDiff.innerHTML = `
+        <span class="text-danger text-sm font-weight-bolder">+${thisWeekRanking - lastWeekRanking} </span>than last week
+        `
+      }
+    } else {
+      rankingDiff.innerHTML = ``
+    }
   } else {
+
+    //doughnut chart
     DoughnutChart.data.datasets[0].data = subjects.map(subject => {
       const calendarYear = calendarDate.getFullYear();
       const calendarMonth = calendarDate.getMonth();
@@ -563,6 +873,33 @@ function updateCharts() {
       return subject.monthly.total[index] ? subject.monthly.total[index] : 0
     });
     DoughnutChart.update();
+
+    //ranking graph
+    rankingGraph.data.labels = myRanking.monthly.map((day, index) => {
+      const date = new Date(todayTime - (Math.round(myRanking.monthly.length - index - 1) * 1000 * 60 * 60 * 24 * 30.4375));
+      return `${date.getMonth() + 1}`
+    })
+    rankingGraph.data.datasets[0].data = myRanking.monthly;
+    rankingGraph.update();
+
+    rankingType.innerText = 'Monthly Ranking';
+    ranking.innerText = `#${myRanking.monthly[myRanking.monthly.length - 1]}`;
+    if(myRanking.monthly.length > 1) {
+      const thisMonthRanking = myRanking.monthly[myRanking.monthly.length - 1];
+      const lastMonthRanking = myRanking.monthly[myRanking.monthly.length - 2];
+      if(thisMonthRanking < lastMonthRanking) {
+        rankingDiff.innerHTML = `
+        <span class="text-success text-sm font-weight-bolder">${thisMonthRanking - lastMonthRanking} </span>than last month
+        `
+      } else if (thisMonthRanking > lastMonthRanking) {
+        rankingDiff.innerHTML = `
+        <span class="text-danger text-sm font-weight-bolder">+${thisMonthRanking - lastMonthRanking} </span>than last month
+        `
+      }
+    } else {
+      rankingDiff.innerHTML = ``
+    }
+
   }
   updateDoughnutPercentage();
 }
@@ -594,6 +931,7 @@ function updateDoughnutPercentage() {
     </tr>`
   })
 }
+
 const matrixChart = document.getElementById('matrix-chart');
 const matrixActivities = document.getElementById("activities")
 function updateHourlyMatrix(subjects, subjectInfo) {
@@ -613,7 +951,6 @@ function updateHourlyMatrix(subjects, subjectInfo) {
         div1.classList.add('activity');
         matrixActivities.appendChild(div1);
       } else if(stopTimeMin - startTimeMin){
-        console.log(startTimeHr, startTimeMin, stopTimeHr, stopTimeMin)
         const div1 = document.createElement('div');
         div1.style.top = 27 + startTimeHr * 30 + 'px';
         div1.style.left = 100 + (matrixChart.clientWidth - 100) / 60 * startTimeMin + 'px';
@@ -625,7 +962,7 @@ function updateHourlyMatrix(subjects, subjectInfo) {
           startTimeHr ++;
           const divs = document.createElement('div');
           divs.style.top = 27 + startTimeHr * 30 + 'px';
-          divs.style.left = matrixChart.clientWidth - 100 + 'px';
+          divs.style.left = '100px';
           divs.style.width = matrixChart.clientWidth - 100 + 'px';
           divs.style.backgroundColor = subjectInfo[i][1];
           divs.classList.add('activity');
@@ -642,6 +979,37 @@ function updateHourlyMatrix(subjects, subjectInfo) {
       }
     })
   })
+}
+
+function updateHistogram(subjects) {
+  const histogramData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,];
+
+  subjects.map(subject => {
+    subject.map(([start, stop]) => {
+      let startTime = new Date(start * 1000);
+      let startTimeHr = startTime.getHours();
+      let startTimeMin = startTime.getMinutes();
+      let stopTime = new Date(stop * 1000);
+      let stopTimeHr = stopTime.getHours();
+      let stopTimeMin = stopTime.getMinutes();
+
+      if(startTimeHr == stopTimeHr) {
+        histogramData[startTimeHr] += stop - start
+      } else {
+        const hourEndMin = new Date(start * 1000).setHours(startTimeHr, 59, 59, 0);
+        histogramData[startTimeHr] += hourEndMin / 1000 - start;
+        while(startTimeHr < stopTimeHr - 1) {
+          startTimeHr ++;
+          histogramData[startTimeHr] += 60 * 60;
+        }
+        startTimeHr ++;
+        const hourStartMin = new Date(start * 1000).setHours(startTimeHr, 0, 0, 0);
+        histogramData[startTimeHr] += stop - hourStartMin/ 1000
+      }
+    })
+  })
+  histogram.data.datasets[0].data = histogramData;
+  histogram.update();
 }
 
 let graphViewOpt = 'day';
@@ -667,3 +1035,108 @@ graphViewOptMonth.addEventListener('click', () => {
   graphViewOpt = 'month';
   updateCharts();
 })
+
+
+//sidebar toggle
+
+const sidebarToggleBtn = document.querySelector('.sidenav-toggler.sidenav-toggler-inner');
+
+sidebarToggleBtn.addEventListener('click', () => {
+  const hourlyTimeline = subjects.map(subject => {
+    const index = Math.floor((calendarDate.setHours(0, 0, 0, 0) / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
+    return subject.daily.grouped[index] ? subject.daily.grouped[index] : [[0, 0], [0, 0]]
+  });
+
+  const hourlyTimelineInfo = subjects.map(subject => {
+    return [subject.name, subject.color]
+  })
+  setTimeout(() => {
+    updateHourlyMatrix(hourlyTimeline, hourlyTimelineInfo);
+  }, 2000)
+})
+
+//compare
+
+const addCompareTargetBtn = document.querySelector("#compare-target u");
+const addCompareTargetModal = document.getElementById("compare-target-modal");
+const docmain = document.getElementsByTagName('main')[0];
+const userSearch = document.getElementById('user-search');
+let compareUserselected = false;
+
+addCompareTargetBtn.addEventListener('click', () => {
+  addCompareTargetModal.classList.toggle('closed-modal');
+  docmain.classList.toggle('blurbg')
+})
+
+
+let inputBox = document.querySelector('.input-box'),
+  searchIcon = document.querySelector('.search'),
+  closeIcon = document.querySelector('.close-icon');
+
+// ---- ---- Open Input ---- ---- //
+searchIcon.addEventListener('click', () => {
+  inputBox.classList.add('open');
+});
+// ---- ---- Close Input ---- ---- //
+closeIcon.addEventListener('click', () => {
+  inputBox.classList.remove('open');
+  userSearch.value = '';
+  usersList.forEach(user => {
+    user.el.classList.remove('closed-user');
+  })
+});
+
+userSearch.addEventListener('input', () => {
+  const query = userSearch.value;
+
+  usersList.forEach(user => {
+    if(user.name.includes(query)) {
+      user.el.classList.remove('closed-user');
+    } else {
+      user.el.classList.add('closed-user');
+    }
+  })
+})
+
+const userSearchCloseBtn = document.getElementById('user-search-close');
+userSearchCloseBtn.addEventListener('click', () => {
+  addCompareTargetModal.classList.add('closed-modal');
+  docmain.classList.remove('blurbg');
+})
+/* {label: subject.name, tension: 0.4, borderWidth: 0, pointRadius: 2, pointBackgroundColor: subject.color, borderColor: subject.color, borderWidth: 3, data: data, maxBarThickness: 6} */
+const compareGraphContainer = document.getElementById('compare-graph').getContext("2d");
+compareGraph =  new Chart(compareGraphContainer, {
+  type: "line",
+  data: {
+    labels: [1, 2],
+    datasets: [
+      {
+        label: 'me',
+        tension: 0.4, 
+        borderWidth: 0, 
+        pointRadius: 2, 
+        pointBackgroundColor: '#FF6666', 
+        borderColor: '#FF6666', 
+        backgroundColor: '#FF6666',
+        borderWidth: 3, 
+      },
+      {
+        label: 'Select User',
+        tension: 0.4, 
+        borderWidth: 0, 
+        pointRadius: 2, 
+        pointBackgroundColor: '#3b44ed', 
+        borderColor: '#3b44ed',
+        backgroundColor: '#3b44ed',
+        borderWidth: 3,
+      }
+    ]
+  },
+  options: {
+      scales: {
+          y: {
+              stacked: true
+          }
+      }
+  }
+});
