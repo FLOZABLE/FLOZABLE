@@ -40,7 +40,6 @@ Router.post('/add-subject', async (req, res) => {
   const subjects = JSON.parse(select[0].subjects || "[]");
   subjects.push(subject);
   const updatedJson = JSON.stringify(subjects);
-
   const updateQuery = "UPDATE users SET subjects = ? WHERE user_id = ?";
   const updateParams = [updatedJson, req.session.user_id];
   const update = await connection.query(updateQuery, updateParams);
@@ -59,7 +58,7 @@ Router.post('/start', async (req, res) => {
   const connection = await (await pool).getConnection();
   const subjectId = req.body.id;
 
-  const select = await connection.query(`SELECT subjects, groups FROM users WHERE user_id = "${req.session.user_id}"`);
+  const select = await connection.query(`SELECT subjects, daily, weekly, monthly, groups FROM users WHERE user_id = "${req.session.user_id}"`);
   const subjects = JSON.parse(select[0].subjects || "[]");
   const groups = select[0].groups ? select[0].groups.split(",") : [];
   const startTime = Math.floor(new Date().getTime() / 1000);
@@ -87,8 +86,7 @@ Router.post('/stop', async (req, res) => {
   const io = req.app.get('socketio');
   const connection = await (await pool).getConnection();
   const subjectId = req.body.id;
-
-  const select = await connection.query(`SELECT subjects, groups FROM users WHERE user_id = "${req.session.user_id}"`);
+  const select = await connection.query(`SELECT subjects, daily, weekly, monthly, datum_point, groups FROM users WHERE user_id = "${req.session.user_id}"`);
   const groups = select[0].groups ? select[0].groups.split(",") : [];
 
   if (groups.length !== 0) {
@@ -100,10 +98,63 @@ Router.post('/stop', async (req, res) => {
   const subject = subjects.find(subject => subject.id == subjectId);
   const storedTime = stopTime - subject.datum_point;
   subject.timeline[subject.timeline.length - 1].push(storedTime);
-  subject.total += subject.timeline[subject.timeline.length - 1][1] - subject.timeline[subject.timeline.length - 1][0];
+  //subject.total += subject.timeline[subject.timeline.length - 1][1] - subject.timeline[subject.timeline.length - 1][0];
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const date = new Date();
+  date.toLocaleString("en-US", { timeZone });
+  date.setHours(0, 0, 0, 0);
+  const datum_point = new Date(select[0].datum_point * 1000);
+  datum_point.toLocaleString("en-US", {timeZone});
+  datum_point.setHours(0, 0, 0, 0);
+  const daily = JSON.parse(select[0].daily);
+  const weekly = JSON.parse(select[0].weekly);
+  const monthly = JSON.parse(select[0].monthly);
+
+  const dayPassed = (date.getTime() - datum_point.getTime()) / (1000 * 60 * 60 * 24);
+
+  let dateWeekStart = date.getTime() - date.getDay() * 24 * 60 * 60 * 1000;
+  let datum_pointWeekStart = datum_point.getTime() - datum_point.getDay() * 24 * 60 * 60 * 1000;
+  const weekPassed = (dateWeekStart - datum_pointWeekStart) / (1000 * 60 * 60 * 24 * 7);
+  let monthPassed = 0;
+  let datumYear = datum_point.getFullYear();
+  let datumMonth = datum_point.getMonth();
+  let datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
+  const dateMonthStart = new Date(date.getFullYear(), date.getMonth(), 1).setHours(0, 0, 0, 0);
+  while(datumMonthStart < dateMonthStart) {
+    datumMonth += 1;
+    if(datumMonth >= 11) {
+      datumMonth = 0;
+      datumYear += 1;
+    }
+    monthPassed += 1;
+    datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
+  }
+  console.log(dayPassed, weekPassed, monthPassed);
+
+  let dayDiff = dayPassed - daily.length + 1;
+  let weekDiff = weekPassed - weekly.length + 1;
+  let monthDiff = monthPassed - monthly.length + 1;
+
+  for(let i = 0; i < dayDiff; i++) {
+    daily.push(0);
+  }
+
+  for(let i = 0; i < weekDiff; i++) {
+    weekly.push(0);
+  }
+
+  for(let i = 0; i < monthDiff; i++) {
+    monthly.push(0);
+  }
+
+  const duration =  subject.timeline[subject.timeline.length - 1][1] - subject.timeline[subject.timeline.length - 1][0];
+  daily[daily.length - 1] += duration;
+  weekly[weekly.length - 1] += duration;
+  monthly[monthly.length - 1] += duration;
+
   const updatedJson = JSON.stringify(subjects);
-  const updateParams = [updatedJson, req.session.user_id];
-  const update = await connection.query(`UPDATE users SET subjects = ? WHERE user_id = ?`, updateParams);
+  const updateParams = [updatedJson, JSON.stringify(daily), JSON.stringify(weekly), JSON.stringify(monthly), req.session.user_id];
+  const update = await connection.query(`UPDATE users SET subjects = ?, daily = ?, weekly = ?, monthly = ?  WHERE user_id = ?`, updateParams);
 
   res.send({ success: true });
   connection.release();
@@ -275,17 +326,31 @@ Router.post('/update-plan', async(req, res) => {
   
     const connection = await (await pool).getConnection();
     const planInfo = req.body;
+    //sanitize
+    planInfo.description = encodeURIComponent(planInfo.description);
+    console.log(planInfo.description)
     try {
       let plans = await connection.query(`SELECT plan from users where user_id = "${userId}"`);
       plans = JSON.parse(`[${plans[0].plan}]`);
-      let plan = plans.find(plan => planInfo.planId == plan.planId);
-      connection.query(`UPDATE users set plan = CONCAT_WS(',', REPLACE(plan, '${JSON.stringify(plan)}', '${JSON.stringify(planInfo)}')) WHERE user_id = '${userId}'`);
-      connection.release();
-      res.send({ success: true });
+      let plan = plans.find(plan => planInfo.id == plan.id);
+      console.log(plan)
+      if(plan) {
+        console.log('dd')
+        connection.query(`UPDATE users set plan = CONCAT_WS(',', REPLACE(plan, '${JSON.stringify(plan)}', '${JSON.stringify(planInfo)}')) WHERE user_id = '${userId}'`);
+        res.send({ success: true, type: 'update' });
+      } else {
+        const addPlan = await connection.query(`UPDATE users SET plan = CASE
+        WHEN plan = '' THEN '${JSON.stringify(planInfo)}'
+        ELSE CONCAT(plan, ',', '${JSON.stringify(planInfo)}')
+        END
+        WHERE user_id = '${userId}'`);
+        res.send({ success: true, type: 'add' });
+      }
     } catch (error) {
       console.error('MySQL error:', error);
       res.send({ success: false, reason: 'MySQL error' });
     }
+    connection.release();
   } catch (error) {
     console.error('An error occurred:', error);
     res.send({ success: false, reason: 'An error occurred' });
