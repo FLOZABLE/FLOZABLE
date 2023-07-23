@@ -18,10 +18,33 @@ let tabUsageData = {};
 let lastTime = Date.now();
 let prevTabId = false;
 let prevTabDomain;
-let undefinedTabs = {}
+let undefinedTabs = []
+
+async function update(){
+  let response = await fetch('http://localhost/api/update-tabs', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'sdfwpep9p345oD563$SDFksdfkdswt9e9',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({tabUsageData: tabUsageData})
+  })
+  response = await response.json();
+  return response;
+}
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
   const now = Date.now();
+
+  //date change detection
+  if(new Date(lastTime).setHours(0, 0, 0, 0) != new Date(now).setHours(0, 0, 0, 0)) {
+    let response = update();
+    if(response.success) {
+      tabUsageData = {};
+      prevTabDomain = false;
+      tabDomain = false;
+    }
+  }
   const tabId = activeInfo.tabId;
 
   chrome.tabs.get(tabId, async(tab) => {
@@ -29,21 +52,21 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     let tabDomain;
 
     if(tab.url == 'chrome://newtab/' || tab.url == ''){
-      undefinedTabs[tabId] = {domainState: false};
-      tabDomain = tabId;
+      /* undefinedTabs[tabId] = {domainState: false};
+      tabDomain = tabId; */
+      return 0;
     } else {
-      console.log(tab.url)
       tabDomain = new URL(tab.url).hostname;
-      if(undefinedTabs[tabId]) {
+      /* if(undefinedTabs[tabId]) {
         tabUsageData[tabDomain] = tabUsageData[tabId];
         delete tabUsageData[tabId];
         delete undefinedTabs[tabId];
-      }
+      } */
     }
-
+    console.log(tabDomain)
     if (!tabUsageData[tabDomain]) {
       chrome.tabs.get(tabId, (tab) => {
-        tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: now, timeline: [[Math.floor(now / 1000)]] };
+        tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: now, timeline: [[Math.floor(now / 1000)]]};
       });
     } else {
       //update
@@ -53,23 +76,15 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     }
 
     if(tabDomain == 'localhost') {
-      let response = await fetch('http://localhost/api/update-tabs', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'sdfwpep9p345oD563$SDFksdfkdswt9e9',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({tabUsageData: tabUsageData})
-      })
-      response = await response.json();
+      let response = update();
       if(response.success) {
-        tabUsageData = {};
+        /* tabUsageData = {};
         prevTabDomain = false;
-        tabDomain = false;
+        tabDomain = false; */
+        console.log('updated')
       }
 
     }
-
     if(prevTabDomain) {
       tabUsageData[prevTabDomain].totalTime += now - lastTime;
       tabUsageData[prevTabDomain].lastActiveTime = now;
@@ -79,6 +94,35 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     lastTime = now;
     prevTabDomain = tabDomain;
   });
+});
+
+chrome.tabs.onUpdated.addListener((tabId) => {
+  const now  = Date.now();
+  console.log(tabId)
+  chrome.tabs.get(tabId, async(tab) => {
+    console.log(tab.url)
+    if(tab.url == 'chrome://newtab/' || tab.url == '') {
+      undefinedTabs.push(tabId);
+      return 0;
+    }
+    undefinedTabs = undefinedTabs.filter(item => item !== tabId);
+    let tabDomain = new URL(tab.url).hostname;
+    if(!tabUsageData[tabDomain]) {
+      tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: now, timeline: [[Math.floor(now / 1000)]]};
+    } else {
+      tabUsageData[tabDomain].usageCount++;
+      tabUsageData[tabDomain].lastActiveTime = now;
+      tabUsageData[tabDomain].timeline.push([Math.floor(now / 1000)]);
+    }
+
+    if(prevTabDomain) {
+      tabUsageData[prevTabDomain].totalTime += now - lastTime;
+      tabUsageData[prevTabDomain].lastActiveTime = now;
+      tabUsageData[prevTabDomain].timeline[tabUsageData[prevTabDomain].timeline.length - 1].push(Math.floor(now / 1000));
+    }
+    lastTime = now;
+    prevTabDomain = tabDomain;
+  })
 });
 
 function getTabUsageData() {
@@ -91,10 +135,21 @@ function getTabUsageData() {
 chrome.runtime.onMessage.addListener(async(message, sender, sendResponse) => {
   if (message.command === 'start-monitor') {
     sendResponse({success: true, data: getTabUsageData()});
-  } else if(message.command === 'save-data') {
-    const response = await fetch('http://localhost/extension', {
-      method: 'post',
-      data: {}
-    })
+  } else if(message.command === 'tab-timer') {
+    const tabDomain = message.domain;
+    if(tabUsageData[tabDomain]) {
+      if(prevTabDomain == tabDomain) {
+        sendResponse({success: true, tabUsageData: {
+          usageCount: tabUsageData[tabDomain].usageCount + 1,
+          totalTime: tabUsageData[tabDomain].totalTime + Date.now() - lastTime,
+          lastActiveTime: Date.now(),
+          timeline: tabDomain.timeline
+        }})
+      } else {
+        sendResponse({success: true, tabUsageData: tabUsageData[tabDomain]});
+      }
+    } else {
+      sendResponse({success: false, tabUsageData: {}});
+    }
   }
 });

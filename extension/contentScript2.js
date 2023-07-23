@@ -408,23 +408,46 @@ function divMoveXY(e) {
 document.addEventListener('mousemove', divMoveXY);
 extensionWrapper.addEventListener('mouseup', mouseUp);
 extensionWrapper.addEventListener('mousedown', mouseDown);
-const tabData = { today: 0 };
-timer = {
-  hundredth: 0,
-  sec: Math.floor((tabData.today / 1000) % 60),
-  min: Math.floor((tabData.today / (1000 * 60)) % 60),
-  hr: Math.floor((tabData.today / (1000 * 60 * 60))),
-  run: false,
-  secDisp: extensionWrapper.querySelector('.sec'),
-  minDisp: extensionWrapper.querySelector('.min'),
-  hrDisp: extensionWrapper.querySelector('.hr'),
-}
-let intervalId = setInterval(() => {
-  count(timer);
-}, 1000)
-function count(timer) {
-  timer.hundredth += 1;
 
+let timer;
+let intervalId;
+
+function syncTimer() {
+  chrome.runtime.sendMessage({command: 'tab-timer', domain: domain}, (response) => {
+    console.log(response);
+    if(response.success) {
+      console.log(response.tabUsageData);
+      const seconds = Math.floor(response.tabUsageData.totalTime / 1000);
+      timer = {
+        sec: Math.floor(seconds % 60),
+        min: Math.floor((seconds / (60)) % 60),
+        hr: Math.floor((seconds / (60 * 60))),
+        run: false,
+        secDisp: extensionWrapper.querySelector('.sec'),
+        minDisp: extensionWrapper.querySelector('.min'),
+        hrDisp: extensionWrapper.querySelector('.hr'),
+      }
+    } else {
+      timer = {
+        sec: 0,
+        min: 0,
+        hr: 0,
+        run: false,
+        secDisp: extensionWrapper.querySelector('.sec'),
+        minDisp: extensionWrapper.querySelector('.min'),
+        hrDisp: extensionWrapper.querySelector('.hr'),
+      }
+    }
+    clearInterval(intervalId);
+    intervalId = setInterval(() => {
+      count(timer);
+    }, 1000);
+  }); 
+}
+
+syncTimer();
+
+function count(timer) {
   timer.sec += 1;
 
   if (timer.sec == 60) {
@@ -450,9 +473,7 @@ document.addEventListener("visibilitychange", () => {
     clearInterval(intervalId)
   } else {
     console.log('open');
-    intervalId = setInterval(() => {
-      count(timer);
-    }, 1000)
+    syncTimer();
     /* chrome.runtime.sendMessage({command: 'save-data'}, (response) => {
       if(response.success) {
         console.log('success');
