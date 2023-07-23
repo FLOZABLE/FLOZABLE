@@ -14,17 +14,15 @@ Router.post("/update-tabs", async (req, res) => {
   let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = "${req.session.user_id}"`);
   prevWebUsageData = JSON.parse(prevWebUsageData[0].activity);
   console.log(req.body.tabUsageData)
-  const newWebsites = Object.keys(newWebUsageData);
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const date = new Date();
+  date.toLocaleString("en-US", { timeZone });
+  date.setHours(0, 0, 0, 0);
+  prevWebUsageData[date / 1000] = {data: newWebUsageData};
+
+  /* const newWebsites = Object.keys(newWebUsageData);
   const prevWebsites = Object.keys(prevWebUsageData);
   Object.values(newWebUsageData).map((newWebsite, index) => {
-    /* const websiteLocatedIndex = prevWebsites.findIndex((prevWebsite) => {return prevWebsite == newWebsites[index]});
-    if(websiteLocatedIndex >= 0) {
-      console.log(websiteLocatedIndex)
-      const prevWebsite = prevWebUsageData[websiteLocatedIndex];
-      prevWebsite.timeline = prevWebsite.timeline.concat(newWebsite.timeline);
-    } else {
-      prevWebUsageData[newWebsites[index]] = newWebsite;
-    } */
     if(prevWebUsageData[newWebsites[index]]) {
       prevWebUsageData[newWebsites[index]].timeline = prevWebUsageData[newWebsites[index]].timeline.concat(newWebsite.timeline);
       prevWebUsageData[newWebsites[index]].usageCount = prevWebUsageData[newWebsites[index]].usageCount += newWebsite.usageCount;
@@ -33,7 +31,7 @@ Router.post("/update-tabs", async (req, res) => {
     } else {
       prevWebUsageData[newWebsites[index]] = newWebsite;
     }
-  })
+  }) */
 
   console.log(prevWebUsageData)
 
