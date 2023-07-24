@@ -1,3 +1,5 @@
+//no timeline ver
+
 // background.js
 chrome.tabs.query({}, function(tabs) {
   tabs.forEach(function(tab) {
@@ -85,13 +87,13 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     console.log(tabDomain)
     if (!tabUsageData[tabDomain]) {
       chrome.tabs.get(tabId, (tab) => {
-        tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000), timeline: [[Math.floor(now / 1000)]]};
+        tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000)/* , timeline: [[Math.floor(now / 1000)]] */};
       });
     } else {
       //update
       tabUsageData[tabDomain].usageCount++;
       tabUsageData[tabDomain].lastActiveTime = Math.floor(now / 1000);
-      tabUsageData[tabDomain].timeline.push([Math.floor(now / 1000)]);
+      //tabUsageData[tabDomain].timeline.push([Math.floor(now / 1000)]);
     }
 
     if(tabDomain == 'localhost') {
@@ -107,7 +109,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     if(prevTabDomain) {
       tabUsageData[prevTabDomain].totalTime += now - lastTime;
       tabUsageData[prevTabDomain].lastActiveTime = Math.floor(now / 1000);
-      tabUsageData[prevTabDomain].timeline[tabUsageData[prevTabDomain].timeline.length - 1].push(Math.floor(now / 1000));
+      //tabUsageData[prevTabDomain].timeline[tabUsageData[prevTabDomain].timeline.length - 1].push(Math.floor(now / 1000));
     }
     
     lastTime = now;
@@ -127,17 +129,17 @@ chrome.tabs.onUpdated.addListener((tabId) => {
     undefinedTabs = undefinedTabs.filter(item => item !== tabId);
     let tabDomain = new URL(tab.url).hostname;
     if(!tabUsageData[tabDomain]) {
-      tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000), timeline: [[Math.floor(now / 1000)]]};
+      tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000)/* , timeline: [[Math.floor(now / 1000)]] */};
     } else {
       tabUsageData[tabDomain].usageCount++;
       tabUsageData[tabDomain].lastActiveTime = Math.floor(now / 1000);
-      tabUsageData[tabDomain].timeline.push([Math.floor(now / 1000)]);
+      //tabUsageData[tabDomain].timeline.push([Math.floor(now / 1000)]);
     }
 
     if(prevTabDomain) {
       tabUsageData[prevTabDomain].totalTime += now - lastTime;
       tabUsageData[prevTabDomain].lastActiveTime = Math.floor(now / 1000);
-      tabUsageData[prevTabDomain].timeline[tabUsageData[prevTabDomain].timeline.length - 1].push(Math.floor(now / 1000));
+      //abUsageData[prevTabDomain].timeline[tabUsageData[prevTabDomain].timeline.length - 1].push(Math.floor(now / 1000));
     }
     lastTime = now;
     prevTabDomain = tabDomain;
@@ -163,7 +165,7 @@ chrome.runtime.onMessage.addListener(async(message, sender, sendResponse) => {
           usageCount: tabUsageData[tabDomain].usageCount + 1,
           totalTime: tabUsageData[tabDomain].totalTime + now - lastTime,
           lastActiveTime: Math.floor(now / 1000),
-          timeline: tabDomain.timeline
+          //timeline: tabDomain.timeline
         }})
       } else {
         sendResponse({success: true, tabUsageData: tabUsageData[tabDomain]});
