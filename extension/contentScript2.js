@@ -239,12 +239,14 @@ const modalCSS = `
 }
 .extension-wrapper .to {
   opacity: 0;
+  height: 64px;
   position: absolute;
   transition: opacity 100ms cubic-bezier(0.4, 0.0, 1, 1);
 }
 .extension-wrapper .to-contents {
   transform: scale(.55);
   transform-origin: 0 0;
+  display: none;
   transition: transform 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 .extension-wrapper .timers {
@@ -358,6 +360,7 @@ const modalCSS = `
 }
 .extension-wrapper .expand .to-contents {
   transform: scale(1);
+  display: block;
 }
 `;
 
