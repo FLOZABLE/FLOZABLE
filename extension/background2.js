@@ -35,6 +35,7 @@ let undefinedTabs = [];
     console.log(response.data)
     if(response.data) {
       tabUsageData = response.data;
+      console.log(tabUsageData)
     }
   } else {
     console.log(response.reason)
@@ -59,6 +60,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 
   //date change detection
   if(new Date(lastTime).setHours(0, 0, 0, 0) != new Date(now).setHours(0, 0, 0, 0)) {
+    console.log(new Date(lastTime).setHours(0, 0, 0, 0),new Date(now).setHours(0, 0, 0, 0))
     let response = update();
     if(response.success) {
       tabUsageData = {};
@@ -87,7 +89,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     console.log(tabDomain)
     if (!tabUsageData[tabDomain]) {
       chrome.tabs.get(tabId, (tab) => {
-        tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000)/* , timeline: [[Math.floor(now / 1000)]] */};
+        tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000)/* , timeline: [[Math.floor(now / 1000)]] */, favicon: tab.favIconUrl};
       });
     } else {
       //update
@@ -120,6 +122,9 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 chrome.tabs.onUpdated.addListener((tabId) => {
   const now  = Date.now();
   console.log(tabId)
+  if(now - lastTime < 3000) {
+    return 0;
+  }
   chrome.tabs.get(tabId, async(tab) => {
     console.log(tab.url)
     if(tab.url == 'chrome://newtab/' || tab.url == '') {
@@ -129,7 +134,7 @@ chrome.tabs.onUpdated.addListener((tabId) => {
     undefinedTabs = undefinedTabs.filter(item => item !== tabId);
     let tabDomain = new URL(tab.url).hostname;
     if(!tabUsageData[tabDomain]) {
-      tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000)/* , timeline: [[Math.floor(now / 1000)]] */};
+      tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000)/* , timeline: [[Math.floor(now / 1000)]] */, favicon: tab.favIconUrl};
     } else {
       tabUsageData[tabDomain].usageCount++;
       tabUsageData[tabDomain].lastActiveTime = Math.floor(now / 1000);
