@@ -85,7 +85,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     console.log(tabDomain)
     if (!tabUsageData[tabDomain]) {
       chrome.tabs.get(tabId, (tab) => {
-        tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000), timeline: [[Math.floor(now / 1000)]]};
+        tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000), timeline: [[Math.floor(now / 1000)]], favicon: tab.favIconUrl};
       });
     } else {
       //update
@@ -127,7 +127,7 @@ chrome.tabs.onUpdated.addListener((tabId) => {
     undefinedTabs = undefinedTabs.filter(item => item !== tabId);
     let tabDomain = new URL(tab.url).hostname;
     if(!tabUsageData[tabDomain]) {
-      tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000), timeline: [[Math.floor(now / 1000)]]};
+      tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000), timeline: [[Math.floor(now / 1000)]], favicon: tab.favIconUrl};
     } else {
       tabUsageData[tabDomain].usageCount++;
       tabUsageData[tabDomain].lastActiveTime = Math.floor(now / 1000);

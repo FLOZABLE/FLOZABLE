@@ -7,15 +7,20 @@ let rankingGraph;
 let DoughnutChart;
 let histogram;
 let lineChart;
-let calendarDate = new Date();
+let calendarDate = new Date().setHours(0, 0, 0, 0);
 let subjects;
 let compareGraph;
+let activities;
+let appUsageDoughnutChart;
 const usersList = [];
 const myRanking = {
   daily: [],
   weekly: [],
   monthly: []
 };
+
+const activitiesWrapper = document.getElementById('activities-wrapper');
+
 (async () => {
   let myInfo = await fetch('/account/bring-my-info', {
     method: 'post',
@@ -23,7 +28,13 @@ const myRanking = {
 
   let ranking = await fetch('/ranking', {
     method: 'post',
-  })
+  });
+
+  activities = await fetch('/api/bring-activities', {
+    method:'post'
+  });
+
+  activities = await activities.json();
 
   myInfo = await myInfo.json();
   const userInfo = myInfo.userInfo;
@@ -136,7 +147,7 @@ const myRanking = {
         }
       },
       dateClick: function(info) {
-        calendarDate = info.date;
+        calendarDate = new Date(info.date).setHours(0, 0, 0, 0);
         updateCharts();
       }
     });
@@ -235,6 +246,7 @@ const myRanking = {
 
   let ctx1 = document.getElementById("chart-line").getContext("2d");
   let ctx2 = document.getElementById("chart-doughnut").getContext("2d");
+  const appUsageCont = document.getElementById('chart-appusage').getContext("2d");
 
   let gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
 
@@ -527,7 +539,29 @@ const myRanking = {
       addCompareTargetModal.classList.add('closed-modal');
       docmain.classList.remove('blurbg');
     }
-  })
+  });
+  console.log(calendarDate, activities.data[calendarDate / 1000], Object.values(activities.data[calendarDate / 1000]).map(web => {
+    console.log(web)
+    return web.totlaTime
+  }),)
+  appUsageDoughnutChart = new Chart(appUsageCont, {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(activities.data[calendarDate / 1000]),
+      datasets: [{
+        label: "Projects",
+        backgroundColor: ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7", "#e60049", "#0bb4ff", "#50e991", "#e6d800", "#9b19f5", "#ffa300", "#dc0ab4", "#b3d4ff", "#00bfa0"],
+        data: Object.values(activities.data[calendarDate / 1000]).map(web => {
+          return web.totalTime
+        }),
+        fill: false
+      }],
+    },
+    options: {
+      responsive: true,
+
+    },
+  });
 })();
 
 function filterTimeline(timeline, startTime, endTime, datum_point) {
@@ -777,12 +811,12 @@ function updateCharts() {
 
     //update doughnut chart
     DoughnutChart.data.datasets[0].data = subjects.map(subject => {
-      const index = Math.floor((calendarDate.setHours(0, 0, 0, 0) / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
+      const index = Math.floor((calendarDate / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
       return subject.daily.total[index] ? subject.daily.total[index] : 0
     });
 
     const hourlyTimeline = subjects.map(subject => {
-      const index = Math.floor((calendarDate.setHours(0, 0, 0, 0) / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
+      const index = Math.floor((calendarDate / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
       return subject.daily.grouped[index] ? subject.daily.grouped[index] : [[0, 0], [0, 0]]
     });
 
@@ -822,6 +856,64 @@ function updateCharts() {
 
     //histogram
     updateHistogram(hourlyTimeline)
+
+    //manage activity
+
+    console.log(activities, calendarDate)
+    const selectedActivity = activities.data[calendarDate / 1000];
+    if(selectedActivity) {
+      const webTitles = Object.keys(selectedActivity);
+      const webs = Object.values(selectedActivity);
+      webs.map((web, index) => {
+        const activityWrapper = document.createElement('li');
+        activityWrapper.classList.add('list-group-item');
+        activityWrapper.classList.add('border-0');
+        activityWrapper.classList.add('d-flex');
+        activityWrapper.classList.add('align-items-center');
+        activityWrapper.classList.add('px-0');
+        activityWrapper.classList.add('mb-2');
+
+        let activityTimeDisp = '';
+        const totalSec = Math.floor(web.totalTime / 1000);
+        let activityHr = Math.floor(totalSec / (60 * 60));
+        let activityMin = Math.floor((totalSec / 60 ) % (60));
+        let activitySec = totalSec % 60;
+        console.log(activityHr, activityMin, activitySec)
+        if(activityHr) {
+          activityTimeDisp += `${activityHr}hr `
+        }
+        if(activityMin) {
+          activityTimeDisp += `${activityMin}min `
+        }
+        activityTimeDisp += `${activitySec}sec / ${web.usageCount} times`
+        activityWrapper.innerHTML = `
+        <div class="w-100">
+        <div class="d-flex align-items-center mb-2">
+          <a class="btn btn-facebook btn-simple mb-0 p-0" target = "_blank" href="https://${webTitles[index]}">
+
+            <div class = "favicon-wrapper">
+            </div>
+          </a>
+          <span class="me-2 text-sm font-weight-normal text-capitalize ms-2">${webTitles[index]}</span>
+          <span class="ms-auto text-sm font-weight-normal">${activityTimeDisp}</span>
+        </div>
+        <div>
+          <div class="progress progress-md">
+            <div class="progress-bar bg-gradient-dark w-80" role="progressbar" aria-valuenow="60"
+              aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+        `;
+        const faviconWrapper = activityWrapper.querySelector('.favicon-wrapper');
+        if(web.favicon) {
+          faviconWrapper.innerHTML = `<img src = "${web.favicon}"/>`
+        }
+        activitiesWrapper.appendChild(activityWrapper);
+      })
+    } else {
+      //timezone err or no extension
+    }
 
   } else if (graphViewOpt == 'week') {
 
@@ -1010,6 +1102,10 @@ function updateHistogram(subjects) {
   })
   histogram.data.datasets[0].data = histogramData;
   histogram.update();
+}
+
+function updateAppUsage() {
+
 }
 
 let graphViewOpt = 'day';

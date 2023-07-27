@@ -253,6 +253,7 @@ const modalCSS = `
   font-size: 14px;
   line-height: 32px;
   margin-left: 10px;
+  border: none !important;
 }
 .extension-wrapper .top {
   background: #6422EB;
@@ -392,7 +393,6 @@ function mouseUp(e) {
   e.preventDefault();
   if(clicked) {
     extensionExpandBtn.classList.add('expand');
-    console.log('d')
   }
   clicked = true;
   isDragging = false;
@@ -417,9 +417,7 @@ let intervalId;
 
 function syncTimer() {
   chrome.runtime.sendMessage({command: 'tab-timer', domain: domain}, (response) => {
-    console.log(response);
     if(response.success) {
-      console.log(response.tabUsageData);
       const seconds = Math.floor(response.tabUsageData.totalTime / 1000);
       timer = {
         sec: Math.floor(seconds % 60),
@@ -475,7 +473,6 @@ document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     clearInterval(intervalId)
   } else {
-    console.log('open');
     syncTimer();
     /* chrome.runtime.sendMessage({command: 'save-data'}, (response) => {
       if(response.success) {

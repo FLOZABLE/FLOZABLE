@@ -739,7 +739,7 @@
               <div class="card h-100">
                 <div class="card-header pb-0 p-3">
                   <div class="d-flex align-items-center">
-                    <h6 class="mb-0">Social</h6>
+                    <h6 class="mb-0">Website usage while studying</h6>
                     <button type="button"
                       class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex align-items-center justify-content-center ms-auto"
                       data-bs-toggle="tooltip" data-bs-placement="bottom"
@@ -749,92 +749,8 @@
                   </div>
                 </div>
                 <div class="card-body p-3">
-                  <ul class="list-group">
-                    <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                      <div class="w-100">
-                        <div class="d-flex align-items-center mb-2">
-                          <a class="btn btn-facebook btn-simple mb-0 p-0" href="javascript:;">
-                            <i class="fab fa-facebook fa-lg"></i>
-                          </a>
-                          <span class="me-2 text-sm font-weight-normal text-capitalize ms-2">Facebook</span>
-                          <span class="ms-auto text-sm font-weight-normal">80%</span>
-                        </div>
-                        <div>
-                          <div class="progress progress-md">
-                            <div class="progress-bar bg-gradient-dark w-80" role="progressbar" aria-valuenow="60"
-                              aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                      <div class="w-100">
-                        <div class="d-flex align-items-center mb-2">
-                          <a class="btn btn-twitter btn-simple mb-0 p-0" href="javascript:;">
-                            <i class="fab fa-twitter fa-lg"></i>
-                          </a>
-                          <span class="me-2 text-sm font-weight-normal text-capitalize ms-2">Twitter</span>
-                          <span class="ms-auto text-sm font-weight-normal">40%</span>
-                        </div>
-                        <div>
-                          <div class="progress progress-md">
-                            <div class="progress-bar bg-gradient-dark w-40" role="progressbar" aria-valuenow="40"
-                              aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                      <div class="w-100">
-                        <div class="d-flex align-items-center mb-2">
-                          <a class="btn btn-reddit btn-simple mb-0 p-0" href="javascript:;">
-                            <i class="fab fa-reddit fa-lg"></i>
-                          </a>
-                          <span class="me-2 text-sm font-weight-normal text-capitalize ms-2">Reddit</span>
-                          <span class="ms-auto text-sm font-weight-normal">30%</span>
-                        </div>
-                        <div>
-                          <div class="progress progress-md">
-                            <div class="progress-bar bg-gradient-dark w-30" role="progressbar" aria-valuenow="30"
-                              aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                      <div class="w-100">
-                        <div class="d-flex align-items-center mb-2">
-                          <a class="btn btn-youtube btn-simple mb-0 p-0" href="javascript:;">
-                            <i class="fab fa-youtube fa-lg"></i>
-                          </a>
-                          <span class="me-2 text-sm font-weight-normal text-capitalize ms-2">Youtube</span>
-                          <span class="ms-auto text-sm font-weight-normal">25%</span>
-                        </div>
-                        <div>
-                          <div class="progress progress-md">
-                            <div class="progress-bar bg-gradient-dark w-25" role="progressbar" aria-valuenow="25"
-                              aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                      <div class="w-100">
-                        <div class="d-flex align-items-center mb-2">
-                          <a class="btn btn-slack btn-simple mb-0 p-0" href="javascript:;">
-                            <i class="fab fa-slack fa-lg"></i>
-                          </a>
-                          <span class="me-2 text-sm font-weight-normal text-capitalize ms-2">Slack</span>
-                          <span class="ms-auto text-sm font-weight-normal">15%</span>
-                        </div>
-                        <div>
-                          <div class="progress progress-md">
-                            <div class="progress-bar bg-gradient-dark w-15" role="progressbar" aria-valuenow="15"
-                              aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
+                  <canvas id="chart-appusage" class="chart-canvas" height="200"></canvas>
+                  <ul class="list-group" id = "activities-wrapper">
                   </ul>
                 </div>
               </div>

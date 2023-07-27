@@ -15,7 +15,7 @@ function encryptText(text, key, iv) {
   const tag = cipher.getAuthTag();
 
   return { encryptedData, tag };
-}
+};
 
 Router.post("/update-tabs", async (req, res) => {
   if(!req.session.user_id) {
@@ -29,7 +29,7 @@ Router.post("/update-tabs", async (req, res) => {
   const date = new Date();
   date.toLocaleString("en-US", { timeZone });
   date.setHours(0, 0, 0, 0);
-  prevWebUsageData[date / 1000] = {data: newWebUsageData};
+  prevWebUsageData[date / 1000] = newWebUsageData;
 
   //decrypt
 
@@ -66,6 +66,29 @@ Router.post('/bring-tabs', async(req, res) => {
   const date = req.body.date;
   res.send({success: true, data: prevWebUsageData[date / 1000]})
   connection.release();
+});
+
+Router.post('/bring-activities', async(req, res) => {
+  if(!req.session.user_id) {
+    return res.send({success: false, reason: 'auth-fail'})
+  }
+  const connection = await (await pool).getConnection();
+
+  let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = "${req.session.user_id}"`);
+  prevWebUsageData = JSON.parse(prevWebUsageData[0].activity);
+  const date = req.body.date;
+  res.send({success: true, data: prevWebUsageData})
+  connection.release();
 })
+
+Router.post('/bring-activity-setting', async(req, res) => {
+  if (!req.session.loggedin) {
+    return res.send({ success : false, reason : 'no session'})
+  }
+  const connection = await (await pool).getConnection();
+  let activitySetting = await connection.query(`SELECT activity_setting from users where user_id = "${req.session.user_id}"`);
+  activitySetting = activitySetting[0].activity_setting;
+  res.send({ success : true, activitySetting : activitySetting})
+});
 
 module.exports = Router;
