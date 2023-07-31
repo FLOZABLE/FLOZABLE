@@ -7,7 +7,7 @@ const sharp = require('sharp');
 const path = require('path');
 const multer = require('multer');
 const Ajv = require("ajv");
-const { connect } = require('http2');
+const webpush = require("web-push");
 
 function hashing(password) {
   let salt = crypto.randomBytes(32).toString('hex');
@@ -27,7 +27,7 @@ function generateId() {
   return groupId;
 }
 
-Router.get('/signin', (req, res) => {
+Router.get('/signin', async(req, res) => {
   if (req.session.loggedin) {
     res.render("authentication/signin/illustration", { loggedin: true });
   } else {
@@ -76,7 +76,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
       console.log(req.session.user_id, req.session.loggedin);
 
       res.cookie("userId", userId, {
-        maxAge: 1000 * 60 * 10,
+        maxAge: 1000 * 60 * 60 * 24 * 30,
         secure: true,
         httpOnly: true,
         signed: true,
@@ -115,7 +115,8 @@ Router.post('/signup-authentication', async (req, res, next) => {
   let hashed = hashing(sanitizedPassword);
 
   const userId = generateId();
-  var user = {
+  
+  const user = {
     name: sanitizedName,
     email: sanitizedEmail,
     hashed_password: hashed[1],
@@ -137,7 +138,14 @@ Router.post('/signup-authentication', async (req, res, next) => {
     req.session.user_id = userId;
     req.session.loggedin = true;
     req.session.name = sanitizedName;
-    req.session.userInfo = {userId: userId, name: sanitizedName, loggedin: true, email: email}
+    req.session.userInfo = {userId: userId, name: sanitizedName, loggedin: true, email: email};
+
+    res.cookie("userId", userId, {
+      maxAge: 1000 * 60 * 60 * 30,
+      secure: true,
+      httpOnly: true,
+      signed: true,
+    });
 
     res.send({ success: true });
     console.log(req.session)

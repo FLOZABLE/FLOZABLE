@@ -13,12 +13,12 @@ const crypto = require("crypto");
 const dotenv = require("dotenv");
 const cors = require('cors');
 dotenv.config({path: ".env.production"});
-var server = http.createServer(app);
+const server = http.createServer(app);
 const port = process.env.PORT;
 //const WebSocketToken = process.env.WEBSOCKET_TOKEN;
 //const WebSocket = require('ws');
 //const wsServer =  new WebSocket.Server({ server });
-var io = require('socket.io')(server);
+const io = require('socket.io')(server);
 const pool = require('./model/pool');
 
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -122,8 +122,13 @@ io.on('connection', (socket) => {
     io.emit('start')
     console.log('test')
   })
+
+  socket.on('test', () => {
+    console.log('test')
+  })
 })
 
+module.exports = io;
 /* wsServer.on('connection', (socket, req) => {
   socket.on('message', (message) => {
     const data = JSON.parse(message);
@@ -143,7 +148,11 @@ io.on('connection', (socket) => {
   });
 }); */
 
+//services
+const notificationService = require('./services/notification');
+notificationService.notificationService();
 
+//Router
 const mainRouter = require("./Router/main");
 const emailRouter = require("./Router/email");
 const accountRouter = require("./Router/account");
@@ -151,7 +160,7 @@ const myAccountRouter = require("./Router/myaccount");
 const chatRouter = require("./Router/chat")(io);
 const studyRouter = require("./Router/study");
 const githubRouter = require("./Router/github");
-const adminRouter = require("./Router/admin/main");
+//const adminRouter = require("./Router/admin/main");
 const articleRouter = require('./Router/article');
 const categoryRouter = require('./Router/article');
 const searchRouter = require('./Router/search');
@@ -161,6 +170,7 @@ const aiRouter = require('./Router/ai');
 const dashboardRouter = require('./Router/dashboard');
 const rankingRouter = require('./Router/ranking');
 const extensionRouter = require('./Router/api');
+const notificationRouter = notificationService.notificationRouter;
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -182,11 +192,9 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: { 
-    maxAge: 1000 * 60 * 60 * 24,
     secure: false,
     httpOnly: true,
     signed: true,
-    authorized: true,
   },
   //store: new fileStore(),
 }))
@@ -198,7 +206,7 @@ app.use('/myaccount', myAccountRouter);
 app.use('/chat', chatRouter);
 app.use('/study', studyRouter);
 app.use('/github', githubRouter);
-app.use('/admin', adminRouter);
+//app.use('/admin', adminRouter);
 app.use('/article', articleRouter);
 app.use('/category', categoryRouter);
 app.use('/search', searchRouter);
@@ -208,6 +216,8 @@ app.use('/ai', aiRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/ranking', rankingRouter);
 app.use('/api', extensionRouter);
+app.use('/notification', notificationRouter);
+
 
 // error handler
 app.use(function (err, req, res, next) {
@@ -221,5 +231,3 @@ app.get('*',function(req,res){
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);
 });
-
-module.exports = app;

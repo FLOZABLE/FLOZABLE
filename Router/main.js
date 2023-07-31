@@ -4,10 +4,24 @@ const fs = require("fs");
 const pool = require('../model/pool');
 
 Router.get("/", async (req, res) => {
-  if(req.session.loggedin == true){
-    res.render("index", {loggedin: true});
+  if (req.session.loggedin) {
+    res.render("index", {loggedIn: true});
+  } else if (req.signedCookies.userId) {
+    const connection = await (await pool).getConnection();
+    let userInfo = await connection.query('SELECT name, email, myinfo FROM users where user_id = ?', [req.signedCookies.userId]);
+    connection.release();
+    userInfo = userInfo[0];
+    if (userInfo) {
+      req.session.user_id = req.signedCookies.userId;
+      req.session.name = userInfo.name;
+      req.session.loggedin = true;
+      req.session.userInfo = {userId: req.signedCookies.userId, name: userInfo.name, loggedin: true, email: userInfo.email, myinfo: userInfo.myinfo};
+      res.render('index', {loggedIn: true});
+    } else {
+      res.render('index', {loggedIn: false});
+    }
   } else {
-    res.render("index", {loggedin: false});
+    res.render("index", {loggedIn: false});
   }
 })
 

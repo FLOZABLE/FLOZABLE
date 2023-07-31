@@ -1,11 +1,3 @@
-<script>
-  function replaceImg() {
-    const profiles = document.querySelectorAll(".profile");
-    profiles.forEach(profile => {
-      profile.setAttribute('src', "../../img/default_profile.jpg")
-    })
-  }
-</script>
 <aside
   class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark"
   id="sidenav-main">
@@ -23,25 +15,26 @@
       <li class="nav-item mb-2 mt-0">
         <a data-bs-toggle="collapse" href="#ProfileNav" class="nav-link text-white" aria-controls="ProfileNav"
           role="button" aria-expanded="false">
-          <img src="../../img/profiles/<%= userInfo.userId%>.jpeg"  onerror="replaceImg()" class="avatar profile">
-          <span class="nav-link-text ms-2 ps-1">Brooklyn Alice</span>
+          <!-- src -->
+          <img src="/profile-images/<%= userInfo.userId%>.jpeg" class="avatar profile">
+          <span class="nav-link-text ms-2 ps-1"><%= userInfo.name%></span>
         </a>
         <div class="collapse" id="ProfileNav" style>
           <ul class="nav ">
             <li class="nav-item">
-              <a class="nav-link text-white" href="../../pages/pages/profile/overview.html">
+              <a class="nav-link text-white" href="/account">
                 <span class="sidenav-mini-icon"> <i class="fa-solid fa-user" style="color: #ffffff;"></i> </span>
                 <span class="sidenav-normal  ms-3  ps-1"> My Profile </span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white " href="../../pages/pages/account/settings.html">
+              <a class="nav-link text-white " href="/account/setting">
                 <span class="sidenav-mini-icon"> <i class="fa-solid fa-gear" style="color: #ffffff;"></i> </span>
                 <span class="sidenav-normal  ms-3  ps-1"> Settings </span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white " href="../../pages/authentication/signin/basic.html">
+              <a class="nav-link text-white " href="/account/logout">
                 <span class="sidenav-mini-icon"> <i class="fa-solid fa-arrow-right-from-bracket"
                     style="color: #ffffff;"></i> </span>
                 <span class="sidenav-normal  ms-3  ps-1"> Logout </span>

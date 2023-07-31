@@ -64,7 +64,11 @@
                     <a href="../#review" class="nav-item nav-link">Review</a>
                     <a href="/dashboard/stats" class="nav-item nav-link">Dashboard</a>
                 </div>
-                <a href="/account/signin" class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block">Sign In</a>
+                <% if (loggedIn) {%>
+                  <a href="/account/logout" class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block">Log Out</a>
+                <% } else { %>
+                  <a href="/account/signin" class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block">Sign In</a>
+                <% } %>
             </div>
         </nav>
       </div>

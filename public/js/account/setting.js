@@ -335,6 +335,19 @@ notificationUpdBtn.addEventListener('click', async() => {
 
   if (response.success) {
     successMsg('Updated Notifications!');
+    if ('Notification' in window) {
+      // Check if the browser supports notifications
+    
+      Notification.requestPermission().then(function (permission) {
+        if (permission === 'granted') {
+        } else if (permission === 'denied') {
+          setTimeout(() => {
+            errMsg('Enable Notifications to receive Push Notifications!');
+          }, 3000);
+        }
+        console.log(permission)
+      });
+    }
   } else {
     errMsg(response.reason);
   }
