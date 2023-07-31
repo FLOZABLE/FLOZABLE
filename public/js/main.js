@@ -139,3 +139,58 @@ planYearBtn.addEventListener('click', () => {
   planYear.classList.toggle('active');
 })
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('./service-worker.js');
+      console.log('Service worker registered:', registration);
+    } catch (error) {
+      console.error('Error registering service worker:', error);
+    }
+  });
+} else {
+  console.log('Service workers are not supported in this browser.');
+}
+
+// Request permission for push notifications
+if ('Notification' in window) {
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      // User has allowed notifications
+      // You can proceed to subscribe to push notifications
+      console.log('test')
+      subscribeUserToPush();
+    } else if (permission === 'denied') {
+      // User has blocked notifications
+      // Handle this case accordingly
+      console.log('Push notifications are blocked by the user.');
+    }
+  });
+} else {
+  console.log('Notifications are not supported in this browser.');
+}
+
+async function subscribeUserToPush() {
+  if (!('serviceWorker' in navigator)) {
+    console.log('Service workers are not supported in this browser.');
+    return;
+  }
+
+  try {
+    console.log(navigator.serviceWorker)
+    navigator.serviceWorker.ready.then(registration => {
+      registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: 'BLA00cufFwkKvcgi4-4TEGnZfoKqdQofWox2I4QJk5QCM-7MkTCSjGQE7AhbHAQcx6LbJbuFKe0LDhI4J-krUAY'
+      }).then(subscription => {
+        // Send the subscription object to your server for storage
+        // The server will need to store the endpoint URL, auth, and p256dh keys
+      }).catch(error => {
+        // Failed to subscribe to push notifications
+        console.error('Error subscribing to push notifications:', error);
+      });
+    });
+  } catch (error) {
+    console.error('Error subscribing to push notifications:', error);
+  }
+}
