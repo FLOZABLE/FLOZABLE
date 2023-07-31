@@ -140,26 +140,36 @@ planYearBtn.addEventListener('click', () => {
 })
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    try {
-      const registration = await navigator.serviceWorker.register('./service-worker.js');
-      console.log('Service worker registered:', registration);
-    } catch (error) {
-      console.error('Error registering service worker:', error);
-    }
-  });
+  const serviceWorkerRegistered = localStorage.getItem('serviceWorkerRegistered');
+
+  if (!serviceWorkerRegistered) {
+    // Register the service worker if it hasn't been registered before
+    window.addEventListener('load', async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('./service-worker.js');
+        console.log('Service worker registered:', registration);
+
+        // Set the flag to indicate that the service worker has been registered
+        localStorage.setItem('serviceWorkerRegistered', 'true');
+      } catch (error) {
+        console.error('Error registering service worker:', error);
+      }
+    });
+  } else {
+    console.log('Service worker has already been registered.');
+  }
 } else {
   console.log('Service workers are not supported in this browser.');
 }
 
-// Request permission for push notifications
 if ('Notification' in window) {
-  Notification.requestPermission().then((permission) => {
+  Notification.requestPermission().then(async(permission) => {
     if (permission === 'granted') {
-      // User has allowed notifications
-      // You can proceed to subscribe to push notifications
-      console.log('test')
-      subscribeUserToPush();
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscribeUserToPush();
+      }
     } else if (permission === 'denied') {
       // User has blocked notifications
       // Handle this case accordingly
@@ -177,19 +187,24 @@ async function subscribeUserToPush() {
   }
 
   try {
-    console.log(navigator.serviceWorker)
-    navigator.serviceWorker.ready.then(registration => {
-      registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: 'BLA00cufFwkKvcgi4-4TEGnZfoKqdQofWox2I4QJk5QCM-7MkTCSjGQE7AhbHAQcx6LbJbuFKe0LDhI4J-krUAY'
-      }).then(subscription => {
-        // Send the subscription object to your server for storage
-        // The server will need to store the endpoint URL, auth, and p256dh keys
-      }).catch(error => {
-        // Failed to subscribe to push notifications
-        console.error('Error subscribing to push notifications:', error);
-      });
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: 'BLA00cufFwkKvcgi4-4TEGnZfoKqdQofWox2I4QJk5QCM-7MkTCSjGQE7AhbHAQcx6LbJbuFKe0LDhI4J-krUAY',
     });
+    console.log('Subscription:', subscription);
+    let response = await fetch('/notification/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({subscription: subscription}),
+    });
+    response = await response.json();
+    console.log(response)
+    if (response.success) {
+      console.log('success')
+    } else {
+      console.log('fail')
+    }
   } catch (error) {
     console.error('Error subscribing to push notifications:', error);
   }
