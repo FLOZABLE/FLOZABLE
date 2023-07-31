@@ -115,7 +115,9 @@ Router.post('/signup-authentication', async (req, res, next) => {
   let hashed = hashing(sanitizedPassword);
 
   const userId = generateId();
-  
+  const keySalt = crypto.randomBytes(32).toString('hex');
+  const iv = crypto.randomBytes(16).toString('hex');
+
   const user = {
     name: sanitizedName,
     email: sanitizedEmail,
@@ -124,6 +126,8 @@ Router.post('/signup-authentication', async (req, res, next) => {
     user_id: userId,
     timezone: timeZone,
     datum_point: date / 1000,
+    key_salt: keySalt,
+    iv: iv
   };
 
   connection.query('INSERT INTO users SET ?', user);
@@ -394,7 +398,6 @@ Router.post('/update/:type', upload.single('image'), async(req, res) => {
 
     const updatedNotificationSettings = req.body.notificationSettings;
     const isValid = isValidJSON(updatedNotificationSettings, schema);
-    console.log(updatedNotificationSettings)
     if (isValid) {
       const updateInfo = [{ notification : JSON.stringify(updatedNotificationSettings) }, req.session.user_id];
       let update = await connection.query('UPDATE users set ? WHERE user_id = ?', updateInfo);
