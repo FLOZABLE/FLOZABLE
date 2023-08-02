@@ -119,14 +119,14 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   });
 });
 
-chrome.tabs.onUpdated.addListener((tabId) => {
-  const now  = Date.now();
-  console.log(tabId)
-  if(now - lastTime < 3000) {
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status !== 'complete' || !tab.active) {
     return 0;
   }
+  console.log(changeInfo, tab)
+  const now  = Date.now();
+  console.log(tabId)
   chrome.tabs.get(tabId, async(tab) => {
-    console.log(tab.url)
     if(tab.url == 'chrome://newtab/' || tab.url == '') {
       undefinedTabs.push(tabId);
       return 0;

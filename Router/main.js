@@ -2,9 +2,11 @@ const express = require("express");
 const Router = express.Router();
 const fs = require("fs");
 const pool = require('../model/pool');
+const account = require('./account');
 
 Router.get("/", async (req, res) => {
-  if (req.session.loggedin) {
+  account.autoSignin(req, res, (() => res.render('index', {loggedIn: true})), (() => res.render('index', {loggedIn: false})));
+  /* if (req.session.loggedin) {
     res.render("index", {loggedIn: true});
   } else if (req.signedCookies.userId) {
     const connection = await (await pool).getConnection();
@@ -22,7 +24,7 @@ Router.get("/", async (req, res) => {
     }
   } else {
     res.render("index", {loggedIn: false});
-  }
+  } */
 })
 
 Router.get('/privacy-policy', async(req, res) => {

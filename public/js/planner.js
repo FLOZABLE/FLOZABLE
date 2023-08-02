@@ -1,5 +1,6 @@
 let dailyPlanCalendar  = new Swiper('.swiper-container#daily-planner', {
   loop: true,
+  allowTouchMove: false,
   navigation: {
     nextEl: 'calendar-btn.nextday',
     prevEl: '.calendar-btn.prevday',
@@ -676,7 +677,7 @@ planSaveBtn.addEventListener('click', async() => {
 });
 
 async function updatePlan () {
-  /* const {name, id, date, startHr, startMin, length, repeat, description, subject, notification, priority} = selectedPlan;
+  const {name, id, date, startHr, startMin, length, repeat, description, subject, notification, priority} = selectedPlan;
   let response = await fetch('/study/update-plan', {
     method: 'post',
     headers: {
@@ -709,7 +710,7 @@ async function updatePlan () {
     notificationAlertFail.classList.remove('notify');
     notificationAlertSuccess.offsetHeight;
     notificationAlertFail.classList.add('notify');
-  } */
+  }
 }
 
 planRepeatCont.addEventListener('change', () => {
@@ -850,6 +851,7 @@ function mouseUp(planInfo, e) {
   target.style.opacity = "1";
   target.parentNode.removeEventListener('mousemove', bind);
   if(initialMouseY == -1) {
+    console.log('test')
     selectedPlan = planInfo;
     openAddPlanModal();
     return 0;

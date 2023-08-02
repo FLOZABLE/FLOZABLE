@@ -43,6 +43,7 @@
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",
     "node-sass-middleware": "^1.0.1",
+    "node-schedule": "^2.1.1",
     "openai": "^3.2.1",
     "passport": "^0.6.0",
     "passport-github": "^1.1.0",

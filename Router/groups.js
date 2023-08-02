@@ -3,6 +3,7 @@ const Router = express.Router();
 const fs = require("fs");
 const pool = require('../model/pool');
 const crypto = require("crypto");
+const account  = require('./account');
 
 function hashing(password) {
   let salt = crypto.randomBytes(32).toString('hex')
@@ -24,19 +25,19 @@ function generateGroupId() {
 
 
 Router.get("/", async (req, res) => {
-  if (req.session.loggedin == true) {
-    res.render("group/groups", { loggedin: true });
-  } else {
-    res.render("group/groups", { loggedin: false });
-  }
+  account.autoSignin(req, res, (() => {
+    res.render("group/groups");
+  }), (() => {
+    res.redirect('/account/signin');
+  }))
 })
 
 Router.get('/create', (req, res) => {
-  if (req.session.loggedin == true) {
-    res.render('group/create', { loggedin: true });
-  } else {
-    res.render('group/create', { loggedin: false });
-  }
+  account.autoSignin(req, res, (() => {
+    res.render("group/create");
+  }), (() => {
+    res.redirect('/account/signin');
+  }))
 })
 
 Router.get('/:id', async(req, res) => {
@@ -44,61 +45,59 @@ Router.get('/:id', async(req, res) => {
 })
 
 Router.post('/create/retriveProgress', (req, res) => {
-  console.log(req.session)
   res.send({ retrivedProgress: req.session.retrivedProgress });
 })
 
 Router.post('/create-validate', async (req, res) => {
-  if (!req.session.loggedin) {
-    console.log('not logged in')
+  account.autoSignin(req, res, (async() => {
+    const connection = await (await pool).getConnection();
+    let hashed = hashing(req.body['password']);
+    let group = req.body;
+    if(!group.name || !group.explanation){
+      console.log('null');
+      res.send({success: false, reason: 'err', msg: 'Fill out the form'})
+      return 0
+    }
+  
+    const query = 'INSERT INTO groups SET ?';
+    const values = {
+      name: group.name,
+      explanation: group.explanation,
+      tags: JSON.stringify(group.tags),
+      max_members: group.max_people,
+      visibility: group.visibility,
+      hashed_password: hashed[1],
+      salt: hashed[0],
+      date: new Date().getTime(),
+      group_id: generateGroupId(),
+      leader: req.session.user_id,
+      members: JSON.stringify([req.session.user_id, req.session.name]),
+      color: group.color,
+      goal_hr: group.goal_hr,
+      font: group.font
+    };
+  
+    const query1 = await connection.query(query, values);
+    const query2 = await connection.query(`UPDATE users SET groups = CASE
+    WHEN groups IS NULL THEN '${values.group_id}'
+    WHEN groups = '' THEN '${values.group_id}'
+    ELSE CONCAT(groups, ',', '${values.group_id}')
+    END
+    WHERE user_id = '${req.session.user_id}'`);
+    if (query1.affectedRows + query2.affectedRows >= 1) {
+      res.send({ success: true });
+      delete req.session.retrivedProgress;
+      req.session.save();
+      console.log(req.session, 'affected')
+    } else {
+      res.send({ success: false });
+    }
+  
+    connection.release();
+  }), (() => {
     req.session.retrivedProgress = req.body;
-    return res.send({ success: false, reason: 'not loggedin' });
-  }
-
-  const connection = await (await pool).getConnection();
-  let hashed = hashing(req.body['password']);
-  let group = req.body;
-  if(!group.name || !group.explanation){
-    console.log('null');
-    res.send({success: false, reason: 'err', msg: 'Fill out the form'})
-    return 0
-  }
-
-  const query = 'INSERT INTO groups SET ?';
-  const values = {
-    name: group.name,
-    explanation: group.explanation,
-    tags: JSON.stringify(group.tags),
-    max_members: group.max_people,
-    visibility: group.visibility,
-    hashed_password: hashed[1],
-    salt: hashed[0],
-    date: new Date().getTime(),
-    group_id: generateGroupId(),
-    leader: req.session.user_id,
-    members: JSON.stringify([req.session.user_id, req.session.name]),
-    color: group.color,
-    goal_hr: group.goal_hr,
-    font: group.font
-  };
-
-  const query1 = await connection.query(query, values);
-  const query2 = await connection.query(`UPDATE users SET groups = CASE
-  WHEN groups IS NULL THEN '${values.group_id}'
-  WHEN groups = '' THEN '${values.group_id}'
-  ELSE CONCAT(groups, ',', '${values.group_id}')
-  END
-  WHERE user_id = '${req.session.user_id}'`);
-  if (query1.affectedRows + query2.affectedRows >= 1) {
-    res.send({ success: true });
-    delete req.session.retrivedProgress;
-    req.session.save();
-    console.log(req.session, 'affected')
-  } else {
-    res.send({ success: false });
-  }
-
-  connection.release();
+    res.send({ success: false, reason: 'not autenticated' });
+  }))
 })
 
 Router.post('/join/:id', async (req, res) => {

@@ -4,7 +4,7 @@
   font-family: Poppins, sans-serif;
 }
 
-main {
+.main {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,7 +16,7 @@ main {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
-header {
+.header {
   background-color: #525ADD;
 }
 
@@ -26,11 +26,11 @@ header {
 .waves img{
   width: 100%;
 }
-section {
+.section {
   padding: 20px;
 }
 
-section#explanation {
+.section#explanation {
   background-color: #fff;
 }
 
@@ -69,7 +69,7 @@ h1 {
   font-weight: bold;
 }
 
-section#ranking {
+.section#ranking {
   background-color: #6e76f6;
 }
 
@@ -93,7 +93,7 @@ section#ranking {
   background-color: #a5a9f5;
 }
 
-section#study-time {
+.section#study-time {
   background-color: #a5a9f5;
 }
 
@@ -101,11 +101,11 @@ section#study-time {
   background-color: #caccfa;
 }
 
-section#other-apps {
+.section#other-apps {
   background-color: #caccfa;
 }
 
-section#focus p, section#focus h1, section#focus h2, section#focus h3, section#focus h4 {
+.section#focus p, .section#focus h1, .section#focus h2, .section#focus h3, .section#focus h4 {
   color: #6e76f6;
 }
 
@@ -113,7 +113,7 @@ section#focus p, section#focus h1, section#focus h2, section#focus h3, section#f
   background-color: #525ADD;
 }
 
-section#timeline {
+.section#timeline {
   background-color: #525ADD;
 }
 
@@ -206,13 +206,13 @@ section#timeline {
 .waves#wave6 {
   background-color: #6e76f6;
 }
-section#quote {
+.section#quote {
   background-color: #6e76f6;
   color: #fff;
   padding: 30px;
 }
 
-section#quote h1 {
+.section#quote h1 {
   font-size: 30px;
   line-height: 140%;
 }
@@ -221,19 +221,19 @@ section#quote h1 {
   background-color: #a5a9f5;
 }
 
-footer {
+.footer {
   background-color: #a5a9f5;
 }
 
-footer a, footer h1, footer h2, footer h3, footer h4, footer p {
+.footer a, .footer h1, .footer h2, .footer h3, .footer h4, .footer p {
   color: #fff;
 }
 
-footer .wrapper {
+.footer .wrapper {
   flex-direction: column;
 }
 
-footer .wrapper > div {
+.footer .wrapper > table {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -241,11 +241,11 @@ footer .wrapper > div {
   margin-bottom: 20px;
 }
 
-footer .pages a {
+.footer .pages a {
   padding: 0px 20px;
 }
 
-footer a {
+.footer a {
   text-decoration: none;
   font-weight: bold;
 }
@@ -254,7 +254,7 @@ footer a {
   margin: 0px 10px;
 }
 
-footer .notification {
+.footer .notification {
   padding: 20px;
 }
 
