@@ -154,19 +154,10 @@ notificationService.notificationService();
 
 //Router
 const mainRouter = require("./Router/main");
-const emailRouter = require("./Router/email");
 const accountRouter = require("./Router/account").Router;
-const myAccountRouter = require("./Router/myaccount");
-const chatRouter = require("./Router/chat")(io);
 const studyRouter = require("./Router/study");
-const githubRouter = require("./Router/github");
-//const adminRouter = require("./Router/admin/main");
-const articleRouter = require('./Router/article');
-const categoryRouter = require('./Router/article');
-const searchRouter = require('./Router/search');
 const groupsRouter = require("./Router/groups");
 const linksRouter = require('./Router/links');
-const aiRouter = require('./Router/ai');
 const dashboardRouter = require('./Router/dashboard');
 const rankingRouter = require('./Router/ranking');
 const extensionRouter = require('./Router/api');
@@ -200,19 +191,10 @@ app.use(session({
 }))
 
 app.use('/', mainRouter);
-app.use('/email', emailRouter);
 app.use('/account', accountRouter);
-app.use('/myaccount', myAccountRouter);
-app.use('/chat', chatRouter);
 app.use('/study', studyRouter);
-app.use('/github', githubRouter);
-//app.use('/admin', adminRouter);
-app.use('/article', articleRouter);
-app.use('/category', categoryRouter);
-app.use('/search', searchRouter);
 app.use('/groups', groupsRouter);
 app.use('/links', linksRouter);
-app.use('/ai', aiRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/ranking', rankingRouter);
 app.use('/api', extensionRouter);

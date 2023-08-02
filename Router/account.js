@@ -52,7 +52,7 @@ function generateId() {
 }
 
 Router.get('/signin', async (req, res) => {
-  autoSignin(req, res, (() => res.render("authentication/signin/illustration", { loggedin: true })), (() => res.render("authentication/signin/illustration", { loggedin: false })));
+  autoSignin(req, res, (() => res.render("/account/signin", { loggedin: true })), (() => res.render("/account/signup", { loggedin: false })));
 });
 
 Router.post('/signin-authentication', async (req, res, next) => {
@@ -179,22 +179,8 @@ Router.post('/signup-authentication', async (req, res, next) => {
 });
 
 Router.get('/signup', function (req, res) {
-  autoSignin(req, res, (() => res.render("authentication/signup/illustration", {
-    title: 'Registration Page',
-    name: '',
-    email: '',
-    password: '',
-    button: "SIGN IN",
-    path: "/account",
-  })), 
-  (() => res.render("authentication/signup/illustration", {
-    title: 'Registration Page',
-    name: '',
-    email: '',
-    password: '',
-    button: "SIGN IN",
-    path: "/account",
-  })));
+  autoSignin(req, res, (() => res.render("/account/signup")), 
+  (() => res.render("/account/signup")));
 });
 
 Router.get('/logout', function (req, res) {
