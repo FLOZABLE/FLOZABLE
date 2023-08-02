@@ -155,7 +155,7 @@ notificationService.notificationService();
 //Router
 const mainRouter = require("./Router/main");
 const emailRouter = require("./Router/email");
-const accountRouter = require("./Router/account");
+const accountRouter = require("./Router/account").Router;
 const myAccountRouter = require("./Router/myaccount");
 const chatRouter = require("./Router/chat")(io);
 const studyRouter = require("./Router/study");

@@ -1,349 +1,794 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="en" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="./style.css">
+  <title></title>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]-->
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    a[x-apple-data-detectors] {
+      color: inherit !important;
+      text-decoration: inherit !important;
+    }
+
+    #MessageViewBody a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    p {
+      line-height: inherit
+    }
+
+    .desktop_hide,
+    .desktop_hide table {
+      mso-hide: all;
+      display: none;
+      max-height: 0px;
+      overflow: hidden;
+    }
+
+    .image_block img+div {
+      display: none;
+    }
+
+    @media (max-width:620px) {
+      .desktop_hide table.icons-inner {
+        display: inline-block !important;
+      }
+
+      .icons-inner {
+        text-align: center;
+      }
+
+      .icons-inner td {
+        margin: 0 auto;
+      }
+
+      .social_block.desktop_hide .social-table {
+        display: inline-block !important;
+      }
+
+      .row-content {
+        width: 100% !important;
+      }
+
+      .stack .column {
+        width: 100%;
+        display: block;
+      }
+
+      .mobile_hide {
+        max-width: 0;
+        min-height: 0;
+        max-height: 0;
+        font-size: 0;
+        display: none;
+        overflow: hidden;
+      }
+
+      .desktop_hide,
+      .desktop_hide table {
+        max-height: none !important;
+        display: table !important;
+      }
+    }
+  </style>
 </head>
-<body>
-  <main>
-    <div class="inner">
-      <header>
-        <a href="https://flozable.com">
-          <img src="https://flozable.com/img/logo.png" alt="logo" id = "logo">
-        </a>
-      </header>
-      <div class="waves">
-        <img src="./images/wave1.png" alt="">
-      </div>
-      <section id = "explanation">
-        <div class="wrapper">
-          <div class="seperate">
-            <h1>Your personal <span style="color:#f54f4a;">daily report</span> {{date}}</h1>
-            <p>Go to Dashboard to view the full report</p>
-            <a href="">
-              <button id = "toDashboard"><p>Go to Dashboard</p></button>
-            </a>
-          </div>
-          <div class="seperate">
-            <div class="study-streak">
-              <svg height="182px" width="182px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#000000">
-                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                <g id="SVGRepo_iconCarrier">
-                  <style type="text/css">
-                    .st0 {
-                      fill: #000000;
-                    }
-                  </style>
-                  <g>
-                    <path class="st0" d="M260.847,51.057C210.844,88.23,92.606,195.549,3.954,195.549c-5.836,0-3.486,4.232-3.486,4.232l77.458,32.376 l-47.118,46.646v77.175l251.153,104.964L512,233.189v-77.168L260.847,51.057z M68.485,204.425 c26.6-9.94,53.389-24.653,79.054-41.188c6.421-4.135,12.738-8.416,18.994-12.73c1.375-0.951,2.741-1.886,4.103-2.846 c6.063-4.232,12.036-8.506,17.889-12.802c0.681-0.499,1.335-0.991,2.016-1.491c5.68-4.192,11.234-8.377,16.676-12.528 c0.734-0.565,1.467-1.113,2.193-1.677c6.01-4.612,11.843-9.142,17.502-13.592l204.576,85.503 c-53.933,41.067-123.229,87.479-176.38,87.479c-3.797,0-7.498-0.25-11.012-0.75l-127.332-53.208l-21.933-9.158L68.485,204.425z M99.885,241.315L238.04,299.07c5.55,0.976,11.23,1.443,17.067,1.443c55.598,0,122.83-42.211,177.573-82.842L275.596,373.182 L58.384,282.415L99.885,241.315z M490.04,224.031L276.906,435.033l-224.138-93.67v-18.252l225.561,94.258L490.04,207.771V224.031z M490.04,194.783L276.209,406.486l-223.44-93.372v-19.445l225.71,94.323L490.04,178.546V194.783z">
-                    </path>
-                  </g>
-                </g>
-              </svg>
-              {{streak}}
-            </div>
-          </div>
-        </div>
-      </section>
-      <section id = "ranking">
-        <div class="wrapper type2">
-          <svg width="64px" height="64px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--noto" preserveAspectRatio="xMidYMid meet" fill="#000000">
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-              <path d="M97.12 59.35c2.22-1.83 15.04-9.76 22.06-16.44c5.48-5.22 7.6-18.85-.83-25.48c-10.96-8.61-21.48.43-21.48.43s-.92-5.11-7.32-8.11c-8.06-3.78-18.27-5.19-27.66-5.07c-9.1.11-17.48 1.21-24.92 4.86c-6.66 3.27-7.06 7.93-7.06 7.93s-8.74-8.35-19.45-1.57C-.24 22.69 2.83 36.29 7.98 42c6.71 7.44 14.77 11.23 18.43 13.97c3.65 2.74 7.15 5.35 7.15 7.7c0 2.35-1.04 2.87-1.44 2.74c-.39-.13-1.08-2.42-2.87-1.44c-2.44 1.35-1.7 6.79 3.39 7.31c4.93.51 5.87-4.7 5.87-4.7l.78-5.09l8.09 5.61l8.87 7.31l-.26 6.26s-.39 4.83-2.74 9.01s-6.13 8.35-6.13 8.35l-.12 3.78l32.89-.78l-1.04-3.65s-4.24-4.66-6.79-9.66c-1.82-3.58-2.11-7.19-2.11-7.19l-.08-8.98l17.07-10.46s1.83 1.44 1.57 1.96s-.32 5.85 3.78 7.83c4.05 1.96 7.31-.52 6.92-3.92c-.39-3.39-2.48-2.22-3.13-1.7c-.65.52-2.09.65-2.48-1.31c-.4-1.94 1.3-3.77 3.52-5.6zM13.09 40.89l-3.91-11.9l4.73-6.19l5.3-1.55s6.77 5.05 7.01 5.46c.24.41 4.32 8.8 4.32 8.8l5.38 19.48l-22.83-14.1zm76.86 15.65c.08-.41 5.05-20.87 5.05-20.87c0-.24 3.5-1.87 3.5-2.2c0-.33 6.36-10.68 6.36-10.68l10.6.41l2.2 10.51l-5.3 8.72c.01.01-22.49 14.51-22.41 14.11z" fill="#fec417"></path>
-              <path d="M119.92 30.64c-.78-9.32-10-11.55-13.79-10.2s-6.25 3.88-7.09 7.48c-.68 2.91-1.36 4.85-2.14 5.15c-.86.32-1.65.19-1.65.19s-.14-6.3-.1-8.84c.1-5.24 1.7-6.58 1.7-6.58s-.34-1.77-1.02-2.75c-.68-.97-1.94-2.23-1.94-2.23s.29 2.52-.97 3.11s-2.62-.29-2.62-.29l1.26 5.24s-2.04 26.12-2.23 26.7c-.19.58-7.86 13.88-7.86 13.88s-4.47 4.18-6.6 5.15c-2.14.97-3.98 3.5-12.23 3.59c-8.25.1-15.34-6.41-15.34-6.41l-7.09-6.8l-5.24-15.44l-.78-15.73l.33-5.72l.23-2.39l-.37-1.21s-.68.68-1.94.39c-1.26-.29-1.75-1.94-1.75-1.94s-.49.78-.58 1.17c-.1.39-.2 1.29-.2 1.29s1.36 1.43 1.65 3.47c.29 2.04-.1 10.49-1.55 10.29c-1.46-.19-.98-7.28-6.51-10c-4.79-2.36-11.94-1.65-14.86 4.27c-2.91 5.92-.78 12.91 8.35 19.42s18.85 11.98 20.39 17.2c1.84 6.21-2.33 9.9-2.33 9.9s3.03-.42 4.52-3.67c.48-1.05.66-2.58.73-3.49c3.45 4.5 8.04 8.31 14.12 10.15c2.3.79 4.89 1.19 8.49 1.19c.52 0 1.03-.02 1.54-.04c4.21-.15 7.81-.94 11.3-2.67c4.71-2.18 8.36-5.51 11.18-9.29c-.08.9.47 3.14 1.52 4.91c1.84 3.11 4.95 3.3 4.95 3.3s-4.27-2.52-3.4-8.54c.87-6.02 4.85-8.16 10.87-12.04c6.04-3.89 19.82-11.85 19.05-21.17zM21.27 43.85c-2.71-1.91-7.46-4.46-9.42-8.35c-2.61-5.19-.49-11.46 4.47-12.23c10.3-1.62 10.49 11.17 11.17 12.72c.68 1.55 2.62 1.65 2.62 1.65s.07.86.35 2.52c.01.05.02.09.02.14l.03.15c.19 1.13.46 2.54.84 4.15l.03.12c.21.91.43 1.77.66 2.56c.46 1.66 1.02 3.45 1.71 5.29c-1-.68-6.73-4.65-12.48-8.72zm93.31-7.19c-2.15 3.48-6.5 6.07-9.71 8.25c-4.14 2.81-10.3 7.03-12.04 8.21c.4-1.06.75-2.11 1.07-3.14c.52-1.36 1.07-3.02 1.45-4.81c1-4.7 1.17-8.81 1.17-8.81s2.04.58 3.3-.78c1.26-1.36 1.73-5.58 2.91-7.57c1.84-3.11 5.53-6.31 11.07-2.43c3.2 2.25 3.32 6.96.78 11.08z" fill="#ffa828"></path>
-              <path d="M60.52 79.31l5.65-.07s.15 6.17 1.04 10.77c.89 4.61 2.08 9.73 2.08 9.73s-11.51 3.86-11.44-.3s1.78-12.26 1.78-12.26s1.04-9.65.89-7.87z" fill="#ffa828"></path>
-              <path d="M51.04 15.19s6.29-.71 12.14-.62s11.87 1.24 11.87 1.24s-.35 19.58-1.42 30.57c-1.06 10.99-5.22 19.22-6.33 21.55c-1.07 2.26-1.85 3.47-1.85 3.47l-5.64-.66l-9.75-19.58l.98-35.97z" fill="#ffa828"></path>
-              <path d="M43.51 18.12s1.77-.89 4.34-1.86c2.33-.88 4.43-1.15 4.43-1.15s.06 12.98.27 22.24c.18 7.89 3.1 20.82 4.52 24.28c1.42 3.46 3.98 8.74 3.98 8.74s-5.15-.74-8.32-4.76c-1.67-2.12-9.48-18.52-9.75-29.33s.79-18.43.53-18.16z" fill="#ffefab"></path>
-              <path d="M40.58 19.62c-.18.53-1.59 11.7.62 22.06s5.48 17.45 7.64 20.26c1.92 2.49 3.17 3.67 3.88 3.67s-2.92-8.59-4.61-15.33c-1.68-6.73-2.57-14.8-2.75-18.78c-.18-3.99-.35-14.27-.35-14.27s-1.95.89-2.39 1.15c-.44.27-2.04 1.24-2.04 1.24z" fill="#fffcfd"></path>
-              <path d="M53.34 99.01s3.81-6.2 4.61-10.9c.8-4.7 1.24-8.86 1.24-8.86l2.36.1s-.23 6.81-.5 11.42s-1.06 9.13-1.06 9.13l-6.65-.89z" fill="#ffefab"></path>
-              <path d="M56.27 75.41s1.77-1.73 6.64-1.73s6.96 1.87 6.96 1.87l.13 6.01s-3.24-1.01-7.18-1.06c-3.28-.04-6.81 1.18-6.81 1.18l.26-6.27z" fill="#d1701c"></path>
-              <path d="M35 15.72c.82-.76 8.68-6.66 27.29-6.82c20.02-.18 27.53 5.62 28 5.94c.53.35 1.15 1.95.89 2.66c-.27.71-.8.97-2.3.35c-1.51-.62-8.95-6.05-26.85-5.49c-17.19.53-24.48 5.76-25.25 6.2c-.62.35-1.77.44-2.3-.27c-.54-.7-.01-2.07.52-2.57z" fill="#d1701c"></path>
-              <path d="M91.18 19.89c-2.3.18-.71 18.7-5.58 30.3c-5.22 12.41-11.88 15.95-11.61 16.66c.27.71 6.79-1.26 10.9-7.09c3.81-5.4 6.11-10.19 7.18-16.57c1.05-6.38 1.67-23.5-.89-23.3z" fill="#d1701c"></path>
-              <path d="M34.51 22.01c-.58-.03.01 9.21-.93 13.27c-.36 1.56-1.24 1.88-1.33 2.23c-.09.35 1.93 12.24 5.32 17.46c3.28 5.05 9.75 11.34 10.81 10.28c1.06-1.06-4.7-4.61-8.59-12.32c-2.24-4.42-4.52-11.08-4.61-18.7c-.06-5.04.57-12.15-.67-12.22z" fill="#d1701c"></path>
-              <path d="M86.77 112.71l-.01-14.29H40.89c.14 0 .03 11.62.01 14.34h-6.52v10.35h58.25v-10.35l-5.86-.05z" fill="#865c50"></path>
-              <path d="M55.59 105.93c-1.13-.05-2.43.18-2.48 1.58s-.05 5.45-.05 6.22c0 .77.63 1.44 2.21 1.49c1.58.05 16.41 0 17.45 0c1.04 0 1.58-.9 1.62-1.8c.05-.9-.05-4.69-.05-5.72c0-1.71-1.53-1.71-2.57-1.71c-1.12-.02-16.13-.06-16.13-.06z" fill="#fcc219"></path>
-            </g>
-          </svg>
-          <div class="text">
-            <h3>TODAY'S RANKING</h3>
-          </div>
-          <div class="text">
-            <h4>{{ranking_compare}}</h4>
-          </div>
-          <div class="text">
-            <h1>{{ranking}}</h1>
-          </div>
-        </div>
-      </section>
-      <div class="waves" id = "wave2">
-        <img src="./images/wave2.png" alt="">
-      </div>
-      <section id = "study-time">
-        <div class="wrapper type2">
-          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" width="64px" height="64px" fill="#000000">
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-              <path style="fill:#F7A872;" d="M512,126.885v265.116c0,13.191-10.705,23.896-23.896,23.896H290.434 c-3.847,0-6.954,3.107-6.954,6.942v0.012c0,3.835-3.107,6.942-6.954,6.942h-41.054c-3.847,0-6.954-3.107-6.954-6.942v-0.012 c0-3.835-3.107-6.942-6.954-6.942H23.896C10.705,415.898,0,405.192,0,392.002V126.885c0-10.694,7.037-19.762,16.727-22.797 c2.27-0.717,4.672-1.099,7.169-1.099h464.208C501.294,102.989,512,113.695,512,126.885z">
-              </path>
-              <g>
-                <rect x="314.104" y="374.549" style="fill:#E09461;" width="77.065" height="41.352"></rect>
-                <path style="fill:#E09461;" d="M239.273,102.989V375.74H16.727V104.088c2.27-0.717,4.672-1.099,7.169-1.099H239.273z">
-                </path>
-              </g>
-              <g>
-                <path style="fill:#B3B3B3;" d="M209.14,298.579c25.88,0,46.86,51.281,46.86,77.161H33.455v-77.161L209.14,298.579L209.14,298.579z">
-                </path>
-                <path style="fill:#B3B3B3;" d="M478.533,293.8v81.94H256c0-25.88,20.969-81.94,46.849-81.94L478.533,293.8L478.533,293.8z">
-                </path>
-              </g>
-              <g>
-                <path style="fill:#E6E6E6;" d="M478.533,62.831V328.88H302.849c-25.88,0-46.849,20.981-46.849,46.86V109.692 c0-25.88,20.969-46.86,46.849-46.86C302.849,62.831,478.533,62.831,478.533,62.831z">
-                </path>
-                <path style="fill:#E6E6E6;" d="M256,109.692V375.74c0-25.88-20.981-46.86-46.86-46.86H33.455V62.831H209.14 C235.019,62.831,256,83.812,256,109.692z">
-                </path>
-              </g>
-              <polygon style="fill:#E88158;" points="223.306,238.572 94.273,238.572 94.273,123.877 76.351,123.877 76.351,238.572 58.43,238.572 58.43,256.495 76.351,256.495 76.351,276.208 94.273,276.208 94.273,256.495 223.306,256.495 ">
-              </polygon>
-              <path style="fill:#5DACD8;" d="M165.958,224.236c-30.634,0-55.556-24.923-55.556-55.556v-8.961h17.922v8.961 c0,20.751,16.883,37.634,37.634,37.634s37.634-16.883,37.634-37.634v-8.961h17.922v8.961 C221.514,199.313,196.59,224.236,165.958,224.236z">
-              </path>
-              <g>
-                <rect x="311.117" y="106.553" style="fill:#808080;" width="123.663" height="17.922"></rect>
-                <rect x="311.117" y="266.048" style="fill:#808080;" width="123.663" height="17.922"></rect>
-                <rect x="311.117" y="226.178" style="fill:#808080;" width="123.663" height="17.922"></rect>
-                <rect x="311.117" y="146.424" style="fill:#808080;" width="123.663" height="17.922"></rect>
-                <rect x="311.117" y="186.307" style="fill:#808080;" width="123.663" height="17.922"></rect>
-              </g>
-              <path style="fill:#CCCCCC;" d="M238.078,72.844v266.048c10.909,8.58,17.922,21.89,17.922,36.848V109.692 C256,94.734,248.986,81.424,238.078,72.844z">
-              </path>
-              <polygon style="fill:#E88158;" points="401.92,449.169 363.39,433.195 324.858,449.169 324.858,363.787 401.92,363.787 ">
-              </polygon>
-              <path style="fill:#CCCCCC;" d="M287.065,65.564C268.955,72.045,256,89.351,256,109.692V375.74c0-20.34,12.955-37.647,31.065-44.128 V65.564z">
-              </path>
-            </g>
-          </svg>
-          <div class="text">
-            <h3>TOTAL STUDY TIME</h3>
-          </div>
-          <div class="text">
-            <h4>{{study_time_compare}}</h4>
-          </div>
-          <div class="text">
-            <h1>{{study_time}}</h1>
-          </div>
-        </div>
-      </section>
-      <div class="waves" id = "wave3">
-        <img src="./images/wave3.png" alt="">
-      </div>
-      <section id = "other-apps">
-        <div class="wrapper type2">
-          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" width="64px" height="64px" fill="#000000">
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-              <path style="fill:#FFFFFF;" d="M153.412,510c-20.744-0.048-37.552-16.856-37.6-37.6V39.632c0.048-20.744,16.856-37.552,37.6-37.6 H358.58c20.744,0.048,37.552,16.856,37.6,37.6v432.736c-0.048,20.76-16.88,37.576-37.64,37.6L153.412,510z">
-              </path>
-              <path style="fill:#AAC1CE;" d="M358.58,4c19.672,0.024,35.608,15.96,35.632,35.632v432.736c-0.032,19.664-15.968,35.6-35.632,35.632 H153.412c-19.672-0.024-35.608-15.96-35.632-35.632V39.632C117.804,19.96,133.74,4.024,153.412,4H358.58 M358.58,0H153.412 c-21.864,0.064-39.568,17.768-39.632,39.632v432.736c0.064,21.864,17.768,39.568,39.632,39.632H358.58 c21.864-0.064,39.568-17.768,39.64-39.632V39.632C398.156,17.768,380.444,0.056,358.58,0z">
-              </path>
-              <rect x="132.54" y="40.4" style="fill:#415E72;" width="246.912" height="403.76"></rect>
-              <g>
-                <path style="fill:#AAC1CE;" d="M293.028,26.328H242.5c-2.28-0.008-4.12-1.848-4.128-4.128l0,0c0.008-2.28,1.848-4.12,4.128-4.128 h50.528c2.28,0.008,4.12,1.848,4.128,4.128l0,0C297.148,24.48,295.3,26.32,293.028,26.328z">
-                </path>
-                <circle style="fill:#AAC1CE;" cx="218.964" cy="22.2" r="4.128">
-                </circle>
-                <path style="fill:#AAC1CE;" d="M255.996,495.704c-10.784,0-19.52-8.736-19.52-19.52s8.736-19.52,19.52-19.52 c10.784,0,19.52,8.736,19.52,19.52l0,0C275.5,486.96,266.764,495.688,255.996,495.704z M255.996,460.656 c-8.568,0-15.52,6.952-15.52,15.52s6.952,15.52,15.52,15.52c8.568,0,15.52-6.952,15.52-15.52l0,0 C271.5,467.608,264.556,460.664,255.996,460.656z">
-                </path>
-              </g>
-              <rect x="150.14" y="92.04" style="fill:#25B6D2;" width="40" height="40">
-              </rect>
-              <rect x="207.38" y="92.04" style="fill:#FFFFFF;" width="40" height="40">
-              </rect>
-              <rect x="264.636" y="92.04" style="fill:#25B6D2;" width="40" height="40"></rect>
-              <rect x="321.836" y="92.04" style="fill:#E04F5F;" width="40" height="40"></rect>
-              <rect x="150.14" y="157.144" style="fill:#FFFFFF;" width="40" height="40"></rect>
-              <rect x="207.38" y="157.144" style="fill:#25B6D2;" width="40" height="40"></rect>
-              <rect x="264.636" y="157.144" style="fill:#E04F5F;" width="40" height="40"></rect>
-              <rect x="321.836" y="157.144" style="fill:#25B6D2;" width="40" height="40"></rect>
-              <rect x="150.14" y="222.248" style="fill:#E04F5F;" width="40" height="40"></rect>
-              <g>
-                <rect x="207.38" y="222.248" style="fill:#FFFFFF;" width="40" height="40"></rect>
-                <rect x="264.636" y="222.248" style="fill:#FFFFFF;" width="40" height="40"></rect>
-              </g>
-              <g>
-                <rect x="321.836" y="222.248" style="fill:#25B6D2;" width="40" height="40"></rect>
-                <rect x="150.14" y="287.344" style="fill:#25B6D2;" width="40" height="40"></rect>
-                <rect x="207.38" y="287.344" style="fill:#25B6D2;" width="40" height="40"></rect>
-              </g>
-              <rect x="264.636" y="287.344" style="fill:#E04F5F;" width="40" height="40"></rect>
-              <g>
-                <rect x="321.836" y="287.344" style="fill:#FFFFFF;" width="40" height="40"></rect>
-                <rect x="150.14" y="352.48" style="fill:#FFFFFF;" width="40" height="40"></rect>
-              </g>
-              <rect x="207.38" y="352.48" style="fill:#E04F5F;" width="40" height="40"></rect>
-              <g>
-                <rect x="264.636" y="352.48" style="fill:#25B6D2;" width="40" height="40"></rect>
-                <rect x="321.836" y="352.48" style="fill:#25B6D2;" width="40" height="40"></rect>
-              </g>
-            </g>
-          </svg>
-          <div class="text">
-            <h3>OTHER APPS USAGE</h3>
-          </div>
-          <div class="text">
-            <h4>{{other_apps_compare}}</h4>
-          </div>
-          <div class="text">
-            <h1>{{other_apps}}</h1>
-          </div>
-        </div>
-      </section>
-      <div class="waves" id = "wave4">
-        <img src="./images/wave4.png" alt="">
-      </div>
-      <section id = "focus">
-        <div class="wrapper type2">
-          <svg height="64px" width="64px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 495 495" xml:space="preserve" fill="#000000">
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-              <g>
-                <path style="fill:#FFCD00;" d="M367.012,313.424c12.661,0,22.962-10.301,22.962-22.962S379.673,267.5,367.012,267.5H330v45.924 H367.012z">
-                </path>
-                <path style="fill:#FFCD00;" d="M330,0v112.034c24.427,3.272,43.331,24.234,43.331,49.542c0,25.308-18.904,46.27-43.331,49.542 V227.5h37.012c34.717,0,62.962,28.245,62.962,62.962s-28.245,62.962-62.962,62.962H330v94.656L495,495V46.92L330,0z">
-                </path>
-                <path style="fill:#FFDA44;" d="M277.519,181.576h-67.132c-12.661,0-22.962,10.301-22.962,22.962s10.301,22.962,22.962,22.962H330 v-16.382c-2.184,0.292-4.407,0.458-6.669,0.458C302.87,211.576,285.25,199.217,277.519,181.576z">
-                </path>
-                <path style="fill:#FFDA44;" d="M330,267.5H210.387c-17.825,0-33.931-7.458-45.397-19.402v65.326H330V267.5z">
-                </path>
-                <path style="fill:#FFDA44;" d="M210.387,141.576h67.132c7.731-17.641,25.351-30,45.813-30c2.262,0,4.485,0.166,6.669,0.458V0 L164.99,46.92v114.059C176.456,149.034,192.562,141.576,210.387,141.576z">
-                </path>
-                <polygon style="fill:#FFDA44;" points="164.99,353.424 164.99,495 330,448.08 330,353.424 ">
-                </polygon>
-                <path style="fill:#FFCD00;" d="M160.839,353.424c-7.731,17.641-25.351,30-45.813,30c-27.57,0-50-22.43-50-50s22.43-50,50-50 c20.461,0,38.081,12.359,45.813,30h4.151v-65.326c-10.866-11.319-17.565-26.667-17.565-43.56s6.699-32.24,17.565-43.56V46.92L0,0 v448.08L164.99,495V353.424H160.839z">
-                </path>
-                <path style="fill:#FFFFFF;" d="M187.425,204.538c0-12.661,10.301-22.962,22.962-22.962h67.132c-2.686-6.129-4.188-12.891-4.188-20 c0-7.109,1.501-13.871,4.187-20h-67.132c-17.825,0-33.931,7.458-45.397,19.402c-10.866,11.319-17.565,26.667-17.565,43.56 s6.699,32.24,17.565,43.56c11.466,11.945,27.572,19.402,45.397,19.402h156.625c12.661,0,22.962,10.301,22.962,22.962 s-10.301,22.962-22.962,22.962H160.839c2.686,6.129,4.188,12.891,4.188,20c0,7.109-1.501,13.871-4.188,20h206.173 c34.717,0,62.962-28.245,62.962-62.962S401.729,227.5,367.012,227.5H210.387C197.726,227.5,187.425,217.199,187.425,204.538z">
-                </path>
-                <path style="fill:#005ECE;" d="M323.331,211.576c2.262,0,4.485-0.165,6.669-0.458c24.427-3.272,43.331-24.234,43.331-49.542 c0-25.308-18.904-46.27-43.331-49.542c-2.184-0.292-4.407-0.458-6.669-0.458V211.576z">
-                </path>
-                <path style="fill:#2488FF;" d="M277.519,181.576c7.731,17.641,25.351,30,45.813,30v-100c-20.461,0-38.082,12.359-45.813,30 c-2.686,6.129-4.187,12.891-4.187,20C273.331,168.685,274.832,175.447,277.519,181.576z">
-                </path>
-                <path style="fill:#005ECE;" d="M165.026,333.424c0-7.109-1.501-13.871-4.188-20c-7.731-17.641-25.351-30-45.813-30v100 c20.461,0,38.081-12.359,45.813-30C163.525,347.295,165.026,340.533,165.026,333.424z">
-                </path>
-                <path style="fill:#2488FF;" d="M65.026,333.424c0,27.57,22.43,50,50,50v-100C87.456,283.424,65.026,305.854,65.026,333.424z">
-                </path>
-              </g>
-            </g>
-          </svg>
-          <div class="text">
-            <h3>LONGEST FOCUS</h3>
-          </div>
-          <div class="text">
-            <h4>{{focus_compare}}</h4>
-          </div>
-          <div class="text">
-            <h1>{{focus}}</h1>
-          </div>
-        </div>
-      </section>
-      <div class="waves" id = "wave5">
-        <img src="./images/wave5.png" alt="">
-      </div>
-      <section id = "timeline">
-        <div class="wrapper type2">
-          <svg height="64px" width="64px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path style="fill:#F2F2F2;" d="M469.779,34.205H42.221c-22.103,0-40.084,17.981-40.084,40.084v429.695 c0,4.427,3.588,8.017,8.017,8.017h491.691c4.428,0,8.017-3.589,8.017-8.017V74.288C509.862,52.186,491.881,34.205,469.779,34.205z"></path> <path style="fill:#EB6836;" d="M509.862,74.288c0-22.103-17.981-40.084-40.083-40.084H42.221c-22.103,0-40.084,17.981-40.084,40.084 v28.86h507.724V74.288z"></path> <path style="fill:#E5E5E5;" d="M42.221,34.205c-22.103,0-40.084,17.981-40.084,40.084v429.695c0,4.427,3.588,8.017,8.017,8.017 h278.407L59.688,34.205H42.221z"></path> <path style="fill:#C74B38;" d="M42.221,34.205c-22.103,0-40.084,17.981-40.084,40.084v28.86h90.576L59.688,34.205H42.221z"></path> <g> <path style="fill:#F7D04A;" d="M256,80.167c-4.428,0-8.017-3.589-8.017-8.017V8.017C247.983,3.589,251.572,0,256,0 c4.428,0,8.017,3.589,8.017,8.017V72.15C264.017,76.578,260.428,80.167,256,80.167z"></path> <path style="fill:#F7D04A;" d="M196.142,80.167c-4.428,0-8.017-3.589-8.017-8.017V8.017c0-4.427,3.588-8.017,8.017-8.017 s8.017,3.589,8.017,8.017V72.15C204.159,76.578,200.57,80.167,196.142,80.167z"></path> <path style="fill:#F7D04A;" d="M136.284,80.167c-4.428,0-8.017-3.589-8.017-8.017V8.017c0-4.427,3.588-8.017,8.017-8.017 c4.428,0,8.017,3.589,8.017,8.017V72.15C144.301,76.578,140.712,80.167,136.284,80.167z"></path> <path style="fill:#F7D04A;" d="M76.426,80.167c-4.428,0-8.017-3.589-8.017-8.017V8.017C68.409,3.589,71.997,0,76.426,0 s8.017,3.589,8.017,8.017V72.15C84.443,76.578,80.854,80.167,76.426,80.167z"></path> <path style="fill:#F7D04A;" d="M315.858,80.167c-4.428,0-8.017-3.589-8.017-8.017V8.017c0-4.427,3.588-8.017,8.017-8.017 c4.428,0,8.017,3.589,8.017,8.017V72.15C323.875,76.578,320.286,80.167,315.858,80.167z"></path> <path style="fill:#F7D04A;" d="M375.716,80.167c-4.428,0-8.017-3.589-8.017-8.017V8.017c0-4.427,3.588-8.017,8.017-8.017 c4.428,0,8.017,3.589,8.017,8.017V72.15C383.733,76.578,380.145,80.167,375.716,80.167z"></path> <path style="fill:#F7D04A;" d="M435.574,80.167c-4.428,0-8.017-3.589-8.017-8.017V8.017c0-4.427,3.588-8.017,8.017-8.017 s8.017,3.589,8.017,8.017V72.15C443.591,76.578,440.003,80.167,435.574,80.167z"></path> </g> <path style="fill:#808080;" d="M439.85,242.639H72.15c-4.428,0-8.017-3.589-8.017-8.017s3.588-8.017,8.017-8.017H439.85 c4.428,0,8.017,3.589,8.017,8.017S444.278,242.639,439.85,242.639z"></path> <path style="fill:#62C9CC;" d="M236.76,145.37h-74.823c-4.428,0-8.017,3.589-8.017,8.017v42.756c0,4.427,3.588,8.017,8.017,8.017 h21.115l10.49,17.486c3.058,5.095,10.691,5.096,13.749,0l10.491-17.486h18.977c4.428,0,8.017-3.589,8.017-8.017v-42.756 C244.777,148.959,241.188,145.37,236.76,145.37z"></path> <path style="fill:#808080;" d="M439.85,355.586H72.15c-4.428,0-8.017-3.589-8.017-8.017c0-4.427,3.588-8.017,8.017-8.017H439.85 c4.428,0,8.017,3.589,8.017,8.017C447.866,351.996,444.278,355.586,439.85,355.586z"></path> <path style="fill:#F7D04A;" d="M356.476,258.672h-74.823c-4.428,0-8.017,3.589-8.017,8.017v42.756c0,4.427,3.588,8.017,8.017,8.017 h21.115l10.49,17.486c3.058,5.095,10.691,5.096,13.749,0l10.491-17.486h18.977c4.428,0,8.017-3.589,8.017-8.017v-42.756 C364.493,262.262,360.904,258.672,356.476,258.672z"></path> <path style="fill:#808080;" d="M439.85,469.244H72.15c-4.428,0-8.017-3.589-8.017-8.017s3.588-8.017,8.017-8.017H439.85 c4.428,0,8.017,3.589,8.017,8.017S444.278,469.244,439.85,469.244z"></path> <path style="fill:#EB6836;" d="M172.626,371.975H97.804c-4.428,0-8.017,3.589-8.017,8.017v42.756c0,4.427,3.588,8.017,8.017,8.017 h21.115l10.49,17.486c3.058,5.095,10.691,5.096,13.749,0l10.491-17.486h18.977c4.428,0,8.017-3.589,8.017-8.017v-42.756 C180.643,375.564,177.055,371.975,172.626,371.975z"></path> </g></svg>
-          <div class="text">
-            <h3>TIMELINE</h3>
-          </div>
-          <div class="timeline-container">
-            <div class="timeline-block timeline-block-right">
-              <div class="marker"></div>
-              <div class="timeline-content">
-                <h3>12AM</h3>
-                <h4>Chem Final prep</h4>
-                <p>Long text...</p>
-              </div>
-            </div>
-            <div class="timeline-block timeline-block-left">
-              <div class="marker"></div>
-              <div class="timeline-content">
-                <h3>1PM</h3>
-                <h4>Math Study</h4>
-                <p>Text.</p>
-              </div>
-            </div>
-            <div class="timeline-block timeline-block-right">
-              <div class="marker"></div>
-              <div class="timeline-content">
-                <h3>2PM</h3>
-                <h4>English study</h4>
-                <p>Another text.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <div class="waves" id = "wave6">
-        <img src="./images/wave1.png" alt="">
-      </div>
-      <section id = "quote">
-        <div class="wrapper">
-          {{quote}}
-        </div>
-      </section>
-      <div class="waves" id = "wave7">
-        <img src="./images/wave2.png" alt="">
-      </div>
-      <footer>
-        <div class="wrapper">
-          <div class="pages">
-            <div class="page">
-              <a href="https://flozable.com#about">About us</a>
-            </div>
-            <div class="page">
-              <a href="https://flozable.com/news">News</a>
-            </div>
-            <div class="page">
-              <a href="https://flozable.com/account/signin">Sign In</a>
-            </div>
-          </div>
-          <div class="social">
-            <div class="circle">
-              <a href="">
-                <svg width="24px" height="24px" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="16" cy="16" r="14" fill="url(#paint0_linear_87_7208)"></circle> <path d="M21.2137 20.2816L21.8356 16.3301H17.9452V13.767C17.9452 12.6857 18.4877 11.6311 20.2302 11.6311H22V8.26699C22 8.26699 20.3945 8 18.8603 8C15.6548 8 13.5617 9.89294 13.5617 13.3184V16.3301H10V20.2816H13.5617V29.8345C14.2767 29.944 15.0082 30 15.7534 30C16.4986 30 17.2302 29.944 17.9452 29.8345V20.2816H21.2137Z" fill="white"></path> <defs> <linearGradient id="paint0_linear_87_7208" x1="16" y1="2" x2="16" y2="29.917" gradientUnits="userSpaceOnUse"> <stop stop-color="#18ACFE"></stop> <stop offset="1" stop-color="#0163E0"></stop> </linearGradient> </defs> </g></svg>
-              </a>
-            </div>
-            <div class="circle">
-              <a href="">
-                <svg width="24px" height="24px" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <rect x="2" y="2" width="28" height="28" rx="6" fill="url(#paint0_radial_87_7153)"></rect> <rect x="2" y="2" width="28" height="28" rx="6" fill="url(#paint1_radial_87_7153)"></rect> <rect x="2" y="2" width="28" height="28" rx="6" fill="url(#paint2_radial_87_7153)"></rect> <path d="M23 10.5C23 11.3284 22.3284 12 21.5 12C20.6716 12 20 11.3284 20 10.5C20 9.67157 20.6716 9 21.5 9C22.3284 9 23 9.67157 23 10.5Z" fill="white"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M16 21C18.7614 21 21 18.7614 21 16C21 13.2386 18.7614 11 16 11C13.2386 11 11 13.2386 11 16C11 18.7614 13.2386 21 16 21ZM16 19C17.6569 19 19 17.6569 19 16C19 14.3431 17.6569 13 16 13C14.3431 13 13 14.3431 13 16C13 17.6569 14.3431 19 16 19Z" fill="white"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M6 15.6C6 12.2397 6 10.5595 6.65396 9.27606C7.2292 8.14708 8.14708 7.2292 9.27606 6.65396C10.5595 6 12.2397 6 15.6 6H16.4C19.7603 6 21.4405 6 22.7239 6.65396C23.8529 7.2292 24.7708 8.14708 25.346 9.27606C26 10.5595 26 12.2397 26 15.6V16.4C26 19.7603 26 21.4405 25.346 22.7239C24.7708 23.8529 23.8529 24.7708 22.7239 25.346C21.4405 26 19.7603 26 16.4 26H15.6C12.2397 26 10.5595 26 9.27606 25.346C8.14708 24.7708 7.2292 23.8529 6.65396 22.7239C6 21.4405 6 19.7603 6 16.4V15.6ZM15.6 8H16.4C18.1132 8 19.2777 8.00156 20.1779 8.0751C21.0548 8.14674 21.5032 8.27659 21.816 8.43597C22.5686 8.81947 23.1805 9.43139 23.564 10.184C23.7234 10.4968 23.8533 10.9452 23.9249 11.8221C23.9984 12.7223 24 13.8868 24 15.6V16.4C24 18.1132 23.9984 19.2777 23.9249 20.1779C23.8533 21.0548 23.7234 21.5032 23.564 21.816C23.1805 22.5686 22.5686 23.1805 21.816 23.564C21.5032 23.7234 21.0548 23.8533 20.1779 23.9249C19.2777 23.9984 18.1132 24 16.4 24H15.6C13.8868 24 12.7223 23.9984 11.8221 23.9249C10.9452 23.8533 10.4968 23.7234 10.184 23.564C9.43139 23.1805 8.81947 22.5686 8.43597 21.816C8.27659 21.5032 8.14674 21.0548 8.0751 20.1779C8.00156 19.2777 8 18.1132 8 16.4V15.6C8 13.8868 8.00156 12.7223 8.0751 11.8221C8.14674 10.9452 8.27659 10.4968 8.43597 10.184C8.81947 9.43139 9.43139 8.81947 10.184 8.43597C10.4968 8.27659 10.9452 8.14674 11.8221 8.0751C12.7223 8.00156 13.8868 8 15.6 8Z" fill="white"></path> <defs> <radialGradient id="paint0_radial_87_7153" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(12 23) rotate(-55.3758) scale(25.5196)"> <stop stop-color="#B13589"></stop> <stop offset="0.79309" stop-color="#C62F94"></stop> <stop offset="1" stop-color="#8A3AC8"></stop> </radialGradient> <radialGradient id="paint1_radial_87_7153" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(11 31) rotate(-65.1363) scale(22.5942)"> <stop stop-color="#E0E8B7"></stop> <stop offset="0.444662" stop-color="#FB8A2E"></stop> <stop offset="0.71474" stop-color="#E2425C"></stop> <stop offset="1" stop-color="#E2425C" stop-opacity="0"></stop> </radialGradient> <radialGradient id="paint2_radial_87_7153" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(0.500002 3) rotate(-8.1301) scale(38.8909 8.31836)"> <stop offset="0.156701" stop-color="#406ADC"></stop> <stop offset="0.467799" stop-color="#6A45BE"></stop> <stop offset="1" stop-color="#6A45BE" stop-opacity="0"></stop> </radialGradient> </defs> </g></svg>
-              </a>
-            </div>
-            <div class="circle">
-              <a href="">
-                <svg width="24px" height="24px" viewBox="0 -4 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>Twitter-color</title> <desc>Created with Sketch.</desc> <defs> </defs> <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Color-" transform="translate(-300.000000, -164.000000)" fill="#00AAEC"> <path d="M348,168.735283 C346.236309,169.538462 344.337383,170.081618 342.345483,170.324305 C344.379644,169.076201 345.940482,167.097147 346.675823,164.739617 C344.771263,165.895269 342.666667,166.736006 340.418384,167.18671 C338.626519,165.224991 336.065504,164 333.231203,164 C327.796443,164 323.387216,168.521488 323.387216,174.097508 C323.387216,174.88913 323.471738,175.657638 323.640782,176.397255 C315.456242,175.975442 308.201444,171.959552 303.341433,165.843265 C302.493397,167.339834 302.008804,169.076201 302.008804,170.925244 C302.008804,174.426869 303.747139,177.518238 306.389857,179.329722 C304.778306,179.280607 303.256911,178.821235 301.9271,178.070061 L301.9271,178.194294 C301.9271,183.08848 305.322064,187.17082 309.8299,188.095341 C309.004402,188.33225 308.133826,188.450704 307.235077,188.450704 C306.601162,188.450704 305.981335,188.390033 305.381229,188.271578 C306.634971,192.28169 310.269414,195.2026 314.580032,195.280607 C311.210424,197.99061 306.961789,199.605634 302.349709,199.605634 C301.555203,199.605634 300.769149,199.559408 300,199.466956 C304.358514,202.327194 309.53689,204 315.095615,204 C333.211481,204 343.114633,188.615385 343.114633,175.270495 C343.114633,174.831347 343.106181,174.392199 343.089276,173.961719 C345.013559,172.537378 346.684275,170.760563 348,168.735283" id="Twitter"> </path> </g> </g> </g></svg>
-              </a>
-            </div>
-          </div>
-          <div class="notification">
-            <p>
-              You are receiving this email because you have visited our site or asked
-                                              us about the regular newsletter. Make sure our messages get to your Inbox
-                                              (and not your bulk or junk folders).
-            </p>
-          </div>
-          <div class="privacy">
-            <a href="https://flozable.com/privacy-policy">Privacy Policy</a>
-            <div class="line"></div>
-            <a href="https://flozable.com/account/setting">Unsubscribe</a>
-          </div>
-        </div>
-      </footer>
-    </div>
-  </main>
+
+<body style="text-size-adjust: none; background-color: #eaeaea; margin: 0; padding: 0;">
+  <table border="0" cellpadding="0" cellspacing="0" class="nl-container" role="presentation"
+    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #eaeaea;" width="100%">
+    <tbody>
+      <tr>
+        <td>
+          <table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-1" role="presentation"
+            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack"
+                    role="presentation"
+                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000; background-color: #fff; width: 600px; margin: 0 auto;"
+                    width="600">
+                    <tbody>
+                      <tr>
+                        <td class="column column-1"
+                          style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;"
+                          width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-1"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #525ADD;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/logo.png"
+                                    style="height: auto; display: block; border: 0; max-width: 600px; width: 100%;"
+                                    width="600" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-2"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/wave1.png"
+                                    style="height: auto; display: block; border: 0; max-width: 600px; width: 100%;"
+                                    width="600" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-2" role="presentation"
+            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack"
+                    role="presentation"
+                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000; background-color: #fff; border-radius: 0; width: 600px; margin: 0 auto;"
+                    width="600">
+                    <tbody>
+                      <tr>
+                        <td class="column column-1"
+                          style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;"
+                          width="50%">
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-1"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#101112;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:50px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:left;mso-line-height-alt:60px;">
+                                  <p style="margin: 0;">Your personal <strong
+                                      style="color: #f54f4a;">daily report</strong> {{date}}</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-2"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#101112;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:left;mso-line-height-alt:19.2px;">
+                                  <p style="margin: 0;">Go to Dashboard to view the full report</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="button_block block-3"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div align="center" class="alignment">
+                                  <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" style="height:44px;width:177px;v-text-anchor:middle;" arcsize="69%" stroke="false" fillcolor="#f54f4a"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#ffffff; font-family:Arial, sans-serif; font-size:17px"><![endif]-->
+                                    <a href="https://flozable.com/dashboard">
+                                      <div
+                                      style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#f54f4a;border-radius:30px;width:auto;border-top:0px solid transparent;font-weight:700;border-right:0px solid transparent;border-bottom:0px solid transparent;border-left:0px solid transparent;padding-top:5px;padding-bottom:5px;font-family:Arial, Helvetica, sans-serif;font-size:17px;text-align:center;mso-border-alt:none;word-break:keep-all;">
+                                      <span
+                                        style="padding-left:20px;padding-right:20px;font-size:17px;display:inline-block;letter-spacing:normal;"><span
+                                          style="word-break: break-word; line-height: 34px;">Go to Dashboard</span></span>
+                                    </div><!--[if mso]></center></v:textbox></v:roundrect><![endif]-->
+                                    </a>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                        <td class="column column-2"
+                          style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;"
+                          width="50%">
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-1"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/_x32_.png"
+                                    style="height: auto; display: block; border: 0; max-width: 182px; width: 100%;"
+                                    width="182" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-2"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#101112;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:19.2px;">
+                                  <p style="margin: 0;">{{streak}}</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-3" role="presentation"
+            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack"
+                    role="presentation"
+                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #fff; background-color: #6e76f6; border-radius: 0; width: 600px; margin: 0 auto;"
+                    width="600">
+                    <tbody>
+                      <tr>
+                        <td class="column column-1"
+                          style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;"
+                          width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-1"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/untitled.png"
+                                    style="height: auto; display: block; border: 0; max-width: 64px; width: 100%;"
+                                    width="64" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-2"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:21px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:25.2px;">
+                                  <p style="margin: 0;">TODAY'S RANKING</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-3"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:18px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:21.599999999999998px;">
+                                  <p style="margin: 0;">{{ranking_compare}}</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-4"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:50px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:60px;">
+                                  <p style="margin: 0;">{{ranking}}</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-4" role="presentation"
+            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack"
+                    role="presentation"
+                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #fff; background-color: #a5a9f5; border-radius: 0; width: 600px; margin: 0 auto;"
+                    width="600">
+                    <tbody>
+                      <tr>
+                        <td class="column column-1"
+                          style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;"
+                          width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-1"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/wave2.png"
+                                    style="height: auto; display: block; border: 0; max-width: 600px; width: 100%;"
+                                    width="600" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-2"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/Layer_1.png"
+                                    style="height: auto; display: block; border: 0; max-width: 64px; width: 100%;"
+                                    width="64" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-3"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:21px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:25.2px;">
+                                  <p style="margin: 0;">TOTAL STUDY TIME</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-4"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:18px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:21.599999999999998px;">
+                                  <p style="margin: 0;">{{study_time_compare}}</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-5"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:50px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:60px;">
+                                  <p style="margin: 0;">{{study_time}}</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-5" role="presentation"
+            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack"
+                    role="presentation"
+                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #fff; background-color: #caccfa; border-radius: 0; width: 600px; margin: 0 auto;"
+                    width="600">
+                    <tbody>
+                      <tr>
+                        <td class="column column-1"
+                          style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;"
+                          width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-1"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/wave3.png"
+                                    style="height: auto; display: block; border: 0; max-width: 600px; width: 100%;"
+                                    width="600" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-2"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/Layer_1_1.png"
+                                    style="height: auto; display: block; border: 0; max-width: 64px; width: 100%;"
+                                    width="64" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-3"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:21px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:25.2px;">
+                                  <p style="margin: 0;">OTHER APPS USAGE</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-4"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:18px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:21.599999999999998px;">
+                                  <p style="margin: 0;">{{other_apps_compare}}</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-5"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:50px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:60px;">
+                                  <p style="margin: 0;">{{other_apps}}</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-6" role="presentation"
+            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack"
+                    role="presentation"
+                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000; background-color: #fff; border-radius: 0; width: 600px; margin: 0 auto;"
+                    width="600">
+                    <tbody>
+                      <tr>
+                        <td class="column column-1"
+                          style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;"
+                          width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-1"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/wave4.png"
+                                    style="height: auto; display: block; border: 0; max-width: 600px; width: 100%;"
+                                    width="600" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-2"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/Layer_1_2.png"
+                                    style="height: auto; display: block; border: 0; max-width: 64px; width: 100%;"
+                                    width="64" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-3"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#6e76f6;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:21px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:25.2px;">
+                                  <p style="margin: 0;">LONGEST FOCUS</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-4"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#6e76f6;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:18px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:21.599999999999998px;">
+                                  <p style="margin: 0;">{{focus_compare}}</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-5"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#6e76f6;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:50px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:60px;">
+                                  <p style="margin: 0;">{{focus}}</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-7" role="presentation"
+            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack"
+                    role="presentation"
+                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000; background-color: #525ADD; border-radius: 0; width: 600px; margin: 0 auto;"
+                    width="600">
+                    <tbody>
+                      <tr>
+                        <td class="column column-1"
+                          style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;"
+                          width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-1"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/wave5.png"
+                                    style="height: auto; display: block; border: 0; max-width: 600px; width: 100%;"
+                                    width="600" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-2"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/Layer_1_3.png"
+                                    style="height: auto; display: block; border: 0; max-width: 64px; width: 100%;"
+                                    width="64" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-3"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:21px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:25.2px;">
+                                  <p style="margin: 0;">TIMELINE</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="0" cellspacing="0" class="html_block block-4"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div align="center" style="font-family:Arial, Helvetica, sans-serif;text-align:center; color: #fff">
+                                  {{timeline}}
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-8" role="presentation"
+            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack"
+                    role="presentation"
+                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000; background-color: #6e76f6; border-radius: 0; width: 600px; margin: 0 auto;"
+                    width="600">
+                    <tbody>
+                      <tr>
+                        <td class="column column-1"
+                          style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;"
+                          width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-1"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/wave1.png"
+                                    style="height: auto; display: block; border: 0; max-width: 600px; width: 100%;"
+                                    width="600" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="paragraph_block block-2"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div
+                                  style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:30px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:36px;">
+                                  <p style="margin: 0;">{{quote}}</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-9" role="presentation"
+            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack"
+                    role="presentation"
+                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000; background-color: #a5a9f5; border-radius: 0; width: 600px; margin: 0 auto;"
+                    width="600">
+                    <tbody>
+                      <tr>
+                        <td class="column column-1"
+                          style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;"
+                          width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" class="image_block block-1"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="width:100%;">
+                                <div align="center" class="alignment" style="line-height:10px"><img
+                                    src="images/wave2.png"
+                                    style="height: auto; display: block; border: 0; max-width: 600px; width: 100%;"
+                                    width="600" /></div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table align="center" border="0" cellpadding="0" cellspacing="0" class="row row-10" role="presentation"
+            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack"
+                    role="presentation"
+                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000; background-color: #a5a9f5; width: 600px; margin: 0 auto;"
+                    width="600">
+                    <tbody>
+                      <tr>
+                        <td class="column column-1"
+                          style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;"
+                          width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" class="html_block block-1"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div align="center" style="font-family:Arial, Helvetica, sans-serif;text-align:center;">
+                                  <div style="height:30px;"> </div>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="0" cellspacing="0" class="social_block block-2"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad" style="text-align:center;padding-right:0px;padding-left:0px;">
+                                <div align="center" class="alignment">
+                                  <table border="0" cellpadding="0" cellspacing="0" class="social-table"
+                                    role="presentation"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; display: inline-block;"
+                                    width="188px">
+                                    <tr>
+                                      <td style="padding:0 15px 0 0px;"><a href="https://www.facebook.com/"
+                                          target="_blank"><img alt="Facebook" height="32" src="images/facebook2x.png"
+                                            style="height: auto; display: block; border: 0;" title="Facebook"
+                                            width="32" /></a></td>
+                                      <td style="padding:0 15px 0 0px;"><a href="https://twitter.com/"
+                                          target="_blank"><img alt="Twitter" height="32" src="images/twitter2x.png"
+                                            style="height: auto; display: block; border: 0;" title="Twitter"
+                                            width="32" /></a></td>
+                                      <td style="padding:0 15px 0 0px;"><a href="https://plus.google.com/"
+                                          target="_blank"><img alt="Google+" height="32" src="images/googleplus2x.png"
+                                            style="height: auto; display: block; border: 0;" title="Google+"
+                                            width="32" /></a></td>
+                                      <td style="padding:0 15px 0 0px;"><a href="https://instagram.com/"
+                                          target="_blank"><img alt="Instagram" height="32" src="images/instagram2x.png"
+                                            style="height: auto; display: block; border: 0;" title="Instagram"
+                                            width="32" /></a></td>
+                                    </tr>
+                                  </table>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="0" cellspacing="0" class="html_block block-3"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div align="center" style="font-family:Arial, Helvetica, sans-serif;text-align:center;">
+                                  <div style="margin-top: 40px;border-top:1px dashed #D6D6D6;margin-bottom: 40px;">
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="10" cellspacing="0" class="text_block block-4"
+                            role="presentation"
+                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div style="font-family: sans-serif">
+                                  <div class=""
+                                    style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; mso-line-height-alt: 14.399999999999999px; color: #fff; line-height: 1.2;">
+                                    <p
+                                      style="margin: 0; font-size: 12px; text-align: center; mso-line-height-alt: 14.399999999999999px;">
+                                      <span style="color:#fff;">Copyright © 2023 FLOZABLE, All
+                                        rights reserved. <a href="https://flozable.com/account/setting" style="color:#fff;"
+                                          target="_blank">unsubscribe</a> at any time.</span></p>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                          <table border="0" cellpadding="0" cellspacing="0" class="html_block block-5"
+                            role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
+                            <tr>
+                              <td class="pad">
+                                <div align="center" style="font-family:Arial, Helvetica, sans-serif;text-align:center;">
+                                  <div style="height-top: 20px;"> </div>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table><!-- End -->
 </body>
+
 </html>

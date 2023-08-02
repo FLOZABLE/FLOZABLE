@@ -14,6 +14,30 @@ function hashing(password) {
   return [salt, crypto.pbkdf2Sync(password, salt, 99097, 32, 'sha512').toString('hex')];
 }
 
+async function autoSignin(req, res, success = (() => {}), fail = (() => {res.send({success: false, reason: 'not authenticated'})})) {
+  console.log(req.session, req.signedCookies)
+  if (req.session.loggedin) {
+    return success();
+  } else if (req.signedCookies.userId) {
+    const connection = await (await pool).getConnection();
+    let userInfo = await connection.query('SELECT name, email, myinfo FROM users where user_id = ?', [req.signedCookies.userId]);
+    connection.release();
+    userInfo = userInfo[0];
+    if (userInfo) {
+      req.session.user_id = req.signedCookies.userId;
+      req.session.name = userInfo.name;
+      req.session.loggedin = true;
+      req.session.userInfo = { userId: req.signedCookies.userId, name: userInfo.name, loggedin: true, email: userInfo.email, myinfo: userInfo.myinfo };
+      return success();
+    } else {
+      console.log('fail2')
+      return fail();
+    }
+  } else {
+    return fail();
+  }
+}
+
 function generateId() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const length = 15;
@@ -27,12 +51,8 @@ function generateId() {
   return groupId;
 }
 
-Router.get('/signin', async(req, res) => {
-  if (req.session.loggedin) {
-    res.render("authentication/signin/illustration", { loggedin: true });
-  } else {
-    res.render("authentication/signin/illustration", { loggedin: false });
-  }
+Router.get('/signin', async (req, res) => {
+  autoSignin(req, res, (() => res.render("authentication/signin/illustration", { loggedin: true })), (() => res.render("authentication/signin/illustration", { loggedin: false })));
 });
 
 Router.post('/signin-authentication', async (req, res, next) => {
@@ -71,7 +91,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
       req.session.user_id = userId;
       req.session.name = matching_email[0].name;
       req.session.loggedin = true;
-      req.session.userInfo = {userId: userId, name: matching_email[0].name, loggedin: true, email: email, myinfo: matching_email[0].myinfo};
+      req.session.userInfo = { userId: userId, name: matching_email[0].name, loggedin: true, email: email, myinfo: matching_email[0].myinfo };
       console.log("login success");
       console.log(req.session.user_id, req.session.loggedin);
 
@@ -142,7 +162,7 @@ Router.post('/signup-authentication', async (req, res, next) => {
     req.session.user_id = userId;
     req.session.loggedin = true;
     req.session.name = sanitizedName;
-    req.session.userInfo = {userId: userId, name: sanitizedName, loggedin: true, email: email};
+    req.session.userInfo = { userId: userId, name: sanitizedName, loggedin: true, email: email };
 
     res.cookie("userId", userId, {
       maxAge: 1000 * 60 * 60 * 30,
@@ -159,25 +179,22 @@ Router.post('/signup-authentication', async (req, res, next) => {
 });
 
 Router.get('/signup', function (req, res) {
-  if (req.session.loggedin) {
-    res.render('authentication/signup/illustration', {
-      title: 'Registration Page',
-      name: '',
-      email: '',
-      password: '',
-      button: "SIGN IN",
-      path: "/account",
-    });
-  } else {
-    res.render('authentication/signup/illustration', {
-      title: 'Registration Page',
-      name: '',
-      email: '',
-      password: '',
-      button: "SIGN IN",
-      path: "/account",
-    });
-  }
+  autoSignin(req, res, (() => res.render("authentication/signup/illustration", {
+    title: 'Registration Page',
+    name: '',
+    email: '',
+    password: '',
+    button: "SIGN IN",
+    path: "/account",
+  })), 
+  (() => res.render("authentication/signup/illustration", {
+    title: 'Registration Page',
+    name: '',
+    email: '',
+    password: '',
+    button: "SIGN IN",
+    path: "/account",
+  })));
 });
 
 Router.get('/logout', function (req, res) {
@@ -186,34 +203,31 @@ Router.get('/logout', function (req, res) {
       console.log("Error destroying session:", err);
     }
     res.clearCookie('userId');
+    console.log(req.signedCookies, req.session)
     res.redirect('/');
   });
 });
 
-Router.post('/bring-my-info', async(req, res) => {
-  if(!req.session.loggedin) {
-    return res.send({success: false, reason: 'no session'})
-  }
+Router.post('/bring-my-info', async (req, res) => {
+  autoSignin(req, res, (async() => {
+    const connection = await (await pool).getConnection();
 
-  const connection = await (await pool).getConnection();
-
-  let userInfo = await connection.query(`SELECT name, myinfo, groups, user_id, plan, subjects from users WHERE user_id = "${req.session.user_id}"`);
-  userInfo = userInfo[0];
-  res.send({success: true, userInfo: userInfo});
-  connection.release();
+    let userInfo = await connection.query(`SELECT name, myinfo, groups, user_id, plan, subjects from users WHERE user_id = "${req.session.user_id}"`);
+    userInfo = userInfo[0];
+    res.send({ success: true, userInfo: userInfo });
+    connection.release();
+  }));
 });
 
-Router.get('/setting', async(req, res) => {
-  if(!req.session.loggedin) {
-    return res.redirect('/account/signin')
-  }
+Router.get('/setting', async (req, res) => {
+  autoSignin(req, res, (async() => {
+    const connection = await (await pool).getConnection();
 
-  const connection = await (await pool).getConnection();
-
-  let userInfo = await connection.query(`SELECT name, email, language, interest, user_id from users WHERE user_id = "${req.session.user_id}"`);
-  userInfo = {userId: userInfo[0].user_id, name: userInfo[0].name, loggedin: true, email: userInfo[0].email, language: userInfo[0].language, interest: userInfo[0].interest};
-  res.render('account/setting', {userInfo: userInfo})
-  connection.release();
+    let userInfo = await connection.query(`SELECT name, email, language, interest, user_id from users WHERE user_id = "${req.session.user_id}"`);
+    userInfo = { userId: userInfo[0].user_id, name: userInfo[0].name, loggedin: true, email: userInfo[0].email, language: userInfo[0].language, interest: userInfo[0].interest };
+    res.render('account/setting', { userInfo: userInfo })
+    connection.release();
+  }), (() => {return res.redirect('/account/signin')}));
 });
 
 
@@ -233,196 +247,193 @@ function isValidJSON(data, schema) {
     return true;
   }
 }
-Router.post('/update/:type', upload.single('image'), async(req, res) => {
-  if(!req.session.loggedin) {
-    return res.send({success: false, reason: 'no session'})
-  }
+Router.post('/update/:type', upload.single('image'), async (req, res) => {
+  autoSignin(req, res, (async() => {
+    const type = req.params.type;
 
-  const type = req.params.type;
-
-  const connection = await (await pool).getConnection();
-  if (type == 'image') {
-    connection.release();
-    try {
-      if (!req.file) {
-        return res.send({ success : false, reason : 'No image file found' });
+    const connection = await (await pool).getConnection();
+    if (type == 'image') {
+      connection.release();
+      try {
+        if (!req.file) {
+          return res.send({ success: false, reason: 'No image file found' });
+        }
+  
+        const imageBuffer = req.file.buffer; // Get the image buffer from the request
+  
+        // Process the image using sharp
+        await sharp(imageBuffer)
+          .toFormat('jpeg')
+          .resize({ width: 800, height: 800 })
+          .jpeg({ quality: 40 })
+          .toFile(`./public/profile-images/${req.session.user_id}.jpeg`);
+        res.send({ success: true });
+      } catch (error) {
+        res.send({ success: false, reason: 'Unsupported File Type' })
+      }
+    } else if (type == 'info') {
+      let name = req.body.name;
+      let email = req.body.email;
+      let emailConfirm = req.body.emailConfirm;
+      let language = req.body.language;
+      let interest = req.body.interest;
+  
+      const supportedLanguages = ['English', 'Spanish', 'French'];
+      if (!/^[a-zA-Z0-9]+$/.test(name)) {
+        connection.release();
+        return res.send({ success: false, reason: 'Invalid Name' });
+      } else if (!/^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/.test(email)) {
+        connection.release();
+        return res.send({ success: false, reason: 'Invalid Email' });
+      } else if (email !== emailConfirm) {
+        connection.release();
+        return res.send({ success: false, reason: 'Email Confirmation Failed' });
+      } else if (!supportedLanguages.includes(language)) {
+        connection.release();
+        return res.send({ success: false, reason: 'Not Supported Language' });
+      }
+      const updateInfo = [{ name: name, email: email, language: language, interest: interest }, req.session.user_id];
+      let update = await connection.query('UPDATE users set ? WHERE user_id = ?', updateInfo);
+      res.send({ success: true });
+      connection.release();
+    } else if (type == 'password') {
+      let password = req.body.password;
+      let passwordConfirm = req.body.passwordConfirm;
+      console.log(password, passwordConfirm)
+      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+        connection.release();
+        return res.send({ success: false, reason: 'No Special Character' });
+      } else if ((password.match(/\d/g) || []).length < 2) {
+        connection.release();
+        return res.send({ success: false, reason: 'Need More Than 2 Numbers' });
+      } else if (password.length < 6) {
+        connection.release();
+        return res.send({ success: false, reason: 'Too Short' });
+      } else if (password !== passwordConfirm) {
+        connection.release();
+        return res.send({ success: false, reason: 'Password Does Not Match' });
       }
   
-      const imageBuffer = req.file.buffer; // Get the image buffer from the request
+      connection.release();
+      res.send({ success: true });
+      let hashed = hashing(password);
+      let salt = hashed[0];
+      let hashedPw = hashed[1];
+      const updateInfo = [{ hashed_password: hashedPw, salt: salt }, req.session.user_id];
+      const update = await connection.query("UPDATE users set ? WHERE user_id = ?", updateInfo);
+    } else if (type == 'auth') {
   
-      // Process the image using sharp
-      await sharp(imageBuffer)
-        .toFormat('jpeg')
-        .resize({ width: 800, height: 800 })
-        .jpeg({ quality: 40 })
-        .toFile(`./public/profile-images/${req.session.user_id}.jpeg`);
-      res.send({ success : true });
-    } catch (error) {
-      res.send({ success : false, reason : 'Unsupported File Type' })
-    }
-  } else if (type == 'info') {
-    let name = req.body.name;
-    let email = req.body.email;
-    let emailConfirm = req.body.emailConfirm;
-    let language = req.body.language;
-    let interest = req.body.interest;
-
-    const supportedLanguages = ['English', 'Spanish', 'French'];
-    if (!/^[a-zA-Z0-9]+$/.test(name)) {
-      connection.release();
-      return res.send({success : false, reason : 'Invalid Name'});
-    } else if (!/^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/.test(email)) {
-      connection.release();
-      return res.send({success : false, reason : 'Invalid Email'});
-    } else if (email !== emailConfirm) {
-      connection.release();
-      return res.send({success : false, reason : 'Email Confirmation Failed'});
-    } else if (!supportedLanguages.includes(language)) {
-      connection.release();
-      return res.send({success : false, reason : 'Not Supported Language'});
-    }
-    const updateInfo = [{name : name, email : email, language : language, interest : interest}, req.session.user_id];
-    let update = await connection.query('UPDATE users set ? WHERE user_id = ?', updateInfo);
-    res.send({success : true});
-    connection.release();
-  } else if (type == 'password') {
-    let password = req.body.password;
-    let passwordConfirm = req.body.passwordConfirm;
-    console.log(password, passwordConfirm)
-    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-      connection.release();
-      return res.send({ success : false, reason : 'No Special Character'});
-    } else if ((password.match(/\d/g) || []).length < 2) {
-      connection.release();
-      return res.send({ success : false, reason : 'Need More Than 2 Numbers'});
-    } else if (password.length < 6) {
-      connection.release();
-      return res.send({ success : false, reason : 'Too Short'}); 
-    } else if (password !== passwordConfirm) {
-      connection.release();
-      return res.send({ success : false, reason : 'Password Does Not Match'});
-    }
-
-    connection.release();
-    res.send({ success : true });
-    let hashed = hashing(password);
-    let salt = hashed[0];
-    let hashedPw = hashed[1];
-    const updateInfo = [{ hashed_password : hashedPw, salt : salt }, req.session.user_id];
-    const update = await connection.query("UPDATE users set ? WHERE user_id = ?", updateInfo);
-  } else if (type == 'auth') {
-
-  } else if (type == 'extension-add') {
-    try {
-      let url = req.body.url;
-      let origin;
-      let domain;
-      if (!/^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[a-zA-Z0-9.-]*)*$/.test(url)) {
+    } else if (type == 'extension-add') {
+      try {
+        let url = req.body.url;
+        let origin;
+        let domain;
+        if (!/^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[a-zA-Z0-9.-]*)*$/.test(url)) {
+          connection.release();
+          return res.send({ success: false, reason: 'Invalid URL or Domain' });
+        }
+        if (url.includes('https://') || url.includes('http://')) {
+          origin = new URL(url).origin;
+          domain = new URL(url).hostname;
+        } else {
+          origin = new URL('https://' + url).origin;
+          domain = new URL('https://' + url).hostname;
+        }
+  
+        let activitySettings = await connection.query(`select activity_setting from users where user_id = "${req.session.user_id}"`);
+        activitySettings = JSON.parse(activitySettings[0].activity_setting);
+        const selectedActivity = activitySettings.find(activitySetting => { return activitySetting.domain == domain });
+        if (selectedActivity) {
+          connection.release();
+          return res.send({ success: false, reason: 'Already Exist' });
+        } else {
+          activitySettings.push({
+            domain: domain,
+            block: true,
+            timer: true
+          });
+          const updateSetting = await connection.query(`UPDATE users set activity_setting = '${JSON.stringify(activitySettings)}' where user_id = "${req.session.user_id}"`);
+        }
         connection.release();
-        return res.send({success: false, reason: 'Invalid URL or Domain'});
-      }
-      if(url.includes('https://') || url.includes('http://')) {
-        origin = new URL(url).origin;
-        domain = new URL(url).hostname;
-      } else {
-        origin = new URL('https://' + url).origin;
-        domain = new URL('https://' + url).hostname;
-      }
-
-      let activitySettings = await connection.query(`select activity_setting from users where user_id = "${req.session.user_id}"`);
-      activitySettings = JSON.parse(activitySettings[0].activity_setting);
-      const selectedActivity = activitySettings.find(activitySetting => {return activitySetting.domain == domain });
-      if(selectedActivity) {
+        res.send({ success: true, origin: origin, domain: domain })
+      } catch (error) {
+        console.log(error)
         connection.release();
-        return res.send({success: false, reason: 'Already Exist'});
-      } else {
-        activitySettings.push({
-          domain: domain,
-          block: true,
-          timer: true
-        });
-        const updateSetting = await connection.query(`UPDATE users set activity_setting = '${JSON.stringify(activitySettings)}' where user_id = "${req.session.user_id}"`);
+        res.send({ success: false, reason: 'Invalid URL or Domain' })
       }
-      connection.release();
-      res.send({success: true, origin: origin, domain: domain})
-    } catch (error) {
-      console.log(error)
-      connection.release();
-      res.send({success: false, reason: 'Invalid URL or Domain'})
-    }
-  } else if (type == 'extension-setting-update') {
-    const schema = {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          domain: { type: 'string', minLength: 2, maxLength: 260 },
-          block: { type: 'boolean' },
-          timer: { type: 'boolean' },
+    } else if (type == 'extension-setting-update') {
+      const schema = {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            domain: { type: 'string', minLength: 2, maxLength: 260 },
+            block: { type: 'boolean' },
+            timer: { type: 'boolean' },
+          },
+          required: ['domain', 'block', 'timer'],
+          additionalProperties: false
         },
-        required: ['domain', 'block', 'timer'],
-        additionalProperties: false
-      },
-    };
-
-    const updatedExtSettings = req.body.activitySettings;
-    console.log(updatedExtSettings)
-    const isValid = isValidJSON(updatedExtSettings, schema);
-    if (isValid) {
-      const updateInfo = [{ activity_setting : JSON.stringify(updatedExtSettings) }, req.session.user_id];
-      let update = await connection.query('UPDATE users set ? WHERE user_id = ?', updateInfo);
-      connection.release();
-      return res.send({ success : true });
-    } else {
-      connection.release();
-      return res.send({ success : false, reason : 'Data Invalid' })
-    }
-  } else if (type == 'account') {
-
-  } else if (type == 'notification') {
-    const schema = {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          id: { type: 'integer', minimum: 0, maximum: 14 },
-          name: { type: 'string', maxLength: 50 },
-          email: { type: 'boolean' },
-          push: { type: 'boolean' },
-          sms: { type: 'boolean' },
+      };
+  
+      const updatedExtSettings = req.body.activitySettings;
+      console.log(updatedExtSettings)
+      const isValid = isValidJSON(updatedExtSettings, schema);
+      if (isValid) {
+        const updateInfo = [{ activity_setting: JSON.stringify(updatedExtSettings) }, req.session.user_id];
+        let update = await connection.query('UPDATE users set ? WHERE user_id = ?', updateInfo);
+        connection.release();
+        return res.send({ success: true });
+      } else {
+        connection.release();
+        return res.send({ success: false, reason: 'Data Invalid' })
+      }
+    } else if (type == 'account') {
+  
+    } else if (type == 'notification') {
+      const schema = {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer', minimum: 0, maximum: 14 },
+            name: { type: 'string', maxLength: 50 },
+            email: { type: 'boolean' },
+            push: { type: 'boolean' },
+            sms: { type: 'boolean' },
+          },
+          required: ['id', 'name', 'email', 'push', 'sms'],
+          additionalProperties: false
         },
-        required: ['id', 'name', 'email', 'push', 'sms'],
-        additionalProperties: false
-      },
-    };
-
-    const updatedNotificationSettings = req.body.notificationSettings;
-    const isValid = isValidJSON(updatedNotificationSettings, schema);
-    if (isValid) {
-      const updateInfo = [{ notification : JSON.stringify(updatedNotificationSettings) }, req.session.user_id];
-      let update = await connection.query('UPDATE users set ? WHERE user_id = ?', updateInfo);
-      connection.release();
-      return res.send({ success : true });
-    } else {
-      connection.release();
-      return res.send({ success : false, reason : 'Data Invalid' })
+      };
+  
+      const updatedNotificationSettings = req.body.notificationSettings;
+      const isValid = isValidJSON(updatedNotificationSettings, schema);
+      if (isValid) {
+        const updateInfo = [{ notification_setting: JSON.stringify(updatedNotificationSettings) }, req.session.user_id];
+        let update = await connection.query('UPDATE users set ? WHERE user_id = ?', updateInfo);
+        connection.release();
+        return res.send({ success: true });
+      } else {
+        connection.release();
+        return res.send({ success: false, reason: 'Data Invalid' })
+      }
+    } else if (type == 'session') {
+  
     }
-  } else if (type == 'session') {
-
-  }
+  }));
 });
 
-Router.post('/notification-setting', async(req, res) => {
-  if (!req.session.loggedin) {
-    return res.send({ success : false, reason : 'no session'});
-  }
-  const connection = await (await pool).getConnection();
+Router.post('/notification-setting', async (req, res) => {
+  autoSignin(req, res, (async() => {
+    const connection = await (await pool).getConnection();
 
-  let select = await connection.query('SELECT notification from users where user_id = ?', [req.session.user_id]);
-  let notification = select[0].notification;
-
-  res.send({ success : true, notification : notification });
-  connection.release();
+    let select = await connection.query('SELECT notification_setting from users where user_id = ?', [req.session.user_id]);
+    let notification = select[0].notification;
+  
+    res.send({ success: true, notification: notification });
+    connection.release();
+  }));
 })
 
-module.exports = Router;
+module.exports = { Router: Router, autoSignin: autoSignin };
