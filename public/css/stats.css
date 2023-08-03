@@ -343,3 +343,25 @@ tr.line {
 #activities-wrapper .text-capitalize{
   text-transform: none !important;
 }
+
+.row.mt-4 .col-xl-6.col-sm-6.mb-xl-0.mb-4 .card.mb-4 {
+  height: 100%;
+}
+
+.row.mt-4 .col-xl-6.col-sm-6.mb-xl-0.mb-4 .card.mb-4 .row{
+  position: relative;
+}
+
+.no-data {
+  filter: blur(10px);
+}
+
+.row .no-data-blocker {
+  left: 25px;
+  width: calc(100% - 50px);
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  z-index: 1;
+  background-color: #fff;
+}
