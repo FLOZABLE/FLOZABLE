@@ -365,3 +365,7 @@ tr.line {
   z-index: 1;
   background-color: #fff;
 }
+
+.row .no-data-blocker.hidden {
+  display: none;
+}

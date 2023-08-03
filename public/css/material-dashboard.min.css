@@ -137,3 +137,7 @@ Github: https://github.com/fiduswriter/Simple-DataTables
     width: calc(100% - 17.125rem - 50px) !important;
 }
 }
+
+.sidenav span{
+  font-weight: bold;
+}
