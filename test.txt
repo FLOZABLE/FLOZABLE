@@ -1,55 +1,11 @@
-#weekly-planner {
-  display: none;
-}
-
-#monthly-planner {
-  display: none;
-}
-
-#weekly-planner td:nth-child(-n + 8){
-  border-top: none;
-}
-
-#weekly-planner td:nth-child(1){
-  width: 100px;
-}
-
-#weekly-planner p {
-  padding: 0px;
-  margin: 0px;
-}
-
-#weekly-planner p.date {
-  font-size: 25px;
-}
-
-#weekly-planner p.day {
-  font-size: 20px;
-}
-
-#weekly-planner .weekly-planner-header {
-  height: fit-content;
-}
-
-#weekly-planner tbody {
-  table-layout: fixed;
-  width: 100%;
-  position: relative
-}
-
-#weekly-planner tr {
-  display: flex;
-  position: relative;
-}
-
-#weekly-planner tr.weekly-planner-header th:nth-child(-n + 8){
-  width: calc((100% - 100px) / 7);
-}
-
-#weekly-planner tr.weekly-planner-header th:nth-child(1){
-  width: 100px;
-}
-
-#weekly-planner td.block {
-  width: calc((100% - 100px) / 7);
-}
+    updateSubjectLineChart(() => {
+      return subjects.map(subject => {
+        const data = Array(subjects.monthly.maxlength - subject.monthly.total.length).fill(0).concat(subject.monthly.total);
+        return {label: subject.name, tension: 0.4, borderWidth: 0, pointRadius: 2, pointBackgroundColor: subject.color, borderColor: subject.color, borderWidth: 3, data: data, maxBarThickness: 6}
+      })
+    }, () => {
+      return subjects.monthly.groupedTotal.map((monthlyTotal, i) => {
+        const date = new Date(subjects.monthly.datum_point * 1000 + i * 1000 * 60 * 60 * 24);
+        return `${date.getMonth() + 1}/${date.getDate()}`
+      })
+    })
