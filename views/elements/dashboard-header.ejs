@@ -1,12 +1,3 @@
-<script>
-  function replaceImg() {
-    const profiles = document.querySelectorAll(".profile");
-    profiles.forEach(profile => {
-      profile.setAttribute('src', "../../img/default_profile.jpg")
-    })
-  }
-</script>
-
 <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
   <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
     <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
@@ -89,8 +80,7 @@
     </div>
     <div class="nav-item dropdown">
       <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-        <img class="rounded-circle me-lg-2 profile" src="../../img/profiles/<%= userInfo.userId%>.jpeg"
-          onerror="replaceImg()" alt="" style="width: 40px; height: 40px;">
+        <img class="rounded-circle me-lg-2 profile" src="../../img/profiles/<%= userInfo.userId%>.jpeg" alt="" style="width: 40px; height: 40px;">
         <span class="d-none d-lg-inline-flex">
           <%= userInfo.name%>
         </span>

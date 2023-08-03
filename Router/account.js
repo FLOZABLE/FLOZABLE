@@ -52,7 +52,7 @@ function generateId() {
 }
 
 Router.get('/signin', async (req, res) => {
-  autoSignin(req, res, (() => res.render("/account/signin", { loggedin: true })), (() => res.render("/account/signup", { loggedin: false })));
+  autoSignin(req, res, (() => res.render("account/signin", { loggedin: true })), (() => res.render("account/signin", { loggedin: false })));
 });
 
 Router.post('/signin-authentication', async (req, res, next) => {
@@ -179,8 +179,8 @@ Router.post('/signup-authentication', async (req, res, next) => {
 });
 
 Router.get('/signup', function (req, res) {
-  autoSignin(req, res, (() => res.render("/account/signup")), 
-  (() => res.render("/account/signup")));
+  autoSignin(req, res, (() => res.render("account/signup")), 
+  (() => res.render("account/signup")));
 });
 
 Router.get('/logout', function (req, res) {

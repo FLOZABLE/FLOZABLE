@@ -147,7 +147,7 @@ const activitiesWrapper = document.getElementById('activities-wrapper');
         }
       },
       dateClick: function(info) {
-        calendarDate = new Date(info.date).setHours(0, 0, 0, 0);
+        calendarDate = new Date(info.date);
         updateCharts();
       }
     });
@@ -442,7 +442,7 @@ const activitiesWrapper = document.getElementById('activities-wrapper');
       <div class="d-flex px-2 py-1">
         <div>
           <img src="profile-images/${user.userId}.jpeg" class="avatar avatar-sm me-3 profile"
-            alt="avatar image" onerror="replaceImg()">
+            alt="avatar image">
         </div>
         <div class="d-flex flex-column justify-content-center">
           <h6 class="mb-0 font-weight-normal text-sm">${user.name}</h6>
@@ -540,28 +540,26 @@ const activitiesWrapper = document.getElementById('activities-wrapper');
       docmain.classList.remove('blurbg');
     }
   });
-  console.log(calendarDate, activities.data[calendarDate / 1000], Object.values(activities.data[calendarDate / 1000]).map(web => {
-    console.log(web)
-    return web.totlaTime
-  }),)
-  appUsageDoughnutChart = new Chart(appUsageCont, {
-    type: "doughnut",
-    data: {
-      labels: Object.keys(activities.data[calendarDate / 1000]),
-      datasets: [{
-        label: "Projects",
-        backgroundColor: ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7", "#e60049", "#0bb4ff", "#50e991", "#e6d800", "#9b19f5", "#ffa300", "#dc0ab4", "#b3d4ff", "#00bfa0"],
-        data: Object.values(activities.data[calendarDate / 1000]).map(web => {
-          return web.totalTime
-        }),
-        fill: false
-      }],
-    },
-    options: {
-      responsive: true,
-
-    },
-  });
+  if(activities.data[calendarDate / 1000]) {
+    appUsageDoughnutChart = new Chart(appUsageCont, {
+      type: "doughnut",
+      data: {
+        labels: Object.keys(activities.data[calendarDate / 1000]),
+        datasets: [{
+          label: "Projects",
+          backgroundColor: ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7", "#e60049", "#0bb4ff", "#50e991", "#e6d800", "#9b19f5", "#ffa300", "#dc0ab4", "#b3d4ff", "#00bfa0"],
+          data: Object.values(activities.data[calendarDate / 1000]).map(web => {
+            return web.totalTime
+          }),
+          fill: false
+        }],
+      },
+      options: {
+        responsive: true,
+  
+      },
+    });
+  }
 })();
 
 function filterTimeline(timeline, startTime, endTime, datum_point) {
@@ -997,11 +995,16 @@ function updateCharts() {
 }
 
 const doughnutPercentageContainer = document.getElementById('doughnut-percentage');
+const doughnutChartBlocker = document.getElementById('sbj-doughnt-blocker');
 
 function updateDoughnutPercentage() {
   doughnutPercentageContainer.innerHTML = ''
   let total = 0;
   DoughnutChart.data.datasets[0].data.map((subjectHr) => total += subjectHr);
+  if (!total) {
+    doughnutChartBlocker.innerHTML = '<h2>No Data Provided</h2>';
+    return 0;
+  }
   total = total ? total : 1;
   subjects.map((subject, i) => {
     const time = DoughnutChart.data.datasets[0].data[i]// ? DoughnutChart.data.datasets[0].data[i] : 0;
