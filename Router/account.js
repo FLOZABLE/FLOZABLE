@@ -147,7 +147,14 @@ Router.post('/signup-authentication', async (req, res, next) => {
     timezone: timeZone,
     datum_point: date / 1000,
     key_salt: keySalt,
-    iv: iv
+    iv: iv,
+    plan: '',
+    daily: '[0]',
+    weekly: '[0]',
+    monthly: '[0]',
+    activity: '{}',
+    activity_setting: '[]',
+    notifications: '[]'
   };
 
   connection.query('INSERT INTO users SET ?', user);
