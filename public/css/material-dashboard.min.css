@@ -117,7 +117,7 @@ Github: https://github.com/fiduswriter/Simple-DataTables
 
 .header-left p {
   display: inline;
-  font-size: 12px;
+  font-size: 15px;
 }
 
 @media (min-width: 1200px) {
@@ -140,4 +140,12 @@ Github: https://github.com/fiduswriter/Simple-DataTables
 
 .sidenav span{
   font-weight: bold;
+}
+
+aside {
+  background-image: url('/img/test1.png');
+}
+
+ul.navbar-nav li i{
+  font-size: 27px;
 }

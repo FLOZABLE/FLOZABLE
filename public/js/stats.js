@@ -18,7 +18,7 @@ let subjectDoughnutChartContainer = document.getElementById('subjectDoughnutChar
 let timelineHistogramChartContainer = document.getElementById('timelineHistogramChart');
 let subjectLineChartContainer = document.getElementById('subjectLinceChart');
 let compareChartContainer = document.getElementById('rankingChart');
-let webUsageChartContainer = document.getElementById('rankingChart');
+let webUsageChartContainer = document.getElementById('webUsageChart');
 let appUsageChartContainer = document.getElementById('rankingChart');
 
 colorsList = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7", "#e60049", "#0bb4ff", "#50e991", "#e6d800", "#9b19f5", "#ffa300", "#dc0ab4", "#b3d4ff", "#00bfa0"];
@@ -79,14 +79,14 @@ subjectLineChart = new Chart(subjectLineChartContainer, {
   type: "line",
   data: {
     labels: [],
-    datasets: []
+    datasets: [],
   },
   options: {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false,
+        display: true,
       }
     },
     interaction: {
@@ -211,6 +211,23 @@ timelineHistogramChart = new Chart(timelineHistogramChartContainer, {
   }
 })
 
+webUsageChart = new Chart(webUsageChartContainer, {
+  type: "doughnut",
+  data: {
+    labels: [],
+    datasets: [{
+      label: "Projects",
+      backgroundColor: colorsList,
+      data: [],
+      fill: false
+    }],
+  },
+  options: {
+    responsive: true,
+
+  },
+});
+
 let calendarDate = new Date(new Date().setHours(0, 0, 0, 0));
 
 let subjects;
@@ -327,9 +344,13 @@ const activitiesWrapper = document.getElementById('activities-wrapper');
     subjectDoughnutChart.data.labels = subjects.map(subject => {
       return subject.name
     })
-    subjectDoughnutChart.data.datasets[0].backgroundColor = subjects.map(subject => {
+
+    //color sync
+    /* subjectDoughnutChart.data.datasets[0].backgroundColor = subjects.map(subject => {
       return subject.color
-    })
+    }) */
+
+    subjectDoughnutChart.data.datasets[0].backgroundColor = colorsList;
   }
 
   if (ranking.success) {
@@ -674,9 +695,12 @@ function updateCharts() {
     }), 'Daily Ranking');
 
     updateSubjectLineChart(() => {
-      return subjects.map(subject => {
+      return subjects.map((subject, index) => {
         const data = Array(subjects.daily.maxlength - subject.daily.total.length).fill(0).concat(subject.daily.total);
-        return { label: subject.name, tension: 0.4, borderWidth: 0, pointRadius: 2, pointBackgroundColor: subject.color, borderColor: subject.color, borderWidth: 3, data: data, maxBarThickness: 6 }
+        //sync bg
+        //return { label: subject.name, tension: 0.4, borderWidth: 0, pointRadius: 2, pointBackgroundColor: subject.color, borderColor: subject.color, borderWidth: 3, data: data, maxBarThickness: 6 }
+        //orig bg
+        return { label: subject.name, tension: 0.4, borderWidth: 0, pointRadius: 2, pointBackgroundColor: colorsList[index], borderColor: colorsList[index], backgroundColor: colorsList[index], borderWidth: 3, data: data, maxBarThickness: 6 }
       })
     }, () => {
       return subjects.daily.groupedTotal.map((dailyTotal, i) => {
@@ -715,10 +739,24 @@ function updateCharts() {
     //manage activity
 
     const selectedActivity = activities.data[calendarDate / 1000];
+    console.log(activities.data)
+
+    /* 
+    labels: Object.keys(activities.data[calendarDate / 1000]),
+    datasets: [{
+      label: "Projects",
+      backgroundColor: colorsList,
+      data: Object.values(activities.data[calendarDate / 1000]).map(web => {
+        return web.totalTime
+      }),
+      fill: false
+    }],
+    */
     if (selectedActivity) {
       const webTitles = Object.keys(selectedActivity);
       const webs = Object.values(selectedActivity);
-      webs.map((web, index) => {
+      webUsageChart.data.labels = webTitles;
+      webUsageChart.data.datasets[0].data = webs.map((web, index) => {
         const activityWrapper = document.createElement('li');
         activityWrapper.classList.add('list-group-item');
         activityWrapper.classList.add('border-0');
@@ -763,7 +801,9 @@ function updateCharts() {
           faviconWrapper.innerHTML = `<img src = "${web.favicon}"/>`
         }
         activitiesWrapper.appendChild(activityWrapper);
-      })
+        return web.totalTime;
+      });
+      webUsageChart.update();
     } else {
       //timezone err or no extension
     }
@@ -780,7 +820,7 @@ function updateCharts() {
     updateSubjectLineChart(() => {
       return subjects.map(subject => {
         const data = Array(subjects.weekly.maxlength - subject.weekly.total.length).fill(0).concat(subject.weekly.total);
-        return { label: subject.name, tension: 0.4, borderWidth: 0, pointRadius: 2, pointBackgroundColor: subject.color, borderColor: subject.color, borderWidth: 3, data: data, maxBarThickness: 6 }
+        return { label: subject.name, tension: 0.4, borderWidth: 0, pointRadius: 2, pointBackgroundColor: colorsList[index], borderColor: colorsList[index], backgroundColor: colorsList[index], borderWidth: 3, data: data, maxBarThickness: 6 }
       })
     }, () => {
       return subjects.weekly.groupedTotal.map((weeklyTotal, i) => {
@@ -812,7 +852,7 @@ function updateCharts() {
     updateSubjectLineChart(() => {
       return subjects.map(subject => {
         const data = Array(subjects.monthly.maxlength - subject.monthly.total.length).fill(0).concat(subject.monthly.total);
-        return { label: subject.name, tension: 0.4, borderWidth: 0, pointRadius: 2, pointBackgroundColor: subject.color, borderColor: subject.color, borderWidth: 3, data: data, maxBarThickness: 6 }
+        return { label: subject.name, tension: 0.4, borderWidth: 0, pointRadius: 2, pointBackgroundColor: colorsList[index], borderColor: colorsList[index], backgroundColor: colorsList[index], borderWidth: 3, data: data, maxBarThickness: 6 }
       })
     }, () => {
       return subjects.monthly.groupedTotal.map((monthlyTotal, i) => {
