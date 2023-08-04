@@ -357,15 +357,69 @@ tr.line {
 }
 
 .row .no-data-blocker {
-  left: 25px;
-  width: calc(100% - 50px);
-  height: 100%;
+  width: 100%;
+  height: calc(100% - 100px);
   position: absolute;
-  top: 0px;
+  top: 80px;
+  left: 0px;
   z-index: 1;
   background-color: #fff;
 }
 
 .row .no-data-blocker.hidden {
   display: none;
+}
+
+.fc .fc-button-group .fc-button-primary {
+    background-color: #faed89;
+    border-color: #faed89;
+    color: black;
+}
+
+/* .icon.icon-lg.icon-shape {
+  background-color: #faed89;
+  padding: 10px;
+} */
+
+#calendar-container {
+  margin-bottom: 20px;
+}
+
+.row .col-xl-12 {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 24px;
+}
+
+.row .col-xl-12 .card.mb-4 {
+  height: 100%;
+}
+
+.row .col-xl-12 .col-xl-6:nth-child(1) .card.mb-4 {
+  margin-right: 12px;
+}
+
+.row .col-xl-12 .col-xl-6:nth-child(2) .card.mb-4 {
+  margin-left: 12px;
+}
+
+#statsBtn {
+  margin-bottom: 0px;
+}
+
+.calendar .fc-daygrid-body.fc-daygrid-body-unbalanced.fc-daygrid-body-natural {
+  width: 100% !important;
+}
+
+.calendar .fc-daygrid-body.fc-daygrid-body-unbalanced.fc-daygrid-body-natural table{
+  width: 100% !important;
+}
+
+#calendar {
+  height: calc(100vh - 200px); /* Set the height to 100% of the viewport height minus 200 pixels */
+  max-height: 700px;
+}
+
+#calendar .fc-daygrid, #calendar .fc-scrollgrid, #calendar .fc-scrollgrid tbody, #calendar .fc-scrollgrid-section, #calendar .fc-scroller-harness, #calendar .fc-scroller, #calendar .fc-daygrid-body, #calendar .fc-scrollgrid-sync-table{
+  height: 100%;
 }
