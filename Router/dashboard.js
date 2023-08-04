@@ -30,25 +30,17 @@ Router.get("/groups/create", async (req, res) => {
   }))
 })
 
-Router.get("/leaderboard", async (req, res) => {
+/* Router.get("/leaderboard", async (req, res) => {
   account.autoSignin(req, res, (() => {
     res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
   }), (() => {
     res.redirect('/account/signin');
   }))
-})
+}) */
 
 Router.get("/planner", async (req, res) => {
   account.autoSignin(req, res, (() => {
     res.render("dashboards/planner.ejs", {userInfo: req.session.userInfo});
-  }), (() => {
-    res.redirect('/account/signin');
-  }))
-})
-
-Router.get("/analytics", async (req, res) => {
-  account.autoSignin(req, res, (() => {
-    res.render("dashboards/analytics.ejs", {userInfo: req.session.userInfo});
   }), (() => {
     res.redirect('/account/signin');
   }))
