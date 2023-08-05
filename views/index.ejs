@@ -3,34 +3,27 @@
 
 <head>
   <%- include("./elements/head");%>
-  <meta charset="utf-8">
-  <title>FitApp - Mobile App HTML Template</title>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <meta content="" name="keywords">
-  <meta content="" name="description">
+    <title>
+      FLOZABLE
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500&family=Jost:wght@500;600;700&display=swap"
+      rel="stylesheet">
 
-  <!-- Favicon -->
-  <link href="img/main/favicon.ico" rel="icon">
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- Google Web Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500&family=Jost:wght@500;600;700&display=swap"
-    rel="stylesheet">
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
-  <!-- Icon Font Stylesheet -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Libraries Stylesheet -->
-  <link href="lib/animate/animate.min.css" rel="stylesheet">
-  <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
-  <!-- Customized Bootstrap Stylesheet -->
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Template Stylesheet -->
-  <link href="css/main.css" rel="stylesheet">
+    <!-- Template Stylesheet -->
+    <link href="css/main.css" rel="stylesheet">
 </head>
 
 <body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="51">
@@ -49,28 +42,30 @@
     <div class="container-xxl position-relative p-0" id="home">
       <div class="container-xxl position-relative p-0" id="home">
         <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-            <a href="" class="navbar-brand p-0">
-                <h1 class="m-0">FLOZABLE</h1>
-                <!-- <img src="img/main/logo.png" alt="Logo"> -->
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                <span class="fa fa-bars"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav mx-auto py-0">
-                    <a href="../#home" class="nav-item nav-link active">Home</a>
-                    <a href="../#about" class="nav-item nav-link">About</a>
-                    <a href="../#feature" class="nav-item nav-link">Feature</a>
-                    <a href="../#pricing" class="nav-item nav-link">Pricing</a>
-                    <a href="../#review" class="nav-item nav-link">Review</a>
-                    <a href="/dashboard/stats" class="nav-item nav-link">Dashboard</a>
-                </div>
-                <% if (loggedIn) {%>
-                  <a href="/account/logout" class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block">Log Out</a>
-                <% } else { %>
-                  <a href="/account/signin" class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block">Sign In</a>
-                <% } %>
+          <a href="" class="navbar-brand p-0">
+            <h1 class="m-0">FLOZABLE</h1>
+            <!-- <img src="img/main/logo.png" alt="Logo"> -->
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="fa fa-bars"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav mx-auto py-0">
+              <a href="../#home" class="nav-item nav-link active">Home</a>
+              <a href="../#about" class="nav-item nav-link">About</a>
+              <a href="../#feature" class="nav-item nav-link">Feature</a>
+              <a href="../#pricing" class="nav-item nav-link">Pricing</a>
+              <a href="../#review" class="nav-item nav-link">Review</a>
+              <a href="/dashboard/stats" class="nav-item nav-link">Dashboard</a>
             </div>
+            <% if (loggedIn) {%>
+              <a href="/account/logout"
+                class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block">Log Out</a>
+              <% } else { %>
+                <a href="/account/signin"
+                  class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block">Sign In</a>
+                <% } %>
+          </div>
         </nav>
       </div>
 
@@ -572,7 +567,7 @@
                       <div class="d-flex justify-content-between mb-3">
                         <span>Change study session background to YouTube</span>
                         <i class="fa fa-check text-primary-gradient pt-1"></i>
-                      </div>                      
+                      </div>
                       <div class="d-flex justify-content-between mb-3">
                         <span>AI model limitations</span>
                         <i class="fa fa-check text-primary-gradient pt-1"></i>
@@ -665,7 +660,7 @@
                       <div class="d-flex justify-content-between mb-3">
                         <span>Change study session background to YouTube</span>
                         <i class="fa fa-check text-primary-gradient pt-1"></i>
-                      </div>                      
+                      </div>
                       <div class="d-flex justify-content-between mb-3">
                         <span>AI model limitations</span>
                         <i class="fa fa-check text-primary-gradient pt-1"></i>
@@ -769,7 +764,9 @@
                 </div>
               </div>
             </div>
-            <p class="mb-0">"FLOZABLE is a total game-changer for studying! I can finally connect with my friends and study together, even when we're not in the same place. It's like having a virtual study group that actually keeps me focused and motivated."</p>
+            <p class="mb-0">"FLOZABLE is a total game-changer for studying! I can finally connect with my friends and
+              study together, even when we're not in the same place. It's like having a virtual study group that
+              actually keeps me focused and motivated."</p>
           </div>
           <div class="testimonial-item rounded p-4">
             <div class="d-flex align-items-center mb-4">
@@ -787,7 +784,9 @@
                 </div>
               </div>
             </div>
-            <p class="mb-0">"OMG, FLOZABLE is my new study BFF! The AI study suggestions are surprisingly helpful, and the timer keeps me on track without feeling too strict. Plus, the study icon is super cute and makes studying feel a little less boring."</p>
+            <p class="mb-0">"OMG, FLOZABLE is my new study BFF! The AI study suggestions are surprisingly helpful, and
+              the timer keeps me on track without feeling too strict. Plus, the study icon is super cute and makes
+              studying feel a little less boring."</p>
           </div>
           <div class="testimonial-item rounded p-4">
             <div class="d-flex align-items-center mb-4">
@@ -805,7 +804,9 @@
                 </div>
               </div>
             </div>
-            <p class="mb-0">"FLOZABLE is a lifesaver during exams! The study planner helps me stay organized and on top of my assignments, while the chat feature lets me get quick answers to my questions. It's like having a study support group right in my pocket!"</p>
+            <p class="mb-0">"FLOZABLE is a lifesaver during exams! The study planner helps me stay organized and on top
+              of my assignments, while the chat feature lets me get quick answers to my questions. It's like having a
+              study support group right in my pocket!"</p>
           </div>
           <div class="testimonial-item rounded p-4">
             <div class="d-flex align-items-center mb-4">
@@ -823,7 +824,9 @@
                 </div>
               </div>
             </div>
-            <p class="mb-0">"I can't get enough of FLOZABLE's YouTube background feature! I love setting up my study sessions with my favorite study playlists in the background. It's such a vibe and helps me stay in the zone."</p>
+            <p class="mb-0">"I can't get enough of FLOZABLE's YouTube background feature! I love setting up my study
+              sessions with my favorite study playlists in the background. It's such a vibe and helps me stay in the
+              zone."</p>
           </div>
         </div>
       </div>
