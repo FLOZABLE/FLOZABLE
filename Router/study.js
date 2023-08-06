@@ -335,9 +335,10 @@ Router.post('/update-plan', async(req, res) => {
         let plans = JSON.parse(`[${userInfo.plan}]`);
         let plan = plans.find(plan => planInfo.id == plan.id);
         console.log(plan)
-        const startTime = (plan.date + plan.hr * 60 * 60 + plan.min * 60) * 1000;
+        const startTime = (planInfo.date + planInfo.hr * 60 * 60 + planInfo.min * 60) * 1000;
         if (plan) {
           let notifications = JSON.parse(userInfo.notifications);
+          console.log(notifications)
           notifications = notifications.filter(notification => notification !== plan.id);
           console.log('dd')
           const addPlan = await connection.query(
@@ -348,17 +349,17 @@ Router.post('/update-plan', async(req, res) => {
           res.send({ success: true, type: 'update' });
         } else {
           let notifications = JSON.parse(userInfo.notifications);
-          notifications = notifications.push(plan.id);
+          notifications = notifications.push(planInfo.id);
           const addPlan = await connection.query(
             'UPDATE users SET plan = CASE WHEN plan = ? THEN ? ELSE CONCAT(plan, ?, ?) END, notifications = ? WHERE user_id = ?',
             [JSON.stringify(planInfo), JSON.stringify(planInfo), ',', JSON.stringify(planInfo), JSON.stringify(notifications), userId]
           );
-          notificationService.planNotification(plan, userInfo, startTime);
+          notificationService.planNotification(planInfo, userInfo, startTime);
           res.send({ success: true, type: 'add' });
         }
       } catch (error) {
         console.error('MySQL error:', error);
-        res.send({ success: false, reason: 'MySQL error' });
+        res.send({ success: false, reason: 'Server Error' });
       }
       connection.release();
     } catch (error) {
