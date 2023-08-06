@@ -71,7 +71,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
 
   if (matching_email.length === 0) {
     console.log("no email");
-    res.send({ success: false, signin_err_msg: "NO SUCH USER", signup_err_msg: "" });
+    res.send({ success: false, reason: "NO SUCH USER" });
     return;
   }
 
@@ -84,7 +84,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
     req.session.regenerate((err) => {
       if (err) {
         console.log("Error regenerating session ID:", err);
-        res.send({ success: false, signin_err_msg: "SESSION ERROR", signup_err_msg: "" });
+        res.send({ success: false, reason: "SESSION ERROR"});
         return;
       }
 
@@ -105,7 +105,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
       res.send({ success: true });
     });
   } else {
-    res.send({ success: false, signin_err_msg: "INVALID PASSWORD", signup_err_msg: "" });
+    res.send({ success: false, reason: 'INVALID PASSWORD'});
   }
 });
 
@@ -128,7 +128,7 @@ Router.post('/signup-authentication', async (req, res, next) => {
 
   if (check_email.length !== 0) {
     console.log("not new");
-    res.send({ success: false, signup_err_msg: "EMAIL ALREADY IN USE", signin_err_msg: "" });
+    res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
     return;
   }
 
@@ -162,7 +162,7 @@ Router.post('/signup-authentication', async (req, res, next) => {
   req.session.regenerate((err) => {
     if (err) {
       console.log("Error regenerating session ID:", err);
-      res.send({ success: false, signup_err_msg: "SESSION ERROR", signin_err_msg: "" });
+      res.send({ success: false, reason: "SESSION ERROR" });
       return;
     }
 
@@ -422,8 +422,7 @@ Router.post('/notification-setting', async (req, res) => {
     const connection = await (await pool).getConnection();
 
     let select = await connection.query('SELECT notification_setting from users where user_id = ?', [req.session.user_id]);
-    let notification = select[0].notification;
-  
+    let notification = select[0].notification_setting;
     res.send({ success: true, notification: notification });
     connection.release();
   }));
