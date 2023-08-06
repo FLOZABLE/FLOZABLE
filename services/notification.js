@@ -102,10 +102,10 @@ async function notificationService () {
 
 function planNotification(plan, userInfo, startTime, decryptedData) {
   console.log(userInfo.user_id)
-  let schduleNotification = schedule.scheduleJob(plan.id, new Date(startTime), async() => {
+  let schduleNotification = schedule.scheduleJob(userInfo.user_id + '-' + plan.id, new Date(startTime), async() => {
     //remove notifications
     
-    const notificationSettings = await removeNotification(userInfo.user_id, plan.id);
+    const notificationSettings = await completeNotification(userInfo.user_id, plan.id);
     //email
     if (notificationSettings[0].email) {
       const to = [{ email: 'junjason1126@gmail.com', name: 'Jason' }];
@@ -179,7 +179,7 @@ function planNotification(plan, userInfo, startTime, decryptedData) {
   });
 }
 
-async function removeNotification(userId, planId) {
+async function completeNotification(userId, planId) {
   const connection = await (await pool).getConnection();
   let userInfo = await connection.query('SELECT notification_setting, notifications from users where user_id = ?', [userId]);
   userInfo = userInfo[0];
@@ -194,11 +194,16 @@ async function removeNotification(userId, planId) {
   let notifications = JSON.parse(userInfo.notifications);
   notifications = notifications.filter(notification => notification !== planId);
 
-  console.log(notifications)
+  console.log('ddd', notifications)
   const updateInfo = [{ notifications: JSON.stringify(notifications) }, userInfo.userId];
   const update = await connection.query('UPDATE users SET ? WHERE user_id = ?', updateInfo);
   connection.release();
   return notificationSettings;
+}
+
+async function removePrevNotification(userId, planId) {
+  const cancel = schedule.cancelJob(userId + '-' + planId);
+  console.log(cancel);
 }
 
 async function getSubscription(userInfo) {
@@ -263,7 +268,8 @@ Router.post('/subscribe', async(req, res) => {
 module.exports = {
   notificationService: notificationService,
   notificationRouter: Router,
-  planNotification: planNotification
+  planNotification: planNotification,
+  removePrevNotification: removePrevNotification
 };
 
 /* 

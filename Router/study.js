@@ -130,7 +130,6 @@ Router.post('/stop', async (req, res) => {
       monthPassed += 1;
       datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
     }
-    console.log(dayPassed, weekPassed, monthPassed);
   
     let dayDiff = dayPassed - daily.length + 1;
     let weekDiff = weekPassed - weekly.length + 1;
@@ -328,28 +327,29 @@ Router.post('/update-plan', async(req, res) => {
       const planInfo = req.body;
       //sanitize
       planInfo.description = encodeURIComponent(planInfo.description);
-      console.log(planInfo.description)
       try {
         let userInfo = await connection.query(`SELECT plan, notification_setting, notifications, user_id, name, key_salt, iv, subscription, user_id from users where user_id = ?`, [req.session.user_id]);
         userInfo = userInfo[0];
         let plans = JSON.parse(`[${userInfo.plan}]`);
         let plan = plans.find(plan => planInfo.id == plan.id);
-        console.log(plan)
         const startTime = (planInfo.date + planInfo.hr * 60 * 60 + planInfo.min * 60) * 1000;
         if (plan) {
-          let notifications = JSON.parse(userInfo.notifications);
-          console.log(notifications)
+          /* let notifications = JSON.parse(userInfo.notifications);
           notifications = notifications.filter(notification => notification !== plan.id);
-          console.log('dd')
           const addPlan = await connection.query(
             'UPDATE users SET plan = CONCAT_WS(",", REPLACE(plan, ?, ?)), notifications = ? WHERE user_id = ?',
             [JSON.stringify(plan), JSON.stringify(planInfo), JSON.stringify(notifications), userId]
+          ); */
+          const addPlan = await connection.query(
+            'UPDATE users SET plan = CONCAT_WS(",", REPLACE(plan, ?, ?)) WHERE user_id = ?',
+            [JSON.stringify(plan), JSON.stringify(planInfo), userId]
           );
+          notificationService.removePrevNotification(userId, plan.id)
           notificationService.planNotification(plan, userInfo, startTime);
           res.send({ success: true, type: 'update' });
         } else {
           let notifications = JSON.parse(userInfo.notifications);
-          notifications = notifications.push(planInfo.id);
+          notifications.push(planInfo.id);
           const addPlan = await connection.query(
             'UPDATE users SET plan = CASE WHEN plan = ? THEN ? ELSE CONCAT(plan, ?, ?) END, notifications = ? WHERE user_id = ?',
             [JSON.stringify(planInfo), JSON.stringify(planInfo), ',', JSON.stringify(planInfo), JSON.stringify(notifications), userId]
