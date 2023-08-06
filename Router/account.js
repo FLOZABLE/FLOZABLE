@@ -217,7 +217,7 @@ Router.post('/bring-my-info', async (req, res) => {
   autoSignin(req, res, (async() => {
     const connection = await (await pool).getConnection();
 
-    let userInfo = await connection.query(`SELECT name, myinfo, groups, user_id, plan, subjects from users WHERE user_id = "${req.session.user_id}"`);
+    let userInfo = await connection.query(`SELECT name, myinfo, groups, user_id, plan, subjects from users WHERE user_id = ?`, [req.session.user_id]);
     userInfo = userInfo[0];
     res.send({ success: true, userInfo: userInfo });
     connection.release();
@@ -228,7 +228,7 @@ Router.get('/setting', async (req, res) => {
   autoSignin(req, res, (async() => {
     const connection = await (await pool).getConnection();
 
-    let userInfo = await connection.query(`SELECT name, email, language, interest, user_id from users WHERE user_id = "${req.session.user_id}"`);
+    let userInfo = await connection.query(`SELECT name, email, language, interest, user_id from users WHERE user_id = ?`, [req.session.user_id]);
     userInfo = { userId: userInfo[0].user_id, name: userInfo[0].name, loggedin: true, email: userInfo[0].email, language: userInfo[0].language, interest: userInfo[0].interest };
     res.render('account/setting', { userInfo: userInfo })
     connection.release();
@@ -344,7 +344,7 @@ Router.post('/update/:type', upload.single('image'), async (req, res) => {
           domain = new URL('https://' + url).hostname;
         }
   
-        let activitySettings = await connection.query(`select activity_setting from users where user_id = "${req.session.user_id}"`);
+        let activitySettings = await connection.query(`select activity_setting from users where user_id = ?`, [req.session.user_id]);
         activitySettings = JSON.parse(activitySettings[0].activity_setting);
         const selectedActivity = activitySettings.find(activitySetting => { return activitySetting.domain == domain });
         if (selectedActivity) {
@@ -356,7 +356,8 @@ Router.post('/update/:type', upload.single('image'), async (req, res) => {
             block: true,
             timer: true
           });
-          const updateSetting = await connection.query(`UPDATE users set activity_setting = '${JSON.stringify(activitySettings)}' where user_id = "${req.session.user_id}"`);
+          const updateInfo = [{activity_setting: JSON.stringify(activitySettings)}, req.session.user_id];
+          const updateSetting = await connection.query(`UPDATE users set ? where user_id = ?`, updateInfo);
         }
         connection.release();
         res.send({ success: true, origin: origin, domain: domain })

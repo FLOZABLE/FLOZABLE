@@ -23,7 +23,7 @@ Router.post("/update-tabs", async (req, res) => {
   }
   const connection = await (await pool).getConnection();
   const newWebUsageData = req.body.tabUsageData;
-  let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = "${req.session.user_id}"`);
+  let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = ?`, [req.session.user_id]);
   prevWebUsageData = JSON.parse(prevWebUsageData[0].activity);
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const date = new Date();
@@ -61,7 +61,7 @@ Router.post('/bring-tabs', async(req, res) => {
   }
   const connection = await (await pool).getConnection();
 
-  let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = "${req.session.user_id}"`);
+  let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = ?`, [req.session.user_id]);
   prevWebUsageData = JSON.parse(prevWebUsageData[0].activity);
   const date = req.body.date;
   res.send({success: true, data: prevWebUsageData[date / 1000]})
@@ -74,7 +74,7 @@ Router.post('/bring-activities', async(req, res) => {
   }
   const connection = await (await pool).getConnection();
 
-  let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = "${req.session.user_id}"`);
+  let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = ?`, [req.session.user_id]);
   prevWebUsageData = JSON.parse(prevWebUsageData[0].activity);
   const date = req.body.date;
   res.send({success: true, data: prevWebUsageData})
@@ -86,7 +86,7 @@ Router.post('/bring-activity-setting', async(req, res) => {
     return res.send({ success : false, reason : 'no session'})
   }
   const connection = await (await pool).getConnection();
-  let activitySetting = await connection.query(`SELECT activity_setting from users where user_id = "${req.session.user_id}"`);
+  let activitySetting = await connection.query(`SELECT activity_setting from users where user_id = ?`, [req.session.user_id]);
   activitySetting = activitySetting[0].activity_setting;
   res.send({ success : true, activitySetting : activitySetting})
 });
