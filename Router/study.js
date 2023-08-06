@@ -60,7 +60,7 @@ Router.post('/start', async (req, res) => {
     const connection = await (await pool).getConnection();
     const subjectId = req.body.id;
   
-    const select = await connection.query(`SELECT subjects, daily, weekly, monthly, groups FROM users WHERE user_id = "${req.session.user_id}"`);
+    const select = await connection.query(`SELECT subjects, daily, weekly, monthly, groups FROM users WHERE user_id = ?`, [req.session.user_id]);
     const subjects = JSON.parse(select[0].subjects || "[]");
     const groups = select[0].groups ? select[0].groups.split(",") : [];
     const startTime = Math.floor(new Date().getTime() / 1000);
@@ -309,7 +309,7 @@ Router.post('/bring-plans', async(req, res) => {
   account.autoSignin(req, res, (async() => {
     const connection = await (await pool).getConnection();
 
-    let plans = await connection.query(`SELECT plan from users where user_id = "${req.session.user_id}"`);
+    let plans = await connection.query(`SELECT plan from users where user_id = ?`, [req.session.user_id]);
     plans = JSON.stringify(`[${plans[0].plan}]`);
     res.send(plans);
     connection.release();
@@ -330,7 +330,7 @@ Router.post('/update-plan', async(req, res) => {
       planInfo.description = encodeURIComponent(planInfo.description);
       console.log(planInfo.description)
       try {
-        let userInfo = await connection.query(`SELECT plan, notification_setting, notifications, user_id, name, key_salt, iv, subscription, user_id from users where user_id = "${userId}"`);
+        let userInfo = await connection.query(`SELECT plan, notification_setting, notifications, user_id, name, key_salt, iv, subscription, user_id from users where user_id = ?`, [req.session.user_id]);
         userInfo = userInfo[0];
         let plans = JSON.parse(`[${userInfo.plan}]`);
         let plan = plans.find(plan => planInfo.id == plan.id);
