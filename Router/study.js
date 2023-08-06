@@ -60,7 +60,7 @@ Router.post('/start', async (req, res) => {
     const connection = await (await pool).getConnection();
     const subjectId = req.body.id;
   
-    const select = await connection.query(`SELECT subjects, daily, weekly, monthly, groups FROM users WHERE user_id = ?`, [req.session.user_id]);
+    const select = await connection.query(`SELECT subjects, daily, weekly, monthly, "groups" FROM users WHERE user_id = ?`, [req.session.user_id]);
     const subjects = JSON.parse(select[0].subjects || "[]");
     const groups = select[0].groups ? select[0].groups.split(",") : [];
     const startTime = Math.floor(new Date().getTime() / 1000);
@@ -87,7 +87,7 @@ Router.post('/stop', async (req, res) => {
     const io = req.app.get('socketio');
     const connection = await (await pool).getConnection();
     const subjectId = req.body.id;
-    const select = await connection.query(`SELECT subjects, daily, weekly, monthly, datum_point, groups FROM users WHERE user_id = "${req.session.user_id}"`);
+    const select = await connection.query(`SELECT subjects, daily, weekly, monthly, datum_point, "groups" FROM users WHERE user_id = "${req.session.user_id}"`);
     const groups = select[0].groups ? select[0].groups.split(",") : [];
   
     if (groups.length !== 0) {
@@ -176,14 +176,14 @@ Router.post('/bring-members-info', async (req, res) => {
   account.autoSignin(req, res, (async() => {
     const connection = await (await pool).getConnection();
     const userId = req.session.user_id;
-    let userInfo = await connection.query('SELECT groups FROM users WHERE user_id = ?', [userId]);
+    let userInfo = await connection.query('SELECT "groups" FROM users WHERE user_id = ?', [userId]);
     groups = userInfo[0].groups ? userInfo[0].groups.split(',') : null;
     
     if (!groups) {
       return res.send({ success: false, reason: 'no groups' });
     }
     
-    const groupsInfo = await connection.query('SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM groups WHERE group_id IN (?)', [groups]);
+    const groupsInfo = await connection.query('SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM `groups` WHERE group_id IN (?)', [groups]);
     let membersInfo = [];
     
     await Promise.all(groupsInfo.map(async (group, group_index) => {

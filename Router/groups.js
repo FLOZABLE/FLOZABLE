@@ -59,7 +59,7 @@ Router.post('/create-validate', async (req, res) => {
       return 0
     }
   
-    const query = 'INSERT INTO groups SET ?';
+    const query = 'INSERT INTO `groups` SET ?';
     const values = {
       name: group.name,
       explanation: group.explanation,
@@ -80,10 +80,10 @@ Router.post('/create-validate', async (req, res) => {
     const query1 = await connection.query(query, values);
     const query2 = await connection.query(`
     UPDATE users
-    SET groups = CASE
-      WHEN groups IS NULL THEN ?
-      WHEN groups = '' THEN ?
-      ELSE CONCAT(groups, ',', ?)
+    SET "groups" = CASE
+      WHEN "groups" IS NULL THEN ?
+      WHEN "groups" = '' THEN ?
+      ELSE CONCAT("groups", ',', ?)
     END
     WHERE user_id = ?
   `, [
@@ -123,7 +123,7 @@ Router.post('/join/:id', async (req, res) => {
     const connection = await (await pool).getConnection();
     try {
       let userInfo = await connection.query(
-        "SELECT groups FROM users WHERE user_id = ?",
+        "SELECT `groups` FROM users WHERE user_id = ?",
         [req.session.user_id]
       );
       userInfo = userInfo[0];
@@ -131,22 +131,17 @@ Router.post('/join/:id', async (req, res) => {
       // ... (rest of the existing code)
 
       connection.query(
-        `UPDATE users SET groups = CASE
-          WHEN groups IS NULL THEN ?
-          WHEN groups = '' THEN ?
-          ELSE CONCAT(groups, ',', ?)
+        `UPDATE users SET "groups" = CASE
+          WHEN "groups" IS NULL THEN ?
+          WHEN "groups" = '' THEN ?
+          ELSE CONCAT("groups", ',', ?)
           END
           WHERE user_id = ?`,
         [groupId, groupId, groupId, req.session.user_id]
       );
 
       connection.query(
-        `UPDATE groups SET members = CASE
-          WHEN members IS NULL THEN ?
-          WHEN members = '' THEN ?
-          ELSE CONCAT(members, ',', ?)
-          END
-          WHERE group_id = ?`,
+        "UPDATE `groups` SET members = CASE WHEN members IS NULL THEN ? WHEN members = '' THEN ? ELSE CONCAT(members, ',', ?) END WHERE group_id = ?",
         [JSON.stringify([req.session.user_id, req.session.name]), JSON.stringify([req.session.user_id, req.session.name]), JSON.stringify([req.session.user_id, req.session.name]), groupId]
       );
 
@@ -182,19 +177,19 @@ Router.post('/leave/:id', async (req, res) => {
       console.log([userInfo.groups].includes(groupId), [userInfo.groups], groupId);
       if (userInfo.groups.includes(groupId)) {
         connection.query(
-          `UPDATE users SET groups = CONCAT_WS(',', REPLACE(groups, ?, '')) WHERE user_id = ?`,
+          `UPDATE users SET "groups" = CONCAT_WS(',', REPLACE("groups", ?, '')) WHERE user_id = ?`,
           [`${groupId},`, req.session.user_id]
         );
         connection.query(
-          `UPDATE users SET groups = CONCAT_WS(',', REPLACE(groups, ?, '')) WHERE user_id = ?`,
+          `UPDATE users SET "groups" = CONCAT_WS(',', REPLACE("groups", ?, '')) WHERE user_id = ?`,
           [groupId, req.session.user_id]
         );
         connection.query(
-          `UPDATE groups SET members = CONCAT_WS(',', REPLACE(members, ?, '')) WHERE group_id = ?`,
+          "UPDATE `groups` SET members = CONCAT_WS(',', REPLACE(members, ?, '')) WHERE group_id = ?",
           [`["${req.session.user_id}","${userInfo.name}"],`, groupId]
         );
         connection.query(
-          `UPDATE groups SET members = CONCAT_WS(',', REPLACE(members, ?, '')) WHERE group_id = ?`,
+          "UPDATE `groups` SET members = CONCAT_WS(',', REPLACE(members, ?, '')) WHERE group_id = ?",
           [`["${req.session.user_id}","${userInfo.name}"]`, groupId]
         );
         res.send({ success: true });
@@ -250,7 +245,7 @@ Router.post('/like/:id', async (req, res) => {
     const connection = await (await pool).getConnection();
     try {
       let groupInfo = await connection.query(
-        "SELECT likes from groups where group_id = ?",
+        "SELECT likes from `groups` where group_id = ?",
         [groupId]
       );
       groupInfo = groupInfo[0];
@@ -258,12 +253,7 @@ Router.post('/like/:id', async (req, res) => {
       console.log(groupInfo.likes);
       if (!groupInfo.likes || !groupInfo.likes.includes(req.session.user_id)) {
         const query1 = await connection.query(
-          `UPDATE groups SET likes = CASE
-            WHEN likes IS NULL THEN ?
-            WHEN likes = '' THEN ?
-            ELSE CONCAT(likes, ',', ?)
-            END
-            WHERE group_id = ?`,
+          "UPDATE `groups` SET likes = CASE WHEN likes IS NULL THEN ? WHEN likes = '' THEN ? ELSE CONCAT(likes, ',', ?) END WHERE group_id = ?",
           [req.session.user_id, req.session.user_id, req.session.user_id, groupId]
         );
         if (query1.affectedRows >= 1) {
@@ -271,11 +261,11 @@ Router.post('/like/:id', async (req, res) => {
         }
       } else if (groupInfo.likes && groupInfo.likes.includes(req.session.user_id)) {
         const query1 = await connection.query(
-          `UPDATE groups SET likes = CONCAT_WS(',', REPLACE(likes, ?, '')) WHERE group_id = ?`,
+          "UPDATE `groups` SET likes = CONCAT_WS(',', REPLACE(likes, ?, '')) WHERE group_id = ?",
           [`${req.session.user_id},`, groupId]
         );
         const query2 = await connection.query(
-          `UPDATE groups SET likes = CONCAT_WS(',', REPLACE(likes, ?, '')) WHERE group_id = ?`,
+          "UPDATE `groups` SET likes = CONCAT_WS(',', REPLACE(likes, ?, '')) WHERE group_id = ?",
           [req.session.user_id, groupId]
         );
         /* if(query.affectedRows) */
