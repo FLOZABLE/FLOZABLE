@@ -166,7 +166,8 @@ Router.post('/signup-authentication', async (req, res) => {
     monthly: '[0]',
     activity: '{}',
     activity_setting: '[]',
-    notifications: '[]'
+    notifications: '[]',
+    subjects: '[]'
   };
   console.log(user)
   //connection.query('INSERT INTO users SET ?', user);
