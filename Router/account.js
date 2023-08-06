@@ -105,11 +105,11 @@ Router.post('/signin-authentication', async (req, res, next) => {
       res.send({ success: true });
     });
   } else {
-    res.send({ success: false, reason: 'INVALID PASSWORD'});
+    res.send({ success: false, reason: 'WRONG PASSWORD'});
   }
 });
 
-Router.post('/signup-authentication', async (req, res, next) => {
+Router.post('/signup-authentication', async (req, res) => {
   let email = req.body.email;
   let name = req.body.name;
   let password = req.body.password;
@@ -118,13 +118,25 @@ Router.post('/signup-authentication', async (req, res, next) => {
   date.toLocaleString("en-US", { timeZone });
   date.setHours(0, 0, 0, 0);
   // Sanitize inputs
-  let sanitizedEmail = email.replace(/[^a-z0-9!?@.]/gi, '');
-  let sanitizedName = name.replace(/[^a-z0-9!?@.]/gi, '');
-  let sanitizedPassword = password.replace(/[^a-z0-9!?@.]/gi, '');
+
+  //check email
+  if (!/^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/.test(email)) {
+    return res.send({ success: false, reason: 'Invalid Email' });
+  }
+
+  //check name
+  if (!/^[A-Za-z]+$/.test(name)) {
+    return res.send({ success: false, reason: 'Invalid Name' });
+  }
+
+  //check pw
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    return res.send({ success: false, reason: 'No Special Characters' });
+  }
 
   const connection = await (await pool).getConnection();
 
-  let check_email = await connection.query("SELECT * FROM users WHERE email = ?", sanitizedEmail);
+  let check_email = await connection.query("SELECT * FROM users WHERE email = ?", email);
 
   if (check_email.length !== 0) {
     console.log("not new");
@@ -132,15 +144,15 @@ Router.post('/signup-authentication', async (req, res, next) => {
     return;
   }
 
-  let hashed = hashing(sanitizedPassword);
+  let hashed = hashing(password);
 
   const userId = generateId();
   const keySalt = crypto.randomBytes(32).toString('hex');
   const iv = crypto.randomBytes(16).toString('hex');
 
   const user = {
-    name: sanitizedName,
-    email: sanitizedEmail,
+    name: name,
+    email: email,
     hashed_password: hashed[1],
     salt: hashed[0],
     user_id: userId,
@@ -156,8 +168,8 @@ Router.post('/signup-authentication', async (req, res, next) => {
     activity_setting: '[]',
     notifications: '[]'
   };
-
-  connection.query('INSERT INTO users SET ?', user);
+  console.log(user)
+  //connection.query('INSERT INTO users SET ?', user);
 
   req.session.regenerate((err) => {
     if (err) {
@@ -292,7 +304,6 @@ Router.post('/update/:type', upload.single('image'), async (req, res) => {
     } else if (type == 'password') {
       let password = req.body.password;
       let passwordConfirm = req.body.passwordConfirm;
-      console.log(password, passwordConfirm)
       if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
         connection.release();
         return res.send({ success: false, reason: 'No Special Character' });
