@@ -129,9 +129,15 @@ Router.post('/signup-authentication', async (req, res) => {
     return res.send({ success: false, reason: 'Invalid Name' });
   }
 
+  
+
   //check pw
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
     return res.send({ success: false, reason: 'No Special Characters' });
+  } else if ((password.match(/\d/g) || []).length < 2) {
+    return res.send({ success: false, reason: 'Need More Than 2 Numbers' });
+  } else if (password.length < 6) {
+    return res.send({ success: false, reason: 'Too Short' });
   }
 
   const connection = await (await pool).getConnection();
@@ -170,7 +176,7 @@ Router.post('/signup-authentication', async (req, res) => {
     subjects: '[]'
   };
   console.log(user)
-  //connection.query('INSERT INTO users SET ?', user);
+  connection.query('INSERT INTO users SET ?', user);
 
   req.session.regenerate((err) => {
     if (err) {
@@ -181,8 +187,8 @@ Router.post('/signup-authentication', async (req, res) => {
 
     req.session.user_id = userId;
     req.session.loggedin = true;
-    req.session.name = sanitizedName;
-    req.session.userInfo = { userId: userId, name: sanitizedName, loggedin: true, email: email };
+    req.session.name = name;
+    req.session.userInfo = { userId: userId, name: name, loggedin: true, email: email };
 
     res.cookie("userId", userId, {
       maxAge: 1000 * 60 * 60 * 30,
