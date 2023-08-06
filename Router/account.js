@@ -217,7 +217,7 @@ Router.post('/bring-my-info', async (req, res) => {
   autoSignin(req, res, (async() => {
     const connection = await (await pool).getConnection();
 
-    let userInfo = await connection.query(`SELECT name, myinfo, "groups", user_id, plan, subjects from users WHERE user_id = ?`, [req.session.user_id]);
+    let userInfo = await connection.query(`SELECT name, myinfo, \`groups\`, user_id, plan, subjects from users WHERE user_id = ?`, [req.session.user_id]);
     userInfo = userInfo[0];
     res.send({ success: true, userInfo: userInfo });
     connection.release();
