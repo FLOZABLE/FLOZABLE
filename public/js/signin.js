@@ -1,4 +1,21 @@
+const notificationAlertSuccess = document.getElementById('notification-alert-success');
+const notificationAlertFail = document.getElementById('notification-alert-fail');
+const errMsgWrapper = document.getElementById('err-msg');
+const successMsgWrapper = document.getElementById('success-msg');
 
+function successMsg(msg) {
+  successMsgWrapper.innerText = msg;
+  notificationAlertSuccess.classList.remove('notify');
+  notificationAlertSuccess.offsetHeight;
+  notificationAlertSuccess.classList.add('notify');
+}
+
+function errMsg(msg) {
+  errMsgWrapper.innerText = msg;
+  notificationAlertFail.classList.remove('notify');
+  notificationAlertFail.offsetHeight;
+  notificationAlertFail.classList.add('notify');
+}
 
 const signUpSubmitBtn = document.querySelector('#signup-submit');
 const signInSubmitBtn = document.querySelector('#signin-submit');
@@ -6,7 +23,7 @@ const signInSubmitBtn = document.querySelector('#signin-submit');
 const emailContainer = document.querySelector("input#email");
 const passwordContainer = document.querySelector("input#password");
 
-const errPrintArea = document.querySelectorAll('span#error_msg');
+const errPrintArea = document.getElementById('error_msg');
 
 signInSubmitBtn.addEventListener('click', async() => {
   let redirectUrl = window.location.protocol + '//' + window.location.hostname;
@@ -27,11 +44,11 @@ signInSubmitBtn.addEventListener('click', async() => {
   console.log(response);
 
   if(response.success == true){
+    //successMsg('')
     setTimeout(function() {
       window.location.href = redirectUrl;
     }, 500); 
   } else {
-    errPrintArea[0].innerText = response.signup_err_msg;
-    errPrintArea[1].innerText = response.signin_err_msg;
+    errMsg(response.reason);
   }
 })

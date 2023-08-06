@@ -58,62 +58,20 @@
   border-radius: 10px;
 }
 
-@keyframes notification {
-  0% {
-    transform: translateY(0px);
-  }
-
-  20% {
-    transform: translateY(140px);
-  }
-
-  80% {
-    transform: translateY(140px);
-  }
-
-  100% {
-    transform: translateY(0px);
-  }
+.col-lg-3 .card {
+  position: fixed !important;
+  top: unset !important;
+  width: calc(25vw - 100px);
 }
 
-.notification-alert {
-  opacity: 1;
-  z-index: 5;
-  color: #fff;
-  position: fixed;
-  top: -100px;
-  width: 50vw;
-  left: 25vw;
-  height: 60px;
-  border-radius: 20px;
+#setting-nav {
+  transition: all .2s ease-in-out;
 }
 
-.notification-alert .notification-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.g-sidenav-hidden .navbar-vertical.fixed-start+.main-content #setting-nav {
+  width: calc(25vw - 60px);
 }
 
-.notification-alert i {
-  font-size: 25px;
-}
-
-.notification-alert p {
-  font-size: 25px;
-  line-height: unset;
-  font-weight: 900;
-  margin-top: 10px;
-  margin-left: 10px;
-}
-
-#notification-alert-success {
-  background-color:#ecbd00;
-}
-
-#notification-alert-fail {
-  background-color: #f44335;
-}
-
-.notification-alert.notify {
-  animation: notification 2s 0.5s forwards;
+.col-lg-9.mt-lg-0.mt-4 > div{
+  scroll-margin-top: 150px;
 }
