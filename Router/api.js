@@ -25,7 +25,7 @@ Router.post("/update-tabs", async (req, res) => {
   const newWebUsageData = req.body.tabUsageData;
   let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = ?`, [req.session.user_id]);
   prevWebUsageData = JSON.parse(prevWebUsageData[0].activity);
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const timeZone = req.header('X-Timezone') || 'UTC';
   const date = new Date();
   date.toLocaleString("en-US", { timeZone });
   date.setHours(0, 0, 0, 0);
