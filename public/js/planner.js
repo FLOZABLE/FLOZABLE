@@ -453,90 +453,96 @@ let subjects;
     subjectsContainer.appendChild(subjectOpt);
   })
 
-  SavedPlans = await fetch('/study/bring-plans', {
+  let response = await fetch('/study/bring-plans', {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
     }
   });
 
-  SavedPlans = await JSON.parse(await SavedPlans.json());
-  console.log(SavedPlans)
-  SavedPlans.map(plan => {
-    const planEl = document.createElement('div');
-    planEl.classList.add('plan');
-    planEl.id = `planId-${plan.id}`;
-    planEl.draggable = true;
-    planEl.innerHTML = `
-    <div class="plan-name">
-    <span>${plan.name}</span>
-    </div>
-    <div class="plan-time">
-      <span></span>
-    </div>
-    `;
-    const decodedDescription = decodeURIComponent(plan.description);
-    const subject = subjects.find(subject => {return subject.id == plan.subject});
-    console.log(subject)
-    const sliderIndex = dailyPlanCalendar.activeIndex;
-    const planInfo = {
-      id: plan.id,
-      name: plan.name,
-      el: planEl,
-      date: new Date(plan.date * 1000),
-      startHr: plan.hr,
-      startMin: plan.min,
-      length: plan.length,
-      repeat: plan.repeat,
-      subject: plan.subject,
-      repeat: plan.repeat,
-      notification: plan.notification,
-      planDragZone: dayPlanDragZones[sliderIndex],
-      priority: plan.priority,
-      description: decodedDescription,
-      timeDisp: planEl.querySelector('.plan-time span'),
-      nameDisp: planEl.querySelector('.plan-name span'),
-      saved: true
-    }
-    planEl.addEventListener('mousedown', mouseDown.bind(null, planInfo), false);
-    planEl.addEventListener('mouseup', mouseUp.bind(null, planInfo), false);
-    plans.push(planInfo);
-    planEl.style.top = plan.hr * 60 + plan.min + 'px';
-    planEl.style.height = plan.length + 'px';
-    const [dispStartHr, dispStartMin, startampm, dispStopHr, dispStopMin, stopampm] = dispTime(planInfo);
-
-    planEl.style.backgroundColor = subject.color;
-
-    //events container
-    const event = document.createElement('div');
-    event.classList.add('d-flex');
-    event.classList.add('mt-4');
-    /* 
-    <div class="d-flex mt-4">
-                        <div class="icon icon-shape bg-gradient-dark shadow text-center">
-                          <i class="material-icons opacity-10 pt-1">notifications</i>
-                        </div>
-                        <div class="ms-3">
-                          <div class="numbers">
-                            <h6 class="mb-1 text-dark text-sm">Meeting with Marry</h6>
-                            <span class="text-sm">24 March 2021, at 10:00 PM</span>
+  response = await response.json();
+  console.log(response)
+  if (response.success) {
+    const SavedPlans = response.plans;
+    SavedPlans.map(plan => {
+      const planEl = document.createElement('div');
+      planEl.classList.add('plan');
+      planEl.id = `planId-${plan.id}`;
+      planEl.draggable = true;
+      planEl.innerHTML = `
+      <div class="plan-name">
+      <span>${plan.name}</span>
+      </div>
+      <div class="plan-time">
+        <span></span>
+      </div>
+      `;
+      const decodedDescription = decodeURIComponent(plan.description);
+      const subject = subjects.find(subject => {return subject.id == plan.subject});
+      console.log(subject)
+      const sliderIndex = dailyPlanCalendar.activeIndex;
+      let time = plan.time.split(':');
+      plan.hr = parseInt(time[0]);
+      plan.min = parseInt(time[1]);
+      const planInfo = {
+        id: plan.id,
+        name: plan.name,
+        el: planEl,
+        date: new Date(plan.date * 1000),
+        startHr: plan.hr,
+        startMin: plan.min,
+        length: plan.length,
+        repeat: plan.repeat,
+        subject: plan.subject,
+        repeat: plan.repeat,
+        notification: plan.notification,
+        planDragZone: dayPlanDragZones[sliderIndex],
+        priority: plan.priority,
+        description: decodedDescription,
+        timeDisp: planEl.querySelector('.plan-time span'),
+        nameDisp: planEl.querySelector('.plan-name span'),
+        saved: true
+      }
+      planEl.addEventListener('mousedown', mouseDown.bind(null, planInfo), false);
+      planEl.addEventListener('mouseup', mouseUp.bind(null, planInfo), false);
+      plans.push(planInfo);
+      planEl.style.top = plan.hr * 60 + plan.min + 'px';
+      planEl.style.height = plan.length + 'px';
+      const [dispStartHr, dispStartMin, startampm, dispStopHr, dispStopMin, stopampm] = dispTime(planInfo);
+  
+      planEl.style.backgroundColor = subject.color;
+  
+      //events container
+      const event = document.createElement('div');
+      event.classList.add('d-flex');
+      event.classList.add('mt-4');
+      /* 
+      <div class="d-flex mt-4">
+                          <div class="icon icon-shape bg-gradient-dark shadow text-center">
+                            <i class="material-icons opacity-10 pt-1">notifications</i>
+                          </div>
+                          <div class="ms-3">
+                            <div class="numbers">
+                              <h6 class="mb-1 text-dark text-sm">Meeting with Marry</h6>
+                              <span class="text-sm">24 March 2021, at 10:00 PM</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-    */
-    event.innerHTML = `
-    <div class="icon icon-shape shadow text-center" style = "background-color: ${subject.color}">
-    </div>
-    <div class="ms-3">
-      <div class="numbers">
-        <h6 class="mb-1 text-dark text-sm">${plan.name}</h6>
-        <span class="text-sm">${decodedDescription}</span>    
-        <span class="text-sm">${dispStartHr}:${dispStartMin.toString().padStart(2, '0')}-${dispStopHr}:${dispStopMin.toString().padStart(2, '0')}</span>
+      */
+      event.innerHTML = `
+      <div class="icon icon-shape shadow text-center" style = "background-color: ${subject.color}">
       </div>
-    </div>
-    `
-    eventsContainer.appendChild(event);
-  })
+      <div class="ms-3">
+        <div class="numbers">
+          <h6 class="mb-1 text-dark text-sm">${plan.name}</h6>
+          <span class="text-sm">${decodedDescription}</span>    
+          <span class="text-sm">${dispStartHr}:${dispStartMin.toString().padStart(2, '0')}-${dispStopHr}:${dispStopMin.toString().padStart(2, '0')}</span>
+        </div>
+      </div>
+      `
+      eventsContainer.appendChild(event);
+    })
+  }
   updatePlanner(new Date(new Date().setHours(0, 0, 0, 0)))
 })();
 
@@ -683,7 +689,7 @@ async function updatePlan () {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({name: name, id: id, date: date.setHours(0, 0, 0, 0) / 1000, hr: startHr, min: startMin, length: length, repeat: repeat, description: description, subject: subject, notification: notification, priority: priority})
+    body: JSON.stringify({name: name, id: id, date: date.setHours(0, 0, 0, 0) / 1000, hr: startHr, min: startMin, length: length, repeat: repeat, description: description, subject: subject, notification: notification, priority: parseInt(priority)})
   });
 
   response = await response.json();
