@@ -15,7 +15,6 @@ function hashing(password) {
 }
 
 async function autoSignin(req, res, success = (() => {}), fail = (() => {res.send({success: false, reason: 'not authenticated'})})) {
-  console.log(req.session, req.signedCookies)
   if (req.session.loggedin) {
     return success();
   } else if (req.signedCookies.userId) {
@@ -30,7 +29,6 @@ async function autoSignin(req, res, success = (() => {}), fail = (() => {res.sen
       req.session.userInfo = { userId: req.signedCookies.userId, name: userInfo.name, loggedin: true, email: userInfo.email, myinfo: userInfo.myinfo };
       return success();
     } else {
-      console.log('fail2')
       return fail();
     }
   } else {
@@ -70,7 +68,6 @@ Router.post('/signin-authentication', async (req, res, next) => {
   connection.release();
 
   if (matching_email.length === 0) {
-    console.log("no email");
     res.send({ success: false, reason: "NO SUCH USER" });
     return;
   }
@@ -92,8 +89,6 @@ Router.post('/signin-authentication', async (req, res, next) => {
       req.session.name = matching_email[0].name;
       req.session.loggedin = true;
       req.session.userInfo = { userId: userId, name: matching_email[0].name, loggedin: true, email: email, myinfo: matching_email[0].myinfo };
-      console.log("login success");
-      console.log(req.session.user_id, req.session.loggedin);
 
       res.cookie("userId", userId, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
@@ -145,7 +140,6 @@ Router.post('/signup-authentication', async (req, res) => {
   let check_email = await connection.query("SELECT * FROM users WHERE email = ?", email);
 
   if (check_email.length !== 0) {
-    console.log("not new");
     res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
     return;
   }
@@ -175,12 +169,10 @@ Router.post('/signup-authentication', async (req, res) => {
     notifications: '[]',
     subjects: '[]'
   };
-  console.log(user)
   connection.query('INSERT INTO users SET ?', user);
 
   req.session.regenerate((err) => {
     if (err) {
-      console.log("Error regenerating session ID:", err);
       res.send({ success: false, reason: "SESSION ERROR" });
       return;
     }
@@ -198,7 +190,6 @@ Router.post('/signup-authentication', async (req, res) => {
     });
 
     res.send({ success: true });
-    console.log(req.session)
   });
 
   connection.release();
@@ -215,7 +206,6 @@ Router.get('/logout', function (req, res) {
       console.log("Error destroying session:", err);
     }
     res.clearCookie('userId');
-    console.log(req.signedCookies, req.session)
     res.redirect('/');
   });
 });
@@ -389,7 +379,6 @@ Router.post('/update/:type', upload.single('image'), async (req, res) => {
       };
   
       const updatedExtSettings = req.body.activitySettings;
-      console.log(updatedExtSettings)
       const isValid = isValidJSON(updatedExtSettings, schema);
       if (isValid) {
         const updateInfo = [{ activity_setting: JSON.stringify(updatedExtSettings) }, req.session.user_id];

@@ -64,6 +64,33 @@
   height: 30px;
   position: relative;
   top: 12px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.weekly-planner-header {
+  height: 30px;
+}
+
+.weekly-planner-header th .table-h{
+  position: absolute;
+  text-align: right;
+  top: 0px;
+  left: -10px;
+}
+
+th .time-m {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  top: 0px;
+  left: 40px;
+}
+
+.weekly-planner-header th {
+  text-align: center;
+  height: 30px;
+  position: relative;
 }
 
 #matrix-chart table td.block {
@@ -388,7 +415,7 @@ tr.line {
 .row .col-xl-12 {
   display: flex;
   flex-direction: row;
-  margin-bottom: 24px;
+  margin: 24px 0px;
 }
 
 .row .col-xl-12 .card.mb-4 {
@@ -422,4 +449,12 @@ tr.line {
 
 #calendar .fc-daygrid, #calendar .fc-scrollgrid, #calendar .fc-scrollgrid tbody, #calendar .fc-scrollgrid-section, #calendar .fc-scroller-harness, #calendar .fc-scroller, #calendar .fc-daygrid-body, #calendar .fc-scrollgrid-sync-table{
   height: 100%;
+}
+
+.container-fluid.py-4 > .row {
+  margin: 20px;
+}
+
+#timeline-card .card {
+  box-shadow: none;
 }
