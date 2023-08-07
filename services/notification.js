@@ -35,8 +35,8 @@ let notificationSettings;
 async function notificationService () {
   const now = new Date().getTime();
   const connection = await (await pool).getConnection();
-  const usersInfo = await connection.query('SELECT notification_setting, notifications, timezone, plan, user_id, name, key_salt, iv, subscription from users');
-  
+  const usersInfo = await connection.query('SELECT notification_setting, timezone, user_id, name, email, key_salt, iv, subscription from users');
+  let plans = await connection.query(`SELECT * FROM plans`);
   usersInfo.map(async(userInfo, index) => {
     const userId = userInfo.user_id;
     /* const keySalt = userInfo.key_salt;
@@ -54,6 +54,7 @@ async function notificationService () {
     
     decryptedData = JSON.parse(decryptedData); */
     const decryptedData = await getSubscription(userInfo);
+    console.log(decryptedData)
     //webpush.sendNotification(decryptedData)
     if (userInfo.notification_setting == 'default_setting') {
       notificationSettings = [{id:0,name:'PlanNotifications',email:true,push:true,sms:false},{id:1,name:'AchievementCelebrations',email:true,push:true,sms:false},{id:2,name:'GroupStudyInvitations',email:true,push:true,sms:false},{id:3,name:'StudyProgressUpdates',email:true,push:true,sms:false},{id:4,name:'StudyChallengeNotifications',email:true,push:true,sms:false},{id:5,name:'RewardNotifications',email:true,push:true,sms:false},{id:6,name:'DeadlineReminders',email:true,push:true,sms:false},{id:7,name:'PersonalizedStudyRecommendations',email:true,push:true,sms:false},{id:8,name:'StudyBreakReminders',email:true,push:true,sms:false},{id:9,name:'TimeManagementTips',email:true,push:true,sms:false},{id:10,name:'DailyStudyReports',email:true,push:true,sms:false},{id:11,name:'WeeklyStudyReports',email:true,push:true,sms:false},{id:12,name:'MonthlyProgressReports',email:true,push:true,sms:false}];
@@ -61,20 +62,19 @@ async function notificationService () {
       notificationSettings = JSON.parse(userInfo.notification_setting);
     }
 
-    const plans = JSON.parse(`[${userInfo.plan}]`);
-    console.log(now)
-    plans.map(async(plan) => {
-      const startTime = (plan.date + plan.hr * 60 * 60 + plan.min * 60) * 1000;
-      console.log(startTime);
+    let userPlans = plans.filter(plan => plan.user_id == userId);
+
+
+    userPlans.map(async(plan) => {
+      let time = plan.time.split(':');
+      let startHr = parseInt(time[0]);
+      let startMin = parseInt(time[1]);
+      const startTime = (plan.date + startHr * 60 * 60 + startMin * 60) * 1000;
+      console.log(startTime, plan.date, startHr, startMin)
       if (startTime < now) {
-        console.log('past', startTime)
       } else {
-        console.log('new', plan);
-        let notifications = JSON.parse(userInfo.notifications);
+        console.log('new')
         planNotification(plan, userInfo, startTime, decryptedData);
-        notifications.push(plan.id);
-        const updateInfo = [{ notifications: JSON.stringify(notifications) }, userId];
-        connection.query('UPDATE users SET ? WHERE user_id = ?', updateInfo);
       }
     })
     notificationSettings.map(notificationSetting => {
@@ -101,16 +101,19 @@ async function notificationService () {
 //const params = { date: '7/8', streak: '🔥Streak of 8 Days!🔥', ranking_compare: '+1', ranking: '#1', study_time_compare: '+1', study_time: '1', other_apps_compare: '1', other_apps: 'dd', focus_compare: '1hr', focus: '1hr', quote: 'gg' }; 
 
 function planNotification(plan, userInfo, startTime, decryptedData) {
-  console.log(userInfo.user_id)
+  console.log(plan.time)
+  console.log(new Date(startTime), userInfo.user_id)
   let schduleNotification = schedule.scheduleJob(userInfo.user_id + '-' + plan.id, new Date(startTime), async() => {
     //remove notifications
     
     const notificationSettings = await completeNotification(userInfo.user_id, plan.id);
+    let time = plan.time.split(':');
+    let startHr = parseInt(time[0]);
+    let startMin = parseInt(time[1]);
     //email
     if (notificationSettings[0].email) {
       const to = [{ email: 'junjason1126@gmail.com', name: 'Jason' }];
-      let startHr = plan.hr;
-      let startMin = plan.min;
+      console.log(startHr, startMin);
       let ampm = 'am';
       if (startHr == 12) {
         ampm = 'pm';
@@ -132,10 +135,11 @@ function planNotification(plan, userInfo, startTime, decryptedData) {
       if (!decryptedData) {
         decryptedData = await getSubscription(userInfo);
       }
+      console.log(decryptedData)
 
-      let dispStartHr = plan.hr;
-      let dispStartMin = plan.min;
-      let endTime = plan.hr + plan.min * 60 + plan.length;
+      let dispStartHr = startHr;
+      let dispStartMin = startMin;
+      let endTime = startHr + startMin * 60 + plan.length;
       let dispEndHr = Math.floor(endTime / 60);
       let dispEndMin = endTime % 60;
       let startampm = 'am';
@@ -181,7 +185,7 @@ function planNotification(plan, userInfo, startTime, decryptedData) {
 
 async function completeNotification(userId, planId) {
   const connection = await (await pool).getConnection();
-  let userInfo = await connection.query('SELECT notification_setting, notifications from users where user_id = ?', [userId]);
+  /* let userInfo = await connection.query('SELECT notification_setting, notifications from users where user_id = ?', [userId]);
   userInfo = userInfo[0];
 
   let notificationSettings;
@@ -194,16 +198,25 @@ async function completeNotification(userId, planId) {
   let notifications = JSON.parse(userInfo.notifications);
   notifications = notifications.filter(notification => notification !== planId);
 
-  console.log('ddd', notifications)
   const updateInfo = [{ notifications: JSON.stringify(notifications) }, userInfo.userId];
   const update = await connection.query('UPDATE users SET ? WHERE user_id = ?', updateInfo);
-  connection.release();
+  connection.release(); */
+  console.log(userId)
+
+  let userInfo = await connection.query(`SELECT notification_setting from users WHERE user_id = ?`, [userId]);
+  userInfo = userInfo[0];
+  
+  let notificationSettings;
+  if (userInfo.notification_setting == 'default_setting') {
+    notificationSettings = [{id:0,name:'PlanNotifications',email:true,push:true,sms:false},{id:1,name:'AchievementCelebrations',email:true,push:true,sms:false},{id:2,name:'GroupStudyInvitations',email:true,push:true,sms:false},{id:3,name:'StudyProgressUpdates',email:true,push:true,sms:false},{id:4,name:'StudyChallengeNotifications',email:true,push:true,sms:false},{id:5,name:'RewardNotifications',email:true,push:true,sms:false},{id:6,name:'DeadlineReminders',email:true,push:true,sms:false},{id:7,name:'PersonalizedStudyRecommendations',email:true,push:true,sms:false},{id:8,name:'StudyBreakReminders',email:true,push:true,sms:false},{id:9,name:'TimeManagementTips',email:true,push:true,sms:false},{id:10,name:'DailyStudyReports',email:true,push:true,sms:false},{id:11,name:'WeeklyStudyReports',email:true,push:true,sms:false},{id:12,name:'MonthlyProgressReports',email:true,push:true,sms:false}];
+  } else {
+    notificationSettings = JSON.parse(userInfo.notification_setting);
+  }
   return notificationSettings;
 }
 
 async function removePrevNotification(userId, planId) {
   const cancel = schedule.cancelJob(userId + '-' + planId);
-  console.log(cancel);
 }
 
 async function getSubscription(userInfo) {
@@ -213,7 +226,6 @@ async function getSubscription(userInfo) {
   const subscription = userInfo.subscription;
 
   if (subscription == 0) {
-    console.log(subscription)
     return 0;
   }
   const encryptKey = await deriveKey(userId, keySalt);
@@ -261,7 +273,6 @@ Router.post('/subscribe', async(req, res) => {
   encryptedData += cipher.final('hex');
   const update = connection.query('UPDATE users set ? where user_id = ?', [{subscription: encryptedData}, userId]);
   connection.release();
-  console.log('Encrypted data:', encryptedData);
   res.send({success: true})
 });
 

@@ -3,6 +3,8 @@ const Router = express.Router();
 const pool = require('../model/pool');
 const notificationService = require('../services/notification');
 const account = require('./account');
+const Ajv = require('ajv');
+const ajv = new Ajv();
 
 function generateRandomId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -65,14 +67,12 @@ Router.post('/start', async (req, res) => {
     const groups = select[0].groups ? select[0].groups.split(",") : [];
     const startTime = Math.floor(new Date().getTime() / 1000);
     const subject = subjects.find(subject => subject.id == subjectId);
-    console.log(subject, subjectId, req.body)
     const storedTime = startTime - subject.datum_point;
     subject.timeline.push([storedTime]);
     const updatedJson = JSON.stringify(subjects);
     const update = await connection.query("UPDATE users SET subjects = ? WHERE user_id = ?", [updatedJson, req.session.user_id]);
   
     if (groups.length !== 0) {
-      console.log(`send signals to ${groups}`)
       io.to(groups).emit('studying', req.session.user_id, groups);
     }
   
@@ -271,51 +271,19 @@ Router.post('/update-members-info', async(req, res) => {
   }))
 })
 
-/* Router.post('/add-plan', async(req, res) => {
-  try {
-    const userId = req.session.user_id;
-    if (!userId) {
-      return res.send({ success: false, reason: 'not auth' });
-    }
-  
-    const connection = await (await pool).getConnection();
-    const plan = req.body;
-    let userInfo = await connection.query('SELECT notification_setting, notifications from users where user_id = ?', [userId]);
-    userInfo = userInfo[0];
-
-    try {
-      const addPlan = await connection.query(`UPDATE users SET plan = CASE
-        WHEN plan IS NULL THEN '${JSON.stringify(plan)}'
-        WHEN plan = '' THEN '${JSON.stringify(plan)}'
-        ELSE CONCAT(plan, ',', '${JSON.stringify(plan)}')
-        END
-        WHERE user_id = '${userId}'`);
-        const startTime = (plan.date + plan.hr * 60 * 60 + plan.min * 60) * 1000;
-        notificationService.planNotification(plan, startTime, userInfo.notifications, decryptedData, connection, userId);
-        connection.release();
-      res.send({ success: true });
-    } catch (error) {
-      console.error('MySQL error:', error);
-      res.send({ success: false, reason: 'MySQL error' });
-    }
-  } catch (error) {
-    console.error('An error occurred:', error);
-    res.send({ success: false, reason: 'An error occurred' });
-  }
-}) */
-
 Router.post('/bring-plans', async(req, res) => {
   account.autoSignin(req, res, (async() => {
     const connection = await (await pool).getConnection();
 
-    let plans = await connection.query(`SELECT plan from users where user_id = ?`, [req.session.user_id]);
-    plans = JSON.stringify(`[${plans[0].plan}]`);
-    res.send(plans);
+    let plans = await connection.query(`SELECT * from plans where user_id = ?`, [req.session.user_id]);
+    res.send({success: true, plans: plans})
+    /* plans = JSON.stringify(`[${plans[0].plan}]`);
+    res.send(plans); */
     connection.release();
   }))
 });
 
-Router.post('/update-plan', async(req, res) => {
+/* Router.post('/update-plan', async(req, res) => {
   account.autoSignin(req, res, (async() => {
     try {
       const userId = req.session.user_id;
@@ -334,12 +302,6 @@ Router.post('/update-plan', async(req, res) => {
         let plan = plans.find(plan => planInfo.id == plan.id);
         const startTime = (planInfo.date + planInfo.hr * 60 * 60 + planInfo.min * 60) * 1000;
         if (plan) {
-          /* let notifications = JSON.parse(userInfo.notifications);
-          notifications = notifications.filter(notification => notification !== plan.id);
-          const addPlan = await connection.query(
-            'UPDATE users SET plan = CONCAT_WS(",", REPLACE(plan, ?, ?)), notifications = ? WHERE user_id = ?',
-            [JSON.stringify(plan), JSON.stringify(planInfo), JSON.stringify(notifications), userId]
-          ); */
           const addPlan = await connection.query(
             'UPDATE users SET plan = CONCAT_WS(",", REPLACE(plan, ?, ?)) WHERE user_id = ?',
             [JSON.stringify(plan), JSON.stringify(planInfo), userId]
@@ -367,5 +329,85 @@ Router.post('/update-plan', async(req, res) => {
       res.send({ success: false, reason: 'An error occurred' });
     }
   }))
+}) */
+
+Router.post('/update-plan', async(req, res) => {
+  account.autoSignin(req, res, (async() => {
+    try {
+      const planInfo = req.body;
+      const schema = {
+        type: 'object',
+        properties: {
+          name: { type: 'string', maxLength: 100 },
+          id: { type: 'string', minLength: 10, maxLength: 10 },
+          date: { type: 'integer'},
+          hr: { type: 'integer', minimum: 0, maximum: 24 },
+          min: { type: 'integer', minimum: 0, maximum: 60 },
+          length: { type: 'integer' },
+          repeat: { type: 'string' },
+          description: { type: 'string'},
+          subject: { type: 'string' },
+          notification: { type: 'string'},
+          priority: { type: 'integer', minimum: 0, maximum: 100 },
+        },
+        required: ['name', 'id', 'date', 'hr', 'min', 'length', 'repeat', 'description', 'notification', 'subject', 'priority'],
+        additionalProperties: false
+      };
+
+      const isValid = isValidJSON(planInfo, schema);
+      console.log(planInfo)
+      if (isValid) {
+        const connection = await (await pool).getConnection();
+        try {
+          const {name, id, date, hr, min, length, repeat, description, notification, subject, priority} = planInfo;
+          const insertInfo = {
+            id: id,
+            user_id: req.session.user_id,
+            name: name,
+            date: date.toString(),
+            time: `${hr}:${min}`,
+            length: length,
+            repeat: repeat,
+            description: description,
+            notification: notification,
+            subject: subject,
+            priority: priority
+          }
+          const deletePrev = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [req.session.user_id, id]);
+          if (!deletePrev.affectedRows) {
+            console.log('update');
+            notificationService.removePrevNotification(req.session.user_id, planInfo.id);
+          }
+          const userInfo = await connection.query(`SELECT user_id, name, email, notification_setting, key_salt, iv, subscription from users where user_id = ?`, [req.session.user_id]);
+          const startTime = (planInfo.date + planInfo.hr * 60 * 60 + planInfo.min * 60) * 1000;
+          notificationService.planNotification(insertInfo, userInfo[0], startTime)
+          const insert = connection.query(`INSERT INTO plans SET ?`, insertInfo);
+          res.send({success: true})
+        } catch (error) {
+          res.send({ success: false, reason: 'An error occurred' });
+          console.log('Mysql Err', error);
+        } finally {
+          connection.release();
+        }
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+      res.send({ success: false, reason: 'An error occurred' });
+    }
+  }))
 })
+
+function isValidJSON(data, schema) {
+  const validate = ajv.compile(schema);
+  const isValid = validate(data);
+
+  if (!isValid) {
+    console.log('Invalid data:', validate.errors);
+    return false;
+  } else {
+    console.log('Data is valid.');
+    return true;
+  }
+}
+
 module.exports = Router;

@@ -984,66 +984,6 @@ input[type="range"]:disabled::-moz-range-thumb {
 	cursor: not-allowed;
 }
 
-@keyframes notification {
-  0% {
-    transform: translateY(0px);
-  }
-
-  20% {
-    transform: translateY(140px);
-  }
-
-  80% {
-    transform: translateY(140px);
-  }
-
-  100% {
-    transform: translateY(0px);
-  }
-}
-
-.notification-alert {
-  opacity: 1;
-  z-index: 5;
-  color: #fff;
-  position: fixed;
-  top: -100px;
-  width: 50vw;
-  left: 25vw;
-  height: 60px;
-  border-radius: 20px;
-}
-
-.notification-alert .notification-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.notification-alert i {
-  font-size: 25px;
-}
-
-.notification-alert p {
-  font-size: 25px;
-  line-height: unset;
-  font-weight: 900;
-  margin-top: 10px;
-  margin-left: 10px;
-}
-
-#notification-alert-success {
-  background-color:#ecbd00;
-}
-
-#notification-alert-fail {
-  background-color: #f44335;
-}
-
-.notification-alert.notify {
-  animation: notification 1s 0.5s forwards;
-}
-
 /* checkbox */
 
 .checkbox-wrapper-37 input[type="checkbox"] {
