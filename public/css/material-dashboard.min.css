@@ -142,8 +142,9 @@ Github: https://github.com/fiduswriter/Simple-DataTables
   font-weight: bold;
 }
 
-aside {
+aside.sidenav {
   background-image: url('/img/test1.png');
+  margin-left: 35px !important;
 }
 
 ul.navbar-nav li i{
@@ -207,6 +208,20 @@ ul.navbar-nav li i{
   background-color: #f44335;
 }
 
+#notification-alert-fail i {
+  margin-bottom: 3px;
+}
+
 .notification-alert.notify {
   animation: notification 2s 0.5s forwards;
+}
+
+.line-div {
+  height: 20px;
+  width: 1px;
+  background-color: #7b809a;
+}
+    
+.navbar-brand.m-0 {
+  font-size: 18px;
 }
