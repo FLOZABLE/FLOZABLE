@@ -108,7 +108,7 @@ Router.post('/signup-authentication', async (req, res) => {
   let email = req.body.email;
   let name = req.body.name;
   let password = req.body.password;
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;;
+  const timeZone = req.header('X-Timezone') || 'UTC';
   const date = new Date();
   date.toLocaleString("en-US", { timeZone });
   date.setHours(0, 0, 0, 0);
