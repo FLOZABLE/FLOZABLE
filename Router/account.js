@@ -120,7 +120,7 @@ Router.post('/signup-authentication', async (req, res) => {
   }
 
   //check name
-  if (!/^[A-Za-z0-9]+$/.test(name)) {
+  if (/^[A-Za-z0-9]+$/) {
     return res.send({ success: false, reason: 'Invalid Name (Only A-Z, a-z, and 0-9 available)' });
   }
 
