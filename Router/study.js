@@ -100,7 +100,7 @@ Router.post('/stop', async (req, res) => {
     const storedTime = stopTime - subject.datum_point;
     subject.timeline[subject.timeline.length - 1].push(storedTime);
     //subject.total += subject.timeline[subject.timeline.length - 1][1] - subject.timeline[subject.timeline.length - 1][0];
-    const timeZone = req.header('X-Timezone') || 'UTC';
+    const timeZone = req.session.timeZone;
     const date = new Date();
     date.toLocaleString("en-US", { timeZone });
     date.setHours(0, 0, 0, 0);
