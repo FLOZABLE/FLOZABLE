@@ -5,6 +5,7 @@ const notificationService = require('../services/notification');
 const account = require('./account');
 const Ajv = require('ajv');
 const ajv = new Ajv();
+const {DateTime} = require('luxon');
 
 function generateRandomId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -104,6 +105,11 @@ Router.post('/stop', async (req, res) => {
     const date = new Date();
     date.toLocaleString("en-US", { timeZone });
     date.setHours(0, 0, 0, 0);
+    /* 
+    const userDateTime = DateTime.now().setZone(timeZone);
+    const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+    const unixTimestamp = twelveAmDateTime.toMillis();
+    */
     const datum_point = new Date(select[0].datum_point * 1000);
     datum_point.toLocaleString("en-US", {timeZone});
     datum_point.setHours(0, 0, 0, 0);

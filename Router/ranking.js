@@ -3,6 +3,7 @@ const Router = express.Router();
 const pool = require('../model/pool');
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
+const {DateTime} = require('luxon');
 
 Router.post("/", async (req, res) => {
   const connection = await (await pool).getConnection();
@@ -13,13 +14,13 @@ Router.post("/", async (req, res) => {
   const monthlyRanking = [];
 
   const timeZone = req.session.timeZone;
-  const date = new Date();
-  date.toLocaleString("en-US", { timeZone });
-  date.setHours(0, 0, 0, 0);
+  const userDateTime = DateTime.now().setZone(timeZone);
+  const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+  const unixTimestamp = twelveAmDateTime.toMillis();
+  console.log(unixTimestamp)
+  const cachedDate = new Date(unixTimestamp);  
 
-  const cachedDate = new Date(date);  
-
-  if(date.getMinutes() < 30) {
+  if(twelveAmDateTime.minute < 30) {
     cachedDate.setMinutes(0);
   } else {
     cachedDate.setMinutes(30);
@@ -31,6 +32,7 @@ Router.post("/", async (req, res) => {
     return res.send(cachedData);
   }
   
+  const date = new Date(unixTimestamp);
 
   const usersInfo = users.map(user => {
     const datum_point = new Date(user.datum_point * 1000);
