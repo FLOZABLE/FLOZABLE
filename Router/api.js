@@ -42,7 +42,6 @@ Router.post("/update-tabs", async (req, res) => {
   const { encryptedData, tag } = encryptText(JSON.stringify(prevWebUsageData), encryptionKey, iv);
   const encryptedEncryptionKey = crypto.pbkdf2Sync(encryptionKey, req.session.user_id, 99097, 32, 'sha512').toString('hex');
 
-  console.log(prevWebUsageData);
   //const encryptInfo = { encryptionKey: encryptedEncryptionKey, iv: iv, tag: tag }
   //const update = await connection.query('UPDATE users SET activity = ? WHERE user_id = ?', [JSON.stringify(encryptedData), req.session.user_id]);
   const update = await connection.query('UPDATE users SET activity = ? WHERE user_id = ?', [JSON.stringify(prevWebUsageData), req.session.user_id]);
