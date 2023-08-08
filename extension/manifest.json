@@ -1,6 +1,6 @@
 {
   "name": "My Extension",
-  "version": "1.0",
+  "version": "0.0.1",
   "manifest_version": 3,
   "description": "My extension description",
   "permissions": [
@@ -10,6 +10,9 @@
     "activeTab",
     "storage"
   ],
+  "externally_connectable": {
+    "matches": ["https://*.flozable.com/*", "http://localhost/*"]
+  },
   "action": {
     "default_popup": "popup.html"
   },
@@ -18,13 +21,10 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://localhost/study", "https://flozable/study"],
-      "js": ["contentScript.js"],
-      "run_at": "document_idle"
-    },
-    {
       "matches": ["<all_urls>"],
-      "js": ["contentScript2.js"]
+      "js": ["contentScript.js"],
+      "match_origin_as_fallback": true,
+      "run_at": "document_idle"
     }
   ]
 }
