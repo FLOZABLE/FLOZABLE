@@ -1,5 +1,5 @@
 {
-  "name": "My Extension",
+  "name": "FLOZABLE Tab Monitor",
   "version": "0.0.1",
   "manifest_version": 3,
   "description": "FLOZABLE Tab Monitor",
@@ -11,7 +11,7 @@
     "storage"
   ],
   "externally_connectable": {
-    "matches": ["https://*.flozable.com/*", "http://localhost/*"]
+    "matches": ["https://*.flozable.com/*"]
   },
   "icons": {
     "16": "images/favicon.png" 
