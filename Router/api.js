@@ -47,6 +47,7 @@ Router.post("/update-tabs", async (req, res) => {
   const update = await connection.query('UPDATE users SET activity = ? WHERE user_id = ?', [JSON.stringify(prevWebUsageData), req.session.user_id]);
   res.send({success: true});
   connection.release();
+  console.log(timeZone, unixTimestamp, twelveAmDateTime, userDateTime)
 });
 
 /* Router.post('/user-info', async(req, res) => {
