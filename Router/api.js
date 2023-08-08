@@ -26,7 +26,7 @@ Router.post("/update-tabs", async (req, res) => {
   const newWebUsageData = req.body.tabUsageData;
   let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = ?`, [req.session.user_id]);
   prevWebUsageData = JSON.parse(prevWebUsageData[0].activity);
-  const timeZone = req.session.timeZone;
+  const timeZone = req.session.userInfo.timeZone;
 
   const userDateTime = DateTime.now().setZone(timeZone);
   const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
@@ -47,7 +47,6 @@ Router.post("/update-tabs", async (req, res) => {
   const update = await connection.query('UPDATE users SET activity = ? WHERE user_id = ?', [JSON.stringify(prevWebUsageData), req.session.user_id]);
   res.send({success: true});
   connection.release();
-  console.log(timeZone, unixTimestamp, twelveAmDateTime, userDateTime)
 });
 
 /* Router.post('/user-info', async(req, res) => {
