@@ -23,17 +23,26 @@ const nameContainer = document.querySelector("input#name");
 const emailContainer = document.querySelector("input#email");
 const passwordContainer = document.querySelector("input#password");
 
+function getUserTimezone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch (error) {
+    console.error('Intl.DateTimeFormat not supported:', error);
+    return 'UTC';
+  }
+}
+
 signUpSubmitBtn.addEventListener('click', async() => {
   let redirectUrl = window.location.protocol + '//' + window.location.hostname;
   const match = window.location.href.match(/[\?&]redirect=([^&#]*)/);
   const parameterValue = match ? match[1] : null;
-  console.log(parameterValue);
+  const timeZone = getUserTimezone();
   if(parameterValue){
     redirectUrl += '/' + parameterValue;
   }
   let response = await fetch('/account/signup-authentication', {
     method: 'post',
-    body: JSON.stringify({name: nameContainer.value, email: emailContainer.value, password: passwordContainer.value, redirectUrl: redirectUrl}),
+    body: JSON.stringify({name: nameContainer.value, email: emailContainer.value, password: passwordContainer.value, redirectUrl: redirectUrl, timeZone: timeZone}),
     headers: {
       'Content-Type': 'application/json'
     }

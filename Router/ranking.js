@@ -12,7 +12,7 @@ Router.post("/", async (req, res) => {
   const weeklyRanking = [];
   const monthlyRanking = [];
 
-  const timeZone = req.header('X-Timezone') || 'UTC';
+  const timeZone = req.session.timeZone;
   const date = new Date();
   date.toLocaleString("en-US", { timeZone });
   date.setHours(0, 0, 0, 0);

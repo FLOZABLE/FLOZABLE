@@ -88,7 +88,7 @@ const websitesWrapper = document.getElementById('extension-website-wrapper');
 
 addWebsiteBtn.addEventListener('click', async () => {
   try {
-    let response = await fetch('/update/extension-add', {
+    let response = await fetch('/account/update/extension-add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -103,23 +103,42 @@ addWebsiteBtn.addEventListener('click', async () => {
       <td class="ps-1" colspan="4">
         <div class="my-auto">
           <span class="text-dark d-block text-sm">${response.domain}</span>
-          <span class="text-xs font-weight-normal">Notify when another user mentions you in a
-            comment</span>
+          <span class="text-xs font-weight-normal"></span>
+        </div>
+      </td>
+      <td>
+        <div class="form-check form-switch mb-0 d-flex align-items-center justify-content-center is-filled">
+          <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault11">
         </div>
       </td>
       <td>
         <div class="form-check form-switch mb-0 d-flex align-items-center justify-content-center">
-          <input class="form-check-input" checked type="checkbox" id="flexSwitchCheckDefault11">
-        </div>
-      </td>
-      <td>
-        <div class="form-check form-switch mb-0 d-flex align-items-center justify-content-center">
-          <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault12">
+          <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault12" checked="">
         </div>
       </td>
       `
       websitesWrapper.appendChild(tr);
-      successMsg('Updated Profile Image!');
+      successMsg('Updated Website Setting List!');
+      let activitySetting = {domain: response.domain, block: true, timer: true};
+      activitySettings.push(activitySetting);
+      const blockOptBtn = tr.querySelector('#flexSwitchCheckDefault11');
+      const timerOptBtn = tr.querySelector('#flexSwitchCheckDefault12');
+
+      blockOptBtn.addEventListener('change', () => {
+        if (blockOptBtn.checked) {
+          activitySetting.block = true;
+        } else {
+          activitySetting.block = false;
+        }
+      });
+
+      timerOptBtn.addEventListener('change', () => {
+        if (timerOptBtn.checked) {
+          activitySetting.timer = true;
+        } else {
+          activitySetting.timer = false;
+        }
+      })
     } else {
       console.log(response)
       errMsg(response.reason)
@@ -290,6 +309,9 @@ extSettingBtn.addEventListener('click', async() => {
 
   if (response.success) {
     successMsg('Updated Extension Settings!');
+      chrome.runtime.sendMessage("dalobnhjngmjgnkdjkeonfnbbkaclcpm", { command: 'setting_changed', activitySettings: activitySettings }, (response) => {
+        console.log(response)
+      });
   } else {
     errMsg(response.reason);
   }
