@@ -309,7 +309,7 @@ extSettingBtn.addEventListener('click', async() => {
 
   if (response.success) {
     successMsg('Updated Extension Settings!');
-      chrome.runtime.sendMessage("dalobnhjngmjgnkdjkeonfnbbkaclcpm", { command: 'setting_changed', activitySettings: activitySettings }, (response) => {
+      chrome.runtime.sendMessage("nbajcfnoofjfnmifklognmllikhkpaen", { command: 'setting_changed', activitySettings: activitySettings }, (response) => {
         console.log(response)
       });
   } else {
