@@ -13,7 +13,7 @@ Router.post("/", async (req, res) => {
   const weeklyRanking = [];
   const monthlyRanking = [];
 
-  const timeZone = req.session.timeZone;
+  const timeZone = req.session.userInfo.timeZone;
   const userDateTime = DateTime.now().setZone(timeZone);
   const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
   const unixTimestamp = twelveAmDateTime.toMillis();
