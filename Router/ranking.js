@@ -17,7 +17,6 @@ Router.post("/", async (req, res) => {
   const userDateTime = DateTime.now().setZone(timeZone);
   const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
   const unixTimestamp = twelveAmDateTime.toMillis();
-  console.log(unixTimestamp)
   const cachedDate = new Date(unixTimestamp);  
 
   if(twelveAmDateTime.minute < 30) {
@@ -25,10 +24,8 @@ Router.post("/", async (req, res) => {
   } else {
     cachedDate.setMinutes(30);
   }
-  console.log(cachedDate.getTime())
   const cachedData = cache.get(cachedDate.getTime());
   if (cachedData) {
-    console.log("cached")
     return res.send(cachedData);
   }
   
@@ -61,7 +58,6 @@ Router.post("/", async (req, res) => {
       missingMonth += 1;
       datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
     }
-    console.log(missingDay, missingWeek)
     for(let i = 0; i < missingDay; i++) {
       daily.push(0);
     }
