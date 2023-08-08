@@ -361,7 +361,6 @@ Router.post('/update-plan', async(req, res) => {
       };
 
       const isValid = isValidJSON(planInfo, schema);
-      console.log(planInfo)
       if (isValid) {
         const connection = await (await pool).getConnection();
         try {
@@ -381,7 +380,6 @@ Router.post('/update-plan', async(req, res) => {
           }
           const deletePrev = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [req.session.user_id, id]);
           if (!deletePrev.affectedRows) {
-            console.log('update');
             notificationService.removePrevNotification(req.session.user_id, planInfo.id);
           }
           const userInfo = await connection.query(`SELECT user_id, name, email, notification_setting, key_salt, iv, subscription from users where user_id = ?`, [req.session.user_id]);
@@ -408,10 +406,8 @@ function isValidJSON(data, schema) {
   const isValid = validate(data);
 
   if (!isValid) {
-    console.log('Invalid data:', validate.errors);
     return false;
   } else {
-    console.log('Data is valid.');
     return true;
   }
 }

@@ -255,10 +255,8 @@ function isValidJSON(data, schema) {
   const isValid = validate(data);
 
   if (!isValid) {
-    console.log('Invalid data:', validate.errors);
     return false;
   } else {
-    console.log('Data is valid.');
     return true;
   }
 }
@@ -423,7 +421,6 @@ Router.post('/update/extension-setting-update', async (req, res) => {
       };
   
       const updatedExtSettings = req.body.activitySettings;
-      console.log(updatedExtSettings)
       const isValid = isValidJSON(updatedExtSettings, schema);
       if (isValid) {
         const updateInfo = [{ activity_setting: JSON.stringify(updatedExtSettings) }, req.session.user_id];

@@ -54,7 +54,6 @@ Router.post('/create-validate', async (req, res) => {
     let hashed = hashing(req.body['password']);
     let group = req.body;
     if(!group.name || !group.explanation){
-      console.log('null');
       res.send({success: false, reason: 'err', msg: 'Fill out the form'})
       return 0
     }
@@ -96,7 +95,6 @@ Router.post('/create-validate', async (req, res) => {
       res.send({ success: true });
       delete req.session.retrivedProgress;
       req.session.save();
-      console.log(req.session, 'affected')
     } else {
       res.send({ success: false });
     }
@@ -145,7 +143,6 @@ Router.post('/join/:id', async (req, res) => {
         [JSON.stringify([req.session.user_id, req.session.name]), JSON.stringify([req.session.user_id, req.session.name]), JSON.stringify([req.session.user_id, req.session.name]), groupId]
       );
 
-      console.log('inserted');
       const io = req.app.get('socketio');
       io.emit('addUser', groupId, req.session.user_id);
       res.send({ success: true });
@@ -166,7 +163,6 @@ Router.post('/join/:id', async (req, res) => {
 Router.post('/leave/:id', async (req, res) => {
   if (req.session.loggedin == true) {
     const groupId = req.params.id;
-    console.log(groupId);
     const connection = await (await pool).getConnection();
     try {
       let userInfo = await connection.query(
@@ -174,7 +170,6 @@ Router.post('/leave/:id', async (req, res) => {
         [req.session.user_id]
       );
       userInfo = userInfo[0];
-      console.log([userInfo.groups].includes(groupId), [userInfo.groups], groupId);
       if (userInfo.groups.includes(groupId)) {
         connection.query(
           `UPDATE users SET \`groups\` = CONCAT_WS(',', REPLACE(\`groups\`, ?, '')) WHERE user_id = ?`,
@@ -228,7 +223,6 @@ Router.post('/bring-groups', async (req, res) => {
         likedList.push(group.group_id);
       }
     });
-    console.log([groupList, req.session.user_id, groupWithUser]);
     res.send([groupList, req.session.user_id, groupWithUser]);
   } catch (err) {
     // Handle any errors that may occur during the execution of queries
@@ -249,8 +243,6 @@ Router.post('/like/:id', async (req, res) => {
         [groupId]
       );
       groupInfo = groupInfo[0];
-      console.log(groupInfo);
-      console.log(groupInfo.likes);
       if (!groupInfo.likes || !groupInfo.likes.includes(req.session.user_id)) {
         const query1 = await connection.query(
           "UPDATE \`groups\` SET likes = CASE WHEN likes IS NULL THEN ? WHEN likes = '' THEN ? ELSE CONCAT(likes, ',', ?) END WHERE group_id = ?",
@@ -272,7 +264,6 @@ Router.post('/like/:id', async (req, res) => {
         if (query1.affectedRows + query2.affectedRows >= 1) {
           res.send({ state: 'unliked' });
         }
-        console.log(query1.affectedRows, query2.affectedRows);
       } else {
         res.send({ state: 'fail' });
       }
