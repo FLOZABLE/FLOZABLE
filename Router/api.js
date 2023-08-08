@@ -4,6 +4,7 @@ const fs = require("fs");
 const pool = require('../model/pool');
 const extensionAuthKey = process.env.EXTENSIONAUTHKEY;
 const crypto = require('crypto');
+const {DateTime} = require('luxon')
 
 function encryptText(text, key, iv) {
   const algorithm = 'aes-256-gcm';
@@ -26,10 +27,12 @@ Router.post("/update-tabs", async (req, res) => {
   let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = ?`, [req.session.user_id]);
   prevWebUsageData = JSON.parse(prevWebUsageData[0].activity);
   const timeZone = req.session.timeZone;
-  const date = new Date();
-  date.toLocaleString("en-US", { timeZone });
-  date.setHours(0, 0, 0, 0);
-  prevWebUsageData[date / 1000] = newWebUsageData;
+
+  const userDateTime = DateTime.now().setZone(timeZone);
+  const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+  const unixTimestamp = Math.floor(twelveAmDateTime.toMillis() / 1000);
+  
+  prevWebUsageData[unixTimestamp] = newWebUsageData;
 
   //decrypt
 
