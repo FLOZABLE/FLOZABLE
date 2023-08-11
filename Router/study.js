@@ -44,7 +44,8 @@ Router.post('/add-subject', async (req, res) => {
     const selectQuery = "SELECT subjects FROM users WHERE user_id = ?";
     const selectParams = [req.session.user_id];
     const select = await connection.query(selectQuery, selectParams);
-    const subjects = JSON.parse(select[0].subjects || "[]");
+    const userInfo = select[0];
+    const subjects = JSON.parse(userInfo.subjects || "[]");
     subjects.push(subject);
     const updatedJson = JSON.stringify(subjects);
     const updateQuery = "UPDATE users SET subjects = ? WHERE user_id = ?";
@@ -64,8 +65,9 @@ Router.post('/start', async (req, res) => {
     const subjectId = req.body.id;
   
     const select = await connection.query(`SELECT subjects, daily, weekly, monthly, \`groups\` FROM users WHERE user_id = ?`, [req.session.user_id]);
-    const subjects = JSON.parse(select[0].subjects || "[]");
-    const groups = select[0].groups ? select[0].groups.split(",") : [];
+    const userInfo = select[0];
+    const subjects = JSON.parse(userInfo.subjects || "[]");
+    const groups = userInfo.groups ? userInfo.groups.split(",") : [];
     const startTime = Math.floor(new Date().getTime() / 1000);
     const subject = subjects.find(subject => subject.id == subjectId);
     const storedTime = startTime - subject.datum_point;
@@ -89,44 +91,43 @@ Router.post('/stop', async (req, res) => {
     const connection = await (await pool).getConnection();
     const subjectId = req.body.id;
     const select = await connection.query(`SELECT subjects, daily, weekly, monthly, datum_point, \`groups\` FROM users WHERE user_id = "${req.session.user_id}"`);
-    const groups = select[0].groups ? select[0].groups.split(",") : [];
-  
+    const userInfo = select[0];
+    const groups = userInfo.groups ? userInfo.groups.split(",") : [];
+    console.log(groups)
     if (groups.length !== 0) {
       io.to(groups).emit('stopstudying', req.session.user_id, groups);
     }
   
-    const subjects = JSON.parse(select[0].subjects || "[]");
+    const subjects = JSON.parse(userInfo.subjects || "[]");
     const stopTime = Math.floor(new Date().getTime() / 1000);
     const subject = subjects.find(subject => subject.id == subjectId);
     const storedTime = stopTime - subject.datum_point;
     subject.timeline[subject.timeline.length - 1].push(storedTime);
     //subject.total += subject.timeline[subject.timeline.length - 1][1] - subject.timeline[subject.timeline.length - 1][0];
     const timeZone = req.session.userInfo.timeZone;
-    const date = new Date();
-    date.toLocaleString("en-US", { timeZone });
-    date.setHours(0, 0, 0, 0);
+    const date = DateTime.now().setZone(timeZone).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     /* 
     const userDateTime = DateTime.now().setZone(timeZone);
     const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     const unixTimestamp = twelveAmDateTime.toMillis();
     */
-    const datum_point = new Date(select[0].datum_point * 1000);
-    datum_point.toLocaleString("en-US", {timeZone});
-    datum_point.setHours(0, 0, 0, 0);
-    const daily = JSON.parse(select[0].daily);
-    const weekly = JSON.parse(select[0].weekly);
-    const monthly = JSON.parse(select[0].monthly);
+    //const datum_point = new Date(userInfo.datum_point * 1000);
+    const datum_point = DateTime.fromMillis(userInfo.datum_point * 1000).setZone(timeZone).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+    const daily = JSON.parse(userInfo.daily);
+    const weekly = JSON.parse(userInfo.weekly);
+    const monthly = JSON.parse(userInfo.monthly);
   
-    const dayPassed = (date.getTime() - datum_point.getTime()) / (1000 * 60 * 60 * 24);
-  
-    let dateWeekStart = date.getTime() - date.getDay() * 24 * 60 * 60 * 1000;
-    let datum_pointWeekStart = datum_point.getTime() - datum_point.getDay() * 24 * 60 * 60 * 1000;
+    const dayPassed = (date.toMillis() - datum_point.toMillis()) / (1000 * 60 * 60 * 24);
+    const dateDay = date.weekday == 7 ? 0 : date.weekday;
+    let dateWeekStart = date.toMillis() - dateDay * 24 * 60 * 60 * 1000;
+    const datumDay = datum_point.weekday == 7 ? 0 : datum_point.weekday;
+    let datum_pointWeekStart = datum_point.toMillis() - datumDay * 24 * 60 * 60 * 1000;
     const weekPassed = (dateWeekStart - datum_pointWeekStart) / (1000 * 60 * 60 * 24 * 7);
     let monthPassed = 0;
-    let datumYear = datum_point.getFullYear();
-    let datumMonth = datum_point.getMonth();
-    let datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
-    const dateMonthStart = new Date(date.getFullYear(), date.getMonth(), 1).setHours(0, 0, 0, 0);
+    let datumYear = datum_point.year;
+    let datumMonth = datum_point.month;
+    let datumMonthStart = DateTime.local(datumYear, datumMonth, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+    const dateMonthStart = DateTime.local(date.year, date.month, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
     while(datumMonthStart < dateMonthStart) {
       datumMonth += 1;
       if(datumMonth >= 11) {
@@ -134,7 +135,7 @@ Router.post('/stop', async (req, res) => {
         datumYear += 1;
       }
       monthPassed += 1;
-      datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
+      datumMonthStart = DateTime.local(datumYear, datumMonth, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     }
   
     let dayDiff = dayPassed - daily.length + 1;
@@ -190,7 +191,7 @@ Router.post('/bring-members-info', async (req, res) => {
     
     const groupsInfo = await connection.query('SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id IN (?)', [groups]);
     let membersInfo = [];
-    
+    const timeZone = req.session.timeZone;
     await Promise.all(groupsInfo.map(async (group, group_index) => {
       group.members = group.members ? JSON.parse(`[${group.members}]`) : [];
       const membersId = group.members.flat().filter((value, index) => index % 2 === 0);
@@ -200,9 +201,10 @@ Router.post('/bring-members-info', async (req, res) => {
     
       await Promise.all(members.map(async (member, member_index) => {
         member.subjects = JSON.parse(member.subjects);
-        const date = new Date().toLocaleDateString('en-US', { timeZone: member.timezone });
-        const startTime = new Date(`${date} 00:00:00`).getTime();
-        const endTime = new Date(`${date} 24:00:00`).getTime();
+        //const date = new Date().toLocaleDateString('en-US', { timeZone: member.timezone });
+        const date = DateTime.now().setZone(timeZone).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+        const startTime = date.startOf('day').toMillis();
+        const endTime = date.endOf('day').toMillis();
         let today = 0;
         membersInfo[group_index].members.push({ userId: member.user_id, name: member.name, subjects: member.subjects, timezone: member.timezone, filteredTimeline: [], today: 0 });
         member.subjects = member.subjects ? member.subjects : [];
