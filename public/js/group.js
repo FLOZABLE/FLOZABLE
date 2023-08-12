@@ -201,7 +201,8 @@ async function likeButtonEvent(group, div) {
 function createGroup(group) {
   const div = document.createElement('div');
   div.setAttribute('class', 'group');
-  div.style = `background: linear-gradient(to right, ${changeBrightness(group.color, 80)}, ${group.color});`;
+  //div.style = `background: linear-gradient(to right, ${changeBrightness(group.color, 80)}, ${group.color});`;
+  div.style.backgroundColor = group.color;
   div.setAttribute('id', group.group_id);
   const lock = !group.visibility ? `<i class="fa-solid fa-lock"></i>` : '';
   //group.tags = JSON.parse(group.tags);
@@ -289,6 +290,7 @@ let userId;
 let groupWithUser;
 let likedList;
 (async () => {
+  console.time('fetch');
   response = await fetch('/groups/bring-groups',
     {
       method: 'post',
@@ -312,6 +314,7 @@ let likedList;
     group.likes = group.likes.split(',');
     createGroup(group);
   });
+  console.timeEnd('fetch'); 
 })();
 
 const askPwModal = document.getElementById('ask-pw-modal');

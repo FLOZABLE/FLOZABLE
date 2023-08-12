@@ -71,7 +71,7 @@ Router.post('/start', async (req, res) => {
     const startTime = Math.floor(new Date().getTime() / 1000);
     const subject = subjects.find(subject => subject.id == subjectId);
     const storedTime = startTime - subject.datum_point;
-    subject.timeline.push([storedTime]);
+    subject.timeline.push([storedTime, storedTime]);
     const updatedJson = JSON.stringify(subjects);
     const update = await connection.query("UPDATE users SET subjects = ? WHERE user_id = ?", [updatedJson, req.session.user_id]);
   
@@ -102,7 +102,7 @@ Router.post('/stop', async (req, res) => {
     const stopTime = Math.floor(new Date().getTime() / 1000);
     const subject = subjects.find(subject => subject.id == subjectId);
     const storedTime = stopTime - subject.datum_point;
-    subject.timeline[subject.timeline.length - 1].push(storedTime);
+    subject.timeline[subject.timeline.length - 1][1] = storedTime;
     //subject.total += subject.timeline[subject.timeline.length - 1][1] - subject.timeline[subject.timeline.length - 1][0];
     const timeZone = req.session.userInfo.timeZone;
     const date = DateTime.now().setZone(timeZone).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
