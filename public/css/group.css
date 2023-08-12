@@ -224,6 +224,10 @@ li {
   min-height: 230px;
 }
 
+.group p {
+  font-weight: 400;
+}
+
 .groups-container .bottom-btns button,
 .mygroups-container .bottom-btns button {
   font-size: 13px;
@@ -279,7 +283,7 @@ li {
 .group .middle {
   background-color: #fff;
   border-radius: 10px;
-  max-height: 280px;
+  height: 190px;
   margin-bottom: 10px;
   position: relative;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -299,11 +303,13 @@ li {
   display: inline-block;
   margin: 5px;
   background-color: bisque;
-  height: 30px;
+  padding: 0px 5px;
   border-radius: 15px;
-  min-width: 50px;
+  font-size: 10px;
+  font-weight: 600;
+  
 }
-
+/* 
 
 #font-0 {
   font-family: 'Lobster', cursive;
@@ -355,7 +361,7 @@ li {
 
 #font-12 {
   font-family: 'Sigmar One', cursive;
-}
+} */
 
 .password-modal .password-wrapper {
   text-align: center;
