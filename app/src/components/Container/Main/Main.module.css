@@ -1,0 +1,52 @@
+.MainContainer {
+  font-size: 30px;
+}
+
+.MainContainer .Main {
+  margin: 200px 0px 0px 170px;
+  background-color: aqua;
+  transition: all .2s ease-in-out;
+  width: calc(100vw - 200px);
+  border-radius: 20px;
+}
+
+.MainContainer .Main.sidebarOpen {
+  margin-left: 350px;
+  width: calc(100vw - 380px);
+}
+
+.MainContainer .boxes {
+  display: flex;
+}
+
+.MainContainer .boxes .box {
+  background-color: aliceblue;
+  border-radius: 20px;
+}
+
+.MainContainer .boxes .box .inner {
+  padding: 50px;
+}
+
+.MainContainer .boxes .box .name {
+  font-size: 40px;
+}
+
+.MainContainer .boxes .box .report {
+  font-size: 30px;
+}
+
+.MainContainer .btnCenter {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.MainContainer .toStatsBtn {
+  background-color: blue;
+  padding: 20px 100px;
+  color: #fff;
+  font-size: 20px;
+  border-radius: 20px;
+  margin-top: 50px;
+}

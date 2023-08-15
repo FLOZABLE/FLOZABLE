@@ -1,0 +1,57 @@
+.Sidebar {
+  position: fixed;
+  top: 30px;
+  left: 50px;
+  height: calc(100vh - 60px);
+  width: 70px;
+  background-color: #6F6AF8;
+  border-radius: 20px;
+  transition: all .2s ease-in-out;
+  font-weight: 500;
+}
+
+.Sidebar.isOpen {
+  width: 250px;
+}
+
+.Sidebar .navItemWrapper {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 70px;
+}
+
+.Sidebar .navItemWrapper.hovered {
+  background-color: aliceblue;
+}
+
+.Sidebar .navItem {
+  display: flex;
+  align-items: center;
+}
+
+.Sidebar .navItem .icon {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Sidebar .navItem .icon img{
+  height: 30px;
+}
+
+.Sidebar.isOpen .navItem .navText {
+  opacity: 1;
+}
+
+.Sidebar .navItem .navText {
+  opacity: 0;
+  transition: opacity .2s ease-in-out;
+  color: #fff;
+  margin-left: 70px;
+}

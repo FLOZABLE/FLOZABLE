@@ -1,0 +1,837 @@
+// NewComponent.js
+
+import React from 'react';
+
+const NewComponent = () => {
+  return (
+
+    <div className="container-xxl bg-white p-0">
+      {/* Spinner Start */}
+      <div id="spinner" className="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div className="spinner-grow text-primary" style={{width: '3rem', height: '3rem'}} role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
+      </div>
+      {/* Spinner End */}
+      {/* Navbar & Hero Start */}
+      <div className="container-xxl position-relative p-0" id="home">
+        <div className="container-xxl position-relative p-0" id="home">
+          <nav className="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+            <a href className="navbar-brand p-0">
+              <h1 className="m-0">FLOZABLE</h1>
+              {/* <img src="img/main/logo.png" alt="Logo"> */}
+            </a>
+            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+              <span className="fa fa-bars" />
+            </button>
+            <div className="collapse navbar-collapse" id="navbarCollapse">
+              <div className="navbar-nav mx-auto py-0">
+                <a href="../#home" className="nav-item nav-link active">Home</a>
+                <a href="../#about" className="nav-item nav-link">About</a>
+                <a href="../#feature" className="nav-item nav-link">Feature</a>
+                <a href="../#pricing" className="nav-item nav-link">Pricing</a>
+                <a href="../#review" className="nav-item nav-link">Review</a>
+                <a href="/dashboard/stats" className="nav-item nav-link">Dashboard</a>
+              </div>
+              &lt;% if (loggedIn) {'{'}%&gt;
+              <a href="/account/logout" className="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block">Log Out</a>
+              &lt;% {'}'} else {'{'} %&gt;
+              <a href="/account/signin" className="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block">Sign In</a>
+              &lt;% {'}'} %&gt;
+            </div>
+          </nav>
+        </div>
+        <div className="container-xxl bg-primary hero-header">
+          <div className="container px-lg-5">
+            <div className="row g-5">
+              <div className="col-lg-8 text-center text-lg-start">
+                <h1 className="text-white mb-4 animated slideInDown">Unlock Your Focus, Unleash Your Potential with FLOZABLE
+                </h1>
+                <p className="text-white pb-3 animated slideInDown">Ignite your focus, conquer distractions, and achieve
+                  greatness with FLOZABLE. Join our dynamic community, leverage our powerful timer, and unleash your full
+                  potential today.</p>
+                <a href className="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft">Read
+                  More</a>
+                <a href className="btn btn-secondary-gradient py-sm-3 px-4 px-sm-5 rounded-pill animated slideInRight">Contact
+                  Us</a>
+              </div>
+              <div className="col-lg-4 d-flex justify-content-center justify-content-lg-end wow fadeInUp" data-wow-delay="0.3s">
+                <div className="owl-carousel screenshot-carousel">
+                  <img className="img-fluid" src="img/mobile/screenshot-1.png" alt="" />
+                  <img className="img-fluid" src="img/mobile/screenshot-2.png" alt="" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Navbar & Hero End */}
+      {/* About Start */}
+      <div className="container-xxl py-5" id="about">
+        <div className="container py-5 px-lg-5">
+          <div className="row g-5 align-items-center">
+            <div className="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
+              <h5 className="text-primary-gradient fw-medium">About App</h5>
+              <h1 className="mb-4">#1 App for Empowering Your Focus and Productivity</h1>
+              <p className="mb-4">
+                Flozable is the #1 app that empowers you to regain control of your time and boost productivity. With
+                innovative features and an interactive community, Flozable is your ultimate tool for studying, learning,
+                and connecting with like-minded individuals.<br /><br />
+                Experience the power of our advanced timer function, designed to challenge you and keep you focused on
+                your tasks. Our AI-based study suggestions provide personalized course recommendations tailored to your
+                interests and weaknesses. Engage in group study sessions, communicate with peers, and tap into the active
+                community for motivation and support.<br /><br />
+                Benefit from integrated school platform authorization, webcam support, and microphone compatibility.
+                Achieve your goals, track your progress with detailed study analytics, and compete for the top spot on our
+                dynamic leaderboard.<br /><br />
+                Join the millions of users who have unlocked their full potential with Flozable. Start today and become #1
+                in maximizing your focus and productivity.
+              </p>
+              <div className="row g-4 mb-4">
+                <div className="col-sm-6 wow fadeIn" data-wow-delay="0.5s">
+                  <div className="d-flex">
+                    <i className="fa fa-cogs fa-2x text-primary-gradient flex-shrink-0 mt-1" />
+                    <div className="ms-3">
+                      <h2 className="mb-0" data-toggle="counter-up">1014</h2>
+                      <p className="text-primary-gradient mb-0">Active Install</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-sm-6 wow fadeIn" data-wow-delay="0.7s">
+                  <div className="d-flex">
+                    <i className="fa fa-comments fa-2x text-secondary-gradient flex-shrink-0 mt-1" />
+                    <div className="ms-3">
+                      <h2 className="mb-0" data-toggle="counter-up">203</h2>
+                      <p className="text-secondary-gradient mb-0">Clients Reviews</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <a href className="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill mt-3">Read More</a>
+            </div>
+            <div className="col-lg-6">
+              <img className="img-fluid wow fadeInUp" data-wow-delay="0.5s" src="img/mobile/3.png" />
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* About End */}
+      {/* Features Start */}
+      <div className="container-xxl py-5" id="feature">
+        <div className="container py-5 px-lg-5">
+          <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5 className="text-primary-gradient fw-medium">App Features</h5>
+            <h1 className="mb-5">Awesome Features</h1>
+          </div>
+          <div className="row g-4">
+            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+              <div className="feature-item bg-light rounded p-4">
+                <div className="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle mb-4" style={{width: '60px', height: '60px'}}>
+                  <i className="fa fa-hourglass text-white fs-4" />
+                </div>
+                <h5 className="mb-3">Timer and Study Tracker</h5>
+                <p className="m-0">Efficiently manage your time and track your study progress with our intuitive timer and
+                  study tracker features.</p>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+              <div className="feature-item bg-light rounded p-4">
+                <div className="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle mb-4" style={{width: '60px', height: '60px'}}>
+                  <i><svg fill="#ffffff" width="36px" height="36px" viewBox="-3 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                      <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+                      <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
+                      <g id="SVGRepo_iconCarrier">
+                        <title>group</title>
+                        <path d="M20.906 20.75c1.313 0.719 2.063 2 1.969 3.281-0.063 0.781-0.094 0.813-1.094 0.938-0.625 0.094-4.563 0.125-8.625 0.125-4.594 0-9.406-0.094-9.75-0.188-1.375-0.344-0.625-2.844 1.188-4.031 1.406-0.906 4.281-2.281 5.063-2.438 1.063-0.219 1.188-0.875 0-3-0.281-0.469-0.594-1.906-0.625-3.406-0.031-2.438 0.438-4.094 2.563-4.906 0.438-0.156 0.875-0.219 1.281-0.219 1.406 0 2.719 0.781 3.25 1.938 0.781 1.531 0.469 5.625-0.344 7.094-0.938 1.656-0.844 2.188 0.188 2.469 0.688 0.188 2.813 1.188 4.938 2.344zM3.906 19.813c-0.5 0.344-0.969 0.781-1.344 1.219-1.188 0-2.094-0.031-2.188-0.063-0.781-0.188-0.344-1.625 0.688-2.25 0.781-0.5 2.375-1.281 2.813-1.375 0.563-0.125 0.688-0.469 0-1.656-0.156-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.25-2.313 1.438-2.719 1-0.375 2.125 0.094 2.531 0.938 0.406 0.875 0.188 3.125-0.25 3.938-0.5 0.969-0.406 1.219 0.156 1.375 0.125 0.031 0.375 0.156 0.719 0.313-1.375 0.563-3.25 1.594-4.219 2.188zM24.469 18.625c0.75 0.406 1.156 1.094 1.094 1.813-0.031 0.438-0.031 0.469-0.594 0.531-0.156 0.031-0.875 0.063-1.813 0.063-0.406-0.531-0.969-1.031-1.656-1.375-1.281-0.75-2.844-1.563-4-2.063 0.313-0.125 0.594-0.219 0.719-0.25 0.594-0.125 0.688-0.469 0-1.656-0.125-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.219-2.313 1.406-2.719 1.031-0.375 2.156 0.094 2.531 0.938 0.406 0.875 0.25 3.125-0.188 3.938-0.5 0.969-0.438 1.219 0.094 1.375 0.375 0.125 1.563 0.688 2.75 1.313z">
+                        </path>
+                      </g>
+                    </svg></i>
+                </div>
+                <h5 className="mb-3">Collaborative Study Groups</h5>
+                <p className="m-0">Connect with like-minded individuals, form study groups, and share ideas to enhance your
+                  learning experience.</p>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+              <div className="feature-item bg-light rounded p-4">
+                <div className="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle mb-4" style={{width: '60px', height: '60px'}}>
+                  <i className="fa fa-robot text-white fs-4" />
+                </div>
+                <h5 className="mb-3">AI-Based Study Suggestions</h5>
+                <p className="m-0">Receive personalized study suggestions tailored to your interests and goals, powered by our
+                  advanced AI model.</p>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+              <div className="feature-item bg-light rounded p-4">
+                <div className="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle mb-4" style={{width: '60px', height: '60px'}}>
+                  <i className="fa fa-comments text-white fs-4" />
+                </div>
+                <h5 className="mb-3">Active Community</h5>
+                <p className="m-0">Engage with a vibrant community of learners, exchange knowledge, and receive support to
+                  stay motivated and inspired.</p>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+              <div className="feature-item bg-light rounded p-4">
+                <div className="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle mb-4" style={{width: '60px', height: '60px'}}>
+                  <i><svg width="36px" height="36px" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" fill>
+                      <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+                      <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
+                      <g id="SVGRepo_iconCarrier">
+                        <defs>
+                          <style dangerouslySetInnerHTML={{__html: "\n                          .cls-1 {\n                            fill: none;\n                          }\n\n                          .cls-2 {\n                            fill: #ffffff;\n                          }\n                        " }} />
+                        </defs>
+                        <title />
+                        <g data-name="Layer 2" id="Layer_2">
+                          <g id="Icons">
+                            <g data-name="Data Analysis" id="Data_Analysis">
+                              <rect className="cls-1" height={60} width={60} />
+                              <path className="cls-2" d="M49.1,10.44,47,10V9.68a3,3,0,0,0-3-3H32.78L21.85,4.14A3,3,0,0,0,18.23,6.4l-.06.27H16a3,3,0,0,0-3,3V29.06L8.64,48a3,3,0,0,0,2.26,3.61l2.1.49v.27a3,3,0,0,0,3,3H27.32l.11.05,10.72,2.48a3,3,0,0,0,3.62-2.26l.06-.27H44a3,3,0,0,0,3-3V32.94l4.36-18.89A3,3,0,0,0,49.1,10.44ZM13,50l-1.65-.39a1,1,0,0,1-.76-1.21L13,38ZM21.4,6.09l2.49.58H20.26A1,1,0,0,1,21.4,6.09ZM38.6,55.91l-2.48-.58h3.62A1,1,0,0,1,38.6,55.91ZM45,52.32a1,1,0,0,1-1,1H16a1,1,0,0,1-1-1V9.68a1,1,0,0,1,1-1H44a1,1,0,0,1,1,1ZM49.41,13.6,47,24.05V12l1.65.38A1,1,0,0,1,49.41,13.6Z">
+                              </path>
+                              <path className="cls-2" d="M40,47.83H21V39.7a1,1,0,0,0-2,0v9.13a1,1,0,0,0,1,1H40a1,1,0,0,0,0-2Z" />
+                              <path className="cls-2" d="M23.33,22.22a4.34,4.34,0,0,0,4.34-4.33A4.29,4.29,0,0,0,27,15.62l1.82-1.81a1,1,0,0,0-1.42-1.42l-4.08,4.08L21.05,14.2a1,1,0,0,0-1.41,0,1,1,0,0,0,0,1.41h0A4.28,4.28,0,0,0,19,17.89,4.33,4.33,0,0,0,23.33,22.22Zm-2.19-5.11,1.49,1.49a1,1,0,0,0,.7.29A1,1,0,0,0,24,18.6l1.49-1.49a2.56,2.56,0,0,1,.14.78,2.34,2.34,0,0,1-4.67,0A2.29,2.29,0,0,1,21.14,17.11Z">
+                              </path>
+                              <path className="cls-2" d="M23.33,33.18A4.34,4.34,0,1,0,19,28.84,4.35,4.35,0,0,0,23.33,33.18Zm0-6.67A2.34,2.34,0,1,1,21,28.84,2.34,2.34,0,0,1,23.33,26.51Z">
+                              </path>
+                              <path className="cls-2" d="M40,35.38H36.08a1,1,0,0,0,0,2h1.51L32,43,28.07,39a1,1,0,0,0-1.41,0l-3.58,3.59A1,1,0,1,0,24.49,44l2.88-2.88,3.92,3.93a1,1,0,0,0,1.42,0L39,38.8v1.5a1,1,0,0,0,2,0V36.38A1,1,0,0,0,40,35.38Z">
+                              </path>
+                              <path className="cls-2" d="M31.33,27.84h4.29a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z" />
+                              <path className="cls-2" d="M31.33,31.85h8.23a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z" />
+                              <path className="cls-2" d="M31.33,16.89h4.29a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z" />
+                              <path className="cls-2" d="M31.33,20.89h8.23a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z" />
+                            </g>
+                          </g>
+                        </g>
+                      </g>
+                    </svg></i>
+                </div>
+                <h5 className="mb-3">Study Analytics</h5>
+                <p className="m-0">Gain insights into your study habits with detailed statistics and trends to improve your
+                  productivity.</p>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+              <div className="feature-item bg-light rounded p-4">
+                <div className="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle mb-4" style={{width: '60px', height: '60px'}}>
+                  <i className="fa fa-trophy text-white fs-4" />
+                </div>
+                <h5 className="mb-3">Competitive Leaderboard</h5>
+                <p className="m-0">Challenge yourself and others by competing on the leaderboard, fostering a sense of
+                  achievement and accountability.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Features End */}
+      {/* Screenshot Start */}
+      <div className="container-xxl py-5">
+        <div className="container py-5 px-lg-5">
+          <div className="row g-5 align-items-center">
+            <div className="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
+              <h5 className="text-primary-gradient fw-medium">Screenshot</h5>
+              <h1 className="mb-4">User Friendly interface And Very Easy To Use FLOZABLE App</h1>
+              <p className="mb-4">Flozable strives to continuously improve the user experience and welcomes feedback to
+                address any concerns or limitations users may encounter.</p>
+              <p><i className="fa fa-check text-primary-gradient me-3" />Enhanced Focus: Stay on track and boost
+                productivity with Flozable's distraction-free environment.</p>
+              <p><i className="fa fa-check text-primary-gradient me-3" />Personalized Recommendations: Get customized study
+                suggestions to maximize your learning potential.</p>
+              <p className="mb-4"><i className="fa fa-check text-primary-gradient me-3" />Active Community: Connect with
+                like-minded individuals, collaborate, and stay motivated together.</p>
+              <a href className="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill mt-3">Read More</a>
+            </div>
+            <div className="col-lg-4 d-flex justify-content-center justify-content-lg-end wow fadeInUp" data-wow-delay="0.3s">
+              <div className="owl-carousel screenshot-carousel">
+                <img className="img-fluid" src="img/mobile/screenshot-1.png" alt="" />
+                <img className="img-fluid" src="img/mobile/screenshot-2.png" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Screenshot End */}
+      {/* Process Start */}
+      <div className="container-xxl py-5 steps">
+        <div className="container py-5 px-lg-5">
+          <div className="text-center pb-4 wow fadeInUp" data-wow-delay="0.1s">
+            <h5 className="text-primary-gradient fw-medium">How It Works</h5>
+            <h1 className="mb-5">3 Easy Steps</h1>
+            <ul className="nav nav-pills d-inline-flex justify-content-center bg-primary-gradient rounded-pill mb-5">
+              <li className="nav-item">
+                <button className="nav-link active btn-1" data-bs-toggle="pill" href="#tab-1">PC</button>
+              </li>
+              <li className="nav-item">
+                <button className="nav-link btn-2" data-bs-toggle="pill" href="#tab-2">Mobile</button>
+              </li>
+            </ul>
+            <div className="tab-content text-start" id="deviceTab">
+              <div id="tab-1" className="tab-pane fade show p-0 active">
+                <div className="row gy-5 gx-4 justify-content-center">
+                  <div className="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp" data-wow-delay="0.1s">
+                    <div className="position-relative bg-light rounded pt-5 pb-4 px-4">
+                      <div className="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow" style={{width: '100px', height: '100px'}}>
+                        <i className="fa fa-address-card fa-3x text-white" />
+                      </div>
+                      <h5 className="mt-4 mb-3">Setup Your Profile</h5>
+                      <p className="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum et
+                        lorem
+                        et sit sed stet</p>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp" data-wow-delay="0.3s">
+                    <div className="position-relative bg-light rounded pt-5 pb-4 px-4">
+                      <div className="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow" style={{width: '100px', height: '100px'}}>
+                        <i><svg width="44px" height="44px" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                            <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
+                            <g id="SVGRepo_iconCarrier">
+                              <path d="M24 15C28.9706 15 33 19.0294 33 24C33 28.9706 28.9706 33 24 33C19.0294 33 15 28.9706 15 24C15 19.0294 19.0294 15 24 15ZM24 15H41.8654M17 42.7408L29.6439 31M6 15.2717L16.8751 29.552M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z" stroke="#fff" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" />
+                            </g>
+                          </svg></i>
+                      </div>
+                      <h5 className="mt-4 mb-3">Install Chrome Extension</h5>
+                      <p className="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum et
+                        lorem
+                        et sit sed stet</p>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp" data-wow-delay="0.5s">
+                    <div className="position-relative bg-light rounded pt-5 pb-4 px-4">
+                      <div className="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow" style={{width: '100px', height: '100px'}}>
+                        <i><svg fill="#ffffff" width="44px" height="44px" viewBox="-3 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                            <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
+                            <g id="SVGRepo_iconCarrier">
+                              <title>group</title>
+                              <path d="M20.906 20.75c1.313 0.719 2.063 2 1.969 3.281-0.063 0.781-0.094 0.813-1.094 0.938-0.625 0.094-4.563 0.125-8.625 0.125-4.594 0-9.406-0.094-9.75-0.188-1.375-0.344-0.625-2.844 1.188-4.031 1.406-0.906 4.281-2.281 5.063-2.438 1.063-0.219 1.188-0.875 0-3-0.281-0.469-0.594-1.906-0.625-3.406-0.031-2.438 0.438-4.094 2.563-4.906 0.438-0.156 0.875-0.219 1.281-0.219 1.406 0 2.719 0.781 3.25 1.938 0.781 1.531 0.469 5.625-0.344 7.094-0.938 1.656-0.844 2.188 0.188 2.469 0.688 0.188 2.813 1.188 4.938 2.344zM3.906 19.813c-0.5 0.344-0.969 0.781-1.344 1.219-1.188 0-2.094-0.031-2.188-0.063-0.781-0.188-0.344-1.625 0.688-2.25 0.781-0.5 2.375-1.281 2.813-1.375 0.563-0.125 0.688-0.469 0-1.656-0.156-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.25-2.313 1.438-2.719 1-0.375 2.125 0.094 2.531 0.938 0.406 0.875 0.188 3.125-0.25 3.938-0.5 0.969-0.406 1.219 0.156 1.375 0.125 0.031 0.375 0.156 0.719 0.313-1.375 0.563-3.25 1.594-4.219 2.188zM24.469 18.625c0.75 0.406 1.156 1.094 1.094 1.813-0.031 0.438-0.031 0.469-0.594 0.531-0.156 0.031-0.875 0.063-1.813 0.063-0.406-0.531-0.969-1.031-1.656-1.375-1.281-0.75-2.844-1.563-4-2.063 0.313-0.125 0.594-0.219 0.719-0.25 0.594-0.125 0.688-0.469 0-1.656-0.125-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.219-2.313 1.406-2.719 1.031-0.375 2.156 0.094 2.531 0.938 0.406 0.875 0.25 3.125-0.188 3.938-0.5 0.969-0.438 1.219 0.094 1.375 0.375 0.125 1.563 0.688 2.75 1.313z">
+                              </path>
+                            </g>
+                          </svg></i>
+                      </div>
+                      <h5 className="mt-4 mb-3">Join/Create Groups</h5>
+                      <p className="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum et
+                        lorem
+                        et sit sed stet</p>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp" data-wow-delay="0.5s">
+                    <div className="position-relative bg-light rounded pt-5 pb-4 px-4">
+                      <div className="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow" style={{width: '100px', height: '100px'}}>
+                        <i className="fa fa-check fa-3x text-white" />
+                      </div>
+                      <h5 className="mt-4 mb-3">Enjoy The Features</h5>
+                      <p className="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum et
+                        lorem
+                        et sit sed stet</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="tab-2" className="tab-pane fade show p-0">
+                <div className="row gy-5 gx-4 justify-content-center">
+                  <div className="col-lg-4 col-sm-6 text-center pt-4" data-wow-delay="0.1s">
+                    <div className="position-relative bg-light rounded pt-5 pb-4 px-4">
+                      <div className="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow" style={{width: '100px', height: '100px'}}>
+                        <i className="fa fa-cog fa-3x text-white" />
+                      </div>
+                      <h5 className="mt-4 mb-3">Install the App Mobile</h5>
+                      <p className="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum et
+                        lorem
+                        et sit sed stet</p>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-sm-6 text-center pt-4" data-wow-delay="0.3s">
+                    <div className="position-relative bg-light rounded pt-5 pb-4 px-4">
+                      <div className="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow" style={{width: '100px', height: '100px'}}>
+                        <i className="fa fa-address-card fa-3x text-white" />
+                      </div>
+                      <h5 className="mt-4 mb-3">Setup Your Profile</h5>
+                      <p className="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum et
+                        lorem
+                        et sit sed stet</p>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-sm-6 text-center pt-4" data-wow-delay="0.5s">
+                    <div className="position-relative bg-light rounded pt-5 pb-4 px-4">
+                      <div className="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow" style={{width: '100px', height: '100px'}}>
+                        <i><svg fill="#ffffff" width="44px" height="44px" viewBox="-3 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                            <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
+                            <g id="SVGRepo_iconCarrier">
+                              <title>group</title>
+                              <path d="M20.906 20.75c1.313 0.719 2.063 2 1.969 3.281-0.063 0.781-0.094 0.813-1.094 0.938-0.625 0.094-4.563 0.125-8.625 0.125-4.594 0-9.406-0.094-9.75-0.188-1.375-0.344-0.625-2.844 1.188-4.031 1.406-0.906 4.281-2.281 5.063-2.438 1.063-0.219 1.188-0.875 0-3-0.281-0.469-0.594-1.906-0.625-3.406-0.031-2.438 0.438-4.094 2.563-4.906 0.438-0.156 0.875-0.219 1.281-0.219 1.406 0 2.719 0.781 3.25 1.938 0.781 1.531 0.469 5.625-0.344 7.094-0.938 1.656-0.844 2.188 0.188 2.469 0.688 0.188 2.813 1.188 4.938 2.344zM3.906 19.813c-0.5 0.344-0.969 0.781-1.344 1.219-1.188 0-2.094-0.031-2.188-0.063-0.781-0.188-0.344-1.625 0.688-2.25 0.781-0.5 2.375-1.281 2.813-1.375 0.563-0.125 0.688-0.469 0-1.656-0.156-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.25-2.313 1.438-2.719 1-0.375 2.125 0.094 2.531 0.938 0.406 0.875 0.188 3.125-0.25 3.938-0.5 0.969-0.406 1.219 0.156 1.375 0.125 0.031 0.375 0.156 0.719 0.313-1.375 0.563-3.25 1.594-4.219 2.188zM24.469 18.625c0.75 0.406 1.156 1.094 1.094 1.813-0.031 0.438-0.031 0.469-0.594 0.531-0.156 0.031-0.875 0.063-1.813 0.063-0.406-0.531-0.969-1.031-1.656-1.375-1.281-0.75-2.844-1.563-4-2.063 0.313-0.125 0.594-0.219 0.719-0.25 0.594-0.125 0.688-0.469 0-1.656-0.125-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.219-2.313 1.406-2.719 1.031-0.375 2.156 0.094 2.531 0.938 0.406 0.875 0.25 3.125-0.188 3.938-0.5 0.969-0.438 1.219 0.094 1.375 0.375 0.125 1.563 0.688 2.75 1.313z">
+                              </path>
+                            </g>
+                          </svg></i>
+                      </div>
+                      <h5 className="mt-4 mb-3">Join/Create Groups</h5>
+                      <p className="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum et
+                        lorem
+                        et sit sed stet</p>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-sm-6 text-center pt-4" data-wow-delay="0.5s">
+                    <div className="position-relative bg-light rounded pt-5 pb-4 px-4">
+                      <div className="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow" style={{width: '100px', height: '100px'}}>
+                        <i className="fa fa-check fa-3x text-white" />
+                      </div>
+                      <h5 className="mt-4 mb-3">Enjoy The Features</h5>
+                      <p className="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum et
+                        lorem
+                        et sit sed stet</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Process Start */}
+      {/* Download Start */}
+      <div className="container-xxl py-5">
+        <div className="container py-5 px-lg-5">
+          <div className="row g-5 align-items-center">
+            <div className="col-lg-6">
+              <img className="img-fluid wow fadeInUp" data-wow-delay="0.1s" src="img/mobile/3.png" />
+            </div>
+            <div className="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
+              <h5 className="text-primary-gradient fw-medium">Download</h5>
+              <h1 className="mb-4">Download The Latest Version Of Our App</h1>
+              <p className="mb-4">Experience our app's full range of features on your mobile device, including iOS and
+                Android, while enjoying an enhanced user interface designed specifically for desktop users.</p>
+              <div className="row g-4">
+                <div className="col-sm-6 wow fadeIn" data-wow-delay="0.5s">
+                  <a href="https://apps.apple.com/app" className="d-flex bg-primary-gradient rounded py-3 px-4">
+                    <i className="fab fa-apple fa-3x text-white flex-shrink-0" />
+                    <div className="ms-3">
+                      <p className="text-white mb-0">Available On</p>
+                      <h5 className="text-white mb-0">App Store</h5>
+                    </div>
+                  </a>
+                </div>
+                <div className="col-sm-6 wow fadeIn" data-wow-delay="0.7s">
+                  <a href="https://play.google.com/store/apps/details?id=e" className="d-flex bg-secondary-gradient rounded py-3 px-4">
+                    <i className="fab fa-android fa-3x text-white flex-shrink-0" />
+                    <div className="ms-3">
+                      <p className="text-white mb-0">Available On</p>
+                      <h5 className="text-white mb-0">Play Store</h5>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Download End */}
+      {/* Pricing Start */}
+      <div className="container-xxl py-5" id="pricing">
+        <div className="container py-5 px-lg-5">
+          <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5 className="text-primary-gradient fw-medium">Pricing Plan</h5>
+            <h1 className="mb-5">Choose Your Plan</h1>
+          </div>
+          <div className="tab-class text-center pricing wow fadeInUp" data-wow-delay="0.1s">
+            <ul className="nav nav-pills d-inline-flex justify-content-center bg-primary-gradient rounded-pill mb-5">
+              <li className="nav-item">
+                <button className="nav-link active btn-1" data-bs-toggle="pill" href="#tab-1">Monthly</button>
+              </li>
+              <li className="nav-item">
+                <button className="nav-link btn-2" data-bs-toggle="pill" href="#tab-2">Yearly</button>
+              </li>
+            </ul>
+            <div className="tab-content text-start">
+              <div id="tab-1" className="tab-pane fade show p-0 active">
+                <div className="row g-4">
+                  <div className="col-lg-4">
+                    <div className="bg-light rounded">
+                      <div className="border-bottom p-4 mb-4">
+                        <h4 className="text-primary-gradient mb-1">Basic Plan</h4>
+                        <span>Powerful &amp; Awesome Features</span>
+                      </div>
+                      <div className="p-4 pt-0">
+                        <h1 className="mb-3">
+                          <small className="align-top" style={{fontSize: '22px', lineHeight: '45px'}}>FREE</small><small className="align-bottom" style={{fontSize: '16px', lineHeight: '40px'}} />
+                        </h1>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Study with friends(maximum group of 10)</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Change study session background to YouTube</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>AI model limitations</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Default study icon</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <a href="/account" className="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4">Get Started</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-4">
+                    <div className="bg-light rounded border">
+                      <div className="border-bottom p-4 mb-4">
+                        <h4 className="text-primary-gradient mb-1">Advance Plan</h4>
+                        <span>Powerful &amp; Awesome Features</span>
+                      </div>
+                      <div className="p-4 pt-0">
+                        <h1 className="mb-3">
+                          <small className="align-top" style={{fontSize: '22px', lineHeight: '45px'}}>$</small>2.99<small className="align-bottom" style={{fontSize: '16px', lineHeight: '40px'}}>/ Month</small>
+                        </h1>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>All features from the Basic plan</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Expanded AI model capabilities</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Customizable study icons</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>No ADS</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <a href className="btn btn-secondary-gradient rounded-pill py-2 px-4 mt-4">Get Started</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-4">
+                    <div className="bg-light rounded">
+                      <div className="border-bottom p-4 mb-4">
+                        <h4 className="text-primary-gradient mb-1">Premium Plan</h4>
+                        <span>Powerful &amp; Awesome Features</span>
+                      </div>
+                      <div className="p-4 pt-0">
+                        <h1 className="mb-3">
+                          <small className="align-top" style={{fontSize: '22px', lineHeight: '45px'}}>$</small>3.99<small className="align-bottom" style={{fontSize: '16px', lineHeight: '40px'}}>/ Month</small>
+                        </h1>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>All features from the Advanced Plan</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Unlimited study group size</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Advanced study insights and recommendations</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <a href className="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4">Get Started</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="tab-2" className="tab-pane p-0">
+                <div className="row g-4">
+                  <div className="col-lg-4">
+                    <div className="bg-light rounded">
+                      <div className="border-bottom p-4 mb-4">
+                        <h4 className="text-primary-gradient mb-1">Basic Plan</h4>
+                        <span>Powerful &amp; Awesome Features</span>
+                      </div>
+                      <div className="p-4 pt-0">
+                        <h1 className="mb-3">
+                          <small className="align-top" style={{fontSize: '22px', lineHeight: '45px'}}>FREE</small><small className="align-bottom" style={{fontSize: '16px', lineHeight: '40px'}} />
+                        </h1>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Study with friends(maximum group of 10)</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Change study session background to YouTube</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>AI model limitations</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Default study icon</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <a href="/account" className="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4">Get Started</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-4">
+                    <div className="bg-light rounded border">
+                      <div className="border-bottom p-4 mb-4">
+                        <h4 className="text-primary-gradient mb-1">Advance Plan</h4>
+                        <span>Powerful &amp; Awesome Features</span>
+                      </div>
+                      <div className="p-4 pt-0">
+                        <h1 className="mb-3">
+                          <small className="align-top" style={{fontSize: '22px', lineHeight: '45px'}}>$</small>30.99<small className="align-bottom" style={{fontSize: '16px', lineHeight: '40px'}}>/ Year</small>
+                        </h1>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>All features from the Basic plan</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Expanded AI model capabilities</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Customizable study icons</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>No ADS</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <a href className="btn btn-secondary-gradient rounded-pill py-2 px-4 mt-4">Get Started</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-4">
+                    <div className="bg-light rounded">
+                      <div className="border-bottom p-4 mb-4">
+                        <h4 className="text-primary-gradient mb-1">Premium Plan</h4>
+                        <span>Powerful &amp; Awesome Features</span>
+                      </div>
+                      <div className="p-4 pt-0">
+                        <h1 className="mb-3">
+                          <small className="align-top" style={{fontSize: '22px', lineHeight: '45px'}}>$</small>40.99<small className="align-bottom" style={{fontSize: '16px', lineHeight: '40px'}}>/ Year</small>
+                        </h1>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>All features from the Advanced Plan</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Unlimited study group size</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <div className="d-flex justify-content-between mb-3">
+                          <span>Advanced study insights and recommendations</span>
+                          <i className="fa fa-check text-primary-gradient pt-1" />
+                        </div>
+                        <a href className="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4">Get Started</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Pricing End */}
+      {/* Testimonial Start */}
+      <div className="container-xxl py-5" id="review">
+        <div className="container py-5 px-lg-5">
+          <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5 className="text-primary-gradient fw-medium">Testimonial</h5>
+            <h1 className="mb-5">What Say Our Clients!</h1>
+          </div>
+          <div className="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.1s">
+            <div className="testimonial-item rounded p-4">
+              <div className="d-flex align-items-center mb-4">
+                <img className="img-fluid bg-white rounded flex-shrink-0 p-1" src="img/main/testimonial-1.jpg" style={{width: '85px', height: '85px'}} />
+                <div className="ms-4">
+                  <h5 className="mb-1">Client Name</h5>
+                  <p className="mb-1">Profession</p>
+                  <div>
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                  </div>
+                </div>
+              </div>
+              <p className="mb-0">"FLOZABLE is a total game-changer for studying! I can finally connect with my friends and
+                study together, even when we're not in the same place. It's like having a virtual study group that
+                actually keeps me focused and motivated."</p>
+            </div>
+            <div className="testimonial-item rounded p-4">
+              <div className="d-flex align-items-center mb-4">
+                <img className="img-fluid bg-white rounded flex-shrink-0 p-1" src="img/main/testimonial-2.jpg" style={{width: '85px', height: '85px'}} />
+                <div className="ms-4">
+                  <h5 className="mb-1">Client Name</h5>
+                  <p className="mb-1">Profession</p>
+                  <div>
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                  </div>
+                </div>
+              </div>
+              <p className="mb-0">"OMG, FLOZABLE is my new study BFF! The AI study suggestions are surprisingly helpful, and
+                the timer keeps me on track without feeling too strict. Plus, the study icon is super cute and makes
+                studying feel a little less boring."</p>
+            </div>
+            <div className="testimonial-item rounded p-4">
+              <div className="d-flex align-items-center mb-4">
+                <img className="img-fluid bg-white rounded flex-shrink-0 p-1" src="img/main/testimonial-3.jpg" style={{width: '85px', height: '85px'}} />
+                <div className="ms-4">
+                  <h5 className="mb-1">Client Name</h5>
+                  <p className="mb-1">Profession</p>
+                  <div>
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                  </div>
+                </div>
+              </div>
+              <p className="mb-0">"FLOZABLE is a lifesaver during exams! The study planner helps me stay organized and on top
+                of my assignments, while the chat feature lets me get quick answers to my questions. It's like having a
+                study support group right in my pocket!"</p>
+            </div>
+            <div className="testimonial-item rounded p-4">
+              <div className="d-flex align-items-center mb-4">
+                <img className="img-fluid bg-white rounded flex-shrink-0 p-1" src="img/main/testimonial-4.jpg" style={{width: '85px', height: '85px'}} />
+                <div className="ms-4">
+                  <h5 className="mb-1">Client Name</h5>
+                  <p className="mb-1">Profession</p>
+                  <div>
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                    <small className="fa fa-star text-warning" />
+                  </div>
+                </div>
+              </div>
+              <p className="mb-0">"I can't get enough of FLOZABLE's YouTube background feature! I love setting up my study
+                sessions with my favorite study playlists in the background. It's such a vibe and helps me stay in the
+                zone."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Testimonial End */}
+      {/* Contact Start */}
+      {/* <div class="container-xxl py-5" id="contact">
+    <div class="container py-5 px-lg-5">
+      <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+        <h5 class="text-primary-gradient fw-medium">Contact Us</h5>
+        <h1 class="mb-5">Get In Touch!</h1>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="wow fadeInUp" data-wow-delay="0.3s">
+            <form>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input type="text" class="form-control" id="name" placeholder="Your Name">
+                    <label for="name">Your Name</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input type="email" class="form-control" id="email" placeholder="Your Email">
+                    <label for="email">Your Email</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating">
+                    <input type="text" class="form-control" id="subject" placeholder="Subject">
+                    <label for="subject">Subject</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating">
+                    <textarea class="form-control" placeholder="Leave a message here" id="message"
+                      style="height: 150px"></textarea>
+                    <label for="message">Message</label>
+                  </div>
+                </div>
+                <div class="col-12 text-center">
+                  <button class="btn btn-primary-gradient rounded-pill py-3 px-5" type="submit">Send Message</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> */}
+      {/* Contact End */}
+      {/* Footer Start */}
+      <div className="container-fluid bg-primary text-light footer wow fadeIn" data-wow-delay="0.1s">
+        <div className="container py-5 px-lg-5">
+          <div className="row g-5">
+            <div className="col-md-6 col-lg-3">
+              <h4 className="text-white mb-4">Address</h4>
+              <p><i className="fa fa-map-marker-alt me-3" />5363 Harwood Rd, San Jose, CA, USA</p>
+              <p><i className="fa fa-phone-alt me-3" />+1 669 291 5423</p>
+              <p><i className="fa fa-envelope me-3" />support@flozable.com</p>
+              <div className="d-flex pt-2">
+                <a className="btn btn-outline-light btn-social" href><i className="fab fa-twitter" /></a>
+                <a className="btn btn-outline-light btn-social" href><i className="fab fa-facebook-f" /></a>
+                <a className="btn btn-outline-light btn-social" href><i className="fab fa-instagram" /></a>
+                <a className="btn btn-outline-light btn-social" href><i className="fab fa-linkedin-in" /></a>
+              </div>
+            </div>
+            <div className="col-md-6 col-lg-3">
+              <h4 className="text-white mb-4">Quick Link</h4>
+              <a className="btn btn-link" href>About Us</a>
+              <a className="btn btn-link" href>Contact Us</a>
+              <a className="btn btn-link" href>Privacy Policy</a>
+              <a className="btn btn-link" href>Terms &amp; Condition</a>
+              <a className="btn btn-link" href>Career</a>
+            </div>
+            <div className="col-md-6 col-lg-3">
+              <h4 className="text-white mb-4">Popular Link</h4>
+              <a className="btn btn-link" href>About Us</a>
+              <a className="btn btn-link" href>Contact Us</a>
+              <a className="btn btn-link" href>Privacy Policy</a>
+              <a className="btn btn-link" href>Terms &amp; Condition</a>
+              <a className="btn btn-link" href>Career</a>
+            </div>
+            <div className="col-md-6 col-lg-3">
+              <h4 className="text-white mb-4">Newsletter</h4>
+              <p>Lorem ipsum dolor sit amet elit. Phasellus nec pretium mi. Curabitur facilisis ornare velit non vulpu</p>
+              <div className="position-relative w-100 mt-3">
+                <input className="form-control border-0 rounded-pill w-100 ps-4 pe-5" type="text" placeholder="Your Email" style={{height: '48px'}} />
+                <button type="button" className="btn shadow-none position-absolute top-0 end-0 mt-1 me-2"><i className="fa fa-paper-plane text-primary-gradient fs-4" /></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="container px-lg-5">
+          <div className="copyright">
+            <div className="row">
+              <div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                © <a className="border-bottom" href="#">Your Site Name</a>, All Right Reserved.
+                {/*/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. *** /*/}
+                Designed By <a className="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
+              </div>
+              <div className="col-md-6 text-center text-md-end">
+                <div className="footer-menu">
+                  <a href>Home</a>
+                  <a href>Cookies</a>
+                  <a href>Help</a>
+                  <a href>FQAs</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Footer End */}
+      {/* Back to Top */}
+      <a href="#" className="btn btn-lg btn-lg-square back-to-top pt-2"><i className="bi bi-arrow-up text-white" /></a>
+    </div>
+  );
+};
+
+export default NewComponent;
