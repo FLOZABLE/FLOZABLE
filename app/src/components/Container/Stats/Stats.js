@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import Sidebar from '../../UI/Sidebar/Sidebar';
 import Header from "../../UI/Header/Header";
 import PieChart from '../../UI/PieChart';
+import Calendar from '../../UI/Calendar/Calendar';
 import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { colorsList } from '../../../constant';
-import styles from './Stats.module.css'
+import styles from './Stats.module.css';
 import { plugins } from 'chart.js';
 
 function Stats() {
@@ -35,7 +36,23 @@ function Stats() {
       <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
 
       <div className={`${styles.Main} ${isSidebarOpen || isHovered ? styles.sidebarOpen : ''}`}>
-        <p>d</p>
+        <div className={styles.boxes}>
+          <div className={styles.box}>
+            <Calendar />
+          </div>
+          <div className={styles.box}>
+
+          </div>
+          <div className={styles.box}>
+
+          </div>
+          <div className={styles.box}>
+
+          </div>
+          <div className={styles.box}>
+
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -17,3 +17,18 @@
   margin-left: 350px;
   width: calc(100vw - 380px);
 }
+
+.StatsContainer .boxes {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.StatsContainer .boxes .box {
+  background-color: aliceblue;
+  border-radius: 20px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin: 0px 30px;
+  max-width: 500px;
+  flex-grow: 1;
+  padding: 30px;
+}
