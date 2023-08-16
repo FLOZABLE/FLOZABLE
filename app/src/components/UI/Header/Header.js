@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faCommentDots, faCalendar, faClock } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faCommentDots, faCalendar, faClock, faBook, faMobileScreenButton, faFire, faArrowsToCircle } from '@fortawesome/free-solid-svg-icons';
 import ToggleBtn from "../ToggleBtn/ToggleBtn";
 import styles from "./Header.module.css";
 
@@ -14,8 +14,27 @@ function Header(props) {
   const handleMouseLeave = () => {
     setHoveredElement('null');
   };
+
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
-    <header className={`${styles.header} ${props.isSidebarOpen || props.isSidebarHovered ? styles.isOpen : ''}`}>
+    <header className={`${styles.header} ${props.isSidebarOpen || props.isSidebarHovered ? styles.isOpen : ''} ${isScrolled ? styles.scrolled : ''}`}>
       <div className={styles.left}>
         <ToggleBtn
           on={<p>on</p>}
@@ -26,7 +45,7 @@ function Header(props) {
         />
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-            <img src="./logo512.png" alt="" />
+          <FontAwesomeIcon icon={faBook} style={{color: "#FFF6BD",}} />
           </div>
           <div className={styles.text}>
             <h5>20k</h5>
@@ -35,7 +54,7 @@ function Header(props) {
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-            <img src="./logo512.png" alt="" />
+          <FontAwesomeIcon icon={faMobileScreenButton} style={{color: "#DAEAF1",}} />
           </div>
           <div className={styles.text}>
             <h5>20k</h5>
@@ -44,7 +63,7 @@ function Header(props) {
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-            <img src="./logo512.png" alt="" />
+          <FontAwesomeIcon icon={faFire} style={{color: "#FFEFEF",}} />
           </div>
           <div className={styles.text}>
             <h5>20k</h5>
@@ -53,7 +72,7 @@ function Header(props) {
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-            <img src="./logo512.png" alt="" />
+          <FontAwesomeIcon icon={faArrowsToCircle} style={{color: "#C7E9B0",}} />
           </div>
           <div className={styles.text}>
             <h5>20k</h5>
@@ -148,7 +167,7 @@ function Header(props) {
             </div>
           </div>
           <div className={styles.dropDown}>
-            <button><FontAwesomeIcon icon={faCommentDots} style={{ color: "#ffffff" }} /></button>
+            <button><img src="./profile.png" alt="" /></button>
             <div className={styles.dropDownContent}>
             <div className={styles.inner}>
               <h3 className={styles.title}>Messages</h3>
@@ -175,16 +194,6 @@ function Header(props) {
               </div>
             </div>
           </div>
-          <button
-                  onMouseEnter={() => handleMouseEnter('navItemProfile')}
-                  onMouseLeave={handleMouseLeave}
-                  className={`${hoveredElement === 'navItemProfile' ? styles.hovered : ''}`}
-          >
-            <img src="./profile.png" alt="" />
-            <div className={styles.dropDownMenu}>
-
-            </div>
-          </button>
         </div>
       </div>
     </header>
