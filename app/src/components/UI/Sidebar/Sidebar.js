@@ -25,7 +25,7 @@ function Sidebar(props) {
         onMouseLeave={handleMouseLeave}
         className={`${styles.startStudy} ${styles.navItemWrapper} ${hoveredElement === 'navItem1' ? styles.hovered : ''}`}
       >
-        <Link to="/study" className={styles.navItem}>
+        <Link to="/dashboard" className={styles.navItem}>
           <div className={styles.icon}>
           <FontAwesomeIcon icon={faHouse} style={{color: "#ffffff",}} />
           </div>
@@ -39,7 +39,7 @@ function Sidebar(props) {
             onMouseLeave={handleMouseLeave}
             className={`${styles.startStudy} ${styles.navItemWrapper} ${hoveredElement === 'navItem2' ? styles.hovered : ''}`}
           >
-            <Link to="/study" className={styles.navItem}>
+            <Link to="/dashboard/stats" className={styles.navItem}>
               <div className={styles.icon}>
               <FontAwesomeIcon icon={faChartColumn} style={{color: "#ffffff",}} />
               </div>
