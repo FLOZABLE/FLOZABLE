@@ -9,6 +9,7 @@
   transition: all .2s ease-in-out;
   font-weight: 500;
   background-image: url("/public/img/sidebar.png");
+  font-size: 25px;
 }
 
 .Sidebar.isOpen {

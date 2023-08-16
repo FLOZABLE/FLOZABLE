@@ -1,0 +1,19 @@
+@import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
+
+.StatsContainer {
+  font-size: 30px;
+  top: 0px;
+}
+
+.StatsContainer .Main {
+  position: relative;
+  margin: 200px 0px 0px 170px;
+  transition: all .2s ease-in-out;
+  width: calc(100vw - 200px);
+  border-radius: 20px;
+}
+
+.StatsContainer .Main.sidebarOpen {
+  margin-left: 350px;
+  width: calc(100vw - 380px);
+}
