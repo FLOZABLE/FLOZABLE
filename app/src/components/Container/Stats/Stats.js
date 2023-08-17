@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Sidebar from '../../UI/Sidebar/Sidebar';
 import Header from "../../UI/Header/Header";
 import PieChart from '../../UI/PieChart';
-import Calendar from '../../UI/Calendar/Calendar';
+import StatsCalendar from '../../UI/StatsCalendar/StatsCalendar';
 import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { colorsList } from '../../../constant';
 import styles from './Stats.module.css';
@@ -38,7 +38,7 @@ function Stats() {
       <div className={`${styles.Main} ${isSidebarOpen || isHovered ? styles.sidebarOpen : ''}`}>
         <div className={styles.boxes}>
           <div className={styles.box}>
-            <Calendar />
+            <StatsCalendar />
           </div>
           <div className={styles.box}>
 
