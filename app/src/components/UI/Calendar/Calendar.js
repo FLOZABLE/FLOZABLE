@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from './Calendar.module.css';
 import "@mobiscroll/react/dist/css/mobiscroll.min.css";
-import { Eventcalendar, snackbar, setOptions, Popup, Button, Input, Textarea, Switch, Datepicker, SegmentedGroup, SegmentedItem } from '@mobiscroll/react';
+import "./Calendar.css";
+import { Eventcalendar, snackbar, setOptions, Popup, Button, Input, Textarea, Switch, Datepicker, SegmentedGroup, SegmentedItem, CalendarNav, CalendarPrev, CalendarNext, CalendarToday } from '@mobiscroll/react';
 
 setOptions({
     theme: 'ios',
@@ -46,12 +47,12 @@ const defaultEvents = [{
     color: '#f44437'
 }];
 const viewSettings = {
-    schedule: { type: 'day' }
+    schedule: { type: 'month' }
 };
 const responsivePopup = {
     medium: {
         display: 'anchored',
-        width: 400,
+        width: 700,
         fullScreen: false,
         touchUi: false
     }
@@ -73,6 +74,8 @@ function Calendar() {
     const [anchor, setAnchor] = React.useState(null);
     const [start, startRef] = React.useState(null);
     const [end, endRef] = React.useState(null);
+    const [view, setView] = React.useState('month');
+    const [calView, setCalView] = React.useState({calendar: { labels: true }});
     const [popupEventTitle, setTitle] = React.useState('');
     const [popupEventDescription, setDescription] = React.useState('');
     const [popupEventAllDay, setAllDay] = React.useState(true);
@@ -277,10 +280,74 @@ function Calendar() {
         }
     }, [selectColor, setSelectedColor]);
 
+    const changeView = (event) => {
+      let calView;
+      
+      switch (event.target.value) {
+          case 'year':
+              calView = {
+                  calendar: { type: 'year' }
+              }
+              break;
+          case 'month':
+              calView = {
+                  calendar: { labels: true }
+              }
+              break;
+          case 'week':
+              calView = {
+                  schedule: { type: 'week' }
+              }
+              break;
+          case 'day':
+              calView = {
+                  schedule: { type: 'day' }
+              }
+              break;
+          case 'agenda':
+              calView = {
+                  calendar: { type: 'week' },
+                  agenda: { type: 'week' }
+              }
+              break;
+      }
+
+      setView(event.target.value);
+      setCalView(calView);
+  }
+
+  const customWithNavButtons = () => {
+    return <React.Fragment>
+        <CalendarNav className="cal-header-nav" />
+        <div className="cal-header-picker">
+            <SegmentedGroup value={view} onChange={changeView}>
+                <SegmentedItem value="year">
+                    Year
+                </SegmentedItem>
+                <SegmentedItem value="month">
+                    Month
+                </SegmentedItem>
+                <SegmentedItem value="week">
+                    Week
+                </SegmentedItem>
+                <SegmentedItem value="day">
+                    Day
+                </SegmentedItem>
+                <SegmentedItem value="agenda">
+                    Agenda
+                </SegmentedItem>
+            </SegmentedGroup>
+        </div>
+        <CalendarPrev className="cal-header-prev" />
+        <CalendarToday className="cal-header-today" />
+        <CalendarNext className="cal-header-next" />
+    </React.Fragment>;
+}
+
     return (
         <div className={styles.CalendarContainer}>
             <Eventcalendar
-                view={viewSettings}
+                view={calView}
                 data={myEvents}
                 clickToCreate="double"
                 dragToCreate={true}
@@ -292,6 +359,7 @@ function Calendar() {
                 onEventCreated={onEventCreated}
                 onEventDeleted={onEventDeleted}
                 onEventUpdated={onEventUpdated}
+                renderHeader={customWithNavButtons}
             />
             <Popup
                 display="bottom"
