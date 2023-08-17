@@ -9,7 +9,7 @@
   display: flex;
   justify-content: space-between;
   transition: .2s all;
-  z-index: 2;
+  z-index: 3;
 }
 
 .header.scrolled {
