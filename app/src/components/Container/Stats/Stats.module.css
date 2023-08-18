@@ -27,12 +27,107 @@
   background-color: aliceblue;
   border-radius: 20px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  margin: 0px 30px;
+  margin: 0px 30px 50px;
   flex-grow: 1;
   padding: 30px;
   position: relative;
+  width: 100%;
 }
 
-.StatsContainer .boxes .box:nth-child(1) {
-  width: 80vw;
+.StatsContainer .box .title {
+  font-size: 40px;
+  font-weight: 800;
+  color: #545B77;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 10px 30px;
+  cursor: pointer
+}
+
+.StatsContainer .box .title:hover {
+  background-color: rgba(233, 232, 217, 0.612);
+}
+
+.StatsContainer .box .title .caret {
+  font-size: 30px;
+}
+
+.StatsContainer .box .container {
+  display: flex;
+}
+
+.StatsContainer .box .container > div:not(.divider){
+  width: 50%;
+  text-align: left;
+}
+
+.StatsContainer .box .divider {
+  background-color: black;
+  width: 10px;
+  margin: 0px 50px;
+  border-radius: 3px;
+}
+
+.StatsContainer .box .todoList ul li{
+  background-color: #ADC4CE;
+  border-radius: 20px;
+  height: 50px;
+  margin-bottom: 30px;
+  padding: 10px 10px 10px 20px;
+}
+
+.StatsContainer .box strong {
+  font-size: 15px;
+}
+
+.StatsContainer .boxes .smallBoxContainer {
+  display: flex;
+  width: 100%;
+}
+
+.StatsContainer .boxes .smallBox {
+  background-color: aliceblue;
+  border-radius: 20px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin: 0px 30px 50px;
+  flex-grow: 1;
+  padding: 30px;
+  position: relative;
+  display: flex;
+}
+
+.StatsContainer .horizontalLine {
+  width: 100%;
+  height: 3px;
+  border-radius: 3px;
+  background-color: black;
+  margin-bottom: 50px;
+}
+
+.StatsContainer .boxes .smallBox .circle {
+  background-color: blue;
+  height: 50px;
+  width: 50px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+
+.StatsContainer .CalendarModal {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  z-index: 2;
+  border-radius: 20px;
+  display: none;
+  left: 50vw;
+  top: 0vh;
+  transform: translate(-50%, -50%);
+  background-color: #ADC4CE;
+}
+
+.StatsContainer .CalendarModal.isOpen {
+  display: block;
 }

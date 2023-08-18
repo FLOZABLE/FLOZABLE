@@ -1,0 +1,25 @@
+.StuckModalContainer {
+  position: fixed;
+  top: 50vh;
+  transform: translateY(-50%);
+  right: 100px;
+  background-color: blue;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  z-index: 2;
+  padding: 20px;
+}
+
+.StuckModalContainer button {
+  transition: all .3s ease-in-out;
+  padding: 0px 10px;
+}
+.StuckModalContainer button:hover {
+  background-color: rgba(226, 226, 201, 0.534);
+}
+
+.StuckModalContainer button a {
+  font-size: 30px;
+  color: #fff;
+}

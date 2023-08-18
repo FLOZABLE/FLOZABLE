@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Calendar.module.css';
 import "@mobiscroll/react/dist/css/mobiscroll.min.css";
-import "./Calendar.css";
+import "../Calendar.css";
 import { Eventcalendar, snackbar, setOptions, Popup, Button, Input, Textarea, Switch, Datepicker, SegmentedGroup, SegmentedItem, CalendarNav, CalendarPrev, CalendarNext, CalendarToday } from '@mobiscroll/react';
 
 setOptions({
