@@ -1,0 +1,109 @@
+@import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
+
+.MainContainer {
+  font-size: 30px;
+  top: 0px;
+}
+
+.MainContainer .Main {
+  position: relative;
+  margin: 200px 0px 0px 170px;
+  transition: all .2s ease-in-out;
+  width: calc(100vw - 200px);
+  border-radius: 20px;
+}
+
+.MainContainer .Main.sidebarOpen {
+  margin-left: 350px;
+  width: calc(100vw - 380px);
+}
+
+.MainContainer .boxes {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.MainContainer .boxes .box {
+  position: absolute;
+  background-color: aliceblue;
+  border-radius: 20px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin: 0px 30px;
+  max-width: 500px;
+  flex-grow: 1;
+  height: min-content;
+}
+
+.MainContainer .boxes .box .inner {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+}
+
+.MainContainer .boxes .box .name {
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.MainContainer .boxes .box .report {
+  font-size: 30px;
+  color: grey;
+}
+
+.MainContainer .btnCenter {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.MainContainer .toStatsBtn {
+  background-color: blue;
+  padding: 20px 100px;
+  color: #fff;
+  font-size: 20px;
+  border-radius: 20px;
+  margin-top: 50px;
+  font-weight: 800;
+}
+
+.MainContainer .plan {
+  background-color: #95BDFF;
+  border-radius: 10px;
+  padding: 20px 30px;
+  margin-bottom: 10px;
+  color: aliceblue;
+  font-size: 15px;
+}
+
+.MainContainer .plan strong {
+  font-weight: 300;
+  font-size: 15px;
+}
+
+.MainContainer .plan .topic {
+  font-size: 17px;
+  color: #8294C4;
+}
+
+.MainContainer .box.memo {
+  height: 400px;
+  background-color: transparent;
+  box-shadow: none;
+  width: 400px;
+  text-align: left;
+}
+
+.MainContainer .box.memo .inner{
+  padding: 10px;
+  background-image: url('/public/img/memo.png');
+  background-position: center;      /* center the image */
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+}
+
+.MainContainer .box.memo p {
+  font-family: 'Permanent Marker', cursive;
+}
