@@ -49,7 +49,6 @@ select {
   display: inline-block;
   width: 50%;
   text-align: center;
-  float: left;
   border-radius: 0;
 }
 input[type="radio"] + label:first-of-type {
@@ -621,41 +620,6 @@ input[type="color"]::-webkit-color-swatch::after {
 
 .font-selection .font-12 {
   font-family: 'Sigmar One', cursive;
-}
-.err-modal {
-  z-index: 4;
-  width: 350px;
-  height: 100px;
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #dfdfdf;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-}
-
-.err-modal .textcontainer {
-  position: absolute;
-  color: red;
-  top: 50%;
-  left: 50%;
-  font-weight: 400;
-  transform: translate(-50%, -50%);
-}
-
-.err-modal .textcontainer p {
-  font-size: 25px;
-  white-space: nowrap;
-  line-height: normal;
-  margin: 0px;
-  padding: 0px;
-  font-family: 'Bungee Shade', cursive;
-  color: red;
-}
-
-.err-modal .close-btn {
-  float: right;
 }
 
 /* .blur {

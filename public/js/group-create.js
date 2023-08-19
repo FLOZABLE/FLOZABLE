@@ -1,3 +1,22 @@
+const notificationAlertSuccess = document.getElementById('notification-alert-success');
+const notificationAlertFail = document.getElementById('notification-alert-fail');
+const errMsgWrapper = document.getElementById('err-msg');
+const successMsgWrapper = document.getElementById('success-msg');
+
+function successMsg(msg) {
+  successMsgWrapper.innerText = msg;
+  notificationAlertSuccess.classList.remove('notify');
+  notificationAlertSuccess.offsetHeight;
+  notificationAlertSuccess.classList.add('notify');
+}
+
+function errMsg(msg) {
+  errMsgWrapper.innerText = msg;
+  notificationAlertFail.classList.remove('notify');
+  notificationAlertFail.offsetHeight;
+  notificationAlertFail.classList.add('notify');
+}
+
 const public = document.querySelector("input#public");
 const private = document.querySelector("input#private");
 const passwordArea = document.querySelector("div#password");
@@ -9,10 +28,6 @@ public.addEventListener('click', () => {
 private.addEventListener('click', () => {
   passwordArea.style = "display: block";
 })
-
-const ul = document.querySelector("ul.tags"),
-  input = document.querySelector("input.tags"),
-  tagNumb = document.querySelector(".details span");
 
 
 const recommendedColors = [
@@ -56,71 +71,109 @@ colorSelector.addEventListener('input', () => {
 
 const randomFontIndex  = Math.floor(Math.random() * 13);
 const randomFont = document.querySelector(`.font-selection input#font-${randomFontIndex}`)
-console.log(randomFont, randomFontIndex);
 randomFont.checked = true;
 
 const submitbtn = document.querySelector("button.submit");
 const groupName = document.querySelector("input.name");
 const explanation = document.querySelector("input.explanation");
-const tags = []
 const max_people = document.querySelector("input.max-people");
 const userPassword = document.querySelector("input.password");
 const color = document.querySelector("input.color");
 const goal = document.querySelector("input.goal");
 //check if there is data to retrive
-let Createtags = [];
 
-let maxTags = 10;
-input.addEventListener("keyup", addTag);
-  
-const removeBtn = document.querySelector(".details button");
-removeBtn.addEventListener("click", () => {
-  Createtags.length = 0;
-  ul.querySelectorAll("li").forEach((li) => li.remove());
-  countTags();
-});
-function remove(element, tag) {
-  let index = Createtags.indexOf(tag);
-  Createtags = [...Createtags.slice(0, index), ...Createtags.slice(index + 1)];
-  element.parentElement.remove();
-  countTags();
-}
+class tagContainerGen {
+  constructor(tagContainer, maxTags) {
+    this.tagContainer = document.getElementById(tagContainer);
+    this.maxTags = maxTags;
+    this.Createtags = [];
+    this.addTag = this.addTag.bind(this);
+    this.remove = this.remove.bind(this);
+    this.createComponents();
+  }
 
-function countTags() {
-  input.focus();
-  tagNumb.innerText = maxTags - Createtags.length;
-}
-
-function createTag() {
-  ul.querySelectorAll("li").forEach((li) => li.remove());
-  Createtags
-    .slice()
-    .reverse()
-    .forEach((tag) => {
-      let liTag = `<li><p class = "tags">${tag}</p> <i class="fa-solid fa-xmark" onclick="remove(this, '${tag}')"></i></li>`;
-      ul.insertAdjacentHTML("afterbegin", liTag);
+  createComponents() {
+    this.tagContainer.innerHTML = `
+    <div class="title">
+      <i class="fa-solid fa-tags"></i>
+      <h2>Tags</h2>
+    </div>
+    <div class="content">
+      <p>Press enter after each tag</p>
+      <ul class="tags"><input class="tags" type="text" spellcheck="false"></ul>
+    </div>
+    <div class="details">
+      <p><span>10</span> tags are remaining</p>
+      <button id = "removeall">Remove All</button>
+    </div>
+    `
+    this.ul = this.tagContainer.querySelector("ul.tags"),
+    this.tagNumb = this.tagContainer.querySelector(".details span");
+    this.input = this.tagContainer.querySelector('input')
+    this.input.addEventListener("keyup", this.addTag);
+    const removeBtn = this.tagContainer.querySelector(".details button");
+    removeBtn.addEventListener("click", () => {
+      this.Createtags.length = 0;
+      this.ul.querySelectorAll("li").forEach((li) => li.remove());
+      this.countTags();
     });
-  countTags();
-}
+  }
+
+  remove(element, tag) {
+    let index = this.Createtags.indexOf(tag);
+    this.Createtags = [...this.Createtags.slice(0, index), ...this.Createtags.slice(index + 1)];
+    element.parentElement.remove();
+    this.countTags();
+  }
+
+  countTags() {
+    this.input.focus();
+    this.tagNumb.innerText = this.maxTags - this.Createtags.length;
+  }
+
+  createTag() {
+    this.ul.querySelectorAll("li").forEach((li) => li.remove());
+    this.Createtags
+      .slice()
+      .reverse()
+      .forEach((tag) => {
+        let liTag = `<li><p class = "tags">${tag}</p> <i class="fa-solid fa-xmark")"></i></li>`;
+        this.ul.insertAdjacentHTML("afterbegin", liTag);
+      });
+    this.countTags();
+    this.ul.querySelectorAll("li").forEach(li => {
+      const i =  li.querySelector('i');
+      const tag = li.querySelector('p').innerText;
+      i.addEventListener("click", () => this.remove(i, tag));
+    })
+  }
 
 
-function addTag(e) {
-  if (e.key == "Enter") {
-    let tag = e.target.value.replace(/\s+/g, " ");
-    if (tag.length > 1 && !Createtags.includes(tag)) {
-      if (Createtags.length < 10) {
-        tag.split(",").forEach((tag) => {
-          Createtags.push(tag);
-          createTag();
-        });
+  addTag(e) {
+    if (e.key == "Enter") {
+      let tag = e.target.value.replace(/\s+/g, " ");
+      if (tag.length > 1 && !this.Createtags.includes(tag)) {
+        if (this.Createtags.length < 10) {
+          tag.split(",").forEach((tag) => {
+            this.Createtags.push(tag);
+            this.createTag();
+          });
+        }
       }
+      e.target.value = "";
     }
-    e.target.value = "";
+  }
+
+  getTags() {
+    return 
   }
 }
 
+const newGrouptag = new tagContainerGen('newGroupTag', 10);
+const groupSearchTag = new tagContainerGen('groupSearchTag', 10);
+console.log(newGrouptag.Createtags);
 (async() => {
-  let response = await fetch('/groups/create/retriveProgress', {
+  /* let response = await fetch('/groups/create/retriveProgress', {
     method: 'post',
     headers: {
       'Content-type': 'application/json'
@@ -143,49 +196,79 @@ function addTag(e) {
     colorDisplay.style = `color: ${response.retrivedProgress.color}`;
     goal.value = response.retrivedProgress.goal_hr;
     document.querySelector(`.font-selection input#font-${response.retrivedProgress.font}`).checked = true;
-  }
+  } */
   
   
-  countTags();
-  createTag();
+  /* countTags();
+  createTag(); */
   
 
 })();
 const errModal = document.querySelector('.err-modal');
 const mainContainer = document.querySelector('.main.container');
-const errModalCloseBtn = errModal.querySelector('.close-btn');
 submitbtn.addEventListener("click", () => {
   const visibility = document.querySelector("input.visibility:checked").value;
   const font = document.querySelector(".font-selection input:checked").value;
 
-  document.querySelector("ul.tags").querySelectorAll("li").forEach((li) => tags.push(li.querySelector("p").innerText));
+  //document.querySelector("ul.tags").querySelectorAll("li").forEach((li) => tags.push(li.querySelector("p").innerText));
   (async() => {
-    let response = await fetch('/groups/create-validate', {
-      method: 'post',
-      body: JSON.stringify({ name: groupName.value, explanation:explanation.value, tags:tags, max_people:max_people.value, visibility:visibility, password:userPassword.value, color: color.value, goal_hr: goal.value, font: font }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
+    try {
+      const group = { 
+        name: groupName.value, 
+        explanation:explanation.value, 
+        tags: newGrouptag.Createtags, 
+        max_members: parseInt(max_people.value), 
+        visibility:parseInt(visibility), 
+        password:userPassword.value, 
+        color: color.value, 
+        goal_hr: parseInt(goal.value), 
+        font: parseInt(font) 
+      };
+      let response = await fetch('/groups/create-validate', {
+        method: 'post',
+        body: JSON.stringify(group),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+  
+      response = await response.json();
+  
+      if (response.success) {
+        successMsg(`New group ${groupName.value} generated!`);
+        groupCreateModal.classList.add('closed-modal');
+        group.members = [userId];
+        const groupId = response.data.group_id;
+        groupWithUser.push(groupId);
+        group.group_id = groupId;
+        group.likes = [];
+        createGroup(group);
 
-    response = await response.json();
-    console.log(response.reason, response)
-    if(response.success == true){
-      let redirectUrl = window.location.protocol + '//' + window.location.hostname + '/dashboard/groups';
-      window.location.href = redirectUrl;
-    } else if(response.reason == 'not loggedin') {
-      let redirectUrl = window.location.protocol + '//' + window.location.hostname + '/account/signin?redirect=groups/create';
-      window.location.href = redirectUrl;
-    } else if(response.reason == 'err'){
-      errModal.style = 'display: block';
-      errModal.querySelector('.textcontainer').innerHTML = `<p>${response.msg}</p>`;
-      console.log('err', response.msg)
-      mainContainer.classList.add('blur');
+      } else {
+        errMsg(response.reason);
+      }
+    } catch (error) {
+      console.log(error)
+      errMsg('Error')
     }
   })();
 });
 
-errModalCloseBtn.addEventListener('click', () => {
-  mainContainer.classList.remove('blur');
-  errModal.style = 'display: none'
+
+const groupCreateBtn = document.getElementById('create-group-btn');
+const groupCreateModal = document.getElementById('create-group-modal');
+
+groupCreateBtn.addEventListener('click', () => {
+  groupCreateModal.classList.toggle('closed-modal');
+})
+
+const groupCreateModalCloseBtn = document.querySelector('.create-group-modal #modalclosebtn');
+groupCreateModalCloseBtn.addEventListener('click', () => {
+  groupCreateModal.classList.add('closed-modal');
+});
+
+const pwSubmitBtn = document.getElementById('groupPwSubmit');
+
+pwSubmitBtn.addEventListener('click', () => {
+  joinGroup(group, el, password = '')
 })

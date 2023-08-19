@@ -8,6 +8,7 @@ const path = require('path');
 const multer = require('multer');
 const Ajv = require("ajv");
 const webpush = require("web-push");
+const {DateTime} = require('luxon');
 
 function hashing(password) {
   let salt = crypto.randomBytes(32).toString('hex');
@@ -122,9 +123,14 @@ Router.post('/signup-authentication', async (req, res) => {
   if (!isValidTimeZone) {
     timeZone = 'UTC';
   }
-  const date = new Date();
-  date.toLocaleString("en-US", { timeZone });
-  date.setHours(0, 0, 0, 0);
+  const userDateTime = DateTime.now().setZone(timeZone);
+
+  // Set the time to 12:00 AM
+  const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+  
+  // Get the Unix timestamp in seconds
+  const unixTimestamp = Math.floor(twelveAmDateTime.toMillis() / 1000);
+  console.log(unixTimestamp)
   // Sanitize inputs
 
   //check email
@@ -170,7 +176,7 @@ Router.post('/signup-authentication', async (req, res) => {
     salt: hashed[0],
     user_id: userId,
     timezone: timeZone,
-    datum_point: date / 1000,
+    datum_point: unixTimestamp,
     key_salt: keySalt,
     iv: iv,
     plan: '',
@@ -182,7 +188,7 @@ Router.post('/signup-authentication', async (req, res) => {
     notification_setting: 'default_setting',
     subjects: '[]'
   };
-  //onnection.query('INSERT INTO users SET ?', user);
+  connection.query('INSERT INTO users SET ?', user);
 
   req.session.regenerate((err) => {
     if (err) {

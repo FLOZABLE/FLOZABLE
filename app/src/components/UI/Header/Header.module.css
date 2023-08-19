@@ -1,0 +1,174 @@
+.header {
+  height: 100px;
+  background-color: transparent;
+  border-radius: 10px;
+  width: calc(100vw - 200px);
+  position: fixed;
+  right: 30px;
+  top: 30px;
+  display: flex;
+  justify-content: space-between;
+  transition: .2s all;
+  z-index: 3;
+}
+
+.header.scrolled {
+  background-color: #fff;
+}
+
+.header .left, .header .right {
+  display: flex;
+}
+
+.header .headerEl {
+  display: flex;
+  margin: 10px 0px 10px 30px;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.header .left .headerEl:nth-child(1) {
+  background-color: #F8F9D7;
+  color: #FFF6BD;
+}
+
+.header .left .headerEl:nth-child(1) .circle{
+  background-color: #F8F9D7;
+}
+
+.header .left .headerEl:nth-child(2) {
+  background-color: #F8F9D7;
+  color: #FFD966;
+}
+
+.header .left .headerEl:nth-child(2) .circle{
+  background-color: #FFD966;
+}
+
+.header .left .headerEl:nth-child(3) {
+  background-color: #DAEAF1;
+  color: #95BDFF
+}
+
+.header .left .headerEl:nth-child(3) .circle{
+  background-color: #95BDFF;
+}
+
+.header .left .headerEl:nth-child(4) {
+  background-color: #FFEFEF;
+  color: #FF9494
+}
+
+.header .left .headerEl:nth-child(4) .circle{
+  background-color: #FF9494;
+}
+
+.header .left .headerEl:nth-child(5) {
+  background-color: #C7E9B0;
+  color: #5C8984;
+}
+
+.header .left .headerEl:nth-child(5) .circle{
+  background-color: #5C8984;
+}
+
+.header .headerEl .circle {
+  height: 50px;
+  width: 50px;
+  border-radius: 25px;
+  background-color: aliceblue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+}
+
+.header .headerEl .text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 25px;
+}
+
+
+.header.isOpen {
+  background-color: #FF9B9B;
+  width: calc(100vw - 380px);
+}
+
+.header .right .headerEl {
+  background-color: #95BDFF;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.header .right .headerEl img {
+  height: 33px;
+}
+
+.header .right .headerEl button {
+  font-size: 30px;
+  margin: 0px 10px;
+}
+
+.header .right .headerEl .dropDown {
+  padding: 30px 0px;
+}
+
+.header .right .headerEl .dropDown .dropDownContent {
+  position: absolute;
+  top: 70px;
+  right: 0px;
+  background-color: #F9F5F6;
+  width: 400px;
+  text-align: left;
+  border-radius: 20px;
+  transition: all .2s ease-in-out .2s;
+  opacity: 0;
+  overflow: hidden;
+  height: 0px;
+  clear: both;
+}
+
+.header .right .headerEl .dropDown:hover .dropDownContent {
+  opacity: 1;
+  height: fit-content;
+}
+
+.header .dropDownContent .inner {
+  padding: 30px;
+}
+
+.header .dropDownContent .icon {
+  height: 50px;
+  width: 50px;
+  border-radius: 20px;
+  background-color: #DBC4F0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.header .dropDownContent li{
+  display: flex;
+  margin-top: 30px;
+}
+
+.header .dropDownContent li .explanation {
+  margin-left: 20px;
+}
+
+.header .dropDownContent li .topic{
+  font-size: 20px;
+  font-weight: 600;
+} 
+
+.header .dropDownContent li .time{
+  font-size: 16px;
+  font-weight: 300;
+} 

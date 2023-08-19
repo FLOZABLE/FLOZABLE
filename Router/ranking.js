@@ -29,26 +29,27 @@ Router.post("/", async (req, res) => {
     return res.send(cachedData);
   }
   
-  const date = new Date(unixTimestamp);
+  const date = DateTime.now().setZone(timeZone).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
   const usersInfo = users.map(user => {
-    const datum_point = new Date(user.datum_point * 1000);
-    datum_point.toLocaleString("en-US", {timeZone});
-    datum_point.setHours(0, 0, 0, 0);
+    const datum_point = DateTime.fromMillis(user.datum_point * 1000).setZone(timeZone).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     const daily = JSON.parse(user.daily);
     const weekly = JSON.parse(user.weekly);
     const monthly = JSON.parse(user.monthly);
 
-    let missingDay = (date.getTime() - datum_point.getTime()) / (1000 * 60 * 60 * 24) - daily.length + 1;
+    let missingDay = (date.toMillis() - datum_point.toMillis()) / (1000 * 60 * 60 * 24) - daily.length + 1;
 
-    let dateWeekStart = date.getTime() - date.getDay() * 24 * 60 * 60 * 1000;
-    let datum_pointWeekStart = datum_point.getTime() - datum_point.getDay() * 24 * 60 * 60 * 1000;
+    let dateWeekStart = date.toMillis() - date.toMillis() * 24 * 60 * 60 * 1000;
+    const day = datum_point.weekday == 7 ? 0 : datum_point.weekday;
+    let datum_pointWeekStart = datum_point.toMillis() - day * 24 * 60 * 60 * 1000;
     let missingWeek = (dateWeekStart - datum_pointWeekStart) / (1000 * 60 * 60 * 24 * 7) - weekly.length + 1;
     let missingMonth = 0 - monthly.length + 1;
-    let datumYear = datum_point.getFullYear();
-    let datumMonth = datum_point.getMonth();
-    let datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
-    const dateMonthStart = new Date(date.getFullYear(), date.getMonth(), 1).setHours(0, 0, 0, 0);
+    let datumYear = datum_point.year;
+    let datumMonth = datum_point.month;
+    //let datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
+    let datumMonthStart = DateTime.local(datumYear, datumMonth, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+    //const dateMonthStart = new Date(date.getFullYear(), date.getMonth(), 1).setHours(0, 0, 0, 0);
+    const dateMonthStart = DateTime.local(date.year, date.month, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
     while(datumMonthStart < dateMonthStart) {
       datumMonth += 1;
       if(datumMonth >= 11) {
@@ -56,7 +57,8 @@ Router.post("/", async (req, res) => {
         datumYear += 1;
       }
       missingMonth += 1;
-      datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
+      //datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
+      datumMonthStart = DateTime.local(datumYear, datumMonth, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     }
     for(let i = 0; i < missingDay; i++) {
       daily.push(0);

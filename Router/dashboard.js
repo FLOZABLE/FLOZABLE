@@ -3,6 +3,11 @@ const Router = express.Router();
 const fs = require("fs");
 const pool = require('../model/pool');
 const account = require('./account');
+const path = require('path');
+
+/* Router.get("/stats", async(req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'app/build', 'index.html'));
+}) */
 
 Router.get("/stats", async (req, res) => {
   account.autoSignin(req, res, (() => {

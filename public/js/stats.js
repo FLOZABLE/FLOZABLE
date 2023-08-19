@@ -737,10 +737,7 @@ function updateCharts() {
     updateHistogram(hourlyTimeline)
 
     //manage activity
-
-    const selectedActivity = activities.data[calendarDate / 1000];
-    console.log(activities.data)
-
+    updateWebUsageChart();
     /* 
     labels: Object.keys(activities.data[calendarDate / 1000]),
     datasets: [{
@@ -752,61 +749,7 @@ function updateCharts() {
       fill: false
     }],
     */
-    if (selectedActivity) {
-      const webTitles = Object.keys(selectedActivity);
-      const webs = Object.values(selectedActivity);
-      webUsageChart.data.labels = webTitles;
-      webUsageChart.data.datasets[0].data = webs.map((web, index) => {
-        const activityWrapper = document.createElement('li');
-        activityWrapper.classList.add('list-group-item');
-        activityWrapper.classList.add('border-0');
-        activityWrapper.classList.add('d-flex');
-        activityWrapper.classList.add('align-items-center');
-        activityWrapper.classList.add('px-0');
-        activityWrapper.classList.add('mb-2');
-
-        let activityTimeDisp = '';
-        const totalSec = Math.floor(web.totalTime / 1000);
-        let activityHr = Math.floor(totalSec / (60 * 60));
-        let activityMin = Math.floor((totalSec / 60) % (60));
-        let activitySec = totalSec % 60;
-        if (activityHr) {
-          activityTimeDisp += `${activityHr}hr `
-        }
-        if (activityMin) {
-          activityTimeDisp += `${activityMin}min `
-        }
-        activityTimeDisp += `${activitySec}sec / ${web.usageCount} times`
-        activityWrapper.innerHTML = `
-        <div class="w-100">
-        <div class="d-flex align-items-center mb-2">
-          <a class="btn btn-facebook btn-simple mb-0 p-0" target = "_blank" href="https://${webTitles[index]}">
-
-            <div class = "favicon-wrapper">
-            </div>
-          </a>
-          <span class="me-2 text-sm font-weight-normal text-capitalize ms-2">${webTitles[index]}</span>
-          <span class="ms-auto text-sm font-weight-normal">${activityTimeDisp}</span>
-        </div>
-        <div>
-          <div class="progress progress-md">
-            <div class="progress-bar bg-gradient-dark w-80" role="progressbar" aria-valuenow="60"
-              aria-valuemin="0" aria-valuemax="100"></div>
-          </div>
-        </div>
-      </div>
-        `;
-        const faviconWrapper = activityWrapper.querySelector('.favicon-wrapper');
-        if (web.favicon) {
-          faviconWrapper.innerHTML = `<img src = "${web.favicon}"/>`
-        }
-        activitiesWrapper.appendChild(activityWrapper);
-        return web.totalTime;
-      });
-      webUsageChart.update();
-    } else {
-      //timezone err or no extension
-    }
+    
 
   } else if (graphViewOpt == 'week') {
     updateRankingChart(myRanking.weekly, (() => {
@@ -897,7 +840,6 @@ function updateCharts() {
 
 function updateRankingChart(data, labels, rankingText = 'Daily Ranking', compareText = 'than yesterday') {
   rankingChart.data.labels = labels();
-  console.log(data)
   rankingChart.data.datasets = [{tension: 0.4, borderWidth: 0, pointRadius: 2, pointBackgroundColor: '#fd7f6f', borderColor: '#fd7f6f', borderWidth: 3, data: data, maxBarThickness: 6}];
   rankingChart.update();
 
@@ -934,7 +876,6 @@ function updateDoughnutPercentage() {
   doughnutPercentageContainer.innerHTML = ''
   let total = 0;
   subjectDoughnutChart.data.datasets[0].data.map((subjectHr) => total += subjectHr);
-  console.log(total)
   if (!total) {
     doughnutChartBlocker.classList.remove('hidden');
     return 0;
@@ -1041,6 +982,68 @@ function updateHistogram(subjects) {
   })
   timelineHistogramChart.data.datasets[0].data = histogramData;
   timelineHistogramChart.update();
+}
+
+function updateWebUsageChart() {
+  const selectedActivity = activities.data[calendarDate / 1000];
+  if (selectedActivity) {
+    const webTitles = Object.keys(selectedActivity);
+    const webs = Object.values(selectedActivity);
+    webUsageChart.data.labels = webTitles;
+    webUsageChart.data.datasets[0].data = webs.map((web, index) => {
+      const activityWrapper = document.createElement('li');
+      activityWrapper.classList.add('list-group-item');
+      activityWrapper.classList.add('border-0');
+      activityWrapper.classList.add('d-flex');
+      activityWrapper.classList.add('align-items-center');
+      activityWrapper.classList.add('px-0');
+      activityWrapper.classList.add('mb-2');
+
+      let activityTimeDisp = '';
+      const totalSec = Math.floor(web.totalTime / 1000);
+      let activityHr = Math.floor(totalSec / (60 * 60));
+      let activityMin = Math.floor((totalSec / 60) % (60));
+      let activitySec = totalSec % 60;
+      if (activityHr) {
+        activityTimeDisp += `${activityHr}hr `
+      }
+      if (activityMin) {
+        activityTimeDisp += `${activityMin}min `
+      }
+      activityTimeDisp += `${activitySec}sec / ${web.usageCount} times`
+      activityWrapper.innerHTML = `
+      <div class="w-100">
+      <div class="d-flex align-items-center mb-2">
+        <a class="btn btn-facebook btn-simple mb-0 p-0" target = "_blank" href="https://${webTitles[index]}">
+
+          <div class = "favicon-wrapper">
+          </div>
+        </a>
+        <span class="me-2 text-sm font-weight-normal text-capitalize ms-2">${webTitles[index]}</span>
+        <span class="ms-auto text-sm font-weight-normal">${activityTimeDisp}</span>
+      </div>
+      <div>
+        <div class="progress progress-md">
+          <div class="progress-bar bg-gradient-dark w-80" role="progressbar" aria-valuenow="60"
+            aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+    </div>
+      `;
+      const faviconWrapper = activityWrapper.querySelector('.favicon-wrapper');
+      if (web.favicon) {
+        faviconWrapper.innerHTML = `<img src = "${web.favicon}"/>`
+      }
+      activitiesWrapper.appendChild(activityWrapper);
+      return web.totalTime;
+    });
+  } else {
+    console.log(activitiesWrapper)
+    activitiesWrapper.innerHTML = '';
+    webUsageChart.data.labels = [];
+    webUsageChart.data.datasets[0].data = [] ;
+  }
+  webUsageChart.update();
 }
 
 function updateAppUsage() {
