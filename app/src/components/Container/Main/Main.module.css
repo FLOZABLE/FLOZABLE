@@ -1,16 +1,13 @@
 @import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
 
-.MainContainer {
-  font-size: 30px;
-  top: 0px;
-}
-
 .MainContainer .Main {
   position: relative;
-  margin: 200px 0px 0px 170px;
+  margin: 130px 0px 0px 170px;
   transition: all .2s ease-in-out;
   width: calc(100vw - 200px);
   border-radius: 20px;
+  height: calc(100vh);
+  overflow: hidden;
 }
 
 .MainContainer .Main.sidebarOpen {

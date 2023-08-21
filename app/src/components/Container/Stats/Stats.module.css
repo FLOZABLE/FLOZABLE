@@ -24,14 +24,12 @@
 }
 
 .StatsContainer .boxes .box {
-  background-color: aliceblue;
-  border-radius: 20px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  margin: 0px 30px 50px;
+  margin: 0px;
   flex-grow: 1;
   padding: 30px;
   position: relative;
   width: 100%;
+  padding: 0px;
 }
 
 .StatsContainer .box .title {
@@ -41,10 +39,14 @@
   border-radius: 20px;
   width: fit-content;
   padding: 10px 30px;
-  cursor: pointer
+  cursor: pointer;
 }
 
-.StatsContainer .box .title:hover {
+.StatsContainer .box button.title {
+  cursor: pointer;
+}
+
+.StatsContainer .box button.title:hover {
   background-color: rgba(233, 232, 217, 0.612);
 }
 
@@ -52,8 +54,21 @@
   font-size: 30px;
 }
 
+.StatsContainer .box .buttonArea {
+  display: flex;
+  margin-bottom: 40px;
+}
+
+.StatsContainer .box .buttonArea > button{
+  margin-right: auto;
+}
 .StatsContainer .box .container {
   display: flex;
+  background-color: #f7f9fd;
+  border-radius: 40px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 40px;
+  margin-bottom: 50px;
 }
 
 .StatsContainer .box .container > div:not(.divider){
@@ -61,15 +76,30 @@
   text-align: left;
 }
 
+.StatsContainer .box .container > div:nth-child(1) {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
 .StatsContainer .box .divider {
-  background-color: black;
-  width: 10px;
+  background-color: #D9D9D9;
+  width: 5px;
   margin: 0px 50px;
   border-radius: 3px;
 }
 
+.StatsContainer .box .chartContainer {
+  width: 70%;
+}
+
+.StatsContainer .box .todoList {
+  background-color: #f2f2fd;
+  border-radius: 20px;
+  padding: 30px;
+}
+
 .StatsContainer .box .todoList ul li{
-  background-color: #ADC4CE;
   border-radius: 20px;
   height: 50px;
   margin-bottom: 30px;
@@ -86,11 +116,11 @@
 }
 
 .StatsContainer .boxes .smallBox {
-  background-color: aliceblue;
-  border-radius: 20px;
+  background-color: #f7f9fd;
+  border-radius: 40px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   margin: 0px 30px 50px;
-  flex-grow: 1;
+  width: 100%;
   padding: 30px;
   position: relative;
   display: flex;
@@ -105,7 +135,7 @@
 }
 
 .StatsContainer .boxes .smallBox .circle {
-  background-color: blue;
+  background-color: #5261f4;
   height: 50px;
   width: 50px;
   border-radius: 25px;
@@ -123,11 +153,40 @@
   border-radius: 20px;
   display: none;
   left: 50vw;
-  top: 0vh;
+  top: 50vh;
   transform: translate(-50%, -50%);
   background-color: #ADC4CE;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 .StatsContainer .CalendarModal.isOpen {
   display: block;
+}
+
+.StatsContainer .smallBox.chartsBox {
+  flex-direction: column;
+}
+
+.StatsContainer .smallBox.chartsBox .title {
+  font-size: 40px;
+  font-weight: 800;
+  color: #545B77;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 10px 30px;
+}
+
+.StatsContainer .smallBox.chartsBox .chartContainer{
+  height: 100%;
+  width: 80%;
+  margin-left: 10%;
+}
+
+.StatsContainer .smallBoxContainer:nth-child(5) .smallBox.chartsBox .chartContainer{
+  height: 100%;
+  width: 70%;
+  margin-left: 15%;
 }
