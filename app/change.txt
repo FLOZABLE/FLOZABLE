@@ -1,0 +1,63 @@
+import React from "react";
+import styles from "./Timeline.module.css";
+
+function Timeline() {
+  const timelineEl = [];
+  for (let hour = 0; hour < 24; hour++) {
+    timelineEl.push(
+      <div className={styles.row}>
+        <div className={styles.box}></div>
+        <div className={styles.box}></div>
+        <div className={styles.box}></div>
+        <div className={styles.box}></div>
+        <div className={styles.box}></div>
+        <div className={styles.box}></div>
+      </div>
+    )
+  }
+  return (
+    <div className={styles.TimelineContainer}>
+      <div className={styles.rowHeader}>
+        <p>0</p>
+        <p>10</p>
+        <p>20</p>
+        <p>30</p>
+        <p>40</p>
+        <p>50</p>
+        <p>60</p>
+      </div>
+      <div className={styles.colHeader}>
+      <p>0</p>
+        <p>1</p>
+        <p>2</p>
+        <p>3</p>
+        <p>4</p>
+        <p>5</p>
+        <p>6</p>
+        <p>7</p>
+        <p>8</p>
+        <p>9</p>
+        <p>10</p>
+        <p>11</p>
+        <p>12</p>
+        <p>13</p>
+        <p>14</p>
+        <p>15</p>
+        <p>16</p>
+        <p>17</p>
+        <p>18</p>
+        <p>19</p>
+        <p>20</p>
+        <p>21</p>
+        <p>22</p>
+        <p>23</p>
+        <p>24</p>
+      </div>
+      <div className={styles.timelineWrapper}>
+        {timelineEl}
+      </div>
+    </div>
+  )
+}
+
+export default Timeline;
