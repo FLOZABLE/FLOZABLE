@@ -1,3 +1,4 @@
 .env.production
 .env.development
 ./test.txt
+node_modules
