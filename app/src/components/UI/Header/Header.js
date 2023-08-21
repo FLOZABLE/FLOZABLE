@@ -45,7 +45,7 @@ function Header(props) {
         />
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-          <FontAwesomeIcon icon={faBook} style={{color: "#FFF6BD",}} />
+          <FontAwesomeIcon icon={faBook} style={{color: "#348d50",}} />
           </div>
           <div className={styles.text}>
             <h5>20k</h5>
@@ -54,7 +54,7 @@ function Header(props) {
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-          <FontAwesomeIcon icon={faMobileScreenButton} style={{color: "#DAEAF1",}} />
+          <FontAwesomeIcon icon={faMobileScreenButton} style={{color: "#ff562d",}} />
           </div>
           <div className={styles.text}>
             <h5>20k</h5>
@@ -63,7 +63,7 @@ function Header(props) {
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-          <FontAwesomeIcon icon={faFire} style={{color: "#FFEFEF",}} />
+          <FontAwesomeIcon icon={faFire} style={{color: "#2c70ff",}} />
           </div>
           <div className={styles.text}>
             <h5>20k</h5>
@@ -72,7 +72,7 @@ function Header(props) {
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-          <FontAwesomeIcon icon={faArrowsToCircle} style={{color: "#C7E9B0",}} />
+          <FontAwesomeIcon icon={faArrowsToCircle} style={{color: "#705dc1",}} />
           </div>
           <div className={styles.text}>
             <h5>20k</h5>
@@ -167,7 +167,7 @@ function Header(props) {
             </div>
           </div>
           <div className={styles.dropDown}>
-            <button><img src="./profile.png" alt="" /></button>
+            <button><img src="/profile.png" alt="" /></button>
             <div className={styles.dropDownContent}>
             <div className={styles.inner}>
               <h3 className={styles.title}>Messages</h3>
