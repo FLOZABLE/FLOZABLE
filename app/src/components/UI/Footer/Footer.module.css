@@ -1,0 +1,30 @@
+.FooterContainer {
+  width: 100vw;
+  position: relative;
+  bottom: 0px;
+  left: 0px;
+  background-color: #f0f2f5;
+  height: 100px;
+}
+
+.FooterContainer .inner {
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+  margin-left: 10%;
+  align-items: center;
+  height: 100%;
+  justify-content: right;
+}
+
+.FooterContainer .inner p {
+  font-size: 20px;
+  color: #7f849d;
+}
+
+.FooterContainer .inner .divider {
+  width: 1px;
+  height: 30px;
+  margin: 0px 20px;
+  background-color: #7f849d;
+}
