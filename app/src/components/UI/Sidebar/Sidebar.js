@@ -67,7 +67,7 @@ function Sidebar(props) {
             onMouseLeave={handleMouseLeave}
             className={`${styles.startStudy} ${styles.navItemWrapper} ${hoveredElement === 'navItem4' ? styles.hovered : ''}`}
           >
-            <Link to="/study" className={styles.navItem}>
+            <Link to="/dashboard/groups" className={styles.navItem}>
               <div className={styles.icon}>
               <FontAwesomeIcon icon={faUserGroup} style={{color: "#ffffff",}} />
               </div>
