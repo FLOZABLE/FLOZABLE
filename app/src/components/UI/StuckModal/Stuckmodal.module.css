@@ -1,25 +1,20 @@
 .StuckModalContainer {
   position: fixed;
-  top: 50vh;
-  transform: translateY(-50%);
+  bottom: 100px;
   right: 100px;
-  background-color: blue;
-  display: flex;
-  flex-direction: column;
-  border-radius: 20px;
+  background: linear-gradient(to right, #8C52FF, #5C97E6);
+  border-radius: 50px;
   z-index: 2;
-  padding: 20px;
-}
-
-.StuckModalContainer button {
-  transition: all .3s ease-in-out;
-  padding: 0px 10px;
-}
-.StuckModalContainer button:hover {
-  background-color: rgba(226, 226, 201, 0.534);
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .StuckModalContainer button a {
   font-size: 30px;
+  line-height: 100%;
   color: #fff;
+  font-weight: 700;
 }
