@@ -5,13 +5,7 @@ function StuckModal(props) {
   return (
     <div className={styles.StuckModalContainer}>
       <button>
-        <a href="#today">TODAY</a>
-      </button>
-      <button>
-        <a href="#weekly">WEEKLY</a>
-      </button>
-      <button>
-        <a href="#monthly">MONTHLY</a>
+        <a href="#today">Go <br />Study</a>
       </button>
     </div>
   )

@@ -10,7 +10,7 @@ const BarChart = (props) => {
     datasets: props.datasets
   };
   return (
-    <div style={{ height: props.height}}>
+    <div style={{height: '100%'}}>
       <Bar data={data} options={props.options}/>
     </div>
   );

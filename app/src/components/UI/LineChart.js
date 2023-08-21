@@ -9,7 +9,7 @@ const data = {
 };
   return (
     <div>
-      <Line data={data} />
+      <Line data={data} options={props.options}/>
     </div>
   );
 };

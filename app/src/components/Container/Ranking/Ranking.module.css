@@ -1,0 +1,199 @@
+@import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
+
+.RankingContainer {
+  font-size: 30px;
+  top: 0px;
+}
+
+.RankingContainer .Main {
+  position: relative;
+  margin: 200px 0px 0px 170px;
+  transition: all .2s ease-in-out;
+  width: calc(100vw - 200px);
+  min-height: calc(100vh - 200px);
+  border-radius: 20px;
+}
+
+.RankingContainer .Main.sidebarOpen {
+  margin-left: 350px;
+  width: calc(100vw - 380px);
+}
+
+.RankingContainer .boxes {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.RankingContainer .boxes .box {
+  margin: 0px;
+  flex-grow: 1;
+  padding: 30px;
+  position: relative;
+  width: 100%;
+  padding: 0px;
+}
+
+.RankingContainer .box .title {
+  font-size: 40px;
+  font-weight: 800;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 10px 30px;
+  cursor: pointer;
+  color: #545454;
+}
+
+.RankingContainer .box button.title {
+  cursor: pointer;
+}
+
+.RankingContainer .box button.title:hover {
+  background-color: rgba(233, 232, 217, 0.612);
+}
+
+.RankingContainer .box .title .caret {
+  font-size: 30px;
+}
+
+.RankingContainer .box .buttonArea {
+  display: flex;
+  margin-bottom: 40px;
+}
+
+.RankingContainer .box .buttonArea > button{
+  margin-right: auto;
+}
+
+.RankingContainer .box .container {
+  display: flex;
+  background-color: #f7f9fd;
+  border-radius: 40px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 40px;
+  margin-bottom: 50px;
+}
+
+.RankingContainer .boxes .smallBoxContainer {
+  display: flex;
+  width: 100%;
+}
+
+.RankingContainer .boxes .smallBox {
+  background-color: #f7f9fd;
+  border-radius: 40px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin: 0px 30px 50px;
+  width: 100%;
+  padding: 30px;
+  position: relative;
+  display: flex;
+}
+
+.RankingContainer .boxes .smallBox .circle {
+  background-color: #5261f4;
+  height: 50px;
+  width: 50px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+
+.RankingContainer .CalendarModal {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  z-index: 2;
+  border-radius: 20px;
+  display: none;
+  left: 50vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
+  background-color: #ADC4CE;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.RankingContainer .CalendarModal.isOpen {
+  display: block;
+}
+
+.RankingContainer .container ul {
+  width: 100%;
+}
+
+.RankingContainer .container ul li {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.RankingContainer .rankingContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.RankingContainer .rankingContainer .header{
+  display: flex;
+  margin-left: auto;
+}
+
+.RankingContainer .rankingContainer .header p {
+  margin-left: 10px;
+  color: #AEB4B7;
+  font-weight: 100;
+}
+
+.RankingContainer .rankingContainer li .circle {
+  background-color: red;
+  border-radius: 25px;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.RankingContainer .rankingContainer .userInfo{
+  display: flex;
+  margin-left: 20px;
+  width: 100%;
+}
+
+.RankingContainer .rankingContainer .userInfo .profileImg{
+  display: flex;
+  background-color: #e5e6e7;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-right: 7px;
+}
+
+.RankingContainer .dash {
+  background-color: #545454;
+  width: 4px;
+  height: 100%;
+  rotate: 20deg;
+  border-radius: 2px;
+  margin: 0px 12px;
+}
+
+.RankingContainer .divider {
+  width: calc(100% - 60px);
+  margin: 15px 0px 15px 60px;
+  background-color: #e5e6e7;
+  height: 3px;
+  border-radius: 2px;
+}
+.RankingContainer .rankingContainer li .userInfo .ranking{
+  display: flex;
+  font-weight: 900;
+  font-size: 32px;
+  margin-left: auto;
+}

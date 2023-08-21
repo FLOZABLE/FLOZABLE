@@ -1,0 +1,65 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+.RadioBtnContainer .container{
+  position: relative;
+  width: 400px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+}
+
+.RadioBtnContainer .selector {
+  position: relative;
+  width: 100%;
+  background-color: #f1f3f5;
+  height: 80px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 9999px;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
+}
+
+.RadioBtnContainer .selectorItem {
+  position: relative;
+  flex-basis: calc(70% / 3);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.RadioBtnContainer .selectorItemRadio {
+  appearance: none;
+  display: none;
+}
+
+.RadioBtnContainer .selectorItemLabel {
+  position: relative;
+  height: 80%;
+  width: 100%;
+  text-align: center;
+  border-radius: 9999px;
+  line-height: 300%;
+  font-family: 'Poppins', sans-serif;
+  transition-duration: 0.5s;
+  transition-property: transform, box-shadow;
+  transform: none;
+  padding: 0px 5px;
+  font-size: 20px;
+}
+
+.RadioBtnContainer .selectorItemRadio:checked + .selectorItemLabel {
+  background-color: #4169e1;
+  color: #fff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+  .RadioBtnContainer .selector {
+    width: 90%;
+  }
+}

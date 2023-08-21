@@ -81,7 +81,7 @@ function Sidebar(props) {
             onMouseLeave={handleMouseLeave}
             className={`${styles.startStudy} ${styles.navItemWrapper} ${hoveredElement === 'navItem5' ? styles.hovered : ''}`}
           >
-            <Link to="/study" className={styles.navItem}>
+            <Link to="/dashboard/ranking" className={styles.navItem}>
               <div className={styles.icon}>
               <FontAwesomeIcon icon={faRankingStar} style={{color: "#ffffff",}} />
               </div>

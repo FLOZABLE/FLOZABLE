@@ -1,0 +1,44 @@
+.TimelineContainer {
+  position: relative;
+}
+
+.TimelineContainer .row {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.TimelineContainer .timelineWrapper {
+  padding: 50px 0px 0px 50px;
+}
+
+.TimelineContainer .box {
+  height: 30px;
+  width: 100%;
+  border: 1px solid #dee0e3;
+}
+
+.TimelineContainer .rowHeader {
+  position: absolute;
+  top: 0px;
+  left: 45px;
+  width: calc(113% - 50px);
+  display: flex;
+  font-size: 20px;
+}
+
+.TimelineContainer .rowHeader div {
+  width: 100%;
+  text-align: left;
+}
+
+.TimelineContainer .colHeader div {
+  height: calc(100% / 24);
+}
+
+.TimelineContainer .colHeader {
+  position: absolute;
+  top: 40px;
+  height: calc(100% - 50px);
+  font-size: 20px;
+  text-align: right;
+}

@@ -1,4 +1,4 @@
-.mbsc-calendar-cell.mbsc-flex-1-0-0.mbsc-calendar-day.mbsc-ios.mbsc-ltr>div:nth-child(1) > div, .mbsc-scroller-wheel-item.mbsc-ios.mbsc-ltr > div:nth-child(1) > div, .mbsc-calendar-cell.mbsc-flex-1-0-0.mbsc-calendar-year.mbsc-ios.mbsc-ltr > div:nth-child(1) > div, .mbsc-schedule-event.mbsc-schedule-event-start.mbsc-schedule-event-end > div:nth-last-child(1) > div{
+.mbsc-calendar-cell.mbsc-flex-1-0-0.mbsc-calendar-day.mbsc-ios.mbsc-ltr>div:nth-child(1) > div, .mbsc-scroller-wheel-item.mbsc-ios.mbsc-ltr > div:nth-child(1) > div, .mbsc-calendar-cell.mbsc-flex-1-0-0.mbsc-calendar-year.mbsc-ios.mbsc-ltr > div:nth-child(1) > div, .mbsc-schedule-event.mbsc-schedule-event-start.mbsc-schedule-event-end > div:nth-last-child(1) > div, .mbsc-calendar-cell.mbsc-flex-1-0-0.mbsc-calendar-month > div:nth-child(1) > div{
   z-index: -1;
   color: #fff;
 }
