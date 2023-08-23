@@ -23,24 +23,26 @@ function Stats(props) {
     setIsCalendarOpen(!isCalendarOpen);
   };
 
+  const [statsViewer, setStatsViewer] = useState('Daily');
+
   return (
     <div className={styles.StatsContainer}>
       <div className={`${styles.CalendarModal} ${isCalendarOpen ? styles.isOpen : ''}`}>
-        <StatsCalendar onToggleCalendar={toggleCalendar} isCalendarOpen={isCalendarOpen} />
+        <StatsCalendar onToggleCalendar={toggleCalendar} isCalendarOpen={isCalendarOpen} viewOpt={statsViewer}/>
       </div>
       <StuckModal />
-      <div className={`${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? styles.sidebarOpen : ''}`}>
+      <div className={` Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
               <button className={styles.title}
                 onClick={toggleCalendar}
               >Today <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} /></button>
-              <RadioBtn items={['Daily', 'Weekly', 'Monthly']} />
+              <RadioBtn items={['Daily', 'Weekly', 'Monthly']} changeEvent={setStatsViewer} />
             </div>
             <div className={styles.container}>
               <div className={styles.divided}>
-              <p className={styles.title}>Today's Time Usage by Subjects</p>
+              <p className={styles.title}>{statsViewer} Time Usage by Subjects</p>
               <div className={styles.chartContainer}>
               <PieChart
                 labels={

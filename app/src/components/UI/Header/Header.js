@@ -86,7 +86,7 @@ function Header(props) {
             <button><FontAwesomeIcon icon={faCalendar} style={{ color: "#ffffff" }} /></button>
             <div className={styles.dropDownContent}>
             <div className={styles.inner}>
-              <h3 className={styles.title}>Messages</h3>
+              <h3 className={styles.title}>Today's Plan</h3>
                 <ul>
                   <li>
                     <div className={styles.icon}>
@@ -114,7 +114,7 @@ function Header(props) {
             <button><FontAwesomeIcon icon={faBell} style={{ color: "#ffffff" }} /></button>
             <div className={styles.dropDownContent}>
             <div className={styles.inner}>
-              <h3 className={styles.title}>Messages</h3>
+              <h3 className={styles.title}>Notifications</h3>
                 <ul>
                   <li>
                     <div className={styles.icon}>
@@ -170,7 +170,7 @@ function Header(props) {
             <button><img src="/profile.png" alt="" /></button>
             <div className={styles.dropDownContent}>
             <div className={styles.inner}>
-              <h3 className={styles.title}>Messages</h3>
+              <h3 className={styles.title}>Profile Setting</h3>
                 <ul>
                   <li>
                     <div className={styles.icon}>

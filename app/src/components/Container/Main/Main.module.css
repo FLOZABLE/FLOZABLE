@@ -1,18 +1,8 @@
 @import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
 
 .MainContainer .Main {
-  position: relative;
-  margin: 130px 0px 0px 170px;
-  transition: all .2s ease-in-out;
-  width: calc(100vw - 200px);
-  border-radius: 20px;
-  height: calc(100vh);
   overflow: hidden;
-}
-
-.MainContainer .Main.sidebarOpen {
-  margin-left: 350px;
-  width: calc(100vw - 380px);
+  height: calc(100vh);
 }
 
 .MainContainer .boxes {
@@ -29,6 +19,10 @@
   max-width: 500px;
   flex-grow: 1;
   height: min-content;
+}
+
+.MainContainer .boxes .box:nth-child(1) img{
+  width: 100%;
 }
 
 .MainContainer .boxes .box .inner {

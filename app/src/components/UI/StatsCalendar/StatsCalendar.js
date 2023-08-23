@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import styles from './StatsCalendar.module.css';
 import "../Calendar.css"
-import { Datepicker, CalendarPrev, CalendarNav, CalendarNext, CalendarToday, setOptions } from '@mobiscroll/react';
+import { Datepicker, CalendarPrev, CalendarNav, CalendarNext, setOptions } from '@mobiscroll/react';
 
 setOptions({
   theme: 'ios',
@@ -11,6 +11,8 @@ setOptions({
 });
 
 function StatsCalendar(props) {
+
+  const [date, setDate] = React.useState(new Date());
   const [colors] = React.useState([
     { recurring: { repeat: 'yearly', month: 12, day: 8 }, background: '#9ccc65' },
     { recurring: { repeat: 'yearly', month: 5, day: 1 }, background: 'red' },
@@ -32,15 +34,24 @@ function StatsCalendar(props) {
     { start: '2023-09-15T00:00', end: '2023-09-18T00:00', text: 'Conference', background: '#f4511e' }
   ]);
 
+  const handleCustomTodayClick = () => {
+    setDate(new Date());
+    if (props.isCalendarOpen) {
+      props.onToggleCalendar();
+    }
+  };
+
   const calendarHeaderCustom = () => {
     return <React.Fragment>
       <CalendarPrev className="custom-prev" />
       <CalendarNav className="custom-nav" />
       <CalendarNext className="custom-next" />
       <div className={styles.right}>
-        <CalendarToday />
+        <button onClick={handleCustomTodayClick} className={styles.todayBtn}>
+          <p>{props.viewOpt == 'Daily' ? 'Today' : props.viewOpt == 'Weekly' ? 'This Week' : 'This Month'}</p>
+        </button>
         <button onClick={props.onToggleCalendar}>
-        <FontAwesomeIcon icon={faXmark} className={styles.caret}/>
+          <FontAwesomeIcon icon={faXmark} className={styles.caret} />
         </button>
       </div>
     </React.Fragment>;
@@ -48,6 +59,8 @@ function StatsCalendar(props) {
 
   const dateChanged = (event, inst) => {
     console.log(event.value, inst)
+    setDate(event.value)
+    Datepicker.value = event.value
     if (props.isCalendarOpen) {
       props.onToggleCalendar();
     }
@@ -60,7 +73,9 @@ function StatsCalendar(props) {
         display="inline"
         renderCalendarHeader={calendarHeaderCustom}
         colors={colors}
-        onChange ={dateChanged}
+        onChange={dateChanged}
+        lang={{ calendar: { today: 'test' } }}
+        value={date}
       />
     </div>
   );

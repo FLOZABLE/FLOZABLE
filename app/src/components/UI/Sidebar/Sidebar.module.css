@@ -12,6 +12,8 @@
   font-size: 25px;
   z-index: 2;
   overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+  clip-path: inset(-50px -50px -50px -50px);
 }
 
 .Sidebar.isOpen {
@@ -35,6 +37,7 @@
 .Sidebar .navItem {
   display: flex;
   align-items: center;
+  width: 250px;
 }
 
 .Sidebar .navItem .icon {
