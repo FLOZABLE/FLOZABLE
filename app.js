@@ -15,6 +15,7 @@ const cors = require('cors');
 dotenv.config({path: ".env.production"});
 const server = http.createServer(app);
 const port = process.env.PORT;
+const account =require("./Router/account");
 //const WebSocketToken = process.env.WEBSOCKET_TOKEN;
 //const WebSocket = require('ws');
 //const wsServer =  new WebSocket.Server({ server });
@@ -28,7 +29,7 @@ const testTools = require('./test/generate');
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors({origin: 'chrome-extension://dalobnhjngmjgnkdjkeonfnbbkaclcpm'}));
-app.use(express.static(path.join(__dirname, 'app/build')));
+
 /* app.use(helmet.permittedCrossDomainPolicies());
 app.use(helmet.referrerPolicy());
 app.use(helmet.xssFilter());
@@ -159,7 +160,7 @@ notificationService.notificationService();
 
 //Router
 const mainRouter = require("./Router/main");
-const accountRouter = require("./Router/account").Router;
+const accountRouter = account.Router;
 const studyRouter = require("./Router/study");
 const groupsRouter = require("./Router/groups");
 const linksRouter = require('./Router/links');
@@ -167,6 +168,7 @@ const dashboardRouter = require('./Router/dashboard');
 const rankingRouter = require('./Router/ranking');
 const extensionRouter = require('./Router/api');
 const notificationRouter = notificationService.notificationRouter;
+const accountApi = require('./Router/Api/account').Router;
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -200,12 +202,25 @@ app.use('/account', accountRouter);
 app.use('/study', studyRouter);
 app.use('/groups', groupsRouter);
 app.use('/links', linksRouter);
-app.use('/dashboard', dashboardRouter);
+/* app.use('/dashboard', dashboardRouter); */
 app.use('/ranking', rankingRouter);
 app.use('/api', extensionRouter);
 app.use('/notification', notificationRouter);
 
 
+app.use('/api', accountApi);
+
+app.use(express.static(path.join(__dirname, 'app/build')));
+app.get('/dashboard*', (req, res) => {
+  console.log(req.session.loggedin, req.signedCookies)
+  account.autoSignin(req, res, (() => {
+    res.sendFile(path.join(__dirname, 'app/build', 'index.html'));
+  }),
+  (() => {
+    res.redirect('/account/signin');
+  })
+  );
+});
 // error handler
 app.use(function (err, req, res, next) {
   console.log(err.message, err.status)

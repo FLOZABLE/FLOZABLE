@@ -9,19 +9,27 @@ const path = require('path');
   res.sendFile(path.join(__dirname, '..', 'app/build', 'index.html'));
 }) */
 
+Router.get("/*", (req, res) => {
+  console.log(req.session.loggedin, req.signedCookies)
+  account.autoSignin(req, res, (() => {
+    res.sendFile(path.join(__dirname, 'app/build', 'index.html'));
+  })
+  );
+})
+
 Router.get("/stats", async (req, res) => {
   account.autoSignin(req, res, (() => {
-    res.render("dashboards/stats.ejs", {userInfo: req.session.userInfo});
+    res.render("dashboards/stats.ejs", { userInfo: req.session.userInfo });
   }),
-  (() => {
-    res.redirect('/account/signin');
-  })
+    (() => {
+      res.redirect('/account/signin');
+    })
   );
 })
 
 Router.get("/groups", async (req, res) => {
   account.autoSignin(req, res, (() => {
-    res.render("dashboards/groups.ejs", {userInfo: req.session.userInfo});
+    res.render("dashboards/groups.ejs", { userInfo: req.session.userInfo });
   }), (() => {
     res.redirect('/account/signin');
   }))
@@ -29,7 +37,7 @@ Router.get("/groups", async (req, res) => {
 
 Router.get("/groups/create", async (req, res) => {
   account.autoSignin(req, res, (() => {
-    res.render("dashboards/groups-create.ejs", {userInfo: req.session.userInfo});
+    res.render("dashboards/groups-create.ejs", { userInfo: req.session.userInfo });
   }), (() => {
     res.redirect('/account/signin');
   }))
@@ -45,7 +53,7 @@ Router.get("/groups/create", async (req, res) => {
 
 Router.get("/planner", async (req, res) => {
   account.autoSignin(req, res, (() => {
-    res.render("dashboards/planner.ejs", {userInfo: req.session.userInfo});
+    res.render("dashboards/planner.ejs", { userInfo: req.session.userInfo });
   }), (() => {
     res.redirect('/account/signin');
   }))

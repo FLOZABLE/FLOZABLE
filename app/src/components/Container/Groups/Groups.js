@@ -20,7 +20,7 @@ function Ranking(props) {
         <StatsCalendar onToggleCalendar={toggleCalendar} isCalendarOpen={isCalendarOpen} />
       </div>
       <StuckModal />
-      <div className={`${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? styles.sidebarOpen : ''}`}>
+      <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>

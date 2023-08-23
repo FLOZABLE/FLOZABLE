@@ -1,24 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
 
-.GroupsContainer {
-  font-size: 30px;
-  top: 0px;
-}
-
-.GroupsContainer .Main {
-  position: relative;
-  margin: 200px 0px 0px 170px;
-  transition: all .2s ease-in-out;
-  width: calc(100vw - 200px);
-  min-height: calc(100vh - 200px);
-  border-radius: 20px;
-}
-
-.GroupsContainer .Main.sidebarOpen {
-  margin-left: 350px;
-  width: calc(100vw - 380px);
-}
-
 .GroupsContainer .boxes {
   display: flex;
   flex-wrap: wrap;
