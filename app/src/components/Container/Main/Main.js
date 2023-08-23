@@ -140,7 +140,7 @@ function Main(props) {
 
   return (
     <div className={styles.MainContainer}>
-      <div className={`${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? styles.sidebarOpen : ''}`}>
+      <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
           <div className={`${styles.box} box 1`} ref={box[0]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
             <div className={styles.inner}>
@@ -160,6 +160,7 @@ function Main(props) {
                 </div>
               </div>
             </div>
+            <img src="./img/collaboration.jpeg" alt="" />
           </div>
           <div className={`${styles.box} box 2`} ref={box[1]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
             <div className={styles.inner}>
@@ -233,18 +234,6 @@ function Main(props) {
                   <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
                   <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
                 </li>
-                <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li>
-                <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li>
-                <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17 Solve English textbook pg 14 - 17 Solve English textbook pg 14 - 17</p>
-                </li>
               </ul>
               <Link to="dashboard/stats">
                 <button className={styles.toStatsBtn}>
@@ -272,14 +261,6 @@ function Main(props) {
                 <li className={styles.plan}>
                   <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
                   <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li>
-                <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li>
-                <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17 Solve English textbook pg 14 - 17 Solve English textbook pg 14 - 17</p>
                 </li>
               </ul>
             </div>
