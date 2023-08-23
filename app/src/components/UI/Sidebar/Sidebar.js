@@ -27,9 +27,9 @@ function Sidebar(props) {
       >
         <Link to="/dashboard" className={styles.navItem}>
           <div className={styles.icon}>
-          <FontAwesomeIcon icon={faHouse} style={{color: "#ffffff",}} />
+          <FontAwesomeIcon icon={faHouse}  />
           </div>
-          <p className={styles.navText}>Study</p>
+          <p className={styles.navText} data-text="Study">Study</p>
         </Link>
       </div>
       <ul>
@@ -41,9 +41,9 @@ function Sidebar(props) {
           >
             <Link to="/dashboard/stats" className={styles.navItem}>
               <div className={styles.icon}>
-              <FontAwesomeIcon icon={faChartColumn} style={{color: "#ffffff",}} />
+              <FontAwesomeIcon icon={faChartColumn} />
               </div>
-              <p className={styles.navText}>Stats</p>
+              <p className={styles.navText} data-text="Stats">Stats</p>
             </Link>
           </div>
         </li>
@@ -55,9 +55,9 @@ function Sidebar(props) {
           >
             <Link to="/study" className={styles.navItem}>
               <div className={styles.icon}>
-              <FontAwesomeIcon icon={faCalendar} style={{color: "#ffffff",}} />
+              <FontAwesomeIcon icon={faCalendar} />
               </div>
-              <p className={styles.navText}>Planner</p>
+              <p className={styles.navText} data-text="Planner">Planner</p>
             </Link>
           </div>
         </li>
@@ -69,9 +69,9 @@ function Sidebar(props) {
           >
             <Link to="/dashboard/groups" className={styles.navItem}>
               <div className={styles.icon}>
-              <FontAwesomeIcon icon={faUserGroup} style={{color: "#ffffff",}} />
+              <FontAwesomeIcon icon={faUserGroup} />
               </div>
-              <p className={styles.navText}>Groups</p>
+              <p className={styles.navText} data-text="Groups">Groups</p>
             </Link>
           </div>
         </li>
@@ -83,9 +83,9 @@ function Sidebar(props) {
           >
             <Link to="/dashboard/ranking" className={styles.navItem}>
               <div className={styles.icon}>
-              <FontAwesomeIcon icon={faRankingStar} style={{color: "#ffffff",}} />
+              <FontAwesomeIcon icon={faRankingStar} />
               </div>
-              <p className={styles.navText}>Ranking</p>
+              <p className={styles.navText}  data-text="Ranking">Ranking</p>
             </Link>
           </div>
         </li>
