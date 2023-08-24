@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Main from './components/Container/Main/Main';
 import Stats from './components/Container/Stats/Stats';
@@ -24,6 +24,22 @@ function App() {
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
+
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    fetch('/api/information/accountinfo', { method: 'post' })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setUserInfo(data.userInfo);
+        };
+        console.log(data);
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  console.log(userInfo)
   return (
     <Router>
       <Routes>
