@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import styles from './StatsCalendar.module.css';
@@ -12,8 +12,7 @@ setOptions({
 
 function StatsCalendar(props) {
 
-  const [date, setDate] = React.useState(new Date());
-  const [colors] = React.useState([
+  const [colors] = useState([
     { recurring: { repeat: 'yearly', month: 12, day: 8 }, background: '#9ccc65' },
     { recurring: { repeat: 'yearly', month: 5, day: 1 }, background: 'red' },
     { recurring: { repeat: 'yearly', month: 12, day: 24 }, background: '#fff568' },
@@ -35,7 +34,7 @@ function StatsCalendar(props) {
   ]);
 
   const handleCustomTodayClick = () => {
-    setDate(new Date());
+    props.setViewDate(new Date().setHours(0, 0, 0, 0));
     if (props.isCalendarOpen) {
       props.onToggleCalendar();
     }
@@ -58,8 +57,7 @@ function StatsCalendar(props) {
   };
 
   const dateChanged = (event, inst) => {
-    console.log(event.value, inst)
-    setDate(event.value)
+    props.setViewDate(new Date(event.value.setHours(0, 0, 0, 0)))
     Datepicker.value = event.value
     if (props.isCalendarOpen) {
       props.onToggleCalendar();
@@ -75,7 +73,7 @@ function StatsCalendar(props) {
         colors={colors}
         onChange={dateChanged}
         lang={{ calendar: { today: 'test' } }}
-        value={date}
+        value={props.viewDate}
       />
     </div>
   );
