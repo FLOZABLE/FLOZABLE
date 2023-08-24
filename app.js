@@ -168,7 +168,12 @@ const dashboardRouter = require('./Router/dashboard');
 const rankingRouter = require('./Router/ranking');
 const extensionRouter = require('./Router/api');
 const notificationRouter = notificationService.notificationRouter;
-const accountApi = require('./Router/Api/account').Router;
+
+
+//API
+const studyAPI = require('./Router/Api/study');
+const informationAPI = require('./Router/Api/information');
+const rankingAPI = require('./Router/Api/ranking');
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -208,8 +213,9 @@ app.use('/api', extensionRouter);
 app.use('/notification', notificationRouter);
 
 
-app.use('/api', accountApi);
-
+app.use('/api/study', studyAPI);
+app.use('/api/information', informationAPI);
+app.use('/api/ranking', rankingAPI);
 app.use(express.static(path.join(__dirname, 'app/build')));
 app.get('/dashboard*', (req, res) => {
   console.log(req.session.loggedin, req.signedCookies)
@@ -226,9 +232,9 @@ app.use(function (err, req, res, next) {
   console.log(err.message, err.status)
 });
 
-app.get('*',function(req,res){
+/* app.get('*',function(req,res){
   res.redirect('/');
-});
+}); */
 
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);

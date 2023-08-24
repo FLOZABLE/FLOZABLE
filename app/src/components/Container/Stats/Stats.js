@@ -14,8 +14,10 @@ import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { colorsList } from '../../../constant';
 import styles from './Stats.module.css';
 import { plugins } from 'chart.js';
+import { sortSubjects } from './StatTools';
 
 function Stats(props) {
+  const today = new Date().setHours(0, 0, 0, 0);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -24,11 +26,97 @@ function Stats(props) {
   };
 
   const [statsViewer, setStatsViewer] = useState('Daily');
+  const [viewDate, setViewDate] = useState(new Date().setHours(0, 0, 0, 0));
+  const [calendarLabel, setCalendarLabel] = useState('Today');
+  const [subjects, setSubjects] = useState([]);
+  const [ranking, setRanking] = useState({});
+  //time usage pie chart
+  const [timeUsagePie, setTimeUsagePie] = useState()
+
+  const updateViewer = async (item) => {
+    setStatsViewer(item);
+  };
+
+  const updateViewDate = (date) => {
+    setViewDate(date);
+    console.log('date', new Date(date));
+  };
+
+  useEffect(() => {
+    updateCalendarLabel();
+  }, [viewDate, statsViewer]);
+
+  const updateCalendarLabel = () => {
+    if (viewDate === today) {
+      if (statsViewer === 'Daily') {
+        setCalendarLabel('Today');
+      } else if (statsViewer === 'Weekly') {
+        setCalendarLabel('This Week');
+      } else {
+        setCalendarLabel('This Month');
+      }
+    } else {
+      setCalendarLabel(`${viewDate.getMonth() + 1}/${viewDate.getDate()}`);
+    }
+  };
+
+  useEffect(() => {
+    fetch('/api/information/bring-subjects', { method: 'post' })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setSubjects(data.subjects);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/ranking', { method: 'post' })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setRanking(data.ranking);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  const updateCharts = () => {
+    const labels = subjects.map((subject) => {return subject.name});
+    const timeUsagePieData = {
+      labels: subjects.map(subject => {
+        const index = Math.floor((viewDate / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
+        return subject.daily.total[index] ? subject.daily.total[index] : 0
+      }),
+      data: subjects.map(subject => {
+        const index = Math.floor((viewDate / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
+        return subject.daily.total[index] ? subject.daily.total[index] : 0
+      })
+    }
+    setTimeUsagePie({
+      labels: labels,
+      datasets: 
+        [
+          {
+            label: timeUsagePieData.labels,
+            backgroundColor: colorsList,
+            borderColor: colorsList,
+            data: timeUsagePieData.data,
+          },
+      ]
+    })
+  };
+
+  updateCharts();
+
+  console.log(subjects);
+
 
   return (
     <div className={styles.StatsContainer}>
       <div className={`${styles.CalendarModal} ${isCalendarOpen ? styles.isOpen : ''}`}>
-        <StatsCalendar onToggleCalendar={toggleCalendar} isCalendarOpen={isCalendarOpen} viewOpt={statsViewer}/>
+        <StatsCalendar onToggleCalendar={toggleCalendar} isCalendarOpen={isCalendarOpen} viewOpt={statsViewer} setViewDate={updateViewDate} viewDate={viewDate} />
       </div>
       <StuckModal />
       <div className={` Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
@@ -37,64 +125,64 @@ function Stats(props) {
             <div className={styles.buttonArea}>
               <button className={styles.title}
                 onClick={toggleCalendar}
-              >Today <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} /></button>
-              <RadioBtn items={['Daily', 'Weekly', 'Monthly']} changeEvent={setStatsViewer} />
+              >{calendarLabel} <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} /></button>
+              <RadioBtn items={['Daily', 'Weekly', 'Monthly']} changeEvent={updateViewer} defaultViewer={0} />
             </div>
             <div className={styles.container}>
               <div className={styles.divided}>
-              <p className={styles.title}>{statsViewer} Time Usage by Subjects</p>
-              <div className={styles.chartContainer}>
-              <PieChart
-                labels={
-                  ["Math", "English", "History", "Sci", "Phy"]
-                }
+                <p className={styles.title}>{statsViewer} Time Usage by Subjects</p>
+                <div className={styles.chartContainer}>
+                  <PieChart
+                    labels={
+                      ["Math", "English", "History", "Sci", "Phy"]
+                    }
 
-                datasets={
-                  [
-                    {
-                      label: "My First dataset",
-                      backgroundColor: colorsList,
-                      borderColor: colorsList,
-                      data: [2, 20, 30, 45],
-                    },
-                  ]
-                }
-
-                options={
-                  {
-                    plugins: {
-                      legend: {
-                        position: 'bottom',
-                      },
-                      datalabels: {
-                        color: '#ffffff',
-                        font: {
-                          size: 32,
-                          family: 'Arial',
-                          weight: 700
+                    datasets={
+                      [
+                        {
+                          label: "My First dataset",
+                          backgroundColor: colorsList,
+                          borderColor: colorsList,
+                          data: [2, 20, 30, 45],
                         },
-                        formatter: (value, context, index) => {
-                          const { chart, dataIndex } = context;
-                          const labels = chart.data.labels;
-                          const label = labels[dataIndex];
-                          return ``;
+                      ]
+                    }
+
+                    options={
+                      {
+                        plugins: {
+                          legend: {
+                            position: 'bottom',
+                          },
+                          datalabels: {
+                            color: '#ffffff',
+                            font: {
+                              size: 32,
+                              family: 'Arial',
+                              weight: 700
+                            },
+                            formatter: (value, context, index) => {
+                              const { chart, dataIndex } = context;
+                              const labels = chart.data.labels;
+                              const label = labels[dataIndex];
+                              return ``;
+                            }
+                          }
                         }
                       }
                     }
-                  }
-                }
 
-                plugins={
-                  ChartDataLabel
-                }
-              />
-              </div>
+                    plugins={
+                      ChartDataLabel
+                    }
+                  />
+                </div>
               </div>
               <div className={styles.divider}>
 
               </div>
               <div className={`${styles.divided} ${styles.todoList}`}>
-              <p className={styles.title}>Your to-do list</p>
+                <p className={styles.title}>Your to-do list</p>
                 <ul>
                   <li>
                     <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
@@ -142,7 +230,7 @@ function Stats(props) {
             <div className={`${styles.smallBox} ${styles.chartsBox}`}>
               <p className={styles.title}>Today's Timeline</p>
               <div className={styles.chartContainer}>
-                <Timeline key={1}/>
+                <Timeline key={1} />
               </div>
             </div>
             <div className={`${styles.smallBox} ${styles.chartsBox}`}>
