@@ -78,6 +78,18 @@
 
 .StatsContainer .box .chartContainer {
   width: 70%;
+  position: relative;
+}
+
+.StatsContainer .box .chartContainer .noChart {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #ADC4CE;
+}
+
+.StatsContainer .box .chartContainer .noChart.true {
+  display: none;
 }
 
 .StatsContainer .box .todoList {
