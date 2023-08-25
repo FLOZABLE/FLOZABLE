@@ -14,7 +14,7 @@ import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { colorsList } from '../../../constant';
 import styles from './Stats.module.css';
 import { plugins } from 'chart.js';
-import { sortSubjects } from './StatTools';
+import { sortSubjects, getTimeUsagePieData } from './StatTools';
 
 function Stats(props) {
   const today = new Date().setHours(0, 0, 0, 0);
@@ -26,12 +26,19 @@ function Stats(props) {
   };
 
   const [statsViewer, setStatsViewer] = useState('Daily');
-  const [viewDate, setViewDate] = useState(new Date().setHours(0, 0, 0, 0));
+  const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [calendarLabel, setCalendarLabel] = useState('Today');
   const [subjects, setSubjects] = useState([]);
   const [ranking, setRanking] = useState({});
   //time usage pie chart
-  const [timeUsagePie, setTimeUsagePie] = useState()
+  const [timeUsagePie, setTimeUsagePie] = useState({labels: [], datasets: [
+    {
+      label: [],
+      backgroundColor: colorsList,
+      borderColor: colorsList,
+      data: [],
+    },
+]});
 
   const updateViewer = async (item) => {
     setStatsViewer(item);
@@ -65,7 +72,7 @@ function Stats(props) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setSubjects(data.subjects);
+          setSubjects(sortSubjects(data.subjects));
         }
       })
       .catch((error) => console.error(error));
@@ -83,23 +90,14 @@ function Stats(props) {
   }, []);
 
   const updateCharts = () => {
+    console.log(subjects)
     const labels = subjects.map((subject) => {return subject.name});
-    const timeUsagePieData = {
-      labels: subjects.map(subject => {
-        const index = Math.floor((viewDate / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
-        return subject.daily.total[index] ? subject.daily.total[index] : 0
-      }),
-      data: subjects.map(subject => {
-        const index = Math.floor((viewDate / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
-        return subject.daily.total[index] ? subject.daily.total[index] : 0
-      })
-    }
+    const timeUsagePieData = getTimeUsagePieData(subjects, viewDate, statsViewer);
     setTimeUsagePie({
       labels: labels,
       datasets: 
         [
           {
-            label: timeUsagePieData.labels,
             backgroundColor: colorsList,
             borderColor: colorsList,
             data: timeUsagePieData.data,
@@ -110,10 +108,9 @@ function Stats(props) {
 
   useEffect(() => {
     updateCharts();
-  }, []);
-
-  console.log(subjects);
-
+    console.log('updated');
+  }, [viewDate, statsViewer, subjects]);
+  console.log(timeUsagePie)
 
   return (
     <div className={styles.StatsContainer}>
@@ -134,21 +131,13 @@ function Stats(props) {
               <div className={styles.divided}>
                 <p className={styles.title}>{statsViewer} Time Usage by Subjects</p>
                 <div className={styles.chartContainer}>
+                  <div className={`${styles.noChart} ${timeUsagePie.datasets[0].data.length ? styles.true : ''}`}>
+                    <p>No Data provided</p>
+                  </div>
                   <PieChart
-                    labels={
-                      ["Math", "English", "History", "Sci", "Phy"]
-                    }
+                    labels={timeUsagePie.labels}
 
-                    datasets={
-                      [
-                        {
-                          label: "My First dataset",
-                          backgroundColor: colorsList,
-                          borderColor: colorsList,
-                          data: [2, 20, 30, 45],
-                        },
-                      ]
-                    }
+                    datasets={timeUsagePie.datasets}
 
                     options={
                       {
