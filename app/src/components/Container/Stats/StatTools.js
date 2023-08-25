@@ -254,4 +254,41 @@ function totalRangeTime(timeline) {
 };
 
 
-export { sortSubjects };
+//time usage pie
+function getTimeUsagePieData(subjects, viewDate, type) {
+  let data = [];
+  const labels = subjects.map(subject => {
+    const index = Math.floor((viewDate.getTime() / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
+    return subject.daily.total[index] ? subject.daily.total[index] : 0;
+  });
+
+  if (type === 'Daily') {
+    data = subjects.map(subject => {
+      const index = Math.floor((viewDate / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
+      return subject.daily.total[index] ? subject.daily.total[index] : 0
+    });
+  } else if (type === 'Weekly') {
+    data = subjects.map(subject => {
+      const calendarWeekStart = viewDate - viewDate.getDay() * 24 * 60 * 60 * 1000;
+      const timelineStart = subject.weekly.grouped[0][0][0] ? new Date(subject.weekly.grouped[0][0][0] * 1000) : new Date(subject.datum_point * 1000);
+      const timelineWeekStart = timelineStart.setHours(0, 0, 0, 0) - timelineStart.getDay() * 24 * 60 * 60 * 1000;
+      const index = (calendarWeekStart - timelineWeekStart) / (1000 * 60 * 60 * 24 * 7)
+      return subject.weekly.total[index] ? subject.weekly.total[index] : 0
+    });
+  } else {
+    data = subjects.map(subject => {
+      const calendarYear = viewDate.getFullYear();
+      const calendarMonth = viewDate.getMonth();
+      const timelineStart = subject.monthly.grouped[0][0][0] ? new Date(subject.monthly.grouped[0][0][0] * 1000) : new Date(subject.datum_point * 1000);
+      const timelineYear = timelineStart.getFullYear();
+      const timelineMonth = timelineStart.getMonth();
+      const index = (calendarYear - timelineYear) * 12 + calendarMonth - timelineMonth;
+      return subject.monthly.total[index] ? subject.monthly.total[index] : 0
+    });
+  };
+
+  return ({ labels: labels, data: data });
+};
+
+
+export { sortSubjects, getTimeUsagePieData };
