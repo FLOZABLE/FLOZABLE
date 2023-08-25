@@ -14,7 +14,7 @@ import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { colorsList } from '../../../constant';
 import styles from './Stats.module.css';
 import { plugins } from 'chart.js';
-import { sortSubjects, getTimeUsagePieData } from './StatTools';
+import { sortSubjects, getTimeUsagePieData, updateHourlyMatrix } from './StatTools';
 
 function Stats(props) {
   const today = new Date().setHours(0, 0, 0, 0);
@@ -31,14 +31,18 @@ function Stats(props) {
   const [subjects, setSubjects] = useState([]);
   const [ranking, setRanking] = useState({});
   //time usage pie chart
-  const [timeUsagePie, setTimeUsagePie] = useState({labels: [], datasets: [
-    {
-      label: [],
-      backgroundColor: colorsList,
-      borderColor: colorsList,
-      data: [],
-    },
-]});
+  const [timeUsagePie, setTimeUsagePie] = useState({
+    labels: [], datasets: [
+      {
+        label: [],
+        backgroundColor: colorsList,
+        borderColor: colorsList,
+        data: [],
+      },
+    ]
+  });
+
+  const timeLineRef = useRef(null);
 
   const updateViewer = async (item) => {
     setStatsViewer(item);
@@ -91,23 +95,24 @@ function Stats(props) {
 
   const updateCharts = () => {
     console.log(subjects)
-    const labels = subjects.map((subject) => {return subject.name});
+    const labels = subjects.map((subject) => { return subject.name });
     const timeUsagePieData = getTimeUsagePieData(subjects, viewDate, statsViewer);
     setTimeUsagePie({
       labels: labels,
-      datasets: 
+      datasets:
         [
           {
             backgroundColor: colorsList,
             borderColor: colorsList,
             data: timeUsagePieData.data,
           },
-      ]
+        ]
     })
   };
 
   useEffect(() => {
     updateCharts();
+    updateHourlyMatrix(subjects, timeLineRef);
     console.log('updated');
   }, [viewDate, statsViewer, subjects]);
   console.log(timeUsagePie)
@@ -131,7 +136,7 @@ function Stats(props) {
               <div className={styles.divided}>
                 <p className={styles.title}>{statsViewer} Time Usage by Subjects</p>
                 <div className={styles.chartContainer}>
-                  <div className={`${styles.noChart} ${timeUsagePie.datasets[0].data.length ? styles.true : ''}`}>
+                  <div className={`${styles.noChart} ${timeUsagePie.datasets[0].data.reduce((accumulator, currentValue) => accumulator + currentValue, 0) ? styles.true : ''}`}>
                     <p>No Data provided</p>
                   </div>
                   <PieChart
@@ -221,7 +226,7 @@ function Stats(props) {
             <div className={`${styles.smallBox} ${styles.chartsBox}`}>
               <p className={styles.title}>Today's Timeline</p>
               <div className={styles.chartContainer}>
-                <Timeline key={1} />
+                <Timeline ref={timeLineRef} />
               </div>
             </div>
             <div className={`${styles.smallBox} ${styles.chartsBox}`}>

@@ -1,3 +1,5 @@
+import styles from './Stats.module.css';
+
 const usersList = [];
 const myRanking = {
   daily: [],
@@ -290,5 +292,66 @@ function getTimeUsagePieData(subjects, viewDate, type) {
   return ({ labels: labels, data: data });
 };
 
+function updateHourlyMatrix(subjects, matrixChartWidth) {
+  const matrixChart = [];
+  subjects.map((subject, i) => {
+    subject.map(([start, stop]) => {
+      let startTimeHr = new Date(start * 1000).getHours();
+      let startTimeMin = new Date(start * 1000).getMinutes();
+      let stopTimeHr = new Date(stop * 1000).getHours();
+      let stopTimeMin = new Date(stop * 1000).getMinutes();
+      if (stopTimeMin - startTimeMin && (startTimeHr == stopTimeHr)) {
+/*         const div1 = document.createElement('div');
+        div1.style.top = 27 + startTimeHr * 30 + 'px';
+        div1.style.left = 100 + (matrixChart.clientWidth - 100) / 60 * startTimeMin + 'px';
+        div1.style.width = (matrixChart.clientWidth - 100) / 60 * (stopTimeMin - startTimeMin) + 'px';
+        div1.style.backgroundColor = subjectInfo[i][1];
+        div1.classList.add('activity'); */
+        matrixChart.push(
+          <div className={styles.activity} style={{top: 27 + startTimeHr * 30 + 'px', left: 100 + (matrixChartWidth - 100) / 60 * startTimeMin + 'px', width: (matrixChart.clientWidth - 100) / 60 * (stopTimeMin - startTimeMin) + 'px',backgroundColor: 'red'}}>
+          </div>
+        );
+      } else if (stopTimeMin - startTimeMin) {
+        /* const div1 = document.createElement('div');
+        div1.style.top = 27 + startTimeHr * 30 + 'px';
+        div1.style.left = 100 + (matrixChart.clientWidth - 100) / 60 * startTimeMin + 'px';
+        div1.style.width = (matrixChart.clientWidth - 100 - ((matrixChart.clientWidth - 100) / 60 * startTimeMin)) + 'px';
+        div1.style.backgroundColor = subjectInfo[i][1];
+        div1.classList.add('activity');
+        matrixChart.appendChild(div1); */
+        matrixChart.push(
+          <div className={styles.activity} style={{top: 27 + startTimeHr * 30 + 'px', left: 100 + (matrixChartWidth - 100) / 60 * startTimeMin + 'px', width: (matrixChart.clientWidth - 100) / 60 * (stopTimeMin - startTimeMin) + 'px',backgroundColor: 'red'}}>
+          </div>
+        );
+        while (startTimeHr < stopTimeHr - 1) {
+          startTimeHr++;
+          /* const divs = document.createElement('div');
+          divs.style.top = 27 + startTimeHr * 30 + 'px';
+          divs.style.left = '100px';
+          divs.style.width = matrixChart.clientWidth - 100 + 'px';
+          divs.style.backgroundColor = subjectInfo[i][1];
+          divs.classList.add('activity');
+          matrixChart.appendChild(divs); */
+          matrixChart.push(
+            <div className={styles.activity} style={{top: 27 + startTimeHr * 30 + 'px', left: 100 + (matrixChartWidth - 100) / 60 * startTimeMin + 'px', width: (matrixChart.clientWidth - 100) / 60 * (stopTimeMin - startTimeMin) + 'px',backgroundColor: 'red'}}>
+            </div>
+          );
+        }
+        /* startTimeHr++;
+        const div2 = document.createElement('div');
+        div2.style.top = 27 + startTimeHr * 30 + 'px';
+        div2.style.left = 100 + 'px';
+        div2.style.width = (matrixChart.clientWidth - 100) / 60 * stopTimeMin + 'px';
+        div2.style.backgroundColor = subjectInfo[i][1];
+        div2.classList.add('activity');
+        matrixChart.appendChild(div2); */
+        matrixChart.push(
+          <div className={styles.activity} style={{top: 27 + startTimeHr * 30 + 'px', left: 100 + (matrixChartWidth - 100) / 60 * startTimeMin + 'px', width: (matrixChart.clientWidth - 100) / 60 * (stopTimeMin - startTimeMin) + 'px',backgroundColor: 'red'}}>
+          </div>
+        );
+      }
+    })
+  })
+};
 
-export { sortSubjects, getTimeUsagePieData };
+export { sortSubjects, getTimeUsagePieData,updateHourlyMatrix };
