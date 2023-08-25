@@ -108,7 +108,9 @@ function Stats(props) {
     })
   };
 
-  updateCharts();
+  useEffect(() => {
+    updateCharts();
+  }, []);
 
   console.log(subjects);
 
