@@ -16,6 +16,8 @@ import styles from './Stats.module.css';
 import { plugins } from 'chart.js';
 import { sortSubjects, getTimeUsagePieData, updateHourlyMatrix } from './StatTools';
 
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+console.log('server',serverOrigin, process.env)
 function Stats(props) {
   const today = new Date().setHours(0, 0, 0, 0);
 
@@ -42,7 +44,7 @@ function Stats(props) {
     ]
   });
 
-  const timeLineRef = useRef(null);
+  const timelineRef = useRef(null);
 
   const updateViewer = async (item) => {
     setStatsViewer(item);
@@ -72,18 +74,19 @@ function Stats(props) {
   };
 
   useEffect(() => {
-    fetch('/api/information/bring-subjects', { method: 'post' })
+    fetch(`${serverOrigin}/api/information/bring-subjects`, { method: 'post' })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
           setSubjects(sortSubjects(data.subjects));
+          console.log(subjects);
         }
       })
       .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
-    fetch('/api/ranking', { method: 'post' })
+    fetch(`${serverOrigin}/api/ranking`, { method: 'post' })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -112,9 +115,12 @@ function Stats(props) {
 
   useEffect(() => {
     updateCharts();
-    updateHourlyMatrix(subjects, timeLineRef);
+    console.log('timereffffff', timelineRef, timelineRef.current, timelineRef.current.offsetWidth, subjects)
+    if (timelineRef.current) {
+      updateHourlyMatrix(subjects, timelineRef.current.offsetWidth, viewDate);
+    }
     console.log('updated');
-  }, [viewDate, statsViewer, subjects]);
+  }, [viewDate, statsViewer, subjects, timelineRef]);
   console.log(timeUsagePie)
 
   return (
@@ -226,7 +232,7 @@ function Stats(props) {
             <div className={`${styles.smallBox} ${styles.chartsBox}`}>
               <p className={styles.title}>Today's Timeline</p>
               <div className={styles.chartContainer}>
-                <Timeline ref={timeLineRef} />
+                <Timeline refT={timelineRef} />
               </div>
             </div>
             <div className={`${styles.smallBox} ${styles.chartsBox}`}>

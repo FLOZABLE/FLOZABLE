@@ -12,7 +12,7 @@ const http = require('http');
 const crypto = require("crypto");
 const dotenv = require("dotenv");
 const cors = require('cors');
-dotenv.config({path: ".env.production"});
+dotenv.config({path: ".env.development"});
 const server = http.createServer(app);
 const port = process.env.PORT;
 const account =require("./Router/account");
@@ -28,8 +28,11 @@ const testTools = require('./test/generate');
 //testTools.testGroupGeneration(40);
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-app.use(cors({origin: 'chrome-extension://dalobnhjngmjgnkdjkeonfnbbkaclcpm'}));
-
+//app.use(cors({origin: 'chrome-extension://dalobnhjngmjgnkdjkeonfnbbkaclcpm'}));
+console.log(process.env.NODE_ENV)
+if (process.env.NODE_ENV === 'development') {
+  app.use(cors());
+}
 /* app.use(helmet.permittedCrossDomainPolicies());
 app.use(helmet.referrerPolicy());
 app.use(helmet.xssFilter());
@@ -175,6 +178,9 @@ const studyAPI = require('./Router/Api/study');
 const informationAPI = require('./Router/Api/information');
 const rankingAPI = require('./Router/Api/ranking');
 
+//test
+const testAPI = require('./test/Api');
+
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
 app.set('socketio', io);
@@ -212,11 +218,15 @@ app.use('/ranking', rankingRouter);
 app.use('/api', extensionRouter);
 app.use('/notification', notificationRouter);
 
-
+//api
 app.use('/api/study', studyAPI);
 app.use('/api/information', informationAPI);
 app.use('/api/ranking', rankingAPI);
 app.use(express.static(path.join(__dirname, 'app/build')));
+
+//test api
+app.use('/test/api', testAPI);
+
 app.get('/dashboard*', (req, res) => {
   console.log(req.session.loggedin, req.signedCookies)
   account.autoSignin(req, res, (() => {
