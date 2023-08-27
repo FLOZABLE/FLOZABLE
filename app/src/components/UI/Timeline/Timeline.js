@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./Timeline.module.css";
 
-function Timeline() {
+function Timeline(props) {
   const timelineEl = [];
   for (let hour = 0; hour < 24; hour++) {
     timelineEl.push(
@@ -16,7 +16,7 @@ function Timeline() {
     )
   }
   return (
-    <div className={styles.TimelineContainer}>
+    <div className={styles.TimelineContainer} ref={props.refT}>
       <div className={styles.rowHeader}>
         <div>0</div>
         <div>10</div>
