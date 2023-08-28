@@ -1,79 +1,67 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faUser } from '@fortawesome/free-solid-svg-icons';
-import StatsCalendar from '../../UI/StatsCalendar/StatsCalendar';
+import { faBullseye, faHeart, faPeopleGroup, faStopwatch } from '@fortawesome/free-solid-svg-icons';
 import StuckModal from '../../UI/StuckModal/StuckModal';
-import RadioBtn from '../../UI/RadioBtn/RadioBtn';
+import Search from '../../UI/Search/Search';
+import SearchTags from '../../UI/SearchTags/SearchTags';
 import styles from './Groups.module.css';
 
 function Ranking(props) {
-
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-
-  const toggleCalendar = () => {
-    setIsCalendarOpen(!isCalendarOpen);
-  };
+  const [searched, setSearched] = useState(false);
+  const [tags, setTags] = useState([]);
 
   return (
     <div className={styles.GroupsContainer}>
-      <div className={`${styles.CalendarModal} ${isCalendarOpen ? styles.isOpen : ''}`}>
-        <StatsCalendar onToggleCalendar={toggleCalendar} isCalendarOpen={isCalendarOpen} />
-      </div>
       <StuckModal />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
-              <button className={styles.title}
-                onClick={toggleCalendar}
-              >Today <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} /></button>
-              <RadioBtn items={['Daily', 'Weekly', 'Monthly']} />
+              <p className={styles.title}>Groups</p>
             </div>
-            <div className={`${styles.container} ${styles.rankingContainer}`}>
-              <div className={styles.header}>
-                <p>Day</p>
-                <p>Week</p>
-                <p>Month</p>
+            <div className={`${styles.container} ${styles.myGroups}`}>
+              <div className={styles.group}>
+                <div className={styles.name}>
+                  Eng
+                </div>
+                <div className={styles.explanation}>
+                  <ul className={styles.info}>
+                    <li>
+                      <p>dd</p>
+                      <FontAwesomeIcon icon={faPeopleGroup} />
+                    </li>
+                    <li>
+                      <p>9hr</p>
+                      <FontAwesomeIcon icon={faBullseye} />
+                    </li>
+                    <li>
+                      <p>dd</p>
+                      <FontAwesomeIcon icon={faStopwatch} />
+                    </li>
+                    <li>
+                      <p>dd</p>
+                      <FontAwesomeIcon icon={faHeart} />
+                    </li>
+                  </ul>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint voluptatibus similique, accusantium quia ad delectus ipsa praesentium quasi quas minus nostrum nam repellat ea architecto natus. Ut vero modi ratione?
+                </div>
+                <ul className={styles.tags}>
+                  <li className={styles.tag}>tt</li>
+                  <li className={styles.tag}>tt</li>
+                  <li className={styles.tag}>tt</li>
+                  <li className={styles.tag}>tt</li>
+                </ul>
               </div>
-              <ul>
-                <li>
-                  <div className={styles.circle}>
-                    <p>1</p>
-                  </div>
-                  <div className={styles.userInfo}>
-                    <div className={styles.profileImg}>
-                      <FontAwesomeIcon icon={faUser}/>
-                    </div>
-                    <p className={styles.name}>KimTaehumMossol</p>
-                    <div className={styles.ranking}>
-                      <p>16h</p>
-                      <div className={styles.dash}></div>
-                      <p>12h</p>
-                      <div className={styles.dash}></div>
-                      <p>500h</p>
-                    </div>
-                  </div>
-                </li>
-                <div className={styles.divider}></div>
-                <li>
-                  <div className={styles.circle}>
-                    <p>1</p>
-                  </div>
-                  <div className={styles.userInfo}>
-                    <div className={styles.profileImg}>
-                      <FontAwesomeIcon icon={faUser}/>
-                    </div>
-                    <p className={styles.name}>KimTaehumMossol</p>
-                    <div className={styles.ranking}>
-                      <p>16h</p>
-                      <div className={styles.dash}></div>
-                      <p>12h</p>
-                      <div className={styles.dash}></div>
-                      <p>500h</p>
-                    </div>
-                  </div>
-                </li>
-              </ul>
+            </div>
+            <div className={`${styles.container} ${styles.allGroups}`}>
+              <div className={styles.searchZone}>
+                <SearchTags />
+                <Search searched={searched} setSearched={setSearched}/>
+                <button id="create-group-btn">
+                  <i className="fa-solid fa-plus"></i>
+                  Create new group
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -20,12 +20,7 @@
   border-radius: 20px;
   width: fit-content;
   padding: 10px 30px;
-  cursor: pointer;
   color: #545454;
-}
-
-.GroupsContainer .box button.title {
-  cursor: pointer;
 }
 
 .GroupsContainer .box button.title:hover {
@@ -54,127 +49,56 @@
   margin-bottom: 50px;
 }
 
-.GroupsContainer .boxes .smallBoxContainer {
-  display: flex;
-  width: 100%;
+
+.GroupsContainer .box .container.myGroups {
+  background-color: unset;
+  box-shadow: none;
 }
 
-.GroupsContainer .boxes .smallBox {
+.GroupsContainer .group {
+  width: 300px;
+  height: 200px;
   background-color: #f7f9fd;
   border-radius: 40px;
+  padding: 20px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  margin: 0px 30px 50px;
-  width: 100%;
-  padding: 30px;
   position: relative;
-  display: flex;
 }
 
-.GroupsContainer .boxes .smallBox .circle {
-  background-color: #5261f4;
-  height: 50px;
-  width: 50px;
-  border-radius: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 20px;
+.GroupsContainer .group .explanation {
+  border-top: 1px solid #545454;
+  position: relative;
+  margin-top: 16px;
+  padding-top: 20px;
 }
 
-.GroupsContainer .CalendarModal {
-  position: fixed;
-  width: 500px;
-  height: 500px;
-  z-index: 2;
-  border-radius: 20px;
-  display: none;
-  left: 50vw;
-  top: 50vh;
-  transform: translate(-50%, -50%);
-  background-color: #ADC4CE;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-.GroupsContainer .CalendarModal.isOpen {
-  display: block;
-}
-
-.GroupsContainer .container ul {
-  width: 100%;
-}
-
-.GroupsContainer .container ul li {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-}
-
-.GroupsContainer .GroupsContainer {
-  display: flex;
-  flex-direction: column;
-}
-
-.GroupsContainer .GroupsContainer .header{
-  display: flex;
-  margin-left: auto;
-}
-
-.GroupsContainer .GroupsContainer .header p {
-  margin-left: 10px;
-  color: #AEB4B7;
-  font-weight: 100;
-}
-
-.GroupsContainer .GroupsContainer li .circle {
-  background-color: red;
-  border-radius: 25px;
-  height: 50px;
-  width: 50px;
+.GroupsContainer .group .tags {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
 }
 
-.GroupsContainer .GroupsContainer .userInfo{
+.GroupsContainer .group .tags .tag{
+  margin: 0px 5px;
+  padding: 2px 10px;
+  border-radius: 10px;
+  background-color: blanchedalmond;
+}
+
+.GroupsContainer .group .info {
+  position: absolute;
   display: flex;
-  margin-left: 20px;
-  width: 100%;
+  background-color: blanchedalmond;
+  height: 33px;
+  border-radius: 17px;
+  padding: 0px 10px;
+  top: -16px;
 }
 
-.GroupsContainer .GroupsContainer .userInfo .profileImg{
-  display: flex;
-  background-color: #e5e6e7;
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  justify-content: center;
-  align-items: center;
-  margin-right: 7px;
+.GroupsContainer .group .info li {
+  margin: 0px 3px;
 }
 
-.GroupsContainer .dash {
-  background-color: #545454;
-  width: 4px;
-  height: 100%;
-  rotate: 20deg;
-  border-radius: 2px;
-  margin: 0px 12px;
-}
-
-.GroupsContainer .divider {
-  width: calc(100% - 60px);
-  margin: 15px 0px 15px 60px;
-  background-color: #e5e6e7;
-  height: 3px;
-  border-radius: 2px;
-}
-.GroupsContainer .GroupsContainer li .userInfo .ranking{
-  display: flex;
-  font-weight: 900;
-  font-size: 32px;
-  margin-left: auto;
+.GroupsContainer .group .info li p {
+  margin-right: 3px;
 }

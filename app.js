@@ -213,7 +213,7 @@ app.use('/account', accountRouter);
 app.use('/study', studyRouter);
 app.use('/groups', groupsRouter);
 app.use('/links', linksRouter);
-/* app.use('/dashboard', dashboardRouter); */
+app.use('/dashboards', dashboardRouter);
 app.use('/ranking', rankingRouter);
 app.use('/api', extensionRouter);
 app.use('/notification', notificationRouter);
