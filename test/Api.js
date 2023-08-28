@@ -9,6 +9,8 @@ const NodeCache = require('node-cache');
 const cache = new NodeCache();
 const {DateTime} = require('luxon');
 
+
+const tester = 't1';
 function generateRandomId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -23,9 +25,17 @@ function generateRandomId(length) {
 
 Router.post('/information/bring-subjects', async (req, res) => {
   const connection = await (await pool).getConnection();
-  const [userInfo] = await connection.query("SELECT subjects FROM users WHERE name = 't1'");
+  const [userInfo] = await connection.query("SELECT subjects FROM users WHERE name = ?", [tester]);
   connection.release();
   res.send({success: true, subjects: userInfo.subjects});
+});
+
+Router.post('/information/accountinfo', async(req, res) => {
+  const connection = await (await pool).getConnection();
+  let userInfo = await connection.query("SELECT user_id, name, email, language FROM users WHERE name = ?", [tester]);
+  connection.release();
+  userInfo = userInfo[0];
+  res.send({success: true, userInfo: userInfo});
 });
 
 Router.post("/ranking", async (req, res) => {

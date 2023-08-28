@@ -55,6 +55,7 @@ function Timeline(props) {
       </div>
       <div className={styles.timelineWrapper}>
         {timelineEl}
+        {props.dailyTimeline}
       </div>
     </div>
   )
