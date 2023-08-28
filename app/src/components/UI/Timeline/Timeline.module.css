@@ -9,6 +9,7 @@
 
 .TimelineContainer .timelineWrapper {
   padding: 50px 0px 0px 50px;
+  position: relative;
 }
 
 .TimelineContainer .box {
@@ -41,4 +42,8 @@
   height: calc(100% - 50px);
   font-size: 20px;
   text-align: right;
+}
+
+.TimelineContainer .activity {
+  opacity: 0;
 }
