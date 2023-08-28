@@ -1,0 +1,19 @@
+.SearchTags {
+  width: 500px;
+}
+
+.SearchTags li,
+.SearchTags .title {
+  display: flex;
+}
+
+.SearchTags i.fa-tags {
+  font-size: 30px;
+}
+
+.SearchTags .removeAll {
+  background-color: #FF9494;
+  font-weight: 800;
+  height: 40px;
+  border-radius: 20px;
+}
