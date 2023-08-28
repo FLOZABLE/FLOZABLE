@@ -9,14 +9,6 @@ const path = require('path');
   res.sendFile(path.join(__dirname, '..', 'app/build', 'index.html'));
 }) */
 
-Router.get("/*", (req, res) => {
-  console.log(req.session.loggedin, req.signedCookies)
-  account.autoSignin(req, res, (() => {
-    res.sendFile(path.join(__dirname, 'app/build', 'index.html'));
-  })
-  );
-})
-
 Router.get("/stats", async (req, res) => {
   account.autoSignin(req, res, (() => {
     res.render("dashboards/stats.ejs", { userInfo: req.session.userInfo });
