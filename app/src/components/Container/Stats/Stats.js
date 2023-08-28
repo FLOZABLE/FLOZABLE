@@ -14,10 +14,10 @@ import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { colorsList } from '../../../constant';
 import styles from './Stats.module.css';
 import { plugins } from 'chart.js';
-import { sortSubjects, getTimeUsagePieData, updateHourlyMatrix } from './StatTools';
+import { sortSubjects, updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, sortRanking, updateRankingTrend } from './StatTools';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
-console.log('server',serverOrigin, process.env)
+console.log('server', serverOrigin, process.env)
 function Stats(props) {
   const today = new Date().setHours(0, 0, 0, 0);
 
@@ -32,6 +32,8 @@ function Stats(props) {
   const [calendarLabel, setCalendarLabel] = useState('Today');
   const [subjects, setSubjects] = useState([]);
   const [ranking, setRanking] = useState({});
+  const [dailyTimeline, setDailyTimeline] = useState([]);
+
   //time usage pie chart
   const [timeUsagePie, setTimeUsagePie] = useState({
     labels: [], datasets: [
@@ -43,6 +45,36 @@ function Stats(props) {
       },
     ]
   });
+  //hourly histogram
+  const [hourlyHistogram, setHourlyHistogram] = useState({
+    data: [],
+  });
+
+  //time trend
+  const [timeTrend, setTimeTrend] = useState({
+    labels: [],
+    datasets:
+      [
+        {
+          backgroundColor: "#fd7f6f",
+          borderColor: "#fd7f6f",
+          data: [],
+        },
+      ]
+  });
+
+  //ranking trend
+  const [rankingTrend, setRankingTrend] = useState({
+    labels: [],
+    datasets:
+      [
+        {
+          backgroundColor: "#fd7f6f",
+          borderColor: "#fd7f6f",
+          data: [],
+        },
+      ]
+  })
 
   const timelineRef = useRef(null);
 
@@ -52,7 +84,6 @@ function Stats(props) {
 
   const updateViewDate = (date) => {
     setViewDate(date);
-    console.log('date', new Date(date));
   };
 
   useEffect(() => {
@@ -79,7 +110,6 @@ function Stats(props) {
       .then((data) => {
         if (data.success) {
           setSubjects(sortSubjects(data.subjects));
-          console.log(subjects);
         }
       })
       .catch((error) => console.error(error));
@@ -90,16 +120,18 @@ function Stats(props) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setRanking(data.ranking);
+          const sortedRanking = sortRanking(data.ranking, props.userInfo);
+          setRanking(sortedRanking);
+          console.log(sortedRanking, data.ranking);
         }
       })
       .catch((error) => console.error(error));
-  }, []);
+  }, [props.userInfo]);
 
-  const updateCharts = () => {
-    console.log(subjects)
+
+  useEffect(() => {
     const labels = subjects.map((subject) => { return subject.name });
-    const timeUsagePieData = getTimeUsagePieData(subjects, viewDate, statsViewer);
+    const timeUsagePieData = updateTimeUsagePie(subjects, viewDate, statsViewer);
     setTimeUsagePie({
       labels: labels,
       datasets:
@@ -110,18 +142,40 @@ function Stats(props) {
             data: timeUsagePieData.data,
           },
         ]
-    })
-  };
-
-  useEffect(() => {
-    updateCharts();
-    console.log('timereffffff', timelineRef, timelineRef.current, timelineRef.current.offsetWidth, subjects)
+    });
+    console.log(timelineRef);
     if (timelineRef.current) {
-      updateHourlyMatrix(subjects, timelineRef.current.offsetWidth, viewDate);
+      setDailyTimeline(updateHourlyMatrix(subjects, timelineRef.current.offsetWidth, viewDate));
     }
-    console.log('updated');
+    const hourlyHistogramData = updateHourlyHistogram(subjects, statsViewer, viewDate);
+    setHourlyHistogram({
+      data: hourlyHistogramData
+    });
+    const timeTrend = updateTimeTrend(subjects, statsViewer);
+    setTimeTrend({
+      labels: timeTrend[0],
+        datasets:
+          [
+            {
+              backgroundColor: "#fd7f6f",
+              borderColor: "#fd7f6f",
+              data: timeTrend[1],
+            },
+          ]
+    });
+    const rankingTrend = updateRankingTrend(ranking, statsViewer);
+    setRankingTrend({
+      labels: rankingTrend[0],
+      datasets:
+        [
+          {
+            backgroundColor: "#fd7f6f",
+            borderColor: "#fd7f6f",
+            data: rankingTrend[1],
+          },
+        ]
+    });
   }, [viewDate, statsViewer, subjects, timelineRef]);
-  console.log(timeUsagePie)
 
   return (
     <div className={styles.StatsContainer}>
@@ -232,7 +286,7 @@ function Stats(props) {
             <div className={`${styles.smallBox} ${styles.chartsBox}`}>
               <p className={styles.title}>Today's Timeline</p>
               <div className={styles.chartContainer}>
-                <Timeline refT={timelineRef} />
+                <Timeline refT={timelineRef} dailyTimeline={dailyTimeline} />
               </div>
             </div>
             <div className={`${styles.smallBox} ${styles.chartsBox}`}>
@@ -246,7 +300,7 @@ function Stats(props) {
                   datasets={
                     [
                       {
-                        data: [10],
+                        data: hourlyHistogram.data,
                         backgroundColor: colorsList
                       }
                     ]
@@ -308,19 +362,10 @@ function Stats(props) {
               <div className={styles.chartContainer}>
                 <LineChart
                   labels={
-                    ["Math", "English", "History", "Sci"]
+                    timeTrend.labels
                   }
 
-                  datasets={
-                    [
-                      {
-                        label: "My First dataset",
-                        backgroundColor: "#fd7f6f",
-                        borderColor: "#fd7f6f",
-                        data: [2, 10, 3, 1],
-                      },
-                    ]
-                  }
+                  datasets={timeTrend.datasets}
 
                   options={
                     {
@@ -375,19 +420,10 @@ function Stats(props) {
               <div className={styles.chartContainer}>
                 <LineChart
                   labels={
-                    ["Math", "English", "History", "Sci", "Phy"]
+                    rankingTrend.labels
                   }
 
-                  datasets={
-                    [
-                      {
-                        label: "My First dataset",
-                        backgroundColor: "#fd7f6f",
-                        borderColor: "#fd7f6f",
-                        data: [2, 10, 3, 1],
-                      },
-                    ]
-                  }
+                  datasets={rankingTrend.datasets}
 
                   options={
                     {

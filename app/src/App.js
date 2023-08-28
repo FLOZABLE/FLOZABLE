@@ -8,6 +8,7 @@ import './App.css';
 import Sidebar from './components/UI/Sidebar/Sidebar';
 import Header from './components/UI/Header/Header';
 import Footer from './components/UI/Footer/Footer';
+const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -28,18 +29,16 @@ function App() {
   const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
-    fetch('/api/information/accountinfo', { method: 'post' })
+    fetch(`${serverOrigin}/api/information/accountinfo`, { method: 'post' })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
           setUserInfo(data.userInfo);
         };
-        console.log(data);
       })
       .catch((error) => console.error(error));
   }, []);
 
-  console.log(userInfo)
   return (
     <Router>
       <Routes>
@@ -51,7 +50,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Main setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
+            <Main setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo}/>
             <Footer />
           </div>
         } />
@@ -63,7 +62,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Stats setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
+            <Stats setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo}/>
             <Footer />
           </div>
         } />
@@ -75,7 +74,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Ranking setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
+            <Ranking setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo}/>
             <Footer />
           </div>
         } />
@@ -87,7 +86,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
+            <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo}/>
             <Footer />
           </div>
         } />
