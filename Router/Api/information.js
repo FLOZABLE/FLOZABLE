@@ -10,9 +10,8 @@ const {DateTime} = require('luxon');
 Router.post('/accountinfo', (req, res) => {
   account.autoSignin(req, res, (async() => {
     const connection = await (await pool).getConnection();
-    let userInfo = await connection.query("SELECT user_id, name, email, language FROM users WHERE user_id = ?", [req.session.user_id]);
+    const [userInfo] = await connection.query("SELECT user_id, name, email, language, groups FROM users WHERE user_id = ?", [req.session.user_id]);
     connection.release();
-    userInfo = userInfo[0];
     res.send({success: true, userInfo: userInfo});
   }));
 });
