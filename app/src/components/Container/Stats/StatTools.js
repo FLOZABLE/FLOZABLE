@@ -471,6 +471,7 @@ function updateTimeTrend(subjects, type) {
 };
 
 function sortRanking(ranking, userInfo) {
+  console.log('ranking',ranking)
   const myRanking = {
     daily: [],
     weekly: [],
@@ -508,7 +509,6 @@ function sortRanking(ranking, userInfo) {
   myRanking.daily.reverse();
   myRanking.weekly.reverse();
   myRanking.monthly.reverse();
-
   return myRanking;
 }
 
@@ -547,6 +547,7 @@ function updateRankingTrend(ranking, type) {
       });
     };
   };
+  console.log(labels, data, ranking.weekly, ranking)
   return [labels, data];
 }
 

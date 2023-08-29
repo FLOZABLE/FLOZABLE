@@ -14,7 +14,8 @@ Router.post("/", async (req, res) => {
     const weeklyRanking = [];
     const monthlyRanking = [];
   
-    const timeZone = req.session.userInfo.timeZone;
+    //const timeZone = req.session.userInfo.timeZone;
+    const timeZone = 'America/Los_Angeles';
     const userDateTime = DateTime.now().setZone(timeZone);
     const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     const unixTimestamp = twelveAmDateTime.toMillis();
@@ -40,16 +41,14 @@ Router.post("/", async (req, res) => {
   
       let missingDay = (date.toMillis() - datum_point.toMillis()) / (1000 * 60 * 60 * 24) - daily.length + 1;
   
-      let dateWeekStart = date.toMillis() - date.toMillis() * 24 * 60 * 60 * 1000;
+      let dateWeekStart = date.startOf('week').toMillis();
       const day = datum_point.weekday == 7 ? 0 : datum_point.weekday;
-      let datum_pointWeekStart = datum_point.toMillis() - day * 24 * 60 * 60 * 1000;
+      let datum_pointWeekStart = datum_point.startOf('week').toMillis();
       let missingWeek = (dateWeekStart - datum_pointWeekStart) / (1000 * 60 * 60 * 24 * 7) - weekly.length + 1;
       let missingMonth = 0 - monthly.length + 1;
       let datumYear = datum_point.year;
       let datumMonth = datum_point.month;
-      //let datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
       let datumMonthStart = DateTime.local(datumYear, datumMonth, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-      //const dateMonthStart = new Date(date.getFullYear(), date.getMonth(), 1).setHours(0, 0, 0, 0);
       const dateMonthStart = DateTime.local(date.year, date.month, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
       while(datumMonthStart < dateMonthStart) {
         datumMonth += 1;
@@ -58,13 +57,13 @@ Router.post("/", async (req, res) => {
           datumYear += 1;
         }
         missingMonth += 1;
-        //datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
         datumMonthStart = DateTime.local(datumYear, datumMonth, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-      }
+      };
+
       for(let i = 0; i < missingDay; i++) {
         daily.push(0);
       }
-  
+
       for(let i = 0; i < missingWeek; i++) {
         weekly.push(0);
       }

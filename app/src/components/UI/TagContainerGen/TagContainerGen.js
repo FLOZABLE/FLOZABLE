@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import styles from "./TagContainerGen.module.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTags, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 class TagContainerGen extends Component {
   constructor(props) {
@@ -6,10 +9,12 @@ class TagContainerGen extends Component {
     this.state = {
       maxTags: props.maxTags,
       createdTags: [],
-      inputValue: ''
+      inputValue: '',
+      tagCount: props.maxTags
     };
     this.addTag = this.addTag.bind(this);
     this.remove = this.remove.bind(this);
+    this.createTag = this.createTag.bind(this);
   }
 
   componentDidMount() {
@@ -22,19 +27,20 @@ class TagContainerGen extends Component {
 
   remove(tag) {
     const updatedTags = this.state.createdTags.filter(t => t !== tag);
-    this.setState({ createdTags: updatedTags }, this.createTag);
-    this.countTags();
+    this.setState({ createdTags: updatedTags }, () => {
+      this.createTag();
+      this.props.handleCreatedTagsChange(updatedTags); // Call the callback to update the state in the parent component
+      this.countTags();
+    });
   }
 
   createTag() {
-    const tagsList = this.state.createdTags.map((tag, index) => (
+    return this.state.createdTags.map((tag, index) => (
       <li key={index}>
-        <p className="tags">{tag}</p>
-        <i className="fa-solid fa-xmark" onClick={() => this.remove(tag)}></i>
+        <p className={styles.tags}>{tag}</p>
+        <FontAwesomeIcon icon={faXmark} className={styles.closeIcon} onClick={() => this.remove(tag)}/>
       </li>
     ));
-
-    return tagsList;
   }
 
   addTag(e) {
@@ -58,16 +64,18 @@ class TagContainerGen extends Component {
 
   render() {
     return (
-      <div className="tagContainer">
-        <div className="title">
-          <i className="fa-solid fa-tags"></i>
+      <div className={styles.TagContainerGen}>
+        <div className={styles.title}>
+          <i className={`fa-solid fa-tags ${styles.icon}`}></i>
+          <FontAwesomeIcon icon={faTags} className={styles.faTags}/>
           <h2>Tags</h2>
         </div>
-        <div className="content">
+        <div className={styles.content}>
           <p>Press enter after each tag</p>
-          <ul className="tags">
+          <ul className={styles.tags}>
+          {this.createTag()}
             <input
-              className="tags"
+              className={styles.tags}
               type="text"
               spellCheck="false"
               onKeyUp={this.addTag}
@@ -76,15 +84,15 @@ class TagContainerGen extends Component {
             />
           </ul>
         </div>
-        <div className="details">
+        <div className={styles.details}>
           <p>
             <span>{this.state.tagCount}</span> tags are remaining
           </p>
-          <button id="removeAll" onClick={() => this.setState({ createdTags: [] }, this.countTags)}>
+          <button className={styles.removeAllBtn} onClick={() => this.setState({ createdTags: [] }, this.countTags)}>
             Remove All
           </button>
         </div>
-        <ul className="tagsList">{this.createTag()}</ul>
+        {/* <ul className={styles.tagsList}>{this.createTag()}</ul> */}
       </div>
     );
   }
