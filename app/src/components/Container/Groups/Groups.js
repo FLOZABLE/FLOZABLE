@@ -1,15 +1,47 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBullseye, faHeart, faPeopleGroup, faStopwatch } from '@fortawesome/free-solid-svg-icons';
+import { faBullseye, faHeart, faPeopleGroup, faPlus, faStopwatch } from '@fortawesome/free-solid-svg-icons';
 import StuckModal from '../../UI/StuckModal/StuckModal';
 import Search from '../../UI/Search/Search';
-import SearchTags from '../../UI/SearchTags/SearchTags';
+import TagContainerGen from '../../UI/TagContainerGen/TagContainerGen';
 import styles from './Groups.module.css';
+import { getLikedGroups, getMyGroups, otherGroupsGen } from './GroupsTool';
+
+const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Ranking(props) {
-  const [searched, setSearched] = useState(false);
   const [tags, setTags] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [groups, setGroups] = useState([]);
+  const [likedGroups, setLikedGroups] = useState([]);
+  const [myGroups, setMyGroups] = useState([]);
+  const [otherGroups, setOtherGroups] = useState([]);
+  const [otherGrousEl, setOtherGroupsEl] = useState([]);
+  
+  const handleCreatedTagsChange = (tags) => {
+    setTags(tags);
+  };
 
+  useEffect(() => {
+    fetch(`${serverOrigin}/api/groups/bring-groups`, { method: 'post' })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setGroups(data.groups);
+        }
+      })
+      .catch((error) => console.error(error));
+    }, []);
+
+  useEffect(() => {
+    setLikedGroups(getLikedGroups(props.userInfo, groups));
+    const dividedGroups = getMyGroups(props.userInfo, groups);
+    setMyGroups(dividedGroups.myGroups);
+    setOtherGroups(dividedGroups.otherGroups);
+    setOtherGroupsEl(otherGroupsGen(otherGroups));
+    console.log(likedGroups, myGroups, otherGroups, groups)
+  }, [props.userInfo, groups]);
+  
   return (
     <div className={styles.GroupsContainer}>
       <StuckModal />
@@ -20,7 +52,7 @@ function Ranking(props) {
               <p className={styles.title}>Groups</p>
             </div>
             <div className={`${styles.container} ${styles.myGroups}`}>
-              <div className={styles.group}>
+              {/* <div className={styles.group}>
                 <div className={styles.name}>
                   Eng
                 </div>
@@ -51,16 +83,22 @@ function Ranking(props) {
                   <li className={styles.tag}>tt</li>
                   <li className={styles.tag}>tt</li>
                 </ul>
-              </div>
+              </div> */}
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>
               <div className={styles.searchZone}>
-                <SearchTags />
-                <Search searched={searched} setSearched={setSearched}/>
-                <button id="create-group-btn">
-                  <i className="fa-solid fa-plus"></i>
+                <TagContainerGen maxTags={10}
+                setTags={setTags}
+                handleCreatedTagsChange={handleCreatedTagsChange}
+                />
+                <Search setSearchQuery={setSearchQuery} searchQuery={searchQuery}/>
+                <button id={styles.CreateGroupBtn}>
+                  <FontAwesomeIcon icon={faPlus} className={styles.plus}/>
                   Create new group
                 </button>
+              </div>
+              <div className={styles.groupsWrapper}>
+                {otherGrousEl}
               </div>
             </div>
           </div>
