@@ -1,6 +1,11 @@
+import { Link } from "react-router-dom";
 import styles from "./Group.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullseye, faHeart, faPeopleGroup, faStopwatch } from "@fortawesome/free-solid-svg-icons";
+import LikeBtn from "../../UI/LikeBtn/LikeBtn";
+
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
 function getLikedGroups(userInfo, groups) {
   const userId = userInfo.user_id;
   const likedGroups = [];
@@ -31,6 +36,18 @@ function getMyGroups(userInfo, groups) {
   return { myGroups: myGroups, otherGroups: otherGroups };
 };
 
+function joinGroup(groupId) {
+  console.log(groupId, 'sds')
+  fetch(`${serverOrigin}/api/groups/bring-groups`, { method: 'post' })
+  .then((response) => response.json())
+  .then((data) => {
+    if (data.success) {
+      console.log(data)
+    }
+  })
+  .catch((error) => console.error(error));
+}
+
 function otherGroupsGen(otherGroups) {
   const otherGroupsEl = otherGroups.map((group, i) => {
     const tags = JSON.parse(group.tags);
@@ -39,9 +56,12 @@ function otherGroupsGen(otherGroups) {
       return (
         <li className={styles.tag} key={i}>{tag}</li>
       )
-    })
+    });
+
+
     return (
-      <div className={styles.group}  key={i}>
+      <div className={styles.group} key={i}>
+        <div className={styles.groupColor} style={{backgroundColor: group.color}}></div>
         <div className={styles.name}>
           {group.name}
         </div>
@@ -66,9 +86,17 @@ function otherGroupsGen(otherGroups) {
           </ul>
           {group.explanation}
         </div>
-        <ul className={styles.tags}>
-        {tagsEl}
-        </ul>
+        <div className={styles.bottom}>
+          <ul className={styles.tags}>
+            {tagsEl}
+          </ul>
+          <div className={styles.buttons}>
+            <LikeBtn />
+            <button onClick={() => {joinGroup(group.group_id)}}>
+              Join
+            </button>
+          </div>
+        </div>
       </div>
     );
   });
