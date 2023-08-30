@@ -153,19 +153,18 @@ async function generateGroups(length) {
     const hashed = hashing('0');
     const max_people = Math.floor(Math.random() * 40) + 50;
     const membersLength = Math.floor(Math.random() * 10) + 3;
-    let members = '';
-    let leader = '';
-    let likes = '';
-    let membersIndex = [];
+    const leaderIndex = Math.floor(Math.random() * 100);
+    let leader = testUsers[leaderIndex].user_id;
+    let members = leader;
+    let likes = leader;
+    let membersIndex = [leaderIndex];
     for(let j = 0; j < membersLength; j ++) {
       const memberIndex = Math.floor(Math.random() * 100);
       if (membersIndex.includes(memberIndex)) {
         break;
-      }
+      };
+      membersIndex.push(memberIndex);
       const member = testUsers[memberIndex];
-      if (!leader.length) {
-        leader = member;
-      }
       members += `,${member.user_id}`;
       likes += `,${member.user_id}`;
       const updateMember = connection.query(`
@@ -204,9 +203,34 @@ async function generateGroups(length) {
   }
 
   connection.release();
+};
+
+async function deleteTestUsers() {
+  const connection = await (await pool).getConnection();
+  try {
+    const removeTesters = await connection.query("DELETE FROM users WHERE name LIKE 'tester%'");
+  } catch (err) {
+    console.log(err);
+  } finally {
+    connection.release();
+  };
+};
+
+async function deleteGroups() {
+  const connection = await (await pool).getConnection();
+  try {
+    const removeGroups = await connection.query("DELETE FROM groups");
+    const updateUserGroups = await connection.query("UPDATE users set groups = ''");
+  } catch (err) {
+    console.log(err);
+  } finally {
+    connection.release();
+  };
 }
 
 module.exports = {
   testUserGeneration: generateUsers,
   testGroupGeneration: generateGroups,
+  deleteTestUsers: deleteTestUsers,
+  deleteGroups: deleteGroups
 }

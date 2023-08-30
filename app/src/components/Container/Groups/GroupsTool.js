@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import styles from "./Group.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBullseye, faHeart, faPeopleGroup, faStopwatch } from "@fortawesome/free-solid-svg-icons";
+import { faBullseye, faHeart, faPeopleGroup, faStopwatch, faLock, faLink } from "@fortawesome/free-solid-svg-icons";
 import LikeBtn from "../../UI/LikeBtn/LikeBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -36,19 +37,24 @@ function getMyGroups(userInfo, groups) {
   return { myGroups: myGroups, otherGroups: otherGroups };
 };
 
-function joinGroup(groupId) {
-  console.log(groupId, 'sds')
-  fetch(`${serverOrigin}/api/groups/bring-groups`, { method: 'post' })
-  .then((response) => response.json())
-  .then((data) => {
-    if (data.success) {
-      console.log(data)
-    }
-  })
-  .catch((error) => console.error(error));
-}
+function joinGroup(groupId, setNotificationResponse) {
+  fetch(`${serverOrigin}/api/groups/join/${groupId}`, { method: 'post' })
+    .then((response) => response.json())
+    .then((data) => {
+      setNotificationResponse(data);
+    })
+    .catch((error) => console.error(error));
+};
 
-function otherGroupsGen(otherGroups) {
+function handleCopyClick(content, setCopied) {
+  navigator.clipboard.writeText(content);
+  setCopied(true);
+  setTimeout(() => {
+    setCopied(false);
+  }, 2000);
+};
+
+function otherGroupsGen(otherGroups, setNotificationResponse, setCopied, copied) {
   const otherGroupsEl = otherGroups.map((group, i) => {
     const tags = JSON.parse(group.tags);
     console.log(tags)
@@ -61,8 +67,11 @@ function otherGroupsGen(otherGroups) {
 
     return (
       <div className={styles.group} key={i}>
-        <div className={styles.groupColor} style={{backgroundColor: group.color}}></div>
+        <div className={styles.groupColor} style={{ backgroundColor: group.color }}></div>
         <div className={styles.name}>
+          {!group.visibility ? <i>
+            <FontAwesomeIcon icon={faLock} />
+          </i> : ''}
           {group.name}
         </div>
         <div className={styles.explanation}>
@@ -92,8 +101,14 @@ function otherGroupsGen(otherGroups) {
           </ul>
           <div className={styles.buttons}>
             <LikeBtn />
-            <button onClick={() => {joinGroup(group.group_id)}}>
+            <button onClick={() => { joinGroup(group.group_id, setNotificationResponse) }}>
               Join
+            </button>
+            <button onClick={() => {handleCopyClick(`https://flozable.com/groups/join/${group.group_id}`, setCopied)}}>
+              <FontAwesomeIcon icon={faLink} />
+              <div className={`${styles.copyModal} ${copied ? styles.copied : ''}`} >
+                Copied!
+              </div>
             </button>
           </div>
         </div>

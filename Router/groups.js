@@ -166,8 +166,7 @@ Router.post('/join/:id', async (req, res) => {
   const userId = req.session.user_id;
   const connection = await (await pool).getConnection();
   try {
-    let groupInfo = await connection.query(`SELECT password, salt, visibility, max_members from \`groups\` where group_id = ?`, [groupId]);
-    groupInfo = groupInfo[0];
+    let [groupInfo] = await connection.query(`SELECT password, salt, visibility, max_members from \`groups\` where group_id = ?`, [groupId]);
 
     if (groupInfo.visibility) {
       await connection.query(
@@ -182,7 +181,6 @@ Router.post('/join/:id', async (req, res) => {
       await connection.query(
         `UPDATE \`groups\` 
         SET members = CASE 
-          CASE
             WHEN members = '' THEN ?
             WHEN members LIKE ? OR members LIKE ? OR members LIKE ? THEN
               members

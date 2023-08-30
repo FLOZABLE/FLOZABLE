@@ -256,16 +256,15 @@ Router.post('/groups/join/:id', async (req, res) => {
     }
   }
 
-  if (!req.session.loggedin) {
+/*   if (!req.session.loggedin) {
     return res.send({ success: false, reason: 'not authenticated' });
-  }
+  } */
 
   const groupId = req.params.id;
   const userId = tester.id;
   const connection = await (await pool).getConnection();
   try {
-    let groupInfo = await connection.query(`SELECT password, salt, visibility, max_members from \`groups\` where group_id = ?`, [groupId]);
-    groupInfo = groupInfo[0];
+    let [groupInfo] = await connection.query(`SELECT password, salt, visibility, max_members from \`groups\` where group_id = ?`, [groupId]);
 
     if (groupInfo.visibility) {
       await connection.query(
@@ -280,7 +279,6 @@ Router.post('/groups/join/:id', async (req, res) => {
       await connection.query(
         `UPDATE \`groups\` 
         SET members = CASE 
-          CASE
             WHEN members = '' THEN ?
             WHEN members LIKE ? OR members LIKE ? OR members LIKE ? THEN
               members
