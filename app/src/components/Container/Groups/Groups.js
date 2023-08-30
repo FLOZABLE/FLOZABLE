@@ -6,6 +6,7 @@ import Search from '../../UI/Search/Search';
 import TagContainerGen from '../../UI/TagContainerGen/TagContainerGen';
 import styles from './Groups.module.css';
 import { getLikedGroups, getMyGroups, otherGroupsGen } from './GroupsTool';
+import TopNotification from '../../UI/TopNotification/TopNotification';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -17,6 +18,8 @@ function Ranking(props) {
   const [myGroups, setMyGroups] = useState([]);
   const [otherGroups, setOtherGroups] = useState([]);
   const [otherGrousEl, setOtherGroupsEl] = useState([]);
+  const [joinResponse, setNotificationResponse] = useState({});
+  const [copied, setCopied] = useState(false);
   
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
@@ -38,12 +41,12 @@ function Ranking(props) {
     const dividedGroups = getMyGroups(props.userInfo, groups);
     setMyGroups(dividedGroups.myGroups);
     setOtherGroups(dividedGroups.otherGroups);
-    setOtherGroupsEl(otherGroupsGen(otherGroups));
-    console.log(likedGroups, myGroups, otherGroups, groups)
+    setOtherGroupsEl(otherGroupsGen(otherGroups, setNotificationResponse, setCopied, copied));
   }, [props.userInfo, groups]);
   
   return (
     <div className={styles.GroupsContainer}>
+      <TopNotification duration={3000} response={joinResponse}/>
       <StuckModal />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
