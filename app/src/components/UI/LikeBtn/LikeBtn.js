@@ -23,7 +23,7 @@ const LikeBtn = () => {
             <div className={styles.heartAnimation1}></div>
             <div className={styles.heartAnimation2}></div>
           </span>
-          Favorite
+          {/* Favorite */}
         </a>
       </div>
     </div>

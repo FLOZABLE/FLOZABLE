@@ -26,6 +26,8 @@ const testTools = require('./test/generate');
 
 //testTools.testUserGeneration(100);
 //testTools.testGroupGeneration(40);
+//testTools.deleteGroups();
+//testTools.deleteTestUsers();
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 //app.use(cors({origin: 'chrome-extension://dalobnhjngmjgnkdjkeonfnbbkaclcpm'}));
