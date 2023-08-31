@@ -1,0 +1,123 @@
+.GroupPwModal {
+  position: fixed;
+  left: 50vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  z-index: 3;
+  background-color: #fff;
+  overflow: hidden;
+  border-radius: 30px;
+  display: none;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.GroupPwModal.open {
+  display: block;
+}
+
+.GroupPwModal .header {
+  display: flex;
+  width: 100%;
+  background-color: #ff9494ff;
+  height: 60px;
+  align-items: center;
+}
+
+.GroupPwModal .header i {
+  margin-left: auto;
+  font-size:40px;
+  color: #fff;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.GroupPwModal .content {
+  padding: 30px;
+  color: #ff9494ff;
+}
+
+.GroupPwModal .content > div {
+  display: flex;
+  font-weight: 800;
+}
+
+.GroupPwModal .content > div:nth-child(1) {
+  font-size: 50px;
+}
+
+.GroupPwModal .content > div:nth-child(2) {
+  font-size: 25px;
+  margin-bottom: 15px;
+}
+
+.GroupPwModal .formGroup {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.GroupPwModal .formField {
+  outline: none;
+  border: none;
+  background-color: #f9f9f9;
+  font-size: 20px;
+  padding: 15px;
+}
+
+.GroupPwModal .formField:focus {
+  border:#ff9494ff 1px solid;
+}
+
+.GroupPwModal .formGroup>span,
+.GroupPwModal .formGroup .formField {
+  white-space: nowrap;
+  display: block;
+}
+
+.GroupPwModal .formGroup>span:not(:first-child):not(:last-child),
+.GroupPwModal .formGroup .formField:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+
+.GroupPwModal .formGroup>span:first-child,
+.GroupPwModal .formGroup .formField:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.GroupPwModal .formGroup>span:last-child,
+.GroupPwModal .formGroup .formField:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.GroupPwModal .formGroup>span:not(:first-child),
+.GroupPwModal .formGroup .formField:not(:first-child) {
+  margin-left: -1px;
+}
+
+.GroupPwModal .formGroup .formField {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  width: 1%;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.GroupPwModal .formGroup>span {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+  font-size: 20px;
+  line-height: 25px;
+  color: #ff9494ff;
+  background: #EEF4FF;
+  transition: background 0.5s ease, border 0.5s ease, color 0.5s ease;
+}
+
+.GroupPwModal .formGroup:focus-within>span {
+  color: #fff;
+  background: #FF9494;
+}

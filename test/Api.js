@@ -8,6 +8,7 @@ const ajv = new Ajv();
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
 const { DateTime } = require('luxon');
+const crypto = require("crypto");
 
 
 const tester = { name: 't1', id: 'EoFObpf612bdJKt' };
@@ -264,7 +265,7 @@ Router.post('/groups/join/:id', async (req, res) => {
   const userId = tester.id;
   const connection = await (await pool).getConnection();
   try {
-    let [groupInfo] = await connection.query(`SELECT password, salt, visibility, max_members from \`groups\` where group_id = ?`, [groupId]);
+    let [groupInfo] = await connection.query(`SELECT password, salt, visibility, max_members, name from \`groups\` where group_id = ?`, [groupId]);
 
     if (groupInfo.visibility) {
       await connection.query(
@@ -319,7 +320,7 @@ Router.post('/groups/join/:id', async (req, res) => {
 
     const io = req.app.get('socketio');
     io.emit('addUser', groupId, tester.id);
-    res.send({ success: true });
+    res.send({ success: true, msg: `Joined group "${groupInfo.name}"` });
   } catch (err) {
     // Handle any errors that may occur during the execution of queries
     console.error('Error performing database queries:', err);

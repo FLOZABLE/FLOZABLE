@@ -27,6 +27,10 @@ body {
   font-family: 'Source Sans 3', sans-serif;
 }
 
+input {
+  outline: none;
+}
+
 ::selection {
   background-color: rgb(38, 38, 208);
   color: #fff;

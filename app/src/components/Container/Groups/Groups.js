@@ -7,6 +7,8 @@ import TagContainerGen from '../../UI/TagContainerGen/TagContainerGen';
 import styles from './Groups.module.css';
 import { getLikedGroups, getMyGroups, otherGroupsGen } from './GroupsTool';
 import TopNotification from '../../UI/TopNotification/TopNotification';
+import GroupsGen from '../../UI/GroupsGen/GroupsGen';
+import GroupPwModal from '../../UI/GroupPwModal/GroupPwModal';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -17,10 +19,10 @@ function Ranking(props) {
   const [likedGroups, setLikedGroups] = useState([]);
   const [myGroups, setMyGroups] = useState([]);
   const [otherGroups, setOtherGroups] = useState([]);
-  const [otherGrousEl, setOtherGroupsEl] = useState([]);
-  const [joinResponse, setNotificationResponse] = useState({});
-  const [copied, setCopied] = useState(false);
-  
+  const [joinGroupResponse, setJoinGroupResponse] = useState(null);
+  const [openGroupPwModal, setOpenGroupPwModal] = useState(false);
+  const [joinTarget, setJoinTarget] = useState(null);
+
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
   };
@@ -41,13 +43,15 @@ function Ranking(props) {
     const dividedGroups = getMyGroups(props.userInfo, groups);
     setMyGroups(dividedGroups.myGroups);
     setOtherGroups(dividedGroups.otherGroups);
-    setOtherGroupsEl(otherGroupsGen(otherGroups, setNotificationResponse, setCopied, copied));
+    //setOtherGroupsEl(otherGroupsGen(otherGroups, setNotificationResponse, setCopied, copied));
   }, [props.userInfo, groups]);
+
   
   return (
     <div className={styles.GroupsContainer}>
-      <TopNotification duration={3000} response={joinResponse}/>
+      <TopNotification duration={3000} response={joinGroupResponse}/>
       <StuckModal />
+      <GroupPwModal setOpenGroupPwModal={setOpenGroupPwModal} openGroupPwModal={openGroupPwModal} joinTarget={joinTarget} setJoinGroupResponse={setJoinGroupResponse} />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
@@ -55,38 +59,7 @@ function Ranking(props) {
               <p className={styles.title}>Groups</p>
             </div>
             <div className={`${styles.container} ${styles.myGroups}`}>
-              {/* <div className={styles.group}>
-                <div className={styles.name}>
-                  Eng
-                </div>
-                <div className={styles.explanation}>
-                  <ul className={styles.info}>
-                    <li>
-                      <p>dd</p>
-                      <FontAwesomeIcon icon={faPeopleGroup} />
-                    </li>
-                    <li>
-                      <p>9hr</p>
-                      <FontAwesomeIcon icon={faBullseye} />
-                    </li>
-                    <li>
-                      <p>dd</p>
-                      <FontAwesomeIcon icon={faStopwatch} />
-                    </li>
-                    <li>
-                      <p>dd</p>
-                      <FontAwesomeIcon icon={faHeart} />
-                    </li>
-                  </ul>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint voluptatibus similique, accusantium quia ad delectus ipsa praesentium quasi quas minus nostrum nam repellat ea architecto natus. Ut vero modi ratione?
-                </div>
-                <ul className={styles.tags}>
-                  <li className={styles.tag}>tt</li>
-                  <li className={styles.tag}>tt</li>
-                  <li className={styles.tag}>tt</li>
-                  <li className={styles.tag}>tt</li>
-                </ul>
-              </div> */}
+
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>
               <div className={styles.searchZone}>
@@ -101,7 +74,8 @@ function Ranking(props) {
                 </button>
               </div>
               <div className={styles.groupsWrapper}>
-                {otherGrousEl}
+                <GroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={otherGroups} setOpenGroupPwModal={setOpenGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} />
+                {/* <otherGroupsGen otherGroups={otherGroups} setNotificationResponse={setNotificationResponse} setCopied={setCopied} copied={copied} /> */}
               </div>
             </div>
           </div>

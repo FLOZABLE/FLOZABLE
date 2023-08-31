@@ -107,4 +107,7 @@
 
 .group .buttons .copyModal.copied {
   display: block;
+  background-color: #fd8a8a;
+  height: 100px;
+  width: 100px;
 }

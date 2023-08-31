@@ -1,14 +1,56 @@
 .TopNotification {
   position: fixed;
-  top: 0px;
-  width: 80vw;
+  top: -100px;
+  width: 50vw;
+  left: 50vw;
+  transform: translateX(-50%);
+  z-index: 5;
   height: 100px;
 }
 
+
+
+@keyframes notification {
+  0% {
+    transform: translate(-50%, 0px);
+  }
+
+  20% {
+    transform: translate(-50%, 140px);
+  }
+
+  80% {
+    transform: translate(-50%, 140px);
+  }
+
+  100% {
+    transform: translate(-50%, 0px);
+  }
+}
+
+.TopNotification.notify {
+  animation: notification 2s 0.5s forwards;
+}
+
+.TopNotification .notification {
+  height: 100%;
+  color: #fff;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.TopNotification .notification i {
+  margin-right: 10px;
+}
+
 .TopNotification .success {
-  background-color: aqua;
+  background-color:#ecbd00;
 }
 
 .TopNotification .fail {
-  background-color: blue;
+  background-color: #f44335;
 }
