@@ -11,25 +11,32 @@ function TopNotification(props) {
   useEffect(() => {
     const response  = props.response;
     console.log(response)
-    if (response.success) {
-      setNotification(
-        <div className={styles.success}>
-          <FontAwesomeIcon icon={faCircleCheck} />
-          <p className={styles.msg}>{props.successMsg}</p>
-        </div>
-      );
-    } else {
-      setNotification(
-        <div className={styles.fail}>
-          <FontAwesomeIcon icon={faCircleXmark} />
-          <p className={styles.msg}>{props.successMsg}</p>
-        </div>
-      );
-    };
-    setNotify(true);
-    setTimeout(() => {
-      setNotify(false);
-    }, props.duration);
+    if (response) {
+      if (response.success) {
+        setNotification(
+          <div className={`${styles.success} ${styles.notification}`}>
+            <i>
+            <FontAwesomeIcon icon={faCircleCheck} />
+            </i>
+            <p className={styles.msg}>{response.msg}</p>
+          </div>
+        );
+      } else {
+        setNotification(
+          <div className={`${styles.fail} ${styles.notification}`}>
+            <i>
+            <FontAwesomeIcon icon={faCircleXmark} />
+            </i>
+            <p className={styles.msg}>{response.reason}</p>
+          </div>
+        );
+      };
+      setNotify(true);
+      setTimeout(() => {
+        setNotify(false);
+      }, props.duration);
+      console.log(notify) 
+    }
   }, [props.response]);
 
   return (

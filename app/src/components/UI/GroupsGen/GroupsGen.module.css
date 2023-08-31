@@ -1,5 +1,9 @@
+.groupContainer {
+  position: relative;
+  margin: 20px;
+}
 
-.group {
+.groupContainer .group {
   width: 300px;
   height: 200px;
   background-color: #f7f9fd;
@@ -7,14 +11,13 @@
   padding: 20px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   position: relative;
-  margin: 20px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.group .groupColor {
+.groupContainer .groupColor {
   width: 50px;
   height: 50px;
   position: absolute;
@@ -22,25 +25,25 @@
   top: 0px;
 }
 
-.group .name {
+.groupContainer .name {
   font-weight: 800;
   font-size: 20px;
   max-width: calc(100% - 60px);
 }
 
-.group .name i {
+.groupContainer .name i {
   font-size: 23px;
   margin-right: 10px;
 }
 
-.group .explanation {
+.groupContainer .explanation {
   border-top: 1px solid #545454;
   position: relative;
   margin-top: 16px;
   padding-top: 20px;
 }
 
-.group .bottom {
+.groupContainer .bottom {
   position: absolute;
   bottom: 0px;
   display: flex;
@@ -50,21 +53,21 @@
   width: calc(100% - 40px);
 }
 
-.group .tags {
+.groupContainer .tags {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.group .tags .tag{
+.groupContainer .tags .tag{
   margin: 0px 5px;
   padding: 2px 10px;
   border-radius: 10px;
   background-color: blanchedalmond;
 }
 
-.group .info {
+.groupContainer .info {
   position: absolute;
   display: flex;
   background-color: blanchedalmond;
@@ -74,19 +77,19 @@
   top: -16px;
 }
 
-.group .info li {
+.groupContainer .info li {
   margin: 0px 3px;
 }
 
-.group .info li p {
+.groupContainer .info li p {
   margin-right: 3px;
 }
 
-.group .buttons {
+.groupContainer .buttons {
   display: flex;
 }
 
-.group .buttons button {
+.groupContainer .buttons button {
   background-color: #fd8a8a;
   font-weight: 800;
   color: #fff;
@@ -95,19 +98,28 @@
   font-size: 16px;
 }
 
-.group .buttons > * {
+.groupContainer .buttons > * {
   margin: 5px;
   position: relative;
 }
 
-.group .buttons .copyModal {
-  position: absolute; 
-  display: none;
+.groupContainer .copyModal {
+  position: absolute;
+  top: calc(100%);
+  right: 0px;
+  height: 30px;
+  width: 100px;
+  margin-right:50px;
+  background-color: #545454;
+  transition: opacity 1s;
+  opacity: 0;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
 }
 
-.group .buttons .copyModal.copied {
-  display: block;
-  background-color: #fd8a8a;
-  height: 100px;
-  width: 100px;
+.groupContainer .copyModal.copied {
+  opacity: 1;
 }
