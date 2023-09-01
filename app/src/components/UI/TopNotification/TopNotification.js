@@ -10,7 +10,6 @@ function TopNotification(props) {
 
   useEffect(() => {
     const response  = props.response;
-    console.log(response)
     if (response) {
       if (response.success) {
         setNotification(
@@ -35,7 +34,6 @@ function TopNotification(props) {
       setTimeout(() => {
         setNotify(false);
       }, props.duration);
-      console.log(notify) 
     }
   }, [props.response]);
 

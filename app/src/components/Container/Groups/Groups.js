@@ -8,6 +8,7 @@ import styles from './Groups.module.css';
 import { getLikedGroups, getMyGroups, otherGroupsGen } from './GroupsTool';
 import TopNotification from '../../UI/TopNotification/TopNotification';
 import GroupsGen from '../../UI/GroupsGen/GroupsGen';
+import MyGroupsGen from '../../UI/MyGroupsGen/MyGroupsGen';
 import GroupPwModal from '../../UI/GroupPwModal/GroupPwModal';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -22,6 +23,7 @@ function Ranking(props) {
   const [joinGroupResponse, setJoinGroupResponse] = useState(null);
   const [openGroupPwModal, setOpenGroupPwModal] = useState(false);
   const [joinTarget, setJoinTarget] = useState(null);
+  const [allMembers, setAllMembers] = useState([]);
 
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
@@ -33,6 +35,7 @@ function Ranking(props) {
       .then((data) => {
         if (data.success) {
           setGroups(data.groups);
+          setAllMembers(data.membersInfo);
         }
       })
       .catch((error) => console.error(error));
@@ -45,6 +48,14 @@ function Ranking(props) {
     setOtherGroups(dividedGroups.otherGroups);
     //setOtherGroupsEl(otherGroupsGen(otherGroups, setNotificationResponse, setCopied, copied));
   }, [props.userInfo, groups]);
+
+  useEffect(() => {
+    if (joinTarget) {
+      setOtherGroups(otherGroups.filter((group) => {return group.group_id != joinTarget.group_id}));
+      myGroups.push(joinTarget)
+      setMyGroups(myGroups);
+    };
+  }, [joinGroupResponse]);
 
   
   return (
@@ -59,7 +70,7 @@ function Ranking(props) {
               <p className={styles.title}>Groups</p>
             </div>
             <div className={`${styles.container} ${styles.myGroups}`}>
-
+            <MyGroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={myGroups} setOpenGroupPwModal={setOpenGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} allMembers={allMembers} />
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>
               <div className={styles.searchZone}>

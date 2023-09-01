@@ -376,7 +376,18 @@ Router.post('/groups/bring-groups', async (req, res) => {
     const groups = await connection.query(
       "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\`"
     );
-    res.send({ success: true, groups: groups });
+    const allMembersIds = [];
+    groups.map((group) => {
+      const members = group.members.split(',');
+      members.map((member) => {
+        if (!allMembersIds.includes(member)) {
+          allMembersIds.push(member);
+        };
+      });
+    });
+    const membersInfo = await connection.query('SELECT user_id, name, study, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
+    //console.log(membersInfo);
+    res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
     // Handle any errors that may occur during the execution of queries
     console.error('Error performing database queries:', err);

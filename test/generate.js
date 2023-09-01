@@ -88,7 +88,8 @@ async function generateUsers(length) {
       activity: '{}',
       activity_setting: '[]',
       notification_setting: 'default_setting',
-      subjects: '[]'
+      subjects: '[]',
+      study: JSON.stringify({study:false,point:unixTimestamp,total:0})
     }
     connection.query('INSERT INTO users SET?', userInfo);
   }

@@ -10,7 +10,6 @@ function GroupsGen(props) {
   const [copied, setCopied] = useState(null);
 
   const joinGroup = (group) => {
-    console.log(group)
     props.setJoinTarget(group);
     if (group.visibility) {
       fetch(`${serverOrigin}/api/groups/join/${group.group_id}`, { method: 'post' })
@@ -34,7 +33,7 @@ function GroupsGen(props) {
 
   useEffect(() => {
     const query = props.searchQuery;
-    
+
   }, [props.searchQuery]);
 
   //`https://flozable.com/groups/join/${group.group_id}`, i
