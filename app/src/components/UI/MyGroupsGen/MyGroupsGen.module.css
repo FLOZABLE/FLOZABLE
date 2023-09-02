@@ -4,8 +4,8 @@
 }
 
 .myGroupContainer .group {
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 200px;
   background-color: #f7f9fd;
   border-radius: 40px;
   padding: 20px;
@@ -96,6 +96,7 @@
   padding: 0px 20px;
   border-radius: 20px;
   font-size: 16px;
+  white-space: nowrap;
 }
 
 .myGroupContainer .buttons > * {
@@ -124,7 +125,7 @@
   opacity: 1;
 }
 
-.myGroupContainer .members {
+/* .myGroupContainer .members {
   display: flex;
   flex-wrap: wrap;
   max-height: 300px;
@@ -138,4 +139,4 @@
   background-color: aqua;
   border-radius: 10px;
   margin: 10px;
-}
+} */

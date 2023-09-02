@@ -1,10 +1,3 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
-import styles from "./Group.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBullseye, faHeart, faPeopleGroup, faStopwatch, faLock, faLink } from "@fortawesome/free-solid-svg-icons";
-import LikeBtn from "../../UI/LikeBtn/LikeBtn";
-
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function getLikedGroups(userInfo, groups) {
@@ -25,8 +18,7 @@ function getMyGroups(userInfo, groups) {
   const myGroups = [];
   const otherGroups = [];
   groups.map(group => {
-    const members = group.members.split(',');
-    if (members.includes(userId)) {
+    if (group.members.find(member => member.user_id == userId)) {
       myGroups.push(group);
     } else {
       otherGroups.push(group);
@@ -36,4 +28,19 @@ function getMyGroups(userInfo, groups) {
   return { myGroups: myGroups, otherGroups: otherGroups };
 };
 
-export { getLikedGroups, getMyGroups };
+function setGroupMembers(groups, users) {
+  groups.map((group) => {
+    group.members = group.members.split(',');
+    group.members = group.members.map(member => {
+      member = users.find((userInfo) => { return member == userInfo.user_id });
+      if (typeof member.study == "string") {
+        member.study = JSON.parse(member.study);
+      }
+      return member;
+    });
+    return group;
+  });
+  return groups;
+}
+
+export { getLikedGroups, getMyGroups, setGroupMembers };

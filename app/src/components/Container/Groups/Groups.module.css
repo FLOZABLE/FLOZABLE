@@ -53,6 +53,8 @@
 .GroupsContainer .box .container.myGroups {
   background-color: unset;
   box-shadow: none;
+  position: relative;
+  display: block;
 }
 
 .GroupsContainer .box .container.allGroups {
@@ -92,4 +94,16 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+}
+
+.GroupsContainer .groupsViewer {
+  position: fixed;
+  top: 50vh;
+  left: 50vw;
+  transform: translate(-50%, -50%);
+  height: 50vh;
+  width: 50vw;
+  z-index: 5;
+  background-color: #f7f9fd;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }

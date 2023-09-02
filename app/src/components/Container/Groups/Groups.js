@@ -5,11 +5,12 @@ import StuckModal from '../../UI/StuckModal/StuckModal';
 import Search from '../../UI/Search/Search';
 import TagContainerGen from '../../UI/TagContainerGen/TagContainerGen';
 import styles from './Groups.module.css';
-import { getLikedGroups, getMyGroups, otherGroupsGen } from './GroupsTool';
+import { getLikedGroups, getMyGroups, setGroupMembers } from './GroupsTool';
 import TopNotification from '../../UI/TopNotification/TopNotification';
 import GroupsGen from '../../UI/GroupsGen/GroupsGen';
 import MyGroupsGen from '../../UI/MyGroupsGen/MyGroupsGen';
 import GroupPwModal from '../../UI/GroupPwModal/GroupPwModal';
+import MyGroupsViewer from '../../UI/MyGroupsViewer/MyGroupsViewer';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -34,12 +35,12 @@ function Ranking(props) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setGroups(data.groups);
           setAllMembers(data.membersInfo);
+          setGroups(setGroupMembers(data.groups, data.membersInfo));
         }
       })
       .catch((error) => console.error(error));
-    }, []);
+  }, []);
 
   useEffect(() => {
     setLikedGroups(getLikedGroups(props.userInfo, groups));
@@ -51,17 +52,20 @@ function Ranking(props) {
 
   useEffect(() => {
     if (joinTarget) {
-      setOtherGroups(otherGroups.filter((group) => {return group.group_id != joinTarget.group_id}));
+      setOtherGroups(otherGroups.filter((group) => { return group.group_id != joinTarget.group_id }));
       myGroups.push(joinTarget)
       setMyGroups(myGroups);
     };
   }, [joinGroupResponse]);
 
-  
+
   return (
     <div className={styles.GroupsContainer}>
-      <TopNotification duration={3000} response={joinGroupResponse}/>
+      <TopNotification duration={3000} response={joinGroupResponse} />
       <StuckModal />
+      {/* <div className={styles.groupsViewer}>
+        <MyGroupsViewer myGroups={myGroups}/>
+      </div> */}
       <GroupPwModal setOpenGroupPwModal={setOpenGroupPwModal} openGroupPwModal={openGroupPwModal} joinTarget={joinTarget} setJoinGroupResponse={setJoinGroupResponse} />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
@@ -70,17 +74,18 @@ function Ranking(props) {
               <p className={styles.title}>Groups</p>
             </div>
             <div className={`${styles.container} ${styles.myGroups}`}>
-            <MyGroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={myGroups} setOpenGroupPwModal={setOpenGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} allMembers={allMembers} />
+              {/* <MyGroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={myGroups} setOpenGroupPwModal={setOpenGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} allMembers={allMembers} /> */}
+              <MyGroupsViewer myGroups={myGroups} allMembers={allMembers} />
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>
               <div className={styles.searchZone}>
                 <TagContainerGen maxTags={10}
-                setTags={setTags}
-                handleCreatedTagsChange={handleCreatedTagsChange}
+                  setTags={setTags}
+                  handleCreatedTagsChange={handleCreatedTagsChange}
                 />
-                <Search setSearchQuery={setSearchQuery} searchQuery={searchQuery}/>
+                <Search setSearchQuery={setSearchQuery} searchQuery={searchQuery} />
                 <button id={styles.CreateGroupBtn}>
-                  <FontAwesomeIcon icon={faPlus} className={styles.plus}/>
+                  <FontAwesomeIcon icon={faPlus} className={styles.plus} />
                   Create new group
                 </button>
               </div>
