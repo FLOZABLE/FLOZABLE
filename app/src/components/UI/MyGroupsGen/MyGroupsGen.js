@@ -23,6 +23,10 @@ function MyGroupsGen(props) {
     }
   };
 
+  const viewGroup = (group) => {
+    
+  }
+
   const handleCopyClick = (id) => {
     navigator.clipboard.writeText(`https://flozable.com/groups/join/${id}`);
     setCopied(id);
@@ -97,9 +101,7 @@ function MyGroupsGen(props) {
                 <FontAwesomeIcon icon={faHeart} />
               </li>
             </ul>
-            <div className={styles.members}>
-            {membersEl}
-            </div>
+            {group.explanation}
           </div>
           <div className={styles.bottom}>
             {/* <ul className={styles.tags}>
@@ -108,7 +110,7 @@ function MyGroupsGen(props) {
             <div className={styles.buttons}>
               <LikeBtn />
               <button onClick={() => { joinGroup(group, props.joinGroupResponse) }}>
-                Join
+                View Group
               </button>
               <button onClick={() => { handleCopyClick(group.group_id) }}>
                 <FontAwesomeIcon icon={faLink} />
