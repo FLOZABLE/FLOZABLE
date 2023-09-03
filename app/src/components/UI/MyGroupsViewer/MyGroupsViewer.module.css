@@ -1,3 +1,7 @@
+:root {
+  --bgColor: #000000c3;
+}
+
 .MyGroupsViewer {
   height: 600px;
   -webkit-user-select: none; /* Safari */
@@ -23,8 +27,9 @@
   position: relative;
 }
 
-.MyGroupsViewer .name {
+.MyGroupsViewer .name a {
   font-size: 50px;
+  color: #545454;
 }
 
 .MyGroupsViewer .header {
@@ -101,4 +106,24 @@
   align-items: center;
   justify-content: center;
   margin: 0px 10px;
+}
+
+.MyGroupsViewer.study *{
+ color: #fff !important;
+}
+
+.MyGroupsViewer.study .members .member {
+  background-color: var(--bgColor);
+}
+
+.MyGroupsViewer.study .status {
+  background-color: var(--bgColor);
+}
+
+.MyGroupsViewer.study .buttons button:nth-child(1) {
+  display: none;
+}
+
+.MyGroupsViewer.study .buttons button {
+  background-color: var(--bgColor);
 }

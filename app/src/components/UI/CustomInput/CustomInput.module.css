@@ -1,0 +1,71 @@
+
+.CustomInput {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.CustomInput .formField {
+  outline: none;
+  border: none;
+  background-color: #f9f9f9;
+  font-size: 20px;
+  padding: 15px;
+}
+
+.CustomInput .formField:focus {
+  border:#ff9494ff 1px solid;
+}
+
+.CustomInput>span,
+.CustomInput .formField {
+  white-space: nowrap;
+  display: block;
+}
+
+.CustomInput>span:not(:first-child):not(:last-child),
+.CustomInput .formField:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+
+.CustomInput>span:first-child,
+.CustomInput .formField:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.CustomInput>span:last-child,
+.CustomInput .formField:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.CustomInput>span:not(:first-child),
+.CustomInput .formField:not(:first-child) {
+  margin-left: -1px;
+}
+
+.CustomInput .formField {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  width: 1%;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.CustomInput>span {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+  font-size: 20px;
+  line-height: 25px;
+  color: #ff9494ff;
+  background: #EEF4FF;
+  transition: background 0.5s ease, border 0.5s ease, color 0.5s ease;
+}
+
+.CustomInput:focus-within>span {
+  color: #fff;
+  background: #FF9494;
+}

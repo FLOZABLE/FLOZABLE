@@ -1,0 +1,100 @@
+:root{
+  --percentage: 30%;
+  --main-color: 255,255,255;
+  --el-bg-color: 220,220,220;
+}
+
+.soundSliderContainer {
+  display: flex;
+  width: 300px;
+  height: 20px;
+  padding: 20px 40px;
+  background: rgba(var(--main-color), 0.07);
+  border: 1px solid rgba(var(--main-color), 0.03);
+  border-radius: 1in;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.soundSliderContainer::after {
+  content: "";
+  height: 100%;
+  opacity: 0;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  transition: opacity 500ms;
+  width: 100%;
+  background: radial-gradient(
+    500px circle at var(--mouse-x) var(--mouse-y),
+    rgba(var(--main-color), 0.06),
+    transparent 40%
+  );
+  z-index: -1;
+}
+
+.soundSliderContainer:hover::after {
+  opacity: 1;
+}
+
+.soundSliderContainer .soundPicto {
+  fill: rgb(var(--el-bg-color));
+  cursor: pointer;
+}
+
+.soundSliderContainer .soundToggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  background-color: transparent;
+}
+
+.soundSliderContainer .soundSlider {
+  margin: 0 10px;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 1in;
+  outline: none;
+  transition: 0.2s;
+  cursor: pointer;
+  background: rgba(var(--el-bg-color), 0.5);
+  background-image: linear-gradient(rgb(var(--main-color)), rgb(var(--main-color)));
+  background-size: calc(var(--percentage) - 9px) 100%;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+}
+
+.soundSliderContainer .soundSlider::after {
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 10px;
+  border-radius: 0 1in 1in 0;
+  background-color: rgb(var(--main-color));
+  transition: 0.2s;
+  left: calc(var(--percentage) - 10px);
+}
+
+.soundSliderContainer .soundSlider::-webkit-slider-thumb {
+  appearance: none;
+  visibility: hidden;
+  width: 1px;
+  height: 10px;
+}
+
+.soundSliderContainer .soundSlider:hover {
+  height: 1em;
+}
+
+.soundSliderContainer .volume {
+  font-family: sans-serif;
+  color: rgb(var(--el-bg-color));
+  min-width: 2em;
+  text-align: right;
+}

@@ -1,0 +1,105 @@
+:root {
+  --bgColor: #00000050;
+}
+
+.StudyHeader {
+  width: 100vw;
+  height: 50px;
+  position: fixed;
+  top: 30px;
+  left: 0px;
+  z-index: 3;
+}
+
+.StudyHeader ul {
+  display: flex;
+  justify-content: right;
+  margin-right: 50px;
+}
+
+.StudyHeader li {
+  display: flex;
+  position: relative;
+  margin: 20px;
+}
+
+.StudyHeader li button {
+  font-size: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--bgColor);
+  height: 50px;
+  width: 50px;
+  color: #fff;
+}
+
+.StudyHeader li button:hover ~ .hoverEl{
+  background-color: var(--bgColor);
+  opacity: 1;
+}
+
+.StudyHeader li .hoverEl {
+  transition: opacity .3s ease-in-out;
+  position: absolute;
+  top: 40px;
+  color: #fff;
+  padding: 5px 20px;
+  opacity: 0;
+  white-space: nowrap;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* .StudyHeader li button:cli ~ .hoverEl{
+  background-color: var(--bgColor);
+  opacity: 1;
+}
+ */
+
+.StudyHeader .clickedEl {
+  transition: opacity .3s ease-in-out;
+  position: absolute;
+  background-color: var(--bgColor);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 20px;
+  border-radius: 20px;
+  opacity: 0;
+  z-index: -1;
+  top: 40px;
+}
+
+.StudyHeader .videoContainer {
+  display: flex;
+  flex-wrap: wrap;
+  width: 330px;
+  justify-content: center;
+  align-items: center;
+  max-height: 600px;
+}
+
+.StudyHeader .videoContainer .video {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  height: 70px;
+  width: 100px;
+  overflow: hidden;
+}
+
+.StudyHeader .videoContainer .video img{
+  width: 120px;
+  height: auto;
+}
+
+.StudyHeader li.open .clickedEl{
+  display: block;
+  opacity: 1;
+  z-index: 3;
+}
+
+.StudyHeader li.open .hoverEl {
+  display: none;
+}
