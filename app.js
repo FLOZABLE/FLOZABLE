@@ -19,7 +19,11 @@ const account =require("./Router/account");
 //const WebSocketToken = process.env.WEBSOCKET_TOKEN;
 //const WebSocket = require('ws');
 //const wsServer =  new WebSocket.Server({ server });
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: "http://localhost:3001"
+  }
+});
 const pool = require('./model/pool');
 //test
 const testTools = require('./test/generate');

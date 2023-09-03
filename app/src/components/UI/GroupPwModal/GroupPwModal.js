@@ -3,6 +3,7 @@ import styles from "./GroupPwModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faLock, faXmark } from "@fortawesome/free-solid-svg-icons";
 import BlobBtn from "../BlobBtn/BlobBtn";
+import CustomInput from "../CustomInput/CustomInput";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -34,6 +35,14 @@ function GroupPwModal(props) {
         .catch((error) => console.error(error));
     }
   }, [pwSubmit]);
+
+  const submit = () => {
+    setPwSubmit(true);
+    setTimeout(() => {
+      setPwSubmit(false);
+    }, 2000);
+  };
+
   return (
     <div className={`${styles.GroupPwModal} ${props.openGroupPwModal ? styles.open : ''}`}>
       <div className={styles.header}>
@@ -51,7 +60,7 @@ function GroupPwModal(props) {
         <div>
           <p>Enter the password to enther this group.</p>
         </div>
-        <div className={styles.formGroup}>
+        {/* <div className={styles.formGroup}>
           <span className={styles.pwIcon}>
             <i>
               <FontAwesomeIcon icon={faKey} />
@@ -64,7 +73,8 @@ function GroupPwModal(props) {
             type="text"
             placeholder="Password"
           />
-        </div>
+        </div> */}
+        <CustomInput input={pw} handleInput={handlePwInput} handleEnter={submit} icon={faKey} placeHolder={"Password"} type={"text"} />
         <div>
           <BlobBtn name={'SUBMIT'} setClicked={setPwSubmit} />
         </div>

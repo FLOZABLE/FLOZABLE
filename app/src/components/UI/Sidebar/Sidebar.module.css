@@ -16,9 +16,12 @@
   clip-path: inset(-50px -50px -50px -50px);
 }
 
+.Sidebar.studyMode {
+  background-color: #00000041;
+}
+
 .Sidebar.isOpen {
   width: 250px;
-  border-left: 10px #423f74 solid;
 }
 
 .Sidebar .navItemWrapper {

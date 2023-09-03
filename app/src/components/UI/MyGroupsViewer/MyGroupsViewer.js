@@ -24,7 +24,6 @@ function MyGroupsViewer(props) {
         sec = studyInfo.total;
       };
       if (new Date(studyInfo.point * 1000) == new Date()) {
-        console.log('studied');
         sec = studyInfo.total;
       };
       return (
@@ -83,7 +82,7 @@ function MyGroupsViewer(props) {
     )
   })
   return (
-    <div className={styles.MyGroupsViewer}>
+    <div className={`${styles.MyGroupsViewer} ${props.mode === 'study' ? styles.study : ''}`}>
       <Swiper
         slidesPerView={1}
         loop={true}

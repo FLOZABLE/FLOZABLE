@@ -18,7 +18,7 @@ function Sidebar(props) {
     <aside
       onMouseEnter={props.onMouseEnter}
       onMouseLeave={props.onMouseLeave}
-      className={`${styles.Sidebar} ${props.isSidebarOpen ? styles.isOpen : ''} ${props.isSidebarHovered ? styles.isOpen : props.isSidebarHovered}`}>
+      className={`${styles.Sidebar} ${props.mode === "study" ? styles.studyMode : ''} ${props.isSidebarOpen ? styles.isOpen : ''} ${props.isSidebarHovered ? styles.isOpen : props.isSidebarHovered}`}>
       {props.isSidebarOpen}
       <div
         onMouseEnter={() => handleMouseEnter('navItem1')}
