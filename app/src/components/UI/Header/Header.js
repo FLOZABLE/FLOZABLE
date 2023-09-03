@@ -5,16 +5,6 @@ import ToggleBtn from "../ToggleBtn/ToggleBtn";
 import styles from "./Header.module.css";
 
 function Header(props) {
-  const [hoveredElement, setHoveredElement] = useState(null);
-
-  const handleMouseEnter = (elementId) => {
-    setHoveredElement(elementId);
-  };
-
-  const handleMouseLeave = () => {
-    setHoveredElement('null');
-  };
-
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -34,7 +24,7 @@ function Header(props) {
   }, []);
 
   return (
-    <header className={`${styles.header} ${props.isSidebarOpen || props.isSidebarHovered ? styles.isOpen : ''} ${isScrolled ? styles.scrolled : ''}`}>
+    <header className={`${styles.header} ${props.isSidebarOpen || props.isSidebarHovered ? styles.isOpen : ''} ${props.mode === "study" ? styles.studyMode : ''} ${isScrolled ? styles.scrolled : ''}`}>
       <div className={styles.left}>
         <ToggleBtn
           on={<p>on</p>}

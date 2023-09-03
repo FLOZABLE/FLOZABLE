@@ -14,7 +14,7 @@ import MyGroupsViewer from '../../UI/MyGroupsViewer/MyGroupsViewer';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function Ranking(props) {
+function Groups(props) {
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [groups, setGroups] = useState([]);
@@ -51,7 +51,7 @@ function Ranking(props) {
   }, [props.userInfo, groups]);
 
   useEffect(() => {
-    if (joinTarget) {
+    if (joinTarget && joinGroupResponse.success) {
       setOtherGroups(otherGroups.filter((group) => { return group.group_id != joinTarget.group_id }));
       myGroups.push(joinTarget)
       setMyGroups(myGroups);
@@ -75,7 +75,7 @@ function Ranking(props) {
             </div>
             <div className={`${styles.container} ${styles.myGroups}`}>
               {/* <MyGroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={myGroups} setOpenGroupPwModal={setOpenGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} allMembers={allMembers} /> */}
-              <MyGroupsViewer myGroups={myGroups} allMembers={allMembers} />
+              <MyGroupsViewer myGroups={myGroups} />
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>
               <div className={styles.searchZone}>
@@ -101,4 +101,4 @@ function Ranking(props) {
   )
 }
 
-export default Ranking;
+export default Groups;
