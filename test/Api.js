@@ -3,6 +3,7 @@ const Router = express.Router();
 const pool = require('../model/pool');
 const notificationService = require('../services/notification');
 const account = require('../Router/account');
+const io = require("../socket");
 const Ajv = require('ajv');
 const ajv = new Ajv();
 const NodeCache = require('node-cache');
@@ -435,7 +436,13 @@ function isValidJSON(data, schema) {
     return false;
   } else {
     return true;
-  }
-}
+  };
+};
+
+//get total live 
+Router.post("/live-members", (req, res) => {
+  const totalLiveMembers = Object.keys(io.socket.sockets).length;
+  res.send({success: true, totalLiveMembers: totalLiveMembers});
+})
 
 module.exports = Router;

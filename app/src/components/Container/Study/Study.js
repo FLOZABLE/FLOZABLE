@@ -35,9 +35,21 @@ function Study(props) {
     setMyGroups(getMyGroups(props.userInfo, allGroups, membersInfo).myGroups);
   }, [allGroups, props.userInfo]);
 
-  /* useEffect(() => {
-    setGroups(getMyGroups(props.userInfo, groups).myGroups);
-  }, []); */
+  useEffect(() => {
+    console.log(myGroups)
+    if (myGroups.length) {
+      myGroups.map((group) => {
+        props.socket.emit('joinRoom', group.group_id, props.userInfo.user_id);
+        //props.socket.emit('onlineMembers');
+      })
+    };
+  }, [myGroups]);
+
+  useEffect(() => {
+    props.socket.on('onlineMembers', (onlineMembers) => {
+      console.log(onlineMembers)
+    })
+  }, []);
 
   return (
     <div className={styles.StudyContainer}>
