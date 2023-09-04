@@ -6,28 +6,34 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const session = require("express-session");
+const connectRedis = require("connect-redis");
+const RedisStore = require('connect-redis').default;
+const redisClient = require("./model/redis");
+redisClient.connect().catch(console.error);
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const http = require('http');
-const crypto = require("crypto");
 const dotenv = require("dotenv");
 const cors = require('cors');
-dotenv.config({path: ".env.development"});
 const server = http.createServer(app);
+if (process.env.NODE_ENV === 'development') {
+  dotenv.config({ path: '.env.development' });
+} else if (process.env.NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
+}
 const port = process.env.PORT;
-const account =require("./Router/account");
+const account = require("./Router/account");
 //const WebSocketToken = process.env.WEBSOCKET_TOKEN;
 //const WebSocket = require('ws');
 //const wsServer =  new WebSocket.Server({ server });
-const io = require('socket.io')(server, {
+/* const io = require('socket.io')(server, {
   cors: {
     origin: "http://localhost:3001"
   }
-});
-const pool = require('./model/pool');
+}); */
+console.log(process.env.NODE_ENV)
 //test
 const testTools = require('./test/generate');
-
 //testTools.testUserGeneration(100);
 //testTools.testGroupGeneration(40);
 //testTools.deleteGroups();
@@ -35,8 +41,9 @@ const testTools = require('./test/generate');
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 //app.use(cors({origin: 'chrome-extension://dalobnhjngmjgnkdjkeonfnbbkaclcpm'}));
-console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'development') {
+  app.use(cors());
+} else {
   app.use(cors());
 }
 /* app.use(helmet.permittedCrossDomainPolicies());
@@ -68,101 +75,24 @@ const cspOptions = {
 }
 
 app.use(helmet.contentSecurityPolicy(cspOptions))  */
+const redisStore = new RedisStore({client: redisClient});
 
+const sessionMiddleWare = session({
+  store: redisStore,
+  secret: process.env.SECRET_ID,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: false,
+    httpOnly: true,
+    signed: true,
+  },
+  //store: new fileStore(),
+});
 
-io.on('connection', (socket) => {
-  console.log('test')
-  socket.on('joinRoom', (room, userId) => {
-    socket.join(room); // Join the specified room
-    console.log(`User joined room: ${room}`);
-    console.log(userId, room)
-  });
+app.use(sessionMiddleWare);
 
-  socket.on('getMembersTime', async(groups, userId) => {
-    if(groups.length == 0){
-      return 0
-    }
-    const connection = await (await pool).getConnection();
-
-    const groupsInfo = await connection.query('SELECT members FROM groups WHERE group_id IN (?)', [groups]);
-    groupsInfo.forEach(async (group) => {
-      group.members = group.members ? JSON.parse(`[${group.members}]`) : [];
-      const membersId = group.members.flat().filter((value, index) => index % 2 === 0);
-      console.log('groups',group)
-      const members = await connection.query(`SELECT user_id, name, subjects, timezone from users where user_id in (?)`, [membersId]);
-      members.forEach((member) => {
-        member.subjects = JSON.parse(member.subjects)
-        console.log(member.subjects);
-        const date = new Date().toLocaleDateString('en-US', { timeZone: member.timezone });
-        const startTime = new Date(`${date} 00:00:00`).getTime();
-        const endTime = new Date(`${date} 24:00:00`).getTime();
-        
-        console.log(startTime); // Unix timestamp for 0 AM
-        console.log(endTime); // Unix timestamp for 12 PM
-        if(member.subjects == null){
-          return 0;
-        }
-        member.subjects.forEach((subject, index) => {
-          const datum_point = member.subjects[index].datum_point;
-          const filteredTimeline = subject.timeline.filter((period, index) => {
-            let [start, end] = period;
-            console.log(member.subjects[index], index)
-            console.log(start, end, datum_point);
-            start = (start + datum_point) * 1000;
-            if(end == null){
-              console.log('studying')
-            }
-            end = (end + datum_point) * 1000;
-            console.log(start, end, startTime, endTime);
-            return start >= startTime && end <= endTime;
-          })
-          console.log('filtered time', filteredTimeline)
-        })
-      })
-    })
-    //io.to(groups).emit('sendTime', userId);
-    console.log('members in group',groups, userId)
-  });
-
-  socket.on('addUser', (room, userId) => {
-    console.log('adduser:', room, userId)
-    io.to(room).emit('addUser', room, userId);
-  });
-
-  socket.on('removeUser', (room, userId) => {
-    io.to(room).emit('removeUser', room, userId)
-  })
-
-  socket.on('send-signal', () => {
-    io.emit('start')
-    console.log('test')
-  })
-
-  socket.on('test', () => {
-    console.log('test')
-  })
-})
-
-module.exports = io;
-/* wsServer.on('connection', (socket, req) => {
-  socket.on('message', (message) => {
-    const data = JSON.parse(message);
-    if (data.type === 'authorization') {
-      if (WebSocketToken == data.token) {
-        console.log(req.headers.origin)
-      } else {
-        console.log('Client unauthorized:', req.headers.origin);
-        socket.close();
-      }
-    } else {
-    }
-  });
-
-  socket.on('close', () => {
-    console.log('WebSocket client disconnected.');
-  });
-}); */
-
+module.exports = {server, sessionMiddleWare};
 //services
 const notificationService = require('./services/notification');
 notificationService.notificationService();
@@ -183,36 +113,21 @@ const notificationRouter = notificationService.notificationRouter;
 const studyAPI = require('./Router/Api/study');
 const informationAPI = require('./Router/Api/information');
 const rankingAPI = require('./Router/Api/ranking');
+const groupAPI = require("./Router/Api/groups");
 
 //test
 const testAPI = require('./test/Api');
 
+
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
+const io = require("./socket");
 app.set('socketio', io);
-
-app.get('/public/img/profiles/:profile', (req, res) => {
-  console.log('sdssdf')
-  const profile = req.params.profile;
-  console.log(profile);
-})
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.SECRET_ID));
 app.use(express.static(path.join(__dirname, '/public')));
 app.disable('etag');
-
-app.use(session({
-  secret: process.env.SECRET_ID,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { 
-    secure: false,
-    httpOnly: true,
-    signed: true,
-  },
-  //store: new fileStore(),
-}))
 
 app.use('/', mainRouter);
 app.use('/account', accountRouter);
@@ -228,6 +143,7 @@ app.use('/notification', notificationRouter);
 app.use('/api/study', studyAPI);
 app.use('/api/information', informationAPI);
 app.use('/api/ranking', rankingAPI);
+app.use('/api/groups', groupAPI);
 app.use(express.static(path.join(__dirname, 'app/build')));
 
 //test api
@@ -238,14 +154,23 @@ app.get('/dashboard*', (req, res) => {
   account.autoSignin(req, res, (() => {
     res.sendFile(path.join(__dirname, 'app/build', 'index.html'));
   }),
-  (() => {
-    res.redirect('/account/signin');
-  })
+    (() => {
+      res.redirect('/account/signin');
+    })
   );
 });
-// error handler
-app.use(function (err, req, res, next) {
-  console.log(err.message, err.status)
+
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+app.use((err, req, res, next) => {
+  res.locals.error = err;
+  const status = err.status || 500;
+  res.status(status);
+  res.render('error');
 });
 
 /* app.get('*',function(req,res){

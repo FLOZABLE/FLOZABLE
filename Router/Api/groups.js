@@ -274,22 +274,21 @@ Router.post('/bring-groups', async (req, res) => {
   const connection = await (await pool).getConnection();
   try {
     const userId = req.session.user_id;
-    const groupList = await connection.query(
+    const groups = await connection.query(
       "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\`"
     );
-    let groupWithUser = [];
-    let likedList = [];
-    groupList.forEach((group, index) => {
-      group.members = group.members.split(',').filter(member => member !== '');
-      if (group.members && group.members.includes(userId)) {
-        groupWithUser.push(group.group_id);
-      }
-
-      if (group.likes && group.likes.includes(userId)) {
-        likedList.push(group.group_id);
-      }
+    const allMembersIds = [];
+    groups.map((group) => {
+      const members = group.members.split(',');
+      members.map((member) => {
+        if (!allMembersIds.includes(member)) {
+          allMembersIds.push(member);
+        };
+      });
     });
-    res.send({success: true, groupList: groupList,  groupWithUser : groupWithUser, userId: userId, likedList: likedList});
+    const membersInfo = await connection.query('SELECT user_id, name, study, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
+    //console.log(membersInfo);
+    res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
     // Handle any errors that may occur during the execution of queries
     console.error('Error performing database queries:', err);
