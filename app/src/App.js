@@ -18,10 +18,6 @@ function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
 
   useEffect(() => {
-    socket.connect();
-  }, []);
-
-  useEffect(() => {
     setIsConnected(socket.connected);
     console.log(socket)
   }, [socket.connected]);
@@ -31,11 +27,7 @@ function App() {
   };
 
   useEffect(() => {
-    const onConnect = () => {
-
-    }
     socket.on('connect', () => {console.log('testdd')})
-    socket.emit('joinRoom', '1', '1');
   }, []);
 
   const [isHovered, setIsHovered] = useState(false);
@@ -56,6 +48,7 @@ function App() {
       .then((data) => {
         if (data.success) {
           setUserInfo(data.userInfo);
+          socket.connect();
         };
       })
       .catch((error) => console.error(error));
@@ -121,7 +114,7 @@ function App() {
               mode={"study"}
             />
             {/* <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} mode={"study"} /> */}
-            <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
+            <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket}/>
           </div>
         } />
       </Routes>

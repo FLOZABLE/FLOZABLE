@@ -1,11 +1,54 @@
-import io from "./app";
+const {server, sessionMiddleWare} = require("./app");
+const cron = require('node-cron');
+const pool = require("./model/pool");
+
+const io = require('socket.io')(server, {
+  cors: {
+    origin: ["http://localhost:3001", "http://localhost:3000"],
+    credentials: true,
+    methods: ["GET", "POST"],
+  },
+  allowEIO3: true
+});
+
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+
+io.use(wrap(sessionMiddleWare));
+
+/* io.use((socket, next) => {
+  const req = socket.request;
+  if (process.env.NODE_ENV == "production") {
+    try {
+      const sessionData = socket.request.session;
+      if (sessionData ) {
+        console.log(sessionData);
+      }
+    } catch (err) {
+      console.log(err);
+    };
+    //const sessionData = req.session;
+    //socket.sessionData = sessionData;
+  }
+  next();
+}); */
 
 io.on('connection', (socket) => {
-  console.log('test')
+  let userInfo = false;
+
+  if (process.env.NODE_ENV == "production") {
+    //socket.userId = socket.sessionData.userId;
+    try {
+      userInfo = socket.request.session;
+    } catch (err) {
+      console.log(err);
+    };
+  } else {
+    
+  }
   socket.on('joinRoom', (room, userId) => {
     socket.join(room); // Join the specified room
-    console.log(`User joined room: ${room}`);
-    console.log(userId, room)
+    /* console.log(`User joined room: ${room}`);
+    console.log(userId, room) */
   });
 
   socket.on('getMembersTime', async(groups, userId) => {
@@ -20,35 +63,7 @@ io.on('connection', (socket) => {
       const membersId = group.members.flat().filter((value, index) => index % 2 === 0);
       console.log('groups',group)
       const members = await connection.query(`SELECT user_id, name, subjects, timezone from users where user_id in (?)`, [membersId]);
-      members.forEach((member) => {
-        member.subjects = JSON.parse(member.subjects)
-        console.log(member.subjects);
-        const date = new Date().toLocaleDateString('en-US', { timeZone: member.timezone });
-        const startTime = new Date(`${date} 00:00:00`).getTime();
-        const endTime = new Date(`${date} 24:00:00`).getTime();
-        
-        console.log(startTime); // Unix timestamp for 0 AM
-        console.log(endTime); // Unix timestamp for 12 PM
-        if(member.subjects == null){
-          return 0;
-        }
-        member.subjects.forEach((subject, index) => {
-          const datum_point = member.subjects[index].datum_point;
-          const filteredTimeline = subject.timeline.filter((period, index) => {
-            let [start, end] = period;
-            console.log(member.subjects[index], index)
-            console.log(start, end, datum_point);
-            start = (start + datum_point) * 1000;
-            if(end == null){
-              console.log('studying')
-            }
-            end = (end + datum_point) * 1000;
-            console.log(start, end, startTime, endTime);
-            return start >= startTime && end <= endTime;
-          })
-          console.log('filtered time', filteredTimeline)
-        })
-      })
+      
     })
     //io.to(groups).emit('sendTime', userId);
     console.log('members in group',groups, userId)
@@ -68,9 +83,19 @@ io.on('connection', (socket) => {
     console.log('test')
   })
 
-  socket.on('test', () => {
-    console.log('test')
-  })
-})
+  socket.on('onlineMembers', () => {
+    /* const onlineMembers = io.engine.clientsCount;
+    io.emit() */
+    /* const onlineMembers = Object.keys(socket.sockets).length;
+    io.emit({success: true, totalLiveMembers: onlineMembers});
+    console.log(onlineMembers); */
+  });
+});
 
-export {io};
+
+cron.schedule('*/10 * * * * *', () => {
+  const onlineMembers = io.engine.clientsCount;
+  io.emit('onlineMembers', onlineMembers);
+});
+
+module.exports = io;
