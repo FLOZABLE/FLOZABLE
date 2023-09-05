@@ -53,7 +53,7 @@ function Sidebar(props) {
             onMouseLeave={handleMouseLeave}
             className={`${styles.startStudy} ${styles.navItemWrapper} ${hoveredElement === 'navItem3' ? styles.hovered : ''}`}
           >
-            <Link to="/study" className={styles.navItem}>
+            <Link to="/dashboard/planner" className={styles.navItem}>
               <div className={styles.icon}>
               <FontAwesomeIcon icon={faCalendar} />
               </div>
