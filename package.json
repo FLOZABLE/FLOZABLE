@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon app.js nodemon --watch app.js --watch *.js app.js",
-    "production": "cross-env NODE_ENV=production nodemon app.js nodemon --watch app.js --watch *.js app.js"
+    "dev": "cross-env NODE_ENV=development nodemon app.js nodemon --watch app.js --watch *.js --ignore app",
+    "production": "cross-env NODE_ENV=production nodemon app.js --watch app.js --watch *.js --ignore app"
   },
   "repository": {
     "type": "git",
