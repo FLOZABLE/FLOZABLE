@@ -7,6 +7,7 @@ import { setGroupMembers, getMyGroups } from './StudyTool';
 import MyGroupsViewer from '../../UI/MyGroupsViewer/MyGroupsViewer';
 import YouTubePlayer from '../../UI/YouTubePlayer/YouTubePlayer';
 import StudyHeader from '../../UI/StudyHeader/StudyHeader';
+import PlanTimelineBar from '../../UI/PlanTimelineBar/PlanTimelineBar';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -45,11 +46,11 @@ function Study(props) {
     };
   }, [myGroups]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     props.socket.on('onlineMembers', (onlineMembers) => {
       console.log(onlineMembers)
     })
-  }, []);
+  }, []); */
 
   return (
     <div className={styles.StudyContainer}>
@@ -57,17 +58,20 @@ function Study(props) {
       <TopNotification duration={3000} />
       <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={`${styles.myGroupsViewerWrapper} ${groupsBtn ? styles.open : ''}`}>
-        <MyGroupsViewer myGroups={myGroups} mode={'study'}/>
+          <MyGroupsViewer myGroups={myGroups} mode={'study'} />
+        </div>
+        <div className={styles.PlanTimelineBarWrapper}>
+          <PlanTimelineBar />
         </div>
       </div>
       <div className={styles.ytBg}>
-          <YouTubePlayer
-            height={"100vh"}
-            width={"100vw"}
-            videoId={videoId}
-            volume={volume}
-          />
-        </div>
+        <YouTubePlayer
+          height={"100vh"}
+          width={"100vw"}
+          videoId={videoId}
+          volume={volume}
+        />
+      </div>
     </div>
   )
 }

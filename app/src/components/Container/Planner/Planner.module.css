@@ -1,0 +1,36 @@
+@import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
+
+
+.GroupsContainer .header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+
+.GroupsContainer .title {
+  font-size: 50px;
+  font-weight: 800;
+  border-radius: 20px;
+  width: fit-content;
+  padding: 10px 30px;
+  color: #545454;
+  margin-right: auto;
+}
+
+.GroupsContainer .container {
+  display: flex;
+  background-color: #f7f9fd;
+  border-radius: 40px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 40px;
+  margin-bottom: 50px;
+}
+
+.GroupsContainer .container .planner {
+  
+}
+
+.GroupsContainer .container .widget {
+  width: 500px;
+  margin-left: auto;
+}

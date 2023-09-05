@@ -9,6 +9,7 @@ import './App.css';
 import Sidebar from './components/UI/Sidebar/Sidebar';
 import Header from './components/UI/Header/Header';
 import Footer from './components/UI/Footer/Footer';
+import Planner from './components/Container/Planner/Planner';
 import { socket } from "./socket";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -115,6 +116,17 @@ function App() {
             />
             {/* <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} mode={"study"} /> */}
             <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket}/>
+          </div>
+        } />
+                <Route path="/dashboard/planner" element={
+          <div>
+            <Sidebar isSidebarOpen={isSidebarOpen}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              isSidebarHovered={isHovered}
+            />
+            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
+            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket}/>
           </div>
         } />
       </Routes>

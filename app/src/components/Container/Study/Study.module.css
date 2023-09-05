@@ -26,3 +26,10 @@
 .StudyContainer .myGroupsViewerWrapper.open {
   display: block;
 }
+
+.StudyContainer .PlanTimelineBarWrapper {
+  position: fixed;
+  bottom:50px;
+  left: 0px;
+  width: 100vw;
+}
