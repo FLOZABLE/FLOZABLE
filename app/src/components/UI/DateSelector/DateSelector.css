@@ -1,0 +1,42 @@
+.DateSelector .selectorWrapper {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  height: 100%;
+}
+
+.selectorWrapper fieldset {
+  border: none;
+}
+
+.selectorWrapper .timeStart input{
+  width: 80px;
+}
+.selectorWrapper .timeStop input{
+  width: 80px;
+}
+
+.DateWrapper input {
+  width: 60px;
+}
+
+.selectorWrapper .inputWrapper:hover .hoverEl{
+  display: flex;
+  background-color:#000000C0;
+  opacity: 1;
+  color: #fff;
+  z-index: 2;
+}
+
+.selectorWrapper .hoverEl {
+  position: absolute;
+  transition: opacity .3s ease-in-out;
+  opacity: 0;
+  width: fit-content;
+  border-radius: 20px;
+  height: 40px;
+  padding: 0px 20px;
+  justify-content: center;
+  align-items: center;
+  color: transparent;
+}
