@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import styles from './SmallCalendar.module.css';
@@ -64,15 +64,33 @@ const StyleWrapper = styled.div`
     border-radius: 13px;
     color: #fff;
   }
+  .SmallCalendar.today .fc-day-today {
+    background-color: #4169e1 !important;
+    border-radius: 13px;
+    color: #fff;
+  }
+  .SmallCalendar.today .selected-date {
+    background-color: #fff !important;
+    border-radius: 13px;
+    color: #545454;
+  }
 `;
 
 function SmallCalendar(props) {
   const calendarRef = useRef(null);
   const currentDateRef = useRef(null);
+  const [isToday, setIsToday] = useState(props.viewDate.getTime() == new Date().setHours(0, 0, 0, 0));
+
+  useEffect(() => {
+    calendarRef.current.getApi().gotoDate(props.viewDate);
+    console.log('defa', calendarRef/* calendarRef.current.props.dateClick */)
+  }, [props.viewDate])
 
   const handleDateClick = (arg) => {
     const currentDate = new Date(arg.date);
-    console.log(arg);
+    console.log(currentDate);
+    setIsToday(currentDate.getTime() == new Date().setHours(0, 0, 0, 0));
+    console.log(isToday, currentDate.getTime(), new Date().setHours(0, 0, 0, 0))
     if (currentDateRef.current) {
       currentDateRef.current.classList.remove('selected-date');
     };
@@ -84,8 +102,10 @@ function SmallCalendar(props) {
 
   const handleTodayButtonClick = () => {
     const currentDate = new Date();
+    setIsToday(true);
     props.setViewDate(new Date(currentDate.setHours(0, 0, 0, 0)));
     calendarRef.current.getApi().gotoDate(currentDate);
+    console.log(calendarRef)
   };
 
   const customHeader = {
@@ -95,8 +115,8 @@ function SmallCalendar(props) {
   };
 
   return (
-    <div className={styles.StatsCalendarContainer}>
-      <StyleWrapper>
+    <StyleWrapper>
+    <div className={`SmallCalendar ${isToday ? 'today' : ''}`}>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
@@ -118,8 +138,8 @@ function SmallCalendar(props) {
         headerToolbar={customHeader}
         dateClick={handleDateClick}
       />
-      </StyleWrapper>
     </div>
+    </StyleWrapper>
   );
 }
 
