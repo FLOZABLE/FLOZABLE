@@ -17,7 +17,11 @@ function renderEventContent(eventInfo) {
 
 function handleEventClick(clickInfo, setModal, setInformation) {
   //setEnd(clickInfo.event.end);
-
+/*   const calendarApi = clickInfo.view.calendar;
+  calendarApi.addEvent({
+    start: clickInfo.start,
+    end: clickInfo.end
+  }) */
   setModal(true);
 };
 
@@ -34,13 +38,13 @@ function handleEventResize(checkInfo) {
   //setConfirmModal(true);
 };
 
-function handleDateSelect(selectInfo, setModal, setSelectedPlan, setViewDate) {
+function handleDateSelect(eventInfo, setModal, setSelectedEvent, setViewDate) {
   // console.log(selectInfo.view.type);
   if (
-    selectInfo.view.type === "timeGridWeek" ||
-    selectInfo.view.type === "timeGridDay"
+    eventInfo.view.type === "timeGridWeek" ||
+    eventInfo.view.type === "timeGridDay"
   ) {
-    console.log(selectInfo)
+    console.log(eventInfo)
     //selectInfo.view.calendar.unselect();
     /* setState({ selectInfo, state: "create" });
     // Open modal create
@@ -49,10 +53,15 @@ function handleDateSelect(selectInfo, setModal, setSelectedPlan, setViewDate) {
     setStart(selectInfo.start);
     setEnd(selectInfo.end);
     setModal(true); */
-    console.log(new Date())
-    setViewDate(new Date(new Date(selectInfo.start).setHours(0, 0, 0, 0)));
-    setSelectedPlan(selectInfo);
-    setModal(true)
+    setViewDate(new Date(new Date(eventInfo.start).setHours(0, 0, 0, 0)));
+    const calendarApi = eventInfo.view.calendar;
+    calendarApi.addEvent({
+      start: eventInfo.start,
+      end: eventInfo.end,
+      title: ''
+    })
+    setSelectedEvent(eventInfo);
+    setModal(true);
   }
 
   // let calendarApi = selectInfo.view.calendar;
@@ -75,8 +84,20 @@ function handleDateClick(arg) {
   // console.log(arg.dateStr);
 };
 
-function handleUpdate(selectedEvent) {
-
+function handleUpdate(selectedEvent, title, startTime, stopTime, subject, notification, description, setSelectedEvent) {
+  console.log(selectedEvent, title, startTime, stopTime, subject, notification, description)
+  const calendarApi = selectedEvent.view.calendar;
+  setSelectedEvent({start: startTime, end: stopTime, title: title, description: description})
+  /* selectedEvent.start = startTime;
+  selectedEvent.end = stopTime;
+  selectedEvent.title = title;
+  selectedEvent.description = description; */
+  /* calendarApi.addEvent({
+    title: title,
+    start: startTime,
+    end: stopTime
+  }) */
+  console.log(calendarApi)
 }
 
 export {renderEventContent, handleEventClick, handleEventDrop, handleEventResize, handleDateSelect, handleDateClick, handleUpdate };
