@@ -439,6 +439,13 @@ function isValidJSON(data, schema) {
   };
 };
 
+Router.post("/plan/bring-plans", async(req, res) => {
+  const connection = await(await pool).getConnection();
+  let plans = await connection.query(`SELECT * from plans where user_id = ?`, [tester.id]);
+  res.send({success: true, plans: plans})
+  connection.release();
+})
+
 //get total live 
 Router.post("/live-members", (req, res) => {
   const totalLiveMembers = Object.keys(io.socket.sockets).length;

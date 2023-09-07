@@ -68,6 +68,19 @@ function App() {
       .catch((error) => console.error(error));
   }, []);
 
+  const [plans, setPlans] = useState([]);
+
+  useEffect(() => {
+    fetch(`${serverOrigin}/api/plan/bring-plans`, { method: 'post' })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setPlans(data.plans);
+        };
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
 
   return (
     <Router>
@@ -140,7 +153,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} userInfo={userInfo} socket={socket}/>
+            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} userInfo={userInfo} socket={socket} plans={plans} />
           </div>
         } />
       </Routes>
