@@ -29,11 +29,18 @@ const StyleWrapper = styled.div`
 }
 
 `;
-function TextEditor() {
+function TextEditor(props) {
+  const handleChange = (html) => {
+    props.setDescription(html);
+  };
+
   return (
     <div className={styles.TextEditor}>
       <StyleWrapper>
-        <ReactQuill theme="snow" />
+        <ReactQuill theme="snow" 
+        onChange={handleChange}
+        value={props.description}
+        />
       </StyleWrapper>
     </div>
   );
