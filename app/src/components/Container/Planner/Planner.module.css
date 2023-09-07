@@ -27,7 +27,7 @@
 }
 
 .GroupsContainer .container .planner {
-  
+  flex-grow: 1;
 }
 
 .GroupsContainer .container .widget {

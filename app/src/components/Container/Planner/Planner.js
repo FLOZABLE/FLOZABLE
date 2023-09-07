@@ -35,7 +35,7 @@ function Planner(props) {
           </div>
           <div className={styles.container}>
             <div className={styles.planner}>
-              <EventPlanner />
+              <EventPlanner viewDate={viewDate} setViewDate={updateViewDate} subjects={props.subjects} />
             </div>
             <div className={styles.widget}>
             <SmallCalendar viewOpt={viewMode} setViewDate={updateViewDate} viewDate={viewDate} />

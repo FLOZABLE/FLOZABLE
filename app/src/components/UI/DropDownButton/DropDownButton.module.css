@@ -1,0 +1,61 @@
+.DropDownButton {
+  position: relative;
+  width: min-content;
+  display: flex;
+}
+
+.DropDownButton button {
+  padding: 5px 30px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  font-size: 20px;
+  width: min-content;
+  white-space: nowrap;
+  transition: .3s background-color ease-in-out;
+}
+
+.DropDownButton button:hover {
+  background-color: rgb(230, 226, 226);
+}
+
+.DropDownButton button.clicked {
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+.DropDownButton button.clicked ~ .options{
+  font-size: 20px;
+  transition: font-size .3s ease-in-out;
+}
+
+.DropDownButton button.clicked .options .option{
+  padding: 3px 20px;
+}
+
+.DropDownButton .options {
+  position: absolute;
+  font-size: 0px;
+  transition: font-size .3s ease-in-out;
+  width: 100%;
+  top: 50px;
+  background-color: #fff;
+  max-height: 100px;
+  overflow-y: auto;
+  z-index: 2;
+}
+
+.DropDownButton .options .option {
+  padding-left: 30px;
+  cursor: pointer;
+}
+
+.DropDownButton button i {
+  transform: rotate(0deg);
+  transition: transform .4s cubic-bezier(0.075, 0.82, 0.165, 1);
+  margin-left: 20px;
+  font-size: 30px;
+}
+
+.DropDownButton button.clicked i {
+  transform: rotate(180deg);
+}

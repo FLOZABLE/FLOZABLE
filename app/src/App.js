@@ -10,6 +10,7 @@ import Sidebar from './components/UI/Sidebar/Sidebar';
 import Header from './components/UI/Header/Header';
 import Footer from './components/UI/Footer/Footer';
 import Planner from './components/Container/Planner/Planner';
+import { sortSubjects } from './components/Container/Stats/StatTools';
 import { socket } from "./socket";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -17,6 +18,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(socket.connected);
+  const [subjects, setSubjects] = useState([]);
 
   useEffect(() => {
     setIsConnected(socket.connected);
@@ -54,6 +56,18 @@ function App() {
       })
       .catch((error) => console.error(error));
   }, []);
+
+  useEffect(() => {
+    fetch(`${serverOrigin}/api/information/bring-subjects`, { method: 'post' })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setSubjects(sortSubjects(data.subjects));
+        }
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
 
   return (
     <Router>
@@ -126,7 +140,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket}/>
+            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} userInfo={userInfo} socket={socket}/>
           </div>
         } />
       </Routes>
