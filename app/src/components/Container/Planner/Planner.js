@@ -13,7 +13,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function Planner(props) {
   const [viewMode, setViewMode] = useState('Day');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
-
+  const [forceUdt, setForceUdt] = useState([]);
   const updateViewer = (item) => {
     setViewMode(item);
   };
@@ -21,9 +21,18 @@ function Planner(props) {
   const updateViewDate = (date) => {
     setViewDate(date);
   };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      //setForceUdt([]);
+    }, 300);
+    return (() => {
+      clearInterval(timeoutId);
+    })
+  }, [props.isSidebarOpen, props.isSidebarHovered]);
   return (
     <div className={styles.GroupsContainer}>
-      <TopNotification duration={3000} />
+      <TopNotification duration={1000} />
       <StuckModal />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.wrapper}>
@@ -40,6 +49,7 @@ function Planner(props) {
             <div className={styles.widget}>
             <SmallCalendar viewOpt={viewMode} setViewDate={updateViewDate} viewDate={viewDate} />
             </div>
+            {forceUdt}
           </div>
         </div>
       </div>

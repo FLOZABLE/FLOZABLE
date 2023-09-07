@@ -38,8 +38,8 @@ function Header(props) {
           <FontAwesomeIcon icon={faBook} style={{color: "#348d50",}} />
           </div>
           <div className={styles.text}>
-            <h5>20k</h5>
-            <h6>Attended</h6>
+            <h5>0.3h</h5>
+            <h6>Today Total</h6>
           </div>
         </div>
         <div className={styles.headerEl}>
@@ -47,8 +47,8 @@ function Header(props) {
           <FontAwesomeIcon icon={faMobileScreenButton} style={{color: "#ff562d",}} />
           </div>
           <div className={styles.text}>
-            <h5>20k</h5>
-            <h6>Attended</h6>
+            <h5>2h</h5>
+            <h6>App Usage</h6>
           </div>
         </div>
         <div className={styles.headerEl}>
@@ -56,8 +56,8 @@ function Header(props) {
           <FontAwesomeIcon icon={faFire} style={{color: "#2c70ff",}} />
           </div>
           <div className={styles.text}>
-            <h5>20k</h5>
-            <h6>Attended</h6>
+            <h5>5</h5>
+            <h6>Streaks</h6>
           </div>
         </div>
         <div className={styles.headerEl}>
@@ -65,8 +65,8 @@ function Header(props) {
           <FontAwesomeIcon icon={faArrowsToCircle} style={{color: "#705dc1",}} />
           </div>
           <div className={styles.text}>
-            <h5>20k</h5>
-            <h6>Attended</h6>
+            <h5>0.2h</h5>
+            <h6>Focus</h6>
           </div>
         </div>
       </div>

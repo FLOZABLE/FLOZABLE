@@ -27,6 +27,7 @@ export default function DateSelector(props) {
             <div className="startWrapper inputWrapper">
               <TimePicker className='timeStart'
                 slotProps={{ textField: { placeholder: 'Start Time' } }}
+                value={DateTime.fromMillis(props.startTime.getTime())}
               />
               <div className="hoverEl">
                 Start Time
@@ -35,7 +36,8 @@ export default function DateSelector(props) {
             <div className='stopWrapper inputWrapper'>
               <TimePicker className='timeStop'
                 slotProps={{ textField: { placeholder: 'Stop Time' } }}
-                value={DateTime.fromMillis(props.viewDate.getTime())}
+                value={DateTime.fromMillis(props.stopTime.getTime())}
+                
               />
               <div className="hoverEl">
                 Stop Time

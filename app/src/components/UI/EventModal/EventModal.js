@@ -9,26 +9,7 @@ import DropDownButton from "../DropDownButton/DropDownButton";
 import CuteToggleButton from "../CuteToggleButton/CuteToggleButton";
 import BlobBtn from "../BlobBtn/BlobBtn";
 
-const StyleWrapper = styled.div`
-.react-date-picker__inputGroup {
-  display: flex;
-  background-color: #fff;
-  justify-content: center;
-}
-.react-date-picker__inputGroup input{
-  width: 50px !important;
-}
-`;
-
 function EventModal(props) {
-  const [subjects, setSubjects] = useState([]);
-  const [notification, setNotification] = useState(false);
-
-  useEffect(() => {
-    setSubjects(props.subjects.map((subject) => {
-      return subject.name;
-    }));
-  }, [props.subjects])
   useEffect(() => {
     console.log('updated', props.viewDate)
   }, [props.viewDate]);
@@ -36,7 +17,7 @@ function EventModal(props) {
     <div className={`${styles.EventModal} ${props.isOpen ? styles.open : ''}`}>
       <div className={styles.header}>
         <i>
-        <FontAwesomeIcon icon={faXmark} />
+          <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
       <div className={styles.container}>
@@ -44,7 +25,7 @@ function EventModal(props) {
           <div className={styles.iconWrapper}>
           </div>
           <div className={styles.contentWrapper}>
-            <input type="text" placeholder="Enter title"/>
+            <input type="text" placeholder="Enter title" onChange={(e) => {props.setTitle(e.target.value)}}/>
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -55,7 +36,7 @@ function EventModal(props) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <DateSelector viewDate={props.viewDate} />
+            <DateSelector viewDate={props.viewDate} startTime={props.startTime} setStartTime={props.setStartTime} stopTime={props.stopTime} setStopTime={props.setStopTime}/>
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -66,7 +47,10 @@ function EventModal(props) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <TextEditor />
+            <TextEditor 
+            setDescription={props.setDescription}
+            description={props.description}
+            />
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -78,7 +62,7 @@ function EventModal(props) {
           </div>
           <div className={styles.contentWrapper}>
             <div className={styles.subjectWrapper}>
-              <DropDownButton options={subjects} defaultIndex={0} />
+              <DropDownButton options={props.subjects} defaultIndex={0} />
             </div>
           </div>
         </div>
@@ -97,7 +81,7 @@ function EventModal(props) {
           </div>
         </div>
         <div className={styles.submit}>
-        <BlobBtn name={'SUBMIT'} setClicked={props.setSavePlan} />
+          <BlobBtn name={'SUBMIT'} setClicked={props.setSavePlan} />
         </div>
       </div>
     </div>
