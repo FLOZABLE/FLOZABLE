@@ -62,7 +62,7 @@ function EventModal(props) {
           </div>
           <div className={styles.contentWrapper}>
             <div className={styles.subjectWrapper}>
-              <DropDownButton options={props.subjects} defaultIndex={0} />
+              <DropDownButton options={props.subjects} defaultIndex={0} setValue={props.setSubject} />
             </div>
           </div>
         </div>
@@ -75,13 +75,13 @@ function EventModal(props) {
           </div>
           <div className={styles.contentWrapper}>
             <div className={styles.notificationWrapper}>
-              <DropDownButton options={['no notification', '5 minutes before', '10 minutes before', '30 minutes before', '1 hour before']} defaultIndex={0} />
+              <DropDownButton options={[{name:'no notification', value: -1}, {name: '5 minutes before', value: 5}, {name: '10 minutes before', value: 10}, {name: '30 minutes before', value: 30}, {name: '1 hour before', value: 60}]} defaultIndex={0} setValue={props.setNotification} />
             </div>
 
           </div>
         </div>
         <div className={styles.submit}>
-          <BlobBtn name={'SUBMIT'} setClicked={props.setSavePlan} />
+          <BlobBtn name={'SUBMIT'} setClicked={props.setSubmit} />
         </div>
       </div>
     </div>

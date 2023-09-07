@@ -11,8 +11,8 @@ function DropDownButton(props) {
   useEffect(() => {
     setOptions(props.options.map((option, i) => {
       return (
-        <li key={i} onClick={() => {setIndex(i);setClicked(false)}} className={styles.option}>
-          {option}
+        <li key={i} onClick={() => {setIndex(i);setClicked(false);props.setValue(option.value)}} className={styles.option}>
+          {option.name}
         </li>
       )
     }));

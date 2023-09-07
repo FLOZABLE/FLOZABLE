@@ -48,13 +48,13 @@ function EventPlanner(props) {
 
   useEffect(() => {
     if (submit) {
-      handleUpdate(selectedEvent);
-    }
+      handleUpdate(selectedEvent, title, startTime, stopTime, subject, notification, description, setSelectedEvent);
+    };
   }, [submit]);
 
   useEffect(() => {
     setSubjects(props.subjects.map((subject) => {
-      return subject.name;
+      return { name: subject.name, value: subject.id };
     }));
   }, [props.subjects]);
 
@@ -62,64 +62,68 @@ function EventPlanner(props) {
     if (selectedEvent) {
       setStartTime(new Date(selectedEvent.start));
       setStopTime(new Date(selectedEvent.end));
-    }
+    };
+
+    console.log('updated', selectedEvent)
   }, [selectedEvent]);
 
   return (
     <div className={styles.eventPlanner}>
       <StyleWrapper>
-      <FullCalendar
-      slotDuration={'00:15:00'}
-      slotLabelInterval={{ hours: 1 }}
-      allDaySlot={false}
-      slotLabelFormat={
-        {hour: '2-digit',
-        minute: '2-digit',
-        hour12: true}
-      }
-        ref={calendarRef}
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        editable={true}
-        selectable={true}
-        selectMirror={true}
-        dayMaxEvents={true}
-        select={(eventInfo) => {handleDateSelect(eventInfo, setIsModal, setSelectedEvent, props.setViewDate)}}
-        eventContent={renderEventContent} // custom render function
-        eventClick={(clickInfo) => {handleEventClick(clickInfo, setIsModal)}}
-        eventDrop={handleEventDrop}
-        eventResize={handleEventResize}
-        //
-        dateClick={handleDateClick}
-        eventAdd={(e) => {
-          console.log("eventAdd", e);
-        }}
-        eventChange={(e) => {
-          console.log("eventChange", e);
-        }}
-        eventRemove={(e) => {
-          console.log("eventRemove", e);
-        }}
-      />
-      <EventModal
-        isOpen={isModal}
-        viewDate={props.viewDate}
-        setViewDate={props.setViewDate}
-        subjects={subjects}
-        setStartTime={setStartTime}
-        setStopTime={setStopTime}
-        startTime={startTime}
-        stopTime={stopTime}
-        setSubmit={setSubmit}
-        setTitle={setTitle}
-        title={title}
-        description={description}
-        setDescription={setDescription}
-        subject={description}
-        setSubject={setSubject}
-        notification={notification}
-        setNotification={setNotification}
-      />
+        <FullCalendar
+          slotDuration={'00:15:00'}
+          slotLabelInterval={{ hours: 1 }}
+          allDaySlot={false}
+          slotLabelFormat={
+            {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            }
+          }
+          ref={calendarRef}
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          initialView="timeGridWeek"
+          editable={true}
+          selectable={true}
+          selectMirror={true}
+          dayMaxEvents={true}
+          select={(eventInfo) => { handleDateSelect(eventInfo, setIsModal, setSelectedEvent, props.setViewDate) }}
+          eventContent={renderEventContent} // custom render function
+          eventClick={(clickInfo) => { handleEventClick(clickInfo, setIsModal) }}
+          eventDrop={handleEventDrop}
+          eventResize={handleEventResize}
+          //
+          dateClick={handleDateClick}
+          eventAdd={(e) => {
+            console.log("eventAdd", e);
+          }}
+          eventChange={(e) => {
+            console.log("eventChange", e);
+          }}
+          eventRemove={(e) => {
+            console.log("eventRemove", e);
+          }}
+        />
+        <EventModal
+          isOpen={isModal}
+          viewDate={props.viewDate}
+          setViewDate={props.setViewDate}
+          subjects={subjects}
+          setStartTime={setStartTime}
+          setStopTime={setStopTime}
+          startTime={startTime}
+          stopTime={stopTime}
+          setSubmit={setSubmit}
+          setTitle={setTitle}
+          title={title}
+          description={description}
+          setDescription={setDescription}
+          subject={description}
+          setSubject={setSubject}
+          notification={notification}
+          setNotification={setNotification}
+        />
       </StyleWrapper>
     </div>
   );
