@@ -75,7 +75,7 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setPlans(data.plans);
+          //setPlans(data.plans);
         };
       })
       .catch((error) => console.error(error));

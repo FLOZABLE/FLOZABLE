@@ -170,7 +170,7 @@ app.use((err, req, res, next) => {
   res.locals.error = err;
   const status = err.status || 500;
   res.status(status);
-  res.render('error');
+  console.log(err)
 });
 
 /* app.get('*',function(req,res){

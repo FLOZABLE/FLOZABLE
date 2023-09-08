@@ -10,13 +10,13 @@ import CuteToggleButton from "../CuteToggleButton/CuteToggleButton";
 import BlobBtn from "../BlobBtn/BlobBtn";
 
 function EventModal(props) {
-  useEffect(() => {
+  /* useEffect(() => {
     console.log('updated', props.viewDate)
-  }, [props.viewDate]);
+  }, [props.viewDate]); */
   return (
-    <div className={`${styles.EventModal} ${props.isOpen ? styles.open : ''}`}>
+    <div className={`${styles.EventModal} ${props.isModal ? styles.open : ''}`}>
       <div className={styles.header}>
-        <i>
+        <i onClick={() => {props.setIsModal(false)}}>
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
@@ -25,7 +25,7 @@ function EventModal(props) {
           <div className={styles.iconWrapper}>
           </div>
           <div className={styles.contentWrapper}>
-            <input type="text" placeholder="Enter title" onChange={(e) => {props.setTitle(e.target.value)}}/>
+            <input type="text" placeholder="Enter title" value={props.title} onChange={(e) => {props.setTitle(e.target.value)}}/>
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -36,7 +36,7 @@ function EventModal(props) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <DateSelector viewDate={props.viewDate} startTime={props.startTime} setStartTime={props.setStartTime} stopTime={props.stopTime} setStopTime={props.setStopTime}/>
+            <DateSelector start={props.start} setStart={props.setStart} end={props.end} setEnd={props.setEnd}/>
           </div>
         </div>
         <div className={styles.wrapper}>
