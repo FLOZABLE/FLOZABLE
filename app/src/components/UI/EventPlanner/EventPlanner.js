@@ -8,9 +8,12 @@ import interactionPlugin from "@fullcalendar/interaction";
 import styles from "./EventPlanner.module.css";
 import events from "./Events";
 import styled from "@emotion/styled";
+import {generateRandomId} from "../../../utils/RandomId";
+import { DateTime } from "luxon";
 
 import EventModal from "../EventModal/EventModal";
-import { renderEventContent, handleEventClick, handleEventDrop, handleEventResize, handleDateSelect, handleDateClick, handleUpdate } from "./EventPlannerTool";
+//import { renderEventContent, handleDateSelect, handleDateClick } from "./EventPlannerTool";
+
 const StyleWrapper = styled.div`
 .fc-col-header {
   width: 100% !important;
@@ -34,53 +37,126 @@ const StyleWrapper = styled.div`
 
 
 function EventPlanner(props) {
-  const [isModal, setIsModal] = useState(false);
   const calendarRef = useRef(null);
+  const [events, setEvents] = useState(props.plans);
+  const [isModal, setIsModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [submit, setSubmit] = useState(false);
-  const [subjects, setSubjects] = useState([]);
+  
+  //new event stats
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [subject, setSubject] = useState('');
-  const [notification, setNotification] = useState(0);
-  const [startTime, setStartTime] = useState(new Date());
-  const [stopTime, setStopTime] = useState(new Date());
+  const [subjet, setSubject] = useState(false);
+  const [subjects, setSubjects] = useState([]);
+  const [start, setStart] = useState(new Date());
+  const [end, setEnd] = useState(new Date());
+  const [priority, setPriority] = useState(50);
+  const [notification, setNotification] = useState(-1);
+  const [submit, setSubmit] = useState(false);
 
-  useEffect(() => {
-    if (submit) {
-      handleUpdate(selectedEvent, title, startTime, stopTime, subject, notification, description, setSelectedEvent);
+  function renderEventContent(eventInfo) {
+    return (
+      <div>
+        {/* <b>{eventInfo.timeText}</b> */}
+        <i
+          style={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis"
+          }}
+        >
+          {eventInfo.event.title}
+        </i>
+      </div>
+    );
+  };
+
+  function renderHeader(info) {
+    console.log(info);
+    const date = DateTime.fromMillis(info.date.getTime());
+    const weekDay = date.weekdayShort;
+    const day = date.day;
+    return (
+      <div>
+        <p className="weekDay">{weekDay}</p>
+        <p className="day">{day}</p>
+      </div>
+    )
+  }
+  
+  function handleDateSelect(selectInfo) {
+    if (!selectedEvent) {
+      const id = generateRandomId(10);
+      setSelectedEvent(id);
+      const start = new Date(selectInfo.start);
+      const end = new Date(selectInfo.end);
+      const newEvent = {
+        id: id,
+        title: 'vf',
+        start: start,
+        end: end,
+        description: '',
+        subject: subjet,
+        notification: notification
+      };
+      setStart(start);
+      setEnd(end);
+      setEvents([...events, newEvent]);
+      setIsModal(true);
+    } else {
+      selectInfo.view.calendar.unselect();
     };
-  }, [submit]);
+  };
 
   useEffect(() => {
-    setSubjects(props.subjects.map((subject) => {
+    calendarRef.current.getApi().refetchEvents();
+    console.log(events)
+  }, [events]);
+
+  useEffect(() => {
+    if (!isModal) {
+      setSelectedEvent(null);
+    }
+  }, [isModal]);
+  
+  useEffect(() => {
+    console.log(props.subjects)
+    setSubjects([...props.subjects.map((subject) => {
       return { name: subject.name, value: subject.id };
-    }));
+    }), {name: 'others', value: '0000000000'}]);
   }, [props.subjects]);
 
+  //handle submit
   useEffect(() => {
-    if (selectedEvent) {
-      setStartTime(new Date(selectedEvent.start));
-      setStopTime(new Date(selectedEvent.end));
+    if (submit) {
+      const eventIndex = events.findIndex((event) => event.id == selectedEvent);
+      if (eventIndex !== 1) {
+        const updatedEvents = [...events];
+        updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title, start, end };
+        /* updatedEvents[eventIndex].start = start;
+        updatedEvents[eventIndex].end = end;
+        updatedEvents[eventIndex].description = description;
+        updatedEvents[eventIndex].subject = subjet;
+        updatedEvents[eventIndex].notification = notification; */
+        setEvents(updatedEvents)
+        console.log(eventIndex)
+      }
     };
-
-    console.log('updated', selectedEvent)
-  }, [selectedEvent]);
-
+  }, [submit]);
   return (
     <div className={styles.eventPlanner}>
       <StyleWrapper>
         <FullCalendar
+        key={'dsader3wt45'}
           slotDuration={'00:15:00'}
           slotLabelInterval={{ hours: 1 }}
           allDaySlot={false}
           slotLabelFormat={
             {
-              hour: '2-digit',
-              minute: '2-digit',
+              hour: 'numeric',
               hour12: true
             }
           }
+          dayHeaderContent={renderHeader}
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="timeGridWeek"
@@ -88,13 +164,11 @@ function EventPlanner(props) {
           selectable={true}
           selectMirror={true}
           dayMaxEvents={true}
-          select={(eventInfo) => { handleDateSelect(eventInfo, setIsModal, setSelectedEvent, props.setViewDate) }}
-          eventContent={renderEventContent} // custom render function
-          eventClick={(clickInfo) => { handleEventClick(clickInfo, setIsModal) }}
-          eventDrop={handleEventDrop}
-          eventResize={handleEventResize}
-          //
-          dateClick={handleDateClick}
+          events={events}
+          eventContent={renderEventContent}
+          dateClick={handleDateSelect}
+          select={handleDateSelect}
+
           eventAdd={(e) => {
             console.log("eventAdd", e);
           }}
@@ -106,23 +180,22 @@ function EventPlanner(props) {
           }}
         />
         <EventModal
-          isOpen={isModal}
-          viewDate={props.viewDate}
-          setViewDate={props.setViewDate}
-          subjects={subjects}
-          setStartTime={setStartTime}
-          setStopTime={setStopTime}
-          startTime={startTime}
-          stopTime={stopTime}
-          setSubmit={setSubmit}
-          setTitle={setTitle}
+          isModal={isModal}
+          setIsModal={setIsModal}
           title={title}
+          setTitle={setTitle}
+          setStart={setStart}
+          start={start}
+          setEnd={setEnd}
+          end={end}
           description={description}
           setDescription={setDescription}
-          subject={description}
           setSubject={setSubject}
+          subjects={subjects}
           notification={notification}
           setNotification={setNotification}
+          submit={submit}
+          setSubmit={setSubmit}
         />
       </StyleWrapper>
     </div>
