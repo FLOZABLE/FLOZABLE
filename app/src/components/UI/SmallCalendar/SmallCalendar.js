@@ -116,10 +116,6 @@ function SmallCalendar(props) {
     setEvents([{start: viewDate, end: viewDate, allDay: true, display: 'background', title: viewDate.getDate()}])
   }, [viewDate]);
 
-  useEffect(() => {
-    console.log(events)
-  }, [events]);
-
   const handleDateClick = (arg) => {
     setViewDate(arg.date);
     /* const currentDate = new Date(arg.date);
