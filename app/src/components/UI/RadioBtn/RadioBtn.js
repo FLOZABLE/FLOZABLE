@@ -12,7 +12,6 @@ function RadioBtn(props) {
         className={styles.selectorItemRadio}
         onClick={() => {
           props.changeEvent(item.value);
-          console.log('changed');
         }}
         defaultChecked={props.defaultViewer == index}
       />

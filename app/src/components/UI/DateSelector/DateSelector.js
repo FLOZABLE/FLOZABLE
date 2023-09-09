@@ -14,15 +14,15 @@ export default function DateSelector(props) {
       year: newDate.year,
       month: newDate.month,
       day: newDate.day,
-      hour: props.start.hour,
-      minute: props.start.minute,
+      hour: props.start.getHours(),
+      minute: props.start.getMinutes(),
     });
     const updatedEnd = DateTime.fromObject({
       year: newDate.year,
       month: newDate.month,
       day: newDate.day,
-      hour: props.end.hour,
-      minute: props.end.minute,
+      hour: props.end.getHours(),
+      minute: props.end.getMinutes(),
     });
 
     props.setStart(updatedStart.toJSDate());

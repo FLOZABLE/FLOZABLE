@@ -200,7 +200,6 @@ function EventPlanner(props) {
   useEffect(() => {
     if (PlannerApi) {
       PlannerApi.gotoDate(viewDate);
-      console.log(viewDate)
     }
   }, [viewDate]);
 
@@ -209,7 +208,6 @@ function EventPlanner(props) {
   }, [start]);
 
   useEffect(() => {
-    console.log(props.subjects)
     setSubjects([...props.subjects.map((subject) => {
       return { name: subject.name, value: subject.id };
     }), { name: 'others', value: '0000000000' }]);
@@ -222,11 +220,21 @@ function EventPlanner(props) {
       if (eventIndex !== -1) {
         const updatedEvents = [...events];
         updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, description: description, subject: subject, saved: true };
-        setEvents(updatedEvents)
-        console.log(eventIndex)
+        setEvents(updatedEvents);
       }
     };
   }, [submit]);
+
+  useEffect(() => {
+    if (selectedEvent) {
+      const eventIndex = events.findIndex((event) => event.id == selectedEvent);
+      if (eventIndex !== -1) {
+        const updatedEvents = [...events];
+        updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, subject: subject };
+        setEvents(updatedEvents)
+      }
+    };
+  }, [title, start, end, subject]);
 
   useEffect(() => {
     if (!isModal) {
@@ -258,7 +266,6 @@ function EventPlanner(props) {
   }
 
   useEffect(() => {
-    console.log(viewMode)
     if (PlannerApi) {
       PlannerApi.changeView(viewMode, viewDate);
     }
@@ -301,6 +308,7 @@ function EventPlanner(props) {
           eventContent={renderEventContent}
           dateClick={handleDateSelect}
           select={handleDateSelect}
+          eventDrop={(e) => console.log(e)}
 
           eventAdd={(e) => {
             console.log("eventAdd", e);
