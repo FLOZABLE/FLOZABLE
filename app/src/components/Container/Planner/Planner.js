@@ -11,8 +11,12 @@ import EventPlanner from '../../UI/EventPlanner/EventPlanner';
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Planner(props) {
-  const [viewMode, setViewMode] = useState('Day');
+  const [viewMode, setViewMode] = useState('timeGridWeek');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
+  const PlannerRef = useRef(null);
+  const [PlannerApi, setPlannerApi] = useState(null);
+  const SmallCalendarRef = useRef(null);
+  const [SmallCalendarApi, setSmallCalendarApi] = useState(null);
   const [forceUdt, setForceUdt] = useState([]);
   const updateViewer = (item) => {
     setViewMode(item);
@@ -21,6 +25,14 @@ function Planner(props) {
   const updateViewDate = (date) => {
     setViewDate(date);
   };
+
+  useEffect(() => {
+    setPlannerApi(PlannerRef.current.getApi());
+  }, [PlannerRef]);
+
+  useEffect(() => {
+    setSmallCalendarApi(SmallCalendarRef.current.getApi());
+  }, [SmallCalendarRef]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -40,14 +52,14 @@ function Planner(props) {
             <div className={styles.title}>
               Planner
             </div>
-            <RadioBtn items={['Day', 'Week', 'Month']} changeEvent={updateViewer} defaultViewer={0} />
+            <RadioBtn items={[{view: 'Day', value: 'timeGridDay'}, {view: 'Week', value: 'timeGridWeek'}, {view: 'Month', value: 'dayGridMonth'}]} changeEvent={updateViewer} defaultViewer={1} />
           </div>
           <div className={styles.container}>
             <div className={styles.planner}>
-              <EventPlanner viewDate={viewDate} setViewDate={updateViewDate} subjects={props.subjects} plans={props.plans}/>
+              <EventPlanner viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={props.subjects} plans={props.plans} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
             </div>
             <div className={styles.widget}>
-            <SmallCalendar viewOpt={viewMode} setViewDate={updateViewDate} viewDate={viewDate} />
+            <SmallCalendar viewOpt={viewMode} setViewDate={updateViewDate} viewDate={viewDate} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
             </div>
             {forceUdt}
           </div>

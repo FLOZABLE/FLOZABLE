@@ -27,7 +27,7 @@ function Ranking(props) {
               <button className={styles.title}
                 onClick={toggleCalendar}
               >Today <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} /></button>
-              <RadioBtn items={['Daily', 'Weekly', 'Monthly']} />
+              <RadioBtn items={[{view: 'Day', value: 'timeGridDay'}, {view: 'Week', value: 'timeGridWeek'}, {view: 'Month', value: 'dayGridMonth'}]} />
             </div>
             <div className={`${styles.container} ${styles.rankingContainer}`}>
               <div className={styles.header}>
