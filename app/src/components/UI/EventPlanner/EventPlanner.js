@@ -33,6 +33,9 @@ const StyleWrapper = styled.div`
 .fc-timegrid-cols > table {
   width: 100% !important;
 }
+.fc-timegrid-cols > table .fc-day-today {
+  background-color: transparent;
+}
 `;
 
 
@@ -143,7 +146,7 @@ function EventPlanner(props) {
     };
   }, [submit]);
   return (
-    <div className={styles.eventPlanner}>
+    <div className={`${styles.eventPlanner} eventPlanner`}>
       <StyleWrapper>
         <FullCalendar
         key={'dsader3wt45'}
