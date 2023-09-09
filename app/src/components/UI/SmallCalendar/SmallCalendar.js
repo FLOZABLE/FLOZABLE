@@ -22,7 +22,7 @@ const StyleWrapper = styled.div`
 
   .fc.fc-media-screen.fc-direction-ltr.fc-theme-standard {
     position: relative;
-    height: 500px;
+    height: 400px;
   }
   .fc-theme-standard td, .fc-theme-standard th {
     border: none;
@@ -31,7 +31,7 @@ const StyleWrapper = styled.div`
     justify-content: center;
   }
   .fc-toolbar-title {
-    font-size: 30px
+    font-size: 20px
   }
   .fc .fc-prev-button.fc-button-primary, .fc .fc-next-button.fc-button-primary {
     background-color: transparent;
@@ -51,7 +51,7 @@ const StyleWrapper = styled.div`
   }
   .fc-view-harness {
     border-radius: 30px;
-    overflow: hidden;
+    /* overflow: hidden; */
   }
   * {
     border: none !important;
@@ -59,35 +59,70 @@ const StyleWrapper = styled.div`
   .fc .fc-daygrid-day.fc-day-today {
     background-color: #fff;
   }
-  .selected-date {
-    background-color: #4169e1 !important;
-    border-radius: 13px;
+  .fc-daygrid-day-events {
+    position: absolute !important;
+    top: 0px;
+    width: 100%;
+    height: 42px !important;
+    
+  }
+  .fc-daygrid-day-bg {
+    z-index: 5;
+  }
+  .fc-bg-event {
+    background-color: #4169e1;
+    opacity: 1;
+    border-radius: 30px;
+    display: flex;
+    justify-content: center;
+    align-item: center;
+  }
+  .fc-bg-event .fc-event-title {
+    font-style: unset;
+    font-size: 1em;
     color: #fff;
   }
-  .SmallCalendar.today .fc-day-today {
-    background-color: #4169e1 !important;
-    border-radius: 13px;
-    color: #fff;
-  }
-  .SmallCalendar.today .selected-date {
-    background-color: #fff !important;
-    border-radius: 13px;
-    color: #545454;
+  .fc-daygrid-day-frame.fc-scrollgrid-sync-inner {
+    min-height: 42.85px;
+    height: 42.85px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
   }
 `;
 
 function SmallCalendar(props) {
-  const calendarRef = useRef(null);
+  const {PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewDate, setViewDate} = props;
   const currentDateRef = useRef(null);
   const [isToday, setIsToday] = useState(props.viewDate.getTime() == new Date().setHours(0, 0, 0, 0));
+  const [foreceUdt, setForceUdt] = useState([]);
+  const [events, setEvents] = useState([]);
+
 
   useEffect(() => {
-    calendarRef.current.getApi().gotoDate(props.viewDate);
-    console.log('defa', calendarRef/* calendarRef.current.props.dateClick */)
-  }, [props.viewDate])
+    /* if (calendarApi) {
+      calendarApi.gotoDate(props.viewDate);
+      const dateElement = document.querySelector(`.SmallCalendar .fc-day[data-date="${new Date(props.viewDate).toISOString().slice(0, 10)}"]`);
+      console.log(dateElement);
+      if (currentDateRef.current) {
+        currentDateRef.current.classList.remove('selected-date');
+      };
+      currentDateRef.current = dateElement;
+      currentDateRef.current.classList.add('selected-date');
+      setForceUdt([]);
+    } */
+
+    setEvents([{start: viewDate, end: viewDate, allDay: true, display: 'background', title: viewDate.getDate()}])
+  }, [viewDate]);
+
+  useEffect(() => {
+    console.log(events)
+  }, [events]);
 
   const handleDateClick = (arg) => {
-    const currentDate = new Date(arg.date);
+    setViewDate(arg.date);
+    /* const currentDate = new Date(arg.date);
     console.log(currentDate);
     setIsToday(currentDate.getTime() == new Date().setHours(0, 0, 0, 0));
     console.log(isToday, currentDate.getTime(), new Date().setHours(0, 0, 0, 0))
@@ -97,46 +132,32 @@ function SmallCalendar(props) {
 
     currentDateRef.current = arg.dayEl;
     currentDateRef.current.classList.add('selected-date');
-    props.setViewDate(new Date(currentDate.setHours(0, 0, 0, 0)));
-  };
-
-  const handleTodayButtonClick = () => {
-    const currentDate = new Date();
-    setIsToday(true);
-    props.setViewDate(new Date(currentDate.setHours(0, 0, 0, 0)));
-    calendarRef.current.getApi().gotoDate(currentDate);
-    console.log(calendarRef)
+    props.setViewDate(new Date(currentDate.setHours(0, 0, 0, 0))); */
   };
 
   const customHeader = {
-    left: 'title',
-    center: 'prev next',
-    right: 'custom-today',
+    left: 'title prev next',
+    center: '',
+    right: '',
+  };
+
+  const dayHeaderContentCallback = (args) => {
+    return args.text.charAt(0);
   };
 
   return (
     <StyleWrapper>
-    <div className={`SmallCalendar ${isToday ? 'today' : ''}`}>
+    <div className="SmallCalendar">
       <FullCalendar
-        ref={calendarRef}
+        ref={SmallCalendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        customButtons={{
-          'custom-prev': {
-            text: 'Prev',
-            click: () => {}
-          },
-          'custom-next': {
-            text: 'Next',
-            click: () => {console.log('d')}
-          },
-          'custom-today': {
-            text: 'Today',
-            click: handleTodayButtonClick,
-          },
-        }}
+        titleFormat={{month: 'long', year: 'numeric'}}
+        dayHeaderContent={dayHeaderContentCallback}
         headerToolbar={customHeader}
         dateClick={handleDateClick}
+        select={handleDateClick}
+        events={events}
       />
     </div>
     </StyleWrapper>

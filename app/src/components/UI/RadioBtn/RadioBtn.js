@@ -11,13 +11,13 @@ function RadioBtn(props) {
         name="selector"
         className={styles.selectorItemRadio}
         onClick={() => {
-          props.changeEvent(item);
+          props.changeEvent(item.value);
           console.log('changed');
         }}
         defaultChecked={props.defaultViewer == index}
       />
       <label htmlFor={"radio" + index} className={styles.selectorItemLabel}>
-        {item}
+        {item.view}
       </label>
     </div>
     )
