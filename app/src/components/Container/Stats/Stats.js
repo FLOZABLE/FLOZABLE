@@ -190,7 +190,7 @@ function Stats(props) {
               <button className={styles.title}
                 onClick={toggleCalendar}
               >{calendarLabel} <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} /></button>
-              <RadioBtn items={['Daily', 'Weekly', 'Monthly']} changeEvent={updateViewer} defaultViewer={0} />
+              <RadioBtn items={[{view: 'Daily', value: 'Daily'}, {view: 'Weekly', value: 'Weekly'}, {view: 'Monthly', value: 'Monthly'}]} changeEvent={updateViewer} defaultViewer={0} />
             </div>
             <div className={styles.container}>
               <div className={styles.divided}>

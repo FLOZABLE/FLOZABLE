@@ -24,7 +24,7 @@
   border-bottom-right-radius: 0px;
 }
 .DropDownButton button.clicked ~ .options{
-  font-size: 20px;
+  font-size: 17px;
   transition: font-size .3s ease-in-out;
 }
 
@@ -47,6 +47,7 @@
 .DropDownButton .options .option {
   padding-left: 30px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .DropDownButton button i {
