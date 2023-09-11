@@ -75,7 +75,8 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          //setPlans(data.plans);
+          setPlans(data.plans.map(plan => {plan.saved = true; plan.start = new Date(plan.start * 1000 * 60); plan.end = new Date(plan.end * 1000 * 60); return plan}));
+          console.log(data.plans);
         };
       })
       .catch((error) => console.error(error));
@@ -153,7 +154,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} userInfo={userInfo} socket={socket} plans={plans} />
+            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans}/>
           </div>
         } />
       </Routes>

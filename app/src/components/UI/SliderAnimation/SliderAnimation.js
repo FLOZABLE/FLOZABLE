@@ -5,7 +5,7 @@ function SliderAnimation(props) {
   const { min, max, step, value, setSliderValue, sliderValue } = props;
 
   const handleChange = (e) => {
-    setSliderValue(e.target.value);
+    setSliderValue(parseInt(e.target.value));
   };
 
   const percent = () => {

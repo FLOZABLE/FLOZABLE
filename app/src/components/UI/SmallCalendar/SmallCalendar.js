@@ -93,7 +93,7 @@ const StyleWrapper = styled.div`
 `;
 
 function SmallCalendar(props) {
-  const {PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewDate, setViewDate} = props;
+  const {PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewDate, setViewDate, isModal, setIsModal} = props;
   const currentDateRef = useRef(null);
   const [isToday, setIsToday] = useState(props.viewDate.getTime() == new Date().setHours(0, 0, 0, 0));
   const [foreceUdt, setForceUdt] = useState([]);
@@ -112,8 +112,15 @@ function SmallCalendar(props) {
       currentDateRef.current.classList.add('selected-date');
       setForceUdt([]);
     } */
-
-    setEvents([{start: viewDate, end: viewDate, allDay: true, display: 'background', title: viewDate.getDate()}])
+    console.log(viewDate)
+    setEvents([{start: viewDate, end: viewDate, allDay: true, display: 'background', title: viewDate.getDate()}]);
+    if (SmallCalendarApi) {
+      SmallCalendarApi.gotoDate(viewDate);
+    };
+    console.log(isModal)
+    if (PlannerApi && !isModal) {
+      PlannerApi.gotoDate(viewDate);
+    }
   }, [viewDate]);
 
   const handleDateClick = (arg) => {
@@ -132,9 +139,9 @@ function SmallCalendar(props) {
   };
 
   const customHeader = {
-    left: 'title prev next',
+    left: 'title',
     center: '',
-    right: '',
+    right: 'prev next',
   };
 
   const dayHeaderContentCallback = (args) => {
