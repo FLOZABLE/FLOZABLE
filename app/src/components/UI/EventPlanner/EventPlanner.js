@@ -160,7 +160,7 @@ thead .fc-scroller {
 
 
 function EventPlanner(props) {
-  const { PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isModal, setIsModal } = props;
+  const { PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isAddPlanModal, setIsAddPlanModal, setIsAddSubjectModal } = props;
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [viewText, setViewText] = useState({
     year: 'numeric',
@@ -232,7 +232,7 @@ function EventPlanner(props) {
       setStart(start);
       setEnd(end);
       setEvents([...events, newEvent]);
-      setIsModal(true);
+      setIsAddPlanModal(true);
     } else {
       selectInfo.view.calendar.unselect();
     };
@@ -270,9 +270,9 @@ function EventPlanner(props) {
           setEvents(updatedEvents);
         };
       };
-    }
+    };
     if (eventInfo.saved) {
-      setIsModal(true);
+      setIsAddPlanModal(true);
       setSelectedEvent(event.event.id);
       setStart(event.event.start);
       setEnd(event.event.end);
@@ -285,13 +285,13 @@ function EventPlanner(props) {
   }
 
   useEffect(() => {
-    if (!isModal) {
+    if (!isAddPlanModal) {
       setSelectedEvent(null);
       setTitle('');
       setDescription('');
       setPriority(50);
     }
-  }, [isModal]);
+  }, [isAddPlanModal]);
 
   function areDatesInSameWeek(date1, date2) {
     const dayOfWeek1 = date1.getDay();
@@ -369,7 +369,7 @@ function EventPlanner(props) {
           setAddPlanResponse(data);
           if (data.success) {
             setEvents(updatedEvents);
-            setIsModal(false);
+            setIsAddPlanModal(false);
           };
         })
         .catch((error) => console.error(error));
@@ -391,7 +391,7 @@ function EventPlanner(props) {
   }, [title, start, end, subject]);
 
   useEffect(() => {
-    if (!isModal) {
+    if (!isAddPlanModal) {
       const eventIndex = events.findIndex((event) => event.id == selectedEvent);
       if (eventIndex !== -1) {
         const updatedEvents = [...events];
@@ -401,7 +401,7 @@ function EventPlanner(props) {
         };
       };
     };
-  }, [isModal]);
+  }, [isAddPlanModal]);
 
   const handleTodayButtonClick = () => {
     const currentDate = new Date();
@@ -517,8 +517,8 @@ function EventPlanner(props) {
           }}
         />
         <EventModal
-          isModal={isModal}
-          setIsModal={setIsModal}
+          isAddPlanModal={isAddPlanModal}
+          setIsAddPlanModal={setIsAddPlanModal}
           title={title}
           setTitle={setTitle}
           setStart={setStart}
@@ -537,6 +537,7 @@ function EventPlanner(props) {
           setRepeat={setRepeat}
           priority={priority}
           setPriority={setPriority}
+          setIsAddSubjectModal={setIsAddSubjectModal}
         />
       </StyleWrapper>
     </div>

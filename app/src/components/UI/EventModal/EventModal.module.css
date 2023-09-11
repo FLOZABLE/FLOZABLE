@@ -109,3 +109,7 @@
   align-items: center;
   display: flex;
 }
+
+.EventModal .addSubjectWrapper {
+  margin-left: auto;
+}
