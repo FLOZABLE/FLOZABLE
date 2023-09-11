@@ -65,11 +65,8 @@ async function notificationService () {
 
 
     userPlans.map(async(plan) => {
-      let time = plan.time.split(':');
-      let startHr = parseInt(time[0]);
-      let startMin = parseInt(time[1]);
-      const startTime = (plan.date + startHr * 60 * 60 + startMin * 60) * 1000;
-      if (startTime < now) {
+      const startTime = new Date(plan.start * 1000 * 60);
+      if (startTime.getTime() < now) {
       } else {
         planNotification(plan, userInfo, startTime, decryptedData);
       }
@@ -98,13 +95,12 @@ async function notificationService () {
 //const params = { date: '7/8', streak: '🔥Streak of 8 Days!🔥', ranking_compare: '+1', ranking: '#1', study_time_compare: '+1', study_time: '1', other_apps_compare: '1', other_apps: 'dd', focus_compare: '1hr', focus: '1hr', quote: 'gg' }; 
 
 function planNotification(plan, userInfo, startTime, decryptedData) {
-  let schduleNotification = schedule.scheduleJob(userInfo.user_id + '-' + plan.id, new Date(startTime), async() => {
+  let schduleNotification = schedule.scheduleJob(userInfo.user_id + '-' + plan.id, startTime, async() => {
     //remove notifications
     
     const notificationSettings = await completeNotification(userInfo.user_id, plan.id);
-    let time = plan.time.split(':');
-    let startHr = parseInt(time[0]);
-    let startMin = parseInt(time[1]);
+    let startHr = startTime.getHours();
+    let startMin = startTime.getMinutes();
     //email
     if (notificationSettings[0].email) {
       const to = [{ email: 'junjason1126@gmail.com', name: 'Jason' }];
@@ -119,7 +115,7 @@ function planNotification(plan, userInfo, startTime, decryptedData) {
       }
 
       const dispTime = `${startHr}:${startMin.toString().padStart(2, '0')}${ampm}`;
-      const params = { plan_name: plan.name, plan_time: dispTime, plan_description: plan.description}; 
+      const params = { plan_name: plan.title, plan_time: dispTime, plan_description: plan.description}; 
       const id = 2;
       sendEmail(to, params, id);
     };
@@ -132,9 +128,9 @@ function planNotification(plan, userInfo, startTime, decryptedData) {
 
       let dispStartHr = startHr;
       let dispStartMin = startMin;
-      let endTime = startHr + startMin * 60 + plan.length;
-      let dispEndHr = Math.floor(endTime / 60);
-      let dispEndMin = endTime % 60;
+      let endTime = new Date(plan.end * 1000 * 60);
+      let dispEndHr = endTime.getHours();
+      let dispEndMin = endTime.getMinutes();
       let startampm = 'am';
       let endampm = 'am';
 
@@ -158,7 +154,7 @@ function planNotification(plan, userInfo, startTime, decryptedData) {
 
       const dispTime = `${dispStartHr}:${dispStartMin.toString().padStart(2, '0')}${startampm} - ${dispEndHr}:${dispEndMin.toString().padStart(2, 0)}${endampm}`;
       const payload = JSON.stringify({
-        title: plan.name,
+        title: plan.title,
         body: dispTime,
         icon: '/img/logo.png',
         actions: [

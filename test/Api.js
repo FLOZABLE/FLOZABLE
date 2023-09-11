@@ -258,9 +258,9 @@ Router.post('/groups/join/:id', async (req, res) => {
     }
   }
 
-/*   if (!req.session.loggedin) {
-    return res.send({ success: false, reason: 'not authenticated' });
-  } */
+  /*   if (!req.session.loggedin) {
+      return res.send({ success: false, reason: 'not authenticated' });
+    } */
 
   const groupId = req.params.id;
   const userId = tester.id;
@@ -439,17 +439,76 @@ function isValidJSON(data, schema) {
   };
 };
 
-Router.post("/plan/bring-plans", async(req, res) => {
-  const connection = await(await pool).getConnection();
-  let plans = await connection.query(`SELECT * from plans where user_id = ?`, [tester.id]);
-  res.send({success: true, plans: plans})
+Router.post("/plan/bring-plans", async (req, res) => {
+  const connection = await (await pool).getConnection();
+  let plans = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority FROM plans where user_id = ?`, [tester.id]);
+  res.send({ success: true, plans: plans })
   connection.release();
-})
+});
+
+Router.post('/plan/update-plan', async (req, res) => {
+  try {
+    const planInfo = req.body;
+    const now = new Date();
+    const maxPlanVal = Math.floor(new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()).getTime() / 1000 / 60);
+    const schema = {
+      type: 'object',
+      properties: {
+        title: { type: 'string', minLength: 1, maxLength: 100 },
+        id: { type: 'string', minLength: 10, maxLength: 10 },
+        start: { type: 'integer', minimum: 0, maximum: maxPlanVal },
+        end: { type: 'integer', minimum: 0, maximum: maxPlanVal },
+        repeat: { type: 'integer', minimum: 0, maximum: 3 },
+        description: { type: 'string',  minLength: 0, maxLength: 1000 },
+        subject: { type: 'string', minLength: 10, maxLength: 10 },
+        notification: { type: 'integer', minimum: -1, maximum: 60 },
+        priority: { type: 'integer', minimum: 0, maximum: 100 },
+      },
+      required: ['title', 'id', 'start', 'end', 'repeat', 'description', 'notification', 'subject', 'priority'],
+      additionalProperties: false
+    };
+
+    const isValid = isValidJSON(planInfo, schema);
+    console.log(isValid, planInfo);
+
+    if (planInfo.start > planInfo.end) {
+      return res.send({success: false, reason: 'Invalid Time'});
+    };
+
+    if (!planInfo.title.length) {
+      return res.send({success: false, reason: 'Enter Plan Title'});
+    }
+    if (isValid) {
+      const connection = await (await pool).getConnection();
+      try {
+        const insertInfo = {...planInfo, user_id: tester.id};
+        const deletePrev = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [tester.id, planInfo.id]);
+        if (!deletePrev.affectedRows) {
+          notificationService.removePrevNotification(tester.id, planInfo.id);
+        }
+        const userInfo = await connection.query(`SELECT user_id, name, email, notification_setting, key_salt, iv, subscription from users where user_id = ?`, [tester.id]);
+        const startTime = planInfo * 1000 * 60;
+        notificationService.planNotification(insertInfo, userInfo[0], startTime)
+        const insert = await connection.query(`INSERT INTO plans SET ?`, insertInfo);
+        res.send({ success: true, msg: 'Plan Saved!' })
+      } catch (error) {
+        res.send({ success: false, reason: 'An error occurred' });
+        console.log('Mysql Err', error);
+      } finally {
+        connection.release();
+      }
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+    res.send({ success: false, reason: 'An error occurred' });
+  }
+});
+
 
 //get total live 
 Router.post("/live-members", (req, res) => {
   const totalLiveMembers = Object.keys(io.socket.sockets).length;
-  res.send({success: true, totalLiveMembers: totalLiveMembers});
+  res.send({ success: true, totalLiveMembers: totalLiveMembers });
 })
 
 module.exports = Router;

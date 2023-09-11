@@ -18,6 +18,9 @@ function Planner(props) {
   const SmallCalendarRef = useRef(null);
   const [SmallCalendarApi, setSmallCalendarApi] = useState(null);
   const [forceUdt, setForceUdt] = useState([]);
+  const [addPlanResponse, setAddPlanResponse] = useState(null);
+  const [isModal, setIsModal] = useState(false);
+  
   const updateViewer = (item) => {
     setViewMode(item);
   };
@@ -42,9 +45,10 @@ function Planner(props) {
       clearInterval(timeoutId);
     })
   }, [props.isSidebarOpen, props.isSidebarHovered]);
+
   return (
-    <div className={styles.GroupsContainer}>
-      <TopNotification duration={1000} />
+    <div className={styles.PlannerContainer}>
+      <TopNotification duration={3000} response={addPlanResponse}/>
       <StuckModal />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.wrapper}>
@@ -56,12 +60,12 @@ function Planner(props) {
           </div>
           <div className={styles.container}>
             <div className={styles.planner}>
-              <EventPlanner viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={props.subjects} plans={props.plans} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
+              <EventPlanner isModal={isModal} setIsModal={setIsModal} viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={props.subjects} events={props.events} setEvents={props.setEvents} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} addPlanResponse={addPlanResponse} setAddPlanResponse={setAddPlanResponse} />
             </div>
             <div className={styles.widget}>
-            <SmallCalendar viewOpt={viewMode} setViewDate={updateViewDate} viewDate={viewDate} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
+            <SmallCalendar isModal={isModal} setIsModal={setIsModal} viewOpt={viewMode} setViewDate={updateViewDate} viewDate={viewDate} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
             </div>
-            {forceUdt}
+            {/* {forceUdt} */}
           </div>
         </div>
       </div>

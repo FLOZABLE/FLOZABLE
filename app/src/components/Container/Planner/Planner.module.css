@@ -1,13 +1,13 @@
 @import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
 
 
-.GroupsContainer .header {
+.PlannerContainer .header {
   display: flex;
   justify-content: center;
   margin-bottom: 50px;
 }
 
-.GroupsContainer .title {
+.PlannerContainer .title {
   font-size: 50px;
   font-weight: 800;
   border-radius: 20px;
@@ -17,7 +17,7 @@
   margin-right: auto;
 }
 
-.GroupsContainer .container {
+.PlannerContainer .container {
   display: flex;
   background-color: #f7f9fd;
   border-radius: 40px;
@@ -26,11 +26,12 @@
   margin-bottom: 50px;
 }
 
-.GroupsContainer .container .planner {
+.PlannerContainer .container .planner {
   flex-grow: 1;
+  margin-right: 50px;
 }
 
-.GroupsContainer .container .widget {
+.PlannerContainer .container .widget {
   width: 300px;
   margin-left: auto;
 }

@@ -13,6 +13,7 @@ import { DateTime } from "luxon";
 
 import EventModal from "../EventModal/EventModal";
 //import { renderEventContent, handleDateSelect, handleDateClick } from "./EventPlannerTool";
+const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 const StyleWrapper = styled.div`
 .fc-col-header {
@@ -91,7 +92,6 @@ thead .fc-scroller {
 .fc-scroller::-webkit-scrollbar
 {
 	width: 12px;
-
 }
 
 .fc-scroller::-webkit-scrollbar-thumb
@@ -115,19 +115,62 @@ thead .fc-scroller {
 .fc-timegrid-slots {
   margin-top: 10px;
 }
+
+.fc-daygrid-day-top {
+  justify-content: center;
+}
+
+.fc .fc-custom-today-button {
+  background-color: #4169e1;
+  padding: 10px 30px;
+  font-size: 20px;
+  border-radius: 30px;
+  border: none;
+  transition: .3s background-color ease-in-out;
+}
+
+.fc-custom-prev-button {
+  background-color: #4169e1;
+  border: none;
+  transition: .3s background-color ease-in-out;
+}
+
+.fc-custom-next-button {
+  background-color: #4169e1;
+  border: none;
+  transition: .3s background-color ease-in-out;
+}
+
+.fc .fc-custom-today-button:hover {
+  background-color: #3788d8;
+}
+
+.fc-custom-prev-button:hover {
+  background-color: #3788d8 !important;
+}
+
+.fc-custom-next-button:hover {
+  background-color: #3788d8 !important;
+}
+
+.fc-toolbar-chunk {
+  display: flex;
+}
 `;
 
 
 function EventPlanner(props) {
-  const { PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate } = props;
-  const [events, setEvents] = useState(props.plans);
-  const [isModal, setIsModal] = useState(false);
+  const { PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isModal, setIsModal } = props;
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [viewText, setViewText] = useState({
+    year: 'numeric',
+    month: 'long',
+  })
 
   //new event stats
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [subject, setSubject] = useState(false);
+  const [subject, setSubject] = useState('0000000000');
   const [subjects, setSubjects] = useState([]);
   const [start, setStart] = useState(new Date());
   const [end, setEnd] = useState(new Date());
@@ -135,6 +178,9 @@ function EventPlanner(props) {
   const [priority, setPriority] = useState(50);
   const [notification, setNotification] = useState(-1);
   const [submit, setSubmit] = useState(false);
+
+  /* const [prevStart, setPrevStart] = useState(null); */
+
 
   function renderEventContent(eventInfo) {
     return (
@@ -160,7 +206,7 @@ function EventPlanner(props) {
     return (
       <div>
         <p className="weekDay">{weekDay}</p>
-        <p className="day">{day}</p>
+        {viewMode !== 'dayGridMonth' ? <p className="day">{day}</p> : ''}
       </div>
     );
   };
@@ -177,8 +223,10 @@ function EventPlanner(props) {
         start: start,
         end: end,
         description: '',
+        repeat: repeat,
         subject: subject,
         notification: notification,
+        priority: priority,
         saved: false
       };
       setStart(start);
@@ -190,16 +238,91 @@ function EventPlanner(props) {
     };
   };
 
+  function handleEventDateDrop(dropInfo) {
+    const eventInfo = dropInfo.event._def.extendedProps;
+    const event = dropInfo.event;
+    if (selectedEvent !== event.id && eventInfo.saved) {
+      updatePlan(event.id, event.title, event.start, event.end, eventInfo.description, eventInfo.subject, eventInfo.priority);
+    } else {
+      setStart(event.start);
+      setEnd(event.end);
+    }
+  };
+
+  function handleEventResize(resizeInfo) {
+    const eventInfo = resizeInfo.event._def.extendedProps;
+    const event = resizeInfo.event;
+    if (selectedEvent !== event.id && eventInfo.saved) {
+      updatePlan(event.id, event.title, event.start, event.end, eventInfo.description, eventInfo.subject, eventInfo.priority);
+    } else {
+      setEnd(event.end);
+    };
+  };
+
+  function handleEventClick(event) {
+    const eventInfo = event.event._def.extendedProps;
+    if (selectedEvent && !selectedEvent.saved) {
+      const eventIndex = events.findIndex((event) => event.id == selectedEvent);
+      if (eventIndex !== -1) {
+        const updatedEvents = [...events];
+        if (!updatedEvents[eventIndex].saved) {
+          updatedEvents.splice(eventIndex, 1);
+          setEvents(updatedEvents);
+        };
+      };
+    }
+    if (eventInfo.saved) {
+      setIsModal(true);
+      setSelectedEvent(event.event.id);
+      setStart(event.event.start);
+      setEnd(event.event.end);
+      setTitle(event.event.title);
+      setDescription(eventInfo.description);
+      setRepeat(eventInfo.description);
+      setPriority(eventInfo.priority);
+      setNotification(eventInfo.notification);
+    }
+  }
 
   useEffect(() => {
     if (!isModal) {
       setSelectedEvent(null);
+      setTitle('');
+      setDescription('');
+      setPriority(50);
     }
   }, [isModal]);
 
+  function areDatesInSameWeek(date1, date2) {
+    const dayOfWeek1 = date1.getDay();
+    const dayOfWeek2 = date2.getDay();
+
+    const startOfWeek1 = new Date(date1);
+    startOfWeek1.setDate(date1.getDate() - dayOfWeek1);
+    startOfWeek1.setHours(0, 0, 0, 0);
+
+    const startOfWeek2 = new Date(date2);
+    startOfWeek2.setDate(date2.getDate() - dayOfWeek2);
+    startOfWeek2.setHours(0, 0, 0, 0);
+
+    return startOfWeek1.getTime() === startOfWeek2.getTime();
+  }
+
   useEffect(() => {
     if (PlannerApi) {
-      PlannerApi.gotoDate(viewDate);
+      if (viewMode == 'timeGridDay') {
+        if (new Date(start.setHours(0, 0, 0, 0)).getTime() !== viewDate.getTime()) {
+          PlannerApi.gotoDate(viewDate);
+        }
+      } else if (viewMode == 'timeGridWeek') {
+        if (!areDatesInSameWeek(new Date(start), new Date(viewDate))) {
+          PlannerApi.gotoDate(viewDate);
+        }
+      } else {
+        if (!(start.getFullYear() !== viewDate.getFullYear() && start.getMonth() !== viewDate.getMonth())) {
+          PlannerApi.gotoDate(viewDate);
+        }
+      }
     }
   }, [viewDate]);
 
@@ -215,23 +338,54 @@ function EventPlanner(props) {
 
   //handle submit
   useEffect(() => {
+    console.log(submit)
     if (submit) {
-      const eventIndex = events.findIndex((event) => event.id == selectedEvent);
-      if (eventIndex !== -1) {
-        const updatedEvents = [...events];
-        updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, description: description, subject: subject, saved: true };
-        setEvents(updatedEvents);
-      }
+      updatePlan(selectedEvent, title, start, end, description, subject, priority);
     };
   }, [submit]);
+
+  function updatePlan(selectedEvent, title, start, end, description, subject, priority) {
+    const eventIndex = events.findIndex((event) => event.id == selectedEvent);
+    if (eventIndex !== -1) {
+      const updatedEvents = [...events];
+      updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, description: description, subject: subject, saved: true, priority: priority };
+      const planInfo = {
+        ...updatedEvents[eventIndex],
+        start: Math.floor(start.getTime() / (1000 * 60)),
+        end: Math.floor(end.getTime() / (1000 * 60)),
+      }
+  
+      delete planInfo.saved;
+      fetch(`${serverOrigin}/api/plan/update-plan`,
+        {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(planInfo)
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          setAddPlanResponse(data);
+          if (data.success) {
+            setEvents(updatedEvents);
+            setIsModal(false);
+          };
+        })
+        .catch((error) => console.error(error));
+    };
+  };
 
   useEffect(() => {
     if (selectedEvent) {
       const eventIndex = events.findIndex((event) => event.id == selectedEvent);
       if (eventIndex !== -1) {
         const updatedEvents = [...events];
-        updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, subject: subject };
-        setEvents(updatedEvents)
+        updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, subject: subject, priority: priority };
+        if (start.getTime() > end.getTime()) {
+        } else {
+          setEvents(updatedEvents)
+        }
       }
     };
   }, [title, start, end, subject]);
@@ -257,17 +411,46 @@ function EventPlanner(props) {
 
   const handlePrevBtn = () => {
     PlannerApi.prev();
-    //SmallCalendarRef.current.getApi().prev();
+    if (viewMode == 'dayGridMonth') {
+      const monthStart = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
+      PlannerApi.gotoDate(monthStart);
+      props.setViewDate(monthStart);
+    } else {
+      props.setViewDate(PlannerApi.view.activeStart);
+    };
   };
 
   const handleNextBtn = () => {
     PlannerApi.next();
-    //SmallCalendarRef.current.getApi().next();
+    if (viewMode == 'dayGridMonth') {
+      const monthStart = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1);
+      PlannerApi.gotoDate(monthStart);
+      props.setViewDate(monthStart);
+    } else {
+      props.setViewDate(PlannerApi.view.activeStart);
+    }
   }
 
   useEffect(() => {
+    console.log('view changed')
     if (PlannerApi) {
       PlannerApi.changeView(viewMode, viewDate);
+    };
+    if (viewMode == 'timeGridDay') {
+      setViewText({
+        year: 'numeric',
+        month: 'long',
+      });
+    } else if (viewMode == 'timeGridWeek') {
+      setViewText({
+        year: 'numeric',
+        month: 'long',
+      });
+    } else {
+      setViewText({
+        year: 'numeric',
+        month: 'long',
+      });
     }
   }, [viewMode])
 
@@ -292,10 +475,7 @@ function EventPlanner(props) {
               right: ''
             }
           }
-          titleFormat={{
-            year: 'numeric',
-            month: 'long',
-          }}
+          titleFormat={viewText}
           dayHeaderContent={renderHeader}
           ref={PlannerRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -308,7 +488,9 @@ function EventPlanner(props) {
           eventContent={renderEventContent}
           dateClick={handleDateSelect}
           select={handleDateSelect}
-          eventDrop={(e) => console.log(e)}
+          eventDrop={handleEventDateDrop}
+          eventResize={handleEventResize}
+          eventClick={handleEventClick}
 
           eventAdd={(e) => {
             console.log("eventAdd", e);
@@ -321,11 +503,11 @@ function EventPlanner(props) {
           }}
           customButtons={{
             'custom-prev': {
-              text: 'Prev',
+              icon: 'chevron-left',
               click: handlePrevBtn
             },
             'custom-next': {
-              text: 'Next',
+              icon: 'chevron-right',
               click: handleNextBtn
             },
             'custom-today': {

@@ -30,28 +30,19 @@ export default function DateSelector(props) {
   };
 
   const handleStartTimeChange = (newTime) => {
-    const updatedStart = DateTime.fromObject({
-      year: props.start.year,
-      month: props.start.month,
-      day: props.start.day,
-      hour: newTime.hour,
-      minute: newTime.minute,
-    });
-
-    props.setStart(updatedStart.toJSDate());
+    const newTimeTs = new Date(newTime.ts);
+    console.log(newTimeTs)
+    const updatedStart = new Date(props.start.getFullYear(), props.start.getMonth(), props.start.getDate(), newTimeTs.getHours(), newTimeTs.getMinutes());
+    props.setStart(updatedStart);
   };
 
 
   const handleEndTimeChange = (newTime) => {
-    const updatedEnd = DateTime.fromObject({
-      year: props.end.year,
-      month: props.end.month,
-      day: props.end.day,
-      hour: newTime.hour,
-      minute: newTime.minute,
-    });
+    const newTimeTs = new Date(newTime.ts);
+    console.log(newTimeTs)
+    const updatedEnd = new Date(props.start.getFullYear(), props.start.getMonth(), props.start.getDate(), newTimeTs.getHours(), newTimeTs.getMinutes());
 
-    props.setEnd(updatedEnd.toJSDate());
+    props.setEnd(updatedEnd);
   };
 
   return (
@@ -82,12 +73,12 @@ export default function DateSelector(props) {
             </div>
             <div className='stopWrapper inputWrapper'>
               <TimePicker className='timeStop'
-                slotProps={{ textField: { placeholder: 'Stop Time' } }}
+                slotProps={{ textField: { placeholder: 'End Time' } }}
                 value={DateTime.fromMillis(props.end.getTime())}
                 onChange={handleEndTimeChange}
               />
               <div className="hoverEl">
-                Stop Time
+                End Time
               </div>
             </div>
           </div>
