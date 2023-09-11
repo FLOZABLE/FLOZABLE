@@ -7,6 +7,7 @@ import RadioBtn from "../../UI/RadioBtn/RadioBtn";
 import styles from "./Planner.module.css";
 import SmallCalendar from '../../UI/SmallCalendar/SmallCalendar';
 import EventPlanner from '../../UI/EventPlanner/EventPlanner';
+import AddSubjectModal from '../../UI/AddSubjectModal/AddSubjectModal';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -19,7 +20,8 @@ function Planner(props) {
   const [SmallCalendarApi, setSmallCalendarApi] = useState(null);
   const [forceUdt, setForceUdt] = useState([]);
   const [addPlanResponse, setAddPlanResponse] = useState(null);
-  const [isModal, setIsModal] = useState(false);
+  const [isAddPlanModal, setIsAddPlanModal] = useState(false);
+  const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   
   const updateViewer = (item) => {
     setViewMode(item);
@@ -50,6 +52,7 @@ function Planner(props) {
     <div className={styles.PlannerContainer}>
       <TopNotification duration={3000} response={addPlanResponse}/>
       <StuckModal />
+      <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.wrapper}>
           <div className={styles.header}>
@@ -60,10 +63,10 @@ function Planner(props) {
           </div>
           <div className={styles.container}>
             <div className={styles.planner}>
-              <EventPlanner isModal={isModal} setIsModal={setIsModal} viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={props.subjects} events={props.events} setEvents={props.setEvents} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} addPlanResponse={addPlanResponse} setAddPlanResponse={setAddPlanResponse} />
+              <EventPlanner isAddPlanModal={isAddPlanModal} setIsAddPlanModal={setIsAddPlanModal} viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={props.subjects} events={props.events} setEvents={props.setEvents} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} addPlanResponse={addPlanResponse} setAddPlanResponse={setAddPlanResponse} setIsAddSubjectModal={setIsAddSubjectModal} />
             </div>
             <div className={styles.widget}>
-            <SmallCalendar isModal={isModal} setIsModal={setIsModal} viewOpt={viewMode} setViewDate={updateViewDate} viewDate={viewDate} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
+            <SmallCalendar isAddPlanModal={isAddPlanModal} setIsAddPlanModal={setIsAddPlanModal} viewOpt={viewMode} setViewDate={updateViewDate} viewDate={viewDate} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
             </div>
             {/* {forceUdt} */}
           </div>

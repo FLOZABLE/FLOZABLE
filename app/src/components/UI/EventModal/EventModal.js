@@ -16,9 +16,9 @@ function EventModal(props) {
     console.log('updated', props.viewDate)
   }, [props.viewDate]); */
   return (
-    <div className={`${styles.EventModal} ${props.isModal ? styles.open : ''}`}>
+    <div className={`${styles.EventModal} ${props.isAddPlanModal ? styles.open : ''}`}>
       <div className={styles.header}>
-        <i onClick={() => {props.setIsModal(false)}}>
+        <i onClick={() => {props.setIsAddPlanModal(false)}}>
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
@@ -76,6 +76,10 @@ function EventModal(props) {
           <div className={styles.contentWrapper}>
             <div className={styles.subjectWrapper}>
               <DropDownButton options={props.subjects} defaultIndex={0} setValue={props.setSubject} />
+            </div>
+            <p>OR</p>
+            <div className={styles.addSubjectWrapper}>
+              <BlobBtn name={'Add Subject'} setClicked={props.setIsAddSubjectModal} delay={-1} />
             </div>
           </div>
         </div>
