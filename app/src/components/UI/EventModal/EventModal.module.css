@@ -1,8 +1,8 @@
 .EventModal {
   position: fixed;
   left: 50vw;
-  top: 50vh;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
+  top: 150px;
   background-color: #fff;
   height: fit-content;
   width: 500px;
@@ -99,7 +99,7 @@
 }
 
 .EventModal .notificationWrapper {
-  width: 300px;
+  width: 400px;
 }
 
 .EventModal .submit {
