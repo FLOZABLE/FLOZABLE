@@ -93,7 +93,7 @@ const StyleWrapper = styled.div`
 `;
 
 function SmallCalendar(props) {
-  const {PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewDate, setViewDate, isModal, setIsModal} = props;
+  const {PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewDate, setViewDate, isAddPlanModal, setIsAddPlanModal} = props;
   const currentDateRef = useRef(null);
   const [isToday, setIsToday] = useState(props.viewDate.getTime() == new Date().setHours(0, 0, 0, 0));
   const [foreceUdt, setForceUdt] = useState([]);
@@ -117,8 +117,8 @@ function SmallCalendar(props) {
     if (SmallCalendarApi) {
       SmallCalendarApi.gotoDate(viewDate);
     };
-    console.log(isModal)
-    if (PlannerApi && !isModal) {
+    console.log(isAddPlanModal)
+    if (PlannerApi && !isAddPlanModal) {
       PlannerApi.gotoDate(viewDate);
     }
   }, [viewDate]);
