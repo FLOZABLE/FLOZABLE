@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import styles from "./PlanTimeline.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBook } from "@fortawesome/free-solid-svg-icons";
 
 function PlanTimeline(props) {
   const [plans, start, end] = props;
@@ -22,7 +23,7 @@ function PlanTimeline(props) {
       <ul>
         <li className={styles.plans}>
           <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={}
+            <FontAwesomeIcon icon={faBook} />
           </div>
         </li>
       </ul>

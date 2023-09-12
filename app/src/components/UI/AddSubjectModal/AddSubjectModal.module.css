@@ -1,0 +1,31 @@
+.AddSubjectModal {
+  position: fixed;
+  top: 150px;
+  left: 50vw;
+  transform: translateX(-50%);
+  background-color: aqua;
+  width: 500px;
+  height: 300px;
+  visibility:hidden;
+  z-index: 3;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  border-radius: 20px;
+}
+
+.AddSubjectModal.open {
+  visibility: visible;
+}
+
+.AddSubjectModal .header {
+  background-color: #6f6af8;
+  height: 30px;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  text-align: right;
+}
+
+.AddSubjectModal .header i {
+  font-size: 20px;
+  color: #fff;
+  margin-right: 10px;
+}
