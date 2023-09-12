@@ -9,6 +9,7 @@ function AddSubjectModal(props) {
   const {isAddSubjectModal, setIsAddSubjectModal} = props;
 
   const [name, setName] = useState('');
+  const [color, setColor] = useState(null);
 
   const handleNameInput = (e) => {
     setName(e.target.value);
@@ -22,7 +23,7 @@ function AddSubjectModal(props) {
       </div>
       <div className={styles.content}>
         <CustomInput input={name} handleInput={handleNameInput} icon={faBook} placeHolder={"Subject Name"} type={"text"} />
-        <ColorPalette />
+        <ColorPalette setColor={setColor} />
       </div>
 
     </div>

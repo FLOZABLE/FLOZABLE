@@ -26,24 +26,24 @@ function generateRandomId(length) {
 }
 
 Router.post('/information/bring-subjects', async (req, res) => {
-  const connection = await (await pool).getConnection();
-  const [userInfo] = await connection.query("SELECT subjects FROM users WHERE name = ?", [tester.name]);
-  connection.release();
+  const connection = pool.promise();
+  const [[userInfo]] = await connection.query("SELECT subjects FROM users WHERE name = ?", [tester.name]);
+  pool.releaseConnection(connection);
   res.send({ success: true, subjects: userInfo.subjects });
 });
 
 Router.post('/information/accountinfo', async (req, res) => {
-  const connection = await (await pool).getConnection();
-  const [userInfo] = await connection.query("SELECT user_id, name, email, language, groups FROM users WHERE user_id = ?", [tester.id]);
+  const connection = pool.promise();
+  const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups FROM users WHERE user_id = ?", [tester.id]);
   console.log(userInfo, tester.id)
-  connection.release();
+  pool.releaseConnection(connection);
   res.send({ success: true, userInfo: userInfo });
 });
 
 Router.post("/ranking", async (req, res) => {
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   try {
-    const users = await connection.query(`SELECT datum_point, daily, weekly, monthly, name, user_id from users`);
+    const [users] = await connection.query(`SELECT datum_point, daily, weekly, monthly, name, user_id from users`);
 
     const dailyRanking = [];
     const weeklyRanking = [];
@@ -162,14 +162,14 @@ Router.post("/ranking", async (req, res) => {
     console.log(error);
     res.send({ success: false, reason: 'error' });
   } finally {
-    connection.release();
+    pool.releaseConnection(connection);
   };
 });
 
 //groups
 
 Router.post('/groups/create-validate', async (req, res) => {
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   try {
     let group = req.body;
     console.log(group)
@@ -244,7 +244,7 @@ Router.post('/groups/create-validate', async (req, res) => {
     console.log(error)
     res.send({ success: false, reason: 'Error' })
   } finally {
-    connection.release();
+    pool.releaseConnection(connection);
   }
 })
 
@@ -264,9 +264,9 @@ Router.post('/groups/join/:id', async (req, res) => {
 
   const groupId = req.params.id;
   const userId = tester.id;
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   try {
-    let [groupInfo] = await connection.query(`SELECT password, salt, visibility, max_members, name from \`groups\` where group_id = ?`, [groupId]);
+    let [[groupInfo]] = await connection.query(`SELECT password, salt, visibility, max_members, name from \`groups\` where group_id = ?`, [groupId]);
 
     if (groupInfo.visibility) {
       await connection.query(
@@ -327,7 +327,7 @@ Router.post('/groups/join/:id', async (req, res) => {
     console.error('Error performing database queries:', err);
     res.send({ success: false, reason: 'An error occurred' });
   } finally {
-    connection.release();
+    pool.releaseConnection(connection);
   }
 })
 
@@ -336,7 +336,7 @@ Router.post('/groups/join/:id', async (req, res) => {
 Router.post('/groups/leave/:id', async (req, res) => {
   if (req.session.loggedin == true) {
     const groupId = req.params.id;
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     try {
       const updateUser = await connection.query(`
       UPDATE users
@@ -362,7 +362,7 @@ Router.post('/groups/leave/:id', async (req, res) => {
       console.error('Error performing database queries:', err);
       res.send({ success: false, reason: 'An error occurred' });
     } finally {
-      connection.release();
+      pool.releaseConnection(connection);
     }
   } else {
     res.send({ success: false });
@@ -371,10 +371,10 @@ Router.post('/groups/leave/:id', async (req, res) => {
 
 
 Router.post('/groups/bring-groups', async (req, res) => {
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   try {
     const userId = tester.id;
-    const groups = await connection.query(
+    const [groups] = await connection.query(
       "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\`"
     );
     const allMembersIds = [];
@@ -386,7 +386,7 @@ Router.post('/groups/bring-groups', async (req, res) => {
         };
       });
     });
-    const membersInfo = await connection.query('SELECT user_id, name, study, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
+    const [membersInfo] = await connection.query('SELECT user_id, name, study, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
     //console.log(membersInfo);
     res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
@@ -394,7 +394,7 @@ Router.post('/groups/bring-groups', async (req, res) => {
     console.error('Error performing database queries:', err);
     res.status(500).send({ success: false, reason: 'An error occurred' });
   } finally {
-    connection.release();
+    pool.releaseConnection(connection);
   }
 });
 
@@ -404,10 +404,10 @@ Router.post('/groups/like/:id', async (req, res) => {
   }
 
   const groupId = req.params.id;
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   try {
     const userId = tester.id;
-    const update = await connection.query(
+    const [update] = await connection.query(
       `UPDATE \`groups\` 
       SET likes = CASE 
         WHEN likes = '' THEN ?
@@ -424,7 +424,7 @@ Router.post('/groups/like/:id', async (req, res) => {
     console.error('Error performing database queries:', err);
     res.status(500).send({ success: false, reason: 'An error occurred' });
   } finally {
-    connection.release();
+    pool.releaseConnection(connection);
   }
 });
 
@@ -440,10 +440,10 @@ function isValidJSON(data, schema) {
 };
 
 Router.post("/plan/bring-plans", async (req, res) => {
-  const connection = await (await pool).getConnection();
-  let plans = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority FROM plans where user_id = ?`, [tester.id]);
+  const connection = pool.promise();
+  let [plans] = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority FROM plans where user_id = ?`, [tester.id]);
   res.send({ success: true, plans: plans })
-  connection.release();
+  pool.releaseConnection(connection);
 });
 
 Router.post('/plan/update-plan', async (req, res) => {
@@ -479,14 +479,14 @@ Router.post('/plan/update-plan', async (req, res) => {
       return res.send({success: false, reason: 'Enter Plan Title'});
     }
     if (isValid) {
-      const connection = await (await pool).getConnection();
+      const connection = pool.promise();
       try {
         const insertInfo = {...planInfo, user_id: tester.id};
-        const deletePrev = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [tester.id, planInfo.id]);
+        const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [tester.id, planInfo.id]);
         if (!deletePrev.affectedRows) {
           notificationService.removePrevNotification(tester.id, planInfo.id);
         }
-        const userInfo = await connection.query(`SELECT user_id, name, email, notification_setting, key_salt, iv, subscription from users where user_id = ?`, [tester.id]);
+        const [userInfo] = await connection.query(`SELECT user_id, name, email, notification_setting, key_salt, iv, subscription from users where user_id = ?`, [tester.id]);
         const startTime = planInfo * 1000 * 60;
         notificationService.planNotification(insertInfo, userInfo[0], startTime)
         const insert = await connection.query(`INSERT INTO plans SET ?`, insertInfo);
@@ -495,7 +495,7 @@ Router.post('/plan/update-plan', async (req, res) => {
         res.send({ success: false, reason: 'An error occurred' });
         console.log('Mysql Err', error);
       } finally {
-        connection.release();
+        pool.releaseConnection(connection);
       }
     }
   } catch (error) {

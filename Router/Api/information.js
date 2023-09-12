@@ -9,9 +9,9 @@ const {DateTime} = require('luxon');
 
 Router.post('/accountinfo', (req, res) => {
   account.autoSignin(req, res, (async() => {
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     const [userInfo] = await connection.query("SELECT user_id, name, email, language, groups FROM users WHERE user_id = ?", [req.session.user_id]);
-    connection.release();
+    pool.releaseConnection(connection);
     res.send({success: true, userInfo: userInfo});
   }));
 });
@@ -19,9 +19,9 @@ Router.post('/accountinfo', (req, res) => {
 Router.post('/bring-subjects', async (req, res) => {
   console.log('test')
   account.autoSignin(req, res, (async() => {
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     let userInfo = await connection.query("SELECT subjects FROM users WHERE user_id = ?", [req.session.user_id]);
-    connection.release();
+    pool.releaseConnection(connection);
     userInfo = userInfo[0];
     res.send({success: true, subjects: userInfo.subjects});
   }));
@@ -29,7 +29,7 @@ Router.post('/bring-subjects', async (req, res) => {
 
 Router.post('/bring-members-info', async (req, res) => {
   account.autoSignin(req, res, (async() => {
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     const userId = req.session.user_id;
     let userInfo = await connection.query('SELECT \`groups\` FROM users WHERE user_id = ?', [userId]);
     groups = userInfo[0].groups ? userInfo[0].groups.split(',') : null;
@@ -80,13 +80,13 @@ Router.post('/bring-members-info', async (req, res) => {
     }));
     
     res.send([groupsInfo, req.session.user_id, groups, membersInfo]);
-    connection.release();
+    pool.releaseConnection(connection);
   }))
 })
 
 Router.post('/update-members-info', async(req, res) => {
   account.autoSignin(req, res, (async() => {
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     const userId = req.body.userId;
     
     let member = await connection.query(`SELECT user_id, name, subjects, timezone from users where user_id  = ?`, [userId]);
@@ -123,7 +123,7 @@ Router.post('/update-members-info', async(req, res) => {
       member.study = study;
       member.filteredTimeline.push(filteredTimeline);
     }));
-    connection.release();
+    pool.releaseConnection(connection);
     res.send(member);
   }))
 })
