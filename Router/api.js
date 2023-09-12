@@ -22,7 +22,7 @@ Router.post("/update-tabs", async (req, res) => {
   if(!req.session.user_id) {
     return res.send({success: false, reason: 'auth-fail'})
   }
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   const newWebUsageData = req.body.tabUsageData;
   let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = ?`, [req.session.user_id]);
   prevWebUsageData = JSON.parse(prevWebUsageData[0].activity);
@@ -46,7 +46,7 @@ Router.post("/update-tabs", async (req, res) => {
   //const update = await connection.query('UPDATE users SET activity = ? WHERE user_id = ?', [JSON.stringify(encryptedData), req.session.user_id]);
   const update = await connection.query('UPDATE users SET activity = ? WHERE user_id = ?', [JSON.stringify(prevWebUsageData), req.session.user_id]);
   res.send({success: true});
-  connection.release();
+  pool.releaseConnection(connection);
 });
 
 /* Router.post('/user-info', async(req, res) => {
@@ -61,33 +61,33 @@ Router.post('/bring-tabs', async(req, res) => {
   if(!req.session.user_id) {
     return res.send({success: false, reason: 'auth-fail'})
   }
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
 
   let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = ?`, [req.session.user_id]);
   prevWebUsageData = JSON.parse(prevWebUsageData[0].activity);
   const date = req.body.date;
   res.send({success: true, data: prevWebUsageData[date / 1000]})
-  connection.release();
+  pool.releaseConnection(connection);
 });
 
 Router.post('/bring-activities', async(req, res) => {
   if(!req.session.user_id) {
     return res.send({success: false, reason: 'auth-fail'})
   }
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
 
   let prevWebUsageData = await connection.query(`SELECT activity from users where user_id = ?`, [req.session.user_id]);
   prevWebUsageData = JSON.parse(prevWebUsageData[0].activity);
   const date = req.body.date;
   res.send({success: true, data: prevWebUsageData})
-  connection.release();
+  pool.releaseConnection(connection);
 })
 
 Router.post('/bring-activity-setting', async(req, res) => {
   if (!req.session.loggedin) {
     return res.send({ success : false, reason : 'no session'})
   }
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   let activitySetting = await connection.query(`SELECT activity_setting from users where user_id = ?`, [req.session.user_id]);
   activitySetting = activitySetting[0].activity_setting;
   res.send({ success : true, activitySetting : activitySetting})

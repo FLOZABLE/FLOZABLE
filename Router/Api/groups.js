@@ -63,7 +63,7 @@ Router.post('/create/retriveProgress', (req, res) => {
 
 Router.post('/create-validate', async (req, res) => {
   account.autoSignin(req, res, (async () => {
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     try {
       let group = req.body;
       console.log(group)
@@ -138,7 +138,7 @@ Router.post('/create-validate', async (req, res) => {
       console.log(error)
       res.send({success: false, reason: 'Error'})
     } finally {
-      connection.release();
+      pool.releaseConnection(connection);
     }
 
 
@@ -164,7 +164,7 @@ Router.post('/join/:id', async (req, res) => {
 
   const groupId = req.params.id;
   const userId = req.session.user_id;
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   try {
     let [groupInfo] = await connection.query(`SELECT password, salt, visibility, max_members, name from \`groups\` where group_id = ?`, [groupId]);
 
@@ -227,7 +227,7 @@ Router.post('/join/:id', async (req, res) => {
     console.error('Error performing database queries:', err);
     res.send({ success: false, reason: 'An error occurred' });
   } finally {
-    connection.release();
+    pool.releaseConnection(connection);
   }
 })
 
@@ -236,7 +236,7 @@ Router.post('/join/:id', async (req, res) => {
 Router.post('/leave/:id', async (req, res) => {
   if (req.session.loggedin == true) {
     const groupId = req.params.id;
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     try {
       const updateUser = await connection.query(`
       UPDATE users
@@ -262,7 +262,7 @@ Router.post('/leave/:id', async (req, res) => {
       console.error('Error performing database queries:', err);
       res.send({ success: false, reason: 'An error occurred' });
     } finally {
-      connection.release();
+      pool.releaseConnection(connection);
     }
   } else {
     res.send({ success: false });
@@ -271,7 +271,7 @@ Router.post('/leave/:id', async (req, res) => {
 
 
 Router.post('/bring-groups', async (req, res) => {
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   try {
     const userId = req.session.user_id;
     const groups = await connection.query(
@@ -294,7 +294,7 @@ Router.post('/bring-groups', async (req, res) => {
     console.error('Error performing database queries:', err);
     res.status(500).send({ success: false, reason: 'An error occurred' });
   } finally {
-    connection.release();
+    pool.releaseConnection(connection);
   }
 });
 
@@ -304,7 +304,7 @@ Router.post('/like/:id', async (req, res) => {
   }
 
   const groupId = req.params.id;
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   try {
     const userId = req.session.user_id;
     const update = await connection.query(
@@ -353,7 +353,7 @@ Router.post('/like/:id', async (req, res) => {
     console.error('Error performing database queries:', err);
     res.status(500).send({ success: false, reason: 'An error occurred' });
   } finally {
-    connection.release();
+    pool.releaseConnection(connection);
   }
 });
 

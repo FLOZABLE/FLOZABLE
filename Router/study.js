@@ -32,7 +32,7 @@ Router.get("/", async(req, res) => {
 Router.post('/add-subject', async (req, res) => {
   account.autoSignin(req, res, (async() => {
 
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     const subject = {
       ...req.body,
       total: 0,
@@ -51,7 +51,7 @@ Router.post('/add-subject', async (req, res) => {
     const updateQuery = "UPDATE users SET subjects = ? WHERE user_id = ?";
     const updateParams = [updatedJson, req.session.user_id];
     const update = await connection.query(updateQuery, updateParams);
-    connection.release();
+    pool.releaseConnection(connection);
   
   
     res.send({success: true, id: subject.id});
@@ -61,7 +61,7 @@ Router.post('/add-subject', async (req, res) => {
 Router.post('/start', async (req, res) => {
   account.autoSignin(req, res, (async() => {
     const io = req.app.get('socketio');
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     const subjectId = req.body.id;
   
     const select = await connection.query(`SELECT subjects, daily, weekly, monthly, \`groups\` FROM users WHERE user_id = ?`, [req.session.user_id]);
@@ -79,7 +79,7 @@ Router.post('/start', async (req, res) => {
       io.to(groups).emit('studying', req.session.user_id, groups);
     }
   
-    connection.release();
+    pool.releaseConnection(connection);
     res.send({ success: true });
   }));
 });
@@ -88,7 +88,7 @@ Router.post('/stop', async (req, res) => {
 
   account.autoSignin(req, res, (async() => {
     const io = req.app.get('socketio');
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     const subjectId = req.body.id;
     const select = await connection.query(`SELECT subjects, daily, weekly, monthly, datum_point, \`groups\` FROM users WHERE user_id = "${req.session.user_id}"`);
     const userInfo = select[0];
@@ -164,15 +164,15 @@ Router.post('/stop', async (req, res) => {
     const update = await connection.query(`UPDATE users SET subjects = ?, daily = ?, weekly = ?, monthly = ?  WHERE user_id = ?`, updateParams);
   
     res.send({ success: true });
-    connection.release();
+    pool.releaseConnection(connection);
   }));
 });
 
 Router.post('/bring-subjects', async (req, res) => {
   account.autoSignin(req, res, (async() => {
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     const subjects = await connection.query("SELECT subjects FROM users WHERE user_id = ?", [req.session.user_id]);
-    connection.release();
+    pool.releaseConnection(connection);
   
     res.send(subjects[0].subjects);
   }));
@@ -180,7 +180,7 @@ Router.post('/bring-subjects', async (req, res) => {
 
 Router.post('/bring-members-info', async (req, res) => {
   account.autoSignin(req, res, (async() => {
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     const userId = req.session.user_id;
     let userInfo = await connection.query('SELECT \`groups\` FROM users WHERE user_id = ?', [userId]);
     groups = userInfo[0].groups ? userInfo[0].groups.split(',') : null;
@@ -231,13 +231,13 @@ Router.post('/bring-members-info', async (req, res) => {
     }));
     
     res.send([groupsInfo, req.session.user_id, groups, membersInfo]);
-    connection.release();
+    pool.releaseConnection(connection);
   }))
 })
 
 Router.post('/update-members-info', async(req, res) => {
   account.autoSignin(req, res, (async() => {
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     const userId = req.body.userId;
     
     let member = await connection.query(`SELECT user_id, name, subjects, timezone from users where user_id  = ?`, [userId]);
@@ -274,20 +274,20 @@ Router.post('/update-members-info', async(req, res) => {
       member.study = study;
       member.filteredTimeline.push(filteredTimeline);
     }));
-    connection.release();
+    pool.releaseConnection(connection);
     res.send(member);
   }))
 })
 
 Router.post('/bring-plans', async(req, res) => {
   account.autoSignin(req, res, (async() => {
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
 
     let plans = await connection.query(`SELECT * from plans where user_id = ?`, [req.session.user_id]);
     res.send({success: true, plans: plans})
     /* plans = JSON.stringify(`[${plans[0].plan}]`);
     res.send(plans); */
-    connection.release();
+    pool.releaseConnection(connection);
   }))
 });
 
@@ -299,7 +299,7 @@ Router.post('/bring-plans', async(req, res) => {
         return res.send({ success: false, reason: 'not auth' });
       }
     
-      const connection = await (await pool).getConnection();
+      const connection = pool.promise();
       const planInfo = req.body;
       //sanitize
       planInfo.description = encodeURIComponent(planInfo.description);
@@ -331,7 +331,7 @@ Router.post('/bring-plans', async(req, res) => {
         console.error('MySQL error:', error);
         res.send({ success: false, reason: 'Server Error' });
       }
-      connection.release();
+      pool.releaseConnection(connection);
     } catch (error) {
       console.error('An error occurred:', error);
       res.send({ success: false, reason: 'An error occurred' });
@@ -364,7 +364,7 @@ Router.post('/update-plan', async(req, res) => {
 
       const isValid = isValidJSON(planInfo, schema);
       if (isValid) {
-        const connection = await (await pool).getConnection();
+        const connection = pool.promise();
         try {
           const {name, id, date, hr, min, length, repeat, description, notification, subject, priority} = planInfo;
           const insertInfo = {
@@ -393,7 +393,7 @@ Router.post('/update-plan', async(req, res) => {
           res.send({ success: false, reason: 'An error occurred' });
           console.log('Mysql Err', error);
         } finally {
-          connection.release();
+          pool.releaseConnection(connection);
         }
       }
     } catch (error) {

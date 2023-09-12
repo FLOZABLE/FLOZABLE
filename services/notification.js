@@ -34,8 +34,8 @@ let notificationSettings;
 
 async function notificationService () {
   const now = new Date().getTime();
-  const connection = await (await pool).getConnection();
-  const usersInfo = await connection.query('SELECT notification_setting, timezone, user_id, name, email, key_salt, iv, subscription from users');
+  const connection = pool.promise();
+  const [usersInfo] = await connection.query('SELECT notification_setting, timezone, user_id, name, email, key_salt, iv, subscription from users');
   let plans = await connection.query(`SELECT * FROM plans`);
   usersInfo.map(async(userInfo, index) => {
     const userId = userInfo.user_id;
@@ -173,7 +173,7 @@ function planNotification(plan, userInfo, startTime, decryptedData) {
 }
 
 async function completeNotification(userId, planId) {
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   /* let userInfo = await connection.query('SELECT notification_setting, notifications from users where user_id = ?', [userId]);
   userInfo = userInfo[0];
 
@@ -189,7 +189,7 @@ async function completeNotification(userId, planId) {
 
   const updateInfo = [{ notifications: JSON.stringify(notifications) }, userInfo.userId];
   const update = await connection.query('UPDATE users SET ? WHERE user_id = ?', updateInfo);
-  connection.release(); */
+  pool.releaseConnection(connection); */
 
   let userInfo = await connection.query(`SELECT notification_setting from users WHERE user_id = ?`, [userId]);
   userInfo = userInfo[0];
@@ -248,7 +248,7 @@ Router.post('/subscribe', async(req, res) => {
   const userId = req.session.user_id;
   const subscriptionInfo = req.body.subscription;
 
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
 
   let userInfo = await connection.query('SELECT user_id, key_salt, iv from users where user_id = ?', userId);
   userInfo = userInfo[0];
@@ -260,7 +260,7 @@ Router.post('/subscribe', async(req, res) => {
   let encryptedData = cipher.update(JSON.stringify(subscriptionInfo), 'utf8', 'hex');
   encryptedData += cipher.final('hex');
   const update = connection.query('UPDATE users set ? where user_id = ?', [{subscription: encryptedData}, userId]);
-  connection.release();
+  pool.releaseConnection(connection);
   res.send({success: true})
 });
 

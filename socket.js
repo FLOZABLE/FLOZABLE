@@ -55,9 +55,9 @@ io.on('connection', (socket) => {
     if(groups.length == 0){
       return 0
     }
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
 
-    const groupsInfo = await connection.query('SELECT members FROM groups WHERE group_id IN (?)', [groups]);
+    const [groupsInfo] = await connection.query('SELECT members FROM groups WHERE group_id IN (?)', [groups]);
     groupsInfo.forEach(async (group) => {
       group.members = group.members ? JSON.parse(`[${group.members}]`) : [];
       const membersId = group.members.flat().filter((value, index) => index % 2 === 0);

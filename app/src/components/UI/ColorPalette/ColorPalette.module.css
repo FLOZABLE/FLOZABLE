@@ -42,6 +42,7 @@
   flex: 0 0 auto;
   font-size: 14px;
   padding: 12px;
+  cursor: pointer;
 }
 
 .ColorPalette .paletteInfoHexcode {
@@ -62,6 +63,7 @@
   background: var(--bg-color);
   height: 100%;
   flex: 1;
+  cursor: pointer;
 }
 .ColorPalette .paletteShades {
   flex: 0;
@@ -88,6 +90,7 @@
 .ColorPalette .palette:hover .paletteShadesItem {
   opacity: 1;
   left: 0;
+  cursor: pointer;
 }
 .ColorPalette .palette:hover .paletteShadesItem:nth-child(1) {
   transition: 0.2s ease 0.2s;

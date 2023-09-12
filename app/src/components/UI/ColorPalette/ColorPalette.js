@@ -3,6 +3,7 @@ import styles from "./ColorPalette.module.css";
 import { ColorPaletteOptions } from "../../../utils/ColorPaletteOptions";
 
 function ColorPalette(props) {
+  const {setColor} = props;
 
   const [paletteColorsEl, setPaletteColorsEl] = useState([]);
 
@@ -11,16 +12,16 @@ function ColorPalette(props) {
       return (
         <div className={styles.palette} key={i}>
         <div className={styles.paletteColors}>
-          <div className={styles.paletteColor} style={{ "--bg-color": colorOption.colors[0] }}></div>
+          <div className={styles.paletteColor} onClick={() => {setColor(colorOption.colors[0])}} style={{ "--bg-color": colorOption.colors[0] }}></div>
           <div className={styles.paletteShades}>
-            <div className={styles.paletteShadesItem} style={{ "--bg-color": colorOption.colors[1] }}>{colorOption.colors[1]}</div>
-            <div className={styles.paletteShadesItem} style={{ "--bg-color": colorOption.colors[2] }}>{colorOption.colors[2]}</div>
-            <div className={styles.paletteShadesItem} style={{ "--bg-color": colorOption.colors[3] }}>{colorOption.colors[3]}</div>
+            <div className={styles.paletteShadesItem} onClick={() => {setColor(colorOption.colors[1])}} style={{ "--bg-color": colorOption.colors[1] }}>{colorOption.colors[1]}</div>
+            <div className={styles.paletteShadesItem} onClick={() => {setColor(colorOption.colors[2])}} style={{ "--bg-color": colorOption.colors[2] }}>{colorOption.colors[2]}</div>
+            <div className={styles.paletteShadesItem} onClick={() => {setColor(colorOption.colors[3])}} style={{ "--bg-color": colorOption.colors[3] }}>{colorOption.colors[3]}</div>
           </div>
         </div>
         <div className={styles.paletteInfo}>
           <div className={styles.paletteInfoName}>{colorOption.name}</div>
-          <div className={styles.palletteInfoHexcode}>{colorOption.colors[0]}</div>
+          <div className={styles.palletteInfoHexcode} onClick={() => {setColor(colorOption.colors[0])}} >{colorOption.colors[0]}</div>
         </div>
       </div>
       )

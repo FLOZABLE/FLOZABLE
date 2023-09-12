@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon app.js nodemon --watch app.js --watch *.js --ignore app",
-    "production": "cross-env NODE_ENV=production nodemon app.js --watch app.js --watch *.js --ignore app"
+    "dev": "cross-env NODE_ENV=development nodemon app.js nodemon -e js --ignore app",
+    "production": "cross-env NODE_ENV=production nodemon app.js nodemon -e js --ignore app"
   },
   "repository": {
     "type": "git",
@@ -39,6 +39,7 @@
     "mailgun.js": "^8.1.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.6.1",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",
     "node-schedule": "^2.1.1",

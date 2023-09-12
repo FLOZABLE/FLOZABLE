@@ -39,7 +39,7 @@ function generateGroupId() {
 
 
 async function generateUsers(length) {
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   let timeZones = [
     'America/Los_Angeles',
     'Europe/London',
@@ -92,14 +92,14 @@ async function generateUsers(length) {
       study: JSON.stringify({study:false,point:unixTimestamp,total:0})
     }
     connection.query('INSERT INTO users SET?', userInfo);
-  }
-  connection.release();
+  };
+  pool.releaseConnection(connection);
 }
 
 async function generateGroups(length) {
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
 
-  const testUsers = await connection.query(`SELECT name, user_id FROM users WHERE name LIKE ?`, [`tester%`]);
+  const [testUsers] = await connection.query(`SELECT name, user_id FROM users WHERE name LIKE ?`, [`tester%`]);
   const templates = [
     { name: 'Group Focus', explanation: 'Let\'s study all day long!', tags: ['Focus', '24hr no sleep', 'highschool'] },
     { name: 'Math Wizards', explanation: 'Unlock the magic of numbers and equations.', tags: ['Math', 'Problem Solving', 'Logic'] },
@@ -203,29 +203,29 @@ async function generateGroups(length) {
     connection.query(`INSERT INTO \`groups\` SET ?`, groupInfo);
   }
 
-  connection.release();
+  pool.releaseConnection(connection);
 };
 
 async function deleteTestUsers() {
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   try {
     const removeTesters = await connection.query("DELETE FROM users WHERE name LIKE 'tester%'");
   } catch (err) {
     console.log(err);
   } finally {
-    connection.release();
+    pool.releaseConnection(connection);
   };
 };
 
 async function deleteGroups() {
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   try {
     const removeGroups = await connection.query("DELETE FROM groups");
     const updateUserGroups = await connection.query("UPDATE users set groups = ''");
   } catch (err) {
     console.log(err);
   } finally {
-    connection.release();
+    pool.releaseConnection(connection);
   };
 }
 

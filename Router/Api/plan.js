@@ -10,13 +10,13 @@ const {DateTime} = require('luxon');
 
 Router.post('/bring-plans', async(req, res) => {
   account.autoSignin(req, res, (async() => {
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
 
     let plans = await connection.query(`SELECT * from plans where user_id = ?`, [req.session.user_id]);
     res.send({success: true, plans: plans})
     /* plans = JSON.stringify(`[${plans[0].plan}]`);
     res.send(plans); */
-    connection.release();
+    pool.releaseConnection(connection);
   }))
 });
 
@@ -45,7 +45,7 @@ Router.post('/update-plan', async(req, res) => {
 
       const isValid = isValidJSON(planInfo, schema);
       if (isValid) {
-        const connection = await (await pool).getConnection();
+        const connection = pool.promise();
         try {
           const {name, id, date, hr, min, length, repeat, description, notification, subject, priority} = planInfo;
           const insertInfo = {
@@ -74,7 +74,7 @@ Router.post('/update-plan', async(req, res) => {
           res.send({ success: false, reason: 'An error occurred' });
           console.log('Mysql Err', error);
         } finally {
-          connection.release();
+          pool.releaseConnection(connection);
         }
       }
     } catch (error) {

@@ -9,9 +9,9 @@ Router.get("/", async (req, res) => {
   /* if (req.session.loggedin) {
     res.render("index", {loggedIn: true});
   } else if (req.signedCookies.userId) {
-    const connection = await (await pool).getConnection();
+    const connection = pool.promise();
     let userInfo = await connection.query('SELECT name, email, myinfo FROM users where user_id = ?', [req.signedCookies.userId]);
-    connection.release();
+    pool.releaseConnection(connection);
     userInfo = userInfo[0];
     if (userInfo) {
       req.session.user_id = req.signedCookies.userId;
