@@ -10,6 +10,7 @@ const NodeCache = require('node-cache');
 const cache = new NodeCache();
 const { DateTime } = require('luxon');
 const crypto = require("crypto");
+const redisClient = require("../model/redis");
 
 
 const tester = { name: 't1', id: 'EoFObpf612bdJKt' };
@@ -504,6 +505,11 @@ Router.post('/plan/update-plan', async (req, res) => {
   }
 });
 
+//redis study part
+Router.post("/study/start", async(req, res) => {
+  await redisClient.set("test", "d");
+  console.log(await redisClient.get("test"));
+});
 
 //get total live 
 Router.post("/live-members", (req, res) => {

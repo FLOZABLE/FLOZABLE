@@ -8,7 +8,7 @@ const {DateTime} = require('luxon');
 Router.post("/", async (req, res) => {
   const connection = pool.promise();
   try {
-    const users = await connection.query(`SELECT datum_point, daily, weekly, monthly, name, user_id from users`);
+    const [users] = await connection.query(`SELECT datum_point, daily, weekly, monthly, name, user_id from users`);
   
     const dailyRanking = [];
     const weeklyRanking = [];
