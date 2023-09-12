@@ -12,10 +12,8 @@ Router.post('/bring-plans', async(req, res) => {
   account.autoSignin(req, res, (async() => {
     const connection = pool.promise();
 
-    let plans = await connection.query(`SELECT * from plans where user_id = ?`, [req.session.user_id]);
+    let [plans] = await connection.query(`SELECT * from plans where user_id = ?`, [req.session.user_id]);
     res.send({success: true, plans: plans})
-    /* plans = JSON.stringify(`[${plans[0].plan}]`);
-    res.send(plans); */
     pool.releaseConnection(connection);
   }))
 });
@@ -61,11 +59,11 @@ Router.post('/update-plan', async(req, res) => {
             subject: subject,
             priority: priority
           }
-          const deletePrev = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [req.session.user_id, id]);
+          const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [req.session.user_id, id]);
           if (!deletePrev.affectedRows) {
             notificationService.removePrevNotification(req.session.user_id, planInfo.id);
           }
-          const userInfo = await connection.query(`SELECT user_id, name, email, notification_setting, key_salt, iv, subscription from users where user_id = ?`, [req.session.user_id]);
+          const [userInfo] = await connection.query(`SELECT user_id, name, email, notification_setting, key_salt, iv, subscription from users where user_id = ?`, [req.session.user_id]);
           const startTime = (planInfo.date + planInfo.hr * 60 * 60 + planInfo.min * 60) * 1000;
           notificationService.planNotification(insertInfo, userInfo[0], startTime)
           const insert = connection.query(`INSERT INTO plans SET ?`, insertInfo);
