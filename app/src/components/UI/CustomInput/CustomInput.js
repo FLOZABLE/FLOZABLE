@@ -21,7 +21,7 @@ function CustomInput(props) {
       onChange={props.handleInput}
       type={props.type}
       onKeyDown={handleEnterKeyPress}
-      placeholder={props.placeholder}
+      placeholder={props.placeHolder}
     />
     </div>
   )
