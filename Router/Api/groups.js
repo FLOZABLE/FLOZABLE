@@ -166,7 +166,7 @@ Router.post('/join/:id', async (req, res) => {
   const userId = req.session.user_id;
   const connection = pool.promise();
   try {
-    let [groupInfo] = await connection.query(`SELECT password, salt, visibility, max_members, name from \`groups\` where group_id = ?`, [groupId]);
+    let [[groupInfo]] = await connection.query(`SELECT password, salt, visibility, max_members, name from \`groups\` where group_id = ?`, [groupId]);
 
     if (groupInfo.visibility) {
       await connection.query(
@@ -274,7 +274,7 @@ Router.post('/bring-groups', async (req, res) => {
   const connection = pool.promise();
   try {
     const userId = req.session.user_id;
-    const groups = await connection.query(
+    const [groups] = await connection.query(
       "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\`"
     );
     const allMembersIds = [];
@@ -286,7 +286,7 @@ Router.post('/bring-groups', async (req, res) => {
         };
       });
     });
-    const membersInfo = await connection.query('SELECT user_id, name, study, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
+    const [membersInfo] = await connection.query('SELECT user_id, name, study, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
     //console.log(membersInfo);
     res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
