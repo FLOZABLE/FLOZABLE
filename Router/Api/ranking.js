@@ -6,7 +6,7 @@ const cache = new NodeCache();
 const {DateTime} = require('luxon');
 
 Router.post("/", async (req, res) => {
-  const connection = await (await pool).getConnection();
+  const connection = pool.promise();
   try {
     const users = await connection.query(`SELECT datum_point, daily, weekly, monthly, name, user_id from users`);
   
@@ -127,7 +127,7 @@ Router.post("/", async (req, res) => {
     console.log(error);
     res.send({success: false, reason: 'error'});
   } finally {
-    connection.release();
+    pool.releaseConnection(connection);
   };
 });
 
