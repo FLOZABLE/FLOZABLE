@@ -508,8 +508,15 @@ Router.post('/plan/update-plan', async (req, res) => {
 //redis study part
 Router.post("/study/start", async(req, res) => {
   await redisClient.set("test", "d");
-  console.log(await redisClient.get("test"));
+  console.log(await redisClient.get(""));
 });
+
+Router.post("/study/get-today", async(req, res) => {
+  const userInfo = await redisClient.get(`user:${tester.id}`);
+  if (!userInfo) {
+    redisClient.hmset(`user:${tester.id}`);
+  }
+})
 
 //get total live 
 Router.post("/live-members", (req, res) => {
