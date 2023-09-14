@@ -532,6 +532,19 @@ Router.post("/study/add-subject", async(req, res) => {
     };
     console.log(subjectInfo);
     if (isValid) {
+      const connection = pool.promise();
+      try {
+        const [[userInfo]] = await connection.query(`SELECT subjects from users where user_id = ?`, [tester.id]);
+        console.log(userInfo);
+        const subjects = JSON.parse(userInfo.subjects);
+        subjects.push(JSON.stringify(subjectInfo));
+         const updateSubjects = await connection.query(`UPDATE users set subjects = ? where user_id = ?`, [JSON.stringify(subjectInfo), tester.id]);
+
+      } catch (err) {
+        console.log(err);
+      } finally {
+        pool.releaseConnection();
+      }
       res.send({success: true, msg: `Added Subject "${subjectInfo.name}"`, info: {subjectInfo: subjectInfo}})
     } else {
       res.send({success: false, reason: "Invalid Value"});
