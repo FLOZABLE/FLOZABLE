@@ -154,7 +154,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans}/>
+            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans}/>
           </div>
         } />
       </Routes>

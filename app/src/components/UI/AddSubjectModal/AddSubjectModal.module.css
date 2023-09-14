@@ -1,11 +1,11 @@
 .AddSubjectModal {
   position: fixed;
-  top: 150px;
+  top: 200px;
   left: 50vw;
   transform: translateX(-50%);
-  background-color: aqua;
-  width: 500px;
-  height: 300px;
+  background-color: #fff;
+  width: 550px;
+  height: fit-content;
   visibility:hidden;
   z-index: 3;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -22,10 +22,26 @@
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
   text-align: right;
+  display: flex;
+  justify-content: right;
+  align-items: center;
 }
 
 .AddSubjectModal .header i {
-  font-size: 20px;
+  font-size: 30px;
   color: #fff;
   margin-right: 10px;
+}
+
+.AddSubjectModal .content {
+  padding: 30px 20px;
+}
+
+.AddSubjectModal .content .inputWrapper {
+  margin-bottom: 10px;
+}
+
+.AddSubjectModal .submit {
+  display: flex;
+  justify-content: center;
 }
