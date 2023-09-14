@@ -11,8 +11,14 @@
   grid-gap: 20px;
   justify-content: center;
   padding: 20px;
-  max-height: 200px;
-  overflow-y: auto;
+  height: 0px;
+  overflow-y: hidden;
+  transition: height .3s ease-in-out;
+  position: relative;
+}
+
+.ColorPalette .paletteGrid.open {
+  height: 200px;
 }
 
 .ColorPalette .palette {
@@ -26,7 +32,11 @@
   align-items: stretch;
   flex-wrap: wrap;
   flex-flow: column;
-  transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), margin-left 0.2s ease 0.2s;
+  margin-left: -100px;
+}
+.ColorPalette .paletteGrid.open .palette{
+  margin-left: 0px;
 }
 .ColorPalette .palette:hover {
   top: -5px;
@@ -128,3 +138,23 @@
   color: #999;
   line-height: 1.5;
 } */
+.ColorPalette .header {
+  display: flex;
+}
+.ColorPalette .header p {
+  font-size: 30px;
+  font-weight: 700;
+  color: #545454;
+}
+
+.ColorPalette .header .selectedColor {
+  margin-left: 10px;
+  background-color: #fff;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+}
