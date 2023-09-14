@@ -506,6 +506,63 @@ Router.post('/plan/update-plan', async (req, res) => {
 });
 
 //redis study part
+
+Router.post("/study/add-subject", async(req, res) => {
+  try {
+    const now = new Date()
+    const schema = {
+      type: 'object',
+      properties: {
+        name: { type: 'string', minLength: 1, maxLength: 30 },
+        color: { type: 'string', minLength: 7, maxLength: 7 },
+        icon: { type: 'string', minLength: 1, maxLength: 15 },
+
+      },
+      required: ['name', 'color', 'icon'],
+      additionalProperties: false
+    };
+
+    const isValid = isValidJSON(req.body, schema);
+    console.log(isValid, req.body);
+    const subjectInfo = {
+      ...req.body,
+      datum_point: Math.floor(new Date().getTime() / 1000),
+      timeline: [],
+      id: generateRandomId(10),
+    };
+    console.log(subjectInfo);
+    if (isValid) {
+      res.send({success: true, msg: `Added Subject "${subjectInfo.name}"`, info: {subjectInfo: subjectInfo}})
+    } else {
+      res.send({success: false, reason: "Invalid Value"});
+    }
+  } catch (error) {
+
+  };
+  /* const connection = pool.promise();
+  const subject = {
+    ...req.body,
+    datum_point: Math.floor(new Date().getTime() / 1000),
+    timeline: [],
+    id: generateRandomId(10)
+  };
+
+  const selectQuery = "SELECT subjects FROM users WHERE user_id = ?";
+  const selectParams = [req.session.user_id];
+  const select = await connection.query(selectQuery, selectParams);
+  const userInfo = select[0];
+  const subjects = JSON.parse(userInfo.subjects || "[]");
+  subjects.push(subject);
+  const updatedJson = JSON.stringify(subjects);
+  const updateQuery = "UPDATE users SET subjects = ? WHERE user_id = ?";
+  const updateParams = [updatedJson, req.session.user_id];
+  const update = await connection.query(updateQuery, updateParams);
+  pool.releaseConnection(connection);
+
+
+  res.send({success: true, id: subject.id}); */
+})
+
 Router.post("/study/start", async(req, res) => {
   await redisClient.set("test", "d");
   console.log(await redisClient.get(""));
@@ -514,7 +571,7 @@ Router.post("/study/start", async(req, res) => {
 Router.post("/study/get-today", async(req, res) => {
   const userInfo = await redisClient.get(`user:${tester.id}`);
   if (!userInfo) {
-    redisClient.hmset(`user:${tester.id}`);
+    redisClient.hSet(`user:${tester.id}`);
   }
 })
 

@@ -1,0 +1,61 @@
+.selectIcon .header {
+  display: flex;
+}
+
+.selectIcon .header p {
+  font-size: 30px;
+  font-weight: 700;
+  color: #545454;
+}
+
+.selectIcon .header .selectedIcon {
+  margin-left: 10px;
+  background-color: #fff;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.selectIcon .icons {
+  display: flex;
+  flex-wrap: wrap;
+  height: 0px;
+  transition: .3s height ease-in-out, .3s width ease-in-out;
+  overflow-y: hidden;
+}
+
+.selectIcon .icons.open {
+  height: 150px;
+}
+
+.selectIcon .iconWrapper {
+  background-color: #fff;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin: 10px;
+  transition: box-shadow .3s ease-in-out, width .3s ease-in-out, height .3s ease-in-out, margin-left 0.2s ease 0.2s, margin-top .3s ease-in-out;
+  position: relative;
+  margin-left: -100px;
+  cursor: pointer;
+}
+
+.selectIcon .iconWrapper:hover {
+  width: 55px;
+  height: 55px;
+  margin-top: 5px !important;
+
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+}
+
+.selectIcon .icons.open .iconWrapper {
+  margin: 10px;
+}

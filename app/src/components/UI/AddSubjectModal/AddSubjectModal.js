@@ -1,31 +1,71 @@
-import React, {useState} from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./AddSubjectModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faXmark } from "@fortawesome/free-solid-svg-icons";
 import CustomInput from "../CustomInput/CustomInput";
 import ColorPalette from "../ColorPalette/ColorPalette";
+import BlobBtn from "../BlobBtn/BlobBtn";
+import SelectIcon from "../SelectIcon/SelectIcon";
+
+const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function AddSubjectModal(props) {
-  const {isAddSubjectModal, setIsAddSubjectModal} = props;
+  const { isAddSubjectModal, setIsAddSubjectModal, setAddSubjectResponse, subjects, setSubjects } = props;
 
   const [name, setName] = useState('');
-  const [color, setColor] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [isSelectColor, setIsSelectColor] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState({ name: null, el: null });
+  const [isSelectIcon, setIsSelectIcon] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const handleNameInput = (e) => {
     setName(e.target.value);
-  }
+  };
+
+  useEffect(() => {
+    if (isSubmit) {
+      fetch(`${serverOrigin}/api/study/add-subject`,
+      {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({name: name, color: selectedColor, icon: selectedIcon.name})
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        setAddSubjectResponse(data);
+        if (data.success) {
+          setIsAddSubjectModal(false);
+          //setSubjects(...subjects, data.info.id);
+          const newSubjects = subjects;
+          newSubjects.push(data.info.subjectInfo);
+          setSubjects(newSubjects);
+          console.log(subjects)
+        }
+      })
+      .catch((error) => console.error(error));
+    };
+  }, [isSubmit]);
+  
   return (
     <div className={`${styles.AddSubjectModal} ${isAddSubjectModal ? styles.open : ''}`}>
       <div className={styles.header}>
-        <i>
-        <FontAwesomeIcon icon={faXmark} />
+        <i onClick={() => {setIsAddSubjectModal(false)}}>
+          <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
       <div className={styles.content}>
+        <div className={styles.inputWrapper}>
         <CustomInput input={name} handleInput={handleNameInput} icon={faBook} placeHolder={"Subject Name"} type={"text"} />
-        <ColorPalette setColor={setColor} />
+        </div>
+        <SelectIcon selectedIcon={selectedIcon} setSelectedIcon={setSelectedIcon} isSelectIcon={isSelectIcon} setIsSelectIcon={setIsSelectIcon} setIsSelectColor={setIsSelectColor} />
+        <ColorPalette setSelectedColor={setSelectedColor} selectedColor={selectedColor} isSelectColor={isSelectColor} setIsSelectColor={setIsSelectColor} setIsSelectIcon={setIsSelectIcon} />
+        <div className={styles.submit}>
+        <BlobBtn name={'SUBMIT'} setClicked={setIsSubmit} />
+        </div>
       </div>
-
     </div>
   )
 };

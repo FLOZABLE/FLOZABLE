@@ -338,7 +338,6 @@ function EventPlanner(props) {
 
   //handle submit
   useEffect(() => {
-    console.log(submit)
     if (submit) {
       updatePlan(selectedEvent, title, start, end, description, subject, priority);
     };
@@ -432,7 +431,6 @@ function EventPlanner(props) {
   }
 
   useEffect(() => {
-    console.log('view changed')
     if (PlannerApi) {
       PlannerApi.changeView(viewMode, viewDate);
     };
@@ -493,13 +491,13 @@ function EventPlanner(props) {
           eventClick={handleEventClick}
 
           eventAdd={(e) => {
-            console.log("eventAdd", e);
+            /* console.log("eventAdd", e); */
           }}
           eventChange={(e) => {
-            console.log("eventChange", e);
+            /* console.log("eventChange", e); */
           }}
           eventRemove={(e) => {
-            console.log("eventRemove", e);
+            /* console.log("eventRemove", e); */
           }}
           customButtons={{
             'custom-prev': {
