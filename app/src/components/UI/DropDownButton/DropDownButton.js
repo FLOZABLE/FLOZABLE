@@ -9,6 +9,9 @@ function DropDownButton(props) {
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
+    if (props.options[0]) {
+      props.setValue(props.options[0].value);
+    };
     setOptions(props.options.map((option, i) => {
       return (
         <li key={i} onClick={() => {setIndex(i);setClicked(false);props.setValue(option.value)}} className={styles.option}>

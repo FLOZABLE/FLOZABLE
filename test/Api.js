@@ -29,8 +29,10 @@ function generateRandomId(length) {
 Router.post('/information/bring-subjects', async (req, res) => {
   const connection = pool.promise();
   const [[userInfo]] = await connection.query("SELECT subjects FROM users WHERE name = ?", [tester.name]);
+  const [subjectsInfo] = await connection.query(`SELECT * FROM subjects where user_id = ?`, [tester.id]);
+  console.log(subjectsInfo, userInfo.subjects);
   pool.releaseConnection(connection);
-  res.send({ success: true, subjects: userInfo.subjects });
+  res.send({ success: true, subjects: subjectsInfo });
 });
 
 Router.post('/information/accountinfo', async (req, res) => {
@@ -387,7 +389,11 @@ Router.post('/groups/bring-groups', async (req, res) => {
         };
       });
     });
-    const [membersInfo] = await connection.query('SELECT user_id, name, study, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
+    let membersInfo = [];
+    if (allMembersIds.length) {
+      [membersInfo] = await connection.query('SELECT user_id, name, study, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
+    };
+
     //console.log(membersInfo);
     res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
@@ -442,7 +448,7 @@ function isValidJSON(data, schema) {
 
 Router.post("/plan/bring-plans", async (req, res) => {
   const connection = pool.promise();
-  let [plans] = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority FROM plans where user_id = ?`, [tester.id]);
+  let [plans] = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed FROM plans where user_id = ?`, [tester.id]);
   res.send({ success: true, plans: plans })
   pool.releaseConnection(connection);
 });
@@ -464,8 +470,9 @@ Router.post('/plan/update-plan', async (req, res) => {
         subject: { type: 'string', minLength: 10, maxLength: 10 },
         notification: { type: 'integer', minimum: -1, maximum: 60 },
         priority: { type: 'integer', minimum: 0, maximum: 100 },
+        completed: {type: 'integer', minimum: 0, maximum: 1}
       },
-      required: ['title', 'id', 'start', 'end', 'repeat', 'description', 'notification', 'subject', 'priority'],
+      required: ['title', 'id', 'start', 'end', 'repeat', 'description', 'notification', 'subject', 'priority', 'completed'],
       additionalProperties: false
     };
 
@@ -527,19 +534,21 @@ Router.post("/study/add-subject", async(req, res) => {
     const subjectInfo = {
       ...req.body,
       datum_point: Math.floor(new Date().getTime() / 1000),
-      timeline: [],
+      timeline: JSON.stringify([]),
       id: generateRandomId(10),
+      user_id: tester.id
     };
     console.log(subjectInfo);
     if (isValid) {
       const connection = pool.promise();
       try {
-        const [[userInfo]] = await connection.query(`SELECT subjects from users where user_id = ?`, [tester.id]);
+        /* const [[userInfo]] = await connection.query(`SELECT subjects from users where user_id = ?`, [tester.id]);
         console.log(userInfo);
         const subjects = JSON.parse(userInfo.subjects);
         subjects.push(JSON.stringify(subjectInfo));
-         const updateSubjects = await connection.query(`UPDATE users set subjects = ? where user_id = ?`, [JSON.stringify(subjectInfo), tester.id]);
-
+         const updateSubjects = await connection.query(`UPDATE users set subjects = ? where user_id = ?`, [JSON.stringify(subjectInfo), tester.id]); */
+        const insertSubject = await connection.query(`INSERT INTO subjects SET ?`, subjectInfo);
+        res.send({success: true, msg: `Added Subject "${subjectInfo.name}"`, info: {subjectInfo: subjectInfo}})
       } catch (err) {
         console.log(err);
       } finally {

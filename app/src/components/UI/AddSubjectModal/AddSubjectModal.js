@@ -10,7 +10,7 @@ import SelectIcon from "../SelectIcon/SelectIcon";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function AddSubjectModal(props) {
-  const { isAddSubjectModal, setIsAddSubjectModal, setAddSubjectResponse, subjects, setSubjects } = props;
+  const { isAddSubjectModal, setIsAddSubjectModal, setAddSubjectResponse, subjects, setSubjects, setSubject } = props;
 
   const [name, setName] = useState('');
   const [selectedColor, setSelectedColor] = useState(null);
@@ -24,6 +24,7 @@ function AddSubjectModal(props) {
   };
 
   useEffect(() => {
+    /* props.setSubjects([]); */
     if (isSubmit) {
       fetch(`${serverOrigin}/api/study/add-subject`,
       {
@@ -38,11 +39,11 @@ function AddSubjectModal(props) {
         setAddSubjectResponse(data);
         if (data.success) {
           setIsAddSubjectModal(false);
-          //setSubjects(...subjects, data.info.id);
-          const newSubjects = subjects;
-          newSubjects.push(data.info.subjectInfo);
-          setSubjects(newSubjects);
-          console.log(subjects)
+          setSubjects((prevSubjects) => [
+            ...prevSubjects,
+            data.info.subjectInfo
+          ]);
+          setSubject(data.info.subjectInfo.id);
         }
       })
       .catch((error) => console.error(error));

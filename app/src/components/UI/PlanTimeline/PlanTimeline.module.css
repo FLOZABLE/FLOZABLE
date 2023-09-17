@@ -1,0 +1,66 @@
+.PlanTimeline {
+  position: relative;
+}
+
+.PlanTimeline .plan {
+  display: flex;
+  margin-bottom: 10px;
+  transition: height .3s ease-in-out
+}
+
+.PlanTimeline .plan:hover .description{
+  max-height: 300px;
+  animation: showScroll 0s .3s forwards;
+}
+
+@keyframes showScroll {
+  to {
+    overflow-y: auto;
+  }
+}
+
+.PlanTimeline .iconWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 50px;
+  border-radius: 10px;
+}
+
+.PlanTimeline .content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  max-width: calc(100% - 60px);
+}
+
+.PlanTimeline .description {
+  margin-left: 20px;
+  max-height: 0;
+  overflow-y: hidden;
+  transition: max-height .3s ease-in-out;
+}
+
+.PlanTimeline .description ol {
+ list-style: decimal;
+ list-style-position: inside;
+}
+
+.PlanTimeline .description ul {
+  list-style: disc;
+  list-style-position: inside;
+ }
+
+.PlanTimeline .description li {
+  list-style: unset;
+}
+
+.PlanTimeline .iconWrapper:hover .hoverDisp {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 50px;
+  height: 50px;
+  background-color: aqua;
+}
