@@ -8,12 +8,15 @@ import styles from "./Planner.module.css";
 import SmallCalendar from '../../UI/SmallCalendar/SmallCalendar';
 import EventPlanner from '../../UI/EventPlanner/EventPlanner';
 import AddSubjectModal from '../../UI/AddSubjectModal/AddSubjectModal';
+import PlanTimeline from '../../UI/PlanTimeline/PlanTimeline';
+import DropDownButton from '../../UI/DropDownButton/DropDownButton';
 
 function Planner(props) {
-  const { subjects, setSubjects } = props;
+  const { subjects, setSubjects, events } = props;
 
   const [viewMode, setViewMode] = useState('timeGridWeek');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
+  const [subject, setSubject] = useState('0000000000');
   const PlannerRef = useRef(null);
   const [PlannerApi, setPlannerApi] = useState(null);
   const SmallCalendarRef = useRef(null);
@@ -21,6 +24,7 @@ function Planner(props) {
   const [addPlanResponse, setAddPlanResponse] = useState(null);
   const [isAddPlanModal, setIsAddPlanModal] = useState(false);
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
+  const [subjectsOptions, setSubjectsOptions] = useState(null);
 
   const [addSubjectResponse, setAddSubjectResponse] = useState(null);
 
@@ -57,7 +61,7 @@ function Planner(props) {
     <div className={styles.PlannerContainer}>
       <TopNotification duration={3000} response={addPlanResponse} />
       <StuckModal />
-      <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} />
+      <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.wrapper}>
           <div className={styles.header}>
@@ -68,10 +72,17 @@ function Planner(props) {
           </div>
           <div className={styles.container}>
             <div className={styles.planner}>
-              <EventPlanner isAddPlanModal={isAddPlanModal} setIsAddPlanModal={setIsAddPlanModal} viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={subjects} events={props.events} setEvents={props.setEvents} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} addPlanResponse={addPlanResponse} setAddPlanResponse={setAddPlanResponse} setIsAddSubjectModal={setIsAddSubjectModal} />
+              <EventPlanner isAddPlanModal={isAddPlanModal} setIsAddPlanModal={setIsAddPlanModal} viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={subjects} events={events} setEvents={props.setEvents} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} addPlanResponse={addPlanResponse} setAddPlanResponse={setAddPlanResponse} setIsAddSubjectModal={setIsAddSubjectModal} subject={subject} setSubject={setSubject} />
             </div>
             <div className={styles.widget}>
+              <div className={styles.smallCalendarWrapper}>
               <SmallCalendar isAddPlanModal={isAddPlanModal} setIsAddPlanModal={setIsAddPlanModal} viewOpt={viewMode} setViewDate={updateViewDate} viewDate={viewDate} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
+              </div>
+              
+              {/* <DropDownButton options={[{name:'Does not repeat', value: 0}, {name: 'Daily', value: 1}, {name: 'Weekly', value: 2}, {name: `Monthly`, value: 3}]} defaultIndex={0} setValue={setSubjectsOptions} /> */}
+              <div className={`${styles.planTimelineWrapper} customScroll`}>
+              <PlanTimeline plans={events} viewDate={viewDate} viewMode={viewMode} subjects={subjects} setPlans={props.setEvents} />
+              </div>
             </div>
           </div>
         </div>

@@ -95,8 +95,6 @@ const StyleWrapper = styled.div`
 function SmallCalendar(props) {
   const {PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewDate, setViewDate, isAddPlanModal, setIsAddPlanModal} = props;
   const currentDateRef = useRef(null);
-  const [isToday, setIsToday] = useState(props.viewDate.getTime() == new Date().setHours(0, 0, 0, 0));
-  const [foreceUdt, setForceUdt] = useState([]);
   const [events, setEvents] = useState([]);
 
 
@@ -112,12 +110,10 @@ function SmallCalendar(props) {
       currentDateRef.current.classList.add('selected-date');
       setForceUdt([]);
     } */
-    console.log(viewDate)
     setEvents([{start: viewDate, end: viewDate, allDay: true, display: 'background', title: viewDate.getDate()}]);
     if (SmallCalendarApi) {
       SmallCalendarApi.gotoDate(viewDate);
     };
-    console.log(isAddPlanModal)
     if (PlannerApi && !isAddPlanModal) {
       PlannerApi.gotoDate(viewDate);
     }
@@ -125,17 +121,6 @@ function SmallCalendar(props) {
 
   const handleDateClick = (arg) => {
     setViewDate(arg.date);
-    /* const currentDate = new Date(arg.date);
-    console.log(currentDate);
-    setIsToday(currentDate.getTime() == new Date().setHours(0, 0, 0, 0));
-    console.log(isToday, currentDate.getTime(), new Date().setHours(0, 0, 0, 0))
-    if (currentDateRef.current) {
-      currentDateRef.current.classList.remove('selected-date');
-    };
-
-    currentDateRef.current = arg.dayEl;
-    currentDateRef.current.classList.add('selected-date');
-    props.setViewDate(new Date(currentDate.setHours(0, 0, 0, 0))); */
   };
 
   const customHeader = {
@@ -150,7 +135,7 @@ function SmallCalendar(props) {
 
   return (
     <StyleWrapper>
-    <div className="SmallCalendar">
+    <div className={styles.SmallCalendar}>
       <FullCalendar
         ref={SmallCalendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}

@@ -160,7 +160,7 @@ thead .fc-scroller {
 
 
 function EventPlanner(props) {
-  const { PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isAddPlanModal, setIsAddPlanModal, setIsAddSubjectModal } = props;
+  const { PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isAddPlanModal, setIsAddPlanModal, setIsAddSubjectModal, subjects, setSubjects, setSubject, subject } = props;
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [viewText, setViewText] = useState({
     year: 'numeric',
@@ -170,8 +170,7 @@ function EventPlanner(props) {
   //new event stats
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [subject, setSubject] = useState('0000000000');
-  const [subjects, setSubjects] = useState([]);
+  const [subjectsOpt, setSubjectsOpt] = useState([]);
   const [start, setStart] = useState(new Date());
   const [end, setEnd] = useState(new Date());
   const [repeat, setRepeat] = useState(0);
@@ -227,7 +226,8 @@ function EventPlanner(props) {
         subject: subject,
         notification: notification,
         priority: priority,
-        saved: false
+        saved: false,
+        completed: false
       };
       setStart(start);
       setEnd(end);
@@ -331,10 +331,10 @@ function EventPlanner(props) {
   }, [start]);
 
   useEffect(() => {
-    setSubjects([...props.subjects.map((subject) => {
+    setSubjectsOpt([...props.subjects.map((subject) => {
       return { name: subject.name, value: subject.id };
     }), { name: 'others', value: '0000000000' }]);
-  }, [props.subjects]);
+  }, [subjects]);
 
   //handle submit
   useEffect(() => {
@@ -432,7 +432,7 @@ function EventPlanner(props) {
 
   useEffect(() => {
     if (PlannerApi) {
-      PlannerApi.changeView(viewMode, viewDate);
+      PlannerApi.changeView(viewMode);
     };
     if (viewMode == 'timeGridDay') {
       setViewText({
@@ -526,7 +526,7 @@ function EventPlanner(props) {
           description={description}
           setDescription={setDescription}
           setSubject={setSubject}
-          subjects={subjects}
+          subjects={subjectsOpt}
           notification={notification}
           setNotification={setNotification}
           submit={submit}
