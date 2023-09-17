@@ -9,20 +9,20 @@ const myRanking = {
 
 const sortSubjects = (subjects) => {
   try {
-    subjects = JSON.parse(subjects);
+    //subjects = JSON.parse(subjects);
     const now = new Date();
     const currentDay = now.getDay();
     subjects.forEach((subject) => {
-      const { name, total, datum_point, timeline, color } = subject;
+      const { datum_point, timeline } = subject;
 
       subject.daily = {};
-      subject.daily.grouped = dailyTimelineSplit(timeline, datum_point);
+      subject.daily.grouped = dailyTimelineSplit(JSON.parse(timeline), datum_point);
       subject.daily.total = totalRangeTime(subject.daily.grouped);
       subject.monthly = {};
-      subject.monthly.grouped = monthlyTimelineSplit(timeline, datum_point);
+      subject.monthly.grouped = monthlyTimelineSplit(JSON.parse(timeline), datum_point);
       subject.monthly.total = totalRangeTime(subject.monthly.grouped);
       subject.weekly = {};
-      subject.weekly.grouped = weeklyTimelineSplit(timeline, datum_point);
+      subject.weekly.grouped = weeklyTimelineSplit(JSON.parse(timeline), datum_point);
       subject.weekly.total = totalRangeTime(subject.weekly.grouped);
     });
     subjects.daily = { maxlength: 0 };

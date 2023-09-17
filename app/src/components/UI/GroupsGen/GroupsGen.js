@@ -60,20 +60,20 @@ function GroupsGen(props) {
           <div className={styles.explanation}>
             <ul className={styles.info}>
               <li>
+              <FontAwesomeIcon icon={faPeopleGroup} />
                 <p>dd</p>
-                <FontAwesomeIcon icon={faPeopleGroup} />
               </li>
               <li>
+              <FontAwesomeIcon icon={faBullseye} />
                 <p>9hr</p>
-                <FontAwesomeIcon icon={faBullseye} />
               </li>
               <li>
+              <FontAwesomeIcon icon={faStopwatch} />
                 <p>dd</p>
-                <FontAwesomeIcon icon={faStopwatch} />
               </li>
               <li>
+              <FontAwesomeIcon icon={faHeart} />
                 <p>dd</p>
-                <FontAwesomeIcon icon={faHeart} />
               </li>
             </ul>
             {group.explanation}

@@ -54,6 +54,9 @@
 .MyGroupsViewer .status li {
   font-size: 40px;
   margin: 0px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .MyGroupsViewer .membersContainer {

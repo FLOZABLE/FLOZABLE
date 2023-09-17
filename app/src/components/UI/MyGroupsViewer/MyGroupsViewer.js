@@ -51,8 +51,8 @@ function MyGroupsViewer(props) {
           <div className={styles.header}>
           <ul className={styles.status}>
             <li>
-              <p>5/12</p>
               <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />  
+              <p>5/12</p>
             </li>
             <li>
               <FontAwesomeIcon icon={faBullhorn} />

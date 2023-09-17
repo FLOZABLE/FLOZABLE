@@ -41,6 +41,7 @@
   position: relative;
   margin-top: 16px;
   padding-top: 20px;
+  width: 100%;
 }
 
 .groupContainer .bottom {
@@ -79,10 +80,13 @@
 
 .groupContainer .info li {
   margin: 0px 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .groupContainer .info li p {
-  margin-right: 3px;
+  margin-left: 3px;
 }
 
 .groupContainer .buttons {

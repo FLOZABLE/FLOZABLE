@@ -32,6 +32,32 @@
 }
 
 .PlannerContainer .container .widget {
-  width: 300px;
+  width: fit-content;
   margin-left: auto;
+}
+
+.PlannerContainer .smallCalendarWrapper {
+  display: flex;
+  width: 100%;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+
+.PlannerContainer .planTimelineWrapper {
+  width: 300px;
+  margin-top: 30px;
+  max-height: 600px;
+  transition: width .3s ease-in-out;
+}
+
+@keyframes showScroll {
+  to {
+    overflow-y: auto;
+  }
+}
+
+.PlannerContainer .planTimelineWrapper:hover {
+  width: 400px;
+  animation: showScroll 2s .3s forwards;
 }

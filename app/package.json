@@ -23,6 +23,7 @@
         "chartjs-plugin-datalabels": "^2.2.0",
         "fullcalendar": "^6.1.8",
         "gsap": "^3.12.2",
+        "html-react-parser": "^4.2.2",
         "luxon": "^3.4.3",
         "react": "^18.2.0",
         "react-beautiful-dnd": "^13.1.1",
