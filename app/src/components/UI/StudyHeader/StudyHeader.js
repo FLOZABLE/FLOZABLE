@@ -7,8 +7,12 @@ import CustomInput from "../CustomInput/CustomInput";
 import VolumeControl from "../VolumeControl/VolumeControl";
 import FullScreenBtn from "../FullScreenBtn/FullScreenBtn";
 import SmallPlanner from "../SmallPlanner/SmallPlanner";
+import SubjectTimer from "../SubjectTimer/SubjectTimer";
 
 function StudyHeader(props) {
+
+  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal } = props;
+
   const [recommendedThemes, setRecommendedThemes] = useState([]);
   const [link, setLink] = useState([]);
   const [backgrounBtn, setBackgrounBtn] = useState(false);
@@ -16,6 +20,7 @@ function StudyHeader(props) {
   const [fullScreeenBtn, setFullScreenBtn] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
   const [plannerBtn, setPlannerBtn] = useState(false);
+  const [timerBtn, setTimerBtn] = useState(false);
 
   const handleLinkInput = (e) => {
     setLink(e.target.value);
@@ -47,7 +52,20 @@ function StudyHeader(props) {
   };
   return (
     <header className={styles.StudyHeader}>
-      <ul>
+      <ul className={styles.left}>
+        <li className={`${timerBtn ? styles.open : ''}`}>
+          <button onClick={() => { setTimerBtn(!timerBtn) }}>
+            <FontAwesomeIcon icon={faClipboardCheck} />
+          </button>
+          <div className={styles.hoverEl}>
+            Background
+          </div>
+          <div className={styles.clickedEl}>
+            <SubjectTimer subjects={subjects} subject={subject} setSubject={setSubject} isStudy={isStudy} setIsStudy={setIsStudy} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} />
+          </div>
+        </li>
+      </ul>
+      <ul className={styles.right}>
         <li className={`${plannerBtn ? styles.open : ''}`}>
           <button onClick={() => { setPlannerBtn(!plannerBtn) }}>
             <FontAwesomeIcon icon={faClipboardCheck} />

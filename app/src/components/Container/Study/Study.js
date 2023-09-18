@@ -8,16 +8,23 @@ import MyGroupsViewer from '../../UI/MyGroupsViewer/MyGroupsViewer';
 import YouTubePlayer from '../../UI/YouTubePlayer/YouTubePlayer';
 import StudyHeader from '../../UI/StudyHeader/StudyHeader';
 import PlanTimelineBar from '../../UI/PlanTimelineBar/PlanTimelineBar';
-
+import AddSubjectModal from '../../UI/AddSubjectModal/AddSubjectModal';
+import { sortSubjects } from '../../Container/Stats/StatTools';
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Study(props) {
+
+  const { isStudy, setIsStudy, subjects, setSubjects } = props;
+
   const [myGroups, setMyGroups] = useState([]);
   const [allGroups, setAllGroups] = useState([]);
   const [membersInfo, setMembersInfo] = useState([]);
   const [videoId, setVideoId] = useState('MYPVQccHhAQ');
   const [volume, setVolume] = useState(0);
   const [groupsBtn, setGroupsBtn] = useState(true);
+  const [subject, setSubject] = useState(null);
+  const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
+  const [addSubjectResponse, setAddSubjectResponse] = useState(null);
 
   useEffect(() => {
     fetch(`${serverOrigin}/api/groups/bring-groups`, { method: 'post' })
@@ -37,6 +44,12 @@ function Study(props) {
   }, [allGroups, props.userInfo]);
 
   useEffect(() => {
+    if (addSubjectResponse && addSubjectResponse.success) {
+      setSubjects((prevSubjects) => sortSubjects([...prevSubjects]));
+    }
+  }, [addSubjectResponse]);
+
+  useEffect(() => {
     console.log(myGroups)
     if (myGroups.length) {
       myGroups.map((group) => {
@@ -54,8 +67,9 @@ function Study(props) {
 
   return (
     <div className={styles.StudyContainer}>
-      <StudyHeader setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} />
-      <TopNotification duration={3000} />
+      <StudyHeader subjects={subjects} subject={subject} setSubject={setSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} />
+      <TopNotification duration={3000} response={addSubjectResponse} />
+      <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
       <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={`${styles.myGroupsViewerWrapper} ${groupsBtn ? styles.open : ''}`}>
           <MyGroupsViewer myGroups={myGroups} mode={'study'} />

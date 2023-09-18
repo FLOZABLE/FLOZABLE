@@ -1,0 +1,104 @@
+import React, { useState, useEffect, useRef } from "react";
+import styles from "./SubjectTimer.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretDown, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
+import worker from "./TimerWorker";
+
+function SubjectTimer(props) {
+  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal } = props;
+  const timerDispRef = useRef(null);
+
+  const [options, setOptions] = useState([]);
+  const [subjectTimer, setSubjectTimer] = useState({total: 0, });
+  const [clicked, setClicked] = useState(false);
+
+  useEffect(() => {
+    console.log('subjects', subjects)
+    if (subjects[0]) {
+      setSubject(subjects[0]);
+    }
+    const subjectOptions = subjects.map((option, i) => {
+      let timeValue = 0;
+      if (option.daily && option.daily.total) {
+        timeValue = option.daily.total[option.daily.total.length - 1];
+      };
+      const sec = timeValue % 60;
+      const min = Math.floor(timeValue % 60) % 60;
+      const hr = Math.floor(timeValue / 3600);
+      return (
+      <li key={i} onClick={(e) => {
+        setSubjectTimer({total: timeValue})
+        setClicked(false);
+        setSubject(option);
+        const targetElement = e.currentTarget.querySelector('p');
+        timerDispRef.current = targetElement;
+      }
+      } className={styles.option} >
+        {option.name} <p className={styles.timeDisp}> {hr}:{min.toString().padStart(2, '0')}:{sec.toString().padStart(2, '0')}</p>
+      </li>
+    )});
+    
+    subjectOptions.push(
+      <li key={subjects.length + 1} onClick={() => { setClicked(false); setIsAddSubjectModal(true) }} className={styles.option}>
+        Or Add Subject
+      </li>
+    );
+
+    setOptions(subjectOptions);
+  }, [subjects]);
+
+  const toggleTimer = () => {
+    if (!isStudy) {
+      worker.postMessage({command: 'startSubjectTimer'});
+    } else {
+      worker.postMessage({command: 'stopSubjectTimer'});
+    }
+    setIsStudy(!isStudy);
+    console.log();
+  };
+
+  useEffect(() => {
+    const messageHandler = (e) => {
+      if (e.data.command === 'updateSubjectTimer') {
+        console.log(e.data);
+        setSubjectTimer((prevTimer) => ({ total: prevTimer.total + 1 }));
+      }
+    };
+  
+    worker.addEventListener('message', messageHandler);
+  
+    return () => {
+      worker.removeEventListener('message', messageHandler);
+    };
+  }, []);
+  
+
+  /* useEffect(() => {
+    setIndex()
+  }, []) */
+
+  return (
+    <div className={styles.SubjectTimer}>
+      <div className={styles.timerWrapper}>
+        <button className={`${clicked ? styles.clicked : ''}`} onClick={() => { setClicked(!clicked) }}>
+          {/* {options[index]} */}
+          {subject ? subject.name : ''}
+          {subjectTimer.total}
+          <i>
+            <FontAwesomeIcon icon={faCaretDown} />
+          </i>
+        </button>
+        <ul className={`${styles.options} customScroll`}>
+          {options}
+        </ul>
+      </div>
+      <div className={styles.buttons}>
+        <button onClick={toggleTimer}>
+          {isStudy ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default SubjectTimer;

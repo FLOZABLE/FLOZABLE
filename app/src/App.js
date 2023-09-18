@@ -19,6 +19,8 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [subjects, setSubjects] = useState([]);
+  const [isStudy, setIsStudy] = useState(false);
+  const [updateSubjects, setUpdateSubjects] = useState(true);
 
   useEffect(() => {
     setIsConnected(socket.connected);
@@ -143,7 +145,7 @@ function App() {
               mode={"study"}
             />
             {/* <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} mode={"study"} /> */}
-            <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket}/>
+            <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} />
           </div>
         } />
                 <Route path="/dashboard/planner" element={
