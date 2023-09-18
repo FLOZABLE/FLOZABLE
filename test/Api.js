@@ -30,8 +30,27 @@ Router.post('/information/bring-subjects', async (req, res) => {
   const connection = pool.promise();
   const [[userInfo]] = await connection.query("SELECT subjects FROM users WHERE name = ?", [tester.name]);
   const [subjectsInfo] = await connection.query(`SELECT * FROM subjects where user_id = ?`, [tester.id]);
-  console.log(subjectsInfo, userInfo.subjects);
+  //console.log(subjectsInfo, userInfo.subjects);
   pool.releaseConnection(connection);
+
+  subjectsInfo.forEach((item) => {
+    // Extract the field name and field value from each item
+    const fieldName = item.fieldName; // Replace with the actual field name property
+    const fieldValue = item.fieldValue; // Replace with the actual field value property
+  
+    // Define the key (hash name)
+    const key = `user:${tester.id}`;
+  
+    // Use the hSet method to set the field and value
+    console.log(...Object.entries(item))
+    redisClient.hSet(key, `subject:${item.id}`, JSON.stringify(item), (err, reply) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(`Field set successfully for ${key}`);
+      }
+    });
+  });
   res.send({ success: true, subjects: subjectsInfo });
 });
 
@@ -449,7 +468,7 @@ function isValidJSON(data, schema) {
 Router.post("/plan/bring-plans", async (req, res) => {
   const connection = pool.promise();
   let [plans] = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed FROM plans where user_id = ?`, [tester.id]);
-  res.send({ success: true, plans: plans })
+  res.send({ success: true, plans: plans });
   pool.releaseConnection(connection);
 });
 
@@ -561,6 +580,7 @@ Router.post("/study/add-subject", async(req, res) => {
   } catch (error) {
 
   };
+
   /* const connection = pool.promise();
   const subject = {
     ...req.body,
@@ -586,8 +606,10 @@ Router.post("/study/add-subject", async(req, res) => {
 })
 
 Router.post("/study/start", async(req, res) => {
-  await redisClient.set("test", "d");
-  console.log(await redisClient.get(""));
+  await redisClient.hSet('t', ...Object.entries({b: 'b'}));
+  const result = await redisClient.hGetAll("t");
+  console.log(result); // This should show you the hash contents
+  res.send({});
 });
 
 Router.post("/study/get-today", async(req, res) => {
