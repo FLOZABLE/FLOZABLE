@@ -227,7 +227,7 @@ function EventPlanner(props) {
         notification: notification,
         priority: priority,
         saved: false,
-        completed: false
+        completed: 0
       };
       setStart(start);
       setEnd(end);

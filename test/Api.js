@@ -32,24 +32,17 @@ Router.post('/information/bring-subjects', async (req, res) => {
   const [subjectsInfo] = await connection.query(`SELECT * FROM subjects where user_id = ?`, [tester.id]);
   //console.log(subjectsInfo, userInfo.subjects);
   pool.releaseConnection(connection);
-
   subjectsInfo.forEach((item) => {
-    // Extract the field name and field value from each item
-    const fieldName = item.fieldName; // Replace with the actual field name property
-    const fieldValue = item.fieldValue; // Replace with the actual field value property
-  
-    // Define the key (hash name)
     const key = `user:${tester.id}`;
-  
-    // Use the hSet method to set the field and value
-    console.log(...Object.entries(item))
-    redisClient.hSet(key, `subject:${item.id}`, JSON.stringify(item), (err, reply) => {
+    console.log(item.timeline);
+    redisClient.ft.create(key, {})
+    /* redisClient.hSet(key, `subject:${item.id}`, item.timeline, (err, reply) => {
       if (err) {
         console.error(err);
       } else {
         console.log(`Field set successfully for ${key}`);
       }
-    });
+    }); */
   });
   res.send({ success: true, subjects: subjectsInfo });
 });

@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
 import worker from "./TimerWorker";
 
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
 function SubjectTimer(props) {
   const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal } = props;
   const timerDispRef = useRef(null);
@@ -50,8 +52,21 @@ function SubjectTimer(props) {
   const toggleTimer = () => {
     if (!isStudy) {
       worker.postMessage({command: 'startSubjectTimer'});
+      worker.postMessage({command: 'stopSubjectTimer'});
+      fetch(`${serverOrigin}/api/study/start`, { method: 'post' })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error(error));
     } else {
       worker.postMessage({command: 'stopSubjectTimer'});
+      fetch(`${serverOrigin}/api/study/stop`, { method: 'post' })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error(error));
     }
     setIsStudy(!isStudy);
     console.log();
