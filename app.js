@@ -7,9 +7,6 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const session = require("express-session");
 const connectRedis = require("connect-redis");
-const RedisStore = require('connect-redis').default;
-const redisClient = require("./model/redis");
-redisClient.connect().catch(console.error);
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const http = require('http');
@@ -20,7 +17,10 @@ if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.env.development' });
 } else if (process.env.NODE_ENV === 'production') {
   dotenv.config({ path: '.env.production' });
-}
+};
+const RedisStore = require('connect-redis').default;
+const redisClient = require("./model/redis");
+redisClient.connect().catch(console.error);
 const port = process.env.PORT;
 const account = require("./Router/account");
 //const WebSocketToken = process.env.WEBSOCKET_TOKEN;
