@@ -9,12 +9,18 @@
   top: 30px;
   left: 0px;
   z-index: 3;
+  display: flex;
 }
 
-.StudyHeader ul {
+.StudyHeader ul.left {
+  margin-left: 200px;
+}
+
+.StudyHeader ul.right {
   display: flex;
   justify-content: right;
   margin-right: 50px;
+  margin-left: auto;
 }
 
 .StudyHeader li {
