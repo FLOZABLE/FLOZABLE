@@ -11,7 +11,7 @@ function SubjectTimer(props) {
   const timerDispRef = useRef(null);
 
   const [options, setOptions] = useState([]);
-  const [subjectTimer, setSubjectTimer] = useState({total: 0, });
+  const [subjectTimer, setSubjectTimer] = useState({ total: 0, });
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
@@ -28,18 +28,19 @@ function SubjectTimer(props) {
       const min = Math.floor(timeValue % 60) % 60;
       const hr = Math.floor(timeValue / 3600);
       return (
-      <li key={i} onClick={(e) => {
-        setSubjectTimer({total: timeValue})
-        setClicked(false);
-        setSubject(option);
-        const targetElement = e.currentTarget.querySelector('p');
-        timerDispRef.current = targetElement;
-      }
-      } className={styles.option} >
-        {option.name} <p className={styles.timeDisp}> {hr}:{min.toString().padStart(2, '0')}:{sec.toString().padStart(2, '0')}</p>
-      </li>
-    )});
-    
+        <li key={i} onClick={(e) => {
+          setSubjectTimer({ total: timeValue })
+          setClicked(false);
+          setSubject(option);
+          const targetElement = e.currentTarget.querySelector('p');
+          timerDispRef.current = targetElement;
+        }
+        } className={styles.option} >
+          {option.name} <p className={styles.timeDisp}> {hr}:{min.toString().padStart(2, '0')}:{sec.toString().padStart(2, '0')}</p>
+        </li>
+      )
+    });
+
     subjectOptions.push(
       <li key={subjects.length + 1} onClick={() => { setClicked(false); setIsAddSubjectModal(true) }} className={styles.option}>
         Or Add Subject
@@ -51,22 +52,32 @@ function SubjectTimer(props) {
 
   const toggleTimer = () => {
     if (!isStudy) {
-      worker.postMessage({command: 'startSubjectTimer'});
-      worker.postMessage({command: 'stopSubjectTimer'});
-      fetch(`${serverOrigin}/api/study/start`, { method: 'post' })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
+      worker.postMessage({ command: 'startSubjectTimer' });
+      fetch(`${serverOrigin}/api/study/start`, {
+        method: 'post', headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ subjectId: subject.id })
       })
-      .catch((error) => console.error(error));
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => console.error(error));
     } else {
-      worker.postMessage({command: 'stopSubjectTimer'});
-      fetch(`${serverOrigin}/api/study/stop`, { method: 'post' })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
+      worker.postMessage({ command: 'stopSubjectTimer' });
+      fetch(`${serverOrigin}/api/study/stop`, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ subjectId: subject.id })
       })
-      .catch((error) => console.error(error));
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => console.error(error));
     }
     setIsStudy(!isStudy);
     console.log();
@@ -79,14 +90,14 @@ function SubjectTimer(props) {
         setSubjectTimer((prevTimer) => ({ total: prevTimer.total + 1 }));
       }
     };
-  
+
     worker.addEventListener('message', messageHandler);
-  
+
     return () => {
       worker.removeEventListener('message', messageHandler);
     };
   }, []);
-  
+
 
   /* useEffect(() => {
     setIndex()
