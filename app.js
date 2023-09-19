@@ -75,7 +75,7 @@ const cspOptions = {
 }
 
 app.use(helmet.contentSecurityPolicy(cspOptions))  */
-const redisStore = new RedisStore({client: redisClient});
+const redisStore = new RedisStore({client: redisClient, ttl: 60 * 60 * 24 * 3});
 
 const sessionMiddleWare = session({
   store: redisStore,

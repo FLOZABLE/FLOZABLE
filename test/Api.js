@@ -13,7 +13,8 @@ const crypto = require("crypto");
 const redisClient = require("../model/redis");
 
 
-const tester = { name: 't1', id: 'EoFObpf612bdJKt' };
+const tester = { name: 't1', id: 'EoFObpf612bdJKt', timeZone: 'America/Los_Angeles', subjects: [] };
+
 function generateRandomId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -28,21 +29,28 @@ function generateRandomId(length) {
 
 Router.post('/information/bring-subjects', async (req, res) => {
   const connection = pool.promise();
-  const [[userInfo]] = await connection.query("SELECT subjects FROM users WHERE name = ?", [tester.name]);
   const [subjectsInfo] = await connection.query(`SELECT * FROM subjects where user_id = ?`, [tester.id]);
   //console.log(subjectsInfo, userInfo.subjects);
   pool.releaseConnection(connection);
+  //const res1 = await redisClient.lPush('bikes:repaird', time);
+  /* const userDateTime = DateTime.now().setZone(tester.timeZone);
+  const dateStart = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toMillis();
+  const dateEnd = userDateTime.set({ hour: 23, minute: 59, second: 59, millisecond:999 }).toMillis();
   subjectsInfo.forEach((item) => {
-    const key = `user:${tester.id}`;
-    console.log(item.timeline);
-    redisClient.ft.create(key, {})
-    /* redisClient.hSet(key, `subject:${item.id}`, item.timeline, (err, reply) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(`Field set successfully for ${key}`);
+    redisClient.del(`user:${tester.id}:${item.id}`);
+    const redisTimeline = JSON.parse(item.timeline).map(timeline => {
+      if ((item.datum_point + timeline[0]) < now) {
+        
       }
-    }); */
+      return (`[${timeline.start[0]}, ${timeline[1]}]`)
+    });
+    console.log(redisTimeline);
+  }); */
+  subjectsInfo.forEach(subject => {
+    const redisSubject = subject;
+    delete redisSubject.timeline;
+    redisClient.hSet(`user:${tester.id}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
+    console.log(redisSubject)
   });
   res.send({ success: true, subjects: subjectsInfo });
 });
@@ -599,9 +607,32 @@ Router.post("/study/add-subject", async(req, res) => {
 })
 
 Router.post("/study/start", async(req, res) => {
-  await redisClient.hSet('t', ...Object.entries({b: 'b'}));
-  const result = await redisClient.hGetAll("t");
-  console.log(result); // This should show you the hash contents
+  console.log(req.body);
+  const subjectId = req.body.subjectId;
+  const now = Math.floor(new Date().getTime() / 1000);
+  const userInfo = await redisClient.hGetAll(`user:${tester.id}:subject:${subjectId}`)
+  if (subjectId && subjectId.length == 10 && typeof subjectId === 'string') {
+    if (tester.subjects.includes(subjectId)) {
+      console.log("includes")
+    }
+    redisClient.rPush(`user:${tester.id}:subject:${subjectId}`, `[${now},${now}]`);
+  };
+  res.send({});
+});
+
+Router.post("/study/stop", async(req, res) => {
+  const subjectId = req.body.subjectId;
+  const now = Math.floor(new Date().getTime() / 1000);
+
+  if (subjectId && subjectId.length == 10 && typeof subjectId === 'string') {
+    if (tester.subjects.includes(subjectId)) {
+      console.log("includes")
+    }
+    const lastSubejct = await redisClient.rPop(`user:${tester.id}:subject:${subjectId}`);
+    console.log(lastSubejct);
+
+  };
+  //redisClient.rPush(`user:${tester.id}:subject:${}`)
   res.send({});
 });
 
