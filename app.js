@@ -97,6 +97,9 @@ module.exports = {server, sessionMiddleWare};
 const notificationService = require('./services/notification');
 notificationService.notificationService();
 
+const timerUpdateService = require('./services/timerUpdate');
+timerUpdateService.timerUpdate();
+
 //Router
 const mainRouter = require("./Router/main");
 const accountRouter = account.Router;
