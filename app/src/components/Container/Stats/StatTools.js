@@ -14,15 +14,15 @@ const sortSubjects = (subjects) => {
     const currentDay = now.getDay();
     subjects.forEach((subject) => {
       const { datum_point, timeline } = subject;
-
+      console.log(subject.id, timeline)
       subject.daily = {};
-      subject.daily.grouped = dailyTimelineSplit(JSON.parse(timeline), datum_point);
+      subject.daily.grouped = dailyTimelineSplit(timeline, datum_point);
       subject.daily.total = totalRangeTime(subject.daily.grouped);
       subject.monthly = {};
-      subject.monthly.grouped = monthlyTimelineSplit(JSON.parse(timeline), datum_point);
+      subject.monthly.grouped = monthlyTimelineSplit(timeline, datum_point);
       subject.monthly.total = totalRangeTime(subject.monthly.grouped);
       subject.weekly = {};
-      subject.weekly.grouped = weeklyTimelineSplit(JSON.parse(timeline), datum_point);
+      subject.weekly.grouped = weeklyTimelineSplit(timeline, datum_point);
       subject.weekly.total = totalRangeTime(subject.weekly.grouped);
     });
     subjects.daily = { maxlength: 0 };
@@ -90,13 +90,12 @@ const sortSubjects = (subjects) => {
 function dailyTimelineSplit(timeline, datum_point) {
   let dayStart = new Date(datum_point * 1000).setHours(0, 0, 0, 0);
   let dayStop = new Date(datum_point * 1000).setHours(23, 59, 59, 999);
-  let cut = false;
   const dailyTimeline = [[]];
   timeline.forEach(([start, stop]) => {
     const acStart = new Date((datum_point + start) * 1000).getTime();
     const acStop = new Date((datum_point + stop) * 1000).getTime();
-
-    while (dayStart < new Date(acStart).setHours(0, 0, 0, 0) && cut) {
+    console.log('start', new Date(acStart), new Date(acStop))
+    while (dayStart < new Date(acStart).setHours(0, 0, 0, 0) ) {
       dayStart += 1000 * 60 * 60 * 24;
       dayStop += 1000 * 60 * 60 * 24;
       dailyTimeline.push([[0, 0]]);
@@ -105,20 +104,17 @@ function dailyTimelineSplit(timeline, datum_point) {
 
     if (dayStart <= acStart && dayStop >= acStop) {
       dailyTimeline[dailyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
-      cut = false;
     } else if (dayStop > acStart && dayStop < acStop) {
       dailyTimeline[dailyTimeline.length - 1].push([acStart / 1000, (dayStop + 1) / 1000]);
       dailyTimeline.push([])
       dailyTimeline[dailyTimeline.length - 1].push([(dayStop + 1) / 1000, acStop / 1000]);
       dayStart += 1000 * 60 * 60 * 24;
       dayStop += 1000 * 60 * 60 * 24;
-      cut = false;
     } else {
       dailyTimeline.push([]);
       dailyTimeline[dailyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
       dayStart += 1000 * 60 * 60 * 24;
       dayStop += 1000 * 60 * 60 * 24;
-      cut = false;
     }
   })
 
@@ -135,13 +131,12 @@ function weeklyTimelineSplit(timeline, datum_point) {
   let date = new Date(datum_point * 1000);
   let weekStart = date.setHours(0, 0, 0, 0) - date.getDay() * 24 * 60 * 60 * 1000;
   let weekStop = date.setHours(23, 59, 59, 999) + (6 - date.getDay()) * 24 * 60 * 60 * 1000 + 999;
-  let cut = false;
   const weeklyTimeline = [[]];
   timeline.forEach(([start, stop]) => {
     const acStart = new Date((datum_point + start) * 1000).getTime();
     const acStop = new Date((datum_point + stop) * 1000).getTime();
 
-    while (weekStart < new Date(acStart).setHours(0, 0, 0, 0) && cut) {
+    while (weekStart < new Date(acStart).setHours(0, 0, 0, 0)) {
       weekStart += 1000 * 60 * 60 * 24 * 7;
       weekStop += 1000 * 60 * 60 * 24 * 7;
       weeklyTimeline.push([[0, 0]]);
@@ -150,20 +145,17 @@ function weeklyTimelineSplit(timeline, datum_point) {
 
     if (weekStart <= acStart && weekStop >= acStop) {
       weeklyTimeline[weeklyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
-      cut = false;
     } else if (weekStop > acStart && weekStop < acStop) {
       weeklyTimeline[weeklyTimeline.length - 1].push([acStart / 1000, (weekStop + 1) / 1000]);
       weeklyTimeline.push([])
       weeklyTimeline[weeklyTimeline.length - 1].push([(weekStop + 1) / 1000, acStop / 1000]);
       weekStart += 1000 * 60 * 60 * 24 * 7;
       weekStop += 1000 * 60 * 60 * 24 * 7;
-      cut = false;
     } else {
       weeklyTimeline.push([]);
       weeklyTimeline[weeklyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
       weekStart += 1000 * 60 * 60 * 24 * 7;
       weekStop += 1000 * 60 * 60 * 24 * 7;
-      cut = false;
     }
   })
 
@@ -182,13 +174,12 @@ function monthlyTimelineSplit(timeline, datum_point) {
   let startYear = date.getFullYear();
   let startMonth = date.getMonth();
   let [monthStart, monthStop] = [new Date(startYear, startMonth, 1).setHours(0, 0, 0, 0), new Date(startYear, startMonth + 1, 0).setHours(23, 59, 59, 999)];
-  let cut = false;
   const monthlyTimeline = [[]];
   timeline.forEach(([start, stop]) => {
     const acStart = new Date((datum_point + start) * 1000).getTime();
     const acStop = new Date((datum_point + stop) * 1000).getTime();
 
-    while (monthStart < new Date(acStart).setHours(0, 0, 0, 0) && cut) {
+    while (monthStart < new Date(acStart).setHours(0, 0, 0, 0)) {
       startMonth += 1
       if (startMonth >= 11) {
         startMonth = 0;
@@ -201,7 +192,6 @@ function monthlyTimelineSplit(timeline, datum_point) {
 
     if (monthStart <= acStart && monthStop >= acStop) {
       monthlyTimeline[monthlyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
-      cut = false;
     } else if (monthStop > acStart && monthStop < acStop) {
       monthlyTimeline[monthlyTimeline.length - 1].push([acStart / 1000, (monthStop + 1) / 1000]);
       monthlyTimeline.push([])
@@ -212,7 +202,6 @@ function monthlyTimelineSplit(timeline, datum_point) {
         startYear += 1;
       }
       [monthStart, monthStop] = [new Date(startYear, startMonth, 1).setHours(0, 0, 0, 0), new Date(startYear, startMonth + 1, 0).setHours(23, 59, 59, 999)];
-      cut = false;
     } else {
       monthlyTimeline.push([]);
       monthlyTimeline[monthlyTimeline.length - 1].push([acStart / 1000, acStop / 1000]);
@@ -222,7 +211,6 @@ function monthlyTimelineSplit(timeline, datum_point) {
         startYear += 1;
       }
       [monthStart, monthStop] = [new Date(startYear, startMonth, 1).setHours(0, 0, 0, 0), new Date(startYear, startMonth + 1, 0).setHours(23, 59, 59, 999)];
-      cut = false;
     }
   })
 
@@ -471,7 +459,6 @@ function updateTimeTrend(subjects, type) {
 };
 
 function sortRanking(ranking, userInfo) {
-  console.log('ranking',ranking)
   const myRanking = {
     daily: [],
     weekly: [],
@@ -547,7 +534,6 @@ function updateRankingTrend(ranking, type) {
       });
     };
   };
-  console.log(labels, data, ranking.weekly, ranking)
   return [labels, data];
 }
 

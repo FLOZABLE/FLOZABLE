@@ -18,6 +18,10 @@ function SubjectTimer(props) {
     console.log('subjects', subjects)
     if (subjects[0]) {
       setSubject(subjects[0]);
+      if (subjects[0].daily && subjects[0].daily.total) {
+        const timeValue = subjects[0].daily.total[subjects[0].daily.total.length - 1];
+        setSubjectTimer({total: timeValue})
+      };
     }
     const subjectOptions = subjects.map((option, i) => {
       let timeValue = 0;
@@ -25,7 +29,7 @@ function SubjectTimer(props) {
         timeValue = option.daily.total[option.daily.total.length - 1];
       };
       const sec = timeValue % 60;
-      const min = Math.floor(timeValue % 60) % 60;
+      const min = Math.floor(timeValue / 60) % 60;
       const hr = Math.floor(timeValue / 3600);
       return (
         <li key={i} onClick={(e) => {
