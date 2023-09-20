@@ -30,28 +30,16 @@ function generateRandomId(length) {
 Router.post('/information/bring-subjects', async (req, res) => {
   const connection = pool.promise();
   const [subjectsInfo] = await connection.query(`SELECT * FROM subjects where user_id = ?`, [tester.id]);
-  //console.log(subjectsInfo, userInfo.subjects);
   pool.releaseConnection(connection);
-  //const res1 = await redisClient.lPush('bikes:repaird', time);
-  /* const userDateTime = DateTime.now().setZone(tester.timeZone);
-  const dateStart = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toMillis();
-  const dateEnd = userDateTime.set({ hour: 23, minute: 59, second: 59, millisecond:999 }).toMillis();
-  subjectsInfo.forEach((item) => {
-    redisClient.del(`user:${tester.id}:${item.id}`);
-    const redisTimeline = JSON.parse(item.timeline).map(timeline => {
-      if ((item.datum_point + timeline[0]) < now) {
-        
-      }
-      return (`[${timeline.start[0]}, ${timeline[1]}]`)
-    });
-    console.log(redisTimeline);
-  }); */
-  subjectsInfo.forEach(subject => {
-    const redisSubject = subject;
+  for (const subject of subjectsInfo) {
+    const redisSubject = { ...subject };
     delete redisSubject.timeline;
-    redisClient.hSet(`user:${tester.id}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
-    console.log(redisSubject)
-  });
+    await redisClient.hSet(`user:${tester.id}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
+    const prevTimeline = JSON.parse(subject.timeline);
+    const todayTimeline = (await redisClient.lRange(`user:${tester.id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
+    subject.timeline = prevTimeline.concat(todayTimeline);
+  }
+  redisClient.hSet(`user:${tester.id}`, `ActiveSubject`, '0');
   res.send({ success: true, subjects: subjectsInfo });
 });
 
@@ -607,33 +595,40 @@ Router.post("/study/add-subject", async(req, res) => {
 })
 
 Router.post("/study/start", async(req, res) => {
-  console.log(req.body);
   const subjectId = req.body.subjectId;
-  const now = Math.floor(new Date().getTime() / 1000);
-  const userInfo = await redisClient.hGetAll(`user:${tester.id}:subject:${subjectId}`)
-  if (subjectId && subjectId.length == 10 && typeof subjectId === 'string') {
-    if (tester.subjects.includes(subjectId)) {
-      console.log("includes")
+  const userInfo = await redisClient.hGetAll(`user:${tester.id}`)
+
+  Object.keys(userInfo).forEach(async(info) => {
+    if (info.includes('subject:')) {
+      const infoSubjectId = info.split(':')[1];
+      if (infoSubjectId === subjectId) {
+        console.log(JSON.parse(userInfo[info]))
+        const subjectInfo = JSON.parse(userInfo[info]);
+        const now = Math.floor(new Date().getTime() / 1000);
+        const start = now - subjectInfo.datum_point;
+        console.log(`user:${tester.id}:subject:${subjectId}`);
+        const push = await redisClient.rPush(`user:${tester.id}:subject:${subjectId}`, `[${start},${start}]`);
+        console.log(push)
+        redisClient.hSet(`user:${tester.id}`, `ActiveSubject`, JSON.stringify(subjectInfo));
+      }
     }
-    redisClient.rPush(`user:${tester.id}:subject:${subjectId}`, `[${now},${now}]`);
-  };
-  res.send({});
+  })
+  res.send({success: false, msg: 'Timer Started!'});
 });
 
 Router.post("/study/stop", async(req, res) => {
   const subjectId = req.body.subjectId;
-  const now = Math.floor(new Date().getTime() / 1000);
-
-  if (subjectId && subjectId.length == 10 && typeof subjectId === 'string') {
-    if (tester.subjects.includes(subjectId)) {
-      console.log("includes")
-    }
-    const lastSubejct = await redisClient.rPop(`user:${tester.id}:subject:${subjectId}`);
-    console.log(lastSubejct);
-
+  const activeSubject = JSON.parse(await redisClient.hGet(`user:${tester.id}`, 'ActiveSubject'));
+  console.log(activeSubject);
+  if (activeSubject.id === subjectId) {
+    const activity = JSON.parse(await redisClient.rPop(`user:${tester.id}:subject:${subjectId}`));
+    const now = Math.floor(new Date().getTime() / 1000);
+    const start = activity[0];
+    const stop = now - activeSubject.datum_point;
+    redisClient.rPush(`user:${tester.id}:subject:${subjectId}`, `[${start},${stop}]`);
+    redisClient.hSet(`user:${tester.id}`, `ActiveSubject`, '0');
   };
-  //redisClient.rPush(`user:${tester.id}:subject:${}`)
-  res.send({});
+  res.send({success: true, msg: 'Timer Stopped!'});
 });
 
 Router.post("/study/get-today", async(req, res) => {
