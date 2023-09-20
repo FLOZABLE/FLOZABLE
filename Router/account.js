@@ -183,7 +183,6 @@ Router.post('/signup-authentication', async (req, res) => {
     activity: '{}',
     activity_setting: '[]',
     notification_setting: 'default_setting',
-    subjects: '[]',
     study: JSON.stringify({study:false,point:unixTimestamp,total:0})
   };
   connection.query('INSERT INTO users SET ?', user);
