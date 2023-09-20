@@ -35,10 +35,18 @@ Router.post('/information/bring-subjects', async (req, res) => {
     const redisSubject = { ...subject };
     delete redisSubject.timeline;
     await redisClient.hSet(`user:${tester.id}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
-    const prevTimeline = JSON.parse(subject.timeline);
+
+    //const substringsToReplace = [/\[\s*|\s*,\s*/g];
+    /* const regex = new RegExp(substringsToReplace.join('|'), 'g');
+    const prevTimeline = JSON.parse(subject.timeline.replace(regex, ""));
+    console.log(prevTimeline) */
+    let prevTimeline = JSON.parse(subject.timeline);
+    prevTimeline = prevTimeline.map(str => JSON.parse(str)).flat();
     const todayTimeline = (await redisClient.lRange(`user:${tester.id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
+    console.log(prevTimeline)
     subject.timeline = prevTimeline.concat(todayTimeline);
   }
+  //console.log(subjectsInfo)
   redisClient.hSet(`user:${tester.id}`, `ActiveSubject`, '0');
   res.send({ success: true, subjects: subjectsInfo });
 });
@@ -556,6 +564,18 @@ Router.post("/study/add-subject", async(req, res) => {
         subjects.push(JSON.stringify(subjectInfo));
          const updateSubjects = await connection.query(`UPDATE users set subjects = ? where user_id = ?`, [JSON.stringify(subjectInfo), tester.id]); */
         const insertSubject = await connection.query(`INSERT INTO subjects SET ?`, subjectInfo);
+        const updateUser = await connection.query(`
+        UPDATE users
+        SET subjects = CASE
+          WHEN subjects = '' THEN ?
+          ELSE CONCAT(subjects, ',', ?)
+        END
+        WHERE user_id = ?
+      `, [
+          subjectInfo.id,
+          subjectInfo.id,
+          tester.id
+        ]);
         res.send({success: true, msg: `Added Subject "${subjectInfo.name}"`, info: {subjectInfo: subjectInfo}})
       } catch (err) {
         console.log(err);
