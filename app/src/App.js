@@ -32,7 +32,9 @@ function App() {
   };
 
   useEffect(() => {
-    socket.on('connect', () => {console.log('testdd')})
+    socket.on('connect', () => {
+      socket.emit('joinMyGroups');
+    });
   }, []);
 
   const [isHovered, setIsHovered] = useState(false);

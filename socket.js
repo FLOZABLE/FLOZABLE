@@ -1,4 +1,4 @@
-const {server, sessionMiddleWare} = require("./app");
+const { server, sessionMiddleWare } = require("./app");
 const cron = require('node-cron');
 const pool = require("./model/pool");
 
@@ -15,44 +15,65 @@ const wrap = middleware => (socket, next) => middleware(socket.request, {}, next
 
 io.use(wrap(sessionMiddleWare));
 
-/* io.use((socket, next) => {
-  const req = socket.request;
-  if (process.env.NODE_ENV == "production") {
-    try {
-      const sessionData = socket.request.session;
-      if (sessionData ) {
-        console.log(sessionData);
-      }
-    } catch (err) {
-      console.log(err);
-    };
-    //const sessionData = req.session;
-    //socket.sessionData = sessionData;
-  }
-  next();
-}); */
 
 io.on('connection', (socket) => {
-  let userInfo = false;
+  let session = false;
 
   if (process.env.NODE_ENV == "production") {
-    //socket.userId = socket.sessionData.userId;
     try {
-      userInfo = socket.request.session;
+      session = socket.request.session;
     } catch (err) {
       console.log(err);
     };
   } else {
-    
+
   }
-  socket.on('joinRoom', (room, userId) => {
-    socket.join(room); // Join the specified room
-    /* console.log(`User joined room: ${room}`);
-    console.log(userId, room) */
+
+  socket.on('joinMyGroups', async () => {
+    const connection = pool.promise();
+    try {
+      const [[userInfo]] = await connection.query(`SELECT groups from users where user_id = ?`, [session.user_id]);
+      if (userInfo) {
+        const myGroups = userInfo.groups.split(',');
+        socket.join(myGroups);
+        socket.userId = session.user_id;
+        if (myGroups.length) {
+          io.to(myGroups).emit('online', session.user_id);
+        }
+      };
+    } catch (err) {
+      console.log(err);
+    } finally {
+      connection.releaseConnection();
+    };
   });
 
-  socket.on('getMembersTime', async(groups, userId) => {
-    if(groups.length == 0){
+  socket.on('myGroupsOnline', async () => {
+
+    const connection = pool.promise();
+
+    try {
+      const [[userInfo]] = await connection.query(`SELECT groups from users where user_id = ?`, [session.user_id]);
+      if (userInfo) {
+        const myGroups = userInfo.groups.split(',');
+        myGroups.map(group => {
+          const socketsInRoom = io.sockets.in(group).sockets;
+          console.log(socketsInRoom);
+        });
+      };
+    } catch (err) {
+      console.log(err);
+    } finally {
+      connection.releaseConnection();
+    }
+  })
+
+  socket.on('joinRoom', (room, userId) => {
+    socket.join(room);
+  });
+
+  socket.on('getMembersTime', async (groups, userId) => {
+    if (groups.length == 0) {
       return 0
     }
     const connection = pool.promise();
@@ -61,12 +82,12 @@ io.on('connection', (socket) => {
     groupsInfo.forEach(async (group) => {
       group.members = group.members ? JSON.parse(`[${group.members}]`) : [];
       const membersId = group.members.flat().filter((value, index) => index % 2 === 0);
-      console.log('groups',group)
+      console.log('groups', group)
       const members = await connection.query(`SELECT user_id, name, subjects, timezone from users where user_id in (?)`, [membersId]);
-      
+
     })
     //io.to(groups).emit('sendTime', userId);
-    console.log('members in group',groups, userId)
+    console.log('members in group', groups, userId)
   });
 
   socket.on('addUser', (room, userId) => {
@@ -90,11 +111,16 @@ io.on('connection', (socket) => {
     io.emit({success: true, totalLiveMembers: onlineMembers});
     console.log(onlineMembers); */
   });
+
+  socket.on("disconnect", (reason) => {
+    io.emit("offline", session.user_id);
+  });
 });
 
 
 cron.schedule('*/10 * * * * *', () => {
   const onlineMembers = io.engine.clientsCount;
+  console.log(onlineMembers)
   io.emit('onlineMembers', onlineMembers);
 });
 
