@@ -20,7 +20,7 @@ function MyGroupsViewer(props) {
       let studyIcon = <RestPerson width={'40px'} height={'40px'} opt1={'#000'} />
       if (studyInfo.study) {
         studyIcon = <StudyPerson opt1={'#000'} width={'40px'} height={'40px'} />
-        run = true; 
+        run = true;
         sec = studyInfo.total;
       };
       if (new Date(studyInfo.point * 1000) == new Date()) {
@@ -33,7 +33,7 @@ function MyGroupsViewer(props) {
             {studyIcon}
           </div>
           <div className={styles.timer}>
-            <MemberTimer run={run} sec={sec}/>
+            <MemberTimer run={run} sec={sec} />
           </div>
         </div>
       )
@@ -42,41 +42,41 @@ function MyGroupsViewer(props) {
     return (
       <SwiperSlide className={styles.slide} key={i}>
         <div className={styles.inner}>
-        <div className={styles.name}>
-          <Link>
-            {group.name}
-          </Link>
-        </div>
-        <div className={styles.information}>
-          <div className={styles.header}>
-          <ul className={styles.status}>
-            <li>
-              <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />  
-              <p>5/12</p>
-            </li>
-            <li>
-              <FontAwesomeIcon icon={faBullhorn} />
-            </li>
-            <li>
-              <FontAwesomeIcon icon={faRankingStar} />
-            </li>
-          </ul>
-          <div className={styles.right}>
-          <FontAwesomeIcon icon={faGear} />
+          <div className={styles.name}>
+            <Link>
+              {group.name}
+            </Link>
           </div>
+          <div className={styles.information}>
+            <div className={styles.header}>
+              <ul className={styles.status}>
+                <li>
+                  <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
+                  <p>5/12</p>
+                </li>
+                <li>
+                  <FontAwesomeIcon icon={faBullhorn} />
+                </li>
+                <li>
+                  <FontAwesomeIcon icon={faRankingStar} />
+                </li>
+              </ul>
+              <div className={styles.right}>
+                <FontAwesomeIcon icon={faGear} />
+              </div>
+            </div>
+            <div className={styles.membersContainer}>
+              <div className={`${styles.members} customScroll`}>
+                {membersEl}
+              </div>
+            </div>
           </div>
-          <div className={styles.membersContainer}>
-          <div className={`${styles.members} customScroll`}>
-            {membersEl}
+          <div className={styles.buttons}>
+            <button>Go to Group</button>
+            <button>
+              <FontAwesomeIcon icon={faComments} />
+            </button>
           </div>
-          </div>
-        </div>
-        <div className={styles.buttons}>
-          <button>Go to Group</button>
-          <button>
-          <FontAwesomeIcon icon={faComments} />
-          </button>
-        </div>
         </div>
       </SwiperSlide>
     )

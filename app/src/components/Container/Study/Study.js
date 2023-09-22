@@ -14,7 +14,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Study(props) {
 
-  const { isStudy, setIsStudy, subjects, setSubjects } = props;
+  const { isStudy, setIsStudy, subjects, setSubjects, socket } = props;
 
   const [myGroups, setMyGroups] = useState([]);
   const [allGroups, setAllGroups] = useState([]);
@@ -40,6 +40,16 @@ function Study(props) {
   }, []);
 
   useEffect(() => {
+    socket.on("studying", (userId) => {
+      console.log('start', userId);
+    });
+
+    socket.on("stopStudying", (userId) => {
+      console.log('stop', userId);
+    });
+  }, []);
+
+  useEffect(() => {
     setMyGroups(getMyGroups(props.userInfo, allGroups, membersInfo).myGroups);
   }, [allGroups, props.userInfo]);
 
@@ -50,20 +60,24 @@ function Study(props) {
   }, [addSubjectResponse]);
 
   useEffect(() => {
+    console.log(membersInfo);
+  }, [membersInfo]);
+
+  useEffect(() => {
     console.log(myGroups)
     if (myGroups.length) {
       myGroups.map((group) => {
-        props.socket.emit('joinRoom', group.group_id, props.userInfo.user_id);
+        //props.socket.emit('joinRoom', group.group_id, props.userInfo.user_id);
         //props.socket.emit('onlineMembers');
       })
     };
   }, [myGroups]);
 
-  /* useEffect(() => {
-    props.socket.on('onlineMembers', (onlineMembers) => {
+  useEffect(() => {
+    socket.on('onlineMembers', (onlineMembers) => {
       console.log(onlineMembers)
     })
-  }, []); */
+  }, []);
 
   return (
     <div className={styles.StudyContainer}>
