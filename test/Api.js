@@ -395,15 +395,19 @@ Router.post('/groups/bring-groups', async (req, res) => {
       });
     });
     let membersInfo = [];
+    console.log(allMembersIds)
     if (allMembersIds.length) {
-      [membersInfo] = await connection.query('SELECT user_id, name, study, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
-    };
+      [membersInfo] = await connection.query('SELECT user_id, name, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
+      // Use Promise.all to wait for all asynchronous operations to complete
+      await Promise.all(membersInfo.map(async (member) => {
+        let memberTimer = await redisClient.hGet(`user:${member.user_id}`, 'timerInfo');
+        if (!memberTimer) {
+          memberTimer = `{"datum":1695399707,"timeline":[[0,0],[148,152],[170,181],[8549,8552]],"run":0,"start":0}`
+        }
+        member.study = memberTimer; // Set the study property for each member
+      }));
 
-    membersInfo.map(async member => {
-      const memberTimer = await redisClient.hGetAll(`user:${member.user_id}`);
-      console.log(memberTimer)
-      //member.study = "{}"
-    })
+    };
 
     res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
@@ -475,11 +479,11 @@ Router.post('/plan/update-plan', async (req, res) => {
         start: { type: 'integer', minimum: 0, maximum: maxPlanVal },
         end: { type: 'integer', minimum: 0, maximum: maxPlanVal },
         repeat: { type: 'integer', minimum: 0, maximum: 3 },
-        description: { type: 'string',  minLength: 0, maxLength: 1000 },
+        description: { type: 'string', minLength: 0, maxLength: 1000 },
         subject: { type: 'string', minLength: 10, maxLength: 10 },
         notification: { type: 'integer', minimum: -1, maximum: 60 },
         priority: { type: 'integer', minimum: 0, maximum: 100 },
-        completed: {type: 'integer', minimum: 0, maximum: 1}
+        completed: { type: 'integer', minimum: 0, maximum: 1 }
       },
       required: ['title', 'id', 'start', 'end', 'repeat', 'description', 'notification', 'subject', 'priority', 'completed'],
       additionalProperties: false
@@ -488,16 +492,16 @@ Router.post('/plan/update-plan', async (req, res) => {
     const isValid = isValidJSON(planInfo, schema);
 
     if (planInfo.start > planInfo.end) {
-      return res.send({success: false, reason: 'Invalid Time'});
+      return res.send({ success: false, reason: 'Invalid Time' });
     };
 
     if (!planInfo.title.length) {
-      return res.send({success: false, reason: 'Enter Plan Title'});
+      return res.send({ success: false, reason: 'Enter Plan Title' });
     }
     if (isValid) {
       const connection = pool.promise();
       try {
-        const insertInfo = {...planInfo, user_id: tester.id};
+        const insertInfo = { ...planInfo, user_id: tester.id };
         const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [tester.id, planInfo.id]);
         if (!deletePrev.affectedRows) {
           notificationService.removePrevNotification(tester.id, planInfo.id);
@@ -522,7 +526,7 @@ Router.post('/plan/update-plan', async (req, res) => {
 
 //redis study part
 
-Router.post("/study/add-subject", async(req, res) => {
+Router.post("/study/add-subject", async (req, res) => {
   try {
     const now = new Date()
     const schema = {
@@ -561,15 +565,15 @@ Router.post("/study/add-subject", async(req, res) => {
           subjectInfo.id,
           tester.id
         ]);
-        res.send({success: true, msg: `Added Subject "${subjectInfo.name}"`, info: {subjectInfo: subjectInfo}})
+        res.send({ success: true, msg: `Added Subject "${subjectInfo.name}"`, info: { subjectInfo: subjectInfo } })
       } catch (err) {
         console.log(err);
       } finally {
         pool.releaseConnection();
       }
-      res.send({success: true, msg: `Added Subject "${subjectInfo.name}"`, info: {subjectInfo: subjectInfo}})
+      res.send({ success: true, msg: `Added Subject "${subjectInfo.name}"`, info: { subjectInfo: subjectInfo } })
     } else {
-      res.send({success: false, reason: "Invalid Value"});
+      res.send({ success: false, reason: "Invalid Value" });
     }
   } catch (error) {
 
@@ -599,11 +603,11 @@ Router.post("/study/add-subject", async(req, res) => {
   res.send({success: true, id: subject.id}); */
 })
 
-Router.post("/study/start", async(req, res) => {
+Router.post("/study/start", async (req, res) => {
   const subjectId = req.body.subjectId;
   const userInfo = await redisClient.hGetAll(`user:${tester.id}`)
 
-  Object.keys(userInfo).forEach(async(info) => {
+  Object.keys(userInfo).forEach(async (info) => {
     if (info.includes('subject:')) {
       const infoSubjectId = info.split(':')[1];
       if (infoSubjectId === subjectId) {
@@ -620,7 +624,7 @@ Router.post("/study/start", async(req, res) => {
           //remove old timeline
           const MAXSTORELEN = 24 * 60 * 60;
           const lastVal = newTimer.timeline[newTimer.timeline.length - 1];
-          const missingTotal = Math.floor((lastVal ? lastVal[1] + datum : datum) / (MAXSTORELEN * 2));
+          const missingTotal = Math.floor((lastVal ? lastVal[1] : 0) / (MAXSTORELEN * 2));
           const newDatum = datum + missingTotal * MAXSTORELEN;
           const start = now - newDatum;
           /* while (newTimer.timeline[newTimer.timeline.length - 1] >= MAXSTORELEN) {
@@ -632,7 +636,7 @@ Router.post("/study/start", async(req, res) => {
               };
             });
           }; */
-          console.log(newDatum, missingTotal, newTimer)
+          console.log(newDatum, missingTotal, missingTotal)
           if (missingTotal) {
             newTimer.timeline.map(([start, stop]) => {
               const newStart = start - missingTotal * MAXSTORELEN;
@@ -644,16 +648,16 @@ Router.post("/study/start", async(req, res) => {
           };
           console.log(newDatum);
 
-          newTimer.timeline.push(start, start);
+          newTimer.timeline.push([start, start]);
           newTimer.datum = newDatum;
-          newTimer.run = 1;
+          newTimer.start = 1;
           redisClient.hSet(`user:${tester.id}`, 'timerInfo', JSON.stringify(newTimer));
         } else {
-          const newTimer = {datum: now, timeline: [[0, 0]], run: 1};
+          const newTimer = { datum: now, timeline: [[0, 0]], start: 1 };
           redisClient.hSet(`user:${tester.id}`, 'timerInfo', JSON.stringify(newTimer));
         };
         //redisClient.hSet(`user:${tester.id}`, 'timer', JSON.stringify(subjectInfo));
-        const groups  = userInfo.groups.split(',');
+        const groups = userInfo.groups.split(',');
         console.log(groups)
         if (groups.length) {
           groups.map(group => {
@@ -671,10 +675,10 @@ Router.post("/study/start", async(req, res) => {
       };
     };
   });
-  res.send({success: false, msg: 'Timer Started!'});
+  res.send({ success: false, msg: 'Timer Started!' });
 });
 
-Router.post("/study/stop", async(req, res) => {
+Router.post("/study/stop", async (req, res) => {
   const subjectId = req.body.subjectId;
   const groups = (await redisClient.hGet(`user:${tester.id}`, "groups")).split(',');
   const activeSubject = JSON.parse(await redisClient.hGet(`user:${tester.id}`, 'ActiveSubject'));
@@ -688,12 +692,21 @@ Router.post("/study/stop", async(req, res) => {
     console.log(groups)
     if (groups.length) {
       io.to(groups).emit('studying', tester.id);
-    }
+    };
+    const timerInfo = await redisClient.hGet(`user:${tester.id}`, 'timerInfo');
+    if (timerInfo) {
+      const newTimer = JSON.parse(timerInfo);
+      const lastActivity = newTimer.timeline.pop();
+      lastActivity[1] = now - newTimer.datum;
+      newTimer.timeline.push(lastActivity);
+      newTimer.start = 0;
+      redisClient.hSet(`user:${tester.id}`, 'timerInfo', JSON.stringify(newTimer));
+    };
   };
-  res.send({success: true, msg: 'Timer Stopped!'});
+  res.send({ success: true, msg: 'Timer Stopped!' });
 });
 
-Router.post("/study/get-today", async(req, res) => {
+Router.post("/study/get-today", async (req, res) => {
   const userInfo = await redisClient.get(`user:${tester.id}`);
   if (!userInfo) {
     redisClient.hSet(`user:${tester.id}`);
