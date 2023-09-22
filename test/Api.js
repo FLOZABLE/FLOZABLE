@@ -29,24 +29,17 @@ function generateRandomId(length) {
 
 Router.post('/information/bring-subjects', async (req, res) => {
   const connection = pool.promise();
-  const [subjectsInfo] = await connection.query(`SELECT * FROM subjects where user_id = ?`, [tester.id]);
+  const [subjectsInfo] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline FROM subjects where user_id = ?`, [tester.id]);
   pool.releaseConnection(connection);
   for (const subject of subjectsInfo) {
     const redisSubject = { ...subject };
     delete redisSubject.timeline;
     await redisClient.hSet(`user:${tester.id}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
-
-    //const substringsToReplace = [/\[\s*|\s*,\s*/g];
-    /* const regex = new RegExp(substringsToReplace.join('|'), 'g');
-    const prevTimeline = JSON.parse(subject.timeline.replace(regex, ""));
-    console.log(prevTimeline) */
     let prevTimeline = JSON.parse(subject.timeline);
     prevTimeline = prevTimeline.map(str => JSON.parse(str)).flat();
     const todayTimeline = (await redisClient.lRange(`user:${tester.id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
-    console.log(prevTimeline)
     subject.timeline = prevTimeline.concat(todayTimeline);
   }
-  //console.log(subjectsInfo)
   redisClient.hSet(`user:${tester.id}`, `ActiveSubject`, '0');
   res.send({ success: true, subjects: subjectsInfo });
 });
@@ -54,8 +47,8 @@ Router.post('/information/bring-subjects', async (req, res) => {
 Router.post('/information/accountinfo', async (req, res) => {
   const connection = pool.promise();
   const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups FROM users WHERE user_id = ?", [tester.id]);
-  console.log(userInfo, tester.id)
   pool.releaseConnection(connection);
+  redisClient.hSet(`user:${tester.id}`, `groups`, userInfo.groups);
   res.send({ success: true, userInfo: userInfo });
 });
 
@@ -191,7 +184,6 @@ Router.post('/groups/create-validate', async (req, res) => {
   const connection = pool.promise();
   try {
     let group = req.body;
-    console.log(group)
     const schema = {
       type: 'object',
       properties: {
@@ -227,8 +219,6 @@ Router.post('/groups/create-validate', async (req, res) => {
       return res.send({ success: false, reason: 'Add description for your study group' });
     };
 
-    console.log(JSON.stringify(group))
-    console.log(isValid, group.tags)
     let hashed = hashing(req.body['password']);
 
     group.tags = JSON.stringify(group.tags);
@@ -312,7 +302,6 @@ Router.post('/groups/join/:id', async (req, res) => {
         return res.send({ success: false, reason: 'Wrong Password' });
       }
       let password = crypto.pbkdf2Sync(req.body.password, groupInfo.salt, 99097, 32, 'sha512').toString('hex');
-      console.log(password, groupInfo.password)
       if (password == groupInfo.password) {
         await connection.query(
           `UPDATE users SET \`groups\` = CASE
@@ -410,7 +399,12 @@ Router.post('/groups/bring-groups', async (req, res) => {
       [membersInfo] = await connection.query('SELECT user_id, name, study, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
     };
 
-    //console.log(membersInfo);
+    membersInfo.map(async member => {
+      const memberTimer = await redisClient.hGetAll(`user:${member.user_id}`);
+      console.log(memberTimer)
+      //member.study = "{}"
+    })
+
     res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
     // Handle any errors that may occur during the execution of queries
@@ -440,7 +434,6 @@ Router.post('/groups/like/:id', async (req, res) => {
         END WHERE group_id = ?`,
       [userId, `%,${userId},%`, `${userId},%`, `%,${userId}`, userId, userId, groupId]
     );
-    console.log(update)
     res.send({ success: true });
   } catch (err) {
     // Handle any errors that may occur during the execution of queries
@@ -493,7 +486,6 @@ Router.post('/plan/update-plan', async (req, res) => {
     };
 
     const isValid = isValidJSON(planInfo, schema);
-    console.log(isValid, planInfo);
 
     if (planInfo.start > planInfo.end) {
       return res.send({success: false, reason: 'Invalid Time'});
@@ -546,7 +538,6 @@ Router.post("/study/add-subject", async(req, res) => {
     };
 
     const isValid = isValidJSON(req.body, schema);
-    console.log(isValid, req.body);
     const subjectInfo = {
       ...req.body,
       datum_point: Math.floor(new Date().getTime() / 1000),
@@ -554,15 +545,9 @@ Router.post("/study/add-subject", async(req, res) => {
       id: generateRandomId(10),
       user_id: tester.id
     };
-    console.log(subjectInfo);
     if (isValid) {
       const connection = pool.promise();
       try {
-        /* const [[userInfo]] = await connection.query(`SELECT subjects from users where user_id = ?`, [tester.id]);
-        console.log(userInfo);
-        const subjects = JSON.parse(userInfo.subjects);
-        subjects.push(JSON.stringify(subjectInfo));
-         const updateSubjects = await connection.query(`UPDATE users set subjects = ? where user_id = ?`, [JSON.stringify(subjectInfo), tester.id]); */
         const insertSubject = await connection.query(`INSERT INTO subjects SET ?`, subjectInfo);
         const updateUser = await connection.query(`
         UPDATE users
@@ -622,24 +607,77 @@ Router.post("/study/start", async(req, res) => {
     if (info.includes('subject:')) {
       const infoSubjectId = info.split(':')[1];
       if (infoSubjectId === subjectId) {
-        console.log(JSON.parse(userInfo[info]))
         const subjectInfo = JSON.parse(userInfo[info]);
         const now = Math.floor(new Date().getTime() / 1000);
         const start = now - subjectInfo.datum_point;
-        console.log(`user:${tester.id}:subject:${subjectId}`);
         const push = await redisClient.rPush(`user:${tester.id}:subject:${subjectId}`, `[${start},${start}]`);
-        console.log(push)
         redisClient.hSet(`user:${tester.id}`, `ActiveSubject`, JSON.stringify(subjectInfo));
-      }
-    }
-  })
+        const prevTimer = await redisClient.hGet(`user:${tester.id}`, 'timerInfo');
+        console.log('prev', prevTimer);
+        if (prevTimer) {
+          const newTimer = JSON.parse(prevTimer);
+          const datum = newTimer.datum;
+          //remove old timeline
+          const MAXSTORELEN = 24 * 60 * 60;
+          const lastVal = newTimer.timeline[newTimer.timeline.length - 1];
+          const missingTotal = Math.floor((lastVal ? lastVal[1] + datum : datum) / (MAXSTORELEN * 2));
+          const newDatum = datum + missingTotal * MAXSTORELEN;
+          const start = now - newDatum;
+          /* while (newTimer.timeline[newTimer.timeline.length - 1] >= MAXSTORELEN) {
+            newTimer.timeline = newTimer.timeline.map(([start, stop]) => {
+              const newStart = start - MAXSTORELEN;
+              const newStop = stop - MAXSTORELEN;
+              if (newStart >= 0 && newStop >= 0) {
+                return [newStart, newStop];
+              };
+            });
+          }; */
+          console.log(newDatum, missingTotal, newTimer)
+          if (missingTotal) {
+            newTimer.timeline.map(([start, stop]) => {
+              const newStart = start - missingTotal * MAXSTORELEN;
+              const newStop = stop - missingTotal * MAXSTORELEN;
+              if (newStart >= 0 && newStop >= 0) {
+                return [newStart, newStop];
+              };
+            });
+          };
+          console.log(newDatum);
+
+          newTimer.timeline.push(start, start);
+          newTimer.datum = newDatum;
+          newTimer.run = 1;
+          redisClient.hSet(`user:${tester.id}`, 'timerInfo', JSON.stringify(newTimer));
+        } else {
+          const newTimer = {datum: now, timeline: [[0, 0]], run: 1};
+          redisClient.hSet(`user:${tester.id}`, 'timerInfo', JSON.stringify(newTimer));
+        };
+        //redisClient.hSet(`user:${tester.id}`, 'timer', JSON.stringify(subjectInfo));
+        const groups  = userInfo.groups.split(',');
+        console.log(groups)
+        if (groups.length) {
+          groups.map(group => {
+            const socketsInRoom = io.sockets.in(group).sockets;
+            console.log(group)
+            // Iterate through the sockets and access socket properties
+            for (const socketId in socketsInRoom) {
+              const socket = socketsInRoom[socketId];
+              console.log(`Socket ID: ${socket.id}, User ID: ${socket.userId}`);
+            }
+          })
+          io.to(groups).emit('studying', tester.id);
+        }
+        //io.to.emit("study")
+      };
+    };
+  });
   res.send({success: false, msg: 'Timer Started!'});
 });
 
 Router.post("/study/stop", async(req, res) => {
   const subjectId = req.body.subjectId;
+  const groups = (await redisClient.hGet(`user:${tester.id}`, "groups")).split(',');
   const activeSubject = JSON.parse(await redisClient.hGet(`user:${tester.id}`, 'ActiveSubject'));
-  console.log(activeSubject);
   if (activeSubject.id === subjectId) {
     const activity = JSON.parse(await redisClient.rPop(`user:${tester.id}:subject:${subjectId}`));
     const now = Math.floor(new Date().getTime() / 1000);
@@ -647,6 +685,10 @@ Router.post("/study/stop", async(req, res) => {
     const stop = now - activeSubject.datum_point;
     redisClient.rPush(`user:${tester.id}:subject:${subjectId}`, `[${start},${stop}]`);
     redisClient.hSet(`user:${tester.id}`, `ActiveSubject`, '0');
+    console.log(groups)
+    if (groups.length) {
+      io.to(groups).emit('studying', tester.id);
+    }
   };
   res.send({success: true, msg: 'Timer Stopped!'});
 });
