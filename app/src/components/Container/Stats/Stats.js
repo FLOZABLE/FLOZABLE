@@ -17,7 +17,7 @@ import { plugins } from 'chart.js';
 import { sortSubjects, updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, sortRanking, updateRankingTrend } from './StatTools';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
-console.log('server', serverOrigin, process.env)
+
 function Stats(props) {
   const today = new Date().setHours(0, 0, 0, 0);
 
@@ -143,7 +143,7 @@ function Stats(props) {
           },
         ]
     });
-    console.log(timelineRef);
+
     if (timelineRef.current) {
       setDailyTimeline(updateHourlyMatrix(subjects, timelineRef.current.offsetWidth, viewDate));
     }

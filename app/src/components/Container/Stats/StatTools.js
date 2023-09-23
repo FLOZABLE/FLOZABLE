@@ -14,7 +14,6 @@ const sortSubjects = (subjects) => {
     const currentDay = now.getDay();
     subjects.forEach((subject) => {
       const { datum_point, timeline } = subject;
-      console.log(subject.id, timeline)
       subject.daily = {};
       subject.daily.grouped = dailyTimelineSplit(timeline, datum_point);
       subject.daily.total = totalRangeTime(subject.daily.grouped);
@@ -94,7 +93,6 @@ function dailyTimelineSplit(timeline, datum_point) {
   timeline.forEach(([start, stop]) => {
     const acStart = new Date((datum_point + start) * 1000).getTime();
     const acStop = new Date((datum_point + stop) * 1000).getTime();
-    console.log('start', new Date(acStart), new Date(acStop))
     while (dayStart < new Date(acStart).setHours(0, 0, 0, 0) ) {
       dayStart += 1000 * 60 * 60 * 24;
       dayStop += 1000 * 60 * 60 * 24;
