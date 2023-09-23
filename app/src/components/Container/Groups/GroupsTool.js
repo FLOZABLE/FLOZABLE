@@ -66,7 +66,7 @@ function setGroupMembers(groups, users) {
             member.study.total += stop - todayStart;
           };
         });
-        console.log(member.study.total);
+        console.log('member', member.study.total);
         
       };
       return member;

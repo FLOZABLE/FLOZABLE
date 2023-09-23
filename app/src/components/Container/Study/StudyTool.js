@@ -17,6 +17,9 @@ function getMyGroups(userInfo, groups, users) {
   const userId = userInfo.user_id;
   const myGroups = [];
   const allGroups = groups;
+  const todayStart = new Date().setHours(0, 0, 0, 0) / 1000;
+  const todayEnd = new Date().setHours(23, 59, 59, 0) / 1000;
+  console.log(todayStart, todayEnd)
   if (!allGroups.length) {
     return { myGroups: myGroups}
   }
@@ -28,6 +31,20 @@ function getMyGroups(userInfo, groups, users) {
           const memberInfo = users.find((user) => { return user.user_id == member });
           if (typeof memberInfo.study == "string") {
             memberInfo.study = JSON.parse(memberInfo.study);
+            const datum = memberInfo.study.datum;
+            memberInfo.study.total = 0;
+            console.log(memberInfo.study.timeline, memberInfo)
+            memberInfo.study.timeline.map(([start, stop]) => {
+              start += datum;
+              stop += datum;
+              if (start >= todayStart && stop <= todayEnd) {
+                memberInfo.study.total += stop - start;
+              } else if (start >= todayStart) {
+                memberInfo.study.total += todayEnd - start;
+              } else if (stop <= todayEnd) {
+                memberInfo.study.total += stop - todayStart;
+              };
+            });
           }
           return memberInfo;
         });

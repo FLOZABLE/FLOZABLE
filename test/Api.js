@@ -395,20 +395,20 @@ Router.post('/groups/bring-groups', async (req, res) => {
       });
     });
     let membersInfo = [];
-    console.log(allMembersIds)
+    const now = Math.floor(new Date().getTime() / 1000);
     if (allMembersIds.length) {
       [membersInfo] = await connection.query('SELECT user_id, name, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
       // Use Promise.all to wait for all asynchronous operations to complete
       await Promise.all(membersInfo.map(async (member) => {
         let memberTimer = await redisClient.hGet(`user:${member.user_id}`, 'timerInfo');
         if (!memberTimer) {
-          memberTimer = `{"datum":1695399707,"timeline":[[0,0],[148,152],[170,181],[8549,8552]],"run":0,"start":0}`
+          memberTimer = `{"datum":${now},"timeline":[[0,0]],"study":0}`
         }
         member.study = memberTimer; // Set the study property for each member
       }));
 
     };
-
+    console.log(membersInfo)
     res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
     // Handle any errors that may occur during the execution of queries
@@ -650,10 +650,10 @@ Router.post("/study/start", async (req, res) => {
 
           newTimer.timeline.push([start, start]);
           newTimer.datum = newDatum;
-          newTimer.start = 1;
+          newTimer.study = 1;
           redisClient.hSet(`user:${tester.id}`, 'timerInfo', JSON.stringify(newTimer));
         } else {
-          const newTimer = { datum: now, timeline: [[0, 0]], start: 1 };
+          const newTimer = { datum: now, timeline: [[0, 0]], study: 1 };
           redisClient.hSet(`user:${tester.id}`, 'timerInfo', JSON.stringify(newTimer));
         };
         //redisClient.hSet(`user:${tester.id}`, 'timer', JSON.stringify(subjectInfo));
@@ -699,7 +699,7 @@ Router.post("/study/stop", async (req, res) => {
       const lastActivity = newTimer.timeline.pop();
       lastActivity[1] = now - newTimer.datum;
       newTimer.timeline.push(lastActivity);
-      newTimer.start = 0;
+      newTimer.study = 0;
       redisClient.hSet(`user:${tester.id}`, 'timerInfo', JSON.stringify(newTimer));
     };
   };

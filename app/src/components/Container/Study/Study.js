@@ -60,11 +60,11 @@ function Study(props) {
   }, [addSubjectResponse]);
 
   useEffect(() => {
-    console.log(membersInfo);
+    //console.log(membersInfo);
   }, [membersInfo]);
 
   useEffect(() => {
-    console.log(myGroups)
+    console.log('groups', myGroups)
     if (myGroups.length) {
       myGroups.map((group) => {
         //props.socket.emit('joinRoom', group.group_id, props.userInfo.user_id);

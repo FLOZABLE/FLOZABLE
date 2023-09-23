@@ -80,7 +80,6 @@ function App() {
       .then((data) => {
         if (data.success) {
           setPlans(data.plans.map(plan => {plan.saved = true; plan.start = new Date(plan.start * 1000 * 60); plan.end = new Date(plan.end * 1000 * 60); return plan}));
-          console.log(data.plans);
         };
       })
       .catch((error) => console.error(error));
