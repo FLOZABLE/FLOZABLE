@@ -22,17 +22,39 @@ io.on('connection', (socket) => {
   if (process.env.NODE_ENV == "production") {
     try {
       session = socket.request.session;
+      console.log(session);
     } catch (err) {
       console.log(err);
     };
   } else {
-
+    session = {
+      cookie: {
+        path: '/',
+        _expires: null,
+        originalMaxAge: null,
+        httpOnly: true,
+        secure: false
+      },
+      user_id: 'EoFObpf612bdJKt',
+      name: 't1',
+      loggedin: true,
+      userInfo: {
+        userId: 'EoFObpf612bdJKt',
+        name: 't1',
+        loggedin: true,
+        email: 't1@t.t',
+        myinfo: null,
+        timeZone: 'America/Los_Angeles'
+      }
+    }
   }
 
   socket.on('joinMyGroups', async () => {
     const connection = pool.promise();
+    console.log('joined')
     try {
       const [[userInfo]] = await connection.query(`SELECT groups from users where user_id = ?`, [session.user_id]);
+      console.log(userInfo)
       if (userInfo) {
         const myGroups = userInfo.groups.split(',');
         socket.join(myGroups);

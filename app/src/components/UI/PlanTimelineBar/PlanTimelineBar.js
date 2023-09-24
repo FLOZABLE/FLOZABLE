@@ -46,12 +46,10 @@ function PlanTimelineBar(props) {
 
   useEffect(() => {
     const now  = new Date();
-    console.log(now)
     setDispTime(`${now.getHours() % 12}:${now.getMinutes().toString().padStart(2, '0')}`);
   }, [now.getMinutes()]);
 
   useEffect(() => {
-    console.log(swiperIndex);
     const now = new Date();
     const hr = now.getHours() % 12;
     const updateIndex = (swiperIndex + 1) % 4;

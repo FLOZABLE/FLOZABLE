@@ -99,17 +99,6 @@ function SmallCalendar(props) {
 
 
   useEffect(() => {
-    /* if (calendarApi) {
-      calendarApi.gotoDate(props.viewDate);
-      const dateElement = document.querySelector(`.SmallCalendar .fc-day[data-date="${new Date(props.viewDate).toISOString().slice(0, 10)}"]`);
-      console.log(dateElement);
-      if (currentDateRef.current) {
-        currentDateRef.current.classList.remove('selected-date');
-      };
-      currentDateRef.current = dateElement;
-      currentDateRef.current.classList.add('selected-date');
-      setForceUdt([]);
-    } */
     setEvents([{start: viewDate, end: viewDate, allDay: true, display: 'background', title: viewDate.getDate()}]);
     if (SmallCalendarApi) {
       SmallCalendarApi.gotoDate(viewDate);
