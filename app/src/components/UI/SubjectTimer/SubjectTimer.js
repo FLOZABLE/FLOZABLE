@@ -15,6 +15,7 @@ function SubjectTimer(props) {
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
+    console.log(subjects, subject)
     if (subjects[0]) {
       setSubject(subjects[0]);
       if (subjects[0].daily && subjects[0].daily.total) {
@@ -109,10 +110,11 @@ function SubjectTimer(props) {
   return (
     <div className={styles.SubjectTimer}>
       <div className={styles.timerWrapper}>
-        <button className={`${clicked ? styles.clicked : ''}`} onClick={() => { setClicked(!clicked) }}>
-          {/* {options[index]} */}
-          {subject ? subject.name : ''}
+        <button className={`${clicked ? styles.clicked : ''} ${styles.optBtn}`} onClick={() => { setClicked(!clicked) }}>
+          <p>{subject ? subject.name : ''}</p>
+          <p className={styles.mainTimeDisp}>
           {Math.floor(subjectTimer.total / 3600)}:{(Math.floor(subjectTimer.total / 60) % 60).toString().padStart(2, '0')}:{(subjectTimer.total % 60).toString().padStart(2, '0')}
+          </p>
           <i>
             <FontAwesomeIcon icon={faCaretDown} />
           </i>
@@ -121,8 +123,8 @@ function SubjectTimer(props) {
           {options}
         </ul>
       </div>
-      <div className={styles.buttons}>
-        <button onClick={toggleTimer}>
+      <div className={styles.buttonWrapper}>
+        <button onClick={toggleTimer} className={styles.toggleBtn}>
           {isStudy ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
         </button>
       </div>

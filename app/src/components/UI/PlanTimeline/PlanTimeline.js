@@ -4,18 +4,50 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
 import { WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert } from "../../../utils/svgs";
+import CheckBox from "../CheckBox/CheckBox";
+
+const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function PlanTimeline(props) {
-  const { plans, viewMode, viewDate, subjects, setPlans } = props;
+  const { plans, viewMode, viewDate, subjects, setIsAddPlanModal, mode, setPlans } = props;
   const [plansEl, setPlansEl] = useState([]);
+  const [isPlan, setIsPlan] = useState(false);
 
   const togglePlan = (plan) => {
-    if (plan.completed) {
-      
-    }
+    console.log(plan.completed)
+    const eventIndex = plans.findIndex((planInfo) => planInfo.id == plan.id);
+    if (eventIndex !== -1) {
+      const updatedEvents = [...plans];
+      updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], completed: plan.completed ? 0 : 1 };
+      const planInfo = {
+        id: plan.id,
+        completed: plan.completed ? 0 : 1
+      }
+
+      console.log(updatedEvents, eventIndex)
+
+      delete planInfo.saved;
+      fetch(`${serverOrigin}/api/plan/status-change`,
+        {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(planInfo)
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            setPlans(updatedEvents);
+            setIsAddPlanModal(false);
+          };
+        })
+        .catch((error) => console.error(error));
+    };
   };
 
   useEffect(() => {
+    setIsPlan(false);
     setPlansEl(plans.map((plan, i) => {
       const planSubject = subjects.find((subject) => { return subject.id == plan.subject });
       let isInRange = false;
@@ -37,6 +69,7 @@ function PlanTimeline(props) {
       };
 
       if (isInRange) {
+        setIsPlan(true);
         const dispStart = `${plan.start.getHours() % 12}:${plan.start.getMinutes().toString().padStart(2, '0')}`;
         const dispEnd = `${plan.end.getHours() % 12}:${plan.end.getMinutes().toString().padStart(2, '0')}`;
         let icon;
@@ -105,7 +138,9 @@ function PlanTimeline(props) {
           <li className={styles.plan} key={i}>
             <div className={styles.iconWrapper} style={{ backgroundColor: subjectBg }}>
               {icon}
-              <div className={styles.hoverDisp} onClick={() => {togglePlan(plan)}}></div>
+              <div className={styles.hoverDisp} onClick={() => { togglePlan(plan) }}>
+                <CheckBox id={plan.id} checked={plan.completed} />
+              </div>
             </div>
             <div className={styles.content}>
               <div className={styles.title}>
@@ -118,14 +153,16 @@ function PlanTimeline(props) {
           </li>
         );
       };
-
     }));
   }, [plans, viewMode, viewDate, subjects]);
 
   return (
-    <div className={styles.PlanTimeline}>
+    <div className={`${isPlan ? styles.noPlan : ''} ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ''}`}>
       <ul>
-        {plansEl}
+        {isPlan ? plansEl : <div className={styles.noPlanText} key={10}>
+          <h3>You don't have any plans!</h3>
+          <h4 onClick={() => { setIsAddPlanModal(true) }}>Add a New Plan</h4>
+        </div>}
       </ul>
     </div>
   );

@@ -8,10 +8,11 @@ import VolumeControl from "../VolumeControl/VolumeControl";
 import FullScreenBtn from "../FullScreenBtn/FullScreenBtn";
 import SmallPlanner from "../SmallPlanner/SmallPlanner";
 import SubjectTimer from "../SubjectTimer/SubjectTimer";
+import PlanTimeline from "../PlanTimeline/PlanTimeline";
 
 function StudyHeader(props) {
 
-  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal } = props;
+  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, events, setEvents, setIsAddPlanModal } = props;
 
   const [recommendedThemes, setRecommendedThemes] = useState([]);
   const [link, setLink] = useState([]);
@@ -53,12 +54,12 @@ function StudyHeader(props) {
   return (
     <header className={styles.StudyHeader}>
       <ul className={styles.left}>
-        <li className={`${timerBtn ? styles.open : ''}`}>
-          <button onClick={() => { setTimerBtn(!timerBtn) }}>
+        <li className={`${timerBtn ? styles.open : ''} ${styles.timer}`}>
+          <button onClick={() => { setTimerBtn(!timerBtn) }} className={styles.dispBtn}>
             <FontAwesomeIcon icon={faClipboardCheck} />
           </button>
           <div className={styles.hoverEl}>
-            Background
+            Timer
           </div>
           <div className={styles.clickedEl}>
             <SubjectTimer subjects={subjects} subject={subject} setSubject={setSubject} isStudy={isStudy} setIsStudy={setIsStudy} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} />
@@ -66,19 +67,21 @@ function StudyHeader(props) {
         </li>
       </ul>
       <ul className={styles.right}>
-        <li className={`${plannerBtn ? styles.open : ''}`}>
-          <button onClick={() => { setPlannerBtn(!plannerBtn) }}>
+        <li className={`${plannerBtn ? styles.open : ''} ${styles.planner}`}>
+          <button onClick={() => { setPlannerBtn(!plannerBtn) }} className={styles.dispBtn}>
             <FontAwesomeIcon icon={faClipboardCheck} />
           </button>
           <div className={styles.hoverEl}>
-            Background
+            Planner
           </div>
           <div className={styles.clickedEl}>
-            <SmallPlanner plannerBtn={plannerBtn} setPlannerBtn={setPlannerBtn} />
+            {/* <SmallPlanner plannerBtn={plannerBtn} setPlannerBtn={setPlannerBtn} /> */}
+            <PlanTimeline plans={events} viewDate={new Date(new Date().setHours(0, 0, 0, 0))} viewMode={"timeGridDay"} subjects={subjects} setPlans={setEvents} mode={"study"} setIsAddPlanModal={setIsAddPlanModal} />
+            <h4 onClick={() => { setIsAddPlanModal(true) }}>Add a New Plan</h4>
           </div>
         </li>
         <li className={`${backgrounBtn ? styles.open : ''}`}>
-          <button onClick={() => { setBackgrounBtn(!backgrounBtn) }}>
+          <button onClick={() => { setBackgrounBtn(!backgrounBtn) }} className={styles.dispBtn}>
             <FontAwesomeIcon icon={faImage} />
           </button>
           <div className={styles.hoverEl}>
@@ -92,7 +95,7 @@ function StudyHeader(props) {
           </div>
         </li>
         <li>
-          <button onClick={() => { props.setGroupsBtn(!props.groupsBtn) }}>
+          <button onClick={() => { props.setGroupsBtn(!props.groupsBtn) }} className={styles.dispBtn}>
             <FontAwesomeIcon icon={faUsers} />
           </button>
           <div className={styles.hoverEl}>
@@ -100,7 +103,7 @@ function StudyHeader(props) {
           </div>
         </li>
         <li className={`${volumeBtn ? styles.open : ''}`}>
-          <button onClick={() => { setVolumeBtn(!volumeBtn) }}>
+          <button onClick={() => { setVolumeBtn(!volumeBtn) }} className={styles.dispBtn}>
             <FontAwesomeIcon icon={faVolumeHigh} />
           </button>
           <div className={styles.hoverEl}>
@@ -111,7 +114,7 @@ function StudyHeader(props) {
           </div>
         </li>
         <li className={`${fullScreeenBtn ? styles.open : ''}`}>
-          <button onClick={() => { setFullScreenBtn(!fullScreeenBtn) }}>
+          <button onClick={() => { setFullScreenBtn(!fullScreeenBtn) }} className={styles.dispBtn}>
             <FullScreenBtn setFullScreen={setFullScreen} fullScreen={fullScreen} />
           </button>
           <div className={styles.hoverEl}>
