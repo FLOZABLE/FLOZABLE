@@ -56,11 +56,36 @@
   list-style: unset;
 }
 
-.PlanTimeline .iconWrapper:hover .hoverDisp {
+.PlanTimeline .iconWrapper .hoverDisp {
+  transition: .3s opacity ease-in-out;
   position: absolute;
   top: 0px;
   left: 0px;
   width: 50px;
   height: 50px;
-  background-color: aqua;
+  opacity: 0;
+}
+.PlanTimeline .iconWrapper:hover .hoverDisp {
+  opacity: 1;
+}
+
+.PlanTimeline .noPlan {
+
+}
+
+.PlanTimeline .noPlanText h4 {
+  background-color: red;
+  background-image: linear-gradient(45deg, #8C52FF, #5C97E6);
+  background-size: 100%;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent; 
+  -moz-background-clip: text;
+  -moz-text-fill-color: transparent;
+  cursor: pointer;
+}
+
+.PlanTimeline.studyMode {
+  width: 300px;
 }

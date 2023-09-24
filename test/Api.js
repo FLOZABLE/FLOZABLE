@@ -523,6 +523,41 @@ Router.post('/plan/update-plan', async (req, res) => {
   }
 });
 
+Router.post("/plan/status-change", async(req, res) => {
+  try {
+    const planInfo = req.body;
+
+    console.log(planInfo)
+    const schema = {
+      type: 'object',
+      properties: {
+        id: { type: 'string', minLength: 10, maxLength: 10 },
+        completed: { type: 'integer', minimum: 0, maximum: 1 }
+      },
+      required: ['id', 'completed'],
+      additionalProperties: false
+    };
+
+    const isValid = isValidJSON(planInfo, schema);
+    if (isValid) {
+      const connection = pool.promise();
+      try {
+        await connection.query(`UPDATE plans SET completed = ? WHERE id = ?`, [planInfo.completed, planInfo.id])  
+        res.send({success: true, msg: 'Updated'})
+      } catch (err) {
+        console.log(err);
+      } finally {
+        connection.releaseConnection();
+      };
+    } else {
+      res.send({success: false, reason: "Invalid data"});
+    }
+  } catch (err) {
+    console.log(err);
+    res.send({success: false, reason: "Err"});
+  };
+})
+
 //redis study part
 
 Router.post("/study/add-subject", async (req, res) => {

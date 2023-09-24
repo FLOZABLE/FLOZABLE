@@ -13,27 +13,33 @@
   display: flex;
   justify-content: left;
   align-items: center;
-  font-size: 20px;
+  font-size: 23px;
   width: min-content;
   white-space: nowrap;
-  transition: .3s background-color ease-in-out;
+  transition: .3s background-color ease-in-out, .3s border-radius ease-in-out;
   width: fit-content !important;
+  color: #fff;
+  font-weight: 500;
 }
 
 .SubjectTimer button:hover {
   background-color: rgb(230, 226, 226);
+  color: #545454;
 }
 
 .SubjectTimer button.clicked {
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
+  background-color: rgb(230, 226, 226);
+  color: #545454;
 }
-.SubjectTimer button.clicked ~ .options{
+
+.SubjectTimer button.clicked~.options {
   font-size: 17px;
   transition: font-size .3s ease-in-out;
 }
 
-.SubjectTimer button.clicked .options .option{
+.SubjectTimer button.clicked .options .option {
   padding: 3px 20px;
 }
 
@@ -43,10 +49,15 @@
   transition: font-size .3s ease-in-out;
   min-width: 100%;
   top: 50px;
-  background-color: #fff;
+  background-color: rgb(230, 226, 226);
   max-height: 100px;
   overflow-y: auto;
   z-index: 2;
+}
+
+.SubjectTimer .options {
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 .SubjectTimer .options .option {
@@ -54,15 +65,34 @@
   cursor: pointer;
   white-space: nowrap;
   margin: 0px;
+  font-weight: 600;
 }
 
-.SubjectTimer button i {
+.SubjectTimer .optBtn i {
   transform: rotate(0deg);
   transition: transform .4s cubic-bezier(0.075, 0.82, 0.165, 1);
   margin-left: 20px;
   font-size: 30px;
 }
 
-.SubjectTimer button.clicked i {
+.SubjectTimer .optBtn.clicked i {
   transform: rotate(180deg);
+}
+
+.SubjectTimer .timeDisp {
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.SubjectTimer .mainTimeDisp {
+  margin-left: 5px;
+}
+
+.SubjectTimer .toggleBtn {
+  width: 40px !important;
+  justify-content: center;
+}
+
+.SubjectTimer .buttonWrapper {
+  display: flex;
 }

@@ -160,7 +160,7 @@ thead .fc-scroller {
 
 
 function EventPlanner(props) {
-  const { PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isAddPlanModal, setIsAddPlanModal, setIsAddSubjectModal, subjects, setSubjects, setSubject, subject } = props;
+  const { PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isAddPlanModal, setIsAddPlanModal, setIsAddSubjectModal, subjects, setSubjects, setSubject, subject, setViewDate } = props;
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [viewText, setViewText] = useState({
     year: 'numeric',
@@ -327,11 +327,11 @@ function EventPlanner(props) {
   }, [viewDate]);
 
   useEffect(() => {
-    props.setViewDate(new Date(new Date(start).setHours(0, 0, 0, 0)));
+    setViewDate(new Date(new Date(start).setHours(0, 0, 0, 0)));
   }, [start]);
 
   useEffect(() => {
-    setSubjectsOpt([...props.subjects.map((subject) => {
+    setSubjectsOpt([...subjects.map((subject) => {
       return { name: subject.name, value: subject.id };
     }), { name: 'others', value: '0000000000' }]);
   }, [subjects]);
@@ -353,7 +353,7 @@ function EventPlanner(props) {
         start: Math.floor(start.getTime() / (1000 * 60)),
         end: Math.floor(end.getTime() / (1000 * 60)),
       }
-  
+
       delete planInfo.saved;
       fetch(`${serverOrigin}/api/plan/update-plan`,
         {
@@ -405,7 +405,7 @@ function EventPlanner(props) {
   const handleTodayButtonClick = () => {
     const currentDate = new Date();
     PlannerApi.gotoDate(currentDate)
-    props.setViewDate(new Date(currentDate.setHours(0, 0, 0, 0)));
+    setViewDate(new Date(currentDate.setHours(0, 0, 0, 0)));
   };
 
   const handlePrevBtn = () => {
@@ -413,9 +413,9 @@ function EventPlanner(props) {
     if (viewMode == 'dayGridMonth') {
       const monthStart = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
       PlannerApi.gotoDate(monthStart);
-      props.setViewDate(monthStart);
+      setViewDate(monthStart);
     } else {
-      props.setViewDate(PlannerApi.view.activeStart);
+      setViewDate(PlannerApi.view.activeStart);
     };
   };
 
@@ -424,9 +424,9 @@ function EventPlanner(props) {
     if (viewMode == 'dayGridMonth') {
       const monthStart = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1);
       PlannerApi.gotoDate(monthStart);
-      props.setViewDate(monthStart);
+      setViewDate(monthStart);
     } else {
-      props.setViewDate(PlannerApi.view.activeStart);
+      setViewDate(PlannerApi.view.activeStart);
     }
   }
 
