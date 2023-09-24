@@ -11,7 +11,6 @@ function Search(props) {
   };
 
   const updateSearchQuery = (e) => {
-    console.log(e.target.value);
     props.setSearchQuery(e.target.value);
   };
   return (

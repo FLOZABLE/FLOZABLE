@@ -11,7 +11,7 @@ import SubjectTimer from "../SubjectTimer/SubjectTimer";
 
 function StudyHeader(props) {
 
-  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal } = props;
+  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal } = props;
 
   const [recommendedThemes, setRecommendedThemes] = useState([]);
   const [link, setLink] = useState([]);
@@ -61,7 +61,7 @@ function StudyHeader(props) {
             Background
           </div>
           <div className={styles.clickedEl}>
-            <SubjectTimer subjects={subjects} subject={subject} setSubject={setSubject} isStudy={isStudy} setIsStudy={setIsStudy} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} />
+            <SubjectTimer subjects={subjects} subject={subject} setSubject={setSubject} isStudy={isStudy} setIsStudy={setIsStudy} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} />
           </div>
         </li>
       </ul>

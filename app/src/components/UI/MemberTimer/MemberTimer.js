@@ -1,30 +1,49 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styles from "./MemberTimer.module.css";
 import worker from "./TimeWorker";
 
 function MemberTimer(props) {
-  const [run, setRun] = useState(props.run);
-  const [sec, setSec] = useState(props.sec % 60);
-  const [min, setMin] = useState(Math.floor(props.sec / 60) % 60);
-  const [hr, setHr] = useState(Math.floor(props.sec / (60 * 60)));
-
-  worker.addEventListener('message', (e) => {
-    if (e.data.command === 'update-timer') {
-      if (props.run) {
-        setSec(sec + 1);
-      };
-    };
-  });
+  const { run, total, me, myTimerTotal } = props;
+  const [sec, setSec] = useState(0);
+  const [min, setMin] = useState(0);
+  const [hr, setHr] = useState(0);
 
   useEffect(() => {
-    if (sec == 60) {
+    console.log('total', total)
+    setSec(total % 60);
+    setMin(Math.floor(total / 60) % 60);
+    setHr(Math.floor(total / (60 * 60)));
+  }, []);
+
+  useEffect(() => {
+    if (!me) {
+      worker.addEventListener('message', (e) => {
+        if (e.data.command === 'update-timer') {
+          if (run) {
+            setSec(sec + 1);
+          };
+        };
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    if (me) {
+      setSec(myTimerTotal % 60);
+      setMin(Math.floor(myTimerTotal / 60) % 60);
+      setHr(Math.floor(myTimerTotal / (60 * 60)));
+    }
+  }, [myTimerTotal]);
+
+  useEffect(() => {
+    if (!me && sec == 60) {
       setSec(0);
       setMin(min + 1);
     };
   }, [sec]);
 
   useEffect(() => {
-    if (min == 60) {
+    if (!me && min == 60) {
       setMin(0);
       setHr(hr + 1);
     };

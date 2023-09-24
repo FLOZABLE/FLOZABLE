@@ -12,9 +12,6 @@ import BlobBtn from "../BlobBtn/BlobBtn";
 import SliderAnimation from "../SliderAnimation/SliderAnimation";
 
 function EventModal(props) {
-  /* useEffect(() => {
-    console.log('updated', props.viewDate)
-  }, [props.viewDate]); */
   return (
     <div className={`${styles.EventModal} ${props.isAddPlanModal ? styles.open : ''}`}>
       <div className={styles.header}>

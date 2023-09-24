@@ -408,7 +408,6 @@ Router.post('/groups/bring-groups', async (req, res) => {
       }));
 
     };
-    console.log(membersInfo)
     res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
     // Handle any errors that may occur during the execution of queries
@@ -636,7 +635,6 @@ Router.post("/study/start", async (req, res) => {
               };
             });
           }; */
-          console.log(newDatum, missingTotal, missingTotal)
           if (missingTotal) {
             newTimer.timeline.map(([start, stop]) => {
               const newStart = start - missingTotal * MAXSTORELEN;
@@ -646,7 +644,6 @@ Router.post("/study/start", async (req, res) => {
               };
             });
           };
-          console.log(newDatum);
 
           newTimer.timeline.push([start, start]);
           newTimer.datum = newDatum;
@@ -660,7 +657,7 @@ Router.post("/study/start", async (req, res) => {
         const groups = userInfo.groups.split(',');
         console.log(groups)
         if (groups.length) {
-          groups.map(group => {
+          /* groups.map(group => {
             const socketsInRoom = io.sockets.in(group).sockets;
             console.log(group)
             // Iterate through the sockets and access socket properties
@@ -668,7 +665,7 @@ Router.post("/study/start", async (req, res) => {
               const socket = socketsInRoom[socketId];
               console.log(`Socket ID: ${socket.id}, User ID: ${socket.userId}`);
             }
-          })
+          }) */
           io.to(groups).emit('studying', tester.id);
         }
         //io.to.emit("study")
@@ -691,7 +688,7 @@ Router.post("/study/stop", async (req, res) => {
     redisClient.hSet(`user:${tester.id}`, `ActiveSubject`, '0');
     console.log(groups)
     if (groups.length) {
-      io.to(groups).emit('studying', tester.id);
+      io.to(groups).emit('stopStudying', tester.id);
     };
     const timerInfo = await redisClient.hGet(`user:${tester.id}`, 'timerInfo');
     if (timerInfo) {

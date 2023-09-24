@@ -13,7 +13,6 @@ function Main(props) {
       let dropArea = target.parentNode;
       let parentRect = dropArea.getBoundingClientRect();
       const xDiff = e.clientX - parentRect.left + parseInt(target.style.left.split('px')[0]);
-      //console.log(xDiff)
       let topPosition = e.clientY - parentRect.top + dropArea.scrollTop - 10;
       let leftPosition = e.clientX - parentRect.left - 50;
       target.style.top = topPosition + 'px';
@@ -110,7 +109,6 @@ function Main(props) {
   const settings = Object.values(mainViewerSetting);
   useEffect(() => {
     settings.map((boxSetting, index) => {
-      console.log(box[index].current)
       box[index].current.style.left = boxSetting.x;
       box[index].current.style.top = boxSetting.y;
     })
