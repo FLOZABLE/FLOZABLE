@@ -122,7 +122,6 @@ function Stats(props) {
         if (data.success) {
           const sortedRanking = sortRanking(data.ranking, props.userInfo);
           setRanking(sortedRanking);
-          console.log(sortedRanking, data.ranking);
         }
       })
       .catch((error) => console.error(error));

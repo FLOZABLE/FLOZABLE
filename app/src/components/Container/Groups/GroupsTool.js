@@ -41,20 +41,6 @@ function setGroupMembers(groups, users) {
         member.study = JSON.parse(member.study);
         const datum = member.study.datum;
         member.study.total = 0;
-        /* member.study.timeline = member.study.timeline.map(([start, stop]) => {
-          console.log(start, stop);
-          start += datum;
-          stop += datum;
-          if (start > todayStart && stop < todayEnd) {
-            //return [start, stop];
-            member.study.total += stop - start;
-          } else if (start > todayStart) {
-            //return [todayStart, todayEnd];
-            member.study.total += stop - start;
-          } else if (stop < todayEnd) {
-            //return [todayStart, stop];
-          }
-        }) */
         member.study.timeline.map(([start, stop]) => {
           start += datum;
           stop += datum;
@@ -66,8 +52,6 @@ function setGroupMembers(groups, users) {
             member.study.total += stop - todayStart;
           };
         });
-        console.log('member', member.study.total);
-        
       };
       return member;
     });

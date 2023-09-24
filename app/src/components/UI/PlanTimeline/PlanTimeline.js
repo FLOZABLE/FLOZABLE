@@ -10,7 +10,6 @@ function PlanTimeline(props) {
   const [plansEl, setPlansEl] = useState([]);
 
   const togglePlan = (plan) => {
-    console.log(plan);
     if (plan.completed) {
       
     }

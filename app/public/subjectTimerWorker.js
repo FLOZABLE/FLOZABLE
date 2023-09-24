@@ -2,7 +2,6 @@ let intervalId;
 
 self.addEventListener('message', (e) => {
   let message = e.data;
-  console.log(message)
   if(message.command === 'startSubjectTimer') {
     clearInterval(intervalId);
     intervalId = setInterval(() => {

@@ -5,33 +5,55 @@ import { StudyPerson, RestPerson } from "../../../utils/svgs";
 import MemberTimer from "../MemberTimer/MemberTimer";
 
 function MemberEl(props) {
-
-  const { memberInfo } = [props];
-  const [run, setRun] = useEffect(0);
-  const [sec, setSec] = useSearchParams(0);
-  const [studyIcon, setStudyIcon] = useState(<RestPerson width={'40px'} height={'40px'} opt1={'#000'} />)
+  const { memberInfo, toggleTimer, me, myTimerTotal } = props;
+  const [run, setRun] = useState(0);
+  const [sec, setSec] = useState(0);
+  const [studyIcon, setStudyIcon] = useState(
+    <RestPerson width={'40px'} height={'40px'} opt1={'#000'} />
+  );
 
   useEffect(() => {
     const studyInfo = memberInfo.study;
+    setSec(studyInfo.total);
     if (studyInfo.study) {
       setRun(1);
-      setSec(studyInfo.total);
-      setStudyIcon(<StudyPerson opt1={'#000'} width={'40px'} height={'40px'} />);
+      setStudyIcon(
+        <StudyPerson opt1={'#000'} width={'40px'} height={'40px'} />
+      );
     };
-    console.log('memberInfo')
   }, [memberInfo]);
+
+  useEffect(() => {
+    if (toggleTimer.id === memberInfo.user_id) {
+      const studyInfo = memberInfo.study;
+      setRun(toggleTimer.status);
+      if (toggleTimer.status) {
+        setStudyIcon(
+          <StudyPerson opt1={'#000'} width={'40px'} height={'40px'} />
+        );
+      } else {
+        setStudyIcon(
+          <RestPerson width={'40px'} height={'40px'} opt1={'#000'} />
+        );
+      };
+
+      /* if (userInfo && userInfo.user_id === toggleTimer.id) { 
+        //my timer
+        setSec(myTimerTotal);
+        console.log(userInfo, myTimerTotal)
+      } */
+    };
+  }, [toggleTimer]);
 
   return (
     <div className={styles.member} key={props.k}>
       <div className={styles.userName}>{memberInfo.name}</div>
-      <div className={styles.icon}>
-        {studyIcon}
-      </div>
+      <div className={styles.icon}>{studyIcon}</div>
       <div className={styles.timer}>
-        <MemberTimer run={run} sec={sec} />
+        <MemberTimer run={run} total={sec} me={me} myTimerTotal={myTimerTotal} />
       </div>
     </div>
   );
-};
+}
 
 export default MemberEl;

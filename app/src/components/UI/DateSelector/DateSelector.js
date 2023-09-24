@@ -31,7 +31,6 @@ export default function DateSelector(props) {
 
   const handleStartTimeChange = (newTime) => {
     const newTimeTs = new Date(newTime.ts);
-    console.log(newTimeTs)
     const updatedStart = new Date(props.start.getFullYear(), props.start.getMonth(), props.start.getDate(), newTimeTs.getHours(), newTimeTs.getMinutes());
     props.setStart(updatedStart);
   };
@@ -39,7 +38,6 @@ export default function DateSelector(props) {
 
   const handleEndTimeChange = (newTime) => {
     const newTimeTs = new Date(newTime.ts);
-    console.log(newTimeTs)
     const updatedEnd = new Date(props.start.getFullYear(), props.start.getMonth(), props.start.getDate(), newTimeTs.getHours(), newTimeTs.getMinutes());
 
     props.setEnd(updatedEnd);

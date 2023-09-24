@@ -39,7 +39,6 @@ function StatsCalendar(props) {
   ]);
   const handleDateClick = (arg) => {
     const currentDate = new Date(arg.date);
-    console.log(currentDate);
     props.setViewDate(new Date(currentDate.setHours(0, 0, 0, 0)));
 
     if (props.isCalendarOpen) {

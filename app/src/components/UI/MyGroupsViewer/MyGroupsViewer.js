@@ -14,92 +14,20 @@ import MemberEl from "../MemberEl/MemberEl";
 
 function MyGroupsViewer(props) {
 
-  const {myGroups} = props;
+  const { myGroups, socket, userInfo, subjects, myTimerTotal } = props;
 
-  const [membersEl, setMembersEl] = useState([]);
-  const [groupsEl, setGroupsEl] = useState([]);
-
-  useEffect(() => {
-    
-  }, [myGroups]);
+  const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
 
   useEffect(() => {
-    setGroupsEl(myGroups.map((group, i) => {
-      /* const membersEl = group.members.map((memberInfo, i) => {
-        const studyInfo = memberInfo.study;
-        console.log(studyInfo.study)
-        let sec = 0;
-        let run = studyInfo.study;
-        let studyIcon = <RestPerson width={'40px'} height={'40px'} opt1={'#000'} />
-        if (studyInfo.study) {
-          studyIcon = <StudyPerson opt1={'#000'} width={'40px'} height={'40px'} />
-          run = studyInfo.study;
-          sec = studyInfo.total;
-        };
-        if (new Date(studyInfo.point * 1000) == new Date()) {
-          sec = studyInfo.total;
-        };
-        return (
-          <div className={styles.member} key={i} >
-            <div className={styles.userName}>{memberInfo.name}</div>
-            <div className={styles.icon}>
-              {studyIcon}
-            </div>
-            <div className={styles.timer}>
-              <MemberTimer run={run} sec={sec} />
-            </div>
-          </div>
-        )
-      }); */
-      setMembersEl(group.members.map((memberInfo, i) => {
-        return (
-          <MemberEl memberInfo={memberInfo} key={i} k={i} />
-        )
-      }));
-  
-      return (
-        <SwiperSlide className={styles.slide} key={i}>
-          <div className={styles.inner}>
-            <div className={styles.name}>
-              <Link>
-                {group.name}
-              </Link>
-            </div>
-            <div className={styles.information}>
-              <div className={styles.header}>
-                <ul className={styles.status}>
-                  <li>
-                    <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
-                    <p>5/12</p>
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faBullhorn} />
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faRankingStar} />
-                  </li>
-                </ul>
-                <div className={styles.right}>
-                  <FontAwesomeIcon icon={faGear} />
-                </div>
-              </div>
-              <div className={styles.membersContainer}>
-                <div className={`${styles.members} customScroll`}>
-                  {membersEl}
-                </div>
-              </div>
-            </div>
-            <div className={styles.buttons}>
-              <button>Go to Group</button>
-              <button>
-                <FontAwesomeIcon icon={faComments} />
-              </button>
-            </div>
-          </div>
-        </SwiperSlide>
-      )
-    }))
-  }, [myGroups]);
+    socket.on("studying", (userId) => {
+      setToggleTimer({ id: userId, status: 1 });
+    });
+
+    socket.on("stopStudying", (userId) => {
+      console.log('stop')
+      setToggleTimer({ id: userId, status: 0 });
+    });
+  }, []);
 
   return (
     <div className={`${styles.MyGroupsViewer} ${props.mode === 'study' ? styles.study : ''}`}>
@@ -113,7 +41,60 @@ function MyGroupsViewer(props) {
         modules={[Pagination, Navigation]}
         className={styles.Swiper}
       >
-        {groupsEl}
+        {myGroups.map((group, i) => {
+          let membersEl = [];
+          if (group.members) {
+            membersEl = group.members.map((memberInfo, j) => {
+              return (
+                <MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} />
+              );
+            });
+          };
+
+          return (
+            <SwiperSlide className={styles.slide} key={i}>
+              <div className={styles.inner}>
+                <div className={styles.name}>
+                  <Link>
+                    {group.name}
+                  </Link>
+                </div>
+                <div className={styles.information}>
+                  <div className={styles.header}>
+                    <ul className={styles.status}>
+                      <li>
+                        <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
+                        <p>5/12</p>
+                      </li>
+                      <li>
+                        <FontAwesomeIcon icon={faBullhorn} />
+                      </li>
+                      <li>
+                        <FontAwesomeIcon icon={faRankingStar} />
+                      </li>
+                    </ul>
+                    <div className={styles.right}>
+                      <FontAwesomeIcon icon={faGear} />
+                    </div>
+                  </div>
+                  <div className={styles.membersContainer}>
+                    <div className={`${styles.members} customScroll`}>
+                      {group.members.map((memberInfo, j) => {
+                        return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} me={memberInfo.user_id === userInfo.user_id} />)
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.buttons}>
+                  <button>Go to Group</button>
+                  <button>
+                    <FontAwesomeIcon icon={faComments} />
+                  </button>
+                </div>
+              </div>
+            </SwiperSlide>
+          )
+        })}
       </Swiper>
     </div>
   );
