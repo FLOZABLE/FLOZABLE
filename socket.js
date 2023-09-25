@@ -90,9 +90,6 @@ io.on('connection', (socket) => {
     }
   })
 
-  socket.on('joinRoom', (room, userId) => {
-    socket.join(room);
-  });
 
   socket.on('getMembersTime', async (groups, userId) => {
     if (groups.length == 0) {
@@ -142,8 +139,22 @@ io.on('connection', (socket) => {
 
 cron.schedule('*/10 * * * * *', () => {
   const onlineMembers = io.engine.clientsCount;
-  console.log(onlineMembers)
   io.emit('onlineMembers', onlineMembers);
+
+  const allRooms = io.sockets.adapter.rooms;
+  for (const [groupId, socketIdsSet] of allRooms) {
+    const users = [];
+    for (const socketId of socketIdsSet) {
+      const socket = io.sockets.sockets.get(socketId);
+      if (socket && socket.userId) {
+        if (!users.includes(socket.userId)) {
+          users.push(socket.userId);
+        };
+      }
+    };
+    console.log(groupId, users);
+    io.to(groupId).emit('groupOnlineMembers', groupId, users);
+  };
 });
 
 module.exports = io;

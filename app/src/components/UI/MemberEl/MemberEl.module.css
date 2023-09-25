@@ -1,26 +1,11 @@
-
-.membersContainer {
-  padding-top: 60px;
-}
-
-.members {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 240px);
-  justify-content: center;
-  flex-wrap: wrap;
-  overflow-y: auto;
-  max-height: 350px;
-  gap: 20px;
-}
-
-.members .member {
+.member {
   height: 100px;
   margin: 20px;
   padding: 10px;
-  background-color: #f7f9fd;
   display: flex;
   align-items: center;
   flex-direction: column;
   border-radius: 20px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  background-color: #00000050;
 }
