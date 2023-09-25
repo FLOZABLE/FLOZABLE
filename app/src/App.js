@@ -17,15 +17,9 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isConnected, setIsConnected] = useState(socket.connected);
   const [subjects, setSubjects] = useState([]);
   const [isStudy, setIsStudy] = useState(false);
   const [updateSubjects, setUpdateSubjects] = useState(true);
-
-  useEffect(() => {
-    setIsConnected(socket.connected);
-    console.log(socket)
-  }, [socket.connected]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prevState => !prevState);

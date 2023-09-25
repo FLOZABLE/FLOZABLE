@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./StudyHeader.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboardCheck, faImage, faKey, faLink, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
+import { faClipboardCheck, faHourglass, faImage, faKey, faLink, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
 import { AllThemes } from "../../../utils/Themes";
 import CustomInput from "../CustomInput/CustomInput";
 import VolumeControl from "../VolumeControl/VolumeControl";
@@ -56,7 +56,7 @@ function StudyHeader(props) {
       <ul className={styles.left}>
         <li className={`${timerBtn ? styles.open : ''} ${styles.timer}`}>
           <button onClick={() => { setTimerBtn(!timerBtn) }} className={styles.dispBtn}>
-            <FontAwesomeIcon icon={faClipboardCheck} />
+            <FontAwesomeIcon icon={faHourglass} />
           </button>
           <div className={styles.hoverEl}>
             Timer
@@ -77,7 +77,6 @@ function StudyHeader(props) {
           <div className={styles.clickedEl}>
             {/* <SmallPlanner plannerBtn={plannerBtn} setPlannerBtn={setPlannerBtn} /> */}
             <PlanTimeline plans={events} viewDate={new Date(new Date().setHours(0, 0, 0, 0))} viewMode={"timeGridDay"} subjects={subjects} setPlans={setEvents} mode={"study"} setIsAddPlanModal={setIsAddPlanModal} />
-            <h4 onClick={() => { setIsAddPlanModal(true) }}>Add a New Plan</h4>
           </div>
         </li>
         <li className={`${backgrounBtn ? styles.open : ''}`}>

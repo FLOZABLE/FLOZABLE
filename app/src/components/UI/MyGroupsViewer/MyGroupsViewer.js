@@ -14,19 +14,22 @@ import MemberEl from "../MemberEl/MemberEl";
 
 function MyGroupsViewer(props) {
 
-  const { myGroups, socket, userInfo, subjects, myTimerTotal } = props;
+  const { myGroups, setMyGroups, socket, userInfo, subjects, myTimerTotal } = props;
 
   const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
 
   useEffect(() => {
     socket.on("studying", (userId) => {
       setToggleTimer({ id: userId, status: 1 });
+      console.log('myGroups',myGroups);
     });
 
     socket.on("stopStudying", (userId) => {
-      console.log('stop')
       setToggleTimer({ id: userId, status: 0 });
     });
+
+    socket.on("groupOnlineMembers", (group, users) => {
+    })
   }, []);
 
   return (
@@ -43,14 +46,18 @@ function MyGroupsViewer(props) {
       >
         {myGroups.map((group, i) => {
           let membersEl = [];
+          let studyingMembers = 0;
+
           if (group.members) {
             membersEl = group.members.map((memberInfo, j) => {
+              if (memberInfo.study.study) {
+                studyingMembers ++;
+              };
               return (
                 <MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} />
               );
             });
           };
-
           return (
             <SwiperSlide className={styles.slide} key={i}>
               <div className={styles.inner}>
@@ -64,7 +71,7 @@ function MyGroupsViewer(props) {
                     <ul className={styles.status}>
                       <li>
                         <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
-                        <p>5/12</p>
+                        <p>{studyingMembers}/{group.members.length}</p>
                       </li>
                       <li>
                         <FontAwesomeIcon icon={faBullhorn} />
@@ -93,7 +100,7 @@ function MyGroupsViewer(props) {
                 </div>
               </div>
             </SwiperSlide>
-          )
+          );
         })}
       </Swiper>
     </div>

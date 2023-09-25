@@ -9,7 +9,7 @@ function MemberEl(props) {
   const [run, setRun] = useState(0);
   const [sec, setSec] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
-    <RestPerson width={'40px'} height={'40px'} opt1={'#000'} />
+    <RestPerson width={'40px'} height={'40px'} opt1={'#fff'} />
   );
 
   useEffect(() => {
@@ -18,7 +18,7 @@ function MemberEl(props) {
     if (studyInfo.study) {
       setRun(1);
       setStudyIcon(
-        <StudyPerson opt1={'#000'} width={'40px'} height={'40px'} />
+        <StudyPerson opt1={'#fff'} width={'40px'} height={'40px'} />
       );
     };
   }, [memberInfo]);
@@ -29,11 +29,11 @@ function MemberEl(props) {
       setRun(toggleTimer.status);
       if (toggleTimer.status) {
         setStudyIcon(
-          <StudyPerson opt1={'#000'} width={'40px'} height={'40px'} />
+          <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
         );
       } else {
         setStudyIcon(
-          <RestPerson width={'40px'} height={'40px'} opt1={'#000'} />
+          <RestPerson width={'40px'} height={'40px'} opt1={'#fff'} />
         );
       };
 
