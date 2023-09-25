@@ -219,10 +219,10 @@ function Study(props) {
       <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
       <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={`${styles.myGroupsViewerWrapper} ${groupsBtn ? styles.open : ''}`}>
-          <MyGroupsViewer myGroups={myGroups} mode={'study'} socket={socket} userInfo={userInfo} subjects={subjects} myTimerTotal={myTimerTotal} />
+          <MyGroupsViewer myGroups={myGroups} setMyGroups={setMyGroups} mode={'study'} socket={socket} userInfo={userInfo} subjects={subjects} myTimerTotal={myTimerTotal} />
         </div>
         <div className={styles.PlanTimelineBarWrapper}>
-          <PlanTimelineBar />
+          <PlanTimelineBar events={events} subjects={subjects} />
         </div>
       </div>
       <div className={styles.ytBg}>

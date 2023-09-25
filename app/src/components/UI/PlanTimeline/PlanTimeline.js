@@ -158,10 +158,10 @@ function PlanTimeline(props) {
 
   return (
     <div className={`${isPlan ? styles.noPlan : ''} ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ''}`}>
+      <h4 onClick={() => { setIsAddPlanModal(true) }}>Add a New Plan</h4>
       <ul>
         {isPlan ? plansEl : <div className={styles.noPlanText} key={10}>
           <h3>You don't have any plans!</h3>
-          <h4 onClick={() => { setIsAddPlanModal(true) }}>Add a New Plan</h4>
         </div>}
       </ul>
     </div>

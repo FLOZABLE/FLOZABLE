@@ -45,7 +45,7 @@
 }
 
 .PlanTimelineBar .timelineWrapper .inner{
-  border: 1px solid rgb(63, 61, 61);
+  /* border: 1px solid transparent; */
   height:40px;
   margin-top: 60px;
   position: relative;
@@ -61,4 +61,32 @@
   align-items: center;
   justify-content: center;
   transform: translateX(-50%);
+}
+
+.PlanTimelineBar .wrapper {
+  position: relative;
+  background-color: aqua;
+}
+
+.PlanTimelineBar .eventWrapper {
+  z-index: 1;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 40px;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  cursor: pointer;
+}
+
+.PlanTimelineBar .border {
+  position: absolute;
+  right: 0px;
+  width: 2px;
+  background-color: rgb(63, 61, 61);
+  height: 40px;
+  top: 60px;
+  z-index: 2;
 }

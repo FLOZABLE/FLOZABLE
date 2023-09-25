@@ -8,33 +8,84 @@ import 'swiper/css/free-mode';
 import 'swiper/css/pagination';
 
 function PlanTimelineBar(props) {
+  const { events, subjects } = props;
+
   const [swiperIndex, setSwiperIndex] = useState(0);
   const [slide0, setSlide0] = useState([]);
   const [slide1, setSlide1] = useState([]);
   const [slide2, setSlide2] = useState([]);
   const [slide3, setSlide3] = useState([]);
+  const [slides, setSlides] = useState([]);
   const [dispTime, setDispTime] = useState(null);
   const [now, setNow] = useState(new Date());
   const [defaultMin, setDefaultMint] = useState(new Date().getMinutes());
-  const [plans, setPlans] = useState([]);
+
+
+  const [slide0Events, setSlide0Events] = useState([]);
+  const [slide1Events, setSlide1Events] = useState([]);
+  const [slide2Events, setSlide2Events] = useState([]);
+  const [slide3Events, setSlide3Events] = useState([]);
+
 
   //set default
   useEffect(() => {
     const now = new Date();
-    setDispTime(`${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`);
-    const hr = now.getHours() % 12;
-    setSlide0(
-      <p className={styles.hour}>{hr - 1}</p>
-    );
-    setSlide1(
-      <p className={styles.hour}>{hr}</p>
-    );
-    setSlide2(
-      <p className={styles.hour}>{hr + 1}</p>
-    );
-    setSlide3(
-      <p className={styles.hour}>{hr + 2}</p>
-    );
+    const todayStart = new Date().setHours(0, 0, 0, 0);
+    const todayEnd = new Date().setHours(23, 59, 59, 999);
+    setDispTime(`${now.getHours() % 12 ? now.getHours() % 12 : 12}:${now.getMinutes().toString().padStart(2, '0')}`);
+    const hr = now.getHours();
+    const slidesEl = [];
+    const todayEvents = events.filter(event => {
+      return (todayStart <= event.start.getTime() && todayEnd >= event.start.getTime())
+    });
+    console.log('today',todayEvents)
+    for (let i = 0; i < 24; i++) {
+      const hour = hr + i - 1;
+
+      slidesEl.push(
+        <SwiperSlide key={i}>
+          <div className={styles.inner}>
+            <p className={styles.hour}>{hour % 12 ? hour % 12 : 12}</p>
+            <div className={styles.events}>
+              {
+                todayEvents.map((event) => {
+                  if (event.start.getHours() === hour % 24) {
+                    let subject = subjects.find(subject => {return subject.id === event.subject});
+                    if (!subject) {
+                      subject = {
+                        color: '#fff'
+                      };
+                    };
+                    const width = (event.end.getTime() - event.start.getTime()) / 36000;
+                    const left = event.start.getMinutes() / 6 * 10 + '%';
+                    const startHr = event.start.getHours() % 12 ? event.start.getHours() % 12 : 12;
+                    const endHr = event.end.getHours() % 12 ? event.end.getHours() % 12 : 12;
+                    const startDisp = `${startHr}:${event.start.getMinutes().toString().padStart(2, '0')} - ${endHr}:${event.end.getMinutes().toString().padStart(2, '0')}`
+                    
+                    if (width > 5) {
+                      return (
+                        <div className={styles.eventWrapper} key={i * Math.random()} style={{backgroundColor: subject.color, width: width + '%', left: left}} >
+                          <p>{event.title}</p>
+                          <p>{startDisp}</p>
+                        </div>
+                      )
+                    } else {
+                      return (
+                        <div className={styles.eventWrapper} key={i * Math.random()} style={{backgroundColor: subject.color, width: '1%', left: left}} >
+                        </div>
+                      )
+                    }
+                  }
+                })
+              }
+            </div>
+          </div>
+          <div className={styles.border}></div>
+        </SwiperSlide>
+      );
+    };
+
+    setSlides(slidesEl);
     const intervalId = setInterval(() => {
       setNow(new Date());
     }, 1000 * 10);
@@ -42,14 +93,14 @@ function PlanTimelineBar(props) {
     return (() => {
       clearInterval(intervalId);
     });
-  }, []);
+  }, [events]);
 
   useEffect(() => {
-    const now  = new Date();
-    setDispTime(`${now.getHours() % 12}:${now.getMinutes().toString().padStart(2, '0')}`);
+    const now = new Date();
+    setDispTime(`${now.getHours() % 12 ? now.getHours() % 12 : 12}:${now.getMinutes().toString().padStart(2, '0')}`);
   }, [now.getMinutes()]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const now = new Date();
     const hr = now.getHours() % 12;
     const updateIndex = (swiperIndex + 1) % 4;
@@ -57,8 +108,11 @@ function PlanTimelineBar(props) {
       setSlide0(
         <p className={styles.hour}>{hr}</p>
       )
-    }
-  }, [swiperIndex]);
+    };
+    console.log(swiperIndex);
+    const startIndex = swiperIndex % 4;
+
+  }, [swiperIndex, events]); */
 
   const rootStyle = {
     /* '--percentage': `${(props.volume * 100) / 100}%`, // Update '--percentage' variable
@@ -86,30 +140,23 @@ function PlanTimelineBar(props) {
         modules={[FreeMode, Autoplay]}
         className={styles.timelineWrapper}
       >
-        <SwiperSlide>
-          <div className={styles.inner}>
-            {slide0}
-          </div>
+        {/* <SwiperSlide>
+          {slide0}
         </SwiperSlide>
         <SwiperSlide>
-          <div className={styles.inner}>
           {slide1}
-          </div>
         </SwiperSlide>
         <SwiperSlide>
-          <div className={styles.inner}>
           {slide2}
-          </div>
         </SwiperSlide>
         <SwiperSlide>
-          <div className={styles.inner}>
           {slide3}
-          </div>
-        </SwiperSlide>
+        </SwiperSlide> */}
+        {slides}
       </Swiper>
       <div className={styles.now}></div>
       <div className={styles.timeDisp}>
-      {dispTime}
+        {dispTime}
       </div>
     </div>
   );
