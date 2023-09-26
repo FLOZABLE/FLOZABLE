@@ -15,6 +15,8 @@ import MyGroupsViewer from '../../UI/MyGroupsViewer/MyGroupsViewer';
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Groups(props) {
+  const { socket, userInfo, subjects } = props;
+
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [groups, setGroups] = useState([]);
@@ -25,6 +27,7 @@ function Groups(props) {
   const [openGroupPwModal, setOpenGroupPwModal] = useState(false);
   const [joinTarget, setJoinTarget] = useState(null);
   const [allMembers, setAllMembers] = useState([]);
+  const [myTimerTotal, setMyTimerTotal] = useState(0);
 
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
@@ -43,12 +46,12 @@ function Groups(props) {
   }, []);
 
   useEffect(() => {
-    setLikedGroups(getLikedGroups(props.userInfo, groups));
-    const dividedGroups = getMyGroups(props.userInfo, groups);
+    setLikedGroups(getLikedGroups(userInfo, groups));
+    const dividedGroups = getMyGroups(userInfo, groups);
     setMyGroups(dividedGroups.myGroups);
     setOtherGroups(dividedGroups.otherGroups);
     //setOtherGroupsEl(otherGroupsGen(otherGroups, setNotificationResponse, setCopied, copied));
-  }, [props.userInfo, groups]);
+  }, [userInfo, groups]);
 
   useEffect(() => {
     if (joinTarget && joinGroupResponse.success) {
@@ -58,6 +61,11 @@ function Groups(props) {
     };
   }, [joinGroupResponse]);
 
+  useEffect(() => {
+    if (subjects.daily && subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]) {
+      setMyTimerTotal(subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]);
+    };
+  }, [subjects]);
 
   return (
     <div className={styles.GroupsContainer}>
@@ -75,7 +83,7 @@ function Groups(props) {
             </div>
             <div className={`${styles.container} ${styles.myGroups}`}>
               {/* <MyGroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={myGroups} setOpenGroupPwModal={setOpenGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} allMembers={allMembers} /> */}
-              <MyGroupsViewer myGroups={myGroups} />
+              <MyGroupsViewer myGroups={myGroups} socket={socket} userInfo={userInfo} myTimerTotal={myTimerTotal} />
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>
               <div className={styles.searchZone}>
