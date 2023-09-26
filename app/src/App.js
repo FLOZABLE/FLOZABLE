@@ -73,7 +73,7 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setPlans(data.plans.map(plan => {plan.saved = true; plan.start = new Date(plan.start * 1000 * 60); plan.end = new Date(plan.end * 1000 * 60); return plan}));
+          setPlans(data.plans.map(plan => { plan.saved = true; plan.start = new Date(plan.start * 1000 * 60); plan.end = new Date(plan.end * 1000 * 60); return plan }));
         };
       })
       .catch((error) => console.error(error));
@@ -127,7 +127,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
+            <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} />
             <Footer />
           </div>
         } />
@@ -143,7 +143,7 @@ function App() {
             <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} />
           </div>
         } />
-                <Route path="/dashboard/planner" element={
+        <Route path="/dashboard/planner" element={
           <div>
             <Sidebar isSidebarOpen={isSidebarOpen}
               onMouseEnter={handleMouseEnter}
@@ -151,7 +151,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans}/>
+            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans} />
           </div>
         } />
       </Routes>

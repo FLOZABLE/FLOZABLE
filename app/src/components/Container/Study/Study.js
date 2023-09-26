@@ -71,7 +71,7 @@ function Study(props) {
   }, [addSubjectResponse]);
 
   useEffect(() => {
-    if (subjects.daily) {
+    if (subjects.daily && subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]) {
       setMyTimerTotal(subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]);
     };
   }, [subjects]);

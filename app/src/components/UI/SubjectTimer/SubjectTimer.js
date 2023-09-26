@@ -111,7 +111,7 @@ function SubjectTimer(props) {
     <div className={styles.SubjectTimer}>
       <div className={styles.timerWrapper}>
         <button className={`${clicked ? styles.clicked : ''} ${styles.optBtn}`} onClick={() => { setClicked(!clicked) }}>
-          <p>{subject ? subject.name : ''}</p>
+          <p>{subject ? subject.name : 'Others'}</p>
           <p className={styles.mainTimeDisp}>
           {Math.floor(subjectTimer.total / 3600)}:{(Math.floor(subjectTimer.total / 60) % 60).toString().padStart(2, '0')}:{(subjectTimer.total % 60).toString().padStart(2, '0')}
           </p>

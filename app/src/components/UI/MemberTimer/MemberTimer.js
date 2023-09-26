@@ -29,9 +29,11 @@ function MemberTimer(props) {
 
   useEffect(() => {
     if (me) {
-      setSec(myTimerTotal % 60);
-      setMin(Math.floor(myTimerTotal / 60) % 60);
-      setHr(Math.floor(myTimerTotal / (60 * 60)));
+      if (!myTimerTotal) {
+        setSec(myTimerTotal % 60);
+        setMin(Math.floor(myTimerTotal / 60) % 60);
+        setHr(Math.floor(myTimerTotal / (60 * 60)));
+      };
     }
   }, [myTimerTotal]);
 
