@@ -15,6 +15,7 @@ const wrap = middleware => (socket, next) => middleware(socket.request, {}, next
 
 io.use(wrap(sessionMiddleWare));
 
+const userIdToSocketIdMap = new Map();
 
 io.on('connection', (socket) => {
   let session = false;
@@ -22,7 +23,6 @@ io.on('connection', (socket) => {
   if (process.env.NODE_ENV == "production") {
     try {
       session = socket.request.session;
-      console.log(session);
     } catch (err) {
       console.log(err);
     };
@@ -51,14 +51,13 @@ io.on('connection', (socket) => {
 
   socket.on('joinMyGroups', async () => {
     const connection = pool.promise();
-    console.log('joined')
     try {
       const [[userInfo]] = await connection.query(`SELECT groups from users where user_id = ?`, [session.user_id]);
-      console.log(userInfo)
       if (userInfo) {
         const myGroups = userInfo.groups.split(',');
         socket.join(myGroups);
         socket.userId = session.user_id;
+        userIdToSocketIdMap.set(socket.userId, socket.id);
         if (myGroups.length) {
           io.to(myGroups).emit('online', session.user_id);
         }
@@ -132,7 +131,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on("disconnect", (reason) => {
-    io.emit("offline", session.user_id);
+    console.log(socket.userId)
+    userIdToSocketIdMap.delete(socket.userId)
   });
 });
 
@@ -152,9 +152,8 @@ cron.schedule('*/10 * * * * *', () => {
         };
       }
     };
-    console.log(groupId, users);
     io.to(groupId).emit('groupOnlineMembers', groupId, users);
   };
 });
 
-module.exports = io;
+module.exports = { io, userIdToSocketIdMap };

@@ -1,9 +1,10 @@
 const redisClient = require("../model/redis");
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
-const { DateTime, IANAZone  } = require('luxon');
+const { DateTime } = require('luxon');
 const crypto = require("crypto");
 const pool = require("../model/pool");
+const { io, userIdToSocketIdMap } = require("../socket");
 
 async function timerUpdate() {
   const now = DateTime.utc();
@@ -18,12 +19,11 @@ async function timerUpdate() {
   const connection = pool.promise();
   try {
     const [usersInfo] = await connection.query(`SELECT subjects, user_id, daily, weekly, monthly FROM users where timezone IN (?)`, [midnightTimezones]);
-    //const [subjects] = await connection.query(`SELECT id from subjects`)
-    usersInfo.map(async(userInfo) => {
+    usersInfo.map(async (userInfo) => {
       if (userInfo.subjects) {
         userInfo.subjects = userInfo.subjects.split(`,`);
         console.log(userInfo.subjects);
-        userInfo.subjects.map(async(subject) => {
+        userInfo.subjects.map(async (subject) => {
           const todayTimeline = (await redisClient.lRange(`user:${userInfo.user_id}:subject:${subject}`, 0, -1)).map(JSON.parse);
           if (todayTimeline.length) {
             const insertTimeline = await connection.query(`UPDATE subjects SET timeline = JSON_ARRAY_APPEND(timeline, '$', ?) WHERE id = ?`, [JSON.stringify(todayTimeline), subject])

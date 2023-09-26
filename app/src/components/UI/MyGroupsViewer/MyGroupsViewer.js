@@ -17,20 +17,95 @@ function MyGroupsViewer(props) {
   const { myGroups, setMyGroups, socket, userInfo, subjects, myTimerTotal } = props;
 
   const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
+  const [groupStudying, setGroupStudying] = useState({});
 
   useEffect(() => {
-    socket.on("studying", (userId) => {
+/*     socket.on("studying", (userId, groups) => {
       setToggleTimer({ id: userId, status: 1 });
-      console.log('myGroups',myGroups);
+      groups.map(group => {
+        const updatedgroupStudying = { ...groupStudying };
+        console.log(updatedgroupStudying[group], group, updatedgroupStudying)
+        if (updatedgroupStudying[group]) {
+          console.log('exist');
+          updatedgroupStudying[group].members.push(userId);
+          setGroupStudying(updatedgroupStudying);
+        }
+      });
     });
 
-    socket.on("stopStudying", (userId) => {
+    socket.on("stopStudying", (userId, groups) => {
       setToggleTimer({ id: userId, status: 0 });
+      groups.map(group => {
+        const updatedgroupStudying = { ...groupStudying };
+        console.log(updatedgroupStudying[group])
+        if (updatedgroupStudying[group]) {
+          console.log('exist');
+          updatedgroupStudying[group].members.pop(userId);
+          setGroupStudying(updatedgroupStudying);
+        }
+      });
     });
 
-    socket.on("groupOnlineMembers", (group, users) => {
-    })
+    socket.on("groupmembers", (group, users) => {
+
+    }) */
   }, []);
+
+  useEffect(() => {
+    setGroupStudying(
+      Object.fromEntries(myGroups.map((group) => {
+        const members = [];
+        group.members.map(member => {
+          if (member.study.study) {
+            members.push(member.user_id);
+          };
+        });
+        return [group.group_id, { members: members }]
+      }))
+    );
+    const handleStudying = (userId, groups) => {
+      setToggleTimer({ id: userId, status: 1 });
+      groups.forEach((group) => {
+        setGroupStudying((prevGroupStudying) => {
+          const updatedGroupStudying = { ...prevGroupStudying };
+          if (updatedGroupStudying[group]) {
+            updatedGroupStudying[group].members.push(userId);
+          }
+          return updatedGroupStudying;
+        });
+      });
+    };
+  
+    const handleStopStudying = (userId, groups) => {
+      setToggleTimer({ id: userId, status: 0 });
+      groups.forEach((group) => {
+        setGroupStudying((prevGroupStudying) => {
+          const updatedGroupStudying = { ...prevGroupStudying };
+          if (updatedGroupStudying[group]) {
+            const index = updatedGroupStudying[group].members.indexOf(userId);
+            if (index !== -1) {
+              updatedGroupStudying[group].members.splice(index, 1);
+            }
+          }
+          return updatedGroupStudying;
+        });
+      });
+    };
+  
+    // Add event listeners
+    socket.on("studying", handleStudying);
+    socket.on("stopStudying", handleStopStudying);
+  
+    // Clean up the event listeners when the component unmounts
+    return () => {
+      socket.off("studying", handleStudying);
+      socket.off("stopStudying", handleStopStudying);
+    };
+  }, [myGroups]);
+
+  useEffect(() => {
+    console.log('online', groupStudying)
+  }, [groupStudying])
 
   return (
     <div className={`${styles.MyGroupsViewer} ${props.mode === 'study' ? styles.study : ''}`}>
@@ -46,13 +121,9 @@ function MyGroupsViewer(props) {
       >
         {myGroups.map((group, i) => {
           let membersEl = [];
-          let studyingMembers = 0;
 
           if (group.members) {
             membersEl = group.members.map((memberInfo, j) => {
-              if (memberInfo.study.study) {
-                studyingMembers ++;
-              };
               return (
                 <MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} />
               );
@@ -71,7 +142,7 @@ function MyGroupsViewer(props) {
                     <ul className={styles.status}>
                       <li>
                         <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
-                        <p>{studyingMembers}/{group.members.length}</p>
+                        <p>{groupStudying[group.group_id] ? groupStudying[group.group_id].members.length : 0}/{group.members.length}</p>
                       </li>
                       <li>
                         <FontAwesomeIcon icon={faBullhorn} />
