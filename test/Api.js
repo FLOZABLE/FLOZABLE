@@ -3,7 +3,7 @@ const Router = express.Router();
 const pool = require('../model/pool');
 const notificationService = require('../services/notification');
 const account = require('../Router/account');
-const io = require("../socket");
+const { io } = require("../socket");
 const Ajv = require('ajv');
 const ajv = new Ajv();
 const NodeCache = require('node-cache');
@@ -523,7 +523,7 @@ Router.post('/plan/update-plan', async (req, res) => {
   }
 });
 
-Router.post("/plan/status-change", async(req, res) => {
+Router.post("/plan/status-change", async (req, res) => {
   try {
     const planInfo = req.body;
 
@@ -542,19 +542,19 @@ Router.post("/plan/status-change", async(req, res) => {
     if (isValid) {
       const connection = pool.promise();
       try {
-        await connection.query(`UPDATE plans SET completed = ? WHERE id = ?`, [planInfo.completed, planInfo.id])  
-        res.send({success: true, msg: 'Updated'})
+        await connection.query(`UPDATE plans SET completed = ? WHERE id = ?`, [planInfo.completed, planInfo.id])
+        res.send({ success: true, msg: 'Updated' })
       } catch (err) {
         console.log(err);
       } finally {
         connection.releaseConnection();
       };
     } else {
-      res.send({success: false, reason: "Invalid data"});
+      res.send({ success: false, reason: "Invalid data" });
     }
   } catch (err) {
     console.log(err);
-    res.send({success: false, reason: "Err"});
+    res.send({ success: false, reason: "Err" });
   };
 })
 
@@ -701,7 +701,7 @@ Router.post("/study/start", async (req, res) => {
               console.log(`Socket ID: ${socket.id}, User ID: ${socket.userId}`);
             }
           }) */
-          io.to(groups).emit('studying', tester.id);
+          io.to(groups).emit('studying', tester.id, groups);
         }
         //io.to.emit("study")
       };
@@ -723,7 +723,7 @@ Router.post("/study/stop", async (req, res) => {
     redisClient.hSet(`user:${tester.id}`, `ActiveSubject`, '0');
     console.log(groups)
     if (groups.length) {
-      io.to(groups).emit('stopStudying', tester.id);
+      io.to(groups).emit('stopStudying', tester.id, groups);
     };
     const timerInfo = await redisClient.hGet(`user:${tester.id}`, 'timerInfo');
     if (timerInfo) {

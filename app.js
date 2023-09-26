@@ -75,7 +75,7 @@ const cspOptions = {
 }
 
 app.use(helmet.contentSecurityPolicy(cspOptions))  */
-const redisStore = new RedisStore({client: redisClient, ttl: 60 * 60 * 24 * 3});
+const redisStore = new RedisStore({ client: redisClient, ttl: 60 * 60 * 24 * 3 });
 
 const sessionMiddleWare = session({
   store: redisStore,
@@ -92,7 +92,7 @@ const sessionMiddleWare = session({
 
 app.use(sessionMiddleWare);
 
-module.exports = {server, sessionMiddleWare};
+module.exports = { server, sessionMiddleWare };
 //services
 const notificationService = require('./services/notification');
 notificationService.notificationService();
@@ -124,7 +124,7 @@ const testAPI = require('./test/Api');
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
-const io = require("./socket");
+const { io } = require("./socket");
 app.set('socketio', io);
 app.use(logger('dev'));
 app.use(bodyParser.json());
