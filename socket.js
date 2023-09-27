@@ -58,6 +58,13 @@ io.on('connection', (socket) => {
         socket.join(myGroups);
         socket.userId = session.user_id;
         userIdToSocketIdMap.set(socket.userId, socket.id);
+        socket.join(socket.userId);
+        /* const prevSocketId = userIdToSocketIdMap.get(socket.userId);
+        if (prevSocketId) {
+          userIdToSocketIdMap.set(socket.userId, socket.id);
+        } else {
+          userIdToSocketIdMap.set(socket.userId, prevSocketId + ',' + socket.id);
+        }; */
         if (myGroups.length) {
           io.to(myGroups).emit('online', session.user_id);
         }
@@ -132,7 +139,20 @@ io.on('connection', (socket) => {
 
   socket.on("disconnect", (reason) => {
     console.log(socket.userId)
-    userIdToSocketIdMap.delete(socket.userId)
+    let socketIds = userIdToSocketIdMap.get(socket.userId);
+    userIdToSocketIdMap.delete(socketIds);
+    /* try {
+      if (socketIds) {
+        socketIds = socketIds.split(',');
+        if (socketIds.length > 1) {
+          socketIds.pop(socket.id);
+        } else {
+          userIdToSocketIdMap.delete(socket.userId);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }; */
   });
 });
 

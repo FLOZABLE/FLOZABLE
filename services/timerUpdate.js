@@ -5,6 +5,7 @@ const { DateTime } = require('luxon');
 const crypto = require("crypto");
 const pool = require("../model/pool");
 const { io, userIdToSocketIdMap } = require("../socket");
+const cron = require("node-cron");
 
 async function timerUpdate() {
   const now = DateTime.utc();
@@ -22,14 +23,17 @@ async function timerUpdate() {
     usersInfo.map(async (userInfo) => {
       if (userInfo.subjects) {
         userInfo.subjects = userInfo.subjects.split(`,`);
-        console.log(userInfo.subjects);
         userInfo.subjects.map(async (subject) => {
           const todayTimeline = (await redisClient.lRange(`user:${userInfo.user_id}:subject:${subject}`, 0, -1)).map(JSON.parse);
           if (todayTimeline.length) {
             const insertTimeline = await connection.query(`UPDATE subjects SET timeline = JSON_ARRAY_APPEND(timeline, '$', ?) WHERE id = ?`, [JSON.stringify(todayTimeline), subject])
           };
-          const deleteTodayTimeline = await redisClient.del(`user:${userInfo.user_id}:subject:${subject}`);
+          redisClient.del(`user:${userInfo.user_id}:subject:${subject}`);
         });
+      };
+      const socketId = userIdToSocketIdMap.get(userInfo.user_id);
+      if (socketId) {
+        io.to(socketId).emit('reset');
       };
       //const todayTimeline = (await redisClient.lRange(`user:${userInfo.user_id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
       //console.log(todayTimeline);
@@ -41,6 +45,10 @@ async function timerUpdate() {
     connection.releaseConnection();
   };
 };
+
+cron.schedule('*/5 * * * * *', () => {
+  timerUpdate();
+});
 
 module.exports = {
   timerUpdate: timerUpdate

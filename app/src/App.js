@@ -19,6 +19,7 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [subjects, setSubjects] = useState([]);
   const [isStudy, setIsStudy] = useState(false);
+  const [reset, setReset] = useState(false)
   const [updateSubjects, setUpdateSubjects] = useState(true);
 
   const toggleSidebar = () => {
@@ -26,9 +27,24 @@ function App() {
   };
 
   useEffect(() => {
-    socket.on('connect', () => {
+    const socketConnectAction = () => {
       socket.emit('joinMyGroups');
-    });
+    };
+  
+    const socketResetAction = () => {
+      setReset(prevReset => !prevReset);
+      setTimeout(() => {
+        setReset(prevReset => !prevReset);
+      }, 100);
+    };
+  
+    socket.on('connect', socketConnectAction);
+    socket.on('reset', socketResetAction);
+  
+    return () => {
+      socket.off("joinMyGroups", socketConnectAction);
+      socket.off("reset", socketResetAction);
+    };
   }, []);
 
   const [isHovered, setIsHovered] = useState(false);
@@ -103,7 +119,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Stats setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
+            <Stats setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} />
             <Footer />
           </div>
         } />
@@ -115,7 +131,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Ranking setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
+            <Ranking setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} />
             <Footer />
           </div>
         } />
@@ -127,7 +143,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} />
+            <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} reset={reset} />
             <Footer />
           </div>
         } />
@@ -140,7 +156,7 @@ function App() {
               mode={"study"}
             />
             {/* <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} mode={"study"} /> */}
-            <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} />
+            <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} />
           </div>
         } />
         <Route path="/dashboard/planner" element={
@@ -151,7 +167,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
-            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans} />
+            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans} reset={reset} />
           </div>
         } />
       </Routes>
