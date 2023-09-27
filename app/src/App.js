@@ -72,6 +72,10 @@ function App() {
   }, []);
 
   useEffect(() => {
+    console.log('socket',socket)
+  }, [socket.connected]);
+
+  useEffect(() => {
     fetch(`${serverOrigin}/api/information/bring-subjects`, { method: 'post' })
       .then((response) => response.json())
       .then((data) => {

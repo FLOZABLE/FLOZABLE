@@ -9,3 +9,8 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+if (process.env.REACT_APP_DEVICE === "chromebook") {
+  const eruda = require('eruda');
+  eruda.init();
+};
