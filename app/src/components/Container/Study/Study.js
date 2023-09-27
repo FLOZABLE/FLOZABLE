@@ -17,7 +17,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Study(props) {
 
-  const { isStudy, setIsStudy, subjects, setSubjects, socket, userInfo, events, setEvents } = props;
+  const { isStudy, setIsStudy, subjects, setSubjects, socket, userInfo, events, setEvents, reset } = props;
 
   const [myGroups, setMyGroups] = useState([]);
   const [allGroups, setAllGroups] = useState([]);
@@ -59,6 +59,12 @@ function Study(props) {
       })
       .catch((error) => console.error(error));
   }, []);
+
+  useEffect(() => {
+    if (reset) {
+      window.alert(JSON.stringify(subject))
+    };
+  }, [reset])
 
   useEffect(() => {
     setMyGroups(getMyGroups(props.userInfo, allGroups, membersInfo).myGroups);
@@ -191,7 +197,7 @@ function Study(props) {
 
   return (
     <div className={styles.StudyContainer}>
-      <StudyHeader subjects={subjects} subject={timerSubject} setSubject={setTimerSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} events={events} setEvents={setEvents} setIsAddPlanModal={setIsAddPlanModal} mode={"study"} />
+      <StudyHeader subjects={subjects} subject={timerSubject} setSubject={setTimerSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} events={events} setEvents={setEvents} setIsAddPlanModal={setIsAddPlanModal} mode={"study"} reset={reset} />
       <TopNotification duration={3000} response={addPlanResponse} />
       <EventModal
         isAddPlanModal={isAddPlanModal}
