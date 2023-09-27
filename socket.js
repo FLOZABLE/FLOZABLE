@@ -4,7 +4,7 @@ const pool = require("./model/pool");
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: ["http://localhost:3001", "http://localhost:3000"],
+    origin: ["http://localhost:3001", "http://localhost:3000", "https://super-meme-qx696prxr4j264qx-3001.app.github.dev", "https://super-meme-qx696prxr4j264qx-3000.app.github.dev"],
     credentials: true,
     methods: ["GET", "POST"],
   },
@@ -46,8 +46,14 @@ io.on('connection', (socket) => {
         myinfo: null,
         timeZone: 'America/Los_Angeles'
       }
-    }
-  }
+    };
+  };
+
+  socket.join(myGroups);
+  socket.userId = session.user_id;
+  userIdToSocketIdMap.set(socket.userId, socket.id);
+  socket.join(socket.userId);
+  console.log(userIdToSocketIdMap)
 
   socket.on('joinMyGroups', async () => {
     const connection = pool.promise();
@@ -55,10 +61,6 @@ io.on('connection', (socket) => {
       const [[userInfo]] = await connection.query(`SELECT groups from users where user_id = ?`, [session.user_id]);
       if (userInfo) {
         const myGroups = userInfo.groups.split(',');
-        socket.join(myGroups);
-        socket.userId = session.user_id;
-        userIdToSocketIdMap.set(socket.userId, socket.id);
-        socket.join(socket.userId);
         /* const prevSocketId = userIdToSocketIdMap.get(socket.userId);
         if (prevSocketId) {
           userIdToSocketIdMap.set(socket.userId, socket.id);

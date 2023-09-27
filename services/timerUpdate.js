@@ -19,7 +19,7 @@ async function timerUpdate() {
   });
   const connection = pool.promise();
   try {
-    const [usersInfo] = await connection.query(`SELECT subjects, user_id, daily, weekly, monthly FROM users where timezone IN (?)`, [midnightTimezones]);
+    const [usersInfo] = await connection.query(`SELECT subjects, name, user_id, daily, weekly, monthly FROM users where timezone IN (?)`, [midnightTimezones]);
     usersInfo.map(async (userInfo) => {
       if (userInfo.subjects) {
         userInfo.subjects = userInfo.subjects.split(`,`);
@@ -32,6 +32,7 @@ async function timerUpdate() {
         });
       };
       const socketId = userIdToSocketIdMap.get(userInfo.user_id);
+      //console.log(socketId, userInfo.user_id)
       if (socketId) {
         io.to(socketId).emit('reset');
       };
