@@ -75,15 +75,19 @@ function App() {
     console.log('socket',socket)
   }, [socket.connected]);
 
-  useEffect(() => {
+  const fetchSubjects = () => {
     fetch(`${serverOrigin}/api/information/bring-subjects`, { method: 'post' })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setSubjects(sortSubjects(data.subjects));
-        }
-      })
-      .catch((error) => console.error(error));
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        setSubjects(sortSubjects(data.subjects));
+      }
+    })
+    .catch((error) => console.error(error));
+  };
+
+  useEffect(() => {
+    fetchSubjects();
   }, []);
 
   const [plans, setPlans] = useState([]);
@@ -99,6 +103,11 @@ function App() {
       .catch((error) => console.error(error));
   }, []);
 
+  useEffect(() => {
+    if (reset) {
+      fetchSubjects();
+    };
+  }, [reset]);
 
   return (
     <Router>
