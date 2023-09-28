@@ -49,7 +49,6 @@ io.on('connection', (socket) => {
     };
   };
 
-  socket.join(myGroups);
   socket.userId = session.user_id;
   userIdToSocketIdMap.set(socket.userId, socket.id);
   socket.join(socket.userId);
@@ -67,6 +66,7 @@ io.on('connection', (socket) => {
         } else {
           userIdToSocketIdMap.set(socket.userId, prevSocketId + ',' + socket.id);
         }; */
+        socket.join(myGroups);
         if (myGroups.length) {
           io.to(myGroups).emit('online', session.user_id);
         }

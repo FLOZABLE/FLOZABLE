@@ -38,6 +38,10 @@ const testTools = require('./test/generate');
 //testTools.testGroupGeneration(40);
 //testTools.deleteGroups();
 //testTools.deleteTestUsers();
+const datasets = require('./test/Datasets');
+datasets.getSubjects();
+datasets.getPlans();
+
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 //app.use(cors({origin: 'chrome-extension://dalobnhjngmjgnkdjkeonfnbbkaclcpm'}));

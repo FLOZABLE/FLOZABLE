@@ -21,25 +21,37 @@ async function timerUpdate() {
   try {
     const [usersInfo] = await connection.query(`SELECT subjects, name, user_id, daily, weekly, monthly FROM users where timezone IN (?)`, [midnightTimezones]);
     usersInfo.map(async (userInfo) => {
+      const userId = userInfo.user_id;
+      const studyInfo = await redisClient.hGet(`user:${userId}`, `timerInfo`);
+      const now = Math.floor(new Date().getTime() / 1000);
+      let activeSubject = -1;
+      if (studyInfo && JSON.parse(studyInfo).study) {
+        console.log("study interupt")
+        activeSubject = JSON.parse(await redisClient.hGet(`user:${userId}`, 'ActiveSubject'));
+        const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
+        const start = activity[0];
+        const stop = now - activeSubject.datum_point;
+        await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${stop}]`);
+      };
       if (userInfo.subjects) {
         userInfo.subjects = userInfo.subjects.split(`,`);
-        userInfo.subjects.map(async (subject) => {
-          const todayTimeline = (await redisClient.lRange(`user:${userInfo.user_id}:subject:${subject}`, 0, -1)).map(JSON.parse);
+        for (const subject of userInfo.subjects) {
+          const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject}`, 0, -1)).map(JSON.parse);
           if (todayTimeline.length) {
             const insertTimeline = await connection.query(`UPDATE subjects SET timeline = JSON_ARRAY_APPEND(timeline, '$', ?) WHERE id = ?`, [JSON.stringify(todayTimeline), subject])
           };
-          redisClient.del(`user:${userInfo.user_id}:subject:${subject}`);
-        });
+          await redisClient.lTrim(`user:${userId}:subject:${subject}`, 1, 0);
+        }
       };
-      const socketId = userIdToSocketIdMap.get(userInfo.user_id);
-      //console.log(socketId, userInfo.user_id)
+      if (activeSubject !== -1) {
+        const start = now - activeSubject.datum_point;
+        const push = await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${start}]`);
+      };
+      const socketId = userIdToSocketIdMap.get(userId);
       if (socketId) {
         io.to(socketId).emit('reset');
       };
-      //const todayTimeline = (await redisClient.lRange(`user:${userInfo.user_id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
-      //console.log(todayTimeline);
     });
-    //console.log(subjects);
   } catch (err) {
     console.log(err);
   } finally {
@@ -47,7 +59,7 @@ async function timerUpdate() {
   };
 };
 
-cron.schedule('*/5 * * * * *', () => {
+cron.schedule('*/60 * * * * *', () => {
   timerUpdate();
 });
 
