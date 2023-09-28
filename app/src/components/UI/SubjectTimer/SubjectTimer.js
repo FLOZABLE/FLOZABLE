@@ -7,7 +7,7 @@ import worker from "./TimerWorker";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function SubjectTimer(props) {
-  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal } = props;
+  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, reset } = props;
   const timerDispRef = useRef(null);
 
   const [options, setOptions] = useState([]);
@@ -85,6 +85,16 @@ function SubjectTimer(props) {
     }
     setIsStudy(!isStudy);
   };
+
+  useEffect(() => {
+    console.log('reset:',reset)
+    if (reset && isStudy) {
+      console.log("reset")
+      setSubjectTimer({total: 0});
+      /* toggleTimer();
+      toggleTimer(); */
+    };
+  }, [reset]);
 
   useEffect(() => {
     const messageHandler = (e) => {

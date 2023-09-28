@@ -61,12 +61,6 @@ function Study(props) {
   }, []);
 
   useEffect(() => {
-    if (reset) {
-      window.alert(JSON.stringify(subject))
-    };
-  }, [reset])
-
-  useEffect(() => {
     setMyGroups(getMyGroups(props.userInfo, allGroups, membersInfo).myGroups);
   }, [allGroups, props.userInfo]);
 
