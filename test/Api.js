@@ -419,10 +419,6 @@ Router.post('/groups/bring-groups', async (req, res) => {
 });
 
 Router.post('/groups/like/:id', async (req, res) => {
-  if (!req.session.loggedin) {
-    return res.send({ success: false, reason: 'not authenticated' })
-  }
-
   const groupId = req.params.id;
   const connection = pool.promise();
   try {
