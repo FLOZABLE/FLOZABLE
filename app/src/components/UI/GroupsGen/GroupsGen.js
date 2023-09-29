@@ -7,19 +7,22 @@ import styles from "./GroupsGen.module.css";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function GroupsGen(props) {
+
+  const { searchQuery, setJoinGroupResponse, joinGroupResponse, setOpenGroupPwModal, setJoinTarget, groups, userInfo, queryTags } = props;
+
   const [copied, setCopied] = useState(null);
 
   const joinGroup = (group) => {
-    props.setJoinTarget(group);
+    setJoinTarget(group);
     if (group.visibility) {
       fetch(`${serverOrigin}/api/groups/join/${group.group_id}`, { method: 'post' })
-      .then((response) => response.json())
-      .then((data) => {
-        props.setJoinGroupResponse(data);
-      })
-      .catch((error) => console.error(error));
+        .then((response) => response.json())
+        .then((data) => {
+          setJoinGroupResponse(data);
+        })
+        .catch((error) => console.error(error));
     } else {
-      props.setOpenGroupPwModal(true);
+      setOpenGroupPwModal(true);
     }
   };
 
@@ -32,14 +35,18 @@ function GroupsGen(props) {
   };
 
   useEffect(() => {
-    const query = props.searchQuery;
+    //searchQuery;
 
-  }, [props.searchQuery]);
+  }, [searchQuery]);
 
   //`https://flozable.com/groups/join/${group.group_id}`, i
   //otherGroups, setNotificationResponse, setCopied, copied
-  const otherGroupsEl = props.groups.map((group, i) => {
+  const groupsCopy = Array.from(groups);
+  const otherGroupsEl = groupsCopy.map((group, i) => {
     const tags = JSON.parse(group.tags);
+    const likes = group.likes.split(",");
+    const liked = likes.includes(userInfo.user_id)
+    console.log(group)
     const tagsEl = tags.map((tag, i) => {
       return (
         <li className={styles.tag} key={i}>{tag}</li>
@@ -48,7 +55,7 @@ function GroupsGen(props) {
 
 
     return (
-      <div className={styles.groupContainer} key={i}>
+      <div className={`${styles.groupContainer} ${group.name.toLowerCase().includes(searchQuery) || searchQuery == '' ? '' : styles.hidden}`} key={i}>
         <div className={styles.group}>
           <div className={styles.groupColor} style={{ backgroundColor: group.color }}></div>
           <div className={styles.name}>
@@ -60,20 +67,20 @@ function GroupsGen(props) {
           <div className={styles.explanation}>
             <ul className={styles.info}>
               <li>
-              <FontAwesomeIcon icon={faPeopleGroup} />
+                <FontAwesomeIcon icon={faPeopleGroup} />
+                <p>{group.members.length}</p>
+              </li>
+              <li>
+                <FontAwesomeIcon icon={faBullseye} />
+                <p>{group.goal_hr}hr</p>
+              </li>
+              <li>
+                <FontAwesomeIcon icon={faStopwatch} />
                 <p>dd</p>
               </li>
               <li>
-              <FontAwesomeIcon icon={faBullseye} />
-                <p>9hr</p>
-              </li>
-              <li>
-              <FontAwesomeIcon icon={faStopwatch} />
-                <p>dd</p>
-              </li>
-              <li>
-              <FontAwesomeIcon icon={faHeart} />
-                <p>dd</p>
+                <FontAwesomeIcon icon={faHeart} />
+                <p>{likes.length}</p>
               </li>
             </ul>
             {group.explanation}
@@ -83,8 +90,8 @@ function GroupsGen(props) {
               {tagsEl}
             </ul>
             <div className={styles.buttons}>
-              <LikeBtn />
-              <button onClick={() => { joinGroup(group, props.joinGroupResponse) }}>
+              <LikeBtn liked={liked} id={group.group_id}/>
+              <button onClick={() => { joinGroup(group, joinGroupResponse) }}>
                 Join
               </button>
               <button onClick={() => { handleCopyClick(group.group_id) }}>

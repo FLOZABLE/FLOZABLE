@@ -31,6 +31,7 @@ function Groups(props) {
 
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
+    console.log(tags)
   };
 
   useEffect(() => {
@@ -98,7 +99,7 @@ function Groups(props) {
                 </button>
               </div>
               <div className={styles.groupsWrapper}>
-                <GroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={otherGroups} setOpenGroupPwModal={setOpenGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} />
+                <GroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={otherGroups} setOpenGroupPwModal={setOpenGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} userInfo={userInfo} queryTags={tags} />
                 {/* <otherGroupsGen otherGroups={otherGroups} setNotificationResponse={setNotificationResponse} setCopied={setCopied} copied={copied} /> */}
               </div>
             </div>

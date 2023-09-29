@@ -17,6 +17,10 @@
   align-items: center;
 }
 
+.groupContainer.hidden {
+  display: none;
+}
+
 .groupContainer .groupColor {
   width: 50px;
   height: 50px;
