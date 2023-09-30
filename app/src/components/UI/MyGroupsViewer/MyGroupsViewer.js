@@ -63,14 +63,17 @@ function MyGroupsViewer(props) {
         return [group.group_id, { members: members }]
       }))
     );
+  }, [myGroups]);
+
+  useEffect(() => {
     const handleStudying = (userId, groups) => {
       setToggleTimer({ id: userId, status: 1 });
       groups.forEach((group) => {
         setGroupStudying((prevGroupStudying) => {
           const updatedGroupStudying = { ...prevGroupStudying };
-          if (updatedGroupStudying[group]) {
+          if (updatedGroupStudying[group] && !updatedGroupStudying[group].members.includes(userId)) {
             updatedGroupStudying[group].members.push(userId);
-          }
+          };
           return updatedGroupStudying;
         });
       });
@@ -101,7 +104,7 @@ function MyGroupsViewer(props) {
       socket.off("studying", handleStudying);
       socket.off("stopStudying", handleStopStudying);
     };
-  }, [myGroups]);
+  }, []);
 
   useEffect(() => {
     console.log('online', groupStudying)

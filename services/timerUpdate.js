@@ -59,7 +59,7 @@ async function timerUpdate() {
   };
 };
 
-cron.schedule('*/3600 * * * * *', () => {
+cron.schedule('0 * * * *', () => {
   timerUpdate();
 });
 
