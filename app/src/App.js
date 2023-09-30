@@ -10,6 +10,7 @@ import Sidebar from './components/UI/Sidebar/Sidebar';
 import Header from './components/UI/Header/Header';
 import Footer from './components/UI/Footer/Footer';
 import Planner from './components/Container/Planner/Planner';
+import ChatModal from './components/UI/ChatModal/ChatModal';
 import { sortSubjects } from './components/Container/Stats/StatTools';
 import { socket } from "./socket";
 
@@ -21,6 +22,7 @@ function App() {
   const [isStudy, setIsStudy] = useState(false);
   const [reset, setReset] = useState(false)
   const [updateSubjects, setUpdateSubjects] = useState(true);
+  const [isChatModal, setIsChatModal] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prevState => !prevState);
@@ -155,6 +157,7 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
             <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} reset={reset} />
             <Footer />
