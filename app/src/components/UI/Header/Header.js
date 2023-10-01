@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faCommentDots, faCalendar, faClock, faBook, faMobileScreenButton, faFire, faArrowsToCircle } from '@fortawesome/free-solid-svg-icons';
 import ToggleBtn from "../ToggleBtn/ToggleBtn";
 import styles from "./Header.module.css";
 
 function Header(props) {
+  const { isChatModal, setIsChatModal } = props;
+
   const [isScrolled, setIsScrolled] = useState(false);
+  const messageDropDownRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,7 +38,7 @@ function Header(props) {
         />
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-          <FontAwesomeIcon icon={faBook} style={{color: "#348d50",}} />
+            <FontAwesomeIcon icon={faBook} style={{ color: "#348d50", }} />
           </div>
           <div className={styles.text}>
             <h5>0.3h</h5>
@@ -44,7 +47,7 @@ function Header(props) {
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-          <FontAwesomeIcon icon={faMobileScreenButton} style={{color: "#ff562d",}} />
+            <FontAwesomeIcon icon={faMobileScreenButton} style={{ color: "#ff562d", }} />
           </div>
           <div className={styles.text}>
             <h5>2h</h5>
@@ -53,7 +56,7 @@ function Header(props) {
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-          <FontAwesomeIcon icon={faFire} style={{color: "#2c70ff",}} />
+            <FontAwesomeIcon icon={faFire} style={{ color: "#2c70ff", }} />
           </div>
           <div className={styles.text}>
             <h5>5</h5>
@@ -62,7 +65,7 @@ function Header(props) {
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-          <FontAwesomeIcon icon={faArrowsToCircle} style={{color: "#705dc1",}} />
+            <FontAwesomeIcon icon={faArrowsToCircle} style={{ color: "#705dc1", }} />
           </div>
           <div className={styles.text}>
             <h5>0.2h</h5>
@@ -72,15 +75,15 @@ function Header(props) {
       </div>
       <div className={styles.right}>
         <div className={styles.headerEl}>
-        <div className={styles.dropDown}>
+          <div className={styles.dropDown}>
             <button><FontAwesomeIcon icon={faCalendar} style={{ color: "#ffffff" }} /></button>
             <div className={styles.dropDownContent}>
-            <div className={styles.inner}>
-              <h3 className={styles.title}>Today's Plan</h3>
+              <div className={styles.inner}>
+                <h3 className={styles.title}>Today's Plan</h3>
                 <ul>
                   <li>
                     <div className={styles.icon}>
-                    <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
+                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
                     </div>
                     <div className={styles.explanation}>
                       <p className={styles.topic}>JaSon</p>
@@ -89,7 +92,7 @@ function Header(props) {
                   </li>
                   <li>
                     <div className={styles.icon}>
-                    <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
+                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
                     </div>
                     <div className={styles.explanation}>
                       <p className={styles.topic}>Run payoll</p>
@@ -103,12 +106,12 @@ function Header(props) {
           <div className={styles.dropDown}>
             <button><FontAwesomeIcon icon={faBell} style={{ color: "#ffffff" }} /></button>
             <div className={styles.dropDownContent}>
-            <div className={styles.inner}>
-              <h3 className={styles.title}>Notifications</h3>
+              <div className={styles.inner}>
+                <h3 className={styles.title}>Notifications</h3>
                 <ul>
                   <li>
                     <div className={styles.icon}>
-                    <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
+                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
                     </div>
                     <div className={styles.explanation}>
                       <p className={styles.topic}>JaSon</p>
@@ -117,7 +120,7 @@ function Header(props) {
                   </li>
                   <li>
                     <div className={styles.icon}>
-                    <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
+                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
                     </div>
                     <div className={styles.explanation}>
                       <p className={styles.topic}>Run payoll</p>
@@ -129,14 +132,14 @@ function Header(props) {
             </div>
           </div>
           <div className={styles.dropDown}>
-            <button><FontAwesomeIcon icon={faCommentDots} style={{ color: "#ffffff" }} /></button>
-            <div className={styles.dropDownContent}>
-            <div className={styles.inner}>
-              <h3 className={styles.title}>Messages</h3>
+            <button onClick={() => { setIsChatModal(!isChatModal) }}><FontAwesomeIcon icon={faCommentDots} style={{ color: "#ffffff" }} /></button>
+            <div className={`${styles.dropDownContent} ${isChatModal ? styles.chatModalOpen : ''}`} onClick={() => {setIsChatModal(!isChatModal)}} >
+              <div className={styles.inner}>
+                <h3 className={styles.title}>Messages</h3>
                 <ul>
                   <li>
                     <div className={styles.icon}>
-                    <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
+                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
                     </div>
                     <div className={styles.explanation}>
                       <p className={styles.topic}>JaSon</p>
@@ -145,7 +148,7 @@ function Header(props) {
                   </li>
                   <li>
                     <div className={styles.icon}>
-                    <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
+                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
                     </div>
                     <div className={styles.explanation}>
                       <p className={styles.topic}>Run payoll</p>
@@ -159,12 +162,12 @@ function Header(props) {
           <div className={styles.dropDown}>
             <button><img src="/profile.png" alt="" /></button>
             <div className={styles.dropDownContent}>
-            <div className={styles.inner}>
-              <h3 className={styles.title}>Profile Setting</h3>
+              <div className={styles.inner}>
+                <h3 className={styles.title}>Profile Setting</h3>
                 <ul>
                   <li>
                     <div className={styles.icon}>
-                    <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
+                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
                     </div>
                     <div className={styles.explanation}>
                       <p className={styles.topic}>JaSon</p>
@@ -173,7 +176,7 @@ function Header(props) {
                   </li>
                   <li>
                     <div className={styles.icon}>
-                    <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
+                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
                     </div>
                     <div className={styles.explanation}>
                       <p className={styles.topic}>Run payoll</p>
