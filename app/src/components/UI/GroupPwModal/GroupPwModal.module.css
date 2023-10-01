@@ -20,7 +20,7 @@
   display: flex;
   width: 100%;
   background-color: #ff9494ff;
-  height: 60px;
+  height: 40px;
   align-items: center;
 }
 
@@ -35,6 +35,12 @@
 .GroupPwModal .content {
   padding: 30px;
   color: #ff9494ff;
+}
+
+.GroupPwModal .submitBtnWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .GroupPwModal .content > div {
