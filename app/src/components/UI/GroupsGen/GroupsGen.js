@@ -38,7 +38,7 @@ function GroupsGen(props) {
     setOtherGroupsEl(
       Array.from(groups).map((group, i) => {
         if (i == 0) {
-          console.log("rerendered")
+          console.log("rerendered", searchQuery)
         }
         const tags = JSON.parse(group.tags);
         const likes = group.likes.split(",");
@@ -51,7 +51,7 @@ function GroupsGen(props) {
     
         /* ${(group.name.toLowerCase().includes(searchQuery) || group.tags.includes(searchQuery) || tags.some(element => queryTags.includes(element))) || (searchQuery === '' && !queryTags.length) ? '' : styles.hidden} */
         let isSearched = false;
-        if (!queryTags.length && searchQuery === "") {
+        if (!queryTags.length && (searchQuery === "" || typeof searchQuery === "undefined")) {
           isSearched = true;
         } else if (queryTags.length && searchQuery === "") {
           if (tags.some(element => queryTags.includes(element.toLowerCase()))) {
@@ -120,7 +120,7 @@ function GroupsGen(props) {
         );
       })
     )
-  }, [queryTags, searchQuery]);
+  }, [queryTags, searchQuery, groups]);
   return otherGroupsEl;
 };
 

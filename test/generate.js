@@ -201,7 +201,18 @@ async function generateGroups(length) {
       font: Math.floor(Math.random() * 13)
     }
     connection.query(`INSERT INTO \`groups\` SET ?`, groupInfo);
-  }
+    
+    const roomInfo = {
+      id: generateRandomId(10),
+      group_id: group.group_id,
+      name: 'general',
+      type: 1,
+      members: '*'
+    }
+
+    const addGroupRoom = await connection.query('INSERT INTO chatrooms set ?', roomInfo);
+
+  };
 
   pool.releaseConnection(connection);
 };
@@ -227,7 +238,7 @@ async function deleteGroups() {
   } finally {
     pool.releaseConnection(connection);
   };
-}
+};
 
 module.exports = {
   testUserGeneration: generateUsers,

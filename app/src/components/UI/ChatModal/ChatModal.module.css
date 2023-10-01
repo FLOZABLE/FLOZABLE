@@ -1,19 +1,20 @@
 .ChatModal {
   position: fixed;
-  right: 50px;
-  top: 200px;
+  right: -500px;
+  bottom: 100px;
   background-color: #fff;
-  height: 700px;
+  height: 550px;
   width: 400px;
-  z-index: 5;
+  z-index: 3;
   border-radius: 20px;
   transition: transform .3s ease-in-out;
   overflow: hidden;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  overflow: hidden;
 }
 
 .ChatModal.open {
-  transform: translateX(-100px);
+  transform: translateX(-550px);
 }
 
 .ChatModal .header {
@@ -30,4 +31,120 @@
   color: #fff;
 }
 
-/* sidebar chat animation */
+.ChatModal .sidebar {
+  height: 100%;
+  width: 230px;
+  background-color: aqua;
+  position: absolute;
+  top: 0px;
+  left: -300px;
+  transition: transform .3s ease-in-out;
+}
+
+.ChatModal .sidebarToggleBtn {
+  margin-left: 10px;
+}
+
+.ChatModal .sidebar.open {
+  transform: translateX(300px);
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+.ChatModal .sidebarHeader {
+  height: 40px;
+  width: 101%;
+  background-color: #ff9494;
+  display: flex;
+  align-items: center;
+}
+
+.ChatModal .sidebarHeader .closeBtn {
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.ChatModal .chatRoom {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  color: #fff;
+  position: relative;
+  margin: 5px 0px;
+}
+
+.ChatModal .chatRoom .notifications {
+  position: absolute;
+  left: 35px;
+  top: 35px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius:50%;
+  background-color: red;
+  border: 2px solid black;
+}
+
+.ChatModal .chatRoom .hoverEl {
+  position: absolute;
+  left: 60px;
+  top: 20px;
+  opacity: 0;
+  white-space: nowrap;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity .3s ease-in-out;
+  background-color: #ff9494;
+  z-index: -1;
+}
+
+.ChatModal .chatRoom:hover .hoverEl {
+  opacity: 1;
+  z-index: 1;
+}
+
+.ChatModal .dms {
+  width: 50px;
+  height: 50px;
+  background-color: #6f6af8;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 30%;
+}
+
+.ChatModal .chatRoom .bar {
+  width: 6px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #ff9494;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: height .2s ease-in-out;
+}
+
+.ChatModal .chatRoom:hover .bar {
+  height: 70%;
+}
+
+.ChatModal .content {
+  display: flex;
+  flex-direction: row;
+}
+
+.ChatModal .rooms {
+  margin-left: 20px;
+}
+
+.ChatModal .rooms .roomTypes .room{
+  margin-left: 10px;
+}
+
+.ChatModal .roomTypes .type, .ChatModal .room {
+  cursor: pointer;
+}

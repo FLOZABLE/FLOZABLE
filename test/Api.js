@@ -244,6 +244,23 @@ Router.post('/groups/create-validate', async (req, res) => {
         tester.id,
       ]);
 
+      const roomInfo = {
+        id: generateRandomId(10),
+        group_id: group.group_id,
+        name: 'general',
+        type: 1,
+        members: '*'
+      };
+
+      const addGroupRoom = await connection.query('INSERT INTO chatrooms set ?', roomInfo);
+      let groups = await redisClient.hGet(`user:${tester.id}`, 'groups');
+      console.log(groups);
+      /* if (groups) {
+        groups = groups.split(',');
+        groups.push(group.group_id);
+        redisClient.hSet(`user:${tester.id}`, `groups`, JSON.stringify(groups));
+      } */
+
       res.send({ success: true, data: { id: group.group_id } })
     } catch (error) {
       console.log(error)
@@ -746,5 +763,29 @@ Router.post("/live-members", (req, res) => {
   const totalLiveMembers = Object.keys(io.socket.sockets).length;
   res.send({ success: true, totalLiveMembers: totalLiveMembers });
 })
+
+//chat
+
+Router.post("/chat/bring-group-rooms", async (req, res) => {
+  let userGroups = await redisClient.hGet(`user:${tester.id}`, 'groups');
+  if (userGroups) {
+    try {
+      userGroups = userGroups.split(',');
+      const connection = pool.promise();
+      const totalChats = [];
+      
+      const [groupInfo] = userGroups.length ? await connection.query(`SELECT group_id, name, leader, color FROM groups where group_id IN (?)`, [userGroups]) : [];
+      console.log(groupInfo)
+      for (let i = 0; i < userGroups.length; i++) {
+        const groupId = userGroups[i];
+        const chats = (await redisClient.lRange(`group:${groupId}:chat`, 0, -1)).map(JSON.parse);
+        totalChats.push({...groupInfo[i], chats: chats});
+      };
+      res.send({success: true, chats: totalChats});
+    } catch (err) {
+      console.log(err)
+    }
+  };
+});
 
 module.exports = Router;

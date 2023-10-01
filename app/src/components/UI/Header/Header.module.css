@@ -139,7 +139,7 @@
 
 .header .right .headerEl .dropDown .dropDownContent {
   position: absolute;
-  top: 70px;
+  top: 80px;
   right: 0px;
   background-color: #f7f9fd;
   width: 400px;
@@ -156,6 +156,11 @@
 .header .right .headerEl .dropDown:hover .dropDownContent {
   opacity: 1;
   height: fit-content;
+}
+
+.header .chatModalOpen {
+  opacity: 0 !important;
+  height: 0px;
 }
 
 .header .dropDownContent .inner {

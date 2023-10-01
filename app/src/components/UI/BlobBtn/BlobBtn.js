@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./BlobBtn.module.css";
 
 function BlobBtn(props) {
+  const {color1 = "#fff", color2 = "#ecbd00"} = props;
   const { setClicked, name, delay } = props;
   const handleClick = () => {
     setClicked(true);
@@ -12,7 +13,7 @@ function BlobBtn(props) {
     };
   }
   return (
-    <button className={styles.BlobBtn} onClick={handleClick}>
+    <button className={styles.BlobBtn} onClick={handleClick} style={{"--color1": color1 , "--color2": color2}}>
       {name}
       <span className={styles.blobBtnInner}>
         <span className={styles.blobBtnBlobs}>

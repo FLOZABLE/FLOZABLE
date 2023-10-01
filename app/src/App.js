@@ -23,6 +23,7 @@ function App() {
   const [reset, setReset] = useState(false)
   const [updateSubjects, setUpdateSubjects] = useState(true);
   const [isChatModal, setIsChatModal] = useState(false);
+  const [groupChats, setGroupChats] = useState([]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prevState => !prevState);
@@ -103,6 +104,13 @@ function App() {
         };
       })
       .catch((error) => console.error(error));
+    fetch(`${serverOrigin}/api/chat/bring-group-rooms`, {method: 'post'})
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        setGroupChats(data.chats);
+      };
+    })
   }, []);
 
   useEffect(() => {
@@ -121,7 +129,8 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} />
+            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Main setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
             <Footer />
           </div>
@@ -133,7 +142,8 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} />
+            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Stats setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} />
             <Footer />
           </div>
@@ -145,7 +155,8 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} />
+            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Ranking setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} />
             <Footer />
           </div>
@@ -157,8 +168,8 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
-            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} />
+            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} reset={reset} />
             <Footer />
           </div>
@@ -171,6 +182,7 @@ function App() {
               isSidebarHovered={isHovered}
               mode={"study"}
             />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} />
             {/* <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} mode={"study"} /> */}
             <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} />
           </div>
@@ -182,7 +194,8 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} />
+            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans} reset={reset} />
           </div>
         } />
