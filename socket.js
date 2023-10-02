@@ -1,6 +1,7 @@
 const { server, sessionMiddleWare } = require("./app");
 const cron = require('node-cron');
 const pool = require("./model/pool");
+const redisClient = require("./model/redis");
 
 const io = require('socket.io')(server, {
   cors: {
@@ -16,6 +17,18 @@ const wrap = middleware => (socket, next) => middleware(socket.request, {}, next
 io.use(wrap(sessionMiddleWare));
 
 const userIdToSocketIdMap = new Map();
+
+function generateRandomId(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+
+  return result;
+};
 
 io.on('connection', (socket) => {
   let session = false;
@@ -156,6 +169,36 @@ io.on('connection', (socket) => {
       console.log(err);
     }; */
   });
+
+  //chat
+
+  socket.on("chaneRoom", async (roomId) => {
+    console.log(roomId, socket.userId);
+    const userId = socket.userId;
+    let userGroups = await redisClient.hGet(`user:${userId}`, 'groups');
+    if (userGroups) {
+      userGroups = userGroups.split(',');
+      if (userGroups.includes(userId)) {
+        redisClient.hSet(`user:${userId}`, 'groups')
+      }
+    }
+  });
+
+  socket.on("sendMsg", async (group, msg) => {
+    console.log(group, msg);
+    const userId = socket.userId;
+    let userGroups = await redisClient.hGet(`user:${userId}`, 'groups');
+    if (userGroups) {
+      userGroups = userGroups.split(',');
+      if (userGroups.includes(group)) {
+        const msgId = generateRandomId(10);
+        const time = Math.floor(new Date().getTime() / 1000);
+        const msgInfo = { u: userId, m: msg, i: msgId, t: time };
+        redisClient.rPush(`group:${group}:chat`, JSON.stringify(msgInfo));
+        io.to(group).emit('msgReceived', group, msgInfo);
+      }
+    }
+  })
 });
 
 

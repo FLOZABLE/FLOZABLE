@@ -780,11 +780,12 @@ Router.post("/chat/bring-group-rooms", async (req, res) => {
       const totalChats = [];
       
       const [groupInfo] = userGroups.length ? await connection.query(`SELECT group_id, name, leader, color FROM groups where group_id IN (?)`, [userGroups]) : [];
-      //const [groupChatRooms] = await conne
+      //const [groupChatRooms] = await conneR
       console.log(groupInfo)
       for (let i = 0; i < userGroups.length; i++) {
         const groupId = userGroups[i];
-        const chats = (await redisClient.lRange(`group:${groupId}:chat`, 0, -1)).map(JSON.parse);
+        const chats = (await redisClient.lRange(`group:${groupId}:chat`, 0, -1));
+        console.log(chats)
         totalChats.push({...groupInfo[i], chats: chats});
       };
       res.send({success: true, chats: totalChats});

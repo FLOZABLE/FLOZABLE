@@ -155,3 +155,43 @@
   bottom: 0px;
   width: 100%;
 }
+
+.ChatModal .chatsContainer {
+  max-height: calc(100% - 80px);
+  overflow-y: auto;
+}
+.ChatModal .message {
+  background-color: var(--pink);
+  color: #fff;
+  border-radius: 10px;
+  padding: 3px 10px;
+  width: fit-content;
+  text-align: right;
+  margin-top: 20px;
+}
+.ChatModal .messageWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.ChatModal .messageWrapper.me {
+  margin-left: auto;
+  width: fit-content;
+}
+
+.ChatModal .messageWrapper.me .timeDisp{
+  text-align: right;
+  position: absolute;
+  right: 0px;
+  bottom: -20px;
+}
+.ChatModal .profileWrapper {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: red;
+}
+
+.ChatModal .messageWrapper.others {
+  
+}

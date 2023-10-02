@@ -7,7 +7,7 @@ import SendBtn from "../SendBtn/SendBtn";
 import CustomInput from "../CustomInput/CustomInput";
 
 function ChatModal(props) {
-  const { setIsChatModal, isChatModal, groupChatRooms, setGroupChats } = props;
+  const { setIsChatModal, isChatModal, groupChatRooms, setGroupChats, socket, userInfo } = props;
 
   const [isSidebar, setIsSidebar] = useState(false);
   const [groupChatRoomsEl, setGroupChatRoomsEl] = useState(null);
@@ -16,6 +16,51 @@ function ChatModal(props) {
   const [room, setRoom] = useState(null);
   const [message, setMessage] = useState("");
   const [send, setSend] = useState(false);
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    if (send) {
+      socket.emit('sendMsg', selectedGroup.group_id, message);
+    }
+  }, [send]);
+
+  useEffect(() => {
+    const onMsg = (group, msgInfo) => {
+      console.log(group, msgInfo);
+      const isMe = msgInfo.u === userInfo.user_id;
+      const date = new Date(msgInfo.t * 1000);
+      const hr = date.getHours() % 12 ? date.getHours() % 12 : 12;
+      const ampm = date.getHours() / 12 ? 'PM' : 'AM';
+      const timeDisp = `${hr}:${date.getMinutes().toString().padStart(2, '0')}${ampm}`;
+      let newChat = (
+        <div className={`${styles.messageWrapper} ${styles.others}`} key={msgInfo.i}>
+          <div className={styles.profileWrapper}>
+
+          </div>
+          <div className={styles.message}>
+            <p>{msgInfo.m}</p>
+          </div>
+          <p className={styles.timeDisp}>{timeDisp}</p>
+        </div>
+      )
+      if (isMe) {
+        newChat = (
+          <div className={`${styles.messageWrapper} ${styles.me}`} key={msgInfo.i}>
+            <div className={styles.message} >
+              <p>{msgInfo.m}</p>
+            </div>
+            <p className={styles.timeDisp}>{timeDisp}</p>
+          </div>
+        )
+      };
+      setMessages((prevMessages) => [...prevMessages, newChat]);
+    };
+    socket.on('msgReceived', onMsg);
+
+    return () => {
+      socket.off("msgReceived", onMsg);
+    };
+  });
 
   useEffect(() => {
     setGroupChatRoomsEl(groupChatRooms.map((group, i) => {
@@ -41,6 +86,44 @@ function ChatModal(props) {
     setRoom(group);
     setIsSidebar(false);
   }, []);
+
+  useEffect(() => {
+    console.log(selectedGroup);
+    if (selectedGroup) {
+      const newMessages = selectedGroup.chats.map((chat, i) => {
+        const msgInfo = JSON.parse(chat);
+        console.log('chat', chat);
+        const isMe = msgInfo.u === userInfo.user_id;
+        const date = new Date(msgInfo.t * 1000);
+        const hr = date.getHours() % 12 ? date.getHours() % 12 : 12;
+        const ampm = date.getHours() / 12 ? 'PM' : 'AM';
+        const timeDisp = `${hr}:${date.getMinutes().toString().padStart(2, '0')}${ampm}`;
+        let newChat = (
+          <div className={styles.messageWrapper} key={i}>
+            <div className={styles.profileWrapper}>
+
+            </div>
+            <div className={styles.message}>
+              <p>{msgInfo.m}</p>
+            </div>
+            <p className={styles.timeDisp}>{timeDisp}</p>
+          </div>
+        )
+        if (isMe) {
+          newChat = (
+            <div className={`${styles.messageWrapper} ${styles.me}`} key={i}>
+              <div className={styles.message}>
+                <p>{msgInfo.m}</p>
+              </div>
+              <p className={styles.timeDisp}>{timeDisp}</p>
+            </div>
+          )
+        };
+        return newChat;
+      });
+      setMessages(newMessages);
+    };
+  }, [room]);
 
   const handleMessageInput = (e) => {
     setMessage(e.target.value);
@@ -70,7 +153,7 @@ function ChatModal(props) {
       </div>
     );
   }, [selectedGroup]);
-  
+
   return (
     <div className={`${styles.ChatModal} ${isChatModal ? styles.open : ''}`}>
       <div className={styles.header}>
@@ -98,10 +181,11 @@ function ChatModal(props) {
           {selectedGroupRooms}
         </div>
       </div>
-      <div className={styles.chatsContainer}>
+      <div className={`${styles.chatsContainer} customScroll`}>
+        {messages}
       </div>
       <div className={styles.messageInputContainer}>
-        <CustomInput input={message} handleInput={handleMessageInput} icon={null} type={"text"} />
+        <CustomInput input={message} handleInput={handleMessageInput} handleEnter={() => { setSend(true); setTimeout(() => { setSend(false) }, 800) }} icon={null} type={"text"} />
         <SendBtn send={send} setSend={setSend} />
       </div>
     </div>
