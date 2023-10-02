@@ -3,6 +3,8 @@ import styles from "./ChatModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import SidebarToggleBtn from "../SidebarToggleBtn/SidebarToggleBtn";
+import SendBtn from "../SendBtn/SendBtn";
+import CustomInput from "../CustomInput/CustomInput";
 
 function ChatModal(props) {
   const { setIsChatModal, isChatModal, groupChatRooms, setGroupChats } = props;
@@ -12,6 +14,8 @@ function ChatModal(props) {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedGroupRooms, setSelectedGroupRooms] = useState(null);
   const [room, setRoom] = useState(null);
+  const [message, setMessage] = useState("");
+  const [send, setSend] = useState(false);
 
   useEffect(() => {
     setGroupChatRoomsEl(groupChatRooms.map((group, i) => {
@@ -36,7 +40,12 @@ function ChatModal(props) {
   const groupChange = useCallback((group, room) => {
     setRoom(group);
     setIsSidebar(false);
-  } , []);
+  }, []);
+
+  const handleMessageInput = (e) => {
+    setMessage(e.target.value);
+  };
+
 
   useEffect(() => {
     console.log(selectedGroup)
@@ -46,7 +55,7 @@ function ChatModal(props) {
           <li>
             <p className={styles.type}>TEXT CHANNELS</p>
             <ul>
-            <li className={styles.room} onClick={() => {groupChange(selectedGroup, 'general')}}>tester1</li>
+              <li className={styles.room} onClick={() => { groupChange(selectedGroup, 'general') }}>tester1</li>
             </ul>
           </li>
           <li>
@@ -61,6 +70,7 @@ function ChatModal(props) {
       </div>
     );
   }, [selectedGroup]);
+  
   return (
     <div className={`${styles.ChatModal} ${isChatModal ? styles.open : ''}`}>
       <div className={styles.header}>
@@ -87,6 +97,12 @@ function ChatModal(props) {
           </ul>
           {selectedGroupRooms}
         </div>
+      </div>
+      <div className={styles.chatsContainer}>
+      </div>
+      <div className={styles.messageInputContainer}>
+        <CustomInput input={message} handleInput={handleMessageInput} icon={null} type={"text"} />
+        <SendBtn send={send} setSend={setSend} />
       </div>
     </div>
   )

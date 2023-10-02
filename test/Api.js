@@ -780,6 +780,7 @@ Router.post("/chat/bring-group-rooms", async (req, res) => {
       const totalChats = [];
       
       const [groupInfo] = userGroups.length ? await connection.query(`SELECT group_id, name, leader, color FROM groups where group_id IN (?)`, [userGroups]) : [];
+      //const [groupChatRooms] = await conne
       console.log(groupInfo)
       for (let i = 0; i < userGroups.length; i++) {
         const groupId = userGroups[i];
