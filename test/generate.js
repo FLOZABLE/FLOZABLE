@@ -24,6 +24,19 @@ function generateId() {
   return groupId;
 }
 
+
+function generateRandomId(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+
+  return result;
+};
+
 function generateGroupId() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const length = 8;
@@ -204,7 +217,7 @@ async function generateGroups(length) {
     
     const roomInfo = {
       id: generateRandomId(10),
-      group_id: group.group_id,
+      group_id: groupInfo.group_id,
       name: 'general',
       type: 1,
       members: '*'
