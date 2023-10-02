@@ -25,7 +25,12 @@ function generateRandomId(length) {
   }
 
   return result;
-}
+};
+
+function hashing(password) {
+  let salt = crypto.randomBytes(32).toString('hex')
+  return [salt, crypto.pbkdf2Sync(password, salt, 99097, 32, 'sha512').toString('hex')]
+};
 
 Router.post('/information/bring-subjects', async (req, res) => {
   const connection = pool.promise();
@@ -184,11 +189,12 @@ Router.post('/groups/create-validate', async (req, res) => {
   const connection = pool.promise();
   try {
     let group = req.body;
+    group.font = 1;
     const schema = {
       type: 'object',
       properties: {
         name: { type: 'string', maxLength: 100 },
-        explanation: { type: 'string', maxLength: 100 },
+        explanation: { type: 'string', maxLength: 400 },
         tags: { type: 'array', maxItems: 10 },
         max_members: { type: 'integer', minimum: 0, maximum: 100 },
         visibility: { type: 'integer', minimum: 0, maximum: 1 },
@@ -202,6 +208,7 @@ Router.post('/groups/create-validate', async (req, res) => {
     };
 
     const isValid = isValidJSON(group, schema);
+    console.log(group)
     if (!isValid) {
       return res.send({ success: false, reason: 'Wrong Information' });
     }
@@ -225,7 +232,7 @@ Router.post('/groups/create-validate', async (req, res) => {
     group.password = hashed[1];
     group.salt = hashed[0];
     group.date = Math.floor(new Date().getTime() / 1000);
-    group.group_id = generateGroupId();
+    group.group_id = generateRandomId(10);
     group.leader = tester.id;
     group.members = tester.id;
 
@@ -254,14 +261,12 @@ Router.post('/groups/create-validate', async (req, res) => {
 
       const addGroupRoom = await connection.query('INSERT INTO chatrooms set ?', roomInfo);
       let groups = await redisClient.hGet(`user:${tester.id}`, 'groups');
-      console.log(groups);
-      /* if (groups) {
-        groups = groups.split(',');
-        groups.push(group.group_id);
-        redisClient.hSet(`user:${tester.id}`, `groups`, JSON.stringify(groups));
-      } */
-
-      res.send({ success: true, data: { id: group.group_id } })
+      groups = groups ? groups + group.group_id : group.group_id;
+      redisClient.hSet(`user:${tester.id}`, `groups`, groups);
+      const groupInfo = {...group, likes: ""};
+      delete groupInfo.password;
+      delete groupInfo.salt;
+      res.send({ success: true, data: { group: groupInfo }, msg: `JOINED GROUP "${group.name}"`})
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'Error' })

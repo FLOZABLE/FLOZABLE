@@ -4,6 +4,7 @@
   align-items: center;
   font-size: 16px;
   color: #664aff;
+  width: 100%;
 }
 .slider input[type=range] {
   outline: none;
