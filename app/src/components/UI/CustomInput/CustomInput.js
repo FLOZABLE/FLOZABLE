@@ -12,7 +12,7 @@ function CustomInput(props) {
     <div className={styles.CustomInput}>
     <span className={styles.pwIcon}>
       <i>
-        <FontAwesomeIcon icon={props.icon} />
+        {props.icon ? <FontAwesomeIcon icon={props.icon} /> : null}
       </i>
     </span>
     <input

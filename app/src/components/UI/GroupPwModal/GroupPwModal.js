@@ -76,7 +76,7 @@ function GroupPwModal(props) {
         </div> */}
         <CustomInput input={pw} handleInput={handlePwInput} handleEnter={submit} icon={faKey} placeHolder={"Password"} type={"text"} />
         <div className={styles.submitBtnWrapper}>
-          <BlobBtn name={'SUBMIT'} setClicked={setPwSubmit} color1={'#fff'} color2={"#ff9494"}/>
+          <BlobBtn name={'SUBMIT'} setClicked={setPwSubmit} color1={'#fff'} color2={"var(--pink)"} />
         </div>
       </div>
     </div>

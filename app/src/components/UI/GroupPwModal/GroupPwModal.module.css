@@ -19,7 +19,7 @@
 .GroupPwModal .header {
   display: flex;
   width: 100%;
-  background-color: #ff9494ff;
+  background-color: var(--pink);
   height: 40px;
   align-items: center;
 }
@@ -34,7 +34,7 @@
 
 .GroupPwModal .content {
   padding: 30px;
-  color: #ff9494ff;
+  color: var(--pink);
 }
 
 .GroupPwModal .submitBtnWrapper {
@@ -72,7 +72,7 @@
 }
 
 .GroupPwModal .formField:focus {
-  border:#ff9494ff 1px solid;
+  border:var(--pink) 1px solid;
 }
 
 .GroupPwModal .formGroup>span,
@@ -118,12 +118,12 @@
   padding: 12px 20px;
   font-size: 20px;
   line-height: 25px;
-  color: #ff9494ff;
+  color: var(--pink);
   background: #EEF4FF;
   transition: background 0.5s ease, border 0.5s ease, color 0.5s ease;
 }
 
 .GroupPwModal .formGroup:focus-within>span {
   color: #fff;
-  background: #FF9494;
+  background: var(--pink);
 }

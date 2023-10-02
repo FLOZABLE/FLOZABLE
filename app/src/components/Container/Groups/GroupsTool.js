@@ -29,11 +29,10 @@ function getMyGroups(userInfo, groups) {
 };
 
 function setGroupMembers(groups, users) {
-  const now  = Math.floor(new Date().getTime() / 1000);
   const todayStart = new Date().setHours(0, 0, 0, 0) / 1000;
   const todayEnd = new Date().setHours(23, 59, 59, 0) / 1000;
-
-  groups.map((group) => {
+  const newGroups = [...groups];
+  newGroups.map((group) => {
     group.members = group.members.split(',');
     group.members = group.members.map(member => {
       member = users.find((userInfo) => { return member == userInfo.user_id });
@@ -57,7 +56,7 @@ function setGroupMembers(groups, users) {
     });
     return group;
   });
-  return groups;
-}
+  return newGroups;
+};
 
 export { getLikedGroups, getMyGroups, setGroupMembers };
