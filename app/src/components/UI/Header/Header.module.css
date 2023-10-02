@@ -145,17 +145,16 @@
   width: 400px;
   text-align: left;
   border-radius: 20px;
-  transition: all .2s ease-in-out .2s;
+  transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
   opacity: 0;
   overflow: hidden;
-  height: 0px;
-  clear: both;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  visibility: hidden;
 }
 
 .header .right .headerEl .dropDown:hover .dropDownContent {
   opacity: 1;
-  height: fit-content;
+  visibility: visible;
 }
 
 .header .chatModalOpen {

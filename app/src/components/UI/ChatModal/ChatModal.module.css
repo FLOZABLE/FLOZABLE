@@ -34,7 +34,7 @@
 .ChatModal .sidebar {
   height: 100%;
   width: 230px;
-  background-color: aqua;
+  background-color: #fff;
   position: absolute;
   top: 0px;
   left: -300px;
@@ -147,4 +147,11 @@
 
 .ChatModal .roomTypes .type, .ChatModal .room {
   cursor: pointer;
+}
+
+.ChatModal .messageInputContainer {
+  display: flex;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
 }
