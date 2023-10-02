@@ -58,10 +58,6 @@ const TagContainerGen = (props) => {
 
   return (
     <div className={styles.TagContainerGen}>
-      <div className={styles.title}>
-        <FontAwesomeIcon icon={faTags} className={styles.faTags} />
-        <h2>Tags</h2>
-      </div>
       <div className={styles.content}>
         <p>Press enter after each tag</p>
         <ul className={styles.tags}>

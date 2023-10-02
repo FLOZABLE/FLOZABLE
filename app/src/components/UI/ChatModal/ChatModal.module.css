@@ -19,7 +19,7 @@
 
 .ChatModal .header {
   height: 40px;
-  background-color: #ff9494;
+  background-color: var(--pink);
   display: flex;
   align-items: center;
 }
@@ -53,7 +53,7 @@
 .ChatModal .sidebarHeader {
   height: 40px;
   width: 101%;
-  background-color: #ff9494;
+  background-color: var(--pink);
   display: flex;
   align-items: center;
 }
@@ -97,7 +97,7 @@
   justify-content: center;
   align-items: center;
   transition: opacity .3s ease-in-out;
-  background-color: #ff9494;
+  background-color: var(--pink);
   z-index: -1;
 }
 
@@ -121,7 +121,7 @@
   width: 6px;
   height: 10px;
   border-radius: 5px;
-  background-color: #ff9494;
+  background-color: var(--pink);
   position: absolute;
   top: 50%;
   transform: translateY(-50%);

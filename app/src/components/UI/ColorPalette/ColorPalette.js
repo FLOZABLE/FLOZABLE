@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "./ColorPalette.module.css";
 import { ColorPaletteOptions } from "../../../utils/ColorPaletteOptions";
 
@@ -7,16 +7,21 @@ function ColorPalette(props) {
 
   const [paletteColorsEl, setPaletteColorsEl] = useState([]);
 
+  const selectColor = useCallback((color) => {
+    setSelectedColor(color);
+    setIsSelectColor(false);
+  }, []);
+
   useEffect(() => {
     setPaletteColorsEl(ColorPaletteOptions.map((colorOption, i) => {
       return (
         <div className={styles.palette} key={i}>
           <div className={styles.paletteColors}>
-            <div className={styles.paletteColor} onClick={() => { setSelectedColor(colorOption.colors[0]) }} style={{ "--bg-color": colorOption.colors[0] }}></div>
+            <div className={styles.paletteColor} onClick={() => {selectColor(colorOption.colors[0])}} style={{ "--bg-color": colorOption.colors[0] }}></div>
             <div className={styles.paletteShades}>
-              <div className={styles.paletteShadesItem} onClick={() => { setSelectedColor(colorOption.colors[1]) }} style={{ "--bg-color": colorOption.colors[1] }}>{colorOption.colors[1]}</div>
-              <div className={styles.paletteShadesItem} onClick={() => { setSelectedColor(colorOption.colors[2]) }} style={{ "--bg-color": colorOption.colors[2] }}>{colorOption.colors[2]}</div>
-              <div className={styles.paletteShadesItem} onClick={() => { setSelectedColor(colorOption.colors[3]) }} style={{ "--bg-color": colorOption.colors[3] }}>{colorOption.colors[3]}</div>
+              <div className={styles.paletteShadesItem} onClick={() => { selectColor(colorOption.colors[1])}} style={{ "--bg-color": colorOption.colors[1] }}>{colorOption.colors[1]}</div>
+              <div className={styles.paletteShadesItem} onClick={() => { selectColor(colorOption.colors[2])}} style={{ "--bg-color": colorOption.colors[2] }}>{colorOption.colors[2]}</div>
+              <div className={styles.paletteShadesItem} onClick={() => { selectColor(colorOption.colors[3])}} style={{ "--bg-color": colorOption.colors[3] }}>{colorOption.colors[3]}</div>
             </div>
           </div>
           <div className={styles.paletteInfo}>
@@ -30,7 +35,7 @@ function ColorPalette(props) {
   return (
     <div className={styles.ColorPalette}>
       <div className={styles.header}>
-        <button onClick={() => { setIsSelectColor(!isSelectColor); setIsSelectIcon(false) }}>
+        <button onClick={() => { setIsSelectColor(!isSelectColor); if (setIsSelectIcon) {setIsSelectIcon(false)} }}>
           {!selectedColor ? <p>Select Color!</p> : <p>Selected Color: </p>}
         </button>
         <div className={styles.selectedColor} style={{ backgroundColor: selectedColor }}>

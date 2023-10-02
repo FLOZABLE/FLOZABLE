@@ -40,7 +40,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #FF9494;
+  background-color: var(--pink);
   border-radius: 6px;
   cursor: pointer;
   color: #fff;
@@ -60,7 +60,7 @@
   top: 50%;
   right: -45px;
   font-size: 30px;
-  color: #FF9494;
+  color: var(--pink);
   padding: 5px;
   transform: translateY(-50%);
   transition: all 0.5s ease-in-out;

@@ -45,7 +45,7 @@
 
 .MyGroupsViewer .status {
   display: flex;
-  background-color: #FF9494;
+  background-color: var(--pink);
   color: #fff;
   border-radius: 20px;
   padding: 5px 10px;
@@ -100,7 +100,7 @@
   border-radius: 20px;
   height: 40px;
   width: fit-content;
-  background-color: #FF9494;
+  background-color: var(--pink);
   color: #fff;
   font-weight: 700;
   margin-left: auto;
