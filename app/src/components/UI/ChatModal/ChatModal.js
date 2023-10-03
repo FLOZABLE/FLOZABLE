@@ -7,7 +7,7 @@ import SendBtn from "../SendBtn/SendBtn";
 import CustomInput from "../CustomInput/CustomInput";
 
 function ChatModal(props) {
-  const { setIsChatModal, isChatModal, groupChatRooms, setGroupChats, socket, userInfo } = props;
+  const { setIsChatModal, isChatModal, groupChatRooms, setGroupChats, socket, userInfo, allMembers } = props;
 
   const [isSidebar, setIsSidebar] = useState(false);
   const [groupChatRoomsEl, setGroupChatRoomsEl] = useState(null);
@@ -26,7 +26,7 @@ function ChatModal(props) {
 
   useEffect(() => {
     const onMsg = (group, msgInfo) => {
-      console.log(group, msgInfo);
+      console.log(group, allMembers);
       const isMe = msgInfo.u === userInfo.user_id;
       const date = new Date(msgInfo.t * 1000);
       const hr = date.getHours() % 12 ? date.getHours() % 12 : 12;
@@ -43,7 +43,7 @@ function ChatModal(props) {
           <p className={styles.timeDisp}>{timeDisp}</p>
         </div>
       )
-      if (isMe) {
+      if (!isMe) {
         newChat = (
           <div className={`${styles.messageWrapper} ${styles.me}`} key={msgInfo.i}>
             <div className={styles.message} >
@@ -138,7 +138,7 @@ function ChatModal(props) {
           <li>
             <p className={styles.type}>TEXT CHANNELS</p>
             <ul>
-              <li className={styles.room} onClick={() => { groupChange(selectedGroup, 'general') }}>tester1</li>
+              <li className={styles.room} onClick={() => { groupChange(selectedGroup, 'general') }}>#general</li>
             </ul>
           </li>
           <li>
@@ -166,7 +166,9 @@ function ChatModal(props) {
       </div>
       <div className={`${styles.sidebar} ${isSidebar ? styles.open : ''}`}>
         <div className={styles.sidebarHeader}>
-          {selectedGroup ? selectedGroup.name : ''}
+          <p className={styles.groupName}>
+            {selectedGroup ? selectedGroup.name : ''}
+          </p>
           <i className={styles.closeBtn} >
             <SidebarToggleBtn isOpen={isSidebar} setIsOpen={setIsSidebar} />
           </i>

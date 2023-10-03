@@ -16,18 +16,16 @@ import CreateGroupModal from '../../UI/CreateGroupModal/CreateGroupModal';
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Groups(props) {
-  const { socket, userInfo, subjects } = props;
+  const { socket, userInfo, subjects, groups, allMembers } = props;
 
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [groups, setGroups] = useState([]);
   const [likedGroups, setLikedGroups] = useState([]);
   const [myGroups, setMyGroups] = useState([]);
   const [otherGroups, setOtherGroups] = useState([]);
   const [joinGroupResponse, setJoinGroupResponse] = useState(null);
   const [openGroupPwModal, setOpenGroupPwModal] = useState(false);
   const [joinTarget, setJoinTarget] = useState(null);
-  const [allMembers, setAllMembers] = useState([]);
   const [myTimerTotal, setMyTimerTotal] = useState(0);
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
   const [createGroupResponse, setCreateGroupResponse] = useState(null);
@@ -35,18 +33,6 @@ function Groups(props) {
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
   };
-
-  useEffect(() => {
-    fetch(`${serverOrigin}/api/groups/bring-groups`, { method: 'post' })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setAllMembers(data.membersInfo);
-          setGroups(setGroupMembers(data.groups, data.membersInfo));
-        }
-      })
-      .catch((error) => console.error(error));
-  }, []);
 
   useEffect(() => {
     setLikedGroups(getLikedGroups(userInfo, groups));

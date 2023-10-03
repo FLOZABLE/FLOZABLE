@@ -157,7 +157,7 @@
 }
 
 .ChatModal .chatsContainer {
-  max-height: calc(100% - 80px);
+  height: calc(100% - 100px);
   overflow-y: auto;
 }
 .ChatModal .message {
@@ -167,7 +167,6 @@
   padding: 3px 10px;
   width: fit-content;
   text-align: right;
-  margin-top: 20px;
 }
 .ChatModal .messageWrapper {
   position: relative;
@@ -177,21 +176,36 @@
 .ChatModal .messageWrapper.me {
   margin-left: auto;
   width: fit-content;
+  margin-right: 10px;
 }
 
+.ChatModal .me .message {
+  margin-top: 27px;
+}
 .ChatModal .messageWrapper.me .timeDisp{
   text-align: right;
   position: absolute;
   right: 0px;
   bottom: -20px;
 }
+.ChatModal .timeDisp {
+  font-size: 12px;
+}
 .ChatModal .profileWrapper {
   width: 30px;
   height: 30px;
   border-radius: 50%;
   background-color: red;
+  left: -40px;
+  position: absolute;
 }
 
 .ChatModal .messageWrapper.others {
-  
+  margin-left: 40px;
+  margin-top: 7px;
+}
+
+.ChatModal .groupName {
+  color: #fff;
+  margin-left: 20px;
 }
