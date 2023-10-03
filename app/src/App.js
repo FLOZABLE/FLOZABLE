@@ -5,6 +5,7 @@ import Stats from './components/Container/Stats/Stats';
 import Ranking from './components/Container/Ranking/Ranking';
 import Groups from './components/Container/Groups/Groups';
 import Study from './components/Container/Study/Study';
+import Account from './components/Container/Account/Account';
 import './App.css';
 import Sidebar from './components/UI/Sidebar/Sidebar';
 import Header from './components/UI/Header/Header';
@@ -13,6 +14,7 @@ import Planner from './components/Container/Planner/Planner';
 import ChatModal from './components/UI/ChatModal/ChatModal';
 import { sortSubjects } from './components/Container/Stats/StatTools';
 import { socket } from "./socket";
+import { setGroupMembers } from './components/Container/Groups/GroupsTool';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -21,9 +23,10 @@ function App() {
   const [subjects, setSubjects] = useState([]);
   const [isStudy, setIsStudy] = useState(false);
   const [reset, setReset] = useState(false)
-  const [updateSubjects, setUpdateSubjects] = useState(true);
   const [isChatModal, setIsChatModal] = useState(false);
   const [groupChats, setGroupChats] = useState([]);
+  const [allMembers, setAllMembers] = useState([]);
+  const [groups, setGroups] = useState([]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prevState => !prevState);
@@ -33,17 +36,17 @@ function App() {
     const socketConnectAction = () => {
       socket.emit('joinMyGroups');
     };
-  
+
     const socketResetAction = () => {
       setReset(prevReset => !prevReset);
       setTimeout(() => {
         setReset(prevReset => !prevReset);
       }, 100);
     };
-  
+
     socket.on('connect', socketConnectAction);
     socket.on('reset', socketResetAction);
-  
+
     return () => {
       socket.off("joinMyGroups", socketConnectAction);
       socket.off("reset", socketResetAction);
@@ -74,24 +77,16 @@ function App() {
       .catch((error) => console.error(error));
   }, []);
 
-  useEffect(() => {
-    console.log('socket',socket)
-  }, [socket.connected]);
-
   const fetchSubjects = () => {
     fetch(`${serverOrigin}/api/information/bring-subjects`, { method: 'post' })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        setSubjects(sortSubjects(data.subjects));
-      }
-    })
-    .catch((error) => console.error(error));
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setSubjects(sortSubjects(data.subjects));
+        }
+      })
+      .catch((error) => console.error(error));
   };
-
-  useEffect(() => {
-    fetchSubjects();
-  }, []);
 
   const [plans, setPlans] = useState([]);
 
@@ -104,13 +99,25 @@ function App() {
         };
       })
       .catch((error) => console.error(error));
-    fetch(`${serverOrigin}/api/chat/bring-group-rooms`, {method: 'post'})
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        setGroupChats(data.chats);
-      };
-    })
+    fetch(`${serverOrigin}/api/chat/bring-group-rooms`, { method: 'post' })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setGroupChats(data.chats);
+        };
+      });
+
+    fetch(`${serverOrigin}/api/groups/bring-groups`, { method: 'post' })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setAllMembers(data.membersInfo);
+          setGroups(setGroupMembers(data.groups, data.membersInfo));
+        }
+      })
+      .catch((error) => console.error(error));
+
+    fetchSubjects();
   }, []);
 
   useEffect(() => {
@@ -129,7 +136,7 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} allMembers={allMembers} />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Main setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
             <Footer />
@@ -142,7 +149,7 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} allMembers={allMembers} />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Stats setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} />
             <Footer />
@@ -155,7 +162,7 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} allMembers={allMembers} />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Ranking setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} />
             <Footer />
@@ -168,9 +175,9 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} allMembers={allMembers} />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
-            <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} reset={reset} />
+            <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} reset={reset} allMembers={allMembers} groups={groups} />
             <Footer />
           </div>
         } />
@@ -182,7 +189,7 @@ function App() {
               isSidebarHovered={isHovered}
               mode={"study"}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} allMembers={allMembers} />
             {/* <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} mode={"study"} /> */}
             <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} />
           </div>
@@ -194,9 +201,21 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} allMembers={allMembers} />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans} reset={reset} />
+          </div>
+        } />
+        <Route path="/dashboard/account" element={
+          <div>
+            <Sidebar isSidebarOpen={isSidebarOpen}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              isSidebarHovered={isHovered}
+            />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} groupChatRooms={groupChats} setGroupChats={setGroupChats} socket={socket} userInfo={userInfo} allMembers={allMembers} />
+            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Account setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} />
           </div>
         } />
       </Routes>

@@ -11,6 +11,9 @@ const cache = new NodeCache();
 const { DateTime } = require('luxon');
 const crypto = require("crypto");
 const redisClient = require("../model/redis");
+const multer = require("multer");
+const sharp = require("sharp");
+const upload = multer();
 
 
 const tester = { name: 't1', id: 'EoFObpf612bdJKt', timeZone: 'America/Los_Angeles', subjects: [] };
@@ -794,5 +797,25 @@ Router.post("/chat/bring-group-rooms", async (req, res) => {
     }
   };
 });
+
+//account update
+
+Router.post('/account/update/image', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.send({ success: false, reason: 'No image file found' });
+    }
+    const imageBuffer = req.file.buffer; // Get the image buffer from the request
+    await sharp(imageBuffer)
+      .toFormat('jpeg')
+      .resize({ width: 800, height: 800 })
+      .jpeg({ quality: 40 })
+      .toFile(`../public/profile-images/${req.session.user_id}.jpeg`);
+    res.send({ success: true });
+  } catch (error) {
+    res.send({ success: false, reason: 'Unsupported File Type' })
+  }
+});
+
 
 module.exports = Router;
