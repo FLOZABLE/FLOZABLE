@@ -3,3 +3,5 @@
 .env.build
 ./test.txt
 node_modules
+subjects.csv
+plans.csv

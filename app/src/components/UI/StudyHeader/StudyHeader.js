@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./StudyHeader.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboardCheck, faHourglass, faImage, faKey, faLink, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faClipboardCheck, faHourglass, faImage, faKey, faLink, faMicrophone, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
 import { AllThemes } from "../../../utils/Themes";
 import CustomInput from "../CustomInput/CustomInput";
 import VolumeControl from "../VolumeControl/VolumeControl";
@@ -12,7 +12,7 @@ import PlanTimeline from "../PlanTimeline/PlanTimeline";
 
 function StudyHeader(props) {
 
-  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, events, setEvents, setIsAddPlanModal, reset } = props;
+  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, events, setEvents, setIsAddPlanModal, reset, setIsMic, setIsCam, isMic, isCam } = props;
 
   const [recommendedThemes, setRecommendedThemes] = useState([]);
   const [link, setLink] = useState([]);
@@ -68,6 +68,26 @@ function StudyHeader(props) {
         </li>
       </ul>
       <ul className={styles.right}>
+        <li className={`${plannerBtn ? styles.open : ''} ${styles.planner}`}>
+          <button onClick={() => { setIsCam(!isCam) }} className={styles.dispBtn}>
+            <FontAwesomeIcon icon={faCamera} />
+          </button>
+          <div className={styles.hoverEl}>
+            Camera
+          </div>
+          <div className={styles.clickedEl}>
+          </div>
+        </li>
+        <li className={`${plannerBtn ? styles.open : ''} ${styles.planner}`}>
+          <button onClick={() => { setIsMic(!isMic) }} className={styles.dispBtn}>
+            <FontAwesomeIcon icon={faMicrophone} />
+          </button>
+          <div className={styles.hoverEl}>
+            Microphone
+          </div>
+          <div className={styles.clickedEl}>
+          </div>
+        </li>
         <li className={`${plannerBtn ? styles.open : ''} ${styles.planner}`}>
           <button onClick={() => { setPlannerBtn(!plannerBtn) }} className={styles.dispBtn}>
             <FontAwesomeIcon icon={faClipboardCheck} />
