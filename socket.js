@@ -2,6 +2,7 @@ const { server, sessionMiddleWare } = require("./app");
 const cron = require('node-cron');
 const pool = require("./model/pool");
 const redisClient = require("./model/redis");
+const Peer = require("simple-peer");
 
 const io = require('socket.io')(server, {
   cors: {
@@ -198,7 +199,19 @@ io.on('connection', (socket) => {
         io.to(group).emit('msgReceived', group, msgInfo);
       }
     }
-  })
+  });
+
+  //webcam
+  socket.on("camOn", async() => {
+    const userId = socket.userId;
+    let userGroups = await redisClient.hGet(`user:${userId}`, 'groups');
+    if (userGroups) {
+      userGroups = userGroups.split(',');
+      if (userGroups.length) {
+        redisClient.hSet(`user:${userId}`, 'groups')
+      }
+    }
+  });
 });
 
 

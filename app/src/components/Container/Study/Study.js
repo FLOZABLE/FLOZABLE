@@ -12,6 +12,7 @@ import AddSubjectModal from '../../UI/AddSubjectModal/AddSubjectModal';
 import EventModal from '../../UI/EventModal/EventModal';
 import { sortSubjects } from '../../Container/Stats/StatTools';
 import { generateRandomId } from "../../../utils/RandomId";
+import SimplePeer from 'simple-peer';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -30,9 +31,10 @@ function Study(props) {
   const [isAddPlanModal, setIsAddPlanModal] = useState(false);
   const [addSubjectResponse, setAddSubjectResponse] = useState(null);
   const [myTimerTotal, setMyTimerTotal] = useState(0);
-  const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [addPlanResponse, setAddPlanResponse] = useState(null);
-
+  const [isCam, setIsCam] = useState(false);
+  const [isMic, setIsMic] = useState(false);
+  const [stream, setStream] = useState(null);
 
   //events
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -46,6 +48,7 @@ function Study(props) {
   const [priority, setPriority] = useState(50);
   const [notification, setNotification] = useState(-1);
   const [submit, setSubmit] = useState(false);
+  const [peer, setPeer] = useState(null);
 
   useEffect(() => {
     fetch(`${serverOrigin}/api/groups/bring-groups`, { method: 'post' })
@@ -97,6 +100,57 @@ function Study(props) {
       updatePlan(selectedEvent, title, start, end, description, subject, priority);
     };
   }, [submit]);
+
+  //webcam & mic
+
+  useEffect(() => {
+    if (stream) {
+      console.log(stream)
+      const p = new SimplePeer({
+        initiator: window.location.hash === "#1",
+        trickle: false,
+        stream,
+      });
+      p.on("error", (err) => console.log("error", err));
+      p.on("signal", (data) => {
+        console.log("SIGNAL", JSON.stringify(data));
+        document.querySelector("#outgoing").textContent =
+          JSON.stringify(data);
+      });
+      console.log(p)
+      const socketConnectAction = () => {
+        socket.emit('joinMyGroups');
+      };
+  
+      p.on('connect', socketConnectAction);
+      setPeer(p);
+
+      return () => {
+        p.off("joinMyGroups", socketConnectAction);
+      };
+    };
+  }, [stream]);
+
+  useEffect(() => {
+    const getPermission = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+        });
+        setStream(stream);
+      } catch (err) {
+      }
+    };
+  
+    if (isCam) {
+      getPermission();
+    }
+    return () => {
+      if (isCam) {
+      }
+    };
+  }, [isCam]);
 
   function updatePlan(selectedEvent, title, start, end, description, subject, priority) {
     const eventIndex = events.findIndex((event) => event.id == selectedEvent);
@@ -191,7 +245,7 @@ function Study(props) {
 
   return (
     <div className={styles.StudyContainer}>
-      <StudyHeader subjects={subjects} subject={timerSubject} setSubject={setTimerSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} events={events} setEvents={setEvents} setIsAddPlanModal={setIsAddPlanModal} mode={"study"} reset={reset} />
+      <StudyHeader subjects={subjects} subject={timerSubject} setSubject={setTimerSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} events={events} setEvents={setEvents} setIsAddPlanModal={setIsAddPlanModal} mode={"study"} reset={reset} isCam={isCam} setIsMic={setIsMic} setIsCam={setIsCam} isMic={isMic} />
       <TopNotification duration={3000} response={addPlanResponse} />
       <EventModal
         isAddPlanModal={isAddPlanModal}

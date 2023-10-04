@@ -1,22 +1,26 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import styles from "./ChatModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faComments, faSchool, faXmark } from "@fortawesome/free-solid-svg-icons";
 import SidebarToggleBtn from "../SidebarToggleBtn/SidebarToggleBtn";
 import SendBtn from "../SendBtn/SendBtn";
 import CustomInput from "../CustomInput/CustomInput";
 
+const serverOrigin = process.env.REACT_APP_SERVER_ORIGIN;
+
 function ChatModal(props) {
-  const { setIsChatModal, isChatModal, groupChatRooms, setGroupChats, socket, userInfo, allMembers } = props;
+  const { setIsChatModal, isChatModal, rooms, setGroupChats, socket, userInfo, allMembers, groups } = props;
 
   const [isSidebar, setIsSidebar] = useState(false);
-  const [groupChatRoomsEl, setGroupChatRoomsEl] = useState(null);
+  const [groupsEl, setGroupsEl] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
-  const [selectedGroupRooms, setSelectedGroupRooms] = useState(null);
+  const [groupRoomsEl, setGroupRoomsEl] = useState(null);
   const [room, setRoom] = useState(null);
   const [message, setMessage] = useState("");
   const [send, setSend] = useState(false);
   const [messages, setMessages] = useState([]);
+
+  const msgContainerRef = useRef(null);
 
   useEffect(() => {
     if (send) {
@@ -26,7 +30,6 @@ function ChatModal(props) {
 
   useEffect(() => {
     const onMsg = (group, msgInfo) => {
-      console.log(group, allMembers);
       const isMe = msgInfo.u === userInfo.user_id;
       const date = new Date(msgInfo.t * 1000);
       const hr = date.getHours() % 12 ? date.getHours() % 12 : 12;
@@ -34,7 +37,7 @@ function ChatModal(props) {
       const timeDisp = `${hr}:${date.getMinutes().toString().padStart(2, '0')}${ampm}`;
       let newChat = (
         <div className={`${styles.messageWrapper} ${styles.others}`} key={msgInfo.i}>
-          <div className={styles.profileWrapper}>
+          <div className={styles.profileWrapper} style={{backgroundImage: `url("${serverOrigin}/profile-images/${userInfo.user_id}.jpeg")`}}>
 
           </div>
           <div className={styles.message}>
@@ -53,6 +56,9 @@ function ChatModal(props) {
           </div>
         )
       };
+      /* if (group === selectedGroup) {
+
+      } */
       setMessages((prevMessages) => [...prevMessages, newChat]);
     };
     socket.on('msgReceived', onMsg);
@@ -63,10 +69,11 @@ function ChatModal(props) {
   });
 
   useEffect(() => {
-    setGroupChatRoomsEl(groupChatRooms.map((group, i) => {
+    console.log(groups)
+    setGroupsEl(groups.map((group, i) => {
       return (
-        <li className={styles.chatRoom} key={i} style={{ backgroundColor: group.color }} onClick={() => { setSelectedGroup(group) }}>
-          <div className={styles.bar}></div>
+        <li className={styles.group} key={i} style={{ backgroundColor: group.color }} onClick={() => { setSelectedGroup(group) }}>
+          {/* <div className={styles.bar}></div> */}
           <div className={styles.notifications}>1</div>
           <div className={styles.hoverEl}>
             <p>{group.name}</p>
@@ -74,25 +81,34 @@ function ChatModal(props) {
         </li>
       );
     }));
-
-    if (groupChatRooms[0]) {
+    /* if (groupChatRooms[0]) {
       setSelectedGroup(
         groupChatRooms[0]
       );
-    };
-  }, [groupChatRooms]);
+      setRoom('general');
+    }; */
+  }, [groups]);
 
-  const groupChange = useCallback((group, room) => {
-    setRoom(group);
+  const roomChange = useCallback((room) => {
+    setRoom(room);
     setIsSidebar(false);
   }, []);
 
+  /*   useEffect(() => {
+      
+    }, []); */
+
   useEffect(() => {
-    console.log(selectedGroup);
-    if (selectedGroup) {
-      const newMessages = selectedGroup.chats.map((chat, i) => {
+    msgContainerRef.current.scrollTo({
+      top: msgContainerRef.current.scrollHeight,
+      behavior: 'smooth',
+    });
+  }, [messages]);
+
+  useEffect(() => {
+    if (room) {
+      const newMessages = room.chats.map((chat, i) => {
         const msgInfo = JSON.parse(chat);
-        console.log('chat', chat);
         const isMe = msgInfo.u === userInfo.user_id;
         const date = new Date(msgInfo.t * 1000);
         const hr = date.getHours() % 12 ? date.getHours() % 12 : 12;
@@ -131,27 +147,35 @@ function ChatModal(props) {
 
 
   useEffect(() => {
-    console.log(selectedGroup)
-    setSelectedGroupRooms(
+    console.log(rooms, 'ddd');
+    const groupRooms = rooms.filter(room => {return room.group_id === selectedGroup.group_id});
+    console.log(groupRooms);
+    setGroupRoomsEl(
       <div className={styles.rooms}>
         <ul className={styles.roomTypes}>
           <li>
-            <p className={styles.type}>TEXT CHANNELS</p>
-            <ul>
-              <li className={styles.room} onClick={() => { groupChange(selectedGroup, 'general') }}>#general</li>
+            <p className={styles.type}><FontAwesomeIcon icon={faComments} />TEXT CHANNELS</p>
+            <ul className={styles.roomsContainer}>
+              {groupRooms.map((room, i) => {
+                return (
+                  <li className={styles.room} key={i} onClick={() => { 
+                    setRoom(room);
+                    setIsSidebar(false);
+                   }}>#{room.name}</li>
+                )
+              })}
             </ul>
           </li>
           <li>
-            <p className={styles.type}>STUDY SESSION</p>
+            <p className={styles.type}><FontAwesomeIcon icon={faSchool} /> STUDY SESSION</p>
             <ul>
-              <li className={styles.room}>tester1</li>
-              <li className={styles.room}>tester1</li>
               <li className={styles.room}>tester1</li>
             </ul>
           </li>
         </ul>
       </div>
     );
+    //setRoom(selectedGroup);
   }, [selectedGroup]);
 
   return (
@@ -174,16 +198,16 @@ function ChatModal(props) {
           </i>
         </div>
         <div className={styles.content}>
-          <ul>
+          <ul className={styles.groupContainer}>
             <li className={styles.dms}>
               <p>DM</p>
             </li>
-            {groupChatRoomsEl}
+            {groupsEl}
           </ul>
-          {selectedGroupRooms}
+          {groupRoomsEl}
         </div>
       </div>
-      <div className={`${styles.chatsContainer} customScroll`}>
+      <div className={`${styles.chatsContainer} customScroll`} ref={msgContainerRef} >
         {messages}
       </div>
       <div className={styles.messageInputContainer}>
