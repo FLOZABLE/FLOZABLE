@@ -3,6 +3,7 @@ import styles from "./MemberEl.module.css";
 import { useSearchParams } from "react-router-dom";
 import { StudyPerson, RestPerson } from "../../../utils/svgs";
 import MemberTimer from "../MemberTimer/MemberTimer";
+import UserCamDisp from "../UserCamDisp/UserCamDisp";
 
 function MemberEl(props) {
   const { memberInfo, toggleTimer, me, myTimerTotal } = props;
@@ -49,6 +50,7 @@ function MemberEl(props) {
     <div className={styles.member} key={props.k}>
       <div className={styles.userName}>{memberInfo.name}</div>
       <div className={styles.icon}>{studyIcon}</div>
+      {/* <UserCamDisp /> */}
       <div className={styles.timer}>
         <MemberTimer run={run} total={sec} me={me} myTimerTotal={myTimerTotal} />
       </div>

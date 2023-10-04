@@ -51,6 +51,7 @@
     "redis": "^4.6.8",
     "sharp": "^0.32.4",
     "sib-api-v3-sdk": "^8.5.0",
+    "simple-peer": "^9.11.1",
     "socket.io": "^4.5.4",
     "web-push": "^3.6.4",
     "ws": "^8.13.0"

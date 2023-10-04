@@ -39,8 +39,8 @@ const testTools = require('./test/generate');
 //testTools.deleteGroups();
 //testTools.deleteTestUsers();
 const datasets = require('./test/Datasets');
-datasets.getSubjects();
-datasets.getPlans();
+//datasets.getSubjects();
+//datasets.getPlans();
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
