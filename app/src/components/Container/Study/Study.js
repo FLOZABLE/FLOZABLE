@@ -246,7 +246,7 @@ function Study(props) {
   return (
     <div className={styles.StudyContainer}>
       <StudyHeader subjects={subjects} subject={timerSubject} setSubject={setTimerSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} events={events} setEvents={setEvents} setIsAddPlanModal={setIsAddPlanModal} mode={"study"} reset={reset} isCam={isCam} setIsMic={setIsMic} setIsCam={setIsCam} isMic={isMic} />
-      <TopNotification duration={3000} response={addPlanResponse} />
+      <TopNotification duration={2500} response={addPlanResponse} />
       <EventModal
         isAddPlanModal={isAddPlanModal}
         setIsAddPlanModal={setIsAddPlanModal}

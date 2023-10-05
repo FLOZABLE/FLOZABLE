@@ -11,7 +11,7 @@ function Study(props) {
 
   return (
     <div className={styles.GroupsContainer}>
-      <TopNotification duration={3000} />
+      <TopNotification duration={2500} />
       <StuckModal />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>

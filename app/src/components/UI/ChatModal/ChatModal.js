@@ -15,7 +15,7 @@ function ChatModal(props) {
   const [groupsEl, setGroupsEl] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [groupRoomsEl, setGroupRoomsEl] = useState(null);
-  const [room, setRoom] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState(null);
   const [message, setMessage] = useState("");
   const [send, setSend] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -29,36 +29,42 @@ function ChatModal(props) {
   }, [send]);
 
   useEffect(() => {
-    const onMsg = (group, msgInfo) => {
+    const onMsg = (room, msgInfo) => {
       const isMe = msgInfo.u === userInfo.user_id;
       const date = new Date(msgInfo.t * 1000);
       const hr = date.getHours() % 12 ? date.getHours() % 12 : 12;
       const ampm = date.getHours() / 12 ? 'PM' : 'AM';
       const timeDisp = `${hr}:${date.getMinutes().toString().padStart(2, '0')}${ampm}`;
       let newChat = (
-        <div className={`${styles.messageWrapper} ${styles.others}`} key={msgInfo.i}>
-          <div className={styles.profileWrapper} style={{backgroundImage: `url("${serverOrigin}/profile-images/${userInfo.user_id}.jpeg")`}}>
-
-          </div>
-          <div className={styles.message}>
+        <div className={`${styles.messageWrapper} ${styles.me}`} key={msgInfo.i}>
+          <div className={styles.message} >
             <p>{msgInfo.m}</p>
           </div>
           <p className={styles.timeDisp}>{timeDisp}</p>
         </div>
-      )
-      if (!isMe) {
+      );
+      if (isMe) {
+        const user = allMembers.find(user => { return user.user_id === msgInfo.u });
+        console.log(user.name)
         newChat = (
-          <div className={`${styles.messageWrapper} ${styles.me}`} key={msgInfo.i}>
-            <div className={styles.message} >
+          <div className={`${styles.messageWrapper} ${styles.others}`} key={msgInfo.i}>
+            <div className={styles.profileWrapper} style={{
+              backgroundImage: `url("${serverOrigin}/profile-images/${userInfo.user_id}.jpeg")`, backgroundSize: 'cover',
+              backgroundPosition: 'center center',
+              backgroundRepeat: 'no-repeat',
+            }}>
+            </div>
+            <p className={styles.name} >{user.name}</p>
+            <div className={styles.message}>
               <p>{msgInfo.m}</p>
             </div>
             <p className={styles.timeDisp}>{timeDisp}</p>
           </div>
-        )
+        );
       };
-      /* if (group === selectedGroup) {
+      if (room === selectedRoom) {
 
-      } */
+      }
       setMessages((prevMessages) => [...prevMessages, newChat]);
     };
     socket.on('msgReceived', onMsg);
@@ -85,14 +91,9 @@ function ChatModal(props) {
       setSelectedGroup(
         groupChatRooms[0]
       );
-      setRoom('general');
+      setSelectedRoom('general');
     }; */
   }, [groups]);
-
-  const roomChange = useCallback((room) => {
-    setRoom(room);
-    setIsSidebar(false);
-  }, []);
 
   /*   useEffect(() => {
       
@@ -106,40 +107,56 @@ function ChatModal(props) {
   }, [messages]);
 
   useEffect(() => {
-    if (room) {
-      const newMessages = room.chats.map((chat, i) => {
+    if (selectedRoom) {
+      const newMessages = [];
+      selectedRoom.chats.map((chat, i) => {
         const msgInfo = JSON.parse(chat);
         const isMe = msgInfo.u === userInfo.user_id;
         const date = new Date(msgInfo.t * 1000);
         const hr = date.getHours() % 12 ? date.getHours() % 12 : 12;
         const ampm = date.getHours() / 12 ? 'PM' : 'AM';
         const timeDisp = `${hr}:${date.getMinutes().toString().padStart(2, '0')}${ampm}`;
-        let newChat = (
-          <div className={styles.messageWrapper} key={i}>
-            <div className={styles.profileWrapper}>
-
+        const prevChat = i ? JSON.parse(selectedRoom.chats[i - 1]) : false;
+        const isDateChange = prevChat ? new Date(prevChat.t * 1000).setHours(0, 0, 0, 0) !== new Date(msgInfo.t * 1000).setHours(0, 0, 0, 0) : true;
+        if (isDateChange) {
+          const changeDate = new Date(msgInfo.t * 1000);
+          newMessages.push(
+            <div className={styles.dateChange} key={(i + 1) * (Math.random() + 1 * 100)}>
+              <p>{changeDate.getMonth() + 1}/{changeDate.getDate()}</p>
             </div>
+          )
+        }
+        let newChat = (
+          <div className={`${styles.messageWrapper} ${styles.me}`} key={i}>
             <div className={styles.message}>
               <p>{msgInfo.m}</p>
             </div>
             <p className={styles.timeDisp}>{timeDisp}</p>
           </div>
-        )
-        if (isMe) {
+        );
+        if (!isMe) {
+          const user = allMembers.find(user => { return user.user_id === msgInfo.u });
           newChat = (
-            <div className={`${styles.messageWrapper} ${styles.me}`} key={i}>
+            <div className={`${styles.messageWrapper} ${styles.others}`} key={i}>
+              <div className={styles.profileWrapper} style={{
+                backgroundImage: `url("${serverOrigin}/profile-images/${userInfo.user_id}.jpeg")`, backgroundSize: 'cover',
+                backgroundPosition: 'center center',
+                backgroundRepeat: 'no-repeat',
+              }}>
+              </div>
+              <p className={styles.name} >{user.name}</p>
               <div className={styles.message}>
                 <p>{msgInfo.m}</p>
               </div>
               <p className={styles.timeDisp}>{timeDisp}</p>
             </div>
-          )
+          );
         };
-        return newChat;
+        newMessages.push(newChat);
       });
       setMessages(newMessages);
     };
-  }, [room]);
+  }, [selectedRoom]);
 
   const handleMessageInput = (e) => {
     setMessage(e.target.value);
@@ -147,8 +164,7 @@ function ChatModal(props) {
 
 
   useEffect(() => {
-    console.log(rooms, 'ddd');
-    const groupRooms = rooms.filter(room => {return room.group_id === selectedGroup.group_id});
+    const groupRooms = rooms.filter(room => { return room.group_id === selectedGroup.group_id });
     console.log(groupRooms);
     setGroupRoomsEl(
       <div className={styles.rooms}>
@@ -158,10 +174,10 @@ function ChatModal(props) {
             <ul className={styles.roomsContainer}>
               {groupRooms.map((room, i) => {
                 return (
-                  <li className={styles.room} key={i} onClick={() => { 
-                    setRoom(room);
+                  <li className={styles.room} key={i} onClick={() => {
+                    setSelectedRoom(room);
                     setIsSidebar(false);
-                   }}>#{room.name}</li>
+                  }}>#{room.name}</li>
                 )
               })}
             </ul>
@@ -175,7 +191,7 @@ function ChatModal(props) {
         </ul>
       </div>
     );
-    //setRoom(selectedGroup);
+    //setSelectedRoom(selectedGroup);
   }, [selectedGroup]);
 
   return (
