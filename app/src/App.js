@@ -6,6 +6,7 @@ import Ranking from './components/Container/Ranking/Ranking';
 import Groups from './components/Container/Groups/Groups';
 import Study from './components/Container/Study/Study';
 import Account from './components/Container/Account/Account';
+import Templates from './components/Container/Templates/Templates';
 import './App.css';
 import Sidebar from './components/UI/Sidebar/Sidebar';
 import Header from './components/UI/Header/Header';
@@ -228,6 +229,18 @@ function App() {
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} rooms={chatRooms} setRooms={setGroupRooms} socket={socket} userInfo={userInfo} allMembers={allMembers} groups={myGroups} />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Account setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} />
+          </div>
+        } />
+        <Route path="/dashboard/templates" element={
+          <div>
+            <Sidebar isSidebarOpen={isSidebarOpen}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              isSidebarHovered={isHovered}
+            />
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} rooms={chatRooms} setRooms={setGroupRooms} socket={socket} userInfo={userInfo} allMembers={allMembers} groups={myGroups} />
+            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Templates setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
           </div>
         } />
       </Routes>

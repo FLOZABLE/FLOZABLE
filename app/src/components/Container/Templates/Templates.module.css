@@ -1,0 +1,102 @@
+.Templates {
+  
+}
+
+.Templates .box {
+  display: flex;
+  background-color: #f7f9fd;
+  border-radius: 40px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 40px;
+  margin-bottom: 50px;
+  flex-direction: column;
+}
+
+.Templates .searchZone {
+  display: flex;
+  width: 100%;
+}
+
+.Templates .template {
+  width: 500px;
+  height: 400px;
+  background-color: aqua;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.Templates .template .photo {
+  background-color: red;
+  width: 100%;
+  height: 270px;
+}
+
+.Templates .template .expand {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 20px;
+  background-color: #00000088;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.Templates .expand i {
+ opacity: 1;
+}
+
+.Templates .tags {
+  display: flex;
+  justify-content: center;
+}
+
+.Templates .tags .tag {
+  height: 27px;
+  padding: 0px 15px;
+  margin: 0px 5px;
+  display: flex;
+  align-items: center;
+  background-color: bisque;
+  border-radius: 14px;
+}
+
+.Templates .reaction {
+  position: absolute;
+  top: 287px;
+  background-color: var(--pink);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.Templates .info {
+  margin: 10px 20px;
+}
+
+.Templates .bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.Templates .buttons {
+  display: flex;
+  z-index: 1;
+}
+
+/* .Templates .buttons button {
+  background-color: #fd8a8a;
+  font-weight: 800;
+  color: #fff;
+  padding: 0px 20px;
+  border-radius: 20px;
+  font-size: 16px;
+} */
+
+/* .Templates .buttons > * {
+  margin: 5px;
+  position: relative;
+} */

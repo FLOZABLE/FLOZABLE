@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartColumn, faHouse, faCalendar, faUserGroup, faRankingStar } from '@fortawesome/free-solid-svg-icons';
+import { faChartColumn, faHouse, faCalendar, faUserGroup, faRankingStar, faNoteSticky } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 
@@ -86,6 +86,20 @@ function Sidebar(props) {
               <FontAwesomeIcon icon={faRankingStar} />
               </div>
               <p className={styles.navText}  data-text="Ranking">Ranking</p>
+            </Link>
+          </div>
+        </li>
+        <li>
+          <div
+            onMouseEnter={() => handleMouseEnter('navItem5')}
+            onMouseLeave={handleMouseLeave}
+            className={`${styles.startStudy} ${styles.navItemWrapper} ${hoveredElement === 'navItem6' ? styles.hovered : ''}`}
+          >
+            <Link to="/dashboard/templates" className={styles.navItem}>
+              <div className={styles.icon}>
+              <FontAwesomeIcon icon={faNoteSticky} />
+              </div>
+              <p className={styles.navText}  data-text="Templates">Templates</p>
             </Link>
           </div>
         </li>

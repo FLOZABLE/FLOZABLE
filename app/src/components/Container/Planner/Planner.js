@@ -59,7 +59,7 @@ function Planner(props) {
 
   return (
     <div className={styles.PlannerContainer}>
-      <TopNotification duration={3000} response={addPlanResponse} />
+      <TopNotification duration={2500} response={addPlanResponse} />
       <StuckModal />
       <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>

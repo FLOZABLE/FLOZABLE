@@ -238,7 +238,7 @@ function Stats(props) {
               </div>
               <div className={`${styles.divided} ${styles.todoList}`}>
                 <p className={styles.title}>Your to-do list</p>
-                <ul>
+                {/* <ul>
                   <li>
                     <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
                   </li>
@@ -251,7 +251,7 @@ function Stats(props) {
                   <li>
                     <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
                   </li>
-                </ul>
+                </ul> */}
               </div>
             </div>
           </div>

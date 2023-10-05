@@ -70,7 +70,7 @@ function Groups(props) {
 
   return (
     <div className={styles.GroupsContainer}>
-      <TopNotification duration={3000} response={joinGroupResponse} />
+      <TopNotification duration={2500} response={joinGroupResponse} />
       <StuckModal />
       {/* <div className={styles.groupsViewer}>
         <MyGroupsViewer myGroups={myGroups}/>

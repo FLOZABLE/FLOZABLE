@@ -7,6 +7,7 @@ function TopNotification(props) {
 
   const [notification, setNotification] = useState(null);
   const [notify, setNotify] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
 
   useEffect(() => {
     const response  = props.response;
@@ -30,10 +31,13 @@ function TopNotification(props) {
           </div>
         );
       };
+      clearTimeout(timeoutId);
+      setNotify(false);
       setNotify(true);
-      setTimeout(() => {
+      const newTimeoutId = setTimeout(() => {
         setNotify(false);
       }, props.duration);
+      setTimeoutId(newTimeoutId);
     }
   }, [props.response]);
 
