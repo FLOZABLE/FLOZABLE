@@ -101,3 +101,8 @@
     transform: translateZ(0) scale(2);
   }
 }
+
+.BlobBtn.opt1 {
+  padding: 0px 10px;
+  white-space: nowrap;
+}

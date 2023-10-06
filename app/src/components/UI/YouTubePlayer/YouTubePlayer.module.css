@@ -7,4 +7,5 @@
 .YouTubePlayer .video {
   height: calc(100% + 300px);
   width: 100%;
+  pointer-events: none;
 }

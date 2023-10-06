@@ -7,6 +7,7 @@ import Groups from './components/Container/Groups/Groups';
 import Study from './components/Container/Study/Study';
 import Account from './components/Container/Account/Account';
 import Templates from './components/Container/Templates/Templates';
+import EditTemplate from './components/Container/EditTemplate/EditTemplate';
 import './App.css';
 import Sidebar from './components/UI/Sidebar/Sidebar';
 import Header from './components/UI/Header/Header';
@@ -241,6 +242,13 @@ function App() {
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} rooms={chatRooms} setRooms={setGroupRooms} socket={socket} userInfo={userInfo} allMembers={allMembers} groups={myGroups} />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Templates setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
+          </div>
+        } />
+       <Route path="/dashboard/templates/edit" element={
+          <div>
+            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} rooms={chatRooms} setRooms={setGroupRooms} socket={socket} userInfo={userInfo} allMembers={allMembers} groups={myGroups} />
+            {/* <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} mode={"study"} /> */}
+            <EditTemplate setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} />
           </div>
         } />
       </Routes>
