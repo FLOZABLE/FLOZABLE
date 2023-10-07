@@ -1,0 +1,9 @@
+.StudySidebar {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  background-color: aqua;
+  width: 300px;
+  height: 100vh;
+  z-index: 3;
+}
