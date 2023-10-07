@@ -13,7 +13,10 @@ import EventModal from '../../UI/EventModal/EventModal';
 import { sortSubjects } from '../Stats/StatTools';
 import { generateRandomId } from "../../../utils/RandomId";
 import SimplePeer from 'simple-peer';
-import { DndProvider, Droppable, Draggable } from 'react-dnd';
+import ToolBoxModal from '../../UI/ToolBoxModal/ToolBoxModal';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import StudySidebar from '../../UI/StudySidebar/StudySidebar';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -51,7 +54,11 @@ function EditTemplate(props) {
   const [submit, setSubmit] = useState(false);
   const [peer, setPeer] = useState(null);
 
-  
+  const [droppedItems, setDroppedItems] = useState([]);
+
+  const handleDrop = (itemName) => {
+    setDroppedItems((prevItems) => [...prevItems, itemName]);
+  };
 
   useEffect(() => {
     fetch(`${serverOrigin}/api/groups/bring-groups`, { method: 'post' })
@@ -124,7 +131,7 @@ function EditTemplate(props) {
       const socketConnectAction = () => {
         socket.emit('joinMyGroups');
       };
-  
+
       p.on('connect', socketConnectAction);
       setPeer(p);
 
@@ -145,7 +152,7 @@ function EditTemplate(props) {
       } catch (err) {
       }
     };
-  
+
     if (isCam) {
       getPermission();
     }
@@ -245,52 +252,65 @@ function EditTemplate(props) {
       }
     };
   }, [title, start, end, subject]);
-
+  const [items, setItems] = useState([
+    { id: 1, text: 'Item 1' },
+    { id: 2, text: 'Item 2' },
+    { id: 3, text: 'Item 3' },
+  ]);
+  const moveItem = (fromIndex, toIndex) => {
+    const updatedItems = [...items];
+    const [movedItem] = updatedItems.splice(fromIndex, 1);
+    updatedItems.splice(toIndex, 0, movedItem);
+    setItems(updatedItems);
+  };
   return (
-    <div className={styles.EditTemplate}>
-      <StudyHeader subjects={subjects} subject={timerSubject} setSubject={setTimerSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} events={events} setEvents={setEvents} setIsAddPlanModal={setIsAddPlanModal} mode={"study"} reset={reset} isCam={isCam} setIsMic={setIsMic} setIsCam={setIsCam} isMic={isMic} />
-      <TopNotification duration={2500} response={addPlanResponse} />
-      <EventModal
-        isAddPlanModal={isAddPlanModal}
-        setIsAddPlanModal={setIsAddPlanModal}
-        title={title}
-        setTitle={setTitle}
-        setStart={setStart}
-        start={start}
-        setEnd={setEnd}
-        end={end}
-        description={description}
-        setDescription={setDescription}
-        setSubject={setSubject}
-        subjects={subjectsOpt}
-        notification={notification}
-        setNotification={setNotification}
-        submit={submit}
-        setSubmit={setSubmit}
-        repeat={repeat}
-        setRepeat={setRepeat}
-        priority={priority}
-        setPriority={setPriority}
-        setIsAddSubjectModal={setIsAddSubjectModal}
-      />
-      <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
-      <div className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
-        <div className={`${styles.myGroupsViewerWrapper} ${groupsBtn ? styles.open : ''}`}>
-          <MyGroupsViewer myGroups={myGroups} setMyGroups={setMyGroups} mode={'study'} socket={socket} userInfo={userInfo} subjects={subjects} myTimerTotal={myTimerTotal} />
-        </div>
-        <div className={styles.PlanTimelineBarWrapper}>
-          <PlanTimelineBar events={events} subjects={subjects} />
-        </div>
-      </div>
-      <div className={styles.ytBg}>
-        <YouTubePlayer
-          height={"100vh"}
-          width={"100vw"}
-          videoId={videoId}
-          volume={volume}
+    <DndProvider backend={HTML5Backend}>
+      <div className={styles.EditTemplate}>
+        <StudyHeader subjects={subjects} subject={timerSubject} setSubject={setTimerSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} events={events} setEvents={setEvents} setIsAddPlanModal={setIsAddPlanModal} mode={"study"} reset={reset} isCam={isCam} setIsMic={setIsMic} setIsCam={setIsCam} isMic={isMic} />
+        <TopNotification duration={2500} response={addPlanResponse} />
+        <EventModal
+          isAddPlanModal={isAddPlanModal}
+          setIsAddPlanModal={setIsAddPlanModal}
+          title={title}
+          setTitle={setTitle}
+          setStart={setStart}
+          start={start}
+          setEnd={setEnd}
+          end={end}
+          description={description}
+          setDescription={setDescription}
+          setSubject={setSubject}
+          subjects={subjectsOpt}
+          notification={notification}
+          setNotification={setNotification}
+          submit={submit}
+          setSubmit={setSubmit}
+          repeat={repeat}
+          setRepeat={setRepeat}
+          priority={priority}
+          setPriority={setPriority}
+          setIsAddSubjectModal={setIsAddSubjectModal}
         />
+        <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
+        <StudySidebar onDrop={handleDrop}  items={items} moveItem={moveItem} />
+        <div className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
+          <div className={`${styles.myGroupsViewerWrapper} ${groupsBtn ? styles.open : ''}`}>
+            <MyGroupsViewer myGroups={myGroups} setMyGroups={setMyGroups} mode={'study'} socket={socket} userInfo={userInfo} subjects={subjects} myTimerTotal={myTimerTotal} />
+          </div>
+          <div className={styles.PlanTimelineBarWrapper}>
+            <PlanTimelineBar events={events} subjects={subjects} />
+          </div>
+        </div>
+        <div className={styles.ytBg}>
+          <YouTubePlayer
+            height={"100vh"}
+            width={"100vw"}
+            videoId={videoId}
+            volume={volume}
+          />
+        </div>
       </div>
-    </div>
+    </DndProvider>
   )
 }
 
