@@ -26,10 +26,11 @@ function Study(props) {
   const [isTimerModal, setIsTimerModal] = useState(false);
   const [isMicModal, setIsMicModal] = useState(false);
   const [isCamModal, setIsCamModal] = useState(false);
-  const [isPlannerModal, setIsPlanModal] = useState(false);
+  const [isPlannerModal, setIsPlannerModal] = useState(false);
   const [isTemplateModal, setIsTemplateModal] = useState(false);
   const [isGroupModal, setIsGroupModal] = useState(false);
   const [isVolumeModal, setIsVolumeModal] = useState(false);
+  const [isZoom, setIsZoom] = useState(false);
 
   const [myGroups, setMyGroups] = useState([]);
   const [allGroups, setAllGroups] = useState([]);
@@ -132,7 +133,7 @@ function Study(props) {
       const socketConnectAction = () => {
         socket.emit('joinMyGroups');
       };
-  
+
       p.on('connect', socketConnectAction);
       setPeer(p);
 
@@ -153,7 +154,7 @@ function Study(props) {
       } catch (err) {
       }
     };
-  
+
     if (isCam) {
       getPermission();
     }
@@ -284,7 +285,7 @@ function Study(props) {
         setPriority={setPriority}
         setIsAddSubjectModal={setIsAddSubjectModal}
       />
-      <StudySidebar isTimerModal={isTimerModal} isPlannerModal={isPlannerModal} isTemplateModal={isTemplateModal} isGroupModal={isGroupModal} isVolumeModal={isVolumeModal} />
+      <StudySidebar isTimerModal={isTimerModal} isPlannerModal={isPlannerModal} isTemplateModal={isTemplateModal} isGroupModal={isGroupModal} isVolumeModal={isVolumeModal} setIsTimerModal={setIsTimerModal} setIsPlannerModal={setIsPlannerModal} setIsTemplateModal={setIsTemplateModal} setIsGroupModal={setIsGroupModal} setIsVolumeModal={setIsVolumeModal} isZoom={isZoom} setIsZoom={setIsZoom} />
       <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
       <div className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={`${styles.myGroupsViewerWrapper} ${groupsBtn ? styles.open : ''}`}>

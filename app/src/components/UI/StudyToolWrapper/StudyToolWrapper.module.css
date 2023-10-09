@@ -1,3 +1,7 @@
-.studyTool {
-  background-color: red;
+.studyToolWrapper {
+  transform: translate(0, 0);
+}
+
+.studyToolWrapper.clicked i {
+  color: var(--pink);
 }
