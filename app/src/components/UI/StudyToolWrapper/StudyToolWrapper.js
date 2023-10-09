@@ -1,9 +1,11 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { ItemTypes } from './ItemTypes.js'
 import styles from "./StudyToolWrapper.module.css";
 
-function StudyTool({ id, element, index, moveCard, styles }) {
+function StudyTool({ id, element, index, moveCard }) {
+  const [isClicked, setIsClicked] = useState(false);
+
   const ref = useRef(null)
   const [{ handlerId }, drop] = useDrop({
     accept: ItemTypes.CARD,
@@ -59,11 +61,10 @@ function StudyTool({ id, element, index, moveCard, styles }) {
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
-  })
-  const opacity = isDragging ? 0 : 1
+  });
   drag(drop(ref))
   return (
-    <div ref={ref} data-handler-id={handlerId}>
+    <div ref={ref} data-handler-id={handlerId} style={{ opacity: isDragging ? 0 : 1}} className={`${styles.studyToolWrapper} ${isClicked ? styles.clicked : ''}`} onClick={() => {setIsClicked(!isClicked)}}>
       {element}
     </div>
   )

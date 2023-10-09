@@ -6,54 +6,83 @@ import StudyTool from "../StudyToolWrapper/StudyToolWrapper";
 
 import styles from "./StudySidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHourglass } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faClipboardCheck, faHourglass, faImage, faMicrophone, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
 
-function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupModal, isVolumeModal }) {
-  const handleItemClick = (itemId) => {
-    setItems((prevItems) => {
-      return prevItems.map((item) =>
-        item.id === itemId ? { ...item, clicked: !item.clicked } : item
-      );
-    });
-  };
-
+function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupModal, isVolumeModal, isZoom, setIsTimerModal, setIsPlannerModal, setIsTemplateModal, setIsGroupModal, setIsVolumeModal, setIsZoom }) {
+  const [isItemDragging, setIsItemDragging] = useState(false);
+  
   const [items, setItems] = useState([
     {
       id: 1,
-      clicked: false,
       element:
-        <div className={styles.studyTool} onClick={() => { handleItemClick(1) }}>
-          <FontAwesomeIcon icon={faHourglass} style={{ color: "#fff" }} />
+        <div className={`${styles.studyTool} ${isTimerModal ? styles.clicked : ''}`} onClick={() => { setIsTimerModal((prev) => !prev) }}>
+          <i>
+            <FontAwesomeIcon icon={faHourglass} />
+          </i>
         </div>,
     },
     {
       id: 2,
-      element: <div className={styles.iconWrapper} onClick={() => { console.log('d') }}>
-        <FontAwesomeIcon icon={faHourglass} />
-      </div>,
+      element:
+        <div className={`${styles.studyTool} ${isPlannerModal ? styles.clicked : ''}`} onClick={() => { setIsPlannerModal((prev) => !prev) }}>
+          <i>
+            <FontAwesomeIcon icon={faClipboardCheck} />
+          </i>
+        </div>,
     },
-    {
+    /* {
       id: 3,
       element:
-        <div className={styles.studyTool} onClick={() => { handleItemClick(1) }}>
-          <FontAwesomeIcon icon={faHourglass} style={{ color: "#fff" }} />
+        <div className={`${styles.studyTool} ${isModal ? styles.clicked : ''}`} onClick={() => { setModal((prev) => !prev) }}>
+          <i>
+            <FontAwesomeIcon icon={faCamera} />
+          </i>
         </div>,
     },
     {
       id: 4,
-      element: 'Create some examples',
-    },
+      element:
+        <div className={`${styles.studyTool} ${isModal ? styles.clicked : ''}`} onClick={() => { setModal((prev) => !prev) }}>
+          <i>
+            <FontAwesomeIcon icon={faMicrophone} />
+          </i>
+        </div>,
+    }, */
     {
       id: 5,
-      element: 'Spam in Twitter and IRC to promote it (note that this element is taller than the others)',
+      element:
+        <div className={`${styles.studyTool} ${isTemplateModal ? styles.clicked : ''}`} onClick={() => { setIsTemplateModal((prev) => !prev) }}>
+          <i>
+            <FontAwesomeIcon icon={faImage} />
+          </i>
+        </div>,
     },
     {
       id: 6,
-      element: '???',
+      element:
+        <div className={`${styles.studyTool} ${isVolumeModal ? styles.clicked : ''}`} onClick={() => { setIsVolumeModal((prev) => !prev) }}>
+          <i>
+            <FontAwesomeIcon icon={faVolumeHigh} />
+          </i>
+        </div>,
     },
     {
       id: 7,
-      element: 'PROFIT',
+      element:
+        <div className={`${styles.studyTool} ${isGroupModal ? styles.clicked : ''}`} onClick={() => { setIsGroupModal((prev) => !prev) }}>
+          <i>
+            <FontAwesomeIcon icon={faUsers} />
+          </i>
+        </div>,
+    },
+    {
+      id: 8,
+      element:
+        <div className={`${styles.studyTool} ${isZoom ? styles.clicked : ''}`} onClick={() => { setIsZoom((prev) => !prev) }}>
+          <i>
+            <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+          </i>
+        </div>,
     },
   ]);
   const moveCard = useCallback((dragIndex, hoverIndex) => {

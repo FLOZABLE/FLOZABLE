@@ -1,7 +1,7 @@
 .env.production
 .env.development
 .env.build
-./test.txt
+test.txt
 node_modules
 subjects.csv
 plans.csv
