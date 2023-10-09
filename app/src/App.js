@@ -197,12 +197,12 @@ function App() {
         } />
         <Route path="/dashboard/study" element={
           <div>
-            <Sidebar isSidebarOpen={isSidebarOpen}
+            {/* <Sidebar isSidebarOpen={isSidebarOpen}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
               mode={"study"}
-            />
+            /> */}
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} rooms={chatRooms} setRooms={setGroupRooms} socket={socket} userInfo={userInfo} allMembers={allMembers} groups={myGroups} />
             {/* <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} mode={"study"} /> */}
             <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} />

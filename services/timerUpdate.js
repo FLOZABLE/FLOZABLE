@@ -10,7 +10,7 @@ const cron = require("node-cron");
 async function timerUpdate() {
   const now = DateTime.utc();
   const allTimezones = Intl.supportedValuesOf('timeZone');
-  const midnightTimezones = ["America/Los_Angeles"];
+  const midnightTimezones = [];
   allTimezones.forEach(zone => {
     const dtInZone = now.setZone(zone);
     if (dtInZone.hour === 0) {
