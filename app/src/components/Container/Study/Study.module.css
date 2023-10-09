@@ -8,6 +8,7 @@
   height: 100vh;
   z-index: 2;
   overflow: hidden;
+  margin-left: 100px;
 }
 
 .StudyContainer .ytBg {
@@ -32,4 +33,5 @@
   bottom:50px;
   left: 0px;
   width: 100vw;
+  z-index: 2;
 }
