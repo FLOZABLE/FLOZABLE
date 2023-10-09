@@ -13,12 +13,23 @@ import EventModal from '../../UI/EventModal/EventModal';
 import { sortSubjects } from '../../Container/Stats/StatTools';
 import { generateRandomId } from "../../../utils/RandomId";
 import SimplePeer from 'simple-peer';
+import StudySidebar from '../../UI/StudySidebar/StudySidebar';
+import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Study(props) {
 
   const { isStudy, setIsStudy, subjects, setSubjects, socket, userInfo, events, setEvents, reset } = props;
+
+  const [isTimerModal, setIsTimerModal] = useState(false);
+  const [isMicModal, setIsMicModal] = useState(false);
+  const [isCamModal, setIsCamModal] = useState(false);
+  const [isPlannerModal, setIsPlanModal] = useState(false);
+  const [isTemplateModal, setIsTemplateModal] = useState(false);
+  const [isGroupModal, setIsGroupModal] = useState(false);
+  const [isVolumeModal, setIsVolumeModal] = useState(false);
 
   const [myGroups, setMyGroups] = useState([]);
   const [allGroups, setAllGroups] = useState([]);
@@ -245,6 +256,9 @@ function Study(props) {
 
   return (
     <div className={styles.StudyContainer}>
+      <DndProvider backend={HTML5Backend}>
+
+      </DndProvider>
       <StudyHeader subjects={subjects} subject={timerSubject} setSubject={setTimerSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} events={events} setEvents={setEvents} setIsAddPlanModal={setIsAddPlanModal} mode={"study"} reset={reset} isCam={isCam} setIsMic={setIsMic} setIsCam={setIsCam} isMic={isMic} />
       <TopNotification duration={2500} response={addPlanResponse} />
       <EventModal
@@ -270,8 +284,9 @@ function Study(props) {
         setPriority={setPriority}
         setIsAddSubjectModal={setIsAddSubjectModal}
       />
+      <StudySidebar isTimerModal={isTimerModal} isPlannerModal={isPlannerModal} isTemplateModal={isTemplateModal} isGroupModal={isGroupModal} isVolumeModal={isVolumeModal} />
       <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
-      <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
+      <div className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={`${styles.myGroupsViewerWrapper} ${groupsBtn ? styles.open : ''}`}>
           <MyGroupsViewer myGroups={myGroups} setMyGroups={setMyGroups} mode={'study'} socket={socket} userInfo={userInfo} subjects={subjects} myTimerTotal={myTimerTotal} />
         </div>
