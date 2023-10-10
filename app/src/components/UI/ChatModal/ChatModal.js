@@ -25,6 +25,7 @@ function ChatModal(props) {
   useEffect(() => {
     if (send) {
       socket.emit('sendMsg', selectedGroup.group_id, message);
+      console.log(selectedGroup.group_id);
     }
   }, [send]);
 
@@ -43,7 +44,7 @@ function ChatModal(props) {
           <p className={styles.timeDisp}>{timeDisp}</p>
         </div>
       );
-      if (isMe) {
+      if (!isMe) {
         const user = allMembers.find(user => { return user.user_id === msgInfo.u });
         console.log(user.name)
         newChat = (
@@ -62,10 +63,9 @@ function ChatModal(props) {
           </div>
         );
       };
-      if (room === selectedRoom) {
-
+      if (room == selectedRoom.group_id) {
+        setMessages((prevMessages) => [...prevMessages, newChat]);
       }
-      setMessages((prevMessages) => [...prevMessages, newChat]);
     };
     socket.on('msgReceived', onMsg);
 
@@ -108,6 +108,7 @@ function ChatModal(props) {
 
   useEffect(() => {
     if (selectedRoom) {
+      console.log("Current Room: " + selectedRoom.group_id);
       const newMessages = [];
       selectedRoom.chats.map((chat, i) => {
         const msgInfo = JSON.parse(chat);
@@ -227,7 +228,7 @@ function ChatModal(props) {
         {messages}
       </div>
       <div className={styles.messageInputContainer}>
-        <CustomInput input={message} handleInput={handleMessageInput} handleEnter={() => { setSend(true); setTimeout(() => { setSend(false) }, 800) }} icon={null} type={"text"} />
+        <CustomInput input={message} handleInput={handleMessageInput} handleEnter={() => {setSend(true); setTimeout(() => { setSend(false) }, 800) }} icon={null} type={"text"} />
         <SendBtn send={send} setSend={setSend} />
       </div>
     </div>

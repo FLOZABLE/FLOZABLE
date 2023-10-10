@@ -186,7 +186,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on("sendMsg", async (group, msg) => {
-    console.log(group, msg);
+    console.log("Group ID: " + group, msg);
     const userId = socket.userId;
     let userGroups = await redisClient.hGet(`user:${userId}`, 'groups');
     if (userGroups) {
