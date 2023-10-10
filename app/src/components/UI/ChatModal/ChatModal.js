@@ -25,7 +25,7 @@ function ChatModal(props) {
   useEffect(() => {
     if (send) {
       socket.emit('sendMsg', selectedGroup.group_id, message);
-      console.log(selectedGroup.group_id);
+      console.log(selectedGroup.group_id, selectedGroup, selectedRoom);
     }
   }, [send]);
 
@@ -46,7 +46,6 @@ function ChatModal(props) {
       );
       if (!isMe) {
         const user = allMembers.find(user => { return user.user_id === msgInfo.u });
-        console.log(user.name)
         newChat = (
           <div className={`${styles.messageWrapper} ${styles.others}`} key={msgInfo.i}>
             <div className={styles.profileWrapper} style={{
@@ -63,9 +62,11 @@ function ChatModal(props) {
           </div>
         );
       };
-      if (room == selectedRoom.group_id) {
+      //update msg array
+      console.log(room, msgInfo, groups)
+     /*  if (room == selectedRoom.group_id) {
         setMessages((prevMessages) => [...prevMessages, newChat]);
-      }
+      } */
     };
     socket.on('msgReceived', onMsg);
 
@@ -166,7 +167,6 @@ function ChatModal(props) {
 
   useEffect(() => {
     const groupRooms = rooms.filter(room => { return room.group_id === selectedGroup.group_id });
-    console.log(groupRooms);
     setGroupRoomsEl(
       <div className={styles.rooms}>
         <ul className={styles.roomTypes}>
