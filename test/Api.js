@@ -775,7 +775,7 @@ Router.post("/live-members", (req, res) => {
 
 Router.post("/chat/bring-group-rooms", async (req, res) => {
   let userGroups = await redisClient.hGet(`user:${tester.id}`, 'groups');
-  if (userGroups) {
+  /* if (userGroups) {
     try {
       userGroups = userGroups.split(',');
       const connection = pool.promise();
@@ -783,22 +783,18 @@ Router.post("/chat/bring-group-rooms", async (req, res) => {
 
       const [groupInfo] = userGroups.length ? await connection.query(`SELECT group_id, name, leader, color FROM groups where group_id IN (?)`, [userGroups]) : [];
       //const [groupChatRooms] = await conneR
-      let groupRooms = redisClient.sMembers();
       console.log('groups', groupInfo)
       for (let i = 0; i < groupInfo.length; i++) {
         const groupId = groupInfo[i].group_id;
-        let groupRooms = redisClient.sMembers(groupId);
-        if (!groupRooms) {
+        let groupRooms = await redisClient.sMembers(groupId);
+        console.log('groupRoom', groupRooms)
+        if (!groupRooms.length) {
           [groupRooms] = await connection.query(`SELECT * FROM chatrooms WHERE group_id = ?`, [groupId]);
-          /* groupRooms.map(room => {
-            if (room.members === "*" || room.members.split(',').includes(tester.id)) {
-
-            }
-          }) */
           const redisGroupRooms = groupRooms.map(room => JSON.stringify(room));
-          redisClient.sAdd(...redisGroupRooms);
-          console.log('rooms', groupRooms)
+          //redisClient.sAdd(...redisGroupRooms);
+          console.log('rooms', groupRooms, redisGroupRooms)
         }
+
         //const chat
         let chats = (await redisClient.lRange(`group:${groupId}:chat`, 0, -1));
         //bring mariadb stored value if no chat exist/too short
@@ -811,7 +807,26 @@ Router.post("/chat/bring-group-rooms", async (req, res) => {
     } catch (err) {
       console.log(err)
     }
-  };
+  }; */
+  try {
+    //no cache if
+    if (!userGroups) {
+      const connection = pool.promise();
+      const [groups] = await connection.query(`SELECT groups FROM users WHERE user_id = ?` , [tester.id]);
+      userGroups = groups;
+    } else {
+      userGroups = userGroups.split(',');
+    }
+    /* await promise.all(userGroups.map(group => {
+      const chatRooms = await redisClient.sMembers(`group:${chatRoom.group_id}:rooms`)
+    })) */
+    await Promise.all(userGroups.map(async (group) => {
+      const chatRooms = await redisClient.sMembers(`group:${group}:rooms`);
+      console.log(chatRooms);
+    }))
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 //account update
