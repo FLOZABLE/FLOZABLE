@@ -254,22 +254,21 @@ Router.post('/groups/create-validate', async (req, res) => {
         tester.id,
       ]);
 
+      let groups = await redisClient.hGet(`user:${tester.id}`, 'groups');
+      groups = groups ? groups + group.group_id : group.group_id;
+      redisClient.hSet(`user:${tester.id}`, `groups`, groups);
+      const groupInfo = { ...group, likes: "" };
+      delete groupInfo.password;
+      delete groupInfo.salt;
+      res.send({ success: true, data: { group: groupInfo }, msg: `JOINED GROUP "${group.name}"` })
+      //create chat room
       const roomInfo = {
         id: generateRandomId(10),
         group_id: group.group_id,
         name: 'general',
-        type: 1,
-        members: '*'
       };
 
       const addGroupRoom = await connection.query('INSERT INTO chatrooms set ?', roomInfo);
-      let groups = await redisClient.hGet(`user:${tester.id}`, 'groups');
-      groups = groups ? groups + group.group_id : group.group_id;
-      redisClient.hSet(`user:${tester.id}`, `groups`, groups);
-      const groupInfo = {...group, likes: ""};
-      delete groupInfo.password;
-      delete groupInfo.salt;
-      res.send({ success: true, data: { group: groupInfo }, msg: `JOINED GROUP "${group.name}"`})
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'Error' })
@@ -781,17 +780,34 @@ Router.post("/chat/bring-group-rooms", async (req, res) => {
       userGroups = userGroups.split(',');
       const connection = pool.promise();
       const totalChats = [];
-      
+
       const [groupInfo] = userGroups.length ? await connection.query(`SELECT group_id, name, leader, color FROM groups where group_id IN (?)`, [userGroups]) : [];
       //const [groupChatRooms] = await conneR
-      console.log(groupInfo)
-      for (let i = 0; i < userGroups.length; i++) {
-        const groupId = userGroups[i];
-        const chats = (await redisClient.lRange(`group:${groupId}:chat`, 0, -1));
-        console.log(chats)
-        totalChats.push({...groupInfo[i], chats: chats});
+      let groupRooms = redisClient.sMembers();
+      console.log('groups', groupInfo)
+      for (let i = 0; i < groupInfo.length; i++) {
+        const groupId = groupInfo[i].group_id;
+        let groupRooms = redisClient.sMembers(groupId);
+        if (!groupRooms) {
+          [groupRooms] = await connection.query(`SELECT * FROM chatrooms WHERE group_id = ?`, [groupId]);
+          /* groupRooms.map(room => {
+            if (room.members === "*" || room.members.split(',').includes(tester.id)) {
+
+            }
+          }) */
+          const redisGroupRooms = groupRooms.map(room => JSON.stringify(room));
+          redisClient.sAdd(...redisGroupRooms);
+          console.log('rooms', groupRooms)
+        }
+        //const chat
+        let chats = (await redisClient.lRange(`group:${groupId}:chat`, 0, -1));
+        //bring mariadb stored value if no chat exist/too short
+        if (chats.length < 30) {
+
+        }
+        totalChats.push({ ...groupInfo[i], room: groupRooms });
       };
-      res.send({success: true, chats: totalChats});
+      res.send({ success: true, chats: totalChats });
     } catch (err) {
       console.log(err)
     }

@@ -32,12 +32,6 @@ const account = require("./Router/account");
   }
 }); */
 console.log(process.env.NODE_ENV)
-//test
-const testTools = require('./test/generate');
-//testTools.testUserGeneration(100);
-//testTools.testGroupGeneration(40);
-//testTools.deleteGroups();
-//testTools.deleteTestUsers();
 const datasets = require('./test/Datasets');
 //datasets.getSubjects();
 //datasets.getPlans();
@@ -183,6 +177,13 @@ app.use((err, req, res, next) => {
 /* app.get('*',function(req,res){
   res.redirect('/');
 }); */
+
+//test
+const testTools = require('./test/generate');
+//testTools.testUserGeneration(100);
+//testTools.testGroupGeneration(40);
+//testTools.deleteGroups();
+//testTools.deleteTestUsers();
 
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);
