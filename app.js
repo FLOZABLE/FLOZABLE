@@ -12,6 +12,7 @@ const helmet = require("helmet");
 const http = require('http');
 const dotenv = require("dotenv");
 const cors = require('cors');
+const cron = require("node-cron");
 const server = http.createServer(app);
 if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.env.development' });
@@ -23,6 +24,7 @@ const redisClient = require("./model/redis");
 redisClient.connect().catch(console.error);
 const port = process.env.PORT;
 const account = require("./Router/account");
+const {flushRedis, groupsLoader, cacheManager} = require("./services/redisLoader");
 //const WebSocketToken = process.env.WEBSOCKET_TOKEN;
 //const WebSocket = require('ws');
 //const wsServer =  new WebSocket.Server({ server });
@@ -184,6 +186,12 @@ const testTools = require('./test/generate');
 //testTools.testGroupGeneration(40);
 //testTools.deleteGroups();
 //testTools.deleteTestUsers();
+flushRedis();
+groupsLoader();
+cacheManager();
+cron.schedule('0 * * * *', () => {
+  cacheManager();
+});
 
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);
