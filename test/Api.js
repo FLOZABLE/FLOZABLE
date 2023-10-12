@@ -820,10 +820,12 @@ Router.post("/chat/bring-group-rooms", async (req, res) => {
     /* await promise.all(userGroups.map(group => {
       const chatRooms = await redisClient.sMembers(`group:${chatRoom.group_id}:rooms`)
     })) */
-    await Promise.all(userGroups.map(async (group) => {
+    const groupRooms = await Promise.all(userGroups.map(async (group) => {
       const chatRooms = await redisClient.sMembers(`group:${group}:rooms`);
-      console.log(chatRooms);
-    }))
+      console.log('rooms:',chatRooms);
+      return chatRooms;
+    }));
+    res.send({success: true, groupRooms: groupRooms});
   } catch (err) {
     console.log(err);
   }
