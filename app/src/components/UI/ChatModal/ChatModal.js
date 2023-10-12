@@ -109,7 +109,7 @@ function ChatModal(props) {
 
   useEffect(() => {
     if (selectedRoom) {
-      console.log("Current Room: " + selectedRoom.group_id);
+      //console.log("Current Room: " + selectedRoom.group_id);
       const newMessages = [];
       selectedRoom.chats.map((chat, i) => {
         const msgInfo = JSON.parse(chat);

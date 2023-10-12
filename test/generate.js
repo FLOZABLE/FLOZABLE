@@ -7,10 +7,6 @@ function hashing(password) {
   return [salt, crypto.pbkdf2Sync(password, salt, 99097, 32, 'sha512').toString('hex')];
 }
 
-function generateGroups() {
-
-}
-
 function generateId() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const length = 15;
@@ -215,15 +211,20 @@ async function generateGroups(length) {
     }
     connection.query(`INSERT INTO \`groups\` SET ?`, groupInfo);
     
-    const roomInfo = {
+    const roomInfo1 = {
       id: generateRandomId(10),
       group_id: groupInfo.group_id,
       name: 'general',
-      type: 1,
-      members: '*'
     }
 
-    const addGroupRoom = await connection.query('INSERT INTO chatrooms set ?', roomInfo);
+    const roomInfo2 = {
+      id: generateRandomId(10),
+      group_id: groupInfo.group_id,
+      name: 'room2',
+    }
+
+    const addGroupRoom1 = await connection.query('INSERT INTO chatrooms set ?', roomInfo1);
+    const addGroupRoom2 = await connection.query('INSERT INTO chatrooms set ?', roomInfo2);
 
   };
 
@@ -245,6 +246,7 @@ async function deleteGroups() {
   const connection = pool.promise();
   try {
     const removeGroups = await connection.query("DELETE FROM groups");
+    const removeChatRooms = await connection.query("DELETE FROM chatrooms");
     const updateUserGroups = await connection.query("UPDATE users set groups = ''");
   } catch (err) {
     console.log(err);
