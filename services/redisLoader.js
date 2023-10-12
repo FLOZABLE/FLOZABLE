@@ -11,12 +11,12 @@ async function groupsLoader() {
   const [groups] = await connection.query(`SELECT group_id, name FROM groups`);
   const [chatRooms] = await connection.query(`SELECT id, group_id, name, type, members FROM chatrooms`);
   //console.log(chatRooms);
-  chatRooms.map(chatRoom => {
+  chatRooms.map(async (chatRoom) => {
     const chatRoomInfo = {...chatRoom};
     delete chatRoomInfo.group_id;
     //redisClient.hSet(`group:${chatRoom.group_id}`, 'rooms', JSON.stringify(chatRoomInfo))
-    redisClient.sAdd(`group:${chatRoom.group_id}:rooms`, JSON.stringify(chatRoomInfo));
-  })
+    await redisClient.sAdd(`group:${chatRoom.group_id}:rooms`, JSON.stringify(chatRoomInfo));
+  });
 };
 
 function cacheManager() {
