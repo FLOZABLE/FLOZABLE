@@ -15,7 +15,7 @@ function SubjectTimer(props) {
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
-    console.log(subjects, subject)
+     
     if (subjects[0]) {
       setSubject(subjects[0]);
       if (subjects[0].daily && subjects[0].daily.total) {
@@ -65,7 +65,7 @@ function SubjectTimer(props) {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
+           
         })
         .catch((error) => console.error(error));
     } else {
@@ -79,7 +79,7 @@ function SubjectTimer(props) {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
+           
         })
         .catch((error) => console.error(error));
     }
@@ -87,9 +87,9 @@ function SubjectTimer(props) {
   };
 
   useEffect(() => {
-    console.log('reset:',reset)
+     
     if (reset && isStudy) {
-      console.log("reset")
+       
       setSubjectTimer({total: 0});
       /* toggleTimer();
       toggleTimer(); */
@@ -99,7 +99,7 @@ function SubjectTimer(props) {
   useEffect(() => {
     const messageHandler = (e) => {
       if (e.data.command === 'updateSubjectTimer') {
-        //console.log(e.data);
+        // 
         setSubjectTimer((prevTimer) => ({ total: prevTimer.total + 1 }));
         setMyTimerTotal((prevTimer) => (prevTimer + 1));
       }

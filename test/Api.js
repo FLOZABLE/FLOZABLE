@@ -57,6 +57,7 @@ Router.post('/information/accountinfo', async (req, res) => {
   const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups FROM users WHERE user_id = ?", [tester.id]);
   pool.releaseConnection(connection);
   redisClient.hSet(`user:${tester.id}`, `groups`, userInfo.groups);
+  console.log('userInfo')
   res.send({ success: true, userInfo: userInfo });
 });
 
@@ -405,7 +406,6 @@ Router.post('/groups/leave/:id', async (req, res) => {
 Router.post('/groups/bring-groups', async (req, res) => {
   const connection = pool.promise();
   try {
-    const userId = tester.id;
     const [groups] = await connection.query(
       "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\`"
     );

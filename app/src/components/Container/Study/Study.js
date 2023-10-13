@@ -102,7 +102,7 @@ function Study(props) {
 
   useEffect(() => {
     socket.on('onlineMembers', (onlineMembers) => {
-      //console.log(onlineMembers)
+      // 
     })
   }, []);
 
@@ -117,19 +117,18 @@ function Study(props) {
 
   useEffect(() => {
     if (stream) {
-      console.log(stream)
+       
       const p = new SimplePeer({
         initiator: window.location.hash === "#1",
         trickle: false,
         stream,
       });
-      p.on("error", (err) => console.log("error", err));
+      /* p.on("error", (err) =>  ); */
       p.on("signal", (data) => {
-        console.log("SIGNAL", JSON.stringify(data));
         document.querySelector("#outgoing").textContent =
           JSON.stringify(data);
       });
-      console.log(p)
+       
       const socketConnectAction = () => {
         socket.emit('joinMyGroups');
       };

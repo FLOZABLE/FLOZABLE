@@ -75,7 +75,7 @@ function StatsCalendar(props) {
           },
           'custom-next': {
             text: 'Next',
-            click: () => {console.log('d')} // Implement your logic here
+            click: () => { } // Implement your logic here
           },
           'custom-today': {
             text: 'Today',
