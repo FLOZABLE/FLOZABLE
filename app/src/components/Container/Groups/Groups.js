@@ -13,16 +13,11 @@ import GroupPwModal from '../../UI/GroupPwModal/GroupPwModal';
 import MyGroupsViewer from '../../UI/MyGroupsViewer/MyGroupsViewer';
 import CreateGroupModal from '../../UI/CreateGroupModal/CreateGroupModal';
 
-const serverOrigin = process.env.REACT_APP_ORIGIN;
-
 function Groups(props) {
-  const { socket, userInfo, subjects, groups, allMembers } = props;
+  const { socket, userInfo, subjects, groups, allMembers, otherGroups, setOtherGroups, myGroups, setMyGroups, likedGroups, setLikedGroups } = props;
 
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [likedGroups, setLikedGroups] = useState([]);
-  const [myGroups, setMyGroups] = useState([]);
-  const [otherGroups, setOtherGroups] = useState([]);
   const [joinGroupResponse, setJoinGroupResponse] = useState(null);
   const [openGroupPwModal, setOpenGroupPwModal] = useState(false);
   const [joinTarget, setJoinTarget] = useState(null);
@@ -33,14 +28,6 @@ function Groups(props) {
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
   };
-
-  useEffect(() => {
-    setLikedGroups(getLikedGroups(userInfo, groups));
-    const dividedGroups = getMyGroups(userInfo, groups);
-    setMyGroups(dividedGroups.myGroups);
-    setOtherGroups(dividedGroups.otherGroups);
-    //setOtherGroupsEl(otherGroupsGen(otherGroups, setNotificationResponse, setCopied, copied));
-  }, [userInfo, groups]);
 
   useEffect(() => {
     if (joinTarget && joinGroupResponse.success) {
@@ -72,9 +59,6 @@ function Groups(props) {
     <div className={styles.GroupsContainer}>
       <TopNotification duration={2500} response={joinGroupResponse} />
       <StuckModal />
-      {/* <div className={styles.groupsViewer}>
-        <MyGroupsViewer myGroups={myGroups}/>
-      </div> */}
       <CreateGroupModal isOpen={isCreateNewGroup} setIsOpen={setIsCreateNewGroup} setCreateGroupResponse={setCreateGroupResponse} />
       <GroupPwModal setOpenGroupPwModal={setOpenGroupPwModal} openGroupPwModal={openGroupPwModal} joinTarget={joinTarget} setJoinGroupResponse={setJoinGroupResponse} />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>

@@ -38,7 +38,7 @@ function GroupsGen(props) {
     setOtherGroupsEl(
       Array.from(groups).map((group, i) => {
         if (i == 0) {
-          console.log("rerendered", searchQuery)
+           
         }
         const tags = JSON.parse(group.tags);
         const likes = group.likes.split(",");
