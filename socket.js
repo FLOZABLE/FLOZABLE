@@ -200,7 +200,7 @@ io.on('connection', (socket) => {
       }
     }
   });
-
+  const userId = socket.userId;
   //webcam
   socket.on("camOn", async() => {
     const userId = socket.userId;
@@ -212,6 +212,10 @@ io.on('connection', (socket) => {
       }
     }
   });
+  socket.on("checkRoom", async(groupId, msgId) => {
+    console.log(groupId, msgId);
+    
+  })
 });
 
 

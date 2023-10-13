@@ -186,8 +186,8 @@ const testTools = require('./test/generate');
 //testTools.testGroupGeneration(40);
 //testTools.deleteGroups();
 //testTools.deleteTestUsers();
-flushRedis();
-groupsLoader();
+//flushRedis();
+//groupsLoader();
 cacheManager();
 cron.schedule('0 * * * *', () => {
   cacheManager();
