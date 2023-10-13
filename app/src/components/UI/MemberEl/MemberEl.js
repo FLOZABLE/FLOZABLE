@@ -41,7 +41,7 @@ function MemberEl(props) {
       /* if (userInfo && userInfo.user_id === toggleTimer.id) { 
         //my timer
         setSec(myTimerTotal);
-        console.log(userInfo, myTimerTotal)
+         
       } */
     };
   }, [toggleTimer]);

@@ -491,13 +491,13 @@ function EventPlanner(props) {
           eventClick={handleEventClick}
 
           eventAdd={(e) => {
-            /* console.log("eventAdd", e); */
+            /*   */
           }}
           eventChange={(e) => {
-            /* console.log("eventChange", e); */
+            /*   */
           }}
           eventRemove={(e) => {
-            /* console.log("eventRemove", e); */
+            /*   */
           }}
           customButtons={{
             'custom-prev': {

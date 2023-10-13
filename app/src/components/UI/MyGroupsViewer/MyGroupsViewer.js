@@ -24,9 +24,9 @@ function MyGroupsViewer(props) {
       setToggleTimer({ id: userId, status: 1 });
       groups.map(group => {
         const updatedgroupStudying = { ...groupStudying };
-        console.log(updatedgroupStudying[group], group, updatedgroupStudying)
+         
         if (updatedgroupStudying[group]) {
-          console.log('exist');
+           
           updatedgroupStudying[group].members.push(userId);
           setGroupStudying(updatedgroupStudying);
         }
@@ -37,9 +37,9 @@ function MyGroupsViewer(props) {
       setToggleTimer({ id: userId, status: 0 });
       groups.map(group => {
         const updatedgroupStudying = { ...groupStudying };
-        console.log(updatedgroupStudying[group])
+         
         if (updatedgroupStudying[group]) {
-          console.log('exist');
+           
           updatedgroupStudying[group].members.pop(userId);
           setGroupStudying(updatedgroupStudying);
         }
@@ -107,7 +107,7 @@ function MyGroupsViewer(props) {
   }, []);
 
   useEffect(() => {
-    console.log('online', groupStudying)
+     
   }, [groupStudying])
 
   return (

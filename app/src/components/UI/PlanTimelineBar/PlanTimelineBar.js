@@ -38,7 +38,7 @@ function PlanTimelineBar(props) {
     const todayEvents = events.filter(event => {
       return (todayStart <= event.start.getTime() && todayEnd >= event.start.getTime())
     });
-    console.log('today',todayEvents)
+     
     for (let i = 0; i < 24; i++) {
       const hour = hr + i - 1;
 
@@ -109,7 +109,7 @@ function PlanTimelineBar(props) {
         <p className={styles.hour}>{hr}</p>
       )
     };
-    console.log(swiperIndex);
+     
     const startIndex = swiperIndex % 4;
 
   }, [swiperIndex, events]); */

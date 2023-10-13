@@ -14,7 +14,7 @@ function PlanTimeline(props) {
   const [isPlan, setIsPlan] = useState(false);
 
   const togglePlan = (plan) => {
-    console.log(plan.completed)
+     
     const eventIndex = plans.findIndex((planInfo) => planInfo.id == plan.id);
     if (eventIndex !== -1) {
       const updatedEvents = [...plans];
@@ -24,7 +24,7 @@ function PlanTimeline(props) {
         completed: plan.completed ? 0 : 1
       }
 
-      console.log(updatedEvents, eventIndex)
+       
 
       delete planInfo.saved;
       fetch(`${serverOrigin}/api/plan/status-change`,

@@ -14,18 +14,12 @@ function getLikedGroups(userInfo, groups) {
 };
 
 function getMyGroups(userInfo, groups) {
-  const userId = userInfo.user_id;
-  const myGroups = [];
-  const otherGroups = [];
-  groups.map(group => {
-    if (group.members.find(member => member.user_id == userId)) {
-      myGroups.push(group);
-    } else {
-      otherGroups.push(group);
-    };
-  });
-
-  return { myGroups: myGroups, otherGroups: otherGroups };
+  const otherGroups = [...groups];
+  const myGroupsId = userInfo.groups.split(",");
+  const myGroups = otherGroups.filter(group => myGroupsId.includes(group.group_id));
+  const otherGroupsFiltered = otherGroups.filter(group => !myGroupsId.includes(group.group_id));
+  return { myGroups, otherGroups: otherGroupsFiltered };
+  
 };
 
 function setGroupMembers(groups, users) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Main from './components/Container/Main/Main';
 import Stats from './components/Container/Stats/Stats';
@@ -7,7 +7,7 @@ import Groups from './components/Container/Groups/Groups';
 import Study from './components/Container/Study/Study';
 import Account from './components/Container/Account/Account';
 import Templates from './components/Container/Templates/Templates';
-import EditTemplate from './components/Container/EditTemplate/EditTemplate';
+/* import EditTemplate from './components/Container/EditTemplate/EditTemplate'; */
 import './App.css';
 import Sidebar from './components/UI/Sidebar/Sidebar';
 import Header from './components/UI/Header/Header';
@@ -22,6 +22,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
   const [subjects, setSubjects] = useState([]);
   const [isStudy, setIsStudy] = useState(false);
   const [reset, setReset] = useState(false)
@@ -30,6 +31,7 @@ function App() {
   const [allMembers, setAllMembers] = useState([]);
   const [groups, setGroups] = useState([]);
   const [myGroups, setMyGroups] = useState([]);
+  const [plans, setPlans] = useState([]);
   const [otherGroups, setOtherGroups] = useState([]);
   const [likedGroups, setLikedGroups] = useState([]);
 
@@ -68,51 +70,41 @@ function App() {
     setIsHovered(false);
   };
 
-  const [userInfo, setUserInfo] = useState({});
-
-  useEffect(() => {
-    fetch(`${serverOrigin}/api/information/accountinfo`, { method: 'post' })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setUserInfo(data.userInfo);
-          socket.connect();
-        };
-      })
-      .catch((error) => console.error(error));
+  const bringSubjects = useCallback(() => {
+    fetch(`${serverOrigin}/api/information/bring-subjects`, { method: 'post' })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        setSubjects(sortSubjects(data.subjects));
+      }
+    })
+    .catch((error) => console.error(error));
   }, []);
 
-  const fetchSubjects = () => {
-    fetch(`${serverOrigin}/api/information/bring-subjects`, { method: 'post' })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setSubjects(sortSubjects(data.subjects));
-        }
-      })
-      .catch((error) => console.error(error));
-  };
+  const bringAccountInfo = useCallback(() => {
+    fetch(`${serverOrigin}/api/information/accountinfo`, { method: 'post' })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        setUserInfo(data.userInfo);
+        socket.connect();
+      };
+    })
+    .catch((error) => console.error(error));
+  }, []);
 
-  const [plans, setPlans] = useState([]);
-
-  useEffect(() => {
+  const bringPlans = useCallback(() => {
     fetch(`${serverOrigin}/api/plan/bring-plans`, { method: 'post' })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setPlans(data.plans.map(plan => { plan.saved = true; plan.start = new Date(plan.start * 1000 * 60); plan.end = new Date(plan.end * 1000 * 60); return plan }));
-        };
-      })
-      .catch((error) => console.error(error));
-    fetch(`${serverOrigin}/api/chat/bring-group-rooms`, { method: 'post' })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setGroupRooms(data.chats);
-          console.log('ffff', data.chats)
-        };
-      });
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        setPlans(data.plans.map(plan => { plan.saved = true; plan.start = new Date(plan.start * 1000 * 60); plan.end = new Date(plan.end * 1000 * 60); return plan }));
+      };
+    })
+    .catch((error) => console.error(error));
+  }, []);
 
+  const bringGroups = useCallback(() => {
     fetch(`${serverOrigin}/api/groups/bring-groups`, { method: 'post' })
       .then((response) => response.json())
       .then((data) => {
@@ -122,22 +114,33 @@ function App() {
         }
       })
       .catch((error) => console.error(error));
+  }, []);
 
-    fetchSubjects();
+  const bringChats = useCallback(() => {
+    fetch(`${serverOrigin}/api/groups/bring-group-rooms`, { method: 'post' })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        console.log(data)
+      }
+    })
+    .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
-    if (reset) {
-      fetchSubjects();
-    };
-  }, [reset]);
+    bringSubjects();
+    bringAccountInfo();
+    bringGroups();
+    bringPlans();
+  }, []);
 
   useEffect(() => {
-    setLikedGroups(getLikedGroups(userInfo, groups));
-    const dividedGroups = getMyGroups(userInfo, groups);
-    setMyGroups(dividedGroups.myGroups);
-    setOtherGroups(dividedGroups.otherGroups);
-    //setOtherGroupsEl(otherGroupsGen(otherGroups, setNotificationResponse, setCopied, copied));
+    if (userInfo && groups) {
+      setLikedGroups(getLikedGroups(userInfo, groups));
+      const dividedGroups = getMyGroups(userInfo, groups);
+      setMyGroups(dividedGroups.myGroups);
+      setOtherGroups(dividedGroups.otherGroups);
+    };
   }, [userInfo, groups]);
 
   return (
@@ -191,7 +194,7 @@ function App() {
             />
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} rooms={chatRooms} setRooms={setGroupRooms} socket={socket} userInfo={userInfo} allMembers={allMembers} groups={myGroups} />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
-            <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} reset={reset} allMembers={allMembers} groups={groups} />
+            <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} reset={reset} allMembers={allMembers} groups={groups} otherGroups={otherGroups} setOtherGroups={setOtherGroups} myGroups={myGroups} setMyGroups={setMyGroups} likedGroups={likedGroups} setLikedGroups={setLikedGroups} />
             <Footer />
           </div>
         } />
@@ -244,13 +247,12 @@ function App() {
             <Templates setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
           </div>
         } />
-       <Route path="/dashboard/templates/edit" element={
+       {/* <Route path="/dashboard/templates/edit" element={
           <div>
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} rooms={chatRooms} setRooms={setGroupRooms} socket={socket} userInfo={userInfo} allMembers={allMembers} groups={myGroups} />
-            {/* <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} mode={"study"} /> */}
             <EditTemplate setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} />
           </div>
-        } />
+        } /> */}
       </Routes>
     </Router>
   );

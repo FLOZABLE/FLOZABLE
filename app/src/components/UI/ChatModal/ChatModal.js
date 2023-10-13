@@ -25,7 +25,7 @@ function ChatModal(props) {
   useEffect(() => {
     if (send) {
       socket.emit('sendMsg', selectedGroup.group_id, message);
-      console.log(selectedGroup.group_id, selectedGroup, selectedRoom);
+       
     }
   }, [send]);
 
@@ -63,7 +63,7 @@ function ChatModal(props) {
         );
       };
       //update msg array
-      console.log(room, msgInfo, groups)
+       
      /*  if (room == selectedRoom.group_id) {
         setMessages((prevMessages) => [...prevMessages, newChat]);
       } */
@@ -76,7 +76,7 @@ function ChatModal(props) {
   });
 
   useEffect(() => {
-    console.log(groups)
+     
     setGroupsEl(groups.map((group, i) => {
       return (
         <li className={styles.group} key={i} style={{ backgroundColor: group.color }} onClick={() => { setSelectedGroup(group) }}>
@@ -109,7 +109,7 @@ function ChatModal(props) {
 
   useEffect(() => {
     if (selectedRoom) {
-      //console.log("Current Room: " + selectedRoom.group_id);
+      // 
       const newMessages = [];
       selectedRoom.chats.map((chat, i) => {
         const msgInfo = JSON.parse(chat);
