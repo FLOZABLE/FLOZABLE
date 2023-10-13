@@ -773,9 +773,10 @@ Router.post("/live-members", (req, res) => {
 
 //chat
 
-Router.post("/chat/bring-group-rooms", async (req, res) => {
+Router.post("/chat/bring-rooms", async (req, res) => {
+  /* 
   let userGroups = await redisClient.hGet(`user:${tester.id}`, 'groups');
-  /* if (userGroups) {
+  if (userGroups) {
     try {
       userGroups = userGroups.split(',');
       const connection = pool.promise();
@@ -808,21 +809,32 @@ Router.post("/chat/bring-group-rooms", async (req, res) => {
       console.log(err)
     }
   }; */
+  const userInfo = await redisClient.hmGet(`user:${tester.id}`, 'groups', 'msgstatus');
   try {
-    //no cache if
-    if (!userGroups) {
+    let userGroups;
+    let msgStatus = [];
+    if (userInfo.length !== 2) {
       const connection = pool.promise();
-      const [groups] = await connection.query(`SELECT groups FROM users WHERE user_id = ?` , [tester.id]);
-      userGroups = groups;
+      const [[userInfo]] = await connection.query(`SELECT groups FROM users WHERE user_id = ?` , [tester.id]);
+      userGroups = userInfo.groups.split(',');
+      const groupRooms = await Promise.all(userGroups.map(async (group) => {
+        let chatRooms = await redisClient.sMembers(`group:${group}:rooms`);
+        console.log(chatRooms, group);
+        chatRooms = chatRooms.map(room => {
+          room = JSON.parse(room);
+          room.status = -1;
+          return room;
+        });
+        return chatRooms;
+      }));
+      console.log("roomsss", groupRooms)
+      //redisClient.hSet(`user:${tester.id}`, `groups`, JSON.stringify(groups));
     } else {
-      userGroups = userGroups.split(',');
-    }
-    /* await promise.all(userGroups.map(group => {
-      const chatRooms = await redisClient.sMembers(`group:${chatRoom.group_id}:rooms`)
-    })) */
+      userGroups = userInfo[0].split(',');
+      msgStatus = JSON.parse(userInfo[1]);
+    };
     const groupRooms = await Promise.all(userGroups.map(async (group) => {
       const chatRooms = await redisClient.sMembers(`group:${group}:rooms`);
-      console.log('rooms:',chatRooms);
       return chatRooms;
     }));
     res.send({success: true, groupRooms: groupRooms});

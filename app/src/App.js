@@ -117,7 +117,7 @@ function App() {
   }, []);
 
   const bringChats = useCallback(() => {
-    fetch(`${serverOrigin}/api/groups/bring-group-rooms`, { method: 'post' })
+    fetch(`${serverOrigin}/api/chat/bring-rooms`, { method: 'post' })
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
@@ -132,6 +132,7 @@ function App() {
     bringAccountInfo();
     bringGroups();
     bringPlans();
+    bringChats();
   }, []);
 
   useEffect(() => {
