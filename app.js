@@ -101,7 +101,7 @@ const timerUpdateService = require('./services/timerUpdate');
 timerUpdateService.timerUpdate();
 
 //Router
-const mainRouter = require("./Router/main");
+/* const mainRouter = require("./Router/main");
 const accountRouter = account.Router;
 const studyRouter = require("./Router/study");
 const groupsRouter = require("./Router/groups");
@@ -109,14 +109,17 @@ const linksRouter = require('./Router/links');
 const dashboardRouter = require('./Router/dashboard');
 const rankingRouter = require('./Router/ranking');
 const extensionRouter = require('./Router/api');
+const chatRouter = require('./Router/chat');
+const planRouter = require("./Router/plan"); */
 const notificationRouter = notificationService.notificationRouter;
 
 
 //API
-const studyAPI = require('./Router/Api/study');
-const informationAPI = require('./Router/Api/information');
-const rankingAPI = require('./Router/Api/ranking');
-const groupAPI = require("./Router/Api/groups");
+const accountAPI = require("./API/account");
+const chatAPI = require("./API/chat");
+const groupsAPI = require("./API/groups");
+const planAPI = require("./API/plan");
+const studyAPI = require("./API/study");
 
 //test
 const testAPI = require('./test/Api');
@@ -132,25 +135,24 @@ app.use(cookieParser(process.env.SECRET_ID));
 app.use(express.static(path.join(__dirname, '/public')));
 app.disable('etag');
 
-app.use('/', mainRouter);
+/* app.use('/', mainRouter);
 app.use('/account', accountRouter);
 app.use('/study', studyRouter);
 app.use('/groups', groupsRouter);
 app.use('/links', linksRouter);
 app.use('/dashboards', dashboardRouter);
 app.use('/ranking', rankingRouter);
-app.use('/api', extensionRouter);
+app.use('/api', extensionRouter); */
 app.use('/notification', notificationRouter);
 
 //api
+app.use('/api/account', accountAPI);
+app.use('/api/chat', chatAPI);
+app.use('/api/groups', groupsAPI);
+app.use('/api/plan', planAPI);
 app.use('/api/study', studyAPI);
-app.use('/api/information', informationAPI);
-app.use('/api/ranking', rankingAPI);
-app.use('/api/groups', groupAPI);
 app.use(express.static(path.join(__dirname, 'app/build')));
 
-//test api
-app.use('/test/api', testAPI);
 
 app.get('/dashboard*', (req, res) => {
   console.log(req.session.loggedin, req.signedCookies)
@@ -162,23 +164,6 @@ app.get('/dashboard*', (req, res) => {
     })
   );
 });
-
-app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-app.use((err, req, res, next) => {
-  res.locals.error = err;
-  const status = err.status || 500;
-  res.status(status);
-  console.log(err)
-});
-
-/* app.get('*',function(req,res){
-  res.redirect('/');
-}); */
 
 //test
 const testTools = require('./test/generate');
