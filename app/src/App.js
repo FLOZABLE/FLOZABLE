@@ -71,7 +71,7 @@ function App() {
   };
 
   const bringSubjects = useCallback(() => {
-    fetch(`${serverOrigin}/api/information/bring-subjects`, { method: 'post' })
+    fetch(`${serverOrigin}/api/study/bring-subjects`, { method: 'post' })
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
@@ -82,7 +82,7 @@ function App() {
   }, []);
 
   const bringAccountInfo = useCallback(() => {
-    fetch(`${serverOrigin}/api/information/accountinfo`, { method: 'post' })
+    fetch(`${serverOrigin}/api/account/accountinfo`, { method: 'post' })
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
@@ -130,10 +130,18 @@ function App() {
   useEffect(() => {
     bringSubjects();
     bringAccountInfo();
-    bringGroups();
+/*     bringGroups();
     bringPlans();
-    bringChats();
+    bringChats(); */
   }, []);
+
+  useEffect(() => {
+    if (userInfo) {
+      bringGroups();
+      bringPlans();
+      bringChats();
+    };
+  }, [userInfo]);
 
   useEffect(() => {
     if (userInfo && groups) {
@@ -169,7 +177,7 @@ function App() {
             />
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} rooms={chatRooms} setRooms={setGroupRooms} socket={socket} userInfo={userInfo} allMembers={allMembers} groups={myGroups} />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
-            <Stats setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} />
+            <Stats setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} subjects={subjects} />
             <Footer />
           </div>
         } />
@@ -209,7 +217,7 @@ function App() {
             /> */}
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} rooms={chatRooms} setRooms={setGroupRooms} socket={socket} userInfo={userInfo} allMembers={allMembers} groups={myGroups} />
             {/* <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} mode={"study"} /> */}
-            <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} />
+            <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} myGroups={myGroups} />
           </div>
         } />
         <Route path="/dashboard/planner" element={

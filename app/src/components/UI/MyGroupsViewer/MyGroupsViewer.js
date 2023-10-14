@@ -14,7 +14,7 @@ import MemberEl from "../MemberEl/MemberEl";
 
 function MyGroupsViewer(props) {
 
-  const { myGroups, setMyGroups, socket, userInfo, subjects, myTimerTotal } = props;
+  const { myGroups, socket, userInfo, myTimerTotal } = props;
 
   const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
   const [groupStudying, setGroupStudying] = useState({});

@@ -21,7 +21,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Study(props) {
 
-  const { isStudy, setIsStudy, subjects, setSubjects, socket, userInfo, events, setEvents, reset } = props;
+  const { isStudy, setIsStudy, subjects, setSubjects, socket, userInfo, events, setEvents, reset, myGroups } = props;
 
   const [isTimerModal, setIsTimerModal] = useState(false);
   const [isMicModal, setIsMicModal] = useState(false);
@@ -32,7 +32,6 @@ function Study(props) {
   const [isVolumeModal, setIsVolumeModal] = useState(false);
   const [isZoom, setIsZoom] = useState(false);
 
-  const [myGroups, setMyGroups] = useState([]);
   const [allGroups, setAllGroups] = useState([]);
   const [membersInfo, setMembersInfo] = useState([]);
   const [videoId, setVideoId] = useState('MYPVQccHhAQ');
@@ -61,23 +60,6 @@ function Study(props) {
   const [notification, setNotification] = useState(-1);
   const [submit, setSubmit] = useState(false);
   const [peer, setPeer] = useState(null);
-
-  useEffect(() => {
-    fetch(`${serverOrigin}/api/groups/bring-groups`, { method: 'post' })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          //setMyGroups(getMyGroups(props.userInfo, data.groups, data.membersInfo).myGroups);
-          setMembersInfo(data.membersInfo);
-          setAllGroups(data.groups);
-        }
-      })
-      .catch((error) => console.error(error));
-  }, []);
-
-  useEffect(() => {
-    setMyGroups(getMyGroups(props.userInfo, allGroups, membersInfo).myGroups);
-  }, [allGroups, props.userInfo]);
 
   useEffect(() => {
     if (addSubjectResponse && addSubjectResponse.success) {
@@ -288,7 +270,7 @@ function Study(props) {
       <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
       <div className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={`${styles.myGroupsViewerWrapper} ${groupsBtn ? styles.open : ''}`}>
-          <MyGroupsViewer myGroups={myGroups} setMyGroups={setMyGroups} mode={'study'} socket={socket} userInfo={userInfo} subjects={subjects} myTimerTotal={myTimerTotal} />
+          <MyGroupsViewer myGroups={myGroups} mode={'study'} socket={socket} userInfo={userInfo} myTimerTotal={myTimerTotal} />
         </div>
         <div className={styles.PlanTimelineBarWrapper}>
           <PlanTimelineBar events={events} subjects={subjects} />

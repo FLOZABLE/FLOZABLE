@@ -56,8 +56,7 @@ Router.post('/information/accountinfo', async (req, res) => {
   const connection = pool.promise();
   const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups FROM users WHERE user_id = ?", [tester.id]);
   pool.releaseConnection(connection);
-  redisClient.hSet(`user:${tester.id}`, `groups`, userInfo.groups);
-  console.log('userInfo')
+  await redisClient.hSet(`user:${tester.id}`, `groups`, userInfo.groups);
   res.send({ success: true, userInfo: userInfo });
 });
 
@@ -363,8 +362,6 @@ Router.post('/groups/join/:id', async (req, res) => {
     pool.releaseConnection(connection);
   }
 })
-
-// ... (other imports and setup code)
 
 Router.post('/groups/leave/:id', async (req, res) => {
   if (req.session.loggedin == true) {
@@ -809,17 +806,15 @@ Router.post("/chat/bring-rooms", async (req, res) => {
       console.log(err)
     }
   }; */
-  const userInfo = await redisClient.hmGet(`user:${tester.id}`, 'groups', 'msgstatus');
+  const groupInfo = await redisClient.hGet(`user:${tester.id}`, 'groups');
+  console.log("gggg", groupInfo)
   try {
-    let userGroups;
-    let msgStatus = [];
-    if (userInfo.length !== 2) {
+    if (!groupInfo) {
       const connection = pool.promise();
       const [[userInfo]] = await connection.query(`SELECT groups FROM users WHERE user_id = ?` , [tester.id]);
-      userGroups = userInfo.groups.split(',');
+      const userGroups = userInfo.groups.split(',');
       const groupRooms = await Promise.all(userGroups.map(async (group) => {
         let chatRooms = await redisClient.sMembers(`group:${group}:rooms`);
-        console.log(chatRooms, group);
         chatRooms = chatRooms.map(room => {
           room = JSON.parse(room);
           room.status = -1;
@@ -828,16 +823,11 @@ Router.post("/chat/bring-rooms", async (req, res) => {
         return chatRooms;
       }));
       console.log("roomsss", groupRooms)
-      //redisClient.hSet(`user:${tester.id}`, `groups`, JSON.stringify(groups));
+      res.send({success: true, groupRooms: groupRooms});
     } else {
-      userGroups = userInfo[0].split(',');
-      msgStatus = JSON.parse(userInfo[1]);
+      const userGroups = groupInfo.split(',');
+      res.send({success: true, groupRooms: ""});
     };
-    const groupRooms = await Promise.all(userGroups.map(async (group) => {
-      const chatRooms = await redisClient.sMembers(`group:${group}:rooms`);
-      return chatRooms;
-    }));
-    res.send({success: true, groupRooms: groupRooms});
   } catch (err) {
     console.log(err);
   }
