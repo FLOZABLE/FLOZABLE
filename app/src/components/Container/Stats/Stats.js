@@ -14,11 +14,12 @@ import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { colorsList } from '../../../constant';
 import styles from './Stats.module.css';
 import { plugins } from 'chart.js';
-import { sortSubjects, updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, sortRanking, updateRankingTrend } from './StatTools';
+import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, sortRanking, updateRankingTrend } from './StatTools';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Stats(props) {
+  const {subjects} = props;
   const today = new Date().setHours(0, 0, 0, 0);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -30,7 +31,6 @@ function Stats(props) {
   const [statsViewer, setStatsViewer] = useState('Daily');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [calendarLabel, setCalendarLabel] = useState('Today');
-  const [subjects, setSubjects] = useState([]);
   const [ranking, setRanking] = useState({});
   const [dailyTimeline, setDailyTimeline] = useState([]);
 
@@ -103,17 +103,6 @@ function Stats(props) {
       setCalendarLabel(`${viewDate.getMonth() + 1}/${viewDate.getDate()}`);
     }
   };
-
-  useEffect(() => {
-    fetch(`${serverOrigin}/api/information/bring-subjects`, { method: 'post' })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setSubjects(sortSubjects(data.subjects));
-        }
-      })
-      .catch((error) => console.error(error));
-  }, []);
 
   useEffect(() => {
     fetch(`${serverOrigin}/api/ranking`, { method: 'post' })
