@@ -1,266 +1,108 @@
 .ChatModal {
   position: fixed;
-  right: -500px;
-  bottom: 100px;
   background-color: #fff;
-  height: 550px;
   width: 400px;
-  z-index: 3;
+  height: 500px;
+  right: 100px;
+  bottom: 100px;
+  z-index: 5;
   border-radius: 20px;
-  transition: transform .3s ease-in-out;
   overflow: hidden;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  overflow: hidden;
-}
-
-.ChatModal.open {
-  transform: translateX(-550px);
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .ChatModal .header {
-  height: 40px;
   background-color: var(--pink);
+  height: 35px;
   display: flex;
   align-items: center;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 }
 
-.ChatModal .header .closeBtn {
+.ChatModal .closeBtn {
   margin-left: auto;
   margin-right: 10px;
   font-size: 30px;
   color: #fff;
 }
 
-.ChatModal .sidebar {
-  height: 100%;
-  width: 230px;
-  background-color: #fff;
+.ChatModal .inputWrapper {
   position: absolute;
-  top: 0px;
-  left: -300px;
-  transition: transform .3s ease-in-out;
-  z-index: 2;
+  bottom: 0px;
+  width: calc(100% - 40px);
+  background-color: blue;
+  display: flex;
+  padding: 0px 20px 10px 20px;
 }
 
-.ChatModal .sidebarToggleBtn {
-  margin-left: 10px;
+.ChatModal .inputWrapper input {
+  border: none;
+  flex: 1;
+}
+
+.ChatModal .sidebar {
+  position: absolute;
+  width: 200px;
+  height: 100%;
+  background-color: red;
+  z-index: 10;
+  top: 0px;
+  left: -200px;
+  transition: .3s left ease-in-out;
 }
 
 .ChatModal .sidebar.open {
-  transform: translateX(300px);
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  left: 0px;
 }
 
-.ChatModal .sidebarHeader {
-  height: 40px;
-  width: 100%;
-  background-color: var(--pink);
-  display: flex;
-  align-items: center;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-}
-
-.ChatModal .sidebarHeader .closeBtn {
+.ChatModal .sidebar .header .sidebarToggleBtn {
   margin-left: auto;
-  margin-right: 10px;
 }
 
-.ChatModal .group {
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  color: #fff;
-  position: relative;
-  margin: 5px 0px 5px 5px;
-  pointer-events: auto;
-}
-
-.ChatModal .group .notifications {
-  position: absolute;
-  left: 35px;
-  top: 35px;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius:50%;
-  background-color: red;
-  border: 2px solid black;
-}
-
-.ChatModal .group .hoverEl {
-  position: absolute;
-  left: 60px;
-  top: 13px;
-  opacity: 0;
-  white-space: nowrap;
-  height: 20px;
-  padding: 3px 5px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: opacity .3s ease-in-out;
-  background-color: var(--pink);
-  z-index: -1;
-}
-
-.ChatModal .group:hover .hoverEl {
-  opacity: 1;
-  z-index: 1;
-}
-
-.ChatModal .dms {
-  width: 50px;
-  height: 50px;
-  background-color: #6f6af8;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 30%;
-  margin: 5px 0px 0px 5px;
-}
-
-.ChatModal .group .bar {
-  width: 6px;
-  height: 10px;
-  border-radius: 5px;
-  background-color: var(--pink);
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  transition: height .2s ease-in-out;
-}
-
-.ChatModal .group:hover .bar {
-  height: 70%;
-}
-
-.ChatModal .content {
-  display: flex;
-  flex-direction: row;
-}
-
-.ChatModal .rooms {
-  margin-left: 70px;
-  margin-top: 10px;
-}
-
-.ChatModal .rooms .roomTypes .room{
-  margin-left: 10px;
-}
-
-.ChatModal .roomTypes .type, .ChatModal .room {
-  cursor: pointer;
-  border-radius: 3px;
-  padding: 3px 3px;
-  width: fit-content;
-  transition: background-color .3s ease-in-out;
-}
-
-.ChatModal .room:hover {
-  background-color: aliceblue;
-}
-
-.ChatModal .messageInputContainer {
-  display: flex;
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
-}
-
-.ChatModal .chatsContainer {
-  height: calc(100% - 100px);
-  overflow-y: auto;
-}
-.ChatModal .message {
-  background-color: var(--pink);
-  color: #fff;
-  border-radius: 10px;
-  padding: 3px 10px;
-  width: fit-content;
-  text-align: right;
-}
-.ChatModal .messageWrapper {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-.ChatModal .messageWrapper.me {
-  margin-left: auto;
-  width: fit-content;
-  margin-right: 10px;
-}
-
-.ChatModal .me .message {
-  margin-top: 27px;
-}
-.ChatModal .messageWrapper.me .timeDisp{
-  text-align: right;
-  position: absolute;
-  right: 0px;
-  bottom: -20px;
-}
-.ChatModal .timeDisp {
-  font-size: 12px;
-}
-.ChatModal .profileWrapper {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: red;
-  left: -35px;
-  top: 0px;
-  position: absolute;
-}
-
-.ChatModal .name {
-  font-size: 13px;
-  position: absolute;
-  left: -35px;
-  top: -16px;
-}
-
-.ChatModal .messageWrapper.others {
-  margin-left: 40px;
-  margin-top: 7px;
-}
-
-.ChatModal .groupName {
-  color: #fff;
+.ChatModal .header .sidebarToggleBtn {
   margin-left: 20px;
 }
 
-.ChatModal .groupContainer {
-  position: absolute;
-  overflow-y: auto;
-  height: 510px;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-  width: 100%;
-  pointer-events: none;
+.ChatModal .group {
+  display: flex;
+  position: relative;
+  margin-bottom: 15px;
 }
 
-.ChatModal .groupContainer::-webkit-scrollbar {
-  display: none;
+.ChatModal .groupProfile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
-.ChatModal .type {
-  border-bottom: 2px solid var(--pink);
-}
-
-.ChatModal .dateChange {
-  margin-top: 20px;
+.ChatModal .group .notificationN {
+  width: 15px;
+  height: 15px;
   display: flex;
   justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  background-color: #fff;
+  border-radius: 50%;
 }
 
-.ChatModal .dateChange p {
-  background-color: #eef4ff;
-  color: var(--pink);
-  padding: 2px 10px;
-  border-radius: 7px;
+.ChatModal .hoverEl {
+  visibility:hidden;
+  opacity: 0;
+  transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
+  position: absolute;
+  left: 45px;
+  top: 15px;
+  pointer-events: none;
+  font-size: 13px;
+  background-color: #fff;
+  border-radius: 3px;
+  padding: 0px 3px;
+
+}
+
+.ChatModal .groupProfile:hover ~ .hoverEl{
+  opacity: 1;
+  visibility: visible;
 }

@@ -8,7 +8,6 @@ Router.post("/bring-rooms", async (req, res) => {
   autoSignin(req, res, (async() => {
     const userId = req.session.user_id;
     const groupInfo = await redisClient.hGet(`user:${userId}`, 'groups');
-    console.log("gggg", groupInfo)
     try {
       if (!groupInfo) {
         const connection = pool.promise();
@@ -33,8 +32,9 @@ Router.post("/bring-rooms", async (req, res) => {
             room.status = -1;
             return room;
           });
-          return chatRooms;
+          return {groupId: group, rooms: chatRooms};
         }));
+        console.log(groupRooms)
         res.send({success: true, groupRooms: groupRooms});
       };
     } catch (err) {
