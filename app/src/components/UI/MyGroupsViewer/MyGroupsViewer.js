@@ -8,47 +8,34 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import styles from "./MyGroupsViewer.module.css";
+import SimplePeer from "simple-peer";
 import MemberTimer from "../MemberTimer/MemberTimer";
 import { faBullhorn, faBullseye, faComments, faGear, faHeart, faPeopleGroup, faRankingStar, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import MemberEl from "../MemberEl/MemberEl";
 
 function MyGroupsViewer(props) {
 
-  const { myGroups, socket, userInfo, myTimerTotal } = props;
+  const { myGroups, socket, userInfo, myTimerTotal, isCam, isMic } = props;
 
   const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
   const [groupStudying, setGroupStudying] = useState({});
 
+  //simple peer
+  const [peer, setPeer] = useState(null);
+  const [stream, setStream] = useState(null);
+  
+
   useEffect(() => {
-/*     socket.on("studying", (userId, groups) => {
-      setToggleTimer({ id: userId, status: 1 });
-      groups.map(group => {
-        const updatedgroupStudying = { ...groupStudying };
-         
-        if (updatedgroupStudying[group]) {
-           
-          updatedgroupStudying[group].members.push(userId);
-          setGroupStudying(updatedgroupStudying);
-        }
-      });
+    const newPeer = new SimplePeer({});
+    newPeer.on("connect", (data) => {
+      console.log("connected", data)
     });
 
-    socket.on("stopStudying", (userId, groups) => {
-      setToggleTimer({ id: userId, status: 0 });
-      groups.map(group => {
-        const updatedgroupStudying = { ...groupStudying };
-         
-        if (updatedgroupStudying[group]) {
-           
-          updatedgroupStudying[group].members.pop(userId);
-          setGroupStudying(updatedgroupStudying);
-        }
-      });
-    });
+    newPeer.on("stream", (stream) => {
+      console.log(stream)
+    })
 
-    socket.on("groupmembers", (group, users) => {
-
-    }) */
+    setPeer(newPeer);
   }, []);
 
   useEffect(() => {
@@ -66,6 +53,19 @@ function MyGroupsViewer(props) {
   }, [myGroups]);
 
   useEffect(() => {
+    if (isCam || isMic) {
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: isMic,
+          video: isCam,
+        })
+        .then((stream) => {
+          peer.addStream(stream);
+        });
+    };
+  }, [isCam, isMic]);
+
+  useEffect(() => {
     const handleStudying = (userId, groups) => {
       setToggleTimer({ id: userId, status: 1 });
       groups.forEach((group) => {
@@ -78,7 +78,7 @@ function MyGroupsViewer(props) {
         });
       });
     };
-  
+
     const handleStopStudying = (userId, groups) => {
       setToggleTimer({ id: userId, status: 0 });
       groups.forEach((group) => {
@@ -94,11 +94,11 @@ function MyGroupsViewer(props) {
         });
       });
     };
-  
+
     // Add event listeners
     socket.on("studying", handleStudying);
     socket.on("stopStudying", handleStopStudying);
-  
+
     // Clean up the event listeners when the component unmounts
     return () => {
       socket.off("studying", handleStudying);
@@ -107,7 +107,7 @@ function MyGroupsViewer(props) {
   }, []);
 
   useEffect(() => {
-     
+
   }, [groupStudying])
 
   return (
