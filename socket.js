@@ -164,6 +164,27 @@ io.on('connection', (socket) => {
       const chats = (await redisClient.lRange(`room:${roomId}:chat`, 0, -1));
       io.to(socket.id).emit("bringChat", { chats: chats });
     };
+  });
+
+  //peer
+  socket.on("joinPeerGroup", async() => {
+    let groups = await redisClient.hGet(`user:${userId}`, 'groups');
+    if (!groups) {
+      const connection = pool.promise();
+      try {
+        groups = await connection.query(`SELECT groups FROM users WHERE user_id = ?`, [userId]);
+      } catch (err) {
+        console.log(err);
+      };
+    };
+    groups = groups.split(",");
+    groups.map(group => {
+      const groupId = `peer:${group}`;
+      socket.join(groupId);
+      io.to(groupId).emit('newPeer', userId);
+    });
+    console.log("joined", groups)
+    //io.to(socket.id).emit("joinedPeerRoom")
   })
 });
 
