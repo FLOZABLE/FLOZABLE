@@ -1,11 +1,34 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./UserCamDisp.module.css";
-import Webcam from "react-webcam";
+import SimplePeer from "simple-peer";
 
-function UserCamDisp(props) {
+function UserCamDisp({isCam, isMic}) {
+  const [peer, setPeer] = useState(null);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const newPeer = new SimplePeer({});
+
+    newPeer.on("", () => {
+
+    });
+    
+  }, [])
+  useEffect(() => {
+    if (isCam || isMic) {
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: isMic,
+          video: isCam,
+        })
+        .then((stream) => {
+          peer.addStream(stream);
+        });
+    };
+  }, [isCam, isMic]);
   return (
     <div className={styles.UserCamDisp}>
-      <Webcam audio={false}/>
+      <video ref={videoRef} autoPlay playsInline />
     </div>
   );
 };
