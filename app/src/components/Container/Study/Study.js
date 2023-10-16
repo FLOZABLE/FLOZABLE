@@ -12,7 +12,6 @@ import AddSubjectModal from '../../UI/AddSubjectModal/AddSubjectModal';
 import EventModal from '../../UI/EventModal/EventModal';
 import { sortSubjects } from '../../Container/Stats/StatTools';
 import { generateRandomId } from "../../../utils/RandomId";
-import SimplePeer from 'simple-peer';
 import StudySidebar from '../../UI/StudySidebar/StudySidebar';
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -94,56 +93,6 @@ function Study(props) {
       updatePlan(selectedEvent, title, start, end, description, subject, priority);
     };
   }, [submit]);
-
-  //webcam & mic
-
-  useEffect(() => {
-    if (stream) {
-       
-      const p = new SimplePeer({
-        initiator: window.location.hash === "#1",
-        trickle: false,
-        stream,
-      });
-      /* p.on("error", (err) =>  ); */
-      p.on("signal", (data) => {
-        document.querySelector("#outgoing").textContent =
-          JSON.stringify(data);
-      });
-       
-      const socketConnectAction = () => {
-        socket.emit('joinMyGroups');
-      };
-
-      p.on('connect', socketConnectAction);
-      setPeer(p);
-
-      return () => {
-        p.off("joinMyGroups", socketConnectAction);
-      };
-    };
-  }, [stream]);
-
-  useEffect(() => {
-    const getPermission = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true
-        });
-        setStream(stream);
-      } catch (err) {
-      }
-    };
-
-    if (isCam) {
-      getPermission();
-    }
-    return () => {
-      if (isCam) {
-      }
-    };
-  }, [isCam]);
 
   function updatePlan(selectedEvent, title, start, end, description, subject, priority) {
     const eventIndex = events.findIndex((event) => event.id == selectedEvent);
@@ -270,7 +219,7 @@ function Study(props) {
       <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
       <div className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={`${styles.myGroupsViewerWrapper} ${groupsBtn ? styles.open : ''}`}>
-          <MyGroupsViewer myGroups={myGroups} mode={'study'} socket={socket} userInfo={userInfo} myTimerTotal={myTimerTotal} />
+          <MyGroupsViewer myGroups={myGroups} mode={'study'} socket={socket} userInfo={userInfo} myTimerTotal={myTimerTotal} isCam={isCam} isMic={isMic} />
         </div>
         <div className={styles.PlanTimelineBarWrapper}>
           <PlanTimelineBar events={events} subjects={subjects} />
