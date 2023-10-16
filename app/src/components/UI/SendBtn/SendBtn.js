@@ -13,7 +13,9 @@ function SendBtn({submit, setSubmit}) {
 
   return (
     <div className={styles.SendBtn} onClick={() => {handleSubmit()}}>
+      <i className={`${submit ? styles.submit : ''}`}>
       <FontAwesomeIcon icon={faPaperPlane} />
+      </i>
     </div>
   )
 };

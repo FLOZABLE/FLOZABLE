@@ -1,8 +1,48 @@
 .SendBtn {
   width: 40px;
   height: 40px;
-  background-color: aqua;
+  background-color: var(--purple);
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+
+@keyframes send {
+  20% {
+    transform: translate(50px, -50px);
+  }
+  40% {
+    transform: translate(50px, 50px);
+  }
+  60% {
+    transform: translate(-50px, 50px);
+  }
+
+  
+  /* 98% {
+    opacity: 0;
+    transform: translate(0px, 0px);
+  }
+  99% {
+    opacity: 1;
+    transform: translate(0px, 0px);
+  } */
+}
+
+@keyframes endsend {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.SendBtn i {
+  position: absolute;
+  /* animation: endsend .3s ease-in-out; */
+}
+.SendBtn i.submit {
+  animation: send .5s ease-in-out;
 }
