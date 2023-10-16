@@ -49,15 +49,13 @@ Router.post("/add-subject", async (req, res) => {
           res.send({ success: true, msg: `Added Subject "${subjectInfo.name}"`, info: { subjectInfo: subjectInfo } })
         } catch (err) {
           console.log(err);
-        } finally {
-          pool.releaseConnection();
-        }
+        };
         res.send({ success: true, msg: `Added Subject "${subjectInfo.name}"`, info: { subjectInfo: subjectInfo } })
       } else {
         res.send({ success: false, reason: "Invalid Value" });
       }
     } catch (error) {
-      console.log(err);
+      console.log(error);
     };
   }));
 })
