@@ -29,7 +29,7 @@
   position: absolute;
   bottom: 0px;
   width: calc(100% - 40px);
-  background-color: blue;
+  background-color: transparent;
   display: flex;
   padding: 0px 20px 10px 20px;
 }
@@ -43,7 +43,7 @@
   position: absolute;
   width: 200px;
   height: 100%;
-  background-color: red;
+  background-color: #fff;
   z-index: 10;
   top: 0px;
   left: -200px;
@@ -60,6 +60,10 @@
 
 .ChatModal .header .sidebarToggleBtn {
   margin-left: 20px;
+}
+
+.ChatModal .groups {
+  position: absolute;
 }
 
 .ChatModal .group {
@@ -99,10 +103,91 @@
   background-color: #fff;
   border-radius: 3px;
   padding: 0px 3px;
+  text-wrap: nowrap;
 
 }
 
 .ChatModal .groupProfile:hover ~ .hoverEl{
   opacity: 1;
   visibility: visible;
+}
+
+.ChatModal .rooms {
+  margin-left: 50px;
+}
+
+.ChatModal .roomType i {
+  margin-left: 10px;
+  position: absolute;
+  transform: rotate(0deg);
+  transition: transform .4s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.ChatModal .roomType i.clicked {
+  transform: rotate(180deg);
+}
+
+.ChatModal .msgContainer {
+  height: calc(100% - 85px);
+  overflow-y: auto;
+}
+
+.ChatModal .msgWrapper {
+  display: flex;
+  justify-content: right;
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.ChatModal .msgWrapper .msg {
+  background-color: var(--pink);
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 15px;
+}
+
+.ChatModal .msgWrapper .timeDisp {
+  position: absolute;
+  bottom: 0px;
+}
+
+.ChatModal .msgWrapper.others {
+  justify-content: left;
+  margin-left: 40px;
+  margin-bottom: 5px;
+}
+
+.ChatModal .msgWrapper.others .timeDisp {
+  justify-content: left;
+  font-size: 12px;
+}
+
+.ChatModal .profileWrapper {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: red;
+  left: -35px;
+  top: 5px;
+  position: absolute;
+}
+
+.ChatModal .msgWrapper .name {
+  position: absolute;
+  top: -13px;
+  left: -30px;
+  font-size: 12px;
+  display: none;
+}
+
+.ChatModal .dateChange {
+  justify-content: center;
+  display: flex;
+}
+
+.ChatModal .dateChange p {
+  background-color: var(--pink);
+  color: #fff;
+  border-radius: 10px;
+  padding: 0px 3px;
 }
