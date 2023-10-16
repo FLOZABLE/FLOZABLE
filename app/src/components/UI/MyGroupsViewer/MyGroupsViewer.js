@@ -8,7 +8,6 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import styles from "./MyGroupsViewer.module.css";
-import SimplePeer from "simple-peer";
 import MemberTimer from "../MemberTimer/MemberTimer";
 import { faBullhorn, faBullseye, faComments, faGear, faHeart, faPeopleGroup, faRankingStar, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import MemberEl from "../MemberEl/MemberEl";
@@ -19,24 +18,6 @@ function MyGroupsViewer(props) {
 
   const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
   const [groupStudying, setGroupStudying] = useState({});
-
-  //simple peer
-  const [peer, setPeer] = useState(null);
-  const [stream, setStream] = useState(null);
-  
-
-  useEffect(() => {
-    const newPeer = new SimplePeer({});
-    newPeer.on("connect", (data) => {
-      console.log("connected", data)
-    });
-
-    newPeer.on("stream", (stream) => {
-      console.log(stream)
-    })
-
-    setPeer(newPeer);
-  }, []);
 
   useEffect(() => {
     setGroupStudying(
@@ -51,19 +32,6 @@ function MyGroupsViewer(props) {
       }))
     );
   }, [myGroups]);
-
-  useEffect(() => {
-    if (isCam || isMic) {
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: isMic,
-          video: isCam,
-        })
-        .then((stream) => {
-          peer.addStream(stream);
-        });
-    };
-  }, [isCam, isMic]);
 
   useEffect(() => {
     const handleStudying = (userId, groups) => {
@@ -128,7 +96,7 @@ function MyGroupsViewer(props) {
           if (group.members) {
             membersEl = group.members.map((memberInfo, j) => {
               return (
-                <MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} />
+                <MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} isMic={isMic} isCam={isCam} />
               );
             });
           };
