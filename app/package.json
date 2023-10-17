@@ -26,6 +26,7 @@
         "html-react-parser": "^4.2.2",
         "immutability-helper": "^3.1.1",
         "luxon": "^3.4.3",
+        "process": "^0.11.10",
         "react": "^18.2.0",
         "react-beautiful-dnd": "^13.1.1",
         "react-chartjs-2": "^5.2.0",
@@ -70,6 +71,7 @@
         ]
     },
     "devDependencies": {
-        "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+        "react-error-overlay": "^6.0.9"
     }
 }

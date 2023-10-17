@@ -9,15 +9,47 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import styles from "./MyGroupsViewer.module.css";
 import MemberTimer from "../MemberTimer/MemberTimer";
+import SimplePeer from 'simple-peer';
 import { faBullhorn, faBullseye, faComments, faGear, faHeart, faPeopleGroup, faRankingStar, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import MemberEl from "../MemberEl/MemberEl";
 
 function MyGroupsViewer(props) {
 
-  const { myGroups, socket, userInfo, myTimerTotal, isCam, isMic } = props;
+  const { myGroups, socket, userInfo, myTimerTotal, isCam, isMic, mode } = props;
 
   const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
   const [groupStudying, setGroupStudying] = useState({});
+
+  const [stream, setStream] = useState(null);
+
+  useEffect(() => {
+    if (isCam || isMic) {
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: isMic,
+          video: isCam,
+        })
+        .then((stream) => {
+          setStream(stream);
+        });
+    };
+  }, [isCam, isMic]);
+
+/*   useEffect(() => {
+    const onNewPeer = (data) => {
+      console.log("data:", data);
+    };
+
+    socket.on("newPeer", onNewPeer);
+
+    return () => {
+      socket.off("joinPeerGroup", onNewPeer);
+    };
+  }, []); */
+
+  /* useEffect(() => {
+    socket.emit("joinPeerGroup");
+  }, []); */
 
   useEffect(() => {
     setGroupStudying(
@@ -34,7 +66,9 @@ function MyGroupsViewer(props) {
   }, [myGroups]);
 
   useEffect(() => {
+    console.log(socket)
     const handleStudying = (userId, groups) => {
+      console.log(userId, groups)
       setToggleTimer({ id: userId, status: 1 });
       groups.forEach((group) => {
         setGroupStudying((prevGroupStudying) => {
@@ -75,11 +109,11 @@ function MyGroupsViewer(props) {
   }, []);
 
   useEffect(() => {
-
-  }, [groupStudying])
+    console.log(socket)
+  }, [socket]);
 
   return (
-    <div className={`${styles.MyGroupsViewer} ${props.mode === 'study' ? styles.study : ''}`}>
+    <div className={`${styles.MyGroupsViewer} ${mode === 'study' ? styles.study : ''}`}>
       <Swiper
         slidesPerView={1}
         loop={true}
@@ -91,15 +125,6 @@ function MyGroupsViewer(props) {
         className={styles.Swiper}
       >
         {myGroups.map((group, i) => {
-          let membersEl = [];
-
-          if (group.members) {
-            membersEl = group.members.map((memberInfo, j) => {
-              return (
-                <MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} isMic={isMic} isCam={isCam} />
-              );
-            });
-          };
           return (
             <SwiperSlide className={styles.slide} key={i}>
               <div className={styles.inner}>
@@ -129,7 +154,7 @@ function MyGroupsViewer(props) {
                   <div className={styles.membersContainer}>
                     <div className={`${styles.members} customScroll`}>
                       {group.members.map((memberInfo, j) => {
-                        return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} me={memberInfo.user_id === userInfo.user_id} />)
+                        return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} me={memberInfo.user_id === userInfo.user_id} stream={stream} socket={socket} />)
                       })}
                     </div>
                   </div>

@@ -4,6 +4,8 @@ const pool = require("./model/pool");
 const redisClient = require("./model/redis");
 const Peer = require("simple-peer");
 const { generateRandomId } = require("./tool");
+const { lastMsgCache, groupCache } = require("./services/redisLoader");
+
 
 const io = require('socket.io')(server, {
   cors: {
@@ -60,25 +62,21 @@ io.on('connection', (socket) => {
 
   socket.on('joinMyGroups', async () => {
     try {
-      let userGroups = await redisClient.hGet(`user:${userId}`, 'groups');
-      if (!userGroups) {
-        const connection = pool.promise();
-        try {
-          userGroups = await connection.query(`SELECT groups FROM users WHERE user_id = ?`, [userId]);
-        } catch (err) {
-          console.log(err);
-        };
-      };
-      userGroups = userGroups.split(',');
-      userGroups.map(async groupId => {
-        let rooms = await redisClient.sMembers(`group:${groupId}:rooms`);
-        if (rooms) {
-          rooms.map(room => {
-            room = JSON.parse(room);
-            socket.join(room.id);
-          });
-        };
-      });
+      const groups = await groupCache(userId);
+      const groupRooms = await Promise.all(groups.map(async (group) => {
+        let chatRooms = await redisClient.sMembers(`group:${group}:rooms`);
+        chatRooms = chatRooms.map(room => {
+          room = JSON.parse(room);
+          room.status = -1;
+          socket.join(room.id);
+          return room;
+        });
+        return { groupId: group, rooms: chatRooms };
+      }));
+      io.to(socket.id).emit('joinMyGroups', groupRooms);
+
+      //handle cache
+      lastMsgCache();
     } catch (err) {
       console.log(err);
     };
@@ -168,27 +166,22 @@ io.on('connection', (socket) => {
 
   //peer
   socket.on("joinPeerGroup", async() => {
-    let groups = await redisClient.hGet(`user:${userId}`, 'groups');
-    if (!groups) {
-      const connection = pool.promise();
-      try {
-        groups = await connection.query(`SELECT groups FROM users WHERE user_id = ?`, [userId]);
-      } catch (err) {
-        console.log(err);
-      };
-    };
-    groups = groups.split(",");
+    const groups = await groupCache(userId);
     groups.map(group => {
       const groupId = `peer:${group}`;
       socket.join(groupId);
-      io.to(groupId).emit('newPeer', userId);
     });
-    console.log("joined", groups)
-    //io.to(socket.id).emit("joinedPeerRoom")
+  });
+
+  socket.on("offer", async(offer) => {
+    const groups = await groupCache(userId);
+    if (groups.length) {
+      io.to(groups).emit("offer", offer, userId);
+    };
   })
 });
 
-async function isInGroupRoom (userId, groupId, roomId) {
+async function isInGroupRoom(userId, groupId, roomId) {
   try {
     let userGroups = await redisClient.hGet(`user:${userId}`, 'groups');
     if (!userGroups) {
@@ -216,6 +209,14 @@ async function isInGroupRoom (userId, groupId, roomId) {
     return false;
   }
 };
+
+async function updateLastMsg(msgInfo) {
+  try {
+    //let userRoomStatus = await redisClient.hGet(`user:${userId}`, 'groups');
+  } catch (err) {
+    console.log(err);
+  };
+}
 
 cron.schedule('*/10 * * * * *', () => {
   const onlineMembers = io.engine.clientsCount;
