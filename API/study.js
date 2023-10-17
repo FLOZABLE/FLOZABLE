@@ -124,6 +124,7 @@ Router.post("/start", async (req, res) => {
                 console.log(`Socket ID: ${socket.id}, User ID: ${socket.userId}`);
               }
             }) */
+            console.log("socket send", groups)
             io.to(groups).emit('studying', userId, groups);
           }
         };
