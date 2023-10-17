@@ -50,7 +50,7 @@ function MemberEl(props) {
     <div className={styles.member} key={props.k}>
       <div className={styles.userName}>{memberInfo.name}</div>
       <div className={styles.icon}>{studyIcon}</div>
-      <UserCamDisp isCam={isCam} isMic={isMic} stream={stream} socket={socket} />
+      <UserCamDisp isCam={isCam} isMic={isMic} stream={stream} socket={socket} me={me} />
       <div className={styles.timer}>
         <MemberTimer run={run} total={sec} me={me} myTimerTotal={myTimerTotal} />
       </div>
