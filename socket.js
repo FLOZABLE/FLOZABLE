@@ -166,7 +166,7 @@ io.on('connection', (socket) => {
   });
 
   //peer
-  socket.on("joinPeerGroup", async() => {
+  socket.on("joinPeerGroup", async () => {
     const groups = await groupCache(userId);
     groups.map(group => {
       const groupId = `peer:${group}`;
@@ -174,15 +174,15 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on("offer", async(offer) => {
+  socket.on("offer", async (offer) => {
     const groups = await groupCache(userId);
     if (groups.length) {
       io.to(groups).emit("offer", offer, userId);
     };
   });
 
-  
-socket.on("start", async(subjectId) => {
+
+  socket.on("start", async (subjectId) => {
     const userInfo = await redisClient.hGetAll(`user:${userId}`)
 
     Object.keys(userInfo).forEach(async (info) => {
@@ -222,7 +222,7 @@ socket.on("start", async(subjectId) => {
                 };
               });
             };
-  
+
             newTimer.timeline.push([start, start]);
             newTimer.datum = newDatum;
             newTimer.study = 1;
@@ -249,10 +249,10 @@ socket.on("start", async(subjectId) => {
         };
       };
     });
-});
+  });
 
 
-socket.on("stop", async (subjectId) => {
+  socket.on("stop", async (subjectId) => {
     const groups = (await redisClient.hGet(`user:${userId}`, "groups")).split(',');
     const activeSubject = JSON.parse(await redisClient.hGet(`user:${userId}`, 'ActiveSubject'));
     if (activeSubject.id === subjectId) {
@@ -273,10 +273,10 @@ socket.on("stop", async (subjectId) => {
         lastActivity[1] = now - newTimer.datum;
         newTimer.timeline.push(lastActivity);
         newTimer.study = 0;
-        redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
+        redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer)); 
       };
     };
-});
+  });
 });
 
 async function isInGroupRoom(userId, groupId, roomId) {

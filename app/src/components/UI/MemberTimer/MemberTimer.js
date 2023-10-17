@@ -9,7 +9,6 @@ function MemberTimer(props) {
   const [hr, setHr] = useState(0);
 
   useEffect(() => {
-     
     setSec(total % 60);
     setMin(Math.floor(total / 60) % 60);
     setHr(Math.floor(total / (60 * 60)));
@@ -29,6 +28,7 @@ function MemberTimer(props) {
 
   useEffect(() => {
     if (me) {
+      console.log(me)
       if (myTimerTotal) {
         setSec(myTimerTotal % 60);
         setMin(Math.floor(myTimerTotal / 60) % 60);
