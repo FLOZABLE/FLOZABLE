@@ -19,7 +19,6 @@ const msg1Render = (msgInfo, timeDisp, i) => {
 };
 
 const msg2Render = (user, msgInfo, timeDisp, i) => {
-  console.log(user)
   return (
     <div className={`${styles.msgWrapper} ${styles.others}`} key={i}>
       <div className={styles.profileWrapper} style={{
@@ -45,7 +44,7 @@ const timeDiff = (changeDate, i) => {
   )
 }
 
-function ChatModal({ socket, userInfo, myGroups, allMembers }) {
+function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsChatModal }) {
 
   const msgContainerRef = useRef(null);
 
@@ -120,12 +119,18 @@ function ChatModal({ socket, userInfo, myGroups, allMembers }) {
       setMsg(newMessages);
     };
 
-    socket.on('bringChat', bringChat);
+    const joinMyGroups = (groups) => {
+      setChatGroups(groups);
+    }
 
-    bringRooms();
+    socket.on('bringChat', bringChat);
+    socket.on('joinMyGroups', joinMyGroups);
+
+    //bringRooms();
 
     return () => {
       socket.off("bringChat", bringChat);
+      socket.off('joinMyGroups', joinMyGroups);
     };
   }, [userInfo, allMembers]);
 
@@ -223,10 +228,13 @@ function ChatModal({ socket, userInfo, myGroups, allMembers }) {
   }, [msg]);
 
   return (
-    <div className={styles.ChatModal}>
+    <div className={`${styles.ChatModal} ${isChatModal ? styles.isOpen : ''}`}>
       <div className={styles.header}>
         <i className={styles.sidebarToggleBtn}>
           <SidebarToggleBtn isOpen={isSidebar} setIsOpen={setIsSidebar} />
+        </i>
+        <i className={styles.closeBtn} onClick={() => {setIsChatModal(false)}}>
+          <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
       <div className={`${styles.sidebar} ${isSidebar ? styles.open : ''}`}>

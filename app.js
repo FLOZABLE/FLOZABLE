@@ -101,7 +101,7 @@ const timerUpdateService = require('./services/timerUpdate');
 timerUpdateService.timerUpdate();
 
 //Router
-/* const mainRouter = require("./Router/main");
+const mainRouter = require("./Router/main");
 const accountRouter = account.Router;
 const studyRouter = require("./Router/study");
 const groupsRouter = require("./Router/groups");
@@ -110,7 +110,7 @@ const dashboardRouter = require('./Router/dashboard');
 const rankingRouter = require('./Router/ranking');
 const extensionRouter = require('./Router/api');
 const chatRouter = require('./Router/chat');
-const planRouter = require("./Router/plan"); */
+const planRouter = require("./Router/plan");
 const notificationRouter = notificationService.notificationRouter;
 
 
@@ -135,14 +135,14 @@ app.use(cookieParser(process.env.SECRET_ID));
 app.use(express.static(path.join(__dirname, '/public')));
 app.disable('etag');
 
-/* app.use('/', mainRouter);
+app.use('/', mainRouter);
 app.use('/account', accountRouter);
 app.use('/study', studyRouter);
 app.use('/groups', groupsRouter);
 app.use('/links', linksRouter);
 app.use('/dashboards', dashboardRouter);
 app.use('/ranking', rankingRouter);
-app.use('/api', extensionRouter); */
+app.use('/api', extensionRouter);
 app.use('/notification', notificationRouter);
 
 //api
