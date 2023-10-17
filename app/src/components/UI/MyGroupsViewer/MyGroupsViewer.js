@@ -150,7 +150,7 @@ function MyGroupsViewer(props) {
                   <div className={styles.membersContainer}>
                     <div className={`${styles.members} customScroll`}>
                       {group.members.map((memberInfo, j) => {
-                        return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} me={memberInfo.user_id === userInfo.user_id} stream={stream} socket={socket} />)
+                        return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} me={memberInfo.user_id === userInfo.user_id ? userInfo : false} stream={stream} socket={socket} />)
                       })}
                     </div>
                   </div>

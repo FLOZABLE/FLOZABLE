@@ -2,11 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./UserCamDisp.module.css";
 import SimplePeer from "simple-peer";
 
-function UserCamDisp({isCam, isMic, stream, socket}) {
+function UserCamDisp({isCam, isMic, stream, socket, me}) {
   const [peer, setPeer] = useState(null);
   const videoRef = useRef(null);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const newPeer = new SimplePeer({
       initiator: true,
     });
@@ -48,13 +48,17 @@ function UserCamDisp({isCam, isMic, stream, socket}) {
 
   useEffect(() => {
     if (stream && peer) {
-      peer.addStream(stream);
-      /* stream.getTracks().forEach((track) => {
+      //peer.addStream(stream);
+      stream.getTracks().forEach((track) => {
         peer.addTrack(track, stream);
         //console.log("track",track);
-      }); */
+      });
     };
-  }, [stream, peer]);
+  }, [stream, peer]); */
+
+  useEffect(() => {
+    const initiator = me ? true : false;
+  }, );
 
   return (
     <div className={styles.UserCamDisp}>
