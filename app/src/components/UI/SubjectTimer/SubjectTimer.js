@@ -7,7 +7,7 @@ import worker from "./TimerWorker";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function SubjectTimer(props) {
-  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, reset } = props;
+  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, reset, socket } = props;
   const timerDispRef = useRef(null);
 
   const [options, setOptions] = useState([]);
@@ -57,7 +57,8 @@ function SubjectTimer(props) {
   const toggleTimer = () => {
     if (!isStudy) {
       worker.postMessage({ command: 'startSubjectTimer' });
-      fetch(`${serverOrigin}/api/study/start`, {
+      socket.emit("start", subject.id);
+      /* fetch(`${serverOrigin}/api/study/start`, {
         method: 'post', headers: {
           'Content-Type': 'application/json'
         },
@@ -67,10 +68,11 @@ function SubjectTimer(props) {
         .then((data) => {
            
         })
-        .catch((error) => console.error(error));
+        .catch((error) => console.error(error)); */
     } else {
       worker.postMessage({ command: 'stopSubjectTimer' });
-      fetch(`${serverOrigin}/api/study/stop`, {
+      socket.emit("stop", subject.id);
+      /* fetch(`${serverOrigin}/api/study/stop`, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json'
@@ -81,7 +83,7 @@ function SubjectTimer(props) {
         .then((data) => {
            
         })
-        .catch((error) => console.error(error));
+        .catch((error) => console.error(error)); */
     }
     setIsStudy(!isStudy);
   };

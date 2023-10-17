@@ -73,6 +73,7 @@ io.on('connection', (socket) => {
         });
         return { groupId: group, rooms: chatRooms };
       }));
+      socket.join(groups)
       io.to(socket.id).emit('joinMyGroups', groupRooms);
 
       //handle cache
@@ -178,7 +179,104 @@ io.on('connection', (socket) => {
     if (groups.length) {
       io.to(groups).emit("offer", offer, userId);
     };
-  })
+  });
+
+  
+socket.on("start", async(subjectId) => {
+    const userInfo = await redisClient.hGetAll(`user:${userId}`)
+
+    Object.keys(userInfo).forEach(async (info) => {
+      if (info.includes('subject:')) {
+        const infoSubjectId = info.split(':')[1];
+        if (infoSubjectId === subjectId) {
+          const subjectInfo = JSON.parse(userInfo[info]);
+          const now = Math.floor(new Date().getTime() / 1000);
+          const start = now - subjectInfo.datum_point;
+          const push = await redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${start}]`);
+          redisClient.hSet(`user:${userId}`, `ActiveSubject`, JSON.stringify(subjectInfo));
+          const prevTimer = await redisClient.hGet(`user:${userId}`, 'timerInfo');
+          if (prevTimer) {
+            const newTimer = JSON.parse(prevTimer);
+            const datum = newTimer.datum;
+            //remove old timeline
+            const MAXSTORELEN = 24 * 60 * 60;
+            const lastVal = newTimer.timeline[newTimer.timeline.length - 1];
+            const missingTotal = Math.floor((lastVal ? lastVal[1] : 0) / (MAXSTORELEN * 2));
+            const newDatum = datum + missingTotal * MAXSTORELEN;
+            const start = now - newDatum;
+            /* while (newTimer.timeline[newTimer.timeline.length - 1] >= MAXSTORELEN) {
+              newTimer.timeline = newTimer.timeline.map(([start, stop]) => {
+                const newStart = start - MAXSTORELEN;
+                const newStop = stop - MAXSTORELEN;
+                if (newStart >= 0 && newStop >= 0) {
+                  return [newStart, newStop];
+                };
+              });
+            }; */
+            if (missingTotal) {
+              newTimer.timeline.map(([start, stop]) => {
+                const newStart = start - missingTotal * MAXSTORELEN;
+                const newStop = stop - missingTotal * MAXSTORELEN;
+                if (newStart >= 0 && newStop >= 0) {
+                  return [newStart, newStop];
+                };
+              });
+            };
+  
+            newTimer.timeline.push([start, start]);
+            newTimer.datum = newDatum;
+            newTimer.study = 1;
+            redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
+          } else {
+            const newTimer = { datum: now, timeline: [[0, 0]], study: 1 };
+            redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
+          };
+          const groups = userInfo.groups.split(',');
+          console.log(groups)
+          if (groups.length) {
+            /* groups.map(group => {
+              const socketsInRoom = io.sockets.in(group).sockets;
+              console.log(group)
+              // Iterate through the sockets and access socket properties
+              for (const socketId in socketsInRoom) {
+                const socket = socketsInRoom[socketId];
+                console.log(`Socket ID: ${socket.id}, User ID: ${socket.userId}`);
+              }
+            }) */
+            console.log("socket send", groups)
+            io.to(groups).emit('studying', userId, groups);
+          }
+        };
+      };
+    });
+});
+
+
+socket.on("stop", async (subjectId) => {
+    const groups = (await redisClient.hGet(`user:${userId}`, "groups")).split(',');
+    const activeSubject = JSON.parse(await redisClient.hGet(`user:${userId}`, 'ActiveSubject'));
+    if (activeSubject.id === subjectId) {
+      const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
+      const now = Math.floor(new Date().getTime() / 1000);
+      const start = activity[0];
+      const stop = now - activeSubject.datum_point;
+      redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${stop}]`);
+      redisClient.hSet(`user:${userId}`, `ActiveSubject`, '0');
+      console.log(groups)
+      if (groups.length) {
+        io.to(groups).emit('stopStudying', userId, groups);
+      };
+      const timerInfo = await redisClient.hGet(`user:${userId}`, 'timerInfo');
+      if (timerInfo) {
+        const newTimer = JSON.parse(timerInfo);
+        const lastActivity = newTimer.timeline.pop();
+        lastActivity[1] = now - newTimer.datum;
+        newTimer.timeline.push(lastActivity);
+        newTimer.study = 0;
+        redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
+      };
+    };
+});
 });
 
 async function isInGroupRoom(userId, groupId, roomId) {

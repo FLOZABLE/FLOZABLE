@@ -106,10 +106,6 @@ function MyGroupsViewer(props) {
       socket.off("studying", handleStudying);
       socket.off("stopStudying", handleStopStudying);
     };
-  }, []);
-
-  useEffect(() => {
-    console.log(socket)
   }, [socket]);
 
   return (

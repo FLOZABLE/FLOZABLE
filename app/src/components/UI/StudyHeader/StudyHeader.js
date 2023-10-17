@@ -12,7 +12,7 @@ import PlanTimeline from "../PlanTimeline/PlanTimeline";
 
 function StudyHeader(props) {
 
-  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, events, setEvents, setIsAddPlanModal, reset, setIsMic, setIsCam, isMic, isCam } = props;
+  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, events, setEvents, setIsAddPlanModal, reset, setIsMic, setIsCam, isMic, isCam, socket } = props;
 
   const [recommendedThemes, setRecommendedThemes] = useState([]);
   const [link, setLink] = useState([]);
@@ -63,7 +63,7 @@ function StudyHeader(props) {
             Timer
           </div>
           <div className={styles.clickedEl}>
-            <SubjectTimer subjects={subjects} subject={subject} setSubject={setSubject} isStudy={isStudy} setIsStudy={setIsStudy} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} reset={reset} />
+            <SubjectTimer socket={socket} subjects={subjects} subject={subject} setSubject={setSubject} isStudy={isStudy} setIsStudy={setIsStudy} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} reset={reset} />
           </div>
         </li>
       </ul>
