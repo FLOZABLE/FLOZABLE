@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./UserCamDisp.module.css";
 import SimplePeer from "simple-peer";
 
-function UserCamDisp({isCam, isMic, stream, socket, me}) {
+function UserCamDisp({isCam, isMic, stream, socket, me, memberInfo, offer, answer}) {
   const [peer, setPeer] = useState(null);
   const videoRef = useRef(null);
 
@@ -57,8 +57,74 @@ function UserCamDisp({isCam, isMic, stream, socket, me}) {
   }, [stream, peer]); */
 
   useEffect(() => {
-    const initiator = me ? true : false;
-  }, );
+    if (peer) {
+      peer.destroy();
+    };
+    
+    if (!me) {
+      const newPeer = new SimplePeer({
+        initiator: false
+      });
+  
+      setPeer(newPeer);
+    } else {
+      const newPeer = new SimplePeer({
+        initiator: true
+      });
+  
+      newPeer.on("stream", (remoteStream) => {
+        console.log("0000000000remote", remoteStream)
+        videoRef.current.srcObject = remoteStream;
+      });
+
+      newPeer.on("signal", (offer) => {
+        console.log("signal", offer)
+        socket.emit("offer", offer);
+      });
+      
+      newPeer.on("track", (track) => {
+        console.log("track", track)
+      })
+
+/*       socket.on('answer', (data) => {
+        if (data.sender === targetSocketId) {
+          peer.signal(data.answer);
+        }
+      }); */
+  
+      setPeer(newPeer);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (offer && offer.userId === memberInfo.user_id) {
+      console.log('eeeeeeee', offer.data);
+      socket.emit("answer", offer.data);
+    };
+  }, [offer]);
+
+  useEffect(() => {
+    if (answer && answer.data) {
+      console.log("sdfdddd", answer.data);
+      peer.signal(answer.data);
+    }
+  }, [answer]);
+
+  useEffect(() => {
+    if (me && stream) {
+      videoRef.current.srcObject = stream;
+      stream.getTracks().forEach(track => {
+        peer.addTrack(track, stream);
+      });
+      //peer.addStream(stream)
+    } else if(stream && peer) {
+      stream.getTracks().forEach(track => {
+        peer.addTrack(track, stream);
+      });
+      //peer.addStream(stream)
+    }
+    console.log("sddddddddddddddddd", peer)
+  }, [stream, peer]);
 
   return (
     <div className={styles.UserCamDisp}>
