@@ -24,6 +24,20 @@ function MyGroupsViewer(props) {
   const [offer, setOffer] = useState(null);
   const [answer, setAnswer] = useState(null);
 
+  const [myPeer, setMyPeer] = useState(null);
+  
+  useEffect(() => {
+    const newPeer = new SimplePeer({initiator: true});
+    newPeer.on("stream", (remoteStream) => {
+
+    });
+
+    newPeer.on("signal", (offer) => {
+      console.log("000000")
+      socket.emit("offer", offer);
+    })
+  }, []);
+
   useEffect(() => {
     if (isCam || isMic) {
       navigator.mediaDevices
