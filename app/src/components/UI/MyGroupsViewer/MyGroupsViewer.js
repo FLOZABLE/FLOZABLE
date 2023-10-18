@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useId } from "react";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
@@ -21,6 +21,8 @@ function MyGroupsViewer(props) {
   const [groupStudying, setGroupStudying] = useState({});
 
   const [stream, setStream] = useState(null);
+  const [offer, setOffer] = useState(null);
+  const [answer, setAnswer] = useState(null);
 
   useEffect(() => {
     if (isCam || isMic) {
@@ -47,9 +49,9 @@ function MyGroupsViewer(props) {
     };
   }, []); */
 
-  /* useEffect(() => {
+  useEffect(() => {
     socket.emit("joinPeerGroup");
-  }, []); */
+  }, []);
 
   useEffect(() => {
     setGroupStudying(
@@ -65,48 +67,58 @@ function MyGroupsViewer(props) {
     );
   }, [myGroups]);
 
-  useEffect(() => {
-    console.log(socket)
-    const handleStudying = (userId, groups) => {
-      console.log(userId, groups)
-      setToggleTimer({ id: userId, status: 1 });
-      groups.forEach((group) => {
-        setGroupStudying((prevGroupStudying) => {
-          const updatedGroupStudying = { ...prevGroupStudying };
-          if (updatedGroupStudying[group] && !updatedGroupStudying[group].members.includes(userId)) {
-            updatedGroupStudying[group].members.push(userId);
-          };
-          return updatedGroupStudying;
-        });
+  const handleStudying = (userId, groups) => {
+    console.log(userId, groups)
+    setToggleTimer({ id: userId, status: 1 });
+    groups.forEach((group) => {
+      setGroupStudying((prevGroupStudying) => {
+        const updatedGroupStudying = { ...prevGroupStudying };
+        if (updatedGroupStudying[group] && !updatedGroupStudying[group].members.includes(userId)) {
+          updatedGroupStudying[group].members.push(userId);
+        };
+        return updatedGroupStudying;
       });
-    };
+    });
+  };
 
-    const handleStopStudying = (userId, groups) => {
-      setToggleTimer({ id: userId, status: 0 });
-      groups.forEach((group) => {
-        setGroupStudying((prevGroupStudying) => {
-          const updatedGroupStudying = { ...prevGroupStudying };
-          if (updatedGroupStudying[group]) {
-            const index = updatedGroupStudying[group].members.indexOf(userId);
-            if (index !== -1) {
-              updatedGroupStudying[group].members.splice(index, 1);
-            }
+  const handleStopStudying = (userId, groups) => {
+    setToggleTimer({ id: userId, status: 0 });
+    groups.forEach((group) => {
+      setGroupStudying((prevGroupStudying) => {
+        const updatedGroupStudying = { ...prevGroupStudying };
+        if (updatedGroupStudying[group]) {
+          const index = updatedGroupStudying[group].members.indexOf(userId);
+          if (index !== -1) {
+            updatedGroupStudying[group].members.splice(index, 1);
           }
-          return updatedGroupStudying;
-        });
+        }
+        return updatedGroupStudying;
       });
-    };
+    });
+  };
 
-    // Add event listeners
+  const handleOffer = (data, userId) => {
+    console.log("offer", offer);
+    setOffer({data: data, userId: userId});
+  };
+
+  const handleAnswer = (data, userId) => {
+    console.log("ansddsf");
+    setAnswer({data: data, userId: userId});
+  };
+
+  useEffect(() => {
     socket.on("studying", handleStudying);
     socket.on("stopStudying", handleStopStudying);
-
-    // Clean up the event listeners when the component unmounts
+    socket.on("offer", handleOffer);
+    socket.on("answer", handleAnswer);
     return () => {
       socket.off("studying", handleStudying);
       socket.off("stopStudying", handleStopStudying);
+      socket.off("offer", handleOffer);
+      socket.off("answer", handleAnswer);
     };
-  }, [socket]);
+  }, []);
 
   return (
     <div className={`${styles.MyGroupsViewer} ${mode === 'study' ? styles.study : ''}`}>
@@ -150,7 +162,7 @@ function MyGroupsViewer(props) {
                   <div className={styles.membersContainer}>
                     <div className={`${styles.members} customScroll`}>
                       {group.members.map((memberInfo, j) => {
-                        return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} me={memberInfo.user_id === userInfo.user_id ? userInfo : false} stream={stream} socket={socket} />)
+                        return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} me={memberInfo.user_id === userInfo.user_id ? userInfo : false} stream={stream} socket={socket} offer={offer} answer={answer} />)
                       })}
                     </div>
                   </div>

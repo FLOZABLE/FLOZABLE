@@ -165,6 +165,11 @@ app.get('/dashboard*', (req, res) => {
   );
 });
 
+cacheManager();
+cron.schedule('0 * * * *', () => {
+  cacheManager();
+});
+
 //test
 const testTools = require('./test/generate');
 //testTools.testUserGeneration(100);
@@ -173,10 +178,6 @@ const testTools = require('./test/generate');
 //testTools.deleteTestUsers();
 //flushRedis();
 //groupsLoader();
-cacheManager();
-cron.schedule('0 * * * *', () => {
-  cacheManager();
-});
 
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);
