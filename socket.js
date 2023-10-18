@@ -175,14 +175,14 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on("offer", async (offer) => {
+  socket.on("offer", async (offer, userId) => {
     const groups = await groupCache(userId);
     if (groups.length) {
       io.to(groups.map(group => {return `peer:${group}`})).emit("offer", offer, userId);
     };
   });
 
-  socket.on("answer", async (offer) => {
+  socket.on("answer", async (offer, userId) => {
     const groups = await groupCache(userId);
     if (groups.length) {
       io.to(groups.map(group => {return `peer:${group}`})).emit("answer", offer, userId);
