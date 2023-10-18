@@ -1,4 +1,5 @@
 const express = require("express");
+const Router = express.Router();
 const app = express();
 const ejs = require("ejs");
 const createError = require("http-errors");
@@ -25,6 +26,8 @@ redisClient.connect().catch(console.error);
 const port = process.env.PORT;
 const account = require("./Router/account");
 const {flushRedis, groupsLoader, cacheManager} = require("./services/redisLoader");
+
+const { ExpressPeerServer } = require('peer');
 //const WebSocketToken = process.env.WEBSOCKET_TOKEN;
 //const WebSocket = require('ws');
 //const wsServer =  new WebSocket.Server({ server });
@@ -153,6 +156,12 @@ app.use('/api/plan', planAPI);
 app.use('/api/study', studyAPI);
 app.use(express.static(path.join(__dirname, 'app/build')));
 
+const peerServer = ExpressPeerServer(server, {
+  debug: true,
+  path: '/videoserver',
+});
+
+Router.use('/peerjs', peerServer);
 
 app.get('/dashboard*', (req, res) => {
   console.log(req.session.loggedin, req.signedCookies)
