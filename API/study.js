@@ -124,8 +124,9 @@ Router.post("/start", async (req, res) => {
                 console.log(`Socket ID: ${socket.id}, User ID: ${socket.userId}`);
               }
             }) */
-            console.log("socket send", groups)
-            io.to(groups).emit('studying', userId, groups);
+            const io = req.app.get('socketio')
+            console.log("socket send", io)
+            io.to(groups).emit('reset', userId, groups);
           }
         };
       };

@@ -41,17 +41,16 @@ function App() {
   useEffect(() => {
     const socketConnectAction = () => {
       socket.emit('joinMyGroups');
+      console.log('dddddddddd')
     };
 
     const socketResetAction = () => {
-      setReset(prevReset => !prevReset);
-      setTimeout(() => {
-        setReset(prevReset => !prevReset);
-      }, 100);
+      console.log('reseeeeeeee')
     };
 
     socket.on('connect', socketConnectAction);
     socket.on('reset', socketResetAction);
+    socket.on("studying", () => {console.log('ddd')})
 
     return () => {
       socket.off("joinMyGroups", socketConnectAction);

@@ -171,16 +171,23 @@ io.on('connection', (socket) => {
     groups.map(group => {
       const groupId = `peer:${group}`;
       socket.join(groupId);
+      //io.to(groupId).emit()
     });
   });
 
   socket.on("offer", async (offer) => {
     const groups = await groupCache(userId);
     if (groups.length) {
-      io.to(groups).emit("offer", offer, userId);
+      io.to(groups.map(group => {return `peer:${group}`})).emit("offer", offer, userId);
     };
   });
 
+  socket.on("answer", async (offer) => {
+    const groups = await groupCache(userId);
+    if (groups.length) {
+      io.to(groups.map(group => {return `peer:${group}`})).emit("answer", offer, userId);
+    };
+  })
 
   socket.on("start", async (subjectId) => {
     const userInfo = await redisClient.hGetAll(`user:${userId}`)

@@ -77,13 +77,14 @@ function Study(props) {
       myGroups.map((group) => {
         //props.socket.emit('joinRoom', group.group_id, props.userInfo.user_id);
         //props.socket.emit('onlineMembers');
-      })
+      });
     };
   }, [myGroups]);
 
   useEffect(() => {
-    socket.on('onlineMembers', (onlineMembers) => {
+    socket.on('studying', (onlineMembers) => {
       // 
+      console.log(onlineMembers)
     })
   }, []);
 
