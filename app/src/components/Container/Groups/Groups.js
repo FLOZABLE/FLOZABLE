@@ -31,6 +31,9 @@ function Groups(props) {
 
   useEffect(() => {
     if (joinTarget && joinGroupResponse.success) {
+      const myInfo = allMembers.find(member => {return member.user_id === userInfo.user_id});
+      joinTarget.members.push(myInfo);
+      setJoinTarget(joinTarget);
       setOtherGroups(otherGroups.filter((group) => { return group.group_id != joinTarget.group_id }));
       myGroups.push(joinTarget)
       setMyGroups(myGroups);

@@ -136,7 +136,10 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
 
   useEffect(() => {
     if (submit) {
-      socket.emit('sendMsg', selectedGroup.group_id, selectedRoom.id, msgInput);
+      if (msgInput.length > 0){
+        setMsgInput("");
+        socket.emit('sendMsg', selectedGroup.group_id, selectedRoom.id, msgInput);
+      }
     }
   }, [submit]);
 
@@ -210,6 +213,7 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
     };
     //group not user
     console.log("new Room", selectedRoom)
+    setIsSidebar(false); //close sidebar after room selection
     if (selectedGroup && selectedRoom) {
       socket.emit('bringChat', selectedGroup.group_id, selectedRoom.id);
     };
@@ -233,6 +237,9 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
         <i className={styles.sidebarToggleBtn}>
           <SidebarToggleBtn isOpen={isSidebar} setIsOpen={setIsSidebar} />
         </i>
+        <div className={styles.locationHeader}>
+          {selectedGroup ? (selectedGroup.name + (selectedRoom ? ": " + selectedRoom.name : "")) : "No group selected"}
+        </div>
         <i className={styles.closeBtn} onClick={() => {setIsChatModal(false)}}>
           <FontAwesomeIcon icon={faXmark} />
         </i>
@@ -265,7 +272,7 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
         {msg}
       </div>
       <div className={styles.inputWrapper}>
-        <input type="text" value={msgInput} onChange={(e) => setMsgInput(e.target.value)} />
+        <input type="text" value={msgInput} onKeyDown={(e) => {setSubmit(e.key == "Enter")}} onChange={(e) => setMsgInput(e.target.value)} />
         <SendBtn submit={submit} setSubmit={setSubmit} />
       </div>
     </div>
