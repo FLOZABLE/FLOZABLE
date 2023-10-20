@@ -301,9 +301,9 @@ io.on('connection', (socket) => {
     };
   }); */
 
+  //viewer
   socket.on('answer', async(data) => {
     try {
-      console.log(data.sdp.type, 'fff')
       const peer = new webrtc.RTCPeerConnection({
         iceServers: [
           {
@@ -319,7 +319,11 @@ io.on('connection', (socket) => {
       const payload = {
         sdp: peer.localDescription
       }
-  
+      senderStream.getTracks().forEach(track => {
+        console.log('Track ID:', track.id);
+        console.log('Track Kind:', track.kind);
+        console.log('Track Label:', track.label);
+      });
       const groups = await groupCache(userId);
       io.to(groups.map(group => {return `peer:${group}`})).emit('answer', payload, userId);
       
@@ -328,6 +332,7 @@ io.on('connection', (socket) => {
     };
   });
 
+  //broadcast
   socket.on('offer', async (data) => {
     const peer = new webrtc.RTCPeerConnection({
       iceServers: [
@@ -336,7 +341,7 @@ io.on('connection', (socket) => {
         }
       ]
     });
-    peer.ontrack = (e) => handleTrackEvent(e, peer);
+    peer.ontrack = (e) => handleTrackEvent(e, userId);
     const desc = new webrtc.RTCSessionDescription(data.sdp);
     await peer.setRemoteDescription(desc);
     const answer = await peer.createAnswer();
@@ -346,12 +351,14 @@ io.on('connection', (socket) => {
     }
     const groups = await groupCache(userId);
     io.to(groups.map(group => {return `peer:${group}`})).emit('offer', payload, userId);
+    //io.to(socket.id).emit('offer', payload, userId);
   });
   
 
 });
 
-function handleTrackEvent(e, peer) {
+function handleTrackEvent(e, userId) {
+  console.log('stream',e.streams[0].getTracks());
   senderStream = e.streams[0];
 };
 
