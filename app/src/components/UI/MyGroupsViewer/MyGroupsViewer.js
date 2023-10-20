@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useId } from "react";
+import React, { useRef, useState, useEffect, useId, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
@@ -13,6 +13,8 @@ import SimplePeer from 'simple-peer';
 import { faBullhorn, faBullseye, faComments, faGear, faHeart, faPeopleGroup, faRankingStar, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import MemberEl from "../MemberEl/MemberEl";
 
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
 function MyGroupsViewer(props) {
 
   const { myGroups, socket, userInfo, myTimerTotal, isCam, isMic, mode } = props;
@@ -25,17 +27,45 @@ function MyGroupsViewer(props) {
   const [answer, setAnswer] = useState(null);
 
   const [myPeer, setMyPeer] = useState(null);
-  
-  useEffect(() => {
-    const newPeer = new SimplePeer({initiator: true});
-    newPeer.on("stream", (remoteStream) => {
 
+  const createPeer = useCallback(() => {
+    const newPeer = new RTCPeerConnection({
+      iceServers: [
+        {
+          urls: "stun:stun.stunprotocol.org"
+        }
+      ]
     });
+    newPeer.onnegotiationneeded = () => handleNegotiationNeededEvent(newPeer);
+    return newPeer;
+  }, []);
 
-    newPeer.on("signal", (offer) => {
-      console.log("000000")
-      socket.emit("offer", offer);
-    })
+  const handleNegotiationNeededEvent = useCallback(async (peer) => {
+    console.log("gd")
+    const offer = await peer.createOffer();
+    await peer.setLocalDescription(offer);
+    const payload = {
+      sdp: peer.localDescription
+    };
+    socket.emit('offer', payload);
+  }, []);
+
+  useEffect(() => {
+    setMyPeer(createPeer());
+
+    const onOffer = (payload, userId) => {
+      setOffer({payload: payload, userId: userId});
+    };
+    const onAnswer = (payload, userId) => {
+      setAnswer({payload: payload, userId: userId});
+    };
+    socket.on('offer', onOffer);
+    socket.on('answer', onAnswer);
+
+    return () => {
+      socket.off('offer', onOffer);
+      socket.off('answer', onAnswer)
+    };
   }, []);
 
   useEffect(() => {
@@ -46,22 +76,10 @@ function MyGroupsViewer(props) {
           video: isCam,
         })
         .then((stream) => {
-          setStream(stream);
+          stream.getTracks().forEach(track => myPeer.addTrack(track, stream));
         });
     };
   }, [isCam, isMic]);
-
-/*   useEffect(() => {
-    const onNewPeer = (data) => {
-      console.log("data:", data);
-    };
-
-    socket.on("newPeer", onNewPeer);
-
-    return () => {
-      socket.off("joinPeerGroup", onNewPeer);
-    };
-  }, []); */
 
   useEffect(() => {
     socket.emit("joinPeerGroup");
@@ -113,12 +131,12 @@ function MyGroupsViewer(props) {
 
   const handleOffer = (data, userId) => {
     console.log("offer", offer);
-    setOffer({data: data, userId: userId});
+    setOffer({ data: data, userId: userId });
   };
 
   const handleAnswer = (data, userId) => {
     console.log("ansddsf");
-    setAnswer({data: data, userId: userId});
+    setAnswer({ data: data, userId: userId });
   };
 
   useEffect(() => {

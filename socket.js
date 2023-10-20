@@ -5,6 +5,7 @@ const redisClient = require("./model/redis");
 const Peer = require("simple-peer");
 const { generateRandomId } = require("./tool");
 const { lastMsgCache, groupCache } = require("./services/redisLoader");
+const webrtc = require("wrtc");
 
 
 const io = require('socket.io')(server, {
@@ -21,6 +22,7 @@ const wrap = middleware => (socket, next) => middleware(socket.request, {}, next
 io.use(wrap(sessionMiddleWare));
 
 const userIdToSocketIdMap = new Map();
+let senderStream;
 
 io.on('connection', (socket) => {
   let session;
@@ -175,20 +177,6 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on("offer", async (offer, userId) => {
-    const groups = await groupCache(userId);
-    if (groups.length) {
-      io.to(groups.map(group => {return `peer:${group}`})).emit("offer", offer, userId);
-    };
-  });
-
-  socket.on("answer", async (offer, userId) => {
-    const groups = await groupCache(userId);
-    if (groups.length) {
-      io.to(groups.map(group => {return `peer:${group}`})).emit("answer", offer, userId);
-    };
-  })
-
   socket.on("start", async (subjectId) => {
     const userInfo = await redisClient.hGetAll(`user:${userId}`)
 
@@ -284,7 +272,88 @@ io.on('connection', (socket) => {
       };
     };
   });
+
+  //logic for cam communication
+
+/*   socket.on('offer', async (data) => {
+    console.log('Received offer from ' + socket.id);
+    // Broadcast the offer to other connected clients
+    const groups = await groupCache(userId);
+    if (groups.length) {
+      io.to(groups.map(group => {return `peer:${group}`})).emit('offer', { offer: data.offer, sender: socket.id });
+    };
+  });
+
+  socket.on('answer', async(data) => {
+    console.log('Received answer from ' + socket.id);
+    const groups = await groupCache(userId);
+    if (groups.length) {
+      io.to(groups.map(group => {return `peer:${group}`})).emit('answer', { answer: data.answer, sender: socket.id });
+    };
+  });
+
+  socket.on('ice-candidate', async (data) => {
+    console.log('Received ICE candidate from ' + socket.id);
+    // Broadcast the ICE candidate to other connected clients
+    const groups = await groupCache(userId);
+    if (groups.length) {
+      io.to(groups.map(group => {return `peer:${group}`})).emit('ice-candidate', { candidate: data.candidate, sender: socket.id });
+    };
+  }); */
+
+  socket.on('answer', async(data) => {
+    try {
+      console.log(data.sdp.type, 'fff')
+      const peer = new webrtc.RTCPeerConnection({
+        iceServers: [
+          {
+            urls: "stun:stun.stunprotocol.org"
+          }
+        ]
+      });
+      const desc = new webrtc.RTCSessionDescription(data.sdp);
+      await peer.setRemoteDescription(desc);
+      senderStream.getTracks().forEach(track => peer.addTrack(track, senderStream));
+      const answer = await peer.createAnswer();
+      await peer.setLocalDescription(answer);
+      const payload = {
+        sdp: peer.localDescription
+      }
+  
+      const groups = await groupCache(userId);
+      io.to(groups.map(group => {return `peer:${group}`})).emit('answer', payload, userId);
+      
+    } catch (err) {
+      console.log(err);
+    };
+  });
+
+  socket.on('offer', async (data) => {
+    const peer = new webrtc.RTCPeerConnection({
+      iceServers: [
+        {
+          urls: "stun:stun.stunprotocol.org"
+        }
+      ]
+    });
+    peer.ontrack = (e) => handleTrackEvent(e, peer);
+    const desc = new webrtc.RTCSessionDescription(data.sdp);
+    await peer.setRemoteDescription(desc);
+    const answer = await peer.createAnswer();
+    await peer.setLocalDescription(answer);
+    const payload = {
+      sdp: peer.localDescription
+    }
+    const groups = await groupCache(userId);
+    io.to(groups.map(group => {return `peer:${group}`})).emit('offer', payload, userId);
+  });
+  
+
 });
+
+function handleTrackEvent(e, peer) {
+  senderStream = e.streams[0];
+};
 
 async function isInGroupRoom(userId, groupId, roomId) {
   try {
