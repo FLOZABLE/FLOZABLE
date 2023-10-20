@@ -13,8 +13,6 @@ import SimplePeer from 'simple-peer';
 import { faBullhorn, faBullseye, faComments, faGear, faHeart, faPeopleGroup, faRankingStar, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import MemberEl from "../MemberEl/MemberEl";
 
-const serverOrigin = process.env.REACT_APP_ORIGIN;
-
 function MyGroupsViewer(props) {
 
   const { myGroups, socket, userInfo, myTimerTotal, isCam, isMic, mode } = props;
@@ -28,37 +26,57 @@ function MyGroupsViewer(props) {
 
   const [myPeer, setMyPeer] = useState(null);
 
-  const createPeer = useCallback(() => {
-    const newPeer = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: "stun:stun.stunprotocol.org"
-        }
-      ]
+  const createPeer = () => {
+    const peer = new RTCPeerConnection({
+        iceServers: [
+            {
+                urls: "stun:stun.stunprotocol.org"
+            }
+        ]
     });
-    newPeer.onnegotiationneeded = () => handleNegotiationNeededEvent(newPeer);
-    return newPeer;
-  }, []);
+    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peer);
 
-  const handleNegotiationNeededEvent = useCallback(async (peer) => {
-    console.log("gd")
+    return peer;
+}
+
+  const handleNegotiationNeededEvent = async(peer) => {
     const offer = await peer.createOffer();
-    await peer.setLocalDescription(offer);
+    await peer.setLocalDescription(offer)
     const payload = {
-      sdp: peer.localDescription
+        sdp: peer.localDescription
     };
+
     socket.emit('offer', payload);
-  }, []);
+    /* const { data } = await axios.post('/broadcast', payload);
+    const desc = new RTCSessionDescription(data.sdp);
+    peer.setRemoteDescription(desc).catch(e => console.log(e)); */
+}
+
+
+
 
   useEffect(() => {
-    setMyPeer(createPeer());
+
+    if (!userInfo) {
+      return ;
+    }
+    const newPeer = createPeer();
 
     const onOffer = (payload, userId) => {
+      console.log('offer', userId)
+      const desc = new RTCSessionDescription(payload.sdp);
+      console.log(desc, newPeer)
+      if (userId === userInfo.user_id) {
+        newPeer.setRemoteDescription(desc).catch(e => console.log(e));
+      };
       setOffer({payload: payload, userId: userId});
     };
     const onAnswer = (payload, userId) => {
+      /* const desc = new RTCSessionDescription(payload.sdp);
+      myPeer.setRemoteDescription(desc).catch(e => console.log(e)); */
       setAnswer({payload: payload, userId: userId});
     };
+    setMyPeer(newPeer);
     socket.on('offer', onOffer);
     socket.on('answer', onAnswer);
 
@@ -66,7 +84,7 @@ function MyGroupsViewer(props) {
       socket.off('offer', onOffer);
       socket.off('answer', onAnswer)
     };
-  }, []);
+  }, [userInfo]);
 
   useEffect(() => {
     if (isCam || isMic) {
@@ -76,6 +94,7 @@ function MyGroupsViewer(props) {
           video: isCam,
         })
         .then((stream) => {
+          setStream(stream);
           stream.getTracks().forEach(track => myPeer.addTrack(track, stream));
         });
     };
@@ -129,7 +148,7 @@ function MyGroupsViewer(props) {
     });
   };
 
-  const handleOffer = (data, userId) => {
+  /* const handleOffer = (data, userId) => {
     console.log("offer", offer);
     setOffer({ data: data, userId: userId });
   };
@@ -138,17 +157,17 @@ function MyGroupsViewer(props) {
     console.log("ansddsf");
     setAnswer({ data: data, userId: userId });
   };
-
+ */
   useEffect(() => {
     socket.on("studying", handleStudying);
     socket.on("stopStudying", handleStopStudying);
-    socket.on("offer", handleOffer);
-    socket.on("answer", handleAnswer);
+    /* socket.on("offer", handleOffer);
+    socket.on("answer", handleAnswer); */
     return () => {
       socket.off("studying", handleStudying);
       socket.off("stopStudying", handleStopStudying);
-      socket.off("offer", handleOffer);
-      socket.off("answer", handleAnswer);
+      /* socket.off("offer", handleOffer);
+      socket.off("answer", handleAnswer); */
     };
   }, []);
 

@@ -5,18 +5,10 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function UserCamDisp({ isCam, isMic, stream, socket, me, memberInfo, offer, answer }) {
   const [peer, setPeer] = useState(null);
+  const [newStream, setNewStream] = useState(null);
+
   const videoRef = useRef(null);
-
-  const handleNegotiationNeededEvent = useCallback(async(newPeer) => {
-    const offer = await newPeer.createOffer();
-    await newPeer.setLocalDescription(offer);
-    const payload = {
-      sdp: newPeer.localDescription
-    };
-    socket.emit('answer', payload);
-  }, [])
-
-  const createnewPeer = useCallback(() => {
+  const createPeer = () => {
     const newPeer = new RTCPeerConnection({
       iceServers: [
         {
@@ -26,29 +18,40 @@ function UserCamDisp({ isCam, isMic, stream, socket, me, memberInfo, offer, answ
     });
     newPeer.ontrack = handleTrackEvent;
     newPeer.onnegotiationneeded = () => handleNegotiationNeededEvent(newPeer);
+
     return newPeer;
-  }, []);
+  }
 
-  const handleTrackEvent = useCallback((e) => {
-    console.log("track", e.streams, videoRef.current)
+  const handleNegotiationNeededEvent = async (peer) => {
+    const offer = await peer.createOffer();
+    await peer.setLocalDescription(offer);
+    const payload = {
+      sdp: peer.localDescription
+    };
+
+    socket.emit('answer', payload);
+  }
+
+  const handleTrackEvent = (e) => {
     videoRef.current.srcObject = e.streams[0];
-  }, [videoRef]);
+  };
 
   useEffect(() => {
-    if (peer) {
-      peer.addTransceiver("video", { direction: "recvonly" })
+    if (offer && me.user_id === offer.userId) {
+      videoRef.current.srcObject = stream;
+      return;
     }
-  }, [peer]);
-
-  useEffect(() => {
     if (offer && offer.userId === memberInfo.user_id) {
-      setPeer(createnewPeer());
+      console.log('gd gd gd')
+      const newPeer = createPeer();
+      newPeer.addTransceiver("video", { direction: "recvonly" });
+      setPeer(newPeer);
     }
   }, [offer]);
 
   useEffect(() => {
-    if (answer && answer.data && answer.data.sdp && peer) {
-      const desc = new RTCSessionDescription(answer.data.sdp);
+    if (answer && answer.payload && answer.payload.sdp && peer) {
+      const desc = new RTCSessionDescription(answer.payload.sdp);
       peer.setRemoteDescription(desc).catch(e => console.log(e));
     }
   }, [answer]);
@@ -56,7 +59,7 @@ function UserCamDisp({ isCam, isMic, stream, socket, me, memberInfo, offer, answ
 
   return (
     <div className={styles.UserCamDisp}>
-      <video ref={videoRef} autoPlay playsInline className={styles.video} />
+      <video ref={videoRef} autoPlay playsInline className={`${styles.video}`} />
     </div>
   );
 };
