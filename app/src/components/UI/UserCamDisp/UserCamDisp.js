@@ -5,7 +5,6 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function UserCamDisp({ isCam, isMic, stream, socket, me, memberInfo, offer, answer }) {
   const [peer, setPeer] = useState(null);
-  const [newStream, setNewStream] = useState(null);
 
   const videoRef = useRef(null);
   const createPeer = () => {
@@ -34,6 +33,9 @@ function UserCamDisp({ isCam, isMic, stream, socket, me, memberInfo, offer, answ
 
   const handleTrackEvent = (e) => {
     videoRef.current.srcObject = e.streams[0];
+    console.log('streaming ot',e.streams[0].getTracks().map(track => {
+      console.log('ot track',track)
+    }))
   };
 
   useEffect(() => {

@@ -358,7 +358,7 @@ io.on('connection', (socket) => {
 });
 
 function handleTrackEvent(e, userId) {
-  console.log('stream',e.streams[0].getTracks());
+  console.log('stream',e.streams[0].getTracks(), senderStream);
   senderStream = e.streams[0];
 };
 

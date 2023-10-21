@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import styles from "./MemberEl.module.css";
+import styles from "./MyEl.module.css";
 import { useSearchParams } from "react-router-dom";
 import { StudyPerson, RestPerson } from "../../../utils/svgs";
-import MemberTimer from "../MemberTimer/MemberTimer";
-import UserCamDisp from "../UserCamDisp/UserCamDisp";
+import MyCamDisp from "../MyCamDisp/MyCamDisp";
+import MyTimer from "../MyTimer/MyTimer";
 
-function MemberEl(props) {
-  const { memberInfo, toggleTimer, me, myTimerTotal, isCam, isMic, stream, socket, offer, answer } = props;
+function MyEl(props) {
+  const { memberInfo, toggleTimer, me, myTimerTotal, stream } = props;
   const [run, setRun] = useState(0);
   const [sec, setSec] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
@@ -25,11 +25,10 @@ function MemberEl(props) {
   }, [memberInfo]);
 
   useEffect(() => {
-    //logic for stream data of user
-    /* if (stream) {
+    if (stream) {
       setStudyIcon(null);
       return;
-    }; */
+    };
     if (toggleTimer.id === memberInfo.user_id) {
       setRun(toggleTimer.status);
       if (toggleTimer.status) {
@@ -42,20 +41,21 @@ function MemberEl(props) {
         );
       };
     };
-  }, [toggleTimer]);
+  }, [toggleTimer, stream]);
+
 
   return (
     <div className={styles.member} key={props.k}>
-      <UserCamDisp isCam={isCam} isMic={isMic} stream={stream} socket={socket} me={me} memberInfo={memberInfo} offer={offer} answer={answer} />
+      <MyCamDisp stream={stream} />
       <div className={styles.inner}>
         <div className={styles.userName}>{memberInfo.name}</div>
         <div className={styles.icon}>{studyIcon}</div>
         <div className={styles.timer}>
-          <MemberTimer run={run} total={sec} me={me} myTimerTotal={myTimerTotal} />
+          <MyTimer run={run} total={sec} me={true} myTimerTotal={myTimerTotal} />
         </div>
       </div>
     </div>
   );
 }
 
-export default MemberEl;
+export default MyEl;
