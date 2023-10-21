@@ -12,6 +12,7 @@ import MemberTimer from "../MemberTimer/MemberTimer";
 import SimplePeer from 'simple-peer';
 import { faBullhorn, faBullseye, faComments, faGear, faHeart, faPeopleGroup, faRankingStar, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import MemberEl from "../MemberEl/MemberEl";
+import MyEl from "../MyEl/MyEl";
 
 function MyGroupsViewer(props) {
 
@@ -28,37 +29,31 @@ function MyGroupsViewer(props) {
 
   const createPeer = () => {
     const peer = new RTCPeerConnection({
-        iceServers: [
-            {
-                urls: "stun:stun.stunprotocol.org"
-            }
-        ]
+      iceServers: [
+        {
+          urls: "stun:stun.stunprotocol.org"
+        }
+      ]
     });
     peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peer);
 
     return peer;
-}
+  }
 
-  const handleNegotiationNeededEvent = async(peer) => {
+  const handleNegotiationNeededEvent = async (peer) => {
     const offer = await peer.createOffer();
     await peer.setLocalDescription(offer)
     const payload = {
-        sdp: peer.localDescription
+      sdp: peer.localDescription
     };
 
-    socket.emit('offer', payload);
-    /* const { data } = await axios.post('/broadcast', payload);
-    const desc = new RTCSessionDescription(data.sdp);
-    peer.setRemoteDescription(desc).catch(e => console.log(e)); */
-}
-
-
-
+    //socket.emit('offer', payload);
+  }
 
   useEffect(() => {
 
     if (!userInfo) {
-      return ;
+      return;
     }
     const newPeer = createPeer();
 
@@ -69,12 +64,10 @@ function MyGroupsViewer(props) {
       if (userId === userInfo.user_id) {
         newPeer.setRemoteDescription(desc).catch(e => console.log(e));
       };
-      setOffer({payload: payload, userId: userId});
+      setOffer({ payload: payload, userId: userId });
     };
     const onAnswer = (payload, userId) => {
-      /* const desc = new RTCSessionDescription(payload.sdp);
-      myPeer.setRemoteDescription(desc).catch(e => console.log(e)); */
-      setAnswer({payload: payload, userId: userId});
+      setAnswer({ payload: payload, userId: userId });
     };
     setMyPeer(newPeer);
     socket.on('offer', onOffer);
@@ -95,6 +88,9 @@ function MyGroupsViewer(props) {
         })
         .then((stream) => {
           setStream(stream);
+          console.log('streaming me',stream.getTracks(track => {
+            console.log('my track',track)
+          }))
           stream.getTracks().forEach(track => myPeer.addTrack(track, stream));
         });
     };
@@ -148,26 +144,12 @@ function MyGroupsViewer(props) {
     });
   };
 
-  /* const handleOffer = (data, userId) => {
-    console.log("offer", offer);
-    setOffer({ data: data, userId: userId });
-  };
-
-  const handleAnswer = (data, userId) => {
-    console.log("ansddsf");
-    setAnswer({ data: data, userId: userId });
-  };
- */
   useEffect(() => {
     socket.on("studying", handleStudying);
     socket.on("stopStudying", handleStopStudying);
-    /* socket.on("offer", handleOffer);
-    socket.on("answer", handleAnswer); */
     return () => {
       socket.off("studying", handleStudying);
       socket.off("stopStudying", handleStopStudying);
-      /* socket.off("offer", handleOffer);
-      socket.off("answer", handleAnswer); */
     };
   }, []);
 
@@ -213,7 +195,11 @@ function MyGroupsViewer(props) {
                   <div className={styles.membersContainer}>
                     <div className={`${styles.members} customScroll`}>
                       {group.members.map((memberInfo, j) => {
-                        return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} me={memberInfo.user_id === userInfo.user_id ? userInfo : false} stream={stream} socket={socket} offer={offer} answer={answer} />)
+                        if (memberInfo.user_id === userInfo.user_id) {
+                          return (<MyEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} stream={stream} socket={socket} />)
+                        } else {
+                          return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} stream={stream} socket={socket} offer={offer} answer={answer} />)
+                        }
                       })}
                     </div>
                   </div>

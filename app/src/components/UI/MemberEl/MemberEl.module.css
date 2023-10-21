@@ -1,11 +1,20 @@
 .member {
-  height: 100px;
+  height: 100%;
   margin: 20px;
-  padding: 10px;
   display: flex;
   align-items: center;
   flex-direction: column;
   border-radius: 20px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   background-color: #00000050;
+  position: relative;
+  overflow: hidden;
+}
+
+.member .inner {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  z-index: 1;
 }

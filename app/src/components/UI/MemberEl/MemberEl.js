@@ -25,8 +25,12 @@ function MemberEl(props) {
   }, [memberInfo]);
 
   useEffect(() => {
+    //logic for stream data of user
+    /* if (stream) {
+      setStudyIcon(null);
+      return;
+    }; */
     if (toggleTimer.id === memberInfo.user_id) {
-      const studyInfo = memberInfo.study;
       setRun(toggleTimer.status);
       if (toggleTimer.status) {
         setStudyIcon(
@@ -37,22 +41,18 @@ function MemberEl(props) {
           <RestPerson width={'40px'} height={'40px'} opt1={'#fff'} />
         );
       };
-
-      /* if (userInfo && userInfo.user_id === toggleTimer.id) { 
-        //my timer
-        setSec(myTimerTotal);
-         
-      } */
     };
   }, [toggleTimer]);
 
   return (
     <div className={styles.member} key={props.k}>
-      <div className={styles.userName}>{memberInfo.name}</div>
-      <div className={styles.icon}>{studyIcon}</div>
       <UserCamDisp isCam={isCam} isMic={isMic} stream={stream} socket={socket} me={me} memberInfo={memberInfo} offer={offer} answer={answer} />
-      <div className={styles.timer}>
-        <MemberTimer run={run} total={sec} me={me} myTimerTotal={myTimerTotal} />
+      <div className={styles.inner}>
+        <div className={styles.userName}>{memberInfo.name}</div>
+        <div className={styles.icon}>{studyIcon}</div>
+        <div className={styles.timer}>
+          <MemberTimer run={run} total={sec} me={me} myTimerTotal={myTimerTotal} />
+        </div>
       </div>
     </div>
   );
