@@ -65,25 +65,12 @@
 
 .MyGroupsViewer .members {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 240px);
+  grid-template-columns: repeat(auto-fill, 300px);
   justify-content: center;
   flex-wrap: wrap;
   overflow-y: auto;
   max-height: 350px;
   gap: 20px;
-}
-
-.MyGroupsViewer .members .member {
-  height: 100px;
-  margin: 20px;
-  padding: 10px;
-  background-color: #f7f9fd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  border-radius: 20px;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .MyGroupsViewer .buttons {
