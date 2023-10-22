@@ -3,6 +3,8 @@ import styles from "./UserCamDisp.module.css";
 
 function UserCamDisp({ socket, memberInfo, offer, answer }) {
   const [peer, setPeer] = useState(null);
+  const [update, setUpdate] = useState(0);
+  const [payload, setPayload] = useState(null);
 
   const videoRef = useRef(null);
   const createPeer = () => {
@@ -22,31 +24,35 @@ function UserCamDisp({ socket, memberInfo, offer, answer }) {
   const handleNegotiationNeededEvent = async (peer) => {
     const offer = await peer.createOffer();
     await peer.setLocalDescription(offer);
-    const payload = {
-      sdp: peer.localDescription
+    const newPayload = {
+      sdp: await peer.localDescription
     };
-    console.log('answerpeer', await peer)
-    socket.emit('answer', payload, memberInfo.user_id);
+    setPayload(newPayload)
   }
 
   const handleTrackEvent = (e) => {
     videoRef.current.srcObject = e.streams[0];
-    console.log('streaming ot',)
+    console.log('streaming ot', e.streams[0])
+    setUpdate(update + 1)
     e.streams[0].getTracks().map(track => {
-      console.log('ot track',track)
+      console.log('ot track', track)
     })
   };
 
   useEffect(() => {
+    const newPeer = createPeer();
+    newPeer.addTransceiver("video", { direction: "recvonly" });
+    setPeer(newPeer);
+  }, []);
+
+  useEffect(() => {
     if (offer && offer.userId === memberInfo.user_id) {
-      const newPeer = createPeer();
-      newPeer.addTransceiver("video", { direction: "recvonly" });
-      setPeer(newPeer);
-    }
+      socket.emit('answer', payload, memberInfo.user_id);
+    };
   }, [offer]);
 
   useEffect(() => {
-    if (answer && answer.payload && peer) {
+    if (answer && answer.userId === memberInfo.user_id) {
       const desc = new RTCSessionDescription(answer.payload.sdp);
       peer.setRemoteDescription(desc).catch(e => console.log(e));
     }
@@ -55,7 +61,8 @@ function UserCamDisp({ socket, memberInfo, offer, answer }) {
 
   return (
     <div className={styles.UserCamDisp}>
-      <video ref={videoRef} autoPlay playsInline className={`${styles.video}`} />
+      <video ref={videoRef} autoPlay playsInline className={`${styles.video} ${update}`} />
+      {update}
     </div>
   );
 };
