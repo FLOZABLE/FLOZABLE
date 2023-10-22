@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./UserCamDisp.module.css";
 
-const serverOrigin = process.env.REACT_APP_ORIGIN;
-
-function UserCamDisp({ isCam, isMic, stream, socket, me, memberInfo, offer, answer }) {
+function UserCamDisp({ socket, memberInfo, offer, answer }) {
   const [peer, setPeer] = useState(null);
 
   const videoRef = useRef(null);
@@ -27,24 +25,20 @@ function UserCamDisp({ isCam, isMic, stream, socket, me, memberInfo, offer, answ
     const payload = {
       sdp: peer.localDescription
     };
-
-    socket.emit('answer', payload);
+    console.log('answerpeer', await peer)
+    socket.emit('answer', payload, memberInfo.user_id);
   }
 
   const handleTrackEvent = (e) => {
     videoRef.current.srcObject = e.streams[0];
-    console.log('streaming ot',e.streams[0].getTracks().map(track => {
+    console.log('streaming ot',)
+    e.streams[0].getTracks().map(track => {
       console.log('ot track',track)
-    }))
+    })
   };
 
   useEffect(() => {
-    if (offer && me.user_id === offer.userId) {
-      videoRef.current.srcObject = stream;
-      return;
-    }
     if (offer && offer.userId === memberInfo.user_id) {
-      console.log('gd gd gd')
       const newPeer = createPeer();
       newPeer.addTransceiver("video", { direction: "recvonly" });
       setPeer(newPeer);
@@ -52,7 +46,7 @@ function UserCamDisp({ isCam, isMic, stream, socket, me, memberInfo, offer, answ
   }, [offer]);
 
   useEffect(() => {
-    if (answer && answer.payload && answer.payload.sdp && peer) {
+    if (answer && answer.payload && peer) {
       const desc = new RTCSessionDescription(answer.payload.sdp);
       peer.setRemoteDescription(desc).catch(e => console.log(e));
     }
