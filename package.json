@@ -46,7 +46,6 @@
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",
     "node-schedule": "^2.1.1",
-    "node-webrtc": "^0.0.0",
     "passport-github": "^1.1.0",
     "peer": "^1.0.1",
     "promise-mysql": "^5.2.0",

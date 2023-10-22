@@ -47,7 +47,7 @@ function MyGroupsViewer(props) {
       sdp: peer.localDescription
     };
 
-    //socket.emit('offer', payload);
+    socket.emit('offer', payload);
   }
 
   useEffect(() => {
@@ -69,6 +69,7 @@ function MyGroupsViewer(props) {
     const onAnswer = (payload, userId) => {
       setAnswer({ payload: payload, userId: userId });
     };
+
     setMyPeer(newPeer);
     socket.on('offer', onOffer);
     socket.on('answer', onAnswer);

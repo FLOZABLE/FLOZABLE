@@ -23,6 +23,7 @@ io.use(wrap(sessionMiddleWare));
 
 const userIdToSocketIdMap = new Map();
 let senderStream;
+const streams = new Map();
 
 io.on('connection', (socket) => {
   let session;
@@ -302,7 +303,7 @@ io.on('connection', (socket) => {
   }); */
 
   //viewer
-  socket.on('answer', async(data) => {
+  socket.on('answer', async(data, targetId) => {
     try {
       const peer = new webrtc.RTCPeerConnection({
         iceServers: [
@@ -313,6 +314,7 @@ io.on('connection', (socket) => {
       });
       const desc = new webrtc.RTCSessionDescription(data.sdp);
       await peer.setRemoteDescription(desc);
+      const senderStream = streams.get(targetId);
       senderStream.getTracks().forEach(track => peer.addTrack(track, senderStream));
       const answer = await peer.createAnswer();
       await peer.setLocalDescription(answer);
@@ -321,11 +323,11 @@ io.on('connection', (socket) => {
       }
       senderStream.getTracks().forEach(track => {
         console.log('Track ID:', track.id);
-        console.log('Track Kind:', track.kind);
-        console.log('Track Label:', track.label);
+        /* console.log('Track Kind:', track.kind);
+        console.log('Track Label:', track.label); */
       });
-      const groups = await groupCache(userId);
-      io.to(groups.map(group => {return `peer:${group}`})).emit('answer', payload, userId);
+      const groups = await groupCache(targetId);
+      io.to(groups.map(group => {return `peer:${group}`})).emit('answer', payload, targetId);
       
     } catch (err) {
       console.log(err);
@@ -354,12 +356,14 @@ io.on('connection', (socket) => {
     //io.to(socket.id).emit('offer', payload, userId);
   });
   
+  socket.on('getStreamId', async(streamId) => {
 
+  })
 });
 
 function handleTrackEvent(e, userId) {
-  console.log('stream',e.streams[0].getTracks(), senderStream);
   senderStream = e.streams[0];
+  streams.set(userId, senderStream);
 };
 
 async function isInGroupRoom(userId, groupId, roomId) {
