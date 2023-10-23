@@ -303,7 +303,7 @@ io.on('connection', (socket) => {
   }); */
 
   //viewer
-  socket.on('answer', async(data, targetId) => {
+  /* socket.on('answer', async(data, targetId) => {
     try {
       const peer = new webrtc.RTCPeerConnection({
         iceServers: [
@@ -323,8 +323,6 @@ io.on('connection', (socket) => {
       }
       senderStream.getTracks().forEach(track => {
         console.log('Track ID:', track.id);
-        /* console.log('Track Kind:', track.kind);
-        console.log('Track Label:', track.label); */
       });
       const groups = await groupCache(targetId);
       io.to(groups.map(group => {return `peer:${group}`})).emit('answer', payload, targetId);
@@ -354,10 +352,17 @@ io.on('connection', (socket) => {
     const groups = await groupCache(userId);
     io.to(groups.map(group => {return `peer:${group}`})).emit('offer', payload, userId);
     //io.to(socket.id).emit('offer', payload, userId);
-  });
+  }); */
   
-  socket.on('getStreamId', async(streamId) => {
+  socket.on('offer', async(offer) => {
+    console.log(userId, offer)
+    const groups = await groupCache(userId);
+    io.to(groups.map(group => {return `peer:${group}`})).emit('offer', offer, userId);
+  })
 
+  socket.on('answer', async(desciption, targetId) => {
+    console.log('answer',desciption, targetId)
+    io.to(targetId).emit('answer', desciption, targetId);
   })
 });
 

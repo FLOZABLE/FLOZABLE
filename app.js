@@ -182,7 +182,7 @@ const testTools = require('./test/generate');
 //testTools.deleteTestUsers();
 //flushRedis();
 //groupsLoader();
-
+require('./videoServer');
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);
 });
