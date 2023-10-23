@@ -5,7 +5,45 @@ function UserCamDisp({ socket, memberInfo, offer, answer }) {
   const [peer, setPeer] = useState(null);
 
   const videoRef = useRef(null);
-  const createPeer = () => {
+
+  useEffect(() => {
+    console.log(offer ? offer.userId : '', memberInfo ? memberInfo.user_id : '')
+    if (offer && offer.userId === memberInfo.user_id) {
+      const newPeer = new RTCPeerConnection({
+        iceServers: [
+          {
+            urls: "stun:stun.stunprotocol.org"
+          }
+        ]
+      });
+      console.log('offer',offer, memberInfo.name)
+      newPeer.setRemoteDescription(offer.description);
+      newPeer.createAnswer()
+      .then((description) => {
+        newPeer.setLocalDescription(description);
+        socket.emit('answer', description, memberInfo.user_id);
+      })
+
+      newPeer.ontrack = (e) => {
+        videoRef.current.srcObject = e.streams[0];
+        console.log('streaming ot',)
+        e.streams[0].getTracks().map(track => {
+          console.log('ot track',track)
+        })
+      }
+      setPeer(newPeer);
+    }
+  }, [offer]);
+
+  /* useEffect(() => {
+
+  }, [answer]); */
+
+  /* useEffect(() => {
+    const newPeer = new RTCPeerConnection();
+
+  }, []); */
+  /* const createPeer = () => {
     const newPeer = new RTCPeerConnection({
       iceServers: [
         {
@@ -35,9 +73,9 @@ function UserCamDisp({ socket, memberInfo, offer, answer }) {
     e.streams[0].getTracks().map(track => {
       console.log('ot track',track)
     })
-  };
+  }; */
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (offer && offer.userId === memberInfo.user_id) {
       const newPeer = createPeer();
       newPeer.addTransceiver("video", { direction: "recvonly" });
@@ -51,7 +89,7 @@ function UserCamDisp({ socket, memberInfo, offer, answer }) {
       peer.setRemoteDescription(desc).catch(e => console.log(e));
     }
   }, [answer]);
-
+ */
 
   return (
     <div className={styles.UserCamDisp}>
