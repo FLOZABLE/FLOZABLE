@@ -6,7 +6,7 @@ import MemberTimer from "../MemberTimer/MemberTimer";
 import UserCamDisp from "../UserCamDisp/UserCamDisp";
 
 function MemberEl(props) {
-  const { memberInfo, toggleTimer, me, myTimerTotal, isCam, isMic, stream, socket, offer, answer } = props;
+  const { memberInfo, toggleTimer, me, myTimerTotal, socket } = props;
   const [run, setRun] = useState(0);
   const [sec, setSec] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
@@ -46,7 +46,7 @@ function MemberEl(props) {
 
   return (
     <div className={styles.member} key={props.k}>
-      <UserCamDisp isCam={isCam} isMic={isMic} stream={stream} socket={socket} me={me} memberInfo={memberInfo} offer={offer} answer={answer} />
+      <UserCamDisp socket={socket} memberInfo={memberInfo} />
       <div className={styles.inner}>
         <div className={styles.userName}>{memberInfo.name}</div>
         <div className={styles.icon}>{studyIcon}</div>
