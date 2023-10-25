@@ -16,33 +16,6 @@ import MyEl from "../MyEl/MyEl";
 import { mediaSocket } from "../../../mediaSocket";
 import mediasoupClient from 'mediasoup-client';
 
-const params = {
-  // mediasoup params
-  encodings: [
-    {
-      rid: 'r0',
-      maxBitrate: 100000,
-      scalabilityMode: 'S1T3',
-    },
-    {
-      rid: 'r1',
-      maxBitrate: 300000,
-      scalabilityMode: 'S1T3',
-    },
-    {
-      rid: 'r2',
-      maxBitrate: 900000,
-      scalabilityMode: 'S1T3',
-    },
-  ],
-  // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerCodecOptions
-  codecOptions: {
-    videoGoogleStartBitrate: 1000
-  }
-};
-
-const roomName = '1';
-
 function MyGroupsViewer(props) {
 
   const { myGroups, socket, userInfo, myTimerTotal, isCam, isMic, mode } = props;
@@ -51,6 +24,11 @@ function MyGroupsViewer(props) {
   const [groupStudying, setGroupStudying] = useState({});
 
   const [stream, setStream] = useState(null);
+
+  useEffect(() => {
+    mediaSocket.connect();
+    console.log(mediaSocket)
+  }, []);
 
   useEffect(() => {
     if (isCam || isMic) {
