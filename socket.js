@@ -168,16 +168,6 @@ io.on('connection', (socket) => {
     };
   });
 
-  //peer
-  socket.on("joinPeerGroup", async () => {
-    const groups = await groupCache(userId);
-    groups.map(group => {
-      const groupId = `peer:${group}`;
-      socket.join(groupId);
-      //io.to(groupId).emit()
-    });
-  });
-
   socket.on("start", async (subjectId) => {
     const userInfo = await redisClient.hGetAll(`user:${userId}`)
 
@@ -363,6 +353,18 @@ io.on('connection', (socket) => {
   socket.on('answer', async(desciption, targetId) => {
     console.log('answer',desciption, targetId)
     io.to(targetId).emit('answer', desciption, targetId);
+  });
+
+    //peer
+
+  socket.on('joinPeerGroups', async() => {
+    const groups = await groupCache(userId); 
+    groups.map(group => {
+      const groupId = `peer:${group}`;
+      socket.join(groupId);
+    });
+    console.log('join peergroups:',groups)
+    io.to(groups.map(group => {return `peer:${group}`})).emit('onlinePeer', userId, socket.id);
   })
 });
 

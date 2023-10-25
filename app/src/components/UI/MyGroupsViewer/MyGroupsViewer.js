@@ -13,8 +13,23 @@ import SimplePeer from 'simple-peer';
 import { faBullhorn, faBullseye, faComments, faGear, faHeart, faPeopleGroup, faRankingStar, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import MemberEl from "../MemberEl/MemberEl";
 import MyEl from "../MyEl/MyEl";
-import { mediaSocket } from "../../../mediaSocket";
+//import { socket } from "../../../socket";
 import mediasoupClient from 'mediasoup-client';
+
+const pcConfig = {
+  iceServers: [
+    {
+      urls: 'stun:stun.l.google.com:19302',
+    },
+  ],
+};
+
+const sdpConstraints = {
+  mandatory: {
+    OfferToReceiveAudio: true,
+    OfferToReceiveVideo: true,
+  },
+};
 
 function MyGroupsViewer(props) {
 
@@ -23,11 +38,80 @@ function MyGroupsViewer(props) {
   const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
   const [groupStudying, setGroupStudying] = useState({});
 
-  const [stream, setStream] = useState(null);
+  const [localStream, setLocalStream] = useState(null);
+  const [remoteStreams, setRemoteStreams] = useState([]);
+  const [peerConnections, setPeerConnections] = useState({});
+
+  //peer related codes
+
+  const sendToPeer = (messageType, payload, socketID) => {
+    socket.emit(messageType, {
+      socketID,
+      payload,
+    });
+  };
+
+  const createPeerConnection = (socketId, callback) => {
+    try {
+      const pc = new RTCPeerConnection(pcConfig);
+      const newPcConnections = { ...peerConnections, [socketId]: pc };
+      setPeerConnections(newPcConnections);
+      console.log('new pc', pc)
+      pc.onicecandidate = (e) => {
+        console.log('icecandidate', e)
+        /* if (e.candidate) {
+          sendToPeer('candidate', e.candidate, {
+            local: socket.id,
+            remote: socketId,
+          });
+        } */
+      };
+
+      pc.ontrack = (e) => {
+        console.log('new track', e)
+      }
+
+      pc.oniceconnectionstatechange = (e) => { };
+      if (localStream) {
+        localStream.getTracks().forEach(track => {
+          pc.addTrack(track);
+          console.log('local stream track', track)
+        })
+      }
+    } catch (err) {
+      console.log(err);
+    };
+  }
+
+  const handleOffer = (data) => {
+    console.log('new offer', data);
+
+  };
+
+  const handleOnlinePeer = (socketId, userId) => {
+    console.log('onlinepeer', socketId, userId);
+    createPeerConnection()
+  }
 
   useEffect(() => {
-    mediaSocket.connect();
-    console.log(mediaSocket)
+    //socket.connect();
+    createPeerConnection(socket.id);
+    console.log('socket', socket)
+    socket.emit('joinPeerGroups')
+
+    socket.on("studying", handleStudying);
+    socket.on("stopStudying", handleStopStudying);
+
+    //peer sockets
+    socket.on("offer", handleOffer);
+    socket.on("onlinePeer", handleOnlinePeer);
+
+    return () => {
+      socket.off("studying", handleStudying);
+      socket.off("stopStudying", handleStopStudying);
+      socket.off("offer", handleOffer);
+      socket.off("onlinePeer", handleOnlinePeer);
+    };
   }, []);
 
   useEffect(() => {
@@ -38,10 +122,11 @@ function MyGroupsViewer(props) {
           video: isCam,
         })
         .then((stream) => {
-          setStream(stream);
+          setLocalStream(stream);
         });
     };
   }, [isCam, isMic]);
+
 
   useEffect(() => {
     setGroupStudying(
@@ -87,15 +172,6 @@ function MyGroupsViewer(props) {
     });
   };
 
-  useEffect(() => {
-    socket.on("studying", handleStudying);
-    socket.on("stopStudying", handleStopStudying);
-    return () => {
-      socket.off("studying", handleStudying);
-      socket.off("stopStudying", handleStopStudying);
-    };
-  }, []);
-
   return (
     <div className={`${styles.MyGroupsViewer} ${mode === 'study' ? styles.study : ''}`}>
       <Swiper
@@ -139,7 +215,7 @@ function MyGroupsViewer(props) {
                     <div className={`${styles.members} customScroll`}>
                       {group.members.map((memberInfo, j) => {
                         if (memberInfo.user_id === userInfo.user_id) {
-                          return (<MyEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} stream={stream} socket={socket} />)
+                          return (<MyEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} stream={localStream} socket={socket} />)
                         } else {
                           return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} socket={socket} />)
                         }
