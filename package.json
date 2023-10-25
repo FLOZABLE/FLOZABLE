@@ -46,6 +46,7 @@
     "mysql2": "^3.6.1",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",
+    "node-pre-gyp": "^0.17.0",
     "node-schedule": "^2.1.1",
     "passport-github": "^1.1.0",
     "peer": "^1.0.1",

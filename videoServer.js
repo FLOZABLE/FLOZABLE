@@ -7,7 +7,7 @@ const peers = io.of('/webrtcPeer')
 // let connectedPeers = new Map()
 
 peers.on('connection', socket => {
-
+  console.log('peer connected')
   const room = socket.handshake.query.room
 
   rooms[room] = rooms[room] && rooms[room].set(socket.id, socket) || (new Map()).set(socket.id, socket)

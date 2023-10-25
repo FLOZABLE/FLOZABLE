@@ -13,9 +13,11 @@ const upload = multer();
 Router.post('/accountinfo', async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id
+    console.log(userId)
     const connection = pool.promise();
     const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups FROM users WHERE user_id = ?", [userId]);
     pool.releaseConnection(connection);
+    console.log(userInfo)
     await redisClient.hSet(`user:${userId}`, `groups`, userInfo.groups);
     res.send({ success: true, userInfo: userInfo });
   }))
