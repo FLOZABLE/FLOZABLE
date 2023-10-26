@@ -344,15 +344,29 @@ io.on('connection', (socket) => {
     //io.to(socket.id).emit('offer', payload, userId);
   }); */
   
-  socket.on('offer', async(offer) => {
+  /* socket.on('offer', async(offer) => {
     console.log(userId, offer)
     const groups = await groupCache(userId);
     io.to(groups.map(group => {return `peer:${group}`})).emit('offer', offer, userId);
+  }) */
+
+  socket.on('offer', async(sdp, remoteSocketId) => {
+    console.log('offer',remoteSocketId, socket.id);
+    //const groups = await groupCache(remoteSocketId); 
+    io.to(remoteSocketId).emit('offer', sdp, socket.id, userId);
+    //io.to(groups.map(group => {return `peer:${group}`})).emit('offer', sdp, socket.id, userId);
   })
 
-  socket.on('answer', async(desciption, targetId) => {
-    console.log('answer',desciption, targetId)
-    io.to(targetId).emit('answer', desciption, targetId);
+  socket.on('answer', async(sdp, remoteSocketId, remoteUserId) => {
+    console.log('answer', remoteSocketId)
+    //const groups = await groupCache(remoteUserId); 
+    io.to(remoteSocketId).emit('offer', sdp, socket.id, userId);
+    //io.to(groups.map(group => {return `peer:${group}`})).emit('answer', sdp, socket.id, userId);
+  });
+
+  socket.on('candidate', async(sdp, remoteSocketId, remoteUserId) => {
+    console.log('answer', remoteSocketId)
+    io.to(remoteSocketId).emit('offer', sdp, socket.id, userId);
   });
 
     //peer
