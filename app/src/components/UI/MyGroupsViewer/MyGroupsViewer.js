@@ -16,21 +16,6 @@ import MyEl from "../MyEl/MyEl";
 //import { socket } from "../../../socket";
 import mediasoupClient from 'mediasoup-client';
 
-const pcConfig = {
-  iceServers: [
-    {
-      urls: 'stun:stun.l.google.com:19302',
-    },
-  ],
-};
-
-const sdpConstraints = {
-  mandatory: {
-    OfferToReceiveAudio: true,
-    OfferToReceiveVideo: true,
-  },
-};
-
 function MyGroupsViewer(props) {
 
   const { myGroups, socket, userInfo, myTimerTotal, isCam, isMic, mode } = props;
@@ -39,121 +24,7 @@ function MyGroupsViewer(props) {
   const [groupStudying, setGroupStudying] = useState({});
 
   const [localStream, setLocalStream] = useState(null);
-  const [remoteStreams, setRemoteStreams] = useState([]);
-  const [peerConnections, setPeerConnections] = useState({});
-  const [sendChannels, setSendChannels] = useState([]);
 
-  //peer related codes
-
-  const createPeerConnection = (remoteSocketId, callback) => {
-    try {
-      const pc = new RTCPeerConnection(pcConfig);
-      const newPcConnections = { ...peerConnections, [remoteSocketId]: pc };
-      setPeerConnections(newPcConnections);
-      console.log('new pc', newPcConnections)
-      pc.onicecandidate = (e) => {
-        //console.log('icecandidate', e)
-        if (e.candidate) {
-          socket.emit('candidate', e.candidate, remoteSocketId);
-        }
-        /* if (e.candidate) {
-          sendToPeer('candidate', e.candidate, {
-            local: socket.id,
-            remote: socketId,
-          });
-        } */
-      };
-
-      pc.ontrack = (e) => {
-        console.log('new track', e)
-      }
-
-      pc.oniceconnectionstatechange = (e) => { };
-      if (localStream) {
-        localStream.getTracks().forEach(track => {
-          pc.addTrack(track);
-          console.log('local stream track', track)
-        })
-      }
-      callback(pc);
-    } catch (err) {
-      console.log(err);
-    };
-  }
-
-  const handleOffer = (sdp, remoteSocketId, remoteUserId) => {
-    console.log('new offer', sdp, remoteSocketId, remoteUserId);
-    createPeerConnection(remoteSocketId, (pc) => {
-      if (!pc) return;
-      if (localStream) {
-        pc.addStream(localStream);
-      }
-
-      const sendChannel = pc.createDataChannel('sendChannel');
-      sendChannel.onopen = () => {};
-      sendChannel.onclose = () => {};
-
-      setSendChannels((_sendChannels) => [..._sendChannels, sendChannel]);
-
-      pc.setRemoteDescription(new RTCSessionDescription(sdp)).then(() => {
-        pc.createAnswer(sdpConstraints)
-          .then((sdp) => {
-            pc.setLocalDescription(sdp);
-            /* sendToPeer('answer', sdp, {
-              local: socket.id,
-              remote: data.socketID,
-            }); */
-            socket.emit('answer', sdp, remoteSocketId, remoteUserId);
-          });
-      });
-    });
-  };
-
-  const handleOnlinePeer = (socketId, userId) => {
-    console.log('onlinepeer', socketId, userId);
-    createPeerConnection(socketId, (pc) => {
-      if (!pc) {
-        return null;
-      };
-      const sendChannel = pc.createDataChannel('sendChannel');
-      sendChannel.onopen = () => {};
-      sendChannel.onclose = () => {};
-
-      setSendChannels((_sendChannels) => [..._sendChannels, sendChannel]);
-
-      const receiveChannelCallback = (event) => {
-      };
-
-      pc.ondatachannel = receiveChannelCallback;
-      console.log('create peer callback')
-      pc.createOffer(sdpConstraints)
-        .then((sdp) => {
-          pc.setLocalDescription(sdp);
-          /* sendToPeer('offer', sdp, {
-            local: socket.id,
-            remote: socketId,
-          }); */
-          socket.emit('offer', sdp, socketId)
-        });
-    });
-  };
-
-  const handleAnswer = (sdp, remoteSocketId, remoteUserId) => {
-    const pc = peerConnections[remoteSocketId];
-    console.log('answer', pc.remoteDescription)
-    //pc && !pc.remoteDescription&& pc.setRemoteDescription(new RTCSessionDescription(sdp)).then(() => {console.log('added description')});
-  }
-
-  useEffect(() => {
-    socket.on("offer", handleOffer);
-    socket.on("answer", handleAnswer);
-    socket.on("onlinePeer", handleOnlinePeer);
-    return () => {
-      socket.off("offer", handleOffer);
-      socket.off("answer", handleAnswer);
-      socket.off("onlinePeer", handleOnlinePeer);
-    };
-  }, [localStream, peerConnections])
 
   useEffect(() => {
     //socket.connect();
@@ -161,20 +32,11 @@ function MyGroupsViewer(props) {
     console.log('socket', socket)
     socket.emit('joinPeerGroups')
 
-    socket.on("studying", handleStudying);
-    socket.on("stopStudying", handleStopStudying);
-
-    //peer sockets
-/*     socket.on("offer", handleOffer);
-    socket.on("answer", handleAnswer);
-    socket.on("onlinePeer", handleOnlinePeer);
- */
+    socket.on("studying", onStudying);
+    socket.on("stopStudying", onStopStudying);
     return () => {
-      socket.off("studying", handleStudying);
-      socket.off("stopStudying", handleStopStudying);
-      /* socket.off("offer", handleOffer);
-      socket.off("answer", handleAnswer);
-      socket.off("onlinePeer", handleOnlinePeer); */
+      socket.off("studying", onStudying);
+      socket.off("stopStudying", onStopStudying);
     };
   }, []);
 
@@ -186,7 +48,6 @@ function MyGroupsViewer(props) {
           video: isCam,
         })
         .then((stream) => {
-          setLocalStream(stream);
           setLocalStream(stream);
         });
     };
@@ -207,7 +68,7 @@ function MyGroupsViewer(props) {
     );
   }, [myGroups]);
 
-  const handleStudying = (userId, groups) => {
+  const onStudying = (userId, groups) => {
     console.log(userId, groups)
     setToggleTimer({ id: userId, status: 1 });
     groups.forEach((group) => {
@@ -221,7 +82,7 @@ function MyGroupsViewer(props) {
     });
   };
 
-  const handleStopStudying = (userId, groups) => {
+  const onStopStudying = (userId, groups) => {
     setToggleTimer({ id: userId, status: 0 });
     groups.forEach((group) => {
       setGroupStudying((prevGroupStudying) => {
