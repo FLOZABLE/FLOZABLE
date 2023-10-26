@@ -41,7 +41,7 @@ async function groupCache(userId) {
       const connection = pool.promise();
       try {
         const [[userInfo]] = await connection.query(`SELECT groups FROM users WHERE user_id = ?`, [userId]);
-        groups = userInfo.groups;
+        groups = userInfo ? userInfo.groups : null;
       } catch (err) {
         console.log(err);
       };
