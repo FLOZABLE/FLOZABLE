@@ -13,8 +13,33 @@ import SimplePeer from 'simple-peer';
 import { faBullhorn, faBullseye, faComments, faGear, faHeart, faPeopleGroup, faRankingStar, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import MemberEl from "../MemberEl/MemberEl";
 import MyEl from "../MyEl/MyEl";
-//import { socket } from "../../../socket";
+import { mediaSocket } from "../../../mediaSocket";
 import mediasoupClient from 'mediasoup-client';
+
+const params = {
+  // mediasoup params
+  encodings: [
+    {
+      rid: 'r0',
+      maxBitrate: 100000,
+      scalabilityMode: 'S1T3',
+    },
+    {
+      rid: 'r1',
+      maxBitrate: 300000,
+      scalabilityMode: 'S1T3',
+    },
+    {
+      rid: 'r2',
+      maxBitrate: 900000,
+      scalabilityMode: 'S1T3',
+    },
+  ],
+  // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerCodecOptions
+  codecOptions: {
+    videoGoogleStartBitrate: 1000
+  }
+}
 
 function MyGroupsViewer(props) {
 
@@ -25,12 +50,50 @@ function MyGroupsViewer(props) {
 
   const [localStream, setLocalStream] = useState(null);
 
+  //mediasoup related codes
+  const [device, setDevice] = useState(null);
+  const [rtpCapabilities, setRtpCapabilities] = useState(null);
+  const [producerTransport, setProducerTransport] = useState(null);
+  const [consumerTransports, setConsumerTransports] = useState([]);
+  const [audioProducer, setAudioProducer] = useState(null);
+  const [videoProducer, setVideoProducer] = useState(null);
+  const [consumer, setConsumer] = useState(null);
+  const [audioParams, setAudioParams] = useState(null);
+  const [videoParams, setVideoParams] = useState[{ params }];
+  const [consumingTransports, setConsumingTransports] = useState([]);
 
+  const createDevice = async () => {
+    try {
+      device = new mediasoupClient.Device()
+  
+      // https://mediasoup.org/documentation/v3/mediasoup-client/api/#device-load
+      // Loads the device with RTP capabilities of the Router (server side)
+      await device.load({
+        // see getRtpCapabilities() below
+        routerRtpCapabilities: rtpCapabilities
+      })
+  
+      console.log('Device RTP Capabilities', device.rtpCapabilities)
+  
+      // once the device loads, create transport
+      createSendTransport()
+  
+    } catch (error) {
+      console.log(error)
+      if (error.name === 'UnsupportedError')
+        console.warn('browser not supported')
+    }
+  }
+
+  
   useEffect(() => {
     //socket.connect();
     //createPeerConnection(socket.id);
     console.log('socket', socket)
-    socket.emit('joinPeerGroups')
+    socket.emit('joinPeerGroups', (data) => {
+      rtpCapabilities = data.rtpCapabilities;
+      createDevice();
+    });
 
     socket.on("studying", onStudying);
     socket.on("stopStudying", onStopStudying);
@@ -49,6 +112,8 @@ function MyGroupsViewer(props) {
         })
         .then((stream) => {
           setLocalStream(stream);
+          setAudioParams({ track: stream.getAudioTracks()[0], ...audioParams });
+          setVideoParams({ track: stream.getVideoTracks()[0], ...videoParams });
         });
     };
   }, [isCam, isMic]);
