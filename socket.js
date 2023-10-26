@@ -10,7 +10,7 @@ const webrtc = require("wrtc");
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: ["http://localhost:3001", "http://localhost:3000", "https://super-meme-qx696prxr4j264qx-3001.app.github.dev", "https://super-meme-qx696prxr4j264qx-3000.app.github.dev"],
+    origin: ["https://localhost:3001", "https://localhost:3000", "http://localhost:3001", "http://localhost:3000", "https://super-meme-qx696prxr4j264qx-3001.app.github.dev", "https://super-meme-qx696prxr4j264qx-3000.app.github.dev"],
     credentials: true,
     methods: ["GET", "POST"],
   },

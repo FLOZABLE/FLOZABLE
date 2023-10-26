@@ -11,10 +11,18 @@ const connectRedis = require("connect-redis");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const http = require('http');
+const https = require('https');
 const dotenv = require("dotenv");
 const cors = require('cors');
 const cron = require("node-cron");
-const server = http.createServer(app);
+const fs = require('fs');
+const options = {
+  key: fs.readFileSync('./ssl/key.pem', 'utf-8'),
+  cert: fs.readFileSync('./ssl/cert.pem', 'utf-8')
+}
+
+//const server = http.createServer(app);
+const server = https.createServer(options, app);
 if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.env.development' });
 } else if (process.env.NODE_ENV === 'production') {
@@ -143,7 +151,7 @@ app.use('/account', accountRouter);
 app.use('/study', studyRouter);
 app.use('/groups', groupsRouter);
 app.use('/links', linksRouter);
-app.use('/dashboards', dashboardRouter);
+//app.use('/dashboards', dashboardRouter);
 app.use('/ranking', rankingRouter);
 app.use('/api', extensionRouter);
 app.use('/notification', notificationRouter);
