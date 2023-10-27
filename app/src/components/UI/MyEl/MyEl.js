@@ -43,7 +43,7 @@ function MyEl(props) {
     };
   }, [toggleTimer, stream]);
 
-
+  
   return (
     <div className={styles.member} key={props.k}>
       <MyCamDisp stream={stream} />

@@ -1,7 +1,8 @@
 const {createWorker} = require('mediasoup');
 const {io} = require('./socket');
+const { groupCache } = require("./services/redisLoader");
 
-const connections = io.of('/mediaSocket');
+const mediaSocket = io.of('/mediaSocket');
 
 /**
  * Worker
@@ -58,10 +59,68 @@ const mediaCodecs = [
   },
 ]
 
-connections.on('connection', async socket => {
+mediaSocket.on('connection', async socket => {
   console.log(socket.id)
-  socket.emit('connection-success', {
+  /* socket.emit('connection-success', {
     socketId: socket.id,
+  }); */
+  let session;
+  if (process.env.NODE_ENV === "production") {
+    try {
+      session = socket.request.session;
+    } catch (err) {
+      console.log(err);
+    };
+  } else {
+    session = {
+      cookie: {
+        path: '/',
+        _expires: null,
+        originalMaxAge: null,
+        httpOnly: true,
+        secure: false
+      },
+      user_id: 'EoFObpf612bdJKt',
+      name: 't1',
+      loggedin: true,
+      userInfo: {
+        userId: 'EoFObpf612bdJKt',
+        name: 't1',
+        loggedin: true,
+        email: 't1@t.t',
+        myinfo: null,
+        timeZone: 'America/Los_Angeles'
+      }
+    };
+  };
+  const userId = session.user_id;
+
+  socket.on('changeGroup', async (selectedGroup, callback) => {
+    console.log('selectedGroup', selectedGroup)
+        // create Router if it does not exist
+    // const newRouter = rooms[roomName] && rooms[roomName].get('data').router || await createRoom(roomName, socket.id)
+    const groups = await groupCache(userId);
+    if (groups.includes(selectedGroup)) {
+      const newRouter = await createRoom(selectedGroup, socket.id)
+
+      peers[socket.id] = {
+        socket,
+        selectedGroup: selectedGroup,           // Name for the Router this Peer joined
+        transports: [],
+        producers: [],
+        consumers: [],
+        peerDetails: {
+          name: '',
+          isAdmin: false,   // Is this Peer the Admin?
+        }
+      }
+  
+      // get Router RTP Capabilities
+      const rtpCapabilities = newRouter.rtpCapabilities;
+  
+      // call callback from the client and send back the rtpCapabilities
+      callback({ rtpCapabilities })
+    }
   })
 
   const removeItems = (items, socketId, type) => {
@@ -75,7 +134,7 @@ connections.on('connection', async socket => {
     return items
   }
 
-  socket.on('disconnect', () => {
+  /* socket.on('disconnect', () => {
     // do some cleanup
     console.log('peer disconnected')
     consumers = removeItems(consumers, socket.id, 'consumer')
@@ -90,12 +149,12 @@ connections.on('connection', async socket => {
       router: rooms[roomName].router,
       peers: rooms[roomName].peers.filter(socketId => socketId !== socket.id)
     }
-  })
+  }) */
 
   socket.on('joinRoom', async ({ roomName }, callback) => {
     // create Router if it does not exist
-    // const router1 = rooms[roomName] && rooms[roomName].get('data').router || await createRoom(roomName, socket.id)
-    const router1 = await createRoom(roomName, socket.id)
+    // const newRouter = rooms[roomName] && rooms[roomName].get('data').router || await createRoom(roomName, socket.id)
+    const newRouter = await createRoom(roomName, socket.id)
 
     peers[socket.id] = {
       socket,
@@ -110,35 +169,40 @@ connections.on('connection', async socket => {
     }
 
     // get Router RTP Capabilities
-    const rtpCapabilities = router1.rtpCapabilities
+    const rtpCapabilities = newRouter.rtpCapabilities
 
     // call callback from the client and send back the rtpCapabilities
     callback({ rtpCapabilities })
   })
 
-  const createRoom = async (roomName, socketId) => {
+  const createRoom = async (roomId, socketId) => {
     // worker.createRouter(options)
     // options = { mediaCodecs, appData }
     // mediaCodecs -> defined above
     // appData -> custom application data - we are not supplying any
     // none of the two are required
-    let router1
+    let newRouter
     let peers = []
-    if (rooms[roomName]) {
-      router1 = rooms[roomName].router
-      peers = rooms[roomName].peers || []
+    if (rooms[roomId]) {
+      newRouter = rooms[roomId].router
+      peers = rooms[roomId].peers || []
     } else {
-      router1 = await worker.createRouter({ mediaCodecs, })
+      newRouter = await worker.createRouter({ mediaCodecs, })
     }
     
-    console.log(`Router ID: ${router1.id}`, peers.length)
-
-    rooms[roomName] = {
-      router: router1,
+    /* if (!peers.includes(socketId)) {
+      console.log('added')
+      rooms[roomId] = {
+        router: newRouter,
+        peers: [...peers, socketId],
+      }
+    } */
+    rooms[roomId] = {
+      router: newRouter,
       peers: [...peers, socketId],
     }
-
-    return router1
+    console.log(`Router ID: ${newRouter.id}`, peers.length)
+    return newRouter
   }
 
   // socket.on('createRoom', async (callback) => {
@@ -165,14 +229,16 @@ connections.on('connection', async socket => {
   // We need to differentiate between the producer and consumer transports
   socket.on('createWebRtcTransport', async ({ consumer }, callback) => {
     // get Room Name from Peer's properties
-    const roomName = peers[socket.id].roomName
+    console.log('wrtc transport', peers[socket.id].selectedGroup)
+    const roomName = peers[socket.id].selectedGroup
 
     // get Router (Room) object this peer is in based on RoomName
     const router = rooms[roomName].router
-
+    console.log('router', router)
 
     createWebRtcTransport(router).then(
       transport => {
+        console.log('gd', callback);
         callback({
           params: {
             id: transport.id,
@@ -391,7 +457,7 @@ const createWebRtcTransport = async (router) => {
         listenIps: [
           {
             ip: '0.0.0.0', // replace with relevant IP address
-            announcedIp: '10.0.0.115',
+            announcedIp: '127.0.0.1',
           }
         ],
         enableUdp: true,
