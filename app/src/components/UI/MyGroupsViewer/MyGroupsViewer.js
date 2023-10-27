@@ -91,6 +91,7 @@ function MyGroupsViewer(props) {
     // this is a call from Producer, so sender = true
     console.log('send trasport')
     mediaSocket.emit('createWebRtcTransport', { consumer: false }, ({ params }) => {
+      console.log('create webrtc transport')
       // The server sends back params needed 
       // to create Send Transport on the client side
       if (params.error) {
@@ -111,7 +112,7 @@ function MyGroupsViewer(props) {
         try {
           // Signal local DTLS parameters to the server side transport
           // see server's socket.on('transport-connect', ...)
-          await mediaSocket.emit('transport-connect', {
+          mediaSocket.emit('transport-connect', {
             dtlsParameters,
           })
   
@@ -124,14 +125,14 @@ function MyGroupsViewer(props) {
       })
   
       newProducerTransport.on('produce', async (parameters, callback, errback) => {
-        console.log(parameters)
+        console.log('produce')
   
         try {
           // tell the server to create a Producer
           // with the following parameters and produce
           // and expect back a server side producer id
           // see server's socket.on('transport-produce', ...)
-          await mediaSocket.emit('transport-produce', {
+          mediaSocket.emit('transport-produce', {
             kind: parameters.kind,
             rtpParameters: parameters.rtpParameters,
             appData: parameters.appData,
@@ -141,27 +142,68 @@ function MyGroupsViewer(props) {
             callback({ id })
   
             // if producers exist, then join room
-            if (producersExist) getProducers()
+            if (producersExist) getProducers(device)
           })
         } catch (error) {
           errback(error)
         }
       });
       setProducerTransport(newProducerTransport);
-      //connectSendTransport()
+      //connectSendTransport(newProducerTransport)
     })
   };
 
-  const getProducers = () => {
+  const connectSendTransport = async (audioParams, videoParams) => {
+    // we now call produce() to instruct the producer transport
+    // to send media to the Router
+    // https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce
+    // this action will trigger the 'connect' and 'produce' events above
+    if (!producerTransport) return;
+    if (audioParams && audioParams.track) {
+      const audioProducer = await producerTransport.produce(audioParams);
+    
+      audioProducer.on('trackended', () => {
+        console.log('audio track ended')
+    
+        // close audio track
+      })
+    
+      audioProducer.on('transportclose', () => {
+        console.log('audio transport ended')
+    
+        // close audio track
+      })
+    }
+    if (videoParams && videoParams.track) {
+      const videoProducer = await producerTransport.produce(videoParams);
+      videoProducer.on('trackended', () => {
+        console.log('video track ended')
+    
+        // close video track
+      })
+    
+      videoProducer.on('transportclose', () => {
+        console.log('video transport ended')
+    
+        // close video track
+      })
+    }
+  }
+  
+  const getProducers = (device) => {
+    console.log('getproducer')
     mediaSocket.emit('getProducers', producerIds => {
-      console.log(producerIds)
+      console.log('producerIds', producerIds)
       // for each of the producer create a consumer
       // producerIds.forEach(id => signalNewConsumerTransport(id))
-      producerIds.forEach(signalNewConsumerTransport)
+      //producerIds.forEach(signalNewConsumerTransport());
+      producerIds.map((producerId) => {
+        signalNewConsumerTransport(producerId, device)
+      })
     })
   };
 
-  const signalNewConsumerTransport = async (remoteProducerId) => {
+  const signalNewConsumerTransport = async (remoteProducerId, device) => {
     //check if we are already consuming the remoteProducerId
     if (consumingTransports.includes(remoteProducerId)) return;
     consumingTransports.push(remoteProducerId);
@@ -204,21 +246,22 @@ function MyGroupsViewer(props) {
         }
       })
   
-      connectRecvTransport(consumerTransport, remoteProducerId, params.id)
+      connectRecvTransport(consumerTransport, remoteProducerId, params.id, device)
     })
   };
 
   
-const connectRecvTransport = async (consumerTransport, remoteProducerId, serverConsumerTransportId) => {
+const connectRecvTransport = async (consumerTransport, remoteProducerId, serverConsumerTransportId, device) => {
   // for consumer, we need to tell the server first
   // to create a consumer based on the rtpCapabilities and consume
   // if the router can consume, it will send back a set of params as below
-  console.log('consumer', consumer)
+  console.log('consumer', consumer, params)
   await mediaSocket.emit('consume', {
     rtpCapabilities: device.rtpCapabilities,
     remoteProducerId,
     serverConsumerTransportId,
   }, async ({ params }) => {
+    console.log('params err', params)
     if (params.error) {
       console.log('Cannot Consume')
       return
@@ -270,8 +313,11 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
     // so we need to inform the server to resume
     socket.emit('consumer-resume', { serverConsumerId: params.serverConsumerId }) */
   })
-}
+};
 
+const onNewProducer = () => {
+  console.log('gdp')
+}
   
   useEffect(() => {
     mediaSocket.connect();
@@ -279,9 +325,11 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
     console.log('socket', socket)
     socket.on("studying", onStudying);
     socket.on("stopStudying", onStopStudying);
+    socket.on('new-producer', onNewProducer);
     return () => {
       socket.off("studying", onStudying);
       socket.off("stopStudying", onStopStudying);
+      socket.off('new-producer', onNewProducer);
     };
   }, []);
 
@@ -294,8 +342,12 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
         })
         .then((stream) => {
           setLocalStream(stream);
+          const newAudioParams = { track: stream.getAudioTracks()[0], ...audioParams };
+          const newVideoParams = { track: stream.getVideoTracks()[0], ...videoParams };
+          console.log('params: ', newAudioParams, newVideoParams)
           setAudioParams({ track: stream.getAudioTracks()[0], ...audioParams });
-          setVideoParams({ track: stream.getVideoTracks()[0], ...videoParams });
+          setVideoParams(newAudioParams, newVideoParams);
+          connectSendTransport(newAudioParams, newVideoParams);
         });
     };
   }, [isCam, isMic]);
