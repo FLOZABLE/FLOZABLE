@@ -24,8 +24,8 @@ io.use(wrap(sessionMiddleWare));
 const userIdToSocketIdMap = new Map();
 let senderStream;
 const streams = new Map();
-
-io.on('connection', (socket) => {
+const mainSocket = io.of('/');
+mainSocket.on('connection', (socket) => {
   let session;
 
   if (process.env.NODE_ENV === "production") {
@@ -437,4 +437,7 @@ cron.schedule('*/10 * * * * *', () => {
   };
 });
 
+//require('./videoServer')
+
 module.exports = { io, userIdToSocketIdMap };
+require('./videoServer')

@@ -1,9 +1,11 @@
 const {createWorker} = require('mediasoup');
 const {io} = require('./socket');
 const { groupCache } = require("./services/redisLoader");
-
+const {sessionMiddleWare} = require('./app');
 const mediaSocket = io.of('/mediaSocket');
 
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+mediaSocket.use(wrap(sessionMiddleWare));
 /**
  * Worker
  * |-> Router(s)
@@ -22,7 +24,7 @@ let consumers = []      // [ { socketId1, roomName1, consumer, }, ... ]
 const createMediaWorker = async () => {
   worker = await createWorker({
     rtcMinPort: 2000,
-    rtcMaxPort: 2020,
+    rtcMaxPort: 12000,
   })
   console.log(`worker pid ${worker.pid}`)
 
@@ -59,7 +61,7 @@ const mediaCodecs = [
   },
 ]
 
-mediaSocket.on('connection', async socket => {
+mediaSocket.on('connection', async (socket) => {
   console.log(socket.id)
   /* socket.emit('connection-success', {
     socketId: socket.id,
@@ -93,6 +95,7 @@ mediaSocket.on('connection', async socket => {
       }
     };
   };
+  socket.userId = session.user_id;
   const userId = session.user_id;
 
   socket.on('changeGroup', async (selectedGroup, callback) => {
