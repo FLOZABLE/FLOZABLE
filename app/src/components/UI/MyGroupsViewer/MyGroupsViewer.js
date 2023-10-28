@@ -227,6 +227,7 @@ function MyGroupsViewer(props) {
     mediaSocket.emit('createWebRtcTransport', { consumer: false }, ({ params }) => {
       // The server sends back params needed 
       // to create Send Transport on the client side
+      console.log("create webrtctransport")
       if (params.error) {
         console.log(params.error)
         return
@@ -274,9 +275,10 @@ function MyGroupsViewer(props) {
             // Tell the transport that parameters were transmitted and provide it with the
             // server side producer's id.
             callback({ id })
-  
+            console.log('transport produce', producersExist)
             // if producers exist, then join room
-            if (producersExist) getProducers(device)
+            //if (producersExist) getProducers(device)
+            getProducers(device)
           })
         } catch (error) {
           errback(error)
@@ -288,7 +290,7 @@ function MyGroupsViewer(props) {
 
   const getProducers = (device) => {
     mediaSocket.emit('getProducers', producerIds => {
-      console.log(producerIds)
+      console.log('producsers',producerIds)
       // for each of the producer create a consumer
       // producerIds.forEach(id => signalNewConsumerTransport(id))
       //producerIds.forEach(signalNewConsumerTransport)
@@ -300,6 +302,7 @@ function MyGroupsViewer(props) {
 
   const signalNewConsumerTransport = async (remoteProducerId, device) => {
     //check if we are already consuming the remoteProducerId
+    console.log('singal new consumer transport')
     if (consumingTransports.includes(remoteProducerId)) return;
     setConsumingTransports([...consumingTransports, remoteProducerId]);
   
@@ -310,7 +313,7 @@ function MyGroupsViewer(props) {
         console.log(params.error)
         return
       }
-      console.log(`PARAMS... ${params}`)
+      console.log(`create webrtc transport... ${params}`, params)
   
       let consumerTransport
       try {
@@ -331,7 +334,7 @@ function MyGroupsViewer(props) {
             dtlsParameters,
             serverConsumerTransportId: params.id,
           })
-  
+          console.log('transport rcv connect')
           // Tell the transport that parameters were transmitted.
           callback()
         } catch (error) {
@@ -401,7 +404,7 @@ function MyGroupsViewer(props) {
       console.log(new MediaStream[track]);
       // the server consumer started with media paused
       // so we need to inform the server to resume
-      socket.emit('consumer-resume', { serverConsumerId: params.serverConsumerId })
+      mediaSocket.emit('consumer-resume', { serverConsumerId: params.serverConsumerId })
     })
   }
   
