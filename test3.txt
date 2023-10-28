@@ -1,70 +1,240 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import styles from "./UserCamDisp.module.css";
+import React, { useRef, useState, useEffect, useId, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { StudyPerson, RestPerson } from "../../../utils/svgs";
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import styles from "./MyGroupsViewer.module.css";
+import MemberTimer from "../MemberTimer/MemberTimer";
+import SimplePeer from 'simple-peer';
+import { faBullhorn, faBullseye, faComments, faGear, faHeart, faPeopleGroup, faRankingStar, faStopwatch } from "@fortawesome/free-solid-svg-icons";
+import MemberEl from "../MemberEl/MemberEl";
+import MyEl from "../MyEl/MyEl";
+import {mediaSocket} from '../../../mediaSocket'
+import {Device} from 'mediasoup-client';
 
-function UserCamDisp({ socket, memberInfo, offer, answer }) {
-  const [peer, setPeer] = useState(null);
-  const [update, setUpdate] = useState(0);
-  const [payload, setPayload] = useState(null);
-
-  const videoRef = useRef(null);
-  const createPeer = () => {
-    const newPeer = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: "stun:stun.stunprotocol.org"
-        }
-      ]
-    });
-    newPeer.ontrack = handleTrackEvent;
-    newPeer.onnegotiationneeded = () => handleNegotiationNeededEvent(newPeer);
-
-    return newPeer;
+const params = {
+  // mediasoup params
+  encodings: [
+    {
+      rid: 'r0',
+      maxBitrate: 100000,
+      scalabilityMode: 'S1T3',
+    },
+    {
+      rid: 'r1',
+      maxBitrate: 300000,
+      scalabilityMode: 'S1T3',
+    },
+    {
+      rid: 'r2',
+      maxBitrate: 900000,
+      scalabilityMode: 'S1T3',
+    },
+  ],
+  // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerCodecOptions
+  codecOptions: {
+    videoGoogleStartBitrate: 1000
   }
+}
 
-  const handleNegotiationNeededEvent = async (peer) => {
-    const offer = await peer.createOffer();
-    await peer.setLocalDescription(offer);
-    const newPayload = {
-      sdp: await peer.localDescription
-    };
-    setPayload(newPayload)
-  }
+function MyGroupsViewer(props) {
 
-  const handleTrackEvent = (e) => {
-    videoRef.current.srcObject = e.streams[0];
-    console.log('streaming ot', e.streams[0])
-    setUpdate(update + 1)
-    e.streams[0].getTracks().map(track => {
-      console.log('ot track', track)
-    })
-  };
+  const { myGroups, socket, userInfo, myTimerTotal, isCam, isMic, mode } = props;
 
+  const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
+  const [groupStudying, setGroupStudying] = useState({});
+  const [myGroupsViewerContent, setMyGroupsViewerContent] = useState([]);
+  const [localStream, setLocalStream] = useState(null);
+  const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
+
+  /* mediasocket */
+  const [videoParams, setVideoParams] = useState()
+  
   useEffect(() => {
-    const newPeer = createPeer();
-    newPeer.addTransceiver("video", { direction: "recvonly" });
-    setPeer(newPeer);
+    mediaSocket.connect();
+    //createPeerConnection(socket.id);
+    console.log('socket', socket)
+    socket.on("studying", onStudying);
+    socket.on("stopStudying", onStopStudying);
+    socket.on('new-producer', onNewProducer);
+    return () => {
+      socket.off("studying", onStudying);
+      socket.off("stopStudying", onStopStudying);
+      socket.off('new-producer', onNewProducer);
+    };
   }, []);
 
   useEffect(() => {
-    if (offer && offer.userId === memberInfo.user_id) {
-      socket.emit('answer', payload, memberInfo.user_id);
+    if (isCam) {
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+        })
+        .then((stream) => {
+          setLocalStream(stream);
+          const newVideoParams = { track: stream.getVideoTracks()[0], ...videoParams };
+          console.log('params: ', newVideoParams)
+          /* connectSendTransport(newAudioParams, newVideoParams); */
+        });
     };
-  }, [offer]);
+  }, [isCam]);
 
   useEffect(() => {
-    if (answer && answer.userId === memberInfo.user_id) {
-      const desc = new RTCSessionDescription(answer.payload.sdp);
-      peer.setRemoteDescription(desc).catch(e => console.log(e));
-    }
-  }, [answer]);
+    if (isCam || isMic) {
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: isMic,
+          video: isCam,
+        })
+        .then((stream) => {
+          setLocalStream(stream);
+          const newAudioParams = { track: stream.getAudioTracks()[0], ...audioParams };
+          console.log('params: ', audioParams)
+          /* connectSendTransport(newAudioParams, newVideoParams); */
+        });
+    };
+  }, [isMic]);
 
+
+  useEffect(() => {
+    setGroupStudying(
+      Object.fromEntries(myGroups.map((group) => {
+        const members = [];
+        group.members.map(member => {
+          if (member.study.study) {
+            members.push(member.user_id);
+          };
+        });
+        return [group.group_id, { members: members }]
+      }))
+    );
+  }, [myGroups]);
+
+  const onStudying = (userId, groups) => {
+    console.log(userId, groups)
+    setToggleTimer({ id: userId, status: 1 });
+    groups.forEach((group) => {
+      setGroupStudying((prevGroupStudying) => {
+        const updatedGroupStudying = { ...prevGroupStudying };
+        if (updatedGroupStudying[group] && !updatedGroupStudying[group].members.includes(userId)) {
+          updatedGroupStudying[group].members.push(userId);
+        };
+        return updatedGroupStudying;
+      });
+    });
+  };
+
+  const onStopStudying = (userId, groups) => {
+    setToggleTimer({ id: userId, status: 0 });
+    groups.forEach((group) => {
+      setGroupStudying((prevGroupStudying) => {
+        const updatedGroupStudying = { ...prevGroupStudying };
+        if (updatedGroupStudying[group]) {
+          const index = updatedGroupStudying[group].members.indexOf(userId);
+          if (index !== -1) {
+            updatedGroupStudying[group].members.splice(index, 1);
+          }
+        }
+        return updatedGroupStudying;
+      });
+    });
+  };
+
+  useEffect(() => {
+    if (!myGroups.length) return;
+    let selectedGroup;
+    if (isNaN(selectedGroupIndex)) {
+      selectedGroup = myGroups[0] ? myGroups[0] : false;
+    } else if (myGroups[selectedGroupIndex]) {
+      selectedGroup = myGroups[selectedGroupIndex];
+    };
+    mediaSocket.emit('changeGroup', selectedGroup ? selectedGroup.group_id : 0, (data) => {
+      console.log(`Router RTP Capabilities... ${data.rtpCapabilities}`)
+      // we assign to local variable and will be used when
+      // loading the client Device (see createDevice above)
+      /* setRtpCapabilities(data.rtpCapabilities);
+  
+      // once we have rtpCapabilities from the Router, create Device
+      createDevice(data.rtpCapabilities) */
+    });
+  }, [selectedGroupIndex, myGroups]);
 
   return (
-    <div className={styles.UserCamDisp}>
-      <video ref={videoRef} autoPlay playsInline className={`${styles.video} ${update}`} />
-      {update}
+    <div className={`${styles.MyGroupsViewer} ${mode === 'study' ? styles.study : ''}`}>
+      <Swiper
+        slidesPerView={1}
+        loop={true}
+        pagination={{
+          clickable: true,
+        }}
+        navigation={true}
+        modules={[Pagination, Navigation]}
+        className={styles.Swiper}
+        initialSlide={0}
+        onSlideChange={(swiperCore) => {
+          const {
+            realIndex
+          } = swiperCore;
+          setSelectedGroupIndex(realIndex);
+          console.log('index', realIndex)
+        }}
+      >
+        {      myGroups.map((group, i) => {
+        return (
+          <SwiperSlide className={styles.slide} key={i}>
+            <div className={styles.inner}>
+              <div className={styles.name}>
+                <Link>
+                  {group.name}
+                </Link>
+              </div>
+              <div className={styles.information}>
+                <div className={styles.header}>
+                  <ul className={styles.status}>
+                    <li>
+                      <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
+                      <p>{groupStudying[group.group_id] ? groupStudying[group.group_id].members.length : 0}/{group.members.length}</p>
+                    </li>
+                    <li>
+                      <FontAwesomeIcon icon={faBullhorn} />
+                    </li>
+                    <li>
+                      <FontAwesomeIcon icon={faRankingStar} />
+                    </li>
+                  </ul>
+                  <div className={styles.right}>
+                    <FontAwesomeIcon icon={faGear} />
+                  </div>
+                </div>
+                <div className={styles.membersContainer}>
+                  <div className={`${styles.members} customScroll`}>
+                    {group.members.map((memberInfo, j) => {
+                      if (memberInfo.user_id === userInfo.user_id) {
+                        return (<MyEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} stream={localStream} socket={socket} />)
+                      } else {
+                        return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} socket={socket} />)
+                      }
+                    })}
+                  </div>
+                </div>
+              </div>
+              <div className={styles.buttons}>
+                <button>Go to Group</button>
+                <button>
+                  <FontAwesomeIcon icon={faComments} />
+                </button>
+              </div>
+            </div>
+          </SwiperSlide>
+        );
+      })}
+      </Swiper>
     </div>
   );
 };
 
-export default UserCamDisp;
+export default MyGroupsViewer;
