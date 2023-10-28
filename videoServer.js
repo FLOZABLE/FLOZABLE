@@ -98,17 +98,17 @@ mediaSocket.on('connection', async (socket) => {
   socket.userId = session.user_id;
   const userId = session.user_id;
 
-  socket.on('changeGroup', async (selectedGroup, callback) => {
-    console.log('selectedGroup', selectedGroup)
+  socket.on('changeGroup', async (roomId, callback) => {
+    console.log('roomId', roomId)
         // create Router if it does not exist
     // const newRouter = rooms[roomId] && rooms[roomId].get('data').router || await createRoom(roomId, socket.id)
     const groups = await groupCache(userId);
-    if (groups.includes(selectedGroup)) {
-      const newRouter = await createRoom(selectedGroup, socket.id)
+    if (groups.includes(roomId)) {
+      const newRouter = await createRoom(roomId, socket.id)
 
       peers[socket.id] = {
         socket,
-        selectedGroup: selectedGroup,           // Name for the Router this Peer joined
+        roomId: roomId,           // Name for the Router this Peer joined
         transports: [],
         producers: [],
         consumers: [],
@@ -117,7 +117,7 @@ mediaSocket.on('connection', async (socket) => {
           isAdmin: false,   // Is this Peer the Admin?
         }
       }
-      socket.join(selectedGroup);
+      socket.join(roomId);
       //io.to('se')
       // get Router RTP Capabilities
       const rtpCapabilities = newRouter.rtpCapabilities;
@@ -199,7 +199,7 @@ mediaSocket.on('connection', async (socket) => {
   // We need to differentiate between the producer and consumer transports
   socket.on('createWebRtcTransport', async ({ consumer }, callback) => {
     // get Room Name from Peer's properties
-    const roomId = peers[socket.id].selectedGroup
+    const roomId = peers[socket.id].roomId
 
     // get Router (Room) object this peer is in based on roomId
     console.log('roomId',roomId)
@@ -275,8 +275,8 @@ mediaSocket.on('connection', async (socket) => {
 
   socket.on('getProducers', callback => {
     //return all producer transports
-    const { roomId } = peers[socket.id]
-
+    const roomId = peers[socket.id].roomId;
+    console.log('selectedroom', roomId)
     let producerList = []
     producers.forEach(producerData => {
       if (producerData.socketId !== socket.id && producerData.roomId === roomId) {
@@ -322,13 +322,13 @@ mediaSocket.on('connection', async (socket) => {
     })
 
     // add producer to the producers array
-    const { roomId } = peers[socket.id]
+    const roomId = peers[socket.id].roomId;
 
     addProducer(producer, roomId)
 
     informConsumers(roomId, socket.id, producer.id)
 
-    console.log('Producer ID: ', producer.id, producer.kind)
+    console.log('Producer ID: ', producer.id, producer.kind, roomId)
 
     producer.on('transportclose', () => {
       console.log('transport for this producer closed ')
@@ -348,14 +348,19 @@ mediaSocket.on('connection', async (socket) => {
     const consumerTransport = transports.find(transportData => (
       transportData.consumer && transportData.transport.id == serverConsumerTransportId
     )).transport
-    await consumerTransport.connect({ dtlsParameters })
+    try {
+      await consumerTransport.connect({ dtlsParameters })
+    } catch (err) {
+      console.log('err', err)
+    }
   })
 
   socket.on('consume', async ({ rtpCapabilities, remoteProducerId, serverConsumerTransportId }, callback) => {
     try {
 
-      const roomId  = peers[socket.id].selectedGroup;
-      const router = rooms[roomId].router
+      const roomId  = peers[socket.id].roomId;
+      const router = rooms[roomId].router;
+      console.log('consuming', roomId)
       let consumerTransport = transports.find(transportData => (
         transportData.consumer && transportData.transport.id == serverConsumerTransportId
       )).transport
