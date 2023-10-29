@@ -5,7 +5,6 @@ const redisClient = require("./model/redis");
 const Peer = require("simple-peer");
 const { generateRandomId } = require("./tool");
 const { lastMsgCache, groupCache } = require("./services/redisLoader");
-const webrtc = require("wrtc");
 
 
 const io = require('socket.io')(server, {
