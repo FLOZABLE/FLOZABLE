@@ -13,8 +13,8 @@ import SimplePeer from 'simple-peer';
 import { faBullhorn, faBullseye, faComments, faGear, faHeart, faPeopleGroup, faRankingStar, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import MemberEl from "../MemberEl/MemberEl";
 import MyEl from "../MyEl/MyEl";
-import {mediaSocket} from '../../../mediaSocket'
-import {Device} from 'mediasoup-client';
+import { mediaSocket } from '../../../mediaSocket'
+import { Device } from 'mediasoup-client';
 
 const params = {
   // mediasoup params
@@ -41,24 +41,15 @@ const params = {
   }
 }
 
+let device = null;
 function MyGroupsViewer(props) {
 
   const { myGroups, socket, userInfo, myTimerTotal, isCam, isMic, mode } = props;
 
   const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
   const [groupStudying, setGroupStudying] = useState({});
-  const [myGroupsViewerContent, setMyGroupsViewerContent] = useState([]);
   const [localStream, setLocalStream] = useState(null);
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
-
-  /* mediasocket */
-  const [videoParams, setVideoParams] = useState({params});
-  const [audioParams, setAudioParams] = useState(null);
-  const [consumingTransports, setConsumingTransports] = useState([]);
-  const [audioProducer, setAudioProducer] = useState(null);
-  const [videoProducer, setVideoProducer] = useState(null);
-  const [producerTransport, setProducerTransport] = useState(null);
-  const [consumerTransports, setConsumerTransports] = useState([]);
 
   useEffect(() => {
     mediaSocket.connect();
@@ -69,70 +60,6 @@ function MyGroupsViewer(props) {
       socket.off("stopStudying", onStopStudying);
     };
   }, []);
-
-  useEffect(() => {
-    if (isCam) {
-      navigator.mediaDevices
-        .getUserMedia({
-          video: true,
-        })
-        .then((stream) => {
-          setLocalStream(stream);
-          const newVideoParams = { track: stream.getVideoTracks()[0], ...videoParams };
-          setVideoParams(newVideoParams)
-          connectVideoTransport(newVideoParams);
-          /* connectSendTransport(newAudioParams, newVideoParams); */
-        });
-    };
-  }, [isCam]);
-
-  useEffect(() => {
-    if (isMic) {
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: true,
-        })
-        .then((stream) => {
-          setLocalStream(stream);
-          const newAudioParams = { track: stream.getAudioTracks()[0], ...audioParams };
-          setAudioParams(newAudioParams)
-          connectAudioTransport(newAudioParams)
-          /* connectSendTransport(newAudioParams, newVideoParams); */
-        });
-    };
-  }, [isMic]);
-
-  const connectVideoTransport = async(videoParams) => {
-  const newVideoProducer = await producerTransport.produce(videoParams);
-  newVideoProducer.on('trackended', () => {
-    console.log('video track ended')
-
-    // close video track
-  })
-
-  newVideoProducer.on('transportclose', () => {
-    console.log('video transport ended')
-
-    // close video track
-  })
-  };
-
-  const connectAudioTransport = async (audioParams) => {
-    const newAudioProducer = await producerTransport.produce(audioParams);
-  
-    newAudioProducer.on('trackended', () => {
-      console.log('audio track ended')
-  
-      // close audio track
-    })
-  
-    newAudioProducer.on('transportclose', () => {
-      console.log('audio transport ended')
-  
-      // close audio track
-    })
-  };
-
 
   useEffect(() => {
     setGroupStudying(
@@ -178,6 +105,50 @@ function MyGroupsViewer(props) {
     });
   };
 
+  //reset zone
+  const [videoParams, setVideoParams] = useState({ params });
+  const [audioParams, setAudioParams] = useState(null);
+  const [consumingTransports, setConsumingTransports] = useState([]);
+  const [producerTransport, setProducerTransport] = useState(null);
+
+  useEffect(() => {
+    if (isCam) {
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+        })
+        .then(async(stream) => {
+          setLocalStream(stream);
+          try {
+            const newVideoParams = { track: stream.getVideoTracks()[0], ...videoParams };
+          const videoProducer = await producerTransport.produce(newVideoParams);
+          setVideoParams(newVideoParams)
+          } catch (err) {
+            console.log(err);
+          }
+        });
+    };
+  }, [isCam]);
+
+  useEffect(() => {
+    if (isMic) {
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: true,
+        })
+        .then(async(stream) => {
+          setLocalStream(stream);
+          try {
+            const newAudioParams = { track: stream.getAudioTracks()[0], ...audioParams };
+            const audioProducer = await producerTransport.produce(newAudioParams);
+            setAudioParams(newAudioParams)
+          } catch (err) {
+            console.log(err);
+          }
+        });
+    };
+  }, [isMic]);
+
   useEffect(() => {
     if (!myGroups.length) return;
     let selectedGroup;
@@ -187,7 +158,7 @@ function MyGroupsViewer(props) {
       selectedGroup = myGroups[selectedGroupIndex];
     };
     mediaSocket.emit('changeGroup', selectedGroup ? selectedGroup.group_id : 0, (data) => {
-      console.log(`Router RTP Capabilities... ${data.rtpCapabilities}`)
+      console.log(`Router RTP Capabilities...`, data.rtpCapabilities)
       // we assign to local variable and will be used when
       // loading the client Device (see createDevice above)
       /* setRtpCapabilities(data.rtpCapabilities);
@@ -200,7 +171,7 @@ function MyGroupsViewer(props) {
 
   const createDevice = async (rtpCapabilities) => {
     try {
-      const device = new Device();
+      device = new Device()
   
       // https://mediasoup.org/documentation/v3/mediasoup-client/api/#device-load
       // Loads the device with RTP capabilities of the Router (server side)
@@ -212,7 +183,7 @@ function MyGroupsViewer(props) {
       console.log('Device RTP Capabilities', device.rtpCapabilities)
   
       // once the device loads, create transport
-      createSendTransport(device)
+      createSendTransport(device);
   
     } catch (error) {
       console.log(error)
@@ -221,195 +192,209 @@ function MyGroupsViewer(props) {
     }
   }
 
-  const createSendTransport = (device) => {
-    // see server's socket.on('createWebRtcTransport', sender?, ...)
-    // this is a call from Producer, so sender = true
-    mediaSocket.emit('createWebRtcTransport', { consumer: false }, ({ params }) => {
-      // The server sends back params needed 
-      // to create Send Transport on the client side
-      console.log("create webrtctransport")
-      if (params.error) {
-        console.log(params.error)
-        return
-      }
   
-      console.log(params)
-  
-      // creates a new WebRTC Transport to send media
-      // based on the server's producer transport params
-      // https://mediasoup.org/documentation/v3/mediasoup-client/api/#TransportOptions
-      const producerTransport = device.createSendTransport(params)
-  
-      // https://mediasoup.org/documentation/v3/communication-between-client-and-server/#producing-media
-      // this event is raised when a first call to transport.produce() is made
-      // see connectSendTransport() below
-      producerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
-        try {
-          // Signal local DTLS parameters to the server side transport
-          // see server's socket.on('transport-connect', ...)
-          await mediaSocket.emit('transport-connect', {
-            dtlsParameters,
-          })
-  
-          // Tell the transport that parameters were transmitted.
-          callback()
-  
-        } catch (error) {
-          errback(error)
-        }
-      })
-  
-      producerTransport.on('produce', async (parameters, callback, errback) => {
-        console.log(parameters)
-  
-        try {
-          // tell the server to create a Producer
-          // with the following parameters and produce
-          // and expect back a server side producer id
-          // see server's socket.on('transport-produce', ...)
-          await mediaSocket.emit('transport-produce', {
-            kind: parameters.kind,
-            rtpParameters: parameters.rtpParameters,
-            appData: parameters.appData,
-          }, ({ id, producersExist }) => {
-            // Tell the transport that parameters were transmitted and provide it with the
-            // server side producer's id.
-            callback({ id })
-            console.log('transport produce', producersExist)
-            // if producers exist, then join room
-            //if (producersExist) getProducers(device)
-            getProducers(device)
-          })
-        } catch (error) {
-          errback(error)
-        }
-      })
-      setProducerTransport(producerTransport);
-    })
-  }
+const createSendTransport = (device) => {
+  // see server's socket.on('createWebRtcTransport', sender?, ...)
+  // this is a call from Producer, so sender = true
+  mediaSocket.emit('createWebRtcTransport', { consumer: false }, ({ params }) => {
+    // The server sends back params needed 
+    // to create Send Transport on the client side
+    if (params.error) {
+      console.log(params.error)
+      return
+    }
 
-  const getProducers = (device) => {
-    mediaSocket.emit('getProducers', producerIds => {
-      console.log('producsers',producerIds)
-      // for each of the producer create a consumer
-      // producerIds.forEach(id => signalNewConsumerTransport(id))
-      //producerIds.forEach(signalNewConsumerTransport)
-      producerIds.map(producerId => {
-        signalNewConsumerTransport(producerId, device)
-      })
-    })
-  }
+    console.log('createWebRtcTransport')
 
-  const signalNewConsumerTransport = async (remoteProducerId, device) => {
-    //check if we are already consuming the remoteProducerId
-    console.log('singal new consumer transport')
-    if (consumingTransports.includes(remoteProducerId)) return;
-    setConsumingTransports([...consumingTransports, remoteProducerId]);
-  
-    await mediaSocket.emit('createWebRtcTransport', { consumer: true }, ({ params }) => {
-      // The server sends back params needed 
-      // to create Send Transport on the client side
-      if (params.error) {
-        console.log(params.error)
-        return
-      }
-      console.log(`create webrtc transport... ${params}`, params)
-  
-      let consumerTransport
+    // creates a new WebRTC Transport to send media
+    // based on the server's producer transport params
+    // https://mediasoup.org/documentation/v3/mediasoup-client/api/#TransportOptions
+    const newProducerTransport = device.createSendTransport(params)
+
+    // https://mediasoup.org/documentation/v3/communication-between-client-and-server/#producing-media
+    // this event is raised when a first call to transport.produce() is made
+    // see connectSendTransport() below
+    newProducerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
       try {
-        consumerTransport = device.createRecvTransport(params)
+        console.log('producerTransport connect')
+        // Signal local DTLS parameters to the server side transport
+        // see server's socket.on('transport-connect', ...)
+        await mediaSocket.emit('transport-connect', {
+          dtlsParameters,
+        })
+
+        // Tell the transport that parameters were transmitted.
+        callback()
+
       } catch (error) {
-        // exceptions: 
-        // {InvalidStateError} if not loaded
-        // {TypeError} if wrong arguments.
-        console.log(error)
-        return
+        errback(error)
       }
-  
-      consumerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
-        try {
-          // Signal local DTLS parameters to the server side transport
-          // see server's socket.on('transport-recv-connect', ...)
-          await mediaSocket.emit('transport-recv-connect', {
-            dtlsParameters,
-            serverConsumerTransportId: params.id,
-          })
-          console.log('transport rcv connect')
-          // Tell the transport that parameters were transmitted.
-          callback()
-        } catch (error) {
-          // Tell the transport that something was wrong
-          errback(error)
-        }
-      })
-  
-      connectRecvTransport(consumerTransport, remoteProducerId, params.id, device)
     })
+
+    newProducerTransport.on('produce', async (parameters, callback, errback) => {
+      console.log('producerTransport produce')
+
+      try {
+        // tell the server to create a Producer
+        // with the following parameters and produce
+        // and expect back a server side producer id
+        // see server's socket.on('transport-produce', ...)
+        await mediaSocket.emit('transport-produce', {
+          kind: parameters.kind,
+          rtpParameters: parameters.rtpParameters,
+          appData: parameters.appData,
+        }, ({ id, producersExist }) => {
+          // Tell the transport that parameters were transmitted and provide it with the
+          // server side producer's id.
+          callback({ id })
+
+          // if producers exist, then join room
+          getProducers();
+          //if (producersExist) getProducers()
+        })
+      } catch (error) {
+        errback(error)
+      }
+    });
+    setProducerTransport(newProducerTransport);
+    //connectSendTransport()
+  })
+}
+
+const getProducers = () => {
+  mediaSocket.emit('getProducers', producerIds => {
+    console.log(producerIds)
+    // for each of the producer create a consumer
+    // producerIds.forEach(id => signalNewConsumerTransport(id))
+    //producerIds.forEach(signalNewConsumerTransport)
+    producerIds.map((producerId) => {
+      signalNewConsumerTransport(producerId);
+    });
+  })
+};
+
+  const onNewProducer = ({producerId}) => {
+    console.log('new producer')
+    signalNewConsumerTransport(producerId);
   };
 
-  const connectRecvTransport = async (consumerTransport, remoteProducerId, serverConsumerTransportId, device) => {
-    // for consumer, we need to tell the server first
-    // to create a consumer based on the rtpCapabilities and consume
-    // if the router can consume, it will send back a set of params as below
-    console.log('gd')
-    mediaSocket.emit('consume', {
-      rtpCapabilities: device.rtpCapabilities,
-      remoteProducerId,
-      serverConsumerTransportId,
-    }, async ({ params }) => {
-      if (params.error) {
-        console.log('Cannot Consume')
-        return
-      }
-  
-      console.log(`Consumer Params ${params}`)
-      // then consume with the local consumer transport
-      // which creates a consumer
-      const consumer = await consumerTransport.consume({
-        id: params.id,
-        producerId: params.producerId,
-        kind: params.kind,
-        rtpParameters: params.rtpParameters
-      })
-  
-      setConsumerTransports(  [
-        ...consumerTransports,
-        {
-          consumerTransport,
+  useEffect(() => {
+    mediaSocket.on('new-producer', onNewProducer);
+
+    return () => {
+      mediaSocket.off('new-producer', onNewProducer);
+    };
+  }, []);
+const signalNewConsumerTransport = useCallback((remoteProducerId) => {
+  //if (consumingTransports.includes(remoteProducerId) || !device) return;
+  console.log('device',device);
+  if (!device) return;
+  setConsumingTransports([consumingTransports, ...remoteProducerId]);
+  console.log('signalNewConsumerTransport')
+   mediaSocket.emit('createWebRtcTransport', { consumer: true }, ({ params }) => {
+    // The server sends back params needed 
+    // to create Send Transport on the client side
+    if (params.error) {
+      console.log(params.error)
+      return
+    }
+    console.log(`PARAMS... ${params}`)
+
+    let consumerTransport
+    try {
+      consumerTransport = device.createRecvTransport(params)
+    } catch (error) {
+      // exceptions: 
+      // {InvalidStateError} if not loaded
+      // {TypeError} if wrong arguments.
+      console.log(error)
+      return
+    }
+
+    consumerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
+      try {
+        console.log('signalNewConsumerTransport connect')
+        // Signal local DTLS parameters to the server side transport
+        // see server's socket.on('transport-recv-connect', ...)
+        await socket.emit('transport-recv-connect', {
+          dtlsParameters,
           serverConsumerTransportId: params.id,
-          producerId: remoteProducerId,
-          consumer,
-        },
-      ]);
-  
-      // create a new div element for the new consumer media
-      /* const newElem = document.createElement('div')
-      newElem.setAttribute('id', `td-${remoteProducerId}`) */
-  
-      /* if (params.kind == 'audio') {
-        //append to the audio container
-        newElem.innerHTML = '<audio id="' + remoteProducerId + '" autoplay></audio>'
-      } else {
-        //append to the video container
-        newElem.setAttribute('class', 'remoteVideo')
-        newElem.innerHTML = '<video id="' + remoteProducerId + '" autoplay class="video" ></video>'
+        })
+
+        // Tell the transport that parameters were transmitted.
+        callback()
+      } catch (error) {
+        // Tell the transport that something was wrong
+        errback(error)
       }
-   */
-      //videoContainer.appendChild(newElem)
-  
-      // destructure and retrieve the video track from the producer
-      const { track } = consumer
-  
-      //document.getElementById(remoteProducerId).srcObject = new MediaStream([track])
-      console.log(new MediaStream[track]);
-      // the server consumer started with media paused
-      // so we need to inform the server to resume
-      mediaSocket.emit('consumer-resume', { serverConsumerId: params.serverConsumerId })
     })
-  }
-  
-  // server informs the client of a new producer just joined
-  mediaSocket.on('new-producer', ({ producerId }) => signalNewConsumerTransport(producerId))
+
+    connectRecvTransport(consumerTransport, remoteProducerId, params.id, device)
+  })
+}, [device]);
+
+
+const connectRecvTransport = async (consumerTransport, remoteProducerId, serverConsumerTransportId, device) => {
+  // for consumer, we need to tell the server first
+  // to create a consumer based on the rtpCapabilities and consume
+  // if the router can consume, it will send back a set of params as below
+  console.log('connectRecvTransport')
+  await mediaSocket.emit('consume', {
+    rtpCapabilities: device.rtpCapabilities,
+    remoteProducerId,
+    serverConsumerTransportId,
+  }, async ({ params }) => {
+    if (params.error) {
+      console.log('Cannot Consume')
+      return
+    }
+
+    console.log(`Consumer Params `, params)
+    // then consume with the local consumer transport
+    // which creates a consumer
+    const consumer = await consumerTransport.consume({
+      id: params.id,
+      producerId: params.producerId,
+      kind: params.kind,
+      rtpParameters: params.rtpParameters
+    })
+
+    /* consumerTransports = [
+      ...consumerTransports,
+      {
+        consumerTransport,
+        serverConsumerTransportId: params.id,
+        producerId: remoteProducerId,
+        consumer,
+      },
+    ] */
+
+    /* // create a new div element for the new consumer media
+    const newElem = document.createElement('div')
+    newElem.setAttribute('id', `td-${remoteProducerId}`)
+
+    if (params.kind == 'audio') {
+      //append to the audio container
+      newElem.innerHTML = '<audio id="' + remoteProducerId + '" autoplay></audio>'
+    } else {
+      //append to the video container
+      newElem.setAttribute('class', 'remoteVideo')
+      newElem.innerHTML = '<video id="' + remoteProducerId + '" autoplay class="video" ></video>'
+    }
+
+    videoContainer.appendChild(newElem) */
+
+    // destructure and retrieve the video track from the producer
+    const { track } = consumer;
+    console.log(track)
+
+    //document.getElementById(remoteProducerId).srcObject = new MediaStream([track])
+
+    // the server consumer started with media paused
+    // so we need to inform the server to resume
+    mediaSocket.emit('consumer-resume', { serverConsumerId: params.serverConsumerId })
+  })
+}
 
   return (
     <div className={`${styles.MyGroupsViewer} ${mode === 'study' ? styles.study : ''}`}>
@@ -431,55 +416,55 @@ function MyGroupsViewer(props) {
           console.log('index', realIndex)
         }}
       >
-        {      myGroups.map((group, i) => {
-        return (
-          <SwiperSlide className={styles.slide} key={i}>
-            <div className={styles.inner}>
-              <div className={styles.name}>
-                <Link>
-                  {group.name}
-                </Link>
-              </div>
-              <div className={styles.information}>
-                <div className={styles.header}>
-                  <ul className={styles.status}>
-                    <li>
-                      <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
-                      <p>{groupStudying[group.group_id] ? groupStudying[group.group_id].members.length : 0}/{group.members.length}</p>
-                    </li>
-                    <li>
-                      <FontAwesomeIcon icon={faBullhorn} />
-                    </li>
-                    <li>
-                      <FontAwesomeIcon icon={faRankingStar} />
-                    </li>
-                  </ul>
-                  <div className={styles.right}>
-                    <FontAwesomeIcon icon={faGear} />
+        {myGroups.map((group, i) => {
+          return (
+            <SwiperSlide className={styles.slide} key={i}>
+              <div className={styles.inner}>
+                <div className={styles.name}>
+                  <Link>
+                    {group.name}
+                  </Link>
+                </div>
+                <div className={styles.information}>
+                  <div className={styles.header}>
+                    <ul className={styles.status}>
+                      <li>
+                        <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
+                        <p>{groupStudying[group.group_id] ? groupStudying[group.group_id].members.length : 0}/{group.members.length}</p>
+                      </li>
+                      <li>
+                        <FontAwesomeIcon icon={faBullhorn} />
+                      </li>
+                      <li>
+                        <FontAwesomeIcon icon={faRankingStar} />
+                      </li>
+                    </ul>
+                    <div className={styles.right}>
+                      <FontAwesomeIcon icon={faGear} />
+                    </div>
+                  </div>
+                  <div className={styles.membersContainer}>
+                    <div className={`${styles.members} customScroll`}>
+                      {group.members.map((memberInfo, j) => {
+                        if (memberInfo.user_id === userInfo.user_id) {
+                          return (<MyEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} stream={localStream} socket={socket} />)
+                        } else {
+                          return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} socket={socket} />)
+                        }
+                      })}
+                    </div>
                   </div>
                 </div>
-                <div className={styles.membersContainer}>
-                  <div className={`${styles.members} customScroll`}>
-                    {group.members.map((memberInfo, j) => {
-                      if (memberInfo.user_id === userInfo.user_id) {
-                        return (<MyEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} stream={localStream} socket={socket} />)
-                      } else {
-                        return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} socket={socket} />)
-                      }
-                    })}
-                  </div>
+                <div className={styles.buttons}>
+                  <button>Go to Group</button>
+                  <button>
+                    <FontAwesomeIcon icon={faComments} />
+                  </button>
                 </div>
               </div>
-              <div className={styles.buttons}>
-                <button>Go to Group</button>
-                <button>
-                  <FontAwesomeIcon icon={faComments} />
-                </button>
-              </div>
-            </div>
-          </SwiperSlide>
-        );
-      })}
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
     </div>
   );
