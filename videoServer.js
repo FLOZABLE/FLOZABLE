@@ -99,11 +99,11 @@ mediaSocket.on('connection', async (socket) => {
   const userId = session.user_id;
 
   socket.on('changeGroup', async (roomId, callback) => {
-    console.log('roomId', roomId)
         // create Router if it does not exist
     // const newRouter = rooms[roomId] && rooms[roomId].get('data').router || await createRoom(roomId, socket.id)
     const groups = await groupCache(userId);
     if (groups.includes(roomId)) {
+      console.log('join', roomId)
       const newRouter = await createRoom(roomId, socket.id)
 
       peers[socket.id] = {
@@ -360,16 +360,21 @@ mediaSocket.on('connection', async (socket) => {
 
       const roomId  = peers[socket.id].roomId;
       const router = rooms[roomId].router;
-      console.log('consuming', roomId)
+      console.log('consuming', roomId, serverConsumerTransportId)
       let consumerTransport = transports.find(transportData => (
         transportData.consumer && transportData.transport.id == serverConsumerTransportId
       )).transport
 
       // check if the router can consume the specified producer
+      console.log(router.canConsume({
+        producerId: remoteProducerId,
+        rtpCapabilities
+      }), router)
       if (router.canConsume({
         producerId: remoteProducerId,
         rtpCapabilities
       })) {
+        console.log('can consume!@')
         // transport can now consume and return a consumer
         const consumer = await consumerTransport.consume({
           producerId: remoteProducerId,
