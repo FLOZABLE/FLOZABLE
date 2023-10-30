@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./MemberCamDisp.module.css";
 
+const stream = new MediaStream();
+
 function MemberCamDisp({ track }) {
   const videoRef = useRef(null);
-  const [stream, setStream] = useState(new MediaStream());
+  //const [stream, setStream] = useState(new MediaStream());
   const [upd, setUpd] = useState(0);
 
   useEffect(() => {
@@ -13,9 +15,9 @@ function MemberCamDisp({ track }) {
     };
     track.enabled = true;
     stream.addTrack(track)
-    console.log('other user track', track, stream)
+    console.log('other user track', track, [stream], stream)
     videoRef.current.srcObject = stream;
-    console.log(stream.getTracks());
+    console.log(stream.getTracks(), videoRef.current.srcObject, videoRef);
     setUpd(upd + 1);
   }, [track]);
 
