@@ -110,6 +110,7 @@ function MyGroupsViewer(props) {
   const [audioParams, setAudioParams] = useState(null);
   const [consumingTransports, setConsumingTransports] = useState([]);
   const [producerTransport, setProducerTransport] = useState(null);
+  const [usersTracks, setUsersTracks] = useState([]);
 
   useEffect(() => {
     if (isCam) {
@@ -387,6 +388,10 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
     // destructure and retrieve the video track from the producer
     const { track } = consumer;
     console.log(track)
+    const newStream = new MediaStream();
+    newStream.addTrack(track);
+    console.log('new Stream',newStream.getTracks())
+    setUsersTracks([...usersTracks, {userId: params.userId, track: track}]);
 
     //document.getElementById(remoteProducerId).srcObject = new MediaStream([track])
 
@@ -449,7 +454,7 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
                         if (memberInfo.user_id === userInfo.user_id) {
                           return (<MyEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} stream={localStream} socket={socket} />)
                         } else {
-                          return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} socket={socket} />)
+                          return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} socket={socket} usersTracks={usersTracks} />)
                         }
                       })}
                     </div>
