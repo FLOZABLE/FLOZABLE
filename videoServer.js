@@ -236,7 +236,7 @@ mediaSocket.on('connection', async (socket) => {
       const selectedProducer = producers.find(producer => {
         return (producer.producer.id === remoteProducerId)
       });
-      console.log('selected',selectedProducer)
+      console.log('selected')
 
       let consumerTransport = transports.find(transportData => (
         transportData.consumer && transportData.transport.id == serverConsumerTransportId
@@ -247,11 +247,12 @@ mediaSocket.on('connection', async (socket) => {
         producerId: remoteProducerId,
         rtpCapabilities
       })) {
+        console.log('consuming')
         // transport can now consume and return a consumer
         const consumer = await consumerTransport.consume({
           producerId: remoteProducerId,
           rtpCapabilities,
-          /* paused: false, */
+          paused: false,
         })
 
         consumer.on('transportclose', () => {
@@ -297,7 +298,7 @@ mediaSocket.on('connection', async (socket) => {
   socket.on('consumer-resume', async ({ serverConsumerId }) => {
     console.log('consumer resume')
     const { consumer } = consumers.find(consumerData => consumerData.consumer.id === serverConsumerId);
-    console.log(userId)
+    console.log(userId, consumer)
     await consumer.resume()
   });
 
@@ -337,7 +338,8 @@ mediaSocket.on('connection', async (socket) => {
     //console.log('DTLS PARAMS... ', /* { dtlsParameters } */)
     const transport = getTransport(socket.id);
     console.log('transport-connect', transports, socket.id);
-    if (transport && transport.appData && transport.appData.connected) {
+    if ((transport && transport.appData && !transport.appData.connected) || transport) {
+      console.log('connect!!!!!!!!!!!!!!!!!!!!!!!!!!!')
       transport.connect({dtlsParameters});
       transport.appData.connected = true;
     }

@@ -388,9 +388,6 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
     // destructure and retrieve the video track from the producer
     const { track } = consumer;
     console.log(track)
-    const newStream = new MediaStream();
-    newStream.addTrack(track);
-    console.log('new Stream',newStream.getTracks())
     setUsersTracks([...usersTracks, {userId: params.userId, track: track}]);
 
     //document.getElementById(remoteProducerId).srcObject = new MediaStream([track])
