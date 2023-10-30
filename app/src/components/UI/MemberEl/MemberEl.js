@@ -3,12 +3,13 @@ import styles from "./MemberEl.module.css";
 import { useSearchParams } from "react-router-dom";
 import { StudyPerson, RestPerson } from "../../../utils/svgs";
 import MemberTimer from "../MemberTimer/MemberTimer";
-import UserCamDisp from "../UserCamDisp/UserCamDisp";
+import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 
 function MemberEl(props) {
-  const { memberInfo, toggleTimer, me, myTimerTotal, socket } = props;
+  const { memberInfo, toggleTimer, me, myTimerTotal, socket, usersTracks } = props;
   const [run, setRun] = useState(0);
   const [sec, setSec] = useState(0);
+  const [track, setTrack] = useState(null);
   const [studyIcon, setStudyIcon] = useState(
     <RestPerson width={'40px'} height={'40px'} opt1={'#fff'} />
   );
@@ -44,9 +45,17 @@ function MemberEl(props) {
     };
   }, [toggleTimer]);
 
+  useEffect(() => {
+    usersTracks.map(userTracksData => {
+      if (userTracksData.userId === memberInfo.user_id) {
+        setTrack(userTracksData.track);
+      }
+    })
+  }, [usersTracks, memberInfo]);
+
   return (
     <div className={styles.member} key={props.k}>
-      <UserCamDisp socket={socket} memberInfo={memberInfo} />
+      <MemberCamDisp socket={socket} memberInfo={memberInfo} track={track} />
       <div className={styles.inner}>
         <div className={styles.userName}>{memberInfo.name}</div>
         <div className={styles.icon}>{studyIcon}</div>

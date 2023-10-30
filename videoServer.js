@@ -4,6 +4,8 @@ const { groupCache } = require("./services/redisLoader");
 const {sessionMiddleWare} = require('./app');
 const mediaSocket = io.of('/mediaSocket');
 
+const userIdToSocketIdMap = new Map();
+
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 mediaSocket.use(wrap(sessionMiddleWare));
 /**
@@ -124,10 +126,16 @@ mediaSocket.on('connection', async (socket) => {
       // call callback from the client and send back the rtpCapabilities
       callback({ rtpCapabilities })
     } */
+    console.log('changegroup')
+    socket.join(roomName, () => {
+      console.log(socket.rooms);
+      //io.sockets.in("room1").emit('connectedToRoom1', { message: "You connected room 1" });
+  });
     const router1 = await createRoom(roomName, socket.id)
 
     peers[socket.id] = {
       socket,
+      userId,
       roomName,           // Name for the Router this Peer joined
       transports: [],
       producers: [],
@@ -197,6 +205,7 @@ mediaSocket.on('connection', async (socket) => {
       if (producerData.socketId !== socket.id && producerData.roomName === roomName) {
         producerList = [...producerList, producerData.producer.id]
       }
+            //producerList = [...producerList, {producerId: producerData.producer.id, userId: }]
     })
 
     // return the producer list back to the client
@@ -220,9 +229,15 @@ mediaSocket.on('connection', async (socket) => {
   }
   socket.on('consume', async ({ rtpCapabilities, remoteProducerId, serverConsumerTransportId }, callback) => {
     try {
+      const selectedPeer = peers[socket.id];
+      const { roomName } = selectedPeer;
+      console.log('consume',producers, userId)
+      const router = rooms[roomName].router;
+      const selectedProducer = producers.find(producer => {
+        return (producer.producer.id === remoteProducerId)
+      });
+      console.log('selected',selectedProducer)
 
-      const { roomName } = peers[socket.id]
-      const router = rooms[roomName].router
       let consumerTransport = transports.find(transportData => (
         transportData.consumer && transportData.transport.id == serverConsumerTransportId
       )).transport
@@ -236,7 +251,7 @@ mediaSocket.on('connection', async (socket) => {
         const consumer = await consumerTransport.consume({
           producerId: remoteProducerId,
           rtpCapabilities,
-          paused: true,
+          /* paused: false, */
         })
 
         consumer.on('transportclose', () => {
@@ -263,6 +278,7 @@ mediaSocket.on('connection', async (socket) => {
           kind: consumer.kind,
           rtpParameters: consumer.rtpParameters,
           serverConsumerId: consumer.id,
+          userId: selectedProducer.userId
         }
 
         // send the parameters to the client
@@ -280,7 +296,8 @@ mediaSocket.on('connection', async (socket) => {
 
   socket.on('consumer-resume', async ({ serverConsumerId }) => {
     console.log('consumer resume')
-    const { consumer } = consumers.find(consumerData => consumerData.consumer.id === serverConsumerId)
+    const { consumer } = consumers.find(consumerData => consumerData.consumer.id === serverConsumerId);
+    console.log(userId)
     await consumer.resume()
   });
 
@@ -342,7 +359,7 @@ mediaSocket.on('connection', async (socket) => {
     addProducer(producer, roomName)
 
     //informConsumers(roomName, socket.id, producer.id)
-    io.to(roomName).emit('new-producer', {producerId: producer.id})
+    mediaSocket.to(roomName).emit('new-producer', {producerId: producer.id, userId})
     console.log('Producer ID: ', producer.id, producer.kind)
 
     producer.on('transportclose', () => {
@@ -360,7 +377,7 @@ mediaSocket.on('connection', async (socket) => {
   const addProducer = (producer, roomName) => {
     producers = [
       ...producers,
-      { socketId: socket.id, producer, roomName, }
+      { socketId: socket.id, producer, roomName, userId }
     ]
 
     peers[socket.id] = {
