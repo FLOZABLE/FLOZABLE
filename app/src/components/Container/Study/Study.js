@@ -216,7 +216,47 @@ function Study(props) {
         setPriority={setPriority}
         setIsAddSubjectModal={setIsAddSubjectModal}
       />
+      {/*
       <StudySidebar isTimerModal={isTimerModal} isPlannerModal={isPlannerModal} isTemplateModal={isTemplateModal} isGroupModal={isGroupModal} isVolumeModal={isVolumeModal} setIsTimerModal={setIsTimerModal} setIsPlannerModal={setIsPlannerModal} setIsTemplateModal={setIsTemplateModal} setIsGroupModal={setIsGroupModal} setIsVolumeModal={setIsVolumeModal} isZoom={isZoom} setIsZoom={setIsZoom} />
+      */}
+      <StudySidebar 
+        subjects={subjects}
+        subject={timerSubject}
+        setSubject={setTimerSubject} 
+        isStudy={isStudy} 
+        setIsStudy={setIsStudy} 
+        setVideoId={setVideoId} 
+        setVolume={setVolume} 
+        volume={volume} 
+        setGroupsBtn={setGroupsBtn} 
+        groupsBtn={groupsBtn} 
+        setIsAddSubjectModal={setIsAddSubjectModal} 
+        isAddSubjectModal={isAddSubjectModal} 
+        setMyTimerTotal={setMyTimerTotal} 
+        events={events} 
+        setEvents={setEvents} 
+        setIsAddPlanModal={setIsAddPlanModal} 
+        isTimerModal={isTimerModal} 
+        setIsTimerModal={setIsTimerModal} 
+        isPlannerModal={isPlannerModal} 
+        setIsPlannerModal={setIsPlannerModal} 
+        isTemplateModal={isTemplateModal}
+        setIsTemplateModal={setIsTemplateModal}
+        isGroupModal={isGroupModal}
+        setIsGroupModal={setIsGroupModal}
+        isVolumeModal={isVolumeModal}
+        setIsVolumeModal={setIsVolumeModal}
+        isZoom={isZoom}
+        setIsZoom={setIsZoom}
+        mode={"study"} 
+        reset={reset} 
+        isCam={isCam} 
+        setIsMic={setIsMic} 
+        setIsCam={setIsCam} 
+        isMic={isMic} 
+        socket={socket}
+      />
+
       <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
       <div className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={`${styles.myGroupsViewerWrapper} ${groupsBtn ? styles.open : ''}`}>

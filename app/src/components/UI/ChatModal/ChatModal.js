@@ -65,6 +65,7 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
+          console.log("Rooms received!");
           console.log(data)
           setChatGroups(data.groupRooms);
         }
@@ -105,7 +106,7 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
   }, [userInfo, allMembers]);
 
   useEffect(() => {
-    console.log('d')
+    console.log("Groups:",myGroups);
     if (!userInfo) {
       return;
     };
@@ -135,8 +136,10 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
   }, [userInfo, allMembers]);
 
   useEffect(() => {
+    console.log("Sent Test");
+    socket.emit("Test", 2839);
     if (submit) {
-      if (msgInput.length > 0){
+      if (msgInput.length > 0 && !!!selectedGroup){
         setMsgInput("");
         socket.emit('sendMsg', selectedGroup.group_id, selectedRoom.id, msgInput);
       }

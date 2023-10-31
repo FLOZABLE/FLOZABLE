@@ -17,8 +17,8 @@ const cors = require('cors');
 const cron = require("node-cron");
 const fs = require('fs');
 const options = {
-  key: fs.readFileSync('./ssl/key.pem', 'utf-8'),
-  cert: fs.readFileSync('./ssl/cert.pem', 'utf-8')
+  key: fs.readFileSync(path.resolve('./SSL/key.pem'), 'utf-8'),
+  cert: fs.readFileSync(path.resolve('./SSL/cert.pem'), 'utf-8')
 }
 
 //const server = http.createServer(app);

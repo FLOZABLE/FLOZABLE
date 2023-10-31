@@ -115,7 +115,7 @@ function StudyHeader(props) {
           </div>
         </li>
         <li>
-          <button onClick={() => { props.setGroupsBtn(!props.groupsBtn) }} className={styles.dispBtn}>
+          <button onClick={() => { alert(props.groupsBtn); props.setGroupsBtn(!props.groupsBtn) }} className={styles.dispBtn}>
             <FontAwesomeIcon icon={faUsers} />
           </button>
           <div className={styles.hoverEl}>

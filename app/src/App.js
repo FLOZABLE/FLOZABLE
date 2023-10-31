@@ -74,6 +74,7 @@ function App() {
     .then((data) => {
       if (data.success) {
         setSubjects(sortSubjects(data.subjects));
+        console.log(data.subjects);
       }
     })
     .catch((error) => console.error(error));

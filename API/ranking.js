@@ -122,6 +122,7 @@ Router.post("/", async (req, res) => {
 
   const result = {success: true, dailyRanking: dailyRanking, weeklyRanking: weeklyRanking, monthlyRanking: monthlyRanking, usersInfo: usersInfo};
   res.send(result);
+  console.log(result)
   cache.set(cachedDate.getTime(), result);
   pool.releaseConnection(connection);
 })

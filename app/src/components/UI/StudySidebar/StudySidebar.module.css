@@ -33,9 +33,28 @@
 }
 
 .StudySidebar .studyTool:hover {
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  box-shadow: rgba(255, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .StudySidebar .studyTool:hover i, .StudySidebar .studyTool.clicked i {
   color: var(--pink);
 }
+
+.StudySidebar .clickedEl {
+  /* transition: opacity .3s ease-in-out; */
+  position: relative;
+  background-color: var(--bgColor);
+  left: 100%;
+  padding: 20px;
+  border-radius: 20px;
+  opacity: 1;
+  z-index: -1;
+}
+
+/*
+.StudySidebar .dispBtn{
+  background: blue;
+  width: 100px;
+  height: 100px;
+}
+*/

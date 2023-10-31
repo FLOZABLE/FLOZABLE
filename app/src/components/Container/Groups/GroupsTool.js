@@ -18,7 +18,7 @@ function getMyGroups(userInfo, groups) {
   const myGroupsId = userInfo.groups.split(",");
   const myGroups = otherGroups.filter(group => myGroupsId.includes(group.group_id));
   const otherGroupsFiltered = otherGroups.filter(group => !myGroupsId.includes(group.group_id));
-  return { myGroups, otherGroups: otherGroupsFiltered };
+  return { myGroups: myGroups, otherGroups: otherGroupsFiltered };
   
 };
 
