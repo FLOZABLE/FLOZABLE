@@ -17,11 +17,11 @@ mediaSocket.use(wrap(sessionMiddleWare));
  *         |-> Consumer 
  **/
 let worker
-let rooms = {}          // { roomId1: { Router, rooms: [ sicketId1, ... ] }, ...}
-let peers = {}          // { socketId1: { roomId1, socket, transports = [id1, id2,] }, producers = [id1, id2,] }, consumers = [id1, id2,], peerDetails }, ...}
-let transports = []     // [ { socketId1, roomId1, transport, consumer }, ... ]
-let producers = []      // [ { socketId1, roomId1, producer, }, ... ]
-let consumers = []      // [ { socketId1, roomId1, consumer, }, ... ]
+let rooms = {}          // { roomName1: { Router, rooms: [ sicketId1, ... ] }, ...}
+let peers = {}          // { socketId1: { roomName1, socket, transports = [id1, id2,] }, producers = [id1, id2,] }, consumers = [id1, id2,], peerDetails }, ...}
+let transports = []     // [ { socketId1, roomName1, transport, consumer }, ... ]
+let producers = []      // [ { socketId1, roomName1, producer, }, ... ]
+let consumers = []      // [ { socketId1, roomName1, consumer, }, ... ]
 
 const createMediaWorker = async () => {
   worker = await createWorker({
@@ -131,11 +131,33 @@ mediaSocket.on('connection', async (socket) => {
       console.log(socket.rooms);
       //io.sockets.in("room1").emit('connectedToRoom1', { message: "You connected room 1" });
   });
+  const router1 = await createRoom(roomName, socket.id)
+
+  peers[socket.id] = {
+    socket,
+    roomName,           // Name for the Router this Peer joined
+    transports: [],
+    producers: [],
+    consumers: [],
+    peerDetails: {
+      name: '',
+      isAdmin: false,   // Is this Peer the Admin?
+    }
+  }
+
+  // get Router RTP Capabilities
+  const rtpCapabilities = router1.rtpCapabilities
+  socket.join(roomName);
+  // call callback from the client and send back the rtpCapabilities
+  callback({ rtpCapabilities })
+  });
+  socket.on('joinRoom', async ({ roomName }, callback) => {
+    // create Router if it does not exist
+    // const router1 = rooms[roomName] && rooms[roomName].get('data').router || await createRoom(roomName, socket.id)
     const router1 = await createRoom(roomName, socket.id)
 
     peers[socket.id] = {
       socket,
-      userId,
       roomName,           // Name for the Router this Peer joined
       transports: [],
       producers: [],
@@ -148,10 +170,10 @@ mediaSocket.on('connection', async (socket) => {
 
     // get Router RTP Capabilities
     const rtpCapabilities = router1.rtpCapabilities
-
+    socket.join(roomName);
     // call callback from the client and send back the rtpCapabilities
     callback({ rtpCapabilities })
-  });
+  })
 
   const createRoom = async (roomName, socketId) => {
     // worker.createRouter(options)
@@ -169,18 +191,39 @@ mediaSocket.on('connection', async (socket) => {
     }
     
     console.log(`Router ID: ${router1.id}`, peers.length)
-  
+
     rooms[roomName] = {
       router: router1,
       peers: [...peers, socketId],
     }
-  
+
     return router1
   }
 
+  // socket.on('createRoom', async (callback) => {
+  //   if (router === undefined) {
+  //     // worker.createRouter(options)
+  //     // options = { mediaCodecs, appData }
+  //     // mediaCodecs -> defined above
+  //     // appData -> custom application data - we are not supplying any
+  //     // none of the two are required
+  //     router = await worker.createRouter({ mediaCodecs, })
+  //     console.log(`Router ID: ${router.id}`)
+  //   }
+
+  //   getRtpCapabilities(callback)
+  // })
+
+  // const getRtpCapabilities = (callback) => {
+  //   const rtpCapabilities = router.rtpCapabilities
+
+  //   callback({ rtpCapabilities })
+  // }
+
+  // Client emits a request to create server side Transport
+  // We need to differentiate between the producer and consumer transports
   socket.on('createWebRtcTransport', async ({ consumer }, callback) => {
     // get Room Name from Peer's properties
-    console.log('createWebRtcTransport', consumer)
     const roomName = peers[socket.id].roomName
 
     // get Router (Room) object this peer is in based on RoomName
@@ -206,74 +249,21 @@ mediaSocket.on('connection', async (socket) => {
       })
   })
 
+  const addTransport = (transport, roomName, consumer) => {
 
-
-const addTransport = (transport, roomName, consumer) => {
-
-  transports = [
-    ...transports,
-    { socketId: socket.id, transport, roomName, consumer, }
-  ]
-
-  peers[socket.id] = {
-    ...peers[socket.id],
-    transports: [
-      ...peers[socket.id].transports,
-      transport.id,
+    transports = [
+      ...transports,
+      { socketId: socket.id, transport, roomName, consumer, }
     ]
-  }
-}
 
-  //producertransport on
-  const getTransport = (socketId) => {
-    const [producerTransport] = transports.filter(transport => transport.socketId === socketId && !transport.consumer)
-    return producerTransport.transport
-  }
-
-  // see client's socket.emit('transport-connect', ...)
-  socket.on('transport-connect', ({ dtlsParameters }) => {
-    console.log('DTLS PARAMS... ', { dtlsParameters })
-    const transport = getTransport(socket.id);
-    console.log('transport-connect', transports, socket.id);
-    if ((transport && transport.appData && !transport.appData.connected) || (transport && !transport.appData)) {
-      console.log('connect!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-      transport.connect({dtlsParameters});
-      transport.appData.connected = true;
+    peers[socket.id] = {
+      ...peers[socket.id],
+      transports: [
+        ...peers[socket.id].transports,
+        transport.id,
+      ]
     }
-
-    //getTransport(socket.id).connect({ dtlsParameters })
-  })
-
-  socket.on('transport-produce', async ({ kind, rtpParameters, appData }, callback) => {
-    // call produce based on the prameters from the client
-    console.log('transport-produce')
-    const transport = await getTransport(socket.id);
-    if (!transport) return;
-    const producer = await transport.produce({
-      kind,
-      rtpParameters,
-    })
-
-    // add producer to the producers array
-    const { roomName } = peers[socket.id]
-
-    addProducer(producer, roomName)
-
-    //informConsumers(roomName, socket.id, producer.id)
-    mediaSocket.to(roomName).emit('new-producer', {producerId: producer.id, userId});
-    //console.log('Producer ID: ', producer.id, producer.kind)
-
-    producer.on('transportclose', () => {
-      console.log('transport for this producer closed ')
-      producer.close()
-    })
-
-    // Send back to the client the Producer's id
-    callback({
-      id: producer.id,
-      producersExist: producers.length>1 ? true : false
-    })
-  })
+  }
 
   const addProducer = (producer, roomName) => {
     producers = [
@@ -288,43 +278,8 @@ const addTransport = (transport, roomName, consumer) => {
         producer.id,
       ]
     }
-  };
+  }
 
-  socket.on('transport-recv-connect', async ({ dtlsParameters, serverConsumerTransportId }) => {
-    try {
-      console.log(`DTLS PARAMS: ${dtlsParameters}`)
-      const consumerTransport = transports.find(transportData => (
-        transportData.consumer && transportData.transport.id == serverConsumerTransportId
-      )).transport
-      /* if ((consumerTransport && consumerTransport.appData && !consumerTransport.appData.connected) || (consumerTransport && !consumerTransport.appData)) {
-        console.log('rec connect!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-        consumerTransport.connect({dtlsParameters});
-        consumerTransport.appData.connected = true;
-      } */
-      consumerTransport.connect({dtlsParameters});
-      await consumerTransport.connect({ dtlsParameters })
-    } catch (err) {
-      console.log(err)
-    }
-  })
-
-  socket.on('getProducers', callback => {
-    //return all producer transports
-    const { roomName } = peers[socket.id]
-
-    let producerList = []
-    producers.forEach(producerData => {
-      if (producerData.socketId !== socket.id && producerData.roomName === roomName) {
-        producerList = [...producerList, producerData.producer.id]
-      }
-    })
-
-    // return the producer list back to the client
-    callback(producerList)
-  })
-
-  
-  
   const addConsumer = (consumer, roomName) => {
     // add the consumer to the consumers list
     consumers = [
@@ -342,6 +297,84 @@ const addTransport = (transport, roomName, consumer) => {
     }
   }
 
+  socket.on('getProducers', callback => {
+    //return all producer transports
+    const { roomName } = peers[socket.id]
+
+    let producerList = []
+    producers.forEach(producerData => {
+      if (producerData.socketId !== socket.id && producerData.roomName === roomName) {
+        producerList = [...producerList, producerData.producer.id]
+      }
+    })
+
+    // return the producer list back to the client
+    callback(producerList)
+  })
+
+  const informConsumers = (roomName, socketId, id) => {
+    console.log(`just joined, id ${id} ${roomName}, ${socketId}`)
+    // A new producer just joined
+    // let all consumers to consume this producer
+    producers.forEach(producerData => {
+      if (producerData.socketId !== socketId && producerData.roomName === roomName) {
+        const producerSocket = peers[producerData.socketId].socket
+        // use socket to send producer id to producer
+        producerSocket.emit('new-producer', { producerId: id })
+      }
+    })
+  }
+
+  const getTransport = (socketId) => {
+    const [producerTransport] = transports.filter(transport => transport.socketId === socketId && !transport.consumer)
+    return producerTransport.transport
+  }
+
+  // see client's socket.emit('transport-connect', ...)
+  socket.on('transport-connect', ({ dtlsParameters }) => {
+    console.log('DTLS PARAMS... ', { dtlsParameters })
+    
+    getTransport(socket.id).connect({ dtlsParameters })
+  })
+
+  // see client's socket.emit('transport-produce', ...)
+  socket.on('transport-produce', async ({ kind, rtpParameters, appData }, callback) => {
+    // call produce based on the prameters from the client
+    const producer = await getTransport(socket.id).produce({
+      kind,
+      rtpParameters,
+    })
+
+    // add producer to the producers array
+    const { roomName } = peers[socket.id]
+
+    addProducer(producer, roomName)
+
+    //informConsumers(roomName, socket.id, producer.id)
+    mediaSocket.to(roomName).emit('new-producer', { producerId: producer.id });
+    console.log('Producer ID: ', producer.id, producer.kind)
+
+    producer.on('transportclose', () => {
+      console.log('transport for this producer closed ')
+      producer.close()
+    })
+
+    // Send back to the client the Producer's id
+    callback({
+      id: producer.id,
+      producersExist: producers.length>1 ? true : false
+    })
+  })
+
+  // see client's socket.emit('transport-recv-connect', ...)
+  socket.on('transport-recv-connect', async ({ dtlsParameters, serverConsumerTransportId }) => {
+    console.log(`DTLS PARAMS: ${dtlsParameters}`)
+    const consumerTransport = transports.find(transportData => (
+      transportData.consumer && transportData.transport.id == serverConsumerTransportId
+    )).transport
+    await consumerTransport.connect({ dtlsParameters })
+  })
+
   socket.on('consume', async ({ rtpCapabilities, remoteProducerId, serverConsumerTransportId }, callback) => {
     try {
 
@@ -352,6 +385,10 @@ const addTransport = (transport, roomName, consumer) => {
       )).transport
 
       // check if the router can consume the specified producer
+      console.log('canconsume?', router.canConsume({
+        producerId: remoteProducerId,
+        rtpCapabilities
+      }))
       if (router.canConsume({
         producerId: remoteProducerId,
         rtpCapabilities
@@ -400,6 +437,12 @@ const addTransport = (transport, roomName, consumer) => {
         }
       })
     }
+  })
+
+  socket.on('consumer-resume', async ({ serverConsumerId }) => {
+    console.log('consumer resume')
+    /* const { consumer } = consumers.find(consumerData => consumerData.consumer.id === serverConsumerId)
+    await consumer.resume() */
   })
 })
 
