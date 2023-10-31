@@ -98,12 +98,13 @@ Router.post("/start", async (req, res) => {
               newTimer.timeline.map(([start, stop]) => {
                 const newStart = start - missingTotal * MAXSTORELEN;
                 const newStop = stop - missingTotal * MAXSTORELEN;
+                console.log(newStart, newStop);
                 if (newStart >= 0 && newStop >= 0) {
                   return [newStart, newStop];
                 };
               });
             };
-  
+            console.log(start);
             newTimer.timeline.push([start, start]);
             newTimer.datum = newDatum;
             newTimer.study = 1;
