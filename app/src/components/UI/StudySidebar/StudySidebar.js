@@ -3,12 +3,26 @@ import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import update from 'immutability-helper';
 import StudyTool from "../StudyToolWrapper/StudyToolWrapper";
+import FullScreenBtn from "../FullScreenBtn/FullScreenBtn";
+import VolumeControl from "../VolumeControl/VolumeControl";
 
 import styles from "./StudySidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faClipboardCheck, faHourglass, faImage, faMicrophone, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
 
-function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupModal, isVolumeModal, isZoom, setIsTimerModal, setIsPlannerModal, setIsTemplateModal, setIsGroupModal, setIsVolumeModal, setIsZoom }) {
+function StudySidebar(props) {
+  
+  const { subjects, subject, setSubject, isStudy, setIsStudy, setVideoId, setVolume, volume, setGroupsBtn, groupsBtn, setIsAddSubjectModal, isAddSubjectModal, setMyTimerTotal, events, setEvents, setIsAddPlanModal, isTimerModal, setIsTimerModal, isPlannerModal, setIsPlannerModal, isTemplateModal, setIsTemplateModal, isGroupModal, setIsGroupModal, isVolumeModal, setIsVolumeModal, isZoom, setIsZoom, mode, reset, isCam, setIsMic, setIsCam, isMic, socket } = props;
+  
+  const [recommendedThemes, setRecommendedThemes] = useState([]);
+  const [link, setLink] = useState([]);
+  const [backgrounBtn, setBackgrounBtn] = useState(false);
+  const [volumeBtn, setVolumeBtn] = useState(false);
+  const [fullScreenBtn, setFullScreenBtn] = useState(false);
+  const [fullScreen, setFullScreen] = useState(false);
+  const [plannerBtn, setPlannerBtn] = useState(false);
+  const [timerBtn, setTimerBtn] = useState(false);
+
   const [isItemDragging, setIsItemDragging] = useState(false);
   
   const [items, setItems] = useState([
@@ -51,7 +65,7 @@ function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupMo
     {
       id: 5,
       element:
-        <div className={`${styles.studyTool} ${isTemplateModal ? styles.clicked : ''}`} onClick={() => { setIsTemplateModal((prev) => !prev) }}>
+        <div className={`${styles.studyTool} ${isTemplateModal ? styles.clicked : ''}`} onClick={() => { setBackgrounBtn((prev) => !prev) }}>
           <i>
             <FontAwesomeIcon icon={faImage} />
           </i>
@@ -63,13 +77,16 @@ function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupMo
         <div className={`${styles.studyTool} ${isVolumeModal ? styles.clicked : ''}`} onClick={() => { setIsVolumeModal((prev) => !prev) }}>
           <i>
             <FontAwesomeIcon icon={faVolumeHigh} />
+            <div className={styles.clickedEl}>
+              <VolumeControl setVolume={props.setVolume} volume={props.volume} />
+            </div>
           </i>
         </div>,
     },
     {
       id: 7,
       element:
-        <div className={`${styles.studyTool} ${isGroupModal ? styles.clicked : ''}`} onClick={() => { setIsGroupModal((prev) => !prev) }}>
+        <div className={`${styles.studyTool} ${props.groupsBtn ? styles.clicked : ''}`} onClick={() => { setGroupsBtn((prev) => false) }}>
           <i>
             <FontAwesomeIcon icon={faUsers} />
           </i>
@@ -78,10 +95,8 @@ function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupMo
     {
       id: 8,
       element:
-        <div className={`${styles.studyTool} ${isZoom ? styles.clicked : ''}`} onClick={() => { setIsZoom((prev) => !prev) }}>
-          <i>
-            <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
-          </i>
+        <div className={`${styles.studyTool} ${fullScreenBtn ? styles.clicked : ''}`}>
+            <FullScreenBtn setFullScreen={setFullScreen} fullScreen={false} />
         </div>,
     },
   ]);

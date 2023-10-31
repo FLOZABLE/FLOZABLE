@@ -20,6 +20,7 @@ Router.post("/bring-rooms", async (req, res) => {
             room.status = -1;
             return room;
           });
+          console.log(23, chatRooms);
           return chatRooms;
         }));
         res.send({success: true, groupRooms: groupRooms});
@@ -34,7 +35,7 @@ Router.post("/bring-rooms", async (req, res) => {
           });
           return {groupId: group, rooms: chatRooms};
         }));
-        console.log(groupRooms)
+        console.log(37,groupRooms)
         res.send({success: true, groupRooms: groupRooms});
       };
     } catch (err) {

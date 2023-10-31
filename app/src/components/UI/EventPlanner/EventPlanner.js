@@ -367,6 +367,7 @@ function EventPlanner(props) {
         .then((data) => {
           setAddPlanResponse(data);
           if (data.success) {
+            console.log("Planner success!")
             setEvents(updatedEvents);
             setIsAddPlanModal(false);
           };
