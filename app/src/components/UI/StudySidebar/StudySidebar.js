@@ -8,7 +8,7 @@ import styles from "./StudySidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faClipboardCheck, faDownLeftAndUpRightToCenter, faHourglass, faImage, faMicrophone, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
 
-function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupModal, isVolumeModal, isZoom, setIsTimerModal, setIsPlannerModal, setIsTemplateModal, setIsVolumeModal, setIsZoom, setIsViewGroups }) {
+function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupModal, isVolumeModal, isZoom, setIsTimerModal, setIsPlannerModal, setIsTemplateModal, setIsVolumeModal, setIsZoom, setIsViewGroups, setIsCam, setIsMic, isCam, isMic }) {
   const [isItemDragging, setIsItemDragging] = useState(false);
 
   const [items, setItems] = useState([
@@ -30,10 +30,10 @@ function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupMo
           </i>
         </div>,
     },
-    /* {
+    {
       id: 3,
       element:
-        <div className={`${styles.studyTool} ${isModal ? styles.clicked : ''}`} onClick={() => { setModal((prev) => !prev) }}>
+        <div className={`${styles.studyTool} ${isCam ? styles.clicked : ''}`} onClick={() => { setIsCam((prev) => !prev) }}>
           <i>
             <FontAwesomeIcon icon={faCamera} />
           </i>
@@ -42,12 +42,12 @@ function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupMo
     {
       id: 4,
       element:
-        <div className={`${styles.studyTool} ${isModal ? styles.clicked : ''}`} onClick={() => { setModal((prev) => !prev) }}>
+        <div className={`${styles.studyTool} ${isMic ? styles.clicked : ''}`} onClick={() => { setIsMic((prev) => !prev) }}>
           <i>
             <FontAwesomeIcon icon={faMicrophone} />
           </i>
         </div>,
-    }, */
+    },
     {
       id: 5,
       element:
