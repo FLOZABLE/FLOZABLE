@@ -25,8 +25,22 @@ let consumers = []      // [ { socketId1, roomName1, consumer, }, ... ]
 
 const createMediaWorker = async () => {
   worker = await createWorker({
-    rtcMinPort: 2000,
-    rtcMaxPort: 12000,
+    rtcMinPort: 10000,
+    rtcMaxPort: 10100,
+    logLevel: 'warn',
+    logTags: [
+      'info',
+      'ice',
+      'dtls',
+      'rtp',
+      'srtp',
+      'rtcp'
+      // 'rtx',
+      // 'bwe',
+      // 'score',
+      // 'simulcast',
+      // 'svc'
+    ]
   })
   console.log(`worker pid ${worker.pid}`)
 
@@ -460,6 +474,8 @@ const createWebRtcTransport = async (router) => {
         enableUdp: true,
         enableTcp: true,
         preferUdp: true,
+        maxIncomingBitrate: 1500000,
+        initialAvailableOutgoingBitrate: 1000000
       }
 
       // https://mediasoup.org/documentation/v3/mediasoup/api/#router-createWebRtcTransport

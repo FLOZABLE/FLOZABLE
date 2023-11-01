@@ -65,7 +65,7 @@ function MyGroupsViewer(props) {
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
 
   useEffect(() => {
-    mediaSocket.connect();
+    //mediaSocket.connect();
     socket.on("studying", onStudying);
     socket.on("stopStudying", onStopStudying);
     return () => {
@@ -456,7 +456,7 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
   return (
     <div className={`${styles.MyGroupsViewer} ${mode === 'study' ? styles.study : ''}`}>
             <video ref={videoRef} autoPlay playsInline className={`${styles.video}`} style={{zIndex: 1000, position: 'fixed'}} />
-            <audio ref={audioRef} autoplay></audio>
+            <audio ref={audioRef} autoPlay></audio>
       <Swiper
         slidesPerView={1}
         loop={true}

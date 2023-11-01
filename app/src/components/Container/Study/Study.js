@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBullseye, faHeart, faPeopleGroup, faPlus, faStopwatch } from '@fortawesome/free-solid-svg-icons';
+import { faBullseye, faHeart, faLink, faPeopleGroup, faPlus, faStopwatch } from '@fortawesome/free-solid-svg-icons';
 import TopNotification from '../../UI/TopNotification/TopNotification';
 import styles from "./Study.module.css";
 import { setGroupMembers, getMyGroups } from './StudyTool';
@@ -15,6 +15,14 @@ import { generateRandomId } from "../../../utils/RandomId";
 import StudySidebar from '../../UI/StudySidebar/StudySidebar';
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import SubjectTimer from '../../UI/SubjectTimer/SubjectTimer';
+import StudyModalContainer from '../../UI/StudyModalContainer/StudyModalContainer';
+import PlanTimeline from '../../UI/PlanTimeline/PlanTimeline';
+import CustomInput from '../../UI/CustomInput/CustomInput';
+import VolumeControl from '../../UI/VolumeControl/VolumeControl';
+import { AllThemes } from "../../../utils/Themes";
+import Draggable from "react-draggable";
+import ThemeSelector from '../../UI/ThemeSelector/ThemeSelector';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -27,16 +35,11 @@ function Study(props) {
   const [isCamModal, setIsCamModal] = useState(false);
   const [isPlannerModal, setIsPlannerModal] = useState(false);
   const [isTemplateModal, setIsTemplateModal] = useState(false);
-  const [isGroupModal, setIsGroupModal] = useState(false);
   const [isVolumeModal, setIsVolumeModal] = useState(false);
   const [isZoom, setIsZoom] = useState(false);
 
-  const [allGroups, setAllGroups] = useState([]);
-  const [membersInfo, setMembersInfo] = useState([]);
   const [videoId, setVideoId] = useState('MYPVQccHhAQ');
   const [volume, setVolume] = useState(0);
-  const [groupsBtn, setGroupsBtn] = useState(true);
-  const [timerSubject, setTimerSubject] = useState(null);
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [isAddPlanModal, setIsAddPlanModal] = useState(false);
   const [addSubjectResponse, setAddSubjectResponse] = useState(null);
@@ -44,7 +47,8 @@ function Study(props) {
   const [addPlanResponse, setAddPlanResponse] = useState(null);
   const [isCam, setIsCam] = useState(false);
   const [isMic, setIsMic] = useState(false);
-  const [stream, setStream] = useState(null);
+  const [link, setLink] = useState([]);
+  const [isViewGroups, setIsViewGroups] = useState(true);
 
   //events
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -58,7 +62,10 @@ function Study(props) {
   const [priority, setPriority] = useState(50);
   const [notification, setNotification] = useState(-1);
   const [submit, setSubmit] = useState(false);
-  const [peer, setPeer] = useState(null);
+
+  const handleLinkInput = (e) => {
+    setLink(e.target.value);
+  };
 
   useEffect(() => {
     if (addSubjectResponse && addSubjectResponse.success) {
@@ -87,6 +94,33 @@ function Study(props) {
       console.log(onlineMembers)
     })
   }, []);
+
+  useEffect(() => {
+    /* if (isZoom) {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch((err) => {
+          console.error('Fullscreen request failed:', err);
+        });
+      } else {
+        document.exitFullscreen().catch((err) => {
+          console.error('Exit fullscreen request failed:', err);
+        });
+      }
+    } else {
+      document.exitFullscreen().catch((err) => {
+        console.error('Exit fullscreen request failed:', err);
+      });
+    } */
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error('Fullscreen request failed:', err);
+      });
+    } else {
+      document.exitFullscreen().catch((err) => {
+        console.error('Exit fullscreen request failed:', err);
+      });
+    }
+  }, [isZoom]);
 
   //handle submit
   useEffect(() => {
@@ -188,10 +222,26 @@ function Study(props) {
 
   return (
     <div className={styles.StudyContainer}>
-      <DndProvider backend={HTML5Backend}>
-
-      </DndProvider>
-      <StudyHeader subjects={subjects} subject={timerSubject} setSubject={setTimerSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} events={events} setEvents={setEvents} setIsAddPlanModal={setIsAddPlanModal} mode={"study"} reset={reset} isCam={isCam} setIsMic={setIsMic} setIsCam={setIsCam} isMic={isMic} socket={socket} />
+      {/* <Draggable>
+        
+      </Draggable> */}
+      <StudyModalContainer
+        isDisp={isTimerModal}
+        element={<SubjectTimer socket={socket} subjects={subjects} subject={subject} setSubject={setSubject} isStudy={isStudy} setIsStudy={setIsStudy} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} />}
+      />
+      <StudyModalContainer
+        isDisp={isPlannerModal}
+        element={<PlanTimeline plans={events} viewDate={new Date(new Date().setHours(0, 0, 0, 0))} viewMode={"timeGridDay"} subjects={subjects} setPlans={setEvents} mode={"study"} setIsAddPlanModal={setIsAddPlanModal} />}
+      />
+      <StudyModalContainer
+        isDisp={isTemplateModal}
+        element={<ThemeSelector link={link} handleLinkInput={handleLinkInput} submit={submit} setVideoId={setVideoId} />}
+      />
+      <StudyModalContainer
+        isDisp={isVolumeModal}
+        element={<VolumeControl setVolume={setVolume} volume={volume} />}
+      />
+      {/*<StudyHeader subjects={subjects} subject={timerSubject} setSubject={setTimerSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} events={events} setEvents={setEvents} setIsAddPlanModal={setIsAddPlanModal} mode={"study"} reset={reset} isCam={isCam} setIsMic={setIsMic} setIsCam={setIsCam} isMic={isMic} socket={socket} /> */}
       <TopNotification duration={2500} response={addPlanResponse} />
       <EventModal
         isAddPlanModal={isAddPlanModal}
@@ -216,50 +266,22 @@ function Study(props) {
         setPriority={setPriority}
         setIsAddSubjectModal={setIsAddSubjectModal}
       />
-      {/*
-      <StudySidebar isTimerModal={isTimerModal} isPlannerModal={isPlannerModal} isTemplateModal={isTemplateModal} isGroupModal={isGroupModal} isVolumeModal={isVolumeModal} setIsTimerModal={setIsTimerModal} setIsPlannerModal={setIsPlannerModal} setIsTemplateModal={setIsTemplateModal} setIsGroupModal={setIsGroupModal} setIsVolumeModal={setIsVolumeModal} isZoom={isZoom} setIsZoom={setIsZoom} />
-      */}
       <StudySidebar 
-        subjects={subjects}
-        subject={timerSubject}
-        setSubject={setTimerSubject} 
-        isStudy={isStudy} 
-        setIsStudy={setIsStudy} 
-        setVideoId={setVideoId} 
-        setVolume={setVolume} 
-        volume={volume} 
-        setGroupsBtn={setGroupsBtn} 
-        groupsBtn={groupsBtn} 
-        setIsAddSubjectModal={setIsAddSubjectModal} 
-        isAddSubjectModal={isAddSubjectModal} 
-        setMyTimerTotal={setMyTimerTotal} 
-        events={events} 
-        setEvents={setEvents} 
-        setIsAddPlanModal={setIsAddPlanModal} 
-        isTimerModal={isTimerModal} 
-        setIsTimerModal={setIsTimerModal} 
-        isPlannerModal={isPlannerModal} 
-        setIsPlannerModal={setIsPlannerModal} 
-        isTemplateModal={isTemplateModal}
-        setIsTemplateModal={setIsTemplateModal}
-        isGroupModal={isGroupModal}
-        setIsGroupModal={setIsGroupModal}
-        isVolumeModal={isVolumeModal}
-        setIsVolumeModal={setIsVolumeModal}
-        isZoom={isZoom}
-        setIsZoom={setIsZoom}
-        mode={"study"} 
-        reset={reset} 
-        isCam={isCam} 
-        setIsMic={setIsMic} 
-        setIsCam={setIsCam} 
-        isMic={isMic} 
-        socket={socket}
+      isTimerModal={isTimerModal} 
+      isPlannerModal={isPlannerModal} 
+      isTemplateModal={isTemplateModal} 
+      isVolumeModal={isVolumeModal} 
+      setIsTimerModal={setIsTimerModal} 
+      setIsPlannerModal={setIsPlannerModal} 
+      setIsTemplateModal={setIsTemplateModal} 
+      setIsVolumeModal={setIsVolumeModal} 
+      isZoom={isZoom} 
+      setIsZoom={setIsZoom} 
+      setIsViewGroups={setIsViewGroups}
       />
-
       <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
       <div className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
-        <div className={`${styles.myGroupsViewerWrapper} ${groupsBtn ? styles.open : ''}`}>
+        <div className={`${styles.myGroupsViewerWrapper} ${isViewGroups ? styles.open : ''}`}>
           <MyGroupsViewer myGroups={myGroups} mode={'study'} socket={socket} userInfo={userInfo} myTimerTotal={myTimerTotal} isCam={isCam} isMic={isMic} />
         </div>
         <div className={styles.PlanTimelineBarWrapper}>
