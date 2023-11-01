@@ -87,6 +87,7 @@ function App() {
       if (data.success) {
         setUserInfo(data.userInfo);
         socket.connect();
+        console.log('connect!!!', socket)
       };
     })
     .catch((error) => console.error(error));

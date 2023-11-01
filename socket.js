@@ -23,8 +23,8 @@ io.use(wrap(sessionMiddleWare));
 const userIdToSocketIdMap = new Map();
 let senderStream;
 const streams = new Map();
-const mainSocket = io.of('/');
-mainSocket.on('connection', (socket) => {
+const connection = io.of('/');
+connection.on('connection', (socket) => {
   let session;
 
   if (process.env.NODE_ENV === "production") {
@@ -55,7 +55,7 @@ mainSocket.on('connection', (socket) => {
       }
     };
   };
-
+  console.log('joinnnnnnn')
   socket.userId = session.user_id;
   const userId = session.user_id;
 
@@ -169,7 +169,7 @@ mainSocket.on('connection', (socket) => {
 
   socket.on("start", async (subjectId) => {
     const userInfo = await redisClient.hGetAll(`user:${userId}`)
-
+    console.log('study start')
     Object.keys(userInfo).forEach(async (info) => {
       if (info.includes('subject:')) {
         const infoSubjectId = info.split(':')[1];

@@ -136,8 +136,6 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
   }, [userInfo, allMembers]);
 
   useEffect(() => {
-    console.log("Sent Test");
-    socket.emit("Test", 2839);
     if (submit) {
       if (msgInput.length > 0 && !!!selectedGroup){
         setMsgInput("");
