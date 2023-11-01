@@ -271,6 +271,8 @@ function Study(props) {
       isPlannerModal={isPlannerModal} 
       isTemplateModal={isTemplateModal} 
       isVolumeModal={isVolumeModal} 
+      isCam={isCam}
+      isMic={isMic}
       setIsTimerModal={setIsTimerModal} 
       setIsPlannerModal={setIsPlannerModal} 
       setIsTemplateModal={setIsTemplateModal} 
@@ -278,6 +280,8 @@ function Study(props) {
       isZoom={isZoom} 
       setIsZoom={setIsZoom} 
       setIsViewGroups={setIsViewGroups}
+      setIsCam={setIsCam}
+      setIsMic={setIsMic}
       />
       <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
       <div className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
