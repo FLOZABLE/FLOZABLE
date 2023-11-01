@@ -1,0 +1,21 @@
+.ThemeSelector {
+  width: 300px;
+}
+
+.ThemeSelector .themeContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ThemeSelector .video {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: min-content;
+}
+
+.ThemeSelector .video img {
+  width: 100px;
+  height: auto;
+}

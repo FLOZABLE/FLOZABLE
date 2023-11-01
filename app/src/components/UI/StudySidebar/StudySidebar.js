@@ -1,30 +1,16 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import update from 'immutability-helper';
 import StudyTool from "../StudyToolWrapper/StudyToolWrapper";
-import FullScreenBtn from "../FullScreenBtn/FullScreenBtn";
-import VolumeControl from "../VolumeControl/VolumeControl";
 
 import styles from "./StudySidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCamera, faClipboardCheck, faHourglass, faImage, faMicrophone, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faClipboardCheck, faDownLeftAndUpRightToCenter, faHourglass, faImage, faMicrophone, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
 
-function StudySidebar(props) {
-  
-  const { subjects, subject, setSubject, isStudy, setIsStudy, setVideoId, setVolume, volume, setGroupsBtn, groupsBtn, setIsAddSubjectModal, isAddSubjectModal, setMyTimerTotal, events, setEvents, setIsAddPlanModal, isTimerModal, setIsTimerModal, isPlannerModal, setIsPlannerModal, isTemplateModal, setIsTemplateModal, isGroupModal, setIsGroupModal, isVolumeModal, setIsVolumeModal, isZoom, setIsZoom, mode, reset, isCam, setIsMic, setIsCam, isMic, socket } = props;
-  
-  const [recommendedThemes, setRecommendedThemes] = useState([]);
-  const [link, setLink] = useState([]);
-  const [backgrounBtn, setBackgrounBtn] = useState(false);
-  const [volumeBtn, setVolumeBtn] = useState(false);
-  const [fullScreenBtn, setFullScreenBtn] = useState(false);
-  const [fullScreen, setFullScreen] = useState(false);
-  const [plannerBtn, setPlannerBtn] = useState(false);
-  const [timerBtn, setTimerBtn] = useState(false);
-
+function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupModal, isVolumeModal, isZoom, setIsTimerModal, setIsPlannerModal, setIsTemplateModal, setIsVolumeModal, setIsZoom, setIsViewGroups }) {
   const [isItemDragging, setIsItemDragging] = useState(false);
-  
+
   const [items, setItems] = useState([
     {
       id: 1,
@@ -65,7 +51,7 @@ function StudySidebar(props) {
     {
       id: 5,
       element:
-        <div className={`${styles.studyTool} ${isTemplateModal ? styles.clicked : ''}`} onClick={() => { setBackgrounBtn((prev) => !prev) }}>
+        <div className={`${styles.studyTool} ${isTemplateModal ? styles.clicked : ''}`} onClick={() => { setIsTemplateModal((prev) => !prev) }}>
           <i>
             <FontAwesomeIcon icon={faImage} />
           </i>
@@ -77,16 +63,13 @@ function StudySidebar(props) {
         <div className={`${styles.studyTool} ${isVolumeModal ? styles.clicked : ''}`} onClick={() => { setIsVolumeModal((prev) => !prev) }}>
           <i>
             <FontAwesomeIcon icon={faVolumeHigh} />
-            <div className={styles.clickedEl}>
-              <VolumeControl setVolume={props.setVolume} volume={props.volume} />
-            </div>
           </i>
         </div>,
     },
     {
       id: 7,
       element:
-        <div className={`${styles.studyTool} ${props.groupsBtn ? styles.clicked : ''}`} onClick={() => { setGroupsBtn((prev) => false) }}>
+        <div className={`${styles.studyTool} ${isGroupModal ? styles.clicked : ''}`} onClick={() => { setIsViewGroups((prev) => !prev) }}>
           <i>
             <FontAwesomeIcon icon={faUsers} />
           </i>
@@ -95,11 +78,17 @@ function StudySidebar(props) {
     {
       id: 8,
       element:
-        <div className={`${styles.studyTool} ${fullScreenBtn ? styles.clicked : ''}`}>
-            <FullScreenBtn setFullScreen={setFullScreen} fullScreen={false} />
+        <div className={`${styles.studyTool} ${isZoom ? styles.clicked : ''}`} onClick={() => { setIsZoom((prev) => !prev) }}>
+          <i>
+            <FontAwesomeIcon icon={ isZoom ? faUpRightAndDownLeftFromCenter : faDownLeftAndUpRightToCenter} />
+          </i>
         </div>,
     },
   ]);
+
+  useEffect(() => {
+    console.log('zoom', isZoom)
+  }, [isZoom])
   const moveCard = useCallback((dragIndex, hoverIndex) => {
     setItems((prevItems) =>
       update(prevItems, {
