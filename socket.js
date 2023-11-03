@@ -4,7 +4,7 @@ const pool = require("./model/pool");
 const redisClient = require("./model/redis");
 const Peer = require("simple-peer");
 const { generateRandomId } = require("./tool");
-const { lastMsgCache, groupCache, subjectsCache } = require("./services/redisLoader");
+const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache } = require("./services/redisLoader");
 
 
 const io = require('socket.io')(server, {
@@ -227,19 +227,18 @@ connection.on('connection', (socket) => {
 
 
   socket.on("stop", async (subjectId) => {
-    const groups = (await redisClient.hGet(`user:${userId}`, "groups")).split(',');
-    const activeSubject = JSON.parse(await redisClient.hGet(`user:${userId}`, 'ActiveSubject'));
-    if (activeSubject.id === subjectId) {
+    const groups = await groupCache(userId);
+    const activeSubject = await activeSubjectCache(userId);
+    if (activeSubject && activeSubject.id === subjectId) {
+      if (groups.length) {
+        io.to(groups).emit('stopStudying', userId, groups);
+      };
       const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
       const now = Math.floor(new Date().getTime() / 1000);
       const start = activity[0];
       const stop = now - activeSubject.datum_point;
       redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${stop}]`);
-      redisClient.hSet(`user:${userId}`, `ActiveSubject`, '0');
-      console.log(groups)
-      if (groups.length) {
-        io.to(groups).emit('stopStudying', userId, groups);
-      };
+      redisClient.hSet(`user:${userId}`, `ActiveSubject`, 0);
       const timerInfo = await redisClient.hGet(`user:${userId}`, 'timerInfo');
       if (timerInfo) {
         const newTimer = JSON.parse(timerInfo);

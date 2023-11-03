@@ -158,6 +158,16 @@ async function groupRoomCache(userId) {
 }
  */
 
+async function activeSubjectCache(userId) {
+  try {
+    let activeSubject = await redisClient.hGet(`user:${userId}`, `ActiveSubject`);
+    activeSubject = activeSubject ? JSON.parse(activeSubject) : 0;
+    return activeSubject;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   flushRedis,
   groupsLoader,
@@ -166,4 +176,5 @@ module.exports = {
   groupCache,
   groupRoomCache,
   subjectsCache,
+  activeSubjectCache
 }
