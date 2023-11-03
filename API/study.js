@@ -68,7 +68,7 @@ Router.post("/start", async (req, res) => {
   autoSignin(req, res, (async() => {
     const userId = req.session.user_id;
     const subjectId = req.body.subjectId;
-    const userInfo = await redisClient.hGetAll(`user:${userId}`)
+    const userInfo = await redisClient.hGetAll(`user:${userId}`);
 
     Object.keys(userInfo).forEach(async (info) => {
       if (info.includes('subject:')) {

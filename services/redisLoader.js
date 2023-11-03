@@ -56,63 +56,77 @@ async function groupCache(userId) {
 
 async function subjectsCache(userId) {
   try {
-    let subjects = await redisClient.hGet(`user:${userId}`, 'subjects');
-    if (!subjects) {
-      const connection = pool.promise();
-      try {
-        const [[userInfo]] = await connection.query(`SELECT subjects FROM users WHERE user_id = ?`, [userId]);
-        subjects = userInfo ? userInfo.subjects : "";
-      } catch (err) {
-        console.log(err);
+    const userInfo = await redisClient.hGetAll(`user:${userId}`);
+    let subjects;
+    if (userInfo) {
+
+      subjects = Object.keys(userInfo).reduce( (filteredSubjects, info, i) => {
+        if (info.includes('subject:')) {
+          const subjectInfo = JSON.parse(userInfo[info]);
+          filteredSubjects.push(subjectInfo);
+        };
+        return filteredSubjects;
+      }, []);
+      if (!subjects) {
+        //no cache
+        try {
+          const connection = pool.promise();
+          [subjects] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
+          subjects.map(async(subject) => {
+            /* 
+            {\"id\":\"gQNfNmQnGR\",\"name\":\"gd\",\"icon\":\"Article\",\"color\":\"#D2DAFF\",\"datum_point\":1698958888}
+            */
+           const redisSubject = {...subject};
+           delete redisSubject.timeline;
+          redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
+          })
+        } catch (err) {
+          console.log(err);
+        };
       };
     };
-    subjects = subjects.split(',');
     return subjects;
   } catch (err) {
     console.log(err);
   }
 };
 
-async function subjectsInfoCache(userId) {
+//subject with timeline
+
+/* async function subjectsTimelineCache(userId) {
   try {
-    const subjects = await subjectsCache(userId);
-    let subjectsInfo = await redisClient.hmGet(`user:${userId}`, ...subjects.map(subject => {return `subject:${subject}`}));
-    console.log('subjectsInfo',subjectsInfo);
-    /* for (const subject of subjects) {
-      if (!subject) {
-        const [subjectsInfo] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline FROM subjects where user_id = ?`, [userId]);
-        return subjectsInfo;
-      }
+    const userInfo = await redisClient.hGetAll(`user:${userId}`);
+    let subjects;
+    if (userInfo) {
+      subjects = Object.keys(userInfo).forEach(async (info) => {
+        if (info.includes('subject:')) {
+          const subjectInfo = JSON.parse(userInfo[info]);
+          const subjectTimeline = await redisClient.lRange(`subject`)
+          return subjectInfo;
+        }
+      });
 
+      if (!subjects) {
+        try {
+          const connection = pool.promise();
+          [subjects] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline FROM subjects where user_id = ?`, [userId]);
+          subjects.map(async(subject) => {
+           const redisSubject = {...subject};
+           delete redisSubject.timeline;
+            redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, redisSubject);
+          })
+        } catch (err) {
+          console.log(err);
+        };
+      };
     }
-    if (!subjectsInfo) {
-      const connection = pool.promise();
-      [subjectsInfo] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline FROM subjects where user_id = ?`, [userId]);
-      for (const subject of subjectsInfo) {
-        const redisSubject = { ...subject };
-        delete redisSubject.timeline;
-        await redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
-        let prevTimeline = JSON.parse(subject.timeline);
-        prevTimeline = prevTimeline.map(str => JSON.parse(str)).flat();
-        const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
-        subject.timeline = prevTimeline.concat(todayTimeline);
-      }
-    } else {
-      for (const subject of subjectsInfo) {
-        const redisSubject = { ...subject };
-        delete redisSubject.timeline;
-        await redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
-        let prevTimeline = JSON.parse(subject.timeline);
-        prevTimeline = prevTimeline.map(str => JSON.parse(str)).flat();
-        const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
-        subject.timeline = prevTimeline.concat(todayTimeline);
-      }
-    }
-    redisClient.hSet(`user:${userId}`, `ActiveSubject`, '0'); */
+    console.log('subjects',subjects)
+    return subjects;
   } catch (err) {
-
+    console.log(err);
   }
-}
+}; */
+
 
 async function groupRoomCache(userId) {
   try {
@@ -152,5 +166,4 @@ module.exports = {
   groupCache,
   groupRoomCache,
   subjectsCache,
-  subjectsInfoCache
 }
