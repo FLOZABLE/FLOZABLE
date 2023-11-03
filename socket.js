@@ -4,7 +4,7 @@ const pool = require("./model/pool");
 const redisClient = require("./model/redis");
 const Peer = require("simple-peer");
 const { generateRandomId } = require("./tool");
-const { lastMsgCache, groupCache, subjectsInfoCache } = require("./services/redisLoader");
+const { lastMsgCache, groupCache, subjectsCache } = require("./services/redisLoader");
 
 
 const io = require('socket.io')(server, {
@@ -168,73 +168,61 @@ connection.on('connection', (socket) => {
   });
 
   socket.on("start", async (subjectId) => {
-    subjectsInfoCache(userId)
-    const userInfo = await redisClient.hGetAll(`user:${userId}`)
-    console.log('study start', userInfo)
-    Object.keys(userInfo).forEach(async (info) => {
-      if (info.includes('subject:')) {
-        const infoSubjectId = info.split(':')[1];
-        if (infoSubjectId === subjectId) {
-          const subjectInfo = JSON.parse(userInfo[info]);
-          const now = Math.floor(new Date().getTime() / 1000);
-          const start = now - subjectInfo.datum_point;
-          const push = await redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${start}]`);
-          redisClient.hSet(`user:${userId}`, `ActiveSubject`, JSON.stringify(subjectInfo));
-          const prevTimer = await redisClient.hGet(`user:${userId}`, 'timerInfo');
-          if (prevTimer) {
-            const newTimer = JSON.parse(prevTimer);
-            const datum = newTimer.datum;
-            //remove old timeline
-            const MAXSTORELEN = 24 * 60 * 60;
-            const lastVal = newTimer.timeline[newTimer.timeline.length - 1];
-            const missingTotal = Math.floor((lastVal ? lastVal[1] : 0) / (MAXSTORELEN * 2));
-            const newDatum = datum + missingTotal * MAXSTORELEN;
-            const start = now - newDatum;
-            /* while (newTimer.timeline[newTimer.timeline.length - 1] >= MAXSTORELEN) {
-              newTimer.timeline = newTimer.timeline.map(([start, stop]) => {
-                const newStart = start - MAXSTORELEN;
-                const newStop = stop - MAXSTORELEN;
-                if (newStart >= 0 && newStop >= 0) {
-                  return [newStart, newStop];
-                };
-              });
-            }; */
-            if (missingTotal) {
-              newTimer.timeline.map(([start, stop]) => {
-                const newStart = start - missingTotal * MAXSTORELEN;
-                const newStop = stop - missingTotal * MAXSTORELEN;
-                if (newStart >= 0 && newStop >= 0) {
-                  return [newStart, newStop];
-                };
-              });
-            };
-
-            newTimer.timeline.push([start, start]);
-            newTimer.datum = newDatum;
-            newTimer.study = 1;
-            redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
-          } else {
-            const newTimer = { datum: now, timeline: [[0, 0]], study: 1 };
-            redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
+    try {
+      const subjects = await subjectsCache(userId);
+      const groups = await groupCache(userId);
+      const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId);
+      console.log('selected sj', subject);
+      if (subject) {
+        if (groups.length) {
+          console.log("socket send", groups)
+          io.to(groups).emit('studying', userId, groups);
+        }
+        const now = Math.floor(new Date().getTime() / 1000);
+        const start = now - subject.datum_point;
+        const push = await redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${start}]`);
+        redisClient.hSet(`user:${userId}`, `ActiveSubject`, JSON.stringify(subject));
+        const prevTimer = await redisClient.hGet(`user:${userId}`, 'timerInfo');
+        if (prevTimer) {
+          const newTimer = JSON.parse(prevTimer);
+          const datum = newTimer.datum;
+          //remove old timeline
+          const MAXSTORELEN = 24 * 60 * 60;
+          const lastVal = newTimer.timeline[newTimer.timeline.length - 1];
+          const missingTotal = Math.floor((lastVal ? lastVal[1] : 0) / (MAXSTORELEN * 2));
+          const newDatum = datum + missingTotal * MAXSTORELEN;
+          const start = now - newDatum;
+          /* while (newTimer.timeline[newTimer.timeline.length - 1] >= MAXSTORELEN) {
+            newTimer.timeline = newTimer.timeline.map(([start, stop]) => {
+              const newStart = start - MAXSTORELEN;
+              const newStop = stop - MAXSTORELEN;
+              if (newStart >= 0 && newStop >= 0) {
+                return [newStart, newStop];
+              };
+            });
+          }; */
+          if (missingTotal) {
+            newTimer.timeline.map(([start, stop]) => {
+              const newStart = start - missingTotal * MAXSTORELEN;
+              const newStop = stop - missingTotal * MAXSTORELEN;
+              if (newStart >= 0 && newStop >= 0) {
+                return [newStart, newStop];
+              };
+            });
           };
-          const groups = userInfo.groups.split(',');
-          console.log(groups)
-          if (groups.length) {
-            /* groups.map(group => {
-              const socketsInRoom = io.sockets.in(group).sockets;
-              console.log(group)
-              // Iterate through the sockets and access socket properties
-              for (const socketId in socketsInRoom) {
-                const socket = socketsInRoom[socketId];
-                console.log(`Socket ID: ${socket.id}, User ID: ${socket.userId}`);
-              }
-            }) */
-            console.log("socket send", groups)
-            io.to(groups).emit('studying', userId, groups);
-          }
+
+          newTimer.timeline.push([start, start]);
+          newTimer.datum = newDatum;
+          newTimer.study = 1;
+          redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
+        } else {
+          const newTimer = { datum: now, timeline: [[0, 0]], study: 1 };
+          redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
         };
-      };
-    });
+      }
+    } catch (err) {
+      console.log(err);
+    };
   });
 
 
@@ -263,92 +251,6 @@ connection.on('connection', (socket) => {
       };
     };
   });
-
-  //logic for cam communication
-
-/*   socket.on('offer', async (data) => {
-    console.log('Received offer from ' + socket.id);
-    // Broadcast the offer to other connected clients
-    const groups = await groupCache(userId);
-    if (groups.length) {
-      io.to(groups.map(group => {return `peer:${group}`})).emit('offer', { offer: data.offer, sender: socket.id });
-    };
-  });
-
-  socket.on('answer', async(data) => {
-    console.log('Received answer from ' + socket.id);
-    const groups = await groupCache(userId);
-    if (groups.length) {
-      io.to(groups.map(group => {return `peer:${group}`})).emit('answer', { answer: data.answer, sender: socket.id });
-    };
-  });
-
-  socket.on('ice-candidate', async (data) => {
-    console.log('Received ICE candidate from ' + socket.id);
-    // Broadcast the ICE candidate to other connected clients
-    const groups = await groupCache(userId);
-    if (groups.length) {
-      io.to(groups.map(group => {return `peer:${group}`})).emit('ice-candidate', { candidate: data.candidate, sender: socket.id });
-    };
-  }); */
-
-  //viewer
-  /* socket.on('answer', async(data, targetId) => {
-    try {
-      const peer = new webrtc.RTCPeerConnection({
-        iceServers: [
-          {
-            urls: "stun:stun.stunprotocol.org"
-          }
-        ]
-      });
-      const desc = new webrtc.RTCSessionDescription(data.sdp);
-      await peer.setRemoteDescription(desc);
-      const senderStream = streams.get(targetId);
-      senderStream.getTracks().forEach(track => peer.addTrack(track, senderStream));
-      const answer = await peer.createAnswer();
-      await peer.setLocalDescription(answer);
-      const payload = {
-        sdp: peer.localDescription
-      }
-      senderStream.getTracks().forEach(track => {
-        console.log('Track ID:', track.id);
-      });
-      const groups = await groupCache(targetId);
-      io.to(groups.map(group => {return `peer:${group}`})).emit('answer', payload, targetId);
-      
-    } catch (err) {
-      console.log(err);
-    };
-  });
-
-  //broadcast
-  socket.on('offer', async (data) => {
-    const peer = new webrtc.RTCPeerConnection({
-      iceServers: [
-        {
-          urls: "stun:stun.stunprotocol.org"
-        }
-      ]
-    });
-    peer.ontrack = (e) => handleTrackEvent(e, userId);
-    const desc = new webrtc.RTCSessionDescription(data.sdp);
-    await peer.setRemoteDescription(desc);
-    const answer = await peer.createAnswer();
-    await peer.setLocalDescription(answer);
-    const payload = {
-      sdp: peer.localDescription
-    }
-    const groups = await groupCache(userId);
-    io.to(groups.map(group => {return `peer:${group}`})).emit('offer', payload, userId);
-    //io.to(socket.id).emit('offer', payload, userId);
-  }); */
-  
-  /* socket.on('offer', async(offer) => {
-    console.log(userId, offer)
-    const groups = await groupCache(userId);
-    io.to(groups.map(group => {return `peer:${group}`})).emit('offer', offer, userId);
-  }) */
 
   socket.on('offer', async(sdp, remoteSocketId) => {
     console.log('offer', remoteSocketId);
