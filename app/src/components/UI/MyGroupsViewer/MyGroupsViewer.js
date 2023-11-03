@@ -508,7 +508,7 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
                         if (memberInfo.user_id === userInfo.user_id) {
                           return (<MyEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} stream={localStream} socket={socket} />)
                         } else {
-                          return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} socket={socket} usersTracks={usersTracks} />)
+                          return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} socket={socket} usersTracks={usersTracks} />)
                         }
                       })}
                     </div>
