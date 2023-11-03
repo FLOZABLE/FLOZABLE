@@ -10,13 +10,13 @@ function SubjectTimer(props) {
   const { subjects, /* subject, setSubject,  */isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, reset, socket } = props;
   const timerDispRef = useRef(null);
   
-  const [subject, setSubject] = useState(null);
+  const [subject, setSubject] = useState({id: 'others'});
   const [options, setOptions] = useState([]);
   const [subjectTimer, setSubjectTimer] = useState({ total: 0, });
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
-     console.log('subjects', subjects.length)
+     console.log('subjects', subjects)
     if (subjects.length) {
       console.log('subject selected', subjects[0])
       setSubject({...subjects[0]});
@@ -52,7 +52,7 @@ function SubjectTimer(props) {
         Or Add Subject
       </li>
     );
-
+    
     setOptions(subjectOptions);
   }, [subjects]);
 
