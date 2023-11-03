@@ -5,6 +5,7 @@ const redisClient = require("../model/redis");
 const notificationService = require('../services/notification');
 const { io } = require("../socket");
 const { generateRandomId, isValidJSON, autoSignin } = require("../tool");
+const { subjectsCache } = require("../services/redisLoader");
 
 Router.post("/add-subject", async (req, res) => {
   autoSignin(req, res, (async() => {
@@ -28,7 +29,7 @@ Router.post("/add-subject", async (req, res) => {
         datum_point: Math.floor(new Date().getTime() / 1000),
         timeline: JSON.stringify([]),
         id: generateRandomId(10),
-        user_id: userId
+        user_id: userId,
       };
       if (isValid) {
         const connection = pool.promise();
@@ -46,11 +47,14 @@ Router.post("/add-subject", async (req, res) => {
             subjectInfo.id,
             userId
           ]);
-          res.send({ success: true, msg: `Added Subject "${subjectInfo.name}"`, info: { subjectInfo: subjectInfo } })
+          res.send({ success: true, msg: `Added Subject "${subjectInfo.name}"`, info: { subjectInfo: subjectInfo } });
+          delete subjectInfo.timeline;
+          delete subjectInfo.user_id;
+          subjectInfo.timeline_sum = 0;
+          redisClient.hSet(`user:${userId}`, `subject:${subjectInfo.id}`, JSON.stringify(subjectInfo));
         } catch (err) {
           console.log(err);
         };
-        res.send({ success: true, msg: `Added Subject "${subjectInfo.name}"`, info: { subjectInfo: subjectInfo } })
       } else {
         res.send({ success: false, reason: "Invalid Value" });
       }
@@ -187,9 +191,7 @@ Router.post('/bring-subjects', async (req, res) => {
       res.send({ success: true, subjects: subjectsInfo });
     } catch (err) {
       console.log(err);
-    } finally {
-      pool.releaseConnection(connection);
-    };
+    }
   }));
 });
 

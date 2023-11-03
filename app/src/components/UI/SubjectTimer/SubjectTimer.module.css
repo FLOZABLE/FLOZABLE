@@ -18,7 +18,7 @@
   white-space: nowrap;
   transition: .3s background-color ease-in-out, .3s border-radius ease-in-out;
   width: fit-content !important;
-  color: #fff;
+  color: var(--pink);
   font-weight: 500;
 }
 
@@ -64,6 +64,7 @@
   padding-left: 30px;
   cursor: pointer;
   white-space: nowrap;
+  display: flex;
   margin: 0px;
   font-weight: 600;
 }

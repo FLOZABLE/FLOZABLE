@@ -6,7 +6,7 @@ import MemberTimer from "../MemberTimer/MemberTimer";
 import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 
 function MemberEl(props) {
-  const { memberInfo, toggleTimer, me, myTimerTotal, socket, usersTracks } = props;
+  const { memberInfo, toggleTimer, me, socket, usersTracks } = props;
   const [run, setRun] = useState(0);
   const [sec, setSec] = useState(0);
   const [track, setTrack] = useState(null);
@@ -60,7 +60,7 @@ function MemberEl(props) {
         <div className={styles.userName}>{memberInfo.name}</div>
         <div className={styles.icon}>{studyIcon}</div>
         <div className={styles.timer}>
-          <MemberTimer run={run} total={sec} me={me} myTimerTotal={myTimerTotal} />
+          <MemberTimer run={run} total={sec} me={me} /* memberTimerTotal={memberTimerTotal} */ />
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ const pool = require("./model/pool");
 const redisClient = require("./model/redis");
 const Peer = require("simple-peer");
 const { generateRandomId } = require("./tool");
-const { lastMsgCache, groupCache } = require("./services/redisLoader");
+const { lastMsgCache, groupCache, subjectsInfoCache } = require("./services/redisLoader");
 
 
 const io = require('socket.io')(server, {
@@ -168,8 +168,9 @@ connection.on('connection', (socket) => {
   });
 
   socket.on("start", async (subjectId) => {
+    subjectsInfoCache(userId)
     const userInfo = await redisClient.hGetAll(`user:${userId}`)
-    console.log('study start')
+    console.log('study start', userInfo)
     Object.keys(userInfo).forEach(async (info) => {
       if (info.includes('subject:')) {
         const infoSubjectId = info.split(':')[1];

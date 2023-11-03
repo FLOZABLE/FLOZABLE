@@ -7,17 +7,19 @@ import worker from "./TimerWorker";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function SubjectTimer(props) {
-  const { subjects, subject, setSubject, isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, reset, socket } = props;
+  const { subjects, /* subject, setSubject,  */isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, reset, socket } = props;
   const timerDispRef = useRef(null);
-
+  
+  const [subject, setSubject] = useState(null);
   const [options, setOptions] = useState([]);
   const [subjectTimer, setSubjectTimer] = useState({ total: 0, });
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
-     
-    if (subjects[0]) {
-      setSubject(subjects[0]);
+     console.log('subjects', subjects.length)
+    if (subjects.length) {
+      console.log('subject selected', subjects[0])
+      setSubject({...subjects[0]});
       if (subjects[0].daily && subjects[0].daily.total) {
         const timeValue = subjects[0].daily.total[subjects[0].daily.total.length - 1];
         setSubjectTimer({total: timeValue})
@@ -115,11 +117,6 @@ function SubjectTimer(props) {
       worker.removeEventListener('message', messageHandler);
     };
   }, []);
-
-
-  /* useEffect(() => {
-    setIndex()
-  }, []) */
 
   return (
     <div className={styles.SubjectTimer}>
