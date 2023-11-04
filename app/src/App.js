@@ -73,8 +73,8 @@ function App() {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
+        console.log('original subjects',data);
         setSubjects(sortSubjects(data.subjects));
-        console.log(data.subjects);
       }
     })
     .catch((error) => console.error(error));

@@ -173,7 +173,19 @@ Router.post('/signup-authentication', async (req, res) => {
     study: JSON.stringify({ study: false, point: unixTimestamp, total: 0 })
   };
   connection.query('INSERT INTO users SET ?', user);
-
+  //create default subject
+  const subjectId = generateRandomId(10);
+  const datum_point = Math.floor(new Date().getTime() / 1000);
+  const subject = {
+    id: subjectId,
+    name: 'others',
+    user_id: userId,
+    icon: 'others',
+    color: '#000000',
+    datum_point
+  };
+  console.log('sub', subject)
+  const test = await connection.query(`INSERT INTO subjects SET ?`, subject);
   req.session.regenerate((err) => {
     if (err) {
       res.send({ success: false, reason: "SESSION ERROR" });
