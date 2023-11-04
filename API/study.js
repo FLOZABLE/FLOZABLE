@@ -182,12 +182,13 @@ Router.post('/bring-subjects', async (req, res) => {
         const redisSubject = { ...subject };
         delete redisSubject.timeline;
         await redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
-        let prevTimeline = JSON.parse(subject.timeline);
-        prevTimeline = prevTimeline.map(str => JSON.parse(str)).flat();
+        let prevTimeline = subject.timeline === "" ? [] :  subject.timeline.split(',');
+        console.log('prev',prevTimeline)
         const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
         subject.timeline = prevTimeline.concat(todayTimeline);
       }
       redisClient.hSet(`user:${userId}`, `ActiveSubject`, '0');
+      console.log('subject', subjectsInfo[0].timeline)
       res.send({ success: true, subjects: subjectsInfo });
     } catch (err) {
       console.log(err);

@@ -8,14 +8,15 @@ const path = require('path');
 const multer = require('multer');
 const Ajv = require("ajv");
 const webpush = require("web-push");
-const {DateTime} = require('luxon');
+const { DateTime } = require('luxon');
+const { generateRandomId } = require('../tool');
 
 function hashing(password) {
   let salt = crypto.randomBytes(32).toString('hex');
   return [salt, crypto.pbkdf2Sync(password, salt, 99097, 32, 'sha512').toString('hex')];
 }
 
-async function autoSignin(req, res, success = (() => {}), fail = (() => {res.send({success: false, reason: 'not authenticated'})})) {
+async function autoSignin(req, res, success = (() => { }), fail = (() => { res.send({ success: false, reason: 'not authenticated' }) })) {
   if (req.session.loggedin) {
     return success();
   } else if (req.signedCookies.userId) {
@@ -66,7 +67,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
   const [[userInfo]] = await connection.query('SELECT user_id, salt, hashed_password, email, myinfo, name, timezone, hashed_password FROM users WHERE email = ?', sanitizedEmail);
 
   pool.releaseConnection(connection);
-  
+
   if (!userInfo) {
     return res.send({ success: false, reason: "NO SUCH USER" });
   };
@@ -80,7 +81,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
     req.session.regenerate((err) => {
       if (err) {
         console.log("Error regenerating session ID:", err);
-        res.send({ success: false, reason: "SESSION ERROR"});
+        res.send({ success: false, reason: "SESSION ERROR" });
         return;
       }
 
@@ -99,13 +100,13 @@ Router.post('/signin-authentication', async (req, res, next) => {
       res.send({ success: true });
     });
   } else {
-    res.send({ success: false, reason: 'WRONG PASSWORD'});
+    res.send({ success: false, reason: 'WRONG PASSWORD' });
   }
 });
 
 function isValidTimeZone(timeZone) {
   try {
-    Intl.DateTimeFormat(undefined, {timeZone: timeZone});
+    Intl.DateTimeFormat(undefined, { timeZone: timeZone });
     return true;
   } catch {
     return false
@@ -125,7 +126,7 @@ Router.post('/signup-authentication', async (req, res) => {
 
   // Set the time to 12:00 AM
   const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-  
+
   // Get the Unix timestamp in seconds
   const unixTimestamp = Math.floor(twelveAmDateTime.toMillis() / 1000);
   console.log(unixTimestamp)
@@ -141,7 +142,7 @@ Router.post('/signup-authentication', async (req, res) => {
     return res.send({ success: false, reason: 'Invalid Name (Only A-Z, a-z, and 0-9 available)' });
   }
 
-  
+
 
   //check pw
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
@@ -183,10 +184,22 @@ Router.post('/signup-authentication', async (req, res) => {
     activity: '{}',
     activity_setting: '[]',
     notification_setting: 'default_setting',
-    study: JSON.stringify({study:false,point:unixTimestamp,total:0})
+    study: JSON.stringify({ study: false, point: unixTimestamp, total: 0 })
   };
   connection.query('INSERT INTO users SET ?', user);
-
+  //create default subject
+  const subjectId = generateRandomId(10);
+  const datum_point = Math.floor(new Date().getTime() / 1000);
+  const subject = {
+    id: subjectId,
+    name: 'others',
+    user_id: userId,
+    icon: 'others',
+    color: '#000000',
+    datum_point
+  };
+  console.log('sub', subject)
+  const test = await connection.query(`INSERT INTO subjects SET ?`, subject);
   req.session.regenerate((err) => {
     if (err) {
       res.send({ success: false, reason: "SESSION ERROR" });
@@ -212,8 +225,8 @@ Router.post('/signup-authentication', async (req, res) => {
 });
 
 Router.get('/signup', function (req, res) {
-  autoSignin(req, res, (() => res.render("account/signup")), 
-  (() => res.render("account/signup")));
+  autoSignin(req, res, (() => res.render("account/signup")),
+    (() => res.render("account/signup")));
 });
 
 Router.get('/logout', function (req, res) {
@@ -227,7 +240,7 @@ Router.get('/logout', function (req, res) {
 });
 
 Router.post('/bring-my-info', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const connection = pool.promise();
 
     let userInfo = await connection.query(`SELECT name, myinfo, \`groups\`, user_id, plan, subjects from users WHERE user_id = ?`, [req.session.user_id]);
@@ -238,14 +251,14 @@ Router.post('/bring-my-info', async (req, res) => {
 });
 
 Router.get('/setting', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const connection = pool.promise();
 
     let userInfo = await connection.query(`SELECT name, email, language, interest, user_id from users WHERE user_id = ?`, [req.session.user_id]);
     userInfo = { userId: userInfo.user_id, name: userInfo.name, loggedin: true, email: userInfo.email, language: userInfo.language, interest: userInfo.interest };
     res.render('account/setting', { userInfo: userInfo })
     pool.releaseConnection(connection);
-  }), (() => {return res.redirect('/account/signin')}));
+  }), (() => { return res.redirect('/account/signin') }));
 });
 
 
@@ -266,7 +279,7 @@ function isValidJSON(data, schema) {
 
 
 Router.post('/update/image', upload.single('image'), async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     try {
       if (!req.file) {
         return res.send({ success: false, reason: 'No image file found' });
@@ -289,7 +302,7 @@ Router.post('/update/image', upload.single('image'), async (req, res) => {
 
 
 Router.post('/update/info', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const connection = pool.promise();
     try {
       let name = req.body.name;
@@ -297,7 +310,7 @@ Router.post('/update/info', async (req, res) => {
       let emailConfirm = req.body.emailConfirm;
       let language = req.body.language;
       let interest = req.body.interest;
-  
+
       const supportedLanguages = ['English', 'Spanish', 'French'];
       if (!/^[a-zA-Z0-9]+$/.test(name)) {
         return res.send({ success: false, reason: 'Invalid Name' });
@@ -321,7 +334,7 @@ Router.post('/update/info', async (req, res) => {
 
 
 Router.post('/update/password', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const connection = pool.promise();
     try {
       let password = req.body.password;
@@ -351,7 +364,7 @@ Router.post('/update/password', async (req, res) => {
 
 
 Router.post('/update/auth', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const connection = pool.promise();
     try {
     } catch (error) {
@@ -363,7 +376,7 @@ Router.post('/update/auth', async (req, res) => {
 
 
 Router.post('/update/extension-add', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const connection = pool.promise();
     try {
       let url = req.body.url;
@@ -391,7 +404,7 @@ Router.post('/update/extension-add', async (req, res) => {
           block: false,
           timer: true
         });
-        const updateInfo = [{activity_setting: JSON.stringify(activitySettings)}, req.session.user_id];
+        const updateInfo = [{ activity_setting: JSON.stringify(activitySettings) }, req.session.user_id];
         const updateSetting = await connection.query(`UPDATE users set ? where user_id = ?`, updateInfo);
       }
       res.send({ success: true, origin: origin, domain: domain })
@@ -406,7 +419,7 @@ Router.post('/update/extension-add', async (req, res) => {
 
 
 Router.post('/update/extension-setting-update', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const connection = pool.promise();
     try {
       const schema = {
@@ -422,7 +435,7 @@ Router.post('/update/extension-setting-update', async (req, res) => {
           additionalProperties: false
         },
       };
-  
+
       const updatedExtSettings = req.body.activitySettings;
       const isValid = isValidJSON(updatedExtSettings, schema);
       if (isValid) {
@@ -442,7 +455,7 @@ Router.post('/update/extension-setting-update', async (req, res) => {
 
 
 Router.post('/update/account', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const connection = pool.promise();
     try {
     } catch (error) {
@@ -454,7 +467,7 @@ Router.post('/update/account', async (req, res) => {
 
 
 Router.post('/update/notification', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const connection = pool.promise();
     try {
       const schema = {
@@ -472,7 +485,7 @@ Router.post('/update/notification', async (req, res) => {
           additionalProperties: false
         },
       };
-  
+
       const updatedNotificationSettings = req.body.notificationSettings;
       const isValid = isValidJSON(updatedNotificationSettings, schema);
       if (isValid) {
@@ -491,7 +504,7 @@ Router.post('/update/notification', async (req, res) => {
 
 
 Router.post('/update/session', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const connection = pool.promise();
     try {
     } catch (error) {
@@ -503,7 +516,7 @@ Router.post('/update/session', async (req, res) => {
 
 
 Router.post('/notification-setting', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const connection = pool.promise();
 
     let select = await connection.query('SELECT notification_setting from users where user_id = ?', [req.session.user_id]);

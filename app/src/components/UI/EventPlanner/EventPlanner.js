@@ -333,7 +333,7 @@ function EventPlanner(props) {
   useEffect(() => {
     setSubjectsOpt([...subjects.map((subject) => {
       return { name: subject.name, value: subject.id };
-    }), { name: 'others', value: '0000000000' }]);
+    })]);
   }, [subjects]);
 
   //handle submit

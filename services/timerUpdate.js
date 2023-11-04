@@ -10,7 +10,7 @@ const cron = require("node-cron");
 async function timerUpdate() {
   const now = DateTime.utc();
   const allTimezones = Intl.supportedValuesOf('timeZone');
-  const midnightTimezones = [];
+  const midnightTimezones = ['America/Los_Angeles'];
   allTimezones.forEach(zone => {
     const dtInZone = now.setZone(zone);
     if (dtInZone.hour === 0) {
@@ -38,7 +38,22 @@ async function timerUpdate() {
         for (const subject of userInfo.subjects) {
           const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject}`, 0, -1)).map(JSON.parse);
           if (todayTimeline.length) {
-            const insertTimeline = await connection.query(`UPDATE subjects SET timeline = JSON_ARRAY_APPEND(timeline, '$', ?) WHERE id = ?`, [JSON.stringify(todayTimeline), subject])
+            //const insertTimeline = await connection.query(`UPDATE subjects SET timeline = JSON_ARRAY_APPEND(timeline, '$', ?) WHERE id = ?`, [JSON.stringify(todayTimeline), subject])
+            //this changes from [[39102,39104],[39105,39109],[39109,39112]] to [39102,39104],[39105,39109],[39109,39112]
+            const modifiedTimeline = JSON.stringify(todayTimeline).slice(1, -1);
+            console.log(modifiedTimeline, 'mid')
+            const updateTimeline = await connection.query(`
+            UPDATE subjects
+            SET timeline = CASE
+              WHEN timeline = '' THEN ?
+              ELSE CONCAT(timeline, ',', ?)
+            END
+            WHERE id = ?
+          `, [
+              modifiedTimeline,
+              modifiedTimeline,
+              subject
+            ]);
           };
           await redisClient.lTrim(`user:${userId}:subject:${subject}`, 1, 0);
         }
@@ -58,6 +73,8 @@ async function timerUpdate() {
     connection.releaseConnection();
   };
 };
+
+timerUpdate();
 
 cron.schedule('0 * * * *', () => {
   timerUpdate();
