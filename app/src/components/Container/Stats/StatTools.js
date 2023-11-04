@@ -126,6 +126,7 @@ function dailyTimelineSplit(timeline, datum_point) {
 }
 
 function weeklyTimelineSplit(timeline, datum_point) {
+  console.log('stuff week', timeline)
   let date = new Date(datum_point * 1000);
   let weekStart = date.setHours(0, 0, 0, 0) - date.getDay() * 24 * 60 * 60 * 1000;
   let weekStop = date.setHours(23, 59, 59, 999) + (6 - date.getDay()) * 24 * 60 * 60 * 1000 + 999;

@@ -3,6 +3,7 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { isValidJSON, hashing, generateRandomId, autoSignin } = require("../tool");
+const { removePrevNotification, planNotification } = require("../services/notification");
 
 Router.post("/bring-plans", async (req, res) => {
   autoSignin(req, res, (async () => {
@@ -59,11 +60,11 @@ Router.post('/update-plan', async (req, res) => {
           const insertInfo = { ...planInfo, user_id: userId };
           const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [userId, planInfo.id]);
           if (!deletePrev.affectedRows) {
-            notificationService.removePrevNotification(userId, planInfo.id);
+            removePrevNotification(userId, planInfo.id);
           }
           const [userInfo] = await connection.query(`SELECT user_id, name, email, notification_setting, key_salt, iv, subscription from users where user_id = ?`, [userId]);
           const startTime = planInfo * 1000 * 60;
-          notificationService.planNotification(insertInfo, userInfo[0], startTime)
+          planNotification(insertInfo, userInfo[0], startTime)
           const insert = await connection.query(`INSERT INTO plans SET ?`, insertInfo);
           res.send({ success: true, msg: 'Plan Saved!' })
         } catch (error) {

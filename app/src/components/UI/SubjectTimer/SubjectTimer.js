@@ -10,7 +10,7 @@ function SubjectTimer(props) {
   const { subjects, /* subject, setSubject,  */isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, reset, socket } = props;
   const timerDispRef = useRef(null);
   
-  const [subject, setSubject] = useState({id: 'others'});
+  const [subject, setSubject] = useState(null);
   const [options, setOptions] = useState([]);
   const [subjectTimer, setSubjectTimer] = useState({ total: 0, });
   const [clicked, setClicked] = useState(false);
