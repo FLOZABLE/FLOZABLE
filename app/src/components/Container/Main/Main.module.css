@@ -75,7 +75,7 @@
 
 .MainContainer .plan .topic {
   font-size: 17px;
-  color: #8294C4;
+  color: #ffffff;
 }
 
 .MainContainer .box.memo {
@@ -97,4 +97,10 @@
 
 .MainContainer .box.memo p {
   font-family: 'Permanent Marker', cursive;
+}
+
+.MainContainer .divider {
+  color: rgb(110, 117, 150);
+  text-align: center;
+  padding: 5px;
 }
