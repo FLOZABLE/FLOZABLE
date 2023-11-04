@@ -9,6 +9,23 @@ import { plugins } from 'chart.js';
 function Main(props) {
   const {setIsSidebarOpen, isSidebarOpen, isSidebarHovered, userInfo, subjects} = props;
 
+  let subjectActivity = [];
+  function sortActivity(){
+    for (let i = 0; i < subjects.length; i++){
+      let datum = subjects[i].datum_point;
+      for (let j = 0; j < subjects[i].timeline.length; j++){
+        let start = subjects[i].timeline[j][0] + datum;
+        let end = subjects[i].timeline[j][0] + datum;
+
+        subjectActivity.push([start, end, subjects[i].name]);
+      }
+    }
+
+    subjectActivity.sort((a, b) => b[1] - a[1]);
+    //console.log("sa",subjectActivity);
+  }
+  sortActivity();
+
   let target = false;
   function divMoveXY(e) {
     if (target) {
@@ -165,7 +182,7 @@ function Main(props) {
           </div>
           <div className={`${styles.box} box 2`} ref={box[1]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
             <div className={styles.inner}>
-              <p className={styles.name}>Today's Activity</p>
+              <p className={styles.name}>Daily Subject Spread</p>
               <div className={styles.progress}>
                 <PieChart
                   labels={
@@ -245,15 +262,15 @@ function Main(props) {
           </div>
           <div className={`${styles.box} box 4`} ref={box[3]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
             <div className={styles.inner}>
-              <p className={styles.name}>Timeline</p>
+              <p className={styles.name}>Recent Activity</p>
               <ul>
                 {
-                  subjects.map((subject, i) => {
-                    let startTime = subject.name;
+                  subjectActivity.slice(0, Math.min(7,subjectActivity.length)).map((subject, i) => {
+                    let startTime = subject[0];
+                    let endTime = subject[1];
                     return (
                       <li className={styles.plan} key={i}>
-                        <p className={styles.topic}>subject.name<strong> (11:45-12:45)</strong></p>
-                        <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
+                        <p className={styles.topic}>{subject[2]}<strong> ({startTime} - {endTime})</strong></p>
                       </li>
                     );
                   })
