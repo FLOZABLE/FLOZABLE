@@ -5,9 +5,10 @@ import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { colorsList } from '../../../constant';
 import styles from './Main.module.css'
 import { plugins } from 'chart.js';
+import { abort } from 'process';
 
 function Main(props) {
-  const {setIsSidebarOpen, isSidebarOpen, isSidebarHovered, userInfo, subjects} = props;
+  const {setIsSidebarOpen, isSidebarOpen, isSidebarHovered, userInfo, subjects, plans} = props;
 
   let subjectActivity = [];
   function sortActivity(){
@@ -22,9 +23,20 @@ function Main(props) {
     }
 
     subjectActivity.sort((a, b) => b[1] - a[1]);
-    //console.log("sa",subjectActivity);
   }
   sortActivity();
+
+  let planActivity = [];
+  function sortPlans(){
+    for (let i = 0; i < plans.length; i++){
+      let start = plans[i].start;
+      let end = plans[i].end;
+      planActivity.push({start: new Date(start).getTime(), end: new Date(end).getTime(), title: plans[i].title, description: plans[i].description});
+    }
+
+    planActivity.sort((a, b) => b.start - a.start);
+  }
+  sortPlans();
 
   let target = false;
   function divMoveXY(e) {
@@ -52,7 +64,6 @@ function Main(props) {
 
   function mouseDown(e) {
     e.preventDefault();
-    console.log("Subjects: ", subjects);
     target = parentSearch(e.target, 'box');
     if (target) {
       target.style.opacity = "0.8";
@@ -170,7 +181,7 @@ function Main(props) {
                 </p>
 
                 <div className={styles.btnCenter}>
-                  <Link to="dashboard/stats">
+                  <Link to="/dashboard/stats">
                     <button className={styles.toStatsBtn}>
                       View Stats
                     </button>
@@ -182,7 +193,7 @@ function Main(props) {
           </div>
           <div className={`${styles.box} box 2`} ref={box[1]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
             <div className={styles.inner}>
-              <p className={styles.name}>Daily Subject Spread</p>
+              <p className={styles.name}>Subject Usage</p>
               <div className={styles.progress}>
                 <PieChart
                   labels={
@@ -227,7 +238,7 @@ function Main(props) {
                 />
 
                 <div className={styles.btnCenter}>
-                  <Link to="dashboard/stats">
+                  <Link to="/dashboard/stats">
                     <button className={styles.toStatsBtn}>
                       View Stats
                     </button>
@@ -238,24 +249,20 @@ function Main(props) {
           </div>
           <div className={`${styles.box} box 3`} ref={box[2]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
             <div className={styles.inner}>
-              <p className={styles.name}>Plans</p>
-              <ul>
-                <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li>
-                <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li>
-                <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li>
-              </ul>
-              <Link to="dashboard/stats">
+              <p className={styles.name}>Planner</p>
+              {
+                planActivity.map((plan, i) => {
+                  return (
+                    <li className={styles.plan} key={i}>
+                    <p className={styles.topic}>{plan.title}<strong> ({plan.start/1000} - {plan.end/1000})</strong></p>
+                    <p className={styles.explanation}>{plan.description.slice(3,-4)}</p>
+                  </li>
+                  );
+                })
+              }
+              <Link to="/dashboard/planner">
                 <button className={styles.toStatsBtn}>
-                  View Stats
+                  View Plans
                 </button>
               </Link>
             </div>
@@ -266,11 +273,39 @@ function Main(props) {
               <ul>
                 {
                   subjectActivity.slice(0, Math.min(7,subjectActivity.length)).map((subject, i) => {
-                    let startTime = subject[0];
-                    let endTime = subject[1];
+                    const startTime = subject[0];
+                    const endTime = subject[1];
+
+                    const date1 = new Date(startTime * 1000);
+                    const hours1 = date1.getHours();
+                    const minutes1 = "0" + date1.getMinutes();
+                    const startString = (hours1 > 12 ? hours1 - 12 : hours1) + ':' + minutes1.substring(minutes1.length - 2) + (hours1 >= 12 ? "PM" : "AM");
+
+                    const date2 = new Date(endTime * 1000);
+                    const hours2 = date2.getHours();
+                    const minutes2 = "0" + date2.getMinutes();
+                    const endString = (hours2 > 12 ? hours2 - 12 : hours2) + ':' + minutes2.substring(minutes2.length - 2) + (hours2 >= 12 ? "PM" : "AM");
+
+                    const prevTime = i > 0 ? new Date(subjectActivity[i - 1][0] * 1000) : new Date();
+                    const prevDate = (prevTime.getMonth() + 1) + "/" + prevTime.getDate() + "/" + prevTime.getFullYear();
+                    const startDate = (date1.getMonth() + 1)+ "/" + date1.getDate() + "/" + date1.getFullYear();
+
+                    if (prevDate != startDate){
+                      return (
+                        <div key = {i}>
+                          <div className={styles.divider}>
+                            <p>{startDate}</p>
+                          </div>
+                          <li className={styles.plan} key={i}>
+                            <p className={styles.topic}>{subject[2]}<strong> ({startString} - {endString})</strong></p>
+                          </li>
+                        </div>
+                      );
+                    }
+
                     return (
                       <li className={styles.plan} key={i}>
-                        <p className={styles.topic}>{subject[2]}<strong> ({startTime} - {endTime})</strong></p>
+                        <p className={styles.topic}>{subject[2]}<strong> ({startString} - {endString})</strong></p>
                       </li>
                     );
                   })

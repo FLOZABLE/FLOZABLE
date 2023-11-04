@@ -150,7 +150,7 @@ function App() {
             />
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
             <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
-            <Main subjects={subjects} setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
+            <Main subjects={subjects} plans={plans} setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
             <Footer />
           </div>
         } />
