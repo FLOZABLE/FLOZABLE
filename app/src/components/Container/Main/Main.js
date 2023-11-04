@@ -7,6 +7,8 @@ import styles from './Main.module.css'
 import { plugins } from 'chart.js';
 
 function Main(props) {
+  const {setIsSidebarOpen, isSidebarOpen, isSidebarHovered, userInfo, subjects} = props;
+
   let target = false;
   function divMoveXY(e) {
     if (target) {
@@ -33,6 +35,7 @@ function Main(props) {
 
   function mouseDown(e) {
     e.preventDefault();
+    console.log("Subjects: ", subjects);
     target = parentSearch(e.target, 'box');
     if (target) {
       target.style.opacity = "0.8";
@@ -76,7 +79,7 @@ function Main(props) {
     } else {
       mainViewerSetting = {
         1: {
-          name: 'timeline',
+          name: 'test',
           x: '100px',
           y: '100px',
         },
@@ -166,7 +169,7 @@ function Main(props) {
               <div className={styles.progress}>
                 <PieChart
                   labels={
-                    ["Math", "English", "History", "Sci", "Phy"]
+                    subjects.map((subject) => subject.name)
                   }
 
                   datasets={
@@ -175,7 +178,7 @@ function Main(props) {
                         label: "My First dataset",
                         backgroundColor: colorsList,
                         borderColor: colorsList,
-                        data: [2, 20, 30, 45],
+                        data: subjects.map((subject) => subject.daily.total[subject.daily.total.length - 1]),
                       },
                     ]
                   }
@@ -244,7 +247,19 @@ function Main(props) {
             <div className={styles.inner}>
               <p className={styles.name}>Timeline</p>
               <ul>
-                <li className={styles.plan}>
+                {
+                  subjects.map((subject, i) => {
+                    let startTime = subject.name;
+                    return (
+                      <li className={styles.plan} key={i}>
+                        <p className={styles.topic}>subject.name<strong> (11:45-12:45)</strong></p>
+                        <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
+                      </li>
+                    );
+                  })
+                }
+
+                {/* <li className={styles.plan}>
                   <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
                   <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
                 </li>
@@ -255,19 +270,17 @@ function Main(props) {
                 <li className={styles.plan}>
                   <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
                   <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li>
-                <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
+
           <div className={`${styles.box} box 5 ${styles.memo}`} ref={box[4]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
             <div className={styles.inner}>
               <p>test</p>
             </div>
           </div>
+
         </div>
       </div>
     </div>
