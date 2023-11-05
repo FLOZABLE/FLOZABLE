@@ -17,6 +17,7 @@ import ChatModal from './components/UI/ChatModal/ChatModal';
 import { sortSubjects } from './components/Container/Stats/StatTools';
 import { socket } from "./socket";
 import { setGroupMembers, getMyGroups, getLikedGroups } from './components/Container/Groups/GroupsTool';
+import { timelineSort } from './utils/timelineSorting';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -73,8 +74,8 @@ function App() {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        console.log('original subjects',data);
-        setSubjects(sortSubjects(data.subjects));
+        timelineSort(data.subjects);
+        //setSubjects(sortSubjects(data.subjects));
       }
     })
     .catch((error) => console.error(error));

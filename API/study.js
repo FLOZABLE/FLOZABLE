@@ -177,18 +177,18 @@ Router.post('/bring-subjects', async (req, res) => {
     const connection = pool.promise();
     try {
       const userId = req.session.user_id;
-      const [subjectsInfo] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline FROM subjects where user_id = ?`, [userId]);
+      const [subjectsInfo] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline, timeline_sum FROM subjects where user_id = ?`, [userId]);
+      console.log('my subjects', subjectsInfo)
       for (const subject of subjectsInfo) {
         const redisSubject = { ...subject };
         delete redisSubject.timeline;
         await redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
-        let prevTimeline = subject.timeline === "" ? [] :  subject.timeline.split(',');
-        console.log('prev',prevTimeline)
+        //this code adds [at the start and ] at the end
+        let prevTimeline = subject.timeline === "" ? [] :  JSON.parse(subject.timeline.replace(/^/,"[").replace(/$/,"]"));
         const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
         subject.timeline = prevTimeline.concat(todayTimeline);
       }
       redisClient.hSet(`user:${userId}`, `ActiveSubject`, '0');
-      console.log('subject', subjectsInfo[0].timeline)
       res.send({ success: true, subjects: subjectsInfo });
     } catch (err) {
       console.log(err);

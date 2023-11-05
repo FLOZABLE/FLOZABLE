@@ -183,11 +183,15 @@ cron.schedule('0 * * * *', () => {
 });
 
 //test
-const testTools = require('./test/generate');
-//testTools.testUserGeneration(100);
-//testTools.testGroupGeneration(40);
-//testTools.deleteGroups();
-//testTools.deleteTestUsers();
+
+const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubjects, deleteSubjectTimeline, generateOtherSubject } = require('./test/generate');
+//generateUsers(100);
+//generateGroups(40);
+//deleteTestUsers();
+//deleteGroups();
+//deleteSubjects();
+//deleteSubjectTimeline();
+//generateOtherSubject(process.env.TESTER_ID);
 //flushRedis();
 //groupsLoader();
 require('./videoServer');

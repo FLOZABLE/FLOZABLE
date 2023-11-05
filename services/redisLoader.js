@@ -67,24 +67,27 @@ async function subjectsCache(userId) {
         };
         return filteredSubjects;
       }, []);
-      if (!subjects) {
-        //no cache
-        try {
-          const connection = pool.promise();
-          [subjects] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
-          subjects.map(async(subject) => {
-            /* 
-            {\"id\":\"gQNfNmQnGR\",\"name\":\"gd\",\"icon\":\"Article\",\"color\":\"#D2DAFF\",\"datum_point\":1698958888}
-            */
-           const redisSubject = {...subject};
-           delete redisSubject.timeline;
-          redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
-          })
-        } catch (err) {
-          console.log(err);
-        };
+    };
+    console.log('cacje', subjects)
+    if (!subjects) {
+      //no cache
+      try {
+        const connection = pool.promise();
+        [subjects] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
+        subjects.map(async(subject) => {
+          /* 
+          {\"id\":\"gQNfNmQnGR\",\"name\":\"gd\",\"icon\":\"Article\",\"color\":\"#D2DAFF\",\"datum_point\":1698958888}
+          */
+         const redisSubject = {...subject};
+         delete redisSubject.timeline;
+         console.log('redis subject', redisSubject)
+        redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
+        })
+      } catch (err) {
+        console.log(err);
       };
     };
+    
     return subjects;
   } catch (err) {
     console.log(err);
@@ -165,6 +168,20 @@ async function activeSubjectCache(userId) {
     return activeSubject;
   } catch (err) {
     console.log(err);
+  }
+};
+
+async function timerCache(userId) {
+  try {
+    let timer = await redisClient.hGet(`user:${userId}`, 'timerInfo');
+    const now = Math.round(new Date().getTime() / 1000);
+    if (!timer) {
+      timer = { datum: now, study: 1 };
+    };
+
+    return timer;
+  } catch (err) {
+
   }
 }
 
