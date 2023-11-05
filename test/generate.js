@@ -1,6 +1,8 @@
 const pool = require('../model/pool');
 const { DateTime } = require('luxon');
 const crypto = require('crypto');
+const redisClient = require('../model/redis');
+const { flushRedis } = require('../services/redisLoader');
 
 function hashing(password) {
   let salt = crypto.randomBytes(32).toString('hex');
@@ -77,7 +79,7 @@ async function generateUsers(length) {
     let userDateTime = DateTime.now().setZone(timeZone);
     //randomize date
     const subtractedDate = Math.floor(Math.random() * 100)
-    userDateTime = userDateTime.minus({days: subtractedDate});
+    userDateTime = userDateTime.minus({ days: subtractedDate });
     const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     const unixTimestamp = Math.floor(twelveAmDateTime.toMillis() / 1000);
     const userInfo = {
@@ -98,7 +100,7 @@ async function generateUsers(length) {
       activity_setting: '[]',
       notification_setting: 'default_setting',
       subjects: '[]',
-      study: JSON.stringify({study:false,point:unixTimestamp,total:0})
+      study: JSON.stringify({ study: false, point: unixTimestamp, total: 0 })
     }
     connection.query('INSERT INTO users SET?', userInfo);
   };
@@ -155,8 +157,8 @@ async function generateGroups(length) {
     '#FD8A8A',
     '#B9F3FC'
   ]
-  
-  
+
+
   for (let i = 0; i < length; i++) {
     const groupId = generateGroupId();
     const template = templates[Math.floor(Math.random() * 15)]
@@ -168,7 +170,7 @@ async function generateGroups(length) {
     let members = leader;
     let likes = leader;
     let membersIndex = [leaderIndex];
-    for(let j = 0; j < membersLength; j ++) {
+    for (let j = 0; j < membersLength; j++) {
       const memberIndex = Math.floor(Math.random() * 100);
       if (membersIndex.includes(memberIndex)) {
         break;
@@ -210,7 +212,7 @@ async function generateGroups(length) {
       font: Math.floor(Math.random() * 13)
     }
     connection.query(`INSERT INTO \`groups\` SET ?`, groupInfo);
-    
+
     const roomInfo1 = {
       id: generateRandomId(10),
       group_id: groupInfo.group_id,
@@ -255,9 +257,56 @@ async function deleteGroups() {
   };
 };
 
+async function deleteSubjects() {
+  try {
+    const connection = pool.promise();
+    connection.query(`DELETE FROM subjects`);
+    connection.query(`UPDATE users SET subjects = ''`);
+    flushRedis();
+  } catch (err) {
+    console.log(err);
+  };
+};
+
+async function deleteSubjectTimeline() {
+  try {
+    const connection = pool.promise();
+    connection.query(`UPDATE subjects SET timeline = ''`);
+    flushRedis();
+  } catch (err) {
+    console.log(err);
+  };
+};
+
+async function generateOtherSubject(userId) {
+  try {
+    const connection = pool.promise();
+    const subjectId = generateRandomId(10);
+    const datum_point = Math.floor(new Date().getTime() / 1000);
+    const subject = {
+      id: subjectId,
+      name: 'others',
+      user_id: userId,
+      icon: 'others',
+      color: '#000000',
+      datum_point
+    };
+    await connection.query(`INSERT INTO subjects SET ?`, subject);
+    delete subject.timeline;
+    delete subject.user_id;
+    subject.timeline_sum = 0;
+    redisClient.hSet(`user:${userId}`, `subject:${subjectId}`, JSON.stringify(subject));
+  } catch (err) {
+    console.log(err);
+  };
+};
+
 module.exports = {
-  testUserGeneration: generateUsers,
-  testGroupGeneration: generateGroups,
-  deleteTestUsers: deleteTestUsers,
-  deleteGroups: deleteGroups
+  generateUsers,
+  generateGroups,
+  deleteTestUsers,
+  deleteGroups,
+  deleteSubjects,
+  deleteSubjectTimeline,
+  generateOtherSubject
 }

@@ -55,7 +55,6 @@ connection.on('connection', (socket) => {
       }
     };
   };
-  console.log('joinnnnnnn')
   socket.userId = session.user_id;
   const userId = session.user_id;
 
@@ -95,7 +94,7 @@ connection.on('connection', (socket) => {
         const myGroups = userInfo.groups.split(',');
         myGroups.map(group => {
           const socketsInRoom = io.sockets.in(group).sockets;
-          console.log(socketsInRoom);
+          //console.log(socketsInRoom);
         });
       };
     } catch (err) {
@@ -172,18 +171,18 @@ connection.on('connection', (socket) => {
       const subjects = await subjectsCache(userId);
       const groups = await groupCache(userId);
       const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId);
-      console.log('selected sj', subject);
       if (subject) {
         if (groups.length) {
           console.log("socket send", groups)
           io.to(groups).emit('studying', userId, groups);
         }
         const now = Math.floor(new Date().getTime() / 1000);
-        const start = now - subject.datum_point;
-        const push = await redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${start}]`);
+        const timelineSum = subject.timeline_sum;
+        const start = now - subject.datum_point - timelineSum;
+        const push = await redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},0]`);
         redisClient.hSet(`user:${userId}`, `ActiveSubject`, JSON.stringify(subject));
-        const prevTimer = await redisClient.hGet(`user:${userId}`, 'timerInfo');
-        if (prevTimer) {
+        //const timer = await redisClient.lRange(`user:${userId}:timer`, 0, -1);
+        /* if (prevTimer) {
           const newTimer = JSON.parse(prevTimer);
           const datum = newTimer.datum;
           //remove old timeline
@@ -192,15 +191,6 @@ connection.on('connection', (socket) => {
           const missingTotal = Math.floor((lastVal ? lastVal[1] : 0) / (MAXSTORELEN * 2));
           const newDatum = datum + missingTotal * MAXSTORELEN;
           const start = now - newDatum;
-          /* while (newTimer.timeline[newTimer.timeline.length - 1] >= MAXSTORELEN) {
-            newTimer.timeline = newTimer.timeline.map(([start, stop]) => {
-              const newStart = start - MAXSTORELEN;
-              const newStop = stop - MAXSTORELEN;
-              if (newStart >= 0 && newStop >= 0) {
-                return [newStart, newStop];
-              };
-            });
-          }; */
           if (missingTotal) {
             newTimer.timeline.map(([start, stop]) => {
               const newStart = start - missingTotal * MAXSTORELEN;
@@ -218,7 +208,7 @@ connection.on('connection', (socket) => {
         } else {
           const newTimer = { datum: now, timeline: [[0, 0]], study: 1 };
           redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
-        };
+        }; */
       }
     } catch (err) {
       console.log(err);
@@ -229,17 +219,22 @@ connection.on('connection', (socket) => {
   socket.on("stop", async (subjectId) => {
     const groups = await groupCache(userId);
     const activeSubject = await activeSubjectCache(userId);
-    if (activeSubject && activeSubject.id === subjectId) {
+    const subjects = await subjectsCache(userId);
+    const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId);
+    if (activeSubject && activeSubject.id === subjectId && subject) {
       if (groups.length) {
         io.to(groups).emit('stopStudying', userId, groups);
       };
       const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
       const now = Math.floor(new Date().getTime() / 1000);
       const start = activity[0];
-      const stop = now - activeSubject.datum_point;
-      redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${stop}]`);
+      const stop = now - activeSubject.datum_point - subject.timeline_sum;
+      redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${stop- start}]`);
+      redisClient.rPush(`user:${userId}:timer`, `[${start},${stop- start}]`);
+      subject.timeline_sum += stop;
+      redisClient.hSet(`user:${userId}`, `subject:${subjectId}`, JSON.stringify(subject))
       redisClient.hSet(`user:${userId}`, `ActiveSubject`, 0);
-      const timerInfo = await redisClient.hGet(`user:${userId}`, 'timerInfo');
+      /* const timerInfo = await redisClient.hGet(`user:${userId}`, 'timerInfo');
       if (timerInfo) {
         const newTimer = JSON.parse(timerInfo);
         const lastActivity = newTimer.timeline.pop();
@@ -247,7 +242,7 @@ connection.on('connection', (socket) => {
         newTimer.timeline.push(lastActivity);
         newTimer.study = 0;
         redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer)); 
-      };
+      }; */
     };
   });
 
