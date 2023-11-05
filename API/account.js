@@ -16,7 +16,6 @@ Router.post('/accountinfo', async (req, res) => {
     const connection = pool.promise();
     const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups FROM users WHERE user_id = ?", [userId]);
     await redisClient.hSet(`user:${userId}`, `groups`, userInfo.groups);
-    console.log(userInfo)
     res.send({ success: true, userInfo: userInfo });
   }))
 });

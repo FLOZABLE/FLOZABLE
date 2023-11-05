@@ -29,9 +29,11 @@ async function timerUpdate() {
         console.log("study interupt")
         activeSubject = JSON.parse(await redisClient.hGet(`user:${userId}`, 'ActiveSubject'));
         const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
-        const start = activity[0];
-        const stop = now - activeSubject.datum_point;
-        await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${stop}]`);
+        if (activity) {
+          const start = activity[0];
+          const stop = now - activeSubject.datum_point;
+          await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${stop}]`);
+        }
       };
       if (userInfo.subjects) {
         userInfo.subjects = userInfo.subjects.split(`,`);
@@ -74,7 +76,7 @@ async function timerUpdate() {
   };
 };
 
-timerUpdate();
+//timerUpdate();
 
 cron.schedule('0 * * * *', () => {
   timerUpdate();
