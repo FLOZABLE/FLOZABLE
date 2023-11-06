@@ -13,14 +13,20 @@ function MemberTimer({ run, total, me, myTimerTotal }) {
     setHr(Math.floor(total / (60 * 60)));
   }, []);
 
+
   useEffect(() => {
-    worker.addEventListener('message', (e) => {
+    const onMessage = (e) => {
       console.log(e.data.command === 'update-timer')
       if (run && e.data.command === 'update-timer') {
-        setSec(sec + 1);
+        setSec(prevSec => prevSec + 1);
       };
-    });
-  }, []);
+    };
+    worker.addEventListener('message', onMessage);
+
+    return () => {
+      worker.removeEventListener('message', onMessage);
+    }
+  }, [run]);
 
   useEffect(() => {
     if (myTimerTotal) {

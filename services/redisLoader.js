@@ -1,6 +1,6 @@
 const redisClient = require("../model/redis");
 const pool = require('../model/pool');
-const {writeLog} = require('../Logger');
+const { writeLog } = require('../Logger');
 
 async function flushRedis() {
   await redisClient.flushDb();
@@ -54,13 +54,12 @@ async function groupCache(userId) {
   };
 };
 
-async function subjectsCache(userId, opt = ['id', 'name', 'icon', 'color', 'datum_point', 'timeline_sum']) {
+async function subjectsCache(userId, cache = true, opt = ['id', 'name', 'icon', 'color', 'datum_point', 'timeline_sum']) {
   try {
     const userInfo = await redisClient.hGetAll(`user:${userId}`);
     let subjects;
     if (userInfo) {
-
-      subjects = Object.keys(userInfo).reduce( (filteredSubjects, info, i) => {
+      subjects = Object.keys(userInfo).reduce((filteredSubjects, info, i) => {
         if (info.includes('subject:')) {
           const subjectInfo = JSON.parse(userInfo[info]);
           filteredSubjects.push(subjectInfo);
@@ -73,19 +72,21 @@ async function subjectsCache(userId, opt = ['id', 'name', 'icon', 'color', 'datu
       try {
         const connection = pool.promise();
         [subjects] = await connection.query(`SELECT ${opt.join(', ')} FROM subjects where user_id = ?`, [userId]);
-        subjects.map(async(subject) => {
+        subjects.map(async (subject) => {
           /* 
           {\"id\":\"gQNfNmQnGR\",\"name\":\"gd\",\"icon\":\"Article\",\"color\":\"#D2DAFF\",\"datum_point\":1698958888}
           */
-         const redisSubject = {...subject};
-         delete redisSubject.timeline;
-        redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
+          const redisSubject = { ...subject };
+          delete redisSubject.timeline;
+          if (cache) {
+            redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
+          };
         })
       } catch (err) {
         console.log(err);
       };
     };
-    
+
     return subjects;
   } catch (err) {
     console.log(err);
@@ -144,7 +145,7 @@ async function groupRoomCache(userId) {
     }));
     io.to(socket.id).emit('joinMyGroups', groupRooms);
   } catch (err) {
-    
+
   };
 };
 
@@ -162,19 +163,26 @@ async function groupRoomCache(userId) {
 async function activeSubjectCache(userId) {
   try {
     let activeSubject = await redisClient.hGet(`user:${userId}`, `ActiveSubject`);
-    activeSubject = activeSubject ? JSON.parse(activeSubject) : 0;
+    activeSubject = activeSubject ? { id: activeSubject.split(':')[0], time: activeSubject.split(':')[1] } : { id: 0, time: 0 };
     return activeSubject;
   } catch (err) {
     console.log(err);
   }
 };
 
+/**return timer information of the user.
+ * return type is object
+ * dp(datumpoint), ts(timeline sum)
+ */
 async function timerCache(userId) {
   try {
     let timer = await redisClient.hGet(`user:${userId}`, 'timerInfo');
-    const now = Math.round(new Date().getTime() / 1000);
-    if (!timer) {
-      timer = { datum: now, study: 1 };
+    
+    if (timer) {
+      timer = JSON.parse(timer);
+    } else {
+      const now = Math.round(new Date().getTime() / 1000);
+      timer = {dp: now, ts: 0};
     };
 
     return timer;
@@ -191,5 +199,6 @@ module.exports = {
   groupCache,
   groupRoomCache,
   subjectsCache,
-  activeSubjectCache
+  activeSubjectCache,
+  timerCache
 }
