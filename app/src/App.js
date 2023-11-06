@@ -74,7 +74,7 @@ function App() {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        timelineSort(data.subjects);
+        setSubjects(timelineSort(data.subjects))
         //setSubjects(sortSubjects(data.subjects));
       }
     })

@@ -173,12 +173,12 @@ connection.on('connection', (socket) => {
       const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId);
       if (subject) {
         if (groups.length) {
-          console.log("socket send", groups)
           io.to(groups).emit('studying', userId, groups);
         }
         const now = Math.floor(new Date().getTime() / 1000);
         const timelineSum = subject.timeline_sum;
         const start = now - subject.datum_point - timelineSum;
+        console.log('timelinesum', timelineSum, start)
         const push = await redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},0]`);
         redisClient.hSet(`user:${userId}`, `ActiveSubject`, JSON.stringify(subject));
         //const timer = await redisClient.lRange(`user:${userId}:timer`, 0, -1);
@@ -229,9 +229,10 @@ connection.on('connection', (socket) => {
       const now = Math.floor(new Date().getTime() / 1000);
       const start = activity[0];
       const stop = now - activeSubject.datum_point - subject.timeline_sum;
-      redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${stop- start}]`);
-      redisClient.rPush(`user:${userId}:timer`, `[${start},${stop- start}]`);
+      redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${stop - start}]`);
+      redisClient.rPush(`user:${userId}:timer`, `[${start},${stop - start}]`);
       subject.timeline_sum += stop;
+      console.log('subject', subject)
       redisClient.hSet(`user:${userId}`, `subject:${subjectId}`, JSON.stringify(subject))
       redisClient.hSet(`user:${userId}`, `ActiveSubject`, 0);
       /* const timerInfo = await redisClient.hGet(`user:${userId}`, 'timerInfo');
@@ -246,29 +247,29 @@ connection.on('connection', (socket) => {
     };
   });
 
-  socket.on('offer', async(sdp, remoteSocketId) => {
+  socket.on('offer', async (sdp, remoteSocketId) => {
     console.log('offer', remoteSocketId);
     io.to(remoteSocketId).emit('offer', sdp, socket.id, userId);
   })
 
-  socket.on('answer', async(sdp, remoteSocketId, remoteUserId) => {
+  socket.on('answer', async (sdp, remoteSocketId, remoteUserId) => {
   });
 
-  socket.on('candidate', async(sdp, remoteSocketId, remoteUserId) => {
+  socket.on('candidate', async (sdp, remoteSocketId, remoteUserId) => {
     console.log('candidate', remoteSocketId)
     io.to(remoteSocketId).emit('offer', sdp, socket.id, userId);
   });
 
-    //peer
+  //peer
 
-  socket.on('joinPeerGroups', async() => {
-    const groups = await groupCache(userId); 
+  socket.on('joinPeerGroups', async () => {
+    const groups = await groupCache(userId);
     groups.map(group => {
       const groupId = `peer:${group}`;
       socket.join(groupId);
     });
-    console.log('join peergroups:',groups)
-    io.to(groups.map(group => {return `peer:${group}`})).emit('onlinePeer', socket.id, userId);
+    console.log('join peergroups:', groups)
+    io.to(groups.map(group => { return `peer:${group}` })).emit('onlinePeer', socket.id, userId);
   })
 });
 

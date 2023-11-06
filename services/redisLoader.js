@@ -68,7 +68,6 @@ async function subjectsCache(userId) {
         return filteredSubjects;
       }, []);
     };
-    console.log('cacje', subjects)
     if (!subjects) {
       //no cache
       try {
@@ -80,7 +79,6 @@ async function subjectsCache(userId) {
           */
          const redisSubject = {...subject};
          delete redisSubject.timeline;
-         console.log('redis subject', redisSubject)
         redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
         })
       } catch (err) {
