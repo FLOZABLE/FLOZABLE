@@ -7,7 +7,7 @@ import worker from "./TimerWorker";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function SubjectTimer(props) {
-  const { subjects, /* subject, setSubject,  */isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, reset, socket } = props;
+  const { subjects, setSubjects, /* subject, setSubject,  */isStudy, setIsStudy, isAddSubjectModal, setIsAddSubjectModal, setMyTimerTotal, reset, socket } = props;
   const timerDispRef = useRef(null);
   
   const [subject, setSubject] = useState(null);
@@ -16,7 +16,6 @@ function SubjectTimer(props) {
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
-     console.log('subjects', subjects)
     if (subjects.length) {
       console.log('subject selected', subjects[0])
       setSubject({...subjects[0]});
@@ -25,6 +24,7 @@ function SubjectTimer(props) {
         setSubjectTimer({total: timeValue})
       };
     }
+    console.log(subject);
     const subjectOptions = subjects.map((option, i) => {
       let timeValue = 0;
       if (option.daily && option.daily.total) {
@@ -58,7 +58,8 @@ function SubjectTimer(props) {
 
   const toggleTimer = () => {
     if (!isStudy) {
-      console.log("start")
+      console.log("start");
+      console.log(subjectTimer, subject);
       worker.postMessage({ command: 'startSubjectTimer' });
       socket.emit("start", subject.id);
       /* fetch(`${serverOrigin}/api/study/start`, {
@@ -108,6 +109,8 @@ function SubjectTimer(props) {
         // 
         setSubjectTimer((prevTimer) => ({ total: prevTimer.total + 1 }));
         setMyTimerTotal((prevTimer) => (prevTimer + 1));
+
+        console.log(114, setSubjects, setSubjectTimer);
       }
     };
 

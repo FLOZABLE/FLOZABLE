@@ -226,18 +226,22 @@ function Study(props) {
         
       </Draggable> */}
       <StudyModalContainer
+        startPos = {{x: '5vw', y: '5vh'}}
         isDisp={isTimerModal}
-        element={<SubjectTimer socket={socket} subjects={subjects} subject={subject} setSubject={setSubject} isStudy={isStudy} setIsStudy={setIsStudy} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} />}
+        element={<SubjectTimer socket={socket} subjects={subjects} setSubjects={setSubjects} subject={subject} setSubject={setSubject} isStudy={isStudy} setIsStudy={setIsStudy} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} />}
       />
       <StudyModalContainer
+        startPos = {{x: '5vw', y: '12vh'}}
         isDisp={isPlannerModal}
         element={<PlanTimeline plans={events} viewDate={new Date(new Date().setHours(0, 0, 0, 0))} viewMode={"timeGridDay"} subjects={subjects} setPlans={setEvents} mode={"study"} setIsAddPlanModal={setIsAddPlanModal} />}
       />
       <StudyModalContainer
+        startPos = {{x: '50vw', y: '19vh'}}
         isDisp={isTemplateModal}
         element={<ThemeSelector link={link} handleLinkInput={handleLinkInput} submit={submit} setVideoId={setVideoId} />}
       />
       <StudyModalContainer
+        startPos = {{x: '5vw', y: '38vh'}}
         isDisp={isVolumeModal}
         element={<VolumeControl setVolume={setVolume} volume={volume} />}
       />
