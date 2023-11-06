@@ -54,7 +54,7 @@ async function groupCache(userId) {
   };
 };
 
-async function subjectsCache(userId) {
+async function subjectsCache(userId, opt = ['id', 'name', 'icon', 'color', 'datum_point', 'timeline_sum']) {
   try {
     const userInfo = await redisClient.hGetAll(`user:${userId}`);
     let subjects;
@@ -72,7 +72,7 @@ async function subjectsCache(userId) {
       //no cache
       try {
         const connection = pool.promise();
-        [subjects] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
+        [subjects] = await connection.query(`SELECT ${opt.join(', ')} FROM subjects where user_id = ?`, [userId]);
         subjects.map(async(subject) => {
           /* 
           {\"id\":\"gQNfNmQnGR\",\"name\":\"gd\",\"icon\":\"Article\",\"color\":\"#D2DAFF\",\"datum_point\":1698958888}

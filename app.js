@@ -107,8 +107,6 @@ module.exports = { server, sessionMiddleWare };
 const notificationService = require('./services/notification');
 notificationService.notificationService();
 
-const timerUpdateService = require('./services/timerUpdate');
-timerUpdateService.timerUpdate();
 
 //Router
 const mainRouter = require("./Router/main");
@@ -196,6 +194,8 @@ const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubj
 //groupsLoader();
 require('./videoServer');
 require('./Logger');
+require('./services/timerUpdate');
+
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);
 });
