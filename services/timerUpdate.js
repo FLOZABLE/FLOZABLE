@@ -6,6 +6,7 @@ const crypto = require("crypto");
 const pool = require("../model/pool");
 const { io, userIdToSocketIdMap } = require("../socket");
 const cron = require("node-cron");
+const { activeSubjectCache } = require("./redisLoader");
 
 async function timerUpdate() {
   const now = DateTime.utc();
@@ -19,32 +20,35 @@ async function timerUpdate() {
   });
   const connection = pool.promise();
   try {
-    const [usersInfo] = await connection.query(`SELECT subjects, name, user_id, daily, weekly, monthly FROM users where timezone IN (?)`, [midnightTimezones]);
-    usersInfo.map(async (userInfo) => {
-      const userId = userInfo.user_id;
-      const studyInfo = await redisClient.hGet(`user:${userId}`, `timerInfo`);
+    const [usersInfo] = await connection.query(`SELECT subjects, name, user_id, timezone FROM users where timezone IN (?)`, [midnightTimezones]);
+    usersInfo.map(async ({subjects, user_id, timeline_sum, }) => {
+      const userId = user_id;
       const now = Math.floor(new Date().getTime() / 1000);
-      let activeSubject = -1;
-      if (studyInfo && JSON.parse(studyInfo).study) {
+      const activeSubject = activeSubjectCache(userId);
+      if (activeSubject) {
         console.log("study interupt")
-        activeSubject = JSON.parse(await redisClient.hGet(`user:${userId}`, 'ActiveSubject'));
         const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
+        //const subjectInfo = await redisClient.hG
         if (activity) {
           const start = activity[0];
-          const stop = now - activeSubject.datum_point;
-          await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${stop}]`);
+          const stop = now - activeSubject.datum_point - activeSubject.timeline_sum;
+          redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${start - stop}]`);
+          redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
         }
       };
-      if (userInfo.subjects) {
-        userInfo.subjects = userInfo.subjects.split(`,`);
-        for (const subject of userInfo.subjects) {
-          const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject}`, 0, -1)).map(JSON.parse);
+      if (subjects) {
+        subjects = subjects.split(`,`);
+        subjects.map(async(subject) => {
+          let todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject}`, 0, -1)).map(JSON.parse);
           if (todayTimeline.length) {
+            const timelineSum = timeline_sum;
+            todayTimeline = todayTimeline.map(([start, duration], i) => {
+              return [start + (i + 1) * timelineSum, duration];
+            });
             //const insertTimeline = await connection.query(`UPDATE subjects SET timeline = JSON_ARRAY_APPEND(timeline, '$', ?) WHERE id = ?`, [JSON.stringify(todayTimeline), subject])
             //this changes from [[39102,39104],[39105,39109],[39109,39112]] to [39102,39104],[39105,39109],[39109,39112]
             const modifiedTimeline = JSON.stringify(todayTimeline).slice(1, -1);
-            console.log(modifiedTimeline, 'mid')
-            const updateTimeline = await connection.query(`
+            connection.query(`
             UPDATE subjects
             SET timeline = CASE
               WHEN timeline = '' THEN ?
@@ -57,12 +61,8 @@ async function timerUpdate() {
               subject
             ]);
           };
-          await redisClient.lTrim(`user:${userId}:subject:${subject}`, 1, 0);
-        }
-      };
-      if (activeSubject !== -1) {
-        const start = now - activeSubject.datum_point;
-        const push = await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${start}]`);
+          redisClient.lTrim(`user:${userId}:subject:${subject}`, 1, 0);
+        })
       };
       const socketId = userIdToSocketIdMap.get(userId);
       if (socketId) {
@@ -76,6 +76,13 @@ async function timerUpdate() {
   };
 };
 
+/** removes old timeline from the redis
+ * because every users need t
+ * 
+ */
+async function removeTimeline() {
+
+}
 //timerUpdate();
 
 cron.schedule('0 * * * *', () => {
