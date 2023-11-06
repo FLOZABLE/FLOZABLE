@@ -193,9 +193,10 @@ Router.post('/bring-groups', async (req, res) => {
       [membersInfo] = await connection.query('SELECT user_id, name, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
       await Promise.all(membersInfo.map(async (member) => {
         let memberTimer = await redisClient.hGet(`user:${member.user_id}`, 'timerInfo');
-        if (!memberTimer) {
+        /* if (!memberTimer) {
           memberTimer = `{"datum":${now},"timeline":[[0,0]],"study":0}`
-        }
+        } */
+        memberTimer = `{"datum":${now},"timeline":[[0,0]],"study":0}`
         member.study = memberTimer;
       }));
 
