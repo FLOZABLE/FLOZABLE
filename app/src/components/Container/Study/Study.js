@@ -67,11 +67,11 @@ function Study(props) {
     setLink(e.target.value);
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (addSubjectResponse && addSubjectResponse.success) {
-      setSubjects((prevSubjects) => sortSubjects([...prevSubjects]));
+      //setSubjects((prevSubjects) => sortSubjects([...prevSubjects]));
     }
-  }, [addSubjectResponse]);
+  }, [addSubjectResponse]); */
 
   useEffect(() => {
     if (subjects.daily && subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]) {

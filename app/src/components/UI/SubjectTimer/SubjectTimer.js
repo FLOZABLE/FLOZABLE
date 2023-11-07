@@ -17,14 +17,13 @@ function SubjectTimer(props) {
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
-    let tempTimeValues = [];
-    console.log(21, subjects.length);
-    subjects.map((subject) => {
-      console.log(subject);
-      let totalTime = subject.daily.total[subject.daily.total.length - 1];
-      let subjectId = subject.id;
-      setTimeValues([...timeValues, {id: subjectId, total: totalTime}]);
-    });
+    setTimeValues(
+      subjects.map((subject) => {
+        let total = subject.daily.total[subject.daily.total.length - 1];
+        let id = subject.id;
+        return {id, total};
+      })
+    );
   }, [subjects]);
 
   useEffect(() => {
