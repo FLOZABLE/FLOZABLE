@@ -41,15 +41,9 @@ function AddSubjectModal(props) {
         if (data.success) {
           const newSubject = sortNewSubject(subjects, data.info.subjectInfo);
           setIsAddSubjectModal(false);
-          const newSubjects = []
           setSubjects((prevSubjects) => {
-            // Create a copy of the previous state
             const newState = [...prevSubjects];
-          
-            // Add the new subject to the copy
             newState.push(newSubject);
-          
-            // Preserve the properties like "daily," "monthly," and "weekly"
             newState.daily = prevSubjects.daily;
             newState.monthly = prevSubjects.monthly;
             newState.weekly = prevSubjects.weekly;
@@ -62,10 +56,6 @@ function AddSubjectModal(props) {
       .catch((error) => console.error(error));
     };
   }, [isSubmit]);
-
-  useEffect(() => {
-    console.log('subject changed', subjects)
-  }, [subjects])
   
   return (
     <div className={`${styles.AddSubjectModal} ${isAddSubjectModal ? styles.open : ''}`}>
