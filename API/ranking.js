@@ -4,8 +4,9 @@ const pool = require('../model/pool');
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
 const {DateTime} = require('luxon');
+const { subjectsCache } = require("../services/redisLoader");
 
-Router.post("/", async (req, res) => {
+/* Router.post("/", async (req, res) => {
   const connection = pool.promise();
   const users = await connection.query(`SELECT datum_point, daily, weekly, monthly, name, user_id from users`);
 
@@ -125,6 +126,53 @@ Router.post("/", async (req, res) => {
   console.log(result)
   cache.set(cachedDate.getTime(), result);
   pool.releaseConnection(connection);
+})
+ */
+
+Router.get('/daily', async(req, res) => {
+  try {
+    const connection = pool.promise();
+    const [users] = await connection.query(`SELECT datum_point, name, user_id from users`);
+    users.map(async({user_id, datum_point, name}) => {
+      const [subjects] = await connection.query(`SELECT id, name, timeline_sum, datum_point, timeline FROM subjects WHERE user_id = ?`, [user_id]);
+      subjects.map(async(subject) => {
+        console.log(subject);
+      })
+    });
+  } catch (err) {
+    console.log(err);
+  }
+  res.send(200)
+});
+
+Router.get('/weekly', async(req, res) => {
+  try {
+    const connection = pool.promise();
+    const users = await connection.query(`SELECT datum_point, name, user_id from users`);
+    users.map(async({user_id, datum_point, name}) => {
+      const subjects = await connection.query(`SELECT id, name, timeline_sum, datum_point, timeline FROM subjects WHERE user_id = ?`, [user_id]);
+      subjects.map(async(subject) => {
+        console.log(subject);
+      })
+    });
+  } catch (err) {
+    console.log(err);
+  }
+})
+
+Router.get('/monthly', async(req, res) => {
+  try {
+    const connection = pool.promise();
+    const users = await connection.query(`SELECT datum_point, name, user_id from users`);
+    users.map(async({user_id, datum_point, name}) => {
+      const subjects = await connection.query(`SELECT id, name, timeline_sum, datum_point, timeline FROM subjects WHERE user_id = ?`, [user_id]);
+      subjects.map(async(subject) => {
+        console.log(subject);
+      })
+    });
+  } catch (err) {
+    console.log(err);
+  }
 })
 
 module.exports = Router;
