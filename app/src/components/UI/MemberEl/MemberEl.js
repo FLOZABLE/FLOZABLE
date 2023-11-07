@@ -17,7 +17,7 @@ function MemberEl(props) {
   useEffect(() => {
     const studyInfo = memberInfo.study;
     setSec(studyInfo.total);
-    if (studyInfo.study) {
+    if (studyInfo.study == 1) {
       setRun(1);
       setStudyIcon(
         <StudyPerson opt1={'#fff'} width={'40px'} height={'40px'} />
