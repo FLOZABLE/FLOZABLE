@@ -172,6 +172,7 @@ Router.post('/bring-subjects', async (req, res) => {
   account.autoSignin(req, res, (async() => {
     const connection = pool.promise();
     const subjects = await connection.query("SELECT subjects FROM users WHERE user_id = ?", [req.session.user_id]);
+    console.log(subjects);
     pool.releaseConnection(connection);
   
     res.send(subjects[0].subjects);

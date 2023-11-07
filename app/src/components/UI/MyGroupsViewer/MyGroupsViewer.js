@@ -89,11 +89,14 @@ function MyGroupsViewer(props) {
   }, [myGroups]);
 
   const onStudying = (userId, groups) => {
-    console.log(userId, groups)
+    console.log("Someone's studying!");
     setToggleTimer({ id: userId, status: 1 });
+    console.log(groupStudying);
     groups.forEach((group) => {
+      console.log(group);
       setGroupStudying((prevGroupStudying) => {
         const updatedGroupStudying = { ...prevGroupStudying };
+        console.log(prevGroupStudying);
         if (updatedGroupStudying[group] && !updatedGroupStudying[group].members.includes(userId)) {
           updatedGroupStudying[group].members.push(userId);
         };

@@ -11,25 +11,38 @@ function SubjectTimer(props) {
   const timerDispRef = useRef(null);
   
   const [subject, setSubject] = useState(null);
+  const [timeValues, setTimeValues] = useState([]);
   const [options, setOptions] = useState([]);
   const [subjectTimer, setSubjectTimer] = useState({ total: 0, });
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
-    if (subjects.length) {
-      console.log('subject selected', subjects[0])
+    let tempTimeValues = [];
+    console.log(21, subjects.length);
+    subjects.map((subject) => {
+      console.log(subject);
+      let totalTime = subject.daily.total[subject.daily.total.length - 1];
+      let subjectId = subject.id;
+      setTimeValues([...timeValues, {id: subjectId, total: totalTime}]);
+    });
+  }, [subjects]);
+
+  useEffect(() => {
+    if (timeValues.length) {
       setSubject({...subjects[0]});
       if (subjects[0].daily && subjects[0].daily.total) {
         const timeValue = subjects[0].daily.total[subjects[0].daily.total.length - 1];
-        setSubjectTimer({total: timeValue})
+        setSubjectTimer({total: timeValue});
       };
+      setSubjectTimer({total: timeValues[0].total});
     }
-    console.log(subject);
     const subjectOptions = subjects.map((option, i) => {
       let timeValue = 0;
-      if (option.daily && option.daily.total) {
+      /*if (option.daily && option.daily.total) {
         timeValue = option.daily.total[option.daily.total.length - 1];
-      };
+      };*/
+      timeValue = timeValues[i].total;
+
       const sec = timeValue % 60;
       const min = Math.floor(timeValue / 60) % 60;
       const hr = Math.floor(timeValue / 3600);
@@ -54,7 +67,7 @@ function SubjectTimer(props) {
     );
     
     setOptions(subjectOptions);
-  }, [subjects]);
+  }, [timeValues]);
 
   const toggleTimer = () => {
     if (!isStudy) {
@@ -110,7 +123,16 @@ function SubjectTimer(props) {
         setSubjectTimer((prevTimer) => ({ total: prevTimer.total + 1 }));
         setMyTimerTotal((prevTimer) => (prevTimer + 1));
 
-        console.log(114, setSubjects, setSubjectTimer);
+        let timeValuesTemp = [];
+        for (let i = 0; i < timeValues.length; i++){
+          if (timeValues[i].id == subject.id){
+            timeValuesTemp.push({id: timeValues[i].id, total: timeValues[i].total + 1});
+          }
+          else{
+            timeValuesTemp.push({id: timeValues[i].id, total: timeValues[i].total});
+          }
+        }
+        setTimeValues([...timeValuesTemp]);
       }
     };
 
@@ -119,7 +141,7 @@ function SubjectTimer(props) {
     return () => {
       worker.removeEventListener('message', messageHandler);
     };
-  }, []);
+  }, [timeValues, subject]);
 
   return (
     <div className={styles.SubjectTimer}>
