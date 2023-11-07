@@ -6,6 +6,7 @@ import CustomInput from "../CustomInput/CustomInput";
 import ColorPalette from "../ColorPalette/ColorPalette";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import SelectIcon from "../SelectIcon/SelectIcon";
+import { sortNewSubject } from "../../../utils/timelineSorting";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -38,17 +39,33 @@ function AddSubjectModal(props) {
       .then((data) => {
         setAddSubjectResponse(data);
         if (data.success) {
+          const newSubject = sortNewSubject(subjects, data.info.subjectInfo);
           setIsAddSubjectModal(false);
-          setSubjects((prevSubjects) => [
-            ...prevSubjects,
-            data.info.subjectInfo
-          ]);
-          setSubject(data.info.subjectInfo.id);
+          const newSubjects = []
+          setSubjects((prevSubjects) => {
+            // Create a copy of the previous state
+            const newState = [...prevSubjects];
+          
+            // Add the new subject to the copy
+            newState.push(newSubject);
+          
+            // Preserve the properties like "daily," "monthly," and "weekly"
+            newState.daily = prevSubjects.daily;
+            newState.monthly = prevSubjects.monthly;
+            newState.weekly = prevSubjects.weekly;
+          
+            return newState;
+          });
+          setSubject(newSubject);
         }
       })
       .catch((error) => console.error(error));
     };
   }, [isSubmit]);
+
+  useEffect(() => {
+    console.log('subject changed', subjects)
+  }, [subjects])
   
   return (
     <div className={`${styles.AddSubjectModal} ${isAddSubjectModal ? styles.open : ''}`}>
