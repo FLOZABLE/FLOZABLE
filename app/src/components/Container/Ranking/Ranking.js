@@ -6,18 +6,48 @@ import StuckModal from '../../UI/StuckModal/StuckModal';
 import RadioBtn from '../../UI/RadioBtn/RadioBtn';
 import styles from './Ranking.module.css';
 
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
 function Ranking(props) {
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-
+  const [viewDate, setViewDate] = useState(new Date());
+  const [viewer, setViewer] = useState('Daily');
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
   };
 
+  const updateViewer = (data) => {
+    setViewer(data);
+  }
+
+  const updateViewDate = (date) => {
+    setViewDate(date);
+    console.log(date, 'dd')
+  };
+
+  useEffect(() => {
+    if (!['Daily', 'Weekly', 'Monthly'].includes(viewer)) return;
+    fetch(`${serverOrigin}/api/ranking/${viewer}`, { 
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ date: Math.floor(viewDate.getTime() / 1000) })
+     })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        console.log('ranking', data);
+      }
+    })
+    .catch((error) => console.error(error));
+  }, [viewDate, viewer]);
+
   return (
     <div className={styles.RankingContainer}>
       <div className={`${styles.CalendarModal} ${isCalendarOpen ? styles.isOpen : ''}`}>
-        <StatsCalendar onToggleCalendar={toggleCalendar} isCalendarOpen={isCalendarOpen} />
+      <StatsCalendar onToggleCalendar={toggleCalendar} isCalendarOpen={isCalendarOpen} setViewDate={updateViewDate} viewDate={viewDate} />
       </div>
       <StuckModal />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
@@ -27,17 +57,18 @@ function Ranking(props) {
               <button className={styles.title}
                 onClick={toggleCalendar}
               >Today <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} /></button>
-              <RadioBtn items={[{view: 'Day', value: 'timeGridDay'}, {view: 'Week', value: 'timeGridWeek'}, {view: 'Month', value: 'dayGridMonth'}]} />
+              <RadioBtn items={[{view: 'Daily', value: 'Daily'}, {view: 'Weekly', value: 'Weekly'}, {view: 'Monthly', value: 'Monthly'}]} changeEvent={updateViewer} defaultViewer={0} />
             </div>
             <div className={`${styles.container} ${styles.rankingContainer}`}>
               <div className={styles.header}>
-                <p>Day</p>
-                <p>Week</p>
+                <p>Ranking</p>
+                <p>Time</p>
                 <p>Month</p>
               </div>
               <ul>
                 <li>
                   <div className={styles.circle}>
+                    ,
                     <p>1</p>
                   </div>
                   <div className={styles.userInfo}>
@@ -54,7 +85,7 @@ function Ranking(props) {
                     </div>
                   </div>
                 </li>
-                <div className={styles.divider}></div>
+                {/* <div className={styles.divider}></div> */}
                 <li>
                   <div className={styles.circle}>
                     <p>1</p>

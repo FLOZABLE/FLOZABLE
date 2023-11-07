@@ -20,26 +20,6 @@ Router.post('/accountinfo', async (req, res) => {
   }))
 });
 
-Router.post('/update/image', upload.single('image'), async (req, res) => {
-  autoSignin(req, res, (async () => {
-    const userId = req.session.user_id;
-    try {
-      if (!req.file) {
-        return res.send({ success: false, reason: 'No image file found' });
-      }
-      const imageBuffer = req.file.buffer; // Get the image buffer from the request
-      await sharp(imageBuffer)
-        .toFormat('jpeg')
-        .resize({ width: 800, height: 800 })
-        .jpeg({ quality: 40 })
-        .toFile(`../public/profile-images/${userId}.jpeg`);
-      res.send({ success: true });
-    } catch (error) {
-      res.send({ success: false, reason: 'Unsupported File Type' })
-    }
-  }));
-});
-
 Router.post('/signin-authentication', async (req, res, next) => {
   let email = req.body.email;
   let password = req.body.password;
@@ -205,8 +185,30 @@ Router.post('/signup-authentication', async (req, res) => {
 
     res.send({ success: true });
   });
-
-  pool.releaseConnection(connection);
 });
+
+Router.post('/update/image', upload.single('image'), async (req, res) => {
+  autoSignin(req, res, (async () => {
+    const userId = req.session.user_id;
+    try {
+      if (!req.file) {
+        return res.send({ success: false, reason: 'No image file found' });
+      }
+      const imageBuffer = req.file.buffer; // Get the image buffer from the request
+      await sharp(imageBuffer)
+        .toFormat('jpeg')
+        .resize({ width: 800, height: 800 })
+        .jpeg({ quality: 40 })
+        .toFile(`../public/profile-images/${userId}.jpeg`);
+      console.log('gd');
+      res.send({ success: true });
+    } catch (err) {
+      console.log(err)
+      res.send({ success: false, reason: 'Unsupported File Type' })
+    }
+  }));
+});
+
+
 
 module.exports = Router;
