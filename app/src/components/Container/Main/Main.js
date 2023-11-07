@@ -177,7 +177,7 @@ function Main(props) {
               <div className={styles.progress}>
                 <p className={styles.report}>
                   You have 6 meetings to finish in this week.<br />
-                  Your progress activity is exellent
+                  Your progress activity is excellent
                 </p>
 
                 <div className={styles.btnCenter}>
@@ -203,7 +203,7 @@ function Main(props) {
                   datasets={
                     [
                       {
-                        label: "My First dataset",
+                        label: "Seconds",
                         backgroundColor: colorsList,
                         borderColor: colorsList,
                         data: subjects.map((subject) => subject.daily.total[subject.daily.total.length - 1]),
@@ -252,11 +252,35 @@ function Main(props) {
               <p className={styles.name}>Planner</p>
               {
                 planActivity.map((plan, i) => {
+                  const startTime = plan.start;
+                  const endTime = plan.end;
+
+                  const date1 = new Date(startTime);
+                  const hours1 = date1.getHours();
+                  const minutes1 = "0" + date1.getMinutes();
+                  const startString = (hours1 > 12 ? hours1 - 12 : hours1) + ':' + minutes1.substring(minutes1.length - 2) + (hours1 >= 12 ? "PM" : "AM");
+
+                  const date2 = new Date(endTime);
+                  const hours2 = date2.getHours();
+                  const minutes2 = "0" + date2.getMinutes();
+                  const endString = (hours2 > 12 ? hours2 - 12 : hours2) + ':' + minutes2.substring(minutes2.length - 2) + (hours2 >= 12 ? "PM" : "AM");
+
+                  const prevTime = i > 0 ? new Date(planActivity[i - 1].end) : new Date(); //check if event has passed
+                  const timeDiff = prevTime - endTime;
+
+                  if (endTime < Date.now()){
+                    return (
+                      <li className={styles.plan} key={i}>
+                        <p className={styles.topic}>{plan.title}<strong><br></br>(Passed)<br></br>({startString} - {endString})</strong></p>
+                        <p className={styles.explanation}>{plan.description.slice(3,-4)}</p>
+                      </li>
+                    )
+                  }
                   return (
                     <li className={styles.plan} key={i}>
-                    <p className={styles.topic}>{plan.title}<strong> ({plan.start/1000} - {plan.end/1000})</strong></p>
-                    <p className={styles.explanation}>{plan.description.slice(3,-4)}</p>
-                  </li>
+                      <p className={styles.topic}>{plan.title}<br></br><strong> ({startString} - {endString})</strong></p>
+                      <p className={styles.explanation}>{plan.description.slice(3,-4)}</p>
+                    </li>
                   );
                 })
               }
