@@ -10,6 +10,7 @@ function Account(props) {
   const inputRef = useRef(null);
 
   const readURL = useCallback((input) => {
+    console.log('gd', input.files)
     if (input.files && input.files[0]) {
       const reader = new FileReader();
       reader.readAsDataURL(input.files[0]);
@@ -20,18 +21,32 @@ function Account(props) {
         formData.append('image', input.files[0]);
 
         uploadImage(formData);
+        console.log('formdaa', formData)
       };
     }
   }, []);
 
   const uploadImage = useCallback(async (formData) => {
     try {
-      let response = await fetch(`${serverOrigin}/api/account/update/image`, {
+      /* let response = await fetch(`${serverOrigin}/api/account/update/image`, {
         method: 'POST',
         body: formData,
-      });
-
-      response = await response.json();
+      }); */
+      console.log('fetch', formData)
+      fetch(`${serverOrigin}/api/account/update/image`, { 
+        method: 'post',
+        /* headers: {
+          'Content-Type': 'application/json'
+        }, */
+        body: formData,
+       })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log('ranking', data);
+        }
+      })
+      .catch((error) => console.error(error));
     } catch (error) {
       console.error('Error uploading image:', error);
     }
