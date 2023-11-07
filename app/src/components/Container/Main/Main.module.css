@@ -66,6 +66,9 @@
   margin-bottom: 10px;
   color: aliceblue;
   font-size: 15px;
+  text-align: center;
+  width: 10vw;
+  overflow-wrap: break-word;
 }
 
 .MainContainer .plan strong {

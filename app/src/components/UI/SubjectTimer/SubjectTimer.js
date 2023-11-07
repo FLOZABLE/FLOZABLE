@@ -28,12 +28,23 @@ function SubjectTimer(props) {
 
   useEffect(() => {
     if (timeValues.length) {
-      setSubject({...subjects[0]});
-      if (subjects[0].daily && subjects[0].daily.total) {
-        const timeValue = subjects[0].daily.total[subjects[0].daily.total.length - 1];
-        setSubjectTimer({total: timeValue});
-      };
-      setSubjectTimer({total: timeValues[0].total});
+      if (!!!subject) setSubject({...subjects[0]});
+      let subjectIndex = subject ? subject.id : -1; //default to -1 if undefined and check later
+      if (subjectIndex != -1){
+        for (let i = 0; i < subjects.length; i++){
+          if (subjects[i].id == subjectIndex){
+            subjectIndex = i;
+          }
+        }
+        if (subjects[subjectIndex].daily && subjects[subjectIndex].daily.total) {
+          const timeValue = subjects[subjectIndex].daily.total[subjects[subjectIndex].daily.total.length - 1];
+          setSubjectTimer({total: timeValue});
+        };
+        setSubjectTimer({total: timeValues[subjectIndex].total});
+      }
+      else{
+        setSubjectTimer({total: timeValues[0].total});
+      }
     }
     const subjectOptions = subjects.map((option, i) => {
       const selectedOption = timeValues.find(timeVal => timeVal.id === option.id);
