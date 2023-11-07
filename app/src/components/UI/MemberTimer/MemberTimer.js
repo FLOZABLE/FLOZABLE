@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import styles from "./MemberTimer.module.css";
 import worker from "./TimeWorker";
 
-function MemberTimer({ run, total, me, myTimerTotal }) {
+function MemberTimer({ run, total, me }) {
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
@@ -28,12 +28,12 @@ function MemberTimer({ run, total, me, myTimerTotal }) {
   }, [run]);
 
   useEffect(() => {
-    if (myTimerTotal) {
-      setSec(myTimerTotal % 60);
-      setMin(Math.floor(myTimerTotal / 60) % 60);
-      setHr(Math.floor(myTimerTotal / (60 * 60)));
+    if (total) {
+      setSec(total % 60);
+      setMin(Math.floor(total / 60) % 60);
+      setHr(Math.floor(total / (60 * 60)));
     };
-  }, [myTimerTotal]);
+  }, [total]);
 
   useEffect(() => {
     if (sec == 60) {

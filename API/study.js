@@ -188,7 +188,6 @@ Router.post('/bring-subjects', async (req, res) => {
         const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
         subject.timeline = prevTimeline.concat(todayTimeline);
       }
-      redisClient.hSet(`user:${userId}`, `ActiveSubject`, '0');
       res.send({ success: true, subjects: subjectsInfo });
     } catch (err) {
       console.log(err);
