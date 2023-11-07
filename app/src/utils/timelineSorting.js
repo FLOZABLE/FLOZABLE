@@ -172,16 +172,16 @@ function sortNewSubject(subjects, newSubject) {
   console.log('subjects', subjects, newSubject);
   const {daily, weekly, monthly} = subjects;
   newSubject.daily = {
-    grouped: Array(daily.maxLength).fill([]),
-    total: Array(daily.maxLength).fill(0)
+    grouped: Array(daily.maxLength ? daily.maxLength : 1).fill([]),
+    total: Array(daily.maxLength ? daily.maxLength : 1).fill(0)
   };
   newSubject.weekly = {
-    grouped: Array(weekly.maxLength).fill([]),
-    total: Array(weekly.maxLength).fill(0)
+    grouped: Array(weekly.maxLength ? weekly.maxLength : 1).fill([]),
+    total: Array(weekly.maxLength ? weekly.maxLength : 1).fill(0)
   };
   newSubject.monthly = {
-    grouped: Array(monthly.maxLength).fill([]),
-    total: Array(monthly.maxLength).fill(0)
+    grouped: Array(monthly.maxLength ? monthly.maxLength : 1).fill([]),
+    total: Array(monthly.maxLength ? monthly.maxLength : 1).fill(0)
   };
 
   console.log('new subject', newSubject)

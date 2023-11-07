@@ -5,7 +5,7 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const crypto = require("crypto");
 const {isValidJSON, hashing, generateRandomId, autoSignin} = require("../tool");
-const { timerCache } = require("../services/redisLoader");
+const { timerCache, activeSubjectCache } = require("../services/redisLoader");
 
 Router.post('/create-validate', async (req, res) => {
   autoSignin(req, res, (async () => {
@@ -195,6 +195,7 @@ Router.post('/bring-groups', async (req, res) => {
       await Promise.all(membersInfo.map(async (member) => {
         let memberTimer = await redisClient.hGet(`user:${member.user_id}`, 'timerInfo');
         const timerInfo = await timerCache(member.user_id);
+        const activeSubject = await activeSubjectCache(member.user_id);
         const timer = await redisClient.lRange(`user:${member.user_id}:timer`, 0, -1);
         /* if (!memberTimer) {
           memberTimer = `{"datum":${now},"timeline":[[0,0]],"study":0}`
@@ -203,6 +204,7 @@ Router.post('/bring-groups', async (req, res) => {
         member.study = memberTimer;
         member.timer = timer;
         member.timerInfo = timerInfo;
+        member.activeSubject = activeSubject;
       }));
 
     };
