@@ -129,6 +129,7 @@ const groupsAPI = require("./API/groups");
 const planAPI = require("./API/plan");
 const studyAPI = require("./API/study");
 const videoAPI = require("./API/video");
+const rankingAPI = require('./API/ranking');
 
 //test
 const testAPI = require('./test/Api');
@@ -161,6 +162,7 @@ app.use('/api/groups', groupsAPI);
 app.use('/api/plan', planAPI);
 app.use('/api/study', studyAPI);
 app.use('/api/video', videoAPI);
+app.use('/api/ranking', rankingAPI);
 app.use(express.static(path.join(__dirname, 'app/build')));
 
 

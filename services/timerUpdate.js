@@ -21,13 +21,13 @@ async function timerUpdate() {
   const connection = pool.promise();
   try {
     const [usersInfo] = await connection.query(`SELECT name, user_id, timezone FROM users where timezone IN (?)`, [midnightTimezones]);
-    usersInfo.map(async ({ user_id, timeline_sum }) => {
+    usersInfo.map(async ({ user_id }) => {
       const userId = user_id;
       const now = Math.floor(new Date().getTime() / 1000);
-      const subjects = await subjectsCache(userId, false, ['id']);
+      const subjects = await subjectsCache(userId, false, ['id', 'timeline_sum']);
       const activeSubject = await activeSubjectCache(userId);
       //user is studying
-      if (activeSubject.id) {
+      /* if (activeSubject.id) {
         const activeSubjectInfo = subjects.find(subject => {return subject.id === activeSubject.id});
         const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
         if (activity) {
@@ -36,8 +36,8 @@ async function timerUpdate() {
           redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${start - stop}]`);
           redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
         }
-      };
-      subjects.map(async({id}) => {
+      }; */
+      subjects.map(async({id, timeline_sum}) => {
         let todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
         if (todayTimeline.length) {
           const timelineSum = timeline_sum;
@@ -47,6 +47,7 @@ async function timerUpdate() {
           //const insertTimeline = await connection.query(`UPDATE subjects SET timeline = JSON_ARRAY_APPEND(timeline, '$', ?) WHERE id = ?`, [JSON.stringify(todayTimeline), subject])
           //this changes from [[39102,39104],[39105,39109],[39109,39112]] to [39102,39104],[39105,39109],[39109,39112]
           const modifiedTimeline = JSON.stringify(todayTimeline).slice(1, -1);
+          console.log(modifiedTimeline);
           connection.query(`
           UPDATE subjects
           SET timeline = CASE
@@ -81,7 +82,7 @@ async function timerUpdate() {
 async function removeTimeline() {
 
 }
-//timerUpdate();
+timerUpdate();
 
 cron.schedule('0 * * * *', () => {
   timerUpdate();
