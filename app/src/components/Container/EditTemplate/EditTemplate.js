@@ -79,7 +79,7 @@ function EditTemplate(props) {
 
   useEffect(() => {
     if (addSubjectResponse && addSubjectResponse.success) {
-      setSubjects((prevSubjects) => sortSubjects([...prevSubjects]));
+      //setSubjects((prevSubjects) => sortSubjects([...prevSubjects]));
     }
   }, [addSubjectResponse]);
 

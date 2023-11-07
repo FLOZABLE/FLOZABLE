@@ -167,4 +167,25 @@ function timelineSorter({ timeline, datum_point }, option, firstDatumPoint, star
   return [sortedTimeline, totalTime];
 };
 
-export { timelineSort };
+/** sort new subject */
+function sortNewSubject(subjects, newSubject) {
+  console.log('subjects', subjects, newSubject);
+  const {daily, weekly, monthly} = subjects;
+  newSubject.daily = {
+    grouped: Array(daily.maxLength).fill([]),
+    total: Array(daily.maxLength).fill(0)
+  };
+  newSubject.weekly = {
+    grouped: Array(weekly.maxLength).fill([]),
+    total: Array(weekly.maxLength).fill(0)
+  };
+  newSubject.monthly = {
+    grouped: Array(monthly.maxLength).fill([]),
+    total: Array(monthly.maxLength).fill(0)
+  };
+
+  console.log('new subject', newSubject)
+  return newSubject;
+}
+
+export { timelineSort, sortNewSubject };

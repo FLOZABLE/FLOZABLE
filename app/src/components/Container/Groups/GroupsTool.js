@@ -25,6 +25,7 @@ function getMyGroups(userInfo, groups) {
 function setGroupMembers(groups, users) {
   const todayStart = new Date().setHours(0, 0, 0, 0) / 1000;
   const todayEnd = new Date().setHours(23, 59, 59, 0) / 1000;
+  console.log('gd', groups, users)
   const newGroups = [...groups];
   newGroups.map((group) => {
     group.members = group.members.split(',');
