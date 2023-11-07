@@ -19,7 +19,7 @@ function getMyGroups(userInfo, groups) {
   const myGroups = otherGroups.filter(group => myGroupsId.includes(group.group_id));
   const otherGroupsFiltered = otherGroups.filter(group => !myGroupsId.includes(group.group_id));
   return { myGroups: myGroups, otherGroups: otherGroupsFiltered };
-  
+
 };
 
 function setGroupMembers(groups, users) {
@@ -31,22 +31,32 @@ function setGroupMembers(groups, users) {
     group.members = group.members.split(',');
     group.members = group.members.map(member => {
       member = users.find((userInfo) => { return member == userInfo.user_id });
-      if (typeof member.study == "string") {
-        member.study = JSON.parse(member.study);
-        const datum = member.study.datum;
-        member.study.total = 0;
-        member.study.timeline.map(([start, stop]) => {
-          start += datum;
-          stop += datum;
-          if (start > todayStart && stop < todayEnd) {
-            member.study.total += stop - start;
-          } else if (start > todayStart) {
-            member.study.total += todayEnd - start;
-          } else if (stop < todayEnd) {
-            member.study.total += stop - todayStart;
-          };
-        });
-      };
+      const datum = member.timerInfo.dp;
+      let timelineSum = 0;
+      let total = 0;
+      //used find instead of map because it is not possible to get out of the loop when using map
+      member.timer.find(activity => {
+        const [start, duration] = JSON.parse(activity);
+        const unixStart = start + datum + timelineSum;
+        const unixStop = unixStart + duration;
+        //console.log(new Date(unixStart * 1000), new Date(unixStop * 1000))
+        timelineSum += start + duration;
+        if (todayStart <= unixStart && unixStop <= todayEnd) {
+          total += duration;
+        } else if (todayStart <= unixStart) {
+          //case when start time is between 0:00 and 23:59, but stop time is new date
+          //in this case, we will separte the activity into 2 arrays one activity with [start, 23:59], [0:00, stop]
+          //console.log('changed1', new Date(startTime * 1000), new Date(stopTime * 1000), new Date(unixStart * 1000), new Date(unixStop * 1000))
+          total += todayEnd - unixStart;
+          //stop the loop because it is not in the range anymore
+          return true;
+        } /* else if (unixStop <= todayEnd) { //impossible value
+          total += unixStop - todayStart;
+          //stop the loop because it is not in the range anymore
+          return true;
+        }; */
+      });
+      member.timerInfo.total = total;
       return member;
     });
     return group;

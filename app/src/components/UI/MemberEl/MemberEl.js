@@ -15,14 +15,21 @@ function MemberEl(props) {
   );
 
   useEffect(() => {
-    const studyInfo = memberInfo.study;
-    setSec(studyInfo.total);
-    if (studyInfo.study == 1) {
-      setRun(1);
-      setStudyIcon(
-        <StudyPerson opt1={'#fff'} width={'40px'} height={'40px'} />
-      );
-    };
+    const {timerInfo, activeSubject} = memberInfo;
+    if (timerInfo && timerInfo.total) {
+      const total = memberInfo.timerInfo.total;
+      setSec(total);
+      console.log('sec', total, 'gd')
+      if (activeSubject && activeSubject.id) {
+        setRun(1);
+        const now = Math.floor(new Date() / 1000);
+        console.log('running', memberInfo, activeSubject, now, now - activeSubject.time + total)
+        setSec(now - activeSubject.time + total);
+        setStudyIcon(
+          <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
+        );
+      };
+    }
   }, [memberInfo]);
 
   useEffect(() => {
@@ -60,7 +67,7 @@ function MemberEl(props) {
         <div className={styles.userName}>{memberInfo.name}</div>
         <div className={styles.icon}>{studyIcon}</div>
         <div className={styles.timer}>
-          <MemberTimer run={run} total={sec} me={me} /* memberTimerTotal={memberTimerTotal} */ />
+          <MemberTimer run={run} total={sec} me={me} />
         </div>
       </div>
     </div>

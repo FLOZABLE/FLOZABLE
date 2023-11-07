@@ -174,15 +174,15 @@ async function activeSubjectCache(userId) {
  * return type is object
  * dp(datumpoint), ts(timeline sum)
  */
-async function timerCache(userId) {
+async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000)) {
   try {
     let timer = await redisClient.hGet(`user:${userId}`, 'timerInfo');
     
     if (timer) {
       timer = JSON.parse(timer);
     } else {
-      const now = Math.round(new Date().getTime() / 1000);
       timer = {dp: now, ts: 0};
+      redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timer));
     };
 
     return timer;

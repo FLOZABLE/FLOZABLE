@@ -181,34 +181,8 @@ connection.on('connection', (socket) => {
         console.log('timelinesum', timelineSum, start)
         const push = await redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},0]`);
         redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${subjectId}:${now}`);
-        //const timer = await redisClient.lRange(`user:${userId}:timer`, 0, -1);
-        /* if (prevTimer) {
-          const newTimer = JSON.parse(prevTimer);
-          const datum = newTimer.datum;
-          //remove old timeline
-          const MAXSTORELEN = 24 * 60 * 60;
-          const lastVal = newTimer.timeline[newTimer.timeline.length - 1];
-          const missingTotal = Math.floor((lastVal ? lastVal[1] : 0) / (MAXSTORELEN * 2));
-          const newDatum = datum + missingTotal * MAXSTORELEN;
-          const start = now - newDatum;
-          if (missingTotal) {
-            newTimer.timeline.map(([start, stop]) => {
-              const newStart = start - missingTotal * MAXSTORELEN;
-              const newStop = stop - missingTotal * MAXSTORELEN;
-              if (newStart >= 0 && newStop >= 0) {
-                return [newStart, newStop];
-              };
-            });
-          };
-
-          newTimer.timeline.push([start, start]);
-          newTimer.datum = newDatum;
-          newTimer.study = 1;
-          redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
-        } else {
-          const newTimer = { datum: now, timeline: [[0, 0]], study: 1 };
-          redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
-        }; */
+        const timerInfo = await timerCache(userId, now);
+        /* redisClient.hSet(`user${userId}`, 'timerInfo', ); */
       }
     } catch (err) {
       console.log(err);
@@ -236,11 +210,12 @@ connection.on('connection', (socket) => {
       //total timer update
       //this is unix time in sec of active subject's start
       const activeSubjectStart = activeSubject.time;
-      const timerInfo = await timerCache(userId);
+      const timerInfo = await timerCache(userId, now);
       const timerStart = activeSubjectStart - timerInfo.dp - timerInfo.ts;
       const timerStop = now - timerInfo.dp - timerInfo.ts;
       timerInfo.ts += timerStop;
-      redisClient.rPush(`user:${userId}:timer`, `[${timerStart},${timerStop - timerStop}]`);
+      console.log('stopped', timerInfo, timerStart, timerStop)
+      redisClient.rPush(`user:${userId}:timer`, `[${timerStart},${timerStop - timerStart}]`);
       redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo));
       redisClient.hDel(`user:${userId}`, `ActiveSubject`);
     };
