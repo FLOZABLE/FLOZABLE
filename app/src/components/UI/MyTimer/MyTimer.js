@@ -3,7 +3,7 @@ import styles from "./MyTimer.module.css";
 import worker from "./TimeWorker";
 
 function MyTimer(props) {
-  const { total, myTimerTotal } = props;
+  const {run, total, myTimerTotal } = props;
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
@@ -12,6 +12,14 @@ function MyTimer(props) {
     setSec(total % 60);
     setMin(Math.floor(total / 60) % 60);
     setHr(Math.floor(total / (60 * 60)));
+  }, []);
+
+  useEffect(() => {
+    worker.addEventListener('message', (e) => {
+      if (run && e.data.command === 'update-timer') {
+        setSec(sec + 1);
+      };
+    });
   }, []);
 
   useEffect(() => {

@@ -16,7 +16,6 @@ function MemberTimer({ run, total, me, myTimerTotal }) {
 
   useEffect(() => {
     const onMessage = (e) => {
-      console.log(e.data.command === 'update-timer')
       if (run && e.data.command === 'update-timer') {
         setSec(prevSec => prevSec + 1);
       };
