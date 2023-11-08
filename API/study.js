@@ -178,13 +178,12 @@ Router.post('/bring-subjects', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const [subjectsInfo] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline, timeline_sum FROM subjects where user_id = ?`, [userId]);
-      console.log('my subjects', subjectsInfo)
       for (const subject of subjectsInfo) {
         const redisSubject = { ...subject };
         delete redisSubject.timeline;
         await redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
         //this code adds [at the start and ] at the end
-        let prevTimeline = subject.timeline === "" ? [] :  JSON.parse(subject.timeline.replace(/^/,"[").replace(/$/,"]"));
+        let prevTimeline = subject.timeline === "" ? [] :  JSON.parse(subject.timeline.replace(/^/,"[").replace(/$/,"]")); //wrapping the string with "[]"
         const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
         subject.timeline = prevTimeline.concat(todayTimeline);
       }
