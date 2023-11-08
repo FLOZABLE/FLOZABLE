@@ -1,6 +1,7 @@
 const express = require("express");
 const Router = express.Router();
 const pool = require('../model/pool');
+const redisClient = require("../model/redis");
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
 const {DateTime} = require('luxon');
@@ -129,20 +130,54 @@ const { subjectsCache } = require("../services/redisLoader");
 })
  */
 
-Router.get('/daily', async(req, res) => {
+Router.post('/daily', async(req, res) => {
+  const {date} = req.body; //date = unix, mode = "day"/"week"/"month";
+  console.log("Date",date);
+  let usersSorted = [];
   try {
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT datum_point, name, user_id from users`);
-    users.map(async({user_id, datum_point, name}) => {
-      const [subjects] = await connection.query(`SELECT id, name, timeline_sum, datum_point, timeline FROM subjects WHERE user_id = ?`, [user_id]);
-      subjects.map(async(subject) => {
-        console.log(subject);
-      })
-    });
+    await Promise.all(users.map(async({user_id, datum_point, name}) => {
+      const [subjects] = await connection.query(`SELECT id, name, datum_point, timeline FROM subjects WHERE user_id = ?`, [user_id]);
+      let studySum = 0; //total time studied in seconds
+
+      for (const subject of subjects){
+
+        let prevTimeline = subject.timeline === "" ? [[]] :  JSON.parse(subject.timeline.replace(/^/,"[").replace(/$/,"]")); //wrapping the string with "[]"
+        const todayTimeline = (await redisClient.lRange(`user:${user_id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
+        subject.timeline = prevTimeline.concat(todayTimeline);
+
+        let currentSum = subject.datum_point;
+
+        await Promise.all(subject.timeline.map( async([start, duration]) => {
+          let startUnix = currentSum + start; //start time in unix
+          let endUnix = startUnix + duration; //end time in unix
+          currentSum = endUnix;
+          
+          // check if current [startUnix, endUnix] lies within daily range
+          if (endUnix < date || startUnix > date + 86400){
+            //this means that the current timeline does not intersect with the range
+          }
+          else{
+            //so this means it does
+            let realStart = Math.max(startUnix, date);
+            let realEnd = Math.min(endUnix, date + 86400);
+            let realDuration = realEnd - realStart; // in seconds
+            studySum += realDuration;
+          }
+        }));
+      }
+
+      //add to list
+      usersSorted.push({id: user_id, total: studySum});
+    }));
+
+    usersSorted.sort((a, b) => {a.total - b.total});
+    res.send(usersSorted) //return {id: __, total: __}
+
   } catch (err) {
     console.log(err);
   }
-  res.send(200)
 });
 
 Router.get('/weekly', async(req, res) => {
