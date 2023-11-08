@@ -136,3 +136,29 @@
   width: fit-content;
   margin-right: 0px;
 }
+
+.Account #extensionHeader {
+  border-bottom: 1px #999 solid;
+}
+
+.Account #extensionHeader > div {
+  display: flex;
+  justify-content: center;
+}
+
+.Account .websiteOptions {
+  display: flex;
+}
+
+.Account .websiteOptions > div {
+  width: 100%;
+  display: flex;;
+}
+
+.Account .websiteOptions .block {
+  justify-content: center;
+}
+
+.Account .websiteOptions .timer {
+  justify-content: center;
+}

@@ -1,0 +1,36 @@
+.LabelMovingInput {
+  position: relative;
+  width: 100%;
+  height: 60px;
+}
+
+.LabelMovingInput label {
+  position: absolute;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 3px 5px;
+  top: 7px;
+  left: 10px;
+  transition: top .3s ease-in-out, left .3s ease-in-out, font-size .3s ease-in-out;
+  font-size: 15px;
+  pointer-events: none;
+}
+
+.LabelMovingInput input {
+  background-color: #fff;
+  border: 2px solid #e7e7e7;
+  transition: .3s border ease-in-out;
+  height: 40px;
+  padding-left: 10px;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.LabelMovingInput input:focus {
+  border: 2px solid #e91e63;
+}
+
+.LabelMovingInput input:focus ~ label {
+  top: -10px;
+  font-size: 12px;
+}

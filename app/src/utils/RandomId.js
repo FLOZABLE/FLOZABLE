@@ -10,4 +10,4 @@ function generateRandomId(length) {
   return randomId;
 };
 
-export {generateRandomId};
+export default generateRandomId;

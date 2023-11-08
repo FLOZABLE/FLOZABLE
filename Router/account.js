@@ -178,11 +178,6 @@ Router.post('/signup-authentication', async (req, res) => {
     key_salt: keySalt,
     iv: iv,
     plan: '',
-    daily: '[0]',
-    weekly: '[0]',
-    monthly: '[0]',
-    activity: '{}',
-    activity_setting: '[]',
     notification_setting: 'default_setting',
     study: JSON.stringify({ study: false, point: unixTimestamp, total: 0 })
   };
