@@ -12,6 +12,7 @@
   transition: color 0.5s;
   cursor: pointer;
   border-radius: 30px;
+  z-index: 1;
 }
 .BlobBtn:before {
   content: "";

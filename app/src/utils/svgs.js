@@ -385,5 +385,29 @@ function Question(props) {
   );
 };
 
+const Chrome = (props) => (
+  <svg
+    fill="#000000"
+    width="22px"
+    height="22px"
+    viewBox="0 0 7.736 7.736"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+    <g
+      id="SVGRepo_tracerCarrier"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <g id="SVGRepo_iconCarrier">
+      <title>{"chrome"}</title>
+      <path 
+      transform="translate(1, 0)"
+      d="M5.137 2.667H2.705c-0.234 0 -0.446 0.076 -0.635 0.189a1.206 1.206 0 0 0 -0.559 0.975L0.574 2.206C1.073 1.571 1.836 1.156 2.705 1.156c1.065 0 1.995 0.62 2.433 1.511zM0.453 2.357l1.209 2.1c0.007 0.007 0.007 0.015 0.015 0.023 0.106 0.189 0.272 0.34 0.469 0.446 0.174 0.083 0.355 0.144 0.559 0.144s0.393 -0.06 0.567 -0.144l-0.944 1.624C1.013 6.362 0 5.236 0 3.868c0 -0.559 0.166 -1.08 0.453 -1.511zm2.886 0.499h1.881c0.121 0.31 0.197 0.657 0.197 1.012 0 1.496 -1.216 2.705 -2.712 2.705 -0.06 0 -0.113 0 -0.174 -0.007l1.209 -2.085c0.007 -0.007 0.007 -0.015 0.015 -0.023 0.098 -0.181 0.151 -0.378 0.151 -0.589v-0.038c-0.015 -0.408 -0.242 -0.771 -0.567 -0.975zM1.806 3.868c0 -0.506 0.393 -0.907 0.899 -0.907s0.907 0.4 0.907 0.907 -0.4 0.907 -0.907 0.907S1.806 4.374 1.806 3.868z" />
+    </g>
+  </svg>
+);
 
-export { StudyPerson, RestPerson, WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert, Question };
+
+export { StudyPerson, RestPerson, WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert, Question, Chrome };

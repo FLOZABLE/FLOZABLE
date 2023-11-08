@@ -199,7 +199,7 @@ Router.post('/update/image', upload.single('image'), async (req, res) => {
         .toFormat('jpeg')
         .resize({ width: 800, height: 800 })
         .jpeg({ quality: 40 })
-        .toFile(`../public/profile-images/${userId}.jpeg`);
+        .toFile(`./public/profile-images/${userId}.jpeg`);
       console.log('gd');
       res.send({ success: true });
     } catch (err) {
@@ -209,6 +209,6 @@ Router.post('/update/image', upload.single('image'), async (req, res) => {
   }));
 });
 
-
+Router.post('/update/')
 
 module.exports = Router;
