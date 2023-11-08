@@ -158,9 +158,6 @@ Router.post('/daily', async(req, res) => {
             
             // check if current [startUnix, endUnix] lies within daily range
             if (endUnix < date || startUnix > date + 86400){
-              if (user_id == "EoFObpf612bdJKt"){
-                console.log(currentSum);
-              }
               //this means that the current timeline does not intersect with the range
             }
             else{

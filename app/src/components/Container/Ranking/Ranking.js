@@ -27,20 +27,21 @@ function Ranking(props) {
   };
 
   useEffect(() => {
-    console.log(viewer);
+    console.log(viewDate);
+    let startDate = new Date(viewDate).getTime(); //fix to local time later
     if (!['Daily', 'Weekly', 'Monthly'].includes(viewer)) return;
     fetch(`${serverOrigin}/api/ranking/${viewer}`, { 
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ date: Math.floor(1699344000000 / 1000) }) //change back later
+      body: JSON.stringify({ date: Math.floor(startDate / 1000) })
      })
     .then((response) => response.json())
     .then((data) => {
       //if (data.success){
         console.log('ranking', data);
-        alert("First place: " + data[0].id + " with " + data[0].total + " seconds studied\nSecond place: " + data[1].id + " with " + data[1].total + " seconds studied");
+        //alert("First place: " + data[0].id + " with " + data[0].total + " seconds studied\nSecond place: " + data[1].id + " with " + data[1].total + " seconds studied");
       //}
     })
     .catch((error) => console.error(error));
