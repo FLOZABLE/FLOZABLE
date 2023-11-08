@@ -27,6 +27,7 @@ function Ranking(props) {
   };
 
   useEffect(() => {
+    console.log(viewer);
     if (!['Daily', 'Weekly', 'Monthly'].includes(viewer)) return;
     fetch(`${serverOrigin}/api/ranking/${viewer}`, { 
       method: 'post',
