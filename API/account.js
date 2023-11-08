@@ -112,9 +112,9 @@ Router.post('/signup-authentication', async (req, res) => {
   //check pw
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
     return res.send({ success: false, reason: 'No Special Characters' });
-  } else if ((password.match(/\d/g) || []).length < 2) {
+  } /* else if ((password.match(/\d/g) || []).length < 2) {
     return res.send({ success: false, reason: 'Need More Than 2 Numbers' });
-  } else if (password.length < 6) {
+  }  */else if (password.length < 6) {
     return res.send({ success: false, reason: 'Too Short' });
   }
 
@@ -143,11 +143,7 @@ Router.post('/signup-authentication', async (req, res) => {
     key_salt: keySalt,
     iv: iv,
     plan: '',
-    daily: '[0]',
-    weekly: '[0]',
-    monthly: '[0]',
     activity: '{}',
-    activity_setting: '[]',
     notification_setting: 'default_setting',
     study: JSON.stringify({ study: false, point: unixTimestamp, total: 0 })
   };
@@ -209,6 +205,109 @@ Router.post('/update/image', upload.single('image'), async (req, res) => {
   }));
 });
 
-Router.post('/update/')
+Router.post('/update/info', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    const connection = pool.promise();
+    try {
+      const {name, email, confirmEmail} = req.body;
+      console.log('gd', name)
+      //const supportedLanguages = ['English', 'Spanish', 'French'];
+      if (!/^[a-zA-Z0-9]+$/.test(name)) {
+        return res.send({ success: false, reason: 'Invalid Name' });
+      } else if (!/^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/.test(email) || email.length > 320) {
+        return res.send({ success: false, reason: 'Invalid Email' });
+      } else if (email !== confirmEmail) {
+        return res.send({ success: false, reason: 'Email Confirmation Failed' });
+      }
+      /* else if (!supportedLanguages.includes(language)) {
+        return res.send({ success: false, reason: 'Not Supported Language' });
+      } */
+      const updateInfo = [{ name: name, email: email }, req.session.user_id];
+      //await connection.query('UPDATE users set ? WHERE user_id = ?', updateInfo);
+      res.send({ success: true, msg: 'Updated Your Information!' });
+    } catch (error) {
+      res.send({ success: false, reason: 'Unsupported File Type' })
+    } finally {
+      pool.releaseConnection(connection);
+    }
+  }));
+});
+
+
+Router.post('/update/password', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const connection = pool.promise();
+      const {password, confirmPassword} = req.body;
+      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+        return res.send({ success: false, reason: 'No Special Character' });
+      } /* else if ((password.match(/\d/g) || []).length < 2) {
+        return res.send({ success: false, reason: 'Need More Than 2 Numbers' });
+      } */ else if (password.length < 6) {
+        return res.send({ success: false, reason: 'Too Short' });
+      } else if (password !== confirmPassword) {
+        return res.send({ success: false, reason: 'Password Does Not Match' });
+      }
+      res.send({ success: true });
+      let hashed = hashing(password);
+      let salt = hashed[0];
+      let hashedPw = hashed[1];
+      const updateInfo = [{ hashed_password: hashedPw, salt: salt }, req.session.user_id];
+      //const update = await connection.query("UPDATE users set ? WHERE user_id = ?", updateInfo);
+    } catch (error) {
+      res.send({ success: false, reason: 'Unsupported File Type' })
+    };
+  }));
+});
+
+Router.post('/update/extension-add', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const userId = req.session.user_id;
+      const connection = pool.promise();
+      const {url} = req.body;
+      console.log(url, 'gd')
+      let origin;
+      let domain;
+      if (!/^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[a-zA-Z0-9.-]*)*$/.test(url)) {
+        return res.send({ success: false, reason: 'Invalid URL or Domain' });
+      }
+      if (url.includes('https://') || url.includes('http://')) {
+        origin = new URL(url).origin;
+        domain = new URL(url).hostname;
+      } else {
+        origin = new URL('https://' + url).origin;
+        domain = new URL('https://' + url).hostname;
+      };
+
+      const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
+      console.log('userinfo', userInfo)
+      let activitySettings = userInfo.activitySettings === "" ? [] :  JSON.parse(userInfo.activity_setting.replace(/^/,"[").replace(/$/,"]"));
+      const selectedActivity = activitySettings.find(activitySetting => { return activitySetting.d == domain });
+      if (selectedActivity) {
+        return res.send({ success: false, reason: 'Already Exist' });
+      } else {
+        //d: domain, b: block, t: timer
+        const stringlified = JSON.stringify({d: domain, b: true, t: true});
+        /* await connection.query(`
+        UPDATE users
+        SET activity_setting = CASE
+          WHEN activity_setting = '' THEN ?
+          ELSE CONCAT(activity_setting, ',', ?)
+        END
+        WHERE user_id = ?
+      `, [
+          stringlified,
+          stringlified,
+          userId
+        ]); */
+      }
+      res.send({ success: true, origin: origin, domain: domain })
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'Invalid URL or Domain' })
+    };
+  }));
+});
 
 module.exports = Router;
