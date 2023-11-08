@@ -11,7 +11,7 @@ import PlanTimelineBar from '../../UI/PlanTimelineBar/PlanTimelineBar';
 import AddSubjectModal from '../../UI/AddSubjectModal/AddSubjectModal';
 import EventModal from '../../UI/EventModal/EventModal';
 import { sortSubjects } from '../../Container/Stats/StatTools';
-import { generateRandomId } from "../../../utils/RandomId";
+import generateRandomId from "../../../utils/RandomId";
 import StudySidebar from '../../UI/StudySidebar/StudySidebar';
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";

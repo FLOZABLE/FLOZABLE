@@ -8,7 +8,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import styles from "./EventPlanner.module.css";
 import events from "./Events";
 import styled from "@emotion/styled";
-import { generateRandomId } from "../../../utils/RandomId";
+import generateRandomId from "../../../utils/RandomId";
 import { DateTime } from "luxon";
 
 import EventModal from "../EventModal/EventModal";
