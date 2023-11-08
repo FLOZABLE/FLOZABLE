@@ -34,13 +34,14 @@ function Ranking(props) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ date: Math.floor(viewDate.getTime() / 1000) })
+      body: JSON.stringify({ date: Math.floor(1699344000000 / 1000) }) //change back later
      })
     .then((response) => response.json())
     .then((data) => {
-      if (data.success) {
+      //if (data.success){
         console.log('ranking', data);
-      }
+        alert("First place: " + data[0].id + " with " + data[0].total + " seconds studied\nSecond place: " + data[1].id + " with " + data[1].total + " seconds studied");
+      //}
     })
     .catch((error) => console.error(error));
   }, [viewDate, viewer]);

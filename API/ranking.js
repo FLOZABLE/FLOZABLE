@@ -148,22 +148,28 @@ Router.post('/daily', async(req, res) => {
         subject.timeline = prevTimeline.concat(todayTimeline);
 
         let currentSum = subject.datum_point;
+        console.log(currentSum);
 
         await Promise.all(subject.timeline.map( async([start, duration]) => {
-          let startUnix = currentSum + start; //start time in unix
-          let endUnix = startUnix + duration; //end time in unix
-          currentSum = endUnix;
-          
-          // check if current [startUnix, endUnix] lies within daily range
-          if (endUnix < date || startUnix > date + 86400){
-            //this means that the current timeline does not intersect with the range
-          }
-          else{
-            //so this means it does
-            let realStart = Math.max(startUnix, date);
-            let realEnd = Math.min(endUnix, date + 86400);
-            let realDuration = realEnd - realStart; // in seconds
-            studySum += realDuration;
+          if (!!start){ //check if null (this is a temporary fix to another problem - delete later)
+            let startUnix = currentSum + start; //start time in unix
+            let endUnix = startUnix + duration; //end time in unix
+            currentSum = endUnix;
+            
+            // check if current [startUnix, endUnix] lies within daily range
+            if (endUnix < date || startUnix > date + 86400){
+              if (user_id == "EoFObpf612bdJKt"){
+                console.log(currentSum);
+              }
+              //this means that the current timeline does not intersect with the range
+            }
+            else{
+              //so this means it does
+              let realStart = Math.max(startUnix, date);
+              let realEnd = Math.min(endUnix, date + 86400);
+              let realDuration = realEnd - realStart; // in seconds
+              studySum += realDuration;
+            }
           }
         }));
       }
@@ -173,6 +179,7 @@ Router.post('/daily', async(req, res) => {
     }));
 
     usersSorted.sort((a, b) => {a.total - b.total});
+    usersSorted.reverse();
     res.send(usersSorted) //return {id: __, total: __}
 
   } catch (err) {
