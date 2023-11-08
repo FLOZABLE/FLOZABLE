@@ -1,8 +1,36 @@
 .Account .fixedNav {
   width: 500px;
-  height: 500px;
-  background-color: aqua;
+  background-color: #fff;
   position: fixed;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  border-radius: 10px;
+}
+
+.Account .navWrapper {
+  width: calc(100% - 40px);
+  padding: 20px;
+}
+
+.Account .fixedNav .navEl {
+  display: flex;
+  padding: 10px 20px;
+  border-radius: 10px;
+  transition: background-color .3s ease-in-out, color .3s ease-in-out;
+  font-size: 20px;
+  margin: 5px 0px;
+}
+
+.Account .fixedNav .navEl:hover {
+  background-color: var(--pink);
+  color: #fff;
+}
+
+.Account .navEl i {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .Account .boxContainer {
@@ -22,20 +50,20 @@
 
 /* profile pic selector */
 
-.imgSelector {
+.Account .imgSelector {
   position: relative;
 }
-.profilePic {
+.Account .profilePic {
   width: 128px;
   height: auto;
   object-fit: cover;
 }
 
-.fileUpload {
+.Account .fileUpload {
   display: none;
 }
 
-.circle {
+.Account .circle {
   border-radius: 100% !important;
   overflow: hidden;
   width: 128px;
@@ -48,7 +76,7 @@
   justify-content: center;
 }
 
-.pImage {
+.Account .pImage {
   position: absolute;
   top: 110px;
   left: 100px;
@@ -63,15 +91,48 @@
   border-radius: 100%;
 }
 
-.pImage:hover {
+.Account .pImage:hover {
   transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
 }
 
-.uploadBtn {
+.Account .uploadBtn {
   font-size: 1.2em;
 }
 
-.uploadBtn:hover {
+.Account .uploadBtn:hover {
   transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
   color: #999;
+}
+
+.Account .content {
+  display: flex;
+  flex-direction: column;
+}
+
+.Account .content .layer {
+  display: flex;
+  width: 100%;
+  margin: 20px 0px;
+  position: relative;
+}
+
+.Account .content .layer > div {
+  width: 100%;
+  padding: 0px 20px;
+}
+
+.Account .submitWrapper {
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.Account .passwordReq ul li {
+  list-style: disc;
+}
+
+.Account #password .submitWrapper {
+  position: absolute;
+  right: 0px;
+  width: fit-content;
+  margin-right: 0px;
 }
