@@ -14,7 +14,7 @@ Router.post('/accountinfo', async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
     const connection = pool.promise();
-    const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups FROM users WHERE user_id = ?", [userId]);
+    const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups, activity_setting FROM users WHERE user_id = ?", [userId]);
     await redisClient.hSet(`user:${userId}`, `groups`, userInfo.groups);
     res.send({ success: true, userInfo: userInfo });
   }))
@@ -223,7 +223,7 @@ Router.post('/update/info', async (req, res) => {
         return res.send({ success: false, reason: 'Not Supported Language' });
       } */
       const updateInfo = [{ name: name, email: email }, req.session.user_id];
-      //await connection.query('UPDATE users set ? WHERE user_id = ?', updateInfo);
+      await connection.query('UPDATE users set ? WHERE user_id = ?', updateInfo);
       res.send({ success: true, msg: 'Updated Your Information!' });
     } catch (error) {
       res.send({ success: false, reason: 'Unsupported File Type' })
@@ -253,7 +253,7 @@ Router.post('/update/password', async (req, res) => {
       let salt = hashed[0];
       let hashedPw = hashed[1];
       const updateInfo = [{ hashed_password: hashedPw, salt: salt }, req.session.user_id];
-      //const update = await connection.query("UPDATE users set ? WHERE user_id = ?", updateInfo);
+      const update = await connection.query("UPDATE users set ? WHERE user_id = ?", updateInfo);
     } catch (error) {
       res.send({ success: false, reason: 'Unsupported File Type' })
     };
@@ -266,7 +266,6 @@ Router.post('/update/extension-add', async (req, res) => {
       const userId = req.session.user_id;
       const connection = pool.promise();
       const {url} = req.body;
-      console.log(url, 'gd')
       let origin;
       let domain;
       if (!/^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[a-zA-Z0-9.-]*)*$/.test(url)) {
@@ -288,8 +287,8 @@ Router.post('/update/extension-add', async (req, res) => {
         return res.send({ success: false, reason: 'Already Exist' });
       } else {
         //d: domain, b: block, t: timer
-        const stringlified = JSON.stringify({d: domain, b: true, t: true});
-        /* await connection.query(`
+        const stringlified = JSON.stringify({d: domain, b: 0, t: 1});
+        await connection.query(`
         UPDATE users
         SET activity_setting = CASE
           WHEN activity_setting = '' THEN ?
@@ -300,13 +299,51 @@ Router.post('/update/extension-add', async (req, res) => {
           stringlified,
           stringlified,
           userId
-        ]); */
+        ]);
       }
       res.send({ success: true, origin: origin, domain: domain })
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'Invalid URL or Domain' })
     };
+  }));
+});
+
+
+Router.post('/update/extension-setting-update', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const userId = req.session.user_id;
+      const {d, target, value} = req.body;
+      const connection = pool.promise();
+      const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
+      let activitySettings = userInfo.activitySettings === "" ? [] :  JSON.parse(userInfo.activity_setting.replace(/^/,"[").replace(/$/,"]"));
+      const activityIndex = activitySettings.findIndex(activitySetting => { return activitySetting.d == d });
+      if (activityIndex === -1) {
+        return res.send({ success: false, reason: 'No Matching Website' });
+      } else {
+        //d: domain, b: block, t: timer
+        if (target === 'block') {
+          activitySettings[activityIndex] = {...activitySettings[activityIndex], b: value ? 1 : 0};
+        } else {
+          activitySettings[activityIndex] = {...activitySettings[activityIndex], t: value ? 1 : 0};
+        };
+        const stringlified = JSON.stringify(activitySettings).slice(1, -1);
+        await connection.query(`
+        UPDATE users
+        SET activity_setting = ?
+        WHERE user_id = ?
+      `, [
+          stringlified,
+          userId
+        ]);
+      }
+
+      res.send({success: true});
+    } catch (error) {
+
+    } finally {
+    }
   }));
 });
 
