@@ -53,6 +53,9 @@ const StyleWrapper = styled.div`
     border-radius: 30px;
     /* overflow: hidden; */
   }
+  .fc-scroller.fc-scroller-liquid-absolute {
+    overflow: unset !important;
+  }
   * {
     border: none !important;
   }
@@ -81,6 +84,10 @@ const StyleWrapper = styled.div`
     font-style: unset;
     font-size: 1em;
     color: #fff;
+    margin: 0px;
+    position: absolute;
+    top: 50%;
+    transform: translatey(-50%);
   }
   .fc-daygrid-day-frame.fc-scrollgrid-sync-inner {
     min-height: 42.85px;
@@ -92,9 +99,7 @@ const StyleWrapper = styled.div`
   }
 `;
 
-function SmallCalendar(props) {
-  const {PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewDate, setViewDate, isAddPlanModal, setIsAddPlanModal} = props;
-  const currentDateRef = useRef(null);
+function SmallCalendar({SmallCalendarRef, PlannerApi, SmallCalendarApi, viewDate, setViewDate, isAddPlanModal, width, setIsCalendarOpen}) {
   const [events, setEvents] = useState([]);
 
 
@@ -110,6 +115,9 @@ function SmallCalendar(props) {
 
   const handleDateClick = (arg) => {
     setViewDate(arg.date);
+    if (setIsCalendarOpen) {
+      setIsCalendarOpen(false);
+    }
   };
 
   const customHeader = {
@@ -124,7 +132,7 @@ function SmallCalendar(props) {
 
   return (
     <StyleWrapper>
-    <div className={styles.SmallCalendar}>
+    <div className={styles.SmallCalendar} style={{width: width}}>
       <FullCalendar
         ref={SmallCalendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}

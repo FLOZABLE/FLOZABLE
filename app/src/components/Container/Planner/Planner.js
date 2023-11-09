@@ -76,7 +76,7 @@ function Planner(props) {
             </div>
             <div className={styles.widget}>
               <div className={styles.smallCalendarWrapper}>
-              <SmallCalendar isAddPlanModal={isAddPlanModal} setIsAddPlanModal={setIsAddPlanModal} viewOpt={viewMode} setViewDate={updateViewDate} viewDate={viewDate} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
+              <SmallCalendar width={"300px"} setViewDate={updateViewDate}  isAddPlanModal={isAddPlanModal} viewDate={viewDate} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
               </div>
               
               {/* <DropDownButton options={[{name:'Does not repeat', value: 0}, {name: 'Daily', value: 1}, {name: 'Weekly', value: 2}, {name: `Monthly`, value: 3}]} defaultIndex={0} setValue={setSubjectsOptions} /> */}

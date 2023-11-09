@@ -1,19 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faUser, faXmark } from '@fortawesome/free-solid-svg-icons';
 import {DateTime} from "luxon";
 import StatsCalendar from '../../UI/StatsCalendar/StatsCalendar';
 import StuckModal from '../../UI/StuckModal/StuckModal';
 import RadioBtn from '../../UI/RadioBtn/RadioBtn';
 import styles from './Ranking.module.css';
+import SmallCalendar from '../../UI/SmallCalendar/SmallCalendar';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function Ranking(props) {
-
+function Ranking({isSidebarOpen, isSidebarHovered}) {
+  const [SmallCalendarApi, setSmallCalendarApi] = useState(null);
+  const SmallCalendarRef = useRef(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [viewDate, setViewDate] = useState(new Date());
+  const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [viewer, setViewer] = useState('Daily');
+  const [rankingEl, setRankingEl] = useState([]);
+  const [ranking, setRanking] = useState([]);
+
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
   };
@@ -28,14 +33,14 @@ function Ranking(props) {
   };
 
   useEffect(() => {
-    let startTime = DateTime.fromISO(JSON.stringify(viewDate).replaceAll("\"",""));
+    let startTime =    DateTime.fromJSDate(viewDate);
     /*
     FIXME: viewer defaults to current time if the user does not click any day on the calendar.
     Change it to the beginning of the day as default
     */
     console.log("start time:",startTime);
 
-    let startUnix = Math.floor(startTime.ts / 1000); // in seconds
+    let startUnix = startTime.toSeconds();
     let endUnix = 0; //monthly only
     if (viewer == "Daily"){
       //Do nothing
@@ -63,6 +68,10 @@ function Ranking(props) {
      })
     .then((response) => response.json())
     .then((data) => {
+      if (data.success) {
+        console.log('ranking', data.data);
+        setRanking(data.data);
+      }
       //if (data.success){
         console.log('ranking', data);
         //alert("First place: " + data[0].id + " with " + data[0].total + " seconds studied\nSecond place: " + data[1].id + " with " + data[1].total + " seconds studied");
@@ -71,13 +80,43 @@ function Ranking(props) {
     .catch((error) => console.error(error));
   }, [viewDate, viewer]);
 
+  useEffect(() => {
+    setRankingEl(ranking.map((user, i) => {
+      return (
+        <li key={i}>
+        <div className={styles.circle}>
+          <p>{i + 1}</p>
+        </div>
+        <div className={styles.userInfo}>
+          <div className={styles.profileImg}>
+            <FontAwesomeIcon icon={faUser}/>
+          </div>
+          <p className={styles.name}>{user.name}</p>
+          <div className={styles.ranking}>
+            <p>16h</p>
+            <div className={styles.dash}></div>
+            <p>12h</p>
+            <div className={styles.dash}></div>
+            <p>500h</p>
+          </div>
+        </div>
+      </li>
+      )
+    }))
+  }, [ranking]);
+
   return (
     <div className={styles.RankingContainer}>
       <div className={`${styles.CalendarModal} ${isCalendarOpen ? styles.isOpen : ''}`}>
-      <StatsCalendar onToggleCalendar={toggleCalendar} isCalendarOpen={isCalendarOpen} setViewDate={updateViewDate} viewDate={viewDate} />
+        <div className={styles.modalHeader}>
+          <i onClick={() => {setIsCalendarOpen(false)}}>
+            <FontAwesomeIcon icon={faXmark} />
+          </i>
+        </div>
+      <SmallCalendar width={"400px"} setViewDate={updateViewDate} viewDate={viewDate} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} setIsCalendarOpen={setIsCalendarOpen} />
       </div>
       <StuckModal />
-      <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
+      <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
@@ -93,44 +132,7 @@ function Ranking(props) {
                 <p>Month</p>
               </div>
               <ul>
-                <li>
-                  <div className={styles.circle}>
-                    ,
-                    <p>1</p>
-                  </div>
-                  <div className={styles.userInfo}>
-                    <div className={styles.profileImg}>
-                      <FontAwesomeIcon icon={faUser}/>
-                    </div>
-                    <p className={styles.name}>KimTaehumMossol</p>
-                    <div className={styles.ranking}>
-                      <p>16h</p>
-                      <div className={styles.dash}></div>
-                      <p>12h</p>
-                      <div className={styles.dash}></div>
-                      <p>500h</p>
-                    </div>
-                  </div>
-                </li>
-                {/* <div className={styles.divider}></div> */}
-                <li>
-                  <div className={styles.circle}>
-                    <p>1</p>
-                  </div>
-                  <div className={styles.userInfo}>
-                    <div className={styles.profileImg}>
-                      <FontAwesomeIcon icon={faUser}/>
-                    </div>
-                    <p className={styles.name}>KimTaehumMossol</p>
-                    <div className={styles.ranking}>
-                      <p>16h</p>
-                      <div className={styles.dash}></div>
-                      <p>12h</p>
-                      <div className={styles.dash}></div>
-                      <p>500h</p>
-                    </div>
-                  </div>
-                </li>
+                {rankingEl}
               </ul>
             </div>
           </div>
