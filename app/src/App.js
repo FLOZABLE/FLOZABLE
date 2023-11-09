@@ -163,7 +163,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Stats setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} subjects={subjects} />
             <Footer />
           </div>
@@ -176,7 +176,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Ranking setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} />
             <Footer />
           </div>
@@ -189,7 +189,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} reset={reset} allMembers={allMembers} groups={groups} otherGroups={otherGroups} setOtherGroups={setOtherGroups} myGroups={myGroups} setMyGroups={setMyGroups} likedGroups={likedGroups} setLikedGroups={setLikedGroups} />
             <Footer />
           </div>
@@ -215,7 +215,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans} reset={reset} />
           </div>
         } />
@@ -227,7 +227,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Account setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} />
           </div>
         } />
@@ -239,7 +239,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Templates setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
           </div>
         } />
