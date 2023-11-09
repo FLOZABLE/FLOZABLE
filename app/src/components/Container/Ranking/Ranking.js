@@ -36,6 +36,7 @@ function Ranking(props) {
     console.log("start time:",startTime);
 
     let startUnix = Math.floor(startTime.ts / 1000); // in seconds
+    let endUnix = 0; //monthly only
     if (viewer == "Daily"){
       //Do nothing
     }
@@ -44,7 +45,11 @@ function Ranking(props) {
       startUnix -= 84600 * (startTime.weekday - 1); //monday = 1, tuesday = 2, wednesday = 3...
     }
     else if (viewer == "Monthly"){
-
+      console.log("Month-day is " + startTime.day + ", subtracting " + (86400 * (startTime.day - 1)) + " seconds to find the start of the month.");
+      startUnix -= 84600 * (startTime.day - 1); //1 = 1, 2 = 2, (month-date)
+      endUnix = startTime.endOf('month').ts + 1; //end of month in unix (add 1 ms for next month);
+      endUnix = Math.floor(endUnix/1000);
+      console.log("end of month is", endUnix);
     }
     else{
       return;
@@ -54,7 +59,7 @@ function Ranking(props) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ date: startUnix })
+      body: JSON.stringify({ date: startUnix, monthEnd: endUnix })
      })
     .then((response) => response.json())
     .then((data) => {
