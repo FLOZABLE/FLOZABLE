@@ -5,7 +5,11 @@ import ToggleBtn from "../ToggleBtn/ToggleBtn";
 import styles from "./Header.module.css";
 
 function Header(props) {
-  const { isChatModal, setIsChatModal } = props;
+  const { isChatModal, setIsChatModal, subjects } = props;
+
+  const [totalStudied, setTotalStudied] = useState("0m"); // string
+  const [longestSession, setLongestSession] = useState("0m"); //in seconds
+  const [studyStreak, setStudyStreak] = useState(0); //days of consecutive study
 
   const [isScrolled, setIsScrolled] = useState(false);
   const messageDropDownRef = useRef(null);
@@ -17,7 +21,7 @@ function Header(props) {
       } else {
         setIsScrolled(false);
       }
-    };
+    }
 
     window.addEventListener('scroll', handleScroll);
 
@@ -25,6 +29,63 @@ function Header(props) {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    if (!!!subjects.daily) return;
+
+    //Solve daily
+    let totalSeconds = subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1];
+    let totalMinutes = Math.round(totalSeconds/60);
+    let totalHours = Math.round(totalMinutes/60);
+
+    let displayString = "";
+    if (totalHours > 0){
+      displayString += totalHours + "h ";
+      displayString += (totalMinutes % 60) + "m";
+    }
+    else{
+      displayString += totalMinutes + "m";
+    }
+    setTotalStudied(displayString);
+
+    //Solve streak
+    let tempStreak = 0;
+    let day = 0;
+    for (let i = 0; i < subjects.length; i++){
+      day = Math.max(day, subjects[i].daily.grouped.length); //find the latest day
+      // this will find the maximum length in all the daily arrays
+    }
+    while (true){
+      let studiedToday = false;
+      for (let i = 0; i < subjects.length; i++){
+        if (subjects[i].daily.grouped[day] > 0){
+          //the user has studied in this subject this day
+          tempStreak += 1;
+          studiedToday = true;
+          break; //to prevent adding streak for other subjects;
+        }
+      }
+      if (!studiedToday) break;
+      day -= 1;
+    }
+    setStudyStreak(tempStreak);
+
+    //Solve focus
+    let subjectActivity = [];
+    for (let i = 0; i < subjects.length; i++){
+      let datum = subjects[i].datum_point;
+      for (let j = 0; j < subjects[i].timeline.length; j++){
+        let start = subjects[i].timeline[j][0] + datum;
+        let end = subjects[i].timeline[j][0] + datum;
+        let duration = start - end;
+
+        subjectActivity.push(duration);
+      }
+    }
+    subjectActivity.sort();
+    setLongestSession(subjectActivity.length ? subjectActivity[subjectActivity.length - 1] : 0);
+
+  },[subjects]);
 
   return (
     <header className={`${styles.header} ${props.isSidebarOpen || props.isSidebarHovered ? styles.isOpen : ''} ${props.mode === "study" ? styles.studyMode : ''} ${isScrolled ? styles.scrolled : ''}`}>
@@ -41,7 +102,7 @@ function Header(props) {
             <FontAwesomeIcon icon={faBook} style={{ color: "#348d50", }} />
           </div>
           <div className={styles.text}>
-            <h5>0.3h</h5>
+            <h5>{totalStudied}</h5>
             <h6>Today Total</h6>
           </div>
         </div>
@@ -59,8 +120,8 @@ function Header(props) {
             <FontAwesomeIcon icon={faFire} style={{ color: "#2c70ff", }} />
           </div>
           <div className={styles.text}>
-            <h5>5</h5>
-            <h6>Streaks</h6>
+            <h5>{studyStreak} Day</h5>
+            <h6>Streak</h6>
           </div>
         </div>
         <div className={styles.headerEl}>
@@ -68,7 +129,7 @@ function Header(props) {
             <FontAwesomeIcon icon={faArrowsToCircle} style={{ color: "#705dc1", }} />
           </div>
           <div className={styles.text}>
-            <h5>0.2h</h5>
+            <h5>{longestSession}</h5>
             <h6>Focus</h6>
           </div>
         </div>

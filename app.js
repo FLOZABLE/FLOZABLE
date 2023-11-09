@@ -21,8 +21,8 @@ const options = {
   cert: fs.readFileSync('./SSL/cert.pem', 'utf-8')
 }
 
-//const server = http.createServer(app);
-const server = https.createServer(options, app);
+const server = http.createServer(app);
+//const server = https.createServer(options, app);
 if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.env.development' });
 } else if (process.env.NODE_ENV === 'production') {

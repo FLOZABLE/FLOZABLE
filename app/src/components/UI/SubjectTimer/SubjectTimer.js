@@ -18,8 +18,11 @@ function SubjectTimer(props) {
 
   useEffect(() => {
     setTimeValues(
-      subjects.map((subject) => {
+      subjects.map((subject, i) => {
         let total = subject.daily.total[subject.daily.total.length - 1];
+        if (timeValues.length > i){ //If a new subejct is added, do not reset the timer
+          total = Math.max(timeValues[i].total, total);
+        }
         let id = subject.id;
         return {id, total};
       })
