@@ -172,7 +172,7 @@ Router.post('/daily', async(req, res) => {
       }
 
       //add to list
-      usersSorted.push({id: user_id, total: studySum});
+      usersSorted.push({name: name, id: user_id, total: studySum});
     }));
     usersSorted.sort((a, b) => {a.total - b.total});
     usersSorted.reverse();
@@ -221,7 +221,7 @@ Router.post('/weekly', async(req, res) => {
         }));
       }
 
-      usersSorted.push({id: user_id, total: studySum});
+      usersSorted.push({name: name, id: user_id, total: studySum});
     }));
 
     usersSorted.sort((a, b) => {a.total - b.total});
@@ -271,7 +271,7 @@ Router.post('/monthly', async(req, res) => {
         }));
       }
 
-      usersSorted.push({id: user_id, total: studySum});
+      usersSorted.push({name: name, id: user_id, total: studySum});
     }));
 
     usersSorted.sort((a, b) => {a.total - b.total});
