@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faUser } from '@fortawesome/free-solid-svg-icons';
+import {DateTime} from "luxon";
 import StatsCalendar from '../../UI/StatsCalendar/StatsCalendar';
 import StuckModal from '../../UI/StuckModal/StuckModal';
 import RadioBtn from '../../UI/RadioBtn/RadioBtn';
@@ -27,15 +28,33 @@ function Ranking(props) {
   };
 
   useEffect(() => {
-    console.log(viewDate);
-    let startDate = new Date(viewDate).getTime(); //fix to local time later
-    if (!['Daily', 'Weekly', 'Monthly'].includes(viewer)) return;
+    let startTime = DateTime.fromISO(JSON.stringify(viewDate).replaceAll("\"",""));
+    /*
+    FIXME: viewer defaults to current time if the user does not click any day on the calendar.
+    Change it to the beginning of the day as default
+    */
+    console.log("start time:",startTime);
+
+    let startUnix = Math.floor(startTime.ts / 1000); // in seconds
+    if (viewer == "Daily"){
+      //Do nothing
+    }
+    else if (viewer == "Weekly"){
+      console.log("Weekday is " + startTime.weekday + ", subtracting " + (86400 * (startTime.weekday - 1)) + " seconds to find the start of the week.");
+      startUnix -= 84600 * (startTime.weekday - 1); //monday = 1, tuesday = 2, wednesday = 3...
+    }
+    else if (viewer == "Monthly"){
+
+    }
+    else{
+      return;
+    }
     fetch(`${serverOrigin}/api/ranking/${viewer}`, { 
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ date: Math.floor(startDate / 1000) })
+      body: JSON.stringify({ date: startUnix })
      })
     .then((response) => response.json())
     .then((data) => {
