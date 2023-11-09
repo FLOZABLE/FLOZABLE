@@ -27,7 +27,7 @@ Router.post("/add-subject", async (req, res) => {
       const subjectInfo = {
         ...req.body,
         datum_point: Math.floor(new Date().getTime() / 1000),
-        timeline: JSON.stringify([]),
+        timeline: JSON.stringify([0,0]),
         id: generateRandomId(10),
         user_id: userId,
       };

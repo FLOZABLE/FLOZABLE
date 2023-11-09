@@ -12,6 +12,8 @@ function GroupsGen(props) {
 
   const [copied, setCopied] = useState(null);
   const [otherGroupsEl, setOtherGroupsEl] = useState( null);
+  const [maxGroups, setMaxGroups] = useState(20);
+
   const joinGroup = (group) => {
     setJoinTarget(group);
     if (group.visibility) {
@@ -37,8 +39,8 @@ function GroupsGen(props) {
   useEffect(() => {
     setOtherGroupsEl(
       Array.from(groups).map((group, i) => {
-        if (i == 0) {
-           
+        if (i > maxGroups) {
+           return;
         }
         const tags = JSON.parse(group.tags);
         const likes = group.likes.split(",");
@@ -120,8 +122,13 @@ function GroupsGen(props) {
         );
       })
     )
-  }, [queryTags, searchQuery, groups]);
-  return otherGroupsEl;
+  }, [queryTags, searchQuery, groups, maxGroups]);
+  return (
+    <div className={`${styles.groupContainer}`}>
+      {otherGroupsEl}
+      <button onClick={() => { setMaxGroups(maxGroups + 20)}}>Load More</button>
+    </div>
+  );
 };
 
 export default GroupsGen;
