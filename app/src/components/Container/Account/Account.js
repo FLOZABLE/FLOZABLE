@@ -11,7 +11,7 @@ import generateRandomId from '../../../utils/RandomId';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function Account(props) {
+function Account({isSidebarHovered, isSidebarOpen, userInfo}) {
   const [imageSrc, setImageSrc] = useState(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -23,10 +23,8 @@ function Account(props) {
   const [isSubmitProfile, setIsSubmitProfile] = useState(false);
   const [isSubmitPw, setIsSubmitPw] = useState(false);
   const [isSumbmitUrl, setIsSubmitUrl] = useState(false);
-
-
-
   const [websites, setWebsites] = useState([]);
+
 
   const inputRef = useRef(null);
 
@@ -42,7 +40,7 @@ function Account(props) {
         formData.append('image', input.files[0]);
 
         uploadImage(formData);
-        console.log('formdaa', formData)
+        console.log('formdaa', e.target.result)
       };
     }
   }, []);
@@ -115,14 +113,15 @@ function Account(props) {
     }, 2000);
   }, [isSubmitPw]);
 
-  const fetchExtensionSettingUpdate = useCallback((domain, block, timer) => {
+  const fetchExtensionSettingUpdate = useCallback((d, target, value) => {
+    console.log(d, target, value)
     fetch(`${serverOrigin}/api/account/update/extension-setting-update`,
     {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ domain, block, timer })
+      body: JSON.stringify({ d, target, value })
     })
     .then((response) => response.json())
     .then((data) => {
@@ -130,26 +129,6 @@ function Account(props) {
     })
     .catch((error) => console.error(error));
   }, []);
-
-  const addWebsite = useCallback((domain, origin, block = false, timer = true) => {
-    const newWebsite = (
-      <li className={styles.websiteOptions} key={generateRandomId(5)}>
-        <div className={styles.domain}>
-          <p>{domain}</p>
-        </div>
-        <div className={styles.block}>
-          <SimpleToggleBtn onClick={() => {
-            fetchExtensionSettingUpdate(domain, )
-          }}/>
-        </div>
-        <div className={styles.timer}>
-          <SimpleToggleBtn />
-        </div>
-      </li>
-    );
-
-    setWebsites([...websites, newWebsite]);
-  }, [websites]);
 
   useEffect(() => {
     if (isSumbmitUrl) {
@@ -165,7 +144,8 @@ function Account(props) {
         .then((data) => {
           console.log('res', data)
           if (data.success) {
-            addWebsite(data.domain, data.origin);
+            const {domain, origin} = data;
+            setWebsites([...websites, {domain, origin, block: false, timer: true}]);
           }
         })
         .catch((error) => console.error(error));
@@ -175,10 +155,19 @@ function Account(props) {
     }, 2000);
   }, [isSumbmitUrl]);
 
+  useEffect(() => {
+    if(!userInfo) return;
+    setEmail(userInfo.email);
+    setConfirmEmail(userInfo.email);
+    setName(userInfo.name);
+    const websites = userInfo.activity_setting === "" ? [] :  JSON.parse(userInfo.activity_setting.replace(/^/,"[").replace(/$/,"]"));
+    setWebsites(websites);
+    setImageSrc(`${serverOrigin}/profile-images/${userInfo.user_id}.jpeg`);
+  }, [userInfo]);
 
   return (
     <div className={styles.Account}>
-      <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
+      <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.fixedNav}>
           <ul className={styles.navWrapper}>
             <li className={styles.navEl}>
@@ -203,13 +192,13 @@ function Account(props) {
               <i>
                 <Chrome width={"22px"} height={"22px"} fill={"#545454"} />
               </i>
-              <p>Chrome</p>
+              <p>Chrome Extension</p>
             </li>
             <li className={styles.navEl}>
               <i>
                 <FontAwesomeIcon icon={faBell} />
               </i>
-              <p>Bell</p>
+              <p>Notifications</p>
             </li>
           </ul>
         </div>
@@ -217,7 +206,7 @@ function Account(props) {
           <div className={styles.box}>
             <div className={styles.imgSelector}>
               <div className={styles.circle}>
-                <img className={styles.profilePic} src="/profile-images/.jpeg" alt="" />
+                <img className={styles.profilePic} src={imageSrc} alt="" />
               </div>
               <div className={styles.pImage} onClick={() => { inputRef.current.click() }}>
                 <i className={styles.uploadBtn}>
@@ -287,7 +276,7 @@ function Account(props) {
           <div className={styles.box} id={styles.extension}>
             <div className={styles.title}>
               <h1>Chrome Extension</h1>
-              <p>Here you can setup and manage your chrome extension's tracking option.(Default options for all websites are true for all options)</p>
+              <p>Here you can setup and manage your chrome extension's tracking option.(Default options for all websitesEl are true for all options)</p>
             </div>
             <div className={styles.content}>
               <div className={styles.layer}>
@@ -303,7 +292,7 @@ function Account(props) {
               <div className={styles.extensionWrapper}>
                 <div className={styles.layer} id={styles.extensionHeader}>
                   <div>
-                    Websites
+                    WebsitesEl
                   </div>
                   <div>
                     Block When Studying
@@ -313,18 +302,25 @@ function Account(props) {
                   </div>
                 </div>
                 <ul>
-                  <li className={styles.websiteOptions}>
-                    <div className={styles.domain}>
-                      <p>dfd</p>
-                    </div>
-                    <div className={styles.block}>
-                      <SimpleToggleBtn />
-                    </div>
-                    <div className={styles.timer}>
-                      <SimpleToggleBtn />
-                    </div>
-                  </li>
-                  {websites}
+                  {websites.map(({d, b, t}, i) => {
+                    return (
+                      <li className={styles.websiteOptions} key={i}>
+                      <div className={styles.domain}>
+                        <p>{d}</p>
+                      </div>
+                      <div className={styles.block}>
+                        <SimpleToggleBtn checked={b} onToggle={(e) => {
+                          fetchExtensionSettingUpdate(d, 'block', e.target.checked);
+                        }}/>
+                      </div>
+                      <div className={styles.timer}>
+                      <SimpleToggleBtn checked={t} onToggle={(e) => {
+                          fetchExtensionSettingUpdate(d, 'timer', e.target.checked);
+                        }}/>
+                      </div>
+                    </li>
+                    )
+                  })}
                 </ul>
               </div>
             </div>

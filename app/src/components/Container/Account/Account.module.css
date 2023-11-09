@@ -37,7 +37,6 @@
   width: calc(100% - 550px);
   margin-left: 550px;
   height: 100vh;
-  background-color: pink;
 }
 
 .Account .box {
@@ -46,6 +45,7 @@
   border-radius: 20px;
   background-color: #fff;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin-bottom: 30px;
 }
 
 /* profile pic selector */
@@ -148,6 +148,7 @@
 
 .Account .websiteOptions {
   display: flex;
+  margin-bottom: 10px;
 }
 
 .Account .websiteOptions > div {
