@@ -176,7 +176,7 @@ Router.post('/daily', async(req, res) => {
     }));
     usersSorted.sort((a, b) => {a.total - b.total});
     usersSorted.reverse();
-    res.send(usersSorted) //return {id: __, total: __}
+    res.send({success: true, data: usersSorted}) //return {id: __, total: __}
 
   } catch (err) {
     console.log(err);
@@ -226,7 +226,7 @@ Router.post('/weekly', async(req, res) => {
 
     usersSorted.sort((a, b) => {a.total - b.total});
     usersSorted.reverse();
-    res.send(usersSorted) //return {id: __, total: __}
+    res.send({success: true, data: usersSorted}) //return {id: __, total: __}
 
   } catch (err) {
     console.log(err);
@@ -276,7 +276,7 @@ Router.post('/monthly', async(req, res) => {
 
     usersSorted.sort((a, b) => {a.total - b.total});
     usersSorted.reverse();
-    res.send(usersSorted) //return {id: __, total: __}
+    res.send({success: true, data: usersSorted}) //return {id: __, total: __}
 
   } catch (err) {
     console.log(err);
