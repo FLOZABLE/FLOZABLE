@@ -92,14 +92,7 @@ async function generateUsers(length) {
       datum_point: unixTimestamp,
       key_salt: keySalt,
       iv: iv,
-      plan: '',
-      daily: '[0]',
-      weekly: '[0]',
-      monthly: '[0]',
-      activity: '{}',
-      activity_setting: '[]',
       notification_setting: 'default_setting',
-      subjects: '[]',
       study: JSON.stringify({ study: false, point: unixTimestamp, total: 0 })
     }
     connection.query('INSERT INTO users SET?', userInfo);
