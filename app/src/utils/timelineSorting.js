@@ -16,7 +16,7 @@
 import { DateTime } from "luxon";
 
 function timelineSort(subjects) {
-  console.log('original', subjects);
+  console.log('original', {...subjects});
   let firstDatumPoint = Math.floor(new Date().getTime() / 1000);
   subjects.map(({ datum_point }) => {
     //this code compares the current firstdatumPoint and current looped subject's datumpoint and updtate the firstDatunmPoint with
@@ -76,7 +76,7 @@ function timelineSort(subjects) {
 
 
   /* part2 */
-  console.log('result subject', subjects, new Date(firstDatumPoint * 1000));
+  console.log('result subject', {...subjects});
   return subjects;
 };
 
