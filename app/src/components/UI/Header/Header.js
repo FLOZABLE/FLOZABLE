@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faCommentDots, faCalendar, faClock, faBook, faMobileScreenButton, faFire, faArrowsToCircle } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faCommentDots, faCalendar, faClock, faBook, faMobileScreenButton, faFire, faArrowsToCircle, faBars } from '@fortawesome/free-solid-svg-icons';
 import ToggleBtn from "../ToggleBtn/ToggleBtn";
 import styles from "./Header.module.css";
 
@@ -8,7 +8,7 @@ function Header(props) {
   const { isChatModal, setIsChatModal, subjects } = props;
 
   const [totalStudied, setTotalStudied] = useState("0m"); // string
-  const [longestSession, setLongestSession] = useState("0m"); //in seconds
+  const [longestSession, setLongestSession] = useState("0s");
   const [studyStreak, setStudyStreak] = useState(0); //days of consecutive study
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -40,11 +40,11 @@ function Header(props) {
 
     let displayString = "";
     if (totalHours > 0){
-      displayString += totalHours + "h ";
-      displayString += (totalMinutes % 60) + "m";
+      displayString += "" + totalHours + "h ";
+      displayString += "" + (totalMinutes % 60) + "m";
     }
     else{
-      displayString += totalMinutes + "m";
+      displayString += "" + totalMinutes + "m";
     }
     setTotalStudied(displayString);
 
@@ -52,13 +52,13 @@ function Header(props) {
     let tempStreak = 0;
     let day = 0;
     for (let i = 0; i < subjects.length; i++){
-      day = Math.max(day, subjects[i].daily.grouped.length); //find the latest day
+      day = Math.max(day, subjects[i].daily.grouped.length - 1); //find the latest day
       // this will find the maximum length in all the daily arrays
     }
-    while (true){
+    while (day >= 0){
       let studiedToday = false;
       for (let i = 0; i < subjects.length; i++){
-        if (subjects[i].daily.grouped[day] > 0){
+        if (subjects[i].daily.grouped[day].length > 0){
           //the user has studied in this subject this day
           tempStreak += 1;
           studiedToday = true;
@@ -73,17 +73,25 @@ function Header(props) {
     //Solve focus
     let subjectActivity = [];
     for (let i = 0; i < subjects.length; i++){
-      let datum = subjects[i].datum_point;
-      for (let j = 0; j < subjects[i].timeline.length; j++){
-        let start = subjects[i].timeline[j][0] + datum;
-        let end = subjects[i].timeline[j][0] + datum;
-        let duration = start - end;
-
-        subjectActivity.push(duration);
-      }
+      subjects[i].daily.grouped[subjects[i].daily.grouped.length - 1].map(([startUnix, stopUnix]) => {
+        subjectActivity.push(stopUnix - startUnix);
+      });
     }
-    subjectActivity.sort();
-    setLongestSession(subjectActivity.length ? subjectActivity[subjectActivity.length - 1] : 0);
+    subjectActivity.sort((a,b) => a - b);
+    console.log(subjectActivity);
+    let longestSessionSeconds = subjectActivity.length ? subjectActivity[subjectActivity.length - 1] : 0;
+    let longestSessionMinutes = Math.floor(longestSessionSeconds / 60);
+    let longestSessionHours = Math.floor(longestSessionMinutes / 60);
+    let longestSessionString = "";
+    if (longestSessionHours > 0){
+      longestSessionString += "" + longestSessionHours + "h ";
+      longestSessionString += "" + (longestSessionMinutes % 60) + "m";
+    }
+    else{
+      longestSessionString += "" + longestSessionMinutes + "m";
+    }
+
+    setLongestSession(longestSessionString);
 
   },[subjects]);
 
@@ -108,7 +116,7 @@ function Header(props) {
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-            <FontAwesomeIcon icon={faMobileScreenButton} style={{ color: "#ff562d", }} />
+            <FontAwesomeIcon icon={faBars} style={{ color: "#ff562d", }} />
           </div>
           <div className={styles.text}>
             <h5>2h</h5>
