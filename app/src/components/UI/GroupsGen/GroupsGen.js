@@ -124,10 +124,7 @@ function GroupsGen(props) {
     )
   }, [queryTags, searchQuery, groups, maxGroups]);
   return (
-    <div className={`${styles.groupContainer}`}>
-      {otherGroupsEl}
-      <button onClick={() => { setMaxGroups(maxGroups + 20)}}>Load More</button>
-    </div>
+    otherGroupsEl
   );
 };
 
