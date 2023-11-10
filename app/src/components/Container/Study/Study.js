@@ -287,7 +287,6 @@ function Study(props) {
       setIsCam={setIsCam}
       setIsMic={setIsMic}
       />
-      <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setAddSubjectResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} />
       <div className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={`${styles.myGroupsViewerWrapper} ${isViewGroups ? styles.open : ''}`}>
           <MyGroupsViewer myGroups={myGroups} mode={'study'} socket={socket} userInfo={userInfo} myTimerTotal={myTimerTotal} isCam={isCam} isMic={isMic} />

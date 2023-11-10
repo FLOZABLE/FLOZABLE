@@ -515,29 +515,6 @@ function EventPlanner(props) {
             },
           }}
         />
-        <EventModal
-          isAddPlanModal={isAddPlanModal}
-          setIsAddPlanModal={setIsAddPlanModal}
-          title={title}
-          setTitle={setTitle}
-          setStart={setStart}
-          start={start}
-          setEnd={setEnd}
-          end={end}
-          description={description}
-          setDescription={setDescription}
-          setSubject={setSubject}
-          subjects={subjectsOpt}
-          notification={notification}
-          setNotification={setNotification}
-          submit={submit}
-          setSubmit={setSubmit}
-          repeat={repeat}
-          setRepeat={setRepeat}
-          priority={priority}
-          setPriority={setPriority}
-          setIsAddSubjectModal={setIsAddSubjectModal}
-        />
       </StyleWrapper>
     </div>
   );
