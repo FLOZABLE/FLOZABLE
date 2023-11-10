@@ -18,6 +18,8 @@ import { sortSubjects } from './components/Container/Stats/StatTools';
 import { socket } from "./socket";
 import { setGroupMembers, getMyGroups, getLikedGroups } from './components/Container/Groups/GroupsTool';
 import { timelineSort } from './utils/timelineSorting';
+import EventModal from './components/UI/EventModal/EventModal';
+import AddSubjectModal from './components/UI/AddSubjectModal/AddSubjectModal';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -34,10 +36,32 @@ function App() {
   const [plans, setPlans] = useState([]);
   const [otherGroups, setOtherGroups] = useState([]);
   const [likedGroups, setLikedGroups] = useState([]);
+  const [isAddPlanModal, setIsAddPlanModal] = useState(false);
+
+  //modal props
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [subjectsOpt, setSubjectsOpt] = useState([]);
+  const [start, setStart] = useState(new Date());
+  const [end, setEnd] = useState(new Date());
+  const [repeat, setRepeat] = useState(0);
+  const [priority, setPriority] = useState(50);
+  const [notification, setNotification] = useState(-1);
+  const [submit, setSubmit] = useState(false);
+  const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
+
+  const [addSubjectResponse, setAddSubjectResponse] = useState(null);
+  const [subject, setSubject] = useState('0000000000');
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prevState => !prevState);
   };
+
+  useEffect(() => {
+    setSubjectsOpt([...subjects.map((subject) => {
+      return { name: subject.name, value: subject.id };
+    })]);
+  }, [subjects]);
 
   useEffect(() => {
     const socketConnectAction = () => {
@@ -51,7 +75,7 @@ function App() {
 
     socket.on('connect', socketConnectAction);
     socket.on('reset', socketResetAction);
-    socket.on("studying", () => {console.log('ddd')})
+    socket.on("studying", () => { console.log('ddd') })
 
     return () => {
       socket.off("joinMyGroups", socketConnectAction);
@@ -71,38 +95,38 @@ function App() {
 
   const bringSubjects = useCallback(() => {
     fetch(`${serverOrigin}/api/study/bring-subjects`, { method: 'post' })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        setSubjects(timelineSort(data.subjects))
-        //setSubjects(sortSubjects(data.subjects));
-      }
-    })
-    .catch((error) => console.error(error));
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setSubjects(timelineSort(data.subjects))
+          //setSubjects(sortSubjects(data.subjects));
+        }
+      })
+      .catch((error) => console.error(error));
   }, []);
 
   const bringAccountInfo = useCallback(() => {
     fetch(`${serverOrigin}/api/account/accountinfo`, { method: 'post' })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        setUserInfo(data.userInfo);
-        socket.connect();
-        console.log('connect!!!', socket)
-      };
-    })
-    .catch((error) => console.error(error));
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setUserInfo(data.userInfo);
+          socket.connect();
+          console.log('connect!!!', socket)
+        };
+      })
+      .catch((error) => console.error(error));
   }, []);
 
   const bringPlans = useCallback(() => {
     fetch(`${serverOrigin}/api/plan/bring-plans`, { method: 'post' })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        setPlans(data.plans.map(plan => { plan.saved = true; plan.start = new Date(plan.start * 1000 * 60); plan.end = new Date(plan.end * 1000 * 60); return plan }));
-      };
-    })
-    .catch((error) => console.error(error));
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setPlans(data.plans.map(plan => { plan.saved = true; plan.start = new Date(plan.start * 1000 * 60); plan.end = new Date(plan.end * 1000 * 60); return plan }));
+        };
+      })
+      .catch((error) => console.error(error));
   }, []);
 
   const bringGroups = useCallback(() => {
@@ -141,6 +165,38 @@ function App() {
 
   return (
     <Router>
+      <EventModal
+        isAddPlanModal={isAddPlanModal}
+        setIsAddPlanModal={setIsAddPlanModal}
+        title={title}
+        setTitle={setTitle}
+        setStart={setStart}
+        start={start}
+        setEnd={setEnd}
+        end={end}
+        description={description}
+        setDescription={setDescription}
+        setSubject={setSubject}
+        subjects={subjectsOpt}
+        notification={notification}
+        setNotification={setNotification}
+        submit={submit}
+        setSubmit={setSubmit}
+        repeat={repeat}
+        setRepeat={setRepeat}
+        priority={priority}
+        setPriority={setPriority}
+        setIsAddSubjectModal={setIsAddSubjectModal}
+      />
+      <AddSubjectModal
+        setIsAddSubjectModal={setIsAddSubjectModal}
+        isAddSubjectModal={isAddSubjectModal}
+        setAddSubjectResponse={setAddSubjectResponse}
+        subjects={subjects}
+        setSubjects={setSubjects}
+        setSubject={setSubject}
+      />
+      <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
       <Routes>
         <Route path="/dashboard" element={
           <div>
@@ -149,8 +205,8 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+
+            <Header setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} plans={plans} subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Main subjects={subjects} plans={plans} setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
             <Footer />
           </div>
@@ -162,8 +218,8 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            
+            <Header setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} plans={plans} subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Stats setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} subjects={subjects} />
             <Footer />
           </div>
@@ -175,8 +231,7 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Header setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} plans={plans} subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Ranking setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} />
             <Footer />
           </div>
@@ -188,22 +243,13 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Header setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} plans={plans} subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Groups setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} reset={reset} allMembers={allMembers} groups={groups} otherGroups={otherGroups} setOtherGroups={setOtherGroups} myGroups={myGroups} setMyGroups={setMyGroups} likedGroups={likedGroups} setLikedGroups={setLikedGroups} />
             <Footer />
           </div>
         } />
         <Route path="/dashboard/study" element={
           <div>
-            {/* <Sidebar isSidebarOpen={isSidebarOpen}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              isSidebarHovered={isHovered}
-              mode={"study"}
-            /> */}
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            {/* <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} mode={"study"} /> */}
             <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} myGroups={myGroups} />
           </div>
         } />
@@ -214,8 +260,7 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Header setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} plans={plans} subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans} reset={reset} />
           </div>
         } />
@@ -226,8 +271,7 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Header setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} plans={plans} subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Account setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} />
           </div>
         } />
@@ -238,17 +282,10 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <Header subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <Header setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} plans={plans} subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Templates setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
           </div>
         } />
-       {/* <Route path="/dashboard/templates/edit" element={
-          <div>
-            <ChatModal setIsChatModal={setIsChatModal} isChatModal={isChatModal} socket={socket} userInfo={userInfo} allMembers={allMembers} myGroups={myGroups} />
-            <EditTemplate setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} />
-          </div>
-        } /> */}
       </Routes>
     </Router>
   );

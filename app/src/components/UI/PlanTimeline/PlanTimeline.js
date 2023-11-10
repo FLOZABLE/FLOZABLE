@@ -5,11 +5,12 @@ import { faBook } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
 import { WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert } from "../../../utils/svgs";
 import CheckBox from "../CheckBox/CheckBox";
+import CircularCheckBox from "../CircularCheckBox/CircularCheckBox";
+import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function PlanTimeline(props) {
-  const { plans, viewMode, viewDate, subjects, setIsAddPlanModal, mode, setPlans } = props;
+function PlanTimeline({ plans, viewMode, viewDate, subjects, setIsAddPlanModal, mode, setPlans }) {
   const [plansEl, setPlansEl] = useState([]);
   const [isPlan, setIsPlan] = useState(false);
 
@@ -51,15 +52,13 @@ function PlanTimeline(props) {
     setPlansEl(plans.map((plan, i) => {
       const planSubject = subjects.find((subject) => { return subject.id == plan.subject });
       let isInRange = false;
+      const viewDateTime = DateTime.fromJSDate(viewDate);
       if (viewMode === "timeGridDay") {
-        if (new Date(viewDate).setHours(0, 0, 0, 0) < plan.start.getTime() && plan.start.getTime() < new Date(viewDate).setHours(23, 59, 59, 999)) {
+        if (viewDateTime.startOf('day').toMillis <= plan.start.getTime() && plan.start.getTime() <= viewDateTime.endOf('day').toMillis) {
           isInRange = true;
         };
       } else if (viewMode === "timeGridWeek") {
-        const startOfWeek = new Date(viewDate).setDate(new Date(viewDate).getDate() - new Date(viewDate).getDay());
-        const endOfWeek = new Date(new Date(viewDate).setDate(viewDate.getDate() + (6 - viewDate.getDay() + 1)));
-        endOfWeek.setHours(23, 59, 59, 999);
-        if (startOfWeek < plan.start.getTime() && plan.start.getTime() < endOfWeek) {
+        if (viewDateTime.startOf('week').toMillis <= plan.start.getTime() && plan.start.getTime() <= viewDateTime.endOf('week').toMillis) {
           isInRange = true;
         };
       } else {
@@ -137,9 +136,9 @@ function PlanTimeline(props) {
         return (
           <li className={styles.plan} key={i}>
             <div className={styles.iconWrapper} style={{ backgroundColor: subjectBg }}>
-              {icon}
-              <div className={styles.hoverDisp} onClick={() => { togglePlan(plan) }}>
-                <CheckBox id={plan.id} checked={plan.completed} />
+              {/* {icon} */}
+              <div className={styles.hoverDispn} onClick={() => { togglePlan(plan) }}>
+                <CircularCheckBox checked={plan.completed} />
               </div>
             </div>
             <div className={styles.content}>
