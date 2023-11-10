@@ -30,21 +30,17 @@ function timelineSort(subjects) {
 
   subjects.map((subject, i) => {
     const [dailySorted, dailyTotal] = timelineSorter(subject, 'daily', firstDatumPoint, (startTime, stopTime) => {
-      startTime += DATETOSEC;
-      stopTime += DATETOSEC;
-      //return [startTime + DATETOSEC, stopTime + DATETOSEC];
+      return [startTime + DATETOSEC, stopTime + DATETOSEC];
     });
     const [weeklySorted, weeklyTotal] = timelineSorter(subject, 'weekly', firstDatumPoint, (startTime, stopTime) => {
-      startTime += WEEKTOSEC;
-      stopTime += WEEKTOSEC;
-      //return [startTime + WEEKTOSEC, stopTime + WEEKTOSEC];
+      return [startTime + WEEKTOSEC, stopTime + WEEKTOSEC];
     });
     const [monthlySorted, monthlyTotal] = timelineSorter(subject, 'monthly', firstDatumPoint, (startTime, stopTime) => {
       const originalStart = DateTime.fromSeconds(startTime);
       const originalStop = DateTime.fromSeconds(stopTime);
       startTime = DateTime.fromObject({ year: originalStart.year, month: originalStart.month + 1 });
       stopTime = DateTime.fromObject({ year: originalStop.year, month: originalStop.month + 1 });
-      //return [startTime, stopTime];
+      return [startTime, stopTime];
     });
 
     subject.daily = {};
@@ -143,33 +139,23 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
   };
 
   timeline.map(([start, duration]) => {
-    if (!start) {
-      return;
-    }
     const unixStart = datum_point + start + timelineSum;
     const unixStop = unixStart + duration;
     timelineSum += start + duration;
     let isIn = true;
-    //console.log('changed1', timelineSum, new Date(startTime * 1000),new Date(stopTime * 1000), new Date(unixStart * 1000), new Date(unixStop * 1000))
     while (isIn) {
       if (startTime <= unixStart && unixStop <= stopTime) {
         sortedTimeline[sortedTimeline.length - 1].push([unixStart, unixStop]);
         totalTime[sortedTimeline.length - 1] += duration;
         isIn = false;
-      } else if (startTime <= unixStart) {
-        //case when start time is between 0:00 and 23:59, but stop time is new date
-        //in this case, we will separte the activity into 2 arrays one activity with [start, 23:59], [0:00, stop]
-        //console.log('changed1', new Date(startTime * 1000), new Date(stopTime * 1000), new Date(unixStart * 1000), new Date(unixStop * 1000))
-        sortedTimeline[sortedTimeline.length - 1].push([unixStart, stopTime]);
-        totalTime[sortedTimeline.length - 1] += stopTime - unixStart;
-        sortedTimeline.push([]);
-        sortedTimeline[sortedTimeline.length - 1].push([stopTime + 1, unixStop]);
-        totalTime[sortedTimeline.length - 1] += unixStop - (stopTime + 1);
-        /* const missingDates = unixStop % (60 * 60 * 24) */
-        isIn = false;
-      } else {
-        //console.log('changed', new Date(startTime * 1000), new Date(stopTime * 1000), new Date(unixStart * 1000), new Date(unixStop * 1000))
-        startTimeChange(unixStart, unixStop);
+      }
+       else {
+        /* if (unixStart < stopTime) {
+          sortedTimeline[sortedTimeline.length - 1].push([startTime, unixStop]);
+          totalTime[sortedTimeline.length - 1] += duration;
+          isIn = false;
+        } */
+        [startTime, stopTime] = startTimeChange(startTime, stopTime);
         sortedTimeline.push([]);
         totalTime.push(0);
       };
