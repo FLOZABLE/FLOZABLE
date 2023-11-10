@@ -13,13 +13,9 @@ function Main(props) {
   let subjectActivity = [];
   function sortActivity(){
     for (let i = 0; i < subjects.length; i++){
-      let datum = subjects[i].datum_point;
-      for (let j = 0; j < subjects[i].timeline.length; j++){
-        let start = subjects[i].timeline[j][0] + datum;
-        let end = subjects[i].timeline[j][0] + datum;
-
-        subjectActivity.push([start, end, subjects[i].name]);
-      }
+      subjects[i].daily.grouped[subjects[i].daily.grouped.length - 1].map(([startUnix, stopUnix]) => {
+        subjectActivity.push([startUnix, stopUnix, subjects[i].name]);
+      });
     }
 
     subjectActivity.sort((a, b) => b[1] - a[1]);

@@ -34,10 +34,6 @@ function Ranking({isSidebarOpen, isSidebarHovered}) {
 
   useEffect(() => {
     let startTime =    DateTime.fromJSDate(viewDate);
-    /*
-    FIXME: viewer defaults to current time if the user does not click any day on the calendar.
-    Change it to the beginning of the day as default
-    */
     console.log("start time:",startTime);
 
     let startUnix = startTime.toSeconds();
