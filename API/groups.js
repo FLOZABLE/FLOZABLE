@@ -179,7 +179,7 @@ Router.post('/bring-groups', async (req, res) => {
     const [groups] = await connection.query(
       "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\`"
     );
-    const allMembersIds = [];
+    /*const allMembersIds = [];
     groups.map((group) => {
       const members = group.members.split(',');
       members.map((member) => {
@@ -187,27 +187,26 @@ Router.post('/bring-groups', async (req, res) => {
           allMembersIds.push(member);
         };
       });
-    });
+    });*/
     let membersInfo = [];
     const now = Math.floor(new Date().getTime() / 1000);
-    if (allMembersIds.length) {
-      [membersInfo] = await connection.query('SELECT user_id, name, timezone FROM users WHERE user_id IN (?)', [allMembersIds]);
-      await Promise.all(membersInfo.map(async (member) => {
-        let memberTimer = await redisClient.hGet(`user:${member.user_id}`, 'timerInfo');
-        const timerInfo = await timerCache(member.user_id);
-        const activeSubject = await activeSubjectCache(member.user_id);
-        const timer = await redisClient.lRange(`user:${member.user_id}:timer`, 0, -1);
-        /* if (!memberTimer) {
-          memberTimer = `{"datum":${now},"timeline":[[0,0]],"study":0}`
-        } */
+    
+    [membersInfo] = await connection.query('SELECT user_id, name, timezone FROM users');
+    await Promise.all(membersInfo.map(async (member) => {
+      let memberTimer = await redisClient.hGet(`user:${member.user_id}`, 'timerInfo');
+      const timerInfo = await timerCache(member.user_id);
+      const activeSubject = await activeSubjectCache(member.user_id);
+      const timer = await redisClient.lRange(`user:${member.user_id}:timer`, 0, -1);
+      /* if (!memberTimer) {
         memberTimer = `{"datum":${now},"timeline":[[0,0]],"study":0}`
-        member.study = memberTimer;
-        member.timer = timer;
-        member.timerInfo = timerInfo;
-        member.activeSubject = activeSubject;
-      }));
+      } */
+      memberTimer = `{"datum":${now},"timeline":[[0,0]],"study":0}`
+      member.study = memberTimer;
+      member.timer = timer;
+      member.timerInfo = timerInfo;
+      member.activeSubject = activeSubject;
+    }));
 
-    };
     res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
     console.error('Error performing database queries:', err);
