@@ -143,6 +143,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.SECRET_ID));
 app.use(express.static(path.join(__dirname, '/public')));
+
 app.disable('etag');
 
 app.use('/', mainRouter);
@@ -176,6 +177,13 @@ app.get('/dashboard*', (req, res) => {
     })
   );
 });
+
+app.use((req, res) => {
+  if (!req.path.startsWith('/profile-images')) return;
+  const defaultImagePath = path.join(__dirname, 'public', '/img/default_profile.jpg');
+  res.sendFile(defaultImagePath);
+});
+
 
 cacheManager();
 cron.schedule('0 * * * *', () => {
