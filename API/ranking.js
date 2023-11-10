@@ -162,9 +162,10 @@ Router.post('/sort', async (req, res) => {
 
     //sort
     users.sort((a, b) => b.total - a.total);
-    res.send({ success: false, data: users })
+    res.send({ success: true, data: users })
   } catch (err) {
     console.log(err);
+    res.send({ success: false });
   }
 })
 

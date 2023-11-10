@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faUser, faXmark } from '@fortawesome/free-solid-svg-icons';
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
 import StatsCalendar from '../../UI/StatsCalendar/StatsCalendar';
 import StuckModal from '../../UI/StuckModal/StuckModal';
 import RadioBtn from '../../UI/RadioBtn/RadioBtn';
@@ -10,7 +10,7 @@ import SmallCalendar from '../../UI/SmallCalendar/SmallCalendar';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function Ranking({isSidebarOpen, isSidebarHovered}) {
+function Ranking({ isSidebarOpen, isSidebarHovered }) {
   const [SmallCalendarApi, setSmallCalendarApi] = useState(null);
   const SmallCalendarRef = useRef(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -38,60 +38,61 @@ function Ranking({isSidebarOpen, isSidebarHovered}) {
 
     let startTime;
     let stopTime;
-    if (viewer == "Daily"){
+    if (viewer == "Daily") {
       startTime = viewTime.startOf('day').toSeconds();
       stopTime = viewTime.endOf('day').toSeconds();
     }
-    else if (viewer == "Weekly"){
+    else if (viewer == "Weekly") {
       startTime = viewTime.startOf('week').toSeconds();
       stopTime = viewTime.endOf('week').toSeconds();
     }
-    else if (viewer == "Monthly"){
+    else if (viewer == "Monthly") {
       startTime = viewTime.startOf('month').toSeconds();
       stopTime = viewTime.endOf('month').toSeconds();
     }
-    else{
+    else {
       return;
-    }
-    console.log('unix',new Date(startTime * 1000), new Date(stopTime * 1000))
-    fetch(`${serverOrigin}/api/ranking/sort`, { 
+    };
+    fetch(`${serverOrigin}/api/ranking/sort`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ startTime, stopTime })
-     })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        console.log('ranking', data.data);
-        setRanking(data.data);
-      }
     })
-    .catch((error) => console.error(error));
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log('ranking', data.data);
+          setRanking(data.data);
+        }
+      })
+      .catch((error) => console.error(error));
   }, [viewDate, viewer]);
 
   useEffect(() => {
-    setRankingEl(ranking.map((user, i) => {
+    setRankingEl(ranking.map(({ total, name, user_id }, i) => {
       return (
         <li key={i}>
-        <div className={styles.circle}>
-          <p>{i + 1}</p>
-        </div>
-        <div className={styles.userInfo}>
-          <div className={styles.profileImg}>
-            <FontAwesomeIcon icon={faUser}/>
+          <div className={styles.circle}>
+            <p>{i + 1}</p>
           </div>
-          <p className={styles.name}>{user.name}</p>
-          <div className={styles.ranking}>
-            <p>16h</p>
-            <div className={styles.dash}></div>
-            <p>12h</p>
-            <div className={styles.dash}></div>
-            <p>500h</p>
+          <div className={styles.userInfo}>
+            <div className={styles.profileImg}
+              style={{
+                backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`, backgroundSize: 'cover',
+                backgroundPosition: 'center center',
+                backgroundRepeat: 'no-repeat',
+              }}
+            >
+              {/* <FontAwesomeIcon icon={faUser} /> */}
+            </div>
+            <p className={styles.name}>{name}</p>
+            <div className={styles.ranking}>
+              <p>{(total / (60 * 60)).toFixed(2)}hr</p>
+            </div>
           </div>
-        </div>
-      </li>
+        </li>
       )
     }))
   }, [ranking]);
@@ -100,11 +101,11 @@ function Ranking({isSidebarOpen, isSidebarHovered}) {
     <div className={styles.RankingContainer}>
       <div className={`${styles.CalendarModal} ${isCalendarOpen ? styles.isOpen : ''}`}>
         <div className={styles.modalHeader}>
-          <i onClick={() => {setIsCalendarOpen(false)}}>
+          <i onClick={() => { setIsCalendarOpen(false) }}>
             <FontAwesomeIcon icon={faXmark} />
           </i>
         </div>
-      <SmallCalendar width={"400px"} setViewDate={updateViewDate} viewDate={viewDate} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} setIsCalendarOpen={setIsCalendarOpen} />
+        <SmallCalendar width={"400px"} setViewDate={updateViewDate} viewDate={viewDate} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} setIsCalendarOpen={setIsCalendarOpen} />
       </div>
       <StuckModal />
       <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
@@ -113,14 +114,12 @@ function Ranking({isSidebarOpen, isSidebarHovered}) {
             <div className={styles.buttonArea}>
               <button className={styles.title}
                 onClick={toggleCalendar}
-              >Today <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} /></button>
-              <RadioBtn items={[{view: 'Daily', value: 'Daily'}, {view: 'Weekly', value: 'Weekly'}, {view: 'Monthly', value: 'Monthly'}]} changeEvent={updateViewer} defaultViewer={0} />
+              >{new Date(viewDate).setHours(0, 0, 0, 0) === new Date().setHours(0, 0, 0, 0) ? 'Today' : `${viewDate.getMonth() + 1}/${viewDate.getDate()}`} <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} /></button>
+              <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
             </div>
             <div className={`${styles.container} ${styles.rankingContainer}`}>
               <div className={styles.header}>
-                <p>Ranking</p>
-                <p>Time</p>
-                <p>Month</p>
+                <p>Hours</p>
               </div>
               <ul>
                 {rankingEl}
