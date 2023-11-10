@@ -32,35 +32,34 @@ function Ranking({isSidebarOpen, isSidebarHovered}) {
     console.log(date, 'dd')
   };
 
+  //fetch new ranking
   useEffect(() => {
-    let startTime =    DateTime.fromJSDate(viewDate);
-    console.log("start time:",startTime);
+    const viewTime = DateTime.fromJSDate(viewDate);
 
-    let startUnix = startTime.toSeconds();
-    let endUnix = 0; //monthly only
+    let startTime;
+    let stopTime;
     if (viewer == "Daily"){
-      //Do nothing
+      startTime = viewTime.startOf('day').toSeconds();
+      stopTime = viewTime.endOf('day').toSeconds();
     }
     else if (viewer == "Weekly"){
-      console.log("Weekday is " + startTime.weekday + ", subtracting " + (86400 * (startTime.weekday - 1)) + " seconds to find the start of the week.");
-      startUnix -= 84600 * (startTime.weekday - 1); //monday = 1, tuesday = 2, wednesday = 3...
+      startTime = viewTime.startOf('week').toSeconds();
+      stopTime = viewTime.endOf('week').toSeconds();
     }
     else if (viewer == "Monthly"){
-      console.log("Month-day is " + startTime.day + ", subtracting " + (86400 * (startTime.day - 1)) + " seconds to find the start of the month.");
-      startUnix -= 84600 * (startTime.day - 1); //1 = 1, 2 = 2, (month-date)
-      endUnix = startTime.endOf('month').ts + 1; //end of month in unix (add 1 ms for next month);
-      endUnix = Math.floor(endUnix/1000);
-      console.log("end of month is", endUnix);
+      startTime = viewTime.startOf('month').toSeconds();
+      stopTime = viewTime.endOf('month').toSeconds();
     }
     else{
       return;
     }
-    fetch(`${serverOrigin}/api/ranking/${viewer}`, { 
+    console.log('unix',new Date(startTime * 1000), new Date(stopTime * 1000))
+    fetch(`${serverOrigin}/api/ranking/sort`, { 
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ date: startUnix, monthEnd: endUnix })
+      body: JSON.stringify({ startTime, stopTime })
      })
     .then((response) => response.json())
     .then((data) => {
@@ -68,10 +67,6 @@ function Ranking({isSidebarOpen, isSidebarHovered}) {
         console.log('ranking', data.data);
         setRanking(data.data);
       }
-      //if (data.success){
-        console.log('ranking', data);
-        //alert("First place: " + data[0].id + " with " + data[0].total + " seconds studied\nSecond place: " + data[1].id + " with " + data[1].total + " seconds studied");
-      //}
     })
     .catch((error) => console.error(error));
   }, [viewDate, viewer]);

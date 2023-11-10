@@ -4,7 +4,7 @@ const pool = require('../model/pool');
 const redisClient = require("../model/redis");
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
-const {DateTime} = require('luxon');
+const { DateTime } = require('luxon');
 const { subjectsCache } = require("../services/redisLoader");
 
 /* Router.post("/", async (req, res) => {
@@ -130,10 +130,47 @@ const { subjectsCache } = require("../services/redisLoader");
 })
  */
 
-Router.post('/daily', async(req, res) => {
-  const {date} = req.body; //date = unix, mode = "day"/"week"/"month";
-  console.log("Daily Date",date);
-  let usersSorted = [];
+Router.post('/sort', async (req, res) => {
+  const { startTime, stopTime } = req.body;
+  try {
+    const connection = pool.promise();
+    const [users] = await connection.query(`SELECT name, user_id from users`);
+    await Promise.all(users.map(async (user) => {
+      const {user_id} = user;
+      const [subjects] = await connection.query(`SELECT datum_point, timeline FROM subjects WHERE user_id = ?`, [user_id]);
+      user.total = 0;
+      subjects.map(({ timeline, datum_point }) => {
+        let timelineSum = 0;
+        const parsedTimeline = timeline === "" ? [[]] : JSON.parse(timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
+        parsedTimeline.find(([start, duration]) => {
+          const startUnix = datum_point + start + 0;
+          const stopUnix = startUnix + duration;
+          timelineSum += start + duration;
+          if (startTime <= startUnix && stopUnix <= stopTime) {
+            user.total += duration;
+          } else if (startTime <= stopUnix) {
+            //this is the case when time range is between the starttime and stop time
+            console.log(stopUnix, startUnix, timelineSum)
+            //user.total += stopUnix - startTime;
+          } else if (startTime <= startUnix) {
+            //stop running the loop
+            return true;
+          };
+        });
+      });
+    }));
+
+    //sort
+    users.sort((a, b) => b.total - a.total);
+    res.send({ success: false, data: users })
+  } catch (err) {
+    console.log(err);
+  }
+})
+
+/* Router.post('/daily', async(req, res) => {
+  const {startUnix, stopUnix} = req.body;
+  const usersSorted = [];
   try {
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT datum_point, name, user_id from users`);
@@ -176,41 +213,42 @@ Router.post('/daily', async(req, res) => {
     }));
     usersSorted.sort((a, b) => {a.total - b.total});
     usersSorted.reverse();
+    console.log(usersSorted)
     res.send({success: true, data: usersSorted}) //return {id: __, total: __}
 
   } catch (err) {
     console.log(err);
   }
 });
-
-Router.post('/weekly', async(req, res) => {
-  const {date} = req.body; //date = unix, mode = "day"/"week"/"month";
-  console.log("Weekly Date",date);
+ */
+Router.post('/weekly', async (req, res) => {
+  const { date } = req.body; //date = unix, mode = "day"/"week"/"month";
+  console.log("Weekly Date", date);
   let usersSorted = [];
   try {
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT datum_point, name, user_id from users`);
-    await Promise.all(users.map(async({user_id, datum_point, name}) => {
+    await Promise.all(users.map(async ({ user_id, datum_point, name }) => {
       const [subjects] = await connection.query(`SELECT id, name, timeline_sum, datum_point, timeline FROM subjects WHERE user_id = ?`, [user_id]);
       let studySum = 0;
 
-      for (const subject of subjects){
+      for (const subject of subjects) {
 
-        let prevTimeline = subject.timeline === "" ? [[]] :  JSON.parse(subject.timeline.replace(/^/,"[").replace(/$/,"]")); //wrapping the string with "[]"
+        let prevTimeline = subject.timeline === "" ? [[]] : JSON.parse(subject.timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
         const todayTimeline = (await redisClient.lRange(`user:${user_id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
         subject.timeline = prevTimeline.concat(todayTimeline);
 
         let currentSum = subject.datum_point;
 
-        await Promise.all(subject.timeline.map( async([start, duration]) => {
-          if (!!start){ //check if null (this is a temporary fix to another problem - delete later)
+        await Promise.all(subject.timeline.map(async ([start, duration]) => {
+          if (!!start) { //check if null (this is a temporary fix to another problem - delete later)
             let startUnix = currentSum + start; //start time in unix
             let endUnix = startUnix + duration; //end time in unix
             currentSum = endUnix;
-            
+
             // check if current [startUnix, endUnix] lies within daily range
-            if (endUnix < date || startUnix > date + 86400 * 7){}
-            else{
+            if (endUnix < date || startUnix > date + 86400 * 7) { }
+            else {
               //so this means it does
               let realStart = Math.max(startUnix, date);
               let realEnd = Math.min(endUnix, date + 86400 * 7);
@@ -221,46 +259,47 @@ Router.post('/weekly', async(req, res) => {
         }));
       }
 
-      usersSorted.push({name: name, id: user_id, total: studySum});
+      usersSorted.push({ name: name, id: user_id, total: studySum });
     }));
 
-    usersSorted.sort((a, b) => {a.total - b.total});
+    usersSorted.sort((a, b) => { a.total - b.total });
     usersSorted.reverse();
-    res.send({success: true, data: usersSorted}) //return {id: __, total: __}
+    console.log('weeky', usersSorted)
+    res.send({ success: true, data: usersSorted }) //return {id: __, total: __}
 
   } catch (err) {
     console.log(err);
   }
 })
 
-Router.post('/monthly', async(req, res) => {
-  const {date, monthEnd} = req.body; //date = unix, mode = "day"/"week"/"month";
-  console.log("Monthly Date",date);
+Router.post('/monthly', async (req, res) => {
+  const { date, monthEnd } = req.body; //date = unix, mode = "day"/"week"/"month";
+  console.log("Monthly Date", date);
   let usersSorted = [];
   try {
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT datum_point, name, user_id from users`);
-    await Promise.all(users.map(async({user_id, datum_point, name}) => {
+    await Promise.all(users.map(async ({ user_id, datum_point, name }) => {
       const [subjects] = await connection.query(`SELECT id, name, timeline_sum, datum_point, timeline FROM subjects WHERE user_id = ?`, [user_id]);
       let studySum = 0;
 
-      for (const subject of subjects){
+      for (const subject of subjects) {
 
-        let prevTimeline = subject.timeline === "" ? [[]] :  JSON.parse(subject.timeline.replace(/^/,"[").replace(/$/,"]")); //wrapping the string with "[]"
+        let prevTimeline = subject.timeline === "" ? [[]] : JSON.parse(subject.timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
         const todayTimeline = (await redisClient.lRange(`user:${user_id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
         subject.timeline = prevTimeline.concat(todayTimeline);
 
         let currentSum = subject.datum_point;
 
-        await Promise.all(subject.timeline.map( async([start, duration]) => {
-          if (!!start){ //check if null (this is a temporary fix to another problem - delete later)
+        await Promise.all(subject.timeline.map(async ([start, duration]) => {
+          if (!!start) { //check if null (this is a temporary fix to another problem - delete later)
             let startUnix = currentSum + start; //start time in unix
             let endUnix = startUnix + duration; //end time in unix
             currentSum = endUnix;
-            
+
             // check if current [startUnix, endUnix] lies within daily range
-            if (endUnix < date || startUnix > monthEnd){}
-            else{
+            if (endUnix < date || startUnix > monthEnd) { }
+            else {
               //so this means it does
               let realStart = Math.max(startUnix, date);
               let realEnd = Math.min(endUnix, monthEnd);
@@ -271,12 +310,12 @@ Router.post('/monthly', async(req, res) => {
         }));
       }
 
-      usersSorted.push({name: name, id: user_id, total: studySum});
+      usersSorted.push({ name: name, id: user_id, total: studySum });
     }));
 
-    usersSorted.sort((a, b) => {a.total - b.total});
+    usersSorted.sort((a, b) => { a.total - b.total });
     usersSorted.reverse();
-    res.send({success: true, data: usersSorted}) //return {id: __, total: __}
+    res.send({ success: true, data: usersSorted }) //return {id: __, total: __}
 
   } catch (err) {
     console.log(err);
