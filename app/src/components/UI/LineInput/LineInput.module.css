@@ -41,7 +41,7 @@
 
 .LineInput .title {
   transition: .3s ease-in-out color;
-  z-index: 3;
+  z-index: 1;
   position: absolute;
   top: 0px;
 }

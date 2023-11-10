@@ -124,26 +124,47 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #fff;
 }
 
-.header .right .dropDownContainer button:hover ~ .dropDownContents {
+.header .right .dropDownContainer:hover .dropDownContents {
   visibility: visible;
   opacity: 1;
 }
 
+.header .right .dropDownContainer button:active .dropDownContents {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* .header .right .dropDownContainer button:focus ~ .dropDownContents {
+  visibility: visible;
+  opacity: 1;
+} */
+
 .header .dropDownContainer .dropDownContents {
   position: absolute;
-  top: 60px;
+  top: 50px;
+  right:30px;
   visibility: hidden;
   opacity: 0;
   transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
 }
 
-.header .dropDownContainer:nth-child(4) {
-  /* height: 40px;
-  width: 40px;
+.header .dropDownContents#planner .inner{
+  min-width: 300px;
+}
+
+.header .dropDownContainer .dropDownContents .inner {
+  margin-top: 30px;
+  padding: 30px;
+  background-color: #fff;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   border-radius: 20px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center; */
+}
+
+.header .dropDownContainer .profileImg {
+  width: 40px;
+  height: 40px;
+  border-radius:20px;
 }

@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faCommentDots, faCalendar, faClock, faBook, faMobileScreenButton, faFire, faArrowsToCircle, faBars } from '@fortawesome/free-solid-svg-icons';
 import ToggleBtn from "../ToggleBtn/ToggleBtn";
 import styles from "./Header.module.css";
+import PlanTimeline from "../PlanTimeline/PlanTimeline";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function Header({ isChatModal, setIsChatModal, subjects, isSlibarOpen, isSidebarHovered, userInfo, mode, isSidebarOpen, onToggleSidebar }) {
+function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAddPlanModal, plans, subjects, isSlibarOpen, isSidebarHovered, userInfo, mode, isSidebarOpen, onToggleSidebar }) {
 
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
   const [studyStreak, setStudyStreak] = useState(0); //days of consecutive study
 
   const [isScrolled, setIsScrolled] = useState(false);
-  const messageDropDownRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,7 +60,7 @@ function Header({ isChatModal, setIsChatModal, subjects, isSlibarOpen, isSidebar
     while (day >= 0) {
       let studiedToday = false;
       for (let i = 0; i < subjects.length; i++) {
-        if (subjects[i].daily.grouped[day].length > 0) {
+        if (subjects[i].daily.grouped[day] && subjects[i].daily.grouped[day].length > 0) {
           //the user has studied in this subject this day
           tempStreak += 1;
           studiedToday = true;
@@ -151,10 +152,10 @@ function Header({ isChatModal, setIsChatModal, subjects, isSlibarOpen, isSidebar
                 <FontAwesomeIcon icon={faCalendar} />
               </i>
             </button>
-            <div className={styles.dropDownContents}>
-              <ul>
-                <li>sdfsdfs</li>
-              </ul>
+            <div className={styles.dropDownContents} id={styles.planner}>
+              <div className={styles.inner}>
+                <PlanTimeline plans={plans} viewDate={new Date()} subjects={subjects} setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} />
+              </div>
             </div>
           </div>
           <div className={styles.dropDownContainer}>
@@ -164,33 +165,29 @@ function Header({ isChatModal, setIsChatModal, subjects, isSlibarOpen, isSidebar
               </i>
             </button>
             <div className={styles.dropDownContents}>
-              <ul>
-                <li>sdfsdfs</li>
-              </ul>
+              <div className={styles.inner}>
+                <p>0 notifications</p>
+              </div>
             </div>
           </div>
           <div className={styles.dropDownContainer}>
-            <button>
+            <button onClick={() => { setIsChatModal(!isChatModal) }}>
               <i>
                 <FontAwesomeIcon icon={faCommentDots} />
               </i>
             </button>
-            <div className={styles.dropDownContents}>
-              <ul>
-                <li>sdfsdfs</li>
-              </ul>
-            </div>
           </div>
           <div className={styles.dropDownContainer}>
             <button
             >
-              <div className={styles.profileImg}                           style={{
-                            backgroundImage: `url("${serverOrigin}/profile-images/${userInfo ? userInfo.user_id : ''}.jpeg")`, backgroundSize: 'cover',
-                            backgroundPosition: 'center center',
-                            backgroundRepeat: 'no-repeat',
-                          }}>
-                
-              </div>
+              <Link to="/dashboard/account" className={styles.navItem}>
+                <div className={styles.profileImg} style={{
+                  backgroundImage: `url("${serverOrigin}/profile-images/${userInfo ? userInfo.user_id : ''}.jpeg")`, backgroundSize: 'cover',
+                  backgroundPosition: 'center center',
+                  backgroundRepeat: 'no-repeat',
+                }}>
+                </div>
+              </Link>
             </button>
           </div>
         </div>
