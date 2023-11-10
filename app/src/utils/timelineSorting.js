@@ -28,7 +28,7 @@ function timelineSort(subjects) {
   subjects.weekly = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: []};
   subjects.monthly = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: []};
 
-  subjects.map(subject => {
+  subjects.map((subject, i) => {
     const [dailySorted, dailyTotal] = timelineSorter(subject, 'daily', firstDatumPoint, (startTime, stopTime) => {
       startTime += DATETOSEC;
       stopTime += DATETOSEC;
@@ -59,18 +59,36 @@ function timelineSort(subjects) {
     subject.monthly.grouped = monthlySorted;
     subject.monthly.total = monthlyTotal;
 
+    //fills array only when index is 0
+    if (!i) {
+      subjects.daily.grouped = Array(dailySorted.length).fill([]);
+      subjects.weekly.grouped = Array(weeklySorted.length).fill([]);
+      subjects.monthly.grouped = Array(monthlySorted.length).fill([]);
 
-    subjects.daily.maxLength = dailyTotal.length > subjects.daily.maxLength ? dailyTotal.length : subjects.daily.maxLength;
-    subjects.weekly.maxLength = weeklyTotal.length > subjects.weekly.maxLength ? weeklyTotal.length : subjects.weekly.maxLength;
-    subjects.monthly.maxLength = monthlyTotal.length > subjects.monthly.maxLength ? monthlyTotal.length : subjects.monthly.maxLength;
+      subjects.daily.groupedTotal = Array(dailyTotal.length).fill(0);
+      subjects.weekly.groupedTotal = Array(weeklyTotal.length).fill(0);
+      subjects.monthly.groupedTotal = Array(monthlyTotal.length).fill(0);
+    };
 
-    subjects.daily.grouped = [...subjects.daily.grouped, ...dailySorted];
-    subjects.weekly.grouped = [...subjects.weekly.grouped, ...weeklySorted];
-    subjects.monthly.grouped = [...subjects.monthly.grouped, ...monthlySorted];
+    subjects.daily.grouped = dailySorted.map((val, i) => {
+      return [...val, ...subjects.daily.grouped[i]];
+    });
+    subjects.weekly.grouped = weeklySorted.map((val, i) => {
+      return [...val, ...subjects.weekly.grouped[i]];
+    });
+    subjects.monthly.grouped = monthlySorted.map((val, i) => {
+      return [...val, ...subjects.monthly.grouped[i]];
+    });
 
-    subjects.daily.groupedTotal = [...subjects.daily.groupedTotal, ...dailyTotal];
-    subjects.weekly.groupedTotal = [...subjects.weekly.groupedTotal, ...weeklyTotal];
-    subjects.monthly.groupedTotal = [...subjects.monthly.groupedTotal, ...monthlyTotal];
+    subjects.daily.groupedTotal = dailyTotal.map((val, i) => {
+      return val + subjects.daily.groupedTotal[i];
+    });
+    subjects.weekly.groupedTotal = weeklyTotal.map((val, i) => {
+      return val + subjects.weekly.groupedTotal[i];
+    });
+    subjects.monthly.groupedTotal = monthlyTotal.map((val, i) => {
+      return val + subjects.monthly.groupedTotal[i];
+    });
   });
 
 
@@ -83,7 +101,7 @@ function timelineSort(subjects) {
 const DATETOSEC = 60 * 60 * 24;
 const WEEKTOSEC = DATETOSEC * 7;
 
-function timelineSorter({ timeline, datum_point }, option, firstDatumPoint, startTimeChange) {
+function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint, startTimeChange) {
   let timelineSum = 0;
   let startTime;
   let stopTime;
@@ -97,7 +115,7 @@ function timelineSorter({ timeline, datum_point }, option, firstDatumPoint, star
     const formattedFirstDatum = new Date(firstDatumPoint * 1000).setHours(0, 0, 0, 0) / 1000;
     indexDiff = (startTime - formattedFirstDatum) / DATETOSEC;
     const now = new Date().setHours(0, 0, 0, 0) / 1000;
-    expectedLength = (formattedFirstDatum - now) / DATETOSEC + 1;
+    expectedLength = (now - formattedFirstDatum) / DATETOSEC + 1;
   } else if (option === 'weekly') {
     startTime = DateTime.fromSeconds(datum_point).startOf('week').toSeconds();
     stopTime = DateTime.fromSeconds(datum_point).endOf('week').toSeconds();
@@ -108,9 +126,10 @@ function timelineSorter({ timeline, datum_point }, option, firstDatumPoint, star
     startTime = DateTime.fromSeconds(datum_point).startOf('month').toSeconds();
     stopTime = DateTime.fromSeconds(datum_point).endOf('month').toSeconds();
     const formattedFirstDatum = DateTime.fromSeconds(firstDatumPoint).startOf('month');
-    indexDiff = DateTime.fromSeconds(datum_point).startOf('month').diff(formattedFirstDatum, 'month');
+    indexDiff = DateTime.fromSeconds(datum_point).startOf('month').diff(formattedFirstDatum, 'month').toObject().months;
     expectedLength = DateTime.now().startOf('month').diff(formattedFirstDatum, 'month').months + 1;
   };
+  console.log('result', option,name, indexDiff, expectedLength)
 
   const sortedTimeline = [[]];
   const totalTime = [0];
@@ -161,7 +180,6 @@ function timelineSorter({ timeline, datum_point }, option, firstDatumPoint, star
   while (expectedLength - totalTime.length > 0) {
     totalTime.push(0);
     sortedTimeline.push([]);
-    expectedLength -= 1;
   };
 
   return [sortedTimeline, totalTime];
