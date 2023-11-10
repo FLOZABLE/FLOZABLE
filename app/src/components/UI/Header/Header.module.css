@@ -121,93 +121,29 @@
 .header .right .headerEl button {
   font-size: 30px;
   margin: 0px 10px;
-}
-
-.header .right .headerEl .dropDown {
-  padding: 30px 0px;
-}
-
-.header .right .headerEl .dropDown:nth-child(4) button {
-  background-color: #e4e6e7;
-  width: 40px;
-  height: 40px;
-  border-radius: 25px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
-.header .right .headerEl .dropDown .dropDownContent {
-  position: absolute;
-  top: 80px;
-  right: 0px;
-  background-color: #f7f9fd;
-  width: 400px;
-  text-align: left;
-  border-radius: 20px;
-  transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
-  opacity: 0;
-  overflow: hidden;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  visibility: hidden;
-}
-
-.header .right .headerEl .dropDown:hover .dropDownContent {
-  opacity: 1;
+.header .right .dropDownContainer button:hover ~ .dropDownContents {
   visibility: visible;
+  opacity: 1;
 }
 
-.header .chatModalOpen {
-  opacity: 0 !important;
-  height: 0px;
+.header .dropDownContainer .dropDownContents {
+  position: absolute;
+  top: 60px;
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
 }
 
-.header .dropDownContent .inner {
-  padding: 30px;
-}
-
-.header .dropDownContent .icon {
-  height: 50px;
-  width: 50px;
+.header .dropDownContainer:nth-child(4) {
+  /* height: 40px;
+  width: 40px;
   border-radius: 20px;
-  background-color: #DBC4F0;
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: center;
-
+  justify-content: center; */
 }
-
-.header .dropDownContent .title {
-  font-size: 30px;
-}
-
-.header .dropDownContent ul {
-  background-color: #f2f2fd;
-  border-radius: 20px;
-  padding: 20px;
-  margin-top: 20px;
-}
-
-.header .dropDownContent li {
-  display: flex;
-  justify-content: left;
-}
-
-.header .dropDownContent li:not(:nth-child(1)){
-  display: flex;
-  margin-top: 30px;
-}
-
-.header .dropDownContent li .explanation {
-  margin-left: 20px;
-}
-
-.header .dropDownContent li .topic{
-  font-size: 20px;
-  font-weight: 600;
-} 
-
-.header .dropDownContent li .time{
-  font-size: 16px;
-  font-weight: 300;
-} 

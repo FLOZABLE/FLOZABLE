@@ -40,10 +40,7 @@ async function timerUpdate() {
       subjects.map(async({id, timeline_sum}) => {
         let todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
         if (todayTimeline.length) {
-          const timelineSum = timeline_sum;
-          todayTimeline = todayTimeline.map(([start, duration], i) => {
-            return [start + (i + 1) * timelineSum, duration];
-          });
+  
           //const insertTimeline = await connection.query(`UPDATE subjects SET timeline = JSON_ARRAY_APPEND(timeline, '$', ?) WHERE id = ?`, [JSON.stringify(todayTimeline), subject])
           //this changes from [[39102,39104],[39105,39109],[39109,39112]] to [39102,39104],[39105,39109],[39109,39112]
           const modifiedTimeline = JSON.stringify(todayTimeline).slice(1, -1);
@@ -53,11 +50,13 @@ async function timerUpdate() {
           SET timeline = CASE
             WHEN timeline = '' THEN ?
             ELSE CONCAT(timeline, ',', ?)
-          END
+          END,
+          timeline_sum = ?
           WHERE id = ?
         `, [
             modifiedTimeline,
             modifiedTimeline,
+            timeline_sum,
             id
           ]);
         };
