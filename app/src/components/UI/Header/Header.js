@@ -4,8 +4,9 @@ import { faBell, faCommentDots, faCalendar, faClock, faBook, faMobileScreenButto
 import ToggleBtn from "../ToggleBtn/ToggleBtn";
 import styles from "./Header.module.css";
 
-function Header(props) {
-  const { isChatModal, setIsChatModal, subjects } = props;
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
+function Header({ isChatModal, setIsChatModal, subjects, isSlibarOpen, isSidebarHovered, userInfo, mode, isSidebarOpen, onToggleSidebar }) {
 
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
@@ -35,15 +36,15 @@ function Header(props) {
 
     //Solve daily
     let totalSeconds = subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1];
-    let totalMinutes = Math.round(totalSeconds/60);
-    let totalHours = Math.round(totalMinutes/60);
+    let totalMinutes = Math.round(totalSeconds / 60);
+    let totalHours = Math.round(totalMinutes / 60);
 
     let displayString = "";
-    if (totalHours > 0){
+    if (totalHours > 0) {
       displayString += "" + totalHours + "h ";
       displayString += "" + (totalMinutes % 60) + "m";
     }
-    else{
+    else {
       displayString += "" + totalMinutes + "m";
     }
     setTotalStudied(displayString);
@@ -51,14 +52,14 @@ function Header(props) {
     //Solve streak
     let tempStreak = 0;
     let day = 0;
-    for (let i = 0; i < subjects.length; i++){
+    for (let i = 0; i < subjects.length; i++) {
       day = Math.max(day, subjects[i].daily.grouped.length - 1); //find the latest day
       // this will find the maximum length in all the daily arrays
     }
-    while (day >= 0){
+    while (day >= 0) {
       let studiedToday = false;
-      for (let i = 0; i < subjects.length; i++){
-        if (subjects[i].daily.grouped[day].length > 0){
+      for (let i = 0; i < subjects.length; i++) {
+        if (subjects[i].daily.grouped[day].length > 0) {
           //the user has studied in this subject this day
           tempStreak += 1;
           studiedToday = true;
@@ -72,38 +73,38 @@ function Header(props) {
 
     //Solve focus
     let subjectActivity = [];
-    for (let i = 0; i < subjects.length; i++){
+    for (let i = 0; i < subjects.length; i++) {
       subjects[i].daily.grouped[subjects[i].daily.grouped.length - 1].map(([startUnix, stopUnix]) => {
         subjectActivity.push(stopUnix - startUnix);
       });
     }
-    subjectActivity.sort((a,b) => a - b);
+    subjectActivity.sort((a, b) => a - b);
     console.log(subjectActivity);
     let longestSessionSeconds = subjectActivity.length ? subjectActivity[subjectActivity.length - 1] : 0;
     let longestSessionMinutes = Math.floor(longestSessionSeconds / 60);
     let longestSessionHours = Math.floor(longestSessionMinutes / 60);
     let longestSessionString = "";
-    if (longestSessionHours > 0){
+    if (longestSessionHours > 0) {
       longestSessionString += "" + longestSessionHours + "h ";
       longestSessionString += "" + (longestSessionMinutes % 60) + "m";
     }
-    else{
+    else {
       longestSessionString += "" + longestSessionMinutes + "m";
     }
 
     setLongestSession(longestSessionString);
 
-  },[subjects]);
+  }, [subjects]);
 
   return (
-    <header className={`${styles.header} ${props.isSidebarOpen || props.isSidebarHovered ? styles.isOpen : ''} ${props.mode === "study" ? styles.studyMode : ''} ${isScrolled ? styles.scrolled : ''}`}>
+    <header className={`${styles.header} ${isSidebarOpen || isSidebarHovered ? styles.isOpen : ''} ${mode === "study" ? styles.studyMode : ''} ${isScrolled ? styles.scrolled : ''}`}>
       <div className={styles.left}>
         <ToggleBtn
           on={<p>on</p>}
           off={<p>off</p>}
           style={{ backgroundColor: '#fff' }}
-          onToggle={props.onToggleSidebar}
-          isToggled={props.isSidebarOpen}
+          onToggle={onToggleSidebar}
+          isToggled={isSidebarOpen}
         />
         <div className={styles.headerEl}>
           <div className={styles.circle}>
@@ -144,117 +145,53 @@ function Header(props) {
       </div>
       <div className={styles.right}>
         <div className={styles.headerEl}>
-          <div className={styles.dropDown}>
-            <button><FontAwesomeIcon icon={faCalendar} style={{ color: "#ffffff" }} /></button>
-            <div className={styles.dropDownContent}>
-              <div className={styles.inner}>
-                <h3 className={styles.title}>Today's Plan</h3>
-                <ul>
-                  <li>
-                    <div className={styles.icon}>
-                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
-                    </div>
-                    <div className={styles.explanation}>
-                      <p className={styles.topic}>JaSon</p>
-                      <p className={styles.time}>Sup bro</p>
-                    </div>
-                  </li>
-                  <li>
-                    <div className={styles.icon}>
-                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
-                    </div>
-                    <div className={styles.explanation}>
-                      <p className={styles.topic}>Run payoll</p>
-                      <p className={styles.time}>Mar 4 at 6:00pm</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+          <div className={styles.dropDownContainer}>
+            <button>
+              <i>
+                <FontAwesomeIcon icon={faCalendar} />
+              </i>
+            </button>
+            <div className={styles.dropDownContents}>
+              <ul>
+                <li>sdfsdfs</li>
+              </ul>
             </div>
           </div>
-          <div className={styles.dropDown}>
-            <button><FontAwesomeIcon icon={faBell} style={{ color: "#ffffff" }} /></button>
-            <div className={styles.dropDownContent}>
-              <div className={styles.inner}>
-                <h3 className={styles.title}>Notifications</h3>
-                <ul>
-                  <li>
-                    <div className={styles.icon}>
-                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
-                    </div>
-                    <div className={styles.explanation}>
-                      <p className={styles.topic}>JaSon</p>
-                      <p className={styles.time}>Sup bro</p>
-                    </div>
-                  </li>
-                  <li>
-                    <div className={styles.icon}>
-                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
-                    </div>
-                    <div className={styles.explanation}>
-                      <p className={styles.topic}>Run payoll</p>
-                      <p className={styles.time}>Mar 4 at 6:00pm</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+          <div className={styles.dropDownContainer}>
+            <button>
+              <i>
+                <FontAwesomeIcon icon={faBell} />
+              </i>
+            </button>
+            <div className={styles.dropDownContents}>
+              <ul>
+                <li>sdfsdfs</li>
+              </ul>
             </div>
           </div>
-          <div className={styles.dropDown}>
-            <button onClick={() => { setIsChatModal(!isChatModal) }}><FontAwesomeIcon icon={faCommentDots} style={{ color: "#ffffff" }} /></button>
-            <div className={`${styles.dropDownContent} ${isChatModal ? styles.chatModalOpen : ''}`} onClick={() => {setIsChatModal(!isChatModal)}} >
-              <div className={styles.inner}>
-                <h3 className={styles.title}>Messages</h3>
-                <ul>
-                  <li>
-                    <div className={styles.icon}>
-                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
-                    </div>
-                    <div className={styles.explanation}>
-                      <p className={styles.topic}>JaSon</p>
-                      <p className={styles.time}>Sup bro</p>
-                    </div>
-                  </li>
-                  <li>
-                    <div className={styles.icon}>
-                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
-                    </div>
-                    <div className={styles.explanation}>
-                      <p className={styles.topic}>Run payoll</p>
-                      <p className={styles.time}>Mar 4 at 6:00pm</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+          <div className={styles.dropDownContainer}>
+            <button>
+              <i>
+                <FontAwesomeIcon icon={faCommentDots} />
+              </i>
+            </button>
+            <div className={styles.dropDownContents}>
+              <ul>
+                <li>sdfsdfs</li>
+              </ul>
             </div>
           </div>
-          <div className={styles.dropDown}>
-            <button><img src="/profile.png" alt="" /></button>
-            <div className={styles.dropDownContent}>
-              <div className={styles.inner}>
-                <h3 className={styles.title}>Profile Setting</h3>
-                <ul>
-                  <li>
-                    <div className={styles.icon}>
-                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
-                    </div>
-                    <div className={styles.explanation}>
-                      <p className={styles.topic}>JaSon</p>
-                      <p className={styles.time}>Sup bro</p>
-                    </div>
-                  </li>
-                  <li>
-                    <div className={styles.icon}>
-                      <FontAwesomeIcon icon={faClock} style={{ color: "#ffffff" }} />
-                    </div>
-                    <div className={styles.explanation}>
-                      <p className={styles.topic}>Run payoll</p>
-                      <p className={styles.time}>Mar 4 at 6:00pm</p>
-                    </div>
-                  </li>
-                </ul>
+          <div className={styles.dropDownContainer}>
+            <button
+            >
+              <div className={styles.profileImg}                           style={{
+                            backgroundImage: `url("${serverOrigin}/profile-images/${userInfo ? userInfo.user_id : ''}.jpeg")`, backgroundSize: 'cover',
+                            backgroundPosition: 'center center',
+                            backgroundRepeat: 'no-repeat',
+                          }}>
+                
               </div>
-            </div>
+            </button>
           </div>
         </div>
       </div>
