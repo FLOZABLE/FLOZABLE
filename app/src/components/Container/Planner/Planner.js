@@ -12,7 +12,7 @@ import PlanTimeline from '../../UI/PlanTimeline/PlanTimeline';
 import DropDownButton from '../../UI/DropDownButton/DropDownButton';
 
 function Planner(props) {
-  const { subjects, setSubjects, events } = props;
+  const { subjects, setSubjects, events, isAddPlanModal, setIsAddPlanModal } = props;
 
   const [viewMode, setViewMode] = useState('timeGridWeek');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
@@ -22,7 +22,6 @@ function Planner(props) {
   const SmallCalendarRef = useRef(null);
   const [SmallCalendarApi, setSmallCalendarApi] = useState(null);
   const [addPlanResponse, setAddPlanResponse] = useState(null);
-  const [isAddPlanModal, setIsAddPlanModal] = useState(false);
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [subjectsOptions, setSubjectsOptions] = useState(null);
 

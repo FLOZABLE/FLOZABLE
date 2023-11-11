@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import styles from './Stats.module.css';
 
 const usersList = [];
@@ -247,13 +248,14 @@ function totalRangeTime(timeline) {
 function updateTimeUsagePie(subjects, viewDate, type) {
   let data = [];
   const labels = subjects.map(subject => {
-    const index = Math.floor((viewDate.getTime() / 1000 - subject.datum_point) / (60 * 60 * 24)) + 1;
+    const index = Math.floor((viewDate.getTime() / 1000 - subject.datum_point) / (60 * 60 * 24));
     return subject.daily.total[index] ? subject.daily.total[index] : 0;
   });
 
-  if (type === 'Daily') {
+  /* if (type === 'Daily') {
     data = subjects.map(subject => {
-      const index = Math.floor((viewDate / 1000 - subject.datum_point) / (60 * 60 * 24));
+      const index = Math.floor((viewDate.getTime() / 1000 - subject.datum_point) / (60 * 60 * 24));
+      console.log('index',index, viewDate)
       return subject.daily.total[index] ? subject.daily.total[index] : 0
     });
   } else if (type === 'Weekly') {
@@ -272,8 +274,32 @@ function updateTimeUsagePie(subjects, viewDate, type) {
       let diff = (viewMonthStart - datumMonthStart) / (1000 * 60 * 60 * 24);
       return subject.monthly.total[diff] ? subject.monthly.total[diff] : 0;
     });
-  };
-
+  }; */
+  const {firstDatumPoint} = subjects;
+  if (type === 'Daily') {
+    data = subjects.map(subject => {
+      const {daily} = subject;
+      const index = Math.floor((viewDate.getTime() / 1000 - firstDatumPoint) / (60 * 60 * 24)) + 1;
+      return daily.total[index] ? daily.total[index] : 0;
+    });
+  } else if (type === 'Weekly') {
+    data = subjects.map(subject => {
+      const {weekly} = subject;
+      const index = Math.round(DateTime.fromJSDate(viewDate).startOf('week').diff(DateTime.fromSeconds(firstDatumPoint), 'week').weeks);
+      console.log('g', index)
+      return weekly.total[index] ? weekly.total[index] : 0;
+    });
+  } else {
+    data = subjects.map(subject => {
+      const {monthly} = subject;
+      const datumPoint = new Date(firstDatumPoint * 1000);
+      let datumMonthStart = new Date(datumPoint.getFullYear(), datumPoint.getMonth(), 1);
+      const viewMonthStart = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
+      let diff = (viewMonthStart - datumMonthStart) / (1000 * 60 * 60 * 24);
+      return monthly.total[diff] ? monthly.total[diff] : 0;
+    });
+  }
+  console.log('tisdf', data)
   return ({ labels: labels, data: data });
 };
 
