@@ -21,6 +21,7 @@
     "@testing-library/user-event": "^13.5.0",
     "chart.js": "^4.3.3",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "eruda": "^3.0.1",
     "fullcalendar": "^6.1.8",
     "gsap": "^3.12.2",
     "html-react-parser": "^4.2.2",
