@@ -6,7 +6,7 @@ import { colorsList } from '../../../constant';
 import styles from './Main.module.css'
 import parse from "html-react-parser";
 import { plugins } from 'chart.js';
-import Draggable from 'react-draggable';
+import Draggable, {DraggableCore} from 'react-draggable';
 
 function Main(props) {
   const {setIsSidebarOpen, isSidebarOpen, isSidebarHovered, userInfo, subjects, plans} = props;
@@ -150,10 +150,10 @@ function Main(props) {
 
   return (
     <div className={styles.MainContainer}>
-      {/* <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
+      <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
           <Draggable nodeRef={hiMsgRef}>
-          <div className={`${styles.box} box 1`} >
+          <div ref={hiMsgRef} className={`${styles.box} box 1`} >
             <div className={styles.inner}>
               <p className={styles.name}>Hi Jason Lee</p>
               <div className={styles.progress}>
@@ -175,7 +175,7 @@ function Main(props) {
           </div>
           </Draggable>
           <Draggable nodeRef={subjectRef}>
-          <div className={`${styles.box} box 2`} >
+          <div ref={subjectRef} className={`${styles.box} box 2`} >
             <div className={styles.inner}>
               <p className={styles.name}>Subject Usage</p>
               <div className={styles.progress}>
@@ -233,7 +233,7 @@ function Main(props) {
           </div>
           </Draggable>
           <Draggable nodeRef={plannerRef}>
-          <div className={`${styles.box} box 3`}>
+          <div ref = {plannerRef} className={`${styles.box} box 3`}>
             <div className={styles.inner}>
               <p className={styles.name}>Planner</p>
               {
@@ -279,7 +279,7 @@ function Main(props) {
           </div>
           </Draggable>
           <Draggable nodeRef={recentActivityRef}>
-          <div className={`${styles.box} box 4`} >
+          <div ref={recentActivityRef} className={`${styles.box} box 4`} >
             <div className={styles.inner}>
               <p className={styles.name}>Recent Activity</p>
               <ul>
@@ -327,7 +327,7 @@ function Main(props) {
           </div>
           </Draggable>
          <Draggable nodeRef={memoRef}>
-         <div className={`${styles.box} box 5 ${styles.memo}`} >
+         <div ref={memoRef} className={`${styles.box} box 5 ${styles.memo}`} >
             <div className={styles.inner}>
               <p>test</p>
             </div>
@@ -335,7 +335,7 @@ function Main(props) {
          </Draggable>
 
         </div>
-      </div> */}
+      </div>
     </div>
   )
 }
