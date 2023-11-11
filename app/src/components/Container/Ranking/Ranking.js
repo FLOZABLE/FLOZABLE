@@ -55,6 +55,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     else {
       return;
     };
+    console.log("start, stop",startTime,stopTime);
     fetch(`${serverOrigin}/api/ranking/sort`, {
       method: 'post',
       headers: {
