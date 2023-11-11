@@ -250,7 +250,7 @@ function App() {
         } />
         <Route path="/dashboard/study" element={
           <div>
-            <Study setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} myGroups={myGroups} />
+            <Study isAddSubjectModal={isAddSubjectModal} setIsAddSubjectModal={setIsAddSubjectModal} setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} socket={socket} subjects={subjects} setSubjects={setSubjects} isStudy={isStudy} setIsStudy={setIsStudy} events={plans} setEvents={setPlans} reset={reset} myGroups={myGroups} />
           </div>
         } />
         <Route path="/dashboard/planner" element={
