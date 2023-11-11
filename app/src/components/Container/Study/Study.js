@@ -8,7 +8,6 @@ import MyGroupsViewer from '../../UI/MyGroupsViewer/MyGroupsViewer';
 import YouTubePlayer from '../../UI/YouTubePlayer/YouTubePlayer';
 import StudyHeader from '../../UI/StudyHeader/StudyHeader';
 import PlanTimelineBar from '../../UI/PlanTimelineBar/PlanTimelineBar';
-import AddSubjectModal from '../../UI/AddSubjectModal/AddSubjectModal';
 import EventModal from '../../UI/EventModal/EventModal';
 import { sortSubjects } from '../../Container/Stats/StatTools';
 import generateRandomId from "../../../utils/RandomId";
@@ -28,7 +27,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Study(props) {
 
-  const { isStudy, setIsStudy, subjects, setSubjects, socket, userInfo, events, setEvents, reset, myGroups } = props;
+  const { isStudy, setIsStudy, subjects, setSubjects, socket, userInfo, events, setEvents, reset, myGroups, isAddSubjectModal, setIsAddSubjectModal } = props;
 
   const [isTimerModal, setIsTimerModal] = useState(false);
   const [isMicModal, setIsMicModal] = useState(false);
@@ -40,7 +39,6 @@ function Study(props) {
 
   const [videoId, setVideoId] = useState('MYPVQccHhAQ');
   const [volume, setVolume] = useState(0);
-  const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [isAddPlanModal, setIsAddPlanModal] = useState(false);
   const [addSubjectResponse, setAddSubjectResponse] = useState(null);
   const [myTimerTotal, setMyTimerTotal] = useState(0);
@@ -245,7 +243,6 @@ function Study(props) {
         isDisp={isVolumeModal}
         element={<VolumeControl setVolume={setVolume} volume={volume} />}
       />
-      {/*<StudyHeader subjects={subjects} subject={timerSubject} setSubject={setTimerSubject} isStudy={isStudy} setIsStudy={setIsStudy} setVideoId={setVideoId} setVolume={setVolume} volume={volume} setGroupsBtn={setGroupsBtn} groupsBtn={groupsBtn} setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setMyTimerTotal={setMyTimerTotal} events={events} setEvents={setEvents} setIsAddPlanModal={setIsAddPlanModal} mode={"study"} reset={reset} isCam={isCam} setIsMic={setIsMic} setIsCam={setIsCam} isMic={isMic} socket={socket} /> */}
       <TopNotification duration={2500} response={addPlanResponse} />
       <EventModal
         isAddPlanModal={isAddPlanModal}
