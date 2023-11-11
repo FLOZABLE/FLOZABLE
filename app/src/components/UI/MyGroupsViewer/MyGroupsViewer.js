@@ -65,7 +65,7 @@ function MyGroupsViewer(props) {
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
 
   useEffect(() => {
-    //mediaSocket.connect();
+    mediaSocket.connect();
     socket.on("studying", onStudying);
     socket.on("stopStudying", onStopStudying);
     return () => {
