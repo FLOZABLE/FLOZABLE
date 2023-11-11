@@ -51,7 +51,7 @@ function generateId() {
 }
 
 Router.get('/signin', async (req, res) => {
-  autoSignin(req, res, (() => res.render("account/signin", { loggedin: true })), (() => res.render("account/signin", { loggedin: false })));
+  autoSignin(req, res, (() => res.render("signIn", { loggedin: true })), (() => res.render("signIn", { loggedin: false })));
 });
 
 Router.post('/signin-authentication', async (req, res, next) => {
