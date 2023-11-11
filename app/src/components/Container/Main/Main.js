@@ -7,6 +7,7 @@ import styles from './Main.module.css'
 import parse from "html-react-parser";
 import { plugins } from 'chart.js';
 import Draggable, {DraggableCore} from 'react-draggable';
+import { DateTime } from 'luxon';
 
 function Main(props) {
   const {setIsSidebarOpen, isSidebarOpen, isSidebarHovered, userInfo, subjects, plans} = props;
@@ -16,6 +17,46 @@ function Main(props) {
   const recentActivityRef = useRef(null);
   const plannerRef = useRef(null);
   const memoRef = useRef(null);
+
+  const [yesterdayTotal, setYesterdayTotal] = useState("");
+  const [weeklyAverage, setWeeklyAverage] = useState(""); // compare yesterday study total to montly percentage
+
+  useEffect(() =>{
+    if (!!!subjects.daily){
+      return;
+    }
+    if (subjects.daily.groupedTotal.length > 1){
+      let yesterdaySeconds = subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 2];
+      let yesterdayMinutes = Math.floor(yesterdaySeconds / 60);
+      let yesterdayHours = Math.floor(yesterdayMinutes / 60);
+      if (yesterdayHours > 0){
+        setYesterdayTotal("You studied for " + yesterdayHours + " hours and " + (yesterdayMinutes % 60) + " minutes yesterday!");
+      }
+      else{
+        if (yesterdayMinutes > 5){
+          setYesterdayTotal("You studied for " + yesterdayMinutes + " minutes yesterday!");
+        }
+        else{
+          setYesterdayTotal("You studied for " + yesterdayMinutes + " minutes yesterday");
+        }
+      }
+
+      let weekTotal = subjects.weekly.groupedTotal[subjects.weekly.groupedTotal.length - 1];
+      const weekday = DateTime.fromISO(new Date().toISOString()).weekday;
+      let weeklySeconds = weekTotal / weekday;
+      let weeklyMinutes = Math.floor(weeklySeconds / 60);
+      let weeklyHours = Math.floor(weeklyMinutes / 60);
+      if (weeklyHours > 0){
+        setWeeklyAverage("Your daily average is " + weeklyHours + " hours and " + (weeklyMinutes % 60) + " minutes this week");
+      }
+      else{
+        setWeeklyAverage("Your daily average is " + weeklyMinutes + " minutes this week");
+      }
+    }
+    else{
+      setYesterdayTotal("Welcome to FLOZABLE!"); //their first time day at flozable
+    }
+  },[subjects]);
 
   let subjectActivity = [];
   function sortActivity(){
@@ -155,17 +196,17 @@ function Main(props) {
           <Draggable nodeRef={hiMsgRef}>
           <div ref={hiMsgRef} className={`${styles.box} box 1`} >
             <div className={styles.inner}>
-              <p className={styles.name}>Hi Jason Lee</p>
+              <p className={styles.name}>Welcome Back!</p>
               <div className={styles.progress}>
                 <p className={styles.report}>
-                  You have 6 meetings to finish in this week.<br />
-                  Your progress activity is excellent
+                  {yesterdayTotal}<br />
+                  {weeklyAverage}
                 </p>
 
                 <div className={styles.btnCenter}>
-                  <Link to="/dashboard/stats">
+                  <Link to="/dashboard/study">
                     <button className={styles.toStatsBtn}>
-                      View Stats
+                      Go Study!
                     </button>
                   </Link>
                 </div>
