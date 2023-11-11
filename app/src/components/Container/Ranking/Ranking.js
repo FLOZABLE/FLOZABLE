@@ -7,6 +7,7 @@ import StuckModal from '../../UI/StuckModal/StuckModal';
 import RadioBtn from '../../UI/RadioBtn/RadioBtn';
 import styles from './Ranking.module.css';
 import SmallCalendar from '../../UI/SmallCalendar/SmallCalendar';
+import Search from '../../UI/Search/Search';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -18,6 +19,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   const [viewer, setViewer] = useState('Daily');
   const [rankingEl, setRankingEl] = useState([]);
   const [ranking, setRanking] = useState([]);
+  const [rankingSearch, setRankingSearch] = useState("");
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -72,6 +74,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   useEffect(() => {
     setRankingEl(ranking.map(({ total, name, user_id }, i) => {
+      if (!name.includes(rankingSearch)) return;
       return (
         <li key={i}>
           <div className={styles.circle}>
@@ -95,7 +98,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
         </li>
       )
     }))
-  }, [ranking]);
+  }, [ranking, rankingSearch]);
 
   return (
     <div className={styles.RankingContainer}>
@@ -118,6 +121,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
               <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
             </div>
             <div className={`${styles.container} ${styles.rankingContainer}`}>
+            <Search className={styles.Search} searchQuery = {rankingSearch} setSearchQuery = {setRankingSearch}></Search>
               <div className={styles.header}>
                 <p>Hours</p>
               </div>

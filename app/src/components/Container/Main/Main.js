@@ -4,6 +4,7 @@ import PieChart from '../../UI/PieChart';
 import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { colorsList } from '../../../constant';
 import styles from './Main.module.css'
+import parse from "html-react-parser";
 import { plugins } from 'chart.js';
 import { abort } from 'process';
 
@@ -268,14 +269,14 @@ function Main(props) {
                     return (
                       <li className={styles.plan} key={i}>
                         <p className={styles.topic}>{plan.title}<strong><br></br>(Passed)<br></br>({startString} - {endString})</strong></p>
-                        <p className={styles.explanation}>{plan.description.slice(3,-4)}</p>
+                        <div className={styles.explanation}>{parse(plan.description)}</div>
                       </li>
                     )
                   }
                   return (
                     <li className={styles.plan} key={i}>
                       <p className={styles.topic}>{plan.title}<br></br><strong> ({startString} - {endString})</strong></p>
-                      <p className={styles.explanation}>{plan.description.slice(3,-4)}</p>
+                      <div className={styles.explanation}>{parse(plan.description)}</div>
                     </li>
                   );
                 })
