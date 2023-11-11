@@ -64,6 +64,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
       });
 
       res.send({ success: true });
+      //res.redirect(307, '/dashboard');
     });
   } else {
     res.send({ success: false, reason: 'WRONG PASSWORD' });
@@ -80,10 +81,7 @@ function isValidTimeZone(timeZone) {
 }
 
 Router.post('/signup-authentication', async (req, res) => {
-  let email = req.body.email;
-  let name = req.body.name;
-  let password = req.body.password;
-  let timeZone = req.body.timeZone;
+  let {email, name, password, timeZone} = req.body;
 
   if (!isValidTimeZone) {
     timeZone = 'UTC';
@@ -94,7 +92,7 @@ Router.post('/signup-authentication', async (req, res) => {
   const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
   // Get the Unix timestamp in seconds
-  const unixTimestamp = Math.floor(twelveAmDateTime.toMillis() / 1000);
+  const unixTimestamp = twelveAmDateTime.toSeconds();
   // Sanitize inputs
 
   //check email
@@ -142,9 +140,6 @@ Router.post('/signup-authentication', async (req, res) => {
     datum_point: unixTimestamp,
     key_salt: keySalt,
     iv: iv,
-    plan: '',
-    activity: '{}',
-    notification_setting: 'default_setting',
     study: JSON.stringify({ study: false, point: unixTimestamp, total: 0 })
   };
   connection.query('INSERT INTO users SET ?', user);
@@ -345,6 +340,17 @@ Router.post('/update/extension-setting-update', async (req, res) => {
     } finally {
     }
   }));
+});
+
+Router.get('/logout', function (req, res) {
+  req.session.destroy((err) => {
+    if (err) {
+      console.log("Error destroying session:", err);
+    }
+    res.clearCookie('userId');
+    //res.redirect('/');
+    res.send(200);
+  });
 });
 
 module.exports = Router;
