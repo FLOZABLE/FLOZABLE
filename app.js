@@ -104,8 +104,8 @@ app.use(sessionMiddleWare);
 
 module.exports = { server, sessionMiddleWare };
 //services
-const notificationService = require('./services/notification');
-notificationService.notificationService();
+/* const notificationService = require('./services/notification');
+notificationService.notificationService(); */
 
 
 //Router
@@ -119,7 +119,7 @@ const rankingRouter = require('./Router/ranking');
 const extensionRouter = require('./Router/api');
 const chatRouter = require('./Router/chat');
 const planRouter = require("./Router/plan");
-const notificationRouter = notificationService.notificationRouter;
+//const notificationRouter = notificationService.notificationRouter;
 
 
 //API
@@ -130,6 +130,7 @@ const planAPI = require("./API/plan");
 const studyAPI = require("./API/study");
 const videoAPI = require("./API/video");
 const rankingAPI = require('./API/ranking');
+
 
 //test
 const testAPI = require('./test/Api');
@@ -154,7 +155,7 @@ app.use('/links', linksRouter);
 //app.use('/dashboards', dashboardRouter);
 app.use('/ranking', rankingRouter);
 app.use('/api', extensionRouter);
-app.use('/notification', notificationRouter);
+//app.use('/notification', notificationRouter);
 
 //api
 app.use('/api/account', accountAPI);
@@ -173,7 +174,7 @@ app.get('/dashboard*', (req, res) => {
     res.sendFile(path.join(__dirname, 'app/build', 'index.html'));
   }),
     (() => {
-      res.redirect('/account/signin');
+      res.redirect('/');
     })
   );
 });
