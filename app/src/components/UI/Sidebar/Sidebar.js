@@ -29,7 +29,7 @@ function Sidebar(props) {
           <div className={styles.icon}>
           <FontAwesomeIcon icon={faHouse}  />
           </div>
-          <p className={styles.navText} data-text="Study">Study</p>
+          <p className={styles.navText} data-text="Home">Home</p>
         </Link>
       </div>
       <ul>
@@ -89,7 +89,7 @@ function Sidebar(props) {
             </Link>
           </div>
         </li>
-        <li>
+        {/* <li>
           <div
             onMouseEnter={() => handleMouseEnter('navItem5')}
             onMouseLeave={handleMouseLeave}
@@ -102,7 +102,7 @@ function Sidebar(props) {
               <p className={styles.navText}  data-text="Templates">Templates</p>
             </Link>
           </div>
-        </li>
+        </li> */}
       </ul>
     </aside>
   )

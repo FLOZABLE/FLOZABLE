@@ -78,6 +78,7 @@ const mediaCodecs = [
 ]
 
 mediaSocket.on('connection', async (socket) => {
+  console.log('gddd')
   /* socket.emit('connection-success', {
     socketId: socket.id,
   }); */

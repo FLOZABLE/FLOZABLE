@@ -23,6 +23,7 @@ function timelineSort(subjects) {
     //smaller value
     firstDatumPoint = datum_point < firstDatumPoint ? datum_point : firstDatumPoint;
   });
+  subjects.firstDatumPoint = firstDatumPoint;
 
   subjects.daily = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: []};
   subjects.weekly = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: []};

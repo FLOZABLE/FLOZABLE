@@ -6,10 +6,16 @@ import { colorsList } from '../../../constant';
 import styles from './Main.module.css'
 import parse from "html-react-parser";
 import { plugins } from 'chart.js';
-import { abort } from 'process';
+import Draggable from 'react-draggable';
 
 function Main(props) {
   const {setIsSidebarOpen, isSidebarOpen, isSidebarHovered, userInfo, subjects, plans} = props;
+
+  const subjectRef = useRef(null);
+  const hiMsgRef = useRef(null);
+  const recentActivityRef = useRef(null);
+  const plannerRef = useRef(null);
+  const memoRef = useRef(null);
 
   let subjectActivity = [];
   function sortActivity(){
@@ -134,41 +140,20 @@ function Main(props) {
     console.error('Error parsing localStorage data:', error);
   }
   const box = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)]
-  const settings = Object.values(mainViewerSetting);
+ /*  const settings = Object.values(mainViewerSetting);
   useEffect(() => {
     settings.map((boxSetting, index) => {
       box[index].current.style.left = boxSetting.x;
       box[index].current.style.top = boxSetting.y;
     })
-  }, []);
-  function mouseUp(e) {
-    e.preventDefault();
-    if (target) {
-      target.style.opacity = "1";
-      let id = false;
-      target.classList.forEach((className) => {
-        if (/^[1-5]$/.test(className)) {
-          id = parseInt(className);
-        }
-      });
-
-
-      if (id) {
-        mainViewerSetting[id].x = target.style.left;
-        mainViewerSetting[id].y = target.style.top;
-      }
-      localStorage.setItem('mainViewerSetting', JSON.stringify(mainViewerSetting));
-    }
-    target = false;
-  }
-
-  document.addEventListener('mousemove', divMoveXY);
+  }, []); */
 
   return (
     <div className={styles.MainContainer}>
-      <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
+      {/* <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
-          <div className={`${styles.box} box 1`} ref={box[0]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
+          <Draggable nodeRef={hiMsgRef}>
+          <div className={`${styles.box} box 1`} >
             <div className={styles.inner}>
               <p className={styles.name}>Hi Jason Lee</p>
               <div className={styles.progress}>
@@ -188,7 +173,9 @@ function Main(props) {
             </div>
             <img src="./img/collaboration.jpeg" alt="" />
           </div>
-          <div className={`${styles.box} box 2`} ref={box[1]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
+          </Draggable>
+          <Draggable nodeRef={subjectRef}>
+          <div className={`${styles.box} box 2`} >
             <div className={styles.inner}>
               <p className={styles.name}>Subject Usage</p>
               <div className={styles.progress}>
@@ -244,7 +231,9 @@ function Main(props) {
               </div>
             </div>
           </div>
-          <div className={`${styles.box} box 3`} ref={box[2]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
+          </Draggable>
+          <Draggable nodeRef={plannerRef}>
+          <div className={`${styles.box} box 3`}>
             <div className={styles.inner}>
               <p className={styles.name}>Planner</p>
               {
@@ -288,7 +277,9 @@ function Main(props) {
               </Link>
             </div>
           </div>
-          <div className={`${styles.box} box 4`} ref={box[3]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
+          </Draggable>
+          <Draggable nodeRef={recentActivityRef}>
+          <div className={`${styles.box} box 4`} >
             <div className={styles.inner}>
               <p className={styles.name}>Recent Activity</p>
               <ul>
@@ -331,31 +322,20 @@ function Main(props) {
                     );
                   })
                 }
-
-                {/* <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li>
-                <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li>
-                <li className={styles.plan}>
-                  <p className={styles.topic}>Do Homework<strong> (11:45-12:45)</strong></p>
-                  <p className={styles.explanation}>Solve English textbook pg 14 - 17</p>
-                </li> */}
               </ul>
             </div>
           </div>
-
-          <div className={`${styles.box} box 5 ${styles.memo}`} ref={box[4]} draggable onMouseDown={mouseDown} onMouseUp={mouseUp}>
+          </Draggable>
+         <Draggable nodeRef={memoRef}>
+         <div className={`${styles.box} box 5 ${styles.memo}`} >
             <div className={styles.inner}>
               <p>test</p>
             </div>
           </div>
+         </Draggable>
 
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

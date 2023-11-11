@@ -261,7 +261,7 @@ function App() {
               isSidebarHovered={isHovered}
             />
             <Header setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} plans={plans} subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
-            <Planner setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans} reset={reset} />
+            <Planner isAddPlanModal={isAddPlanModal} setIsAddPlanModal={setIsAddPlanModal} setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} subjects={subjects} setSubjects={setSubjects} userInfo={userInfo} socket={socket} events={plans} setEvents={setPlans} reset={reset} />
           </div>
         } />
         <Route path="/dashboard/account" element={
