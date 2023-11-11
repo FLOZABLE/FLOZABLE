@@ -109,7 +109,7 @@ Router.post('/signup-authentication', async (req, res) => {
 
   //check pw
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-    return res.send({ success: false, reason: 'No Special Characters' });
+    return res.send({ success: false, reason: 'You need special characters' });
   } /* else if ((password.match(/\d/g) || []).length < 2) {
     return res.send({ success: false, reason: 'Need More Than 2 Numbers' });
   }  */else if (password.length < 6) {
