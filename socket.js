@@ -2,7 +2,6 @@ const { server, sessionMiddleWare } = require("./app");
 const cron = require('node-cron');
 const pool = require("./model/pool");
 const redisClient = require("./model/redis");
-const Peer = require("simple-peer");
 const { generateRandomId } = require("./tool");
 const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache } = require("./services/redisLoader");
 
