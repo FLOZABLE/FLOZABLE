@@ -119,37 +119,44 @@ function createProfileImg(percentage, userId, gender) {
 };
 
 async function startBot(user_id, groups) {
-  connection.to(groups).emit('studying', user_id, groups);
-  try {
-    const [subject] = await subjectsCache(user_id, false, ['id', 'timeline_sum', 'datum_point']);
-    const now = Math.floor(new Date().getTime() / 1000);
-    const timelineSum = subject.timeline_sum;
-    const start = now - subject.datum_point - timelineSum;
-    const push = await redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},0]`);
-    const timerInfo = await timerCache(userId, now);
-    /* redisClient.hSet(`user${userId}`, 'timerInfo', ); */
-  } catch (err) {
-    console.log(err);
-  };
   try {
     const [subject] = await subjectsCache(user_id);
     if (subject) {
       connection.to(groups).emit('studying', user_id, groups);
       const now = Math.floor(new Date().getTime() / 1000);
-      const {timeline_sum, datum_point} = subject;
+      const {timeline_sum, datum_point, id} = subject;
       const start = now - datum_point - timeline_sum;
       const push = await redisClient.rPush(`user:${user_id}:subject:${subject}`, `[${start},0]`);
-      redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${subjectId}:${now}`);
-      const timerInfo = await timerCache(userId, now);
-      /* redisClient.hSet(`user${userId}`, 'timerInfo', ); */
+      redisClient.hSet(`user:${user_id}`, `ActiveSubject`, `${id}:${now}`);
+      const timerInfo = await timerCache(user_id, now);
     }
   } catch (err) {
     console.log(err);
   };
 };
 
-async function stopBot() {
-  connection.to(groups).emit('studying', user_id, groups);
+async function stopBot(userId, groups) {
+  const [subject] = await subjectsCache(userId);
+  if (subject) {
+    const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
+    const now = Math.floor(new Date().getTime() / 1000);
+    const start = activity[0];
+    const {timeline_sum, datum_point, id} = subject;
+    const stop = now - datum_point - timeline_sum;
+    redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${stop - start}]`);
+    timeline_sum += stop;
+    subject = {...subject, timeline_sum};
+    redisClient.hSet(`user:${userId}`, `subject:${id}`, JSON.stringify(subject));
+  
+    const activeSubjectStart = activeSubject.time;
+    const timerInfo = await timerCache(userId, now);
+    const timerStart = activeSubjectStart - timerInfo.dp - timerInfo.ts;
+    const timerStop = now - timerInfo.dp - timerInfo.ts;
+    timerInfo.ts += timerStop;
+    redisClient.rPush(`user:${userId}:timer`, `[${timerStart},${timerStop - timerStart}]`);
+    redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo));
+    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
+  };
 };
 
 const BOT_STUDYING_NUMBERS = 70;
@@ -157,7 +164,7 @@ const BOT_MIN_STUDY = 60 * 10; //10 min = min time bot will study
 const BOT_MAX_STUDY = 60 * 60 * 2; //2 hr = max time bot will study
 const MAX_START_DELAY = 60 * 60; //1 hr = starts atleast 1hr from being assigned
 
-async function botSelector(numbers, start, duration) {
+async function botSelector(numbers) {
   const connection = pool.promise();
   const [bots] = await connection.query(`SELECT name, groups, user_id FROM users WHERE type = -1`);
   //const [subjects] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects`)
@@ -186,6 +193,9 @@ async function botSelector(numbers, start, duration) {
       const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), stopBot(user_id, groupsArr));
     }
   };
+
+  //update active bot list in redis
+  redisClient.sAdd('activeBots', ...activeBots);
 }
 
 async function botManager() {
