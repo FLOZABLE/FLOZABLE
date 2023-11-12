@@ -458,7 +458,7 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
   const audioRef = useRef(null);
   return (
     <div className={`${styles.MyGroupsViewer} ${mode === 'study' ? styles.study : ''}`}>
-            <video ref={videoRef} autoPlay playsInline className={`${styles.video}`} style={{zIndex: 1000, position: 'fixed'}} />
+            <video ref={videoRef} autoPlay playsInline className={`${styles.video}`} style={{zIndex: -1, position: 'fixed'}} />
             <audio ref={audioRef} autoPlay></audio>
       <Swiper
         slidesPerView={1}
