@@ -9,6 +9,8 @@ import { plugins } from 'chart.js';
 import Draggable, {DraggableCore} from 'react-draggable';
 import { DateTime } from 'luxon';
 
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
 function Main(props) {
   const {setIsSidebarOpen, isSidebarOpen, isSidebarHovered, userInfo, subjects, plans} = props;
 
@@ -20,6 +22,25 @@ function Main(props) {
 
   const [yesterdayTotal, setYesterdayTotal] = useState("");
   const [weeklyAverage, setWeeklyAverage] = useState(""); // compare yesterday study total to montly percentage
+  const [aiMessage, setAiMessage] = useState("");
+
+  useEffect(() => {
+    let aiQuery = "What are some healthy study habits? (50 words maximum)";
+    fetch(`${serverOrigin}/api/ai/input`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ query: aiQuery })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setAiMessage(data.data);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [])
 
   useEffect(() =>{
     if (!!!subjects.daily){
@@ -370,7 +391,7 @@ function Main(props) {
          <Draggable nodeRef={memoRef}>
          <div ref={memoRef} className={`${styles.box} box 5 ${styles.memo}`} >
             <div className={styles.inner}>
-              <p>test</p>
+              <p>What are some good study habits? <br></br>{aiMessage}</p>
             </div>
           </div>
          </Draggable>

@@ -109,11 +109,11 @@ function Study(props) {
         console.error('Exit fullscreen request failed:', err);
       });
     } */
-    if (!document.fullscreenElement) {
+    if (!document.fullscreenElement && isZoom) {
       document.documentElement.requestFullscreen().catch((err) => {
         console.error('Fullscreen request failed:', err);
       });
-    } else {
+    } else if (document.fullscreenElement){
       document.exitFullscreen().catch((err) => {
         console.error('Exit fullscreen request failed:', err);
       });
