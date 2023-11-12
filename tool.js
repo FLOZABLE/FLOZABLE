@@ -55,10 +55,16 @@ function getUserId(req) {
   return process.env.NODE_ENV === 'development' ? process.env.TESTER_ID : req.session.user_id;
 };
 
+function randomIntInRange(min, max) {
+  const randomVal = Math.floor(Math.random() * (max - min + 1)) + min;
+  return randomVal;
+}
+
 module.exports = {
   generateRandomId,
   hashing,
   autoSignin,
   isValidJSON,
-  getUserId
+  getUserId,
+  randomIntInRange
 };

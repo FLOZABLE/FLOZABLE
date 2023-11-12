@@ -189,7 +189,7 @@ async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000))
   } catch (err) {
 
   }
-}
+};
 
 module.exports = {
   flushRedis,
