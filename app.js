@@ -206,6 +206,9 @@ const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubj
 require('./videoServer');
 require('./Logger');
 require('./services/timerUpdate');
+const {createBots, addId} = require('./Bot/Bot');
+//addId();
+createBots(0, 3);
 
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);

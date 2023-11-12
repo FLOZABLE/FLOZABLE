@@ -92,8 +92,6 @@ async function generateUsers(length) {
       datum_point: unixTimestamp,
       key_salt: keySalt,
       iv: iv,
-      notification_setting: 'default_setting',
-      study: JSON.stringify({ study: false, point: unixTimestamp, total: 0 })
     }
     connection.query('INSERT INTO users SET?', userInfo);
   };
