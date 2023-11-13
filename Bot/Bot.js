@@ -257,58 +257,68 @@ async function deleteBots() {
 };
 
 async function createGroups(startIndex, length) {
-
+  const connection = pool.promise();
+  const [bots] = await connection.query(`SELECT user_id, groups FROM users WHERE type = -1`);
   for (let i = 0; i < length; i++) {
     const groupId = generateRandomId(8);
-    const template = groupsData
+    const groupData = groupsData[i + startIndex];
     const hashed = hashing('0');
-    const max_people = randomIntInRange(10, 50);
-    const membersLength = randomIntInRange
-    const leaderIndex = Math.floor(Math.random() * 100);
-    let leader = testUsers[leaderIndex].user_id;
-    let members = leader;
-    let likes = leader;
-    let membersIndex = [leaderIndex];
-    for (let j = 0; j < membersLength; j++) {
-      const memberIndex = Math.floor(Math.random() * 100);
-      if (membersIndex.includes(memberIndex)) {
-        break;
+    const max_members = randomIntInRange(10, 50);
+    const membersLength = randomIntInRange(10, max_members);
+    const members = [];
+    const likes = [];
+    while (members.length <= membersLength) {
+      const selectedBotIndex = randomIntInRange(0, bots.length - 1);
+      const selectedBot = bots[selectedBotIndex];
+
+      if (!members.includes(selectedBot.user_id)) {
+        members.push(selectedBot.user_id);
+        connection.query(`
+          UPDATE users
+          SET \`groups\` = CASE
+            WHEN \`groups\` = '' THEN ?
+            ELSE CONCAT(\`groups\`, ',', ?)
+          END
+          WHERE user_id = ?
+        `, [
+          groupId,
+          groupId,
+          selectedBot.user_id,
+        ]);
+        const isLike = randomIntInRange(0, 1);
+        if (isLike) {
+          likes.push(selectedBot.user_id);
+        };
       };
-      membersIndex.push(memberIndex);
-      const member = testUsers[memberIndex];
-      members += `,${member.user_id}`;
-      likes += `,${member.user_id}`;
-      const updateMember = connection.query(`
-      UPDATE users
-      SET \`groups\` = CASE
-        WHEN \`groups\` = '' THEN ?
-        ELSE CONCAT(\`groups\`, ',', ?)
-      END
-      WHERE user_id = ?
-    `, [
-        groupId,
-        groupId,
-        member.user_id,
-      ]);
-    }
-    const color = colors[Math.floor(Math.random() * 26)];
+    };
+    const leader = members[0];
+    const colorIndex = randomIntInRange(0, colors.length - 1);
+    const color = colors[colorIndex];
+    const {name, explanation, tags} = groupData;
+    const visibility = randomIntInRange(0, 7) <= 1;
+
+    const stringlifiedLikes = JSON.stringify(likes).slice(1, -1);
+    const stringlifiedMembers = JSON.stringify(members).slice(1, -1);
+    const goal_hr = randomIntInRange(4, 8);
+    const font = randomIntInRange(0, 13);
+
     const groupInfo = {
-      name: template.name,
-      explanation: template.explanation,
-      tags: JSON.stringify(template.tags),
-      visibility: Math.floor(Math.random() * 2),
+      name,
+      explanation,
+      tags: JSON.stringify(tags),
+      visibility,
       password: hashed[1],
-      max_members: max_people,
       salt: hashed[0],
+      max_members,
       date: Math.floor(new Date().getTime() / 1000),
       group_id: groupId,
       leader: leader,
-      likes: likes,
-      members: members,
+      likes: stringlifiedLikes,
+      members: stringlifiedMembers,
       color: color,
-      average_hr: Math.floor(Math.random() * 5) + 2,
-      goal_hr: Math.floor(Math.random() * 6) + 4,
-      font: Math.floor(Math.random() * 13)
+      average_hr: 0,
+      goal_hr,
+      font
     }
     connection.query(`INSERT INTO \`groups\` SET ?`, groupInfo);
 
@@ -324,8 +334,8 @@ async function createGroups(startIndex, length) {
       name: 'room2',
     }
 
-    const addGroupRoom1 = await connection.query('INSERT INTO chatrooms set ?', roomInfo1);
-    const addGroupRoom2 = await connection.query('INSERT INTO chatrooms set ?', roomInfo2);
+    connection.query('INSERT INTO chatrooms set ?', roomInfo1);
+    connection.query('INSERT INTO chatrooms set ?', roomInfo2);
 
   };
 
@@ -336,5 +346,6 @@ module.exports = {
   createBots,
   deleteBots,
   addId,
-  botManager
+  botManager,
+  createGroups
 }
