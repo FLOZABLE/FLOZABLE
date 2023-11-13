@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon app.js nodemon -e js --ignore data",
-    "production": "cross-env NODE_ENV=production nodemon app.js nodemon -e js --ignore app"
+    "dev": "cross-env NODE_ENV=development nodemon app.js nodemon -e js --ignore data,public",
+    "production": "cross-env NODE_ENV=production nodemon app.js nodemon -e js --ignore app,public"
   },
   "repository": {
     "type": "git",

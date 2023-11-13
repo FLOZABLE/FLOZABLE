@@ -67,7 +67,7 @@ async function subjectsCache(userId, cache = true, opt = ['id', 'name', 'icon', 
         return filteredSubjects;
       }, []);
     };
-    if (!subjects) {
+    if (!subjects.length) {
       //no cache
       try {
         const connection = pool.promise();
@@ -174,14 +174,14 @@ async function activeSubjectCache(userId) {
  * return type is object
  * dp(datumpoint), ts(timeline sum)
  */
-async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000)) {
+async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000), ts = 0) {
   try {
     let timer = await redisClient.hGet(`user:${userId}`, 'timerInfo');
     
     if (timer) {
       timer = JSON.parse(timer);
     } else {
-      timer = {dp: now, ts: 0};
+      timer = {dp: now, ts};
       redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timer));
     };
 

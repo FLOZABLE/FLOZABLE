@@ -112,3 +112,21 @@ function getUserTimezone() {
     return 'UTC';
   }
 }
+
+const toSignInBtn = document.getElementById('tosignin');
+const toSignUpBtn = document.getElementById('tosignup');
+
+const isSignInBtn = document.getElementById('issignin');
+
+toSignInBtn.addEventListener('click', () => {
+  isSignInBtn.checked = false;
+})
+
+toSignUpBtn.addEventListener('click', () => {
+  isSignInBtn.checked = true;
+});
+
+if (window.location.href.includes('signin')) {
+  dispBlock.classList.add('visible');
+  accountModal.classList.add('visible');
+}

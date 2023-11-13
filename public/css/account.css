@@ -66,7 +66,12 @@
 #accountModal [type="checkbox"]:checked,
 #accountModal [type="checkbox"]:not(:checked){
   position: absolute;
-  left: -9999px;
+  transform: translateX(-50%);
+  opacity: 0;
+  width: 100px;
+  height: 30px;
+  z-index: 21;
+  cursor: pointer;
 }
 #accountModal .checkbox:checked + label,
 #accountModal .checkbox:not(:checked) + label{
@@ -81,8 +86,8 @@
   cursor: pointer;
   background-color: #ffeba7;
 }
-#accountModal .checkbox:checked + label:before,
-#accountModal .checkbox:not(:checked) + label:before{
+#accountModal .checkbox:checked + label .arrow,
+#accountModal .checkbox:not(:checked) + label .arrow{
   position: absolute;
   display: block;
   width: 36px;
@@ -90,8 +95,6 @@
   border-radius: 50%;
   color: #ffeba7;
   background-color: #102770;
-  font-family: 'unicons';
-  content: '\eb4f';
   z-index: 20;
   top: -10px;
   left: -10px;
@@ -100,7 +103,7 @@
   font-size: 24px;
   transition: all 0.5s ease;
 }
-#accountModal .checkbox:checked + label:before {
+#accountModal .checkbox:checked + label .arrow {
   transform: translateX(44px) rotate(-270deg);
 }
 
@@ -305,4 +308,8 @@
 	height: 26px;
 	width: auto;
 	display: block;
+}
+
+#tosignin, #tosignup {
+  cursor: pointer;
 }
