@@ -20,6 +20,7 @@ import { setGroupMembers, getMyGroups, getLikedGroups } from './components/Conta
 import { timelineSort } from './utils/timelineSorting';
 import EventModal from './components/UI/EventModal/EventModal';
 import AddSubjectModal from './components/UI/AddSubjectModal/AddSubjectModal';
+import User from './components/Container/User/User';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -218,7 +219,7 @@ function App() {
               onMouseLeave={handleMouseLeave}
               isSidebarHovered={isHovered}
             />
-            
+
             <Header setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} plans={plans} subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Stats setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} reset={reset} subjects={subjects} />
             <Footer />
@@ -284,6 +285,17 @@ function App() {
             />
             <Header setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} plans={plans} subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
             <Templates setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
+          </div>
+        } />
+        <Route path="/dashboard/user/*" element={
+          <div>
+            <Sidebar isSidebarOpen={isSidebarOpen}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              isSidebarHovered={isHovered}
+            />
+            <Header setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} plans={plans} subjects={subjects} onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} setIsChatModal={setIsChatModal} isChatModal={isChatModal} />
+            <User setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} isSidebarHovered={isHovered} userInfo={userInfo} />
           </div>
         } />
       </Routes>
