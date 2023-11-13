@@ -3,12 +3,16 @@ const Router = express.Router();
 
 const { OpenAI } = require("openai");
 
+/*
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
+*/
+
 
 Router.post("/input", async (req, res) => {
     const { query } = req.body;
+    /*
     try {
         const completion = await (openai.chat.completions.create({
             messages: [{ role: "system", content: query }],
@@ -19,6 +23,9 @@ Router.post("/input", async (req, res) => {
         console.log(err);
         res.send({ success: false });
     }
+    */
+   res.send({success: true});
 })
+
 
 module.exports = Router;

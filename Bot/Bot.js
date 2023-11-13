@@ -109,7 +109,7 @@ function createProfileImg(percentage, userId, gender) {
 async function startBot(userId, groups) {
   try {
     const [subject] = await subjectsCache(userId);
-    console.log('start', DateTime.now().toSeconds(), userId, subject.id);
+    console.log('start', DateTime.now().toSeconds(), userId, subject.timeline_sum);
     if (subject) {
       //send socket only when there is more than one groups because io.to.emit() (blank target group) will result broadcasting
       if (groups.length) {
@@ -139,7 +139,7 @@ async function stopBot(userId, groups) {
   redisClient.sRem('activeBots', userId);
   const [subject] = await subjectsCache(userId);
   const activeSubject = await activeSubjectCache(userId);
-  console.log('stop', DateTime.now().toSeconds(), userId, subject.id)
+  console.log('stop', DateTime.now().toSeconds(), userId, subject.timeline_sum)
   try {
     if (subject) {
       //send socket only when there is more than one groups because io.to.emit() (blank target group) will result broadcasting
@@ -150,9 +150,9 @@ async function stopBot(userId, groups) {
       const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${id}`));
       const now = Math.floor(new Date().getTime() / 1000);
       const start = activity[0];
-      const stop = now - datum_point - timeline_sum;
-      redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${stop - start}]`);
-      timeline_sum += stop;
+      const duration = now - datum_point - timeline_sum;
+      redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${duration}]`);
+      timeline_sum += duration;
       subject.timeline_sum = timeline_sum;
       redisClient.hSet(`user:${userId}`, `subject:${id}`, JSON.stringify(subject));
 
