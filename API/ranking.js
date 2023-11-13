@@ -137,12 +137,15 @@ Router.post('/sort', async (req, res) => {
     const [users] = await connection.query(`SELECT name, user_id from users`);
     await Promise.all(users.map(async (user) => {
       const {user_id} = user;
-      const [subjects] = await connection.query(`SELECT datum_point, timeline FROM subjects WHERE user_id = ?`, [user_id]);
+      const [subjects] = await connection.query(`SELECT datum_point, timeline, id FROM subjects WHERE user_id = ?`, [user_id]);
       user.total = 0;
-      subjects.map(({ timeline, datum_point }) => {
+      subjects.map(async({ timeline, datum_point, id }) => {
         let timelineSum = 0;
-        const parsedTimeline = timeline === "" ? [[]] : JSON.parse(timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
-        parsedTimeline.find(([start, duration]) => {
+        const prevTimeline = timeline === "" ? [[]] : JSON.parse(timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
+        const todayTimeline = (await redisClient.lRange(`user:${user_id}:subject:${id}`, 0, -1)).map(JSON.parse);
+        const totalTimeline  = prevTimeline.concat(todayTimeline);
+        //console.log(todayTimeline, user_id, id,)
+        totalTimeline.find(([start, duration]) => {
           const startUnix = datum_point + start + 0;
           const stopUnix = startUnix + duration;
           timelineSum += start + duration;

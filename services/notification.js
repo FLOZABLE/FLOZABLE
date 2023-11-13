@@ -10,6 +10,7 @@ const API_KEY = process.env.SENDINBLUE_API;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 const sendInBlue = require('sib-api-v3-sdk');
+const { autoSignin } = require('../Router/account');
 const sendinBlueClient = sendInBlue.ApiClient.instance;
 sendinBlueClient.authentications['api-key'].apiKey = API_KEY;
 
@@ -32,12 +33,12 @@ async function deriveKey(userId, key_salt) {
 
 let notificationSettings;
 
-async function notificationService () {
+async function notificationService() {
   const now = new Date().getTime();
   const connection = pool.promise();
   const [usersInfo] = await connection.query('SELECT notification_setting, timezone, user_id, name, email, key_salt, iv, subscription from users');
   let plans = await connection.query(`SELECT * FROM plans`);
-  usersInfo.map(async(userInfo, index) => {
+  usersInfo.map(async (userInfo, index) => {
     const userId = userInfo.user_id;
     /* const keySalt = userInfo.key_salt;
     const iv = userInfo.iv;
@@ -56,7 +57,7 @@ async function notificationService () {
     const decryptedData = await getSubscription(userInfo);
     //webpush.sendNotification(decryptedData)
     if (userInfo.notification_setting === '') {
-      notificationSettings = [{id:0,name:'PlanNotifications',email:true,push:true,sms:false},{id:1,name:'AchievementCelebrations',email:true,push:true,sms:false},{id:2,name:'GroupStudyInvitations',email:true,push:true,sms:false},{id:3,name:'StudyProgressUpdates',email:true,push:true,sms:false},{id:4,name:'StudyChallengeNotifications',email:true,push:true,sms:false},{id:5,name:'RewardNotifications',email:true,push:true,sms:false},{id:6,name:'DeadlineReminders',email:true,push:true,sms:false},{id:7,name:'PersonalizedStudyRecommendations',email:true,push:true,sms:false},{id:8,name:'StudyBreakReminders',email:true,push:true,sms:false},{id:9,name:'TimeManagementTips',email:true,push:true,sms:false},{id:10,name:'DailyStudyReports',email:true,push:true,sms:false},{id:11,name:'WeeklyStudyReports',email:true,push:true,sms:false},{id:12,name:'MonthlyProgressReports',email:true,push:true,sms:false}];
+      notificationSettings = [{ id: 0, name: 'PlanNotifications', email: true, push: true, sms: false }, { id: 1, name: 'AchievementCelebrations', email: true, push: true, sms: false }, { id: 2, name: 'GroupStudyInvitations', email: true, push: true, sms: false }, { id: 3, name: 'StudyProgressUpdates', email: true, push: true, sms: false }, { id: 4, name: 'StudyChallengeNotifications', email: true, push: true, sms: false }, { id: 5, name: 'RewardNotifications', email: true, push: true, sms: false }, { id: 6, name: 'DeadlineReminders', email: true, push: true, sms: false }, { id: 7, name: 'PersonalizedStudyRecommendations', email: true, push: true, sms: false }, { id: 8, name: 'StudyBreakReminders', email: true, push: true, sms: false }, { id: 9, name: 'TimeManagementTips', email: true, push: true, sms: false }, { id: 10, name: 'DailyStudyReports', email: true, push: true, sms: false }, { id: 11, name: 'WeeklyStudyReports', email: true, push: true, sms: false }, { id: 12, name: 'MonthlyProgressReports', email: true, push: true, sms: false }];
     } else {
       notificationSettings = JSON.parse(userInfo.notification_setting);
     }
@@ -64,7 +65,7 @@ async function notificationService () {
     let userPlans = plans.filter(plan => plan.user_id == userId);
 
 
-    userPlans.map(async(plan) => {
+    userPlans.map(async (plan) => {
       const startTime = new Date(plan.start * 1000 * 60);
       if (startTime.getTime() < now) {
       } else {
@@ -73,7 +74,7 @@ async function notificationService () {
     })
     notificationSettings.map(notificationSetting => {
       if (notificationSetting.email) {
-        
+
       }
       if (notificationSetting.push) {
 
@@ -86,8 +87,8 @@ async function notificationService () {
     const timeZone = userInfo.timezone;
     const currentDate = new Date();
     const formattedTime = new Date(new Date().toLocaleString('en-US', { timeZone }));
-    if(formattedTime.getHours() == 0) {
-      
+    if (formattedTime.getHours() == 0) {
+
     }
   });
 };
@@ -95,9 +96,9 @@ async function notificationService () {
 //const params = { date: '7/8', streak: '🔥Streak of 8 Days!🔥', ranking_compare: '+1', ranking: '#1', study_time_compare: '+1', study_time: '1', other_apps_compare: '1', other_apps: 'dd', focus_compare: '1hr', focus: '1hr', quote: 'gg' }; 
 
 function planNotification(plan, userInfo, startTime, decryptedData) {
-  let schduleNotification = schedule.scheduleJob(userInfo.user_id + '-' + plan.id, startTime, async() => {
+  let schduleNotification = schedule.scheduleJob(userInfo.user_id + '-' + plan.id, startTime, async () => {
     //remove notifications
-    
+
     const notificationSettings = await completeNotification(userInfo.user_id, plan.id);
     let startHr = startTime.getHours();
     let startMin = startTime.getMinutes();
@@ -115,7 +116,7 @@ function planNotification(plan, userInfo, startTime, decryptedData) {
       }
 
       const dispTime = `${startHr}:${startMin.toString().padStart(2, '0')}${ampm}`;
-      const params = { plan_name: plan.title, plan_time: dispTime, plan_description: plan.description}; 
+      const params = { plan_name: plan.title, plan_time: dispTime, plan_description: plan.description };
       const id = 2;
       sendEmail(to, params, id);
     };
@@ -134,7 +135,7 @@ function planNotification(plan, userInfo, startTime, decryptedData) {
       let startampm = 'am';
       let endampm = 'am';
 
-      if( dispStartHr == 12 ) {
+      if (dispStartHr == 12) {
         startampm = 'pm';
       }
 
@@ -146,7 +147,7 @@ function planNotification(plan, userInfo, startTime, decryptedData) {
         dispStartHr -= 12;
         startampm = 'pm'
       }
-      
+
       while (dispEndHr > 12) {
         dispEndHr -= 12;
         endampm = 'pm';
@@ -193,10 +194,10 @@ async function completeNotification(userId, planId) {
 
   let userInfo = await connection.query(`SELECT notification_setting from users WHERE user_id = ?`, [userId]);
   userInfo = userInfo[0];
-  
+
   let notificationSettings;
   if (userInfo.notification_setting == 'default_setting') {
-    notificationSettings = [{id:0,name:'PlanNotifications',email:true,push:true,sms:false},{id:1,name:'AchievementCelebrations',email:true,push:true,sms:false},{id:2,name:'GroupStudyInvitations',email:true,push:true,sms:false},{id:3,name:'StudyProgressUpdates',email:true,push:true,sms:false},{id:4,name:'StudyChallengeNotifications',email:true,push:true,sms:false},{id:5,name:'RewardNotifications',email:true,push:true,sms:false},{id:6,name:'DeadlineReminders',email:true,push:true,sms:false},{id:7,name:'PersonalizedStudyRecommendations',email:true,push:true,sms:false},{id:8,name:'StudyBreakReminders',email:true,push:true,sms:false},{id:9,name:'TimeManagementTips',email:true,push:true,sms:false},{id:10,name:'DailyStudyReports',email:true,push:true,sms:false},{id:11,name:'WeeklyStudyReports',email:true,push:true,sms:false},{id:12,name:'MonthlyProgressReports',email:true,push:true,sms:false}];
+    notificationSettings = [{ id: 0, name: 'PlanNotifications', email: true, push: true, sms: false }, { id: 1, name: 'AchievementCelebrations', email: true, push: true, sms: false }, { id: 2, name: 'GroupStudyInvitations', email: true, push: true, sms: false }, { id: 3, name: 'StudyProgressUpdates', email: true, push: true, sms: false }, { id: 4, name: 'StudyChallengeNotifications', email: true, push: true, sms: false }, { id: 5, name: 'RewardNotifications', email: true, push: true, sms: false }, { id: 6, name: 'DeadlineReminders', email: true, push: true, sms: false }, { id: 7, name: 'PersonalizedStudyRecommendations', email: true, push: true, sms: false }, { id: 8, name: 'StudyBreakReminders', email: true, push: true, sms: false }, { id: 9, name: 'TimeManagementTips', email: true, push: true, sms: false }, { id: 10, name: 'DailyStudyReports', email: true, push: true, sms: false }, { id: 11, name: 'WeeklyStudyReports', email: true, push: true, sms: false }, { id: 12, name: 'MonthlyProgressReports', email: true, push: true, sms: false }];
   } else {
     notificationSettings = JSON.parse(userInfo.notification_setting);
   }
@@ -220,8 +221,8 @@ async function getSubscription(userInfo) {
   const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(encryptKey, 'hex'), Buffer.from(iv, 'hex'));
   let decryptedData = decipher.update(subscription, 'hex', 'utf8');
   decryptedData += decipher.final('utf8');
-  
-  decryptedData = JSON.parse(decryptedData); 
+
+  decryptedData = JSON.parse(decryptedData);
 
   return decryptedData;
 }
@@ -234,34 +235,32 @@ function sendEmail(to, params, id) {
   sendSmtpEmail.to = to;
   sendSmtpEmail.templateId = id;
   sendSmtpEmail.params = params;
-  apiInstance.sendTransacEmail(sendSmtpEmail).then(function(data) {
+  apiInstance.sendTransacEmail(sendSmtpEmail).then(function (data) {
     console.log('Email sent successfully:', data);
-  }).catch(function(error) {
+  }).catch(function (error) {
     console.error('Error sending email:', error);
   });
 }
 
-Router.post('/subscribe', async(req, res) => {
-  if (!req.session.loggedin) {
-    return res.send({success: false, reason: 'no session'});
-  }
-  const userId = req.session.user_id;
-  const subscriptionInfo = req.body.subscription;
+Router.post('/subscribe', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    const userId = req.session.user_id;
+    const { subscriptionInfo } = req.body;
 
-  const connection = pool.promise();
+    const connection = pool.promise();
 
-  let userInfo = await connection.query('SELECT user_id, key_salt, iv from users where user_id = ?', userId);
-  userInfo = userInfo[0];
+    const [[userInfo]] = await connection.query('SELECT user_id, key_salt, iv FROM users WHERE user_id = ?', [userId]);
 
-  const encryptKey = await deriveKey(userId, userInfo.key_salt);
+    const encryptKey = await deriveKey(userId, userInfo.key_salt);
 
-  const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(encryptKey, 'hex'), Buffer.from(userInfo.iv, 'hex'));
+    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(encryptKey, 'hex'), Buffer.from(userInfo.iv, 'hex'));
 
-  let encryptedData = cipher.update(JSON.stringify(subscriptionInfo), 'utf8', 'hex');
-  encryptedData += cipher.final('hex');
-  const update = connection.query('UPDATE users set ? where user_id = ?', [{subscription: encryptedData}, userId]);
-  pool.releaseConnection(connection);
-  res.send({success: true})
+    let encryptedData = cipher.update(JSON.stringify(subscriptionInfo), 'utf8', 'hex');
+    encryptedData += cipher.final('hex');
+    connection.query('UPDATE users SET ? WHERE user_id = ?', [{ subscription: encryptedData }, userId]);
+    res.send({ success: true })
+  })
+  );
 });
 
 module.exports = {
