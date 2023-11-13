@@ -72,16 +72,16 @@ async function subjectsCache(userId, cache = true, opt = ['id', 'name', 'icon', 
       try {
         const connection = pool.promise();
         [subjects] = await connection.query(`SELECT ${opt.join(', ')} FROM subjects where user_id = ?`, [userId]);
-        subjects.map(async (subject) => {
+        Promise.all(subjects.map(async (subject) => {
           /* 
           {\"id\":\"gQNfNmQnGR\",\"name\":\"gd\",\"icon\":\"Article\",\"color\":\"#D2DAFF\",\"datum_point\":1698958888}
           */
           const redisSubject = { ...subject };
           delete redisSubject.timeline;
           if (cache) {
-            redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
+            await redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
           };
-        })
+        }))
       } catch (err) {
         console.log(err);
       };
@@ -182,7 +182,7 @@ async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000),
       timer = JSON.parse(timer);
     } else {
       timer = {dp: now, ts};
-      redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timer));
+      await redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timer));
     };
 
     return timer;
