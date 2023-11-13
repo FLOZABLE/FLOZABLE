@@ -368,4 +368,26 @@ Router.get('/logout', function (req, res) {
   });
 });
 
+Router.get('/profile/:userId', async(req, res) => {
+  try {
+    const connection = pool.promise();
+    const targetUserId = req.params.userId;
+    const [[userInfo]] = await connection.query(`SELECT name, email, user_id FROM users WHERE user_id = ?`, [targetUserId]);
+    if (!userInfo) return res.send({ success: false, msg: 'No such user' });
+    const [subjectsInfo] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline, timeline_sum FROM subjects where user_id = ?`, [targetUserId]);
+    for (const subject of subjectsInfo) {
+      const redisSubject = { ...subject };
+      delete redisSubject.timeline;
+      await redisClient.hSet(`user:${targetUserId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
+      //this code adds [at the start and ] at the end
+      let prevTimeline = subject.timeline === "" ? [] :  JSON.parse(subject.timeline.replace(/^/,"[").replace(/$/,"]")); //wrapping the string with "[]"
+      const todayTimeline = (await redisClient.lRange(`user:${targetUserId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
+      subject.timeline = prevTimeline.concat(todayTimeline);
+    }
+    res.send({ success: true, userInfo, subjectsInfo });
+  } catch (err) {
+    console.log(err);
+  }
+})
+
 module.exports = Router;
