@@ -1,22 +1,22 @@
 {
-  "name": "programming-club",
+  "name": "FLOZABLE",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon app.js nodemon -e js --ignore data,public",
+    "dev": "cross-env NODE_ENV=development nodemon app.js nodemon -e js --ignore app",
     "production": "cross-env NODE_ENV=production nodemon app.js nodemon -e js --ignore app,public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dIwnsgml/programming-club.git"
+    "url": "git+https://github.com/dIwnsgml/FLOZABLE.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/dIwnsgml/programming-club/issues"
+    "url": "https://github.com/dIwnsgml/FLOZABLE/issues"
   },
-  "homepage": "https://github.com/dIwnsgml/programming-club#readme",
+  "homepage": "https://github.com/dIwnsgml/FLOZABLE#readme",
   "dependencies": {
     "ajv": "^8.12.0",
     "async": "^3.2.4",

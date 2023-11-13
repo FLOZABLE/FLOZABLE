@@ -6,7 +6,7 @@ const crypto = require("crypto");
 const pool = require("../model/pool");
 const { io, userIdToSocketIdMap } = require("../socket");
 const cron = require("node-cron");
-const { activeSubjectCache, subjectsCache } = require("./redisLoader");
+const { activeSubjectCache, subjectsCache, timerCache } = require("./redisLoader");
 
 async function timerUpdate() {
   const now = DateTime.utc();
@@ -37,10 +37,9 @@ async function timerUpdate() {
           redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
         }
       }; */
-      subjects.map(async({id, timeline_sum}) => {
+      subjects.map(async ({ id, timeline_sum }) => {
         let todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
         if (todayTimeline.length) {
-  
           //const insertTimeline = await connection.query(`UPDATE subjects SET timeline = JSON_ARRAY_APPEND(timeline, '$', ?) WHERE id = ?`, [JSON.stringify(todayTimeline), subject])
           //this changes from [[39102,39104],[39105,39109],[39109,39112]] to [39102,39104],[39105,39109],[39109,39112]
           const modifiedTimeline = JSON.stringify(todayTimeline).slice(1, -1);
@@ -61,6 +60,7 @@ async function timerUpdate() {
           ]);
         };
         redisClient.lTrim(`user:${userId}:subject:${id}`, 1, 0);
+        removeTimeline(userId, now);
       })
       const socketId = userIdToSocketIdMap.get(userId);
       if (socketId) {
@@ -69,17 +69,41 @@ async function timerUpdate() {
     });
   } catch (err) {
     console.log(err);
-  } finally {
-    connection.releaseConnection();
   };
 };
 
+const MAX_SAVING = 60 * 60 * 24 * 2;//save for 2 days;
 /** removes old timeline from the redis
- * because every users need t
+ * 
  * 
  */
-async function removeTimeline() {
+async function removeTimeline(userId, time) {
+  try {
+    const timer = await redisClient.lRange(`user:${userId}:timer`, 0, -1);
+    const timerInfo = await timerCache(userId, time);
+    const { dp, ts } = timerInfo;
 
+    const lastStopUnix = dt + ts;
+    let timelineSum = 0;
+
+    const trimIndex = timer.find(([start, duration], i) => {
+      const startUnix = dp + start + timelineSum;
+      timelineSum += start + duration;
+      if (lastStopUnix - startUnix > MAX_SAVING) {
+        return i;
+      };
+    });
+
+    console.log('trim index', trimIndex);
+    redisClient.lTrim(`user:${userId}:timer`, 0, trimIndex);
+
+    timerInfo.dp = dp;
+    timerInfo.ts = ts - timelineSum;
+
+    redisClient.hSet(`user:${userId}:timerInfo`, JSON.stringify(timerInfo));
+  } catch (err) {
+    console.log(err);
+  };
 }
 //timerUpdate();
 

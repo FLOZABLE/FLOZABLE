@@ -208,7 +208,7 @@ require('./Logger');
 require('./services/timerUpdate');
 const {createBots, addId, deleteBots, botManager, createGroups} = require('./Bot/Bot');
 //createGroups(0, 1);
-botManager();
+//botManager();
 //deleteBots();
 //addId();
 //createBots(0, 100);
