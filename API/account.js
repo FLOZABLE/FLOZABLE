@@ -52,9 +52,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
       }
 
       req.session.user_id = userId;
-      req.session.name = userInfo.name;
       req.session.loggedin = true;
-      req.session.userInfo = { userId: userId, name: userInfo.name, loggedin: true, email: email, myinfo: userInfo.myinfo, timeZone: userInfo.timezone };
 
       res.cookie("userId", userId, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
@@ -64,7 +62,6 @@ Router.post('/signin-authentication', async (req, res, next) => {
       });
 
       res.send({ success: true });
-      //res.redirect(307, '/dashboard');
     });
   } else {
     res.send({ success: false, reason: 'WRONG PASSWORD' });
@@ -81,7 +78,7 @@ function isValidTimeZone(timeZone) {
 }
 
 Router.post('/signup-authentication', async (req, res) => {
-  let {email, name, password, timeZone} = req.body;
+  let { email, name, password, timeZone } = req.body;
 
   if (!isValidTimeZone) {
     timeZone = 'UTC';
@@ -140,7 +137,6 @@ Router.post('/signup-authentication', async (req, res) => {
     datum_point: unixTimestamp,
     key_salt: keySalt,
     iv: iv,
-    study: JSON.stringify({ study: false, point: unixTimestamp, total: 0 })
   };
   connection.query('INSERT INTO users SET ?', user);
   //create default subject
@@ -154,9 +150,28 @@ Router.post('/signup-authentication', async (req, res) => {
     color: '#000000',
     datum_point
   };
-  console.log('sub', subject)
-  const test = await connection.query(`INSERT INTO subjects SET ?`, subject);
+
+  connection.query(`INSERT INTO subjects SET ?`, subject);
   req.session.regenerate((err) => {
+    if (err) {
+      console.log("Error regenerating session ID:", err);
+      res.send({ success: false, reason: "SESSION ERROR" });
+      return;
+    }
+
+    req.session.user_id = userId;
+    req.session.loggedin = true;
+
+    res.cookie("userId", userId, {
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      secure: true,
+      httpOnly: true,
+      signed: true,
+    });
+
+    res.send({ success: true });
+  });
+  /* req.session.regenerate((err) => {
     if (err) {
       res.send({ success: false, reason: "SESSION ERROR" });
       return;
@@ -175,7 +190,7 @@ Router.post('/signup-authentication', async (req, res) => {
     });
 
     res.send({ success: true });
-  });
+  }); */
 });
 
 Router.post('/update/image', upload.single('image'), async (req, res) => {
@@ -204,7 +219,7 @@ Router.post('/update/info', async (req, res) => {
   autoSignin(req, res, (async () => {
     const connection = pool.promise();
     try {
-      const {name, email, confirmEmail} = req.body;
+      const { name, email, confirmEmail } = req.body;
       console.log('gd', name)
       //const supportedLanguages = ['English', 'Spanish', 'French'];
       if (!/^[a-zA-Z0-9]+$/.test(name)) {
@@ -233,7 +248,7 @@ Router.post('/update/password', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
       const connection = pool.promise();
-      const {password, confirmPassword} = req.body;
+      const { password, confirmPassword } = req.body;
       if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
         return res.send({ success: false, reason: 'No Special Character' });
       } /* else if ((password.match(/\d/g) || []).length < 2) {
@@ -260,7 +275,7 @@ Router.post('/update/extension-add', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const connection = pool.promise();
-      const {url} = req.body;
+      const { url } = req.body;
       let origin;
       let domain;
       if (!/^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[a-zA-Z0-9.-]*)*$/.test(url)) {
@@ -276,13 +291,13 @@ Router.post('/update/extension-add', async (req, res) => {
 
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
       console.log('userinfo', userInfo)
-      let activitySettings = userInfo.activitySettings === "" ? [] :  JSON.parse(userInfo.activity_setting.replace(/^/,"[").replace(/$/,"]"));
+      let activitySettings = userInfo.activitySettings === "" ? [] : JSON.parse(userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"));
       const selectedActivity = activitySettings.find(activitySetting => { return activitySetting.d == domain });
       if (selectedActivity) {
         return res.send({ success: false, reason: 'Already Exist' });
       } else {
         //d: domain, b: block, t: timer
-        const stringlified = JSON.stringify({d: domain, b: 0, t: 1});
+        const stringlified = JSON.stringify({ d: domain, b: 0, t: 1 });
         await connection.query(`
         UPDATE users
         SET activity_setting = CASE
@@ -309,19 +324,19 @@ Router.post('/update/extension-setting-update', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
       const userId = req.session.user_id;
-      const {d, target, value} = req.body;
+      const { d, target, value } = req.body;
       const connection = pool.promise();
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
-      let activitySettings = userInfo.activitySettings === "" ? [] :  JSON.parse(userInfo.activity_setting.replace(/^/,"[").replace(/$/,"]"));
+      let activitySettings = userInfo.activitySettings === "" ? [] : JSON.parse(userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"));
       const activityIndex = activitySettings.findIndex(activitySetting => { return activitySetting.d == d });
       if (activityIndex === -1) {
         return res.send({ success: false, reason: 'No Matching Website' });
       } else {
         //d: domain, b: block, t: timer
         if (target === 'block') {
-          activitySettings[activityIndex] = {...activitySettings[activityIndex], b: value ? 1 : 0};
+          activitySettings[activityIndex] = { ...activitySettings[activityIndex], b: value ? 1 : 0 };
         } else {
-          activitySettings[activityIndex] = {...activitySettings[activityIndex], t: value ? 1 : 0};
+          activitySettings[activityIndex] = { ...activitySettings[activityIndex], t: value ? 1 : 0 };
         };
         const stringlified = JSON.stringify(activitySettings).slice(1, -1);
         await connection.query(`
@@ -334,7 +349,7 @@ Router.post('/update/extension-setting-update', async (req, res) => {
         ]);
       }
 
-      res.send({success: true});
+      res.send({ success: true });
     } catch (error) {
 
     } finally {
