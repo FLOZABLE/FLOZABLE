@@ -1,0 +1,1874 @@
+[
+  {
+    "name": "Study Buddies",
+    "explanation": "Let's excel together!",
+    "tags": [
+      "Study",
+      "Learning",
+      "Success"
+    ]
+  },
+  {
+    "name": "Coding Wizards",
+    "explanation": "Unlock the magic of code.",
+    "tags": [
+      "Coding",
+      "Programming",
+      "Development"
+    ]
+  },
+  {
+    "name": "Art Enthusiasts",
+    "explanation": "Explore the world of art and creativity.",
+    "tags": [
+      "Art",
+      "Creativity",
+      "Design"
+    ]
+  },
+  {
+    "name": "Science Geeks",
+    "explanation": "Discover the wonders of science.",
+    "tags": [
+      "Science",
+      "Experiment",
+      "Research"
+    ]
+  },
+  {
+    "name": "History Explorers",
+    "explanation": "Journey through the pages of history.",
+    "tags": [
+      "History",
+      "Historical Analysis",
+      "Research"
+    ]
+  },
+  {
+    "name": "Language Lovers",
+    "explanation": "Celebrate the beauty of languages.",
+    "tags": [
+      "Languages",
+      "Language Learning",
+      "Communication"
+    ]
+  },
+  {
+    "name": "Math Masters",
+    "explanation": "Solve the mysteries of numbers.",
+    "tags": [
+      "Math",
+      "Problem Solving",
+      "Logic"
+    ]
+  },
+  {
+    "name": "Literary Club",
+    "explanation": "Dive into the world of literature.",
+    "tags": [
+      "Literature",
+      "Reading",
+      "Analysis"
+    ]
+  },
+  {
+    "name": "Tech Innovators",
+    "explanation": "Shape the future with technology.",
+    "tags": [
+      "Technology",
+      "Innovation",
+      "Tech Trends"
+    ]
+  },
+  {
+    "name": "Healthy Living",
+    "explanation": "Embrace fitness and wellness.",
+    "tags": [
+      "Fitness",
+      "Health",
+      "Wellness"
+    ]
+  },
+  {
+    "name": "Music Makers",
+    "explanation": "Create music and explore melodies.",
+    "tags": [
+      "Music",
+      "Composition",
+      "Melody"
+    ]
+  },
+  {
+    "name": "Environmental Heroes",
+    "explanation": "Work for a greener planet.",
+    "tags": [
+      "Environment",
+      "Sustainability",
+      "Eco-Friendly"
+    ]
+  },
+  {
+    "name": "Brain Teasers",
+    "explanation": "Challenge your mind with puzzles.",
+    "tags": [
+      "Puzzles",
+      "Brain Teasers",
+      "Critical Thinking"
+    ]
+  },
+  {
+    "name": "Travel Enthusiasts",
+    "explanation": "Share travel stories and plans.",
+    "tags": [
+      "Travel",
+      "Adventure",
+      "Exploration"
+    ]
+  },
+  {
+    "name": "Philosophy Discussions",
+    "explanation": "Explore the depths of philosophy.",
+    "tags": [
+      "Philosophy",
+      "Deep Thinking",
+      "Ideas"
+    ]
+  },
+  {
+    "name": "DIY Creations",
+    "explanation": "Get creative with DIY projects.",
+    "tags": [
+      "DIY",
+      "Crafts",
+      "Innovation"
+    ]
+  },
+  {
+    "name": "Bookworms United",
+    "explanation": "Read, discuss, and share books.",
+    "tags": [
+      "Books",
+      "Reading",
+      "Literature"
+    ]
+  },
+  {
+    "name": "Chess Strategists",
+    "explanation": "Plan your moves and conquer.",
+    "tags": [
+      "Chess",
+      "Strategy",
+      "Tactics"
+    ]
+  },
+  {
+    "name": "Film Buffs Society",
+    "explanation": "Explore the world of cinema.",
+    "tags": [
+      "Movies",
+      "Film Analysis",
+      "Cinematography"
+    ]
+  },
+  {
+    "name": "Yoga & Meditation",
+    "explanation": "Find inner peace and balance.",
+    "tags": [
+      "Yoga",
+      "Meditation",
+      "Well-Being"
+    ]
+  },
+  {
+    "name": "Cooking Delights",
+    "explanation": "Share culinary adventures.",
+    "tags": [
+      "Cooking",
+      "Recipes",
+      "Cuisine"
+    ]
+  },
+  {
+    "name": "Nature Explorers",
+    "explanation": "Connect with the great outdoors.",
+    "tags": [
+      "Nature",
+      "Outdoors",
+      "Adventure"
+    ]
+  },
+  {
+    "name": "Startups Hub",
+    "explanation": "Entrepreneurship and innovation.",
+    "tags": [
+      "Startups",
+      "Business",
+      "Innovation"
+    ]
+  },
+  {
+    "name": "Astronomy Enthusiasts",
+    "explanation": "Stargazing and cosmic wonders.",
+    "tags": [
+      "Astronomy",
+      "Stargazing",
+      "Cosmos"
+    ]
+  },
+  {
+    "name": "Photography World",
+    "explanation": "Capture moments through the lens.",
+    "tags": [
+      "Photography",
+      "Visual Art",
+      "Images"
+    ]
+  },
+  {
+    "name": "Gaming Guild",
+    "explanation": "Level up and game on!",
+    "tags": [
+      "Gaming",
+      "Video Games",
+      "Online Gaming"
+    ]
+  },
+  {
+    "name": "Pet Lovers' Corner",
+    "explanation": "For furry friends and their owners.",
+    "tags": [
+      "Pets",
+      "Animals",
+      "Pet Care"
+    ]
+  },
+  {
+    "name": "Film Noir Fans",
+    "explanation": "Dive into the world of film noir.",
+    "tags": [
+      "Film Noir",
+      "Cinematic Style",
+      "Classic Films"
+    ]
+  },
+  {
+    "name": "Robotics Revolution",
+    "explanation": "Explore the world of robotics.",
+    "tags": [
+      "Robotics",
+      "Automation",
+      "Innovation"
+    ]
+  },
+  {
+    "name": "Fashionistas Lounge",
+    "explanation": "Fashion and style discussions.",
+    "tags": [
+      "Fashion",
+      "Style",
+      "Trends"
+    ]
+  },
+  {
+    "name": "Aeronautics Club",
+    "explanation": "Take flight in the world of aviation.",
+    "tags": [
+      "Aeronautics",
+      "Flight",
+      "Aircraft"
+    ]
+  },
+  {
+    "name": "Comedy Club",
+    "explanation": "Laugh out loud with comedy lovers.",
+    "tags": [
+      "Comedy",
+      "Humor",
+      "Stand-Up"
+    ]
+  },
+  {
+    "name": "Tech Gadgets Galore",
+    "explanation": "Explore the latest tech gadgets.",
+    "tags": [
+      "Tech Gadgets",
+      "Electronics",
+      "Gizmos"
+    ]
+  },
+  {
+    "name": "Hiking Adventures",
+    "explanation": "Discover nature through hiking.",
+    "tags": [
+      "Hiking",
+      "Outdoors",
+      "Adventure"
+    ]
+  },
+  {
+    "name": "Gardening Gurus",
+    "explanation": "Grow and tend to your garden.",
+    "tags": [
+      "Gardening",
+      "Plants",
+      "Green Thumb"
+    ]
+  },
+  {
+    "name": "Creative Writing Circle",
+    "explanation": "Write and share creative stories.",
+    "tags": [
+      "Creative Writing",
+      "Stories",
+      "Imagination"
+    ]
+  },
+  {
+    "name": "Coffee Connoisseurs",
+    "explanation": "For the love of coffee and caffeine.",
+    "tags": [
+      "Coffee",
+      "Caffeine",
+      "Brewing"
+    ]
+  },
+  {
+    "name": "Architectural Wonders",
+    "explanation": "Explore the world of architecture.",
+    "tags": [
+      "Architecture",
+      "Design",
+      "Structures"
+    ]
+  },
+  {
+    "name": "Eco-Friendly Living",
+    "explanation": "Sustainable living and green tips.",
+    "tags": [
+      "Sustainability",
+      "Eco-Friendly",
+      "Green Living"
+    ]
+  },
+  {
+    "name": "Motorsport Madness",
+    "explanation": "For racing and motorsport fans.",
+    "tags": [
+      "Motorsport",
+      "Racing",
+      "Cars"
+    ]
+  },
+  {
+    "name": "Fitness Fanatics",
+    "explanation": "Combine study breaks with fitness tips and routines.",
+    "tags": [
+      "Fitness",
+      "Exercise",
+      "Health"
+    ]
+  },
+  {
+    "name": "Music Masters",
+    "explanation": "Discuss music theory, genres, and artists.",
+    "tags": [
+      "Music",
+      "Music Theory",
+      "Genres"
+    ]
+  },
+  {
+    "name": "Sustainable Solutions",
+    "explanation": "Brainstorm eco-friendly ideas for a greener future.",
+    "tags": [
+      "Sustainability",
+      "Environment",
+      "Innovation"
+    ]
+  },
+  {
+    "name": "Brain Teasers Brigade",
+    "explanation": "Sharpen your mind with puzzles and challenges.",
+    "tags": [
+      "Puzzles",
+      "Brain Teasers",
+      "Problem Solving"
+    ]
+  },
+  {
+    "name": "Travel Enthusiasts",
+    "explanation": "Share travel experiences and plan future trips.",
+    "tags": [
+      "Travel",
+      "Adventure",
+      "Exploration"
+    ]
+  },
+  {
+    "name": "Philosophy Circle",
+    "explanation": "Dive into deep philosophical conversations.",
+    "tags": [
+      "Philosophy",
+      "Discussion",
+      "Critical Thinking"
+    ]
+  },
+  {
+    "name": "DIY Innovators",
+    "explanation": "Share DIY projects and innovative ideas.",
+    "tags": [
+      "DIY",
+      "Innovation",
+      "Creativity"
+    ]
+  },
+  {
+    "name": "Chess Champions",
+    "explanation": "Master the game of chess.",
+    "tags": [
+      "Chess",
+      "Strategy",
+      "Tactics"
+    ]
+  },
+  {
+    "name": "Movie Buffs Club",
+    "explanation": "Discuss and critique movies.",
+    "tags": [
+      "Movies",
+      "Film Analysis",
+      "Cinematography"
+    ]
+  },
+  {
+    "name": "Culinary Creations",
+    "explanation": "Explore the world of cooking.",
+    "tags": [
+      "Cooking",
+      "Recipes",
+      "Cuisine"
+    ]
+  },
+  {
+    "name": "Outdoor Adventures",
+    "explanation": "Embrace the great outdoors.",
+    "tags": [
+      "Outdoors",
+      "Adventure",
+      "Nature"
+    ]
+  },
+  {
+    "name": "Startup Success",
+    "explanation": "Empower your entrepreneurial journey.",
+    "tags": [
+      "Startups",
+      "Business",
+      "Success"
+    ]
+  },
+  {
+    "name": "Astronomy Enthusiasts",
+    "explanation": "Stargazing and cosmic wonders.",
+    "tags": [
+      "Astronomy",
+      "Stargazing",
+      "Cosmos"
+    ]
+  },
+  {
+    "name": "Photography Passion",
+    "explanation": "Capture moments through the lens.",
+    "tags": [
+      "Photography",
+      "Visual Art",
+      "Images"
+    ]
+  },
+  {
+    "name": "Gaming Community",
+    "explanation": "Game together and have fun.",
+    "tags": [
+      "Gaming",
+      "Video Games",
+      "Fun"
+    ]
+  },
+  {
+    "name": "Pet Owners' Paradise",
+    "explanation": "For pet lovers and their pets.",
+    "tags": [
+      "Pets",
+      "Animals",
+      "Pet Care"
+    ]
+  },
+  {
+    "name": "Classic Cinema Lovers",
+    "explanation": "Explore classic film gems.",
+    "tags": [
+      "Classic Films",
+      "Cinema",
+      "Movie Classics"
+    ]
+  },
+  {
+    "name": "Robotics Enthusiasts",
+    "explanation": "Delve into the world of robotics.",
+    "tags": [
+      "Robotics",
+      "Automation",
+      "Innovation"
+    ]
+  },
+  {
+    "name": "Fashion Forward",
+    "explanation": "Stay updated with fashion trends.",
+    "tags": [
+      "Fashion",
+      "Trends",
+      "Style"
+    ]
+  },
+  {
+    "name": "Aviation Adventures",
+    "explanation": "Fly high in the world of aviation.",
+    "tags": [
+      "Aviation",
+      "Flying",
+      "Adventure"
+    ]
+  },
+  {
+    "name": "Laughter Lounge",
+    "explanation": "Share a laugh with comedy fans.",
+    "tags": [
+      "Comedy",
+      "Humor",
+      "Jokes"
+    ]
+  },
+  {
+    "name": "Tech Gadgets Galore",
+    "explanation": "Discover the latest tech gadgets.",
+    "tags": [
+      "Tech Gadgets",
+      "Gizmos",
+      "Electronics"
+    ]
+  },
+  {
+    "name": "Mountain Hikers",
+    "explanation": "Conquer mountains and trails.",
+    "tags": [
+      "Hiking",
+      "Mountains",
+      "Nature"
+    ]
+  },
+  {
+    "name": "Green Thumbs Club",
+    "explanation": "Grow and nurture plants.",
+    "tags": [
+      "Gardening",
+      "Plants",
+      "Botany"
+    ]
+  },
+  {
+    "name": "Writers' Guild",
+    "explanation": "Craft and share stories.",
+    "tags": [
+      "Writing",
+      "Stories",
+      "Authorship"
+    ]
+  },
+  {
+    "name": "Coffee Enthusiasts",
+    "explanation": "Savor the world of coffee.",
+    "tags": [
+      "Coffee",
+      "Caffeine",
+      "Brewing"
+    ]
+  },
+  {
+    "name": "Architectural Marvels",
+    "explanation": "Explore architectural wonders.",
+    "tags": [
+      "Architecture",
+      "Design",
+      "Buildings"
+    ]
+  },
+  {
+    "name": "Green Living Advocates",
+    "explanation": "Champion eco-friendly living.",
+    "tags": [
+      "Sustainability",
+      "Green Living",
+      "Eco-Friendly"
+    ]
+  },
+  {
+    "name": "Motorsport Mania",
+    "explanation": "Rev up for motorsport action.",
+    "tags": [
+      "Motorsport",
+      "Racing",
+      "Speed"
+    ]
+  },
+  {
+    "name": "Yogis & Yoginis",
+    "explanation": "Find serenity through yoga.",
+    "tags": [
+      "Yoga",
+      "Meditation",
+      "Balance"
+    ]
+  },
+  {
+    "name": "Culinary Delights",
+    "explanation": "Share and savor culinary delights.",
+    "tags": [
+      "Cuisine",
+      "Cooking",
+      "Taste"
+    ]
+  },
+  {
+    "name": "Nature Enthusiasts",
+    "explanation": "Connect with the beauty of nature.",
+    "tags": [
+      "Nature",
+      "Exploration",
+      "Outdoor"
+    ]
+  },
+  {
+    "name": "Tech Innovators Hub",
+    "explanation": "Innovate with technology.",
+    "tags": [
+      "Technology",
+      "Innovation",
+      "Ideas"
+    ]
+  },
+  {
+    "name": "Literary Legends",
+    "explanation": "Celebrate the world of literature.",
+    "tags": [
+      "Literature",
+      "Books",
+      "Writing"
+    ]
+  },
+  {
+    "name": "Space Explorers",
+    "explanation": "Journey to the stars and beyond.",
+    "tags": [
+      "Space",
+      "Exploration",
+      "Astronomy"
+    ]
+  },
+  {
+    "name": "Artistic Visions",
+    "explanation": "Express through art and creativity.",
+    "tags": [
+      "Art",
+      "Creativity",
+      "Visual Arts"
+    ]
+  },
+  {
+    "name": "Music Makers' Club",
+    "explanation": "Create and appreciate music.",
+    "tags": [
+      "Music",
+      "Composition",
+      "Melodies"
+    ]
+  },
+  {
+    "name": "Environmental Warriors",
+    "explanation": "Fight for a greener planet.",
+    "tags": [
+      "Environment",
+      "Sustainability",
+      "Activism"
+    ]
+  },
+  {
+    "name": "Mystery Solvers",
+    "explanation": "Solve puzzles and mysteries.",
+    "tags": [
+      "Puzzles",
+      "Mystery",
+      "Solving"
+    ]
+  },
+  {
+    "name": "Wanderlust Society",
+    "explanation": "Explore the world of travel.",
+    "tags": [
+      "Travel",
+      "Adventures",
+      "Exploration"
+    ]
+  },
+  {
+    "name": "Philosophical Debates",
+    "explanation": "Delve into philosophical discussions.",
+    "tags": [
+      "Philosophy",
+      "Debates",
+      "Ideas"
+    ]
+  },
+  {
+    "name": "Innovative DIYers",
+    "explanation": "Create and innovate with DIY projects.",
+    "tags": [
+      "DIY",
+      "Innovation",
+      "Projects"
+    ]
+  },
+  {
+    "name": "Book Club Oasis",
+    "explanation": "Discuss and celebrate books.",
+    "tags": [
+      "Books",
+      "Reading",
+      "Literary"
+    ]
+  },
+  {
+    "name": "Science Enthusiasts",
+    "explanation": "Dive into the wonders of science.",
+    "tags": [
+      "Science",
+      "Discovery",
+      "Learning"
+    ]
+  },
+  {
+    "name": "Theatrical Stars",
+    "explanation": "Explore the world of theater.",
+    "tags": [
+      "Theater",
+      "Drama",
+      "Performing Arts"
+    ]
+  },
+  {
+    "name": "Healthy Living Squad",
+    "explanation": "Embrace wellness and health.",
+    "tags": [
+      "Health",
+      "Wellness",
+      "Fitness"
+    ]
+  },
+  {
+    "name": "Digital Artists Guild",
+    "explanation": "Express through digital art.",
+    "tags": [
+      "Digital Art",
+      "Creativity",
+      "Design"
+    ]
+  },
+  {
+    "name": "Board Gamers United",
+    "explanation": "Play board games and have fun.",
+    "tags": [
+      "Board Games",
+      "Fun",
+      "Strategy"
+    ]
+  },
+  {
+    "name": "Animal Lovers Haven",
+    "explanation": "For all animal enthusiasts.",
+    "tags": [
+      "Animals",
+      "Pets",
+      "Love"
+    ]
+  },
+  {
+    "name": "Classic Movie Nights",
+    "explanation": "Enjoy classic films together.",
+    "tags": [
+      "Classic Movies",
+      "Cinematic Classics",
+      "Movie Nights"
+    ]
+  },
+  {
+    "name": "Math Wizards Study Group",
+    "explanation": "Unlock the secrets of mathematics.",
+    "tags": [
+      "Math",
+      "Problem Solving",
+      "Logic"
+    ]
+  },
+  {
+    "name": "Literary Lounge for Scholars",
+    "explanation": "Dive into the world of literature.",
+    "tags": [
+      "Literature",
+      "Reading",
+      "Analysis"
+    ]
+  },
+  {
+    "name": "Science Explorers Society",
+    "explanation": "Explore the wonders of science and theories.",
+    "tags": [
+      "Science",
+      "Experiment",
+      "Research"
+    ]
+  },
+  {
+    "name": "Language Lab for Linguists",
+    "explanation": "Practice languages from around the world.",
+    "tags": [
+      "Languages",
+      "Language Learning",
+      "Communication"
+    ]
+  },
+  {
+    "name": "Coding Collective Collaborative",
+    "explanation": "Collaborate on coding projects and enhance your skills.",
+    "tags": [
+      "Coding",
+      "Programming",
+      "Development"
+    ]
+  },
+  {
+    "name": "History Buffs Discussion Group",
+    "explanation": "Uncover mysteries of the past and historical debates.",
+    "tags": [
+      "History",
+      "Historical Analysis",
+      "Research"
+    ]
+  },
+  {
+    "name": "Environmental Studies Think Tank",
+    "explanation": "Brainstorm eco-friendly ideas for a greener future.",
+    "tags": [
+      "Environmental Studies",
+      "Sustainability",
+      "Innovation"
+    ]
+  },
+  {
+    "name": "Brain Teasers and Puzzles Enthusiasts",
+    "explanation": "Sharpen your mind with puzzles and challenges.",
+    "tags": [
+      "Puzzles",
+      "Brain Teasers",
+      "Problem Solving"
+    ]
+  },
+  {
+    "name": "Philosophy Circle for Deep Thinkers",
+    "explanation": "Dive into deep philosophical conversations.",
+    "tags": [
+      "Philosophy",
+      "Discussion",
+      "Critical Thinking"
+    ]
+  },
+  {
+    "name": "DIY Innovators and Makers",
+    "explanation": "Share DIY projects and innovative ideas.",
+    "tags": [
+      "DIY",
+      "Innovation",
+      "Creativity"
+    ]
+  },
+  {
+    "name": "Study Buddies for Success",
+    "explanation": "Let's excel together in our studies.",
+    "tags": [
+      "Study",
+      "Learning",
+      "Success"
+    ]
+  },
+  {
+    "name": "Coding Wizards Academy",
+    "explanation": "Unlock the magic of code and programming.",
+    "tags": [
+      "Coding",
+      "Programming",
+      "Development"
+    ]
+  },
+  {
+    "name": "Science Geeks Corner",
+    "explanation": "Discover the wonders of science and experimentation.",
+    "tags": [
+      "Science",
+      "Experiment",
+      "Research"
+    ]
+  },
+  {
+    "name": "Language Learners' Haven",
+    "explanation": "Explore the beauty of languages and communication.",
+    "tags": [
+      "Languages",
+      "Language Learning",
+      "Communication"
+    ]
+  },
+  {
+    "name": "Math Enthusiasts' Forum",
+    "explanation": "Solve mathematical mysteries and problems.",
+    "tags": [
+      "Math",
+      "Problem Solving",
+      "Logic"
+    ]
+  },
+  {
+    "name": "Literary Analysis Group",
+    "explanation": "Delve into the depths of literature and reading.",
+    "tags": [
+      "Literature",
+      "Reading",
+      "Analysis"
+    ]
+  },
+  {
+    "name": "Tech Innovators and Developers",
+    "explanation": "Shape the future with technology and innovation.",
+    "tags": [
+      "Technology",
+      "Innovation",
+      "Tech Trends"
+    ]
+  },
+  {
+    "name": "Wellness and Study Balance",
+    "explanation": "Maintain wellness during your studies.",
+    "tags": [
+      "Wellness",
+      "Study Balance",
+      "Health"
+    ]
+  },
+  {
+    "name": "Music Theory Explorers",
+    "explanation": "Dive into music theory and genres.",
+    "tags": [
+      "Music",
+      "Music Theory",
+      "Genres"
+    ]
+  },
+  {
+    "name": "Sustainable Solutions Lab",
+    "explanation": "Brainstorm eco-friendly solutions for a greener world.",
+    "tags": [
+      "Sustainability",
+      "Environment",
+      "Innovation"
+    ]
+  },
+  {
+    "name": "Logical Thinkers' Society",
+    "explanation": "Challenge your mind with logic and puzzles.",
+    "tags": [
+      "Logic",
+      "Critical Thinking",
+      "Puzzles"
+    ]
+  },
+  {
+    "name": "World History Enthusiasts",
+    "explanation": "Explore the history of our world and civilizations.",
+    "tags": [
+      "World History",
+      "Historical Analysis",
+      "Research"
+    ]
+  },
+  {
+    "name": "Yoga for Mind and Study",
+    "explanation": "Find balance and focus through yoga and meditation.",
+    "tags": [
+      "Yoga",
+      "Meditation",
+      "Study Focus"
+    ]
+  },
+  {
+    "name": "Culinary Science Experimenters",
+    "explanation": "Combine cooking and science in your kitchen.",
+    "tags": [
+      "Culinary Science",
+      "Cooking Experiments",
+      "Food"
+    ]
+  },
+  {
+    "name": "Nature Learning Adventures",
+    "explanation": "Connect with nature through learning and exploration.",
+    "tags": [
+      "Nature",
+      "Learning",
+      "Outdoor"
+    ]
+  },
+  {
+    "name": "Startup Success Strategies",
+    "explanation": "Empower your startup journey with strategies and insights.",
+    "tags": [
+      "Startup Success",
+      "Entrepreneurship",
+      "Business"
+    ]
+  },
+  {
+    "name": "Astronomy Enthusiasts Club",
+    "explanation": "Explore the cosmos and stars through astronomy.",
+    "tags": [
+      "Astronomy",
+      "Stargazing",
+      "Cosmos"
+    ]
+  },
+  {
+    "name": "Creative Writing Workshop",
+    "explanation": "Craft and share creative stories and writing.",
+    "tags": [
+      "Creative Writing",
+      "Stories",
+      "Imagination"
+    ]
+  },
+  {
+    "name": "Coffee and Study Companions",
+    "explanation": "Enjoy coffee and productive study sessions.",
+    "tags": [
+      "Coffee",
+      "Study Sessions",
+      "Productivity"
+    ]
+  },
+  {
+    "name": "Architectural Design Studio",
+    "explanation": "Explore architectural design and creativity.",
+    "tags": [
+      "Architecture",
+      "Design",
+      "Creativity"
+    ]
+  },
+  {
+    "name": "Green Living Advocates",
+    "explanation": "Champion eco-friendly and sustainable living.",
+    "tags": [
+      "Green Living",
+      "Sustainability",
+      "Eco-Friendly"
+    ]
+  },
+  {
+    "name": "Motivated Study Group",
+    "explanation": "Stay motivated and focused on your studies.",
+    "tags": [
+      "Motivated Study",
+      "Focus",
+      "Success"
+    ]
+  },
+  {
+    "name": "Mind and Body Wellness",
+    "explanation": "Balance study with wellness for a healthy life.",
+    "tags": [
+      "Wellness",
+      "Healthy Living",
+      "Mind and Body"
+    ]
+  },
+  {
+    "name": "Visual Arts Creators",
+    "explanation": "Express through visual arts and creativity.",
+    "tags": [
+      "Visual Arts",
+      "Creativity",
+      "Design"
+    ]
+  },
+  {
+    "name": "Logical Board Gamers",
+    "explanation": "Challenge your mind with board games.",
+    "tags": [
+      "Board Games",
+      "Logic",
+      "Strategic Play"
+    ]
+  },
+  {
+    "name": "Literature Appreciation Society",
+    "explanation": "Appreciate the beauty of literature and books.",
+    "tags": [
+      "Literature",
+      "Book Lovers",
+      "Reading"
+    ]
+  },
+  {
+    "name": "Space and Astronomy Lovers",
+    "explanation": "Explore the cosmos and astronomy wonders.",
+    "tags": [
+      "Space",
+      "Astronomy",
+      "Stargazing"
+    ]
+  },
+  {
+    "name": "Artistic Creators' Hub",
+    "explanation": "Create and showcase your artistic creations.",
+    "tags": [
+      "Artistic Creations",
+      "Art Showcase",
+      "Visual Arts"
+    ]
+  },
+  {
+    "name": "Musical Creators' Community",
+    "explanation": "Compose and create music together.",
+    "tags": [
+      "Music Creation",
+      "Musical Collaborations",
+      "Composers"
+    ]
+  },
+  {
+    "name": "Environmental Warriors for Change",
+    "explanation": "Fight for a greener and sustainable future.",
+    "tags": [
+      "Environmental Activism",
+      "Sustainability",
+      "Eco Warriors"
+    ]
+  },
+  {
+    "name": "Puzzle Solvers and Riddlers",
+    "explanation": "Solve puzzles and riddles for fun and challenge.",
+    "tags": [
+      "Puzzles",
+      "Riddles",
+      "Brain Teasers"
+    ]
+  },
+  {
+    "name": "Explorers of Learning and Discovery",
+    "explanation": "Embark on learning adventures and discoveries.",
+    "tags": [
+      "Learning",
+      "Exploration",
+      "Educational Adventures"
+    ]
+  },
+  {
+    "name": "Philosophical Debates and Conversations",
+    "explanation": "Engage in deep philosophical discussions and debates.",
+    "tags": [
+      "Philosophy",
+      "Debates",
+      "Thoughtful Conversations"
+    ]
+  },
+  {
+    "name": "Innovative DIY Projects and Ideas",
+    "explanation": "Share and collaborate on innovative DIY projects.",
+    "tags": [
+      "DIY Projects",
+      "Innovation",
+      "Creativity"
+    ]
+  },
+  {
+    "name": "Chemistry Enthusiasts",
+    "explanation": "Explore the world of chemical reactions and elements.",
+    "tags": [
+      "Chemistry",
+      "Science",
+      "Experiments"
+    ]
+  },
+  {
+    "name": "Debate Club",
+    "explanation": "Engage in intellectual debates and discussions.",
+    "tags": [
+      "Debate",
+      "Discussion",
+      "Critical Thinking"
+    ]
+  },
+  {
+    "name": "Philosophy and Ethics Forum",
+    "explanation": "Delve into philosophical and ethical debates.",
+    "tags": [
+      "Philosophy",
+      "Ethics",
+      "Philosophical Discussions"
+    ]
+  },
+  {
+    "name": "Study Buddies Alliance",
+    "explanation": "Connect with like-minded study partners.",
+    "tags": [
+      "Study Partners",
+      "Collaboration",
+      "Academic Support"
+    ]
+  },
+  {
+    "name": "Literary Critics Society",
+    "explanation": "Analyze and critique literary works.",
+    "tags": [
+      "Literary Analysis",
+      "Critique",
+      "Books"
+    ]
+  },
+  {
+    "name": "Physics Pioneers",
+    "explanation": "Study the laws of the universe and physics.",
+    "tags": [
+      "Physics",
+      "Science",
+      "Theory"
+    ]
+  },
+  {
+    "name": "Language Enthusiasts Network",
+    "explanation": "Learn and practice new languages together.",
+    "tags": [
+      "Language Learning",
+      "Language Exchange",
+      "Multilingual"
+    ]
+  },
+  {
+    "name": "Code Wizards Guild",
+    "explanation": "Master the art of coding and programming.",
+    "tags": [
+      "Coding Mastery",
+      "Software Development",
+      "Tech"
+    ]
+  },
+  {
+    "name": "Historical Mysteries Group",
+    "explanation": "Unravel the mysteries of the past.",
+    "tags": [
+      "Historical Mysteries",
+      "Research",
+      "Discovery"
+    ]
+  },
+  {
+    "name": "Study Break Yoga Sessions",
+    "explanation": "Relax and rejuvenate with yoga during study breaks.",
+    "tags": [
+      "Yoga Breaks",
+      "Relaxation",
+      "Mindfulness"
+    ]
+  },
+  {
+    "name": "Creative Writing Workshop",
+    "explanation": "Hone your writing skills and creativity.",
+    "tags": [
+      "Creative Writing",
+      "Writing Workshop",
+      "Storytelling"
+    ]
+  },
+  {
+    "name": "Coffee and Study Partners",
+    "explanation": "Fuel your study sessions with coffee and camaraderie.",
+    "tags": [
+      "Coffee Lovers",
+      "Study Groups",
+      "Caffeine Boost"
+    ]
+  },
+  {
+    "name": "Eco-conscious Innovators",
+    "explanation": "Brainstorm green solutions for a sustainable future.",
+    "tags": [
+      "Eco-friendly Innovation",
+      "Sustainability",
+      "Environmental Solutions"
+    ]
+  },
+  {
+    "name": "Mystery Solvers Society",
+    "explanation": "Solve complex puzzles and unravel mysteries.",
+    "tags": [
+      "Mystery Solving",
+      "Puzzle Challenges",
+      "Enigma"
+    ]
+  },
+  {
+    "name": "Global Explorers Club",
+    "explanation": "Embark on virtual journeys to explore the world.",
+    "tags": [
+      "Virtual Travel",
+      "Exploration",
+      "Cultural Discovery"
+    ]
+  },
+  {
+    "name": "Social Sciences Think Tank",
+    "explanation": "Discuss social issues and research in the social sciences.",
+    "tags": [
+      "Social Sciences",
+      "Research",
+      "Social Studies"
+    ]
+  },
+  {
+    "name": "Botany Enthusiasts",
+    "explanation": "Dive into the world of plants and botany.",
+    "tags": [
+      "Botany",
+      "Plant Science",
+      "Greenery"
+    ]
+  },
+  {
+    "name": "Study Motivation Squad",
+    "explanation": "Stay motivated and inspired for academic success.",
+    "tags": [
+      "Motivation",
+      "Study Success",
+      "Academic Goals"
+    ]
+  },
+  {
+    "name": "Music Theory Explorers",
+    "explanation": "Explore the depths of music theory and composition.",
+    "tags": [
+      "Music Theory",
+      "Composition",
+      "Musical Analysis"
+    ]
+  },
+  {
+    "name": "Sustainability Champions",
+    "explanation": "Champion sustainability and eco-conscious living.",
+    "tags": [
+      "Sustainability",
+      "Green Living",
+      "Eco Warriors"
+    ]
+  },
+  {
+    "name": "Riddle and Puzzle Masters",
+    "explanation": "Conquer mind-bending riddles and puzzles.",
+    "tags": [
+      "Riddles",
+      "Brain Teasers",
+      "Puzzle Solvers"
+    ]
+  },
+  {
+    "name": "Learning and Discovery Society",
+    "explanation": "Embark on a journey of learning and exploration.",
+    "tags": [
+      "Learning Adventures",
+      "Educational Discovery",
+      "Knowledge"
+    ]
+  },
+  {
+    "name": "Critical Thinkers Club",
+    "explanation": "Sharpen your critical thinking skills through discussions.",
+    "tags": [
+      "Critical Thinking",
+      "Debate",
+      "Analysis"
+    ]
+  },
+  {
+    "name": "Artistic Creations Showcase",
+    "explanation": "Share and appreciate creative artistic works.",
+    "tags": [
+      "Artistic Creations",
+      "Visual Arts",
+      "Art Appreciation"
+    ]
+  },
+  {
+    "name": "Musical Harmony Collective",
+    "explanation": "Create harmonious music together.",
+    "tags": [
+      "Music Creation",
+      "Musical Collaborations",
+      "Harmony"
+    ]
+  },
+  {
+    "name": "Environmental Activists Alliance",
+    "explanation": "Take action for a greener and cleaner planet.",
+    "tags": [
+      "Environmental Activism",
+      "Eco Warriors",
+      "Green Planet"
+    ]
+  },
+  {
+    "name": "Mind-Bending Puzzle Lovers",
+    "explanation": "Get lost in the world of mind-bending puzzles.",
+    "tags": [
+      "Mind Puzzles",
+      "Riddle Enthusiasts",
+      "Brain Games"
+    ]
+  },
+  {
+    "name": "Explorers of Knowledge",
+    "explanation": "Discover the depths of human knowledge.",
+    "tags": [
+      "Knowledge Exploration",
+      "Learning",
+      "Intellectual Discovery"
+    ]
+  },
+  {
+    "name": "Deep Philosophical Debates",
+    "explanation": "Engage in profound philosophical discussions.",
+    "tags": [
+      "Philosophical Debates",
+      "Intellectual Discourse",
+      "Deep Thoughts"
+    ]
+  },
+  {
+    "name": "Innovative DIY Projects Hub",
+    "explanation": "Explore the world of creative DIY projects.",
+    "tags": [
+      "DIY Innovation",
+      "Crafting",
+      "Creativity"
+    ]
+  },
+  {
+    "name": "Literature and Book Club",
+    "explanation": "Celebrate the joy of reading and literary discussions.",
+    "tags": [
+      "Literary Enthusiasts",
+      "Book Lovers",
+      "Reading Club"
+    ]
+  },
+  {
+    "name": "Science Enthusiasts Society",
+    "explanation": "Dive into the wonders of science and discovery.",
+    "tags": [
+      "Science Enthusiasts",
+      "Scientific Exploration",
+      "Knowledge"
+    ]
+  },
+  {
+    "name": "Theater and Drama Enthusiasts",
+    "explanation": "Explore the world of theater and dramatic arts.",
+    "tags": [
+      "Theater",
+      "Drama",
+      "Performing Arts"
+    ]
+  },
+  {
+    "name": "Wellness and Study Balance",
+    "explanation": "Maintain a healthy balance between wellness and academic pursuits.",
+    "tags": [
+      "Wellness",
+      "Study Balance",
+      "Healthy Living"
+    ]
+  },
+  {
+    "name": "Digital Art Creators Society",
+    "explanation": "Express your creativity through digital art.",
+    "tags": [
+      "Digital Art",
+      "Creative Expression",
+      "Digital Design"
+    ]
+  },
+  {
+    "name": "Board Game Enthusiasts Club",
+    "explanation": "Enjoy strategic and fun board games with fellow enthusiasts.",
+    "tags": [
+      "Board Games",
+      "Gaming",
+      "Board Game Nights"
+    ]
+  },
+  {
+    "name": "Animal Lovers' Paradise",
+    "explanation": "For those who adore and appreciate animals.",
+    "tags": [
+      "Animal Lovers",
+      "Pets",
+      "Animal Welfare"
+    ]
+  },
+  {
+    "name": "Classic Movie Aficionados",
+    "explanation": "Celebrate classic cinematic masterpieces together.",
+    "tags": [
+      "Classic Movies",
+      "Film Buffs",
+      "Movie Nights"
+    ]
+  },
+  {
+    "name": "Mathematics Marvels",
+    "explanation": "Unleash the power of numbers and mathematical concepts.",
+    "tags": [
+      "Mathematics",
+      "Problem Solving",
+      "Math Enthusiasts"
+    ]
+  },
+  {
+    "name": "Literary Analysis Forum",
+    "explanation": "Analyze and dissect literature with fellow bookworms.",
+    "tags": [
+      "Literary Analysis",
+      "Book Discussions",
+      "Literary Insights"
+    ]
+  },
+  {
+    "name": "Science Discoveries Collective",
+    "explanation": "Explore the wonders of science and its breakthroughs.",
+    "tags": [
+      "Science Discovery",
+      "Scientific Exploration",
+      "Innovation"
+    ]
+  },
+  {
+    "name": "Language Learning Exchange",
+    "explanation": "Learn and practice languages from around the world.",
+    "tags": [
+      "Language Learning",
+      "Multilingualism",
+      "Cultural Exchange"
+    ]
+  },
+  {
+    "name": "Coding Challenges and Collaborations",
+    "explanation": "Challenge yourself with coding projects and collaborations.",
+    "tags": [
+      "Coding Challenges",
+      "Programming",
+      "Code Collaboration"
+    ]
+  },
+  {
+    "name": "Historical Mysteries Uncovered",
+    "explanation": "Unearth the secrets of history and historical mysteries.",
+    "tags": [
+      "Historical Mysteries",
+      "Archaeology",
+      "History Enthusiasts"
+    ]
+  },
+  {
+    "name": "Wellness and Study Balance Center",
+    "explanation": "Achieve a harmonious balance between wellness and academics.",
+    "tags": [
+      "Wellness",
+      "Study-Life Balance",
+      "Healthy Mind and Body"
+    ]
+  },
+  {
+    "name": "Artistic Creations Gallery",
+    "explanation": "Showcase your artistic creations and inspire creativity.",
+    "tags": [
+      "Artistic Creations",
+      "Art Showcase",
+      "Creative Expression"
+    ]
+  },
+  {
+    "name": "Music Creators' Collective",
+    "explanation": "Compose and create music together with fellow musicians.",
+    "tags": [
+      "Music Creation",
+      "Collaborative Music",
+      "Melodic Harmony"
+    ]
+  },
+  {
+    "name": "Environmental Warriors for Change",
+    "explanation": "Fight for a greener and sustainable future.",
+    "tags": [
+      "Environmental Activism",
+      "Sustainability",
+      "Eco Warriors"
+    ]
+  },
+  {
+    "name": "Puzzle Solvers and Riddlers",
+    "explanation": "Solve puzzles and riddles for fun and challenge.",
+    "tags": [
+      "Puzzles",
+      "Riddles",
+      "Brain Teasers"
+    ]
+  },
+  {
+    "name": "Explorers of Learning and Discovery",
+    "explanation": "Embark on learning adventures and discoveries.",
+    "tags": [
+      "Learning",
+      "Exploration",
+      "Educational Adventures"
+    ]
+  },
+  {
+    "name": "Philosophical Debates and Conversations",
+    "explanation": "Dive into deep philosophical conversations.",
+    "tags": [
+      "Philosophy",
+      "Discussion",
+      "Critical Thinking"
+    ]
+  },
+  {
+    "name": "Innovative DIY Projects and Ideas",
+    "explanation": "Share DIY projects and innovative ideas.",
+    "tags": [
+      "DIY",
+      "Innovation",
+      "Creativity"
+    ]
+  },
+  {
+    "name": "Mathematics Puzzles and Challenges",
+    "explanation": "Solve complex math puzzles and engage in mathematical challenges.",
+    "tags": [
+      "Math Puzzles",
+      "Problem-Solving",
+      "Math Challenges"
+    ]
+  },
+  {
+    "name": "Book Lovers' Paradise",
+    "explanation": "For those who adore and cherish the world of books.",
+    "tags": [
+      "Book Lovers",
+      "Literary Enthusiasts",
+      "Reading Club"
+    ]
+  },
+  {
+    "name": "Astronomy Enthusiasts",
+    "explanation": "Explore the mysteries of the cosmos and celestial bodies.",
+    "tags": [
+      "Astronomy",
+      "Space Exploration",
+      "Stargazing"
+    ]
+  },
+  {
+    "name": "Foreign Language Learners",
+    "explanation": "Learn and practice foreign languages with language enthusiasts.",
+    "tags": [
+      "Language Learning",
+      "Cultural Exchange",
+      "Language Skills"
+    ]
+  },
+  {
+    "name": "Web Development Wizards",
+    "explanation": "Master the art of web development and coding.",
+    "tags": [
+      "Web Development",
+      "Coding",
+      "Programming"
+    ]
+  },
+  {
+    "name": "Ancient History Enthusiasts",
+    "explanation": "Delve into the ancient mysteries and stories of history.",
+    "tags": [
+      "Ancient History",
+      "Historical Exploration",
+      "Archaeology"
+    ]
+  },
+  {
+    "name": "Mindfulness and Study Breaks",
+    "explanation": "Relax and rejuvenate with mindfulness during study breaks.",
+    "tags": [
+      "Mindfulness",
+      "Stress Relief",
+      "Well-Being"
+    ]
+  },
+  {
+    "name": "Writers' Workshop and Critique",
+    "explanation": "Hone your writing skills and offer constructive critiques.",
+    "tags": [
+      "Writers' Workshop",
+      "Creative Writing",
+      "Feedback"
+    ]
+  },
+  {
+    "name": "Coffee Lovers' Study Sessions",
+    "explanation": "Boost study sessions with coffee and like-minded company.",
+    "tags": [
+      "Coffee Lovers",
+      "Study Groups",
+      "Caffeine-Fueled"
+    ]
+  },
+  {
+    "name": "Sustainable Solutions Brainstorm",
+    "explanation": "Generate eco-friendly ideas for a greener future.",
+    "tags": [
+      "Sustainability",
+      "Eco Solutions",
+      "Green Innovation"
+    ]
+  },
+  {
+    "name": "Riddle Enthusiasts Society",
+    "explanation": "Conquer brain-teasing riddles and puzzles.",
+    "tags": [
+      "Riddles",
+      "Mind Games",
+      "Puzzle Masters"
+    ]
+  },
+  {
+    "name": "Learning and Discovery Explorers",
+    "explanation": "Embark on educational journeys of learning and discovery.",
+    "tags": [
+      "Learning Adventures",
+      "Intellectual Exploration",
+      "Knowledge Seekers"
+    ]
+  },
+  {
+    "name": "Intellectual Debates and Dialogue",
+    "explanation": "Engage in intellectual debates and meaningful discussions.",
+    "tags": [
+      "Intellectual Debates",
+      "Thoughtful Conversations",
+      "Debate Club"
+    ]
+  },
+  {
+    "name": "Creative Makerspace Community",
+    "explanation": "Collaborate on innovative DIY projects and creations.",
+    "tags": [
+      "Creative Makerspace",
+      "Innovation",
+      "DIY Creations"
+    ]
+  },
+  {
+    "name": "Literary Appreciation Circle",
+    "explanation": "Celebrate the beauty of literature and its impact.",
+    "tags": [
+      "Literary Enthusiasts",
+      "Book Appreciation",
+      "Literary Insights"
+    ]
+  },
+  {
+    "name": "Science and Nature Explorers",
+    "explanation": "Discover the wonders of science and the natural world.",
+    "tags": [
+      "Science Enthusiasts",
+      "Nature Exploration",
+      "Scientific Inquiry"
+    ]
+  },
+  {
+    "name": "Theater and Drama Aficionados",
+    "explanation": "Explore the world of theater, drama, and the performing arts.",
+    "tags": [
+      "Theater",
+      "Drama",
+      "Acting Enthusiasts"
+    ]
+  },
+  {
+    "name": "Holistic Wellness and Study Balance",
+    "explanation": "Maintain a healthy balance between wellness and academic pursuits.",
+    "tags": [
+      "Holistic Wellness",
+      "Study-Life Balance",
+      "Healthy Living"
+    ]
+  },
+  {
+    "name": "Digital Art Creators' Hub",
+    "explanation": "Express your creativity through digital art and design.",
+    "tags": [
+      "Digital Art",
+      "Creative Expression",
+      "Visual Design"
+    ]
+  },
+  {
+    "name": "Board Game Strategy Enthusiasts",
+    "explanation": "Plan and strategize in fun board games with fellow enthusiasts.",
+    "tags": [
+      "Board Games",
+      "Gaming",
+      "Strategy"
+    ]
+  },
+  {
+    "name": "Animal Lovers' Oasis",
+    "explanation": "A haven for those who adore and support animals.",
+    "tags": [
+      "Animal Lovers",
+      "Animal Welfare",
+      "Pet Enthusiasts"
+    ]
+  },
+  {
+    "name": "Classic Movie Connoisseurs",
+    "explanation": "Appreciate and discuss classic cinematic gems.",
+    "tags": [
+      "Classic Movies",
+      "Film Connoisseurs",
+      "Cinematic Classics"
+    ]
+  }
+]

@@ -28,9 +28,7 @@ async function autoSignin(req, res, success = (() => { }), fail = (() => { res.s
     pool.releaseConnection(connection);
     if (userInfo) {
       req.session.user_id = req.signedCookies.userId;
-      req.session.name = userInfo.name;
       req.session.loggedin = true;
-      req.session.userInfo = { userId: req.signedCookies.userId, name: userInfo.name, loggedin: true, email: userInfo.email, myinfo: userInfo.myinfo, timeZone: userInfo.timezone };
       return success();
     } else {
       return fail();

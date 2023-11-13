@@ -43,7 +43,6 @@ const {flushRedis, groupsLoader, cacheManager} = require("./services/redisLoader
     origin: "http://localhost:3001"
   }
 }); */
-console.log(process.env.NODE_ENV)
 const datasets = require('./test/Datasets');
 //datasets.getSubjects();
 //datasets.getPlans();
@@ -171,12 +170,11 @@ app.use(express.static(path.join(__dirname, 'app/build')));
 
 
 app.get('/dashboard*', (req, res) => {
-  console.log(req.session.loggedin, req.signedCookies)
   account.autoSignin(req, res, (() => {
     res.sendFile(path.join(__dirname, 'app/build', 'index.html'));
   }),
     (() => {
-      res.redirect('/');
+      res.redirect('/#signin');
     })
   );
 });
@@ -208,9 +206,19 @@ const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubj
 require('./videoServer');
 require('./Logger');
 require('./services/timerUpdate');
-const {createBots, addId} = require('./Bot/Bot');
+const {createBots, addId, deleteBots, botManager} = require('./Bot/Bot');
+//botManager();
+//deleteBots();
 //addId();
-createBots(0, 3);
+//createBots(0, 100);
+
+const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable} = require('./query');
+
+/* createUsersTable();
+createSubjectsTable();
+createGroupsTable();
+createPlansTable();
+createChatroomsTable(); */
 
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);

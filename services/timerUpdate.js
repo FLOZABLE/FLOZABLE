@@ -11,7 +11,7 @@ const { activeSubjectCache, subjectsCache } = require("./redisLoader");
 async function timerUpdate() {
   const now = DateTime.utc();
   const allTimezones = Intl.supportedValuesOf('timeZone');
-  const midnightTimezones = ['America/Los_Angeles'];
+  const midnightTimezones = [];
   allTimezones.forEach(zone => {
     const dtInZone = now.setZone(zone);
     if (dtInZone.hour === 0) {
@@ -81,7 +81,7 @@ async function timerUpdate() {
 async function removeTimeline() {
 
 }
-timerUpdate();
+//timerUpdate();
 
 cron.schedule('0 * * * *', () => {
   timerUpdate();
