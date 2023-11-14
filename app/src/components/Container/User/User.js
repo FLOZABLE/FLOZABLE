@@ -5,6 +5,8 @@ import StuckModal from '../../UI/StuckModal/StuckModal';
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function User({ isSidebarOpen, isSidebarHovered }) {
+  const [userInfo, setUserInfo] = useState(null);
+  const [userSubject, setUserSubject] = useState(null);
 
   useEffect(() => {
     const pathName = window.location.pathname.split('/');
@@ -14,19 +16,20 @@ function User({ isSidebarOpen, isSidebarHovered }) {
     .then((data) => {
       console.log(data)
       if (data.success) {
-        
+        setUserSubject(data.userInfo);
+        setUserSubject(data.subjectInfo);
       };
     })
     .catch((error) => console.error(error));
   }, []);
+  
   return (
     <div className={styles.UserContainer}>
       <StuckModal />
       <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.profileContainer}>
           <div className={styles.row}>
-            <div className={styles.divided}>
-
+            <div className={styles.divided} id={styles.profileImg}>
             </div>
             <div className={styles.divided}>
               

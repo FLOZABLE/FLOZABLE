@@ -8,3 +8,10 @@
   width: 500px;
   background-color: red;
 }
+
+.UserContainer .profileImg {
+  border-radius: 50%;
+  background-color: aqua;
+  width: 60px;
+  height: 60px;
+}
