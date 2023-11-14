@@ -13,7 +13,7 @@ function BlobBtn(props) {
     };
   }
   return (
-    <button className={`${styles.BlobBtn} ${opt ? styles.opt1 : '' }`} onClick={handleClick} style={{"--color1": color1 , "--color2": color2}}>
+    <button className={`${styles.BlobBtn} ${opt === 1 ? styles.opt1 : '' } ${opt === 2 ? styles.opt2 : '' }`} onClick={handleClick} style={{"--color1": color1 , "--color2": color2}}>
       {name}
       <span className={styles.blobBtnInner}>
         <span className={styles.blobBtnBlobs}>

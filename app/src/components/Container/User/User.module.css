@@ -5,13 +5,43 @@
 .UserContainer .profileContainer {
   position: fixed;
   height: 500px;
-  width: 500px;
-  background-color: red;
+  width: 300px;
+  background-color: #fff;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 20px;
+  border-radius: 20px;
 }
 
-.UserContainer .profileImg {
+.UserContainer #profileImg {
   border-radius: 50%;
   background-color: aqua;
-  width: 60px;
-  height: 60px;
+  width: 100px;
+  height: 100px;
 }
+
+.UserContainer .row {
+  display: flex;
+  width: 100%;
+}
+
+.UserContainer .row .divided {
+  width: 100%;
+}
+
+.UserContainer .row#buttons .divided {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.UserContainer .hoverEl {
+  position: absolute;
+  top: 0px;
+  font-size: 13px;
+  z-index: 2;
+  background-color: black;
+  color: #fff;
+  visibility: none;
+  transition: top .3s ease-in-out, visibility .3s ease-in-out, opacity .3s ease-in-out;
+}
+
