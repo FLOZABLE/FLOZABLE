@@ -83,7 +83,7 @@ async function removeTimeline(userId, time) {
     const timerInfo = await timerCache(userId, time);
     const { dp, ts } = timerInfo;
 
-    const lastStopUnix = dt + ts;
+    const lastStopUnix = dp + ts;
     let timelineSum = 0;
 
     const trimIndex = timer.find(([start, duration], i) => {

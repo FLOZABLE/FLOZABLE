@@ -1,0 +1,10 @@
+.UserContainer {
+  position: relative;
+}
+
+.UserContainer .profileContainer {
+  position: fixed;
+  height: 500px;
+  width: 500px;
+  background-color: red;
+}
