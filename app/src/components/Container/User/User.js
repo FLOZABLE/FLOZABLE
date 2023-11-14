@@ -3,18 +3,68 @@ import React, { useState, useEffect, useRef } from 'react';
 import StuckModal from '../../UI/StuckModal/StuckModal';
 import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComments, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faComments, faEarthAmericas, faUser } from "@fortawesome/free-solid-svg-icons";
 import { Punch } from "../../../utils/svgs";
+import LineChart from "../../UI/LineChart";
+import { timelineSort } from "../../../utils/timelineSorting";
+import RadioBtn from "../../UI/RadioBtn/RadioBtn";
+import CalendarModal from "../../UI/CalendarModal/CalendarModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
+const lineChartOption = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+    }
+  },
+  interaction: {
+    intersect: false,
+    mode: 'index',
+  },
+  scales: {
+    y: {
+      grid: {
+        drawBorder: false,
+        display: true,
+        drawOnChartArea: true,
+        drawTicks: false,
+        borderDash: [5, 5]
+      },
+      ticks: {
+        display: true,
+        padding: 10,
+        color: '#9ca2b7',
+        stepSize: 1
+      }
+    },
+    x: {
+      grid: {
+        drawBorder: false,
+        display: true,
+        drawOnChartArea: true,
+        drawTicks: true,
+        borderDash: [5, 5]
+      },
+      ticks: {
+        display: true,
+        color: '#9ca2b7',
+        padding: 10
+      }
+    },
+  },
+};
+
 function User({ isSidebarOpen, isSidebarHovered }) {
   const [userInfo, setUserInfo] = useState(null);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [userSubject, setUserSubject] = useState(null);
+  const [statsViewer, setStatsViewer] = useState('Daily');
+  const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
+  const [calendarLabel, setCalendarLabel] = useState('Today');
 
-  const [isAddFriendBtn, setIsAddFriendBtn] = useState(false);
-  const [isMsgBtn, setIsMsgBtn] = useState(false);
-  const [isCompareBtn, setIsCompareBtn] = useState(false);
+  const [timeTrend, setTimeTrend] = useState({ datasets: [], labels: [] });
 
   useEffect(() => {
     const pathName = window.location.pathname.split('/');
@@ -24,53 +74,103 @@ function User({ isSidebarOpen, isSidebarHovered }) {
       .then((data) => {
         console.log(data)
         if (data.success) {
-          setUserSubject(data.userInfo);
-          setUserSubject(data.subjectInfo);
+          setUserInfo(data.userInfo);
+          const sortedSubject = timelineSort(data.subjectInfo);
+          setUserSubject(sortedSubject);
         };
       })
       .catch((error) => console.error(error));
   }, []);
 
+  const updateViewer = async (item) => {
+    setStatsViewer(item);
+  };
+
+  
+  const updateViewDate = (date) => {
+    setViewDate(date);
+  };
+
+
   return (
     <div className={styles.UserContainer}>
+      <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate}/>
       <StuckModal />
       <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.profileContainer}>
           <div className={styles.row}>
             <div className={styles.divided}>
-              <div id={styles.profileImg}></div>
+              <div id={styles.profileImg}
+                style={{
+                  backgroundImage: `url("${serverOrigin}/profile-images/${userInfo ? userInfo.user_id : ''}.jpeg")`, backgroundSize: 'cover',
+                  backgroundPosition: 'center center',
+                  backgroundRepeat: 'no-repeat',
+                }}
+              ></div>
             </div>
-            <div className={styles.divided}>
+            <div className={styles.divided} id={styles.profileInfo}>
               <p>Jason</p>
             </div>
-            <img src="" alt="" />
           </div>
           <div className={styles.row} id={styles.buttons}>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-              <BlobBtn name={<Punch width={'18px'} height={'18px'} fill={'red'}/>} setClicked={() => {}} color1={'#fff'} color2={"var(--pink)"} opt={2}/>
+                <BlobBtn name={<Punch width={'18px'} height={'18px'} fill={'red'} />} setClicked={() => { }} color1={'#fff'} color2={"var(--pink)"} opt={2} />
               </div>
-            
-            <div className={styles.hoverEl}>
-              <p>Compete with Jason!</p>
-            </div>
+
+              <div className={styles.hoverEl}>
+                <p>Compete with Jason!</p>
+              </div>
             </div>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-              <BlobBtn name={<FontAwesomeIcon icon={faComments} />} setClicked={() => {}} color1={'#fff'} color2={"var(--pink)"} opt={2} />
+                <BlobBtn name={<FontAwesomeIcon icon={faComments} />} setClicked={() => { }} color1={'#fff'} color2={"var(--pink)"} opt={2} />
               </div>
-            <div className={styles.hoverEl}>
-              <p>Become a friend with Jason!</p>
-            </div>
+              <div className={styles.hoverEl}>
+                <p>Become a friend with Jason!</p>
+              </div>
             </div>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-              <BlobBtn name={<>+<FontAwesomeIcon icon={faUser} /></>} setClicked={() => {}} color1={'#fff'} color2={"var(--purple)"} opt={2} />
+                <BlobBtn name={<>+<FontAwesomeIcon icon={faUser} /></>} setClicked={() => { }} color1={'#fff'} color2={"var(--purple)"} opt={2} />
               </div>
-            
-            <div className={styles.hoverEl}>
-              <p>Become a friend with Jason!</p>
+
+              <div className={styles.hoverEl}>
+                <p>Become a friend with Jason!</p>
+              </div>
             </div>
+          </div>
+          <div className={styles.row}>
+            <div className={styles.divided} id={styles.description}>
+              <p>I am a programer</p>
+            </div>
+          </div>
+          <div className={styles.row}>
+            <div className={styles.infoContainer}>
+              <div className={styles.iconWrapper}>
+                <FontAwesomeIcon icon={faEarthAmericas} />
+              </div>
+              <div className={styles.info}>
+                <p className={styles.infoTitle}>Timezone</p>
+                <p>dfsdfd</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles.statsContainer}>
+          <div className={styles.rowTitle}>
+
+            <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
+          </div>
+          <div className={styles.row}>
+            <div className={styles.chartContainer}>
+              <LineChart
+                labels={timeTrend.labels}
+
+                datasets={timeTrend.datasets}
+
+                options={lineChartOption}
+              />
             </div>
           </div>
         </div>
