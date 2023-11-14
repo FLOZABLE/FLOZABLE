@@ -107,3 +107,9 @@
   padding: 0px 10px;
   white-space: nowrap;
 }
+
+
+.BlobBtn.opt2 {
+  padding: 10px 30px;
+  white-space: nowrap;
+}
