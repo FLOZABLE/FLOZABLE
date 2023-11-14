@@ -8,12 +8,11 @@ import RadioBtn from '../../UI/RadioBtn/RadioBtn';
 import styles from './Ranking.module.css';
 import SmallCalendar from '../../UI/SmallCalendar/SmallCalendar';
 import Search from '../../UI/Search/Search';
+import CalendarModal from '../../UI/CalendarModal/CalendarModal';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Ranking({ isSidebarOpen, isSidebarHovered }) {
-  const [SmallCalendarApi, setSmallCalendarApi] = useState(null);
-  const SmallCalendarRef = useRef(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [viewer, setViewer] = useState('Daily');
@@ -103,14 +102,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   return (
     <div className={styles.RankingContainer}>
-      <div className={`${styles.CalendarModal} ${isCalendarOpen ? styles.isOpen : ''}`}>
-        <div className={styles.modalHeader}>
-          <i onClick={() => { setIsCalendarOpen(false) }}>
-            <FontAwesomeIcon icon={faXmark} />
-          </i>
-        </div>
-        <SmallCalendar width={"400px"} setViewDate={updateViewDate} viewDate={viewDate} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} setIsCalendarOpen={setIsCalendarOpen} />
-      </div>
+      <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate}/>
       <StuckModal />
       <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
