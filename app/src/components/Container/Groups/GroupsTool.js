@@ -31,6 +31,8 @@ function setGroupMembers(groups, users) {
     group.members = group.members.split(',');
     group.members = group.members.map(member => {
       member = users.find((userInfo) => { return member == userInfo.user_id });
+      if (!member) return;
+      console.log(member)
       const datum = member.timerInfo.dp;
       let timelineSum = 0;
       let total = 0;
