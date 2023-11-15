@@ -9,7 +9,7 @@ const data = {
 };
   return (
     <div>
-      <Line data={data} options={props.options}/>
+      <Line data={data} options={{...props.options/* , width: '100%', 'height': '100%' */}}/*  width={'100%'} height={'100%'} *//>
     </div>
   );
 };

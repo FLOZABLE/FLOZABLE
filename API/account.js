@@ -372,7 +372,9 @@ Router.get('/profile/:userId', async(req, res) => {
   try {
     const connection = pool.promise();
     const targetUserId = req.params.userId;
-    const [[userInfo]] = await connection.query(`SELECT name, email, user_id FROM users WHERE user_id = ?`, [targetUserId]);
+    console.log('gd', targetUserId)
+    const [[userInfo]] = await connection.query(`SELECT name, email, user_id, groups FROM users WHERE user_id = ?`, [targetUserId]);
+    console.log('gd',userInfo)
     if (!userInfo) return res.send({ success: false, msg: 'No such user' });
     const [subjectsInfo] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline, timeline_sum FROM subjects where user_id = ?`, [targetUserId]);
     for (const subject of subjectsInfo) {
