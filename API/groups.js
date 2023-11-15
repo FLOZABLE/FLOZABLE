@@ -188,10 +188,10 @@ Router.post('/bring-groups', async (req, res) => {
         };
       });
     });*/
-    let membersInfo = [];
+    //let membersInfo = [];
     const now = Math.floor(new Date().getTime() / 1000);
     
-    [membersInfo] = await connection.query('SELECT user_id, name, timezone FROM users');
+    const [membersInfo] = await connection.query('SELECT user_id, name, timezone FROM users');
     await Promise.all(membersInfo.map(async (member) => {
       let memberTimer = await redisClient.hGet(`user:${member.user_id}`, 'timerInfo');
       const timerInfo = await timerCache(member.user_id);
@@ -206,7 +206,7 @@ Router.post('/bring-groups', async (req, res) => {
       member.timerInfo = timerInfo;
       member.activeSubject = activeSubject;
     }));
-
+    console.log(groups)
     res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
     console.error('Error performing database queries:', err);

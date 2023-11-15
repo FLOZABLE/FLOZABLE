@@ -297,8 +297,8 @@ async function createGroups(startIndex, length) {
     const {name, explanation, tags} = groupData;
     const visibility = randomIntInRange(0, 7) <= 1;
 
-    const stringlifiedLikes = JSON.stringify(likes).slice(1, -1);
-    const stringlifiedMembers = JSON.stringify(members).slice(1, -1);
+    const stringlifiedLikes = JSON.stringify(likes).slice(1, -1).replaceAll(`"`, "");
+    const stringlifiedMembers = JSON.stringify(members).slice(1, -1).replaceAll(`"`, "");
     const goal_hr = randomIntInRange(4, 8);
     const font = randomIntInRange(0, 13);
 
