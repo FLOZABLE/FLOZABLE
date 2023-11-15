@@ -86,11 +86,13 @@ async function removeTimeline(userId, time) {
     const lastStopUnix = dp + ts;
     let timelineSum = 0;
 
-    const trimIndex = timer.find(([start, duration], i) => {
+    let trimIndex = 0;
+    timer.find(([start, duration], i) => {
       const startUnix = dp + start + timelineSum;
       timelineSum += start + duration;
       if (lastStopUnix - startUnix > MAX_SAVING) {
-        return i;
+        trimIndex = i;
+        return true;
       };
     });
 

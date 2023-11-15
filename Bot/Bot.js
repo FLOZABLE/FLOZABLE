@@ -285,8 +285,8 @@ async function createGroups(startIndex, length) {
           groupId,
           selectedBot.user_id,
         ]);
-        const isLike = randomIntInRange(0, 1);
-        if (isLike) {
+        const isLike = randomIntInRange(0, 6);
+        if (!isLike) {
           likes.push(selectedBot.user_id);
         };
       };

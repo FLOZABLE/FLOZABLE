@@ -3,12 +3,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import StuckModal from '../../UI/StuckModal/StuckModal';
 import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComments, faEarthAmericas, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown, faComments, faEarthAmericas, faUser } from "@fortawesome/free-solid-svg-icons";
 import { Punch } from "../../../utils/svgs";
 import LineChart from "../../UI/LineChart";
 import { timelineSort } from "../../../utils/timelineSorting";
 import RadioBtn from "../../UI/RadioBtn/RadioBtn";
 import CalendarModal from "../../UI/CalendarModal/CalendarModal";
+import DateSelectorBtn from "../../UI/DateSelectorBtn/DateSelectorBtn";
+import GroupsGen from "../../UI/GroupsGen/GroupsGen";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -56,27 +58,37 @@ const lineChartOption = {
   },
 };
 
-function User({ isSidebarOpen, isSidebarHovered }) {
+function User({ isSidebarOpen, isSidebarHovered, groups }) {
   const [userInfo, setUserInfo] = useState(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [userSubject, setUserSubject] = useState(null);
   const [statsViewer, setStatsViewer] = useState('Daily');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [calendarLabel, setCalendarLabel] = useState('Today');
+  const [userGroups, setUserGroups] = useState([]);
+
+  const [joinGroupResponse, setJoinGroupResponse] = useState(null);
 
   const [timeTrend, setTimeTrend] = useState({ datasets: [], labels: [] });
+  const [setOpenGroupPwModal, isSetOpenGroupPwModal] = useState(false);
 
   useEffect(() => {
     const pathName = window.location.pathname.split('/');
     const selectedUserId = pathName[pathName.length - 1];
-    fetch(`${serverOrigin}/api/account/porfile/${selectedUserId}`, { method: 'post' })
+    console.log('sele',selectedUserId)
+    fetch(`${serverOrigin}/api/account/profile/${selectedUserId}`, { method: 'get' })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
+        console.log('userinfo',data)
         if (data.success) {
           setUserInfo(data.userInfo);
           const sortedSubject = timelineSort(data.subjectInfo);
           setUserSubject(sortedSubject);
+          const groupsArr = data.userInfo.groups.split(',');
+          const userGroups = groupsArr.filter(userGroup => {
+            return groups.find((group) => {return userGroup === group.id})
+          });
+          console.log('gd', userGroups)
         };
       })
       .catch((error) => console.error(error));
@@ -86,7 +98,7 @@ function User({ isSidebarOpen, isSidebarHovered }) {
     setStatsViewer(item);
   };
 
-  
+
   const updateViewDate = (date) => {
     setViewDate(date);
   };
@@ -94,7 +106,7 @@ function User({ isSidebarOpen, isSidebarHovered }) {
 
   return (
     <div className={styles.UserContainer}>
-      <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate}/>
+      <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} />
       <StuckModal />
       <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.profileContainer}>
@@ -124,7 +136,7 @@ function User({ isSidebarOpen, isSidebarHovered }) {
             </div>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-                <BlobBtn name={<FontAwesomeIcon icon={faComments} />} setClicked={() => { }} color1={'#fff'} color2={"var(--pink)"} opt={2} />
+                <BlobBtn name={<FontAwesomeIcon icon={faComments} />} setClicked={() => { }} opt={2} />
               </div>
               <div className={styles.hoverEl}>
                 <p>Become a friend with Jason!</p>
@@ -157,20 +169,33 @@ function User({ isSidebarOpen, isSidebarHovered }) {
             </div>
           </div>
         </div>
+
         <div className={styles.statsContainer}>
-          <div className={styles.rowTitle}>
+          <div className={styles.box}>
+            <div className={styles.rowTitle}>
+              <DateSelectorBtn viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} />
+              <div id={styles.viewerSelector}>
+                <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
+              </div>
+            </div>
+            <div className={styles.row}>
+              <div className={styles.chartContainer}>
+                <LineChart
+                  labels={timeTrend.labels}
 
-            <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
+                  datasets={timeTrend.datasets}
+
+                  options={lineChartOption}
+                />
+              </div>
+            </div>
           </div>
-          <div className={styles.row}>
-            <div className={styles.chartContainer}>
-              <LineChart
-                labels={timeTrend.labels}
-
-                datasets={timeTrend.datasets}
-
-                options={lineChartOption}
-              />
+          <div className={styles.box}>
+            <div className={styles.rowTitle}>
+              <p>Jason's groups</p>
+            </div>
+            <div className={styles.row}>
+            <GroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={groups} setOpenGroupPwModal={setOpenGroupPwModal} searchQuery={""} userInfo={userInfo} queryTags={[]} />
             </div>
           </div>
         </div>

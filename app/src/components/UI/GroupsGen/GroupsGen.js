@@ -12,7 +12,7 @@ function GroupsGen(props) {
 
   const [copied, setCopied] = useState(null);
   const [otherGroupsEl, setOtherGroupsEl] = useState( null);
-  const [maxGroups, setMaxGroups] = useState(20);
+  const [maxGroups, setMaxGroups] = useState(-1);
 
   const joinGroup = (group) => {
     setJoinTarget(group);
@@ -37,9 +37,11 @@ function GroupsGen(props) {
   };
 
   useEffect(() => {
+    console.log('iuuu', groups)
+    if (!userInfo) return;
     setOtherGroupsEl(
       Array.from(groups).map((group, i) => {
-        if (i > maxGroups) {
+        if (maxGroups !== -1 && i > maxGroups) {
            return;
         }
         const tags = JSON.parse(group.tags);
@@ -122,7 +124,7 @@ function GroupsGen(props) {
         );
       })
     )
-  }, [queryTags, searchQuery, groups, maxGroups]);
+  }, [queryTags, searchQuery, groups, maxGroups, userInfo]);
   return (
     otherGroupsEl
   );

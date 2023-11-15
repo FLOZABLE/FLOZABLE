@@ -1,0 +1,24 @@
+.DateSelectorBtn {
+  display: flex;
+  font-size: 30px;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  transition: .3s background-color ease-in-out, box-shadow .3s ease-in-out;
+}
+
+.DateSelectorBtn i {
+  margin-left: 10px;
+  transition: rotate .3s ease-in-out;
+}
+
+.DateSelectorBtn:hover {
+  background-color: var(--gray);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.DateSelectorBtn.open i {
+  rotate: -180deg;
+}
+

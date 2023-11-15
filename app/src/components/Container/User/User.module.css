@@ -27,6 +27,7 @@
 
 .UserContainer .rowTitle {
   width: 100%;
+  display: flex;
 }
 
 .UserContainer .row .divided {
@@ -106,14 +107,32 @@
 }
 
 .UserContainer .statsContainer {
-  padding: 30px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   width: calc(100% - 420px);
   margin-left: 380px;
-  height: 100vh;
+}
+
+.UserContainer .statsContainer .box {
+  padding: 30px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   border-radius: 20px;
+  margin-bottom: 35px;
 }
 
 .UserContainer .chartContainer {
   width: 100%;
+}
+
+.UserContainer #dateSelector {
+  font-size: 30px;
+  border-radius: 10px;
+  background-color: var(--gray);
+  padding: 0px 20px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.UserContainer #viewerSelector {
+  margin-left: auto;
 }

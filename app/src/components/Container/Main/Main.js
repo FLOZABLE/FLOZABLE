@@ -8,7 +8,6 @@ import parse from "html-react-parser";
 import { plugins } from 'chart.js';
 import Draggable, {DraggableCore} from 'react-draggable';
 import { DateTime } from 'luxon';
-import {Quotes} from '../../../utils/Quotes.js';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -23,9 +22,8 @@ function Main(props) {
 
   const [yesterdayTotal, setYesterdayTotal] = useState("");
   const [weeklyAverage, setWeeklyAverage] = useState(""); // compare yesterday study total to montly percentage
-  const [quoteMsg, setQuoteMsg] = useState("");
+  const [aiMessage, setAiMessage] = useState("");
 
-  /*
   useEffect(() => {
     let aiQuery = "What are some healthy study habits? (50 words maximum)";
     fetch(`${serverOrigin}/api/ai/input`, {
@@ -43,10 +41,6 @@ function Main(props) {
       })
       .catch((error) => console.error(error));
   }, [])
-  */
- useEffect(() => {
-  setQuoteMsg(Quotes[Math.floor(Math.random() * Quotes.length)]);
- }, []);
 
   useEffect(() =>{
     if (!!!subjects.daily){
@@ -216,17 +210,11 @@ function Main(props) {
     })
   }, []); */
 
-  const eventHandler = (e,dragElement,id) => {
-    let posX = dragElement.x;
-    let posY = dragElement.y;
-    localStorage.setItem(id,JSON.stringify({x: posX, y: posY}));
-  }
-
   return (
     <div className={styles.MainContainer}>
       <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
-          <Draggable defaultPosition={localStorage.welcome ? JSON.parse(localStorage.welcome) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"welcome")}} nodeRef={hiMsgRef}>
+          <Draggable nodeRef={hiMsgRef}>
           <div ref={hiMsgRef} className={`${styles.box} box 1`} >
             <div className={styles.inner}>
               <p className={styles.name}>Welcome Back!</p>
@@ -245,10 +233,10 @@ function Main(props) {
                 </div>
               </div>
             </div>
-            <img draggable = "false" src="./img/collaboration.jpeg" alt="" />
+            <img src="./img/collaboration.jpeg" alt="" />
           </div>
           </Draggable>
-          <Draggable defaultPosition={localStorage.subject ? JSON.parse(localStorage.subject) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"subject")}} nodeRef={subjectRef}>
+          <Draggable nodeRef={subjectRef}>
           <div ref={subjectRef} className={`${styles.box} box 2`} >
             <div className={styles.inner}>
               <p className={styles.name}>Subject Usage</p>
@@ -306,7 +294,7 @@ function Main(props) {
             </div>
           </div>
           </Draggable>
-          <Draggable defaultPosition={localStorage.planner ? JSON.parse(localStorage.planner) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"planner")}} nodeRef={plannerRef}>
+          <Draggable nodeRef={plannerRef}>
           <div ref = {plannerRef} className={`${styles.box} box 3`}>
             <div className={styles.inner}>
               <p className={styles.name}>Planner</p>
@@ -352,7 +340,7 @@ function Main(props) {
             </div>
           </div>
           </Draggable>
-          <Draggable defaultPosition={localStorage.activity ? JSON.parse(localStorage.activity) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"activity")}} nodeRef={recentActivityRef}>
+          <Draggable nodeRef={recentActivityRef}>
           <div ref={recentActivityRef} className={`${styles.box} box 4`} >
             <div className={styles.inner}>
               <p className={styles.name}>Recent Activity</p>
@@ -400,10 +388,10 @@ function Main(props) {
             </div>
           </div>
           </Draggable>
-         <Draggable defaultPosition={localStorage.quote ? JSON.parse(localStorage.quote) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"quote")}} nodeRef={memoRef}>
+         <Draggable nodeRef={memoRef}>
          <div ref={memoRef} className={`${styles.box} box 5 ${styles.memo}`} >
             <div className={styles.inner}>
-              <p>{quoteMsg}</p>
+              <p>What are some good study habits? <br></br>{aiMessage}</p>
             </div>
           </div>
          </Draggable>
