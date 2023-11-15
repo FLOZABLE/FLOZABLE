@@ -107,3 +107,61 @@
   text-align: center;
   padding: 5px;
 }
+
+@media (max-width: 1700px) {
+  .MainContainer .box.memo {
+    height: 250px;
+    background-color: transparent;
+    box-shadow: none;
+    width: 250px;
+    text-align: center;
+  }
+
+  .MainContainer .toStatsBtn {
+    background-color: blue;
+    padding: 20px 70px;
+    color: #fff;
+    font-size: 13px;
+    border-radius: 20px;
+    margin-top: 30px;
+    font-weight: 800;
+  }
+
+  .MainContainer .boxes .box {
+    position: absolute;
+    background-color: aliceblue;
+    border-radius: 20px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    margin: 0px 15px;
+    max-width: 312px;
+    flex-grow: 1;
+    height: min-content;
+  }
+
+  .MainContainer .boxes .box .name {
+    font-size: 25px;
+    font-weight: 600;
+  }
+
+  .MainContainer .boxes .box .report {
+    font-size: 15px;
+    color: grey;
+  }
+
+  .MainContainer .boxes .box .inner {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+  }
+
+  .MainContainer .box .memo .inner{
+    padding: 30px;
+    background-image: url('/public/img/memo.png');
+    background-position: center;      /* center the image */
+    background-size: cover;
+    height: 105%;
+    width: 105%;
+  }
+}
