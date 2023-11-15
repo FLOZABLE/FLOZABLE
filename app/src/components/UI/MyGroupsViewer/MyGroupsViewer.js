@@ -479,6 +479,7 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
         }}
       >
         {myGroups.map((group, i) => {
+          console.log('groupgd', group)
           return (
             <SwiperSlide className={styles.slide} key={i}>
               <div className={styles.inner}>
