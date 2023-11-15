@@ -1,5 +1,5 @@
 {
-  "name": "FLOZABLE",
+  "name": "flozable",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dIwnsgml/FLOZABLE.git"
+    "url": "git+https://github.com/FLOZABLE/FLOZABLE.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/dIwnsgml/FLOZABLE/issues"
+    "url": "https://github.com/FLOZABLE/FLOZABLE/issues"
   },
-  "homepage": "https://github.com/dIwnsgml/FLOZABLE#readme",
+  "homepage": "https://github.com/FLOZABLE/FLOZABLE#readme",
   "dependencies": {
     "ajv": "^8.12.0",
     "async": "^3.2.4",
