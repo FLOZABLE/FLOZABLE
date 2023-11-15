@@ -243,30 +243,6 @@ function Study(props) {
         isDisp={isVolumeModal}
         element={<VolumeControl setVolume={setVolume} volume={volume} />}
       />
-      <TopNotification duration={2500} response={addPlanResponse} />
-      <EventModal
-        isAddPlanModal={isAddPlanModal}
-        setIsAddPlanModal={setIsAddPlanModal}
-        title={title}
-        setTitle={setTitle}
-        setStart={setStart}
-        start={start}
-        setEnd={setEnd}
-        end={end}
-        description={description}
-        setDescription={setDescription}
-        setSubject={setSubject}
-        subjects={subjectsOpt}
-        notification={notification}
-        setNotification={setNotification}
-        submit={submit}
-        setSubmit={setSubmit}
-        repeat={repeat}
-        setRepeat={setRepeat}
-        priority={priority}
-        setPriority={setPriority}
-        setIsAddSubjectModal={setIsAddSubjectModal}
-      />
       <StudySidebar 
       isTimerModal={isTimerModal} 
       isPlannerModal={isPlannerModal} 
