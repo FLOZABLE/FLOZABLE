@@ -8,11 +8,15 @@ import parse from "html-react-parser";
 import { plugins } from 'chart.js';
 import Draggable, {DraggableCore} from 'react-draggable';
 import { DateTime } from 'luxon';
+import {Quotes} from '../../../utils/Quotes.js';
+
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
+
 function Main(props) {
   const {setIsSidebarOpen, isSidebarOpen, isSidebarHovered, userInfo, subjects, plans} = props;
+
 
   const subjectRef = useRef(null);
   const hiMsgRef = useRef(null);
@@ -20,10 +24,13 @@ function Main(props) {
   const plannerRef = useRef(null);
   const memoRef = useRef(null);
 
+
   const [yesterdayTotal, setYesterdayTotal] = useState("");
   const [weeklyAverage, setWeeklyAverage] = useState(""); // compare yesterday study total to montly percentage
-  const [aiMessage, setAiMessage] = useState("");
+  const [quoteMsg, setQuoteMsg] = useState("");
 
+
+  /*
   useEffect(() => {
     let aiQuery = "What are some healthy study habits? (50 words maximum)";
     fetch(`${serverOrigin}/api/ai/input`, {
@@ -41,6 +48,11 @@ function Main(props) {
       })
       .catch((error) => console.error(error));
   }, [])
+  */
+ useEffect(() => {
+  setQuoteMsg(Quotes[Math.floor(Math.random() * Quotes.length)]);
+ }, []);
+
 
   useEffect(() =>{
     if (!!!subjects.daily){
@@ -62,6 +74,7 @@ function Main(props) {
         }
       }
 
+
       let weekTotal = subjects.weekly.groupedTotal[subjects.weekly.groupedTotal.length - 1];
       const weekday = DateTime.fromISO(new Date().toISOString()).weekday;
       let weeklySeconds = weekTotal / weekday;
@@ -79,6 +92,7 @@ function Main(props) {
     }
   },[subjects]);
 
+
   let subjectActivity = [];
   function sortActivity(){
     for (let i = 0; i < subjects.length; i++){
@@ -87,9 +101,11 @@ function Main(props) {
       });
     }
 
+
     subjectActivity.sort((a, b) => b[1] - a[1]);
   }
   sortActivity();
+
 
   let planActivity = [];
   function sortPlans(){
@@ -99,9 +115,11 @@ function Main(props) {
       planActivity.push({start: new Date(start).getTime(), end: new Date(end).getTime(), title: plans[i].title, description: plans[i].description});
     }
 
+
     planActivity.sort((a, b) => b.start - a.start);
   }
   sortPlans();
+
 
   let target = false;
   function divMoveXY(e) {
@@ -116,6 +134,7 @@ function Main(props) {
     }
   }
 
+
   function parentSearch(element, className) {
     while (element !== null) {
       if (element.classList.contains(className)) {
@@ -126,6 +145,7 @@ function Main(props) {
   
     return false;
   }
+
 
   function mouseDown(e) {
     e.preventDefault();
@@ -210,11 +230,19 @@ function Main(props) {
     })
   }, []); */
 
+
+  const eventHandler = (e,dragElement,id) => {
+    let posX = dragElement.x;
+    let posY = dragElement.y;
+    localStorage.setItem(id,JSON.stringify({x: posX, y: posY}));
+  }
+
+
   return (
     <div className={styles.MainContainer}>
       <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
-          <Draggable nodeRef={hiMsgRef}>
+          <Draggable defaultPosition={localStorage.welcome ? JSON.parse(localStorage.welcome) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"welcome")}} nodeRef={hiMsgRef}>
           <div ref={hiMsgRef} className={`${styles.box} box 1`} >
             <div className={styles.inner}>
               <p className={styles.name}>Welcome Back!</p>
@@ -223,6 +251,7 @@ function Main(props) {
                   {yesterdayTotal}<br />
                   {weeklyAverage}
                 </p>
+
 
                 <div className={styles.btnCenter}>
                   <Link to="/dashboard/study">
@@ -233,10 +262,10 @@ function Main(props) {
                 </div>
               </div>
             </div>
-            <img src="./img/collaboration.jpeg" alt="" />
+            <img draggable = "false" src="./img/collaboration.jpeg" alt="" />
           </div>
           </Draggable>
-          <Draggable nodeRef={subjectRef}>
+          <Draggable defaultPosition={localStorage.subject ? JSON.parse(localStorage.subject) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"subject")}} nodeRef={subjectRef}>
           <div ref={subjectRef} className={`${styles.box} box 2`} >
             <div className={styles.inner}>
               <p className={styles.name}>Subject Usage</p>
@@ -245,6 +274,7 @@ function Main(props) {
                   labels={
                     subjects.map((subject) => subject.name)
                   }
+
 
                   datasets={
                     [
@@ -256,6 +286,7 @@ function Main(props) {
                       },
                     ]
                   }
+
 
                   options={
                     {
@@ -278,10 +309,12 @@ function Main(props) {
                     }
                   }
 
+
                   plugins={
                     ChartDataLabel
                   }
                 />
+
 
                 <div className={styles.btnCenter}>
                   <Link to="/dashboard/stats">
@@ -294,7 +327,7 @@ function Main(props) {
             </div>
           </div>
           </Draggable>
-          <Draggable nodeRef={plannerRef}>
+          <Draggable defaultPosition={localStorage.planner ? JSON.parse(localStorage.planner) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"planner")}} nodeRef={plannerRef}>
           <div ref = {plannerRef} className={`${styles.box} box 3`}>
             <div className={styles.inner}>
               <p className={styles.name}>Planner</p>
@@ -303,18 +336,22 @@ function Main(props) {
                   const startTime = plan.start;
                   const endTime = plan.end;
 
+
                   const date1 = new Date(startTime);
                   const hours1 = date1.getHours();
                   const minutes1 = "0" + date1.getMinutes();
                   const startString = (hours1 > 12 ? hours1 - 12 : hours1) + ':' + minutes1.substring(minutes1.length - 2) + (hours1 >= 12 ? "PM" : "AM");
+
 
                   const date2 = new Date(endTime);
                   const hours2 = date2.getHours();
                   const minutes2 = "0" + date2.getMinutes();
                   const endString = (hours2 > 12 ? hours2 - 12 : hours2) + ':' + minutes2.substring(minutes2.length - 2) + (hours2 >= 12 ? "PM" : "AM");
 
+
                   const prevTime = i > 0 ? new Date(planActivity[i - 1].end) : new Date(); //check if event has passed
                   const timeDiff = prevTime - endTime;
+
 
                   if (endTime < Date.now()){
                     return (
@@ -340,7 +377,7 @@ function Main(props) {
             </div>
           </div>
           </Draggable>
-          <Draggable nodeRef={recentActivityRef}>
+          <Draggable defaultPosition={localStorage.activity ? JSON.parse(localStorage.activity) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"activity")}} nodeRef={recentActivityRef}>
           <div ref={recentActivityRef} className={`${styles.box} box 4`} >
             <div className={styles.inner}>
               <p className={styles.name}>Recent Activity</p>
@@ -350,19 +387,23 @@ function Main(props) {
                     const startTime = subject[0];
                     const endTime = subject[1];
 
+
                     const date1 = new Date(startTime * 1000);
                     const hours1 = date1.getHours();
                     const minutes1 = "0" + date1.getMinutes();
                     const startString = (hours1 > 12 ? hours1 - 12 : hours1) + ':' + minutes1.substring(minutes1.length - 2) + (hours1 >= 12 ? "PM" : "AM");
+
 
                     const date2 = new Date(endTime * 1000);
                     const hours2 = date2.getHours();
                     const minutes2 = "0" + date2.getMinutes();
                     const endString = (hours2 > 12 ? hours2 - 12 : hours2) + ':' + minutes2.substring(minutes2.length - 2) + (hours2 >= 12 ? "PM" : "AM");
 
+
                     const prevTime = i > 0 ? new Date(subjectActivity[i - 1][0] * 1000) : new Date();
                     const prevDate = (prevTime.getMonth() + 1) + "/" + prevTime.getDate() + "/" + prevTime.getFullYear();
                     const startDate = (date1.getMonth() + 1)+ "/" + date1.getDate() + "/" + date1.getFullYear();
+
 
                     if (prevDate != startDate){
                       return (
@@ -377,6 +418,7 @@ function Main(props) {
                       );
                     }
 
+
                     return (
                       <li className={styles.plan} key={i}>
                         <p className={styles.topic}>{subject[2]}<strong> ({startString} - {endString})</strong></p>
@@ -388,18 +430,20 @@ function Main(props) {
             </div>
           </div>
           </Draggable>
-         <Draggable nodeRef={memoRef}>
+         <Draggable defaultPosition={localStorage.quote ? JSON.parse(localStorage.quote) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"quote")}} nodeRef={memoRef}>
          <div ref={memoRef} className={`${styles.box} box 5 ${styles.memo}`} >
             <div className={styles.inner}>
-              <p>What are some good study habits? <br></br>{aiMessage}</p>
+              <p>{quoteMsg}</p>
             </div>
           </div>
          </Draggable>
+
 
         </div>
       </div>
     </div>
   )
 }
+
 
 export default Main;
