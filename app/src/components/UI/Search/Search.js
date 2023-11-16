@@ -11,7 +11,7 @@ function Search(props) {
   };
 
   const updateSearchQuery = (e) => {
-    props.setSearchQuery(e.target.value.toLowerCase());
+    props.setSearchQuery(e.target.value);
   };
   return (
     <div className={`${styles.inputBox} ${searched ? styles.open : ''}`}>
