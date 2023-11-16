@@ -81,7 +81,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   useEffect(() => {
     setRankingEl(ranking.map(({ total, name, user_id }, i) => {
-      if (!name.includes(rankingSearch)) return;
+      if (!name.toLowerCase().includes(rankingSearch.toLowerCase())) return;
       return (
         <li key={i}>
           <div className={styles.circle}>
