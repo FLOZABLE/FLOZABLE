@@ -12,6 +12,8 @@ const cron = require('node-cron');
 const { connection } = require('../socket');
 const schedule = require('node-schedule');
 const redisClient = require('../model/redis');
+const timeZones = require('../data/timeZones.json');
+const csv = require("csvtojson");
 const { activeSubjectCache, subjectsCache, timerCache } = require('../services/redisLoader');
 
 /**create bots */
@@ -75,6 +77,37 @@ function addId() {
   })
 };
 
+/**convert csv to json add add more values*/
+const csvFilePath = "./data/originalnames.csv";
+const fileOutputName = "./data/realName.json";
+async function csvIdToJsonDatasets() {
+  /* csv()
+  .fromFile(fileInputName)
+  .then((jsonObj)=>{
+      console.log(jsonObj);
+  }) */
+  const jsonArray=await csv().fromFile(csvFilePath);
+fs.writeFileSync(fileOutputName, JSON.stringify(jsonArray));
+}
+
+//csvIdToJsonDatasets();
+const realNames = require("../data/realName.json");
+async function addValues() {
+  const newData = realNames.map(data => {
+    const userId = generateRandomId(10);
+    const gender = randomIntInRange(0, 1) ? 'Female' : 'Male';
+    const timeZone = timeZones[randomIntInRange(0, timeZones.length - 1)];
+    return { ...data, userId, timeZone, gender };
+  });
+
+  fs.writeFileSync('./data/RealUserIdWithData.json', JSON.stringify(newData, null, 2), 'utf-8', (err) => {
+    if (err) {
+      console.log(err)
+    }
+  })
+};
+
+//addValues();
 const destinationFilePath = "./public/profile-images";
 
 /**create profile imggs for each users*/
@@ -338,8 +371,7 @@ async function createGroups(startIndex, length) {
     connection.query('INSERT INTO chatrooms set ?', roomInfo2);
 
   };
-
-}
+};
 
 
 module.exports = {

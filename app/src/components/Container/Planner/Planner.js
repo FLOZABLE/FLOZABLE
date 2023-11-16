@@ -12,10 +12,7 @@ import PlanTimeline from '../../UI/PlanTimeline/PlanTimeline';
 import DropDownButton from '../../UI/DropDownButton/DropDownButton';
 
 function Planner(props) {
-  const { 
-    title, setTitle,description, setDescription,start, setStart,end, setEnd,repeat, setRepeat,priority, setPriority,
-    notification, setNotification,
-    subjects, setSubjects, events, isAddPlanModal, setIsAddPlanModal, setResponse, planSubmit, setPlanSubmit } = props;
+  const { subjects, setSubjects, events, setResponse, setIsAddSubjectModal } = props;
 
   const [viewMode, setViewMode] = useState('timeGridWeek');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
@@ -25,7 +22,8 @@ function Planner(props) {
   const SmallCalendarRef = useRef(null);
   const [SmallCalendarApi, setSmallCalendarApi] = useState(null);
   const [addPlanResponse, setAddPlanResponse] = useState(null);
-  const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
+  const [isAddPlanModal, setIsAddPlanModal] = useState(false);
+  //const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [subjectsOptions, setSubjectsOptions] = useState(null);
 
   const [addSubjectResponse, setAddSubjectResponse] = useState(null);
@@ -59,13 +57,10 @@ function Planner(props) {
     setAddPlanResponse(addSubjectResponse);
   }, [addSubjectResponse]);
 
-  useEffect(() => {
-    console.log('gdddd', events)
-  }, [events])
-
   return (
     <div className={styles.PlannerContainer}>
       <StuckModal />
+      {/* <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} /> */}
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.wrapper}>
           <div className={styles.header}>
@@ -76,26 +71,7 @@ function Planner(props) {
           </div>
           <div className={styles.container}>
             <div className={styles.planner}>
-              <EventPlanner 
-                              planSubmit={planSubmit}
-                              setPlanSubmit={setPlanSubmit}
-                              title={title}
-                              setTitle={setTitle}
-                              setStart={setStart}
-                              start={start}
-                              setEnd={setEnd}
-                              end={end}
-                              description={description}
-                              setDescription={setDescription}
-                              setSubject={setSubject}
-                              notification={notification}
-                              setNotification={setNotification}
-                              repeat={repeat}
-                              setRepeat={setRepeat}
-                              priority={priority}
-                              setPriority={setPriority}
-              
-              isAddPlanModal={isAddPlanModal} setIsAddPlanModal={setIsAddPlanModal} viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={subjects} events={events} setEvents={props.setEvents} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} setAddPlanResponse={setResponse} setIsAddSubjectModal={setIsAddSubjectModal} subject={subject} submit={planSubmit} setSubmit={setPlanSubmit}/>
+              <EventPlanner setResponse={setResponse} isAddPlanModal={isAddPlanModal} setIsAddPlanModal={setIsAddPlanModal} viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={subjects} events={events} setEvents={props.setEvents} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} addPlanResponse={addPlanResponse} setAddPlanResponse={setResponse} setIsAddSubjectModal={setIsAddSubjectModal} subject={subject} setSubject={setSubject} />
             </div>
             <div className={styles.widget}>
               <div className={styles.smallCalendarWrapper}>
