@@ -60,6 +60,23 @@ button {
 button:hover {
   cursor: pointer;
 }
+
+.modal {
+  visibility: hidden;
+  opacity: 0;
+  top: 500px;
+  position: fixed;
+  left: 50vw;
+  transform: translateX(-50%);
+  transition: .3s ease-in-out opacity, .3s ease-in-out visibility, .3s ease-in-out top;
+}
+
+.modal.open {
+  visibility: visible;
+  opacity: 1;
+  top: 200px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

@@ -38,7 +38,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   //fetch new ranking
   useEffect(() => {
-    const viewTime = DateTime.fromJSDate(viewDate);
+    const viewTime = new DateTime.fromJSDate(viewDate);
 
     let startTime;
     let stopTime;

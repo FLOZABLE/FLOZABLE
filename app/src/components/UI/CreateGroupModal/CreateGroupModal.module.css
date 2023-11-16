@@ -1,21 +1,11 @@
 .CreateGroupModal {
   position: fixed;
-  top: 250px;
-  left: 50%;
-  transform: translateX(-50%);
   width: 600px;
   background-color: #fff;
   z-index: 2;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-  opacity: 0;
-  display: none;
-}
-
-.CreateGroupModal.open {
-  opacity: 1;
-  display: block;
 }
 
 .CreateGroupModal .header {
@@ -34,10 +24,6 @@
   font-size: 23px;
   color: #fff;
   cursor: pointer;
-}
-
-.CreateGroupModal.open {
-  display: block;
 }
 
 .CreateGroupModal .container {

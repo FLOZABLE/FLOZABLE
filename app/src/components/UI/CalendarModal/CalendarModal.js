@@ -5,7 +5,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 function CalendarModal({isCalendarOpen, setIsCalendarOpen, updateViewDate, viewDate}) {
   return (
-    <div className={`${styles.CalendarModal} ${isCalendarOpen ? styles.isOpen : ''}`}>
+    <div className={`${styles.CalendarModal} modal ${isCalendarOpen ? 'open' : ''}`}>
     <div className={styles.modalHeader}>
       <i onClick={() => { setIsCalendarOpen(false) }}>
         <FontAwesomeIcon icon={faXmark} />
