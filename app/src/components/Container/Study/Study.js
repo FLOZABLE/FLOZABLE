@@ -89,7 +89,7 @@ function Study(props) {
   useEffect(() => {
     socket.on('studying', (onlineMembers) => {
       // 
-      console.log(onlineMembers)
+      
     })
   }, []);
 

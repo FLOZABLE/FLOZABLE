@@ -8,7 +8,7 @@ function FullScreenBtn(props) {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   const toggleFullscreen = () => {
-    console.log(props.fullScreen)
+    
     if (!document.fullscreenElement) {
       //props.setFullScreen(true);
       setIsFullScreen(true);

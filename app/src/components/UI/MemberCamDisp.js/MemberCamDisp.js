@@ -15,9 +15,9 @@ function MemberCamDisp({ track }) {
     };
     track.enabled = true;
     stream.addTrack(track)
-    console.log('other user track', track, [stream], stream)
+    
     videoRef.current.srcObject = stream;
-    console.log(stream.getTracks(), videoRef.current.srcObject, videoRef);
+    
     setUpd(upd + 1);
   }, [track]);
 

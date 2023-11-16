@@ -16,7 +16,7 @@
 import { DateTime } from "luxon";
 
 function timelineSort(subjects) {
-  console.log('original', {...subjects});
+  
   let firstDatumPoint = Math.floor(new Date().getTime() / 1000);
   subjects.map(({ datum_point }) => {
     //this code compares the current firstdatumPoint and current looped subject's datumpoint and updtate the firstDatunmPoint with
@@ -91,7 +91,7 @@ function timelineSort(subjects) {
 
 
   /* part2 */
-  console.log('result subject', {...subjects});
+  
   return subjects;
 };
 
@@ -126,7 +126,7 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
     indexDiff = DateTime.fromSeconds(datum_point).startOf('month').diff(formattedFirstDatum, 'month').toObject().months;
     expectedLength = DateTime.now().startOf('month').diff(formattedFirstDatum, 'month').months + 1;
   };
-  console.log('result', option,name, indexDiff, expectedLength)
+  
 
   const sortedTimeline = [[]];
   const totalTime = [0];
@@ -174,7 +174,7 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
 
 /** sort new subject */
 function sortNewSubject(subjects, newSubject) {
-  console.log('subjects', subjects, newSubject);
+  
   const {daily, weekly, monthly} = subjects;
   newSubject.daily = {
     grouped: Array(daily.maxLength ? daily.maxLength : 1).fill([]),
@@ -189,7 +189,7 @@ function sortNewSubject(subjects, newSubject) {
     total: Array(monthly.maxLength ? monthly.maxLength : 1).fill(0)
   };
 
-  console.log('new subject', newSubject)
+  
   return newSubject;
 }
 

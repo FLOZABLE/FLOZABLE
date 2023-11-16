@@ -51,7 +51,7 @@ function MyGroupsGen(props) {
 
   const allMembers = props.allMembers;
   const otherGroupsEl = props.groups.map((group, i) => {
-    console.log(i);
+    
     const tags = JSON.parse(group.tags);
     const tagsEl = tags.map((tag, i) => {
       return (

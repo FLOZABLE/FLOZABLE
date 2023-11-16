@@ -29,7 +29,7 @@ function Account({isSidebarHovered, isSidebarOpen, userInfo}) {
   const inputRef = useRef(null);
 
   const readURL = useCallback((input) => {
-    console.log('gd', input.files)
+    
     if (input.files && input.files[0]) {
       const reader = new FileReader();
       reader.readAsDataURL(input.files[0]);
@@ -40,7 +40,7 @@ function Account({isSidebarHovered, isSidebarOpen, userInfo}) {
         formData.append('image', input.files[0]);
 
         uploadImage(formData);
-        console.log('formdaa', e.target.result)
+        
       };
     }
   }, []);
@@ -51,7 +51,7 @@ function Account({isSidebarHovered, isSidebarOpen, userInfo}) {
         method: 'POST',
         body: formData,
       }); */
-      console.log('fetch', formData)
+      
       fetch(`${serverOrigin}/api/account/update/image`, {
         method: 'post',
         /* headers: {
@@ -62,7 +62,7 @@ function Account({isSidebarHovered, isSidebarOpen, userInfo}) {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            console.log('ranking', data);
+            
           }
         })
         .catch((error) => console.error(error));
@@ -83,7 +83,7 @@ function Account({isSidebarHovered, isSidebarOpen, userInfo}) {
         })
         .then((response) => response.json())
         .then((data) => {
-          console.log('res', data)
+          
         })
         .catch((error) => console.error(error));
     };
@@ -104,7 +104,7 @@ function Account({isSidebarHovered, isSidebarOpen, userInfo}) {
         })
         .then((response) => response.json())
         .then((data) => {
-          console.log('res', data)
+          
         })
         .catch((error) => console.error(error));
     };
@@ -114,7 +114,7 @@ function Account({isSidebarHovered, isSidebarOpen, userInfo}) {
   }, [isSubmitPw]);
 
   const fetchExtensionSettingUpdate = useCallback((d, target, value) => {
-    console.log(d, target, value)
+    
     fetch(`${serverOrigin}/api/account/update/extension-setting-update`,
     {
       method: 'post',
@@ -125,7 +125,7 @@ function Account({isSidebarHovered, isSidebarOpen, userInfo}) {
     })
     .then((response) => response.json())
     .then((data) => {
-      console.log('res', data)
+      
     })
     .catch((error) => console.error(error));
   }, []);
@@ -142,7 +142,7 @@ function Account({isSidebarHovered, isSidebarOpen, userInfo}) {
         })
         .then((response) => response.json())
         .then((data) => {
-          console.log('res', data)
+          
           if (data.success) {
             const {domain, origin} = data;
             setWebsites([...websites, {domain, origin, block: false, timer: true}]);

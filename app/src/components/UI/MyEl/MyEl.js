@@ -32,7 +32,7 @@ function MyEl(props) {
     if (toggleTimer.id === memberInfo.user_id) {
       setRun(toggleTimer.status);
       if (toggleTimer.status) {
-        console.log("study start");
+        
         setStudyIcon(
           <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
         );

@@ -87,7 +87,7 @@ function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupMo
   ]);
 
   useEffect(() => {
-    console.log('zoom', isZoom)
+    
   }, [isZoom])
   const moveCard = useCallback((dragIndex, hoverIndex) => {
     setItems((prevItems) =>

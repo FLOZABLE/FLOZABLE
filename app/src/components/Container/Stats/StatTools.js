@@ -127,7 +127,7 @@ function dailyTimelineSplit(timeline, datum_point) {
 }
 
 function weeklyTimelineSplit(timeline, datum_point) {
-  console.log('stuff week', timeline)
+  
   let date = new Date(datum_point * 1000);
   let weekStart = date.setHours(0, 0, 0, 0) - date.getDay() * 24 * 60 * 60 * 1000;
   let weekStop = date.setHours(23, 59, 59, 999) + (6 - date.getDay()) * 24 * 60 * 60 * 1000 + 999;
@@ -255,7 +255,7 @@ function updateTimeUsagePie(subjects, viewDate, type) {
   /* if (type === 'Daily') {
     data = subjects.map(subject => {
       const index = Math.floor((viewDate.getTime() / 1000 - subject.datum_point) / (60 * 60 * 24));
-      console.log('index',index, viewDate)
+      
       return subject.daily.total[index] ? subject.daily.total[index] : 0
     });
   } else if (type === 'Weekly') {
@@ -286,7 +286,7 @@ function updateTimeUsagePie(subjects, viewDate, type) {
     data = subjects.map(subject => {
       const {weekly} = subject;
       const index = Math.round(DateTime.fromJSDate(viewDate).startOf('week').diff(DateTime.fromSeconds(firstDatumPoint), 'week').weeks);
-      console.log('g', index)
+      
       return weekly.total[index] ? weekly.total[index] : 0;
     });
   } else {
@@ -299,7 +299,7 @@ function updateTimeUsagePie(subjects, viewDate, type) {
       return monthly.total[diff] ? monthly.total[diff] : 0;
     });
   }
-  console.log('tisdf', data)
+  
   return ({ labels: labels, data: data });
 };
 

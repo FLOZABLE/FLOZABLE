@@ -89,14 +89,14 @@ function MyGroupsViewer(props) {
   }, [myGroups]);
 
   const onStudying = (userId, groups) => {
-    console.log("Someone's studying!");
+    
     setToggleTimer({ id: userId, status: 1 });
-    console.log(groupStudying);
+    
     groups.forEach((group) => {
-      console.log(group);
+      
       setGroupStudying((prevGroupStudying) => {
         const updatedGroupStudying = { ...prevGroupStudying };
-        console.log(prevGroupStudying);
+        
         if (updatedGroupStudying[group] && !updatedGroupStudying[group].members.includes(userId)) {
           updatedGroupStudying[group].members.push(userId);
         };
@@ -137,7 +137,7 @@ function MyGroupsViewer(props) {
             videoParams = { track: stream.getVideoTracks()[0], ...videoParams };
           const videoProducer = await producerTransport.produce(videoParams);
           } catch (err) {
-            console.log(err);
+            
           }
         });
     };
@@ -155,7 +155,7 @@ function MyGroupsViewer(props) {
             audioParams = { track: stream.getAudioTracks()[0], ...audioParams };
             const audioProducer = await producerTransport.produce(audioParams);
           } catch (err) {
-            console.log(err);
+            
           }
         });
     };
@@ -184,7 +184,7 @@ function MyGroupsViewer(props) {
           audioParams = { track: stream.getAudioTracks()[0], ...audioParams };
           const audioProducer = await producerTransport.produce(audioParams);
           } catch (err) {
-            console.log(err);
+            
           }
         });
     };
@@ -199,7 +199,7 @@ function MyGroupsViewer(props) {
       selectedGroup = myGroups[selectedGroupIndex];
     };
     mediaSocket.emit('changeGroup', selectedGroup ? selectedGroup.group_id : 0, (data) => {
-      console.log(`Router RTP Capabilities...`, data.rtpCapabilities)
+      
       // we assign to local variable and will be used when
       // loading the client Device (see createDevice above)
       /* setRtpCapabilities(data.rtpCapabilities);
@@ -221,12 +221,12 @@ function MyGroupsViewer(props) {
         routerRtpCapabilities: rtpCapabilities
       })
   
-      console.log('Device RTP Capabilities', device.rtpCapabilities)
+      
   
       // once the device loads, create transport
       createSendTransport();
     } catch (error) {
-      console.log(error)
+      
       if (error.name === 'UnsupportedError')
         console.warn('browser not supported')
     }
@@ -239,11 +239,11 @@ function MyGroupsViewer(props) {
       // The server sends back params needed 
       // to create Send Transport on the client side
       if (params.error) {
-        console.log(params.error)
+        
         return
       }
   
-      console.log(params)
+      
   
       // creates a new WebRTC Transport to send media
       // based on the server's producer transport params
@@ -270,7 +270,7 @@ function MyGroupsViewer(props) {
       })
   
       producerTransport.on('produce', async (parameters, callback, errback) => {
-        console.log(parameters)
+        
   
         try {
           // tell the server to create a Producer
@@ -308,32 +308,32 @@ const connectSendTransport = async () => {
   videoProducer = await producerTransport.produce(videoParams);
 
   audioProducer.on('trackended', () => {
-    console.log('audio track ended')
+    
 
     // close audio track
   })
 
   audioProducer.on('transportclose', () => {
-    console.log('audio transport ended')
+    
 
     // close audio track
   })
   
   videoProducer.on('trackended', () => {
-    console.log('video track ended')
+    
 
     // close video track
   })
 
   videoProducer.on('transportclose', () => {
-    console.log('video transport ended')
+    
 
     // close video track
   })
 }
 
 const signalNewConsumerTransport = async (remoteProducerId) => {
-  console.log('remoteproducerid', remoteProducerId)
+  
   //check if we are already consuming the remoteProducerId
   //if (consumingTransports.includes(remoteProducerId)) return;
   consumingTransports.push(remoteProducerId);
@@ -342,10 +342,10 @@ const signalNewConsumerTransport = async (remoteProducerId) => {
     // The server sends back params needed 
     // to create Send Transport on the client side
     if (params.error) {
-      console.log(params.error)
+      
       return
     }
-    console.log(`PARAMS... ${params}`)
+    
 
     let consumerTransport
     try {
@@ -354,7 +354,7 @@ const signalNewConsumerTransport = async (remoteProducerId) => {
       // exceptions: 
       // {InvalidStateError} if not loaded
       // {TypeError} if wrong arguments.
-      console.log(error)
+      
       return
     }
 
@@ -394,7 +394,7 @@ useEffect(() => {
 
 const getProducers = () => {
   mediaSocket.emit('getProducers', producerIds => {
-    console.log(producerIds)
+    
     // for each of the producer create a consumer
     // producerIds.forEach(id => signalNewConsumerTransport(id))
     producerIds.forEach(signalNewConsumerTransport)
@@ -411,11 +411,11 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
     serverConsumerTransportId,
   }, async ({ params }) => {
     if (params.error) {
-      console.log('Cannot Consume')
+      
       return
     }
 
-    console.log(`Consumer Params ${params}`)
+    
     // then consume with the local consumer transport
     // which creates a consumer
     const consumer = await consumerTransport.consume({
@@ -437,7 +437,7 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
 
     // destructure and retrieve the video track from the producer
     const { track } = consumer;
-    console.log('track',track);
+    
     const newStream = new MediaStream();
     newStream.addTrack(track);
     if (track.kind === 'audio') {
@@ -446,14 +446,14 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
       videoRef.current.srcObject = newStream;
     }
     //videoRef.current.srcObject = newStream;
-    console.log(newStream, videoRef.current.srcObject, videoRef, audioRef)
+    
     
     mediaSocket.emit('consumer-resume', { serverConsumerId: params.serverConsumerId })
   })
 }
 
   useEffect(() => {
-    console.log('testeetse',test)
+    
   }, [test]);
   const audioRef = useRef(null);
   return (
@@ -475,11 +475,11 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
             realIndex
           } = swiperCore;
           setSelectedGroupIndex(realIndex);
-          console.log('index', realIndex)
+          
         }}
       >
         {myGroups.map((group, i) => {
-          console.log('groupgd', group)
+          
           return (
             <SwiperSlide className={styles.slide} key={i}>
               <div className={styles.inner}>

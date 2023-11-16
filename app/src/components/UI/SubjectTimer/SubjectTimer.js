@@ -80,8 +80,8 @@ function SubjectTimer(props) {
 
   const toggleTimer = () => {
     if (!isStudy) {
-      console.log("start");
-      console.log(subjectTimer, subject);
+      
+      
       worker.postMessage({ command: 'startSubjectTimer' });
       socket.emit("start", subject.id);
       /* fetch(`${serverOrigin}/api/study/start`, {
@@ -96,7 +96,7 @@ function SubjectTimer(props) {
         })
         .catch((error) => console.error(error)); */
     } else {
-      console.log("stop")
+      
       worker.postMessage({ command: 'stopSubjectTimer' });
       socket.emit("stop", subject.id);
       /* fetch(`${serverOrigin}/api/study/stop`, {

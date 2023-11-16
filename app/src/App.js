@@ -75,17 +75,17 @@ function App() {
   useEffect(() => {
     const socketConnectAction = () => {
       socket.emit("joinMyGroups");
-      console.log("dddddddddd");
+      
     };
 
     const socketResetAction = () => {
-      console.log("reseeeeeeee");
+      
     };
 
     socket.on("connect", socketConnectAction);
     socket.on("reset", socketResetAction);
     socket.on("studying", () => {
-      console.log("ddd");
+      
     });
 
     return () => {
@@ -123,7 +123,7 @@ function App() {
         if (data.success) {
           setUserInfo(data.userInfo);
           socket.connect();
-          console.log("connect!!!", socket);
+          
         }
       })
       .catch((error) => console.error(error));
@@ -152,14 +152,8 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log("gd1");
           setAllMembers(data.membersInfo);
           setGroups(setGroupMembers(data.groups, data.membersInfo));
-          console.log(
-            "gdddd",
-            data.membersInfo,
-            setGroupMembers(data.groups, data.membersInfo)
-          );
         }
       })
       .catch((error) => console.error(error));
@@ -167,7 +161,7 @@ function App() {
 
   useEffect(() => {
     bringSubjects();
-    console.log(subjects);
+    
     bringAccountInfo();
   }, []);
 
