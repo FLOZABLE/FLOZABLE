@@ -37,7 +37,7 @@ function GroupsGen(props) {
   };
 
   useEffect(() => {
-    console.log('iuuu', groups)
+    
     if (!userInfo) return;
     setOtherGroupsEl(
       Array.from(groups).map((group, i) => {

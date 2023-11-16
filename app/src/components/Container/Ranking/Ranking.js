@@ -33,7 +33,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   const updateViewDate = (date) => {
     setViewDate(date);
-    console.log(date, 'dd')
+    
   };
 
   //fetch new ranking
@@ -61,7 +61,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     setStartDate(startTime * 1000);
     setEndDate(stopTime * 1000);
 
-    console.log("start, stop", startTime, stopTime);
+    
     fetch(`${serverOrigin}/api/ranking/sort`, {
       method: 'post',
       headers: {
@@ -72,7 +72,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log('ranking', data.data);
+          
           setRanking(data.data);
         }
       })

@@ -19,11 +19,11 @@ function MemberEl(props) {
     if (timerInfo && timerInfo.total) {
       const total = memberInfo.timerInfo.total;
       setSec(total);
-      console.log('sec', total, 'gd')
+      
       if (activeSubject && activeSubject.id) {
         setRun(1);
         const now = Math.floor(new Date() / 1000);
-        console.log('running', memberInfo, activeSubject, now, now - activeSubject.time + total)
+        
         setSec(now - activeSubject.time + total);
         setStudyIcon(
           <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />

@@ -80,7 +80,7 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
       });
     }
     subjectActivity.sort((a, b) => a - b);
-    console.log(subjectActivity);
+    
     let longestSessionSeconds = subjectActivity.length ? subjectActivity[subjectActivity.length - 1] : 0;
     let longestSessionMinutes = Math.floor(longestSessionSeconds / 60);
     let longestSessionHours = Math.floor(longestSessionMinutes / 60);

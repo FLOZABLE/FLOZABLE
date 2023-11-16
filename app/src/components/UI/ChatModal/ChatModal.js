@@ -65,8 +65,8 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log("Rooms received!");
-          console.log(data)
+          
+          
           setChatGroups(data.groupRooms);
         }
       })
@@ -106,7 +106,7 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
   }, [userInfo, allMembers]);
 
   useEffect(() => {
-    console.log("Groups:",myGroups);
+    
     if (!userInfo) {
       return;
     };
@@ -204,16 +204,16 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
 
   useEffect(() => {
     const onMsg = (group, room, msgInfo) => {
-      console.log(room, selectedRoom)
+      
       if (room === selectedRoom.id) {
         let newMessages = [];
         newMessages = msgRenderer([], [], JSON.stringify(msgInfo), 0, msgInfo.i, msg);
-        console.log(newMessages)
+        
         setMsg(prevMsg => [...prevMsg, ...newMessages]);
       }
     };
     //group not user
-    console.log("new Room", selectedRoom)
+    
     setIsSidebar(false); //close sidebar after room selection
     if (selectedGroup && selectedRoom) {
       socket.emit('bringChat', selectedGroup.group_id, selectedRoom.id);
