@@ -39,14 +39,14 @@ function setGroupMembers(groups, users) {
         const [start, duration] = JSON.parse(activity);
         const unixStart = start + datum + timelineSum;
         const unixStop = unixStart + duration;
-        //console.log(new Date(unixStart * 1000), new Date(unixStop * 1000))
+        //
         timelineSum += start + duration;
         if (todayStart <= unixStart && unixStop <= todayEnd) {
           total += duration;
         } else if (todayStart <= unixStart) {
           //case when start time is between 0:00 and 23:59, but stop time is new date
           //in this case, we will separte the activity into 2 arrays one activity with [start, 23:59], [0:00, stop]
-          //console.log('changed1', new Date(startTime * 1000), new Date(stopTime * 1000), new Date(unixStart * 1000), new Date(unixStop * 1000))
+          //
           total += todayEnd - unixStart;
           //stop the loop because it is not in the range anymore
           return true;

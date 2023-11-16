@@ -75,11 +75,11 @@ function User({ isSidebarOpen, isSidebarHovered, groups }) {
   useEffect(() => {
     const pathName = window.location.pathname.split('/');
     const selectedUserId = pathName[pathName.length - 1];
-    console.log('sele',selectedUserId)
+    
     fetch(`${serverOrigin}/api/account/profile/${selectedUserId}`, { method: 'get' })
       .then((response) => response.json())
       .then((data) => {
-        console.log('userinfo',data)
+        
         if (data.success) {
           setUserInfo(data.userInfo);
           const sortedSubject = timelineSort(data.subjectInfo);
@@ -88,7 +88,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups }) {
           const userGroups = groupsArr.filter(userGroup => {
             return groups.find((group) => {return userGroup === group.id})
           });
-          console.log('gd', userGroups)
+          
         };
       })
       .catch((error) => console.error(error));

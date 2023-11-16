@@ -58,7 +58,7 @@ function PlanTimeline({ plans, viewMode, viewDate, subjects, setIsAddPlanModal, 
           isInRange = true;
         };
       } else if (viewMode === "timeGridWeek") {
-        console.log(viewDateTime.startOf('week').toMillis() <= plan.start.getTime())
+        
         if (viewDateTime.startOf('week').toMillis() <= plan.start.getTime() && plan.start.getTime() <= viewDateTime.endOf('week').toMillis()) {
           isInRange = true;
         };
@@ -67,7 +67,7 @@ function PlanTimeline({ plans, viewMode, viewDate, subjects, setIsAddPlanModal, 
           isInRange = true;
         };
       };
-      console.log(isInRange)
+      
 
       if (isInRange) {
         setIsPlan(true);

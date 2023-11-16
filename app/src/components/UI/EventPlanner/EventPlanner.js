@@ -345,7 +345,7 @@ function EventPlanner(props) {
 
   function updatePlan(selectedEvent, title, start, end, description, subject, priority) {
     const eventIndex = events.findIndex((event) => event.id == selectedEvent);
-    console.log('eventindex', eventIndex)
+    
     if (eventIndex !== -1) {
       const updatedEvents = [...events];
       updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, description: description, subject: subject, saved: true, priority: priority };
@@ -368,7 +368,7 @@ function EventPlanner(props) {
         .then((data) => {
           setAddPlanResponse(data);
           if (data.success) {
-            console.log("Planner success!")
+            
             setEvents(updatedEvents);
             setIsAddPlanModal(false);
           };
@@ -538,7 +538,7 @@ function EventPlanner(props) {
           priority={priority}
           setPriority={setPriority}
           setIsAddSubjectModal={setIsAddSubjectModal}
-          setPlanSubmit={() => {console.log('gd');updatePlan(selectedEvent, title, start, end, description, subject, priority);}}
+          setPlanSubmit={() => {updatePlan(selectedEvent, title, start, end, description, subject, priority);}}
         />
       </StyleWrapper>
     </div>
