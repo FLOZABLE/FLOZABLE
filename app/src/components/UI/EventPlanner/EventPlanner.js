@@ -336,17 +336,54 @@ function EventPlanner(props) {
     })]);
   }, [subjects]);
 
-  //handle submit
-  useEffect(() => {
-    if (submit) {
-      updatePlan(selectedEvent, title, start, end, description, subject, priority);
-    };
-  }, [submit]);
-
   function updatePlan(selectedEvent, title, start, end, description, subject, priority) {
     const eventIndex = events.findIndex((event) => event.id == selectedEvent);
-    
-    if (eventIndex !== -1) {
+    console.log('event index', eventIndex)
+    if (eventIndex === -1) {
+      //new subject
+      const id = generateRandomId(10);
+      setSelectedEvent(id);
+      const start = new Date();
+      const end = new Date();
+      const newEvent = {
+        id,
+        title: '',
+        start,
+        end,
+        description: '',
+        repeat,
+        subject,
+        notification,
+        priority,
+        saved: false,
+        completed: 0
+      };
+
+      const updatedEvents = [...events, newEvent];
+      setStart(start);
+      setEnd(end);
+      setEvents(updatedEvents);
+      setIsAddPlanModal(true);
+
+      delete newEvent.saved;
+      fetch(`${serverOrigin}/api/plan/update-plan`,
+        {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newEvent)
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          setAddPlanResponse(data);
+          if (data.success) {
+            setEvents(updatedEvents);
+            setIsAddPlanModal(false);
+          };
+        })
+        .catch((error) => console.error(error));
+    } else {
       const updatedEvents = [...events];
       updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, description: description, subject: subject, saved: true, priority: priority };
       const planInfo = {
@@ -354,7 +391,7 @@ function EventPlanner(props) {
         start: Math.floor(start.getTime() / (1000 * 60)),
         end: Math.floor(end.getTime() / (1000 * 60)),
       }
-
+  
       delete planInfo.saved;
       fetch(`${serverOrigin}/api/plan/update-plan`,
         {
@@ -374,7 +411,7 @@ function EventPlanner(props) {
           };
         })
         .catch((error) => console.error(error));
-    };
+    }
   };
 
   useEffect(() => {
