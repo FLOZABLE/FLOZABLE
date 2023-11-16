@@ -207,7 +207,7 @@ require('./videoServer');
 require('./Logger');
 require('./services/timerUpdate');
 const {createBots, addId, deleteBots, botManager, createGroups} = require('./Bot/Bot');
-//createGroups(0, 100);
+//createGroups(0, 10);
 //botManager();
 //deleteBots();
 //addId();

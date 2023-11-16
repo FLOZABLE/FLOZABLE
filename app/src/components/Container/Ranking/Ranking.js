@@ -9,6 +9,7 @@ import styles from './Ranking.module.css';
 import SmallCalendar from '../../UI/SmallCalendar/SmallCalendar';
 import Search from '../../UI/Search/Search';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
+import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -19,6 +20,8 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   const [rankingEl, setRankingEl] = useState([]);
   const [ranking, setRanking] = useState([]);
   const [rankingSearch, setRankingSearch] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -54,6 +57,10 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     else {
       return;
     };
+
+    setStartDate(startTime * 1000);
+    setEndDate(stopTime * 1000);
+
     console.log("start, stop", startTime, stopTime);
     fetch(`${serverOrigin}/api/ranking/sort`, {
       method: 'post',
@@ -108,11 +115,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
-              <button className={styles.title}
-                onClick={toggleCalendar}
-              >
-                {new Date(viewDate).setHours(0, 0, 0, 0) === new Date().setHours(0, 0, 0, 0) ? 'Today' : `${viewDate.getMonth() + 1}/${viewDate.getDate()}`} <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} />
-                </button>
+              <DateSelectorBtn className = {styles.title} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
               <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
             </div>
             <div className={`${styles.container} ${styles.rankingContainer}`}>
