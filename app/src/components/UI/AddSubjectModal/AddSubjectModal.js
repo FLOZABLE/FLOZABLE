@@ -58,7 +58,7 @@ function AddSubjectModal(props) {
   }, [isSubmit]);
   
   return (
-    <div className={`${styles.AddSubjectModal} ${isAddSubjectModal ? styles.open : ''}`}>
+    <div className={`${styles.AddSubjectModal} modal ${isAddSubjectModal ? 'open' : ''}`}>
       <div className={styles.header}>
         <i onClick={() => {setIsAddSubjectModal(false)}}>
           <FontAwesomeIcon icon={faXmark} />

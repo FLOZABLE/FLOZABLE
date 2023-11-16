@@ -1,8 +1,4 @@
 .AddSubjectModal {
-  position: fixed;
-  top: 200px;
-  left: 50vw;
-  transform: translateX(-50%);
   background-color: #fff;
   width: 550px;
   height: fit-content;
@@ -10,10 +6,6 @@
   z-index: 4;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   border-radius: 20px;
-}
-
-.AddSubjectModal.open {
-  visibility: visible;
 }
 
 .AddSubjectModal .header {
@@ -31,6 +23,7 @@
   font-size: 30px;
   color: #fff;
   margin-right: 10px;
+  cursor: pointer;
 }
 
 .AddSubjectModal .content {

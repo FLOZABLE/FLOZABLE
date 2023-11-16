@@ -13,7 +13,7 @@ import SliderAnimation from "../SliderAnimation/SliderAnimation";
 
 function EventModal(props) {
   return (
-    <div className={`${styles.EventModal} ${props.isAddPlanModal ? styles.open : ''}`}>
+    <div className={`${styles.EventModal} modal ${props.isAddPlanModal ? 'open' : ''}`}>
       <div className={styles.header}>
         <i onClick={() => {props.setIsAddPlanModal(false)}}>
           <FontAwesomeIcon icon={faXmark} />

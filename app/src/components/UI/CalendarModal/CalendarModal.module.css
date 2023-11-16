@@ -1,13 +1,8 @@
  .CalendarModal {
-  position: fixed;
   width: 500px;
   height: fit-content;
   z-index: 2;
   border-radius: 20px;
-  display: none;
-  left: 50vw;
-  top: 50vh;
-  transform: translate(-50%, -40%);
   background-color: #fff;
   border-radius: 20px;
   overflow: hidden;
@@ -16,6 +11,7 @@
   align-items: center;
   overflow: hidden;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  display: flex;
 }
 
  .CalendarModal .modalHeader{
@@ -31,8 +27,5 @@
   margin-left: auto;
   color: #fff;
   margin-right: 10px;
-}
-
- .CalendarModal.isOpen {
-  display: flex;
+  cursor: pointer;
 }

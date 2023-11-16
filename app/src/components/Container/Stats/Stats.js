@@ -15,6 +15,8 @@ import { colorsList } from '../../../constant';
 import styles from './Stats.module.css';
 import { plugins } from 'chart.js';
 import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, sortRanking, updateRankingTrend } from './StatTools';
+import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
+import { DateTime } from 'luxon';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -33,6 +35,8 @@ function Stats(props) {
   const [calendarLabel, setCalendarLabel] = useState('Today');
   const [ranking, setRanking] = useState({});
   const [dailyTimeline, setDailyTimeline] = useState([]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   //time usage pie chart
   const [timeUsagePie, setTimeUsagePie] = useState({
@@ -91,6 +95,18 @@ function Stats(props) {
   }, [viewDate, statsViewer]);
 
   const updateCalendarLabel = () => {
+    const viewDateTime = DateTime.fromJSDate(viewDate);
+    if (statsViewer === 'Daily') {
+      setStartDate(viewDateTime.startOf('day').toMillis());
+      setEndDate(viewDateTime.endOf('day').toMillis())
+    } else if (statsViewer === 'Weekly') {
+      setStartDate(viewDateTime.startOf('day').toMillis());
+      setEndDate(viewDateTime.endOf('day').toMillis())
+    } else {
+      setStartDate(viewDateTime.startOf('day').toMillis());
+      setEndDate(viewDateTime.endOf('day').toMillis())
+    }
+    
     if (viewDate === today) {
       if (statsViewer === 'Daily') {
         setCalendarLabel('Today');
@@ -175,9 +191,7 @@ function Stats(props) {
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
-              <button className={styles.title}
-                onClick={toggleCalendar}
-              >{calendarLabel} <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} /></button>
+            <DateSelectorBtn className = {styles.title} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
               <RadioBtn items={[{view: 'Daily', value: 'Daily'}, {view: 'Weekly', value: 'Weekly'}, {view: 'Monthly', value: 'Monthly'}]} changeEvent={updateViewer} defaultViewer={0} />
             </div>
             <div className={styles.container}>

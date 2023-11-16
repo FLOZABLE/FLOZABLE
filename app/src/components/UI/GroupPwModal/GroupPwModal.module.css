@@ -1,19 +1,11 @@
 .GroupPwModal {
   position: fixed;
-  left: 50vw;
-  top: 50vh;
-  transform: translate(-50%, -50%);
   width: 600px;
   z-index: 3;
   background-color: #fff;
   overflow: hidden;
   border-radius: 30px;
-  display: none;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-}
-
-.GroupPwModal.open {
-  display: block;
 }
 
 .GroupPwModal .header {
