@@ -14,7 +14,7 @@ import MyGroupsViewer from '../../UI/MyGroupsViewer/MyGroupsViewer';
 import CreateGroupModal from '../../UI/CreateGroupModal/CreateGroupModal';
 
 function Groups(props) {
-  const { socket, userInfo, subjects, groups, allMembers, otherGroups, setOtherGroups, myGroups, setMyGroups, likedGroups, setLikedGroups } = props;
+  const { socket, userInfo, subjects, groups, allMembers, otherGroups, setOtherGroups, myGroups, setMyGroups, likedGroups, setLikedGroups, setResponse } = props;
 
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,10 +62,9 @@ function Groups(props) {
 
   return (
     <div className={styles.GroupsContainer}>
-      <TopNotification duration={2500} response={joinGroupResponse} />
       <StuckModal />
-      <CreateGroupModal isOpen={isCreateNewGroup} setIsOpen={setIsCreateNewGroup} setCreateGroupResponse={setCreateGroupResponse} />
-      <GroupPwModal setOpenGroupPwModal={setOpenGroupPwModal} openGroupPwModal={openGroupPwModal} joinTarget={joinTarget} setJoinGroupResponse={setJoinGroupResponse} />
+      <CreateGroupModal isOpen={isCreateNewGroup} setIsOpen={setIsCreateNewGroup} setCreateGroupResponse={setResponse} />
+      <GroupPwModal setOpenGroupPwModal={setOpenGroupPwModal} openGroupPwModal={openGroupPwModal} joinTarget={joinTarget} setJoinGroupResponse={setResponse} />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">

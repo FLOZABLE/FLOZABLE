@@ -12,7 +12,10 @@ import PlanTimeline from '../../UI/PlanTimeline/PlanTimeline';
 import DropDownButton from '../../UI/DropDownButton/DropDownButton';
 
 function Planner(props) {
-  const { subjects, setSubjects, events, isAddPlanModal, setIsAddPlanModal } = props;
+  const { 
+    title, setTitle,description, setDescription,start, setStart,end, setEnd,repeat, setRepeat,priority, setPriority,
+    notification, setNotification,
+    subjects, setSubjects, events, isAddPlanModal, setIsAddPlanModal, setResponse, planSubmit, setPlanSubmit } = props;
 
   const [viewMode, setViewMode] = useState('timeGridWeek');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
@@ -56,9 +59,12 @@ function Planner(props) {
     setAddPlanResponse(addSubjectResponse);
   }, [addSubjectResponse]);
 
+  useEffect(() => {
+    console.log('gdddd', events)
+  }, [events])
+
   return (
     <div className={styles.PlannerContainer}>
-      <TopNotification duration={2500} response={addPlanResponse} />
       <StuckModal />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.wrapper}>
@@ -70,7 +76,26 @@ function Planner(props) {
           </div>
           <div className={styles.container}>
             <div className={styles.planner}>
-              <EventPlanner isAddPlanModal={isAddPlanModal} setIsAddPlanModal={setIsAddPlanModal} viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={subjects} events={events} setEvents={props.setEvents} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} addPlanResponse={addPlanResponse} setAddPlanResponse={setAddPlanResponse} setIsAddSubjectModal={setIsAddSubjectModal} subject={subject} setSubject={setSubject} />
+              <EventPlanner 
+                              planSubmit={planSubmit}
+                              setPlanSubmit={setPlanSubmit}
+                              title={title}
+                              setTitle={setTitle}
+                              setStart={setStart}
+                              start={start}
+                              setEnd={setEnd}
+                              end={end}
+                              description={description}
+                              setDescription={setDescription}
+                              setSubject={setSubject}
+                              notification={notification}
+                              setNotification={setNotification}
+                              repeat={repeat}
+                              setRepeat={setRepeat}
+                              priority={priority}
+                              setPriority={setPriority}
+              
+              isAddPlanModal={isAddPlanModal} setIsAddPlanModal={setIsAddPlanModal} viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={subjects} events={events} setEvents={props.setEvents} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} setAddPlanResponse={setResponse} setIsAddSubjectModal={setIsAddSubjectModal} subject={subject} submit={planSubmit} setSubmit={setPlanSubmit}/>
             </div>
             <div className={styles.widget}>
               <div className={styles.smallCalendarWrapper}>
