@@ -26,6 +26,34 @@
   height: 50px;
   width: 50px;
   border-radius: 10px;
+  position: relative;
+}
+
+.PlanTimeline .iconWrapper .icon {
+  position: absolute;
+}
+
+
+.PlanTimeline .iconWrapper .icon:hover ~ .hoverDisp{
+  visibility: visible;
+  opacity: 1;
+}
+
+.PlanTimeline .iconWrapper .hoverDisp:hover{
+  visibility: visible;
+  opacity: 1;
+}
+
+.PlanTimeline .iconWrapper .hoverDisp{
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 10px;
+  margin-left: -10px;
+  margin-top: -10px;
 }
 
 .PlanTimeline .content {

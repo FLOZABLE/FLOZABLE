@@ -138,8 +138,10 @@ function PlanTimeline({ plans, viewMode, viewDate, subjects, setIsAddPlanModal, 
         return (
           <li className={styles.plan} key={i}>
             <div className={styles.iconWrapper} style={{ backgroundColor: subjectBg }}>
+              <div className={styles.icon}>
               {icon}
-              <div className={styles.hoverDispn} onClick={() => { togglePlan(plan) }}>
+              </div>
+              <div className={styles.hoverDisp} onClick={() => { togglePlan(plan) }}>
                 <CircularCheckBox checked={plan.completed} />
               </div>
             </div>

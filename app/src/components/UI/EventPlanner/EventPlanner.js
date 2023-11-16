@@ -160,10 +160,7 @@ thead .fc-scroller {
 
 
 function EventPlanner(props) {
-  const { 
-    title, setTitle,description, setDescription,start, setStart,end, setEnd,repeat, setRepeat,priority, setPriority,
-    notification, setNotification,
-    PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isAddPlanModal, setIsAddPlanModal, setIsAddSubjectModal, subjects, setSubjects, setSubject, subject, setViewDate, submit, setSubmit } = props;
+  const { PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isAddPlanModal, setIsAddPlanModal, setIsAddSubjectModal, subjects, setSubjects, setSubject, subject, setViewDate } = props;
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [viewText, setViewText] = useState({
     year: 'numeric',
@@ -171,14 +168,15 @@ function EventPlanner(props) {
   })
 
   //new event stats
-  /* const [title, setTitle] = useState('');
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [subjectsOpt, setSubjectsOpt] = useState([]);
   const [start, setStart] = useState(new Date());
   const [end, setEnd] = useState(new Date());
   const [repeat, setRepeat] = useState(0);
   const [priority, setPriority] = useState(50);
-  const [notification, setNotification] = useState(-1); */
+  const [notification, setNotification] = useState(-1);
+  const [submit, setSubmit] = useState(false);
 
   /* const [prevStart, setPrevStart] = useState(null); */
 
@@ -332,9 +330,14 @@ function EventPlanner(props) {
     setViewDate(new Date(new Date(start).setHours(0, 0, 0, 0)));
   }, [start]);
 
+  useEffect(() => {
+    setSubjectsOpt([...subjects.map((subject) => {
+      return { name: subject.name, value: subject.id };
+    })]);
+  }, [subjects]);
+
   //handle submit
   useEffect(() => {
-    console.log('gd')
     if (submit) {
       updatePlan(selectedEvent, title, start, end, description, subject, priority);
     };
@@ -342,6 +345,7 @@ function EventPlanner(props) {
 
   function updatePlan(selectedEvent, title, start, end, description, subject, priority) {
     const eventIndex = events.findIndex((event) => event.id == selectedEvent);
+    console.log('eventindex', eventIndex)
     if (eventIndex !== -1) {
       const updatedEvents = [...events];
       updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, description: description, subject: subject, saved: true, priority: priority };
@@ -511,6 +515,30 @@ function EventPlanner(props) {
               click: handleTodayButtonClick,
             },
           }}
+        />
+        <EventModal
+          isAddPlanModal={isAddPlanModal}
+          setIsAddPlanModal={setIsAddPlanModal}
+          title={title}
+          setTitle={setTitle}
+          setStart={setStart}
+          start={start}
+          setEnd={setEnd}
+          end={end}
+          description={description}
+          setDescription={setDescription}
+          setSubject={setSubject}
+          subjects={subjectsOpt}
+          notification={notification}
+          setNotification={setNotification}
+          submit={submit}
+          setSubmit={setSubmit}
+          repeat={repeat}
+          setRepeat={setRepeat}
+          priority={priority}
+          setPriority={setPriority}
+          setIsAddSubjectModal={setIsAddSubjectModal}
+          setPlanSubmit={() => {console.log('gd');updatePlan(selectedEvent, title, start, end, description, subject, priority);}}
         />
       </StyleWrapper>
     </div>
