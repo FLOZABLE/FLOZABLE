@@ -15,7 +15,7 @@ function PlanTimeline({ plans, viewMode, viewDate, subjects, setIsAddPlanModal, 
   const [isPlan, setIsPlan] = useState(false);
 
   const togglePlan = (plan) => {
-     
+
     const eventIndex = plans.findIndex((planInfo) => planInfo.id == plan.id);
     if (eventIndex !== -1) {
       const updatedEvents = [...plans];
@@ -25,7 +25,7 @@ function PlanTimeline({ plans, viewMode, viewDate, subjects, setIsAddPlanModal, 
         completed: plan.completed ? 0 : 1
       }
 
-       
+
 
       delete planInfo.saved;
       fetch(`${serverOrigin}/api/plan/status-change`,
@@ -54,11 +54,12 @@ function PlanTimeline({ plans, viewMode, viewDate, subjects, setIsAddPlanModal, 
       let isInRange = false;
       const viewDateTime = DateTime.fromJSDate(viewDate);
       if (viewMode === "timeGridDay") {
-        if (viewDateTime.startOf('day').toMillis <= plan.start.getTime() && plan.start.getTime() <= viewDateTime.endOf('day').toMillis) {
+        if (viewDateTime.startOf('day').toMillis() <= plan.start.getTime() && plan.start.getTime() <= viewDateTime.endOf('day').toMillis()) {
           isInRange = true;
         };
       } else if (viewMode === "timeGridWeek") {
-        if (viewDateTime.startOf('week').toMillis <= plan.start.getTime() && plan.start.getTime() <= viewDateTime.endOf('week').toMillis) {
+        console.log(viewDateTime.startOf('week').toMillis() <= plan.start.getTime())
+        if (viewDateTime.startOf('week').toMillis() <= plan.start.getTime() && plan.start.getTime() <= viewDateTime.endOf('week').toMillis()) {
           isInRange = true;
         };
       } else {
@@ -66,6 +67,7 @@ function PlanTimeline({ plans, viewMode, viewDate, subjects, setIsAddPlanModal, 
           isInRange = true;
         };
       };
+      console.log(isInRange)
 
       if (isInRange) {
         setIsPlan(true);
@@ -136,7 +138,7 @@ function PlanTimeline({ plans, viewMode, viewDate, subjects, setIsAddPlanModal, 
         return (
           <li className={styles.plan} key={i}>
             <div className={styles.iconWrapper} style={{ backgroundColor: subjectBg }}>
-              {/* {icon} */}
+              {icon}
               <div className={styles.hoverDispn} onClick={() => { togglePlan(plan) }}>
                 <CircularCheckBox checked={plan.completed} />
               </div>

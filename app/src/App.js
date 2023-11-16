@@ -54,7 +54,7 @@ function App() {
   const [repeat, setRepeat] = useState(0);
   const [priority, setPriority] = useState(50);
   const [notification, setNotification] = useState(-1);
-  const [submit, setSubmit] = useState(false);
+  const [planSubmit, setPlanSubmit] = useState(false);
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
 
   const [addSubjectResponse, setAddSubjectResponse] = useState(null);
@@ -205,18 +205,19 @@ function App() {
         subjects={subjectsOpt}
         notification={notification}
         setNotification={setNotification}
-        submit={submit}
-        setSubmit={setSubmit}
+        planSubmit={planSubmit}
+        setPlanSubmit={setPlanSubmit}
         repeat={repeat}
         setRepeat={setRepeat}
         priority={priority}
         setPriority={setPriority}
         setIsAddSubjectModal={setIsAddSubjectModal}
+        setResponse={setResponse}
       />
       <AddSubjectModal
         setIsAddSubjectModal={setIsAddSubjectModal}
         isAddSubjectModal={isAddSubjectModal}
-        setAddSubjectResponse={setAddSubjectResponse}
+        setAddSubjectResponse={setResponse}
         subjects={subjects}
         setSubjects={setSubjects}
         setSubject={setSubject}
@@ -242,6 +243,8 @@ function App() {
               />
 
               <Header
+                planSubmit={planSubmit}
+                setPlanSubmit={setPlanSubmit}
                 setIsAddPlanModal={setIsAddPlanModal}
                 isAddPlanModal={isAddPlanModal}
                 setPlans={setPlans}
@@ -260,6 +263,7 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}
+                setResponse={setResponse}
               />
               <Footer />
             </div>
@@ -277,6 +281,8 @@ function App() {
               />
 
               <Header
+                planSubmit={planSubmit}
+                setPlanSubmit={setPlanSubmit}
                 setIsAddPlanModal={setIsAddPlanModal}
                 isAddPlanModal={isAddPlanModal}
                 setPlans={setPlans}
@@ -295,6 +301,7 @@ function App() {
                 userInfo={userInfo}
                 reset={reset}
                 subjects={subjects}
+                setResponse={setResponse}
               />
               <Footer />
             </div>
@@ -311,6 +318,8 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
+                planSubmit={planSubmit}
+                setPlanSubmit={setPlanSubmit}
                 setIsAddPlanModal={setIsAddPlanModal}
                 isAddPlanModal={isAddPlanModal}
                 setPlans={setPlans}
@@ -328,6 +337,7 @@ function App() {
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}
                 reset={reset}
+                setResponse={setResponse}
               />
               <Footer />
             </div>
@@ -344,6 +354,8 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
+                planSubmit={planSubmit}
+                setPlanSubmit={setPlanSubmit}
                 setIsAddPlanModal={setIsAddPlanModal}
                 isAddPlanModal={isAddPlanModal}
                 setPlans={setPlans}
@@ -371,6 +383,7 @@ function App() {
                 setMyGroups={setMyGroups}
                 likedGroups={likedGroups}
                 setLikedGroups={setLikedGroups}
+                setResponse={setResponse}
               />
               <Footer />
             </div>
@@ -396,6 +409,7 @@ function App() {
                 setEvents={setPlans}
                 reset={reset}
                 myGroups={myGroups}
+                setResponse={setResponse}
               />
             </div>
           }
@@ -411,6 +425,8 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
+                planSubmit={planSubmit}
+                setPlanSubmit={setPlanSubmit}
                 setIsAddPlanModal={setIsAddPlanModal}
                 isAddPlanModal={isAddPlanModal}
                 setPlans={setPlans}
@@ -435,6 +451,24 @@ function App() {
                 events={plans}
                 setEvents={setPlans}
                 reset={reset}
+                setResponse={setResponse}
+                planSubmit={planSubmit}
+                setPlanSubmit={setPlanSubmit}
+                title={title}
+                setTitle={setTitle}
+                setStart={setStart}
+                start={start}
+                setEnd={setEnd}
+                end={end}
+                description={description}
+                setDescription={setDescription}
+                setSubject={setSubject}
+                notification={notification}
+                setNotification={setNotification}
+                repeat={repeat}
+                setRepeat={setRepeat}
+                priority={priority}
+                setPriority={setPriority}
               />
             </div>
           }
@@ -450,6 +484,8 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
+                planSubmit={planSubmit}
+                setPlanSubmit={setPlanSubmit}
                 setIsAddPlanModal={setIsAddPlanModal}
                 isAddPlanModal={isAddPlanModal}
                 setPlans={setPlans}
@@ -468,11 +504,12 @@ function App() {
                 subjects={subjects}
                 setSubjects={setSubjects}
                 userInfo={userInfo}
+                setResponse={setResponse}
               />
             </div>
           }
         />
-        <Route
+        {/* <Route
           path="/dashboard/templates"
           element={
             <div>
@@ -483,6 +520,8 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
+        planSubmit={planSubmit}
+        setPlanSubmit={setPlanSubmit}
                 setIsAddPlanModal={setIsAddPlanModal}
                 isAddPlanModal={isAddPlanModal}
                 setPlans={setPlans}
@@ -502,7 +541,7 @@ function App() {
               />
             </div>
           }
-        />
+        /> */}
         <Route
           path="/dashboard/user/*"
           element={
@@ -514,6 +553,8 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
+                planSubmit={planSubmit}
+                setPlanSubmit={setPlanSubmit}
                 setIsAddPlanModal={setIsAddPlanModal}
                 isAddPlanModal={isAddPlanModal}
                 setPlans={setPlans}
@@ -531,6 +572,7 @@ function App() {
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}
                 groups={groups}
+                setResponse={setResponse}
               />
             </div>
           }

@@ -160,7 +160,10 @@ thead .fc-scroller {
 
 
 function EventPlanner(props) {
-  const { PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isAddPlanModal, setIsAddPlanModal, setIsAddSubjectModal, subjects, setSubjects, setSubject, subject, setViewDate } = props;
+  const { 
+    title, setTitle,description, setDescription,start, setStart,end, setEnd,repeat, setRepeat,priority, setPriority,
+    notification, setNotification,
+    PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isAddPlanModal, setIsAddPlanModal, setIsAddSubjectModal, subjects, setSubjects, setSubject, subject, setViewDate, submit, setSubmit } = props;
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [viewText, setViewText] = useState({
     year: 'numeric',
@@ -168,15 +171,14 @@ function EventPlanner(props) {
   })
 
   //new event stats
-  const [title, setTitle] = useState('');
+  /* const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [subjectsOpt, setSubjectsOpt] = useState([]);
   const [start, setStart] = useState(new Date());
   const [end, setEnd] = useState(new Date());
   const [repeat, setRepeat] = useState(0);
   const [priority, setPriority] = useState(50);
-  const [notification, setNotification] = useState(-1);
-  const [submit, setSubmit] = useState(false);
+  const [notification, setNotification] = useState(-1); */
 
   /* const [prevStart, setPrevStart] = useState(null); */
 
@@ -330,14 +332,9 @@ function EventPlanner(props) {
     setViewDate(new Date(new Date(start).setHours(0, 0, 0, 0)));
   }, [start]);
 
-  useEffect(() => {
-    setSubjectsOpt([...subjects.map((subject) => {
-      return { name: subject.name, value: subject.id };
-    })]);
-  }, [subjects]);
-
   //handle submit
   useEffect(() => {
+    console.log('gd')
     if (submit) {
       updatePlan(selectedEvent, title, start, end, description, subject, priority);
     };
