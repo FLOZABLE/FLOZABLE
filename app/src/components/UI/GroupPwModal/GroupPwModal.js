@@ -44,7 +44,7 @@ function GroupPwModal(props) {
   };
 
   return (
-    <div className={`${styles.GroupPwModal} ${props.openGroupPwModal ? styles.open : ''}`}>
+    <div className={`${styles.GroupPwModal} modal ${props.openGroupPwModal ? 'open' : ''}`}>
       <div className={styles.header}>
         <i onClick={() => { props.setOpenGroupPwModal(false) }}>
           <FontAwesomeIcon icon={faXmark} />

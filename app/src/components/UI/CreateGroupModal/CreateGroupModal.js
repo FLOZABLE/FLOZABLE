@@ -57,7 +57,7 @@ function CreateGroupModal(props) {
   }, [submit]);
 
   return (
-    <div className={`${styles.CreateGroupModal} ${isOpen ? styles.open : ''}`}>
+    <div className={`${styles.CreateGroupModal} modal ${isOpen ? 'open' : ''}`}>
       <div className={styles.header}>
         <i className={styles.closeBtn} onClick={() => {setIsOpen(false)}}>
           <FontAwesomeIcon icon={faXmark} />
