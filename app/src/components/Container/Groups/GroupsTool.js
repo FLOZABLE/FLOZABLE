@@ -25,14 +25,12 @@ function getMyGroups(userInfo, groups) {
 function setGroupMembers(groups, users) {
   const todayStart = new Date().setHours(0, 0, 0, 0) / 1000;
   const todayEnd = new Date().setHours(23, 59, 59, 0) / 1000;
-  console.log('gd', groups, users)
   const newGroups = [...groups];
   newGroups.map((group) => {
-    group.members = group.members.split(',');
+    group.members = typeof group.members === 'string' ? group.members.split(',') : [];
     group.members = group.members.map(member => {
       member = users.find((userInfo) => { return member == userInfo.user_id });
       if (!member) return;
-      console.log(member)
       const datum = member.timerInfo.dp;
       let timelineSum = 0;
       let total = 0;

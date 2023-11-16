@@ -108,7 +108,7 @@ function EventModal(props) {
           </div>
         </div>
         <div className={styles.submit}>
-          <BlobBtn name={'SUBMIT'} setClicked={props.setSubmit} />
+          <BlobBtn name={'SUBMIT'} setClicked={props.setPlanSubmit} />
         </div>
       </div>
     </div>
