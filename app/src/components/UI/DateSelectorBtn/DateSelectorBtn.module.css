@@ -6,6 +6,7 @@
   align-items: center;
   padding: 20px;
   transition: .3s background-color ease-in-out, box-shadow .3s ease-in-out;
+  font-weight: 700;
 }
 
 .DateSelectorBtn i {
