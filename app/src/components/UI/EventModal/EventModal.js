@@ -11,7 +11,22 @@ import { DateTime } from "luxon";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import SliderAnimation from "../SliderAnimation/SliderAnimation";
 
-function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjectModal, setNotification, title, setTitle, start, setStart, end, setEnd, repeat, setRepeat, description, setDescription, setSubject, subject, priority, setPriority, setPlanSubmit}) {
+function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjectModal, setPlanSubmit, setPlans}) {
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [subjectsOpt, setSubjectsOpt] = useState([]);
+  const [start, setStart] = useState(new Date());
+  const [end, setEnd] = useState(new Date());
+  const [repeat, setRepeat] = useState(0);
+  const [priority, setPriority] = useState(50);
+  const [notification, setNotification] = useState(-1);
+  const [subject, setSubject] = useState(null);
+
+  const submit = () => {
+    console.log('gd')
+  }
+
   
   return (
     <div className={`${styles.EventModal} modal ${isAddPlanModal ? 'open' : ''}`}>
@@ -109,7 +124,7 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
           </div>
         </div>
         <div className={styles.submit}>
-          <BlobBtn name={'SUBMIT'} setClicked={setPlanSubmit} />
+          <BlobBtn name={'SUBMIT'} setClicked={submit} />
         </div>
       </div>
     </div>

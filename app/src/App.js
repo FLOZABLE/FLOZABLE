@@ -200,6 +200,13 @@ function App() {
         allMembers={allMembers}
         myGroups={myGroups}
       />
+      <EventModal 
+      isAddPlanModal={isAddPlanModal}
+      subjects={subjects}
+      setIsAddPlanModal={setIsAddPlanModal}
+      setPlans={setPlans}
+      setIsAddSubjectModal={setIsAddSubjectModal}
+      />
       <Routes>
         <Route
           path="/dashboard"

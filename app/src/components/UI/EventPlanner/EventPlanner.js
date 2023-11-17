@@ -12,6 +12,7 @@ import generateRandomId from "../../../utils/RandomId";
 import { DateTime } from "luxon";
 
 import EventModal from "../EventModal/EventModal";
+import PlannerEventModal from "../PlannerEventModal/PlannerEventModal";
 //import { renderEventContent, handleDateSelect, handleDateClick } from "./EventPlannerTool";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -553,7 +554,7 @@ function EventPlanner(props) {
             },
           }}
         />
-        <EventModal
+        <PlannerEventModal
           isAddPlanModal={isAddPlanModal}
           setIsAddPlanModal={setIsAddPlanModal}
           title={title}
