@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from "./EventModal.module.css";
+import styles from "./PlannerEventModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faBook, faClock, faFileLines, faRepeat, faXmark } from "@fortawesome/free-solid-svg-icons";
 import styled from "@emotion/styled";
@@ -11,25 +11,10 @@ import { DateTime } from "luxon";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import SliderAnimation from "../SliderAnimation/SliderAnimation";
 
-function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjectModal, setPlanSubmit, setPlans}) {
-
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [subjectsOpt, setSubjectsOpt] = useState([]);
-  const [start, setStart] = useState(new Date());
-  const [end, setEnd] = useState(new Date());
-  const [repeat, setRepeat] = useState(0);
-  const [priority, setPriority] = useState(50);
-  const [notification, setNotification] = useState(-1);
-  const [subject, setSubject] = useState(null);
-
-  const submit = () => {
-    console.log('gd')
-  }
-
+function PlannerEventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjectModal, setNotification, title, setTitle, start, setStart, end, setEnd, repeat, setRepeat, description, setDescription, setSubject, subject, priority, setPriority, setPlanSubmit}) {
   
   return (
-    <div className={`${styles.EventModal} modal ${isAddPlanModal ? 'open' : ''}`}>
+    <div className={`${styles.PlannerEventModal} modal ${isAddPlanModal ? 'open' : ''}`}>
       <div className={styles.header}>
         <i onClick={() => {setIsAddPlanModal(false)}}>
           <FontAwesomeIcon icon={faXmark} />
@@ -124,11 +109,11 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
           </div>
         </div>
         <div className={styles.submit}>
-          <BlobBtn name={'SUBMIT'} setClicked={submit} />
+          <BlobBtn name={'SUBMIT'} setClicked={setPlanSubmit} />
         </div>
       </div>
     </div>
   );
 }
 
-export default EventModal;
+export default PlannerEventModal;
