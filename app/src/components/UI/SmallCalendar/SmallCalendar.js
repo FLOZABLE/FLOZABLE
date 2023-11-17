@@ -25,7 +25,7 @@ const StyleWrapper = styled.div`
     height: 400px;
   }
   .fc-theme-standard td, .fc-theme-standard th {
-    border: none;
+    border: none !important;
   }
   .fc .fc-daygrid-day-top {
     justify-content: center;
@@ -36,7 +36,8 @@ const StyleWrapper = styled.div`
   .fc .fc-prev-button.fc-button-primary, .fc .fc-next-button.fc-button-primary {
     background-color: transparent;
     color: #000;
-    border: none;
+    border: none !important;
+    box-shadow: none !important;
   }
   .fc-custom-today-button {
     background-color: #4169e1;

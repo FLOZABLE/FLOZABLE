@@ -58,6 +58,6 @@
 }
 
 .PlannerContainer .planTimelineWrapper:hover {
-  width: 400px;
+/*   width: 400px; */
   animation: showScroll 2s .3s forwards;
 }

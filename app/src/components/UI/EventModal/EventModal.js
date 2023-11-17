@@ -11,11 +11,12 @@ import { DateTime } from "luxon";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import SliderAnimation from "../SliderAnimation/SliderAnimation";
 
-function EventModal(props) {
+function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjectModal, setNotification, title, setTitle, start, setStart, end, setEnd, repeat, setRepeat, description, setDescription, setSubject, subject, priority, setPriority, setPlanSubmit}) {
+  
   return (
-    <div className={`${styles.EventModal} modal ${props.isAddPlanModal ? 'open' : ''}`}>
+    <div className={`${styles.EventModal} modal ${isAddPlanModal ? 'open' : ''}`}>
       <div className={styles.header}>
-        <i onClick={() => {props.setIsAddPlanModal(false)}}>
+        <i onClick={() => {setIsAddPlanModal(false)}}>
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
@@ -24,7 +25,7 @@ function EventModal(props) {
           <div className={styles.iconWrapper}>
           </div>
           <div className={styles.contentWrapper}>
-            <input type="text" placeholder="Enter title" value={props.title} onChange={(e) => {props.setTitle(e.target.value)}}/>
+            <input type="text" placeholder="Enter title" value={title} onChange={(e) => {setTitle(e.target.value)}}/>
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -35,7 +36,7 @@ function EventModal(props) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <DateSelector start={props.start} setStart={props.setStart} end={props.end} setEnd={props.setEnd}/>
+            <DateSelector start={start} setStart={setStart} end={end} setEnd={setEnd}/>
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -47,8 +48,8 @@ function EventModal(props) {
           </div>
           <div className={styles.contentWrapper}>
             <TextEditor 
-            setDescription={props.setDescription}
-            description={props.description}
+            setDescription={setDescription}
+            description={description}
             />
           </div>
         </div>
@@ -60,7 +61,7 @@ function EventModal(props) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-          <DropDownButton options={[{name:'Does not repeat', value: 0}, {name: 'Daily', value: 1}, {name: 'Weekly', value: 2}, {name: `Monthly`, value: 3}]} defaultIndex={0} setValue={props.setRepeat} />
+          <DropDownButton options={[{name:'Does not repeat', value: 0}, {name: 'Daily', value: 1}, {name: 'Weekly', value: 2}, {name: `Monthly`, value: 3}]} defaultIndex={0} setValue={setRepeat} />
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -72,11 +73,11 @@ function EventModal(props) {
           </div>
           <div className={styles.contentWrapper}>
             <div className={styles.subjectWrapper}>
-              <DropDownButton options={props.subjects} defaultIndex={0} setValue={props.setSubject} />
+              <DropDownButton options={subjects} defaultIndex={0} setValue={setSubject} />
             </div>
             <p>OR</p>
             <div className={styles.addSubjectWrapper}>
-              <BlobBtn name={'Add Subject'} setClicked={props.setIsAddSubjectModal} delay={-1} />
+              <BlobBtn name={'Add Subject'} setClicked={setIsAddSubjectModal} delay={-1} />
             </div>
           </div>
         </div>
@@ -89,7 +90,7 @@ function EventModal(props) {
           </div>
           <div className={styles.contentWrapper}>
             <div className={styles.notificationWrapper}>
-              <DropDownButton options={[{name:'no notification', value: -1}, {name: '5 minutes before', value: 5}, {name: '10 minutes before', value: 10}, {name: '30 minutes before', value: 30}, {name: '1 hour before', value: 60}]} defaultIndex={0} setValue={props.setNotification} />
+              <DropDownButton options={[{name:'no notification', value: -1}, {name: '5 minutes before', value: 5}, {name: '10 minutes before', value: 10}, {name: '30 minutes before', value: 30}, {name: '1 hour before', value: 60}]} defaultIndex={0} setValue={setNotification} />
             </div>
 
           </div>
@@ -103,12 +104,12 @@ function EventModal(props) {
           </div>
           <div className={styles.contentWrapper}>
             <div className={styles.notificationWrapper}>
-              <SliderAnimation min={0} max={100} step={1} sliderValue={props.priority} setSliderValue={props.setPriority} />
+              <SliderAnimation min={0} max={100} step={1} sliderValue={priority} setSliderValue={setPriority} />
             </div>
           </div>
         </div>
         <div className={styles.submit}>
-          <BlobBtn name={'SUBMIT'} setClicked={props.setPlanSubmit} />
+          <BlobBtn name={'SUBMIT'} setClicked={setPlanSubmit} />
         </div>
       </div>
     </div>

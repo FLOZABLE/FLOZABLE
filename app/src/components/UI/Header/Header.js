@@ -80,7 +80,7 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
       });
     }
     subjectActivity.sort((a, b) => a - b);
-    
+
     let longestSessionSeconds = subjectActivity.length ? subjectActivity[subjectActivity.length - 1] : 0;
     let longestSessionMinutes = Math.floor(longestSessionSeconds / 60);
     let longestSessionHours = Math.floor(longestSessionMinutes / 60);
@@ -99,6 +99,30 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
 
   return (
     <header className={`${styles.header} ${isSidebarOpen || isSidebarHovered ? styles.isOpen : ''} ${mode === "study" ? styles.studyMode : ''} ${isScrolled ? styles.scrolled : ''}`}>
+      {/* <EventModal
+        isAddPlanModal={isAddPlanModal}
+        setIsAddPlanModal={setIsAddPlanModal}
+        title={title}
+        setTitle={setTitle}
+        setStart={setStart}
+        start={start}
+        setEnd={setEnd}
+        end={end}
+        description={description}
+        setDescription={setDescription}
+        setSubject={setSubject}
+        subjects={subjectsOpt}
+        notification={notification}
+        setNotification={setNotification}
+        submit={submit}
+        setSubmit={setSubmit}
+        repeat={repeat}
+        setRepeat={setRepeat}
+        priority={priority}
+        setPriority={setPriority}
+        setIsAddSubjectModal={setIsAddSubjectModal}
+        setPlanSubmit={() => { updatePlan(selectedEvent, title, start, end, description, subject, priority); }}
+      /> */}
       <div className={styles.left}>
         <ToggleBtn
           on={<p>on</p>}

@@ -17,6 +17,7 @@ import { plugins } from 'chart.js';
 import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, sortRanking, updateRankingTrend } from './StatTools';
 import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
 import { DateTime } from 'luxon';
+import CalendarModal from '../../UI/CalendarModal/CalendarModal';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -96,28 +97,30 @@ function Stats(props) {
 
   const updateCalendarLabel = () => {
     const viewDateTime = DateTime.fromJSDate(viewDate);
+    let startMillis;
+    let stopMillis;
     if (statsViewer === 'Daily') {
-      setStartDate(viewDateTime.startOf('day').toMillis());
-      setEndDate(viewDateTime.endOf('day').toMillis())
-    } else if (statsViewer === 'Weekly') {
-      setStartDate(viewDateTime.startOf('day').toMillis());
-      setEndDate(viewDateTime.endOf('day').toMillis())
-    } else {
-      setStartDate(viewDateTime.startOf('day').toMillis());
-      setEndDate(viewDateTime.endOf('day').toMillis())
-    }
-    
-    if (viewDate === today) {
-      if (statsViewer === 'Daily') {
+      startMillis = viewDateTime.startOf('day').toMillis();
+      stopMillis = viewDateTime.endOf('day').toMillis();
+      if (startMillis < new Date().getTime() < stopMillis) {
         setCalendarLabel('Today');
-      } else if (statsViewer === 'Weekly') {
+      }
+    
+    } else if (statsViewer === 'Weekly') {
+      startMillis = viewDateTime.startOf('week').toMillis();
+      stopMillis = viewDateTime.endOf('week').toMillis();
+      if (startMillis < new Date().getTime() < stopMillis) {
         setCalendarLabel('This Week');
-      } else {
-        setCalendarLabel('This Month');
       }
     } else {
-      setCalendarLabel(`${viewDate.getMonth() + 1}/${viewDate.getDate()}`);
-    }
+      startMillis = viewDateTime.startOf('month').toMillis();
+      stopMillis = viewDateTime.endOf('month').toMillis();
+      if (startMillis < new Date().getTime() < stopMillis) {
+        setCalendarLabel('This Month');
+      }
+    };
+    setStartDate(startMillis);
+    setEndDate(stopMillis);
   };
 
   useEffect(() => {
@@ -183,9 +186,7 @@ function Stats(props) {
 
   return (
     <div className={styles.StatsContainer}>
-      <div className={`${styles.CalendarModal} ${isCalendarOpen ? styles.isOpen : ''}`}>
-        <StatsCalendar onToggleCalendar={toggleCalendar} isCalendarOpen={isCalendarOpen} viewOpt={statsViewer} setViewDate={updateViewDate} viewDate={viewDate} />
-      </div>
+ <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} />
       <StuckModal />
       <div className={` Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>

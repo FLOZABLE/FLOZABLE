@@ -5,15 +5,20 @@
   --pink: #ff9494;
   --purple: #6f6af8;
   --gray: #f1f3f5;
+  --font-gray: #545454;
 }
 
 .App {
   text-align: center;
 }
 
+p {
+  color: var(--font-gray);
+}
+
 canvas { 
-  height: 100% !important; 
-  width: 100% !important; 
+  /* height: 100% !important; 
+  width: 100% !important;  */
   display: block;
 }
 

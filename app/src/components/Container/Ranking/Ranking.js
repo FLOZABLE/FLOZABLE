@@ -38,28 +38,24 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   //fetch new ranking
   useEffect(() => {
-    const viewTime = new DateTime.fromJSDate(viewDate);
+    const viewTime = DateTime.fromJSDate(viewDate);
 
     let startTime;
     let stopTime;
     if (viewer == "Daily") {
-      startTime = viewTime.startOf('day').toSeconds();
-      stopTime = viewTime.endOf('day').toSeconds();
+      startTime = viewTime.startOf('day').toMillis();
+      stopTime = viewTime.endOf('day').toMillis();
     }
     else if (viewer == "Weekly") {
-      startTime = viewTime.startOf('week').toSeconds();
-      stopTime = viewTime.endOf('week').toSeconds();
-    }
-    else if (viewer == "Monthly") {
-      startTime = viewTime.startOf('month').toSeconds();
-      stopTime = viewTime.endOf('month').toSeconds();
+      startTime = viewTime.startOf('week').toMillis();
+      stopTime = viewTime.endOf('week').toMillis();
     }
     else {
-      return;
-    };
-
-    setStartDate(startTime * 1000);
-    setEndDate(stopTime * 1000);
+      startTime = viewTime.startOf('month').toMillis();
+      stopTime = viewTime.endOf('month').toMillis();
+    }
+    setStartDate(startTime);
+    setEndDate(stopTime);
 
     
     fetch(`${serverOrigin}/api/ranking/sort`, {

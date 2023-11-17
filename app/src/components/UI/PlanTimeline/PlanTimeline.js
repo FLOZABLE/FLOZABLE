@@ -81,63 +81,70 @@ function PlanTimeline({ plans, viewMode, viewDate, subjects, setIsAddPlanModal, 
             icon = <WritePen
               width={"40px"}
               height={"40px"}
-              fill={"#000"}
-              opt1={"#000"}
+              fill={subjectBg}
+              opt1={subjectBg}
             />
           } else if (planSubject.icon === 'Book') {
             icon = <Book
               width={"40px"}
               height={"40px"}
-              fill={"#000"}
-              opt1={"#000"}
+              fill={subjectBg}
+              opt1={subjectBg}
             />
           } else if (planSubject.icon === 'Microscope') {
             icon = <Microscope
               width={"40px"}
               height={"40px"}
-              fill={"#000"}
-              opt1={"#000"}
+              fill={subjectBg}
+              opt1={subjectBg}
             />
           } else if (planSubject.icon === 'Article') {
             icon = <Article
               width={"40px"}
               height={"40px"}
-              fill={"#000"}
-              opt1={"#000"}
+              fill={subjectBg}
+              opt1={subjectBg}
             />
           } else if (planSubject.icon === 'Coding') {
             icon = <Coding
               width={"40px"}
               height={"40px"}
-              fill={"#000"}
-              opt1={"#000"}
+              fill={subjectBg}
+              opt1={subjectBg}
             />
           } else if (planSubject.icon === 'Globe') {
             icon = <Globe
               width={"40px"}
               height={"40px"}
-              fill={"#000"}
-              opt1={"#000"}
+              fill={subjectBg}
+              opt1={subjectBg}
             />
           } else if (planSubject.icon === 'Workout') {
             icon = <Workout
               width={"40px"}
               height={"40px"}
-              fill={"#000"}
-              opt1={"#000"}
+              fill={subjectBg}
+              opt1={subjectBg}
             />
           } else {
             icon = <Alert
               width={"40px"}
               height={"40px"}
-              fill={"#000"}
-              opt1={"#000"}
+              fill={subjectBg}
+              opt1={subjectBg}
             />
           }
+        } else {
+          icon = <Alert
+            width={"40px"}
+            height={"40px"}
+            fill={'#000'}
+            opt1={'#000'}
+          />
         }
         return (
           <li className={styles.plan} key={i}>
-            <div className={styles.iconWrapper} style={{ backgroundColor: subjectBg }}>
+            <div className={styles.iconWrapper}>
               <div className={styles.icon}>
               {icon}
               </div>
