@@ -26,7 +26,7 @@ Router.post('/update-plan', async (req, res) => {
       const userId = req.session.user_id;
       const planInfo = req.body;
       const now = new Date();
-      const maxPlanVal = Math.floor(new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()).getTime() / 1000 / 60);
+      const maxPlanVal = Math.floor(new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()).getTime() / (1000 * 60));
       const schema = {
         type: 'object',
         properties: {
@@ -46,7 +46,8 @@ Router.post('/update-plan', async (req, res) => {
       };
   
       const isValid = isValidJSON(planInfo, schema);
-  
+      const {title, id, start, end, repeat, description, subject, notification, priority, completed} = planInfo;
+      console.log(isValid, planInfo)
       if (planInfo.start > planInfo.end) {
         return res.send({ success: false, reason: 'Invalid Time' });
       };
@@ -70,9 +71,9 @@ Router.post('/update-plan', async (req, res) => {
         } catch (error) {
           res.send({ success: false, reason: 'An error occurred' });
           console.log('Mysql Err', error);
-        } finally {
-          pool.releaseConnection(connection);
-        }
+        };
+      } else {
+        res.send({ success: false, reason: 'Invalid Value' });
       }
     } catch (error) {
       console.error('An error occurred:', error);

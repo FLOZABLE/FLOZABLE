@@ -51,7 +51,7 @@ function PlanTimeline({ plans, viewMode, viewDate, subjects, setIsAddPlanModal, 
     setIsPlan(false);
     setPlansEl(plans.map((plan, i) => {
       const planSubject = subjects.find((subject) => { return subject.id == plan.subject });
-      console.log(planSubject.icon, planSubject.name)
+      console.log(planSubject)
       let isInRange = false;
       const viewDateTime = DateTime.fromJSDate(viewDate);
       if (viewMode === "timeGridDay") {

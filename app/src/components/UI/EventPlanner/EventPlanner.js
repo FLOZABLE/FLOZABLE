@@ -161,26 +161,11 @@ thead .fc-scroller {
 
 
 function EventPlanner(props) {
-  const { PlannerRef, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isAddPlanModal, setIsAddPlanModal, setIsAddSubjectModal, subjects, setSubjects, setSubject, subject, setViewDate } = props;
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const { PlannerRef, setResponse, SmallCalendarRef, PlannerApi, SmallCalendarApi, viewMode, viewDate, addPlanResponse, setAddPlanResponse, events, setEvents, isAddPlanModal, setIsAddPlanModal, setIsAddSubjectModal, subjects, setSubjects, setSubject, subject, setViewDate } = props;
   const [viewText, setViewText] = useState({
     year: 'numeric',
     month: 'long',
   })
-
-  //new event stats
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [subjectsOpt, setSubjectsOpt] = useState([]);
-  const [start, setStart] = useState(new Date());
-  const [end, setEnd] = useState(new Date());
-  const [repeat, setRepeat] = useState(0);
-  const [priority, setPriority] = useState(50);
-  const [notification, setNotification] = useState(-1);
-  const [submit, setSubmit] = useState(false);
-
-  /* const [prevStart, setPrevStart] = useState(null); */
-
 
   function renderEventContent(eventInfo) {
     return (
@@ -212,87 +197,82 @@ function EventPlanner(props) {
   };
 
   function handleDateSelect(selectInfo) {
-    if (!selectedEvent) {
-      const id = generateRandomId(10);
-      setSelectedEvent(id);
-      const start = new Date(selectInfo.start);
-      const end = new Date(selectInfo.end);
-      const newEvent = {
-        id: id,
-        title: '',
-        start: start,
-        end: end,
-        description: '',
-        repeat: repeat,
-        subject: subject,
-        notification: notification,
-        priority: priority,
-        saved: false,
-        completed: 0
-      };
-      setStart(start);
-      setEnd(end);
-      setEvents([...events, newEvent]);
-      setIsAddPlanModal(newEvent);
-    } else {
+    if (isAddPlanModal && isAddPlanModal.id) {
       selectInfo.view.calendar.unselect();
-    };
-  };
-
-  function handleEventDateDrop(dropInfo) {
-    const eventInfo = dropInfo.event._def.extendedProps;
-    const event = dropInfo.event;
-    if (selectedEvent !== event.id && eventInfo.saved) {
-      updatePlan(event.id, event.title, event.start, event.end, eventInfo.description, eventInfo.subject, eventInfo.priority);
     } else {
-      setStart(event.start);
-      setEnd(event.end);
-    }
-  };
-
-  function handleEventResize(resizeInfo) {
-    const eventInfo = resizeInfo.event._def.extendedProps;
-    const event = resizeInfo.event;
-    if (selectedEvent !== event.id && eventInfo.saved) {
-      updatePlan(event.id, event.title, event.start, event.end, eventInfo.description, eventInfo.subject, eventInfo.priority);
-    } else {
-      setEnd(event.end);
-    };
-  };
-
-  function handleEventClick(event) {
-    const eventInfo = event.event._def.extendedProps;
-    if (selectedEvent && !selectedEvent.saved) {
-      const eventIndex = events.findIndex((event) => event.id == selectedEvent);
-      if (eventIndex !== -1) {
-        const updatedEvents = [...events];
-        if (!updatedEvents[eventIndex].saved) {
-          updatedEvents.splice(eventIndex, 1);
-          setEvents(updatedEvents);
+      const id = generateRandomId(10);
+      const start =  selectInfo.start ? new Date(selectInfo.start) : null;
+      const end = selectInfo.end ? new Date(selectInfo.end) : null;
+      const subject = subjects[0] ? subjects[0].id : '';
+      if (start && end) {
+        const newEvent = {
+          title: '',
+          start,
+          end,
+          description: '',
+          repeat: false,
+          subject,
+          notification: -1,
+          priority: 50,
+          saved: false,
+          completed: 0
         };
-      };
+        setIsAddPlanModal(newEvent);
+      }
     };
-    if (eventInfo.saved) {
-      setIsAddPlanModal(eventInfo);
-      setSelectedEvent(event.event.id);
-      setStart(event.event.start);
-      setEnd(event.event.end);
-      setTitle(event.event.title);
-      setDescription(eventInfo.description);
-      setRepeat(eventInfo.description);
-      setPriority(eventInfo.priority);
-      setNotification(eventInfo.notification);
-    }
+  };
+
+  function handleEventDateDrop(data) {
+    const {id, start, end,} = data.event;
+    const eventIndex = events.findIndex((event) => event.id == id);
+    if (eventIndex !== -1) {
+      const updatedEvents = [...events];
+      updatedEvents[eventIndex] = {...updatedEvents[eventIndex], start, end};
+      setEvents(updatedEvents);
+      updateServer({...updatedEvents[eventIndex]});
+    };
+  };
+
+  function handleEventResize(data) {
+    const {id, start, end} = data.event;
+    const eventIndex = events.findIndex((event) => event.id == id);
+    if (eventIndex !== -1) {
+      const updatedEvents = [...events];
+      updatedEvents[eventIndex] = {...updatedEvents[eventIndex], start, end};
+      setEvents(updatedEvents);
+      updateServer({...updatedEvents[eventIndex]});
+    };
+  };
+
+  function updateServer(event) {
+    const {start, end, completed} = event;
+    const startSec = Math.floor(start.getTime() / (1000 * 60));
+    const endSec = Math.floor(end.getTime() / (1000 * 60));
+    const updateInfo = {...event, start: startSec, end: endSec, completed: completed ? 1 : 0};
+    delete updateInfo.saved;
+    fetch(`${serverOrigin}/api/plan/update-plan`,
+    {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updateInfo)
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setResponse(data);
+      if (data.success) {
+        setIsAddPlanModal(false);
+      };
+    })
+    .catch((error) => console.error(error));
   }
 
-  useEffect(() => {
-    if (!isAddPlanModal) {
-      setSelectedEvent(null);
-      setTitle('');
-      setDescription('');
-      setPriority(50);
-    }
-  }, [isAddPlanModal]);
+  function handleEventClick(data) {
+    const {id, start, end, title} = data.event;
+    const eventInfo = {...data.event._def.extendedProps, id, start, end,title};
+    setIsAddPlanModal(eventInfo);
+  }
 
   function areDatesInSameWeek(date1, date2) {
     const dayOfWeek1 = date1.getDay();
@@ -311,136 +291,24 @@ function EventPlanner(props) {
 
   useEffect(() => {
     if (PlannerApi) {
+      /* const plannerDateTime = DateTime.fromJSDate(PlannerApi.getDate());
+      const viewDateTime = DateTime.fromJSDate(viewDate);
+      console.log(PlannerApi.getDate(), viewDate)
       if (viewMode == 'timeGridDay') {
-        if (new Date(start.setHours(0, 0, 0, 0)).getTime() !== viewDate.getTime()) {
-          PlannerApi.gotoDate(viewDate);
+        if (plannerDateTime.toISODate() !== viewDateTime.toISODate()) {
+          //PlannerApi.gotoDate(viewDate);
         }
       } else if (viewMode == 'timeGridWeek') {
-        if (!areDatesInSameWeek(new Date(start), new Date(viewDate))) {
-          PlannerApi.gotoDate(viewDate);
+        if (!(viewDateTime.startOf('week').toSeconds() <= plannerDateTime.startOf('week').toSeconds() &&  plannerDateTime.endOf('week').toSeconds() <= viewDateTime.endOf('week').toSeconds())) {
+          //PlannerApi.gotoDate(viewDate);
         }
       } else {
-        if (!(start.getFullYear() !== viewDate.getFullYear() && start.getMonth() !== viewDate.getMonth())) {
-          PlannerApi.gotoDate(viewDate);
+        if (plannerDateTime.startOf('month').toSeconds() <= viewDateTime.startOf('month').toSeconds() ||  viewDateTime.endOf('month').toSeconds() <= plannerDateTime.endOf('month').toSeconds()) {
+          //PlannerApi.gotoDate(viewDate);
         }
-      }
+      } */
     }
   }, [viewDate]);
-
-  useEffect(() => {
-    setViewDate(new Date(new Date(start).setHours(0, 0, 0, 0)));
-  }, [start]);
-
-  useEffect(() => {
-    setSubjectsOpt([...subjects.map((subject) => {
-      return { name: subject.name, value: subject.id };
-    })]);
-  }, [subjects]);
-
-  function updatePlan(selectedEvent, title, start, end, description, subject, priority) {
-    const eventIndex = events.findIndex((event) => event.id == selectedEvent);
-    console.log('event index', eventIndex)
-    if (eventIndex === -1) {
-      //new subject
-      const id = generateRandomId(10);
-      setSelectedEvent(id);
-      const start = new Date();
-      const end = new Date();
-      const newEvent = {
-        id,
-        title: '',
-        start,
-        end,
-        description: '',
-        repeat,
-        subject,
-        notification,
-        priority,
-        saved: false,
-        completed: 0
-      };
-
-      const updatedEvents = [...events, newEvent];
-      setStart(start);
-      setEnd(end);
-      setEvents(updatedEvents);
-      setIsAddPlanModal(newEvent);
-
-      delete newEvent.saved;
-      fetch(`${serverOrigin}/api/plan/update-plan`,
-        {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(newEvent)
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          setAddPlanResponse(data);
-          if (data.success) {
-            setEvents(updatedEvents);
-            setIsAddPlanModal(false);
-          };
-        })
-        .catch((error) => console.error(error));
-    } else {
-      const updatedEvents = [...events];
-      updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, description: description, subject: subject, saved: true, priority: priority };
-      const planInfo = {
-        ...updatedEvents[eventIndex],
-        start: Math.floor(start.getTime() / (1000 * 60)),
-        end: Math.floor(end.getTime() / (1000 * 60)),
-      }
-  
-      delete planInfo.saved;
-      fetch(`${serverOrigin}/api/plan/update-plan`,
-        {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(planInfo)
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          setAddPlanResponse(data);
-          if (data.success) {
-            
-            setEvents(updatedEvents);
-            setIsAddPlanModal(false);
-          };
-        })
-        .catch((error) => console.error(error));
-    }
-  };
-
-  useEffect(() => {
-    if (selectedEvent) {
-      const eventIndex = events.findIndex((event) => event.id == selectedEvent);
-      if (eventIndex !== -1) {
-        const updatedEvents = [...events];
-        updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, subject: subject, priority: priority };
-        if (start.getTime() > end.getTime()) {
-        } else {
-          setEvents(updatedEvents)
-        }
-      }
-    };
-  }, [title, start, end, subject]);
-
-  useEffect(() => {
-    if (!isAddPlanModal) {
-      const eventIndex = events.findIndex((event) => event.id == selectedEvent);
-      if (eventIndex !== -1) {
-        const updatedEvents = [...events];
-        if (!updatedEvents[eventIndex].saved) {
-          updatedEvents.splice(eventIndex, 1);
-          setEvents(updatedEvents);
-        };
-      };
-    };
-  }, [isAddPlanModal]);
 
   const handleTodayButtonClick = () => {
     const currentDate = new Date();
