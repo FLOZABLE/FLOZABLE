@@ -483,9 +483,9 @@ function Stats(props) {
             <div className={`${styles.smallBox} ${styles.chartsBox}`}>
               <p className={styles.title}>Today's Website Usage while Studying</p>
               <div className={styles.chartContainer}>
-                <PieChart
+              <PieChart
                   labels={
-                    ["Math", "English", "History", "Sci", "Phy"]
+                    subjects.map((subject) => subject.name)
                   }
 
                   datasets={
@@ -494,7 +494,7 @@ function Stats(props) {
                         label: "My First dataset",
                         backgroundColor: colorsList,
                         borderColor: colorsList,
-                        data: [2, 20, 30, 45],
+                        data: subjects.map((subject) => subject.daily.total[subject.daily.total.length - 1])
                       },
                     ]
                   }
@@ -503,7 +503,7 @@ function Stats(props) {
                     {
                       plugins: {
                         legend: {
-                          position: 'bottom'
+                          position: 'bottom',
                         },
                         datalabels: {
                           color: '#ffffff',
