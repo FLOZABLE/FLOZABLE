@@ -206,7 +206,6 @@ Router.post('/bring-groups', async (req, res) => {
       member.timerInfo = timerInfo;
       member.activeSubject = activeSubject;
     }));
-    console.log(groups)
     res.send({ success: true, groups: groups, membersInfo: membersInfo });
   } catch (err) {
     console.error('Error performing database queries:', err);

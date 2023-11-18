@@ -30,121 +30,84 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
 
   const submit = () => {
     console.log('gd')
+    const startSec = Math.floor(start.getTime() / (1000 * 60));
+    const endSec = Math.floor(end.getTime() / (1000 * 60));
+    const newEventInfo = {title, id, start: startSec, end: endSec, description, repeat, subject, notification, priority, completed: completed ? 1 : 0};
+    fetch(`${serverOrigin}/api/plan/update-plan`,
+    {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({...newEventInfo})
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setResponse(data);
+      if (data.success) {
+        const eventIndex = events.findIndex((event) => event.id == id);
+        if (eventIndex !== -1) {
+          const updatedEvents = [...events];
+          updatedEvents[eventIndex].saved = true;
+          setEvents(updatedEvents);
+        };
+        setIsAddPlanModal(false);
+      };
+    })
+    .catch((error) => console.error(error));
   }
 
   useEffect(() => {
     if (isAddPlanModal && isAddPlanModal.id) {
       const {id, title, start, end, description, repeat, subject, notification, priority, saved, completed} = isAddPlanModal;
-      console.log(isAddPlanModal, isAddPlanModal.id, id, title, start, end, description, repeat, subject, notification, priority, saved, completed);
+      console.log(subject, 'gd')
       setId(id);
       setTitle(title);
       setStart(start);
       setEnd(end);
       setDescription(description);
       setRepeat(repeat);
-      setSubject(subject);
+      //setSubject(subject);
       setNotification(notification);
       setPriority(priority);
       setSaved(saved);
       setCompleted(completed);
-    } else {
+    } else if (isAddPlanModal && isAddPlanModal.start && isAddPlanModal.end) {
+      //date click
+      const {start, end} = isAddPlanModal;
+      const id = generateRandomId(10);
+      setId(id);
+      setStart(start);
+      setEnd(end);
+      const newEvents = [...events, { title, start, end, description, repeat, subject, notification, priority, saved, completed, id}];
+      setEvents(newEvents);
+    }
+    else if (isAddPlanModal) {
       //new event
       const id = generateRandomId(10);
       setId(id);
-      console.log('gd', id)
       const newEvents = [...events, { title, start, end, description, repeat, subject, notification, priority, saved, completed, id}];
       setEvents(newEvents);
+    } else {
+      const eventIndex = events.findIndex((event) => event.id == id);
+      if (eventIndex !== -1) {
+        const updatedEvents = [...events];
+        if (!updatedEvents[eventIndex].saved) {
+          updatedEvents.splice(eventIndex, 1);
+          setEvents(updatedEvents);
+        };
+      };
     }
   }, [isAddPlanModal]);
 
   useEffect(() => {
     const newEvents = [...events];
     const eventIndex = newEvents.findIndex((event) => event.id == id);
-    console.log('new suject', subject)
     if (eventIndex !== -1) {
       newEvents[eventIndex] = { title, start, end, description, repeat, subject, notification, priority, saved, completed, id};
     };
     setEvents(newEvents)
   }, [title, start, end, description, repeat, subject, notification, priority, saved, completed, id]);
-
-  function updatePlan() {
-    const eventIndex = events.findIndex((event) => event.id == id);
-    console.log('event index', eventIndex)
-    if (eventIndex === -1) {
-      //new subject
-      const id = generateRandomId(10);
-      setId(id);
-      const start = new Date();
-      const end = new Date();
-      const newEvent = {
-        id,
-        title: '',
-        start,
-        end,
-        description: '',
-        repeat,
-        subject,
-        notification,
-        priority,
-        saved: false,
-        completed: 0
-      };
-
-      const updatedEvents = [...events, newEvent];
-      setStart(start);
-      setEnd(end);
-      //setEvents(updatedEvents);
-      setIsAddPlanModal(newEvent);
-
-      delete newEvent.saved;
-      fetch(`${serverOrigin}/api/plan/update-plan`,
-        {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(newEvent)
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          setResponse(data);
-          if (data.success) {
-            setEvents(updatedEvents);
-            setIsAddPlanModal(false);
-          };
-        })
-        .catch((error) => console.error(error));
-    } else {
-      const updatedEvents = [...events];
-      updatedEvents[eventIndex] = { title, start, end, description, subject, saved, priority };
-      const planInfo = {
-        ...updatedEvents[eventIndex],
-        start: Math.floor(start.getTime() / (1000 * 60)),
-        end: Math.floor(end.getTime() / (1000 * 60)),
-      }
-  
-      delete planInfo.saved;
-      fetch(`${serverOrigin}/api/plan/update-plan`,
-        {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(planInfo)
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          setResponse(data);
-          if (data.success) {
-            setEvents(updatedEvents);
-            setIsAddPlanModal(false);
-          };
-        })
-        .catch((error) => console.error(error));
-    }
-  };
-
-
   
   return (
     <div className={`${styles.EventModal} modal ${isAddPlanModal ? 'open' : ''}`}>
@@ -158,7 +121,7 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
           <div className={styles.iconWrapper}>
           </div>
           <div className={styles.contentWrapper}>
-            <input type="text" placeholder="Enter title" value={title} onChange={(e) => {setTitle(e.target.value)}}/>
+            <input type="text" placeholder="Enter title" defaultValue={title} onChange={(e) => {setTitle(e.target.value)}}/>
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -209,7 +172,7 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
               <DropDownButton options={subjects.map(subject => {
                 const {name, id} = subject;
                 return {name, value: subject.id}
-              })} defaultIndex={0} setValue={setSubject} />
+              })} defaultIndex={0} setValue={(data) => {console.log(data); setSubject(data)}} />
             </div>
             <p>OR</p>
             <div className={styles.addSubjectWrapper}>
@@ -245,7 +208,7 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
           </div>
         </div>
         <div className={styles.submit}>
-          <BlobBtn name={'SUBMIT'} setClicked={submit} />
+          <BlobBtn name={'SUBMIT'} setClicked={() => {submit()}} />
         </div>
       </div>
     </div>

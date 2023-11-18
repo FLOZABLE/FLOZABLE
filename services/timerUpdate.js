@@ -97,12 +97,14 @@ async function removeTimeline(userId, time) {
     });
 
     console.log('trim index', trimIndex);
-    redisClient.lTrim(`user:${userId}:timer`, 0, trimIndex);
+    if (trimIndex) {
+      redisClient.lTrim(`user:${userId}:timer`, 0, trimIndex);
 
-    timerInfo.dp = dp;
-    timerInfo.ts = ts - timelineSum;
-
-    redisClient.hSet(`user:${userId}:timerInfo`, JSON.stringify(timerInfo));
+      timerInfo.dp = dp;
+      timerInfo.ts = ts - timelineSum;
+  
+      redisClient.hSet(`user:${userId}:timerInfo`, JSON.stringify(timerInfo));
+    };
   } catch (err) {
     console.log(err);
   };

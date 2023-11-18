@@ -117,7 +117,7 @@ const dashboardRouter = require('./Router/dashboard');
 const rankingRouter = require('./Router/ranking');
 const extensionRouter = require('./Router/api');
 const chatRouter = require('./Router/chat');
-const planRouter = require("./Router/plan");
+//const planRouter = require("./Router/plan");
 //const notificationRouter = notificationService.notificationRouter;
 
 

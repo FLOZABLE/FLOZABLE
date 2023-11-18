@@ -35,7 +35,7 @@ function Planner(props) {
   const updateViewDate = (date) => {
     setViewDate(date);
   };
-
+  
   useEffect(() => {
     setPlannerApi(PlannerRef.current.getApi());
   }, [PlannerRef]);
