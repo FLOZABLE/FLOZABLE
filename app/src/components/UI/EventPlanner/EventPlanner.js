@@ -233,7 +233,7 @@ function EventPlanner(props) {
       setStart(start);
       setEnd(end);
       setEvents([...events, newEvent]);
-      setIsAddPlanModal(true);
+      setIsAddPlanModal(newEvent);
     } else {
       selectInfo.view.calendar.unselect();
     };
@@ -273,7 +273,7 @@ function EventPlanner(props) {
       };
     };
     if (eventInfo.saved) {
-      setIsAddPlanModal(true);
+      setIsAddPlanModal(eventInfo);
       setSelectedEvent(event.event.id);
       setStart(event.event.start);
       setEnd(event.event.end);
@@ -364,7 +364,7 @@ function EventPlanner(props) {
       setStart(start);
       setEnd(end);
       setEvents(updatedEvents);
-      setIsAddPlanModal(true);
+      setIsAddPlanModal(newEvent);
 
       delete newEvent.saved;
       fetch(`${serverOrigin}/api/plan/update-plan`,
@@ -553,30 +553,6 @@ function EventPlanner(props) {
               click: handleTodayButtonClick,
             },
           }}
-        />
-        <PlannerEventModal
-          isAddPlanModal={isAddPlanModal}
-          setIsAddPlanModal={setIsAddPlanModal}
-          title={title}
-          setTitle={setTitle}
-          setStart={setStart}
-          start={start}
-          setEnd={setEnd}
-          end={end}
-          description={description}
-          setDescription={setDescription}
-          setSubject={setSubject}
-          subjects={subjectsOpt}
-          notification={notification}
-          setNotification={setNotification}
-          submit={submit}
-          setSubmit={setSubmit}
-          repeat={repeat}
-          setRepeat={setRepeat}
-          priority={priority}
-          setPriority={setPriority}
-          setIsAddSubjectModal={setIsAddSubjectModal}
-          setPlanSubmit={() => {updatePlan(selectedEvent, title, start, end, description, subject, priority);}}
         />
       </StyleWrapper>
     </div>
