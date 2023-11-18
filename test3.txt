@@ -1,240 +1,573 @@
-import React, { useRef, useState, useEffect, useId, useCallback } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from "react-router-dom";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { StudyPerson, RestPerson } from "../../../utils/svgs";
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
-import styles from "./MyGroupsViewer.module.css";
-import MemberTimer from "../MemberTimer/MemberTimer";
-import SimplePeer from 'simple-peer';
-import { faBullhorn, faBullseye, faComments, faGear, faHeart, faPeopleGroup, faRankingStar, faStopwatch } from "@fortawesome/free-solid-svg-icons";
-import MemberEl from "../MemberEl/MemberEl";
-import MyEl from "../MyEl/MyEl";
-import {mediaSocket} from '../../../mediaSocket'
-import {Device} from 'mediasoup-client';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBook, faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import PieChart from '../../UI/PieChart';
+import LineChart from '../../UI/LineChart';
+import BarChart from '../../UI/BarChart';
+import StatsCalendar from '../../UI/StatsCalendar/StatsCalendar';
+import StuckModal from '../../UI/StuckModal/StuckModal';
+import TodoList from '../../UI/TodoList/TodoList';
+import Timeline from '../../UI/Timeline/Timeline';
+import RadioBtn from '../../UI/RadioBtn/RadioBtn';
+import ChartDataLabel from 'chartjs-plugin-datalabels';
+import { colorsList } from '../../../constant';
+import styles from './Stats.module.css';
+import { plugins } from 'chart.js';
+import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, sortRanking, updateRankingTrend } from './StatTools';
 
-const params = {
-  // mediasoup params
-  encodings: [
-    {
-      rid: 'r0',
-      maxBitrate: 100000,
-      scalabilityMode: 'S1T3',
-    },
-    {
-      rid: 'r1',
-      maxBitrate: 300000,
-      scalabilityMode: 'S1T3',
-    },
-    {
-      rid: 'r2',
-      maxBitrate: 900000,
-      scalabilityMode: 'S1T3',
-    },
-  ],
-  // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerCodecOptions
-  codecOptions: {
-    videoGoogleStartBitrate: 1000
-  }
-}
+const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function MyGroupsViewer(props) {
+function Stats(props) {
+  const {subjects} = props;
+  const today = new Date().setHours(0, 0, 0, 0);
 
-  const { myGroups, socket, userInfo, myTimerTotal, isCam, isMic, mode } = props;
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
-  const [groupStudying, setGroupStudying] = useState({});
-  const [myGroupsViewerContent, setMyGroupsViewerContent] = useState([]);
-  const [localStream, setLocalStream] = useState(null);
-  const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
-
-  /* mediasocket */
-  const [videoParams, setVideoParams] = useState()
-  
-  useEffect(() => {
-    mediaSocket.connect();
-    //createPeerConnection(socket.id);
-    console.log('socket', socket)
-    socket.on("studying", onStudying);
-    socket.on("stopStudying", onStopStudying);
-    socket.on('new-producer', onNewProducer);
-    return () => {
-      socket.off("studying", onStudying);
-      socket.off("stopStudying", onStopStudying);
-      socket.off('new-producer', onNewProducer);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isCam) {
-      navigator.mediaDevices
-        .getUserMedia({
-          video: true,
-        })
-        .then((stream) => {
-          setLocalStream(stream);
-          const newVideoParams = { track: stream.getVideoTracks()[0], ...videoParams };
-          console.log('params: ', newVideoParams)
-          /* connectSendTransport(newAudioParams, newVideoParams); */
-        });
-    };
-  }, [isCam]);
-
-  useEffect(() => {
-    if (isCam || isMic) {
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: isMic,
-          video: isCam,
-        })
-        .then((stream) => {
-          setLocalStream(stream);
-          const newAudioParams = { track: stream.getAudioTracks()[0], ...audioParams };
-          console.log('params: ', audioParams)
-          /* connectSendTransport(newAudioParams, newVideoParams); */
-        });
-    };
-  }, [isMic]);
-
-
-  useEffect(() => {
-    setGroupStudying(
-      Object.fromEntries(myGroups.map((group) => {
-        const members = [];
-        group.members.map(member => {
-          if (member.study.study) {
-            members.push(member.user_id);
-          };
-        });
-        return [group.group_id, { members: members }]
-      }))
-    );
-  }, [myGroups]);
-
-  const onStudying = (userId, groups) => {
-    console.log(userId, groups)
-    setToggleTimer({ id: userId, status: 1 });
-    groups.forEach((group) => {
-      setGroupStudying((prevGroupStudying) => {
-        const updatedGroupStudying = { ...prevGroupStudying };
-        if (updatedGroupStudying[group] && !updatedGroupStudying[group].members.includes(userId)) {
-          updatedGroupStudying[group].members.push(userId);
-        };
-        return updatedGroupStudying;
-      });
-    });
+  const toggleCalendar = () => {
+    setIsCalendarOpen(!isCalendarOpen);
   };
 
-  const onStopStudying = (userId, groups) => {
-    setToggleTimer({ id: userId, status: 0 });
-    groups.forEach((group) => {
-      setGroupStudying((prevGroupStudying) => {
-        const updatedGroupStudying = { ...prevGroupStudying };
-        if (updatedGroupStudying[group]) {
-          const index = updatedGroupStudying[group].members.indexOf(userId);
-          if (index !== -1) {
-            updatedGroupStudying[group].members.splice(index, 1);
-          }
+  const [statsViewer, setStatsViewer] = useState('Daily');
+  const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
+  const [calendarLabel, setCalendarLabel] = useState('Today');
+  const [ranking, setRanking] = useState({});
+  const [dailyTimeline, setDailyTimeline] = useState([]);
+
+  //time usage pie chart
+  const [timeUsagePie, setTimeUsagePie] = useState({
+    labels: [], datasets: [
+      {
+        label: [],
+        backgroundColor: colorsList,
+        borderColor: colorsList,
+        data: [],
+      },
+    ]
+  });
+  //hourly histogram
+  const [hourlyHistogram, setHourlyHistogram] = useState({
+    data: [],
+  });
+
+  //time trend
+  const [timeTrend, setTimeTrend] = useState({
+    labels: [],
+    datasets:
+      [
+        {
+          backgroundColor: "#fd7f6f",
+          borderColor: "#fd7f6f",
+          data: [],
+        },
+      ]
+  });
+
+  //ranking trend
+  const [rankingTrend, setRankingTrend] = useState({
+    labels: [1,2],
+    datasets:
+      [
+        {
+          backgroundColor: "#fd7f6f",
+          borderColor: "#fd7f6f",
+          data: [1,1000,1200],
+        },
+      ]
+  })
+
+  const timelineRef = useRef(null);
+
+  const updateViewer = async (item) => {
+    setStatsViewer(item);
+  };
+
+  const updateViewDate = (date) => {
+    setViewDate(date);
+  };
+
+  useEffect(() => {
+    updateCalendarLabel();
+  }, [viewDate, statsViewer]);
+
+  const updateCalendarLabel = () => {
+    if (viewDate === today) {
+      if (statsViewer === 'Daily') {
+        setCalendarLabel('Today');
+      } else if (statsViewer === 'Weekly') {
+        setCalendarLabel('This Week');
+      } else {
+        setCalendarLabel('This Month');
+      }
+    } else {
+      setCalendarLabel(`${viewDate.getMonth() + 1}/${viewDate.getDate()}`);
+    }
+  };
+
+  useEffect(() => {
+    fetch(`${serverOrigin}/api/ranking`, { method: 'post' })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          const sortedRanking = sortRanking(data.ranking, props.userInfo);
+          setRanking(sortedRanking);
         }
-        return updatedGroupStudying;
-      });
-    });
-  };
+      })
+      .catch((error) => console.error(error));
+  }, [props.userInfo]);
+
 
   useEffect(() => {
-    if (!myGroups.length) return;
-    let selectedGroup;
-    if (isNaN(selectedGroupIndex)) {
-      selectedGroup = myGroups[0] ? myGroups[0] : false;
-    } else if (myGroups[selectedGroupIndex]) {
-      selectedGroup = myGroups[selectedGroupIndex];
-    };
-    mediaSocket.emit('changeGroup', selectedGroup ? selectedGroup.group_id : 0, (data) => {
-      console.log(`Router RTP Capabilities... ${data.rtpCapabilities}`)
-      // we assign to local variable and will be used when
-      // loading the client Device (see createDevice above)
-      /* setRtpCapabilities(data.rtpCapabilities);
-  
-      // once we have rtpCapabilities from the Router, create Device
-      createDevice(data.rtpCapabilities) */
+    const labels = subjects.map((subject) => {console.log(subject); return subject.name });
+    const timeUsagePieData = updateTimeUsagePie(subjects, viewDate, statsViewer);
+    setTimeUsagePie({
+      labels: labels,
+      datasets:
+        [
+          {
+            backgroundColor: colorsList,
+            borderColor: colorsList,
+            data: timeUsagePieData.data,
+          },
+        ]
     });
-  }, [selectedGroupIndex, myGroups]);
+
+    if (timelineRef.current) {
+      setDailyTimeline(updateHourlyMatrix(subjects, timelineRef.current.offsetWidth, viewDate));
+    }
+    const hourlyHistogramData = updateHourlyHistogram(subjects, statsViewer, viewDate);
+    setHourlyHistogram({
+      data: hourlyHistogramData
+    });
+    const timeTrend = updateTimeTrend(subjects, statsViewer);
+    setTimeTrend({
+      labels: timeTrend[0],
+        datasets:
+          [
+            {
+              backgroundColor: "#fd7f6f",
+              borderColor: "#fd7f6f",
+              data: timeTrend[1],
+            },
+          ]
+    });
+    /* const rankingTrend = updateRankingTrend(ranking, statsViewer);
+    setRankingTrend({
+      labels: rankingTrend[0],
+      datasets:
+        [
+          {
+            backgroundColor: "#fd7f6f",
+            borderColor: "#fd7f6f",
+            data: rankingTrend[1],
+          },
+        ]
+    }); */
+  }, [viewDate, statsViewer, subjects, timelineRef]);
 
   return (
-    <div className={`${styles.MyGroupsViewer} ${mode === 'study' ? styles.study : ''}`}>
-      <Swiper
-        slidesPerView={1}
-        loop={true}
-        pagination={{
-          clickable: true,
-        }}
-        navigation={true}
-        modules={[Pagination, Navigation]}
-        className={styles.Swiper}
-        initialSlide={0}
-        onSlideChange={(swiperCore) => {
-          const {
-            realIndex
-          } = swiperCore;
-          setSelectedGroupIndex(realIndex);
-          console.log('index', realIndex)
-        }}
-      >
-        {      myGroups.map((group, i) => {
-        return (
-          <SwiperSlide className={styles.slide} key={i}>
-            <div className={styles.inner}>
-              <div className={styles.name}>
-                <Link>
-                  {group.name}
-                </Link>
-              </div>
-              <div className={styles.information}>
-                <div className={styles.header}>
-                  <ul className={styles.status}>
-                    <li>
-                      <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
-                      <p>{groupStudying[group.group_id] ? groupStudying[group.group_id].members.length : 0}/{group.members.length}</p>
-                    </li>
-                    <li>
-                      <FontAwesomeIcon icon={faBullhorn} />
-                    </li>
-                    <li>
-                      <FontAwesomeIcon icon={faRankingStar} />
-                    </li>
-                  </ul>
-                  <div className={styles.right}>
-                    <FontAwesomeIcon icon={faGear} />
+    <div className={styles.StatsContainer}>
+      <div className={`${styles.CalendarModal} ${isCalendarOpen ? styles.isOpen : ''}`}>
+        <StatsCalendar onToggleCalendar={toggleCalendar} isCalendarOpen={isCalendarOpen} viewOpt={statsViewer} setViewDate={updateViewDate} viewDate={viewDate} />
+      </div>
+      <StuckModal />
+      <div className={` Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
+        <div className={styles.boxes}>
+          <div className={styles.box} id="daily">
+            <div className={styles.buttonArea}>
+              <button className={styles.title}
+                onClick={toggleCalendar}
+              >{calendarLabel} <FontAwesomeIcon icon={faCaretDown} style={{ color: "#545B77", }} className={styles.caret} /></button>
+              <RadioBtn items={[{view: 'Daily', value: 'Daily'}, {view: 'Weekly', value: 'Weekly'}, {view: 'Monthly', value: 'Monthly'}]} changeEvent={updateViewer} defaultViewer={0} />
+            </div>
+            <div className={styles.container}>
+              <div className={styles.divided}>
+                <p className={styles.title}>{statsViewer} Time Usage by Subjects</p>
+                <div className={styles.chartContainer}>
+                  <div className={`${styles.noChart} ${timeUsagePie.datasets[0].data.reduce((accumulator, currentValue) => accumulator + currentValue, 0) ? styles.true : ''}`}>
+                    <p>No Data provided</p>
                   </div>
-                </div>
-                <div className={styles.membersContainer}>
-                  <div className={`${styles.members} customScroll`}>
-                    {group.members.map((memberInfo, j) => {
-                      if (memberInfo.user_id === userInfo.user_id) {
-                        return (<MyEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} stream={localStream} socket={socket} />)
-                      } else {
-                        return (<MemberEl memberInfo={memberInfo} key={j} k={j} toggleTimer={toggleTimer} myTimerTotal={myTimerTotal} socket={socket} />)
+                  <PieChart
+                    labels={timeUsagePie.labels}
+
+                    datasets={timeUsagePie.datasets}
+
+                    options={
+                      {
+                        plugins: {
+                          legend: {
+                            position: 'bottom',
+                          },
+                          datalabels: {
+                            color: '#ffffff',
+                            font: {
+                              size: 32,
+                              family: 'Arial',
+                              weight: 700
+                            },
+                            formatter: (value, context, index) => {
+                              const { chart, dataIndex } = context;
+                              const labels = chart.data.labels;
+                              const label = labels[dataIndex];
+                              return ``;
+                            }
+                          }
+                        }
                       }
-                    })}
-                  </div>
+                    }
+
+                    plugins={
+                      ChartDataLabel
+                    }
+                  />
                 </div>
               </div>
-              <div className={styles.buttons}>
-                <button>Go to Group</button>
-                <button>
-                  <FontAwesomeIcon icon={faComments} />
-                </button>
+              <div className={styles.divider}>
+
+              </div>
+              <div className={`${styles.divided} ${styles.todoList}`}>
+                <p className={styles.title}>Your study comparison with ___</p>
+                {/* <ul>
+                  <li>
+                    <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
+                  </li>
+                  <li>
+                    <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
+                  </li>
+                  <li>
+                    <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
+                  </li>
+                  <li>
+                    <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
+                  </li>
+                </ul> */}
               </div>
             </div>
-          </SwiperSlide>
-        );
-      })}
-      </Swiper>
-    </div>
-  );
-};
+          </div>
+          <div className={styles.smallBoxContainer}>
+            <div className={styles.smallBox}>
+              <div className={styles.circle}>
+                <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
+              </div>
+              <p>Study Time <br /><strong>16h</strong></p>
+            </div>
+            <div className={styles.smallBox}>
+              <div className={styles.circle}>
+                <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
+              </div>
+              <p>Study Time <br /><strong>16h</strong></p>
+            </div>
+            <div className={styles.smallBox}>
+              <div className={styles.circle}>
+                <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
+              </div>
+              <p>Today's Ranking<br /><strong>#1</strong></p>
+            </div>
+            <div className={styles.smallBox}>
+              <div className={styles.circle}>
+                <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
+              </div>
+              <p>Website Usage <br /><strong>16h</strong></p>
+            </div>
+          </div>
+          <div className={styles.smallBoxContainer}>
+            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+              <p className={styles.title}>Today's Timeline</p>
+              <div className={styles.chartContainer}>
+                <Timeline refT={timelineRef} dailyTimeline={dailyTimeline} />
+              </div>
+            </div>
+            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+              <p className={styles.title}>Today's Hourly Histogram</p>
+              <div className={styles.chartContainer}>
+                <BarChart
+                  labels={
+                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+                  }
 
-export default MyGroupsViewer;
+                  datasets={
+                    [
+                      {
+                        data: hourlyHistogram.data,
+                        backgroundColor: colorsList
+                      }
+                    ]
+                  }
+
+                  options={
+                    {
+                      maintainAspectRatio: false,
+                      responsive: true,
+                      plugins: {
+                        legend: {
+                          display: false,
+                        }
+                      },
+                      interaction: {
+                        intersect: false,
+                        mode: 'index',
+                      },
+                      scales: {
+                        y: {
+                          grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                          },
+                          ticks: {
+                            display: true,
+                            padding: 10,
+                            color: '#9ca2b7',
+                            stepSize: 1
+                          }
+                        },
+                        x: {
+                          grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: true,
+                            borderDash: [5, 5]
+                          },
+                          ticks: {
+                            display: true,
+                            color: '#9ca2b7',
+                            padding: 10
+                          }
+                        },
+                      },
+                    }
+                  }
+                />
+              </div>
+            </div>
+          </div>
+          <div className={styles.smallBoxContainer}>
+            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+              <p className={styles.title}>Daily Study Time Trend</p>
+              <div className={styles.chartContainer}>
+                <LineChart
+                  labels={
+                    timeTrend.labels
+                  }
+
+                  datasets={timeTrend.datasets}
+
+                  options={
+                    {
+                      responsive: true,
+                      plugins: {
+                        legend: {
+                          display: false,
+                        }
+                      },
+                      interaction: {
+                        intersect: false,
+                        mode: 'index',
+                      },
+                      scales: {
+                        y: {
+                          grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                          },
+                          ticks: {
+                            display: true,
+                            padding: 10,
+                            color: '#9ca2b7',
+                            stepSize: 1
+                          }
+                        },
+                        x: {
+                          grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: true,
+                            borderDash: [5, 5]
+                          },
+                          ticks: {
+                            display: true,
+                            color: '#9ca2b7',
+                            padding: 10
+                          }
+                        },
+                      },
+                    }
+                  }
+                />
+              </div>
+            </div>
+            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+              <p className={styles.title}>Daily Ranking</p>
+              <div className={styles.chartContainer}>
+                <LineChart
+                  labels={
+                    rankingTrend.labels
+                  }
+
+                  datasets={rankingTrend.datasets}
+
+                  options={
+                    {
+                      responsive: true,
+                      plugins: {
+                        legend: {
+                          display: false,
+                        }
+                      },
+                      interaction: {
+                        intersect: false,
+                        mode: 'index',
+                      },
+                      scales: {
+                        y: {
+                          reverse: true,
+                          grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                          },
+                          ticks: {
+                            display: true,
+                            padding: 10,
+                            color: '#9ca2b7',
+                            stepSize: 1
+                          }
+                        },
+                        x: {
+                          grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: true,
+                            borderDash: [5, 5]
+                          },
+                          ticks: {
+                            display: true,
+                            color: '#9ca2b7',
+                            padding: 10
+                          }
+                        },
+                      },
+                    }
+                  }
+                />
+              </div>
+            </div>
+
+          </div>
+          <div className={styles.smallBoxContainer}>
+            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+              <p className={styles.title}>Today's Website Usage while Studying</p>
+              <div className={styles.chartContainer}>
+              <PieChart
+                  labels={
+                    subjects.map((subject) => subject.name)
+                  }
+
+                  datasets={
+                    [
+                      {
+                        label: "My First dataset",
+                        backgroundColor: colorsList,
+                        borderColor: colorsList,
+                        data: subjects.map((subject) => subject.daily.total[subject.daily.total.length - 1])
+                      },
+                    ]
+                  }
+
+                  options={
+                    {
+                      plugins: {
+                        legend: {
+                          position: 'bottom',
+                        },
+                        datalabels: {
+                          color: '#ffffff',
+                          font: {
+                            size: 32,
+                            family: 'Arial',
+                            weight: 700
+                          },
+                          formatter: (value, context, index) => {
+                            const { chart, dataIndex } = context;
+                            const labels = chart.data.labels;
+                            const label = labels[dataIndex];
+                            return ``;
+                          }
+                        }
+                      }
+                    }
+                  }
+
+                  plugins={
+                    ChartDataLabel
+                  }
+                />
+              </div>
+            </div>
+            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+              <p className={styles.title}>Today's App Usage while Studying</p>
+              <div className={styles.chartContainer}>
+                <PieChart
+                  labels={
+                    subjects.map((subject) => subject.name)
+                  }
+
+                  datasets={
+                    [
+                      {
+                        label: "My First dataset",
+                        backgroundColor: colorsList,
+                        borderColor: colorsList,
+                        data: subjects.map((subject) => subject.daily.total[subject.daily.total.length - 1])
+                      },
+                    ]
+                  }
+
+                  options={
+                    {
+                      plugins: {
+                        legend: {
+                          position: 'bottom',
+                        },
+                        datalabels: {
+                          color: '#ffffff',
+                          font: {
+                            size: 32,
+                            family: 'Arial',
+                            weight: 700
+                          },
+                          formatter: (value, context, index) => {
+                            const { chart, dataIndex } = context;
+                            const labels = chart.data.labels;
+                            const label = labels[dataIndex];
+                            return ``;
+                          }
+                        }
+                      }
+                    }
+                  }
+
+                  plugins={
+                    ChartDataLabel
+                  }
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Stats;
