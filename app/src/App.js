@@ -204,8 +204,10 @@ function App() {
       isAddPlanModal={isAddPlanModal}
       subjects={subjects}
       setIsAddPlanModal={setIsAddPlanModal}
-      setPlans={setPlans}
+      setEvents={setPlans}
+      events={plans}
       setIsAddSubjectModal={setIsAddSubjectModal}
+      setResponse={setResponse}
       />
       <Routes>
         <Route
