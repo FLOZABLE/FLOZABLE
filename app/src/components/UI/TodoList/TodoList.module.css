@@ -218,20 +218,25 @@
   .TodoListContainer .wrapper {
     padding: 20px 0;
   }
+
   .TodoListContainer .filters span {
     margin: 0 5px;
   }
+
   .TodoListContainer .taskInput {
     padding: 0 20px;
   }
+
   .TodoListContainer .controls {
     padding: 18px 20px;
   }
+
   .TodoListContainer .taskBox {
     margin-top: 20px;
     margin-right: 5px;
     padding: 0 15px 10px 20px;
   }
+
   .TodoListContainer .task label input {
     margin-top: 4px;
   }

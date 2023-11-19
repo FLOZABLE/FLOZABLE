@@ -4,22 +4,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import SwitchToggleBtn from "../SwitchToggleBtn/SwitchToggleBtn";
 
-function SmallPlanner(props) {
+function SmallPlanner({ setPlannerBtn, plannerBtn }) {
   return (
     <div className={styles.SmallPlanner}>
       <div className={styles.header}>
-        <i onClick={() => {props.setPlannerBtn(!props.plannerBtn)}}>
+        <i
+          onClick={() => {
+            setPlannerBtn(!plannerBtn);
+          }}
+        >
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
       <div className={styles.inner}>
         <div className={styles.planCount}>
           <div className={styles.done}>
-            <p>7 <strong>finished</strong></p>
+            <p>
+              7 <strong>finished</strong>
+            </p>
           </div>
           <span className={styles.comma}>,</span>
           <div className={styles.todo}>
-            <p>7 <strong>to go</strong></p>
+            <p>
+              7 <strong>to go</strong>
+            </p>
           </div>
         </div>
         <SwitchToggleBtn />
@@ -31,7 +39,10 @@ function SmallPlanner(props) {
               <div className={styles.info}>
                 <p className={styles.time}>Eng, 12:45-1:30</p>
                 <div className={`${styles.description} customScroll`}>
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti sunt fugiat ad asperiores, reprehenderit expedita ducimus enim veniam commodi explicabo aliquam ipsa natus atque autem quaerat tenetur accusamus dignissimos amet.
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                  Deleniti sunt fugiat ad asperiores, reprehenderit expedita
+                  ducimus enim veniam commodi explicabo aliquam ipsa natus atque
+                  autem quaerat tenetur accusamus dignissimos amet.
                 </div>
               </div>
             </div>
@@ -43,7 +54,10 @@ function SmallPlanner(props) {
               <div className={styles.info}>
                 <p className={styles.time}>Eng, 12:45-1:30</p>
                 <div className={`${styles.description} customScroll`}>
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti sunt fugiat ad asperiores, reprehenderit expedita ducimus enim veniam commodi explicabo aliquam ipsa natus atque autem quaerat tenetur accusamus dignissimos amet.
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                  Deleniti sunt fugiat ad asperiores, reprehenderit expedita
+                  ducimus enim veniam commodi explicabo aliquam ipsa natus atque
+                  autem quaerat tenetur accusamus dignissimos amet.
                 </div>
               </div>
             </div>
@@ -55,7 +69,10 @@ function SmallPlanner(props) {
               <div className={styles.info}>
                 <p className={styles.time}>Eng, 12:45-1:30</p>
                 <div className={`${styles.description} customScroll`}>
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti sunt fugiat ad asperiores, reprehenderit expedita ducimus enim veniam commodi explicabo aliquam ipsa natus atque autem quaerat tenetur accusamus dignissimos amet.
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                  Deleniti sunt fugiat ad asperiores, reprehenderit expedita
+                  ducimus enim veniam commodi explicabo aliquam ipsa natus atque
+                  autem quaerat tenetur accusamus dignissimos amet.
                 </div>
               </div>
             </div>
@@ -67,7 +84,10 @@ function SmallPlanner(props) {
               <div className={styles.info}>
                 <p className={styles.time}>Eng, 12:45-1:30</p>
                 <div className={`${styles.description} customScroll`}>
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti sunt fugiat ad asperiores, reprehenderit expedita ducimus enim veniam commodi explicabo aliquam ipsa natus atque autem quaerat tenetur accusamus dignissimos amet.
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                  Deleniti sunt fugiat ad asperiores, reprehenderit expedita
+                  ducimus enim veniam commodi explicabo aliquam ipsa natus atque
+                  autem quaerat tenetur accusamus dignissimos amet.
                 </div>
               </div>
             </div>
@@ -79,7 +99,10 @@ function SmallPlanner(props) {
               <div className={styles.info}>
                 <p className={styles.time}>Eng, 12:45-1:30</p>
                 <div className={`${styles.description} customScroll`}>
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti sunt fugiat ad asperiores, reprehenderit expedita ducimus enim veniam commodi explicabo aliquam ipsa natus atque autem quaerat tenetur accusamus dignissimos amet.
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                  Deleniti sunt fugiat ad asperiores, reprehenderit expedita
+                  ducimus enim veniam commodi explicabo aliquam ipsa natus atque
+                  autem quaerat tenetur accusamus dignissimos amet.
                 </div>
               </div>
             </div>
@@ -88,6 +111,6 @@ function SmallPlanner(props) {
       </div>
     </div>
   );
-};
+}
 
 export default SmallPlanner;

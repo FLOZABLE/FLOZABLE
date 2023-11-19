@@ -2,7 +2,7 @@
   display: flex;
 }
 
-.SidebarToggleBtn .openSidebarMenu:checked ~ #sidebarMenu {
+.SidebarToggleBtn .openSidebarMenu:checked~#sidebarMenu {
   transform: translateX(0);
 }
 
@@ -11,6 +11,7 @@
   box-sizing: border-box;
   display: none;
 }
+
 .SidebarToggleBtn .sidebarIconToggle {
   transition: all 0.3s;
   box-sizing: border-box;
@@ -22,6 +23,7 @@
   height: 22px;
   width: 22px;
 }
+
 .SidebarToggleBtn .spinner {
   transition: all 0.3s;
   box-sizing: border-box;
@@ -30,6 +32,7 @@
   width: 100%;
   background-color: #fff;
 }
+
 .SidebarToggleBtn .horizontal {
   transition: all 0.3s;
   box-sizing: border-box;
@@ -37,12 +40,14 @@
   float: left;
   margin-top: 3px;
 }
+
 .SidebarToggleBtn .diagonal.part1 {
   position: relative;
   transition: all 0.3s;
   box-sizing: border-box;
   float: left;
 }
+
 .SidebarToggleBtn .diagonal.part2 {
   transition: all 0.3s;
   box-sizing: border-box;
@@ -50,18 +55,21 @@
   float: left;
   margin-top: 3px;
 }
-.SidebarToggleBtn .openSidebarMenu:checked ~ .sidebarIconToggle > .horizontal {
+
+.SidebarToggleBtn .openSidebarMenu:checked~.sidebarIconToggle>.horizontal {
   transition: all 0.3s;
   box-sizing: border-box;
   opacity: 0;
 }
-.SidebarToggleBtn .openSidebarMenu:checked ~ .sidebarIconToggle > .diagonal.part1 {
+
+.SidebarToggleBtn .openSidebarMenu:checked~.sidebarIconToggle>.diagonal.part1 {
   transition: all 0.3s;
   box-sizing: border-box;
   transform: rotate(135deg);
   margin-top: 8px;
 }
-.SidebarToggleBtn .openSidebarMenu:checked ~ .sidebarIconToggle > .diagonal.part2 {
+
+.SidebarToggleBtn .openSidebarMenu:checked~.sidebarIconToggle>.diagonal.part2 {
   transition: all 0.3s;
   box-sizing: border-box;
   transform: rotate(-135deg);

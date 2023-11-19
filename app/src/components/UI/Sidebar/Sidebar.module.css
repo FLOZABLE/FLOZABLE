@@ -33,7 +33,7 @@
   cursor: pointer;
 }
 
-.Sidebar .navItemWrapper:hover .icon{
+.Sidebar .navItemWrapper:hover .icon {
   color: #6f6af8;
 }
 

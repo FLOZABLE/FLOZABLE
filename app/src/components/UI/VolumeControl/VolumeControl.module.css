@@ -1,7 +1,7 @@
-:root{
+:root {
   --percentage: 30%;
-  --main-color: 255,255,255;
-  --el-bg-color: 220,220,220;
+  --main-color: 255, 255, 255;
+  --el-bg-color: 220, 220, 220;
 }
 
 .soundSliderContainer {
@@ -27,11 +27,9 @@
   top: 0px;
   transition: opacity 500ms;
   width: 100%;
-  background: radial-gradient(
-    500px circle at var(--mouse-x) var(--mouse-y),
-    rgba(var(--main-color), 0.06),
-    transparent 40%
-  );
+  background: radial-gradient(500px circle at var(--mouse-x) var(--mouse-y),
+      rgba(var(--main-color), 0.06),
+      transparent 40%);
   z-index: -1;
 }
 

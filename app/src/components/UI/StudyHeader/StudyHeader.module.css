@@ -40,7 +40,7 @@
   color: #fff;
 }
 
-.StudyHeader li .dispBtn:hover ~ .hoverEl{
+.StudyHeader li .dispBtn:hover~.hoverEl {
   background-color: var(--bgColor);
   opacity: 1;
 }
@@ -96,12 +96,12 @@
   overflow: hidden;
 }
 
-.StudyHeader .videoContainer .video img{
+.StudyHeader .videoContainer .video img {
   width: 120px;
   height: auto;
 }
 
-.StudyHeader li.open .clickedEl{
+.StudyHeader li.open .clickedEl {
   display: block;
   opacity: 1;
   z-index: 3;
@@ -111,14 +111,14 @@
   display: none;
 }
 
-.StudyHeader .planner h4{
+.StudyHeader .planner h4 {
   background-color: red;
   background-image: linear-gradient(45deg, #8C52FF, #5C97E6);
   background-size: 100%;
   background-repeat: repeat;
   background-clip: text;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; 
+  -webkit-text-fill-color: transparent;
   -moz-background-clip: text;
   -moz-text-fill-color: transparent;
   cursor: pointer;

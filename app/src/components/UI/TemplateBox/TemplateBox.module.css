@@ -1,4 +1,3 @@
-
 .TemplateBox {
   width: 400px;
   height: 400px;
@@ -60,7 +59,7 @@
   z-index: 1;
 }
 
-.TemplateBox .buttons > * {
+.TemplateBox .buttons>* {
   margin: 5px;
   position: relative;
 }

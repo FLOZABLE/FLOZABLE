@@ -17,6 +17,6 @@ function SwitchToggleBtn() {
       </label>
     </div>
   );
-};
+}
 
 export default SwitchToggleBtn;

@@ -93,7 +93,7 @@
   transform: skewY(65deg);
 }
 
-.swithCheck input:checked + .switchLeft {
+.swithCheck input:checked+.switchLeft {
   background-color: var(--success);
   color: #fff;
   bottom: 0px;
@@ -103,12 +103,12 @@
   transform: rotate(0deg) skewX(0deg);
 }
 
-.swithCheck input:checked + .switchLeft::before {
+.swithCheck input:checked+.switchLeft::before {
   background-color: transparent;
   width: 3.0833em;
 }
 
-.swithCheck input:checked + .switchLeft + .switchRight {
+.swithCheck input:checked+.switchLeft+.switchRight {
   background-color: #ddd;
   bottom: 0.4em;
   right: 0.8em;
@@ -117,31 +117,31 @@
   transform: rotate(-15deg) skewX(-15deg);
 }
 
-.swithCheck input + .switchLeft {
+.swithCheck input+.switchLeft {
   color: var(--success);
 }
 
-.swithCheck input:checked ~ .switchRight {
+.swithCheck input:checked~.switchRight {
   color: var(--fail);
 }
 
-.swithCheck input:checked + .switchLeft + .switchRight::before {
+.swithCheck input:checked+.switchLeft+.switchRight::before {
   background-color: #ccc;
 }
 
 /* Keyboard Users */
-.swithCheck input:focus + .switchLeft {
+.swithCheck input:focus+.switchLeft {
   color: #333;
 }
 
-.swithCheck input:checked:focus + .switchLeft {
+.swithCheck input:checked:focus+.switchLeft {
   color: #fff;
 }
 
-.swithCheck input:focus + .switchLeft + .switchRight {
+.swithCheck input:focus+.switchLeft+.switchRight {
   color: #fff;
 }
 
-.swithCheck input:checked:focus + .switchLeft + .switchRight {
+.swithCheck input:checked:focus+.switchLeft+.switchRight {
   color: #333;
 }

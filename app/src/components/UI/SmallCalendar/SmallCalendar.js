@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import styles from './SmallCalendar.module.css';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction'; // Add this import
+import React, { useState, useEffect } from "react";
+
+import styles from "./SmallCalendar.module.css";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction"; // Add this import
 /* import '@fullcalendar/daygrid/main.css';
 import '@fullcalendar/interaction/main.css'; */
 import styled from "@emotion/styled";
@@ -24,16 +23,18 @@ const StyleWrapper = styled.div`
     position: relative;
     height: 400px;
   }
-  .fc-theme-standard td, .fc-theme-standard th {
+  .fc-theme-standard td,
+  .fc-theme-standard th {
     border: none !important;
   }
   .fc .fc-daygrid-day-top {
     justify-content: center;
   }
   .fc-toolbar-title {
-    font-size: 20px
+    font-size: 20px;
   }
-  .fc .fc-prev-button.fc-button-primary, .fc .fc-next-button.fc-button-primary {
+  .fc .fc-prev-button.fc-button-primary,
+  .fc .fc-next-button.fc-button-primary {
     background-color: transparent;
     color: #000;
     border: none !important;
@@ -68,7 +69,6 @@ const StyleWrapper = styled.div`
     top: 0px;
     width: 100%;
     height: 42px !important;
-    
   }
   .fc-daygrid-day-bg {
     z-index: 5;
@@ -100,15 +100,31 @@ const StyleWrapper = styled.div`
   }
 `;
 
-function SmallCalendar({SmallCalendarRef, PlannerApi, SmallCalendarApi, viewDate, setViewDate, isAddPlanModal, width, setIsCalendarOpen}) {
+function SmallCalendar({
+  SmallCalendarRef,
+  PlannerApi,
+  SmallCalendarApi,
+  viewDate,
+  setViewDate,
+  isAddPlanModal,
+  width,
+  setIsCalendarOpen,
+}) {
   const [events, setEvents] = useState([]);
 
-
   useEffect(() => {
-    setEvents([{start: viewDate, end: viewDate, allDay: true, display: 'background', title: viewDate.getDate()}]);
+    setEvents([
+      {
+        start: viewDate,
+        end: viewDate,
+        allDay: true,
+        display: "background",
+        title: viewDate.getDate(),
+      },
+    ]);
     if (SmallCalendarApi) {
       SmallCalendarApi.gotoDate(viewDate);
-    };
+    }
     if (PlannerApi && !isAddPlanModal) {
       PlannerApi.gotoDate(viewDate);
     }
@@ -122,9 +138,9 @@ function SmallCalendar({SmallCalendarRef, PlannerApi, SmallCalendarApi, viewDate
   };
 
   const customHeader = {
-    left: 'title',
-    center: '',
-    right: 'prev next',
+    left: "title",
+    center: "",
+    right: "prev next",
   };
 
   const dayHeaderContentCallback = (args) => {
@@ -133,19 +149,19 @@ function SmallCalendar({SmallCalendarRef, PlannerApi, SmallCalendarApi, viewDate
 
   return (
     <StyleWrapper>
-    <div className={styles.SmallCalendar} style={{width: width}}>
-      <FullCalendar
-        ref={SmallCalendarRef}
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        titleFormat={{month: 'long', year: 'numeric'}}
-        dayHeaderContent={dayHeaderContentCallback}
-        headerToolbar={customHeader}
-        dateClick={handleDateClick}
-        select={handleDateClick}
-        events={events}
-      />
-    </div>
+      <div className={styles.SmallCalendar} style={{ width: width }}>
+        <FullCalendar
+          ref={SmallCalendarRef}
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          titleFormat={{ month: "long", year: "numeric" }}
+          dayHeaderContent={dayHeaderContentCallback}
+          headerToolbar={customHeader}
+          dateClick={handleDateClick}
+          select={handleDateClick}
+          events={events}
+        />
+      </div>
     </StyleWrapper>
   );
 }
