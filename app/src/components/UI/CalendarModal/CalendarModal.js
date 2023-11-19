@@ -3,17 +3,35 @@ import styles from "./CalendarModal.module.css";
 import SmallCalendar from "../SmallCalendar/SmallCalendar";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
-function CalendarModal({isCalendarOpen, setIsCalendarOpen, updateViewDate, viewDate}) {
+function CalendarModal({
+  isCalendarOpen,
+  setIsCalendarOpen,
+  updateViewDate,
+  viewDate,
+}) {
   return (
-    <div className={`${styles.CalendarModal} modal ${isCalendarOpen ? 'open' : ''}`}>
-    <div className={styles.modalHeader}>
-      <i onClick={() => { setIsCalendarOpen(false) }}>
-        <FontAwesomeIcon icon={faXmark} />
-      </i>
+    <div
+      className={`${styles.CalendarModal} modal ${
+        isCalendarOpen ? "open" : ""
+      }`}
+    >
+      <div className={styles.modalHeader}>
+        <i
+          onClick={() => {
+            setIsCalendarOpen(false);
+          }}
+        >
+          <FontAwesomeIcon icon={faXmark} />
+        </i>
+      </div>
+      <SmallCalendar
+        width={"400px"}
+        setViewDate={updateViewDate}
+        viewDate={viewDate}
+        setIsCalendarOpen={setIsCalendarOpen}
+      />
     </div>
-    <SmallCalendar width={"400px"} setViewDate={updateViewDate} viewDate={viewDate} setIsCalendarOpen={setIsCalendarOpen} />
-  </div>
   );
-};
+}
 
 export default CalendarModal;

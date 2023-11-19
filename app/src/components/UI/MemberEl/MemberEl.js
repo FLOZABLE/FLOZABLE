@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import styles from "./MemberEl.module.css";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { StudyPerson, RestPerson } from "../../../utils/svgs";
 import MemberTimer from "../MemberTimer/MemberTimer";
 import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 
-function MemberEl(props) {
-  const { memberInfo, toggleTimer, me, socket, usersTracks } = props;
+function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, k }) {
   const [run, setRun] = useState(0);
   const [sec, setSec] = useState(0);
   const [track, setTrack] = useState(null);
   const [studyIcon, setStudyIcon] = useState(
-    <RestPerson width={'40px'} height={'40px'} opt1={'#fff'} />
+    <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
   );
 
   useEffect(() => {
@@ -26,9 +25,14 @@ function MemberEl(props) {
 
         setSec(now - activeSubject.time + total);
         setStudyIcon(
-          <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
+          <StudyPerson
+            opt1={"#fff"}
+            opt2={"#fff"}
+            width={"40px"}
+            height={"40px"}
+          />,
         );
-      };
+      }
     }
   }, [memberInfo]);
 
@@ -42,31 +46,36 @@ function MemberEl(props) {
       setRun(toggleTimer.status);
       if (toggleTimer.status) {
         setStudyIcon(
-          <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
+          <StudyPerson
+            opt1={"#fff"}
+            opt2={"#fff"}
+            width={"40px"}
+            height={"40px"}
+          />,
         );
       } else {
         setStudyIcon(
-          <RestPerson width={'40px'} height={'40px'} opt1={'#fff'} />
+          <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
         );
-      };
-    };
+      }
+    }
   }, [toggleTimer]);
 
   useEffect(() => {
-    usersTracks.map(userTracksData => {
+    usersTracks.map((userTracksData) => {
       if (userTracksData.userId === memberInfo.user_id) {
         setTrack(userTracksData.track);
       }
-    })
+    });
   }, [usersTracks, memberInfo]);
 
   return (
-    <div className={styles.member} key={props.k}>
+    <div className={styles.member} key={k}>
       <MemberCamDisp socket={socket} memberInfo={memberInfo} track={track} />
       <div className={styles.inner}>
-      <Link to={`/dashboard/user/${memberInfo.user_id}`}>
-      <div className={styles.userName}>{memberInfo.name}</div>
-      </Link>
+        <Link to={`/dashboard/user/${memberInfo.user_id}`}>
+          <div className={styles.userName}>{memberInfo.name}</div>
+        </Link>
         <div className={styles.icon}>{studyIcon}</div>
         <div className={styles.timer}>
           <MemberTimer run={run} total={sec} me={me} />
