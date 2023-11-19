@@ -1,7 +1,7 @@
-import React from 'react';
-import styles from './TodoList.module.css';
+import React from "react";
+import styles from "./TodoList.module.css";
 
-function TodoList(props) {
+function TodoList() {
   return (
     <div className={styles.TodoListContainer}>
       <div className={styles.wrapper}>
@@ -30,6 +30,7 @@ function TodoList(props) {
                 id={0}
                 defaultChecked=""
               />
+
               <p className={styles.checked}>ddd</p>
             </label>
             <div className={styles.settings}>
@@ -37,6 +38,7 @@ function TodoList(props) {
                 onClick="showMenu(this)"
                 className={`uil uil-ellipsis-h ${styles.originalClass}`}
               />
+
               <ul className={styles.taskMenu}>
                 <li onClick='editTask(0, "ddd")'>
                   <i className={`uil uil-pen ${styles.originalClass}`} />
@@ -54,6 +56,5 @@ function TodoList(props) {
     </div>
   );
 }
-
 
 export default TodoList;

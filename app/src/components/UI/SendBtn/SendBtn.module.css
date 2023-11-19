@@ -12,14 +12,16 @@
   20% {
     transform: translate(50px, -50px);
   }
+
   40% {
     transform: translate(50px, 50px);
   }
+
   60% {
     transform: translate(-50px, 50px);
   }
 
-  
+
   /* 98% {
     opacity: 0;
     transform: translate(0px, 0px);
@@ -34,6 +36,7 @@
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -43,6 +46,7 @@
   position: absolute;
   /* animation: endsend .3s ease-in-out; */
 }
+
 .SendBtn i.submit {
   animation: send .5s ease-in-out;
 }

@@ -1,105 +1,206 @@
-import { useRef, useState, useCallback, useEffect } from "react";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { useState, useCallback, useEffect } from "react";
+import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import update from 'immutability-helper';
+import update from "immutability-helper";
 import StudyTool from "../StudyToolWrapper/StudyToolWrapper";
 import { Link } from "react-router-dom";
 import styles from "./StudySidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCamera, faClipboardCheck, faDownLeftAndUpRightToCenter, faHome, faHourglass, faImage, faMicrophone, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCamera,
+  faClipboardCheck,
+  faDownLeftAndUpRightToCenter,
+  faHome,
+  faHourglass,
+  faImage,
+  faMicrophone,
+  faUpRightAndDownLeftFromCenter,
+  faUsers,
+  faVolumeHigh,
+} from "@fortawesome/free-solid-svg-icons";
 
-function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupModal, isVolumeModal, isZoom, setIsTimerModal, setIsPlannerModal, setIsTemplateModal, setIsVolumeModal, setIsZoom, setIsViewGroups, setIsCam, setIsMic, isCam, isMic }) {
-  const [isItemDragging, setIsItemDragging] = useState(false);
-
+function StudySidebar({
+  isTimerModal,
+  isPlannerModal,
+  isTemplateModal,
+  isGroupModal,
+  isVolumeModal,
+  isZoom,
+  setIsTimerModal,
+  setIsPlannerModal,
+  setIsTemplateModal,
+  setIsVolumeModal,
+  setIsZoom,
+  setIsViewGroups,
+  setIsCam,
+  setIsMic,
+  isCam,
+  isMic,
+}) {
   const [items, setItems] = useState([
     {
       id: 0,
-      element:
-        <div className={`${styles.studyTool} ${isTimerModal ? styles.clicked : ''}`}>
+      element: (
+        <div
+          className={`${styles.studyTool} ${
+            isTimerModal ? styles.clicked : ""
+          }`}
+        >
           <Link to="/dashboard">
-          <i>
-            <FontAwesomeIcon icon={faHome} />
-          </i>
+            <i>
+              <FontAwesomeIcon icon={faHome} />
+            </i>
           </Link>
-        </div>,
+        </div>
+      ),
     },
+
     {
       id: 1,
-      element:
-        <div className={`${styles.studyTool} ${isTimerModal ? styles.clicked : ''}`} onClick={() => { setIsTimerModal((prev) => !prev) }}>
+      element: (
+        <div
+          className={`${styles.studyTool} ${
+            isTimerModal ? styles.clicked : ""
+          }`}
+          onClick={() => {
+            setIsTimerModal((prev) => !prev);
+          }}
+        >
           <i>
             <FontAwesomeIcon icon={faHourglass} />
           </i>
-        </div>,
+        </div>
+      ),
     },
+
     {
       id: 2,
-      element:
-        <div className={`${styles.studyTool} ${isPlannerModal ? styles.clicked : ''}`} onClick={() => { setIsPlannerModal((prev) => !prev) }}>
+      element: (
+        <div
+          className={`${styles.studyTool} ${
+            isPlannerModal ? styles.clicked : ""
+          }`}
+          onClick={() => {
+            setIsPlannerModal((prev) => !prev);
+          }}
+        >
           <i>
             <FontAwesomeIcon icon={faClipboardCheck} />
           </i>
-        </div>,
+        </div>
+      ),
     },
+
     {
       id: 3,
-      element:
-        <div className={`${styles.studyTool} ${isCam ? styles.clicked : ''}`} onClick={() => { setIsCam((prev) => !prev) }}>
+      element: (
+        <div
+          className={`${styles.studyTool} ${isCam ? styles.clicked : ""}`}
+          onClick={() => {
+            setIsCam((prev) => !prev);
+          }}
+        >
           <i>
             <FontAwesomeIcon icon={faCamera} />
           </i>
-        </div>,
+        </div>
+      ),
     },
+
     {
       id: 4,
-      element:
-        <div className={`${styles.studyTool} ${isMic ? styles.clicked : ''}`} onClick={() => { setIsMic((prev) => !prev) }}>
+      element: (
+        <div
+          className={`${styles.studyTool} ${isMic ? styles.clicked : ""}`}
+          onClick={() => {
+            setIsMic((prev) => !prev);
+          }}
+        >
           <i>
             <FontAwesomeIcon icon={faMicrophone} />
           </i>
-        </div>,
+        </div>
+      ),
     },
+
     {
       id: 5,
-      element:
-        <div className={`${styles.studyTool} ${isTemplateModal ? styles.clicked : ''}`} onClick={() => { setIsTemplateModal((prev) => !prev) }}>
+      element: (
+        <div
+          className={`${styles.studyTool} ${
+            isTemplateModal ? styles.clicked : ""
+          }`}
+          onClick={() => {
+            setIsTemplateModal((prev) => !prev);
+          }}
+        >
           <i>
             <FontAwesomeIcon icon={faImage} />
           </i>
-        </div>,
+        </div>
+      ),
     },
+
     {
       id: 6,
-      element:
-        <div className={`${styles.studyTool} ${isVolumeModal ? styles.clicked : ''}`} onClick={() => { setIsVolumeModal((prev) => !prev) }}>
+      element: (
+        <div
+          className={`${styles.studyTool} ${
+            isVolumeModal ? styles.clicked : ""
+          }`}
+          onClick={() => {
+            setIsVolumeModal((prev) => !prev);
+          }}
+        >
           <i>
             <FontAwesomeIcon icon={faVolumeHigh} />
           </i>
-        </div>,
+        </div>
+      ),
     },
+
     {
       id: 7,
-      element:
-        <div className={`${styles.studyTool} ${isGroupModal ? styles.clicked : ''}`} onClick={() => { setIsViewGroups((prev) => !prev) }}>
+      element: (
+        <div
+          className={`${styles.studyTool} ${
+            isGroupModal ? styles.clicked : ""
+          }`}
+          onClick={() => {
+            setIsViewGroups((prev) => !prev);
+          }}
+        >
           <i>
             <FontAwesomeIcon icon={faUsers} />
           </i>
-        </div>,
+        </div>
+      ),
     },
+
     {
       id: 8,
-      element:
-        <div className={`${styles.studyTool} ${isZoom ? styles.clicked : ''}`} onClick={() => { setIsZoom((prev) => !prev) }}>
+      element: (
+        <div
+          className={`${styles.studyTool} ${isZoom ? styles.clicked : ""}`}
+          onClick={() => {
+            setIsZoom((prev) => !prev);
+          }}
+        >
           <i>
-            <FontAwesomeIcon icon={ isZoom ? faUpRightAndDownLeftFromCenter : faDownLeftAndUpRightToCenter} />
+            <FontAwesomeIcon
+              icon={
+                isZoom
+                  ? faUpRightAndDownLeftFromCenter
+                  : faDownLeftAndUpRightToCenter
+              }
+            />
           </i>
-        </div>,
+        </div>
+      ),
     },
   ]);
 
-  useEffect(() => {
-    
-  }, [isZoom])
+  useEffect(() => {}, [isZoom]);
   const moveCard = useCallback((dragIndex, hoverIndex) => {
     setItems((prevItems) =>
       update(prevItems, {
@@ -108,8 +209,8 @@ function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupMo
           [hoverIndex, 0, prevItems[dragIndex]],
         ],
       }),
-    )
-  }, [])
+    );
+  }, []);
   const renderCard = useCallback((card, index, styles) => {
     return (
       <StudyTool
@@ -120,8 +221,8 @@ function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupMo
         moveCard={moveCard}
         styles={styles}
       />
-    )
-  }, [])
+    );
+  }, []);
   return (
     <div className={styles.StudySidebar}>
       <DndProvider backend={HTML5Backend}>
@@ -129,6 +230,6 @@ function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupMo
       </DndProvider>
     </div>
   );
-};
+}
 
 export default StudySidebar;

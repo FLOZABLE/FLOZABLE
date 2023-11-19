@@ -1,11 +1,14 @@
-import React from 'react';
+import React from "react";
 import styles from "./ToggleBtn.module.css";
 
-function ToggleBtn(props) {
+function ToggleBtn({ onToggle, style, content, isToggled, off, on }) {
   return (
     <div className={styles.ToggleBtn}>
-      <button onClick={props.onToggle} style={props.style}>
-        <div>{props.content}{props.isToggled ? props.off : props.on}</div>   
+      <button onClick={onToggle} style={style}>
+        <div>
+          {content}
+          {isToggled ? off : on}
+        </div>
       </button>
     </div>
   );

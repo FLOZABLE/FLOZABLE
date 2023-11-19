@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./SliderAnimation.module.css";
 
-function SliderAnimation(props) {
-  const { min, max, step, value, setSliderValue, sliderValue } = props;
-
+function SliderAnimation({ min, max, step, setSliderValue, sliderValue }) {
   const handleChange = (e) => {
     setSliderValue(parseInt(e.target.value));
   };
@@ -56,6 +54,7 @@ function SliderAnimation(props) {
           backgroundSize: percent() + "% 100%",
         }}
       />
+
       <div className={styles.sliderValue}>{numbers}</div>
     </div>
   );

@@ -18,13 +18,19 @@ const tasks = [
   { id: 4, name: "Item 4", column: COLUMN_NAMES.DO_IT },
 ];
 
-const MovableItem = ({ name, index, currentColumnName, moveCardHandler, setItems }) => {
+const MovableItem = ({
+  name,
+  index,
+  currentColumnName,
+  moveCardHandler,
+  setItems,
+}) => {
   const changeItemColumn = (currentItem, columnName) => {
     setItems((prevState) =>
       prevState.map((e) => ({
         ...e,
         column: e.name === currentItem.name ? columnName : e.column,
-      }))
+      })),
     );
   };
 
@@ -44,7 +50,8 @@ const MovableItem = ({ name, index, currentColumnName, moveCardHandler, setItems
       }
 
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
-      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
       const clientOffset = monitor.getClientOffset();
       const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
@@ -66,7 +73,7 @@ const MovableItem = ({ name, index, currentColumnName, moveCardHandler, setItems
     item: { index, name, currentColumnName, type: "Our first type" },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult();
-  
+
       if (dropResult) {
         const { name } = dropResult;
         const { DO_IT, IN_PROGRESS, AWAITING_REVIEW, DONE } = COLUMN_NAMES;
@@ -92,7 +99,7 @@ const MovableItem = ({ name, index, currentColumnName, moveCardHandler, setItems
       isDragging: monitor.isDragging(),
     }),
   });
-  
+
   const opacity = isDragging ? 0.4 : 1;
 
   drag(drop(ref));
@@ -104,7 +111,7 @@ const MovableItem = ({ name, index, currentColumnName, moveCardHandler, setItems
   );
 };
 
-const Column = ({ children, className, title, items, setItems }) => {
+const Column = ({ children, className, title }) => {
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: "Our first type",
     drop: () => ({ name: title }),
@@ -140,14 +147,18 @@ const Column = ({ children, className, title, items, setItems }) => {
   };
 
   return (
-    <div ref={drop} className={className} style={{ backgroundColor: getBackgroundColor() }}>
+    <div
+      ref={drop}
+      className={className}
+      style={{ backgroundColor: getBackgroundColor() }}
+    >
       <p>{title}</p>
       {children}
     </div>
   );
 };
 
-function StudySidebar (props) {
+function StudySidebar() {
   const [items, setItems] = useState(tasks);
 
   const moveCardHandler = (dragIndex, hoverIndex) => {
@@ -182,21 +193,41 @@ function StudySidebar (props) {
   return (
     <div className={styles.StudySidebar}>
       <DndProvider backend={HTML5Backend}>
-        <Column title={DO_IT} className="column do-it-column" items={items} setItems={setItems}>
+        <Column
+          title={DO_IT}
+          className="column do-it-column"
+          items={items}
+          setItems={setItems}
+        >
           {returnItemsForColumn(DO_IT)}
         </Column>
-        <Column title={IN_PROGRESS} className="column in-progress-column" items={items} setItems={setItems}>
+        <Column
+          title={IN_PROGRESS}
+          className="column in-progress-column"
+          items={items}
+          setItems={setItems}
+        >
           {returnItemsForColumn(IN_PROGRESS)}
         </Column>
-        <Column title={AWAITING_REVIEW} className="column awaiting-review-column" items={items} setItems={setItems}>
+        <Column
+          title={AWAITING_REVIEW}
+          className="column awaiting-review-column"
+          items={items}
+          setItems={setItems}
+        >
           {returnItemsForColumn(AWAITING_REVIEW)}
         </Column>
-        <Column title={DONE} className="column done-column" items={items} setItems={setItems}>
+        <Column
+          title={DONE}
+          className="column done-column"
+          items={items}
+          setItems={setItems}
+        >
           {returnItemsForColumn(DONE)}
         </Column>
       </DndProvider>
     </div>
   );
-};
+}
 
 export default StudySidebar;
