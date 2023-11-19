@@ -18,41 +18,14 @@ function Groups(props) {
 
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [joinGroupResponse, setJoinGroupResponse] = useState(null);
-  const [openGroupPwModal, setOpenGroupPwModal] = useState(false);
+  const [isGroupPwModal, setIsGroupPwModal] = useState(false);
   const [joinTarget, setJoinTarget] = useState(null);
   const [myTimerTotal, setMyTimerTotal] = useState(0);
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
-  const [createGroupResponse, setCreateGroupResponse] = useState(null);
 
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
   };
-
-  useEffect(() => {
-    if (joinTarget && joinGroupResponse.success) {
-      const myInfo = allMembers.find(member => {return member.user_id === userInfo.user_id});
-      
-      joinTarget.members.push(myInfo);
-      
-      setJoinTarget(joinTarget);
-      setOtherGroups(otherGroups.filter((group) => { return group.group_id != joinTarget.group_id }));
-      myGroups.push(joinTarget)
-      setMyGroups(myGroups);
-    };
-  }, [joinGroupResponse, allMembers]);
-
-  useEffect(() => {
-    if (createGroupResponse) {
-      setJoinGroupResponse(createGroupResponse);
-      if (createGroupResponse.success) {
-        setIsCreateNewGroup(false);
-        const newGroup = createGroupResponse.data.group;
-        const myInfo = allMembers.find(member => {return member.user_id === userInfo.user_id});
-        setMyGroups((prevGroups) => [...prevGroups, { ...newGroup, average_hr: 0, tags: JSON.stringify(newGroup.tags), members: [myInfo] }])
-      }
-    };
-  }, [createGroupResponse]);
 
   useEffect(() => {
     if (subjects.daily && subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]) {
@@ -64,7 +37,7 @@ function Groups(props) {
     <div className={styles.GroupsContainer}>
       <StuckModal />
       <CreateGroupModal isOpen={isCreateNewGroup} setIsOpen={setIsCreateNewGroup} setCreateGroupResponse={setResponse} />
-      <GroupPwModal setOpenGroupPwModal={setOpenGroupPwModal} openGroupPwModal={openGroupPwModal} joinTarget={joinTarget} setJoinGroupResponse={setResponse} />
+      <GroupPwModal myGroups={myGroups} setMyGroups={setMyGroups}  groups={otherGroups} setOtherGroups={setOtherGroups} setIsGroupPwModal={setIsGroupPwModal} isGroupPwModal={isGroupPwModal} joinTarget={joinTarget} setJoinGroupResponse={setResponse} />
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
@@ -72,7 +45,6 @@ function Groups(props) {
               <p className={styles.title}>Groups</p>
             </div>
             <div className={`${styles.container} ${styles.myGroups}`}>
-              {/* <MyGroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={myGroups} setOpenGroupPwModal={setOpenGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} allMembers={allMembers} /> */}
               <MyGroupsViewer myGroups={myGroups} socket={socket} userInfo={userInfo} myTimerTotal={myTimerTotal} />
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>
@@ -94,8 +66,7 @@ function Groups(props) {
                 </button>
               </div>
               <div className={styles.groupsWrapper}>
-                <GroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={otherGroups} setOpenGroupPwModal={setOpenGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} userInfo={userInfo} queryTags={tags} />
-                {/* <otherGroupsGen otherGroups={otherGroups} setNotificationResponse={setNotificationResponse} setCopied={setCopied} copied={copied} /> */}
+                <GroupsGen myGroups={myGroups} setMyGroups={setMyGroups} groups={otherGroups} setOtherGroups={setOtherGroups} setJoinGroupResponse={setResponse} setIsGroupPwModal={setIsGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} userInfo={userInfo} queryTags={tags} />
               </div>
             </div>
           </div>
