@@ -20,8 +20,8 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   const [rankingEl, setRankingEl] = useState([]);
   const [ranking, setRanking] = useState([]);
   const [rankingSearch, setRankingSearch] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
