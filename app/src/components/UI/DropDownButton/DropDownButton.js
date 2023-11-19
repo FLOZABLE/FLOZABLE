@@ -3,38 +3,34 @@ import styles from "./DropDownButton.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 
-function DropDownButton(props) {
-  const [options, setOptions] = useState([]);
-  const [index, setIndex] = useState(props.defaultIndex);
-  const [clicked, setClicked] = useState(false);
+function DropDownButton({ options, setValue }) {
+  const [clicked, setClicked] = useState(false); 
+  const [dispVal, setDispVal] = useState(null);
 
   useEffect(() => {
-    if (props.options[0]) {
-      props.setValue(props.options[0].value);
-    };
-    setOptions(props.options.map((option, i) => {
-      return (
-        <li key={i} onClick={() => {setIndex(i);setClicked(false);props.setValue(option.value)}} className={styles.option}>
-          {option.name}
-        </li>
-      )
-    }));
-  }, [props.options]);
-
-  /* useEffect(() => {
-    setIndex()
-  }, []) */
+    if (dispVal === null && options && options[0]) {
+      const {value, name} = options[0];
+      setValue(value);
+      setDispVal(name);
+    }
+  }, [options]);
 
   return (
     <div className={styles.DropDownButton}>
-      <button className={`${clicked ? styles.clicked : ''}`} onClick={() => {setClicked(!clicked)}}>
-        {options[index]}
+      <button className={`${clicked ? styles.clicked : ''}`} onClick={() => { setClicked(!clicked) }}>
+        {dispVal}
         <i>
           <FontAwesomeIcon icon={faCaretDown} />
         </i>
       </button>
       <ul className={`${styles.options} customScroll`}>
-        {options}
+        {options.map((option, i) => {
+          return (
+            <li key={i} onClick={() => { setValue(option.value); setDispVal(option.name); setClicked(false); }} className={styles.option}>
+              {option.name}
+            </li>
+          )
+        })}
       </ul>
     </div>
   );

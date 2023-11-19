@@ -19,7 +19,7 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [start, setStart] = useState(new Date());
-  const [end, setEnd] = useState(new Date());
+  const [end, setEnd] = useState(new Date(new Date().getTime() + 60 * 1000 * 30));
   const [repeat, setRepeat] = useState(0);
   const [priority, setPriority] = useState(50);
   const [notification, setNotification] = useState(-1);
@@ -29,7 +29,6 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
   const [completed, setCompleted] = useState(false);
 
   const submit = () => {
-    console.log('gd')
     const startSec = Math.floor(start.getTime() / (1000 * 60));
     const endSec = Math.floor(end.getTime() / (1000 * 60));
     const newEventInfo = {title, id, start: startSec, end: endSec, description, repeat, subject, notification, priority, completed: completed ? 1 : 0};
@@ -60,14 +59,13 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
   useEffect(() => {
     if (isAddPlanModal && isAddPlanModal.id) {
       const {id, title, start, end, description, repeat, subject, notification, priority, saved, completed} = isAddPlanModal;
-      console.log(subject, 'gd')
       setId(id);
       setTitle(title);
       setStart(start);
       setEnd(end);
       setDescription(description);
       setRepeat(repeat);
-      //setSubject(subject);
+      setSubject(subject);
       setNotification(notification);
       setPriority(priority);
       setSaved(saved);
@@ -157,7 +155,7 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
             </div>
           </div>
           <div className={styles.contentWrapper}>
-          <DropDownButton options={[{name:'Does not repeat', value: 0}, {name: 'Daily', value: 1}, {name: 'Weekly', value: 2}, {name: `Monthly`, value: 3}]} defaultIndex={0} setValue={setRepeat} />
+          <DropDownButton options={[{name:'Does not repeat', value: 0}, {name: 'Daily', value: 1}, {name: 'Weekly', value: 2}, {name: `Monthly`, value: 3}]} setValue={setRepeat} />
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -171,8 +169,8 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
             <div className={styles.subjectWrapper}>
               <DropDownButton options={subjects.map(subject => {
                 const {name, id} = subject;
-                return {name, value: subject.id}
-              })} defaultIndex={0} setValue={(data) => {console.log(data); setSubject(data)}} />
+                return {name, value: id}
+              })} setValue={setSubject}/>
             </div>
             <p>OR</p>
             <div className={styles.addSubjectWrapper}>
@@ -189,7 +187,7 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
           </div>
           <div className={styles.contentWrapper}>
             <div className={styles.notificationWrapper}>
-              <DropDownButton options={[{name:'no notification', value: -1}, {name: '5 minutes before', value: 5}, {name: '10 minutes before', value: 10}, {name: '30 minutes before', value: 30}, {name: '1 hour before', value: 60}]} defaultIndex={0} setValue={setNotification} />
+              <DropDownButton options={[{name:'no notification', value: -1}, {name: '5 minutes before', value: 5}, {name: '10 minutes before', value: 10}, {name: '30 minutes before', value: 30}, {name: '1 hour before', value: 60}]} setValue={setNotification} />
             </div>
 
           </div>
