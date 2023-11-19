@@ -103,4 +103,37 @@ function createChatroomsTable() {
   `);
 };
 
-module.exports = {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable};
+function createDailyRankingTable() {
+  const connection = pool.promise();
+  connection.query(`
+  CREATE TABLE dailyRanking (
+    date INT(11),
+    timezone TINYINT DEFAULT 0,
+    ranking TEXT DEFAULT ''
+  );  
+  `);
+};
+
+function createWeeklyRankingTable() {
+  const connection = pool.promise();
+  connection.query(`
+  CREATE TABLE weeklyRanking (
+    date INT(11),
+    timezone TINYINT DEFAULT 0,
+    ranking TEXT DEFAULT ''
+  );  
+  `);
+};
+
+function createMonthlyRankingTable() {
+  const connection = pool.promise();
+  connection.query(`
+  CREATE TABLE monthlyRanking (
+    date INT(11),
+    timezone TINYINT DEFAULT 0,
+    ranking TEXT DEFAULT ''
+  );  
+  `);
+};
+
+module.exports = {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable};

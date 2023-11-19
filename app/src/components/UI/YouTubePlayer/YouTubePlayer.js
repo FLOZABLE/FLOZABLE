@@ -40,7 +40,6 @@ function YouTubePlayer(props) {
       player.seekTo(10);
     }
     if (event.data === window.YT.PlayerState.PLAYING) {
-      player.seekTo(10);
       // Video started (start button clicked)
       // You can add custom behavior here or leave it empty
     } else if (event.data === window.YT.PlayerState.PAUSED) {
