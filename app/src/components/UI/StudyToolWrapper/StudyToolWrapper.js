@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { ItemTypes } from './ItemTypes.js'
 import styles from "./StudyToolWrapper.module.css";
+import { Link } from "react-router-dom";
 
 function StudyTool({ id, element, index, moveCard }) {
   const [isClicked, setIsClicked] = useState(false);
