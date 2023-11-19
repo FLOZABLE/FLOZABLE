@@ -18,7 +18,7 @@
 
 .GroupPwModal .header i {
   margin-left: auto;
-  font-size:40px;
+  font-size: 40px;
   color: #fff;
   margin-right: 10px;
   cursor: pointer;
@@ -35,16 +35,16 @@
   margin-top: 20px;
 }
 
-.GroupPwModal .content > div {
+.GroupPwModal .content>div {
   display: flex;
   font-weight: 800;
 }
 
-.GroupPwModal .content > div:nth-child(1) {
+.GroupPwModal .content>div:nth-child(1) {
   font-size: 50px;
 }
 
-.GroupPwModal .content > div:nth-child(2) {
+.GroupPwModal .content>div:nth-child(2) {
   font-size: 25px;
   margin-bottom: 15px;
 }
@@ -64,7 +64,7 @@
 }
 
 .GroupPwModal .formField:focus {
-  border:var(--pink) 1px solid;
+  border: var(--pink) 1px solid;
 }
 
 .GroupPwModal .formGroup>span,

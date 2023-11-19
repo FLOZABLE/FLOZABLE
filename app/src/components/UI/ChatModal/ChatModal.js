@@ -21,13 +21,16 @@ const msg1Render = (msgInfo, timeDisp, i) => {
 const msg2Render = (user, msgInfo, timeDisp, i) => {
   return (
     <div className={`${styles.msgWrapper} ${styles.others}`} key={i}>
-      <div className={styles.profileWrapper} style={{
-        backgroundImage: `url("${serverOrigin}/profile-images/${user.user_id}.jpeg")`, backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat',
-      }}>
-      </div>
-      <p className={styles.name} >{user.name}</p>
+      <div
+        className={styles.profileWrapper}
+        style={{
+          backgroundImage: `url("${serverOrigin}/profile-images/${user.user_id}.jpeg")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+          backgroundRepeat: "no-repeat",
+        }}
+      ></div>
+      <p className={styles.name}>{user.name}</p>
       <div className={styles.msg}>
         <p>{msgInfo.m}</p>
       </div>
@@ -38,14 +41,25 @@ const msg2Render = (user, msgInfo, timeDisp, i) => {
 
 const timeDiff = (changeDate, i) => {
   return (
-    <div className={styles.dateChange} key={(i + 1) * (Math.random() + 1 * 100)}>
-      <p>{changeDate.getMonth() + 1}/{changeDate.getDate()}</p>
+    <div
+      className={styles.dateChange}
+      key={(i + 1) * (Math.random() + 1 * 100)}
+    >
+      <p>
+        {changeDate.getMonth() + 1}/{changeDate.getDate()}
+      </p>
     </div>
-  )
-}
+  );
+};
 
-function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsChatModal }) {
-
+function ChatModal({
+  socket,
+  userInfo,
+  myGroups,
+  allMembers,
+  isChatModal,
+  setIsChatModal,
+}) {
   const msgContainerRef = useRef(null);
 
   const [submit, setSubmit] = useState(false);
@@ -61,55 +75,61 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
   const [reset, setReset] = useState(0);
 
   const bringRooms = useCallback(() => {
-    fetch(`${serverOrigin}/api/chat/bring-rooms`, { method: 'post' })
+    fetch(`${serverOrigin}/api/chat/bring-rooms`, { method: "post" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          
-          
           setChatGroups(data.groupRooms);
         }
       })
       .catch((error) => console.error(error));
   }, []);
 
-  const msgRenderer = useCallback((newMessages, chats, chat, type, i) => {
-    const msgInfo = JSON.parse(chat);
-    const isMe = msgInfo.u === userInfo.user_id;
-    const date = new Date(msgInfo.t * 1000);
-    const hr = date.getHours() % 12 ? date.getHours() % 12 : 12;
-    const ampm = date.getHours() / 12 ? 'PM' : 'AM';
-    const timeDisp = `${hr}:${date.getMinutes().toString().padStart(2, '0')}${ampm}`;
-    let prevMsg = type && i ? JSON.parse(chats[i - 1]) : false;
-    //prevMsg = prevMsgs && prevMsgs.length >= 2 ? prevMsgs[prevMsgs.length - 2] : false;
-    /* if (prevMsgs && prevMsgs.length) {
+  const msgRenderer = useCallback(
+    (newMessages, chats, chat, type, i) => {
+      const msgInfo = JSON.parse(chat);
+      const isMe = msgInfo.u === userInfo.user_id;
+      const date = new Date(msgInfo.t * 1000);
+      const hr = date.getHours() % 12 ? date.getHours() % 12 : 12;
+      const ampm = date.getHours() / 12 ? "PM" : "AM";
+      const timeDisp = `${hr}:${date
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}${ampm}`;
+      let prevMsg = type && i ? JSON.parse(chats[i - 1]) : false;
+      //prevMsg = prevMsgs && prevMsgs.length >= 2 ? prevMsgs[prevMsgs.length - 2] : false;
+      /* if (prevMsgs && prevMsgs.length) {
       prevMsg = 
     } */
-    const isDateChange = prevMsg ? new Date(prevMsg.t * 1000).setHours(0, 0, 0, 0) !== new Date(msgInfo.t * 1000).setHours(0, 0, 0, 0) : true;
-    if (isDateChange && type) {
-      const changeDate = new Date(msgInfo.t * 1000);
-      newMessages.push(
-        timeDiff(changeDate, i)
-      )
-    };
-    let newChat;
-    if (!isMe) {
-      newChat = msg1Render(msgInfo, timeDisp, i)
-    } else {
-      const userInfo = allMembers.find(user => {return user.user_id === msgInfo.u });
-      if (userInfo) {
-        newChat = msg2Render(userInfo, msgInfo, timeDisp, i)
+      const isDateChange = prevMsg
+        ? new Date(prevMsg.t * 1000).setHours(0, 0, 0, 0) !==
+          new Date(msgInfo.t * 1000).setHours(0, 0, 0, 0)
+        : true;
+      if (isDateChange && type) {
+        const changeDate = new Date(msgInfo.t * 1000);
+        newMessages.push(timeDiff(changeDate, i));
       }
-    }
-    newMessages.push(newChat);
-    return newMessages;
-  }, [userInfo, allMembers]);
+      let newChat;
+      if (!isMe) {
+        newChat = msg1Render(msgInfo, timeDisp, i);
+      } else {
+        const userInfo = allMembers.find((user) => {
+          return user.user_id === msgInfo.u;
+        });
+        if (userInfo) {
+          newChat = msg2Render(userInfo, msgInfo, timeDisp, i);
+        }
+      }
+      newMessages.push(newChat);
+      return newMessages;
+    },
+    [userInfo, allMembers],
+  );
 
   useEffect(() => {
-    
     if (!userInfo) {
       return;
-    };
+    }
 
     const bringChat = (data) => {
       const chats = data.chats;
@@ -122,24 +142,29 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
 
     const joinMyGroups = (groups) => {
       setChatGroups(groups);
-    }
+    };
 
-    socket.on('bringChat', bringChat);
-    socket.on('joinMyGroups', joinMyGroups);
+    socket.on("bringChat", bringChat);
+    socket.on("joinMyGroups", joinMyGroups);
 
     //bringRooms();
 
     return () => {
       socket.off("bringChat", bringChat);
-      socket.off('joinMyGroups', joinMyGroups);
+      socket.off("joinMyGroups", joinMyGroups);
     };
   }, [userInfo, allMembers]);
 
   useEffect(() => {
     if (submit) {
-      if (msgInput.length > 0){
+      if (msgInput.length > 0) {
         setMsgInput("");
-        socket.emit('sendMsg', selectedGroup.group_id, selectedRoom.id, msgInput);
+        socket.emit(
+          "sendMsg",
+          selectedGroup.group_id,
+          selectedRoom.id,
+          msgInput,
+        );
       }
     }
   }, [submit]);
@@ -148,7 +173,7 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
     const newChatGroups = [];
     const newDm = [];
 
-    chatGroups.map(group => {
+    chatGroups.map((group) => {
       if (group.groupId) {
         newChatGroups.push(group);
       } else {
@@ -156,47 +181,65 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
       }
     });
 
-    setGroupsEl(newChatGroups.map((group, i) => {
-      const groupInfo = myGroups.find((groupInfo) => { return groupInfo.group_id === group.groupId });
-      if (groupInfo) {
-        return (
-          <div className={styles.group} key={i}>
-            <div className={styles.groupProfile} style={{ backgroundColor: groupInfo.color }} onClick={() => { setSelectedGroup(groupInfo) }}>
+    setGroupsEl(
+      newChatGroups.map((group, i) => {
+        const groupInfo = myGroups.find((groupInfo) => {
+          return groupInfo.group_id === group.groupId;
+        });
+        if (groupInfo) {
+          return (
+            <div className={styles.group} key={i}>
+              <div
+                className={styles.groupProfile}
+                style={{ backgroundColor: groupInfo.color }}
+                onClick={() => {
+                  setSelectedGroup(groupInfo);
+                }}
+              ></div>
+              <div className={styles.notificationN}>
+                <p>1</p>
+              </div>
+              <div className={styles.hoverEl}>{groupInfo.name}</div>
             </div>
-            <div className={styles.notificationN}>
-              <p>1</p>
-            </div>
-            <div className={styles.hoverEl}>
-              {groupInfo.name}
-            </div>
-          </div>
-        )
-      };
-    }));
+          );
+        }
+      }),
+    );
     if (myGroups && myGroups[0]) {
       const defaultGroup = myGroups[0];
       setSelectedGroup(defaultGroup);
-      const chatGroup = chatGroups.find(chatGroup => { return chatGroup.groupId === defaultGroup.group_id });
+      const chatGroup = chatGroups.find((chatGroup) => {
+        return chatGroup.groupId === defaultGroup.group_id;
+      });
       if (chatGroup && chatGroup.rooms[0]) {
         const newRoom = chatGroup.rooms[0];
         setSelectedRoom({ ...newRoom });
       }
-    };
+    }
   }, [chatGroups, myGroups]);
 
   useEffect(() => {
     if (selectedGroup) {
-      const chatGroup = chatGroups.find(chatGroup => { return chatGroup.groupId === selectedGroup.group_id });
+      const chatGroup = chatGroups.find((chatGroup) => {
+        return chatGroup.groupId === selectedGroup.group_id;
+      });
       if (chatGroup) {
-        setRoomsEl(chatGroup.rooms.map((room, i) => {
-          return (
-            <div className={styles.roomContainer} key={i}>
-              <div className={styles.type}>
-                <p onClick={() => { setSelectedRoom(room) }}>#{room.name}</p>
+        setRoomsEl(
+          chatGroup.rooms.map((room, i) => {
+            return (
+              <div className={styles.roomContainer} key={i}>
+                <div className={styles.type}>
+                  <p
+                    onClick={() => {
+                      setSelectedRoom(room);
+                    }}
+                  >
+                    #{room.name}
+                  </p>
+                </div>
               </div>
-            </div>
-          )
-        })
+            );
+          }),
         );
       }
     }
@@ -204,21 +247,27 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
 
   useEffect(() => {
     const onMsg = (group, room, msgInfo) => {
-      
       if (room === selectedRoom.id) {
         let newMessages = [];
-        newMessages = msgRenderer([], [], JSON.stringify(msgInfo), 0, msgInfo.i, msg);
-        
-        setMsg(prevMsg => [...prevMsg, ...newMessages]);
+        newMessages = msgRenderer(
+          [],
+          [],
+          JSON.stringify(msgInfo),
+          0,
+          msgInfo.i,
+          msg,
+        );
+
+        setMsg((prevMsg) => [...prevMsg, ...newMessages]);
       }
     };
     //group not user
-    
+
     setIsSidebar(false); //close sidebar after room selection
     if (selectedGroup && selectedRoom) {
-      socket.emit('bringChat', selectedGroup.group_id, selectedRoom.id);
-    };
-    socket.on('msgReceived', onMsg);
+      socket.emit("bringChat", selectedGroup.group_id, selectedRoom.id);
+    }
+    socket.on("msgReceived", onMsg);
 
     return () => {
       socket.off("msgReceived", onMsg);
@@ -228,24 +277,32 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
   useEffect(() => {
     msgContainerRef.current.scrollTo({
       top: msgContainerRef.current.scrollHeight,
-      behavior: 'smooth',
+      behavior: "smooth",
     });
   }, [msg]);
 
   return (
-    <div className={`${styles.ChatModal} ${isChatModal ? styles.isOpen : ''}`}>
+    <div className={`${styles.ChatModal} ${isChatModal ? styles.isOpen : ""}`}>
       <div className={styles.header}>
         <i className={styles.sidebarToggleBtn}>
           <SidebarToggleBtn isOpen={isSidebar} setIsOpen={setIsSidebar} />
         </i>
         <div className={styles.locationHeader}>
-          {selectedGroup ? (selectedGroup.name + (selectedRoom ? ": " + selectedRoom.name : "")) : "No group selected"}
+          {selectedGroup
+            ? selectedGroup.name +
+              (selectedRoom ? ": " + selectedRoom.name : "")
+            : "No group selected"}
         </div>
-        <i className={styles.closeBtn} onClick={() => {setIsChatModal(false)}}>
+        <i
+          className={styles.closeBtn}
+          onClick={() => {
+            setIsChatModal(false);
+          }}
+        >
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
-      <div className={`${styles.sidebar} ${isSidebar ? styles.open : ''}`}>
+      <div className={`${styles.sidebar} ${isSidebar ? styles.open : ""}`}>
         <div className={styles.header}>
           <div className={styles.roomTitle}>
             {selectedGroup ? selectedGroup.name : ""}
@@ -255,13 +312,16 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
           </i>
         </div>
         <div className={styles.groupsWrapper}>
-          <div className={styles.groups}>
-            {groupsEl}
-          </div>
+          <div className={styles.groups}>{groupsEl}</div>
           <div className={styles.rooms}>
-            <button className={styles.roomType} onClick={() => { setIsChatRooms(!isChatRooms) }}>
+            <button
+              className={styles.roomType}
+              onClick={() => {
+                setIsChatRooms(!isChatRooms);
+              }}
+            >
               Chat Rooms
-              <i className={isChatRooms ? styles.clicked : ''}>
+              <i className={isChatRooms ? styles.clicked : ""}>
                 <FontAwesomeIcon icon={faCaretDown} />
               </i>
             </button>
@@ -269,15 +329,25 @@ function ChatModal({ socket, userInfo, myGroups, allMembers, isChatModal, setIsC
           </div>
         </div>
       </div>
-      <div className={`${styles.msgContainer} customScroll`} ref={msgContainerRef} >
+      <div
+        className={`${styles.msgContainer} customScroll`}
+        ref={msgContainerRef}
+      >
         {msg}
       </div>
       <div className={styles.inputWrapper}>
-        <input type="text" value={msgInput} onKeyDown={(e) => {setSubmit(e.key == "Enter")}} onChange={(e) => setMsgInput(e.target.value)} />
+        <input
+          type="text"
+          value={msgInput}
+          onKeyDown={(e) => {
+            setSubmit(e.key == "Enter");
+          }}
+          onChange={(e) => setMsgInput(e.target.value)}
+        />
         <SendBtn submit={submit} setSubmit={setSubmit} />
       </div>
     </div>
-  )
-};
+  );
+}
 
 export default ChatModal;

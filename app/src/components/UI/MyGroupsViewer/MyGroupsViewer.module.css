@@ -4,9 +4,12 @@
 
 .MyGroupsViewer {
   height: 600px;
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+  /* Standard syntax */
 }
 
 .MyGroupsViewer .noGroup {
@@ -110,8 +113,8 @@
   margin: 0px 10px;
 }
 
-.MyGroupsViewer.study *{
- color: #fff !important;
+.MyGroupsViewer.study * {
+  color: #fff !important;
 }
 
 .MyGroupsViewer.study .members .member {

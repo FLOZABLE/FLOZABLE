@@ -11,9 +11,16 @@ import { sortNewSubject } from "../../../utils/timelineSorting";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function AddSubjectModal(props) {
-  const { isAddSubjectModal, setIsAddSubjectModal, setAddSubjectResponse, subjects, setSubjects, setSubject } = props;
+  const {
+    isAddSubjectModal,
+    setIsAddSubjectModal,
+    setAddSubjectResponse,
+    subjects,
+    setSubjects,
+    setSubject,
+  } = props;
 
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
   const [isSelectColor, setIsSelectColor] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState({ name: null, el: null });
@@ -27,55 +34,84 @@ function AddSubjectModal(props) {
   useEffect(() => {
     /* props.setSubjects([]); */
     if (isSubmit) {
-      fetch(`${serverOrigin}/api/study/add-subject`,
-      {
-        method: 'post',
+      fetch(`${serverOrigin}/api/study/add-subject`, {
+        method: "post",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({name: name, color: selectedColor, icon: selectedIcon.name})
+        body: JSON.stringify({
+          name: name,
+          color: selectedColor,
+          icon: selectedIcon.name,
+        }),
       })
-      .then((response) => response.json())
-      .then((data) => {
-        setAddSubjectResponse(data);
-        if (data.success) {
-          const newSubject = sortNewSubject(subjects, data.info.subjectInfo);
-          setIsAddSubjectModal(false);
-          setSubjects((prevSubjects) => {
-            const newState = [...prevSubjects];
-            newState.push(newSubject);
-            newState.daily = prevSubjects.daily;
-            newState.monthly = prevSubjects.monthly;
-            newState.weekly = prevSubjects.weekly;
-          
-            return newState;
-          });
-          setSubject(newSubject);
-        }
-      })
-      .catch((error) => console.error(error));
-    };
+        .then((response) => response.json())
+        .then((data) => {
+          setAddSubjectResponse(data);
+          if (data.success) {
+            const newSubject = sortNewSubject(subjects, data.info.subjectInfo);
+            setIsAddSubjectModal(false);
+            setSubjects((prevSubjects) => {
+              const newState = [...prevSubjects];
+              newState.push(newSubject);
+              newState.daily = prevSubjects.daily;
+              newState.monthly = prevSubjects.monthly;
+              newState.weekly = prevSubjects.weekly;
+
+              return newState;
+            });
+            setSubject(newSubject);
+          }
+        })
+        .catch((error) => console.error(error));
+    }
   }, [isSubmit]);
-  
+
   return (
-    <div className={`${styles.AddSubjectModal} modal ${isAddSubjectModal ? 'open' : ''}`}>
+    <div
+      className={`${styles.AddSubjectModal} modal ${
+        isAddSubjectModal ? "open" : ""
+      }`}
+    >
       <div className={styles.header}>
-        <i onClick={() => {setIsAddSubjectModal(false)}}>
+        <i
+          onClick={() => {
+            setIsAddSubjectModal(false);
+          }}
+        >
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
       <div className={styles.content}>
         <div className={styles.inputWrapper}>
-        <CustomInput input={name} handleInput={handleNameInput} icon={faBook} placeHolder={"Subject Name"} type={"text"} />
+          <CustomInput
+            input={name}
+            handleInput={handleNameInput}
+            icon={faBook}
+            placeHolder={"Subject Name"}
+            type={"text"}
+          />
         </div>
-        <SelectIcon selectedIcon={selectedIcon} setSelectedIcon={setSelectedIcon} isSelectIcon={isSelectIcon} setIsSelectIcon={setIsSelectIcon} setIsSelectColor={setIsSelectColor} />
-        <ColorPalette setSelectedColor={setSelectedColor} selectedColor={selectedColor} isSelectColor={isSelectColor} setIsSelectColor={setIsSelectColor} setIsSelectIcon={setIsSelectIcon} />
+        <SelectIcon
+          selectedIcon={selectedIcon}
+          setSelectedIcon={setSelectedIcon}
+          isSelectIcon={isSelectIcon}
+          setIsSelectIcon={setIsSelectIcon}
+          setIsSelectColor={setIsSelectColor}
+        />
+        <ColorPalette
+          setSelectedColor={setSelectedColor}
+          selectedColor={selectedColor}
+          isSelectColor={isSelectColor}
+          setIsSelectColor={setIsSelectColor}
+          setIsSelectIcon={setIsSelectIcon}
+        />
         <div className={styles.submit}>
-        <BlobBtn name={'SUBMIT'} setClicked={setIsSubmit} />
+          <BlobBtn name={"SUBMIT"} setClicked={setIsSubmit} />
         </div>
       </div>
     </div>
-  )
-};
+  );
+}
 
 export default AddSubjectModal;
