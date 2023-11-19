@@ -1,21 +1,29 @@
 .ThemeSelector {
-  width: 300px;
+  width: 500px;
 }
 
 .ThemeSelector .themeContainer {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 200px);
   justify-content: center;
   flex-wrap: wrap;
+  overflow-y: auto;
+  max-height: 300px;
+  gap: 20px;
 }
 
 .ThemeSelector .video {
   display: flex;
-  justify-content: center;
+  max-height: 100px;
   align-items: center;
-  width: min-content;
+  flex-direction: column;
+  border-radius: 20px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  background-color: #00000050;
+  position: relative;
+  overflow: hidden;
 }
 
 .ThemeSelector .video img {
-  width: 100px;
   height: auto;
 }

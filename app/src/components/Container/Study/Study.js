@@ -19,7 +19,6 @@ import StudyModalContainer from '../../UI/StudyModalContainer/StudyModalContaine
 import PlanTimeline from '../../UI/PlanTimeline/PlanTimeline';
 import CustomInput from '../../UI/CustomInput/CustomInput';
 import VolumeControl from '../../UI/VolumeControl/VolumeControl';
-import { AllThemes } from "../../../utils/Themes";
 import Draggable from "react-draggable";
 import ThemeSelector from '../../UI/ThemeSelector/ThemeSelector';
 
