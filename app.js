@@ -213,13 +213,19 @@ const {createBots, addId, deleteBots, botManager, createGroups} = require('./Bot
 //addId();
 //createBots(0, 100);
 
-const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable} = require('./query');
+const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable} = require('./query');
+const { rankingManager } = require("./services/rankingUpdate");
 
 /* createUsersTable();
 createSubjectsTable();
 createGroupsTable();
 createPlansTable();
 createChatroomsTable(); */
+/* createDailyRankingTable();
+createWeeklyRankingTable();
+createMonthlyRankingTable(); */
+
+rankingManager();
 
 server.listen(port, process.env.SERVER, () => {
   console.log(`Server running ${port}`);

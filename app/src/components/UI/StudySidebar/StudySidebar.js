@@ -3,15 +3,26 @@ import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import update from 'immutability-helper';
 import StudyTool from "../StudyToolWrapper/StudyToolWrapper";
-
+import { Link } from "react-router-dom";
 import styles from "./StudySidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCamera, faClipboardCheck, faDownLeftAndUpRightToCenter, faHourglass, faImage, faMicrophone, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faClipboardCheck, faDownLeftAndUpRightToCenter, faHome, faHourglass, faImage, faMicrophone, faUpRightAndDownLeftFromCenter, faUsers, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
 
 function StudySidebar({ isTimerModal, isPlannerModal, isTemplateModal, isGroupModal, isVolumeModal, isZoom, setIsTimerModal, setIsPlannerModal, setIsTemplateModal, setIsVolumeModal, setIsZoom, setIsViewGroups, setIsCam, setIsMic, isCam, isMic }) {
   const [isItemDragging, setIsItemDragging] = useState(false);
 
   const [items, setItems] = useState([
+    {
+      id: 0,
+      element:
+        <div className={`${styles.studyTool} ${isTimerModal ? styles.clicked : ''}`}>
+          <Link to="/dashboard">
+          <i>
+            <FontAwesomeIcon icon={faHome} />
+          </i>
+          </Link>
+        </div>,
+    },
     {
       id: 1,
       element:
