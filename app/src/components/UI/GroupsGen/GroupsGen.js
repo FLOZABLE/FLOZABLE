@@ -8,23 +8,25 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function GroupsGen(props) {
 
-  const { searchQuery, setJoinGroupResponse, joinGroupResponse, setOpenGroupPwModal, setJoinTarget, groups, userInfo, queryTags } = props;
+  const { searchQuery, setMyGroups, setOtherGroups , setJoinGroupResponse, joinGroupResponse, setIsGroupPwModal, setJoinTarget, groups, userInfo, queryTags } = props;
 
   const [copied, setCopied] = useState(null);
   const [otherGroupsEl, setOtherGroupsEl] = useState( null);
   const [maxGroups, setMaxGroups] = useState(-1);
 
-  const joinGroup = (group) => {
-    setJoinTarget(group);
-    if (group.visibility) {
-      fetch(`${serverOrigin}/api/groups/join/${group.group_id}`, { method: 'post' })
+  const joinGroup = (targetGroup) => {
+    setJoinTarget(targetGroup);
+    if (targetGroup.visibility) {
+      fetch(`${serverOrigin}/api/groups/join/${targetGroup.group_id}`, { method: 'post' })
         .then((response) => response.json())
         .then((data) => {
           setJoinGroupResponse(data);
+          setOtherGroups(groups.filter((group) => { return group.group_id != targetGroup.group_id }));
+          setMyGroups((myGroups) => [...myGroups, targetGroup]);
         })
         .catch((error) => console.error(error));
     } else {
-      setOpenGroupPwModal(true);
+      setIsGroupPwModal(true);
     }
   };
 

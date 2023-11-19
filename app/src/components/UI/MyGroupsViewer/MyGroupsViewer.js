@@ -451,15 +451,13 @@ const connectRecvTransport = async (consumerTransport, remoteProducerId, serverC
     mediaSocket.emit('consumer-resume', { serverConsumerId: params.serverConsumerId })
   })
 }
-
-  useEffect(() => {
-    
-  }, [test]);
+  
   const audioRef = useRef(null);
   return (
     <div className={`${styles.MyGroupsViewer} ${mode === 'study' ? styles.study : ''}`}>
             <video ref={videoRef} autoPlay playsInline className={`${styles.video}`} style={{zIndex: -1, position: 'fixed'}} />
             <audio ref={audioRef} autoPlay></audio>
+            {!myGroups.length ? <div className={styles.noGroup}>You haven't join any groups yet!</div> : null}
       <Swiper
         slidesPerView={1}
         loop={true}

@@ -7,7 +7,7 @@ import CustomInput from "../CustomInput/CustomInput";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function GroupPwModal(props) {
+function GroupPwModal({joinTarget, isGroupPwModal, setIsGroupPwModal, setJoinGroupResponse, setOtherGroups, groups, setMyGroups, group}) {
   const [pwSubmit, setPwSubmit] = useState(false);
   const [pw, setPw] = useState('');
 
@@ -15,9 +15,8 @@ function GroupPwModal(props) {
     setPw(e.target.value);
   }
   useEffect(() => {
-    const group = props.joinTarget;
     if (pwSubmit) {
-      fetch(`${serverOrigin}/api/groups/join/${group.group_id}`,
+      fetch(`${serverOrigin}/api/groups/join/${joinTarget.group_id}`,
         {
           method: 'post',
           headers: {
@@ -27,9 +26,11 @@ function GroupPwModal(props) {
         })
         .then((response) => response.json())
         .then((data) => {
-          props.setJoinGroupResponse(data);
+          setJoinGroupResponse(data);
           if (data.success) {
-            props.setOpenGroupPwModal(false);
+            setIsGroupPwModal(false);
+            setOtherGroups(groups.filter((group) => { return group.group_id != joinTarget.group_id }));
+            setMyGroups(myGroups => [...myGroups, joinTarget]);
           }
         })
         .catch((error) => console.error(error));
@@ -44,9 +45,9 @@ function GroupPwModal(props) {
   };
 
   return (
-    <div className={`${styles.GroupPwModal} modal ${props.openGroupPwModal ? 'open' : ''}`}>
+    <div className={`${styles.GroupPwModal} modal ${isGroupPwModal ? 'open' : ''}`}>
       <div className={styles.header}>
-        <i onClick={() => { props.setOpenGroupPwModal(false) }}>
+        <i onClick={() => { setIsGroupPwModal(false) }}>
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
