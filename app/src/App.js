@@ -6,15 +6,12 @@ import Ranking from "./components/Container/Ranking/Ranking";
 import Groups from "./components/Container/Groups/Groups";
 import Study from "./components/Container/Study/Study";
 import Account from "./components/Container/Account/Account";
-import Templates from "./components/Container/Templates/Templates";
-/* import EditTemplate from './components/Container/EditTemplate/EditTemplate'; */
 import "./App.css";
 import Sidebar from "./components/UI/Sidebar/Sidebar";
 import Header from "./components/UI/Header/Header";
 import Footer from "./components/UI/Footer/Footer";
 import Planner from "./components/Container/Planner/Planner";
 import ChatModal from "./components/UI/ChatModal/ChatModal";
-import { sortSubjects } from "./components/Container/Stats/StatTools";
 import { socket } from "./socket";
 import {
   setGroupMembers,
@@ -45,16 +42,6 @@ function App() {
   const [likedGroups, setLikedGroups] = useState([]);
   const [isAddPlanModal, setIsAddPlanModal] = useState(false);
 
-/*   //modal props
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [subjectsOpt, setSubjectsOpt] = useState([]);
-  const [start, setStart] = useState(new Date());
-  const [end, setEnd] = useState(new Date());
-  const [repeat, setRepeat] = useState(0);
-  const [priority, setPriority] = useState(50);
-  const [notification, setNotification] = useState(-1);
-  const [planSubmit, setPlanSubmit] = useState(false); */
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
 
   const [addSubjectResponse, setAddSubjectResponse] = useState(null);
@@ -64,29 +51,16 @@ function App() {
     setIsSidebarOpen((prevState) => !prevState);
   };
 
-  /* useEffect(() => {
-    setSubjectsOpt([
-      ...subjects.map((subject) => {
-        return { name: subject.name, value: subject.id };
-      }),
-    ]);
-  }, [subjects]); */
-
   useEffect(() => {
     const socketConnectAction = () => {
       socket.emit("joinMyGroups");
-      
     };
 
-    const socketResetAction = () => {
-      
-    };
+    const socketResetAction = () => {};
 
     socket.on("connect", socketConnectAction);
     socket.on("reset", socketResetAction);
-    socket.on("studying", () => {
-      
-    });
+    socket.on("studying", () => {});
 
     return () => {
       socket.off("joinMyGroups", socketConnectAction);
@@ -123,7 +97,6 @@ function App() {
         if (data.success) {
           setUserInfo(data.userInfo);
           socket.connect();
-          
         }
       })
       .catch((error) => console.error(error));
@@ -140,7 +113,7 @@ function App() {
               plan.start = new Date(plan.start * 1000 * 60);
               plan.end = new Date(plan.end * 1000 * 60);
               return plan;
-            })
+            }),
           );
         }
       })
@@ -161,7 +134,6 @@ function App() {
 
   useEffect(() => {
     bringSubjects();
-    
     bringAccountInfo();
   }, []);
 
@@ -200,14 +172,14 @@ function App() {
         allMembers={allMembers}
         myGroups={myGroups}
       />
-      <EventModal 
-      isAddPlanModal={isAddPlanModal}
-      subjects={subjects}
-      setIsAddPlanModal={setIsAddPlanModal}
-      setEvents={setPlans}
-      events={plans}
-      setIsAddSubjectModal={setIsAddSubjectModal}
-      setResponse={setResponse}
+      <EventModal
+        isAddPlanModal={isAddPlanModal}
+        subjects={subjects}
+        setIsAddPlanModal={setIsAddPlanModal}
+        setEvents={setPlans}
+        events={plans}
+        setIsAddSubjectModal={setIsAddSubjectModal}
+        setResponse={setResponse}
       />
       <Routes>
         <Route
@@ -463,39 +435,6 @@ function App() {
             </div>
           }
         />
-        {/* <Route
-          path="/dashboard/templates"
-          element={
-            <div>
-              <Sidebar
-                isSidebarOpen={isSidebarOpen}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                isSidebarHovered={isHovered}
-              />
-              <Header
-        planSubmit={planSubmit}
-        setPlanSubmit={setPlanSubmit}
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-              />
-              <Templates
-                setIsSidebarOpen={setIsSidebarOpen}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                userInfo={userInfo}
-              />
-            </div>
-          }
-        /> */}
         <Route
           path="/dashboard/user/*"
           element={

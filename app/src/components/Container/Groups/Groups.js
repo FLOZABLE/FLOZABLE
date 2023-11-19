@@ -1,23 +1,33 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBullseye, faHeart, faPeopleGroup, faPlus, faStopwatch, faTags } from '@fortawesome/free-solid-svg-icons';
-import StuckModal from '../../UI/StuckModal/StuckModal';
-import Search from '../../UI/Search/Search';
-import TagContainerGen from '../../UI/TagContainerGen/TagContainerGen';
-import styles from './Groups.module.css';
-import { getLikedGroups, getMyGroups, setGroupMembers } from './GroupsTool';
-import TopNotification from '../../UI/TopNotification/TopNotification';
-import GroupsGen from '../../UI/GroupsGen/GroupsGen';
-import MyGroupsGen from '../../UI/MyGroupsGen/MyGroupsGen';
-import GroupPwModal from '../../UI/GroupPwModal/GroupPwModal';
-import MyGroupsViewer from '../../UI/MyGroupsViewer/MyGroupsViewer';
-import CreateGroupModal from '../../UI/CreateGroupModal/CreateGroupModal';
+import React, { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faTags } from "@fortawesome/free-solid-svg-icons";
+import StuckModal from "../../UI/StuckModal/StuckModal";
+import Search from "../../UI/Search/Search";
+import TagContainerGen from "../../UI/TagContainerGen/TagContainerGen";
+import styles from "./Groups.module.css";
+import { getLikedGroups, getMyGroups, setGroupMembers } from "./GroupsTool";
+import TopNotification from "../../UI/TopNotification/TopNotification";
+import GroupsGen from "../../UI/GroupsGen/GroupsGen";
+import MyGroupsGen from "../../UI/MyGroupsGen/MyGroupsGen";
+import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
+import MyGroupsViewer from "../../UI/MyGroupsViewer/MyGroupsViewer";
+import CreateGroupModal from "../../UI/CreateGroupModal/CreateGroupModal";
 
-function Groups(props) {
-  const { socket, userInfo, subjects, groups, allMembers, otherGroups, setOtherGroups, myGroups, setMyGroups, likedGroups, setLikedGroups, setResponse } = props;
-
+function Groups({
+  socket,
+  userInfo,
+  subjects,
+  otherGroups,
+  setOtherGroups,
+  myGroups,
+  setMyGroups,
+  setResponse,
+  isSidebarOpen,
+  isSidebarHovered,
+}) {
+  
   const [tags, setTags] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isGroupPwModal, setIsGroupPwModal] = useState(false);
   const [joinTarget, setJoinTarget] = useState(null);
   const [myTimerTotal, setMyTimerTotal] = useState(0);
@@ -28,24 +38,51 @@ function Groups(props) {
   };
 
   useEffect(() => {
-    if (subjects.daily && subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]) {
-      setMyTimerTotal(subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]);
-    };
+    if (
+      subjects.daily &&
+      subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]
+    ) {
+      setMyTimerTotal(
+        subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1],
+      );
+    }
   }, [subjects]);
 
   return (
     <div className={styles.GroupsContainer}>
       <StuckModal />
-      <CreateGroupModal isOpen={isCreateNewGroup} setIsOpen={setIsCreateNewGroup} setCreateGroupResponse={setResponse} />
-      <GroupPwModal myGroups={myGroups} setMyGroups={setMyGroups}  groups={otherGroups} setOtherGroups={setOtherGroups} setIsGroupPwModal={setIsGroupPwModal} isGroupPwModal={isGroupPwModal} joinTarget={joinTarget} setJoinGroupResponse={setResponse} />
-      <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
+      <CreateGroupModal
+        isOpen={isCreateNewGroup}
+        setIsOpen={setIsCreateNewGroup}
+        setCreateGroupResponse={setResponse}
+      />
+      <GroupPwModal
+        myGroups={myGroups}
+        setMyGroups={setMyGroups}
+        groups={otherGroups}
+        setOtherGroups={setOtherGroups}
+        setIsGroupPwModal={setIsGroupPwModal}
+        isGroupPwModal={isGroupPwModal}
+        joinTarget={joinTarget}
+        setJoinGroupResponse={setResponse}
+      />
+      <div
+        className={`Main ${
+          isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
+        }`}
+      >
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
               <p className={styles.title}>Groups</p>
             </div>
             <div className={`${styles.container} ${styles.myGroups}`}>
-              <MyGroupsViewer myGroups={myGroups} socket={socket} userInfo={userInfo} myTimerTotal={myTimerTotal} />
+              <MyGroupsViewer
+                myGroups={myGroups}
+                socket={socket}
+                userInfo={userInfo}
+                myTimerTotal={myTimerTotal}
+              />
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>
               <div className={styles.searchZone}>
@@ -54,26 +91,46 @@ function Groups(props) {
                     <FontAwesomeIcon icon={faTags} className={styles.faTags} />
                     <h2>Tags</h2>
                   </div>
-                  <TagContainerGen maxTags={10}
+                  <TagContainerGen
+                    maxTags={10}
                     setTags={setTags}
                     handleCreatedTagsChange={handleCreatedTagsChange}
                   />
                 </div>
-                <Search setSearchQuery={setSearchQuery} searchQuery={searchQuery} />
-                <button id={styles.CreateGroupBtn} onClick={() => { setIsCreateNewGroup(!isCreateNewGroup) }}>
+                <Search
+                  setSearchQuery={setSearchQuery}
+                  searchQuery={searchQuery}
+                />
+                <button
+                  id={styles.CreateGroupBtn}
+                  onClick={() => {
+                    setIsCreateNewGroup(!isCreateNewGroup);
+                  }}
+                >
                   <FontAwesomeIcon icon={faPlus} className={styles.plus} />
                   Create new group
                 </button>
               </div>
               <div className={styles.groupsWrapper}>
-                <GroupsGen myGroups={myGroups} setMyGroups={setMyGroups} groups={otherGroups} setOtherGroups={setOtherGroups} setJoinGroupResponse={setResponse} setIsGroupPwModal={setIsGroupPwModal} setJoinTarget={setJoinTarget} searchQuery={searchQuery} userInfo={userInfo} queryTags={tags} />
+                <GroupsGen
+                  myGroups={myGroups}
+                  setMyGroups={setMyGroups}
+                  groups={otherGroups}
+                  setOtherGroups={setOtherGroups}
+                  setJoinGroupResponse={setResponse}
+                  setIsGroupPwModal={setIsGroupPwModal}
+                  setJoinTarget={setJoinTarget}
+                  searchQuery={searchQuery}
+                  userInfo={userInfo}
+                  queryTags={tags}
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default Groups;

@@ -1,4 +1,3 @@
-
 .CustomInput {
   position: relative;
   display: flex;
@@ -14,7 +13,7 @@
 }
 
 .CustomInput .formField:focus {
-  border:var(--pink) 1px solid;
+  border: var(--pink) 1px solid;
 }
 
 .CustomInput>span,

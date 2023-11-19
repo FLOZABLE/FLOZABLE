@@ -53,6 +53,7 @@
 .Account .imgSelector {
   position: relative;
 }
+
 .Account .profilePic {
   width: 128px;
   height: auto;
@@ -116,7 +117,7 @@
   position: relative;
 }
 
-.Account .content .layer > div {
+.Account .content .layer>div {
   width: 100%;
   padding: 0px 20px;
 }
@@ -141,7 +142,7 @@
   border-bottom: 1px #999 solid;
 }
 
-.Account #extensionHeader > div {
+.Account #extensionHeader>div {
   display: flex;
   justify-content: center;
 }
@@ -151,9 +152,10 @@
   margin-bottom: 10px;
 }
 
-.Account .websiteOptions > div {
+.Account .websiteOptions>div {
   width: 100%;
-  display: flex;;
+  display: flex;
+  ;
 }
 
 .Account .websiteOptions .block {

@@ -1,7 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styles from "./CreateGroupModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faUserGroup, faPalette, faFileLines, faTags, faLock, faStopwatch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faXmark,
+  faUserGroup,
+  faPalette,
+  faFileLines,
+  faTags,
+  faLock,
+  faStopwatch,
+} from "@fortawesome/free-solid-svg-icons";
 import SliderAnimation from "../SliderAnimation/SliderAnimation";
 import TextEditor from "../TextEditor/TextEditor";
 import CustomInput from "../CustomInput/CustomInput";
@@ -12,13 +20,11 @@ import OptionToggleBtn from "../OptionToggleBtn/OptionToggleBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function CreateGroupModal(props) {
-  const { isOpen, setIsOpen, setCreateGroupResponse } = props;
-
+function CreateGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
   const [name, setName] = useState("");
   const [submit, setSubmit] = useState(false);
   const [maxMembers, setMaxMembers] = useState(10);
-  const [color, setColor] = useState('');
+  const [color, setColor] = useState("");
   const [isSelectColor, setIsSelectColor] = useState(false);
   const [tags, setTags] = useState([]);
   const [description, setDescription] = useState("");
@@ -40,14 +46,22 @@ function CreateGroupModal(props) {
 
   useEffect(() => {
     if (submit) {
-      fetch(`${serverOrigin}/api/groups/create-validate`,
-        {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ name: name, color: color, tags: tags, explanation: description, max_members: maxMembers, visibility: visibility, password: password, goal_hr: goalHr })
-        })
+      fetch(`${serverOrigin}/api/groups/create-validate`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name,
+          color: color,
+          tags: tags,
+          explanation: description,
+          max_members: maxMembers,
+          visibility: visibility,
+          password: password,
+          goal_hr: goalHr,
+        }),
+      })
         .then((response) => response.json())
         .then((data) => {
           setCreateGroupResponse(data);
@@ -57,18 +71,28 @@ function CreateGroupModal(props) {
   }, [submit]);
 
   return (
-    <div className={`${styles.CreateGroupModal} modal ${isOpen ? 'open' : ''}`}>
+    <div className={`${styles.CreateGroupModal} modal ${isOpen ? "open" : ""}`}>
       <div className={styles.header}>
-        <i className={styles.closeBtn} onClick={() => {setIsOpen(false)}}>
+        <i
+          className={styles.closeBtn}
+          onClick={() => {
+            setIsOpen(false);
+          }}
+        >
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
       <div className={`${styles.container} customScroll`}>
         <div className={`${styles.wrapper} ${styles.title}`}>
-          <div className={styles.iconWrapper}>
-          </div>
+          <div className={styles.iconWrapper}></div>
           <div className={styles.contentWrapper}>
-            <CustomInput input={name} handleInput={handleNameInput} icon={null} placeHolder={"Study Group Name"} type={"text"} />
+            <CustomInput
+              input={name}
+              handleInput={handleNameInput}
+              icon={null}
+              placeHolder={"Study Group Name"}
+              type={"text"}
+            />
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -93,7 +117,12 @@ function CreateGroupModal(props) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <ColorPalette setSelectedColor={setColor} selectedColor={color} isSelectColor={isSelectColor} setIsSelectColor={setIsSelectColor} />
+            <ColorPalette
+              setSelectedColor={setColor}
+              selectedColor={color}
+              isSelectColor={isSelectColor}
+              setIsSelectColor={setIsSelectColor}
+            />
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -104,7 +133,13 @@ function CreateGroupModal(props) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <SliderAnimation min={0} max={100} step={1} sliderValue={maxMembers} setSliderValue={setMaxMembers} />
+            <SliderAnimation
+              min={0}
+              max={100}
+              step={1}
+              sliderValue={maxMembers}
+              setSliderValue={setMaxMembers}
+            />
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -115,9 +150,11 @@ function CreateGroupModal(props) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <TagContainerGen maxTags={10}
+            <TagContainerGen
+              maxTags={10}
               setTags={setTags}
-              handleCreatedTagsChange={handleCreatedTagsChange} />
+              handleCreatedTagsChange={handleCreatedTagsChange}
+            />
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -128,9 +165,22 @@ function CreateGroupModal(props) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <OptionToggleBtn opt1={{ val: 0, name: 'PRIVATE' }} opt2={{ val: 1, name: "PUBLIC" }} value={visibility} setValue={setVisibility} />
-            <div className={`${styles.inputArea} ${visibility ? '' : styles.open}`}>
-              <CustomInput input={password} handleInput={handlePwInput} icon={null} placeHolder={"Enter Password"} type={"text"} />
+            <OptionToggleBtn
+              opt1={{ val: 0, name: "PRIVATE" }}
+              opt2={{ val: 1, name: "PUBLIC" }}
+              value={visibility}
+              setValue={setVisibility}
+            />
+            <div
+              className={`${styles.inputArea} ${visibility ? "" : styles.open}`}
+            >
+              <CustomInput
+                input={password}
+                handleInput={handlePwInput}
+                icon={null}
+                placeHolder={"Enter Password"}
+                type={"text"}
+              />
             </div>
           </div>
         </div>
@@ -142,23 +192,30 @@ function CreateGroupModal(props) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <SliderAnimation min={0} max={10} step={1} sliderValue={goalHr} setSliderValue={setGoalHr} />
+            <SliderAnimation
+              min={0}
+              max={10}
+              step={1}
+              sliderValue={goalHr}
+              setSliderValue={setGoalHr}
+            />
           </div>
         </div>
         <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-
-          </div>
-          <div className={styles.contentWrapper}>
-
-          </div>
+          <div className={styles.iconWrapper}></div>
+          <div className={styles.contentWrapper}></div>
         </div>
         <div className={styles.submit}>
-          <BlobBtn name={'SUBMIT'} setClicked={setSubmit} color1={'#fff'} color2={"var(--pink)"} />
+          <BlobBtn
+            name={"SUBMIT"}
+            setClicked={setSubmit}
+            color1={"#fff"}
+            color2={"var(--pink)"}
+          />
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default CreateGroupModal;
