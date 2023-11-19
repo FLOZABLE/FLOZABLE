@@ -13,7 +13,7 @@
 }
 
 .TimelineContainer .box {
-  height: 30px;
+  height: 20px;
   width: 100%;
   border: 1px solid #dee0e3;
 }
@@ -34,6 +34,8 @@
 
 .TimelineContainer .colHeader div {
   height: calc(100% / 24);
+  position: relative;
+  transform: translate(0px, 7px);
 }
 
 .TimelineContainer .colHeader {

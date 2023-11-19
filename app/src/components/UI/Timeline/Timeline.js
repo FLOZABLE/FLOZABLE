@@ -27,31 +27,30 @@ function Timeline(props) {
         <div>60</div>
       </div>
       <div className={styles.colHeader}>
-        <div>0</div>
-        <div>1</div>
-        <div>2</div>
-        <div>3</div>
-        <div>4</div>
-        <div>5</div>
-        <div>6</div>
-        <div>7</div>
-        <div>8</div>
-        <div>9</div>
-        <div>10</div>
-        <div>11</div>
-        <div>12</div>
-        <div>13</div>
-        <div>14</div>
-        <div>15</div>
-        <div>16</div>
-        <div>17</div>
-        <div>18</div>
-        <div>19</div>
-        <div>20</div>
-        <div>21</div>
-        <div>22</div>
-        <div>23</div>
-        <div>24</div>
+        <div>12AM</div>
+        <div>1AM</div>
+        <div>2AM</div>
+        <div>3AM</div>
+        <div>4AM</div>
+        <div>5AM</div>
+        <div>6AM</div>
+        <div>7AM</div>
+        <div>8AM</div>
+        <div>9AM</div>
+        <div>10AM</div>
+        <div>11AM</div>
+        <div>12PM</div>
+        <div>1PM</div>
+        <div>2PM</div>
+        <div>3PM</div>
+        <div>4PM</div>
+        <div>5PM</div>
+        <div>6PM</div>
+        <div>7PM</div>
+        <div>8PM</div>
+        <div>9PM</div>
+        <div>10PM</div>
+        <div>11PM</div>
       </div>
       <div className={styles.timelineWrapper}>
         {timelineEl}

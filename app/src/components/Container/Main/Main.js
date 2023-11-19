@@ -242,7 +242,7 @@ function Main(props) {
     <div className={styles.MainContainer}>
       <div className={`Main ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
-          <Draggable defaultPosition={localStorage.welcome ? JSON.parse(localStorage.welcome) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"welcome")}} nodeRef={hiMsgRef}>
+          <Draggable defaultPosition={localStorage.welcome ? JSON.parse(localStorage.welcome) : {x: 450, y: 0}} onStop={(e, element) => {eventHandler(e,element,"welcome")}} nodeRef={hiMsgRef}>
           <div ref={hiMsgRef} className={`${styles.box} box 1`} >
             <div className={styles.inner}>
               <p className={styles.name}>Welcome Back!</p>
@@ -265,7 +265,7 @@ function Main(props) {
             <img draggable = "false" src="./img/collaboration.jpeg" alt="" />
           </div>
           </Draggable>
-          <Draggable defaultPosition={localStorage.subject ? JSON.parse(localStorage.subject) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"subject")}} nodeRef={subjectRef}>
+          <Draggable defaultPosition={localStorage.subject ? JSON.parse(localStorage.subject) : {x: 1000, y: 0}} onStop={(e, element) => {eventHandler(e,element,"subject")}} nodeRef={subjectRef}>
           <div ref={subjectRef} className={`${styles.box} box 2`} >
             <div className={styles.inner}>
               <p className={styles.name}>Subject Usage</p>
@@ -327,7 +327,7 @@ function Main(props) {
             </div>
           </div>
           </Draggable>
-          <Draggable defaultPosition={localStorage.planner ? JSON.parse(localStorage.planner) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"planner")}} nodeRef={plannerRef}>
+          <Draggable defaultPosition={localStorage.planner ? JSON.parse(localStorage.planner) : {x: 1450, y: 0}} onStop={(e, element) => {eventHandler(e,element,"planner")}} nodeRef={plannerRef}>
           <div ref = {plannerRef} className={`${styles.box} box 3`}>
             <div className={styles.inner}>
               <p className={styles.name}>Planner</p>
@@ -430,7 +430,7 @@ function Main(props) {
             </div>
           </div>
           </Draggable>
-         <Draggable defaultPosition={localStorage.quote ? JSON.parse(localStorage.quote) : {x: 0, y: 0}} onStop={(e, element) => {eventHandler(e,element,"quote")}} nodeRef={memoRef}>
+         <Draggable defaultPosition={localStorage.quote ? JSON.parse(localStorage.quote) : {x: 1450, y: 300}} onStop={(e, element) => {eventHandler(e,element,"quote")}} nodeRef={memoRef}>
          <div ref={memoRef} className={`${styles.box} box 5 ${styles.memo}`} >
             <div className={styles.inner}>
               <p>{quoteMsg}</p>

@@ -22,7 +22,7 @@ import CalendarModal from '../../UI/CalendarModal/CalendarModal';
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Stats(props) {
-  const {subjects} = props;
+  const { subjects } = props;
   const today = new Date().setHours(0, 0, 0, 0);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -34,10 +34,12 @@ function Stats(props) {
   const [statsViewer, setStatsViewer] = useState('Daily');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [calendarLabel, setCalendarLabel] = useState('Today');
-  const [ranking, setRanking] = useState({});
   const [dailyTimeline, setDailyTimeline] = useState([]);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [totalStudy, setTotalStudy] = useState("");
+  const [focus, setFocus] = useState("");
+  const [ranking, setRanking] = useState(0);
 
   //time usage pie chart
   const [timeUsagePie, setTimeUsagePie] = useState({
@@ -102,21 +104,30 @@ function Stats(props) {
     if (statsViewer === 'Daily') {
       startMillis = viewDateTime.startOf('day').toMillis();
       stopMillis = viewDateTime.endOf('day').toMillis();
-      if (startMillis < new Date().getTime() < stopMillis) {
+      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
         setCalendarLabel('Today');
       }
-    
+      else {
+        setCalendarLabel(viewDateTime.month + "/" + viewDateTime.day);
+      }
+
     } else if (statsViewer === 'Weekly') {
       startMillis = viewDateTime.startOf('week').toMillis();
       stopMillis = viewDateTime.endOf('week').toMillis();
-      if (startMillis < new Date().getTime() < stopMillis) {
+      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
         setCalendarLabel('This Week');
+      }
+      else {
+        setCalendarLabel(viewDateTime.startOf('week').month + "/" + viewDateTime.startOf('week').day + " ~ " + viewDateTime.endOf('week').month + "/" + viewDateTime.endOf('week').day);
       }
     } else {
       startMillis = viewDateTime.startOf('month').toMillis();
       stopMillis = viewDateTime.endOf('month').toMillis();
-      if (startMillis < new Date().getTime() < stopMillis) {
+      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
         setCalendarLabel('This Month');
+      }
+      else {
+        setCalendarLabel(viewDateTime.monthLong);
       }
     };
     setStartDate(startMillis);
@@ -124,16 +135,27 @@ function Stats(props) {
   };
 
   useEffect(() => {
-    fetch(`${serverOrigin}/api/ranking`, { method: 'post' })
+    if (!!!props.userInfo) return; // wait for userInfo to be defined
+    fetch(`${serverOrigin}/api/ranking/sort`, {
+      method: 'post',
+      body: JSON.stringify({ startDate, endDate })
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          const sortedRanking = sortRanking(data.ranking, props.userInfo);
-          setRanking(sortedRanking);
+          data.data.map((user, i) => {
+            if (user.user_id == props.userInfo.user_id) {
+              let studySeconds = user.total;
+              let focusSeconds = user.focus;
+              setTotalStudy(Math.floor(studySeconds / 60) + "m");
+              setFocus(Math.floor(focusSeconds / 60) + "m");
+              setRanking(i + 1);
+            }
+          });
         }
       })
       .catch((error) => console.error(error));
-  }, [props.userInfo]);
+  }, [props.userInfo, startDate]);
 
 
   useEffect(() => {
@@ -161,14 +183,14 @@ function Stats(props) {
     const timeTrend = updateTimeTrend(subjects, statsViewer);
     setTimeTrend({
       labels: timeTrend[0],
-        datasets:
-          [
-            {
-              backgroundColor: "#fd7f6f",
-              borderColor: "#fd7f6f",
-              data: timeTrend[1],
-            },
-          ]
+      datasets:
+        [
+          {
+            backgroundColor: "#fd7f6f",
+            borderColor: "#fd7f6f",
+            data: timeTrend[1],
+          },
+        ]
     });
     const rankingTrend = updateRankingTrend(ranking, statsViewer);
     setRankingTrend({
@@ -186,14 +208,14 @@ function Stats(props) {
 
   return (
     <div className={styles.StatsContainer}>
- <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} />
+      <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} />
       <StuckModal />
       <div className={` Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
-            <DateSelectorBtn className = {styles.title} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
-              <RadioBtn items={[{view: 'Daily', value: 'Daily'}, {view: 'Weekly', value: 'Weekly'}, {view: 'Monthly', value: 'Monthly'}]} changeEvent={updateViewer} defaultViewer={0} />
+              <DateSelectorBtn className={styles.title} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
+              <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
             </div>
             <div className={styles.container}>
               <div className={styles.divided}>
@@ -238,11 +260,336 @@ function Stats(props) {
                 </div>
               </div>
               <div className={styles.divider}>
-
+                <div className={styles.smallBox}>
+                  <div className={styles.circle}>
+                    <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
+                  </div>
+                  <p>Total ({calendarLabel})<br /><strong>{totalStudy}</strong></p>
+                </div>
+                <div className={styles.smallBox}>
+                  <div className={styles.circle}>
+                    <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
+                  </div>
+                  <p>Focus ({calendarLabel}) <br /><strong>{focus}</strong></p>
+                </div>
+                <div className={styles.smallBox}>
+                  <div className={styles.circle}>
+                    <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
+                  </div>
+                  <p>Ranking ({calendarLabel})<br /><strong>#{ranking}</strong></p>
+                </div>
+                <div className={styles.smallBox}>
+                  <div className={styles.circle}>
+                    <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
+                  </div>
+                  <p>Website Usage <br /><strong>16h</strong></p>
+                </div>
               </div>
-              <div className={`${styles.divided} ${styles.todoList}`}>
-                <p className={styles.title}>Your to-do list</p>
-                {/* <ul>
+            </div>
+            <div className={styles.secondContainer}>
+              <div className={styles.smallBoxContainer}>
+                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+                  <p className={styles.title}>Today's Timeline</p>
+                  <div className={styles.chartContainer}>
+                    <Timeline refT={timelineRef} dailyTimeline={dailyTimeline} />
+                  </div>
+                </div>
+                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+                  <p className={styles.title}>Today's Hourly Histogram</p>
+                  <div className={styles.chartContainer}>
+                    <BarChart
+                      labels={
+                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+                      }
+
+                      datasets={
+                        [
+                          {
+                            data: hourlyHistogram.data,
+                            backgroundColor: colorsList
+                          }
+                        ]
+                      }
+
+                      options={
+                        {
+                          maintainAspectRatio: false,
+                          responsive: true,
+                          plugins: {
+                            legend: {
+                              display: false,
+                            }
+                          },
+                          interaction: {
+                            intersect: false,
+                            mode: 'index',
+                          },
+                          scales: {
+                            y: {
+                              grid: {
+                                drawBorder: false,
+                                display: true,
+                                drawOnChartArea: true,
+                                drawTicks: false,
+                                borderDash: [5, 5]
+                              },
+                              ticks: {
+                                display: true,
+                                padding: 10,
+                                color: '#9ca2b7',
+                                stepSize: 1
+                              }
+                            },
+                            x: {
+                              grid: {
+                                drawBorder: false,
+                                display: true,
+                                drawOnChartArea: true,
+                                drawTicks: true,
+                                borderDash: [5, 5]
+                              },
+                              ticks: {
+                                display: true,
+                                color: '#9ca2b7',
+                                padding: 10
+                              }
+                            },
+                          },
+                        }
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className={styles.thirdContainer}>
+              <div className={styles.smallBoxContainer}>
+                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+                  <p className={styles.title}>Daily Study Time Trend</p>
+                  <div className={styles.chartContainer}>
+                    <LineChart
+                      labels={
+                        timeTrend.labels
+                      }
+
+                      datasets={timeTrend.datasets}
+
+                      options={
+                        {
+                          responsive: true,
+                          plugins: {
+                            legend: {
+                              display: false,
+                            }
+                          },
+                          interaction: {
+                            intersect: false,
+                            mode: 'index',
+                          },
+                          scales: {
+                            y: {
+                              grid: {
+                                drawBorder: false,
+                                display: true,
+                                drawOnChartArea: true,
+                                drawTicks: false,
+                                borderDash: [5, 5]
+                              },
+                              ticks: {
+                                display: true,
+                                padding: 10,
+                                color: '#9ca2b7',
+                                stepSize: 1
+                              }
+                            },
+                            x: {
+                              grid: {
+                                drawBorder: false,
+                                display: true,
+                                drawOnChartArea: true,
+                                drawTicks: true,
+                                borderDash: [5, 5]
+                              },
+                              ticks: {
+                                display: true,
+                                color: '#9ca2b7',
+                                padding: 10
+                              }
+                            },
+                          },
+                        }
+                      }
+                    />
+                  </div>
+                </div>
+                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+                  <p className={styles.title}>Daily Ranking</p>
+                  <div className={styles.chartContainer}>
+                    <LineChart
+                      labels={
+                        rankingTrend.labels
+                      }
+
+                      datasets={rankingTrend.datasets}
+
+                      options={
+                        {
+                          responsive: true,
+                          plugins: {
+                            legend: {
+                              display: false,
+                            }
+                          },
+                          interaction: {
+                            intersect: false,
+                            mode: 'index',
+                          },
+                          scales: {
+                            y: {
+                              reverse: true,
+                              grid: {
+                                drawBorder: false,
+                                display: true,
+                                drawOnChartArea: true,
+                                drawTicks: false,
+                                borderDash: [5, 5]
+                              },
+                              ticks: {
+                                display: true,
+                                padding: 10,
+                                color: '#9ca2b7',
+                                stepSize: 1
+                              }
+                            },
+                            x: {
+                              grid: {
+                                drawBorder: false,
+                                display: true,
+                                drawOnChartArea: true,
+                                drawTicks: true,
+                                borderDash: [5, 5]
+                              },
+                              ticks: {
+                                display: true,
+                                color: '#9ca2b7',
+                                padding: 10
+                              }
+                            },
+                          },
+                        }
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className = {styles.fourthContainer}>
+              <div className={styles.smallBoxContainer}>
+                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+                  <p className={styles.title}>Today's Website Usage while Studying</p>
+                  <div className={styles.chartContainer}>
+                    <PieChart
+                      labels={
+                        subjects.map((subject) => subject.name)
+                      }
+
+                      datasets={
+                        [
+                          {
+                            label: "Seconds",
+                            backgroundColor: colorsList,
+                            borderColor: colorsList,
+                            data: subjects.map((subject) => subject.daily.total[subject.daily.total.length - 1])
+                          },
+                        ]
+                      }
+
+                      options={
+                        {
+                          plugins: {
+                            legend: {
+                              position: 'bottom',
+                            },
+                            datalabels: {
+                              color: '#ffffff',
+                              font: {
+                                size: 32,
+                                family: 'Arial',
+                                weight: 700
+                              },
+                              formatter: (value, context, index) => {
+                                const { chart, dataIndex } = context;
+                                const labels = chart.data.labels;
+                                const label = labels[dataIndex];
+                                return ``;
+                              }
+                            }
+                          }
+                        }
+                      }
+
+                      plugins={
+                        ChartDataLabel
+                      }
+                    />
+                  </div>
+                </div>
+                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+                  <p className={styles.title}>Today's App Usage while Studying</p>
+                  <div className={styles.chartContainer}>
+                    <PieChart
+                      labels={
+                        ["Math", "English", "History", "Sci", "Phy"]
+                      }
+
+                      datasets={
+                        [
+                          {
+                            label: "My First dataset",
+                            backgroundColor: colorsList,
+                            borderColor: colorsList,
+                            data: [2, 20, 30, 45],
+                          },
+                        ]
+                      }
+
+                      options={
+                        {
+                          plugins: {
+                            legend: {
+                              position: 'bottom',
+                            },
+                            datalabels: {
+                              color: '#ffffff',
+                              font: {
+                                size: 32,
+                                family: 'Arial',
+                                weight: 700
+                              },
+                              formatter: (value, context, index) => {
+                                const { chart, dataIndex } = context;
+                                const labels = chart.data.labels;
+                                const label = labels[dataIndex];
+                                return ``;
+                              }
+                            }
+                          }
+                        }
+                      }
+
+                      plugins={
+                        ChartDataLabel
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className= {styles.faceOffContainer}>
+              <div className={`${styles.smallBox} ${styles.chartsBox}`}>
+                <div>
+                  <p className={styles.title}>Face-off with @____</p>
+                  {/* <ul>
                   <li>
                     <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
                   </li>
@@ -256,326 +603,7 @@ function Stats(props) {
                     <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
                   </li>
                 </ul> */}
-              </div>
-            </div>
-          </div>
-          <div className={styles.smallBoxContainer}>
-            <div className={styles.smallBox}>
-              <div className={styles.circle}>
-                <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
-              </div>
-              <p>Study Time <br /><strong>16h</strong></p>
-            </div>
-            <div className={styles.smallBox}>
-              <div className={styles.circle}>
-                <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
-              </div>
-              <p>Study Time <br /><strong>16h</strong></p>
-            </div>
-            <div className={styles.smallBox}>
-              <div className={styles.circle}>
-                <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
-              </div>
-              <p>Today's Ranking<br /><strong>#1</strong></p>
-            </div>
-            <div className={styles.smallBox}>
-              <div className={styles.circle}>
-                <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
-              </div>
-              <p>Website Usage <br /><strong>16h</strong></p>
-            </div>
-          </div>
-          <div className={styles.smallBoxContainer}>
-            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-              <p className={styles.title}>Today's Timeline</p>
-              <div className={styles.chartContainer}>
-                <Timeline refT={timelineRef} dailyTimeline={dailyTimeline} />
-              </div>
-            </div>
-            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-              <p className={styles.title}>Today's Hourly Histogram</p>
-              <div className={styles.chartContainer}>
-                <BarChart
-                  labels={
-                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-                  }
-
-                  datasets={
-                    [
-                      {
-                        data: hourlyHistogram.data,
-                        backgroundColor: colorsList
-                      }
-                    ]
-                  }
-
-                  options={
-                    {
-                      maintainAspectRatio: false,
-                      responsive: true,
-                      plugins: {
-                        legend: {
-                          display: false,
-                        }
-                      },
-                      interaction: {
-                        intersect: false,
-                        mode: 'index',
-                      },
-                      scales: {
-                        y: {
-                          grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                          },
-                          ticks: {
-                            display: true,
-                            padding: 10,
-                            color: '#9ca2b7',
-                            stepSize: 1
-                          }
-                        },
-                        x: {
-                          grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: true,
-                            borderDash: [5, 5]
-                          },
-                          ticks: {
-                            display: true,
-                            color: '#9ca2b7',
-                            padding: 10
-                          }
-                        },
-                      },
-                    }
-                  }
-                />
-              </div>
-            </div>
-          </div>
-          <div className={styles.smallBoxContainer}>
-            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-              <p className={styles.title}>Daily Study Time Trend</p>
-              <div className={styles.chartContainer}>
-                <LineChart
-                  labels={
-                    timeTrend.labels
-                  }
-
-                  datasets={timeTrend.datasets}
-
-                  options={
-                    {
-                      responsive: true,
-                      plugins: {
-                        legend: {
-                          display: false,
-                        }
-                      },
-                      interaction: {
-                        intersect: false,
-                        mode: 'index',
-                      },
-                      scales: {
-                        y: {
-                          grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                          },
-                          ticks: {
-                            display: true,
-                            padding: 10,
-                            color: '#9ca2b7',
-                            stepSize: 1
-                          }
-                        },
-                        x: {
-                          grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: true,
-                            borderDash: [5, 5]
-                          },
-                          ticks: {
-                            display: true,
-                            color: '#9ca2b7',
-                            padding: 10
-                          }
-                        },
-                      },
-                    }
-                  }
-                />
-              </div>
-            </div>
-            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-              <p className={styles.title}>Daily Ranking</p>
-              <div className={styles.chartContainer}>
-                <LineChart
-                  labels={
-                    rankingTrend.labels
-                  }
-
-                  datasets={rankingTrend.datasets}
-
-                  options={
-                    {
-                      responsive: true,
-                      plugins: {
-                        legend: {
-                          display: false,
-                        }
-                      },
-                      interaction: {
-                        intersect: false,
-                        mode: 'index',
-                      },
-                      scales: {
-                        y: {
-                          reverse: true,
-                          grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                          },
-                          ticks: {
-                            display: true,
-                            padding: 10,
-                            color: '#9ca2b7',
-                            stepSize: 1
-                          }
-                        },
-                        x: {
-                          grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: true,
-                            borderDash: [5, 5]
-                          },
-                          ticks: {
-                            display: true,
-                            color: '#9ca2b7',
-                            padding: 10
-                          }
-                        },
-                      },
-                    }
-                  }
-                />
-              </div>
-            </div>
-
-          </div>
-          <div className={styles.smallBoxContainer}>
-            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-              <p className={styles.title}>Today's Website Usage while Studying</p>
-              <div className={styles.chartContainer}>
-              <PieChart
-                  labels={
-                    subjects.map((subject) => subject.name)
-                  }
-
-                  datasets={
-                    [
-                      {
-                        label: "My First dataset",
-                        backgroundColor: colorsList,
-                        borderColor: colorsList,
-                        data: subjects.map((subject) => subject.daily.total[subject.daily.total.length - 1])
-                      },
-                    ]
-                  }
-
-                  options={
-                    {
-                      plugins: {
-                        legend: {
-                          position: 'bottom',
-                        },
-                        datalabels: {
-                          color: '#ffffff',
-                          font: {
-                            size: 32,
-                            family: 'Arial',
-                            weight: 700
-                          },
-                          formatter: (value, context, index) => {
-                            const { chart, dataIndex } = context;
-                            const labels = chart.data.labels;
-                            const label = labels[dataIndex];
-                            return ``;
-                          }
-                        }
-                      }
-                    }
-                  }
-
-                  plugins={
-                    ChartDataLabel
-                  }
-                />
-              </div>
-            </div>
-            <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-              <p className={styles.title}>Today's App Usage while Studying</p>
-              <div className={styles.chartContainer}>
-                <PieChart
-                  labels={
-                    ["Math", "English", "History", "Sci", "Phy"]
-                  }
-
-                  datasets={
-                    [
-                      {
-                        label: "My First dataset",
-                        backgroundColor: colorsList,
-                        borderColor: colorsList,
-                        data: [2, 20, 30, 45],
-                      },
-                    ]
-                  }
-
-                  options={
-                    {
-                      plugins: {
-                        legend: {
-                          position: 'bottom',
-                        },
-                        datalabels: {
-                          color: '#ffffff',
-                          font: {
-                            size: 32,
-                            family: 'Arial',
-                            weight: 700
-                          },
-                          formatter: (value, context, index) => {
-                            const { chart, dataIndex } = context;
-                            const labels = chart.data.labels;
-                            const label = labels[dataIndex];
-                            return ``;
-                          }
-                        }
-                      }
-                    }
-                  }
-
-                  plugins={
-                    ChartDataLabel
-                  }
-                />
+                </div>
               </div>
             </div>
           </div>
