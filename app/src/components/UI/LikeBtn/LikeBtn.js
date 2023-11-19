@@ -1,31 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import styles from "./LikeBtn.module.css";
 
-const LikeBtn = (props) => {
-  const [liked, setLiked] = useState(false);
+const LikeBtn = ({id, liked}) => {
+  const [likedBtn, setLikedBtn] = useState(false);
 
   const serverOrigin = process.env.REACT_APP_ORIGIN;
 
   const handleLike = () => {
-    setLiked(!liked);
-    fetch(`${serverOrigin}/api/groups/like/${props.id}`, {
-      method: 'post'
+    setLikedBtn(!likedBtn);
+    fetch(`${serverOrigin}/api/groups/like/${id}`, {
+      method: "post",
     })
       .then((response) => response.json())
-      .then((data) => {
-      })
+      .then(() => {})
       .catch((error) => console.error(error));
   };
 
   useEffect(() => {
-    setLiked(props.liked);
-  }, [props.liked]);
+    setLikedBtn(liked);
+  }, [liked]);
 
   return (
     <div className={`${styles.middleWrapper}`}>
       <div className={styles.likeWrapper}>
         <a
-          className={`${styles.likeButton} ${liked ? styles.liked : ''}`}
+          className={`${styles.likeButton} ${likedBtn ? styles.liked : ""}`}
           onClick={handleLike}
         >
           <span className={styles.likeIcon}>

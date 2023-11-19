@@ -97,7 +97,7 @@
 }
 
 .ChatModal .hoverEl {
-  visibility:hidden;
+  visibility: hidden;
   opacity: 0;
   transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
   position: absolute;
@@ -112,7 +112,7 @@
 
 }
 
-.ChatModal .groupProfile:hover ~ .hoverEl{
+.ChatModal .groupProfile:hover~.hoverEl {
   opacity: 1;
   visibility: visible;
 }

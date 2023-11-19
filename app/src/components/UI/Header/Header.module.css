@@ -21,7 +21,8 @@
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
-.header .left, .header .right {
+.header .left,
+.header .right {
   display: flex;
   align-items: center;
 }
@@ -40,7 +41,7 @@
   color: #FFF6BD;
 }
 
-.header .left .headerEl:nth-child(1) .circle{
+.header .left .headerEl:nth-child(1) .circle {
   background-color: #F8F9D7;
 }
 
@@ -49,7 +50,7 @@
   color: #348d50;
 }
 
-.header .left .headerEl:nth-child(2) .circle{
+.header .left .headerEl:nth-child(2) .circle {
   background-color: #c3e8d1;
 }
 
@@ -58,7 +59,7 @@
   color: #ff562d
 }
 
-.header .left .headerEl:nth-child(3) .circle{
+.header .left .headerEl:nth-child(3) .circle {
   background-color: #ffdbca;
 }
 
@@ -67,7 +68,7 @@
   color: #2c70ff;
 }
 
-.header .left .headerEl:nth-child(4) .circle{
+.header .left .headerEl:nth-child(4) .circle {
   background-color: #b7e6ff;
 }
 
@@ -76,7 +77,7 @@
   color: #705dc1;
 }
 
-.header .left .headerEl:nth-child(5) .circle{
+.header .left .headerEl:nth-child(5) .circle {
   background-color: #d9d3ff;
 }
 
@@ -145,13 +146,13 @@
 .header .dropDownContainer .dropDownContents {
   position: absolute;
   top: 50px;
-  right:30px;
+  right: 30px;
   visibility: hidden;
   opacity: 0;
   transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
 }
 
-.header .dropDownContents#planner .inner{
+.header .dropDownContents#planner .inner {
   min-width: 300px;
 }
 
@@ -166,5 +167,5 @@
 .header .dropDownContainer .profileImg {
   width: 40px;
   height: 40px;
-  border-radius:20px;
+  border-radius: 20px;
 }
