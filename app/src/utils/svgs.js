@@ -1,10 +1,4 @@
-function getRandomClassName() {
-  const randomString = Math.random().toString(36).substring(7);
-  return `class-${randomString}`;
-}
-
 function StudyPerson(props) {
-  const randomClassName = getRandomClassName();
   return (
     <svg
       height={props.width}

@@ -13,7 +13,7 @@ function RadioBtn({ items, defaultViewer, changeEvent }) {
           onClick={() => {
             changeEvent(item.value);
           }}
-          defaultChecked={defaultViewer == index}
+          defaultChecked={defaultViewer === index}
         />
 
         <label htmlFor={"radio" + index} className={styles.selectorItemLabel}>
