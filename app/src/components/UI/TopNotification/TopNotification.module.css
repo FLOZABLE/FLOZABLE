@@ -43,6 +43,11 @@
   font-weight: 800;
 }
 
+.TopNotification .notification p {
+  color: #fff;
+}
+
+
 .TopNotification .notification i {
   margin-right: 10px;
 }
