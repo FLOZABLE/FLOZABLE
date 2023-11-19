@@ -11,6 +11,8 @@ import RadioBtn from "../../UI/RadioBtn/RadioBtn";
 import CalendarModal from "../../UI/CalendarModal/CalendarModal";
 import DateSelectorBtn from "../../UI/DateSelectorBtn/DateSelectorBtn";
 import GroupsGen from "../../UI/GroupsGen/GroupsGen";
+import { DateTime } from "luxon";
+import { updateRankingTrend, updateTimeTrend } from "../Stats/StatTools";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -58,51 +60,125 @@ const lineChartOption = {
   },
 };
 
-function User({ isSidebarOpen, isSidebarHovered, groups }) {
+function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
   const [userInfo, setUserInfo] = useState(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [userSubject, setUserSubject] = useState(null);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [userSubjects, setUserSubjects] = useState([]);
+  const [rankings, setRankings] = useState([]);
   const [statsViewer, setStatsViewer] = useState('Daily');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
-  const [calendarLabel, setCalendarLabel] = useState('Today');
   const [userGroups, setUserGroups] = useState([]);
 
-  const [joinGroupResponse, setJoinGroupResponse] = useState(null);
+  //time trend
+  const [timeTrend, setTimeTrend] = useState({
+    labels: [],
+    datasets:
+      [
+        {
+          backgroundColor: "#fd7f6f",
+          borderColor: "#fd7f6f",
+          data: [],
+        },
+      ]
+  });
 
-  const [timeTrend, setTimeTrend] = useState({ datasets: [], labels: [] });
+  //ranking trend
+  const [rankingTrend, setRankingTrend] = useState({
+    labels: [],
+    datasets:
+      [
+        {
+          backgroundColor: "#fd7f6f",
+          borderColor: "#fd7f6f",
+          data: [],
+        },
+      ]
+  })
+
   const [setOpenGroupPwModal, isSetOpenGroupPwModal] = useState(false);
 
   useEffect(() => {
+    if (!groups) return;
     const pathName = window.location.pathname.split('/');
     const selectedUserId = pathName[pathName.length - 1];
-    
+
     fetch(`${serverOrigin}/api/account/profile/${selectedUserId}`, { method: 'get' })
       .then((response) => response.json())
       .then((data) => {
-        
+
         if (data.success) {
           setUserInfo(data.userInfo);
-          const sortedSubject = timelineSort(data.subjectInfo);
-          setUserSubject(sortedSubject);
+          const sortedSubject = timelineSort(data.subjectsInfo);
+          setUserSubjects(sortedSubject);
           const groupsArr = data.userInfo.groups.split(',');
-          const userGroups = groupsArr.filter(userGroup => {
-            return groups.find((group) => {return userGroup === group.id})
-          });
-          
+          const userGroups = groups.filter(group => {
+            return groupsArr.includes(group.group_id)
+          })
+          setUserGroups(userGroups);
+          console.log(userGroups)
+
         };
       })
       .catch((error) => console.error(error));
-  }, []);
+  }, [groups]);
 
   const updateViewer = async (item) => {
     setStatsViewer(item);
   };
 
-
   const updateViewDate = (date) => {
     setViewDate(date);
   };
 
+  /* useEffect(() => {
+    const viewTime = DateTime.fromJSDate(viewDate);
+
+    let startTime;
+    let stopTime;
+    if (statsViewer == "Daily") {
+      startTime = viewTime.startOf('day').toMillis();
+      stopTime = viewTime.endOf('day').toMillis();
+    }
+    else if (statsViewer == "Weekly") {
+      startTime = viewTime.startOf('week').toMillis();
+      stopTime = viewTime.endOf('week').toMillis();
+    }
+    else {
+      startTime = viewTime.startOf('month').toMillis();
+      stopTime = viewTime.endOf('month').toMillis();
+    }
+    setStartDate(startTime);
+    setEndDate(stopTime);
+  }, [viewDate, statsViewer]); */
+
+  useEffect(() => {
+    const timeTrend = updateTimeTrend(userSubjects, statsViewer);
+    setTimeTrend({
+      labels: timeTrend[0],
+        datasets:
+          [
+            {
+              backgroundColor: "#fd7f6f",
+              borderColor: "#fd7f6f",
+              data: timeTrend[1],
+            },
+          ]
+    });
+    const rankingTrend = updateRankingTrend(rankings, statsViewer);
+    setRankingTrend({
+      labels: rankingTrend[0],
+      datasets:
+        [
+          {
+            backgroundColor: "#fd7f6f",
+            borderColor: "#fd7f6f",
+            data: rankingTrend[1],
+          },
+        ]
+    });
+  }, [userSubjects, statsViewer]);
 
   return (
     <div className={styles.UserContainer}>
@@ -121,7 +197,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups }) {
               ></div>
             </div>
             <div className={styles.divided} id={styles.profileInfo}>
-              <p>Jason</p>
+              <p>{userInfo ? userInfo.name : ''}</p>
             </div>
           </div>
           <div className={styles.row} id={styles.buttons}>
@@ -131,7 +207,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups }) {
               </div>
 
               <div className={styles.hoverEl}>
-                <p>Compete with Jason!</p>
+                <p>Compete with {userInfo ? userInfo.name : ''}!</p>
               </div>
             </div>
             <div className={styles.divided}>
@@ -139,7 +215,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups }) {
                 <BlobBtn name={<FontAwesomeIcon icon={faComments} />} setClicked={() => { }} opt={2} />
               </div>
               <div className={styles.hoverEl}>
-                <p>Become a friend with Jason!</p>
+                <p>Become a friend with {userInfo ? userInfo.name : ''}!</p>
               </div>
             </div>
             <div className={styles.divided}>
@@ -148,13 +224,13 @@ function User({ isSidebarOpen, isSidebarHovered, groups }) {
               </div>
 
               <div className={styles.hoverEl}>
-                <p>Become a friend with Jason!</p>
+                <p>Become a friend with {userInfo ? userInfo.name : ''}!</p>
               </div>
             </div>
           </div>
           <div className={styles.row}>
             <div className={styles.divided} id={styles.description}>
-              <p>I am a programer</p>
+              <p>{userInfo ? userInfo.datum_point : ''}</p>
             </div>
           </div>
           <div className={styles.row}>
@@ -173,10 +249,31 @@ function User({ isSidebarOpen, isSidebarHovered, groups }) {
         <div className={styles.statsContainer}>
           <div className={styles.box}>
             <div className={styles.rowTitle}>
-              <DateSelectorBtn viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} />
+              {/* <DateSelectorBtn className={styles.title} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn> */}
               <div id={styles.viewerSelector}>
                 <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
               </div>
+            </div>
+            <div className={styles.rowTitle}>
+              <h1>
+              {statsViewer} Study Time Trend
+              </h1>
+            </div>
+            <div className={styles.row}>
+              <div className={styles.chartContainer}>
+                <LineChart
+                  labels={timeTrend.labels}
+
+                  datasets={timeTrend.datasets}
+
+                  options={lineChartOption}
+                />
+              </div>
+            </div>
+            <div className={styles.rowTitle}>
+              <h1>
+              {statsViewer} Ranking Trend
+              </h1>
             </div>
             <div className={styles.row}>
               <div className={styles.chartContainer}>
@@ -192,10 +289,10 @@ function User({ isSidebarOpen, isSidebarHovered, groups }) {
           </div>
           <div className={styles.box}>
             <div className={styles.rowTitle}>
-              <p>Jason's groups</p>
+              <h1>{userInfo ? userInfo.name : ''}'s groups</h1>
             </div>
-            <div className={styles.row}>
-            <GroupsGen setJoinGroupResponse={setJoinGroupResponse} groups={groups} setOpenGroupPwModal={setOpenGroupPwModal} searchQuery={""} userInfo={userInfo} queryTags={[]} />
+            <div className={`${styles.row} customScroll`} id={styles.groupsContainer}>
+              <GroupsGen setJoinGroupResponse={setResponse} groups={userGroups} setOpenGroupPwModal={setOpenGroupPwModal} searchQuery={""} userInfo={userInfo} queryTags={[]} />
             </div>
           </div>
         </div>
