@@ -6,7 +6,6 @@ import styled from "@emotion/styled";
 import TextEditor from "../TextEditor/TextEditor";
 import DateSelector from "../DateSelector/DateSelector";
 import DropDownButton from "../DropDownButton/DropDownButton";
-import CuteToggleButton from "../CuteToggleButton/CuteToggleButton";
 import { DateTime } from "luxon";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import SliderAnimation from "../SliderAnimation/SliderAnimation";

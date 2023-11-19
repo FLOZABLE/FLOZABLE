@@ -14,6 +14,7 @@
   border-radius: 30px;
   z-index: 1;
 }
+
 .BlobBtn:before {
   content: "";
   z-index: 1;
@@ -25,6 +26,7 @@
   border: 2px solid var(--color2);
   border-radius: 30px;
 }
+
 .BlobBtn:after {
   content: "";
   z-index: -2;
@@ -36,16 +38,19 @@
   transition: all 0.3s 0.2s;
   border-radius: 30px;
 }
+
 .BlobBtn:hover {
   color: var(--color1);
   border-radius: 30px;
 }
+
 .BlobBtn:hover:after {
   transition: all 0.3s;
   left: 0;
   top: 0;
   border-radius: 30px;
 }
+
 .blobBtnInner {
   z-index: -1;
   overflow: hidden;
@@ -57,12 +62,14 @@
   border-radius: 30px;
   background: var(--color1);
 }
+
 .blobBtnBlobs {
   position: relative;
   display: block;
   height: 100%;
   filter: url("#goo");
 }
+
 .blobBtnBlob {
   position: absolute;
   top: 2px;
@@ -73,30 +80,37 @@
   transform: translate3d(0, 150%, 0) scale(1.7);
   transition: transform 0.45s;
 }
+
 @supports (filter: url("#goo")) {
   .blobBtnBlob {
     transform: translate3d(0, 150%, 0) scale(1.4);
   }
 }
+
 .blobBtnBlob:nth-child(1) {
   left: 0%;
   transition-delay: 0s;
 }
+
 .blobBtnBlob:nth-child(2) {
   left: 30%;
   transition-delay: 0.08s;
 }
+
 .blobBtnBlob:nth-child(3) {
   left: 60%;
   transition-delay: 0.16s;
 }
+
 .blobBtnBlob:nth-child(4) {
   left: 90%;
   transition-delay: 0.24s;
 }
+
 .BlobBtn:hover .blobBtnBlob {
   transform: translateZ(0) scale(1.7);
 }
+
 @supports (filter: url("#goo")) {
   .BlobBtn:hover .blobBtnBlob {
     transform: translateZ(0) scale(2);

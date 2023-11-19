@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styles from "./CheckBox.module.css";
 
 function CheckBox(props) {
@@ -6,12 +6,17 @@ function CheckBox(props) {
 
   return (
     <div className={styles.CheckBoxWrapper}>
-      <input type="checkbox" className={styles.Checkbox} id={"id" + id} defaultChecked ={checked} />
+      <input
+        type="checkbox"
+        className={styles.Checkbox}
+        id={"id" + id}
+        defaultChecked={checked}
+      />
       <label htmlFor={"id" + id}>
         <div className={styles.tickMark}></div>
       </label>
     </div>
   );
-};
+}
 
 export default CheckBox;

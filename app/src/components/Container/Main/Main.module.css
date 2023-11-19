@@ -21,7 +21,7 @@
   height: min-content;
 }
 
-.MainContainer .boxes .box:nth-child(1) img{
+.MainContainer .boxes .box:nth-child(1) img {
   width: 100%;
 }
 
@@ -89,10 +89,11 @@
   text-align: left;
 }
 
-.MainContainer .box.memo .inner{
+.MainContainer .box.memo .inner {
   padding: 10px;
   background-image: url('/public/img/memo.png');
-  background-position: center;      /* center the image */
+  background-position: center;
+  /* center the image */
   background-size: cover;
   height: 100%;
   width: 100%;
@@ -156,10 +157,11 @@
     text-align: left;
   }
 
-  .MainContainer .box .memo .inner{
+  .MainContainer .box .memo .inner {
     padding: 30px;
     background-image: url('/public/img/memo.png');
-    background-position: center;      /* center the image */
+    background-position: center;
+    /* center the image */
     background-size: cover;
     height: 105%;
     width: 105%;

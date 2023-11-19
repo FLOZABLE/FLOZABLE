@@ -7,30 +7,42 @@ import CustomInput from "../CustomInput/CustomInput";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function GroupPwModal({joinTarget, isGroupPwModal, setIsGroupPwModal, setJoinGroupResponse, setOtherGroups, groups, setMyGroups, group}) {
+function GroupPwModal({
+  joinTarget,
+  isGroupPwModal,
+  setIsGroupPwModal,
+  setJoinGroupResponse,
+  setOtherGroups,
+  groups,
+  setMyGroups,
+  group,
+}) {
   const [pwSubmit, setPwSubmit] = useState(false);
-  const [pw, setPw] = useState('');
+  const [pw, setPw] = useState("");
 
   const handlePwInput = (e) => {
     setPw(e.target.value);
-  }
+  };
   useEffect(() => {
     if (pwSubmit) {
-      fetch(`${serverOrigin}/api/groups/join/${joinTarget.group_id}`,
-        {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ password: pw })
-        })
+      fetch(`${serverOrigin}/api/groups/join/${joinTarget.group_id}`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: pw }),
+      })
         .then((response) => response.json())
         .then((data) => {
           setJoinGroupResponse(data);
           if (data.success) {
             setIsGroupPwModal(false);
-            setOtherGroups(groups.filter((group) => { return group.group_id != joinTarget.group_id }));
-            setMyGroups(myGroups => [...myGroups, joinTarget]);
+            setOtherGroups(
+              groups.filter((group) => {
+                return group.group_id != joinTarget.group_id;
+              }),
+            );
+            setMyGroups((myGroups) => [...myGroups, joinTarget]);
           }
         })
         .catch((error) => console.error(error));
@@ -45,9 +57,15 @@ function GroupPwModal({joinTarget, isGroupPwModal, setIsGroupPwModal, setJoinGro
   };
 
   return (
-    <div className={`${styles.GroupPwModal} modal ${isGroupPwModal ? 'open' : ''}`}>
+    <div
+      className={`${styles.GroupPwModal} modal ${isGroupPwModal ? "open" : ""}`}
+    >
       <div className={styles.header}>
-        <i onClick={() => { setIsGroupPwModal(false) }}>
+        <i
+          onClick={() => {
+            setIsGroupPwModal(false);
+          }}
+        >
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
@@ -75,13 +93,25 @@ function GroupPwModal({joinTarget, isGroupPwModal, setIsGroupPwModal, setJoinGro
             placeholder="Password"
           />
         </div> */}
-        <CustomInput input={pw} handleInput={handlePwInput} handleEnter={submit} icon={faKey} placeHolder={"Password"} type={"text"} />
+        <CustomInput
+          input={pw}
+          handleInput={handlePwInput}
+          handleEnter={submit}
+          icon={faKey}
+          placeHolder={"Password"}
+          type={"text"}
+        />
         <div className={styles.submitBtnWrapper}>
-          <BlobBtn name={'SUBMIT'} setClicked={setPwSubmit} color1={'#fff'} color2={"var(--pink)"} />
+          <BlobBtn
+            name={"SUBMIT"}
+            setClicked={setPwSubmit}
+            color1={"#fff"}
+            color2={"var(--pink)"}
+          />
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default GroupPwModal;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./MemberCamDisp.module.css";
 
 const stream = new MediaStream();
@@ -11,22 +11,27 @@ function MemberCamDisp({ track }) {
   useEffect(() => {
     if (!track) return;
     videoRef.current.onerror = (event) => {
-      console.error('Video playback error:', event);
+      console.error("Video playback error:", event);
     };
     track.enabled = true;
-    stream.addTrack(track)
-    
+    stream.addTrack(track);
+
     videoRef.current.srcObject = stream;
-    
+
     setUpd(upd + 1);
   }, [track]);
 
   return (
     <div className={styles.MemberCamDisp}>
-      <video ref={videoRef} autoPlay playsInline className={`${styles.video}`} />
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        className={`${styles.video}`}
+      />
       {upd}
     </div>
   );
-};
+}
 
 export default MemberCamDisp;

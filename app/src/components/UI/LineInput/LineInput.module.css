@@ -19,7 +19,7 @@
   bottom: 0px;
 }
 
-.LineInput input:focus ~ .lineContainer .line {
+.LineInput input:focus~.lineContainer .line {
   width: 50%;
 }
 
@@ -46,6 +46,6 @@
   top: 0px;
 }
 
-.LineInput input:focus ~ .title {
+.LineInput input:focus~.title {
   color: #e91e63;
 }
