@@ -1,30 +1,28 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import styles from"./CustomInput.module.css";
+import styles from "./CustomInput.module.css";
 
-function CustomInput(props) {
+function CustomInput({handleEnter, handleInput, input, icon, type, placeHolder}) {
   const handleEnterKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      props.handleEnter();
+    if (event.key === "Enter") {
+      handleEnter();
     }
   };
   return (
     <div className={styles.CustomInput}>
-    <span className={styles.pwIcon}>
-      <i>
-        {props.icon ? <FontAwesomeIcon icon={props.icon} /> : null}
-      </i>
-    </span>
-    <input
-      className={styles.formField}
-      value={props.input}
-      onChange={props.handleInput}
-      type={props.type}
-      onKeyDown={handleEnterKeyPress}
-      placeholder={props.placeHolder}
-    />
+      <span className={styles.pwIcon}>
+        <i>{icon ? <FontAwesomeIcon icon={icon} /> : null}</i>
+      </span>
+      <input
+        className={styles.formField}
+        value={input}
+        onChange={handleInput}
+        type={type}
+        onKeyDown={handleEnterKeyPress}
+        placeholder={placeHolder}
+      />
     </div>
-  )
-};
+  );
+}
 
 export default CustomInput;

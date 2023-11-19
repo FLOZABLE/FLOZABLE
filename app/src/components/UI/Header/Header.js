@@ -1,15 +1,35 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faCommentDots, faCalendar, faClock, faBook, faMobileScreenButton, faFire, faArrowsToCircle, faBars } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBell,
+  faCommentDots,
+  faCalendar,
+  faBook,
+  faFire,
+  faArrowsToCircle,
+  faBars,
+} from "@fortawesome/free-solid-svg-icons";
 import ToggleBtn from "../ToggleBtn/ToggleBtn";
 import styles from "./Header.module.css";
 import PlanTimeline from "../PlanTimeline/PlanTimeline";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAddPlanModal, plans, subjects, isSlibarOpen, isSidebarHovered, userInfo, mode, isSidebarOpen, onToggleSidebar }) {
-
+function Header({
+  isChatModal,
+  setIsChatModal,
+  setPlans,
+  setIsAddPlanModal,
+  isAddPlanModal,
+  plans,
+  subjects,
+  isSidebarHovered,
+  userInfo,
+  mode,
+  isSidebarOpen,
+  onToggleSidebar,
+}) {
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
   const [studyStreak, setStudyStreak] = useState(0); //days of consecutive study
@@ -23,12 +43,12 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
       } else {
         setIsScrolled(false);
       }
-    }
+    };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -36,7 +56,8 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
     if (!!!subjects.daily) return;
 
     //Solve daily
-    let totalSeconds = subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1];
+    let totalSeconds =
+      subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1];
     let totalMinutes = Math.round(totalSeconds / 60);
     let totalHours = Math.round(totalMinutes / 60);
 
@@ -44,8 +65,7 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
     if (totalHours > 0) {
       displayString += "" + totalHours + "h ";
       displayString += "" + (totalMinutes % 60) + "m";
-    }
-    else {
+    } else {
       displayString += "" + totalMinutes + "m";
     }
     setTotalStudied(displayString);
@@ -60,7 +80,10 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
     while (day >= 0) {
       let studiedToday = false;
       for (let i = 0; i < subjects.length; i++) {
-        if (subjects[i].daily.grouped[day] && subjects[i].daily.grouped[day].length > 0) {
+        if (
+          subjects[i].daily.grouped[day] &&
+          subjects[i].daily.grouped[day].length > 0
+        ) {
           //the user has studied in this subject this day
           tempStreak += 1;
           studiedToday = true;
@@ -75,65 +98,49 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
     //Solve focus
     let subjectActivity = [];
     for (let i = 0; i < subjects.length; i++) {
-      subjects[i].daily.grouped[subjects[i].daily.grouped.length - 1].map(([startUnix, stopUnix]) => {
-        subjectActivity.push(stopUnix - startUnix);
-      });
+      subjects[i].daily.grouped[subjects[i].daily.grouped.length - 1].map(
+        ([startUnix, stopUnix]) => {
+          subjectActivity.push(stopUnix - startUnix);
+        },
+      );
     }
     subjectActivity.sort((a, b) => a - b);
 
-    let longestSessionSeconds = subjectActivity.length ? subjectActivity[subjectActivity.length - 1] : 0;
+    let longestSessionSeconds = subjectActivity.length
+      ? subjectActivity[subjectActivity.length - 1]
+      : 0;
     let longestSessionMinutes = Math.floor(longestSessionSeconds / 60);
     let longestSessionHours = Math.floor(longestSessionMinutes / 60);
     let longestSessionString = "";
     if (longestSessionHours > 0) {
       longestSessionString += "" + longestSessionHours + "h ";
       longestSessionString += "" + (longestSessionMinutes % 60) + "m";
-    }
-    else {
+    } else {
       longestSessionString += "" + longestSessionMinutes + "m";
     }
 
     setLongestSession(longestSessionString);
-
   }, [subjects]);
 
   return (
-    <header className={`${styles.header} ${isSidebarOpen || isSidebarHovered ? styles.isOpen : ''} ${mode === "study" ? styles.studyMode : ''} ${isScrolled ? styles.scrolled : ''}`}>
-      {/* <EventModal
-        isAddPlanModal={isAddPlanModal}
-        setIsAddPlanModal={setIsAddPlanModal}
-        title={title}
-        setTitle={setTitle}
-        setStart={setStart}
-        start={start}
-        setEnd={setEnd}
-        end={end}
-        description={description}
-        setDescription={setDescription}
-        setSubject={setSubject}
-        subjects={subjectsOpt}
-        notification={notification}
-        setNotification={setNotification}
-        submit={submit}
-        setSubmit={setSubmit}
-        repeat={repeat}
-        setRepeat={setRepeat}
-        priority={priority}
-        setPriority={setPriority}
-        setIsAddSubjectModal={setIsAddSubjectModal}
-        setPlanSubmit={() => { updatePlan(selectedEvent, title, start, end, description, subject, priority); }}
-      /> */}
+    <header
+      className={`${styles.header} ${
+        isSidebarOpen || isSidebarHovered ? styles.isOpen : ""
+      } ${mode === "study" ? styles.studyMode : ""} ${
+        isScrolled ? styles.scrolled : ""
+      }`}
+    >
       <div className={styles.left}>
         <ToggleBtn
           on={<p>on</p>}
           off={<p>off</p>}
-          style={{ backgroundColor: '#fff' }}
+          style={{ backgroundColor: "#fff" }}
           onToggle={onToggleSidebar}
           isToggled={isSidebarOpen}
         />
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-            <FontAwesomeIcon icon={faBook} style={{ color: "#348d50", }} />
+            <FontAwesomeIcon icon={faBook} style={{ color: "#348d50" }} />
           </div>
           <div className={styles.text}>
             <h5>{totalStudied}</h5>
@@ -142,7 +149,7 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-            <FontAwesomeIcon icon={faBars} style={{ color: "#ff562d", }} />
+            <FontAwesomeIcon icon={faBars} style={{ color: "#ff562d" }} />
           </div>
           <div className={styles.text}>
             <h5>2h</h5>
@@ -151,7 +158,7 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-            <FontAwesomeIcon icon={faFire} style={{ color: "#2c70ff", }} />
+            <FontAwesomeIcon icon={faFire} style={{ color: "#2c70ff" }} />
           </div>
           <div className={styles.text}>
             <h5>{studyStreak} Day</h5>
@@ -160,7 +167,10 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
         </div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
-            <FontAwesomeIcon icon={faArrowsToCircle} style={{ color: "#705dc1", }} />
+            <FontAwesomeIcon
+              icon={faArrowsToCircle}
+              style={{ color: "#705dc1" }}
+            />
           </div>
           <div className={styles.text}>
             <h5>{longestSession}</h5>
@@ -178,7 +188,14 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
             </button>
             <div className={styles.dropDownContents} id={styles.planner}>
               <div className={styles.inner}>
-                <PlanTimeline plans={plans} viewDate={new Date()} subjects={subjects} setIsAddPlanModal={setIsAddPlanModal} isAddPlanModal={isAddPlanModal} setPlans={setPlans} />
+                <PlanTimeline
+                  plans={plans}
+                  viewDate={new Date()}
+                  subjects={subjects}
+                  setIsAddPlanModal={setIsAddPlanModal}
+                  isAddPlanModal={isAddPlanModal}
+                  setPlans={setPlans}
+                />
               </div>
             </div>
           </div>
@@ -195,22 +212,30 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
             </div>
           </div>
           <div className={styles.dropDownContainer}>
-            <button onClick={() => { setIsChatModal(!isChatModal) }}>
+            <button
+              onClick={() => {
+                setIsChatModal(!isChatModal);
+              }}
+            >
               <i>
                 <FontAwesomeIcon icon={faCommentDots} />
               </i>
             </button>
           </div>
           <div className={styles.dropDownContainer}>
-            <button
-            >
+            <button>
               <Link to="/dashboard/account" className={styles.navItem}>
-                <div className={styles.profileImg} style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/${userInfo ? userInfo.user_id : ''}.jpeg")`, backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}>
-                </div>
+                <div
+                  className={styles.profileImg}
+                  style={{
+                    backgroundImage: `url("${serverOrigin}/profile-images/${
+                      userInfo ? userInfo.user_id : ""
+                    }.jpeg")`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                ></div>
               </Link>
             </button>
           </div>
@@ -218,6 +243,6 @@ function Header({ isChatModal, setIsChatModal, setPlans, setIsAddPlanModal, isAd
       </div>
     </header>
   );
-};
+}
 
 export default Header;

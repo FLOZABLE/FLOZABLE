@@ -92,18 +92,18 @@
   transform: translateX(calc(var(--size) * .78));
 }
 
-.CheckBoxWrapper input[type="checkbox"]:checked + label {
+.CheckBoxWrapper input[type="checkbox"]:checked+label {
   background-color: #07d410;
   box-shadow: 0 var(--shadow) #92ff97;
 }
 
-.CheckBoxWrapper input[type="checkbox"]:checked + label:before {
+.CheckBoxWrapper input[type="checkbox"]:checked+label:before {
   width: 0;
   height: 0;
 }
 
-.CheckBoxWrapper input[type="checkbox"]:checked + label .tickMark:before,
-.CheckBoxWrapper input[type="checkbox"]:checked + label .tickMark:after {
+.CheckBoxWrapper input[type="checkbox"]:checked+label .tickMark:before,
+.CheckBoxWrapper input[type="checkbox"]:checked+label .tickMark:after {
   transform: translate(0);
   opacity: 1;
 }

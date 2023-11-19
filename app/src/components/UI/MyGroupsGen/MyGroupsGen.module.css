@@ -60,7 +60,7 @@
   flex-wrap: wrap;
 }
 
-.myGroupContainer .tags .tag{
+.myGroupContainer .tags .tag {
   margin: 0px 5px;
   padding: 2px 10px;
   border-radius: 10px;
@@ -99,7 +99,7 @@
   white-space: nowrap;
 }
 
-.myGroupContainer .buttons > * {
+.myGroupContainer .buttons>* {
   margin: 5px;
   position: relative;
 }
@@ -110,7 +110,7 @@
   right: 0px;
   height: 30px;
   width: 100px;
-  margin-right:50px;
+  margin-right: 50px;
   background-color: #545454;
   transition: opacity 1s;
   opacity: 0;

@@ -23,12 +23,13 @@
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
 }
-.DropDownButton button.clicked ~ .options{
+
+.DropDownButton button.clicked~.options {
   font-size: 17px;
   transition: font-size .3s ease-in-out;
 }
 
-.DropDownButton button.clicked .options .option{
+.DropDownButton button.clicked .options .option {
   padding: 3px 20px;
 }
 
