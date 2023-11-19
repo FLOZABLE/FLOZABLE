@@ -22,6 +22,7 @@ function timelineSort(subjects) {
     //this code compares the current firstdatumPoint and current looped subject's datumpoint and updtate the firstDatunmPoint with
     //smaller value
     firstDatumPoint = datum_point < firstDatumPoint ? datum_point : firstDatumPoint;
+    return -1;
   });
   subjects.firstDatumPoint = firstDatumPoint;
 
@@ -86,6 +87,7 @@ function timelineSort(subjects) {
     subjects.monthly.groupedTotal = monthlyTotal.map((val, i) => {
       return val + subjects.monthly.groupedTotal[i];
     });
+    return -1;
   });
 
 
@@ -161,6 +163,7 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
         totalTime.push(0);
       };
     }
+    return -1;
   });
 
   //this code removes the gap between current time and the last activity

@@ -43,9 +43,9 @@ function SubjectTimer({
     if (timeValues.length) {
       if (!!!subject) setSubject({ ...subjects[0] });
       let subjectIndex = subject ? subject.id : -1; //default to -1 if undefined and check later
-      if (subjectIndex != -1) {
+      if (subjectIndex !== -1) {
         for (let i = 0; i < subjects.length; i++) {
-          if (subjects[i].id == subjectIndex) {
+          if (subjects[i].id === subjectIndex) {
             subjectIndex = i;
           }
         }
@@ -161,7 +161,7 @@ function SubjectTimer({
 
         let timeValuesTemp = [];
         for (let i = 0; i < timeValues.length; i++) {
-          if (timeValues[i].id == subject.id) {
+          if (timeValues[i].id === subject.id) {
             timeValuesTemp.push({
               id: timeValues[i].id,
               total: timeValues[i].total + 1,
