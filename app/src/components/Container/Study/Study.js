@@ -26,7 +26,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Study(props) {
 
-  const { isStudy, setIsStudy, subjects, setSubjects, socket, userInfo, events, setEvents, reset, myGroups, isAddSubjectModal, setIsAddSubjectModal } = props;
+  const { isStudy, setIsStudy, subjects, setSubjects, socket, userInfo, events, setEvents, reset, myGroups, isAddSubjectModal, setIsAddSubjectModal, setIsAddPlanModal } = props;
 
   const [isTimerModal, setIsTimerModal] = useState(false);
   const [isMicModal, setIsMicModal] = useState(false);
@@ -38,7 +38,6 @@ function Study(props) {
 
   const [videoId, setVideoId] = useState('MYPVQccHhAQ');
   const [volume, setVolume] = useState(0);
-  const [isAddPlanModal, setIsAddPlanModal] = useState(false);
   const [addSubjectResponse, setAddSubjectResponse] = useState(null);
   const [myTimerTotal, setMyTimerTotal] = useState(0);
   const [addPlanResponse, setAddPlanResponse] = useState(null);
@@ -119,103 +118,12 @@ function Study(props) {
     }
   }, [isZoom]);
 
-  //handle submit
-  useEffect(() => {
-    if (submit) {
-      updatePlan(selectedEvent, title, start, end, description, subject, priority);
-    };
-  }, [submit]);
-
-  function updatePlan(selectedEvent, title, start, end, description, subject, priority) {
-    const eventIndex = events.findIndex((event) => event.id == selectedEvent);
-    if (eventIndex !== -1) {
-      const updatedEvents = [...events];
-      updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, description: description, subject: subject, saved: true, priority: priority };
-      const planInfo = {
-        ...updatedEvents[eventIndex],
-        start: Math.floor(start.getTime() / (1000 * 60)),
-        end: Math.floor(end.getTime() / (1000 * 60)),
-      }
-
-      delete planInfo.saved;
-      fetch(`${serverOrigin}/api/plan/update-plan`,
-        {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(planInfo)
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          setAddPlanResponse(data);
-          if (data.success) {
-            setEvents(updatedEvents);
-            setIsAddPlanModal(false);
-          };
-        })
-        .catch((error) => console.error(error));
-    };
-  };
-
-  useEffect(() => {
-    if (!isAddPlanModal) {
-      const eventIndex = events.findIndex((event) => event.id == selectedEvent);
-      setTitle("");
-      if (eventIndex !== -1) {
-        const updatedEvents = [...events];
-        if (!updatedEvents[eventIndex].saved) {
-          updatedEvents.splice(eventIndex, 1);
-          setEvents(updatedEvents);
-        };
-      };
-      setSelectedEvent(null);
-    } else if (!selectedEvent) {
-      const id = generateRandomId(10);
-      setSelectedEvent(id);
-      const newEvent = {
-        id: id,
-        title: '',
-        start: start,
-        end: end,
-        description: '',
-        repeat: repeat,
-        subject: subject,
-        notification: notification,
-        priority: priority,
-        saved: false,
-        completed: 0
-      };
-      setStart(start);
-      setEnd(end);
-      setEvents([...events, newEvent]);
-      setIsAddPlanModal(true);
-    }
-  }, [isAddPlanModal]);
 
   useEffect(() => {
     setSubjectsOpt([...subjects.map((subject) => {
       return { name: subject.name, value: subject.id };
     }), { name: 'others', value: '0000000000' }]);
   }, [subjects]);
-
-  useEffect(() => {
-    setAddPlanResponse(addSubjectResponse);
-  }, [addSubjectResponse]);
-
-  useEffect(() => {
-    if (selectedEvent) {
-      const eventIndex = events.findIndex((event) => event.id == selectedEvent);
-      if (eventIndex !== -1) {
-        const updatedEvents = [...events];
-        updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], title: title, start: start, end: end, subject: subject, priority: priority };
-        if (start.getTime() > end.getTime()) {
-        } else {
-          setEvents(updatedEvents)
-        }
-      }
-    };
-  }, [title, start, end, subject]);
 
   return (
     <div className={styles.StudyContainer}>
