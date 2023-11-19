@@ -10,6 +10,7 @@ import SmallCalendar from '../../UI/SmallCalendar/SmallCalendar';
 import Search from '../../UI/Search/Search';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
 import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
+import { Link } from 'react-router-dom';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -93,7 +94,9 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
             >
               {/* <FontAwesomeIcon icon={faUser} /> */}
             </div>
+            <Link to={`/dashboard/user/${user_id}`}>
             <p className={styles.name}>{name}</p>
+                  </Link>
             <div className={styles.ranking}>
               <p>{(total / (60 * 60)).toFixed(2)}hr</p>
             </div>

@@ -9,8 +9,14 @@ function ThemeSelector({link, handleLinkInput, submit, setVideoId}) {
       <div className={styles.themeContainer}>
       {AllThemes.map((Theme, i) => {
         return (
-          <div className={styles.video} key={i} onClick={() => { setVideoId(Theme.id) }}>
-            <img src={Theme.img} alt={Theme.id} />
+          <div className={styles.video} key={i} onClick={() => { setVideoId(Theme.id) }}
+          style={{
+            backgroundImage: `url(img/Themes/${Theme.img})`, backgroundSize: 'cover',
+            backgroundPosition: 'center center',
+            backgroundRepeat: 'no-repeat',
+          }}
+          >
+           {/*  <img src={Theme.img} alt={Theme.id} /> */}
           </div>
         );
       })}

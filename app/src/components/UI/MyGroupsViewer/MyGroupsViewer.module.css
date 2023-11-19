@@ -35,6 +35,7 @@
 .MyGroupsViewer .name a {
   font-size: 50px;
   color: #545454;
+  font-weight: 700;
 }
 
 .MyGroupsViewer .header {
@@ -42,6 +43,7 @@
   display: flex;
   width: 100%;
   top: 0px;
+  z-index: 2;
 }
 
 .MyGroupsViewer .header .right {
@@ -62,6 +64,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.MyGroupsViewer .status p {
+  color: #fff;
 }
 
 .MyGroupsViewer .membersContainer {
