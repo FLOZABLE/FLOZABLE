@@ -9,13 +9,14 @@ import { plugins } from 'chart.js';
 import Draggable, {DraggableCore} from 'react-draggable';
 import { DateTime } from 'luxon';
 import {Quotes} from '../../../utils/Quotes.js';
+import PlanTimeline from '../../UI/PlanTimeline/PlanTimeline.js';
 
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 
 function Main(props) {
-  const {setIsSidebarOpen, isSidebarOpen, isSidebarHovered, userInfo, subjects, plans} = props;
+  const {setIsSidebarOpen, isSidebarOpen, isSidebarHovered, userInfo, subjects, plans, setIsAddPlanModal, setPlans} = props;
 
 
   const subjectRef = useRef(null);
@@ -331,7 +332,7 @@ function Main(props) {
           <div ref = {plannerRef} className={`${styles.box} box 3`}>
             <div className={styles.inner}>
               <p className={styles.name}>Planner</p>
-              {
+              {/* {
                 planActivity.map((plan, i) => {
                   const startTime = plan.start;
                   const endTime = plan.end;
@@ -368,7 +369,8 @@ function Main(props) {
                     </li>
                   );
                 })
-              }
+              } */}
+              <PlanTimeline plans={plans} viewDate={new Date(new Date().setHours(0, 0, 0, 0))} viewMode={"timeGridDay"} subjects={subjects} setPlans={setPlans} mode={"study"} setIsAddPlanModal={setIsAddPlanModal} />
               <Link to="/dashboard/planner">
                 <button className={styles.toStatsBtn}>
                   View Plans

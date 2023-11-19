@@ -236,11 +236,13 @@ function App() {
               <Main
                 subjects={subjects}
                 plans={plans}
+                setPlans={setPlans}
                 setIsSidebarOpen={setIsSidebarOpen}
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}
                 setResponse={setResponse}
+                setIsAddPlanModal={setIsAddPlanModal}
               />
               <Footer />
             </div>
