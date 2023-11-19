@@ -8,11 +8,10 @@ import "swiper/css/free-mode";
 import "swiper/css/pagination";
 
 function PlanTimelineBar({ events, subjects}) {
-  const [swiperIndex, setSwiperIndex] = useState(0);
   const [slides, setSlides] = useState([]);
   const [dispTime, setDispTime] = useState(null);
   const [now, setNow] = useState(new Date());
-  const [defaultMin, setDefaultMin] = useState(new Date().getMinutes());
+  const [defaultMin] = useState(new Date().getMinutes());
 
   //set default
   useEffect(() => {
@@ -97,6 +96,7 @@ function PlanTimelineBar({ events, subjects}) {
                     );
                   }
                 }
+                return -1;
               })}
             </div>
           </div>
@@ -147,7 +147,6 @@ function PlanTimelineBar({ events, subjects}) {
   return (
     <div className={styles.PlanTimelineBar} style={rootStyle}>
       <Swiper
-        onRealIndexChange={(swiper) => setSwiperIndex(swiper.realIndex)}
         slidesPerView={2}
         freeMode={true}
         simulateTouch={false}

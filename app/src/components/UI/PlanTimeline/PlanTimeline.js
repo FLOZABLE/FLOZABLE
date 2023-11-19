@@ -31,7 +31,7 @@ function PlanTimeline({
   const [isPlan, setIsPlan] = useState(false);
 
   const togglePlan = (plan) => {
-    const eventIndex = plans.findIndex((planInfo) => planInfo.id == plan.id);
+    const eventIndex = plans.findIndex((planInfo) => planInfo.id === plan.id);
     if (eventIndex !== -1) {
       const updatedEvents = [...plans];
       updatedEvents[eventIndex] = {
@@ -68,7 +68,7 @@ function PlanTimeline({
     setPlansEl(
       plans.map((plan, i) => {
         const planSubject = subjects.find((subject) => {
-          return subject.id == plan.subject;
+          return subject.id === plan.subject;
         });
         //console.log(plan.subject, plan.name, plans)
         let isInRange = false;
@@ -88,7 +88,7 @@ function PlanTimeline({
             isInRange = true;
           }
         } else {
-          if (viewDate.getMonth() == plan.start.getMonth()) {
+          if (viewDate.getMonth() === plan.start.getMonth()) {
             isInRange = true;
           }
         }
@@ -217,6 +217,7 @@ function PlanTimeline({
             </li>
           );
         }
+        return -1;
       }),
     );
   }, [plans, viewMode, viewDate, subjects]);

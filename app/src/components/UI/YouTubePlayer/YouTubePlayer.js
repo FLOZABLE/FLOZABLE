@@ -4,14 +4,14 @@ import styles from "./YouTubePlayer.module.css";
 
 function YouTubePlayer({ height, width, videoId, volume }) {
   const [player, setPlayer] = useState(null);
-  const [opts, setOpts] = useState({
+  const [opts] = useState({
     height: "100%",
     width: "100%",
     playerVars: {
       loop: 1,
       autoplay: 1,
       controls: 0,
-      modestbranding: 0,
+      modestbranding: 1,
       showinfo: 0,
       origin: window.origin,
       mute: 1,
@@ -19,10 +19,8 @@ function YouTubePlayer({ height, width, videoId, volume }) {
       fs: 0,
       rel: 0,
       iv_load_policy: 3,
-      modestbranding: 1,
       playsinline: 1,
       enablejsapi: 0,
-      controls: 0,
       crossOriginIsolated: true,
       autohide: 1,
       wmode: "opaque",
@@ -51,7 +49,7 @@ function YouTubePlayer({ height, width, videoId, volume }) {
   useEffect(() => {
     if (player) {
       player.setVolume(volume);
-      if (volume == 0) {
+      if (volume === 0) {
         player.mute();
       } else {
         player.unMute();
