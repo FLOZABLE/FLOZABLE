@@ -66,7 +66,6 @@ Router.post('/create-validate', async (req, res) => {
     const connection = pool.promise();
     try {
       let group = req.body;
-      console.log(group)
       const schema = {
         type: 'object',
         properties: {
@@ -102,8 +101,6 @@ Router.post('/create-validate', async (req, res) => {
         return res.send({ success: false, reason: 'Add description for your study group' });
       };
 
-      console.log(JSON.stringify(group))
-      console.log(isValid, group.tags)
       let hashed = hashing(req.body['password']);
 
       group.tags = JSON.stringify(group.tags);
