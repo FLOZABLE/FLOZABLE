@@ -71,6 +71,8 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [userGroups, setUserGroups] = useState([]);
 
+  const [datumDateTime, setDateTimeDatum] = useState(DateTime.now());
+
   //time trend
   const [timeTrend, setTimeTrend] = useState({
     labels: [],
@@ -109,16 +111,16 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
       .then((data) => {
 
         if (data.success) {
-          setUserInfo(data.userInfo);
-          const sortedSubject = timelineSort(data.subjectsInfo);
+          const { userInfo, subjectsInfo, datum_point } = data;
+          setUserInfo(userInfo);
+          const sortedSubject = timelineSort(subjectsInfo);
           setUserSubjects(sortedSubject);
-          const groupsArr = data.userInfo.groups.split(',');
+          const groupsArr = userInfo.groups.split(',');
           const userGroups = groups.filter(group => {
-            return groupsArr.includes(group.group_id)
-          })
+            return groupsArr.includes(group.group_id);
+          });
           setUserGroups(userGroups);
-          console.log(userGroups)
-
+          setDateTimeDatum(DateTime.fromSeconds(datum_point));
         };
       })
       .catch((error) => console.error(error));
@@ -157,14 +159,14 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
     const timeTrend = updateTimeTrend(userSubjects, statsViewer);
     setTimeTrend({
       labels: timeTrend[0],
-        datasets:
-          [
-            {
-              backgroundColor: "#fd7f6f",
-              borderColor: "#fd7f6f",
-              data: timeTrend[1],
-            },
-          ]
+      datasets:
+        [
+          {
+            backgroundColor: "#fd7f6f",
+            borderColor: "#fd7f6f",
+            data: timeTrend[1],
+          },
+        ]
     });
     const rankingTrend = updateRankingTrend(rankings, statsViewer);
     setRankingTrend({
@@ -230,7 +232,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
           </div>
           <div className={styles.row}>
             <div className={styles.divided} id={styles.description}>
-              <p>{userInfo ? userInfo.datum_point : ''}</p>
+              <p>Joined at {`${datumDateTime.toLocaleString(DateTime.DATE_FULL)}`}</p>
             </div>
           </div>
           <div className={styles.row}>
@@ -240,7 +242,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
               </div>
               <div className={styles.info}>
                 <p className={styles.infoTitle}>Timezone</p>
-                <p>dfsdfd</p>
+                <p>{userInfo ? userInfo.timezone : ''}</p>
               </div>
             </div>
           </div>
@@ -256,7 +258,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
             </div>
             <div className={styles.rowTitle}>
               <h1>
-              {statsViewer} Study Time Trend
+                {statsViewer} Study Time Trend
               </h1>
             </div>
             <div className={styles.row}>
@@ -272,7 +274,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
             </div>
             <div className={styles.rowTitle}>
               <h1>
-              {statsViewer} Ranking Trend
+                {statsViewer} Ranking Trend
               </h1>
             </div>
             <div className={styles.row}>
