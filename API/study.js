@@ -35,7 +35,7 @@ Router.post("/add-subject", async (req, res) => {
         const connection = pool.promise();
         try {
           const insertSubject = await connection.query(`INSERT INTO subjects SET ?`, subjectInfo);
-          const updateUser = await connection.query(`
+          /* const updateUser = await connection.query(`
           UPDATE users
           SET subjects = CASE
             WHEN subjects = '' THEN ?
@@ -46,7 +46,7 @@ Router.post("/add-subject", async (req, res) => {
             subjectInfo.id,
             subjectInfo.id,
             userId
-          ]);
+          ]); */
           res.send({ success: true, msg: `Added Subject "${subjectInfo.name}"`, info: { subjectInfo: subjectInfo } });
           delete subjectInfo.timeline;
           delete subjectInfo.user_id;

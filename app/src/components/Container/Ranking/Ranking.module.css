@@ -124,6 +124,10 @@
   color: #fff;
 }
 
+.RankingContainer .rankingContainer li .circle p {
+  color: #fff;
+}
+
 .RankingContainer .rankingContainer .userInfo{
   display: flex;
   margin-left: 20px;
