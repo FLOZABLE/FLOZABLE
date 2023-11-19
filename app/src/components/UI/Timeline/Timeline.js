@@ -1,22 +1,22 @@
 import React from "react";
 import styles from "./Timeline.module.css";
 
-function Timeline(props) {
+function Timeline({ refT, dailyTimeline }) {
   const timelineEl = [];
   for (let hour = 0; hour < 24; hour++) {
     timelineEl.push(
-      <div className={styles.row}key={hour}>
+      <div className={styles.row} key={hour}>
         <div className={styles.box}></div>
         <div className={styles.box}></div>
         <div className={styles.box}></div>
         <div className={styles.box}></div>
         <div className={styles.box}></div>
         <div className={styles.box}></div>
-      </div>
-    )
+      </div>,
+    );
   }
   return (
-    <div className={styles.TimelineContainer} ref={props.refT}>
+    <div className={styles.TimelineContainer} ref={refT}>
       <div className={styles.rowHeader}>
         <div>0</div>
         <div>10</div>
@@ -54,10 +54,10 @@ function Timeline(props) {
       </div>
       <div className={styles.timelineWrapper}>
         {timelineEl}
-        {props.dailyTimeline}
+        {dailyTimeline}
       </div>
     </div>
-  )
+  );
 }
 
 export default Timeline;

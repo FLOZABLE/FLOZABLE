@@ -21,6 +21,7 @@
   transition: height .2s ease-in-out;
   overflow-x: hidden;
 }
+
 .TaskCheckBoxWrapper label {
   margin-left: 10px;
   color: var(--text);
@@ -33,11 +34,13 @@
   width: fit-content;
   transition: color 0.3s ease;
 }
+
 .TaskCheckBoxWrapper label::before,
 .TaskCheckBoxWrapper label::after {
   content: "";
   position: absolute;
 }
+
 .TaskCheckBoxWrapper label::before {
   height: 2px;
   width: 8px;
@@ -46,6 +49,7 @@
   border-radius: 2px;
   transition: background 0.3s ease;
 }
+
 .TaskCheckBoxWrapper label:after {
   height: 4px;
   width: 4px;
@@ -53,6 +57,7 @@
   left: -25px;
   border-radius: 50%;
 }
+
 .TaskCheckBoxWrapper input[type=checkbox] {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -68,7 +73,9 @@
   align-items: center;
   justify-content: center;
 }
-.TaskCheckBoxWrapper input[type=checkbox]::before, .TaskCheckBoxWrapper input[type=checkbox]::after {
+
+.TaskCheckBoxWrapper input[type=checkbox]::before,
+.TaskCheckBoxWrapper input[type=checkbox]::after {
   content: "";
 
   height: 2px;
@@ -76,37 +83,44 @@
   background: var(--check);
   border-radius: 3px;
 }
+
 .TaskCheckBoxWrapper input[type=checkbox]::before {
   width: 0px;
   right: 60%;
   transform-origin: right bottom;
 }
+
 .TaskCheckBoxWrapper input[type=checkbox]::after {
   width: 20px;
   left: 40%;
   transform-origin: left bottom;
 }
+
 .TaskCheckBoxWrapper input[type=checkbox]:checked::before {
   -webkit-animation: check-01-11 0.4s ease forwards;
-          animation: check-01-11 0.4s ease forwards;
+  animation: check-01-11 0.4s ease forwards;
 }
+
 .TaskCheckBoxWrapper input[type=checkbox]:checked::after {
   -webkit-animation: check-02-11 0.4s ease forwards;
-          animation: check-02-11 0.4s ease forwards;
+  animation: check-02-11 0.4s ease forwards;
 }
-.TaskCheckBoxWrapper input[type=checkbox]:checked + label {
+
+.TaskCheckBoxWrapper input[type=checkbox]:checked+label {
   color: var(--disabled);
   -webkit-animation: move-11 0.3s ease 0.1s forwards;
-          animation: move-11 0.3s ease 0.1s forwards;
+  animation: move-11 0.3s ease 0.1s forwards;
 }
-.TaskCheckBoxWrapper input[type=checkbox]:checked + label::before {
+
+.TaskCheckBoxWrapper input[type=checkbox]:checked+label::before {
   background: var(--disabled);
   -webkit-animation: slice-11 0.4s ease forwards;
-          animation: slice-11 0.4s ease forwards;
+  animation: slice-11 0.4s ease forwards;
 }
-.TaskCheckBoxWrapper input[type=checkbox]:checked + label::after {
+
+.TaskCheckBoxWrapper input[type=checkbox]:checked+label::after {
   -webkit-animation: firework-11 0.5s ease forwards 0.1s;
-          animation: firework-11 0.5s ease forwards 0.1s;
+  animation: firework-11 0.5s ease forwards 0.1s;
 }
 
 @-webkit-keyframes move-11 {
@@ -114,6 +128,7 @@
     padding-left: 8px;
     padding-right: 0px;
   }
+
   100% {
     padding-right: 4px;
   }
@@ -124,94 +139,111 @@
     padding-left: 8px;
     padding-right: 0px;
   }
+
   100% {
     padding-right: 4px;
   }
 }
+
 @-webkit-keyframes slice-11 {
   60% {
     width: 100%;
     left: 4px;
   }
+
   100% {
     width: 100%;
     left: -2px;
     padding-left: 0;
   }
 }
+
 @keyframes slice-11 {
   60% {
     width: 100%;
     left: 4px;
   }
+
   100% {
     width: 100%;
     left: -2px;
     padding-left: 0;
   }
 }
+
 @-webkit-keyframes check-01-11 {
   0% {
     width: 4px;
     top: auto;
     transform: rotate(0);
   }
+
   50% {
     width: 0px;
     top: auto;
     transform: rotate(0);
   }
+
   51% {
     width: 0px;
     top: 8px;
     transform: rotate(45deg);
   }
+
   100% {
-    width:30px;
+    width: 30px;
     top: 8px;
     transform: rotate(45deg);
     background-color: var(--checkColor);
   }
 }
+
 @keyframes check-01-11 {
   0% {
     width: 4px;
     top: auto;
     transform: rotate(0);
   }
+
   50% {
     width: 0px;
     top: auto;
     transform: rotate(0);
   }
+
   51% {
     width: 0px;
     top: 8px;
     transform: rotate(45deg);
   }
+
   100% {
-    width:30px;
+    width: 30px;
     top: 8px;
     transform: rotate(45deg);
     background-color: var(--checkColor);
   }
 }
+
 @-webkit-keyframes check-02-11 {
   0% {
     width: 4px;
     top: auto;
     transform: rotate(0);
   }
+
   50% {
     width: 0px;
     top: auto;
     transform: rotate(0);
   }
+
   51% {
     width: 0px;
     top: 8px;
     transform: rotate(-45deg);
   }
+
   100% {
     width: 60px;
     top: 8px;
@@ -219,22 +251,26 @@
     background-color: var(--checkColor);
   }
 }
+
 @keyframes check-02-11 {
   0% {
     width: 4px;
     top: auto;
     transform: rotate(0);
   }
+
   50% {
     width: 0px;
     top: auto;
     transform: rotate(0);
   }
+
   51% {
     width: 0px;
     top: 8px;
     transform: rotate(-45deg);
   }
+
   100% {
     width: 60px;
     top: 8px;
@@ -242,27 +278,33 @@
     background-color: var(--checkColor);
   }
 }
+
 @-webkit-keyframes firework-11 {
   0% {
     opacity: 1;
     box-shadow: 0 0 0 -2px var(--checkColor), 0 0 0 -2px var(--checkColor), 0 0 0 -2px var(--checkColor), 0 0 0 -2px var(--checkColor), 0 0 0 -2px var(--checkColor), 0 0 0 -2px var(--checkColor);
   }
+
   30% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
     box-shadow: 0 -15px 0 0px var(--checkColor), 14px -8px 0 0px var(--checkColor), 14px 8px 0 0px var(--checkColor), 0 15px 0 0px var(--checkColor), -14px 8px 0 0px var(--checkColor), -14px -8px 0 0px var(--checkColor);
   }
 }
+
 @keyframes firework-11 {
   0% {
     opacity: 1;
     box-shadow: 0 0 0 -2px var(--checkColor), 0 0 0 -2px var(--checkColor), 0 0 0 -2px var(--checkColor), 0 0 0 -2px var(--checkColor), 0 0 0 -2px var(--checkColor), 0 0 0 -2px var(--checkColor);
   }
+
   30% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
     box-shadow: 0 -15px 0 0px var(--checkColor), 14px -8px 0 0px var(--checkColor), 14px 8px 0 0px var(--checkColor), 0 15px 0 0px var(--checkColor), -14px 8px 0 0px var(--checkColor), -14px -8px 0 0px var(--checkColor);
@@ -292,6 +334,6 @@
   height: 0px;
 }
 
-.TaskCheckBoxWrapper:hover .description{
+.TaskCheckBoxWrapper:hover .description {
   height: 130px;
 }

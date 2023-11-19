@@ -36,7 +36,8 @@
   box-shadow: rgba(255, 0, 0, 0.24) 0px 3px 8px;
 }
 
-.StudySidebar .studyTool:hover i, .StudySidebar .studyTool.clicked i {
+.StudySidebar .studyTool:hover i,
+.StudySidebar .studyTool.clicked i {
   color: var(--pink);
 }
 

@@ -1,27 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import styles from "./TagContainerGen.module.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTags, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
-const TagContainerGen = (props) => {
-
-  const { handleCreatedTagsChange } = props;
-
-  const [maxTags] = useState(props.maxTags);
+const TagContainerGen = ({ handleCreatedTagsChange, maxTags }) => {
+  const [maximumTags] = useState(maxTags);
   const [createdTags, setCreatedTags] = useState([]);
-  const [inputValue, setInputValue] = useState('');
-  const [tagCount, setTagCount] = useState(maxTags);
+  const [inputValue, setInputValue] = useState("");
+  const [tagCount, setTagCount] = useState(maximumTags);
 
   useEffect(() => {
     countTags();
   }, [createdTags]);
 
   const countTags = () => {
-    setTagCount(maxTags - createdTags.length);
+    setTagCount(maximumTags - createdTags.length);
   };
 
   const remove = (tag) => {
-    const updatedTags = createdTags.filter(t => t !== tag);
+    const updatedTags = createdTags.filter((t) => t !== tag);
     setCreatedTags(updatedTags);
     handleCreatedTagsChange(updatedTags); // Call the callback to update the state in the parent component
     countTags();
@@ -30,25 +27,29 @@ const TagContainerGen = (props) => {
   const removeAll = () => {
     setCreatedTags([]);
     handleCreatedTagsChange([]);
-  }
+  };
 
   const createTag = () => {
     return createdTags.map((tag, index) => (
       <li key={index}>
         <p className={styles.tags}>{tag}</p>
-        <FontAwesomeIcon icon={faTimes} className={styles.closeIcon} onClick={() => remove(tag)} />
+        <FontAwesomeIcon
+          icon={faTimes}
+          className={styles.closeIcon}
+          onClick={() => remove(tag)}
+        />
       </li>
     ));
   };
 
   const addTag = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       const tag = e.target.value.trim();
       if (tag.length > 1 && !createdTags.includes(tag)) {
         if (createdTags.length < 10) {
-          const newTags = tag.split(',').map(t => t.trim());
-          setCreatedTags(prevState => [...prevState, ...newTags]);
-          setInputValue('');
+          const newTags = tag.split(",").map((t) => t.trim());
+          setCreatedTags((prevState) => [...prevState, ...newTags]);
+          setInputValue("");
           handleCreatedTagsChange([...createdTags, ...newTags]);
           countTags();
         }
@@ -68,7 +69,7 @@ const TagContainerGen = (props) => {
             spellCheck="false"
             onKeyUp={addTag}
             value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
+            onChange={(e) => setInputValue(e.target.value)}
           />
         </ul>
       </div>

@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import YouTube from 'react-youtube';
-import styles from './YouTubePlayer.module.css';
+import React, { useEffect, useState } from "react";
+import YouTube from "react-youtube";
+import styles from "./YouTubePlayer.module.css";
 
-function YouTubePlayer(props) {
+function YouTubePlayer({ height, width, videoId, volume }) {
   const [player, setPlayer] = useState(null);
-  const { height, width, videoId, volume } = props;
   const [opts, setOpts] = useState({
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%",
     playerVars: {
       loop: 1,
       autoplay: 1,
@@ -26,7 +25,7 @@ function YouTubePlayer(props) {
       controls: 0,
       crossOriginIsolated: true,
       autohide: 1,
-      wmode: 'opaque',
+      wmode: "opaque",
     },
   });
 
@@ -62,7 +61,13 @@ function YouTubePlayer(props) {
 
   return (
     <div className={styles.YouTubePlayer} style={{ height, width }}>
-      <YouTube videoId={videoId} opts={opts} onReady={onReady} onStateChange={onStateChange} className={styles.video} />
+      <YouTube
+        videoId={videoId}
+        opts={opts}
+        onReady={onReady}
+        onStateChange={onStateChange}
+        className={styles.video}
+      />
     </div>
   );
 }
