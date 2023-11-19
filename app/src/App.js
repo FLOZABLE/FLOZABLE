@@ -368,6 +368,7 @@ function App() {
                 isAddSubjectModal={isAddSubjectModal}
                 setIsAddSubjectModal={setIsAddSubjectModal}
                 setIsSidebarOpen={setIsSidebarOpen}
+                setIsAddPlanModal={setIsAddPlanModal}
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}

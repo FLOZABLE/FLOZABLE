@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./EventModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faBook, faClock, faFileLines, faRepeat, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faBook, faCircleExclamation, faClock, faFileLines, faRepeat, faXmark } from "@fortawesome/free-solid-svg-icons";
 import styled from "@emotion/styled";
 import TextEditor from "../TextEditor/TextEditor";
 import DateSelector from "../DateSelector/DateSelector";
@@ -194,9 +194,9 @@ function EventModal({isAddPlanModal, setIsAddPlanModal, subjects, setIsAddSubjec
         </div>
         <div className={styles.wrapper}>
           <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faBell} />
+            <FontAwesomeIcon icon={faCircleExclamation} />
             <div className={styles.hoverEl}>
-              <p>Select Notification</p>
+              <p>Select Importance</p>
             </div>
           </div>
           <div className={styles.contentWrapper}>

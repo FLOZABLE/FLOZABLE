@@ -3,15 +3,17 @@ import { AllThemes } from "../../../utils/Themes";
 import CustomInput from "../CustomInput/CustomInput";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
 function ThemeSelector({link, handleLinkInput, submit, setVideoId}) {
   return (
     <div className={styles.ThemeSelector}>
-      <div className={styles.themeContainer}>
+      <div className={`${styles.themeContainer} customScroll`}>
       {AllThemes.map((Theme, i) => {
         return (
           <div className={styles.video} key={i} onClick={() => { setVideoId(Theme.id) }}
           style={{
-            backgroundImage: `url(img/Themes/${Theme.img})`, backgroundSize: 'cover',
+            backgroundImage: `url("${serverOrigin}/img/Themes/${Theme.img}")`, backgroundSize: 'cover',
             backgroundPosition: 'center center',
             backgroundRepeat: 'no-repeat',
           }}
@@ -21,7 +23,7 @@ function ThemeSelector({link, handleLinkInput, submit, setVideoId}) {
         );
       })}
       </div>
-      <CustomInput input={link} handleInput={handleLinkInput} handleEnter={submit} icon={faLink} placeHolder={"Paste a Youtube Link"} type={"text"} />
+      <CustomInput input={link} handleInput={handleLinkInput} handleEnter={submit} icon={faLink} placeHolder={"or Paste a Youtube Link!"} type={"text"} />
     </div>
   );
 };
