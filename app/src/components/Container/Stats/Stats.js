@@ -36,8 +36,8 @@ function Stats(props) {
   const [calendarLabel, setCalendarLabel] = useState('Today');
   const [ranking, setRanking] = useState({});
   const [dailyTimeline, setDailyTimeline] = useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   //time usage pie chart
   const [timeUsagePie, setTimeUsagePie] = useState({

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./MemberEl.module.css";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { StudyPerson, RestPerson } from "../../../utils/svgs";
 import MemberTimer from "../MemberTimer/MemberTimer";
 import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
@@ -15,15 +15,15 @@ function MemberEl(props) {
   );
 
   useEffect(() => {
-    const {timerInfo, activeSubject} = memberInfo;
+    const { timerInfo, activeSubject } = memberInfo;
     if (timerInfo && timerInfo.total) {
       const total = memberInfo.timerInfo.total;
       setSec(total);
-      
+
       if (activeSubject && activeSubject.id) {
         setRun(1);
         const now = Math.floor(new Date() / 1000);
-        
+
         setSec(now - activeSubject.time + total);
         setStudyIcon(
           <StudyPerson opt1={'#fff'} opt2={'#fff'} width={'40px'} height={'40px'} />
@@ -64,7 +64,9 @@ function MemberEl(props) {
     <div className={styles.member} key={props.k}>
       <MemberCamDisp socket={socket} memberInfo={memberInfo} track={track} />
       <div className={styles.inner}>
-        <div className={styles.userName}>{memberInfo.name}</div>
+      <Link to={`/dashboard/user/${memberInfo.user_id}`}>
+      <div className={styles.userName}>{memberInfo.name}</div>
+      </Link>
         <div className={styles.icon}>{studyIcon}</div>
         <div className={styles.timer}>
           <MemberTimer run={run} total={sec} me={me} />

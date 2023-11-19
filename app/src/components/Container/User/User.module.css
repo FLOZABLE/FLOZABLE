@@ -69,6 +69,10 @@
   transition: top .3s ease-in-out, visibility .3s ease-in-out, opacity .3s ease-in-out;
 }
 
+.UserContainer .hoverEl p {
+  color: #fff;
+}
+
 .UserContainer .blobWrapper:hover ~.hoverEl {
   visibility: visible;
   opacity: 1;
@@ -135,4 +139,14 @@
 
 .UserContainer #viewerSelector {
   margin-left: auto;
+}
+
+.UserContainer .row#groupsContainer {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.UserContainer canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
