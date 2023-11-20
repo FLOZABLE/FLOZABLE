@@ -132,7 +132,7 @@ function createCombinedUserList(percentage, length = realisticNameData.length + 
   })
 };
 
-createCombinedUserList(30);
+//createCombinedUserList(30);
 
 //addValues();
 const destinationFilePath = "./public/profile-images";
