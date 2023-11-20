@@ -8,7 +8,7 @@ async function updateDailyRanking() {
   const [users] = await connection.query(`SELECT user_id FROM users`);
   users.map(async(user) => {
     const {user_id} = user;
-    const subjects = await connection.query(`SELECT datum_point, timeline_sum, timeline FROM users WHERE user+id = ?`, [user_id]);
+    const subjects = await connection.query(`SELECT datum_point, timeline_sum, timeline FROM subjects WHERE user_id = ?`, [user_id]);
     
   })
 };

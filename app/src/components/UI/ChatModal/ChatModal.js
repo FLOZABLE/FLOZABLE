@@ -72,7 +72,6 @@ function ChatModal({
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [isChatRooms, setIsChatRooms] = useState(true);
   const [msg, setMsg] = useState([]);
-  const [reset, setReset] = useState(0);
 
   const bringRooms = useCallback(() => {
     fetch(`${serverOrigin}/api/chat/bring-rooms`, { method: "post" })
@@ -133,9 +132,8 @@ function ChatModal({
 
     const bringChat = (data) => {
       const chats = data.chats;
-      let newMessages = [];
-      chats.map((chat, i) => {
-        newMessages = msgRenderer(newMessages, chats, chat, 1, i);
+      const newMessages = chats.map((chat, i) => {
+        return msgRenderer(newMessages, chats, chat, 1, i);
       });
       setMsg(newMessages);
     };
@@ -147,7 +145,7 @@ function ChatModal({
     socket.on("bringChat", bringChat);
     socket.on("joinMyGroups", joinMyGroups);
 
-    //bringRooms();
+    bringRooms();
 
     return () => {
       socket.off("bringChat", bringChat);
@@ -155,6 +153,7 @@ function ChatModal({
     };
   }, [userInfo, allMembers]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (submit) {
       if (msgInput.length > 0) {
