@@ -65,7 +65,7 @@ function AddSubjectModal(props) {
         })
         .catch((error) => console.error(error));
     }
-  }, [isSubmit]);
+  }, [isSubmit, selectedColor, name]);
 
   return (
     <div

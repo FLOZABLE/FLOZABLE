@@ -1,6 +1,8 @@
 const { generateRandomId, hashing, randomIntInRange } = require('../tool');
 const fs = require('fs');
-const botData = require('../data/DatasetsWithId.json');
+const fullNameData = require('../data/DatasetsWithId.json');
+const realisticNameData = require('../data/RealUserIdWithData.json');
+const combinedNameData = require('../data/combinedNames.json');
 const groupsData = require('../data/Groups.json');
 const originalData = require('../data/Datasets.json');
 const colors = require('../data/GroupColors.json');
@@ -21,7 +23,7 @@ function createBots(startIndex, length) {
   const connection = pool.promise();
 
   for (let i = startIndex; i < length; i++) {
-    const { name, userId, timeZone, gender } = botData[i % (botData.length - 1)];
+    const { name, userId, timeZone, gender } = combinedNameData[i % (combinedNameData.length - 1)];
     const password = '0';
     let hashed = hashing(password);
 
@@ -106,6 +108,31 @@ async function addValues() {
     }
   })
 };
+
+//create combined datasets
+function createCombinedUserList(percentage, length = realisticNameData.length + fullNameData.length - 2) {
+  let fullNameIndex = 0;
+  let realisticNameIndex = 0;
+  const newData = [];
+  for(let i = 0; i < length; i++) {
+    const type = randomIntInRange(0, 100) > percentage;
+    if (type) {
+      newData.push(realisticNameData[realisticNameIndex]);
+      realisticNameIndex += 1;
+    } else {
+      newData.push(fullNameData[fullNameIndex]);
+      fullNameIndex += 1;
+    };
+  }
+
+  fs.writeFileSync('./data/combinedNames.json', JSON.stringify(newData, null, 2), 'utf-8', (err) => {
+    if (err) {
+      console.log(err)
+    }
+  })
+};
+
+//createCombinedUserList(30);
 
 //addValues();
 const destinationFilePath = "./public/profile-images";

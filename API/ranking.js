@@ -145,7 +145,7 @@ Router.post('/sort', async (req, res) => {
         const prevTimeline = timeline === "" ? [[]] : JSON.parse(timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
         const todayTimeline = (await redisClient.lRange(`user:${user_id}:subject:${id}`, 0, -1)).map(JSON.parse);
         const totalTimeline  = prevTimeline.concat(todayTimeline);
-        console.log(totalTimeline, user_id, id);
+        //console.log(totalTimeline, user_id, id);
         totalTimeline.find(([start, duration]) => {
           const startUnix = datum_point + start + 0;
           const stopUnix = startUnix + duration;
@@ -155,7 +155,7 @@ Router.post('/sort', async (req, res) => {
             user.focus = Math.max(user.focus, duration);
           } else if (startTime <= stopUnix) {
             //this is the case when time range is between the starttime and stop time
-            console.log(stopUnix, startUnix, timelineSum)
+            //console.log(stopUnix, startUnix, timelineSum)
             //user.total += stopUnix - startTime;
           } else if (startTime <= startUnix) {
             //stop running the loop

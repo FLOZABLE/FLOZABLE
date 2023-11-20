@@ -4,7 +4,7 @@
     colors: ['#FFD151', '#FFEAAF', '#FFE190', '#FFD970']
   },
   {
-    name: 'Nam',
+    name: 'NamGH',
     colors: ['#9999FF', '#AAC4FF', '#D2DAFF', '#EEF1FF']
   },
   {
