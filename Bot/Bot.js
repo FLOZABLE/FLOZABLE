@@ -116,12 +116,12 @@ function createCombinedUserList(percentage, length = realisticNameData.length + 
   const newData = [];
   for(let i = 0; i < length; i++) {
     const type = randomIntInRange(0, 100) > percentage;
-    if (type) {
-      newData.push(realisticNameData[realisticNameIndex]);
-      realisticNameIndex += 1;
-    } else {
+    if (type && fullNameData[fullNameIndex]) {
       newData.push(fullNameData[fullNameIndex]);
       fullNameIndex += 1;
+    } else {
+      newData.push(realisticNameData[realisticNameIndex]);
+      realisticNameIndex += 1;
     };
   }
 
@@ -132,7 +132,7 @@ function createCombinedUserList(percentage, length = realisticNameData.length + 
   })
 };
 
-//createCombinedUserList(30);
+createCombinedUserList(30);
 
 //addValues();
 const destinationFilePath = "./public/profile-images";
