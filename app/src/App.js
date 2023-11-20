@@ -464,6 +464,7 @@ function App() {
                 userInfo={userInfo}
                 groups={groups}
                 setResponse={setResponse}
+                allMembers={allMembers}
               />
             </div>
           }

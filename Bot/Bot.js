@@ -319,9 +319,9 @@ async function deleteBots() {
 async function createGroups(startIndex, length) {
   const connection = pool.promise();
   const [bots] = await connection.query(`SELECT user_id, groups FROM users WHERE type = -1`);
-  for (let i = 0; i < length; i++) {
+  for (let i = startIndex; i < length; i++) {
     const groupId = generateRandomId(8);
-    const groupData = groupsData[i + startIndex];
+    const groupData = groupsData[i];
     const hashed = hashing('0');
     const max_members = randomIntInRange(10, 50);
     const membersLength = randomIntInRange(10, max_members);
@@ -400,11 +400,99 @@ async function createGroups(startIndex, length) {
   };
 };
 
+async function randomFriend(min, max) {
+  const connection = pool.promise();
+  const [bots] = await connection.query(`SELECT friends, user_id FROM users WHERE type = -1`);
+  const lastBotIndex = bots.length - 1;
+  for (const bot of bots) {
+    const {user_id} = bot;
+    const nFriends = randomIntInRange(min, max);
+    const friends = [];
+
+    for (let i = 0; i < nFriends; i++) {
+      const friendIndex = randomIntInRange(0, lastBotIndex);
+      const friend = bots[friendIndex].user_id;
+      if (!friends.includes(friend) && !friends.includes(user_id)) {
+        friends.push(friend);
+        await connection.query(`
+          UPDATE users
+          SET friends = CASE
+            WHEN friends = '' THEN ?
+            ELSE CONCAT(friends, ',', ?)
+          END
+          WHERE user_id = ?
+        `, [
+          user_id,
+          user_id,
+          friend,
+        ]);
+      };
+    };
+
+    if (friends.length) {
+      const stringlified = JSON.stringify(friends).slice(1, -1).replaceAll(`"`, "");
+      await connection.query(`
+      UPDATE users
+      SET friends = CASE
+        WHEN friends = '' THEN ?
+        ELSE CONCAT(friends, ',', ?)
+      END
+      WHERE user_id = ?
+    `, [
+      stringlified,
+      stringlified,
+      user_id,
+    ]);
+    }
+  }
+/*   bots.map(async (bot) => {
+    const {user_id} = bot;
+    const nFriends = randomIntInRange(min, max);
+    const friends = [];
+
+    for (let i = 0; i < nFriends; i++) {
+      const friendIndex = randomIntInRange(0, lastBotIndex);
+      const friend = bots[friendIndex].user_id;
+      if (!friends.includes(friend) && !friends.includes(user_id)) {
+        friends.push(friend);
+        await connection.query(`
+          UPDATE users
+          SET friends = CASE
+            WHEN friends = '' THEN ?
+            ELSE CONCAT(friends, ',', ?)
+          END
+          WHERE user_id = ?
+        `, [
+          user_id,
+          user_id,
+          friend,
+        ]);
+      };
+    };
+
+    if (friends.length) {
+      const stringlified = JSON.stringify(friends);
+      await connection.query(`
+      UPDATE users
+      SET friends = CASE
+        WHEN friends = '' THEN ?
+        ELSE CONCAT(friends, ',', ?)
+      END
+      WHERE user_id = ?
+    `, [
+      stringlified,
+      stringlified,
+      user_id,
+    ]);
+    }
+  }) */
+}
 
 module.exports = {
   createBots,
   deleteBots,
   addId,
   botManager,
-  createGroups
+  createGroups,
+  randomFriend
 }

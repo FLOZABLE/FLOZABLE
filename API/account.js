@@ -14,9 +14,10 @@ Router.post('/accountinfo', async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
     const connection = pool.promise();
-    const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups, activity_setting FROM users WHERE user_id = ?", [userId]);
+    const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups, activity_setting, friends FROM users WHERE user_id = ?", [userId]);
     await redisClient.hSet(`user:${userId}`, `groups`, userInfo.groups);
     res.send({ success: true, userInfo: userInfo });
+    console.log('user', userInfo)
   }))
 });
 
@@ -220,7 +221,6 @@ Router.post('/update/info', async (req, res) => {
     const connection = pool.promise();
     try {
       const { name, email, confirmEmail } = req.body;
-      console.log('gd', name)
       //const supportedLanguages = ['English', 'Spanish', 'French'];
       if (!/^[a-zA-Z0-9]+$/.test(name)) {
         return res.send({ success: false, reason: 'Invalid Name' });
@@ -290,7 +290,6 @@ Router.post('/update/extension-add', async (req, res) => {
       };
 
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
-      console.log('userinfo', userInfo)
       let activitySettings = userInfo.activitySettings === "" ? [] : JSON.parse(userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"));
       const selectedActivity = activitySettings.find(activitySetting => { return activitySetting.d == domain });
       if (selectedActivity) {
@@ -368,13 +367,11 @@ Router.get('/logout', function (req, res) {
   });
 });
 
-Router.get('/profile/:userId', async(req, res) => {
+Router.get('/profile/:userId', async (req, res) => {
   try {
     const connection = pool.promise();
     const targetUserId = req.params.userId;
-    console.log('gd', targetUserId)
-    const [[userInfo]] = await connection.query(`SELECT name, email, user_id, groups, datum_point, timezone FROM users WHERE user_id = ?`, [targetUserId]);
-    console.log('gd',userInfo)
+    const [[userInfo]] = await connection.query(`SELECT name, email, user_id, groups, datum_point, timezone, friends FROM users WHERE user_id = ?`, [targetUserId]);
     if (!userInfo) return res.send({ success: false, msg: 'No such user' });
     const [subjectsInfo] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline, timeline_sum FROM subjects where user_id = ?`, [targetUserId]);
     for (const subject of subjectsInfo) {
@@ -382,7 +379,7 @@ Router.get('/profile/:userId', async(req, res) => {
       delete redisSubject.timeline;
       await redisClient.hSet(`user:${targetUserId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
       //this code adds [at the start and ] at the end
-      let prevTimeline = subject.timeline === "" ? [] :  JSON.parse(subject.timeline.replace(/^/,"[").replace(/$/,"]")); //wrapping the string with "[]"
+      let prevTimeline = subject.timeline === "" ? [] : JSON.parse(subject.timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
       const todayTimeline = (await redisClient.lRange(`user:${targetUserId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
       subject.timeline = prevTimeline.concat(todayTimeline);
     }
@@ -390,6 +387,88 @@ Router.get('/profile/:userId', async(req, res) => {
   } catch (err) {
     console.log(err);
   }
-})
+});
+
+//add friend
+Router.post('/friend-request', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const userId = req.session.user_id;
+      const { targetId } = req.body;
+      const connection = pool.promise();
+      const [[tatgetUserInfo]] = await connection.query(`SELECT friends, friend_requests, name FROM users WHERE user_id = ?`, [targetId]);
+      let { friends, friend_requests, name } = tatgetUserInfo;
+      friends = friends === "" ? [] : friends.split(',');
+      friend_requests = friend_requests === "" ? [] : friend_requests.split(',');
+
+      console.log(friend_requests, friends);
+
+      if (!(friend_requests.includes(userId) || friends.includes(userId)) && targetId !== userId) {
+        friend_requests.push(userId);
+        await connection.query(`
+          UPDATE users
+          SET friend_requests = CASE
+            WHEN friend_requests = '' THEN ?
+            ELSE CONCAT(friend_requests, ',', ?)
+          END
+          WHERE user_id = ?
+        `, [
+          userId,
+          userId,
+          targetId,
+        ]);
+      };
+
+      //notification part
+      //redisClient.rPush()
+
+      res.send({ success: true, msg: `Sent friend request to ${name}!` });
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'err' });
+    };
+  }));
+});
+
+//accept friend request
+Router.post('/friend-request-accept', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const userId = req.session.user_id;
+      const { targetId } = req.body;
+      const connection = pool.promise();
+      const [[userInfo]] = await connection.query(`SELECT friends, friend_requests, name FROM users WHERE user_id = ?`, [userId]);
+      let { friends, friend_requests, name } = userInfo;
+      friends = friends === "" ? [] : friends.split(',');
+      friend_requests = friend_requests === "" ? [] : friend_requests.split(',');
+
+      console.log(friend_requests, friends);
+
+      if (friend_requests.includes(targetId) && !friends.includes(userId) && targetId !== userId) {
+        await connection.query(`
+          UPDATE users
+          SET friends = CASE
+            WHEN friends = '' THEN ?
+            ELSE CONCAT(friends, ',', ?)
+          END
+          WHERE user_id = ?
+        `, [
+          targetId,
+          targetId,
+          userId,
+        ]);
+      };
+
+      //notification part
+      //redisClient.rPush()
+
+      res.send({ success: true, msg: `Sent friend request to ${name}!` });
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'Failed' });
+    };
+  }));
+});
+
 
 module.exports = Router;
