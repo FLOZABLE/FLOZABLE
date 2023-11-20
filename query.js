@@ -25,8 +25,11 @@ function createUsersTable() {
     key_salt VARCHAR(64),
     iv VARCHAR(32),
     subscription TINYINT(1) DEFAULT 0,
-    type SMALLINT DEFAULT 0
-  )
+    type SMALLINT DEFAULT 0,
+    private SMALLINT DEFAULT 0,
+    friends VARCHAR(200) DEFAULT '',
+    friend_requests VARCHAR(200) DEFAULT ''
+  );
   `);
 };
 

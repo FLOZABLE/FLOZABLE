@@ -13,6 +13,7 @@ import DateSelectorBtn from "../../UI/DateSelectorBtn/DateSelectorBtn";
 import GroupsGen from "../../UI/GroupsGen/GroupsGen";
 import { DateTime } from "luxon";
 import { updateRankingTrend, updateTimeTrend } from "../Stats/StatTools";
+import FriendsViewer from "../../UI/FriendsViewer/FriendsViewer";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -60,7 +61,7 @@ const lineChartOption = {
   },
 };
 
-function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
+function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers }) {
   const [userInfo, setUserInfo] = useState(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
@@ -70,6 +71,8 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
   const [statsViewer, setStatsViewer] = useState('Daily');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [userGroups, setUserGroups] = useState([]);
+  const [userFriends, setUserFriends] = useState([]);
+  const [clickedUser, setClickedUser] = useState(null);
 
   const [datumDateTime, setDateTimeDatum] = useState(DateTime.now());
 
@@ -102,7 +105,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
   const [setOpenGroupPwModal, isSetOpenGroupPwModal] = useState(false);
 
   useEffect(() => {
-    if (!groups) return;
+    if (!groups || !allMembers) return;
     const pathName = window.location.pathname.split('/');
     const selectedUserId = pathName[pathName.length - 1];
 
@@ -111,7 +114,8 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
       .then((data) => {
 
         if (data.success) {
-          const { userInfo, subjectsInfo, datum_point } = data;
+          const { userInfo, subjectsInfo } = data;
+          const { datum_point, friends } = userInfo;
           setUserInfo(userInfo);
           const sortedSubject = timelineSort(subjectsInfo);
           setUserSubjects(sortedSubject);
@@ -121,10 +125,33 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
           });
           setUserGroups(userGroups);
           setDateTimeDatum(DateTime.fromSeconds(datum_point));
+          const friendsArr = friends.split(',');
+          const userFriends = allMembers.filter(member => {
+            return friendsArr.includes(member.user_id);
+          });
+          setUserFriends(userFriends)
         };
       })
       .catch((error) => console.error(error));
-  }, [groups]);
+  }, [groups, allMembers, clickedUser]);
+
+  const requestFriend = () => {
+    fetch(`${serverOrigin}/api/account/friend-request`, {
+      method: "post",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ targetId: userInfo.user_id }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setResponse(data);
+        if (data.success) {
+
+        }
+      })
+      .catch((error) => console.error(error));
+  }
 
   const updateViewer = async (item) => {
     setStatsViewer(item);
@@ -205,7 +232,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
           <div className={styles.row} id={styles.buttons}>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-                <BlobBtn name={<Punch width={'18px'} height={'18px'} fill={'red'} />} setClicked={() => { }} color1={'#fff'} color2={"var(--pink)"} opt={2} />
+                <BlobBtn name={<Punch width={'18px'} height={'18px'} fill={'red'} />} setClicked={() => {}} color1={'#fff'} color2={"var(--pink)"} opt={2} />
               </div>
 
               <div className={styles.hoverEl}>
@@ -222,7 +249,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
             </div>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-                <BlobBtn name={<>+<FontAwesomeIcon icon={faUser} /></>} setClicked={() => { }} color1={'#fff'} color2={"var(--purple)"} opt={2} />
+                <BlobBtn name={<>+<FontAwesomeIcon icon={faUser} /></>} setClicked={() => {requestFriend()}} color1={'#fff'} color2={"var(--purple)"} opt={2} />
               </div>
 
               <div className={styles.hoverEl}>
@@ -295,6 +322,14 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
             </div>
             <div className={`${styles.row} customScroll`} id={styles.groupsContainer}>
               <GroupsGen setJoinGroupResponse={setResponse} groups={userGroups} setOpenGroupPwModal={setOpenGroupPwModal} searchQuery={""} userInfo={userInfo} queryTags={[]} />
+            </div>
+          </div>
+          <div className={styles.box}>
+            <div className={styles.rowTitle}>
+              <h1>{userInfo ? userInfo.name : ''}'s friends</h1>
+            </div>
+            <div className={`${styles.row} customScroll`} id={styles.groupsContainer}>
+              <FriendsViewer friends={userFriends} setClickedUser={setClickedUser} />
             </div>
           </div>
         </div>

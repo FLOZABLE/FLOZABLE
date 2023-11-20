@@ -206,7 +206,8 @@ const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubj
 require('./videoServer');
 require('./Logger');
 require('./services/timerUpdate');
-const {createBots, addId, deleteBots, botManager, createGroups} = require('./Bot/Bot');
+const {createBots, addId, deleteBots, botManager, createGroups, randomFriend} = require('./Bot/Bot');
+//randomFriend(0, 10);
 //createGroups(0, 10);
 //botManager();
 //deleteBots();
