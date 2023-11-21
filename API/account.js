@@ -421,7 +421,11 @@ Router.post('/friend-request', async (req, res) => {
 
       //notification part
       //redisClient.rPush()
-
+      const io = req.app.get('socketio');
+      const id = generateRandomId(7);
+      const notification = { id, type: 0, user_id: targetId, from: userId, };
+      io.to(targetId).emit('notification', notification);
+      connection.query(`INSERT INTO users SET ?`)
       res.send({ success: true, msg: `Sent friend request to ${name}!` });
     } catch (error) {
       console.log(error)
@@ -431,7 +435,7 @@ Router.post('/friend-request', async (req, res) => {
 });
 
 //accept friend request
-Router.post('/friend-request-accept', async (req, res) => {
+Router.post('/friend-request-reply', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
       const userId = req.session.user_id;

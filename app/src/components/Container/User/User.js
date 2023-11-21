@@ -249,7 +249,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
             </div>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-                <BlobBtn name={<>+<FontAwesomeIcon icon={faUser} /></>} setClicked={() => {requestFriend()}} color1={'#fff'} color2={"var(--purple)"} opt={2} />
+                <BlobBtn delay={-1} name={<>+<FontAwesomeIcon icon={faUser} /></>} setClicked={() => {requestFriend()}} color1={'#fff'} color2={"var(--purple)"} opt={2} />
               </div>
 
               <div className={styles.hoverEl}>
