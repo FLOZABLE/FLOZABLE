@@ -9,8 +9,8 @@ function FriendsViewer({ friends, setClickedUser }) {
       {friends.map((friend, i) => {
         const { user_id, name } = friend;
         return (
-            <Link to={`/dashboard/user/${user_id}`} onClick={() => {setClickedUser(user_id)}}>
-                        <div className={styles.profileWrapper} key={i}>
+            <Link to={`/dashboard/user/${user_id}`} onClick={() => {setClickedUser(user_id)}} key={i}>
+                        <div className={styles.profileWrapper}>
                         <div className={styles.profileImg}
                 style={{
                   backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`, backgroundSize: 'cover',
