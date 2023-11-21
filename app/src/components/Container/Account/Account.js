@@ -270,6 +270,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
                   setClicked={setIsSubmitProfile}
                   color1={"#fff"}
                   color2={"var(--pink)"}
+                  delay={-1}
                 />
               </div>
             </div>

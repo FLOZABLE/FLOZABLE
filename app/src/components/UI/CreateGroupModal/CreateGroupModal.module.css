@@ -62,7 +62,7 @@
   top: 50px;
   left: 0px;
   opacity: 0;
-  transition: opacity .3s ease-in-out;
+  transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
   background-color: #000000c3;
   padding: 5px 10px;
   border-radius: 7px;

@@ -23,11 +23,14 @@ import EventModal from "./components/UI/EventModal/EventModal";
 import AddSubjectModal from "./components/UI/AddSubjectModal/AddSubjectModal";
 import User from "./components/Container/User/User";
 import TopNotification from "./components/UI/TopNotification/TopNotification";
+import BottomNotification from "./components/UI/BottomNotification/BottomNotification";
+import NotificationModal from "./components/UI/NotificationModal/NotificationModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function App() {
   const [response, setResponse] = useState(null);
+  const [notifications, setNotifications] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [subjects, setSubjects] = useState([]);
@@ -43,6 +46,7 @@ function App() {
   const [isAddPlanModal, setIsAddPlanModal] = useState(false);
 
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
+  const [isNotificationModal, setIsNotificationModal] = useState(false);
 
   const [addSubjectResponse, setAddSubjectResponse] = useState(null);
   const [subject, setSubject] = useState("0000000000");
@@ -56,15 +60,22 @@ function App() {
       socket.emit("joinMyGroups");
     };
 
-    const socketResetAction = () => {};
+    const socketResetAction = () => { };
+
+    const onNotification = (data) => {
+      setNotifications((prev) => [...prev, data]);
+      console.log(notifications, data)
+    }
 
     socket.on("connect", socketConnectAction);
     socket.on("reset", socketResetAction);
-    socket.on("studying", () => {});
+    socket.on("studying", () => { });
+    socket.on("notification", onNotification);
 
     return () => {
       socket.off("joinMyGroups", socketConnectAction);
       socket.off("reset", socketResetAction);
+      socket.off("notification", onNotification);
     };
   }, []);
 
@@ -155,7 +166,21 @@ function App() {
 
   return (
     <Router>
-      <TopNotification duration={2500} response={response} />
+      <TopNotification
+        duration={2500}
+        response={response}
+      />
+      <NotificationModal
+        setIsNotificationModal={setIsNotificationModal}
+        isNotificationModal={isNotificationModal}
+        notifications={notifications}
+        setNotifications={setNotifications}
+        allMembers={allMembers}
+      />
+      <BottomNotification
+        notifications={notifications}
+        setNotifications={setNotifications}
+      />
       <AddSubjectModal
         setIsAddSubjectModal={setIsAddSubjectModal}
         isAddSubjectModal={isAddSubjectModal}
