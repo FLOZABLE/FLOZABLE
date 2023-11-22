@@ -98,6 +98,14 @@
   position: relative;
 }
 
+.NotificationModal .notification .btnWrapper.accept:hover {
+  filter: saturate(300%) hue-rotate(90deg);
+}
+
+.NotificationModal .notification .btnWrapper.decline:hover {
+  filter: saturate(300%);
+}
+
 .NotificationModal .notification .btnWrapper .hoverDisp {
   position: absolute;
   font-size: 17px;
@@ -110,7 +118,7 @@
   padding: 5px 10px;
   border-radius: 7px;
   color: #fff;
-  z-index: 2;
+  z-index: 5;
   visibility: hidden;
 }
 

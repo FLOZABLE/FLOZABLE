@@ -422,18 +422,27 @@ Router.post('/friend-request', async (req, res) => {
 
       const friendRequests = await NotificationCache(userId, 0);
       const prevFriendReq = friendRequests.find(friendReq => {return friendReq.f === userId});
-      if (!(prevFriendReq || friends.includes(userId)) && targetId !== userId) {
+      if (!(prevFriendReq || friends.includes(userId)) && (targetId !== userId)) {
         const id = generateRandomId(5);
         const date = Math.floor(new Date().getTime() / (1000 * 60));
         const io = req.app.get('socketio');
         const notification = { i: id, t: 0, f: userId, d: date};
         io.to(targetId).emit('notification', notification);
-        redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification))
-      };
-      res.send({ success: true, msg: `Sent friend request to ${name}!` });
+        redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
+        res.send({ success: true, msg: `Sent friend request to ${name}!` });
+      }
+      else if (prevFriendReq){
+        res.send({ success: false, reason: "You've already sent a request to this user"});
+      }
+      else if (friends.includes(userId)){
+        res.send({ success: false, reason: "You're already friends with this user"});
+      }
+      else{
+        res.send({ success: false, reason: "Cannot send request to yourself"});
+      }
     } catch (error) {
       console.log(error)
-      res.send({ success: false, reason: 'err' });
+      res.send({ success: false, reason: 'An Error Occured' });
     };
   }));
 });
@@ -457,7 +466,7 @@ Router.post('/friend-request-reply', async (req, res) => {
       let { friends, friend_requests, name } = userInfo;
       friends = friends === "" ? [] : friends.split(',');
 
-      if (!friends.includes(userId) && targetId !== userId) {
+      if (!friends.includes(userId)) {
         await connection.query(`
           UPDATE users
           SET friends = CASE
@@ -491,5 +500,104 @@ Router.post('/friend-request-reply', async (req, res) => {
   }));
 });
 
+
+Router.post('/friend-notif', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const userId = req.session.user_id;
+      const { targetId } = req.body;
+      const friendRequests = await NotificationCache(userId, 1);
+      const friendReq = friendRequests.find(friendReq => {return friendReq.f === targetId}); 
+      redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(friendReq));
+
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'An Error Occured' });
+    };
+  }));
+});
+
+
+//send challenge
+Router.post('/challenge-request', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const userId = req.session.user_id;
+      const { targetId } = req.body;
+ 
+      const connection = pool.promise();
+      const [[userInfo]] = await connection.query(`SELECT friends, friend_requests, name FROM users WHERE user_id = ?`, [userId]);
+      let {name} = userInfo;
+
+      const challenges = await NotificationCache(userId, 2);
+      const prevChallengeReq = challenges.find(challenge => {return challenge.f === userId}); //already sent request to this user
+
+      if (!prevChallengeReq) { //self-detection later
+        const id = generateRandomId(5);
+        const date = Math.floor(new Date().getTime() / (1000 * 60));
+        const io = req.app.get('socketio');
+        const notification = { i: id, t: 2, f: userId, d: date};
+        io.to(targetId).emit('notification', notification);
+        redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
+        res.send({ success: true, msg: `Challenge sent to ${name}!` });
+      }
+      else{
+        res.send({ success: false, reason: "You've already sent a challenge to this user"});
+      }
+    }
+    catch (error){
+      console.log(error)
+      res.send({ success: false, reason: 'Failed' });
+    }
+  }));
+ });
+ 
+ 
+ //respond to challenge
+ Router.post('/challenge-request-reply', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const userId = req.session.user_id;
+      const { targetId, accepted } = req.body;
+      const challenges = await NotificationCache(userId, 2);
+      const challengeReq = challenges.find(challenge => {return challenge.f === targetId});
+      if (!challengeReq) return res.send({success: false, reason: 'Challenge Expired'})
+      redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(challengeReq));
+      if (!accepted) {
+        return res.send({success: true, msg: "Challenge Declined"});
+      };
+
+      const id = generateRandomId(5);
+      const date = Math.floor(new Date().getTime() / (1000 * 60));
+      const io = req.app.get('socketio');
+      const notification = { i: id, t: 3, f: userId, d: date}; // 3 = challenge accepted
+      io.to(targetId).emit('notification', notification);
+
+      redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
+      res.send({ success: true, msg: `It's on!` });
+
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'Failed' });
+    };
+  }));
+ });
+ 
+
+ Router.post('/challenge-notif', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const userId = req.session.user_id;
+      const { targetId } = req.body;
+      const friendRequests = await NotificationCache(userId, 3);
+      const friendReq = friendRequests.find(friendReq => {return friendReq.f === targetId}); 
+      redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(friendReq));
+
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'An Error Occured' });
+    };
+  }));
+});
 
 module.exports = Router;

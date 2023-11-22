@@ -153,6 +153,24 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
       .catch((error) => console.error(error));
   }
 
+  const requestChallenge = () => {
+    fetch(`${serverOrigin}/api/account/challenge-request`, {
+      method: "post",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ targetId: userInfo.user_id }), //userInfo = user of the page you're viewing
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setResponse(data);
+        if (data.success) {
+
+        }
+      })
+      .catch((error) => console.error(error));
+  }
+
   const updateViewer = async (item) => {
     setStatsViewer(item);
   };
@@ -232,7 +250,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
           <div className={styles.row} id={styles.buttons}>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-                <BlobBtn name={<Punch width={'18px'} height={'18px'} fill={'red'} />} setClicked={() => {}} color1={'#fff'} color2={"var(--pink)"} opt={2} />
+                <BlobBtn delay={-1} name={<Punch width={'18px'} height={'18px'} fill={'red'} />} setClicked={() => {requestChallenge()}} color1={'#fff'} color2={"var(--pink)"} opt={2} />
               </div>
 
               <div className={styles.hoverEl}>
