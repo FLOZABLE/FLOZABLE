@@ -8,6 +8,7 @@ const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
 const { hashing, autoSignin, generateRandomId } = require("../tool");
+const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache } = require('../services/redisLoader');
 const upload = multer();
 
 Router.post('/accountinfo', async (req, res) => {
@@ -15,11 +16,30 @@ Router.post('/accountinfo', async (req, res) => {
     const userId = req.session.user_id;
     const connection = pool.promise();
     const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups, activity_setting, friends FROM users WHERE user_id = ?", [userId]);
+    const notifications = await NotificationCache(userId);
     await redisClient.hSet(`user:${userId}`, `groups`, userInfo.groups);
-    res.send({ success: true, userInfo: userInfo });
+    res.send({ success: true, userInfo: userInfo, notifications });
     console.log('user', userInfo)
   }))
 });
+
+Router.post('/all-accounts', async (req, res) => {
+  const now = Math.floor(new Date().getTime() / 1000);
+  const connection = pool.promise();
+  const [membersInfo] = await connection.query('SELECT user_id, name, timezone FROM users');
+  await Promise.all(membersInfo.map(async (member) => {
+    let memberTimer = await redisClient.hGet(`user:${member.user_id}`, 'timerInfo');
+    const timerInfo = await timerCache(member.user_id);
+    const activeSubject = await activeSubjectCache(member.user_id);
+    const timer = await redisClient.lRange(`user:${member.user_id}:timer`, 0, -1);
+    memberTimer = `{"datum":${now},"timeline":[[0,0]],"study":0}`
+    member.study = memberTimer;
+    member.timer = timer;
+    member.timerInfo = timerInfo;
+    member.activeSubject = activeSubject;
+  }));
+  res.send({success: true, membersInfo});
+})
 
 Router.post('/signin-authentication', async (req, res, next) => {
   let email = req.body.email;
@@ -396,36 +416,20 @@ Router.post('/friend-request', async (req, res) => {
       const userId = req.session.user_id;
       const { targetId } = req.body;
       const connection = pool.promise();
-      const [[tatgetUserInfo]] = await connection.query(`SELECT friends, friend_requests, name FROM users WHERE user_id = ?`, [targetId]);
-      let { friends, friend_requests, name } = tatgetUserInfo;
+      const [[tatgetUserInfo]] = await connection.query(`SELECT friends, name FROM users WHERE user_id = ?`, [targetId]);
+      let { friends, name } = tatgetUserInfo;
       friends = friends === "" ? [] : friends.split(',');
-      friend_requests = friend_requests === "" ? [] : friend_requests.split(',');
 
-      console.log(friend_requests, friends);
-
-      if (!(friend_requests.includes(userId) || friends.includes(userId)) && targetId !== userId) {
-        friend_requests.push(userId);
-        await connection.query(`
-          UPDATE users
-          SET friend_requests = CASE
-            WHEN friend_requests = '' THEN ?
-            ELSE CONCAT(friend_requests, ',', ?)
-          END
-          WHERE user_id = ?
-        `, [
-          userId,
-          userId,
-          targetId,
-        ]);
+      const friendRequests = await NotificationCache(userId, 0);
+      const prevFriendReq = friendRequests.find(friendReq => {return friendReq.f === userId});
+      if (!(prevFriendReq || friends.includes(userId)) && targetId !== userId) {
+        const id = generateRandomId(5);
+        const date = Math.floor(new Date().getTime() / (1000 * 60));
+        const io = req.app.get('socketio');
+        const notification = { i: id, t: 0, f: userId, d: date};
+        io.to(targetId).emit('notification', notification);
+        redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification))
       };
-
-      //notification part
-      //redisClient.rPush()
-      const io = req.app.get('socketio');
-      const id = generateRandomId(7);
-      const notification = { id, type: 0, user_id: targetId, from: userId, };
-      io.to(targetId).emit('notification', notification);
-      connection.query(`INSERT INTO users SET ?`)
       res.send({ success: true, msg: `Sent friend request to ${name}!` });
     } catch (error) {
       console.log(error)
@@ -439,16 +443,21 @@ Router.post('/friend-request-reply', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
       const userId = req.session.user_id;
-      const { targetId } = req.body;
+      const { targetId, accepted } = req.body;
+      const friendRequests = await NotificationCache(userId, 0);
+      const friendReq = friendRequests.find(friendReq => {return friendReq.f === targetId});
+      if (!friendReq) return res.send({success: false, reason: 'expired request'})
+      redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(friendReq));
+      if (!accepted) {
+        return res.send({success: true});
+      };
       const connection = pool.promise();
-      const [[userInfo]] = await connection.query(`SELECT friends, friend_requests, name FROM users WHERE user_id = ?`, [userId]);
+      const [[userInfo]] = await connection.query(`SELECT friends, name FROM users WHERE user_id = ?`, [userId]);
+      const [[targetInfo]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [targetId]);
       let { friends, friend_requests, name } = userInfo;
       friends = friends === "" ? [] : friends.split(',');
-      friend_requests = friend_requests === "" ? [] : friend_requests.split(',');
 
-      console.log(friend_requests, friends);
-
-      if (friend_requests.includes(targetId) && !friends.includes(userId) && targetId !== userId) {
+      if (!friends.includes(userId) && targetId !== userId) {
         await connection.query(`
           UPDATE users
           SET friends = CASE
@@ -461,12 +470,20 @@ Router.post('/friend-request-reply', async (req, res) => {
           targetId,
           userId,
         ]);
-      };
+        res.send({ success: true, msg: `You and ${targetInfo.name} are now friends!` });
+        const id = generateRandomId(5);
+        const date = Math.floor(new Date().getTime() / (1000 * 60));
+        const io = req.app.get('socketio');
+        const notification = { i: id, t: 1, f: userId, d: date};
+        io.to(targetId).emit('notification', notification);
+        redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification))
+      } else {
+        res.send({ success: true, msg: `You and ${targetInfo.name} were already friends!` });
+      }
 
       //notification part
       //redisClient.rPush()
 
-      res.send({ success: true, msg: `Sent friend request to ${name}!` });
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'Failed' });

@@ -8,13 +8,13 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function NotificationModal({ notifications, setNotifications, setIsNotificationModal, isNotificationModal, allMembers }) {
   const [notificationsEl, setNotificationsEl] = useState([]);
 
-  const friendRequestReply = (accepted) => {
+  const friendRequestReply = (targetId, accepted) => {
     fetch(`${serverOrigin}/api/account/friend-request-reply`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ accepted }),
+      body: JSON.stringify({ targetId, accepted }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -24,8 +24,11 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   };
 
   useEffect(() => {
+    console.log('gd', notifications)
     setNotificationsEl(notifications.map((notification, i) => {
-      const {type, msg, from} = notification;
+      const type = notification.t;
+      const from = notification.f;
+      console.log(notification, type, from)
       if (type === 0) {
         const sender = allMembers.find(member => {return member.user_id === from});
         const {name} = sender;
@@ -44,7 +47,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
           </div>
           <div className={styles.buttons}>
             <div className={styles.btnWrapper}>
-              <button onClick={() => {friendRequestReply(false)}}>
+              <button onClick={() => {friendRequestReply(from, false)}}>
                 <FontAwesomeIcon icon={faXmark} />
               </button>
               <div className={styles.hoverDisp}>
@@ -52,7 +55,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
               </div>
             </div>
             <div className={styles.btnWrapper}>
-            <button onClick={() => {friendRequestReply(true)}}>
+            <button onClick={() => {friendRequestReply(from, true)}}>
                 <FontAwesomeIcon icon={faCheck} />
               </button>
               <div className={styles.hoverDisp}>

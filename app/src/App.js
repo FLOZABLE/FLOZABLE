@@ -89,6 +89,17 @@ function App() {
     setIsHovered(false);
   };
 
+  const bringAllMembers = useCallback(() => {
+    fetch(`${serverOrigin}/api/account/all-accounts`, { method: "post" })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setAllMembers(data.membersInfo);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
   const bringSubjects = useCallback(() => {
     fetch(`${serverOrigin}/api/study/bring-subjects`, { method: "post" })
       .then((response) => response.json())
@@ -107,6 +118,7 @@ function App() {
       .then((data) => {
         if (data.success) {
           setUserInfo(data.userInfo);
+          setNotifications(data.notifications);
           socket.connect();
         }
       })
@@ -136,22 +148,27 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setAllMembers(data.membersInfo);
-          setGroups(setGroupMembers(data.groups, data.membersInfo));
+          setGroups(setGroupMembers(data.groups, allMembers));
         }
       })
       .catch((error) => console.error(error));
-  }, []);
+  }, [allMembers]);
 
   useEffect(() => {
     bringSubjects();
-    bringAccountInfo();
+    bringAllMembers();
+    bringPlans();
   }, []);
+
+  useEffect(() => {
+    if (allMembers.length) {
+      bringAccountInfo();
+    }
+  }, [allMembers]);
 
   useEffect(() => {
     if (userInfo) {
       bringGroups();
-      bringPlans();
     }
   }, [userInfo]);
 
