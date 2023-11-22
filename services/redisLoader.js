@@ -191,6 +191,26 @@ async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000),
   }
 };
 
+/**
+ * notification's key:
+ * i: id
+ * t: type ex) -1 = all (default),  0 = friend-request, 1 = friend-accept, 2 = group-invitation
+ * d: date (unix but divided by 1000 * 60 because we  need minute accuracy) 
+ * optional:
+ * f: from (used for friend-request, friend-accept, group invitation)
+ * @param {*} userId 
+ * @param {*} type 
+ * @returns {[]} selectedNotifications
+ */
+async function NotificationCache(userId, type = -1) {
+  const notifications = (await redisClient.sMembers(`user:${userId}:notifications`)).map(JSON.parse);
+  if (type === -1) {
+    return notifications;
+  };
+  const selectedNotifications = notifications.filter(notification => {return notification.t === type});
+  return selectedNotifications;
+}
+
 module.exports = {
   flushRedis,
   groupsLoader,
@@ -200,5 +220,6 @@ module.exports = {
   groupRoomCache,
   subjectsCache,
   activeSubjectCache,
-  timerCache
+  timerCache,
+  NotificationCache
 }
