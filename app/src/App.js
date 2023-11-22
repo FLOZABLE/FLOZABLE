@@ -193,6 +193,7 @@ function App() {
         notifications={notifications}
         setNotifications={setNotifications}
         allMembers={allMembers}
+        setResponse={setResponse}
       />
       <BottomNotification
         notifications={notifications}

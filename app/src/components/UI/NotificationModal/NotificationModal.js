@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function NotificationModal({ notifications, setNotifications, setIsNotificationModal, isNotificationModal, allMembers }) {
+function NotificationModal({ notifications, setNotifications, setIsNotificationModal, isNotificationModal, allMembers, setResponse }) {
   const [notificationsEl, setNotificationsEl] = useState([]);
 
-  const friendRequestReply = (targetId, accepted) => {
+  const friendRequestReply = (targetId, accepted, notificationId) => {
     fetch(`${serverOrigin}/api/account/friend-request-reply`, {
       method: "post",
       headers: {
@@ -18,9 +18,62 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
+        setResponse(data);
       })
       .catch((error) => console.error(error));
+ 
+    setNotifications(notifications.filter(notif => notif.i !== notificationId));
+  };
+
+  const deleteFriendNotif = (targetId, notificationId) => {
+    fetch(`${serverOrigin}/api/account/friend-notif`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ targetId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setResponse(data);
+      })
+      .catch((error) => console.error(error));
+ 
+    setNotifications(notifications.filter(notif => notif.i !== notificationId));
+  };
+
+  const challengeRequestReply = (targetId, accepted, notificationId) => {
+    fetch(`${serverOrigin}/api/account/challenge-request-reply`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ targetId, accepted }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setResponse(data);
+      })
+      .catch((error) => console.error(error));
+ 
+    setNotifications(notifications.filter(notif => notif.i !== notificationId));
+  }; 
+
+  const deleteChallengeNotif = (targetId, notificationId) => {
+    fetch(`${serverOrigin}/api/account/challenge-notif`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ targetId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setResponse(data);
+      })
+      .catch((error) => console.error(error));
+ 
+    setNotifications(notifications.filter(notif => notif.i !== notificationId));
   };
 
   useEffect(() => {
@@ -46,20 +99,115 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
             <p>{name} wants to be friends with you!</p>
           </div>
           <div className={styles.buttons}>
-            <div className={styles.btnWrapper}>
-              <button onClick={() => {friendRequestReply(from, false)}}>
+            <div className={`${styles.btnWrapper} ${styles.decline}`}>
+              <button onClick={() => {friendRequestReply(from, false, notification.i)}}>
                 <FontAwesomeIcon icon={faXmark} />
               </button>
               <div className={styles.hoverDisp}>
                 Decline
               </div>
             </div>
-            <div className={styles.btnWrapper}>
-            <button onClick={() => {friendRequestReply(from, true)}}>
+            <div className={`${styles.btnWrapper} ${styles.accept}`}>
+            <button onClick={() => {friendRequestReply(from, true, notification.i)}}>
                 <FontAwesomeIcon icon={faCheck} />
               </button>
               <div className={styles.hoverDisp}>
                 Accept
+              </div>
+            </div>
+          </div>
+        </div>
+        )
+      }
+      else if (type === 1) {
+        const sender = allMembers.find(member => {return member.user_id === from});
+        const {name} = sender;
+        return (
+          <div className={styles.notification} key={i}>
+          <div className={styles.profileImg}
+            style={{
+              backgroundImage: `url("${serverOrigin}/profile-images/${from}.jpeg")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center center',
+              backgroundRepeat: 'no-repeat',
+            }}>
+          </div>
+          <div className={styles.content}>
+            <p>{name} and you are now friends!</p>
+          </div>
+          <div className={styles.buttons}>
+            <div className={`${styles.btnWrapper} ${styles.accept}`}>
+            <button onClick={() => {deleteFriendNotif(from, notification.i)}}>
+                <FontAwesomeIcon icon={faCheck} />
+              </button>
+              <div className={styles.hoverDisp}>
+                Got it!
+              </div>
+            </div>
+          </div>
+        </div>
+        )
+      }
+      else if (type === 2) {
+        const sender = allMembers.find(member => {return member.user_id === from});
+        const {name} = sender;
+        return (
+          <div className={styles.notification} key={i}>
+          <div className={styles.profileImg}
+            style={{
+              backgroundImage: `url("${serverOrigin}/profile-images/${from}.jpeg")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center center',
+              backgroundRepeat: 'no-repeat',
+            }}>
+          </div>
+          <div className={styles.content}>
+            <p>{name} challenges you to a study face-off!</p>
+          </div>
+          <div className={styles.buttons}>
+            <div className={`${styles.btnWrapper} ${styles.decline}`}>
+              <button onClick={() => {challengeRequestReply(from, false, notification.i)}}>
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+              <div className={styles.hoverDisp}>
+                Decline
+              </div>
+            </div>
+            <div className={`${styles.btnWrapper} ${styles.accept}`}>
+            <button onClick={() => {challengeRequestReply(from, true, notification.i)}}>
+                <FontAwesomeIcon icon={faCheck} />
+              </button>
+              <div className={styles.hoverDisp}>
+                Accept
+              </div>
+            </div>
+          </div>
+        </div>
+        )
+      }
+      else if (type === 3) {
+        const sender = allMembers.find(member => {return member.user_id === from});
+        const {name} = sender;
+        return (
+          <div className={styles.notification} key={i}>
+          <div className={styles.profileImg}
+            style={{
+              backgroundImage: `url("${serverOrigin}/profile-images/${from}.jpeg")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center center',
+              backgroundRepeat: 'no-repeat',
+            }}>
+          </div>
+          <div className={styles.content}>
+            <p>{name} accepted your challenge!</p>
+          </div>
+          <div className={styles.buttons}>
+            <div className={`${styles.btnWrapper} ${styles.accept}`}>
+            <button onClick={() => {deleteChallengeNotif(from, notification.i)}}>
+                <FontAwesomeIcon icon={faCheck} />
+              </button>
+              <div className={styles.hoverDisp}>
+                Got it!
               </div>
             </div>
           </div>
