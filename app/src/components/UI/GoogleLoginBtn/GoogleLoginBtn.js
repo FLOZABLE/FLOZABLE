@@ -8,19 +8,21 @@ function GoogleLoginBtn() {
     flow: 'auth-code',
     onSuccess: (response) => {
       console.log(response);
+      const {code} = response;
       fetch(`${serverOrigin}/api/account/auth/google`, {
         method: "post",
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({data: response}),
+        body: JSON.stringify({data: code}),
       })
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
         })
         .catch((error) => console.error(error));
-    }
+    },
+    scope: "openid email profile https://www.googleapis.com/auth/calendar"
   });
   
   const onSuccess = (response) => {
@@ -30,7 +32,7 @@ function GoogleLoginBtn() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({data: response}),
+      body: JSON.stringify({data: response.code}),
     })
       .then((response) => response.json())
       .then((data) => {
