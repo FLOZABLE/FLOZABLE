@@ -1,6 +1,7 @@
 .OptionToggleBtn {
   display: block;
-  position: relative
+  position: relative;
+  width: 100%;
 }
 
 .OptionToggleBtn .tgl {
@@ -112,6 +113,7 @@
 
 .OptionToggleBtn .tglSkewed:checked+.tglBtn {
   background: #86d993;
+  width: 6em;
 }
 
 .OptionToggleBtn .tglSkewed:checked+.tglBtn:before {
