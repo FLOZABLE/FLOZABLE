@@ -2,13 +2,9 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { isValidJSON, hashing, generateRandomId, autoSignin } = require("../tool");
+const { isValidJSON, hashing, generateRandomId, autoSignin, googleOauth2client } = require("../tool");
 const { removePrevNotification, planNotification } = require("../services/notification");
 const {google} = require('googleapis');
-const googleCalendar = google.calendar({
-  version: 'v3',
-  auth: process.env.GOOGLE_API_KEY // specify your API key here
-});
 
 Router.post("/bring-plans", async (req, res) => {
   autoSignin(req, res, (async () => {
@@ -16,6 +12,35 @@ Router.post("/bring-plans", async (req, res) => {
     try {
       const userId = req.session.user_id;
       const [plans] = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed FROM plans where user_id = ?`, [userId]);
+      const [[{google_refresh_token}]] = await connection.query(`SELECT google_refresh_token FROM users WHERE user_id = ?`, [userId]);
+      if (google_refresh_token) {
+        const auth = googleOauth2client(google_refresh_token);
+        const googleCalendar = google.calendar({
+          version: 'v3',
+          auth: auth
+        });
+        const calendars = await googleCalendar.calendarList.list();
+        console.log(calendars.data);
+        if (calendars && calendars.data) {
+          for (const calendar of calendars.data.items) {
+            const {id, summary, timeZone, backgroundColor} = calendar;
+            const googleCalendarEvents = await googleCalendar.events.list({
+              calendarId: id,
+              timeMin: new Date(0),
+              timeMax: new Date(),
+            });
+    
+            console.log(googleCalendarEvents);
+          }
+        }
+        /* const googleCalendarEvents = googleCalendar.events.list({
+          calendars: ['primary'],
+          timeMin: new Date(0),
+          timeMax: new Date(),
+        });
+
+        console.log(googleCalendarEvents); */
+      }
       res.send({ success: true, plans: plans });
     } catch (err) {
       console.log(err);

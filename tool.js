@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const Ajv = require('ajv');
 const ajv = new Ajv();
+const {google} = require('googleapis');
 
 function generateRandomId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -56,7 +57,19 @@ function getUserId(req) {
 function randomIntInRange(min, max) {
   const randomVal = Math.floor(Math.random() * (max - min + 1)) + min;
   return randomVal;
-}
+};
+
+const googleOauth2client = (refresh_token) => {
+  const auth = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    process.env.GOOGLE_REDIRECT_URL
+  );
+  if (refresh_token) {
+    auth.setCredentials({refresh_token: refresh_token});
+  };
+  return auth;
+};
 
 module.exports = {
   generateRandomId,
@@ -64,5 +77,6 @@ module.exports = {
   autoSignin,
   isValidJSON,
   getUserId,
-  randomIntInRange
+  randomIntInRange,
+  googleOauth2client
 };
