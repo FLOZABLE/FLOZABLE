@@ -7,10 +7,9 @@ const sharp = require('sharp');
 const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
-const { hashing, autoSignin, generateRandomId } = require("../tool");
+const { hashing, autoSignin, generateRandomId, googleOauth2client } = require("../tool");
 const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache } = require('../services/redisLoader');
 const upload = multer();
-const {google} = require('googleapis');
 
 Router.post('/accountinfo', async (req, res) => {
   autoSignin(req, res, (async () => {
@@ -601,35 +600,36 @@ Router.post('/challenge-request', async (req, res) => {
   }));
 });
 
-const oauth2client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.SERVER
-);
-
-const oauthgoogle = ({credential, clientId}) => {
-  const oauth2client = new google.auth.OAuth2(
-    clientId,
-    credential,
-    process.env.SERVER
+const oauth2client = (refresh_token) => {
+  const auth = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    process.env.GOOGLE_REDIRECT_URL
   );
-  return oauth2client;
+  if (refresh_token) {
+    auth.setCredentials({refresh_token: refresh_token});
+  };
+  return auth;
 };
 
 Router.post('/auth/google', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
+      const userId = req.session.user_id;
       const {data} = req.body;
-      const {credential} = data;
-      const gd = await oauth2client.getToken(data);
-      console.log(gd);
-      res.send({success: true, data: true})
+      const auth = googleOauth2client();
+      const response = await auth.getToken(data);
+      const {res, tokens} = response;
+      if (res.status === 200) {
+        const connection = pool.promise();
+        connection.query(`UPDATE users SET google_refresh_token = ? WHERE user_id = ?`, [tokens.refresh_token, userId]);
+      }
+      res.send({success: true, data: response})
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });
     };
   }));
 });
-
 
 module.exports = Router;
