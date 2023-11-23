@@ -8,13 +8,18 @@ import {
   faLock,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
-import { Chrome } from "../../../utils/svgs";
+import { Chrome, GoogleCalendar } from "../../../utils/svgs";
 import LineInput from "../../UI/LineInput/LineInput";
 import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 import LabelMovingInput from "../../UI/LabelMovingInput/LabelMovingInput";
 import SimpleToggleBtn from "../../UI/SimpleToggleBtn/SimpleToggleBtn";
+import OptionToggleBtn from "../../UI/OptionToggleBtn/OptionToggleBtn";
+//import { GoogleLogin } from "react-google-login";
+import {GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import GoogleLoginBtn from "../../UI/GoogleLoginBtn/GoogleLoginBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
+const googleClientId = process.env.REACT_APP_CLIENT_ID;
 
 function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
   const [imageSrc, setImageSrc] = useState(null);
@@ -29,6 +34,8 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
   const [isSubmitPw, setIsSubmitPw] = useState(false);
   const [isSumbmitUrl, setIsSubmitUrl] = useState(false);
   const [websites, setWebsites] = useState([]);
+
+  const [isGoogleCalendar, setIsGoogleCalendar] = useState(0);
 
   const inputRef = useRef(null);
 
@@ -82,7 +89,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
         body: JSON.stringify({ name, email, confirmEmail }),
       })
         .then((response) => response.json())
-        .then((data) => {})
+        .then((data) => { })
         .catch((error) => console.error(error));
     }
     setTimeout(() => {
@@ -100,7 +107,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
         body: JSON.stringify({ password, confirmPassword }),
       })
         .then((response) => response.json())
-        .then((data) => {})
+        .then((data) => { })
         .catch((error) => console.error(error));
     }
     setTimeout(() => {
@@ -117,7 +124,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
       body: JSON.stringify({ d, target, value }),
     })
       .then((response) => response.json())
-      .then((data) => {})
+      .then((data) => { })
       .catch((error) => console.error(error));
   }, []);
 
@@ -156,18 +163,41 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
       userInfo.activity_setting === ""
         ? []
         : JSON.parse(
-            userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"),
-          );
+          userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"),
+        );
     setWebsites(websites);
     setImageSrc(`${serverOrigin}/profile-images/${userInfo.user_id}.jpeg`);
   }, [userInfo]);
 
+  const handleGoogleCalendarAuth = (isAuth) => {
+
+  }
+
+  const onSuccess = (response) => {
+    console.log(response);
+    fetch(`${serverOrigin}/api/account/auth/google`, {
+      method: "post",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({data: response}),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error(error));
+  }
+
+  const onFailure = (err) => {
+    console.log(err)
+  }
+
   return (
     <div className={styles.Account}>
       <div
-        className={`Main ${
-          isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
-        }`}
+        className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
+          }`}
       >
         <div className={styles.fixedNav}>
           <ul className={styles.navWrapper}>
@@ -393,7 +423,105 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
               </div>
             </div>
           </div>
-          <div className={styles.box}></div>
+          <div className={styles.box} id={styles.accounts}>
+            <div className={styles.title}>
+              <h1>Accounts</h1>
+              <p>
+                Here you can setup and manage your integration settings.
+              </p>
+            </div>
+            <div className={styles.content}>
+              <div className={styles.layer}>
+                <div className={styles.iconWrapper}>
+                  <GoogleCalendar />
+                </div>
+                <div className={styles.explanation}>
+                You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar by signing in with your Google account here.
+                </div>
+                <div className={styles.authBtn}>
+                  {/* <OptionToggleBtn
+                    opt1={{ val: 0, name: "Connect" }}
+                    opt2={{ val: 1, name: "Connected!" }}
+                    value={isGoogleCalendar}
+                    setValue={setIsGoogleCalendar}
+                  /> */}
+                  {/* <GoogleLogin
+                    clientId={googleClientId}
+                    buttonText={'Sign In'}
+                    onSuccess={onSuccess}
+                    onFailure={onFailure}
+                    cookiePolicy={'single_host_origin'}
+                    responseType='code'
+                    accessType="offline"
+                    scope="openid email profile https://www.googleapis.com/auth/calendar"
+                  /> */}
+                  <GoogleOAuthProvider
+                  clientId={googleClientId}
+                  >
+                  <GoogleLogin 
+                    buttonText={'Sign In'}
+                    onSuccess={onSuccess}
+                    onFailure={onFailure}
+                    /* useOneTap={true} */
+                  />
+                  <GoogleLoginBtn />
+                  </GoogleOAuthProvider>
+                </div>
+              </div>
+              <div className={styles.layer}>
+                <div>
+                  <BlobBtn
+                    name={"SUBMIT"}
+                    setClicked={setIsSubmitUrl}
+                    color1={"#fff"}
+                    color2={"var(--purple)"}
+                  />
+                </div>
+              </div>
+              <div className={styles.extensionWrapper}>
+                <div className={styles.layer} id={styles.extensionHeader}>
+                  <div>WebsitesEl</div>
+                  <div>Block When Studying</div>
+                  <div>Timer</div>
+                </div>
+                <ul>
+                  {websites.map(({ d, b, t }, i) => {
+                    return (
+                      <li className={styles.websiteOptions} key={i}>
+                        <div className={styles.domain}>
+                          <p>{d}</p>
+                        </div>
+                        <div className={styles.block}>
+                          <SimpleToggleBtn
+                            checked={b}
+                            onToggle={(e) => {
+                              fetchExtensionSettingUpdate(
+                                d,
+                                "block",
+                                e.target.checked,
+                              );
+                            }}
+                          />
+                        </div>
+                        <div className={styles.timer}>
+                          <SimpleToggleBtn
+                            checked={t}
+                            onToggle={(e) => {
+                              fetchExtensionSettingUpdate(
+                                d,
+                                "timer",
+                                e.target.checked,
+                              );
+                            }}
+                          />
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

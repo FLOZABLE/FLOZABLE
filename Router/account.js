@@ -234,6 +234,17 @@ Router.get('/logout', function (req, res) {
   });
 });
 
+Router.get('/setting', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    const connection = pool.promise();
+
+    let userInfo = await connection.query(`SELECT name, email, user_id from users WHERE user_id = ?`, [req.session.user_id]);
+    userInfo = { userId: userInfo.user_id, name: userInfo.name, loggedin: true, email: userInfo.email, language: userInfo.language, interest: userInfo.interest };
+    res.render('account/setting', { userInfo: userInfo })
+    pool.releaseConnection(connection);
+  }), (() => { return res.redirect('/account/signin') }));
+});
+/* 
 Router.post('/bring-my-info', async (req, res) => {
   autoSignin(req, res, (async () => {
     const connection = pool.promise();
@@ -243,17 +254,6 @@ Router.post('/bring-my-info', async (req, res) => {
     res.send({ success: true, userInfo: userInfo });
     pool.releaseConnection(connection);
   }));
-});
-
-Router.get('/setting', async (req, res) => {
-  autoSignin(req, res, (async () => {
-    const connection = pool.promise();
-
-    let userInfo = await connection.query(`SELECT name, email, language, interest, user_id from users WHERE user_id = ?`, [req.session.user_id]);
-    userInfo = { userId: userInfo.user_id, name: userInfo.name, loggedin: true, email: userInfo.email, language: userInfo.language, interest: userInfo.interest };
-    res.render('account/setting', { userInfo: userInfo })
-    pool.releaseConnection(connection);
-  }), (() => { return res.redirect('/account/signin') }));
 });
 
 
@@ -519,6 +519,6 @@ Router.post('/notification-setting', async (req, res) => {
     res.send({ success: true, notification: notification });
     pool.releaseConnection(connection);
   }));
-})
+}) */
 
 module.exports = { Router: Router, autoSignin: autoSignin };

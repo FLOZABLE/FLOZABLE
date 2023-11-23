@@ -4,6 +4,11 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { isValidJSON, hashing, generateRandomId, autoSignin } = require("../tool");
 const { removePrevNotification, planNotification } = require("../services/notification");
+const {google} = require('googleapis');
+const googleCalendar = google.calendar({
+  version: 'v3',
+  auth: process.env.GOOGLE_API_KEY // specify your API key here
+});
 
 Router.post("/bring-plans", async (req, res) => {
   autoSignin(req, res, (async () => {

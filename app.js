@@ -228,6 +228,6 @@ createMonthlyRankingTable(); */
 
 rankingManager();
 
-server.listen(port, process.env.SERVER, () => {
+server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
 });

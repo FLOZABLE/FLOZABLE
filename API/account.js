@@ -10,6 +10,7 @@ const { DateTime } = require('luxon');
 const { hashing, autoSignin, generateRandomId } = require("../tool");
 const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache } = require('../services/redisLoader');
 const upload = multer();
+const {google} = require('googleapis');
 
 Router.post('/accountinfo', async (req, res) => {
   autoSignin(req, res, (async () => {
@@ -599,5 +600,36 @@ Router.post('/challenge-request', async (req, res) => {
     };
   }));
 });
+
+const oauth2client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.SERVER
+);
+
+const oauthgoogle = ({credential, clientId}) => {
+  const oauth2client = new google.auth.OAuth2(
+    clientId,
+    credential,
+    process.env.SERVER
+  );
+  return oauth2client;
+};
+
+Router.post('/auth/google', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const {data} = req.body;
+      const {credential} = data;
+      const gd = await oauth2client.getToken(data);
+      console.log(gd);
+      res.send({success: true, data: true})
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'An Error Occured' });
+    };
+  }));
+});
+
 
 module.exports = Router;
