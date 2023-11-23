@@ -22,7 +22,7 @@ Router.get('/join/:id', async(req, res) => {
       body: JSON.stringify({ groupId }),
     };
     
-    const response = await fetch(`${process.env.DOMAIN}/groups/join/${groupId}`, fetchOptions)
+    const response = await fetch(`${process.env.SERVER}/groups/join/${groupId}`, fetchOptions)
     const status = await response.json();
     console.log(status)
     res.redirect('/groups')
