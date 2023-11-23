@@ -211,13 +211,12 @@ function PlanTimeline({
                   </p>
                 </div>
                 <div className={`${styles.description} customScroll`}>
-                  {parse(plan.description)}
+                  {plan.description ? parse(plan.description) : ''}
                 </div>
               </div>
             </li>
           );
         }
-        return -1;
       }),
     );
   }, [plans, viewMode, viewDate, subjects]);
