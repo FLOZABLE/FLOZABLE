@@ -142,7 +142,7 @@ function createProfileImg(percentage, userId, gender) {
 
   const isProfile = Math.random() < percentage / 100;
   if (isProfile) {
-    const filePath = `./data/profile-imgs/${gender}`;
+    let filePath = `./data/profile-imgs/${gender}`;
     fs.readdir(filePath, async (err, files) => {
       if (err) {
         console.log(err);

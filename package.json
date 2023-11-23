@@ -19,6 +19,7 @@
   "homepage": "https://github.com/FLOZABLE/FLOZABLE#readme",
   "dependencies": {
     "@googleapis/calendar": "^9.3.2",
+    "@react-oauth/google": "^0.12.1",
     "ajv": "^8.12.0",
     "async": "^3.2.4",
     "body-parser": "^1.20.1",
