@@ -53,6 +53,7 @@
   top: 0px;
   left: -200px;
   transition: .3s left ease-in-out;
+  box-shadow: rgba(238, 128, 128, 0.35) 0px 0px 15px;
 }
 
 .ChatModal .sidebar.open {
