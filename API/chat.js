@@ -3,8 +3,9 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const {autoSignin} = require("../tool");
+const {groupCache, chatRoomsCache} = require("../services/redisLoader");
 
-Router.post("/bring-rooms", async (req, res) => {
+/* Router.post("/bring-rooms", async (req, res) => {
   autoSignin(req, res, (async() => {
     const userId = req.session.user_id;
     const groupInfo = await redisClient.hGet(`user:${userId}`, 'groups');
@@ -42,6 +43,20 @@ Router.post("/bring-rooms", async (req, res) => {
       console.log(err);
     }
   }))
+}); */
+
+Router.post("/bring-rooms", async (req, res) => {
+  autoSignin(req, res, (async() => {
+    const userId = req.session.user_id;
+    let rooms = await chatRoomsCache(userId);
+    const roomPromises = rooms.map(async (room) => {
+      const chats = await redisClient.lRange(`room:${room.id}:chats`, 0, -1);
+      return {...room, chats};
+    });
+    rooms = await Promise.all(roomPromises);
+    console.log(rooms)
+    res.send({success: true, rooms})
+  }));
 });
 
 module.exports = Router;

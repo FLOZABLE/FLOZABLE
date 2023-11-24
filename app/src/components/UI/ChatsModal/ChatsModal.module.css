@@ -1,7 +1,7 @@
 .ChatsModal {
   position: fixed;
   bottom: 100px;
-  right: 100px;
+  right: -500px;
   height: 500px;
   width: 350px;
   background-color: #fff;
@@ -9,7 +9,15 @@
   border-radius: 20px;
   z-index: 6;
   overflow: hidden;
-  display: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity, right .3s ease-in-out;
+}
+
+.ChatsModal.open {
+  visibility: visible;
+  opacity: 1;
+  right: 100px;
 }
 
 .ChatsModal .header {
@@ -32,26 +40,238 @@
 }
 
 .ChatsModal .chatRoomsContainer {
-  z-index: 2;
-  background-color: red;
+  background-color: #fff;
+  margin: 10px;
+}
+
+.ChatsModal .chatRoomsContainer .roomInfo .roomName {
+  font-size: 17px;
+}
+
+.ChatsModal .chatRoomsContainer .roomInfo {
+  cursor: pointer;
+}
+
+.ChatsModal .chatRoomsContainer .roomInfo strong {
+  font-size: 14px;
+  margin-left: 5px;
 }
 
 .ChatsModal .chatRoom {
   display: flex;
+  margin-bottom: 10px;
 }
 
 .ChatsModal .chatRoom .imgContainer {
-  background-color: red;
   width: 50px;
   height: 50px;
   border-radius: 25px;
+  margin-right: 10px;
+}
+
+.ChatsModal .chatsWrapper {
+  position: absolute;
+  left: 350px;
+  top: -40px;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity, left .3s ease-in-out;
+}
+
+.ChatsModal .chatsWrapper.open {
+  left: 0px;
+  background-color: #fff;
+  visibility: visible;
+  opacity: 1;
+  left: 0px;
+}
+
+.ChatsModal .chatsHeader {
+  height: 50px;
+  width: 100%;
+  background-color: var(--purple);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ChatsModal .chatsHeader .imgContainer {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+}
+
+.ChatsModal .chatsHeader i {
+  font-size: 30px;
+  color: #fff;
+  display: flex;
+}
+
+.ChatsModal .chatsHeader #exitBtn {
+  position: absolute;
+  left: 20px;
+  cursor: pointer;
+}
+
+.ChatsModal .chatsHeader #closeBtn {
+  position: absolute;
+  right: 10px;
+  font-size: 35px;
+  cursor: pointer;
+}
+
+.ChatsModal .chatsHeader .roomInfo {
+  display: flex;
+  align-items: center;
+}
+
+.ChatsModal .chatsHeader .roomInfo p {
+  color: #fff; 
+}
+
+.ChatsModal .chatsHeader .roomInfo .imgContainer {
+  margin-right: 10px;
 }
 
 .ChatsModal .chatsContainer {
-  position: absolute;
-  left: 300px;
+  height: 400px;
+  background-color: #fff;
+  width: 100%;
+  padding: 0px 10px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
-.ChatsModal .chatRoomsContainer.open {
-  left: 0px;
+.ChatsModal .chatsContainer .msg {
+  border-radius: 1.15rem;
+  line-height: 1.25;
+  max-width: 75%;
+  width: fit-content;
+  padding: 0.5rem .875rem;
+  position: relative;
+  word-wrap: break-word;
+  background-color: #248bf5;
+  margin: 5px 0px;
+}
+
+.ChatsModal .chatsContainer .msg::before, .ChatsModal .chatsContainer .msg::after {
+  bottom: -0.1rem;
+  content: "";
+  height: 1rem;
+  position: absolute;
+}
+
+.ChatsModal .chatsContainer .msg.me {
+  margin: 5px 15px 10px auto;
+}
+
+.ChatsModal .chatsContainer .msg.me .time {
+  position: absolute;
+  color: #000;
+  font-size: 11px;
+  width: 40px;
+  overflow-y: hidden;
+  bottom: -15px;
+  right: 0px;
+}
+
+.ChatsModal .chatsContainer .msg.me p {
+  color: #fff;
+}
+
+.ChatsModal .chatsContainer .msg.me::before {
+  border-bottom-left-radius: 0.8rem 0.7rem;
+  border-right: 1rem solid #248bf5;
+  right: -0.35rem;
+  transform: translate(0, -0.1rem);
+}
+
+.ChatsModal .chatsContainer .msg.me::after {
+  background-color: #fff;
+  border-bottom-left-radius: 0.5rem;
+  right: -40px;
+  transform:translate(-30px, -2px);
+  width: 10px;
+}
+
+.ChatsModal .chatsContainer .msg.others{
+  background-color: #e5e5ea;
+  color: #000;
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
+.ChatsModal .chatsContainer .msg.others p {
+  color: #000;
+}
+
+.ChatsModal .chatsContainer .msg.others::before {
+  border-bottom-right-radius: 0.8rem 0.7rem;
+  border-left: 1rem solid #e5e5ea;
+  left: -0.35rem;
+  transform: translate(0, -0.1rem);
+}
+
+.ChatsModal .chatsContainer .msg.others::after {
+  background-color: #fff;
+  border-bottom-right-radius: 0.5rem;
+  left: 20px;
+  transform: translate(-30px, -2px);
+  width: 10px;
+}
+
+.ChatsModal .msg.others .profileImg {
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  position: absolute;
+  left: -30px;
+  top: 0px;
+  z-index: 2;
+}
+
+.ChatsModal .msg.others .name {
+  position: absolute;
+  left: -20px;
+  top: 36px;
+  font-size: 11px;
+  width: 40px;
+  overflow-y: hidden;
+  height: 11px;
+}
+
+.ChatsModal .msg.others .time {
+  position: absolute;
+  left: 23px;
+  top: 38px;
+  font-size: 11px;
+  width: 40px;
+  overflow-y: hidden;
+  height: 11px;
+}
+
+.ChatsModal .chatsWrapper .inputWrapper {
+  background-color: var(--purple);
+  display: flex;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 0px;
+  height: 50px;
+  align-items: center;
+}
+
+.ChatsModal .chatsWrapper .inputWrapper input {
+  height: 46px;
+  margin: 0px 20px;
+  padding-left: 10px;
+  border: none;
+  font-size: 30px;
+  width: 250px;
+  background-color: var(--purple);
+  cursor: pointer;
+  color: #fff;
+  caret-color: #fff;
 }

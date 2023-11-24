@@ -44,7 +44,12 @@
 
 .SendBtn i {
   position: absolute;
+  transition: .3s ease-in-out color;
   /* animation: endsend .3s ease-in-out; */
+}
+
+.SendBtn:hover i {
+  color: #fff;
 }
 
 .SendBtn i.submit {

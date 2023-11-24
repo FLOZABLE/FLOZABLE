@@ -98,11 +98,9 @@ function createChatroomsTable() {
   connection.query(`
   CREATE TABLE chatrooms (
     id VARCHAR(10),
-    group_id VARCHAR(10),
-    name VARCHAR(30),
-    chats JSON,
+    chats TEXT,
     type TINYINT DEFAULT 0,
-    members VARCHAR(300) DEFAULT  '*'
+    members VARCHAR(300) DEFAULT ''
   );  
   `);
 };

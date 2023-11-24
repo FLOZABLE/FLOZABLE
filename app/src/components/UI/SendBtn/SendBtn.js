@@ -1,15 +1,18 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./SendBtn.module.css";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { useCallback } from "react";
+import { useState } from "react";
 
-function SendBtn({ submit, setSubmit }) {
-  const handleSubmit = useCallback(() => {
+function SendBtn({ onSubmit }) {
+  const [submit, setSubmit] = useState(false);
+
+  const handleSubmit = () => {
+    onSubmit();
     setSubmit(true);
     setTimeout(() => {
       setSubmit(false);
     }, 1000);
-  });
+  }
 
   return (
     <div
