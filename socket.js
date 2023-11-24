@@ -3,7 +3,7 @@ const cron = require('node-cron');
 const pool = require("./model/pool");
 const redisClient = require("./model/redis");
 const { generateRandomId } = require("./tool");
-const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache } = require("./services/redisLoader");
+const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue } = require("./services/redisLoader");
 
 
 const io = require('socket.io')(server, {
@@ -62,22 +62,11 @@ connection.on('connection', (socket) => {
 
   socket.on('joinMyGroups', async () => {
     try {
-      const groups = await groupCache(userId);
-      const groupRooms = await Promise.all(groups.map(async (group) => {
-        let chatRooms = await redisClient.sMembers(`group:${group}:rooms`);
-        chatRooms = chatRooms.map(room => {
-          room = JSON.parse(room);
-          room.status = -1;
-          socket.join(room.id);
-          return room;
-        });
-        return { groupId: group, rooms: chatRooms };
-      }));
-      socket.join(groups)
-      io.to(socket.id).emit('joinMyGroups', groupRooms);
-
-      //handle cache
-      lastMsgCache();
+      const chatRooms = await chatRoomsCache(userId);
+      const chatRoomsId = chatRooms.map(chatRoom => {
+        return chatRoom.id;
+      });
+      socket.join(chatRoomsId);
     } catch (err) {
       console.log(err);
     };
@@ -131,15 +120,15 @@ connection.on('connection', (socket) => {
 
   //chat
 
-  socket.on("sendMsg", async (groupId, roomId, msg) => {
-    console.log(groupId, roomId, msg);
-    const userId = socket.userId;
-    if (isInGroupRoom(userId, groupId, roomId)) {
-      const msgId = generateRandomId(10);
-      const time = Math.floor(new Date().getTime() / 1000);
+  socket.on("sendMsg", async (roomId, msg) => {
+    const isIn = await isInChatRoom(userId, roomId);
+    console.log(isIn)
+    if (isIn) {
+      const msgId = generateRandomId(6);
+      const time = Math.floor(new Date().getTime() / (1000 * 60));
       const msgInfo = { u: userId, m: msg, i: msgId, t: time };
-      redisClient.rPush(`room:${roomId}:chat`, JSON.stringify(msgInfo));
-      io.to(roomId).emit('msgReceived', groupId, roomId, msgInfo);
+      msgQueue(roomId, msgInfo);
+      io.to(roomId).emit('msgReceived', roomId, msgInfo);
     };
   });
 
@@ -228,36 +217,16 @@ connection.on('connection', (socket) => {
       redisClient.hDel(`user:${userId}`, `ActiveSubject`);
     };
   });
-
-  socket.on('offer', async (sdp, remoteSocketId) => {
-    console.log('offer', remoteSocketId);
-    io.to(remoteSocketId).emit('offer', sdp, socket.id, userId);
-  })
-
-  socket.on('answer', async (sdp, remoteSocketId, remoteUserId) => {
-  });
-
-  socket.on('candidate', async (sdp, remoteSocketId, remoteUserId) => {
-    console.log('candidate', remoteSocketId)
-    io.to(remoteSocketId).emit('offer', sdp, socket.id, userId);
-  });
-
-  //peer
-
-  socket.on('joinPeerGroups', async () => {
-    const groups = await groupCache(userId);
-    groups.map(group => {
-      const groupId = `peer:${group}`;
-      socket.join(groupId);
-    });
-    console.log('join peergroups:', groups)
-    io.to(groups.map(group => { return `peer:${group}` })).emit('onlinePeer', socket.id, userId);
-  })
 });
 
-function handleTrackEvent(e, userId) {
-  senderStream = e.streams[0];
-  streams.set(userId, senderStream);
+async function isInChatRoom(userId, roomId) {
+  try {
+    const rooms = await chatRoomsCache(userId);
+    const roomIndex = rooms.findIndex(room => {return room.id === roomId});
+    return roomIndex === -1 ? false : true;
+  } catch (err) {
+    console.log(err);
+  };
 };
 
 async function isInGroupRoom(userId, groupId, roomId) {
