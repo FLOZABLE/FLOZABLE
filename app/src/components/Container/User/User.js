@@ -61,7 +61,7 @@ const lineChartOption = {
   },
 };
 
-function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers }) {
+function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers, socket }) {
   const [userInfo, setUserInfo] = useState(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
@@ -171,6 +171,11 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
       .catch((error) => console.error(error));
   }
 
+  const startDm = () => {
+    console.log(socket);
+    socket.emit('startDm', userInfo.user_id);
+  }
+
   const updateViewer = async (item) => {
     setStatsViewer(item);
   };
@@ -259,10 +264,10 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
             </div>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-                <BlobBtn name={<FontAwesomeIcon icon={faComments} />} setClicked={() => { }} opt={2} />
+                <BlobBtn delay={-1} name={<FontAwesomeIcon icon={faComments} />} setClicked={() => {startDm() }} opt={2} />
               </div>
               <div className={styles.hoverEl}>
-                <p>Become a friend with {userInfo ? userInfo.name : ''}!</p>
+                <p>Chat with {userInfo ? userInfo.name : ''}!</p>
               </div>
             </div>
             <div className={styles.divided}>

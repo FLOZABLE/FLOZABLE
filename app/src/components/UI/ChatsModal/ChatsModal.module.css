@@ -1,0 +1,57 @@
+.ChatsModal {
+  position: fixed;
+  bottom: 100px;
+  right: 100px;
+  height: 500px;
+  width: 350px;
+  background-color: #fff;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  border-radius: 20px;
+  z-index: 6;
+  overflow: hidden;
+  display: none;
+}
+
+.ChatsModal .header {
+  background-color: var(--pink);
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+
+.ChatsModal .header i {
+  font-size: 25px;
+  color: #fff;
+  cursor: pointer;
+  padding-right: 10px;
+}
+
+.ChatsModal .content {
+  position: relative;
+}
+
+.ChatsModal .chatRoomsContainer {
+  z-index: 2;
+  background-color: red;
+}
+
+.ChatsModal .chatRoom {
+  display: flex;
+}
+
+.ChatsModal .chatRoom .imgContainer {
+  background-color: red;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+}
+
+.ChatsModal .chatsContainer {
+  position: absolute;
+  left: 300px;
+}
+
+.ChatsModal .chatRoomsContainer.open {
+  left: 0px;
+}
