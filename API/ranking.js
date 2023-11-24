@@ -136,12 +136,12 @@ Router.post('/sort', async (req, res) => {
   try {
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT name, user_id from users`);
-    const subjectFilter = users.map(async (user) => {
+    const subjectPromises = users.map(async (user) => {
       const {user_id} = user;
       const [subjects] = await connection.query(`SELECT datum_point, timeline, id FROM subjects WHERE user_id = ?`, [user_id]);
       user.total = 0;
       user.focus = 0;
-      subjects.map(async({ timeline, datum_point, id }) => {
+      const timelinePromises = subjects.map(async({ timeline, datum_point, id }) => {
         let timelineSum = 0;
         const prevTimeline = timeline === "" ? [[]] : JSON.parse(timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
         const todayTimeline = (await redisClient.lRange(`user:${user_id}:subject:${id}`, 0, -1)).map(JSON.parse);
@@ -165,8 +165,9 @@ Router.post('/sort', async (req, res) => {
           };
         });
       });
+      await Promise.all(timelinePromises);
     });
-    await Promise.all(subjectFilter);
+    await Promise.all(subjectPromises);
 
     //sort
     await users.sort((a, b) => b.total - a.total);
