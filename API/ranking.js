@@ -6,6 +6,7 @@ const NodeCache = require('node-cache');
 const cache = new NodeCache();
 const { DateTime } = require('luxon');
 const { subjectsCache } = require("../services/redisLoader");
+const { promises } = require("fs");
 
 /* Router.post("/", async (req, res) => {
   const connection = pool.promise();
@@ -135,7 +136,7 @@ Router.post('/sort', async (req, res) => {
   try {
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT name, user_id from users`);
-    await Promise.all(users.map(async (user) => {
+    const subjectFilter = users.map(async (user) => {
       const {user_id} = user;
       const [subjects] = await connection.query(`SELECT datum_point, timeline, id FROM subjects WHERE user_id = ?`, [user_id]);
       user.total = 0;
@@ -164,7 +165,8 @@ Router.post('/sort', async (req, res) => {
           };
         });
       });
-    }));
+    });
+    await Promise.all(subjectFilter);
 
     //sort
     await users.sort((a, b) => b.total - a.total);
