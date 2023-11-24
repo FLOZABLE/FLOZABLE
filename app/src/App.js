@@ -25,6 +25,7 @@ import User from "./components/Container/User/User";
 import TopNotification from "./components/UI/TopNotification/TopNotification";
 import BottomNotification from "./components/UI/BottomNotification/BottomNotification";
 import NotificationModal from "./components/UI/NotificationModal/NotificationModal";
+import ChatsModal from "./components/UI/ChatsModal/ChatsModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -207,7 +208,15 @@ function App() {
         setSubjects={setSubjects}
         setSubject={setSubject}
       />
-      <ChatModal
+      {/* <ChatModal
+        setIsChatModal={setIsChatModal}
+        isChatModal={isChatModal}
+        socket={socket}
+        userInfo={userInfo}
+        allMembers={allMembers}
+        myGroups={myGroups}
+      /> */}
+      <ChatsModal
         setIsChatModal={setIsChatModal}
         isChatModal={isChatModal}
         socket={socket}
@@ -508,6 +517,7 @@ function App() {
                 groups={groups}
                 setResponse={setResponse}
                 allMembers={allMembers}
+                socket={socket}
               />
             </div>
           }
