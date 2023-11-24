@@ -149,6 +149,52 @@ async function groupRoomCache(userId) {
   };
 };
 
+async function chatRoomsCache(userId) {
+  try {
+    let dmRooms = await redisClient.hGet(`user:${userId}`, 'dmRooms');
+    const groups = await groupCache(userId);
+    const groupRooms = groups.map(group => {
+      return {id: group, type: 1};
+    });
+    if (!dmRooms) {
+      const connection = pool.promise();
+      [dmRooms] = await connection.query(`SELECT id, members FROM chatrooms WHERE members LIKE ?`, [userId]);
+      const dmRoomIds = dmRooms.map((dmRoom) => {
+        const {id, members} = dmRoom;
+        redisClient.sAdd(`room:${id}`, members);
+        return id;
+      });
+      redisClient.hSet(`user:${userId}`, 'dmRooms', JSON.stringify(dmRoomIds));
+    } else {
+      dmRooms = JSON.parse(dmRooms);
+    };
+    const rooms = groupRooms.concat(dmRooms);
+    return rooms;
+  } catch (err) {
+    console.log(err);
+    return [];
+  };
+};
+
+//only last 100 msg will be stored inside the redis queue for each groups
+const MAX_QUEUE_LENGTH = 100;
+async function msgQueue(roomId, msgInfo) {
+  redisClient.rPush(`room:${roomId}:chats`, JSON.stringify(msgInfo));
+  const queueLength = await redisClient.lLen(`room:${roomId}:chats`);
+  if (queueLength >= MAX_QUEUE_LENGTH) {
+    const fistMsg = await redisClient.lPop(`room:${roomId}:chats`);
+    const connection = pool.promise();
+    connection.query(
+      `UPDATE chatrooms SET \`chats\` = CASE
+        WHEN \`chats\` = '' THEN ?
+        ELSE CONCAT(\`chats\`, ',', ?)
+        END
+        WHERE id = ?`,
+      [fistMsg, fistMsg, roomId]
+    );
+  };
+};
+
 /* async function accountInfoCache(userId) {
   try {
     let userInfo =
@@ -191,6 +237,7 @@ async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000),
   }
 };
 
+
 /**
  * notification's key:
  * i: id
@@ -209,7 +256,7 @@ async function NotificationCache(userId, type = -1) {
   };
   const selectedNotifications = notifications.filter(notification => {return notification.t === type});
   return selectedNotifications;
-}
+};
 
 module.exports = {
   flushRedis,
@@ -221,5 +268,7 @@ module.exports = {
   subjectsCache,
   activeSubjectCache,
   timerCache,
-  NotificationCache
+  NotificationCache,
+  chatRoomsCache,
+  msgQueue
 }
