@@ -150,9 +150,10 @@ Router.post('/sort', async (req, res) => {
           const startUnix = datum_point + start + 0;
           const stopUnix = startUnix + duration;
           timelineSum += start + duration;
-          if (startTime <= startUnix && stopUnix <= stopTime) {
+          if (startTime / 1000 <= startUnix && stopUnix <= stopTime / 1000) {
             user.total += duration;
             user.focus = Math.max(user.focus, duration);
+            console.log('ca')
           } else if (startTime <= stopUnix) {
             //this is the case when time range is between the starttime and stop time
             //console.log(stopUnix, startUnix, timelineSum)
@@ -166,7 +167,8 @@ Router.post('/sort', async (req, res) => {
     }));
 
     //sort
-    users.sort((a, b) => b.total - a.total);
+    await users.sort((a, b) => b.total - a.total);
+    console.log('sed')
     res.send({ success: true, data: users })
   } catch (err) {
     console.log(err);
