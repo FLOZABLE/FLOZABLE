@@ -1,4 +1,5 @@
 const pool = require('./model/pool');
+const { generateRandomId } = require('./tool');
 
 //these functions are only used for initializing the database (used only once)
 
@@ -98,7 +99,7 @@ function createChatroomsTable() {
   connection.query(`
   CREATE TABLE chatrooms (
     id VARCHAR(10),
-    chats TEXT,
+    chats TEXT DEFAULT '',
     type TINYINT DEFAULT 0,
     members VARCHAR(300) DEFAULT ''
   );  
@@ -138,4 +139,15 @@ function createMonthlyRankingTable() {
   `);
 };
 
-module.exports = {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable};
+async function groupsChatRoomsGeneration() {
+  const connection = pool.promise();
+  const [groups] = await connection.query(`SELECT group_id FROM groups`);
+  groups.map(async (group) => {
+    const roomInfo = {
+      id: generateRandomId(10),
+    };
+    connection.query(`INSERT INTO chatrooms SET ?`, roomInfo);
+  })
+}
+
+module.exports = {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration};

@@ -33,7 +33,7 @@ const redisClient = require("./model/redis");
 redisClient.connect().catch(console.error);
 const port = process.env.PORT;
 const account = require("./Router/account");
-const {flushRedis, groupsLoader, cacheManager} = require("./services/redisLoader");
+const {flushRedis, groupsLoader, cacheManager, dmRoomMembersLoader} = require("./services/redisLoader");
 
 //const WebSocketToken = process.env.WEBSOCKET_TOKEN;
 //const WebSocket = require('ws');
@@ -214,19 +214,21 @@ const {createBots, addId, deleteBots, botManager, createGroups, randomFriend} = 
 //addId();
 //createBots(0, 100);
 
-const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable} = require('./query');
+const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration} = require('./query');
 const { rankingManager } = require("./services/rankingUpdate");
 
-/* createUsersTable();
-createSubjectsTable();
-createGroupsTable();
-createPlansTable();
-createChatroomsTable(); */
+//createUsersTable();
+//createSubjectsTable();
+//createGroupsTable();
+//createPlansTable();
+//createChatroomsTable();
+//groupsChatRoomsGeneration();
 /* createDailyRankingTable();
 createWeeklyRankingTable();
 createMonthlyRankingTable(); */
 
 rankingManager();
+dmRoomMembersLoader();
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);

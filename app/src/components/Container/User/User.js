@@ -171,9 +171,22 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
       .catch((error) => console.error(error));
   }
 
-  const startDm = () => {
-    console.log(socket);
-    socket.emit('startDm', userInfo.user_id);
+  const requestChat = () => {
+    fetch(`${serverOrigin}/api/chat/chat-request`, {
+      method: "post",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ targetId: userInfo.user_id }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setResponse(data);
+        if (data.success) {
+
+        }
+      })
+      .catch((error) => console.error(error));
   }
 
   const updateViewer = async (item) => {
@@ -255,7 +268,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
           <div className={styles.row} id={styles.buttons}>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-                <BlobBtn delay={-1} name={<Punch width={'18px'} height={'18px'} fill={'red'} />} setClicked={() => {requestChallenge()}} color1={'#fff'} color2={"var(--pink)"} opt={2} />
+                <BlobBtn delay={-1} name={<Punch width={'18px'} height={'18px'} fill={'red'} />} setClicked={() => { requestChallenge() }} color1={'#fff'} color2={"var(--pink)"} opt={2} />
               </div>
 
               <div className={styles.hoverEl}>
@@ -264,7 +277,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
             </div>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-                <BlobBtn delay={-1} name={<FontAwesomeIcon icon={faComments} />} setClicked={() => {startDm() }} opt={2} />
+                <BlobBtn delay={-1} name={<FontAwesomeIcon icon={faComments} />} setClicked={() => { requestChat() }} opt={2} />
               </div>
               <div className={styles.hoverEl}>
                 <p>Chat with {userInfo ? userInfo.name : ''}!</p>
@@ -272,7 +285,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
             </div>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
-                <BlobBtn delay={-1} name={<>+<FontAwesomeIcon icon={faUser} /></>} setClicked={() => {requestFriend()}} color1={'#fff'} color2={"var(--purple)"} opt={2} />
+                <BlobBtn delay={-1} name={<>+<FontAwesomeIcon icon={faUser} /></>} setClicked={() => { requestFriend() }} color1={'#fff'} color2={"var(--purple)"} opt={2} />
               </div>
 
               <div className={styles.hoverEl}>
