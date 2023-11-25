@@ -382,21 +382,10 @@ async function createGroups(startIndex, length) {
     }
     connection.query(`INSERT INTO \`groups\` SET ?`, groupInfo);
 
-    const roomInfo1 = {
-      id: generateRandomId(10),
-      group_id: groupInfo.group_id,
-      name: 'general',
+    const roomInfo = {
+      id: generateRandomId(10)
     }
-
-    const roomInfo2 = {
-      id: generateRandomId(10),
-      group_id: groupInfo.group_id,
-      name: 'room2',
-    }
-
-    connection.query('INSERT INTO chatrooms set ?', roomInfo1);
-    connection.query('INSERT INTO chatrooms set ?', roomInfo2);
-
+    connection.query('INSERT INTO chatrooms set ?', roomInfo);
   };
 };
 

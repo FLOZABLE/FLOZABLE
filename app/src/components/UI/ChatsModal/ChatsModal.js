@@ -4,6 +4,7 @@ import { faChevronLeft, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import SendBtn from "../SendBtn/SendBtn";
 import { DateTime } from "luxon";
+import { Link } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -50,14 +51,16 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
         setMsgViewer(prevMsgViewer => [
           ...prevMsgViewer,
           <li className={`${styles.msg} ${styles.others}`} key={i}>
-            <div className={styles.profileImg}
+            <Link 
+            to={`/dashboard/user/${u}`}
+            className={styles.profileImg}
               style={{
                 backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center center',
                 backgroundRepeat: 'no-repeat',
               }}>
-            </div>
+            </Link>
             <p className={styles.name}>{name}</p>
             <p className={styles.time}>{formattedTime}</p>
             <p>{m}</p>
@@ -96,8 +99,8 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
     setChatRoomsEl(
       chatRooms.map((chatRoom, i) => {
         //this means it's group chat room
-        const { type, id } = chatRoom;
-        if (type) {
+        const { type, id, members } = chatRoom;
+        if (!type) {
           const group = myGroups.find(group => { return group.group_id === id });
           if (!group) return;
           const { members, group_id, name, color } = group;
@@ -125,11 +128,40 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
             </li>
           )
         } else {
+          console.log('gd', chatRoom)
 
+          const users = members.map(member => {
+            return allMembers.find(user => {return user.user_id === member});
+          });
+          if (!userInfo) return;
+          console.log(users);
+          return (
+            <li
+              className={styles.chatRoom}
+              key={i}
+            >
+              <div className={styles.imgContainer}>
+              </div>
+              <div className={styles.roomInfo}
+                onClick={() => {
+                  setSelectedRoom(chatRoom);
+                  setRoomName(users.map(user => {return user.name}));
+                }}
+              >
+                <div className={styles.roomName}>
+                  {users.map(user => {return user.name})}
+                  <strong>{members.length}</strong>
+                </div>
+                <div className={styles.newMsgCount}>
+                  10 new messages
+                </div>
+              </div>
+            </li>
+          )
         }
       })
     );
-  }, [chatRooms, myGroups]);
+  }, [chatRooms, myGroups, allMembers, userInfo]);
 
   useEffect(() => {
     if (selectedRoom && selectedRoom.chats && userInfo) {
@@ -148,14 +180,15 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
           const { name } = user;
           return (
             <li className={`${styles.msg} ${styles.others}`} key={i}>
-              <div className={styles.profileImg}
+              <Link to={`/dashboard/user/${u}`}
+               className={styles.profileImg}
                 style={{
                   backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center center',
                   backgroundRepeat: 'no-repeat',
                 }}>
-              </div>
+              </Link>
               <p className={styles.name}>{name}</p>
               <p className={styles.time}>{formattedTime}</p>
               <p>{m}</p>
@@ -176,7 +209,7 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
         </i>
       </div>
       <div className={styles.content}>
-        <ul className={styles.chatRoomsContainer}>
+        <ul className={`${styles.chatRoomsContainer} customScroll`}>
           {chatRoomsEl}
         </ul>
         <div className={`${styles.chatsWrapper} ${selectedRoom ? styles.open : ''}`}>

@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const Ajv = require('ajv');
 const ajv = new Ajv();
 const {google} = require('googleapis');
+const pool = require("./model/pool");
 
 function generateRandomId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -71,6 +72,13 @@ const googleOauth2client = (refresh_token) => {
   return auth;
 };
 
+function arraysHaveSameContents(arr1, arr2) {
+  const sortedArr1 = arr1.slice().sort();
+  const sortedArr2 = arr2.slice().sort();
+
+  return JSON.stringify(sortedArr1) === JSON.stringify(sortedArr2);
+};
+
 module.exports = {
   generateRandomId,
   hashing,
@@ -78,5 +86,6 @@ module.exports = {
   isValidJSON,
   getUserId,
   randomIntInRange,
-  googleOauth2client
+  googleOauth2client,
+  arraysHaveSameContents
 };

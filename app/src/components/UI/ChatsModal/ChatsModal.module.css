@@ -41,7 +41,10 @@
 
 .ChatsModal .chatRoomsContainer {
   background-color: #fff;
-  margin: 10px;
+  margin-left: 10px;
+  padding: 10px 0px;
+  overflow-y: auto;
+  height: 450px;
 }
 
 .ChatsModal .chatRoomsContainer .roomInfo .roomName {
@@ -72,7 +75,7 @@
 .ChatsModal .chatsWrapper {
   position: absolute;
   left: 350px;
-  top: -40px;
+  top: -30px;
   height: 100%;
   width: 100%;
   opacity: 0;
@@ -172,7 +175,7 @@
   position: absolute;
   color: #000;
   font-size: 11px;
-  width: 40px;
+  width: 50px;
   overflow-y: hidden;
   bottom: -15px;
   right: 0px;
