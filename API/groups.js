@@ -72,6 +72,12 @@ Router.post('/create-validate', async (req, res) => {
           group.group_id,
           userId,
         ]);
+
+        const roomInfo = {
+          id: group.group_id,
+        }
+
+        const updateRoom = connection.query(`INSERT INTO chatrooms SET ?`, roomInfo);
   
         res.send({success: true, data: {id: group.group_id}})
       } catch(error) {

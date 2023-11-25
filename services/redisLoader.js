@@ -93,43 +93,6 @@ async function subjectsCache(userId, cache = true, opt = ['id', 'name', 'icon', 
   }
 };
 
-//subject with timeline
-
-/* async function subjectsTimelineCache(userId) {
-  try {
-    const userInfo = await redisClient.hGetAll(`user:${userId}`);
-    let subjects;
-    if (userInfo) {
-      subjects = Object.keys(userInfo).forEach(async (info) => {
-        if (info.includes('subject:')) {
-          const subjectInfo = JSON.parse(userInfo[info]);
-          const subjectTimeline = await redisClient.lRange(`subject`)
-          return subjectInfo;
-        }
-      });
-
-      if (!subjects) {
-        try {
-          const connection = pool.promise();
-          [subjects] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline FROM subjects where user_id = ?`, [userId]);
-          subjects.map(async(subject) => {
-           const redisSubject = {...subject};
-           delete redisSubject.timeline;
-            redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, redisSubject);
-          })
-        } catch (err) {
-          console.log(err);
-        };
-      };
-    }
-    console.log('subjects',subjects)
-    return subjects;
-  } catch (err) {
-    console.log(err);
-  }
-}; */
-
-
 async function groupRoomCache(userId) {
   try {
     const groups = await groupCache(userId);
@@ -149,26 +112,61 @@ async function groupRoomCache(userId) {
   };
 };
 
+async function dmRoomsCache(userId) {
+  let dmRooms = await redisClient.hGet(`user:${userId}`, 'dmRooms');
+  if (!dmRooms) {
+    const connection = pool.promise();
+    [dmRooms] = await connection.query(`SELECT id FROM chatrooms WHERE members LIKE ?`, [`%${userId}%`]);
+    dmRooms = dmRooms.map(dmRoom => {
+      return dmRoom.id;
+    });
+    redisClient.hSet(`user:${userId}`, 'dmRooms', JSON.stringify(dmRooms));
+  } else {
+    dmRooms = JSON.parse(dmRooms);
+  };
+
+  return dmRooms;
+};
+
+/* async function dmRoomMembersCache(roomId) {
+  let members = await redisClient.sMembers(`room:${roomId}`);
+  if (!members.length) {
+    const connection = pool.promise();
+    const [dmRooms] = await connection.query(`SELECT members FROM chatrooms WHERE members LIKE ?`, [`%${userId}%`]);
+  }
+}
+ */
+
+async function dmRoomMembersLoader () {
+  try {
+    const connection = pool.promise();
+    const [dmRooms] = await connection.query(`SELECT id, members FROM chatrooms WHERE type = 1`);
+    dmRooms.map(room => {
+      const {members, id} = room;
+      if (members !== "") {
+        const parsedMembers = members.split(",");
+        redisClient.sAdd(`room:${id}`, parsedMembers)
+      }
+    })
+  } catch (err) {
+    console.log(err);
+  };
+};
+
 async function chatRoomsCache(userId) {
   try {
-    let dmRooms = await redisClient.hGet(`user:${userId}`, 'dmRooms');
+    let dmRooms = await dmRoomsCache(userId);
     const groups = await groupCache(userId);
     const groupRooms = groups.map(group => {
-      return {id: group, type: 1};
+      return { id: group, type: 0, members: [] };
     });
-    if (!dmRooms) {
-      const connection = pool.promise();
-      [dmRooms] = await connection.query(`SELECT id, members FROM chatrooms WHERE members LIKE ?`, [userId]);
-      const dmRoomIds = dmRooms.map((dmRoom) => {
-        const {id, members} = dmRoom;
-        redisClient.sAdd(`room:${id}`, members);
-        return id;
-      });
-      redisClient.hSet(`user:${userId}`, 'dmRooms', JSON.stringify(dmRoomIds));
-    } else {
-      dmRooms = JSON.parse(dmRooms);
-    };
-    const rooms = groupRooms.concat(dmRooms);
+    const dmRoomPromises = dmRooms.map(async (dmRoom) => {
+      const members = await redisClient.sMembers(`room:${dmRoom}`);
+      return {id: dmRoom, members, type: 1};
+    });
+    const dmRoomsInfo = await Promise.all(dmRoomPromises);
+    const rooms = groupRooms.concat(dmRoomsInfo);
+    console.log(rooms, dmRoomsInfo);
     return rooms;
   } catch (err) {
     console.log(err);
@@ -223,11 +221,11 @@ async function activeSubjectCache(userId) {
 async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000), ts = 0) {
   try {
     let timer = await redisClient.hGet(`user:${userId}`, 'timerInfo');
-    
+
     if (timer) {
       timer = JSON.parse(timer);
     } else {
-      timer = {dp: now, ts};
+      timer = { dp: now, ts };
       await redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timer));
     };
 
@@ -237,11 +235,28 @@ async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000),
   }
 };
 
+async function usersCache(userId) {
+  try {
+    let isIn = await redisClient.sIsMember(`allMembers`, userId);
+    if (!isIn) {
+      const connection = pool.promise();
+      const [[userInfo]] = await connection.query(`SELECT user_id FROM users WHERE user_id = ?`, [userId]);
+      if (userInfo) {
+        redisClient.sAdd(`allMembers`, userId);
+        isIn = true;
+      };
+    };
+    return isIn;
+  } catch (err) {
+
+  }
+}
+
 
 /**
  * notification's key:
  * i: id
- * t: type ex) -1 = all (default),  0 = friend-request, 1 = friend-accept, 2 = group-invitation
+ * t: type ex) -1 = all (default),  0 = friend-request, 1 = friend-request-accept, 2 = face-off-request, 3 = face-off-accept, 4 = dm request, 5 = dm accepted, 7 = group-invitation,
  * d: date (unix but divided by 1000 * 60 because we  need minute accuracy) 
  * optional:
  * f: from (used for friend-request, friend-accept, group invitation)
@@ -254,7 +269,7 @@ async function NotificationCache(userId, type = -1) {
   if (type === -1) {
     return notifications;
   };
-  const selectedNotifications = notifications.filter(notification => {return notification.t === type});
+  const selectedNotifications = notifications.filter(notification => { return notification.t === type });
   return selectedNotifications;
 };
 
@@ -270,5 +285,8 @@ module.exports = {
   timerCache,
   NotificationCache,
   chatRoomsCache,
-  msgQueue
+  msgQueue,
+  usersCache,
+  dmRoomMembersLoader,
+  dmRoomsCache
 }

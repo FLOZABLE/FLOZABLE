@@ -416,11 +416,13 @@ Router.post('/friend-request', async (req, res) => {
       const userId = req.session.user_id;
       const { targetId } = req.body;
       const connection = pool.promise();
-      const [[tatgetUserInfo]] = await connection.query(`SELECT friends, name FROM users WHERE user_id = ?`, [targetId]);
-      let { friends, name } = tatgetUserInfo;
+      const [[targetUserInfo]] = await connection.query(`SELECT friends, name FROM users WHERE user_id = ?`, [targetId]);
+      if (!targetUserInfo) return res.send({ success: false, reason: 'No such user' });
+      
+      let { friends, name } = targetUserInfo;
       friends = friends === "" ? [] : friends.split(',');
 
-      const friendRequests = await NotificationCache(userId, 0);
+      const friendRequests = await NotificationCache(targetId, 0);
       const prevFriendReq = friendRequests.find(friendReq => {return friendReq.f === userId});
       if (!(prevFriendReq || friends.includes(userId)) && (targetId !== userId)) {
         const id = generateRandomId(5);
@@ -506,7 +508,7 @@ Router.post('/friend-notif', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { targetId } = req.body;
-      const friendRequests = await NotificationCache(userId, 1);
+      const friendRequests = await NotificationCache(targetId, 1);
       const friendReq = friendRequests.find(friendReq => {return friendReq.f === targetId}); 
       redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(friendReq));
 
@@ -529,7 +531,7 @@ Router.post('/challenge-request', async (req, res) => {
       const [[userInfo]] = await connection.query(`SELECT friends, friend_requests, name FROM users WHERE user_id = ?`, [userId]);
       let {name} = userInfo;
 
-      const challenges = await NotificationCache(userId, 2);
+      const challenges = await NotificationCache(targetId, 2);
       const prevChallengeReq = challenges.find(challenge => {return challenge.f === userId}); //already sent request to this user
 
       if (!prevChallengeReq) { //self-detection later

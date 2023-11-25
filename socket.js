@@ -217,7 +217,19 @@ connection.on('connection', (socket) => {
       redisClient.hDel(`user:${userId}`, `ActiveSubject`);
     };
   });
+
+  socket.on("startDm", async(targetId) => {
+    if (isUser(userId)) {
+
+    } else {}
+  })
 });
+
+async function isUser(userId) {
+  const connection = pool.promise();
+  const [[userInfo]] = await connection.query(`SELECT user_id FROM users WHERE user_id = ?`, [userId]);
+  return userInfo ? true : false;
+};
 
 async function isInChatRoom(userId, roomId) {
   try {
@@ -257,14 +269,6 @@ async function isInGroupRoom(userId, groupId, roomId) {
     return false;
   }
 };
-
-async function updateLastMsg(msgInfo) {
-  try {
-    //let userRoomStatus = await redisClient.hGet(`user:${userId}`, 'groups');
-  } catch (err) {
-    console.log(err);
-  };
-}
 
 cron.schedule('*/10 * * * * *', () => {
   const onlineMembers = io.engine.clientsCount;
