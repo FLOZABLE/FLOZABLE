@@ -84,7 +84,6 @@ Router.post('/update-plan', async (req, res) => {
   
       const isValid = isValidJSON(planInfo, schema);
       const {title, id, start, end, repeat, description, subject, notification, priority, completed} = planInfo;
-      console.log(isValid, planInfo)
       if (planInfo.start > planInfo.end) {
         return res.send({ success: false, reason: 'Invalid Time' });
       };

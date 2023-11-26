@@ -5,46 +5,6 @@ const redisClient = require("../model/redis");
 const { autoSignin, arraysHaveSameContents, generateRandomId } = require("../tool");
 const { groupCache, chatRoomsCache, usersCache, NotificationCache, dmRoomsCache } = require("../services/redisLoader");
 
-/* Router.post("/bring-rooms", async (req, res) => {
-  autoSignin(req, res, (async() => {
-    const userId = req.session.user_id;
-    const groupInfo = await redisClient.hGet(`user:${userId}`, 'groups');
-    try {
-      if (!groupInfo) {
-        const connection = pool.promise();
-        const [[userInfo]] = await connection.query(`SELECT groups FROM users WHERE user_id = ?` , [userId]);
-        const userGroups = userInfo.groups.split(',');
-        const groupRooms = await Promise.all(userGroups.map(async (group) => {
-          let chatRooms = await redisClient.sMembers(`group:${group}:rooms`);
-          chatRooms = chatRooms.map(room => {
-            room = JSON.parse(room);
-            room.status = -1;
-            return room;
-          });
-          console.log(23, chatRooms);
-          return chatRooms;
-        }));
-        res.send({success: true, groupRooms: groupRooms});
-      } else {
-        const userGroups = groupInfo.split(',');
-        const groupRooms = await Promise.all(userGroups.map(async (group) => {
-          let chatRooms = await redisClient.sMembers(`group:${group}:rooms`);
-          chatRooms = chatRooms.map(room => {
-            room = JSON.parse(room);
-            room.status = -1;
-            return room;
-          });
-          return {groupId: group, rooms: chatRooms};
-        }));
-        console.log(37,groupRooms)
-        res.send({success: true, groupRooms: groupRooms});
-      };
-    } catch (err) {
-      console.log(err);
-    }
-  }))
-}); */
-
 Router.post("/bring-rooms", async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
@@ -54,7 +14,6 @@ Router.post("/bring-rooms", async (req, res) => {
       return { ...room, chats };
     });
     rooms = await Promise.all(roomPromises);
-    console.log(rooms)
     res.send({ success: true, rooms })
   }));
 });
@@ -67,13 +26,11 @@ Router.post("/chat-request", async (req, res) => {
     //checks if group with same members exists
     const isRoomExist = chatRooms.find(chatRoom => {
       let {members} = chatRoom;
-      console.log('gd', chatRoom)
       return arraysHaveSameContents(members, [userId, targetId]);
     });
     const userExist = await usersCache(targetId);
     const targetDmRequests = await NotificationCache(targetId, 4);
     const prevDmRequest = targetDmRequests.find(dmRequest => { return dmRequest.f === userId });
-    console.log('user', targetDmRequests);
     if (!isRoomExist && !prevDmRequest && userId !== targetId && userExist) {
       const id = generateRandomId(5);
       const date = Math.floor(new Date().getTime() / (1000 * 60));
