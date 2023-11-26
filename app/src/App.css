@@ -106,6 +106,17 @@ button:hover {
   color: #61dafb;
 }
 
+.title {
+  display: flex;
+  font-size: 20px;
+  align-items: center;
+}
+
+.title i {
+  font-size: 30px;
+  margin-right: 10px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -151,13 +162,13 @@ button:hover {
     position: relative;
     margin: 150px 0px 0px 100px;
     transition: all .2s ease-in-out;
-    width: calc(100vw - 140px);
+    width: calc(100vw - 120px);
     border-radius: 20px;
   }
   
   .Main.sidebarOpen {
-    margin-left: 350px;
-    width: calc(100vw - 410px);
+    margin-left: 200px;
+    width: calc(100vw - 220px);
   }
   
   .modal.open {
