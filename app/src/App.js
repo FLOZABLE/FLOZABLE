@@ -6,6 +6,7 @@ import Ranking from "./components/Container/Ranking/Ranking";
 import Groups from "./components/Container/Groups/Groups";
 import Study from "./components/Container/Study/Study";
 import Account from "./components/Container/Account/Account";
+import Challenge from "./components/Container/Challenge/Challenge";
 import "./App.css";
 import Sidebar from "./components/UI/Sidebar/Sidebar";
 import Header from "./components/UI/Header/Header";
@@ -519,6 +520,40 @@ function App() {
                 setResponse={setResponse}
                 allMembers={allMembers}
                 socket={socket}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/dashboard/challenge/*"
+          element={
+            <div>
+              <Sidebar
+                isSidebarOpen={isSidebarOpen}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                isSidebarHovered={isHovered}
+              />
+              <Header
+                setIsAddPlanModal={setIsAddPlanModal}
+                isAddPlanModal={isAddPlanModal}
+                setPlans={setPlans}
+                plans={plans}
+                subjects={subjects}
+                onToggleSidebar={toggleSidebar}
+                isSidebarOpen={isSidebarOpen}
+                isSidebarHovered={isHovered}
+                setIsChatModal={setIsChatModal}
+                isChatModal={isChatModal}
+              />
+              <Challenge
+                setIsSidebarOpen={setIsSidebarOpen}
+                isSidebarOpen={isSidebarOpen}
+                isSidebarHovered={isHovered}
+                userInfo={userInfo}
+                reset={reset}
+                subjects={subjects}
+                setResponse={setResponse}
               />
             </div>
           }
