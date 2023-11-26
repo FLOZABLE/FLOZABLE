@@ -6,6 +6,7 @@ import {
   faCalendar,
   faUserGroup,
   faRankingStar,
+  faPeopleGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
@@ -100,7 +101,7 @@ function Sidebar({
           >
             <Link to="/dashboard/groups" className={styles.navItem}>
               <div className={styles.icon}>
-                <FontAwesomeIcon icon={faUserGroup} />
+                <FontAwesomeIcon icon={faPeopleGroup} />
               </div>
               <p className={styles.navText} data-text="Groups">
                 Groups
@@ -126,20 +127,20 @@ function Sidebar({
             </Link>
           </div>
         </li>
-        {/* <li>
+        <li>
            <div
-             onMouseEnter={() => handleMouseEnter('navItem5')}
+             onMouseEnter={() => handleMouseEnter('navItem6')}
              onMouseLeave={handleMouseLeave}
              className={`${styles.startStudy} ${styles.navItemWrapper} ${hoveredElement === 'navItem6' ? styles.hovered : ''}`}
            >
-             <Link to="/dashboard/templates" className={styles.navItem}>
+             <Link to="/dashboard/friends" className={styles.navItem}>
                <div className={styles.icon}>
-               <FontAwesomeIcon icon={faNoteSticky} />
+               <FontAwesomeIcon icon={faUserGroup} />
                </div>
-               <p className={styles.navText}  data-text="Templates">Templates</p>
+               <p className={styles.navText}  data-text="Friends">Friends</p>
              </Link>
            </div>
-          </li> */}
+          </li>
       </ul>
     </aside>
   );

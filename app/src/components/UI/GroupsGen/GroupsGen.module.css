@@ -1,6 +1,10 @@
 .groupContainer {
   position: relative;
   margin: 20px;
+  grid-template-columns: repeat(auto-fill, 250px);
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .groupContainer .group {
@@ -132,7 +136,23 @@
   opacity: 1;
 }
 
-.groupWrapper {
+.groupContainer .groupWrapper {
   width: 100%;
   border: 1px solid black;
+}
+
+@media (max-width: 1400px) {
+  .groupContainer .group {
+    width: 200px;
+    font-size: 13px;
+    height: 170px;
+  }
+  .groupContainer .group .name {
+    font-size: 15px;
+  }
+
+  .groupContainer .group .name i {
+    font-size: 15px;
+    margin-right: 5px;
+  }
 }

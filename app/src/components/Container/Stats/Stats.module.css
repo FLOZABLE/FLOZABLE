@@ -156,10 +156,16 @@
   border-radius: 40px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   margin: 50px 30px 30px 50px;
-  width: 30vw;
+  width: 50vw;
   padding: 30px;
   position: relative;
   display: flex;
+}
+
+.StatsContainer canvas {
+  width: calc(100% / 1 - 1px) !important;
+  height: calc(100% / 1 - 1px) !important;
+  overflow: hidden;
 }
 
 .StatsContainer .horizontalLine {
