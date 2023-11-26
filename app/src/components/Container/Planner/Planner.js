@@ -1,15 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBullseye, faHeart, faPeopleGroup, faPlus, faStopwatch } from '@fortawesome/free-solid-svg-icons';
 import StuckModal from '../../UI/StuckModal/StuckModal';
-import TopNotification from '../../UI/TopNotification/TopNotification';
 import RadioBtn from "../../UI/RadioBtn/RadioBtn";
 import styles from "./Planner.module.css";
 import SmallCalendar from '../../UI/SmallCalendar/SmallCalendar';
 import EventPlanner from '../../UI/EventPlanner/EventPlanner';
-import AddSubjectModal from '../../UI/AddSubjectModal/AddSubjectModal';
 import PlanTimeline from '../../UI/PlanTimeline/PlanTimeline';
-import DropDownButton from '../../UI/DropDownButton/DropDownButton';
 
 function Planner(props) {
   const { subjects, setSubjects, events, setEvents, setResponse, setIsAddSubjectModal, isAddPlanModal, setIsAddPlanModal } = props;
@@ -75,7 +70,7 @@ function Planner(props) {
             </div>
             <div className={styles.widget}>
               <div className={styles.smallCalendarWrapper}>
-              <SmallCalendar width={"300px"} setViewDate={updateViewDate}  isAddPlanModal={isAddPlanModal} viewDate={viewDate} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
+              <SmallCalendar width={"100%"} setViewDate={updateViewDate}  isAddPlanModal={isAddPlanModal} viewDate={viewDate} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
               </div>
               
               {/* <DropDownButton options={[{name:'Does not repeat', value: 0}, {name: 'Daily', value: 1}, {name: 'Weekly', value: 2}, {name: `Monthly`, value: 3}]} defaultIndex={0} setValue={setSubjectsOptions} /> */}

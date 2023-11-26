@@ -278,3 +278,27 @@
   color: #fff;
   caret-color: #fff;
 }
+
+@media (max-width: 1400px) {
+  .ChatsModal {
+    height: 400px;
+    width: 300px;
+    bottom: 50px;
+  }
+
+  .ChatsModal.open {
+    right: 50px;
+  }
+
+  .ChatsModal .chatRoomsContainer {
+    height: 350px;
+  }
+
+  .ChatsModal .chatsContainer {
+    height: 300px;
+  }
+
+  .ChatsModal .chatsWrapper .inputWrapper input {
+    width: 200px;
+  }
+}

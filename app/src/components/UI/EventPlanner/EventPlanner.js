@@ -146,6 +146,9 @@ const StyleWrapper = styled.div`
   .fc-toolbar-chunk {
     display: flex;
   }
+  .fc-view-harnessfc-view-harness-active {
+    height: 100vh;
+  }
 `;
 
 function EventPlanner(props) {

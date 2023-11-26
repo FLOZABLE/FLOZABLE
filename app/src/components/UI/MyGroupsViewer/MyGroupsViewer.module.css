@@ -132,3 +132,31 @@
 .MyGroupsViewer.study .buttons button {
   background-color: var(--bgColor);
 }
+
+@media (max-width: 1400px) {
+  .MyGroupsViewer{
+    height: 500px;
+  }
+
+  .MyGroupsViewer .name a {
+    font-size: 30px;
+  }
+
+  .MyGroupsViewer .status {
+    padding: 2px 5px;
+    font-size: 20px;
+  }
+  
+  .MyGroupsViewer .status p {
+    font-size: 20px;
+  }
+
+  .MyGroupsViewer .members {
+    grid-template-columns: repeat(auto-fill, 250px);
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    max-height: 350px;
+    gap: 20px;
+  }
+}

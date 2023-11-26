@@ -63,3 +63,17 @@
     width: 90%;
   }
 }
+
+@media (max-width: 1400px) {
+  .RadioBtnContainer .container {
+    width: 300px;
+  }
+
+  .RadioBtnContainer .selector {
+    height: 60px;
+  }
+
+  .RadioBtnContainer .selectorItemLabel {
+    font-size: 16px;
+  }
+}

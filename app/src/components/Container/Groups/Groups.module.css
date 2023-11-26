@@ -121,3 +121,9 @@
   font-size: 30px;
   margin-left: 10px;
 }
+
+@media (max-width: 1400px) {
+  .GroupsContainer .buttonArea {
+    margin-bottom: 0px !important;
+  }
+}

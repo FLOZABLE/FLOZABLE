@@ -121,3 +121,10 @@
 .CreateGroupModal .inputArea.open {
   opacity: 1;
 }
+
+@media (max-width: 1400px) {
+  .CreateGroupModal {
+    width: 500px;
+    height: 450px;
+  }
+}
