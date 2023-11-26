@@ -30,9 +30,6 @@ function GroupsGen({
   const [maxGroups, setMaxGroups] = useState(-1);
 
   const joinGroup = (targetGroup) => {
-    console.log(groups);
-    console.log(targetGroup, userInfo);
-    return;
     setJoinTarget(targetGroup);
     targetGroup.members = [...targetGroup.members, userInfo];
     if (targetGroup.visibility) {
