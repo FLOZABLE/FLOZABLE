@@ -111,7 +111,6 @@ function createDailyRankingTable() {
   connection.query(`
   CREATE TABLE dailyRanking (
     date INT(11),
-    timezone TINYINT DEFAULT 0,
     ranking TEXT DEFAULT ''
   );  
   `);
@@ -122,7 +121,6 @@ function createWeeklyRankingTable() {
   connection.query(`
   CREATE TABLE weeklyRanking (
     date INT(11),
-    timezone TINYINT DEFAULT 0,
     ranking TEXT DEFAULT ''
   );  
   `);
@@ -133,7 +131,6 @@ function createMonthlyRankingTable() {
   connection.query(`
   CREATE TABLE monthlyRanking (
     date INT(11),
-    timezone TINYINT DEFAULT 0,
     ranking TEXT DEFAULT ''
   );  
   `);

@@ -19,7 +19,6 @@ Router.post('/accountinfo', async (req, res) => {
     const notifications = await NotificationCache(userId);
     await redisClient.hSet(`user:${userId}`, `groups`, userInfo.groups);
     res.send({ success: true, userInfo: userInfo, notifications });
-    console.log('user', userInfo)
   }))
 });
 
@@ -227,7 +226,6 @@ Router.post('/update/image', upload.single('image'), async (req, res) => {
         .resize({ width: 800, height: 800 })
         .jpeg({ quality: 40 })
         .toFile(`./public/profile-images/${userId}.jpeg`);
-      console.log('gd');
       res.send({ success: true });
     } catch (err) {
       console.log(err)
