@@ -528,7 +528,7 @@ Router.post('/challenge-request', async (req, res) => {
       const { targetId } = req.body;
  
       const connection = pool.promise();
-      const [[userInfo]] = await connection.query(`SELECT friends, friend_requests, name FROM users WHERE user_id = ?`, [userId]);
+      const [[userInfo]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [targetId]);
       let {name} = userInfo;
 
       const challenges = await NotificationCache(targetId, 2);
