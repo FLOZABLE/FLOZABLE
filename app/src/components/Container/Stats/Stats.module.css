@@ -46,9 +46,10 @@
   margin-bottom: 40px;
 }
 
-.StatsContainer .box .buttonArea > button{
+.StatsContainer .box .buttonArea>button {
   margin-right: auto;
 }
+
 .StatsContainer .box .container {
   display: flex;
   background-color: #e5f6ff;
@@ -60,7 +61,7 @@
 
 .StatsContainer .box .secondContainer {
   display: flex;
-  background-color: rgb(222,244,230);
+  background-color: rgb(222, 244, 230);
   border-radius: 40px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   padding: 40px;
@@ -69,7 +70,7 @@
 
 .StatsContainer .box .thirdContainer {
   display: flex;
-  background-color: rgb(255,238,230);
+  background-color: rgb(255, 238, 230);
   border-radius: 40px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   padding: 40px;
@@ -78,7 +79,7 @@
 
 .StatsContainer .box .fourthContainer {
   display: flex;
-  background-color: rgb(245,241,254);
+  background-color: rgb(245, 241, 254);
   border-radius: 40px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   padding: 40px;
@@ -94,12 +95,12 @@
   margin-bottom: 50px;
 }
 
-.StatsContainer .box .container > div:not(.divider){
+.StatsContainer .box .container>div:not(.divider) {
   width: 50%;
   text-align: left;
 }
 
-.StatsContainer .box .container > div:nth-child(1) {
+.StatsContainer .box .container>div:nth-child(1) {
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -135,7 +136,7 @@
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
-.StatsContainer .box .todoList ul li{
+.StatsContainer .box .todoList ul li {
   border-radius: 20px;
   height: 50px;
   margin-bottom: 30px;
@@ -222,13 +223,13 @@
   padding: 10px 30px;
 }
 
-.StatsContainer .smallBox.chartsBox .chartContainer{
+.StatsContainer .smallBox.chartsBox .chartContainer {
   height: 90%;
   width: 80%;
   margin-left: 10%;
 }
 
-.StatsContainer .smallBoxContainer:nth-child(5) .smallBox.chartsBox .chartContainer{
+.StatsContainer .smallBoxContainer:nth-child(5) .smallBox.chartsBox .chartContainer {
   height: 100%;
   width: 70%;
   margin-left: 15%;
