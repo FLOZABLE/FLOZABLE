@@ -101,7 +101,6 @@ connection.on('connection', (socket) => {
   });
 
   socket.on("disconnect", (reason) => {
-    console.log(socket.userId)
     let socketIds = userIdToSocketIdMap.get(socket.userId);
     userIdToSocketIdMap.delete(socketIds);
     /* try {
@@ -144,16 +143,6 @@ connection.on('connection', (socket) => {
     }
   });
 
-
-  socket.on("bringChat", async (groupId, roomId) => {
-    console.log(groupId, roomId);
-    const userId = socket.userId;
-    if (isInGroupRoom(userId, groupId, roomId)) {
-      const chats = (await redisClient.lRange(`room:${roomId}:chat`, 0, -1));
-      io.to(socket.id).emit("bringChat", { chats: chats });
-    };
-  });
-
   socket.on("start", async (subjectId) => {
     try {
       const subjects = await subjectsCache(userId);
@@ -173,11 +162,11 @@ connection.on('connection', (socket) => {
         redisClient.hSet(`user:${userId}`, `subject:${id}`, JSON.stringify(subject));
 
         //total timer
-        const timerInfo = await timerCache(userId, now);
+        /* const timerInfo = await timerCache(userId, now);
         const {dp, ts} = timerInfo;
         const totalTimerStart = now - dp - ts;
         timerInfo.ts += totalTimerStart;
-        redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo));
+        redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo)); */
       }
     } catch (err) {
       console.log(err);
@@ -204,16 +193,16 @@ connection.on('connection', (socket) => {
       redisClient.hSet(`user:${userId}`, `subject:${subjectId}`, JSON.stringify(subject));
 
       //total timer update
+      redisClient.incrBy(`user:${userId}:dayTotal`, duration);
       //this is unix time in sec of active subject's start
-      const activeSubjectStart = activeSubject.time;
+      /* const activeSubjectStart = activeSubject.time;
       const timerInfo = await timerCache(userId, now);
       const {dp, ts} = timerInfo;
       const timerStart = activeSubjectStart - dp - ts;
       const totalTimerDuration = now - dp - ts;
       timerInfo.ts += totalTimerDuration;
-      console.log('stopped', timerInfo, timerStart, totalTimerDuration)
       redisClient.rPush(`user:${userId}:timer`, `[${timerStart},${totalTimerDuration}]`);
-      redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo));
+      redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo)); */
       redisClient.hDel(`user:${userId}`, `ActiveSubject`);
     };
   });

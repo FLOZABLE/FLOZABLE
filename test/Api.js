@@ -822,7 +822,6 @@ Router.post("/chat/bring-rooms", async (req, res) => {
         });
         return chatRooms;
       }));
-      console.log("roomsss", groupRooms)
       res.send({success: true, groupRooms: groupRooms});
     } else {
       const userGroups = groupInfo.split(',');

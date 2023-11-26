@@ -166,7 +166,6 @@ async function chatRoomsCache(userId) {
     });
     const dmRoomsInfo = await Promise.all(dmRoomPromises);
     const rooms = groupRooms.concat(dmRoomsInfo);
-    console.log(rooms, dmRoomsInfo);
     return rooms;
   } catch (err) {
     console.log(err);

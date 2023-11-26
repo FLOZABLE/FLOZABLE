@@ -60,7 +60,7 @@ async function timerUpdate() {
           ]);
         };
         redisClient.lTrim(`user:${userId}:subject:${id}`, 1, 0);
-        removeTimeline(userId, now);
+        //removeTimeline(userId, now);
       })
       const socketId = userIdToSocketIdMap.get(userId);
       if (socketId) {
