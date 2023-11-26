@@ -11,8 +11,9 @@
   border-radius: 20px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   margin: 0px 30px;
-  max-width: 500px;
-  flex-grow: 1;
+  width: 23%;
+  max-width: 355px;
+  min-width: 310px;
   height: min-content;
 }
 
@@ -80,7 +81,7 @@
   height: 400px;
   background-color: transparent;
   box-shadow: none;
-  width: 400px;
+  /* width: 400px; */
   text-align: left;
 }
 
@@ -104,61 +105,31 @@
   padding: 5px;
 }
 
-@media (max-width: 1700px) {
-  .MainContainer .box.memo {
-    height: 250px;
-    background-color: transparent;
-    box-shadow: none;
-    width: 230px;
-    text-align: center;
-  }
-
-  .MainContainer .toStatsBtn {
-    background-color: blue;
-    padding: 20px 70px;
-    color: #fff;
-    font-size: 13px;
-    border-radius: 20px;
-    margin-top: 30px;
-    font-weight: 800;
-  }
-
-  .MainContainer .box {
-    position: absolute;
-    background-color: aliceblue;
-    border-radius: 20px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    margin: 0px 15px;
-    max-width: 312px;
-    flex-grow: 1;
-    height: min-content;
-  }
-
+@media (max-width: 1760px) {
   .MainContainer .box .name {
     font-size: 25px;
-    font-weight: 600;
-  }
-
-  .MainContainer .box .report {
-    font-size: 15px;
-    color: grey;
   }
 
   .MainContainer .box .inner {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: left;
+    padding: 25px;
   }
 
-  .MainContainer .box .memo .inner {
-    padding: 30px;
-    background-image: url('/public/img/memo.png');
-    background-position: center;
-    /* center the image */
-    background-size: cover;
-    height: 105%;
-    width: 105%;
+  .MainContainer .box .toStatsBtn {
+    height: fit-content;
+    margin-top: 10px;
+    padding: 10px 40px;
+  }
+
+  .MainContainer .box#welcome {
+    height: fit-content;
+    overflow-y: hidden;
+  }
+  
+  .MainContainer .box#welcome .report {
+    font-size: 17px;
+  }
+
+  .MainContainer .box#planner {
+
   }
 }

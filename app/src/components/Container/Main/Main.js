@@ -106,31 +106,88 @@ function Main({
   const eventHandler = (e, dragElement, id) => {
     let posX = dragElement.x;
     let posY = dragElement.y;
-    localStorage.setItem(id, JSON.stringify({ x: posX, y: posY }));
+    localStorage.setItem(id, JSON.stringify([posX, posY]));
+    setPositions((prevPositions) => ({
+      ...prevPositions,
+      [id]: { x: posX, y: posY },
+    }));
   };
+
+  const [welcomePos, setWelcomePos] = useState();
+  const [positions, setPositions] = useState({
+    welcome: { x: 0, y: 0 },
+    subject: { x: 0, y: 0 },
+    planner: { x: 0, y: 0 },
+    activity: { x: 0, y: 0 },
+    quote: { x: 0, y: 0 },
+  });
+
+  const updatePos = (id, pos) => {
+    const [x,y] = pos;
+    setPositions((prevPositions) => ({
+      ...prevPositions,
+      [id]: { x: x, y: y },
+    }));
+  }
 
   useEffect(() => {
     console.log(mainRef.current);
-    if (mainRef.current) {
-      
+    if (!mainRef.current) return;
+    const width = mainRef.current.offsetWidth;
+    if (localStorage.welcome) {
+      updatePos('welcome', JSON.parse(localStorage.welcome))
+    } else if (width >= 1760 ){
+      updatePos('welcome', [0, 0])
+    } else {
+      updatePos('welcome', [0, 0])
     }
-  }, [mainRef]);
+
+    if (localStorage.subject) {
+      updatePos('subject', JSON.parse(localStorage.subject))
+    } else if (width >= 1760 ){
+      updatePos('subject', [399,0])
+    } else {
+      updatePos('subject', [399,0])
+    }
+
+    if (localStorage.planner) {
+      updatePos('planner', JSON.parse(localStorage.planner))
+    } else if (width >= 1760 ){
+      updatePos('planner', [779,0])
+    } else {
+      updatePos('planner', [779,0])
+    }
+
+    if (localStorage.activity) {
+      updatePos('activity', JSON.parse(localStorage.activity))
+    } else if (width >= 1760 ){
+      updatePos('activity', [1161,0])
+    } else {
+      updatePos('activity', [0, 420])
+    }
+
+    if (localStorage.quote) {
+      updatePos('quote', JSON.parse(localStorage.quote))
+    } else if (width >= 1760 ){
+      updatePos('quote', [790,380])
+    } else {
+      updatePos('quote', [395, 466])
+    }
+  }, [mainRef, mainRef.current ? mainRef.current.offsetWidth : null]);
 
   return (
     <div className={styles.MainContainer}>
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`} ref={mainRef}>
         <Draggable
-          defaultPosition={
-            localStorage.welcome
-              ? JSON.parse(localStorage.welcome)
-              : { x: mainRef.current ? mainRef.current.style.witdh : 0, y: 0 }
+          position={
+            positions.welcome
           }
           onStop={(e, element) => {
             eventHandler(e, element, "welcome");
           }}
           nodeRef={hiMsgRef}
         >
-          <div ref={hiMsgRef} className={`${styles.box} box 1`}>
+          <div ref={hiMsgRef} className={`${styles.box}`} id={styles.welcome}>
             <div className={styles.inner}>
               <p className={styles.name}>Welcome Back!</p>
               <div className={styles.progress}>
@@ -151,10 +208,8 @@ function Main({
           </div>
         </Draggable>
         <Draggable
-          defaultPosition={
-            localStorage.subject
-              ? JSON.parse(localStorage.subject)
-              : { x: 530, y: 0 }
+          position={
+            positions.subject
           }
           onStop={(e, element) => {
             eventHandler(e, element, "subject");
@@ -209,17 +264,15 @@ function Main({
           </div>
         </Draggable>
         <Draggable
-          defaultPosition={
-            localStorage.planner
-              ? JSON.parse(localStorage.planner)
-              : { x: 1450, y: 0 }
+          position={
+            positions.planner
           }
           onStop={(e, element) => {
             eventHandler(e, element, "planner");
           }}
           nodeRef={plannerRef}
         >
-          <div ref={plannerRef} className={`${styles.box} box 3`}>
+          <div ref={plannerRef} className={`${styles.box}`} id={styles.planner}>
             <div className={styles.inner}>
               <p className={styles.name}>Planner</p>
               {/* {
@@ -276,10 +329,8 @@ function Main({
           </div>
         </Draggable>
         <Draggable
-          defaultPosition={
-            localStorage.activity
-              ? JSON.parse(localStorage.activity)
-              : { x: 0, y: 0 }
+          position={
+            positions.activity
           }
           onStop={(e, element) => {
             eventHandler(e, element, "activity");
@@ -369,10 +420,8 @@ function Main({
           </div>
         </Draggable>
         <Draggable
-          defaultPosition={
-            localStorage.quote
-              ? JSON.parse(localStorage.quote)
-              : { x: window.innerWidth - 400, y: 0 }
+          position={
+            positions.quote
           }
           onStop={(e, element) => {
             eventHandler(e, element, "quote");
