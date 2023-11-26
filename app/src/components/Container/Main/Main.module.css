@@ -30,7 +30,7 @@
 }
 
 .MainContainer .box .name {
-  font-size: 40px;
+  font-size: 35px;
   font-weight: 600;
 }
 
@@ -127,9 +127,5 @@
   
   .MainContainer .box#welcome .report {
     font-size: 17px;
-  }
-
-  .MainContainer .box#planner {
-
   }
 }

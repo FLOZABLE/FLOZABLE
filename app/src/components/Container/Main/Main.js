@@ -168,6 +168,8 @@ function Main({
 
     if (localStorage.quote) {
       updatePos('quote', JSON.parse(localStorage.quote))
+    } else if (width >= 2000 ){
+      updatePos('quote', [1550, 0])
     } else if (width >= 1760 ){
       updatePos('quote', [790,380])
     } else {
