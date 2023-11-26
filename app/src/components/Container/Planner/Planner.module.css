@@ -24,6 +24,7 @@
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   padding: 40px;
   margin-bottom: 50px;
+
 }
 
 .PlannerContainer .container .planner {
@@ -38,7 +39,7 @@
 
 .PlannerContainer .smallCalendarWrapper {
   display: flex;
-  width: 100%;
+  width: 300px;
   position: relative;
   justify-content: center;
   align-items: center;
@@ -60,4 +61,18 @@
 .PlannerContainer .planTimelineWrapper:hover {
 /*   width: 400px; */
   animation: showScroll 2s .3s forwards;
+}
+
+@media (max-width: 1400px) {
+  .PlannerContainer .title {
+    font-size: 30px;
+  }
+
+  .PlannerContainer .smallCalendarWrapper {
+    width: 250px;
+  }
+
+  .PlannerContainer .planTimelineWrapper {
+    width: 250px;
+  }
 }

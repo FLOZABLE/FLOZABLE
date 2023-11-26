@@ -98,6 +98,31 @@ const StyleWrapper = styled.div`
     align-items: center;
     position: relative;
   }
+
+  .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr{
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 1400px) {
+    .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr {
+      font-size: 17px
+    }
+    .fc-col-header-cell-cushion {
+      font-size: 18px;
+    }
+
+    .fc-daygrid-day-number {
+      font-size: 20px;
+    }
+
+    .fc-daygrid-day-events {
+      height: 30px !important;
+    }
+
+    .fc-toolbar-title {
+      margin-left: 10px;
+    }
+  }
 `;
 
 function SmallCalendar({
@@ -148,8 +173,8 @@ function SmallCalendar({
   };
 
   return (
-    <StyleWrapper>
-      <div className={styles.SmallCalendar} style={{ width: width }}>
+    <StyleWrapper style={{width: width}}>
+      <div className={styles.SmallCalendar} style={{ width: width}}>
         <FullCalendar
           ref={SmallCalendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}

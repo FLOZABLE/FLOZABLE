@@ -34,6 +34,7 @@
   padding: 20px;
   align-items: center;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  height: 50px;
 }
 
 .header .left .headerEl:nth-child(1) {
@@ -168,4 +169,38 @@
   width: 40px;
   height: 40px;
   border-radius: 20px;
+}
+
+
+@media (max-width: 1400px) {
+
+  .header {
+    height: 80px;
+    width: calc(100vw - 150px);
+  }
+
+  .header.isOpen {
+    /* background-color: #FF9B9B; */
+    width: calc(100vw - 230px);
+  }
+
+  .header .left h6{
+    font-size: 13px;
+  }
+
+  .header .left h5{
+    font-size: 15px;
+  }
+
+  .header .circle {
+    font-size: 12px;
+  }
+
+  .header .headerEl {
+    padding: 10px;
+  }
+
+  .header .left .headerEl {
+    margin-left: 10px;
+  }
 }

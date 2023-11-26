@@ -177,26 +177,3 @@
 .Account #accounts .authBtn span {
   white-space:nowrap;
 }
-
-@media (max-width: 1400px) {
-  .Account .fixedNav {
-    width: 270px;
-  }
-
-  .Account .fixedNav .navEl {
-    padding: 5px 10px;
-  }
-
-  .Account .fixedNav .navEl i {
-    font-size: 17px;
-  }
-
-  .Account .boxContainer {
-    width: calc(100% - 300px);
-    margin-left: 300px;
-  }
-
-  .Account h1 {
-    font-size: 22px;
-  }
-}

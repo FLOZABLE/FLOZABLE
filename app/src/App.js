@@ -26,6 +26,7 @@ import TopNotification from "./components/UI/TopNotification/TopNotification";
 import BottomNotification from "./components/UI/BottomNotification/BottomNotification";
 import NotificationModal from "./components/UI/NotificationModal/NotificationModal";
 import ChatsModal from "./components/UI/ChatsModal/ChatsModal";
+import Friends from "./components/Container/Friends/Friends";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -518,6 +519,37 @@ function App() {
                 setResponse={setResponse}
                 allMembers={allMembers}
                 socket={socket}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/dashboard/friends"
+          element={
+            <div>
+              <Sidebar
+                isSidebarOpen={isSidebarOpen}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                isSidebarHovered={isHovered}
+              />
+              <Header
+                setIsAddPlanModal={setIsAddPlanModal}
+                isAddPlanModal={isAddPlanModal}
+                setPlans={setPlans}
+                plans={plans}
+                subjects={subjects}
+                onToggleSidebar={toggleSidebar}
+                isSidebarOpen={isSidebarOpen}
+                isSidebarHovered={isHovered}
+                setIsChatModal={setIsChatModal}
+                isChatModal={isChatModal}
+              />
+              <Friends
+                setIsSidebarOpen={setIsSidebarOpen}
+                isSidebarOpen={isSidebarOpen}
+                isSidebarHovered={isHovered}
+                userInfo={userInfo}
               />
             </div>
           }

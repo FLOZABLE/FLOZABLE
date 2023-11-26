@@ -46,7 +46,7 @@
   margin-bottom: 40px;
 }
 
-.RankingContainer .box .buttonArea > button{
+.RankingContainer .box .buttonArea>button {
   margin-right: auto;
 }
 
@@ -102,7 +102,7 @@
   flex-direction: column;
 }
 
-.RankingContainer .rankingContainer .header{
+.RankingContainer .rankingContainer .header {
   display: flex;
   margin-left: auto;
 }
@@ -128,13 +128,14 @@
   color: #fff;
 }
 
-.RankingContainer .rankingContainer .userInfo{
+.RankingContainer .rankingContainer .userInfo {
   display: flex;
   margin-left: 20px;
   flex-grow: 1;
+  align-items: center;
 }
 
-.RankingContainer .rankingContainer .userInfo .profileImg{
+.RankingContainer .rankingContainer .userInfo .profileImg {
   display: flex;
   background-color: #e5e6e7;
   width: 40px;
@@ -161,9 +162,20 @@
   height: 3px;
   border-radius: 2px;
 }
-.RankingContainer .rankingContainer li .userInfo .ranking{
+
+.RankingContainer .rankingContainer li .userInfo .ranking {
   display: flex;
   font-weight: 900;
   font-size: 32px;
   margin-left: auto;
+}
+
+@media (max-width: 1400px) {
+  .RankingContainer .userInfo p {
+    font-size: 20px;
+  }
+
+  .RankingContainer .header {
+    font-size: 25px;
+  }
 }
