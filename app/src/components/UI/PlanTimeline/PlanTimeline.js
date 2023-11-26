@@ -70,7 +70,6 @@ function PlanTimeline({
         const planSubject = subjects.find((subject) => {
           return subject.id === plan.subject;
         });
-        //console.log(plan.subject, plan.name, plans)
         let isInRange = false;
         const viewDateTime = DateTime.fromJSDate(viewDate);
         if (viewMode === "timeGridDay") {

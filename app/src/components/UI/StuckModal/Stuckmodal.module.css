@@ -1,12 +1,18 @@
 .StuckModalContainer {
   position: fixed;
-  bottom: 100px;
-  right: 100px;
+  bottom: 150px;
+  right: 70px;
   background: linear-gradient(to right, #8C52FF, #5C97E6);
   border-radius: 50px;
   z-index: 2;
   width: 100px;
   height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.StuckModalContainer a {
   display: flex;
   align-items: center;
   justify-content: center;

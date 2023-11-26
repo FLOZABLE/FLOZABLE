@@ -67,7 +67,6 @@ function App() {
 
     const onNotification = (data) => {
       setNotifications((prev) => [...prev, data]);
-      console.log(notifications, data)
     }
 
     socket.on("connect", socketConnectAction);
