@@ -95,11 +95,9 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   };
 
   useEffect(() => {
-    console.log('gd', notifications)
     setNotificationsEl(notifications.map((notification, i) => {
       const type = notification.t;
       const from = notification.f;
-      console.log(notification, type, from)
       if (type === 0) {
         const sender = allMembers.find(member => {return member.user_id === from});
         const {name} = sender;

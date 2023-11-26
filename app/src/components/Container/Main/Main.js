@@ -109,14 +109,21 @@ function Main({
     localStorage.setItem(id, JSON.stringify({ x: posX, y: posY }));
   };
 
+  useEffect(() => {
+    console.log(mainRef.current);
+    if (mainRef.current) {
+      
+    }
+  }, [mainRef]);
+
   return (
     <div className={styles.MainContainer}>
-      <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
+      <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`} ref={mainRef}>
         <Draggable
           defaultPosition={
             localStorage.welcome
               ? JSON.parse(localStorage.welcome)
-              : { x: 0, y: 0 }
+              : { x: mainRef.current ? mainRef.current.style.witdh : 0, y: 0 }
           }
           onStop={(e, element) => {
             eventHandler(e, element, "welcome");

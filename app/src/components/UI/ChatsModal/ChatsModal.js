@@ -29,10 +29,11 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
   }, []);
 
   const onMsgReceived = useCallback((roomId, msgInfo) => {
-    const chatRoom = chatRooms.find(chatRoom => { return chatRoom.id === roomId });
-    if (chatRoom) {
-      chatRoom.chats.push(JSON.stringify(msgInfo));
-      setChatRooms([...chatRooms, chatRoom]);
+    const chatRoomIndex = chatRooms.findIndex(chatRoom => { return chatRoom.id === roomId });
+    if (chatRoomIndex !== -1) {
+      const newChatRooms = [...chatRooms];
+      newChatRooms[chatRoomIndex].chats.push(JSON.stringify(msgInfo));
+      setChatRooms(newChatRooms);
     };
     if (selectedRoom.id === roomId) {
       const { u, m, i, t } = msgInfo;
@@ -122,19 +123,16 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
                   <strong>{members.length}</strong>
                 </div>
                 <div className={styles.newMsgCount}>
-                  10 new messages
+                  {/* 10 new messages */}
                 </div>
               </div>
             </li>
           )
         } else {
-          console.log('gd', chatRoom)
-
           const users = members.map(member => {
             return allMembers.find(user => {return user.user_id === member});
           });
           if (!userInfo) return;
-          console.log(users);
           return (
             <li
               className={styles.chatRoom}
@@ -153,7 +151,7 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
                   <strong>{members.length}</strong>
                 </div>
                 <div className={styles.newMsgCount}>
-                  10 new messages
+                  {/* 10 new messages */}
                 </div>
               </div>
             </li>
