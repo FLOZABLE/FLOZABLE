@@ -178,7 +178,7 @@ Router.post('/sort', async (req, res) => {
 });
 
 const DAYTOSEC = 60 * 60 * 24;
-const MAX_LENGTH = 7;
+const LENGTH = 7;
 /** get ranking change of user for each period */
 Router.get('/user', async (req, res) => {
   try {
@@ -192,9 +192,17 @@ Router.get('/user', async (req, res) => {
     const rankings = [];
     const [[usersLength]] = await connection.query(`SELECT COUNT(*) FROM users`);
 
-    if (mode.toLowerCase === 'day' || mode === 'daily') {
-      const date = dateTime.toSeconds();
-      for (let i = 0; i < 7; i++) {
+    if (mode === 'day' || mode === 'daily') {
+      let dateStart = dateTime.startOf('day');
+      //this prevents from displaying future ranking
+      let diff = DateTime.now().setZone('utc').startOf('day').diff(dateStart, 'days').toObject().days;
+      console.log(diff)
+      while (diff < LENGTH) {
+        dateStart = dateStart.plus({days: -1});
+        diff += 1;
+      };
+      for (let i = 0; i < LENGTH; i++) {
+        const date = dateStart.plus({days: i}).toSeconds();
         const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [date]);
         if (dailyRanking) {
           const parsedRanking = JSON.parse(dailyRanking.ranking);
@@ -207,9 +215,16 @@ Router.get('/user', async (req, res) => {
         };
       };
     } else if (mode === 'week' || mode === 'weekly') {
-      const weekStart = dateTime.startOf('week').toSeconds();
-      for(let i = 0; i < MAX_LENGTH; i++) {
-        const date = weekStart + DAYTOSEC * i * 7;
+      let weekStart = dateTime.startOf('week');
+      //this prevents from displaying future ranking
+      let diff = DateTime.now().setZone('utc').startOf('week').diff(weekStart, 'weeks').toObject().weeks;
+      console.log(diff);
+      while (diff < LENGTH) {
+        weekStart = weekStart.plus({weeks: -1});
+        diff += 1;
+      };
+      for(let i = 0; i < LENGTH; i++) {
+        const date = weekStart.plus({weeks: i}).toSeconds();
         const [[weeklyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [date]);
         if (weeklyRanking) {
           const parsedRanking = JSON.parse(weeklyRanking.ranking);
@@ -222,9 +237,16 @@ Router.get('/user', async (req, res) => {
         };
       };
     } else {
-      const monthStart = dateTime.startOf('month');
-      for(let i = 0; i < MAX_LENGTH; i++) {
-        const date = monthStart.set({month: monthStart.month + i}).toSeconds();
+      let monthStart = dateTime.startOf('month');
+      //this prevents from displaying future ranking
+      let diff = DateTime.now().setZone('utc').startOf('month').diff(monthStart, 'months').toObject().months;
+      while (diff < LENGTH) {
+        monthStart = monthStart.plus({months: -1});
+        diff += 1;
+      };
+      console.log(diff)
+      for(let i = 0; i < LENGTH; i++) {
+        const date = monthStart.plus({months: i}).toSeconds();
         const [[monthlyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [date]);
         if (monthlyRanking) {
           const parsedRanking = JSON.parse(monthlyRanking);

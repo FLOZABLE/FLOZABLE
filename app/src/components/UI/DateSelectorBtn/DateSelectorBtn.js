@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./DateSelectorBtn.module.css";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
+import { DateTime } from "luxon";
 
 function DateSelectorBtn({
   viewDate,
@@ -9,32 +10,44 @@ function DateSelectorBtn({
   endDate,
   isCalendarOpen,
   setIsCalendarOpen,
+  viewMode
 }) {
   const [viewString, setViewString] = useState("");
+
   useEffect(() => {
-    if (!!startDate) {
-      let startUnix = new Date(startDate);
-      let endUnix = new Date(endDate);
-      let startString = `${startUnix.getMonth() + 1}/${startUnix.getDate()}`;
-      let endString = `${endUnix.getMonth() + 1}/${endUnix.getDate()}`;
-      if (startUnix.setHours(0, 0, 0, 0) === new Date().setHours(0, 0, 0, 0)) {
-        setViewString("Today");
-      } else if (
-        startUnix.setHours(0, 0, 0, 0) === endUnix.setHours(0, 0, 0, 0)
-      ) {
-        setViewString(startString);
-      } else {
-        setViewString(startString + " ~ " + endString);
+    const viewDateTime = DateTime.fromJSDate(viewDate);
+    let startMillis;
+    let stopMillis;
+    if (viewMode === 'Monthly') {
+      startMillis = viewDateTime.startOf('month').toMillis();
+      stopMillis = viewDateTime.endOf('month').toMillis();
+      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
+        setViewString('This Month');
+      }
+      else {
+        setViewString(viewDateTime.monthLong);
+      }
+    } else if (viewMode === 'Weekly') {
+      startMillis = viewDateTime.startOf('week').toMillis();
+      stopMillis = viewDateTime.endOf('week').toMillis();
+      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
+        setViewString('This Week');
+      }
+      else {
+        setViewString(viewDateTime.startOf('week').month + "/" + viewDateTime.startOf('week').day + " ~ " + viewDateTime.endOf('week').month + "/" + viewDateTime.endOf('week').day);
       }
     } else {
-      setViewString(
-        new Date(viewDate).setHours(0, 0, 0, 0) ===
-          new Date().setHours(0, 0, 0, 0)
-          ? "Today"
-          : `${viewDate.getMonth() + 1}/${viewDate.getDate()}`,
-      );
-    }
-  }, [startDate, viewDate]);
+      startMillis = viewDateTime.startOf('day').toMillis();
+      stopMillis = viewDateTime.endOf('day').toMillis();
+      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
+        setViewString('Today');
+      }
+      else {
+        setViewString(viewDateTime.month + "/" + viewDateTime.day);
+      }
+    };
+  }, [startDate, viewDate, viewMode]);
+
   return (
     <button
       className={`${styles.DateSelectorBtn} ${

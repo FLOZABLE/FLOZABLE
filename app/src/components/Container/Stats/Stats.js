@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBook, faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faCaretDown, faFire, faGlobe, faRankingStar } from '@fortawesome/free-solid-svg-icons';
 import PieChart from '../../UI/PieChart';
 import LineChart from '../../UI/LineChart';
 import BarChart from '../../UI/BarChart';
@@ -25,10 +25,6 @@ function Stats(props) {
   const { subjects } = props;
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  const toggleCalendar = () => {
-    setIsCalendarOpen(!isCalendarOpen);
-  };
-
   const [statsViewer, setStatsViewer] = useState('Daily');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [calendarLabel, setCalendarLabel] = useState('Today');
@@ -38,6 +34,7 @@ function Stats(props) {
   const [totalStudy, setTotalStudy] = useState("");
   const [focus, setFocus] = useState("");
   const [ranking, setRanking] = useState(0);
+  const [rankings, setRankings] = useState(0);
 
   //time usage pie chart
   const [timeUsagePie, setTimeUsagePie] = useState({
@@ -68,7 +65,7 @@ function Stats(props) {
       ]
   });
 
-  //ranking trend
+  //rankings trend
   const [rankingTrend, setRankingTrend] = useState({
     labels: [],
     datasets:
@@ -134,24 +131,37 @@ function Stats(props) {
 
   useEffect(() => {
     if (!!!props.userInfo) return; // wait for userInfo to be defined
-    const {user_id} = props.userInfo;
+    const { user_id } = props.userInfo;
     const viewDateTime = DateTime.fromJSDate(viewDate).toUTC().toISODate().toString();
-    fetch(`${serverOrigin}/api/ranking/user?userId=${user_id}&mode=${statsViewer}&date=${viewDateTime}`, {
+    fetch(`${serverOrigin}/api/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime}`, {
       method: 'get'
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          /* data.data.map((user, i) => {
-            if (user.user_id == props.userInfo.user_id) {
-              let studySeconds = user.total;
-              let focusSeconds = user.focus;
-              setTotalStudy(Math.floor(studySeconds / 60) + "m");
-              setFocus(Math.floor(focusSeconds / 60) + "m");
-              setRanking(i + 1);
-            }
-          }); */
-          setRanking(data.rankings);
+          //setRankings(data.rankings);
+          const rankingTrend = updateRankingTrend(data.rankings, statsViewer);
+          setRankingTrend({
+            labels: rankingTrend[0],
+            datasets:
+              [
+                {
+                  backgroundColor: "#fd7f6f",
+                  borderColor: "#fd7f6f",
+                  data: rankingTrend[1],
+                },
+              ]
+          });
+
+          /* if (statsViewer === 'Daily') {
+            const viewDateTime = DateTime.fromJSDate(viewDate);
+            const index = DateTime.now().startOf('day').diff(viewDateTime.startOf('day'), 'days');
+
+          } else if (statsViewer === 'Weekly') {
+
+          } else {
+
+          } */
         }
       })
       .catch((error) => console.error(error));
@@ -160,6 +170,7 @@ function Stats(props) {
 
   useEffect(() => {
     const labels = subjects.map((subject) => { return subject.name });
+
     const timeUsagePieData = updateTimeUsagePie(subjects, viewDate, statsViewer);
     setTimeUsagePie({
       labels: labels,
@@ -176,10 +187,12 @@ function Stats(props) {
     if (timelineRef.current) {
       setDailyTimeline(updateHourlyMatrix(subjects, timelineRef.current.offsetWidth, viewDate));
     }
+
     const hourlyHistogramData = updateHourlyHistogram(subjects, statsViewer, viewDate);
     setHourlyHistogram({
       data: hourlyHistogramData
     });
+
     const timeTrend = updateTimeTrend(subjects, statsViewer);
     setTimeTrend({
       labels: timeTrend[0],
@@ -192,10 +205,73 @@ function Stats(props) {
           },
         ]
     });
+
+    //update main viewer components
+    const viewDateTime = DateTime.fromJSDate(viewDate);
+    const { daily, weekly, monthly } = subjects;
+    if (!daily) return;
+    if (statsViewer === 'Daily') {
+      const index = viewDateTime.diff(DateTime.now().startOf('day'), 'days').toObject();
+      const { groupedTotal, grouped } = daily;
+      const actualIndex = grouped.length + index.days - 1;
+      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
+      setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
+      const focus = focusCalculator(grouped[actualIndex]);
+      const { value, type } = secondConverter(focus);
+      setFocus(`${value}${type}`);
+    } else if (statsViewer === 'Weekly') {
+      const index = viewDateTime.startOf('week').diff(DateTime.now().startOf('week'), 'weeks').toObject();
+      const { groupedTotal, grouped } = weekly;
+      const actualIndex = grouped.length + index.weeks - 1;
+      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
+      setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
+      const focus = focusCalculator(grouped[actualIndex]);
+      const { value, type } = secondConverter(focus);
+      setFocus(`${value}${type}`);
+    } else {
+      const index = viewDateTime.startOf('month').diff(DateTime.now().startOf('month'), 'months').toObject();
+      const { groupedTotal, grouped } = monthly;
+      const actualIndex = grouped.length + index.months - 1;
+      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
+      setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
+      const focus = focusCalculator(grouped[actualIndex]);
+      const { value, type } = secondConverter(focus);
+      setFocus(`${value}${type}`);
+    }
   }, [viewDate, statsViewer, subjects, timelineRef]);
 
-  useEffect(() => {
-    const rankingTrend = updateRankingTrend(ranking, statsViewer);
+  const focusCalculator = (grouped) => {
+    let focus = 0;
+    grouped.map(([start, stop]) => {
+      const duration = stop - start;
+      if (duration > focus) {
+        focus = duration;
+      };
+      return null;
+    });
+    return focus;
+  };
+
+  /**
+   * 0 = sec, 1 = min, 2 = hr
+   * @param {*} sec 
+   * @returns 
+   */
+  const secondConverter = (sec, options = ['s', 'm', 'h']) => {
+    let value = sec;
+    let type = 0;
+    if (sec >= 60 * 60) {
+      value = sec / (60 * 60).toFixed(2);
+      type = 2;
+    } else if (sec > 60) {
+      value = Math.floor(sec / 60);
+    };
+
+    return { value, type: options[type] };
+  };
+
+/*   useEffect(() => {
+    const rankingTrend = updateRankingTrend(rankings, statsViewer);
     setRankingTrend({
       labels: rankingTrend[0],
       datasets:
@@ -207,7 +283,7 @@ function Stats(props) {
           },
         ]
     });
-  }, [viewDate, statsViewer, ranking]);
+  }, [rankings]); */
 
   return (
     <div className={styles.StatsContainer}>
@@ -217,7 +293,9 @@ function Stats(props) {
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
-              <DateSelectorBtn className={styles.title} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
+              <div className={styles.dateSelectorWrapper}>
+                <DateSelectorBtn viewMode={statsViewer} className={styles.title} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
+              </div>
               <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
             </div>
             <div className={styles.container}>
@@ -225,7 +303,7 @@ function Stats(props) {
                 <p className={styles.title}>{statsViewer} Time Usage by Subjects</p>
                 <div className={styles.chartContainer}>
                   <div className={`${styles.noChart} ${timeUsagePie.datasets[0].data.reduce((accumulator, currentValue) => accumulator + currentValue, 0) ? styles.true : ''}`}>
-                    <p>No Data provided</p>
+                    <Link to="/dashboard/study">Study to see stats!</Link>
                   </div>
                   <PieChart
                     labels={timeUsagePie.labels}
@@ -267,38 +345,38 @@ function Stats(props) {
                   <div className={styles.circle}>
                     <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
                   </div>
-                  <p>Total ({calendarLabel})<br /><strong>{totalStudy}</strong></p>
+                  <p>Total<br /><strong>{totalStudy}</strong></p>
                 </div>
                 <div className={styles.smallBox}>
                   <div className={styles.circle}>
-                    <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
+                    <FontAwesomeIcon icon={faGlobe} style={{ color: "#fff", }} />
                   </div>
-                  <p>Focus ({calendarLabel}) <br /><strong>{focus}</strong></p>
+                  <p>Website Usage<br /><strong>0h</strong></p>
                 </div>
                 <div className={styles.smallBox}>
                   <div className={styles.circle}>
-                    <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
+                    <FontAwesomeIcon icon={faRankingStar} style={{ color: "#fff", }} />
                   </div>
-                  <p>Ranking ({calendarLabel})<br /><strong>#{/* {ranking} */}</strong></p>
+                  <p>Ranking<br /><strong>#{ranking}</strong></p>
                 </div>
                 <div className={styles.smallBox}>
                   <div className={styles.circle}>
-                    <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
+                    <FontAwesomeIcon icon={faFire} style={{ color: "#fff", }} />
                   </div>
-                  <p>Website Usage <br /><strong>16h</strong></p>
+                  <p>Focus <br /><strong>{focus}</strong></p>
                 </div>
               </div>
             </div>
             <div className={styles.secondContainer}>
               <div className={styles.smallBoxContainer}>
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-                  <p className={styles.title}>Today's Timeline</p>
+                  <p className={styles.title}>Timeline</p>
                   <div className={styles.chartContainer}>
                     <Timeline refT={timelineRef} dailyTimeline={dailyTimeline} />
                   </div>
                 </div>
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-                  <p className={styles.title}>Today's Hourly Histogram</p>
+                  <p className={styles.title}>Hourly Histogram</p>
                   <div className={styles.chartContainer}>
                     <BarChart
                       labels={
@@ -368,7 +446,7 @@ function Stats(props) {
             <div className={styles.thirdContainer}>
               <div className={styles.smallBoxContainer}>
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-                  <p className={styles.title}>Daily Study Time Trend</p>
+                  <p className={styles.title}>Study Time Trend</p>
                   <div className={styles.chartContainer}>
                     <LineChart
                       labels={
@@ -426,7 +504,7 @@ function Stats(props) {
                   </div>
                 </div>
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-                  <p className={styles.title}>Daily Ranking</p>
+                  <p className={styles.title}>Ranking Trend</p>
                   <div className={styles.chartContainer}>
                     <LineChart
                       labels={
