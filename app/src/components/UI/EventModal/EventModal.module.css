@@ -109,3 +109,26 @@
 .EventModal .addSubjectWrapper {
   margin-left: auto;
 }
+
+
+@media (max-width: 1400px) {
+  .EventModal {
+    width: 450px;
+    height: 450px;
+    overflow: hidden;
+  }
+
+  .EventModal .container {
+    padding-top: 10px;
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 410px;
+  }
+
+  .EventModal .title input {
+    font-size: 20px;
+  }
+}

@@ -127,3 +127,9 @@
   padding: 10px 30px;
   white-space: nowrap;
 }
+
+@media (max-width: 1400px) {
+  .BlobBtn {
+    padding: 10px 20px;
+  }
+}
