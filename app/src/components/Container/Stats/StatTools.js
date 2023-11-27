@@ -524,45 +524,20 @@ function sortRanking(ranking, userInfo) {
   return myRanking;
 }
 
-function updateRankingTrend(type, date) {
+function updateRankingTrend(rankings, type) {
   const data = [];
   const labels = [];
-
-  if (type === 'Daily') {
-
-  }
-  /* if (ranking.daily) {
-    if (type === 'Daily') {
-      const now  = new Date();
-      const datumPoint = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ranking.daily.length).setHours(0, 0, 0, 0);
-      ranking.daily.map((val, i) => {
-        const date = new Date(datumPoint + i * 60 * 60 * 1000 * 24);
-        const label = `${date.getMonth() + 1}/${date.getDate()}`;
-        data.push(val);
-        labels.push(label);
-      });
-    } else if (type === 'Weekly') {
-      const now  = new Date();
-      const datumPoint = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ranking.daily.length);
-      const datumWeekStart = new Date(datumPoint.setDate(datumPoint.getDate() - datumPoint.getDay())).setHours(0, 0, 0, 0);
-      ranking.weekly.map((val, i) => {
-        const date = new Date(datumWeekStart + i * 60 * 60 * 1000 * 24 * 7);
-        const label = `${date.getMonth() + 1}/${date.getDate()}`;
-        data.push(val);
-        labels.push(label);
-      });
-    } else {
-      const now  = new Date();
-      const datumPoint = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ranking.daily.length);
-      const datumMonthStart = new Date(datumPoint.getFullYear(), datumPoint.getMonth(), 1);
-      ranking.monthly.map((val, i) => {
-        const date = new Date(datumMonthStart.getFullYear(), datumMonthStart.getMonth() + i);
-        const label = `${date.getFullYear()}/${date.getMonth() + 1}`;
-        data.push(val);
-        labels.push(label);
-      });
-    };
-  }; */
+  
+  if (rankings) {
+    rankings.data.map(rankingData => {
+      const {date, ranking} = rankingData;
+      labels.push(DateTime.fromSeconds(date, {zone: 'utc'}).toISODate());
+      if (ranking === -1) {
+        data.push(rankings.maxLength);
+      }
+    })
+  };
+  
   return [labels, data];
 }
 

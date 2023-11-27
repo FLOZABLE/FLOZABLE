@@ -178,32 +178,37 @@ Router.post('/sort', async (req, res) => {
 });
 
 const DAYTOSEC = 60 * 60 * 24;
-
+const MAX_LENGTH = 7;
 /** get ranking change of user for each period */
 Router.get('/user', async (req, res) => {
   try {
     const {userId, date, mode} = req.query;
+    console.log(userId, date, mode);
     const dateTime = DateTime.fromISO(date, {zone: 'utc'});
     if (!userId) {
       return res.send({success: false, reason: 'userid required'})
     }
     const connection = pool.promise();
     const rankings = [];
+    const [[usersLength]] = await connection.query(`SELECT COUNT(*) FROM users`);
+
     if (mode.toLowerCase === 'day' || mode === 'daily') {
       const date = dateTime.toSeconds();
-      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [date]);
-      if (dailyRanking) {
-        const parsedRanking = JSON.parse(dailyRanking.ranking);
-        const rankingIndex = parsedRanking.findIndex(info => {
-          return info.u === userId;
-        })
-        rankings.push({date, ranking: rankingIndex});
-      } else {
-        rankings.push({date, ranking: -1});
+      for (let i = 0; i < 7; i++) {
+        const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [date]);
+        if (dailyRanking) {
+          const parsedRanking = JSON.parse(dailyRanking.ranking);
+          const rankingIndex = parsedRanking.findIndex(info => {
+            return info.u === userId;
+          })
+          rankings.push({date, ranking: rankingIndex});
+        } else {
+          rankings.push({date, ranking: -1});
+        };
       };
     } else if (mode === 'week' || mode === 'weekly') {
       const weekStart = dateTime.startOf('week').toSeconds();
-      for(let i = 0; i < 7; i++) {
+      for(let i = 0; i < MAX_LENGTH; i++) {
         const date = weekStart + DAYTOSEC * i * 7;
         const [[weeklyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [date]);
         if (weeklyRanking) {
@@ -217,10 +222,9 @@ Router.get('/user', async (req, res) => {
         };
       };
     } else {
-      const monthLength = dateTime.daysInMonth;
       const monthStart = dateTime.startOf('month');
-      for(let i = 0; i < monthLength; i++) {
-        const date = monthStart.set({month: monthStart.month + i});
+      for(let i = 0; i < MAX_LENGTH; i++) {
+        const date = monthStart.set({month: monthStart.month + i}).toSeconds();
         const [[monthlyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [date]);
         if (monthlyRanking) {
           const parsedRanking = JSON.parse(monthlyRanking);
@@ -233,7 +237,7 @@ Router.get('/user', async (req, res) => {
         };
       };
     };
-    res.send({success: true, rankings});
+    res.send({success: true, rankings: {data: rankings, maxLength: Object.values(usersLength)[0]}});
   } catch (err) {
     console.log(err);
     res.send({success: false, reason: 'err'})
