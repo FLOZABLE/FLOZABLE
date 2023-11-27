@@ -4,12 +4,64 @@
 }
 
 .CurrentChallenge{
+    text-align: center;
+}
+
+.IntroContainer {
     border-radius: 40px;
-    background-color: #e5f6ff;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     padding: 40px;
     margin-bottom: 50px;
-    width: 80%;
-    margin-left: 10%;
+    background-image: linear-gradient(to right, rgb(255, 184, 151) , #95daff);
 }
 
+.ChallengeIntroduction {
+    margin-top: 50px;
+}
+
+.ChallengeTitle {
+    text-align: center;
+}
+
+.container {
+    display: inline;
+}
+
+.container .firstHalf {
+    width: 48%;
+    text-align: center;
+    display: inline-block;
+}
+
+.container .secondHalf {
+    width: 48%;
+    text-align: center;
+    display: inline-block;
+    margin-left: 2%;
+}
+
+.profileImg {
+    display: flex;
+    background-color: #e5e6e7;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.vsTitle{
+    position: relative;
+    top: 100px;
+    font-size: 2em;
+}
+
+.firstCompare{
+    border-radius: 40px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    padding: 40px;
+    margin-bottom: 50px;
+    background-color: rgb(222, 244, 230);
+}
