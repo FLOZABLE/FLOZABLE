@@ -483,7 +483,7 @@ function Stats(props) {
                 </div>
               </div>
             </div>
-            <div className = {styles.fourthContainer}>
+            <div className={styles.fourthContainer}>
               <div className={styles.smallBoxContainer}>
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                   <p className={styles.title}>Today's Website Usage while Studying</p>
@@ -585,7 +585,7 @@ function Stats(props) {
                 </div>
               </div>
             </div>
-            <div className= {styles.faceOffContainer}>
+            <div className={styles.faceOffContainer}>
               <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                 <div>
                   <p className={styles.title}>Face-off with @____</p>
