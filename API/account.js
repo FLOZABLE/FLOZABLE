@@ -574,6 +574,17 @@ Router.post('/challenge-request', async (req, res) => {
       io.to(targetId).emit('notification', notification);
 
       redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
+
+      const connection = pool.promise();
+
+      const challengeInfo = {
+        id: generateRandomId(10),
+        first_user_id: targetId, //the host
+        second_user_id: userId, //the recipient
+        datum_point: Math.floor(new Date().getTime() / 1000),
+      };
+      const insertSubject = await connection.query(`INSERT INTO challenges SET ?`, challengeInfo);
+
       res.send({ success: true, msg: `It's on!` });
 
     } catch (error) {
@@ -597,6 +608,28 @@ Router.post('/challenge-request', async (req, res) => {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });
     };
+  }));
+});
+
+
+Router.post('/bring-challenges', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const { searchId, searchUser } = req.body; //search by challenge id or by user
+      const connection = pool.promise();
+      if (!!searchId){ //searching by id
+        const [[challengeInfo]] = await connection.query(`SELECT first_user_id, second_user_id, datum_point FROM challenges WHERE id = ?`, [searchId]);
+        console.log(challengeInfo);
+        res.send({success: true, data: challengeInfo});
+      }
+      else{ //by user
+        const [[challengeInfo]] = await connection.query(`SELECT id, datum_point FROM challenges WHERE first_user_id = ? OR second_user_id = ?`, [searchUser, searchUser]);
+        res.send({success: true, data: challengeInfo});
+      }
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'An Error Occured' });
+    }
   }));
 });
 
