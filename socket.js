@@ -148,6 +148,7 @@ connection.on('connection', (socket) => {
       const subjects = await subjectsCache(userId);
       const groups = await groupCache(userId);
       const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId);
+      console.log('gg',subject)
       if (subject) {
         if (groups.length) {
           io.to(groups).emit('studying', userId, groups);
@@ -159,7 +160,7 @@ connection.on('connection', (socket) => {
         const push = await redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
         redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
         subject.timeline_sum += start;
-        redisClient.hSet(`user:${userId}`, `subject:${id}`, JSON.stringify(subject));
+        redisClient.hSet(`user:${userId}:subject`, id, JSON.stringify(subject));
 
         //total timer
         /* const timerInfo = await timerCache(userId, now);
