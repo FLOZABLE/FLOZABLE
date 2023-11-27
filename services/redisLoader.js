@@ -56,9 +56,10 @@ async function groupCache(userId) {
 
 async function subjectsCache(userId, cache = true, opt = ['id', 'name', 'icon', 'color', 'datum_point', 'timeline_sum']) {
   try {
-    const userInfo = await redisClient.hGetAll(`user:${userId}`);
-    let subjects;
-    if (userInfo) {
+    const subjects = await {...redisClient.hGetAll(`user:${userId}:subjects`)};
+    console.log('sub', subjects)
+    //let subjects;
+    if (subjects) {
       subjects = Object.keys(userInfo).reduce((filteredSubjects, info, i) => {
         if (info.includes('subject:')) {
           const subjectInfo = JSON.parse(userInfo[info]);
@@ -272,6 +273,24 @@ async function NotificationCache(userId, type = -1) {
   return selectedNotifications;
 };
 
+async function userCache(userId) {
+  let userInfo = await redisClient.hGetAll(`user:${userId}`);
+  if (!userInfo) {
+    [[userInfo]] =  await connection.query("SELECT name, email, groups, friends FROM users WHERE user_id = ?", [userId]);
+    if (userInfo) {
+      const {name, email, groups, friends} = userInfo;
+      redisClient.hSet(`user:${userId}`, 'name', name);
+      redisClient.hSet(`user:${userId}`, 'email', email);
+      redisClient.hSet(`user:${userId}`, 'groups', groups);
+      redisClient.hSet(`user:${userId}`, 'friends', friends);
+    } else {
+      console.log(userInfo);
+    }
+  } else {
+    console.log({...userInfo});
+  };
+}
+
 module.exports = {
   flushRedis,
   groupsLoader,
@@ -287,5 +306,6 @@ module.exports = {
   msgQueue,
   usersCache,
   dmRoomMembersLoader,
-  dmRoomsCache
+  dmRoomsCache,
+  userCache
 }
