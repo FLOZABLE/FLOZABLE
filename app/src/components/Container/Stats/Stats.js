@@ -135,7 +135,7 @@ function Stats(props) {
   useEffect(() => {
     if (!!!props.userInfo) return; // wait for userInfo to be defined
     const {user_id} = props.userInfo;
-    const viewDateTime = DateTime.fromJSDate(viewDate).toUTC().toISODate();
+    const viewDateTime = DateTime.fromJSDate(viewDate).toUTC().toISODate().toString();
     fetch(`${serverOrigin}/api/ranking/user?userId=${user_id}&mode=${statsViewer}&date=${viewDateTime}`, {
       method: 'get'
     })
