@@ -224,9 +224,9 @@ const { rankingManager } = require("./services/rankingUpdate");
 //createChatroomsTable();
 //createChallengesTable();
 //groupsChatRoomsGeneration();
-/* createDailyRankingTable();
-createWeeklyRankingTable();
-createMonthlyRankingTable(); */
+//createDailyRankingTable();
+//createWeeklyRankingTable();
+//createMonthlyRankingTable();
 
 rankingManager();
 dmRoomMembersLoader();

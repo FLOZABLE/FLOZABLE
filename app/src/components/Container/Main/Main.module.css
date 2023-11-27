@@ -129,3 +129,27 @@
     font-size: 17px;
   }
 }
+
+@media (max-height: 700px) {
+  .MainContainer .box .name {
+    font-size: 25px;
+  }
+
+  .MainContainer .box .inner {
+    padding: 25px;
+  }
+
+  .MainContainer .box .toStatsBtn {
+    height: fit-content;
+    margin-top: 10px;
+    padding: 10px 40px;
+  }
+
+  .MainContainer .box#welcome img {
+    display: none;
+  }
+  
+  .MainContainer .box#welcome .report {
+    font-size: 17px;
+  }
+}

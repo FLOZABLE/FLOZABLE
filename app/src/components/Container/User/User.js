@@ -197,26 +197,36 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
     setViewDate(date);
   };
 
-  /* useEffect(() => {
-    const viewTime = DateTime.fromJSDate(viewDate);
 
-    let startTime;
-    let stopTime;
-    if (statsViewer == "Daily") {
-      startTime = viewTime.startOf('day').toMillis();
-      stopTime = viewTime.endOf('day').toMillis();
-    }
-    else if (statsViewer == "Weekly") {
-      startTime = viewTime.startOf('week').toMillis();
-      stopTime = viewTime.endOf('week').toMillis();
-    }
-    else {
-      startTime = viewTime.startOf('month').toMillis();
-      stopTime = viewTime.endOf('month').toMillis();
-    }
-    setStartDate(startTime);
-    setEndDate(stopTime);
-  }, [viewDate, statsViewer]); */
+  useEffect(() => {
+    if (!!!userInfo) return; // wait for userInfo to be defined
+    const { user_id } = userInfo;
+    const viewDateTime = DateTime.fromJSDate(viewDate).toUTC().toISODate().toString();
+    fetch(`${serverOrigin}/api/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime}`, {
+      method: 'get'
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          //setRankings(data.rankings);
+          const rankingTrend = updateRankingTrend(data.rankings, viewDate);
+          setRankingTrend({
+            labels: rankingTrend[0],
+            datasets:
+              [
+                {
+                  backgroundColor: "#fd7f6f",
+                  borderColor: "#fd7f6f",
+                  data: rankingTrend[1],
+                },
+              ]
+          });
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [userInfo, statsViewer, viewDate]);
+
+
 
   useEffect(() => {
     const timeTrend = updateTimeTrend(userSubjects, statsViewer);
@@ -228,18 +238,6 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
             backgroundColor: "#fd7f6f",
             borderColor: "#fd7f6f",
             data: timeTrend[1],
-          },
-        ]
-    });
-    const rankingTrend = updateRankingTrend(rankings, statsViewer);
-    setRankingTrend({
-      labels: rankingTrend[0],
-      datasets:
-        [
-          {
-            backgroundColor: "#fd7f6f",
-            borderColor: "#fd7f6f",
-            data: rankingTrend[1],
           },
         ]
     });
@@ -343,9 +341,9 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
             <div className={styles.row}>
               <div className={styles.chartContainer}>
                 <LineChart
-                  labels={timeTrend.labels}
+                  labels={rankingTrend.labels}
 
-                  datasets={timeTrend.datasets}
+                  datasets={rankingTrend.datasets}
 
                   options={lineChartOption}
                 />
