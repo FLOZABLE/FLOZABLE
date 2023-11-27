@@ -77,7 +77,7 @@ Router.post("/start", async (req, res) => {
           const subjectInfo = JSON.parse(userInfo[info]);
           const now = Math.floor(new Date().getTime() / 1000);
           const start = now - subjectInfo.datum_point;
-          const push = await redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${start}]`);
+          const push = await redisClient.rPush(`user:${userId}:subject:${subjectId}:timeline`, `[${start},${start}]`);
           redisClient.hSet(`user:${userId}`, `ActiveSubject`, JSON.stringify(subjectInfo));
           const prevTimer = await redisClient.hGet(`user:${userId}`, 'timerInfo');
           if (prevTimer) {
@@ -181,7 +181,7 @@ Router.post('/bring-subjects', async (req, res) => {
       for (const subject of subjectsInfo) {
         const redisSubject = { ...subject };
         delete redisSubject.timeline;
-        await redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
+        await redisClient.hSet(`user:${userId}:subjects`, subject.id, JSON.stringify(redisSubject));
         //this code adds [at the start and ] at the end
         let prevTimeline = subject.timeline === "" ? [] :  JSON.parse(subject.timeline.replace(/^/,"[").replace(/$/,"]")); //wrapping the string with "[]"
         const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
