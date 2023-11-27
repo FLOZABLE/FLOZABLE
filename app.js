@@ -214,7 +214,7 @@ const {createBots, addId, deleteBots, botManager, createGroups, randomFriend} = 
 //addId();
 //createBots(0, 100);
 
-const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration} = require('./query');
+const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable} = require('./query');
 const { rankingManager } = require("./services/rankingUpdate");
 
 //createUsersTable();
@@ -222,6 +222,7 @@ const { rankingManager } = require("./services/rankingUpdate");
 //createGroupsTable();
 //createPlansTable();
 //createChatroomsTable();
+//createChallengesTable();
 //groupsChatRoomsGeneration();
 /* createDailyRankingTable();
 createWeeklyRankingTable();

@@ -8,7 +8,7 @@ const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
 const { hashing, autoSignin, generateRandomId, googleOauth2client } = require("../tool");
-const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache } = require('../services/redisLoader');
+const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache } = require('../services/redisLoader');
 const upload = multer();
 
 Router.post('/accountinfo', async (req, res) => {
@@ -17,6 +17,7 @@ Router.post('/accountinfo', async (req, res) => {
     const connection = pool.promise();
     const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups, activity_setting, friends FROM users WHERE user_id = ?", [userId]);
     const notifications = await NotificationCache(userId);
+    usersCache(userId);
     await redisClient.hSet(`user:${userId}`, `groups`, userInfo.groups);
     res.send({ success: true, userInfo: userInfo, notifications });
   }))

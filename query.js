@@ -136,6 +136,18 @@ function createMonthlyRankingTable() {
   `);
 };
 
+function createChallengesTable() {
+  const connection = pool.promise();
+  connection.query(`
+  CREATE TABLE challenges (
+    id VARCHAR(10),
+    first_user_id VARCHAR(20),
+    second_user_id VARCHAR(20),
+    datum_point INT
+  );
+  `);
+}
+
 async function groupsChatRoomsGeneration() {
   const connection = pool.promise();
   const [groups] = await connection.query(`SELECT group_id FROM groups`);
@@ -147,4 +159,4 @@ async function groupsChatRoomsGeneration() {
   })
 }
 
-module.exports = {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration};
+module.exports = {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, groupsChatRoomsGeneration};

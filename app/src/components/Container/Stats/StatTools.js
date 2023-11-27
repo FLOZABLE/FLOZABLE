@@ -524,10 +524,14 @@ function sortRanking(ranking, userInfo) {
   return myRanking;
 }
 
-function updateRankingTrend(ranking, type) {
+function updateRankingTrend(type, date) {
   const data = [];
   const labels = [];
-  if (ranking.daily) {
+
+  if (type === 'Daily') {
+
+  }
+  /* if (ranking.daily) {
     if (type === 'Daily') {
       const now  = new Date();
       const datumPoint = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ranking.daily.length).setHours(0, 0, 0, 0);
@@ -558,7 +562,7 @@ function updateRankingTrend(ranking, type) {
         labels.push(label);
       });
     };
-  };
+  }; */
   return [labels, data];
 }
 
