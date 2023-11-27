@@ -8,38 +8,41 @@ async function rankingSort() {
   if (now.weekday === 1 && now.day === 1) {
     updateWeeklyRanking();
   } */
-  const now = DateTime.utc().set({hour: 0, minute: 0, millisecond: 0}).toSeconds();
+  const now = DateTime.utc().set({hour: 0, minute: 0, second: 0, millisecond: 0}).toSeconds();
   const users = await redisClient.sMembers(`allMembers`);
+  console.log(users)
   await updateDailyRanking(now, users);
   if (now.weekday === 1) {
     updateWeeklyRanking(now, users);
-  }
+  };
   if (now.day === 1) {
     updateMonthlyRanking(now, users);
-  }
+    redisClient.del(`allMembers`);
+  };
 }
 
 async function updateDailyRanking(now, users) {
   try {
-    const userPromises = users.map(async(userId) => {
+    const filteredUsers = [];
+    await Promise.all(users.map(async(userId) => {
       const todayTotal = await redisClient.get(`user:${userId}:dayTotal`);
       //update week total, month total
       if (todayTotal) {
+        filteredUsers.push({u: userId, t: todayTotal});
         await redisClient.incrBy(`user:${userId}:weekTotal`, todayTotal);
         await redisClient.incrBy(`user:${userId}:monthTotal`, todayTotal);
       };
       redisClient.del(`user:${userId}:dayTotal`);
-      return {u: userId, t: todayTotal};
-    });
+      return null;
+    }));
 
-    const userTime = await Promise.all(userPromises);
-    const ranking = userTime.sort((a, b) => b.t - a.t);
+    const ranking = filteredUsers.sort((a, b) => b.t - a.t);
     const stringlifiedRanking = JSON.stringify(ranking);
     const connection = pool.promise();
     const insertInfo = {
       date: now,
       ranking: stringlifiedRanking
-    }
+    };
     connection.query(`INSERT INTO dailyRanking SET ?`, insertInfo);
   } catch (err) {
     console.log(err);
@@ -48,14 +51,17 @@ async function updateDailyRanking(now, users) {
 
 async function updateWeeklyRanking(now, users) {
   try {
-    const userPromises = users.map(async(userId) => {
+    const filteredUsers = [];
+    await Promise.all(users.map(async(userId) => {
       const thisWewekTotal = await redisClient.get(`user:${userId}:weekTotal`);
+      if (thisWewekTotal) {
+        filteredUsers.push({u: userId, t: thisWewekTotal});
+      };
       redisClient.del(`user:${userId}:weekTotal`);
-      return {u: userId, t: thisWewekTotal};
-    });
+      return null;
+    }));
 
-    const userTime = await Promise.all(userPromises);
-    const ranking = userTime.sort((a, b) => b.t - a.t);
+    const ranking = filteredUsers.sort((a, b) => b.t - a.t);
     const stringlifiedRanking = JSON.stringify(ranking);
     const connection = pool.promise();
     const insertInfo = {
@@ -70,14 +76,17 @@ async function updateWeeklyRanking(now, users) {
 
 async function updateMonthlyRanking(now, users) {
   try {
-    const userPromises = users.map(async(userId) => {
+    const filteredUsers = [];
+    await Promise.all(users.map(async(userId) => {
       const thisMonthTotal = await redisClient.get(`user:${userId}:monthTotal`);
+      if (thisMonthTotal) {
+        filteredUsers.push({u: userId, t: thisMonthTotal});
+      }
       redisClient.del(`user:${userId}:monthTotal`);
-      return {u: userId, t: thisMonthTotal};
-    });
+      return null;
+    }));
 
-    const userTime = await Promise.all(userPromises);
-    const ranking = userTime.sort((a, b) => b.t - a.t);
+    const ranking = filteredUsers.sort((a, b) => b.t - a.t);
     const stringlifiedRanking = JSON.stringify(ranking);
     const connection = pool.promise();
     const insertInfo = {
@@ -89,6 +98,8 @@ async function updateMonthlyRanking(now, users) {
     console.log(err);
   };
 };
+
+//rankingSort();
 
 /* function rankingManager() {
   //sec(optional), min, hr, day of month, month, day of week
