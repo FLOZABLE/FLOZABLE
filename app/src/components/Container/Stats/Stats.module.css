@@ -254,3 +254,31 @@
   width: 70%;
   margin-left: 15%;
 }
+
+
+@media (max-width: 1400px) {
+  .StatsContainer .container p.title {
+    font-size: 25px;
+    padding: 0px;
+  }
+  .StatsContainer .boxes .smallBox {
+    padding: 10px;
+    font-size: 17px;
+  }
+
+  .StatsContainer .boxes .smallBox p {
+    padding: 0px;
+    font-size: 17px;
+  }
+
+  .StatsContainer .boxes .box >div {
+    padding: 10px;
+  }
+  .StatsContainer .boxes .box >div .smallBox {
+    margin: 10px;
+  }
+  
+  .StatsContainer .smallBox.chartsBox .title {
+    font-size: 23px;
+  }
+}

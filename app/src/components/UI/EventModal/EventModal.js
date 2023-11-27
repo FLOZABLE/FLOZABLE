@@ -209,7 +209,7 @@ function EventModal({
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
-      <div className={styles.container}>
+      <div className={`${styles.container} customScroll`}>
         <div className={`${styles.wrapper} ${styles.title}`}>
           <div className={styles.iconWrapper}></div>
           <div className={styles.contentWrapper}>

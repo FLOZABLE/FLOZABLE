@@ -68,3 +68,9 @@
   color: #fff;
   background: var(--pink);
 }
+
+@media (max-width: 1400px) {
+  .CustomInput .formField input {
+    font-size: 20px;
+  }
+}
