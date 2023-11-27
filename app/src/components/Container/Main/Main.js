@@ -134,6 +134,7 @@ function Main({
     console.log(mainRef.current);
     if (!mainRef.current) return;
     const width = mainRef.current.offsetWidth;
+    const height = mainRef.current.offsetHeight;
     if (localStorage.welcome) {
       updatePos('welcome', JSON.parse(localStorage.welcome))
     } else if (width >= 1760 ){

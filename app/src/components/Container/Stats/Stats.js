@@ -241,6 +241,7 @@ function Stats(props) {
   }, [viewDate, statsViewer, subjects, timelineRef]);
 
   const focusCalculator = (grouped) => {
+    if (!grouped) return 0;
     let focus = 0;
     grouped.map(([start, stop]) => {
       const duration = stop - start;
@@ -258,7 +259,7 @@ function Stats(props) {
    * @returns 
    */
   const secondConverter = (sec, options = ['s', 'm', 'h']) => {
-    let value = sec;
+    let value = sec ? sec : 0;
     let type = 0;
     if (sec >= 60 * 60) {
       value = sec / (60 * 60).toFixed(2);

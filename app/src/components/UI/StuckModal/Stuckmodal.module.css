@@ -24,3 +24,17 @@
   color: #fff;
   font-weight: 700;
 }
+
+
+@media (max-width: 1400px) {
+  .StuckModalContainer {
+    height: 60px;
+    width: 60px;
+    bottom: 130px;
+    right: 70px;
+  }
+  .StuckModalContainer button p {
+    font-size: 20px;
+    font-weight: 700;
+  }
+}
