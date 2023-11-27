@@ -51,7 +51,6 @@ function App() {
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [isNotificationModal, setIsNotificationModal] = useState(false);
 
-  const [addSubjectResponse, setAddSubjectResponse] = useState(null);
   const [subject, setSubject] = useState("0000000000");
 
   const toggleSidebar = () => {
@@ -209,14 +208,6 @@ function App() {
         setSubjects={setSubjects}
         setSubject={setSubject}
       />
-      {/* <ChatModal
-        setIsChatModal={setIsChatModal}
-        isChatModal={isChatModal}
-        socket={socket}
-        userInfo={userInfo}
-        allMembers={allMembers}
-        myGroups={myGroups}
-      /> */}
       <ChatsModal
         setIsChatModal={setIsChatModal}
         isChatModal={isChatModal}
