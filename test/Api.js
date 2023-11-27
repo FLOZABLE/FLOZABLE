@@ -45,7 +45,7 @@ Router.post('/information/bring-subjects', async (req, res) => {
     await redisClient.hSet(`user:${tester.id}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
     let prevTimeline = JSON.parse(subject.timeline);
     prevTimeline = prevTimeline.map(str => JSON.parse(str)).flat();
-    const todayTimeline = (await redisClient.lRange(`user:${tester.id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
+    const todayTimeline = (await redisClient.lRange(`user:${tester.id}:subject:${subject.id}:timeline`, 0, -1)).map(JSON.parse);
     subject.timeline = prevTimeline.concat(todayTimeline);
   }
   redisClient.hSet(`user:${tester.id}`, `ActiveSubject`, '0');
