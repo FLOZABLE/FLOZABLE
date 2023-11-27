@@ -14,7 +14,7 @@ import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { colorsList } from '../../../constant';
 import styles from './Stats.module.css';
 import { plugins } from 'chart.js';
-import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, sortRanking, updateRankingTrend } from './StatTools';
+import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, updateRankingTrend } from './StatTools';
 import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
 import { DateTime } from 'luxon';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
@@ -23,8 +23,6 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Stats(props) {
   const { subjects } = props;
-  const today = new Date().setHours(0, 0, 0, 0);
-
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const toggleCalendar = () => {
@@ -136,14 +134,15 @@ function Stats(props) {
 
   useEffect(() => {
     if (!!!props.userInfo) return; // wait for userInfo to be defined
-    fetch(`${serverOrigin}/api/ranking/sort`, {
-      method: 'post',
-      body: JSON.stringify({ startDate, endDate })
+    const {user_id} = props.userInfo;
+    const viewDateTime = DateTime.fromJSDate(viewDate).toUTC().toISODate();
+    fetch(`${serverOrigin}/api/ranking/user?userId=${user_id}&mode=${statsViewer}&date=${viewDateTime}`, {
+      method: 'get'
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          data.data.map((user, i) => {
+          /* data.data.map((user, i) => {
             if (user.user_id == props.userInfo.user_id) {
               let studySeconds = user.total;
               let focusSeconds = user.focus;
@@ -151,11 +150,12 @@ function Stats(props) {
               setFocus(Math.floor(focusSeconds / 60) + "m");
               setRanking(i + 1);
             }
-          });
+          }); */
+          setRanking(data.rankings);
         }
       })
       .catch((error) => console.error(error));
-  }, [props.userInfo, startDate]);
+  }, [props.userInfo, startDate, statsViewer]);
 
 
   useEffect(() => {
@@ -192,6 +192,9 @@ function Stats(props) {
           },
         ]
     });
+  }, [viewDate, statsViewer, subjects, timelineRef]);
+
+  useEffect(() => {
     const rankingTrend = updateRankingTrend(ranking, statsViewer);
     setRankingTrend({
       labels: rankingTrend[0],
@@ -204,7 +207,7 @@ function Stats(props) {
           },
         ]
     });
-  }, [viewDate, statsViewer, subjects, timelineRef]);
+  }, [viewDate, statsViewer, ranking]);
 
   return (
     <div className={styles.StatsContainer}>
@@ -276,7 +279,7 @@ function Stats(props) {
                   <div className={styles.circle}>
                     <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
                   </div>
-                  <p>Ranking ({calendarLabel})<br /><strong>#{ranking}</strong></p>
+                  <p>Ranking ({calendarLabel})<br /><strong>#{/* {ranking} */}</strong></p>
                 </div>
                 <div className={styles.smallBox}>
                   <div className={styles.circle}>
