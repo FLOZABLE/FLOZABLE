@@ -621,12 +621,14 @@ Router.post('/bring-challenges', async (req, res) => {
       const connection = pool.promise();
       if (!!searchId){ //searching by id
         const [[challengeInfo]] = await connection.query(`SELECT first_user_id, second_user_id, datum_point FROM challenges WHERE id = ?`, [searchId]);
-        console.log(challengeInfo);
-        res.send({success: true, data: challengeInfo});
+        const [userNames] = await connection.query(`SELECT name FROM users WHERE user_id = ? OR user_id = ?`, [challengeInfo.first_user_id, challengeInfo.second_user_id]);
+        console.log(userNames);
+        res.send({success: true, data: challengeInfo, names: userNames});
       }
       else{ //by user
         const [[challengeInfo]] = await connection.query(`SELECT id, datum_point FROM challenges WHERE first_user_id = ? OR second_user_id = ?`, [searchUser, searchUser]);
-        res.send({success: true, data: challengeInfo});
+        const [userNames] = await connection.query(`SELECT name FROM users WHERE user_id = ? OR user_id = ?`, [searchUser, searchUser])
+        res.send({success: true, data: challengeInfo, names: userNames});
       }
     } catch (error) {
       console.log(error)
@@ -634,7 +636,6 @@ Router.post('/bring-challenges', async (req, res) => {
     }
   }));
 });
-
 const oauth2client = (refresh_token) => {
   const auth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
