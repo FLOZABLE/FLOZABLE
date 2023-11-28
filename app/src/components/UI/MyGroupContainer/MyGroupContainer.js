@@ -1,54 +1,83 @@
 import { SwiperSlide } from "swiper/react";
 import styles from "./MyGroupContainer.module.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StudyPerson } from "../../../utils/svgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullhorn, faComments, faGear, faRankingStar } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import MemberEl from "../MemberEl/MemberEl";
+import MembersContainer from "../MembersContainer/MembersContainer";
 
-function MyGroupContainer({ group, isFocus, studyingUsers }) {
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
+function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
   const [slideContent, setSlideContent] = useState(null);
+
+  const bringMembersInfo = useCallback((groupId) => {
+    fetch(`${serverOrigin}/api/groups/members?groupId=${groupId}`, {
+      method: "get", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log('gd', data)
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [])
 
   useEffect(() => {
     if (!group) return;
     const { group_id, average_hr, color, date, explanation, font, goal_hr, leader, max_member, name, visibility, tags, members, likes } = group;
     const tagsArr = JSON.parse(tags);
-    const membersArr = members === "" ? [] : members.split(",");
+    const memberIdsArr = members === "" ? [] : members.split(",");
+    const membersInfo = [];
+    /* if (isFocus) {
+      bringMembersInfo(group_id);
+    } else {
+      memberIdsArr.map(member => {
+        membersInfo.push({ user_id: member });
+      })
+    } */
     const likesArr = likes === "" ? [] : likes.split(",");
+    console.log(isFocus, name)
     setSlideContent(
       <div className={styles.inner}>
-      <div className={styles.name}>
-        <Link to="/dashboard/study">{name}</Link>
-      </div>
-      <div className={styles.information}>
-        <div className={styles.header}>
-          <ul className={styles.status}>
-            <li>
-              <StudyPerson
-                opt1={"#fff"}
-                opt2={"#fff"}
-                width={"40px"}
-                height={"40px"}
-              />
-              <p>
-                {studyingUsers.length}
-                /{membersArr.length}
-              </p>
-            </li>
-            <li>
-              <FontAwesomeIcon icon={faBullhorn} />
-            </li>
-            <li>
-              <FontAwesomeIcon icon={faRankingStar} />
-            </li>
-          </ul>
-          <div className={styles.right}>
-            <FontAwesomeIcon icon={faGear} />
-          </div>
+        <div className={styles.name}>
+          <Link to="/dashboard/study">{name}</Link>
         </div>
-        <div className={styles.membersContainer}>
-          <div className={`${styles.members} customScroll`}>
-            {/* {membersArr.map((userId, j) => {
+        <div className={styles.information}>
+          <div className={styles.header}>
+            <ul className={styles.status}>
+              <li>
+                <StudyPerson
+                  opt1={"#fff"}
+                  opt2={"#fff"}
+                  width={"40px"}
+                  height={"40px"}
+                />
+                <p>
+                  {studyingUsers.length}
+                  /{membersInfo.length}
+                </p>
+              </li>
+              <li>
+                <FontAwesomeIcon icon={faBullhorn} />
+              </li>
+              <li>
+                <FontAwesomeIcon icon={faRankingStar} />
+              </li>
+            </ul>
+            <div className={styles.right}>
+              <FontAwesomeIcon icon={faGear} />
+            </div>
+          </div>
+          <div className={styles.membersContainer}>
+            <div className={`${styles.members} customScroll`}>
+              {/* {membersArr.map((userId, j) => {
                 if (userId === userInfo.user_id) {
                   return (
                     <MyEl
@@ -63,30 +92,39 @@ function MyGroupContainer({ group, isFocus, studyingUsers }) {
                 } else {
                   return (
                     <MemberEl
+                      isFocus={isFocus}
                       memberInfo={memberInfo}
                       key={j}
                       k={j}
                       toggleTimer={toggleTimer}
-                      socket={socket} 
+                      socket={socket}
                       usersTracks={[]}
                     />
                   );
                 }
               })} */}
+              <MembersContainer 
+               socket={socket}
+               membersIdArr={memberIdsArr}
+              isFocus={isFocus}
+              userInfo={userInfo}
+              groupInfo={group}
+              />
+            </div>
           </div>
         </div>
+        <div className={styles.buttons}>
+          <Link to="/dashboard/study">
+            <button>Go to Group</button>
+          </Link>
+          <button>
+            <FontAwesomeIcon icon={faComments} />
+          </button>
+        </div>
       </div>
-      <div className={styles.buttons}>
-        <Link to="/dashboard/study">
-          <button>Go to Group</button>
-        </Link>
-        <button>
-          <FontAwesomeIcon icon={faComments} />
-        </button>
-      </div>
-    </div>
     )
   }, [group, isFocus]);
+
   return (
     <div className={styles.MyGroupContainer}>
       {slideContent}
