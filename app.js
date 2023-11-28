@@ -203,7 +203,6 @@ const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubj
 //generateOtherSubject(process.env.TESTER_ID);
 //flushRedis();
 //groupsLoader();
-require('./videoServer');
 require('./Logger');
 require('./services/timerUpdate');
 const {createBots, addId, deleteBots, botManager, createGroups, randomFriend} = require('./Bot/Bot');

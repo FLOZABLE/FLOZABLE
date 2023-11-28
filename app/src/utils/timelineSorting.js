@@ -16,7 +16,6 @@
 import { DateTime } from "luxon";
 
 function timelineSort(subjects) {
-  
   let firstDatumPoint = Math.floor(new Date().getTime() / 1000);
   subjects.map(({ datum_point }) => {
     //this code compares the current firstdatumPoint and current looped subject's datumpoint and updtate the firstDatunmPoint with
@@ -38,11 +37,9 @@ function timelineSort(subjects) {
       return [startTime + WEEKTOSEC, stopTime + WEEKTOSEC];
     });
     const [monthlySorted, monthlyTotal] = timelineSorter(subject, 'monthly', firstDatumPoint, (startTime, stopTime) => {
-      const originalStart = DateTime.fromSeconds(startTime);
-      const originalStop = DateTime.fromSeconds(stopTime);
-      startTime = DateTime.fromObject({ year: originalStart.year, month: originalStart.month + 1 });
-      stopTime = DateTime.fromObject({ year: originalStop.year, month: originalStop.month + 1 });
-      return [startTime, stopTime];
+      const newStart = DateTime.fromSeconds(startTime).plus({months: 1}).toSeconds();
+      const newStop = DateTime.fromSeconds(stopTime).plus({months: 1}).toSeconds();
+      return [newStart, newStop];
     });
 
     subject.daily = {};
@@ -117,13 +114,13 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
     expectedLength = (now - formattedFirstDatum) / DATETOSEC + 1;
   } else if (option === 'weekly') {
     startTime = DateTime.fromSeconds(datum_point).startOf('week').toSeconds();
-    stopTime = DateTime.fromSeconds(datum_point).endOf('week').toSeconds();
+    stopTime = Math.floor(DateTime.fromSeconds(datum_point).endOf('week').toSeconds());
     const formattedFirstDatum = DateTime.fromSeconds(firstDatumPoint).startOf('week');
     indexDiff = (startTime - formattedFirstDatum.toSeconds()) / (WEEKTOSEC);
     expectedLength = DateTime.now().startOf('week').diff(formattedFirstDatum, 'week').weeks + 1;
   } else {
     startTime = DateTime.fromSeconds(datum_point).startOf('month').toSeconds();
-    stopTime = DateTime.fromSeconds(datum_point).endOf('month').toSeconds();
+    stopTime = Math.floor(DateTime.fromSeconds(datum_point).endOf('month').toSeconds());
     const formattedFirstDatum = DateTime.fromSeconds(firstDatumPoint).startOf('month');
     indexDiff = DateTime.fromSeconds(datum_point).startOf('month').diff(formattedFirstDatum, 'month').toObject().months;
     expectedLength = DateTime.now().startOf('month').diff(formattedFirstDatum, 'month').months + 1;
