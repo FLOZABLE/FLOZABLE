@@ -56,39 +56,38 @@ async function groupCache(userId) {
 
 async function subjectsCache(userId, cache = true, opt = ['id', 'name', 'icon', 'color', 'datum_point', 'timeline_sum']) {
   try {
-    const isCached = await redisClient.exists(`user:${userId}:subjects`);
-    if (isCached) {
-      try {
-        const subjectsObj = { ...await redisClient.hGetAll(`user:${userId}:subjects`) };
-        const subjectArr = Object.keys(subjectsObj).map((id) => {
-          return {...JSON.parse(subjectsObj[id]), id};
-        }
-        );
-        return subjectArr;
-      } catch (err) {
-        console.log(err);
-      };
-    } else {
+    const userInfo = await redisClient.hGetAll(`user:${userId}`);
+    let subjects;
+    if (userInfo) {
+      subjects = Object.keys(userInfo).reduce((filteredSubjects, info, i) => {
+        if (info.includes('subject:')) {
+          const subjectInfo = JSON.parse(userInfo[info]);
+          filteredSubjects.push(subjectInfo);
+        };
+        return filteredSubjects;
+      }, []);
+    };
+    if (!subjects.length) {
+      //no cache
       try {
         const connection = pool.promise();
-        const [subjects] = await connection.query(`SELECT ${opt.join(', ')} FROM subjects where user_id = ?`, [userId]);
-        subjects.map(async (subject) => {
+        [subjects] = await connection.query(`SELECT ${opt.join(', ')} FROM subjects where user_id = ?`, [userId]);
+        Promise.all(subjects.map(async (subject) => {
           /* 
           {\"id\":\"gQNfNmQnGR\",\"name\":\"gd\",\"icon\":\"Article\",\"color\":\"#D2DAFF\",\"datum_point\":1698958888}
           */
           const redisSubject = { ...subject };
           delete redisSubject.timeline;
-          delete redisSubject.id;
-
           if (cache) {
-            redisClient.hSet(`user:${userId}:subjects`, subject.id, JSON.stringify(redisSubject));
+            await redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
           };
-        });
-        return subjects
+        }))
       } catch (err) {
         console.log(err);
       };
     };
+
+    return subjects;
   } catch (err) {
     console.log(err);
   }
@@ -138,12 +137,12 @@ async function dmRoomsCache(userId) {
 }
  */
 
-async function dmRoomMembersLoader() {
+async function dmRoomMembersLoader () {
   try {
     const connection = pool.promise();
     const [dmRooms] = await connection.query(`SELECT id, members FROM chatrooms WHERE type = 1`);
     dmRooms.map(room => {
-      const { members, id } = room;
+      const {members, id} = room;
       if (members !== "") {
         const parsedMembers = members.split(",");
         redisClient.sAdd(`room:${id}`, parsedMembers)
@@ -163,7 +162,7 @@ async function chatRoomsCache(userId) {
     });
     const dmRoomPromises = dmRooms.map(async (dmRoom) => {
       const members = await redisClient.sMembers(`room:${dmRoom}`);
-      return { id: dmRoom, members, type: 1 };
+      return {id: dmRoom, members, type: 1};
     });
     const dmRoomsInfo = await Promise.all(dmRoomPromises);
     const rooms = groupRooms.concat(dmRoomsInfo);
@@ -273,24 +272,6 @@ async function NotificationCache(userId, type = -1) {
   return selectedNotifications;
 };
 
-async function userCache(userId) {
-  let userInfo = await redisClient.hGetAll(`user:${userId}`);
-  if (!userInfo) {
-    [[userInfo]] = await connection.query("SELECT name, email, groups, friends FROM users WHERE user_id = ?", [userId]);
-    if (userInfo) {
-      const { name, email, groups, friends } = userInfo;
-      redisClient.hSet(`user:${userId}`, 'name', name);
-      redisClient.hSet(`user:${userId}`, 'email', email);
-      redisClient.hSet(`user:${userId}`, 'groups', groups);
-      redisClient.hSet(`user:${userId}`, 'friends', friends);
-    } else {
-      console.log(userInfo);
-    }
-  } else {
-    console.log({ ...userInfo });
-  };
-}
-
 module.exports = {
   flushRedis,
   groupsLoader,
@@ -306,6 +287,5 @@ module.exports = {
   msgQueue,
   usersCache,
   dmRoomMembersLoader,
-  dmRoomsCache,
-  userCache
+  dmRoomsCache
 }

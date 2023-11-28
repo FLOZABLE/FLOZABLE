@@ -8,17 +8,16 @@ const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
 const { hashing, autoSignin, generateRandomId, googleOauth2client } = require("../tool");
-const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache } = require('../services/redisLoader');
+const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache } = require('../services/redisLoader');
 const upload = multer();
 
 Router.post('/accountinfo', async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
     const connection = pool.promise();
-    const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups, friends FROM users WHERE user_id = ?", [userId]);
+    const [[userInfo]] = await connection.query("SELECT user_id, name, email, language, groups, activity_setting, friends FROM users WHERE user_id = ?", [userId]);
     const notifications = await NotificationCache(userId);
     usersCache(userId);
-    userCache(userId);
     await redisClient.hSet(`user:${userId}`, `groups`, userInfo.groups);
     res.send({ success: true, userInfo: userInfo, notifications });
   }))
@@ -31,15 +30,15 @@ Router.post('/all-accounts', async (req, res) => {
   await Promise.all(membersInfo.map(async (member) => {
     let memberTimer = await redisClient.hGet(`user:${member.user_id}`, 'timerInfo');
     const timerInfo = await timerCache(member.user_id);
-    //const activeSubject = await activeSubjectCache(member.user_id);
+    const activeSubject = await activeSubjectCache(member.user_id);
     const timer = await redisClient.lRange(`user:${member.user_id}:timer`, 0, -1);
     memberTimer = `{"datum":${now},"timeline":[[0,0]],"study":0}`
     member.study = memberTimer;
     member.timer = timer;
     member.timerInfo = timerInfo;
-    //member.activeSubject = activeSubject;
+    member.activeSubject = activeSubject;
   }));
-  res.send({success: false, membersInfo});
+  res.send({success: true, membersInfo});
 })
 
 Router.post('/signin-authentication', async (req, res, next) => {
@@ -621,14 +620,12 @@ Router.post('/bring-challenges', async (req, res) => {
       const connection = pool.promise();
       if (!!searchId){ //searching by id
         const [[challengeInfo]] = await connection.query(`SELECT first_user_id, second_user_id, datum_point FROM challenges WHERE id = ?`, [searchId]);
-        const [userNames] = await connection.query(`SELECT name FROM users WHERE user_id = ? OR user_id = ?`, [challengeInfo.first_user_id, challengeInfo.second_user_id]);
-        console.log(userNames);
-        res.send({success: true, data: challengeInfo, names: userNames});
+        console.log(challengeInfo);
+        res.send({success: true, data: challengeInfo});
       }
       else{ //by user
         const [[challengeInfo]] = await connection.query(`SELECT id, datum_point FROM challenges WHERE first_user_id = ? OR second_user_id = ?`, [searchUser, searchUser]);
-        const [userNames] = await connection.query(`SELECT name FROM users WHERE user_id = ? OR user_id = ?`, [searchUser, searchUser])
-        res.send({success: true, data: challengeInfo, names: userNames});
+        res.send({success: true, data: challengeInfo});
       }
     } catch (error) {
       console.log(error)
@@ -636,6 +633,7 @@ Router.post('/bring-challenges', async (req, res) => {
     }
   }));
 });
+
 const oauth2client = (refresh_token) => {
   const auth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
