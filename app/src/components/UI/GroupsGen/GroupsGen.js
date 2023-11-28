@@ -69,7 +69,6 @@ function GroupsGen({
         }
         const tags = JSON.parse(group.tags);
         const likes = group.likes.split(",");
-        console.log(group)
         const liked = likes.includes(userInfo.user_id);
         const tagsEl = tags.map((tag, i) => {
           return (
