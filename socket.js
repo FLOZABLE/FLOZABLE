@@ -159,7 +159,7 @@ connection.on('connection', (socket) => {
         const push = await redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
         redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
         subject.timeline_sum += start;
-        redisClient.hSet(`user:${userId}`, `subject:${id}`, JSON.stringify(subject));
+        redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
 
         //total timer
         /* const timerInfo = await timerCache(userId, now);
@@ -190,7 +190,7 @@ connection.on('connection', (socket) => {
       const duration = now - datum_point - timeline_sum;
       redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${duration}]`);
       subject.timeline_sum += duration;
-      redisClient.hSet(`user:${userId}`, `subject:${subjectId}`, JSON.stringify(subject));
+      redisClient.hSet(`user:${userId}:subjects`, subjectId, JSON.stringify(subject));
 
       //total timer update
       redisClient.incrBy(`user:${userId}:dayTotal`, duration);
