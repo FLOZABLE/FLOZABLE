@@ -149,12 +149,11 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          //setGroups(setGroupMembers(data.groups, allMembers));
-          setGroups();
+          setGroups(setGroupMembers(data.groups, allMembers));
         }
       })
       .catch((error) => console.error(error));
-  }, []);
+  }, [allMembers]);
 
   useEffect(() => {
     bringSubjects();
@@ -163,8 +162,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-    bringAccountInfo();
-  }, []);
+    if (allMembers.length) {
+      bringAccountInfo();
+    }
+  }, [allMembers]);
 
   useEffect(() => {
     if (userInfo) {
