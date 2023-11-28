@@ -28,6 +28,7 @@ import BottomNotification from "./components/UI/BottomNotification/BottomNotific
 import NotificationModal from "./components/UI/NotificationModal/NotificationModal";
 import ChatsModal from "./components/UI/ChatsModal/ChatsModal";
 import Friends from "./components/Container/Friends/Friends";
+import { filterGroups } from "../src/utils/Tool";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -149,11 +150,14 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setGroups(setGroupMembers(data.groups, allMembers));
+          console.log(userInfo);
+          const { myGroups, otherGroups } = filterGroups(userInfo, data.groups);
+          setMyGroups(myGroups);
+          setOtherGroups(otherGroups);
         }
       })
       .catch((error) => console.error(error));
-  }, [allMembers]);
+  }, [userInfo]);
 
   useEffect(() => {
     bringSubjects();
@@ -173,14 +177,14 @@ function App() {
     }
   }, [userInfo]);
 
-  useEffect(() => {
-    if (userInfo && groups) {
-      setLikedGroups(getLikedGroups(userInfo, groups));
-      const dividedGroups = getMyGroups(userInfo, groups);
-      setMyGroups(dividedGroups.myGroups);
-      setOtherGroups(dividedGroups.otherGroups);
-    }
-  }, [userInfo, groups]);
+  /*   useEffect(() => {
+      if (userInfo && groups) {
+        setLikedGroups(getLikedGroups(userInfo, groups));
+        const dividedGroups = getMyGroups(userInfo, groups);
+        setMyGroups(dividedGroups.myGroups);
+        setOtherGroups(dividedGroups.otherGroups);
+      }
+    }, [userInfo, groups]); */
 
   return (
     <Router>

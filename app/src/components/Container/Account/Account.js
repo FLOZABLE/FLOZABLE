@@ -34,8 +34,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
   const [isSubmitPw, setIsSubmitPw] = useState(false);
   const [isSumbmitUrl, setIsSubmitUrl] = useState(false);
   const [websites, setWebsites] = useState([]);
-
-  const [isGoogleCalendar, setIsGoogleCalendar] = useState(0);
+  const [activitySettings, setActivitySettings] = useState([]);
 
   const inputRef = useRef(null);
 
@@ -155,23 +154,36 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
   }, [isSumbmitUrl]);
 
   useEffect(() => {
+    fetch(`${serverOrigin}/api/account/activity-settings`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          const {activity_setting} = data;
+          console.log(data)
+          setEmail(userInfo.email);
+          setConfirmEmail(userInfo.email);
+          setName(userInfo.name);
+          const websites =
+            activity_setting === ""
+              ? []
+              : JSON.parse(
+                activity_setting.replace(/^/, "[").replace(/$/, "]"),
+              );
+          setWebsites(websites);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  useEffect(() => {
     if (!userInfo) return;
-    setEmail(userInfo.email);
-    setConfirmEmail(userInfo.email);
-    setName(userInfo.name);
-    const websites =
-      userInfo.activity_setting === ""
-        ? []
-        : JSON.parse(
-          userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"),
-        );
-    setWebsites(websites);
     setImageSrc(`${serverOrigin}/profile-images/${userInfo.user_id}.jpeg`);
   }, [userInfo]);
-
-  const handleGoogleCalendarAuth = (isAuth) => {
-
-  }
 
   const onSuccess = (response) => {
     console.log(response);
