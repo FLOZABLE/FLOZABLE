@@ -230,4 +230,34 @@ Router.post('/like/:id', async (req, res) => {
   }));
 });
 
+Router.get('/members', async (req, res) => {
+  autoSignin(req, res, (async() => {
+    const {groupId} = req.query;
+    const connection = pool.promise();
+    const userId = req.session.user_id;
+    try {
+      const [[groupInfo]] = await connection.query(`SELECT visibility, members FROM groups WHERE group_id = ?`, [groupId]);
+      if (!groupInfo) return res.send({success: false, reason: 'No such group'});
+      const {visibility, members} = groupInfo;
+      const membersArr = members === "" ? [] : members.split(",");
+      console.log(membersArr)
+      if (visibility || membersArr.includes(userId) && membersArr.length) {
+        const [membersData] = await connection.query(`SELECT name, user_id FROM users WHERE user_id IN (?)`, [membersArr]);
+        const memberStudyDataPromises = membersData.map(async(member) => {
+          const {user_id} = member;
+          const totalTime = await redisClient.get(`user:${user_id}:dayTotal`);
+          const activeSubject = await activeSubjectCache(user_id);
+          return {...member, totalTime, activeSubject};
+        });
+        const memberStudyData = await Promise.all(memberStudyDataPromises);
+        console.log(membersData)
+        res.send({success: true, membersData: memberStudyData});
+      }
+    } catch (err) {
+      console.error('Error performing database queries:', err);
+      res.status(500).send({ success: false, reason: 'An error occurred' });
+    };
+  }));
+});
+
 module.exports = Router;
