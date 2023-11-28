@@ -24,7 +24,7 @@ async function timerUpdate() {
     usersInfo.map(async ({ user_id }) => {
       const userId = user_id;
       const now = Math.floor(new Date().getTime() / 1000);
-      const subjects = await subjectsCache(userId, false, ['id', 'timeline_sum']);
+      const subjects = await subjectsCache(userId);
       const activeSubject = await activeSubjectCache(userId);
       //user is studying
       /* if (activeSubject.id) {

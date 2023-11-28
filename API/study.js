@@ -181,7 +181,7 @@ Router.post('/bring-subjects', async (req, res) => {
       for (const subject of subjectsInfo) {
         const redisSubject = { ...subject };
         delete redisSubject.timeline;
-        await redisClient.hSet(`user:${userId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
+        redisClient.hSet(`user:${userId}:subjects`, subject.id, JSON.stringify(redisSubject));
         //this code adds [at the start and ] at the end
         let prevTimeline = subject.timeline === "" ? [] :  JSON.parse(subject.timeline.replace(/^/,"[").replace(/$/,"]")); //wrapping the string with "[]"
         const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
