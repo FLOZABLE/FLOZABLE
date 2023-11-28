@@ -1,0 +1,139 @@
+.MyGroupContainer {
+  position: relative;
+}
+
+.MyGroupContainer .inner {
+  width: 90%;
+  margin-left: 5%;
+}
+
+.MyGroupContainer .information {
+  height: 400px;
+  position: relative;
+}
+
+.MyGroupContainer .name a {
+  font-size: 50px;
+  color: #545454;
+  font-weight: 700;
+}
+
+.MyGroupContainer .header {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  top: 0px;
+  z-index: 2;
+}
+
+.MyGroupContainer .header .right {
+  margin-left: auto;
+}
+
+.MyGroupContainer .status {
+  display: flex;
+  background-color: var(--pink);
+  color: #fff;
+  border-radius: 20px;
+  padding: 5px 10px;
+}
+
+.MyGroupContainer .status li {
+  font-size: 40px;
+  margin: 0px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.MyGroupContainer .status p {
+  color: #fff;
+}
+
+.MyGroupContainer .membersContainer {
+  padding-top: 60px;
+}
+
+.MyGroupContainer .members {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  justify-content: center;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  max-height: 350px;
+  gap: 20px;
+}
+
+.MyGroupContainer .buttons {
+  position: absolute;
+  bottom: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.MyGroupContainer .buttons button {
+  border-radius: 20px;
+  height: 40px;
+  width: fit-content;
+  background-color: var(--pink);
+  color: #fff;
+  font-weight: 700;
+  margin-left: auto;
+  font-size: 17px;
+  padding: 0px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0px 10px;
+}
+
+.MyGroupContainer.study * {
+  color: #fff !important;
+}
+
+.MyGroupContainer.study .members .member {
+  background-color: var(--bgColor);
+}
+
+.MyGroupContainer.study .status {
+  background-color: var(--bgColor);
+}
+
+.MyGroupContainer.study .buttons button:nth-child(1) {
+  display: none;
+}
+
+.MyGroupContainer.study .buttons button {
+  background-color: var(--bgColor);
+}
+
+@media (max-width: 1400px) {
+  .MyGroupContainer{
+    height: 500px;
+  }
+
+  .MyGroupContainer .name a {
+    font-size: 30px;
+  }
+
+  .MyGroupContainer .status {
+    padding: 2px 5px;
+    font-size: 20px;
+  }
+  
+  .MyGroupContainer .status p {
+    font-size: 20px;
+  }
+
+  .MyGroupContainer .members {
+    grid-template-columns: repeat(auto-fill, 250px);
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    max-height: 350px;
+    gap: 20px;
+  }
+}
