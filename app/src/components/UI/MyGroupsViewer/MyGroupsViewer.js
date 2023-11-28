@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -71,6 +71,7 @@ function MyGroupsViewer({
   const [swiperEl, setSwiperEl] = useState([]);
 
   useEffect(() => {
+    if (!myGroups.length) return;
     mediaSocket.connect();
     socket.on("studying", onStudying);
     socket.on("stopStudying", onStopStudying);
@@ -78,7 +79,7 @@ function MyGroupsViewer({
       socket.off("studying", onStudying);
       socket.off("stopStudying", onStopStudying);
     };
-  }, []);
+  }, [myGroups]);
 
   /*   useEffect(() => {
       setGroupStudying(
@@ -96,9 +97,11 @@ function MyGroupsViewer({
       );
     }, [myGroups]); */
 
-  const onStudying = (userId, groups) => {
+  const onStudying = useCallback((userId, groups) => {
     setToggleTimer({ id: userId, status: 1 });
-
+    const currentGroup = groups.find(group => { return myGroups[selectedGroupIndex] && myGroups[selectedGroupIndex].group_id === group });
+    console.log(currentGroup)
+    /* if (myGroups[selectedGroupIndex])
     groups.forEach((group) => {
       setGroupStudying((prevGroupStudying) => {
         const updatedGroupStudying = { ...prevGroupStudying };
@@ -111,8 +114,8 @@ function MyGroupsViewer({
         }
         return updatedGroupStudying;
       });
-    });
-  };
+    }); */
+  }, [selectedGroupIndex, myGroups]);
 
   const onStopStudying = (userId, groups) => {
     setToggleTimer({ id: userId, status: 0 });
@@ -138,6 +141,8 @@ function MyGroupsViewer({
     } else if (myGroups[selectedGroupIndex]) {
       selectedGroup = myGroups[selectedGroupIndex];
     }
+    console.log(selectedGroupIndex)
+    setSelectedGroupIndex(selectedGroupIndex);
 
     setSwiperEl(myGroups.map((group, i) => {
       return (
@@ -146,37 +151,44 @@ function MyGroupsViewer({
             group={group}
             isFocus={i === selectedGroupIndex}
             studyingUsers={[]}
+            userInfo={userInfo}
+            socket={socket}
           />
         </SwiperSlide>
       )
-    }))
-  }, [selectedGroupIndex, myGroups]);
+    }));
+  }, [myGroups]);
 
   return (
     <div
       className={`${styles.MyGroupsViewer} ${mode === "study" ? styles.study : ""
         }`}
     >
-      {!myGroups.length ? (
+      {swiperEl.length ?
+        <Swiper
+          slidesPerView={1}
+          loop={true}
+          pagination={{
+            clickable: true,
+            dynamicBullets: true
+          }}
+          navigation={true}
+          modules={[Pagination, Navigation]}
+          className={styles.Swiper}
+          onSnapIndexChange={(swiperCore) => {
+            const { realIndex, snapIndex, activeIndex } = swiperCore;
+            console.log('gd', realIndex, snapIndex, activeIndex)
+          }}
+          onSlideChange={(swiperCore) => {
+            const { realIndex } = swiperCore;
+            setSelectedGroupIndex(realIndex);
+          }}
+        >
+          {swiperEl}
+        </Swiper>
+        :
         <div className={styles.noGroup}>You haven't join any groups yet!</div>
-      ) : null}
-      <Swiper
-        slidesPerView={1}
-        loop={true}
-        pagination={{
-          clickable: true,
-        }}
-        navigation={true}
-        modules={[Pagination, Navigation]}
-        className={styles.Swiper}
-        initialSlide={0}
-        onSlideChange={(swiperCore) => {
-          const { realIndex } = swiperCore;
-          setSelectedGroupIndex(realIndex);
-        }}
-      >
-        {swiperEl}
-      </Swiper>
+      }
     </div>
   );
 }
