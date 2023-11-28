@@ -63,12 +63,13 @@ function GroupsGen({
   useEffect(() => {
     if (!userInfo) return;
     setOtherGroupsEl(
-      Array.from(groups).map((group, i) => {
+      [...groups].map((group, i) => {
         if (maxGroups !== -1 && i > maxGroups) {
           return;
         }
         const tags = JSON.parse(group.tags);
         const likes = group.likes.split(",");
+        console.log(group)
         const liked = likes.includes(userInfo.user_id);
         const tagsEl = tags.map((tag, i) => {
           return (
