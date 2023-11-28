@@ -151,8 +151,9 @@ function App() {
       .then((data) => {
         if (data.success) {
           console.log(userInfo);
-          const { myGroups, otherGroups } = filterGroups(userInfo, data.groups);
-          setMyGroups(myGroups);
+          const { userGroups, otherGroups } = filterGroups(userInfo, data.groups);
+          console.log('gd', userGroups)
+          setMyGroups(userGroups);
           setOtherGroups(otherGroups);
         }
       })
