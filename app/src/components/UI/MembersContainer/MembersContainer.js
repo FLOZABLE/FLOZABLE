@@ -8,10 +8,9 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo}) {
   const [membersData, setMembersData] = useState([]);
   useEffect(() => {
-    console.log('gdddd', userInfo, groupInfo)
+    console.log(isFocus)
     if (!userInfo || !groupInfo) return;
     if (isFocus) {
-      console.log('gd', groupInfo.group_id)
       fetch(`${serverOrigin}/api/groups/members?groupId=${groupInfo.group_id}`, {
         method: "get", 
         headers: {
@@ -22,6 +21,7 @@ function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo}) {
         .then((data) => {
           if (data.success) {
             setMembersData(data.membersData);
+            console.log('data', data.membersData);
           }
         })
         .catch((error) => console.error(error));
@@ -34,7 +34,7 @@ function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo}) {
     <div className={styles.MembersContainer}>
       {membersData.map((memberData, i) => {
         const {user_id, name, totalTime, activeSubject} = memberData;
-        if (userInfo && userInfo.user_id === user_id) {
+        /* if (userInfo && userInfo.user_id === user_id) {
           return (
             <MyEl />
           )
@@ -42,7 +42,7 @@ function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo}) {
           return (
             <MemberEl />
           )
-        }
+        } */
       })}
     </div>
   )
