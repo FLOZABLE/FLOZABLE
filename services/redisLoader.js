@@ -208,6 +208,7 @@ async function activeSubjectCache(userId) {
  */
 async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000), ts = 0) {
   try {
+    const isCached = await redisClient
     let timer = await redisClient.hGet(`user:${userId}`, 'timerInfo');
 
     if (timer) {
@@ -283,6 +284,12 @@ async function NotificationCache(userId, type = -1) {
   const selectedNotifications = notifications.filter(notification => { return notification.t === type });
   return selectedNotifications;
 };
+
+async function membersCache(members) {
+  members.map(member => {
+
+  })
+}
 
 module.exports = {
   flushRedis,
