@@ -240,17 +240,16 @@ Router.get('/members', async (req, res) => {
       if (!groupInfo) return res.send({success: false, reason: 'No such group'});
       const {visibility, members} = groupInfo;
       const membersArr = members === "" ? [] : members.split(",");
-      console.log(membersArr)
       if (visibility || membersArr.includes(userId) && membersArr.length) {
         const [membersData] = await connection.query(`SELECT name, user_id FROM users WHERE user_id IN (?)`, [membersArr]);
         const memberStudyDataPromises = membersData.map(async(member) => {
           const {user_id} = member;
           const totalTime = await redisClient.get(`user:${user_id}:dayTotal`);
+          let filteredTotalTime = totalTime === null ? 0 : totalTime;
           const activeSubject = await activeSubjectCache(user_id);
-          return {...member, totalTime, activeSubject};
+          return {...member, totalTime: filteredTotalTime, activeSubject};
         });
         const memberStudyData = await Promise.all(memberStudyDataPromises);
-        console.log(membersData)
         res.send({success: true, membersData: memberStudyData});
       }
     } catch (err) {

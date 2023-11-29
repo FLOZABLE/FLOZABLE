@@ -6,9 +6,8 @@ import MyEl from "../MyEl/MyEl";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo}) {
-  const [membersData, setMembersData] = useState([]);
+  const [membersEl, setMembersEl] = useState([]);
   useEffect(() => {
-    console.log(isFocus)
     if (!userInfo || !groupInfo) return;
     if (isFocus) {
       fetch(`${serverOrigin}/api/groups/members?groupId=${groupInfo.group_id}`, {
@@ -20,30 +19,35 @@ function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo}) {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            setMembersData(data.membersData);
-            console.log('data', data.membersData);
+            const {membersData} = data;
+            setMembersEl(membersData.map((memberInfo, i) => {
+              if (userInfo.user_id === memberInfo.user_id) {
+                return (
+                  <MyEl 
+                  memberInfo={memberInfo}
+                  key={i}
+                  />
+                )
+              } else {
+                return (
+                  <MemberEl 
+                  memberInfo={memberInfo}
+                  key={i}
+                  />
+                )
+              }
+            }))
           }
         })
         .catch((error) => console.error(error));
     } else if (memberIdsArr){
-      setMembersData(memberIdsArr.map(id => {return {user_id: id}}));
+      
     }
   }, [memberIdsArr, isFocus, userInfo, groupInfo]);
 
   return (
     <div className={styles.MembersContainer}>
-      {membersData.map((memberData, i) => {
-        const {user_id, name, totalTime, activeSubject} = memberData;
-        /* if (userInfo && userInfo.user_id === user_id) {
-          return (
-            <MyEl />
-          )
-        } else {
-          return (
-            <MemberEl />
-          )
-        } */
-      })}
+      {membersEl}
     </div>
   )
 };

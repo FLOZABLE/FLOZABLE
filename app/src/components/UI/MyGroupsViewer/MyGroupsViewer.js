@@ -136,7 +136,7 @@ function MyGroupsViewer({
   useEffect(() => {
     setSwiperEl(myGroups.map((group, i) => {
       return (
-        <SwiperSlide key={i}>
+        <SwiperSlide key={i} className={styles.groupsWrapper}>
           <MyGroupContainer
             group={group}
             isFocus={i === selectedGroupIndex}
