@@ -42,7 +42,7 @@ function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, k }) {
       setStudyIcon(null);
       return;
     }; */
-    if (toggleTimer.id === memberInfo.user_id) {
+    /* if (toggleTimer.id === memberInfo.user_id) {
       setRun(toggleTimer.status);
       if (toggleTimer.status) {
         setStudyIcon(
@@ -58,15 +58,15 @@ function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, k }) {
           <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
         );
       }
-    }
+    } */
   }, [toggleTimer]);
 
   useEffect(() => {
-    usersTracks.map((userTracksData) => {
+    /* usersTracks.map((userTracksData) => {
       if (userTracksData.userId === memberInfo.user_id) {
         setTrack(userTracksData.track);
       }
-    });
+    }); */
   }, [usersTracks, memberInfo]);
 
   return (
