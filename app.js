@@ -130,6 +130,7 @@ const studyAPI = require("./API/study");
 const videoAPI = require("./API/video");
 const rankingAPI = require('./API/ranking');
 const AiAPI = require('./API/AI');
+const challengeAPI = require('./API/challenges');
 
 
 //test
@@ -155,6 +156,7 @@ app.use('/links', linksRouter);
 //app.use('/dashboards', dashboardRouter);
 app.use('/ranking', rankingRouter);
 app.use('/api', extensionRouter);
+app.use('/challenges', challengeAPI);
 //app.use('/notification', notificationRouter);
 
 //api
