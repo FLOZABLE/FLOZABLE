@@ -150,7 +150,8 @@ connection.on('connection', (socket) => {
       const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId);
       if (subject) {
         if (groups.length) {
-          io.to(groups).emit('studying', userId, groups);
+          //io.to(groups).emit('studying', userId, groups);
+          io.to(groups).emit(`studying:${userId}`);
         }
         const now = Math.floor(new Date().getTime() / 1000);
         const {timeline_sum, datum_point, id} = subject;

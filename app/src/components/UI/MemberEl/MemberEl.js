@@ -13,6 +13,8 @@ function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, k }) {
     <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
   );
 
+  console.log(socket)
+
   useEffect(() => {
     const { timerInfo, activeSubject } = memberInfo;
     if (timerInfo && timerInfo.total) {

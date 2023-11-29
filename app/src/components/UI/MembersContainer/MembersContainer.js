@@ -5,7 +5,7 @@ import MyEl from "../MyEl/MyEl";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo}) {
+function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo, socket}) {
   const [membersEl, setMembersEl] = useState([]);
   useEffect(() => {
     if (!userInfo || !groupInfo) return;
@@ -26,6 +26,7 @@ function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo}) {
                   <MyEl 
                   memberInfo={memberInfo}
                   key={i}
+                  socket={socket}
                   />
                 )
               } else {
@@ -33,6 +34,7 @@ function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo}) {
                   <MemberEl 
                   memberInfo={memberInfo}
                   key={i}
+                  socket={socket}
                   />
                 )
               }
