@@ -20,6 +20,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
     const [descriptionEl1, setDescriptionEl1] = useState(<p></p>);
     const [descriptionEl2, setDescriptionEl2] = useState(<p></p>);
     const [descriptionEl3, setDescriptionEl3] = useState(<p></p>);
+    const [challengeHistoryEl, setChallengeHistoryEl] = useState(<p></p>)
 
 
     const cyrb128 = (str) => {
@@ -109,7 +110,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    setUserInfo1({ id: data.data.first_user_id, name: data.names[0].name });
+                    setUserInfo1({ id: data.data.first_user_id, name: data.data.first_user_name });
                     setUser1Pfp((
                         <div className={styles.profileImg}
                             style={{
@@ -119,7 +120,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
                             }}
                         ></div>
                     ));
-                    setUserInfo2({ id: data.data.second_user_id, name: data.names[data.names.length - 1].name });
+                    setUserInfo2({ id: data.data.second_user_id, name: data.data.second_user_name });
                     setUser2Pfp((
                         <div className={styles.profileImg}
                             style={{
@@ -229,7 +230,31 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
         //setCompeteInfo1(tempCompete1);
         //setCompeteInfo2(tempCompete2);
 
-    }, [challenge, userInfo1])
+    }, [challenge, userInfo1]);
+
+
+    useEffect(() => {
+        if (!!!userInfo1.id) return;
+        fetch(`${serverOrigin}/api/account/bring-challenges`, {
+            method: "post",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ searchId: false, searchUser: userInfo1.id }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data.data, data.names);
+                setChallengeHistoryEl(data.data.map((challenge, i) => {
+                    if (challenge.datum_point != datumPoint)
+                    return (
+                        <div key={i}>
+                            <a href={challenge.id}>{challenge.first_user_name} vs {challenge.second_user_name}</a>
+                        </div>
+                    )
+                }))
+            })
+    }, [userInfo1]);
 
 
     return (
@@ -328,7 +353,8 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
                 </div>
 
                 <div className={styles.ChallengeHistory}>
-                    <h2>View other challenges by {userInfo1.name}</h2>
+                    <h2>View Other Challenges With {userInfo1.name}</h2>
+                    {challengeHistoryEl}
                 </div>
             </div>
         </div>
