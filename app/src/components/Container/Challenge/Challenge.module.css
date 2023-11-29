@@ -81,3 +81,11 @@
     border-radius: 40px;
     text-align: center;
 }
+
+.ChallengeHistory {
+    width: 100%;
+    height: 20vh;
+    margin-bottom: 50px;
+    border-radius: 40px;
+    text-align: center;
+}

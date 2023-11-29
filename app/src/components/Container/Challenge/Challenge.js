@@ -17,6 +17,9 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
     const [user2Pfp, setUser2Pfp] = useState((<p>An error occured</p>));
     const [competeInfo1, setCompeteInfo1] = useState({ firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 });
     const [competeInfo2, setCompeteInfo2] = useState({ firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 });
+    const [descriptionEl1, setDescriptionEl1] = useState(<p></p>);
+    const [descriptionEl2, setDescriptionEl2] = useState(<p></p>);
+    const [descriptionEl3, setDescriptionEl3] = useState(<p></p>);
 
 
     const cyrb128 = (str) => {
@@ -129,8 +132,8 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
                     setDatumPoint(data.data.datum_point);
 
                     if (choiceOne === 3) {
-                        let startUnix = DateTime.now().toUTC().startOf('week');
-                        let endUnix = DateTime.now().toUTC().endOf('week');
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week');
+                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week');
                         rangeOne = [startUnix, endUnix];
                     }
                     if (choiceTwo === 0) {
@@ -139,7 +142,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
                         rangeTwo = [startUnix, endUnix];
                     }
                     if (choiceThree === 3) {
-                        let startUnix = DateTime.fromSeconds(data.data.datum_point).minus({ days: random(0, 40) }).startOf('day');
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).minus({ days: random(0, 30) }).startOf('day');
                         let endUnix = startUnix.endOf('day');
                         rangeThree = [startUnix, endUnix];
                         console.log(rangeThree);
@@ -158,8 +161,22 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
         if (challenge.first === "An Error Occured") return;
         if (!!!userInfo1.id) return;
 
-        const startUnix = challenge.firstRange[0].ts;
-        const stopUnix = challenge.firstRange[1].ts;
+        const startUnix1 = challenge.firstRange[0].ts;
+        const stopUnix1 = challenge.firstRange[1].ts;
+        const startUnix2 = challenge.secondRange[0].ts;
+        const stopUnix2 = challenge.secondRange[1].ts;
+        const startUnix3 = challenge.thirdRange[0].ts;
+        const stopUnix3 = challenge.thirdRange[1].ts;
+
+        setDescriptionEl1(<h3>{challenge.firstRange[0].toFormat("DD")} ~ {challenge.firstRange[1].toFormat("DD")}</h3>);
+        setDescriptionEl2(<h3>{challenge.secondRange[0].toFormat("DD")} ~ {challenge.secondRange[1].toFormat("DD")}</h3>);
+        if (startUnix3 + 86400000 > stopUnix3){
+            setDescriptionEl3(<h3>Day: {challenge.thirdRange[0].toFormat("DD")}</h3>);
+        }
+        else{
+            setDescriptionEl3(<h3>{challenge.thirdRange[0].toFormat("DD")} ~ {challenge.thirdRange[1].toFormat("DD")}</h3>);
+        }
+
         const DAY_OF_WEEK = DateTime.fromSeconds(datumPoint).weekday; //day of week when challenge was accepted
 
         //let tempCompete1 = { firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 };
@@ -170,7 +187,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ startTime: startUnix, stopTime: stopUnix }),
+            body: JSON.stringify({ startTime: startUnix1, stopTime: stopUnix1 }),
         })
             .then((response) => response.json())
             .then((data) => {
@@ -195,7 +212,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ startTime: challenge.thirdRange[0].ts, stopTime: challenge.thirdRange[1].ts }),
+            body: JSON.stringify({ startTime: startUnix3, stopTime: stopUnix3 }),
         })
             .then((response) => response.json())
             .then((data) => {
@@ -244,6 +261,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
                     <div className={styles.compareContainer}>
                         <h1>Round 1 - Focus and Commitment</h1>
                         <h2>{challenge.first}</h2>
+                        {descriptionEl1}
                         <div className={styles.container}>
                             <div className={styles.firstHalf}>
                                 {user1Pfp}
@@ -266,6 +284,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
                     <div className={styles.compareContainer}>
                         <h1>Round 2 - Habbit and Consistency</h1>
                         <h2>{challenge.second}</h2>
+                        {descriptionEl2}
                         <div className={styles.container}>
                             <div className={styles.firstHalf}>
                                 {user1Pfp}
@@ -288,6 +307,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
                     <div className={styles.compareContainer}>
                         <h1>Round 3 - Wild Card!</h1>
                         <h2>{challenge.third}</h2>
+                        {descriptionEl3}
                         <div className={styles.container}>
                             <div className={styles.firstHalf}>
                                 {user1Pfp}
@@ -305,6 +325,10 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div className={styles.ChallengeHistory}>
+                    <h2>View other challenges by {userInfo1.name}</h2>
                 </div>
             </div>
         </div>
