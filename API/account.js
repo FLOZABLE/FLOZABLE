@@ -591,12 +591,16 @@ Router.post('/challenge-request', async (req, res) => {
       redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
 
       const connection = pool.promise();
+      const [[userName1]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [targetId]);
+      const [[userName2]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [userId]);
 
       const challengeInfo = {
         id: generateRandomId(10),
         first_user_id: targetId, //the host
         second_user_id: userId, //the recipient
         datum_point: Math.floor(new Date().getTime() / 1000),
+        first_user_name: userName1.name,
+        second_user_name: userName2.name
       };
       const insertSubject = await connection.query(`INSERT INTO challenges SET ?`, challengeInfo);
 
@@ -633,22 +637,16 @@ Router.post('/bring-challenges', async (req, res) => {
       const { searchId, searchUser } = req.body; //search by challenge id or by user
       const connection = pool.promise();
       if (!!searchId){ //searching by id
-        const [[challengeInfo]] = await connection.query(`SELECT first_user_id, second_user_id, datum_point FROM challenges WHERE id = ?`, [searchId]);
+        const [[challengeInfo]] = await connection.query(`SELECT first_user_id, second_user_id, first_user_name, second_user_name, datum_point FROM challenges WHERE id = ?`, [searchId]);
         if (!!!challengeInfo){
           res.send({success: false});
           return;
         }
-        let userNames = [];
-        [[userNames[0]]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [challengeInfo.first_user_id]);
-        [[userNames[1]]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [challengeInfo.second_user_id]);
-        res.send({success: true, data: challengeInfo, names: userNames});
+        res.send({success: true, data: challengeInfo});
       }
       else{ //by user
-        const [[challengeInfo]] = await connection.query(`SELECT id, datum_point FROM challenges WHERE first_user_id = ? OR second_user_id = ?`, [searchUser, searchUser]);
-        let userNames = [];
-        [[userNames[0]]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [challengeInfo.first_user_id]);
-        [[userNames[1]]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [challengeInfo.second_user_id]);
-        res.send({success: true, data: challengeInfo, names: userNames});
+        const [challengeInfo] = await connection.query(`SELECT first_user_id, second_user_id, first_user_name, second_user_name, id, datum_point FROM challenges WHERE first_user_id = ? OR second_user_id = ? limit 120`, [searchUser, searchUser]);
+        res.send({success: true, data: challengeInfo});
       }
     } catch (error) {
       console.log(error)
