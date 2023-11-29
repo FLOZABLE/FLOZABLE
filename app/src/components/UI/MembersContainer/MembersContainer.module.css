@@ -1,0 +1,10 @@
+.MembersContainer {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  justify-content: center;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  max-height: 100%;
+  gap: 20px;
+}

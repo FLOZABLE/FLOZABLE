@@ -4,7 +4,7 @@ import { StudyPerson, RestPerson } from "../../../utils/svgs";
 import MyCamDisp from "../MyCamDisp/MyCamDisp";
 import MyTimer from "../MyTimer/MyTimer";
 
-function MyEl({ memberInfo, toggleTimer, myTimerTotal, stream, k }) {
+function MyEl({ memberInfo, toggleTimer, myTimerTotal, stream }) {
   const [run, setRun] = useState(0);
   const [sec, setSec] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
@@ -14,7 +14,7 @@ function MyEl({ memberInfo, toggleTimer, myTimerTotal, stream, k }) {
   useEffect(() => {
     const studyInfo = memberInfo.study;
     setSec(studyInfo.total);
-    if (studyInfo.study) {
+    if (studyInfo.activeSubject) {
       setRun(1);
       setStudyIcon(
         <StudyPerson opt1={"#fff"} width={"40px"} height={"40px"} />,
@@ -27,7 +27,7 @@ function MyEl({ memberInfo, toggleTimer, myTimerTotal, stream, k }) {
       setStudyIcon(null);
       return;
     }
-    if (toggleTimer.id === memberInfo.user_id) {
+    /* if (toggleTimer.id === memberInfo.user_id) {
       setRun(toggleTimer.status);
       if (toggleTimer.status) {
         setStudyIcon(
@@ -43,11 +43,11 @@ function MyEl({ memberInfo, toggleTimer, myTimerTotal, stream, k }) {
           <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
         );
       }
-    }
+    } */
   }, [toggleTimer, stream]);
 
   return (
-    <div className={styles.member} key={k}>
+    <div className={styles.member}>
       <MyCamDisp stream={stream} />
       <div className={styles.inner}>
         <div className={styles.userName}>{memberInfo.name}</div>

@@ -8,7 +8,9 @@
 }
 
 .MyGroupContainer .information {
-  height: 400px;
+  height: calc(100vh - 400px);
+  max-height: 540px;
+  overflow-y: scroll;
   position: relative;
 }
 
@@ -21,13 +23,9 @@
 .MyGroupContainer .header {
   position: absolute;
   display: flex;
-  width: 100%;
-  top: 0px;
+  width: 80%;
+  top: 70px;
   z-index: 2;
-}
-
-.MyGroupContainer .header .right {
-  margin-left: auto;
 }
 
 .MyGroupContainer .status {
@@ -36,6 +34,7 @@
   color: #fff;
   border-radius: 20px;
   padding: 5px 10px;
+  margin-right: auto;
 }
 
 .MyGroupContainer .status li {
@@ -50,26 +49,15 @@
   color: #fff;
 }
 
-.MyGroupContainer .membersContainer {
-  padding-top: 60px;
-}
-
-.MyGroupContainer .members {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
-  justify-content: center;
-  flex-wrap: wrap;
-  overflow-y: auto;
-  max-height: 350px;
-  gap: 20px;
+.MyGroupContainer .membersWrapper {
+  padding: 60px 0px;
 }
 
 .MyGroupContainer .buttons {
   position: absolute;
-  bottom: 50px;
+  bottom: 30px;
   display: flex;
   justify-content: center;
-  align-items: center;
   left: 50%;
   transform: translateX(-50%);
 }

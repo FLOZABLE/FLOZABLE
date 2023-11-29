@@ -3,13 +3,13 @@
 }
 
 .MyGroupsViewer {
-  height: 600px;
   -webkit-user-select: none;
   /* Safari */
   -ms-user-select: none;
   /* IE 10 and IE 11 */
   user-select: none;
   /* Standard syntax */
+  height: fit-content;
 }
 
 .MyGroupsViewer .noGroup {
@@ -77,24 +77,19 @@
   padding-top: 60px;
 }
 
-.MyGroupsViewer .members {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
-  justify-content: center;
-  flex-wrap: wrap;
-  overflow-y: auto;
-  max-height: 350px;
-  gap: 20px;
+.MyGroupsViewer .groupsWrapper {
+  height: fit-content;
 }
 
 .MyGroupsViewer .buttons {
   position: absolute;
-  bottom: 50px;
+  bottom: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 2;
 }
 
 .MyGroupsViewer .buttons button {
@@ -117,9 +112,6 @@
   color: #fff !important;
 }
 
-.MyGroupsViewer.study .members .member {
-  background-color: var(--bgColor);
-}
 
 .MyGroupsViewer.study .status {
   background-color: var(--bgColor);
@@ -149,14 +141,5 @@
   
   .MyGroupsViewer .status p {
     font-size: 20px;
-  }
-
-  .MyGroupsViewer .members {
-    grid-template-columns: repeat(auto-fill, 250px);
-    justify-content: center;
-    flex-wrap: wrap;
-    overflow-y: auto;
-    max-height: 350px;
-    gap: 20px;
   }
 }

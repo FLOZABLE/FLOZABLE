@@ -43,13 +43,13 @@ Router.post('/all-accounts', async (req, res) => {
   const [membersInfo] = await connection.query('SELECT user_id, name, timezone FROM users');
   await Promise.all(membersInfo.map(async (member) => {
     let memberTimer = await redisClient.hGet(`user:${member.user_id}`, 'timerInfo');
-    const timerInfo = await timerCache(member.user_id);
+    //const timerInfo = await timerCache(member.user_id);
     const activeSubject = await activeSubjectCache(member.user_id);
     const timer = await redisClient.lRange(`user:${member.user_id}:timer`, 0, -1);
     memberTimer = `{"datum":${now},"timeline":[[0,0]],"study":0}`
     member.study = memberTimer;
     member.timer = timer;
-    member.timerInfo = timerInfo;
+    member.timerInfo = null;
     member.activeSubject = activeSubject;
   }));
   res.send({success: true, membersInfo});
@@ -676,10 +676,9 @@ Router.post('/auth/google', async (req, res) => {
       const {data} = req.body;
       const auth = googleOauth2client();
       const response = await auth.getToken(data);
-      const {res, tokens} = response;
-      if (res.status === 200) {
+      if (response.res.status === 200) {
         const connection = pool.promise();
-        connection.query(`UPDATE users SET google_refresh_token = ? WHERE user_id = ?`, [tokens.refresh_token, userId]);
+        connection.query(`UPDATE users SET google_refresh_token = ? WHERE user_id = ?`, [response.tokens.refresh_token, userId]);
       }
       res.send({success: true, data: response})
     } catch (error) {

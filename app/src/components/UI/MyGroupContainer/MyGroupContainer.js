@@ -15,7 +15,7 @@ function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
 
   const bringMembersInfo = useCallback((groupId) => {
     fetch(`${serverOrigin}/api/groups/members?groupId=${groupId}`, {
-      method: "get", 
+      method: "get",
       headers: {
         "Content-Type": "application/json",
       },
@@ -49,8 +49,7 @@ function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
         <div className={styles.name}>
           <Link to="/dashboard/study">{name}</Link>
         </div>
-        <div className={styles.information}>
-          <div className={styles.header}>
+        <div className={styles.header}>
             <ul className={styles.status}>
               <li>
                 <StudyPerson
@@ -75,42 +74,15 @@ function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
               <FontAwesomeIcon icon={faGear} />
             </div>
           </div>
-          <div className={styles.membersContainer}>
-            <div className={`${styles.members} customScroll`}>
-              {/* {membersArr.map((userId, j) => {
-                if (userId === userInfo.user_id) {
-                  return (
-                    <MyEl
-                      memberInfo={memberInfo}
-                      key={j}
-                      k={j}
-                      toggleTimer={toggleTimer}
-                      myTimerTotal={myTimerTotal}
-                      socket={socket}
-                    />
-                  );
-                } else {
-                  return (
-                    <MemberEl
-                      isFocus={isFocus}
-                      memberInfo={memberInfo}
-                      key={j}
-                      k={j}
-                      toggleTimer={toggleTimer}
-                      socket={socket}
-                      usersTracks={[]}
-                    />
-                  );
-                }
-              })} */}
-              <MembersContainer 
-               socket={socket}
-               membersIdArr={memberIdsArr}
-              isFocus={isFocus}
-              userInfo={userInfo}
-              groupInfo={group}
-              />
-            </div>
+        <div className={`${styles.information} customScroll`}>
+          <div className={styles.membersWrapper}>
+          <MembersContainer
+            socket={socket}
+            membersIdArr={memberIdsArr}
+            isFocus={isFocus}
+            userInfo={userInfo}
+            groupInfo={group}
+          />
           </div>
         </div>
         <div className={styles.buttons}>
