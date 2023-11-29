@@ -134,16 +134,6 @@ function MyGroupsViewer({
   };
 
   useEffect(() => {
-    if (!myGroups.length) return;
-    let selectedGroup;
-    if (isNaN(selectedGroupIndex)) {
-      selectedGroup = myGroups[0] ? myGroups[0] : false;
-    } else if (myGroups[selectedGroupIndex]) {
-      selectedGroup = myGroups[selectedGroupIndex];
-    }
-    console.log(selectedGroupIndex)
-    setSelectedGroupIndex(selectedGroupIndex);
-
     setSwiperEl(myGroups.map((group, i) => {
       return (
         <SwiperSlide key={i}>
@@ -157,7 +147,7 @@ function MyGroupsViewer({
         </SwiperSlide>
       )
     }));
-  }, [myGroups]);
+  }, [myGroups, selectedGroupIndex]);
 
   return (
     <div
@@ -178,9 +168,6 @@ function MyGroupsViewer({
           onSnapIndexChange={(swiperCore) => {
             const { realIndex, snapIndex, activeIndex } = swiperCore;
             console.log('gd', realIndex, snapIndex, activeIndex)
-          }}
-          onSlideChange={(swiperCore) => {
-            const { realIndex } = swiperCore;
             setSelectedGroupIndex(realIndex);
           }}
         >
