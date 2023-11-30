@@ -158,6 +158,7 @@ function SubjectTimer({
         //
         setSubjectTimer((prevTimer) => ({ total: prevTimer.total + 1 }));
         setMyTimerTotal((prevTimer) => prevTimer + 1);
+        console.log('gd')
 
         let timeValuesTemp = [];
         for (let i = 0; i < timeValues.length; i++) {

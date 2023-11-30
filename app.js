@@ -156,7 +156,6 @@ app.use('/links', linksRouter);
 //app.use('/dashboards', dashboardRouter);
 app.use('/ranking', rankingRouter);
 app.use('/api', extensionRouter);
-app.use('/challenges', challengeAPI);
 //app.use('/notification', notificationRouter);
 
 //api
@@ -168,6 +167,7 @@ app.use('/api/study', studyAPI);
 app.use('/api/video', videoAPI);
 app.use('/api/ranking', rankingAPI);
 app.use('/api/ai', AiAPI);
+app.use('/api/challenges', challengeAPI);
 app.use(express.static(path.join(__dirname, 'app/build')));
 
 

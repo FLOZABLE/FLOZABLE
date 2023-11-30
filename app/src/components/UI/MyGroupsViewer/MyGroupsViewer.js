@@ -60,7 +60,6 @@ function MyGroupsViewer({
   myGroups,
   socket,
   userInfo,
-  myTimerTotal,
   isCam,
   isMic,
   mode,
@@ -143,7 +142,6 @@ function MyGroupsViewer({
             studyingUsers={[]}
             userInfo={userInfo}
             socket={socket}
-            myTimerTotal={myTimerTotal}
           />
         </SwiperSlide>
       )

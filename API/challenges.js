@@ -103,8 +103,7 @@ Router.post('/challenge-request', async (req, res) => {
 });
 
 
-Router.get('/challenges', async (req, res) => {
-  console.log("GET");
+Router.get('/', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
       const { searchId, searchUser } = req.params; //search by challenge id or by user

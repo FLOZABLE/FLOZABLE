@@ -1,3 +1,3 @@
-const worker = new Worker('/timerWorker.js');
+const worker = new Worker('/subjectTimerWorker.js');
 
 export default worker;
