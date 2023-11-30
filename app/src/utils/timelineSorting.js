@@ -31,6 +31,7 @@ function timelineSort(subjects) {
 
   subjects.map((subject, i) => {
     const [dailySorted, dailyTotal] = timelineSorter(subject, 'daily', firstDatumPoint, (startTime, stopTime) => {
+      console.log(startTime, stopTime)
       return [startTime + DATETOSEC, stopTime + DATETOSEC];
     });
     const [weeklySorted, weeklyTotal] = timelineSorter(subject, 'weekly', firstDatumPoint, (startTime, stopTime) => {
@@ -87,7 +88,7 @@ function timelineSort(subjects) {
     return -1;
   });
 
-
+  console.log({...subjects})
 
   /* part2 */
   
@@ -106,8 +107,9 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
   let expectedLength;
 
   if (option === 'daily') {
-    startTime = new Date(datum_point * 1000).setHours(0, 0, 0, 0) / 1000;
-    stopTime = new Date(startTime * 1000).setHours(23, 59, 59, 0) / 1000;
+    const dateStart = DateTime.fromSeconds(datum_point);
+    startTime = dateStart.startOf('day').toSeconds();
+    stopTime = dateStart.endOf('day').set({millisecond: 0}).toSeconds();
     const formattedFirstDatum = new Date(firstDatumPoint * 1000).setHours(0, 0, 0, 0) / 1000;
     indexDiff = (startTime - formattedFirstDatum) / DATETOSEC;
     const now = new Date().setHours(0, 0, 0, 0) / 1000;
