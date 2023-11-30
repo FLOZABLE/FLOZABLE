@@ -5,9 +5,9 @@ import MyCamDisp from "../MyCamDisp/MyCamDisp";
 import MyTimer from "../MyTimer/MyTimer";
 import { DateTime } from "luxon";
 
-function MyEl({ memberInfo, myTimerTotal, stream, socket, setStudyingMembers }) {
+function MyEl({ memberInfo, stream, socket, setStudyingMembers }) {
   const [run, setRun] = useState(0);
-  const [sec, setSec] = useState(0);
+  const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
     <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
   );
@@ -23,9 +23,9 @@ function MyEl({ memberInfo, myTimerTotal, stream, socket, setStudyingMembers }) 
       setRun(true);
       const now = DateTime.now().set({millisecond: 0}).toSeconds();
       const actualTime = totalTime + now - activeSubject.time;
-      setSec(actualTime);
+      setTotal(actualTime);
      } else {
-      setSec(totalTime);
+      setTotal(totalTime);
      };
     const onStudying = () => {
       setRun(true);
@@ -72,7 +72,7 @@ function MyEl({ memberInfo, myTimerTotal, stream, socket, setStudyingMembers }) 
         <div className={styles.timer}>
           <MyTimer
             run={run}
-            myTimerTotal={myTimerTotal}
+            total={total}
           />
         </div>
       </div>
