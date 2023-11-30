@@ -21,7 +21,7 @@ function timelineSort(subjects) {
     //this code compares the current firstdatumPoint and current looped subject's datumpoint and updtate the firstDatunmPoint with
     //smaller value
     firstDatumPoint = datum_point < firstDatumPoint ? datum_point : firstDatumPoint;
-    return -1;
+    return;
   });
   subjects.firstDatumPoint = firstDatumPoint;
 
@@ -31,7 +31,6 @@ function timelineSort(subjects) {
 
   subjects.map((subject, i) => {
     const [dailySorted, dailyTotal] = timelineSorter(subject, 'daily', firstDatumPoint, (startTime, stopTime) => {
-      console.log(startTime, stopTime)
       return [startTime + DATETOSEC, stopTime + DATETOSEC];
     });
     const [weeklySorted, weeklyTotal] = timelineSorter(subject, 'weekly', firstDatumPoint, (startTime, stopTime) => {
@@ -39,7 +38,7 @@ function timelineSort(subjects) {
     });
     const [monthlySorted, monthlyTotal] = timelineSorter(subject, 'monthly', firstDatumPoint, (startTime, stopTime) => {
       const newStart = DateTime.fromSeconds(startTime).plus({months: 1}).toSeconds();
-      const newStop = DateTime.fromSeconds(stopTime).plus({months: 1}).toSeconds();
+      const newStop = DateTime.fromSeconds(stopTime).plus({morenths: 1}).toSeconds();
       return [newStart, newStop];
     });
 
@@ -85,7 +84,7 @@ function timelineSort(subjects) {
     subjects.monthly.groupedTotal = monthlyTotal.map((val, i) => {
       return val + subjects.monthly.groupedTotal[i];
     });
-    return -1;
+    return;
   });
 
   console.log({...subjects})
@@ -162,7 +161,7 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
         totalTime.push(0);
       };
     }
-    return -1;
+    return;
   });
 
   //this code removes the gap between current time and the last activity
