@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { StudyPerson, RestPerson } from "../../../utils/svgs";
 import MemberTimer from "../MemberTimer/MemberTimer";
 import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
+import { DateTime } from "luxon";
 
 function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, k }) {
   const [run, setRun] = useState(0);
@@ -13,9 +14,7 @@ function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, k }) {
     <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
   );
 
-  console.log(socket)
-
-  useEffect(() => {
+  /* useEffect(() => {
     const { timerInfo, activeSubject } = memberInfo;
     if (timerInfo && timerInfo.total) {
       const total = memberInfo.timerInfo.total;
@@ -36,7 +35,31 @@ function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, k }) {
         );
       }
     }
-  }, [memberInfo]);
+  }, [memberInfo]); */
+
+  useEffect(() => {
+    if (!memberInfo || !socket) return;
+    const { totalTime, activeSubject, user_id } = memberInfo;
+     if (activeSubject.time) {
+      setRun(true);
+      const now = DateTime.now().set({millisecond: 0}).toSeconds();
+      const actualTime = totalTime + now - activeSubject.time;
+      setSec(actualTime);
+     } else {
+      setSec(totalTime);
+     };
+
+    const onStudying = () => {
+      console.log();
+      setRun(true);
+    };
+
+    socket.on(`studying:${user_id}`, onStudying);
+
+    return () => {
+      socket.off(`studying:${user_id}`, onStudying);
+    };
+  }, [socket, memberInfo]);
 
   useEffect(() => {
     //logic for stream data of user
