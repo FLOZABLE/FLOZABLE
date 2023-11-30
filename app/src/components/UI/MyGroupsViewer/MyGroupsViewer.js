@@ -143,6 +143,7 @@ function MyGroupsViewer({
             studyingUsers={[]}
             userInfo={userInfo}
             socket={socket}
+            myTimerTotal={myTimerTotal}
           />
         </SwiperSlide>
       )

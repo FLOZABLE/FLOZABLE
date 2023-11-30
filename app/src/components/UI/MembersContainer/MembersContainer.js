@@ -5,8 +5,9 @@ import MyEl from "../MyEl/MyEl";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo, socket}) {
+function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo, socket, myTimerTotal, setStudyingMembers, members, setMembers}) {
   const [membersEl, setMembersEl] = useState([]);
+
   useEffect(() => {
     if (!userInfo || !groupInfo) return;
     if (isFocus) {
@@ -19,33 +20,39 @@ function MembersContainer({memberIdsArr, isFocus, userInfo, groupInfo, socket}) 
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            const {membersData} = data;
-            setMembersEl(membersData.map((memberInfo, i) => {
-              if (userInfo.user_id === memberInfo.user_id) {
-                return (
-                  <MyEl 
-                  memberInfo={memberInfo}
-                  key={i}
-                  socket={socket}
-                  />
-                )
-              } else {
-                return (
-                  <MemberEl 
-                  memberInfo={memberInfo}
-                  key={i}
-                  socket={socket}
-                  />
-                )
-              }
-            }))
-          }
+            setMembers(data.membersData);
+          };
         })
         .catch((error) => console.error(error));
     } else if (memberIdsArr){
       
-    }
+    };
   }, [memberIdsArr, isFocus, userInfo, groupInfo]);
+
+  useEffect(() => {
+    setMembersEl(members.map((memberInfo, i) => {
+      if (userInfo.user_id === memberInfo.user_id) {
+        return (
+          <MyEl 
+          memberInfo={memberInfo}
+          key={i}
+          socket={socket}
+          setStudyingMembers={setStudyingMembers}
+          myTimerTotal={myTimerTotal}
+          />
+        )
+      } else {
+        return (
+          <MemberEl 
+          memberInfo={memberInfo}
+          key={i}
+          socket={socket}
+          setStudyingMembers={setStudyingMembers}
+          />
+        )
+      }
+    }));
+  }, [members]);
 
   return (
     <div className={styles.MembersContainer}>

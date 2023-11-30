@@ -245,7 +245,7 @@ async function userCache(userId) {
   try {
     const isCached = await redisClient.hExists(`user:${userId}`, 'name');
     if (isCached) {
-      const userInfo = { ...await redisClient.hGetAll(`user:${userId}`, 'name') };
+      const userInfo = { ...await redisClient.hGetAll(`user:${userId}`, 'name'), user_id: userId };
       return userInfo;
     } else {
       const connection = pool.promise();

@@ -182,7 +182,7 @@ connection.on('connection', (socket) => {
     const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId);
     if (activeSubject.id === subjectId && subject) {
       if (groups.length) {
-        io.to(groups).emit('stopStudying', userId, groups);
+        io.to(groups).emit(`stopStudying:${userId}`);
       };
       const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
       const now = Math.floor(new Date().getTime() / 1000);
