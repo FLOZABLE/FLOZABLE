@@ -1,5 +1,9 @@
 const express = require('express');
 const Router = express.Router();
+const pool = require("../model/pool");
+const redisClient = require("../model/redis");
+const { autoSignin, generateRandomId } = require("../tool");
+const { NotificationCache } = require('../services/redisLoader');
 
 //send challenge
 Router.post('/challenge-request', async (req, res) => {
@@ -100,6 +104,7 @@ Router.post('/challenge-request', async (req, res) => {
 
 
 Router.get('/challenges', async (req, res) => {
+  console.log("GET");
   autoSignin(req, res, (async () => {
     try {
       const { searchId, searchUser } = req.params; //search by challenge id or by user

@@ -90,3 +90,16 @@
     margin-bottom: 50px;
     background-color: rgb(226, 226, 226);
 }
+
+.pastChallenge {
+    margin: 10px;
+}
+
+.pastChallenge h3 {
+    color:rgb(72, 81, 255)
+}
+
+.historyContainer {
+    max-height: 200px;
+    overflow-y: auto;
+}

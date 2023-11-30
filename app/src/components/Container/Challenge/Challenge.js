@@ -13,6 +13,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
     const [userInfo2, setUserInfo2] = useState({ id: null, name: null });
     const [challenge, setChallenge] = useState({ first: "An Error Occured", second: "An Error Occured", third: "An Error Occured", firstRange: [0, 0], secondRange: [0, 0], thirdRange: [0, 0] });
     const [datumPoint, setDatumPoint] = useState(0);
+    const [challengeId, setChallengeId] = useState("");
     const [user1Pfp, setUser1Pfp] = useState((<p>An error occured</p>));
     const [user2Pfp, setUser2Pfp] = useState((<p>An error occured</p>));
     const [competeInfo1, setCompeteInfo1] = useState({ firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 });
@@ -69,6 +70,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
     useEffect(() => {
         const pathName = window.location.pathname.split('/');
         const selectedChallengeId = pathName[pathName.length - 1];
+        setChallengeId(selectedChallengeId);
 
 
         //seed generated random function
@@ -99,16 +101,15 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
         let rangeTwo = [];
         let rangeThree = [];
 
-
-        fetch(`${serverOrigin}/api/account/bring-challenges`, {
-            method: "post",
+        fetch(`${serverOrigin}/api/challenges/challenges?searchId=${JSON.stringify(selectedChallengeId)}`, {
+            method: "get",
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ searchId: selectedChallengeId, searchUser: false }),
         })
             .then((response) => response.json())
             .then((data) => {
+                console.log(data);
                 if (data.success) {
                     setUserInfo1({ id: data.data.first_user_id, name: data.data.first_user_name });
                     setUser1Pfp((
@@ -235,7 +236,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
 
     useEffect(() => {
         if (!!!userInfo1.id) return;
-        fetch(`${serverOrigin}/api/account/bring-challenges`, {
+        fetch(`${serverOrigin}/api/challenges/bring-challenges`, {
             method: "post",
             headers: {
                 'Content-Type': 'application/json'
@@ -246,10 +247,13 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
             .then((data) => {
                 console.log(data.data, data.names);
                 setChallengeHistoryEl(data.data.map((challenge, i) => {
-                    if (challenge.datum_point != datumPoint)
+                    if (challenge.id != challengeId)
                     return (
-                        <div key={i}>
-                            <a href={challenge.id}>{challenge.first_user_name} vs {challenge.second_user_name}</a>
+                        <div key={i} className={styles.pastChallenge}>
+                            <a href={challenge.id}>
+                                <h3>{challenge.first_user_name} vs {challenge.second_user_name}</h3>
+                            </a>
+                            <p>On {DateTime.fromSeconds(challenge.datum_point).toFormat("DD")}</p>
                         </div>
                     )
                 }))
@@ -354,7 +358,9 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
 
                 <div className={styles.ChallengeHistory}>
                     <h2>View Other Challenges With {userInfo1.name}</h2>
-                    {challengeHistoryEl}
+                    <div className = {styles.historyContainer}>
+                        {challengeHistoryEl}
+                    </div>
                 </div>
             </div>
         </div>
