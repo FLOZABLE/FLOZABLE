@@ -3,8 +3,9 @@ import styles from "./MyEl.module.css";
 import { StudyPerson, RestPerson } from "../../../utils/svgs";
 import MyCamDisp from "../MyCamDisp/MyCamDisp";
 import MyTimer from "../MyTimer/MyTimer";
+import { DateTime } from "luxon";
 
-function MyEl({ memberInfo, toggleTimer, myTimerTotal, stream }) {
+function MyEl({ memberInfo, myTimerTotal, stream, socket, setStudyingMembers }) {
   const [run, setRun] = useState(0);
   const [sec, setSec] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
@@ -12,39 +13,55 @@ function MyEl({ memberInfo, toggleTimer, myTimerTotal, stream }) {
   );
 
   useEffect(() => {
-    const studyInfo = memberInfo.study;
-    setSec(studyInfo.total);
-    if (studyInfo.activeSubject) {
-      setRun(1);
-      setStudyIcon(
-        <StudyPerson opt1={"#fff"} width={"40px"} height={"40px"} />,
-      );
-    }
-  }, [memberInfo]);
+
+  })
 
   useEffect(() => {
-    if (stream) {
-      setStudyIcon(null);
-      return;
-    }
-    /* if (toggleTimer.id === memberInfo.user_id) {
-      setRun(toggleTimer.status);
-      if (toggleTimer.status) {
-        setStudyIcon(
-          <StudyPerson
-            opt1={"#fff"}
-            opt2={"#fff"}
-            width={"40px"}
-            height={"40px"}
-          />,
-        );
-      } else {
-        setStudyIcon(
-          <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
-        );
-      }
-    } */
-  }, [toggleTimer, stream]);
+    if (!memberInfo || !socket) return;
+    const { totalTime, activeSubject, user_id } = memberInfo;
+     if (activeSubject.time) {
+      setRun(true);
+      const now = DateTime.now().set({millisecond: 0}).toSeconds();
+      const actualTime = totalTime + now - activeSubject.time;
+      setSec(actualTime);
+     } else {
+      setSec(totalTime);
+     };
+    const onStudying = () => {
+      setRun(true);
+      console.log('start')
+      setStudyIcon(
+        <StudyPerson
+          opt1={"#fff"}
+          opt2={"#fff"}
+          width={"40px"}
+          height={"40px"}
+        />
+      );
+      setStudyingMembers(prev => [...prev, memberInfo]);
+    };
+
+    const onStopStudying = () => {
+      setRun(false);
+      console.log('gd')
+      setStudyIcon(
+        <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />
+      );
+      setStudyingMembers(prevMembers => {
+        return prevMembers.filter(member => {
+          return member.user_id !== user_id;
+        });
+      });
+    };
+
+    socket.on(`studying:${user_id}`, onStudying);
+    socket.on(`stopStudying:${user_id}`, onStopStudying);
+
+    return () => {
+      socket.off(`studying:${user_id}`, onStudying);
+      socket.off(`stopStudying:${user_id}`, onStopStudying);
+    };
+  }, [socket, memberInfo]);
 
   return (
     <div className={styles.member}>
@@ -55,8 +72,6 @@ function MyEl({ memberInfo, toggleTimer, myTimerTotal, stream }) {
         <div className={styles.timer}>
           <MyTimer
             run={run}
-            total={sec}
-            me={true}
             myTimerTotal={myTimerTotal}
           />
         </div>

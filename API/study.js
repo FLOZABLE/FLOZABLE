@@ -185,6 +185,7 @@ Router.post('/bring-subjects', async (req, res) => {
         //this code adds [at the start and ] at the end
         let prevTimeline = subject.timeline === "" ? [] :  JSON.parse(subject.timeline.replace(/^/,"[").replace(/$/,"]")); //wrapping the string with "[]"
         const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
+        console.log(todayTimeline)
         subject.timeline = prevTimeline.concat(todayTimeline);
       }
       res.send({ success: true, subjects: subjectsInfo });

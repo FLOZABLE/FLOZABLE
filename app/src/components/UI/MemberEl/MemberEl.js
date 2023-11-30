@@ -6,7 +6,7 @@ import MemberTimer from "../MemberTimer/MemberTimer";
 import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 import { DateTime } from "luxon";
 
-function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, k }) {
+function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, activeMembers, setActiveMembers }) {
   const [run, setRun] = useState(0);
   const [sec, setSec] = useState(0);
   const [track, setTrack] = useState(null);
@@ -95,7 +95,7 @@ function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, k }) {
   }, [usersTracks, memberInfo]);
 
   return (
-    <div className={styles.member} key={k}>
+    <div className={styles.member}>
       <MemberCamDisp socket={socket} memberInfo={memberInfo} track={track} />
       <div className={styles.inner}>
         <Link to={`/dashboard/user/${memberInfo.user_id}`}>

@@ -10,24 +10,11 @@ import MembersContainer from "../MembersContainer/MembersContainer";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
+function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo, myTimerTotal }) {
   const [slideContent, setSlideContent] = useState(null);
-
-  const bringMembersInfo = useCallback((groupId) => {
-    fetch(`${serverOrigin}/api/groups/members?groupId=${groupId}`, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          console.log('gd', data)
-        }
-      })
-      .catch((error) => console.error(error));
-  }, [])
+  const [name, setName] = useState("");
+  const [studyingMembers, setStudyingMembers] = useState([]);
+  const [members, setMembers] = useState([]);
 
   useEffect(() => {
     if (!group) return;
@@ -35,16 +22,11 @@ function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
     const tagsArr = JSON.parse(tags);
     const memberIdsArr = members === "" ? [] : members.split(",");
     const membersInfo = [];
-    /* if (isFocus) {
-      bringMembersInfo(group_id);
-    } else {
-      memberIdsArr.map(member => {
-        membersInfo.push({ user_id: member });
-      })
-    } */
-    const likesArr = likes === "" ? [] : likes.split(",");
-    console.log(isFocus, name)
-    setSlideContent(
+    setName(name);
+  }, [group, isFocus]);
+
+  return (
+    <div className={styles.MyGroupContainer}>
       <div className={styles.inner}>
         <div className={styles.name}>
           <Link to="/dashboard/study">{name}</Link>
@@ -59,8 +41,10 @@ function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
                   height={"40px"}
                 />
                 <p>
-                  {studyingUsers.length}
-                  /{membersInfo.length}
+                  {/* {stud}
+                  /{membersInfo.length} */}
+                  {studyingMembers.length}/
+                  {members.length}
                 </p>
               </li>
               <li>
@@ -78,10 +62,13 @@ function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
           <div className={styles.membersWrapper}>
           <MembersContainer
             socket={socket}
-            membersIdArr={memberIdsArr}
             isFocus={isFocus}
             userInfo={userInfo}
             groupInfo={group}
+            setStudyingMembers={setStudyingMembers}
+            members={members}
+            setMembers={setMembers}
+            myTimerTotal={myTimerTotal}
           />
           </div>
         </div>
@@ -94,12 +81,6 @@ function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
           </button>
         </div>
       </div>
-    )
-  }, [group, isFocus]);
-
-  return (
-    <div className={styles.MyGroupContainer}>
-      {slideContent}
     </div>
   )
 };

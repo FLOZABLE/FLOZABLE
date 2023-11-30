@@ -9,12 +9,6 @@ function MyTimer(props) {
   const [hr, setHr] = useState(0);
 
   useEffect(() => {
-    setSec(total % 60);
-    setMin(Math.floor(total / 60) % 60);
-    setHr(Math.floor(total / (60 * 60)));
-  }, []);
-
-  useEffect(() => {
     worker.addEventListener("message", (e) => {
       if (run && e.data.command === "update-timer") {
         setSec(sec + 1);
