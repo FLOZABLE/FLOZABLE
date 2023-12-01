@@ -3,7 +3,7 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { autoSignin, generateRandomId } = require("../tool");
-const { NotificationCache } = require('../services/redisLoader');
+const { NotificationCache, userCache } = require('../services/redisLoader');
 
 //send challenge
 Router.post('/challenge-request', async (req, res) => {
@@ -63,16 +63,12 @@ Router.post('/challenge-request', async (req, res) => {
       redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
 
       const connection = pool.promise();
-      const [[userName1]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [targetId]);
-      const [[userName2]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [userId]);
 
       const challengeInfo = {
         id: generateRandomId(10),
         first_user_id: targetId, //the host
         second_user_id: userId, //the recipient
         datum_point: Math.floor(new Date().getTime() / 1000),
-        first_user_name: userName1.name,
-        second_user_name: userName2.name
       };
       const insertSubject = await connection.query(`INSERT INTO challenges SET ?`, challengeInfo);
 
@@ -106,18 +102,25 @@ Router.post('/challenge-request', async (req, res) => {
 Router.get('/', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
-      const { searchId, searchUser } = req.params; //search by challenge id or by user
+      const { searchId, searchUser } = req.query; //search by challenge id or by user
       const connection = pool.promise();
       if (!!searchId){ //searching by id
-        const [[challengeInfo]] = await connection.query(`SELECT first_user_id, second_user_id, first_user_name, second_user_name, datum_point FROM challenges WHERE id = ?`, [searchId]);
+        const [[challengeInfo]] = await connection.query(`SELECT first_user_id, second_user_id, datum_point FROM challenges WHERE id = ?`, [searchId]);
         if (!!!challengeInfo){
           res.send({success: false});
           return;
         }
+        challengeInfo.first_user = await userCache(challengeInfo.first_user_id);
+        challengeInfo.second_user = await userCache(challengeInfo.second_user_id);
         res.send({success: true, data: challengeInfo});
       }
       else{ //by user
-        const [challengeInfo] = await connection.query(`SELECT first_user_id, second_user_id, first_user_name, second_user_name, id, datum_point FROM challenges WHERE first_user_id = ? OR second_user_id = ? limit 120`, [searchUser, searchUser]);
+        const [challengeInfo] = await connection.query(`SELECT first_user_id, second_user_id, id, datum_point FROM challenges WHERE first_user_id = ? OR second_user_id = ? limit 120`, [searchUser, searchUser]);
+        const namePromise = challengeInfo.map(async (challenge) => {
+          challenge.first_user = await userCache(challenge.first_user_id);
+          challenge.second_user = await userCache(challenge.second_user_id);
+        });
+        await Promise.all(namePromise);
         res.send({success: true, data: challengeInfo});
       }
     } catch (error) {

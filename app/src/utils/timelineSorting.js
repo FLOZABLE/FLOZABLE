@@ -38,7 +38,7 @@ function timelineSort(subjects) {
     });
     const [monthlySorted, monthlyTotal] = timelineSorter(subject, 'monthly', firstDatumPoint, (startTime, stopTime) => {
       const newStart = DateTime.fromSeconds(startTime).plus({months: 1}).toSeconds();
-      const newStop = DateTime.fromSeconds(stopTime).plus({morenths: 1}).toSeconds();
+      const newStop = DateTime.fromSeconds(stopTime).plus({months: 1}).toSeconds();
       return [newStart, newStop];
     });
 
