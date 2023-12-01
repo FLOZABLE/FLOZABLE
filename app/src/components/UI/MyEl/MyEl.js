@@ -68,7 +68,7 @@ function MyEl({ memberInfo, stream, socket, setStudyingMembers }) {
         <div className={styles.timer}>
           <MyTimer
             run={run}
-            total={total}
+            initialSec={total}
           />
         </div>
       </div>

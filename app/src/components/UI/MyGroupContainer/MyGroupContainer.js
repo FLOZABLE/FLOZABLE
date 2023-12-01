@@ -18,10 +18,8 @@ function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
 
   useEffect(() => {
     if (!group) return;
-    const { group_id, average_hr, color, date, explanation, font, goal_hr, leader, max_member, name, visibility, tags, members, likes } = group;
-    const tagsArr = JSON.parse(tags);
-    const memberIdsArr = members === "" ? [] : members.split(",");
-    const membersInfo = [];
+    //group_id, average_hr, color, date, explanation, font, goal_hr, leader, max_member, name, visibility, tags, members, likes
+    const { name } = group;
     setName(name);
   }, [group, isFocus]);
 
