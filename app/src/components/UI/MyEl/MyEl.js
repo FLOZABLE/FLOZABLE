@@ -13,10 +13,6 @@ function MyEl({ memberInfo, stream, socket, setStudyingMembers }) {
   );
 
   useEffect(() => {
-
-  })
-
-  useEffect(() => {
     if (!memberInfo || !socket) return;
     const { totalTime, activeSubject, user_id } = memberInfo;
      if (activeSubject.time) {
