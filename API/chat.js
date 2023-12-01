@@ -18,6 +18,21 @@ Router.post("/bring-rooms", async (req, res) => {
   }));
 });
 
+Router.get('/members', async(req, res) => {
+  autoSignin(req, res, (async () => {
+    const userId = req.session.user_id;
+    const {type, roomId} = req.query;
+    if (!roomId) return res.send({success: false,reason: 'no room'});
+    //group chat room
+    if (!type) {
+      const groups = await groupCache(userId);
+      if (!groups.includes(roomId)) return res.send({success: false, reason: 'not in grouo'});
+      
+    }
+    res.send({ success: true })
+  }));
+})
+
 Router.post("/chat-request", async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;

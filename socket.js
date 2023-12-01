@@ -213,7 +213,7 @@ connection.on('connection', (socket) => {
     if (isUser(userId)) {
 
     } else {}
-  })
+  });
 });
 
 async function isUser(userId) {
@@ -281,4 +281,4 @@ cron.schedule('*/10 * * * * *', () => {
 });
 
 module.exports = { io, userIdToSocketIdMap, connection };
-require('./videoServer')
+//require('./videoServer')
