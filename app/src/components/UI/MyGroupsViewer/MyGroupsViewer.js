@@ -64,73 +64,9 @@ function MyGroupsViewer({
   isMic,
   mode,
 }) {
-  const [toggleTimer, setToggleTimer] = useState({ id: 0, status: 0 });
-  const [groupStudying, setGroupStudying] = useState({});
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
   const [swiperEl, setSwiperEl] = useState([]);
-
-  useEffect(() => {
-    if (!myGroups.length) return;
-    mediaSocket.connect();
-    socket.on("studying", onStudying);
-    socket.on("stopStudying", onStopStudying);
-    return () => {
-      socket.off("studying", onStudying);
-      socket.off("stopStudying", onStopStudying);
-    };
-  }, [myGroups]);
-
-  /*   useEffect(() => {
-      setGroupStudying(
-        Object.fromEntries(
-          myGroups.map((group) => {
-            const members = [];
-            group.members.map((member) => {
-              if (member.study.study) {
-                members.push(member.user_id);
-              }
-            });
-            return [group.group_id, { members: members }];
-          }),
-        ),
-      );
-    }, [myGroups]); */
-
-  const onStudying = useCallback((userId, groups) => {
-    setToggleTimer({ id: userId, status: 1 });
-    const currentGroup = groups.find(group => { return myGroups[selectedGroupIndex] && myGroups[selectedGroupIndex].group_id === group });
-    console.log(currentGroup)
-    /* if (myGroups[selectedGroupIndex])
-    groups.forEach((group) => {
-      setGroupStudying((prevGroupStudying) => {
-        const updatedGroupStudying = { ...prevGroupStudying };
-
-        if (
-          updatedGroupStudying[group] &&
-          !updatedGroupStudying[group].members.includes(userId)
-        ) {
-          updatedGroupStudying[group].members.push(userId);
-        }
-        return updatedGroupStudying;
-      });
-    }); */
-  }, [selectedGroupIndex, myGroups]);
-
-  const onStopStudying = (userId, groups) => {
-    setToggleTimer({ id: userId, status: 0 });
-    groups.forEach((group) => {
-      setGroupStudying((prevGroupStudying) => {
-        const updatedGroupStudying = { ...prevGroupStudying };
-        if (updatedGroupStudying[group]) {
-          const index = updatedGroupStudying[group].members.indexOf(userId);
-          if (index !== -1) {
-            updatedGroupStudying[group].members.splice(index, 1);
-          }
-        }
-        return updatedGroupStudying;
-      });
-    });
-  };
+  const [localStream, setLocalStream] = useState(null);
 
   useEffect(() => {
     setSwiperEl(myGroups.map((group, i) => {
@@ -142,11 +78,42 @@ function MyGroupsViewer({
             studyingUsers={[]}
             userInfo={userInfo}
             socket={socket}
+            localStream={localStream}
           />
         </SwiperSlide>
       )
     }));
-  }, [myGroups, selectedGroupIndex]);
+  }, [myGroups, selectedGroupIndex, localStream]);
+
+  useEffect(() => {
+    if (isCam || isMic) {
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: true,
+          video: {
+            width: {
+              min: 640,
+              max: 1920,
+            },
+            height: {
+              min: 400,
+              max: 1080,
+            }
+          }
+        })
+        .then(async(stream) => {
+          setLocalStream(stream);
+          try {
+            videoParams = { track: stream.getVideoTracks()[0], ...videoParams };
+          //const videoProducer = await producerTransport.produce(videoParams);
+          audioParams = { track: stream.getAudioTracks()[0], ...audioParams };
+          //const audioProducer = await producerTransport.produce(audioParams);
+          } catch (err) {
+            console.log(err);
+          }
+        });
+    };
+  }, [isCam, isMic]);
 
   return (
     <div

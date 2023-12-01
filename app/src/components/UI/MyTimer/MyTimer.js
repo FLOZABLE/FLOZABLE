@@ -29,9 +29,9 @@ function MyTimer({ run, initialSec }) {
   }, [initialSec]);
 
   useEffect(() => {
-    setSec(initialSec % 60);
-    setMin(Math.floor(initialSec / 60) % 60);
-    setHr(Math.floor(initialSec / (60 * 60)));
+    setSec(total % 60);
+    setMin(Math.floor(total / 60) % 60);
+    setHr(Math.floor(total / (60 * 60)));
   }, [total]);
 
   return (
