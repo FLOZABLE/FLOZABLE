@@ -29,7 +29,6 @@ function createUsersTable() {
     type SMALLINT DEFAULT 0,
     private SMALLINT DEFAULT 0,
     friends VARCHAR(200) DEFAULT '',
-    friend_requests VARCHAR(200) DEFAULT '',
     google_refresh_token VARCHAR(150)
   );
   `);

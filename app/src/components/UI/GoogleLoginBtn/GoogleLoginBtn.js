@@ -6,6 +6,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function GoogleLoginBtn() {
   const login = useGoogleLogin({
     flow: 'auth-code',
+    select_account: true,
     onSuccess: (response) => {
       console.log(response);
       const {code} = response;
