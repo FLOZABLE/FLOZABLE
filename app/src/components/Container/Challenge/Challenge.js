@@ -101,7 +101,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
         let rangeTwo = [];
         let rangeThree = [];
 
-        fetch(`${serverOrigin}/api/challenges/challenges?searchId=${JSON.stringify(selectedChallengeId)}`, {
+        fetch(`${serverOrigin}/api/challenges?searchId=${selectedChallengeId}`, {
             method: "get",
             headers: {
                 'Content-Type': 'application/json'
@@ -111,7 +111,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
             .then((data) => {
                 console.log(data);
                 if (data.success) {
-                    setUserInfo1({ id: data.data.first_user_id, name: data.data.first_user_name });
+                    setUserInfo1({ id: data.data.first_user_id, name: data.data.first_user.name });
                     setUser1Pfp((
                         <div className={styles.profileImg}
                             style={{
@@ -121,7 +121,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
                             }}
                         ></div>
                     ));
-                    setUserInfo2({ id: data.data.second_user_id, name: data.data.second_user_name });
+                    setUserInfo2({ id: data.data.second_user_id, name: data.data.second_user.name });
                     setUser2Pfp((
                         <div className={styles.profileImg}
                             style={{
@@ -236,12 +236,11 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
 
     useEffect(() => {
         if (!!!userInfo1.id) return;
-        fetch(`${serverOrigin}/api/challenges/bring-challenges`, {
-            method: "post",
+        fetch(`${serverOrigin}/api/challenges/?searchUser=${userInfo1.id}`, {
+            method: "get",
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ searchId: false, searchUser: userInfo1.id }),
         })
             .then((response) => response.json())
             .then((data) => {
@@ -251,7 +250,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers
                     return (
                         <div key={i} className={styles.pastChallenge}>
                             <a href={challenge.id}>
-                                <h3>{challenge.first_user_name} vs {challenge.second_user_name}</h3>
+                                <h3>{challenge.first_user.name} vs {challenge.second_user.name}</h3>
                             </a>
                             <p>On {DateTime.fromSeconds(challenge.datum_point).toFormat("DD")}</p>
                         </div>
