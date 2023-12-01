@@ -6,6 +6,7 @@ function MyCamDisp({ stream }) {
 
   useEffect(() => {
     videoRef.current.srcObject = stream;
+    console.log(stream);
   }, [stream]);
 
   return (
