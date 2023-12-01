@@ -5,7 +5,7 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const crypto = require("crypto");
 const {isValidJSON, hashing, generateRandomId, autoSignin} = require("../tool");
-const { timerCache, activeSubjectCache } = require("../services/redisLoader");
+const { timerCache, activeSubjectCache, groupCache } = require("../services/redisLoader");
 
 Router.post('/create-validate', async (req, res) => {
   autoSignin(req, res, (async () => {
@@ -168,6 +168,9 @@ Router.post('/join/:id', async (req, res) => {
       const io = req.app.get('socketio');
       io.emit('addUser', groupId, userId);
       res.send({ success: true, msg: `Joined group "${groupInfo.name}"` });
+      const groups = await groupCache(userId);
+      groups.push(groupId);
+      redisClient.hSet(`user:${userId}`, 'groups', groups.join(','));
     } catch (err) {
       // Handle any errors that may occur during the execution of queries
       console.error('Error performing database queries:', err);

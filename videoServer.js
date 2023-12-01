@@ -4,8 +4,6 @@ const { groupCache } = require("./services/redisLoader");
 const {sessionMiddleWare} = require('./app');
 const mediaSocket = io.of('/mediaSocket');
 
-const userIdToSocketIdMap = new Map();
-
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 mediaSocket.use(wrap(sessionMiddleWare));
 /**
@@ -113,7 +111,7 @@ mediaSocket.on('connection', async (socket) => {
   };
   socket.userId = session.user_id;
   const userId = session.user_id;
-
+  console.log('gggg',userId)
   socket.on('changeGroup', async (roomName, callback) => {
         // create Router if it does not exist
     // const newRouter = rooms[roomId] && rooms[roomId].get('data').router || await createRoom(roomId, socket.id)

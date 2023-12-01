@@ -21,6 +21,7 @@ import CustomInput from '../../UI/CustomInput/CustomInput';
 import VolumeControl from '../../UI/VolumeControl/VolumeControl';
 import Draggable from "react-draggable";
 import ThemeSelector from '../../UI/ThemeSelector/ThemeSelector';
+import { mediaSocket } from '../../../mediaSocket';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -80,10 +81,7 @@ function Study(props) {
   }, [myGroups]);
 
   useEffect(() => {
-    socket.on('studying', (onlineMembers) => {
-      // 
-      
-    })
+    mediaSocket.connect();
   }, []);
 
   useEffect(() => {

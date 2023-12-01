@@ -10,8 +10,7 @@ import MembersContainer from "../MembersContainer/MembersContainer";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
-  const [slideContent, setSlideContent] = useState(null);
+function MyGroupContainer({ group, isFocus, localStream, socket, userInfo }) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -66,6 +65,7 @@ function MyGroupContainer({ group, isFocus, studyingUsers, socket, userInfo }) {
             setStudyingMembers={setStudyingMembers}
             members={members}
             setMembers={setMembers}
+            localStream={localStream}
           />
           </div>
         </div>
