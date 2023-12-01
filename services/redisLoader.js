@@ -142,6 +142,22 @@ async function dmRoomMembersLoader() {
   };
 };
 
+async function groupChatsMembersLoader() {
+  try {
+    const connection = pool.promise();
+
+    const [groups] = await connection.query(`SELECT members, group_id FROM groups`);
+    groups.map(group => {
+      const {group_id, members} = group;
+      const membersArr = members === "" ? [] : members.split(",");
+      //redisClient.hSet(`room:${group_id}`, membersArr);
+    })
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+
 async function chatRoomsCache(userId) {
   try {
     let dmRooms = await dmRoomsCache(userId);
@@ -249,14 +265,15 @@ async function userCache(userId) {
       return userInfo;
     } else {
       const connection = pool.promise();
-      const [[userInfo]] = await connection.query("SELECT name, email, groups, friends, timezone FROM users WHERE user_id = ?", [userId]);
+      const [[userInfo]] = await connection.query("SELECT name, email, groups, friends, timezone, datum_point FROM users WHERE user_id = ?", [userId]);
       if (userInfo) {
-        const { name, email, groups, friends, timezone } = userInfo;
+        const { name, email, groups, friends, timezone, datum_point } = userInfo;
         redisClient.hSet(`user:${userId}`, 'name', name);
         redisClient.hSet(`user:${userId}`, 'email', email);
         redisClient.hSet(`user:${userId}`, 'groups', groups);
         redisClient.hSet(`user:${userId}`, 'friends', friends);
         redisClient.hSet(`user:${userId}`, 'timezone', timezone);
+        redisClient.hSet(`user:${userId}`, 'datum_point', datum_point);
       };
       return userInfo;
     };
@@ -291,6 +308,25 @@ async function membersCache(members) {
   })
 }
 
+async function subjectsTimelineCache(userId) {
+  const subjectsInfo = await subjectsCache(userId);
+  const connection = pool.promise();
+  const [subjectTimelines] = await connection.query(`SELECT timeline, id FROM subjects WHERE user_id = ?`, [userId]);
+  const subjectPromises = subjectsInfo.map(async (subject) => {
+    const {id, timeline} = subject;
+    const prevTimeline = subjectTimelines.find(sub => {
+      return sub.id === id;
+    });
+    const parsedTimeline  = prevTimeline.length ?JSON.parse(timeline.replace(/^/,"[").replace(/$/,"]")) : []; //wrapping the string with "[]"
+    const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
+    subject.timeline = parsedTimeline.concat(todayTimeline);
+    return subject;
+  });
+
+  const subjects = await Promise.all(subjectPromises);
+  return subjects;
+}
+
 module.exports = {
   flushRedis,
   groupsLoader,
@@ -307,5 +343,7 @@ module.exports = {
   usersCache,
   dmRoomMembersLoader,
   dmRoomsCache,
-  userCache
+  userCache,
+  subjectsTimelineCache,
+  groupChatsMembersLoader
 }

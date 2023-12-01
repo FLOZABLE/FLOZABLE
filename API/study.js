@@ -5,7 +5,7 @@ const redisClient = require("../model/redis");
 const notificationService = require('../services/notification');
 const { io } = require("../socket");
 const { generateRandomId, isValidJSON, autoSignin } = require("../tool");
-const { subjectsCache } = require("../services/redisLoader");
+const { subjectsCache, subjectsTimelineCache } = require("../services/redisLoader");
 
 Router.post("/add-subject", async (req, res) => {
   autoSignin(req, res, (async() => {
@@ -177,22 +177,8 @@ Router.post('/bring-subjects', async (req, res) => {
     const connection = pool.promise();
     try {
       const userId = req.session.user_id;
-      //const [subjectsInfo] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline, timeline_sum FROM subjects where user_id = ?`, [userId]);
-      const subjectsInfo = await subjectsCache(userId);
-      const [subjectTimelines] = await connection.query(`SELECT timeline, id FROM subjects WHERE user_id = ?`, [userId]);
-      const subjectPromises = subjectsInfo.map(async (subject) => {
-        const {id, timeline} = subject;
-        const prevTimeline = subjectTimelines.find(sub => {
-          return sub.id === id;
-        });
-        const parsedTimeline  = prevTimeline.length ?JSON.parse(timeline.replace(/^/,"[").replace(/$/,"]")) : []; //wrapping the string with "[]"
-        const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
-        subject.timeline = parsedTimeline.concat(todayTimeline);
-        return subject;
-      });
-
-      const subjects = await Promise.all(subjectPromises);
-      res.send({ success: true, subjects });
+      const subjectsInfo = await subjectsTimelineCache(userId);
+      res.send({ success: true, subjects: subjectsInfo });
     } catch (err) {
       console.log(err);
     }

@@ -8,7 +8,7 @@ const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
 const { hashing, autoSignin, generateRandomId, googleOauth2client } = require("../tool");
-const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache } = require('../services/redisLoader');
+const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
 const upload = multer();
 
 Router.post('/accountinfo', async (req, res) => {
@@ -405,21 +405,19 @@ Router.get('/logout', function (req, res) {
 
 Router.get('/profile/:userId', async (req, res) => {
   try {
-    const connection = pool.promise();
     const targetUserId = req.params.userId;
-    const [[userInfo]] = await connection.query(`SELECT name, email, user_id, groups, datum_point, timezone, friends FROM users WHERE user_id = ?`, [targetUserId]);
+    if (!targetUserId) return {success: false, reason: 'invalid user'}
+    const userInfo = await userCache(targetUserId);
     if (!userInfo) return res.send({ success: false, msg: 'No such user' });
-    const [subjectsInfo] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline, timeline_sum FROM subjects where user_id = ?`, [targetUserId]);
-    for (const subject of subjectsInfo) {
-      const redisSubject = { ...subject };
-      delete redisSubject.timeline;
-      await redisClient.hSet(`user:${targetUserId}`, `subject:${subject.id}`, JSON.stringify(redisSubject));
-      //this code adds [at the start and ] at the end
-      let prevTimeline = subject.timeline === "" ? [] : JSON.parse(subject.timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
-      const todayTimeline = (await redisClient.lRange(`user:${targetUserId}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
-      subject.timeline = prevTimeline.concat(todayTimeline);
-    }
-    res.send({ success: true, userInfo, subjectsInfo });
+    const {friends} = userInfo;
+    const friendsArr = friends === "" ? [] : friends.split(",");
+    const firendsInfoPromises = friendsArr.map(async (friendId) => {
+      const friendInfo = await userCache(friendId);
+      return friendInfo;
+    });
+    const friendsInfo = await Promise.all(firendsInfoPromises);
+    const subjectsInfo = await subjectsTimelineCache(targetUserId);
+    res.send({ success: true, userInfo, subjectsInfo, friendsInfo });
   } catch (err) {
     console.log(err);
   }

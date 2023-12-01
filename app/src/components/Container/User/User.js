@@ -61,7 +61,7 @@ const lineChartOption = {
   },
 };
 
-function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers, socket }) {
+function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, socket }) {
   const [userInfo, setUserInfo] = useState(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
@@ -105,7 +105,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
   const [setOpenGroupPwModal, isSetOpenGroupPwModal] = useState(false);
 
   useEffect(() => {
-    if (!groups || !allMembers) return;
+    if (!groups) return;
     const pathName = window.location.pathname.split('/');
     const selectedUserId = pathName[pathName.length - 1];
 
@@ -114,7 +114,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
       .then((data) => {
 
         if (data.success) {
-          const { userInfo, subjectsInfo } = data;
+          const { userInfo, subjectsInfo, friendsInfo } = data;
           const { datum_point, friends } = userInfo;
           setUserInfo(userInfo);
           const sortedSubject = timelineSort(subjectsInfo);
@@ -123,17 +123,13 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, allMembers
           const userGroups = groups.filter(group => {
             return groupsArr.includes(group.group_id);
           });
+          setUserFriends(friendsInfo)
           setUserGroups(userGroups);
-          setDateTimeDatum(DateTime.fromSeconds(datum_point));
-          const friendsArr = friends.split(',');
-          const userFriends = allMembers.filter(member => {
-            return friendsArr.includes(member.user_id);
-          });
-          setUserFriends(userFriends)
+          setDateTimeDatum(DateTime.fromSeconds(parseInt(datum_point)));
         };
       })
       .catch((error) => console.error(error));
-  }, [groups, allMembers, clickedUser]);
+  }, [groups, clickedUser]);
 
   const requestFriend = () => {
     fetch(`${serverOrigin}/api/account/friend-request`, {
