@@ -2,24 +2,36 @@ import React, { useEffect, useState, useRef } from "react";
 import styles from "./MyTimer.module.css";
 import worker from "../../../utils/subjectTimerWorker";
 
-function MyTimer({ run, total }) {
+function MyTimer({ run, initialSec }) {
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
-
-  worker.addEventListener("message", (e) => {
-    if (run && e.data.command === "updateSubjectTimer") {
-      setSec(sec + 1);
-    }
-  });
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    console.log('gdt', total)
-    if (total) {
-      setSec(total % 60);
-      setMin(Math.floor(total / 60) % 60);
-      setHr(Math.floor(total / (60 * 60)));
+    const onMessage = (e) => {
+      if (run && e.data.command === "updateSubjectTimer") {
+        setTotal(prev => prev + 1);
+      };
+    };
+    worker.addEventListener("message", onMessage);
+
+    return () => {
+      worker.removeEventListener("message", onMessage);
+    };
+  }, [run]);
+
+  useEffect(() => {
+    console.log('gdt', initialSec)
+    if (initialSec) {
+      setTotal(initialSec);
     }
+  }, [initialSec]);
+
+  useEffect(() => {
+    setSec(initialSec % 60);
+    setMin(Math.floor(initialSec / 60) % 60);
+    setHr(Math.floor(initialSec / (60 * 60)));
   }, [total]);
 
   return (

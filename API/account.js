@@ -14,10 +14,13 @@ const upload = multer();
 Router.post('/accountinfo', async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
-    const notifications = await NotificationCache(userId);
-    const userInfo = await userCache(userId);
-    usersCache(userId);
-    res.send({ success: true, userInfo: userInfo, notifications });
+    console.log(userId)
+    if (userId) {
+      const notifications = await NotificationCache(userId);
+      const userInfo = await userCache(userId);
+      usersCache(userId);
+      res.send({ success: true, userInfo: userInfo, notifications });
+    }
   }))
 });
 

@@ -8,14 +8,15 @@ import { DateTime } from "luxon";
 
 function MemberEl({ memberInfo, socket, setStudyingMembers }) {
   const [run, setRun] = useState(0);
-  const [sec, setSec] = useState(0);
   const [track, setTrack] = useState(null);
+  const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
     <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
   );
   useEffect(() => {
     if (!memberInfo || !socket) return;
     const { totalTime, activeSubject, user_id } = memberInfo;
+
      if (activeSubject.time) {
       setRun(true);
       const now = DateTime.now().set({millisecond: 0}).toSeconds();
@@ -24,9 +25,9 @@ function MemberEl({ memberInfo, socket, setStudyingMembers }) {
      } else {
       setTotal(totalTime);
      };
+
     const onStudying = () => {
       setRun(true);
-      console.log('start')
       setStudyIcon(
         <StudyPerson
           opt1={"#fff"}
@@ -40,7 +41,6 @@ function MemberEl({ memberInfo, socket, setStudyingMembers }) {
 
     const onStopStudying = () => {
       setRun(false);
-      console.log('gd')
       setStudyIcon(
         <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />
       );
@@ -71,7 +71,7 @@ function MemberEl({ memberInfo, socket, setStudyingMembers }) {
         <div className={styles.timer}>
           <MemberTimer
            run={run} 
-           total={sec} 
+           initialSec={total} 
            />
         </div>
       </div>

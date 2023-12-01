@@ -231,7 +231,6 @@ Router.post('/like/:id', async (req, res) => {
 });
 
 Router.get('/members', async (req, res) => {
-  console.log("EY")
   autoSignin(req, res, (async() => {
     const {groupId} = req.query;
     const connection = pool.promise();
