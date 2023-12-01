@@ -6,37 +6,13 @@ import MemberTimer from "../MemberTimer/MemberTimer";
 import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 import { DateTime } from "luxon";
 
-function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, activeMembers, setActiveMembers }) {
+function MemberEl({ memberInfo, socket, setStudyingMembers }) {
   const [run, setRun] = useState(0);
   const [sec, setSec] = useState(0);
   const [track, setTrack] = useState(null);
   const [studyIcon, setStudyIcon] = useState(
     <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
   );
-
-  /* useEffect(() => {
-    const { timerInfo, activeSubject } = memberInfo;
-    if (timerInfo && timerInfo.total) {
-      const total = memberInfo.timerInfo.total;
-      setSec(total);
-
-      if (activeSubject && activeSubject.id) {
-        setRun(1);
-        const now = Math.floor(new Date() / 1000);
-
-        setSec(now - activeSubject.time + total);
-        setStudyIcon(
-          <StudyPerson
-            opt1={"#fff"}
-            opt2={"#fff"}
-            width={"40px"}
-            height={"40px"}
-          />,
-        );
-      }
-    }
-  }, [memberInfo]); */
-
   useEffect(() => {
     if (!memberInfo || !socket) return;
     const { totalTime, activeSubject, user_id } = memberInfo;
@@ -44,55 +20,45 @@ function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, activeMemb
       setRun(true);
       const now = DateTime.now().set({millisecond: 0}).toSeconds();
       const actualTime = totalTime + now - activeSubject.time;
-      setSec(actualTime);
+      setTotal(actualTime);
      } else {
-      setSec(totalTime);
+      setTotal(totalTime);
      };
-
     const onStudying = () => {
-      console.log();
       setRun(true);
+      console.log('start')
+      setStudyIcon(
+        <StudyPerson
+          opt1={"#fff"}
+          opt2={"#fff"}
+          width={"40px"}
+          height={"40px"}
+        />
+      );
+      setStudyingMembers(prev => [...prev, memberInfo]);
+    };
+
+    const onStopStudying = () => {
+      setRun(false);
+      console.log('gd')
+      setStudyIcon(
+        <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />
+      );
+      setStudyingMembers(prevMembers => {
+        return prevMembers.filter(member => {
+          return member.user_id !== user_id;
+        });
+      });
     };
 
     socket.on(`studying:${user_id}`, onStudying);
+    socket.on(`stopStudying:${user_id}`, onStopStudying);
 
     return () => {
       socket.off(`studying:${user_id}`, onStudying);
+      socket.off(`stopStudying:${user_id}`, onStopStudying);
     };
   }, [socket, memberInfo]);
-
-  useEffect(() => {
-    //logic for stream data of user
-    /* if (stream) {
-      setStudyIcon(null);
-      return;
-    }; */
-    /* if (toggleTimer.id === memberInfo.user_id) {
-      setRun(toggleTimer.status);
-      if (toggleTimer.status) {
-        setStudyIcon(
-          <StudyPerson
-            opt1={"#fff"}
-            opt2={"#fff"}
-            width={"40px"}
-            height={"40px"}
-          />,
-        );
-      } else {
-        setStudyIcon(
-          <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
-        );
-      }
-    } */
-  }, [toggleTimer]);
-
-  useEffect(() => {
-    /* usersTracks.map((userTracksData) => {
-      if (userTracksData.userId === memberInfo.user_id) {
-        setTrack(userTracksData.track);
-      }
-    }); */
-  }, [usersTracks, memberInfo]);
 
   return (
     <div className={styles.member}>
@@ -103,7 +69,10 @@ function MemberEl({ memberInfo, toggleTimer, me, socket, usersTracks, activeMemb
         </Link>
         <div className={styles.icon}>{studyIcon}</div>
         <div className={styles.timer}>
-          <MemberTimer run={run} total={sec} me={me} />
+          <MemberTimer
+           run={run} 
+           total={sec} 
+           />
         </div>
       </div>
     </div>

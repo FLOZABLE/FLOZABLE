@@ -6,7 +6,7 @@ import {
   faPause,
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
-import worker from "./TimerWorker";
+import worker from "../../../utils/subjectTimerWorker";
 
 function SubjectTimer({
   subjects,
