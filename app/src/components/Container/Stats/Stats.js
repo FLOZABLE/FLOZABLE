@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBook, faCaretDown, faFire, faGlobe, faRankingStar } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faFire, faGlobe, faRankingStar } from '@fortawesome/free-solid-svg-icons';
 import PieChart from '../../UI/PieChart';
 import LineChart from '../../UI/LineChart';
 import BarChart from '../../UI/BarChart';
-import StatsCalendar from '../../UI/StatsCalendar/StatsCalendar';
 import StuckModal from '../../UI/StuckModal/StuckModal';
-import TodoList from '../../UI/TodoList/TodoList';
 import Timeline from '../../UI/Timeline/Timeline';
 import RadioBtn from '../../UI/RadioBtn/RadioBtn';
 import ChartDataLabel from 'chartjs-plugin-datalabels';

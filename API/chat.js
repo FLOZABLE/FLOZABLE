@@ -3,7 +3,7 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { autoSignin, arraysHaveSameContents, generateRandomId } = require("../tool");
-const { groupCache, chatRoomsCache, usersCache, NotificationCache, dmRoomsCache } = require("../services/redisLoader");
+const { groupCache, chatRoomsCache, usersCache, NotificationCache, dmRoomsCache, userCache } = require("../services/redisLoader");
 
 Router.post("/bring-rooms", async (req, res) => {
   autoSignin(req, res, (async () => {
@@ -21,15 +21,15 @@ Router.post("/bring-rooms", async (req, res) => {
 Router.get('/members', async(req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
-    const {type, roomId} = req.query;
+    const {roomId} = req.query;
     if (!roomId) return res.send({success: false,reason: 'no room'});
-    //group chat room
-    if (!type) {
-      const groups = await groupCache(userId);
-      if (!groups.includes(roomId)) return res.send({success: false, reason: 'not in grouo'});
-      
-    }
-    res.send({ success: true })
+    const members = await redisClient.sMembers(`room:${roomId}`);
+    if (!members.includes(userId)) return res.send({success: false, reason: 'not in grouo'});
+    const membersInfo = await Promise.all(members.map(async(memberId) => {
+      const memberInfo = await userCache(memberId);
+      return memberInfo;
+    }));
+    res.send({success: true, membersInfo});
   }));
 })
 
@@ -37,23 +37,31 @@ Router.post("/chat-request", async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
     const { targetId } = req.body;
+    console.log('gd')
+    if (userId === targetId) return res.send({success: false, reason: `Can't chat yourself`});
+
     const chatRooms = await chatRoomsCache(userId);
     //checks if group with same members exists
     const isRoomExist = chatRooms.find(chatRoom => {
       let {members} = chatRoom;
       return arraysHaveSameContents(members, [userId, targetId]);
     });
+    if (isRoomExist) return res.send({success: false, reason: 'DM already created!', opr: 1});
+
     const userExist = await usersCache(targetId);
+    if (!userExist) return res.send({success: false, reason: 'No such user'});
+
     const targetDmRequests = await NotificationCache(targetId, 4);
-    const prevDmRequest = targetDmRequests.find(dmRequest => { return dmRequest.f === userId });
-    if (!isRoomExist && !prevDmRequest && userId !== targetId && userExist) {
-      const id = generateRandomId(5);
-      const date = Math.floor(new Date().getTime() / (1000 * 60));
-      const io = req.app.get('socketio');
-      const notification = { i: id, t: 4, f: userId, d: date };
-      io.to(targetId).emit('notification', notification);
-      redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
-    }
+    const prevDmRequest = targetDmRequests.find(dmRequest => { return dmRequest.f.user_id === userId });
+    if (prevDmRequest) return res.send({success: false, reason: 'Already sent the request!'});
+    
+    const id = generateRandomId(5);
+    const date = Math.floor(new Date().getTime() / (1000 * 60));
+    const io = req.app.get('socketio');
+    const notification = { i: id, t: 4, f: userId, d: date };
+    io.to(targetId).emit('notification', notification);
+    redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
+    res.send({success: true, message: `DM request sent!`})
   }));
 });
 
@@ -63,7 +71,7 @@ Router.post("/chat-request-reply", async (req, res) => {
       const userId = req.session.user_id;
       const { targetId, accepted } = req.body;
       const chatRequests = await NotificationCache(userId, 4);
-      const chatReq = chatRequests.find(chatReq => { return chatReq.f === targetId });
+      const chatReq = chatRequests.find(chatReq => { return chatReq.f.user_id === targetId });
       if (!chatReq) return res.send({ success: false, reason: 'expired request' })
       redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(chatReq));
       if (!accepted) {

@@ -81,33 +81,6 @@
   height: fit-content;
 }
 
-.MyGroupsViewer .buttons {
-  position: absolute;
-  bottom: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-}
-
-.MyGroupsViewer .buttons button {
-  border-radius: 20px;
-  height: 40px;
-  width: fit-content;
-  background-color: var(--pink);
-  color: #fff;
-  font-weight: 700;
-  margin-left: auto;
-  font-size: 17px;
-  padding: 0px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0px 10px;
-}
-
 .MyGroupsViewer.study * {
   color: #fff !important;
 }

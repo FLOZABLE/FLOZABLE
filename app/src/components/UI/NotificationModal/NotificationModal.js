@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function NotificationModal({ notifications, setNotifications, setIsNotificationModal, isNotificationModal, allMembers, setResponse }) {
+function NotificationModal({ notifications, setNotifications, setIsNotificationModal, isNotificationModal, setResponse }) {
   const [notificationsEl, setNotificationsEl] = useState([]);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
@@ -97,26 +97,27 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   useEffect(() => {
     setNotificationsEl(notifications.map((notification, i) => {
       const type = notification.t;
-      const from = notification.f;
+      const sender = notification.f;
+      const fromId = sender ? sender.user_id : '';
+      const fromName = sender ? sender : '';
       if (type === 0) {
-        const sender = allMembers.find(member => {return member.user_id === from});
-        const {name} = sender;
+        
         return (
           <div className={styles.notification} key={i}>
-          <Link to={`/dashboard/user/${from}`} className={styles.profileImg}
+          <Link to={`/dashboard/user/${fromId}`} className={styles.profileImg}
             style={{
-              backgroundImage: `url("${serverOrigin}/profile-images/${from}.jpeg")`,
+              backgroundImage: `url("${serverOrigin}/profile-images/${fromId}.jpeg")`,
               backgroundSize: 'cover',
               backgroundPosition: 'center center',
               backgroundRepeat: 'no-repeat',
             }}>
           </Link>
           <div className={styles.content}>
-            <p>{name} wants to be friends with you!</p>
+            <p>{fromName} wants to be friends with you!</p>
           </div>
           <div className={styles.buttons}>
             <div className={`${styles.btnWrapper} ${styles.decline}`}>
-              <button onClick={() => {friendRequestReply(from, false, notification.i)}}>
+              <button onClick={() => {friendRequestReply(fromId, false, notification.i)}}>
                 <FontAwesomeIcon icon={faXmark} />
               </button>
               <div className={styles.hoverDisp}>
@@ -124,7 +125,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
               </div>
             </div>
             <div className={`${styles.btnWrapper} ${styles.accept}`}>
-            <button onClick={() => {friendRequestReply(from, true, notification.i)}}>
+            <button onClick={() => {friendRequestReply(fromId, true, notification.i)}}>
                 <FontAwesomeIcon icon={faCheck} />
               </button>
               <div className={styles.hoverDisp}>
@@ -136,24 +137,23 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
         )
       }
       else if (type === 1) {
-        const sender = allMembers.find(member => {return member.user_id === from});
-        const {name} = sender;
+        
         return (
           <div className={styles.notification} key={i}>
-          <Link to={`/dashboard/user/${from}`} className={styles.profileImg}
+          <Link to={`/dashboard/user/${fromId}`} className={styles.profileImg}
             style={{
-              backgroundImage: `url("${serverOrigin}/profile-images/${from}.jpeg")`,
+              backgroundImage: `url("${serverOrigin}/profile-images/${fromId}.jpeg")`,
               backgroundSize: 'cover',
               backgroundPosition: 'center center',
               backgroundRepeat: 'no-repeat',
             }}>
           </Link>
           <div className={styles.content}>
-            <p>{name} and you are now friends!</p>
+            <p>{fromName} and you are now friends!</p>
           </div>
           <div className={styles.buttons}>
             <div className={`${styles.btnWrapper} ${styles.accept}`}>
-            <button onClick={() => {deleteFriendNotif(from, notification.i)}}>
+            <button onClick={() => {deleteFriendNotif(fromId, notification.i)}}>
                 <FontAwesomeIcon icon={faCheck} />
               </button>
               <div className={styles.hoverDisp}>
@@ -165,24 +165,23 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
         )
       }
       else if (type === 2) {
-        const sender = allMembers.find(member => {return member.user_id === from});
-        const {name} = sender;
+        
         return (
           <div className={styles.notification} key={i}>
-          <Link to={`/dashboard/user/${from}`} className={styles.profileImg}
+          <Link to={`/dashboard/user/${fromId}`} className={styles.profileImg}
             style={{
-              backgroundImage: `url("${serverOrigin}/profile-images/${from}.jpeg")`,
+              backgroundImage: `url("${serverOrigin}/profile-images/${fromId}.jpeg")`,
               backgroundSize: 'cover',
               backgroundPosition: 'center center',
               backgroundRepeat: 'no-repeat',
             }}>
           </Link>
           <div className={styles.content}>
-            <p>{name} challenges you to a study face-off!</p>
+            <p>{fromName} challenges you to a study face-off!</p>
           </div>
           <div className={styles.buttons}>
             <div className={`${styles.btnWrapper} ${styles.decline}`}>
-              <button onClick={() => {challengeRequestReply(from, false, notification.i)}}>
+              <button onClick={() => {challengeRequestReply(fromId, false, notification.i)}}>
                 <FontAwesomeIcon icon={faXmark} />
               </button>
               <div className={styles.hoverDisp}>
@@ -190,7 +189,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
               </div>
             </div>
             <div className={`${styles.btnWrapper} ${styles.accept}`}>
-            <button onClick={() => {challengeRequestReply(from, true, notification.i)}}>
+            <button onClick={() => {challengeRequestReply(fromId, true, notification.i)}}>
                 <FontAwesomeIcon icon={faCheck} />
               </button>
               <div className={styles.hoverDisp}>
@@ -202,24 +201,23 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
         )
       }
       else if (type === 3) {
-        const sender = allMembers.find(member => {return member.user_id === from});
-        const {name} = sender;
+        
         return (
           <div className={styles.notification} key={i}>
-          <Link to={`/dashboard/user/${from}`} className={styles.profileImg}
+          <Link to={`/dashboard/user/${fromId}`} className={styles.profileImg}
             style={{
-              backgroundImage: `url("${serverOrigin}/profile-images/${from}.jpeg")`,
+              backgroundImage: `url("${serverOrigin}/profile-images/${fromId}.jpeg")`,
               backgroundSize: 'cover',
               backgroundPosition: 'center center',
               backgroundRepeat: 'no-repeat',
             }}>
           </Link>
           <div className={styles.content}>
-            <p>{name} accepted your challenge!</p>
+            <p>{fromName} accepted your challenge!</p>
           </div>
           <div className={styles.buttons}>
             <div className={`${styles.btnWrapper} ${styles.accept}`}>
-            <button onClick={() => {deleteChallengeNotif(from, notification.i)}}>
+            <button onClick={() => {deleteChallengeNotif(fromId, notification.i)}}>
                 <FontAwesomeIcon icon={faCheck} />
               </button>
               <div className={styles.hoverDisp}>
@@ -230,24 +228,23 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
         </div>
         )
       } else if (type === 4) {
-        const sender = allMembers.find(member => {return member.user_id === from});
-        const {name} = sender;
+        
         return (
           <div className={styles.notification} key={i}>
-          <Link to={`/dashboard/user/${from}`} className={styles.profileImg}
+          <Link to={`/dashboard/user/${fromId}`} className={styles.profileImg}
             style={{
-              backgroundImage: `url("${serverOrigin}/profile-images/${from}.jpeg")`,
+              backgroundImage: `url("${serverOrigin}/profile-images/${fromId}.jpeg")`,
               backgroundSize: 'cover',
               backgroundPosition: 'center center',
               backgroundRepeat: 'no-repeat',
             }}>
           </Link>
           <div className={styles.content}>
-            <p>{name} wants to chat with you!</p>
+            <p>{fromName} wants to chat with you!</p>
           </div>
           <div className={styles.buttons}>
             <div className={`${styles.btnWrapper} ${styles.decline}`}>
-              <button onClick={() => {chatRequestReply(from, false, notification.i)}}>
+              <button onClick={() => {chatRequestReply(fromId, false, notification.i)}}>
                 <FontAwesomeIcon icon={faXmark} />
               </button>
               <div className={styles.hoverDisp}>
@@ -255,7 +252,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
               </div>
             </div>
             <div className={`${styles.btnWrapper} ${styles.accept}`}>
-            <button onClick={() => {chatRequestReply(from, true, notification.i)}}>
+            <button onClick={() => {chatRequestReply(fromId, true, notification.i)}}>
                 <FontAwesomeIcon icon={faCheck} />
               </button>
               <div className={styles.hoverDisp}>

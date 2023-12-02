@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //allMembers (for link of challenger), userInfo, (fetch challenge on its own)
+function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, (fetch challenge on its own)
 
 
     const [userInfo1, setUserInfo1] = useState({ id: null, name: null });
