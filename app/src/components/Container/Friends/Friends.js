@@ -19,7 +19,9 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo }) {
           <h1>Friends</h1>
         </div>
         <div className={styles.box} id={styles.links}>
-          <button>
+          <div className={styles.buttonsWrapper}>
+            <div className={styles.buttonContainer}>
+            <button>
             <i>
 
             </i>
@@ -30,6 +32,47 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo }) {
               <FontAwesomeIcon icon={faAngleRight} />
             </i>
           </button>
+            </div>
+            <div className={styles.buttonContainer}>
+            <button>
+            <i>
+
+            </i>
+            <p>
+              Friend Link
+            </p>
+            <i>
+              <FontAwesomeIcon icon={faAngleRight} />
+            </i>
+          </button>
+            </div>
+            <div className={styles.buttonContainer}>
+            <button>
+            <i>
+
+            </i>
+            <p>
+              Friend Link
+            </p>
+            <i>
+              <FontAwesomeIcon icon={faAngleRight} />
+            </i>
+          </button>
+            </div>
+            <div className={styles.buttonContainer}>
+            <button>
+            <i>
+
+            </i>
+            <p>
+              Friend Link
+            </p>
+            <i>
+              <FontAwesomeIcon icon={faAngleRight} />
+            </i>
+          </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
