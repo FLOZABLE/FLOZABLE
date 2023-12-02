@@ -61,6 +61,12 @@ const lineChartOption = {
   },
 };
 
+const rankingLinchartOpt = {
+  ...lineChartOption
+};
+
+rankingLinchartOpt.scales.y.reverse = true;
+
 function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, socket }) {
   const [userInfo, setUserInfo] = useState(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -177,6 +183,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, socket }) 
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log('gddd', data)
         setResponse(data);
         if (data.success) {
 
@@ -341,7 +348,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, socket }) 
 
                   datasets={rankingTrend.datasets}
 
-                  options={lineChartOption}
+                  options={rankingLinchartOpt}
                 />
               </div>
             </div>

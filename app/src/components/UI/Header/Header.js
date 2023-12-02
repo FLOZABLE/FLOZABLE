@@ -199,7 +199,7 @@ function Header({
               </div>
             </div>
           </div>
-          <div className={styles.dropDownContainer}>
+          {/* <div className={styles.dropDownContainer}>
             <button>
               <i>
                 <FontAwesomeIcon icon={faBell} />
@@ -210,7 +210,7 @@ function Header({
                 <p>0 notifications</p>
               </div>
             </div>
-          </div>
+          </div> */}
           <div className={styles.dropDownContainer}>
             <button
               onClick={() => {

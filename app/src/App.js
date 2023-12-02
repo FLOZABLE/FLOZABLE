@@ -12,7 +12,6 @@ import Sidebar from "./components/UI/Sidebar/Sidebar";
 import Header from "./components/UI/Header/Header";
 import Footer from "./components/UI/Footer/Footer";
 import Planner from "./components/Container/Planner/Planner";
-import ChatModal from "./components/UI/ChatModal/ChatModal";
 import { socket } from "./socket";
 import {
   setGroupMembers,
@@ -41,7 +40,6 @@ function App() {
   const [isStudy, setIsStudy] = useState(false);
   const [reset, setReset] = useState(false);
   const [isChatModal, setIsChatModal] = useState(false);
-  const [allMembers, setAllMembers] = useState([]);
   const [groups, setGroups] = useState([]);
   const [myGroups, setMyGroups] = useState([]);
   const [plans, setPlans] = useState([]);
@@ -90,17 +88,6 @@ function App() {
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
-
-  const bringAllMembers = useCallback(() => {
-    fetch(`${serverOrigin}/api/account/all-accounts`, { method: "post" })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setAllMembers(data.membersInfo);
-        }
-      })
-      .catch((error) => console.error(error));
-  }, []);
 
   const bringSubjects = useCallback(() => {
     fetch(`${serverOrigin}/api/study/bring-subjects`, { method: "post" })
@@ -161,16 +148,10 @@ function App() {
   }, [userInfo]);
 
   useEffect(() => {
+    bringAccountInfo();
     bringSubjects();
-    bringAllMembers();
     bringPlans();
   }, []);
-
-  useEffect(() => {
-    if (allMembers.length) {
-      bringAccountInfo();
-    }
-  }, [allMembers]);
 
   useEffect(() => {
     if (userInfo) {
@@ -198,7 +179,6 @@ function App() {
         isNotificationModal={isNotificationModal}
         notifications={notifications}
         setNotifications={setNotifications}
-        allMembers={allMembers}
         setResponse={setResponse}
       />
       <BottomNotification
@@ -218,7 +198,6 @@ function App() {
         isChatModal={isChatModal}
         socket={socket}
         userInfo={userInfo}
-        allMembers={allMembers}
         myGroups={myGroups}
       />
       <EventModal
@@ -369,7 +348,6 @@ function App() {
                 socket={socket}
                 subjects={subjects}
                 reset={reset}
-                allMembers={allMembers}
                 groups={groups}
                 otherGroups={otherGroups}
                 setOtherGroups={setOtherGroups}
@@ -513,7 +491,6 @@ function App() {
                 userInfo={userInfo}
                 groups={groups}
                 setResponse={setResponse}
-                allMembers={allMembers}
                 socket={socket}
               />
             </div>
@@ -549,7 +526,6 @@ function App() {
                 reset={reset}
                 subjects={subjects}
                 setResponse={setResponse}
-                allMembers={allMembers}
               />
             </div>
           }
