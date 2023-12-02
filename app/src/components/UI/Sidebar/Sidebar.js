@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
+import { Knife } from "../../../utils/svgs";
 
 function Sidebar({
   onMouseEnter,
@@ -31,19 +32,16 @@ function Sidebar({
     <aside
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={`${styles.Sidebar} ${
-        mode === "study" ? styles.studyMode : ""
-      } ${isSidebarOpen ? styles.isOpen : ""} ${
-        isSidebarHovered ? styles.isOpen : isSidebarHovered
-      }`}
+      className={`${styles.Sidebar} ${mode === "study" ? styles.studyMode : ""
+        } ${isSidebarOpen ? styles.isOpen : ""} ${isSidebarHovered ? styles.isOpen : isSidebarHovered
+        }`}
     >
       {isSidebarOpen}
       <div
         onMouseEnter={() => handleMouseEnter("navItem1")}
         onMouseLeave={handleMouseLeave}
-        className={`${styles.startStudy} ${styles.navItemWrapper} ${
-          hoveredElement === "navItem1" ? styles.hovered : ""
-        }`}
+        className={`${styles.startStudy} ${styles.navItemWrapper} ${hoveredElement === "navItem1" ? styles.hovered : ""
+          }`}
       >
         <Link to="/dashboard" className={styles.navItem}>
           <div className={styles.icon}>
@@ -57,11 +55,7 @@ function Sidebar({
       <ul>
         <li>
           <div
-            onMouseEnter={() => handleMouseEnter("navItem2")}
-            onMouseLeave={handleMouseLeave}
-            className={`${styles.startStudy} ${styles.navItemWrapper} ${
-              hoveredElement === "navItem2" ? styles.hovered : ""
-            }`}
+            className={styles.navItemWrapper}
           >
             <Link to="/dashboard/stats" className={styles.navItem}>
               <div className={styles.icon}>
@@ -74,12 +68,8 @@ function Sidebar({
           </div>
         </li>
         <li>
-          <div
-            onMouseEnter={() => handleMouseEnter("navItem3")}
-            onMouseLeave={handleMouseLeave}
-            className={`${styles.startStudy} ${styles.navItemWrapper} ${
-              hoveredElement === "navItem3" ? styles.hovered : ""
-            }`}
+        <div
+            className={styles.navItemWrapper}
           >
             <Link to="/dashboard/planner" className={styles.navItem}>
               <div className={styles.icon}>
@@ -92,12 +82,8 @@ function Sidebar({
           </div>
         </li>
         <li>
-          <div
-            onMouseEnter={() => handleMouseEnter("navItem4")}
-            onMouseLeave={handleMouseLeave}
-            className={`${styles.startStudy} ${styles.navItemWrapper} ${
-              hoveredElement === "navItem4" ? styles.hovered : ""
-            }`}
+        <div
+            className={styles.navItemWrapper}
           >
             <Link to="/dashboard/groups" className={styles.navItem}>
               <div className={styles.icon}>
@@ -110,12 +96,8 @@ function Sidebar({
           </div>
         </li>
         <li>
-          <div
-            onMouseEnter={() => handleMouseEnter("navItem5")}
-            onMouseLeave={handleMouseLeave}
-            className={`${styles.startStudy} ${styles.navItemWrapper} ${
-              hoveredElement === "navItem5" ? styles.hovered : ""
-            }`}
+        <div
+            className={styles.navItemWrapper}
           >
             <Link to="/dashboard/ranking" className={styles.navItem}>
               <div className={styles.icon}>
@@ -127,20 +109,30 @@ function Sidebar({
             </Link>
           </div>
         </li>
-        <li>
-           <div
-             onMouseEnter={() => handleMouseEnter('navItem6')}
-             onMouseLeave={handleMouseLeave}
-             className={`${styles.startStudy} ${styles.navItemWrapper} ${hoveredElement === 'navItem6' ? styles.hovered : ''}`}
-           >
-             <Link to="/dashboard/friends" className={styles.navItem}>
-               <div className={styles.icon}>
-               <FontAwesomeIcon icon={faUserGroup} />
-               </div>
-               <p className={styles.navText}  data-text="Friends">Friends</p>
-             </Link>
-           </div>
-          </li>
+        {/* <li>
+        <div
+            className={styles.navItemWrapper}
+          >
+            <Link to="/dashboard/friends" className={styles.navItem}>
+              <div className={styles.icon}>
+                <FontAwesomeIcon icon={faUserGroup} />
+              </div>
+              <p className={styles.navText} data-text="Friends">Friends</p>
+            </Link>
+          </div>
+        </li> */}
+        {/* <li>
+        <div
+            className={styles.navItemWrapper}
+          >
+            <Link to="/dashboard/friends" className={styles.navItem}>
+              <div className={styles.icon}>
+                <img src={<Knife />} alt="" />
+              </div>
+              <p className={styles.navText} data-text="Friends">Friends</p>
+            </Link>
+          </div>
+        </li> */}
       </ul>
     </aside>
   );

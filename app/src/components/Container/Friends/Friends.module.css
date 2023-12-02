@@ -6,3 +6,26 @@
   padding: 20px;
   background-color: aliceblue;
 }
+
+.Friends .box .buttonsWrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 10px 100px;
+}
+
+.Friends .box .buttonsWrapper .buttonContainer {
+  width: 50%;
+  background-color: aqua;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Friends .box .buttonContainer button {
+  margin: 10px;
+  background-color: red;
+  border-radius: 20px;
+  width: 100%;
+  padding: 15px 0px;
+}

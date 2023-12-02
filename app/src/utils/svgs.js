@@ -483,4 +483,32 @@ const GoogleCalendar = (props) => (
   </svg>
 );
 
-export { StudyPerson, RestPerson, WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert, Question, Chrome, Punch, GoogleCalendar };
+const Knife = (props) => (
+  <svg
+    id="Uploaded to svgrepo.com"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+    width="64px"
+    height="64px"
+    viewBox="0 0 32 32"
+    xmlSpace="preserve"
+    fill="#000000"
+    {...props}
+  >
+    <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+    <g
+      id="SVGRepo_tracerCarrier"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <g id="SVGRepo_iconCarrier">
+      <style type="text/css">{" .linesandangles_een{fill:#000000;} "}</style>
+      <path
+        className="linesandangles_een"
+        d="M28.414,24l-3-3l2.293-2.293l-1.414-1.414l-2.236,2.236l-3.588-4.186L25,11.46V6h-5.46L16,10.13 L12.46,6H7v5.46l4.531,3.884l-3.588,4.186l-2.236-2.236l-1.414,1.414L6.586,21l-3,3L7,27.414l3-3l2.293,2.293l1.414-1.414 l-2.237-2.237L16,19.174l4.53,3.882l-2.237,2.237l1.414,1.414L22,24.414l3,3L28.414,24z M6.414,24L8,22.414L8.586,23L7,24.586 L6.414,24z M9,10.54V8h2.54l3.143,3.667l-1.85,2.159L9,10.54z M20.46,8H23v2.54L10.053,21.638l-0.69-0.69L20.46,8z M18.95,16.645 l3.688,4.302l-0.69,0.69l-4.411-3.781L18.95,16.645z M25,24.586L23.414,23L24,22.414L25.586,24L25,24.586z"
+      />
+    </g>
+  </svg>
+);
+
+export { StudyPerson, RestPerson, WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert, Question, Chrome, Punch, GoogleCalendar, Knife };
