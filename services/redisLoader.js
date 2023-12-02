@@ -147,10 +147,11 @@ async function groupChatsMembersLoader() {
     const connection = pool.promise();
 
     const [groups] = await connection.query(`SELECT members, group_id FROM groups`);
-    groups.map(group => {
+    groups.map(async (group) => {
       const {group_id, members} = group;
       const membersArr = members === "" ? [] : members.split(",");
-      //redisClient.hSet(`room:${group_id}`, membersArr);
+      //await redisClient.del(`room:${group_id}`);
+      redisClient.sAdd(`room:${group_id}`, membersArr);
     })
   } catch (err) {
     console.log(err);
@@ -295,6 +296,11 @@ async function userCache(userId) {
  */
 async function NotificationCache(userId, type = -1) {
   const notifications = (await redisClient.sMembers(`user:${userId}:notifications`)).map(JSON.parse);
+  await Promise.all(notifications.map(async(notification) => {
+    if (notification.f) {
+      notification.f = await userCache(notification.f);
+    };
+  }));
   if (type === -1) {
     return notifications;
   };

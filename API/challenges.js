@@ -17,7 +17,7 @@ Router.post('/challenge-request', async (req, res) => {
       let {name} = userInfo;
 
       const challenges = await NotificationCache(targetId, 2);
-      const prevChallengeReq = challenges.find(challenge => {return challenge.f === userId}); //already sent request to this user
+      const prevChallengeReq = challenges.find(challenge => {return challenge.f.user_id === userId}); //already sent request to this user
 
       if (!prevChallengeReq) { //self-detection later
         const id = generateRandomId(5);
@@ -47,7 +47,7 @@ Router.post('/challenge-request', async (req, res) => {
       const userId = req.session.user_id;
       const { targetId, accepted } = req.body;
       const challenges = await NotificationCache(userId, 2);
-      const challengeReq = challenges.find(challenge => {return challenge.f === targetId});
+      const challengeReq = challenges.find(challenge => {return challenge.f.user_id === targetId});
       if (!challengeReq) return res.send({success: false, reason: 'Challenge Expired'})
       redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(challengeReq));
       if (!accepted) {
@@ -88,7 +88,7 @@ Router.post('/challenge-request', async (req, res) => {
       const userId = req.session.user_id;
       const { targetId } = req.body;
       const friendRequests = await NotificationCache(userId, 3);
-      const friendReq = friendRequests.find(friendReq => {return friendReq.f === targetId}); 
+      const friendReq = friendRequests.find(friendReq => {return friendReq.f.user_id === targetId}); 
       redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(friendReq));
 
     } catch (error) {

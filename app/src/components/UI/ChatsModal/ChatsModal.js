@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers, userInfo }) {
+function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, userInfo }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [chatRoomsEl, setChatRoomsEl] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(false);
@@ -16,6 +16,7 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
   const [msgViewer, setMsgViewer] = useState([]);
   const [roomName, setRoomName] = useState("");
   const chatsContainerRef = useRef(null);
+  const [roomMembers, setRoomMembers] = useState([]);
 
   useEffect(() => {
     fetch(`${serverOrigin}/api/chat/bring-rooms`, { method: "post" })
@@ -47,7 +48,7 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
           </li>
         ]);
       } else {
-        const user = allMembers.find(member => { return member.user_id === u });
+        const user = roomMembers.find(member => { return member.user_id === u });
         const { name } = user;
         setMsgViewer(prevMsgViewer => [
           ...prevMsgViewer,
@@ -69,7 +70,7 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
         ]);
       };
     };
-  }, [userInfo, chatRooms, selectedRoom, allMembers]);
+  }, [userInfo, chatRooms, selectedRoom, roomMembers]);
 
   useEffect(() => {
     chatsContainerRef.current.scrollTo({
@@ -83,7 +84,7 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
     return () => {
       socket.off('msgReceived', onMsgReceived);
     }
-  }, [chatRooms, selectedRoom]);
+  }, [chatRooms, selectedRoom, roomMembers]);
 
   const onSubmit = useCallback(() => {
     if (msgInput.length) {
@@ -130,7 +131,7 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
           )
         } else {
           const users = members.map(member => {
-            return allMembers.find(user => {return user.user_id === member});
+            return roomMembers.find(user => {return user.user_id === member});
           });
           if (!userInfo) return;
           return (
@@ -143,11 +144,11 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
               <div className={styles.roomInfo}
                 onClick={() => {
                   setSelectedRoom(chatRoom);
-                  setRoomName(users.map(user => {return user.name}));
+                  setRoomName(users.map(user => {return user ? user.name : null}));
                 }}
               >
                 <div className={styles.roomName}>
-                  {users.map(user => {return user.name})}
+                  {users.map(user => {return user ? user.name : null})}
                   <strong>{members.length}</strong>
                 </div>
                 <div className={styles.newMsgCount}>
@@ -159,41 +160,52 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, allMembers,
         }
       })
     );
-  }, [chatRooms, myGroups, allMembers, userInfo]);
+  }, [chatRooms, myGroups, roomMembers, userInfo]);
 
   useEffect(() => {
-    if (selectedRoom && selectedRoom.chats && userInfo) {
-      setMsgViewer(selectedRoom.chats.map((msg) => {
-        const { u, m, i, t } = JSON.parse(msg);
-        const formattedTime = DateTime.fromSeconds(t * 60).toFormat('h:mm a');
-        if (u === userInfo.user_id) {
-          return (
-            <li className={`${styles.msg} ${styles.me}`} key={i}>
-              <p className={styles.time}>{formattedTime}</p>
-              <p>{m}</p>
-            </li>
-          )
-        } else {
-          const user = allMembers.find(member => { return member.user_id === u });
-          const { name } = user;
-          return (
-            <li className={`${styles.msg} ${styles.others}`} key={i}>
-              <Link to={`/dashboard/user/${u}`}
-               className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}>
-              </Link>
-              <p className={styles.name}>{name}</p>
-              <p className={styles.time}>{formattedTime}</p>
-              <p>{m}</p>
-            </li>
-          )
-        };
-      }));
+    const {chats, id} = selectedRoom;
+    if (selectedRoom && chats && userInfo) {
+      const {user_id} = userInfo;
+      fetch(`${serverOrigin}/api/chat/members?roomId=${id}`, { method: "get" })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          const {membersInfo} = data;
+          setRoomMembers([...membersInfo]);
+          setMsgViewer(chats.map((msg) => {
+            const { u, m, i, t } = JSON.parse(msg);
+            const formattedTime = DateTime.fromSeconds(t * 60).toFormat('h:mm a');
+            if (u === user_id) {
+              return (
+                <li className={`${styles.msg} ${styles.me}`} key={i}>
+                  <p className={styles.time}>{formattedTime}</p>
+                  <p>{m}</p>
+                </li>
+              )
+            } else {
+              const user = membersInfo.find(member => { return member.user_id === u });
+              const { name } = user;
+              return (
+                <li className={`${styles.msg} ${styles.others}`} key={i}>
+                  <Link to={`/dashboard/user/${u}`}
+                   className={styles.profileImg}
+                    style={{
+                      backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center center',
+                      backgroundRepeat: 'no-repeat',
+                    }}>
+                  </Link>
+                  <p className={styles.name}>{name}</p>
+                  <p className={styles.time}>{formattedTime}</p>
+                  <p>{m}</p>
+                </li>
+              )
+            };
+          }));
+        }
+      })
+      .catch((error) => console.error(error));
     };
   }, [selectedRoom, userInfo]);
 
