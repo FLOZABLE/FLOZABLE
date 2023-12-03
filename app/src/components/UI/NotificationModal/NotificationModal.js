@@ -44,7 +44,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   };
 
   const challengeRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${serverOrigin}/api/account/challenge-request-reply`, {
+    fetch(`${serverOrigin}/api/challenges/challenge-request-reply`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +61,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   }; 
 
   const deleteChallengeNotif = (targetId, notificationId) => {
-    fetch(`${serverOrigin}/api/account/challenge-notif`, {
+    fetch(`${serverOrigin}/api/challenges/challenge-notif`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -99,7 +99,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
       const type = notification.t;
       const sender = notification.f;
       const fromId = sender ? sender.user_id : '';
-      const fromName = sender ? sender : '';
+      const fromName = sender ? sender.name : '';
       if (type === 0) {
         
         return (
@@ -214,6 +214,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
           </Link>
           <div className={styles.content}>
             <p>{fromName} accepted your challenge!</p>
+            <a href = {`/dashboard/challenge/${notification.c}`}>[View]</a>
           </div>
           <div className={styles.buttons}>
             <div className={`${styles.btnWrapper} ${styles.accept}`}>

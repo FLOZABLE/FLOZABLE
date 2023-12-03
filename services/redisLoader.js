@@ -294,10 +294,10 @@ async function userCache(userId) {
  * @param {*} type 
  * @returns {[]} selectedNotifications
  */
-async function NotificationCache(userId, type = -1) {
+async function NotificationCache(userId, type = -1, processData = true) {
   const notifications = (await redisClient.sMembers(`user:${userId}:notifications`)).map(JSON.parse);
   await Promise.all(notifications.map(async(notification) => {
-    if (notification.f) {
+    if (notification.f && processData) {
       notification.f = await userCache(notification.f);
     };
   }));

@@ -19,7 +19,7 @@ Router.post('/accountinfo', async (req, res) => {
       const notifications = await NotificationCache(userId);
       const userInfo = await userCache(userId);
       usersCache(userId);
-      res.send({ success: true, userInfo: userInfo, notifications });
+      res.send({ success: true, userInfo: userInfo, notifications: notifications });
     }
   }))
 });
@@ -430,7 +430,7 @@ Router.post('/friend-request', async (req, res) => {
       const userId = req.session.user_id;
       const { targetId } = req.body;
 
-      if (userId === targetId) return res.send({ success: false, reason: "Cannot send request to yourself" });
+      //if (userId === targetId) return res.send({ success: false, reason: "Cannot send request to yourself" });
 
       const connection = pool.promise();
       const [[targetUserInfo]] = await connection.query(`SELECT friends, name FROM users WHERE user_id = ?`, [targetId]);
@@ -440,16 +440,18 @@ Router.post('/friend-request', async (req, res) => {
       friends = friends === "" ? [] : friends.split(',');
       if (friends.includes(userId)) return res.send({ success: false, reason: "You're already friends with this user" });
 
-      const friendRequests = await NotificationCache(targetId, 0);
+      const friendRequests = await NotificationCache(targetId, 0, false);
       console.log(friendRequests)
-      const prevFriendReq = friendRequests.find(friendReq => { return friendReq.f.user_id === userId });
+      const prevFriendReq = friendRequests.find(friendReq => { return friendReq.f === userId });
       if (prevFriendReq) return res.send({ success: false, reason: "You've already sent a request to this user" });
 
       const id = generateRandomId(5);
       const date = Math.floor(new Date().getTime() / (1000 * 60));
       const io = req.app.get('socketio');
+      const notificationUser = await userCache(userId);
+      const socketNotif = { i: id, t: 0, f: notificationUser, d: date };
       const notification = { i: id, t: 0, f: userId, d: date };
-      io.to(targetId).emit('notification', notification);
+      io.to(targetId).emit('notification', socketNotif);
       redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
       res.send({ success: true, msg: `Sent friend request to ${name}!` });
     } catch (error) {
@@ -465,8 +467,8 @@ Router.post('/friend-request-reply', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { targetId, accepted } = req.body;
-      const friendRequests = await NotificationCache(userId, 0);
-      const friendReq = friendRequests.find(friendReq => { return friendReq.f.user_id === targetId });
+      const friendRequests = await NotificationCache(userId, 0, false);
+      const friendReq = friendRequests.find(friendReq => { return friendReq.f === targetId });
       if (!friendReq) return res.send({ success: false, reason: 'expired request' })
       redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(friendReq));
       if (!accepted) {
@@ -496,7 +498,9 @@ Router.post('/friend-request-reply', async (req, res) => {
         const date = Math.floor(new Date().getTime() / (1000 * 60));
         const io = req.app.get('socketio');
         const notification = { i: id, t: 1, f: userId, d: date };
-        io.to(targetId).emit('notification', notification);
+        const notificationUser = await userCache(userId);
+        const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
+        io.to(targetId).emit('notification', socketNotif);
         redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification))
       } else {
         res.send({ success: true, msg: `You and ${targetInfo.name} were already friends!` });
@@ -518,8 +522,8 @@ Router.post('/friend-notif', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { targetId } = req.body;
-      const friendRequests = await NotificationCache(targetId, 1);
-      const friendReq = friendRequests.find(friendReq => { return friendReq.f.user_id === targetId });
+      const friendRequests = await NotificationCache(targetId, 1, false);
+      const friendReq = friendRequests.find(friendReq => { return friendReq.f === targetId });
       redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(friendReq));
 
     } catch (error) {
