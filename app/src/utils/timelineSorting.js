@@ -25,9 +25,9 @@ function timelineSort(subjects) {
   });
   subjects.firstDatumPoint = firstDatumPoint;
 
-  subjects.daily = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: []};
-  subjects.weekly = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: []};
-  subjects.monthly = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: []};
+  subjects.daily = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: [], focus: []};
+  subjects.weekly = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: [], focus: []};
+  subjects.monthly = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: [], focus: []};
 
   subjects.map((subject, i) => {
     const [dailySorted, dailyTotal] = timelineSorter(subject, 'daily', firstDatumPoint, (startTime, stopTime) => {
@@ -75,6 +75,21 @@ function timelineSort(subjects) {
       return [...val, ...subjects.monthly.grouped[i]];
     });
 
+    subject.daily.focus = Array(subject.daily.grouped.length).fill(0);
+    subject.daily.focus = subject.daily.grouped.map((val, i) => {
+      return Math.max(val[1] || 0, subject.daily.focus[i]);
+    })
+
+    subject.weekly.focus = Array(subject.weekly.grouped.length).fill(0);
+    subject.weekly.focus = subject.weekly.grouped.map((val, i) => {
+      return Math.max(val[1] || 0, subject.weekly.focus[i]);
+    })
+
+    subject.monthly.focus = Array(subject.monthly.grouped.length).fill(0);
+    subject.monthly.focus = subject.monthly.grouped.map((val, i) => {
+      return Math.max(val[1] || 0, subject.monthly.focus[i]);
+    });
+
     subjects.daily.groupedTotal = dailyTotal.map((val, i) => {
       return val + subjects.daily.groupedTotal[i];
     });
@@ -84,10 +99,20 @@ function timelineSort(subjects) {
     subjects.monthly.groupedTotal = monthlyTotal.map((val, i) => {
       return val + subjects.monthly.groupedTotal[i];
     });
+
+    subjects.daily.focus = subject.daily.focus.map((val, i) => {
+      return Math.max(subjects.daily.focus[i] || 0, val);
+    });
+    subjects.weekly.focus = subject.weekly.focus.map((val, i) => {
+      return Math.max(subjects.weekly.focus[i] || 0, val);
+    });
+    subjects.monthly.focus = subject.monthly.focus.map((val, i) => {
+      return Math.max(subjects.monthly.focus[i] || 0, val);
+    });
+
     return;
   });
 
-  console.log({...subjects})
 
   /* part2 */
   
