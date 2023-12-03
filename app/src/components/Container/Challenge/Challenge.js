@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faV, faS, faSlash } from '@fortawesome/free-solid-svg-icons';
 import { DateTime } from "luxon";
+import { timelineSort } from "../../../utils/timelineSorting"
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -18,6 +19,8 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
     const [user2Pfp, setUser2Pfp] = useState((<p>An error occured</p>));
     const [competeInfo1, setCompeteInfo1] = useState({ firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 });
     const [competeInfo2, setCompeteInfo2] = useState({ firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 });
+    const [user1Subjects, setUser1Subjects] = useState({});
+    const [user2Subjects, setUser2Subjects] = useState({});
     const [descriptionEl1, setDescriptionEl1] = useState(<p></p>);
     const [descriptionEl2, setDescriptionEl2] = useState(<p></p>);
     const [descriptionEl3, setDescriptionEl3] = useState(<p></p>);
@@ -160,8 +163,41 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
 
     useEffect(() => {
-        if (challenge.first === "An Error Occured") return;
         if (!!!userInfo1.id) return;
+        fetch(`${serverOrigin}/api/study/bring-subjects`, {
+            method: "post",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ searchId: userInfo1.id }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success){
+                    setUser1Subjects(timelineSort(data.subjects));
+                }
+            });
+ 
+ 
+        fetch(`${serverOrigin}/api/study/bring-subjects`, {
+            method: "post",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ searchId: userInfo2.id }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success){
+                    setUser2Subjects(timelineSort(data.subjects));
+                }
+            });
+    }, [userInfo1])
+
+
+    useEffect(() => {
+        if (challenge.first === "An Error Occured") return;
+        if (!!!user1Subjects.id) return;
 
         const startUnix1 = challenge.firstRange[0].ts;
         const stopUnix1 = challenge.firstRange[1].ts;
@@ -184,54 +220,10 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         //let tempCompete1 = { firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 };
         //let tempCompete2 = { firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 };
 
-        fetch(`${serverOrigin}/api/ranking/sort`, {
-            method: "post",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ startTime: startUnix1, stopTime: stopUnix1 }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    let totalTime1 = 0;
-                    let averageTime1 = 0;
-                    let totalTime2 = 0;
-                    let averageTime2 = 0;
-                    totalTime1 = data.data.find((user) => user.user_id === userInfo1.id).total;
-                    averageTime1 = Math.round(totalTime1 * 100 / DAY_OF_WEEK) / 100;
-                    //tempCompete1.firstRoundTotal = totalTime1;
-                    //tempCompete1.secondRoundTotal = averageTime1;
-                    totalTime2 = data.data.find((user) => user.user_id === userInfo2.id).total;
-                    averageTime2 = Math.round(totalTime2 * 100 / DAY_OF_WEEK) / 100;
-                    //tempCompete2.firstRoundTotal = totalTime2;
-                    //tempCompete2.secondRoundTotal = averageTime2;
-                }
-            });
-
-        fetch(`${serverOrigin}/api/ranking/sort`, {
-            method: "post",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ startTime: startUnix3, stopTime: stopUnix3 }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    let totalTime1 = 0;
-                    let totalTime2 = 0;
-                    totalTime1 = data.data.find((user) => user.user_id === userInfo1.id).total;
-                    //tempCompete1.thirdRoundTotal = totalTime1;
-                    totalTime2 = data.data.find((user) => user.user_id === userInfo2.id).total;
-                    //tempCompete2.thirdRoundTotal = totalTime2;
-                }
-            });
-
         //setCompeteInfo1(tempCompete1);
         //setCompeteInfo2(tempCompete2);
 
-    }, [challenge, userInfo1]);
+    }, [user1Subjects]);
 
 
     useEffect(() => {

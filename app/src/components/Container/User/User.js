@@ -156,7 +156,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, socket }) 
   }
 
   const requestChallenge = () => {
-    fetch(`${serverOrigin}/api/account/challenge-request`, {
+    fetch(`${serverOrigin}/api/challenges/challenge-request`, {
       method: "post",
       headers: {
         'Content-Type': 'application/json'
