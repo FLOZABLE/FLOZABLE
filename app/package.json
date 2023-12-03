@@ -53,8 +53,8 @@
   },
   "scripts": {
     "start": "cross-env NODE_ENV=development react-scripts start",
-    "build": "cross-env NODE_ENV=test react-scripts build",
-    "production": "cross-env NODE_ENV=production react-scripts build",
+    "test-build": "cross-env NODE_ENV=test BUILD_PATH='./test-build' react-scripts build",
+    "production-build": "cross-env NODE_ENV=production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

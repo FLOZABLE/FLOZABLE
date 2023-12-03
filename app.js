@@ -21,13 +21,21 @@ const options = {
   cert: fs.readFileSync('./SSL/cert.pem', 'utf-8')
 }
 
-//const server = http.createServer(app);
-const server = https.createServer(options, app);
 if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.env.development' });
 } else if (process.env.NODE_ENV === 'production') {
   dotenv.config({ path: '.env.production' });
+} else {
+  dotenv.config({ path: '.env.test' });
+}
+
+let server;
+if (process.env.HTTPS) {
+  server = https.createServer(options, app);
+} else {
+  server = http.createServer(app);
 };
+
 const RedisStore = require('connect-redis').default;
 const redisClient = require("./model/redis");
 redisClient.connect().catch(console.error);
@@ -168,12 +176,12 @@ app.use('/api/video', videoAPI);
 app.use('/api/ranking', rankingAPI);
 app.use('/api/ai', AiAPI);
 app.use('/api/challenges', challengeAPI);
-app.use(express.static(path.join(__dirname, 'app/build')));
+app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 
 app.get('/dashboard*', (req, res) => {
   account.autoSignin(req, res, (() => {
-    res.sendFile(path.join(__dirname, 'app/build', 'index.html'));
+    res.sendFile(path.join(__dirname, process.env.BUILD, 'index.html'));
   }),
     (() => {
       res.redirect('/#signin');
