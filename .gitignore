@@ -1,6 +1,6 @@
 .env.production
 .env.development
-.env.build
+.env.test
 test.txt
 node_modules
 subjects.csv
