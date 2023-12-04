@@ -136,7 +136,7 @@ Router.post('/sort', async (req, res) => {
   console.log('sort', startTime, stopTime)
   try {
     const connection = pool.promise();
-    const [users] = await connection.query(`SELECT name, user_id from users`);
+    const [users] = await connection.query(`SELECT name, user_id, timezone from users`);
     const subjectPromises = users.map(async (user) => {
       const {user_id} = user;
       const [subjects] = await connection.query(`SELECT datum_point, timeline, id FROM subjects WHERE user_id = ?`, [user_id]);

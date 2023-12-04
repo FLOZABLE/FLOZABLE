@@ -12,36 +12,52 @@ function RecommendedFriendsViewer() {
       </div>
       <ul className={styles.recommendedFriends}>
         <li className={styles.recommendedFriend}>
-        <div
-                className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              ></div>
-              <p className={styles.name}>Jason</p>
-              <button>
-                +
-                <FontAwesomeIcon icon={faUser} />
-              </button>
+          <div
+            className={styles.profileImg}
+            style={{
+              backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          ></div>
+          <p className={styles.name}>Jason</p>
+          <button>
+            +
+            <FontAwesomeIcon icon={faUser} />
+          </button>
         </li>
         <li className={styles.recommendedFriend}>
-        <div
-                className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              ></div>
-              <p className={styles.name}>Jason</p>
-              <button>
-                +
-                <FontAwesomeIcon icon={faUser} />
-              </button>
+          <div
+            className={styles.profileImg}
+            style={{
+              backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          ></div>
+          <p className={styles.name}>Jason</p>
+          <button>
+            +
+            <FontAwesomeIcon icon={faUser} />
+          </button>
+        </li>
+        <li className={styles.recommendedFriend}>
+          <div
+            className={styles.profileImg}
+            style={{
+              backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          ></div>
+          <p className={styles.name}>Jason</p>
+          <button>
+            +
+            <FontAwesomeIcon icon={faUser} />
+          </button>
         </li>
       </ul>
     </div>

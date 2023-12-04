@@ -14,6 +14,7 @@ import GroupsGen from "../../UI/GroupsGen/GroupsGen";
 import { DateTime } from "luxon";
 import { updateRankingTrend, updateTimeTrend } from "../Stats/StatTools";
 import FriendsViewer from "../../UI/FriendsViewer/FriendsViewer";
+import CountryViewer from "../../UI/CountryViewer/CountryViewer";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -121,7 +122,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
 
         if (data.success) {
           const { userInfo, subjectsInfo, friendsInfo } = data;
-          const { datum_point, friends } = userInfo;
+          const { datum_point } = userInfo;
           setUserInfo(userInfo);
           const sortedSubject = timelineSort(subjectsInfo);
           setUserSubjects(sortedSubject);
@@ -138,7 +139,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
   }, [groups, clickedUser]);
 
   const requestFriend = () => {
-    fetch(`${serverOrigin}/api/account/friend-request`, {
+    fetch(`${serverOrigin}/api/friend/request`, {
       method: "post",
       headers: {
         'Content-Type': 'application/json'
@@ -303,6 +304,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
             <div className={styles.infoContainer}>
               <div className={styles.iconWrapper}>
                 <FontAwesomeIcon icon={faEarthAmericas} />
+                {/* {userInfo ? <CountryViewer timezone={userInfo.timezone} /> : ''} */}
               </div>
               <div className={styles.info}>
                 <p className={styles.infoTitle}>Timezone</p>

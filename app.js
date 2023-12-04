@@ -134,6 +134,7 @@ const videoAPI = require("./API/video");
 const rankingAPI = require('./API/ranking');
 const AiAPI = require('./API/AI');
 const challengeAPI = require('./API/challenges');
+const friendAPI = require('./API/friend');
 
 
 //test
@@ -171,6 +172,7 @@ app.use('/api/video', videoAPI);
 app.use('/api/ranking', rankingAPI);
 app.use('/api/ai', AiAPI);
 app.use('/api/challenges', challengeAPI);
+app.use('/api/friend', friendAPI);
 app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 
