@@ -5,131 +5,9 @@ const redisClient = require("../model/redis");
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
 const { DateTime } = require('luxon');
-const { subjectsCache } = require("../services/redisLoader");
+const { subjectsCache, userCache } = require("../services/redisLoader");
 const { promises } = require("fs");
-
-/* Router.post("/", async (req, res) => {
-  const connection = pool.promise();
-  const users = await connection.query(`SELECT datum_point, daily, weekly, monthly, name, user_id from users`);
-
-  const dailyRanking = [];
-  const weeklyRanking = [];
-  const monthlyRanking = [];
-
-  const timeZone = req.session.userInfo.timeZone;
-  const userDateTime = DateTime.now().setZone(timeZone);
-  const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-  const unixTimestamp = twelveAmDateTime.toMillis();
-  const cachedDate = new Date(unixTimestamp);  
-
-  if(twelveAmDateTime.minute < 30) {
-    cachedDate.setMinutes(0);
-  } else {
-    cachedDate.setMinutes(30);
-  }
-  const cachedData = cache.get(cachedDate.getTime());
-  if (cachedData) {
-    return res.send(cachedData);
-  }
-  
-  const date = DateTime.now().setZone(timeZone).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-
-  const usersInfo = users.map(user => {
-    const datum_point = DateTime.fromMillis(user.datum_point * 1000).setZone(timeZone).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    const daily = JSON.parse(user.daily);
-    const weekly = JSON.parse(user.weekly);
-    const monthly = JSON.parse(user.monthly);
-
-    let missingDay = (date.toMillis() - datum_point.toMillis()) / (1000 * 60 * 60 * 24) - daily.length + 1;
-
-    let dateWeekStart = date.toMillis() - date.toMillis() * 24 * 60 * 60 * 1000;
-    const day = datum_point.weekday == 7 ? 0 : datum_point.weekday;
-    let datum_pointWeekStart = datum_point.toMillis() - day * 24 * 60 * 60 * 1000;
-    let missingWeek = (dateWeekStart - datum_pointWeekStart) / (1000 * 60 * 60 * 24 * 7) - weekly.length + 1;
-    let missingMonth = 0 - monthly.length + 1;
-    let datumYear = datum_point.year;
-    let datumMonth = datum_point.month;
-    //let datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
-    let datumMonthStart = DateTime.local(datumYear, datumMonth, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    //const dateMonthStart = new Date(date.getFullYear(), date.getMonth(), 1).setHours(0, 0, 0, 0);
-    const dateMonthStart = DateTime.local(date.year, date.month, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
-    while(datumMonthStart < dateMonthStart) {
-      datumMonth += 1;
-      if(datumMonth >= 11) {
-        datumMonth = 0;
-        datumYear += 1;
-      }
-      missingMonth += 1;
-      //datumMonthStart = new Date(datumYear, datumMonth, 1).setHours(0, 0, 0, 0);
-      datumMonthStart = DateTime.local(datumYear, datumMonth, 1, {zone: timeZone}).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    }
-    for(let i = 0; i < missingDay; i++) {
-      daily.push(0);
-    }
-
-    for(let i = 0; i < missingWeek; i++) {
-      weekly.push(0);
-    }
-
-    for(let i = 0; i < missingMonth; i++) {
-      monthly.push(0);
-    }
-
-    daily.reverse();
-    weekly.reverse();
-    monthly.reverse();
-
-    daily.map((day, index) => {
-      if(!dailyRanking[index]) {
-        dailyRanking.push([]);
-      }
-      dailyRanking[index].push({name: user.name, user_id: user.user_id, day: day})
-    })
-
-    weekly.map((week, index) => {
-      if(!weeklyRanking[index]) {
-        weeklyRanking.push([]);
-      }
-      weeklyRanking[index].push({name: user.name, user_id: user.user_id, week: week})
-    })
-
-    monthly.map((month, index) => {
-      if(!monthlyRanking[index]) {
-        monthlyRanking.push([]);
-      }
-      monthlyRanking[index].push({name: user.name, user_id: user.user_id, month: month})
-    })
-
-    return {userId: user.user_id, name: user.name, daily: daily, weekly: weekly, monthly: monthly, datumPoint: user.datum_point}
-  })
-
-
-  //sort ranking
-  dailyRanking.map(dayRanking => {
-    dayRanking.sort((a, b) => {
-      return b.day - a.day;
-    })
-  })
-
-  weeklyRanking.map(weekRanking => {
-    weekRanking.sort((a, b) => {
-      return b.week - a.week;
-    })
-  })
-
-  monthlyRanking.map(monthRanking => {
-    monthRanking.sort((a, b) => {
-      return b.month - a.month;
-    })
-  })
-
-  const result = {success: true, dailyRanking: dailyRanking, weeklyRanking: weeklyRanking, monthlyRanking: monthlyRanking, usersInfo: usersInfo};
-  res.send(result);
-  console.log(result)
-  cache.set(cachedDate.getTime(), result);
-  pool.releaseConnection(connection);
-})
- */
+const { autoSignin } = require("../tool");
 
 Router.post('/sort', async (req, res) => {
   const { startTime, stopTime } = req.body;
@@ -138,15 +16,15 @@ Router.post('/sort', async (req, res) => {
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT name, user_id, timezone from users`);
     const subjectPromises = users.map(async (user) => {
-      const {user_id} = user;
+      const { user_id } = user;
       const [subjects] = await connection.query(`SELECT datum_point, timeline, id FROM subjects WHERE user_id = ?`, [user_id]);
       user.total = 0;
       user.focus = 0;
-      const timelinePromises = subjects.map(async({ timeline, datum_point, id }) => {
+      const timelinePromises = subjects.map(async ({ timeline, datum_point, id }) => {
         let timelineSum = 0;
         const prevTimeline = timeline === "" ? [[]] : JSON.parse(timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
         const todayTimeline = (await redisClient.lRange(`user:${user_id}:subject:${id}`, 0, -1)).map(JSON.parse);
-        const totalTimeline  = prevTimeline.concat(todayTimeline);
+        const totalTimeline = prevTimeline.concat(todayTimeline);
         //console.log(totalTimeline, user_id, id);
         totalTimeline.find(([start, duration]) => {
           const startUnix = datum_point + start + 0;
@@ -178,93 +56,243 @@ Router.post('/sort', async (req, res) => {
   }
 });
 
-const DAYTOSEC = 60 * 60 * 24;
 const LENGTH = 7;
 /** get ranking change of user for each period */
 Router.get('/user', async (req, res) => {
   try {
-    const {userId, date, mode} = req.query;
+    const { userId, date, mode } = req.query;
     console.log(userId, date, mode);
-    const dateTime = DateTime.fromISO(date, {zone: 'utc'});
+    const dateTime = DateTime.fromISO(date, { zone: 'utc' });
     if (!userId) {
-      return res.send({success: false, reason: 'userid required'})
+      return res.send({ success: false, reason: 'userid required' })
     }
     const connection = pool.promise();
-    const rankings = [];
+    let rankings = [];
     const [[usersLength]] = await connection.query(`SELECT COUNT(*) FROM users`);
 
     if (mode === 'day' || mode === 'daily') {
-      let dateStart = dateTime.startOf('day');
-      //this prevents from displaying future ranking
-      let diff = DateTime.now().setZone('utc').startOf('day').diff(dateStart, 'days').toObject().days;
-      console.log(diff)
-      while (diff < LENGTH) {
-        dateStart = dateStart.plus({days: -1});
-        diff += 1;
-      };
-      for (let i = 0; i < LENGTH; i++) {
-        const date = dateStart.plus({days: i}).toSeconds();
-        const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [date]);
-        if (dailyRanking) {
-          const parsedRanking = JSON.parse(dailyRanking.ranking);
-          const rankingIndex = parsedRanking.findIndex(info => {
-            return info.u === userId;
-          })
-          rankings.push({date, ranking: rankingIndex});
-        } else {
-          rankings.push({date, ranking: -1});
-        };
-      };
+      rankings = await userDailySorting(dateTime, LENGTH, userId);
     } else if (mode === 'week' || mode === 'weekly') {
-      let weekStart = dateTime.startOf('week');
-      //this prevents from displaying future ranking
-      let diff = DateTime.now().setZone('utc').startOf('week').diff(weekStart, 'weeks').toObject().weeks;
-      console.log(diff);
-      while (diff < LENGTH) {
-        weekStart = weekStart.plus({weeks: -1});
-        diff += 1;
-      };
-      for(let i = 0; i < LENGTH; i++) {
-        const date = weekStart.plus({weeks: i}).toSeconds();
-        const [[weeklyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [date]);
-        if (weeklyRanking) {
-          const parsedRanking = JSON.parse(weeklyRanking.ranking);
-          const rankingIndex = parsedRanking.findIndex(info => {
-            return info.u === userId;
-          })
-          rankings.push({date, ranking: rankingIndex});
-        } else {
-          rankings.push({date, ranking: -1});
-        };
-      };
+      rankings = await userWeeklySorting(dateTime, LENGTH, userId);
     } else {
-      let monthStart = dateTime.startOf('month');
-      //this prevents from displaying future ranking
-      let diff = DateTime.now().setZone('utc').startOf('month').diff(monthStart, 'months').toObject().months;
-      while (diff < LENGTH) {
-        monthStart = monthStart.plus({months: -1});
-        diff += 1;
-      };
-      console.log(diff)
-      for(let i = 0; i < LENGTH; i++) {
-        const date = monthStart.plus({months: i}).toSeconds();
-        const [[monthlyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [date]);
-        if (monthlyRanking) {
-          const parsedRanking = JSON.parse(monthlyRanking);
-          const rankingIndex = parsedRanking.findIndex(info => {
-            return info.u === userId;
-          })
-          rankings.push({date, ranking: rankingIndex});
-        } else {
-          rankings.push({date, ranking: -1});
-        };
-      };
+      rankings = await userMonthlySorting(dateTime, LENGTH, userId);
     };
-    res.send({success: true, rankings: {data: rankings, maxLength: Object.values(usersLength)[0]}});
+    res.send({ success: true, rankings: { data: rankings, maxLength: Object.values(usersLength)[0] } });
   } catch (err) {
     console.log(err);
-    res.send({success: false, reason: 'err'})
+    res.send({ success: false, reason: 'err' })
   };
+});
+
+async function userDailySorting(dateTime, length, userId) {
+  const rankings = [];
+  let dateStart = dateTime.startOf('day');
+  //this prevents from displaying future ranking
+  let diff = DateTime.now().setZone('utc').startOf('day').diff(dateStart, 'days').toObject().days;
+  while (diff < length) {
+    dateStart = dateStart.plus({ days: -1 });
+    diff += 1;
+  };
+  const connection = pool.promise();
+  for (let i = 0; i < length; i++) {
+    const date = dateStart.plus({ days: i }).toSeconds();
+    const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [date]);
+    if (dailyRanking) {
+      const parsedRanking = JSON.parse(dailyRanking.ranking);
+      const rankingIndex = parsedRanking.findIndex(info => {
+        return info.u === userId;
+      })
+      rankings.push({ date, ranking: rankingIndex });
+    } else {
+      rankings.push({ date, ranking: -1 });
+    };
+  };
+  return rankings;
+};
+
+async function userWeeklySorting(dateTime, length, userId) {
+  const rankings = [];
+  let weekStart = dateTime.startOf('week');
+  //this prevents from displaying future ranking
+  let diff = DateTime.now().setZone('utc').startOf('week').diff(weekStart, 'weeks').toObject().weeks;
+  while (diff < length) {
+    weekStart = weekStart.plus({ weeks: -1 });
+    diff += 1;
+  };
+  const connection = pool.promise();
+  for (let i = 0; i < length; i++) {
+    const date = weekStart.plus({ weeks: i }).toSeconds();
+    const [[weeklyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [date]);
+    if (weeklyRanking) {
+      const parsedRanking = JSON.parse(weeklyRanking.ranking);
+      const rankingIndex = parsedRanking.findIndex(info => {
+        return info.u === userId;
+      })
+      rankings.push({ date, ranking: rankingIndex });
+    } else {
+      rankings.push({ date, ranking: -1 });
+    };
+  };
+  return rankings;
+};
+
+async function userMonthlySorting(dateTime, length, userId) {
+  const rankings = [];
+  let monthStart = dateTime.startOf('month');
+  //this prevents from displaying future ranking
+  let diff = DateTime.now().setZone('utc').startOf('month').diff(monthStart, 'months').toObject().months;
+  while (diff < length) {
+    monthStart = monthStart.plus({ months: -1 });
+    diff += 1;
+  };
+  const connection = pool.promise();
+  for (let i = 0; i < length; i++) {
+    const date = monthStart.plus({ months: i }).toSeconds();
+    const [[monthlyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [date]);
+    if (monthlyRanking) {
+      const parsedRanking = JSON.parse(monthlyRanking);
+      const rankingIndex = parsedRanking.findIndex(info => {
+        return info.u === userId;
+      })
+      rankings.push({ date, ranking: rankingIndex });
+    } else {
+      rankings.push({ date, ranking: -1 });
+    };
+  };
+  return rankings;
+};
+
+
+async function friendsDailySorting(dateTime, length, friends, usersLength) {
+  const rankings = [];
+  let dateStart = dateTime.startOf('day');
+  //this prevents from displaying future ranking
+  let diff = DateTime.now().setZone('utc').startOf('day').diff(dateStart, 'days').toObject().days;
+  while (diff < length) {
+    dateStart = dateStart.plus({ days: -1 });
+    diff += 1;
+  };
+  const connection = pool.promise();
+  for (let i = 0; i < length; i++) {
+    const date = dateStart.plus({ days: i }).toSeconds();
+    const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [date]);
+    if (dailyRanking) {
+      const parsedRanking = JSON.parse(dailyRanking.ranking);
+      const ranking = await Promise.all(friends.map(async (userId) => {
+        const rankingIndex = parsedRanking.findIndex(info => {
+          return info.u === userId;
+        });
+        const userInfo = await userCache(userId);
+        return { userInfo, ranking: rankingIndex === -1 ? usersLength : rankingIndex };
+      }));
+      ranking.sort((a, b) => b.ranking - a.ranking);
+      rankings.push({ date, ranking });
+    } else {
+      const ranking = await Promise.all(friends.map(async (userId) => {
+        const userInfo = await userCache(userId);
+        return { userInfo, ranking: usersLength };
+      }));
+      rankings.push({ date, ranking });
+    };
+  };
+  return rankings;
+};
+
+async function friendsWeeklySorting(dateTime, length, friends, usersLength) {
+  const rankings = [];
+  let weekStart = dateTime.startOf('week');
+  //this prevents from displaying future ranking
+  let diff = DateTime.now().setZone('utc').startOf('week').diff(weekStart, 'weeks').toObject().weeks;
+  while (diff < length) {
+    weekStart = weekStart.plus({ weeks: -1 });
+    diff += 1;
+  };
+  const connection = pool.promise();
+  for (let i = 0; i < length; i++) {
+    const date = weekStart.plus({ weeks: i }).toSeconds();
+    const [[weeklyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [date]);
+    if (weeklyRanking) {
+      const parsedRanking = JSON.parse(weeklyRanking.ranking);
+      const ranking = await Promise.all(friends.map(async (userId) => {
+        const rankingIndex = parsedRanking.findIndex(info => {
+          return info.u === userId;
+        });
+        const userInfo = await userCache(userId);
+        return { userInfo, ranking: rankingIndex === -1 ? usersLength : rankingIndex };
+      }));
+      ranking.sort((a, b) => b.ranking - a.ranking);
+      rankings.push({ date, ranking });
+    } else {
+      const ranking = await Promise.all(friends.map(async (userId) => {
+        const userInfo = await userCache(userId);
+        return { userInfo, ranking: usersLength };
+      }));
+      rankings.push({ date, ranking });
+    };
+  };
+  return rankings;
+};
+
+async function friendsMonthlySorting(dateTime, length, friends, usersLength) {
+  const rankings = [];
+  let monthStart = dateTime.startOf('month');
+  //this prevents from displaying future ranking
+  let diff = DateTime.now().setZone('utc').startOf('month').diff(monthStart, 'months').toObject().months;
+  while (diff < length) {
+    monthStart = monthStart.plus({ months: -1 });
+    diff += 1;
+  };
+  const connection = pool.promise();
+  for (let i = 0; i < length; i++) {
+    const date = monthStart.plus({ months: i }).toSeconds();
+    const [[monthlyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [date]);
+    if (monthlyRanking) {
+      const parsedRanking = JSON.parse(monthlyRanking.ranking);
+      const ranking = await Promise.all(friends.map(async (userId) => {
+        const rankingIndex = parsedRanking.findIndex(info => {
+          return info.u === userId;
+        });
+        const userInfo = await userCache(userId);
+        return { userInfo, ranking: rankingIndex === -1 ? usersLength : rankingIndex };
+      }));
+      ranking.sort((a, b) => b.ranking - a.ranking);
+      rankings.push({ date, ranking });
+    } else {
+      const ranking = await Promise.all(friends.map(async (userId) => {
+        const userInfo = await userCache(userId);
+        return { userInfo, ranking: usersLength };
+      }));
+      rankings.push({ date, ranking });
+    };
+  };
+  return rankings;
+};
+
+Router.get('/friends', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const { date } = req.query;
+      const userId = req.session.user_id;
+      const userInfo = await userCache(userId);
+      if (!userInfo) return res.send({ success: false, reason: 'no user found' });
+      let { friends } = userInfo;
+      friends = friends === "" ? [] : friends.split(',');
+      const connection = pool.promise();
+      let [[usersLength]] = await connection.query(`SELECT COUNT(*) FROM users`);
+      const dateTime = DateTime.fromISO(date, { zone: 'utc' });
+      usersLength = Object.values(usersLength)[0];
+      console.log(usersLength)
+      const dailyRankings = await friendsDailySorting(dateTime, 1, [userId, ...friends], usersLength);
+      const weeklyRankings = await friendsWeeklySorting(dateTime, 1, [userId, ...friends], usersLength);
+      const monthlyRankings = await friendsMonthlySorting(dateTime, 1, [userId, ...friends], usersLength);
+      console.log(dailyRankings[0]);
+
+      res.send({ success: true, dailyRankings, weeklyRankings, monthlyRankings });
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'An Error Occured' });
+    }
+  }));
 });
 
 module.exports = Router;
