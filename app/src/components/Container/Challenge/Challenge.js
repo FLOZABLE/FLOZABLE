@@ -268,6 +268,26 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             }
             setDescriptionEl1(<h3>On {challenge.firstRange[0].toFormat("DD")}</h3>);
         }
+        else if (challengeName1 === "Total Study Time Last Week"){
+            const dateDiff = DateTime.fromMillis(Date.now()).startOf('week').diff(challenge.firstRange[0], ['weeks']); //start of this week to start of range
+
+            const weeklyIndex1 = user1Subjects.weekly.groupedTotal.length - dateDiff.weeks - 1; //index of object (-1 for 0-index)
+            if (weeklyIndex1 >= 0){
+                tempUser1.value1 = user1Subjects.weekly.groupedTotal[weeklyIndex1];
+            }
+            else{
+                tempUser1.value1 = 0; //they were not active last week
+            }
+
+            const weeklyIndex2 = user2Subjects.weekly.groupedTotal.length - dateDiff.weeks;
+            if (weeklyIndex2 >= 0){
+                tempUser2.value1 = user2Subjects.weekly.groupedTotal[weeklyIndex2];
+            }
+            else{
+                tempUser2.value1 = 0;
+            }
+            setDescriptionEl1(<h3>Week of {challenge.firstRange[0].toFormat("DD")} ~ {challenge.firstRange[1].toFormat("DD")}</h3>);
+        }
 
         setDescriptionEl2(<h3>{challenge.secondRange[0].toFormat("DD")} ~ {challenge.secondRange[1].toFormat("DD")}</h3>);
         setDescriptionEl3(<h3>Day: {challenge.thirdRange[0].toFormat("DD")}</h3>);
