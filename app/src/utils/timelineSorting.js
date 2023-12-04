@@ -77,17 +77,35 @@ function timelineSort(subjects) {
 
     subject.daily.focus = Array(subject.daily.grouped.length).fill(0);
     subject.daily.focus = subject.daily.grouped.map((val, i) => {
-      return Math.max(val[1] || 0, subject.daily.focus[i]);
+      let maxVal = 0;
+      if (val.length > 0){
+        val.map((currentTimeline, i) => {
+          maxVal = Math.max(maxVal, currentTimeline[1] - currentTimeline[0]);
+        })
+      }
+      return Math.max(maxVal, subject.daily.focus[i]);
     })
 
     subject.weekly.focus = Array(subject.weekly.grouped.length).fill(0);
     subject.weekly.focus = subject.weekly.grouped.map((val, i) => {
-      return Math.max(val[1] || 0, subject.weekly.focus[i]);
+      let maxVal = 0;
+      if (val.length > 0){
+        val.map((currentTimeline, i) => {
+          maxVal = Math.max(maxVal, currentTimeline[1] - currentTimeline[0]);
+        })
+      }
+      return Math.max(maxVal, subject.daily.focus[i]);
     })
 
     subject.monthly.focus = Array(subject.monthly.grouped.length).fill(0);
     subject.monthly.focus = subject.monthly.grouped.map((val, i) => {
-      return Math.max(val[1] || 0, subject.monthly.focus[i]);
+      let maxVal = 0;
+      if (val.length > 0){
+        val.map((currentTimeline, i) => {
+          maxVal = Math.max(maxVal, currentTimeline[1] - currentTimeline[0]);
+        })
+      }
+      return Math.max(maxVal, subject.daily.focus[i]);
     });
 
     subjects.daily.groupedTotal = dailyTotal.map((val, i) => {

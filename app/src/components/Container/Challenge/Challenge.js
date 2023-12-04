@@ -19,8 +19,8 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
     const [user2Pfp, setUser2Pfp] = useState((<p>An error occured</p>));
     const [competeInfo1, setCompeteInfo1] = useState({ firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 });
     const [competeInfo2, setCompeteInfo2] = useState({ firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 });
-    const [user1Subjects, setUser1Subjects] = useState({});
-    const [user2Subjects, setUser2Subjects] = useState({});
+    const [user1Subjects, setUser1Subjects] = useState(null);
+    const [user2Subjects, setUser2Subjects] = useState(null);
     const [descriptionEl1, setDescriptionEl1] = useState(<p></p>);
     const [descriptionEl2, setDescriptionEl2] = useState(<p></p>);
     const [descriptionEl3, setDescriptionEl3] = useState(<p></p>);
@@ -112,7 +112,6 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
                 if (data.success) {
                     setUserInfo1({ id: data.data.first_user_id, name: data.data.first_user.name });
                     setUser1Pfp((
@@ -150,7 +149,6 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                         let startUnix = DateTime.fromSeconds(data.data.datum_point).minus({ days: random(0, 30) }).startOf('day');
                         let endUnix = startUnix.endOf('day');
                         rangeThree = [startUnix, endUnix];
-                        console.log(rangeThree);
                     }
 
 
@@ -197,7 +195,9 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
     useEffect(() => {
         if (challenge.first === "An Error Occured") return;
-        if (!!!user1Subjects.id) return;
+        if (!!!user1Subjects) return;
+
+        console.log(user1Subjects, user2Subjects);
 
         const startUnix1 = challenge.firstRange[0].ts;
         const stopUnix1 = challenge.firstRange[1].ts;
@@ -236,7 +236,6 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data.data, data.names);
                 setChallengeHistoryEl(data.data.map((challenge, i) => {
                     if (challenge.id != challengeId)
                     return (
