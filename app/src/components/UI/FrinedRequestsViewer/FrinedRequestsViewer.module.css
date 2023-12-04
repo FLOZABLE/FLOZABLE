@@ -1,0 +1,120 @@
+.FrinedRequestsViewer {
+  position: relative;
+}
+
+.FrinedRequestsViewer .title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.FrinedRequestsViewer .optionsWrapper .buttonsContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.FrinedRequestsViewer .optionsWrapper .buttonsContainer button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0px;
+}
+
+.FrinedRequestsViewer .optionsWrapper .buttonsContainer .count {
+  background-color: aquamarine;
+  border-radius: 10px;
+  height: 30px;
+  width: 30px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin-left: 5px;
+}
+
+.FrinedRequestsViewer .lineContainer {
+  height: 2px;
+  width: 100%;
+  background-color: #fff;
+  position: relative;
+}
+
+.FrinedRequestsViewer .lineContainer .line {
+  width: 50%;
+  margin-left: 50%;
+  background-color: var(--purple);
+  height: 2px;
+  transition: margin-left .2s ease-in-out;
+}
+
+.FrinedRequestsViewer .lineContainer.incoming .line {
+  margin-left: 0%;
+}
+
+
+.FrinedRequestsViewer .frinedRequests .frinedRequest {
+  display: flex;
+  padding: 10px;
+}
+
+.FrinedRequestsViewer .frinedRequest .profileImg {
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
+}
+
+.FrinedRequestsViewer .frinedRequest .buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.FrinedRequestsViewer .frinedRequest .buttons button {
+  background-color: var(--gray);
+  font-size: 30px;
+  width: 40px;
+  height: 40px;
+  color: var(--pink);
+  margin: 0px 5px;
+}
+
+.FrinedRequestsViewer .frinedRequest .content {
+  margin: 0px 20px;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.FrinedRequestsViewer .frinedRequest .btnWrapper {
+  position: relative;
+}
+
+.FrinedRequestsViewer .frinedRequest .btnWrapper.accept:hover {
+  filter: saturate(300%) hue-rotate(90deg);
+}
+
+.FrinedRequestsViewer .frinedRequest .btnWrapper.decline:hover {
+  filter: saturate(300%);
+}
+
+.FrinedRequestsViewer .frinedRequest .btnWrapper .hoverDisp {
+  position: absolute;
+  font-size: 17px;
+  white-space: nowrap;
+  top: 50px;
+  left: 0px;
+  opacity: 0;
+  transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
+  background-color: var(--opacity-black);
+  padding: 5px 10px;
+  border-radius: 7px;
+  color: #fff;
+  z-index: 5;
+  visibility: hidden;
+}
+
+.FrinedRequestsViewer .frinedRequest .btnWrapper:hover .hoverDisp {
+  opacity: 1;
+  visibility: visible;
+}

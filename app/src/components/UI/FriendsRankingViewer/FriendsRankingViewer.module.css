@@ -1,0 +1,43 @@
+.FriendsRankingViewer {
+  position: relative;
+}
+
+.FriendsRankingViewer .title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.FriendsRankingViewer .boxContainer {
+
+}
+
+.FriendsRankingViewer .box .header {
+  display: flex;
+  flex-direction: row;
+}
+
+.FriendsRankingViewer .box .header i {
+  margin-left: auto;
+}
+
+.FriendsRankingViewer .ranking {
+  display: flex;
+  align-items: center;
+  margin: 3px 0px;
+}
+
+.FriendsRankingViewer .ranking .profileImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  margin-right: 10px;
+}
+
+.FriendsRankingViewer .ranking .time {
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.FriendsRankingViewer .ranking .rank {
+  margin-right: 5px;
+}
