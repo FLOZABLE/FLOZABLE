@@ -8,6 +8,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function NotificationModal({ notifications, setNotifications, setIsNotificationModal, isNotificationModal, setResponse }) {
   const [notificationsEl, setNotificationsEl] = useState([]);
+  const [iconEl, setIconEl] = useState(<FontAwesomeIcon icon={faBell}/>);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
     fetch(`${serverOrigin}/api/account/friend-request-reply`, {
@@ -266,11 +267,20 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
       }
     }))
   }, [notifications]);
+
+  useEffect(() => {
+    if (notifications.length > 0 && !isNotificationModal){
+      setIconEl(<FontAwesomeIcon icon={faBell} bounce/>)
+    }
+    else{
+      setIconEl(<FontAwesomeIcon icon={faBell}/>)
+    }
+  }, [notifications, isNotificationModal]);
   
   return (
     <div className={`${styles.NotificationModal} ${isNotificationModal ? styles.open : ''}`}>
       <button className={styles.toggleBtn} onClick={() => { setIsNotificationModal(!isNotificationModal) }}>
-        <FontAwesomeIcon icon={faBell} />
+        {iconEl}
       </button>
       <div className={styles.notifications}>
         {notificationsEl}

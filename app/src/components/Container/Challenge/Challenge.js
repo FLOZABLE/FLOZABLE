@@ -86,18 +86,18 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         const rand = sfc32();
 
 
-        const firstRoundChoices = ["Longest Focus this Week", "Longest Focus today", "Most Studied Subject", "Total Study Time this Week", "Most Studied Day this Week"];
-        const secondRoundChoices = ["Study Average this Week", "Day by Day Comparison (Past 7 Days)", "Subject to Subject Comparison (This Week)", "Random Day of the Week"];
-        const thirdRoundChoices = ["Best Ranking this Week", "Average Ranking this Week", "3 Random Days this Week", "Random Day of the Past 30 Days"];
+        const firstRoundChoices = ["Longest Focus Last Week", "Longest Focus Yesterday", "Most Studied Subject Yesterday", "Total Study Time Last Week", "Most Studied Day Last Week"];
+        const secondRoundChoices = ["Study Average Last Week", "Day By Day Comparison (Past 7 Days)", "Subject To Subject Comparison (Last Week)", "Random Day Of Last Week"];
+        const thirdRoundChoices = ["Best Ranking Last Week", "Average Ranking Last Week", "3 Random Days Of Last Week", "Random Day Of The Past 30 Days"];
 
         const random = function (min, max) { //both inclusive
             return Math.floor(rand() * (max - min + 1)) + min;
         }
 
 
-        const choiceOne = 3;
-        const choiceTwo = 0;
-        const choiceThree = 3;
+        const choiceOne = random(0, firstRoundChoices.length - 1);
+        const choiceTwo = random(0, secondRoundChoices.length - 1);
+        const choiceThree = random(0, thirdRoundChoices.length - 1);
 
 
         let rangeOne = [];
@@ -135,22 +135,45 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                     ));
                     setDatumPoint(data.data.datum_point);
 
-                    if (choiceOne === 3) {
-                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week');
-                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week');
+                    if (choiceOne === 0 || choiceOne == 3 || choiceOne == 4) { //longest focus last week OR total study time last week OR most studied day last week
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week').minus({weeks: 1});
+                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week').minus({weeks: 1});
                         rangeOne = [startUnix, endUnix];
                     }
-                    if (choiceTwo === 0) {
-                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week');
-                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week');
+                    else if (choiceOne === 1 || choiceOne === 2) { //longest focus yesterday OR most studied subject yesterday
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('day').minus({day: 1});
+                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('day').minus({day: 1});
+                        rangeOne = [startUnix, endUnix];
+                    }
+
+
+                    if (choiceTwo === 0 || choiceTwo === 2) { //study average last week, subject to subject comparison last week
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week').minus({weeks: 1});
+                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week').minus({weeks: 1});
                         rangeTwo = [startUnix, endUnix];
                     }
-                    if (choiceThree === 3) {
-                        let startUnix = DateTime.fromSeconds(data.data.datum_point).minus({ days: random(0, 30) }).startOf('day');
+                    else if (choiceTwo === 1){ //day by day comparison past 7 days
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('day').minus({days: 7});
+                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('day').minus({days: 7});
+                        rangeTwo = [startUnix, endUnix];
+                    }
+                    else if (choiceTwo === 3){ //random day past 7 days
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).minus({ days: random(1, 7) }).startOf('day');
+                        let endUnix = startUnix.endOf('day');
+                        rangeTwo = [startUnix, endUnix];
+                    }
+
+
+                    if (choiceThree === 0 || choiceThree === 1 || choiceThree === 2) {
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week').minus({ weeks: 1});
+                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week').minus({ weeks: 1});
+                        rangeThree = [startUnix, endUnix];
+                    }
+                    else if (choiceThree === 3){
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).minus({ days: random(1, 30) }).startOf('day');
                         let endUnix = startUnix.endOf('day');
                         rangeThree = [startUnix, endUnix];
                     }
-
 
                     let tempChallenge = { first: firstRoundChoices[choiceOne], second: secondRoundChoices[choiceTwo], third: thirdRoundChoices[choiceThree], firstRange: rangeOne, secondRange: rangeTwo, thirdRange: rangeThree };
                     setChallenge(tempChallenge);
@@ -199,29 +222,56 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
         console.log(user1Subjects, user2Subjects);
 
-        const startUnix1 = challenge.firstRange[0].ts;
-        const stopUnix1 = challenge.firstRange[1].ts;
-        const startUnix2 = challenge.secondRange[0].ts;
-        const stopUnix2 = challenge.secondRange[1].ts;
-        const startUnix3 = challenge.thirdRange[0].ts;
-        const stopUnix3 = challenge.thirdRange[1].ts;
+        const tempUser1 = {};
+        const tempUser2 = {};
 
-        setDescriptionEl1(<h3>{challenge.firstRange[0].toFormat("DD")} ~ {challenge.firstRange[1].toFormat("DD")}</h3>);
+        const challengeName1 = challenge.first;
+
+
+        if (challengeName1 === "Longest Focus Last Week"){ //using full name for readability in code
+            const dateDiff = DateTime.fromMillis(Date.now()).startOf('week').diff(challenge.firstRange[0], ['weeks']); //start of this week to start of range
+
+            const weeklyIndex1 = user1Subjects.weekly.focus.length - dateDiff.weeks - 1; //index of object (-1 for 0-index)
+            if (weeklyIndex1 >= 0){
+                tempUser1.value1 = user1Subjects.weekly.focus[weeklyIndex1];
+            }
+            else{
+                tempUser1.value1 = 0; //they were not active last week
+            }
+
+            const weeklyIndex2 = user2Subjects.weekly.focus.length - dateDiff.weeks;
+            if (weeklyIndex2 >= 0){
+                tempUser2.value1 = user2Subjects.weekly.focus[weeklyIndex2];
+            }
+            else{
+                tempUser2.value1 = 0;
+            }
+            setDescriptionEl1(<h3>Week of {challenge.firstRange[0].toFormat("DD")} ~ {challenge.firstRange[1].toFormat("DD")}</h3>);
+        }
+        else if (challengeName1 === "Longest Focus Yesterday"){
+            const dateDiff = DateTime.fromMillis(Date.now()).startOf('day').diff(challenge.firstRange[0], ['days']);
+
+            const dailyIndex1 = user1Subjects.daily.focus.length - dateDiff.days - 1;
+            if (dailyIndex1 >= 0){
+                tempUser1.value1 = user1Subjects.daily.focus[dailyIndex1];
+            }
+            else{
+                tempUser1.value1 = 0;
+            }
+
+            const dailyIndex2 = user2Subjects.daily.focus.length - dateDiff.days - 1;
+            if (dailyIndex2 >= 0){
+                tempUser2.value1 = user2Subjects.daily.focus[dailyIndex2];
+            }
+            else{
+                tempUser2.value1 = 0;
+            }
+            setDescriptionEl1(<h3>On {challenge.firstRange[0].toFormat("DD")}</h3>);
+        }
+
         setDescriptionEl2(<h3>{challenge.secondRange[0].toFormat("DD")} ~ {challenge.secondRange[1].toFormat("DD")}</h3>);
-        if (startUnix3 + 86400000 > stopUnix3){
-            setDescriptionEl3(<h3>Day: {challenge.thirdRange[0].toFormat("DD")}</h3>);
-        }
-        else{
-            setDescriptionEl3(<h3>{challenge.thirdRange[0].toFormat("DD")} ~ {challenge.thirdRange[1].toFormat("DD")}</h3>);
-        }
-
-        const DAY_OF_WEEK = DateTime.fromSeconds(datumPoint).weekday; //day of week when challenge was accepted
-
-        //let tempCompete1 = { firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 };
-        //let tempCompete2 = { firstRoundTotal: 0, secondRoundTotal: 0, thirdRoundTotal: 0 };
-
-        //setCompeteInfo1(tempCompete1);
-        //setCompeteInfo2(tempCompete2);
+        setDescriptionEl3(<h3>Day: {challenge.thirdRange[0].toFormat("DD")}</h3>);
+        setDescriptionEl3(<h3>{challenge.thirdRange[0].toFormat("DD")} ~ {challenge.thirdRange[1].toFormat("DD")}</h3>);
 
     }, [user1Subjects]);
 
