@@ -114,7 +114,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
-              <DateSelectorBtn className = {styles.title} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
+              <DateSelectorBtn className = {styles.title} viewMode={viewer} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
               <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
             </div>
             <div className={`${styles.container} ${styles.rankingContainer}`}>

@@ -1,0 +1,26 @@
+.RecommendedFriendsViewer {
+  position: relative;
+}
+
+.RecommendedFriendsViewer .title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.RecommendedFriendsViewer .recommendedFriend {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.RecommendedFriendsViewer .recommendedFriend button{
+  margin-left: auto;
+}
+
+.RecommendedFriendsViewer .profileImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  margin-right: 10px;
+}

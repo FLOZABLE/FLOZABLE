@@ -23,7 +23,6 @@ import EventModal from "./components/UI/EventModal/EventModal";
 import AddSubjectModal from "./components/UI/AddSubjectModal/AddSubjectModal";
 import User from "./components/Container/User/User";
 import TopNotification from "./components/UI/TopNotification/TopNotification";
-import BottomNotification from "./components/UI/BottomNotification/BottomNotification";
 import NotificationModal from "./components/UI/NotificationModal/NotificationModal";
 import ChatsModal from "./components/UI/ChatsModal/ChatsModal";
 import Friends from "./components/Container/Friends/Friends";
@@ -139,7 +138,7 @@ function App() {
         if (data.success) {
           console.log(userInfo);
           const { userGroups, otherGroups } = filterGroups(userInfo, data.groups);
-          console.log('gd', userGroups)
+          setGroups(data.groups);
           setMyGroups(userGroups);
           setOtherGroups(otherGroups);
         }
@@ -159,15 +158,6 @@ function App() {
     }
   }, [userInfo]);
 
-  /*   useEffect(() => {
-      if (userInfo && groups) {
-        setLikedGroups(getLikedGroups(userInfo, groups));
-        const dividedGroups = getMyGroups(userInfo, groups);
-        setMyGroups(dividedGroups.myGroups);
-        setOtherGroups(dividedGroups.otherGroups);
-      }
-    }, [userInfo, groups]); */
-
   return (
     <Router>
       <TopNotification
@@ -180,10 +170,6 @@ function App() {
         notifications={notifications}
         setNotifications={setNotifications}
         setResponse={setResponse}
-      />
-      <BottomNotification
-        notifications={notifications}
-        setNotifications={setNotifications}
       />
       <AddSubjectModal
         setIsAddSubjectModal={setIsAddSubjectModal}
@@ -348,7 +334,6 @@ function App() {
                 socket={socket}
                 subjects={subjects}
                 reset={reset}
-                groups={groups}
                 otherGroups={otherGroups}
                 setOtherGroups={setOtherGroups}
                 myGroups={myGroups}

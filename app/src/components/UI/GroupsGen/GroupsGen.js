@@ -78,6 +78,8 @@ function GroupsGen({
           );
         });
 
+        const {members} = group;
+
         /* ${(group.name.toLowerCase().includes(searchQuery) || group.tags.includes(searchQuery) || tags.some(element => queryTags.includes(element))) || (searchQuery === '' && !queryTags.length) ? '' : styles.hidden} */
         let isSearched = false;
         if (
@@ -134,7 +136,7 @@ function GroupsGen({
                 <ul className={styles.info}>
                   <li>
                     <FontAwesomeIcon icon={faPeopleGroup} />
-                    <p>{group.members.length}</p>
+                    <p>{members.split(',').length}</p>
                   </li>
                   <li>
                     <FontAwesomeIcon icon={faBullseye} />
@@ -142,7 +144,7 @@ function GroupsGen({
                   </li>
                   <li>
                     <FontAwesomeIcon icon={faStopwatch} />
-                    <p>dd</p>
+                    <p>0</p>
                   </li>
                   <li>
                     <FontAwesomeIcon icon={faHeart} />

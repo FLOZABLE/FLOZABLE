@@ -133,6 +133,7 @@ const { promises } = require("fs");
 
 Router.post('/sort', async (req, res) => {
   const { startTime, stopTime } = req.body;
+  console.log('sort', startTime, stopTime)
   try {
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT name, user_id from users`);

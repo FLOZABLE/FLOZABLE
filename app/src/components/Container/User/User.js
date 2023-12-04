@@ -67,7 +67,7 @@ const rankingLinchartOpt = {
 
 rankingLinchartOpt.scales.y.reverse = true;
 
-function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, socket }) {
+function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
   const [userInfo, setUserInfo] = useState(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [startDate, setStartDate] = useState(new Date());

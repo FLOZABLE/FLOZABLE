@@ -109,7 +109,7 @@ function Sidebar({
             </Link>
           </div>
         </li>
-        {/* <li>
+        <li>
         <div
             className={styles.navItemWrapper}
           >
@@ -120,7 +120,7 @@ function Sidebar({
               <p className={styles.navText} data-text="Friends">Friends</p>
             </Link>
           </div>
-        </li> */}
+        </li>
         {/* <li>
         <div
             className={styles.navItemWrapper}
