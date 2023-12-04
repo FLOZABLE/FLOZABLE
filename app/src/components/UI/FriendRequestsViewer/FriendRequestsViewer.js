@@ -29,42 +29,79 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
       };
       return;
     });
-    console.log('gd', friendRequests, sentRequests)
     setSentRequestsEl(sentRequests.map((sentRequest) => {
-      console.log(sentRequest)
-      const {f, i} = sentRequest;
-      const {name, timezone, user_id} = f;
+      const { f, i } = sentRequest;
+      const { name, timezone, user_id } = f;
       return (
         <div className={styles.friendRequest} key={i}>
-        <Link to={`/dashboard/user/${user_id}`} >
-        <div className={styles.content}>
-        <div className={styles.profileImg}
-          style={{
-            backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center center',
-            backgroundRepeat: 'no-repeat',
-          }}>
-        </div>
-          <p>{/* {fromName} */}{name}</p>
-          <CountryViewer timezone={timezone}/>
-        </div>
-        </Link>
-        <div className={styles.buttons}>
-          <div className={`${styles.btnWrapper} ${styles.decline}`}>
-            <button onClick={() => {sentRequestClear(user_id, i)}}>
-              <FontAwesomeIcon icon={faXmark} />
-            </button>
-            <div className={styles.hoverDisp}>
-              Abort
+          <Link to={`/dashboard/user/${user_id}`} >
+            <div className={styles.content}>
+              <div className={styles.profileImg}
+                style={{
+                  backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center center',
+                  backgroundRepeat: 'no-repeat',
+                }}>
+              </div>
+              <p>{/* {fromName} */}{name}</p>
+              <CountryViewer timezone={timezone} />
+            </div>
+          </Link>
+          <div className={styles.buttons}>
+            <div className={`${styles.btnWrapper} ${styles.decline}`}>
+              <button onClick={() => { sentRequestClear(user_id, i) }}>
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+              <div className={styles.hoverDisp}>
+                Abort
+              </div>
             </div>
           </div>
         </div>
-      </div>
       )
     }));
 
-    //setFriendRequestEl(friendRequests)
+    setFriendRequestEl(friendRequests.map((friendRequest) => {
+      const { f, i } = friendRequest;
+      const { name, timezone, user_id } = f;
+      return (
+        <div className={styles.friendRequest} key={i}>
+          <Link to={`/dashboard/user/{fromId}`} >
+            <div className={styles.content}>
+              <div className={styles.profileImg}
+                style={{
+                  backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center center',
+                  backgroundRepeat: 'no-repeat',
+                }}>
+              </div>
+              <p>{/* {fromName} */}{name}</p>
+              <CountryViewer timezone={timezone} />
+            </div>
+          </Link>
+          <div className={styles.buttons}>
+            <div className={`${styles.btnWrapper} ${styles.decline}`}>
+              <button onClick={() => {/* friendRequestReply(fromId, false, notification.i) */ }}>
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+              <div className={styles.hoverDisp}>
+                Decline
+              </div>
+            </div>
+            <div className={`${styles.btnWrapper} ${styles.accept}`}>
+              <button onClick={() => {/* friendRequestReply(fromId, true, notification.i) */ }}>
+                <FontAwesomeIcon icon={faCheck} />
+              </button>
+              <div className={styles.hoverDisp}>
+                Accept
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }))
   }, [notifications]);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
@@ -111,7 +148,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
           <button onClick={() => { setIsIncoming(true) }}>
             <p>Incoming</p>
             <div className={styles.count}>
-            {friendRequestEl.length}
+              {friendRequestEl.length}
             </div>
           </button>
           <button onClick={() => { setIsIncoming(false) }}>
@@ -125,48 +162,11 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
           <div className={styles.line}></div>
         </div>
       </div>
-      <div className={styles.friendRequests}>
-        {friendRequests.map((friendRequest, i) => {
-          return (
-            <div className={styles.friendRequest} key={i}>
-            <Link to={`/dashboard/user/{fromId}`} >
-            <div className={styles.content}>
-            <div className={styles.profileImg}
-              style={{
-                backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center center',
-                backgroundRepeat: 'no-repeat',
-              }}>
-            </div>
-              <p>{/* {fromName} */}Jason Lee</p>
-              <CountryViewer timezone={'s'}/>
-            </div>
-            </Link>
-            <div className={styles.buttons}>
-              <div className={`${styles.btnWrapper} ${styles.decline}`}>
-                <button onClick={() => {/* friendRequestReply(fromId, false, notification.i) */ }}>
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
-                <div className={styles.hoverDisp}>
-                  Decline
-                </div>
-              </div>
-              <div className={`${styles.btnWrapper} ${styles.accept}`}>
-                <button onClick={() => {/* friendRequestReply(fromId, true, notification.i) */ }}>
-                  <FontAwesomeIcon icon={faCheck} />
-                </button>
-                <div className={styles.hoverDisp}>
-                  Accept
-                </div>
-              </div>
-            </div>
-          </div>
-          )
-        })}
+      <div className={`${styles.friendRequests} ${isIncoming ? styles.open : ''}`}>
+      {friendRequestEl.length ? friendRequestEl : <p>No incoming requests</p>}
       </div>
-      <div className={styles.friendRequests} id={styles.ongoing}>
-        {sentRequestsEl}
+      <div className={`${styles.friendRequests} ${!isIncoming ? styles.open : ''}`} id={styles.outgoing}>
+        {sentRequestsEl.length ? sentRequestsEl : <p>No outgoing requests</p>}
       </div>
     </div>
   )

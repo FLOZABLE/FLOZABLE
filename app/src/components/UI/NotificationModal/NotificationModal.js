@@ -269,7 +269,11 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   }, [notifications]);
 
   useEffect(() => {
-    if (notifications.length > 0 && !isNotificationModal){
+    if (!notifications) return;
+    
+    const displayedNotifications = notifications.filter(notification => {return notification.t >= 0});
+
+    if (displayedNotifications.length){
       setIconEl(<FontAwesomeIcon icon={faBell} bounce/>)
     }
     else{

@@ -2,10 +2,33 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./FriendsRankingViewer.module.css";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function FriendsRankingViewer({ }) {
+function FriendsRankingViewer({userInfo}) {
+  const [viewDate, setViewDate] = useState(new Date());
+  /* const [daily] */
+  const friendsSort = () => {
+    const isoDateTime = DateTime.fromJSDate(viewDate, {zone: 'utc'}).toISODate();
+    fetch(`${serverOrigin}/api/ranking/friends?date=${isoDateTime}`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+      })
+      .catch((error) => console.error(error));
+  };
+
+  useEffect(() => {
+    friendsSort();
+  }, [viewDate]);
+
   return (
     <div className={styles.FriendsRankingViewer}>
       <div className={styles.title}>

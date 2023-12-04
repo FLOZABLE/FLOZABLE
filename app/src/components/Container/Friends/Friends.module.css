@@ -5,11 +5,11 @@
 .Friends .fixedBoxContainer {
   width: 300px;
   background-color: #fff;
-  position: fixed;
+  position: absolute;
   border-radius: 10px;
-  top: 200px;
+  top: 0px;
   height: calc(100vh - 300px);
-  right: 100px;
+  right: 50px;
 }
 
 .Friends .fixedBoxContainer .box {
