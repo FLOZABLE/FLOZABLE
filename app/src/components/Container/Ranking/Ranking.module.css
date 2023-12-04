@@ -146,6 +146,14 @@
   margin-right: 7px;
 }
 
+.RankingContainer .userInfo .profileInfo {
+  display: flex;
+}
+
+.RankingContainer .profileInfo .name {
+  margin-right: 10px;
+}
+
 .RankingContainer .dash {
   background-color: #545454;
   width: 4px;

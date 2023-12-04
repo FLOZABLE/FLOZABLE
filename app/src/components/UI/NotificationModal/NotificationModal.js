@@ -11,7 +11,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   const [iconEl, setIconEl] = useState(<FontAwesomeIcon icon={faBell}/>);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${serverOrigin}/api/account/friend-request-reply`, {
+    fetch(`${serverOrigin}/api/friend/request-reply`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -28,7 +28,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   };
 
   const deleteFriendNotif = (targetId, notificationId) => {
-    fetch(`${serverOrigin}/api/account/friend-notif`, {
+    fetch(`${serverOrigin}/api/friend/checked`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",

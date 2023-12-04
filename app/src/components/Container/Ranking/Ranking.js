@@ -11,6 +11,7 @@ import Search from '../../UI/Search/Search';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
 import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
 import { Link } from 'react-router-dom';
+import CountryViewer from '../../UI/CountryViewer/CountryViewer';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -34,7 +35,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   const updateViewDate = (date) => {
     setViewDate(date);
-    
+
   };
 
   //fetch new ranking
@@ -58,7 +59,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     setStartDate(startTime);
     setEndDate(stopTime);
 
-    
+
     fetch(`${serverOrigin}/api/ranking/sort`, {
       method: 'post',
       headers: {
@@ -69,7 +70,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          
+
           setRanking(data.data);
         }
       })
@@ -77,7 +78,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   }, [viewDate, viewer]);
 
   useEffect(() => {
-    setRankingEl(ranking.map(({ total, name, user_id }, i) => {
+    setRankingEl(ranking.map(({ total, name, user_id, timezone }, i) => {
       if (!name.toLowerCase().includes(rankingSearch.toLowerCase())) return;
       return (
         <li key={i}>
@@ -94,9 +95,10 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
             >
               {/* <FontAwesomeIcon icon={faUser} /> */}
             </div>
-            <Link to={`/dashboard/user/${user_id}`}>
-            <p className={styles.name}>{name}</p>
-                  </Link>
+            <Link to={`/dashboard/user/${user_id}`} className={styles.profileInfo}>
+              <p className={styles.name}>{name}</p>
+              <CountryViewer timezone={timezone} />
+            </Link>
             <div className={styles.ranking}>
               <p>{(total / (60 * 60)).toFixed(2)}hr</p>
             </div>
@@ -114,7 +116,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
-              <DateSelectorBtn className = {styles.title} viewMode={viewer} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
+              <DateSelectorBtn className={styles.title} viewMode={viewer} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
               <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
             </div>
             <div className={`${styles.container} ${styles.rankingContainer}`}>
