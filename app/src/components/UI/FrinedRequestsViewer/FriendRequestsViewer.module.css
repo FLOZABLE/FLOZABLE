@@ -1,20 +1,20 @@
-.FrinedRequestsViewer {
+.FriendRequestsViewer {
   position: relative;
 }
 
-.FrinedRequestsViewer .title {
+.FriendRequestsViewer .title {
   font-size: 20px;
   font-weight: 600;
 }
 
-.FrinedRequestsViewer .optionsWrapper .buttonsContainer{
+.FriendRequestsViewer .optionsWrapper .buttonsContainer{
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
 }
 
-.FrinedRequestsViewer .optionsWrapper .buttonsContainer button {
+.FriendRequestsViewer .optionsWrapper .buttonsContainer button {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -22,8 +22,9 @@
   margin: 10px 0px;
 }
 
-.FrinedRequestsViewer .optionsWrapper .buttonsContainer .count {
-  background-color: aquamarine;
+.FriendRequestsViewer .optionsWrapper .buttonsContainer .count {
+  background-color: var(--purple);
+  color: #fff;
   border-radius: 10px;
   height: 30px;
   width: 30px;
@@ -33,14 +34,14 @@
   margin-left: 5px;
 }
 
-.FrinedRequestsViewer .lineContainer {
+.FriendRequestsViewer .lineContainer {
   height: 2px;
   width: 100%;
   background-color: #fff;
   position: relative;
 }
 
-.FrinedRequestsViewer .lineContainer .line {
+.FriendRequestsViewer .lineContainer .line {
   width: 50%;
   margin-left: 50%;
   background-color: var(--purple);
@@ -48,59 +49,66 @@
   transition: margin-left .2s ease-in-out;
 }
 
-.FrinedRequestsViewer .lineContainer.incoming .line {
+.FriendRequestsViewer .lineContainer.incoming .line {
   margin-left: 0%;
 }
 
 
-.FrinedRequestsViewer .frinedRequests .frinedRequest {
+.FriendRequestsViewer .friendRequests .friendRequest {
   display: flex;
   padding: 10px;
-}
-
-.FrinedRequestsViewer .frinedRequest .profileImg {
-  height: 40px;
-  width: 40px;
-  border-radius: 20px;
-}
-
-.FrinedRequestsViewer .frinedRequest .buttons {
-  display: flex;
-  justify-content: center;
   align-items: center;
 }
 
-.FrinedRequestsViewer .frinedRequest .buttons button {
-  background-color: var(--gray);
-  font-size: 30px;
-  width: 40px;
+.FriendRequestsViewer .friendRequest .profileImg {
   height: 40px;
+  width: 40px;
+  border-radius: 20px;
+  margin-right: 10px;
+}
+
+.FriendRequestsViewer .friendRequest .buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 0px;
+}
+
+.FriendRequestsViewer .friendRequest .buttons button {
+  background-color: var(--gray);
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
   color: var(--pink);
   margin: 0px 5px;
 }
 
-.FrinedRequestsViewer .frinedRequest .content {
-  margin: 0px 20px;
+.FriendRequestsViewer .friendRequest .content {
   flex-grow: 1;
   display: flex;
   align-items: center;
 }
 
-.FrinedRequestsViewer .frinedRequest .btnWrapper {
+.FriendRequestsViewer .friendRequest .content p {
+  margin-right: 5px;
+}
+
+.FriendRequestsViewer .friendRequest .btnWrapper {
   position: relative;
 }
 
-.FrinedRequestsViewer .frinedRequest .btnWrapper.accept:hover {
+.FriendRequestsViewer .friendRequest .btnWrapper.accept:hover {
   filter: saturate(300%) hue-rotate(90deg);
 }
 
-.FrinedRequestsViewer .frinedRequest .btnWrapper.decline:hover {
+.FriendRequestsViewer .friendRequest .btnWrapper.decline:hover {
   filter: saturate(300%);
 }
 
-.FrinedRequestsViewer .frinedRequest .btnWrapper .hoverDisp {
+.FriendRequestsViewer .friendRequest .btnWrapper .hoverDisp {
   position: absolute;
-  font-size: 17px;
+  font-size: 13px;
   white-space: nowrap;
   top: 50px;
   left: 0px;
@@ -114,7 +122,7 @@
   visibility: hidden;
 }
 
-.FrinedRequestsViewer .frinedRequest .btnWrapper:hover .hoverDisp {
+.FriendRequestsViewer .friendRequest .btnWrapper:hover .hoverDisp {
   opacity: 1;
   visibility: visible;
 }

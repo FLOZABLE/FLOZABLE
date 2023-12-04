@@ -1,3 +1,5 @@
+import ct from 'countries-and-timezones';
+
 function filterGroups(userInfo, groups) {
   const userGroups = [];
   const otherGroups = [];
@@ -13,4 +15,17 @@ function filterGroups(userInfo, groups) {
   return { userGroups, otherGroups };
 };
 
-export { filterGroups };
+function getCountryCode(timezone) {
+  try {
+    const timeZoneData = ct.getTimezone(timezone);
+    if (timeZoneData && timeZoneData.countries[0]) {
+      return timeZoneData.countries[0];
+    };
+    return false;
+  } catch (error) {
+    console.error(`Error getting country code for timezone ${timezone}:`, error);
+    return false;
+  }
+}
+
+export { filterGroups, getCountryCode };

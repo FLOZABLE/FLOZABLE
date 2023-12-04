@@ -2,13 +2,15 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./Friends.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faUserFriends } from "@fortawesome/free-solid-svg-icons";
-import FrinedRequestsViewer from "../../UI/FrinedRequestsViewer/FrinedRequestsViewer";
+import FrinedRequestsViewer from "../../UI/FrinedRequestsViewer/FriendRequestsViewer";
 import FriendsRankingViewer from "../../UI/FriendsRankingViewer/FriendsRankingViewer";
 import RecommendedFriendsViewer from "../../UI/RecommendedFriendsViewer/RecommendedFriendsViewer";
+import FriendRequestsViewer from "../../UI/FrinedRequestsViewer/FriendRequestsViewer";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function Friends({ isSidebarHovered, isSidebarOpen, userInfo }) {
+function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, setNotifications, setResponse }) {
+
   return (
     <div className={styles.Friends}>
       <div
@@ -17,7 +19,10 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo }) {
       >
         <div className={styles.fixedBoxContainer}>
           <div className={styles.box}>
-            <FrinedRequestsViewer 
+            <FriendRequestsViewer
+            notifications={notifications}
+            setNotifications={setNotifications}
+            setResponse={setResponse}
             />
           </div>
           <div className={styles.box}>
