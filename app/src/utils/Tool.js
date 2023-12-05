@@ -26,6 +26,23 @@ function getCountryCode(timezone) {
     console.error(`Error getting country code for timezone ${timezone}:`, error);
     return false;
   }
-}
+};
 
-export { filterGroups, getCountryCode };
+  /**
+   * @param {*} sec 
+   * @returns 
+   */
+  const secondConverter = (sec, options = ['s', 'm', 'h']) => {
+    let value = sec ? sec : 0;
+    let type = 0;
+    if (sec >= 60 * 60) {
+      value = sec / (60 * 60).toFixed(2);
+      type = 2;
+    } else if (sec > 60) {
+      value = Math.floor(sec / 60);
+    };
+
+    return { value, type: options[type] };
+  };
+
+export { filterGroups, getCountryCode, secondConverter };

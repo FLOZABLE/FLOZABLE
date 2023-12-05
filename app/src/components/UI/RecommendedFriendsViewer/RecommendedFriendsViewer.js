@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./RecommendedFriendsViewer.module.css";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -5,6 +6,20 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function RecommendedFriendsViewer() {
+
+  useEffect(() => {
+    fetch(`${serverOrigin}/api/friend/recommended`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+      });
+  }, []);
+
   return (
     <div className={styles.RecommendedFriendsViewer}>
       <div className={styles.title}>
