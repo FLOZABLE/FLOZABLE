@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faV, faS, faSlash } from '@fortawesome/free-solid-svg-icons';
 import { DateTime } from "luxon";
 import { timelineSort } from "../../../utils/timelineSorting"
+import parse from "html-react-parser";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -24,7 +25,8 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
     const [descriptionEl1, setDescriptionEl1] = useState(<p></p>);
     const [descriptionEl2, setDescriptionEl2] = useState(<p></p>);
     const [descriptionEl3, setDescriptionEl3] = useState(<p></p>);
-    const [challengeHistoryEl, setChallengeHistoryEl] = useState(<p></p>)
+    const [challengeHistoryEl, setChallengeHistoryEl] = useState(<p></p>);
+    const [random, setRandom] = useState(null);
 
 
     const cyrb128 = (str) => {
@@ -69,7 +71,6 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         }
     }
 
-
     useEffect(() => {
         const pathName = window.location.pathname.split('/');
         const selectedChallengeId = pathName[pathName.length - 1];
@@ -85,15 +86,16 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         // Four 32-bit component hashes provide the seed for sfc32.
         const rand = sfc32();
 
+        setRandom(() => (min, max) => { return (Math.floor(rand() * (max - min + 1)) + min)});
+
+    }, []);
+
+    useEffect(() => {
+        if (!!!random) return;
 
         const firstRoundChoices = ["Longest Focus Last Week", "Longest Focus Yesterday", "Most Studied Subject Yesterday", "Total Study Time Last Week", "Most Studied Day Last Week"];
         const secondRoundChoices = ["Study Average Last Week", "Day By Day Comparison (Past 7 Days)", "Subject To Subject Comparison (Last Week)", "Random Day Of Last Week"];
         const thirdRoundChoices = ["Best Ranking Last Week", "Average Ranking Last Week", "3 Random Days Of Last Week", "Random Day Of The Past 30 Days"];
-
-        const random = function (min, max) { //both inclusive
-            return Math.floor(rand() * (max - min + 1)) + min;
-        }
-
 
         const choiceOne = random(0, firstRoundChoices.length - 1);
         const choiceTwo = random(0, secondRoundChoices.length - 1);
@@ -104,7 +106,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         let rangeTwo = [];
         let rangeThree = [];
 
-        fetch(`${serverOrigin}/api/challenges?searchId=${selectedChallengeId}`, {
+        fetch(`${serverOrigin}/api/challenges?searchId=${challengeId}`, {
             method: "get",
             headers: {
                 'Content-Type': 'application/json'
@@ -136,28 +138,28 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                     setDatumPoint(data.data.datum_point);
 
                     if (choiceOne === 0 || choiceOne == 3 || choiceOne == 4) { //longest focus last week OR total study time last week OR most studied day last week
-                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week').minus({weeks: 1});
-                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week').minus({weeks: 1});
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week').minus({ weeks: 1 });
+                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week').minus({ weeks: 1 });
                         rangeOne = [startUnix, endUnix];
                     }
                     else if (choiceOne === 1 || choiceOne === 2) { //longest focus yesterday OR most studied subject yesterday
-                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('day').minus({day: 1});
-                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('day').minus({day: 1});
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('day').minus({ day: 1 });
+                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('day').minus({ day: 1 });
                         rangeOne = [startUnix, endUnix];
                     }
 
 
                     if (choiceTwo === 0 || choiceTwo === 2) { //study average last week, subject to subject comparison last week
-                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week').minus({weeks: 1});
-                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week').minus({weeks: 1});
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week').minus({ weeks: 1 });
+                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week').minus({ weeks: 1 });
                         rangeTwo = [startUnix, endUnix];
                     }
-                    else if (choiceTwo === 1){ //day by day comparison past 7 days
-                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('day').minus({days: 7});
-                        let endUnix = DateTime.fromSeconds(data.data.datum_point).startOf('day').minus({days: 1});
+                    else if (choiceTwo === 1) { //day by day comparison past 7 days
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('day').minus({ days: 7 });
+                        let endUnix = DateTime.fromSeconds(data.data.datum_point).startOf('day').minus({ days: 1 });
                         rangeTwo = [startUnix, endUnix];
                     }
-                    else if (choiceTwo === 3){ //random day past 7 days
+                    else if (choiceTwo === 3) { //random day past 7 days
                         let startUnix = DateTime.fromSeconds(data.data.datum_point).minus({ days: random(1, 7) }).startOf('day');
                         let endUnix = startUnix.endOf('day');
                         rangeTwo = [startUnix, endUnix];
@@ -165,11 +167,11 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
 
                     if (choiceThree === 0 || choiceThree === 1 || choiceThree === 2) {
-                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week').minus({ weeks: 1});
-                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week').minus({ weeks: 1});
+                        let startUnix = DateTime.fromSeconds(data.data.datum_point).startOf('week').minus({ weeks: 1 });
+                        let endUnix = DateTime.fromSeconds(data.data.datum_point).endOf('week').minus({ weeks: 1 });
                         rangeThree = [startUnix, endUnix];
                     }
-                    else if (choiceThree === 3){
+                    else if (choiceThree === 3) {
                         let startUnix = DateTime.fromSeconds(data.data.datum_point).minus({ days: random(1, 30) }).startOf('day');
                         let endUnix = startUnix.endOf('day');
                         rangeThree = [startUnix, endUnix];
@@ -180,7 +182,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                 }
             })
             .catch((error) => console.error(error));
-    }, []);
+    }, [random]);
 
 
     useEffect(() => {
@@ -194,12 +196,12 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         })
             .then((response) => response.json())
             .then((data) => {
-                if (data.success){
+                if (data.success) {
                     setUser1Subjects(timelineSort(data.subjects));
                 }
             });
- 
- 
+
+
         fetch(`${serverOrigin}/api/study/bring-subjects`, {
             method: "post",
             headers: {
@@ -209,7 +211,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         })
             .then((response) => response.json())
             .then((data) => {
-                if (data.success){
+                if (data.success) {
                     setUser2Subjects(timelineSort(data.subjects));
                 }
             });
@@ -218,7 +220,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
     useEffect(() => {
         if (challenge.first === "An Error Occured") return;
-        if (!!!user1Subjects) return;
+        if (!!!user1Subjects || !!!user2Subjects) return;
 
         console.log(user1Subjects, user2Subjects);
 
@@ -229,75 +231,75 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         const challengeName2 = challenge.second;
         const challengeName3 = challenge.third;
 
-        if (challengeName1 === "Longest Focus Last Week"){ //using full name for readability in code
+        if (challengeName1 === "Longest Focus Last Week") { //using full name for readability in code
             const dateDiff = DateTime.fromMillis(Date.now()).startOf('week').diff(challenge.firstRange[0], ['weeks']); //start of this week to start of range
 
             const weeklyIndex1 = user1Subjects.weekly.focus.length - dateDiff.weeks - 1; //index of object (-1 for 0-index)
-            if (weeklyIndex1 >= 0){
+            if (weeklyIndex1 >= 0) {
                 tempUser1.value1 = user1Subjects.weekly.focus[weeklyIndex1];
             }
-            else{
+            else {
                 tempUser1.value1 = 0; //they were not active last week
             }
 
-            const weeklyIndex2 = user2Subjects.weekly.focus.length - dateDiff.weeks;
-            if (weeklyIndex2 >= 0){
+            const weeklyIndex2 = user2Subjects.weekly.focus.length - dateDiff.weeks - 1;
+            if (weeklyIndex2 >= 0) {
                 tempUser2.value1 = user2Subjects.weekly.focus[weeklyIndex2];
             }
-            else{
+            else {
                 tempUser2.value1 = 0;
             }
             setDescriptionEl1(<h3>Week of {challenge.firstRange[0].toFormat("DD")} ~ {challenge.firstRange[1].toFormat("DD")}</h3>);
         }
-        else if (challengeName1 === "Longest Focus Yesterday"){
+        else if (challengeName1 === "Longest Focus Yesterday") {
             const dateDiff = DateTime.fromMillis(Date.now()).startOf('day').diff(challenge.firstRange[0], ['days']);
 
             const dailyIndex1 = user1Subjects.daily.focus.length - dateDiff.days - 1;
-            if (dailyIndex1 >= 0){
+            if (dailyIndex1 >= 0) {
                 tempUser1.value1 = user1Subjects.daily.focus[dailyIndex1];
             }
-            else{
+            else {
                 tempUser1.value1 = 0;
             }
 
             const dailyIndex2 = user2Subjects.daily.focus.length - dateDiff.days - 1;
-            if (dailyIndex2 >= 0){
+            if (dailyIndex2 >= 0) {
                 tempUser2.value1 = user2Subjects.daily.focus[dailyIndex2];
             }
-            else{
+            else {
                 tempUser2.value1 = 0;
             }
             setDescriptionEl1(<h3>On {challenge.firstRange[0].toFormat("DD")}</h3>);
         }
-        else if (challengeName1 === "Total Study Time Last Week"){
+        else if (challengeName1 === "Total Study Time Last Week") {
             const dateDiff = DateTime.fromMillis(Date.now()).startOf('week').diff(challenge.firstRange[0], ['weeks']); //start of this week to start of range
 
             const weeklyIndex1 = user1Subjects.weekly.groupedTotal.length - dateDiff.weeks - 1; //index of object (-1 for 0-index)
-            if (weeklyIndex1 >= 0){
+            if (weeklyIndex1 >= 0) {
                 tempUser1.value1 = user1Subjects.weekly.groupedTotal[weeklyIndex1];
             }
-            else{
+            else {
                 tempUser1.value1 = 0; //they were not active last week
             }
 
-            const weeklyIndex2 = user2Subjects.weekly.groupedTotal.length - dateDiff.weeks;
-            if (weeklyIndex2 >= 0){
+            const weeklyIndex2 = user2Subjects.weekly.groupedTotal.length - dateDiff.weeks - 1;
+            if (weeklyIndex2 >= 0) {
                 tempUser2.value1 = user2Subjects.weekly.groupedTotal[weeklyIndex2];
             }
-            else{
+            else {
                 tempUser2.value1 = 0;
             }
             setDescriptionEl1(<h3>Week of {challenge.firstRange[0].toFormat("DD")} ~ {challenge.firstRange[1].toFormat("DD")}</h3>);
         }
-        else if (challengeName1 === "Most Studied Day Last Week"){
+        else if (challengeName1 === "Most Studied Day Last Week") {
             const dateDiff = DateTime.fromMillis(Date.now()).startOf('week').diff(challenge.firstRange[0], ['days']);
 
             const dailyIndex1 = user1Subjects.daily.groupedTotal.length - dateDiff.days - 1; //start of last week in daily grouped total
             tempUser1.value1 = 0;
             let mostStudied1 = 0;
-            for (let i = dailyIndex1; i < dailyIndex1 + 7; i++){
-                if (i >= 0 || i < user1Subjects.daily.groupedTotal.length){ //inside grouped total indexes
-                    if (tempUser1.value1 < user1Subjects.daily.groupedTotal[i]){
+            for (let i = dailyIndex1; i < dailyIndex1 + 7; i++) {
+                if (i >= 0 || i < user1Subjects.daily.groupedTotal.length) { //inside grouped total indexes
+                    if (tempUser1.value1 < user1Subjects.daily.groupedTotal[i]) {
                         tempUser1.value1 = user1Subjects.daily.groupedTotal[i];
                         mostStudied1 = dailyIndex1 - i; //days after week
                     }
@@ -307,9 +309,9 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             const dailyIndex2 = user2Subjects.daily.groupedTotal.length - dateDiff.days - 1;
             tempUser2.value1 = 0;
             let mostStudied2 = 0;
-            for (let i = dailyIndex2; i < dailyIndex2 + 7; i++){
-                if (i >= 0 || i < user2Subjects.daily.groupedTotal.length){
-                    if (tempUser2.value1 < user2Subjects.daily.groupedTotal[i]){
+            for (let i = dailyIndex2; i < dailyIndex2 + 7; i++) {
+                if (i >= 0 || i < user2Subjects.daily.groupedTotal.length) {
+                    if (tempUser2.value1 < user2Subjects.daily.groupedTotal[i]) {
                         tempUser2.value1 = user2Subjects.daily.groupedTotal[i];
                         mostStudied2 = dailyIndex2 - i; //days after week
                     }
@@ -317,19 +319,19 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             }
             setDescriptionEl1(<div>
                 <h3>Week of {challenge.firstRange[0].toFormat("DD")} ~ {challenge.firstRange[1].toFormat("DD")}</h3>
-                <h3>User 1: {challenge.firstRange[0].plus({days: mostStudied1}).toFormat("DD")}</h3>
-                <h3>User 2: {challenge.firstRange[0].plus({days: mostStudied2}).toFormat("DD")}</h3>
+                <h3>User 1: {challenge.firstRange[0].plus({ days: mostStudied1 }).toFormat("DD")}</h3>
+                <h3>User 2: {challenge.firstRange[0].plus({ days: mostStudied2 }).toFormat("DD")}</h3>
             </div>);
         }
-        else if (challengeName1 === "Most Studied Subject Yesterday"){
+        else if (challengeName1 === "Most Studied Subject Yesterday") {
             const dateDiff = DateTime.fromMillis(Date.now()).startOf('day').diff(challenge.firstRange[0], ['days']);
 
             tempUser1.value1 = 0;
             let bestSubject1 = "None";
             user1Subjects.map((subject) => {
                 const dailyIndex1 = subject.daily.total.length - dateDiff.days - 1;
-                if (dailyIndex1 >= 0){
-                    if (tempUser1.value1 < subject.daily.total[dailyIndex1]){
+                if (dailyIndex1 >= 0) {
+                    if (tempUser1.value1 < subject.daily.total[dailyIndex1]) {
                         tempUser1.value1 = subject.daily.total[dailyIndex1];
                         bestSubject1 = subject.name;
                     }
@@ -340,8 +342,8 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             let bestSubject2 = "None";
             user2Subjects.map((subject) => {
                 const dailyIndex2 = subject.daily.total.length - dateDiff.days - 1;
-                if (dailyIndex2 >= 0){
-                    if (tempUser2.value1 < subject.daily.total[dailyIndex2]){
+                if (dailyIndex2 >= 0) {
+                    if (tempUser2.value1 < subject.daily.total[dailyIndex2]) {
                         tempUser2.value1 = subject.daily.total[dailyIndex2];
                         bestSubject2 = subject.name;
                     }
@@ -356,41 +358,41 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         }
 
 
-        if (challengeName2 === "Study Average Last Week"){
+        if (challengeName2 === "Study Average Last Week") {
             const dateDiff = DateTime.fromMillis(Date.now()).startOf('week').diff(challenge.firstRange[0], ['weeks']);
 
-            const weeklyIndex1 = user1Subjects.weekly.groupedTotal.length - dateDiff.weeks;
+            const weeklyIndex1 = user1Subjects.weekly.groupedTotal.length - dateDiff.weeks - 1;
             tempUser1.value2 = 0;
-            if (weeklyIndex1 >= 0){
+            if (weeklyIndex1 >= 0) {
                 tempUser1.value2 = user1Subjects.weekly.groupedTotal[weeklyIndex1] / 7; //average
             }
 
-            const weeklyIndex2 = user2Subjects.weekly.groupedTotal.length - dateDiff.weeks;
+            const weeklyIndex2 = user2Subjects.weekly.groupedTotal.length - dateDiff.weeks - 1;
             tempUser2.value2 = 0;
-            if (weeklyIndex2 >= 0){
+            if (weeklyIndex2 >= 0) {
                 tempUser2.vaue2 = user2Subjects.weekly.groupedTotal[weeklyIndex2] / 7;
             }
 
             setDescriptionEl2(<h3>Week of {challenge.secondRange[0].toFormat("DD")} ~ {challenge.secondRange[1].toFormat("DD")}</h3>);
         }
-        else if (challengeName2 === "Day By Day Comparison (Past 7 Days)"){
+        else if (challengeName2 === "Day By Day Comparison (Past 7 Days)") {
             const dateDiff = DateTime.fromMillis(Date.now()).startOf('day').diff(challenge.firstRange[0], ['days']);
-            
-            const startIndex1 = user1Subjects.daily.groupedTotal.length - dateDiff.days; //7 days ago
+
+            const startIndex1 = user1Subjects.daily.groupedTotal.length - dateDiff.days - 1; //7 days ago
             const dailyArray1 = Array(7).fill(0);
             let idx = 0;
-            for (let i = startIndex1; i < startIndex1 + 7; i++, idx++){
-                if (i >= 0 && i < user1Subjects.daily.groupedTotal.length){
+            for (let i = startIndex1; i < startIndex1 + 7; i++, idx++) {
+                if (i >= 0 && i < user1Subjects.daily.groupedTotal.length) {
                     dailyArray1[idx] = user1Subjects.daily.groupedTotal[i];
                 }
             }
             tempUser1.value2 = dailyArray1;
 
-            const startIndex2 = user2Subjects.daily.groupedTotal.length - dateDiff.days; //7 days ago
+            const startIndex2 = user2Subjects.daily.groupedTotal.length - dateDiff.days - 1; //7 days ago
             const dailyArray2 = Array(7).fill(0);
             idx = 0;
-            for (let i = startIndex2; i < startIndex2 + 7; i++, idx++){
-                if (i >= 0 && i < user2Subjects.daily.groupedTotal.length){
+            for (let i = startIndex2; i < startIndex2 + 7; i++, idx++) {
+                if (i >= 0 && i < user2Subjects.daily.groupedTotal.length) {
                     dailyArray2[idx] = user2Subjects.daily.groupedTotal[i];
                 }
             }
@@ -398,26 +400,26 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
             setDescriptionEl2(<h3>Days {challenge.secondRange[0].toFormat("DD")} ~ {challenge.secondRange[1].toFormat("DD")}</h3>);
         }
-        else if (challengeName2 === "Subject To Subject Comparison (Last Week)"){
+        else if (challengeName2 === "Subject To Subject Comparison (Last Week)") {
             const dateDiff = DateTime.fromMillis(Date.now()).startOf('week').diff(challenge.firstRange[0], ['weeks']);
 
             const subjectTimes1 = [];
             user1Subjects.map((subject) => {
-                const weeklyIndex = subject.weekly.total.length - dateDiff.weeks;
-                if (weeklyIndex >= 0){
-                    subjectTimes1.push(0);
-                }
-                else{
+                const weeklyIndex = subject.weekly.total.length - dateDiff.weeks - 1;
+                if (weeklyIndex >= 0) {
                     subjectTimes1.push(user1Subjects.weekly.total[weeklyIndex]);
+                }
+                else {
+                    subjectTimes1.push(0);
                 }
             });
             const subjectTimes2 = [];
             user2Subjects.map((subject) => {
-                const weeklyIndex = subject.weekly.total.length - dateDiff.weeks;
-                if (weeklyIndex >= 0){
+                const weeklyIndex = subject.weekly.total.length - dateDiff.weeks - 1;
+                if (weeklyIndex < 0) {
                     subjectTimes2.push(0);
                 }
-                else{
+                else {
                     subjectTimes2.push(user2Subjects.weekly.total[weeklyIndex]);
                 }
             });
@@ -427,18 +429,39 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
             setDescriptionEl2(<h3>Week of {challenge.secondRange[0].toFormat("DD")} ~ {challenge.secondRange[1].toFormat("DD")}</h3>);
         }
+        else if (challengeName2 === "Random Day Of Last Week") {
+            const dateDiff = DateTime.fromMillis(Date.now()).startOf('day').diff(challenge.firstRange[0], ['days']);
 
-        if (challengeName3 === "Best Ranking Last Week"){
+            const dailyIndex1 = user1Subjects.daily.groupedTotal.length - dateDiff.days - 1;
+            if (dailyIndex1 >= 0) {
+                tempUser1.value2 = user1Subjects.daily.groupedTotal[dailyIndex1];
+            }
+            else {
+                tempUser1.value2 = 0;
+            }
+
+            const dailyIndex2 = user2Subjects.daily.groupedTotal.length - dateDiff.days - 1;
+            if (dailyIndex2 >= 0) {
+                tempUser2.value2 = user2Subjects.daily.groupedTotal[dailyIndex2];
+            }
+            else {
+                tempUser2.value2 = 0;
+            }
+
+            setDescriptionEl2(<h3>On {challenge.thirdRange[0].toFormat("DD")}</h3>);
+        }
+
+        if (challengeName3 === "Best Ranking Last Week") {
             tempUser1.value3 = 1000000; //ranking
             tempUser2.value3 = 1000000; //ranking
             const startDate = challenge.thirdRange[0].toISO();
             fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo1.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
-              })
+            })
                 .then((response) => response.json())
                 .then((data) => {
                     data.rankings.data.map((ranking) => {
-                        if (ranking.ranking > 0){
+                        if (ranking.ranking > 0) {
                             tempUser1.value3 = Math.min(tempUser1.value3, ranking.ranking);
                         }
                     });
@@ -446,11 +469,11 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
             fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo2.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
-                })
+            })
                 .then((response) => response.json())
                 .then((data) => {
                     data.rankings.data.map((ranking) => {
-                        if (ranking.ranking > 0){
+                        if (ranking.ranking > 0) {
                             tempUser2.value3 = Math.min(tempUser2.value3, ranking.ranking);
                         }
                     });
@@ -458,7 +481,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
             setDescriptionEl3(<h3>Week of {challenge.thirdRange[0].toFormat("DD")} ~ {challenge.thirdRange[1].toFormat("DD")}</h3>);
         }
-        else if (challengeName3 === "Average Ranking Last Week"){
+        else if (challengeName3 === "Average Ranking Last Week") {
             tempUser1.value3 = 0; //ranking
             let highValue1 = 0;
             tempUser2.value3 = 0; //ranking
@@ -466,11 +489,11 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             const startDate = challenge.thirdRange[0].toISO();
             fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo1.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
-              })
+            })
                 .then((response) => response.json())
                 .then((data) => {
                     data.rankings.data.map((ranking) => {
-                        if (ranking.ranking > 0){
+                        if (ranking.ranking > 0) {
                             tempUser1.value3 += ranking.ranking;
                             highValue1 = Math.max(highValue1, ranking.ranking);
                         }
@@ -482,11 +505,11 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
             fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo2.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
-                })
+            })
                 .then((response) => response.json())
                 .then((data) => {
                     data.rankings.data.map((ranking) => {
-                        if (ranking.ranking > 0){
+                        if (ranking.ranking > 0) {
                             tempUser2.value3 += ranking.ranking;
                             highValue2 = Math.max(highValue2, ranking.ranking);
                         }
@@ -496,11 +519,77 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                     });
                 });
 
+            tempUser1.value3 = tempUser1.value3 / 7;
+            tempUser2.value3 = tempUser2.value3 / 7; //0 means they were last in everything
+
             setDescriptionEl3(<h3>Week of {challenge.thirdRange[0].toFormat("DD")} ~ {challenge.thirdRange[1].toFormat("DD")}</h3>);
         }
+        else if (challengeName3 === "3 Random Days Of Last Week") {
+            const randomDayAdd = [0, 1, 2, 3, 4, 5, 6];
+            const userArr1 = [];
+            const userArr2 = [];
+            let elString = "<div>"
+            for (let i = 0; i < 3; i++) {
+                const addDay = random(0, randomDayAdd.length - 1);
+                const date = challenge.thirdRange[0].plus({ days: randomDayAdd[addDay] });
+                randomDayAdd.splice(addDay, 1);
 
-        
-    }, [user1Subjects]);
+                elString += "<h3>Day " + (i + 1) + ": " + date.toFormat("DD") + "</h3>";
+
+                const dateDiff = DateTime.fromMillis(Date.now()).startOf('day').diff(date, ['days']);
+                const dailyIndex1 = user1Subjects.daily.groupedTotal.length - dateDiff.days - 1;
+                if (dailyIndex1 >= 0) {
+                    userArr1.push(user1Subjects.daily.groupedTotal[dailyIndex1]);
+                }
+                else {
+                    userArr1.push(0);
+                }
+
+                const dailyIndex2 = user2Subjects.daily.groupedTotal.length - dateDiff.days - 1;
+                if (dailyIndex2 >= 0) {
+                    userArr2.push(user2Subjects.daily.groupedTotal[dailyIndex2]);
+                }
+                else {
+                    userArr2.push(0);
+                }
+            }
+            elString += "</div>";
+            tempUser1.value3 = userArr1;
+            tempUser2.value3 = userArr2;
+            setDescriptionEl3(parse(elString));
+        }
+        else if (challengeName3 === "Random Day Of The Past 30 Days") {
+            const dateDiff = DateTime.fromMillis(Date.now()).startOf('day').diff(challenge.firstRange[0], ['days']);
+
+            const dailyIndex1 = user1Subjects.daily.groupedTotal.length - dateDiff.days - 1;
+            if (dailyIndex1 >= 0) {
+                tempUser1.value3 = user1Subjects.daily.groupedTotal[dailyIndex1];
+            }
+            else {
+                tempUser1.value3 = 0;
+            }
+
+            const dailyIndex2 = user2Subjects.daily.groupedTotal.length - dateDiff.days - 1;
+            if (dailyIndex2 >= 0) {
+                tempUser2.value3 = user2Subjects.daily.groupedTotal[dailyIndex2];
+            }
+            else {
+                tempUser2.value3 = 0;
+            }
+
+            setDescriptionEl3(<h3>On {challenge.thirdRange[0].toFormat("DD")}</h3>);
+        }
+        setCompeteInfo1(tempUser1);
+        setCompeteInfo2(tempUser2);
+
+    }, [user1Subjects, user2Subjects]);
+
+
+    useEffect(() => {
+        if (!("value1" in competeInfo1)) return;
+
+        console.log(competeInfo1, competeInfo2);
+    }, [competeInfo2]);
 
 
     useEffect(() => {
@@ -515,14 +604,14 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             .then((data) => {
                 setChallengeHistoryEl(data.data.map((challenge, i) => {
                     if (challenge.id != challengeId)
-                    return (
-                        <div key={i} className={styles.pastChallenge}>
-                            <a href={challenge.id}>
-                                <h3>{challenge.first_user.name} vs {challenge.second_user.name}</h3>
-                            </a>
-                            <p>On {DateTime.fromSeconds(challenge.datum_point).toFormat("DD")}</p>
-                        </div>
-                    )
+                        return (
+                            <div key={i} className={styles.pastChallenge}>
+                                <a href={challenge.id}>
+                                    <h3>{challenge.first_user.name} vs {challenge.second_user.name}</h3>
+                                </a>
+                                <p>On {DateTime.fromSeconds(challenge.datum_point).toFormat("DD")}</p>
+                            </div>
+                        )
                 }))
             })
     }, [userInfo1]);
@@ -625,7 +714,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
                 <div className={styles.ChallengeHistory}>
                     <h2>View Other Challenges With {userInfo1.name}</h2>
-                    <div className = {styles.historyContainer}>
+                    <div className={styles.historyContainer}>
                         {challengeHistoryEl}
                     </div>
                 </div>
