@@ -5,13 +5,22 @@ import { faAngleRight, faUserFriends } from "@fortawesome/free-solid-svg-icons";
 import FriendsRankingViewer from "../../UI/FriendsRankingViewer/FriendsRankingViewer";
 import RecommendedFriendsViewer from "../../UI/RecommendedFriendsViewer/RecommendedFriendsViewer";
 import FriendRequestsViewer from "../../UI/FriendRequestsViewer/FriendRequestsViewer";
+import { EmailInvitation, Fight1, FriendLink } from "../../../utils/svgs";
+import FriendLinkModal from "../../UI/FriendLinkModal/FriendLinkModal";
+import FriendsActivityViewer from "../../UI/FriendsActivityViewer/FriendsActivityViewer";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, setNotifications, setResponse }) {
+  const [isFriendLinkModal, setIsFriendLinkModal] = useState(false);
 
   return (
     <div className={styles.Friends}>
+      <FriendLinkModal
+        userInfo={userInfo}
+        isOpen={isFriendLinkModal}
+        setIsOpen={setIsFriendLinkModal}
+      />
       <div
         className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
           }`}
@@ -44,9 +53,13 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
           <div className={styles.box} id={styles.links}>
             <div className={styles.buttonsWrapper}>
               <div className={styles.buttonContainer}>
-                <button>
+                <button
+                  onClick={() => {
+                    setIsFriendLinkModal(true);
+                  }}
+                >
                   <i>
-
+                    <FriendLink />
                   </i>
                   <p>
                     Friend Link
@@ -59,10 +72,13 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
               <div className={styles.buttonContainer}>
                 <button>
                   <i>
-
+                    <EmailInvitation 
+                      width={'50px'}
+                      height={'50px'}
+                    />
                   </i>
                   <p>
-                    Friend Link
+                    Email Invitation
                   </p>
                   <i>
                     <FontAwesomeIcon icon={faAngleRight} />
@@ -72,10 +88,10 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
               <div className={styles.buttonContainer}>
                 <button>
                   <i>
-
+                    <Fight1 />
                   </i>
                   <p>
-                    Friend Link
+                    Create Challenge URL
                   </p>
                   <i>
                     <FontAwesomeIcon icon={faAngleRight} />
@@ -83,7 +99,7 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
                 </button>
               </div>
               <div className={styles.buttonContainer}>
-                <button>
+                {/* <button>
                   <i>
 
                   </i>
@@ -93,9 +109,12 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
                   <i>
                     <FontAwesomeIcon icon={faAngleRight} />
                   </i>
-                </button>
+                </button> */}
               </div>
             </div>
+          </div>
+          <div className={styles.box}>
+            <FriendsActivityViewer />
           </div>
         </div>
       </div>
