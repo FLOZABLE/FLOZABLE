@@ -177,7 +177,13 @@ Router.post('/bring-subjects', async (req, res) => {
     const connection = pool.promise();
     try {
       const userId = req.session.user_id;
-      const subjectsInfo = await subjectsTimelineCache(userId);
+      let searchingId = userId;
+
+      const { searchId } = req.body;
+      if (!!searchId){
+        searchingId = searchId;
+      }
+      const subjectsInfo = await subjectsTimelineCache(searchingId);
       res.send({ success: true, subjects: subjectsInfo });
     } catch (err) {
       console.log(err);
