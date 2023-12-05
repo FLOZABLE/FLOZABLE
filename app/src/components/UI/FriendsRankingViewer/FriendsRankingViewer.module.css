@@ -7,10 +7,6 @@
   font-weight: 600;
 }
 
-.FriendsRankingViewer .boxContainer {
-
-}
-
 .FriendsRankingViewer .box .header {
   display: flex;
   flex-direction: row;
@@ -31,6 +27,14 @@
   height: 40px;
   border-radius: 20px;
   margin-right: 10px;
+}
+
+.FriendsRankingViewer .ranking .name {
+  margin-right: 10px;
+}
+
+.FriendsRankingViewer .ranking .countryWrapper {
+  font-size: 24px;
 }
 
 .FriendsRankingViewer .ranking .time {

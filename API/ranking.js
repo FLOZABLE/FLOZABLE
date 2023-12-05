@@ -268,7 +268,7 @@ async function friendsMonthlySorting(dateTime, length, friends, usersLength) {
   return rankings;
 };
 
-Router.get('/friends', async (req, res) => {
+/* Router.get('/friends', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
       const { date } = req.query;
@@ -285,9 +285,52 @@ Router.get('/friends', async (req, res) => {
       const dailyRankings = await friendsDailySorting(dateTime, 1, [userId, ...friends], friends.length);
       const weeklyRankings = await friendsWeeklySorting(dateTime, 1, [userId, ...friends], friends.length);
       const monthlyRankings = await friendsMonthlySorting(dateTime, 1, [userId, ...friends], friends.length);
-      console.log(dailyRankings[0]);
-
       res.send({ success: true, dailyRankings, weeklyRankings, monthlyRankings });
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'An Error Occured' });
+    }
+  }));
+}); */
+
+Router.get('/friends', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const userId = req.session.user_id;
+      const userInfo = await userCache(userId);
+      if (!userInfo) return res.send({ success: false, reason: 'no user found' });
+      let { friends } = userInfo;
+      friends = friends === "" ? [] : friends.split(',');
+      userInfo.dayTotal = await redisClient.get(`user:${userId}:dayTotal`);
+      userInfo.dayTotal = userInfo.dayTotal === null ? 0 : userInfo.dayTotal;
+      userInfo.weekTotal = await redisClient.get(`user:${userId}:weekTotal`) + userInfo.dayTotal;
+      userInfo.monthTotal = await redisClient.get(`user:${userId}:monthTotal`) + userInfo.dayTotal;
+
+      //remove nulls
+      userInfo.weekTotal = userInfo.weekTotal === null ? 0 : userInfo.weekTotal;
+      userInfo.monthTotal = userInfo.monthTotal === null ? 0 : userInfo.monthTotal;
+      const friendsData = [userInfo];
+      await Promise.all(friends.map(async (friend) => {
+        friend = await userCache(friend);
+        if (friend) {
+          friend.dayTotal = await redisClient.get(`user:${friend.user_id}:dayTotal`);
+          friend.dayTotal = friend.dayTotal === null ? 0 : friend.dayTotal;
+          friend.weekTotal = await redisClient.get(`user:${friend.user_id}:weekTotal`) + friend.dayTotal;
+          friend.monthTotal = await redisClient.get(`user:${friend.user_id}:monthTotal`) + friend.dayTotal;
+
+          //remove nulls
+          friend.weekTotal = friend.weekTotal === null ? 0 : friend.weekTotal;
+          friend.monthTotal = friend.monthTotal === null ? 0 : friend.monthTotal;
+          friendsData.push(friend);
+        }
+        return null;
+      }));
+
+      const todayRankings = [...friendsData].sort((a, b) => b.dayTotal - a.dayTotal);
+      const thisWeekRankings = [...friendsData].sort((a, b) => b.weekTotal - a.weekTotal);
+      const thisMonthRankings = [...friendsData].sort((a, b) => b.monthTotal - a.monthTotal);
+
+      res.send({ success: true, todayRankings, thisWeekRankings, thisMonthRankings });
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });

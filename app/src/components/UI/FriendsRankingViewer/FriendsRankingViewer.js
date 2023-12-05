@@ -4,6 +4,8 @@ import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
+import CountryViewer from "../CountryViewer/CountryViewer";
+import { secondConverter } from "../../../utils/Tool";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -24,67 +26,80 @@ function FriendsRankingViewer({userInfo}) {
     })
       .then((response) => response.json())
       .then((data) => {
-        const {dailyRankings, weeklyRankings, monthlyRankings} = data;
+        const {todayRankings, thisWeekRankings, thisMonthRankings} = data;
         console.log(data);
-        setDailyRankingsEl(dailyRankings[0].ranking.map((userInfo, i) => {
-          const {name, user_id} = userInfo;
+        setDailyRankingsEl(todayRankings.map((userInfo, i) => {
+          const {name, user_id, timezone, dayTotal} = userInfo;
+          const {value, type} = secondConverter(dayTotal);
           return (
-            <Link to={`/dashboard/user/{fromId}`} className={styles.ranking}>
-              <p className={styles.rank}>#1</p>
+            <Link to={`/dashboard/user/${user_id}`} className={styles.ranking} key={i}>
+              <p className={styles.rank}>#{i + 1}</p>
               <div
                 className={styles.profileImg}
                 style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
+                  backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center center',
                   backgroundRepeat: 'no-repeat',
                 }}
               ></div>
-              <div className={styles.name}>gd</div>
-              <div className={styles.time}>1.4hr</div>
+              <div className={styles.name}>{name}</div>
+              <div className={styles.countryWrapper}>
+              <CountryViewer timezone={timezone}/>
+              </div>
+              <div className={styles.time}>{value}{type}</div>
             </Link>
           );
         }));
 
-        setWeeklyRankingsEl(weeklyRankings[0].ranking.map((userInfo, i) => {
-          const {name, user_id} = userInfo;
+        setWeeklyRankingsEl(thisWeekRankings.map((userInfo, i) => {
+          const {name, user_id, timezone, weekTotal} = userInfo;
+          const {value, type} = secondConverter(weekTotal);
           return (
-            <Link to={`/dashboard/user/{fromId}`} className={styles.ranking} key={i}>
-            <p className={styles.rank}>#{i + 1}</p>
-            <div
-              className={styles.profileImg}
-              style={{
-                backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center center',
-                backgroundRepeat: 'no-repeat',
-              }}
-            ></div>
-            <div className={styles.name}>{name}</div>
-            <div className={styles.time}>1.4hr</div>
-          </Link>
+            <Link to={`/dashboard/user/${user_id}`} className={styles.ranking} key={i}>
+              <p className={styles.rank}>#{i + 1}</p>
+              <div
+                className={styles.profileImg}
+                style={{
+                  backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center center',
+                  backgroundRepeat: 'no-repeat',
+                }}
+              ></div>
+              <div className={styles.name}>{name}</div>
+              <div className={styles.countryWrapper}>
+              <CountryViewer timezone={timezone}/>
+              </div>
+              <div className={styles.time}>{value}{type}</div>
+            </Link>
           );
         }));
 
-        setMonthlyRankingsEl(monthlyRankings[0].ranking.map((userInfo, i) => {
-          const {name, user_id} = userInfo;
+        setMonthlyRankingsEl(thisMonthRankings.map((userInfo, i) => {
+          const {name, user_id, timezone, monthTotal} = userInfo;
+          const {value, type} = secondConverter(monthTotal);
           return (
-            <Link to={`/dashboard/user/{fromId}`} className={styles.ranking} key={i}>
-            <p className={styles.rank}>#{i + 1}</p>
-            <div
-              className={styles.profileImg}
-              style={{
-                backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center center',
-                backgroundRepeat: 'no-repeat',
-              }}
-            ></div>
-            <div className={styles.name}>{name}</div>
-            <div className={styles.time}>1.4hr</div>
-          </Link>
+            <Link to={`/dashboard/user/${user_id}`} className={styles.ranking} key={i}>
+              <p className={styles.rank}>#{i + 1}</p>
+              <div
+                className={styles.profileImg}
+                style={{
+                  backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center center',
+                  backgroundRepeat: 'no-repeat',
+                }}
+              ></div>
+              <div className={styles.name}>{name}</div>
+              <div className={styles.countryWrapper}>
+              <CountryViewer timezone={timezone}/>
+              </div>
+              <div className={styles.time}>{value}{type}</div>
+            </Link>
           );
         }));
+
       })
       .catch((error) => console.error(error));
   };
@@ -101,99 +116,36 @@ function FriendsRankingViewer({userInfo}) {
       <div className={styles.boxContainer}>
         <div className={styles.box}>
           <div className={styles.header}>
-            <p>Day</p>
+            <p>Today</p>
             <i>
               <FontAwesomeIcon icon={faAngleRight} />
             </i>
           </div>
           <div className={styles.rankings}>
-            <Link to={`/dashboard/user/{fromId}`} className={styles.ranking}>
-              <p className={styles.rank}>#1</p>
-              <div
-                className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              ></div>
-              <div className={styles.name}>gd</div>
-              <div className={styles.time}>1.4hr</div>
-            </Link>
-            <Link to={`/dashboard/user/{fromId}`} className={styles.ranking}>
-              <p className={styles.rank}>#1</p>
-              <div
-                className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              ></div>
-              <div className={styles.name}>gd</div>
-              <div className={styles.time}>1.4hr</div>
-            </Link>
-            <Link to={`/dashboard/user/{fromId}`} className={styles.ranking}>
-              <p className={styles.rank}>#1</p>
-              <div
-                className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              ></div>
-              <div className={styles.name}>gd</div>
-              <div className={styles.time}>1.4hr</div>
-            </Link>
+            {dailyRankingsEl}
           </div>
         </div>
         <div className={styles.box}>
           <div className={styles.header}>
-            <p>Day</p>
+            <p>This Week</p>
             <i>
               <FontAwesomeIcon icon={faAngleRight} />
             </i>
           </div>
-          <ul className={styles.rankings}>
-            <li className={styles.ranking}>
-              <Link to={`/dashboard/user/{fromId}`} className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}>
-              </Link>
-              <div className={styles.name}>gd</div>
-              <div className={styles.time}>1.4hr</div>
-            </li>
-          </ul>
+          <div className={styles.rankings}>
+            {weeklyRankingsEl}
+          </div>
         </div>
         <div className={styles.box}>
           <div className={styles.header}>
-            <p>Day</p>
+            <p>This Month</p>
             <i>
               <FontAwesomeIcon icon={faAngleRight} />
             </i>
           </div>
-          <ul className={styles.rankings}>
-            <li className={styles.ranking}>
-              <Link to={`/dashboard/user/{fromId}`} className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}>
-              </Link>
-              <div className={styles.name}>gd</div>
-              <div className={styles.time}>1.4hr</div>
-            </li>
-          </ul>
+          <div className={styles.rankings}>
+            {monthlyRankingsEl}
+          </div>
         </div>
       </div>
     </div>
