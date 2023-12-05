@@ -282,9 +282,9 @@ Router.get('/friends', async (req, res) => {
       const dateTime = DateTime.fromISO(date, { zone: 'utc' });
       usersLength = Object.values(usersLength)[0];
       console.log(usersLength)
-      const dailyRankings = await friendsDailySorting(dateTime, 1, [userId, ...friends], usersLength);
-      const weeklyRankings = await friendsWeeklySorting(dateTime, 1, [userId, ...friends], usersLength);
-      const monthlyRankings = await friendsMonthlySorting(dateTime, 1, [userId, ...friends], usersLength);
+      const dailyRankings = await friendsDailySorting(dateTime, 1, [userId, ...friends], friends.length);
+      const weeklyRankings = await friendsWeeklySorting(dateTime, 1, [userId, ...friends], friends.length);
+      const monthlyRankings = await friendsMonthlySorting(dateTime, 1, [userId, ...friends], friends.length);
       console.log(dailyRankings[0]);
 
       res.send({ success: true, dailyRankings, weeklyRankings, monthlyRankings });
