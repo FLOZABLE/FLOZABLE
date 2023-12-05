@@ -16,6 +16,7 @@ import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTi
 import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
 import { DateTime } from 'luxon';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
+import { secondConverter } from '../../../utils/Tool';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -249,24 +250,6 @@ function Stats(props) {
       return null;
     });
     return focus;
-  };
-
-  /**
-   * 0 = sec, 1 = min, 2 = hr
-   * @param {*} sec 
-   * @returns 
-   */
-  const secondConverter = (sec, options = ['s', 'm', 'h']) => {
-    let value = sec ? sec : 0;
-    let type = 0;
-    if (sec >= 60 * 60) {
-      value = sec / (60 * 60).toFixed(2);
-      type = 2;
-    } else if (sec > 60) {
-      value = Math.floor(sec / 60);
-    };
-
-    return { value, type: options[type] };
   };
 
 /*   useEffect(() => {

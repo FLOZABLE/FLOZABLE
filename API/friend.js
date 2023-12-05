@@ -145,4 +145,20 @@ Router.post('/checked', async (req, res) => {
   }));
 });
 
+Router.get('/recommended', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const userId = req.session.user_id;
+      const connection = pool.promise();
+      let userIds = await redisClient.sMembers(`allMembers`);
+      userIds = userIds.filter(userInfo => {return userInfo !== userId});
+      console.log(userIds);
+      res.send({success: true})
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'An Error Occured' });
+    };
+  }));
+});
+
 module.exports = Router;

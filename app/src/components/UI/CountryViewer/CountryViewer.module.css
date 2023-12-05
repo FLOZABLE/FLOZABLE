@@ -18,7 +18,9 @@
   background-color: #00000090;
   padding: 5px 10px;
   border-radius: 10px;
+  pointer-events: none;
 }
+
 .CountryViewer:hover .hoverEl {
   top: 20px;
   visibility: visible;
