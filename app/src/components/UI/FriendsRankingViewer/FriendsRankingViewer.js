@@ -9,6 +9,10 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function FriendsRankingViewer({userInfo}) {
   const [viewDate, setViewDate] = useState(new Date());
+  const [dailyRankingsEl, setDailyRankingsEl] = useState([]);
+  const [weeklyRankingsEl, setWeeklyRankingsEl] = useState([]);
+  const [monthlyRankingsEl, setMonthlyRankingsEl] = useState([]);
+
   /* const [daily] */
   const friendsSort = () => {
     const isoDateTime = DateTime.fromJSDate(viewDate, {zone: 'utc'}).toISODate();
@@ -20,7 +24,67 @@ function FriendsRankingViewer({userInfo}) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
+        const {dailyRankings, weeklyRankings, monthlyRankings} = data;
+        console.log(data);
+        setDailyRankingsEl(dailyRankings[0].ranking.map((userInfo, i) => {
+          const {name, user_id} = userInfo;
+          return (
+            <Link to={`/dashboard/user/{fromId}`} className={styles.ranking}>
+              <p className={styles.rank}>#1</p>
+              <div
+                className={styles.profileImg}
+                style={{
+                  backgroundImage: `url("${serverOrigin}/profile-images/d.jpeg")`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center center',
+                  backgroundRepeat: 'no-repeat',
+                }}
+              ></div>
+              <div className={styles.name}>gd</div>
+              <div className={styles.time}>1.4hr</div>
+            </Link>
+          );
+        }));
+
+        setWeeklyRankingsEl(weeklyRankings[0].ranking.map((userInfo, i) => {
+          const {name, user_id} = userInfo;
+          return (
+            <Link to={`/dashboard/user/{fromId}`} className={styles.ranking} key={i}>
+            <p className={styles.rank}>#{i + 1}</p>
+            <div
+              className={styles.profileImg}
+              style={{
+                backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center center',
+                backgroundRepeat: 'no-repeat',
+              }}
+            ></div>
+            <div className={styles.name}>{name}</div>
+            <div className={styles.time}>1.4hr</div>
+          </Link>
+          );
+        }));
+
+        setMonthlyRankingsEl(monthlyRankings[0].ranking.map((userInfo, i) => {
+          const {name, user_id} = userInfo;
+          return (
+            <Link to={`/dashboard/user/{fromId}`} className={styles.ranking} key={i}>
+            <p className={styles.rank}>#{i + 1}</p>
+            <div
+              className={styles.profileImg}
+              style={{
+                backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center center',
+                backgroundRepeat: 'no-repeat',
+              }}
+            ></div>
+            <div className={styles.name}>{name}</div>
+            <div className={styles.time}>1.4hr</div>
+          </Link>
+          );
+        }));
       })
       .catch((error) => console.error(error));
   };
