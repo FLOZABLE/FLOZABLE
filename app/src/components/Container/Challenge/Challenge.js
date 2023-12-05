@@ -89,7 +89,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         // Four 32-bit component hashes provide the seed for sfc32.
         const rand = sfc32();
 
-        setRandom(() => (min, max) => { return (Math.floor(rand() * (max - min + 1)) + min)});
+        setRandom(() => (min, max) => { return (Math.floor(rand() * (max - min + 1)) + min) });
 
     }, []);
 
@@ -411,20 +411,20 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             user1Subjects.map((subject) => {
                 const weeklyIndex = subject.weekly.total.length - dateDiff.weeks - 1;
                 if (weeklyIndex >= 0) {
-                    subjectTimes1.push(user1Subjects.weekly.total[weeklyIndex]);
+                    subjectTimes1.push({ name: subject.name, value: user1Subjects.weekly.total[weeklyIndex] });
                 }
                 else {
-                    subjectTimes1.push(0);
+                    subjectTimes1.push({ name: subject.name, value: 0 });
                 }
             });
             const subjectTimes2 = [];
             user2Subjects.map((subject) => {
                 const weeklyIndex = subject.weekly.total.length - dateDiff.weeks - 1;
-                if (weeklyIndex < 0) {
-                    subjectTimes2.push(0);
+                if (weeklyIndex >= 0) {
+                    subjectTimes2.push({ name: subject.name, value: user2Subjects.weekly.total[weeklyIndex] });
                 }
                 else {
-                    subjectTimes2.push(user2Subjects.weekly.total[weeklyIndex]);
+                    subjectTimes2.push({ name: subject.name, value: 0 });
                 }
             });
 
@@ -536,26 +536,27 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             for (let i = 0; i < 3; i++) {
                 const addDay = random(0, randomDayAdd.length - 1);
                 const date = challenge.thirdRange[0].plus({ days: randomDayAdd[addDay] });
-                randomDayAdd.splice(addDay, 1);
 
                 elString += "<h3>Day " + (i + 1) + ": " + date.toFormat("DD") + "</h3>";
 
                 const dateDiff = DateTime.fromMillis(Date.now()).startOf('day').diff(date, ['days']);
                 const dailyIndex1 = user1Subjects.daily.groupedTotal.length - dateDiff.days - 1;
                 if (dailyIndex1 >= 0) {
-                    userArr1.push(user1Subjects.daily.groupedTotal[dailyIndex1]);
+                    userArr1.push({value: user1Subjects.daily.groupedTotal[dailyIndex1], days: randomDayAdd[addDay]});
                 }
                 else {
-                    userArr1.push(0);
+                    userArr1.push({value: 0, days: randomDayAdd[addDay]});
                 }
 
                 const dailyIndex2 = user2Subjects.daily.groupedTotal.length - dateDiff.days - 1;
                 if (dailyIndex2 >= 0) {
-                    userArr2.push(user2Subjects.daily.groupedTotal[dailyIndex2]);
+                    userArr2.push({value: user2Subjects.daily.groupedTotal[dailyIndex2], days: randomDayAdd[addDay]});
                 }
                 else {
-                    userArr2.push(0);
+                    userArr2.push({value: 0, days: randomDayAdd[addDay]});
                 }
+
+                randomDayAdd.splice(addDay, 1);
             }
             elString += "</div>";
             tempUser1.value3 = userArr1;
@@ -594,16 +595,16 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
         console.log(competeInfo1, competeInfo2);
 
-        if (challenge.first === "Longest Focus Last Week" || challenge.first === "Longest Focus Yesterday" || challenge.first === "Total Study Time Last Week"){
+        if (challenge.first === "Longest Focus Last Week" || challenge.first === "Longest Focus Yesterday" || challenge.first === "Total Study Time Last Week") {
             const value1 = competeInfo1.value1;
             const value2 = competeInfo2.value1;
-            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000)/10 - 100; //round to 1 place
+            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
             let percentageEl1 = <div></div>;
             let percentageEl2 = <div></div>;
-            if (value1 > value2){
+            if (value1 > value2) {
                 percentageEl1 = <div><p>+ {morePercentage}%</p></div>
             }
-            else if (value2 > value1){
+            else if (value2 > value1) {
                 percentageEl2 = <div><p>+ {morePercentage}%</p></div>
             }
             setResultEl1(
@@ -612,7 +613,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                         {user1Pfp}
                         <h2>{userInfo1.name}</h2>
                         <div className={styles.statContainer}>
-                        {Duration.fromObject({seconds: value1}).toFormat("h'H 'mm'M 'ss'S'")}
+                            {Duration.fromObject({ seconds: value1 }).toFormat("h'H 'mm'M 'ss'S'")}
                             {percentageEl1}
                         </div>
                     </div>
@@ -620,23 +621,23 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                         {user2Pfp}
                         <h2>{userInfo2.name}</h2>
                         <div className={styles.statContainer}>
-                            {Duration.fromObject({seconds: value2}).toFormat("h'H 'mm'M 'ss'S'")}
+                            {Duration.fromObject({ seconds: value2 }).toFormat("h'H 'mm'M 'ss'S'")}
                             {percentageEl2}
                         </div>
                     </div>
                 </div>
-            )
+            );
         }
-        else if (challenge.first === "Most Studied Subject Yesterday"){
+        else if (challenge.first === "Most Studied Subject Yesterday") {
             const value1 = competeInfo1.value1;
             const value2 = competeInfo2.value1;
-            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000)/10 - 100; //round to 1 place
+            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
             let percentageEl1 = <div></div>;
             let percentageEl2 = <div></div>;
-            if (value1 > value2){
+            if (value1 > value2) {
                 percentageEl1 = <div><p>+ {morePercentage}%</p></div>
             }
-            else if (value2 > value1){
+            else if (value2 > value1) {
                 percentageEl2 = <div><p>+ {morePercentage}%</p></div>
             }
             //Make it tell the subject
@@ -646,7 +647,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                         {user1Pfp}
                         <h2>{userInfo1.name}</h2>
                         <div className={styles.statContainer}>
-                        {Duration.fromObject({seconds: value1}).toFormat("h'H 'mm'M 'ss'S'")}
+                            {Duration.fromObject({ seconds: value1 }).toFormat("h'H 'mm'M 'ss'S'")}
                             {percentageEl1}
                         </div>
                     </div>
@@ -654,23 +655,23 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                         {user2Pfp}
                         <h2>{userInfo2.name}</h2>
                         <div className={styles.statContainer}>
-                            {Duration.fromObject({seconds: value2}).toFormat("h'H 'mm'M 'ss'S'")}
+                            {Duration.fromObject({ seconds: value2 }).toFormat("h'H 'mm'M 'ss'S'")}
                             {percentageEl2}
                         </div>
                     </div>
                 </div>
-            )
+            );
         }
-        else if (challenge.first === "Most Studied Day Last Week"){
+        else if (challenge.first === "Most Studied Day Last Week") {
             const value1 = competeInfo1.value1;
             const value2 = competeInfo2.value1;
-            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000)/10 - 100; //round to 1 place
+            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
             let percentageEl1 = <div></div>;
             let percentageEl2 = <div></div>;
-            if (value1 > value2){
+            if (value1 > value2) {
                 percentageEl1 = <div><p>+ {morePercentage}%</p></div>
             }
-            else if (value2 > value1){
+            else if (value2 > value1) {
                 percentageEl2 = <div><p>+ {morePercentage}%</p></div>
             }
             //Make it tell the day
@@ -680,7 +681,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                         {user1Pfp}
                         <h2>{userInfo1.name}</h2>
                         <div className={styles.statContainer}>
-                        {Duration.fromObject({seconds: value1}).toFormat("h'H 'mm'M 'ss'S'")}
+                            {Duration.fromObject({ seconds: value1 }).toFormat("h'H 'mm'M 'ss'S'")}
                             {percentageEl1}
                         </div>
                     </div>
@@ -688,12 +689,319 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                         {user2Pfp}
                         <h2>{userInfo2.name}</h2>
                         <div className={styles.statContainer}>
-                            {Duration.fromObject({seconds: value2}).toFormat("h'H 'mm'M 'ss'S'")}
+                            {Duration.fromObject({ seconds: value2 }).toFormat("h'H 'mm'M 'ss'S'")}
                             {percentageEl2}
                         </div>
                     </div>
                 </div>
-            )
+            );
+        }
+
+
+        if (challenge.second === "Study Average Last Week") {
+            const value1 = competeInfo1.value2;
+            const value2 = competeInfo2.value2;
+            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
+            let percentageEl1 = <div></div>;
+            let percentageEl2 = <div></div>;
+            if (value1 > value2) {
+                percentageEl1 = <div><p>+ {morePercentage}%</p></div>
+            }
+            else if (value2 > value1) {
+                percentageEl2 = <div><p>+ {morePercentage}%</p></div>
+            }
+
+            setResultEl2(
+                <div>
+                    <div className={styles.firstHalf}>
+                        {user1Pfp}
+                        <h2>{userInfo1.name}</h2>
+                        <div className={styles.statContainer}>
+                            {Duration.fromObject({ seconds: value1 }).toFormat("h'H 'mm'M 'ss'S'")}
+                            {percentageEl1}
+                        </div>
+                    </div>
+                    <div className={styles.secondHalf}>
+                        {user2Pfp}
+                        <h2>{userInfo2.name}</h2>
+                        <div className={styles.statContainer}>
+                            {Duration.fromObject({ seconds: value2 }).toFormat("h'H 'mm'M 'ss'S'")}
+                            {percentageEl2}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        else if (challenge.second === "Random Day Of Last Week") {
+            const value1 = competeInfo1.value2;
+            const value2 = competeInfo2.value2;
+            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
+            let percentageEl1 = <div></div>;
+            let percentageEl2 = <div></div>;
+            if (value1 > value2) {
+                percentageEl1 = <div><p>+ {morePercentage}%</p></div>
+            }
+            else if (value2 > value1) {
+                percentageEl2 = <div><p>+ {morePercentage}%</p></div>
+            }
+
+            setResultEl2(
+                <div>
+                    <div className={styles.firstHalf}>
+                        {user1Pfp}
+                        <h2>{userInfo1.name}</h2>
+                        <div className={styles.statContainer}>
+                            {Duration.fromObject({ seconds: value1 }).toFormat("h'H 'mm'M 'ss'S'")}
+                            <p>On {challenge.secondRange[0].toFormat("DD")}</p>
+                            {percentageEl1}
+                        </div>
+                    </div>
+                    <div className={styles.secondHalf}>
+                        {user2Pfp}
+                        <h2>{userInfo2.name}</h2>
+                        <div className={styles.statContainer}>
+                            {Duration.fromObject({ seconds: value2 }).toFormat("h'H 'mm'M 'ss'S'")}
+                            <p>On {challenge.secondRange[0].toFormat("DD")}</p>
+                            {percentageEl2}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        else if (challenge.second === "Day By Day Comparison (Past 7 Days)") {
+            const value1 = competeInfo1.value2;
+            const value2 = competeInfo2.value2;
+
+            setResultEl2(
+                <div>
+                    <div className={styles.firstHalf}>
+                        {user1Pfp}
+                        <h2>{userInfo1.name}</h2>
+                        <div className={styles.statContainer}>
+                            {
+                                value1.map((studySeconds, i) => {
+                                    return (
+                                        <div key={i}>
+                                            <p>{Duration.fromObject({ seconds: studySeconds }).toFormat("h'H 'mm'M 'ss'S'")}</p>
+                                            <p>On {challenge.secondRange[0].plus({ days: i }).toFormat("DD")}</p>
+                                        </div>
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
+                    <div className={styles.secondHalf}>
+                        {user2Pfp}
+                        <h2>{userInfo2.name}</h2>
+                        <div className={styles.statContainer}>
+                            {
+                                value2.map((studySeconds, i) => {
+                                    return (
+                                        <div key={i}>
+                                            <p>{Duration.fromObject({ seconds: studySeconds }).toFormat("h'H 'mm'M 'ss'S'")}</p>
+                                            <p>On {challenge.secondRange[0].plus({ days: i }).toFormat("DD")}</p>
+                                        </div>
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        else if (challenge.second === "Subject To Subject Comparison (Last Week)"){
+            let value1 = competeInfo1.value2.sort((a, b) => b.value - a.value);
+            let value2 = competeInfo2.value2.sort((a, b) => b.value - a.value);
+
+            while (value1.length < 3){
+                value1.push({ name: "None", value: 0});
+            }
+            while (value2.length < 3){
+                value2.push({ name: "None", value: 0});
+            }
+
+            setResultEl2(
+                <div>
+                    <div className={styles.firstHalf}>
+                        {user1Pfp}
+                        <h2>{userInfo1.name}</h2>
+                        <div className={styles.statContainer}>
+                            {
+                                value1.slice(0, 3).map((val, i) => {
+                                    return (
+                                        <div key={i}>
+                                            <p>{Duration.fromObject({ seconds: val.value }).toFormat("h'H 'mm'M 'ss'S'")}</p>
+                                            <p>Subject: {val.name}</p>
+                                        </div>
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
+                    <div className={styles.secondHalf}>
+                        {user2Pfp}
+                        <h2>{userInfo2.name}</h2>
+                        <div className={styles.statContainer}>
+                            {
+                                value2.slice(0, 3).map((val, i) => {
+                                    return (
+                                        <div key={i}>
+                                            <p>{Duration.fromObject({ seconds: val.value }).toFormat("h'H 'mm'M 'ss'S'")}</p>
+                                            <p>Subject: {val.name}</p>
+                                        </div>
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        if (challenge.third === "Best Ranking Last Week"){
+            const value1 = competeInfo1.value3;
+            const value2 = competeInfo2.value3;
+            const morePercentage = Math.max(value1, value2) - Math.min(value1, value2);
+            let percentageEl1 = <div></div>;
+            let percentageEl2 = <div></div>;
+            if (value1 > value2) {
+                percentageEl1 = <div><p>+{morePercentage}</p></div>
+            }
+            else if (value2 > value1) {
+                percentageEl2 = <div><p>+{morePercentage}</p></div>
+            }
+            //Make it tell the day
+            setResultEl3(
+                <div>
+                    <div className={styles.firstHalf}>
+                        {user1Pfp}
+                        <h2>{userInfo1.name}</h2>
+                        <div className={styles.statContainer}>
+                            Ranked: #{value1}
+                            {percentageEl1}
+                        </div>
+                    </div>
+                    <div className={styles.secondHalf}>
+                        {user2Pfp}
+                        <h2>{userInfo2.name}</h2>
+                        <div className={styles.statContainer}>
+                            Ranked: #{value2}
+                            {percentageEl2}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        else if (challenge.third === "Average Ranking Last Week"){
+            const value1 = Math.round(competeInfo1.value3 * 10) / 10;
+            const value2 = Math.round(competeInfo2.value3 * 10) / 10;
+            const morePercentage = Math.max(value1, value2) - Math.min(value1, value2);
+            let percentageEl1 = <div></div>;
+            let percentageEl2 = <div></div>;
+            if (value1 > value2) {
+                percentageEl1 = <div><p>+{morePercentage}</p></div>
+            }
+            else if (value2 > value1) {
+                percentageEl2 = <div><p>+{morePercentage}</p></div>
+            }
+            //Make it tell the day
+            setResultEl3(
+                <div>
+                    <div className={styles.firstHalf}>
+                        {user1Pfp}
+                        <h2>{userInfo1.name}</h2>
+                        <div className={styles.statContainer}>
+                            Average Ranking: #{value1}
+                            {percentageEl1}
+                        </div>
+                    </div>
+                    <div className={styles.secondHalf}>
+                        {user2Pfp}
+                        <h2>{userInfo2.name}</h2>
+                        <div className={styles.statContainer}>
+                            Average Ranking: #{value2}
+                            {percentageEl2}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        else if (challenge.third === "3 Random Days Of Last Week"){
+            const value1 = competeInfo1.value3;
+            const value2 = competeInfo2.value3;
+
+            setResultEl3(
+                <div>
+                    <div className={styles.firstHalf}>
+                        {user1Pfp}
+                        <h2>{userInfo1.name}</h2>
+                        <div className={styles.statContainer}>
+                            {
+                                value1.map((val, i) => {
+                                    return (
+                                        <div key={i}>
+                                            <p>{Duration.fromObject({ seconds: val.value }).toFormat("h'H 'mm'M 'ss'S'")}</p>
+                                            <p>On {challenge.thirdRange[0].plus({ days: val.days }).toFormat("DD")}</p>
+                                        </div>
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
+                    <div className={styles.secondHalf}>
+                        {user2Pfp}
+                        <h2>{userInfo2.name}</h2>
+                        <div className={styles.statContainer}>
+                            {
+                                value2.map((val, i) => {
+                                    return (
+                                        <div key={i}>
+                                            <p>{Duration.fromObject({ seconds: val.value }).toFormat("h'H 'mm'M 'ss'S'")}</p>
+                                            <p>On {challenge.thirdRange[0].plus({ days: val.days }).toFormat("DD")}</p>
+                                        </div>
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        else if (challenge.third === "Random Day Of The Past 30 Days"){
+            const value1 = competeInfo1.value3;
+            const value2 = competeInfo2.value3;
+            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
+            let percentageEl1 = <div></div>;
+            let percentageEl2 = <div></div>;
+            if (value1 > value2) {
+                percentageEl1 = <div><p>+ {morePercentage}%</p></div>
+            }
+            else if (value2 > value1) {
+                percentageEl2 = <div><p>+ {morePercentage}%</p></div>
+            }
+
+            setResultEl3(
+                <div>
+                    <div className={styles.firstHalf}>
+                        {user1Pfp}
+                        <h2>{userInfo1.name}</h2>
+                        <div className={styles.statContainer}>
+                            {Duration.fromObject({ seconds: value1 }).toFormat("h'H 'mm'M 'ss'S'")}
+                            <p>On {challenge.thirdRange[0].toFormat("DD")}</p>
+                            {percentageEl1}
+                        </div>
+                    </div>
+                    <div className={styles.secondHalf}>
+                        {user2Pfp}
+                        <h2>{userInfo2.name}</h2>
+                        <div className={styles.statContainer}>
+                            {Duration.fromObject({ seconds: value2 }).toFormat("h'H 'mm'M 'ss'S'")}
+                            <p>On {challenge.thirdRange[0].toFormat("DD")}</p>
+                            {percentageEl2}
+                        </div>
+                    </div>
+                </div>
+            );
         }
 
     }, [competeInfo2]);
@@ -765,20 +1073,6 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                         <h2>{challenge.second}</h2>
                         {descriptionEl2}
                         <div className={styles.container}>
-                            <div className={styles.firstHalf}>
-                                {user1Pfp}
-                                <h2>{userInfo1.name}</h2>
-                                <div className={styles.statContainer}>
-                                    {competeInfo1.secondRoundTotal} seconds
-                                </div>
-                            </div>
-                            <div className={styles.secondHalf}>
-                                {user2Pfp}
-                                <h2>{userInfo2.name}</h2>
-                                <div className={styles.statContainer}>
-                                    {competeInfo2.secondRoundTotal} seconds
-                                </div>
-                            </div>
                             {resultEl2}
                         </div>
                     </div>
@@ -789,20 +1083,6 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                         <h2>{challenge.third}</h2>
                         {descriptionEl3}
                         <div className={styles.container}>
-                            <div className={styles.firstHalf}>
-                                {user1Pfp}
-                                <h2>{userInfo1.name}</h2>
-                                <div className={styles.statContainer}>
-                                    {competeInfo1.thirdRoundTotal} seconds
-                                </div>
-                            </div>
-                            <div className={styles.secondHalf}>
-                                {user2Pfp}
-                                <h2>{userInfo2.name}</h2>
-                                <div className={styles.statContainer}>
-                                    {competeInfo2.thirdRoundTotal} seconds
-                                </div>
-                            </div>
                             {resultEl3}
                         </div>
                     </div>
