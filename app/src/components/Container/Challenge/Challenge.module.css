@@ -3,44 +3,44 @@
     flex-wrap: wrap;
 }
 
-.CurrentChallenge{
+.ChallengeContainer .CurrentChallenge {
     text-align: center;
 }
 
-.IntroContainer {
+.ChallengeContainer .IntroContainer {
     border-radius: 40px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     padding: 40px;
     margin-bottom: 50px;
-    background-image: linear-gradient(to right, rgb(255, 184, 151) , #95daff);
+    background-image: linear-gradient(to right, rgb(255, 184, 151), #95daff);
 }
 
-.ChallengeIntroduction {
+.ChallengeContainer .ChallengeIntroduction {
     margin-top: 50px;
 }
 
-.ChallengeTitle {
+.ChallengeContainer .ChallengeTitle {
     text-align: center;
 }
 
-.container {
+.ChallengeContainer .container {
     display: inline;
 }
 
-.container .firstHalf {
+.ChallengeContainer .container .firstHalf {
     width: 48%;
     text-align: center;
     display: inline-block;
 }
 
-.container .secondHalf {
+.ChallengeContainer .container .secondHalf {
     width: 48%;
     text-align: center;
     display: inline-block;
     margin-left: 2%;
 }
 
-.profileImg {
+.ChallengeContainer .profileImg {
     display: flex;
     background-color: #e5e6e7;
     width: 40px;
@@ -52,13 +52,13 @@
     margin-left: auto;
 }
 
-.vsTitle{
+.ChallengeContainer .vsTitle {
     position: relative;
     top: 100px;
     font-size: 2em;
 }
 
-.compareContainer{
+.ChallengeContainer .compareContainer {
     border-radius: 40px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     padding: 40px;
@@ -66,22 +66,22 @@
     background-color: rgb(222, 244, 230);
 }
 
-.compareContainer:nth-child(2) {
+.ChallengeContainer .compareContainer:nth-child(2) {
     background-color: #e5f6ff
 }
 
-.compareContainer:nth-child(3) {
+.ChallengeContainer .compareContainer:nth-child(3) {
     background-color: rgb(255, 238, 230);
 }
 
-.statContainer {
+.ChallengeContainer .statContainer {
     width: 100%;
     border: 1px solid black;
     border-radius: 40px;
     text-align: center;
 }
 
-.ChallengeHistory {
+.ChallengeContainer .ChallengeHistory {
     text-align: center;
     border-radius: 40px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -90,15 +90,59 @@
     background-color: rgb(226, 226, 226);
 }
 
-.pastChallenge {
+.ChallengeContainer .pastChallenge {
     margin: 10px;
 }
 
-.pastChallenge h3 {
-    color:rgb(72, 81, 255)
+.ChallengeContainer .pastChallenge h3 {
+    color: rgb(72, 81, 255)
 }
 
-.historyContainer {
+.ChallengeContainer .historyContainer {
     max-height: 200px;
     overflow-y: auto;
+}
+
+.ChallengeContainer .multipleCompare {
+    width: 100%;
+    border: 1px solid black;
+}
+
+.ChallengeContainer .leftCompare {
+    width: 32%;
+    border: 1px solid black;
+    display: inline-block;
+}
+
+.ChallengeContainer .rightCompare {
+    width: 32%;
+    border: 1px solid black;
+    display: inline-block;
+}
+
+.ChallengeContainer .middleCompare {
+    width: 18%;
+    border: 1px solid black;
+    display: inline-block;
+    height: auto;
+}
+
+.ChallengeContainer .compareElement {
+    padding: 7px;
+    height: 30px;
+}
+
+.ChallengeContainer .circle {
+    height: 21px;
+    width: 90%;
+    border-radius: 100% !important;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    background-color: aquamarine;
 }

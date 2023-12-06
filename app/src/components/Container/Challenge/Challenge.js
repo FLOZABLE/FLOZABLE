@@ -459,11 +459,13 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             tempUser1.value3 = 1000000; //ranking
             tempUser2.value3 = 1000000; //ranking
             const startDate = challenge.thirdRange[0].toISO();
+            
             fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo1.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
             })
                 .then((response) => response.json())
                 .then((data) => {
+                    tempUser1.value3 = data.maxLength;
                     data.rankings.data.map((ranking) => {
                         if (ranking.ranking > 0) {
                             tempUser1.value3 = Math.min(tempUser1.value3, ranking.ranking);
@@ -476,6 +478,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             })
                 .then((response) => response.json())
                 .then((data) => {
+                    tempUser2.value3 = data.maxLength;
                     data.rankings.data.map((ranking) => {
                         if (ranking.ranking > 0) {
                             tempUser2.value3 = Math.min(tempUser2.value3, ranking.ranking);
@@ -491,7 +494,9 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             tempUser2.value3 = 0; //ranking
             let highValue2 = 0;
             const startDate = challenge.thirdRange[0].toISO();
-            fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo1.id}&mode=${'day'}&date=${startDate}`, {
+
+            const fetchData = (async() => {
+                await fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo1.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
             })
                 .then((response) => response.json())
@@ -505,7 +510,16 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                             tempUser1.value3 += highValue1;
                         }
                     });
+                    if (tempUser1.value3 === 0){
+                        tempUser1.value3 = data.rankings.maxLength * 7;
+                    }
+
+                    tempUser1.value3 = tempUser1.value3 / 7;
+                    console.log("Async finished");
                 });
+            });
+            fetchData();
+            console.log(tempUser1);
 
             fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo2.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
@@ -521,10 +535,13 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                             tempUser2.value3 += highValue2;
                         }
                     });
-                });
+                    if (tempUser2.value3 === 0){
+                        tempUser2.value3 = data.rankings.maxLength * 7;
+                        console.log(data.rankings.maxLength * 7);
+                    }
 
-            tempUser1.value3 = tempUser1.value3 / 7;
-            tempUser2.value3 = tempUser2.value3 / 7; //0 means they were last in everything
+                    tempUser2.value3 = tempUser2.value3 / 7;
+                });
 
             setDescriptionEl3(<h3>Week of {challenge.thirdRange[0].toFormat("DD")} ~ {challenge.thirdRange[1].toFormat("DD")}</h3>);
         }
@@ -542,18 +559,18 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                 const dateDiff = DateTime.fromMillis(Date.now()).startOf('day').diff(date, ['days']);
                 const dailyIndex1 = user1Subjects.daily.groupedTotal.length - dateDiff.days - 1;
                 if (dailyIndex1 >= 0) {
-                    userArr1.push({value: user1Subjects.daily.groupedTotal[dailyIndex1], days: randomDayAdd[addDay]});
+                    userArr1.push({ value: user1Subjects.daily.groupedTotal[dailyIndex1], days: randomDayAdd[addDay] });
                 }
                 else {
-                    userArr1.push({value: 0, days: randomDayAdd[addDay]});
+                    userArr1.push({ value: 0, days: randomDayAdd[addDay] });
                 }
 
                 const dailyIndex2 = user2Subjects.daily.groupedTotal.length - dateDiff.days - 1;
                 if (dailyIndex2 >= 0) {
-                    userArr2.push({value: user2Subjects.daily.groupedTotal[dailyIndex2], days: randomDayAdd[addDay]});
+                    userArr2.push({ value: user2Subjects.daily.groupedTotal[dailyIndex2], days: randomDayAdd[addDay] });
                 }
                 else {
-                    userArr2.push({value: 0, days: randomDayAdd[addDay]});
+                    userArr2.push({ value: 0, days: randomDayAdd[addDay] });
                 }
 
                 randomDayAdd.splice(addDay, 1);
@@ -584,6 +601,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
             setDescriptionEl3(<h3>On {challenge.thirdRange[0].toFormat("DD")}</h3>);
         }
+
         setCompeteInfo1(tempUser1);
         setCompeteInfo2(tempUser2);
 
@@ -777,29 +795,40 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                     <div className={styles.firstHalf}>
                         {user1Pfp}
                         <h2>{userInfo1.name}</h2>
-                        <div className={styles.statContainer}>
+                    </div>
+                    <div className={styles.secondHalf}>
+                        {user2Pfp}
+                        <h2>{userInfo2.name}</h2>
+                    </div>
+                    <div className={styles.multipleCompare}>
+                        <div className={styles.leftCompare}>
                             {
                                 value1.map((studySeconds, i) => {
                                     return (
-                                        <div key={i}>
+                                        <div key={i} className={styles.compareElement}>
                                             <p>{Duration.fromObject({ seconds: studySeconds }).toFormat("h'H 'mm'M 'ss'S'")}</p>
-                                            <p>On {challenge.secondRange[0].plus({ days: i }).toFormat("DD")}</p>
                                         </div>
                                     );
                                 })
                             }
                         </div>
-                    </div>
-                    <div className={styles.secondHalf}>
-                        {user2Pfp}
-                        <h2>{userInfo2.name}</h2>
-                        <div className={styles.statContainer}>
+                        <div className={styles.middleCompare}>
+                            {
+                                [0,1,2,3,4,5,6].map((val, i) => {
+                                    return (
+                                        <div key={i} className={`${styles.compareElement} ${styles.circle}`}>
+                                            <p>{challenge.secondRange[0].plus({ days: val }).toLocaleString({ month: 'long', day: 'numeric' })}</p>
+                                        </div>
+                                    );
+                                })
+                            }
+                        </div>
+                        <div className={styles.rightCompare}>
                             {
                                 value2.map((studySeconds, i) => {
                                     return (
-                                        <div key={i}>
+                                        <div key={i} className={styles.compareElement}>
                                             <p>{Duration.fromObject({ seconds: studySeconds }).toFormat("h'H 'mm'M 'ss'S'")}</p>
-                                            <p>On {challenge.secondRange[0].plus({ days: i }).toFormat("DD")}</p>
                                         </div>
                                     );
                                 })
@@ -809,15 +838,15 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                 </div>
             );
         }
-        else if (challenge.second === "Subject To Subject Comparison (Last Week)"){
+        else if (challenge.second === "Subject To Subject Comparison (Last Week)") {
             let value1 = competeInfo1.value2.sort((a, b) => b.value - a.value);
             let value2 = competeInfo2.value2.sort((a, b) => b.value - a.value);
 
-            while (value1.length < 3){
-                value1.push({ name: "None", value: 0});
+            while (value1.length < 3) {
+                value1.push({ name: "None", value: 0 });
             }
-            while (value2.length < 3){
-                value2.push({ name: "None", value: 0});
+            while (value2.length < 3) {
+                value2.push({ name: "None", value: 0 });
             }
 
             setResultEl2(
@@ -858,7 +887,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             );
         }
 
-        if (challenge.third === "Best Ranking Last Week"){
+        if (challenge.third === "Best Ranking Last Week") {
             const value1 = competeInfo1.value3;
             const value2 = competeInfo2.value3;
             const morePercentage = Math.max(value1, value2) - Math.min(value1, value2);
@@ -892,7 +921,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                 </div>
             );
         }
-        else if (challenge.third === "Average Ranking Last Week"){
+        else if (challenge.third === "Average Ranking Last Week") {
             const value1 = Math.round(competeInfo1.value3 * 10) / 10;
             const value2 = Math.round(competeInfo2.value3 * 10) / 10;
             const morePercentage = Math.max(value1, value2) - Math.min(value1, value2);
@@ -926,7 +955,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                 </div>
             );
         }
-        else if (challenge.third === "3 Random Days Of Last Week"){
+        else if (challenge.third === "3 Random Days Of Last Week") {
             const value1 = competeInfo1.value3;
             const value2 = competeInfo2.value3;
 
@@ -967,7 +996,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                 </div>
             );
         }
-        else if (challenge.third === "Random Day Of The Past 30 Days"){
+        else if (challenge.third === "Random Day Of The Past 30 Days") {
             const value1 = competeInfo1.value3;
             const value2 = competeInfo2.value3;
             const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
