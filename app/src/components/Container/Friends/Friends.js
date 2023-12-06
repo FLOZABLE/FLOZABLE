@@ -9,7 +9,7 @@ import { EmailInvitation, Fight1, FriendLink } from "../../../utils/svgs";
 import FriendLinkModal from "../../UI/FriendLinkModal/FriendLinkModal";
 import FriendsActivityViewer from "../../UI/FriendsActivityViewer/FriendsActivityViewer";
 
-const serverOrigin = process.env.REACT_APP_ORIGIN;
+/* const serverOrigin = process.env.REACT_APP_ORIGIN; */
 
 function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, setNotifications, setResponse }) {
   const [isFriendLinkModal, setIsFriendLinkModal] = useState(false);
@@ -114,7 +114,7 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
             </div>
           </div>
           <div className={styles.box}>
-            <FriendsActivityViewer />
+            <FriendsActivityViewer setResponse={setResponse} />
           </div>
         </div>
       </div>

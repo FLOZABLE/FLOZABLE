@@ -61,7 +61,7 @@ Router.post("/chat-request", async (req, res) => {
     const notification = { i: id, t: 4, f: userId, d: date };
     io.to(targetId).emit('notification', notification);
     redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
-    res.send({success: true, message: `DM request sent!`})
+    res.send({success: true, msg: `DM request sent!`})
   }));
 });
 

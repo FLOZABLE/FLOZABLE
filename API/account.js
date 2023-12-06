@@ -398,7 +398,7 @@ Router.get('/logout', function (req, res) {
     }
     res.clearCookie('userId');
     //res.redirect('/');
-    res.send(200);
+    res.send({success: true});
   });
 });
 
