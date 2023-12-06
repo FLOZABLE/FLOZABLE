@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faV, faS, faSlash } from '@fortawesome/free-solid-svg-icons';
 import { DateTime, Duration } from "luxon";
 import { timelineSort } from "../../../utils/timelineSorting"
+import { cyrb128 } from "../../../utils/Tool";
 import parse from "html-react-parser";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -31,34 +32,10 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
     const [challengeHistoryEl, setChallengeHistoryEl] = useState(<p></p>);
     const [random, setRandom] = useState(null);
 
-
-    const cyrb128 = (str) => {
-        let h1 = 1779033703, h2 = 3144134277,
-            h3 = 1013904242, h4 = 2773480762;
-        for (let i = 0, k; i < str.length; i++) {
-            k = str.charCodeAt(i);
-            h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
-            h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
-            h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
-            h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
-        }
-        h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
-        h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
-        h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
-        h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
-        h1 ^= (h2 ^ h3 ^ h4);
-        h2 ^= h1;
-        h3 ^= h1;
-        h4 ^= h1;
-        return [h1 >>> 0, h2 >>> 0, h3 >>> 0, h4 >>> 0];
-    }
-
-
     let a = 0;
     let b = 0;
     let c = 0;
     let d = 0;
-
 
     const sfc32 = () => {
         return function () {
@@ -79,7 +56,6 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         const selectedChallengeId = pathName[pathName.length - 1];
         setChallengeId(selectedChallengeId);
 
-
         //seed generated random function
         const seed = cyrb128(selectedChallengeId);
         a = seed[0];
@@ -90,7 +66,6 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         const rand = sfc32();
 
         setRandom(() => (min, max) => { return (Math.floor(rand() * (max - min + 1)) + min) });
-
     }, []);
 
     useEffect(() => {
@@ -189,7 +164,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
 
     useEffect(() => {
-        if (!!!userInfo1.id) return;
+        if (!!!userInfo1.id || !!!userInfo2.id) return;
         fetch(`${serverOrigin}/api/study/bring-subjects`, {
             method: "post",
             headers: {
@@ -218,7 +193,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                     setUser2Subjects(timelineSort(data.subjects));
                 }
             });
-    }, [userInfo1])
+    }, [userInfo1, userInfo2])
 
 
     useEffect(() => {
@@ -233,6 +208,8 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         const challengeName1 = challenge.first;
         const challengeName2 = challenge.second;
         const challengeName3 = challenge.third;
+
+        let waitingForFetch = false;
 
         if (challengeName1 === "Longest Focus Last Week") { //using full name for readability in code
             const dateDiff = DateTime.fromMillis(Date.now()).startOf('week').diff(challenge.firstRange[0], ['weeks']); //start of this week to start of range
@@ -371,7 +348,6 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             }
 
             const weeklyIndex2 = user2Subjects.weekly.groupedTotal.length - dateDiff.weeks - 1;
-            console.log(user2Subjects.weekly.groupedTotal, weeklyIndex2);
             tempUser2.value2 = 0;
             if (weeklyIndex2 >= 0) {
                 tempUser2.value2 = user2Subjects.weekly.groupedTotal[weeklyIndex2] / 7;
@@ -456,6 +432,8 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         }
 
         if (challengeName3 === "Best Ranking Last Week") {
+            waitingForFetch = true;
+
             tempUser1.value3 = 1000000; //ranking
             tempUser2.value3 = 1000000; //ranking
             const startDate = challenge.thirdRange[0].toISO();
@@ -471,6 +449,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                             tempUser1.value3 = Math.min(tempUser1.value3, ranking.ranking);
                         }
                     });
+                    setCompeteInfo1(tempUser1);
                 });
 
             fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo2.id}&mode=${'day'}&date=${startDate}`, {
@@ -484,42 +463,38 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                             tempUser2.value3 = Math.min(tempUser2.value3, ranking.ranking);
                         }
                     });
+                    setCompeteInfo2(tempUser2);
                 });
 
             setDescriptionEl3(<h3>Week of {challenge.thirdRange[0].toFormat("DD")} ~ {challenge.thirdRange[1].toFormat("DD")}</h3>);
         }
         else if (challengeName3 === "Average Ranking Last Week") {
+            waitingForFetch = true;
+
             tempUser1.value3 = 0; //ranking
             let highValue1 = 0;
             tempUser2.value3 = 0; //ranking
             let highValue2 = 0;
             const startDate = challenge.thirdRange[0].toISO();
 
-            const fetchData = (async() => {
-                await fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo1.id}&mode=${'day'}&date=${startDate}`, {
+            fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo1.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
             })
                 .then((response) => response.json())
                 .then((data) => {
                     data.rankings.data.map((ranking) => {
-                        if (ranking.ranking > 0) {
-                            tempUser1.value3 += ranking.ranking;
+                        if (ranking.ranking >= 0) {
+                            tempUser1.value3 += ranking.ranking + 1;
                             highValue1 = Math.max(highValue1, ranking.ranking);
                         }
                         else {
-                            tempUser1.value3 += highValue1;
+                            tempUser1.value3 += data.rankings.maxLength;
                         }
                     });
-                    if (tempUser1.value3 === 0){
-                        tempUser1.value3 = data.rankings.maxLength * 7;
-                    }
 
                     tempUser1.value3 = tempUser1.value3 / 7;
-                    console.log("Async finished");
+                    setCompeteInfo1(tempUser1);
                 });
-            });
-            fetchData();
-            console.log(tempUser1);
 
             fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo2.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
@@ -527,20 +502,17 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                 .then((response) => response.json())
                 .then((data) => {
                     data.rankings.data.map((ranking) => {
-                        if (ranking.ranking > 0) {
-                            tempUser2.value3 += ranking.ranking;
+                        if (ranking.ranking >= 0) {
+                            tempUser2.value3 += ranking.ranking + 1;
                             highValue2 = Math.max(highValue2, ranking.ranking);
                         }
                         else {
-                            tempUser2.value3 += highValue2;
+                            tempUser2.value3 += data.rankings.maxLength;
                         }
                     });
-                    if (tempUser2.value3 === 0){
-                        tempUser2.value3 = data.rankings.maxLength * 7;
-                        console.log(data.rankings.maxLength * 7);
-                    }
 
                     tempUser2.value3 = tempUser2.value3 / 7;
+                    setCompeteInfo2(tempUser2);
                 });
 
             setDescriptionEl3(<h3>Week of {challenge.thirdRange[0].toFormat("DD")} ~ {challenge.thirdRange[1].toFormat("DD")}</h3>);
@@ -602,14 +574,16 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             setDescriptionEl3(<h3>On {challenge.thirdRange[0].toFormat("DD")}</h3>);
         }
 
-        setCompeteInfo1(tempUser1);
-        setCompeteInfo2(tempUser2);
+        if (!waitingForFetch){
+            setCompeteInfo1(tempUser1);
+            setCompeteInfo2(tempUser2);
+        }
 
     }, [user1Subjects, user2Subjects]);
 
 
     useEffect(() => {
-        if (!("value1" in competeInfo1)) return;
+        if (!("value1" in competeInfo1) || !("value1" in competeInfo2)) return;
 
         console.log(competeInfo1, competeInfo2);
 
@@ -1033,7 +1007,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             );
         }
 
-    }, [competeInfo2]);
+    }, [competeInfo1, competeInfo2]);
 
 
     useEffect(() => {
