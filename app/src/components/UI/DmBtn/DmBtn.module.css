@@ -13,13 +13,17 @@
   visibility: hidden;
   opacity: 0;
   padding: 2px;
-  display: flex;
   justify-content: center;
+  left: 50%;
+  transform: translateX(-50%);
+  justify-content: center;
+  width: fit-content;
   transition: top .3s ease-in-out, visibility .3s ease-in-out, opacity .3s ease-in-out;
 }
 
 .DmBtn .hoverEl p {
   color: #fff;
+  overflow: hidden; white-space: nowrap;
 }
 
 .DmBtn .blobWrapper:hover ~.hoverEl {

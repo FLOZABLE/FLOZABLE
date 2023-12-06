@@ -46,6 +46,8 @@
   width: 0px;
   height: 0px;
   position: absolute;
+  pointer-events: none;
+  z-index: 3;
 }
 
 .NotificationModal.open .hoverEl {
