@@ -51,7 +51,7 @@ Router.post('/challenge-request-reply', async (req, res) => {
       const challenges = await NotificationCache(userId, 2, false);
       const challengeReq = challenges.find(challenge => { return challenge.f === targetId });
       if (!challengeReq) return res.send({ success: false, reason: 'Challenge Expired' })
-      redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(challengeReq));
+      redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(challengeReq));
       if (!accepted) {
         return res.send({ success: true, msg: "Challenge Declined" });
       };

@@ -54,9 +54,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=development react-scripts start",
-    "test-build": "cross-env NODE_ENV=test REACT_APP_ENV=test BUILD_PATH='./test-build' react-scripts build",
-    "production-build": "cross-env NODE_ENV=production react-scripts build",
+    "start": "cross-env REACT_APP_ENV=development react-scripts start",
+    "test-build": "env-cmd -f ./.env.test react-scripts build",
+    "production-build": "cross-env REACT_APP_ENV=production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
