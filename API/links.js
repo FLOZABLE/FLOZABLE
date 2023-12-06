@@ -24,7 +24,6 @@ Router.get('/join/:id', async(req, res) => {
     
     const response = await fetch(`${process.env.SERVER}/groups/join/${groupId}`, fetchOptions)
     const status = await response.json();
-    console.log(status)
     res.redirect('/groups')
 
   } else {

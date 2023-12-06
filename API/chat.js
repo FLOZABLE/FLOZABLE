@@ -37,7 +37,6 @@ Router.post("/chat-request", async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
     const { targetId } = req.body;
-    console.log('gd')
     if (userId === targetId) return res.send({success: false, reason: `Can't chat yourself`});
 
     const chatRooms = await chatRoomsCache(userId);

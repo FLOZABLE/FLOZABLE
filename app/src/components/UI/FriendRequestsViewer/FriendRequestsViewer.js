@@ -29,6 +29,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
       };
       return;
     });
+    
     setSentRequestsEl(sentRequests.map((sentRequest) => {
       const { f, i } = sentRequest;
       const { name, timezone, user_id } = f;

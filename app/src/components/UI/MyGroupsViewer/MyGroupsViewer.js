@@ -133,7 +133,6 @@ function MyGroupsViewer({
           className={styles.Swiper}
           onSnapIndexChange={(swiperCore) => {
             const { realIndex, snapIndex, activeIndex } = swiperCore;
-            console.log('gd', realIndex, snapIndex, activeIndex)
             setSelectedGroupIndex(realIndex);
           }}
         >

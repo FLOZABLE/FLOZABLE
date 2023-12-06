@@ -136,7 +136,6 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log(userInfo);
           const { userGroups, otherGroups } = filterGroups(userInfo, data.groups);
           setGroups(data.groups);
           setMyGroups(userGroups);

@@ -3,7 +3,7 @@ const cron = require('node-cron');
 const pool = require("./model/pool");
 const redisClient = require("./model/redis");
 const { generateRandomId } = require("./tool");
-const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue } = require("./services/redisLoader");
+const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache } = require("./services/redisLoader");
 
 
 const io = require('socket.io')(server, {
@@ -145,13 +145,15 @@ connection.on('connection', (socket) => {
 
   socket.on("start", async (subjectId) => {
     try {
-      const subjects = await subjectsCache(userId);
+      /* const subjects = await subjectsCache(userId);
       const groups = await groupCache(userId);
-      const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId);
+      const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId); */
+      const groups = await groupCache(userId);
+      const subject = await subjectCache(userId, subjectId);
       if (subject) {
         if (groups.length) {
           //io.to(groups).emit('studying', userId, groups);
-          io.to(groups).emit(`studying:${userId}`);
+          io.to(groups).emit(`studying:${userId}`, subject);
         }
         const now = Math.floor(new Date().getTime() / 1000);
         const {timeline_sum, datum_point, id} = subject;
@@ -179,8 +181,9 @@ connection.on('connection', (socket) => {
   socket.on("stop", async (subjectId) => {
     const groups = await groupCache(userId);
     const activeSubject = await activeSubjectCache(userId);
-    const subjects = await subjectsCache(userId);
-    const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId);
+    /* const subjects = await subjectsCache(userId);
+    const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId); */
+    const subject = await subjectCache(userId, subjectId);
     if (activeSubject.id === subjectId && subject) {
       if (groups.length) {
         io.to(groups).emit(`stopStudying:${userId}`);
@@ -214,6 +217,15 @@ connection.on('connection', (socket) => {
 
     } else {}
   });
+
+  socket.on("changeGroup", async(groupId) => {
+    const userInfo = await userCache(userId);
+    if (!userInfo) return;
+    const groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
+    if (groups.includes(groupId)) {
+      redisClient.hSet(`user:${userId}`, `ActiveGroup`, groupId);
+    }
+  })
 });
 
 async function isUser(userId) {
