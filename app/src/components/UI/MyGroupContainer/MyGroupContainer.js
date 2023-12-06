@@ -7,10 +7,11 @@ import { faBullhorn, faComments, faGear, faRankingStar } from "@fortawesome/free
 import { Link } from "react-router-dom";
 import MemberEl from "../MemberEl/MemberEl";
 import MembersContainer from "../MembersContainer/MembersContainer";
+import { socket } from "../../../socket";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function MyGroupContainer({ group, isFocus, localStream, socket, userInfo }) {
+function MyGroupContainer({ group, isFocus, localStream, userInfo }) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -20,6 +21,7 @@ function MyGroupContainer({ group, isFocus, localStream, socket, userInfo }) {
     //group_id, average_hr, color, date, explanation, font, goal_hr, leader, max_member, name, visibility, tags, members, likes
     const { name } = group;
     setName(name);
+    socket.emit('changeGroup', group.group_id);
   }, [group, isFocus]);
 
   return (

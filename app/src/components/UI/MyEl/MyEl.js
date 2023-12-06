@@ -25,7 +25,6 @@ function MyEl({ memberInfo, socket, setStudyingMembers, localStream }) {
      };
     const onStudying = () => {
       setRun(true);
-      console.log('start')
       setStudyIcon(
         <StudyPerson
           opt1={"#fff"}
@@ -39,7 +38,6 @@ function MyEl({ memberInfo, socket, setStudyingMembers, localStream }) {
 
     const onStopStudying = () => {
       setRun(false);
-      console.log('gd')
       setStudyIcon(
         <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />
       );

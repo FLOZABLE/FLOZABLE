@@ -11,7 +11,6 @@ const { autoSignin } = require("../tool");
 
 Router.post('/sort', async (req, res) => {
   const { startTime, stopTime } = req.body;
-  console.log('sort', startTime, stopTime)
   try {
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT name, user_id, timezone from users`);
@@ -25,7 +24,6 @@ Router.post('/sort', async (req, res) => {
         const prevTimeline = timeline === "" ? [[]] : JSON.parse(timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
         const todayTimeline = (await redisClient.lRange(`user:${user_id}:subject:${id}`, 0, -1)).map(JSON.parse);
         const totalTimeline = prevTimeline.concat(todayTimeline);
-        //console.log(totalTimeline, user_id, id);
         totalTimeline.find(([start, duration]) => {
           const startUnix = datum_point + start + 0;
           const stopUnix = startUnix + duration;
@@ -61,7 +59,6 @@ const LENGTH = 7;
 Router.get('/user', async (req, res) => {
   try {
     const { userId, date, mode } = req.query;
-    console.log(userId, date, mode);
     const dateTime = DateTime.fromISO(date, { zone: 'utc' });
     if (!userId) {
       return res.send({ success: false, reason: 'userid required' })
@@ -281,7 +278,6 @@ async function friendsMonthlySorting(dateTime, length, friends, usersLength) {
       let [[usersLength]] = await connection.query(`SELECT COUNT(*) FROM users`);
       const dateTime = DateTime.fromISO(date, { zone: 'utc' });
       usersLength = Object.values(usersLength)[0];
-      console.log(usersLength)
       const dailyRankings = await friendsDailySorting(dateTime, 1, [userId, ...friends], friends.length);
       const weeklyRankings = await friendsWeeklySorting(dateTime, 1, [userId, ...friends], friends.length);
       const monthlyRankings = await friendsMonthlySorting(dateTime, 1, [userId, ...friends], friends.length);
