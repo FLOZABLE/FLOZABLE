@@ -59,7 +59,8 @@ Router.post("/chat-request", async (req, res) => {
     const date = Math.floor(new Date().getTime() / (1000 * 60));
     const io = req.app.get('socketio');
     const notification = { i: id, t: 4, f: userId, d: date };
-    io.to(targetId).emit('notification', notification);
+    const socketNotification = { i: id, t: 4, f: await userCache(userId), d: date };
+    io.to(targetId).emit('notification', socketNotification);
     redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
     res.send({success: true, msg: `DM request sent!`})
   }));
@@ -70,10 +71,10 @@ Router.post("/chat-request-reply", async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { targetId, accepted } = req.body;
-      const chatRequests = await NotificationCache(userId, 4);
-      const chatReq = chatRequests.find(chatReq => { return chatReq.f.user_id === targetId });
+      const chatRequests = await NotificationCache(userId, 4, false);
+      const chatReq = chatRequests.find(chatReq => { return chatReq.f === targetId });
       if (!chatReq) return res.send({ success: false, reason: 'expired request' })
-      redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(chatReq));
+      redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(chatReq));
       if (!accepted) {
         return res.send({ success: true, msg: `Declined chat request`});
       };

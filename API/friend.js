@@ -1,6 +1,6 @@
 const express = require('express');
 const { autoSignin, generateRandomId } = require('../tool');
-const { NotificationCache, userCache } = require('../services/redisLoader');
+const { NotificationCache, userCache, activeSubjectCache } = require('../services/redisLoader');
 const redisClient = require('../model/redis');
 const pool = require('../model/pool');
 const Router = express.Router();
@@ -133,10 +133,10 @@ Router.post('/checked', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { targetId } = req.body;
-      const friendRequests = await NotificationCache(targetId, 1, false);
+      const friendRequests = await NotificationCache(userId, 1, false);
       const friendReq = friendRequests.find(friendReq => { return friendReq.f === targetId });
       if (!friendReq) return res.send({success: false, reason: 'no request found'});
-      redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(friendReq));
+      redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(friendReq));
       res.send({success: true});
     } catch (error) {
       console.log(error)
@@ -165,10 +165,12 @@ Router.get('/status', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
       const userId = req.session.user_id;
-      const connection = pool.promise();
-      let userIds = await redisClient.sMembers(`allMembers`);
-      userIds = userIds.filter(userInfo => {return userInfo !== userId});
-      console.log(userIds);
+      const userInfo = await userCache(userId);
+      if (!userInfo) return res.send({success: false, reason: `no such user`});
+      console.log(userInfo);
+      let totalTime = await redisClient.get(`user:${userId}:dayTotal`);
+      totalTime = totalTime === null ? 0 : totalTime;
+      const activeSubject = await activeSubjectCache(userId);
       res.send({success: true})
     } catch (error) {
       console.log(error)

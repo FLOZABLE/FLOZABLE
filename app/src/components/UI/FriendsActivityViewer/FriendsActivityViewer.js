@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import styles from "./FriendsActivityViewer.module.css";
 import CountryViewer from "../CountryViewer/CountryViewer";
@@ -11,6 +11,23 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function FriendsActivityViewer({setResponse}) {
   const [friendsEl, setFriendsEl] = useState([]);
   
+  useEffect(() => {
+    fetch(`${serverOrigin}/api/friend/status`, {
+      method: "get",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+
+        }
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
   return (
     <div className={styles.FriendsActivityViewer}>
       <Link className={styles.friend}>

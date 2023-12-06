@@ -21,12 +21,11 @@ io.use(wrap(sessionMiddleWare));
 
 const userIdToSocketIdMap = new Map();
 let senderStream;
-const streams = new Map();
 const connection = io.of('/');
 connection.on('connection', (socket) => {
   let session;
 
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
     try {
       session = socket.request.session;
     } catch (err) {
@@ -58,7 +57,8 @@ connection.on('connection', (socket) => {
   const userId = session.user_id;
 
   userIdToSocketIdMap.set(socket.userId, socket.id);
-  socket.join(socket.userId);
+  console.log(userId, 'gd')
+  socket.join(userId);
 
   socket.on('joinMyGroups', async () => {
     try {
