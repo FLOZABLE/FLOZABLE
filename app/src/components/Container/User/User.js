@@ -15,6 +15,8 @@ import { DateTime } from "luxon";
 import { updateRankingTrend, updateTimeTrend } from "../Stats/StatTools";
 import FriendsViewer from "../../UI/FriendsViewer/FriendsViewer";
 import CountryViewer from "../../UI/CountryViewer/CountryViewer";
+import ChallengeBtn from "../../UI/ChallengeBtn/ChallengeBtn";
+import DmBtn from "../../UI/DmBtn/DmBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -154,45 +156,8 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
         }
       })
       .catch((error) => console.error(error));
-  }
-
-  const requestChallenge = () => {
-    fetch(`${serverOrigin}/api/challenges/challenge-request`, {
-      method: "post",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ targetId: userInfo.user_id }), //userInfo = user of the page you're viewing
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-        if (data.success) {
-
-        }
-      })
-      .catch((error) => console.error(error));
-  }
-
-  const requestChat = () => {
-    fetch(`${serverOrigin}/api/chat/chat-request`, {
-      method: "post",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ targetId: userInfo.user_id }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('gddd', data)
-        setResponse(data);
-        if (data.success) {
-
-        }
-      })
-      .catch((error) => console.error(error));
-  }
-
+  };
+  
   const updateViewer = async (item) => {
     setStatsViewer(item);
   };
@@ -269,21 +234,10 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
           </div>
           <div className={styles.row} id={styles.buttons}>
             <div className={styles.divided}>
-              <div className={styles.blobWrapper}>
-                <BlobBtn delay={-1} name={<Punch width={'18px'} height={'18px'} fill={'red'} />} setClicked={() => { requestChallenge() }} color1={'#fff'} color2={"var(--pink)"} opt={2} />
-              </div>
-
-              <div className={styles.hoverEl}>
-                <p>Compete with {userInfo ? userInfo.name : ''}!</p>
-              </div>
+              <ChallengeBtn userInfo={userInfo} setResponse={setResponse} />
             </div>
             <div className={styles.divided}>
-              <div className={styles.blobWrapper}>
-                <BlobBtn delay={-1} name={<FontAwesomeIcon icon={faComments} />} setClicked={() => { requestChat() }} opt={2} />
-              </div>
-              <div className={styles.hoverEl}>
-                <p>Chat with {userInfo ? userInfo.name : ''}!</p>
-              </div>
+              <DmBtn userInfo={userInfo} setResponse={setResponse} />
             </div>
             <div className={styles.divided}>
               <div className={styles.blobWrapper}>
