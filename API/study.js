@@ -102,13 +102,11 @@ Router.post("/start", async (req, res) => {
               newTimer.timeline.map(([start, stop]) => {
                 const newStart = start - missingTotal * MAXSTORELEN;
                 const newStop = stop - missingTotal * MAXSTORELEN;
-                console.log(newStart, newStop);
                 if (newStart >= 0 && newStop >= 0) {
                   return [newStart, newStop];
                 };
               });
             };
-            console.log(start);
             newTimer.timeline.push([start, start]);
             newTimer.datum = newDatum;
             newTimer.study = 1;
@@ -118,7 +116,6 @@ Router.post("/start", async (req, res) => {
             redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(newTimer));
           };
           const groups = userInfo.groups.split(',');
-          console.log(groups)
           if (groups.length) {
             /* groups.map(group => {
               const socketsInRoom = io.sockets.in(group).sockets;
@@ -130,7 +127,6 @@ Router.post("/start", async (req, res) => {
               }
             }) */
             const io = req.app.get('socketio')
-            console.log("socket send", io)
             io.to(groups).emit('reset', userId, groups);
           }
         };
@@ -154,7 +150,6 @@ Router.post("/stop", async (req, res) => {
       const stop = now - activeSubject.datum_point;
       redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${stop}]`);
       redisClient.hSet(`user:${userId}`, `ActiveSubject`, '0');
-      console.log(groups)
       if (groups.length) {
         io.to(groups).emit('stopStudying', userId, groups);
       };

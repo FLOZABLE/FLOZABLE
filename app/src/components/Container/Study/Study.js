@@ -66,7 +66,6 @@ function Study(props) {
 
   useEffect(() => {
     if (subjects.daily && subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]) {
-      console.log('timer total',subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1])
       setMyTimerTotal(subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]);
     };
   }, [subjects]);

@@ -104,7 +104,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
       if (type === 0) {
         
         return (
-          <div className={styles.notification} key={i}>
+          <div className={styles.notification} key={i} style={{zIndex: 100 - i}}>
           <Link to={`/dashboard/user/${fromId}`} className={styles.profileImg}
             style={{
               backgroundImage: `url("${serverOrigin}/profile-images/${fromId}.jpeg")`,
@@ -140,7 +140,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
       else if (type === 1) {
         
         return (
-          <div className={styles.notification} key={i}>
+                    <div className={styles.notification} key={i} style={{zIndex: 100 - i}}>
           <Link to={`/dashboard/user/${fromId}`} className={styles.profileImg}
             style={{
               backgroundImage: `url("${serverOrigin}/profile-images/${fromId}.jpeg")`,
@@ -168,7 +168,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
       else if (type === 2) {
         
         return (
-          <div className={styles.notification} key={i}>
+                    <div className={styles.notification} key={i} style={{zIndex: 100 - i}}>
           <Link to={`/dashboard/user/${fromId}`} className={styles.profileImg}
             style={{
               backgroundImage: `url("${serverOrigin}/profile-images/${fromId}.jpeg")`,
@@ -204,7 +204,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
       else if (type === 3) {
         
         return (
-          <div className={styles.notification} key={i}>
+                    <div className={styles.notification} key={i} style={{zIndex: 100 - i}}>
           <Link to={`/dashboard/user/${fromId}`} className={styles.profileImg}
             style={{
               backgroundImage: `url("${serverOrigin}/profile-images/${fromId}.jpeg")`,
@@ -232,7 +232,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
       } else if (type === 4) {
         
         return (
-          <div className={styles.notification} key={i}>
+                    <div className={styles.notification} key={i} style={{zIndex: 100 - i}}>
           <Link to={`/dashboard/user/${fromId}`} className={styles.profileImg}
             style={{
               backgroundImage: `url("${serverOrigin}/profile-images/${fromId}.jpeg")`,

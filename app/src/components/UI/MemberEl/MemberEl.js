@@ -5,8 +5,9 @@ import { StudyPerson, RestPerson } from "../../../utils/svgs";
 import MemberTimer from "../MemberTimer/MemberTimer";
 import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 import { DateTime } from "luxon";
+import { socket } from "../../../socket";
 
-function MemberEl({ memberInfo, socket, setStudyingMembers }) {
+function MemberEl({ memberInfo, setStudyingMembers }) {
   const [run, setRun] = useState(0);
   const [track, setTrack] = useState(null);
   const [total, setTotal] = useState(0);
@@ -14,20 +15,19 @@ function MemberEl({ memberInfo, socket, setStudyingMembers }) {
     <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
   );
   useEffect(() => {
-    if (!memberInfo || !socket) return;
+    if (!memberInfo) return;
     const { totalTime, activeSubject, user_id } = memberInfo;
 
-     if (activeSubject.time) {
+    if (activeSubject.time) {
       setRun(true);
-      const now = DateTime.now().set({millisecond: 0}).toSeconds();
+      const now = DateTime.now().set({ millisecond: 0 }).toSeconds();
       const actualTime = totalTime + now - activeSubject.time;
       setTotal(actualTime);
-     } else {
+    } else {
       setTotal(totalTime);
-     };
+    };
 
     const onStudying = () => {
-      setRun(true);
       setStudyIcon(
         <StudyPerson
           opt1={"#fff"}
@@ -40,7 +40,6 @@ function MemberEl({ memberInfo, socket, setStudyingMembers }) {
     };
 
     const onStopStudying = () => {
-      setRun(false);
       setStudyIcon(
         <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />
       );
@@ -58,11 +57,11 @@ function MemberEl({ memberInfo, socket, setStudyingMembers }) {
       socket.off(`studying:${user_id}`, onStudying);
       socket.off(`stopStudying:${user_id}`, onStopStudying);
     };
-  }, [socket, memberInfo]);
+  }, [memberInfo]);
 
   return (
     <div className={styles.member}>
-      <MemberCamDisp socket={socket} memberInfo={memberInfo} track={track} />
+      <MemberCamDisp memberInfo={memberInfo} track={track} />
       <div className={styles.inner}>
         <Link to={`/dashboard/user/${memberInfo.user_id}`}>
           <div className={styles.userName}>{memberInfo.name}</div>
@@ -70,9 +69,10 @@ function MemberEl({ memberInfo, socket, setStudyingMembers }) {
         <div className={styles.icon}>{studyIcon}</div>
         <div className={styles.timer}>
           <MemberTimer
-           run={run} 
-           initialSec={total} 
-           />
+            initialSec={total}
+            initialStatus={run}
+            userInfo={memberInfo}
+          />
         </div>
       </div>
     </div>

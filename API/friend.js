@@ -24,7 +24,6 @@ Router.post('/request', async (req, res) => {
       if (friends.includes(userId)) return res.send({ success: false, reason: "You're already friends with this user" });
 
       const friendRequests = await NotificationCache(targetId, 0, false);
-      console.log(friendRequests)
       const prevFriendReq = friendRequests.find(friendReq => { return friendReq.f === userId });
       if (prevFriendReq) return res.send({ success: false, reason: "You've already sent a request to this user" });
 
@@ -152,7 +151,6 @@ Router.get('/recommended', async (req, res) => {
       const connection = pool.promise();
       let userIds = await redisClient.sMembers(`allMembers`);
       userIds = userIds.filter(userInfo => {return userInfo !== userId});
-      console.log(userIds);
       res.send({success: true})
     } catch (error) {
       console.log(error)
@@ -167,11 +165,28 @@ Router.get('/status', async (req, res) => {
       const userId = req.session.user_id;
       const userInfo = await userCache(userId);
       if (!userInfo) return res.send({success: false, reason: `no such user`});
-      console.log(userInfo);
-      let totalTime = await redisClient.get(`user:${userId}:dayTotal`);
-      totalTime = totalTime === null ? 0 : totalTime;
-      const activeSubject = await activeSubjectCache(userId);
-      res.send({success: true})
+      const friends = userInfo.friends === "" ? [] : userInfo.friends.split(',');
+      const friendsInfo = [];
+      await Promise.all(friends.map(async(friend) => {
+        friend = await userCache(friend);
+        if (friend) {
+          const totalTime = await redisClient.get(`user:${friend.user_id}:dayTotal`);
+          friend.totalTime = totalTime === null ? 0 : totalTime;
+          const activeSubject = await activeSubjectCache(friend.user_id);
+          if (activeSubject.id) {
+            const subject = await subjectCache(userId, activeSubject.id);
+            if (subject) {
+              friend.activeSubject = {subject, total: activeSubject.total};
+            } else {
+              friend.activeSubject = {subject: undefined, total: activeSubject.total};
+            };
+          } else {
+            friend.activeSubject = activeSubject;
+          };
+          friendsInfo.push(friend);
+        };
+      }));
+      res.send({success: true, friendsInfo})
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });

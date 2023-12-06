@@ -23,6 +23,7 @@
     "chart.js": "^4.3.3",
     "chartjs-plugin-datalabels": "^2.2.0",
     "countries-and-timezones": "^3.5.2",
+    "env-cmd": "^10.1.0",
     "eruda": "^3.0.1",
     "fullcalendar": "^6.1.8",
     "googleapis": "^128.0.0",

@@ -164,7 +164,6 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
       .then((data) => {
         if (data.success) {
           const {activity_setting} = data;
-          console.log(data)
           setEmail(userInfo.email);
           setConfirmEmail(userInfo.email);
           setName(userInfo.name);
@@ -186,7 +185,6 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
   }, [userInfo]);
 
   const onSuccess = (response) => {
-    console.log(response);
     fetch(`${serverOrigin}/api/account/auth/google`, {
       method: "post",
       headers: {
@@ -196,7 +194,6 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
       })
       .catch((error) => console.error(error));
   }

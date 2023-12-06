@@ -68,7 +68,7 @@ async function subjectsCache(userId) {
         const connection = pool.promise();
         const [subjects] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
         subjects.map(async (subject) => {
-          const redisSubject = {...subject};
+          const redisSubject = { ...subject };
           delete redisSubject.id;
           redisClient.hSet(`user:${userId}:subjects`, subject.id, JSON.stringify(redisSubject));
         });
@@ -79,6 +79,35 @@ async function subjectsCache(userId) {
     };
   } catch (err) {
     console.log(err);
+  }
+};
+
+async function subjectCache(userId, subjectId) {
+  try {
+    const isCached = await redisClient.hExists(`user:${userId}:subjects`, subjectId);
+    if (isCached) {
+      const subjectInfo = { ...await redisClient.hGet(`user:${userId}:subjects`, subjectId) };
+      return { subjectInfo, id: subjectId };
+    } else {
+      try {
+        const connection = pool.promise();
+        const [subjects] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
+        subjects.map(async (subject) => {
+          const redisSubject = { ...subject };
+          delete redisSubject.id;
+          redisClient.hSet(`user:${userId}:subjects`, subject.id, JSON.stringify(redisSubject));
+        });
+        const subject = subjects.find(subject => subject.id === subjectId);
+        if (subject) return subject;
+        return false;
+      } catch (err) {
+        console.log(err);
+        return false;
+      };
+    };
+  } catch (err) {
+    console.log(err);
+    return false;
   }
 };
 
@@ -148,7 +177,7 @@ async function groupChatsMembersLoader() {
 
     const [groups] = await connection.query(`SELECT members, group_id FROM groups`);
     groups.map(async (group) => {
-      const {group_id, members} = group;
+      const { group_id, members } = group;
       const membersArr = members === "" ? [] : members.split(",");
       //await redisClient.del(`room:${group_id}`);
       redisClient.sAdd(`room:${group_id}`, membersArr);
@@ -219,6 +248,22 @@ async function activeSubjectCache(userId) {
   }
 };
 
+async function activeGroupCache(userId) {
+  try {
+    const isCached = await redisClient.hExists(`user:${userId}`, `ActiveGroup`);
+    if (isCached) {
+      const activeGroup = await redisClient.hGet(`user:${userId}`, `ActiveGroup`);
+      return activeGroup;
+    } else {
+      return false;
+    };
+  } catch (err) {
+    console.log(err);
+    return false;
+  };
+  ;
+}
+
 /**return timer information of the user.
  * return type is object
  * dp(datumpoint), ts(timeline sum)
@@ -276,7 +321,7 @@ async function userCache(userId) {
         redisClient.hSet(`user:${userId}`, 'timezone', timezone);
         redisClient.hSet(`user:${userId}`, 'datum_point', datum_point);
       };
-      return userInfo;
+      return { ...userInfo, user_id: userId };
     };
   } catch (err) {
     console.log(err);
@@ -297,7 +342,7 @@ async function userCache(userId) {
  */
 async function NotificationCache(userId, type = -1, processData = true) {
   const notifications = (await redisClient.sMembers(`user:${userId}:notifications`)).map(JSON.parse);
-  await Promise.all(notifications.map(async(notification) => {
+  await Promise.all(notifications.map(async (notification) => {
     if (notification.f && processData) {
       notification.f = await userCache(notification.f);
     };
@@ -320,11 +365,11 @@ async function subjectsTimelineCache(userId) {
   const connection = pool.promise();
   const [subjectTimelines] = await connection.query(`SELECT timeline, id FROM subjects WHERE user_id = ?`, [userId]);
   const subjectPromises = subjectsInfo.map(async (subject) => {
-    const {id, timeline} = subject;
+    const { id, timeline } = subject;
     const prevTimeline = subjectTimelines.find(sub => {
       return sub.id === id;
     });
-    const parsedTimeline  = prevTimeline.length ?JSON.parse(timeline.replace(/^/,"[").replace(/$/,"]")) : []; //wrapping the string with "[]"
+    const parsedTimeline = prevTimeline.length ? JSON.parse(timeline.replace(/^/, "[").replace(/$/, "]")) : []; //wrapping the string with "[]"
     const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
     subject.timeline = parsedTimeline.concat(todayTimeline);
     return subject;
@@ -342,6 +387,7 @@ module.exports = {
   groupCache,
   groupRoomCache,
   subjectsCache,
+  subjectCache,
   activeSubjectCache,
   timerCache,
   NotificationCache,
@@ -352,5 +398,6 @@ module.exports = {
   dmRoomsCache,
   userCache,
   subjectsTimelineCache,
-  groupChatsMembersLoader
+  groupChatsMembersLoader,
+  activeGroupCache
 }

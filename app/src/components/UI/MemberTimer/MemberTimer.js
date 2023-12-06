@@ -1,12 +1,37 @@
 import React, { useEffect, useState, useRef } from "react";
 import styles from "./MemberTimer.module.css";
 import worker from "./TimeWorker";
+import {socket} from "../../../socket.js";
 
-function MemberTimer({ run, initialSec = 0 }) {
+function MemberTimer({ initialSec = 0, userInfo, initialStatus = false }) {
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
   const [total, setTotal] = useState(0);
+  const [run, setRun] = useState(false);
+
+  useEffect(() => {
+    setRun(initialStatus);
+  }, [initialStatus]);
+
+  useEffect(() => {
+    if (!userInfo) return;
+    const {user_id} = userInfo;
+    const onStudying = () => {
+      setRun(true);
+    };
+    const onStopStudying = () => {
+      setRun(false);
+    };
+
+    socket.on(`studying:${user_id}`, onStudying);
+    socket.on(`stopStudying:${user_id}`, onStopStudying);
+
+    return () => {
+      socket.off(`studying:${user_id}`, onStudying);
+      socket.off(`stopStudying:${user_id}`, onStopStudying);
+    };
+  }, [userInfo]);
 
   useEffect(() => {
     const onMessage = (e) => {

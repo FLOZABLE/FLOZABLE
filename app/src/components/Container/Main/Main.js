@@ -131,7 +131,6 @@ function Main({
   }
 
   useEffect(() => {
-    console.log(mainRef.current);
     if (!mainRef.current) return;
     const width = mainRef.current.offsetWidth;
     const height = mainRef.current.offsetHeight;

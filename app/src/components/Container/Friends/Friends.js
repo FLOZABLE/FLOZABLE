@@ -31,6 +31,7 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
               notifications={notifications}
               setNotifications={setNotifications}
               setResponse={setResponse}
+              userInfo={userInfo}
             />
           </div>
           <div className={styles.box}>
