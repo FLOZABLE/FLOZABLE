@@ -1,10 +1,16 @@
+import {useState} from "react";
 import { Link } from "react-router-dom";
 import styles from "./FriendsActivityViewer.module.css";
 import CountryViewer from "../CountryViewer/CountryViewer";
+import { Punch } from "../../../utils/svgs";
+import DmBtn from "../DmBtn/DmBtn";
+import ChallengeBtn from "../ChallengeBtn/ChallengeBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function FriendsActivityViewer() {
+function FriendsActivityViewer({setResponse}) {
+  const [friendsEl, setFriendsEl] = useState([]);
+  
   return (
     <div className={styles.FriendsActivityViewer}>
       <Link className={styles.friend}>
@@ -25,29 +31,17 @@ function FriendsActivityViewer() {
         </div>
         </div>
         <div className={styles.subject}>
-          studying math (0:00:0)
+          studying math (0:00:00)
         </div>
         <div className={styles.group}>
           <p>inside <strong>Math club</strong></p> 
         </div>
         <div className={styles.buttons}>
-          <button>
-            Challenge
-          </button>
-          <button>DM</button>
+          <ChallengeBtn />
+          <DmBtn />
         </div>
       </Link>
-      <Link className={styles.friend}>
-        <div className={styles.profileImg}>
-
-        </div>
-        <div className={styles.name}>
-          Jason
-        </div>
-        <div className={styles.subject}>
-          stdying math for 3min
-        </div>
-      </Link>
+      {friendsEl}
     </div>
   )
 };
