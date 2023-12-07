@@ -40,6 +40,7 @@ const secondConverter = (sec, options = ['s', 'm', 'h']) => {
     type = 2;
   } else if (sec > 60) {
     value = Math.floor(sec / 60);
+    type = 1;
   };
 
   return { value, type: options[type] };
