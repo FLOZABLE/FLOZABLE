@@ -47,9 +47,7 @@ function MemberTimer({ initialSec = 0, userInfo, initialStatus = false }) {
   }, [run]);
 
   useEffect(() => {
-    setSec(initialSec % 60);
-    setMin(Math.floor(initialSec / 60) % 60);
-    setHr(Math.floor(initialSec / (60 * 60)));
+    setTotal(initialSec);
   }, [initialSec]);
 
   useEffect(() => {
