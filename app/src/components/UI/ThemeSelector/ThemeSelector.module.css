@@ -29,3 +29,32 @@
 .ThemeSelector .video img {
   height: auto;
 }
+
+.ThemeSelector .categoryLabel {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 5px;
+  width: 90%;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.ThemeSelector .categoryLabel p{
+  color: white;
+}
+
+.ThemeSelector button {
+  background-color: rgb(215, 215, 215);
+  width: 50%;
+}
+
+.ThemeSelector .nameLabel {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 5px;
+  width: 90%;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.ThemeSelector .nameLabel p {
+  color: white;
+}
