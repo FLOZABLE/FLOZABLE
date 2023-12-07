@@ -51,7 +51,7 @@ Router.post("/add-subject", async (req, res) => {
           delete subjectInfo.timeline;
           delete subjectInfo.user_id;
           subjectInfo.timeline_sum = 0;
-          redisClient.hSet(`user:${userId}`, `subject:${subjectInfo.id}`, JSON.stringify(subjectInfo));
+          redisClient.hSet(`user:${userId}:subjects`, subjectInfo.id, JSON.stringify(subjectInfo));
         } catch (err) {
           console.log(err);
         };
