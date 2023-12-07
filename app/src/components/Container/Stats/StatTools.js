@@ -156,18 +156,18 @@ function updateHourlyHistogram(subjects, type, viewDate) {
   } else {
     subjects.map(subject => {
       const datumPoint = new Date(subject.datum_point * 1000);
-      let datumMonthStart = new Date(datumPoint.getFullYear(), datumPoint.getMonth(), 1);
-      const viewMonthStart = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
-      let diff = (viewMonthStart - datumMonthStart) / (1000 * 60 * 60 * 24);
-      while (datumMonthStart.getMonth() <= viewDate.getMonth()) {
+      const datumWeekStart = new Date(datumPoint.setDate(datumPoint.getDate() - datumPoint.getDay())).setHours(0, 0, 0, 0);
+      const viewWeekStart = new Date(new Date(viewDate).setDate(viewDate.getDate() - viewDate.getDay())).setHours(0, 0, 0, 0);
+      let diff = (viewWeekStart - datumWeekStart) / (1000 * 60 * 60 * 24);
+      for (let i = 0; i < 7; i++) {
         if (subject.daily.total[diff]) {
           subject.daily.grouped[diff].map(([start, stop]) => {
             let startTime = new Date(start * 1000);
             let startTimeHr = startTime.getHours();
-            let startTimeMin = startTime.getMinutes();
+            //let startTimeMin = startTime.getMinutes();
             let stopTime = new Date(stop * 1000);
             let stopTimeHr = stopTime.getHours();
-            let stopTimeMin = stopTime.getMinutes();
+            //let stopTimeMin = stopTime.getMinutes();
             if (startTimeHr == stopTimeHr) {
               histogramData[startTimeHr] += stop - start;
             } else {
@@ -179,10 +179,9 @@ function updateHourlyHistogram(subjects, type, viewDate) {
               histogramData[startTimeHr + 1] += stop - new Date(stop * 1000).setMinutes(0) / 1000;
             }
           });
-        }
-        diff += 1;
-        datumMonthStart = new Date(datumMonthStart.getTime() + 1000 * 60 * 60 * 24);
-      };
+        };
+        diff++;
+      }
     });
   }
   return histogramData;

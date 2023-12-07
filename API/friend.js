@@ -85,9 +85,9 @@ Router.post('/request-reply', async (req, res) => {
         return res.send({ success: true });
       };
       const connection = pool.promise();
-      const [[userInfo]] = await connection.query(`SELECT friends, name FROM users WHERE user_id = ?`, [userId]);
-      const [[targetInfo]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [targetId]);
-      let { friends, friend_requests, name } = userInfo;
+      const userInfo = await userCache(userId);
+      const targetInfo = await userCache(targetId);
+      let { friends } = userInfo;
       friends = friends === "" ? [] : friends.split(',');
 
       if (!friends.includes(userId)) {
@@ -103,6 +103,19 @@ Router.post('/request-reply', async (req, res) => {
           targetId,
           userId,
         ]);
+
+        await connection.query(`
+        UPDATE users
+        SET friends = CASE
+          WHEN friends = '' THEN ?
+          ELSE CONCAT(friends, ',', ?)
+        END
+        WHERE user_id = ?
+      `, [
+        userId,
+        userId,
+        targetId,
+      ]);
         res.send({ success: true, msg: `You and ${targetInfo.name} are now friends!` });
         const id = generateRandomId(5);
         const date = Math.floor(new Date().getTime() / (1000 * 60));
@@ -112,13 +125,17 @@ Router.post('/request-reply', async (req, res) => {
         const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
         io.to(targetId).emit('notification', socketNotif);
         redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
+
+        //update cached value of user
+        friends.push(targetId);
+        redisClient.hSet(`user:${userId}`, 'friends', friends.join(','));
+        targetInfo.friends = targetInfo.friends === "" ? [] : targetInfo.friends.split(",");
+        targetInfo.friends.push(userId);
+        redisClient.hSet(`user:${targetId}`, 'friends', targetInfo.friends.join(','));
+
       } else {
         res.send({ success: true, msg: `You and ${targetInfo.name} were already friends!` });
-      }
-
-      //notification part
-      //redisClient.rPush()
-
+      };
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'Failed' });
