@@ -86,8 +86,8 @@ async function subjectCache(userId, subjectId) {
   try {
     const isCached = await redisClient.hExists(`user:${userId}:subjects`, subjectId);
     if (isCached) {
-      const subjectInfo = { ...await redisClient.hGet(`user:${userId}:subjects`, subjectId) };
-      return { subjectInfo, id: subjectId };
+      const subjectInfo = await redisClient.hGet(`user:${userId}:subjects`, subjectId);
+      return { ...JSON.parse(subjectInfo), id: subjectId };
     } else {
       try {
         const connection = pool.promise();

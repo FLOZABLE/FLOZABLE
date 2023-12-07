@@ -44,10 +44,15 @@
   margin-right: 10px;
 }
 
-.FriendsActivityViewer .friend .buttons {
+.FriendsActivityViewer .friend .right {
   margin-left: auto;
   margin-right: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.FriendsActivityViewer .right .today {
+  display: flex;
+  margin-right: 10px;
 }

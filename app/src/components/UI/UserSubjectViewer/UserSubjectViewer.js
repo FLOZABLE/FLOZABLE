@@ -2,6 +2,7 @@ import styles from "./UserSubjectViewer.module.css";
 import { socket } from "../../../socket";
 import MemberTimer from "../MemberTimer/MemberTimer";
 import { useEffect, useState } from "react";
+import { DateTime } from "luxon";
 
 function UserSubjectViewer({userInfo}) {
   const [initialStatus,setInitialStatus] = useState(false);
@@ -12,10 +13,12 @@ function UserSubjectViewer({userInfo}) {
     if (!userInfo) return;
     console.log(userInfo);
     const {user_id, activeSubject} = userInfo;
-    const {name, icon, color, total, id} = activeSubject;
+    const {name, icon, color, total, id, time} = activeSubject;
     if (id) {
+      const liveTotal = DateTime.now().toSeconds().toFixed() - time;
       setSubjectName(name);
-      setSubjectTotal(total);
+      setInitialStatus(true);
+      setSubjectTotal(liveTotal);
     };
 
     const onStudying = (subjectInfo) => {
@@ -43,7 +46,7 @@ function UserSubjectViewer({userInfo}) {
     <div className={styles.UserSubjectViewer}>
       <p>{subjectName}</p>
       <p>&nbsp;</p>
-      <MemberTimer initialStatus={true} initialSec={subjectTotal} userInfo={userInfo} />
+      <MemberTimer initialStatus={initialStatus} initialSec={subjectTotal} userInfo={userInfo} />
     </div>
   );
 };

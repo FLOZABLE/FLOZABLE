@@ -57,7 +57,6 @@ connection.on('connection', (socket) => {
   const userId = session.user_id;
 
   userIdToSocketIdMap.set(socket.userId, socket.id);
-  console.log(userId, 'gd')
   socket.join(userId);
 
   socket.on('joinMyGroups', async () => {

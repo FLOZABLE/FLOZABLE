@@ -49,12 +49,13 @@ Router.post('/create-validate', async (req, res) => {
       };
 
       let hashed = hashing(req.body['password']);
+      const groupId = generateRandomId(8);
 
       group.tags = JSON.stringify(group.tags);
       group.password = hashed[1];
       group.salt = hashed[0];
       group.date = Math.floor(new Date().getTime() / 1000);
-      group.group_id = generateRandomId(8);
+      group.group_id = groupId;
       group.leader = userId;
       group.members = userId;
   
@@ -68,18 +69,22 @@ Router.post('/create-validate', async (req, res) => {
         END
         WHERE user_id = ?
       `, [
-          group.group_id,
-          group.group_id,
+        groupId,
+        groupId,
           userId,
         ]);
 
         const roomInfo = {
-          id: group.group_id,
+          id: groupId,
         }
 
         const updateRoom = connection.query(`INSERT INTO chatrooms SET ?`, roomInfo);
-  
-        res.send({success: true, data: {id: group.group_id}})
+
+        //update cached values
+        const groups = await groupCache(userId);
+        groups.push(groupId);
+        redisClient.hSet(`user:${userId}`, 'groups', groups.join(','));
+        res.send({success: true, data: {id: groupId}})
       } catch(error) {
         console.log(error)
         res.send({ success: false, reason: 'Error' })
