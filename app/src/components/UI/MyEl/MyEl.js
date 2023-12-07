@@ -13,16 +13,16 @@ function MyEl({ memberInfo, socket, setStudyingMembers, localStream }) {
   );
 
   useEffect(() => {
-    if (!memberInfo || !socket) return;
+    if (!memberInfo) return;
     const { totalTime, activeSubject, user_id } = memberInfo;
-     if (activeSubject.time) {
+    const {id, time} = activeSubject;
+    if (id) {
       setRun(true);
-      const now = DateTime.now().set({millisecond: 0}).toSeconds();
-      const actualTime = totalTime + now - activeSubject.time;
-      setTotal(actualTime);
-     } else {
-      setTotal(totalTime);
-     };
+      const liveTotal = parseInt(totalTime) + DateTime.now().toSeconds().toFixed() - parseInt(time);
+      setTotal(liveTotal);
+    } else {
+      setTotal(parseInt(totalTime));
+    };
     const onStudying = () => {
       setRun(true);
       setStudyIcon(
@@ -55,7 +55,7 @@ function MyEl({ memberInfo, socket, setStudyingMembers, localStream }) {
       socket.off(`studying:${user_id}`, onStudying);
       socket.off(`stopStudying:${user_id}`, onStopStudying);
     };
-  }, [socket, memberInfo]);
+  }, [memberInfo]);
 
   return (
     <div className={styles.member}>
