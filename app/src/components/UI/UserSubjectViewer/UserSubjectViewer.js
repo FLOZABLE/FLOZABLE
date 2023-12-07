@@ -12,27 +12,23 @@ function UserSubjectViewer({userInfo}) {
 
   useEffect(() => {
     if (!userInfo) return;
-    console.log(userInfo);
     const {user_id, activeSubject} = userInfo;
     const {name, icon, color, total, id, time} = activeSubject;
     if (id) {
       const liveTotal = DateTime.now().toSeconds().toFixed() - time;
-      setSubjectName(name);
+      setSubjectName(`Studying ${name}`);
       setIsStudying(true);
       setInitialStatus(true);
       setSubjectTotal(liveTotal);
     };
 
     const onStudying = (subjectInfo) => {
-      console.log(subjectInfo);
       const {name} = subjectInfo;
       setSubjectName(`Studying ${name}`);
-      setSubjectTotal(0);
       setIsStudying(true);
     };
     const onStopStudying = () => {
       setSubjectName('taking break');
-      setSubjectTotal(0);
       setIsStudying(false);
     };
 
@@ -45,12 +41,11 @@ function UserSubjectViewer({userInfo}) {
     }
   }, [userInfo]);
 
-
   return (
     <div className={`${styles.UserSubjectViewer} ${isStudying ? styles.open : ''}`}>
       <p>{subjectName}</p>
       <p>&nbsp;</p>
-      <MemberTimer initialStatus={initialStatus} initialSec={subjectTotal} userInfo={userInfo} />
+      <MemberTimer initialStatus={initialStatus} initialSec={subjectTotal} userInfo={userInfo} reset={true} />
     </div>
   );
 };

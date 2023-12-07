@@ -153,7 +153,14 @@ connection.on('connection', (socket) => {
         if (groups.length) {
           //io.to(groups).emit('studying', userId, groups);
           io.to(groups).emit(`studying:${userId}`, subject);
-        }
+        };
+        const userInfo = await userCache(userId);
+        if (userInfo) {
+          userInfo.friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
+          if (userInfo.friends.length) {
+            io.to(userInfo.friends).emit(`studying:${userId}`, subject);
+          };
+        };
         const now = Math.floor(new Date().getTime() / 1000);
         const {timeline_sum, datum_point, id} = subject;
         const start = now - datum_point - timeline_sum;
@@ -186,6 +193,13 @@ connection.on('connection', (socket) => {
     if (activeSubject.id === subjectId && subject) {
       if (groups.length) {
         io.to(groups).emit(`stopStudying:${userId}`);
+      };
+      const userInfo = await userCache(userId);
+      if (userInfo) {
+        userInfo.friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
+        if (userInfo.friends.length) {
+          io.to(userInfo.friends).emit(`stopStudying:${userId}`, subject);
+        };
       };
       const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
       const now = Math.floor(new Date().getTime() / 1000);
@@ -221,9 +235,14 @@ connection.on('connection', (socket) => {
     const userInfo = await userCache(userId);
     if (!userInfo) return;
     const groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
-    if (groups.includes(groupId)) {
-      redisClient.hSet(`user:${userId}`, `ActiveGroup`, groupId);
-    }
+    if (!groups.includes(groupId)) return;
+    redisClient.hSet(`user:${userId}`, `ActiveGroup`, groupId);
+    let friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
+    if (!friends.length) return;
+    const connection = pool.promise();
+    const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [groupId]);
+    if (!groupInfo) return;
+    io.to(friends).emit(`activeGroup`, groupInfo);
   })
 });
 

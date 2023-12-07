@@ -3,7 +3,7 @@ import styles from "./MemberTimer.module.css";
 import worker from "./TimeWorker";
 import {socket} from "../../../socket.js";
 
-function MemberTimer({ initialSec = 0, userInfo, initialStatus = false }) {
+function MemberTimer({ initialSec = 0, userInfo, initialStatus = false, reset = false }) {
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
@@ -20,8 +20,12 @@ function MemberTimer({ initialSec = 0, userInfo, initialStatus = false }) {
     const onStudying = () => {
       setRun(true);
     };
+
     const onStopStudying = () => {
       setRun(false);
+      if (reset) {
+        setTotal(0);
+      };
     };
 
     socket.on(`studying:${user_id}`, onStudying);

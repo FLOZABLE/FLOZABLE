@@ -186,22 +186,28 @@ Router.get('/status', async (req, res) => {
       const friendsInfo = [];
       await Promise.all(friends.map(async(friend) => {
         friend = await userCache(friend);
-        if (friend) {
-          const totalTime = await redisClient.get(`user:${friend.user_id}:dayTotal`);
-          friend.totalTime = totalTime === null ? 0 : totalTime;
-          const activeSubject = await activeSubjectCache(friend.user_id);
-          if (activeSubject.id) {
-            const subject = await subjectCache(friend.user_id, activeSubject.id);
-            if (subject) {
-              friend.activeSubject = {...subject, total: activeSubject.total, time: activeSubject.time};
-            } else {
-              friend.activeSubject = {id: -1, total: activeSubject.total, time: activeSubject.time};
-            };
+        if (!friend) return;
+        const totalTime = await redisClient.get(`user:${friend.user_id}:dayTotal`);
+        friend.totalTime = totalTime === null ? 0 : totalTime;
+        const activeSubject = await activeSubjectCache(friend.user_id);
+        if (activeSubject.id) {
+          const subject = await subjectCache(friend.user_id, activeSubject.id);
+          if (subject) {
+            friend.activeSubject = {...subject, total: activeSubject.total, time: activeSubject.time};
           } else {
-            friend.activeSubject = activeSubject;
+            friend.activeSubject = {id: -1, total: activeSubject.total, time: activeSubject.time};
           };
-          friendsInfo.push(friend);
+        } else {
+          friend.activeSubject = activeSubject;
         };
+        if (friend.ActiveGroup) {
+          const connection = await pool.promise();
+          const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [friend.ActiveGroup]);
+          if (groupInfo) {
+            friend.ActiveGroup = groupInfo;
+          }
+        }
+        friendsInfo.push(friend);
       }));
       res.send({success: true, friendsInfo})
     } catch (error) {

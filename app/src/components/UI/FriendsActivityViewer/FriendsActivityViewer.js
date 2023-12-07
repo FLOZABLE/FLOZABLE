@@ -8,6 +8,7 @@ import ChallengeBtn from "../ChallengeBtn/ChallengeBtn";
 import MemberTimer from "../MemberTimer/MemberTimer";
 import UserSubjectViewer from "../UserSubjectViewer/UserSubjectViewer";
 import { DateTime } from "luxon";
+import UserGroupViewer from "../UserGroupViewer/UserGroupViewer";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -63,7 +64,7 @@ function FriendsActivityViewer({ setResponse }) {
             <UserSubjectViewer userInfo={friend} />
           </div>
           <div className={styles.group}>
-            <p>inside <strong>Math club</strong></p>
+            <UserGroupViewer userInfo={friend}/>
           </div>
           <div className={styles.right}>
             <div className={styles.today}>
