@@ -6,6 +6,7 @@ import { DateTime } from "luxon";
 
 function UserSubjectViewer({userInfo}) {
   const [initialStatus,setInitialStatus] = useState(false);
+  const [isStudying, setIsStudying] = useState(false);
   const [subjectName, setSubjectName] = useState('');
   const [subjectTotal, setSubjectTotal] = useState(0);
 
@@ -17,6 +18,7 @@ function UserSubjectViewer({userInfo}) {
     if (id) {
       const liveTotal = DateTime.now().toSeconds().toFixed() - time;
       setSubjectName(name);
+      setIsStudying(true);
       setInitialStatus(true);
       setSubjectTotal(liveTotal);
     };
@@ -24,12 +26,14 @@ function UserSubjectViewer({userInfo}) {
     const onStudying = (subjectInfo) => {
       console.log(subjectInfo);
       const {name} = subjectInfo;
-      setSubjectName(name);
+      setSubjectName(`Studying ${name}`);
       setSubjectTotal(0);
+      setIsStudying(true);
     };
     const onStopStudying = () => {
       setSubjectName('taking break');
       setSubjectTotal(0);
+      setIsStudying(false);
     };
 
     socket.on(`studying:${user_id}`, onStudying);
@@ -43,7 +47,7 @@ function UserSubjectViewer({userInfo}) {
 
 
   return (
-    <div className={styles.UserSubjectViewer}>
+    <div className={`${styles.UserSubjectViewer} ${isStudying ? styles.open : ''}`}>
       <p>{subjectName}</p>
       <p>&nbsp;</p>
       <MemberTimer initialStatus={initialStatus} initialSec={subjectTotal} userInfo={userInfo} />

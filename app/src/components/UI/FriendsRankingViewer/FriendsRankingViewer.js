@@ -27,10 +27,9 @@ function FriendsRankingViewer({userInfo}) {
       .then((response) => response.json())
       .then((data) => {
         const {todayRankings, thisWeekRankings, thisMonthRankings} = data;
-        console.log(data);
         setDailyRankingsEl(todayRankings.map((userInfo, i) => {
           const {name, user_id, timezone, dayTotal} = userInfo;
-          const {value, type} = secondConverter(dayTotal);
+          const {value, type} = secondConverter(parseInt(dayTotal));
           return (
             <Link to={`/dashboard/user/${user_id}`} className={styles.ranking} key={i}>
               <p className={styles.rank}>#{i + 1}</p>
@@ -54,7 +53,7 @@ function FriendsRankingViewer({userInfo}) {
 
         setWeeklyRankingsEl(thisWeekRankings.map((userInfo, i) => {
           const {name, user_id, timezone, weekTotal} = userInfo;
-          const {value, type} = secondConverter(weekTotal);
+          const {value, type} = secondConverter(parseInt(weekTotal));
           return (
             <Link to={`/dashboard/user/${user_id}`} className={styles.ranking} key={i}>
               <p className={styles.rank}>#{i + 1}</p>
@@ -78,7 +77,7 @@ function FriendsRankingViewer({userInfo}) {
 
         setMonthlyRankingsEl(thisMonthRankings.map((userInfo, i) => {
           const {name, user_id, timezone, monthTotal} = userInfo;
-          const {value, type} = secondConverter(monthTotal);
+          const {value, type} = secondConverter(parseInt(monthTotal));
           return (
             <Link to={`/dashboard/user/${user_id}`} className={styles.ranking} key={i}>
               <p className={styles.rank}>#{i + 1}</p>

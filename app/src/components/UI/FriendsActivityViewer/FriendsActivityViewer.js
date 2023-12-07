@@ -35,11 +35,10 @@ function FriendsActivityViewer({ setResponse }) {
     setFriendsEl(friends.map((friend) => {
       const { user_id, timezone, name, totalTime, activeSubject } = friend;
       const { time, id } = activeSubject;
-      let liveTotal = totalTime;
+      let liveTotal = parseInt(totalTime);
       if (id) {
         liveTotal += DateTime.now().toSeconds().toFixed() - time;
-      }
-      console.log('gd', friend)
+      };
       return (
         <Link
           to={`/dashboard/user/${user_id}`}

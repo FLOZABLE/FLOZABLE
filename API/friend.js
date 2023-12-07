@@ -1,6 +1,6 @@
 const express = require('express');
 const { autoSignin, generateRandomId } = require('../tool');
-const { NotificationCache, userCache, activeSubjectCache } = require('../services/redisLoader');
+const { NotificationCache, userCache, activeSubjectCache, subjectCache } = require('../services/redisLoader');
 const redisClient = require('../model/redis');
 const pool = require('../model/pool');
 const Router = express.Router();
@@ -191,11 +191,11 @@ Router.get('/status', async (req, res) => {
           friend.totalTime = totalTime === null ? 0 : totalTime;
           const activeSubject = await activeSubjectCache(friend.user_id);
           if (activeSubject.id) {
-            const subject = await subjectCache(userId, activeSubject.id);
+            const subject = await subjectCache(friend.user_id, activeSubject.id);
             if (subject) {
-              friend.activeSubject = {subject, total: activeSubject.total};
+              friend.activeSubject = {...subject, total: activeSubject.total, time: activeSubject.time};
             } else {
-              friend.activeSubject = {subject: undefined, total: activeSubject.total};
+              friend.activeSubject = {id: -1, total: activeSubject.total, time: activeSubject.time};
             };
           } else {
             friend.activeSubject = activeSubject;

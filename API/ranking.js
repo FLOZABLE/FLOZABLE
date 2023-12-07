@@ -298,25 +298,26 @@ Router.get('/friends', async (req, res) => {
       let { friends } = userInfo;
       friends = friends === "" ? [] : friends.split(',');
       userInfo.dayTotal = await redisClient.get(`user:${userId}:dayTotal`);
-      userInfo.dayTotal = userInfo.dayTotal === null ? 0 : userInfo.dayTotal;
-      userInfo.weekTotal = await redisClient.get(`user:${userId}:weekTotal`) + userInfo.dayTotal;
-      userInfo.monthTotal = await redisClient.get(`user:${userId}:monthTotal`) + userInfo.dayTotal;
+      userInfo.weekTotal = await redisClient.get(`user:${userId}:weekTotal`);
+      userInfo.monthTotal = await redisClient.get(`user:${userId}:monthTotal`);
 
       //remove nulls
-      userInfo.weekTotal = userInfo.weekTotal === null ? 0 : userInfo.weekTotal;
-      userInfo.monthTotal = userInfo.monthTotal === null ? 0 : userInfo.monthTotal;
+      userInfo.dayTotal = userInfo.dayTotal === null ? 0 : userInfo.dayTotal;
+      userInfo.weekTotal = userInfo.weekTotal === null ? userInfo.dayTotal : userInfo.weekTotal + userInfo.dayTotal;
+      userInfo.monthTotal = userInfo.monthTotal === null ? userInfo.dayTotal : userInfo.monthTotal + userInfo.dayTotal;
       const friendsData = [userInfo];
       await Promise.all(friends.map(async (friend) => {
         friend = await userCache(friend);
         if (friend) {
-          friend.dayTotal = await redisClient.get(`user:${friend.user_id}:dayTotal`);
-          friend.dayTotal = friend.dayTotal === null ? 0 : friend.dayTotal;
-          friend.weekTotal = await redisClient.get(`user:${friend.user_id}:weekTotal`) + friend.dayTotal;
-          friend.monthTotal = await redisClient.get(`user:${friend.user_id}:monthTotal`) + friend.dayTotal;
-
+          const userId = friend.user_id;
+          friend.dayTotal = await redisClient.get(`user:${userId}:dayTotal`);
+          friend.weekTotal = await redisClient.get(`user:${userId}:weekTotal`);
+          friend.monthTotal = await redisClient.get(`user:${userId}:monthTotal`);
+    
           //remove nulls
-          friend.weekTotal = friend.weekTotal === null ? 0 : friend.weekTotal;
-          friend.monthTotal = friend.monthTotal === null ? 0 : friend.monthTotal;
+          friend.dayTotal = friend.dayTotal === null ? 0 : friend.dayTotal;
+          friend.weekTotal = friend.weekTotal === null ? friend.dayTotal : friend.weekTotal + friend.dayTotal;
+          friend.monthTotal = friend.monthTotal === null ? friend.dayTotal : friend.monthTotal + friend.dayTotal;
           friendsData.push(friend);
         }
         return null;
