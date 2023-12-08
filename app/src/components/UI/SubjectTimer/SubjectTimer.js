@@ -114,32 +114,9 @@ function SubjectTimer({
     if (!isStudy) {
       worker.postMessage({ command: "startSubjectTimer" });
       socket.emit("start", subject.id);
-      /* fetch(`${serverOrigin}/api/study/start`, {
-        method: 'post', headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ subjectId: subject.id })
-      })
-        .then((response) => response.json())
-        .then((data) => {
-           
-        })
-        .catch((error) => console.error(error)); */
     } else {
       worker.postMessage({ command: "stopSubjectTimer" });
       socket.emit("stop", subject.id);
-      /* fetch(`${serverOrigin}/api/study/stop`, {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ subjectId: subject.id })
-      })
-        .then((response) => response.json())
-        .then((data) => {
-           
-        })
-        .catch((error) => console.error(error)); */
     }
     setIsStudy(!isStudy);
   };
