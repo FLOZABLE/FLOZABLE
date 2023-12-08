@@ -7,6 +7,8 @@ import {
   faUserGroup,
   faRankingStar,
   faPeopleGroup,
+  faShop,
+  faHandFist,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
@@ -68,7 +70,7 @@ function Sidebar({
           </div>
         </li>
         <li>
-        <div
+          <div
             className={styles.navItemWrapper}
           >
             <Link to="/dashboard/planner" className={styles.navItem}>
@@ -82,7 +84,7 @@ function Sidebar({
           </div>
         </li>
         <li>
-        <div
+          <div
             className={styles.navItemWrapper}
           >
             <Link to="/dashboard/groups" className={styles.navItem}>
@@ -96,7 +98,7 @@ function Sidebar({
           </div>
         </li>
         <li>
-        <div
+          <div
             className={styles.navItemWrapper}
           >
             <Link to="/dashboard/ranking" className={styles.navItem}>
@@ -110,7 +112,7 @@ function Sidebar({
           </div>
         </li>
         <li>
-        <div
+          <div
             className={styles.navItemWrapper}
           >
             <Link to="/dashboard/friends" className={styles.navItem}>
@@ -118,6 +120,34 @@ function Sidebar({
                 <FontAwesomeIcon icon={faUserGroup} />
               </div>
               <p className={styles.navText} data-text="Friends">Friends</p>
+            </Link>
+          </div>
+        </li>
+        <li>
+          <div
+            className={styles.navItemWrapper}
+          >
+            <Link to="/dashboard/themes" className={styles.navItem}>
+              <div className={styles.icon}>
+              <FontAwesomeIcon icon={faShop} />
+              </div>
+              <p className={styles.navText} data-text="Themes">
+                Themes
+              </p>
+            </Link>
+          </div>
+        </li>
+        <li>
+          <div
+            className={styles.navItemWrapper}
+          >
+            <Link to="/dashboard/themes" className={styles.navItem}>
+              <div className={styles.icon}>
+              <FontAwesomeIcon icon={faHandFist} />
+              </div>
+              <p className={styles.navText} data-text="Compete">
+                Compete
+              </p>
             </Link>
           </div>
         </li>
