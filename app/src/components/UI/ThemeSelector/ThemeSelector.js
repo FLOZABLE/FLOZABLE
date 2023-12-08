@@ -11,14 +11,36 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
   const [themeCategory, setThemeCategory] = useState("");
   const [themeChoices, setThemeChoices] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectionEl, setSelectionEl] = useState(<p></p>)
+  const [selectionEl, setSelectionEl] = useState(<p></p>);
+  const [themesList, setThemesList] = useState(null);
 
   useEffect(() => {
-    console.log(themeCategory);
+    const tempThemes = [];
+    AllThemes.map((theme) => {
+      theme.category.map((category) => {
+        let newTheme = true;
+        tempThemes.map((t) => {
+          if (t.name === category){
+            t.choices.push(theme);
+            newTheme = false;
+          }
+        })
+
+        if (newTheme) {
+          tempThemes.push({name: category, choices: [theme], img: theme.img});
+        }
+      });
+    });
+    setThemesList(tempThemes);
+    console.log(tempThemes);
+  }, [])
+
+  useEffect(() => {
+    if (!!!themesList) return;
     if (themeCategory === "") {
       setSelectionEl(
         <div className={`${styles.themeContainer} customScroll`}>
-          {AllThemes.map((Theme, i) => {
+          {themesList.map((Theme, i) => {
             return (
               <div
                 className={styles.video}
@@ -35,7 +57,7 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
                 }}
               >
                 <div className={styles.categoryLabel}>
-                  <p>{Theme.category}</p>
+                  <p>{Theme.name}</p>
                 </div>
               </div>
             );
@@ -68,12 +90,12 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
               </div>
             );
           })}
-          <button onClick={() => {setThemeCategory("")}}>&lt;Back</button>
+          <button onClick={() => { setThemeCategory("") }}>&lt;Back</button>
           <button>Load More</button>
         </div>
       )
     }
-  }, [themeChoices, themeCategory]);
+  }, [themeChoices, themeCategory, themesList]);
 
   return (
     <div className={styles.ThemeSelector}>
