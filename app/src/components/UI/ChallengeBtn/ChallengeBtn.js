@@ -4,8 +4,8 @@ import styles from "./ChallengeBtn.module.css";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ChallengeBtn({userInfo, setResponse}) {
-  
+function ChallengeBtn({ userInfo, setResponse }) {
+
   const requestChallenge = () => {
     fetch(`${serverOrigin}/api/challenges/challenge-request`, {
       method: "post",
@@ -26,13 +26,13 @@ function ChallengeBtn({userInfo, setResponse}) {
 
   return (
     <div className={styles.ChallengeBtn}>
-<div className={styles.blobWrapper}>
-                <BlobBtn delay={-1} name={<Punch width={'18px'} height={'18px'} fill={'red'} />} setClicked={() => { requestChallenge() }} color1={'#fff'} color2={"var(--pink)"} opt={2} />
-              </div>
+      <div className={styles.blobWrapper}>
+        <BlobBtn delay={-1} name={<Punch width={'18px'} height={'18px'} fill={'red'} />} setClicked={() => { requestChallenge() }} color1={'#fff'} color2={"var(--pink)"} opt={2} />
+      </div>
 
-              <div className={styles.hoverEl}>
-                <p>Compete with {userInfo ? userInfo.name : ''}!</p>
-              </div>
+      <div className={styles.hoverEl}>
+        <p>Compete with {userInfo ? userInfo.name : ''}!</p>
+      </div>
     </div>
   )
 };

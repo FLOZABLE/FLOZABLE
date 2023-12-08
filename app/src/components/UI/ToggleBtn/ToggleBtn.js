@@ -12,6 +12,6 @@ function ToggleBtn({ onToggle, style, content, isToggled, off, on }) {
       </button>
     </div>
   );
-}
+};
 
 export default ToggleBtn;
