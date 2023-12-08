@@ -1,0 +1,128 @@
+.FriendGroupViewer {
+  position: relative;
+  margin: 20px;
+  grid-template-columns: repeat(auto-fill, 250px);
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.FriendGroupViewer .group {
+  width: 300px;
+  height: 200px;
+  background-color: #f7f9fd;
+  border-radius: 40px;
+  padding: 20px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.FriendGroupViewer .groupColor {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
+
+.FriendGroupViewer .name {
+  font-weight: 800;
+  font-size: 20px;
+  max-width: calc(100% - 60px);
+}
+
+.FriendGroupViewer .name i {
+  font-size: 23px;
+  margin-right: 10px;
+}
+
+.FriendGroupViewer .explanation {
+  border-top: 1px solid #545454;
+  position: relative;
+  margin-top: 16px;
+  padding-top: 20px;
+  width: 100%;
+}
+
+.FriendGroupViewer .bottom {
+  position: absolute;
+  bottom: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: calc(100% - 40px);
+}
+
+.FriendGroupViewer .tags {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.FriendGroupViewer .tags .tag {
+  margin: 0px 5px;
+  padding: 2px 10px;
+  border-radius: 10px;
+  background-color: blanchedalmond;
+}
+
+.FriendGroupViewer .info {
+  position: absolute;
+  display: flex;
+  background-color: blanchedalmond;
+  height: 33px;
+  border-radius: 17px;
+  padding: 0px 10px;
+  top: -16px;
+}
+
+.FriendGroupViewer .info li {
+  margin: 0px 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.FriendGroupViewer .info li p {
+  margin-left: 3px;
+}
+
+.FriendGroupViewer .buttons {
+  display: flex;
+}
+
+.FriendGroupViewer .buttons button {
+  background-color: #fd8a8a;
+  font-weight: 800;
+  color: #fff;
+  padding: 0px 20px;
+  border-radius: 20px;
+  font-size: 16px;
+}
+
+.FriendGroupViewer .groupWrapper {
+  width: 100%;
+  border: 1px solid black;
+}
+
+@media (max-width: 1400px) {
+  .FriendGroupViewer .group {
+    width: 200px;
+    font-size: 13px;
+    height: 170px;
+  }
+  .FriendGroupViewer .group .name {
+    font-size: 15px;
+  }
+
+  .FriendGroupViewer .group .name i {
+    font-size: 15px;
+    margin-right: 5px;
+  }
+}

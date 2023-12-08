@@ -65,7 +65,7 @@ connection.on('connection', (socket) => {
       const chatRoomsId = chatRooms.map(chatRoom => {
         return chatRoom.id;
       });
-      socket.join(chatRoomsId);
+      socket.join(`chat:${chatRoomsId}`);
     } catch (err) {
       console.log(err);
     };
@@ -126,7 +126,7 @@ connection.on('connection', (socket) => {
       const time = Math.floor(new Date().getTime() / (1000 * 60));
       const msgInfo = { u: userId, m: msg, i: msgId, t: time };
       msgQueue(roomId, msgInfo);
-      io.to(roomId).emit('msgReceived', roomId, msgInfo);
+      io.to(`chat:${roomId}`).emit('msgReceived', roomId, msgInfo);
     };
   });
 
@@ -165,7 +165,7 @@ connection.on('connection', (socket) => {
         const {timeline_sum, datum_point, id} = subject;
         const start = now - datum_point - timeline_sum;
         console.log('timelinesum', timeline_sum, start)
-        const push = await redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
+        redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
         redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
         subject.timeline_sum += start;
         console.log(id, subjectId, subject)
@@ -236,6 +236,11 @@ connection.on('connection', (socket) => {
     if (!userInfo) return;
     const groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
     if (!groups.includes(groupId)) return;
+    groups.map(group => {
+      if (group !== groupId) {
+        socket.leave(groupId);
+      };
+    });
     redisClient.hSet(`user:${userId}`, `ActiveGroup`, groupId);
     let friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
     if (!friends.length) return;
