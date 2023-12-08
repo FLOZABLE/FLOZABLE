@@ -5,7 +5,7 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const crypto = require("crypto");
 const {isValidJSON, hashing, generateRandomId, autoSignin} = require("../tool");
-const { timerCache, activeSubjectCache, groupCache } = require("../services/redisLoader");
+const { timerCache, activeSubjectCache, groupCache, userCache } = require("../services/redisLoader");
 
 Router.post('/create-validate', async (req, res) => {
   autoSignin(req, res, (async () => {
@@ -171,15 +171,20 @@ Router.post('/join/:id', async (req, res) => {
       }
   
       const io = req.app.get('socketio');
-      io.emit('addUser', groupId, userId);
+      io.emit(`newMember:${groupId}`, userId);
       res.send({ success: true, msg: `Joined group "${groupInfo.name}"` });
       const groups = await groupCache(userId);
       groups.push(groupId);
       redisClient.hSet(`user:${userId}`, 'groups', groups.join(','));
+      //send user's study information to group members
+      let totalTime = await redisClient.get(`user:${userId}:dayTotal`);
+      totalTime = totalTime === null ? 0 : totalTime;
+      const activeSubject = await activeSubjectCache(userId);
+      const userInfo = await userCache(userId);
+      io.to(`${groupId}`).emit(`newMemberInfo`, {...userInfo, totalTime, activeSubject});
     } catch (err) {
       // Handle any errors that may occur during the execution of queries
       console.error('Error performing database queries:', err);
-      res.send({ success: false, reason: 'An error occurred' });
     } finally {
       pool.releaseConnection(connection);
     }
@@ -217,8 +222,9 @@ Router.post('/like/:id', async (req, res) => {
     const groupId = req.params.id;
     const connection = pool.promise();
     const userId = req.session.user_id;
+    const {liked} = req.body;
     try {
-      const [update] = await connection.query(
+      /* const [update] = await connection.query(
         `UPDATE \`groups\` 
         SET likes = CASE 
           WHEN likes = '' THEN ?
@@ -227,7 +233,29 @@ Router.post('/like/:id', async (req, res) => {
           ELSE CONCAT(likes, ',', ?) 
           END WHERE group_id = ?`,
         [userId, `%,${userId},%`, `${userId},%`, `%,${userId}`, userId, userId, groupId]
-      );
+      ); */
+      if (liked) {
+        const [update] = await connection.query(
+          `UPDATE \`groups\` 
+          SET likes = CASE 
+            WHEN likes = '' THEN ?
+            ELSE CONCAT(likes, ',', ?) 
+            END WHERE group_id = ?`,
+          [userId, userId, groupId]
+        );
+        const io = req.app.get('socketio');
+        io.emit(`liked:${groupId}`, userId);
+      } else {
+        const [update] = await connection.query(
+          `UPDATE \`groups\` 
+          SET likes = 
+            TRIM(BOTH ',' FROM REPLACE(CONCAT(',', likes, ','), ',${userId},', ','))
+            WHERE group_id = ?`,
+          [groupId]
+        );
+        const io = req.app.get('socketio');
+        io.emit(`unliked:${groupId}`, userId);
+      };
       res.send({ success: true });
     } catch (err) {
       console.error('Error performing database queries:', err);

@@ -115,7 +115,7 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
             </div>
           </div>
           <div className={styles.box}>
-            <FriendsActivityViewer setResponse={setResponse} />
+            <FriendsActivityViewer setResponse={setResponse} userInfo={userInfo} />
           </div>
         </div>
       </div>

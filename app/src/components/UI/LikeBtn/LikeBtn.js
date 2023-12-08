@@ -10,6 +10,10 @@ const LikeBtn = ({id, liked}) => {
     setLikedBtn(!likedBtn);
     fetch(`${serverOrigin}/api/groups/like/${id}`, {
       method: "post",
+      headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ liked: !likedBtn }),
     })
       .then((response) => response.json())
       .then(() => {})
@@ -23,7 +27,7 @@ const LikeBtn = ({id, liked}) => {
   return (
     <div className={`${styles.middleWrapper}`}>
       <div className={styles.likeWrapper}>
-        <a
+        <div
           className={`${styles.likeButton} ${likedBtn ? styles.liked : ""}`}
           onClick={handleLike}
         >
@@ -32,7 +36,7 @@ const LikeBtn = ({id, liked}) => {
             <div className={styles.heartAnimation2}></div>
           </span>
           {/* Favorite */}
-        </a>
+        </div>
       </div>
     </div>
   );

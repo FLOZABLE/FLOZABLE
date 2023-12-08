@@ -10,6 +10,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import LikeBtn from "../LikeBtn/LikeBtn";
 import styles from "./GroupsGen.module.css";
+import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
+import GroupContainer from "../GroupContainer/GroupContainer";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -25,13 +27,11 @@ function GroupsGen({
   userInfo,
   queryTags,
 }) {
-  const [copied, setCopied] = useState(null);
   const [otherGroupsEl, setOtherGroupsEl] = useState(null);
   const [maxGroups, setMaxGroups] = useState(-1);
 
   const joinGroup = (targetGroup) => {
     setJoinTarget(targetGroup);
-    targetGroup.members = [...targetGroup.members, userInfo];
     if (targetGroup.visibility) {
       fetch(`${serverOrigin}/api/groups/join/${targetGroup.group_id}`, {
         method: "post",
@@ -52,14 +52,6 @@ function GroupsGen({
     }
   };
 
-  const handleCopyClick = (id) => {
-    navigator.clipboard.writeText(`https://flozable.com/groups/join/${id}`);
-    setCopied(id);
-    setTimeout(() => {
-      setCopied(null);
-    }, 2000);
-  };
-
   useEffect(() => {
     if (!userInfo) return;
     setOtherGroupsEl(
@@ -68,19 +60,7 @@ function GroupsGen({
           return;
         }
         const tags = JSON.parse(group.tags);
-        const likes = group.likes.split(",");
-        const liked = likes.includes(userInfo.user_id);
-        const tagsEl = tags.map((tag, i) => {
-          return (
-            <li className={styles.tag} key={i}>
-              {tag}
-            </li>
-          );
-        });
 
-        const {members} = group;
-
-        /* ${(group.name.toLowerCase().includes(searchQuery) || group.tags.includes(searchQuery) || tags.some(element => queryTags.includes(element))) || (searchQuery === '' && !queryTags.length) ? '' : styles.hidden} */
         let isSearched = false;
         if (
           !queryTags.length &&
@@ -107,86 +87,21 @@ function GroupsGen({
               group.tags.includes(searchQuery))
           ) {
             isSearched = true;
-          }
-        }
+          };
+        };
 
         return (
-          <div
-            className={`${styles.groupContainer} ${
-              isSearched ? "" : styles.hidden
-            }`}
-            key={i}
-          >
-            <div className={styles.group}>
-              <div
-                className={styles.groupColor}
-                style={{ backgroundColor: group.color }}
-              ></div>
-              <div className={styles.name}>
-                {!group.visibility ? (
-                  <i>
-                    <FontAwesomeIcon icon={faLock} />
-                  </i>
-                ) : (
-                  ""
-                )}
-                {group.name}
-              </div>
-              <div className={styles.explanation}>
-                <ul className={styles.info}>
-                  <li>
-                    <FontAwesomeIcon icon={faPeopleGroup} />
-                    <p>{members.split(',').length}</p>
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faBullseye} />
-                    <p>{group.goal_hr}hr</p>
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faStopwatch} />
-                    <p>0</p>
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faHeart} />
-                    <p>{likes.length}</p>
-                  </li>
-                </ul>
-                {group.explanation}
-              </div>
-              <div className={styles.bottom}>
-                <ul className={styles.tags}>{tagsEl}</ul>
-                <div className={styles.buttons}>
-                  <LikeBtn liked={liked} id={group.group_id} />
-                  <button
-                    onClick={() => {
-                      joinGroup(group, joinGroupResponse);
-                    }}
-                  >
-                    Join
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleCopyClick(group.group_id);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faLink} />
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div
-              className={`${styles.copyModal} ${
-                copied == group.group_id ? styles.copied : ""
-              }`}
-            >
-              Copied!
-            </div>
-          </div>
+          <GroupContainer key={i} isSearched={isSearched} joinGroup={joinGroup} groupInfo={group} userInfo={userInfo}/>
         );
       }),
     );
   }, [queryTags, searchQuery, groups, maxGroups, userInfo]);
-  return otherGroupsEl;
+
+  return (
+    <div className={styles.GroupsContainer}>
+      {otherGroupsEl}
+    </div>
+  );
 }
 
 export default GroupsGen;
