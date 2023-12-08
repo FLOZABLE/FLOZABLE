@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./TopNotification.module.css";
 import { faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
-function TopNotification({response, duration}) {
+function TopNotification({ response, duration }) {
 
   const [notification, setNotification] = useState(null);
   const [notify, setNotify] = useState(false);
@@ -14,22 +14,21 @@ function TopNotification({response, duration}) {
     if (notifResponse) {
       if (notifResponse.success) {
         setNotification(
-        <div className={`${styles.success} ${styles.notification}`}>
+          <div className={`${styles.success} ${styles.notification}`}>
             <i>
-            <FontAwesomeIcon icon={faCircleCheck} />
+              <FontAwesomeIcon icon={faCircleCheck} />
             </i>
             <p className={styles.msg}>{notifResponse.msg}</p>
           </div>);
 
       } else {
         setNotification(
-        <div className={`${styles.fail} ${styles.notification}`}>
+          <div className={`${styles.fail} ${styles.notification}`}>
             <i>
-            <FontAwesomeIcon icon={faCircleXmark} />
+              <FontAwesomeIcon icon={faCircleXmark} />
             </i>
             <p className={styles.msg}>{notifResponse.reason}</p>
           </div>);
-
       };
       clearTimeout(timeoutId);
       setNotify(false);
@@ -45,7 +44,6 @@ function TopNotification({response, duration}) {
     <div className={`${styles.TopNotification} ${notify ? styles.notify : ''}`}>
       {notification}
     </div>);
-
 };
 
 export default TopNotification;
