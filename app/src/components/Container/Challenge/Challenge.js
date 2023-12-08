@@ -445,8 +445,8 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                 .then((data) => {
                     tempUser1.value3 = data.maxLength;
                     data.rankings.data.map((ranking) => {
-                        if (ranking.ranking > 0) {
-                            tempUser1.value3 = Math.min(tempUser1.value3, ranking.ranking);
+                        if (ranking.ranking >= 0) {
+                            tempUser1.value3 = Math.min(tempUser1.value3, ranking.ranking + 1);
                         }
                     });
                     setCompeteInfo1(tempUser1);
@@ -459,8 +459,8 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                 .then((data) => {
                     tempUser2.value3 = data.maxLength;
                     data.rankings.data.map((ranking) => {
-                        if (ranking.ranking > 0) {
-                            tempUser2.value3 = Math.min(tempUser2.value3, ranking.ranking);
+                        if (ranking.ranking >= 0) {
+                            tempUser2.value3 = Math.min(tempUser2.value3, ranking.ranking + 1);
                         }
                     });
                     setCompeteInfo2(tempUser2);
