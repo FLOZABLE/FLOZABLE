@@ -543,7 +543,7 @@ function App() {
                 userInfo={userInfo}
                 notifications={notifications}
                 setNotifications={setNotifications}
-                response={setResponse}
+                setResponse={setResponse}
               />
             </div>
           }

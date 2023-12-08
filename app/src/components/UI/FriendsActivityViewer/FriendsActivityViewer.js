@@ -12,7 +12,7 @@ import UserGroupViewer from "../UserGroupViewer/UserGroupViewer";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function FriendsActivityViewer({ setResponse }) {
+function FriendsActivityViewer({ setResponse, userInfo }) {
   const [friendsEl, setFriendsEl] = useState([]);
   const [friends, setFriends] = useState([]);
   useEffect(() => {
@@ -33,6 +33,8 @@ function FriendsActivityViewer({ setResponse }) {
   }, []);
 
   useEffect(() => {
+    if (!userInfo) return;
+
     setFriendsEl(friends.map((friend) => {
       const { user_id, timezone, name, totalTime, activeSubject } = friend;
       const { time, id } = activeSubject;
@@ -41,10 +43,11 @@ function FriendsActivityViewer({ setResponse }) {
         liveTotal += DateTime.now().toSeconds().toFixed() - time;
       };
       return (
-        <Link
-          to={`/dashboard/user/${user_id}`}
+        <div
           className={styles.friend} key={user_id}>
-          <div className={styles.userInfo}>
+          <Link
+            to={`/dashboard/user/${user_id}`}
+            className={styles.userInfo}>
             <div className={styles.profileImg}
               style={{
                 backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
@@ -59,26 +62,42 @@ function FriendsActivityViewer({ setResponse }) {
             <div className={styles.flagWrapper}>
               <CountryViewer timezone={timezone} />
             </div>
-          </div>
+          </Link>
           <div className={styles.subject}>
-            <UserSubjectViewer userInfo={friend} />
+            <UserSubjectViewer
+              userInfo={friend}
+              setResponse={setResponse}
+            />
           </div>
           <div className={styles.group}>
-            <UserGroupViewer userInfo={friend}/>
+            <UserGroupViewer
+              userInfo={friend}
+              myInfo={userInfo}
+              setResponse={setResponse}
+            />
           </div>
           <div className={styles.right}>
             <div className={styles.today}>
               <p>Today Total: </p>
               <p>&nbsp;</p>
-              <MemberTimer userInfo={friend} initialStatus={id ? true : false} initialSec={liveTotal} />
+              <MemberTimer
+                userInfo={friend}
+                initialStatus={id ? true : false}
+                initialSec={liveTotal}
+                setResponse={setResponse}
+              />
             </div>
-            <ChallengeBtn userInfo={friend} />
-            <DmBtn userInfo={friend} />
+            <ChallengeBtn userInfo={friend}
+              setResponse={setResponse}
+            />
+            <DmBtn userInfo={friend}
+              setResponse={setResponse}
+            />
           </div>
-        </Link>
+        </div>
       )
     }))
-  }, [friends]);
+  }, [friends, userInfo]);
 
   return (
     <div className={styles.FriendsActivityViewer}>
