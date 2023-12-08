@@ -36,7 +36,7 @@ const redisClient = require("./model/redis");
 redisClient.connect().catch(console.error);
 const port = process.env.PORT;
 const account = require("./Router/account");
-const {flushRedis, groupsLoader, cacheManager, dmRoomMembersLoader, groupChatsMembersLoader} = require("./services/redisLoader");
+const {flushRedis, cacheManager} = require("./services/redisLoader");
 
 //const WebSocketToken = process.env.WEBSOCKET_TOKEN;
 //const WebSocket = require('ws');
@@ -235,8 +235,6 @@ const { rankingManager } = require("./services/rankingUpdate");
 //createMonthlyRankingTable();
 
 rankingManager();
-dmRoomMembersLoader();
-groupChatsMembersLoader();
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);

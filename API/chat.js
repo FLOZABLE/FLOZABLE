@@ -3,7 +3,7 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { autoSignin, arraysHaveSameContents, generateRandomId } = require("../tool");
-const { groupCache, chatRoomsCache, usersCache, NotificationCache, dmRoomsCache, userCache } = require("../services/redisLoader");
+const { groupCache, chatRoomsCache, usersCache, NotificationCache, dmRoomsCache, userCache, dmRoomMembersCache, groupMembersCache } = require("../services/redisLoader");
 
 Router.post("/bring-rooms", async (req, res) => {
   autoSignin(req, res, (async () => {
@@ -23,8 +23,8 @@ Router.get('/members', async(req, res) => {
     const userId = req.session.user_id;
     const {roomId} = req.query;
     if (!roomId) return res.send({success: false,reason: 'no room'});
-    const members = await redisClient.sMembers(`room:${roomId}`);
-    if (!members.includes(userId)) return res.send({success: false, reason: 'not in grouo'});
+    const members = await groupMembersCache(roomId);
+    if (!members.includes(userId)) return res.send({success: false, reason: 'not in group'});
     const membersInfo = await Promise.all(members.map(async(memberId) => {
       const memberInfo = await userCache(memberId);
       return memberInfo;

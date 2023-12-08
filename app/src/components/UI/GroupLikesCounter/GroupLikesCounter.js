@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { socket } from "../../../socket";
 
 function GroupLikesCounter({ initialMembers, groupId }) {
@@ -23,7 +23,7 @@ function GroupLikesCounter({ initialMembers, groupId }) {
     };
   }, [groupId]);
 
-  useEffect(() => {
+  useMemo(() => {
     setMembers(initialMembers);
   }, [initialMembers]);
 

@@ -544,6 +544,12 @@ function App() {
                 notifications={notifications}
                 setNotifications={setNotifications}
                 setResponse={setResponse}
+
+                reset={reset}
+                otherGroups={otherGroups}
+                setOtherGroups={setOtherGroups}
+                myGroups={myGroups}
+                setMyGroups={setMyGroups}
               />
             </div>
           }

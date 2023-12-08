@@ -8,11 +8,52 @@ import FriendRequestsViewer from "../../UI/FriendRequestsViewer/FriendRequestsVi
 import { EmailInvitation, Fight1, FriendLink } from "../../../utils/svgs";
 import FriendLinkModal from "../../UI/FriendLinkModal/FriendLinkModal";
 import FriendsActivityViewer from "../../UI/FriendsActivityViewer/FriendsActivityViewer";
+import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
 
-/* const serverOrigin = process.env.REACT_APP_ORIGIN; */
+const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, setNotifications, setResponse }) {
+function Friends({
+  isSidebarHovered,
+  isSidebarOpen,
+  userInfo,
+  notifications,
+  setNotifications,
+  setResponse,
+  otherGroups,
+  setOtherGroups,
+  myGroups,
+  setMyGroups
+}) {
   const [isFriendLinkModal, setIsFriendLinkModal] = useState(false);
+  const [isGroupPwModal, setIsGroupPwModal] = useState(false);
+  const [joinTarget, setJoinTarget] = useState(null);
+
+  useEffect(() => {
+    if (!joinTarget) return;
+    setJoinTarget(joinTarget);
+    const {group_id, visibility} = joinTarget;
+
+    if (visibility) {
+      fetch(`${serverOrigin}/api/groups/join/${group_id}`, {
+        method: "post",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setResponse(data);
+          setOtherGroups(
+            (prev) => {
+              prev.filter(group => {
+                return group.group_id != group_id;
+              })
+            }
+          );
+          setMyGroups((prev) => [...prev, joinTarget]);
+        })
+        .catch((error) => console.error(error));
+    } else {
+      setIsGroupPwModal(true);
+    };
+  },[joinTarget]);
 
   return (
     <div className={styles.Friends}>
@@ -21,9 +62,20 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
         isOpen={isFriendLinkModal}
         setIsOpen={setIsFriendLinkModal}
       />
+      <GroupPwModal
+        myGroups={myGroups}
+        setMyGroups={setMyGroups}
+        groups={otherGroups}
+        setOtherGroups={setOtherGroups}
+        setIsGroupPwModal={setIsGroupPwModal}
+        isGroupPwModal={isGroupPwModal}
+        joinTarget={joinTarget}
+        setJoinGroupResponse={setResponse}
+      />
       <div
-        className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
-          }`}
+        className={`Main ${
+          isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
+        }`}
       >
         <div className={styles.fixedBoxContainer}>
           <div className={styles.box}>
@@ -35,13 +87,10 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
             />
           </div>
           <div className={styles.box}>
-            <FriendsRankingViewer
-              userInfo={userInfo}
-            />
+            <FriendsRankingViewer userInfo={userInfo} />
           </div>
           <div className={styles.box}>
-            <RecommendedFriendsViewer
-            />
+            <RecommendedFriendsViewer />
           </div>
         </div>
         <div className="title">
@@ -62,9 +111,7 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
                   <i>
                     <FriendLink />
                   </i>
-                  <p>
-                    Friend Link
-                  </p>
+                  <p>Friend Link</p>
                   <i>
                     <FontAwesomeIcon icon={faAngleRight} />
                   </i>
@@ -73,14 +120,9 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
               <div className={styles.buttonContainer}>
                 <button>
                   <i>
-                    <EmailInvitation 
-                      width={'50px'}
-                      height={'50px'}
-                    />
+                    <EmailInvitation width={"50px"} height={"50px"} />
                   </i>
-                  <p>
-                    Email Invitation
-                  </p>
+                  <p>Email Invitation</p>
                   <i>
                     <FontAwesomeIcon icon={faAngleRight} />
                   </i>
@@ -91,9 +133,7 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
                   <i>
                     <Fight1 />
                   </i>
-                  <p>
-                    Create Challenge URL
-                  </p>
+                  <p>Create Challenge URL</p>
                   <i>
                     <FontAwesomeIcon icon={faAngleRight} />
                   </i>
@@ -115,12 +155,16 @@ function Friends({ isSidebarHovered, isSidebarOpen, userInfo, notifications, set
             </div>
           </div>
           <div className={styles.box}>
-            <FriendsActivityViewer setResponse={setResponse} userInfo={userInfo} />
+            <FriendsActivityViewer
+              setResponse={setResponse}
+              userInfo={userInfo}
+              setJoinTarget={setJoinTarget}
+            />
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default Friends;
