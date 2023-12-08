@@ -4,6 +4,7 @@ const pool = require("./model/pool");
 const redisClient = require("./model/redis");
 const { generateRandomId } = require("./tool");
 const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache } = require("./services/redisLoader");
+const { DateTime } = require("luxon");
 
 
 const io = require('socket.io')(server, {
@@ -63,9 +64,9 @@ connection.on('connection', (socket) => {
     try {
       const chatRooms = await chatRoomsCache(userId);
       const chatRoomsId = chatRooms.map(chatRoom => {
-        return chatRoom.id;
+        return`chat:${chatRoom.id}`;
       });
-      socket.join(`chat:${chatRoomsId}`);
+      socket.join(chatRoomsId);
     } catch (err) {
       console.log(err);
     };
@@ -241,13 +242,14 @@ connection.on('connection', (socket) => {
         socket.leave(groupId);
       };
     });
-    redisClient.hSet(`user:${userId}`, `ActiveGroup`, groupId);
+    const now = DateTime.now().toSeconds().toFixed();
+    redisClient.hSet(`user:${userId}`, `ActiveGroup`, JSON.stringify({id: groupId, time: now}));
     let friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
     if (!friends.length) return;
     const connection = pool.promise();
     const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [groupId]);
     if (!groupInfo) return;
-    io.to(friends).emit(`activeGroup`, groupInfo);
+    io.to(friends).emit(`activeGroup`, {groupInfo, time: now});
   })
 });
 

@@ -201,12 +201,14 @@ Router.get('/status', async (req, res) => {
           friend.activeSubject = activeSubject;
         };
         if (friend.ActiveGroup) {
-          const connection = await pool.promise();
-          const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [friend.ActiveGroup]);
+          console.log('active group', friend.ActiveGroup)
+          const ActiveGroup = JSON.parse(friend.ActiveGroup);
+          const connection = pool.promise();
+          const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [ActiveGroup.id]);
           if (groupInfo) {
-            friend.ActiveGroup = groupInfo;
-          }
-        }
+            friend.ActiveGroup = {...groupInfo, time: ActiveGroup.time};
+          };
+        };
         friendsInfo.push(friend);
       }));
       res.send({success: true, friendsInfo})

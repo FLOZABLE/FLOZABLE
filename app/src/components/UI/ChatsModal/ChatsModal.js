@@ -105,7 +105,8 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, userInfo })
         if (!type) {
           const group = myGroups.find(group => { return group.group_id === id });
           if (!group) return;
-          const { members, group_id, name, color } = group;
+          const { group_id, name, color } = group;
+          const members = group.members === "" ? [] : group.members.split(",");
           return (
             <li
               className={styles.chatRoom}
@@ -130,25 +131,22 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, userInfo })
             </li>
           )
         } else {
-          const users = members.map(member => {
-            return roomMembers.find(user => {return user.user_id === member});
-          });
           if (!userInfo) return;
           return (
             <li
               className={styles.chatRoom}
               key={i}
             >
-              <div className={styles.imgContainer}>
+              <div className={styles.imgContainer} style={{ backgroundColor: 'var(--purple)' }}>
               </div>
               <div className={styles.roomInfo}
                 onClick={() => {
                   setSelectedRoom(chatRoom);
-                  setRoomName(users.map(user => {return user ? user.name : null}));
+                  setRoomName(members.map(member => {return member.name}).join(","));
                 }}
               >
                 <div className={styles.roomName}>
-                  {users.map(user => {return user ? user.name : null})}
+                  {members.map(member => {return member.name}).join(",")}
                   <strong>{members.length}</strong>
                 </div>
                 <div className={styles.newMsgCount}>
@@ -163,49 +161,85 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, userInfo })
   }, [chatRooms, myGroups, roomMembers, userInfo]);
 
   useEffect(() => {
-    const {chats, id} = selectedRoom;
+    const {chats, id, members, type} = selectedRoom;
     if (selectedRoom && chats && userInfo) {
       const {user_id} = userInfo;
-      fetch(`${serverOrigin}/api/chat/members?roomId=${id}`, { method: "get" })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          const {membersInfo} = data;
-          setRoomMembers([...membersInfo]);
-          setMsgViewer(chats.map((msg) => {
-            const { u, m, i, t } = JSON.parse(msg);
-            const formattedTime = DateTime.fromSeconds(t * 60).toFormat('h:mm a');
-            if (u === user_id) {
-              return (
-                <li className={`${styles.msg} ${styles.me}`} key={i}>
-                  <p className={styles.time}>{formattedTime}</p>
-                  <p>{m}</p>
-                </li>
-              )
-            } else {
-              const user = membersInfo.find(member => { return member.user_id === u });
-              const { name } = user;
-              return (
-                <li className={`${styles.msg} ${styles.others}`} key={i}>
-                  <Link to={`/dashboard/user/${u}`}
-                   className={styles.profileImg}
-                    style={{
-                      backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center center',
-                      backgroundRepeat: 'no-repeat',
-                    }}>
-                  </Link>
-                  <p className={styles.name}>{name}</p>
-                  <p className={styles.time}>{formattedTime}</p>
-                  <p>{m}</p>
-                </li>
-              )
-            };
-          }));
-        }
-      })
-      .catch((error) => console.error(error));
+      if (!type) {
+        fetch(`${serverOrigin}/api/chat/members?roomId=${id}`, { method: "get" })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const {membersInfo} = data;
+            setRoomMembers([...membersInfo]);
+            setMsgViewer(chats.map((msg) => {
+              const { u, m, i, t } = JSON.parse(msg);
+              const formattedTime = DateTime.fromSeconds(t * 60).toFormat('h:mm a');
+              if (u === user_id) {
+                return (
+                  <li className={`${styles.msg} ${styles.me}`} key={i}>
+                    <p className={styles.time}>{formattedTime}</p>
+                    <p>{m}</p>
+                  </li>
+                )
+              } else {
+                const user = membersInfo.find(member => { return member.user_id === u });
+                const { name } = user;
+                return (
+                  <li className={`${styles.msg} ${styles.others}`} key={i}>
+                    <Link to={`/dashboard/user/${u}`}
+                     className={styles.profileImg}
+                      style={{
+                        backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center center',
+                        backgroundRepeat: 'no-repeat',
+                      }}>
+                    </Link>
+                    <p className={styles.name}>{name}</p>
+                    <p className={styles.time}>{formattedTime}</p>
+                    <p>{m}</p>
+                  </li>
+                )
+              };
+            }));
+          }
+        })
+        .catch((error) => console.error(error));
+      } else {
+        const {members} = selectedRoom;
+        setRoomMembers([...members]);
+        setMsgViewer(chats.map((msg) => {
+          const { u, m, i, t } = JSON.parse(msg);
+          const formattedTime = DateTime.fromSeconds(t * 60).toFormat('h:mm a');
+          if (u === user_id) {
+            return (
+              <li className={`${styles.msg} ${styles.me}`} key={i}>
+                <p className={styles.time}>{formattedTime}</p>
+                <p>{m}</p>
+              </li>
+            )
+          } else {
+            const user = members.find(member => { return member.user_id === u });
+            const { name } = user;
+            return (
+              <li className={`${styles.msg} ${styles.others}`} key={i}>
+                <Link to={`/dashboard/user/${u}`}
+                 className={styles.profileImg}
+                  style={{
+                    backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center center',
+                    backgroundRepeat: 'no-repeat',
+                  }}>
+                </Link>
+                <p className={styles.name}>{name}</p>
+                <p className={styles.time}>{formattedTime}</p>
+                <p>{m}</p>
+              </li>
+            )
+          };
+        }));
+      };
     };
   }, [selectedRoom, userInfo]);
 
