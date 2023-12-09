@@ -157,6 +157,16 @@ function App() {
     }
   }, [userInfo]);
 
+  /* useEffect(() => {
+    //every 10m
+    const intervalId = setInterval(() => {
+      bringSubjects();
+    }, 1000 * 60 * 10);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []); */
+
   return (
     <Router>
       <TopNotification
@@ -340,6 +350,7 @@ function App() {
                 likedGroups={likedGroups}
                 setLikedGroups={setLikedGroups}
                 setResponse={setResponse}
+                bringGroups={bringGroups}
               />
               <Footer />
             </div>
@@ -367,6 +378,7 @@ function App() {
                 reset={reset}
                 myGroups={myGroups}
                 setResponse={setResponse}
+                bringSubjects={bringSubjects}
               />
             </div>
           }
