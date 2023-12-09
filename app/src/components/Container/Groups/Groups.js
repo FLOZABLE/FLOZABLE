@@ -24,6 +24,7 @@ function Groups({
   setResponse,
   isSidebarOpen,
   isSidebarHovered,
+  bringGroups
 }) {
   
   const [tags, setTags] = useState([]);
@@ -47,6 +48,10 @@ function Groups({
       );
     }
   }, [subjects]);
+
+  useEffect(() => {
+    bringGroups();
+  }, []);
 
   return (
     <div className={styles.GroupsContainer}>
