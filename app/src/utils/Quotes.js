@@ -1,4 +1,5 @@
-const Quotes = ["\"We are what we repeatedly do. Excellence, then, is not an act, but a habit.\" -Will Durant",
+const Quotes = [
+    "\"We are what we repeatedly do. Excellence, then, is not an act, but a habit.\" -Will Durant",
     "\"A habit cannot be tossed out the window; it must be coaxed down the stairs a step at a time.\" -Mark Twain",
     "\"And once you understand that habits can change, you have the freedom and the responsibility to remake them.\" -Charles Duhigg",
     "\"Discipline is choosing between what you want now and what you want most.\" -Abraham Lincoln",
