@@ -36,6 +36,7 @@ function StudySidebar({
   setIsMic,
   isCam,
   isMic,
+  bringSubjects
 }) {
   const [items, setItems] = useState([
     {
@@ -45,6 +46,7 @@ function StudySidebar({
           className={`${styles.studyTool} ${
             isTimerModal ? styles.clicked : ""
           }`}
+          onClick={bringSubjects}
         >
           <Link to="/dashboard">
             <i>
