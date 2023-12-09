@@ -6,6 +6,7 @@ import { DateTime, Duration } from "luxon";
 import { timelineSort } from "../../../utils/timelineSorting"
 import { cyrb128 } from "../../../utils/Tool";
 import parse from "html-react-parser";
+import { findLongestFocus } from "./ChallengeTools";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -212,43 +213,13 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         let waitingForFetch = false;
 
         if (challengeName1 === "Longest Focus Last Week") { //using full name for readability in code
-            const dateDiff = DateTime.fromMillis(Date.now()).startOf('week').diff(challenge.firstRange[0], ['weeks']); //start of this week to start of range
-
-            const weeklyIndex1 = user1Subjects.weekly.focus.length - dateDiff.weeks - 1; //index of object (-1 for 0-index)
-            if (weeklyIndex1 >= 0) {
-                tempUser1.value1 = user1Subjects.weekly.focus[weeklyIndex1];
-            }
-            else {
-                tempUser1.value1 = 0; //they were not active last week
-            }
-
-            const weeklyIndex2 = user2Subjects.weekly.focus.length - dateDiff.weeks - 1;
-            if (weeklyIndex2 >= 0) {
-                tempUser2.value1 = user2Subjects.weekly.focus[weeklyIndex2];
-            }
-            else {
-                tempUser2.value1 = 0;
-            }
+            tempUser1.value1 = findLongestFocus(user1Subjects, challenge.firstRange[0], "Weekly");
+            tempUser2.value1 = findLongestFocus(user2Subjects, challenge.firstRange[0], "Weekly");
             setDescriptionEl1(<h3>Week of {challenge.firstRange[0].toFormat("DD")} ~ {challenge.firstRange[1].toFormat("DD")}</h3>);
         }
         else if (challengeName1 === "Longest Focus Yesterday") {
-            const dateDiff = DateTime.fromMillis(Date.now()).startOf('day').diff(challenge.firstRange[0], ['days']);
-
-            const dailyIndex1 = user1Subjects.daily.focus.length - dateDiff.days - 1;
-            if (dailyIndex1 >= 0) {
-                tempUser1.value1 = user1Subjects.daily.focus[dailyIndex1];
-            }
-            else {
-                tempUser1.value1 = 0;
-            }
-
-            const dailyIndex2 = user2Subjects.daily.focus.length - dateDiff.days - 1;
-            if (dailyIndex2 >= 0) {
-                tempUser2.value1 = user2Subjects.daily.focus[dailyIndex2];
-            }
-            else {
-                tempUser2.value1 = 0;
-            }
+            tempUser1.value1 = findLongestFocus(user1Subjects, challenge.firstRange[0], "Daily");
+            tempUser2.value1 = findLongestFocus(user2Subjects, challenge.firstRange[0], "Daily");
             setDescriptionEl1(<h3>On {challenge.firstRange[0].toFormat("DD")}</h3>);
         }
         else if (challengeName1 === "Total Study Time Last Week") {
