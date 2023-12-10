@@ -42,18 +42,17 @@ function StudySidebar({
     {
       id: 0,
       element: (
-        <div
+        <Link
+        to={"/dashboard/stats"}
           className={`${styles.studyTool} ${
             isTimerModal ? styles.clicked : ""
           }`}
           onClick={bringSubjects}
         >
-          <Link to="/dashboard">
             <i>
               <FontAwesomeIcon icon={faHome} />
             </i>
-          </Link>
-        </div>
+        </Link>
       ),
     },
 

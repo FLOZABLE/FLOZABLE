@@ -6,37 +6,31 @@ const DATETOSEC = 60 * 60 * 24;
 //time usage pie
 function updateTimeUsagePie(subjects, viewDate, type) {
   let data = [];
-  const labels = subjects.map(subject => {
-    const index = Math.floor((viewDate.getTime() / 1000 - subject.datum_point) / (60 * 60 * 24));
-    return subject.daily.total[index] ? subject.daily.total[index] : 0;
-  });
-
   const {firstDatumPoint} = subjects;
   if (type === 'Daily') {
     data = subjects.map(subject => {
       const {daily} = subject;
-      const index = Math.floor((viewDate.getTime() / 1000 - firstDatumPoint) / (60 * 60 * 24)) + 1;
+      const viewDateTime = DateTime.fromJSDate(viewDate).startOf('day');
+      const index = daily.total.length + Math.floor(viewDateTime.diffNow('days').days);
       return daily.total[index] ? daily.total[index] : 0;
     });
   } else if (type === 'Weekly') {
     data = subjects.map(subject => {
       const {weekly} = subject;
-      const index = Math.round(DateTime.fromJSDate(viewDate).startOf('week').diff(DateTime.fromSeconds(firstDatumPoint), 'week').weeks);
-      
+      const viewDateTime = DateTime.fromJSDate(viewDate).startOf('week');
+      const index = weekly.total.length + Math.floor(viewDateTime.diffNow('weeks').weeks);
       return weekly.total[index] ? weekly.total[index] : 0;
     });
   } else {
     data = subjects.map(subject => {
       const {monthly} = subject;
-      const datumPoint = new Date(firstDatumPoint * 1000);
-      let datumMonthStart = new Date(datumPoint.getFullYear(), datumPoint.getMonth(), 1);
-      const viewMonthStart = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
-      let diff = (viewMonthStart - datumMonthStart) / (1000 * 60 * 60 * 24);
-      return monthly.total[diff] ? monthly.total[diff] : 0;
+      const viewDateTime = DateTime.fromJSDate(viewDate).startOf('month');
+      const index = monthly.total.length + Math.floor(viewDateTime.diffNow('months').months);
+      return monthly.total[index] ? monthly.total[index] : 0;
     });
   }
   
-  return ({ labels: labels, data: data });
+  return ({ data: data });
 };
 
 function updateHourlyMatrix(subjects, matrixChartWidth, viewDate) {

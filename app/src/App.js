@@ -27,6 +27,7 @@ import NotificationModal from "./components/UI/NotificationModal/NotificationMod
 import ChatsModal from "./components/UI/ChatsModal/ChatsModal";
 import Friends from "./components/Container/Friends/Friends";
 import { filterGroups } from "../src/utils/Tool";
+import Themes from "./components/Container/Themes/Themes";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -94,6 +95,7 @@ function App() {
       .then((data) => {
         if (data.success) {
           setSubjects(timelineSort(data.subjects));
+          console.log('subject', data)
           //setSubjects(sortSubjects(data.subjects));
         }
       })
@@ -588,13 +590,11 @@ function App() {
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
               />
-              <Friends
+              <Themes
                 setIsSidebarOpen={setIsSidebarOpen}
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}
-                notifications={notifications}
-                setNotifications={setNotifications}
                 setResponse={setResponse}
               />
             </div>

@@ -62,7 +62,7 @@ Router.post('/challenge-request-reply', async (req, res) => {
       const challengeId = generateRandomId(10);
       const notificationUser = await userCache(userId);
       const socketNotif = { i: id, t: 3, f: notificationUser, d: date, c: challengeId };
-      const notification = { i: id, t: 3, f: userId, d: date, c: challengeId};
+      const notification = { i: id, t: 3, f: userId, d: date, c: challengeId };
       io.to(targetId).emit('notification', socketNotif);
       redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
 
@@ -136,101 +136,101 @@ Router.get('/', async (req, res) => {
 // post challenge
 Router.post('/create-challenge', async (req, res) => {
   autoSignin(req, res, (async () => {
-      try {
-          const userId = req.session.user_id;
-          const { challengeName, challengeDescription, startDate } = req.body;
+    try {
+      const userId = req.session.user_id;
+      const { challengeName, challengeDescription, startDate } = req.body;
 
-          const connection = pool.promise();
-          const [prevAmount] = await connection.query(`SELECT COUNT(*) FROM challengerooms WHERE user_id = ?`, [userId]);
+      const connection = pool.promise();
+      const [prevAmount] = await connection.query(`SELECT COUNT(*) FROM challengerooms WHERE user_id = ?`, [userId]);
 
-          if (prevAmount === 5) {
-              res.send({ success: false, reason: "You cannot have more than 5 open challenges" });
-              return;
-              // maximum 5 open challenges each user (can increase for premium)
-          }
-
-          const id = generateRandomId(10);
-
-          const challengeInfo = {
-              id: id,
-              host_id: userId, //the host
-              start_date: startDate, // day challenge starts
-              name: challengeName,
-              description: challengeDescription
-          };
-          const insertChallenge = await connection.query(`INSERT INTO challengerooms SET ?`, challengeInfo);
-
-          res.send({ success: true, msg: `Challenge posted successfuly` });
+      if (prevAmount === 5) {
+        res.send({ success: false, reason: "You cannot have more than 5 open challenges" });
+        return;
+        // maximum 5 open challenges each user (can increase for premium)
       }
-      catch (error) {
-          console.log(error)
-          res.send({ success: false, reason: 'On Error Occured' });
-      }
+
+      const id = generateRandomId(10);
+
+      const challengeInfo = {
+        id: id,
+        host_id: userId, //the host
+        start_date: startDate, // day challenge starts
+        name: challengeName,
+        description: challengeDescription
+      };
+      const insertChallenge = await connection.query(`INSERT INTO challengerooms SET ?`, challengeInfo);
+
+      res.send({ success: true, msg: `Challenge posted successfuly` });
+    }
+    catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'On Error Occured' });
+    }
   }));
 });
 
 // get challenges
 Router.get('/rooms', async (req, res) => {
   autoSignin(req, res, (async () => {
-      try {
-          const userId = req.session.user_id;
-          const { challengeName, challengeDescription, startDate } = req.params;
+    try {
+      const userId = req.session.user_id;
+      const { challengeName, challengeDescription, startDate } = req.params;
 
-          const connection = pool.promise();
-          const [challengeRooms] = await connection.query(`SELECT * from challengerooms`);
+      const connection = pool.promise();
+      const [challengeRooms] = await connection.query(`SELECT * from challengerooms`);
 
-          console.log(challengeRooms);
-          challengeRooms.map((room) => {
-            room.userInfo = userCache(room.host_id);
-          })
+      console.log(challengeRooms);
+      challengeRooms.map((room) => {
+        room.userInfo = userCache(room.host_id);
+      })
 
-          res.send({ success: true, data: challengeRooms});
-      }
-      catch (error) {
-          console.log(error)
-          res.send({ success: false, reason: 'On Error Occured' });
-      }
+      res.send({ success: true, data: challengeRooms });
+    }
+    catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'On Error Occured' });
+    }
   }));
 });
 
 // join challenge room
 Router.post('/join-challenge', async (req, res) => {
   autoSignin(req, res, (async () => {
-      try {
-          const userId = req.session.user_id;
-          const { joinId } = req.query;
+    try {
+      const userId = req.session.user_id;
+      const { joinId } = req.query;
 
-          const connection = pool.promise();
-          const [[challengeRoom]] = await connection.query(`SELECT * from challengerooms where id = `, [joinId]);
+      const connection = pool.promise();
+      const [[challengeRoom]] = await connection.query(`SELECT * from challengerooms where id = `, [joinId]);
 
-          console.log(challengeRoom);
+      console.log(challengeRoom);
 
-          if (!challengeRoom.id) {
-            res.send({ success: true, data: "Challenge Does Not Exist"});
-            return;
-          }
-
-          const challengeInfo = {
-            id: challengeRoom.id,
-            first_user_id: challengeRoom.host_id,
-            second_user_id: userId,
-            datum_point: challengeRoom.start_date
-          }
-          const insertChallenge = await connection.query(`INSERT INTO challenges SET ?`, challengeInfo);
-
-          const id = generateRandomId(5);
-          const date = Math.floor(new Date().getTime() / (1000 * 60));
-          const io = req.app.get('socketio');
-          const notification = { i: id, t: 3, f: userId, d: date, c: joinId};
-          io.to(challengeRoom.host_id).emit('notification', socketNotif);
-          redisClient.sAdd(`user:${challengeInfo.host_id}:notifications`, JSON.stringify(notification));
-
-          res.send({ success: true, data: "Challenge Accepted!"});
+      if (!challengeRoom.id) {
+        res.send({ success: true, data: "Challenge Does Not Exist" });
+        return;
       }
-      catch (error) {
-          console.log(error)
-          res.send({ success: false, reason: 'On Error Occured' });
+
+      const challengeInfo = {
+        id: challengeRoom.id,
+        first_user_id: challengeRoom.host_id,
+        second_user_id: userId,
+        datum_point: challengeRoom.start_date
       }
+      const insertChallenge = await connection.query(`INSERT INTO challenges SET ?`, challengeInfo);
+
+      const id = generateRandomId(5);
+      const date = Math.floor(new Date().getTime() / (1000 * 60));
+      const io = req.app.get('socketio');
+      const notification = { i: id, t: 3, f: userId, d: date, c: joinId };
+      io.to(challengeRoom.host_id).emit('notification', socketNotif);
+      redisClient.sAdd(`user:${challengeInfo.host_id}:notifications`, JSON.stringify(notification));
+
+      res.send({ success: true, data: "Challenge Accepted!" });
+    }
+    catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'On Error Occured' });
+    }
   }));
 });
 

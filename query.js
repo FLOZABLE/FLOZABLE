@@ -156,6 +156,19 @@ async function groupsChatRoomsGeneration() {
     };
     connection.query(`INSERT INTO chatrooms SET ?`, roomInfo);
   })
+};
+
+function createChallengeRoomsTable() {
+  const connection = pool.promise();
+  connection.query(`
+  CREATE TABLE challengerooms (
+    id VARCHAR(10),
+    host_id VARCHAR(20),
+    start_date INT,
+    name VARCHAR(30),
+    description VARCHAR(700)
+  );
+  `);
 }
 
-module.exports = {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, groupsChatRoomsGeneration};
+module.exports = { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, groupsChatRoomsGeneration, createChallengeRoomsTable };

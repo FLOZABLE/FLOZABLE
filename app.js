@@ -135,6 +135,7 @@ const rankingAPI = require('./API/ranking');
 const AiAPI = require('./API/AI');
 const challengeAPI = require('./API/challenges');
 const friendAPI = require('./API/friend');
+const themesAPI = require('./API/themes');
 
 
 //test
@@ -173,6 +174,7 @@ app.use('/api/ranking', rankingAPI);
 app.use('/api/ai', AiAPI);
 app.use('/api/challenges', challengeAPI);
 app.use('/api/friend', friendAPI);
+app.use('/api/themes', themesAPI);
 app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 
@@ -220,7 +222,7 @@ const {createBots, addId, deleteBots, botManager, createGroups, randomFriend} = 
 //addId();
 //createBots(0, 100);
 
-const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable} = require('./query');
+const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable} = require('./query');
 const { rankingManager } = require("./services/rankingUpdate");
 
 //createUsersTable();
@@ -233,6 +235,7 @@ const { rankingManager } = require("./services/rankingUpdate");
 //createDailyRankingTable();
 //createWeeklyRankingTable();
 //createMonthlyRankingTable();
+//createChallengeRoomsTable();
 
 rankingManager();
 

@@ -1,0 +1,103 @@
+import React, { useEffect, useState } from "react";
+import styles from "./CreateThemeModal.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBook, faLink, faPen, faXmark } from "@fortawesome/free-solid-svg-icons";
+import CustomInput from "../CustomInput/CustomInput";
+import ColorPalette from "../ColorPalette/ColorPalette";
+import BlobBtn from "../BlobBtn/BlobBtn";
+import SelectIcon from "../SelectIcon/SelectIcon";
+import { sortNewSubject } from "../../../utils/timelineSorting";
+import TextEditor from "../TextEditor/TextEditor";
+import TagContainerGen from "../TagContainerGen/TagContainerGen";
+
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
+function CreateThemeModal({
+  isOpen,
+  setIsOpen,
+  setResponse
+}) {
+  const [tags, setTags] = useState([]);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [url, setUrl] = useState("");
+
+  const submit = () => {
+    fetch(`${serverOrigin}/api/themes/create`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name, tags, description, url
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setResponse(data);
+      })
+      .catch((error) => console.error(error));
+  };
+
+  return (
+    <div
+      className={`${styles.CreateThemeModal} modal ${
+        isOpen ? "open" : ""
+      }`}
+    >
+      <div className={styles.header}>
+        <i
+          onClick={() => {
+            setIsOpen(false);
+          }}
+        >
+          <FontAwesomeIcon icon={faXmark} />
+        </i>
+      </div>
+      <div className={styles.content}>
+        <div className={styles.layer}>
+        <CustomInput
+              input={name}
+              handleInput={(e) => {setName(e.target.value)} }
+              icon={faPen}
+              placeHolder={"Theme Name"}
+              type={"text"}
+            />
+        </div>
+        <div className={styles.layer}>
+        <TextEditor
+              setDescription={setDescription}
+              description={description}
+            />
+        </div>
+        <div className={styles.layer}>
+        <CustomInput
+            input={url}
+            handleInput={(e) => {setUrl(e.target.value)} }
+            icon={faLink}
+            placeHolder={"Youtube Link"}
+            type={"text"}
+          />
+        </div>
+        <div className={styles.layer}>
+            <TagContainerGen
+              maxTags={10}
+              setTags={setTags}
+              handleCreatedTagsChange={(tags) => {setTags(tags)}}
+            />
+        </div>
+        <div className={styles.submitWrapper}>
+          <BlobBtn 
+          delay={-1}
+          name={"SUBMIT"}
+          color1={"#fff"}
+          color2={"var(--pink)"}
+          setClicked={submit}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default CreateThemeModal;
