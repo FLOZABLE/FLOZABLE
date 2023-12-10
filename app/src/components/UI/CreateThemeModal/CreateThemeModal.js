@@ -15,7 +15,8 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function CreateThemeModal({
   isOpen,
   setIsOpen,
-  setResponse
+  setResponse,
+  setThemes
 }) {
   const [tags, setTags] = useState([]);
   const [name, setName] = useState("");
@@ -35,6 +36,11 @@ function CreateThemeModal({
       .then((response) => response.json())
       .then((data) => {
         setResponse(data);
+        if (data.success) {
+          setThemes(prev => [...prev, 
+            data.themeInfo
+          ])
+        }
       })
       .catch((error) => console.error(error));
   };

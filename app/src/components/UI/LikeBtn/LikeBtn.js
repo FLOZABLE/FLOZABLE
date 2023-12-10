@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styles from "./LikeBtn.module.css";
 
-const LikeBtn = ({id, liked}) => {
-  const [likedBtn, setLikedBtn] = useState(false);
+const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-  const serverOrigin = process.env.REACT_APP_ORIGIN;
+const LikeBtn = ({id, liked, url=`${serverOrigin}/api/groups/like/${id}`}) => {
+  const [likedBtn, setLikedBtn] = useState(false);
 
   const handleLike = () => {
     setLikedBtn(!likedBtn);
-    fetch(`${serverOrigin}/api/groups/like/${id}`, {
+    fetch(url, {
       method: "post",
       headers: {
         'Content-Type': 'application/json'

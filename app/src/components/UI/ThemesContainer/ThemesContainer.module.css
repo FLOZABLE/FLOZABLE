@@ -10,7 +10,7 @@
 .ThemesContainer .Theme {
   display: flex;
   flex-direction: column;
-  background-color: red;
+  background-color: beige;
   border-radius: 20px;
   position: relative;
 }
@@ -19,7 +19,6 @@
   height: 200px;
   width: 100%;
   border-radius: 20px;
-  background-color: beige;
 }
 
 .ThemesContainer .Theme .description {
@@ -33,7 +32,6 @@
 }
 
 .Theme .tags {
-  background-color: antiquewhite;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -59,7 +57,7 @@
   height: 30px;
   padding: 0px 10px;
   border-radius: 20px;
-  background-color: aqua;
+  background-color: aliceblue;
 }
 
 .ThemesContainer .Theme .info li {

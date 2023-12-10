@@ -6,7 +6,6 @@
   display: flex;
   width: 100%;
   height: calc(100vh - 200px);
-  background-color: aqua;
 }
 
 .Themes .Swiper .Slide {
@@ -25,12 +24,13 @@
 
 .Themes .box {
   display: flex;
-  background-color: aqua;
+  background-color: aliceblue;
   padding: 30px;
   border-radius: 20px;
   justify-content: center;
   flex-direction: column;
   margin-bottom: 30px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .Themes .box#likedList {

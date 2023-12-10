@@ -169,6 +169,21 @@ function createChallengeRoomsTable() {
     description VARCHAR(700)
   );
   `);
+};
+
+function createThemesTable() {
+  const connection = pool.promise();
+  connection.query(`
+  CREATE TABLE themes (
+    id VARCHAR(10),
+    user_id VARCHAR(20),
+    likes TINYINT UNSIGNED default 0,
+    video_id VARCHAR(11),
+    name VARCHAR(40),
+    description VARCHAR(200) default '',
+    tags VARCHAR(300) default ''
+  );  
+  `);
 }
 
-module.exports = { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, groupsChatRoomsGeneration, createChallengeRoomsTable };
+module.exports = { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, groupsChatRoomsGeneration, createChallengeRoomsTable, createThemesTable };
