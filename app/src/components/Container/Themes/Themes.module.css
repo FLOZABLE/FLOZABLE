@@ -1,0 +1,54 @@
+.Themes {
+  display: flex;
+}
+
+.Themes .Swiper {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 200px);
+  background-color: aqua;
+}
+
+.Themes .Swiper .Slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rebeccapurple;
+  width: 100%;
+}
+
+.Themes .box#likedList .title {
+  display: flex;
+  justify-content: center;
+  font-size: 30px;
+}
+
+.Themes .box {
+  display: flex;
+  background-color: aqua;
+  padding: 30px;
+  border-radius: 20px;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 30px;
+}
+
+.Themes .box#likedList {
+  flex-direction: row;
+}
+
+.Themes .box .searchOptions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.Themes .box .searchOptions .tagContainerWrapper {
+  position: relative;
+  width: 300px;
+}
+
+.Themes .box .searchOptions .blobWrapper {
+  margin-left: auto;
+}

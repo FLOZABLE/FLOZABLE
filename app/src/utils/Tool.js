@@ -66,6 +66,6 @@ const cyrb128 = (str) => {
   h3 ^= h1;
   h4 ^= h1;
   return [h1 >>> 0, h2 >>> 0, h3 >>> 0, h4 >>> 0];
-}
+};
 
 export { cyrb128, filterGroups, getCountryCode, secondConverter };
