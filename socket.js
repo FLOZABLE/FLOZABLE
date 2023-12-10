@@ -153,6 +153,7 @@ connection.on('connection', (socket) => {
       if (subject) {
         if (groups.length) {
           //io.to(groups).emit('studying', userId, groups);
+          console.log('gd', userId)
           io.to(groups).emit(`studying:${userId}`, subject);
         };
         const userInfo = await userCache(userId);
@@ -169,7 +170,6 @@ connection.on('connection', (socket) => {
         redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
         redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
         subject.timeline_sum += start;
-        console.log(id, subjectId, subject)
         redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
 
         //total timer
@@ -192,6 +192,7 @@ connection.on('connection', (socket) => {
     const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId); */
     const subject = await subjectCache(userId, subjectId);
     if (activeSubject.id === subjectId && subject) {
+      console.log('gddd')
       if (groups.length) {
         io.to(groups).emit(`stopStudying:${userId}`);
       };
@@ -239,9 +240,10 @@ connection.on('connection', (socket) => {
     if (!groups.includes(groupId)) return;
     groups.map(group => {
       if (group !== groupId) {
-        socket.leave(groupId);
+        socket.leave(group);
       };
     });
+    socket.join(groupId);
     const now = DateTime.now().toSeconds().toFixed();
     redisClient.hSet(`user:${userId}`, `ActiveGroup`, JSON.stringify({id: groupId, time: now}));
     let friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");

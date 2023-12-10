@@ -27,7 +27,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Study(props) {
 
-  const { isStudy, setIsStudy, subjects, setSubjects, socket, userInfo, events, setEvents, reset, myGroups, isAddSubjectModal, setIsAddSubjectModal, setIsAddPlanModal } = props;
+  const { isStudy, setIsStudy, subjects, setSubjects, socket, userInfo, events, setEvents, reset, myGroups, isAddSubjectModal, setIsAddSubjectModal, setIsAddPlanModal, bringSubjects } = props;
 
   const [isTimerModal, setIsTimerModal] = useState(false);
   const [isMicModal, setIsMicModal] = useState(false);
@@ -158,6 +158,7 @@ function Study(props) {
       setIsViewGroups={setIsViewGroups}
       setIsCam={setIsCam}
       setIsMic={setIsMic}
+      bringSubjects={bringSubjects}
       />
       <div className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={`${styles.myGroupsViewerWrapper} ${isViewGroups ? styles.open : ''}`}>
