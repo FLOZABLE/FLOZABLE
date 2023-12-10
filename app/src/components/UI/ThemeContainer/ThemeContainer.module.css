@@ -1,37 +1,40 @@
-.ThemesContainer {
-  position: relative;
-  grid-template-columns: repeat(auto-fill, 400px);
-  justify-content: center;
-  gap: 20px;
-  width: 100%;
-  display: grid;
-}
-
-.ThemesContainer .Theme {
+.ThemeContainer {
   display: flex;
   flex-direction: column;
   background-color: beige;
   border-radius: 20px;
   position: relative;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
-.ThemesContainer .Theme .img {
+.ThemeContainer .name {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: aliceblue;
+  color: var(--purple);
+  border-radius: 20px;
+  height: 25px;
+  padding: 0px 10px;
+}
+
+.ThemeContainer .img {
   height: 200px;
   width: 100%;
   border-radius: 20px;
 }
 
-.ThemesContainer .Theme .description {
+.ThemeContainer .description {
   position: relative;
   height: 100px;
-  background-color: #fd8a8a;
 }
 
-.ThemesContainer .Theme .description .content {
+.ThemeContainer .description .content {
   margin: 15px;
 }
 
-.Theme .tags {
+.ThemeContainer .tags {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -39,15 +42,19 @@
   margin-bottom: 50px;
 }
 
-.Theme .tags .tag {
-  background-color: red;
+.ThemeContainer .tags .tag {
+  background-color: var(--purple);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 20px;
   height: 20px;
   padding: 0px 10px;
   margin: 0px 5px;
 }
 
-.ThemesContainer .Theme .info {
+.ThemeContainer .info {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -57,19 +64,24 @@
   height: 30px;
   padding: 0px 10px;
   border-radius: 20px;
-  background-color: aliceblue;
+  background-color: var(--purple);
+  color: #fff;
 }
 
-.ThemesContainer .Theme .info li {
+.ThemeContainer .info li {
   display: flex;
   margin: 0px 5px;
 }
 
-.ThemesContainer .Theme .info li i {
+.ThemeContainer .info li i {
   margin-right: 5px;
 }
 
-.Theme .bottom {
+.ThemeContainer .info li p {
+  color: #fff;
+}
+
+.ThemeContainer .bottom {
   position: absolute;
   bottom: 10px;
   display: flex;
@@ -78,11 +90,11 @@
   width: 100%;
 }
 
-.Theme .bottom > div {
+.ThemeContainer .bottom > div {
   margin: 0px 10px;
 }
 
-.Theme .bottom button {
+.ThemeContainer .bottom button {
   background-color: #fd8a8a;
   font-weight: 800;
   color: #fff;
