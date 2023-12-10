@@ -7,6 +7,7 @@ import {
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
 import worker from "../../../utils/subjectTimerWorker";
+import { socket } from "../../../socket";
 
 function SubjectTimer({
   subjects,
@@ -15,7 +16,6 @@ function SubjectTimer({
   setIsAddSubjectModal,
   setMyTimerTotal,
   reset,
-  socket,
 }) {
   const timerDispRef = useRef(null);
 
@@ -78,7 +78,10 @@ function SubjectTimer({
           onClick={(e) => {
             setSubjectTimer({ total: timeValue });
             setClicked(false);
-            setSubject(option);
+            if (isStudy) {
+              toggleTimer(subject);
+            };
+            setSubject(option)
             const targetElement = e.currentTarget.querySelector("p");
             timerDispRef.current = targetElement;
           }}
@@ -108,9 +111,9 @@ function SubjectTimer({
     );
 
     setOptions(subjectOptions);
-  }, [timeValues]);
+  }, [timeValues, isStudy]);
 
-  const toggleTimer = () => {
+  const toggleTimer = (subject) => {
     if (!isStudy) {
       worker.postMessage({ command: "startSubjectTimer" });
       socket.emit("start", subject.id);
@@ -160,6 +163,13 @@ function SubjectTimer({
     };
   }, [timeValues, subject]);
 
+  /* useEffect(() => {
+    if (subject && isStudy) {
+      socket.emit(`stop`, subject.id);
+      socket.emit(`stop`, subject.id);
+    }
+  }, [subject, isStudy]); */
+
   return (
     <div className={styles.SubjectTimer}>
       <div className={styles.timerWrapper}>
@@ -184,7 +194,7 @@ function SubjectTimer({
         <ul className={`${styles.options} customScroll`}>{options}</ul>
       </div>
       <div className={styles.buttonWrapper}>
-        <button onClick={toggleTimer} className={styles.toggleBtn}>
+        <button onClick={() => {toggleTimer(subject)}} className={styles.toggleBtn}>
           {isStudy ? (
             <FontAwesomeIcon icon={faPause} />
           ) : (
