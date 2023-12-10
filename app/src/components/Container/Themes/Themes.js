@@ -18,26 +18,46 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function Themes({
   isSidebarOpen,
   isSidebarHovered,
-  setResponse
+  setResponse,
+  userInfo
 }) {
 
   const [slidesEl, setSlidesEl] = useState([]);
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOpt, setSortOpt] = useState(0);
-  const [isCreateTemplateModal, setIsCreateTemplateModal] = useState(false);
+  const [isCreateThemeModal, setIsCreateThemeModal] = useState(false);
+  const [themes, setThemes] = useState([]);
   //const [is]
 
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
   };
 
+  useEffect(() => {
+    fetch(`${serverOrigin}/api/themes`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setThemes(data.themes);
+        };
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+
   return (
     <div className={styles.Themes}>
-      <CreateThemeModal 
-        isOpen={true}
-        setIsOpen={setIsCreateTemplateModal}
+      <CreateThemeModal
+        isOpen={isCreateThemeModal}
+        setIsOpen={setIsCreateThemeModal}
         setResponse={setResponse}
+        setThemes={setThemes}
       />
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.box} id={styles.likedList}>
@@ -105,10 +125,10 @@ function Themes({
                 <h2>Tags</h2>
               </div>
               <TagContainerGen
-              maxTags={10}
-              setTags={setTags}
-              handleCreatedTagsChange={handleCreatedTagsChange}
-            />
+                maxTags={10}
+                setTags={setTags}
+                handleCreatedTagsChange={handleCreatedTagsChange}
+              />
             </div>
             <div>
               <Search
@@ -128,13 +148,17 @@ function Themes({
             <div className={styles.blobWrapper}>
               <BlobBtn
                 name={"Upload template!"}
-                setClicked={setIsCreateTemplateModal}
+                setClicked={setIsCreateThemeModal}
                 color1={"#fff"}
                 color2={"var(--pink)"}
+                delay={-1}
               />
             </div>
           </div>
-          <ThemesContainer />
+          <ThemesContainer
+            themes={themes}
+            userInfo={userInfo}
+          />
         </div>
       </div>
     </div>
