@@ -3,52 +3,10 @@ import styles from "./MyCamDisp.module.css";
 import { mediaSocket } from "../../../mediaSocket";
 import { Device } from "mediasoup-client";
 
-function MyCamDisp({ stream, isFocus }) {
+function MyCamDisp({ stream, isFocus, device }) {
   const videoRef = useRef(null);
-
-  const [rtpCapabilities, setRtpCapabilities] = useState(false);
-  const [device, setDevice] = useState(null);
   const [producerTransport, setProducerTransport] = useState(null);
-  /**
- * Step 1: Retrieve the Router's RTP Capabilities.
- * This function requests the router's RTP capabilities from the server,
- * which are essential to configure the mediasoup Device.
- * The router's RTP capabilities describe the codecs and RTP parameters supported by the router.
- * This information is crucial for ensuring that the Device is compatible with the router.
- */
-const getRouterRtpCapabilities = async () => {
-  mediaSocket.emit("getRouterRtpCapabilities", (routerRtpCapabilities) => {
-    setRtpCapabilities(routerRtpCapabilities);
-    console.log(`getRouterRtpCapabilities:`, routerRtpCapabilities);
-  });
-};
-
-/**
- * Step 2: Create and Initialize the mediasoup Device.
- * This function creates a new mediasoup Device instance and loads the router's RTP capabilities into it.
- * The Device is a client-side entity that provides an API for managing sending/receiving media with a mediasoup server.
- * Loading the router's RTP capabilities ensures that the Device is aware of the codecs and RTP parameters it needs to use
- * to successfully send and receive media with the server.
- *
- * If the Device is unable to load the router's RTP capabilities (e.g., due to an unsupported browser),
- * an error is logged to the console.
- */
-const createDevice = async () => {
-  try {
-    const device = new Device();
-
-    setDevice(device);
-    console.log('new device', device)
-
-    await device.load({ routerRtpCapabilities: rtpCapabilities });
-  } catch (error) {
-    console.log(error);
-    if (error.name === "UnsupportedError") {
-      console.error("Browser not supported");
-    }
-  }
-};
-
+  const [params, setParams] = useState(null);
 /**
  * Step 3: Create a Transport for Sending Media.
  * This function initiates the creation of a transport on the server-side for sending media,
@@ -70,11 +28,12 @@ const createSendTransport = async () => {
        * The `device.createSendTransport` method creates a send transport instance on the client-side
        * using the parameters provided by the server.
        */
+      console.log('gd', params)
       let transport = device.createSendTransport(params);
       console.log('transport',transport)
-
       // Update the state to hold the reference to the created transport
       setProducerTransport(transport);
+      setParams(params);
 
       /**
          * Event handler for the "connect" event on the transport.
@@ -149,23 +108,23 @@ const createProducerTransport = async() => {
 }
 
   useEffect(() => {
+    if(!device) return;
+    createSendTransport();
+    //createProducerTransport();
+  }, [device]);
+
+  useEffect(() => {
     if (!stream || !isFocus) return;
     videoRef.current.srcObject = stream;
-    getRouterRtpCapabilities();
-    console.log(stream);
-  }, [stream, isFocus]);
-
-  useEffect(() => {
-    if (!rtpCapabilities) return;
-    createDevice();
-  }, [rtpCapabilities]);
-
-  useEffect(() => {
-    if(!device) return;
-    //createSendTransport();
-    createProducerTransport();
-  }, [device]);
+  }, [stream]);
   
+  useEffect(() => {
+    if (!producerTransport || !params || !isFocus || !stream) return;
+    const track = stream.getVideoTracks()[0];
+    console.log(track, params, stream, producerTransport)
+    const a = producerTransport.produce({track, ...params});
+    console.log('a',a)
+  }, [producerTransport, params, stream, isFocus]);
 
   return (
     <div className={styles.MyCamDisp}>

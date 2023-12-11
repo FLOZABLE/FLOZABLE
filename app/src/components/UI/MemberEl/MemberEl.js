@@ -7,9 +7,8 @@ import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 import { DateTime } from "luxon";
 import { socket } from "../../../socket";
 
-function MemberEl({ memberInfo, setStudyingMembers }) {
+function MemberEl({ memberInfo, setStudyingMembers, device, isFocus }) {
   const [run, setRun] = useState(0);
-  const [track, setTrack] = useState(null);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
     <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
@@ -60,7 +59,7 @@ function MemberEl({ memberInfo, setStudyingMembers }) {
 
   return (
     <div className={styles.member}>
-      <MemberCamDisp memberInfo={memberInfo} track={track} />
+      <MemberCamDisp memberInfo={memberInfo} device={device} isFocus={isFocus} />
       <div className={styles.inner}>
         <Link to={`/dashboard/user/${memberInfo.user_id}`}>
           <div className={styles.userName}>{memberInfo.name}</div>

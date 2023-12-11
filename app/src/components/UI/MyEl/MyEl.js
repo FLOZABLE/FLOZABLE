@@ -5,7 +5,7 @@ import MyCamDisp from "../MyCamDisp/MyCamDisp";
 import MyTimer from "../MyTimer/MyTimer";
 import { DateTime } from "luxon";
 
-function MyEl({ memberInfo, socket, setStudyingMembers, localStream, isFocus }) {
+function MyEl({ memberInfo, socket, setStudyingMembers, localStream, isFocus, device }) {
   const [run, setRun] = useState(0);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
@@ -59,7 +59,7 @@ function MyEl({ memberInfo, socket, setStudyingMembers, localStream, isFocus }) 
 
   return (
     <div className={styles.member}>
-      <MyCamDisp stream={localStream} isFocus={isFocus} />
+      <MyCamDisp stream={localStream} isFocus={isFocus} device={device} />
       <div className={styles.inner}>
         <div className={styles.userName}>{memberInfo.name}</div>
         <div className={styles.icon}>{studyIcon}</div>
