@@ -173,16 +173,12 @@ Router.post('/create-challenge', async (req, res) => {
 Router.get('/rooms', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
-      const userId = req.session.user_id;
-      const { challengeName, challengeDescription, startDate } = req.params;
-
       const connection = pool.promise();
       const [challengeRooms] = await connection.query(`SELECT * from challengerooms`);
 
-      console.log(challengeRooms);
-      challengeRooms.map((room) => {
-        room.userInfo = userCache(room.host_id);
-      })
+      await Promise.all(challengeRooms.map(async (room) => {
+        room.userInfo = await userCache(room.host_id);
+      }));
 
       res.send({ success: true, data: challengeRooms });
     }
@@ -198,15 +194,13 @@ Router.post('/join-challenge', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
       const userId = req.session.user_id;
-      const { joinId } = req.query;
+      const { joinId } = req.body;
 
       const connection = pool.promise();
-      const [[challengeRoom]] = await connection.query(`SELECT * from challengerooms where id = `, [joinId]);
-
-      console.log(challengeRoom);
+      const [[challengeRoom]] = await connection.query(`SELECT * from challengerooms where id = ?`, [joinId]);
 
       if (!challengeRoom.id) {
-        res.send({ success: true, data: "Challenge Does Not Exist" });
+        res.send({ success: false, reason: "Challenge Does Not Exist" });
         return;
       }
 
@@ -222,10 +216,14 @@ Router.post('/join-challenge', async (req, res) => {
       const date = Math.floor(new Date().getTime() / (1000 * 60));
       const io = req.app.get('socketio');
       const notification = { i: id, t: 3, f: userId, d: date, c: joinId };
+      const notificationUser = await userCache(userId);
+      const socketNotif = { i: id, t: 3, f: notificationUser, d: date, c: joinId };
       io.to(challengeRoom.host_id).emit('notification', socketNotif);
-      redisClient.sAdd(`user:${challengeInfo.host_id}:notifications`, JSON.stringify(notification));
+      redisClient.sAdd(`user:${challengeRoom.host_id}:notifications`, JSON.stringify(notification));
 
-      res.send({ success: true, data: "Challenge Accepted!" });
+      const deleteChallenge = await connection.query(`DELETE FROM challengerooms WHERE ID = ?`, [challengeRoom.id]);
+
+      res.send({ success: true, msg: "Challenge Accepted!" });
     }
     catch (error) {
       console.log(error)
