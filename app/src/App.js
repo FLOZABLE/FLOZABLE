@@ -28,6 +28,7 @@ import ChatsModal from "./components/UI/ChatsModal/ChatsModal";
 import Friends from "./components/Container/Friends/Friends";
 import { filterGroups } from "../src/utils/Tool";
 import Themes from "./components/Container/Themes/Themes";
+import ChallengeRooms from "./components/Container/ChallengeRooms/ChallengeRooms";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -591,6 +592,38 @@ function App() {
                 isChatModal={isChatModal}
               />
               <Themes
+                setIsSidebarOpen={setIsSidebarOpen}
+                isSidebarOpen={isSidebarOpen}
+                isSidebarHovered={isHovered}
+                userInfo={userInfo}
+                setResponse={setResponse}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/dashboard/challenges"
+          element={
+            <div>
+              <Sidebar
+                isSidebarOpen={isSidebarOpen}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                isSidebarHovered={isHovered}
+              />
+              <Header
+                setIsAddPlanModal={setIsAddPlanModal}
+                isAddPlanModal={isAddPlanModal}
+                setPlans={setPlans}
+                plans={plans}
+                subjects={subjects}
+                onToggleSidebar={toggleSidebar}
+                isSidebarOpen={isSidebarOpen}
+                isSidebarHovered={isHovered}
+                setIsChatModal={setIsChatModal}
+                isChatModal={isChatModal}
+              />
+              <ChallengeRooms
                 setIsSidebarOpen={setIsSidebarOpen}
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
