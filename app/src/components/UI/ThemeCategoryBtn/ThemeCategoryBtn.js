@@ -29,7 +29,7 @@ function ThemeCategoryBtn({
       .then((data) => {
         setResponse(data);
         if (data.success) {
-          setDisp(`Saved to ${options[category]}`)
+          setDisp(`Saved to ${options[category].split(":")[0]}`)
         }
       })
       .catch((error) => console.error(error));
@@ -50,9 +50,12 @@ function ThemeCategoryBtn({
       </p>
       <ul className={styles.options}>
         {options.map((option, i) => {
+          const optionArr = option.split(":");
+          const optionName = optionArr[0];
+          const optionIndex = parseInt(optionArr[1]);
           return (
-            <div className={styles.option} key={i} onClick={() => {setCategory(i)}}>
-              <p>{option}</p>
+            <div className={styles.option} key={i} onClick={() => {setCategory(optionIndex)}}>
+              <p>{optionName}</p>
             </div>
           )
         })}
