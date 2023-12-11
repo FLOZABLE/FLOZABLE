@@ -320,4 +320,4 @@ cron.schedule('*/10 * * * * *', () => {
 });
 
 module.exports = { io, userIdToSocketIdMap, connection };
-//require('./videoServer')
+require('./videoServer')

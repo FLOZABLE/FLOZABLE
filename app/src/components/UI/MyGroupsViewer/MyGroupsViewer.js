@@ -79,41 +79,13 @@ function MyGroupsViewer({
             userInfo={userInfo}
             socket={socket}
             localStream={localStream}
+            isCam={isCam}
+            isMic={isMic}
           />
         </SwiperSlide>
       )
     }));
-  }, [myGroups, selectedGroupIndex, localStream]);
-
-  useEffect(() => {
-    if (isCam || isMic) {
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: true,
-          video: {
-            width: {
-              min: 640,
-              max: 1920,
-            },
-            height: {
-              min: 400,
-              max: 1080,
-            }
-          }
-        })
-        .then(async(stream) => {
-          setLocalStream(stream);
-          try {
-            videoParams = { track: stream.getVideoTracks()[0], ...videoParams };
-          //const videoProducer = await producerTransport.produce(videoParams);
-          audioParams = { track: stream.getAudioTracks()[0], ...audioParams };
-          //const audioProducer = await producerTransport.produce(audioParams);
-          } catch (err) {
-            console.log(err);
-          }
-        });
-    };
-  }, [isCam, isMic]);
+  }, [myGroups, selectedGroupIndex, localStream, isMic, isCam]);
 
   return (
     <div
