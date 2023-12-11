@@ -1,0 +1,65 @@
+import { useEffect, useState } from "react";
+import styles from "./ThemeCategoryBtn.module.css";
+
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
+const options = [
+  'Cafe', 'Rain', 'Ghibli'
+]
+
+function ThemeCategoryBtn({
+  themeId,
+  setResponse
+}) {
+  const [category, setCategory] = useState(-2);
+  const [disp, setDisp] = useState("Save");
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (category === -2 || !themeId) return;
+    fetch(`${serverOrigin}/api/themes/save`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        themeId, category
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setResponse(data);
+        if (data.success) {
+          setDisp(`Saved to ${options[category]}`)
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [category, themeId]);
+
+  return (
+    <button className={`${styles.ThemeCategoryBtn} ${isOpen ? styles.open : ''}`}
+    onFocus={() => {
+      setIsOpen(true)
+    }}
+    onBlur={() => {
+      setIsOpen(false)
+    }}
+    >
+      <p className={styles.categoryDisp}
+      >
+        {disp}
+      </p>
+      <ul className={styles.options}>
+        {options.map((option, i) => {
+          return (
+            <div className={styles.option} key={i} onClick={() => {setCategory(i)}}>
+              <p>{option}</p>
+            </div>
+          )
+        })}
+      </ul>
+    </button>
+  );
+};
+
+export default ThemeCategoryBtn;

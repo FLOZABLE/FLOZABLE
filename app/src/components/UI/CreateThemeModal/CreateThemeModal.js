@@ -60,7 +60,7 @@ function CreateThemeModal({
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
-      <div className={styles.content}>
+      <div className={`${styles.content} customScroll`}>
         <div className={styles.layer}>
         <CustomInput
               input={name}
