@@ -1,4 +1,4 @@
-const {createWorker} = require('mediasoup');
+const mediaSoup = require('mediasoup');
 const {io} = require('./socket');
 const { groupCache } = require("./services/redisLoader");
 const {sessionMiddleWare} = require('./app');
@@ -7,70 +7,6 @@ const mediaSocket = io.of('/mediaSocket');
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 mediaSocket.use(wrap(sessionMiddleWare));
 
-let worker1 = (async() => {
-  worker1 = await createWorker({
-    rtcMinPort: 10000,
-    rtcMaxPort: 10100,
-    logLevel: 'warn',
-    logTags: [
-      'info',
-      'ice',
-      'dtls',
-      'rtp',
-      'srtp',
-      'rtcp'
-      // 'rtx',
-      // 'bwe',
-      // 'score',
-      // 'simulcast',
-      // 'svc'
-    ]
-  })
-  console.log(`worker pid ${worker1.pid}`)
-
-  worker1.on('died', error => {
-    // This implies something serious happened, so kill the application
-    console.error('mediasoup worker has died')
-    setTimeout(() => process.exit(1), 2000) // exit in 2 seconds
-  });
-
-  return worker1
-})();
-
-let worker2 = (async() => {
-  worker2 = await createWorker({
-    rtcMinPort: 10000,
-    rtcMaxPort: 10100,
-    logLevel: 'warn',
-    logTags: [
-      'info',
-      'ice',
-      'dtls',
-      'rtp',
-      'srtp',
-      'rtcp'
-      // 'rtx',
-      // 'bwe',
-      // 'score',
-      // 'simulcast',
-      // 'svc'
-    ]
-  })
-  console.log(`worker pid ${worker2.pid}`)
-
-  worker2.on('died', error => {
-    // This implies something serious happened, so kill the application
-    console.error('mediasoup worker has died')
-    setTimeout(() => process.exit(1), 2000) // exit in 2 seconds
-  });
-
-  return worker2
-})();
-
-// This is an Array of RtpCapabilities
-// https://mediasoup.org/documentation/v3/mediasoup/rtp-parameters-and-capabilities/#RtpCodecCapability
-// list of media codecs supported by mediasoup ...
-// https://github.com/versatica/mediasoup/blob/v3/src/supportedRtpCapabilities.ts
 const mediaCodecs = [
   {
     kind: 'audio',
@@ -86,55 +22,126 @@ const mediaCodecs = [
       'x-google-start-bitrate': 1000,
     },
   },
-]
+];
 
-mediaSocket.on('connection', async (socket) => {
-  const router = await worker1.createRouter({mediaCodecs});
-  /**
-   * Event handler for fetching router RTP capabilities.
-   * RTP capabilities are required for configuring transports and producers/consumers.
-   * This function is called when a peer requests the router RTP capabilities.
-   * The callback function is used to send the router RTP capabilities to the peer.
-   */
-  let producer = null;
-  let consumer = null;
-  socket.on("getRouterRtpCapabilities", (callback) => {
-
-    const rtpCapabilities = router.rtpCapabilities
-
-    // call callback from the client and send back the rtpCapabilities
-    callback({ rtpCapabilities })
+async function createWorker() {
+  const worker = await mediaSoup.createWorker({
+    rtcMinPort: 10000,
+    rtcMaxPort: 10100,
+    logLevel: 'warn',
+    logTags: [
+      'info',
+      'ice',
+      'dtls',
+      'rtp',
+      'srtp',
+      'rtcp'
+      // 'rtx',
+      // 'bwe',
+      // 'score',
+      // 'simulcast',
+      // 'svc'
+    ]
   });
 
-  /**
-   * Event handler for creating a transport.
-   * A transport is required for sending or producing media.
-   * The callback function is used to send the transport parameters to the peer.
-   * @param {boolean} data.sender - Indicates whether the transport is for sending or receiving media.
-   * @param {function} callback - A callback function to handle the result of the transport creation.
-   */
-  socket.on("createTransport", async ({ sender }, callback) => {
-    // ... Creating sender/receiver transports ...
-    if (sender) {
-      const params = await handleWebrtcRecvStart(router);
-      callback({ params });
+  worker.on("died", () => {
+    console.error("mediasoup worker died (this should never happen)");
+    process.exit(1);
+  });
+
+  const router = await worker.createRouter({ mediaCodecs });
+  return {worker, router};
+};
+
+/**
+ * {userId:{produce info}, }
+ */
+const producers = {};
+const consumers = {};
+
+(async() => {
+  const worker = await createWorker();
+  mediaSocket.on('connection', async (socket) => {
+    let session;
+
+    if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
+      try {
+        session = socket.request.session;
+      } catch (err) {
+        console.log(err);
+      };
     } else {
-      consumer = await handleWebrtcRecvStart(router);
-    }
+      session = {
+        cookie: {
+          path: '/',
+          _expires: null,
+          originalMaxAge: null,
+          httpOnly: true,
+          secure: false
+        },
+        user_id: 'EoFObpf612bdJKt',
+        name: 't1',
+        loggedin: true,
+        userInfo: {
+          userId: 'EoFObpf612bdJKt',
+          name: 't1',
+          loggedin: true,
+          email: 't1@t.t',
+          myinfo: null,
+          timeZone: 'America/Los_Angeles'
+        }
+      };
+    };
+    const userId = session.user_id;
+    console.log('mediasocket',userId)
+
+    /**
+     * Event handler for fetching router RTP capabilities.
+     * RTP capabilities are required for configuring transports and producers/consumers.
+     * This function is called when a peer requests the router RTP capabilities.
+     * The callback function is used to send the router RTP capabilities to the peer.
+     */
+    const {router} = worker;
+    socket.on("getRouterRtpCapabilities", (callback) => {
+  
+      const rtpCapabilities = router.rtpCapabilities
+  
+      // call callback from the client and send back the rtpCapabilities
+      callback({ rtpCapabilities })
+    });
+  
+    /**
+     * Event handler for creating a transport.
+     * A transport is required for sending or producing media.
+     * The callback function is used to send the transport parameters to the peer.
+     * @param {boolean} data.sender - Indicates whether the transport is for sending or receiving media.
+     * @param {function} callback - A callback function to handle the result of the transport creation.
+     */
+    socket.on("createTransport", async ({ sender }, callback) => {
+      // ... Creating sender/receiver transports ...
+      const {transport, params} = await createWebRtcTransport(router);
+      if (sender) {
+        producers[userId] = transport;
+        callback({ params });
+      } else {
+        consumers[userId] = transport;
+      }
+    });
+  
+    /* socket.on('createProducerTransport', async (callback) => {
+      try {
+        const { transport, params } = await createWebRtcTransport(router);
+        //producerTransport = transport;
+        callback(params);
+      } catch (err) {
+        console.error(err);
+        callback({ error: err.message });
+      }
+    }); */
   });
 
-  socket.on('createProducerTransport', async (callback) => {
-    try {
-      const { transport, params } = await createWebRtcTransport(router);
-      //producerTransport = transport;
-      addTransport(transport, roomName, false, socket.id, false)
-      callback(params);
-    } catch (err) {
-      console.error(err);
-      callback({ error: err.message });
-    }
-  });
-});
+
+})();
 
 /* 
 
@@ -213,12 +220,6 @@ async function createWebRtcTransport(router) {
     }
   })
 
-  if (maxIncomingBitrate) {
-    try {
-      await transport.setMaxIncomingBitrate(maxIncomingBitrate);
-    } catch (error) {
-    }
-  }
   return {
     transport,
     params: {
