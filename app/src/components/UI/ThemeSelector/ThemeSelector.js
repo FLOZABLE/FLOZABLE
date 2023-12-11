@@ -21,14 +21,18 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        const userThemes = data.themes.themes.split(",");
+        let userThemes = [];
+        if (data.themes.themes !== ""){
+          userThemes = data.themes.themes.split(",");
+        }
         const allIds = [];
         const allCategories = [];
         userThemes.map((theme) => {
           const categoryAndId = theme.split(":");
           const categoryName = AllCategories[parseInt(categoryAndId[0])];
+          console.log(categoryName);
           allIds.push(categoryAndId[1]);
-          allCategories.push(categoryName);
+          allCategories.push(categoryName.split(":")[0]);
         });
 
         fetch(`${serverOrigin}/api/themes/videoIds?searchIds=${allIds}`, {
