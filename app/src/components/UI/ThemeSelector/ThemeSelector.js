@@ -1,5 +1,5 @@
 import styles from "./ThemeSelector.module.css";
-import { AllThemes } from "../../../utils/Themes";
+import { AllCategories, AllThemes } from "../../../utils/Themes";
 import CustomInput from "../CustomInput/CustomInput";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
@@ -15,25 +15,55 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
   const [themesList, setThemesList] = useState(null);
 
   useEffect(() => {
-    const tempThemes = [];
-    AllThemes.map((theme) => {
-      theme.category.map((category) => {
-        let newTheme = true;
-        tempThemes.map((t) => {
-          if (t.name === category){
-            t.choices.push(theme);
-            newTheme = false;
-          }
-        })
+    console.log(AllThemes);
+    fetch(`${serverOrigin}/api/themes/user`, {
+      method: 'get'
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const userThemes = data.themes.themes.split(",");
+        const allIds = [];
+        const allCategories = [];
+        userThemes.map((theme) => {
+          const categoryAndId = theme.split(":");
+          const categoryName = AllCategories[parseInt(categoryAndId[0])];
+          allIds.push(categoryAndId[1]);
+          allCategories.push(categoryName);
+        });
 
-        if (newTheme) {
-          tempThemes.push({name: category, choices: [theme], img: theme.img});
-        }
+        fetch(`${serverOrigin}/api/themes/videoIds?searchIds=${allIds}`, {
+          method: 'get'
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const everyTheme = [...AllThemes]; //AllThemes + userThemes
+
+            data.info.map((currentTheme, i) => {
+              console.log(`https://i.ytimg.com/vi/${currentTheme.video_id}/maxresdefault.jpg`);
+              everyTheme.push({ id: allIds[i], img: `https://i.ytimg.com/vi/${currentTheme.video_id}/maxresdefault.jpg`, name: currentTheme.name, category: [allCategories[i]] });
+            });
+
+            const tempThemes = [];
+            everyTheme.map((theme) => {
+              theme.category.map((category) => {
+                let newTheme = true;
+                tempThemes.map((t) => {
+                  if (t.name === category) {
+                    t.choices.push(theme);
+                    newTheme = false;
+                  }
+                })
+
+                if (newTheme) {
+                  tempThemes.push({ name: category, choices: [theme], img: theme.img });
+                }
+              });
+            });
+            setThemesList(tempThemes);
+            console.log(tempThemes);
+          });
       });
-    });
-    setThemesList(tempThemes);
-    console.log(tempThemes);
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (!!!themesList) return;
@@ -50,7 +80,7 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
                   setThemeChoices(Theme.choices);
                 }}
                 style={{
-                  backgroundImage: `url("${serverOrigin}/img/Themes/${Theme.img}")`,
+                  backgroundImage: Theme.img.startsWith("https:") ? `url("${Theme.img}"` : `url("${serverOrigin}/img/Themes/${Theme.img}")`,
                   backgroundSize: "cover",
                   backgroundPosition: "center center",
                   backgroundRepeat: "no-repeat",
@@ -78,7 +108,7 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
                   setVideoId(Theme.id);
                 }}
                 style={{
-                  backgroundImage: `url("${serverOrigin}/img/Themes/${Theme.img}")`,
+                  backgroundImage: Theme.img.startsWith("https:") ? `url("${Theme.img}"` : `url("${serverOrigin}/img/Themes/${Theme.img}")`,
                   backgroundSize: "cover",
                   backgroundPosition: "center center",
                   backgroundRepeat: "no-repeat",
