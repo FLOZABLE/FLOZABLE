@@ -31,11 +31,11 @@ Router.post('/sort', async (req, res) => {
           if (startTime / 1000 <= startUnix && stopUnix <= stopTime / 1000) {
             user.total += duration;
             user.focus = Math.max(user.focus, duration);
-          } else if (startTime <= stopUnix) {
+          } else if (startTime / 1000 <= stopUnix) {
             //this is the case when time range is between the starttime and stop time
             //console.log(stopUnix, startUnix, timelineSum)
             //user.total += stopUnix - startTime;
-          } else if (startTime <= startUnix) {
+          } else if (startTime / 1000 <= startUnix) {
             //stop running the loop
             return true;
           };

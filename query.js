@@ -177,11 +177,11 @@ function createThemesTable() {
   CREATE TABLE themes (
     id VARCHAR(10),
     user_id VARCHAR(20),
-    likes TINYINT UNSIGNED default 0,
+    likes VARCHAR(300) DEFAULT '',
     video_id VARCHAR(11),
     name VARCHAR(40),
-    description VARCHAR(200) default '',
-    tags VARCHAR(300) default ''
+    description VARCHAR(200),
+    tags VARCHAR(300) DEFAULT ''
   );  
   `);
 }

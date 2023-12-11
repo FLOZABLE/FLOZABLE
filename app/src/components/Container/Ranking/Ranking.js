@@ -70,7 +70,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-
+          console.log(data);
           setRanking(data.data);
         }
       })

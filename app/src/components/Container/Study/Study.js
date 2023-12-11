@@ -58,7 +58,7 @@ function Study(props) {
   const [repeat, setRepeat] = useState(0);
   const [priority, setPriority] = useState(50);
   const [notification, setNotification] = useState(-1);
-  const [submit, setSubmit] = useState(false);
+  const [submit, setSubmit] = useState(() => () => {alert("In progress")});
 
   const handleLinkInput = (e) => {
     setLink(e.target.value);
