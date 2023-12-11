@@ -13,6 +13,8 @@ import DropDownButton from "../../UI/DropDownButton/DropDownButton";
 import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 import ThemesContainer from "../../UI/ThemesContainer/ThemesContainer";
 import CreateThemeModal from "../../UI/CreateThemeModal/CreateThemeModal";
+import StuckModal from "../../UI/StuckModal/StuckModal";
+
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Themes({
@@ -59,6 +61,7 @@ function Themes({
         setResponse={setResponse}
         setThemes={setThemes}
       />
+      <StuckModal />
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.box} id={styles.likedList}>
           <div className={styles.title}>
@@ -158,6 +161,7 @@ function Themes({
           <ThemesContainer
             themes={themes}
             userInfo={userInfo}
+            setResponse={setResponse}
           />
         </div>
       </div>

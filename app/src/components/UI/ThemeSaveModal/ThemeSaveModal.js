@@ -7,21 +7,19 @@ import { useEffect, useState } from "react";
 import parse from "html-react-parser";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
 import ThemeUsageCounter from "../ThemeUsageCounter/ThemeUsageCounter";
-import DropDownButton from "../DropDownButton/DropDownButton";
-import ThemeCategoryBtn from "../ThemeCategoryBtn/ThemeCategoryBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ThemeContainer({ theme, userInfo, setResponse }) {
+function ThemeContainer({ theme, userInfo }) {
   const [liked, setLiked] = useState(false);
-
+  
   useEffect(() => {
     if (!theme || !userInfo) return;
     const likes = theme.likes === "" ? [] : theme.likes.split(",");
     if (likes.includes(userInfo.user_id)) {
       setLiked(true);
     };
-
+    
   }, [theme, userInfo]);
 
   return (
@@ -43,7 +41,7 @@ function ThemeContainer({ theme, userInfo, setResponse }) {
             <i>
               <FontAwesomeIcon icon={faHeart} />
             </i>
-            <GroupLikesCounter
+            <GroupLikesCounter 
               initialMembers={(theme?.likes ? theme.likes.split(',') : [])}
               groupId={theme?.id}
             />
@@ -52,7 +50,7 @@ function ThemeContainer({ theme, userInfo, setResponse }) {
             <i>
               <FontAwesomeIcon icon={faPeopleGroup} />
             </i>
-            <ThemeUsageCounter
+            <ThemeUsageCounter 
               initialVal={0}
             />
           </li>
@@ -69,15 +67,16 @@ function ThemeContainer({ theme, userInfo, setResponse }) {
       <div className={styles.bottom}>
         <div className={styles.likeBtnWrapper}>
           <LikeBtn liked={liked} id={theme?.id}
-            url={`${serverOrigin}/api/themes/like/${theme?.id}`}
+          url={`${serverOrigin}/api/themes/like/${theme?.id}`}
           />
         </div>
-        <div>
-          <ThemeCategoryBtn 
-          themeId={theme?.id}
-          setResponse={setResponse}
-          />
-        </div>
+        <button
+          onClick={() => {
+            /* joinGroup('groupInfo'); */
+          }}
+        >
+          Save
+        </button>
         <GroupUrlBtn text={`https://flozable.com/groups/join/${theme?.id}`} />
       </div>
     </div>

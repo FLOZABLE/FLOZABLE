@@ -8,7 +8,8 @@ import ThemeContainer from "../ThemeContainer/ThemeContainer";
 
 function ThemesContainer({
   themes,
-  userInfo
+  userInfo,
+  setResponse
 }) {
   const [ThemesEl, setThemesEl] = useState([]);
 
@@ -20,6 +21,7 @@ function ThemesContainer({
         theme={theme}
         key={i}
         userInfo={userInfo}
+        setResponse={setResponse}
         />
       )
     }));
