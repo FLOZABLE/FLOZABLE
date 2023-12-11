@@ -33,16 +33,6 @@ function MembersContainer({isFocus, userInfo, groupInfo, socket, setStudyingMemb
   }, [isFocus, userInfo, groupInfo]);
 
   useEffect(() => {
-    if(!isFocus) return;
-    try {
-      device = new Device();
-      console.log(device)
-    } catch (err) {
-      console.log(err);
-    }
-  }, [isFocus]);
-
-  useEffect(() => {
     if (isCam || isMic) {
       navigator.mediaDevices
         .getUserMedia({
@@ -79,6 +69,7 @@ function MembersContainer({isFocus, userInfo, groupInfo, socket, setStudyingMemb
           socket={socket}
           setStudyingMembers={setStudyingMembers}
           localStream={localStream}
+          isFocus={isFocus}
           />
         )
       } else {
@@ -88,11 +79,12 @@ function MembersContainer({isFocus, userInfo, groupInfo, socket, setStudyingMemb
           key={i}
           socket={socket}
           setStudyingMembers={setStudyingMembers}
+          isFocus={isFocus}
           />
         )
       }
     }));
-  }, [members, localStream, userInfo]);
+  }, [members, localStream, userInfo, isFocus]);
 
   return (
     <div className={styles.MembersContainer}>

@@ -1,27 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBullseye, faHeart, faLink, faPeopleGroup, faPlus, faStopwatch } from '@fortawesome/free-solid-svg-icons';
-import TopNotification from '../../UI/TopNotification/TopNotification';
+import React, { useState, useEffect } from 'react';
 import styles from "./Study.module.css";
-import { setGroupMembers, getMyGroups } from './StudyTool';
 import MyGroupsViewer from '../../UI/MyGroupsViewer/MyGroupsViewer';
 import YouTubePlayer from '../../UI/YouTubePlayer/YouTubePlayer';
-import StudyHeader from '../../UI/StudyHeader/StudyHeader';
 import PlanTimelineBar from '../../UI/PlanTimelineBar/PlanTimelineBar';
-import EventModal from '../../UI/EventModal/EventModal';
-import { sortSubjects } from '../../Container/Stats/StatTools';
-import generateRandomId from "../../../utils/RandomId";
 import StudySidebar from '../../UI/StudySidebar/StudySidebar';
-import { DndProvider, useDrag, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import SubjectTimer from '../../UI/SubjectTimer/SubjectTimer';
 import StudyModalContainer from '../../UI/StudyModalContainer/StudyModalContainer';
 import PlanTimeline from '../../UI/PlanTimeline/PlanTimeline';
-import CustomInput from '../../UI/CustomInput/CustomInput';
 import VolumeControl from '../../UI/VolumeControl/VolumeControl';
-import Draggable from "react-draggable";
 import ThemeSelector from '../../UI/ThemeSelector/ThemeSelector';
-import { mediaSocket } from '../../../mediaSocket';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -78,10 +65,6 @@ function Study(props) {
       });
     };
   }, [myGroups]);
-
-  useEffect(() => {
-    mediaSocket.connect();
-  }, []);
 
   useEffect(() => {
     /* if (isZoom) {
