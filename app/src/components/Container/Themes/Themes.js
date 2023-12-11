@@ -65,7 +65,7 @@ function Themes({
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.box} id={styles.likedList}>
           <div className={styles.title}>
-            <h1>Checkout the most liked themes this week!</h1>
+            <h1>Check out the most liked themes this week!</h1>
           </div>
           {/* {slidesEl.length ?
             <Swiper>

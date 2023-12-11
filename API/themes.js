@@ -19,6 +19,35 @@ Router.get('/', async (req, res) => {
   }
 });
 
+Router.get('/user', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const connection = pool.promise();
+      const userId = req.session.user_id;
+      const [[themes]] = await connection.query("SELECT themes from users where user_id = ?", [userId]);
+      return res.send({ success: true, themes });
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false });
+    }
+  }));
+})
+
+Router.get('/videoIds', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const connection = pool.promise();
+      const { searchIds } = req.query;
+      console.log(searchIds);
+      const [info] = await connection.query("SELECT video_id, name FROM themes WHERE id IN (?)", [searchIds.split(",")]);
+      return res.send({ success: true, info });
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false });
+    }
+  }));
+})
+
 Router.post('/create', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {

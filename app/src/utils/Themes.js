@@ -14,4 +14,15 @@ const AllThemes = [
   { id: "ddL3y1saEJs", img: "cafe.png", name: "s", category: ["Others"] },
 ];
 
-export { AllThemes };
+const AllCategories = [
+  "Cafe",
+  "Rain",
+  "Anime",
+  "Nature",
+  "Library",
+  "Lofi",
+  "Others"
+]
+AllCategories.sort((a, b) => {return a.localeCompare(b)}); //sort
+
+export { AllCategories, AllThemes };
