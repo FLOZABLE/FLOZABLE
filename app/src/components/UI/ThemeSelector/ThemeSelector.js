@@ -15,7 +15,14 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
   const [themesList, setThemesList] = useState(null);
 
   useEffect(() => {
-    console.log(AllThemes);
+
+    let allCategoriesParsed = {};
+    AllCategories.map((string) => {
+      const index = string.split(":")[1];
+      const name = string.split(":")[0];
+      allCategoriesParsed[index] = name;
+    });
+
     fetch(`${serverOrigin}/api/themes/user`, {
       method: 'get'
     })
@@ -27,9 +34,9 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
         }
         const allIds = [];
         const allCategories = [];
-        userThemes.map((theme) => {
+        userThemes.map((theme) => { //theme is 0:id, 1:id ...
           const categoryAndId = theme.split(":");
-          const categoryName = AllCategories[parseInt(categoryAndId[0])];
+          const categoryName = allCategoriesParsed[parseInt(categoryAndId[0])];
           console.log(categoryName);
           allIds.push(categoryAndId[1]);
           allCategories.push(categoryName.split(":")[0]);

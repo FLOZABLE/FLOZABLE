@@ -5,6 +5,20 @@ import { AllCategories } from "../../../utils/Themes";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 const options = AllCategories;
+const allCategoriesParsed = {}
+AllCategories.map((string) => {
+  const index = string.split(":")[1];
+  const name = string.split(":")[0];
+  allCategoriesParsed[index] = name;
+  /*
+  Format:
+  {
+    "0": name,
+    "1": name,
+    "[id]" : [category name]
+  }
+  */
+});
 
 function ThemeCategoryBtn({
   themeId,
@@ -29,7 +43,7 @@ function ThemeCategoryBtn({
       .then((data) => {
         setResponse(data);
         if (data.success) {
-          setDisp(`Saved to ${options[category].split(":")[0]}`)
+          setDisp(`Saved to ${allCategoriesParsed[category].split(":")[0]}`)
         }
       })
       .catch((error) => console.error(error));

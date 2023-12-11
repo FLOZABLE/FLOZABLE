@@ -6,11 +6,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBullseye, faDownLeftAndUpRightToCenter, faHeart, faLink, faPeopleGroup, faPlus, faStopwatch, faTags, faUpRightAndDownLeftFromCenter } from '@fortawesome/free-solid-svg-icons';
 import TemplateBox from '../../UI/TemplateBox/TemplateBox';
 import BlobBtn from '../../UI/BlobBtn/BlobBtn';
-import CreateTemplateModal from '../../UI/CreateTemplateModal/CreateTemplateModal';
+//import CreateTemplateModal from '../../UI/CreateTemplateModal/CreateTemplateModal';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Templates(props) {
+  const { isSidebarOpen, isSidebarHovered } = props;
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [templates, setTemplates] = useState(null);
@@ -20,11 +21,10 @@ function Templates(props) {
 
   return (
     <div className={styles.Templates}>
-      <CreateTemplateModal isOpen={isCreateTemplate} setIsOpen={setIsCreateTemplate} />
-      <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
+      <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
           <div className={styles.box}>
-            <p>d</p>
+            <h2>Your Themes</h2>
           </div>
           <div className={styles.box}>
             <div className={styles.searchZone}>
@@ -41,7 +41,7 @@ function Templates(props) {
               <Search setSearchQuery={setSearchQuery} searchQuery={searchQuery} />
               <div className={styles.createWrapper}>
                 <BlobBtn
-                  name={<div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}><FontAwesomeIcon icon={faPlus} className={styles.plus} style={{ marginRight: '5px' }} />Create new template</div>}
+                  name={<div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}><FontAwesomeIcon icon={faPlus} className={styles.plus} style={{ marginRight: '5px' }} />Publish your own</div>}
                   setClicked={() => {setIsCreateTemplate(!isCreateTemplate)}}
                   color1={'#fff'}
                   color2={"var(--pink)"}
@@ -49,7 +49,7 @@ function Templates(props) {
               </div>
             </div>
             <div className={styles.templatesContainer}>
-              <TemplateBox expand={expand} />
+              <TemplateBox/>
             </div>
           </div>
         </div>
