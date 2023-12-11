@@ -8,9 +8,9 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse }) {
     const [challenges, setChallenges] = useState([]);
+    const [challengesEl, setChallengesEl] = useState([]);
 
     useEffect(() => {
-        const tempEl = [];
         fetch(`${serverOrigin}/api/challenges/rooms`, {
             method: "get",
             headers: {
@@ -20,21 +20,34 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse }) {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
+                    const tempChallenges = [...data.data];
+                    const tempEl = [];
                     data.data.map((challenge, i) => {
                         tempEl.push(
-                            <ChallengeRoom key={i} challengeInfo={challenge} challenges={challenges} setChallenges={setChallenges} setResponse={setResponse} />
+                            <ChallengeRoom key={i} challengeInfo={challenge} challenges={tempChallenges} setChallenges={setChallenges} setResponse={setResponse} />
                         )
                     });
-                    setChallenges(tempEl);
+                    setChallenges(tempChallenges);
+
                 }
             });
     }, []);
+
+    useEffect(() => {
+        const tempEl = [];
+        challenges.map((challenge, i) => {
+            tempEl.push(
+                <ChallengeRoom key={i} challengeInfo={challenge} challenges={challenges} setChallenges={setChallenges} setResponse={setResponse} />
+            )
+        });
+        setChallengesEl(tempEl);
+    }, [challenges])
 
     return (
         <div className={styles.ChallengeRooms}>
             <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
                 {
-                    challenges.map((el) => {
+                    challengesEl.map((el) => {
                         return el;
                     })
                 }
