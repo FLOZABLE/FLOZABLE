@@ -8,6 +8,11 @@
   position: relative;
 }
 
+.TemplateBox .large {
+  width: 1000px;
+  color: blue;
+}
+
 .TemplateBox .photo {
   background-color: red;
   width: 100%;
