@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import styles from "./ThemeCategoryBtn.module.css";
+import { AllCategories } from "../../../utils/Themes";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-const options = [
-  'Cafe', 'Rain', 'Ghibli'
-]
+const options = AllCategories;
 
 function ThemeCategoryBtn({
   themeId,
