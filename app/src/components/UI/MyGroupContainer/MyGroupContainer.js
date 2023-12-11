@@ -1,17 +1,19 @@
-import { SwiperSlide } from "swiper/react";
 import styles from "./MyGroupContainer.module.css";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { StudyPerson } from "../../../utils/svgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullhorn, faComments, faGear, faRankingStar } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import MemberEl from "../MemberEl/MemberEl";
 import MembersContainer from "../MembersContainer/MembersContainer";
 import { socket } from "../../../socket";
-
+import { Device, detectDevice } from "mediasoup-client";
+import { mediaSocket } from "../../../mediaSocket";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function MyGroupContainer({ group, isFocus, localStream, userInfo }) {
+//device for sending SRTP signal
+let device;
+
+function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -67,7 +69,8 @@ function MyGroupContainer({ group, isFocus, localStream, userInfo }) {
             setStudyingMembers={setStudyingMembers}
             members={members}
             setMembers={setMembers}
-            localStream={localStream}
+            isMic={isMic}
+            isCam={isCam}
           />
           </div>
         </div>
