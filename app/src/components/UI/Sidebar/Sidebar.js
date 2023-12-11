@@ -141,7 +141,7 @@ function Sidebar({
           <div
             className={styles.navItemWrapper}
           >
-            <Link to="/dashboard/themes" className={styles.navItem}>
+            <Link to="/dashboard/challenges" className={styles.navItem}>
               <div className={styles.icon}>
               <FontAwesomeIcon icon={faHandFist} />
               </div>

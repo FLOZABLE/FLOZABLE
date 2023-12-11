@@ -7,6 +7,7 @@ import { timelineSort } from "../../../utils/timelineSorting"
 import { cyrb128 } from "../../../utils/Tool";
 import parse from "html-react-parser";
 import { findLongestFocus, findTotalStudy } from "./ChallengeTools";
+import ChallengeCompare from "../../UI/ChallengeCompare/ChallengeCompare";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -497,176 +498,30 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         console.log(competeInfo1, competeInfo2);
 
         if (challenge.first === "Longest Focus Last Week" || challenge.first === "Longest Focus Yesterday" || challenge.first === "Total Study Time Last Week") {
-            const value1 = competeInfo1.value1;
-            const value2 = competeInfo2.value1;
-            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
-            let percentageEl1 = <div></div>;
-            let percentageEl2 = <div></div>;
-            if (value1 > value2) {
-                percentageEl1 = <div><p>+ {morePercentage}%</p></div>
-            }
-            else if (value2 > value1) {
-                percentageEl2 = <div><p>+ {morePercentage}%</p></div>
-            }
             setResultEl1(
-                <div>
-                    <div className={styles.firstHalf}>
-                        {user1Pfp}
-                        <h2>{userInfo1.name}</h2>
-                        <div className={styles.statContainer}>
-                            {Duration.fromObject({ seconds: value1 }).toFormat("h'H 'mm'M 'ss'S'")}
-                            {percentageEl1}
-                        </div>
-                    </div>
-                    <div className={styles.secondHalf}>
-                        {user2Pfp}
-                        <h2>{userInfo2.name}</h2>
-                        <div className={styles.statContainer}>
-                            {Duration.fromObject({ seconds: value2 }).toFormat("h'H 'mm'M 'ss'S'")}
-                            {percentageEl2}
-                        </div>
-                    </div>
-                </div>
+                <ChallengeCompare value1={competeInfo1.value1} value2={competeInfo2.value1} user1Pfp={user1Pfp} user2Pfp={user2Pfp} userInfo1={userInfo1} userInfo2={userInfo2}/>
             );
         }
         else if (challenge.first === "Most Studied Subject Yesterday") {
-            const value1 = competeInfo1.value1;
-            const value2 = competeInfo2.value1;
-            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
-            let percentageEl1 = <div></div>;
-            let percentageEl2 = <div></div>;
-            if (value1 > value2) {
-                percentageEl1 = <div><p>+ {morePercentage}%</p></div>
-            }
-            else if (value2 > value1) {
-                percentageEl2 = <div><p>+ {morePercentage}%</p></div>
-            }
-            //Make it tell the subject
-            setResultEl1(
-                <div>
-                    <div className={styles.firstHalf}>
-                        {user1Pfp}
-                        <h2>{userInfo1.name}</h2>
-                        <div className={styles.statContainer}>
-                            {Duration.fromObject({ seconds: value1 }).toFormat("h'H 'mm'M 'ss'S'")}
-                            {percentageEl1}
-                        </div>
-                    </div>
-                    <div className={styles.secondHalf}>
-                        {user2Pfp}
-                        <h2>{userInfo2.name}</h2>
-                        <div className={styles.statContainer}>
-                            {Duration.fromObject({ seconds: value2 }).toFormat("h'H 'mm'M 'ss'S'")}
-                            {percentageEl2}
-                        </div>
-                    </div>
-                </div>
+            setResultEl1( //make it show the subject
+                <ChallengeCompare value1={competeInfo1.value1} value2={competeInfo2.value1} user1Pfp={user1Pfp} user2Pfp={user2Pfp} userInfo1={userInfo1} userInfo2={userInfo2}/>
             );
         }
         else if (challenge.first === "Most Studied Day Last Week") {
-            const value1 = competeInfo1.value1;
-            const value2 = competeInfo2.value1;
-            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
-            let percentageEl1 = <div></div>;
-            let percentageEl2 = <div></div>;
-            if (value1 > value2) {
-                percentageEl1 = <div><p>+ {morePercentage}%</p></div>
-            }
-            else if (value2 > value1) {
-                percentageEl2 = <div><p>+ {morePercentage}%</p></div>
-            }
-            //Make it tell the day
-            setResultEl1(
-                <div>
-                    <div className={styles.firstHalf}>
-                        {user1Pfp}
-                        <h2>{userInfo1.name}</h2>
-                        <div className={styles.statContainer}>
-                            {Duration.fromObject({ seconds: value1 }).toFormat("h'H 'mm'M 'ss'S'")}
-                            {percentageEl1}
-                        </div>
-                    </div>
-                    <div className={styles.secondHalf}>
-                        {user2Pfp}
-                        <h2>{userInfo2.name}</h2>
-                        <div className={styles.statContainer}>
-                            {Duration.fromObject({ seconds: value2 }).toFormat("h'H 'mm'M 'ss'S'")}
-                            {percentageEl2}
-                        </div>
-                    </div>
-                </div>
+            setResultEl1( //make it show the day
+                <ChallengeCompare value1={competeInfo1.value1} value2={competeInfo2.value1} user1Pfp={user1Pfp} user2Pfp={user2Pfp} userInfo1={userInfo1} userInfo2={userInfo2}/>
             );
         }
 
 
         if (challenge.second === "Study Average Last Week") {
-            const value1 = competeInfo1.value2;
-            const value2 = competeInfo2.value2;
-            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
-            let percentageEl1 = <div></div>;
-            let percentageEl2 = <div></div>;
-            if (value1 > value2) {
-                percentageEl1 = <div><p>+ {morePercentage}%</p></div>
-            }
-            else if (value2 > value1) {
-                percentageEl2 = <div><p>+ {morePercentage}%</p></div>
-            }
-
             setResultEl2(
-                <div>
-                    <div className={styles.firstHalf}>
-                        {user1Pfp}
-                        <h2>{userInfo1.name}</h2>
-                        <div className={styles.statContainer}>
-                            {Duration.fromObject({ seconds: value1 }).toFormat("h'H 'mm'M 'ss'S'")}
-                            {percentageEl1}
-                        </div>
-                    </div>
-                    <div className={styles.secondHalf}>
-                        {user2Pfp}
-                        <h2>{userInfo2.name}</h2>
-                        <div className={styles.statContainer}>
-                            {Duration.fromObject({ seconds: value2 }).toFormat("h'H 'mm'M 'ss'S'")}
-                            {percentageEl2}
-                        </div>
-                    </div>
-                </div>
+                <ChallengeCompare value1={competeInfo1.value2} value2={competeInfo2.value2} user1Pfp={user1Pfp} user2Pfp={user2Pfp} userInfo1={userInfo1} userInfo2={userInfo2}/>
             );
         }
         else if (challenge.second === "Random Day Of Last Week") {
-            const value1 = competeInfo1.value2;
-            const value2 = competeInfo2.value2;
-            const morePercentage = Math.round((Math.max(value1, value2) / Math.min(value1, value2)) * 1000) / 10 - 100; //round to 1 place
-            let percentageEl1 = <div></div>;
-            let percentageEl2 = <div></div>;
-            if (value1 > value2) {
-                percentageEl1 = <div><p>+ {morePercentage}%</p></div>
-            }
-            else if (value2 > value1) {
-                percentageEl2 = <div><p>+ {morePercentage}%</p></div>
-            }
-
             setResultEl2(
-                <div>
-                    <div className={styles.firstHalf}>
-                        {user1Pfp}
-                        <h2>{userInfo1.name}</h2>
-                        <div className={styles.statContainer}>
-                            {Duration.fromObject({ seconds: value1 }).toFormat("h'H 'mm'M 'ss'S'")}
-                            <p>On {challenge.secondRange[0].toFormat("DD")}</p>
-                            {percentageEl1}
-                        </div>
-                    </div>
-                    <div className={styles.secondHalf}>
-                        {user2Pfp}
-                        <h2>{userInfo2.name}</h2>
-                        <div className={styles.statContainer}>
-                            {Duration.fromObject({ seconds: value2 }).toFormat("h'H 'mm'M 'ss'S'")}
-                            <p>On {challenge.secondRange[0].toFormat("DD")}</p>
-                            {percentageEl2}
-                        </div>
-                    </div>
-                </div>
+                <ChallengeCompare value1={competeInfo1.value2} value2={competeInfo2.value2} user1Pfp={user1Pfp} user2Pfp={user2Pfp} userInfo1={userInfo1} userInfo2={userInfo2}/>
             );
         }
         else if (challenge.second === "Day By Day Comparison (Past 7 Days)") {
