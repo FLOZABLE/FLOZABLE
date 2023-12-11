@@ -11,17 +11,20 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import LikeBtn from "../../UI/LikeBtn/LikeBtn";
 import BlobBtn from "../../UI/BlobBtn/BlobBtn";
+import { useState } from "react";
 
-function TemplateBox({ expand }) {
+function TemplateBox({ }) {
+  const [expand, setExpand] = useState(false);
+
   return (
-    <div className={styles.TemplateBox}>
+    <div className={`${styles.TemplateBox} ${expand ? styles.small : styles.large}`}>
       <div className={styles.photo}>
-        <button className={styles.expand}>
+        <button className={styles.expand} onClick={() => {setExpand(!expand)}}>
           <i>
             {expand ? (
-              <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
-            ) : (
               <FontAwesomeIcon icon={faDownLeftAndUpRightToCenter} />
+            ) : (
+              <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
             )}
           </i>
         </button>
@@ -31,21 +34,21 @@ function TemplateBox({ expand }) {
           <FontAwesomeIcon icon={faPeopleGroup} />
           <p>100</p>
           <div className={styles.hoverEl}>
-            100 people are using this template!
+            100 people are using this theme!
           </div>
         </li>
         <li className={styles.reaction}>
           <FontAwesomeIcon icon={faHeart} />
           <p>100</p>
-          <div className={styles.hoverEl}>100 people liked this template!</div>
+          <div className={styles.hoverEl}>100 people liked this theme!</div>
         </li>
       </ul>
       <div className={styles.info}>
         <div className={styles.name}>
-          <p>Something</p>
+          <p>Nature</p>
         </div>
         <div className={styles.description}>
-          <p>this is something</p>
+          <p>Nature Music To Help You Study</p>
           <div className={styles.expandInfo}>
             <i>
               <FontAwesomeIcon icon={faAngleDown} />
