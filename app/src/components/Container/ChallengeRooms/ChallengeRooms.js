@@ -3,12 +3,17 @@ import { Link } from "react-router-dom";
 import styles from "./ChallengeRooms.module.css";
 import { useEffect, useState } from "react";
 import ChallengeRoom from "../../UI/ChallengeRoom/ChallengeRoom.js"
+import CreateChallengeModal from "../../UI/CreateChallengeModal/CreateChallengeModal.js";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse }) {
     const [challenges, setChallenges] = useState([]);
     const [challengesEl, setChallengesEl] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
 
     useEffect(() => {
         fetch(`${serverOrigin}/api/challenges/rooms`, {
@@ -45,7 +50,16 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse }) {
 
     return (
         <div className={styles.ChallengeRooms}>
+            <CreateChallengeModal 
+                isModalOpen={isModalOpen} 
+                setIsModalOpen={setIsModalOpen} 
+                title={title}
+                setTitle={setTitle}
+                description={description}
+                setDescription={setDescription}
+            />
             <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
+                <button onClick = {() => {setIsModalOpen(true)}}>Create A Challenge</button>
                 {
                     challengesEl.map((el) => {
                         return el;
