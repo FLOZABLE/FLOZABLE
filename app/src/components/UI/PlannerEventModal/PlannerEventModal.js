@@ -13,11 +13,7 @@ import {
 import TextEditor from "../TextEditor/TextEditor";
 import DateSelector from "../DateSelector/DateSelector";
 import DropDownButton from "../DropDownButton/DropDownButton";
-<<<<<<< HEAD
-
-=======
 import { DateTime } from "luxon";
->>>>>>> a48a7dc445e2cb7fb5dde0aa1e234b42ce6fa046
 import BlobBtn from "../BlobBtn/BlobBtn";
 import SliderAnimation from "../SliderAnimation/SliderAnimation";
 
