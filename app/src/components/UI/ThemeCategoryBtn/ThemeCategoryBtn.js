@@ -68,7 +68,7 @@ function ThemeCategoryBtn({
           const optionName = optionArr[0];
           const optionIndex = parseInt(optionArr[1]);
           return (
-            <div className={styles.option} key={i} onClick={() => {setCategory(optionIndex)}}>
+            <div className={styles.option} key={i} onClick={() => {setCategory(optionIndex); setIsOpen(false)}}>
               <p>{optionName}</p>
             </div>
           )
