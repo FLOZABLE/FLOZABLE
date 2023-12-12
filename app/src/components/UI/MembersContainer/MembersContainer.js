@@ -12,6 +12,7 @@ function MembersContainer({isFocus, userInfo, groupInfo, socket, setStudyingMemb
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
   const [localStream, setLocalStream] = useState(null);
   const [device, setDevice] = useState(null);
+  const [recvTransport, setRecvTransport] = useState(null);
   /**
  * Step 1: Retrieve the Router's RTP Capabilities.
  * This function requests the router's RTP capabilities from the server,
@@ -20,9 +21,9 @@ function MembersContainer({isFocus, userInfo, groupInfo, socket, setStudyingMemb
  * This information is crucial for ensuring that the Device is compatible with the router.
  */
 const getRouterRtpCapabilities = async () => {
-  mediaSocket.emit("getRouterRtpCapabilities", (routerRtpCapabilities) => {
-    setRtpCapabilities(routerRtpCapabilities);
-    console.log(`getRouterRtpCapabilities:`, routerRtpCapabilities);
+  mediaSocket.emit("getRouterRtpCapabilities", ({rtpCapabilities}) => {
+    setRtpCapabilities(rtpCapabilities);
+    console.log(`getRouterRtpCapabilities:`, rtpCapabilities);
   });
 };
 
@@ -39,9 +40,9 @@ const getRouterRtpCapabilities = async () => {
 const createDevice = async () => {
   try {
     const device = new Device();
-    console.log('new device', device)
 
     await device.load({ routerRtpCapabilities: rtpCapabilities });
+    console.log(device, rtpCapabilities, 'trp' )
     setDevice(device);
   } catch (error) {
     console.log(error);
@@ -49,6 +50,75 @@ const createDevice = async () => {
       console.error("Browser not supported");
     }
   }
+};
+
+
+/**
+ * this function is used for creating receiving transport
+ */
+const createRecvTransport = async () => {
+  // Request the server to create a send transport
+  mediaSocket.emit(
+    "createTransport",
+    { sender: false },
+    async({ params }) => {
+      if (params.error) {
+        console.log(params.error);
+        return;
+      }
+
+      /**
+       * Replicate the send transport on the client-side.
+       * The `device.createSendTransport` method creates a send transport instance on the client-side
+       * using the parameters provided by the server.
+       */
+      let transport = device.createRecvTransport(params);
+      console.log('consumer transport',transport)
+
+
+      transport.on(
+        "connect",
+        async ({ dtlsParameters }, callback, errback) => {
+          try {
+            console.log("----------> consumer transport has connected");
+            // Notify the server that the transport is ready to connect with the provided DTLS parameters
+            await mediaSocket.emit("transport-connect", { dtlsParameters });
+            // Callback to indicate success
+            callback();
+          } catch (error) {
+            // Errback to indicate failure
+            errback(error);
+          }
+        }
+      );
+
+      transport.on(
+        "consume",
+        async (parameters, callback, errback) => {
+          const { kind, rtpParameters } = parameters;
+
+          console.log("----------> transport-consume");
+
+          try {
+            // Notify the server to start producing media with the provided parameters
+            mediaSocket.emit(
+              "transport-produce",
+              { kind, rtpParameters },
+              ({ id }) => {
+                // Callback to provide the server-generated producer ID back to the transport
+                callback({ id });
+              }
+            );
+          } catch (error) {
+            // Errback to indicate failure
+            errback(error);
+          }
+        }
+      );
+
+      setRecvTransport(transport);
+    }
+  );
 };
 
 useEffect(() => {
@@ -60,6 +130,11 @@ useEffect(() => {
   if (!rtpCapabilities) return;
   createDevice();
 }, [rtpCapabilities]);
+
+useEffect(() => {
+  if (!device || !isFocus) return;
+  createRecvTransport();
+}, [device, isFocus]);
 
   useEffect(() => {
     if (!userInfo || !groupInfo || !isFocus) return;
@@ -129,11 +204,12 @@ useEffect(() => {
           setStudyingMembers={setStudyingMembers}
           isFocus={isFocus}
           device={device}
+          recvTransport={recvTransport}
           />
         )
       }
     }));
-  }, [members, localStream, userInfo, isFocus, device]);
+  }, [members, localStream, userInfo, isFocus, device, recvTransport]);
 
   return (
     <div className={styles.MembersContainer}>

@@ -1,7 +1,7 @@
 const mediaSoup = require('mediasoup');
-const {io} = require('./socket');
-const { groupCache } = require("./services/redisLoader");
-const {sessionMiddleWare} = require('./app');
+const { io } = require('./socket');
+const { groupCache, userCache } = require("./services/redisLoader");
+const { sessionMiddleWare } = require('./app');
 const mediaSocket = io.of('/mediaSocket');
 
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
@@ -50,20 +50,24 @@ async function createWorker() {
   });
 
   const router = await worker.createRouter({ mediaCodecs });
-  return {worker, router};
+  return { worker, router };
 };
 
 /**
  * {userId:{produce info}, }
  */
+const rooms = {};
+const producerTransports = {};
+const consumerTransports = {};
 const producers = {};
 const consumers = {};
 
-(async() => {
+(async () => {
   const worker = await createWorker();
+  const { router } = worker;
   mediaSocket.on('connection', async (socket) => {
     let session;
-
+    let activeGroup;
     if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
       try {
         session = socket.request.session;
@@ -93,23 +97,37 @@ const consumers = {};
       };
     };
     const userId = session.user_id;
-    console.log('mediasocket',userId)
+    console.log('mediasocket', userId);
+    socket.on("changeGroup", async (groupId) => {
+      const userInfo = await userCache(userId);
+      if (!userInfo) return;
+      const groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
+      if (!groups.includes(groupId)) return;
+      groups.map(group => {
+        if (group !== groupId) {
+          socket.leave(group);
+          delete rooms[userId];
+        };
+      });
+      socket.join(groupId);
+      console.log('changegroup')
+      activeGroup = groupId;
+    });
 
     /**
      * Event handler for fetching router RTP capabilities.
-     * RTP capabilities are required for configuring transports and producers/consumers.
+     * RTP capabilities are required for configuring transports and producers/consumerTransports.
      * This function is called when a peer requests the router RTP capabilities.
      * The callback function is used to send the router RTP capabilities to the peer.
      */
-    const {router} = worker;
     socket.on("getRouterRtpCapabilities", (callback) => {
-  
+
       const rtpCapabilities = router.rtpCapabilities
-  
+
       // call callback from the client and send back the rtpCapabilities
       callback({ rtpCapabilities })
     });
-  
+
     /**
      * Event handler for creating a transport.
      * A transport is required for sending or producing media.
@@ -119,29 +137,192 @@ const consumers = {};
      */
     socket.on("createTransport", async ({ sender }, callback) => {
       // ... Creating sender/receiver transports ...
-      const {transport, params} = await createWebRtcTransport(router);
-      if (sender) {
-        producers[userId] = transport;
-        callback({ params });
-      } else {
-        consumers[userId] = transport;
-      }
+      const { transport, params } = await createWebRtcTransport(router);
+      callback({ params });
+      if (activeGroup) {
+        if (sender) {
+          //producerTransports[userId] = { transport, active: false };
+          addProducerTransport(userId, transport);
+        } else {
+          addConsumerTransport(userId, transport);
+        };
+      };
     });
-  
-    /* socket.on('createProducerTransport', async (callback) => {
+
+    socket.on('transport-connect', async ({ dtlsParameters }) => {
+      if (!activeGroup) return;
+      const producerTransport = getProducerTransport(userId);
+      console.log('DTLS PARAMS... ', { dtlsParameters })
+      if (!producerTransport) return;
+      const connection = await producerTransport.connect({ dtlsParameters });
+    })
+
+    socket.on('transport-produce', async ({ kind, rtpParameters }, callback) => {
+      // call produce based on the prameters from the client
+      if (!activeGroup) return;
+      const producerTransport = getProducerTransport(userId);
+
+      //producer not found pr already produced
+      if (!producerTransport) return;
+
+      const producer = await producerTransport.produce({
+        kind,
+        rtpParameters,
+      });
+
+      addProducer(activeGroup, userId, producer);
+      console.log('producer add', producer.id)
+      producer.on('transportclose', () => {
+        console.log('transport for this producer closed ')
+        producer.close()
+      });
+      mediaSocket.to(activeGroup).emit(`newProducer:${userId}`);
+
+      // Send back to the client the Producer's id
+      callback({
+        id: producer.id
+      })
+    })
+
+    socket.on('consume', async ({ rtpCapabilities, targetId }, callback) => {
+      console.log('consume -------------')
       try {
-        const { transport, params } = await createWebRtcTransport(router);
-        //producerTransport = transport;
-        callback(params);
-      } catch (err) {
-        console.error(err);
-        callback({ error: err.message });
+        // check if the router can consume the specified producer
+        if (!activeGroup) return;
+        const producer = getProducer(activeGroup, targetId);
+        console.log('consume producer', producer)
+        if (!producer) return;
+        console.log('producer can consume', router.canConsume({
+          producerId: producer.id,
+          rtpCapabilities
+        }))
+        if (router.canConsume({
+          producerId: producer.id,
+          rtpCapabilities
+        })) {
+          // transport can now consume and return a consumer
+          const consumerTransport = getConsumerTransport(userId);
+          console.log(consumerTransport)
+          if (!consumerTransport) return;
+          const consumer = await consumerTransport.consume({
+            producerId: producer.id,
+            rtpCapabilities,
+            paused: false,
+          })
+  
+          consumer.on('transportclose', () => {
+            console.log('transport close from consumer')
+          })
+  
+          consumer.on('producerclose', () => {
+            console.log('producer of consumer closed')
+          })
+  
+          // from the consumer extract the following params
+          // to send back to the Client
+          const params = {
+            id: consumer.id,
+            producerId: producer.id,
+            kind: consumer.kind,
+            rtpParameters: consumer.rtpParameters,
+          }
+  
+          // send the parameters to the client
+          console.log('callback')
+          callback({ params })
+        }
+      } catch (error) {
+        console.log(error.message)
+        callback({
+          params: {
+            error: error
+          }
+        })
       }
-    }); */
+    })
   });
 
 
 })();
+
+const addProducerTransport = async (userId, transport) => {
+  producerTransports[userId] = { transport, active: false };
+};
+
+const addConsumerTransport = async (userId, transport) => {
+  consumerTransports[userId] = transport;
+};
+
+const getProducerTransport = (userId, produce = false) => {
+  try {
+    const producerTransport = producerTransports[userId];
+    if (!producerTransport) return;
+    
+    if (!produce || !producerTransport.active) return producerTransport.transport;
+    producerTransport.active = true;
+    return producerTransport.transport;
+  } catch (err) {
+    console.log(err);
+    return false;
+  };
+};
+
+const getConsumerTransport = (userId) => {
+  try {
+    const consumerTransport = consumerTransports[userId];
+    return consumerTransport;
+  } catch (err) {
+    console.log(err);
+    return false;
+  };
+};
+
+const addProducer = async (roomId, userId, producer) => {
+  if (producers[roomId]) {
+    producers[roomId][userId] = producer;
+  } else {
+    producers[roomId] = {};
+    producers[roomId][userId] = producer;
+  }
+  //console.log('add producer', producers)
+};
+
+const addConsumer = async (roomId, userId, consumer) => {
+  if (consumers[roomId]) {
+    consumers[roomId][userId] = consumer;
+  } else {
+    consumers[roomId] = {};
+    consumers[roomId][userId] = consumer;
+  }
+};
+
+
+const getProducer = (roomId, userId) => {
+  try {
+    //not found
+    if (!producers[roomId] || !producers[roomId][userId]) return false;
+
+    const producer = producers[roomId][userId];
+    return producer;
+  } catch (err) {
+    console.log(err);
+    return false;
+  };
+};
+
+const getConsumer = (roomId, userId) => {
+  try {
+    //not found
+    if (!consumers[roomId] || !consumers[roomId][userId]) return false;
+
+    const consumer = consumers[roomId][userId];
+    return consumer;
+  } catch (err) {
+    console.log(err);
+    return false;
+  };
+};
+
 
 /* 
 
