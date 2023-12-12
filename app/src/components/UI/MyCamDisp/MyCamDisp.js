@@ -117,7 +117,7 @@ const createSendTransport = async () => {
 const transportProduce = async() => {
   const track = await stream.getVideoTracks()[0];
   console.log(track, params, stream, producerTransport)
-  const a = await producerTransport.produce({track, ...params});
+  const a = await producerTransport.produce({track, params});
 }
 
   useEffect(() => {

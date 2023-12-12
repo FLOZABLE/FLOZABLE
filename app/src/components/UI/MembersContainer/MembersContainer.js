@@ -82,33 +82,10 @@ const createRecvTransport = async () => {
           try {
             console.log("----------> consumer transport has connected");
             // Notify the server that the transport is ready to connect with the provided DTLS parameters
-            await mediaSocket.emit("transport-connect", { dtlsParameters });
+            await mediaSocket.emit("transport-recv-connect", { dtlsParameters });
             // Callback to indicate success
+            console.log('consume dtls', dtlsParameters)
             callback();
-          } catch (error) {
-            // Errback to indicate failure
-            errback(error);
-          }
-        }
-      );
-
-      transport.on(
-        "consume",
-        async (parameters, callback, errback) => {
-          const { kind, rtpParameters } = parameters;
-
-          console.log("----------> transport-consume");
-
-          try {
-            // Notify the server to start producing media with the provided parameters
-            mediaSocket.emit(
-              "transport-produce",
-              { kind, rtpParameters },
-              ({ id }) => {
-                // Callback to provide the server-generated producer ID back to the transport
-                callback({ id });
-              }
-            );
           } catch (error) {
             // Errback to indicate failure
             errback(error);
