@@ -4,6 +4,7 @@ import styles from "./ChallengeRooms.module.css";
 import { useEffect, useState } from "react";
 import ChallengeRoom from "../../UI/ChallengeRoom/ChallengeRoom.js"
 import CreateChallengeModal from "../../UI/CreateChallengeModal/CreateChallengeModal.js";
+import { DateTime } from "luxon"
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -14,6 +15,27 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse }) {
     
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [start, setStart] = useState(new Date());
+    const [end, setEnd] = useState(new Date());
+    
+    function setChallengeSubmit(){
+        const currMillis = new Date(Date.now() + 3600000 - 60000); // + 59 minutes
+        if (start < currMillis){
+            setResponse({success: false, reason: "Must be 1 hour in the future"});
+            return;
+        }
+        if (title === ""){
+            setResponse({success: false, reason: "Please enter a title"});
+            return;
+        }
+        console.log(description);
+        if (description === "<p><br></p>"){
+            setResponse({success: false, reason: "Please enter a description"});
+            return;
+        }
+        alert("Program the fetch statement ChallengeRooms.js Line 35");
+        setIsModalOpen(false);
+    }
 
     useEffect(() => {
         fetch(`${serverOrigin}/api/challenges/rooms`, {
@@ -57,6 +79,11 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse }) {
                 setTitle={setTitle}
                 description={description}
                 setDescription={setDescription}
+                start={start}
+                setStart={setStart}
+                end={end}
+                setEnd={setEnd}
+                setChallengeSubmit={setChallengeSubmit}
             />
             <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
                 <button onClick = {() => {setIsModalOpen(true)}}>Create A Challenge</button>
