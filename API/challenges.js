@@ -139,9 +139,10 @@ Router.post('/create-challenge', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { challengeName, challengeDescription, startDate } = req.body;
+      console.log(req.body);
 
       const connection = pool.promise();
-      const [prevAmount] = await connection.query(`SELECT COUNT(*) FROM challengerooms WHERE user_id = ?`, [userId]);
+      const [prevAmount] = await connection.query(`SELECT COUNT(*) FROM challengerooms WHERE host_id = ?`, [userId]);
 
       if (prevAmount === 5) {
         res.send({ success: false, reason: "You cannot have more than 5 open challenges" });
@@ -158,13 +159,13 @@ Router.post('/create-challenge', async (req, res) => {
         name: challengeName,
         description: challengeDescription
       };
-      const insertChallenge = await connection.query(`INSERT INTO challengerooms SET ?`, challengeInfo);
+      const insertChallenge = await connection.query(`INSERT INTO challengerooms SET ?`, [challengeInfo]);
 
       res.send({ success: true, msg: `Challenge posted successfuly` });
     }
     catch (error) {
       console.log(error)
-      res.send({ success: false, reason: 'On Error Occured' });
+      res.send({ success: false, reason: 'An Error Occured' });
     }
   }));
 });

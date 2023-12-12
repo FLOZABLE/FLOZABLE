@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./ChallengeRoom.module.css";
 import { useEffect, useState } from "react";
+import parse from "html-react-parser";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -26,7 +27,7 @@ function ChallengeRoom({ challengeInfo, setResponse, setChallenges, challenges }
     return (
         <div className={styles.ChallengeRoom}>
             <h2>{challengeInfo.name}</h2>
-            <h3>{challengeInfo.description}</h3>
+            <h3>{parse(challengeInfo.description)}</h3>
             <p>By: {challengeInfo.userInfo.name}</p>
             <p>Starts: {challengeInfo.start_date}</p>
             <button onClick = {() => {joinChallenge(challengeInfo.id)}}>Join!</button>
