@@ -21,7 +21,7 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
         return
       }
   
-      console.log('consume ddd',params)
+      console.log('consume ddd',params, recvTransport)
       // then consume with the local consumer transport
       // which creates a consumer
       const consumer = await recvTransport.consume({
@@ -34,8 +34,9 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
       // destructure and retrieve the video track from the producer
       const { track } = consumer
   
-      const stream = new MediaStream([track])
-      console.log(stream);
+      const stream = new MediaStream();
+      stream.addTrack(track);
+      console.log(stream, track, stream.getVideoTracks());
       setStream(stream);
       // the server consumer started with media paused
       // so we need to inform the server to resume

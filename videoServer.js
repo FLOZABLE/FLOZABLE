@@ -152,9 +152,17 @@ const consumers = {};
     socket.on('transport-connect', async ({ dtlsParameters }) => {
       if (!activeGroup) return;
       const producerTransport = getProducerTransport(userId);
-      console.log('DTLS PARAMS... ', { dtlsParameters })
+      console.log('DTLS PARAMS... ', { dtlsParameters }, producerTransport.id)
       if (!producerTransport) return;
       const connection = await producerTransport.connect({ dtlsParameters });
+    })
+
+    socket.on('transport-recv-connect', async ({ dtlsParameters }) => {
+      if (!activeGroup) return;
+      const consumerTransport = getConsumerTransport(userId);
+      console.log('DTLS PARAMS...  consumer', { dtlsParameters }, consumerTransport.id)
+      if (!consumerTransport) return;
+      const connection = await consumerTransport.connect({ dtlsParameters });
     })
 
     socket.on('transport-produce', async ({ kind, rtpParameters }, callback) => {
@@ -190,7 +198,7 @@ const consumers = {};
         // check if the router can consume the specified producer
         if (!activeGroup) return;
         const producer = getProducer(activeGroup, targetId);
-        console.log('consume producer', producer)
+        console.log('consume producer', producer.id, rtpCapabilities)
         if (!producer) return;
         console.log('producer can consume', router.canConsume({
           producerId: producer.id,
@@ -202,12 +210,12 @@ const consumers = {};
         })) {
           // transport can now consume and return a consumer
           const consumerTransport = getConsumerTransport(userId);
-          console.log(consumerTransport)
+          console.log('consumer transport id',consumerTransport.id)
           if (!consumerTransport) return;
           const consumer = await consumerTransport.consume({
             producerId: producer.id,
             rtpCapabilities,
-            paused: false,
+            paused: true,
           })
   
           consumer.on('transportclose', () => {
@@ -228,7 +236,7 @@ const consumers = {};
           }
   
           // send the parameters to the client
-          console.log('callback')
+          console.log('consumed')
           callback({ params })
         }
       } catch (error) {
@@ -239,6 +247,14 @@ const consumers = {};
           }
         })
       }
+    });
+
+    socket.on('consumer-resume', async () => {
+      console.log('consumer resume');
+      const consumer = getConsumer(activeGroup, userId);
+      if (!consumer) return;
+      console.log('resume', consumer.id)
+      await consumer.resume()
     })
   });
 
@@ -408,7 +424,6 @@ async function createWebRtcTransport(router) {
       iceParameters: transport.iceParameters,
       iceCandidates: transport.iceCandidates,
       dtlsParameters: transport.dtlsParameters,
-      sctpParameters: transport.sctpParameters,
     },
   };
 }
