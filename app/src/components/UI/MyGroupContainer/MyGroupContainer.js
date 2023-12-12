@@ -19,11 +19,12 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
   const [members, setMembers] = useState([]);
 
   useEffect(() => {
-    if (!group) return;
+    if (!group || !isFocus) return;
     //group_id, average_hr, color, date, explanation, font, goal_hr, leader, max_member, name, visibility, tags, members, likes
     const { name } = group;
     setName(name);
     socket.emit('changeGroup', group.group_id);
+    mediaSocket.emit('changeGroup', group.group_id);
   }, [group, isFocus]);
 
   return (
