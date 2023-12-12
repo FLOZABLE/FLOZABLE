@@ -285,7 +285,9 @@ function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, userInfo })
               type="text"
               value={msgInput}
               onKeyDown={(e) => {
-
+                if (e.key === "Enter"){
+                  onSubmit();
+                }
               }}
               onChange={(e) => setMsgInput(e.target.value)}
             />

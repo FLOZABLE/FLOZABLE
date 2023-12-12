@@ -10,9 +10,19 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
 
   const [themeCategory, setThemeCategory] = useState("");
   const [themeChoices, setThemeChoices] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectionEl, setSelectionEl] = useState(<p></p>);
   const [themesList, setThemesList] = useState(null);
+
+  function submitVideoId(e){
+    const url = e.target.value;
+    console.log(url);
+    try {
+      const videoId = new URLSearchParams(new URL(url)).get("v");
+      setVideoId(videoId);
+    } catch (err){
+      //Do nothing
+    }
+  }
 
   useEffect(() => {
 
@@ -145,7 +155,7 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
       <CustomInput
         input={link}
         handleInput={handleLinkInput}
-        handleEnter={submit}
+        handleEnter={submitVideoId}
         icon={faLink}
         placeHolder={"or Paste a Youtube Link!"}
         type={"text"}
