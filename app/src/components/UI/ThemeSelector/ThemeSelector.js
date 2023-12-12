@@ -33,13 +33,13 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
           userThemes = data.themes.themes.split(",");
         }
         const allIds = [];
-        const allCategories = [];
+        const allCategories = {};
         userThemes.map((theme) => { //theme is 0:id, 1:id ...
-          const categoryAndId = theme.split(":");
+          const categoryAndId = theme.split(":"); // [0] is the index, and [1] is the id
           const categoryName = allCategoriesParsed[parseInt(categoryAndId[0])];
-          console.log(categoryName);
+          console.log(theme, categoryName);
           allIds.push(categoryAndId[1]);
-          allCategories.push(categoryName.split(":")[0]);
+          allCategories[categoryAndId[1]] = categoryName.split(":")[0];
         });
 
         fetch(`${serverOrigin}/api/themes/videoIds?searchIds=${allIds}`, {
@@ -50,9 +50,10 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
             const everyTheme = [...AllThemes]; //AllThemes + userThemes
 
             data.info.map((currentTheme, i) => {
-              console.log(`https://i.ytimg.com/vi/${currentTheme.video_id}/maxresdefault.jpg`);
-              everyTheme.push({ id: allIds[i], img: `https://i.ytimg.com/vi/${currentTheme.video_id}/maxresdefault.jpg`, name: currentTheme.name, category: [allCategories[i]] });
+              everyTheme.push({ id: currentTheme.video_id, img: `https://i.ytimg.com/vi/${currentTheme.video_id}/maxresdefault.jpg`, name: currentTheme.name, category: [allCategories[currentTheme.id]] });
             });
+
+            console.log(everyTheme);
 
             const tempThemes = [];
             everyTheme.map((theme) => {

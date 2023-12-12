@@ -39,7 +39,7 @@ Router.get('/videoIds', async (req, res) => {
       const connection = pool.promise();
       const { searchIds } = req.query;
       console.log(searchIds);
-      const [info] = await connection.query("SELECT video_id, name FROM themes WHERE id IN (?)", [searchIds.split(",")]);
+      const [info] = await connection.query("SELECT video_id, name, id FROM themes WHERE id IN (?)", [searchIds.split(",")]);
       return res.send({ success: true, info });
     } catch (err) {
       console.log(err);
