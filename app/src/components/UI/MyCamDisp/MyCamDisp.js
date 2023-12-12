@@ -2,11 +2,32 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./MyCamDisp.module.css";
 import { mediaSocket } from "../../../mediaSocket";
 import { Device } from "mediasoup-client";
-
+const params = {
+  encodings: [
+    {
+      rid: "r0",
+      maxBitrate: 100000,
+      scalabilityMode: "S1T3",
+    },
+    {
+      rid: "r1",
+      maxBitrate: 300000,
+      scalabilityMode: "S1T3",
+    },
+    {
+      rid: "r2",
+      maxBitrate: 900000,
+      scalabilityMode: "S1T3",
+    },
+  ],
+  codecOptions: {
+    videoGoogleStartBitrate: 1000,
+  },
+};
 function MyCamDisp({ stream, isFocus, device }) {
   const videoRef = useRef(null);
   const [producerTransport, setProducerTransport] = useState(null);
-  const [params, setParams] = useState(null);
+  /* const [params, setParams] = useState(null); */
 /**
  * Step 3: Create a Transport for Sending Media.
  * This function initiates the creation of a transport on the server-side for sending media,
@@ -17,7 +38,7 @@ const createSendTransport = async () => {
   mediaSocket.emit(
     "createTransport",
     { sender: true },
-    ({ params }) => {
+    async({ params }) => {
       if (params.error) {
         console.log(params.error);
         return;
@@ -28,12 +49,11 @@ const createSendTransport = async () => {
        * The `device.createSendTransport` method creates a send transport instance on the client-side
        * using the parameters provided by the server.
        */
-      console.log('gd', params)
       let transport = device.createSendTransport(params);
       console.log('transport',transport)
       // Update the state to hold the reference to the created transport
       setProducerTransport(transport);
-      setParams(params);
+      /* setParams(params); */
 
       /**
          * Event handler for the "connect" event on the transport.
@@ -94,24 +114,17 @@ const createSendTransport = async () => {
   );
 };
 
-const createProducerTransport = async() => {
-  const data = await mediaSocket.emit('createProducerTransport', {
-    forceTcp: false,
-    rtpCapabilities: device.rtpCapabilities,
-    sctpCapabilities: device.sctpCapabilities,
-  });
-  console.log('data', data)
-  if (data.error) {
-    console.error(data.error);
-    return;
-  }
+const transportProduce = async() => {
+  const track = await stream.getVideoTracks()[0];
+  console.log(track, params, stream, producerTransport)
+  const a = await producerTransport.produce({track, ...params});
 }
 
   useEffect(() => {
-    if(!device) return;
+    if(!device || !stream || !isFocus) return;
     createSendTransport();
     //createProducerTransport();
-  }, [device]);
+  }, [device, stream, isFocus]);
 
   useEffect(() => {
     if (!stream || !isFocus) return;
@@ -119,11 +132,8 @@ const createProducerTransport = async() => {
   }, [stream]);
   
   useEffect(() => {
-    if (!producerTransport || !params || !isFocus || !stream) return;
-    const track = stream.getVideoTracks()[0];
-    console.log(track, params, stream, producerTransport)
-    const a = producerTransport.produce({track, ...params});
-    console.log('a',a)
+    if (!producerTransport || !isFocus || !stream) return;
+    transportProduce();
   }, [producerTransport, params, stream, isFocus]);
 
   return (
