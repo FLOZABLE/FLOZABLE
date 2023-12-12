@@ -5,7 +5,7 @@ import styles from "./CustomInput.module.css";
 function CustomInput({handleEnter, handleInput, input, icon, type, placeHolder}) {
   const handleEnterKeyPress = (event) => {
     if (event.key === "Enter") {
-      handleEnter();
+      handleEnter(event);
     }
   };
   return (

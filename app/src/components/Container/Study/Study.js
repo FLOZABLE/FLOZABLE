@@ -45,7 +45,6 @@ function Study(props) {
   const [repeat, setRepeat] = useState(0);
   const [priority, setPriority] = useState(50);
   const [notification, setNotification] = useState(-1);
-  const [submit, setSubmit] = useState(() => () => {alert("In progress")});
 
   const handleLinkInput = (e) => {
     setLink(e.target.value);
@@ -118,7 +117,7 @@ function Study(props) {
       <StudyModalContainer
         startPos = {{x: '50vw', y: '19vh'}}
         isDisp={isTemplateModal}
-        element={<ThemeSelector link={link} handleLinkInput={handleLinkInput} submit={submit} setVideoId={setVideoId} />}
+        element={<ThemeSelector link={link} handleLinkInput={handleLinkInput} setVideoId={setVideoId} />}
       />
       <StudyModalContainer
         startPos = {{x: '5vw', y: '38vh'}}
