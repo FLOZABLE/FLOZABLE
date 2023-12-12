@@ -4,7 +4,7 @@ import styles from "./ChallengeRooms.module.css";
 import { useEffect, useState } from "react";
 import ChallengeRoom from "../../UI/ChallengeRoom/ChallengeRoom.js"
 import CreateChallengeModal from "../../UI/CreateChallengeModal/CreateChallengeModal.js";
-import { DateTime } from "luxon"
+import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -21,7 +21,7 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse }) {
     function setChallengeSubmit(){
         const currMillis = new Date(Date.now() + 3600000 - 60000); // + 59 minutes
         if (start < currMillis){
-            setResponse({success: false, reason: "Must be 1 hour in the future"});
+            setResponse({success: false, reason: "Must be at least 1 hour in the future"});
             return;
         }
         if (title === ""){
@@ -33,7 +33,20 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse }) {
             setResponse({success: false, reason: "Please enter a description"});
             return;
         }
-        alert("Program the fetch statement ChallengeRooms.js Line 35");
+
+        const reqBody = {challengeName: title, challengeDescription: description, startDate: DateTime.fromISO(start.toISOString()).ts/1000}
+        fetch(`${serverOrigin}/api/challenges/create-challenge`, {
+            method: "post",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(reqBody),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setResponse(data);
+            });
+
         setIsModalOpen(false);
     }
 
