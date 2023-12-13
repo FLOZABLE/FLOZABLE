@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./ChallengeRoom.module.css";
 import { useEffect, useState } from "react";
 import parse from "html-react-parser";
+import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -29,7 +30,7 @@ function ChallengeRoom({ challengeInfo, setResponse, setChallenges, challenges }
             <h2>{challengeInfo.name}</h2>
             <h3>{parse(challengeInfo.description)}</h3>
             <p>By: {challengeInfo.userInfo.name}</p>
-            <p>Starts: {challengeInfo.start_date}</p>
+            <p>Starts: {DateTime.fromSeconds(challengeInfo.start_date).toFormat("DD")} at {DateTime.fromSeconds(challengeInfo.start_date).toFormat("h:mm a")}</p>
             <button onClick = {() => {joinChallenge(challengeInfo.id)}}>Join!</button>
         </div>
     );
