@@ -139,12 +139,11 @@ Router.post('/create-challenge', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { challengeName, challengeDescription, startDate } = req.body;
-      console.log(req.body);
 
       const connection = pool.promise();
-      const [prevAmount] = await connection.query(`SELECT COUNT(*) FROM challengerooms WHERE host_id = ?`, [userId]);
-
-      if (prevAmount === 5) {
+      const [[prevAmount]] = await connection.query(`SELECT COUNT(*) FROM challengerooms WHERE host_id = ?`, [userId]);
+      
+      if (prevAmount['COUNT(*)'] >= 5) {
         res.send({ success: false, reason: "You cannot have more than 5 open challenges" });
         return;
         // maximum 5 open challenges each user (can increase for premium)

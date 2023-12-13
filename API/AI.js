@@ -11,7 +11,9 @@ const openai = new OpenAI({
 
 
 Router.post("/input", async (req, res) => {
-    const { query } = req.body;
+    const { subjects } = req.body;
+
+    
     /*
     try {
         const completion = await (openai.chat.completions.create({

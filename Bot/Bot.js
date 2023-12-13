@@ -32,7 +32,7 @@ function createBots(startIndex, length) {
 
     let userDateTime = DateTime.now().setZone(timeZone);
     //randomize date
-    const subtractedDate = Math.floor(Math.random() * 100)
+    const subtractedDate = Math.floor(Math.random() * 30) + 20;
     userDateTime = userDateTime.minus({ days: subtractedDate });
     const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     const unixTimestamp = Math.floor(twelveAmDateTime.toMillis() / 1000);
@@ -51,13 +51,42 @@ function createBots(startIndex, length) {
     //console.log(userInfo)
     connection.query('INSERT INTO users SET ?', userInfo);
     const subjectId = generateRandomId(10);
-    const datum_point = Math.floor(new Date().getTime() / 1000);
+    const datum_point = unixTimestamp;
+
+    const subjectTimeline = [];
+    const studyFactor = Math.floor(Math.random() * 10) + 1; //the higher this number is the more they will study
+
+    let prevTime = unixTimestamp
+    let currTime = unixTimestamp;
+    let timelineSum = 0;
+    const timeNow = new Date().getTime() / 1000;
+    const possibleDurations = [60, 120, 180, 1200, 1500, 3600, 4200]
+    while (currTime + 600 < timeNow){
+      let durationSeconds = Math.floor((1 + (Math.random() - 0.5)) * possibleDurations[Math.floor(Math.random() * possibleDurations.length)]); //1 minute to 1 hour
+      durationSeconds = Math.min(durationSeconds, timeNow - currTime - 60);
+      if (studyFactor > Math.floor(Math.random() * 40)){
+        const pastTime = currTime - prevTime;
+        subjectTimeline.push([pastTime, durationSeconds]);
+        timelineSum += pastTime + durationSeconds;
+        prevTime = currTime;
+      }
+      else{
+        currTime += durationSeconds * 10;
+      }
+      currTime += durationSeconds;
+    }
+
+    let stringTimeline = JSON.stringify(subjectTimeline);
+    stringTimeline = stringTimeline.slice(1, stringTimeline.length - 1);
+
     const subject = {
       id: subjectId,
       name: 'others',
       user_id: userId,
       icon: 'others',
       color: '#000000',
+      timeline: stringTimeline,
+      timeline_sum: timelineSum,
       datum_point
     };
     connection.query(`INSERT INTO subjects SET ?`, [subject]);
