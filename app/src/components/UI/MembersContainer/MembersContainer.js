@@ -6,6 +6,7 @@ import { mediaSocket } from "../../../mediaSocket";
 import { Device } from "mediasoup-client";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
+window.localStorage.setItem('debug', 'mediasoup-client:WARN* mediasoup-client:ERROR*');
 
 function MembersContainer({isFocus, userInfo, groupInfo, socket, setStudyingMembers, members, setMembers, isCam, isMic}) {
   const [membersEl, setMembersEl] = useState([]);
@@ -72,11 +73,11 @@ const createRecvTransport = async () => {
        * The `device.createSendTransport` method creates a send transport instance on the client-side
        * using the parameters provided by the server.
        */
-      let transport = device.createRecvTransport(params);
+      const transport = await device.createRecvTransport(params);
       console.log('consumer transport',transport)
 
 
-      transport.on(
+      await transport.on(
         "connect",
         async ({ dtlsParameters }, callback, errback) => {
           try {
