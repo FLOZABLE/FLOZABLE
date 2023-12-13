@@ -26,8 +26,8 @@ const mediaCodecs = [
 
 async function createWorker() {
   const worker = await mediaSoup.createWorker({
-    rtcMinPort: 10000,
-    rtcMaxPort: 10100,
+    rtcMinPort: 2000,
+    rtcMaxPort: 2100,
     logLevel: 'warn',
     logTags: [
       'info',
@@ -35,12 +35,12 @@ async function createWorker() {
       'dtls',
       'rtp',
       'srtp',
-      'rtcp'
-      // 'rtx',
-      // 'bwe',
-      // 'score',
-      // 'simulcast',
-      // 'svc'
+      'rtcp',
+      'rtx',
+      'bwe',
+      'score',
+      'simulcast',
+      'svc'
     ]
   });
 
@@ -63,8 +63,7 @@ const producers = {};
 const consumers = {};
 
 (async () => {
-  const worker = await createWorker();
-  const { router } = worker;
+  const {router} = await createWorker();
   mediaSocket.on('connection', async (socket) => {
     let session;
     let activeGroup;
@@ -138,7 +137,7 @@ const consumers = {};
     socket.on("createTransport", async ({ sender }, callback) => {
       // ... Creating sender/receiver transports ...
       const { transport, params } = await createWebRtcTransport(router);
-      callback({ params });
+      //console.log('create transport', transport, params)
       if (activeGroup) {
         if (sender) {
           //producerTransports[userId] = { transport, active: false };
@@ -147,22 +146,25 @@ const consumers = {};
           addConsumerTransport(userId, transport);
         };
       };
+      callback({ params });
     });
 
     socket.on('transport-connect', async ({ dtlsParameters }) => {
       if (!activeGroup) return;
       const producerTransport = getProducerTransport(userId);
-      console.log('DTLS PARAMS... ', { dtlsParameters }, producerTransport.id)
+      console.log('DTLS PARAMS... ', producerTransport.id, dtlsParameters)
       if (!producerTransport) return;
       const connection = await producerTransport.connect({ dtlsParameters });
+      console.log('connect producer transport')
     })
 
     socket.on('transport-recv-connect', async ({ dtlsParameters }) => {
       if (!activeGroup) return;
       const consumerTransport = getConsumerTransport(userId);
-      console.log('DTLS PARAMS...  consumer', { dtlsParameters }, consumerTransport.id)
+      console.log('DTLS PARAMS...  consumer', consumerTransport.id, dtlsParameters)
       if (!consumerTransport) return;
       const connection = await consumerTransport.connect({ dtlsParameters });
+      console.log('connect consumer transport')
     })
 
     socket.on('transport-produce', async ({ kind, rtpParameters }, callback) => {
@@ -200,14 +202,12 @@ const consumers = {};
         const producer = getProducer(activeGroup, targetId);
         console.log('consume producer', producer.id, rtpCapabilities)
         if (!producer) return;
-        console.log('producer can consume', router.canConsume({
+        const canConsume = router.canConsume({
           producerId: producer.id,
           rtpCapabilities
-        }))
-        if (router.canConsume({
-          producerId: producer.id,
-          rtpCapabilities
-        })) {
+        })
+        console.log('producer can consume', canConsume)
+        if (canConsume) {
           // transport can now consume and return a consumer
           const consumerTransport = getConsumerTransport(userId);
           console.log('consumer transport id',consumerTransport.id)
@@ -215,7 +215,7 @@ const consumers = {};
           const consumer = await consumerTransport.consume({
             producerId: producer.id,
             rtpCapabilities,
-            paused: true,
+            /* paused: false, */
           })
   
           consumer.on('transportclose', () => {
@@ -339,76 +339,18 @@ const getConsumer = (roomId, userId) => {
   };
 };
 
-
-/* 
-
-
-const createWebRtcTransport = async (callback) => {
-  try {
-    // https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportOptions
-    const webRtcTransport_options = {
-      listenIps: [
-        {
-          ip: '0.0.0.0', // replace with relevant IP address
-          announcedIp: '127.0.0.1',
-        }
-      ],
-      enableUdp: true,
-      enableTcp: true,
-      preferUdp: true,
-    }
-
-    // https://mediasoup.org/documentation/v3/mediasoup/api/#router-createWebRtcTransport
-    let transport = await router.createWebRtcTransport(webRtcTransport_options)
-    console.log(`transport id: ${transport.id}`)
-
-    transport.on('dtlsstatechange', dtlsState => {
-      if (dtlsState === 'closed') {
-        transport.close()
-      }
-    })
-
-    transport.on('close', () => {
-      console.log('transport closed')
-    })
-
-    // send back to the client the following prameters
-    callback({
-      // https://mediasoup.org/documentation/v3/mediasoup-client/api/#TransportOptions
-      params: {
-        id: transport.id,
-        iceParameters: transport.iceParameters,
-        iceCandidates: transport.iceCandidates,
-        dtlsParameters: transport.dtlsParameters,
-      }
-    })
-
-    return transport
-
-  } catch (error) {
-    console.log(error)
-    callback({
-      params: {
-        error: error
-      }
-    })
-  }
-}
-*/
-
 async function createWebRtcTransport(router) {
 
   const transport = await router.createWebRtcTransport({
     listenIps: [
       {
-        ip: '0.0.0.0', // replace with relevant IP address
+        ip: '0.0.0.0',
         announcedIp: '127.0.0.1',
       }
     ],
     enableUdp: true,
     enableTcp: true,
     preferUdp: true,
-    enableFp: true,
   });
   transport.on('dtlsstatechange', dtlsState => {
     if (dtlsState === 'closed') {
@@ -426,35 +368,4 @@ async function createWebRtcTransport(router) {
       dtlsParameters: transport.dtlsParameters,
     },
   };
-}
-
-async function handleWebrtcRecvStart(router) {
-  const transport = await router.createWebRtcTransport(
-    {
-      listenIps: [
-        {
-          ip: '0.0.0.0', // replace with relevant IP address
-          announcedIp: '127.0.0.1',
-        }
-      ],
-      enableUdp: true,
-      enableTcp: true,
-      preferUdp: true,
-    }
-  );
-
-  console.log("mediasoup WebRTC RECV transport created");
-
-  const webrtcTransportOptions = {
-    id: transport.id,
-    iceParameters: transport.iceParameters,
-    iceCandidates: transport.iceCandidates,
-    dtlsParameters: transport.dtlsParameters,
-    sctpParameters: transport.sctpParameters
-  };
-
-  // Uncomment for debug
-  // console.log("webrtcTransportOptions: %s", JSON.stringify(webrtcTransportOptions, null, 2));
-
-  return webrtcTransportOptions;
-}
+};

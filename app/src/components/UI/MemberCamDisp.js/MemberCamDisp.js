@@ -28,14 +28,14 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
         id: params.id,
         producerId: params.producerId,
         kind: params.kind,
-        rtpParameters: params.rtpParameters
+        rtpParameters: params.rtpParameters,
       })
   
       // destructure and retrieve the video track from the producer
       const { track } = consumer
   
-      const stream = new MediaStream();
-      stream.addTrack(track);
+      const stream = new MediaStream([track]);
+      /* stream.addTrack(track); */
       console.log(stream, track, stream.getVideoTracks());
       setStream(stream);
       // the server consumer started with media paused
@@ -57,6 +57,7 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
   useEffect(() => {
     if (!stream) return;
     videoRef.current.srcObject = stream;
+    console.log('final re', stream, videoRef.current.srcObject, videoRef)
   }, [stream]);
   
   return (

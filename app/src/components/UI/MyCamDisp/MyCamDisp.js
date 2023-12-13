@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./MyCamDisp.module.css";
 import { mediaSocket } from "../../../mediaSocket";
 import { Device } from "mediasoup-client";
-const params = {
+const videoParams = {
   encodings: [
     {
       rid: "r0",
@@ -24,6 +24,30 @@ const params = {
     videoGoogleStartBitrate: 1000,
   },
 };
+
+const audioParams = {
+  encodings: [
+    {
+      rid: "r0",
+      maxBitrate: 100000,
+      scalabilityMode: "S1T3",
+    },
+    {
+      rid: "r1",
+      maxBitrate: 300000,
+      scalabilityMode: "S1T3",
+    },
+    {
+      rid: "r2",
+      maxBitrate: 900000,
+      scalabilityMode: "S1T3",
+    },
+  ],
+  codecOptions: {
+    videoGoogleStartBitrate: 1000,
+  },
+};
+
 function MyCamDisp({ stream, isFocus, device }) {
   const videoRef = useRef(null);
   const [producerTransport, setProducerTransport] = useState(null);
@@ -49,10 +73,9 @@ const createSendTransport = async () => {
        * The `device.createSendTransport` method creates a send transport instance on the client-side
        * using the parameters provided by the server.
        */
-      let transport = device.createSendTransport(params);
-      console.log('transport',transport)
+      const transport = await device.createSendTransport(params);
+      console.log('transport',transport, device, params)
       // Update the state to hold the reference to the created transport
-      setProducerTransport(transport);
       /* setParams(params); */
 
       /**
@@ -63,7 +86,7 @@ const createSendTransport = async () => {
          * This event it emitted as a result of calling the `producerTransport?.produce(params)`
          * method in the next step. The event will only be emitted if this is the first time
          */
-      transport.on(
+      await transport.on(
         "connect",
         async ({ dtlsParameters }, callback, errback) => {
           try {
@@ -87,10 +110,10 @@ const createSendTransport = async () => {
          * The event is emitted as a result of calling the `producerTransport?.produce(params)`
          * method in the next step.
          */
-      transport.on(
+      await transport.on(
         "produce",
         async (parameters, callback, errback) => {
-          const { kind, rtpParameters } = parameters;
+          const { kind, rtpParameters, appData } = parameters;
 
           console.log("----------> transport-produce");
 
@@ -101,6 +124,7 @@ const createSendTransport = async () => {
               { kind, rtpParameters },
               ({ id }) => {
                 // Callback to provide the server-generated producer ID back to the transport
+                console.log('server producer', id)
                 callback({ id });
               }
             );
@@ -110,14 +134,19 @@ const createSendTransport = async () => {
           }
         }
       );
+
+      setProducerTransport(transport);
     }
   );
 };
 
 const transportProduce = async() => {
   const track = await stream.getVideoTracks()[0];
-  console.log(track, params, stream, producerTransport)
-  const a = await producerTransport.produce({track, params});
+  console.log(track, videoParams, stream, producerTransport)
+  const localProducer = await producerTransport.produce({track, ...videoParams});
+  localProducer.on("trackended", () => { console.log("video track ended"); });
+  localProducer.on("transportclose", () => { console.log("video transport ended"); });
+  console.log('local producer', localProducer)
 }
 
   useEffect(() => {
@@ -134,7 +163,7 @@ const transportProduce = async() => {
   useEffect(() => {
     if (!producerTransport || !isFocus || !stream) return;
     transportProduce();
-  }, [producerTransport, params, stream, isFocus]);
+  }, [producerTransport, stream, isFocus]);
 
   return (
     <div className={styles.MyCamDisp}>
