@@ -330,6 +330,7 @@ async function subjectsTimelineCache(userId) {
   });
 
   const subjects = await Promise.all(subjectPromises);
+  console.log(subjects);
   return subjects;
 };
 

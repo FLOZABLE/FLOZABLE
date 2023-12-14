@@ -20,7 +20,8 @@ async function timerUpdate() {
   });
   const connection = pool.promise();
   try {
-    const [usersInfo] = await connection.query(`SELECT name, user_id, timezone FROM users where timezone IN (?)`, [midnightTimezones]);
+    //const [usersInfo] = await connection.query(`SELECT name, user_id, timezone FROM users where timezone IN (?)`, [midnightTimezones]);
+    const [usersInfo] = await connection.query(`SELECT name, user_id, timezone FROM users`);
     usersInfo.map(async ({ user_id }) => {
       const userId = user_id;
       const now = Math.floor(new Date().getTime() / 1000);
