@@ -237,16 +237,23 @@ function createProfileImg(percentage, userId, gender) {
 };
 
 
-async function createChessProfileImg(userId, imgSrc) {
-  console.log(imgSrc);
-  const response = await axios(imgSrc, { responseType: 'arraybuffer' });
-  const buffer64 = Buffer.from(response.data, 'binary');
-
-  await sharp(buffer64)
-    .toFormat('jpeg')
-    .resize({ width: 800, height: 800 })
-    .jpeg({ quality: 40 })
-    .toFile(`./public/profile-images/${userId}.jpeg`);
+function createChessProfileImg(userId, imgSrc) {
+  axios.get(imgSrc)
+    .then((response) => {
+      return axios.get(imgSrc, { responseType: 'arraybuffer' })
+    })
+    .then((res) => {
+      return sharp(res.data)
+        .resize({ width: 800, height: 800 })
+        .jpeg({ quality: 40 })
+        .toFile(`./public/profile-images/${userId}.jpeg`)
+    })
+    .then(() => {
+      console.log(`Image downloaded and resized!`)
+    })
+    .catch((err) => {
+      console.log(`Couldn't process: ${err}`);
+    })
 };
 
 async function startBot(userId, groups) {
