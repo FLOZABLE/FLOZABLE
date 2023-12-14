@@ -25,7 +25,7 @@ Router.post('/sort', async (req, res) => {
         const todayTimeline = (await redisClient.lRange(`user:${user_id}:subject:${id}`, 0, -1)).map(JSON.parse);
         const totalTimeline = prevTimeline.concat(todayTimeline);
         totalTimeline.find(([start, duration]) => {
-          const startUnix = datum_point + start + 0;
+          const startUnix = datum_point + start + timelineSum;
           const stopUnix = startUnix + duration;
           timelineSum += start + duration;
           if (startTime / 1000 <= startUnix && stopUnix <= stopTime / 1000) {
