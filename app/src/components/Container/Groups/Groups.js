@@ -50,8 +50,9 @@ function Groups({
   }, [subjects]);
 
   useEffect(() => {
+    if (!userInfo) return;
     bringGroups();
-  }, []);
+  }, [userInfo]);
 
   return (
     <div className={styles.GroupsContainer}>

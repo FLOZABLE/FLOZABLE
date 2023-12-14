@@ -194,16 +194,15 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
         isIn = false;
       }
        else {
-        if (unixStart < stopTime) {
+        /* if (unixStart < stopTime) {
           sortedTimeline[sortedTimeline.length - 1].push([startTime, unixStop]);
           totalTime[sortedTimeline.length - 1] += duration;
           isIn = false;
-        }
+        } */
         [startTime, stopTime] = startTimeChange(startTime, stopTime);
-        //alert(option);
         sortedTimeline.push([]);
         totalTime.push(0);
-      }
+      };
     }
     return;
   });
