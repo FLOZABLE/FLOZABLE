@@ -10,6 +10,7 @@ const pool = require('../model/pool');
 const crypto = require('crypto');
 const { DateTime } = require('luxon');
 const sharp = require("sharp");
+const axios = require('axios');
 const cron = require('node-cron');
 const { connection } = require('../socket');
 const schedule = require('node-schedule');
@@ -23,7 +24,7 @@ function createBots(startIndex, length) {
   const connection = pool.promise();
 
   for (let i = startIndex; i < length; i++) {
-    const { name, userId, timeZone, gender } = combinedNameData[i % (combinedNameData.length - 1)];
+    const { name, userId, timeZone, gender, profileImage } = combinedNameData[randomIntInRange(0, combinedNameData.length - 1)];
     const password = '0';
     let hashed = hashing(password);
 
@@ -61,16 +62,16 @@ function createBots(startIndex, length) {
     let timelineSum = 0;
     const timeNow = new Date().getTime() / 1000;
     const possibleDurations = [60, 120, 180, 1200, 1500, 3600, 4200]
-    while (currTime + 600 < timeNow){
+    while (currTime + 600 < timeNow) {
       let durationSeconds = Math.floor((1 + (Math.random() - 0.5)) * possibleDurations[Math.floor(Math.random() * possibleDurations.length)]); //1 minute to 1 hour
       durationSeconds = Math.min(durationSeconds, timeNow - currTime - 60);
-      if (studyFactor > Math.floor(Math.random() * 40)){
+      if (studyFactor > Math.floor(Math.random() * 40)) {
         const pastTime = currTime - prevTime;
         subjectTimeline.push([pastTime, durationSeconds]);
         timelineSum += pastTime + durationSeconds;
         prevTime = currTime;
       }
-      else{
+      else {
         currTime += durationSeconds * 10;
       }
       currTime += durationSeconds;
@@ -90,7 +91,13 @@ function createBots(startIndex, length) {
       datum_point
     };
     connection.query(`INSERT INTO subjects SET ?`, [subject]);
-    createProfileImg(40, userId, gender);
+
+    if (!!profileImage) {
+      createChessProfileImg(userId, profileImage);
+    }
+    else {
+      createProfileImg(40, userId, gender);
+    }
   };
 };
 
@@ -117,8 +124,8 @@ async function csvIdToJsonDatasets() {
   .then((jsonObj)=>{
       console.log(jsonObj);
   }) */
-  const jsonArray=await csv().fromFile(csvFilePath);
-fs.writeFileSync(fileOutputName, JSON.stringify(jsonArray));
+  const jsonArray = await csv().fromFile(csvFilePath);
+  fs.writeFileSync(fileOutputName, JSON.stringify(jsonArray));
 }
 
 //csvIdToJsonDatasets();
@@ -138,12 +145,46 @@ async function addValues() {
   })
 };
 
+//write combinedNames.json with 50/50 chess and realNames
+const CountryTimezones = require('countries-and-timezones');
+const chessData = require("../data/ChessInfo.json");
+const { profile } = require('console');
+//and fullNameData
+async function addChessAndReal() {
+  const fullNameUsers = fullNameData.map(data => {
+    return { ...data };
+  });
+
+  const chessNameUsers = chessData.map(data => {
+    let countryInfo = CountryTimezones.getCountry(data.countryCode.toUpperCase());
+    if (!!!countryInfo) {
+      countryInfo = CountryTimezones.getCountry("US")
+    }
+    const timeZone = countryInfo.timezones[randomIntInRange(0, countryInfo.timezones.length - 1)];
+
+    const userId = generateRandomId(10);
+    const gender = randomIntInRange(0, 1) ? 'Female' : 'Male';
+    const name = data.name;
+    const profileImage = data.imgUrl;
+    return { name, userId, timeZone, gender, profileImage };
+  });
+
+  const newData = fullNameUsers.concat(chessNameUsers);
+
+  fs.writeFileSync('./data/combinedNames.json', JSON.stringify(newData, null, 2), 'utf-8', (err) => {
+    if (err) {
+      console.log(err)
+    }
+  });
+}
+//addChessAndReal()
+
 //create combined datasets
 function createCombinedUserList(percentage, length = realisticNameData.length + fullNameData.length - 2) {
   let fullNameIndex = 0;
   let realisticNameIndex = 0;
   const newData = [];
-  for(let i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     const type = randomIntInRange(0, 100) > percentage;
     if (type && fullNameData[fullNameIndex]) {
       newData.push(fullNameData[fullNameIndex]);
@@ -193,6 +234,19 @@ function createProfileImg(percentage, userId, gender) {
       }
     })
   }
+};
+
+
+async function createChessProfileImg(userId, imgSrc) {
+  console.log(imgSrc);
+  const response = await axios(imgSrc, { responseType: 'arraybuffer' });
+  const buffer64 = Buffer.from(response.data, 'binary');
+
+  await sharp(buffer64)
+    .toFormat('jpeg')
+    .resize({ width: 800, height: 800 })
+    .jpeg({ quality: 40 })
+    .toFile(`./public/profile-images/${userId}.jpeg`);
 };
 
 async function startBot(userId, groups) {
@@ -383,7 +437,7 @@ async function createGroups(startIndex, length) {
     const leader = members[0];
     const colorIndex = randomIntInRange(0, colors.length - 1);
     const color = colors[colorIndex];
-    const {name, explanation, tags} = groupData;
+    const { name, explanation, tags } = groupData;
     const visibility = randomIntInRange(0, 7) <= 1;
 
     const stringlifiedLikes = JSON.stringify(likes).slice(1, -1).replaceAll(`"`, "");
@@ -423,7 +477,7 @@ async function randomFriend(min, max) {
   const [bots] = await connection.query(`SELECT friends, user_id FROM users WHERE type = -1`);
   const lastBotIndex = bots.length - 1;
   for (const bot of bots) {
-    const {user_id} = bot;
+    const { user_id } = bot;
     const nFriends = randomIntInRange(min, max);
     const friends = [];
 
@@ -457,53 +511,53 @@ async function randomFriend(min, max) {
       END
       WHERE user_id = ?
     `, [
-      stringlified,
-      stringlified,
-      user_id,
-    ]);
+        stringlified,
+        stringlified,
+        user_id,
+      ]);
     }
   }
-/*   bots.map(async (bot) => {
-    const {user_id} = bot;
-    const nFriends = randomIntInRange(min, max);
-    const friends = [];
-
-    for (let i = 0; i < nFriends; i++) {
-      const friendIndex = randomIntInRange(0, lastBotIndex);
-      const friend = bots[friendIndex].user_id;
-      if (!friends.includes(friend) && !friends.includes(user_id)) {
-        friends.push(friend);
-        await connection.query(`
-          UPDATE users
-          SET friends = CASE
-            WHEN friends = '' THEN ?
-            ELSE CONCAT(friends, ',', ?)
-          END
-          WHERE user_id = ?
-        `, [
-          user_id,
-          user_id,
-          friend,
-        ]);
+  /*   bots.map(async (bot) => {
+      const {user_id} = bot;
+      const nFriends = randomIntInRange(min, max);
+      const friends = [];
+  
+      for (let i = 0; i < nFriends; i++) {
+        const friendIndex = randomIntInRange(0, lastBotIndex);
+        const friend = bots[friendIndex].user_id;
+        if (!friends.includes(friend) && !friends.includes(user_id)) {
+          friends.push(friend);
+          await connection.query(`
+            UPDATE users
+            SET friends = CASE
+              WHEN friends = '' THEN ?
+              ELSE CONCAT(friends, ',', ?)
+            END
+            WHERE user_id = ?
+          `, [
+            user_id,
+            user_id,
+            friend,
+          ]);
+        };
       };
-    };
-
-    if (friends.length) {
-      const stringlified = JSON.stringify(friends);
-      await connection.query(`
-      UPDATE users
-      SET friends = CASE
-        WHEN friends = '' THEN ?
-        ELSE CONCAT(friends, ',', ?)
-      END
-      WHERE user_id = ?
-    `, [
-      stringlified,
-      stringlified,
-      user_id,
-    ]);
-    }
-  }) */
+  
+      if (friends.length) {
+        const stringlified = JSON.stringify(friends);
+        await connection.query(`
+        UPDATE users
+        SET friends = CASE
+          WHEN friends = '' THEN ?
+          ELSE CONCAT(friends, ',', ?)
+        END
+        WHERE user_id = ?
+      `, [
+        stringlified,
+        stringlified,
+        user_id,
+      ]);
+      }
+    }) */
 }
 
 module.exports = {
