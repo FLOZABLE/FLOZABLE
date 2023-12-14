@@ -177,7 +177,7 @@ async function addChessAndReal() {
     }
   });
 }
-//addChessAndReal()
+addChessAndReal()
 
 //create combined datasets
 function createCombinedUserList(percentage, length = realisticNameData.length + fullNameData.length - 2) {

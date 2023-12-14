@@ -2,7 +2,7 @@ const express = require('express');
 const Router = express.Router();
 
 const { OpenAI } = require("openai");
-
+/*
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
@@ -24,6 +24,6 @@ Router.post("/input", async (req, res) => {
     }
    res.send({success: true});
 })
-
+*/
 
 module.exports = Router;
