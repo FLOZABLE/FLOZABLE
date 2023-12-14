@@ -25,9 +25,9 @@ function timelineSort(subjects) {
   });
   subjects.firstDatumPoint = firstDatumPoint;
 
-  subjects.daily = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: [], focus: []};
-  subjects.weekly = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: [], focus: []};
-  subjects.monthly = {maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: [], focus: []};
+  subjects.daily = { maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: [], focus: [] };
+  subjects.weekly = { maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: [], focus: [] };
+  subjects.monthly = { maxLength: 0, datum_point: firstDatumPoint, groupedTotal: [], grouped: [], focus: [] };
 
   subjects.map((subject, i) => {
     const [dailySorted, dailyTotal] = timelineSorter(subject, 'daily', firstDatumPoint, (startTime, stopTime) => {
@@ -37,8 +37,8 @@ function timelineSort(subjects) {
       return [startTime + WEEKTOSEC, stopTime + WEEKTOSEC];
     });
     const [monthlySorted, monthlyTotal] = timelineSorter(subject, 'monthly', firstDatumPoint, (startTime, stopTime) => {
-      const newStart = DateTime.fromSeconds(startTime).plus({months: 1}).toSeconds();
-      const newStop = DateTime.fromSeconds(stopTime).plus({months: 1}).toSeconds();
+      const newStart = DateTime.fromSeconds(startTime).plus({ months: 1 }).toSeconds();
+      const newStop = DateTime.fromSeconds(stopTime).plus({ months: 1 }).toSeconds();
       return [newStart, newStop];
     });
 
@@ -78,7 +78,7 @@ function timelineSort(subjects) {
     subject.daily.focus = Array(subject.daily.grouped.length).fill(0);
     subject.daily.focus = subject.daily.grouped.map((val, i) => {
       let maxVal = 0;
-      if (val.length > 0){
+      if (val.length > 0) {
         val.map((currentTimeline, i) => {
           maxVal = Math.max(maxVal, currentTimeline[1] - currentTimeline[0]);
         })
@@ -89,7 +89,7 @@ function timelineSort(subjects) {
     subject.weekly.focus = Array(subject.weekly.grouped.length).fill(0);
     subject.weekly.focus = subject.weekly.grouped.map((val, i) => {
       let maxVal = 0;
-      if (val.length > 0){
+      if (val.length > 0) {
         val.map((currentTimeline, i) => {
           maxVal = Math.max(maxVal, currentTimeline[1] - currentTimeline[0]);
         })
@@ -100,7 +100,7 @@ function timelineSort(subjects) {
     subject.monthly.focus = Array(subject.monthly.grouped.length).fill(0);
     subject.monthly.focus = subject.monthly.grouped.map((val, i) => {
       let maxVal = 0;
-      if (val.length > 0){
+      if (val.length > 0) {
         val.map((currentTimeline, i) => {
           maxVal = Math.max(maxVal, currentTimeline[1] - currentTimeline[0]);
         })
@@ -133,7 +133,7 @@ function timelineSort(subjects) {
 
 
   /* part2 */
-  
+
   return subjects;
 };
 
@@ -151,7 +151,7 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
   if (option === 'daily') {
     const dateStart = DateTime.fromSeconds(datum_point);
     startTime = dateStart.startOf('day').toSeconds();
-    stopTime = dateStart.endOf('day').set({millisecond: 0}).toSeconds();
+    stopTime = dateStart.endOf('day').set({ millisecond: 0 }).toSeconds();
     const formattedFirstDatum = new Date(firstDatumPoint * 1000).setHours(0, 0, 0, 0) / 1000;
     indexDiff = (startTime - formattedFirstDatum) / DATETOSEC;
     const now = new Date().setHours(0, 0, 0, 0) / 1000;
@@ -169,7 +169,7 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
     indexDiff = DateTime.fromSeconds(datum_point).startOf('month').diff(formattedFirstDatum, 'month').toObject().months;
     expectedLength = DateTime.now().startOf('month').diff(formattedFirstDatum, 'month').months + 1;
   };
-  
+
 
   const sortedTimeline = [[]];
   const totalTime = [0];
@@ -193,12 +193,12 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
         totalTime[sortedTimeline.length - 1] += duration;
         isIn = false;
       }
-       else {
-        /* if (unixStart < stopTime) {
+      else {
+        if (unixStart < stopTime) {
           sortedTimeline[sortedTimeline.length - 1].push([startTime, unixStop]);
           totalTime[sortedTimeline.length - 1] += duration;
           isIn = false;
-        } */
+        }
         [startTime, stopTime] = startTimeChange(startTime, stopTime);
         sortedTimeline.push([]);
         totalTime.push(0);
@@ -218,8 +218,8 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
 
 /** sort new subject */
 function sortNewSubject(subjects, newSubject) {
-  
-  const {daily, weekly, monthly} = subjects;
+
+  const { daily, weekly, monthly } = subjects;
   newSubject.daily = {
     grouped: Array(daily.maxLength ? daily.maxLength : 1).fill([]),
     total: Array(daily.maxLength ? daily.maxLength : 1).fill(0)
@@ -233,7 +233,7 @@ function sortNewSubject(subjects, newSubject) {
     total: Array(monthly.maxLength ? monthly.maxLength : 1).fill(0)
   };
 
-  
+
   return newSubject;
 }
 

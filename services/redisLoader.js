@@ -323,14 +323,14 @@ async function subjectsTimelineCache(userId) {
     const prevTimeline = subjectTimelines.find(sub => {
       return sub.id === id;
     });
-    const parsedTimeline = prevTimeline.length ? JSON.parse(timeline.replace(/^/, "[").replace(/$/, "]")) : []; //wrapping the string with "[]"
+    const parsedTimeline = prevTimeline.timeline ? JSON.parse(prevTimeline.timeline.replace(/^/, "[").replace(/$/, "]")) : []; //wrapping the string with "[]"
     const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
     subject.timeline = parsedTimeline.concat(todayTimeline);
     return subject;
   });
 
   const subjects = await Promise.all(subjectPromises);
-  console.log(subjects);
+  //console.log(subjects);
   return subjects;
 };
 
