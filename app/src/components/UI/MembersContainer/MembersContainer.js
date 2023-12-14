@@ -24,7 +24,6 @@ function MembersContainer({isFocus, userInfo, groupInfo, socket, setStudyingMemb
 const getRouterRtpCapabilities = async () => {
   mediaSocket.emit("getRouterRtpCapabilities", ({rtpCapabilities}) => {
     setRtpCapabilities(rtpCapabilities);
-    console.log(`getRouterRtpCapabilities:`, rtpCapabilities);
   });
 };
 
@@ -43,7 +42,6 @@ const createDevice = async () => {
     const device = new Device();
 
     await device.load({ routerRtpCapabilities: rtpCapabilities });
-    console.log(device, rtpCapabilities, 'trp' )
     setDevice(device);
   } catch (error) {
     console.log(error);
@@ -74,18 +72,14 @@ const createRecvTransport = async () => {
        * using the parameters provided by the server.
        */
       const transport = await device.createRecvTransport(params);
-      console.log('consumer transport',transport)
-
 
       await transport.on(
         "connect",
         async ({ dtlsParameters }, callback, errback) => {
           try {
-            console.log("----------> consumer transport has connected");
             // Notify the server that the transport is ready to connect with the provided DTLS parameters
             await mediaSocket.emit("transport-recv-connect", { dtlsParameters });
             // Callback to indicate success
-            console.log('consume dtls', dtlsParameters)
             callback();
           } catch (error) {
             // Errback to indicate failure

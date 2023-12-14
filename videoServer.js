@@ -96,7 +96,6 @@ const consumers = {};
       };
     };
     const userId = session.user_id;
-    console.log('mediasocket', userId);
     socket.on("changeGroup", async (groupId) => {
       const userInfo = await userCache(userId);
       if (!userInfo) return;
@@ -109,7 +108,7 @@ const consumers = {};
         };
       });
       socket.join(groupId);
-      console.log('changegroup')
+      console.log('changegroup', userId, groupId)
       activeGroup = groupId;
     });
 
@@ -137,7 +136,6 @@ const consumers = {};
     socket.on("createTransport", async ({ sender }, callback) => {
       // ... Creating sender/receiver transports ...
       const { transport, params } = await createWebRtcTransport(router);
-      //console.log('create transport', transport, params)
       if (activeGroup) {
         if (sender) {
           //producerTransports[userId] = { transport, active: false };
@@ -152,19 +150,15 @@ const consumers = {};
     socket.on('transport-connect', async ({ dtlsParameters }) => {
       if (!activeGroup) return;
       const producerTransport = getProducerTransport(userId);
-      console.log('DTLS PARAMS... ', producerTransport.id, dtlsParameters)
       if (!producerTransport) return;
       const connection = await producerTransport.connect({ dtlsParameters });
-      console.log('connect producer transport')
     })
 
     socket.on('transport-recv-connect', async ({ dtlsParameters }) => {
       if (!activeGroup) return;
       const consumerTransport = getConsumerTransport(userId);
-      console.log('DTLS PARAMS...  consumer', consumerTransport.id, dtlsParameters)
       if (!consumerTransport) return;
       const connection = await consumerTransport.connect({ dtlsParameters });
-      console.log('connect consumer transport')
     })
 
     socket.on('transport-produce', async ({ kind, rtpParameters }, callback) => {
@@ -181,9 +175,7 @@ const consumers = {};
       });
 
       addProducer(activeGroup, userId, producer);
-      console.log('producer add', producer.id)
       producer.on('transportclose', () => {
-        console.log('transport for this producer closed ')
         producer.close()
       });
       mediaSocket.to(activeGroup).emit(`newProducer:${userId}`);
@@ -195,28 +187,26 @@ const consumers = {};
     })
 
     socket.on('consume', async ({ rtpCapabilities, targetId }, callback) => {
-      console.log('consume -------------')
       try {
         // check if the router can consume the specified producer
         if (!activeGroup) return;
         const producer = getProducer(activeGroup, targetId);
-        console.log('consume producer', producer.id, rtpCapabilities)
         if (!producer) return;
         const canConsume = router.canConsume({
           producerId: producer.id,
           rtpCapabilities
         })
-        console.log('producer can consume', canConsume)
         if (canConsume) {
           // transport can now consume and return a consumer
           const consumerTransport = getConsumerTransport(userId);
-          console.log('consumer transport id',consumerTransport.id)
           if (!consumerTransport) return;
           const consumer = await consumerTransport.consume({
             producerId: producer.id,
             rtpCapabilities,
-            /* paused: false, */
-          })
+            paused: true,
+          });
+
+          addConsumer(activeGroup, userId, targetId, consumer);
   
           consumer.on('transportclose', () => {
             console.log('transport close from consumer')
@@ -236,7 +226,6 @@ const consumers = {};
           }
   
           // send the parameters to the client
-          console.log('consumed')
           callback({ params })
         }
       } catch (error) {
@@ -249,9 +238,8 @@ const consumers = {};
       }
     });
 
-    socket.on('consumer-resume', async () => {
-      console.log('consumer resume');
-      const consumer = getConsumer(activeGroup, userId);
+    socket.on('consumer-resume', async ({targetId}) => {
+      const consumer = getConsumer(activeGroup, userId, targetId);
       if (!consumer) return;
       console.log('resume', consumer.id)
       await consumer.resume()
@@ -294,22 +282,20 @@ const getConsumerTransport = (userId) => {
 };
 
 const addProducer = async (roomId, userId, producer) => {
-  if (producers[roomId]) {
-    producers[roomId][userId] = producer;
-  } else {
+  if (!producers[roomId]) {
     producers[roomId] = {};
-    producers[roomId][userId] = producer;
-  }
-  //console.log('add producer', producers)
+  };
+  producers[roomId][userId] = producer;
 };
 
-const addConsumer = async (roomId, userId, consumer) => {
-  if (consumers[roomId]) {
-    consumers[roomId][userId] = consumer;
-  } else {
+const addConsumer = async (roomId, userId, targetId,consumer) => {
+  if (!consumers[roomId]) {
     consumers[roomId] = {};
-    consumers[roomId][userId] = consumer;
-  }
+  };
+  if (!consumers[roomId][userId]) {
+    consumers[roomId][userId] = {};
+  };
+  consumers[roomId][userId][targetId] = consumer;
 };
 
 
@@ -326,12 +312,12 @@ const getProducer = (roomId, userId) => {
   };
 };
 
-const getConsumer = (roomId, userId) => {
+const getConsumer = (roomId, userId, targetId) => {
   try {
     //not found
-    if (!consumers[roomId] || !consumers[roomId][userId]) return false;
+    if (!consumers[roomId] || !consumers[roomId][userId] || !consumers[roomId][userId][targetId]) return false;
 
-    const consumer = consumers[roomId][userId];
+    const consumer = consumers[roomId][userId][targetId];
     return consumer;
   } catch (err) {
     console.log(err);

@@ -155,9 +155,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (userInfo) {
-      bringGroups();
-    }
+    if (!userInfo) return;
+    bringGroups();
   }, [userInfo]);
 
   /* useEffect(() => {

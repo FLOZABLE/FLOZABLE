@@ -74,7 +74,6 @@ const createSendTransport = async () => {
        * using the parameters provided by the server.
        */
       const transport = await device.createSendTransport(params);
-      console.log('transport',transport, device, params)
       // Update the state to hold the reference to the created transport
       /* setParams(params); */
 
@@ -90,7 +89,6 @@ const createSendTransport = async () => {
         "connect",
         async ({ dtlsParameters }, callback, errback) => {
           try {
-            console.log("----------> producer transport has connected");
             // Notify the server that the transport is ready to connect with the provided DTLS parameters
             await mediaSocket.emit("transport-connect", { dtlsParameters });
             // Callback to indicate success
@@ -115,8 +113,6 @@ const createSendTransport = async () => {
         async (parameters, callback, errback) => {
           const { kind, rtpParameters, appData } = parameters;
 
-          console.log("----------> transport-produce");
-
           try {
             // Notify the server to start producing media with the provided parameters
             mediaSocket.emit(
@@ -124,7 +120,6 @@ const createSendTransport = async () => {
               { kind, rtpParameters },
               ({ id }) => {
                 // Callback to provide the server-generated producer ID back to the transport
-                console.log('server producer', id)
                 callback({ id });
               }
             );
@@ -142,7 +137,6 @@ const createSendTransport = async () => {
 
 const transportProduce = async() => {
   const track = await stream.getVideoTracks()[0];
-  console.log(track, videoParams, stream, producerTransport)
   const localProducer = await producerTransport.produce({track, ...videoParams});
   localProducer.on("trackended", () => { console.log("video track ended"); });
   localProducer.on("transportclose", () => { console.log("video transport ended"); });
@@ -150,10 +144,11 @@ const transportProduce = async() => {
 }
 
   useEffect(() => {
-    if(!device || !stream || !isFocus) return;
+    if(!device || !isFocus) return;
+    console.log('create send transport')
     createSendTransport();
     //createProducerTransport();
-  }, [device, stream, isFocus]);
+  }, [device, isFocus]);
 
   useEffect(() => {
     if (!stream || !isFocus) return;

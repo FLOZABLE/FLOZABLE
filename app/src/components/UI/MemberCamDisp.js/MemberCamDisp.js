@@ -5,6 +5,7 @@ import { mediaSocket } from "../../../mediaSocket";
 function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
   const videoRef = useRef(null);
   const [stream, setStream] = useState(null);
+  const [upd, setUpd] = useState(0);
 
   const connectRecvTransport = async () => {
     console.log('new producer')
@@ -21,7 +22,6 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
         return
       }
   
-      console.log('consume ddd',params, recvTransport)
       // then consume with the local consumer transport
       // which creates a consumer
       const consumer = await recvTransport.consume({
@@ -36,11 +36,10 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
   
       const stream = new MediaStream([track]);
       /* stream.addTrack(track); */
-      console.log(stream, track, stream.getVideoTracks());
       setStream(stream);
       // the server consumer started with media paused
       // so we need to inform the server to resume
-      mediaSocket.emit('consumer-resume');
+      mediaSocket.emit('consumer-resume', {targetId});
     })
   };
 
@@ -57,7 +56,7 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
   useEffect(() => {
     if (!stream) return;
     videoRef.current.srcObject = stream;
-    console.log('final re', stream, videoRef.current.srcObject, videoRef)
+    setUpd(prev => prev +1)
   }, [stream]);
   
   return (
@@ -68,6 +67,7 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
         playsInline
         className={`${styles.video}`}
       />
+      {upd}
     </div>
   );
 }
