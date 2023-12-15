@@ -23,8 +23,26 @@ const { activeSubjectCache, subjectsCache, timerCache } = require('../services/r
 function createBots(startIndex, length) {
   const connection = pool.promise();
 
+  const chosenBotIds = {};
+  const botUsers = [];
+
   for (let i = startIndex; i < length; i++) {
     const { name, userId, timeZone, gender, profileImage } = combinedNameData[randomIntInRange(0, combinedNameData.length - 1)];
+    if (Object.values(chosenBotIds).includes(userId)) {
+      // since we're choosing randomly we have to make sure there's no repeats
+      i--;
+      continue;
+    }
+    else {
+      chosenBotIds[userId] = true;
+    }
+
+
+    if (name.toLowerCase().includes("chess")) {
+      i--;
+      continue;
+    }
+
     const password = '0';
     let hashed = hashing(password);
 
@@ -61,20 +79,13 @@ function createBots(startIndex, length) {
     let currTime = unixTimestamp;
     let timelineSum = 0;
     const timeNow = new Date().getTime() / 1000;
-    const possibleDurations = [60, 120, 180, 1200, 1500, 3600, 4200]
-    while (currTime + 600 < timeNow) {
-      let durationSeconds = Math.floor((1 + (Math.random() - 0.5)) * possibleDurations[Math.floor(Math.random() * possibleDurations.length)]); //1 minute to 1 hour
-      durationSeconds = Math.min(durationSeconds, timeNow - currTime - 60);
-      if (studyFactor > Math.floor(Math.random() * 40)) {
-        const pastTime = currTime - prevTime;
-        subjectTimeline.push([pastTime, durationSeconds]);
-        timelineSum += pastTime + durationSeconds;
-        prevTime = currTime;
-      }
-      else {
-        currTime += durationSeconds * 10;
-      }
-      currTime += durationSeconds;
+    const possibleDurations = [0, 0, 0, 0, 60, 120, 180, 240, 360, 1200, 1500, 3600, 4200, 5400, 8000];
+    while (currTime < timeNow) {
+      const duration = Math.floor((1 + Math.random() - 0.5) * possibleDurations[randomIntInRange(0, possibleDurations.length - 1)]);
+      subjectTimeline.push([currTime - prevTime, duration]);
+      timelineSum += duration + currTime - prevTime;
+      prevTime = currTime + duration;
+      currTime += 86400; //currTime will always be the start of the day
     }
 
     let stringTimeline = JSON.stringify(subjectTimeline);
@@ -92,6 +103,8 @@ function createBots(startIndex, length) {
     };
     connection.query(`INSERT INTO subjects SET ?`, [subject]);
 
+    botUsers.push({ id: userId, timeline: subjectTimeline });
+
     if (!!profileImage) {
       createChessProfileImg(userId, profileImage);
     }
@@ -99,6 +112,9 @@ function createBots(startIndex, length) {
       createProfileImg(40, userId, gender);
     }
   };
+
+  console.log(botUsers);
+  // we will use this to create the ranking tables
 };
 
 /**create a new file and add id */
@@ -238,6 +254,10 @@ function createProfileImg(percentage, userId, gender) {
 
 
 function createChessProfileImg(userId, imgSrc) {
+  if (imgSrc === "https://www.chess.com/bundles/web/images/user-image.svg") {
+    // Do not put default chess image
+    return;
+  }
   axios.get(imgSrc)
     .then((response) => {
       return axios.get(imgSrc, { responseType: 'arraybuffer' })
