@@ -241,7 +241,7 @@ function App() {
                 setResponse={setResponse}
                 setIsAddPlanModal={setIsAddPlanModal}
               />
-              <Footer />
+              {/* <Footer /> */}
             </div>
           }
         />
@@ -277,7 +277,7 @@ function App() {
                 subjects={subjects}
                 setResponse={setResponse}
               />
-              <Footer />
+              {/* <Footer /> */}
             </div>
           }
         />
@@ -311,7 +311,7 @@ function App() {
                 reset={reset}
                 setResponse={setResponse}
               />
-              <Footer />
+              {/* <Footer /> */}
             </div>
           }
         />
@@ -354,7 +354,7 @@ function App() {
                 setResponse={setResponse}
                 bringGroups={bringGroups}
               />
-              <Footer />
+              {/* <Footer /> */}
             </div>
           }
         />
