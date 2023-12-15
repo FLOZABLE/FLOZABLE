@@ -335,4 +335,22 @@ Router.get('/friends', async (req, res) => {
   }));
 });
 
+Router.get('/today', async (req, res) => {
+  try {
+    const users = await redisClient.sMembers("allMembers");
+    const dayTotal = await Promise.all(users.map(async(userId) => {
+      let total = await redisClient.get(`user:${userId}:dayTotal`);
+      total = total === null ? 0 : total;
+      const user = await userCache(userId);
+      return {user: user, total}
+    }));
+
+    dayTotal.sort((a, b) => b.total - a.total);
+    res.send({ success: true, rankings: dayTotal});
+  } catch (err) {
+    console.log(err);
+    res.send({ success: false, reason: 'err' })
+  };
+});
+
 module.exports = Router;
