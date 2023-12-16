@@ -266,7 +266,7 @@ function updateRankingTrend(rankings) {
       if (ranking === -1) {
         data.push(rankings.maxLength);
       } else {
-        data.push(ranking);
+        data.push(ranking + 1);
       }
     })
   };
