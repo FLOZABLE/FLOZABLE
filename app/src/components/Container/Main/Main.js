@@ -8,6 +8,13 @@ import { Quotes } from "../../../utils/Quotes.js";
 import PlanTimeline from "../../UI/PlanTimeline/PlanTimeline.js";
 import FriendsActivityViewer from "../../UI/FriendsActivityViewer/FriendsActivityViewer.js";
 import SmallRankingViewer from "../../UI/SmallRankingViewer/SmallRankingViewer.js";
+import ChartDataLabel from "chartjs-plugin-datalabels";
+import PieChart from "../../UI/PieChart";
+
+import SmallSubjectsViewer from "../../UI/SmallSubjectsViewer/SmallSubjectsViewer.js";
+import ActivityViewer from "../../UI/ActivityViewer/ActivityViewer.js";
+import { Link } from "react-router-dom";
+import AIRecommendation from "../../UI/AIRecommendation/AIRecommendation.js";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -15,11 +22,11 @@ function Main({
   isSidebarOpen,
   isSidebarHovered,
   subjects,
-  plans,
-  setIsAddPlanModal,
-  setPlans,
   setResponse,
-  userInfo
+  userInfo,
+  plans,
+  setPlans,
+  setIsAddPlanModal
 }) {
   const [joinTarget, setJoinTarget] = useState(null);
 
@@ -28,6 +35,9 @@ function Main({
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxesContainer}>
           <div className={styles.box}>
+            <div className={styles.title}>
+              <p>Friends Viewer</p>
+            </div>
             <FriendsActivityViewer
               setResponse={setResponse}
               userInfo={userInfo}
@@ -35,10 +45,45 @@ function Main({
             />
           </div>
           <div className={styles.box}>
-            <SmallRankingViewer 
+            <div className={styles.title}>
+              Today's Ranking
+            </div>
+            <SmallRankingViewer
               userInfo={userInfo}
             />
           </div>
+          <div className={styles.box}>
+            <SmallSubjectsViewer subjects={subjects} />
+          </div>
+          <div className={styles.box}>
+            <PlanTimeline
+              plans={plans}
+              viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
+              viewMode={"timeGridDay"}
+              subjects={subjects}
+              setPlans={setPlans}
+              mode={"study"}
+              setIsAddPlanModal={setIsAddPlanModal}
+            />
+            <Link to="/dashboard/planner">
+              <button className={styles.toStatsBtn}>View Plans</button>
+            </Link>
+          </div>
+          <div className={styles.box}>
+            <div className={styles.title}>
+             <p>AI recommendation</p>
+            </div>
+            <AIRecommendation 
+            />
+          </div>
+        </div>
+        <div className={styles.ActivityWrapper}>
+          <div className={styles.title}>
+            <p>Activity Viewer</p>
+          </div>
+          <ActivityViewer
+            subjects={subjects}
+          />
         </div>
       </div>
     </div>
