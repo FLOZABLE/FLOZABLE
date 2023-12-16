@@ -20,17 +20,18 @@ const csv = require("csvtojson");
 const { activeSubjectCache, subjectsCache, timerCache } = require('../services/redisLoader');
 
 /**create bots */
-function createBots(startIndex, length) {
+async function createBots(startIndex, length) {
   const connection = pool.promise();
 
   const chosenBotIds = {};
   const botUsers = [];
 
-  for (let i = startIndex; i < length; i++) {
+  for (let Z = startIndex; Z < length; Z++) {
     const { name, userId, timeZone, gender, profileImage } = combinedNameData[randomIntInRange(0, combinedNameData.length - 1)];
-    if (Object.values(chosenBotIds).includes(userId)) {
+    if (chosenBotIds.hasOwnProperty(userId)) {
       // since we're choosing randomly we have to make sure there's no repeats
-      i--;
+      Z--;
+      console.log("Duplicate " + userId + " (skipped)");
       continue;
     }
     else {
@@ -39,8 +40,13 @@ function createBots(startIndex, length) {
 
 
     if (name.toLowerCase().includes("chess")) {
-      i--;
+      Z--;
       continue;
+    }
+    if (name.length >= 40){
+      Z--;
+      continue;
+      //This will cause server to crash since name is VARCHAR(40)
     }
 
     const password = '0';
@@ -68,7 +74,7 @@ function createBots(startIndex, length) {
     };
 
     //console.log(userInfo)
-    connection.query('INSERT INTO users SET ?', userInfo);
+    await connection.query('INSERT INTO users SET ?', userInfo);
     const subjectId = generateRandomId(10);
     const datum_point = unixTimestamp;
 
@@ -101,7 +107,7 @@ function createBots(startIndex, length) {
       timeline_sum: timelineSum,
       datum_point
     };
-    connection.query(`INSERT INTO subjects SET ?`, [subject]);
+    await connection.query(`INSERT INTO subjects SET ?`, [subject]);
 
     botUsers.push({ id: userId, timeline: subjectTimeline, datum_point });
 
@@ -118,10 +124,10 @@ function createBots(startIndex, length) {
   const botWeeklyRanking = [];
   const botMonthlyRanking = [];
 
-  const LUXON_NOW = DateTime.fromJSDate(new Date()).startOf('day');
+  const LUXON_NOW = DateTime.fromJSDate(new Date()).toUTC().startOf('day');
 
-  botUsers.map((bot) => {
-    const botTimeline = {id: bot.id};
+  botUsers.map((bot) => { //ranking calculations (we only have one session per day, meaning only one [start, duration] per day)
+    const botTimeline = {};
     let totalSum = bot.datum_point;
     bot.timeline.map((tl) => {
       let duration = tl[1];
@@ -130,10 +136,108 @@ function createBots(startIndex, length) {
       botTimeline[startDayUnixUTC.toSeconds()] = duration;
       totalSum += 86400; //add 1 day
     });
-    //console.log(botTimeline);
 
-    
+    for (let i = 1; i < 60; i++) {
+      const previousUnix = LUXON_NOW.minus({ days: i }).toSeconds();
+      let valThisDay = 0;
+      if (botTimeline.hasOwnProperty(previousUnix)) {
+        valThisDay = botTimeline[previousUnix];
+      }
+
+      if (!!!botDailyRanking[i]) {
+        botDailyRanking[i] = [];
+      }
+      botDailyRanking[i].push({ u: bot.id, t: valThisDay }); //at i index we subject 86400*i seconds from LUXON_NOW
+    }
+
+    let mappedTotal = 0;
+    Object.entries(botTimeline).map(([key, val]) => { //create a prefix sum to calculate weekly and monthly times
+      mappedTotal += val;
+      botTimeline[key] = mappedTotal;
+    });
+
+    for (let i = 1; i < 8; i++) {
+      const weekStartUnix = Math.round(LUXON_NOW.minus({ weeks: i }).startOf('week').toSeconds());
+      const weekEndUnix = Math.round(LUXON_NOW.minus({ weeks: i }).endOf('week').toSeconds());
+      let weekDuration = 0;
+      //console.log(weekEndUnix);
+      if (botTimeline.hasOwnProperty(weekEndUnix)) { //if it doens't include the end unix then it won't include the start
+        let startVal = 0;
+        if (botTimeline.hasOwnProperty(weekStartUnix)) {
+          startVal = botTimeline[weekStartUnix];
+        }
+        weekDuration = botTimeline[weekEndUnix] - startVal;
+      }
+
+      if (!!!botWeeklyRanking[i]) {
+        botWeeklyRanking[i] = [];
+      }
+      botWeeklyRanking[i].push({ u: bot.id, t: weekDuration });
+    }
+
+    for (let i = 1; i < 3; i++) {
+      const monthStartUnix = Math.round(LUXON_NOW.minus({ months: i }).startOf('month').toSeconds());
+      const monthEndUnix = Math.round(LUXON_NOW.minus({ months: i }).endOf('month').toSeconds());
+      let monthDuration = 0;
+      //console.log(weekEndUnix);
+      if (botTimeline.hasOwnProperty(monthEndUnix)) { //if it doens't include the end unix then it won't include the start
+        let startVal = 0;
+        if (botTimeline.hasOwnProperty(monthStartUnix)) {
+          startVal = botTimeline[monthEndUnix];
+        }
+        monthDuration = botTimeline[monthEndUnix] - startVal;
+      }
+
+      if (!!!botMonthlyRanking[i]) {
+        botMonthlyRanking[i] = [];
+      }
+      botMonthlyRanking[i].push({ u: bot.id, t: monthDuration });
+    }
   });
+
+  botDailyRanking.map((arr) => {
+    return arr.sort((a, b) => { return b.t - a.t });
+  });
+  botWeeklyRanking.map((arr) => {
+    return arr.sort((a, b) => { return b.t - a.t });
+  });
+  botMonthlyRanking.map((arr) => {
+    return arr.sort((a, b) => { return b.t - a.t });
+  });
+
+  await connection.query(`DELETE FROM dailyRanking`);
+  await connection.query(`DELETE FROM weeklyRanking`);
+  await connection.query(`DELETE FROM monthlyRanking`);
+  //remove old rankings or it won't work
+
+  botDailyRanking.map(async (arr, i) => {
+    const rowDate = LUXON_NOW.minus({ days: i }).toSeconds();
+    const rankingRow = {
+      date: rowDate,
+      ranking: JSON.stringify(arr)
+    };
+    await connection.query(`INSERT INTO dailyRanking SET ?`, [rankingRow]);
+  });
+
+  botWeeklyRanking.map(async (arr, i) => {
+    const rowDate = LUXON_NOW.minus({ weeks: i }).startOf('week').toSeconds();
+    const rankingRow = {
+      date: rowDate,
+      ranking: JSON.stringify(arr)
+    };
+    await connection.query(`INSERT INTO weeklyRanking SET ?`, [rankingRow]);
+  });
+
+  botMonthlyRanking.map(async (arr, i) => {
+    const rowDate = LUXON_NOW.minus({ months: i }).startOf('month').toSeconds();
+    const rankingRow = {
+      date: rowDate,
+      ranking: JSON.stringify(arr)
+    };
+    await connection.query(`INSERT INTO monthlyRanking SET ?`, [rankingRow]);
+  });
+
+  console.log("BOTS SUCCESSFULLY ADDED!");
 };
 
 /**create a new file and add id */
@@ -287,9 +391,6 @@ function createChessProfileImg(userId, imgSrc) {
         .jpeg({ quality: 40 })
         .toFile(`./public/profile-images/${userId}.jpeg`)
     })
-    .then(() => {
-      console.log(`Image downloaded and resized!`)
-    })
     .catch((err) => {
       console.log(`Couldn't process: ${err}`);
     })
@@ -410,6 +511,9 @@ async function botManager() {
 
 async function deleteBots() {
   const connection = pool.promise();
+
+  
+
   const [bots] = await connection.query(`SELECT user_id, groups FROM users WHERE type = -1`);
   const botUserIds = bots.map((bot) => { return bot.user_id });
   if (botUserIds.length) {

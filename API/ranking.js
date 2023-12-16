@@ -147,7 +147,7 @@ async function userMonthlySorting(dateTime, length, userId) {
     const date = monthStart.plus({ months: i }).toSeconds();
     const [[monthlyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [date]);
     if (monthlyRanking) {
-      const parsedRanking = JSON.parse(monthlyRanking);
+      const parsedRanking = JSON.parse(monthlyRanking.ranking);
       const rankingIndex = parsedRanking.findIndex(info => {
         return info.u === userId;
       })
