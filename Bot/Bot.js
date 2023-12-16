@@ -80,7 +80,7 @@ function createBots(startIndex, length) {
     let timelineSum = 0;
     const timeNow = new Date().getTime() / 1000;
     const possibleDurations = [0, 0, 0, 0, 60, 120, 180, 240, 360, 1200, 1500, 3600, 4200, 5400, 8000];
-    while (currTime < timeNow) {
+    while (currTime < timeNow - 86400) { //end at yesterday
       const duration = Math.floor((1 + Math.random() - 0.5) * possibleDurations[randomIntInRange(0, possibleDurations.length - 1)]);
       subjectTimeline.push([currTime - prevTime, duration]);
       timelineSum += duration + currTime - prevTime;
@@ -103,7 +103,7 @@ function createBots(startIndex, length) {
     };
     connection.query(`INSERT INTO subjects SET ?`, [subject]);
 
-    botUsers.push({ id: userId, timeline: subjectTimeline });
+    botUsers.push({ id: userId, timeline: subjectTimeline, datum_point });
 
     if (!!profileImage) {
       createChessProfileImg(userId, profileImage);
@@ -113,8 +113,27 @@ function createBots(startIndex, length) {
     }
   };
 
-  console.log(botUsers);
   // we will use this to create the ranking tables
+  const botDailyRanking = [];
+  const botWeeklyRanking = [];
+  const botMonthlyRanking = [];
+
+  const LUXON_NOW = DateTime.fromJSDate(new Date()).startOf('day');
+
+  botUsers.map((bot) => {
+    const botTimeline = {id: bot.id};
+    let totalSum = bot.datum_point;
+    bot.timeline.map((tl) => {
+      let duration = tl[1];
+      const daysDiff = Math.floor(LUXON_NOW.diff(DateTime.fromSeconds(totalSum), ['days']).days);
+      const startDayUnixUTC = LUXON_NOW.minus({ days: daysDiff });
+      botTimeline[startDayUnixUTC.toSeconds()] = duration;
+      totalSum += 86400; //add 1 day
+    });
+    //console.log(botTimeline);
+
+    
+  });
 };
 
 /**create a new file and add id */
