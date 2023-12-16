@@ -6,6 +6,12 @@
 }
 
 .MainContainer .boxesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  max-width: calc(100% - 300px);
+  max-height: calc(100vh - 200px);
+  justify-content: flex-start;
 }
 
 .MainContainer .boxesContainer .box {
@@ -14,4 +20,25 @@
   border-radius: 20px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   padding: 20px;
+  margin: 20px;
+  height: fit-content;
+}
+
+.MainContainer .ActivityWrapper {
+  position: fixed;
+  right: 50px;
+  top: 150px;
+  width: fit-content;
+  background-color: aliceblue;
+  overflow-y: auto;
+  border-radius: 20px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.MainContainer .title {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  font-size: 27px;
+  font-weight: 700;
 }

@@ -1,0 +1,26 @@
+.ActivityViewer {
+  width: 300px;
+  max-height: calc(50vh - 200px);
+
+}
+
+.ActivityViewer .activity {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.ActivityViewer .activity .icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.ActivityViewer .noActivity {
+  margin-left: 10px;
+  margin-bottom: 10px;
+  text-decoration: underline;
+  font-weight: 700;
+  font-size: 20px;
+}
