@@ -201,7 +201,6 @@ Router.get('/status', async (req, res) => {
           friend.activeSubject = activeSubject;
         };
         if (friend.ActiveGroup) {
-          console.log('active group', friend.ActiveGroup)
           const ActiveGroup = JSON.parse(friend.ActiveGroup);
           const connection = pool.promise();
           const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [ActiveGroup.id]);

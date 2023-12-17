@@ -1,0 +1,40 @@
+.SmallRankingViewer .circle {
+    background-color: #5261f4;
+    height: 20px;
+    width: 20px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
+
+.SmallRankingViewer .miniRankingElement {
+    display: inline-block;
+}
+
+.SmallRankingViewer .miniRankingInfo {
+    display: inline-block;
+}
+
+.SmallRankingViewer .miniRanking {
+    border: 1px solid black;
+}
+
+.SmallRankingViewer .profileImg {
+    display: inline-block;
+    background-color: #e5e6e7;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-right: 7px;
+}
+
+.SmallRankingViewer .ranking {
+    display: flex;
+    font-weight: 900;
+    font-size: 20px;
+    margin-left: auto;
+  }
