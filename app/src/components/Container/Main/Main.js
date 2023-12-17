@@ -76,14 +76,14 @@ function Main({
             <AIRecommendation 
             />
           </div>
-        </div>
-        <div className={styles.ActivityWrapper}>
+          <div className={styles.box}>
           <div className={styles.title}>
             <p>Activity Viewer</p>
           </div>
           <ActivityViewer
             subjects={subjects}
           />
+        </div>
         </div>
       </div>
     </div>

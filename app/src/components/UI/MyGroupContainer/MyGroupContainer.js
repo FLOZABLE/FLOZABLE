@@ -24,7 +24,6 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
 
   return (
     <div className={styles.MyGroupContainer}>
-      <div className={styles.inner}>
         <div className={styles.name}>
           <Link to="/dashboard/study">{name}</Link>
         </div>
@@ -51,12 +50,11 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
                 <FontAwesomeIcon icon={faRankingStar} />
               </li>
             </ul>
-            <div className={styles.right}>
+            {/* <div className={styles.right}>
               <FontAwesomeIcon icon={faGear} />
-            </div>
+            </div> */}
           </div>
-        <div className={`${styles.information} customScroll`}>
-          <div className={styles.membersWrapper}>
+          <div className={`${styles.membersWrapper} customScroll`}>
           <MembersContainer
             isFocus={isFocus}
             userInfo={userInfo}
@@ -68,7 +66,6 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
             isCam={isCam}
           />
           </div>
-        </div>
         <div className={styles.buttons}>
           <Link to="/dashboard/study">
             <button>Go to Group</button>
@@ -77,7 +74,6 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
             <FontAwesomeIcon icon={faComments} />
           </button>
         </div>
-      </div>
     </div>
   )
 };

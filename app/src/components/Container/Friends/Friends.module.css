@@ -33,6 +33,7 @@
   justify-content: center;
   flex-wrap: wrap;
   margin: 10px 50px;
+  
 }
 
 .Friends .box .buttonsWrapper .buttonContainer {
@@ -72,4 +73,22 @@
 .Friends .box .buttonContainer button i {
   font-size: 25px;
   margin-left: 10px;
+}
+
+@media (max-width: 1400px) {
+  .Friends .box {
+    padding: 5px;
+  }
+
+  .Friends .box .buttonsWrapper {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px 0px;
+  }
+
+  .Friends .box .buttonContainer button {
+    margin: 5px;
+    font-size: 13px;
+  }
 }

@@ -1,17 +1,7 @@
 .MyGroupContainer {
   position: relative;
-}
-
-.MyGroupContainer .inner {
-  width: 90%;
-  margin-left: 5%;
-}
-
-.MyGroupContainer .information {
-  height: calc(100vh - 400px);
-  max-height: 540px;
-  overflow-y: scroll;
-  position: relative;
+  height: calc(100vh - 250px);
+  padding: 5px;
 }
 
 .MyGroupContainer .name a {
@@ -26,6 +16,11 @@
   width: 80%;
   top: 70px;
   z-index: 2;
+}
+
+.MyGroupContainer .membersWrapper {
+  height: calc(100% - 200px);
+  overflow-y: auto;
 }
 
 .MyGroupContainer .status {
@@ -83,10 +78,6 @@
   color: #fff !important;
 }
 
-.MyGroupContainer.study .members .member {
-  background-color: var(--bgColor);
-}
-
 .MyGroupContainer.study .status {
   background-color: var(--bgColor);
 }
@@ -124,5 +115,9 @@
     overflow-y: auto;
     max-height: 350px;
     gap: 20px;
+  }
+
+  .MyGroupContainer .header {
+    top: 50px;
   }
 }

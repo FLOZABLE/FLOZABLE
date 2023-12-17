@@ -3,14 +3,18 @@ const Router = express.Router();
 const redisClient = require("../model/redis");
 const { autoSignin, generateRandomId, isValidJSON } = require("../tool");
 const pool = require("../model/pool");
+const { DateTime } = require("luxon");
 
 Router.get('/', async (req, res) => {
   try {
     const connection = pool.promise();
     const [themes] = await connection.query(`SELECT * FROM themes`);
     themes.map(async (theme) => {
-      const usage = await redisClient.get(`theme:${theme.id}:week`);
-      theme.usage = usage ? usage : 0;
+      /* const weekUsage = await redisClient.zmScore(`theme:${theme.id}:weekUsage`, ['0', '1', '2' , '3', '4', '5', '6']);
+      await Promise.all(weekUsage.map(dayTotal => {
+        if (!dayTotal) return;
+        theme.weekUsage += dayTotal;
+      })) */
     })
     return res.send({ success: true, themes });
   } catch (err) {
@@ -187,8 +191,12 @@ Router.post('/save', async (req, res) => {
          WHERE user_id = ?`,
         [themeInfo, `%${themeInfo}%`,  `%:${themeId}%`, `:${themeId}`, themeInfo, themeInfo, userId],
       );
+      
+      const weekDay  = DateTime.now().weekday - 1;
+      redisClient.zIncrBy(`theme:${themeId}:weekUsage`, 1, weekDay.toString());
+      const io = req.app.get('socketio');
+      io.emit(`used:${themeId}`);
       res.send({ success: true, msg: 'Theme Saved' });
-      redisClient.incr(`theme:${themeId}:week`);
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });

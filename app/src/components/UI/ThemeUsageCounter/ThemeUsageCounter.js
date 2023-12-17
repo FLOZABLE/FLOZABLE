@@ -6,8 +6,9 @@ function ThemeUsageCounter({ initialVal, themeId }) {
 
   useEffect(() => {
     if (!themeId) return;
-
+    console.log(themeId)
     const onUsed = () => {
+      console.log('gd used')
       setCount(prev => prev + 1);
     };
 

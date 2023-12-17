@@ -53,7 +53,8 @@ function ThemeContainer({ theme, userInfo, setResponse }) {
               <FontAwesomeIcon icon={faPeopleGroup} />
             </i>
             <ThemeUsageCounter
-              initialVal={0}
+              initialVal={theme?.weekUsage}
+              themeId={theme?.id}
             />
           </li>
         </ul>
