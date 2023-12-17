@@ -5,10 +5,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import SendBtn from "../SendBtn/SendBtn";
 import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
+import { socket } from "../../../socket";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ChatsModal({ socket, isChatModal, setIsChatModal, myGroups, userInfo }) {
+function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [chatRoomsEl, setChatRoomsEl] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(false);

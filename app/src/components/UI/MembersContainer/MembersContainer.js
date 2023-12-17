@@ -8,7 +8,7 @@ import { Device } from "mediasoup-client";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 window.localStorage.setItem('debug', 'mediasoup-client:WARN* mediasoup-client:ERROR*');
 
-function MembersContainer({isFocus, userInfo, groupInfo, socket, setStudyingMembers, members, setMembers, isCam, isMic}) {
+function MembersContainer({isFocus, userInfo, groupInfo, setStudyingMembers, members, setMembers, isCam, isMic}) {
   const [membersEl, setMembersEl] = useState([]);
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
   const [localStream, setLocalStream] = useState(null);
@@ -160,7 +160,6 @@ useEffect(() => {
           <MyEl 
           memberInfo={memberInfo}
           key={i}
-          socket={socket}
           setStudyingMembers={setStudyingMembers}
           localStream={localStream}
           isFocus={isFocus}
@@ -172,7 +171,6 @@ useEffect(() => {
           <MemberEl 
           memberInfo={memberInfo}
           key={i}
-          socket={socket}
           setStudyingMembers={setStudyingMembers}
           isFocus={isFocus}
           device={device}

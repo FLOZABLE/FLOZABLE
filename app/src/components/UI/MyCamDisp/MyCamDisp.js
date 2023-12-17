@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./MyCamDisp.module.css";
 import { mediaSocket } from "../../../mediaSocket";
-import { Device } from "mediasoup-client";
+
 const videoParams = {
   encodings: [
     {

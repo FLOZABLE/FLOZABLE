@@ -193,7 +193,6 @@ function App() {
       <ChatsModal
         setIsChatModal={setIsChatModal}
         isChatModal={isChatModal}
-        socket={socket}
         userInfo={userInfo}
         myGroups={myGroups}
       />
@@ -342,7 +341,6 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}
-                socket={socket}
                 subjects={subjects}
                 reset={reset}
                 otherGroups={otherGroups}
@@ -370,7 +368,6 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}
-                socket={socket}
                 subjects={subjects}
                 setSubjects={setSubjects}
                 isStudy={isStudy}
@@ -417,7 +414,6 @@ function App() {
                 subjects={subjects}
                 setSubjects={setSubjects}
                 userInfo={userInfo}
-                socket={socket}
                 events={plans}
                 setEvents={setPlans}
                 reset={reset}
@@ -489,7 +485,6 @@ function App() {
                 userInfo={userInfo}
                 groups={groups}
                 setResponse={setResponse}
-                socket={socket}
               />
             </div>
           }

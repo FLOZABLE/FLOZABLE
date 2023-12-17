@@ -10,7 +10,6 @@ import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
 
 function MyGroupsViewer({
   myGroups,
-  socket,
   userInfo,
   isCam,
   isMic,
@@ -33,7 +32,6 @@ function MyGroupsViewer({
             isFocus={i === selectedGroupIndex}
             studyingUsers={[]}
             userInfo={userInfo}
-            socket={socket}
             localStream={localStream}
             isCam={isCam}
             isMic={isMic}
