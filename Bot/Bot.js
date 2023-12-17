@@ -17,7 +17,7 @@ const schedule = require('node-schedule');
 const redisClient = require('../model/redis');
 const timeZones = require('../data/timeZones.json');
 const csv = require("csvtojson");
-const { activeSubjectCache, subjectsCache, timerCache } = require('../services/redisLoader');
+const { activeSubjectCache, subjectsCache, timerCache, userCache } = require('../services/redisLoader');
 
 /**create bots */
 async function createBots(startIndex, length) {
@@ -43,7 +43,7 @@ async function createBots(startIndex, length) {
       Z--;
       continue;
     }
-    if (name.length >= 40){
+    if (name.length >= 40) {
       Z--;
       continue;
       //This will cause server to crash since name is VARCHAR(40)
@@ -396,71 +396,61 @@ function createChessProfileImg(userId, imgSrc) {
     })
 };
 
-async function startBot(userId, groups) {
+async function startBot(userId) {
   try {
     const [subject] = await subjectsCache(userId);
-    console.log('start', DateTime.now().toSeconds(), userId, subject.timeline_sum);
-    if (subject) {
-      //send socket only when there is more than one groups because io.to.emit() (blank target group) will result broadcasting
-      if (groups.length) {
-        connection.to(groups).emit('studying', userId, groups);
-      }
-      const now = Math.floor(new Date().getTime() / 1000);
-      const { timeline_sum, datum_point, id } = subject;
-      const start = now - datum_point - timeline_sum;
-      const push = await redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
-      redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
-      subject.timeline_sum += start;
-      redisClient.hSet(`user:${userId}`, `subject:${id}`, JSON.stringify(subject));
-
-      //total timer
-      const timerInfo = await timerCache(userId, now);
-      const { dp, ts } = timerInfo;
-      const totalTimerStart = now - dp - ts;
-      timerInfo.ts += totalTimerStart;
-      redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo));
-    }
+    const userInfo = await userCache(userId);
+    if (!subject || !userInfo) return;
+    let { groups, friends, name } = userInfo;
+    friends = friends === "" ? [] : friends.split(",");
+    groups = groups === "" ? [] : groups.split(",");
+    if (groups.length) {
+      connection.to(groups).emit(`studying:${userId}`, subject);
+    };
+    if (friends.length) {
+      connection.to(friends).emit(`studying:${userId}`, subject);
+    };
+    const now = Math.floor(new Date().getTime() / 1000);
+    const { timeline_sum, datum_point, id } = subject;
+    const start = now - datum_point - timeline_sum;
+    redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
+    redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
+    subject.timeline_sum += start;
+    redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
   } catch (err) {
     console.log(err);
   };
 };
 
-async function stopBot(userId, groups) {
+async function stopBot(userId) {
   redisClient.sRem('activeBots', userId);
-  const [subject] = await subjectsCache(userId);
   const activeSubject = await activeSubjectCache(userId);
-  console.log('stop', DateTime.now().toSeconds(), userId, subject.timeline_sum)
-  try {
-    if (subject) {
-      //send socket only when there is more than one groups because io.to.emit() (blank target group) will result broadcasting
-      if (groups.length) {
-        connection.to(groups).emit('studying', userId, groups);
-      }
-      let { timeline_sum, datum_point, id } = subject;
-      const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${id}`));
-      const now = Math.floor(new Date().getTime() / 1000);
-      const start = activity[0];
-      const duration = now - datum_point - timeline_sum;
-      redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${duration}]`);
-      timeline_sum += duration;
-      subject.timeline_sum = timeline_sum;
-      redisClient.hSet(`user:${userId}`, `subject:${id}`, JSON.stringify(subject));
+  const userInfo = await userCache(userId);
+  const [subject] = await subjectsCache(userId);
+  redisClient.hDel(`user:${userId}`, `ActiveSubject`);
+  if (!userInfo || !subject || !activeSubject.id) return;
+  const { datum_point, timeline_sum, id } = subject;
+  const now = Math.floor(new Date().getTime() / 1000);
 
-      //total timer update
-      //this is unix time in sec of active subject's start
-      const activeSubjectStart = activeSubject.time;
-      const timerInfo = await timerCache(userId, now);
-      const { dp, ts } = timerInfo;
-      const timerStart = activeSubjectStart - dp - ts;
-      const totalTimerDuration = now - dp - ts;
-      timerInfo.ts += totalTimerDuration;
-      redisClient.rPush(`user:${userId}:timer`, `[${timerStart},${totalTimerDuration}]`);
-      redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo));
-      redisClient.hDel(`user:${userId}`, `ActiveSubject`);
-    };
-  } catch (err) {
-    console.log(err);
-  }
+  let { groups, friends } = userInfo;
+  friends = friends === "" ? [] : friends.split(",");
+  groups = groups === "" ? [] : groups.split(",");
+
+  if (groups.length) {
+    connection.to(groups).emit(`stopStudying:${userId}`);
+  };
+  if (friends.length) {
+    connection.to(friends).emit(`studying:${userId}`, subject);
+  };
+  const duration = now - datum_point - timeline_sum;
+  redisClient.incrBy(`user:${userId}:dayTotal`, duration);
+  subject.timeline_sum += duration;
+  redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
+  const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${id}`));
+  if (activity) {
+    const start = activity[0];
+    redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${duration}]`);
+  };
 };
 
 const BOT_STUDYING_NUMBERS = 100;
@@ -470,14 +460,14 @@ const MAX_START_DELAY = 60 * 60; //1 hr = starts atleast 1hr from being assigned
 
 async function botSelector(numbers) {
   const connection = pool.promise();
-  const [bots] = await connection.query(`SELECT name, groups, user_id FROM users WHERE type = -1`);
+  const [bots] = await connection.query(`SELECT user_id FROM users WHERE type = -1`);
   //const [subjects] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects`)
   const now = DateTime.now();
 
   const activeBots = await redisClient.sMembers('activeBots');
   for (let i = 0; i < numbers; i++) {
     const index = randomIntInRange(0, bots.length - 1);
-    const { user_id, groups } = bots[index];
+    const { user_id } = bots[index];
     //this prevents same bot from being added
     if (activeBots.includes(user_id)) continue;
     activeBots.push(user_id);
@@ -489,8 +479,7 @@ async function botSelector(numbers) {
     const stopDate = DateTime.fromSeconds(startDate.toSeconds() + duration);
     //console.log(startDate.toSeconds() - stopDate.toSeconds())
     //const [[subject]] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects WHERE user_id = ?`, [user_id]);
-    const groupsArr = groups === "" ? [] : groups.split(',');
-    const scheduleStart = schedule.scheduleJob(startDate.toJSDate(), () => { startBot(user_id, groupsArr) });
+    const scheduleStart = schedule.scheduleJob(startDate.toJSDate(), () => { startBot(user_id) });
     const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => { stopBot(user_id, groupsArr) });
   };
 
@@ -512,7 +501,7 @@ async function botManager() {
 async function deleteBots() {
   const connection = pool.promise();
 
-  
+
 
   const [bots] = await connection.query(`SELECT user_id, groups FROM users WHERE type = -1`);
   const botUserIds = bots.map((bot) => { return bot.user_id });

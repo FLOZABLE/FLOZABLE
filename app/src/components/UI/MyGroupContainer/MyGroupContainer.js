@@ -6,12 +6,7 @@ import { faBullhorn, faComments, faGear, faRankingStar } from "@fortawesome/free
 import { Link } from "react-router-dom";
 import MembersContainer from "../MembersContainer/MembersContainer";
 import { socket } from "../../../socket";
-import { Device, detectDevice } from "mediasoup-client";
 import { mediaSocket } from "../../../mediaSocket";
-const serverOrigin = process.env.REACT_APP_ORIGIN;
-
-//device for sending SRTP signal
-let device;
 
 function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
   const [name, setName] = useState("");
@@ -63,7 +58,6 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
         <div className={`${styles.information} customScroll`}>
           <div className={styles.membersWrapper}>
           <MembersContainer
-            socket={socket}
             isFocus={isFocus}
             userInfo={userInfo}
             groupInfo={group}

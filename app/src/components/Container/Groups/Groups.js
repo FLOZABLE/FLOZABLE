@@ -5,16 +5,12 @@ import StuckModal from "../../UI/StuckModal/StuckModal";
 import Search from "../../UI/Search/Search";
 import TagContainerGen from "../../UI/TagContainerGen/TagContainerGen";
 import styles from "./Groups.module.css";
-import { getLikedGroups, getMyGroups, setGroupMembers } from "./GroupsTool";
-import TopNotification from "../../UI/TopNotification/TopNotification";
 import GroupsGen from "../../UI/GroupsGen/GroupsGen";
-import MyGroupsGen from "../../UI/MyGroupsGen/MyGroupsGen";
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
 import MyGroupsViewer from "../../UI/MyGroupsViewer/MyGroupsViewer";
 import CreateGroupModal from "../../UI/CreateGroupModal/CreateGroupModal";
 
 function Groups({
-  socket,
   userInfo,
   subjects,
   otherGroups,
@@ -85,7 +81,6 @@ function Groups({
             <div className={`${styles.container} ${styles.myGroups}`}>
               <MyGroupsViewer
                 myGroups={myGroups}
-                socket={socket}
                 userInfo={userInfo}
                 myTimerTotal={myTimerTotal}
               />
