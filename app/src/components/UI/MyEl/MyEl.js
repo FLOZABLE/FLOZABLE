@@ -4,8 +4,9 @@ import { StudyPerson, RestPerson } from "../../../utils/svgs";
 import MyCamDisp from "../MyCamDisp/MyCamDisp";
 import MyTimer from "../MyTimer/MyTimer";
 import { DateTime } from "luxon";
+import { socket } from "../../../socket";
 
-function MyEl({ memberInfo, socket, setStudyingMembers, localStream, isFocus, device }) {
+function MyEl({ memberInfo, setStudyingMembers, localStream, isFocus, device }) {
   const [run, setRun] = useState(0);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
