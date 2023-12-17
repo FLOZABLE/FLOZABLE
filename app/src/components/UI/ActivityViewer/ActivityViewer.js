@@ -26,7 +26,7 @@ function ActivityViewer({ subjects }) {
 
   return (
     <div className={`${styles.ActivityViewer} customScroll`}>
-      {activities.length ? activities.map(activity => {
+      {activities.length ? activities.map((activity, i) => {
         const { time, subject } = activity;
         const { color, id, name, icon } = subject;
         let svgIcon = null;
@@ -104,7 +104,7 @@ function ActivityViewer({ subjects }) {
           );
         }
         return (
-          <div className={styles.activity} key={id}>
+          <div className={styles.activity} key={i}>
             <div className={styles.icon}>
               {svgIcon}
             </div>

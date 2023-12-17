@@ -281,4 +281,8 @@
   .StatsContainer .smallBox.chartsBox .title {
     font-size: 23px;
   }
+
+  .StatsContainer .box .buttonArea {
+    top: 120px;
+  }
 }

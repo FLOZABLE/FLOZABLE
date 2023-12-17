@@ -56,3 +56,30 @@
   display: flex;
   margin-right: 10px;
 }
+
+@media (max-width: 1650px) {
+  .FriendsActivityViewer .friend .profileImg {
+    width: 30px;
+    height: 30px;
+    margin: 0px 5px;
+  }
+
+  .FriendsActivityViewer .friend .name {
+    margin-right: 5px;
+    font-size: 17px;
+  }
+
+  .FriendsActivityViewer .friend .flagWrapper {
+    font-size: 20px;
+    margin-right: 5px;
+  }
+
+  .FriendsActivityViewer .friend .right {
+    margin-left: auto;
+    margin-right: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+  }
+}

@@ -1,111 +1,111 @@
 .CreateChallengeModal {
-    width: 500px;
-    height: fit-content;
-    z-index: 2;
-    border-radius: 20px;
-    background-color: #fff;
-    border-radius: 20px;
-    overflow: hidden;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    display: flex;
+  width: 500px;
+  height: fit-content;
+  z-index: 2;
+  border-radius: 20px;
+  background-color: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  display: flex;
 }
 
 .CreateChallengeModal .modalHeader {
-    border-top-right-radius: 20px;
-    border-top-left-radius: 20px;
-    display: flex;
-    width: 100%;
-    height: 30px;
-    background-color: var(--purple);
-    justify-content: center;
-    align-items: center;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  display: flex;
+  width: 100%;
+  height: 30px;
+  background-color: var(--purple);
+  justify-content: center;
+  align-items: center;
 }
 
 .CreateChallengeModal .container {
-    display: flex;
-    flex-direction: column;
-    margin: 30px 20px 0px 0px;
+  display: flex;
+  flex-direction: column;
+  margin: 30px 20px 0px 0px;
 }
 
 .CreateChallengeModal .wrapper {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 20px;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+  align-items: center;
 }
 
 .CreateChallengeModal .wrapper .iconWrapper:hover .hoverEl {
-    opacity: 1;
-    visibility: visible;
+  opacity: 1;
+  visibility: visible;
 }
 
 .CreateChallengeModal .wrapper .iconWrapper .hoverEl {
-    position: absolute;
-    font-size: 17px;
-    white-space: nowrap;
-    top: 50px;
-    opacity: 0;
-    transition: opacity .3s ease-in-out;
-    background-color: #000000c3;
-    padding: 5px 10px;
-    border-radius: 7px;
-    color: #ffffff;
-    z-index: 2;
-    visibility: hidden;
+  position: absolute;
+  font-size: 17px;
+  white-space: nowrap;
+  top: 50px;
+  opacity: 0;
+  transition: opacity .3s ease-in-out;
+  background-color: #000000c3;
+  padding: 5px 10px;
+  border-radius: 7px;
+  color: #ffffff;
+  z-index: 2;
+  visibility: hidden;
 }
 
 .CreateChallengeModal .modalHeader i {
-    margin-left: auto;
-    color: #fff;
-    margin-top: 3px;
-    padding: 10px;
-    cursor: pointer;
+  margin-left: auto;
+  color: #fff;
+  margin-top: 3px;
+  padding: 10px;
+  cursor: pointer;
 }
 
 .CreateChallengeModal .title {
-    height: 50px;
-
+  height: 50px;
+  margin-left: 70px;
 }
 
 .CreateChallengeModal .title input {
-    width: 100%;
-    border: none;
-    height: 100%;
-    font-size: 30px;
+  width: 100%;
+  border: none;
+  height: 100%;
+  font-size: 30px;
 }
 
 .CreateChallengeModal .wrapper .contentWrapper {
-    position: relative;
-    width: calc(100% - 70px);
-    display: flex;
-    align-items: center;
+  position: relative;
+  width: calc(100% - 70px);
+  display: flex;
+  align-items: center;
 }
 
 .CreateChallengeModal .wrapper .iconWrapper {
-    width: 70px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 27px;
-    position: relative;
+  width: 70px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 27px;
+  position: relative;
 }
 
 .CreateChallengeModal .wrapper .contentWrapper {
-    position: relative;
-    width: calc(100% - 70px);
-    display: flex;
-    align-items: center;
+  position: relative;
+  width: calc(100% - 70px);
+  display: flex;
+  align-items: center;
 }
 
 .CreateChallengeModal .submit {
-    margin-bottom: 30px;
-    justify-content: center;
-    width: 100%;
-    align-items: center;
-    display: flex;
+  margin-bottom: 30px;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
+  display: flex;
 }

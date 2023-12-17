@@ -30,52 +30,6 @@
   margin-left: 5%;
 }
 
-.MyGroupsViewer .information {
-  height: 400px;
-  position: relative;
-}
-
-.MyGroupsViewer .name a {
-  font-size: 50px;
-  color: #545454;
-  font-weight: 700;
-}
-
-.MyGroupsViewer .header {
-  position: absolute;
-  display: flex;
-  width: 100%;
-  top: 0px;
-  z-index: 2;
-}
-
-.MyGroupsViewer .header .right {
-  margin-left: auto;
-}
-
-.MyGroupsViewer .status {
-  display: flex;
-  background-color: var(--pink);
-  color: #fff;
-  border-radius: 20px;
-  padding: 5px 10px;
-}
-
-.MyGroupsViewer .status li {
-  font-size: 40px;
-  margin: 0px 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.MyGroupsViewer .status p {
-  color: #fff;
-}
-
-.MyGroupsViewer .membersContainer {
-  padding-top: 60px;
-}
 
 .MyGroupsViewer .groupsWrapper {
   height: fit-content;
@@ -96,23 +50,4 @@
 
 .MyGroupsViewer.study .buttons button {
   background-color: var(--bgColor);
-}
-
-@media (max-width: 1400px) {
-  .MyGroupsViewer{
-    height: 500px;
-  }
-
-  .MyGroupsViewer .name a {
-    font-size: 30px;
-  }
-
-  .MyGroupsViewer .status {
-    padding: 2px 5px;
-    font-size: 20px;
-  }
-  
-  .MyGroupsViewer .status p {
-    font-size: 20px;
-  }
 }

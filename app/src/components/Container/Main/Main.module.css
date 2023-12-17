@@ -9,7 +9,6 @@
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
-  max-width: calc(100% - 300px);
   max-height: calc(100vh - 200px);
   justify-content: flex-start;
 }
@@ -24,21 +23,29 @@
   height: fit-content;
 }
 
-.MainContainer .ActivityWrapper {
-  position: fixed;
-  right: 50px;
-  top: 150px;
-  width: fit-content;
-  background-color: aliceblue;
-  overflow-y: auto;
-  border-radius: 20px;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-}
-
 .MainContainer .title {
   display: flex;
   justify-content: center;
   margin-top: 10px;
   font-size: 27px;
   font-weight: 700;
+}
+
+@media (max-width: 1650px) {
+  .MainContainer .boxesContainer .box {
+    width: 300px;
+  }
+}
+
+@media (max-width: 1250px) {
+  .MainContainer .boxesContainer .box {
+    margin: 10px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 1150px) {
+  .MainContainer .boxesContainer .box {
+    padding: 5px;
+  }
 }

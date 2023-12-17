@@ -402,6 +402,7 @@ async function startBot(userId) {
     const userInfo = await userCache(userId);
     if (!subject || !userInfo) return;
     let { groups, friends, name } = userInfo;
+    console.log('start', userId, name)
     friends = friends === "" ? [] : friends.split(",");
     groups = groups === "" ? [] : groups.split(",");
     if (groups.length) {
@@ -432,7 +433,7 @@ async function stopBot(userId) {
   const { datum_point, timeline_sum, id } = subject;
   const now = Math.floor(new Date().getTime() / 1000);
 
-  let { groups, friends } = userInfo;
+  let { groups, friends, name } = userInfo;
   friends = friends === "" ? [] : friends.split(",");
   groups = groups === "" ? [] : groups.split(",");
 
@@ -443,6 +444,7 @@ async function stopBot(userId) {
     connection.to(friends).emit(`studying:${userId}`, subject);
   };
   const duration = now - datum_point - timeline_sum;
+  console.log('stop', userId, name, duration);
   redisClient.incrBy(`user:${userId}:dayTotal`, duration);
   subject.timeline_sum += duration;
   redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
@@ -453,8 +455,8 @@ async function stopBot(userId) {
   };
 };
 
-const BOT_STUDYING_NUMBERS = 100;
-const BOT_MIN_STUDY = 60 * 10; //10 min = min time bot will study
+const BOT_STUDYING_NUMBERS = 200;
+const BOT_MIN_STUDY = 5; //10 min = min time bot will study
 const BOT_MAX_STUDY = 60 * 60 * 2; //2 hr = max time bot will study
 const MAX_START_DELAY = 60 * 60; //1 hr = starts atleast 1hr from being assigned
 
@@ -480,7 +482,7 @@ async function botSelector(numbers) {
     console.log(startDate.toSeconds() - stopDate.toSeconds())
     //const [[subject]] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects WHERE user_id = ?`, [user_id]);
     const scheduleStart = schedule.scheduleJob(startDate.toJSDate(), () => { startBot(user_id) });
-    const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => { stopBot(user_id, groupsArr) });
+    const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => { stopBot(user_id) });
   };
 
   const scheduleStartTest = schedule.scheduleJob(DateTime.fromSeconds(now.toSeconds() + 5).toJSDate(), () => { startBot(process.env.TESTER_ID, []) });

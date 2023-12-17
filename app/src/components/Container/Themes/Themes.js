@@ -162,6 +162,9 @@ function Themes({
             themes={themes}
             userInfo={userInfo}
             setResponse={setResponse}
+            tags={tags}
+            sortOpt={sortOpt}
+            searchQuery={searchQuery}
           />
         </div>
       </div>

@@ -4,6 +4,7 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { autoSignin, generateRandomId } = require("../tool");
 const { NotificationCache, userCache } = require('../services/redisLoader');
+const { DateTime } = require('luxon');
 
 //send challenge
 Router.post('/challenge-request', async (req, res) => {
@@ -138,11 +139,14 @@ Router.post('/create-challenge', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
       const userId = req.session.user_id;
-      const { challengeName, challengeDescription, startDate } = req.body;
+      const { title, description, startDate } = req.body;
+      if (!title || !description || !startDate) return res.send({ success: false, reason: 'Invalid Values' })
+      const min = DateTime.now().toSeconds() + 3600 - 60;
+      if (min > startDate) return res.send({ success: false, reason: "Must be at least 1 hour in the future" });
 
       const connection = pool.promise();
       const [[prevAmount]] = await connection.query(`SELECT COUNT(*) FROM challengerooms WHERE host_id = ?`, [userId]);
-      
+
       if (prevAmount['COUNT(*)'] >= 5) {
         res.send({ success: false, reason: "You cannot have more than 5 open challenges" });
         return;
@@ -155,8 +159,8 @@ Router.post('/create-challenge', async (req, res) => {
         id: id,
         host_id: userId, //the host
         start_date: startDate, // day challenge starts
-        name: challengeName,
-        description: challengeDescription
+        name: title,
+        description
       };
       const insertChallenge = await connection.query(`INSERT INTO challengerooms SET ?`, [challengeInfo]);
 

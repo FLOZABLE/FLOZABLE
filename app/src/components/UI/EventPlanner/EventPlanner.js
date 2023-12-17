@@ -38,7 +38,11 @@ const StyleWrapper = styled.div`
   }
 
   th.fc-col-header-cell p.day {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 30px;
+    width: 43px;
     height: 43px;
   }
 
@@ -146,8 +150,39 @@ const StyleWrapper = styled.div`
   .fc-toolbar-chunk {
     display: flex;
   }
-  .fc-view-harnessfc-view-harness-active {
+  .fc-view-harness.fc-view-harness-active {
     height: 100vh;
+  }
+
+  @media (max-width: 1400px) {
+    th.fc-col-header-cell p.day {
+    font-size: 20px;
+    height: 34px;
+    width: 34px !important;
+    }
+
+    th.fc-col-header-cell p.weekDay {
+      font-size: 17px;
+      font-weight: 300;
+    }
+
+    .fc .fc-custom-today-button {
+      padding: 5px 10px;
+      font-size: 17px;
+      height: fit-content;
+    }
+
+    .fc-custom-prev-button {
+      height: fit-content;
+    }
+  
+    .fc-custom-next-button {
+      height: fit-content;
+    }
+
+    .fc-toolbar-title {
+      font-size: 20px;
+    }
   }
 `;
 
@@ -375,7 +410,7 @@ function EventPlanner(props) {
   }, [viewMode]);
 
   return (
-    <div className={`${styles.eventPlanner} eventPlanner`}>
+    <div className={`${styles.EventPlanner}`}>
       <StyleWrapper>
         <FullCalendar
           key={"dsader3wt45"}
