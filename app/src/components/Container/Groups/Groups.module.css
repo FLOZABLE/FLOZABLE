@@ -115,4 +115,12 @@
   .GroupsContainer .buttonArea {
     margin-bottom: 0px !important;
   }
+
+  .GroupsContainer .box .title h2 {
+    font-size: 17px;
+  }
+
+  .GroupsContainer .box .title i {
+    font-size: 13px;
+  }
 }

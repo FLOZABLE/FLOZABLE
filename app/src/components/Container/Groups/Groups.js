@@ -89,7 +89,9 @@ function Groups({
               <div className={styles.searchZone}>
                 <div className={styles.tagContainerWrapper}>
                   <div className={styles.title}>
+                    <i>
                     <FontAwesomeIcon icon={faTags} className={styles.faTags} />
+                    </i>
                     <h2>Tags</h2>
                   </div>
                   <TagContainerGen

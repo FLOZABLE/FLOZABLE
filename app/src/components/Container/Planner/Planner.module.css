@@ -30,6 +30,7 @@
 .PlannerContainer .container .planner {
   flex-grow: 1;
   margin-right: 50px;
+  height: 100vh;
 }
 
 .PlannerContainer .container .widget {
@@ -48,8 +49,9 @@
 .PlannerContainer .planTimelineWrapper {
   width: 300px;
   margin-top: 30px;
-  max-height: 600px;
+  max-height: 300px;
   transition: width .3s ease-in-out;
+  overflow-y: auto;
 }
 
 @keyframes showScroll {
@@ -58,10 +60,10 @@
   }
 }
 
-.PlannerContainer .planTimelineWrapper:hover {
-/*   width: 400px; */
+/* .PlannerContainer .planTimelineWrapper:hover {
+  width: 400px;
   animation: showScroll 2s .3s forwards;
-}
+} */
 
 @media (max-width: 1400px) {
   .PlannerContainer .title {

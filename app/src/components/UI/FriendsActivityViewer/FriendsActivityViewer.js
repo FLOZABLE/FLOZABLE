@@ -80,7 +80,7 @@ function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget }) {
           </div>
           <div className={styles.right}>
             <div className={styles.today}>
-              <p>Today Total: </p>
+              <p>Today: </p>
               <p>&nbsp;</p>
               <MemberTimer
                 userInfo={friend}

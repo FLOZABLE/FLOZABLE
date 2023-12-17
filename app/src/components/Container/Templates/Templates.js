@@ -42,14 +42,14 @@ function Templates(props) {
               <div className={styles.createWrapper}>
                 <BlobBtn
                   name={<div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}><FontAwesomeIcon icon={faPlus} className={styles.plus} style={{ marginRight: '5px' }} />Publish your own</div>}
-                  setClicked={() => {setIsCreateTemplate(!isCreateTemplate)}}
+                  setClicked={() => { setIsCreateTemplate(!isCreateTemplate) }}
                   color1={'#fff'}
                   color2={"var(--pink)"}
                   opt={0} />
               </div>
             </div>
             <div className={styles.templatesContainer}>
-              <TemplateBox/>
+              <TemplateBox />
             </div>
           </div>
         </div>
