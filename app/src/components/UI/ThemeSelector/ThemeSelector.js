@@ -39,8 +39,11 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
       .then((response) => response.json())
       .then((data) => {
         let userThemes = [];
-        if (data.themes.themes !== ""){
-          userThemes = data.themes.themes.split(",");
+        const {themes} = data;
+        if (!themes) return;
+
+        if (themes.themes !== ""){
+          userThemes = themes.themes.split(",");
         }
         const allIds = [];
         const allCategories = {};
