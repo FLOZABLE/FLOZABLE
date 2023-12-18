@@ -215,12 +215,12 @@ const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubj
 require('./Logger');
 require('./services/timerUpdate');
 const {createBots, addId, deleteBots, botManager, createGroups, randomFriend} = require('./Bot/Bot');
-//randomFriend(0, 10);
+//randomFriend(0, 3);
 //createGroups(0, 100);
 //botManager();
 //deleteBots();
 //addId();
-//createBots(0, 30);
+//createBots(0, 200);
 
 const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable} = require('./query');
 const { rankingManager } = require("./services/rankingUpdate");
@@ -231,12 +231,13 @@ const { rankingManager } = require("./services/rankingUpdate");
 //createPlansTable();
 //createChatroomsTable();
 //createChallengesTable();
-//groupsChatRoomsGeneration();
 //createDailyRankingTable();
 //createWeeklyRankingTable();
 //createMonthlyRankingTable();
 //createChallengeRoomsTable();
 //createThemesTable();
+//groupsChatRoomsGeneration();
+
 
 rankingManager();
 
