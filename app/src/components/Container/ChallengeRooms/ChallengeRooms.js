@@ -4,10 +4,12 @@ import styles from "./ChallengeRooms.module.css";
 import { useEffect, useState } from "react";
 import ChallengeRoom from "../../UI/ChallengeRoom/ChallengeRoom.js"
 import CreateChallengeModal from "../../UI/CreateChallengeModal/CreateChallengeModal.js";
+import RecommendChallenges from "../../UI/RecommendChallenges/RecommendChallenges.js";
+import ChallengesContainer from "../../UI/ChallengesContainer/ChallengesContainer.js";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse }) {
+function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse, userInfo }) {
   const [challenges, setChallenges] = useState([]);
   const [challengesEl, setChallengesEl] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,6 +74,15 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse }) {
             return el;
           })
         }
+        <div className={styles.box}>
+          <div className={styles.title}>
+            Recommended challenges for {userInfo?.name}!
+          </div>
+          <RecommendChallenges />
+        </div>
+        <div className={styles.box}>
+          <ChallengesContainer />
+        </div>
       </div>
     </div>
   );

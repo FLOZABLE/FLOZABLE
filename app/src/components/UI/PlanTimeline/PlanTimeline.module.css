@@ -1,5 +1,8 @@
 .PlanTimeline {
   position: relative;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .PlanTimeline .plan {
@@ -65,6 +68,8 @@
   flex-direction: column;
   margin-left: 10px;
   max-width: calc(100% - 60px);
+  overflow-x: hidden;
+  word-break: break-all;
 }
 
 .PlanTimeline .description {

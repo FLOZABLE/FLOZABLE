@@ -150,3 +150,31 @@
   width: 100% !important;
   height: 100% !important;
 }
+
+@media (max-width: 1400px) {
+  .UserContainer .profileContainer {
+    width: 240px;
+    padding: 10px;
+  }
+
+  .UserContainer #profileImg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .UserContainer .statsContainer {
+    width: calc(100% - 320px);
+    margin-left: 280px;
+  }
+  
+  .UserContainer .statsContainer .box {
+    padding: 30px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: 20px;
+    margin-bottom: 35px;
+  }
+
+  .UserContainer h1 {
+    font-size: 25px;
+  }
+}

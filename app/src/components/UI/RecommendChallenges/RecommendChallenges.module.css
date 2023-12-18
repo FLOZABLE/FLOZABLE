@@ -1,0 +1,15 @@
+.RecommendChallenges {
+  position: relative;
+}
+
+.RecommendChallenges .Swiper {
+  width: 100%;
+  padding: 40px 0px;
+}
+
+.RecommendChallenges .Swiper .Slide {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

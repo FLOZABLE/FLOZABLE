@@ -137,7 +137,7 @@ function Sidebar({
             </Link>
           </div>
         </li>
-        <li>
+        {/* <li>
           <div
             className={styles.navItemWrapper}
           >
@@ -150,7 +150,7 @@ function Sidebar({
               </p>
             </Link>
           </div>
-        </li>
+        </li> */}
         {/* <li>
         <div
             className={styles.navItemWrapper}

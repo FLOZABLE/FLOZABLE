@@ -7,86 +7,17 @@
   display: grid;
 }
 
-.ThemesContainer .Theme {
-  display: flex;
-  flex-direction: column;
-  background-color: beige;
-  border-radius: 20px;
-  position: relative;
+@media (max-width: 1400px) {
+  .ThemesContainer {
+    grid-template-columns: repeat(auto-fill, 200px);
+  }
 }
+@media (max-height: 700px) {
+  .CreateThemeModal {
+    height: 300px;
+  }
 
-.ThemesContainer .Theme .img {
-  height: 200px;
-  width: 100%;
-  border-radius: 20px;
-}
-
-.ThemesContainer .Theme .description {
-  position: relative;
-  height: 100px;
-  background-color: #fd8a8a;
-}
-
-.ThemesContainer .Theme .description .content {
-  margin: 15px;
-}
-
-.Theme .tags {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 30px;
-  margin-bottom: 50px;
-}
-
-.Theme .tags .tag {
-  background-color: red;
-  border-radius: 20px;
-  height: 20px;
-  padding: 0px 10px;
-  margin: 0px 5px;
-}
-
-.ThemesContainer .Theme .info {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: -15px;
-  left: 20px;
-  height: 30px;
-  padding: 0px 10px;
-  border-radius: 20px;
-  background-color: aliceblue;
-}
-
-.ThemesContainer .Theme .info li {
-  display: flex;
-  margin: 0px 5px;
-}
-
-.ThemesContainer .Theme .info li i {
-  margin-right: 5px;
-}
-
-.Theme .bottom {
-  position: absolute;
-  bottom: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.Theme .bottom > div {
-  margin: 0px 10px;
-}
-
-.Theme .bottom button {
-  background-color: #fd8a8a;
-  font-weight: 800;
-  color: #fff;
-  padding: 0px 20px;
-  border-radius: 20px;
-  font-size: 16px;
+  .CreateThemeModal .content {
+    max-height: 270px;
+  }
 }

@@ -32,10 +32,20 @@
 .ThemeContainer .description {
   position: relative;
   height: 100px;
+  word-break: break-all;
 }
 
 .ThemeContainer .description .content {
   margin: 15px;
+}
+
+.ThemeContainer .tagsWrapper {
+  overflow-x: auto;
+  pointer-events: none;
+}
+
+.ThemeContainer .tagsWrapper::-webkit-scrollbar {
+  display: none;
 }
 
 .ThemeContainer .tags {
@@ -44,6 +54,9 @@
   align-items: center;
   height: 30px;
   margin-bottom: 50px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: max-content;
 }
 
 .ThemeContainer .tags .tag {

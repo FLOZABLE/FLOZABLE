@@ -124,11 +124,19 @@
 
 @media (max-width: 1400px) {
   .CreateGroupModal {
-    width: 500px;
-    height: 450px;
+    width: 400px;
   }
 
   .CreateGroupModal .title input {
     font-size: 20px;
+  }
+}
+
+@media (max-height: 600px) {
+  .CreateGroupModal .container {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 300px;
   }
 }

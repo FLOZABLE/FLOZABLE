@@ -1,3 +1,4 @@
+import { Google } from "../../../utils/svgs";
 import styles from "./GoogleLoginBtn.module.css";
 import { useGoogleLogin } from '@react-oauth/google';
 
@@ -48,10 +49,9 @@ function GoogleLoginBtn() {
 
 
   return (
-    <div className={styles.GoogleLoginBtn}>
-      <button onClick={() => login()}>
-        dcodsofodsf
-      </button>
+    <div className={styles.GoogleLoginBtn} onClick={login}>
+        <p>Login with Google</p>
+        <Google />
     </div>
   )
 }

@@ -36,7 +36,7 @@
 .Account .boxContainer {
   width: calc(100% - 550px);
   margin-left: 550px;
-  height: 100vh;
+  margin-bottom: 50px;
 }
 
 .Account .box {
@@ -174,10 +174,6 @@
   width: min-content;
 }
 
-.Account #accounts .authBtn span {
-  white-space:nowrap;
-}
-
 @media (max-width: 1400px) {
   .Account .fixedNav {
     width: 270px;
@@ -197,6 +193,10 @@
   }
 
   .Account h1 {
-    font-size: 22px;
+    font-size: 20px;
+  }
+
+  .Account .layer:nth-last-child(1) {
+    flex-direction: column;
   }
 }
