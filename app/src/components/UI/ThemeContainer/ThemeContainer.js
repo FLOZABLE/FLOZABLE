@@ -61,10 +61,12 @@ function ThemeContainer({ theme, userInfo, setResponse, isSearched }) {
           {parse(theme?.description)}
         </div>
       </div>
+      <div className={styles.tagsWrapper}>
       <div className={styles.tags}>
         {(theme?.tags ? theme.tags.split(',') : []).map((tag, i) => (
-          <div className={styles.tag} key={i}>#{tag}</div>
+          <p className={styles.tag} key={i}>#{tag}</p>
         ))}
+      </div>
       </div>
       <div className={styles.bottom}>
         <div className={styles.likeBtnWrapper}>

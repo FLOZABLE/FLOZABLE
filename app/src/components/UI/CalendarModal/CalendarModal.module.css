@@ -38,3 +38,9 @@
     width: 400px;
   }
 }
+
+@media (max-height: 600px) {
+  .CalendarModal {
+    top: 110px !important;
+  }
+}

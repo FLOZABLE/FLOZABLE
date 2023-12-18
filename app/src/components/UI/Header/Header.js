@@ -13,6 +13,7 @@ import {
 import ToggleBtn from "../ToggleBtn/ToggleBtn";
 import styles from "./Header.module.css";
 import PlanTimeline from "../PlanTimeline/PlanTimeline";
+import { secondConverter } from "../../../utils/Tool";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -53,22 +54,13 @@ function Header({
   }, []);
 
   useEffect(() => {
-    if (!!!subjects.daily) return;
+    if (!subjects.daily) return;
 
     //Solve daily
-    let totalSeconds =
-      subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1];
-    let totalMinutes = Math.round(totalSeconds / 60);
-    let totalHours = Math.round(totalMinutes / 60);
-
-    let displayString = "";
-    if (totalHours > 0) {
-      displayString += "" + totalHours + "h ";
-      displayString += "" + (totalMinutes % 60) + "m";
-    } else {
-      displayString += "" + totalMinutes + "m";
-    }
-    setTotalStudied(displayString);
+    let totalSeconds =subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1];
+    totalSeconds = totalSeconds ? totalSeconds : 0;
+    const {value, type} = secondConverter(totalSeconds);
+    setTotalStudied(value + type);
 
     //Solve streak
     let tempStreak = 0;
@@ -152,7 +144,7 @@ function Header({
             <FontAwesomeIcon icon={faBars} style={{ color: "#ff562d" }} />
           </div>
           <div className={styles.text}>
-            <h5>2h</h5>
+            <h5>0s</h5>
             <h6>App Usage</h6>
           </div>
         </div>
@@ -187,10 +179,11 @@ function Header({
               </i>
             </button>
             <div className={styles.dropDownContents} id={styles.planner}>
-              <div className={styles.inner}>
+              <div className={`${styles.inner} customScroll`}>
                 <PlanTimeline
                   plans={plans}
                   viewDate={new Date()}
+                  viewMode={"timeGridDay"}
                   subjects={subjects}
                   setIsAddPlanModal={setIsAddPlanModal}
                   isAddPlanModal={isAddPlanModal}

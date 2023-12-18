@@ -14,7 +14,6 @@ import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 import ThemesContainer from "../../UI/ThemesContainer/ThemesContainer";
 import CreateThemeModal from "../../UI/CreateThemeModal/CreateThemeModal";
 import StuckModal from "../../UI/StuckModal/StuckModal";
-import ThemeContainer from "../../UI/ThemeContainer/ThemeContainer";
 import RankedTheme from "../../UI/RankedTheme/RankedTheme";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -26,7 +25,6 @@ function Themes({
   userInfo
 }) {
 
-  const [slidesEl, setSlidesEl] = useState([]);
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOpt, setSortOpt] = useState(0);

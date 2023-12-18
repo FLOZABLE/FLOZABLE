@@ -154,6 +154,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
   }, [isSumbmitUrl]);
 
   useEffect(() => {
+    if (!userInfo) return;
     fetch(`${serverOrigin}/api/account/activity-settings`, {
       method: "get",
       headers: {
@@ -177,7 +178,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
         }
       })
       .catch((error) => console.error(error));
-  }, []);
+  }, [userInfo]);
 
   useEffect(() => {
     if (!userInfo) return;
@@ -467,67 +468,14 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
                   <GoogleOAuthProvider
                   clientId={googleClientId}
                   >
-                  <GoogleLogin 
+                  {/* <GoogleLogin 
                     buttonText={'Sign In'}
                     onSuccess={onSuccess}
                     onFailure={onFailure}
-                    /* useOneTap={true} */
-                  />
+                  /> */}
                   <GoogleLoginBtn />
                   </GoogleOAuthProvider>
                 </div>
-              </div>
-              <div className={styles.layer}>
-                <div>
-                  <BlobBtn
-                    name={"SUBMIT"}
-                    setClicked={setIsSubmitUrl}
-                    color1={"#fff"}
-                    color2={"var(--purple)"}
-                  />
-                </div>
-              </div>
-              <div className={styles.extensionWrapper}>
-                <div className={styles.layer} id={styles.extensionHeader}>
-                  <div>WebsitesEl</div>
-                  <div>Block When Studying</div>
-                  <div>Timer</div>
-                </div>
-                <ul>
-                  {websites.map(({ d, b, t }, i) => {
-                    return (
-                      <li className={styles.websiteOptions} key={i}>
-                        <div className={styles.domain}>
-                          <p>{d}</p>
-                        </div>
-                        <div className={styles.block}>
-                          <SimpleToggleBtn
-                            checked={b}
-                            onToggle={(e) => {
-                              fetchExtensionSettingUpdate(
-                                d,
-                                "block",
-                                e.target.checked,
-                              );
-                            }}
-                          />
-                        </div>
-                        <div className={styles.timer}>
-                          <SimpleToggleBtn
-                            checked={t}
-                            onToggle={(e) => {
-                              fetchExtensionSettingUpdate(
-                                d,
-                                "timer",
-                                e.target.checked,
-                              );
-                            }}
-                          />
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
               </div>
             </div>
           </div>
