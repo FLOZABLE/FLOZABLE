@@ -12,20 +12,19 @@ import ThemeCategoryBtn from "../ThemeCategoryBtn/ThemeCategoryBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ThemeContainer({ theme, userInfo, setResponse }) {
+function ThemeContainer({ theme, userInfo, setResponse, isSearched }) {
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     if (!theme || !userInfo) return;
-    const likes = theme.likes === "" ? [] : theme.likes.split(",");
-    if (likes.includes(userInfo.user_id)) {
+    if (theme.likes.includes(userInfo.user_id)) {
       setLiked(true);
     };
 
   }, [theme, userInfo]);
 
   return (
-    <div className={styles.ThemeContainer}>
+    <div className={`${styles.ThemeContainer} ${isSearched ? '': styles.hidden}`}>
       <div className={styles.name}>
         {theme?.name}
       </div>
@@ -44,7 +43,7 @@ function ThemeContainer({ theme, userInfo, setResponse }) {
               <FontAwesomeIcon icon={faHeart} />
             </i>
             <GroupLikesCounter
-              initialMembers={(theme?.likes ? theme.likes.split(',') : [])}
+              initialMembers={(theme?.likes)}
               groupId={theme?.id}
             />
           </li>
@@ -74,9 +73,9 @@ function ThemeContainer({ theme, userInfo, setResponse }) {
           />
         </div>
         <div>
-          <ThemeCategoryBtn 
-          themeId={theme?.id}
-          setResponse={setResponse}
+          <ThemeCategoryBtn
+            themeId={theme?.id}
+            setResponse={setResponse}
           />
         </div>
         <GroupUrlBtn text={`https://flozable.com/groups/join/${theme?.id}`} />

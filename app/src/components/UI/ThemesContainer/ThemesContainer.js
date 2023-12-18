@@ -18,16 +18,25 @@ function ThemesContainer({
 
   useEffect(() => {
     if (!themes || !userInfo) return;
-    console.log(tags, searchQuery, sortOpt)
-    const newThemes = [...themes].map(theme => {
-      //theme.likes = theme.likes === "" ? [] : theme.likes.split(","); 
-    })
+    console.log(tags, searchQuery, sortOpt, themes)
+    const newThemes = JSON.parse(JSON.stringify(themes));
+    //sort by like
     if (sortOpt) {
-      themes.sort((a, b) => a.likes - b.likes)
-    }
-    setThemesEl(themes.map((theme, i) => {
+      newThemes.sort((a, b) => b.weekUsage - a.weekUsage)
+    } else {
+      //by usage
+      newThemes.sort((a, b) => b.likes.length - a.likes.length)
+    };
+
+    console.log(newThemes)
+    setThemesEl(newThemes.map((theme, i) => {
+      const {description, name} = theme;
+      const tagsArr = theme.tags === "" ? [] : theme.tags.split(","); 
+      console.log(tags)
+      const isSearched = ((description + name + tags).includes(searchQuery) || searchQuery === "") && (tagsArr.some(element => tags.includes(element)) || !tags.length);
       return (
         <ThemeContainer
+          isSearched={isSearched}
           theme={theme}
           key={i}
           userInfo={userInfo}
