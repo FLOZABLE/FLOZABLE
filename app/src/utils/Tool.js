@@ -68,4 +68,9 @@ const cyrb128 = (str) => {
   return [h1 >>> 0, h2 >>> 0, h3 >>> 0, h4 >>> 0];
 };
 
-export { cyrb128, filterGroups, getCountryCode, secondConverter };
+function randomIntInRange(min, max) {
+  const randomVal = Math.floor(Math.random() * (max - min + 1)) + min;
+  return randomVal;
+};
+
+export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange };

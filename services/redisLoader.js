@@ -319,7 +319,7 @@ async function subjectsTimelineCache(userId) {
   const connection = pool.promise();
   const [subjectTimelines] = await connection.query(`SELECT timeline, id FROM subjects WHERE user_id = ?`, [userId]);
   const subjectPromises = subjectsInfo.map(async (subject) => {
-    const { id, timeline } = subject;
+    const { id } = subject;
     const prevTimeline = subjectTimelines.find(sub => {
       return sub.id === id;
     });

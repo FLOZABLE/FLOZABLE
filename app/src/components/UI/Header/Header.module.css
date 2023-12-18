@@ -154,7 +154,9 @@
 }
 
 .header .dropDownContents#planner .inner {
-  min-width: 300px;
+  width: 400px;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .header .dropDownContainer .dropDownContents .inner {

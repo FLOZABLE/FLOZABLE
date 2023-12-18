@@ -123,6 +123,10 @@ const StyleWrapper = styled.div`
       margin-left: 10px;
     }
   }
+
+  @media (max-height: 600px) {
+
+  }
 `;
 
 function SmallCalendar({
