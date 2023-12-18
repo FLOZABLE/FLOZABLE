@@ -14,6 +14,8 @@ import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 import ThemesContainer from "../../UI/ThemesContainer/ThemesContainer";
 import CreateThemeModal from "../../UI/CreateThemeModal/CreateThemeModal";
 import StuckModal from "../../UI/StuckModal/StuckModal";
+import ThemeContainer from "../../UI/ThemeContainer/ThemeContainer";
+import RankedTheme from "../../UI/RankedTheme/RankedTheme";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -30,7 +32,7 @@ function Themes({
   const [sortOpt, setSortOpt] = useState(0);
   const [isCreateThemeModal, setIsCreateThemeModal] = useState(false);
   const [themes, setThemes] = useState([]);
-  //const [is]
+  const [rankedThemes, setRankedThemes] = useState([]);
 
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
@@ -46,11 +48,22 @@ function Themes({
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
+          data.themes.map(theme => {
+            theme.likes = theme.likes === "" ? [] : theme.likes.split(",");
+          })
           setThemes(data.themes);
         };
       })
       .catch((error) => console.error(error));
   }, []);
+
+  useEffect(() => {
+    if (!themes) return;
+    const newThemes = JSON.parse(JSON.stringify(themes));
+    newThemes.sort((a, b) => b.likes.length - a.likes.length);
+    console.log('srot', newThemes);
+    setRankedThemes(newThemes);
+  }, [themes]);
 
 
   return (
@@ -73,52 +86,41 @@ function Themes({
             </Swiper>
             : null
           } */}
-          <Swiper
-            modules={[Pagination, Navigation, Autoplay, EffectCoverflow]}
-            effect="coverflow"
-            coverflowEffect={{
-              rotate: -20,
-              stretch: 1,
-              depth: 100,
-              slideShadows: false
-            }}
-            pagination={{ clickable: true }}
-            slidesPerView={3}
-            autoplay={{ delay: 1300, disableOnInteraction: false }}
-            speed={500}
-            loop={true}
-            className={styles.Swiper}>
-            <SwiperSlide className={styles.Slide}>
-              sdfsdf
-            </SwiperSlide>
-            <SwiperSlide className={styles.Slide}>
-              sdfsdf
-            </SwiperSlide>
-            <SwiperSlide className={styles.Slide}>
-              sdfsdf
-            </SwiperSlide>
-            <SwiperSlide className={styles.Slide}>
-              sdfsdf
-            </SwiperSlide>
-            <SwiperSlide className={styles.Slide}>
-              sdfsdf
-            </SwiperSlide>
-            <SwiperSlide className={styles.Slide}>
-              sdfsdf
-            </SwiperSlide>
-            <SwiperSlide className={styles.Slide}>
-              sdfsdf
-            </SwiperSlide>
-            <SwiperSlide className={styles.Slide}>
-              sdfsdf
-            </SwiperSlide>
-            <SwiperSlide className={styles.Slide}>
-              sdfsdf
-            </SwiperSlide>
-            <SwiperSlide className={styles.Slide}>
-              sdfsdf
-            </SwiperSlide>
-          </Swiper>
+          {rankedThemes.length ?
+            <Swiper
+              modules={[Pagination, Navigation, Autoplay, EffectCoverflow]}
+              navigation={true}
+              effect="coverflow"
+              coverflowEffect={{
+                rotate: -20,
+                stretch: 1,
+                depth: 100,
+                slideShadows: false
+              }}
+              spaceBetween={30}
+              pagination={{ clickable: true }}
+              slidesPerView={3}
+              autoplay={{ delay: 1300, disableOnInteraction: false }}
+              speed={500}
+              loop={true}
+              className={styles.Swiper}>
+              {rankedThemes.map((theme, i) => {
+                const liked = theme.likes.includes(userInfo?.user_id);
+                return (
+                  <SwiperSlide className={styles.Slide} key={i}>
+                    <RankedTheme
+                    rank={i}
+                      theme={theme}
+                      liked={liked}
+                      setResponse={setResponse}
+                      tags={tags}
+                    />
+                  </SwiperSlide>
+                )
+              })}
+            </Swiper>
+            : null
+          }
         </div>
         <div className={styles.box}>
           <div className={styles.searchOptions}>

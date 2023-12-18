@@ -9,13 +9,14 @@ Router.get('/', async (req, res) => {
   try {
     const connection = pool.promise();
     const [themes] = await connection.query(`SELECT * FROM themes`);
-    themes.map(async (theme) => {
-      /* const weekUsage = await redisClient.zmScore(`theme:${theme.id}:weekUsage`, ['0', '1', '2' , '3', '4', '5', '6']);
+    await Promise.all(themes.map(async (theme) => {
+      const weekUsage = await redisClient.zmScore(`theme:${theme.id}:weekUsage`, ['0', '1', '2' , '3', '4', '5', '6']);
+      theme.weekUsage = 0;
       await Promise.all(weekUsage.map(dayTotal => {
         if (!dayTotal) return;
         theme.weekUsage += dayTotal;
-      })) */
-    })
+      }));
+    }));
     return res.send({ success: true, themes });
   } catch (err) {
     console.log(err);

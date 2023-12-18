@@ -2,17 +2,20 @@
   display: flex;
 }
 
+.Themes h1 {
+  font-size: 37px;
+}
+
 .Themes .Swiper {
   display: flex;
   width: 100%;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 300px);
 }
 
 .Themes .Swiper .Slide {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rebeccapurple;
   width: 100%;
 }
 
@@ -51,4 +54,13 @@
 
 .Themes .box .searchOptions .blobWrapper {
   margin-left: auto;
+}
+
+@media (max-width: 1400px) {
+  .Themes h1 {
+    font-size: 36px;
+  }
+  .Themes .box#likedList {
+    flex-direction: column;
+  }
 }
