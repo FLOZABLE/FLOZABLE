@@ -416,7 +416,6 @@ Router.get('/profile/:userId', async (req, res) => {
     });
     const friendsInfo = await Promise.all(firendsInfoPromises);
     const subjectsInfo = await subjectsTimelineCache(targetUserId);
-    console.log(userInfo, subjectsInfo)
     res.send({ success: true, userInfo, subjectsInfo, friendsInfo });
   } catch (err) {
     console.log(err);
