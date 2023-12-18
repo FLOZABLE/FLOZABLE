@@ -313,3 +313,24 @@
 #tosignin, #tosignup {
   cursor: pointer;
 }
+
+
+@media (max-width: 1400px) {
+}
+@media (max-height: 700px) {
+  #accountModal {
+    position: fixed;
+    top: 50px;
+    left: 50vw;
+    transform: translate(-50%, 0%);
+  }
+
+  #accountModal .card-3d-wrap {
+    height: 300px;
+    margin-top: 20px;
+  }
+
+  .mb-0.mt-4.text-center {
+    margin-top: 5px;
+  }
+}
