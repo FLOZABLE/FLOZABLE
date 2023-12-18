@@ -1,33 +1,20 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import styles from "./ThemeContainer.module.css";
+import styles from "./RankedTheme.module.css";
 import { faHeart, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
-import LikeBtn from "../LikeBtn/LikeBtn";
-import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
-import { useEffect, useState } from "react";
-import parse from "html-react-parser";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
 import ThemeUsageCounter from "../ThemeUsageCounter/ThemeUsageCounter";
-import DropDownButton from "../DropDownButton/DropDownButton";
+import parse from "html-react-parser";
 import ThemeCategoryBtn from "../ThemeCategoryBtn/ThemeCategoryBtn";
+import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
+import LikeBtn from "../LikeBtn/LikeBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ThemeContainer({ theme, userInfo, setResponse, isSearched }) {
-  const [liked, setLiked] = useState(false);
-
-  useEffect(() => {
-    if (!theme || !userInfo) return;
-    if (theme.likes.includes(userInfo.user_id)) {
-      setLiked(true);
-    };
-
-  }, [theme, userInfo]);
+function RankedTheme({ theme, setResponse, liked, rank }) {
 
   return (
-    <div className={`${styles.ThemeContainer} ${isSearched ? '': styles.hidden}`}>
-      <div className={styles.name}>
-        {theme?.name}
-      </div>
+    <div className={styles.RankedTheme}
+    >
       <div className={styles.img}
         style={{
           backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`, backgroundSize: 'cover',
@@ -35,6 +22,9 @@ function ThemeContainer({ theme, userInfo, setResponse, isSearched }) {
           backgroundRepeat: 'no-repeat',
         }}
       >
+      </div>
+      <div className={styles.name}>
+        #{rank + 1} {theme?.name}
       </div>
       <div className={styles.description}>
         <ul className={styles.info}>
@@ -81,7 +71,7 @@ function ThemeContainer({ theme, userInfo, setResponse, isSearched }) {
         <GroupUrlBtn text={`https://flozable.com/groups/join/${theme?.id}`} />
       </div>
     </div>
-  );
+  )
 };
 
-export default ThemeContainer;
+export default RankedTheme;
