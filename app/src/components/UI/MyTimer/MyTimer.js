@@ -22,7 +22,6 @@ function MyTimer({ run, initialSec }) {
   }, [run]);
 
   useEffect(() => {
-    console.log('gdt', initialSec)
     if (initialSec) {
       setTotal(initialSec);
     }
