@@ -323,9 +323,15 @@ async function subjectsTimelineCache(userId) {
     const prevTimeline = subjectTimelines.find(sub => {
       return sub.id === id;
     });
-    const parsedTimeline = prevTimeline.timeline ? JSON.parse(prevTimeline.timeline.replace(/^/, "[").replace(/$/, "]")) : []; //wrapping the string with "[]"
-    const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
-    subject.timeline = parsedTimeline.concat(todayTimeline);
+
+    if (prevTimeline) {
+      const parsedTimeline = prevTimeline.timeline ? JSON.parse(prevTimeline.timeline.replace(/^/, "[").replace(/$/, "]")) : []; //wrapping the string with "[]"
+      const todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
+      subject.timeline = parsedTimeline.concat(todayTimeline);
+    } else {
+      subject.timeline = todayTimeline;
+    };
+    
     return subject;
   });
 

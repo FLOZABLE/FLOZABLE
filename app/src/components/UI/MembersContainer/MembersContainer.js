@@ -154,7 +154,11 @@ useEffect(() => {
 
   useEffect(() => {
     if (!userInfo) return;
+    const studyingMembers = [];
     setMembersEl(members.map((memberInfo, i) => {
+      if (memberInfo.activeSubject.id) {
+        studyingMembers.push(memberInfo);
+      };
       if (userInfo.user_id === memberInfo.user_id) {
         return (
           <MyEl 
@@ -179,6 +183,7 @@ useEffect(() => {
         )
       }
     }));
+    setStudyingMembers(studyingMembers);
   }, [members, localStream, userInfo, isFocus, device, recvTransport]);
 
   return (

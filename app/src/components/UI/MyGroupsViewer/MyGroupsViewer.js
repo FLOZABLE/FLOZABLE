@@ -20,7 +20,7 @@ function MyGroupsViewer({
   const [localStream, setLocalStream] = useState(null);
 
   useEffect(() => {
-    mediaSocket.connect();
+    /* mediaSocket.connect(); */
   }, []);
 
   useEffect(() => {
