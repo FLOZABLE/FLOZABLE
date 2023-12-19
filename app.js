@@ -214,13 +214,14 @@ const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubj
 //groupsLoader();
 require('./Logger');
 require('./services/timerUpdate');
-const {createBots, addId, deleteBots, botManager, createGroups, randomFriend} = require('./Bot/Bot');
+const {createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings} = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(0, 100);
 //botManager();
 //deleteBots();
 //addId();
-//createBots(0, 200);
+//createBots(0, 10);
+//createBotRankings();
 
 const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable} = require('./query');
 const { rankingManager } = require("./services/rankingUpdate");
