@@ -340,7 +340,6 @@ async function stopBot(userId) {
   };
 };
 
-const BOT_STUDYING_NUMBERS = 200;
 const BOT_MIN_STUDY = 5; //10 min = min time bot will study
 const BOT_MAX_STUDY = 60 * 60 * 2; //2 hr = max time bot will study
 const MAX_START_DELAY = 60 * 60; //1 hr = starts atleast 1hr from being assigned
@@ -370,18 +369,15 @@ async function botSelector(numbers) {
     const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => { stopBot(user_id) });
   };
 
-  const scheduleStartTest = schedule.scheduleJob(DateTime.fromSeconds(now.toSeconds() + 5).toJSDate(), () => { startBot(process.env.TESTER_ID, []) });
-  const scheduleStopTest = schedule.scheduleJob(DateTime.fromSeconds(now.toSeconds() + 10).toJSDate(), () => { stopBot(process.env.TESTER_ID, []) });
-
   //update active bot list in redis
   redisClient.sAdd('activeBots', activeBots);
 }
 
-async function botManager() {
+async function botManager(numbers) {
   await redisClient.del('activeBots');
-  botSelector(BOT_STUDYING_NUMBERS);
+  botSelector(numbers);
   schedule.scheduleJob('0 * * * *', async () => {
-    botSelector(BOT_STUDYING_NUMBERS);
+    botSelector(numbers);
   });
 };
 

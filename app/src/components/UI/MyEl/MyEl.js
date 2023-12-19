@@ -19,8 +19,16 @@ function MyEl({ memberInfo, setStudyingMembers, localStream, isFocus, device }) 
     const {id, time} = activeSubject;
     if (id) {
       setRun(true);
-      const liveTotal = parseInt(totalTime) + DateTime.now().toSeconds().toFixed() - parseInt(time);
+      const liveTotal = parseInt(totalTime) + parseInt(DateTime.now().toSeconds()) - parseInt(time);
       setTotal(liveTotal);
+      setStudyIcon(
+        <StudyPerson
+        opt1={"#fff"}
+        opt2={"#fff"}
+        width={"40px"}
+        height={"40px"}
+      />
+      )
     } else {
       setTotal(parseInt(totalTime));
     };
