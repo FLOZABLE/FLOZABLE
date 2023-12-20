@@ -9,7 +9,6 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function FriendRequestsViewer({ setResponse, notifications, setNotifications }) {
   const [isIncoming, setIsIncoming] = useState(true);
-  const [friendRequests, setFriendRequests] = useState([]);
   const [friendRequestEl, setFriendRequestEl] = useState([]);
   const [sentRequestsEl, setSentRequestsEl] = useState([]);
 
@@ -84,7 +83,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
           </Link>
           <div className={styles.buttons}>
             <div className={`${styles.btnWrapper} ${styles.decline}`}>
-              <button onClick={() => {/* friendRequestReply(fromId, false, notification.i) */ }}>
+              <button onClick={() => {friendRequestReply(user_id, false, i) }}>
                 <FontAwesomeIcon icon={faXmark} />
               </button>
               <div className={styles.hoverDisp}>
@@ -92,7 +91,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
               </div>
             </div>
             <div className={`${styles.btnWrapper} ${styles.accept}`}>
-              <button onClick={() => {/* friendRequestReply(fromId, true, notification.i) */ }}>
+              <button onClick={() => {friendRequestReply(user_id, true, i) }}>
                 <FontAwesomeIcon icon={faCheck} />
               </button>
               <div className={styles.hoverDisp}>
@@ -119,7 +118,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
       })
       .catch((error) => console.error(error));
 
-    //setNotifications(notifications.filter(notif => notif.i !== notificationId));
+    setNotifications(notifications.filter(notif => notif.i !== notificationId));
   };
 
   const sentRequestClear = (targetId, notificationId) => {
@@ -131,9 +130,6 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
       body: JSON.stringify({ targetId }),
     })
       .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-      })
       .catch((error) => console.error(error));
 
     setNotifications(notifications.filter(notif => notif.i !== notificationId));

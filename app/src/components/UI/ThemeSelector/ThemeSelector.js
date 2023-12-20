@@ -17,7 +17,7 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
     const url = e.target.value;
     console.log(url);
     try {
-      const videoId = new URLSearchParams(new URL(url)).get("v");
+      const videoId = new URLSearchParams(new URL(url).search).get("v");
       setVideoId(videoId);
     } catch (err){
       //Do nothing
