@@ -9,6 +9,7 @@ import { EmailInvitation, Fight1, FriendLink } from "../../../utils/svgs";
 import FriendLinkModal from "../../UI/FriendLinkModal/FriendLinkModal";
 import FriendsActivityViewer from "../../UI/FriendsActivityViewer/FriendsActivityViewer";
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
+import Search from "../../UI/Search/Search";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -27,11 +28,12 @@ function Friends({
   const [isFriendLinkModal, setIsFriendLinkModal] = useState(false);
   const [isGroupPwModal, setIsGroupPwModal] = useState(false);
   const [joinTarget, setJoinTarget] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (!joinTarget) return;
     setJoinTarget(joinTarget);
-    const {group_id, visibility} = joinTarget;
+    const { group_id, visibility } = joinTarget;
 
     if (visibility) {
       fetch(`${serverOrigin}/api/groups/join/${group_id}`, {
@@ -53,7 +55,7 @@ function Friends({
     } else {
       setIsGroupPwModal(true);
     };
-  },[joinTarget]);
+  }, [joinTarget]);
 
   return (
     <div className={styles.Friends}>
@@ -73,9 +75,8 @@ function Friends({
         setJoinGroupResponse={setResponse}
       />
       <div
-        className={`Main ${
-          isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
-        }`}
+        className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
+          }`}
       >
         <div className={styles.fixedBoxContainer}>
           <div className={styles.box}>
@@ -155,11 +156,24 @@ function Friends({
             </div>
           </div>
           <div className={styles.box}>
+            <div className={styles.friendSearchWrapper}>
+              <Search
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
+            </div>
+            <div className={styles.title}>
+              <h3>Friends</h3>
+            </div>
             <FriendsActivityViewer
               setResponse={setResponse}
               userInfo={userInfo}
               setJoinTarget={setJoinTarget}
             />
+            <div className={styles.title}>
+              <h3>Friends</h3>
+              
+            </div>
           </div>
         </div>
       </div>

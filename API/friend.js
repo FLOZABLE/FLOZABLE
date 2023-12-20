@@ -16,7 +16,7 @@ Router.post('/request', async (req, res) => {
       if (userId === targetId) return res.send({ success: false, reason: "Cannot send request to yourself" });
 
       const connection = pool.promise();
-      const [[targetUserInfo]] = await connection.query(`SELECT friends, name FROM users WHERE user_id = ?`, [targetId]);
+      const targetUserInfo = await userCache(targetId);
       if (!targetUserInfo) return res.send({ success: false, reason: 'No such user' });
 
       let { friends, name } = targetUserInfo;
@@ -40,6 +40,8 @@ Router.post('/request', async (req, res) => {
       //to me
       const ongoing = {i: id, t: -2, f: targetId};
       redisClient.sAdd(`user:${userId}:notifications`, JSON.stringify(ongoing));
+      ongoing.f = await userCache(targetId);
+      io.to(userId).emit('notification', ongoing);
       res.send({ success: true, msg: `Sent friend request to ${name}!` });
     } catch (error) {
       console.log(error)
@@ -216,6 +218,17 @@ Router.get('/status', async (req, res) => {
       res.send({ success: false, reason: 'An Error Occured' });
     };
   }));
+});
+
+Router.get('/search', async(req, res) => {
+  try {
+    const query = req.params;
+    if (!query || query.length < 0) return res.send({success: false, reason: 'Invalid query, atleast 3 characters requires'});
+    const connection = await pool.getConnection();
+    const [users] = await connection.query(`SELECT user_id, name, timezone from users `)
+  } catch (err) {
+    console.log(err);
+  };
 });
 
 module.exports = Router;

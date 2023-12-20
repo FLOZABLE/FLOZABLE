@@ -122,8 +122,10 @@
   position: absolute;
   font-size: 13px;
   white-space: nowrap;
-  top: 50px;
-  left: 0px;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
   opacity: 0;
   transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
   background-color: var(--opacity-black);

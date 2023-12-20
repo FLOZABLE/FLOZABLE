@@ -254,6 +254,7 @@ Router.post('/update/image', upload.single('image'), async (req, res) => {
 Router.post('/update/info', async (req, res) => {
   autoSignin(req, res, (async () => {
     const connection = pool.promise();
+    const userId = req.session.user_id;
     try {
       const { name, email, confirmEmail } = req.body;
       //const supportedLanguages = ['English', 'Spanish', 'French'];
@@ -267,7 +268,9 @@ Router.post('/update/info', async (req, res) => {
       /* else if (!supportedLanguages.includes(language)) {
         return res.send({ success: false, reason: 'Not Supported Language' });
       } */
-      const updateInfo = [{ name: name, email: email }, req.session.user_id];
+      const updateInfo = [{ name: name, email: email }, userId];
+      redisClient.hSet(`user:${userId}`, 'name', name);
+      redisClient.hSet(`user:${userId}`, 'email', email);
       await connection.query('UPDATE users set ? WHERE user_id = ?', updateInfo);
       res.send({ success: true, msg: 'Updated Your Information!' });
     } catch (error) {
