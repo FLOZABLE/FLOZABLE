@@ -45,34 +45,44 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo }) {
         <div className={styles.explanation}>
           <ul className={styles.info}>
             <li>
-              <FontAwesomeIcon icon={faPeopleGroup} />
+              <i>
+                <FontAwesomeIcon icon={faPeopleGroup} />
+              </i>
               <GroupMemCounter initialMembers={members} groupId={group_id} />
             </li>
             <li>
-              <FontAwesomeIcon icon={faBullseye} />
+              <i>
+                <FontAwesomeIcon icon={faBullseye} />
+              </i>
               <p>{goal_hr}hr</p>
             </li>
             <li>
-              <FontAwesomeIcon icon={faStopwatch} />
+              <i>
+                <FontAwesomeIcon icon={faStopwatch} />
+              </i>
               <p>0</p>
             </li>
             <li>
-              <FontAwesomeIcon icon={faHeart} />
+              <i>
+                <FontAwesomeIcon icon={faHeart} />
+              </i>
               <GroupLikesCounter initialMembers={likes} groupId={group_id} />
             </li>
           </ul>
+          <div className={`${styles.content} hiddenScroll`}>
           {explanation}
+          </div>
         </div>
+        <ul className={`${styles.tags} hiddenScroll`}>
+          {tags.map((tag, i) => {
+            return (
+              <li className={styles.tag} key={i}>
+                #{tag}
+              </li>
+            );
+          })}
+        </ul>
         <div className={styles.bottom}>
-          <ul className={styles.tags}>
-            {tags.map((tag, i) => {
-              return (
-                <li className={styles.tag} key={i}>
-                  {tag}
-                </li>
-              );
-            })}
-          </ul>
           <div className={styles.buttons}>
             <div className={styles.likeBtnWrapper}>
               <LikeBtn liked={liked} id={group_id} />

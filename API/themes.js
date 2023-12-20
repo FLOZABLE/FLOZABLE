@@ -58,8 +58,8 @@ Router.post('/create', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { name, tags, description, url } = req.body;
-      console.log(name, tags, description, url);
-      if (!name) return res.send({ success: false, reason: 'Invalid name' });
+      console.log(name.length, tags, description, url);
+      if (!name || name.length >= 40) return res.send({ success: false, reason: 'Invalid name' });
       if (!description) return res.send({ success: false, reason: 'No description' })
       if (!url) return res.send({ success: false, reason: 'no url ' });
       try {

@@ -22,26 +22,40 @@
   background-color: aliceblue;
   color: var(--purple);
   border-radius: 20px;
-  height: 35px;
+  height: fit-content;
   padding: 0px 10px;
   font-size: 25px;
+  width: max-content;
+  max-width: 80%;
+  word-break: break-all;
 }
 
 .RankedTheme .description {
+  margin-top: 15px;
   position: relative;
-  height: 200px;
+  height: 100%;
 }
 
 .RankedTheme .description .content {
   margin: 15px;
+  word-break: break-all;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(50% - 120px);
 }
 
 .RankedTheme .tags {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 30px;
-  margin-bottom: 50px;
+  height: fit-content;
+  position: absolute;
+  bottom: 50px;
+  text-wrap: nowrap;
+  flex-wrap: wrap;
+  width: 100%;
+  overflow-y: auto;
+  max-height: 50px;
 }
 
 .RankedTheme .tags .tag {
@@ -53,7 +67,7 @@
   border-radius: 20px;
   height: 20px;
   padding: 0px 10px;
-  margin: 0px 5px;
+  margin: 2px 5px;
 }
 
 .RankedTheme .info {
@@ -85,7 +99,7 @@
 
 .RankedTheme .bottom {
   position: absolute;
-  bottom: 50px;
+  bottom: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -103,4 +117,10 @@
   padding: 0px 20px;
   border-radius: 20px;
   font-size: 16px;
+}
+
+@media (max-width: 1400px) {
+  .RankedTheme .name {
+    font-size: 17px;
+  }
 }
