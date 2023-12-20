@@ -65,6 +65,18 @@ function CreateGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
         .then((response) => response.json())
         .then((data) => {
           setCreateGroupResponse(data);
+          if (data.success) {
+            setIsOpen(false);
+            setName("");
+            setMaxMembers(10);
+            setColor("");
+            setIsSelectColor(false);
+            setTags([]);
+            setDescription("");
+            setVisibility(1);
+            setPassword("");
+            setGoalHr(3);
+          };
         })
         .catch((error) => console.error(error));
     }

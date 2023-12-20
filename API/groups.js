@@ -13,6 +13,7 @@ Router.post('/create-validate', async (req, res) => {
     const userId = req.session.user_id;
     try {
       let group = req.body;
+      console.log(group)
       const schema = {
         type: 'object',
         properties: {
@@ -24,9 +25,8 @@ Router.post('/create-validate', async (req, res) => {
           password: { type: 'string', maxLength: 30},
           color: { type: 'string', maxLength: 8},
           goal_hr: { type: 'integer', maximum: 24},
-          font: {type: 'integer', maximum: 30},
         },
-        required: ['name', 'explanation', 'tags', 'max_members', 'visibility', 'password', 'color', 'goal_hr', 'font'],
+        required: ['name', 'explanation', 'tags', 'max_members', 'visibility', 'password', 'color', 'goal_hr'],
         additionalProperties: false
       };
 
@@ -84,7 +84,7 @@ Router.post('/create-validate', async (req, res) => {
         const groups = await groupCache(userId);
         groups.push(groupId);
         redisClient.hSet(`user:${userId}`, 'groups', groups.join(','));
-        res.send({success: true, data: {id: groupId}})
+        res.send({success: true, data: {id: groupId}, msg: `Group ${group.name} created!`})
       } catch(error) {
         console.log(error)
         res.send({ success: false, reason: 'Error' })
