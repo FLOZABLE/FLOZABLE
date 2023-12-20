@@ -54,7 +54,7 @@
     "passport-github": "^1.1.0",
     "peer": "^1.0.1",
     "promise-mysql": "^5.2.0",
-    "react-scripts": "^5.0.1",
+    "react-scripts": "^3.0.1",
     "redis": "^4.6.8",
     "sharp": "^0.32.4",
     "sib-api-v3-sdk": "^8.5.0",
@@ -64,6 +64,6 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "nodemon": "^2.0.22"
+    "nodemon": "^3.0.2"
   }
 }
