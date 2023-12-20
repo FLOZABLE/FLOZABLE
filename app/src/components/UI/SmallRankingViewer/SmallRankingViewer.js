@@ -3,6 +3,7 @@ import styles from "./SmallRankingViewer.module.css";
 import { Link } from "react-router-dom";
 import CountryViewer from "../CountryViewer/CountryViewer";
 import { DateTime, Duration } from "luxon";
+import { durationFormatter } from "../../../utils/Tool";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -11,6 +12,7 @@ function SmallRankingViewer({ userInfo }) {
     <p>Study to see your today ranking</p>
   </div>);
   const [threeUsers, setThreeUsers] = useState([]);
+  const [selfUser, setSelfUser] = useState([]);
 
   useEffect(() => {
     if (!userInfo) return;
@@ -28,6 +30,7 @@ function SmallRankingViewer({ userInfo }) {
           if (ranking === -1) return;
           const total = data.rankings[ranking].total;
           if (!!!total) return;
+          setSelfUser(data.rankings[ranking]);
           const rankingOrder = [];
           for (let i = Math.max(ranking - 1, 0); i < Math.min(ranking + 2, data.rankings.length); i++) {
             console.log(data.rankings[i].user);
@@ -41,6 +44,9 @@ function SmallRankingViewer({ userInfo }) {
 
 
   useEffect(() => {
+
+    if (!selfUser) return;
+
     setRankingDisp(
       threeUsers.map((ranking, i) => {
         return (
@@ -62,7 +68,7 @@ function SmallRankingViewer({ userInfo }) {
               <CountryViewer timezone={ranking.user.timezone} />
             </Link>
             <div className={styles.ranking}>
-              <p>{Duration.fromObject({ seconds: ranking.total }).toFormat("h:mm:ss")}</p>
+              <p>{durationFormatter(ranking.total)}</p>
             </div>
           </div>
         );

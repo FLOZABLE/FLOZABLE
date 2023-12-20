@@ -46,6 +46,32 @@ const secondConverter = (sec, options = ['s', 'm', 'h']) => {
   return { value, type: options[type] };
 };
 
+const durationFormatter = (sec) => {
+  let res = "";
+  let hours = 0;
+  if (sec >= 3600) {
+    hours = Math.floor(sec / 3600);
+    sec = sec % 3600;
+  }
+  let mins = 0;
+  if (sec >= 60) {
+    mins = Math.floor(sec / 60);
+    sec = sec % 60;
+  }
+
+  if (hours > 0) {
+    res = hours + "hr " + mins.toString().padStart(2, "0") + "m";
+  }
+  else if (mins > 0) {
+    res = mins + "m " + sec.toString().padStart(2, "0") + "s";
+  }
+  else {
+    res = sec + " seconds";
+  }
+
+  return res;
+};
+
 
 const cyrb128 = (str) => {
   let h1 = 1779033703, h2 = 3144134277,
@@ -73,4 +99,4 @@ function randomIntInRange(min, max) {
   return randomVal;
 };
 
-export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange };
+export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange, durationFormatter };
