@@ -47,11 +47,11 @@ function RankedTheme({ theme, setResponse, liked, rank }) {
             />
           </li>
         </ul>
-        <div className={styles.content}>
+        <div className={`${styles.content} hiddenScroll`}>
           {parse(theme?.description)}
         </div>
       </div>
-      <div className={styles.tags}>
+      <div className={`${styles.tags} hiddenScroll`}>
         {(theme?.tags ? theme.tags.split(',') : []).map((tag, i) => (
           <div className={styles.tag} key={i}>#{tag}</div>
         ))}

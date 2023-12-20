@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import parse from "html-react-parser";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
 import ThemeUsageCounter from "../ThemeUsageCounter/ThemeUsageCounter";
-import DropDownButton from "../DropDownButton/DropDownButton";
 import ThemeCategoryBtn from "../ThemeCategoryBtn/ThemeCategoryBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -57,16 +56,14 @@ function ThemeContainer({ theme, userInfo, setResponse, isSearched }) {
             />
           </li>
         </ul>
-        <div className={styles.content}>
+        <div className={`${styles.content} hiddenScroll`}>
           {parse(theme?.description)}
         </div>
       </div>
-      <div className={styles.tagsWrapper}>
-      <div className={styles.tags}>
+      <div className={`${styles.tags} hiddenScroll`}>
         {(theme?.tags ? theme.tags.split(',') : []).map((tag, i) => (
           <p className={styles.tag} key={i}>#{tag}</p>
         ))}
-      </div>
       </div>
       <div className={styles.bottom}>
         <div className={styles.likeBtnWrapper}>
