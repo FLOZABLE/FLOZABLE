@@ -157,6 +157,15 @@ button:hover {
   background-color: #555555;
 }
 
+.hiddenScroll {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.hiddenScroll::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+}
+
 @media (max-width: 1400px) {
   .Main {
     position: relative;
