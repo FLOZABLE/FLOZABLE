@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./SmallRankingViewer.module.css";
 import { Link } from "react-router-dom";
 import CountryViewer from "../CountryViewer/CountryViewer";
+import { DateTime, Duration } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -61,7 +62,7 @@ function SmallRankingViewer({ userInfo }) {
               <CountryViewer timezone={ranking.user.timezone} />
             </Link>
             <div className={styles.ranking}>
-              <p>{(ranking.total / (60)).toFixed(2)}m</p>
+              <p>{Duration.fromObject({ seconds: ranking.total }).toFormat("h:mm:ss")}</p>
             </div>
           </div>
         );

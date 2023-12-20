@@ -338,6 +338,11 @@ async function stopBot(userId) {
     const start = activity[0];
     redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${duration}]`);
   };
+  //add to allMembers
+  let alreadyActive = await redisClient.sIsMember("allMembers", `${userId}`);
+  if (!alreadyActive){
+    redisClient.sAdd(`allMembers`, `${userId}`);
+  }
 };
 
 const BOT_MIN_STUDY = 5; //10 min = min time bot will study
@@ -363,7 +368,7 @@ async function botSelector(numbers) {
     const start = randomIntInRange(5, MAX_START_DELAY) + now.toSeconds();
     const startDate = DateTime.fromSeconds(start);
     const stopDate = DateTime.fromSeconds(startDate.toSeconds() + duration);
-    console.log(startDate.toSeconds() - stopDate.toSeconds())
+    //console.log(startDate.toSeconds() - stopDate.toSeconds())
     //const [[subject]] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects WHERE user_id = ?`, [user_id]);
     const scheduleStart = schedule.scheduleJob(startDate.toJSDate(), () => { startBot(user_id) });
     const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => { stopBot(user_id) });
