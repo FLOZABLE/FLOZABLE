@@ -305,10 +305,13 @@ async function startBot(userId) {
     redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
     
     //add temporarily to test small ranking viewer
+    /*
     let alreadyActive = await redisClient.sIsMember("allMembers", `${userId}`);
     if (!alreadyActive){
       redisClient.sAdd(`allMembers`, `${userId}`);
     }
+    */
+   
   } catch (err) {
     console.log(err);
   };
