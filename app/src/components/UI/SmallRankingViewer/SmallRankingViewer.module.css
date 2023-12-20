@@ -37,4 +37,12 @@
     font-weight: 900;
     font-size: 20px;
     margin-left: auto;
-  }
+}
+
+.SmallRankingViewer .differenceGreen {
+    color: green;
+}
+
+.SmallRankingViewer .differenceRed {
+    color: red;
+}

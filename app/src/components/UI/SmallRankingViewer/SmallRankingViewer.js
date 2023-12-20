@@ -49,6 +49,13 @@ function SmallRankingViewer({ userInfo }) {
 
     setRankingDisp(
       threeUsers.map((ranking, i) => {
+        let differenceEl = <p>(You)</p>
+        if (ranking.user.user_id != selfUser.user.user_id){
+          const secondsDifference = ranking.total - selfUser.total;
+          differenceEl = (
+            <p className = {secondsDifference > 0 ? styles.differenceGreen : styles.differenceRed}>{secondsDifference > 0 ? "+" : "-"}{durationFormatter(Math.abs(secondsDifference))}</p>
+          )
+        }
         return (
           <div className={styles.miniRanking} key={i}>
             <div className={styles.miniRankingElement}>
@@ -69,6 +76,7 @@ function SmallRankingViewer({ userInfo }) {
             </Link>
             <div className={styles.ranking}>
               <p>{durationFormatter(ranking.total)}</p>
+              {differenceEl}
             </div>
           </div>
         );
