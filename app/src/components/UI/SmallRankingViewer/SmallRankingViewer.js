@@ -53,7 +53,7 @@ function SmallRankingViewer({ userInfo }) {
         if (ranking.user.user_id != selfUser.user.user_id){
           const secondsDifference = ranking.total - selfUser.total;
           differenceEl = (
-            <p className = {secondsDifference > 0 ? styles.differenceGreen : styles.differenceRed}>{secondsDifference > 0 ? "+" : "-"}{durationFormatter(Math.abs(secondsDifference))}</p>
+            <p className = {secondsDifference > 0 ? styles.differenceGreen : styles.differenceRed}> {secondsDifference > 0 ? "+" : "-"}{durationFormatter(Math.abs(secondsDifference))}</p>
           )
         }
         return (
