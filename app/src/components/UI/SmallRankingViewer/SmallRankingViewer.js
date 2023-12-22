@@ -32,7 +32,9 @@ function SmallRankingViewer({ userInfo }) {
           if (!!!total) return;
           setSelfUser(data.rankings[ranking]);
           const rankingOrder = [];
-          for (let i = Math.max(ranking - 1, 0); i < Math.min(ranking + 2, data.rankings.length); i++) {
+          const maxAbove = Math.min(1, ranking);
+          const maxBelow = 2 - maxAbove;
+          for (let i = ranking - maxAbove; i <= Math.min(ranking + maxBelow, data.rankings.length); i++) {
             console.log(data.rankings[i].user);
             data.rankings[i].order = i;
             rankingOrder.push(data.rankings[i]);
