@@ -90,6 +90,12 @@ function ColorPalette({
           {!selectedColor ? <p>Select Color!</p> : <p>Selected Color: </p>}
         </button>
         <div
+          onClick={() => {
+            setIsSelectColor(!isSelectColor);
+            if (setIsSelectIcon) {
+              setIsSelectIcon(false);
+            }
+          }}
           className={styles.selectedColor}
           style={{ backgroundColor: selectedColor }}
         ></div>

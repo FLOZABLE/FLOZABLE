@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "./AddSubjectModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -25,47 +25,47 @@ function AddSubjectModal(props) {
   const [isSelectColor, setIsSelectColor] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState({ name: null, el: null });
   const [isSelectIcon, setIsSelectIcon] = useState(false);
-  const [isSubmit, setIsSubmit] = useState(false);
 
   const handleNameInput = (e) => {
     setName(e.target.value);
   };
 
-  useEffect(() => {
-    /* props.setSubjects([]); */
-    if (isSubmit) {
-      fetch(`${serverOrigin}/api/study/add-subject`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: name,
-          color: selectedColor,
-          icon: selectedIcon.name,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setAddSubjectResponse(data);
-          if (data.success) {
-            const newSubject = sortNewSubject(subjects, data.info.subjectInfo);
-            setIsAddSubjectModal(false);
-            setSubjects((prevSubjects) => {
-              const newState = [...prevSubjects];
-              newState.push(newSubject);
-              newState.daily = prevSubjects.daily;
-              newState.monthly = prevSubjects.monthly;
-              newState.weekly = prevSubjects.weekly;
+  const submit = useCallback(() => {
+    fetch(`${serverOrigin}/api/study/add-subject`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name,
+        color: selectedColor,
+        icon: selectedIcon.name,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setAddSubjectResponse(data);
+        if (data.success) {
+          const newSubject = sortNewSubject(subjects, data.info.subjectInfo);
+          setIsAddSubjectModal(false);
+          setSubjects((prevSubjects) => {
+            const newState = [...prevSubjects];
+            newState.push(newSubject);
+            newState.daily = prevSubjects.daily;
+            newState.monthly = prevSubjects.monthly;
+            newState.weekly = prevSubjects.weekly;
 
-              return newState;
-            });
-            setSubject(newSubject);
-          }
-        })
-        .catch((error) => console.error(error));
-    }
-  }, [isSubmit, selectedColor, name]);
+            return newState;
+          });
+          setSubject(newSubject);
+          //clear new subject info from modal
+          setSelectedColor(null);
+          setSelectedIcon({ name: null, el: null });
+          setName("");
+        };
+      })
+      .catch((error) => console.error(error));
+  }, [selectedColor, selectedIcon]);
 
   return (
     <div
@@ -107,7 +107,7 @@ function AddSubjectModal(props) {
           setIsSelectIcon={setIsSelectIcon}
         />
         <div className={styles.submit}>
-          <BlobBtn name={"SUBMIT"} setClicked={setIsSubmit} />
+          <BlobBtn name={"SUBMIT"} setClicked={submit} />
         </div>
       </div>
     </div>

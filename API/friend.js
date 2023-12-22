@@ -222,10 +222,15 @@ Router.get('/status', async (req, res) => {
 
 Router.get('/search', async(req, res) => {
   try {
-    const query = req.params;
+    const {query} = req.query;
+    console.log(query)
     if (!query || query.length < 0) return res.send({success: false, reason: 'Invalid query, atleast 3 characters requires'});
-    const connection = await pool.getConnection();
-    const [users] = await connection.query(`SELECT user_id, name, timezone from users `)
+    if (!/^[a-zA-Z0-9]+$/.test(query)) return res.send({ success: false, reason: 'Invalid query (Only A-Z, a-z, and 0-9 available)' });
+    
+    const connection = pool.promise();
+    const [users] = await connection.query(`SELECT user_id, name, timezone from users where name like ?`, `%${query}%`);
+    console.log('searched',users);
+    res.send({success: true, users});
   } catch (err) {
     console.log(err);
   };

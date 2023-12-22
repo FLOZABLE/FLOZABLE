@@ -12,7 +12,8 @@ import UserGroupViewer from "../UserGroupViewer/UserGroupViewer";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget }) {
+//mode 0 is for friends page's component, mode 1 is for main page's component
+function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode=1 }) {
   const [friendsEl, setFriendsEl] = useState([]);
   const [friends, setFriends] = useState([]);
 
@@ -89,12 +90,14 @@ function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget }) {
                 setResponse={setResponse}
               />
             </div>
+            <div className={`${styles.buttonsWrapper} ${!mode ? styles.hidden : ''}`}>
             <ChallengeBtn userInfo={friend}
               setResponse={setResponse}
             />
             <DmBtn userInfo={friend}
               setResponse={setResponse}
             />
+            </div>
           </div>
         </div>
       )

@@ -1,48 +1,70 @@
-.SmallRankingViewer .circle {
-    background-color: #5261f4;
-    height: 20px;
-    width: 20px;
-    border-radius: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 20px;
-}
-
-.SmallRankingViewer .miniRankingElement {
-    display: inline-block;
-}
-
-.SmallRankingViewer .miniRankingInfo {
-    display: inline-block;
-}
-
-.SmallRankingViewer .miniRanking {
-    border: 1px solid black;
-}
-
-.SmallRankingViewer .profileImg {
-    display: inline-block;
-    background-color: #e5e6e7;
-    width: 40px;
-    height: 40px;
-    border-radius: 20px;
-    justify-content: center;
-    align-items: center;
-    margin-right: 7px;
+.SmallRankingViewer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
 }
 
 .SmallRankingViewer .ranking {
-    display: flex;
-    font-weight: 900;
-    font-size: 20px;
-    margin-left: auto;
+  display: flex;
+  width: max-content;
+}
+
+.SmallRankingViewer .name {
+  display: flex;
+  align-items: center;
+}
+
+.SmallRankingViewer .ranking .rank {
+  background-color: var(--purple);
+  color: #fff;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 25px;
+  flex: 1;
+}
+
+.SmallRankingViewer .profileImg {
+  display: inline-block;
+  background-color: #e5e6e7;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-right: 7px;
+}
+
+.SmallRankingViewer .timezoneWrapper {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  margin: 0px 3px;
 }
 
 .SmallRankingViewer .differenceGreen {
-    color: green;
+  color: green;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .SmallRankingViewer .differenceRed {
-    color: red;
+  color: red;
+  font-size: 10px;
+  align-items: center;
+}
+
+.SmallRankingViewer .compare  {
+  display: flex;
+  align-items: center;
+}
+
+.SmallRankingViewer .noStudy a {
+  font-weight: 600;
+  text-decoration: underline;
 }

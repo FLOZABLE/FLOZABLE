@@ -42,6 +42,7 @@ function Main({
               setResponse={setResponse}
               userInfo={userInfo}
               setJoinTarget={setJoinTarget}
+              mode={0}
             />
           </div>
           <div className={styles.box}>
