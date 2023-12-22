@@ -10,6 +10,7 @@ import FriendLinkModal from "../../UI/FriendLinkModal/FriendLinkModal";
 import FriendsActivityViewer from "../../UI/FriendsActivityViewer/FriendsActivityViewer";
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
 import Search from "../../UI/Search/Search";
+import SearchUsers from "../../UI/SearchUsers/SearchUsers";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -172,8 +173,10 @@ function Friends({
             />
             <div className={styles.title}>
               <h3>Friends</h3>
-              
             </div>
+            <SearchUsers 
+              searchQuery={searchQuery}
+            />
           </div>
         </div>
       </div>

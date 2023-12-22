@@ -57,6 +57,14 @@
   margin-right: 10px;
 }
 
+.FriendsActivityViewer .right .buttonsWrapper {
+  display: flex;
+}
+
+.FriendsActivityViewer .right .buttonsWrapper.hidden {
+  display: none;
+}
+
 @media (max-width: 1650px) {
   .FriendsActivityViewer .friend .profileImg {
     width: 30px;

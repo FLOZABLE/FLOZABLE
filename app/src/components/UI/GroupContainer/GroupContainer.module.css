@@ -8,7 +8,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden;
 }
 
 .GroupContainer.hidden {
@@ -21,6 +20,8 @@
   position: absolute;
   right: 0px;
   top: 0px;
+  border-top-right-radius: 40px;
+  border-top-left-radius: 40px;
 }
 
 .GroupContainer .name {
