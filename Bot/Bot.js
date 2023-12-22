@@ -409,7 +409,15 @@ async function deleteBots() {
 
 
   //exit group
-  bots.map(({ user_id, groups }) => {
+  bots.map(async({ user_id, groups }) => {
+
+    await redisClient.del(`user:${user_id}:dayTotal`); //remove dayTotal
+    await redisClient.del(`user:${user_id}:weekTotal`); //remove dayTotal
+    await redisClient.del(`user:${user_id}:monthTotal`); //remove dayTotal
+    await redisClient.del(`user:${user_id}`); //remove usercache
+    await redisClient.del(`user:${user_id}:subjects`); //remove dayTotal
+    await redisClient.sRem(`allMembers`,`${user_id}`); //remove from allMembers
+
 
     fs.unlink(`./public/profile-images/${user_id}.jpeg`, (err) => {
       if (err) {
