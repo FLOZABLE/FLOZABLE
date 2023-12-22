@@ -38,7 +38,12 @@ function SelectIcon({
             <p>Selected Icon: </p>
           )}
         </button>
-        <div className={styles.selectedIcon}>{selectedIcon.el}</div>
+        <div className={styles.selectedIcon}
+          onClick={() => {
+            setIsSelectIcon(!isSelectIcon);
+            setIsSelectColor(false);
+          }}
+        >{selectedIcon.el}</div>
       </div>
       <div className={`${styles.icons} ${isSelectIcon ? styles.open : ""}`}>
         <div

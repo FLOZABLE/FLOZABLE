@@ -9,7 +9,9 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function SmallRankingViewer({ userInfo }) {
   const [rankingDisp, setRankingDisp] = useState(<div className={styles.noStudy}>
-    <p>Study to see your today ranking</p>
+    <p><Link
+      to="/dashboard/study"
+    >Study</Link> to see your today's ranking</p>
   </div>);
   const [threeUsers, setThreeUsers] = useState([]);
   const [selfUser, setSelfUser] = useState([]);
@@ -44,24 +46,23 @@ function SmallRankingViewer({ userInfo }) {
 
 
   useEffect(() => {
-
-    if (!selfUser) return;
+    if (!selfUser || !threeUsers || !threeUsers.length) return;
 
     setRankingDisp(
       threeUsers.map((ranking, i) => {
         let differenceEl = <p>(You)</p>
-        if (ranking.user.user_id != selfUser.user.user_id){
+        if (ranking.user.user_id != selfUser.user.user_id) {
           const secondsDifference = ranking.total - selfUser.total;
           differenceEl = (
-            <p className = {secondsDifference > 0 ? styles.differenceGreen : styles.differenceRed}> {secondsDifference > 0 ? "+" : "-"}{durationFormatter(Math.abs(secondsDifference))}</p>
+            <p className={secondsDifference > 0 ? styles.differenceGreen : styles.differenceRed}> ({secondsDifference > 0 ? "+" : "-"}{durationFormatter(Math.abs(secondsDifference))})</p>
           )
         }
         return (
-          <div className={styles.miniRanking} key={i}>
-            <div className={styles.miniRankingElement}>
-              <div className={styles.circle}>
-                <p>{ranking.order + 1}</p>
-              </div>
+          <Link
+            to={`/dashboard/user/${ranking.user.user_id}`}
+            className={styles.ranking} key={i}>
+            <div className={styles.rank}>
+              {ranking.order + 1}
             </div>
             <div className={styles.profileImg}
               style={{
@@ -70,15 +71,17 @@ function SmallRankingViewer({ userInfo }) {
                 backgroundRepeat: 'no-repeat',
               }}
             ></div>
-            <Link to={`/dashboard/user/${ranking.user.user_id}`} className={styles.profileInfo}>
-              <p className={styles.name}>{ranking.user.name}</p>
+            <div className={styles.name}>
+              {ranking.user.name}
+            </div>
+            <div className={styles.timezoneWrapper}>
               <CountryViewer timezone={ranking.user.timezone} />
-            </Link>
-            <div className={styles.ranking}>
+            </div>
+            <div className={styles.compare}>
               <p>{durationFormatter(ranking.total)}</p>
               {differenceEl}
             </div>
-          </div>
+          </Link>
         );
       })
     )

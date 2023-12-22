@@ -75,6 +75,11 @@ function EventModal({
             setEvents(updatedEvents);
           }
           setIsAddPlanModal(false);
+
+          //clear new plan info from modal
+          setTitle("");
+          setDescription("");
+          setPriority(50);
         }
       })
       .catch((error) => console.error(error));

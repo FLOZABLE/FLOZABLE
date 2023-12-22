@@ -217,10 +217,10 @@ require('./services/timerUpdate');
 const {createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings} = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(0, 100);
-botManager(40);
+//botManager(40);
 //deleteBots();
 //addId();
-//createBots(0, 40);
+//createBots(0, 200);
 //createBotRankings();
 
 const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable} = require('./query');
