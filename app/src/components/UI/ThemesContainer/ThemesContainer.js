@@ -5,6 +5,7 @@ import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import ThemeContainer from "../ThemeContainer/ThemeContainer";
+import { AllCategories } from "../../../utils/Themes";
 
 function ThemesContainer({
   themes,
@@ -12,7 +13,8 @@ function ThemesContainer({
   setResponse,
   tags,
   searchQuery,
-  sortOpt
+  sortOpt,
+  userThemes
 }) {
   const [ThemesEl, setThemesEl] = useState([]);
 
@@ -28,12 +30,19 @@ function ThemesContainer({
       newThemes.sort((a, b) => b.likes.length - a.likes.length)
     };
 
-    console.log(newThemes)
+    const userThemeIds = userThemes.map((theme) => {
+      return theme.split(":")[1];
+    });
+    const userThemeCategories = userThemes.map((theme) => {
+      return theme.split(":")[0];
+    })
+
     setThemesEl(newThemes.map((theme, i) => {
       const {description, name} = theme;
-      const tagsArr = theme.tags === "" ? [] : theme.tags.split(","); 
-      console.log(tags)
+      const tagsArr = theme.tags === "" ? [] : theme.tags.split(",");
       const isSearched = ((description + name + tags).includes(searchQuery) || searchQuery === "") && (tagsArr.some(element => tags.includes(element)) || !tags.length);
+      const savedIndex = userThemeIds.indexOf(theme.id);
+      const themeCategory = userThemeCategories[savedIndex];
       return (
         <ThemeContainer
           isSearched={isSearched}
@@ -41,6 +50,8 @@ function ThemesContainer({
           key={i}
           userInfo={userInfo}
           setResponse={setResponse}
+          isSaved={savedIndex >= 0}
+          themeCategory={themeCategory}
         />
       )
     }));

@@ -22,7 +22,8 @@ AllCategories.map((string) => {
 
 function ThemeCategoryBtn({
   themeId,
-  setResponse
+  setResponse,
+  themeCategory
 }) {
   const [category, setCategory] = useState(-2);
   const [disp, setDisp] = useState("Save");
@@ -48,6 +49,12 @@ function ThemeCategoryBtn({
       })
       .catch((error) => console.error(error));
   }, [category, themeId]);
+
+  useEffect(() => {
+    if (themeCategory != -1 && !isNaN(themeCategory)){
+      setDisp(`Saved to ${allCategoriesParsed[parseInt(themeCategory)]}`);
+    }
+  }, []);
 
   return (
     <button className={`${styles.ThemeCategoryBtn} ${isOpen ? styles.open : ''}`}

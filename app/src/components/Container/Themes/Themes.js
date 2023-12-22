@@ -30,6 +30,7 @@ function Themes({
   const [sortOpt, setSortOpt] = useState(0);
   const [isCreateThemeModal, setIsCreateThemeModal] = useState(false);
   const [themes, setThemes] = useState([]);
+  const [userThemes, setUserThemes] = useState([]);
   const [rankedThemes, setRankedThemes] = useState([]);
 
   const handleCreatedTagsChange = (tags) => {
@@ -50,6 +51,21 @@ function Themes({
             theme.likes = theme.likes === "" ? [] : theme.likes.split(",");
           })
           setThemes(data.themes);
+        };
+      })
+      .catch((error) => console.error(error));
+
+
+    fetch(`${serverOrigin}/api/themes/user`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setUserThemes(data.themes.themes.split(","));
         };
       })
       .catch((error) => console.error(error));
@@ -107,7 +123,7 @@ function Themes({
                 return (
                   <SwiperSlide className={styles.Slide} key={i}>
                     <RankedTheme
-                    rank={i}
+                      rank={i}
                       theme={theme}
                       liked={liked}
                       setResponse={setResponse}
@@ -165,6 +181,7 @@ function Themes({
             tags={tags}
             sortOpt={sortOpt}
             searchQuery={searchQuery}
+            userThemes={userThemes}
           />
         </div>
       </div>
