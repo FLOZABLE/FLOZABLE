@@ -11,8 +11,9 @@ import ThemeCategoryBtn from "../ThemeCategoryBtn/ThemeCategoryBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ThemeContainer({ theme, userInfo, setResponse, isSearched }) {
+function ThemeContainer({ theme, userInfo, setResponse, isSearched, isSaved, themeCategory }) {
   const [liked, setLiked] = useState(false);
+  const [savedEl, setSavedEl] = useState(<div></div>);
 
   useEffect(() => {
     if (!theme || !userInfo) return;
@@ -35,7 +36,7 @@ function ThemeContainer({ theme, userInfo, setResponse, isSearched }) {
         }}
       >
       </div>
-      <div className={styles.description}>
+      <div className={`${styles.description} ${isSaved ? styles.saved : ''}`}>
         <ul className={styles.info}>
           <li>
             <i>
@@ -75,8 +76,10 @@ function ThemeContainer({ theme, userInfo, setResponse, isSearched }) {
           <ThemeCategoryBtn
             themeId={theme?.id}
             setResponse={setResponse}
+            themeCategory={parseInt(themeCategory)}
           />
         </div>
+        {savedEl}
         <GroupUrlBtn text={`https://flozable.com/groups/join/${theme?.id}`} />
       </div>
     </div>
