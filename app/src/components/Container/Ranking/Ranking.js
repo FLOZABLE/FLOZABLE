@@ -40,7 +40,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   //fetch new ranking
   useEffect(() => {
-    const viewTime = DateTime.fromJSDate(viewDate);
+    const viewTime = DateTime.fromJSDate(viewDate, {zone: "UTC"});
 
     let startTime;
     let stopTime;
