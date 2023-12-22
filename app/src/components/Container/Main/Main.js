@@ -30,6 +30,24 @@ function Main({
 }) {
   const [joinTarget, setJoinTarget] = useState(null);
 
+  useEffect(() => {
+    if (!subjects.length) return;
+    fetch(`${serverOrigin}/api/AI/input`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ subjects })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log(data);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [subjects]);
+
   return (
     <div className={styles.MainContainer}>
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
@@ -72,19 +90,19 @@ function Main({
           </div>
           <div className={styles.box}>
             <div className={styles.title}>
-             <p>AI recommendation</p>
+              <p>AI recommendation</p>
             </div>
-            <AIRecommendation 
+            <AIRecommendation
             />
           </div>
           <div className={styles.box}>
-          <div className={styles.title}>
-            <p>Activity Viewer</p>
+            <div className={styles.title}>
+              <p>Activity Viewer</p>
+            </div>
+            <ActivityViewer
+              subjects={subjects}
+            />
           </div>
-          <ActivityViewer
-            subjects={subjects}
-          />
-        </div>
         </div>
       </div>
     </div>
