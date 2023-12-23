@@ -136,19 +136,6 @@ async function groupMembersCache(id) {
     console.log(err);
     return [];
   };
-  try {
-    const connection = pool.promise();
-
-    const [groups] = await connection.query(`SELECT members, group_id FROM groups`);
-    groups.map(async (group) => {
-      const { group_id, members } = group;
-      const membersArr = members === "" ? [] : members.split(",");
-      //await redisClient.del(`room:${group_id}`);
-      redisClient.sAdd(`room:${group_id}`, membersArr);
-    })
-  } catch (err) {
-    console.log(err);
-  }
 }
 
 
