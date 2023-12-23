@@ -3,7 +3,7 @@ const cron = require('node-cron');
 const pool = require("./model/pool");
 const redisClient = require("./model/redis");
 const { generateRandomId } = require("./tool");
-const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache } = require("./services/redisLoader");
+const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache, dmRoomMembersCache } = require("./services/redisLoader");
 const { DateTime } = require("luxon");
 
 
@@ -252,6 +252,29 @@ connection.on('connection', (socket) => {
     const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [groupId]);
     if (!groupInfo) return;
     io.to(friends).emit(`activeGroup`, {groupInfo, time: now});
+  });
+
+  socket.on('readMsg', async({roomId, type}) => {
+    console.log('read',roomId);
+    if (!roomId) return;
+    //dm
+    let members = [];
+    if (!type) {
+      members = await dmRoomMembersCache(roomId);
+    } else {
+      members = await groupMembersCache(roomId);
+    };
+
+    //user not member of the chatroom
+    if (!members.includes(userId)) return;
+
+    const lastMsg = await redisClient.lRange(`room:${roomId}:chats`, -1, -1);
+    if (!lastMsg) return;
+
+    //i ==  msg id
+    const {i} = JSON.parse(lastMsg);
+    const now = Math.floor(new Date().getTime() / 1000);
+    redisClient.hSet(`user:${userId}:chats`, roomId, `${i}:${now}`);
   })
 });
 

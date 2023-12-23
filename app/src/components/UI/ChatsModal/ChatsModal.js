@@ -18,6 +18,7 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
   const [roomName, setRoomName] = useState("");
   const chatsContainerRef = useRef(null);
   const [roomMembers, setRoomMembers] = useState([]);
+  const [readStatus, setReadStatus] = useState({});
 
   useEffect(() => {
     fetch(`${serverOrigin}/api/chat/bring-rooms`, { method: "post" })
@@ -25,6 +26,8 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
       .then((data) => {
         if (data.success) {
           setChatRooms(data.rooms);
+          setReadStatus(data.readStatus);
+          console.log(data.readStatus);
         }
       })
       .catch((error) => console.error(error));
@@ -108,6 +111,8 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
           if (!group) return;
           const { group_id, name, color } = group;
           const members = group.members === "" ? [] : group.members.split(",");
+          const lastRead = readStatus[group_id];
+
           return (
             <li
               className={styles.chatRoom}
@@ -159,12 +164,14 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
         }
       })
     );
-  }, [chatRooms, myGroups, roomMembers, userInfo]);
+  }, [chatRooms, myGroups, roomMembers, userInfo, readStatus]);
 
   useEffect(() => {
     const {chats, id, members, type} = selectedRoom;
     if (selectedRoom && chats && userInfo) {
+      console.log('chats', selectedRoom)
       const {user_id} = userInfo;
+      socket.emit('readMsg', {roomId: selectedRoom.id});
       if (!type) {
         fetch(`${serverOrigin}/api/chat/members?roomId=${id}`, { method: "get" })
         .then((response) => response.json())

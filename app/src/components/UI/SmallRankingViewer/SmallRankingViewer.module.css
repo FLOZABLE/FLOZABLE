@@ -8,6 +8,8 @@
 
 .SmallRankingViewer .ranking {
   display: flex;
+  justify-content: center;
+  align-items: center;
   width: max-content;
 }
 
@@ -26,6 +28,7 @@
   align-items: center;
   border-radius: 25px;
   flex: 1;
+  margin-right: 3px;
 }
 
 .SmallRankingViewer .profileImg {

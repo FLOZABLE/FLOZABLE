@@ -14,6 +14,7 @@ import ToggleBtn from "../ToggleBtn/ToggleBtn";
 import styles from "./Header.module.css";
 import PlanTimeline from "../PlanTimeline/PlanTimeline";
 import { secondConverter } from "../../../utils/Tool";
+import ChatModalBtn from "../ChatModalBtn/ChatModalBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -205,15 +206,9 @@ function Header({
             </div>
           </div> */}
           <div className={styles.dropDownContainer}>
-            <button
-              onClick={() => {
-                setIsChatModal(!isChatModal);
-              }}
-            >
-              <i>
-                <FontAwesomeIcon icon={faCommentDots} />
-              </i>
-            </button>
+            <ChatModalBtn 
+              setIsChatModal={setIsChatModal}
+            />
           </div>
           <div className={styles.dropDownContainer}>
             <button>

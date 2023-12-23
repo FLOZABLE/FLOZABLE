@@ -24,7 +24,6 @@ function SmallRankingViewer({ userInfo }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (data.success) {
           const ranking = data.rankings.findIndex(ranking => {
             return userInfo.user_id === ranking.user.user_id;
@@ -37,7 +36,7 @@ function SmallRankingViewer({ userInfo }) {
           const maxAbove = Math.min(1, ranking);
           const maxBelow = 2 - maxAbove;
           for (let i = ranking - maxAbove; i <= Math.min(ranking + maxBelow, data.rankings.length); i++) {
-            console.log(data.rankings[i].user);
+            if (!data.rankings[i]) break;
             data.rankings[i].order = i;
             rankingOrder.push(data.rankings[i]);
           }
