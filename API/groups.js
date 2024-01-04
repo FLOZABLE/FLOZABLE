@@ -242,16 +242,20 @@ Router.post('/like/:id', async (req, res) => {
         [userId, `%,${userId},%`, `${userId},%`, `%,${userId}`, userId, userId, groupId]
       ); */
       if (liked) {
-        const [update] = await connection.query(
+        const [{changedRows}] = await connection.query(
           `UPDATE \`groups\` 
           SET likes = CASE 
             WHEN likes = '' THEN ?
-            ELSE CONCAT(likes, ',', ?) 
+            WHEN NOT likes LIKE ? THEN
+            CONCAT(likes, ',', ?)
+            ELSE likes
             END WHERE group_id = ?`,
-          [userId, userId, groupId]
+          [userId, `%${userId}%`, userId, groupId]
         );
-        const io = req.app.get('socketio');
-        io.emit(`liked:${groupId}`, userId);
+        if (changedRows) {
+          const io = req.app.get('socketio');
+          io.emit(`liked:${groupId}`, userId);
+        };
       } else {
         const [update] = await connection.query(
           `UPDATE \`groups\` 

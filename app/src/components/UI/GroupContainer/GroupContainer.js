@@ -6,8 +6,9 @@ import LikeBtn from "../LikeBtn/LikeBtn";
 import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
 import GroupMemCounter from "../GroupMemCounter/GroupMemCounter";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
+import { Link } from "react-router-dom";
 
-function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo }) {
+function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, myGroups }) {
   const [groupEl, setGroupEl] = useState(null);
 
   useEffect(() => {
@@ -21,6 +22,11 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo }) {
     let liked = false;
     if (userInfo && likes.includes(userInfo.user_id)) {
       liked = true;
+    };
+
+    let joined = false;
+    if (myGroups && type && myGroups.find(group => group.group_id === group_id)) {
+      joined = true;
     };
 
     setGroupEl(
@@ -70,7 +76,7 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo }) {
             </li>
           </ul>
           <div className={`${styles.content} hiddenScroll`}>
-          {explanation}
+            {explanation}
           </div>
         </div>
         <ul className={`${styles.tags} hiddenScroll`}>
@@ -87,19 +93,29 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo }) {
             <div className={styles.likeBtnWrapper}>
               <LikeBtn liked={liked} id={group_id} />
             </div>
-            <button
+            {/* <button
+              onClick={() => {
+                if (joined)
+                joinGroup(groupInfo);
+              }}
+            >
+              {joined ? <Link to={"/dashboard/study"}>
+                Go study session
+              </Link> : 'Join'}
+            </button> */}
+            {!joined ? <button
               onClick={() => {
                 joinGroup(groupInfo);
               }}
             >
               Join
-            </button>
+            </button> : null}
             <GroupUrlBtn text={`https://flozable.com/groups/join/${group_id}`} />
           </div>
         </div>
       </div>
     );
-  }, [groupInfo, isSearched, userInfo]);
+  }, [groupInfo, isSearched, userInfo, type, myGroups]);
 
   return groupEl;
 };
