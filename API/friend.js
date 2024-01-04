@@ -36,9 +36,9 @@ Router.post('/request', async (req, res) => {
       io.to(targetId).emit('notification', socketNotif);
       //to target user
       redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
-      
+
       //to me
-      const ongoing = {i: id, t: -2, f: targetId};
+      const ongoing = { i: id, t: -2, f: targetId };
       redisClient.sAdd(`user:${userId}:notifications`, JSON.stringify(ongoing));
       ongoing.f = await userCache(targetId);
       io.to(userId).emit('notification', ongoing);
@@ -50,7 +50,7 @@ Router.post('/request', async (req, res) => {
   }));
 });
 
-Router.post('/request-cancel', async(req, res) => {
+Router.post('/request-cancel', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
       const userId = req.session.user_id;
@@ -60,9 +60,9 @@ Router.post('/request-cancel', async(req, res) => {
       if (!friendReq) return res.send({ success: false, reason: 'expired request' })
       redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(friendReq));
       //remove it from ongoing friend req list
-      const ongoing = {i: friendReq.i, t: -2, f: targetId};
+      const ongoing = { i: friendReq.i, t: -2, f: targetId };
       redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(ongoing));
-      res.send({success: true});
+      res.send({ success: true });
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'Failed' });
@@ -81,7 +81,7 @@ Router.post('/request-reply', async (req, res) => {
       if (!friendReq) return res.send({ success: false, reason: 'expired request' })
       redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(friendReq));
       //remove it from ongoing friend req list
-      const ongoing = {i: friendReq.i, t: -2, f: userId};
+      const ongoing = { i: friendReq.i, t: -2, f: userId };
       redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(ongoing));
       if (!accepted) {
         return res.send({ success: true });
@@ -114,10 +114,10 @@ Router.post('/request-reply', async (req, res) => {
         END
         WHERE user_id = ?
       `, [
-        userId,
-        userId,
-        targetId,
-      ]);
+          userId,
+          userId,
+          targetId,
+        ]);
         res.send({ success: true, msg: `You and ${targetInfo.name} are now friends!` });
         const id = generateRandomId(5);
         const date = Math.floor(new Date().getTime() / (1000 * 60));
@@ -135,6 +135,16 @@ Router.post('/request-reply', async (req, res) => {
         targetInfo.friends.push(userId);
         redisClient.hSet(`user:${targetId}`, 'friends', targetInfo.friends.join(','));
 
+        //create chat only if it does not exist
+        const [[{ record_count }]] = await connection.query(`SELECT COUNT(*) AS record_count
+        FROM chatrooms
+        WHERE 
+          (members LIKE ? AND members LIKE ?)
+          OR
+          (members LIKE ? AND members LIKE ?)
+        LIMIT 1;`, [`%${userId}%`, `%${targetId}%`, `%${targetId}%`, `%${userId}%`]);
+
+        console.log('dm',record_count);
       } else {
         res.send({ success: true, msg: `You and ${targetInfo.name} were already friends!` });
       };
@@ -153,9 +163,9 @@ Router.post('/checked', async (req, res) => {
       const { targetId } = req.body;
       const friendRequests = await NotificationCache(userId, 1, false);
       const friendReq = friendRequests.find(friendReq => { return friendReq.f === targetId });
-      if (!friendReq) return res.send({success: false, reason: 'no request found'});
+      if (!friendReq) return res.send({ success: false, reason: 'no request found' });
       redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(friendReq));
-      res.send({success: true});
+      res.send({ success: true });
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });
@@ -169,8 +179,8 @@ Router.get('/recommended', async (req, res) => {
       const userId = req.session.user_id;
       const connection = pool.promise();
       let userIds = await redisClient.sMembers(`allMembers`);
-      userIds = userIds.filter(userInfo => {return userInfo !== userId});
-      res.send({success: true})
+      userIds = userIds.filter(userInfo => { return userInfo !== userId });
+      res.send({ success: true })
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });
@@ -183,10 +193,10 @@ Router.get('/status', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const userInfo = await userCache(userId);
-      if (!userInfo) return res.send({success: false, reason: `no such user`});
+      if (!userInfo) return res.send({ success: false, reason: `no such user` });
       const friends = userInfo.friends === "" ? [] : userInfo.friends.split(',');
       const friendsInfo = [];
-      await Promise.all(friends.map(async(friend) => {
+      await Promise.all(friends.map(async (friend) => {
         friend = await userCache(friend);
         if (!friend) return;
         const totalTime = await redisClient.get(`user:${friend.user_id}:dayTotal`);
@@ -195,9 +205,9 @@ Router.get('/status', async (req, res) => {
         if (activeSubject.id) {
           const subject = await subjectCache(friend.user_id, activeSubject.id);
           if (subject) {
-            friend.activeSubject = {...subject, total: activeSubject.total, time: activeSubject.time};
+            friend.activeSubject = { ...subject, total: activeSubject.total, time: activeSubject.time };
           } else {
-            friend.activeSubject = {id: -1, total: activeSubject.total, time: activeSubject.time};
+            friend.activeSubject = { id: -1, total: activeSubject.total, time: activeSubject.time };
           };
         } else {
           friend.activeSubject = activeSubject;
@@ -207,12 +217,12 @@ Router.get('/status', async (req, res) => {
           const connection = pool.promise();
           const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [ActiveGroup.id]);
           if (groupInfo) {
-            friend.ActiveGroup = {...groupInfo, time: ActiveGroup.time};
+            friend.ActiveGroup = { ...groupInfo, time: ActiveGroup.time };
           };
         };
         friendsInfo.push(friend);
       }));
-      res.send({success: true, friendsInfo})
+      res.send({ success: true, friendsInfo })
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });
@@ -220,17 +230,17 @@ Router.get('/status', async (req, res) => {
   }));
 });
 
-Router.get('/search', async(req, res) => {
+Router.get('/search', async (req, res) => {
   try {
-    const {query} = req.query;
+    const { query } = req.query;
     console.log(query)
-    if (!query || query.length < 0) return res.send({success: false, reason: 'Invalid query, atleast 3 characters requires'});
+    if (!query || query.length < 0) return res.send({ success: false, reason: 'Invalid query, atleast 3 characters requires' });
     if (!/^[a-zA-Z0-9]+$/.test(query)) return res.send({ success: false, reason: 'Invalid query (Only A-Z, a-z, and 0-9 available)' });
-    
+
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT user_id, name, timezone from users where name like ?`, `%${query}%`);
-    console.log('searched',users);
-    res.send({success: true, users});
+    console.log('searched', users);
+    res.send({ success: true, users });
   } catch (err) {
     console.log(err);
   };

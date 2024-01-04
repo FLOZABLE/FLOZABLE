@@ -6,10 +6,12 @@ import SendBtn from "../SendBtn/SendBtn";
 import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
 import { socket } from "../../../socket";
+import ChatRoom from "../ChatRoom/ChatRoom";
+
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
+function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewMsg, setTotalNewMsg }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [chatRoomsEl, setChatRoomsEl] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(false);
@@ -27,7 +29,6 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
         if (data.success) {
           setChatRooms(data.rooms);
           setReadStatus(data.readStatus);
-          console.log(data.readStatus);
         }
       })
       .catch((error) => console.error(error));
@@ -37,7 +38,7 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
     const chatRoomIndex = chatRooms.findIndex(chatRoom => { return chatRoom.id === roomId });
     if (chatRoomIndex !== -1) {
       const newChatRooms = [...chatRooms];
-      newChatRooms[chatRoomIndex].chats.push(JSON.stringify(msgInfo));
+      newChatRooms[chatRoomIndex].chats.push(msgInfo);
       setChatRooms(newChatRooms);
     };
     if (selectedRoom.id === roomId) {
@@ -57,9 +58,9 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
         setMsgViewer(prevMsgViewer => [
           ...prevMsgViewer,
           <li className={`${styles.msg} ${styles.others}`} key={i}>
-            <Link 
-            to={`/dashboard/user/${u}`}
-            className={styles.profileImg}
+            <Link
+              to={`/dashboard/user/${u}`}
+              className={styles.profileImg}
               style={{
                 backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
                 backgroundSize: 'cover',
@@ -73,6 +74,8 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
           </li>
         ]);
       };
+    } else {
+      setTotalNewMsg(prev => prev + 1);
     };
   }, [userInfo, chatRooms, selectedRoom, roomMembers]);
 
@@ -102,122 +105,106 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
   }, [msgInput, selectedRoom]);
 
   useEffect(() => {
+    if (!readStatus) return;
     setChatRoomsEl(
-      chatRooms.map((chatRoom, i) => {
+      [...chatRooms].map((chatRoom, i) => {
         //this means it's group chat room
-        const { type, id, members } = chatRoom;
+        const { type, id, members, chats } = chatRoom;
+        const lastMsg = chats.length ? chats[chats.length - 1] : null;
+        const lastRead = readStatus[id];
+
         if (!type) {
           const group = myGroups.find(group => { return group.group_id === id });
           if (!group) return;
-          const { group_id, name, color } = group;
+          const { name, color } = group;
           const members = group.members === "" ? [] : group.members.split(",");
-          const lastRead = readStatus[group_id];
-
+          chatRoom.name = name;
+          chatRoom.color = color;
+          chatRoom.members = members;
           return (
-            <li
-              className={styles.chatRoom}
+            <ChatRoom
               key={i}
-            >
-              <div className={styles.imgContainer} style={{ backgroundColor: color }}>
-              </div>
-              <div className={styles.roomInfo}
-                onClick={() => {
-                  setSelectedRoom(chatRoom);
-                  setRoomName(name);
-                }}
-              >
-                <div className={styles.roomName}>
-                  {name}
-                  <strong>{members.length}</strong>
-                </div>
-                <div className={styles.newMsgCount}>
-                  {/* 10 new messages */}
-                </div>
-              </div>
-            </li>
+              room={chatRoom}
+              setSelectedRoom={setSelectedRoom}
+              setRoomName={setRoomName}
+              lastMsg={lastMsg}
+              lastRead={lastRead}
+              setTotalNewMsg={setTotalNewMsg}
+              isSelected={selectedRoom.id === id}
+            />
           )
         } else {
           if (!userInfo) return;
+          chatRoom.name = members.map(member => { return member.name }).join(",");
+          chatRoom.color = 'var(--purple)'
           return (
-            <li
-              className={styles.chatRoom}
+            <ChatRoom
               key={i}
-            >
-              <div className={styles.imgContainer} style={{ backgroundColor: 'var(--purple)' }}>
-              </div>
-              <div className={styles.roomInfo}
-                onClick={() => {
-                  setSelectedRoom(chatRoom);
-                  setRoomName(members.map(member => {return member.name}).join(","));
-                }}
-              >
-                <div className={styles.roomName}>
-                  {members.map(member => {return member.name}).join(",")}
-                  <strong>{members.length}</strong>
-                </div>
-                <div className={styles.newMsgCount}>
-                  {/* 10 new messages */}
-                </div>
-              </div>
-            </li>
+              room={chatRoom}
+              setSelectedRoom={setSelectedRoom}
+              setRoomName={setRoomName}
+              lastMsg={lastMsg}
+              lastRead={lastRead}
+              setTotalNewMsg={setTotalNewMsg}
+              isSelected={selectedRoom.id === id}
+            />
           )
         }
       })
     );
-  }, [chatRooms, myGroups, roomMembers, userInfo, readStatus]);
+  }, [chatRooms, myGroups, roomMembers, userInfo, readStatus, selectedRoom]);
 
   useEffect(() => {
-    const {chats, id, members, type} = selectedRoom;
+    const { chats, id, members, type } = selectedRoom;
     if (selectedRoom && chats && userInfo) {
-      console.log('chats', selectedRoom)
-      const {user_id} = userInfo;
-      socket.emit('readMsg', {roomId: selectedRoom.id});
+      const { user_id } = userInfo;
+      socket.emit('readMsg', { roomId: selectedRoom.id, type });
       if (!type) {
         fetch(`${serverOrigin}/api/chat/members?roomId=${id}`, { method: "get" })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            const {membersInfo} = data;
-            setRoomMembers([...membersInfo]);
-            setMsgViewer(chats.map((msg) => {
-              const { u, m, i, t } = JSON.parse(msg);
-              const formattedTime = DateTime.fromSeconds(t * 60).toFormat('h:mm a');
-              if (u === user_id) {
-                return (
-                  <li className={`${styles.msg} ${styles.me}`} key={i}>
-                    <p className={styles.time}>{formattedTime}</p>
-                    <p>{m}</p>
-                  </li>
-                )
-              } else {
-                const user = membersInfo.find(member => { return member.user_id === u });
-                const { name } = user;
-                return (
-                  <li className={`${styles.msg} ${styles.others}`} key={i}>
-                    <Link to={`/dashboard/user/${u}`}
-                     className={styles.profileImg}
-                      style={{
-                        backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center center',
-                        backgroundRepeat: 'no-repeat',
-                      }}>
-                    </Link>
-                    <p className={styles.name}>{name}</p>
-                    <p className={styles.time}>{formattedTime}</p>
-                    <p>{m}</p>
-                  </li>
-                )
-              };
-            }));
-          }
-        })
-        .catch((error) => console.error(error));
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              const { membersInfo } = data;
+              setRoomMembers([...membersInfo]);
+              setMsgViewer(chats.map((msg) => {
+                const { u, m, i, t } = msg;
+                const formattedTime = DateTime.fromSeconds(t * 60).toFormat('h:mm a');
+                if (u === user_id) {
+                  return (
+                    <li className={`${styles.msg} ${styles.me}`} key={i}>
+                      <p className={styles.time}>{formattedTime}</p>
+                      <p>{m}</p>
+                    </li>
+                  )
+                } else {
+                  const user = membersInfo.find(member => { return member.user_id === u });
+                  const { name } = user;
+                  return (
+                    <li className={`${styles.msg} ${styles.others}`} key={i}>
+                      <Link to={`/dashboard/user/${u}`}
+                        className={styles.profileImg}
+                        style={{
+                          backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center center',
+                          backgroundRepeat: 'no-repeat',
+                        }}>
+                      </Link>
+                      <p className={styles.name}>{name}</p>
+                      <p className={styles.time}>{formattedTime}</p>
+                      <p>{m}</p>
+                    </li>
+                  )
+                };
+              }));
+            }
+          })
+          .catch((error) => console.error(error));
       } else {
-        const {members} = selectedRoom;
+        const { members } = selectedRoom;
         setRoomMembers([...members]);
         setMsgViewer(chats.map((msg) => {
-          const { u, m, i, t } = JSON.parse(msg);
+          const { u, m, i, t } = msg;
           const formattedTime = DateTime.fromSeconds(t * 60).toFormat('h:mm a');
           if (u === user_id) {
             return (
@@ -232,7 +219,7 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
             return (
               <li className={`${styles.msg} ${styles.others}`} key={i}>
                 <Link to={`/dashboard/user/${u}`}
-                 className={styles.profileImg}
+                  className={styles.profileImg}
                   style={{
                     backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
                     backgroundSize: 'cover',
@@ -251,9 +238,16 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
     };
   }, [selectedRoom, userInfo]);
 
+  useEffect(() => {
+    if (!isChatModal) {
+      setSelectedRoom(false);
+    }
+  }, [isChatModal]);
+
   return (
     <div className={`${styles.ChatsModal} ${isChatModal ? styles.open : ''}`}>
       <div className={styles.header}>
+        <p>You have {totalNewMsg} new messages</p>
         <i onClick={() => {
           setIsChatModal(false);
         }}>
@@ -293,7 +287,7 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo }) {
               type="text"
               value={msgInput}
               onKeyDown={(e) => {
-                if (e.key === "Enter"){
+                if (e.key === "Enter") {
                   onSubmit();
                 }
               }}

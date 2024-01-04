@@ -19,7 +19,6 @@ import ChatModalBtn from "../ChatModalBtn/ChatModalBtn";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function Header({
-  isChatModal,
   setIsChatModal,
   setPlans,
   setIsAddPlanModal,
@@ -31,6 +30,7 @@ function Header({
   mode,
   isSidebarOpen,
   onToggleSidebar,
+  totalNewMsg
 }) {
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
@@ -208,6 +208,7 @@ function Header({
           <div className={styles.dropDownContainer}>
             <ChatModalBtn 
               setIsChatModal={setIsChatModal}
+              bounce={totalNewMsg > 0}
             />
           </div>
           <div className={styles.dropDownContainer}>

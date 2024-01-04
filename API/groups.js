@@ -182,6 +182,13 @@ Router.post('/join/:id', async (req, res) => {
       const activeSubject = await activeSubjectCache(userId);
       const userInfo = await userCache(userId);
       io.to(`${groupId}`).emit(`newMemberInfo`, {...userInfo, totalTime, activeSubject});
+
+      //update cached value only if it exists
+      const isCached = await redisClient.exists(`room:${groupId}`);
+      if (isCached) {
+        redisClient.sAdd(`room:${groupId}`, userId);
+      };
+
     } catch (err) {
       // Handle any errors that may occur during the execution of queries
       console.error('Error performing database queries:', err);
