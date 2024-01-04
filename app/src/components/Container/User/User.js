@@ -1,22 +1,20 @@
 import styles from "./User.module.css";
 import React, { useState, useEffect, useRef } from 'react';
 import StuckModal from '../../UI/StuckModal/StuckModal';
-import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretDown, faComments, faEarthAmericas, faUser } from "@fortawesome/free-solid-svg-icons";
-import { Punch } from "../../../utils/svgs";
+import { faEarthAmericas } from "@fortawesome/free-solid-svg-icons";
 import LineChart from "../../UI/LineChart";
 import { timelineSort } from "../../../utils/timelineSorting";
 import RadioBtn from "../../UI/RadioBtn/RadioBtn";
 import CalendarModal from "../../UI/CalendarModal/CalendarModal";
-import DateSelectorBtn from "../../UI/DateSelectorBtn/DateSelectorBtn";
 import GroupsGen from "../../UI/GroupsGen/GroupsGen";
 import { DateTime } from "luxon";
 import { updateRankingTrend, updateTimeTrend } from "../Stats/StatTools";
 import FriendsViewer from "../../UI/FriendsViewer/FriendsViewer";
-import CountryViewer from "../../UI/CountryViewer/CountryViewer";
 import ChallengeBtn from "../../UI/ChallengeBtn/ChallengeBtn";
 import DmBtn from "../../UI/DmBtn/DmBtn";
+import FriendRequestBtn from "../../UI/FriendRequestBtn/FriendRequestBtn";
+import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -109,7 +107,7 @@ const rankingLinchartOpt = {
   },
 };
 
-function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
+function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGroups, setMyGroups, myGroups, myInfo }) {
   const [userInfo, setUserInfo] = useState(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
@@ -150,7 +148,35 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
       ]
   })
 
-  const [setOpenGroupPwModal, isSetOpenGroupPwModal] = useState(false);
+  const [isGroupPwModal, setIsGroupPwModal] = useState(false);
+  const [joinTarget, setJoinTarget] = useState(null);
+
+  useEffect(() => {
+    if (!joinTarget) return;
+    setJoinTarget(joinTarget);
+    const { group_id, visibility } = joinTarget;
+
+    if (visibility) {
+      fetch(`${serverOrigin}/api/groups/join/${group_id}`, {
+        method: "post",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setResponse(data);
+          setOtherGroups(
+            (prev) => {
+              prev.filter(group => {
+                return group.group_id != group_id;
+              })
+            }
+          );
+          setMyGroups((prev) => [...prev, joinTarget]);
+        })
+        .catch((error) => console.error(error));
+    } else {
+      setIsGroupPwModal(true);
+    };
+  }, [joinTarget]);
 
   useEffect(() => {
     if (!groups) return;
@@ -180,24 +206,6 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
       .catch((error) => console.error(error));
   }, [groups, clickedUser]);
 
-  const requestFriend = () => {
-    fetch(`${serverOrigin}/api/friend/request`, {
-      method: "post",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ targetId: userInfo.user_id }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-        if (data.success) {
-
-        }
-      })
-      .catch((error) => console.error(error));
-  };
-  
   const updateViewer = async (item) => {
     setStatsViewer(item);
   };
@@ -235,8 +243,6 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
       .catch((error) => console.error(error));
   }, [userInfo, statsViewer, viewDate]);
 
-
-
   useEffect(() => {
     const timeTrend = updateTimeTrend(userSubjects, statsViewer);
     setTimeTrend({
@@ -252,10 +258,22 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
     });
   }, [userSubjects, statsViewer]);
 
+  useEffect(() => {
+    console.log(isGroupPwModal)
+  }, [isGroupPwModal])
+
   return (
     <div className={styles.UserContainer}>
       <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} />
       <StuckModal />
+      <GroupPwModal
+        setMyGroups={setMyGroups}
+        setOtherGroups={setOtherGroups}
+        setIsGroupPwModal={setIsGroupPwModal}
+        isGroupPwModal={isGroupPwModal}
+        joinTarget={joinTarget}
+        setJoinGroupResponse={setResponse}
+      />
       <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.profileContainer}>
           <div className={styles.row}>
@@ -280,13 +298,10 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
               <DmBtn userInfo={userInfo} setResponse={setResponse} />
             </div>
             <div className={styles.divided}>
-              <div className={styles.blobWrapper}>
-                <BlobBtn delay={-1} name={<>+<FontAwesomeIcon icon={faUser} /></>} setClicked={() => { requestFriend() }} color1={'#fff'} color2={"var(--purple)"} opt={2} />
-              </div>
-
-              <div className={styles.hoverEl}>
-                <p>Become a friend with {userInfo ? userInfo.name : ''}!</p>
-              </div>
+              <FriendRequestBtn
+                userInfo={userInfo}
+                setResponse={setResponse}
+              />
             </div>
           </div>
           <div className={styles.row}>
@@ -349,12 +364,37 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse }) {
               </div>
             </div>
           </div>
-          <div className={styles.box}>
+          <div className={`${styles.box} customScroll`}>
             <div className={styles.rowTitle}>
               <h1>{userInfo ? userInfo.name : ''}'s groups</h1>
             </div>
             <div className={`${styles.row} customScroll`} id={styles.groupsContainer}>
-              <GroupsGen setJoinGroupResponse={setResponse} groups={userGroups} setOpenGroupPwModal={setOpenGroupPwModal} searchQuery={""} userInfo={userInfo} queryTags={[]} />
+              <GroupsGen
+                groups={userGroups}
+                myGroups={myGroups}
+                setMyGroups={setMyGroups}
+                setOtherGroups={setOtherGroups}
+                setJoinGroupResponse={setResponse}
+                setIsGroupPwModal={setIsGroupPwModal}
+                setJoinTarget={setJoinTarget}
+                userInfo={myInfo}
+                queryTags={[]}
+                type={1}
+              />
+              {/* <GroupsGen setJoinGroupResponse={setResponse} groups={userGroups} setIsGroupPwModal={setIsGroupPwModal} searchQuery={""} userInfo={userInfo} queryTags={[]} setJoinTarget={setJoinTarget} /> */}
+              {/* 
+                            <GroupsGen
+              myGroups={userGroups}
+              groups={userGroups}
+              
+                setMyGroups={setMyGroups}
+                setOtherGroups={setOtherGroups}
+                setJoinGroupResponse={setResponse}
+                setIsGroupPwModal={setIsGroupPwModal}
+                setJoinTarget={setJoinTarget}
+                userInfo={userInfo}
+              />
+              */}
             </div>
           </div>
           <div className={styles.box}>

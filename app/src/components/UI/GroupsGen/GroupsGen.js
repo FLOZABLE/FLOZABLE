@@ -26,6 +26,8 @@ function GroupsGen({
   groups,
   userInfo,
   queryTags,
+  type = 0,
+  myGroups
 }) {
   const [otherGroupsEl, setOtherGroupsEl] = useState(null);
   const [maxGroups, setMaxGroups] = useState(-1);
@@ -54,6 +56,7 @@ function GroupsGen({
 
   useEffect(() => {
     if (!userInfo) return;
+    console.log(',ddd', userInfo)
     setOtherGroupsEl(
       [...groups].map((group, i) => {
         if (maxGroups !== -1 && i > maxGroups) {
@@ -91,11 +94,11 @@ function GroupsGen({
         };
 
         return (
-          <GroupContainer key={i} isSearched={isSearched} joinGroup={joinGroup} groupInfo={group} userInfo={userInfo}/>
+          <GroupContainer key={i} isSearched={isSearched} joinGroup={joinGroup} groupInfo={group} userInfo={userInfo} type={type} myGroups={myGroups} />
         );
       }),
     );
-  }, [queryTags, searchQuery, groups, maxGroups, userInfo]);
+  }, [queryTags, searchQuery, groups, maxGroups, userInfo, type, myGroups]);
 
   return (
     <div className={styles.GroupsContainer}>

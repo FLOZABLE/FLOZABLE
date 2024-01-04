@@ -145,6 +145,34 @@ Router.post('/request-reply', async (req, res) => {
         LIMIT 1;`, [`%${userId}%`, `%${targetId}%`, `%${targetId}%`, `%${userId}%`]);
 
         console.log('dm',record_count);
+        if (!record_count) {
+          const members = [userId, targetId];
+          const roomInfo = {
+            id: generateRandomId(10),
+            type: 1,
+            members: JSON.stringify(members).slice(1, -1).replaceAll(`"`, "")
+          }
+          await connection.query(`
+          INSERT INTO chatrooms SET ?
+        `, [roomInfo]);
+
+          const myDmRooms = await dmRoomsCache(userId);
+          myDmRooms.push(roomInfo.id);
+          const targetDmRooms = await dmRoomsCache(targetId);
+          targetDmRooms.push(roomInfo.id);
+          redisClient.hSet(`user:${userId}`, 'dmRooms', JSON.stringify(myDmRooms));
+          redisClient.hSet(`user:${targetId}`, 'dmRooms', JSON.stringify(targetDmRooms));
+          redisClient.sAdd(`room:${roomInfo.id}`, members);
+
+          //remove chat request if any
+          const myChatRequests = await NotificationCache(userId, 4, false);
+          const chatRequest = myChatRequests.find(chatRequest => { return chatRequest.f === targetId });
+          redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(chatRequest));
+
+          const targetChatRequests = await NotificationCache(targetId, 4, false);
+          const targetchatRequest = targetChatRequests.find(chatRequest => { return chatRequest.f === targetId });
+          redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(targetchatRequest));
+        };
       } else {
         res.send({ success: true, msg: `You and ${targetInfo.name} were already friends!` });
       };
