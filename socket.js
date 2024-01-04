@@ -3,7 +3,7 @@ const cron = require('node-cron');
 const pool = require("./model/pool");
 const redisClient = require("./model/redis");
 const { generateRandomId } = require("./tool");
-const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache, dmRoomMembersCache } = require("./services/redisLoader");
+const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache, dmRoomMembersCache, groupMembersCache } = require("./services/redisLoader");
 const { DateTime } = require("luxon");
 
 
@@ -128,6 +128,8 @@ connection.on('connection', (socket) => {
       const msgInfo = { u: userId, m: msg, i: msgId, t: time };
       msgQueue(roomId, msgInfo);
       io.to(`chat:${roomId}`).emit('msgReceived', roomId, msgInfo);
+      const now = Math.floor(new Date().getTime() / 1000 / 60);
+      redisClient.hSet(`user:${userId}:chats`, roomId, `${msgId}:${now}`);
     };
   });
 
@@ -255,7 +257,7 @@ connection.on('connection', (socket) => {
   });
 
   socket.on('readMsg', async({roomId, type}) => {
-    console.log('read',roomId);
+    console.log('read',roomId, type);
     if (!roomId) return;
     //dm
     let members = [];
@@ -268,12 +270,13 @@ connection.on('connection', (socket) => {
     //user not member of the chatroom
     if (!members.includes(userId)) return;
 
-    const lastMsg = await redisClient.lRange(`room:${roomId}:chats`, -1, -1);
+    const [lastMsg] = await redisClient.lRange(`room:${roomId}:chats`, -1, -1);
+    console.log(lastMsg, 'gd')
     if (!lastMsg) return;
-
+    console.log('gd', lastMsg)
     //i ==  msg id
     const {i} = JSON.parse(lastMsg);
-    const now = Math.floor(new Date().getTime() / 1000);
+    const now = Math.floor(new Date().getTime() / 1000 / 60);
     redisClient.hSet(`user:${userId}:chats`, roomId, `${i}:${now}`);
   })
 });

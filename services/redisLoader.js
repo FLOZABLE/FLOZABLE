@@ -339,6 +339,16 @@ async function groupInfoCache(groupId) {
   }
 }
 
+async function msgReadCache(userId) {
+  let readStatus = {...await redisClient.hGetAll(`user:${userId}:chats`)};
+  readStatus = Object.keys(readStatus).map((id) => {
+    //return { ...JSON.parse(readStatus[id]), id };
+    const [msgId, time] = readStatus[id].split(':');
+    return {msgId, time, id};
+  });
+  return readStatus;
+}
+
 module.exports = {
   flushRedis,
   cacheManager,
@@ -356,5 +366,6 @@ module.exports = {
   dmRoomsCache,
   userCache,
   subjectsTimelineCache,
-  activeGroupCache
+  activeGroupCache,
+  msgReadCache
 }
