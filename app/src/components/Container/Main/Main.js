@@ -61,6 +61,7 @@ function Main({
               userInfo={userInfo}
               setJoinTarget={setJoinTarget}
               mode={0}
+              setCount={() => {}}
             />
           </div>
           <div className={styles.box}>

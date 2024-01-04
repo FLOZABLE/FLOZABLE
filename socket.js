@@ -64,7 +64,7 @@ connection.on('connection', (socket) => {
     try {
       const chatRooms = await chatRoomsCache(userId);
       const chatRoomsId = chatRooms.map(chatRoom => {
-        return`chat:${chatRoom.id}`;
+        return `chat:${chatRoom.id}`;
       });
       socket.join(chatRoomsId);
     } catch (err) {
@@ -164,7 +164,7 @@ connection.on('connection', (socket) => {
       if (friends.length) {
         io.to(friends).emit(`studying:${userId}`, subject);
       };
-      const {timeline_sum, datum_point, id} = subject;
+      const { timeline_sum, datum_point, id } = subject;
       const start = now - datum_point - timeline_sum;
       redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
       redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
@@ -192,11 +192,11 @@ connection.on('connection', (socket) => {
     const userInfo = await userCache(userId);
     if (!userInfo || !subject || !activeSubject.id === subjectId) return;
 
-  
+
     let { groups, friends } = userInfo;
     friends = friends === "" ? [] : friends.split(",");
     groups = groups === "" ? [] : groups.split(",");
-  
+
     if (groups.length) {
       io.to(groups).emit(`stopStudying:${userId}`);
     };
@@ -211,7 +211,7 @@ connection.on('connection', (socket) => {
     redisClient.incrBy(`user:${userId}:dayTotal`, duration);
 
     const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
-    
+
     if (activity) {
       const start = activity[0];
       redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${duration}]`);
@@ -229,13 +229,13 @@ connection.on('connection', (socket) => {
     redisClient.hDel(`user:${userId}`, `ActiveSubject`);
   });
 
-  socket.on("startDm", async(targetId) => {
+  socket.on("startDm", async (targetId) => {
     if (isUser(userId)) {
 
-    } else {}
+    } else { }
   });
 
-  socket.on("changeGroup", async(groupId) => {
+  socket.on("changeGroup", async (groupId) => {
     const userInfo = await userCache(userId);
     if (!userInfo) return;
     const groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
@@ -247,17 +247,17 @@ connection.on('connection', (socket) => {
     });
     socket.join(groupId);
     const now = DateTime.now().toSeconds().toFixed();
-    redisClient.hSet(`user:${userId}`, `ActiveGroup`, JSON.stringify({id: groupId, time: now}));
+    redisClient.hSet(`user:${userId}`, `ActiveGroup`, JSON.stringify({ id: groupId, time: now }));
     let friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
     if (!friends.length) return;
     const connection = pool.promise();
     const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [groupId]);
     if (!groupInfo) return;
-    io.to(friends).emit(`activeGroup`, {groupInfo, time: now});
+    io.to(friends).emit(`activeGroup`, { groupInfo, time: now });
   });
 
-  socket.on('readMsg', async({roomId, type}) => {
-    console.log('read',roomId, type);
+  socket.on('readMsg', async ({ roomId, type }) => {
+    console.log('read', roomId, type);
     if (!roomId) return;
     //dm
     let members = [];
@@ -275,11 +275,32 @@ connection.on('connection', (socket) => {
     if (!lastMsg) return;
     console.log('gd', lastMsg)
     //i ==  msg id
-    const {i} = JSON.parse(lastMsg);
+    const { i } = JSON.parse(lastMsg);
     const now = Math.floor(new Date().getTime() / 1000 / 60);
     redisClient.hSet(`user:${userId}:chats`, roomId, `${i}:${now}`);
-  })
+  });
+
+  socket.on('exitSession', async () => {
+    deActiveGroup(userId);
+  });
+
+  socket.on('disconnect', async () => {
+    deActiveGroup(userId);
+  });
 });
+
+async function deActiveGroup(userId) {
+  const userInfo = await userCache(userId);
+  if (!userInfo) return;
+  const groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
+  groups.map(group => {
+    socket.leave(group);
+  });
+  redisClient.hDel(`user:${userId}`, `ActiveGroup`);
+  const friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
+  if (!friends.length) return;
+  io.to(friends).emit(`deActiveGroup:${userId}`);
+}
 
 async function isUser(userId) {
   const connection = pool.promise();
@@ -290,7 +311,7 @@ async function isUser(userId) {
 async function isInChatRoom(userId, roomId) {
   try {
     const rooms = await chatRoomsCache(userId);
-    const roomIndex = rooms.findIndex(room => {return room.id === roomId});
+    const roomIndex = rooms.findIndex(room => { return room.id === roomId });
     return roomIndex === -1 ? false : true;
   } catch (err) {
     console.log(err);

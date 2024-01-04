@@ -18,6 +18,7 @@ import {
   faUsers,
   faVolumeHigh,
 } from "@fortawesome/free-solid-svg-icons";
+import { socket } from "../../../socket";
 
 function StudySidebar({
   isTimerModal,
@@ -43,15 +44,17 @@ function StudySidebar({
       id: 0,
       element: (
         <Link
-        to={"/dashboard/stats"}
-          className={`${styles.studyTool} ${
-            isTimerModal ? styles.clicked : ""
-          }`}
-          onClick={bringSubjects}
+          to={"/dashboard/stats"}
+          className={`${styles.studyTool} ${isTimerModal ? styles.clicked : ""
+            }`}
+          onClick={() => {
+            bringSubjects();
+            socket.emit('exitSession');
+          }}
         >
-            <i>
-              <FontAwesomeIcon icon={faHome} />
-            </i>
+          <i>
+            <FontAwesomeIcon icon={faHome} />
+          </i>
         </Link>
       ),
     },
@@ -60,9 +63,8 @@ function StudySidebar({
       id: 1,
       element: (
         <div
-          className={`${styles.studyTool} ${
-            isTimerModal ? styles.clicked : ""
-          }`}
+          className={`${styles.studyTool} ${isTimerModal ? styles.clicked : ""
+            }`}
           onClick={() => {
             setIsTimerModal((prev) => !prev);
           }}
@@ -78,9 +80,8 @@ function StudySidebar({
       id: 2,
       element: (
         <div
-          className={`${styles.studyTool} ${
-            isPlannerModal ? styles.clicked : ""
-          }`}
+          className={`${styles.studyTool} ${isPlannerModal ? styles.clicked : ""
+            }`}
           onClick={() => {
             setIsPlannerModal((prev) => !prev);
           }}
@@ -128,9 +129,8 @@ function StudySidebar({
       id: 5,
       element: (
         <div
-          className={`${styles.studyTool} ${
-            isTemplateModal ? styles.clicked : ""
-          }`}
+          className={`${styles.studyTool} ${isTemplateModal ? styles.clicked : ""
+            }`}
           onClick={() => {
             setIsTemplateModal((prev) => !prev);
           }}
@@ -146,9 +146,8 @@ function StudySidebar({
       id: 6,
       element: (
         <div
-          className={`${styles.studyTool} ${
-            isVolumeModal ? styles.clicked : ""
-          }`}
+          className={`${styles.studyTool} ${isVolumeModal ? styles.clicked : ""
+            }`}
           onClick={() => {
             setIsVolumeModal((prev) => !prev);
           }}
@@ -164,9 +163,8 @@ function StudySidebar({
       id: 7,
       element: (
         <div
-          className={`${styles.studyTool} ${
-            isGroupModal ? styles.clicked : ""
-          }`}
+          className={`${styles.studyTool} ${isGroupModal ? styles.clicked : ""
+            }`}
           onClick={() => {
             setIsViewGroups((prev) => !prev);
           }}
@@ -201,7 +199,7 @@ function StudySidebar({
     },
   ]);
 
-  useEffect(() => {}, [isZoom]);
+  useEffect(() => { }, [isZoom]);
   const moveCard = useCallback((dragIndex, hoverIndex) => {
     setItems((prevItems) =>
       update(prevItems, {
