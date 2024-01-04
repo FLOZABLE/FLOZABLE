@@ -51,6 +51,8 @@ function App() {
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [isNotificationModal, setIsNotificationModal] = useState(false);
 
+  const [totalNewMsg, setTotalNewMsg] = useState(0);
+
   const [subject, setSubject] = useState("0000000000");
 
   const toggleSidebar = () => {
@@ -195,6 +197,8 @@ function App() {
         isChatModal={isChatModal}
         userInfo={userInfo}
         myGroups={myGroups}
+        totalNewMsg={totalNewMsg}
+        setTotalNewMsg={setTotalNewMsg}
       />
       <EventModal
         isAddPlanModal={isAddPlanModal}
@@ -228,6 +232,7 @@ function App() {
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
+                totalNewMsg={totalNewMsg}
               />
               <Main
                 subjects={subjects}
@@ -266,6 +271,7 @@ function App() {
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
+                totalNewMsg={totalNewMsg}
               />
               <Stats
                 setIsSidebarOpen={setIsSidebarOpen}

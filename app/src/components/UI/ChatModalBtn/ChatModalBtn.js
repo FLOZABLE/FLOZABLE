@@ -1,8 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./ChatModalBtn.module.css";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
+import { useEffect } from "react";
 
-function ChatModalBtn({setIsChatModal}) {
+function ChatModalBtn({setIsChatModal, bounce}) {
+
   return (
     <button className={styles.ChatModalBtn}
       onClick={() => {
@@ -10,7 +12,7 @@ function ChatModalBtn({setIsChatModal}) {
       }}
     >
       <i>
-        <FontAwesomeIcon icon={faCommentDots} bounce={true}/>
+        <FontAwesomeIcon icon={faCommentDots} bounce={bounce}/>
       </i>
     </button>
   )

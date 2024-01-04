@@ -3,18 +3,19 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { autoSignin, arraysHaveSameContents, generateRandomId } = require("../tool");
-const { groupCache, chatRoomsCache, usersCache, NotificationCache, dmRoomsCache, userCache, dmRoomMembersCache, groupMembersCache } = require("../services/redisLoader");
+const { groupCache, chatRoomsCache, usersCache, NotificationCache, dmRoomsCache, userCache, dmRoomMembersCache, groupMembersCache, msgReadCache } = require("../services/redisLoader");
 
 Router.post("/bring-rooms", async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
     let rooms = await chatRoomsCache(userId);
     const roomPromises = rooms.map(async (room) => {
-      const chats = await redisClient.lRange(`room:${room.id}:chats`, 0, -1);
+      const chats = (await redisClient.lRange(`room:${room.id}:chats`, 0, -1)).map(JSON.parse);
       return { ...room, chats };
     });
     rooms = await Promise.all(roomPromises);
     const readStatus = await redisClient.hGetAll(`user:${userId}:chats`);
+    console.log({...readStatus}, await msgReadCache(userId))
     res.send({ success: true, rooms, readStatus })
   }));
 });
@@ -44,7 +45,7 @@ Router.post("/chat-request", async (req, res) => {
     //checks if group with same members exists
     const isRoomExist = chatRooms.find(chatRoom => {
       let {members} = chatRoom;
-      return arraysHaveSameContents(members, [userId, targetId]);
+      return arraysHaveSameContents(members.map(member => {return member.user_id}), [userId, targetId]);
     });
     if (isRoomExist) return res.send({success: false, reason: 'DM already created!', opr: 1});
 
