@@ -20,6 +20,24 @@
   width: calc(100% - 400px);
 }
 
+.Friends .title {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.Friends .title .count {
+  margin-left: 10px;
+  background-color: var(--purple);
+  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
 .Friends .box {
   padding: 20px;
   background-color: aliceblue;

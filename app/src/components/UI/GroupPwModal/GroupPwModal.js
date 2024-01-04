@@ -38,11 +38,14 @@ function GroupPwModal({
           if (data.success) {
             setIsGroupPwModal(false);
             setOtherGroups(
-              groups.filter((group) => {
-                return group.group_id != joinTarget.group_id;
-              }),
+              groups =>
+              {
+                return groups.filter((group) => {
+                  return group.group_id != joinTarget.group_id;
+                })
+              }
             );
-            setMyGroups((myGroups) => [...myGroups, joinTarget]);
+            setMyGroups((myGroups) => {return [...myGroups, joinTarget]});
           }
         })
         .catch((error) => console.error(error));

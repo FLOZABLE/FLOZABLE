@@ -491,6 +491,10 @@ function App() {
                 userInfo={userInfo}
                 groups={groups}
                 setResponse={setResponse}
+                setOtherGroups={setOtherGroups}
+                setMyGroups={setMyGroups}
+                myGroups={myGroups}
+                myInfo={userInfo}
               />
             </div>
           }

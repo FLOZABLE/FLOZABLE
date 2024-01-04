@@ -7,10 +7,14 @@
 .FriendsActivityViewer .friend {
   position: relative;
   width: 100%;
-  display: flex;
+  display: none;
   margin: 10px 0px;
   justify-content: center;
   align-items: center;
+}
+
+.FriendsActivityViewer .friend.searched {
+  display: flex;
 }
 
 .FriendsActivityViewer .friend .userInfo {
@@ -63,6 +67,10 @@
 
 .FriendsActivityViewer .right .buttonsWrapper.hidden {
   display: none;
+}
+
+.FriendsActivityViewer .right .requestBtn {
+  margin-right: 10px;
 }
 
 @media (max-width: 1650px) {

@@ -96,7 +96,7 @@ Router.post("/chat-request-reply", async (req, res) => {
 
       const myDmRooms = await dmRoomsCache(userId);
       myDmRooms.push(roomInfo.id);
-      const targetDmRooms = await dmRoomsCache(userId);
+      const targetDmRooms = await dmRoomsCache(targetId);
       targetDmRooms.push(roomInfo.id);
       redisClient.hSet(`user:${userId}`, 'dmRooms', JSON.stringify(myDmRooms));
       redisClient.hSet(`user:${targetId}`, 'dmRooms', JSON.stringify(targetDmRooms));

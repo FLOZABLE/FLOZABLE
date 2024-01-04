@@ -22,7 +22,7 @@ function Groups({
   isSidebarHovered,
   bringGroups
 }) {
-  
+
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isGroupPwModal, setIsGroupPwModal] = useState(false);
@@ -69,9 +69,8 @@ function Groups({
         setJoinGroupResponse={setResponse}
       />
       <div
-        className={`Main ${
-          isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
-        }`}
+        className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
+          }`}
       >
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
@@ -90,7 +89,7 @@ function Groups({
                 <div className={styles.tagContainerWrapper}>
                   <div className={styles.title}>
                     <i>
-                    <FontAwesomeIcon icon={faTags} className={styles.faTags} />
+                      <FontAwesomeIcon icon={faTags} className={styles.faTags} />
                     </i>
                     <h2>Tags</h2>
                   </div>

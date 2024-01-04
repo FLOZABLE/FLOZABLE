@@ -31,6 +31,9 @@ function Friends({
   const [joinTarget, setJoinTarget] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [friendCount, setFriendCount] = useState(0);
+  const [suggestionsCount, setSuggestionsCount] = useState(0);
+
   useEffect(() => {
     if (!joinTarget) return;
     setJoinTarget(joinTarget);
@@ -165,17 +168,27 @@ function Friends({
             </div>
             <div className={styles.title}>
               <h3>Friends</h3>
+              <div className={styles.count}>
+                {friendCount}
+              </div>
             </div>
             <FriendsActivityViewer
               setResponse={setResponse}
               userInfo={userInfo}
               setJoinTarget={setJoinTarget}
-            />
-            <div className={styles.title}>
-              <h3>Friends</h3>
-            </div>
-            <SearchUsers 
               searchQuery={searchQuery}
+              setCount={setFriendCount}
+            />
+            {suggestionsCount ? <div className={styles.title}>
+              <h3>Suggestions</h3>
+              <div className={styles.count}>
+                {suggestionsCount}
+              </div>
+            </div> : null}
+            <SearchUsers
+              searchQuery={searchQuery}
+              setCount={setSuggestionsCount}
+              setResponse={setResponse}
             />
           </div>
         </div>

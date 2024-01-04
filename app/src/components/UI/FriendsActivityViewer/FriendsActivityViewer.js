@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "./FriendsActivityViewer.module.css";
 import CountryViewer from "../CountryViewer/CountryViewer";
-import { Punch } from "../../../utils/svgs";
 import DmBtn from "../DmBtn/DmBtn";
 import ChallengeBtn from "../ChallengeBtn/ChallengeBtn";
 import MemberTimer from "../MemberTimer/MemberTimer";
@@ -13,7 +12,7 @@ import UserGroupViewer from "../UserGroupViewer/UserGroupViewer";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 //mode 0 is for friends page's component, mode 1 is for main page's component
-function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode=1 }) {
+function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode = 1, setCount, searchQuery }) {
   const [friendsEl, setFriendsEl] = useState([]);
   const [friends, setFriends] = useState([]);
 
@@ -29,6 +28,7 @@ function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode=1 })
         console.log(data);
         if (data.success) {
           setFriends(data.friendsInfo);
+          setCount(data.friendsInfo.length)
         };
       })
       .catch((error) => console.error(error));
@@ -36,17 +36,23 @@ function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode=1 })
 
   useEffect(() => {
     if (!userInfo) return;
-
-    setFriendsEl(friends.map((friend) => {
+    let totalSearched = 0;
+    setFriendsEl(friends.map((friend, i) => {
       const { user_id, timezone, name, totalTime, activeSubject } = friend;
       const { time, id } = activeSubject;
       let liveTotal = parseInt(totalTime);
       if (id) {
         liveTotal += DateTime.now().toSeconds().toFixed() - time;
       };
+      const searched = !searchQuery || name.includes(searchQuery);
+      if (searched) {
+        totalSearched += 1;
+      };
+
       return (
         <div
-          className={styles.friend} key={user_id}>
+          className={`${styles.friend} ${searched  ? styles.searched : ''}`} key={i}
+          >
           <Link
             to={`/dashboard/user/${user_id}`}
             className={styles.userInfo}>
@@ -91,18 +97,23 @@ function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode=1 })
               />
             </div>
             <div className={`${styles.buttonsWrapper} ${!mode ? styles.hidden : ''}`}>
-            <ChallengeBtn userInfo={friend}
-              setResponse={setResponse}
-            />
-            <DmBtn userInfo={friend}
-              setResponse={setResponse}
-            />
+              <div className={styles.requestBtn}>
+                <ChallengeBtn userInfo={friend}
+                  setResponse={setResponse}
+                />
+              </div>
+              <div className={styles.requestBtn}>
+                <DmBtn userInfo={friend}
+                  setResponse={setResponse}
+                />
+              </div>
             </div>
           </div>
         </div>
       )
-    }))
-  }, [friends, userInfo]);
+    }));
+    setCount(totalSearched);
+  }, [friends, userInfo, searchQuery]);
 
   return (
     <div className={styles.FriendsActivityViewer}>
