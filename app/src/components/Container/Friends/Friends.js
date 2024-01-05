@@ -11,6 +11,7 @@ import FriendsActivityViewer from "../../UI/FriendsActivityViewer/FriendsActivit
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
 import Search from "../../UI/Search/Search";
 import SearchUsers from "../../UI/SearchUsers/SearchUsers";
+import FriendEmailModal from "../../UI/FriendEmailModal/FriendEmailModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -27,6 +28,7 @@ function Friends({
   setMyGroups
 }) {
   const [isFriendLinkModal, setIsFriendLinkModal] = useState(false);
+  const [isFriendEmailModal, setIsFriendEmailModal] = useState(false);
   const [isGroupPwModal, setIsGroupPwModal] = useState(false);
   const [joinTarget, setJoinTarget] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,6 +70,10 @@ function Friends({
         isOpen={isFriendLinkModal}
         setIsOpen={setIsFriendLinkModal}
       />
+      <FriendEmailModal
+        isOpen={isFriendEmailModal}
+        setIsOpen={setIsFriendEmailModal}
+      />
       <GroupPwModal
         myGroups={myGroups}
         setMyGroups={setMyGroups}
@@ -95,7 +101,7 @@ function Friends({
             <FriendsRankingViewer userInfo={userInfo} />
           </div>
           <div className={styles.box}>
-            <RecommendedFriendsViewer 
+            <RecommendedFriendsViewer
               setResponse={setResponse}
             />
           </div>
@@ -125,7 +131,11 @@ function Friends({
                 </button>
               </div>
               <div className={styles.buttonContainer}>
-                <button>
+                <button
+                  onClick={() => {
+                    setIsFriendEmailModal(true);
+                  }}
+                >
                   <i>
                     <EmailInvitation width={"50px"} height={"50px"} />
                   </i>

@@ -3,6 +3,7 @@ const { autoSignin, generateRandomId } = require('../tool');
 const { NotificationCache, userCache, activeSubjectCache, subjectCache } = require('../services/redisLoader');
 const redisClient = require('../model/redis');
 const pool = require('../model/pool');
+const { sendEmail } = require('../email');
 const Router = express.Router();
 
 
@@ -287,21 +288,28 @@ Router.get('/search', async (req, res) => {
 
 const MAX_DURATION = 60 * 60 * 24 * 7;
 
+async function createFriendLink (userId) {
+  try {
+    let linkId = await redisClient.get(`link:friend:${userId}`);
+    if (!linkId) {
+      linkId = generateRandomId(5);
+      redisClient.setEx(`link:friend:${userId}`, MAX_DURATION, linkId);
+    };
+    return linkId;
+  } catch (error) {
+    console.log(error)
+    return false;
+  };
+}
+
 Router.post('/create-link', async (req, res) => {
   autoSignin(req, res, (async () => {
-    try {
-      const userId = req.session.user_id;
-
-      let linkId = await redisClient.get(`link:friend:${userId}`);
-      if (!linkId) {
-        linkId = generateRandomId(5);
-        redisClient.setEx(`link:friend:${userId}`, MAX_DURATION, linkId);
-      };
-      return res.send({ success: true, linkId });
-    } catch (error) {
-      console.log(error)
-      res.send({ success: false, reason: 'An Error Occured' });
-    };
+    const linkId = await createFriendLink(req.session.user_id);
+    if (linkId) {
+      return res.send({success: true, linkId});
+    } else {
+      return res.send({success: false, reason: 'Err'});
+    }
   }));
 });
 
@@ -440,6 +448,33 @@ Router.get('/add', async (req, res) => {
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });
+    };
+  }));
+});
+
+Router.post('/email-invitation', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    try {
+      const userId = req.session.user_id;
+      const {email} = req.body;
+  
+      if (!email) return res.send({success: false, reason: 'Invalid Email'});
+      
+      const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!isValidEmail) return res.send({success: false, reason: 'Invalid Email'});
+  
+      const linkId = await createFriendLink(userId);
+      if (!linkId) return res.send({success: false, reason: 'Error'});
+
+      const userInfo = await userCache(userId);
+      if (!userInfo) return res.send({success: false, reason: 'Error'});
+      const params = { name: userInfo.name, userId: userInfo.user_id, link: linkId };
+      const to = [{ email }];
+      sendEmail(to, params, 3);
+      res.send({success: true});
+    } catch (err) {
+      console.log(err);
+      res.send({success: false});
     };
   }));
 });

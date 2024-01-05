@@ -1,0 +1,70 @@
+.FriendEmailModal {
+  width: 300px;
+  height: 300px;
+  background-color: #fff;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 20px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.FriendEmailModal .header {
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  display: flex;
+  justify-content: right;
+}
+
+.FriendEmailModal .header i {
+  margin-right: 10px;
+  margin-top: 5px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.FriendEmailModal .iconZone {
+  display: flex;
+  align-items: center;
+}
+
+.FriendEmailModal .title {
+  font-size: 30px;
+}
+
+.FriendEmailModal .explanation {
+  font-size: 16px;
+  text-align: center;
+}
+
+.FriendEmailModal .emailContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: aliceblue;
+  border-radius: 100px;
+  height: 50px;
+  overflow: hidden;
+  margin-top: 20px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.FriendEmailModal .emailContainer input {
+  height: 100%;
+  width: 90%;
+  border: none;
+  background-color: transparent;
+  margin-left: 20px;
+}
+
+.FriendEmailModal .emailContainer .sendBtnWrapper {
+  background-color: var(--purple);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -24,7 +24,7 @@ const dispBlock = document.getElementById('dispBlock');
 
 accountButton.addEventListener('click', async () => {
   if (typeof isLogged && isLogged) {
-    await fetch('/API/account/logout', {
+    await fetch('/account/logout', {
       method: 'get',
     })
     window.location.href = window.location.origin;
@@ -46,7 +46,7 @@ signInBtn.addEventListener('click', async () => {
   const email = document.querySelector('.card-front #logemail').value;
   const password = document.querySelector('.card-front #logpass').value;
   console.log(email, password);
-  let response = await fetch('/API/account/signin-authentication', {
+  let response = await fetch('/account/signin-authentication', {
     method: 'post',
     body: JSON.stringify({email, password}),
     headers: {
@@ -86,7 +86,7 @@ signUpBtn.addEventListener('click', async () => {
   const password = document.querySelector('.card-back #logpass').value;
   const timeZone = getUserTimezone();
   console.log(name,email, password);
-  let response = await fetch('/API/account/signup-authentication', {
+  let response = await fetch('/account/signup-authentication', {
     method: 'post',
     body: JSON.stringify({name, email, password, timeZone}),
     headers: {
