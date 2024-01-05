@@ -18,7 +18,7 @@ function FriendsRankingViewer({userInfo}) {
   /* const [daily] */
   const friendsSort = () => {
     const isoDateTime = DateTime.fromJSDate(viewDate, {zone: 'utc'}).toISODate();
-    fetch(`${serverOrigin}/api/ranking/friends?date=${isoDateTime}`, {
+    fetch(`${serverOrigin}/ranking/friends?date=${isoDateTime}`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",

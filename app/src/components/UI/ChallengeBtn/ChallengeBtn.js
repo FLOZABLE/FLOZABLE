@@ -7,7 +7,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function ChallengeBtn({ userInfo, setResponse }) {
 
   const requestChallenge = () => {
-    fetch(`${serverOrigin}/api/challenges/challenge-request`, {
+    fetch(`${serverOrigin}/challenges/challenge-request`, {
       method: "post",
       headers: {
         'Content-Type': 'application/json'

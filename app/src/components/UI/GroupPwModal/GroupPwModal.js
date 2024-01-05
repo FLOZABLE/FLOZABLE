@@ -17,46 +17,37 @@ function GroupPwModal({
   setMyGroups,
   group,
 }) {
-  const [pwSubmit, setPwSubmit] = useState(false);
   const [pw, setPw] = useState("");
 
   const handlePwInput = (e) => {
     setPw(e.target.value);
   };
-  useEffect(() => {
-    if (pwSubmit) {
-      fetch(`${serverOrigin}/api/groups/join/${joinTarget.group_id}`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ password: pw }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setJoinGroupResponse(data);
-          if (data.success) {
-            setIsGroupPwModal(false);
-            setOtherGroups(
-              groups =>
-              {
-                return groups.filter((group) => {
-                  return group.group_id != joinTarget.group_id;
-                })
-              }
-            );
-            setMyGroups((myGroups) => {return [...myGroups, joinTarget]});
-          }
-        })
-        .catch((error) => console.error(error));
-    }
-  }, [pwSubmit]);
 
   const submit = () => {
-    setPwSubmit(true);
-    setTimeout(() => {
-      setPwSubmit(false);
-    }, 2000);
+    fetch(`${serverOrigin}/groups/join/${joinTarget.group_id}`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ password: pw }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setJoinGroupResponse(data);
+        if (data.success) {
+          setIsGroupPwModal(false);
+          setOtherGroups(
+            groups =>
+            {
+              return groups.filter((group) => {
+                return group.group_id != joinTarget.group_id;
+              })
+            }
+          );
+          setMyGroups((myGroups) => {return [...myGroups, joinTarget]});
+        }
+      })
+      .catch((error) => console.error(error));
   };
 
   return (
@@ -107,9 +98,10 @@ function GroupPwModal({
         <div className={styles.submitBtnWrapper}>
           <BlobBtn
             name={"SUBMIT"}
-            setClicked={setPwSubmit}
+            setClicked={submit}
             color1={"#fff"}
             color2={"var(--pink)"}
+            delay={-1}
           />
         </div>
       </div>

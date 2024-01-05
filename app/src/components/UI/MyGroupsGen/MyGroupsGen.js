@@ -25,7 +25,7 @@ function MyGroupsGen({
   const joinGroup = (group) => {
     setJoinTarget(group);
     if (group.visibility) {
-      fetch(`${serverOrigin}/api/groups/join/${group.group_id}`, {
+      fetch(`${serverOrigin}/groups/join/${group.group_id}`, {
         method: "post",
       })
         .then((response) => response.json())

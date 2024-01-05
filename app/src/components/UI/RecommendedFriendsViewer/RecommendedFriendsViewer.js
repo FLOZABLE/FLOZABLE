@@ -14,7 +14,7 @@ function RecommendedFriendsViewer({setResponse}) {
 
   useEffect(() => {
     if (!refresh) return;
-    fetch(`${serverOrigin}/api/friend/recommended`, {
+    fetch(`${serverOrigin}/friend/recommended`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",

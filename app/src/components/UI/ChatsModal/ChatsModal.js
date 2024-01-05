@@ -23,11 +23,12 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
   const [readStatus, setReadStatus] = useState({});
 
   useEffect(() => {
-    fetch(`${serverOrigin}/api/chat/bring-rooms`, { method: "post" })
+    fetch(`${serverOrigin}/chat/bring-rooms`, { method: "post" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
           setChatRooms(data.rooms);
+          console.log('gd', data)
           setReadStatus(data.readStatus);
         }
       })
@@ -160,7 +161,7 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
       const { user_id } = userInfo;
       socket.emit('readMsg', { roomId: selectedRoom.id, type });
       if (!type) {
-        fetch(`${serverOrigin}/api/chat/members?roomId=${id}`, { method: "get" })
+        fetch(`${serverOrigin}/chat/members?roomId=${id}`, { method: "get" })
           .then((response) => response.json())
           .then((data) => {
             if (data.success) {

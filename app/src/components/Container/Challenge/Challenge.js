@@ -86,7 +86,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
         let rangeTwo = [];
         let rangeThree = [];
 
-        fetch(`${serverOrigin}/api/challenges?searchId=${challengeId}`, {
+        fetch(`${serverOrigin}/challenges?searchId=${challengeId}`, {
             method: "get",
             headers: {
                 'Content-Type': 'application/json'
@@ -167,7 +167,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
     useEffect(() => {
         if (!!!userInfo1.id || !!!userInfo2.id) return;
-        fetch(`${serverOrigin}/api/study/bring-subjects`, {
+        fetch(`${serverOrigin}/study/bring-subjects`, {
             method: "post",
             headers: {
                 'Content-Type': 'application/json'
@@ -182,7 +182,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             });
 
 
-        fetch(`${serverOrigin}/api/study/bring-subjects`, {
+        fetch(`${serverOrigin}/study/bring-subjects`, {
             method: "post",
             headers: {
                 'Content-Type': 'application/json'
@@ -379,7 +379,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             tempUser2.value3 = 1000000; //ranking
             const startDate = challenge.thirdRange[0].toISO();
 
-            fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo1.id}&mode=${'day'}&date=${startDate}`, {
+            fetch(`${serverOrigin}/ranking/user?userId=${userInfo1.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
             })
                 .then((response) => response.json())
@@ -393,7 +393,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                     setCompeteInfo1(tempUser1);
                 });
 
-            fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo2.id}&mode=${'day'}&date=${startDate}`, {
+            fetch(`${serverOrigin}/ranking/user?userId=${userInfo2.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
             })
                 .then((response) => response.json())
@@ -418,7 +418,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
             let highValue2 = 0;
             const startDate = challenge.thirdRange[0].toISO();
 
-            fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo1.id}&mode=${'day'}&date=${startDate}`, {
+            fetch(`${serverOrigin}/ranking/user?userId=${userInfo1.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
             })
                 .then((response) => response.json())
@@ -437,7 +437,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
                     setCompeteInfo1(tempUser1);
                 });
 
-            fetch(`${serverOrigin}/api/ranking/user?userId=${userInfo2.id}&mode=${'day'}&date=${startDate}`, {
+            fetch(`${serverOrigin}/ranking/user?userId=${userInfo2.id}&mode=${'day'}&date=${startDate}`, {
                 method: 'get'
             })
                 .then((response) => response.json())
@@ -776,7 +776,7 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
     useEffect(() => {
         if (!!!userInfo1.id) return;
-        fetch(`${serverOrigin}/api/challenges/?searchUser=${userInfo1.id}`, {
+        fetch(`${serverOrigin}/challenges/?searchUser=${userInfo1.id}`, {
             method: "get",
             headers: {
                 'Content-Type': 'application/json'

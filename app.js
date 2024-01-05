@@ -154,27 +154,27 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.disable('etag');
 
 app.use('/', mainRouter);
-app.use('/account', accountRouter);
+/* app.use('/account', accountRouter);
 app.use('/study', studyRouter);
 app.use('/groups', groupsRouter);
-app.use('/links', linksRouter);
+app.use('/links', linksRouter); */
 //app.use('/dashboards', dashboardRouter);
-app.use('/ranking', rankingRouter);
+/* app.use('/ranking', rankingRouter); */
 app.use('/api', extensionRouter);
 //app.use('/notification', notificationRouter);
 
 //api
-app.use('/api/account', accountAPI);
-app.use('/api/chat', chatAPI);
-app.use('/api/groups', groupsAPI);
-app.use('/api/plan', planAPI);
-app.use('/api/study', studyAPI);
-app.use('/api/video', videoAPI);
-app.use('/api/ranking', rankingAPI);
-app.use('/api/ai', AiAPI);
-app.use('/api/challenges', challengeAPI);
-app.use('/api/friend', friendAPI);
-app.use('/api/themes', themesAPI);
+app.use('/account', accountAPI);
+app.use('/chat', chatAPI);
+app.use('/groups', groupsAPI);
+app.use('/plan', planAPI);
+app.use('/study', studyAPI);
+app.use('/video', videoAPI);
+app.use('/ranking', rankingAPI);
+app.use('/ai', AiAPI);
+app.use('/challenges', challengeAPI);
+app.use('/friend', friendAPI);
+app.use('/themes', themesAPI);
 app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 

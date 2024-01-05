@@ -31,7 +31,7 @@ function AddSubjectModal(props) {
   };
 
   const submit = useCallback(() => {
-    fetch(`${serverOrigin}/api/study/add-subject`, {
+    fetch(`${serverOrigin}/study/add-subject`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",

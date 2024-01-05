@@ -111,7 +111,7 @@ useEffect(() => {
   useEffect(() => {
     if (!userInfo || !groupInfo || !isFocus) return;
     const {group_id} = groupInfo;
-    fetch(`${serverOrigin}/api/groups/members?groupId=${group_id}`, {
+    fetch(`${serverOrigin}/groups/members?groupId=${group_id}`, {
       method: "get", 
       headers: {
         "Content-Type": "application/json",

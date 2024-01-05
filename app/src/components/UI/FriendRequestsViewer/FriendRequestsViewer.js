@@ -105,7 +105,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
   }, [notifications]);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${serverOrigin}/api/friend/request-reply`, {
+    fetch(`${serverOrigin}/friend/request-reply`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -122,7 +122,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
   };
 
   const sentRequestClear = (targetId, notificationId) => {
-    fetch(`${serverOrigin}/api/friend/request-cancel`, {
+    fetch(`${serverOrigin}/friend/request-cancel`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
