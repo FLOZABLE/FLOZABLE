@@ -5,6 +5,11 @@
 .RecommendedFriendsViewer .title {
   font-size: 20px;
   font-weight: 600;
+  display: flex;
+}
+
+.RecommendedFriendsViewer .title p {
+  margin-right: 5px;
 }
 
 .RecommendedFriendsViewer .recommendedFriend {

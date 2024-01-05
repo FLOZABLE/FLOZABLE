@@ -281,15 +281,15 @@ connection.on('connection', (socket) => {
   });
 
   socket.on('exitSession', async () => {
-    deActiveGroup(userId);
+    deActiveGroup(userId, socket);
   });
 
   socket.on('disconnect', async () => {
-    deActiveGroup(userId);
+    deActiveGroup(userId, socket);
   });
 });
 
-async function deActiveGroup(userId) {
+async function deActiveGroup(userId, socket) {
   const userInfo = await userCache(userId);
   if (!userInfo) return;
   const groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");

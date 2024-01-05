@@ -144,7 +144,7 @@ Router.post('/request-reply', async (req, res) => {
           (members LIKE ? AND members LIKE ?)
         LIMIT 1;`, [`%${userId}%`, `%${targetId}%`, `%${targetId}%`, `%${userId}%`]);
 
-        console.log('dm',record_count);
+        console.log('dm', record_count);
         if (!record_count) {
           const members = [userId, targetId];
           const roomInfo = {
@@ -205,10 +205,23 @@ Router.get('/recommended', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
       const userId = req.session.user_id;
-      const connection = pool.promise();
-      let userIds = await redisClient.sMembers(`allMembers`);
-      userIds = userIds.filter(userInfo => { return userInfo !== userId });
-      res.send({ success: true })
+      const userInfo = await userCache(userId);
+      if (!userInfo) return;
+      const { friends } = userInfo;
+      const userIds = await redisClient.sMembers(`allMembers`);
+      const users = [];
+      for (let i = 0; i < 100; i++) {
+        if (users.length >= 3) {
+          break;
+        };
+        if (!friends.includes(userIds[i]) && userIds[i] !== userId) {
+          const recommendedUserInfo = await userCache(userIds[i]);
+          if (recommendedUserInfo) {
+            users.push(recommendedUserInfo);
+          };
+        };
+      };
+      res.send({ success: true, users })
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });
