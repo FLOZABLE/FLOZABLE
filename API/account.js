@@ -8,6 +8,7 @@ const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
 const { hashing, autoSignin, generateRandomId, googleOauth2client } = require("../tool");
+const {UserRefreshClient}  = require("google-auth-library")
 const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
 const upload = multer();
 
@@ -434,7 +435,16 @@ Router.post('/auth/google', async (req, res) => {
       const response = await auth.getToken(data);
       if (response.res.status === 200) {
         const connection = pool.promise();
-        connection.query(`UPDATE users SET google_refresh_token = ? WHERE user_id = ?`, [response.tokens.refresh_token, userId]);
+        const {refresh_token, access_token} = response.tokens;
+        console.log('gd', response.tokens)
+        connection.query(`UPDATE users SET google_refresh_token = ? WHERE user_id = ?`, [refresh_token, userId]);
+        /* const user = new UserRefreshClient(
+          process.env.GOOGLE_CLIENT_ID,
+          process.env.GOOGLE_CLIENT_SECRET,
+          refresh_token,
+        );
+        const { credentials } = await user.refreshAccessToken();
+        console.log('dd', credentials) */
       }
       res.send({ success: true, data: response })
     } catch (error) {

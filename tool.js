@@ -60,14 +60,14 @@ function randomIntInRange(min, max) {
   return randomVal;
 };
 
-const googleOauth2client = (refresh_token) => {
+const googleOauth2client = (credential) => {
   const auth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
     process.env.GOOGLE_REDIRECT_URL
   );
-  if (refresh_token) {
-    auth.setCredentials({refresh_token: refresh_token});
+  if (credential) {
+    auth.setCredentials(credential);
   };
   return auth;
 };

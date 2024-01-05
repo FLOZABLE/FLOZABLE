@@ -6,6 +6,7 @@ const { isValidJSON, hashing, generateRandomId, autoSignin, googleOauth2client }
 const { removePrevNotification, planNotification } = require("../services/notification");
 const {google} = require('googleapis');
 const { DateTime } = require("luxon");
+const { UserRefreshClient } = require("google-auth-library");
 
 Router.post("/bring-plans", async (req, res) => {
   autoSignin(req, res, (async () => {
@@ -15,37 +16,47 @@ Router.post("/bring-plans", async (req, res) => {
       let [plans] = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed FROM plans where user_id = ?`, [userId]);
       const [[{google_refresh_token}]] = await connection.query(`SELECT google_refresh_token FROM users WHERE user_id = ?`, [userId]);
       if (google_refresh_token) {
-        const auth = googleOauth2client(google_refresh_token);
-        const googleCalendar = google.calendar({
-          version: 'v3',
-          auth: auth
-        });
-        const calendars = await googleCalendar.calendarList.list();
-        if (calendars && calendars.data) {
-          const calendarEvents = [];
-          const calendarPromises = calendars.data.items.map(async (calendar) => {
-            // Only bring last 30 days events, future 30 days
-            const timeMin = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30);
-            const timeMax = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30);
-            const response = await googleCalendar.events.list({
-              calendarId: calendar.id,
-              timeMin,
-              timeMax,
-            });
-            const events = response.data.items;
-            events.map(event => {
-              const {htmlLink, id, summary, start, end, description, reminders} = event;
-              const startDateTime = Math.floor(DateTime.fromISO(start ? start.dateTime : '', { zone: start ? start.timeZone : '' }).toSeconds() / 60);
-              const endDateTime = Math.floor(DateTime.fromISO(end ? end.dateTime : '', { zone: end ? end.timeZone : '' }).toSeconds() / 60);
-              const newEvent = {id, title: summary, start: startDateTime, end: endDateTime, repeat: 0, description, notification: reminders, subject: calendar.summary, priority: 5, completed: 0, htmlLink};
-              calendarEvents.push(newEvent);
+        try {
+          const user = new UserRefreshClient(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            google_refresh_token,
+          );
+          const { credentials } = await user.refreshAccessToken();
+          const auth = googleOauth2client(credentials);
+          const googleCalendar = google.calendar({
+            version: 'v3',
+            auth: auth
+          });
+          const calendars = await googleCalendar.calendarList.list();
+          if (calendars && calendars.data) {
+            const calendarEvents = [];
+            const calendarPromises = calendars.data.items.map(async (calendar) => {
+              // Only bring last 30 days events, future 30 days
+              const timeMin = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 30);
+              const timeMax = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30);
+              const response = await googleCalendar.events.list({
+                calendarId: calendar.id,
+                timeMin,
+                timeMax,
+              });
+              const events = response.data.items;
+              events.map(event => {
+                const {htmlLink, id, summary, start, end, description, reminders} = event;
+                const startDateTime = Math.floor(DateTime.fromISO(start ? start.dateTime : '', { zone: start ? start.timeZone : '' }).toSeconds() / 60);
+                const endDateTime = Math.floor(DateTime.fromISO(end ? end.dateTime : '', { zone: end ? end.timeZone : '' }).toSeconds() / 60);
+                const newEvent = {id, title: summary, start: startDateTime, end: endDateTime, repeat: 0, description, notification: reminders, subject: calendar.summary, priority: 5, completed: 0, htmlLink};
+                calendarEvents.push(newEvent);
+                return null;
+              });
               return null;
             });
-            return null;
-          });
-          
-          await Promise.all(calendarPromises);
-          plans = plans.concat(calendarEvents);
+            
+            await Promise.all(calendarPromises);
+            plans = plans.concat(calendarEvents);
+          };
+        } catch (err) {
+          console.log(err);
         };
       };
       res.send({ success: true, plans: plans });

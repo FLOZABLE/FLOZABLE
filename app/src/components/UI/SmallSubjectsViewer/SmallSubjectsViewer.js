@@ -1,23 +1,27 @@
-import PieChart from "../PieChart";
 import styles from "./SmallSubjectsViewer.module.css";
 import ChartDataLabel from "chartjs-plugin-datalabels";
 import plugin from "chartjs-plugin-datalabels";
 import { colorsList } from "../../../constant";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import DoughnutChart from "../DoughnutChart";
 
 function SmallSubjectsViewer({ subjects }) {
 
   return (
     <div className={styles.SmallSubjectsViewer}>
       {subjects &&  subjects.daily && subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1] ?
-        <PieChart
+        <DoughnutChart
           labels={subjects.map((subject) => subject.name)}
           datasets={[
             {
               label: "Seconds",
               backgroundColor: colorsList,
               borderColor: colorsList,
+              borderWidth: 5,
+              circumference: (ctx) => {
+                return ctx.dataset.data[0] / 12 * 270
+              },
               data: subjects.map(
                 (subject) =>
                   subject.daily.total[subject.daily.total.length - 1],
