@@ -17,7 +17,7 @@ const schedule = require('node-schedule');
 const redisClient = require('../model/redis');
 const timeZones = require('../data/timeZones.json');
 const csv = require("csvtojson");
-const { activeSubjectCache, subjectsCache, timerCache, userCache } = require('../services/redisLoader');
+const { activeSubjectCache, subjectsCache, timerCache, userCache, usersCache } = require('../services/redisLoader');
 
 /**create bots */
 async function createBots(startIndex, length) {
@@ -281,6 +281,63 @@ function createChessProfileImg(userId, imgSrc) {
     })
 };
 
+async function sendFriendRequest(userId, userInfo, targetId, targetInfo){
+  autoSignin(req, res, (async () => { //modified from friend.js
+    try {
+
+      let { friends, name } = targetInfo;
+      friends = friends === "" ? [] : friends.split(',');
+      if (friends.includes(userId)) return;
+
+      const friendRequests = await NotificationCache(targetId, 0, false);
+      const prevFriendReq = friendRequests.find(friendReq => { return friendReq.f === userId });
+      if (prevFriendReq) return;
+
+      const id = generateRandomId(5);
+      const date = Math.floor(new Date().getTime() / (1000 * 60));
+      const io = req.app.get('socketio');
+      const notificationUser = await userCache(userId);
+      const socketNotif = { i: id, t: 0, f: notificationUser, d: date };
+      const notification = { i: id, t: 0, f: userId, d: date };
+      io.to(targetId).emit('notification', socketNotif);
+      //to target user
+      redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
+
+      //no need to send to self
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'An Error Occured' });
+    };
+  }));
+}
+
+async function addFriends(userId) {
+  const botInfo = await userCache(userId);
+  const botTimeZone = botInfo.timezone;
+  try {
+    const possibleFriends = await redisClient.sMembers('allMembers');
+    possibleFriends.map(async (friend) => {
+      const userInfo = await userCache(friend);
+      console.log(userInfo);
+      let requestChance = 0;
+      const daysJoinedAgo = DateTime.fromSeconds(parseInt(userInfo.datum_point)).diff(DateTime.now());
+      requestChance += Math.min(100, daysJoinedAgo) * 0.05;
+      requestChance += botTimeZone == userInfo.timezone ? 3 : 0;
+      requestChance += Math.min(3, userInfo.friends.length / 100);
+      //request chance increases the longer you joined, the more friends you have,
+      // and if you are in the same timezone
+      const addFriendChance = Math.min(10, requestChance);
+
+      if (randomIntInRange(0,100) > 50){ //change this to addFriendChance
+        //send friend request
+        const scheduleFriend = schedule.scheduleJob(Date.now() + randomIntInRange(5, 3600 * 2), () => {sendFriendRequest(userId, botInfo, friend, userInfo)});
+      }
+    });
+  } catch(err) {
+    console.log(err);
+  };
+};
+
 async function startBot(userId) {
   try {
     const [subject] = await subjectsCache(userId);
@@ -381,6 +438,9 @@ async function botSelector(numbers) {
     //const [[subject]] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects WHERE user_id = ?`, [user_id]);
     const scheduleStart = schedule.scheduleJob(startDate.toJSDate(), () => { startBot(user_id) });
     const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => { stopBot(user_id) });
+
+    const scheduleFriend = schedule.scheduleJob(stopDate.toJSDate(), () => {addFriends(user_id)});
+    //Send friend request after finished studying
   };
 
   //update active bot list in redis
