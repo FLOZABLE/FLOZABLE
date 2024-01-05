@@ -12,7 +12,7 @@ function ChallengeRoom({ challengeInfo, setResponse, setChallenges, challenges }
     console.log(challenges);
     console.log(challenges.filter((c) => c.id != challengeId));
     setChallenges(challenges.filter((c) => c.id !== challengeId));
-    fetch(`${serverOrigin}/api/challenges/join-challenge`, {
+    fetch(`${serverOrigin}/challenges/join-challenge`, {
       method: "post",
       headers: {
         'Content-Type': 'application/json'

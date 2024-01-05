@@ -11,7 +11,7 @@ function GoogleLoginBtn() {
     onSuccess: (response) => {
       console.log(response);
       const {code} = response;
-      fetch(`${serverOrigin}/api/account/auth/google`, {
+      fetch(`${serverOrigin}/account/auth/google`, {
         method: "post",
         headers: {
           'Content-Type': 'application/json'
@@ -29,7 +29,7 @@ function GoogleLoginBtn() {
   
   const onSuccess = (response) => {
     console.log(response);
-    fetch(`${serverOrigin}/api/account/auth/google`, {
+    fetch(`${serverOrigin}/account/auth/google`, {
       method: "post",
       headers: {
         'Content-Type': 'application/json'

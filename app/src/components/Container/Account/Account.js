@@ -55,12 +55,12 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
 
   const uploadImage = useCallback(async (formData) => {
     try {
-      /* let response = await fetch(`${serverOrigin}/api/account/update/image`, {
+      /* let response = await fetch(`${serverOrigin}/account/update/image`, {
         method: 'POST',
         body: formData,
       }); */
 
-      fetch(`${serverOrigin}/api/account/update/image`, {
+      fetch(`${serverOrigin}/account/update/image`, {
         method: "post",
         /* headers: {
           'Content-Type': 'application/json'
@@ -80,7 +80,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
 
   useEffect(() => {
     if (isSubmitProfile) {
-      fetch(`${serverOrigin}/api/account/update/info`, {
+      fetch(`${serverOrigin}/account/update/info`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +98,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
 
   useEffect(() => {
     if (isSubmitPw) {
-      fetch(`${serverOrigin}/api/account/update/password`, {
+      fetch(`${serverOrigin}/account/update/password`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +115,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
   }, [isSubmitPw]);
 
   const fetchExtensionSettingUpdate = useCallback((d, target, value) => {
-    fetch(`${serverOrigin}/api/account/update/extension-setting-update`, {
+    fetch(`${serverOrigin}/account/update/extension-setting-update`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -129,7 +129,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
 
   useEffect(() => {
     if (isSumbmitUrl) {
-      fetch(`${serverOrigin}/api/account/update/extension-add`, {
+      fetch(`${serverOrigin}/account/update/extension-add`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -155,7 +155,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
 
   useEffect(() => {
     if (!userInfo) return;
-    fetch(`${serverOrigin}/api/account/activity-settings`, {
+    fetch(`${serverOrigin}/account/activity-settings`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",
@@ -186,7 +186,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
   }, [userInfo]);
 
   const onSuccess = (response) => {
-    fetch(`${serverOrigin}/api/account/auth/google`, {
+    fetch(`${serverOrigin}/account/auth/google`, {
       method: "post",
       headers: {
         'Content-Type': 'application/json'

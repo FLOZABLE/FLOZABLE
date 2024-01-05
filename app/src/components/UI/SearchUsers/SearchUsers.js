@@ -19,7 +19,7 @@ function SearchUsers({ searchQuery, setResponse, setCount }) {
     if (isRateLimited || !searchQuery || searchQuery.length < 3) return;
 
     setLastUpd(new Date().getTime());
-    fetch(`${serverOrigin}/api/friend/search?query=${searchQuery}`, {
+    fetch(`${serverOrigin}/friend/search?query=${searchQuery}`, {
       method: "get",
       headers: {
         'Content-Type': 'application/json'

@@ -7,7 +7,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function DmBtn({userInfo, setResponse}) {
   const requestChat = () => {
-    fetch(`${serverOrigin}/api/chat/chat-request`, {
+    fetch(`${serverOrigin}/chat/chat-request`, {
       method: "post",
       headers: {
         'Content-Type': 'application/json'

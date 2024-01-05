@@ -19,7 +19,7 @@ function SmallRankingViewer({ userInfo }) {
   useEffect(() => {
     if (!userInfo) return;
 
-    fetch(`${serverOrigin}/api/ranking/today`, {
+    fetch(`${serverOrigin}/ranking/today`, {
       method: 'get'
     })
       .then((response) => response.json())

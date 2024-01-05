@@ -8,7 +8,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function FriendRequestBtn({ userInfo, setResponse }) {
 
   const requestFriend = () => {
-    fetch(`${serverOrigin}/api/friend/request`, {
+    fetch(`${serverOrigin}/friend/request`, {
       method: "post",
       headers: {
         'Content-Type': 'application/json'

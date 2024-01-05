@@ -11,7 +11,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   const [iconEl, setIconEl] = useState(<FontAwesomeIcon icon={faBell}/>);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${serverOrigin}/api/friend/request-reply`, {
+    fetch(`${serverOrigin}/friend/request-reply`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -28,7 +28,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   };
 
   const deleteFriendNotif = (targetId, notificationId) => {
-    fetch(`${serverOrigin}/api/friend/checked`, {
+    fetch(`${serverOrigin}/friend/checked`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -45,7 +45,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   };
 
   const challengeRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${serverOrigin}/api/challenges/challenge-request-reply`, {
+    fetch(`${serverOrigin}/challenges/challenge-request-reply`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -62,7 +62,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   }; 
 
   const deleteChallengeNotif = (targetId, notificationId) => {
-    fetch(`${serverOrigin}/api/challenges/challenge-notif`, {
+    fetch(`${serverOrigin}/challenges/challenge-notif`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -79,7 +79,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
   };
 
   const chatRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${serverOrigin}/api/chat/chat-request-reply`, {
+    fetch(`${serverOrigin}/chat/chat-request-reply`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
