@@ -237,4 +237,21 @@ function sortNewSubject(subjects, newSubject) {
   return newSubject;
 }
 
+
+
+function findDiff(subjects){
+  const dailySorted = subjects.daily.groupedTotal; //reference but no edit
+  //return daily, weekly, and monthly diff 
+  const thisDayTotal = dailySorted[dailySorted.length - 1];
+
+  const lastSevenIndex = dailySorted.length - 7;
+  let lastWeekTotal = 0; //not acutally last week but last 7 days
+  
+
+  const lastDayTotal = subjects.daily.groupedTotal.length > 1 ? subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 2] : 0;
+  
+
+  const dayDiff = thisDayTotal - lastDayTotal; //how much more today
+}
+
 export { timelineSort, sortNewSubject };

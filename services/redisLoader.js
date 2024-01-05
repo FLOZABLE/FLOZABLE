@@ -7,7 +7,7 @@ async function flushRedis() {
 };
 
 function cacheManager() {
-  console.log('d');
+  //console.log('d');
 };
 
 async function groupCache(userId) {
