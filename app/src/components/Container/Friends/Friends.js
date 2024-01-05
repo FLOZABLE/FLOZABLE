@@ -95,7 +95,9 @@ function Friends({
             <FriendsRankingViewer userInfo={userInfo} />
           </div>
           <div className={styles.box}>
-            <RecommendedFriendsViewer />
+            <RecommendedFriendsViewer 
+              setResponse={setResponse}
+            />
           </div>
         </div>
         <div className="title">

@@ -1,0 +1,25 @@
+.RefreshBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  20% {
+    transform: rotate(-90deg);
+  }
+
+
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.RefreshBtn i.refresh {
+  animation: rotate 2s .3s forwards;
+}
