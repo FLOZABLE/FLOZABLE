@@ -11,7 +11,7 @@ const openai = new OpenAI({
 
 async function readFineTune() {
     await openai.files.create({
-        file: fs.createReadStream('/Users/shanjiang/FLOZABLE/API/fineTuning.jsonl'), //change this to full file name
+        file: fs.createReadStream('/workspaces/FLOZABLE/API/fineTuning.jsonl'), //change this to full file name
         purpose: 'fine-tune',
     });
 }
