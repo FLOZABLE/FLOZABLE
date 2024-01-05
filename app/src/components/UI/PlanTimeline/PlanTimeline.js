@@ -44,7 +44,7 @@ function PlanTimeline({
       };
 
       delete planInfo.saved;
-      fetch(`${serverOrigin}/api/plan/status-change`, {
+      fetch(`${serverOrigin}/plan/status-change`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",

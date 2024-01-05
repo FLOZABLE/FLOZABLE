@@ -59,7 +59,7 @@ function RankedTheme({ theme, setResponse, liked, rank }) {
       <div className={styles.bottom}>
         <div className={styles.likeBtnWrapper}>
           <LikeBtn liked={liked} id={theme?.id}
-            url={`${serverOrigin}/api/themes/like/${theme?.id}`}
+            url={`${serverOrigin}/themes/like/${theme?.id}`}
           />
         </div>
         <div>

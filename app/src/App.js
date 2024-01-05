@@ -93,7 +93,7 @@ function App() {
   };
 
   const bringSubjects = useCallback(() => {
-    fetch(`${serverOrigin}/api/study/bring-subjects`, { method: "post" })
+    fetch(`${serverOrigin}/study/bring-subjects`, { method: "post" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -106,7 +106,7 @@ function App() {
   }, []);
 
   const bringAccountInfo = useCallback(() => {
-    fetch(`${serverOrigin}/api/account/accountinfo`, { method: "post" })
+    fetch(`${serverOrigin}/account/accountinfo`, { method: "post" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -119,7 +119,7 @@ function App() {
   }, []);
 
   const bringPlans = useCallback(() => {
-    fetch(`${serverOrigin}/api/plan/bring-plans`, { method: "post" })
+    fetch(`${serverOrigin}/plan/bring-plans`, { method: "post" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -137,7 +137,7 @@ function App() {
   }, []);
 
   const bringGroups = useCallback(() => {
-    fetch(`${serverOrigin}/api/groups/bring-groups`, { method: "post" })
+    fetch(`${serverOrigin}/groups/bring-groups`, { method: "post" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -243,6 +243,9 @@ function App() {
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}
                 setResponse={setResponse}
+                myGroups={myGroups}
+                setMyGroups={setMyGroups}
+                setOtherGroups={setOtherGroups}
                 setIsAddPlanModal={setIsAddPlanModal}
               />
               {/* <Footer /> */}
@@ -563,7 +566,6 @@ function App() {
                 notifications={notifications}
                 setNotifications={setNotifications}
                 setResponse={setResponse}
-
                 reset={reset}
                 otherGroups={otherGroups}
                 setOtherGroups={setOtherGroups}

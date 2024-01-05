@@ -15,6 +15,8 @@ import SmallSubjectsViewer from "../../UI/SmallSubjectsViewer/SmallSubjectsViewe
 import ActivityViewer from "../../UI/ActivityViewer/ActivityViewer.js";
 import { Link } from "react-router-dom";
 import AIRecommendation from "../../UI/AIRecommendation/AIRecommendation.js";
+import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal.js";
+import RecommendedFriendsViewer from "../../UI/RecommendedFriendsViewer/RecommendedFriendsViewer.js";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -26,13 +28,18 @@ function Main({
   userInfo,
   plans,
   setPlans,
-  setIsAddPlanModal
+  setIsAddPlanModal,
+  myGroups,
+  setMyGroups,
+  setOtherGroups
 }) {
   const [joinTarget, setJoinTarget] = useState(null);
+  const [isGroupPwModal, setIsGroupPwModal] = useState(false);
+  const [friendsCount, setFriendsCount] = useState(0);
 
   useEffect(() => {
     if (!subjects.length) return;
-    fetch(`${serverOrigin}/api/AI/input`, {
+    fetch(`${serverOrigin}/AI/input`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
@@ -48,21 +55,37 @@ function Main({
       .catch((error) => console.error(error));
   }, [subjects]);
 
+  console.log('ddd', myGroups)
+
   return (
     <div className={styles.MainContainer}>
+      <GroupPwModal
+        myGroups={myGroups}
+        setMyGroups={setMyGroups}
+        setOtherGroups={setOtherGroups}
+        setIsGroupPwModal={setIsGroupPwModal}
+        isGroupPwModal={isGroupPwModal}
+        joinTarget={joinTarget}
+        setJoinGroupResponse={setResponse}
+      />
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxesContainer}>
           <div className={styles.box}>
             <div className={styles.title}>
-              <p>Friends Viewer</p>
+            {friendsCount ? <p>Friends Viewer</p> : null}
             </div>
             <FriendsActivityViewer
               setResponse={setResponse}
               userInfo={userInfo}
               setJoinTarget={setJoinTarget}
+              searchQuery={''}
+              setCount={setFriendsCount}
+              myGroups={myGroups}
+              setMyGroups={setMyGroups}
+              setOtherGroups={setOtherGroups}
               mode={0}
-              setCount={() => {}}
             />
+            {!friendsCount ? <RecommendedFriendsViewer setResponse={setResponse} /> : null}
           </div>
           <div className={styles.box}>
             <div className={styles.title}>

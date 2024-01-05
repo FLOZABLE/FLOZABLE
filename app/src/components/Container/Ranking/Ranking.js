@@ -60,7 +60,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     setEndDate(stopTime);
 
 
-    fetch(`${serverOrigin}/api/ranking/sort`, {
+    fetch(`${serverOrigin}/ranking/sort`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'

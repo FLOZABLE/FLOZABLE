@@ -11,7 +11,7 @@ function ChallengeContainer({challenge, setChallenges, challenges, setResponse})
     console.log(challenge);
     const {id} = challenge;
     setChallenges(challenges.filter((challenge) => challenge.id !== id));
-    fetch(`${serverOrigin}/api/challenges/join-challenge`, {
+    fetch(`${serverOrigin}/challenges/join-challenge`, {
       method: "post",
       headers: {
         'Content-Type': 'application/json'

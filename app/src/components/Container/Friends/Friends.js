@@ -40,7 +40,7 @@ function Friends({
     const { group_id, visibility } = joinTarget;
 
     if (visibility) {
-      fetch(`${serverOrigin}/api/groups/join/${group_id}`, {
+      fetch(`${serverOrigin}/groups/join/${group_id}`, {
         method: "post",
       })
         .then((response) => response.json())
@@ -180,6 +180,9 @@ function Friends({
               setJoinTarget={setJoinTarget}
               searchQuery={searchQuery}
               setCount={setFriendCount}
+              myGroups={myGroups}
+              setMyGroups={setMyGroups}
+              setOtherGroups={setOtherGroups}
             />
             {suggestionsCount ? <div className={styles.title}>
               <h3>Suggestions</h3>

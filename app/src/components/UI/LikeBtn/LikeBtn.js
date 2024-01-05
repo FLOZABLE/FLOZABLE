@@ -3,7 +3,7 @@ import styles from "./LikeBtn.module.css";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-const LikeBtn = ({id, liked, url=`${serverOrigin}/api/groups/like/${id}`}) => {
+const LikeBtn = ({id, liked, url=`${serverOrigin}/groups/like/${id}`}) => {
   const [likedBtn, setLikedBtn] = useState(false);
 
   const handleLike = () => {

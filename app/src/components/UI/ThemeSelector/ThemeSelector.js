@@ -33,7 +33,7 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
       allCategoriesParsed[index] = name;
     });
 
-    fetch(`${serverOrigin}/api/themes/user`, {
+    fetch(`${serverOrigin}/themes/user`, {
       method: 'get'
     })
       .then((response) => response.json())
@@ -55,7 +55,7 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
           allCategories[categoryAndId[1]] = categoryName.split(":")[0];
         });
 
-        fetch(`${serverOrigin}/api/themes/videoIds?searchIds=${allIds}`, {
+        fetch(`${serverOrigin}/themes/videoIds?searchIds=${allIds}`, {
           method: 'get'
         })
           .then((response) => response.json())

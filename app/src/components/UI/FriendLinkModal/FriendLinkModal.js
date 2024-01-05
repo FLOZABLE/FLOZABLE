@@ -10,10 +10,30 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function FriendLinkModal({ isOpen, setIsOpen, userInfo }) {
   const [addFriendUrl, setAddFriendUrl] = useState("");
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!userInfo) return;
     setAddFriendUrl(serverOrigin + `/friend/add?${userInfo.user_id}`);
-  }, [userInfo]);
+  }, [userInfo]); */
+
+  useEffect(() => {
+    if (!isOpen || addFriendUrl.length) return;
+
+    fetch(`${serverOrigin}/friend/create-link`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success) {
+          console.log(res);
+          setAddFriendUrl(serverOrigin + `/friend/add?user=${userInfo.user_id}&id=${res.linkId}`);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [isOpen]);
+
   return (
     <div className={`${styles.FriendLinkModal} modal ${isOpen ? "open" : ''}`}>
       <div className={styles.header}>
@@ -33,7 +53,7 @@ function FriendLinkModal({ isOpen, setIsOpen, userInfo }) {
         Send this link to anyone, and they will become your friend when they sign up.
       </p>
       <div className={styles.linkContainer}>
-        <div className={styles.content}>
+        <div className={`${styles.content} overflowDot`}>
           {addFriendUrl}
         </div>
         <CopyBtn 

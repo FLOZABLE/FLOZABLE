@@ -38,7 +38,7 @@ function CreateChallengeModal({
     } */
 
     const reqBody = { title, description, startDate: DateTime.fromJSDate(start).toSeconds() };
-    fetch(`${serverOrigin}/api/challenges/create-challenge`, {
+    fetch(`${serverOrigin}/challenges/create-challenge`, {
       method: "post",
       headers: {
         'Content-Type': 'application/json'

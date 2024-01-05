@@ -31,7 +31,7 @@ function ThemeCategoryBtn({
 
   useEffect(() => {
     if (category === -2 || !themeId) return;
-    fetch(`${serverOrigin}/api/themes/save`, {
+    fetch(`${serverOrigin}/themes/save`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",

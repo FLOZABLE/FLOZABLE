@@ -57,7 +57,7 @@ function EventModal({
       priority,
       completed: completed ? 1 : 0,
     };
-    fetch(`${serverOrigin}/api/plan/update-plan`, {
+    fetch(`${serverOrigin}/plan/update-plan`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",

@@ -25,7 +25,7 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
     };
 
     let joined = false;
-    if (myGroups && type && myGroups.find(group => group.group_id === group_id)) {
+    if (myGroups && type && (myGroups.find(group => group.group_id === group_id) || userInfo.groups.includes(group_id))) {
       joined = true;
     };
 

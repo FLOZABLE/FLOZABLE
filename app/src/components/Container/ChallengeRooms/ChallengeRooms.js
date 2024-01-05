@@ -20,7 +20,7 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse, userInfo
   const [end, setEnd] = useState(new Date());
 
   useEffect(() => {
-    fetch(`${serverOrigin}/api/challenges/rooms`, {
+    fetch(`${serverOrigin}/challenges/rooms`, {
       method: "get",
       headers: {
         'Content-Type': 'application/json'

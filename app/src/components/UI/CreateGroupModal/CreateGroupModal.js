@@ -46,7 +46,7 @@ function CreateGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
 
   useEffect(() => {
     if (submit) {
-      fetch(`${serverOrigin}/api/groups/create-validate`, {
+      fetch(`${serverOrigin}/groups/create-validate`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",

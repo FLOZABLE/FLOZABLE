@@ -12,12 +12,12 @@ import UserGroupViewer from "../UserGroupViewer/UserGroupViewer";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 //mode 0 is for friends page's component, mode 1 is for main page's component
-function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode = 1, setCount, searchQuery }) {
+function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode = 1, setCount, searchQuery, myGroups, setMyGroups, setOtherGroups }) {
   const [friendsEl, setFriendsEl] = useState([]);
   const [friends, setFriends] = useState([]);
 
   useEffect(() => {
-    fetch(`${serverOrigin}/api/friend/status`, {
+    fetch(`${serverOrigin}/friend/status`, {
       method: "get",
       headers: {
         'Content-Type': 'application/json'
@@ -83,6 +83,9 @@ function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode = 1,
               myInfo={userInfo}
               setResponse={setResponse}
               setJoinTarget={setJoinTarget}
+              myGroups={myGroups}
+              setMyGroups={setMyGroups}
+              setOtherGroups={setOtherGroups}
             />
           </div>
           <div className={styles.right}>

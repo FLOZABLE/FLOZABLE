@@ -38,7 +38,7 @@ function Themes({
   };
 
   useEffect(() => {
-    fetch(`${serverOrigin}/api/themes`, {
+    fetch(`${serverOrigin}/themes`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",
@@ -56,7 +56,7 @@ function Themes({
       .catch((error) => console.error(error));
 
 
-    fetch(`${serverOrigin}/api/themes/user`, {
+    fetch(`${serverOrigin}/themes/user`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",

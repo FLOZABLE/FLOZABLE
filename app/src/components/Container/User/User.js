@@ -157,7 +157,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
     const { group_id, visibility } = joinTarget;
 
     if (visibility) {
-      fetch(`${serverOrigin}/api/groups/join/${group_id}`, {
+      fetch(`${serverOrigin}/groups/join/${group_id}`, {
         method: "post",
       })
         .then((response) => response.json())
@@ -183,7 +183,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
     const pathName = window.location.pathname.split('/');
     const selectedUserId = pathName[pathName.length - 1];
 
-    fetch(`${serverOrigin}/api/account/profile/${selectedUserId}`, { method: 'get' })
+    fetch(`${serverOrigin}/account/profile/${selectedUserId}`, { method: 'get' })
       .then((response) => response.json())
       .then((data) => {
 
@@ -219,7 +219,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
     if (!!!userInfo) return; // wait for userInfo to be defined
     const { user_id } = userInfo;
     const viewDateTime = DateTime.fromJSDate(viewDate).toUTC().toISODate().toString();
-    fetch(`${serverOrigin}/api/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime}`, {
+    fetch(`${serverOrigin}/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime}`, {
       method: 'get'
     })
       .then((response) => response.json())

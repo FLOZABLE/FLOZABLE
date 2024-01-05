@@ -24,7 +24,7 @@ function CreateThemeModal({
   const [url, setUrl] = useState("");
 
   const submit = () => {
-    fetch(`${serverOrigin}/api/themes/create`, {
+    fetch(`${serverOrigin}/themes/create`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",

@@ -20,7 +20,6 @@ function GroupsGen({
   setMyGroups,
   setOtherGroups,
   setJoinGroupResponse,
-  joinGroupResponse,
   setIsGroupPwModal,
   setJoinTarget,
   groups,
@@ -35,7 +34,7 @@ function GroupsGen({
   const joinGroup = (targetGroup) => {
     setJoinTarget(targetGroup);
     if (targetGroup.visibility) {
-      fetch(`${serverOrigin}/api/groups/join/${targetGroup.group_id}`, {
+      fetch(`${serverOrigin}/groups/join/${targetGroup.group_id}`, {
         method: "post",
       })
         .then((response) => response.json())
@@ -56,7 +55,7 @@ function GroupsGen({
 
   useEffect(() => {
     if (!userInfo) return;
-    console.log(',ddd', userInfo)
+    console.log(',ddd', myGroups)
     setOtherGroupsEl(
       [...groups].map((group, i) => {
         if (maxGroups !== -1 && i > maxGroups) {
