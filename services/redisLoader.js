@@ -267,8 +267,10 @@ async function userCache(userId) {
         redisClient.hSet(`user:${userId}`, 'friends', friends);
         redisClient.hSet(`user:${userId}`, 'timezone', timezone);
         redisClient.hSet(`user:${userId}`, 'datum_point', datum_point);
-      };
-      return { ...userInfo, user_id: userId };
+        return { ...userInfo, user_id: userId };
+      } else {
+        return false;
+      }
     };
   } catch (err) {
     console.log(err);

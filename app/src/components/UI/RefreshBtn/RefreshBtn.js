@@ -3,14 +3,14 @@ import styles from "./RefreshBtn.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotate } from "@fortawesome/free-solid-svg-icons";
 
-function RefreshBtn() {
+function RefreshBtn({refresh, setRefresh}) {
   const [lastUpd, setLastUpd] = useState(new Date().getTime() / 1000);
-  const [refresh, setRefresh] = useState(false);
 
   return (
     <div className={styles.RefreshBtn}
       onClick={() => {
         const now = new Date().getTime() / 1000;
+        console.log(now - lastUpd)
         if (now - lastUpd > 3) {
           setLastUpd(now);
           setRefresh(true);
@@ -20,7 +20,7 @@ function RefreshBtn() {
         };
       }}
     >
-      <i>
+      <i className={refresh ? styles.refresh : ''}>
         <FontAwesomeIcon icon={faRotate}
         />
       </i>
