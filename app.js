@@ -37,6 +37,12 @@ redisClient.connect().catch(console.error);
 const port = process.env.PORT;
 const account = require("./Router/account");
 const {flushRedis, cacheManager} = require("./services/redisLoader");
+const SENDINBLUE_API = process.env.SENDINBLUE_API;
+const sendInBlue = require('sib-api-v3-sdk');
+const sendinBlueClient = sendInBlue.ApiClient.instance;
+sendinBlueClient.authentications['api-key'].apiKey = SENDINBLUE_API;
+
+const emailInstance = new sendInBlue.TransactionalEmailsApi();
 
 //const WebSocketToken = process.env.WEBSOCKET_TOKEN;
 //const WebSocket = require('ws');
@@ -104,7 +110,7 @@ const sessionMiddleWare = session({
 
 app.use(sessionMiddleWare);
 
-module.exports = { server, sessionMiddleWare };
+module.exports = { server, sessionMiddleWare, emailInstance };
 //services
 /* const notificationService = require('./services/notification');
 notificationService.notificationService(); */
