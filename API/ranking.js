@@ -11,7 +11,7 @@ const { autoSignin } = require("../tool");
 
 Router.post('/sort', async (req, res) => {
   const { startTime, stopTime } = req.body;
-  console.log(startTime, stopTime);
+  //console.log(startTime, stopTime);
   try {
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT name, user_id, timezone from users`);
