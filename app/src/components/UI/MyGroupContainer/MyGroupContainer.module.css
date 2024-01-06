@@ -90,6 +90,10 @@
   background-color: var(--bgColor);
 }
 
+.MyGroupContainer li:hover{
+  cursor: pointer;
+}
+
 @media (max-width: 1400px) {
   .MyGroupContainer{
     height: 500px;
