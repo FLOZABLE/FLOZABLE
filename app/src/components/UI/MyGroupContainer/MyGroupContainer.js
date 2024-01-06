@@ -7,11 +7,13 @@ import { Link } from "react-router-dom";
 import MembersContainer from "../MembersContainer/MembersContainer";
 import { socket } from "../../../socket";
 import { mediaSocket } from "../../../mediaSocket";
+import GroupRanking from "../GroupRanking/GroupRanking";
 
 function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
+  const [isGroupRankingModal, setIsGroupRankingModal] = useState(false);
 
   useEffect(() => {
     if (!group || !isFocus) return;
@@ -24,56 +26,61 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
 
   return (
     <div className={styles.MyGroupContainer}>
-        <div className={styles.name}>
-          <Link to="/dashboard/study">{name}</Link>
-        </div>
-        <div className={styles.header}>
-            <ul className={styles.status}>
-              <li>
-                <StudyPerson
-                  opt1={"#fff"}
-                  opt2={"#fff"}
-                  width={"40px"}
-                  height={"40px"}
-                />
-                <p>
-                  {/* {stud}
+      <GroupRanking
+        groupMembers={members}
+        isGroupRankingModal={isGroupRankingModal}
+        setIsGroupRankingModal={setIsGroupRankingModal}
+      />
+      <div className={styles.name}>
+        <Link to="/dashboard/study">{name}</Link>
+      </div>
+      <div className={styles.header}>
+        <ul className={styles.status}>
+          <li>
+            <StudyPerson
+              opt1={"#fff"}
+              opt2={"#fff"}
+              width={"40px"}
+              height={"40px"}
+            />
+            <p>
+              {/* {stud}
                   /{membersInfo.length} */}
-                  {studyingMembers.length}/
-                  {members.length}
-                </p>
-              </li>
-              <li>
-                <FontAwesomeIcon icon={faBullhorn} />
-              </li>
-              <li>
-                <FontAwesomeIcon icon={faRankingStar} />
-              </li>
-            </ul>
-            {/* <div className={styles.right}>
+              {studyingMembers.length}/
+              {members.length}
+            </p>
+          </li>
+          <li>
+            <FontAwesomeIcon icon={faBullhorn} />
+          </li>
+          <li className={styles.showRankingModalListElement}>
+            <FontAwesomeIcon icon={faRankingStar} onClick={() => {setIsGroupRankingModal(!isGroupRankingModal)}}/>
+          </li>
+        </ul>
+        {/* <div className={styles.right}>
               <FontAwesomeIcon icon={faGear} />
             </div> */}
-          </div>
-          <div className={`${styles.membersWrapper} customScroll`}>
-          <MembersContainer
-            isFocus={isFocus}
-            userInfo={userInfo}
-            groupInfo={group}
-            setStudyingMembers={setStudyingMembers}
-            members={members}
-            setMembers={setMembers}
-            isMic={isMic}
-            isCam={isCam}
-          />
-          </div>
-        <div className={styles.buttons}>
-          <Link to="/dashboard/study">
-            <button>Go to Group</button>
-          </Link>
-          <button>
-            <FontAwesomeIcon icon={faComments} />
-          </button>
-        </div>
+      </div>
+      <div className={`${styles.membersWrapper} customScroll`}>
+        <MembersContainer
+          isFocus={isFocus}
+          userInfo={userInfo}
+          groupInfo={group}
+          setStudyingMembers={setStudyingMembers}
+          members={members}
+          setMembers={setMembers}
+          isMic={isMic}
+          isCam={isCam}
+        />
+      </div>
+      <div className={styles.buttons}>
+        <Link to="/dashboard/study">
+          <button>Go to Group</button>
+        </Link>
+        <button>
+          <FontAwesomeIcon icon={faComments} />
+        </button>
+      </div>
     </div>
   )
 };
