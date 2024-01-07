@@ -15,6 +15,7 @@ import ThemesContainer from "../../UI/ThemesContainer/ThemesContainer";
 import CreateThemeModal from "../../UI/CreateThemeModal/CreateThemeModal";
 import StuckModal from "../../UI/StuckModal/StuckModal";
 import RankedTheme from "../../UI/RankedTheme/RankedTheme";
+import ThemePreview from "../../UI/ThemePreview/ThemePreview";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

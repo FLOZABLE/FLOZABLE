@@ -8,12 +8,14 @@ import parse from "html-react-parser";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
 import ThemeUsageCounter from "../ThemeUsageCounter/ThemeUsageCounter";
 import ThemeCategoryBtn from "../ThemeCategoryBtn/ThemeCategoryBtn";
+import ThemePreview from "../ThemePreview/ThemePreview";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ThemeContainer({ theme, userInfo, setResponse, isSearched, isSaved, themeCategory }) {
+function ThemeContainer({ theme, userInfo, setResponse, isSearched, isSaved, themeCategory, videoId }) {
   const [liked, setLiked] = useState(false);
   const [savedEl, setSavedEl] = useState(<div></div>);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     if (!theme || !userInfo) return;
@@ -24,11 +26,19 @@ function ThemeContainer({ theme, userInfo, setResponse, isSearched, isSaved, the
   }, [theme, userInfo]);
 
   return (
-    <div className={`${styles.ThemeContainer} ${isSearched ? '': styles.hidden}`}>
+    <div className={`${styles.ThemeContainer} ${isSearched ? '' : styles.hidden}`}>
+      <ThemePreview
+        videoId={videoId}
+        isActive={isActive}
+        setIsActive={setIsActive}
+        themeId={theme.id}
+        setResponse={setResponse}
+        themeCategory={parseInt(themeCategory)}
+      />
       <div className={styles.name}>
         {theme?.name}
       </div>
-      <div className={styles.img}
+      <div className={styles.img} onClick={() => { setIsActive(!isActive) }}
         style={{
           backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`, backgroundSize: 'cover',
           backgroundPosition: 'center center',
@@ -74,7 +84,7 @@ function ThemeContainer({ theme, userInfo, setResponse, isSearched, isSaved, the
         </div>
         <div>
           <ThemeCategoryBtn
-            themeId={theme?.id}
+            themeId={theme.id}
             setResponse={setResponse}
             themeCategory={parseInt(themeCategory)}
           />

@@ -38,7 +38,8 @@ function ThemesContainer({
     })
 
     setThemesEl(newThemes.map((theme, i) => {
-      const {description, name} = theme;
+      const {description, name, video_id} = theme;
+      console.log(theme);
       const tagsArr = theme.tags === "" ? [] : theme.tags.split(",");
       const isSearched = ((description + name + tags).includes(searchQuery) || searchQuery === "") && (tagsArr.some(element => tags.includes(element)) || !tags.length);
       const savedIndex = userThemeIds.indexOf(theme.id);
@@ -52,6 +53,7 @@ function ThemesContainer({
           setResponse={setResponse}
           isSaved={savedIndex >= 0}
           themeCategory={themeCategory}
+          videoId={video_id}
         />
       )
     }));
