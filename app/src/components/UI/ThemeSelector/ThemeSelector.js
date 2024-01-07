@@ -3,6 +3,7 @@ import { AllCategories, AllThemes } from "../../../utils/Themes";
 import CustomInput from "../CustomInput/CustomInput";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
+import ThemePreview from "../ThemePreview/ThemePreview";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

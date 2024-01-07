@@ -28,9 +28,9 @@ function FullScreenBtn() {
   return (
     <div className={styles.fullScreenBtn} onClick={toggleFullscreen}>
       {isFullScreen ? (
-        <FontAwesomeIcon icon={faDownLeftAndUpRightToCenter} />
+        <FontAwesomeIcon className={styles.icon} icon={faDownLeftAndUpRightToCenter} />
       ) : (
-        <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+        <FontAwesomeIcon className={styles.icon} icon={faUpRightAndDownLeftFromCenter} />
       )}
     </div>
   );

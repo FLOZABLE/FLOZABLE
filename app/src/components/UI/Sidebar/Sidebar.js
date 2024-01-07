@@ -9,6 +9,8 @@ import {
   faPeopleGroup,
   faShop,
   faHandFist,
+  faPencil,
+  faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
@@ -129,12 +131,28 @@ function Sidebar({
           >
             <Link to="/dashboard/themes" className={styles.navItem}>
               <div className={styles.icon}>
-              <FontAwesomeIcon icon={faShop} />
+                <FontAwesomeIcon icon={faShop} />
               </div>
               <p className={styles.navText} data-text="Themes">
                 Themes
               </p>
             </Link>
+          </div>
+        </li>
+        <li>
+          <div className={styles.studyOption}>
+            <div
+              className={styles.navItemWrapper}
+            >
+              <Link to="/dashboard/study" className={styles.navItem}>
+                <div className={styles.icon}>
+                  <FontAwesomeIcon icon={faPencil} />
+                </div>
+                <p className={styles.navText} data-text="Study">
+                  Study
+                </p>
+              </Link>
+            </div>
           </div>
         </li>
         {/* <li>
