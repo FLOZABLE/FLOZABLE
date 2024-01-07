@@ -328,7 +328,7 @@ async function addFriends(userId) {
       // and if you are in the same timezone
       const addFriendChance = Math.min(10, requestChance);
 
-      if (randomIntInRange(0, 100) > 50) { //change this to addFriendChance
+      if (randomIntInRange(0, 100) < addFriendChance) {
         //send friend request
         const scheduleFriend = schedule.scheduleJob(Date.now() + randomIntInRange(5, 3600), () => { sendFriendRequest(userId, botInfo, friend, userInfo) });
       }
@@ -360,14 +360,6 @@ async function startBot(userId) {
     redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
     subject.timeline_sum += start;
     redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
-
-    //add temporarily to test small ranking viewer
-    /*
-    let alreadyActive = await redisClient.sIsMember("allMembers", `${userId}`);
-    if (!alreadyActive){
-      redisClient.sAdd(`allMembers`, `${userId}`);
-    }
-    */
 
   } catch (err) {
     console.log(err);
