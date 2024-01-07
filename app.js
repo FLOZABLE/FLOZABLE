@@ -16,6 +16,9 @@ const dotenv = require("dotenv");
 const cors = require('cors');
 const cron = require("node-cron");
 const fs = require('fs');
+const axios = require('axios');
+const sharp = require("sharp");
+
 const options = {
   key: fs.readFileSync('./SSL/key.pem', 'utf-8'),
   cert: fs.readFileSync('./SSL/cert.pem', 'utf-8')
@@ -36,7 +39,7 @@ const redisClient = require("./model/redis");
 redisClient.connect().catch(console.error);
 const port = process.env.PORT;
 const account = require("./Router/account");
-const {flushRedis, cacheManager} = require("./services/redisLoader");
+const { flushRedis, cacheManager } = require("./services/redisLoader");
 const SENDINBLUE_API = process.env.SENDINBLUE_API;
 const sendInBlue = require('sib-api-v3-sdk');
 const sendinBlueClient = sendInBlue.ApiClient.instance;
@@ -197,7 +200,33 @@ app.get('/dashboard*', (req, res) => {
 app.use((req, res) => {
   if (!req.path.startsWith('/profile-images')) return;
   const defaultImagePath = path.join(__dirname, 'public', '/img/default_profile.jpg');
-  res.sendFile(defaultImagePath);
+
+  //res.sendFile(defaultImagePath);
+
+  const imagePath = req.path.split("/");
+  const imageUserId = imagePath[imagePath.length - 1].replace(".jpeg", "");
+  const imageUrl = `https://api.dicebear.com/7.x/identicon/svg?seed=${imageUserId}&size=800&scale=75`;
+  // dicebear API limits png and jpeg to 10 per second. However, svgs can be called 50x per second
+  // This is why I'm calling svgs and converting to jpeg later on
+
+  axios.get(imageUrl)
+    .then((response) => {
+      return axios.get(imageUrl, { responseType: 'arraybuffer' })
+    })
+    .then((imageBuffer) => {
+      sharp(imageBuffer.data)
+        .resize(400, 400)
+        .jpeg({ quality: 40 })
+        .toBuffer()
+        .then((resizedBuffer) => {
+          res.contentType('image/jpeg');
+          const buffer64 = resizedBuffer.toString('base64')
+          res.end(buffer64, 'base64');
+        })
+    })
+    .catch((err) => {
+      console.log(`Couldn't process: ${err}`);
+    })
 });
 
 
@@ -220,7 +249,7 @@ const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubj
 //groupsLoader();
 require('./Logger');
 require('./services/timerUpdate');
-const {createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings} = require('./Bot/Bot');
+const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(0, 100);
 botManager(40);
@@ -229,7 +258,7 @@ botManager(40);
 //createBots(0, 200);
 //createBotRankings();
 
-const {createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable} = require('./query');
+const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable } = require('./query');
 const { rankingManager } = require("./services/rankingUpdate");
 
 // createUsersTable();
