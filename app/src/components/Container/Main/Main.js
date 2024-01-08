@@ -55,8 +55,6 @@ function Main({
       .catch((error) => console.error(error));
   }, [subjects]);
 
-  console.log('ddd', myGroups)
-
   return (
     <div className={styles.MainContainer}>
       <GroupPwModal
@@ -105,8 +103,8 @@ function Main({
               viewMode={"timeGridDay"}
               subjects={subjects}
               setPlans={setPlans}
-              mode={"study"}
               setIsAddPlanModal={setIsAddPlanModal}
+              mode={"planner"}
             />
             <Link to="/dashboard/planner">
               <button className={styles.toStatsBtn}>View Plans</button>
@@ -119,14 +117,14 @@ function Main({
             <AIRecommendation
             />
           </div>
-          <div className={styles.box}>
+          {/* <div className={styles.box}>
             <div className={styles.title}>
               <p>Activity Viewer</p>
             </div>
             <ActivityViewer
               subjects={subjects}
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

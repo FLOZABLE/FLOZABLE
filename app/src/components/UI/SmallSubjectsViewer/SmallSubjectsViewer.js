@@ -4,14 +4,14 @@ import plugin from "chartjs-plugin-datalabels";
 import { colorsList } from "../../../constant";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import DoughnutChart from "../DoughnutChart";
+import PieChart from "../PieChart";
 
 function SmallSubjectsViewer({ subjects }) {
 
   return (
     <div className={styles.SmallSubjectsViewer}>
       {subjects &&  subjects.daily && subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1] ?
-        <DoughnutChart
+        <PieChart
           labels={subjects.map((subject) => subject.name)}
           datasets={[
             {

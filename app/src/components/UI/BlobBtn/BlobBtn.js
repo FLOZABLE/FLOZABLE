@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./BlobBtn.module.css";
 
-function BlobBtn({ setClicked, name, delay, color1 = "#fff", color2 = "#ecbd00", opt = 0 }) {
+function BlobBtn({ setClicked, name, delay = -1, color1 = "#fff", color2 = "#ecbd00", opt = 0 }) {
   const handleClick = () => {
     setClicked(true);
     if (!delay || delay !== -1) {

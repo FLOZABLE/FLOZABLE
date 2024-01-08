@@ -75,15 +75,12 @@ function EventModal({
             setEvents(updatedEvents);
           }
           setIsAddPlanModal(false);
-
-          //clear new plan info from modal
-          setTitle("");
-          setDescription("");
-          setPriority(50);
         }
       })
       .catch((error) => console.error(error));
   };
+
+
 
   useEffect(() => {
     if (isAddPlanModal && isAddPlanModal.id) {
@@ -137,21 +134,25 @@ function EventModal({
       setEvents(newEvents);
     } else if (isAddPlanModal) {
       //new event
+      console.log('new')
       const id = generateRandomId(10);
       setId(id);
+      setTitle("");
+      setDescription("");
+      setPriority(50);
       const newEvents = [
         ...events,
         {
-          title,
+          title: "",
           start,
           end,
-          description,
+          description : "",
           repeat,
           subject,
           notification,
-          priority,
-          saved,
-          completed,
+          priority: 50,
+          saved: false,
+          completed: false,
           id,
         },
       ];
@@ -164,7 +165,7 @@ function EventModal({
           updatedEvents.splice(eventIndex, 1);
           setEvents(updatedEvents);
         }
-      }
+      };
     }
   }, [isAddPlanModal]);
 
@@ -221,7 +222,7 @@ function EventModal({
             <input
               type="text"
               placeholder="Enter title"
-              defaultValue={title}
+              value={title}
               onChange={(e) => {
                 setTitle(e.target.value);
               }}

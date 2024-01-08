@@ -55,7 +55,6 @@ function GroupsGen({
 
   useEffect(() => {
     if (!userInfo) return;
-    console.log(',ddd', myGroups)
     setOtherGroupsEl(
       [...groups].map((group, i) => {
         if (maxGroups !== -1 && i > maxGroups) {
