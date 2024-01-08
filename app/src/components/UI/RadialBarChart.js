@@ -67,7 +67,7 @@ function RadialBarChart({ series, colors = colorsList, selected, setSelected }) 
                     if (index === null) return;
                     const selected = event.srcElement.getAttribute("selected") === "true";
                     console.log(selected)
-                    if (!selected) {
+                    if (selected) {
                       setSelected(-1);
                     } else {
                       setSelected(parseInt(index));

@@ -132,3 +132,20 @@
     font-size: 20px;
   }
 }
+
+@media (max-height: 800px) {
+  .EventModal {
+    height: calc(100% - 300px);
+    overflow: hidden;
+  }
+
+  .EventModal .container {
+    padding-top: 10px;
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100% - 20px);
+  }
+}

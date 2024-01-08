@@ -2,14 +2,14 @@ import styles from "./MyGroupContainer.module.css";
 import { useEffect, useState } from "react";
 import { StudyPerson } from "../../../utils/svgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBullhorn, faComments, faGear, faRankingStar } from "@fortawesome/free-solid-svg-icons";
+import { faBullhorn, faCommentDots, faComments, faGear, faRankingStar } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import MembersContainer from "../MembersContainer/MembersContainer";
 import { socket } from "../../../socket";
 import { mediaSocket } from "../../../mediaSocket";
 import GroupRanking from "../GroupRanking/GroupRanking";
 
-function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
+function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal}) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -50,8 +50,10 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam }) {
               {members.length}
             </p>
           </li>
-          <li>
-            <FontAwesomeIcon icon={faBullhorn} />
+          <li onClick={() => {
+            setIsChatModal(prev => prev ? !prev : group);
+          }}>
+            <FontAwesomeIcon icon={faCommentDots} />
           </li>
           <li className={styles.showRankingModalListElement}>
             <FontAwesomeIcon icon={faRankingStar} onClick={() => {setIsGroupRankingModal(!isGroupRankingModal)}}/>

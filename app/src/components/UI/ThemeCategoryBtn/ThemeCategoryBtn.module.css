@@ -35,4 +35,11 @@
 
 .ThemeCategoryBtn .categoryDisp {
   color: #fff;
+  white-space: nowrap;
+}
+
+@media (max-width: 1400px) {
+  .ThemeCategoryBtn .categoryDisp {
+    font-size: 13px;
+  }
 }

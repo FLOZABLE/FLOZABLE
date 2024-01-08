@@ -23,6 +23,8 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
   const [readStatus, setReadStatus] = useState({});
 
   useEffect(() => {
+    if (!myGroups) return;
+
     fetch(`${serverOrigin}/chat/bring-rooms`, { method: "post" })
       .then((response) => response.json())
       .then((data) => {
@@ -33,7 +35,7 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
         }
       })
       .catch((error) => console.error(error));
-  }, []);
+  }, [myGroups]);
 
   const onMsgReceived = useCallback((roomId, msgInfo) => {
     const chatRoomIndex = chatRooms.findIndex(chatRoom => { return chatRoom.id === roomId });
@@ -242,8 +244,13 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
   useEffect(() => {
     if (!isChatModal) {
       setSelectedRoom(false);
+    } else if(isChatModal.group_id) {
+      const chatRoom = chatRooms.find(room => room.id === isChatModal.group_id);
+      if (!chatRoom) return;
+      setSelectedRoom(chatRoom);
+      setRoomName(isChatModal.name);
     }
-  }, [isChatModal]);
+  }, [isChatModal, chatRooms]);
 
   return (
     <div className={`${styles.ChatsModal} ${isChatModal ? styles.open : ''}`}>
