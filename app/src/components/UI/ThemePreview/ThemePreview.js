@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import styles from "./ThemePreview.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faDownLeftAndUpRightToCenter,
-    faUpRightAndDownLeftFromCenter,
+    faVolumeHigh,
+    faVolumeXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
 import BlobBtn from "../BlobBtn/BlobBtn"
@@ -11,9 +11,8 @@ import ThemeCategoryBtn from "../ThemeCategoryBtn/ThemeCategoryBtn";
 import Draggable from "react-draggable";
 
 function ThemePreview({ videoId, isActive, setIsActive, themeId, setResponse, themeCategory }) {
-    const [isFullScreen, setIsFullScreen] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
-    const [videoEl, setVideoEl] = useState(<div></div>)
+    const [volume, setVolume] = useState(0);
 
     const eventControl = (event) => {
         if (event.type === 'mousemove' || event.type === 'touchmove') {
@@ -25,29 +24,6 @@ function ThemePreview({ videoId, isActive, setIsActive, themeId, setResponse, th
             }, 100);
         }
     }
-
-    useEffect(() => {
-        if (isActive) {
-            setVideoEl(
-                <div className={styles.youtubeWrapper}>
-                    <div className={isActive ? '' : styles.hidden}>
-                        <YouTubePlayer
-                            height={"100vh"}
-                            width={"100vw"}
-                            videoId={videoId}
-                            volume={0}
-                            autoplay={0}
-                        />
-                    </div>
-                </div>
-            )
-        }
-        else{
-            setVideoEl(
-                <div></div>
-            )
-        }
-    }, [isActive])
 
     return (
         <div className={styles.ThemePreview}>
@@ -62,10 +38,28 @@ function ThemePreview({ videoId, isActive, setIsActive, themeId, setResponse, th
                             <button onClick={() => { if (!isDragging) { setIsActive(!isActive) } }}>
                                 Close
                             </button>
+                            <button onClick={() => { setVolume((volume + 50) % 100) }}>
+                                <FontAwesomeIcon className={styles.volumeIcon} icon={volume > 0 ? faVolumeHigh : faVolumeXmark} />
+                            </button>
                             <ThemeCategoryBtn themeId={themeId} setResponse={setResponse} themeCategory={themeCategory} />
                         </div>
                     </Draggable>
-                    {videoEl}
+                    {
+                        !isActive ?
+                            <div></div>
+                            :
+                            <div className={styles.youtubeWrapper}>
+                                <div className={isActive ? '' : styles.hidden}>
+                                    <YouTubePlayer
+                                        height={"100vh"}
+                                        width={"100vw"}
+                                        videoId={videoId}
+                                        volume={volume}
+                                        autoplay={1}
+                                    />
+                                </div>
+                            </div>
+                    }
                 </div>
             </div>
         </div>
