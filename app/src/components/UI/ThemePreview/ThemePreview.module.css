@@ -15,7 +15,7 @@
     visibility: hidden;
 }
 
-.ThemePreview .active .transitionCircle{
+.ThemePreview .active .transitionCircle {
     width: 400vw;
     height: 400vw;
     top: -200vw;
@@ -34,7 +34,7 @@
     visibility: hidden;
 }
 
-.ThemePreview .controlButtons{
+.ThemePreview .controlButtons {
     position: fixed;
     top: 5%;
     left: 41%;
@@ -47,7 +47,7 @@
     background-color: rgba(255, 255, 255, 0.234);
     padding: 15px;
     border-radius: 5px;
-}   
+}
 
 .ThemePreview .controlButtons button {
     background-color: #fd8a8a;
@@ -59,4 +59,13 @@
     width: 30%;
     padding: 5px;
     margin: 5px;
-  }
+}
+
+.ThemePreview .controlButtons .volumeIcon {
+    color: var(--gray);
+}
+
+.ThemePreview .controlButtons .volumeIcon:hover {
+    color: var(--purple);
+    cursor: pointer;
+}
