@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./PlanTimeline.module.css";
-
+import Chart from 'react-apexcharts';
 import parse from "html-react-parser";
 import {
   WritePen,
@@ -15,6 +15,7 @@ import {
 
 import CircularCheckBox from "../CircularCheckBox/CircularCheckBox";
 import { DateTime } from "luxon";
+import RadialBarChart from "../RadialBarChart";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -29,6 +30,12 @@ function PlanTimeline({
 }) {
   const [plansEl, setPlansEl] = useState([]);
   const [isPlan, setIsPlan] = useState(false);
+  const [planSeries, setPlanSeries] = useState([]);
+  const [selected, setSelected] = useState(-1);
+
+  /* useEffect(() => {
+    console.log('ddd')
+  }, [selected]) */
 
   const togglePlan = (plan) => {
     const eventIndex = plans.findIndex((planInfo) => planInfo.id === plan.id);
@@ -64,33 +71,58 @@ function PlanTimeline({
   };
 
   useEffect(() => {
+    if (!subjects.length || !plans.length) return;
+
+    const planSeries = [];
+    subjects.map(subject => {
+      const subjectPlans = plans.filter(plan => plan.subject === subject.id && isInViewRange(plan));
+      if (subjectPlans.length) {
+        const {id, icon, color, name} = subject;
+        const total = subjectPlans.length;
+        const completed = subjectPlans.filter(plan => plan.completed).length;
+        const val =  Math.floor(completed / total * 100);
+        console.log(val);
+        planSeries.push({id, icon, color, name, val, total, completed});
+      }
+    });
+    console.log(planSeries)
+    setPlanSeries(planSeries)
+  }, [subjects, plans]);
+
+  const isInViewRange = (plan) => {
+    const viewDateTime = DateTime.fromJSDate(viewDate);
+    let isInRange = false;
+
+    if (viewMode === "timeGridDay") {
+      if (
+        viewDateTime.startOf("day").toMillis() <= plan.start.getTime() &&
+        plan.start.getTime() <= viewDateTime.endOf("day").toMillis()
+      ) {
+        isInRange = true;
+      }
+    } else if (viewMode === "timeGridWeek") {
+      if (
+        viewDateTime.startOf("week").toMillis() <= plan.start.getTime() &&
+        plan.start.getTime() <= viewDateTime.endOf("week").toMillis()
+      ) {
+        isInRange = true;
+      }
+    } else {
+      if (viewDate.getMonth() === plan.start.getMonth()) {
+        isInRange = true;
+      }
+    };
+    return isInRange;
+  };
+
+  useEffect(() => {
     setIsPlan(false);
     setPlansEl(
       plans.map((plan, i) => {
         const planSubject = subjects.find((subject) => {
           return subject.id === plan.subject;
         });
-        let isInRange = false;
-        const viewDateTime = DateTime.fromJSDate(viewDate);
-        if (viewMode === "timeGridDay") {
-          if (
-            viewDateTime.startOf("day").toMillis() <= plan.start.getTime() &&
-            plan.start.getTime() <= viewDateTime.endOf("day").toMillis()
-          ) {
-            isInRange = true;
-          }
-        } else if (viewMode === "timeGridWeek") {
-          if (
-            viewDateTime.startOf("week").toMillis() <= plan.start.getTime() &&
-            plan.start.getTime() <= viewDateTime.endOf("week").toMillis()
-          ) {
-            isInRange = true;
-          }
-        } else {
-          if (viewDate.getMonth() === plan.start.getMonth()) {
-            isInRange = true;
-          }
-        }
+        const isInRange = isInViewRange(plan);
 
         if (isInRange) {
           setIsPlan(true);
@@ -222,10 +254,10 @@ function PlanTimeline({
 
   return (
     <div
-      className={`${isPlan ? styles.noPlan : ""} ${styles.PlanTimeline} ${
-        mode === "study" ? styles.studyMode : ""
-      }`}
+      className={`${isPlan ? styles.noPlan : ""} ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ""
+        }`}
     >
+      <RadialBarChart series={planSeries} selected={selected} setSelected={setSelected} />
       <h4
         onClick={() => {
           setIsAddPlanModal(true);
@@ -233,7 +265,7 @@ function PlanTimeline({
       >
         Add a New Plan
       </h4>
-      <ul>
+      <ul className={`${styles.plans} hiddenScroll`}>
         {isPlan ? (
           plansEl
         ) : (

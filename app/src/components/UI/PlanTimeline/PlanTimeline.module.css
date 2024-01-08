@@ -5,6 +5,11 @@
   overflow-x: hidden;
 }
 
+.PlanTimeline .plans {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
 .PlanTimeline .plan {
   display: flex;
   margin-bottom: 10px;
