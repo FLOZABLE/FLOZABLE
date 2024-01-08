@@ -13,6 +13,7 @@ import Draggable from "react-draggable";
 function ThemePreview({ videoId, isActive, setIsActive, themeId, setResponse, themeCategory }) {
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [videoEl, setVideoEl] = useState(<div></div>)
 
     const eventControl = (event) => {
         if (event.type === 'mousemove' || event.type === 'touchmove') {
@@ -24,6 +25,29 @@ function ThemePreview({ videoId, isActive, setIsActive, themeId, setResponse, th
             }, 100);
         }
     }
+
+    useEffect(() => {
+        if (isActive) {
+            setVideoEl(
+                <div className={styles.youtubeWrapper}>
+                    <div className={isActive ? '' : styles.hidden}>
+                        <YouTubePlayer
+                            height={"100vh"}
+                            width={"100vw"}
+                            videoId={videoId}
+                            volume={0}
+                            autoplay={0}
+                        />
+                    </div>
+                </div>
+            )
+        }
+        else{
+            setVideoEl(
+                <div></div>
+            )
+        }
+    }, [isActive])
 
     return (
         <div className={styles.ThemePreview}>
@@ -41,17 +65,7 @@ function ThemePreview({ videoId, isActive, setIsActive, themeId, setResponse, th
                             <ThemeCategoryBtn themeId={themeId} setResponse={setResponse} themeCategory={themeCategory} />
                         </div>
                     </Draggable>
-                    <div className={styles.youtubeWrapper}>
-                        <div className={isActive ? '' : styles.hidden}>
-                            <YouTubePlayer
-                                height={"100vh"}
-                                width={"100vw"}
-                                videoId={videoId}
-                                volume={0}
-                                autoplay={0}
-                            />
-                        </div>
-                    </div>
+                    {videoEl}
                 </div>
             </div>
         </div>
