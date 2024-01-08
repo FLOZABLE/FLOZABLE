@@ -14,6 +14,7 @@ function MyGroupsViewer({
   isCam,
   isMic,
   mode,
+  setIsChatModal
 }) {
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
   const [swiperEl, setSwiperEl] = useState([]);
@@ -35,6 +36,7 @@ function MyGroupsViewer({
             localStream={localStream}
             isCam={isCam}
             isMic={isMic}
+            setIsChatModal={setIsChatModal}
           />
         </SwiperSlide>
       )

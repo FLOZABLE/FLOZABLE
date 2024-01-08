@@ -33,6 +33,7 @@ function Themes({
   const [themes, setThemes] = useState([]);
   const [userThemes, setUserThemes] = useState([]);
   const [rankedThemes, setRankedThemes] = useState([]);
+  const [isThemePreview, setIsThemePreview] = useState(false);
 
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
@@ -80,7 +81,6 @@ function Themes({
     setRankedThemes(newThemes);
   }, [themes]);
 
-
   return (
     <div className={styles.Themes}>
       <CreateThemeModal
@@ -88,6 +88,11 @@ function Themes({
         setIsOpen={setIsCreateThemeModal}
         setResponse={setResponse}
         setThemes={setThemes}
+      />
+      <ThemePreview
+        isActive={isThemePreview}
+        setIsActive={setIsThemePreview}
+        setResponse={setResponse}
       />
       <StuckModal />
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
@@ -121,6 +126,15 @@ function Themes({
               className={styles.Swiper}>
               {rankedThemes.map((theme, i) => {
                 const liked = theme.likes.includes(userInfo?.user_id);
+                const userThemeIds = userThemes.map((theme) => {
+                  return theme.split(":")[1];
+                });
+                const userThemeCategories = userThemes.map((theme) => {
+                  return theme.split(":")[0];
+                });
+                const savedIndex = userThemeIds.indexOf(theme.id);
+                const themeCategory = userThemeCategories[savedIndex];
+
                 return (
                   <SwiperSlide className={styles.Slide} key={i}>
                     <RankedTheme
@@ -129,6 +143,8 @@ function Themes({
                       liked={liked}
                       setResponse={setResponse}
                       tags={tags}
+                      setIsActive={setIsThemePreview}
+                      themeCategory={themeCategory}
                     />
                   </SwiperSlide>
                 )
@@ -167,7 +183,7 @@ function Themes({
             </div>
             <div className={styles.blobWrapper}>
               <BlobBtn
-                name={"Upload template!"}
+                name={"Upload theme!"}
                 setClicked={setIsCreateThemeModal}
                 color1={"#fff"}
                 color2={"var(--pink)"}
@@ -183,6 +199,7 @@ function Themes({
             sortOpt={sortOpt}
             searchQuery={searchQuery}
             userThemes={userThemes}
+            setIsActive={setIsThemePreview}
           />
         </div>
       </div>

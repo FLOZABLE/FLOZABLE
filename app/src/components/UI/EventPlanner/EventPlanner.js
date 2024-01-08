@@ -183,6 +183,10 @@ const StyleWrapper = styled.div`
     .fc-toolbar-title {
       font-size: 20px;
     }
+
+    div.fc-view.fc-timegrid {
+      height: 100vh;
+    }
   }
 `;
 

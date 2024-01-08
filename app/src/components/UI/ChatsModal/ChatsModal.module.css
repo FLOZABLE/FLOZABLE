@@ -42,6 +42,7 @@
 
 .ChatsModal .content {
   position: relative;
+  height: 100%;
 }
 
 .ChatsModal .chatRoomsContainer {
@@ -132,7 +133,7 @@
 }
 
 .ChatsModal .chatsContainer {
-  height: 400px;
+  height: calc(100% - 100px);
   background-color: #fff;
   width: 100%;
   padding: 0px 10px;
@@ -287,8 +288,25 @@
     height: 350px;
   }
 
-  .ChatsModal .chatsContainer {
-    height: 300px;
+  .ChatsModal .chatsWrapper .inputWrapper input {
+    width: 200px;
+  }
+}
+
+
+@media (max-height: 800px) {
+  .ChatsModal {
+    height: calc(100% - 200px);
+    width: 300px;
+    bottom: 50px;
+  }
+
+  .ChatsModal.open {
+    right: 50px;
+  }
+
+  .ChatsModal .chatRoomsContainer {
+    height: calc(100% - 50px);
   }
 
   .ChatsModal .chatsWrapper .inputWrapper input {

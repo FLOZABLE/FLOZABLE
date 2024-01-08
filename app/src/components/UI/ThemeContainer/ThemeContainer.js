@@ -12,10 +12,8 @@ import ThemePreview from "../ThemePreview/ThemePreview";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ThemeContainer({ theme, userInfo, setResponse, isSearched, isSaved, themeCategory, videoId }) {
+function ThemeContainer({ theme, userInfo, setResponse, isSearched, isSaved, themeCategory, setIsActive }) {
   const [liked, setLiked] = useState(false);
-  const [savedEl, setSavedEl] = useState(<div></div>);
-  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     if (!theme || !userInfo) return;
@@ -27,18 +25,10 @@ function ThemeContainer({ theme, userInfo, setResponse, isSearched, isSaved, the
 
   return (
     <div className={`${styles.ThemeContainer} ${isSearched ? '' : styles.hidden}`}>
-      <ThemePreview
-        videoId={videoId}
-        isActive={isActive}
-        setIsActive={setIsActive}
-        themeId={theme.id}
-        setResponse={setResponse}
-        themeCategory={parseInt(themeCategory)}
-      />
       <div className={styles.name}>
         {theme?.name}
       </div>
-      <div className={styles.img} onClick={() => { setIsActive(!isActive) }}
+      <div className={styles.img} onClick={() => { setIsActive(prev => !prev ? theme : !prev) }}
         style={{
           backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`, backgroundSize: 'cover',
           backgroundPosition: 'center center',
@@ -89,7 +79,6 @@ function ThemeContainer({ theme, userInfo, setResponse, isSearched, isSaved, the
             themeCategory={parseInt(themeCategory)}
           />
         </div>
-        {savedEl}
         <GroupUrlBtn text={`https://flozable.com/groups/join/${theme?.id}`} />
       </div>
     </div>

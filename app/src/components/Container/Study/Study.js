@@ -27,6 +27,7 @@ function Study(props) {
     setIsAddSubjectModal,
     setIsAddPlanModal,
     bringSubjects,
+    setIsChatModal
   } = props;
 
   const [isTimerModal, setIsTimerModal] = useState(false);
@@ -198,6 +199,7 @@ function Study(props) {
             myTimerTotal={myTimerTotal}
             isCam={isCam}
             isMic={isMic}
+            setIsChatModal={setIsChatModal}
           />
         </div>
         <div className={styles.PlanTimelineBarWrapper}>
