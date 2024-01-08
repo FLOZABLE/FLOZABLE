@@ -7,9 +7,8 @@ function StudyModalContainer({ element, isDisp, startPos }) {
     <Draggable positionOffset={{ x: startPos.x, y: startPos.y }} nodeRef={ref}>
       <div
         ref={ref}
-        className={`${styles.StudyModalContainer} ${
-          isDisp ? styles.visible : ""
-        }`}
+        className={`${styles.StudyModalContainer} ${isDisp ? styles.visible : ""
+          }`}
       >
         <div className={styles.inner}>{element}</div>
       </div>

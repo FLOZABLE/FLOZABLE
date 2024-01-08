@@ -7,7 +7,7 @@ import ThemePreview from "../ThemePreview/ThemePreview";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ThemeSelector({ link, handleLinkInput, submit, setVideoId }) {
+function ThemeSelector({ link, handleLinkInput, submit, setVideoId, setVolume }) {
 
   const [themeCategory, setThemeCategory] = useState("");
   const [themeChoices, setThemeChoices] = useState([]);

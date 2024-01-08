@@ -63,6 +63,9 @@ function VolumeControl({ volume, setVolume }) {
     </svg>
   );
 
+
+  const handler = e => e.stopPropagation();
+
   return (
     <div
       className={`${styles.soundSliderContainer} ${styles.yourAdditionalClass}`}
@@ -80,6 +83,8 @@ function VolumeControl({ volume, setVolume }) {
         max="100"
         className={styles.soundSlider}
         onChange={handleRangeUpdate}
+        onClick={handler}
+        onMouseDown={handler}
       />
 
       <p className={styles.volume}>{volume}</p>
