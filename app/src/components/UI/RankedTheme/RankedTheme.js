@@ -10,16 +10,18 @@ import LikeBtn from "../LikeBtn/LikeBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function RankedTheme({ theme, setResponse, liked, rank }) {
+function RankedTheme({ theme, setResponse, liked, rank, setIsActive, themeCategory }) {
 
   return (
-    <div className={styles.RankedTheme}
-    >
+    <div className={styles.RankedTheme}>
       <div className={styles.img}
         style={{
           backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`, backgroundSize: 'cover',
           backgroundPosition: 'center center',
           backgroundRepeat: 'no-repeat',
+        }}
+        onClick={() => {
+          setIsActive(theme);
         }}
       >
       </div>
@@ -66,6 +68,7 @@ function RankedTheme({ theme, setResponse, liked, rank }) {
           <ThemeCategoryBtn
             themeId={theme?.id}
             setResponse={setResponse}
+            themeCategory={parseInt(themeCategory)}
           />
         </div>
         <GroupUrlBtn text={`https://flozable.com/groups/join/${theme?.id}`} />

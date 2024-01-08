@@ -343,7 +343,6 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
               />
               <Groups
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -360,6 +359,7 @@ function App() {
                 setLikedGroups={setLikedGroups}
                 setResponse={setResponse}
                 bringGroups={bringGroups}
+                setIsChatModal={setIsChatModal}
               />
               {/* <Footer /> */}
             </div>
@@ -387,6 +387,8 @@ function App() {
                 myGroups={myGroups}
                 setResponse={setResponse}
                 bringSubjects={bringSubjects}
+                isChatModal={isChatModal}
+                setIsChatModal={setIsChatModal}
               />
             </div>
           }

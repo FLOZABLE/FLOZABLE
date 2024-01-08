@@ -20,7 +20,8 @@ function Groups({
   setResponse,
   isSidebarOpen,
   isSidebarHovered,
-  bringGroups
+  bringGroups,
+  setIsChatModal
 }) {
 
   const [tags, setTags] = useState([]);
@@ -82,6 +83,7 @@ function Groups({
                 myGroups={myGroups}
                 userInfo={userInfo}
                 myTimerTotal={myTimerTotal}
+                setIsChatModal={setIsChatModal}
               />
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>
