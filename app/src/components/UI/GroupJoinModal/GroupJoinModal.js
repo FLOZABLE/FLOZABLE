@@ -73,6 +73,9 @@ function GroupJoinModal({ groups, userInfo, isSidebarHovered, isSidebarOpen, set
             .then((response) => response.json())
             .then((data) => {
                 setResponse(data);
+                if (data.success){
+                    window.location.pathname = "/dashboard/groups";
+                }
             })
             .catch((error) => console.error(error));
     }
