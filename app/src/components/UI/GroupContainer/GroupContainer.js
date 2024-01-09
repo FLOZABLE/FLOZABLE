@@ -8,7 +8,9 @@ import GroupMemCounter from "../GroupMemCounter/GroupMemCounter";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
 import { Link } from "react-router-dom";
 
-function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, myGroups }) {
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
+function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, myGroups, viewOnly = false }) {
   const [groupEl, setGroupEl] = useState(null);
 
   useEffect(() => {
@@ -25,9 +27,11 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
     };
 
     let joined = false;
-    if (myGroups && type && (myGroups.find(group => group.group_id === group_id) || userInfo.groups.includes(group_id))) {
-      joined = true;
-    };
+    if (!viewOnly) {
+      if (myGroups && type && (myGroups.find(group => group.group_id === group_id) || userInfo.groups.includes(group_id))) {
+        joined = true;
+      }
+    }
 
     setGroupEl(
       <div
@@ -103,14 +107,14 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
                 Go study session
               </Link> : 'Join'}
             </button> */}
-            {!joined ? <button
+            {!joined && !viewOnly ? <button
               onClick={() => {
                 joinGroup(groupInfo);
               }}
             >
               Join
             </button> : null}
-            <GroupUrlBtn text={`https://flozable.com/groups/join/${group_id}`} />
+            <GroupUrlBtn text={`https://${serverOrigin}/dashboard/groups?joinId=${group_id}`} />
           </div>
         </div>
       </div>
