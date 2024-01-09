@@ -14,9 +14,11 @@ function MyGroupsViewer({
   isCam,
   isMic,
   mode,
-  setIsChatModal
+  setIsChatModal,
+  selectedGroupIndex,
+  setSelectedGroupIndex,
 }) {
-  const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
+  //const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
   const [swiperEl, setSwiperEl] = useState([]);
   const [localStream, setLocalStream] = useState(null);
 

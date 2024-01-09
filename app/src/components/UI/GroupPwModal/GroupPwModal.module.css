@@ -4,8 +4,10 @@
   z-index: 3;
   background-color: #fff;
   overflow: hidden;
+  overflow-y: scroll;
   border-radius: 30px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  max-height: 60vh;
 }
 
 .GroupPwModal .header {
@@ -118,4 +120,11 @@
 .GroupPwModal .formGroup:focus-within>span {
   color: #fff;
   background: var(--pink);
+}
+
+.GroupPwModal .joinGroupDescription {
+  width: 50%;
+  position: relative;
+  left: 25%;
+  margin-top: 15px;
 }

@@ -29,7 +29,6 @@ import Friends from "./components/Container/Friends/Friends";
 import { filterGroups } from "../src/utils/Tool";
 import Themes from "./components/Container/Themes/Themes";
 import ChallengeRooms from "./components/Container/ChallengeRooms/ChallengeRooms";
-import GroupJoinModal from "./components/UI/GroupJoinModal/GroupJoinModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -642,39 +641,7 @@ function App() {
             </div>
           }
         />
-        <Route
-          path="/dashboard/groups/join/*"
-          element={
-            <div>
-              <Sidebar
-                isSidebarOpen={isSidebarOpen}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                isSidebarHovered={isHovered}
-              />
-              <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-              />
-              <GroupJoinModal
-                groups={groups}
-                userInfo={userInfo}
-                setResponse={setResponse}
-                isSidebarHovered={isHovered}
-                isSidebarOpen={isSidebarOpen}
-              />
-            </div>
-          }
-        />
-      </Routes>
+        </Routes>
     </Router>
   );
 }

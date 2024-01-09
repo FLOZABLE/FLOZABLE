@@ -30,6 +30,8 @@ function Groups({
   const [joinTarget, setJoinTarget] = useState(null);
   const [myTimerTotal, setMyTimerTotal] = useState(0);
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
+  const [joinByLink, setJoinByLink] = useState(false);
+  const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
 
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
@@ -51,6 +53,20 @@ function Groups({
     bringGroups();
   }, [userInfo]);
 
+
+  useEffect(() => {
+    const pathName = window.location.href.split('=');
+    const selectedGroupId = pathName[pathName.length - 1];
+
+    otherGroups.map((group) => {
+      if (group.group_id === selectedGroupId) {
+        setJoinTarget({ ...group });
+        setIsGroupPwModal(true);
+        setJoinByLink(true);
+      }
+    });
+  }, [otherGroups]);
+
   return (
     <div className={styles.GroupsContainer}>
       <StuckModal />
@@ -68,6 +84,10 @@ function Groups({
         isGroupPwModal={isGroupPwModal}
         joinTarget={joinTarget}
         setJoinGroupResponse={setResponse}
+        joinByLink={joinByLink}
+        setJoinByLink={setJoinByLink}
+        userInfo={userInfo}
+        setSelectedGroupIndex={setSelectedGroupIndex}
       />
       <div
         className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
@@ -84,6 +104,8 @@ function Groups({
                 userInfo={userInfo}
                 myTimerTotal={myTimerTotal}
                 setIsChatModal={setIsChatModal}
+                selectedGroupIndex={selectedGroupIndex}
+                setSelectedGroupIndex={setSelectedGroupIndex}
               />
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>
@@ -124,6 +146,7 @@ function Groups({
                   setJoinGroupResponse={setResponse}
                   setIsGroupPwModal={setIsGroupPwModal}
                   setJoinTarget={setJoinTarget}
+                  setJoinByLink={setJoinByLink}
                   searchQuery={searchQuery}
                   userInfo={userInfo}
                   queryTags={tags}
