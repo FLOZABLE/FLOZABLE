@@ -116,19 +116,22 @@ Router.post('/join/:id', async (req, res) => {
   autoSignin(req, res, (async() => {
     const groupId = req.params.id;
     const userId = req.session.user_id;
-    console.log(groupId, req.body);
     const connection = pool.promise();
     try {
-      let [[groupInfo]] = await connection.query(`SELECT password, salt, visibility, max_members, name from \`groups\` where group_id = ?`, [groupId]);
-  
+      const [[groupInfo]] = await connection.query(`SELECT password, salt, visibility, max_members, members, name from \`groups\` where group_id = ?`, [groupId]);
+      if (!groupInfo) return res.send({success: false, reason: `Group does not exist`});
+
+      if (groupInfo.members.includes(userId)) return res.send({success: false, reason: 'Already Joined'});
+
       if (groupInfo.visibility) {
         await connection.query(
           `UPDATE users SET \`groups\` = CASE
             WHEN \`groups\` = '' THEN ?
+            WHEN \`groups\` LIKE ? THEN \`groups\`
             ELSE CONCAT(\`groups\`, ',', ?)
             END
             WHERE user_id = ?`,
-          [groupId, groupId, userId]
+          [groupId, `%${groupId}%`, groupId, userId]
         );
   
         await connection.query(
@@ -150,10 +153,11 @@ Router.post('/join/:id', async (req, res) => {
           await connection.query(
             `UPDATE users SET \`groups\` = CASE
               WHEN \`groups\` = '' THEN ?
+              WHEN \`groups\` LIKE ? THEN \`groups\`
               ELSE CONCAT(\`groups\`, ',', ?)
               END
               WHERE user_id = ?`,
-            [groupId, groupId, userId]
+            [groupId, `%${groupId}%`, groupId, userId]
           );
   
           await connection.query(

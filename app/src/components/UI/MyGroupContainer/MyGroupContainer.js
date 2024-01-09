@@ -7,13 +7,12 @@ import { Link } from "react-router-dom";
 import MembersContainer from "../MembersContainer/MembersContainer";
 import { socket } from "../../../socket";
 import { mediaSocket } from "../../../mediaSocket";
-import GroupRanking from "../GroupRanking/GroupRanking";
+import GroupRanking from "../GroupRankingModal/GroupRankingModal";
 
-function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal}) {
+function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal, setIsGroupRankingModal}) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
-  const [isGroupRankingModal, setIsGroupRankingModal] = useState(false);
 
   useEffect(() => {
     if (!group || !isFocus) return;
@@ -22,15 +21,11 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
     setName(name);
     socket.emit('changeGroup', group.group_id);
     mediaSocket.emit('changeGroup', group.group_id);
+    setIsGroupRankingModal(false);
   }, [group, isFocus]);
 
   return (
     <div className={styles.MyGroupContainer}>
-      <GroupRanking
-        groupMembers={members}
-        isGroupRankingModal={isGroupRankingModal}
-        setIsGroupRankingModal={setIsGroupRankingModal}
-      />
       <div className={styles.name}>
         <Link to="/dashboard/study">{name}</Link>
       </div>
@@ -51,12 +46,12 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
             </p>
           </li>
           <li onClick={() => {
-            setIsChatModal(prev => prev ? !prev : group);
+            setIsChatModal(prev => !prev);
           }}>
             <FontAwesomeIcon icon={faCommentDots} />
           </li>
           <li className={styles.showRankingModalListElement}>
-            <FontAwesomeIcon icon={faRankingStar} onClick={() => {setIsGroupRankingModal(!isGroupRankingModal)}}/>
+            <FontAwesomeIcon icon={faRankingStar} onClick={() => {setIsGroupRankingModal(prev => !prev ? members : false)}}/>
           </li>
         </ul>
         {/* <div className={styles.right}>
