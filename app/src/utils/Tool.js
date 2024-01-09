@@ -3,6 +3,7 @@ import ct from 'countries-and-timezones';
 function filterGroups(userInfo, groups) {
   const userGroups = [];
   const otherGroups = [];
+  const myOwnedGroups = [];
   const userGroupIds = userInfo.groups === "" ? [] : userInfo.groups.split(",");
   groups.map(group => {
     if (userGroupIds.includes(group.group_id)) {
@@ -10,9 +11,13 @@ function filterGroups(userInfo, groups) {
     } else {
       otherGroups.push(group);
     };
+
+    if (group.leader == userInfo.user_id){
+      myOwnedGroups.push(group);
+    }
   });
 
-  return { userGroups, otherGroups };
+  return { userGroups, otherGroups, myOwnedGroups };
 };
 
 function getCountryCode(timezone) {
