@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./Study.module.css";
 import MyGroupsViewer from "../../UI/MyGroupsViewer/MyGroupsViewer";
 import YouTubePlayer from "../../UI/YouTubePlayer/YouTubePlayer";
@@ -59,6 +59,8 @@ function Study(props) {
   const [repeat, setRepeat] = useState(0);
   const [priority, setPriority] = useState(50);
   const [notification, setNotification] = useState(-1);
+
+  const groupsViewerRef = useRef(null);
 
   const handleLinkInput = (e) => {
     setLink(e.target.value);
@@ -200,6 +202,7 @@ function Study(props) {
             isCam={isCam}
             isMic={isMic}
             setIsChatModal={setIsChatModal}
+            groupsViewerRef={groupsViewerRef}
           />
         </div>
         <div className={styles.PlanTimelineBarWrapper}>

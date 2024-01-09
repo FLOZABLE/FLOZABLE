@@ -16,10 +16,9 @@ function MyGroupsViewer({
   isMic,
   mode,
   setIsChatModal,
-  selectedGroupIndex,
-  setSelectedGroupIndex,
+  groupsViewerRef
 }) {
-  //const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
+  const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
   const [swiperEl, setSwiperEl] = useState([]);
   const [localStream, setLocalStream] = useState(null);
   const [isGroupRankingModal, setIsGroupRankingModal] = useState(false);
@@ -73,6 +72,7 @@ function MyGroupsViewer({
             const { realIndex, snapIndex, activeIndex } = swiperCore;
             setSelectedGroupIndex(realIndex);
           }}
+          ref={groupsViewerRef}
         >
           {swiperEl}
         </Swiper>
