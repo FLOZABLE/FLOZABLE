@@ -498,6 +498,7 @@ async function deleteBots() {
 async function createGroups(startIndex, length) {
   const connection = pool.promise();
   const [bots] = await connection.query(`SELECT user_id, groups FROM users WHERE type = -1`);
+  console.log("Starting Groups Generation");
   for (let i = startIndex; i < length; i++) {
     const groupId = generateRandomId(8);
     const groupData = groupsData[i];
@@ -566,6 +567,7 @@ async function createGroups(startIndex, length) {
     }
     connection.query('INSERT INTO chatrooms set ?', roomInfo);
   };
+  console.log("Groups Generation Done")
 };
 
 async function randomFriend(min, max) {
