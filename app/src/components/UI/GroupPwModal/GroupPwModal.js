@@ -21,7 +21,7 @@ function GroupPwModal({
   joinByLink,
   setJoinByLink,
   userInfo,
-  setSelectedGroupIndex,
+  groupsViewerRef
 }) {
   const [pw, setPw] = useState("");
   const [groupDesc, setGroupDesc] = useState(<div></div>);
@@ -71,7 +71,9 @@ function GroupPwModal({
             }
           );
           setMyGroups((myGroups) => { return [...myGroups, joinTarget] });
-          setSelectedGroupIndex(myGroups.length);
+          setTimeout(() => {
+            groupsViewerRef.current.swiper.slideTo(myGroups.length);
+          }, 1000);
         }
       })
       .catch((error) => console.error(error));

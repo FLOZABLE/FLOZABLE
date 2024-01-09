@@ -153,12 +153,21 @@ useEffect(() => {
   }, [isCam, isMic]);
 
   useEffect(() => {
-    if (!userInfo) return;
+    if (!userInfo || !isFocus) return;
     const studyingMembers = [];
-    setMembersEl(members.map((memberInfo, i) => {
-      if (memberInfo.activeSubject.id) {
-        studyingMembers.push(memberInfo);
-      };
+    const newMembers = JSON.parse(JSON.stringify(members));
+    newMembers.map((member, i) => {
+      if (member.activeSubject.id) {
+        newMembers.splice(i, 1);
+        studyingMembers.push(member);
+      }
+    });
+
+    newMembers.sort((a, b) => parseInt(b.totalTime) - parseInt(a.totalTime));
+    const now = Math.floor(new Date().getTime() / 1000);
+    studyingMembers.sort((a, b) => parseInt(b.totalTime) + now - parseInt(b.activeSubject.time) - (parseInt(a.totalTime) + now - parseInt(a.activeSubject.time)))
+    const totalMembers = studyingMembers.concat(newMembers);
+    setMembersEl(totalMembers.map((memberInfo, i) => {
       if (userInfo.user_id === memberInfo.user_id) {
         return (
           <MyEl 

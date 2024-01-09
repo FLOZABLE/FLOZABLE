@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTags } from "@fortawesome/free-solid-svg-icons";
 import StuckModal from "../../UI/StuckModal/StuckModal";
@@ -31,7 +31,8 @@ function Groups({
   const [myTimerTotal, setMyTimerTotal] = useState(0);
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
   const [joinByLink, setJoinByLink] = useState(false);
-  const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
+
+  const groupsViewerRef = useRef(null);
 
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
@@ -87,7 +88,7 @@ function Groups({
         joinByLink={joinByLink}
         setJoinByLink={setJoinByLink}
         userInfo={userInfo}
-        setSelectedGroupIndex={setSelectedGroupIndex}
+        groupsViewerRef={groupsViewerRef}
       />
       <div
         className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
@@ -104,8 +105,7 @@ function Groups({
                 userInfo={userInfo}
                 myTimerTotal={myTimerTotal}
                 setIsChatModal={setIsChatModal}
-                selectedGroupIndex={selectedGroupIndex}
-                setSelectedGroupIndex={setSelectedGroupIndex}
+                groupsViewerRef={groupsViewerRef}
               />
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>
@@ -150,6 +150,7 @@ function Groups({
                   searchQuery={searchQuery}
                   userInfo={userInfo}
                   queryTags={tags}
+                  groupsViewerRef={groupsViewerRef}
                 />
               </div>
             </div>
