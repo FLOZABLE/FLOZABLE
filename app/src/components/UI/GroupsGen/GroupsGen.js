@@ -27,6 +27,7 @@ function GroupsGen({
   queryTags,
   type = 0,
   myGroups,
+  groupsViewerRef
 }) {
   const [otherGroupsEl, setOtherGroupsEl] = useState(null);
   const [maxGroups, setMaxGroups] = useState(-1);
@@ -46,6 +47,9 @@ function GroupsGen({
             }),
           );
           setMyGroups((myGroups) => [...myGroups, targetGroup]);
+          setTimeout(() => {
+            groupsViewerRef.current.swiper.slideTo(myGroups.length);
+          }, 1000);
         })
         .catch((error) => console.error(error));
     } else {
