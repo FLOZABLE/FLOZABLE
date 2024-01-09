@@ -7,6 +7,7 @@ import "swiper/css/navigation";
 import styles from "./MyGroupsViewer.module.css";
 import { mediaSocket } from "../../../mediaSocket";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
+import GroupRankingModal from "../GroupRankingModal/GroupRankingModal";
 
 function MyGroupsViewer({
   myGroups,
@@ -19,6 +20,7 @@ function MyGroupsViewer({
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
   const [swiperEl, setSwiperEl] = useState([]);
   const [localStream, setLocalStream] = useState(null);
+  const [isGroupRankingModal, setIsGroupRankingModal] = useState(false);
 
   useEffect(() => {
     /* mediaSocket.connect(); */
@@ -37,6 +39,7 @@ function MyGroupsViewer({
             isCam={isCam}
             isMic={isMic}
             setIsChatModal={setIsChatModal}
+            setIsGroupRankingModal={setIsGroupRankingModal}
           />
         </SwiperSlide>
       )
@@ -48,6 +51,11 @@ function MyGroupsViewer({
       className={`${styles.MyGroupsViewer} ${mode === "study" ? styles.study : ""
         }`}
     >
+      <GroupRankingModal
+        isOpen={isGroupRankingModal}
+        setIsOpen={setIsGroupRankingModal}
+        members={myGroups[selectedGroupIndex]?.members}
+      />
       {swiperEl.length ?
         <Swiper
           slidesPerView={1}
