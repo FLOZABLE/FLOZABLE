@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faLock, faXmark } from "@fortawesome/free-solid-svg-icons";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import CustomInput from "../CustomInput/CustomInput";
+import GroupContainer from "../GroupContainer/GroupContainer";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -15,9 +16,35 @@ function GroupPwModal({
   setOtherGroups,
   groups,
   setMyGroups,
+  myGroups,
   group,
+  joinByLink,
+  setJoinByLink,
+  userInfo,
+  setSelectedGroupIndex,
 }) {
   const [pw, setPw] = useState("");
+  const [groupDesc, setGroupDesc] = useState(<div></div>);
+
+  useEffect(() => {
+    if (joinByLink) {
+      setGroupDesc(
+        <div className={styles.joinGroupDescription}>
+          <GroupContainer
+            isSearched={true}
+            groupInfo={joinTarget}
+            userInfo={userInfo}
+            viewOnly={true}
+          />
+        </div>
+      );
+    }
+    else {
+      setGroupDesc(
+        <div></div>
+      );
+    }
+  }, [joinByLink])
 
   const handlePwInput = (e) => {
     setPw(e.target.value);
@@ -37,14 +64,14 @@ function GroupPwModal({
         if (data.success) {
           setIsGroupPwModal(false);
           setOtherGroups(
-            groups =>
-            {
+            groups => {
               return groups.filter((group) => {
                 return group.group_id != joinTarget.group_id;
               })
             }
           );
-          setMyGroups((myGroups) => {return [...myGroups, joinTarget]});
+          setMyGroups((myGroups) => { return [...myGroups, joinTarget] });
+          setSelectedGroupIndex(myGroups.length);
         }
       })
       .catch((error) => console.error(error));
@@ -55,25 +82,34 @@ function GroupPwModal({
       className={`${styles.GroupPwModal} modal ${isGroupPwModal ? "open" : ""}`}
     >
       <div className={styles.header}>
+        {!joinByLink ?
+          <p>&nbsp;&nbsp;{joinTarget ? joinTarget.name : ''}</p>
+          :
+          <span></span>
+        }
         <i
           onClick={() => {
+            setJoinByLink(false);
             setIsGroupPwModal(false);
           }}
         >
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
-      <div className={styles.content}>
-        <div>
-          <i>
-            <FontAwesomeIcon icon={faLock} />
-          </i>
-          <p>This is private group</p>
-        </div>
-        <div>
-          <p>Enter the password to enther this group.</p>
-        </div>
-        {/* <div className={styles.formGroup}>
+      {groupDesc}
+      {
+        (joinTarget && !joinTarget.visibility) ?
+          <div className={styles.content}>
+            <div>
+              <i>
+                <FontAwesomeIcon icon={faLock} />
+              </i>
+              <p>This is a private group</p>
+            </div>
+            <div>
+              <p>Enter the group password to join</p>
+            </div>
+            {/* <div className={styles.formGroup}>
           <span className={styles.pwIcon}>
             <i>
               <FontAwesomeIcon icon={faKey} />
@@ -87,24 +123,35 @@ function GroupPwModal({
             placeholder="Password"
           />
         </div> */}
-        <CustomInput
-          input={pw}
-          handleInput={handlePwInput}
-          handleEnter={submit}
-          icon={faKey}
-          placeHolder={"Password"}
-          type={"text"}
-        />
-        <div className={styles.submitBtnWrapper}>
-          <BlobBtn
-            name={"SUBMIT"}
-            setClicked={submit}
-            color1={"#fff"}
-            color2={"var(--pink)"}
-            delay={-1}
-          />
-        </div>
-      </div>
+            <CustomInput
+              input={pw}
+              handleInput={handlePwInput}
+              handleEnter={submit}
+              icon={faKey}
+              placeHolder={"Password"}
+              type={"text"}
+            />
+            <div className={styles.submitBtnWrapper}>
+              <BlobBtn
+                name={"SUBMIT"}
+                setClicked={submit}
+                color1={"#fff"}
+                color2={"var(--pink)"}
+                delay={-1}
+              />
+            </div>
+          </div>
+          :
+          <div className={styles.submitBtnWrapper}>
+            <BlobBtn
+              name={"JOIN"}
+              setClicked={submit}
+              color1={"#fff"}
+              color2={"var(--pink)"}
+              delay={-1}
+            />
+          </div>
+      }
     </div>
   );
 }

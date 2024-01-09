@@ -26,7 +26,7 @@ function GroupsGen({
   userInfo,
   queryTags,
   type = 0,
-  myGroups
+  myGroups,
 }) {
   const [otherGroupsEl, setOtherGroupsEl] = useState(null);
   const [maxGroups, setMaxGroups] = useState(-1);
