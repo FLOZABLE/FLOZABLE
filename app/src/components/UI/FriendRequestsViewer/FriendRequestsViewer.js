@@ -44,7 +44,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
                   backgroundRepeat: 'no-repeat',
                 }}>
               </div>
-              <p>{/* {fromName} */}{name}</p>
+              <p className={`${styles.name} overflowDot`}>{name}</p>
               <CountryViewer timezone={timezone} />
             </div>
           </Link>
@@ -77,7 +77,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
                   backgroundRepeat: 'no-repeat',
                 }}>
               </div>
-              <p>{/* {fromName} */}{name}</p>
+              <p className={`${styles.name} overflowDot`}>{name}</p>
               <CountryViewer timezone={timezone} />
             </div>
           </Link>
@@ -159,7 +159,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
           <div className={styles.line}></div>
         </div>
       </div>
-      <div className={`${styles.friendRequests} ${isIncoming ? styles.open : ''}`}>
+      <div className={`${styles.friendRequests} ${isIncoming ? styles.open : ''} hiddenScroll`}>
       {friendRequestEl.length ? friendRequestEl : <p>No incoming requests</p>}
       </div>
       <div className={`${styles.friendRequests} ${!isIncoming ? styles.open : ''}`} id={styles.outgoing}>

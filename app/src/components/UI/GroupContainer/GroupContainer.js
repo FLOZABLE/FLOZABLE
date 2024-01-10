@@ -114,7 +114,7 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
             >
               Join
             </button> : null}
-            <GroupUrlBtn text={`https://${serverOrigin}/dashboard/groups?joinId=${group_id}`} />
+            <GroupUrlBtn text={`${serverOrigin}/dashboard/groups?joinId=${group_id}`} />
           </div>
         </div>
       </div>

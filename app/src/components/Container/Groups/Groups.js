@@ -56,8 +56,10 @@ function Groups({
 
 
   useEffect(() => {
-    const pathName = window.location.href.split('=');
-    const selectedGroupId = pathName[pathName.length - 1];
+    const searchParams = new URLSearchParams(window.location.search);
+    const selectedGroupId = searchParams.get("joinId");
+
+    if(!selectedGroupId) return;
 
     otherGroups.map((group) => {
       if (group.group_id === selectedGroupId) {

@@ -77,7 +77,7 @@ function ThemeContainer({ theme, userInfo }) {
         >
           Save
         </button>
-        <GroupUrlBtn text={`https://flozable.com/groups/join/${theme?.id}`} />
+        <GroupUrlBtn text={`${serverOrigin}/dashboard/themes?id=${theme?.id}`} />
       </div>
     </div>
   );
