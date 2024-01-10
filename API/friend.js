@@ -1,5 +1,5 @@
 const express = require('express');
-const { autoSignin, generateRandomId } = require('../tool');
+const { autoSignin, generateRandomId, randomIntInRange } = require('../tool');
 const { NotificationCache, userCache, activeSubjectCache, subjectCache } = require('../services/redisLoader');
 const redisClient = require('../model/redis');
 const pool = require('../model/pool');
@@ -203,18 +203,20 @@ Router.post('/checked', async (req, res) => {
 Router.get('/recommended', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
-      const userId = req.session.user_id;
-      const userInfo = await userCache(userId);
+      const myUserId = req.session.user_id;
+      const userInfo = await userCache(myUserId);
       if (!userInfo) return;
       const { friends } = userInfo;
       const userIds = await redisClient.sMembers(`allMembers`);
       const users = [];
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 30; i++) {
         if (users.length >= 3) {
           break;
         };
-        if (!friends.includes(userIds[i]) && userIds[i] !== userId) {
-          const recommendedUserInfo = await userCache(userIds[i]);
+        const index = randomIntInRange(0, userIds.length - 1);
+        const userId = userIds[index];
+        if (!friends.includes(userId) && userId !== myUserId && !users.includes(userId)) {
+          const recommendedUserInfo = await userCache(userId);
           if (recommendedUserInfo) {
             users.push(recommendedUserInfo);
           };

@@ -75,10 +75,18 @@ function Themes({
 
   useEffect(() => {
     if (!themes) return;
+
     const newThemes = JSON.parse(JSON.stringify(themes));
     newThemes.sort((a, b) => b.likes.length - a.likes.length);
-    console.log('srot', newThemes);
     setRankedThemes(newThemes);
+    
+    const searchParams = new URLSearchParams(window.location.search);
+    const themeId = searchParams.get("id");
+    
+    if (!themeId) return;
+    const selectedTheme = themes.find(theme => theme.id === themeId);
+    if (!selectedTheme) return;
+    setIsThemePreview(selectedTheme);
   }, [themes]);
 
   return (

@@ -200,8 +200,7 @@ app.get('/dashboard*', (req, res) => {
 app.use((req, res) => {
   if (!req.path.startsWith('/profile-images')) return;
   const defaultImagePath = path.join(__dirname, 'public', '/img/default_profile.jpg');
-
-  //res.sendFile(defaultImagePath);
+  return res.sendFile(defaultImagePath);
 
   const imagePath = req.path.split("/");
   const imageUserId = imagePath[imagePath.length - 1].replace(".jpeg", "");

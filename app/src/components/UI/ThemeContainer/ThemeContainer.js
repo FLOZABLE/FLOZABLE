@@ -79,7 +79,7 @@ function ThemeContainer({ theme, userInfo, setResponse, isSearched, isSaved, the
             themeCategory={parseInt(themeCategory)}
           />
         </div>
-        <GroupUrlBtn text={`https://flozable.com/groups/join/${theme?.id}`} />
+        <GroupUrlBtn text={`${serverOrigin}/dashboard/themes?id=${theme?.id}`} />
       </div>
     </div>
   );

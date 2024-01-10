@@ -5,7 +5,7 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function FriendRequestBtn({ userInfo, setResponse }) {
+function FriendRequestBtn({ userInfo, setResponse, padding }) {
 
   const requestFriend = () => {
     fetch(`${serverOrigin}/friend/request`, {
@@ -25,7 +25,7 @@ function FriendRequestBtn({ userInfo, setResponse }) {
   return (
     <div className={styles.FriendRequestBtn}>
       <div className={styles.blobWrapper}>
-        <BlobBtn delay={-1} name={<>+<FontAwesomeIcon icon={faUser} /></>} setClicked={() => { requestFriend() }} color1={'#fff'} color2={"var(--purple)"} opt={2} />
+        <BlobBtn padding={padding} delay={-1} name={<>+<FontAwesomeIcon icon={faUser} /></>} setClicked={() => { requestFriend() }} color1={'#fff'} color2={"var(--purple)"} opt={2} />
       </div>
       <div className={styles.hoverEl}>
         <p>Become a friend with {userInfo ? userInfo.name : ''}!</p>
