@@ -34,6 +34,7 @@ path {
 function RadialBarChart({ series, colors = colorsList, selected, setSelected }) {
 
   const [ratio, setRatio] = useState("");
+  const [percentage, setPercentage] = useState("");
 
   useEffect(() => {
     if (!series) return;
@@ -53,7 +54,8 @@ function RadialBarChart({ series, colors = colorsList, selected, setSelected }) 
       total = series[selected].total;
       completed = series[selected].completed;
     };
-    setRatio(`${completed}/${total}`)
+    setRatio(`${completed}/${total}`);
+    setPercentage((Math.round(completed/total * 1000)/10) + "%");
   }, [series, selected]);
 
   return (
@@ -135,7 +137,7 @@ function RadialBarChart({ series, colors = colorsList, selected, setSelected }) 
         </div>
         <div className="viewer">
           <div className="percentage">
-            100%
+            {percentage}
           </div>
           <div className="ratio">
           {ratio}
