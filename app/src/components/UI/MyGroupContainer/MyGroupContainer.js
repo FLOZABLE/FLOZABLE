@@ -46,7 +46,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
             </p>
           </li>
           <li onClick={() => {
-            setIsChatModal(prev => !prev);
+            setIsChatModal(prev => !prev ? group : '');
           }}>
             <FontAwesomeIcon icon={faCommentDots} />
           </li>

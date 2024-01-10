@@ -85,7 +85,7 @@ function FriendGroupContainer({ groupInfo, userInfo, setJoinTarget }) {
             >
               Join
             </button>
-            <GroupUrlBtn text={`https://flozable.com/groups/join/${group_id}`} />
+            <GroupUrlBtn text={`${serverOrigin}/dashboard/groups?joinId=${group_id}`} />
           </div>
         </div>
       </div>

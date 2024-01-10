@@ -58,6 +58,8 @@
   opacity: 0;
   height: 0px;
   transition: .3s visibility ease-in-out, .3s opacity ease-in-out;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .FriendRequestsViewer .friendRequests.open {
@@ -70,6 +72,11 @@
   display: flex;
   padding: 10px;
   align-items: center;
+  position: relative;
+}
+
+.FriendRequestsViewer .friendRequests .friendRequest .name {
+  max-width: 100px;
 }
 
 .FriendRequestsViewer .friendRequest .profileImg {

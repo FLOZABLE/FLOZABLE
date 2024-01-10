@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./BlobBtn.module.css";
 
-function BlobBtn({ setClicked, name, delay = -1, color1 = "#fff", color2 = "#ecbd00", opt = 0 }) {
+function BlobBtn({ setClicked, name, delay = -1, color1 = "#fff", color2 = "#ecbd00", opt = 0, padding }) {
   const handleClick = () => {
     setClicked(true);
     if (!delay || delay !== -1) {
@@ -16,7 +16,7 @@ function BlobBtn({ setClicked, name, delay = -1, color1 = "#fff", color2 = "#ecb
         opt === 2 ? styles.opt2 : ""
       }`}
       onClick={handleClick}
-      style={{ "--color1": color1, "--color2": color2 }}
+      style={{ "--color1": color1, "--color2": color2 , padding: padding}}
     >
       {name}
       <span className={styles.blobBtnInner}>

@@ -4,6 +4,8 @@ import styles from "./RecommendedFriendsViewer.module.css";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import RefreshBtn from '../RefreshBtn/RefreshBtn';
 import FriendRequestBtn from '../FriendRequestBtn/FriendRequestBtn';
+import CountryViewer from '../CountryViewer/CountryViewer';
+import { Link } from 'react-router-dom';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -40,11 +42,13 @@ function RecommendedFriendsViewer({setResponse}) {
           setRefresh={setRefresh}
         />
       </div>
-      <ul className={styles.recommendedFriends}>
+      <div className={styles.recommendedFriends}>
         {recommendedFriends.map((user, i) => {
-          const {user_id, name} = user;
+          const {user_id, name, timezone} = user;
           return (
-            <li className={styles.recommendedFriend} key={i}>
+            <Link 
+              to={`${serverOrigin}/dashboard/user/${user_id}`}
+            className={styles.recommendedFriend} key={i}>
             <div
               className={styles.profileImg}
               style={{
@@ -55,14 +59,18 @@ function RecommendedFriendsViewer({setResponse}) {
               }}
             ></div>
             <p className={styles.name}>{name}</p>
+            <CountryViewer timezone={timezone} />
+            <div className={styles.buttons}>
             <FriendRequestBtn 
               userInfo={user}
               setResponse={setResponse}
+              padding={"3px 5px"}
             />
-          </li>
+            </div>
+          </Link>
           )
         })}
-      </ul>
+      </div>
     </div>
   );
 };
