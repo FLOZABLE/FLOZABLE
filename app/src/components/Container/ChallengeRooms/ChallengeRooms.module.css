@@ -9,7 +9,30 @@
   margin: 20px;
 }
 
-.ChallengeRooms .box .title {
+.ChallengeRooms .ChallengeIntro {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.ChallengeRooms .recommendedChallenges {
+  background-color: rgb(255, 124, 124);
+  border-radius: 30px;
+  padding: 20px;
+  margin: 20px;
+  width: 60%;
+  display: inline-block;
+}
+
+.ChallengeRooms .challengeHistory {
+  border: 1px solid black;
+  display: inline-block;
+  width: 30%;
+}
+
+.ChallengeRooms .title {
   font-size: 40px;
   font-weight: 700;
+  color: black;
+  height: 100%;
 }
