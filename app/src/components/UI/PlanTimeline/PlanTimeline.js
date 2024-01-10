@@ -31,7 +31,7 @@ function PlanTimeline({
   const [plansEl, setPlansEl] = useState([]);
   const [isPlan, setIsPlan] = useState(false);
   const [planSeries, setPlanSeries] = useState([]);
-  const [selected, setSelected] = useState(-1);
+  const [selected, setSelected] = useState(-2);
 
   /* useEffect(() => {
     console.log('ddd')

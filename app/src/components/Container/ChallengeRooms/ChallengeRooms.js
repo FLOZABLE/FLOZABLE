@@ -6,6 +6,7 @@ import ChallengeRoom from "../../UI/ChallengeRoom/ChallengeRoom.js"
 import CreateChallengeModal from "../../UI/CreateChallengeModal/CreateChallengeModal.js";
 import RecommendChallenges from "../../UI/RecommendChallenges/RecommendChallenges.js";
 import ChallengesContainer from "../../UI/ChallengesContainer/ChallengesContainer.js";
+import ChallengeHistory from "../../UI/ChallengeHistory/ChallengeHistory.js";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -74,11 +75,17 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse, userInfo
             return el;
           })
         }
-        <div className={styles.box}>
-          <div className={styles.title}>
-            Recommended challenges for {userInfo?.name}!
+        <div className={styles.challengeIntro}>
+          <div className={styles.recommendedChallenges}>
+            <div className={styles.title}>
+              Continue The Rivalry
+            </div>
+            <RecommendChallenges />
           </div>
-          <RecommendChallenges />
+          <div className={styles.challengeHistory}>
+            Your Challenges
+            <ChallengeHistory userInfo={userInfo}/>
+          </div>
         </div>
         <div className={styles.box}>
           <ChallengesContainer />

@@ -16,7 +16,7 @@ function RecommendChallenges() {
         modules={[Navigation, Autoplay]}
         navigation={true}
         spaceBetween={30}
-        slidesPerView={5}
+        slidesPerView={3}
         autoplay={{ delay: 1300, disableOnInteraction: true, reverseDirection: true }}
         speed={2000}
         loop={true}
