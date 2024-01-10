@@ -9,7 +9,7 @@ const StyleWrapper = styled.div`
   position: relative;
 }
 
-.unselected path[selected="false"] {
+.unselected :not(path[selected="true"]) {
   stroke: #f2f3f4;
 }
 
@@ -38,10 +38,12 @@ function RadialBarChart({ series, colors = colorsList, selected, setSelected }) 
   useEffect(() => {
     if (!series) return;
 
+    console.log("Set Selected to ", selected)
+
     let total = 0;
     let completed = 0;
     /* console.log(selected) */
-    if (selected === -1) {
+    if (selected < 0) {
       //total
       series.map(data => {
         total += data.total;
@@ -57,7 +59,7 @@ function RadialBarChart({ series, colors = colorsList, selected, setSelected }) 
   return (
     <StyleWrapper>
       <div className="wrapper">
-        <div className={selected === -1 ? 'unselected' : ''}>
+        <div className={selected < 0 ? '' : 'unselected'}>
           <Chart
             options={{
               chart: {
@@ -66,11 +68,13 @@ function RadialBarChart({ series, colors = colorsList, selected, setSelected }) 
                     const index = event.srcElement.getAttribute("j");
                     if (index === null) return;
                     const selected = event.srcElement.getAttribute("selected") === "true";
-                    console.log(selected)
-                    if (selected) {
+                    console.log("71", selected)
+                    if (!selected) {
                       setSelected(-1);
+                      console.log("Setting to -1");
                     } else {
                       setSelected(parseInt(index));
+                      console.log("Setting to ", parseInt(index));
                     };
                   },
                 },

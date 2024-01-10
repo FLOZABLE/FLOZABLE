@@ -48,7 +48,7 @@ function ChallengeContainer({challenge, setChallenges, challenges, setResponse})
           <p>2</p>
         </div>
         <div className={styles.description}>
-          anyone wanna math time???
+          description
         </div>
         <div className={styles.start}>
           Dec 17 4PM
