@@ -47,9 +47,11 @@ function GroupsGen({
             }),
           );
           setMyGroups((myGroups) => [...myGroups, targetGroup]);
-          setTimeout(() => {
-            groupsViewerRef.current.swiper.slideTo(myGroups.length);
-          }, 1000);
+          if (groupsViewerRef) {
+            setTimeout(() => {
+              groupsViewerRef.current.swiper.slideTo(myGroups.length);
+            }, 1000);
+          };
         })
         .catch((error) => console.error(error));
     } else {

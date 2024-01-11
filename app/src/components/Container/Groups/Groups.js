@@ -9,6 +9,7 @@ import GroupsGen from "../../UI/GroupsGen/GroupsGen";
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
 import MyGroupsViewer from "../../UI/MyGroupsViewer/MyGroupsViewer";
 import CreateGroupModal from "../../UI/CreateGroupModal/CreateGroupModal";
+import EditGroupModal from "../../UI/EditGroupModal/EditGroupModal";
 
 function Groups({
   userInfo,
@@ -31,6 +32,7 @@ function Groups({
   const [myTimerTotal, setMyTimerTotal] = useState(0);
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
   const [joinByLink, setJoinByLink] = useState(false);
+  const [isEditGroupModal, setIsEditGroupModal] = useState(false);
 
   const groupsViewerRef = useRef(null);
 
@@ -92,6 +94,11 @@ function Groups({
         userInfo={userInfo}
         groupsViewerRef={groupsViewerRef}
       />
+      <EditGroupModal 
+        setCreateGroupResponse={setResponse}
+        setIsOpen={setIsEditGroupModal}
+        isOpen={isEditGroupModal}
+      />
       <div
         className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
           }`}
@@ -108,6 +115,7 @@ function Groups({
                 myTimerTotal={myTimerTotal}
                 setIsChatModal={setIsChatModal}
                 groupsViewerRef={groupsViewerRef}
+                setIsEditGroupModal={setIsEditGroupModal}
               />
             </div>
             <div className={`${styles.container} ${styles.allGroups}`}>

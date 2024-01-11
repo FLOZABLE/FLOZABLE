@@ -9,7 +9,7 @@
   /* IE 10 and IE 11 */
   user-select: none;
   /* Standard syntax */
-  height: fit-content;
+  height: 100%;
 }
 
 .MyGroupsViewer .noGroup {
@@ -32,22 +32,9 @@
 
 
 .MyGroupsViewer .groupsWrapper {
-  height: fit-content;
+  height: 100%;
 }
 
 .MyGroupsViewer.study * {
   color: #fff !important;
-}
-
-
-.MyGroupsViewer.study .status {
-  background-color: var(--bgColor);
-}
-
-.MyGroupsViewer.study .buttons button:nth-child(1) {
-  display: none;
-}
-
-.MyGroupsViewer.study .buttons button {
-  background-color: var(--bgColor);
 }

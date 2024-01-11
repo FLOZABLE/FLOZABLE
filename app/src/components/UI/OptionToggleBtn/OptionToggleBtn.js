@@ -1,8 +1,8 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import styles from "./OptionToggleBtn.module.css";
+import { randomIntInRange } from "../../../utils/Tool";
 
-function OptionToggleBtn(props) {
-  const { value, setValue, opt1, opt2 } = props;
+function OptionToggleBtn({ value, setValue, opt1, opt2, id=0 }) {
 
   const toggleValue = useCallback(() => {
     const newVal = value === opt1.val ? opt2.val : opt1.val;
@@ -13,9 +13,9 @@ function OptionToggleBtn(props) {
     <div className={styles.OptionToggleBtn}>
       <input
         className={`${styles.tgl} ${styles.tglSkewed}`}
-        id="cb38"
+        id={id}
         type="checkbox"
-        defaultChecked={true}
+        checked={value}
         onChange={() => {
           toggleValue();
         }}
@@ -24,7 +24,7 @@ function OptionToggleBtn(props) {
         className={styles.tglBtn}
         data-tg-off={opt1.name}
         data-tg-on={opt2.name}
-        htmlFor="cb38"
+        htmlFor={id}
       ></label>
     </div>
   );
