@@ -96,7 +96,7 @@ function PlanTimelineBar({ events, subjects}) {
                     );
                   }
                 }
-                return -1;
+                return null;
               })}
             </div>
           </div>

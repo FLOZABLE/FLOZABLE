@@ -286,7 +286,7 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
       <button className={styles.toggleBtn} onClick={() => { setIsNotificationModal(!isNotificationModal) }}>
         {iconEl}
       </button>
-      <div className={styles.notifications}>
+      <div className={`${styles.notifications} customScroll`}>
         {notificationsEl}
       </div>
     </div>
