@@ -25,7 +25,7 @@ function StudyToolModalWrapper({ id, left, top, hideSourceOnDrag, children }) {
     <div
       className="box"
       ref={drag}
-      style={{ ...style, left, top }}
+      style={{ ...style, left, top, zIndex: 100 - id}}
       data-testid="box"
     >
       {children}

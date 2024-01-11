@@ -19,7 +19,7 @@
   align-items: center;
   bottom: 0px;
   right: 0px;
-  z-index: 1;
+  z-index: 99999;
 }
 
 .NotificationModal .notifications {
@@ -37,6 +37,8 @@
   opacity: 1;
   width: 400px;
   height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .NotificationModal .notifications .notification {

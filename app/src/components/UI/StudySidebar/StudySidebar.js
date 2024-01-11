@@ -20,6 +20,44 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { socket } from "../../../socket";
 
+function FullScreenBtn () {
+  const [isZoom, setIsZoom] = useState(false);
+
+  useEffect(() => {
+    if (!document.fullscreenElement && isZoom) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error("Fullscreen request failed:", err);
+      });
+    } else if (document.fullscreenElement) {
+      document.exitFullscreen().catch((err) => {
+        console.error("Exit fullscreen request failed:", err);
+      });
+    }
+  }, [isZoom]);
+
+  return (
+    <div
+    className={`${styles.studyTool} ${isZoom ? styles.clicked : ""}`}
+    onClick={() => {
+      setIsZoom((prev) => !prev);
+    }}
+  >
+    <i>
+      <FontAwesomeIcon
+        icon={
+          isZoom
+            ? faDownLeftAndUpRightToCenter
+            :  faUpRightAndDownLeftFromCenter
+        }
+      />
+    </i>
+    <div className={styles.hoverEl}>
+      Full Screen
+    </div>
+  </div>
+  )
+};
+
 function StudySidebar({
   isTimerModal,
   isPlannerModal,
@@ -51,10 +89,14 @@ function StudySidebar({
             bringSubjects();
             socket.emit('exitSession');
           }}
+          style={{zIndex: 9}}
         >
           <i>
             <FontAwesomeIcon icon={faHome} />
           </i>
+          <div className={styles.hoverEl}>
+            to Home
+          </div>
         </Link>
       ),
     },
@@ -72,6 +114,9 @@ function StudySidebar({
           <i>
             <FontAwesomeIcon icon={faHourglass} />
           </i>
+          <div className={styles.hoverEl}>
+            Timer
+          </div>
         </div>
       ),
     },
@@ -89,6 +134,9 @@ function StudySidebar({
           <i>
             <FontAwesomeIcon icon={faClipboardCheck} />
           </i>
+          <div className={styles.hoverEl}>
+            Planner
+          </div>
         </div>
       ),
     },
@@ -105,6 +153,9 @@ function StudySidebar({
           <i>
             <FontAwesomeIcon icon={faCamera} />
           </i>
+          <div className={styles.hoverEl}>
+            Cam
+          </div>
         </div>
       ),
     },
@@ -121,6 +172,9 @@ function StudySidebar({
           <i>
             <FontAwesomeIcon icon={faMicrophone} />
           </i>
+          <div className={styles.hoverEl}>
+            Mic
+          </div>
         </div>
       ),
     },
@@ -138,6 +192,9 @@ function StudySidebar({
           <i>
             <FontAwesomeIcon icon={faImage} />
           </i>
+          <div className={styles.hoverEl}>
+            Themes
+          </div>
         </div>
       ),
     },
@@ -155,6 +212,9 @@ function StudySidebar({
           <i>
             <FontAwesomeIcon icon={faVolumeHigh} />
           </i>
+          <div className={styles.hoverEl}>
+            Sound
+          </div>
         </div>
       ),
     },
@@ -172,6 +232,9 @@ function StudySidebar({
           <i>
             <FontAwesomeIcon icon={faUsers} />
           </i>
+          <div className={styles.hoverEl}>
+            View Group
+          </div>
         </div>
       ),
     },
@@ -179,27 +242,11 @@ function StudySidebar({
     {
       id: 8,
       element: (
-        <div
-          className={`${styles.studyTool} ${isZoom ? styles.clicked : ""}`}
-          onClick={() => {
-            setIsZoom((prev) => !prev);
-          }}
-        >
-          <i>
-            <FontAwesomeIcon
-              icon={
-                isZoom
-                  ? faUpRightAndDownLeftFromCenter
-                  : faDownLeftAndUpRightToCenter
-              }
-            />
-          </i>
-        </div>
+        <FullScreenBtn isZoom={isZoom} setIsZoom={setIsZoom} />
       ),
     },
   ]);
 
-  useEffect(() => { }, [isZoom]);
   const moveCard = useCallback((dragIndex, hoverIndex) => {
     setItems((prevItems) =>
       update(prevItems, {
@@ -210,6 +257,7 @@ function StudySidebar({
       }),
     );
   }, []);
+
   const renderCard = useCallback((card, index, styles) => {
     return (
       <StudyTool
@@ -222,6 +270,7 @@ function StudySidebar({
       />
     );
   }, []);
+
   return (
     <div className={styles.StudySidebar}>
       <DndProvider backend={HTML5Backend}>

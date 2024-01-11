@@ -67,7 +67,7 @@ function StudyTool({ id, element, index, moveCard }) {
     <div
       ref={ref}
       data-handler-id={handlerId}
-      style={{ opacity: isDragging ? 0 : 1 }}
+      style={{ opacity: isDragging ? 0 : 1 , zIndex: 100 - index}}
       className={`${styles.studyToolWrapper} ${
         isClicked ? styles.clicked : ""
       }`}
