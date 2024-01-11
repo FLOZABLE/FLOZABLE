@@ -10,7 +10,7 @@ import ChallengeHistory from "../../UI/ChallengeHistory/ChallengeHistory.js";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse, userInfo }) {
+function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse, userInfo, setUserInfo }) {
   const [challenges, setChallenges] = useState([]);
   const [challengesEl, setChallengesEl] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,21 +37,11 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse, userInfo
               <ChallengeRoom key={i} challengeInfo={challenge} challenges={tempChallenges} setChallenges={setChallenges} setResponse={setResponse} />
             )
           });
+          console.log(tempChallenges);
           setChallenges(tempChallenges);
-
         }
       });
   }, []);
-
-  useEffect(() => {
-    const tempEl = [];
-    challenges.map((challenge, i) => {
-      tempEl.push(
-        <ChallengeRoom key={i} challengeInfo={challenge} challenges={challenges} setChallenges={setChallenges} setResponse={setResponse} />
-      )
-    });
-    setChallengesEl(tempEl);
-  }, [challenges])
 
   return (
     <div className={styles.ChallengeRooms}>
@@ -67,6 +57,9 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse, userInfo
         end={end}
         setEnd={setEnd}
         setResponse={setResponse}
+        challenges={challenges}
+        setChallenges={setChallenges}
+        userInfo={userInfo}
       />
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <button onClick={() => { setIsModalOpen(true) }}>Create A Challenge</button>
@@ -84,11 +77,20 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse, userInfo
           </div>
           <div className={styles.challengeHistory}>
             Your Challenges
-            <ChallengeHistory userInfo={userInfo}/>
+            <ChallengeHistory userInfo={userInfo} />
           </div>
         </div>
         <div className={styles.box}>
-          <ChallengesContainer />
+          <h1>
+            Browse Challenges
+          </h1>
+          <ChallengesContainer
+            challenges={challenges}
+            setChallenges={setChallenges}
+            setResponse={setResponse}
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
+          />
         </div>
       </div>
     </div>
