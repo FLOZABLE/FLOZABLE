@@ -19,9 +19,6 @@ function SmallSubjectsViewer({ subjects }) {
               backgroundColor: colorsList,
               borderColor: colorsList,
               borderWidth: 5,
-              circumference: (ctx) => {
-                return ctx.dataset.data[0] / 12 * 270
-              },
               data: subjects.map(
                 (subject) =>
                   subject.daily.total[subject.daily.total.length - 1],

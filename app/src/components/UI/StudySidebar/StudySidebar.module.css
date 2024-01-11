@@ -32,6 +32,26 @@
   transition: color .3s ease-in-out;
 }
 
+.StudySidebar .studyTool .hoverEl {
+  position: absolute;
+  pointer-events: none;
+  top: 50px;
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
+  background-color: #000000C0;
+  color: #fff;
+  font-size: 12px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.StudySidebar .studyTool:hover .hoverEl {
+  opacity: 1;
+  visibility: visible;
+}
+
 .StudySidebar .studyTool:hover {
   box-shadow: rgba(255, 0, 0, 0.24) 0px 3px 8px;
 }
