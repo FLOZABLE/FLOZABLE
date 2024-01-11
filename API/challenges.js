@@ -164,7 +164,7 @@ Router.post('/create-challenge', async (req, res) => {
       };
       const insertChallenge = await connection.query(`INSERT INTO challengerooms SET ?`, [challengeInfo]);
 
-      res.send({ success: true, msg: `Challenge posted successfuly` });
+      res.send({ success: true, msg: `Challenge posted successfuly`, challengeId: id });
     }
     catch (error) {
       console.log(error)
@@ -188,7 +188,7 @@ Router.get('/rooms', async (req, res) => {
     }
     catch (error) {
       console.log(error)
-      res.send({ success: false, reason: 'On Error Occured' });
+      res.send({ success: false, reason: 'An Error Occured' });
     }
   }));
 });
@@ -203,7 +203,7 @@ Router.post('/join-challenge', async (req, res) => {
       const connection = pool.promise();
       const [[challengeRoom]] = await connection.query(`SELECT * from challengerooms where id = ?`, [joinId]);
 
-      if (!challengeRoom.id) {
+      if (!challengeRoom || !challengeRoom.id) {
         res.send({ success: false, reason: "Challenge Does Not Exist" });
         return;
       }

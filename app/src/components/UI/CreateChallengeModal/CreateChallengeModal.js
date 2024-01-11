@@ -19,7 +19,10 @@ function CreateChallengeModal({
   setStart,
   end,
   setEnd,
-  setResponse
+  setResponse,
+  challenges,
+  setChallenges,
+  userInfo,
 }) {
 
   const submit = () => {
@@ -50,6 +53,15 @@ function CreateChallengeModal({
         setResponse(data);
         if (data.success) {
           setIsModalOpen(false);
+          setChallenges([...challenges,
+          {
+            description,
+            host_id: userInfo.user_id,
+            id: data.challengeId,
+            name: title,
+            start_date: DateTime.fromJSDate(start).toSeconds(),
+            userInfo
+          }]);
         };
       });
   }

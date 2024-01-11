@@ -22,28 +22,19 @@ function RecommendChallenges() {
         loop={true}
         className={styles.Swiper}>
         <SwiperSlide className={styles.Slide}>
-          <ChallengeContainer />
+          <ChallengeContainer showRecord={true}/>
         </SwiperSlide>
         <SwiperSlide className={styles.Slide}>
-          <ChallengeContainer />
+          <ChallengeContainer showRecord={true} />
         </SwiperSlide>
         <SwiperSlide className={styles.Slide}>
-          <ChallengeContainer />
+          <ChallengeContainer showRecord={true} />
         </SwiperSlide>
         <SwiperSlide className={styles.Slide}>
-          <ChallengeContainer />
+          <ChallengeContainer showRecord={true} />
         </SwiperSlide>
         <SwiperSlide className={styles.Slide}>
-          <ChallengeContainer />
-        </SwiperSlide>
-        <SwiperSlide className={styles.Slide}>
-          <ChallengeContainer />
-        </SwiperSlide>
-        <SwiperSlide className={styles.Slide}>
-          <ChallengeContainer />
-        </SwiperSlide>
-        <SwiperSlide className={styles.Slide}>
-          <ChallengeContainer />
+          <ChallengeContainer showRecord={true} />
         </SwiperSlide>
       </Swiper>
 {/*       {challenges.length ?
