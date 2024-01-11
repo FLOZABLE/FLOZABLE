@@ -636,6 +636,7 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}
+                setUserInfo={setUserInfo}
                 setResponse={setResponse}
               />
             </div>
