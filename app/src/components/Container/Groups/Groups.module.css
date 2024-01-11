@@ -55,6 +55,7 @@
   box-shadow: none;
   position: relative;
   display: block;
+  height: 100vh;
 }
 
 .GroupsContainer .box .container.allGroups {
