@@ -124,13 +124,14 @@ function Header({
       }`}
     >
       <div className={styles.left}>
-        <ToggleBtn
+        {/* <ToggleBtn
           on={<p>on</p>}
           off={<p>off</p>}
           style={{ backgroundColor: "#fff" }}
           onToggle={onToggleSidebar}
           isToggled={isSidebarOpen}
-        />
+        /> */}
+        <div></div>
         <div className={styles.headerEl}>
           <div className={styles.circle}>
             <FontAwesomeIcon icon={faBook} style={{ color: "#348d50" }} />

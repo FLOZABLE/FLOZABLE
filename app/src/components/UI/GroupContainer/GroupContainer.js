@@ -42,7 +42,7 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
           className={styles.groupColor}
           style={{ backgroundColor: color }}
         ></div>
-        <div className={styles.name}>
+        <div className={`${styles.name} overflowDot`}>
           {!visibility ? (
             <i>
               <FontAwesomeIcon icon={faLock} />

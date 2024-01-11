@@ -14,6 +14,7 @@
   overflow-y: hidden;
   transition: height .3s ease-in-out;
   position: relative;
+  overflow: hidden;
 }
 
 .ColorPalette .paletteGrid.open {
@@ -174,5 +175,9 @@
 @media (max-width: 1400px) {
   .ColorPalette .header p {
     font-size: 20px;
+  }
+
+  .ColorPalette .paletteShadesItem {
+    font-size: 60%;
   }
 }

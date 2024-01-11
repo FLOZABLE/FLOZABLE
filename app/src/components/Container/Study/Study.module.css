@@ -20,8 +20,9 @@
 }
 
 .StudyContainer .myGroupsViewerWrapper {
-  margin-top: 100px;
-  display: none;;
+  margin-top: 50px;
+  display: none;
+  height: calc(100vh - 150px);
 }
 
 .StudyContainer .myGroupsViewerWrapper.open {

@@ -311,4 +311,80 @@ Router.get('/members', async (req, res) => {
   }));
 });
 
+Router.post('/modify', async (req, res) => {
+  autoSignin(req, res, (async () => {
+    const connection = pool.promise();
+    const userId = req.session.user_id;
+    try {
+      const group = req.body;
+      console.log(group);
+      const schema = {
+        type: 'object',
+        properties: {
+          group_id: {type: 'string', maxLength: 11},
+          name: { type: 'string', maxLength: 100 },
+          explanation: { type: 'string', maxLength: 100},
+          tags: { type: 'array', maxItems: 10},
+          max_members: { type: 'integer', minimum: 0, maximum: 100},
+          visibility: { type: 'integer', minimum: 0, maximum: 1},
+          password: { type: 'string', maxLength: 30},
+          color: { type: 'string', maxLength: 8},
+          goal_hr: { type: 'integer', maximum: 24},
+        },
+        required: ['group_id','name', 'explanation', 'tags', 'max_members', 'visibility', 'password', 'color', 'goal_hr'],
+        additionalProperties: false
+      };
+
+      const isValid = isValidJSON(group, schema);
+      if (!isValid) {
+        return res.send({success: false, reason: 'Wrong Information'});
+      }
+
+      const groupId = group.group_id;
+      delete group.group_id;
+
+      const groupInfo = await connection.query(`SELECT leader FROM \`groups\` WHERE group_id = ? AND leader = ?`, [groupId, userId])
+      if (!groupInfo) return res.send({success: false, reason: 'You are not the leader of this group'});
+      
+      //check name
+      /* if (!/^[a-zA-Z0-9]+$/.test(group.name) || group.name.length == 0) {
+        return res.send({ success: false, reason: 'Invalid Name (Only A-Z, a-z, and 0-9 available)' });
+      } */
+      if (!group.name.length) {
+        return res.send({ success: false, reason: 'Choose name for your study group' });
+      };
+
+      //check description
+      if (!group.explanation.length) {
+        return res.send({ success: false, reason: 'Add description for your study group' });
+      };
+
+
+      group.tags = JSON.stringify(group.tags);
+
+      if (group.password === "") {
+        delete group.password;
+      };
+  
+      try {
+        const updateGroup = await connection.query('UPDATE \`groups\` set ? WHERE group_id = ? ', [group, groupId]);
+        res.send({success: true, data: {id: groupId}, msg: `Group ${group.name} updated!`})
+      } catch(error) {
+        console.log(error)
+        res.send({ success: false, reason: 'Error' })
+      }
+    } catch(error) {
+      console.log(error)
+      res.send({success: false, reason: 'Error'})
+    } finally {
+      pool.releaseConnection(connection);
+    }
+
+
+  }), (() => {
+    req.session.retrivedProgress = req.body;
+    res.send({ success: false, reason: 'not autenticated' });
+  }))
+})
+
 module.exports = Router;

@@ -71,9 +71,11 @@ function GroupPwModal({
             }
           );
           setMyGroups((myGroups) => { return [...myGroups, joinTarget] });
-          setTimeout(() => {
-            groupsViewerRef.current.swiper.slideTo(myGroups.length);
-          }, 1000);
+          if (groupsViewerRef) {
+            setTimeout(() => {
+              groupsViewerRef.current.swiper.slideTo(myGroups.length);
+            }, 1000);
+          };
         }
       })
       .catch((error) => console.error(error));

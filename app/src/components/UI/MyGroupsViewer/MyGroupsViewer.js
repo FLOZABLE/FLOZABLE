@@ -16,7 +16,8 @@ function MyGroupsViewer({
   isMic,
   mode,
   setIsChatModal,
-  groupsViewerRef
+  groupsViewerRef,
+  setIsEditGroupModal
 }) {
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
   const [swiperEl, setSwiperEl] = useState([]);
@@ -26,6 +27,17 @@ function MyGroupsViewer({
   useEffect(() => {
     /* mediaSocket.connect(); */
   }, []);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const selectedGroupId = searchParams.get("group");
+
+    if (!groupsViewerRef || !groupsViewerRef.current || !selectedGroupId) return;
+
+    setTimeout(() => {
+      groupsViewerRef.current.swiper.slideTo(myGroups.length);
+    }, 1000);
+  }, [myGroups, groupsViewerRef]);
 
   useEffect(() => {
     setSwiperEl(myGroups.map((group, i) => {
@@ -41,11 +53,13 @@ function MyGroupsViewer({
             isMic={isMic}
             setIsChatModal={setIsChatModal}
             setIsGroupRankingModal={setIsGroupRankingModal}
+            setIsEditGroupModal={setIsEditGroupModal}
+            mode={mode}
           />
         </SwiperSlide>
       )
     }));
-  }, [myGroups, selectedGroupIndex, localStream, isMic, isCam]);
+  }, [myGroups, selectedGroupIndex, localStream, isMic, isCam, mode]);
 
   return (
     <div

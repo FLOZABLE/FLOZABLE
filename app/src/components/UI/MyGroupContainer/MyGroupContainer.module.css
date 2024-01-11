@@ -1,6 +1,6 @@
 .MyGroupContainer {
   position: relative;
-  height: calc(100vh - 250px);
+  height: 100%;
   padding: 5px;
 }
 
@@ -19,7 +19,7 @@
 }
 
 .MyGroupContainer .membersWrapper {
-  height: calc(100% - 200px);
+  height: calc(100% - 180px);
   overflow-y: auto;
 }
 
@@ -74,31 +74,15 @@
   margin: 0px 10px;
 }
 
-.MyGroupContainer.study * {
-  color: #fff !important;
-}
-
-.MyGroupContainer.study .status {
-  background-color: var(--bgColor);
-}
-
-.MyGroupContainer.study .buttons button:nth-child(1) {
-  display: none;
-}
-
-.MyGroupContainer.study .buttons button {
-  background-color: var(--bgColor);
-}
-
 .MyGroupContainer li:hover{
   cursor: pointer;
 }
 
-@media (max-width: 1400px) {
-  .MyGroupContainer{
-    height: 500px;
-  }
+.MyGroupContainer.study .buttons {
+  display: none;
+}
 
+@media (max-width: 1400px) {
   .MyGroupContainer .name a {
     font-size: 30px;
   }

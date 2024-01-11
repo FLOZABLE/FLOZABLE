@@ -2,17 +2,18 @@ import styles from "./MyGroupContainer.module.css";
 import { useEffect, useState } from "react";
 import { StudyPerson } from "../../../utils/svgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBullhorn, faCommentDots, faComments, faGear, faRankingStar } from "@fortawesome/free-solid-svg-icons";
+import { faBullhorn, faCommentDots, faComments, faGear, faPen, faRankingStar } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import MembersContainer from "../MembersContainer/MembersContainer";
 import { socket } from "../../../socket";
 import { mediaSocket } from "../../../mediaSocket";
 import GroupRanking from "../GroupRankingModal/GroupRankingModal";
 
-function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal, setIsGroupRankingModal}) {
+function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal, setIsGroupRankingModal, setIsEditGroupModal, mode}) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
+  const [isLeader, setIsLeader] = useState(false);
 
   useEffect(() => {
     if (!group || !isFocus) return;
@@ -24,10 +25,21 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
     setIsGroupRankingModal(false);
   }, [group, isFocus]);
 
+  useEffect(() => {
+    if (!userInfo || !group) return;
+    const {leader} = group;
+    if (leader === userInfo.user_id) {
+      setIsLeader(true);
+    };
+  }, [userInfo, group]);
+
   return (
-    <div className={styles.MyGroupContainer}>
+    <div className={`${styles.MyGroupContainer} ${mode === "study" ? styles.study : ''}`}>
       <div className={styles.name}>
-        <Link to="/dashboard/study">{name}</Link>
+        <Link to={`/dashboard/study?group=${group.group_id}`}>{name}</Link>
+        {userInfo?.user_id === group?.leader ? <i onClick={() => {
+          setIsEditGroupModal(group);
+        }}> <FontAwesomeIcon icon={faPen} /></i> : null}
       </div>
       <div className={styles.header}>
         <ul className={styles.status}>
@@ -71,7 +83,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
         />
       </div>
       <div className={styles.buttons}>
-        <Link to="/dashboard/study">
+        <Link to={`/dashboard/study?group=${group.group_id}`}>
           <button>Go to Group</button>
         </Link>
         <button>
