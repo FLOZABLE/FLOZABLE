@@ -1,4 +1,4 @@
-const serverEndPoint = 'http://localhost'
+const serverEndPoint = 'https://localhost:3000'
 
 //no timeline ver
 
@@ -223,6 +223,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.command === 'tab-setting') {
     const tabSetting = checkDomainSetting(message.domain);
+    console.log('tab setting', tabSetting)
     sendResponse({ success: true, tabSetting: tabSetting });
   }
 
