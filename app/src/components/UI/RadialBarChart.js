@@ -44,7 +44,11 @@ function RadialBarChart({ series, colors = colorsList, selected, setSelected }) 
     let total = 0;
     let completed = 0;
     /* console.log(selected) */
-    if (selected < 0) {
+    if (series.length === 0){
+      completed = 0;
+      total = 0;
+    }
+    else if (selected < 0) {
       //total
       series.map(data => {
         total += data.total;
@@ -67,144 +71,75 @@ function RadialBarChart({ series, colors = colorsList, selected, setSelected }) 
     <StyleWrapper>
       <div className="wrapper">
         <div className={selected < 0 ? '' : 'unselected'}>
-          {
-            series.length > 0 ?
-              <Chart
-                options={{
-                  chart: {
-                    events: {
-                      click: function (event, chartContext, config) {
-                        const index = event.srcElement.getAttribute("j");
-                        if (index === null) return;
-                        const selected = event.srcElement.getAttribute("selected") === "true";
-                        console.log("71", selected)
-                        if (!selected) {
-                          setSelected(-1);
-                          console.log("Setting to -1");
-                        } else {
-                          setSelected(parseInt(index));
-                          console.log("Setting to ", parseInt(index));
-                        };
-                      },
-                    },
-                    selection: {
-                      enabled: false
-                    }
+          <Chart
+            options={{
+              chart: {
+                events: {
+                  click: function (event, chartContext, config) {
+                    const index = event.srcElement.getAttribute("j");
+                    if (index === null) return;
+                    const selected = event.srcElement.getAttribute("selected") === "true";
+                    if (!selected) {
+                      setSelected(-1);
+                    } else {
+                      setSelected(parseInt(index));
+                    };
                   },
-                  states: {
-                    hover: {
-                      filter: {
-                        type: 'none'
-                        /* type: 'lighten', value: 1 */
-                      }
-                    }
-                  },
-                  plotOptions: {
-                    radialBar: {
-                      hollow: {
-                        size: '30%',
-                      },
-                      dataLabels: {
-
-                        name: {
-                          fontSize: '100px',
-                          show: false
-                        },
-                        value: {
-                          fontSize: '13px',
-                          show: false,
-                          formatter: (val) => {
-                            return val
-                          }
-                        },
-                        total: {
-                          show: true,
-                          label: 'Total',
-                          formatter: function (w) {
-                            return null
-                          }
-                        },
-                      },
-                      track: {
-                        /* background: ['#000', '#fff'] */
-                        /* strokeWidth: '200%' */
-                      },
-                    },
-                  },
-                  stroke: {
-                    lineCap: "round"
-                  },
-                  fill: {
-                    colors: colors
+                },
+                selection: {
+                  enabled: false
+                }
+              },
+              states: {
+                hover: {
+                  filter: {
+                    type: 'none'
+                    /* type: 'lighten', value: 1 */
                   }
-                }}
-                series={series.map(data => { return data.val })}
-                type="radialBar"
-              />
-              :
-              <Chart
-                options={{
-                  chart: {
-                    events: {
-                      click: function () {
-                        return false;
-                      },
-                    },
-                    selection: {
-                      enabled: false
-                    }
+                }
+              },
+              plotOptions: {
+                radialBar: {
+                  hollow: {
+                    size: '30%',
                   },
-                  states: {
-                    hover: {
-                      filter: {
-                        type: 'none'
-                        /* type: 'lighten', value: 1 */
-                      }
-                    }
-                  },
-                  plotOptions: {
-                    radialBar: {
-                      hollow: {
-                        size: '30%',
-                      },
-                      dataLabels: {
+                  dataLabels: {
 
-                        name: {
-                          fontSize: '100px',
-                          show: false
-                        },
-                        value: {
-                          fontSize: '13px',
-                          show: false,
-                          formatter: (val) => {
-                            return val
-                          }
-                        },
-                        total: {
-                          show: true,
-                          label: 'Total',
-                          formatter: function (w) {
-                            return null
-                          }
-                        },
-                      },
-                      track: {
-                        /* background: ['#000', '#fff'] */
-                        /* strokeWidth: '200%' */
-                      },
+                    name: {
+                      fontSize: '100px',
+                      show: false
+                    },
+                    value: {
+                      fontSize: '13px',
+                      show: false,
+                      formatter: (val) => {
+                        return val
+                      }
+                    },
+                    total: {
+                      show: true,
+                      label: 'Total',
+                      formatter: function (w) {
+                        return null
+                      }
                     },
                   },
-                  stroke: {
-                    lineCap: "round"
+                  track: {
+                    /* background: ['#000', '#fff'] */
+                    /* strokeWidth: '200%' */
                   },
-                  fill: {
-                    colors: colors
-                  }
-                }}
-                series={[100]}
-                type="radialBar"
-              />
-          }
+                },
+              },
+              stroke: {
+                lineCap: "round"
+              },
+              fill: {
+                colors: colors
+              }
+            }}
+            series={series.length > 0 ? series.map(data => { return data.val }) : [100]}
+            type="radialBar"
+          />
         </div>
         <div className="viewer">
           <div className="percentage">
