@@ -420,6 +420,7 @@ let intervalId;
 
 function syncTimer() {
   chrome.runtime.sendMessage({ command: 'tab-timer', domain: domain }, (response) => {
+    console.log(response)
     if (response.success) {
       const seconds = Math.floor(response.tabUsageData.totalTime / 1000);
       timer = {
@@ -524,6 +525,7 @@ function createTimerFlozable() {
 
 function checkTabSetting() {
   chrome.runtime.sendMessage({ command: 'tab-setting', domain: domain }, async (response) => {
+    console.log(response);
     if (response.success) {
       console.log(response.tabSetting);
       const tabSetting = response.tabSetting;

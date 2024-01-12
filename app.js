@@ -145,6 +145,7 @@ const AiAPI = require('./API/AI');
 const challengeAPI = require('./API/challenges');
 const friendAPI = require('./API/friend');
 const themesAPI = require('./API/themes');
+const extensionAPI = require('./API/extension');
 
 
 //test
@@ -169,7 +170,7 @@ app.use('/groups', groupsRouter);
 app.use('/links', linksRouter); */
 //app.use('/dashboards', dashboardRouter);
 /* app.use('/ranking', rankingRouter); */
-app.use('/api', extensionRouter);
+//app.use('/api', extensionRouter);
 //app.use('/notification', notificationRouter);
 
 //api
@@ -184,6 +185,7 @@ app.use('/ai', AiAPI);
 app.use('/challenges', challengeAPI);
 app.use('/friend', friendAPI);
 app.use('/themes', themesAPI);
+app.use('/extension', extensionAPI);
 app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 
