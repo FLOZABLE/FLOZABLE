@@ -33,6 +33,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const server = https.createServer(options, app);
+http.createServer(app)
 
 const RedisStore = require('connect-redis').default;
 const redisClient = require("./model/redis");
