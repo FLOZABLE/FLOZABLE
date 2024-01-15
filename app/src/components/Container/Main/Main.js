@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import AIRecommendation from "../../UI/AIRecommendation/AIRecommendation.js";
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal.js";
 import RecommendedFriendsViewer from "../../UI/RecommendedFriendsViewer/RecommendedFriendsViewer.js";
+import YouTubeAudioPlayer from "../../UI/YoutubeAudioPlayer/YoutTubeAudioPlayer.js";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -36,6 +37,7 @@ function Main({
   const [joinTarget, setJoinTarget] = useState(null);
   const [isGroupPwModal, setIsGroupPwModal] = useState(false);
   const [friendsCount, setFriendsCount] = useState(0);
+  const [tempVolume, setTempVolume] = useState(50);
 
   useEffect(() => {
     if (!subjects.length) return;
@@ -126,7 +128,7 @@ function Main({
             />
           </div> */}
         </div>
-      </div>
+        </div>
     </div>
   );
 }
