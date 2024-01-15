@@ -30,7 +30,7 @@ function ChallengeHistory({
     return (
         <div className={styles.ChallengeHistory}>
             {
-                challenges.map((challenge, i) => {
+                challenges.sort((a,b) => b.datum_point - a.datum_point).map((challenge, i) => {
                     return (
                         <div key={i}>
                             <Link to={`/dashboard/challenge/${challenge.id}`}>
