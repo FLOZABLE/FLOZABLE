@@ -1,0 +1,10 @@
+.YouTubeMusicModal {
+    position: relative;
+    max-height: 40vh;
+    width: 400px;
+    overflow-y: scroll;
+}
+
+.audioWrapper {
+    display: inline;
+}
