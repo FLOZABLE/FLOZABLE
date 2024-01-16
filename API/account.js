@@ -353,7 +353,7 @@ Router.post('/update/extension-add', async (req, res) => {
           userId
         ]);
       }
-      res.send({ success: true, origin: origin, domain: domain })
+      res.send({ success: true, origin: origin, domain: domain, msg: `Added ${domain}` })
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'Invalid URL or Domain' })

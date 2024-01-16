@@ -15,13 +15,15 @@ import LabelMovingInput from "../../UI/LabelMovingInput/LabelMovingInput";
 import SimpleToggleBtn from "../../UI/SimpleToggleBtn/SimpleToggleBtn";
 import OptionToggleBtn from "../../UI/OptionToggleBtn/OptionToggleBtn";
 //import { GoogleLogin } from "react-google-login";
-import {GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import GoogleLoginBtn from "../../UI/GoogleLoginBtn/GoogleLoginBtn";
+import { extensionSocket } from "../../../extensionSocket";
+import { useSearchParams } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;
 
-function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
+function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
   const [imageSrc, setImageSrc] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,9 +34,8 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
 
   const [isSubmitProfile, setIsSubmitProfile] = useState(false);
   const [isSubmitPw, setIsSubmitPw] = useState(false);
-  const [isSumbmitUrl, setIsSubmitUrl] = useState(false);
   const [websites, setWebsites] = useState([]);
-  const [activitySettings, setActivitySettings] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const inputRef = useRef(null);
 
@@ -115,6 +116,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
   }, [isSubmitPw]);
 
   const fetchExtensionSettingUpdate = useCallback((d, target, value) => {
+    extensionSocket.emit('setting-update', { d, target, value });
     fetch(`${serverOrigin}/account/update/extension-setting-update`, {
       method: "post",
       headers: {
@@ -127,34 +129,39 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
       .catch((error) => console.error(error));
   }, []);
 
-  useEffect(() => {
-    if (isSumbmitUrl) {
-      fetch(`${serverOrigin}/account/update/extension-add`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url }),
+  const onSubmitUrl = (urlPar) => {
+    fetch(`${serverOrigin}/account/update/extension-add`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: urlPar ? urlPar : url }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setResponse(data);
+        if (data.success) {
+          const { domain, origin } = data;
+
+          setWebsites([
+            ...websites,
+            { d: domain, o: origin, b: false, t: true },
+          ]);
+
+          extensionSocket.emit('setting-create', { d: domain, block: false, timer: true });
+          setTimeout(() => {
+            const section = document.querySelector(`#${domain.replace(/\./g, '_')}`);
+            if (!section) return;
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 300);
+        }
       })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            const { domain, origin } = data;
-            setWebsites([
-              ...websites,
-              { domain, origin, block: false, timer: true },
-            ]);
-          }
-        })
-        .catch((error) => console.error(error));
-    }
-    setTimeout(() => {
-      setIsSubmitUrl(false);
-    }, 2000);
-  }, [isSumbmitUrl]);
+      .catch((error) => console.error(error));
+  };
 
   useEffect(() => {
     if (!userInfo) return;
+    setImageSrc(`${serverOrigin}/profile-images/${userInfo.user_id}.jpeg`);
     fetch(`${serverOrigin}/account/activity-settings`, {
       method: "get",
       headers: {
@@ -164,7 +171,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          const {activity_setting} = data;
+          const { activity_setting } = data;
           setEmail(userInfo.email);
           setConfirmEmail(userInfo.email);
           setName(userInfo.name);
@@ -181,27 +188,36 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
   }, [userInfo]);
 
   useEffect(() => {
-    if (!userInfo) return;
-    setImageSrc(`${serverOrigin}/profile-images/${userInfo.user_id}.jpeg`);
-  }, [userInfo]);
+    extensionSocket.connect();
 
-  const onSuccess = (response) => {
-    fetch(`${serverOrigin}/account/auth/google`, {
-      method: "post",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({data: response}),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-      })
-      .catch((error) => console.error(error));
-  }
+    return () => {
+      extensionSocket.disconnect();
+    }
+  }, []);
 
-  const onFailure = (err) => {
-    console.log(err)
-  }
+  useEffect(() => {
+    if (!websites.length) return;
+
+    const selectedUrl = searchParams.get("website");
+    searchParams.delete("website");
+    if (!selectedUrl) return;
+
+    console.log(selectedUrl)
+    const domain = new URL(selectedUrl).hostname;
+    if (!domain) return;
+
+    const isExist = websites.find(website => website.d === domain);
+
+    console.log(isExist, 'exi')
+    if (isExist) {
+      const section = document.querySelector(`#${domain.replace(/\./g, '_')}`);
+      if (!section) return;
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      onSubmitUrl(selectedUrl);
+    };
+  }, [websites, searchParams]);
+
 
   return (
     <div className={styles.Account}>
@@ -383,7 +399,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
                 <div>
                   <BlobBtn
                     name={"SUBMIT"}
-                    setClicked={setIsSubmitUrl}
+                    setClicked={() => { onSubmitUrl() }}
                     color1={"#fff"}
                     color2={"var(--purple)"}
                   />
@@ -398,7 +414,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
                 <ul>
                   {websites.map(({ d, b, t }, i) => {
                     return (
-                      <li className={styles.websiteOptions} key={i}>
+                      <li className={styles.websiteOptions} key={i} id={d.replace(/\./g, '_')}>
                         <div className={styles.domain}>
                           <p>{d}</p>
                         </div>
@@ -446,7 +462,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
                   <GoogleCalendar />
                 </div>
                 <div className={styles.explanation}>
-                You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar by signing in with your Google account here.
+                  You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar by signing in with your Google account here.
                 </div>
                 <div className={styles.authBtn}>
                   {/* <OptionToggleBtn
@@ -466,14 +482,14 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo }) {
                     scope="openid email profile https://www.googleapis.com/auth/calendar"
                   /> */}
                   <GoogleOAuthProvider
-                  clientId={googleClientId}
+                    clientId={googleClientId}
                   >
-                  {/* <GoogleLogin 
+                    {/* <GoogleLogin 
                     buttonText={'Sign In'}
                     onSuccess={onSuccess}
                     onFailure={onFailure}
                   /> */}
-                  <GoogleLoginBtn />
+                    <GoogleLoginBtn />
                   </GoogleOAuthProvider>
                 </div>
               </div>

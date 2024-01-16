@@ -3,6 +3,7 @@ const Ajv = require('ajv');
 const ajv = new Ajv();
 const {google} = require('googleapis');
 const pool = require("./model/pool");
+const { userCache } = require("./services/redisLoader");
 
 function generateRandomId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -23,15 +24,13 @@ function hashing(password) {
 
 async function autoSignin(req, res, success = (() => { }), fail = (() => { res.send({ success: false, reason: 'not authenticated', msg: 'not authenticated' }) })) {
   if (req.session.loggedin || (process.env.NODE_ENV === 'development' && (req.session.user_id = process.env.TESTER_ID))) {
-    return success();
+    return success(req.session.user_id);
   } else if (req.signedCookies.userId) {
-    const connection = pool.promise();
-    const [[userInfo]] = await connection.query('SELECT name, email, myinfo, timezone FROM users where user_id = ?', [req.signedCookies.userId]);
-    pool.releaseConnection(connection);
+    const userInfo = await userCache(req.signedCookies.userId);
     if (userInfo) {
       req.session.user_id = req.signedCookies.userId;
       req.session.loggedin = true;
-      return success();
+      return success(req.session.user_id);
     } else {
       return fail();
     }
