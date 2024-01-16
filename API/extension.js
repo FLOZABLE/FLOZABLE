@@ -2,8 +2,6 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const ioClient = require("socket.io-client");
-const {io, extensionNameSpace} = require("../socket");
 const { autoSignin, arraysHaveSameContents, generateRandomId } = require("../tool");
 
 Router.post("/auth", async (req, res) => {
