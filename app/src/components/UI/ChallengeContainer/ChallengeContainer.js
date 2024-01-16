@@ -49,8 +49,8 @@ function ChallengeContainer({
     if (!challenge) return;
     setChallengeDescription(parse(challenge.description));
     setChallengeTitle(challenge.name);
-    setChallengeTime(`${DateTime.fromSeconds(challenge.start_date).toFormat("DD")} at ${DateTime.fromSeconds(challenge.start_date).toFormat("h:mm a")}`);
-    setChallengeHostId(challenge.host_id);
+    setChallengeTime(`${DateTime.fromSeconds(challenge.startDate).toFormat("DD")} at ${DateTime.fromSeconds(challenge.startDate).toFormat("h:mm a")}`);
+    setChallengeHostId(challenge.hostId);
   }, [challenge]);
 
   useEffect(() => {

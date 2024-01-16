@@ -56,10 +56,10 @@ function CreateChallengeModal({
           setChallenges([...challenges,
           {
             description,
-            host_id: userInfo.user_id,
+            hostId: userInfo.user_id,
             id: data.challengeId,
             name: title,
-            start_date: DateTime.fromJSDate(start).toSeconds(),
+            startDate: DateTime.fromJSDate(start).toSeconds(),
             userInfo
           }]);
         };
