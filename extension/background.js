@@ -1,12 +1,11 @@
-const serverEndPoint = 'http://localhost:3000'
+const serverEndPoint = 'http://localhost:3000';
 
 import { io } from "https://cdn.jsdelivr.net/npm/socket.io-client@4.7.1/+esm";
 
-const socket = io(serverEndPoint);
+const socket = io(`${serverEndPoint}/extension`, {
+  transports: ['websocket', 'polling']
+});
 
-console.log(socket, io);
-
-socket.emit('tab-start');
 //no timeline ver
 
 // background.js
@@ -30,6 +29,18 @@ let prevTabDomain;
 let undefinedTabs = [];
 let tabSettings = [];
 
+//auth
+(async () => {
+  fetch(`${serverEndPoint}/extension/auth`, { method: "post" })
+  .then((response) => response.json())
+  .then((res) => {
+    if (res.success) {
+      socket.emit('auth', {authId: res.authId});
+    }
+  })
+  .catch((error) => console.error(error));
+})();
+
 //bring today's activity
 (async () => {
   let response = await fetch(`${serverEndPoint}/extension/today-tabs`, {
@@ -41,11 +52,9 @@ let tabSettings = [];
   })
   response = await response.json();
   if (response.success) {
-    console.log(response.data)
-    if (response.data) {
-      tabUsageData = response.tabs;
-      console.log(tabUsageData)
-    }
+    console.log(response)
+    tabUsageData = response.tabs;
+    console.log('ong',tabUsageData)
   } else {
     console.log(response.reason)
   }
@@ -54,42 +63,29 @@ let tabSettings = [];
 
 //bring tab's setting
 (async () => {
-  let response = await fetch(`${serverEndPoint}/extension/bring-activity-setting`, {
-    method: 'POST',
-    headers: {
-      'Authorization': 'sdfwpep9p345oD563$SDFksdfkdswt9e9',
-      'Content-Type': 'application/json'
-    },
+  fetch(`${serverEndPoint}/extension/tabs-settings`, { method: "get" })
+  .then((response) => response.json())
+  .then((res) => {
+    console.log(res.tabSettings)
+    if (res.success) {
+      tabSettings = res.tabSettings;
+    }
   })
-  response = await response.json();
-  if (response.success) {
-    tabSettings = JSON.parse(response.activitySetting);
-    console.log(tabSettings)
-  }
+  .catch((error) => console.error(error));
 })();
 
 function checkDomainSetting(domain) {
-  const tabSetting = tabSettings.find(tabSetting => { return tabSetting.domain === domain })
-  console.log(tabSetting)
+  const tabSetting = tabSettings.find(tabSetting => tabSetting.d.replace(/^www\./, '') === domain.replace(/^www\./, ''));
+  console.log(tabSetting, tabSettings, 'ddd', domain.replace(/^www\./, ''))
   return tabSetting
 }
 
 async function updateTabs (domain, duration) {
-  let response = await fetch(`${serverEndPoint}/extension/update-tabs`, {
-    method: 'POST',
-    headers: {
-      'Authorization': 'sdfwpep9p345oD563$SDFksdfkdswt9e9',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ domain, duration })
-  })
-  response = await response.json();
-  console.log(response)
-  return response;
+  socket.emit("update-tabs", {domain, duration});
 }
 
-async function updateTabSettings(domain, block, timer) {
-  const tabSetting = tabSettings.find(tabSetting => { return tabSetting.domain === domain });
+/* async function updateTabSettings(domain, block, timer) {
+  const tabSetting = tabSettings.find(tabSetting => { return tabSetting.d === domain });
   if (!tabSetting) {
     tabSettings.push({domain: domain, block: block, timer: timer});
   } else {
@@ -107,7 +103,22 @@ async function updateTabSettings(domain, block, timer) {
   })
   response = await response.json();
   return response;
-}
+}; */
+
+socket.on("setting-updated", ({d, target, value}) => {
+  console.log(d, target, value);
+  const tabSettingIndex = tabSettings.findIndex(tab => tab.d === d);
+
+  if (target === "block") {
+    tabSettings[tabSettingIndex] = {...tabSettings[tabSettingIndex], b: value};
+  } else {
+    tabSettings[tabSettingIndex] = {...tabSettings[tabSettingIndex], t: value};
+  }
+});
+
+socket.on("setting-created", ({d, b, t}) => {
+  tabSettings.push({d, b, t});
+});
 
 function timerCheck(url, now) {
   if (url == 'chrome://newtab/' || url == '') {
@@ -123,7 +134,7 @@ function timerCheck(url, now) {
   }
   let domain =  new URL(url).hostname;
   let domainSetting = checkDomainSetting(domain);
-  if (domainSetting && !domainSetting.timer) {
+  if (domainSetting && !domainSetting.t) {
     if (prevTabDomain) {
       tabUsageData[prevTabDomain].totalTime += now - lastTime;
       tabUsageData[prevTabDomain].lastActiveTime = Math.floor(now / 1000);
@@ -148,7 +159,7 @@ function updateTabsInfo(tabId) {
   
   chrome.tabs.get(tabId, async (tab) => {
     if (!timerCheck(tab.url, now)) {
-      console.log('filtered')
+      console.log('filtered', tab.url)
       return 0;
     }
     undefinedTabs = undefinedTabs.filter(item => item !== tabId);
@@ -223,7 +234,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else {
       sendResponse({ success: false, tabUsageData: {} });
     }
-  } else if (message.commad === 'no-track-data') {
+  } 
+
+  if (message.commad === 'no-track-data') {
     const tabDomain = message.domain;
 
   }
@@ -234,7 +247,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({ success: true, tabSetting: tabSetting });
   }
 
-  if (message.command === 'update-setting') {
+  /* if (message.command === 'update-setting') {
     //const response = await updateTabSettings(message.domain, message.block, message.timer);
     (async() => {
       const response = await updateTabSettings(message.domain, message.block, message.timer);
@@ -242,7 +255,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })();
 
     return true;
-  }
+  } */
 });
 
   chrome.runtime.onMessageExternal.addListener(async (message, sender, sendResponse) => {

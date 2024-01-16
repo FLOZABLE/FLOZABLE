@@ -1,9 +1,9 @@
 import styles from "./LabelMovingInput.module.css";
 
-function LabelMovingInput({ title, type, value, setValue }) {
+function LabelMovingInput({ title, type, value, setValue, onEnter }) {
   return (
     <div className={styles.LabelMovingInput}>
-      <form onKeyDown={function (e) {
+      <form onKeyDown={(e) => {
         if (e.key == "Enter") {
           e.preventDefault();
         }
@@ -13,6 +13,11 @@ function LabelMovingInput({ title, type, value, setValue }) {
           defaultValue={value}
           onChange={(e) => {
             setValue(e.target.value);
+          }}
+          onKeyDown={(e) => {
+            if (e.key == "Enter" && onEnter) {
+              onEnter();
+            }
           }}
         />
         <label className={styles.label}>{title}</label>

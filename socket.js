@@ -5,9 +5,9 @@ const redisClient = require("./model/redis");
 const { generateRandomId } = require("./tool");
 const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache, dmRoomMembersCache, groupMembersCache } = require("./services/redisLoader");
 const { DateTime } = require("luxon");
+const {Server} = require('socket.io');
 
-
-const io = require('socket.io')(server, {
+const io = new Server(server, {
   cors: {
     origin: ["https://localhost:3001", "https://localhost:3000", "http://localhost:3001", "http://localhost:3000", "https://super-meme-qx696prxr4j264qx-3001.app.github.dev", "https://super-meme-qx696prxr4j264qx-3000.app.github.dev"],
     credentials: true,
@@ -56,6 +56,8 @@ connection.on('connection', (socket) => {
   };
   socket.userId = session.user_id;
   const userId = session.user_id;
+
+  console.log('connected0', userId)
 
   userIdToSocketIdMap.set(socket.userId, socket.id);
   socket.join(userId);
@@ -289,6 +291,45 @@ connection.on('connection', (socket) => {
   });
 });
 
+const extensionNameSpace = io.of("/extension");
+
+extensionNameSpace.on("connection" , (socket) => {
+  if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
+    try {
+      socket.userId = socket.request.session.user_id;
+    } catch (err) {
+      console.log(err);
+    };
+  } else {
+    socket.userId = process.env.TESTER_ID;
+  };
+
+  socket.on("auth", async ({authId}) => {
+    if (!authId) return;
+    const userId = await redisClient.get(`extension:auth:${authId}`);
+    //invalid auth id
+    if (!userId) return;
+    socket.userId = userId;
+    socket.join(userId);
+  });
+
+  socket.on("setting-update", async({d, target, value}) => {
+    if (!socket.userId) return;
+    extensionNameSpace.to(socket.userId).emit("setting-updated", {d, target, value});
+  });
+
+  socket.on("setting-create", async({d, block, timer}) => {
+    if (!socket.userId || !block || !timer) return;
+    extensionNameSpace.to(socket.userId).emit("setting-created", {d, block, timer});
+  });
+
+  socket.on("update-tabs", async({domain, duration}) => {
+    if (!socket.userId || !domain || !duration) return;
+    redisClient.zIncrBy(`user:${socket.userId}:tabs:timer`, duration, domain);
+    redisClient.zIncrBy(`user:${socket.userId}:tabs:usage`, 1, domain);
+  })
+})
+
 async function deActiveGroup(userId, socket) {
   const userInfo = await userCache(userId);
   if (!userInfo) return;
@@ -366,7 +407,7 @@ cron.schedule('*/10 * * * * *', () => {
   };
 });
 
-module.exports = { io, userIdToSocketIdMap, connection };
+module.exports = { io, userIdToSocketIdMap, connection, extensionNameSpace };
 require('./videoServer')
 
 //require('./SFUServer');
