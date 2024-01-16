@@ -310,6 +310,7 @@ extensionNameSpace.on("connection" , (socket) => {
     //invalid auth id
     if (!userId) return;
     socket.userId = userId;
+    console.log("authed")
     socket.join(userId);
   });
 
@@ -319,7 +320,8 @@ extensionNameSpace.on("connection" , (socket) => {
   });
 
   socket.on("setting-create", async({d, block, timer}) => {
-    if (!socket.userId || !block || !timer) return;
+    console.log(socket.userId, block, timer, 'created')
+    if (!socket.userId) return;
     extensionNameSpace.to(socket.userId).emit("setting-created", {d, block, timer});
   });
 

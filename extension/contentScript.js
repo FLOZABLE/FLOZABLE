@@ -371,7 +371,7 @@ const modalCSS = `
 `;
 
 const websiteBlockerHTML = `
-<div id="websiteBlocker">
+<div id="websiteBlocker" class="websiteBlockerHidden">
 <div id="websiteBlockerWrapper">
   <div>
     <div id="websiteBlockerText">
@@ -566,7 +566,6 @@ let intervalId;
 
 function syncTimer() {
   chrome.runtime.sendMessage({ command: 'tab-timer', domain: domain }, (response) => {
-    console.log(response)
     if (response.success) {
       const seconds = Math.floor(response.tabUsageData.totalTime / 1000);
       timer = {
@@ -624,21 +623,21 @@ function removeTracking() {
   containerElement.classList.add('no-track-tab');
 }
 
+document.body.appendChild(styleElement2);
+document.body.appendChild(containerElement2);
+
 function websiteBlocker() {
-  console.log('blocked');
-  document.body.appendChild(styleElement2);
-  document.body.appendChild(containerElement2);
   containerElement2.querySelector(`#websiteBlocker`).classList.remove('websiteBlockerHidden');
 }
 
 function websiteUnblocker() {
-  console.log('unblocked')
   containerElement2.querySelector(`#websiteBlocker`).classList.add('websiteBlockerHidden');
 }
 
+document.body.appendChild(styleElement1);
+document.body.appendChild(containerElement);
+
 function createTimerFlozable() {
-  document.body.appendChild(styleElement1);
-  document.body.appendChild(containerElement);
   syncTimer();
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
@@ -652,11 +651,6 @@ function createTimerFlozable() {
   extensionWrapper.addEventListener('mouseup', mouseUp);
   extensionWrapper.addEventListener('mousedown', mouseDown);
 
-
-  /* extensionExpandBtn.addEventListener('click', () => {
-    extensionExpandBtn.classList.add('expand');
-  }) */
-
   const trackBtn = document.getElementById('check-5');
 
   extensionCloseBtn.addEventListener('click', (event) => {
@@ -664,25 +658,17 @@ function createTimerFlozable() {
     event.stopPropagation();
     if (!trackBtn.checked) {
       chrome.runtime.sendMessage({ command: 'update-setting', domain: domain, block : false, timer: false }, (response) => {
-        console.log(response)
         if (response.success) {
           removeTracking();
         }
       });
     }
   });
-
-  trackBtn.addEventListener('change', () => {
-    console.log(trackBtn.checked)
-  });
-}
+};
 
 function checkTabSetting() {
-  console.log("chck")
   chrome.runtime.sendMessage({ command: 'tab-setting', domain: domain }, async (response) => {
-    console.log(response, 'dddd');
     if (response.success) {
-      console.log(response.tabSetting);
       const tabSetting = response.tabSetting;
   
       if (!tabSetting) {
@@ -693,6 +679,8 @@ function checkTabSetting() {
       if (tabSetting.t) {
         createTimerFlozable();
         containerElement.classList.remove('no-track-tab');
+      } else {
+        containerElement.classList.add('no-track-tab');
       }
   
       if (tabSetting.b) {
