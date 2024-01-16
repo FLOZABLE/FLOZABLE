@@ -37,6 +37,13 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
   const [websites, setWebsites] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const [scrollRef, setScrollRef] = useState(null);
+  const profileRef = useRef(null);
+  const informationRef = useRef(null);
+  const passwordRef = useRef(null);
+  const extensionRef = useRef(null);
+  const accountsRef = useRef(null);
+
   const inputRef = useRef(null);
 
   const readURL = useCallback((input) => {
@@ -198,12 +205,11 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
   useEffect(() => {
     if (!websites.length) return;
 
-    const selectedUrl = searchParams.get("website");
+    const domain = searchParams.get("website");
     searchParams.delete("website");
-    if (!selectedUrl) return;
+    if (!domain) return;
 
-    console.log(selectedUrl)
-    const domain = new URL(selectedUrl).hostname;
+    console.log(domain);
     if (!domain) return;
 
     const isExist = websites.find(website => website.d === domain);
@@ -214,10 +220,16 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
       if (!section) return;
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-      onSubmitUrl(selectedUrl);
+      onSubmitUrl(domain);
     };
   }, [websites, searchParams]);
 
+  useEffect(() => {
+    if (!scrollRef || !scrollRef.current) return;
+
+    const y = scrollRef.current.getBoundingClientRect().top - 50;
+    window.scrollTo({top: y, behavior: 'smooth'});
+  }, [scrollRef]);
 
   return (
     <div className={styles.Account}>
@@ -227,35 +239,35 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
       >
         <div className={styles.fixedNav}>
           <ul className={styles.navWrapper}>
-            <li className={styles.navEl}>
+            <li className={styles.navEl} onClick={() => {setScrollRef(profileRef)}}>
               <i>
                 <FontAwesomeIcon icon={faUser} />
               </i>
               <p>Profile</p>
             </li>
-            <li className={styles.navEl}>
-              <i>
-                <FontAwesomeIcon icon={faFileLines} />
-              </i>
-              <p>Information</p>
-            </li>
-            <li className={styles.navEl}>
+            <li className={styles.navEl} onClick={() => {setScrollRef(passwordRef)}}>
               <i>
                 <FontAwesomeIcon icon={faLock} />
               </i>
               <p>Change Password</p>
             </li>
-            <li className={styles.navEl}>
+            <li className={styles.navEl} onClick={() => {setScrollRef(extensionRef)}}>
               <i>
                 <Chrome width={"22px"} height={"22px"} fill={"#545454"} />
               </i>
               <p>Chrome Extension</p>
             </li>
-            <li className={styles.navEl}>
+            <li className={styles.navEl} onClick={() => {setScrollRef(profileRef)}}>
               <i>
                 <FontAwesomeIcon icon={faBell} />
               </i>
               <p>Notifications</p>
+            </li>
+            <li className={styles.navEl} onClick={() => {setScrollRef(accountsRef)}}>
+              <i>
+                <FontAwesomeIcon icon={faBell} />
+              </i>
+              <p>Accounts</p>
             </li>
           </ul>
         </div>
@@ -286,7 +298,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
               </div>
             </div>
           </div>
-          <div className={styles.box}>
+          <div className={styles.box} ref={profileRef}>
             <div className={styles.title}>
               <p>Profile</p>
             </div>
@@ -331,7 +343,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
               </div>
             </div>
           </div>
-          <div className={styles.box} id={styles.password}>
+          <div className={styles.box} id={styles.password} ref={passwordRef}>
             <div className={styles.title}>
               <p>Change Password</p>
             </div>
@@ -375,7 +387,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
               </div>
             </div>
           </div>
-          <div className={styles.box} id={styles.extension}>
+          <div className={styles.box} id={styles.extension} ref={extensionRef}>
             <div className={styles.title}>
               <h1>Chrome Extension</h1>
               <p>
@@ -449,7 +461,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
               </div>
             </div>
           </div>
-          <div className={styles.box} id={styles.accounts}>
+          <div className={styles.box} id={styles.accounts} ref={accountsRef}>
             <div className={styles.title}>
               <h1>Accounts</h1>
               <p>

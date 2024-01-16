@@ -33,7 +33,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
       const { f, i } = sentRequest;
       const { name, timezone, user_id } = f;
       return (
-        <div className={styles.friendRequest} key={i}>
+        <div className={styles.friendRequest} style={{zIndex: sentRequests.length - i + 1}} key={i}>
           <Link to={`/dashboard/user/${user_id}`} >
             <div className={styles.content}>
               <div className={styles.profileImg}

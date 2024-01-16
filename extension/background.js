@@ -52,9 +52,7 @@ let tabSettings = [];
   })
   response = await response.json();
   if (response.success) {
-    console.log(response)
     tabUsageData = response.tabs;
-    console.log('ong',tabUsageData)
   } else {
     console.log(response.reason)
   }
@@ -66,7 +64,6 @@ let tabSettings = [];
   fetch(`${serverEndPoint}/extension/tabs-settings`, { method: "get" })
   .then((response) => response.json())
   .then((res) => {
-    console.log(res.tabSettings)
     if (res.success) {
       tabSettings = res.tabSettings;
     }
@@ -76,7 +73,6 @@ let tabSettings = [];
 
 function checkDomainSetting(domain) {
   const tabSetting = tabSettings.find(tabSetting => tabSetting.d.replace(/^www\./, '') === domain.replace(/^www\./, ''));
-  console.log(tabSetting, tabSettings, 'ddd', domain.replace(/^www\./, ''))
   return tabSetting
 }
 
@@ -84,29 +80,7 @@ async function updateTabs (domain, duration) {
   socket.emit("update-tabs", {domain, duration});
 }
 
-/* async function updateTabSettings(domain, block, timer) {
-  const tabSetting = tabSettings.find(tabSetting => { return tabSetting.d === domain });
-  if (!tabSetting) {
-    tabSettings.push({domain: domain, block: block, timer: timer});
-  } else {
-    tabSetting.block = block;
-    tabSetting.timer = timer;
-  }
-
-  let response = await fetch(`${serverEndPoint}/account/update/extension-setting-update`, {
-    method: 'POST',
-    headers: {
-      'Authorization': 'sdfwpep9p345oD563$SDFksdfkdswt9e9',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ activitySettings: tabSettings })
-  })
-  response = await response.json();
-  return response;
-}; */
-
 socket.on("setting-updated", ({d, target, value}) => {
-  console.log(d, target, value);
   const tabSettingIndex = tabSettings.findIndex(tab => tab.d === d);
 
   if (target === "block") {
@@ -116,13 +90,13 @@ socket.on("setting-updated", ({d, target, value}) => {
   }
 });
 
-socket.on("setting-created", ({d, b, t}) => {
-  tabSettings.push({d, b, t});
+socket.on("setting-created", ({d, block, timer}) => {
+  tabSettings.push({d, b: block, t: timer});
+  console.log(d, block, timer, tabSettings, 'updated')
 });
 
 function timerCheck(url, now) {
   if (url == 'chrome://newtab/' || url == '') {
-    console.log(prevTabDomain)
     if (prevTabDomain) {
       tabUsageData[prevTabDomain].totalTime += now - lastTime;
       tabUsageData[prevTabDomain].lastActiveTime = Math.floor(now / 1000);
@@ -243,19 +217,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.command === 'tab-setting') {
     const tabSetting = checkDomainSetting(message.domain);
-    console.log('tab setting', tabSetting)
     sendResponse({ success: true, tabSetting: tabSetting });
   }
-
-  /* if (message.command === 'update-setting') {
-    //const response = await updateTabSettings(message.domain, message.block, message.timer);
-    (async() => {
-      const response = await updateTabSettings(message.domain, message.block, message.timer);
-      sendResponse(response);
-    })();
-
-    return true;
-  } */
 });
 
   chrome.runtime.onMessageExternal.addListener(async (message, sender, sendResponse) => {
