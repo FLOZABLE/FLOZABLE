@@ -257,12 +257,12 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
               </i>
               <p>Chrome Extension</p>
             </li>
-            <li className={styles.navEl} onClick={() => {setScrollRef(profileRef)}}>
+            {/* <li className={styles.navEl} onClick={() => {setScrollRef(profileRef)}}>
               <i>
                 <FontAwesomeIcon icon={faBell} />
               </i>
               <p>Notifications</p>
-            </li>
+            </li> */}
             <li className={styles.navEl} onClick={() => {setScrollRef(accountsRef)}}>
               <i>
                 <FontAwesomeIcon icon={faBell} />
