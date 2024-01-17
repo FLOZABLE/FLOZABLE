@@ -19,6 +19,7 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import GoogleLoginBtn from "../../UI/GoogleLoginBtn/GoogleLoginBtn";
 import { extensionSocket } from "../../../extensionSocket";
 import { useSearchParams } from "react-router-dom";
+import DropDownButton from "../../UI/DropDownButton/DropDownButton";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;
@@ -36,6 +37,8 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
   const [isSubmitPw, setIsSubmitPw] = useState(false);
   const [websites, setWebsites] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const [websitesViewr, setWebsitesViewr] = useState(0)
 
   const [scrollRef, setScrollRef] = useState(null);
   const profileRef = useRef(null);
@@ -123,7 +126,6 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
   }, [isSubmitPw]);
 
   const fetchExtensionSettingUpdate = useCallback((d, target, value) => {
-    extensionSocket.emit('setting-update', { d, target, value });
     fetch(`${serverOrigin}/account/update/extension-setting-update`, {
       method: "post",
       headers: {
@@ -132,7 +134,11 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
       body: JSON.stringify({ d, target, value }),
     })
       .then((response) => response.json())
-      .then((data) => { })
+      .then((data) => {
+        if (data.success) {
+          extensionSocket.emit('setting-update', { d, target, value });
+        }
+      })
       .catch((error) => console.error(error));
   }, []);
 
@@ -152,7 +158,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
 
           setWebsites([
             ...websites,
-            { d: domain, o: origin, b: false, t: true },
+            { d: domain, o: origin, b: false, t: false, bs: false, ts: true },
           ]);
 
           extensionSocket.emit('setting-create', { d: domain, block: false, timer: true });
@@ -228,7 +234,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
     if (!scrollRef || !scrollRef.current) return;
 
     const y = scrollRef.current.getBoundingClientRect().top - 50;
-    window.scrollTo({top: y, behavior: 'smooth'});
+    window.scrollTo({ top: y, behavior: 'smooth' });
   }, [scrollRef]);
 
   return (
@@ -239,19 +245,19 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
       >
         <div className={styles.fixedNav}>
           <ul className={styles.navWrapper}>
-            <li className={styles.navEl} onClick={() => {setScrollRef(profileRef)}}>
+            <li className={styles.navEl} onClick={() => { setScrollRef(profileRef) }}>
               <i>
                 <FontAwesomeIcon icon={faUser} />
               </i>
               <p>Profile</p>
             </li>
-            <li className={styles.navEl} onClick={() => {setScrollRef(passwordRef)}}>
+            <li className={styles.navEl} onClick={() => { setScrollRef(passwordRef) }}>
               <i>
                 <FontAwesomeIcon icon={faLock} />
               </i>
               <p>Change Password</p>
             </li>
-            <li className={styles.navEl} onClick={() => {setScrollRef(extensionRef)}}>
+            <li className={styles.navEl} onClick={() => { setScrollRef(extensionRef) }}>
               <i>
                 <Chrome width={"22px"} height={"22px"} fill={"#545454"} />
               </i>
@@ -263,7 +269,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
               </i>
               <p>Notifications</p>
             </li> */}
-            <li className={styles.navEl} onClick={() => {setScrollRef(accountsRef)}}>
+            <li className={styles.navEl} onClick={() => { setScrollRef(accountsRef) }}>
               <i>
                 <FontAwesomeIcon icon={faBell} />
               </i>
@@ -406,8 +412,6 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
                     type={"text"}
                   />
                 </div>
-              </div>
-              <div className={styles.layer}>
                 <div>
                   <BlobBtn
                     name={"SUBMIT"}
@@ -417,14 +421,25 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
                   />
                 </div>
               </div>
+              {/* <div className={styles.layer}>
+                <DropDownButton
+                  options={[
+                    { name: "Focus mode", value: 0 },
+                    { name: "General", value: 1 },
+                  ]}
+                  setValue={setWebsitesViewr}
+                />
+              </div> */}
               <div className={styles.extensionWrapper}>
                 <div className={styles.layer} id={styles.extensionHeader}>
-                  <div>WebsitesEl</div>
-                  <div>Block When Studying</div>
+                  <div>Websites</div>
+                  <div>Block</div>
+                  <div>Block when studying</div>
                   <div>Timer</div>
+                  <div>Timer when studying</div>
                 </div>
                 <ul>
-                  {websites.map(({ d, b, t }, i) => {
+                  {websites.map(({ d, b, sb, t, st }, i) => {
                     return (
                       <li className={styles.websiteOptions} key={i} id={d.replace(/\./g, '_')}>
                         <div className={styles.domain}>
@@ -442,6 +457,18 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
                             }}
                           />
                         </div>
+                        <div className={styles.block}>
+                          <SimpleToggleBtn
+                            checked={sb}
+                            onToggle={(e) => {
+                              fetchExtensionSettingUpdate(
+                                d,
+                                "studyblock",
+                                e.target.checked,
+                              );
+                            }}
+                          />
+                        </div>
                         <div className={styles.timer}>
                           <SimpleToggleBtn
                             checked={t}
@@ -449,6 +476,18 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
                               fetchExtensionSettingUpdate(
                                 d,
                                 "timer",
+                                e.target.checked,
+                              );
+                            }}
+                          />
+                        </div>
+                        <div className={styles.timer}>
+                          <SimpleToggleBtn
+                            checked={st}
+                            onToggle={(e) => {
+                              fetchExtensionSettingUpdate(
+                                d,
+                                "studytimer",
                                 e.target.checked,
                               );
                             }}
