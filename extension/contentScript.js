@@ -540,13 +540,34 @@ function mouseDown(e) {
   e.preventDefault();
   isDragging = true;
   //extensionWrapper.style.opacity = "0.8";
-}
+};
+
+function syncCordinate() {
+  /* chrome.storage.sync.set({"FLOZABLE_TIMER_X": 0});
+  chrome.storage.sync.set({"FLOZABLE_TIMER_Y": 0}); */
+  chrome.storage.sync.get(["FLOZABLE_TIMER_X", "FLOZABLE_TIMER_Y"], ({FLOZABLE_TIMER_X, FLOZABLE_TIMER_Y}) => {
+    extensionWrapper.style.top = parseInt(FLOZABLE_TIMER_Y) + 'px';
+    extensionWrapper.style.left = parseInt(FLOZABLE_TIMER_X) + 'px'
+  });
+  /* const y = chrome.storage.sync.get({FLOZABLE_TIMER_Y});
+
+  extensionWrapper.style.top = parseInt(x) + 'px';
+  extensionWrapper.style.left = parseInt(y) + 'px'; */
+};
+
+syncCordinate();
 
 function mouseUp(e) {
   e.preventDefault();
   if (clicked) {
     extensionExpandBtn.classList.add('expand');
-  }
+  } else {
+    chrome.storage.sync.set({"FLOZABLE_TIMER_X": e.clientX});
+    chrome.storage.sync.set({"FLOZABLE_TIMER_Y": e.clientY});
+    console.log(e.pageX, e.pageY);
+    console.log(e.clientX + window.scrollX, e)
+  };
+
   clicked = true;
   isDragging = false;
   extensionWrapper.style.opacity = "1";
@@ -623,9 +644,6 @@ function removeTracking() {
   containerElement.classList.add('no-track-tab');
 }
 
-document.body.appendChild(styleElement2);
-document.body.appendChild(containerElement2);
-
 function websiteBlocker() {
   containerElement2.querySelector(`#websiteBlocker`).classList.remove('websiteBlockerHidden');
 }
@@ -638,39 +656,28 @@ document.body.appendChild(styleElement1);
 document.body.appendChild(containerElement);
 
 function createTimerFlozable() {
+  document.body.appendChild(styleElement2);
+  document.body.appendChild(containerElement2);
   syncTimer();
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       clearInterval(intervalId)
     } else {
       syncTimer();
+      syncCordinate();
     }
   })
 
   document.addEventListener('mousemove', divMoveXY);
   extensionWrapper.addEventListener('mouseup', mouseUp);
   extensionWrapper.addEventListener('mousedown', mouseDown);
-
-  const trackBtn = document.getElementById('check-5');
-
-  extensionCloseBtn.addEventListener('click', (event) => {
-    extensionExpandBtn.classList.remove('expand');
-    event.stopPropagation();
-    if (!trackBtn.checked) {
-      chrome.runtime.sendMessage({ command: 'update-setting', domain: domain, block : false, timer: false }, (response) => {
-        if (response.success) {
-          removeTracking();
-        }
-      });
-    }
-  });
 };
 
 function checkTabSetting() {
   chrome.runtime.sendMessage({ command: 'tab-setting', domain: domain }, async (response) => {
     if (response.success) {
       const tabSetting = response.tabSetting;
-  
+
       if (!tabSetting) {
         createTimerFlozable();
         containerElement.classList.remove('no-track-tab');
@@ -682,7 +689,7 @@ function checkTabSetting() {
       } else {
         containerElement.classList.add('no-track-tab');
       }
-  
+
       if (tabSetting.b) {
         websiteBlocker();
       } else {
@@ -693,7 +700,6 @@ function checkTabSetting() {
 }
 
 checkTabSetting();
-
 
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {

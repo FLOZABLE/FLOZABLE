@@ -6,21 +6,20 @@ const socket = io(`${serverEndPoint}/extension`, {
   transports: ['websocket', 'polling']
 });
 
-//no timeline ver
+socket.on("setting-updated", ({d, target, value}) => {
+  const tabSettingIndex = tabSettings.findIndex(tab => tab.d === d);
 
-// background.js
-chrome.tabs.query({}, function (tabs) {
-  tabs.forEach(function (tab) {
-    console.log('Tab URL:', tab.url);
-  });
+  if (target === "block") {
+    tabSettings[tabSettingIndex] = {...tabSettings[tabSettingIndex], b: value};
+  } else {
+    tabSettings[tabSettingIndex] = {...tabSettings[tabSettingIndex], t: value};
+  }
 });
 
-chrome.cookies.getAll({ url: `${serverEndPoint}` }, function (cookies) {
-  cookies.forEach(function (cookie) {
-    console.log('Cookie:', cookie.name, cookie.value);
-  });
+socket.on("setting-created", ({d, block, timer}) => {
+  tabSettings.push({d, b: block, t: timer});
+  console.log(d, block, timer, tabSettings, 'updated')
 });
-
 
 let tabUsageData = {};
 let lastTime = Date.now();
@@ -73,27 +72,12 @@ let tabSettings = [];
 
 function checkDomainSetting(domain) {
   const tabSetting = tabSettings.find(tabSetting => tabSetting.d.replace(/^www\./, '') === domain.replace(/^www\./, ''));
-  return tabSetting
+  return tabSetting;
 }
 
 async function updateTabs (domain, duration) {
   socket.emit("update-tabs", {domain, duration});
 }
-
-socket.on("setting-updated", ({d, target, value}) => {
-  const tabSettingIndex = tabSettings.findIndex(tab => tab.d === d);
-
-  if (target === "block") {
-    tabSettings[tabSettingIndex] = {...tabSettings[tabSettingIndex], b: value};
-  } else {
-    tabSettings[tabSettingIndex] = {...tabSettings[tabSettingIndex], t: value};
-  }
-});
-
-socket.on("setting-created", ({d, block, timer}) => {
-  tabSettings.push({d, b: block, t: timer});
-  console.log(d, block, timer, tabSettings, 'updated')
-});
 
 function timerCheck(url, now) {
   if (url == 'chrome://newtab/' || url == '') {
@@ -139,13 +123,6 @@ function updateTabsInfo(tabId) {
     undefinedTabs = undefinedTabs.filter(item => item !== tabId);
     let tabDomain = new URL(tab.url).hostname;
 
-    /* if (new URL(tab.url).origin == serverEndPoint) {
-      let response = updateTabs();
-      if (response.success) {
-        console.log('updated')
-      }
-    } */
-
     if (!tabUsageData[tabDomain]) {
       tabUsageData[tabDomain] = { usageCount: 1, totalTime: 0, lastActiveTime: Math.floor(now / 1000)/* , timeline: [[Math.floor(now / 1000)]] */, favicon: tab.favIconUrl };
     } else {
@@ -177,18 +154,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   updateTabsInfo(tabId)
 });
 
-function getTabUsageData() {
-  let usageDataList = Object.values(tabUsageData);
-  usageDataList.sort((a, b) => b.usageCount - a.usageCount);
-  return JSON.stringify(usageDataList, null, 2);
-}
-
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  const now = Date.now();
-  if (message.command === 'start-monitor') {
-    sendResponse({ success: true, data: getTabUsageData() });
-  }
 
   if (message.command === 'tab-timer') {
     const tabDomain = message.domain;
@@ -212,13 +178,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.commad === 'no-track-data') {
     const tabDomain = message.domain;
-
   }
 
   if (message.command === 'tab-setting') {
     const tabSetting = checkDomainSetting(message.domain);
     sendResponse({ success: true, tabSetting: tabSetting });
-  }
+  };
 });
 
   chrome.runtime.onMessageExternal.addListener(async (message, sender, sendResponse) => {
