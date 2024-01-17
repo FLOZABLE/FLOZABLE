@@ -3,8 +3,9 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { autoSignin, generateRandomId } = require("../tool");
-const { NotificationCache, userCache } = require('../services/redisLoader');
+const { NotificationCache, userCache, challengeroomsCache } = require('../services/redisLoader');
 const { DateTime } = require('luxon');
+const { redis } = require('googleapis/build/src/apis/redis');
 
 //send challenge
 Router.post('/challenge-request', async (req, res) => {
@@ -141,28 +142,32 @@ Router.post('/create-challenge', async (req, res) => {
       const userId = req.session.user_id;
       const { title, description, startDate } = req.body;
       if (!title || !description || !startDate) return res.send({ success: false, reason: 'Invalid Values' })
-      const min = DateTime.now().toSeconds() + 3600 - 60;
-      if (min > startDate) return res.send({ success: false, reason: "Must be at least 1 hour in the future" });
+      const min = DateTime.now().toSeconds() + 3600 * 5 - 60;
+      const max = DateTime.now().toSeconds() + 3600 * 24 * 30 + 60;
+      //if (min > startDate) return res.send({ success: false, reason: "Must be at least 5 hours in the future" });
+      if (max < startDate) return res.send({ success: false, reason: "Challenge is too far in the future" });
 
-      const connection = pool.promise();
-      const [[prevAmount]] = await connection.query(`SELECT COUNT(*) FROM challengerooms WHERE host_id = ?`, [userId]);
+      const expireSeconds = startDate - DateTime.now().toUTC().toSeconds();
 
-      if (prevAmount['COUNT(*)'] >= 5) {
+      const prevAmount = await redisClient.zIncrBy(`user:${userId}:ratelimit`, 1, `activeChallenges`);
+      if (prevAmount > 5) {
         res.send({ success: false, reason: "You cannot have more than 5 open challenges" });
+        await redisClient.zIncrBy(`user:${userId}:ratelimit`, -1, `activeChallenges`);
         return;
         // maximum 5 open challenges each user (can increase for premium)
       }
 
       const id = generateRandomId(10);
 
-      const challengeInfo = {
-        id: id,
-        host_id: userId, //the host
-        start_date: startDate, // day challenge starts
-        name: title,
-        description
-      };
-      const insertChallenge = await connection.query(`INSERT INTO challengerooms SET ?`, [challengeInfo]);
+      await redisClient.hSet(`challenge:${id}`, `hostId`, userId);
+      redisClient.hSet(`challenge:${id}`, `startDate`, startDate);
+      redisClient.hSet(`challenge:${id}`, `name`, title);
+      redisClient.hSet(`challenge:${id}`, `hostId`, userId);
+      redisClient.hSet(`challenge:${id}`, `description`, description);
+
+      redisClient.sAdd('allChallenges', id);
+
+      redisClient.expire(`challenge:${id}`, parseInt(expireSeconds));
 
       res.send({ success: true, msg: `Challenge posted successfuly`, challengeId: id });
     }
@@ -177,11 +182,12 @@ Router.post('/create-challenge', async (req, res) => {
 Router.get('/rooms', async (req, res) => {
   autoSignin(req, res, (async () => {
     try {
-      const connection = pool.promise();
-      const [challengeRooms] = await connection.query(`SELECT * from challengerooms`);
+      const challengeRooms = await challengeroomsCache();
+      console.log(challengeRooms);
 
       await Promise.all(challengeRooms.map(async (room) => {
-        room.userInfo = await userCache(room.host_id);
+        room.userInfo = await userCache(room.hostId);
+        room.startDate = parseInt(room.startDate);
       }));
 
       res.send({ success: true, data: challengeRooms });
@@ -200,19 +206,25 @@ Router.post('/join-challenge', async (req, res) => {
       const userId = req.session.user_id;
       const { joinId } = req.body;
 
-      const connection = pool.promise();
-      const [[challengeRoom]] = await connection.query(`SELECT * from challengerooms where id = ?`, [joinId]);
+      const challengeRoom = await redisClient.hGetAll(`challenge:${joinId}`);
 
-      if (!challengeRoom || !challengeRoom.id) {
+
+      if (!challengeRoom || !challengeRoom.hostId) {
         res.send({ success: false, reason: "Challenge Does Not Exist" });
         return;
       }
 
+      const connection = pool.promise();
+
+      const deletedChallenge = redisClient.del(`challenge:${joinId}`);
+      redisClient.sRem("allChallenges", [joinId]);
+      redisClient.zIncrBy(`user:${challengeRoom.hostId}:ratelimit`, -1, 'activeChallenges');
+
       const challengeInfo = {
         id: challengeRoom.id,
-        first_user_id: challengeRoom.host_id,
+        first_user_id: challengeRoom.hostId,
         second_user_id: userId,
-        datum_point: challengeRoom.start_date
+        datum_point: challengeRoom.startDate
       }
       const insertChallenge = await connection.query(`INSERT INTO challenges SET ?`, challengeInfo);
 
@@ -223,9 +235,7 @@ Router.post('/join-challenge', async (req, res) => {
       const notificationUser = await userCache(userId);
       const socketNotif = { i: id, t: 3, f: notificationUser, d: date, c: joinId };
       io.to(challengeRoom.host_id).emit('notification', socketNotif);
-      redisClient.sAdd(`user:${challengeRoom.host_id}:notifications`, JSON.stringify(notification));
-
-      const deleteChallenge = await connection.query(`DELETE FROM challengerooms WHERE ID = ?`, [challengeRoom.id]);
+      redisClient.sAdd(`user:${challengeRoom.hostId}:notifications`, JSON.stringify(notification));
 
       res.send({ success: true, msg: "Challenge Accepted!" });
     }

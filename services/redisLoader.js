@@ -351,6 +351,24 @@ async function msgReadCache(userId) {
   return readStatus;
 }
 
+async function challengeroomsCache() {
+  const allChallenges = [];
+  const allChallengeIds = await redisClient.sMembers('allChallenges');
+
+  await Promise.all(allChallengeIds.map(async (challengeId) => {
+    if (!await redisClient.exists(`challenge:${challengeId}`)){
+      console.log("Does not exist");
+      redisClient.sRem('allChallenges', challengeId);
+    }
+    else{
+      const obj = await redisClient.hGetAll(`challenge:${challengeId}`);
+      allChallenges.push({...obj, id: challengeId});
+    }
+  }));
+
+  return allChallenges;
+}
+
 module.exports = {
   flushRedis,
   cacheManager,
@@ -369,5 +387,6 @@ module.exports = {
   userCache,
   subjectsTimelineCache,
   activeGroupCache,
-  msgReadCache
+  msgReadCache,
+  challengeroomsCache,
 }
