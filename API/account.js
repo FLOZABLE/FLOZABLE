@@ -377,9 +377,13 @@ Router.post('/update/extension-setting-update', async (req, res) => {
         //d: domain, b: block, t: timer
         if (target === 'block') {
           activitySettings[activityIndex] = { ...activitySettings[activityIndex], b: value ? 1 : 0 };
-        } else {
+        } else if (target === "blockstudy") {
+          activitySettings[activityIndex] = { ...activitySettings[activityIndex], bs: value ? 1 : 0 };
+        } else if (target === "timer") {
           activitySettings[activityIndex] = { ...activitySettings[activityIndex], t: value ? 1 : 0 };
-        };
+        } else {
+          activitySettings[activityIndex] = { ...activitySettings[activityIndex], ts: value ? 1 : 0 };
+        }
         const stringlified = JSON.stringify(activitySettings).slice(1, -1);
         await connection.query(`
         UPDATE users
