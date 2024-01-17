@@ -104,6 +104,7 @@ connection.on('connection', (socket) => {
 
   socket.on("disconnect", (reason) => {
     let socketIds = userIdToSocketIdMap.get(socket.userId);
+    redisClient.hDel(`user:${userId}`, 'ActiveSubject');
     userIdToSocketIdMap.delete(socketIds);
     /* try {
       if (socketIds) {
@@ -172,7 +173,7 @@ connection.on('connection', (socket) => {
       redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
       subject.timeline_sum += start;
       redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
-
+      extensionIo.to(userId).emit("studying", {studying: true});
       //total timer
       /* const timerInfo = await timerCache(userId, now);
       const {dp, ts} = timerInfo;
@@ -218,6 +219,7 @@ connection.on('connection', (socket) => {
       const start = activity[0];
       redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${duration}]`);
     };
+    extensionIo.to(userId).emit("studying", {studying: false});
     //total timer update
     //this is unix time in sec of active subject's start
     /* const activeSubjectStart = activeSubject.time;
@@ -291,9 +293,9 @@ connection.on('connection', (socket) => {
   });
 });
 
-const extensionNameSpace = io.of("/extension");
+const extensionIo = io.of("/extension");
 
-extensionNameSpace.on("connection" , (socket) => {
+extensionIo.on("connection" , (socket) => {
   if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
     try {
       socket.userId = socket.request.session.user_id;
@@ -312,24 +314,26 @@ extensionNameSpace.on("connection" , (socket) => {
     socket.userId = userId;
     console.log("authed")
     socket.join(userId);
+    const activeSubject = await activeSubjectCache(userId);
+    extensionIo.to(userId).emit("studying", {studying: activeSubject ? true : false});
   });
 
   socket.on("setting-update", async({d, target, value}) => {
     if (!socket.userId) return;
-    extensionNameSpace.to(socket.userId).emit("setting-updated", {d, target, value});
+    extensionIo.to(socket.userId).emit("setting-updated", {d, target, value});
   });
 
   socket.on("setting-create", async({d, block, timer}) => {
     console.log(socket.userId, block, timer, 'created')
     if (!socket.userId) return;
-    extensionNameSpace.to(socket.userId).emit("setting-created", {d, block, timer});
+    extensionIo.to(socket.userId).emit("setting-created", {d, block, timer});
   });
 
   socket.on("update-tabs", async({domain, duration}) => {
     if (!socket.userId || !domain || !duration) return;
     redisClient.zIncrBy(`user:${socket.userId}:tabs:timer`, duration, domain);
     redisClient.zIncrBy(`user:${socket.userId}:tabs:usage`, 1, domain);
-  })
+  });
 })
 
 async function deActiveGroup(userId, socket) {
@@ -409,7 +413,7 @@ cron.schedule('*/10 * * * * *', () => {
   };
 });
 
-module.exports = { io, userIdToSocketIdMap, connection, extensionNameSpace };
+module.exports = { io, userIdToSocketIdMap, connection, extensionIo };
 require('./videoServer')
 
 //require('./SFUServer');

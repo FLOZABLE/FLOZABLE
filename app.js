@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.env.test' });
 }
 
-const server = https.createServer(options, app);
+const server = http.createServer(app);
 
 const RedisStore = require('connect-redis').default;
 const redisClient = require("./model/redis");

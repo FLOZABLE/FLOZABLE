@@ -513,6 +513,8 @@ const websiteBlockerCSS = `
 }
 `
 
+let isStudying = false;
+
 const styleElement1 = document.createElement('style');
 styleElement1.textContent = modalCSS;
 
@@ -676,25 +678,41 @@ function createTimerFlozable() {
 function checkTabSetting() {
   chrome.runtime.sendMessage({ command: 'tab-setting', domain: domain }, async (response) => {
     if (response.success) {
-      const tabSetting = response.tabSetting;
-
+      const {tabSetting, isStudying} = response;
+      console.log('tab setting', tabSetting, isStudying)
       if (!tabSetting) {
         createTimerFlozable();
         containerElement.classList.remove('no-track-tab');
         return 0
-      }
+      };
+
       if (tabSetting.t) {
         createTimerFlozable();
         containerElement.classList.remove('no-track-tab');
       } else {
         containerElement.classList.add('no-track-tab');
-      }
+      };
 
       if (tabSetting.b) {
         websiteBlocker();
       } else {
         websiteUnblocker();
-      }
+      };
+
+      if (!isStudying) return;
+
+      if (tabSetting.ts) {
+        createTimerFlozable();
+        containerElement.classList.remove('no-track-tab');
+      } else {
+        containerElement.classList.add('no-track-tab');
+      };
+
+      if (tabSetting.bs) {
+        websiteBlocker();
+      } else {
+        websiteUnblocker();
+      };
     }
   });
 }
@@ -705,4 +723,9 @@ document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {
     checkTabSetting();
   }
-})
+});
+
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log(message, sender, 'msg')
+});
