@@ -31,12 +31,6 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse, userInfo
       .then((data) => {
         if (data.success) {
           const tempChallenges = [...data.data];
-          const tempEl = [];
-          data.data.map((challenge, i) => {
-            tempEl.push(
-              <ChallengeRoom key={i} challengeInfo={challenge} challenges={tempChallenges} setChallenges={setChallenges} setResponse={setResponse} />
-            )
-          });
           console.log(tempChallenges);
           setChallenges(tempChallenges);
         }
