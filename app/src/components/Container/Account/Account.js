@@ -17,7 +17,6 @@ import OptionToggleBtn from "../../UI/OptionToggleBtn/OptionToggleBtn";
 //import { GoogleLogin } from "react-google-login";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import GoogleLoginBtn from "../../UI/GoogleLoginBtn/GoogleLoginBtn";
-import { extensionSocket } from "../../../extensionSocket";
 import { useSearchParams } from "react-router-dom";
 import DropDownButton from "../../UI/DropDownButton/DropDownButton";
 
@@ -135,9 +134,6 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.success) {
-          extensionSocket.emit('setting-update', { d, target, value });
-        }
       })
       .catch((error) => console.error(error));
   }, []);
@@ -161,7 +157,6 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
             { d: domain, o: origin, b: false, t: false, bs: false, ts: true },
           ]);
 
-          extensionSocket.emit('setting-create', { d: domain, block: false, timer: true });
           setTimeout(() => {
             const section = document.querySelector(`#${domain.replace(/\./g, '_')}`);
             if (!section) return;
@@ -201,14 +196,6 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
   }, [userInfo]);
 
   useEffect(() => {
-    extensionSocket.connect();
-
-    return () => {
-      extensionSocket.disconnect();
-    }
-  }, []);
-
-  useEffect(() => {
     if (!websites.length) return;
 
     const domain = searchParams.get("website");
@@ -218,11 +205,11 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
     console.log(domain);
     if (!domain) return;
 
-    const isExist = websites.find(website => website.d === domain);
+    const isExist = websites.find(website => website.d.replace(/^www\.(.*)$/, "$1") === domain.replace(/^www\.(.*)$/, "$1"));
 
     console.log(isExist, 'exi')
     if (isExist) {
-      const section = document.querySelector(`#${domain.replace(/\./g, '_')}`);
+      const section = document.querySelector(`#${domain.replace(/^www\.(.*)$/, "$1").replace(/\./g, '_')}`);
       if (!section) return;
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
@@ -232,9 +219,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
 
   useEffect(() => {
     if (!scrollRef || !scrollRef.current) return;
-
-    const y = scrollRef.current.getBoundingClientRect().top - 50;
-    window.scrollTo({ top: y, behavior: 'smooth' });
+    scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [scrollRef]);
 
   return (
@@ -439,7 +424,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
                   <div>Timer when studying</div>
                 </div>
                 <ul>
-                  {websites.map(({ d, b, sb, t, st }, i) => {
+                  {websites.map(({ d, b, bs, t, ts }, i) => {
                     return (
                       <li className={styles.websiteOptions} key={i} id={d.replace(/\./g, '_')}>
                         <div className={styles.domain}>
@@ -459,11 +444,11 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
                         </div>
                         <div className={styles.block}>
                           <SimpleToggleBtn
-                            checked={sb}
+                            checked={bs}
                             onToggle={(e) => {
                               fetchExtensionSettingUpdate(
                                 d,
-                                "studyblock",
+                                "blockstudy",
                                 e.target.checked,
                               );
                             }}
@@ -483,11 +468,11 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
                         </div>
                         <div className={styles.timer}>
                           <SimpleToggleBtn
-                            checked={st}
+                            checked={ts}
                             onToggle={(e) => {
                               fetchExtensionSettingUpdate(
                                 d,
-                                "studytimer",
+                                "timerstudy",
                                 e.target.checked,
                               );
                             }}

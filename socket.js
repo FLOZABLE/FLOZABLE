@@ -312,13 +312,13 @@ extensionIo.on("connection" , (socket) => {
     //invalid auth id
     if (!userId) return;
     socket.userId = userId;
-    console.log("authed")
     socket.join(userId);
     const activeSubject = await activeSubjectCache(userId);
-    extensionIo.to(userId).emit("studying", {studying: activeSubject ? true : false});
+    console.log("authed", 'is studying' , activeSubject.id ? true : false, activeSubject)
+    extensionIo.to(userId).emit("studying", {studying: activeSubject.id ? true : false});
   });
 
-  socket.on("setting-update", async({d, target, value}) => {
+/*   socket.on("setting-update", async({d, target, value}) => {
     if (!socket.userId) return;
     extensionIo.to(socket.userId).emit("setting-updated", {d, target, value});
   });
@@ -327,7 +327,7 @@ extensionIo.on("connection" , (socket) => {
     console.log(socket.userId, block, timer, 'created')
     if (!socket.userId) return;
     extensionIo.to(socket.userId).emit("setting-created", {d, block, timer});
-  });
+  }); */
 
   socket.on("update-tabs", async({domain, duration}) => {
     if (!socket.userId || !domain || !duration) return;

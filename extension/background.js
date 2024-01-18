@@ -16,17 +16,22 @@ const socket = io(`${serverEndPoint}/extension`, {
 
 socket.on("setting-updated", ({ d, target, value }) => {
   const tabSettingIndex = tabSettings.findIndex(tab => tab.d === d);
+  console.log(data, tabSettings, 'updated')
 
   if (target === "block") {
     tabSettings[tabSettingIndex] = { ...tabSettings[tabSettingIndex], b: value };
-  } else {
+  } else if (target === "blockstudy") {
+    tabSettings[tabSettingIndex] = { ...tabSettings[tabSettingIndex], bs: value };
+  } else if (target === "timer") {
     tabSettings[tabSettingIndex] = { ...tabSettings[tabSettingIndex], t: value };
-  }
+  } else {
+    tabSettings[tabSettingIndex] = { ...tabSettings[tabSettingIndex], ts: value };
+  } 
 });
 
-socket.on("setting-created", ({ d, block, timer }) => {
-  tabSettings.push({ d, b: block, t: timer });
-  console.log(d, block, timer, tabSettings, 'updated')
+socket.on("setting-created", (data) => {
+  tabSettings.push(data);
+  console.log(data, tabSettings, 'created')
 });
 
 socket.on("studying", ({studying}) => {
@@ -123,7 +128,6 @@ function updateTabsInfo(tabId) {
   if (new Date(lastTime).setHours(0, 0, 0, 0) != new Date(now).setHours(0, 0, 0, 0)) {
     tabUsageData = {};
     prevTabDomain = false;
-    tabDomain = false;
   };
 
   chrome.tabs.get(tabId, async (tab) => {
