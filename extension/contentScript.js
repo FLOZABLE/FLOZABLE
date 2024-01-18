@@ -681,8 +681,8 @@ function checkTabSetting() {
       const {tabSetting, isStudying} = response;
       console.log('tab setting', tabSetting, isStudying)
       if (!tabSetting) {
-        createTimerFlozable();
-        containerElement.classList.remove('no-track-tab');
+        containerElement.classList.add('no-track-tab');
+        websiteUnblocker();
         return 0
       };
 

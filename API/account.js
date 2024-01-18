@@ -10,6 +10,7 @@ const { DateTime } = require('luxon');
 const { hashing, autoSignin, generateRandomId, googleOauth2client } = require("../tool");
 const {UserRefreshClient}  = require("google-auth-library")
 const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
+const { extensionIo } = require('../socket');
 const upload = multer();
 
 Router.post('/accountinfo', async (req, res) => {
@@ -332,6 +333,9 @@ Router.post('/update/extension-add', async (req, res) => {
         domain = new URL('https://' + url).hostname;
       };
 
+      origin = origin.replace(/^www\.(.*)$/, "$1");
+      domain = domain.replace(/^www\.(.*)$/, "$1");
+
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
       let activitySettings = userInfo.activitySettings === "" ? [] : JSON.parse(userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"));
       const selectedActivity = activitySettings.find(activitySetting => { return activitySetting.d == domain });
@@ -339,7 +343,7 @@ Router.post('/update/extension-add', async (req, res) => {
         return res.send({ success: false, reason: 'Already Exist' });
       } else {
         //d: domain, b: block, t: timer
-        const stringlified = JSON.stringify({ d: domain, b: 0, t: 1 });
+        const stringlified = JSON.stringify({ d: domain, b: 0, bs: 0, t: 0, ts: 1 });
         await connection.query(`
         UPDATE users
         SET activity_setting = CASE
@@ -352,7 +356,8 @@ Router.post('/update/extension-add', async (req, res) => {
           stringlified,
           userId
         ]);
-      }
+      };
+      extensionIo.to(userId).emit('setting-created', {d: domain, b: 0, bs: 0, t: 0, ts: 1});
       res.send({ success: true, origin: origin, domain: domain, msg: `Added ${domain}` })
     } catch (error) {
       console.log(error)
@@ -396,6 +401,7 @@ Router.post('/update/extension-setting-update', async (req, res) => {
       }
 
       res.send({ success: true });
+      extensionIo.to(userId).emit('setting-updated', {d, target, value});
     } catch (error) {
 
     } finally {
