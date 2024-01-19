@@ -1,10 +1,10 @@
 const YouTubeMusic = [
-    { id: "p29JUpsOSTE", name: "1" },
-    { id: "HVau-JRGirg", name: "2" },
-    { id: "bzBH9Nm1BP8", name: "3" },
-    { id: "xDWG9SrB4io", name: "4" },
-    { id: "SE9nDvo94hw", name: "5" },
-    { id: "WNcsUNKlAKw", name: "6", icon: "🌱" },
+    { id: "p29JUpsOSTE", name: "Rain", icon: "💧" },
+    { id: "HVau-JRGirg", name: "Nature", icon: "🌱" },
+    { id: "bzBH9Nm1BP8", name: "Library", icon: "📚" },
+    { id: "xDWG9SrB4io", name: "Beats", icon: "🎧" },
+    { id: "SE9nDvo94hw", name: "Nighttime", icon: "🌙" },
+    { id: "WNcsUNKlAKw", name: "Cafe", icon: "☕" },
 ];
 
 export { YouTubeMusic }
