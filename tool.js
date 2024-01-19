@@ -50,6 +50,16 @@ function isValidJSON(data, schema) {
   }
 };
 
+
+function isValidTimeZone(timeZone) {
+  try {
+    Intl.DateTimeFormat(undefined, { timeZone: timeZone });
+    return true;
+  } catch {
+    return false
+  }
+}
+
 function getUserId(req) {
   return process.env.NODE_ENV === 'development' ? process.env.TESTER_ID : req.session.user_id;
 };
@@ -83,6 +93,7 @@ module.exports = {
   hashing,
   autoSignin,
   isValidJSON,
+  isValidTimeZone,
   getUserId,
   randomIntInRange,
   googleOauth2client,
