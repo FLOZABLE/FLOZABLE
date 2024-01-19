@@ -86,7 +86,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
 });
 
 Router.post('/signup-authentication', async (req, res) => {
-  let { email, name, password, timeZone } = req.body;
+  const { email, name, password, timeZone } = req.body;
 
   if (!isValidTimeZone) {
     timeZone = 'UTC';
@@ -122,7 +122,7 @@ Router.post('/signup-authentication', async (req, res) => {
 
   const connection = pool.promise();
 
-  let [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
+  const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
 
   if (checkEmail) {
     return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
@@ -135,8 +135,8 @@ Router.post('/signup-authentication', async (req, res) => {
   const iv = crypto.randomBytes(16).toString('hex');
 
   const user = {
-    name: name,
-    email: email,
+    name,
+    email,
     hashed_password: hashed[1],
     salt: hashed[0],
     user_id: userId,
@@ -201,8 +201,7 @@ Router.post('/signup-authentication', async (req, res) => {
 });
 
 Router.post('/update/image', upload.single('image'), async (req, res) => {
-  autoSignin(req, res, (async () => {
-    const userId = req.session.user_id;
+  autoSignin(req, res, (async (userId) => {
     try {
       if (!req.file) {
         return res.send({ success: false, reason: 'No image file found' });
@@ -250,9 +249,8 @@ Router.post('/update/info', async (req, res) => {
   }));
 });
 
-
 Router.post('/update/password', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
       const connection = pool.promise();
       const { password, confirmPassword } = req.body;
@@ -269,7 +267,7 @@ Router.post('/update/password', async (req, res) => {
       let hashed = hashing(password);
       let salt = hashed[0];
       let hashedPw = hashed[1];
-      const updateInfo = [{ hashed_password: hashedPw, salt: salt }, req.session.user_id];
+      const updateInfo = [{ hashed_password: hashedPw, salt: salt }, userId];
       const update = await connection.query("UPDATE users set ? WHERE user_id = ?", updateInfo);
     } catch (error) {
       res.send({ success: false, reason: 'Unsupported File Type' })
@@ -278,9 +276,8 @@ Router.post('/update/password', async (req, res) => {
 });
 
 Router.post('/update/extension-add', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const connection = pool.promise();
       const { url } = req.body;
       let origin;
@@ -324,19 +321,18 @@ Router.post('/update/extension-add', async (req, res) => {
       res.send({ success: true, origin: origin, domain: domain, msg: `Added ${domain}` })
     } catch (error) {
       console.log(error)
-      res.send({ success: false, reason: 'Invalid URL or Domain' })
+      res.send({ success: false, reason: 'Invalid URL or Domain' });
     };
   }));
 });
 
-
 Router.post('/update/extension-setting-update', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { d, target, value } = req.body;
       const connection = pool.promise();
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
+      if (!userInfo) return res.send({success: false, reason: "No Such User"});
       let activitySettings = userInfo.activitySettings === "" ? [] : JSON.parse(userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"));
       const activityIndex = activitySettings.findIndex(activitySetting => { return activitySetting.d == d });
       if (activityIndex === -1) {
@@ -366,9 +362,8 @@ Router.post('/update/extension-setting-update', async (req, res) => {
       res.send({ success: true });
       extensionIo.to(userId).emit('setting-updated', {d, target, value});
     } catch (error) {
-
-    } finally {
-    }
+      res.send({ success: false, reason: 'Invalid URL or Domain' });
+    };
   }));
 });
 
@@ -386,16 +381,17 @@ Router.get('/logout', function (req, res) {
 Router.get('/profile/:userId', async (req, res) => {
   try {
     const targetUserId = req.params.userId;
-    if (!targetUserId) return { success: false, reason: 'invalid user' }
+    if (!targetUserId) return { success: false, reason: 'Invalid User' };
     const userInfo = await userCache(targetUserId);
     if (!userInfo) return res.send({ success: false, msg: 'No such user' });
-    const { friends } = userInfo;
-    const friendsArr = friends === "" ? [] : friends.split(",");
-    const firendsInfoPromises = friendsArr.map(async (friendId) => {
+    const friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
+    const friendsInfo = [];
+    await Promise.all(friends.map(async (friendId) => {
       const friendInfo = await userCache(friendId);
-      return friendInfo;
-    });
-    const friendsInfo = await Promise.all(firendsInfoPromises);
+      if (friendInfo) {
+        friendsInfo.push(friendInfo);
+      };
+    }));
     const subjectsInfo = await subjectsTimelineCache(targetUserId);
     res.send({ success: true, userInfo, subjectsInfo, friendsInfo });
   } catch (err) {
@@ -404,9 +400,8 @@ Router.get('/profile/:userId', async (req, res) => {
 });
 
 Router.post('/auth/google', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { data } = req.body;
       const auth = googleOauth2client();
       const response = await auth.getToken(data);
