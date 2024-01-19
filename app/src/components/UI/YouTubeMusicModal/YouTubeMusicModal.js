@@ -30,7 +30,12 @@ function YouTubeMusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
         YouTubeMusic.map((audio, i) => {
           return (
             <div key={i} className={styles.audioWrapper}>
-              {audio.name}
+              <div className={styles.audioDescription}>
+                🌱
+                <span className={styles.audioDescriptionName}>
+                  {audio.name}
+                </span>
+              </div>
               <YouTubeAudioPlayer height={"1vh"} width={"1vw"} videoId={audio.id} volume={audioVolumes ? audioVolumes[i] : 0} />
             </div>
           )

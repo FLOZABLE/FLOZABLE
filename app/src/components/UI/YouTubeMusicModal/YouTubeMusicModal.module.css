@@ -1,10 +1,18 @@
 .YouTubeMusicModal {
     position: relative;
     max-height: 40vh;
-    width: 400px;
     overflow-y: scroll;
 }
 
-.audioWrapper {
-    display: inline;
+.YouTubeMusicModal .audioWrapper {
+    padding-bottom: 10px;
+}
+
+.YouTubeMusicModal .audioDescription {
+    font-size: 15px;
+    padding-left: 5px;
+}
+
+.YouTubeMusicModal .audioDescriptionName {
+    padding-left: 20px;
 }
