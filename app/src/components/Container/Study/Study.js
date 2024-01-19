@@ -162,11 +162,13 @@ function Study(props) {
           />
         }
       />
-      <StudyModalContainer
-        startPos={{ x: "5vw", y: "38vh" }}
-        isDisp={isVolumeModal}
-        element={<YouTubeMusicModal originalVideoVolume={volume} setOriginalVideoVolume={setVolume} />}
-      />
+      {
+        <StudyModalContainer
+          startPos={{ x: "5vw", y: "38vh" }}
+          isDisp={isVolumeModal}
+          element={<YouTubeMusicModal originalVideoVolume={volume} setOriginalVideoVolume={setVolume} />}
+        />
+      }
       <StudySidebar
         isTimerModal={isTimerModal}
         isPlannerModal={isPlannerModal}
@@ -186,14 +188,12 @@ function Study(props) {
         bringSubjects={bringSubjects}
       />
       <div
-        className={`StudyMain ${styles.Main} ${
-          props.isSidebarOpen || props.isSidebarHovered ? "sidebarOpen" : ""
-        }`}
+        className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? "sidebarOpen" : ""
+          }`}
       >
         <div
-          className={`${styles.myGroupsViewerWrapper} ${
-            isViewGroups ? styles.open : ""
-          }`}
+          className={`${styles.myGroupsViewerWrapper} ${isViewGroups ? styles.open : ""
+            }`}
         >
           <MyGroupsViewer
             myGroups={myGroups}
