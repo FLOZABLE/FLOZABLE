@@ -4,7 +4,7 @@ const YouTubeMusic = [
     { id: "bzBH9Nm1BP8", name: "3" },
     { id: "xDWG9SrB4io", name: "4" },
     { id: "SE9nDvo94hw", name: "5" },
-    { id: "WNcsUNKlAKw", name: "6" },
+    { id: "WNcsUNKlAKw", name: "6", icon: "🌱" },
 ];
 
 export { YouTubeMusic }
