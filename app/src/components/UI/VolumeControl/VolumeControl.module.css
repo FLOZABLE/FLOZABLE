@@ -60,12 +60,15 @@
   outline: none;
   transition: 0.2s;
   cursor: pointer;
+  /*
   background: rgba(var(--el-bg-color), 0.5);
   background-image: linear-gradient(rgb(var(--main-color)), rgb(var(--main-color)));
   background-size: calc(var(--percentage) - 9px) 100%;
   background-repeat: no-repeat;
+  */
   position: relative;
   overflow: hidden;
+  background-color: #9a905d;
 }
 
 .soundSliderContainer .soundSlider::after {
@@ -84,6 +87,13 @@
   visibility: hidden;
   width: 1px;
   height: 10px;
+}
+
+.soundSliderContainer .soundSlider::-webkit-slider-runnable-track {
+  height: 10px;
+  -webkit-appearance: none;
+  color: #13bba4;
+  margin-top: -1px;
 }
 
 .soundSliderContainer .soundSlider:hover {
