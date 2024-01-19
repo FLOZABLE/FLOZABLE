@@ -8,7 +8,7 @@ function VolumeControl({ volume, setVolume }) {
   const sliderContainerRef = useRef(null);
 
   const handleRangeUpdate = (e) => {
-    const newVolume = parseInt(e.target.value, 10);
+    const newVolume = parseInt(e.target.value);
     setVolume(newVolume);
     if (newVolume === 0) {
       setMuted(true);
@@ -86,8 +86,6 @@ function VolumeControl({ volume, setVolume }) {
         onClick={handler}
         onMouseDown={handler}
       />
-
-      <p className={styles.volume}>{volume}</p>
     </div>
   );
 }
