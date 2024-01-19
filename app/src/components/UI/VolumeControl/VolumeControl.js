@@ -1,17 +1,20 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./VolumeControl.module.css"; // Import your module CSS file
 
-function VolumeControl({ volume, setVolume }) {
+function VolumeControl({ volume, setVolume, backgroundImage }) {
   const [isMuted, setMuted] = useState(true); // Track whether the volume is muted
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [prevVolume, setPrevVolume] = useState(volume);
+  const [sliderStyle, useSliderStyle] = useState('');
   const sliderContainerRef = useRef(null);
+
+  useEffect(() => {console.log('dlsfk',backgroundImage)},[backgroundImage]);
 
   const handleRangeUpdate = (e) => {
     const newVolume = parseInt(e.target.value);
     setVolume(newVolume);
     if (newVolume === 0) {
-      setMuted(true);
+      setMuted(true); 
     } else {
       setMuted(false);
     }

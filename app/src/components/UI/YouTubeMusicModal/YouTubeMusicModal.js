@@ -23,15 +23,24 @@ function YouTubeMusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
   return (
     <div className={`${styles.YouTubeMusicModal}`}>
       <div className={styles.audioWrapper}>
-        Original Video Audio
-        <VolumeControl volume={originalVideoVolume} setVolume={setOriginalVideoVolume} />
+        <div className={styles.audioDescription}>
+          🔴
+          <span className={styles.audioDescriptionName}>
+            Original Video Audio
+          </span>
+        </div>
+        <VolumeControl 
+        volume={originalVideoVolume} 
+        setVolume={setOriginalVideoVolume} 
+        backgroundImage={'https://as1.ftcdn.net/v2/jpg/00/92/53/56/1000_F_92535664_IvFsQeHjBzfE6sD4VHdO8u5OHUSc6yHF.jpg'}
+        />
       </div>
       {
         YouTubeMusic.map((audio, i) => {
           return (
             <div key={i} className={styles.audioWrapper}>
               <div className={styles.audioDescription}>
-                🌱
+                {audio.icon}
                 <span className={styles.audioDescriptionName}>
                   {audio.name}
                 </span>

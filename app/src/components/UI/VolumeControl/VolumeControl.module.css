@@ -66,11 +66,9 @@
   background-size: calc(var(--percentage) - 9px) 100%;
   background-repeat: no-repeat;
   */
-  position: relative;
-  overflow: hidden;
-  background-color: #9a905d;
 }
 
+/*
 .soundSliderContainer .soundSlider::after {
   position: absolute;
   content: "";
@@ -81,12 +79,17 @@
   transition: 0.2s;
   left: calc(var(--percentage) - 10px);
 }
+*/
 
 .soundSliderContainer .soundSlider::-webkit-slider-thumb {
-  appearance: none;
-  visibility: hidden;
-  width: 1px;
-  height: 10px;
+  width: 20px;
+  -webkit-appearance: none;
+  height: 20px;
+  cursor: ew-resize;
+  background: var(--pink);
+  box-shadow: 160px 0 0 150px rgb(216, 216, 216);
+  transform: translate(0px, -5px);
+  border-radius: 50%;
 }
 
 .soundSliderContainer .soundSlider::-webkit-slider-runnable-track {
@@ -94,6 +97,14 @@
   -webkit-appearance: none;
   color: #13bba4;
   margin-top: -1px;
+}
+
+.soundSliderContainer .soundSlider{
+  overflow: hidden;
+  appearance: none;
+  background-image: url('../../../../public/img/rain-audio.jpeg');
+  background-size: 300px auto;
+  background-repeat: no-repeat;
 }
 
 .soundSliderContainer .soundSlider:hover {
