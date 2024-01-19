@@ -7,31 +7,23 @@ const sharp = require('sharp');
 const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
-const { hashing, autoSignin, generateRandomId, googleOauth2client } = require("../tool");
+const { hashing, autoSignin, generateRandomId, googleOauth2client, isValidTimeZone } = require("../tool");
 const {UserRefreshClient}  = require("google-auth-library")
 const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
 const { extensionIo } = require('../socket');
 const upload = multer();
 
 Router.post('/accountinfo', async (req, res) => {
-  autoSignin(req, res, (async () => {
-    let userId = req.session.user_id;
-    let { bodyUserId } = req.body;
-    if (!!bodyUserId){
-      userId = bodyUserId;
-    }
-    if (userId) {
-      const notifications = await NotificationCache(userId);
-      const userInfo = await userCache(userId);
-      usersCache(userId);
-      res.send({ success: true, userInfo: userInfo, notifications: notifications });
-    }
+  autoSignin(req, res, (async (userId) => {
+    const notifications = await NotificationCache(userId);
+    const userInfo = await userCache(userId);
+    usersCache(userId);
+    res.send({ success: true, userInfo: userInfo, notifications: notifications });
   }))
 });
 
 Router.get('/activity-settings', async (req, res) => {
-  autoSignin(req, res, (async () => {
-    const userId = req.session.user_id;
+  autoSignin(req, res, (async (userId) => {
     try {
       const connection = pool.promise();
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
@@ -64,24 +56,24 @@ Router.post('/all-accounts', async (req, res) => {
 })
 
 Router.post('/signin-authentication', async (req, res, next) => {
-  let email = req.body.email;
-  let password = req.body.password;
+  const {email, password} = req.body;
 
+  if (!email || !password) return res.send({success: false, reason: 'NO SUCH USER'});
+  
   // Sanitize inputs
-  let sanitizedEmail = email.replace(/[^a-z0-9!?@.]/gi, '');
-  let sanitizedPassword = password;
+  if (!/^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/.test(email)) {
+    return res.send({ success: false, reason: 'Invalid Email' });
+  }
 
   const connection = pool.promise();
 
   const [[userInfo]] = await connection.query('SELECT user_id, salt, hashed_password, email, myinfo, name, timezone, hashed_password FROM users WHERE email = ?', sanitizedEmail);
 
-  pool.releaseConnection(connection);
-
   if (!userInfo) {
     return res.send({ success: false, reason: "NO SUCH USER" });
   };
 
-  const hashedPassword = crypto.pbkdf2Sync(sanitizedPassword, userInfo.salt, 99097, 32, 'sha512').toString('hex');
+  const hashedPassword = crypto.pbkdf2Sync(password, userInfo.salt, 99097, 32, 'sha512').toString('hex');
 
   if (hashedPassword === userInfo.hashed_password) {
     const userId = userInfo.user_id;
@@ -111,15 +103,6 @@ Router.post('/signin-authentication', async (req, res, next) => {
   };
 });
 
-function isValidTimeZone(timeZone) {
-  try {
-    Intl.DateTimeFormat(undefined, { timeZone: timeZone });
-    return true;
-  } catch {
-    return false
-  }
-}
-
 Router.post('/signup-authentication', async (req, res) => {
   let { email, name, password, timeZone } = req.body;
 
@@ -144,7 +127,6 @@ Router.post('/signup-authentication', async (req, res) => {
   if (!/^[a-zA-Z0-9]+$/.test(name)) {
     return res.send({ success: false, reason: 'Invalid Name (Only A-Z, a-z, and 0-9 available)' });
   }
-
 
 
   //check pw
@@ -258,9 +240,8 @@ Router.post('/update/image', upload.single('image'), async (req, res) => {
 });
 
 Router.post('/update/info', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     const connection = pool.promise();
-    const userId = req.session.user_id;
     try {
       const { name, email, confirmEmail } = req.body;
       //const supportedLanguages = ['English', 'Spanish', 'French'];
