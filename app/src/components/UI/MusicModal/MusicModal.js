@@ -47,7 +47,7 @@ function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
               {audio.name}
             </span>
           </div>
-          <AudioPlayer audio={audio.audio}/>
+          <AudioPlayer audio={audio.audio} name={audio.name} />
           {/* <YouTubeAudioPlayer height={"1vh"} width={"1vw"} videoId={audio.id} volume={audioVolumes ? audioVolumes[i] : 0} /> */}
         </div>
         )
