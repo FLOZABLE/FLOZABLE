@@ -347,8 +347,8 @@ function mouseUp(e) {
 function divMoveXY(e) {
   if (isDragging) {
     clicked = false;
-    timerModalEl.style.top = e.clientY + 'px';
-    timerModalEl.style.left = e.clientX + 'px';
+    timerModalEl.style.top = e.clientY - 30 + 'px';
+    timerModalEl.style.left = e.clientX - 30 + 'px';
   }
 }
 
@@ -423,7 +423,7 @@ function createTimerFlozable() {
   })
 
   document.addEventListener('mousemove', divMoveXY);
-  document.addEventListener('mouseup', mouseUp);
+  timerModalEl.addEventListener('mouseup', mouseUp);
   timerModalEl.addEventListener('mousedown', mouseDown);
 };
 
@@ -436,7 +436,7 @@ function checkTabSetting() {
   chrome.runtime.sendMessage({ command: 'tab-setting', domain: domain }, async (response) => {
     if (response.success) {
       const { tabSetting, isStudying } = response;
-      createTimerFlozable();
+      //createTimerFlozable();
       if (!tabSetting) return;
 
       if (tabSetting.t) {
