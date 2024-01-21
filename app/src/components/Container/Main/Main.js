@@ -17,7 +17,6 @@ import { Link } from "react-router-dom";
 import AIRecommendation from "../../UI/AIRecommendation/AIRecommendation.js";
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal.js";
 import RecommendedFriendsViewer from "../../UI/RecommendedFriendsViewer/RecommendedFriendsViewer.js";
-import YouTubeMusicModal from "../../UI/YouTubeMusicModal/YouTubeMusicModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
