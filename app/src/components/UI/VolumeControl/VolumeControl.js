@@ -8,8 +8,6 @@ function VolumeControl({ volume, setVolume, backgroundImage }) {
   const [sliderStyle, useSliderStyle] = useState('');
   const sliderContainerRef = useRef(null);
 
-  useEffect(() => {console.log('dlsfk',backgroundImage)},[backgroundImage]);
-
   const handleRangeUpdate = (e) => {
     const newVolume = parseInt(e.target.value);
     setVolume(newVolume);
@@ -88,6 +86,7 @@ function VolumeControl({ volume, setVolume, backgroundImage }) {
         onChange={handleRangeUpdate}
         onClick={handler}
         onMouseDown={handler}
+        style={{backgroundImage: backgroundImage}}
       />
     </div>
   );

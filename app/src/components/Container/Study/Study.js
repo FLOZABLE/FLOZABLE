@@ -9,7 +9,7 @@ import StudyModalContainer from "../../UI/StudyModalContainer/StudyModalContaine
 import PlanTimeline from "../../UI/PlanTimeline/PlanTimeline";
 import VolumeControl from "../../UI/VolumeControl/VolumeControl";
 import ThemeSelector from "../../UI/ThemeSelector/ThemeSelector";
-import YouTubeMusicModal from "../../UI/YouTubeMusicModal/YouTubeMusicModal";
+import MusicModal from "../../UI/MusicModal/MusicModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -166,7 +166,7 @@ function Study(props) {
         <StudyModalContainer
           startPos={{ x: "5vw", y: "38vh" }}
           isDisp={isVolumeModal}
-          element={<YouTubeMusicModal originalVideoVolume={volume} setOriginalVideoVolume={setVolume} />}
+          element={<MusicModal originalVideoVolume={volume} setOriginalVideoVolume={setVolume} />}
         />
       }
       <StudySidebar
