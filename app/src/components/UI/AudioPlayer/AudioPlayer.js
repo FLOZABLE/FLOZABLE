@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import VolumeControl from "../VolumeControl/VolumeControl";
 import styles from "./AudioPlayer.module.css";
 
-function AudioPlayer({audio}) {
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
+function AudioPlayer({audio, name}) {
   const [volume, setVolume] = useState(0);
 
   useEffect(() => {
@@ -15,7 +17,7 @@ function AudioPlayer({audio}) {
   return (
     <div className={styles.AudioPlayer}>
       <div className={styles.volumeWrapper}>
-        <VolumeControl volume={volume} setVolume={setVolume} />
+        <VolumeControl volume={volume} setVolume={setVolume} backgroundImage={`url(${serverOrigin}/img/${name}.jpg)`}/>
       </div>
     </div>
   )
