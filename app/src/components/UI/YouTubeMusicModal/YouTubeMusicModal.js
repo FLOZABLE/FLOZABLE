@@ -32,7 +32,6 @@ function YouTubeMusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
         <VolumeControl 
         volume={originalVideoVolume} 
         setVolume={setOriginalVideoVolume} 
-        backgroundImage={'https://as1.ftcdn.net/v2/jpg/00/92/53/56/1000_F_92535664_IvFsQeHjBzfE6sD4VHdO8u5OHUSc6yHF.jpg'}
         />
       </div>
       {
@@ -45,7 +44,7 @@ function YouTubeMusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
                   {audio.name}
                 </span>
               </div>
-              <YouTubeAudioPlayer height={"1vh"} width={"1vw"} videoId={audio.id} volume={audioVolumes ? audioVolumes[i] : 0} />
+              <YouTubeAudioPlayer audioPath={`/audio/${audio.file}`} />
             </div>
           )
         })
