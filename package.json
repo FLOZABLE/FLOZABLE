@@ -19,6 +19,10 @@
   },
   "homepage": "https://github.com/FLOZABLE/FLOZABLE#readme",
   "dependencies": {
+    "@dicebear/avatars": "^4.10.8",
+    "@dicebear/avatars-male-sprites": "^4.10.8",
+    "@dicebear/collection": "^7.0.3",
+    "@dicebear/core": "^7.0.3",
     "@googleapis/calendar": "^9.3.2",
     "@react-oauth/google": "^0.12.1",
     "ajv": "^8.12.0",
@@ -64,7 +68,8 @@
     "sib-api-v3-sdk": "^8.5.0",
     "socket.io": "^4.5.4",
     "web-push": "^3.6.4",
-    "ws": "^8.13.0"
+    "ws": "^8.13.0",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
