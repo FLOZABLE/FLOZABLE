@@ -53,7 +53,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
           const groupMembers = group.members.split(",");
 
           data.rankings.map((ranking) => {
-            if (groupMembers.includes(ranking.user.user_id)){
+            if (groupMembers.includes(ranking.user.user_id)) {
               groupTotalTime += parseInt(ranking.total);
             }
           });
@@ -98,7 +98,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
           </li>
           <li>
             <div className={styles.groupTotal}>
-              {durationFormatter(groupTotal)}
+              {Math.round(groupTotal * 100 / 3060) / 100}hr
             </div>
           </li>
         </ul>
