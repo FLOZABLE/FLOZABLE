@@ -12,6 +12,7 @@ import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
 import Search from "../../UI/Search/Search";
 import SearchUsers from "../../UI/SearchUsers/SearchUsers";
 import FriendEmailModal from "../../UI/FriendEmailModal/FriendEmailModal";
+import StuckModal from "../../UI/StuckModal/StuckModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -65,6 +66,7 @@ function Friends({
 
   return (
     <div className={styles.Friends}>
+      <StuckModal />
       <FriendLinkModal
         userInfo={userInfo}
         isOpen={isFriendLinkModal}

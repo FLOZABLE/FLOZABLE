@@ -13,12 +13,11 @@ import LineInput from "../../UI/LineInput/LineInput";
 import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 import LabelMovingInput from "../../UI/LabelMovingInput/LabelMovingInput";
 import SimpleToggleBtn from "../../UI/SimpleToggleBtn/SimpleToggleBtn";
-import OptionToggleBtn from "../../UI/OptionToggleBtn/OptionToggleBtn";
+import StuckModal from "../../UI/StuckModal/StuckModal";
 //import { GoogleLogin } from "react-google-login";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import GoogleLoginBtn from "../../UI/GoogleLoginBtn/GoogleLoginBtn";
 import { useSearchParams } from "react-router-dom";
-import DropDownButton from "../../UI/DropDownButton/DropDownButton";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;
@@ -224,6 +223,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
 
   return (
     <div className={styles.Account}>
+      <StuckModal />
       <div
         className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
           }`}

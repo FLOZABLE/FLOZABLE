@@ -204,7 +204,7 @@ connection.on('connection', (socket) => {
       io.to(groups).emit(`stopStudying:${userId}`);
     };
     if (friends.length) {
-      io.to(friends).emit(`studying:${userId}`, subject);
+      io.to(friends).emit(`stopStudying:${userId}`, subject);
     };
     const { datum_point, timeline_sum } = subject;
 

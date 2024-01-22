@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import AIRecommendation from "../../UI/AIRecommendation/AIRecommendation.js";
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal.js";
 import RecommendedFriendsViewer from "../../UI/RecommendedFriendsViewer/RecommendedFriendsViewer.js";
+import StuckModal from "../../UI/StuckModal/StuckModal.js";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -58,6 +59,7 @@ function Main({
 
   return (
     <div className={styles.MainContainer}>
+      <StuckModal />
       <GroupPwModal
         myGroups={myGroups}
         setMyGroups={setMyGroups}
