@@ -44,7 +44,7 @@ function GroupTimeCounter({
 
     return (
         <div className={styles.GroupTimeCounter}>
-            {Math.round(groupTotal * 100/3060)/100}hr
+            {Math.round(groupTotal * 100/3600)/100}hr
         </div>
     );
 }
