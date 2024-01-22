@@ -98,7 +98,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
           </li>
           <li>
             <div className={styles.groupTotal}>
-              {Math.round(groupTotal * 100 / 3060) / 100}hr
+              {Math.round(groupTotal * 100 / 3600) / 100}hr
             </div>
           </li>
         </ul>
