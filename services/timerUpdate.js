@@ -4,7 +4,7 @@ const cache = new NodeCache();
 const { DateTime } = require('luxon');
 const crypto = require("crypto");
 const pool = require("../model/pool");
-const { io, userIdToSocketIdMap } = require("../socket");
+const { io } = require("../socket");
 const cron = require("node-cron");
 const { activeSubjectCache, subjectsCache, timerCache } = require("./redisLoader");
 
@@ -28,16 +28,10 @@ async function timerUpdate() {
       const subjects = await subjectsCache(userId);
       const activeSubject = await activeSubjectCache(userId);
       //user is studying
-      /* if (activeSubject.id) {
-        const activeSubjectInfo = subjects.find(subject => {return subject.id === activeSubject.id});
-        const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
-        if (activity) {
-          const start = activity[0];
-          const stop = now - activeSubjectInfo.datum_point - activeSubjectInfo.timeline_sum;
-          redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${start - stop}]`);
-          redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
-        }
-      }; */
+      let activity = false;
+      if (activeSubject.id) {
+        activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
+      };
       subjects.map(async ({ id, timeline_sum }) => {
         let todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
         if (todayTimeline.length) {
@@ -62,11 +56,19 @@ async function timerUpdate() {
         };
         redisClient.lTrim(`user:${userId}:subject:${id}`, 1, 0);
         //removeTimeline(userId, now);
-      })
-      const socketId = userIdToSocketIdMap.get(userId);
-      if (socketId) {
-        io.to(socketId).emit('reset');
-      };
+      });
+      io.to(userId).emit('reset');
+      if (activity) {
+        const start = activity[0];
+        const activeSubjectInfo = subjects.find(subject => {return subject.id === activeSubject.id});
+        if (!activeSubjectInfo) return;
+        const stop = now - activeSubjectInfo.datum_point - activeSubjectInfo.timeline_sum;
+        activeSubjectInfo.timeline_sum += start - stop;
+        redisClient.hSet(`user:${userId}:subjects`, activeSubject.id, JSON.stringify(activeSubjectInfo));
+        await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${start - stop}]`);
+        redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
+        redisClient.incrBy(`user:${userId}:dayTotal`, start - stop);
+      }
     });
   } catch (err) {
     console.log(err);

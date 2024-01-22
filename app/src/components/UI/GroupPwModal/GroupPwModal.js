@@ -83,7 +83,7 @@ function GroupPwModal({
 
   return (
     <div
-      className={`${styles.GroupPwModal} modal ${isGroupPwModal ? "open" : ""}`}
+      className={`${styles.GroupPwModal} modal ${isGroupPwModal ? "open" : ""} hiddenScroll`}
     >
       <div className={styles.header}>
         {!joinByLink ?
