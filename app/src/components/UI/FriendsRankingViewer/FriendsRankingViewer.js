@@ -54,6 +54,7 @@ function FriendsRankingViewer({userInfo}) {
         setWeeklyRankingsEl(thisWeekRankings.map((userInfo, i) => {
           const {name, user_id, timezone, weekTotal} = userInfo;
           const {value, type} = secondConverter(parseInt(weekTotal));
+          console.log(value, type, weekTotal, 'total');
           return (
             <Link to={`/dashboard/user/${user_id}`} className={styles.ranking} key={i}>
               <p className={styles.rank}>#{i + 1}</p>

@@ -61,10 +61,6 @@ function FriendEmailModal({ isOpen, setIsOpen }) {
             })
               .then((res) => res.json())
               .then((res) => {
-                console.log(res)
-                if (res.success) {
-                  console.log(res);
-                }
               })
               .catch((error) => console.error(error));
           }} />

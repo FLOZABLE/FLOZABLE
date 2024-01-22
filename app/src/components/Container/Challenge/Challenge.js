@@ -495,8 +495,6 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
     useEffect(() => {
         if (!("value1" in competeInfo1) || !("value1" in competeInfo2)) return;
 
-        console.log(competeInfo1, competeInfo2);
-
         if (challenge.first === "Longest Focus Last Week" || challenge.first === "Longest Focus Yesterday" || challenge.first === "Total Study Time Last Week") {
             setResultEl1(
                 <ChallengeCompare value1={competeInfo1.value1} value2={competeInfo2.value1} user1Pfp={user1Pfp} user2Pfp={user2Pfp} userInfo1={userInfo1} userInfo2={userInfo2}/>

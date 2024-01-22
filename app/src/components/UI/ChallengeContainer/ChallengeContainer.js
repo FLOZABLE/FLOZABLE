@@ -25,7 +25,6 @@ function ChallengeContainer({
   const [matchRecord, setMatchRecord] = useState(<div></div>);
 
   function joinChallenge() {
-    console.log(challenge);
     const { id } = challenge;
     setChallenges(challenges.filter((challenge) => challenge.id !== id));
     fetch(`${serverOrigin}/challenges/join-challenge`, {

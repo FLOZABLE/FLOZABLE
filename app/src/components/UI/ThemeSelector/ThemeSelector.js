@@ -16,7 +16,6 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId, setVolume })
 
   function submitVideoId(e){
     const url = e.target.value;
-    console.log(url);
     try {
       const videoId = new URLSearchParams(new URL(url).search).get("v");
       setVideoId(videoId);
@@ -51,7 +50,6 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId, setVolume })
         userThemes.map((theme) => { //theme is 0:id, 1:id ...
           const categoryAndId = theme.split(":"); // [0] is the index, and [1] is the id
           const categoryName = allCategoriesParsed[parseInt(categoryAndId[0])];
-          console.log(theme, categoryName);
           allIds.push(categoryAndId[1]);
           allCategories[categoryAndId[1]] = categoryName.split(":")[0];
         });
@@ -66,8 +64,6 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId, setVolume })
             data.info.map((currentTheme, i) => {
               everyTheme.push({ id: currentTheme.video_id, img: `https://i.ytimg.com/vi/${currentTheme.video_id}/maxresdefault.jpg`, name: currentTheme.name, category: [allCategories[currentTheme.id]] });
             });
-
-            console.log(everyTheme);
 
             const tempThemes = [];
             everyTheme.map((theme) => {
@@ -86,7 +82,6 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId, setVolume })
               });
             });
             setThemesList(tempThemes);
-            console.log(tempThemes);
           });
       });
   }, []);
@@ -122,7 +117,6 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId, setVolume })
       )
     }
     else {
-      console.log(themeChoices);
       setSelectionEl(
         <div className={`${styles.themeContainer} customScroll`}>
           {themeChoices.map((Theme, i) => {

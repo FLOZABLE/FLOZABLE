@@ -26,27 +26,6 @@ function GoogleLoginBtn() {
     },
     scope: "openid email profile https://www.googleapis.com/auth/calendar"
   });
-  
-  const onSuccess = (response) => {
-    console.log(response);
-    fetch(`${serverOrigin}/account/auth/google`, {
-      method: "post",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({data: response.code}),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => console.error(error));
-  }
-
-  const onFailure = (err) => {
-    console.log(err)
-  }
-
 
   return (
     <div className={styles.GoogleLoginBtn} onClick={login}>

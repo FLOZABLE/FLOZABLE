@@ -18,8 +18,6 @@ function YouTubeMusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
     setAudioVolumes(new Array(audioChoices.length).fill[0]);
   }, [audioChoices])
 
-  console.log(YouTubeMusic);
-
   return (
     <div className={`${styles.YouTubeMusicModal}`}>
       <div className={styles.audioWrapper}>

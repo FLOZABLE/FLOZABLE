@@ -30,7 +30,6 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
       .then((data) => {
         if (data.success) {
           setChatRooms(data.rooms);
-          console.log('gd', data)
           setReadStatus(data.readStatus);
         }
       })

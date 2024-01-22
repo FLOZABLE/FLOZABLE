@@ -10,7 +10,6 @@ function RefreshBtn({refresh, setRefresh}) {
     <div className={styles.RefreshBtn}
       onClick={() => {
         const now = new Date().getTime() / 1000;
-        console.log(now - lastUpd)
         if (now - lastUpd > 3) {
           setLastUpd(now);
           setRefresh(true);

@@ -201,12 +201,10 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
     searchParams.delete("website");
     if (!domain) return;
 
-    console.log(domain);
     if (!domain) return;
 
     const isExist = websites.find(website => website.d.replace(/^www\.(.*)$/, "$1") === domain.replace(/^www\.(.*)$/, "$1"));
 
-    console.log(isExist, 'exi')
     if (isExist) {
       const section = document.querySelector(`#${domain.replace(/^www\.(.*)$/, "$1").replace(/\./g, '_')}`);
       if (!section) return;
