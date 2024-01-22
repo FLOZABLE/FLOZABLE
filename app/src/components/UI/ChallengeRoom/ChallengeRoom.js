@@ -9,8 +9,6 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function ChallengeRoom({ challengeInfo, setResponse, setChallenges, challenges }) {
 
   function joinChallenge(challengeId) {
-    console.log(challenges);
-    console.log(challenges.filter((c) => c.id != challengeId));
     setChallenges(challenges.filter((c) => c.id !== challengeId));
     fetch(`${serverOrigin}/challenges/join-challenge`, {
       method: "post",

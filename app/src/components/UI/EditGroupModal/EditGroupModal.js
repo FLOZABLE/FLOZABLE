@@ -46,7 +46,6 @@ function CreateGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
   }, []);
 
   useEffect(() => {
-    console.log(description)
     if (submit && groupId) {
       fetch(`${serverOrigin}/groups/modify`, {
         method: "post",

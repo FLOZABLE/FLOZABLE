@@ -27,7 +27,6 @@ function FriendLinkModal({ isOpen, setIsOpen, userInfo }) {
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          console.log(res);
           setAddFriendUrl(serverOrigin + `/friend/add?user=${userInfo.user_id}&id=${res.linkId}`);
         }
       })

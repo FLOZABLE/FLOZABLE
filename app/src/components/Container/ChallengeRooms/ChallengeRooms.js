@@ -31,7 +31,6 @@ function ChallengeRooms({ isSidebarOpen, isSidebarHovered, setResponse, userInfo
       .then((data) => {
         if (data.success) {
           const tempChallenges = [...data.data];
-          console.log(tempChallenges);
           setChallenges(tempChallenges);
         }
       });

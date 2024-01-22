@@ -24,7 +24,6 @@ function RecommendedFriendsViewer({setResponse}) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (data.success) {
           setRecommendedFriends(data.users);
         }

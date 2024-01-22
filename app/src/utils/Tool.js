@@ -41,7 +41,7 @@ const secondConverter = (sec, options = ['s', 'm', 'h']) => {
   let value = sec ? sec : 0;
   let type = 0;
   if (sec >= 60 * 60) {
-    value = sec / (60 * 60).toFixed(2);
+    value = (sec / (60 * 60)).toFixed(2);
     type = 2;
   } else if (sec > 60) {
     value = Math.floor(sec / 60);

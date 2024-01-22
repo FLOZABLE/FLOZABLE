@@ -33,10 +33,6 @@ function PlanTimeline({
   const [planSeries, setPlanSeries] = useState([]);
   const [selected, setSelected] = useState(-2);
 
-  /* useEffect(() => {
-    console.log('ddd')
-  }, [selected]) */
-
   const togglePlan = (plan) => {
     const eventIndex = plans.findIndex((planInfo) => planInfo.id === plan.id);
     if (eventIndex !== -1) {
@@ -81,11 +77,9 @@ function PlanTimeline({
         const total = subjectPlans.length;
         const completed = subjectPlans.filter(plan => plan.completed).length;
         const val =  Math.floor(completed / total * 100);
-        console.log(val);
         planSeries.push({id, icon, color, name, val, total, completed});
       }
     });
-    console.log(planSeries)
     setPlanSeries(planSeries)
   }, [subjects, plans]);
 

@@ -39,8 +39,6 @@ function RadialBarChart({ series, colors = colorsList, selected, setSelected }) 
   useEffect(() => {
     if (!series) return;
 
-    console.log("Set Selected to ", selected)
-
     let total = 0;
     let completed = 0;
     /* console.log(selected) */
