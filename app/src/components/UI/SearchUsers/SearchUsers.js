@@ -15,7 +15,6 @@ function SearchUsers({ searchQuery, setResponse, setCount }) {
 
   useEffect(() => {
     const isRateLimited = lastUpd && new Date().getTime() - lastUpd < 1000;
-    console.log(isRateLimited)
     if (isRateLimited || !searchQuery || searchQuery.length < 3) return;
 
     setLastUpd(new Date().getTime());
@@ -27,7 +26,6 @@ function SearchUsers({ searchQuery, setResponse, setCount }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (data.success) {
           setUsers(data.users);
           setCount(data.users.length);

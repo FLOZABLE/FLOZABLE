@@ -189,7 +189,6 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
 
         if (data.success) {
           const { userInfo, subjectsInfo, friendsInfo } = data;
-          console.log(subjectsInfo);
           const { datum_point } = userInfo;
           setUserInfo(userInfo);
           const sortedSubject = timelineSort(subjectsInfo);
@@ -257,10 +256,6 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
         ]
     });
   }, [userSubjects, statsViewer]);
-
-  useEffect(() => {
-    console.log(isGroupPwModal)
-  }, [isGroupPwModal])
 
   return (
     <div className={styles.UserContainer}>

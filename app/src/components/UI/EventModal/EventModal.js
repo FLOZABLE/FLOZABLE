@@ -134,7 +134,6 @@ function EventModal({
       setEvents(newEvents);
     } else if (isAddPlanModal) {
       //new event
-      console.log('new')
       const id = generateRandomId(10);
       setId(id);
       setTitle("");
