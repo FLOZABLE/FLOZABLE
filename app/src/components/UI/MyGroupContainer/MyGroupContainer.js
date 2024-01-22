@@ -8,12 +8,16 @@ import MembersContainer from "../MembersContainer/MembersContainer";
 import { socket } from "../../../socket";
 import { mediaSocket } from "../../../mediaSocket";
 import GroupRanking from "../GroupRankingModal/GroupRankingModal";
+import { durationFormatter } from "../../../utils/Tool";
 
-function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal, setIsGroupRankingModal, setIsEditGroupModal, mode}) {
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
+function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal, setIsGroupRankingModal, setIsEditGroupModal, mode }) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
   const [isLeader, setIsLeader] = useState(false);
+  const [groupTotal, setGroupTotal] = useState(0);
 
   useEffect(() => {
     if (!group || !isFocus) return;
@@ -27,11 +31,38 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
 
   useEffect(() => {
     if (!userInfo || !group) return;
-    const {leader} = group;
+    const { leader } = group;
     if (leader === userInfo.user_id) {
       setIsLeader(true);
     };
   }, [userInfo, group]);
+
+  useEffect(() => {
+    if (group.length <= 0) return;
+
+    fetch(`${serverOrigin}/ranking/today`, {
+      method: "get",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          let groupTotalTime = 0;
+          const groupMembers = group.members.split(",");
+
+          data.rankings.map((ranking) => {
+            if (groupMembers.includes(ranking.user.user_id)){
+              groupTotalTime += parseInt(ranking.total);
+            }
+          });
+
+          setGroupTotal(groupTotalTime);
+        }
+      });
+
+  }, [group]);
 
   return (
     <div className={`${styles.MyGroupContainer} ${mode === "study" ? styles.study : ''}`}>
@@ -63,7 +94,12 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
             <FontAwesomeIcon icon={faCommentDots} />
           </li>
           <li className={styles.showRankingModalListElement}>
-            <FontAwesomeIcon icon={faRankingStar} onClick={() => {setIsGroupRankingModal(prev => !prev ? members : false)}}/>
+            <FontAwesomeIcon icon={faRankingStar} onClick={() => { setIsGroupRankingModal(prev => !prev ? members : false) }} />
+          </li>
+          <li>
+            <div className={styles.groupTotal}>
+              {durationFormatter(groupTotal)}
+            </div>
           </li>
         </ul>
         {/* <div className={styles.right}>

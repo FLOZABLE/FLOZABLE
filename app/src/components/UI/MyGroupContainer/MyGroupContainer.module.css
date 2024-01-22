@@ -82,6 +82,13 @@
   display: none;
 }
 
+.MyGroupContainer .groupTotal {
+  /*
+  font-size: 15px;
+  */
+  display: block;
+}
+
 @media (max-width: 1400px) {
   .MyGroupContainer .name a {
     font-size: 30px;

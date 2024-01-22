@@ -6,6 +6,7 @@ import LikeBtn from "../LikeBtn/LikeBtn";
 import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
 import GroupMemCounter from "../GroupMemCounter/GroupMemCounter";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
+import GroupTimeCounter from "../GroupTimeCounter/GroupTimeCounter";
 import { Link } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -70,7 +71,7 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
               <i>
                 <FontAwesomeIcon icon={faStopwatch} />
               </i>
-              <p>0</p>
+              <GroupTimeCounter members={members}/>
             </li>
             <li>
               <i>
