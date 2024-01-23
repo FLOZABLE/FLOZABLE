@@ -185,6 +185,17 @@ function createThemesTable() {
     tags VARCHAR(300) DEFAULT ''
   );  
   `);
-}
+};
 
-module.exports = { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, groupsChatRoomsGeneration, createChallengeRoomsTable, createThemesTable };
+function createActivitiesTable() {
+  const connection = pool.promise();
+  connection.query(`
+  CREATE TABLE activities (
+    user_id VARCHAR(20),
+    date VARCHAR(10),
+    data TEXT DEFAULT ''
+  );
+  `);
+};
+
+module.exports = { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, groupsChatRoomsGeneration, createChallengeRoomsTable, createThemesTable, createActivitiesTable };
