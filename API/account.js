@@ -7,7 +7,7 @@ const sharp = require('sharp');
 const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
-const { hashing, autoSignin, generateRandomId, googleOauth2client, isValidTimeZone } = require("../tool");
+const { hashing, autoSignin, generateRandomId, googleOauth2client, isValidTimeZone, validateEmail, validateName, validatePassword } = require("../tool");
 const {UserRefreshClient}  = require("google-auth-library")
 const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
 const { extensionIo } = require('../socket');
@@ -86,7 +86,8 @@ Router.post('/signin-authentication', async (req, res, next) => {
 });
 
 Router.post('/signup-authentication', async (req, res) => {
-  const { email, name, password, timeZone } = req.body;
+  try {
+    const { email, name, password, timeZone } = req.body;
 
   if (!isValidTimeZone) {
     timeZone = 'UTC';
@@ -101,25 +102,21 @@ Router.post('/signup-authentication', async (req, res) => {
   // Sanitize inputs
 
   //check email
-  if (!/^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/.test(email)) {
-    return res.send({ success: false, reason: 'Invalid Email' });
-  }
+  const isValidEmail = validateEmail(email);
+  if (!isValidEmail.isValid) {
+    return res.send({success: false, reason: isValidEmail.reason});
+  };
 
-  //check name
-  if (!/^[a-zA-Z0-9]+$/.test(name)) {
-    return res.send({ success: false, reason: 'Invalid Name (Only A-Z, a-z, and 0-9 available)' });
-  }
+  const isValidName = validateName(name);
+  if (!isValidName.isValid) {
+    return res.send({success: false, reason: isValidName.reason});
+  };
 
-
-  //check pw
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-    return res.send({ success: false, reason: 'You need special characters' });
-  } /* else if ((password.match(/\d/g) || []).length < 2) {
-    return res.send({ success: false, reason: 'Need More Than 2 Numbers' });
-  }  */else if (password.length < 6) {
-    return res.send({ success: false, reason: 'Too Short' });
-  }
-
+  const isValidPassword = validatePassword(password);
+  if (!isValidPassword.isValid) {
+    return res.send({success: false, reason: isValidPassword.reason});
+  };
+  
   const connection = pool.promise();
 
   const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
@@ -128,7 +125,7 @@ Router.post('/signup-authentication', async (req, res) => {
     return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
   };
 
-  let hashed = hashing(password);
+  const [salt, hashed_password] = hashing(password);
 
   const userId = generateRandomId(15);
   const keySalt = crypto.randomBytes(32).toString('hex');
@@ -137,8 +134,8 @@ Router.post('/signup-authentication', async (req, res) => {
   const user = {
     name,
     email,
-    hashed_password: hashed[1],
-    salt: hashed[0],
+    hashed_password,
+    salt,
     user_id: userId,
     timezone: timeZone,
     datum_point: unixTimestamp,
@@ -198,6 +195,9 @@ Router.post('/signup-authentication', async (req, res) => {
 
     res.send({ success: true });
   }); */
+  } catch (err) {
+    res.send({success: false, reason: "Error"});
+  };
 });
 
 Router.post('/update/image', upload.single('image'), async (req, res) => {
@@ -222,17 +222,31 @@ Router.post('/update/image', upload.single('image'), async (req, res) => {
 
 Router.post('/update/info', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
-    const connection = pool.promise();
     try {
       const { name, email, confirmEmail } = req.body;
       //const supportedLanguages = ['English', 'Spanish', 'French'];
-      if (!/^[a-zA-Z0-9]+$/.test(name)) {
-        return res.send({ success: false, reason: 'Invalid Name' });
-      } else if (!/^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/.test(email) || email.length > 320) {
-        return res.send({ success: false, reason: 'Invalid Email' });
-      } else if (email !== confirmEmail) {
+      const isValidEmail = validateEmail(email);
+      if (!isValidEmail.isValid) {
+        return res.send({success: false, reason: isValidEmail.reason});
+      };
+    
+      const isValidName = validateName(name);
+      if (!isValidName.isValid) {
+        return res.send({success: false, reason: isValidName.reason});
+      };
+      
+      if (email !== confirmEmail) {
         return res.send({ success: false, reason: 'Email Confirmation Failed' });
-      }
+      };
+      
+      const connection = pool.promise();
+
+      const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
+    
+      if (checkEmail) {
+        return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
+      };
+      
       /* else if (!supportedLanguages.includes(language)) {
         return res.send({ success: false, reason: 'Not Supported Language' });
       } */
@@ -243,9 +257,7 @@ Router.post('/update/info', async (req, res) => {
       res.send({ success: true, msg: 'Updated Your Information!' });
     } catch (error) {
       res.send({ success: false, reason: 'Unsupported File Type' })
-    } finally {
-      pool.releaseConnection(connection);
-    }
+    };
   }));
 });
 
@@ -254,21 +266,20 @@ Router.post('/update/password', async (req, res) => {
     try {
       const connection = pool.promise();
       const { password, confirmPassword } = req.body;
-      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-        return res.send({ success: false, reason: 'No Special Character' });
-      } /* else if ((password.match(/\d/g) || []).length < 2) {
-        return res.send({ success: false, reason: 'Need More Than 2 Numbers' });
-      } */ else if (password.length < 6) {
-        return res.send({ success: false, reason: 'Too Short' });
-      } else if (password !== confirmPassword) {
+
+      const isValidPassword = validatePassword(password);
+      if (!isValidPassword.isValid) {
+        return res.send({success: false, reason: isValidPassword.reason});
+      };
+      
+      if (password !== confirmPassword) {
         return res.send({ success: false, reason: 'Password Does Not Match' });
-      }
-      res.send({ success: true });
-      let hashed = hashing(password);
-      let salt = hashed[0];
-      let hashedPw = hashed[1];
-      const updateInfo = [{ hashed_password: hashedPw, salt: salt }, userId];
+      };
+
+      const [salt, hashed_password] = hashing(password);
+      const updateInfo = [{ hashed_password, salt }, userId];
       const update = await connection.query("UPDATE users set ? WHERE user_id = ?", updateInfo);
+      res.send({ success: true });
     } catch (error) {
       res.send({ success: false, reason: 'Unsupported File Type' })
     };
@@ -282,9 +293,9 @@ Router.post('/update/extension-add', async (req, res) => {
       const { url } = req.body;
       let origin;
       let domain;
-      if (!/^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[a-zA-Z0-9.-]*)*$/.test(url)) {
+      if (!/^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[a-zA-Z0-9.-]*)*$/.test(url) || domain.length > 25) {
         return res.send({ success: false, reason: 'Invalid URL or Domain' });
-      }
+      };
       if (url.includes('https://') || url.includes('http://')) {
         origin = new URL(url).origin;
         domain = new URL(url).hostname;

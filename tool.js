@@ -88,6 +88,42 @@ function arraysHaveSameContents(arr1, arr2) {
   return JSON.stringify(sortedArr1) === JSON.stringify(sortedArr2);
 };
 
+function validateEmail(email) {
+  if (!/^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/.test(email)) {
+    return {isValid: false, reason: "Invalid Email"};
+  };
+  if (email.length >= 60) {
+    return {isValid: false, reason: "Email too long"};
+  };
+  return true;
+};
+
+function validateName(name) {
+  if (!/^[a-zA-Z0-9]+$/.test(name)) {
+    return {isValid: false, reason: "Invalid Name (Only A-Z, a-z, and 0-9 available)"};
+  };
+  if (!name.length) {
+    return {isValid: false, reason: "name too short"};
+  };
+  if (name.length >= 40) {
+    return {isValid: false, reason: "Name too long"};
+  };
+  return {isValid: true};
+};
+
+function validatePassword(password) {
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    return {isValid: false, reason: "You need special characters"};
+  };
+  if (!password.length) {
+    return {isValid: false, reason: "Password too short"};
+  };
+  if (password.length >= 100) {
+    return {isValid: false, reason: "Password too long"};
+  };
+  return {isValid: true};
+};
+
 module.exports = {
   generateRandomId,
   hashing,
@@ -97,5 +133,8 @@ module.exports = {
   getUserId,
   randomIntInRange,
   googleOauth2client,
-  arraysHaveSameContents
+  arraysHaveSameContents,
+  validateEmail,
+  validateName,
+  validatePassword
 };

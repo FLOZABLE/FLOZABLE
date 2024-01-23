@@ -26,27 +26,27 @@ Router.get("/today-tabs", async (req, res) => {
   }));
 });
 
-Router.post("/update-tabs", async (req, res) => {
-  autoSignin(req, res, (async () => {
+Router.get("/tabs-settings", async (req, res) => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
-      const {domain, duration} = req.body;
-      console.log(userId, domain, duration)
-      if (!userId || !domain || !duration) return res.send({success: false});
+      if (!userId) return res.send({success: false});
+      const connection = pool.promise();
+      const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
+      if (!userInfo) return res.send({success: false, reason: 'No auth'});
 
-      await redisClient.zIncrBy(`user:${userId}:tabs:timer`, duration, domain);
-      await redisClient.zIncrBy(`user:${userId}:tabs:usage`, 1, domain);
-      return res.send({success: true});
+      const tabSettings = userInfo.activity_setting === "" ? [] : JSON.parse(userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"));
+      console.log(tabSettings)
+      return res.send({success: true, tabSettings});
     } catch (err) {
       return res.send({success: false});
     };
   }));
 });
 
-Router.get("/tabs-settings", async (req, res) => {
+Router.get("/usage", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
-      if (!userId) return res.send({success: false});
+      const {date, mode} = req.body;
       const connection = pool.promise();
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
       if (!userInfo) return res.send({success: false, reason: 'No auth'});

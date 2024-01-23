@@ -311,6 +311,14 @@ extensionIo.on("connection" , (socket) => {
     const userId = await redisClient.get(`extension:auth:${authId}`);
     //invalid auth id
     if (!userId) return;
+    const userInfo = await userCache(userId);
+    
+    if (!userInfo) return;
+
+    const dateTime = DateTime.now().setZone(userInfo.timezone);
+    const score = Math.floor(dateTime.offset) / 60 + 12;
+    console.log('timezone off', score);
+    redisClient.zAdd(`extensionUsers`, [{value: userId, score}]);
     socket.userId = userId;
     socket.join(userId);
     const activeSubject = await activeSubjectCache(userId);
@@ -333,6 +341,7 @@ extensionIo.on("connection" , (socket) => {
     if (!socket.userId || !domain || !duration) return;
     redisClient.zIncrBy(`user:${socket.userId}:tabs:timer`, duration, domain);
     redisClient.zIncrBy(`user:${socket.userId}:tabs:usage`, 1, domain);
+    
   });
 })
 
