@@ -80,8 +80,8 @@ function PlanTimeline({
         planSeries.push({id, icon, color, name, val, total, completed});
       }
     });
-    setPlanSeries(planSeries)
-  }, [subjects, plans]);
+    setPlanSeries(planSeries);
+  }, [subjects, plans, plansEl]);
 
   const isInViewRange = (plan) => {
     const viewDateTime = DateTime.fromJSDate(viewDate);
