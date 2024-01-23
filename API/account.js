@@ -49,7 +49,7 @@ Router.post('/signin-authentication', async (req, res, next) => {
 
   const connection = pool.promise();
 
-  const [[userInfo]] = await connection.query('SELECT user_id, salt, hashed_password, email, myinfo, name, timezone, hashed_password FROM users WHERE email = ?', sanitizedEmail);
+  const [[userInfo]] = await connection.query('SELECT user_id, salt, hashed_password, email, myinfo, name, timezone, hashed_password FROM users WHERE email = ?', email);
 
   if (!userInfo) {
     return res.send({ success: false, reason: "NO SUCH USER" });
