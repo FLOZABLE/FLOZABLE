@@ -260,8 +260,9 @@ const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, c
 //createBots(0, 50);
 //createBotRankings();
 
-const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable } = require('./query');
+const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable } = require('./query');
 const { rankingManager } = require("./services/rankingUpdate");
+const { extensionManager } = require("./services/extension");
 
 // createUsersTable();
 // createSubjectsTable();
@@ -275,9 +276,11 @@ const { rankingManager } = require("./services/rankingUpdate");
 // createChallengeRoomsTable();
 // createThemesTable();
 // groupsChatRoomsGeneration();
+// createActivitiesTable();
 
 
 rankingManager();
+extensionManager();
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
