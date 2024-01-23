@@ -6,6 +6,12 @@
  */
 
 /*!
+ * ApexCharts v3.45.1
+ * (c) 2018-2023 ApexCharts
+ * Released under the MIT License.
+ */
+
+/*!
  * Chart.js v4.3.3
  * https://www.chartjs.org
  * (c) 2023 Chart.js Contributors
@@ -22,6 +28,14 @@
 /*! queue-microtask. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
 /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
+
+/*! svg.draggable.js - v2.2.2 - 2019-01-08
+* https://github.com/svgdotjs/svg.draggable.js
+* Copyright (c) 2019 Wout Fierens; Licensed MIT */
+
+/*! svg.filter.js - v2.0.2 - 2016-02-24
+* https://github.com/wout/svg.filter.js
+* Copyright (c) 2016 Wout Fierens; Licensed MIT */
 
 /**
  * @license React
@@ -112,6 +126,15 @@
 */
 
 /** @license React v16.13.1
+ * react-is.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v17.0.2
  * react-is.production.min.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
