@@ -367,7 +367,23 @@ async function challengeroomsCache() {
   }));
 
   return allChallenges;
-}
+};
+
+async function websiteUsageCache(userId) {
+  const websitesUsage = await redisClient.zRangeWithScores(`user:${userId}:tabs:usage`, 0, -1);
+  const websitesTimer = await redisClient.zRangeWithScores(`user:${userId}:tabs:timer`, 0, -1);
+  //console.log(websitesUsage, websitesTimer);
+  const websiteData = websitesTimer.map(({value, score}) => {
+    let v = 0;
+    const websiteUsage = websitesUsage.find(website => {return website.value === value});
+    if (websiteUsage) {
+      v = websiteUsage.score;
+    }
+    return {d: value, t: score, v};
+  });
+
+  return websiteData;
+};
 
 module.exports = {
   flushRedis,
@@ -389,4 +405,5 @@ module.exports = {
   activeGroupCache,
   msgReadCache,
   challengeroomsCache,
+  websiteUsageCache
 }

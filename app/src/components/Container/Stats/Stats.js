@@ -17,6 +17,7 @@ import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
 import { DateTime } from 'luxon';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
 import { secondConverter } from '../../../utils/Tool';
+import ExtensionPie from '../../UI/ExtensionPie/ExtensionPie';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -551,49 +552,9 @@ function Stats(props) {
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                   <p className={styles.title}>Today's Website Usage while Studying</p>
                   <div className={styles.chartContainer}>
-                    <PieChart
-                      labels={
-                        subjects.map((subject) => subject.name)
-                      }
-
-                      datasets={
-                        [
-                          {
-                            label: "Seconds",
-                            backgroundColor: colorsList,
-                            borderColor: colorsList,
-                            data: subjects.map((subject) => subject.daily.total[subject.daily.total.length - 1])
-                          },
-                        ]
-                      }
-
-                      options={
-                        {
-                          plugins: {
-                            legend: {
-                              position: 'bottom',
-                            },
-                            datalabels: {
-                              color: '#ffffff',
-                              font: {
-                                size: 32,
-                                family: 'Arial',
-                                weight: 700
-                              },
-                              formatter: (value, context, index) => {
-                                const { chart, dataIndex } = context;
-                                const labels = chart.data.labels;
-                                const label = labels[dataIndex];
-                                return ``;
-                              }
-                            }
-                          }
-                        }
-                      }
-
-                      plugins={
-                        ChartDataLabel
-                      }
+                    <ExtensionPie 
+                      viewDate={viewDate}
+                      viewMode={statsViewer}
                     />
                   </div>
                 </div>

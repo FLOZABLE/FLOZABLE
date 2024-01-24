@@ -11,7 +11,7 @@ function createUsersTable() {
     users_id INT(255) AUTO_INCREMENT PRIMARY KEY, 
     user_id VARCHAR(20),
     name VARCHAR(40), 
-    email VARCHAR(30), 
+    email VARCHAR(60), 
     hashed_password VARCHAR(100), 
     salt VARCHAR(100), 
     myinfo VARCHAR(300), 

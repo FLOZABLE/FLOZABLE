@@ -11,7 +11,7 @@ async function extensionManager() {
     } else if (hour > 12) {
       dateTime.plus({day: 1});
     };
-    const date = dateTime.toLocaleString(DateTime.DATE_SHORT);
+    const date = dateTime.toFormat("M/d/yyyy");
     const users = await redisClient.zRange(`extensionUsers`, hour, hour);
     const connection = pool.promise();
     users.map(async(user) => {
@@ -31,7 +31,7 @@ async function extensionManager() {
         date,
         data: websiteStats.join(',')
       };
-      console.log(activity)
+      console.log(date)
       const update = await connection.query(`INSERT INTO activities set ?`, activity);
     });
   } catch (err) {
