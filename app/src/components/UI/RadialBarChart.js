@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 const StyleWrapper = styled.div`
 .wrapper {
   position: relative;
+  font-size: 13px;
 }
 
 .unselected :not(path[selected="true"]) {

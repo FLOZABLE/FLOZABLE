@@ -262,7 +262,7 @@ function updateRankingTrend(rankings) {
   if (rankings) {
     rankings.data.map(rankingData => {
       const {date, ranking} = rankingData;
-      labels.push(DateTime.fromSeconds(date, {zone: 'utc'}).toISODate());
+      labels.push(DateTime.fromSeconds(date, {zone: 'utc'}).toFormat('M/d'));
       if (ranking === -1) {
         data.push(rankings.maxLength);
       } else {
