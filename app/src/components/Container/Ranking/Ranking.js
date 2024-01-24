@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faUser, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { DateTime } from "luxon";
@@ -27,6 +28,8 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   const [resultStart, setResultStart] = useState(0);
   const [resultEnd, setResultEnd] = useState(50);
   const [resultCount, setResultCount] = useState(0);
+
+  let [searchParams, setSearchParams] = useSearchParams({page: 1});
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -83,7 +86,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   useEffect(() => {
     setRankingEl(ranking.map(({ total, name, user_id, timezone }, i) => {
-      if (i < resultStart || i > resultEnd) return;
+      if (i < (searchParams.get('page') - 1) * 50 || i >= (searchParams.get('page')) * 50) return;
       if (!name.toLowerCase().includes(rankingSearch.toLowerCase())) return;
       return (
         <li key={i}>
@@ -111,7 +114,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
         </li>
       )
     }))
-  }, [ranking, rankingSearch, resultStart]);
+  }, [ranking, rankingSearch, searchParams]);
 
   return (
     <div className={styles.RankingContainer}>
@@ -132,22 +135,25 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
               <ul>
                 {rankingEl}
               </ul>
-              {
-                resultStart > 50 ?
-                  <button onClick={() => { setResultStart(resultStart - 50); setResultEnd(resultEnd - 50) }}>
-                    Back
-                  </button>
-                  :
-                  <div></div>
-              }
-              {
-                resultEnd < resultCount ?
-                  <button onClick={() => { setResultStart(resultStart + 50); setResultEnd(resultEnd + 50) }}>
-                    Next
-                  </button>
-                  :
-                  <div></div>
-              }
+              <div className={styles.PageButtons}>
+                {
+                  parseInt(searchParams.get('page')) > 1 ?
+                    <button onClick={() => { setSearchParams({'page': parseInt(searchParams.get('page')) - 1}) }}>
+                      &lt; Back
+                    </button>
+                    :
+                    <div></div>
+                }
+                <span className={styles.textContainer}>Page {searchParams.get('page')}</span>
+                {
+                  parseInt(searchParams.get('page')) * 50 < resultCount ?
+                    <button onClick={() => { setSearchParams({'page': parseInt(searchParams.get('page')) + 1}) }}>
+                      Next &gt;
+                    </button>
+                    :
+                    <div></div>
+                }
+              </div>
             </div>
           </div>
         </div>
