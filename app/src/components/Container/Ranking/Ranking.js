@@ -24,6 +24,9 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   const [rankingSearch, setRankingSearch] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+  const [resultStart, setResultStart] = useState(0);
+  const [resultEnd, setResultEnd] = useState(50);
+  const [resultCount, setResultCount] = useState(0);
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -40,7 +43,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   //fetch new ranking
   useEffect(() => {
-    const viewTime = DateTime.fromJSDate(viewDate, {zone: "UTC"});
+    const viewTime = DateTime.fromJSDate(viewDate, { zone: "UTC" });
 
     let startTime;
     let stopTime;
@@ -72,6 +75,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
         if (data.success) {
           console.log(data);
           setRanking(data.data);
+          setResultCount(data.data.length);
         }
       })
       .catch((error) => console.error(error));
@@ -79,6 +83,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   useEffect(() => {
     setRankingEl(ranking.map(({ total, name, user_id, timezone }, i) => {
+      if (i < resultStart || i > resultEnd) return;
       if (!name.toLowerCase().includes(rankingSearch.toLowerCase())) return;
       return (
         <li key={i}>
@@ -106,7 +111,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
         </li>
       )
     }))
-  }, [ranking, rankingSearch]);
+  }, [ranking, rankingSearch, resultStart]);
 
   return (
     <div className={styles.RankingContainer}>
@@ -127,6 +132,22 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
               <ul>
                 {rankingEl}
               </ul>
+              {
+                resultStart > 50 ?
+                  <button onClick={() => { setResultStart(resultStart - 50); setResultEnd(resultEnd - 50) }}>
+                    Back
+                  </button>
+                  :
+                  <div></div>
+              }
+              {
+                resultEnd < resultCount ?
+                  <button onClick={() => { setResultStart(resultStart + 50); setResultEnd(resultEnd + 50) }}>
+                    Next
+                  </button>
+                  :
+                  <div></div>
+              }
             </div>
           </div>
         </div>
