@@ -338,6 +338,7 @@ extensionIo.on("connection" , (socket) => {
   }); */
 
   socket.on("update-tabs", async({domain, duration}) => {
+    console.log(duration)
     if (!socket.userId || !domain || !duration) return;
     redisClient.zIncrBy(`user:${socket.userId}:tabs:timer`, duration, domain);
     redisClient.zIncrBy(`user:${socket.userId}:tabs:usage`, 1, domain);
