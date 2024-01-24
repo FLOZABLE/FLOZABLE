@@ -18,6 +18,10 @@ import { DateTime } from 'luxon';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
 import { secondConverter } from '../../../utils/Tool';
 import ExtensionPie from '../../UI/ExtensionPie/ExtensionPie';
+import DropDownButton from '../../UI/DropDownButton/DropDownButton';
+
+import ApexChart from 'apexcharts';
+import Chart from 'react-apexcharts';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -35,6 +39,10 @@ function Stats(props) {
   const [focus, setFocus] = useState("");
   const [ranking, setRanking] = useState(0);
   const [rankings, setRankings] = useState(0);
+  const [websites, setWebsites] = useState([]);
+  const [viewOption, setViewOption] = useState(0);
+  const [websitesUsage, setWebsitesUsage] = useState(0);
+  const [websitesVisit, setWebsitesVisit] = useState(0);
 
   //time usage pie chart
   const [timeUsagePie, setTimeUsagePie] = useState({
@@ -55,27 +63,13 @@ function Stats(props) {
   //time trend
   const [timeTrend, setTimeTrend] = useState({
     labels: [],
-    datasets:
-      [
-        {
-          backgroundColor: "#fd7f6f",
-          borderColor: "#fd7f6f",
-          data: [],
-        },
-      ]
+    datasets: []
   });
 
   //rankings trend
   const [rankingTrend, setRankingTrend] = useState({
     labels: [],
-    datasets:
-      [
-        {
-          backgroundColor: "#fd7f6f",
-          borderColor: "#fd7f6f",
-          data: [],
-        },
-      ]
+    datasets: []
   })
 
   const timelineRef = useRef(null);
@@ -143,14 +137,7 @@ function Stats(props) {
           const rankingTrend = updateRankingTrend(data.rankings, statsViewer);
           setRankingTrend({
             labels: rankingTrend[0],
-            datasets:
-              [
-                {
-                  backgroundColor: "#fd7f6f",
-                  borderColor: "#fd7f6f",
-                  data: rankingTrend[1],
-                },
-              ]
+            datasets: rankingTrend[1],
           });
 
           /* if (statsViewer === 'Daily') {
@@ -196,14 +183,7 @@ function Stats(props) {
     const timeTrend = updateTimeTrend(subjects, statsViewer);
     setTimeTrend({
       labels: timeTrend[0],
-      datasets:
-        [
-          {
-            backgroundColor: "#fd7f6f",
-            borderColor: "#fd7f6f",
-            data: timeTrend[1],
-          },
-        ]
+      datasets: timeTrend[1]
     });
 
     //update main viewer components
@@ -253,20 +233,50 @@ function Stats(props) {
     return focus;
   };
 
-/*   useEffect(() => {
-    const rankingTrend = updateRankingTrend(rankings, statsViewer);
-    setRankingTrend({
-      labels: rankingTrend[0],
-      datasets:
-        [
-          {
-            backgroundColor: "#fd7f6f",
-            borderColor: "#fd7f6f",
-            data: rankingTrend[1],
-          },
-        ]
-    });
-  }, [rankings]); */
+  /*   useEffect(() => {
+      const rankingTrend = updateRankingTrend(rankings, statsViewer);
+      setRankingTrend({
+        labels: rankingTrend[0],
+        datasets:
+          [
+            {
+              backgroundColor: "#fd7f6f",
+              borderColor: "#fd7f6f",
+              data: rankingTrend[1],
+            },
+          ]
+      });
+    }, [rankings]); */
+
+
+  useEffect(() => {
+    if (!viewDate) return;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    console.log(timezone);
+    const viewDateSec = DateTime.fromJSDate(viewDate).toSeconds();
+    fetch(`${serverOrigin}/extension/usage?date=${viewDateSec}&mode=${viewOption}&timezone=${timezone}`,
+      {
+        method: "get",
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response)
+        if (response.success) {
+          setWebsites(response.websitesData);
+          let websitesUsage = 0;
+          let websitesVisit = 0;
+          response.websitesData.map(website => {
+            websitesUsage += website.t;
+            websitesVisit += website.v;
+          });
+          const websitesUsagesDisp = secondConverter(websitesUsage);
+          console.log(websitesUsage, websitesUsagesDisp, 'webu')
+          setWebsitesUsage(`${websitesUsagesDisp.value} ${websitesUsagesDisp.type}`);
+          setWebsitesVisit(`${websitesVisit} times`);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [viewDate, viewOption]);
 
   return (
     <div className={styles.StatsContainer}>
@@ -334,7 +344,7 @@ function Stats(props) {
                   <div className={styles.circle}>
                     <FontAwesomeIcon icon={faGlobe} style={{ color: "#fff", }} />
                   </div>
-                  <p>Website Usage<br /><strong>0h</strong></p>
+                  <p>Website Usage<br /><strong>{websitesUsage} / {websitesVisit}</strong></p>
                 </div>
                 <div className={styles.smallBox}>
                   <div className={styles.circle}>
@@ -422,6 +432,89 @@ function Stats(props) {
                         }
                       }
                     />
+
+{/*                     <Chart
+                    type="bar"
+                      series={[{
+                        name: 'Inflation',
+                        data: hourlyHistogram.data
+                      }]}
+                      options={{
+                        chart: {
+                          height: 350,
+                          type: 'bar',
+                        },
+                        plotOptions: {
+                          bar: {
+                            borderRadius: 10,
+                            dataLabels: {
+                              position: 'top', // top, center, bottom
+                            },
+                          }
+                        },
+                        dataLabels: {
+                          enabled: true,
+                          formatter: function (val) {
+                            return val + "%";
+                          },
+                          offsetY: -20,
+                          style: {
+                            fontSize: '12px',
+                            colors: ["#304758"]
+                          }
+                        },
+
+                        xaxis: {
+                          categories: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+                          position: 'top',
+                          axisBorder: {
+                            show: false
+                          },
+                          axisTicks: {
+                            show: false
+                          },
+                          crosshairs: {
+                            fill: {
+                              type: 'gradient',
+                              gradient: {
+                                colorFrom: '#D8E3F0',
+                                colorTo: '#BED1E6',
+                                stops: [0, 100],
+                                opacityFrom: 0.4,
+                                opacityTo: 0.5,
+                              }
+                            }
+                          },
+                          tooltip: {
+                            enabled: true,
+                          }
+                        },
+                        yaxis: {
+                          axisBorder: {
+                            show: false
+                          },
+                          axisTicks: {
+                            show: false,
+                          },
+                          labels: {
+                            show: false,
+                            formatter: function (val) {
+                              return val + "%";
+                            }
+                          }
+
+                        },
+                        title: {
+                          text: 'Monthly Inflation in Argentina, 2002',
+                          floating: true,
+                          offsetY: 330,
+                          align: 'center',
+                          style: {
+                            color: '#444'
+                          }
+                        }
+                      }}
+                    /> */}
                   </div>
                 </div>
               </div>
@@ -431,7 +524,7 @@ function Stats(props) {
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                   <p className={styles.title}>Study Time Trend</p>
                   <div className={styles.chartContainer}>
-                    <LineChart
+                    {/* <LineChart
                       labels={
                         timeTrend.labels
                       }
@@ -483,65 +576,97 @@ function Stats(props) {
                           },
                         }
                       }
+                    /> */}
+                    <Chart
+                      type="line"
+                      series={[{
+                        name: "Study Time",
+                        data: timeTrend.datasets
+                      }]}
+                      options={{
+                        chart: {
+                          height: 350,
+                          type: 'line',
+                          zoom: {
+                            enabled: false
+                          },
+                          animations: {
+                            enabled: true,
+                            easing: 'easeinout',
+                            speed: 800,
+                            animateGradually: {
+                              enabled: true,
+                              delay: 150
+                            },
+                            dynamicAnimation: {
+                              enabled: true,
+                              speed: 350
+                            }
+                          }
+                        },
+                        dataLabels: {
+                          enabled: false
+                        },
+                        stroke: {
+                          curve: 'straight'
+                        },
+                        /* title: {
+                          text: 'Product Trends by Month',
+                          align: 'left'
+                        }, */
+                        grid: {
+                          row: {
+                            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                            opacity: 0.5
+                          },
+                        },
+                        xaxis: {
+                          categories: timeTrend.labels,
+                          range: 7
+                        },
+
+                      }}
                     />
                   </div>
                 </div>
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                   <p className={styles.title}>Ranking Trend</p>
                   <div className={styles.chartContainer}>
-                    <LineChart
-                      labels={
-                        rankingTrend.labels
-                      }
-
-                      datasets={rankingTrend.datasets}
-
-                      options={
-                        {
-                          responsive: true,
-                          plugins: {
-                            legend: {
-                              display: false,
-                            }
+                    <Chart
+                      type="line"
+                      series={[{
+                        name: "Study Time",
+                        data: rankingTrend.datasets
+                      }]}
+                      options={{
+                        chart: {
+                          height: 350,
+                          type: 'line',
+                          zoom: {
+                            enabled: false
+                          }
+                        },
+                        dataLabels: {
+                          enabled: false
+                        },
+                        stroke: {
+                          curve: 'straight'
+                        },
+                        /* title: {
+                          text: 'Product Trends by Month',
+                          align: 'left'
+                        }, */
+                        grid: {
+                          row: {
+                            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                            opacity: 0.5
                           },
-                          interaction: {
-                            intersect: false,
-                            mode: 'index',
-                          },
-                          scales: {
-                            y: {
-                              reverse: true,
-                              grid: {
-                                drawBorder: false,
-                                display: true,
-                                drawOnChartArea: true,
-                                drawTicks: false,
-                                borderDash: [5, 5]
-                              },
-                              ticks: {
-                                display: true,
-                                padding: 10,
-                                color: '#9ca2b7',
-                                stepSize: 1
-                              }
-                            },
-                            x: {
-                              grid: {
-                                drawBorder: false,
-                                display: true,
-                                drawOnChartArea: true,
-                                drawTicks: true,
-                                borderDash: [5, 5]
-                              },
-                              ticks: {
-                                display: true,
-                                color: '#9ca2b7',
-                                padding: 10
-                              }
-                            },
-                          },
+                        },
+                        xaxis: {
+                          categories: rankingTrend.labels,
+                          range: 7
                         }
-                      }
+                      }}
                     />
                   </div>
                 </div>
@@ -552,9 +677,54 @@ function Stats(props) {
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                   <p className={styles.title}>Today's Website Usage while Studying</p>
                   <div className={styles.chartContainer}>
-                    <ExtensionPie 
-                      viewDate={viewDate}
-                      viewMode={statsViewer}
+                    <DropDownButton
+                      options={[
+                        { name: "Active Time", value: 0 },
+                        { name: "Visited Time", value: 1 },
+                      ]}
+                      setValue={setViewOption}
+                    />
+                    <PieChart
+                      labels={websites.map(website => { return website.d })}
+
+                      datasets={
+                        [
+                          {
+                            label: viewOption ? "Visited Time" : "Active Time",
+                            backgroundColor: colorsList,
+                            borderColor: colorsList,
+                            data: viewOption ? websites.map(website => { return website.v }) : websites.map(website => { return Math.floor(website.t / (60 * 60)) }),
+                          },
+                        ]
+                      }
+
+                      options={
+                        {
+                          plugins: {
+                            legend: {
+                              position: 'bottom',
+                            },
+                            datalabels: {
+                              color: '#ffffff',
+                              font: {
+                                size: 32,
+                                family: 'Arial',
+                                weight: 700
+                              },
+                              formatter: (value, context, index) => {
+                                const { chart, dataIndex } = context;
+                                const labels = chart.data.labels;
+                                const label = labels[dataIndex];
+                                return ``;
+                              }
+                            }
+                          }
+                        }
+                      }
+
+                      plugins={
+                        ChartDataLabel
+                      }
                     />
                   </div>
                 </div>
