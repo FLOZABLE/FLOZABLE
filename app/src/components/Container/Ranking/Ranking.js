@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faUser, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { DateTime } from "luxon";
@@ -24,6 +25,11 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   const [rankingSearch, setRankingSearch] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+  const [resultStart, setResultStart] = useState(0);
+  const [resultEnd, setResultEnd] = useState(50);
+  const [resultCount, setResultCount] = useState(0);
+
+  let [searchParams, setSearchParams] = useSearchParams({page: 1});
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -40,7 +46,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   //fetch new ranking
   useEffect(() => {
-    const viewTime = DateTime.fromJSDate(viewDate, {zone: "UTC"});
+    const viewTime = DateTime.fromJSDate(viewDate, { zone: "UTC" });
 
     let startTime;
     let stopTime;
@@ -72,6 +78,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
         if (data.success) {
           console.log(data);
           setRanking(data.data);
+          setResultCount(data.data.length);
         }
       })
       .catch((error) => console.error(error));
@@ -79,6 +86,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   useEffect(() => {
     setRankingEl(ranking.map(({ total, name, user_id, timezone }, i) => {
+      if (i < (searchParams.get('page') - 1) * 50 || i >= (searchParams.get('page')) * 50) return;
       if (!name.toLowerCase().includes(rankingSearch.toLowerCase())) return;
       return (
         <li key={i}>
@@ -106,7 +114,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
         </li>
       )
     }))
-  }, [ranking, rankingSearch]);
+  }, [ranking, rankingSearch, searchParams]);
 
   return (
     <div className={styles.RankingContainer}>
@@ -127,6 +135,25 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
               <ul>
                 {rankingEl}
               </ul>
+              <div className={styles.PageButtons}>
+                {
+                  parseInt(searchParams.get('page')) > 1 ?
+                    <button onClick={() => { setSearchParams({'page': parseInt(searchParams.get('page')) - 1}) }}>
+                      &lt; Back
+                    </button>
+                    :
+                    <div></div>
+                }
+                <span className={styles.textContainer}>Page {searchParams.get('page')}</span>
+                {
+                  parseInt(searchParams.get('page')) * 50 < resultCount ?
+                    <button onClick={() => { setSearchParams({'page': parseInt(searchParams.get('page')) + 1}) }}>
+                      Next &gt;
+                    </button>
+                    :
+                    <div></div>
+                }
+              </div>
             </div>
           </div>
         </div>
