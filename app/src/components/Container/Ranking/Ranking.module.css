@@ -124,6 +124,26 @@
   color: #fff;
 }
 
+.RankingContainer .PageButtons button {
+  /* background-color: var(--pink); */
+  padding: 5px;
+  width: 60px;
+  border: 1px solid black;
+}
+
+.RankingContainer .PageButtons .textContainer {
+  /* background-color: var(--pink); */
+  padding: 5px;
+  width: 60px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.RankingContainer .PageButtons {
+  text-align: center;
+  font-size: 15px;
+}
+
 .RankingContainer .rankingContainer li .circle p {
   color: #fff;
 }
