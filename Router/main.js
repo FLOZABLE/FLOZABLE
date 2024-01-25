@@ -9,11 +9,15 @@ Router.get("/", async (req, res) => {
 })
 
 Router.get('/privacy-policy', async(req, res) => {
-  res.render("privacy-policy");
+  autoSignin(req, res, (() => res.render('privacy-policy', {loggedIn: true})), (() => res.render('privacy-policy', {loggedIn: false})));
 })
 
-Router.get('/terms-of-use', async(req, res) => {
-  res.render("terms-of-use");
+Router.get('/terms', async(req, res) => {
+  autoSignin(req, res, (() => res.render('terms', {loggedIn: true})), (() => res.render('terms', {loggedIn: false})));
+})
+
+Router.get('/cookies', async(req, res) => {
+  autoSignin(req, res, (() => res.render('cookies', {loggedIn: true})), (() => res.render('cookies', {loggedIn: false})));
 })
 
 Router.get('/contact', async(req, res) => {
