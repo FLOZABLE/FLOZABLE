@@ -200,8 +200,8 @@ app.get('/dashboard*', (req, res) => {
   );
 });
 
-app.use((req, res) => {
-  if (!req.path.startsWith('/profile-images')) return;
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/profile-images')) next();
   const defaultImagePath = path.join(__dirname, 'public', '/img/default_profile.jpg');
   return res.sendFile(defaultImagePath);
 
@@ -231,6 +231,9 @@ app.use((req, res) => {
     })
 });
 
+app.get('*',function(req,res){
+  res.redirect('/');
+});
 
 cacheManager();
 cron.schedule('0 * * * *', () => {
@@ -263,6 +266,10 @@ const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, c
 const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable } = require('./query');
 const { rankingManager } = require("./services/rankingUpdate");
 const { extensionManager } = require("./services/extension");
+
+app.get('*', (req, res) => {
+  res.redirect('/');
+});
 
 // createUsersTable();
 // createSubjectsTable();
