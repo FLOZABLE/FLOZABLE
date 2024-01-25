@@ -29,6 +29,7 @@ import Friends from "./components/Container/Friends/Friends";
 import { filterGroups } from "../src/utils/Tool";
 import Themes from "./components/Container/Themes/Themes";
 import ChallengeRooms from "./components/Container/ChallengeRooms/ChallengeRooms";
+import Helmet from "react-helmet";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -214,6 +215,29 @@ function App() {
           path="/dashboard"
           element={
             <div>
+              <Helmet>
+                <title>Dashboard - FLOZABLE</title>
+                <meta name="title" content="Dashboard - FLOZABLE" />
+                <meta name="description" content="Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/dashboard" />
+                <meta property="og:title" content="Dashboard - FLOZABLE" />
+                <meta property="og:description" content="Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/dashboard" />
+                <meta property="twitter:title" content="Dashboard - FLOZABLE" />
+                <meta property="twitter:description" content="Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="progress tracking, study achievements, study sessions planning" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 onMouseEnter={handleMouseEnter}
@@ -256,6 +280,29 @@ function App() {
           path="/dashboard/stats"
           element={
             <div>
+              <Helmet>
+                <title>Stats - FLOZABLE</title>
+                <meta name="title" content="Stats - FLOZABLE" />
+                <meta name="description" content="Explore detailed statistics on your study habits with FLOZABLE Stats. Track study hours, set goals, and analyze your performance over time." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/stats" />
+                <meta property="og:title" content="Stats - FLOZABLE" />
+                <meta property="og:description" content="Explore detailed statistics on your study habits with FLOZABLE Stats. Track study hours, set goals, and analyze your performance over time." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/stats" />
+                <meta property="twitter:title" content="Stats - FLOZABLE" />
+                <meta property="twitter:description" content="Explore detailed statistics on your study habits with FLOZABLE Stats. Track study hours, set goals, and analyze your performance over time." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="study statistics, performance analysis, study goals" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 onMouseEnter={handleMouseEnter}
@@ -293,6 +340,29 @@ function App() {
           path="/dashboard/ranking"
           element={
             <div>
+              <Helmet>
+                <title>Ranking - FLOZABLE</title>
+                <meta name="title" content="Ranking - FLOZABLE" />
+                <meta name="description" content="Check your ranking and compete with others on FLOZABLE. Stay motivated and climb the leaderboard by achieving your study goals." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/ranking" />
+                <meta property="og:title" content="Ranking - FLOZABLE" />
+                <meta property="og:description" content="Check your ranking and compete with others on FLOZABLE. Stay motivated and climb the leaderboard by achieving your study goals." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/ranking" />
+                <meta property="twitter:title" content="Ranking - FLOZABLE" />
+                <meta property="twitter:description" content="Check your ranking and compete with others on FLOZABLE. Stay motivated and climb the leaderboard by achieving your study goals." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="study ranking, leaderboard, competition, study goals" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 onMouseEnter={handleMouseEnter}
@@ -327,6 +397,29 @@ function App() {
           path="/dashboard/groups"
           element={
             <div>
+              <Helmet>
+                <title>Groups - FLOZABLE</title>
+                <meta name="title" content="Groups - FLOZABLE" />
+                <meta name="description" content="Join or create study groups on FLOZABLE. Collaborate with users who share similar interests, participate in group activities, and enhance your learning journey together." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/groups" />
+                <meta property="og:title" content="Groups - FLOZABLE" />
+                <meta property="og:description" content="Join or create study groups on FLOZABLE. Collaborate with users who share similar interests, participate in group activities, and enhance your learning journey together." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/groups" />
+                <meta property="twitter:title" content="Groups - FLOZABLE" />
+                <meta property="twitter:description" content="Join or create study groups on FLOZABLE. Collaborate with users who share similar interests, participate in group activities, and enhance your learning journey together." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="study groups, collaboration, group activities, shared interests" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 onMouseEnter={handleMouseEnter}
@@ -369,6 +462,29 @@ function App() {
           path="/dashboard/study"
           element={
             <div>
+              <Helmet>
+                <title>Study - FLOZABLE</title>
+                <meta name="title" content="Study - FLOZABLE" />
+                <meta name="description" content="Enhance your learning experience on FLOZABLE. Access study materials, set personalized study plans, and engage with a community of learners for a more productive study session." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/study" />
+                <meta property="og:title" content="Study - FLOZABLE" />
+                <meta property="og:description" content="Enhance your learning experience on FLOZABLE. Access study materials, set personalized study plans, and engage with a community of learners for a more productive study session." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/study" />
+                <meta property="twitter:title" content="Study - FLOZABLE" />
+                <meta property="twitter:description" content="Enhance your learning experience on FLOZABLE. Access study materials, set personalized study plans, and engage with a community of learners for a more productive study session." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="learning experience, study materials, personalized plans, community engagement" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Study
                 isAddSubjectModal={isAddSubjectModal}
                 setIsAddSubjectModal={setIsAddSubjectModal}
@@ -397,6 +513,29 @@ function App() {
           path="/dashboard/planner"
           element={
             <div>
+              <Helmet>
+                <title>Planner - FLOZABLE</title>
+                <meta name="title" content="Planner - FLOZABLE" />
+                <meta name="description" content="Organize your study schedule and set goals with the FLOZABLE Planner. Stay on track, manage your time effectively, and achieve your academic milestones." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/planner" />
+                <meta property="og:title" content="Planner - FLOZABLE" />
+                <meta property="og:description" content="Organize your study schedule and set goals with the FLOZABLE Planner. Stay on track, manage your time effectively, and achieve your academic milestones." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/planner" />
+                <meta property="twitter:title" content="Planner - FLOZABLE" />
+                <meta property="twitter:description" content="Organize your study schedule and set goals with the FLOZABLE Planner. Stay on track, manage your time effectively, and achieve your academic milestones." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="study planner, goal setting, time management, academic milestones" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 onMouseEnter={handleMouseEnter}
@@ -437,6 +576,29 @@ function App() {
           path="/dashboard/account"
           element={
             <div>
+              <Helmet>
+                <title>Account - FLOZABLE</title>
+                <meta name="title" content="Account - FLOZABLE" />
+                <meta name="description" content="Manage your FLOZABLE account settings. Explore options for personalization, security, and other account-related features to enhance your experience." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/account" />
+                <meta property="og:title" content="Account - FLOZABLE" />
+                <meta property="og:description" content="Manage your FLOZABLE account settings. Explore options for personalization, security, and other account-related features to enhance your experience." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/account" />
+                <meta property="twitter:title" content="Account - FLOZABLE" />
+                <meta property="twitter:description" content="Manage your FLOZABLE account settings. Explore options for personalization, security, and other account-related features to enhance your experience." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="account settings, user profile, customization" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 onMouseEnter={handleMouseEnter}
@@ -471,6 +633,29 @@ function App() {
           path="/dashboard/user/*"
           element={
             <div>
+              <Helmet>
+                <title>User Profile - FLOZABLE</title>
+                <meta name="title" content="User Profile - FLOZABLE" />
+                <meta name="description" content="Explore the user profile on FLOZABLE. View achievements, study habits, and connect with other users. Join the community and stay motivated on your academic journey." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/user" />
+                <meta property="og:title" content="User Profile - FLOZABLE" />
+                <meta property="og:description" content="Explore the user profile on FLOZABLE. View achievements, study habits, and connect with other users. Join the community and stay motivated on your academic journey." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/user" />
+                <meta property="twitter:title" content="User Profile - FLOZABLE" />
+                <meta property="twitter:description" content="Explore the user profile on FLOZABLE. View achievements, study habits, and connect with other users. Join the community and stay motivated on your academic journey." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="user profile, achievements, study habits, community, academic journey" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 onMouseEnter={handleMouseEnter}
@@ -508,6 +693,29 @@ function App() {
           path="/dashboard/challenge/*"
           element={
             <div>
+              <Helmet>
+                <title>Challenge - FLOZABLE</title>
+                <meta name="title" content="Challenge - FLOZABLE" />
+                <meta name="description" content="Participate in educational challenges on FLOZABLE. Explore specific academic tasks, set goals, and track your progress as you compete and collaborate with other users." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/challenge" />
+                <meta property="og:title" content="Challenge - FLOZABLE" />
+                <meta property="og:description" content="Participate in educational challenges on FLOZABLE. Explore specific academic tasks, set goals, and track your progress as you compete and collaborate with other users." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/challenge" />
+                <meta property="twitter:title" content="Challenge - FLOZABLE" />
+                <meta property="twitter:description" content="Participate in educational challenges on FLOZABLE. Explore specific academic tasks, set goals, and track your progress as you compete and collaborate with other users." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="educational challenges, academic tasks, goal setting, user collaboration" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 onMouseEnter={handleMouseEnter}
@@ -542,6 +750,29 @@ function App() {
           path="/dashboard/friends"
           element={
             <div>
+              <Helmet>
+                <title>Friends - FLOZABLE</title>
+                <meta name="title" content="Friends - FLOZABLE" />
+                <meta name="description" content="Connect with friends on FLOZABLE. Build a network of study buddies, share achievements, and enjoy a collaborative learning atmosphere with your peers." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/friends" />
+                <meta property="og:title" content="Friends - FLOZABLE" />
+                <meta property="og:description" content="Connect with friends on FLOZABLE. Build a network of study buddies, share achievements, and enjoy a collaborative learning atmosphere with your peers." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/friends" />
+                <meta property="twitter:title" content="Friends - FLOZABLE" />
+                <meta property="twitter:description" content="Connect with friends on FLOZABLE. Build a network of study buddies, share achievements, and enjoy a collaborative learning atmosphere with your peers." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="connect with friends, study buddies, collaborative learning" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 onMouseEnter={handleMouseEnter}
@@ -581,6 +812,29 @@ function App() {
           path="/dashboard/themes"
           element={
             <div>
+              <Helmet>
+                <title>Themes - FLOZABLE</title>
+                <meta name="title" content="Themes - FLOZABLE" />
+                <meta name="description" content="Explore different themes on FLOZABLE. Enhance your study environment by choosing themes that match your preferences. Stay focused and motivated with a personalized study experience." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/themes" />
+                <meta property="og:title" content="Themes - FLOZABLE" />
+                <meta property="og:description" content="Explore different themes on FLOZABLE. Enhance your study environment by choosing themes that match your preferences. Stay focused and motivated with a personalized study experience." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/themes" />
+                <meta property="twitter:title" content="Themes - FLOZABLE" />
+                <meta property="twitter:description" content="Explore different themes on FLOZABLE. Enhance your study environment by choosing themes that match your preferences. Stay focused and motivated with a personalized study experience." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="themes, study environment, focus, motivation, personalized study" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 onMouseEnter={handleMouseEnter}
@@ -613,6 +867,29 @@ function App() {
           path="/dashboard/challenges"
           element={
             <div>
+              <Helmet>
+                <title>Challenges - FLOZABLE</title>
+                <meta name="title" content="Challenges - FLOZABLE" />
+                <meta name="description" content="Join study challenges on FLOZABLE. Set goals, compete with others, and achieve new milestones in your academic journey. Stay motivated and track your progress with exciting challenges." />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://flozable.com/challenges" />
+                <meta property="og:title" content="Challenges - FLOZABLE" />
+                <meta property="og:description" content="Join study challenges on FLOZABLE. Set goals, compete with others, and achieve new milestones in your academic journey. Stay motivated and track your progress with exciting challenges." />
+                <meta property="og:image" content="https://flozable.com/favicon.ico" />
+
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://flozable.com/challenges" />
+                <meta property="twitter:title" content="Challenges - FLOZABLE" />
+                <meta property="twitter:description" content="Join study challenges on FLOZABLE. Set goals, compete with others, and achieve new milestones in your academic journey. Stay motivated and track your progress with exciting challenges." />
+                <meta property="twitter:image" content="https://flozable.com/favicon.ico" />
+
+                <meta name="keywords" content="challenges, study goals, competition, milestones, academic journey, motivation" />
+                <meta name="robots" content="index, follow" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="language" content="English" />
+
+              </Helmet>
               <Sidebar
                 isSidebarOpen={isSidebarOpen}
                 onMouseEnter={handleMouseEnter}
@@ -642,7 +919,7 @@ function App() {
             </div>
           }
         />
-        </Routes>
+      </Routes>
     </Router>
   );
 }
