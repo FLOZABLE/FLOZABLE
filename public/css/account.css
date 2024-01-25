@@ -5,6 +5,7 @@
   background-color: #a4afd4bb;
   opacity: 0;
   transition: opacity .3s ease-in-out;
+  z-index: -1;
 }
 
 #dispBlock.visible {
@@ -60,9 +61,7 @@
   width: 100%;
   display: block;
 }
-#accountModal .full-height{
 
-}
 #accountModal [type="checkbox"]:checked,
 #accountModal [type="checkbox"]:not(:checked){
   position: absolute;
