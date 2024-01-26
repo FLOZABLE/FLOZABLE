@@ -7,8 +7,9 @@ const sharp = require('sharp');
 const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
-const { hashing, autoSignin, generateRandomId, googleOauth2client, isValidTimeZone, validateEmail, validateName, validatePassword } = require("../tool");
-const {UserRefreshClient}  = require("google-auth-library")
+const { hashing, autoSignin, generateRandomId, googleOauth2client, isValidTimeZone } = require("../tool");
+const { validateEmail, validateString, validatePassword } = require("../validate");
+const { UserRefreshClient } = require("google-auth-library")
 const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
 const { extensionIo } = require('../socket');
 const upload = multer();
@@ -38,10 +39,10 @@ Router.get('/activity-settings', async (req, res) => {
 });
 
 Router.post('/signin-authentication', async (req, res, next) => {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
 
-  if (!email || !password) return res.send({success: false, reason: 'NO SUCH USER'});
-  
+  if (!email || !password) return res.send({ success: false, reason: 'NO SUCH USER' });
+
   // Sanitize inputs
   if (!/^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/.test(email)) {
     return res.send({ success: false, reason: 'Invalid Email' });
@@ -89,114 +90,114 @@ Router.post('/signup-authentication', async (req, res) => {
   try {
     const { email, name, password, timeZone } = req.body;
 
-  if (!isValidTimeZone) {
-    timeZone = 'UTC';
-  }
-  const userDateTime = DateTime.now().setZone(timeZone);
+    if (!isValidTimeZone) {
+      timeZone = 'UTC';
+    }
+    const userDateTime = DateTime.now().setZone(timeZone);
 
-  // Set the time to 12:00 AM
-  const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+    // Set the time to 12:00 AM
+    const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
-  // Get the Unix timestamp in seconds
-  const unixTimestamp = twelveAmDateTime.toSeconds();
-  // Sanitize inputs
+    // Get the Unix timestamp in seconds
+    const unixTimestamp = twelveAmDateTime.toSeconds();
+    // Sanitize inputs
 
-  //check email
-  const isValidEmail = validateEmail(email);
-  if (!isValidEmail.isValid) {
-    return res.send({success: false, reason: isValidEmail.reason});
-  };
+    //check email
+    const isValidEmail = validateEmail(email);
+    if (!isValidEmail.isValid) {
+      return res.send({ success: false, reason: isValidEmail.reason });
+    };
 
-  const isValidName = validateName(name);
-  if (!isValidName.isValid) {
-    return res.send({success: false, reason: isValidName.reason});
-  };
+    const isValidName = validateString(name);
+    if (!isValidName.isValid) {
+      return res.send({ success: false, reason: isValidName.reason });
+    };
 
-  const isValidPassword = validatePassword(password);
-  if (!isValidPassword.isValid) {
-    return res.send({success: false, reason: isValidPassword.reason});
-  };
+    const isValidPassword = validatePassword(password);
+    if (!isValidPassword.isValid) {
+      return res.send({ success: false, reason: isValidPassword.reason });
+    };
+
+    const connection = pool.promise();
+
+    const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
+
+    if (checkEmail) {
+      return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
+    };
+
+    const [salt, hashed_password] = hashing(password);
+
+    const userId = generateRandomId(15);
+    const keySalt = crypto.randomBytes(32).toString('hex');
+    const iv = crypto.randomBytes(16).toString('hex');
+
+    const user = {
+      name,
+      email,
+      hashed_password,
+      salt,
+      user_id: userId,
+      timezone: timeZone,
+      datum_point: unixTimestamp,
+      key_salt: keySalt,
+      iv: iv,
+    };
+    connection.query('INSERT INTO users SET ?', user);
+    //create default subject
+    const subjectId = generateRandomId(10);
+    const datum_point = Math.floor(new Date().getTime() / 1000);
+    const subject = {
+      id: subjectId,
+      name: 'others',
+      user_id: userId,
+      icon: 'others',
+      color: '#000000',
+      datum_point
+    };
+
+    connection.query(`INSERT INTO subjects SET ?`, subject);
+    req.session.regenerate((err) => {
+      if (err) {
+        console.log("Error regenerating session ID:", err);
+        res.send({ success: false, reason: "SESSION ERROR" });
+        return;
+      }
+
+      req.session.user_id = userId;
+      req.session.loggedin = true;
+
+      res.cookie("userId", userId, {
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        secure: true,
+        httpOnly: true,
+        signed: true,
+      });
+
+      res.send({ success: true });
+    });
+    /* req.session.regenerate((err) => {
+      if (err) {
+        res.send({ success: false, reason: "SESSION ERROR" });
+        return;
+      }
   
-  const connection = pool.promise();
-
-  const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
-
-  if (checkEmail) {
-    return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
-  };
-
-  const [salt, hashed_password] = hashing(password);
-
-  const userId = generateRandomId(15);
-  const keySalt = crypto.randomBytes(32).toString('hex');
-  const iv = crypto.randomBytes(16).toString('hex');
-
-  const user = {
-    name,
-    email,
-    hashed_password,
-    salt,
-    user_id: userId,
-    timezone: timeZone,
-    datum_point: unixTimestamp,
-    key_salt: keySalt,
-    iv: iv,
-  };
-  connection.query('INSERT INTO users SET ?', user);
-  //create default subject
-  const subjectId = generateRandomId(10);
-  const datum_point = Math.floor(new Date().getTime() / 1000);
-  const subject = {
-    id: subjectId,
-    name: 'others',
-    user_id: userId,
-    icon: 'others',
-    color: '#000000',
-    datum_point
-  };
-
-  connection.query(`INSERT INTO subjects SET ?`, subject);
-  req.session.regenerate((err) => {
-    if (err) {
-      console.log("Error regenerating session ID:", err);
-      res.send({ success: false, reason: "SESSION ERROR" });
-      return;
-    }
-
-    req.session.user_id = userId;
-    req.session.loggedin = true;
-
-    res.cookie("userId", userId, {
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-      secure: true,
-      httpOnly: true,
-      signed: true,
-    });
-
-    res.send({ success: true });
-  });
-  /* req.session.regenerate((err) => {
-    if (err) {
-      res.send({ success: false, reason: "SESSION ERROR" });
-      return;
-    }
-
-    req.session.user_id = userId;
-    req.session.loggedin = true;
-    req.session.name = name;
-    req.session.userInfo = { userId: userId, name: name, loggedin: true, email: email, timeZone: timeZone };
-
-    res.cookie("userId", userId, {
-      maxAge: 1000 * 60 * 60 * 30,
-      secure: true,
-      httpOnly: true,
-      signed: true,
-    });
-
-    res.send({ success: true });
-  }); */
+      req.session.user_id = userId;
+      req.session.loggedin = true;
+      req.session.name = name;
+      req.session.userInfo = { userId: userId, name: name, loggedin: true, email: email, timeZone: timeZone };
+  
+      res.cookie("userId", userId, {
+        maxAge: 1000 * 60 * 60 * 30,
+        secure: true,
+        httpOnly: true,
+        signed: true,
+      });
+  
+      res.send({ success: true });
+    }); */
   } catch (err) {
-    res.send({success: false, reason: "Error"});
+    res.send({ success: false, reason: "Error" });
   };
 });
 
@@ -227,26 +228,26 @@ Router.post('/update/info', async (req, res) => {
       //const supportedLanguages = ['English', 'Spanish', 'French'];
       const isValidEmail = validateEmail(email);
       if (!isValidEmail.isValid) {
-        return res.send({success: false, reason: isValidEmail.reason});
+        return res.send({ success: false, reason: isValidEmail.reason });
       };
-    
-      const isValidName = validateName(name);
+
+      const isValidName = validateString(name);
       if (!isValidName.isValid) {
-        return res.send({success: false, reason: isValidName.reason});
+        return res.send({ success: false, reason: isValidName.reason });
       };
-      
+
       if (email !== confirmEmail) {
         return res.send({ success: false, reason: 'Email Confirmation Failed' });
       };
-      
+
       const connection = pool.promise();
 
       const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
-    
+
       if (checkEmail) {
         return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
       };
-      
+
       /* else if (!supportedLanguages.includes(language)) {
         return res.send({ success: false, reason: 'Not Supported Language' });
       } */
@@ -269,9 +270,9 @@ Router.post('/update/password', async (req, res) => {
 
       const isValidPassword = validatePassword(password);
       if (!isValidPassword.isValid) {
-        return res.send({success: false, reason: isValidPassword.reason});
+        return res.send({ success: false, reason: isValidPassword.reason });
       };
-      
+
       if (password !== confirmPassword) {
         return res.send({ success: false, reason: 'Password Does Not Match' });
       };
@@ -328,7 +329,7 @@ Router.post('/update/extension-add', async (req, res) => {
           userId
         ]);
       };
-      extensionIo.to(userId).emit('setting-created', {d: domain, b: 0, bs: 0, t: 0, ts: 1});
+      extensionIo.to(userId).emit('setting-created', { d: domain, b: 0, bs: 0, t: 0, ts: 1 });
       res.send({ success: true, origin: origin, domain: domain, msg: `Added ${domain}` })
     } catch (error) {
       console.log(error)
@@ -343,7 +344,7 @@ Router.post('/update/extension-setting-update', async (req, res) => {
       const { d, target, value } = req.body;
       const connection = pool.promise();
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
-      if (!userInfo) return res.send({success: false, reason: "No Such User"});
+      if (!userInfo) return res.send({ success: false, reason: "No Such User" });
       let activitySettings = userInfo.activitySettings === "" ? [] : JSON.parse(userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"));
       const activityIndex = activitySettings.findIndex(activitySetting => { return activitySetting.d == d });
       if (activityIndex === -1) {
@@ -371,7 +372,7 @@ Router.post('/update/extension-setting-update', async (req, res) => {
       }
 
       res.send({ success: true });
-      extensionIo.to(userId).emit('setting-updated', {d, target, value});
+      extensionIo.to(userId).emit('setting-updated', { d, target, value });
     } catch (error) {
       res.send({ success: false, reason: 'Invalid URL or Domain' });
     };
@@ -385,7 +386,7 @@ Router.get('/logout', function (req, res) {
     }
     res.clearCookie('userId');
     //res.redirect('/');
-    res.send({success: true});
+    res.send({ success: true });
   });
 });
 
@@ -418,9 +419,9 @@ Router.post('/auth/google', async (req, res) => {
       const response = await auth.getToken(data);
       if (response.res.status === 200) {
         const connection = pool.promise();
-        const {refresh_token, access_token} = response.tokens;
+        const { refresh_token, access_token } = response.tokens;
         console.log('gd', response.tokens);
-        redisClient.set(`user:${userId}:googleAccessToken`, access_token, {EX: 3590});
+        redisClient.set(`user:${userId}:googleAccessToken`, access_token, { EX: 3590 });
         connection.query(`UPDATE users SET google_refresh_token = ? WHERE user_id = ?`, [refresh_token, userId]);
         /* const user = new UserRefreshClient(
           process.env.GOOGLE_CLIENT_ID,

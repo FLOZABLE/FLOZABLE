@@ -120,7 +120,7 @@ function App() {
   }, []);
 
   const bringPlans = useCallback(() => {
-    fetch(`${serverOrigin}/plan/bring-plans`, { method: "post" })
+    fetch(`${serverOrigin}/plan`, { method: "get" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {

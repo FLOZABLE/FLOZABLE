@@ -186,3 +186,22 @@ button:hover {
     top: 150px;
   }
 }
+
+@media (max-height: 800px) {
+  .Main {
+    position: relative;
+    margin: 150px 0px 0px 100px;
+    transition: all .2s ease-in-out;
+    width: calc(100vw - 120px);
+    border-radius: 20px;
+  }
+  
+  /* .Main.sidebarOpen {
+    margin-left: 200px;
+    width: calc(100vw - 220px);
+  } */
+  
+  .modal.open {
+    top: 150px;
+  }
+}
