@@ -30,7 +30,6 @@
 .PlannerContainer .container .planner {
   flex-grow: 1;
   margin-right: 50px;
-  height: 100vh;
 }
 
 .PlannerContainer .container .widget {
