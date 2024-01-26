@@ -23,6 +23,7 @@ Router.post("/bring-plans", async (req, res) => {
             google_refresh_token,
           );
           const { credentials } = await user.refreshAccessToken();
+          console.log(credentials)
           const auth = googleOauth2client(credentials);
           const googleCalendar = google.calendar({
             version: 'v3',
@@ -40,6 +41,7 @@ Router.post("/bring-plans", async (req, res) => {
                 timeMin,
                 timeMax,
               });
+              console.log(response)
               const events = response.data.items;
               events.map(event => {
                 const {htmlLink, id, summary, start, end, description, reminders} = event;
