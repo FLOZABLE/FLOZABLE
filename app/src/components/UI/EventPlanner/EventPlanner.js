@@ -305,7 +305,7 @@ function EventPlanner(props) {
       completed: completed ? 1 : 0,
     };
     delete updateInfo.saved;
-    fetch(`${serverOrigin}/plan/update-plan`, {
+    fetch(`${serverOrigin}/plan/update`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
