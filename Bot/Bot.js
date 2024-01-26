@@ -17,7 +17,8 @@ const schedule = require('node-schedule');
 const redisClient = require('../model/redis');
 const timeZones = require('../data/timeZones.json');
 const csv = require("csvtojson");
-const { activeSubjectCache, subjectsCache, timerCache, userCache, usersCache, NotificationCache } = require('../services/redisLoader');
+const socketio = require('../socket');
+const { activeSubjectCache, subjectsCache, timerCache, userCache, usersCache, NotificationCache, dmRoomMembersCache, dmRoomsCache } = require('../services/redisLoader');
 
 /**create bots */
 async function createBots(startIndex, length) {
@@ -307,6 +308,110 @@ async function sendFriendRequest(userId, userInfo, targetId, targetInfo) {
   };
 }
 
+async function botAcceptFriendRequest(botId, request) {
+
+  try {
+
+    //Delete redis notifs
+    const friendRequests = await NotificationCache(botId, 0, false);
+    const friendReq = friendRequests.find(friendReq => { return friendReq.f === request.f.user_id });
+    if (!friendReq) return; //expired request
+    redisClient.sRem(`user:${botId}:notifications`, JSON.stringify(friendReq));
+    //remove it from ongoing friend req list
+    const ongoing = { i: friendReq.i, t: -2, f: botId };
+    redisClient.sRem(`user:${request.f.user_id}:notifications`, JSON.stringify(ongoing));
+
+
+    const connection = pool.promise();
+
+    await connection.query(`
+          UPDATE users
+          SET friends = CASE
+            WHEN friends = '' THEN ?
+            ELSE CONCAT(friends, ',', ?)
+          END
+          WHERE user_id = ?
+        `, [
+      request.f.user_id,
+      request.f.user_id,
+      botId,
+    ]);
+
+    await connection.query(`
+        UPDATE users
+        SET friends = CASE
+          WHEN friends = '' THEN ?
+          ELSE CONCAT(friends, ',', ?)
+        END
+        WHERE user_id = ?
+      `, [
+      botId,
+      botId,
+      request.f.user_id,
+    ]);
+
+    const id = generateRandomId(5);
+    const date = Math.floor(new Date().getTime() / (1000 * 60));
+    const io = socketio.connection;
+    const notification = { i: id, t: 1, f: botId, d: date };
+    const notificationUser = await userCache(botId);
+    const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
+    io.to(request.f.user_id).emit('notification', socketNotif);
+    redisClient.sAdd(`user:${request.f.user_id}:notifications`, JSON.stringify(notification));
+
+    let { friends } = notificationUser; //this is user id of recipient (bot)
+    friends = friends === "" ? [] : friends.split(',');
+
+    friends.push(request.f.user_id);
+    redisClient.hSet(`user:${botId}`, 'friends', friends.join(','));
+
+    const targetInfo = await userCache(request.f.user_id);
+    targetInfo.friends = targetInfo.friends === "" ? [] : targetInfo.friends.split(",");
+    targetInfo.friends.push(botId);
+    redisClient.hSet(`user:${targetInfo.user_id}`, 'friends', targetInfo.friends.join(','));
+
+    const [[{ record_count }]] = await connection.query(`SELECT COUNT(*) AS record_count
+        FROM chatrooms
+        WHERE 
+          (members LIKE ? AND members LIKE ?)
+          OR
+          (members LIKE ? AND members LIKE ?)
+        LIMIT 1;`, [`%${botId}%`, `%${targetInfo.user_id}%`, `%${targetInfo.user_id}%`, `%${botId}%`]);
+
+    if (!record_count) {
+      const members = [botId, targetInfo.user_id];
+      const roomInfo = {
+        id: generateRandomId(10),
+        type: 1,
+        members: JSON.stringify(members).slice(1, -1).replaceAll(`"`, "")
+      }
+      await connection.query(`
+          INSERT INTO chatrooms SET ?
+        `, [roomInfo]);
+
+      const myDmRooms = await dmRoomsCache(botId);
+      myDmRooms.push(roomInfo.id);
+      const targetDmRooms = await dmRoomsCache(targetInfo.user_id);
+      targetDmRooms.push(roomInfo.id);
+      redisClient.hSet(`user:${botId}`, 'dmRooms', JSON.stringify(myDmRooms));
+      redisClient.hSet(`user:${targetInfo.user_id}`, 'dmRooms', JSON.stringify(targetDmRooms));
+      redisClient.sAdd(`room:${roomInfo.id}`, members);
+
+      //remove chat request if any
+      const myChatRequests = await NotificationCache(botId, 4, false);
+      const chatRequest = myChatRequests.find(chatRequest => { return chatRequest.f === targetInfo.user_id });
+      if (!!chatRequest) redisClient.sRem(`user:${botId}:notifications`, JSON.stringify(chatRequest));
+
+      const targetChatRequests = await NotificationCache(targetInfo.user_id, 4, false);
+      const targetchatRequest = targetChatRequests.find(chatRequest => { return chatRequest.f === targetInfo.user_id });
+      if (!!chatRequest) redisClient.sRem(`user:${targetInfo.user_id}:notifications`, JSON.stringify(targetchatRequest));
+    }
+
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 async function addFriends(userId) {
   const botInfo = await userCache(userId);
   const botTimeZone = botInfo.timezone;
@@ -314,7 +419,7 @@ async function addFriends(userId) {
     const possibleFriends = await redisClient.sMembers('allMembers');
     possibleFriends.map(async (friend) => {
       const userInfo = await userCache(friend);
-      if (userInfo.email.length < 2){
+      if (userInfo.email.length < 2) {
         return;
         //this means they are a bot
       }
@@ -332,6 +437,16 @@ async function addFriends(userId) {
         //send friend request
         const scheduleFriend = schedule.scheduleJob(Date.now() + randomIntInRange(5, 3600), () => { sendFriendRequest(userId, botInfo, friend, userInfo) });
       }
+
+      const incomingRequests = await NotificationCache(userId, 0);
+      //handle incoming friend requests
+      incomingRequests.map((request) => {
+        const accept = randomIntInRange(0, 1);
+        if (accept) {
+          botAcceptFriendRequest(userId, request);
+          console.log("Accepting friend request from " + request.f.user_id);
+        }
+      })
     });
   } catch (err) {
     console.log(err);
