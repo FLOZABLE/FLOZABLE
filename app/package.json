@@ -43,7 +43,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.6",
-    "react-helmet": "^6.1.0",
+    "react-helmet-async": "^2.0.4",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.15.0",
     "react-scripts": "5.0.1",

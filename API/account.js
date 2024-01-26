@@ -419,7 +419,8 @@ Router.post('/auth/google', async (req, res) => {
       if (response.res.status === 200) {
         const connection = pool.promise();
         const {refresh_token, access_token} = response.tokens;
-        console.log('gd', response.tokens)
+        console.log('gd', response.tokens);
+        redisClient.set(`user:${userId}:googleAccessToken`, access_token, {EX: 3590});
         connection.query(`UPDATE users SET google_refresh_token = ? WHERE user_id = ?`, [refresh_token, userId]);
         /* const user = new UserRefreshClient(
           process.env.GOOGLE_CLIENT_ID,

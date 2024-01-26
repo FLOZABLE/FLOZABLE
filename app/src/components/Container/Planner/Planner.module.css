@@ -49,9 +49,7 @@
 .PlannerContainer .planTimelineWrapper {
   width: 300px;
   margin-top: 30px;
-  max-height: 300px;
   transition: width .3s ease-in-out;
-  overflow-y: auto;
 }
 
 @keyframes showScroll {
