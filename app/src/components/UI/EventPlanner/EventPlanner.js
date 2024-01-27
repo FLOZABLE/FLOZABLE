@@ -247,10 +247,9 @@ function EventPlanner(props) {
   }
 
   function handleDateSelect(selectInfo) {
-    if (isAddPlanModal && isAddPlanModal.id) {
+    if (isAddPlanModal) {
       selectInfo.view.calendar.unselect();
     } else {
-      const id = generateRandomId(10);
       const start = selectInfo.start ? new Date(selectInfo.start) : null;
       const end = selectInfo.end ? new Date(selectInfo.end) : null;
       const subject = subjects[0] ? subjects[0].id : "";
@@ -279,7 +278,9 @@ function EventPlanner(props) {
       const updatedEvents = [...events];
       updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], start, end };
       setEvents(updatedEvents);
-      updateServer({ ...updatedEvents[eventIndex] });
+      if (updatedEvents[eventIndex].saved) {
+        updateServer({ ...updatedEvents[eventIndex] });
+      }
     }
   }
 
@@ -290,7 +291,9 @@ function EventPlanner(props) {
       const updatedEvents = [...events];
       updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], start, end };
       setEvents(updatedEvents);
-      updateServer({ ...updatedEvents[eventIndex] });
+      if (updatedEvents[eventIndex].saved) {
+        updateServer({ ...updatedEvents[eventIndex] });
+      }
     }
   }
 
