@@ -108,7 +108,7 @@ Router.post('/signup-authentication', async (req, res) => {
       return res.send({ success: false, reason: isValidEmail.reason });
     };
 
-    const isValidName = validateString(name);
+    const isValidName = validateString(name, 'Name0');
     if (!isValidName.isValid) {
       return res.send({ success: false, reason: isValidName.reason });
     };

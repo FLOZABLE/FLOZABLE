@@ -7,7 +7,7 @@ function validateEmail(email) {
   if (!/^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/.test(email)) {
     return { isValid: false, reason: "Invalid Email" };
   };
-  return true;
+  return { isValid: true };
 };
 
 function validateString(value, type, max = 20, min = 1) {
