@@ -6,6 +6,7 @@ const { autoSignin, generateRandomId } = require("../tool");
 const { NotificationCache, userCache, challengeroomsCache } = require('../services/redisLoader');
 const { DateTime } = require('luxon');
 const { redis } = require('googleapis/build/src/apis/redis');
+const { validateStrictString, validateBoolean, validateInteger } = require('../validate');
 
 //send challenge
 Router.post('/challenge-request', async (req, res) => {
@@ -14,9 +15,15 @@ Router.post('/challenge-request', async (req, res) => {
       const userId = req.session.user_id;
       const { targetId } = req.body;
 
+      const isValidTargetId = validateStrictString(targetId, 'user id', 10);
+
+      if (!isValidTargetId.isValid) {
+        return res.send({ success: false, reason: isValidTargetId.reason });
+      };
+
       const connection = pool.promise();
       const [[userInfo]] = await connection.query(`SELECT name FROM users WHERE user_id = ?`, [targetId]);
-      let { name } = userInfo;
+      const { name } = userInfo;
 
       const challenges = await NotificationCache(targetId, 2, false);
       const prevChallengeReq = challenges.find(challenge => { return challenge.f === userId }); //already sent request to this user
@@ -46,15 +53,27 @@ Router.post('/challenge-request', async (req, res) => {
 
 //respond to challenge
 Router.post('/challenge-request-reply', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { targetId, accepted } = req.body;
+
+      const isValidTargetId = validateStrictString(targetId, 'user id', 10);
+
+      if (!isValidTargetId.isValid) {
+        return res.send({ success: false, reason: isValidTargetId.reason });
+      };
+
+      const isValidAcceped = validateBoolean(accepted, 'accept', true);
+
+      if (!isValidAcceped.isValid) {
+        return res.send({ success: false, reason: isValidAcceped.reason });
+      };
+
       const challenges = await NotificationCache(userId, 2, false);
       const challengeReq = challenges.find(challenge => { return challenge.f === targetId });
       if (!challengeReq) return res.send({ success: false, reason: 'Challenge Expired' })
       redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(challengeReq));
-      if (!accepted) {
+      if (!isValidAcceped.value) {
         return res.send({ success: true, msg: "Challenge Declined" });
       };
 
@@ -89,10 +108,16 @@ Router.post('/challenge-request-reply', async (req, res) => {
 
 
 Router.post('/challenge-notif', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { targetId } = req.body;
+
+      const isValidTargetId = validateStrictString(targetId, 'user id', 10);
+
+      if (!isValidTargetId.isValid) {
+        return res.send({ success: false, reason: isValidTargetId.reason });
+      };
+
       const challengeRequests = await NotificationCache(userId, 3, false);
       const challengeReq = challengeRequests.find(challengeR => { return challengeR.f === targetId });
       redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(challengeReq));
@@ -109,17 +134,23 @@ Router.get('/', async (req, res) => {
     try {
       const { searchId, searchUser } = req.query; //search by challenge id or by user
       const connection = pool.promise();
-      if (!!searchId) { //searching by id
+      const isValidSearchId = validateStrictString(searchId, 'user id', 10);
+
+      if (isValidSearchId.isValid) { //searching by id
         const [[challengeInfo]] = await connection.query(`SELECT first_user_id, second_user_id, datum_point FROM challenges WHERE id = ?`, [searchId]);
-        if (!!!challengeInfo) {
-          res.send({ success: false });
-          return;
-        }
+        if (!challengeInfo) {
+          return res.send({ success: false, reason: 'No challenge information found' });
+        };
         challengeInfo.first_user = await userCache(challengeInfo.first_user_id);
         challengeInfo.second_user = await userCache(challengeInfo.second_user_id);
         res.send({ success: true, data: challengeInfo });
       }
       else { //by user
+        const isValidSearchId = validateStrictString(searchUser, 'user id', 10);
+
+        if (!isValidSearchId.isValid) {
+          return res.send({ success: false, reason: isValidSearchId.reason });
+        };
         const [challengeInfo] = await connection.query(`SELECT first_user_id, second_user_id, id, datum_point FROM challenges WHERE first_user_id = ? OR second_user_id = ? limit 120`, [searchUser, searchUser]);
         const namePromise = challengeInfo.map(async (challenge) => {
           challenge.first_user = await userCache(challenge.first_user_id);
@@ -141,11 +172,28 @@ Router.post('/create-challenge', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { title, description, startDate } = req.body;
-      if (!title || !description || !startDate) return res.send({ success: false, reason: 'Invalid Values' })
       const min = DateTime.now().toSeconds() + 3600 * 5 - 60;
       const max = DateTime.now().toSeconds() + 3600 * 24 * 30 + 60;
-      //if (min > startDate) return res.send({ success: false, reason: "Must be at least 5 hours in the future" });
-      if (max < startDate) return res.send({ success: false, reason: "Challenge is too far in the future" });
+
+      const isValidStartDate = validateInteger(startDate, "start date", min, max);
+
+      if (!isValidStartDate.isValid) {
+        if (max < startDate) return res.send({ success: false, reason: "Challenge is too far in the future" });
+
+        return res.send({ success: false, reason: isValidStartDate.reason });
+      };
+
+      const isValidDescription = validateStrictString(description, "description", 200);
+
+      if (!isValidDescription.isValid) {
+        return res.send({ success: false, reason: isValidDescription.reason });
+      };
+
+      const isValidTitle = validateInteger(startDate, "title", 20);
+
+      if (!isValidTitle.isValid) {
+        return res.send({ success: false, reason: isValidTitle.reason });
+      };
 
       const expireSeconds = startDate - DateTime.now().toUTC().toSeconds();
 
@@ -201,13 +249,17 @@ Router.get('/rooms', async (req, res) => {
 
 // join challenge room
 Router.post('/join-challenge', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { joinId } = req.body;
 
-      const challengeRoom = await redisClient.hGetAll(`challenge:${joinId}`);
+      const isValidJoinId = validateStrictString(joinId, "challenge id", 10);
 
+      if (!isValidJoinId.isValid) {
+        return res.send({ success: false, reason: isValidJoinId.reason });
+      };
+
+      const challengeRoom = await redisClient.hGetAll(`challenge:${joinId}`);
 
       if (!challengeRoom || !challengeRoom.hostId) {
         res.send({ success: false, reason: "Challenge Does Not Exist" });

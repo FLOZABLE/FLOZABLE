@@ -22,7 +22,6 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function CreateGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
   const [name, setName] = useState("");
-  const [submit, setSubmit] = useState(false);
   const [maxMembers, setMaxMembers] = useState(10);
   const [color, setColor] = useState("");
   const [isSelectColor, setIsSelectColor] = useState(false);
@@ -44,43 +43,42 @@ function CreateGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
     setTags(tags);
   }, []);
 
-  useEffect(() => {
-    if (submit) {
-      fetch(`${serverOrigin}/groups/create-validate`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: name,
-          color: color,
-          tags: tags,
-          explanation: description,
-          max_members: maxMembers,
-          visibility: visibility,
-          password: password,
-          goal_hr: goalHr,
-        }),
+  const submit = () => {
+    fetch(`${serverOrigin}/groups/create-validate`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name,
+        color: color,
+        tags: tags,
+        explanation: description,
+        max_members: maxMembers,
+        visibility: visibility,
+        password: password,
+        goal_hr: goalHr,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setCreateGroupResponse(data);
+        console.log(data)
+        if (data.success) {
+          setIsOpen(false);
+          setName("");
+          setMaxMembers(10);
+          setColor("");
+          setIsSelectColor(false);
+          setTags([]);
+          setDescription("");
+          setVisibility(1);
+          setPassword("");
+          setGoalHr(3);
+        };
       })
-        .then((response) => response.json())
-        .then((data) => {
-          setCreateGroupResponse(data);
-          if (data.success) {
-            setIsOpen(false);
-            setName("");
-            setMaxMembers(10);
-            setColor("");
-            setIsSelectColor(false);
-            setTags([]);
-            setDescription("");
-            setVisibility(1);
-            setPassword("");
-            setGoalHr(3);
-          };
-        })
-        .catch((error) => console.error(error));
-    }
-  }, [submit]);
+      .catch((error) => console.error(error));
+  }
 
   return (
     <div className={`${styles.CreateGroupModal} modal ${isOpen ? "open" : ""}`}>
@@ -220,7 +218,7 @@ function CreateGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
         <div className={styles.submit}>
           <BlobBtn
             name={"SUBMIT"}
-            setClicked={setSubmit}
+            setClicked={submit}
             color1={"#fff"}
             color2={"var(--pink)"}
           />

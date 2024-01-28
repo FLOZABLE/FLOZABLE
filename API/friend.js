@@ -4,15 +4,21 @@ const { NotificationCache, userCache, activeSubjectCache, subjectCache } = requi
 const redisClient = require('../model/redis');
 const pool = require('../model/pool');
 const { sendEmail } = require('../email');
+const { validateEmail } = require('../validate');
 const Router = express.Router();
 
 
 //add friend
 Router.post('/request', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { targetId } = req.body;
+
+      const isValidTargetId = validateStrictString(targetId, 'user id', 10);
+
+      if (!isValidTargetId.isValid) {
+        return res.send({ success: false, reason: isValidTargetId.reason });
+      };
 
       if (userId === targetId) return res.send({ success: false, reason: "Cannot send request to yourself" });
 
@@ -51,10 +57,16 @@ Router.post('/request', async (req, res) => {
 });
 
 Router.post('/request-cancel', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { targetId } = req.body;
+
+      const isValidTargetId = validateStrictString(targetId, 'user id', 10);
+
+      if (!isValidTargetId.isValid) {
+        return res.send({ success: false, reason: isValidTargetId.reason });
+      };
+
       const friendRequests = await NotificationCache(targetId, 0, false);
       const friendReq = friendRequests.find(friendReq => { return friendReq.f === userId });
       if (!friendReq) return res.send({ success: false, reason: 'expired request' })
@@ -72,10 +84,22 @@ Router.post('/request-cancel', async (req, res) => {
 
 //accept friend request
 Router.post('/request-reply', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { targetId, accepted } = req.body;
+
+      const isValidTargetId = validateStrictString(targetId, 'user id', 10);
+
+      if (!isValidTargetId.isValid) {
+        return res.send({ success: false, reason: isValidTargetId.reason });
+      };
+
+      const isValidAcceped = validateBoolean(accepted, 'accept', true);
+
+      if (!isValidAcceped.isValid) {
+        return res.send({ success: false, reason: isValidAcceped.reason });
+      };
+
       const friendRequests = await NotificationCache(userId, 0, false);
       const friendReq = friendRequests.find(friendReq => { return friendReq.f === targetId });
       if (!friendReq) return res.send({ success: false, reason: 'expired request' })
@@ -184,10 +208,16 @@ Router.post('/request-reply', async (req, res) => {
 
 /**read notification so clear it from the redis */
 Router.post('/checked', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { targetId } = req.body;
+
+      const isValidTargetId = validateStrictString(targetId, 'user id', 10);
+
+      if (!isValidTargetId.isValid) {
+        return res.send({ success: false, reason: isValidTargetId.reason });
+      };
+
       const friendRequests = await NotificationCache(userId, 1, false);
       const friendReq = friendRequests.find(friendReq => { return friendReq.f === targetId });
       if (!friendReq) return res.send({ success: false, reason: 'no request found' });
@@ -201,11 +231,12 @@ Router.post('/checked', async (req, res) => {
 });
 
 Router.get('/recommended', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const myUserId = req.session.user_id;
-      const userInfo = await userCache(myUserId);
-      if (!userInfo) return;
+      const userInfo = await userCache(userId);
+      if (!userInfo) {
+        return res.send({ success: false, reason: 'No user found' });
+      };
       const { friends } = userInfo;
       const userIds = await redisClient.sMembers(`allMembers`);
       const users = [];
@@ -215,7 +246,7 @@ Router.get('/recommended', async (req, res) => {
         };
         const index = randomIntInRange(0, userIds.length - 1);
         const userId = userIds[index];
-        if (!friends.includes(userId) && userId !== myUserId && !users.includes(userId)) {
+        if (!friends.includes(userId) && userId !== userId && !users.includes(userId)) {
           const recommendedUserInfo = await userCache(userId);
           if (recommendedUserInfo) {
             users.push(recommendedUserInfo);
@@ -231,9 +262,8 @@ Router.get('/recommended', async (req, res) => {
 });
 
 Router.get('/status', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const userInfo = await userCache(userId);
       if (!userInfo) return res.send({ success: false, reason: `no such user` });
       const friends = userInfo.friends === "" ? [] : userInfo.friends.split(',');
@@ -275,13 +305,15 @@ Router.get('/status', async (req, res) => {
 Router.get('/search', async (req, res) => {
   try {
     const { query } = req.query;
-    console.log(query)
-    if (!query || query.length < 0) return res.send({ success: false, reason: 'Invalid query, atleast 3 characters requires' });
-    if (!/^[a-zA-Z0-9]+$/.test(query)) return res.send({ success: false, reason: 'Invalid query (Only A-Z, a-z, and 0-9 available)' });
+
+    const isValidQuery = validateStrictString(query, 'query', 10, 3);
+
+    if (!isValidQuery.isValid) {
+      return res.send({ success: false, reason: isValidQuery.reason });
+    };
 
     const connection = pool.promise();
     const [users] = await connection.query(`SELECT user_id, name, timezone from users where name like ?`, `%${query}%`);
-    console.log('searched', users);
     res.send({ success: true, users });
   } catch (err) {
     console.log(err);
@@ -290,7 +322,7 @@ Router.get('/search', async (req, res) => {
 
 const MAX_DURATION = 60 * 60 * 24 * 7;
 
-async function createFriendLink (userId) {
+async function createFriendLink(userId) {
   try {
     let linkId = await redisClient.get(`link:friend:${userId}`);
     if (!linkId) {
@@ -305,12 +337,12 @@ async function createFriendLink (userId) {
 }
 
 Router.post('/create-link', async (req, res) => {
-  autoSignin(req, res, (async () => {
-    const linkId = await createFriendLink(req.session.user_id);
+  autoSignin(req, res, (async (userId) => {
+    const linkId = await createFriendLink(userId);
     if (linkId) {
-      return res.send({success: true, linkId});
+      return res.send({ success: true, linkId });
     } else {
-      return res.send({success: false, reason: 'Err'});
+      return res.send({ success: false, reason: 'Err' });
     }
   }));
 });
@@ -320,13 +352,22 @@ Router.post('/create-link', async (req, res) => {
  */
 
 Router.get('/add', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { id } = req.query;
       const targetId = req.query.user;
-      console.log(targetId, id);
-      if (!targetId || !id) return res.send({ success: false, reason: "Invalid Values" });
+
+      const isValidTargetId = validateStrictString(targetId, 'user id', 10);
+
+      if (!isValidTargetId.isValid) {
+        return res.send({ success: false, reason: isValidTargetId.reason });
+      };
+
+      const isValidId = validateStrictString(id, 'add id', 10);
+
+      if (!isValidId.isValid) {
+        return res.send({ success: false, reason: isValidId.reason });
+      };
 
       //check if its not user himself
       if (userId === targetId) return res.send({ success: false, reason: "Cannot send request to yourself" });
@@ -455,28 +496,28 @@ Router.get('/add', async (req, res) => {
 });
 
 Router.post('/email-invitation', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
-      const {email} = req.body;
-  
-      if (!email) return res.send({success: false, reason: 'Invalid Email'});
-      
-      const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      if (!isValidEmail) return res.send({success: false, reason: 'Invalid Email'});
-  
+      const { email } = req.body;
+
+      const isValidEmail = validateEmail(email);
+
+      if (!isValidEmail.isValid) {
+        return res.send({ success: false, reason: isValidEmail.reason });
+      };
+
       const linkId = await createFriendLink(userId);
-      if (!linkId) return res.send({success: false, reason: 'Error'});
+      if (!linkId) return res.send({ success: false, reason: 'Error' });
 
       const userInfo = await userCache(userId);
-      if (!userInfo) return res.send({success: false, reason: 'Error'});
+      if (!userInfo) return res.send({ success: false, reason: 'Error' });
       const params = { name: userInfo.name, userId: userInfo.user_id, link: linkId };
       const to = [{ email }];
       sendEmail(to, params, 3);
-      res.send({success: true});
+      res.send({ success: true });
     } catch (err) {
       console.log(err);
-      res.send({success: false});
+      res.send({ success: false });
     };
   }));
 });

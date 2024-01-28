@@ -4,10 +4,10 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { autoSignin, arraysHaveSameContents, generateRandomId } = require("../tool");
 const { groupCache, chatRoomsCache, usersCache, NotificationCache, dmRoomsCache, userCache, dmRoomMembersCache, groupMembersCache, msgReadCache } = require("../services/redisLoader");
+const { validateStrictString } = require("../validate");
 
 Router.post("/bring-rooms", async (req, res) => {
-  autoSignin(req, res, (async () => {
-    const userId = req.session.user_id;
+  autoSignin(req, res, (async (userId) => {
     let rooms = await chatRoomsCache(userId);
     const roomPromises = rooms.map(async (room) => {
       const chats = (await redisClient.lRange(`room:${room.id}:chats`, 0, -1)).map(JSON.parse);
@@ -20,10 +20,14 @@ Router.post("/bring-rooms", async (req, res) => {
 });
 
 Router.get('/members', async(req, res) => {
-  autoSignin(req, res, (async () => {
-    const userId = req.session.user_id;
+  autoSignin(req, res, (async (userId) => {
     const {roomId} = req.query;
-    if (!roomId) return res.send({success: false,reason: 'no room'});
+
+    const isValidRoomId = validateStrictString(roomId, 'room id', 10);
+
+    if (!isValidRoomId.isValid) {
+      return res.send({success: false, reason: isValidRoomId.reason});
+    };
     const members = await groupMembersCache(roomId);
     if (!members.includes(userId)) return res.send({success: false, reason: 'not in group'});
     const membersInfo = await Promise.all(members.map(async(memberId) => {
@@ -35,9 +39,14 @@ Router.get('/members', async(req, res) => {
 })
 
 Router.post("/chat-request", async (req, res) => {
-  autoSignin(req, res, (async () => {
-    const userId = req.session.user_id;
+  autoSignin(req, res, (async (userId) => {
     const { targetId } = req.body;
+    const isValidTargetId = validateStrictString(targetId, 'target user', 10);
+
+    if (!isValidTargetId.isValid) {
+      return res.send({success: false, reason: isValidTargetId.reason});
+    };
+
     if (userId === targetId) return res.send({success: false, reason: `Can't chat yourself`});
 
     const chatRooms = await chatRoomsCache(userId);
@@ -67,10 +76,22 @@ Router.post("/chat-request", async (req, res) => {
 });
 
 Router.post("/chat-request-reply", async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { targetId, accepted } = req.body;
+
+      const isValidTargetId = validateStrictString(targetId, 'target user', 10);
+
+      if (!isValidTargetId.isValid) {
+        return res.send({success: false, reason: isValidTargetId.reason});
+      };
+
+      const isValidAcceped = validateBoolean(accepted, 'accept', true);
+
+      if (!isValidAcceped.isValid) {
+        return res.send({ success: false, reason: isValidAcceped.reason });
+      };
+
       const chatRequests = await NotificationCache(userId, 4, false);
       const chatReq = chatRequests.find(chatReq => { return chatReq.f === targetId });
       if (!chatReq) return res.send({ success: false, reason: 'expired request' })
