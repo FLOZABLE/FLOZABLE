@@ -135,7 +135,7 @@ function SmallCalendar({
   SmallCalendarApi,
   viewDate,
   setViewDate,
-  isAddPlanModal,
+  planModal,
   width,
   setIsCalendarOpen,
 }) {
@@ -154,7 +154,7 @@ function SmallCalendar({
     if (SmallCalendarApi) {
       SmallCalendarApi.gotoDate(viewDate);
     }
-    if (PlannerApi && !isAddPlanModal) {
+    if (PlannerApi && !planModal) {
       PlannerApi.gotoDate(viewDate);
     }
   }, [viewDate]);

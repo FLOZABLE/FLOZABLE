@@ -23,7 +23,7 @@ function validateString(value, type, max = 20, min = 1) {
   return { isValid: true };
 };
 
-function isValidInteger(value, type, max, min) {
+function validateInteger(value, type, max, min) {
   if (typeof value !== 'number') {
     return { isValid: false, reason: `Invalid value ${type} (Only number allowed)` };
   };
@@ -49,9 +49,20 @@ function validatePassword(password, max = 20, min = 5) {
   return { isValid: true };
 };
 
+function validateLength(value, type, max, min = 0) {
+  if (value.length <= min) {
+    return { isValid: false, reason: `${type} is too large` };
+  };
+  if (value.length >= max) {
+    return { isValid: false, reason: `${type} is too large` };
+  };
+  return {isValid: true};
+}
+
 module.exports = {
   validateEmail,
   validateString,
-  isValidInteger,
-  validatePassword
+  validateInteger,
+  validatePassword,
+  validateLength
 };

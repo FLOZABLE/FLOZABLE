@@ -203,8 +203,8 @@ function EventPlanner(props) {
     setAddPlanResponse,
     events,
     setEvents,
-    isAddPlanModal,
-    setIsAddPlanModal,
+    planModal,
+    setPlanModal,
     setIsAddSubjectModal,
     subjects,
     setSubjects,
@@ -247,7 +247,33 @@ function EventPlanner(props) {
   }
 
   function handleDateSelect(selectInfo) {
-    if (isAddPlanModal) {
+    const start = selectInfo.start ? new Date(selectInfo.start) : null;
+    const end = selectInfo.end ? new Date(selectInfo.end) : null;
+
+    if (!start || !end) return;
+
+    console.log(start, end, 'dd');
+    if (!planModal.id) {
+      const planInfo = { ...planModal, start, end };
+      //planInfo.id = generateRandomId(10);
+
+      setPlanModal((prev) => ({ ...prev, ...planInfo, opened: true }));
+      //setEvents((prev) => [...prev, planInfo]);
+    } else {
+      setEvents((prev) => {
+        const foundIndex = prev.findIndex((val) => val.id === planModal.id);
+        if (foundIndex !== -1) {
+          return [
+            ...prev.slice(0, foundIndex),
+            { ...planModal, start, end },
+            ...prev.slice(foundIndex + 1),
+          ];
+        }
+
+        return prev;
+      });
+    }
+    /* if (planModal) {
       selectInfo.view.calendar.unselect();
     } else {
       const start = selectInfo.start ? new Date(selectInfo.start) : null;
@@ -266,20 +292,30 @@ function EventPlanner(props) {
           saved: false,
           completed: 0,
         };
-        setIsAddPlanModal(newEvent);
+        setPlanModal(newEvent);
       }
-    }
-  }
+    } */
+  };
+
+  /* useEffect(() => {
+    console.log(planModal)
+    console.log('changed plan')
+  }, [planModal]); */
 
   function handleEventDateDrop(data) {
     const { id, start, end } = data.event;
     const eventIndex = events.findIndex((event) => event.id == id);
+    console.log(eventIndex)
     if (eventIndex !== -1) {
       const updatedEvents = [...events];
       updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], start, end };
+      console.log(updatedEvents);
       setEvents(updatedEvents);
       if (updatedEvents[eventIndex].saved) {
         updateServer({ ...updatedEvents[eventIndex] });
+        setPlanModal((prev) => ({ ...prev, start, end }));
+      } else {
+        setPlanModal((prev) => ({ ...prev, start, end, opened: true }));
       }
     }
   }
@@ -293,6 +329,9 @@ function EventPlanner(props) {
       setEvents(updatedEvents);
       if (updatedEvents[eventIndex].saved) {
         updateServer({ ...updatedEvents[eventIndex] });
+        setPlanModal((prev) => ({ ...prev, start, end }));
+      } else {
+        setPlanModal((prev) => ({ ...prev, start, end, opened: true }));
       }
     }
   }
@@ -319,7 +358,7 @@ function EventPlanner(props) {
       .then((data) => {
         setResponse(data);
         if (data.success) {
-          setIsAddPlanModal(false);
+          //setPlanModal(false);
         }
       })
       .catch((error) => console.error(error));
@@ -334,7 +373,7 @@ function EventPlanner(props) {
       end,
       title,
     };
-    setIsAddPlanModal(eventInfo);
+    //setPlanModal(eventInfo);
   };
 
   useEffect(() => {

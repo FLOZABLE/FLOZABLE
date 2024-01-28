@@ -34,7 +34,7 @@ function StudyHeader({
   setVolume,
   events,
   setEvents,
-  setIsAddPlanModal,
+  setPlanModal,
   reset,
   setIsMic,
   setIsCam,
@@ -160,7 +160,7 @@ function StudyHeader({
               subjects={subjects}
               setPlans={setEvents}
               mode={"study"}
-              setIsAddPlanModal={setIsAddPlanModal}
+              setPlanModal={setPlanModal}
             />
           </div>
         </li>
