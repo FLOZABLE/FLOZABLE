@@ -57,7 +57,7 @@ function EventModal({
   };
 
   useEffect(() => {
-    if (!planModal || !planModal.opened) return;
+    if (!planModal || !planModal.opened || !subjects) return;
     if (!planModal.id) {
       const planInfo = { ...planModal };
       delete planInfo.opened;
@@ -69,18 +69,24 @@ function EventModal({
     } else {
       setEvents((prev) => {
         const foundIndex = prev.findIndex((val) => val.id === planModal.id);
+        const subject = subjects.find(subject => subject.id === planModal.subject);
+        const planInfo = {...planModal};
+        if (subject) {
+          planInfo.backgroundColor = subject.color;
+          planInfo.borderColor = subject.color;
+        }
         if (foundIndex !== -1) {
           return [
             ...prev.slice(0, foundIndex),
-            planModal,
+            planInfo,
             ...prev.slice(foundIndex + 1),
           ];
         } else {
-          return [...prev.slice(), planModal];
+          return [...prev.slice(), planInfo];
         };
       });
     }
-  }, [planModal]);
+  }, [planModal, subjects]);
 
   useEffect(() => {
     if (!planModal) return;

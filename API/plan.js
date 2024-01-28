@@ -123,7 +123,7 @@ Router.post('/update', async (req, res) => {
         return res.send({ success: false, reason: isValidPriority.reason });
       };
 
-      const isValidCompleted = validateStrictString(completed, 'Completed', 0, 1);
+      const isValidCompleted = validateInteger(completed, 'Completed', 0, 1);
       if (!isValidCompleted.isValid) {
         return res.send({ success: false, reason: isValidCompleted.reason });
       };
