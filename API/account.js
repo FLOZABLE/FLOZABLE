@@ -8,7 +8,7 @@ const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
 const { hashing, autoSignin, generateRandomId, googleOauth2client, isValidTimeZone } = require("../tool");
-const { validateEmail, validateString, validatePassword } = require("../validate");
+const { validateEmail, validateStrictString, validatePassword, validateURL } = require("../validate");
 const { UserRefreshClient } = require("google-auth-library")
 const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
 const { extensionIo } = require('../socket');
@@ -41,12 +41,10 @@ Router.get('/activity-settings', async (req, res) => {
 Router.post('/signin-authentication', async (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email || !password) return res.send({ success: false, reason: 'NO SUCH USER' });
-
-  // Sanitize inputs
-  if (!/^[^\s@%]+@[^\s@%]+\.[^\s@%]+$/.test(email)) {
-    return res.send({ success: false, reason: 'Invalid Email' });
-  }
+  const isValidEmail = validateEmail(email);
+  if (!isValidEmail.isValid) {
+    return res.send({ success: false, reason: isValidEmail.reason });
+  };
 
   const connection = pool.promise();
 
@@ -108,7 +106,7 @@ Router.post('/signup-authentication', async (req, res) => {
       return res.send({ success: false, reason: isValidEmail.reason });
     };
 
-    const isValidName = validateString(name, 'Name0');
+    const isValidName = validateStrictString(name, 'Name');
     if (!isValidName.isValid) {
       return res.send({ success: false, reason: isValidName.reason });
     };
@@ -231,7 +229,7 @@ Router.post('/update/info', async (req, res) => {
         return res.send({ success: false, reason: isValidEmail.reason });
       };
 
-      const isValidName = validateString(name);
+      const isValidName = validateStrictString(name);
       if (!isValidName.isValid) {
         return res.send({ success: false, reason: isValidName.reason });
       };
@@ -292,21 +290,14 @@ Router.post('/update/extension-add', async (req, res) => {
     try {
       const connection = pool.promise();
       const { url } = req.body;
-      let origin;
-      let domain;
-      if (!/^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[a-zA-Z0-9.-]*)*$/.test(url) || domain.length > 25) {
-        return res.send({ success: false, reason: 'Invalid URL or Domain' });
-      };
-      if (url.includes('https://') || url.includes('http://')) {
-        origin = new URL(url).origin;
-        domain = new URL(url).hostname;
-      } else {
-        origin = new URL('https://' + url).origin;
-        domain = new URL('https://' + url).hostname;
+      
+      const isValidURL = validateURL(url);
+
+      if (!isValidURL.isValid) {
+        return res.send({success: false, reason: isValidURL.reason});
       };
 
-      origin = origin.replace(/^www\.(.*)$/, "$1");
-      domain = domain.replace(/^www\.(.*)$/, "$1");
+      const {domain, origin} = isValidURL;
 
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
       let activitySettings = userInfo.activitySettings === "" ? [] : JSON.parse(userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"));

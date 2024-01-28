@@ -4,62 +4,109 @@ const fs = require("fs");
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const crypto = require("crypto");
-const {isValidJSON, hashing, generateRandomId, autoSignin} = require("../tool");
+const { isValidJSON, hashing, generateRandomId, autoSignin } = require("../tool");
 const { timerCache, activeSubjectCache, groupCache, userCache } = require("../services/redisLoader");
+const { validateArray, validateStrictString, validateInteger, validateLength, validateHEX, validatePassword, validateBoolean } = require("../validate");
 
 Router.post('/create-validate', async (req, res) => {
-  autoSignin(req, res, (async () => {
-    const connection = pool.promise();
-    const userId = req.session.user_id;
+  autoSignin(req, res, (async (userId) => {
     try {
-      let group = req.body;
-      console.log(group)
-      const schema = {
+      const { name, explanation, tags, max_members, visibility, password, color, goal_hr } = req.body;
+      /* const schema = {
         type: 'object',
         properties: {
           name: { type: 'string', maxLength: 100 },
-          explanation: { type: 'string', maxLength: 100},
-          tags: { type: 'array', maxItems: 10},
-          max_members: { type: 'integer', minimum: 0, maximum: 100},
-          visibility: { type: 'integer', minimum: 0, maximum: 1},
-          password: { type: 'string', maxLength: 30},
-          color: { type: 'string', maxLength: 8},
-          goal_hr: { type: 'integer', maximum: 24},
+          explanation: { type: 'string', maxLength: 100 },
+          tags: { type: 'array', maxItems: 10 },
+          max_members: { type: 'integer', minimum: 0, maximum: 100 },
+          visibility: { type: 'integer', minimum: 0, maximum: 1 },
+          password: { type: 'string', maxLength: 30 },
+          color: { type: 'string', maxLength: 8 },
+          goal_hr: { type: 'integer', maximum: 24 },
         },
         required: ['name', 'explanation', 'tags', 'max_members', 'visibility', 'password', 'color', 'goal_hr'],
         additionalProperties: false
       };
 
-      const isValid = isValidJSON(group, schema);
-      if (!isValid) {
-        return res.send({success: false, reason: 'Wrong Information'});
-      }
-      
-      //check name
-      /* if (!/^[a-zA-Z0-9]+$/.test(group.name) || group.name.length == 0) {
-        return res.send({ success: false, reason: 'Invalid Name (Only A-Z, a-z, and 0-9 available)' });
+      const isValid = isValidJSON(group, schema); */
+      /* if (!isValid) {
+        return res.send({ success: false, reason: 'Wrong Information' });
       } */
-      if (!group.name.length) {
-        return res.send({ success: false, reason: 'Choose name for your study group' });
+
+      const isValidName = validateStrictString(name, 'Name');
+      if (!isValidName.isValid) {
+        return res.send({ success: false, reason: isValidName.reason });
       };
 
-      //check description
-      if (!group.explanation.length) {
-        return res.send({ success: false, reason: 'Add description for your study group' });
+      const isValidExplanation = validateLength(explanation, 'Description', 200, 1);
+      if (!isValidExplanation.isValid) {
+        return res.send({ success: false, reason: isValidExplanation.reason });
       };
 
-      let hashed = hashing(req.body['password']);
-      const groupId = generateRandomId(8);
+      const isValidTags = validateArray(tags, 'tags', 10);
+      if (!isValidTags.isValid) {
+        return res.send({ success: false, reason: isValidTags.reason });
+      };
 
-      group.tags = JSON.stringify(group.tags);
+      const isValidMembers = validateInteger(max_members, 'max members', 100, 0);
+      if (!isValidMembers.isValid) {
+        return res.send({ success: false, reason: isValidMembers.reason });
+      };
+
+      const isValidVisibility = validateInteger(visibility, 'visibility', 1, 0);
+      if (!isValidVisibility.isValid) {
+        return res.send({ success: false, reason: isValidVisibility.reason });
+      };
+
+      if (!visibility) {
+        const isValidPassword = validatePassword(password);
+        if (!isValidPassword.isValid) {
+          return res.send({ success: false, reason: isValidPassword.reason });
+        };
+      };
+
+      const isValidColor = validateHEX(color, 'Color', 100, 8, 8);
+      if (!isValidMembers.isValid) {
+        return res.send({ success: false, reason: isValidColor.reason });
+      };
+
+      const isValidGodalHr = validateInteger(goal_hr, 'goal time', 10);
+      if (!isValidGodalHr.isValid) {
+        return res.send({ success: false, reason: isValidGodalHr.reason });
+      };
+
+
+      const hashed = hashing(password);
+      const group_id = generateRandomId(8);
+      const date = Math.floor(new Date().getTime() / 1000);
+      const stringlifiedTags = JSON.stringify(tags);
+      const group = {
+        group_id,
+        salt: hashed[0],
+        password: hashed[1],
+        date,
+        name,
+        explanation,
+        leader: userId,
+        members: userId,
+        tags: stringlifiedTags,
+        max_members,
+        visibility,
+        color,
+        goal_hr
+      };
+
+      /* group.tags = JSON.stringify(group.tags);
       group.password = hashed[1];
       group.salt = hashed[0];
       group.date = Math.floor(new Date().getTime() / 1000);
       group.group_id = groupId;
       group.leader = userId;
-      group.members = userId;
-  
+      group.members = userId; */
+
       try {
+        const connection = pool.promise();
+
         const updateGroup = await connection.query('INSERT INTO \`groups\` SET ?', group);
         const updateUser = await connection.query(`
         UPDATE users
@@ -69,33 +116,30 @@ Router.post('/create-validate', async (req, res) => {
         END
         WHERE user_id = ?
       `, [
-        groupId,
-        groupId,
+          group_id,
+          group_id,
           userId,
         ]);
 
         const roomInfo = {
-          id: groupId,
+          id: group_id,
         }
 
         const updateRoom = connection.query(`INSERT INTO chatrooms SET ?`, roomInfo);
 
         //update cached values
         const groups = await groupCache(userId);
-        groups.push(groupId);
+        groups.push(group_id);
         redisClient.hSet(`user:${userId}`, 'groups', groups.join(','));
-        res.send({success: true, data: {id: groupId}, msg: `Group ${group.name} created!`})
-      } catch(error) {
+        res.send({ success: true, data: { id: group_id }, msg: `Group ${group.name} created!` })
+      } catch (error) {
         console.log(error)
         res.send({ success: false, reason: 'Error' })
       }
-    } catch(error) {
+    } catch (error) {
       console.log(error)
-      res.send({success: false, reason: 'Error'})
-    } finally {
-      pool.releaseConnection(connection);
-    }
-
+      res.send({ success: false, reason: 'Error' })
+    };
 
   }), (() => {
     req.session.retrivedProgress = req.body;
@@ -104,24 +148,29 @@ Router.post('/create-validate', async (req, res) => {
 })
 
 Router.post('/join/:id', async (req, res) => {
-  const sessionDataHeader = req.headers['x-session-data'];
+  /* const sessionDataHeader = req.headers['x-session-data'];
   if (sessionDataHeader) {
     const sessionData = JSON.parse(sessionDataHeader);
     if (sessionData.user_id && sessionData.loggedin) {
       req.session.user_id = sessionData.user_id;
       req.session.loggedin = sessionData.loggedin;
     }
-  };
+  }; */
 
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async (userId) => {
     const groupId = req.params.id;
-    const userId = req.session.user_id;
+
+    const isValidGroupId = validateStrictString(groupId, 'group id', 8, 10);
+    if (!isValidGroupId.isValid) {
+      return res.send({ success: false, reason: isValidGroupId.reason });
+    };
+
     const connection = pool.promise();
     try {
       const [[groupInfo]] = await connection.query(`SELECT password, salt, visibility, max_members, members, name from \`groups\` where group_id = ?`, [groupId]);
-      if (!groupInfo) return res.send({success: false, reason: `Group does not exist`});
+      if (!groupInfo) return res.send({ success: false, reason: `Group does not exist` });
 
-      if (groupInfo.members.includes(userId)) return res.send({success: false, reason: 'Already Joined'});
+      if (groupInfo.members.includes(userId)) return res.send({ success: false, reason: 'Already Joined' });
 
       if (groupInfo.visibility) {
         await connection.query(
@@ -133,7 +182,7 @@ Router.post('/join/:id', async (req, res) => {
             WHERE user_id = ?`,
           [groupId, `%${groupId}%`, groupId, userId]
         );
-  
+
         await connection.query(
           `UPDATE \`groups\` 
           SET members = CASE 
@@ -145,11 +194,15 @@ Router.post('/join/:id', async (req, res) => {
           [userId, `%,${userId},%`, `${userId},%`, `%,${userId}`, userId, groupId]
         );
       } else {
-        if (!req.body.password) {
-          return res.send({ success: false, reason: 'Wrong Password' });
-        }
-        let password = crypto.pbkdf2Sync(req.body.password, groupInfo.salt, 99097, 32, 'sha512').toString('hex');
-        if (password == groupInfo.password) {
+        const { password } = req.body;
+        const isValidPassword = validatePassword(password);
+
+        if (!isValidPassword.isValid) {
+          return res.send({ success: false, reason: isValidPassword.reason });
+        };
+
+        const hashedPassword = crypto.pbkdf2Sync(password, groupInfo.salt, 99097, 32, 'sha512').toString('hex');
+        if (hashedPassword == groupInfo.password) {
           await connection.query(
             `UPDATE users SET \`groups\` = CASE
               WHEN \`groups\` = '' THEN ?
@@ -159,7 +212,7 @@ Router.post('/join/:id', async (req, res) => {
               WHERE user_id = ?`,
             [groupId, `%${groupId}%`, groupId, userId]
           );
-  
+
           await connection.query(
             `UPDATE \`groups\` 
             SET members = CASE 
@@ -174,7 +227,7 @@ Router.post('/join/:id', async (req, res) => {
           return res.send({ success: false, reason: 'Wrong Password' });
         }
       }
-  
+
       const io = req.app.get('socketio');
       io.emit(`newMember:${groupId}`, userId);
       res.send({ success: true, msg: `Joined group "${groupInfo.name}"` });
@@ -186,7 +239,7 @@ Router.post('/join/:id', async (req, res) => {
       totalTime = totalTime === null ? 0 : totalTime;
       const activeSubject = await activeSubjectCache(userId);
       const userInfo = await userCache(userId);
-      io.to(`${groupId}`).emit(`newMemberInfo`, {...userInfo, totalTime, activeSubject});
+      io.to(`${groupId}`).emit(`newMemberInfo`, { ...userInfo, totalTime, activeSubject });
 
       //update cached value only if it exists
       const isCached = await redisClient.exists(`room:${groupId}`);
@@ -197,16 +250,14 @@ Router.post('/join/:id', async (req, res) => {
     } catch (err) {
       // Handle any errors that may occur during the execution of queries
       console.error('Error performing database queries:', err);
-    } finally {
-      pool.releaseConnection(connection);
-    }
+    };
   }));
 })
 
 
 Router.post('/bring-groups', async (req, res) => {
-  const connection = pool.promise();
   try {
+    const connection = pool.promise();
     const [groups] = await connection.query(
       "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\`"
     );
@@ -224,18 +275,28 @@ Router.post('/bring-groups', async (req, res) => {
   } catch (err) {
     console.error('Error performing database queries:', err);
     res.status(500).send({ success: false, reason: 'An error occurred' });
-  } finally {
-    pool.releaseConnection(connection);
-  }
+  };
 });
 
 Router.post('/like/:id', async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async (userId) => {
     const groupId = req.params.id;
-    const connection = pool.promise();
-    const userId = req.session.user_id;
-    const {liked} = req.body;
+    const { liked } = req.body;
+
+    const isValidGroupId = validateStrictString(groupId, 'group id');
+
+    if (!isValidGroupId.isValid) {
+      return res.send({ success: false, reason: isValidGroupId.reason });
+    };
+
+    const isValidLiked = validateBoolean(liked, 'like', true);
+
+    if (!isValidLiked.isValid) {
+      return res.send({ success: false, reason: isValidLiked.reason });
+    };
+
     try {
+      const connection = pool.promise();
       /* const [update] = await connection.query(
         `UPDATE \`groups\` 
         SET likes = CASE 
@@ -247,7 +308,7 @@ Router.post('/like/:id', async (req, res) => {
         [userId, `%,${userId},%`, `${userId},%`, `%,${userId}`, userId, userId, groupId]
       ); */
       if (liked) {
-        const [{changedRows}] = await connection.query(
+        const [{ changedRows }] = await connection.query(
           `UPDATE \`groups\` 
           SET likes = CASE 
             WHEN likes = '' THEN ?
@@ -276,33 +337,37 @@ Router.post('/like/:id', async (req, res) => {
     } catch (err) {
       console.error('Error performing database queries:', err);
       res.status(500).send({ success: false, reason: 'An error occurred' });
-    } finally {
-      pool.releaseConnection(connection);
-    }
+    };
   }));
 });
 
 Router.get('/members', async (req, res) => {
-  autoSignin(req, res, (async() => {
-    const {groupId} = req.query;
+  autoSignin(req, res, (async (userId) => {
+    const { groupId } = req.query;
+
+    const isValidGroupId = validateStrictString(groupId, 'group id');
+
+    if (!isValidGroupId.isValid) {
+      return res.send({ success: false, reason: isValidGroupId.reason });
+    };
+
     const connection = pool.promise();
-    const userId = req.session.user_id;
     try {
       const [[groupInfo]] = await connection.query(`SELECT visibility, members FROM groups WHERE group_id = ?`, [groupId]);
-      if (!groupInfo) return res.send({success: false, reason: 'No such group'});
-      const {visibility, members} = groupInfo;
+      if (!groupInfo) return res.send({ success: false, reason: 'No such group' });
+      const { visibility, members } = groupInfo;
       const membersArr = members === "" ? [] : members.split(",");
       if (visibility || membersArr.includes(userId) && membersArr.length) {
         const [membersData] = await connection.query(`SELECT name, user_id FROM users WHERE user_id IN (?)`, [membersArr]);
-        const memberStudyDataPromises = membersData.map(async(member) => {
-          const {user_id} = member;
+        const memberStudyDataPromises = membersData.map(async (member) => {
+          const { user_id } = member;
           const totalTime = await redisClient.get(`user:${user_id}:dayTotal`);
           let filteredTotalTime = totalTime === null ? 0 : totalTime;
           const activeSubject = await activeSubjectCache(user_id);
-          return {...member, totalTime: filteredTotalTime, activeSubject};
+          return { ...member, totalTime: filteredTotalTime, activeSubject };
         });
         const memberStudyData = await Promise.all(memberStudyDataPromises);
-        res.send({success: true, membersData: memberStudyData});
+        res.send({ success: true, membersData: memberStudyData });
       }
     } catch (err) {
       console.error('Error performing database queries:', err);
@@ -312,78 +377,114 @@ Router.get('/members', async (req, res) => {
 });
 
 Router.post('/modify', async (req, res) => {
-  autoSignin(req, res, (async () => {
-    const connection = pool.promise();
-    const userId = req.session.user_id;
+  autoSignin(req, res, (async (userId) => {
     try {
-      const group = req.body;
-      console.log(group);
-      const schema = {
+      const { group_id, name, explanation, tags, max_members, visibility, password, color, goal_hr } = req.body;
+
+      const isValidGroupId = validateStrictString(group_id, 'group id');
+      if (!isValidGroupId.isValid) {
+        return res.send({ success: false, reason: isValidGroupId.reason });
+      };
+
+      const isValidName = validateStrictString(name, 'Name');
+      if (!isValidName.isValid) {
+        return res.send({ success: false, reason: isValidName.reason });
+      };
+
+      const isValidExplanation = validateLength(explanation, 'Description', 200, 1);
+      if (!isValidExplanation.isValid) {
+        return res.send({ success: false, reason: isValidExplanation.reason });
+      };
+
+      const isValidTags = validateArray(tags, 'tags', 10);
+      if (!isValidTags.isValid) {
+        return res.send({ success: false, reason: isValidTags.reason });
+      };
+
+      const isValidMembers = validateInteger(max_members, 'max members', 100, 0);
+      if (!isValidMembers.isValid) {
+        return res.send({ success: false, reason: isValidMembers.reason });
+      };
+
+      const isValidVisibility = validateInteger(visibility, 'visibility', 1, 0);
+      if (!isValidVisibility.isValid) {
+        return res.send({ success: false, reason: isValidVisibility.reason });
+      };
+
+      const isValidColor = validateHEX(color, 'Color', 100, 8, 8);
+      if (!isValidMembers.isValid) {
+        return res.send({ success: false, reason: isValidColor.reason });
+      };
+
+      const isValidGodalHr = validateInteger(goal_hr, 'goal time', 10);
+      if (!isValidGodalHr.isValid) {
+        return res.send({ success: false, reason: isValidGodalHr.reason });
+      };
+      /* const schema = {
         type: 'object',
         properties: {
-          group_id: {type: 'string', maxLength: 11},
+          group_id: { type: 'string', maxLength: 11 },
           name: { type: 'string', maxLength: 100 },
-          explanation: { type: 'string', maxLength: 100},
-          tags: { type: 'array', maxItems: 10},
-          max_members: { type: 'integer', minimum: 0, maximum: 100},
-          visibility: { type: 'integer', minimum: 0, maximum: 1},
-          password: { type: 'string', maxLength: 30},
-          color: { type: 'string', maxLength: 8},
-          goal_hr: { type: 'integer', maximum: 24},
+          explanation: { type: 'string', maxLength: 100 },
+          tags: { type: 'array', maxItems: 10 },
+          max_members: { type: 'integer', minimum: 0, maximum: 100 },
+          visibility: { type: 'integer', minimum: 0, maximum: 1 },
+          password: { type: 'string', maxLength: 30 },
+          color: { type: 'string', maxLength: 8 },
+          goal_hr: { type: 'integer', maximum: 24 },
         },
-        required: ['group_id','name', 'explanation', 'tags', 'max_members', 'visibility', 'password', 'color', 'goal_hr'],
+        required: ['group_id', 'name', 'explanation', 'tags', 'max_members', 'visibility', 'password', 'color', 'goal_hr'],
         additionalProperties: false
       };
 
       const isValid = isValidJSON(group, schema);
       if (!isValid) {
-        return res.send({success: false, reason: 'Wrong Information'});
-      }
-
-      const groupId = group.group_id;
-      delete group.group_id;
-
-      const groupInfo = await connection.query(`SELECT leader FROM \`groups\` WHERE group_id = ? AND leader = ?`, [groupId, userId])
-      if (!groupInfo) return res.send({success: false, reason: 'You are not the leader of this group'});
-      
-      //check name
-      /* if (!/^[a-zA-Z0-9]+$/.test(group.name) || group.name.length == 0) {
-        return res.send({ success: false, reason: 'Invalid Name (Only A-Z, a-z, and 0-9 available)' });
+        return res.send({ success: false, reason: 'Wrong Information' });
       } */
-      if (!group.name.length) {
-        return res.send({ success: false, reason: 'Choose name for your study group' });
+
+      const connection = pool.promise();
+
+      const groupInfo = await connection.query(`SELECT leader FROM \`groups\` WHERE group_id = ? AND leader = ?`, [group_id, userId])
+      if (!groupInfo) return res.send({ success: false, reason: 'You are not the leader of this group' });
+
+      const date = Math.floor(new Date().getTime() / 1000);
+      const stringlifiedTags = JSON.stringify(tags);
+      const group = {
+        date,
+        name,
+        explanation,
+        leader: userId,
+        members: userId,
+        tags: stringlifiedTags,
+        max_members,
+        visibility,
+        color,
+        goal_hr
       };
 
-      //check description
-      if (!group.explanation.length) {
-        return res.send({ success: false, reason: 'Add description for your study group' });
+
+      if (!visibility && password !== "") {
+        const isValidPassword = validatePassword(password);
+        if (!isValidPassword.isValid) {
+          return res.send({ success: false, reason: isValidPassword.reason });
+        };
+        const hashed = hashing(password);
+        group.salt = hashed[0];
+        group.password = hashed[1];
       };
 
-
-      group.tags = JSON.stringify(group.tags);
-
-      if (group.password === "") {
-        delete group.password;
-      };
-  
       try {
-        const updateGroup = await connection.query('UPDATE \`groups\` set ? WHERE group_id = ? ', [group, groupId]);
-        res.send({success: true, data: {id: groupId}, msg: `Group ${group.name} updated!`})
-      } catch(error) {
+        const connection = pool.promise();
+        const updateGroup = await connection.query('UPDATE \`groups\` set ? WHERE group_id = ? ', [group, group_id]);
+        res.send({ success: true, data: { id: group_id }, msg: `Group ${group.name} updated!` })
+      } catch (error) {
         console.log(error)
         res.send({ success: false, reason: 'Error' })
       }
-    } catch(error) {
+    } catch (error) {
       console.log(error)
-      res.send({success: false, reason: 'Error'})
-    } finally {
-      pool.releaseConnection(connection);
-    }
-
-
-  }), (() => {
-    req.session.retrivedProgress = req.body;
-    res.send({ success: false, reason: 'not autenticated' });
+      res.send({ success: false, reason: 'Error' })
+    };
   }))
 })
 

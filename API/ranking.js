@@ -8,9 +8,27 @@ const { DateTime } = require('luxon');
 const { subjectsCache, userCache } = require("../services/redisLoader");
 const { promises } = require("fs");
 const { autoSignin } = require("../tool");
+const { validateInteger, validateStrictString, validateLength, validateISO } = require("../validate");
 
 Router.post('/sort', async (req, res) => {
   const { startTime, stopTime } = req.body;
+
+  const maxStartTime = DateTime.now().plus({year: 1}).millisecond;
+  const maxStopTime = DateTime.now().minus({year: 1}).millisecond;
+
+  const isValidStartTime = validateInteger(startTime, "start time", maxStartTime, maxStopTime);
+
+  if (!isValidStartTime.isValid) {
+    return res.send({success: false, reason: isValidStartTime.reason});
+  };
+
+  const isValidStopTime = validateInteger(stopTime, "stop time", startTime, startTime + 1000 * 60 * 60 * 24 * 50);
+
+  if (!isValidStopTime.isValid) {
+    return res.send({success: false, reason: isValidStopTime.reason});
+  };
+
+
   //console.log(startTime, stopTime);
   try {
     const connection = pool.promise();
@@ -60,6 +78,25 @@ const LENGTH = 7;
 Router.get('/user', async (req, res) => {
   try {
     const { userId, date, mode } = req.query;
+
+    const isValidUserId = validateStrictString(userId, 'user id', 10);
+
+    if (!isValidUserId.isValid) {
+      return res.send({ success: false, reason: isValidUserId.reason });
+    };
+    
+    const isValidDate = validateISO(date, 'date');
+
+    if (!isValidDate.isValid) {
+      return res.send({ success: false, reason: isValidDate.reason });
+    };
+
+    const isValidMode = validateStrictString(mode, 'mode', 10);
+
+    if (!isValidMode.isValid) {
+      return res.send({ success: false, reason: isValidMode.reason });
+    };
+
     const dateTime = DateTime.fromISO(date, { zone: 'utc' });
     if (!userId) {
       return res.send({ success: false, reason: 'userid required' })
@@ -291,9 +328,8 @@ async function friendsMonthlySorting(dateTime, length, friends, usersLength) {
 }); */
 
 Router.get('/friends', async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
       const userInfo = await userCache(userId);
       if (!userInfo) return res.send({ success: false, reason: 'no user found' });
       let { friends } = userInfo;

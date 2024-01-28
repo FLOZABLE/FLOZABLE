@@ -5,6 +5,7 @@ const redisClient = require("../model/redis");
 const { autoSignin, arraysHaveSameContents, generateRandomId } = require("../tool");
 const { userCache, websiteUsageCache } = require("../services/redisLoader");
 const { DateTime } = require("luxon");
+const { validateStrictString, validateTimeZone } = require("../validate");
 
 Router.post("/auth", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -15,8 +16,7 @@ Router.post("/auth", async (req, res) => {
 });
 
 Router.get("/today-tabs", async (req, res) => {
-  autoSignin(req, res, (async () => {
-    const userId = req.session.user_id;
+  autoSignin(req, res, (async (userId) => {
     const tabsTimer = await redisClient.zRangeWithScores(`user:${userId}:tabs:timer`, 0, -1);
     const tabsUsage = await redisClient.zRangeWithScores(`user:${userId}:tabs:usage`, 0, -1);
     const tabs = {};
@@ -31,7 +31,6 @@ Router.get("/today-tabs", async (req, res) => {
 Router.get("/tabs-settings", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
-      if (!userId) return res.send({ success: false });
       const connection = pool.promise();
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
       if (!userInfo) return res.send({ success: false, reason: 'No auth' });
@@ -49,8 +48,24 @@ Router.get("/usage", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
       const { date, mode, timezone } = req.query;
-      if (!date || !mode) return res.send({success: false, reason: 'Date/Mode values missing'});
-      console.log(date, mode, timezone);
+      const isValidDate = validateStrictString(date, 'date', 20);
+
+      if (!isValidDate.isValid) {
+        return res.send({success: false, reason: isValidDate.reason});
+      };
+
+      const isValidMode = validateStrictString(mode, 'mode', 10);
+
+      if (!isValidMode.isValid) {
+        return res.send({ success: false, reason: isValidMode.reason });
+      };
+
+      const isValidTimeZone = validateTimeZone(timezone);
+
+      if (!isValidTimeZone.isValid) {
+        return res.send({ success: false, reason: isValidTimeZone.reason });
+      };
+
       const viewDateTime = DateTime.fromSeconds(parseInt(date)).setZone(timezone).startOf("day");
       const todayDateTime = DateTime.now().setZone(timezone).startOf("day");
 
