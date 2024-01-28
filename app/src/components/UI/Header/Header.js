@@ -21,8 +21,8 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function Header({
   setIsChatModal,
   setPlans,
-  setIsAddPlanModal,
-  isAddPlanModal,
+  setPlanModal,
+  planModal,
   plans,
   subjects,
   isSidebarHovered,
@@ -187,8 +187,8 @@ function Header({
                   viewDate={new Date()}
                   viewMode={"timeGridDay"}
                   subjects={subjects}
-                  setIsAddPlanModal={setIsAddPlanModal}
-                  isAddPlanModal={isAddPlanModal}
+                  setPlanModal={setPlanModal}
+                  planModal={planModal}
                   setPlans={setPlans}
                 />
               </div>

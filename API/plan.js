@@ -7,7 +7,7 @@ const { removePrevNotification, planNotification } = require("../services/notifi
 const { google } = require('googleapis');
 const { DateTime } = require("luxon");
 const { UserRefreshClient } = require("google-auth-library");
-const { validateString, isValidInteger } = require("../validate");
+const { validateString, validateInteger, validateLength } = require("../validate");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, (async () => {
@@ -89,22 +89,22 @@ Router.post('/update', async (req, res) => {
         return res.send({ success: false, reason: isValidId.reason });
       };
 
-      const isValidStart = isValidInteger(start, 'Start time', maxPlanTime, minPlanTime);
+      const isValidStart = validateInteger(start, 'Start time', maxPlanTime, minPlanTime);
       if (!isValidStart.isValid) {
         return res.send({ success: false, reason: isValidStart.reason });
       };
 
-      const isValidEnd = isValidInteger(end, 'End time', maxPlanTime, start);
+      const isValidEnd = validateInteger(end, 'End time', maxPlanTime, start);
       if (!isValidEnd.isValid) {
         return res.send({ success: false, reason: isValidEnd.reason });
       };
 
-      const isValidRepeat = isValidInteger(repeat, 'Repeat', 3, 0);
+      const isValidRepeat = validateInteger(repeat, 'Repeat', 3, 0);
       if (!isValidRepeat.isValid) {
         return res.send({ success: false, reason: isValidRepeat.reason });
       };
 
-      const isValidDescription = validateString(description, 'Description', 300);
+      const isValidDescription = validateLength(description, 'Description', 300);
       if (!isValidDescription.isValid) {
         return res.send({ success: false, reason: isValidDescription.reason });
       };
@@ -114,7 +114,7 @@ Router.post('/update', async (req, res) => {
         return res.send({ success: false, reason: isValidSubject.reason });
       };
 
-      const isValidNotification = validateString(notification, 'Notification', -1, 60);
+      const isValidNotification = validateInteger(notification, 'Notification', -1, 60);
       if (!isValidNotification.isValid) {
         return res.send({ success: false, reason: isValidNotification.reason });
       };
@@ -157,13 +157,14 @@ Router.post('/update', async (req, res) => {
       } */
       try {
         const connection = pool.promise();
-        const insertInfo = { ...planInfo, user_id: userId };
-        const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [userId, planInfo.id]);
+        const planData = {title, id, start, end, repeat, description, subject, notification, priority, completed};
+        const insertInfo = { ...planData, user_id: userId };
+        const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [userId, planData.id]);
         if (!deletePrev.affectedRows) {
-          removePrevNotification(userId, planInfo.id);
+          removePrevNotification(userId, planData.id);
         }
         const [userInfo] = await connection.query(`SELECT user_id, name, email, notification_setting, key_salt, iv, subscription from users where user_id = ?`, [userId]);
-        const startTime = planInfo * 1000 * 60;
+        const startTime = planData * 1000 * 60;
         planNotification(insertInfo, userInfo[0], startTime)
         const insert = await connection.query(`INSERT INTO plans SET ?`, insertInfo);
         res.send({ success: true, msg: 'Plan Saved!' })

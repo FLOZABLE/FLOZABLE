@@ -24,7 +24,7 @@ function PlanTimeline({
   viewMode,
   viewDate,
   subjects,
-  setIsAddPlanModal,
+  setPlanModal,
   mode,
   setPlans,
 }) {
@@ -59,7 +59,7 @@ function PlanTimeline({
         .then((data) => {
           if (data.success) {
             setPlans(updatedEvents);
-            setIsAddPlanModal(false);
+            setPlanModal(false);
           }
         })
         .catch((error) => console.error(error));
@@ -254,7 +254,7 @@ function PlanTimeline({
       <RadialBarChart series={planSeries} selected={selected} setSelected={setSelected} />
       <h4
         onClick={() => {
-          setIsAddPlanModal(true);
+          setPlanModal(true);
         }}
       >
         Add a New Plan
