@@ -29,7 +29,7 @@ function Main({
   userInfo,
   plans,
   setPlans,
-  setIsAddPlanModal,
+  setPlanModal,
   myGroups,
   setMyGroups,
   setOtherGroups
@@ -106,7 +106,7 @@ function Main({
               viewMode={"timeGridDay"}
               subjects={subjects}
               setPlans={setPlans}
-              setIsAddPlanModal={setIsAddPlanModal}
+              setPlanModal={setPlanModal}
               mode={"planner"}
             />
             <Link to="/dashboard/planner">

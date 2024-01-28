@@ -47,7 +47,7 @@ function App() {
   const [plans, setPlans] = useState([]);
   const [otherGroups, setOtherGroups] = useState([]);
   const [likedGroups, setLikedGroups] = useState([]);
-  const [isAddPlanModal, setIsAddPlanModal] = useState(false);
+  //const [planModal, setPlanModal] = useState(false);
 
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [isNotificationModal, setIsNotificationModal] = useState(false);
@@ -55,6 +55,21 @@ function App() {
   const [totalNewMsg, setTotalNewMsg] = useState(0);
 
   const [subject, setSubject] = useState("0000000000");
+
+  const [planModal, setPlanModal] = useState({
+    opened: false,
+    title: '',
+    description: '',
+    start: new Date(),
+    end: new Date(new Date().getTime() + 60 * 1000 * 30),
+    repeat: 0,
+    priority: 50,
+    notification: -1,
+    subject: null,
+    id: null,
+    saved: false,
+    completed: false
+  });
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState);
@@ -202,9 +217,9 @@ function App() {
         setTotalNewMsg={setTotalNewMsg}
       />
       <EventModal
-        isAddPlanModal={isAddPlanModal}
+        setPlanModal={setPlanModal}
+        planModal={planModal}
         subjects={subjects}
-        setIsAddPlanModal={setIsAddPlanModal}
         setEvents={setPlans}
         events={plans}
         setIsAddSubjectModal={setIsAddSubjectModal}
@@ -248,8 +263,10 @@ function App() {
               />
 
               <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
+                planModal={planModal.opened}
                 setPlans={setPlans}
                 plans={plans}
                 subjects={subjects}
@@ -272,7 +289,9 @@ function App() {
                 myGroups={myGroups}
                 setMyGroups={setMyGroups}
                 setOtherGroups={setOtherGroups}
-                setIsAddPlanModal={setIsAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
               />
               {/* <Footer /> */}
             </div>
@@ -315,8 +334,10 @@ function App() {
               />
 
               <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
+                planModal={planModal.opened}
                 setPlans={setPlans}
                 plans={plans}
                 subjects={subjects}
@@ -376,8 +397,10 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
+                planModal={planModal.opened}
                 setPlans={setPlans}
                 plans={plans}
                 subjects={subjects}
@@ -435,8 +458,10 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
+                planModal={planModal.opened}
                 setPlans={setPlans}
                 plans={plans}
                 subjects={subjects}
@@ -499,7 +524,9 @@ function App() {
                 isAddSubjectModal={isAddSubjectModal}
                 setIsAddSubjectModal={setIsAddSubjectModal}
                 setIsSidebarOpen={setIsSidebarOpen}
-                setIsAddPlanModal={setIsAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}
@@ -555,8 +582,10 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
+                planModal={planModal.opened}
                 setPlans={setPlans}
                 plans={plans}
                 subjects={subjects}
@@ -567,9 +596,9 @@ function App() {
                 isChatModal={isChatModal}
               />
               <Planner
-                isAddPlanModal={isAddPlanModal}
+                planModal={planModal}
                 setIsAddSubjectModal={setIsAddSubjectModal}
-                setIsAddPlanModal={setIsAddPlanModal}
+                setPlanModal={setPlanModal}
                 setIsSidebarOpen={setIsSidebarOpen}
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
@@ -620,8 +649,10 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
+                planModal={planModal.opened}
                 setPlans={setPlans}
                 plans={plans}
                 subjects={subjects}
@@ -679,8 +710,10 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
+                planModal={planModal.opened}
                 setPlans={setPlans}
                 plans={plans}
                 subjects={subjects}
@@ -741,8 +774,10 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
+                planModal={planModal.opened}
                 setPlans={setPlans}
                 plans={plans}
                 subjects={subjects}
@@ -800,8 +835,10 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
+                planModal={planModal.opened}
                 setPlans={setPlans}
                 plans={plans}
                 subjects={subjects}
@@ -864,8 +901,10 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
+                planModal={planModal.opened}
                 setPlans={setPlans}
                 plans={plans}
                 subjects={subjects}
@@ -921,8 +960,10 @@ function App() {
                 isSidebarHovered={isHovered}
               />
               <Header
-                setIsAddPlanModal={setIsAddPlanModal}
-                isAddPlanModal={isAddPlanModal}
+                setPlanModal={(planModal) => {
+                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
+                }}
+                planModal={planModal.opened}
                 setPlans={setPlans}
                 plans={plans}
                 subjects={subjects}

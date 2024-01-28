@@ -18,8 +18,8 @@ import BlobBtn from "../BlobBtn/BlobBtn";
 import SliderAnimation from "../SliderAnimation/SliderAnimation";
 
 function PlannerEventModal({
-  isAddPlanModal,
-  setIsAddPlanModal,
+  planModal,
+  setPlanModal,
   subjects,
   setIsAddSubjectModal,
   setNotification,
@@ -40,13 +40,13 @@ function PlannerEventModal({
   return (
     <div
       className={`${styles.PlannerEventModal} modal ${
-        isAddPlanModal ? "open" : ""
+        planModal ? "open" : ""
       }`}
     >
       <div className={styles.header}>
         <i
           onClick={() => {
-            setIsAddPlanModal(false);
+            setPlanModal(false);
           }}
         >
           <FontAwesomeIcon icon={faXmark} />

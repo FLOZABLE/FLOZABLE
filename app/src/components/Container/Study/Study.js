@@ -26,7 +26,7 @@ function Study(props) {
     myGroups,
     isAddSubjectModal,
     setIsAddSubjectModal,
-    setIsAddPlanModal,
+    setPlanModal,
     bringSubjects,
     setIsChatModal
   } = props;
@@ -147,7 +147,7 @@ function Study(props) {
             subjects={subjects}
             setPlans={setEvents}
             mode={"study"}
-            setIsAddPlanModal={setIsAddPlanModal}
+            setPlanModal={setPlanModal}
           />
         }
       />
