@@ -7,13 +7,12 @@ const { removePrevNotification, planNotification } = require("../services/notifi
 const { google } = require('googleapis');
 const { DateTime } = require("luxon");
 const { UserRefreshClient } = require("google-auth-library");
-const { validateString, validateInteger, validateLength } = require("../validate");
+const { validateStrictString, validateInteger, validateLength, validateBoolean } = require("../validate");
 
 Router.get("/", async (req, res) => {
-  autoSignin(req, res, (async () => {
-    const connection = pool.promise();
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
+      const connection = pool.promise();
       let [plans] = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed FROM plans where user_id = ?`, [userId]);
       const [[{ google_refresh_token }]] = await connection.query(`SELECT google_refresh_token FROM users WHERE user_id = ?`, [userId]);
       if (google_refresh_token) {
@@ -74,17 +73,17 @@ Router.post('/update', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
       const planInfo = req.body;
-      if (!planInfo) return res.send({success: false, reason: 'Plan information missing'});
+      if (!planInfo) return res.send({ success: false, reason: 'Plan information missing' });
 
-      const minPlanTime = DateTime.now().minus({month: 1}).toSeconds();
-      const maxPlanTime = DateTime.now().plus({year: 1}).toSeconds();
+      const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds();
+      const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds();
       const { title, id, start, end, repeat, description, subject, notification, priority, completed } = planInfo;
 
-      const isValidTitle = validateString(title, 'Title');
+      const isValidTitle = validateStrictString(title, 'Title');
       if (!isValidTitle.isValid) {
         return res.send({ success: false, reason: isValidTitle.reason });
       };
-      const isValidId = validateString(id, 'Id', 10, 10);
+      const isValidId = validateStrictString(id, 'Id', 10, 10);
       if (!isValidId.isValid) {
         return res.send({ success: false, reason: isValidId.reason });
       };
@@ -109,7 +108,7 @@ Router.post('/update', async (req, res) => {
         return res.send({ success: false, reason: isValidDescription.reason });
       };
 
-      const isValidSubject = validateString(subject, 'Subject', 10, 10);
+      const isValidSubject = validateStrictString(subject, 'Subject', 10, 10);
       if (!isValidSubject.isValid) {
         return res.send({ success: false, reason: isValidSubject.reason });
       };
@@ -119,45 +118,19 @@ Router.post('/update', async (req, res) => {
         return res.send({ success: false, reason: isValidNotification.reason });
       };
 
-      const isValidPriority = validateString(priority, 'Subject', 10, 10);
+      const isValidPriority = validateStrictString(priority, 'Subject', 10, 10);
       if (!isValidPriority.isValid) {
         return res.send({ success: false, reason: isValidPriority.reason });
       };
 
-      const isValidCompleted = validateString(completed, 'Completed', 0, 1);
+      const isValidCompleted = validateStrictString(completed, 'Completed', 0, 1);
       if (!isValidCompleted.isValid) {
         return res.send({ success: false, reason: isValidCompleted.reason });
       };
 
-      /* const schema = {
-        type: 'object',
-        properties: {
-          title: { type: 'string', minLength: 1, maxLength: 100 },
-          id: { type: 'string', minLength: 10, maxLength: 10 },
-          start: { type: 'integer', minimum: 0, maximum: maxPlanVal },
-          end: { type: 'integer', minimum: 0, maximum: maxPlanVal },
-          repeat: { type: 'integer', minimum: 0, maximum: 3 },
-          description: { type: 'string', minLength: 0, maxLength: 1000 },
-          subject: { type: 'string', minLength: 10, maxLength: 10 },
-          notification: { type: 'integer', minimum: -1, maximum: 60 },
-          priority: { type: 'integer', minimum: 0, maximum: 100 },
-          completed: { type: 'integer', minimum: 0, maximum: 1 }
-        },
-        required: ['title', 'id', 'start', 'end', 'repeat', 'description', 'notification', 'subject', 'priority', 'completed'],
-        additionalProperties: false
-      };
-
-      const isValid = isValidJSON(planInfo, schema); */
-      /* if (planInfo.start > planInfo.end) {
-        return res.send({ success: false, reason: 'Invalid Time' });
-      };
-
-      if (!planInfo.title.length) {
-        return res.send({ success: false, reason: 'Enter Plan Title' });
-      } */
       try {
         const connection = pool.promise();
-        const planData = {title, id, start, end, repeat, description, subject, notification, priority, completed};
+        const planData = { title, id, start, end, repeat, description, subject, notification, priority, completed };
         const insertInfo = { ...planData, user_id: userId };
         const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [userId, planData.id]);
         if (!deletePrev.affectedRows) {
@@ -180,32 +153,29 @@ Router.post('/update', async (req, res) => {
 });
 
 Router.post("/status-change", async (req, res) => {
-  autoSignin(req, res, (async () => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const planInfo = req.body;
-      const userId = req.session.user_id;
-      const schema = {
-        type: 'object',
-        properties: {
-          id: { type: 'string', minLength: 10, maxLength: 10 },
-          completed: { type: 'integer', minimum: 0, maximum: 1 }
-        },
-        required: ['id', 'completed'],
-        additionalProperties: false
+      const { id, completed } = req.body;
+
+      const isValidId = validateStrictString(id, 'plan id', 10, 8);
+
+      if (!isValidId) {
+        return res.send({ success: false, reason: isValidId.reason });
       };
 
-      const isValid = isValidJSON(planInfo, schema);
-      if (isValid) {
-        const connection = pool.promise();
-        try {
-          await connection.query(`UPDATE plans SET completed = ? WHERE id = ?`, [planInfo.completed, planInfo.id])
-          res.send({ success: true, msg: 'Updated' })
-        } catch (err) {
-          console.log(err);
-        };
-      } else {
-        res.send({ success: false, reason: "Invalid data" });
-      }
+      const isValidCompleted = validateInteger(completed, 'completed', 1, 0);
+
+      if (!isValidCompleted) {
+        return res.send({ success: false, reason: isValidCompleted.reason });
+      };
+
+      const connection = pool.promise();
+      try {
+        await connection.query(`UPDATE plans SET completed = ? WHERE id = ? AND user_id = ?`, [completed, id, userId]);
+        res.send({ success: true, msg: 'Plan Updated' });
+      } catch (err) {
+        console.log(err);
+      };
     } catch (err) {
       console.log(err);
       res.send({ success: false, reason: "Err" });
