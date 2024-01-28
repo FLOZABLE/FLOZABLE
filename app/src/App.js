@@ -114,8 +114,11 @@ function App() {
       .then((data) => {
         if (data.success) {
           setSubjects(timelineSort(data.subjects));
+          bringPlans(data.subjects);
           console.log('subject', data)
           //setSubjects(sortSubjects(data.subjects));
+        } else {
+          bringPlans([]);
         }
       })
       .catch((error) => console.error(error));
@@ -134,7 +137,7 @@ function App() {
       .catch((error) => console.error(error));
   }, []);
 
-  const bringPlans = useCallback(() => {
+  const bringPlans = useCallback((subjects) => {
     fetch(`${serverOrigin}/plan`, { method: "get" })
       .then((response) => response.json())
       .then((data) => {
@@ -144,6 +147,12 @@ function App() {
               plan.saved = true;
               plan.start = new Date(plan.start * 1000 * 60);
               plan.end = new Date(plan.end * 1000 * 60);
+              const subject = subjects.find(subject => subject.id === plan.subject);
+              console.log(subject, subjects)
+              if (subject) {
+                plan.backgroundColor = subject.color;
+                plan.borderColor = subject.color;
+              }
               return plan;
             }),
           );
@@ -169,7 +178,6 @@ function App() {
   useEffect(() => {
     bringAccountInfo();
     bringSubjects();
-    bringPlans();
   }, []);
 
   useEffect(() => {

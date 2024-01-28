@@ -37,6 +37,10 @@ const StyleWrapper = styled.div`
     font-weight: 300;
   }
 
+  .fc-event {
+    transition: .3s ease-in-out all;
+  }
+
   th.fc-col-header-cell p.day {
     display: flex;
     justify-content: center;
@@ -373,7 +377,7 @@ function EventPlanner(props) {
       end,
       title,
     };
-    //setPlanModal(eventInfo);
+    setPlanModal(prev => ({...prev, ...eventInfo, opened: true}));
   };
 
   useEffect(() => {
