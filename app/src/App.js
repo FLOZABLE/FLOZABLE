@@ -194,19 +194,28 @@ function App() {
     };
   }, []); */
 
+  useEffect(() => {
+    console.log(198, notifications);
+  }, [notifications])
+
   return (
     <Router>
       <TopNotification
         duration={2500}
         response={response}
       />
-      <NotificationModal
-        setIsNotificationModal={setIsNotificationModal}
-        isNotificationModal={isNotificationModal}
-        notifications={notifications}
-        setNotifications={setNotifications}
-        setResponse={setResponse}
-      />
+      {
+        notifications.filter((notif) => notif.t != -2).length ?
+          <NotificationModal
+            setIsNotificationModal={setIsNotificationModal}
+            isNotificationModal={isNotificationModal}
+            notifications={notifications}
+            setNotifications={setNotifications}
+            setResponse={setResponse}
+          />
+          :
+          <div></div>
+      }
       <AddSubjectModal
         setIsAddSubjectModal={setIsAddSubjectModal}
         isAddSubjectModal={isAddSubjectModal}
