@@ -27,10 +27,12 @@
 }
 
 .ThemeCategoryBtn.open .options {
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   visibility: visible;
   opacity: 1;
   top: 20px;
-  height: 100px;
+  height: 140px;
+  color: var(--font-gray);
 }
 
 .ThemeCategoryBtn .categoryDisp {

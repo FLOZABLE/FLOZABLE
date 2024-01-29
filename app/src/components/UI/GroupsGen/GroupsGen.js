@@ -41,16 +41,18 @@ function GroupsGen({
         .then((response) => response.json())
         .then((data) => {
           setJoinGroupResponse(data);
-          setOtherGroups(
-            groups.filter((group) => {
-              return group.group_id != targetGroup.group_id;
-            }),
-          );
-          setMyGroups((myGroups) => [...myGroups, targetGroup]);
-          if (groupsViewerRef) {
-            setTimeout(() => {
-              groupsViewerRef.current.swiper.slideTo(myGroups.length);
-            }, 1000);
+          if (data.success) {
+            setOtherGroups(
+              groups.filter((group) => {
+                return group.group_id != targetGroup.group_id;
+              }),
+            );
+            setMyGroups((myGroups) => [...myGroups, targetGroup]);
+            if (groupsViewerRef) {
+              setTimeout(() => {
+                groupsViewerRef.current.swiper.slideTo(myGroups.length);
+              }, 1000);
+            };
           };
         })
         .catch((error) => console.error(error));
@@ -60,7 +62,7 @@ function GroupsGen({
   };
 
   useEffect(() => {
-    if (!userInfo) return;
+    if (userInfo === null || userInfo === undefined ) return;
     setOtherGroupsEl(
       [...groups].map((group, i) => {
         if (maxGroups !== -1 && i > maxGroups) {

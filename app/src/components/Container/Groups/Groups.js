@@ -52,7 +52,7 @@ function Groups({
   }, [subjects]);
 
   useEffect(() => {
-    if (!userInfo) return;
+    if (userInfo === null || userInfo === undefined) return;
     bringGroups();
   }, [userInfo]);
 

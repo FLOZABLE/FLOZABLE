@@ -20,7 +20,7 @@ function ThemesContainer({
   const [ThemesEl, setThemesEl] = useState([]);
 
   useEffect(() => {
-    if (!themes || !userInfo) return;
+    if (!themes || userInfo === null || userInfo === undefined) return;
     const newThemes = JSON.parse(JSON.stringify(themes));
     //sort by like
     if (sortOpt) {
@@ -38,7 +38,7 @@ function ThemesContainer({
     })
 
     setThemesEl(newThemes.map((theme, i) => {
-      const {description, name} = theme;
+      const { description, name } = theme;
       const tagsArr = theme.tags === "" ? [] : theme.tags.split(",");
       const isSearched = ((description + name + tags).includes(searchQuery) || searchQuery === "") && (tagsArr.some(element => tags.includes(element)) || !tags.length);
       const savedIndex = userThemeIds.indexOf(theme.id);

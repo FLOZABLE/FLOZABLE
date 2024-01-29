@@ -190,7 +190,7 @@ button:hover {
 @media (max-height: 800px) {
   .Main {
     position: relative;
-    margin: 150px 0px 0px 100px;
+    margin: 150px 0px 0px 150px;
     transition: all .2s ease-in-out;
     width: calc(100vw - 120px);
     border-radius: 20px;

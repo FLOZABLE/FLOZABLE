@@ -32,7 +32,7 @@ async function timerUpdate() {
       if (activeSubject.id) {
         activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
       };
-      subjects.map(async ({ id, timeline_sum }) => {
+      await Promise.all(subjects.map(async ({ id, timeline_sum }) => {
         let todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
         if (todayTimeline.length) {
           //const insertTimeline = await connection.query(`UPDATE subjects SET timeline = JSON_ARRAY_APPEND(timeline, '$', ?) WHERE id = ?`, [JSON.stringify(todayTimeline), subject])
@@ -54,20 +54,20 @@ async function timerUpdate() {
             id
           ]);
         };
-        redisClient.lTrim(`user:${userId}:subject:${id}`, 1, 0);
+        await redisClient.lTrim(`user:${userId}:subject:${id}`, 1, 0);
         //removeTimeline(userId, now);
-      });
+      }));
       io.to(userId).emit('reset');
       if (activity) {
         const start = activity[0];
         const activeSubjectInfo = subjects.find(subject => {return subject.id === activeSubject.id});
         if (!activeSubjectInfo) return;
-        const stop = now - activeSubjectInfo.datum_point - activeSubjectInfo.timeline_sum;
-        activeSubjectInfo.timeline_sum += start - stop;
+        const duration = now - activeSubjectInfo.datum_point - activeSubjectInfo.timeline_sum;
+        activeSubjectInfo.timeline_sum += duration;
         redisClient.hSet(`user:${userId}:subjects`, activeSubject.id, JSON.stringify(activeSubjectInfo));
-        await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${start - stop}]`);
+        await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${duration}]`);
         redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
-        redisClient.incrBy(`user:${userId}:dayTotal`, start - stop);
+        redisClient.incrBy(`user:${userId}:dayTotal`, duration);
       }
     });
   } catch (err) {
