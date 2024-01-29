@@ -30,6 +30,7 @@ import { filterGroups } from "../src/utils/Tool";
 import Themes from "./components/Container/Themes/Themes";
 import ChallengeRooms from "./components/Container/ChallengeRooms/ChallengeRooms";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import AccountModal from "./components/UI/AccountModal/AccountModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -125,13 +126,17 @@ function App() {
   }, []);
 
   const bringAccountInfo = useCallback(() => {
-    fetch(`${serverOrigin}/account/accountinfo`, { method: "post" })
+    fetch(`${serverOrigin}/account/accountinfo`, { method: "get" })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data, 'userinfo')
         if (data.success) {
           setUserInfo(data.userInfo);
           setNotifications(data.notifications);
           socket.connect();
+        } else if (data.code === 401){
+          console.log('not user');
+          setUserInfo(false);
         }
       })
       .catch((error) => console.error(error));
@@ -165,6 +170,11 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
+          if (userInfo === false) {
+            setOtherGroups(data.groups);
+            console.log(data.groups, 'dd')
+            return;
+          }
           const { userGroups, otherGroups } = filterGroups(userInfo, data.groups);
           setGroups(data.groups);
           setMyGroups(userGroups);
@@ -180,7 +190,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!userInfo) return;
+    if (userInfo === null || userInfo === undefined ) return;
     bringGroups();
   }, [userInfo]);
 
@@ -240,6 +250,8 @@ function App() {
         events={plans}
         setIsAddSubjectModal={setIsAddSubjectModal}
         setResponse={setResponse}
+      />
+      <AccountModal 
       />
       <Routes>
         <Route

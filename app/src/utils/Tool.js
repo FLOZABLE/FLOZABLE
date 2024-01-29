@@ -104,4 +104,8 @@ function randomIntInRange(min, max) {
   return randomVal;
 };
 
-export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange, durationFormatter };
+function undefinedORNull(value) {
+  return value === undefined || value === null;
+};
+
+export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange, durationFormatter, undefinedORNull };

@@ -14,13 +14,17 @@ const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, 
 const { extensionIo } = require('../socket');
 const upload = multer();
 
-Router.post('/accountinfo', async (req, res) => {
+Router.get('/accountinfo', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     const notifications = await NotificationCache(userId);
     const userInfo = await userCache(userId);
     usersCache(userId);
     res.send({ success: true, userInfo: userInfo, notifications: notifications });
-  }))
+  }
+  ), () => {
+    res.send({ success: false, code: 401 });
+  }
+  );
 });
 
 Router.get('/activity-settings', async (req, res) => {
@@ -290,14 +294,14 @@ Router.post('/update/extension-add', async (req, res) => {
     try {
       const connection = pool.promise();
       const { url } = req.body;
-      
+
       const isValidURL = validateURL(url);
 
       if (!isValidURL.isValid) {
-        return res.send({success: false, reason: isValidURL.reason});
+        return res.send({ success: false, reason: isValidURL.reason });
       };
 
-      const {domain, origin} = isValidURL;
+      const { domain, origin } = isValidURL;
 
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
       let activitySettings = userInfo.activitySettings === "" ? [] : JSON.parse(userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"));
