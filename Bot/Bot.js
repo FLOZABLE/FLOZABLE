@@ -475,6 +475,7 @@ async function startBot(userId) {
     redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
     subject.timeline_sum += start;
     redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
+    redisClient.sAdd(`allMembers`, `${userId}`);
 
   } catch (err) {
     console.log(err);
@@ -488,8 +489,6 @@ async function stopBot(userId) {
   const [subject] = await subjectsCache(userId);
   redisClient.hDel(`user:${userId}`, `ActiveSubject`);
   if (!userInfo || !subject || !activeSubject.id) return;
-  const { datum_point, timeline_sum, id } = subject;
-  const now = Math.floor(new Date().getTime() / 1000);
 
   let { groups, friends, name } = userInfo;
   friends = friends === "" ? [] : friends.split(",");
@@ -501,6 +500,10 @@ async function stopBot(userId) {
   if (friends.length) {
     connection.to(friends).emit(`studying:${userId}`, subject);
   };
+
+  const { datum_point, timeline_sum, id } = subject;
+  const now = Math.floor(new Date().getTime() / 1000);
+
   const duration = now - datum_point - timeline_sum;
   console.log('stop', userId, name, duration);
   redisClient.incrBy(`user:${userId}:dayTotal`, duration);
@@ -511,14 +514,13 @@ async function stopBot(userId) {
     const start = activity[0];
     redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${duration}]`);
   };
-  //add to allMembers
-  let alreadyActive = await redisClient.sIsMember("allMembers", `${userId}`);
-  if (!alreadyActive) {
-    redisClient.sAdd(`allMembers`, `${userId}`);
-  }
 };
 
-const BOT_MIN_STUDY = 5; //10 min = min time bot will study
+/* const BOT_MIN_STUDY = 5; //10 min = min time bot will study
+const BOT_MAX_STUDY = 6; //2 hr = max time bot will study
+const MAX_START_DELAY = 60; //1 hr = starts atleast 1hr from being assigned */
+
+const BOT_MIN_STUDY = 60 * 10; //10 min = min time bot will study
 const BOT_MAX_STUDY = 60 * 60 * 2; //2 hr = max time bot will study
 const MAX_START_DELAY = 60 * 60; //1 hr = starts atleast 1hr from being assigned
 
@@ -555,9 +557,12 @@ async function botSelector(numbers) {
 }
 
 async function botManager(numbers) {
-  await redisClient.del('activeBots');
+  const activeBots = await redisClient.sMembers('activeBots');
+  await Promise.all(activeBots.map(async(botId) => {
+    await stopBot(botId);
+  }));
   botSelector(numbers);
-  schedule.scheduleJob('0 * * * *', async () => {
+  schedule.scheduleJob('*/10 * * * * *', async () => {
     botSelector(numbers);
   });
 };

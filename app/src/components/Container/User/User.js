@@ -15,6 +15,8 @@ import ChallengeBtn from "../../UI/ChallengeBtn/ChallengeBtn";
 import DmBtn from "../../UI/DmBtn/DmBtn";
 import FriendRequestBtn from "../../UI/FriendRequestBtn/FriendRequestBtn";
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
+import ApexChart from 'apexcharts';
+import Chart from 'react-apexcharts';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -125,27 +127,13 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
   //time trend
   const [timeTrend, setTimeTrend] = useState({
     labels: [],
-    datasets:
-      [
-        {
-          backgroundColor: "#fd7f6f",
-          borderColor: "#fd7f6f",
-          data: [],
-        },
-      ]
+    datasets: []
   });
 
   //ranking trend
   const [rankingTrend, setRankingTrend] = useState({
     labels: [],
-    datasets:
-      [
-        {
-          backgroundColor: "#fd7f6f",
-          borderColor: "#fd7f6f",
-          data: [],
-        },
-      ]
+    datasets: []
   })
 
   const [isGroupPwModal, setIsGroupPwModal] = useState(false);
@@ -215,7 +203,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
 
 
   useEffect(() => {
-    if (!!!userInfo) return; // wait for userInfo to be defined
+    if (!userInfo) return; // wait for userInfo to be defined
     const { user_id } = userInfo;
     const viewDateTime = DateTime.fromJSDate(viewDate).toUTC().toISODate().toString();
     fetch(`${serverOrigin}/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime}`, {
@@ -223,19 +211,12 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data)
         if (data.success) {
           //setRankings(data.rankings);
-          const rankingTrend = updateRankingTrend(data.rankings, viewDate);
+          const [labels, datasets] = updateRankingTrend(data.rankings, viewDate);
           setRankingTrend({
-            labels: rankingTrend[0],
-            datasets:
-              [
-                {
-                  backgroundColor: "#fd7f6f",
-                  borderColor: "#fd7f6f",
-                  data: rankingTrend[1],
-                },
-              ]
+            labels, datasets
           });
         }
       })
@@ -243,17 +224,9 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
   }, [userInfo, statsViewer, viewDate]);
 
   useEffect(() => {
-    const timeTrend = updateTimeTrend(userSubjects, statsViewer);
+    const [labels, datasets] = updateTimeTrend(userSubjects, statsViewer);
     setTimeTrend({
-      labels: timeTrend[0],
-      datasets:
-        [
-          {
-            backgroundColor: "#fd7f6f",
-            borderColor: "#fd7f6f",
-            data: timeTrend[1],
-          },
-        ]
+      labels, datasets
     });
   }, [userSubjects, statsViewer]);
 
@@ -333,12 +306,41 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
             </div>
             <div className={styles.row}>
               <div className={styles.chartContainer}>
-                <LineChart
-                  labels={timeTrend.labels}
-
-                  datasets={timeTrend.datasets}
-
-                  options={lineChartOption}
+                <Chart
+                  type="line"
+                  series={[{
+                    name: "Study Time",
+                    data: timeTrend.datasets
+                  }]}
+                  options={{
+                    chart: {
+                      height: 350,
+                      type: 'line',
+                      zoom: {
+                        enabled: false
+                      }
+                    },
+                    dataLabels: {
+                      enabled: false
+                    },
+                    stroke: {
+                      curve: 'straight'
+                    },
+                    /* title: {
+                      text: 'Product Trends by Month',
+                      align: 'left'
+                    }, */
+                    grid: {
+                      row: {
+                        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                        opacity: 0.5
+                      },
+                    },
+                    xaxis: {
+                      categories: timeTrend.labels,
+                      range: 7
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -349,12 +351,44 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
             </div>
             <div className={styles.row}>
               <div className={styles.chartContainer}>
-                <LineChart
-                  labels={rankingTrend.labels}
-
-                  datasets={rankingTrend.datasets}
-
-                  options={rankingLinchartOpt}
+              <Chart
+                  type="line"
+                  series={[{
+                    name: "Ranking",
+                    data: rankingTrend.datasets
+                  }]}
+                  options={{
+                    chart: {
+                      height: 350,
+                      type: 'line',
+                      zoom: {
+                        enabled: false
+                      }
+                    },
+                    dataLabels: {
+                      enabled: false
+                    },
+                    stroke: {
+                      curve: 'straight'
+                    },
+                    /* title: {
+                      text: 'Product Trends by Month',
+                      align: 'left'
+                    }, */
+                    grid: {
+                      row: {
+                        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                        opacity: 0.5
+                      },
+                    },
+                    xaxis: {
+                      categories: rankingTrend.labels,
+                      range: 7
+                    },
+                    yaxis: {
+                      reversed: true
+                    }
+                  }}
                 />
               </div>
             </div>
