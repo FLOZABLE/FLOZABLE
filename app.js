@@ -257,7 +257,7 @@ require('./services/timerUpdate');
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(1, 10);
-//botManager(171);
+botManager(171);
 //deleteBots();
 //addId();
 //createBots(0, 100);
