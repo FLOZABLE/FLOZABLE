@@ -4,7 +4,7 @@ const { NotificationCache, userCache, activeSubjectCache, subjectCache } = requi
 const redisClient = require('../model/redis');
 const pool = require('../model/pool');
 const { sendEmail } = require('../email');
-const { validateEmail } = require('../validate');
+const { validateEmail, validateStrictString } = require('../validate');
 const Router = express.Router();
 
 
