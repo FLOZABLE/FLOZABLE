@@ -85,6 +85,12 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   }, [viewDate, viewer]);
 
   useEffect(() => {
+    if (!searchParams.get('page')){
+      setSearchParams({...searchParams, page: 1});
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     setRankingEl(ranking.map(({ total, name, user_id, timezone }, i) => {
       if (i < (searchParams.get('page') - 1) * 50 || i >= (searchParams.get('page')) * 50) return;
       if (!name.toLowerCase().includes(rankingSearch.toLowerCase())) return;
