@@ -91,16 +91,24 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   }, [searchParams]);
 
   useEffect(() => {
+    if (searchParams.get('page') != 1){
+      setSearchParams({...searchParams, page: 1});
+    }
+  }, [rankingSearch])
+
+  useEffect(() => {
     let shownResults = 0;
+    let allResults = 0;
     setRankingEl(ranking.map(({ total, name, user_id, timezone }, i) => {
+      allResults += 1;
       if (rankingSearch.length === 0){
         if (i < (searchParams.get('page') - 1) * 50 || i >= (searchParams.get('page')) * 50) return;
       }
       else{
         if (!name.toLowerCase().includes(rankingSearch.toLowerCase())) return;
-        if (shownResults >= 50) return;
+        shownResults += 1;
+        if (shownResults < (searchParams.get('page') - 1) * 50 || shownResults >= (searchParams.get('page')) * 50) return;
       }
-      shownResults += 1;
       return (
         <li key={i}>
           <div className={styles.circle}>
@@ -126,7 +134,14 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
           </div>
         </li>
       )
-    }))
+    }));
+
+    if (rankingSearch.length == 0){
+      setResultCount(allResults);
+    }
+    else{
+      setResultCount(shownResults);
+    }
   }, [ranking, rankingSearch, searchParams]);
 
   return (

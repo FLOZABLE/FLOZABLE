@@ -160,7 +160,7 @@ Router.post('/join/:id', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     const groupId = req.params.id;
 
-    const isValidGroupId = validateStrictString(groupId, 'group id', 8, 10);
+    const isValidGroupId = validateStrictString(groupId, 'group id', 10, 8);
     if (!isValidGroupId.isValid) {
       return res.send({ success: false, reason: isValidGroupId.reason });
     };
@@ -195,7 +195,7 @@ Router.post('/join/:id', async (req, res) => {
         );
       } else {
         const { password } = req.body;
-        const isValidPassword = validatePassword(password);
+        const isValidPassword = validateLength(password, 100);
 
         if (!isValidPassword.isValid) {
           return res.send({ success: false, reason: isValidPassword.reason });
