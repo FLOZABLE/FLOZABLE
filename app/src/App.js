@@ -148,7 +148,6 @@ function App() {
               plan.start = new Date(plan.start * 1000 * 60);
               plan.end = new Date(plan.end * 1000 * 60);
               const subject = subjects.find(subject => subject.id === plan.subject);
-              console.log(subject, subjects)
               if (subject) {
                 plan.backgroundColor = subject.color;
                 plan.borderColor = subject.color;
