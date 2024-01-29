@@ -39,7 +39,7 @@ function validateString(value, type, maxLength = 20, minLength = 1) {
   if (value.length > maxLength) {
     return { isValid: false, reason: `${type} is too long` };
   };
-  if (!/^[a-zA-Z0-9!?#@&()<>~".,/]+$/.test(value)) {
+  if (!/^[a-zA-Z0-9!?#@&()<>~".,/\s]+$/.test(value)) {
     return { isValid: false, reason: `Invalid ${type} (Only A-Z, a-z, 0-9, and !?#@&()<>~".,/ available)` };
   };
   return { isValid: true };
