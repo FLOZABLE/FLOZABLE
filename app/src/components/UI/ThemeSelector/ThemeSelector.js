@@ -59,6 +59,9 @@ function ThemeSelector({ link, handleLinkInput, submit, setVideoId, setVolume })
         })
           .then((response) => response.json())
           .then((data) => {
+            if (!data.success){
+              data.info = [];
+            }
             const everyTheme = [...AllThemes]; //AllThemes + userThemes
 
             data.info.map((currentTheme, i) => {
