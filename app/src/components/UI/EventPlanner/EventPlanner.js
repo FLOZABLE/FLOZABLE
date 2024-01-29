@@ -398,6 +398,7 @@ function EventPlanner(props) {
           //PlannerApi.gotoDate(viewDate);
         }
       } */
+      PlannerApi.gotoDate(viewDate);
     }
   }, [viewDate]);
 
