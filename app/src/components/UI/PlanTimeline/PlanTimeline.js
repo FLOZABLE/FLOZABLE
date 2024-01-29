@@ -80,6 +80,7 @@ function PlanTimeline({
         planSeries.push({id, icon, color, name, val, total, completed});
       }
     });
+    console.log("Setting to: ", planSeries, "Time\n", viewDate);
     setPlanSeries(planSeries);
   }, [subjects, plans, plansEl]);
 
@@ -96,8 +97,8 @@ function PlanTimeline({
       }
     } else if (viewMode === "timeGridWeek") {
       if (
-        viewDateTime.startOf("week").toMillis() <= plan.start.getTime() &&
-        plan.start.getTime() <= viewDateTime.endOf("week").toMillis()
+        viewDateTime.plus({days: 1}).startOf("week").minus({days: 1}).toMillis() <= plan.start.getTime() &&
+        plan.start.getTime() <= viewDateTime.plus({days: 1}).endOf("week").minus({days: 1}).toMillis()
       ) {
         isInRange = true;
       }
