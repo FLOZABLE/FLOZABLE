@@ -91,9 +91,16 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   }, [searchParams]);
 
   useEffect(() => {
+    let shownResults = 0;
     setRankingEl(ranking.map(({ total, name, user_id, timezone }, i) => {
-      if (i < (searchParams.get('page') - 1) * 50 || i >= (searchParams.get('page')) * 50) return;
-      if (!name.toLowerCase().includes(rankingSearch.toLowerCase())) return;
+      if (rankingSearch.length === 0){
+        if (i < (searchParams.get('page') - 1) * 50 || i >= (searchParams.get('page')) * 50) return;
+      }
+      else{
+        if (!name.toLowerCase().includes(rankingSearch.toLowerCase())) return;
+        if (shownResults >= 50) return;
+      }
+      shownResults += 1;
       return (
         <li key={i}>
           <div className={styles.circle}>
