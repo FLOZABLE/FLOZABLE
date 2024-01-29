@@ -31,7 +31,6 @@ function ThemePreview({ isActive, setIsActive, setResponse }) {
       <div className={isActive ? styles.active : styles.hidden}>
         <div className={styles.transitionCircle}>
           <Draggable
-            bounds='parent'
             onDrag={eventControl}
             onStop={eventControl}
           >

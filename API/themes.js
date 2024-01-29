@@ -4,7 +4,7 @@ const redisClient = require("../model/redis");
 const { autoSignin, generateRandomId, isValidJSON } = require("../tool");
 const pool = require("../model/pool");
 const { DateTime } = require("luxon");
-const { validateStrictString, validateLength, validateString, validateBoolean, validateInteger } = require("../validate");
+const { validateStrictString, validateLength, validateString, validateBoolean, validateInteger, validateURL } = require("../validate");
 
 Router.get('/', async (req, res) => {
   try {

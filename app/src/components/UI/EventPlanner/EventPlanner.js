@@ -382,23 +382,23 @@ function EventPlanner(props) {
 
   useEffect(() => {
     if (PlannerApi) {
-      /* const plannerDateTime = DateTime.fromJSDate(PlannerApi.getDate());
+      const plannerDateTime = DateTime.fromJSDate(PlannerApi.getDate());
       const viewDateTime = DateTime.fromJSDate(viewDate);
       console.log(PlannerApi.getDate(), viewDate)
       if (viewMode == 'timeGridDay') {
         if (plannerDateTime.toISODate() !== viewDateTime.toISODate()) {
-          //PlannerApi.gotoDate(viewDate);
+          PlannerApi.gotoDate(viewDate);
         }
       } else if (viewMode == 'timeGridWeek') {
-        if (!(viewDateTime.startOf('week').toSeconds() <= plannerDateTime.startOf('week').toSeconds() &&  plannerDateTime.endOf('week').toSeconds() <= viewDateTime.endOf('week').toSeconds())) {
-          //PlannerApi.gotoDate(viewDate);
+        if (!(viewDateTime.plus({days: 1}).startOf("week").minus({days: 1}).toSeconds() <= plannerDateTime.plus({days: 1}).startOf("week").minus({days: 1}).toSeconds() 
+        && plannerDateTime.plus({days: 1}).endOf("week").minus({days: 1}).toSeconds()   <=    viewDateTime.plus({days: 1}).endOf("week").minus({days: 1}).toSeconds())) {
+          PlannerApi.gotoDate(viewDate);
         }
       } else {
         if (plannerDateTime.startOf('month').toSeconds() <= viewDateTime.startOf('month').toSeconds() ||  viewDateTime.endOf('month').toSeconds() <= plannerDateTime.endOf('month').toSeconds()) {
-          //PlannerApi.gotoDate(viewDate);
+          PlannerApi.gotoDate(viewDate);
         }
-      } */
-      PlannerApi.gotoDate(viewDate);
+      }
     }
   }, [viewDate]);
 
