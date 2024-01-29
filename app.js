@@ -257,11 +257,7 @@ require('./services/timerUpdate');
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(1, 10);
-<<<<<<< HEAD
-botManager(171);
-=======
-//botManager(150);
->>>>>>> f882fd0f (user apex chart migration + stop activebotlist when crash)
+//botManager(171);
 //deleteBots();
 //addId();
 //createBots(0, 100);
