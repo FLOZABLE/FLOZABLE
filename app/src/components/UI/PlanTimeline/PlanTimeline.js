@@ -40,6 +40,7 @@ function PlanTimeline({
       updatedEvents[eventIndex] = {
         ...updatedEvents[eventIndex],
         completed: plan.completed ? 0 : 1,
+        className: plan.completed ? "" : "completed"
       };
       const planInfo = {
         id: plan.id,
@@ -59,7 +60,7 @@ function PlanTimeline({
         .then((data) => {
           if (data.success) {
             setPlans(updatedEvents);
-            setPlanModal(false);
+            setPlanModal((prev) => ({...prev, opened: false}));
           }
         })
         .catch((error) => console.error(error));
@@ -73,11 +74,11 @@ function PlanTimeline({
     subjects.map(subject => {
       const subjectPlans = plans.filter(plan => plan.subject === subject.id && isInViewRange(plan));
       if (subjectPlans.length) {
-        const {id, icon, color, name} = subject;
+        const { id, icon, color, name } = subject;
         const total = subjectPlans.length;
         const completed = subjectPlans.filter(plan => plan.completed).length;
-        const val =  Math.floor(completed / total * 100);
-        planSeries.push({id, icon, color, name, val, total, completed});
+        const val = Math.floor(completed / total * 100);
+        planSeries.push({ id, icon, color, name, val, total, completed });
       }
     });
     console.log("Setting to: ", planSeries, "Time\n", viewDate);
@@ -97,8 +98,8 @@ function PlanTimeline({
       }
     } else if (viewMode === "timeGridWeek") {
       if (
-        viewDateTime.plus({days: 1}).startOf("week").minus({days: 1}).toMillis() <= plan.start.getTime() &&
-        plan.start.getTime() <= viewDateTime.plus({days: 1}).endOf("week").minus({days: 1}).toMillis()
+        viewDateTime.plus({ days: 1 }).startOf("week").minus({ days: 1 }).toMillis() <= plan.start.getTime() &&
+        plan.start.getTime() <= viewDateTime.plus({ days: 1 }).endOf("week").minus({ days: 1 }).toMillis()
       ) {
         isInRange = true;
       }
@@ -121,14 +122,8 @@ function PlanTimeline({
 
         if (isInRange) {
           setIsPlan(true);
-          const dispStart = `${plan.start.getHours() % 12}:${plan.start
-            .getMinutes()
-            .toString()
-            .padStart(2, "0")}`;
-          const dispEnd = `${plan.end.getHours() % 12}:${plan.end
-            .getMinutes()
-            .toString()
-            .padStart(2, "0")}`;
+          const dispStart = DateTime.fromJSDate(plan.start).toLocaleString(DateTime.TIME_SIMPLE);
+          const dispEnd = DateTime.fromJSDate(plan.end).toLocaleString(DateTime.TIME_SIMPLE);
           let icon;
           let subjectBg = "#fff";
           if (planSubject) {
@@ -232,10 +227,11 @@ function PlanTimeline({
               <div className={styles.content}>
                 <div className={styles.title}>
                   <h2>{plan.title}</h2>
-                  <p>
-                    ({dispStart}-{dispEnd})
-                  </p>
+                  <div className={`${styles.line} ${plan.completed ? styles.completed : ''}`}></div>
                 </div>
+                <p>
+                  ({dispStart}-{dispEnd})
+                </p>
                 <div className={`${styles.description} customScroll`}>
                   {plan.description ? parse(plan.description) : ''}
                 </div>
@@ -255,7 +251,7 @@ function PlanTimeline({
       <RadialBarChart series={planSeries} selected={selected} setSelected={setSelected} />
       <h4
         onClick={() => {
-          setPlanModal(true);
+          setPlanModal((prev) => ({ ...prev, opened: true }));
         }}
       >
         Add a New Plan

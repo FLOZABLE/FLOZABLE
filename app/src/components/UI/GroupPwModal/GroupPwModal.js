@@ -72,6 +72,7 @@ function GroupPwModal({
           );
           setMyGroups((myGroups) => { return [...myGroups, joinTarget] });
           if (groupsViewerRef) {
+            document.body.scrollIntoView({ behavior: 'smooth', block: 'start' });
             setTimeout(() => {
               groupsViewerRef.current.swiper.slideTo(myGroups.length);
             }, 1000);
