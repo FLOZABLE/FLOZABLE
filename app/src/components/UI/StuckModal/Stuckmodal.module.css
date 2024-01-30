@@ -4,7 +4,7 @@
   right: 70px;
   background: linear-gradient(to right, #8C52FF, #5C97E6);
   border-radius: 50px;
-  z-index: 2;
+  z-index: 5;
   width: 100px;
   height: 100px;
   display: flex;

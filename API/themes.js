@@ -72,19 +72,19 @@ Router.post('/create', async (req, res) => {
       const isValidName = validateString(name, 'theme name');
 
       if (!isValidName.isValid) {
-        return res.send({success: false, reason: isValidName.reason});
+        return res.send({ success: false, reason: isValidName.reason });
       };
 
       const isValidDescription = validateString(description, 'theme description', 100);
 
       if (!isValidDescription.isValid) {
-        return res.send({success: false, reason: isValidDescription.reason});
+        return res.send({ success: false, reason: isValidDescription.reason });
       };
 
       const isValidURL = validateURL(url);
 
       if (!isValidURL.isValid) {
-        return res.send({success: false, reason: isValidURL.reason});
+        return res.send({ success: false, reason: isValidURL.reason });
       };
 
       const videoId = new URLSearchParams(new URL(url).search).get("v");
@@ -106,17 +106,17 @@ Router.post('/like/:id', async (req, res) => {
     const themeId = req.params.id;
     const userId = req.session.user_id;
     const { liked } = req.body;
-    
+
     const isValidLiked = validateBoolean(liked, 'liked', true);
 
     if (!isValidLiked.isValid) {
-      return res.send({success: false, reason: isValidLiked.reason});
+      return res.send({ success: false, reason: isValidLiked.reason });
     };
 
     const isValidThemeId = validateStrictString(themeId, 'theme id');
 
     if (!isValidThemeId.isValid) {
-      return res.send({success: false, reason: isValidThemeId.reason});
+      return res.send({ success: false, reason: isValidThemeId.reason });
     };
 
     try {
@@ -156,20 +156,20 @@ Router.post('/save', async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { themeId, category } = req.body;
-      
+
       const isValidCategory = validateInteger(category, 'category', 10, -1);
 
       if (!isValidCategory.isValid) {
-        return res.send({success: false, reason: isValidCategory.reason});
-      };
-  
-      const isValidThemeId = validateStrictString(themeId, 'theme id');
-  
-      if (!isValidThemeId.isValid) {
-        return res.send({success: false, reason: isValidThemeId.reason});
+        return res.send({ success: false, reason: isValidCategory.reason });
       };
 
-      
+      const isValidThemeId = validateStrictString(themeId, 'theme id');
+
+      if (!isValidThemeId.isValid) {
+        return res.send({ success: false, reason: isValidThemeId.reason });
+      };
+
+
       const themeInfo = `${category}:${themeId}`;
       const connection = pool.promise();
       /* const [update] = await connection.query(
@@ -208,20 +208,16 @@ Router.post('/save', async (req, res) => {
                WHERE user_id = ?`,
               [themeInfo, `%${themeInfo}%`,  `%:${themeId}%`, `:${themeId}`, themeInfo, `:${themeId}`, themeInfo, userId],
             ); */
-      connection.query(
-        `UPDATE users
-         SET themes = CASE
-           WHEN themes = '' THEN ?
-           WHEN themes LIKE ? THEN themes
 
-           WHEN themes LIKE ? THEN
-           CONCAT(SUBSTRING(REPLACE(themes, ?, ?), 2))
+      const [[userInfo]] = await connection.query(`SELECT themes from users WHERE user_id = ?`, [userId]);
 
-           ELSE CONCAT(themes, ',', ?)
-         END
-         WHERE user_id = ?`,
-        [themeInfo, `%${themeInfo}%`, `%:${themeId}%`, `:${themeId}`, themeInfo, themeInfo, userId],
-      );
+      const themes = userInfo.themes === "" ? [] : userInfo.themes.split(",");
+      const oldThemeIndex = themes.findIndex(theme => theme.includes(themeId));
+      if (oldThemeIndex !== -1) {
+        themes.splice(oldThemeIndex, 1);
+      };
+      themes.push(themeInfo);
+      await connection.query(`UPDATE users SET themes = ? WHERE user_id = ?`, [themes.join(','), userId]);
 
       const weekDay = DateTime.now().weekday - 1;
       redisClient.zIncrBy(`theme:${themeId}:weekUsage`, 1, weekDay.toString());

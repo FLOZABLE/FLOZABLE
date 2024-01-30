@@ -159,6 +159,11 @@ function App() {
                 plan.backgroundColor = subject.color;
                 plan.borderColor = subject.color;
               }
+
+              if (plan.completed) {
+                plan.className = "completed";
+              }
+              console.log(plan.completed)
               return plan;
             }),
           );
