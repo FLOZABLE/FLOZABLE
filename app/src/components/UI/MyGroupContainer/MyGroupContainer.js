@@ -9,6 +9,7 @@ import { socket } from "../../../socket";
 import { mediaSocket } from "../../../mediaSocket";
 import GroupRanking from "../GroupRankingModal/GroupRankingModal";
 import { durationFormatter } from "../../../utils/Tool";
+import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -122,9 +123,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
         <Link to={`/dashboard/study?group=${group.group_id}`}>
           <button>Go to Group</button>
         </Link>
-        <button>
-          <FontAwesomeIcon icon={faComments} />
-        </button>
+        <GroupUrlBtn text = {`${serverOrigin}/dashboard/groups?joinId=${group.group_id}`} copyText="Share"/>
       </div>
     </div>
   )
