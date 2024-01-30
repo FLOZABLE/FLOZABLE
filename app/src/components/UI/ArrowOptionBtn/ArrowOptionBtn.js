@@ -6,8 +6,8 @@ function ArrowOptionBtn({clicked, setClicked}) {
   return (
     <div className={styles.ArrowOptionBtn}>
       <div className={styles.options}>
-        <p>LOG IN</p>
-        <p>SIGN UP</p>
+        <p onClick={() => {setClicked(false)}}>LOG IN</p>
+        <p onClick={() => {setClicked(true)}}>SIGN UP</p>
       </div>
       <div className={styles.slider} onClick={() => {setClicked(!clicked)}}>
         <div className={`${styles.arrow} ${clicked ? styles.clicked : ''}`} onClick={() => {setClicked(!clicked)}}>

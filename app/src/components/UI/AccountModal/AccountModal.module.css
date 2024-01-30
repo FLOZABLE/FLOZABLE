@@ -4,6 +4,33 @@
   left: 50vw;
   transform: translate(-50%, -50%);
   z-index: 10;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  perspective: 800px;
+  visibility: hidden;
+  opacity: 0;
+  transform: .3s ease-in-out opacity, .3s ease-in-out visibility;
+  z-index: 101;
+}
+
+.AccountModal.opened {
+  visibility: visible;
+  opacity: 1;
+}
+
+.AccountModal #closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #ffeba7;
+  border-radius: 10px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ffeba7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 .AccountModal .optionsWrapper {
@@ -11,14 +38,43 @@
   justify-content: center;
 }
 
-.AccountModal .container {
+.AccountModal .containers {
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  transition: all 600ms ease-out;
   width: 400px;
   height: 400px;
+}
+
+.AccountModal .container {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 20px;
   background-color: #2a2b38;
+  background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/1462889/pat.svg');
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  background-size: 300%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.AccountModal .container#back {
+  transform: rotateY(180deg);
+}
+
+.AccountModal .containers.login {
+  transform: rotateY(180deg);
 }
 
 .AccountModal .contents {
@@ -28,6 +84,7 @@
   align-items: center;
   width: 350px;
   position: relative;
+  transform: translate3d(0, 0, 35px) perspective(100px);
 }
 
 .AccountModal .contents .inputWrapper{
@@ -47,9 +104,10 @@
   background-color: none;
   width: 100%;
   background-color: transparent;
-  color: #fff;
+  color: #ffeba7;
 }
 
 .AccountModal .contents .inputWrapper .icon {
   padding: 0px 30px;
+  color: #ffeba7;
 }

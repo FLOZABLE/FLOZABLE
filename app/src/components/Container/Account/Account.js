@@ -78,6 +78,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
       })
         .then((response) => response.json())
         .then((data) => {
+          setResponse(data);
           if (data.success) {
           }
         })
@@ -97,7 +98,9 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
         body: JSON.stringify({ name, email, confirmEmail }),
       })
         .then((response) => response.json())
-        .then((data) => { })
+        .then((data) => {
+          setResponse(data);
+        })
         .catch((error) => console.error(error));
     }
     setTimeout(() => {
@@ -115,7 +118,9 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
         body: JSON.stringify({ password, confirmPassword }),
       })
         .then((response) => response.json())
-        .then((data) => { })
+        .then((data) => {
+          setResponse(data);
+        })
         .catch((error) => console.error(error));
     }
     setTimeout(() => {
@@ -133,6 +138,7 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
     })
       .then((response) => response.json())
       .then((data) => {
+        setResponse(data);
       })
       .catch((error) => console.error(error));
   }, []);

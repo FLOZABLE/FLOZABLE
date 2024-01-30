@@ -191,13 +191,14 @@ app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 
 app.get('/dashboard*', (req, res) => {
-  account.autoSignin(req, res, (() => {
+  res.sendFile(path.join(__dirname, process.env.BUILD, 'index.html'));
+  /* account.autoSignin(req, res, (() => {
     res.sendFile(path.join(__dirname, process.env.BUILD, 'index.html'));
   }),
     (() => {
       res.redirect('/#signin');
     })
-  );
+  ); */
 });
 
 app.use((req, res, next) => {
@@ -257,7 +258,7 @@ require('./services/timerUpdate');
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(1, 10);
-botManager(170);
+//botManager(170);
 //deleteBots();
 //addId();
 //createBots(0, 170);

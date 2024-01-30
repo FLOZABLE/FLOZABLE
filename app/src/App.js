@@ -53,6 +53,8 @@ function App() {
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [isNotificationModal, setIsNotificationModal] = useState(false);
 
+  const [isAccountModal, setIsAccountModal] = useState(false);
+
   const [totalNewMsg, setTotalNewMsg] = useState(0);
 
   const [subject, setSubject] = useState("0000000000");
@@ -205,8 +207,12 @@ function App() {
   }, []); */
 
   useEffect(() => {
-    console.log(198, notifications);
-  }, [notifications])
+    console.log('response', userInfo, response)
+    if (userInfo === false || (response && response.reason === "Sign in required")) {
+      console.log('ssss')
+      setIsAccountModal(true);
+    }
+  }, [response, userInfo]);
 
   return (
     <Router>
@@ -251,8 +257,12 @@ function App() {
         setIsAddSubjectModal={setIsAddSubjectModal}
         setResponse={setResponse}
       />
-      <AccountModal 
+      <AccountModal
+        isOpened={isAccountModal}
+        setIsOpened={setIsAccountModal}
+        setResponse={setResponse}
       />
+      {isAccountModal ? <div style={{zIndex: 100, backgroundColor: "#a4afd4bb", width: '100vw', height: '100vh', position: "fixed", top: "0px", left: "0px"}}></div> : null}
       <Routes>
         <Route
           path="/dashboard"

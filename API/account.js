@@ -42,9 +42,9 @@ Router.get('/activity-settings', async (req, res) => {
   }))
 });
 
-Router.post('/signin-authentication', async (req, res, next) => {
+Router.post('/signin-authentication', async (req, res) => {
   const { email, password } = req.body;
-
+  
   const isValidEmail = validateEmail(email);
   if (!isValidEmail.isValid) {
     return res.send({ success: false, reason: isValidEmail.reason });
@@ -215,7 +215,7 @@ Router.post('/update/image', upload.single('image'), async (req, res) => {
         .resize({ width: 800, height: 800 })
         .jpeg({ quality: 40 })
         .toFile(`./public/profile-images/${userId}.jpeg`);
-      res.send({ success: true });
+      res.send({ success: true, msg: 'Updated Profile Image!' });
     } catch (err) {
       console.log(err)
       res.send({ success: false, reason: 'Unsupported File Type' })
@@ -282,7 +282,7 @@ Router.post('/update/password', async (req, res) => {
       const [salt, hashed_password] = hashing(password);
       const updateInfo = [{ hashed_password, salt }, userId];
       const update = await connection.query("UPDATE users set ? WHERE user_id = ?", updateInfo);
-      res.send({ success: true });
+      res.send({ success: true, msg: "Password Updated!" });
     } catch (error) {
       res.send({ success: false, reason: 'Unsupported File Type' })
     };
@@ -366,7 +366,7 @@ Router.post('/update/extension-setting-update', async (req, res) => {
         ]);
       }
 
-      res.send({ success: true });
+      res.send({ success: true, msg: "Setting updated!" });
       extensionIo.to(userId).emit('setting-updated', { d, target, value });
     } catch (error) {
       res.send({ success: false, reason: 'Invalid URL or Domain' });
