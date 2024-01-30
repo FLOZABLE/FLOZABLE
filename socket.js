@@ -5,7 +5,7 @@ const redisClient = require("./model/redis");
 const { generateRandomId } = require("./tool");
 const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache, dmRoomMembersCache, groupMembersCache } = require("./services/redisLoader");
 const { DateTime } = require("luxon");
-const {Server} = require('socket.io');
+const { Server } = require('socket.io');
 
 const io = new Server(server, {
   cors: {
@@ -173,7 +173,7 @@ connection.on('connection', (socket) => {
       redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
       subject.timeline_sum += start;
       redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
-      extensionIo.to(userId).emit("studying", {studying: true});
+      extensionIo.to(userId).emit("studying", { studying: true });
       //total timer
       /* const timerInfo = await timerCache(userId, now);
       const {dp, ts} = timerInfo;
@@ -219,7 +219,7 @@ connection.on('connection', (socket) => {
       const start = activity[0];
       redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${duration}]`);
     };
-    extensionIo.to(userId).emit("studying", {studying: false});
+    extensionIo.to(userId).emit("studying", { studying: false });
     //total timer update
     //this is unix time in sec of active subject's start
     /* const activeSubjectStart = activeSubject.time;
@@ -295,54 +295,44 @@ connection.on('connection', (socket) => {
 
 const extensionIo = io.of("/extension");
 
-extensionIo.on("connection" , (socket) => {
-  if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
-    try {
-      socket.userId = socket.request.session.user_id;
-    } catch (err) {
-      console.log(err);
-    };
-  } else {
-    socket.userId = process.env.TESTER_ID;
-  };
-
-  socket.on("auth", async ({authId}) => {
+extensionIo.on("connection", (socket) => {
+  socket.on("auth", async ({ authId }) => {
     if (!authId) return;
     const userId = await redisClient.get(`extension:auth:${authId}`);
     //invalid auth id
     if (!userId) return;
     const userInfo = await userCache(userId);
-    
+
     if (!userInfo) return;
 
     const dateTime = DateTime.now().setZone(userInfo.timezone);
     const score = Math.floor(dateTime.offset) / 60 + 12;
     console.log('timezone off', score);
-    redisClient.zAdd(`extensionUsers`, [{value: userId, score}]);
+    redisClient.zAdd(`extensionUsers`, [{ value: userId, score }]);
     socket.userId = userId;
     socket.join(userId);
     const activeSubject = await activeSubjectCache(userId);
-    console.log("authed", 'is studying' , activeSubject.id ? true : false, activeSubject)
-    extensionIo.to(userId).emit("studying", {studying: activeSubject.id ? true : false});
+    console.log("authed", 'is studying', activeSubject.id ? true : false, activeSubject)
+    extensionIo.to(userId).emit("studying", { studying: activeSubject.id ? true : false });
   });
 
-/*   socket.on("setting-update", async({d, target, value}) => {
-    if (!socket.userId) return;
-    extensionIo.to(socket.userId).emit("setting-updated", {d, target, value});
-  });
+  /*   socket.on("setting-update", async({d, target, value}) => {
+      if (!socket.userId) return;
+      extensionIo.to(socket.userId).emit("setting-updated", {d, target, value});
+    });
+  
+    socket.on("setting-create", async({d, block, timer}) => {
+      console.log(socket.userId, block, timer, 'created')
+      if (!socket.userId) return;
+      extensionIo.to(socket.userId).emit("setting-created", {d, block, timer});
+    }); */
 
-  socket.on("setting-create", async({d, block, timer}) => {
-    console.log(socket.userId, block, timer, 'created')
-    if (!socket.userId) return;
-    extensionIo.to(socket.userId).emit("setting-created", {d, block, timer});
-  }); */
-
-  socket.on("update-tabs", async({domain, duration}) => {
+  socket.on("update-tabs", async ({ domain, duration }) => {
     console.log(duration)
     if (!socket.userId || !domain || !duration) return;
     redisClient.zIncrBy(`user:${socket.userId}:tabs:timer`, duration, domain);
     redisClient.zIncrBy(`user:${socket.userId}:tabs:usage`, 1, domain);
-    
+
   });
 })
 
