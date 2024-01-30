@@ -6,7 +6,7 @@ const redisClient = require("../model/redis");
 const crypto = require("crypto");
 const { isValidJSON, hashing, generateRandomId, autoSignin } = require("../tool");
 const { timerCache, activeSubjectCache, groupCache, userCache } = require("../services/redisLoader");
-const { validateArray, validateStrictString, validateInteger, validateLength, validateHEX, validatePassword, validateBoolean } = require("../validate");
+const { validateArray, validateStrictString, validateInteger, validateLength, validateHEX, validatePassword, validateBoolean, validateString } = require("../validate");
 
 Router.post('/create-validate', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -33,7 +33,8 @@ Router.post('/create-validate', async (req, res) => {
         return res.send({ success: false, reason: 'Wrong Information' });
       } */
 
-      const isValidName = validateStrictString(name, 'Name');
+      const isValidName = validateString(name, 'Name');
+      console.log(name)
       if (!isValidName.isValid) {
         return res.send({ success: false, reason: isValidName.reason });
       };

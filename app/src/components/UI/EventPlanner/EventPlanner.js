@@ -40,6 +40,18 @@ const StyleWrapper = styled.div`
   .fc-event {
     transition: .3s ease-in-out all;
   }
+  .fc-event.completed i {
+    position: relative;
+  }
+  .fc-event.completed i::before {
+    content: "";
+    background: #000;
+    width: 100%;
+    height: 3px;
+    display: inline-block;
+    position: absolute;
+    top: 8px;
+  }
 
   th.fc-col-header-cell p.day {
     display: flex;
@@ -155,7 +167,7 @@ const StyleWrapper = styled.div`
     display: flex;
   }
   .fc-view-harness.fc-view-harness-active {
-    height: 100vh;
+    height: 100vh !important;
   }
 
   @media (max-width: 1400px) {

@@ -126,3 +126,9 @@
     font-size: 20px;
   }
 }
+
+@media (max-height: 800px) {
+  .Sidebar {
+    left: 25px;
+  }
+}

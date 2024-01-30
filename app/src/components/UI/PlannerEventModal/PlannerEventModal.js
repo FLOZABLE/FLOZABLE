@@ -46,7 +46,7 @@ function PlannerEventModal({
       <div className={styles.header}>
         <i
           onClick={() => {
-            setPlanModal(false);
+            setPlanModal((prev) => ({...prev, opened: false}));
           }}
         >
           <FontAwesomeIcon icon={faXmark} />
