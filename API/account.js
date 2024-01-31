@@ -167,17 +167,20 @@ Router.post('/signup-authentication', async (req, res) => {
       }
 
       req.session.user_id = userId;
-      req.session.loggedin = true;
-
-      res.cookie("userId", userId, {
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-        secure: true,
-        httpOnly: true,
-        signed: true,
-      });
-
-      res.send({ success: true });
     });
+
+    const authId = generateRandomId(10);
+    await redisClient.setEx(`extension:auth:${authId}`, 10, userId);
+    res.cookie("userId", userId, {
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      secure: true,
+      httpOnly: true,
+      signed: true,
+    });
+
+    extensionIo.to(userId).emit("tryAuth");
+
+    res.send({ success: true });
     /* req.session.regenerate((err) => {
       if (err) {
         res.send({ success: false, reason: "SESSION ERROR" });

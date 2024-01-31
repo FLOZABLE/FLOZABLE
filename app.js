@@ -147,6 +147,7 @@ const challengeAPI = require('./API/challenges');
 const friendAPI = require('./API/friend');
 const themesAPI = require('./API/themes');
 const extensionAPI = require('./API/extension');
+const canvasAPI = require('./API/canvas');
 
 
 //test
@@ -187,6 +188,7 @@ app.use('/challenges', challengeAPI);
 app.use('/friend', friendAPI);
 app.use('/themes', themesAPI);
 app.use('/extension', extensionAPI);
+app.use('/canvas', canvasAPI);
 app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 
@@ -281,7 +283,7 @@ async function testCanvasFetch() {
     console.log(userAssignments);
   }
 }
-testCanvasFetch();
+//testCanvasFetch();
 
 const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubjects, deleteSubjectTimeline, generateOtherSubject } = require('./test/generate');
 //generateUsers(100);
