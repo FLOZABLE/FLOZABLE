@@ -202,7 +202,7 @@ app.get('/dashboard*', (req, res) => {
 });
 
 app.use((req, res, next) => {
-  if (!req.path.startsWith('/profile-images')) {next(); return};
+  if (!req.path.startsWith('/profile-images')) { next(); return };
   const defaultImagePath = path.join(__dirname, 'public', '/img/default_profile.jpg');
   return res.sendFile(defaultImagePath);
 
@@ -232,7 +232,7 @@ app.use((req, res, next) => {
     })
 });
 
-app.get('*',function(req,res){
+app.get('*', function (req, res) {
   res.redirect('/');
 });
 
@@ -242,6 +242,57 @@ cron.schedule('0 * * * *', () => {
 });
 
 //test
+async function testCanvasFetch() {
+  const response = await axios.get('https://cuhsd.instructure.com/api/v1/courses', {
+    headers: {
+      'Authorization': `Bearer ${process.env.CANVAS_ACCESS_KEY}`
+    }
+  });
+
+  const userAssignments = [];
+
+  if (response.data) {
+
+    await Promise.all(response.data.map(async (course) => {
+      if (course.access_restricted_by_date) {
+        return; //this means the course was taken last year and student is no longer in the class
+      }
+      const courseId = course.id;
+      const courseName = course.name;
+
+      const assignmentGroups = await axios.get(`https://cuhsd.instructure.com/api/v1/courses/${courseId}/assignment_groups`, {
+        headers: {
+          'Authorization': `Bearer ${process.env.CANVAS_ACCESS_KEY}`
+        }
+      });
+      //console.log(assignmentGroups);
+
+      await Promise.all(assignmentGroups.data.map(async (assignmentGroup) => {
+        const assignments = await axios.get(`https://cuhsd.instructure.com/api/v1/courses/${courseId}/assignment_groups/${assignmentGroup.id}/assignments`, {
+          headers: {
+            'Authorization': `Bearer ${process.env.CANVAS_ACCESS_KEY}`
+          }
+        });
+
+        assignments.data.map((assignment) => {
+          const assignmentObj = {
+            name: assignment.name,
+            course: courseName,
+            //submitted: assignment.has_submitted_submissions,
+            points: assignment.points_possible,
+            due: assignment.due_at,
+            url: assignment.html_url,
+          }
+          userAssignments.push(assignmentObj);
+        });
+      }));
+
+    }));
+
+    console.log(userAssignments.filter((a) => a.course === "AP Computer Science"));
+  }
+}
+//testCanvasFetch();
 
 const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubjects, deleteSubjectTimeline, generateOtherSubject } = require('./test/generate');
 //generateUsers(100);
