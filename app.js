@@ -246,7 +246,7 @@ async function testCanvasFetch() {
   const response = await axios.get('https://cuhsd.instructure.com/api/v1/courses', {
     headers: {
       'Authorization': `Bearer ${process.env.CANVAS_ACCESS_KEY}`
-    }
+    },
   });
 
   const userAssignments = [];
@@ -260,39 +260,28 @@ async function testCanvasFetch() {
       const courseId = course.id;
       const courseName = course.name;
 
-      const assignmentGroups = await axios.get(`https://cuhsd.instructure.com/api/v1/courses/${courseId}/assignment_groups`, {
+      const courseEvents = await axios.get(`https://cuhsd.instructure.com/api/v1/calendar_events?type=assignment&start_date=2024-01-15&end_date=2024-02-29&context_codes[]=course_${courseId}&per_page=100`, {
         headers: {
           'Authorization': `Bearer ${process.env.CANVAS_ACCESS_KEY}`
-        }
+        },
       });
-      //console.log(assignmentGroups);
 
-      await Promise.all(assignmentGroups.data.map(async (assignmentGroup) => {
-        const assignments = await axios.get(`https://cuhsd.instructure.com/api/v1/courses/${courseId}/assignment_groups/${assignmentGroup.id}/assignments`, {
-          headers: {
-            'Authorization': `Bearer ${process.env.CANVAS_ACCESS_KEY}`
-          }
+      courseEvents.data.map((assignment) => {
+        userAssignments.push({
+          name: assignment.title,
+          course: courseName,
+          date: assignment.end_at,
+          url: assignment.html_url,
+          submitted: assignment.assignment.user_submitted,
+          points: assignment.assignment.points_possible,
         });
-
-        assignments.data.map((assignment) => {
-          const assignmentObj = {
-            name: assignment.name,
-            course: courseName,
-            //submitted: assignment.has_submitted_submissions,
-            points: assignment.points_possible,
-            due: assignment.due_at,
-            url: assignment.html_url,
-          }
-          userAssignments.push(assignmentObj);
-        });
-      }));
-
+      })
     }));
 
-    console.log(userAssignments.filter((a) => a.course === "AP Computer Science"));
+    console.log(userAssignments);
   }
 }
-//testCanvasFetch();
+testCanvasFetch();
 
 const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubjects, deleteSubjectTimeline, generateOtherSubject } = require('./test/generate');
 //generateUsers(100);
