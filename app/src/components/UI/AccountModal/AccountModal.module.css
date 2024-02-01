@@ -9,7 +9,7 @@
   perspective: 800px;
   visibility: hidden;
   opacity: 0;
-  transform: .3s ease-in-out opacity, .3s ease-in-out visibility;
+  transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
   z-index: 101;
 }
 
