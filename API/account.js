@@ -72,7 +72,6 @@ Router.post('/signin-authentication', async (req, res) => {
       }
 
       req.session.user_id = userId;
-      req.session.loggedin = true;
 
       res.cookie("userId", userId, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
@@ -81,7 +80,7 @@ Router.post('/signin-authentication', async (req, res) => {
         signed: true,
       });
 
-      res.send({ success: true });
+      res.send({ success: true, msg: 'Success' });
     });
   } else {
     res.send({ success: false, reason: 'WRONG PASSWORD' });
