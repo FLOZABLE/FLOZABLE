@@ -87,6 +87,24 @@ button:hover {
   white-space: nowrap;
 }
 
+.touchBlocker {
+  z-index: 100;
+  background-color: #a4afd4bb;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0px;
+  left: -20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
+}
+
+.touchBlocker.blocked {
+  opacity: 1;
+  visibility: visible;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

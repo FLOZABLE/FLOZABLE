@@ -10,7 +10,7 @@ const { validateStrictString, validateTimeZone } = require("../validate");
 Router.post("/auth", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     const authId = generateRandomId(10);
-    redisClient.setEx(`extension:auth:${authId}`, 10, userId);
+    await redisClient.setEx(`extension:auth:${authId}`, 10, userId);
     return res.send({ success: true, authId });
   }));
 });
