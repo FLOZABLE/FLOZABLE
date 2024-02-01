@@ -1,11 +1,8 @@
 const express = require("express");
-const Router = express.Router();
 const app = express();
 const ejs = require("ejs");
-const createError = require("http-errors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const logger = require("morgan");
 const session = require("express-session");
 const connectRedis = require("connect-redis");
 const bodyParser = require("body-parser");
@@ -39,8 +36,7 @@ const RedisStore = require('connect-redis').default;
 const redisClient = require("./model/redis");
 redisClient.connect().catch(console.error);
 const port = process.env.PORT;
-const account = require("./Router/account");
-const { flushRedis, cacheManager } = require("./services/redisLoader");
+const { cacheManager } = require("./services/redisLoader");
 const SENDINBLUE_API = process.env.SENDINBLUE_API;
 const sendInBlue = require('sib-api-v3-sdk');
 const sendinBlueClient = sendInBlue.ApiClient.instance;
@@ -122,17 +118,6 @@ notificationService.notificationService(); */
 
 //Router
 const mainRouter = require("./Router/main");
-const accountRouter = account.Router;
-const studyRouter = require("./Router/study");
-const groupsRouter = require("./Router/groups");
-const linksRouter = require('./Router/links');
-const dashboardRouter = require('./Router/dashboard');
-const rankingRouter = require('./Router/ranking');
-const extensionRouter = require('./Router/api');
-const chatRouter = require('./Router/chat');
-//const planRouter = require("./Router/plan");
-//const notificationRouter = notificationService.notificationRouter;
-
 
 //API
 const accountAPI = require("./API/account");
@@ -147,11 +132,7 @@ const challengeAPI = require('./API/challenges');
 const friendAPI = require('./API/friend');
 const themesAPI = require('./API/themes');
 const extensionAPI = require('./API/extension');
-
-
-//test
-const testAPI = require('./test/Api');
-
+const playlistsAPI = require('./API/playlists');
 
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
@@ -165,14 +146,6 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.disable('etag');
 
 app.use('/', mainRouter);
-/* app.use('/account', accountRouter);
-app.use('/study', studyRouter);
-app.use('/groups', groupsRouter);
-app.use('/links', linksRouter); */
-//app.use('/dashboards', dashboardRouter);
-/* app.use('/ranking', rankingRouter); */
-//app.use('/api', extensionRouter);
-//app.use('/notification', notificationRouter);
 
 //api
 app.use('/account', accountAPI);
@@ -187,6 +160,7 @@ app.use('/challenges', challengeAPI);
 app.use('/friend', friendAPI);
 app.use('/themes', themesAPI);
 app.use('/extension', extensionAPI);
+app.use('/playlists', playlistsAPI);
 app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 
@@ -241,18 +215,6 @@ cron.schedule('0 * * * *', () => {
   cacheManager();
 });
 
-//test
-
-const { generateUsers, generateGroups, deleteTestUsers, deleteGroups, deleteSubjects, deleteSubjectTimeline, generateOtherSubject } = require('./test/generate');
-//generateUsers(100);
-//generateGroups(40);
-//deleteTestUsers();
-//deleteGroups();
-//deleteSubjects();
-//deleteSubjectTimeline();
-//generateOtherSubject(process.env.TESTER_ID);
-//flushRedis();
-//groupsLoader();
 require('./Logger');
 require('./services/timerUpdate');
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');

@@ -3,6 +3,7 @@ import styles from "./MusicModal.module.css";
 import VolumeControl from "../VolumeControl/VolumeControl";
 import { Music } from "../../../utils/Music";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
+import { socket } from "../../../socket";
 //<YouTubeAudioPlayer height={"50%"} weight={"50%"} videoId={"nMfPqeZjc2c"} volume={tempVolume}/>
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -20,11 +21,30 @@ function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
 
   useEffect(() => {
     setAudioVolumes(new Array(audioChoices.length).fill[0]);
-  }, [audioChoices])
+  }, [audioChoices]);
 
+  const onMouseUp = () => {
+    socket.emit("volumeChange", {id: "original", volume: originalVideoVolume});
+  };
+
+  useEffect(() => {
+    const onVolumeChanged = ({id, volume}) => {
+      if (id !== "original") {
+        return;
+      };
+      console.log('changed', volume)
+      setOriginalVideoVolume(volume);
+    };
+
+    socket.on("volumeChange", onVolumeChanged);
+
+    return () => {
+      socket.off("volumeChange", onVolumeChanged);
+    };
+  }, []);
 
   return (
-    <div className={`${styles.YouTubeMusicModal}`}>
+    <div className={`${styles.YouTubeMusicModal} customScroll`}>
       <div className={styles.audioWrapper}>
         <div className={styles.audioDescription}>
           🔴
@@ -36,6 +56,7 @@ function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
           volume={originalVideoVolume}
           setVolume={setOriginalVideoVolume}
           backgroundImage={'https://as1.ftcdn.net/v2/jpg/00/92/53/56/1000_F_92535664_IvFsQeHjBzfE6sD4VHdO8u5OHUSc6yHF.jpg'}
+          onMouseUp={onMouseUp}
         />
       </div>
       {audioChoices.map((audio, i) => {
@@ -47,7 +68,7 @@ function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
               {audio.name}
             </span>
           </div>
-          <AudioPlayer audio={audio.audio} name={audio.name} />
+          <AudioPlayer audio={audio} />
           {/* <YouTubeAudioPlayer height={"1vh"} width={"1vw"} videoId={audio.id} volume={audioVolumes ? audioVolumes[i] : 0} /> */}
         </div>
         )

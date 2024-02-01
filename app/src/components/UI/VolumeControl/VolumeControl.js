@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./VolumeControl.module.css"; // Import your module CSS file
 
-function VolumeControl({ volume, setVolume, backgroundImage }) {
+function VolumeControl({ volume, setVolume, backgroundImage, onMouseUp = () => {} }) {
   const [isMuted, setMuted] = useState(true); // Track whether the volume is muted
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [prevVolume, setPrevVolume] = useState(volume);
@@ -86,6 +86,7 @@ function VolumeControl({ volume, setVolume, backgroundImage }) {
         onChange={handleRangeUpdate}
         onClick={handler}
         onMouseDown={handler}
+        onMouseUp={onMouseUp}
         style={{backgroundImage: backgroundImage}}
       />
     </div>

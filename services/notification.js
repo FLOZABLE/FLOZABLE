@@ -10,7 +10,7 @@ const API_KEY = process.env.SENDINBLUE_API;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 const sendInBlue = require('sib-api-v3-sdk');
-const { autoSignin } = require('../Router/account');
+const { autoSignin } = require('../tool');
 const sendinBlueClient = sendInBlue.ApiClient.instance;
 sendinBlueClient.authentications['api-key'].apiKey = API_KEY;
 

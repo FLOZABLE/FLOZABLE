@@ -3,15 +3,25 @@ import BlobBtn from "../BlobBtn/BlobBtn";
 import styles from "./AccountModal.module.css";
 import { faAt, faLock, faUser, faXmark } from "@fortawesome/free-solid-svg-icons";
 import ArrowOptionBtn from "../ArrowOptionBtn/ArrowOptionBtn";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function AccountModal({ isOpened, setIsOpened, setResponse }) {
   const [isLogin, setIsLogin] = useState(false);
 
-  const [signUp, setSignUp] = useState({name: "", email: "", password: ""});
+  const [signUp, setSignUp] = useState({name: "", email: "", password: "", timeZone: null});
   const [login, setLogin] = useState({email: "", password: ""});
+
+  useEffect(() => {
+    try {
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      setSignUp((prev) => ({...prev, timeZone}))
+    } catch (error) {
+      console.error('Intl.DateTimeFormat not supported:', error);
+      return 'UTC';
+    }
+  }, []);
 
   return (
     <div className={`${styles.AccountModal} ${isOpened ? styles.opened : ''}`}>
