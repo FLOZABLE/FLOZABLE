@@ -1,5 +1,5 @@
 const AllThemes = [
-  { id: "MYPVQccHhAQ", img: "cafe.png", name: "Cafe 1", category: ["Cafe", "Default"] },
+  { id: "MYPVQccHhAQ", img: "cafe.png", name: "Cafe 1", category: ["Default", "Cafe"] },
   { id: "0L38Z9hIi5s", img: "cafe2.png", name: "Cafe 2", category: ["Default", "Cafe"] },
   { id: "fX7k3W-2BMM", img: "ghibli.png", name: "Ghibli", category: ["Default", "Anime"] },
   { id: "HGl75kurxok", img: "ghibli.png", name: "Anime", category: ["Default", "Anime"] },

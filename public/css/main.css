@@ -17,6 +17,10 @@
   }
 }
 
+html {
+  overflow-x: hidden;
+}
+
 .notification-alert {
   opacity: 1;
   z-index: 10;
