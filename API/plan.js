@@ -7,7 +7,7 @@ const { removePrevNotification, planNotification } = require("../services/notifi
 const { google } = require('googleapis');
 const { DateTime } = require("luxon");
 const { UserRefreshClient } = require("google-auth-library");
-const { validateStrictString, validateInteger, validateLength, validateBoolean } = require("../validate");
+const { validateStrictString, validateInteger, validateLength, validateString } = require("../validate");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -79,7 +79,7 @@ Router.post('/update', async (req, res) => {
       const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds();
       const { title, id, start, end, repeat, description, subject, notification, priority, completed } = planInfo;
 
-      const isValidTitle = validateStrictString(title, 'Title');
+      const isValidTitle = validateString(title, 'Title');
       if (!isValidTitle.isValid) {
         return res.send({ success: false, reason: isValidTitle.reason });
       };

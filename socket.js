@@ -284,6 +284,14 @@ connection.on('connection', (socket) => {
     redisClient.hSet(`user:${userId}:chats`, roomId, `${i}:${now}`);
   });
 
+  socket.on("volumeChange", ({id, volume}) => {
+    if (!id || !volume) {
+      return;
+    };
+    console.log(id,volume, 'changed');
+    socket.to(userId).emit(`volumeChange`, {id, volume});
+  })
+
   socket.on('exitSession', async () => {
     deActiveGroup(userId, socket);
   });

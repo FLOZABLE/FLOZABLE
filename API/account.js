@@ -92,7 +92,7 @@ Router.post('/signup-authentication', async (req, res) => {
   try {
     const { email, name, password, timeZone } = req.body;
 
-    if (!isValidTimeZone) {
+    if (!isValidTimeZone(timeZone)) {
       timeZone = 'UTC';
     }
     const userDateTime = DateTime.now().setZone(timeZone);
