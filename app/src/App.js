@@ -136,7 +136,7 @@ function App() {
           setUserInfo(data.userInfo);
           setNotifications(data.notifications);
           socket.connect();
-        } else if (data.code === 401){
+        } else if (data.code === 401) {
           console.log('not user');
           setUserInfo(false);
         }
@@ -197,7 +197,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (userInfo === null || userInfo === undefined ) return;
+    if (userInfo === null || userInfo === undefined) return;
     bringGroups();
   }, [userInfo]);
 
@@ -267,7 +267,7 @@ function App() {
         setIsOpened={setIsAccountModal}
         setResponse={setResponse}
       />
-      {isAccountModal ? <div style={{zIndex: 100, backgroundColor: "#a4afd4bb", width: '100vw', height: '100vh', position: "fixed", top: "0px", left: "0px"}}></div> : null}
+      <div className={`touchBlocker ${isAccountModal ? "blocked" : ""}`}></div>
       <Routes>
         <Route
           path="/dashboard"

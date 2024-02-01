@@ -132,6 +132,7 @@ const challengeAPI = require('./API/challenges');
 const friendAPI = require('./API/friend');
 const themesAPI = require('./API/themes');
 const extensionAPI = require('./API/extension');
+const canvasAPI = require('./API/canvas');
 const playlistsAPI = require('./API/playlists');
 
 app.set('view engine', 'ejs');
@@ -161,6 +162,7 @@ app.use('/friend', friendAPI);
 app.use('/themes', themesAPI);
 app.use('/extension', extensionAPI);
 app.use('/playlists', playlistsAPI);
+app.use('/canvas', canvasAPI);
 app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 
@@ -176,7 +178,7 @@ app.get('/dashboard*', (req, res) => {
 });
 
 app.use((req, res, next) => {
-  if (!req.path.startsWith('/profile-images')) {next(); return};
+  if (!req.path.startsWith('/profile-images')) { next(); return };
   const defaultImagePath = path.join(__dirname, 'public', '/img/default_profile.jpg');
   return res.sendFile(defaultImagePath);
 
@@ -206,7 +208,7 @@ app.use((req, res, next) => {
     })
 });
 
-app.get('*',function(req,res){
+app.get('*', function (req, res) {
   res.redirect('/');
 });
 

@@ -23,13 +23,12 @@ function hashing(password) {
 };
 
 async function autoSignin(req, res, success = (() => { }), fail = (() => { res.send({ success: false, reason: 'Sign in required', msg: 'Sign in required' }) })) {
-  if (req.session.loggedin || (process.env.NODE_ENV === 'development' && (req.session.user_id = process.env.TESTER_ID))) {
+  if (req.session.user_id || (process.env.NODE_ENV === 'development' && (req.session.user_id = process.env.TESTER_ID))) {
     return success(req.session.user_id);
   } else if (req.signedCookies.userId) {
     const userInfo = await userCache(req.signedCookies.userId);
     if (userInfo) {
       req.session.user_id = req.signedCookies.userId;
-      req.session.loggedin = true;
       return success(req.session.user_id);
     } else {
       return fail();
