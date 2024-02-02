@@ -10,9 +10,13 @@ function AudioPlayer({audio}) {
 
   useEffect(() => {
     if (!audio || !volume || !audio.audio) return;
-    audio.audio.play();
-    audio.audio.volume = volume / 100;
-    audio.audio.loop = true;
+    try {
+      audio.audio.play();
+      audio.audio.volume = volume / 100;
+      audio.audio.loop = true;
+    } catch (err) {
+      console.log(err);
+    };
   }, [audio, volume]);
 
   const onMouseUp = () => {
