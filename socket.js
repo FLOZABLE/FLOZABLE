@@ -285,11 +285,12 @@ connection.on('connection', (socket) => {
   });
 
   socket.on("volumeChange", ({id, volume}) => {
-    if (!id || !volume) {
+    if (!id) {
       return;
     };
     console.log(id,volume, 'changed');
     socket.to(userId).emit(`volumeChange`, {id, volume});
+    extensionIo.to(userId).emit(`volumeChange`, {id, volume});
   })
 
   socket.on('exitSession', async () => {
@@ -320,7 +321,7 @@ extensionIo.on("connection", (socket) => {
     socket.userId = userId;
     socket.join(userId);
     const activeSubject = await activeSubjectCache(userId);
-    console.log("authed", 'is studying', activeSubject.id ? true : false, activeSubject)
+    console.log("authed", 'is studying', activeSubject.id ? true : false, activeSubject, userInfo.name)
     extensionIo.to(userId).emit("studying", { studying: activeSubject.id ? true : false });
   });
 
@@ -342,6 +343,11 @@ extensionIo.on("connection", (socket) => {
     redisClient.zIncrBy(`user:${socket.userId}:tabs:usage`, 1, domain);
 
   });
+
+  socket.on("volumeChange", async({id, volume}) => {
+    if (!socket.userId || !id) return;
+    io.to(socket.userId).emit(`volumeChange`, {id, volume});
+  })
 })
 
 async function deActiveGroup(userId, socket) {
