@@ -31,6 +31,7 @@ import Themes from "./components/Container/Themes/Themes";
 import ChallengeRooms from "./components/Container/ChallengeRooms/ChallengeRooms";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import AccountModal from "./components/UI/AccountModal/AccountModal";
+import SpotifyTest from "./SpotifyTest";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -221,6 +222,7 @@ function App() {
 
   return (
     <Router>
+      <SpotifyTest></SpotifyTest>
       <TopNotification
         duration={2500}
         response={response}
