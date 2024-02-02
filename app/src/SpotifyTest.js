@@ -11,8 +11,7 @@ const SCOPE = "user-read-email";
 function SpotifyTest({ }) {
 
     const [token, setToken] = useState("");
-    const [searchKey, setSearchKey] = useState("")
-    const [artists, setArtists] = useState([])
+
 
     const logout = () => {
         setToken("")
@@ -42,7 +41,6 @@ function SpotifyTest({ }) {
 
         if (!token) {
             token = window.location.href.split("code=")[1];
-            console.log(token);
             window.localStorage.setItem("code", token);
             fetch('https://accounts.spotify.com/api/token', {
                 method: 'POST',
@@ -54,24 +52,32 @@ function SpotifyTest({ }) {
                 .then((response) => response.json())
                 .then((data) => {
                     console.log(data);
+                    if (data.refresh_token) {
+                        //Store in server
+
+                        //Get access token
+                        token = data.access_token;
+
+                        fetch('https://api.spotify.com/v1/me', {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            console.log(data);
+                        }).catch((err) => {
+                            console.log(err);
+                        })
+
+                        setToken(token);
+                    }
                 })
                 .catch((error) => {
                     console.log(error);
                 });
         }
-
-        setToken(token)
-
     }, []);
-
-    const renderArtists = () => {
-        return artists.map(artist => (
-            <div key={artist.id}>
-                {artist.images.length ? <img width={"100%"} src={artist.images[0].url} alt="" /> : <div>No Image</div>}
-                {artist.name}
-            </div>
-        ))
-    }
 
     return (
         <div>
