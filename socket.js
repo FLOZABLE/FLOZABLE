@@ -9,7 +9,7 @@ const { Server } = require('socket.io');
 
 const io = new Server(server, {
   cors: {
-    origin: ["https://localhost:3001", "https://localhost:3000", "http://localhost:3001", "http://localhost:3000", "https://super-meme-qx696prxr4j264qx-3001.app.github.dev", "https://super-meme-qx696prxr4j264qx-3000.app.github.dev"],
+    origin: ["https://localhost:3001", "https://localhost:3000", "http://localhost:3001", "http://localhost:3000", "https://super-meme-qx696prxr4j264qx-3001.app.github.dev", "https://super-meme-qx696prxr4j264qx-3000.app.github.dev", "http://localhost:3002"],
     credentials: true,
     methods: ["GET", "POST"],
   },
@@ -285,7 +285,7 @@ connection.on('connection', (socket) => {
   });
 
   socket.on("volumeChange", ({id, volume}) => {
-    if (!id || !volume) {
+    if (!id || typeof volume !== "number") {
       return;
     };
     console.log(id,volume, 'changed');

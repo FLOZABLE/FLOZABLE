@@ -4,9 +4,6 @@ import VolumeControl from "../VolumeControl/VolumeControl";
 import { Music } from "../../../utils/Music";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { socket } from "../../../socket";
-//<YouTubeAudioPlayer height={"50%"} weight={"50%"} videoId={"nMfPqeZjc2c"} volume={tempVolume}/>
-
-const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
 
