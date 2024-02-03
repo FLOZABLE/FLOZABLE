@@ -9,9 +9,10 @@ function AudioPlayer({audio}) {
   const [volume, setVolume] = useState(0);
 
   useEffect(() => {
-    if (!audio || !volume || !audio.audio) return;
+    console.log(volume);
+    if (!audio || (!volume && volume !== 0) || !audio.audio) return;
     try {
-      audio.audio.play();
+      if (volume > 0) audio.audio.play();
       audio.audio.volume = volume / 100;
       audio.audio.loop = true;
     } catch (err) {

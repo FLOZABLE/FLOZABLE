@@ -21,6 +21,7 @@ function YouTubeAudioPlayer({ audioPath}) {
 
   useEffect(() => {
     if (volume <= 0 && !interacted) return;
+    console.log(volume);
     audioRef.current.volume = volume/100;
     if (!interacted){
       setInteracted(true);
