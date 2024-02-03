@@ -79,8 +79,8 @@ Router.get('/spotify-playlists', async (req, res) => {
                                 redisClient.expire(`user:${userId}:spotifyAccessToken`, 3000); //expire in 50 min (10 minute buffer)
                                 currentAccessToken = data.access_token;
                             }
-                            else{
-                                return res.send({success: false, reason: "Access Token Unable to Refresh"});
+                            else {
+                                return res.send({ success: false, reason: "Access Token Unable to Refresh" });
                             }
                         }).catch((err) => {
                             console.log(err);
@@ -90,7 +90,7 @@ Router.get('/spotify-playlists', async (req, res) => {
                     return res.send({ success: false, reason: "User not authenticated" }); //the user never auth'ed with spotify
                 }
             }
-            else{
+            else {
                 currentAccessToken = await redisClient.get(`user:${userId}:spotifyAccessToken`);
             }
             const accessToken = currentAccessToken;
@@ -103,6 +103,8 @@ Router.get('/spotify-playlists', async (req, res) => {
             }).then((response) => response.json())
                 .then(async (data) => {
                     if (!!data.items) {
+
+                        /*
                         await Promise.all(data.items.map(async (playlist) => {
                             let playlistObj = { name: playlist.name };
                             const playlistItems = [];
@@ -121,6 +123,12 @@ Router.get('/spotify-playlists', async (req, res) => {
                                     userPlaylists.push(playlistObj);
                                 });
                         }));
+                        */
+                        
+                        data.items.map((playlist) => {
+                            userPlaylists.push(playlist.external_urls.spotify)
+                        });
+
                         return res.send({ success: true, data: userPlaylists });
                     }
                     else {
