@@ -18,9 +18,11 @@ import StuckModal from "../../UI/StuckModal/StuckModal";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import GoogleLoginBtn from "../../UI/GoogleLoginBtn/GoogleLoginBtn";
 import { useSearchParams } from "react-router-dom";
+import SpotifyAuthBtn from "../../UI/SpotifyAuthBtn/SpotifyAuthBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;
+const appOrigin = process.env.REACT_APP_LOCATION;
 
 function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
   const [imageSrc, setImageSrc] = useState(null);
@@ -531,6 +533,36 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
                   /> */}
                     <GoogleLoginBtn />
                   </GoogleOAuthProvider>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.content}>
+              <div className={styles.layer}>
+                <div className={styles.iconWrapper}>
+                  <GoogleCalendar />
+                </div>
+                <div className={styles.explanation}>
+                  You haven't connected your Spotify Account yet or you aren't authorized. Please authorize our application to access your Spotify Playlists here.
+                </div>
+                <div className={styles.authBtn}>
+                  {/* <OptionToggleBtn
+                    opt1={{ val: 0, name: "Connect" }}
+                    opt2={{ val: 1, name: "Connected!" }}
+                    value={isGoogleCalendar}
+                    setValue={setIsGoogleCalendar}
+                  /> */}
+                  {/* <GoogleLogin
+                    clientId={googleClientId}
+                    buttonText={'Sign In'}
+                    onSuccess={onSuccess}
+                    onFailure={onFailure}
+                    cookiePolicy={'single_host_origin'}
+                    responseType='code'
+                    accessType="offline"
+                    scope="openid email profile https://www.googleapis.com/auth/calendar"
+                  /> */}
+                  <SpotifyAuthBtn userInfo={userInfo} redirectURI={`${appOrigin}/dashboard/account`}/>
                 </div>
               </div>
             </div>
