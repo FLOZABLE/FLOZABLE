@@ -11,6 +11,24 @@ const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 Router.post('/spotify-login', async (req, res) => {
     const { token, redirectURI, userId } = req.body;
 
+    async function returnName(currentAccessToken) { // if yes, return their username
+        const accessToken = currentAccessToken;
+
+        fetch('https://api.spotify.com/v1/me/', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        }).then((response) => response.json())
+            .then(async (data) => {
+                if (!!data.display_name) {
+                    return res.send({ success: true, name: data.display_name, msg: `Logged in as ${data.display_name}`});
+                }
+                else {
+                    return res.send({ success: false, reason: "An error occured" });
+                }
+            });
+    }
+
     fetch('https://accounts.spotify.com/api/token', {
         method: 'POST',
         headers: {
@@ -28,6 +46,8 @@ Router.post('/spotify-login', async (req, res) => {
                 redisClient.expire(`user:${userId}:spotifyAccessToken`, 3000); //expire in 50 min
                 const connection = pool.promise();
                 connection.query(`UPDATE users SET spotify_refresh_token = ? WHERE user_id = ?`, [refreshToken, userId]);
+
+                returnName(accessToken);
             }
         })
         .catch((error) => {
@@ -36,16 +56,67 @@ Router.post('/spotify-login', async (req, res) => {
 
 });
 
-Router.get('/spotify-refresh-token', async (req, res) => {
+Router.get('/spotify-logged-in', async (req, res) => { //check if user is logged into their spotify account.
     autoSignin(req, res, (async () => {
+
+        async function returnName(currentAccessToken) { // if yes, return their username
+            const accessToken = currentAccessToken;
+
+            fetch('https://api.spotify.com/v1/me/', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            }).then((response) => response.json())
+                .then(async (data) => {
+                    if (!!data.display_name) {
+                        return res.send({ auth: true, name: data.display_name });
+                    }
+                    else {
+                        return res.send({ auth: false, reason: "An error occured" });
+                    }
+                });
+        }
+
         const connection = pool.promise();
         try {
             const userId = req.session.user_id;
-            const [[refreshToken]] = await connection.query(`SELECT spotify_refresh_token FROM users WHERE user_id = ?`, [userId]);
-            if (!refreshToken) {
-                return res.send({ success: false, reason: "User not authenticated" });
+
+            const oldAccessToken = await redisClient.exists(`user:${userId}:spotifyAccessToken`);
+            if (oldAccessToken) {
+                const currentAccessToken = await redisClient.get(`user:${userId}:spotifyAccessToken`);
+                returnName(currentAccessToken);
+                return;
             }
-            return res.send({ success: refreshToken.length > 0 });
+
+            const [[refreshToken]] = await connection.query(`SELECT spotify_refresh_token FROM users WHERE user_id = ?`, [userId]);
+
+            if (!refreshToken) {
+                return res.send({ auth: false });
+            }
+            else {
+                fetch('https://accounts.spotify.com/api/token', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        Authorization: `Basic ${Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString("base64")}`
+                    },
+                    body: `grant_type=refresh_token&refresh_token=${refreshToken.spotify_refresh_token}`,
+                }).then((response) => response.json())
+                    .then(async (data) => {
+                        if (data.access_token) {
+                            await redisClient.set(`user:${userId}:spotifyAccessToken`, data.access_token);
+                            redisClient.expire(`user:${userId}:spotifyAccessToken`, 3000);
+                            currentAccessToken = data.access_token;
+                            returnName(currentAccessToken);
+                        }
+                        else {
+                            return res.send({ auth: false }); //the user most likely invalidated their refresh token
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                    });
+            }
+
         } catch (err) {
             console.log(err);
         }
