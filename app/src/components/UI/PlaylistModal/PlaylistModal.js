@@ -6,6 +6,9 @@ import CustomInput from "../CustomInput/CustomInput";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import SpotifyPlayer from "../SpotifyPlayer/SpotifyPlayer";
 
+const appOrigin = process.env.REACT_APP_LOCATION;
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
 const playlists = [
   {
     id: 1,
@@ -98,10 +101,16 @@ const playlists = [
     ]
   }
 ]
-function PlaylistModal({userInfo}) {
+function PlaylistModal({ userInfo }) {
   const [playlist, setPlaylist] = useState([]);
   const [link, setLink] = useState("");
   const [playLink, setPlayLink] = useState(null);
+  const [redirectURI, setRedirectURI] = useState("");
+
+  useEffect(() => {
+    setRedirectURI(`${appOrigin}/dashboard/study`);
+    console.log(appOrigin)
+  }, []);
 
   useEffect(() => {
     if (playlist.length) {
@@ -122,7 +131,7 @@ function PlaylistModal({userInfo}) {
         } else {
           setPlayLink(link);
         };
-      };  
+      };
     } catch (err) {
       console.log(err);
     };
@@ -132,11 +141,29 @@ function PlaylistModal({userInfo}) {
     setLink(e.target.value);
   };
 
+
+  useEffect(() => {
+    fetch(`${serverOrigin}/playlists/spotify-refresh-token`, {
+      method: 'get',
+    }).then((response) => response.json())
+      .then((data) => {
+        if (data.success) return; //user already authenticated
+        fetch(`${serverOrigin}/playlists/spotify-playlists`, { method: "get" })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data, 'playlist');
+          }).catch((err) => {
+            console.log(err);
+          })
+      });
+
+  }, [userInfo])
+
   return (
     <div className={styles.PlaylistModal}>
       <div className={styles.authGuide}>
-      <p>Connect your Spotify account to bring your playlists!</p>
-      <SpotifyAuthBtn userInfo={userInfo}/>
+        <p>Connect your Spotify account to bring your playlists!</p>
+        <SpotifyAuthBtn redirectURI={`${appOrigin}/dashboard/study`} userInfo={userInfo} />
       </div>
       {/* <DropDownButton
         options={[
@@ -154,9 +181,9 @@ function PlaylistModal({userInfo}) {
         type={"text"}
       />
       <div className={styles.spotifyPlayerWrapper}>
-      <SpotifyPlayer 
-        link={playLink}
-      />
+        <SpotifyPlayer
+          link={playLink}
+        />
       </div>
     </div>
   )
