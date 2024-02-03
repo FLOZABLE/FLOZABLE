@@ -102,6 +102,7 @@ Router.get('/spotify-playlists', async (req, res) => {
                 }
             }).then((response) => response.json())
                 .then(async (data) => {
+                  console.log(data)
                     if (!!data.items) {
 
                         /*
