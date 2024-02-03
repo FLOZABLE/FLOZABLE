@@ -97,7 +97,6 @@ Router.get('/spotify-playlists', async (req, res) => {
                         body: `grant_type=refresh_token&refresh_token=${refreshToken.spotify_refresh_token}`,
                     }).then((response) => response.json())
                         .then(async (data) => {
-                            console.log(data);
                             if (data.access_token) {
                                 await redisClient.set(`user:${userId}:spotifyAccessToken`, data.access_token);
                                 redisClient.expire(`user:${userId}:spotifyAccessToken`, 3000); //expire in 50 min (10 minute buffer)
