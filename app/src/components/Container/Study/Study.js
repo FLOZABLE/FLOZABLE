@@ -29,7 +29,8 @@ function Study(props) {
     setIsAddSubjectModal,
     setPlanModal,
     bringSubjects,
-    setIsChatModal
+    setIsChatModal,
+    setResponse,
   } = props;
 
   const [isTimerModal, setIsTimerModal] = useState(false);
@@ -124,6 +125,7 @@ function Study(props) {
         element={
           <PlaylistModal 
           userInfo={userInfo}
+          setResponse={setResponse}
           />
         }
       />
