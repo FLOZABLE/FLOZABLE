@@ -221,9 +221,20 @@ function App() {
     }
   }, [response, userInfo]);
 
+  useEffect(() => {
+    fetch(`${serverOrigin}/playlists/spotify-playlists`, { method: "get" })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      }).catch((err) => {
+        console.log(err);
+      })
+
+  }, [userInfo])
+
   return (
     <Router>
-      <SpotifyCallbackHandler></SpotifyCallbackHandler>
+      <SpotifyCallbackHandler userInfo={userInfo} />
       <TopNotification
         duration={2500}
         response={response}
