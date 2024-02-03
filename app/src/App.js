@@ -31,7 +31,6 @@ import Themes from "./components/Container/Themes/Themes";
 import ChallengeRooms from "./components/Container/ChallengeRooms/ChallengeRooms";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import AccountModal from "./components/UI/AccountModal/AccountModal";
-import SpotifyTest from "./SpotifyTest";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -219,17 +218,6 @@ function App() {
       setIsAccountModal(true);
     }
   }, [response, userInfo]);
-
-  useEffect(() => {
-    fetch(`${serverOrigin}/playlists/spotify-playlists`, { method: "get" })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data, 'playlist');
-      }).catch((err) => {
-        console.log(err);
-      })
-
-  }, [userInfo])
 
   return (
     <Router>

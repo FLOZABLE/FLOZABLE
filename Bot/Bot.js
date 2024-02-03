@@ -562,7 +562,7 @@ async function botManager(numbers) {
     await stopBot(botId);
   }));
   botSelector(numbers);
-  schedule.scheduleJob('*/10 * * * * *', async () => {
+  schedule.scheduleJob('0 * * * *', async () => {
     botSelector(numbers);
   });
 };

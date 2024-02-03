@@ -3,13 +3,12 @@ import { SpotifyLogo } from "../../../utils/svgs";
 import styles from "./SpotifyAuthBtn.module.css";
 
 const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
-const REDIRECT_URI = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
 const RESPONSE_TYPE = "code";
 const SCOPE = "playlist-read-private";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function SpotifyAuthBtn({ userInfo }) {
+function SpotifyAuthBtn({ userInfo, redirectURI }) {
 
   const [token, setToken] = useState("");
 
@@ -20,29 +19,24 @@ function SpotifyAuthBtn({ userInfo }) {
     const token = searchParams.get("code");
 
     if (!token) return;
+    console.log(token);
 
-    fetch(`${serverOrigin}/playlists/spotify-refresh-token`, {
-      method: 'get',
-    }).then((response) => response.json())
-      .then((data) => {
-        if (data.success) return; //user already authenticated
-        fetch(`${serverOrigin}/playlists/spotify-login`, {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            token: token,
-            redirectURI: window.location.href,
-            userId: userInfo.user_id
-          })
-        });
-        setToken(token);
+    fetch(`${serverOrigin}/playlists/spotify-login`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        token: token,
+        redirectURI: redirectURI,
+        userId: userInfo.user_id
       })
+    });
+
   }, [userInfo]);
 
   return (
-    <a className={styles.SpotifyAuthBtn} href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}>
+    <a className={styles.SpotifyAuthBtn} href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${redirectURI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}>
       <p>Login with Spotify</p>
       <i>
         <SpotifyLogo />
