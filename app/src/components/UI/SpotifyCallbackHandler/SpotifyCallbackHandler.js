@@ -11,48 +11,48 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function SpotifyCallbackHandler({ userInfo }) {
 
-    const [token, setToken] = useState("");
+  const [token, setToken] = useState("");
 
-    useEffect(() => {
-        if (window.location.href.includes("code=") && !!userInfo) {
-            let token = window.location.href.split("code=")[1];
+  useEffect(() => {
+    if (window.location.href.includes("code=") && !!userInfo) {
+      let token = window.location.href.split("code=")[1];
 
-            fetch(`${serverOrigin}/playlists/spotify-refresh-token`, {
-                method: 'get',
-            }).then((response) => response.json())
-                .then((data) => {
-                    if (data.success) return; //user already authenticated
-                    else {
-                        fetch(`${serverOrigin}/playlists/spotify-login`, {
-                            method: 'post',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                token: token,
-                                redirectURI: REDIRECT_URI,
-                                userId: userInfo.user_id
-                            })
-                        });
+      fetch(`${serverOrigin}/playlists/spotify-refresh-token`, {
+        method: 'get',
+      }).then((response) => response.json())
+        .then((data) => {
+          if (data.success) return; //user already authenticated
+          else {
+            fetch(`${serverOrigin}/playlists/spotify-login`, {
+              method: 'post',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                token: token,
+                redirectURI: REDIRECT_URI,
+                userId: userInfo.user_id
+              })
+            });
 
-                        setToken(token);
-                    }
-                })
-        }
-    }, [userInfo]);
+            setToken(token);
+          }
+        })
+    }
+  }, [userInfo]);
 
-    return (
-        <div>
-            {
-                !token ?
-                    <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}>
-                        Login to Spotify
-                    </a>
-                    :
-                    <button>Logged in Sucessfully</button>
-            }
-        </div>
-    );
+  return (
+    <div>
+      {
+        !token ?
+          <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}>
+            Login to Spotify
+          </a>
+          :
+          <button>Logged in Sucessfully</button>
+      }
+    </div>
+  );
 };
 
 export default SpotifyCallbackHandler;
