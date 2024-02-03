@@ -6,7 +6,7 @@ const CLIENT_SECRET = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 const REDIRECT_URI = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
 const RESPONSE_TYPE = "code";
-const SCOPE = "user-read-email";
+const SCOPE = "playlist-read-private";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function SpotifyCallbackHandler({ userInfo }) {
