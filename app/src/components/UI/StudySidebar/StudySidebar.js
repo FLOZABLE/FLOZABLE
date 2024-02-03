@@ -14,6 +14,7 @@ import {
   faHourglass,
   faImage,
   faMicrophone,
+  faMusic,
   faUpRightAndDownLeftFromCenter,
   faUsers,
   faVolumeHigh,
@@ -75,7 +76,9 @@ function StudySidebar({
   setIsMic,
   isCam,
   isMic,
-  bringSubjects
+  bringSubjects,
+  setIsPlaylistModal,
+  isPlaylistModal
 }) {
   const [items, setItems] = useState([
     {
@@ -238,11 +241,29 @@ function StudySidebar({
         </div>
       ),
     },
-
     {
       id: 8,
       element: (
         <FullScreenBtn isZoom={isZoom} setIsZoom={setIsZoom} />
+      ),
+    },
+    {
+      id: 9,
+      element: (
+        <div
+          className={`${styles.studyTool} ${isGroupModal ? styles.clicked : ""
+            }`}
+          onClick={() => {
+            setIsPlaylistModal((prev) => !prev);
+          }}
+        >
+          <i>
+            <FontAwesomeIcon icon={faMusic} />
+          </i>
+          <div className={styles.hoverEl}>
+            Playlist
+          </div>
+        </div>
       ),
     },
   ]);

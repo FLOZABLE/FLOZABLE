@@ -10,6 +10,7 @@ import PlanTimeline from "../../UI/PlanTimeline/PlanTimeline";
 import VolumeControl from "../../UI/VolumeControl/VolumeControl";
 import ThemeSelector from "../../UI/ThemeSelector/ThemeSelector";
 import MusicModal from "../../UI/MusicModal/MusicModal";
+import PlaylistModal from "../../UI/PlaylistModal/PlaylistModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -32,6 +33,7 @@ function Study(props) {
   } = props;
 
   const [isTimerModal, setIsTimerModal] = useState(false);
+  const [isPlaylistModal, setIsPlaylistModal] = useState(false);
   const [isMicModal, setIsMicModal] = useState(false);
   const [isCamModal, setIsCamModal] = useState(false);
   const [isPlannerModal, setIsPlannerModal] = useState(false);
@@ -116,9 +118,15 @@ function Study(props) {
 
   return (
     <div className={styles.StudyContainer}>
-      {/* <Draggable>
-        
-      </Draggable> */}
+      <StudyModalContainer 
+        startPos={{ x: "10vw", y: "5vh" }}
+        isDisp={isPlaylistModal}
+        element={
+          <PlaylistModal 
+          userInfo={userInfo}
+          />
+        }
+      />
       <StudyModalContainer
         startPos={{ x: "5vw", y: "5vh" }}
         isDisp={isTimerModal}
@@ -170,6 +178,8 @@ function Study(props) {
         />
       }
       <StudySidebar
+        setIsPlaylistModal={setIsPlaylistModal}
+        isPlaylistModal={isPlaylistModal}
         isTimerModal={isTimerModal}
         isPlannerModal={isPlannerModal}
         isTemplateModal={isTemplateModal}

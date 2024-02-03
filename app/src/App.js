@@ -32,7 +32,6 @@ import ChallengeRooms from "./components/Container/ChallengeRooms/ChallengeRooms
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import AccountModal from "./components/UI/AccountModal/AccountModal";
 import SpotifyTest from "./SpotifyTest";
-import SpotifyCallbackHandler from "./components/UI/SpotifyCallbackHandler/SpotifyCallbackHandler"
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -225,7 +224,7 @@ function App() {
     fetch(`${serverOrigin}/playlists/spotify-playlists`, { method: "get" })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        console.log(data, 'playlist');
       }).catch((err) => {
         console.log(err);
       })
@@ -234,7 +233,6 @@ function App() {
 
   return (
     <Router>
-      <SpotifyCallbackHandler userInfo={userInfo} />
       <TopNotification
         duration={2500}
         response={response}

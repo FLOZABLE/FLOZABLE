@@ -1,0 +1,13 @@
+.PlaylistModal {
+  position: relative;
+}
+
+.PlaylistModal .authGuide {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0px 0px 20px 0px;
+}
+
+.PlaylistModal .spotifyPlayerWrapper {
+  margin-top: 10px;
+}
