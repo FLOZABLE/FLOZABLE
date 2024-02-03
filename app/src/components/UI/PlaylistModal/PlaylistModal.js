@@ -9,114 +9,12 @@ import SpotifyPlayer from "../SpotifyPlayer/SpotifyPlayer";
 const appOrigin = process.env.REACT_APP_LOCATION;
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-const playlists = [
-  {
-    id: 1,
-    name: 'playlist1',
-    songs: [
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      },
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      },
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      },
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      }
-    ]
-  },
-  {
-    id: 1,
-    name: 'playlist1',
-    songs: [
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      },
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      },
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      },
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      }
-    ]
-  },
-  {
-    id: 1,
-    name: 'playlist1',
-    songs: [
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      },
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      },
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      },
-      {
-        name: 'song1',
-        image: 'https://',
-        url: 'https://',
-        author: 'ong'
-      }
-    ]
-  }
-]
+
 function PlaylistModal({ userInfo, setResponse }) {
-  const [playlist, setPlaylist] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
+  const [spotifyLoggedIn, setSpotifyLoggedIn] = useState(false);
   const [link, setLink] = useState("");
   const [playLink, setPlayLink] = useState(null);
-  const [redirectURI, setRedirectURI] = useState("");
-
-  useEffect(() => {
-    setRedirectURI(`${appOrigin}/dashboard/study`);
-    console.log(appOrigin)
-  }, []);
-
-  useEffect(() => {
-    if (playlist.length) {
-      setPlaylist([playlists]);
-    }
-  }, []);
 
   const submitURL = () => {
     console.log(link);
@@ -143,26 +41,28 @@ function PlaylistModal({ userInfo, setResponse }) {
 
 
   useEffect(() => {
-    fetch(`${serverOrigin}/playlists/spotify-refresh-token`, {
-      method: 'get',
-    }).then((response) => response.json())
+    fetch(`${serverOrigin}/playlists/spotify-playlists`, { method: "get" })
+      .then((response) => response.json())
       .then((data) => {
-        if (data.success) return; //user already authenticated
-        fetch(`${serverOrigin}/playlists/spotify-playlists`, { method: "get" })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data, 'playlist');
-          }).catch((err) => {
-            console.log(err);
-          })
-      });
-
-  }, [userInfo])
+        console.log(data, 'playlist');
+        if (data.success) {
+          setPlaylists(data.data);
+          setSpotifyLoggedIn(true);
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+  }, [userInfo]);
 
   return (
     <div className={styles.PlaylistModal}>
       <div className={styles.authGuide}>
-        <p>Connect your Spotify account to bring your playlists!</p>
+        {
+          spotifyLoggedIn ?
+            <div></div>
+            :
+            <p>Connect your Spotify account to bring your playlists!</p>
+        }
         <SpotifyAuthBtn setResponse={setResponse} redirectURI={`${appOrigin}/dashboard/study`} userInfo={userInfo} />
       </div>
       {/* <DropDownButton
