@@ -1,9 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
-const CLIENT_ID = "";
-const CLIENT_SECRET = "";
-const REDIRECT_URI = "http://localhost:3001"
+const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+const CLIENT_SECRET = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
+const REDIRECT_URI = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
 const RESPONSE_TYPE = "code";
 const SCOPE = "user-read-email";
@@ -14,8 +14,30 @@ function SpotifyTest({ }) {
 
 
     const logout = () => {
-        setToken("")
-        window.localStorage.removeItem("token")
+        setToken("");
+    }
+
+    const getRefreshToken = (refreshToken) => {
+
+        // refresh token that has been previously stored
+        const url = "https://accounts.spotify.com/api/token";
+
+        fetch('https://accounts.spotify.com/api/token', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                grant_type: 'refresh_token',
+                refreshToken: refreshToken,
+                clientId: CLIENT_ID
+            })
+        }).then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+            }).catch((err) => {
+                console.log(err);
+            });
     }
 
     /*const searchArtists = async (e) => {
@@ -35,59 +57,57 @@ function SpotifyTest({ }) {
             .catch((error) => console.error(error));
     }*/
 
+    /*
     useEffect(() => {
-        let token = window.localStorage.getItem("code");
-        if (window.location.href.includes("code="));
-
-        if (!token) {
-            token = window.location.href.split("code=")[1];
-            window.localStorage.setItem("code", token);
-            fetch('https://accounts.spotify.com/api/token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&grant_type=authorization_code&code=' + token + '&redirect_uri=' + 'http://localhost:3001'
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log(data);
-                    if (data.refresh_token) {
-                        //Store in server
-
-                        //Get access token
-                        token = data.access_token;
-
-                        fetch('https://api.spotify.com/v1/me', {
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            }
-                        })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            console.log(data);
-                        }).catch((err) => {
-                            console.log(err);
-                        })
-
-                        setToken(token);
-                    }
+        let token = false
+        if (window.location.href.includes("code=")) {
+            if (!token) {
+                token = window.location.href.split("code=")[1];
+                fetch('https://accounts.spotify.com/api/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&grant_type=authorization_code&code=' + token + '&redirect_uri=' + REDIRECT_URI
                 })
-                .catch((error) => {
-                    console.log(error);
-                });
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data);
+                        if (data.refresh_token) {
+                            //Store in server
+
+                            //Get access token
+                            token = data.access_token;
+
+                            fetch('https://api.spotify.com/v1/me', {
+                                headers: {
+                                    'Authorization': `Bearer ${token}`
+                                }
+                            })
+                                .then((response) => response.json())
+                                .then((data) => {
+                                    console.log(data);
+                                }).catch((err) => {
+                                    console.log(err);
+                                })
+
+                            setToken(token);
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }
         }
     }, []);
+    */
 
     return (
         <div>
             {
-                !token ?
-                    <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}>
-                        Login to Spotify
-                    </a>
-                    :
-                    <button onClick={logout}>Logout</button>
+                <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}>
+                    Login to Spotify
+                </a>
             }
         </div>
     );
