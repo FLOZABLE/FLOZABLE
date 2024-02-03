@@ -19,6 +19,7 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import GoogleLoginBtn from "../../UI/GoogleLoginBtn/GoogleLoginBtn";
 import { useSearchParams } from "react-router-dom";
 import SpotifyAuthBtn from "../../UI/SpotifyAuthBtn/SpotifyAuthBtn";
+import { SpotifyLogo } from "../../../utils/svgs";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;
@@ -540,29 +541,13 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
             <div className={styles.content}>
               <div className={styles.layer}>
                 <div className={styles.iconWrapper}>
-                  <GoogleCalendar />
+                  <SpotifyLogo />
                 </div>
                 <div className={styles.explanation}>
                   You haven't connected your Spotify Account yet or you aren't authorized. Please authorize our application to access your Spotify Playlists here.
                 </div>
                 <div className={styles.authBtn}>
-                  {/* <OptionToggleBtn
-                    opt1={{ val: 0, name: "Connect" }}
-                    opt2={{ val: 1, name: "Connected!" }}
-                    value={isGoogleCalendar}
-                    setValue={setIsGoogleCalendar}
-                  /> */}
-                  {/* <GoogleLogin
-                    clientId={googleClientId}
-                    buttonText={'Sign In'}
-                    onSuccess={onSuccess}
-                    onFailure={onFailure}
-                    cookiePolicy={'single_host_origin'}
-                    responseType='code'
-                    accessType="offline"
-                    scope="openid email profile https://www.googleapis.com/auth/calendar"
-                  /> */}
-                  <SpotifyAuthBtn userInfo={userInfo} redirectURI={`${appOrigin}/dashboard/account`}/>
+                  <SpotifyAuthBtn setResponse={setResponse} userInfo={userInfo} redirectURI={`${appOrigin}/dashboard/account`} />
                 </div>
               </div>
             </div>

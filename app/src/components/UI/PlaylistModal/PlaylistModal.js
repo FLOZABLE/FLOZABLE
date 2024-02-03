@@ -101,7 +101,7 @@ const playlists = [
     ]
   }
 ]
-function PlaylistModal({ userInfo }) {
+function PlaylistModal({ userInfo, setResponse }) {
   const [playlist, setPlaylist] = useState([]);
   const [link, setLink] = useState("");
   const [playLink, setPlayLink] = useState(null);
@@ -163,7 +163,7 @@ function PlaylistModal({ userInfo }) {
     <div className={styles.PlaylistModal}>
       <div className={styles.authGuide}>
         <p>Connect your Spotify account to bring your playlists!</p>
-        <SpotifyAuthBtn redirectURI={`${appOrigin}/dashboard/study`} userInfo={userInfo} />
+        <SpotifyAuthBtn setResponse={setResponse} redirectURI={`${appOrigin}/dashboard/study`} userInfo={userInfo} />
       </div>
       {/* <DropDownButton
         options={[
