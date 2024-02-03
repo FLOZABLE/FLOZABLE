@@ -53,6 +53,29 @@ Router.get('/spotify-refresh-token', async (req, res) => {
 });
 
 Router.get('/spotify-playlists', async (req, res) => {
+
+    async function searchForPlaylists(currentAccessToken) {
+        const accessToken = currentAccessToken;
+        const userPlaylists = [];
+
+        fetch('https://api.spotify.com/v1/me/playlists', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        }).then((response) => response.json())
+            .then(async (data) => {
+                if (!!data.items) {
+                    data.items.map((playlist) => {
+                        userPlaylists.push(playlist.external_urls.spotify)
+                    });
+                    return res.send({ success: true, data: userPlaylists });
+                }
+                else {
+                    return res.send({ success: false, reason: "An error occured" });
+                }
+            });
+    }
+
     autoSignin(req, res, (async () => {
         const connection = pool.promise();
         try {
@@ -74,16 +97,18 @@ Router.get('/spotify-playlists', async (req, res) => {
                         body: `grant_type=refresh_token&refresh_token=${refreshToken.spotify_refresh_token}`,
                     }).then((response) => response.json())
                         .then(async (data) => {
+                            console.log(data);
                             if (data.access_token) {
                                 await redisClient.set(`user:${userId}:spotifyAccessToken`, data.access_token);
                                 redisClient.expire(`user:${userId}:spotifyAccessToken`, 3000); //expire in 50 min (10 minute buffer)
                                 currentAccessToken = data.access_token;
+                                searchForPlaylists(currentAccessToken);
                             }
                             else {
                                 return res.send({ success: false, reason: "Access Token Unable to Refresh" });
                             }
                         }).catch((err) => {
-                            console.log(err);
+                            console.log(86, err);
                         });
                 }
                 else {
@@ -92,51 +117,8 @@ Router.get('/spotify-playlists', async (req, res) => {
             }
             else {
                 currentAccessToken = await redisClient.get(`user:${userId}:spotifyAccessToken`);
+                searchForPlaylists(currentAccessToken);
             }
-            const accessToken = currentAccessToken;
-            const userPlaylists = [];
-
-            fetch('https://api.spotify.com/v1/me/playlists', {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            }).then((response) => response.json())
-                .then(async (data) => {
-                  console.log(data)
-                    if (!!data.items) {
-
-                        /*
-                        await Promise.all(data.items.map(async (playlist) => {
-                            let playlistObj = { name: playlist.name };
-                            const playlistItems = [];
-                            await fetch(`${playlist.href}/tracks`, {
-                                headers: {
-                                    'Authorization': `Bearer ${accessToken}`
-                                }
-                            }).then((response) => response.json())
-                                .then((playlistData) => {
-                                    if (playlistData.items) {
-                                        playlistData.items.map(({ track }) => {
-                                            playlistItems.push({ name: track.name, url: track.external_urls.spotify, artists: track.artists });
-                                        });
-                                        playlistObj = { ...playlistObj, tracks: playlistItems };
-                                    }
-                                    userPlaylists.push(playlistObj);
-                                });
-                        }));
-                        */
-                        
-                        data.items.map((playlist) => {
-                            userPlaylists.push(playlist.external_urls.spotify)
-                        });
-
-                        return res.send({ success: true, data: userPlaylists });
-                    }
-                    else {
-                        return res.send({ success: false, reason: "An error occured" });
-                    }
-                })
-
         } catch (err) {
             console.log(err);
         }
