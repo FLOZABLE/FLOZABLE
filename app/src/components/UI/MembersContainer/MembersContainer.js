@@ -101,7 +101,7 @@ useEffect(() => {
   if (!isFocus) return;
   setTimeout(() => {
     getRouterRtpCapabilities();
-  }, 5000);
+  }, 1000);
 }, [isFocus]);
 
 useEffect(() => {

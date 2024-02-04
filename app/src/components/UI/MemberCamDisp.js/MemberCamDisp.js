@@ -97,6 +97,22 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
     }
   }, [memberInfo, isFocus, recvTransport, device]);
 
+  useEffect(() => {
+    if (!memberInfo || !isFocus) return;
+    const { user_id } = memberInfo;
+
+    const onRemoveProducer = () => {
+      videoRef.current.srcObject = null;
+      audioRef.current.srcObject = null;
+    };
+
+    mediaSocket.on(`removeProducer:${user_id}`, onRemoveProducer);
+
+    return () => {
+      mediaSocket.off(`removeProducer:${user_id}`, onRemoveProducer);
+    }
+  }, [memberInfo, isFocus]);
+
   return (
     <div className={styles.MemberCamDisp}>
       <video
