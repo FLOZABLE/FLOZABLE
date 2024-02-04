@@ -106,6 +106,12 @@ const consumers = {};
           delete rooms[userId];
         };
       });
+
+      if (activeGroup) {
+        socket.to(activeGroup).emit(`removeProducer:${userId}`);
+        removeConsumer(activeGroup, userId);
+        removeProducer(activeGroup, userId);
+      }
       socket.join(groupId);
       console.log('changegroup', userId, groupId)
       activeGroup = groupId;
@@ -247,6 +253,14 @@ const consumers = {};
       if (!consumer) return;
       console.log('resume', consumer.id, kind)
       await consumer.resume()
+    });
+
+    socket.on('disconnect', () => {
+      if (activeGroup) {
+        socket.to(activeGroup).emit(`removeProducer:${userId}`);
+        removeConsumer(activeGroup, userId);
+        removeProducer(activeGroup, userId);
+      }
     })
   });
 
@@ -314,6 +328,12 @@ const addProducer = async (roomId, userId, producer, kind) => {
   //producers[roomId][userId] = producer;
 };
 
+const removeProducer = async (roomId, userId) => {
+  if (producers[roomId] && producers[roomId][userId]) {
+    delete producers[roomId].userId;
+  }
+}
+
 const addConsumer = async (roomId, userId, targetId,consumer, kind) => {
   if (!consumers[roomId]) {
     consumers[roomId] = {};
@@ -331,6 +351,18 @@ const addConsumer = async (roomId, userId, targetId,consumer, kind) => {
   };
   //consumers[roomId][userId][targetId] = consumer;
 };
+
+const removeConsumerTarget = async (roomId, userId, targetId) => {
+  if (consumers[roomId] && consumers[roomId][userId] && consumers[roomId][userId][targetId]) {
+    delete consumers[roomId][userId].targetId;
+  }
+}
+
+const removeConsumer = async (roomId, userId) => {
+  if (consumers[roomId] && consumers[roomId][userId]) {
+    delete consumers[roomId].userId;
+  }
+}
 
 
 const getProducer = (roomId, userId, kind) => {
