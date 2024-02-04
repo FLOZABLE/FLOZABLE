@@ -57,7 +57,6 @@ function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
         />
       </div>
       {audioChoices.map((audio, i) => {
-        console.log(audio);
         return (
           <div className={styles.audioWrapper} key={i}>
           <div className={styles.audioDescription}>
