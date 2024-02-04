@@ -12,12 +12,12 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function PlaylistModal({ userInfo, setResponse }) {
   const [playlists, setPlaylists] = useState([]);
+  const [playlist, setPlaylist] = useState("");
   const [spotifyLoggedIn, setSpotifyLoggedIn] = useState(false);
   const [link, setLink] = useState("");
   const [playLink, setPlayLink] = useState(null);
 
   const submitURL = () => {
-    console.log(link);
     try {
       const url = new URL(link);
       if (url.hostname === "open.spotify.com") {
@@ -25,7 +25,7 @@ function PlaylistModal({ userInfo, setResponse }) {
         if (urlPaths[1] !== "embed") {
           urlPaths.unshift("embed");
           const modifiedURL = "https://open.spotify.com/" + urlPaths.join("/");
-          setPlayLink(modifiedURL);
+          setPlaylist(modifiedURL);
         } else {
           setPlayLink(link);
         };
@@ -64,14 +64,21 @@ function PlaylistModal({ userInfo, setResponse }) {
             <p>Connect your Spotify account to bring your playlists!</p>
         }
         <SpotifyAuthBtn setResponse={setResponse} redirectURI={`${appOrigin}/dashboard/study`} userInfo={userInfo} />
+        {
+          spotifyLoggedIn ?
+            <DropDownButton
+              options={
+                playlists.map((choice) => {
+                  const modifiedURL = choice.url.replace("https://open.spotify.com", "https://open.spotify.com/embed");
+                  return { name: choice.name, value: modifiedURL }
+                })
+              }
+              setValue={setPlaylist}
+            />
+            :
+            <div></div>
+        }
       </div>
-      {/* <DropDownButton
-        options={[
-          { name: "Playlist1", value: 0 },
-          { name: "Playlist1", value: 1 },
-        ]}
-        setValue={setPlaylist}
-      /> */}
       <CustomInput
         input={link}
         handleInput={handleLinkInput}
@@ -82,7 +89,7 @@ function PlaylistModal({ userInfo, setResponse }) {
       />
       <div className={styles.spotifyPlayerWrapper}>
         <SpotifyPlayer
-          link={playLink}
+          link={playlist}
         />
       </div>
     </div>
