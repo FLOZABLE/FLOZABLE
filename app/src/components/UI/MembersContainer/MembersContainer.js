@@ -12,6 +12,8 @@ function MembersContainer({isFocus, userInfo, groupInfo, setStudyingMembers, mem
   const [membersEl, setMembersEl] = useState([]);
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
   const [localStream, setLocalStream] = useState(null);
+  const [videoStream, setVideoStream] = useState(null);
+  const [audioStream, setAudioStream] = useState(null);
   const [device, setDevice] = useState(null);
   const [recvTransport, setRecvTransport] = useState(null);
   /**
@@ -23,6 +25,7 @@ function MembersContainer({isFocus, userInfo, groupInfo, setStudyingMembers, mem
  */
 const getRouterRtpCapabilities = async () => {
   mediaSocket.emit("getRouterRtpCapabilities", ({rtpCapabilities}) => {
+    console.log('SFU: get rtp capabilities', rtpCapabilities)
     setRtpCapabilities(rtpCapabilities);
   });
 };
@@ -72,10 +75,11 @@ const createRecvTransport = async () => {
        * using the parameters provided by the server.
        */
       const transport = await device.createRecvTransport(params);
-
+      console.log('create recv transport', transport);
       await transport.on(
         "connect",
         async ({ dtlsParameters }, callback, errback) => {
+          console.log("transport connect")
           try {
             // Notify the server that the transport is ready to connect with the provided DTLS parameters
             await mediaSocket.emit("transport-recv-connect", { dtlsParameters });
@@ -95,7 +99,9 @@ const createRecvTransport = async () => {
 
 useEffect(() => {
   if (!isFocus) return;
-  getRouterRtpCapabilities();
+  setTimeout(() => {
+    getRouterRtpCapabilities();
+  }, 5000);
 }, [isFocus]);
 
 useEffect(() => {
@@ -127,30 +133,45 @@ useEffect(() => {
   }, [isFocus, userInfo, groupInfo]);
 
   useEffect(() => {
-    if (isCam || isMic) {
+    if (!isCam) return;
+
+    try {
       navigator.mediaDevices
-        .getUserMedia({
-          audio: false,
-          video: {
-            width: {
-              min: 640,
-              max: 1920,
-            },
-            height: {
-              min: 400,
-              max: 1080,
-            }
+      .getUserMedia({
+        video: {
+          width: {
+            min: 640,
+            max: 1920,
+          },
+          height: {
+            min: 400,
+            max: 1080,
           }
-        })
-        .then(async(stream) => {
-          setLocalStream(stream);
-          try {
-          } catch (err) {
-            console.log(err);
-          }
-        });
+        }
+      })
+      .then(async(stream) => {
+        setVideoStream(stream);
+      });
+    } catch (err) {
+      console.log(err);
     };
-  }, [isCam, isMic]);
+  }, [isCam]);
+
+  useEffect(() => {
+    if (!isMic) return;
+
+    try {
+      navigator.mediaDevices
+      .getUserMedia({
+        audio: true,
+      })
+      .then(async(stream) => {
+        setAudioStream(stream);
+      });
+    } catch (err) {
+      console.log(err);
+    };
+  }, [isMic]);
 
   useEffect(() => {
     if (!userInfo || !isFocus) return;
@@ -174,7 +195,8 @@ useEffect(() => {
           memberInfo={memberInfo}
           key={i}
           setStudyingMembers={setStudyingMembers}
-          localStream={localStream}
+          videoStream={videoStream}
+          audioStream={audioStream}
           isFocus={isFocus}
           device={device}
           />
@@ -193,7 +215,7 @@ useEffect(() => {
       }
     }));
     setStudyingMembers(studyingMembers);
-  }, [members, localStream, userInfo, isFocus, device, recvTransport]);
+  }, [members, videoStream, audioStream, userInfo, isFocus, device, recvTransport]);
 
   return (
     <div className={styles.MembersContainer}>

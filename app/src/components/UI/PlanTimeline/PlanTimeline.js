@@ -81,7 +81,6 @@ function PlanTimeline({
         planSeries.push({ id, icon, color, name, val, total, completed });
       }
     });
-    console.log("Setting to: ", planSeries, "Time\n", viewDate);
     setPlanSeries(planSeries);
   }, [subjects, plans, plansEl]);
 

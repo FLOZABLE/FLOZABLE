@@ -25,7 +25,7 @@ function MyGroupsViewer({
   const [isGroupRankingModal, setIsGroupRankingModal] = useState(false);
 
   useEffect(() => {
-    /* mediaSocket.connect(); */
+    mediaSocket.connect();
   }, []);
 
   useEffect(() => {
@@ -41,21 +41,24 @@ function MyGroupsViewer({
 
   useEffect(() => {
     setSwiperEl(myGroups.map((group, i) => {
+      const focus = i === selectedGroupIndex;
       return (
         <SwiperSlide key={i} className={styles.groupsWrapper}>
-          <MyGroupContainer
-            group={group}
-            isFocus={i === selectedGroupIndex}
-            studyingUsers={[]}
-            userInfo={userInfo}
-            localStream={localStream}
-            isCam={isCam}
-            isMic={isMic}
-            setIsChatModal={setIsChatModal}
-            setIsGroupRankingModal={setIsGroupRankingModal}
-            setIsEditGroupModal={setIsEditGroupModal}
-            mode={mode}
-          />
+          {focus ?
+            <MyGroupContainer
+              group={group}
+              isFocus={true}
+              studyingUsers={[]}
+              userInfo={userInfo}
+              localStream={localStream}
+              isCam={isCam}
+              isMic={isMic}
+              setIsChatModal={setIsChatModal}
+              setIsGroupRankingModal={setIsGroupRankingModal}
+              setIsEditGroupModal={setIsEditGroupModal}
+              mode={mode}
+            /> : null
+          }
         </SwiperSlide>
       )
     }));
