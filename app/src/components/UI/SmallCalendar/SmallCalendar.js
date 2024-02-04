@@ -7,6 +7,7 @@ import interactionPlugin from "@fullcalendar/interaction"; // Add this import
 /* import '@fullcalendar/daygrid/main.css';
 import '@fullcalendar/interaction/main.css'; */
 import styled from "@emotion/styled";
+import { DateTime } from "luxon";
 
 const StyleWrapper = styled.div`
   .fc td {
@@ -68,6 +69,9 @@ const StyleWrapper = styled.div`
     position: absolute !important;
     top: 0px;
     width: 100%;
+    border-radius: 50%;
+    opacity: 0.75;
+    z-index: 1;
     height: 42px !important;
   }
   .fc-daygrid-day-bg {
@@ -138,26 +142,39 @@ function SmallCalendar({
   planModal,
   width,
   setIsCalendarOpen,
+  subjects = [],
+  showHeatmap = false,
 }) {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    setEvents([
-      {
-        start: viewDate,
-        end: viewDate,
-        allDay: true,
-        display: "background",
-        title: viewDate.getDate(),
-      },
-    ]);
+    const allEvents = [{
+      start: viewDate,
+      end: viewDate,
+      allDay: true,
+      display: "background",
+      title: viewDate.getDate(),
+    }];
+
+    if (showHeatmap && subjects.length) {
+        subjects.daily.groupedTotal.toReversed().map((day, i) => {
+          const currentDay = DateTime.now().minus({ days: i });
+          const stringDay = currentDay.toFormat("yyyy-MM-dd");
+          if (currentDay.startOf('day').equals(DateTime.fromJSDate(viewDate).startOf('day'))) return;
+          allEvents.push({ title: '', date: stringDay, color: `hsla(212, 100%, ${100 - Math.min(25 * Math.sqrt(day / 3600), 60)}%, 1)` });
+          // 0 hours white to 5 dark blue https://www.desmos.com/calculator/sezqjfdbfl
+        })
+    }
+
+    setEvents(allEvents);
+
     if (SmallCalendarApi) {
       SmallCalendarApi.gotoDate(viewDate);
     }
     if (PlannerApi && !planModal) {
       PlannerApi.gotoDate(viewDate);
     }
-  }, [viewDate]);
+  }, [viewDate, subjects]);
 
   const handleDateClick = (arg) => {
     setViewDate(arg.date);
@@ -177,8 +194,8 @@ function SmallCalendar({
   };
 
   return (
-    <StyleWrapper style={{width: width}}>
-      <div className={styles.SmallCalendar} style={{ width: width}}>
+    <StyleWrapper style={{ width: width }}>
+      <div className={styles.SmallCalendar} style={{ width: width }}>
         <FullCalendar
           ref={SmallCalendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
