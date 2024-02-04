@@ -9,7 +9,6 @@ function AudioPlayer({audio}) {
   const [volume, setVolume] = useState(0);
 
   useEffect(() => {
-    console.log(volume);
     if (!audio || (!volume && volume !== 0) || !audio.audio) return;
     try {
       if (volume > 0) audio.audio.play();
