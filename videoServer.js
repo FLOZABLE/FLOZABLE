@@ -49,8 +49,7 @@ async function createWorker() {
     process.exit(1);
   });
 
-  const router = await worker.createRouter({ mediaCodecs });
-  return { worker, router };
+  return worker;
 };
 
 /**
@@ -63,7 +62,7 @@ const producers = {};
 const consumers = {};
 
 (async () => {
-  const {router} = await createWorker();
+  const worker = await createWorker();
   mediaSocket.on('connection', async (socket) => {
     let session;
     let activeGroup;
@@ -118,10 +117,12 @@ const consumers = {};
      * This function is called when a peer requests the router RTP capabilities.
      * The callback function is used to send the router RTP capabilities to the peer.
      */
-    socket.on("getRouterRtpCapabilities", (callback) => {
+    socket.on("getRouterRtpCapabilities", async (callback) => {
+      if (!activeGroup) return;
 
-      const rtpCapabilities = router.rtpCapabilities
-
+      const router = await getRouter(activeGroup, worker);
+      const rtpCapabilities = router.rtpCapabilities;
+      console.log('sent router capabilities')
       // call callback from the client and send back the rtpCapabilities
       callback({ rtpCapabilities })
     });
@@ -135,14 +136,15 @@ const consumers = {};
      */
     socket.on("createTransport", async ({ sender }, callback) => {
       // ... Creating sender/receiver transports ...
+      if (!activeGroup) return;
+      console.log('create transport', sender)
+      const router = await getRouter(activeGroup, worker);
       const { transport, params } = await createWebRtcTransport(router);
-      if (activeGroup) {
-        if (sender) {
-          //producerTransports[userId] = { transport, active: false };
-          addProducerTransport(userId, transport);
-        } else {
-          addConsumerTransport(userId, transport);
-        };
+      if (sender) {
+        //producerTransports[userId] = { transport, active: false };
+        addProducerTransport(userId, transport);
+      } else {
+        addConsumerTransport(userId, transport);
       };
       callback({ params });
     });
@@ -158,6 +160,7 @@ const consumers = {};
       if (!activeGroup) return;
       const consumerTransport = getConsumerTransport(userId);
       if (!consumerTransport) return;
+      console.log('found consumer transport')
       const connection = await consumerTransport.connect({ dtlsParameters });
     })
 
@@ -168,17 +171,16 @@ const consumers = {};
 
       //producer not found pr already produced
       if (!producerTransport) return;
-
       const producer = await producerTransport.produce({
         kind,
         rtpParameters,
       });
 
-      addProducer(activeGroup, userId, producer);
+      addProducer(activeGroup, userId, producer, kind);
       producer.on('transportclose', () => {
         producer.close()
       });
-      mediaSocket.to(activeGroup).emit(`newProducer:${userId}`);
+      mediaSocket.to(activeGroup).emit(`newProducer:${userId}`, kind);
 
       // Send back to the client the Producer's id
       callback({
@@ -186,12 +188,14 @@ const consumers = {};
       })
     })
 
-    socket.on('consume', async ({ rtpCapabilities, targetId }, callback) => {
+    socket.on('consume', async ({ rtpCapabilities, targetId, kind }, callback) => {
       try {
         // check if the router can consume the specified producer
         if (!activeGroup) return;
-        const producer = getProducer(activeGroup, targetId);
+        console.log('consume', kind);
+        const producer = getProducer(activeGroup, targetId, kind);
         if (!producer) return;
+        const router = await getRouter(activeGroup, worker);
         const canConsume = router.canConsume({
           producerId: producer.id,
           rtpCapabilities
@@ -206,7 +210,7 @@ const consumers = {};
             paused: true,
           });
 
-          addConsumer(activeGroup, userId, targetId, consumer);
+          addConsumer(activeGroup, userId, targetId, consumer, kind);
   
           consumer.on('transportclose', () => {
             console.log('transport close from consumer')
@@ -238,16 +242,29 @@ const consumers = {};
       }
     });
 
-    socket.on('consumer-resume', async ({targetId}) => {
-      const consumer = getConsumer(activeGroup, userId, targetId);
+    socket.on('consumer-resume', async ({targetId, kind}) => {
+      const consumer = getConsumer(activeGroup, userId, targetId, kind);
       if (!consumer) return;
-      console.log('resume', consumer.id)
+      console.log('resume', consumer.id, kind)
       await consumer.resume()
     })
   });
 
 
 })();
+
+const getRouter = async (roomId, worker) => {
+  const room = rooms[roomId];
+  if (!room) {
+    rooms[roomId] = {};
+  };
+  //if there is no router for the room, create one
+  if (!rooms[roomId].router) {
+    rooms[roomId].router = await worker.createRouter({ mediaCodecs });
+    return rooms[roomId].router;
+  };
+  return rooms[roomId].router;
+};
 
 const addProducerTransport = async (userId, transport) => {
   producerTransports[userId] = { transport, active: false };
@@ -281,44 +298,70 @@ const getConsumerTransport = (userId) => {
   };
 };
 
-const addProducer = async (roomId, userId, producer) => {
+const addProducer = async (roomId, userId, producer, kind) => {
+  console.log(producer)
   if (!producers[roomId]) {
     producers[roomId] = {};
   };
-  producers[roomId][userId] = producer;
+  if (!producers[roomId][userId]) {
+    producers[roomId][userId] = {};
+  };
+  if (kind === "audio") {
+    producers[roomId][userId].audio = producer;
+  } else {
+    producers[roomId][userId].video = producer;
+  };
+  //producers[roomId][userId] = producer;
 };
 
-const addConsumer = async (roomId, userId, targetId,consumer) => {
+const addConsumer = async (roomId, userId, targetId,consumer, kind) => {
   if (!consumers[roomId]) {
     consumers[roomId] = {};
   };
   if (!consumers[roomId][userId]) {
     consumers[roomId][userId] = {};
   };
-  consumers[roomId][userId][targetId] = consumer;
+  if (!consumers[roomId][userId][targetId]) {
+    consumers[roomId][userId][targetId] = {};
+  };
+  if (kind === "audio") {
+    consumers[roomId][userId][targetId].audio = consumer;
+  } else {
+    consumers[roomId][userId][targetId].video = consumer;
+  };
+  //consumers[roomId][userId][targetId] = consumer;
 };
 
 
-const getProducer = (roomId, userId) => {
+const getProducer = (roomId, userId, kind) => {
   try {
     //not found
     if (!producers[roomId] || !producers[roomId][userId]) return false;
 
     const producer = producers[roomId][userId];
-    return producer;
+    if (kind === "audio") {
+      return producer.audio;
+    };
+    return producer.video;
+    /* const producer = producers[roomId][userId];
+    return producer; */
   } catch (err) {
     console.log(err);
     return false;
   };
 };
 
-const getConsumer = (roomId, userId, targetId) => {
+const getConsumer = (roomId, userId, targetId, kind) => {
   try {
     //not found
     if (!consumers[roomId] || !consumers[roomId][userId] || !consumers[roomId][userId][targetId]) return false;
 
     const consumer = consumers[roomId][userId][targetId];
-    return consumer;
+    if (kind === "audio") {
+      return consumer.audio;
+    };
+    return consumer.video;
+    //return consumer;
   } catch (err) {
     console.log(err);
     return false;

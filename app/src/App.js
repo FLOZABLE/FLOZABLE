@@ -163,7 +163,6 @@ function App() {
               if (plan.completed) {
                 plan.className = "completed";
               }
-              console.log(plan.completed)
               return plan;
             }),
           );

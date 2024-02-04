@@ -29,8 +29,8 @@ if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.env.test' });
 }
 
-const server = http.createServer(app);
-//const server = https.createServer(options, app);
+//const server = http.createServer(app);
+const server = https.createServer(options, app);
 
 const RedisStore = require('connect-redis').default;
 const redisClient = require("./model/redis");
@@ -222,7 +222,7 @@ require('./services/timerUpdate');
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(1, 10);
-botManager(100);
+//botManager(100);
 //deleteBots();
 //addId();
 //createBots(0, 170);
