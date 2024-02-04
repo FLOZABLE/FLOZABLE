@@ -137,7 +137,7 @@ Router.get('/spotify-playlists', async (req, res) => {
             .then(async (data) => {
                 if (!!data.items) {
                     data.items.map((playlist) => {
-                        userPlaylists.push(playlist.external_urls.spotify)
+                        userPlaylists.push({name: playlist.name, url: playlist.external_urls.spotify})
                     });
                     return res.send({ success: true, data: userPlaylists });
                 }
