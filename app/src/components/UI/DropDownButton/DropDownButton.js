@@ -34,6 +34,7 @@ function DropDownButton({ options, setValue }) {
             <li
               key={i}
               onClick={() => {
+                console.log(option.value);
                 setValue(option.value);
                 setDispVal(option.name);
                 setClicked(false);
