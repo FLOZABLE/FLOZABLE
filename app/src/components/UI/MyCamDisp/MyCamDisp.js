@@ -26,29 +26,10 @@ const videoParams = {
 };
 
 const audioParams = {
-  encodings: [
-    {
-      rid: "r0",
-      maxBitrate: 100000,
-      scalabilityMode: "S1T3",
-    },
-    {
-      rid: "r1",
-      maxBitrate: 300000,
-      scalabilityMode: "S1T3",
-    },
-    {
-      rid: "r2",
-      maxBitrate: 900000,
-      scalabilityMode: "S1T3",
-    },
-  ],
-  codecOptions: {
-    videoGoogleStartBitrate: 1000,
-  },
+  encodings: [{ maxBitrate: 900000 }],
 };
 
-function MyCamDisp({ stream, isFocus, device }) {
+function MyCamDisp({ videoStream, audioStream,isFocus, device }) {
   const videoRef = useRef(null);
   const [producerTransport, setProducerTransport] = useState(null);
   /* const [params, setParams] = useState(null); */
@@ -136,11 +117,19 @@ const createSendTransport = async () => {
 };
 
 const transportProduce = async() => {
-  const track = await stream.getVideoTracks()[0];
+  const track = await videoStream.getVideoTracks()[0];
   const localProducer = await producerTransport.produce({track, ...videoParams});
   localProducer.on("trackended", () => { console.log("video track ended"); });
   localProducer.on("transportclose", () => { console.log("video transport ended"); });
-  console.log('local producer', localProducer)
+  console.log('local video producer', localProducer)
+}
+
+const audioTransportProduce = async() => {
+  const track = await audioStream.getAudioTracks()[0];
+  const localProducer = await producerTransport.produce({track, ...audioParams});
+  localProducer.on("trackended", () => { console.log("audio track ended"); });
+  localProducer.on("transportclose", () => { console.log("audio transport ended"); });
+  console.log('local audio producer', localProducer)
 }
 
   useEffect(() => {
@@ -151,14 +140,19 @@ const transportProduce = async() => {
   }, [device, isFocus]);
 
   useEffect(() => {
-    if (!stream || !isFocus) return;
-    videoRef.current.srcObject = stream;
-  }, [stream]);
+    if (!videoStream || !isFocus) return;
+    videoRef.current.srcObject = videoStream;
+  }, [videoStream]);
   
   useEffect(() => {
-    if (!producerTransport || !isFocus || !stream) return;
+    if (!producerTransport || !isFocus || !videoStream) return;
     transportProduce();
-  }, [producerTransport, stream, isFocus]);
+  }, [producerTransport, videoStream, isFocus]);
+
+  useEffect(() => {
+    if (!producerTransport || !isFocus || !audioStream) return;
+    audioTransportProduce();
+  }, [producerTransport, audioStream, isFocus]);
 
   return (
     <div className={styles.MyCamDisp}>
