@@ -149,7 +149,7 @@ function PlanTimelineBar({ events, subjects}) {
       <Swiper
         slidesPerView={2}
         freeMode={true}
-        simulateTouch={false}
+        simulateTouch={true}
         /* pagination={{
         clickable: true,
       }} */
@@ -157,7 +157,7 @@ function PlanTimelineBar({ events, subjects}) {
         speed={1000 * 60 * 60}
         autoplay={{
           delay: 0,
-          disableOnInteraction: false,
+          disableOnInteraction: true,
         }}
         modules={[FreeMode, Autoplay]}
         className={styles.timelineWrapper}

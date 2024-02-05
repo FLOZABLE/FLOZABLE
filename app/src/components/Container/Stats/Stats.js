@@ -604,8 +604,13 @@ function Stats(props) {
                             }
                           }
                         },
-                        dataLabels: {
-                          enabled: false
+                        yaxis: {
+                          labels: {
+                            formatter: function (sec) {
+                              const {value, type} = secondConverter(sec);
+                              return `${value} ${type}`;
+                            }
+                          },
                         },
                         stroke: {
                           curve: 'straight'
@@ -646,9 +651,6 @@ function Stats(props) {
                             enabled: false
                           }
                         },
-                        dataLabels: {
-                          enabled: false
-                        },
                         stroke: {
                           curve: 'straight'
                         },
@@ -665,7 +667,15 @@ function Stats(props) {
                         xaxis: {
                           categories: rankingTrend.labels,
                           range: 7
-                        }
+                        },
+                        yaxis: {
+                          reversed: true,
+                          labels: {
+                            formatter: function (val) {
+                              return `#${val}`;
+                            }
+                          },
+                        },
                       }}
                     />
                   </div>
