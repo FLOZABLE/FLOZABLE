@@ -919,6 +919,39 @@ function IconCameraVideoOffFill(props) {
       />
     </svg>
   );
+};
+
+// icon:headphones-off | Material Design Icons https://materialdesignicons.com/ | Austin Andrews
+
+function IconHeadphonesOff(props) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path d="M12 1a9 9 0 019 9v7c0 .62-.19 1.19-.5 1.67L15 13.18V12h4v-2a7 7 0 00-7-7c-2 0-3.77.82-5.04 2.14L5.55 3.72A8.96 8.96 0 0112 1M2.78 3.5L20.5 21.22l-1.27 1.28-2.5-2.5H15v-1.73l-6-6V20H6a3 3 0 01-3-3v-7c0-1.11.2-2.18.57-3.16L1.5 4.77 2.78 3.5m2.39 4.94C5.06 8.94 5 9.46 5 10v2h3.73L5.17 8.44z" />
+    </svg>
+  );
 }
 
-export { StudyPerson, RestPerson, WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert, Question, Chrome, Punch, GoogleCalendar, Knife, FriendLink, EmailInvitation, Fight1, Google, SpotifyLogo, IconMicFill, IconMicMuteFill, IconCameraVideoFill, IconCameraVideoOffFill };
+// icon:headphone-fill | Remix Icon https://remixicon.com/ | Remix Design
+
+function IconHeadphoneFill(props) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path fill="none" d="M0 0h24v24H0z" />
+      <path d="M4 12h3a2 2 0 012 2v5a2 2 0 01-2 2H4a2 2 0 01-2-2v-7C2 6.477 6.477 2 12 2s10 4.477 10 10v7a2 2 0 01-2 2h-3a2 2 0 01-2-2v-5a2 2 0 012-2h3a8 8 0 10-16 0z" />
+    </svg>
+  );
+}
+
+export { StudyPerson, RestPerson, WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert, Question, Chrome, Punch, GoogleCalendar, Knife, FriendLink, EmailInvitation, Fight1, Google, SpotifyLogo, IconMicFill, IconMicMuteFill, IconCameraVideoFill, IconCameraVideoOffFill, IconHeadphoneFill, IconHeadphonesOff };

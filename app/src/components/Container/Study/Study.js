@@ -49,6 +49,7 @@ function Study(props) {
   const [addPlanResponse, setAddPlanResponse] = useState(null);
   const [isCam, setIsCam] = useState(false);
   const [isMic, setIsMic] = useState(false);
+  const [isHeadphone, setIsHeadphone] = useState(false);
   const [link, setLink] = useState([]);
   const [isViewGroups, setIsViewGroups] = useState(true);
 
@@ -116,6 +117,10 @@ function Study(props) {
       { name: "others", value: "0000000000" },
     ]);
   }, [subjects]);
+
+  useEffect(() => {
+    console.log('head', isHeadphone)
+  }, [isHeadphone])
 
   return (
     <div className={styles.StudyContainer}>
@@ -194,6 +199,8 @@ function Study(props) {
         setIsVolumeModal={setIsVolumeModal}
         isZoom={isZoom}
         setIsZoom={setIsZoom}
+        isHeadphone={isHeadphone}
+        setIsHeadphone={setIsHeadphone}
         setIsViewGroups={setIsViewGroups}
         setIsCam={setIsCam}
         setIsMic={setIsMic}
@@ -216,6 +223,7 @@ function Study(props) {
             isMic={isMic}
             setIsChatModal={setIsChatModal}
             groupsViewerRef={groupsViewerRef}
+            isHeadphone={isHeadphone}
           />
         </div>
         <div className={styles.PlanTimelineBarWrapper}>

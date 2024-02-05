@@ -13,7 +13,7 @@ import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal, setIsGroupRankingModal, setIsEditGroupModal, mode }) {
+function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal, setIsGroupRankingModal, setIsEditGroupModal, mode, isHeadphone }) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -117,6 +117,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
           setMembers={setMembers}
           isMic={isMic}
           isCam={isCam}
+          isHeadphone={isHeadphone}
         />
       </div>
       <div className={styles.buttons}>
