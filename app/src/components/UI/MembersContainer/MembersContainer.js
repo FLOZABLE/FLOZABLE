@@ -11,7 +11,6 @@ window.localStorage.setItem('debug', 'mediasoup-client:WARN* mediasoup-client:ER
 function MembersContainer({isFocus, userInfo, groupInfo, setStudyingMembers, members, setMembers, isCam, isMic}) {
   const [membersEl, setMembersEl] = useState([]);
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
-  const [localStream, setLocalStream] = useState(null);
   const [videoStream, setVideoStream] = useState(null);
   const [audioStream, setAudioStream] = useState(null);
   const [device, setDevice] = useState(null);
@@ -133,43 +132,49 @@ useEffect(() => {
   }, [isFocus, userInfo, groupInfo]);
 
   useEffect(() => {
-    if (!isCam) return;
 
-    try {
-      navigator.mediaDevices
-      .getUserMedia({
-        video: {
-          width: {
-            min: 640,
-            max: 1920,
-          },
-          height: {
-            min: 400,
-            max: 1080,
+    if (isCam) {
+      try {
+        navigator.mediaDevices
+        .getUserMedia({
+          video: {
+            width: {
+              min: 640,
+              max: 1920,
+            },
+            height: {
+              min: 400,
+              max: 1080,
+            }
           }
-        }
-      })
-      .then(async(stream) => {
-        setVideoStream(stream);
-      });
-    } catch (err) {
-      console.log(err);
+        })
+        .then(async(stream) => {
+          setVideoStream(stream);
+        });
+      } catch (err) {
+        console.log(err);
+      };
+    } else {
+      mediaSocket.emit("removeMyProducer", {kind: 'video'});
     };
   }, [isCam]);
 
   useEffect(() => {
-    if (!isMic) return;
 
-    try {
-      navigator.mediaDevices
-      .getUserMedia({
-        audio: true,
-      })
-      .then(async(stream) => {
-        setAudioStream(stream);
-      });
-    } catch (err) {
-      console.log(err);
+    if (isMic) {
+      try {
+        navigator.mediaDevices
+        .getUserMedia({
+          audio: true,
+        })
+        .then(async(stream) => {
+          setAudioStream(stream);
+        });
+      } catch (err) {
+        console.log(err);
+      };
+    } else {
+      mediaSocket.emit("removeMyProducer", {kind: 'audio'});
     };
   }, [isMic]);
 

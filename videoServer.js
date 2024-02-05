@@ -274,6 +274,11 @@ const consumers = {};
       await consumer.resume()
     });
 
+    socket.on('removeMyProducer', async({kind}) => {
+      removeProducer(activeGroup, userId, kind);
+      socket.to(activeGroup).emit(`removeProducer:${userId}`);
+    });
+
     socket.on('disconnect', async () => {
       if (activeGroup) {
         socket.to(activeGroup).emit(`removeProducer:${userId}`);
@@ -355,16 +360,33 @@ const addProducer = async (roomId, userId, producer, kind) => {
   //producers[roomId][userId] = producer;
 };
 
-const removeProducer = async (roomId, userId) => {
-  if (producers[roomId] && producers[roomId][userId]) {
+const removeProducer = async (roomId, userId, kind = false) => {
+  if (!producers[roomId] || !producers[roomId][userId]) {
+    return;
+  };
+
+  if (!kind) {
+    //remove both;
     if (producers[roomId][userId].audio) {
       producers[roomId][userId].audio.close();
     }
     if (producers[roomId][userId].video) {
       producers[roomId][userId].video.close();
     };
-    delete producers[roomId].userId;
-  }
+    delete producers[roomId][userId];
+  };
+
+  if (kind === "audio") {
+    if (producers[roomId][userId].audio) {
+      producers[roomId][userId].audio.close();
+    };
+    delete producers[roomId][userId].audio;
+  } else {
+    if (producers[roomId][userId].video) {
+      producers[roomId][userId].video.close();
+    };
+    delete producers[roomId][userId].video;
+  };
 }
 
 const addConsumer = async (roomId, userId, targetId,consumer, kind) => {
@@ -393,7 +415,7 @@ const removeConsumerTarget = async (roomId, userId, targetId) => {
 
 const removeConsumer = async (roomId, userId) => {
   if (consumers[roomId] && consumers[roomId][userId]) {
-    delete consumers[roomId].userId;
+    delete consumers[roomId][userId];
   }
 }
 
