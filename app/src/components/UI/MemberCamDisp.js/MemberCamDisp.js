@@ -3,7 +3,7 @@ import styles from "./MemberCamDisp.module.css";
 import { mediaSocket } from "../../../mediaSocket";
 import { IconCameraVideoFill, IconCameraVideoOffFill, IconMicFill, IconMicMuteFill } from "../../../utils/svgs";
 
-function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
+function MemberCamDisp({ memberInfo, device, isFocus, recvTransport, isHeadphone }) {
   const videoRef = useRef(null);
   const audioRef = useRef(null);
   const [isAudio, setIsAudio] = useState(false);
@@ -43,14 +43,8 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
         setIsVideo(true);
         console.log('video')
       } else {
-        try {
-          setIsAudio(true);
-          audioRef.current.srcObject = stream;
-          audioRef.current.play();
-          console.log('audio')
-        } catch (err) {
-          console.log(err);
-        }
+        setIsAudio(true);
+        audioRef.current.srcObject = stream;
       }
       //videoRef.current.srcObject = stream;
       /* stream.addTrack(track); */
@@ -127,11 +121,14 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
   }, [memberInfo, isFocus]);
 
   useEffect(() => {
-    document.addEventListener("click", () => {
-      console.log('play');
+    if (!audioRef || !audioRef.current) return;
+    
+    if (isHeadphone) {
       audioRef.current.play();
-    })
-  }, []);
+    } else {
+      audioRef.current.pause();
+    };
+  }, [isHeadphone]);
 
   return (
     <div className={styles.MemberCamDisp}>

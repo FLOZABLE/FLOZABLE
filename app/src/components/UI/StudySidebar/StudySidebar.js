@@ -20,8 +20,9 @@ import {
   faVolumeHigh,
 } from "@fortawesome/free-solid-svg-icons";
 import { socket } from "../../../socket";
+import { IconCameraVideoFill, IconCameraVideoOffFill, IconHeadphoneFill, IconHeadphonesOff, IconMicFill, IconMicMuteFill } from "../../../utils/svgs";
 
-function FullScreenBtn () {
+function FullScreenBtn() {
   const [isZoom, setIsZoom] = useState(false);
 
   useEffect(() => {
@@ -38,26 +39,64 @@ function FullScreenBtn () {
 
   return (
     <div
-    className={`${styles.studyTool} ${isZoom ? styles.clicked : ""}`}
-    onClick={() => {
-      setIsZoom((prev) => !prev);
-    }}
-  >
-    <i>
-      <FontAwesomeIcon
-        icon={
-          isZoom
-            ? faDownLeftAndUpRightToCenter
-            :  faUpRightAndDownLeftFromCenter
-        }
-      />
-    </i>
-    <div className={styles.hoverEl}>
-      Full Screen
+      className={`${styles.studyTool} ${isZoom ? styles.clicked : ""}`}
+      onClick={() => {
+        setIsZoom((prev) => !prev);
+      }}
+    >
+      <i>
+        <FontAwesomeIcon
+          icon={
+            isZoom
+              ? faDownLeftAndUpRightToCenter
+              : faUpRightAndDownLeftFromCenter
+          }
+        />
+      </i>
+      <div className={styles.hoverEl}>
+        Full Screen
+      </div>
     </div>
-  </div>
   )
 };
+
+function HeadphoneBtn() {
+  const [isHeadphone, setIsHeadphone] = useState(false);
+  return (
+    <div
+      className={`${styles.studyTool} ${isHeadphone ? styles.clicked : ""}`}
+      onClick={() => {
+        setIsHeadphone(prev => !prev);
+      }}
+    >
+      <i style={{ fontSize: '23px' }}>
+        {isHeadphone ? <IconHeadphoneFill /> : <IconHeadphonesOff />}
+      </i>
+      <div className={styles.hoverEl}>
+        {isHeadphone ? "Undeafen" : "Deafen"}
+      </div>
+    </div>
+  )
+};
+
+function ButtonContainer({text1, text2, icon1, icon2}) {
+  const [isClicked, setIsClicked] = useState(false);
+  return (
+    <div
+      className={`${styles.studyTool} ${isClicked ? styles.clicked : ""}`}
+      onClick={() => {
+        setIsClicked(prev => !prev);
+      }}
+    >
+      <i style={{ fontSize: '23px' }}>
+        {isClicked ? icon1 : icon2}
+      </i>
+      <div className={styles.hoverEl}>
+        {isClicked ? text1 : text2}
+      </div>
+    </div>
+  )
+}
 
 function StudySidebar({
   isTimerModal,
@@ -78,7 +117,9 @@ function StudySidebar({
   isMic,
   bringSubjects,
   setIsPlaylistModal,
-  isPlaylistModal
+  isPlaylistModal,
+  isHeadphone,
+  setIsHeadphone
 }) {
   const [items, setItems] = useState([
     {
@@ -92,7 +133,7 @@ function StudySidebar({
             bringSubjects();
             socket.emit('exitSession');
           }}
-          style={{zIndex: 9}}
+          style={{ zIndex: 9 }}
         >
           <i>
             <FontAwesomeIcon icon={faHome} />
@@ -148,17 +189,16 @@ function StudySidebar({
       id: 3,
       element: (
         <div
-          className={`${styles.studyTool} ${isCam ? styles.clicked : ""}`}
           onClick={() => {
             setIsCam((prev) => !prev);
           }}
         >
-          <i>
-            <FontAwesomeIcon icon={faCamera} />
-          </i>
-          <div className={styles.hoverEl}>
-            Cam
-          </div>
+          <ButtonContainer 
+            text1={"Turn Off Camera"}
+            text2={"Turn On Camera"}
+            icon1={<IconCameraVideoFill />}
+            icon2={<IconCameraVideoOffFill />}
+          />
         </div>
       ),
     },
@@ -167,23 +207,40 @@ function StudySidebar({
       id: 4,
       element: (
         <div
-          className={`${styles.studyTool} ${isMic ? styles.clicked : ""}`}
           onClick={() => {
             setIsMic((prev) => !prev);
           }}
         >
-          <i>
-            <FontAwesomeIcon icon={faMicrophone} />
-          </i>
-          <div className={styles.hoverEl}>
-            Mic
-          </div>
+          <ButtonContainer 
+            text1={"Mute"}
+            text2={"Unmute"}
+            icon1={<IconMicFill />}
+            icon2={<IconMicMuteFill />}
+          />
         </div>
       ),
     },
 
     {
       id: 5,
+      element: (
+        <div
+          onClick={() => {
+            setIsHeadphone((prev) => !prev);
+          }}
+        >
+          <ButtonContainer 
+            text1={"Deafen"}
+            text2={"Undeafen"}
+            icon1={<IconHeadphoneFill />}
+            icon2={<IconHeadphonesOff />}
+          />
+        </div>
+      ),
+    },
+
+    {
+      id: 6,
       element: (
         <div
           className={`${styles.studyTool} ${isTemplateModal ? styles.clicked : ""
@@ -203,7 +260,7 @@ function StudySidebar({
     },
 
     {
-      id: 6,
+      id: 7,
       element: (
         <div
           className={`${styles.studyTool} ${isVolumeModal ? styles.clicked : ""
@@ -223,7 +280,7 @@ function StudySidebar({
     },
 
     {
-      id: 7,
+      id: 8,
       element: (
         <div
           className={`${styles.studyTool} ${isGroupModal ? styles.clicked : ""
@@ -242,13 +299,13 @@ function StudySidebar({
       ),
     },
     {
-      id: 8,
+      id: 9,
       element: (
         <FullScreenBtn isZoom={isZoom} setIsZoom={setIsZoom} />
       ),
     },
     {
-      id: 9,
+      id: 10,
       element: (
         <div
           className={`${styles.studyTool} ${isGroupModal ? styles.clicked : ""
