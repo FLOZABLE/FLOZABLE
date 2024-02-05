@@ -28,7 +28,7 @@ function DropDownButton({ options, setValue }) {
           <FontAwesomeIcon icon={faCaretDown} />
         </i>
       </button>
-      <ul className={`${styles.options} customScroll`}>
+      <ul className={`${styles.options} customScroll overflowDot`}>
         {options.map((option, i) => {
           return (
             <li
