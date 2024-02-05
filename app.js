@@ -29,8 +29,8 @@ if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.env.test' });
 }
 
-//const server = http.createServer(app);
-const server = https.createServer(options, app);
+const server = http.createServer(app);
+//const server = https.createServer(options, app);
 
 const RedisStore = require('connect-redis').default;
 const redisClient = require("./model/redis");
@@ -258,3 +258,62 @@ extensionManager();
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
 });
+
+//Test
+const Chart = {
+  type: 'line',
+  data: {
+    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    datasets: [{
+      label: 'Hours',
+      data: [1.5, 2.1, 0.2, 3.2, 0.0, 1.1, 0.8]
+    }]
+  }
+}
+const Chart2 = {
+  type: 'donut',
+  data:
+  {
+    labels: ['Math', 'Science', 'English', 'Physics', 'History'],
+    datasets: [{
+      data: [50, 190, 70, 180, 20]
+    }]
+  },
+  options: {
+    legend: {
+      labels: {
+        fontColor: "white",
+        fontSize: 12
+      }
+    },
+    plugins: {
+      doughnutlabel: {
+        labels: [
+          {
+            text: '510',
+            font: { size: 20 }
+          },
+          { text: 'Total' }
+        ]
+      },
+      datalabels: {
+        color: "white",
+      }
+    },
+  },
+}
+
+const ChartURL = "https://quickchart.io/chart?c=" + JSON.stringify(Chart2);
+
+// axios.get(ChartURL)
+//   .then((response) => {
+//     return axios.get(ChartURL, { responseType: 'arraybuffer' })
+//   })
+//   .then((res) => {
+//     return sharp(res.data)
+//       .jpeg({ quality: 100 })
+//       .toFile(`./public/profile-images/ZZZZ-chart-${Math.random()}.jpeg`)
+//   })
+//   .catch((err) => {
+//     console.log(`Couldn't process: ${err}`);
+//   })
