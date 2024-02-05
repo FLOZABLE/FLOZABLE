@@ -2,6 +2,7 @@
   position: relative;
   width: min-content;
   display: flex;
+  font-weight: 600;
 }
 
 .DropDownButton button {
@@ -13,9 +14,14 @@
   width: min-content;
   white-space: nowrap;
   transition: .3s background-color ease-in-out;
+  font-weight: 600;
 }
 
-.DropDownButton button:hover {
+.DropDownButton:hover button {
+  background-color: rgb(230, 226, 226);
+}
+
+.DropDownButton:hover .options {
   background-color: rgb(230, 226, 226);
 }
 
@@ -24,31 +30,37 @@
   border-bottom-right-radius: 0px;
 }
 
-.DropDownButton button.clicked~.options {
-  font-size: 17px;
-  transition: font-size .3s ease-in-out;
+.DropDownButton button.clicked {
+  box-shadow: rgba(0, 0, 0, 0.15) 2.6px 1.95px 1.95px;
 }
 
-.DropDownButton button.clicked .options .option {
-  padding: 3px 20px;
+.DropDownButton button.clicked ~ .options {
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 }
 
 .DropDownButton .options {
   position: absolute;
-  font-size: 0px;
-  transition: font-size .3s ease-in-out;
-  min-width: 100%;
   top: 50px;
+  height: 0px;
   background-color: #fff;
   max-height: 100px;
   overflow-y: auto;
   z-index: 2;
+  width: 100%;
+  transition: .3s height ease-in-out, .3s background-color ease-in-out;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.DropDownButton button.clicked~.options {
+  height: 100px;
 }
 
 .DropDownButton .options .option {
   padding-left: 30px;
   cursor: pointer;
   white-space: nowrap;
+  width: 100%;
 }
 
 .DropDownButton button i {
