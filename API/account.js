@@ -12,6 +12,7 @@ const { validateEmail, validateStrictString, validatePassword, validateURL } = r
 const { UserRefreshClient } = require("google-auth-library")
 const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
 const { extensionIo } = require('../socket');
+const { sendEmail } = require('../email');
 const upload = multer();
 
 Router.get('/accountinfo', async (req, res) => {
@@ -204,6 +205,40 @@ Router.post('/signup-authentication', async (req, res) => {
     res.send({ success: false, reason: "Error" });
   };
 });
+
+//reset password link only available for 24 hr
+const MAX_DURATION = 60 * 60 * 24;
+
+Router.post('/reset-password', async (req, res) => {
+  try {
+    const {email} = req.body;
+
+    const isValidEmail = validateEmail(email);
+  
+    if (!isValidEmail.isValid) {
+      return res.send({success: false, reason: isValidEmail.reason});
+    };
+  
+    const connection = pool.promise();
+  
+    const [[user]] = await connection.query(`SELECT user_id, type FROM users WHERE email = ? LIMIT 1`, [email]);
+  
+    console.log(user)
+    if (!user || user.type === -1) {
+      return res.send({success: false, reason: "No User found!"});
+    };
+
+    const resetId = generateRandomId(30);
+    redisClient.setEx(`resetPw:${resetId}`,MAX_DURATION,  user.user_id);
+    const params = { resetURL: resetId };
+    const to = [{email: 'junjason1126@gmail.com'}];
+    sendEmail(to, params, 4);
+    res.send({success: true, msg: 'Check your email!'})
+  } catch (err) {
+    console.log(err);
+    res.send({success: false, reason: 'Error'});
+  };
+})
 
 Router.post('/update/image', upload.single('image'), async (req, res) => {
   autoSignin(req, res, (async (userId) => {

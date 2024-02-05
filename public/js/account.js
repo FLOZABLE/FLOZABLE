@@ -129,4 +129,27 @@ toSignUpBtn.addEventListener('click', () => {
 if (window.location.href.includes('signin')) {
   dispBlock.classList.add('visible');
   accountModal.classList.add('visible');
-}
+};
+
+const pwResetBtn = document.getElementById("pwResetBtn");
+
+pwResetBtn.addEventListener("click", async () => {
+  const email = document.querySelector('.card-front #logemail').value;
+  console.log(email);
+  fetch('/account/reset-password', {
+    method: 'post',
+    body: JSON.stringify({email}),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data);
+    if (data.success) {
+      successMsg(data.msg);
+    } else {
+      errMsg(data.reason);
+    };
+  }) 
+});
