@@ -40,9 +40,13 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
         videoRef.current.srcObject = stream;
         console.log('video')
       } else {
-        audioRef.current.srcObject = stream;
-        audioRef.current.play();
-        console.log('audio')
+        try {
+          audioRef.current.srcObject = stream;
+          audioRef.current.play();
+          console.log('audio')
+        } catch (err) {
+          console.log(err);
+        }
       }
       //videoRef.current.srcObject = stream;
       /* stream.addTrack(track); */
@@ -112,6 +116,13 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport }) {
       mediaSocket.off(`removeProducer:${user_id}`, onRemoveProducer);
     }
   }, [memberInfo, isFocus]);
+
+  useEffect(() => {
+    document.addEventListener("click", () => {
+      console.log('play');
+      audioRef.current.play();
+    })
+  }, []);
 
   return (
     <div className={styles.MemberCamDisp}>
