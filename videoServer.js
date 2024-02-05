@@ -111,8 +111,27 @@ const consumers = {};
         socket.to(activeGroup).emit(`removeProducer:${userId}`);
         removeConsumer(activeGroup, userId);
         removeProducer(activeGroup, userId);
+        const producerTransport = await getProducerTransport(userId);
+        if (producerTransport) {
+          producerTransport.close();
+        };
+        const consumerTransport = await getConsumerTransport(userId);
+        if (consumerTransport) {
+          consumerTransport.close();
+        };
       }
       socket.join(groupId);
+      console.log(producers, 'producers')
+      if (producers[groupId]) {
+        Object.keys(producers[groupId]).map(userId => {
+          Object.keys(producers[groupId][userId]).map(kind => {
+            console.log('dddd', kind);
+            setTimeout(() => {
+              socket.emit(`newProducer:${userId}`, kind);
+            }, 3000);
+          })
+        })
+      }
       console.log('changegroup', userId, groupId)
       activeGroup = groupId;
     });
@@ -255,11 +274,19 @@ const consumers = {};
       await consumer.resume()
     });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
       if (activeGroup) {
         socket.to(activeGroup).emit(`removeProducer:${userId}`);
         removeConsumer(activeGroup, userId);
         removeProducer(activeGroup, userId);
+        const producerTransport = await getProducerTransport(userId);
+        if (producerTransport) {
+          producerTransport.close();
+        };
+        const consumerTransport = await getConsumerTransport(userId);
+        if (consumerTransport) {
+          consumerTransport.close();
+        };
       }
     })
   });
@@ -330,6 +357,12 @@ const addProducer = async (roomId, userId, producer, kind) => {
 
 const removeProducer = async (roomId, userId) => {
   if (producers[roomId] && producers[roomId][userId]) {
+    if (producers[roomId][userId].audio) {
+      producers[roomId][userId].audio.close();
+    }
+    if (producers[roomId][userId].video) {
+      producers[roomId][userId].video.close();
+    };
     delete producers[roomId].userId;
   }
 }
