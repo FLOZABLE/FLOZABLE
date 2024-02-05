@@ -313,6 +313,10 @@
   cursor: pointer;
 }
 
+#accountModal #pwResetBtn {
+  cursor: pointer;
+}
+
 
 @media (max-width: 1400px) {
 }
