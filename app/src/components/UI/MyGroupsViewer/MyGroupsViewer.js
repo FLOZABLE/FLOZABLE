@@ -17,7 +17,8 @@ function MyGroupsViewer({
   mode,
   setIsChatModal,
   groupsViewerRef,
-  setIsEditGroupModal
+  setIsEditGroupModal,
+  isHeadphone
 }) {
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
   const [swiperEl, setSwiperEl] = useState([]);
@@ -57,12 +58,13 @@ function MyGroupsViewer({
               setIsGroupRankingModal={setIsGroupRankingModal}
               setIsEditGroupModal={setIsEditGroupModal}
               mode={mode}
+              isHeadphone={isHeadphone}
             /> : null
           }
         </SwiperSlide>
       )
     }));
-  }, [myGroups, selectedGroupIndex, localStream, isMic, isCam, mode]);
+  }, [myGroups, selectedGroupIndex, localStream, isMic, isCam, mode, isHeadphone]);
 
   return (
     <div
