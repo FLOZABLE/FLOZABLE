@@ -198,4 +198,22 @@ function createActivitiesTable() {
   `);
 };
 
-module.exports = { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, groupsChatRoomsGeneration, createChallengeRoomsTable, createThemesTable, createActivitiesTable };
+/**
+ * convert columns to utf8mb4_unicode_ci
+ */
+async function utf8mb4Unicode() {
+  const connection = pool.promise();
+  await connection.query(`
+  ALTER TABLE plans MODIFY COLUMN title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  ALTER TABLE plans MODIFY COLUMN description VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  ALTER TABLE plans MODIFY COLUMN subject VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+  ALTER TABLE users MODIFY COLUMN name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+  ALTER TABLE subjects MODIFY COLUMN name char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  `);
+
+  console.log('migration complete');
+}
+
+module.exports = { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, groupsChatRoomsGeneration, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode };

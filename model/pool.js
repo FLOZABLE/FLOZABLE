@@ -11,6 +11,7 @@ const pool = mysql.createPool({
   connectionLimit: 100,
   waitForConnections: true,
   debug: false,
+  charset: 'utf8mb4',
 });
 
 module.exports = pool;

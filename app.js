@@ -228,7 +228,7 @@ const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, c
 //createBots(0, 170);
 //createBotRankings();
 
-const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable } = require('./query');
+const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode } = require('./query');
 const { rankingManager } = require("./services/rankingUpdate");
 const { extensionManager } = require("./services/extension");
 
@@ -249,6 +249,7 @@ app.get('*', (req, res) => {
 // createThemesTable();
 // groupsChatRoomsGeneration();
 // createActivitiesTable();
+// utf8mb4Unicode();
 
 
 rankingManager();
