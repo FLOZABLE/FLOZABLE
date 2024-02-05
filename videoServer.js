@@ -375,6 +375,7 @@ const removeProducer = async (roomId, userId, kind = false) => {
         producers[roomId][userId].video.close();
       };
       delete producers[roomId][userId];
+      return;
     };
   
     if (kind === "audio") {

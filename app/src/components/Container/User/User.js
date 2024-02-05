@@ -17,6 +17,7 @@ import FriendRequestBtn from "../../UI/FriendRequestBtn/FriendRequestBtn";
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
 import ApexChart from 'apexcharts';
 import Chart from 'react-apexcharts';
+import { secondConverter } from "../../../utils/Tool";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -339,7 +340,15 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
                     xaxis: {
                       categories: timeTrend.labels,
                       range: 7
-                    }
+                    },
+                    yaxis: {
+                      labels: {
+                        formatter: function (sec) {
+                          const {value, type} = secondConverter(sec);
+                          return `${value} ${type}`;
+                        }
+                      },
+                    },
                   }}
                 />
               </div>
@@ -386,7 +395,12 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
                       range: 7
                     },
                     yaxis: {
-                      reversed: true
+                      reversed: true,
+                      labels: {
+                        formatter: function (val) {
+                          return `#${val}`;
+                        }
+                      },
                     }
                   }}
                 />
