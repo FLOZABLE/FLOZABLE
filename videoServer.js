@@ -276,7 +276,7 @@ const consumers = {};
 
     socket.on('removeMyProducer', async({kind}) => {
       removeProducer(activeGroup, userId, kind);
-      socket.to(activeGroup).emit(`removeProducer:${userId}`);
+      socket.to(activeGroup).emit(`removeProducer:${userId}`, kind);
     });
 
     socket.on('disconnect', async () => {
@@ -361,32 +361,36 @@ const addProducer = async (roomId, userId, producer, kind) => {
 };
 
 const removeProducer = async (roomId, userId, kind = false) => {
-  if (!producers[roomId] || !producers[roomId][userId]) {
-    return;
-  };
-
-  if (!kind) {
-    //remove both;
-    if (producers[roomId][userId].audio) {
-      producers[roomId][userId].audio.close();
-    }
-    if (producers[roomId][userId].video) {
-      producers[roomId][userId].video.close();
+  try {
+    if (!producers[roomId] || !producers[roomId][userId]) {
+      return;
     };
-    delete producers[roomId][userId];
-  };
-
-  if (kind === "audio") {
-    if (producers[roomId][userId].audio) {
-      producers[roomId][userId].audio.close();
+  
+    if (!kind) {
+      //remove both;
+      if (producers[roomId][userId].audio) {
+        producers[roomId][userId].audio.close();
+      }
+      if (producers[roomId][userId].video) {
+        producers[roomId][userId].video.close();
+      };
+      delete producers[roomId][userId];
     };
-    delete producers[roomId][userId].audio;
-  } else {
-    if (producers[roomId][userId].video) {
-      producers[roomId][userId].video.close();
+  
+    if (kind === "audio") {
+      if (producers[roomId][userId].audio) {
+        producers[roomId][userId].audio.close();
+      };
+      delete producers[roomId][userId].audio;
+    } else {
+      if (producers[roomId][userId].video) {
+        producers[roomId][userId].video.close();
+      };
+      delete producers[roomId][userId].video;
     };
-    delete producers[roomId][userId].video;
-  };
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 const addConsumer = async (roomId, userId, targetId,consumer, kind) => {

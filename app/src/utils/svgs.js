@@ -849,4 +849,76 @@ const SpotifyLogo = (props) => (
   </svg>
 );
 
-export { StudyPerson, RestPerson, WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert, Question, Chrome, Punch, GoogleCalendar, Knife, FriendLink, EmailInvitation, Fight1, Google, SpotifyLogo };
+// icon:mic-fill | Bootstrap https://icons.getbootstrap.com/ | Bootstrap
+
+function IconMicFill(props) {
+  return (
+    <svg
+      fill="currentColor"
+      viewBox="0 0 16 16"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path d="M5 3a3 3 0 016 0v5a3 3 0 01-6 0V3z" />
+      <path d="M3.5 6.5A.5.5 0 014 7v1a4 4 0 008 0V7a.5.5 0 011 0v1a5 5 0 01-4.5 4.975V15h3a.5.5 0 010 1h-7a.5.5 0 010-1h3v-2.025A5 5 0 013 8V7a.5.5 0 01.5-.5z" />
+    </svg>
+  );
+};
+
+// icon:mic-mute-fill | Bootstrap https://icons.getbootstrap.com/ | Bootstrap
+
+function IconMicMuteFill(props) {
+  return (
+    <svg
+      fill="currentColor"
+      viewBox="0 0 16 16"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4.02 4.02 0 0012 8V7a.5.5 0 011 0v1zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a4.973 4.973 0 01-2.43.923V15h3a.5.5 0 010 1h-7a.5.5 0 010-1h3v-2.025A5 5 0 013 8V7a.5.5 0 011 0v1a4 4 0 004 4zm3-9v4.879L5.158 2.037A3.001 3.001 0 0111 3z" />
+      <path d="M9.486 10.607L5 6.12V8a3 3 0 004.486 2.607zm-7.84-9.253l12 12 .708-.708-12-12-.708.708z" />
+    </svg>
+  );
+};
+
+// icon:camera-video-fill | Bootstrap https://icons.getbootstrap.com/ | Bootstrap
+
+function IconCameraVideoFill(props) {
+  return (
+    <svg
+      fill="currentColor"
+      viewBox="0 0 16 16"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path
+        fillRule="evenodd"
+        d="M0 5a2 2 0 012-2h7.5a2 2 0 011.983 1.738l3.11-1.382A1 1 0 0116 4.269v7.462a1 1 0 01-1.406.913l-3.111-1.382A2 2 0 019.5 13H2a2 2 0 01-2-2V5z"
+      />
+    </svg>
+  );
+};
+
+// icon:camera-video-off-fill | Bootstrap https://icons.getbootstrap.com/ | Bootstrap
+
+function IconCameraVideoOffFill(props) {
+  return (
+    <svg
+      fill="currentColor"
+      viewBox="0 0 16 16"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path
+        fillRule="evenodd"
+        d="M10.961 12.365a1.99 1.99 0 00.522-1.103l3.11 1.382A1 1 0 0016 11.731V4.269a1 1 0 00-1.406-.913l-3.111 1.382A2 2 0 009.5 3H4.272l6.69 9.365zm-10.114-9A2.001 2.001 0 000 5v6a2 2 0 002 2h5.728L.847 3.366zm9.746 11.925l-10-14 .814-.58 10 14-.814.58z"
+      />
+    </svg>
+  );
+}
+
+export { StudyPerson, RestPerson, WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert, Question, Chrome, Punch, GoogleCalendar, Knife, FriendLink, EmailInvitation, Fight1, Google, SpotifyLogo, IconMicFill, IconMicMuteFill, IconCameraVideoFill, IconCameraVideoOffFill };
