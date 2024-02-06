@@ -174,7 +174,7 @@ function SmallCalendar({
     if (PlannerApi && !planModal) {
       PlannerApi.gotoDate(viewDate);
     }
-  }, [viewDate]);
+  }, [viewDate, subjects]);
 
   const handleDateClick = (arg) => {
     setViewDate(arg.date);
