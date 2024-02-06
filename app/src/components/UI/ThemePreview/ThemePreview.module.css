@@ -1,53 +1,53 @@
 .ThemePreview {
-    position: relative;
+  position: relative;
 }
 
 .ThemePreview .transitionCircle {
-    position: fixed;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: var(--purple);
-    top: -15px;
-    left: -15px;
-    transition: 1s linear;
-    z-index: 7;
-    visibility: hidden;
+  position: fixed;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--purple);
+  top: -15px;
+  left: -15px;
+  transition: 1s linear;
+  z-index: 7;
+  visibility: hidden;
 }
 
 .ThemePreview .active .transitionCircle {
-    width: 400vw;
-    height: 400vw;
-    top: -200vw;
-    left: -200vw;
-    visibility: visible;
+  width: 400vw;
+  height: 400vw;
+  top: -200vw;
+  left: -200vw;
+  visibility: visible;
 }
 
 .ThemePreview .youtubeWrapper {
-    position: fixed;
-    top: 0%;
-    left: 0%;
-    transition-delay: 1s;
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  transition-delay: 1s;
 }
 
 .ThemePreview .hidden {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .ThemePreview .controlButtons {
-    position: fixed;
-    top: 5%;
-    left: 50%;
-    z-index: 1;
-    transform: translateX(-50%);
-    justify-content: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    background-color: rgba(255, 255, 255, 0.234);
-    padding: 15px;
-    border-radius: 5px;
-    white-space: nowrap;
+  position: fixed;
+  top: 5%;
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  background-color: rgba(255, 255, 255, 0.234);
+  padding: 15px;
+  border-radius: 5px;
+  white-space: nowrap;
 }
 
 .ThemePreview .controlButtons.initial {
@@ -55,21 +55,21 @@
 }
 
 .ThemePreview .controlButtons button {
-    background-color: #fd8a8a;
-    font-weight: 800;
-    color: #fff;
-    padding: 0px 20px;
-    border-radius: 20px;
-    font-size: 16px;
-    padding: 5px;
-    margin: 5px;
+  background-color: #fd8a8a;
+  font-weight: 800;
+  color: #fff;
+  padding: 0px 20px;
+  border-radius: 20px;
+  font-size: 16px;
+  padding: 5px;
+  margin: 5px;
 }
 
 .ThemePreview .controlButtons .volumeIcon {
-    color: var(--gray);
+  color: var(--gray);
 }
 
 .ThemePreview .controlButtons .volumeIcon:hover {
-    color: var(--purple);
-    cursor: pointer;
+  color: var(--purple);
+  cursor: pointer;
 }

@@ -16,12 +16,6 @@ function Planner(props) {
   const [PlannerApi, setPlannerApi] = useState(null);
   const SmallCalendarRef = useRef(null);
   const [SmallCalendarApi, setSmallCalendarApi] = useState(null);
-  const [addPlanResponse, setAddPlanResponse] = useState(null);
-  //const [planModal, setPlanModal] = useState(false);
-  //const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
-  const [subjectsOptions, setSubjectsOptions] = useState(null);
-
-  const [addSubjectResponse, setAddSubjectResponse] = useState(null);
 
   const updateViewer = (item) => {
     setViewMode(item);
@@ -39,19 +33,6 @@ function Planner(props) {
     setSmallCalendarApi(SmallCalendarRef.current.getApi());
   }, [SmallCalendarRef]);
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      //setForceUdt([]);
-    }, 300);
-    return (() => {
-      clearInterval(timeoutId);
-    })
-  }, [props.isSidebarOpen, props.isSidebarHovered]);
-
-  useEffect(() => {
-    setAddPlanResponse(addSubjectResponse);
-  }, [addSubjectResponse]);
-
   return (
     <div className={styles.PlannerContainer}>
       <StuckModal />
@@ -66,7 +47,7 @@ function Planner(props) {
           </div>
           <div className={styles.container}>
             <div className={styles.planner}>
-              <EventPlanner setResponse={setResponse} planModal={planModal} setPlanModal={setPlanModal} viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={subjects} events={events} setEvents={props.setEvents} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} addPlanResponse={addPlanResponse} setAddPlanResponse={setResponse} setIsAddSubjectModal={setIsAddSubjectModal} subject={subject} setSubject={setSubject} />
+              <EventPlanner setResponse={setResponse} planModal={planModal} setPlanModal={setPlanModal} viewDate={viewDate} setViewDate={updateViewDate} viewMode={viewMode} subjects={subjects} events={events} setEvents={props.setEvents} PlannerRef={PlannerRef} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} setAddPlanResponse={setResponse} setIsAddSubjectModal={setIsAddSubjectModal} subject={subject} setSubject={setSubject} />
             </div>
             <div className={styles.widget}>
               <div className={styles.smallCalendarWrapper}>

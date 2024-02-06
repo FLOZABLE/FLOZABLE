@@ -1,18 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Main.module.css";
-import parse from "html-react-parser";
-import { plugins } from "chart.js";
-import Draggable, { DraggableCore } from "react-draggable";
-import { DateTime } from "luxon";
-import { Quotes } from "../../../utils/Quotes.js";
 import PlanTimeline from "../../UI/PlanTimeline/PlanTimeline.js";
 import FriendsActivityViewer from "../../UI/FriendsActivityViewer/FriendsActivityViewer.js";
 import SmallRankingViewer from "../../UI/SmallRankingViewer/SmallRankingViewer.js";
-import ChartDataLabel from "chartjs-plugin-datalabels";
-import PieChart from "../../UI/PieChart";
-
 import SmallSubjectsViewer from "../../UI/SmallSubjectsViewer/SmallSubjectsViewer.js";
-import ActivityViewer from "../../UI/ActivityViewer/ActivityViewer.js";
 import { Link } from "react-router-dom";
 import AIRecommendation from "../../UI/AIRecommendation/AIRecommendation.js";
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal.js";
@@ -37,7 +28,6 @@ function Main({
   const [joinTarget, setJoinTarget] = useState(null);
   const [isGroupPwModal, setIsGroupPwModal] = useState(false);
   const [friendsCount, setFriendsCount] = useState(0);
-  const [tempVolume, setTempVolume] = useState(50);
 
   useEffect(() => {
     if (!subjects.length) return;
@@ -120,14 +110,6 @@ function Main({
             <AIRecommendation
             />
           </div>
-          {/* <div className={styles.box}>
-            <div className={styles.title}>
-              <p>Activity Viewer</p>
-            </div>
-            <ActivityViewer
-              subjects={subjects}
-            />
-          </div> */}
         </div>
         </div>
     </div>

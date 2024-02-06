@@ -2,20 +2,31 @@ import styles from "./UserGroupViewer.module.css";
 import { socket } from "../../../socket";
 import { useEffect, useState } from "react";
 import GroupsGen from "../GroupsGen/GroupsGen";
-import FriendGroupContainer from "../FriendGroupContainer/FriendGroupContainer";
 
-function UserGroupViewer({ userInfo, setResponse, myInfo, setJoinTarget, myGroups, setMyGroups, setOtherGroups }) {
+function UserGroupViewer({
+  userInfo,
+  setResponse,
+  myInfo,
+  setJoinTarget,
+  myGroups,
+  setMyGroups,
+  setOtherGroups,
+  setIsGroupPwModal,
+}) {
   const [groupName, setGroupName] = useState("");
   const [activeGroup, setActiveGroup] = useState([]);
-  const [isGroupPwModal, setIsGroupPwModal] = useState(false);
 
   useEffect(() => {
     if (!userInfo) return;
     const { ActiveGroup } = userInfo;
     if (ActiveGroup) {
       setActiveGroup([ActiveGroup]);
-      setGroupName(<p>inside <strong>{ActiveGroup.name}</strong></p>);
-    };
+      setGroupName(
+        <p>
+          inside <strong>{ActiveGroup.name}</strong>
+        </p>,
+      );
+    }
   }, [userInfo]);
 
   useEffect(() => {
@@ -23,27 +34,20 @@ function UserGroupViewer({ userInfo, setResponse, myInfo, setJoinTarget, myGroup
 
     const onDeActiveGroup = () => {
       setActiveGroup([]);
-      setGroupName('');
+      setGroupName("");
     };
 
     socket.on(`deActiveGroup:${userInfo.user_id}`, onDeActiveGroup);
 
     return () => {
       socket.off(`deActiveGroup:${userInfo.user_id}`, onDeActiveGroup);
-    }
+    };
   }, [userInfo]);
 
   return (
     <div className={styles.UserGroupViewer}>
       {groupName}
       <div className={styles.hoverEl}>
-        {/* <FriendGroupContainer
-          groupInfo={activeGroup}
-          userInfo={userInfo}
-          myInfo={myInfo}
-          setIsGroupPwModal={setIsGroupPwModal}
-          setJoinTarget={setJoinTarget}
-        /> */}
         <GroupsGen
           groups={activeGroup}
           myGroups={myGroups}
@@ -59,6 +63,6 @@ function UserGroupViewer({ userInfo, setResponse, myInfo, setJoinTarget, myGroup
       </div>
     </div>
   );
-};
+}
 
 export default UserGroupViewer;

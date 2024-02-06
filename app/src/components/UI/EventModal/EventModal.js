@@ -90,18 +90,33 @@ function EventModal({
 
   useEffect(() => {
     if (!planModal) return;
-    if (!planModal.opened && !planModal.saved) {
-      setPlanModal(prev => ({ ...prev, id: null }));
-      setEvents((prev) => {
-        const foundIndex = prev.findIndex((val) => val.id === planModal.id);
-        if (foundIndex !== -1) {
-          return [
-            ...prev.slice(0, foundIndex),
-            ...prev.slice(foundIndex + 1),
-          ];
-        }
-        return prev;
+    if (!planModal.opened) {
+      setPlanModal({
+        opened: false,
+        title: '',
+        description: '',
+        start: new Date(),
+        end: new Date(new Date().getTime() + 60 * 1000 * 30),
+        repeat: 0,
+        priority: 50,
+        notification: -1,
+        subject: null,
+        id: null,
+        saved: false,
+        completed: false
       });
+      if (!planModal.saved) {
+        setEvents((prev) => {
+          const foundIndex = prev.findIndex((val) => val.id === planModal.id);
+          if (foundIndex !== -1) {
+            return [
+              ...prev.slice(0, foundIndex),
+              ...prev.slice(foundIndex + 1),
+            ];
+          }
+          return prev;
+        });
+      };
     }
   }, [planModal.opened]);
 
