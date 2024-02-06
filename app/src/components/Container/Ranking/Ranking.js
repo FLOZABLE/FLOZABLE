@@ -146,7 +146,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   return (
     <div className={styles.RankingContainer}>
-      <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} />
+      <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} showHeatmap={false} subjects={[]} />
       <StuckModal />
       <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
