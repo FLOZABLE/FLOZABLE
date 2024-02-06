@@ -8,7 +8,8 @@ function CalendarModal({
   setIsCalendarOpen,
   updateViewDate,
   viewDate,
-  subjects
+  subjects = [],
+  showHeatmap = false
 }) {
   return (
     <div
@@ -30,7 +31,7 @@ function CalendarModal({
         setViewDate={updateViewDate}
         viewDate={viewDate}
         setIsCalendarOpen={setIsCalendarOpen}
-        showHeatmap={true}
+        showHeatmap={showHeatmap}
         subjects={subjects}
       />
     </div>

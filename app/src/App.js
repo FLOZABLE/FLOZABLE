@@ -18,7 +18,7 @@ import {
   getMyGroups,
   getLikedGroups,
 } from "./components/Container/Groups/GroupsTool";
-import { timelineSort } from "./utils/timelineSorting";
+import { createStudyGraph, timelineSort } from "./utils/timelineSorting";
 import EventModal from "./components/UI/EventModal/EventModal";
 import AddSubjectModal from "./components/UI/AddSubjectModal/AddSubjectModal";
 import User from "./components/Container/User/User";
@@ -116,7 +116,8 @@ function App() {
         if (data.success) {
           setSubjects(timelineSort(data.subjects));
           bringPlans(data.subjects);
-          console.log('subject', data)
+          console.log('subject', data);
+          console.log('graphURL', createStudyGraph(timelineSort(data.subjects)));
           //setSubjects(sortSubjects(data.subjects));
         } else {
           bringPlans([]);
