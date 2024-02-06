@@ -12,6 +12,7 @@
     grid-template-columns: repeat(auto-fill, 200px);
   }
 }
+
 @media (max-height: 700px) {
   .CreateThemeModal {
     height: 300px;

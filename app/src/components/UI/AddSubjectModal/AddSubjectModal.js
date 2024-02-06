@@ -57,7 +57,6 @@ function AddSubjectModal(props) {
 
             return newState;
           });
-          setSubject(newSubject);
           //clear new subject info from modal
           setSelectedColor(null);
           setSelectedIcon({ name: null, el: null });

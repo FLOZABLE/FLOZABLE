@@ -58,101 +58,108 @@ function Sidebar({
       </div>
       <ul>
         <li>
-          <div
+          <Link
             className={styles.navItemWrapper}
+            to="/dashboard/stats"
           >
-            <Link to="/dashboard/stats" className={styles.navItem}>
+            <div className={styles.navItem}>
               <div className={styles.icon}>
                 <FontAwesomeIcon icon={faChartColumn} />
               </div>
               <p className={styles.navText} data-text="Stats">
                 Stats
               </p>
-            </Link>
-          </div>
+            </div>
+          </Link>
         </li>
         <li>
-          <div
+          <Link
             className={styles.navItemWrapper}
+            to="/dashboard/planner"
           >
-            <Link to="/dashboard/planner" className={styles.navItem}>
+            <div className={styles.navItem}>
               <div className={styles.icon}>
                 <FontAwesomeIcon icon={faCalendar} />
               </div>
               <p className={styles.navText} data-text="Planner">
                 Planner
               </p>
-            </Link>
-          </div>
+            </div>
+          </Link>
         </li>
         <li>
-          <div
+          <Link
             className={styles.navItemWrapper}
+            to="/dashboard/groups"
           >
-            <Link to="/dashboard/groups" className={styles.navItem}>
+            <div className={styles.navItem}>
               <div className={styles.icon}>
                 <FontAwesomeIcon icon={faPeopleGroup} />
               </div>
               <p className={styles.navText} data-text="Groups">
                 Groups
               </p>
-            </Link>
-          </div>
+            </div>
+          </Link>
         </li>
         <li>
-          <div
+          <Link
             className={styles.navItemWrapper}
+            to="/dashboard/ranking"
           >
-            <Link to="/dashboard/ranking" className={styles.navItem}>
+            <div className={styles.navItem}>
               <div className={styles.icon}>
                 <FontAwesomeIcon icon={faRankingStar} />
               </div>
               <p className={styles.navText} data-text="Ranking">
                 Ranking
               </p>
-            </Link>
-          </div>
+            </div>
+          </Link>
         </li>
         <li>
-          <div
+          <Link
             className={styles.navItemWrapper}
+            to="/dashboard/friends"
           >
-            <Link to="/dashboard/friends" className={styles.navItem}>
+            <div className={styles.navItem}>
               <div className={styles.icon}>
                 <FontAwesomeIcon icon={faUserGroup} />
               </div>
               <p className={styles.navText} data-text="Friends">Friends</p>
-            </Link>
-          </div>
+            </div>
+          </Link>
         </li>
         <li>
-          <div
+          <Link
             className={styles.navItemWrapper}
+            to="/dashboard/themes"
           >
-            <Link to="/dashboard/themes" className={styles.navItem}>
+            <div className={styles.navItem}>
               <div className={styles.icon}>
                 <FontAwesomeIcon icon={faShop} />
               </div>
               <p className={styles.navText} data-text="Themes">
                 Themes
               </p>
-            </Link>
-          </div>
+            </div>
+          </Link>
         </li>
         <li>
           <div className={styles.studyOption}>
-            <div
+            <Link
               className={styles.navItemWrapper}
+              to="/dashboard/study"
             >
-              <Link to="/dashboard/study" className={styles.navItem}>
+              <div className={styles.navItem}>
                 <div className={styles.icon}>
                   <FontAwesomeIcon icon={faPencil} />
                 </div>
                 <p className={styles.navText} data-text="Study">
                   Study
                 </p>
-              </Link>
-            </div>
+              </div>
+            </Link>
           </div>
         </li>
         {/* <li>

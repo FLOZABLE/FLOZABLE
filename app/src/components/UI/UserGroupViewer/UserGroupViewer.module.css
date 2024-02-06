@@ -2,7 +2,7 @@
   position: relative;
 }
 
-.UserGroupViewer p:hover ~ .hoverEl{
+.UserGroupViewer p:hover~.hoverEl {
   opacity: 1;
   visibility: visible;
   top: 0px;

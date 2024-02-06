@@ -99,7 +99,7 @@
   margin-top: -1px;
 }
 
-.soundSliderContainer .soundSlider{
+.soundSliderContainer .soundSlider {
   overflow: hidden;
   appearance: none;
   background-image: url('../../../../public/img/rain-audio.jpeg');

@@ -5,7 +5,7 @@ import { AllCategories } from "../../../utils/Themes";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 const options = AllCategories;
-const allCategoriesParsed = {}
+const allCategoriesParsed = {};
 AllCategories.map((string) => {
   const index = string.split(":")[1];
   const name = string.split(":")[0];
@@ -20,11 +20,7 @@ AllCategories.map((string) => {
   */
 });
 
-function ThemeCategoryBtn({
-  themeId,
-  setResponse,
-  themeCategory
-}) {
+function ThemeCategoryBtn({ themeId, setResponse, themeCategory }) {
   const [category, setCategory] = useState(-2);
   const [disp, setDisp] = useState("Save");
   const [isOpen, setIsOpen] = useState(false);
@@ -37,52 +33,58 @@ function ThemeCategoryBtn({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        themeId, category
+        themeId,
+        category,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
         setResponse(data);
         if (data.success) {
-          setDisp(`Saved to ${allCategoriesParsed[category].split(":")[0]}`)
+          setDisp(`Saved to ${allCategoriesParsed[category].split(":")[0]}`);
         }
       })
       .catch((error) => console.error(error));
   }, [category, themeId]);
 
   useEffect(() => {
-    if (themeCategory != -1 && !isNaN(themeCategory)){
+    if (themeCategory != -1 && !isNaN(themeCategory)) {
       setDisp(`Saved to ${allCategoriesParsed[parseInt(themeCategory)]}`);
     }
   }, []);
 
   return (
-    <button className={`${styles.ThemeCategoryBtn} ${isOpen ? styles.open : ''}`}
-    onFocus={() => {
-      setIsOpen(true)
-    }}
-    onBlur={() => {
-      setIsOpen(false)
-    }}
+    <button
+      className={`${styles.ThemeCategoryBtn} ${isOpen ? styles.open : ""}`}
+      onFocus={() => {
+        setIsOpen(true);
+      }}
+      onBlur={() => {
+        setIsOpen(false);
+      }}
     >
-      <p className={styles.categoryDisp}
-      >
-        {disp}
-      </p>
+      <p className={styles.categoryDisp}>{disp}</p>
       <ul className={styles.options}>
         {options.map((option, i) => {
           const optionArr = option.split(":");
           const optionName = optionArr[0];
           const optionIndex = parseInt(optionArr[1]);
           return (
-            <div className={styles.option} key={i} onClick={() => {setCategory(optionIndex); setIsOpen(false)}}>
+            <div
+              className={styles.option}
+              key={i}
+              onClick={() => {
+                setCategory(optionIndex);
+                setIsOpen(false);
+              }}
+            >
               <p>{optionName}</p>
             </div>
-          )
+          );
         })}
       </ul>
     </button>
   );
-};
+}
 
 export default ThemeCategoryBtn;

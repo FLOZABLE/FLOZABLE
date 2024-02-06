@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
   faCamera,
-  faFileLines,
   faLock,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -14,7 +13,6 @@ import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 import LabelMovingInput from "../../UI/LabelMovingInput/LabelMovingInput";
 import SimpleToggleBtn from "../../UI/SimpleToggleBtn/SimpleToggleBtn";
 import StuckModal from "../../UI/StuckModal/StuckModal";
-//import { GoogleLogin } from "react-google-login";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import GoogleLoginBtn from "../../UI/GoogleLoginBtn/GoogleLoginBtn";
 import { useSearchParams } from "react-router-dom";
@@ -39,11 +37,8 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
   const [websites, setWebsites] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [websitesViewr, setWebsitesViewr] = useState(0)
-
   const [scrollRef, setScrollRef] = useState(null);
   const profileRef = useRef(null);
-  const informationRef = useRef(null);
   const passwordRef = useRef(null);
   const extensionRef = useRef(null);
   const accountsRef = useRef(null);
@@ -508,30 +503,9 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
                   You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar by signing in with your Google account here.
                 </div>
                 <div className={styles.authBtn}>
-                  {/* <OptionToggleBtn
-                    opt1={{ val: 0, name: "Connect" }}
-                    opt2={{ val: 1, name: "Connected!" }}
-                    value={isGoogleCalendar}
-                    setValue={setIsGoogleCalendar}
-                  /> */}
-                  {/* <GoogleLogin
-                    clientId={googleClientId}
-                    buttonText={'Sign In'}
-                    onSuccess={onSuccess}
-                    onFailure={onFailure}
-                    cookiePolicy={'single_host_origin'}
-                    responseType='code'
-                    accessType="offline"
-                    scope="openid email profile https://www.googleapis.com/auth/calendar"
-                  /> */}
                   <GoogleOAuthProvider
                     clientId={googleClientId}
                   >
-                    {/* <GoogleLogin 
-                    buttonText={'Sign In'}
-                    onSuccess={onSuccess}
-                    onFailure={onFailure}
-                  /> */}
                     <GoogleLoginBtn />
                   </GoogleOAuthProvider>
                 </div>

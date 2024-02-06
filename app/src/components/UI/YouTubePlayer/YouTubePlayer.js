@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import YouTube from "react-youtube";
 import styles from "./YouTubePlayer.module.css";
 
-function YouTubePlayer({ height, width, videoId, volume, autoplay = 1 }) {
+function YouTubePlayer({ height, width, videoId, volume }) {
   const [player, setPlayer] = useState(null);
   const [opts] = useState({
     height: "100%",

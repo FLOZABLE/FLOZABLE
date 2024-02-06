@@ -1,11 +1,15 @@
 import React, { useState, useRef } from "react";
 import styles from "./VolumeControl.module.css"; // Import your module CSS file
 
-function VolumeControl({ volume, setVolume, backgroundImage, onMouseUp = () => {} }) {
+function VolumeControl({
+  volume,
+  setVolume,
+  backgroundImage,
+  onMouseUp = () => {},
+}) {
   const [isMuted, setMuted] = useState(true); // Track whether the volume is muted
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [prevVolume, setPrevVolume] = useState(volume);
-  const [sliderStyle, useSliderStyle] = useState('');
   const sliderContainerRef = useRef(null);
 
   const handleRangeUpdate = (e) => {
@@ -64,8 +68,7 @@ function VolumeControl({ volume, setVolume, backgroundImage, onMouseUp = () => {
     </svg>
   );
 
-
-  const handler = e => e.stopPropagation();
+  const handler = (e) => e.stopPropagation();
 
   return (
     <div
@@ -88,7 +91,7 @@ function VolumeControl({ volume, setVolume, backgroundImage, onMouseUp = () => {
         onMouseDown={handler}
         onMouseUp={onMouseUp}
         onDragEnd={onMouseUp}
-        style={{backgroundImage: backgroundImage}}
+        style={{ backgroundImage: backgroundImage }}
       />
     </div>
   );

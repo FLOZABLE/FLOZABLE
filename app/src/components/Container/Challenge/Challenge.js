@@ -1,7 +1,5 @@
 import styles from "./Challenge.module.css";
-import React, { useState, useEffect, useRef } from 'react';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faV, faS, faSlash } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from 'react';
 import { DateTime, Duration } from "luxon";
 import { timelineSort } from "../../../utils/timelineSorting"
 import { cyrb128 } from "../../../utils/Tool";

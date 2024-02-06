@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./ThemesContainer.module.css";
-import LikeBtn from "../LikeBtn/LikeBtn";
-import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import ThemeContainer from "../ThemeContainer/ThemeContainer";
-import { AllCategories } from "../../../utils/Themes";
 
 function ThemesContainer({
   themes,
@@ -15,7 +10,7 @@ function ThemesContainer({
   searchQuery,
   sortOpt,
   userThemes,
-  setIsActive
+  setIsActive,
 }) {
   const [ThemesEl, setThemesEl] = useState([]);
 
@@ -24,45 +19,46 @@ function ThemesContainer({
     const newThemes = JSON.parse(JSON.stringify(themes));
     //sort by like
     if (sortOpt) {
-      newThemes.sort((a, b) => b.weekUsage - a.weekUsage)
+      newThemes.sort((a, b) => b.weekUsage - a.weekUsage);
     } else {
       //by usage
-      newThemes.sort((a, b) => b.likes.length - a.likes.length)
-    };
+      newThemes.sort((a, b) => b.likes.length - a.likes.length);
+    }
 
     const userThemeIds = userThemes.map((theme) => {
       return theme.split(":")[1];
     });
     const userThemeCategories = userThemes.map((theme) => {
       return theme.split(":")[0];
-    })
+    });
 
-    setThemesEl(newThemes.map((theme, i) => {
-      const { description, name } = theme;
-      const tagsArr = theme.tags === "" ? [] : theme.tags.split(",");
-      const isSearched = ((description + name + tags).includes(searchQuery) || searchQuery === "") && (tagsArr.some(element => tags.includes(element)) || !tags.length);
-      const savedIndex = userThemeIds.indexOf(theme.id);
-      const themeCategory = userThemeCategories[savedIndex];
-      return (
-        <ThemeContainer
-          isSearched={isSearched}
-          theme={theme}
-          key={i}
-          userInfo={userInfo}
-          setResponse={setResponse}
-          isSaved={savedIndex >= 0}
-          themeCategory={themeCategory}
-          setIsActive={setIsActive}
-        />
-      )
-    }));
+    setThemesEl(
+      newThemes.map((theme, i) => {
+        const { description, name } = theme;
+        const tagsArr = theme.tags === "" ? [] : theme.tags.split(",");
+        const isSearched =
+          ((description + name + tags).includes(searchQuery) ||
+            searchQuery === "") &&
+          (tagsArr.some((element) => tags.includes(element)) || !tags.length);
+        const savedIndex = userThemeIds.indexOf(theme.id);
+        const themeCategory = userThemeCategories[savedIndex];
+        return (
+          <ThemeContainer
+            isSearched={isSearched}
+            theme={theme}
+            key={i}
+            userInfo={userInfo}
+            setResponse={setResponse}
+            isSaved={savedIndex >= 0}
+            themeCategory={themeCategory}
+            setIsActive={setIsActive}
+          />
+        );
+      }),
+    );
   }, [themes, userInfo, tags, searchQuery, sortOpt]);
 
-  return (
-    <div className={styles.ThemesContainer}>
-      {ThemesEl}
-    </div>
-  );
-};
+  return <div className={styles.ThemesContainer}>{ThemesEl}</div>;
+}
 
 export default ThemesContainer;

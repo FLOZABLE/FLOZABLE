@@ -268,13 +268,10 @@ function EventPlanner(props) {
 
     if (!start || !end) return;
 
-    console.log(start, end, 'dd');
     if (!planModal.id) {
       const planInfo = { ...planModal, start, end };
-      //planInfo.id = generateRandomId(10);
 
       setPlanModal((prev) => ({ ...prev, ...planInfo, opened: true }));
-      //setEvents((prev) => [...prev, planInfo]);
     } else {
       setEvents((prev) => {
         const foundIndex = prev.findIndex((val) => val.id === planModal.id);
@@ -288,29 +285,8 @@ function EventPlanner(props) {
 
         return prev;
       });
-    }
-    /* if (planModal) {
-      selectInfo.view.calendar.unselect();
-    } else {
-      const start = selectInfo.start ? new Date(selectInfo.start) : null;
-      const end = selectInfo.end ? new Date(selectInfo.end) : null;
-      const subject = subjects[0] ? subjects[0].id : "";
-      if (start && end) {
-        const newEvent = {
-          title: "",
-          start,
-          end,
-          description: "",
-          repeat: false,
-          subject,
-          notification: -1,
-          priority: 50,
-          saved: false,
-          completed: 0,
-        };
-        setPlanModal(newEvent);
-      }
-    } */
+      setPlanModal((prev) => ({ ...prev, start, end }));
+    };
   };
 
   /* useEffect(() => {
@@ -321,11 +297,9 @@ function EventPlanner(props) {
   function handleEventDateDrop(data) {
     const { id, start, end } = data.event;
     const eventIndex = events.findIndex((event) => event.id == id);
-    console.log(eventIndex)
     if (eventIndex !== -1) {
       const updatedEvents = [...events];
       updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], start, end };
-      console.log(updatedEvents);
       setEvents(updatedEvents);
       if (updatedEvents[eventIndex].saved) {
         updateServer({ ...updatedEvents[eventIndex] });
@@ -389,7 +363,7 @@ function EventPlanner(props) {
       end,
       title,
     };
-    setPlanModal(prev => ({...prev, ...eventInfo, opened: true}));
+    setPlanModal(prev => ({ ...prev, ...eventInfo, opened: true }));
   };
 
   useEffect(() => {
@@ -402,12 +376,12 @@ function EventPlanner(props) {
           PlannerApi.gotoDate(viewDate);
         }
       } else if (viewMode == 'timeGridWeek') {
-        if (!(viewDateTime.plus({days: 1}).startOf("week").minus({days: 1}).toSeconds() <= plannerDateTime.plus({days: 1}).startOf("week").minus({days: 1}).toSeconds() 
-        && plannerDateTime.plus({days: 1}).endOf("week").minus({days: 1}).toSeconds()   <=    viewDateTime.plus({days: 1}).endOf("week").minus({days: 1}).toSeconds())) {
+        if (!(viewDateTime.plus({ days: 1 }).startOf("week").minus({ days: 1 }).toSeconds() <= plannerDateTime.plus({ days: 1 }).startOf("week").minus({ days: 1 }).toSeconds()
+          && plannerDateTime.plus({ days: 1 }).endOf("week").minus({ days: 1 }).toSeconds() <= viewDateTime.plus({ days: 1 }).endOf("week").minus({ days: 1 }).toSeconds())) {
           PlannerApi.gotoDate(viewDate);
         }
       } else {
-        if (plannerDateTime.startOf('month').toSeconds() <= viewDateTime.startOf('month').toSeconds() ||  viewDateTime.endOf('month').toSeconds() <= plannerDateTime.endOf('month').toSeconds()) {
+        if (plannerDateTime.startOf('month').toSeconds() <= viewDateTime.startOf('month').toSeconds() || viewDateTime.endOf('month').toSeconds() <= plannerDateTime.endOf('month').toSeconds()) {
           PlannerApi.gotoDate(viewDate);
         }
       }
