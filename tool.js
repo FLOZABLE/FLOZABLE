@@ -87,6 +87,13 @@ function arraysHaveSameContents(arr1, arr2) {
   return JSON.stringify(sortedArr1) === JSON.stringify(sortedArr2);
 };
 
+const hex2rgb = (hex) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  
+  return { r, g, b };
+}
 
 module.exports = {
   generateRandomId,
@@ -98,4 +105,5 @@ module.exports = {
   randomIntInRange,
   googleOauth2client,
   arraysHaveSameContents,
+  hex2rgb
 };
