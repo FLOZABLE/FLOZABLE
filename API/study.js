@@ -168,17 +168,11 @@ Router.post("/stop", async (req, res) => {
 });
 
 Router.post('/bring-subjects', async (req, res) => {
-  autoSignin(req, res, (async() => {
-    const connection = pool.promise();
+  autoSignin(req, res, (async(userId) => {
     try {
-      const userId = req.session.user_id;
-      let searchingId = userId;
+      const searchId = req.body.searchId ? req.body.searchId : userId;
 
-      const { searchId } = req.body;
-      if (!!searchId){
-        searchingId = searchId;
-      }
-      const subjectsInfo = await subjectsTimelineCache(searchingId);
+      const subjectsInfo = await subjectsTimelineCache(searchId);
       res.send({ success: true, subjects: subjectsInfo });
     } catch (err) {
       console.log(err);

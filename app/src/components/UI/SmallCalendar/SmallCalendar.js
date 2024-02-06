@@ -142,7 +142,7 @@ function SmallCalendar({
   planModal,
   width,
   setIsCalendarOpen,
-  subjects = [],
+  subjects,
   showHeatmap = false,
 }) {
   const [events, setEvents] = useState([]);
@@ -156,14 +156,14 @@ function SmallCalendar({
       title: viewDate.getDate(),
     }];
 
-    if (showHeatmap && subjects.length) {
-        subjects.daily.groupedTotal.toReversed().map((day, i) => {
-          const currentDay = DateTime.now().minus({ days: i });
-          const stringDay = currentDay.toFormat("yyyy-MM-dd");
-          if (currentDay.startOf('day').equals(DateTime.fromJSDate(viewDate).startOf('day'))) return;
-          allEvents.push({ title: '', date: stringDay, color: `hsla(212, 100%, ${100 - Math.min(25 * Math.sqrt(day / 3600), 60)}%, 1)` });
-          // 0 hours white to 5 dark blue https://www.desmos.com/calculator/sezqjfdbfl
-        })
+    if (showHeatmap && subjects && subjects.length) {
+      subjects.daily.groupedTotal.toReversed().map((day, i) => {
+        const currentDay = DateTime.now().minus({ days: i });
+        const stringDay = currentDay.toFormat("yyyy-MM-dd");
+        if (currentDay.startOf('day').equals(DateTime.fromJSDate(viewDate).startOf('day'))) return;
+        allEvents.push({ title: '', date: stringDay, color: `hsla(212, 100%, ${100 - Math.min(25 * Math.sqrt(day / 3600), 60)}%, 1)` });
+        // 0 hours white to 5 dark blue https://www.desmos.com/calculator/sezqjfdbfl
+      })
     }
 
     setEvents(allEvents);
