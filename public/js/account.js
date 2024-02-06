@@ -136,7 +136,7 @@ const pwResetBtn = document.getElementById("pwResetBtn");
 pwResetBtn.addEventListener("click", async () => {
   const email = document.querySelector('.card-front #logemail').value;
   console.log(email);
-  fetch('/account/reset-password', {
+  fetch('/account/reset-password-request', {
     method: 'post',
     body: JSON.stringify({email}),
     headers: {

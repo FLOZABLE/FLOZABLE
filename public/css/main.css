@@ -31,6 +31,13 @@ html {
   left: 25vw;
   height: 60px;
   border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-alert p {
+  margin: 0px;
 }
 
 .notification-alert .notification-header {
@@ -45,9 +52,7 @@ html {
 
 .notification-alert p {
   font-size: 25px;
-  line-height: unset;
   font-weight: 900;
-  margin-top: 10px;
   margin-left: 10px;
 }
 
@@ -57,10 +62,6 @@ html {
 
 #notification-alert-fail {
   background-color: #f44335;
-}
-
-#notification-alert-fail i {
-  margin-bottom: 3px;
 }
 
 .notification-alert.notify {

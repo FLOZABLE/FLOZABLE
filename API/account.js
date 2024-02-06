@@ -45,7 +45,7 @@ Router.get('/activity-settings', async (req, res) => {
 
 Router.post('/signin-authentication', async (req, res) => {
   const { email, password } = req.body;
-  
+
   const isValidEmail = validateEmail(email);
   if (!isValidEmail.isValid) {
     return res.send({ success: false, reason: isValidEmail.reason });
@@ -209,36 +209,87 @@ Router.post('/signup-authentication', async (req, res) => {
 //reset password link only available for 24 hr
 const MAX_DURATION = 60 * 60 * 24;
 
-Router.post('/reset-password', async (req, res) => {
+Router.post('/reset-password-request', async (req, res) => {
   try {
-    const {email} = req.body;
+    const { email } = req.body;
 
     const isValidEmail = validateEmail(email);
-  
+
     if (!isValidEmail.isValid) {
-      return res.send({success: false, reason: isValidEmail.reason});
-    };
-  
-    const connection = pool.promise();
-  
-    const [[user]] = await connection.query(`SELECT user_id, type FROM users WHERE email = ? LIMIT 1`, [email]);
-  
-    console.log(user)
-    if (!user || user.type === -1) {
-      return res.send({success: false, reason: "No User found!"});
+      return res.send({ success: false, reason: isValidEmail.reason });
     };
 
-    const resetId = generateRandomId(30);
-    redisClient.setEx(`resetPw:${resetId}`,MAX_DURATION,  user.user_id);
-    const params = { resetURL: resetId };
-    const to = [{email: 'junjason1126@gmail.com'}];
-    sendEmail(to, params, 4);
-    res.send({success: true, msg: 'Check your email!'})
+    const connection = pool.promise();
+
+    const [[user]] = await connection.query(`SELECT user_id, type FROM users WHERE email = ? LIMIT 1`, [email]);
+
+    console.log(user)
+    if (!user || user.type === -1) {
+      return res.send({ success: false, reason: "No User found!" });
+    };
+
+    let resetId = await redisClient.get(`resetPw:${email}`);
+
+    if (!resetId) {
+      resetId = generateRandomId(30);
+      redisClient.setEx(`resetPw:${email}`, MAX_DURATION, resetId);
+      const params = { resetURL: `${process.env.SERVER}/account/reset-password?resetId=${resetId}&email=${email}` };
+      const to = [{ email: 'junjason1126@gmail.com' }];
+      sendEmail(to, params, 4);
+    };
+
+    res.send({ success: true, msg: 'Check your email!' })
   } catch (err) {
     console.log(err);
-    res.send({success: false, reason: 'Error'});
+    res.send({ success: false, reason: 'Error' });
   };
-})
+});
+
+Router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, resetId, password } = req.body;
+
+    const isValidEmail = validateEmail(email);
+
+    if (!isValidEmail.isValid) {
+      return res.send({ success: false, reason: isValidEmail.reason });
+    };
+
+    const isValidPassword = validatePassword(password);
+    if (!isValidPassword.isValid) {
+      return res.send({ success: false, reason: isValidPassword.reason });
+    };
+
+    const isValidResetId = validateStrictString(resetId, "reset id", 30, 30);
+    if (!isValidResetId.isValid) {
+      return res.send({ success: false, reason: isValidResetId.reason });
+    };
+
+    const matchedResetId = await redisClient.get(`resetPw:${email}`);
+
+    console.log(matchedResetId, resetId);
+    if (!matchedResetId || matchedResetId !== resetId) {
+      return res.send({success: false, reason: 'Expired or Invalid URL'});
+    };
+
+    redisClient.del(`resetPw:${email}`);
+
+    const connection = pool.promise();
+
+    const [salt, hashed_password] = hashing(password);
+    const updateInfo = [{ hashed_password, salt }, email];
+    const update = await connection.query("UPDATE users set ? WHERE email = ?", updateInfo);
+
+    res.send({success: true, msg: "Password reset successful!"});
+  } catch (err) {
+    console.log(err);
+    res.send({ success: false, reason: 'Error' });
+  };
+});
+
+Router.get('/reset-password', (req, res) => {
+  autoSignin(req, res, (() => res.render('reset-password', {loggedIn: true})), (() => res.render('reset-password', {loggedIn: false})));
+});
 
 Router.post('/update/image', upload.single('image'), async (req, res) => {
   autoSignin(req, res, (async (userId) => {
