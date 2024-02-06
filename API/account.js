@@ -234,7 +234,7 @@ Router.post('/reset-password-request', async (req, res) => {
       resetId = generateRandomId(30);
       redisClient.setEx(`resetPw:${email}`, MAX_DURATION, resetId);
       const params = { resetURL: `${process.env.SERVER}/account/reset-password?resetId=${resetId}&email=${email}` };
-      const to = [{ email: 'junjason1126@gmail.com' }];
+      const to = [{ email }];
       sendEmail(to, params, 4);
     };
 
