@@ -57,8 +57,6 @@ function App() {
 
   const [totalNewMsg, setTotalNewMsg] = useState(0);
 
-  const [subject, setSubject] = useState("0000000000");
-
   const [planModal, setPlanModal] = useState({
     opened: false,
     title: '',
@@ -178,7 +176,6 @@ function App() {
         if (data.success) {
           if (userInfo === false) {
             setOtherGroups(data.groups);
-            console.log(data.groups, 'dd')
             return;
           }
           const { userGroups, otherGroups } = filterGroups(userInfo, data.groups);
@@ -200,20 +197,8 @@ function App() {
     bringGroups();
   }, [userInfo]);
 
-  /* useEffect(() => {
-    //every 10m
-    const intervalId = setInterval(() => {
-      bringSubjects();
-    }, 1000 * 60 * 10);
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []); */
-
   useEffect(() => {
-    console.log('response', userInfo, response)
     if (userInfo === false || (response && response.reason === "Sign in required")) {
-      console.log('ssss')
       setIsAccountModal(true);
     }
   }, [response, userInfo]);
@@ -242,7 +227,6 @@ function App() {
         setAddSubjectResponse={setResponse}
         subjects={subjects}
         setSubjects={setSubjects}
-        setSubject={setSubject}
       />
       <ChatsModal
         setIsChatModal={setIsChatModal}
@@ -399,7 +383,6 @@ function App() {
                 subjects={subjects}
                 setResponse={setResponse}
               />
-              {/* <Footer /> */}
             </div>
           }
         />

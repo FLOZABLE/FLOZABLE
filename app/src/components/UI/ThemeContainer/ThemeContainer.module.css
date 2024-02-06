@@ -112,7 +112,7 @@
   width: 100%;
 }
 
-.ThemeContainer .bottom > div {
+.ThemeContainer .bottom>div {
   margin: 0px 5px;
 }
 
@@ -130,7 +130,7 @@
     font-size: 17px;
   }
 
-  .ThemeContainer .bottom > div {
+  .ThemeContainer .bottom>div {
     margin: 0px 1px;
   }
 }

@@ -7,7 +7,7 @@ function ThemeUsageCounter({ initialVal, themeId }) {
   useEffect(() => {
     if (!themeId) return;
     const onUsed = () => {
-      setCount(prev => prev + 1);
+      setCount((prev) => prev + 1);
     };
 
     /* const onRemoveMember = (userId) => {
@@ -27,9 +27,7 @@ function ThemeUsageCounter({ initialVal, themeId }) {
     setCount(initialVal);
   }, [initialVal]);
 
-  return (
-    <p>{count}</p>
-  );
-};
+  return <p>{count}</p>;
+}
 
 export default ThemeUsageCounter;

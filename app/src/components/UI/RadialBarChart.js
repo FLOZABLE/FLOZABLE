@@ -42,7 +42,6 @@ function RadialBarChart({ series, colors = colorsList, selected, setSelected }) 
 
     let total = 0;
     let completed = 0;
-    /* console.log(selected) */
     if (series.length === 0){
       completed = 0;
       total = 0;
