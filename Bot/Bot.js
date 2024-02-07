@@ -8,7 +8,7 @@ const originalData = require('../data/Datasets.json');
 const colors = require('../data/GroupColors.json');
 const pool = require('../model/pool');
 const crypto = require('crypto');
-const { DateTime } = require('luxon');
+const { DateTime, Duration } = require('luxon');
 const sharp = require("sharp");
 const axios = require('axios');
 const cron = require('node-cron');
@@ -77,41 +77,60 @@ async function createBots(startIndex, length) {
       type: -1
     };
 
-    //console.log(userInfo)
     await connection.query('INSERT INTO users SET ?', userInfo);
-    const subjectId = generateRandomId(10);
-    const datum_point = unixTimestamp;
 
-    const subjectTimeline = [];
-    const studyFactor = Math.floor(Math.random() * 10) + 1; //the higher this number is the more they will study
+    const maxSubjects = randomIntInRange(1, 5);
+    const possibleSubjects = [
+      ["Math","Math","Math","Math","Calculus","Trig"],
+      ["Science","Science","Biology","Environment","Biology","Anatomy","Biology","Biology"],
+      ["Science","Science","Chemistry","Chemistry","Chemistry","Biochemistry"],
+      ["Physics","Physics","Physics","Physics 1","Physics 2","Physics C"],
+      ["French","French","Chinese","Chinese","Spanish","Spanish","Spanish","Spanish","Latin","Latin"],
+      ["English","English","English","ELA","ELA","Lit","Literature","Literature","Language Arts"],
+      ["History","History","APUSH","US History","U.S. History","Social Studies","Social Studies"],
+      ["Reading","Piano","Cooking","Art","Art","Reading","Piano","Piano","PE","Coding"],
+      ["Astronomy","Computer Science","Essays","Comp Sci","Engineering","DE","College Apps","Shakespeare","Essays","Computer Science","Music Theory","Music Theory","Art"]
+    ]
 
-    let prevTime = unixTimestamp
-    let currTime = unixTimestamp;
-    let timelineSum = 0;
-    const timeNow = new Date().getTime() / 1000;
-    const possibleDurations = [0, 0, 0, 0, 60, 120, 180, 240, 360, 1200, 1500, 3600, 4200, 5400, 8000];
-    while (currTime < timeNow - 86400) { //end at yesterday
-      const duration = Math.floor((1 + Math.random() - 0.5) * possibleDurations[randomIntInRange(0, possibleDurations.length - 1)]);
-      subjectTimeline.push([currTime - prevTime, duration]);
-      timelineSum += duration + currTime - prevTime;
-      prevTime = currTime + duration;
-      currTime += 86400; //currTime will always be the start of the day
+    for (let subjectNum = 0; subjectNum < maxSubjects; subjectNum++) {
+      const subjectId = generateRandomId(10);
+      const datum_point = unixTimestamp;
+
+      const subjectTimeline = [];
+      
+      let prevTime = unixTimestamp
+      let currTime = unixTimestamp;
+      let timelineSum = 0;
+      const timeNow = new Date().getTime() / 1000;
+      const possibleDurations = [0, 0, 0, 0, 0, 0, 60, 120, 180, 180, 180, 240, 240, 360, 1200, 1500, 3600, 4200, 5400, 8000];
+      while (currTime < timeNow - 86400) { //end at yesterday
+        const duration = Math.floor((1 + Math.random() - 0.5) * possibleDurations[randomIntInRange(0, possibleDurations.length - 1)]);
+        subjectTimeline.push([currTime - prevTime, duration]);
+        timelineSum += duration + currTime - prevTime;
+        prevTime = currTime + duration;
+        currTime += 86400; //currTime will always be the start of the day
+      }
+
+      let stringTimeline = JSON.stringify(subjectTimeline);
+      stringTimeline = stringTimeline.slice(1, stringTimeline.length - 1);
+
+      const subjectCategory = randomIntInRange(0, possibleSubjects.length - 1);
+      let subjectName = possibleSubjects[subjectCategory];
+      subjectName = subjectName[randomIntInRange(0, subjectName.length - 1)];
+      possibleSubjects.splice(subjectCategory, 1);
+
+      const subject = {
+        id: subjectId,
+        name: subjectName,
+        user_id: userId,
+        icon: 'others',
+        color: '#000000',
+        timeline: stringTimeline,
+        timeline_sum: timelineSum,
+        datum_point
+      };
+      await connection.query(`INSERT INTO subjects SET ?`, [subject]);
     }
-
-    let stringTimeline = JSON.stringify(subjectTimeline);
-    stringTimeline = stringTimeline.slice(1, stringTimeline.length - 1);
-
-    const subject = {
-      id: subjectId,
-      name: 'others',
-      user_id: userId,
-      icon: 'others',
-      color: '#000000',
-      timeline: stringTimeline,
-      timeline_sum: timelineSum,
-      datum_point
-    };
-    await connection.query(`INSERT INTO subjects SET ?`, [subject]);
 
     if (!!profileImage) {
       createChessProfileImg(userId, profileImage);
@@ -455,7 +474,8 @@ async function addFriends(userId) {
 
 async function startBot(userId) {
   try {
-    const [subject] = await subjectsCache(userId);
+    const subjects = await subjectsCache(userId);
+    const subject = subjects[randomIntInRange(0, subjects.length - 1)];
     const userInfo = await userCache(userId);
     if (!subject || !userInfo) return;
     let { groups, friends, name } = userInfo;
@@ -486,10 +506,11 @@ async function stopBot(userId) {
   redisClient.sRem('activeBots', userId);
   const activeSubject = await activeSubjectCache(userId);
   const userInfo = await userCache(userId);
-  const [subject] = await subjectsCache(userId);
+  const subjects = await subjectsCache(userId);
+  const [subject] = subjects.filter((sub) => sub.id === activeSubject.id);
   redisClient.hDel(`user:${userId}`, `ActiveSubject`);
   if (!userInfo || !subject || !activeSubject.id) return;
-
+  console.log(subject);
   let { groups, friends, name } = userInfo;
   friends = friends === "" ? [] : friends.split(",");
   groups = groups === "" ? [] : groups.split(",");
@@ -558,7 +579,7 @@ async function botSelector(numbers) {
 
 async function botManager(numbers) {
   const activeBots = await redisClient.sMembers('activeBots');
-  await Promise.all(activeBots.map(async(botId) => {
+  await Promise.all(activeBots.map(async (botId) => {
     await stopBot(botId);
   }));
   botSelector(numbers);
