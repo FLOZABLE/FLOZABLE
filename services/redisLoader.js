@@ -1,6 +1,7 @@
 const redisClient = require("../model/redis");
 const pool = require('../model/pool');
 const { writeLog } = require('../Logger');
+const { UserRefreshClient } = require("google-auth-library");
 
 async function flushRedis() {
   await redisClient.flushDb();
@@ -385,6 +386,39 @@ async function websiteUsageCache(userId) {
   return websiteData;
 };
 
+async function googleAccessTokenCache(userId) {
+  try {
+    const googleAccessToken = await redisClient.get(`user:${userId}:googleAccessToken`);
+
+    if (googleAccessToken) {
+      return googleAccessToken;
+    };
+  
+    const connection = await pool.promise();
+    const [[userInfo]] = await connection.query(`SELECT google_refresh_token FROM users WHERE user_id = ?`, [userId]);
+    if (!userInfo || !userInfo.google_refresh_token) {
+      return false;
+    };
+  
+    const user = new UserRefreshClient(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      google_refresh_token,
+    );
+    const {res} = await user.getAccessToken();
+    
+    if (res.data.access_token) {
+      redisClient.set(`user:${userId}:googleAccessToken`, access_token, { EX: 3590 });
+      return res.data.access_token;
+    };
+
+    return false;
+  } catch (err) {
+    console.log(err);
+    return false;
+  };
+}
+
 module.exports = {
   flushRedis,
   cacheManager,
@@ -405,5 +439,6 @@ module.exports = {
   activeGroupCache,
   msgReadCache,
   challengeroomsCache,
-  websiteUsageCache
+  websiteUsageCache,
+  googleAccessTokenCache
 }
