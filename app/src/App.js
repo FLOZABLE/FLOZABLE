@@ -31,6 +31,7 @@ import Themes from "./components/Container/Themes/Themes";
 import ChallengeRooms from "./components/Container/ChallengeRooms/ChallengeRooms";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import AccountModal from "./components/UI/AccountModal/AccountModal";
+import YoutubeAPI from "./components/UI/YoutubeAPI";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

@@ -18,9 +18,11 @@ import GoogleLoginBtn from "../../UI/GoogleLoginBtn/GoogleLoginBtn";
 import { useSearchParams } from "react-router-dom";
 import SpotifyAuthBtn from "../../UI/SpotifyAuthBtn/SpotifyAuthBtn";
 import { SpotifyLogo } from "../../../utils/svgs";
+import YoutubeAPI from "../../UI/YoutubeAPI";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;
+const youtubeClientId = process.env.REACT_APP_YOUTUBE_CLIENT_ID;
 const appOrigin = process.env.REACT_APP_LOCATION;
 
 function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
@@ -503,10 +505,15 @@ function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
                   You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar by signing in with your Google account here.
                 </div>
                 <div className={styles.authBtn}>
-                  <GoogleOAuthProvider
+                <GoogleOAuthProvider
                     clientId={googleClientId}
                   >
                     <GoogleLoginBtn />
+                  </GoogleOAuthProvider>
+                  <GoogleOAuthProvider
+                    clientId={googleClientId}
+                  >
+                    <YoutubeAPI />
                   </GoogleOAuthProvider>
                 </div>
               </div>

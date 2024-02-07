@@ -80,6 +80,19 @@ const googleOauth2client = (credential) => {
   return auth;
 };
 
+
+const googleYoutubeOauth2client = (credential) => {
+  const auth = new google.auth.OAuth2(
+    process.env.YOUTUBE_CLIENT_ID,
+    process.env.YOUTUBE_CLIENT_SECRET,
+    process.env.YOUTUBE_REDIRECT_URL
+  );
+  if (credential) {
+    auth.setCredentials(credential);
+  };
+  return auth;
+};
+
 function arraysHaveSameContents(arr1, arr2) {
   const sortedArr1 = arr1.slice().sort();
   const sortedArr2 = arr2.slice().sort();
@@ -104,6 +117,7 @@ module.exports = {
   getUserId,
   randomIntInRange,
   googleOauth2client,
+  googleYoutubeOauth2client,
   arraysHaveSameContents,
   hex2rgb
 };
