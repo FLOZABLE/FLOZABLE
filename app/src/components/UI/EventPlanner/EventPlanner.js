@@ -278,7 +278,7 @@ function EventPlanner(props) {
         if (foundIndex !== -1) {
           return [
             ...prev.slice(0, foundIndex),
-            { ...planModal, start, end },
+            { ...prev[foundIndex], start, end },
             ...prev.slice(foundIndex + 1),
           ];
         }

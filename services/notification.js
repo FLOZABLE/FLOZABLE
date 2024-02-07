@@ -1,7 +1,6 @@
 const { DateTime } = require("luxon");
 const { subjectsTimelineCache } = require("../services/redisLoader");
 const { timelineSort } = require("../timelineSorting");
-const { default: QuickChart } = require("quickchart-js");
 const { hex2rgb } = require("../tool");
 
 
@@ -15,7 +14,6 @@ async function dailyReport(userId, timezone) {
   });
 
   const dailyTrend = subjects.daily.groupedTotal.slice(-7);
-  console.log(subjectsInformation, dailyTrend);
   const now = DateTime.now().setZone(timezone);
   const dailyTrendLabels = [];
   for (let i = 0; i < dailyTrend.length; i++) {
