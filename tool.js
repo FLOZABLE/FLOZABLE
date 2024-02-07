@@ -106,7 +106,25 @@ const hex2rgb = (hex) => {
   const b = parseInt(hex.slice(5, 7), 16);
   
   return { r, g, b };
-}
+};
+
+/**
+ * @param {*} sec 
+ * @returns 
+ */
+const secondConverter = (sec, options = ['s', 'm', 'h']) => {
+  let value = sec ? sec : 0;
+  let type = 0;
+  if (sec >= 60 * 60) {
+    value = (sec / (60 * 60)).toFixed(2);
+    type = 2;
+  } else if (sec > 60) {
+    value = Math.floor(sec / 60);
+    type = 1;
+  };
+
+  return { value, type: options[type] };
+};
 
 module.exports = {
   generateRandomId,
@@ -119,5 +137,6 @@ module.exports = {
   googleOauth2client,
   googleYoutubeOauth2client,
   arraysHaveSameContents,
-  hex2rgb
+  hex2rgb,
+  secondConverter
 };
