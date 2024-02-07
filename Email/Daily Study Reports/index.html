@@ -378,7 +378,7 @@
                               <div
                                 style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:50px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:60px;">
                                <!--  <p style="margin: 0;">{{study_time}}</p> -->
-                               <img src="https://quickchart.io/chart?c={"type":"pie","data":{"datasets":[{"data":[0,0,0,0,0,0,0,0,0],"backgroundColor":["rgb(243, 129, 129)","rgb(0, 0, 0)","rgb(153, 153, 255)","rgb(227, 253, 253)","rgb(0, 0, 0)","rgb(153, 153, 255)","rgb(153, 153, 255)","rgb(153, 153, 255)","rgb(255, 209, 81)"]}],"labels":["Chem","others","Eng","Math","others","c","c","x","Read"]},"options":{"legend":{"display":true},"scales":{"xAxes":[{"display":false}],"yAxes":[]},"plugins":{"datalabels":{"display":false}}}}" alt="">
+                               <img width="100%" src="https://quickchart.io/chart?c={%22type%22:%22pie%22,%22data%22:{%22datasets%22:[{%22data%22:[0,0,0,0,0,0,6,0,0],%22backgroundColor%22:[%22rgb(0,%200,%200)%22,%22rgb(0,%200,%200)%22,%22rgb(227,%20253,%20253)%22,%22rgb(153,%20153,%20255)%22,%22rgb(255,%20209,%2081)%22,%22rgb(153,%20153,%20255)%22,%22rgb(243,%20129,%20129)%22,%22rgb(153,%20153,%20255)%22,%22rgb(153,%20153,%20255)%22]}],%22labels%22:[%22others%22,%22others%22,%22Math%22,%22Eng%22,%22Read%22,%22c%22,%22Chem%22,%22c%22,%22x%22]},%22options%22:{%22legend%22:{%22display%22:true},%22scales%22:{%22xAxes%22:[{%22display%22:false}],%22yAxes%22:[]},%22plugins%22:{%22datalabels%22:{%22display%22:false}}}}" alt="">
                               </div>
                             </td>
                           </tr>
@@ -390,7 +390,8 @@
                           <td class="pad">
                             <div
                               style="color:#fff;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:50px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:60px;">
-                              <p style="margin: 0;">{{study_time}}</p>
+                              <!-- <p style="margin: 0;">{{study_time}}</p> -->
+                              <img width="100%" src="https://quickchart.io/chart?c=%7Btype%3A%27line%27%2Cdata%3A%7Blabels%3A%5B%271%2F31%27%2C%272%2F1%27%2C%272%2F2%27%2C%272%2F3%27%2C%272%2F4%27%2C%272%2F5%27%2C%272%2F6%27%5D%2Cdatasets%3A%5B%7Blabel%3A%27Hours%27%2Cdata%3A%5B0%2C0%2C0%2C0%2C0%2C0%2C6%5D%7D%5D%7D%2Coptions%3A%7Bscales%3A%7ByAxes%3A%5B%7Bticks%3A%7Bcallback%3A%28sec%29+%3D%3E+%7B%0D%0A++let+value+%3D+sec+%3F+sec+%3A+0%3B%0D%0A++let+type+%3D+%27s%27%3B%0D%0A++if+%28sec+%3E%3D+60+*+60%29+%7B%0D%0A++++value+%3D+%28sec+%2F+%2860+*+60%29%29.toFixed%282%29%3B%0D%0A++++type+%3D+%27h%27%3B%0D%0A++%7D+else+if+%28sec+%3E+60%29+%7B%0D%0A++++value+%3D+Math.floor%28sec+%2F+60%29%3B%0D%0A++++type+%3D+%27m%27%3B%0D%0A++%7D%3B%0D%0A%0D%0A++return+%28%0D%0A++++value+%2B+type%0D%0A++%29%3B%0D%0A%7D%7D%7D%5D%7D%7D%7D&w=500&h=300&ref=qc-js&bkg=%23ffffff&f=png&v=2.9.4" alt="">
                             </div>
                           </td>
                         </tr>
