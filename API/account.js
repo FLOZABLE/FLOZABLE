@@ -7,7 +7,7 @@ const sharp = require('sharp');
 const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
-const { hashing, autoSignin, generateRandomId, googleOauth2client, isValidTimeZone } = require("../tool");
+const { hashing, autoSignin, generateRandomId, googleOauth2client, googleYoutubeOauth2client, isValidTimeZone } = require("../tool");
 const { validateEmail, validateStrictString, validatePassword, validateURL } = require("../validate");
 const { UserRefreshClient } = require("google-auth-library")
 const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
@@ -513,6 +513,28 @@ Router.post('/auth/google', async (req, res) => {
         );
         const { credentials } = await user.refreshAccessToken();
         console.log('dd', credentials) */
+      }
+      res.send({ success: true, data: response })
+    } catch (error) {
+      console.log(error)
+      res.send({ success: false, reason: 'An Error Occured' });
+    };
+  }));
+});
+
+
+Router.post('/auth/youtube', async (req, res) => {
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const { data } = req.body;
+      const auth = googleYoutubeOauth2client();
+      const response = await auth.getToken(data);
+      if (response.res.status === 200) {
+        const connection = pool.promise();
+        const { refresh_token, access_token } = response.tokens;
+        console.log('youtube login', response.tokens);
+        redisClient.set(`user:${userId}:youtubeAccessToken`, access_token, { EX: 3590 });
+        //connection.query(`UPDATE users SET google_refresh_token = ? WHERE user_id = ?`, [refresh_token, userId]);
       }
       res.send({ success: true, data: response })
     } catch (error) {
