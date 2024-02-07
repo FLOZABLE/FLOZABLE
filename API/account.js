@@ -527,7 +527,8 @@ Router.post('/auth/youtube', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
       const { data } = req.body;
-      const auth = googleYoutubeOauth2client();
+      console.log('ddd', data)
+      const auth = googleOauth2client(data);
       const response = await auth.getToken(data);
       if (response.res.status === 200) {
         const connection = pool.promise();
