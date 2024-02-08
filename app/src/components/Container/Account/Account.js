@@ -27,7 +27,7 @@ const googleClientId = process.env.REACT_APP_CLIENT_ID;
 const youtubeClientId = process.env.REACT_APP_YOUTUBE_CLIENT_ID;
 const appOrigin = process.env.REACT_APP_LOCATION;
 
-function Account({ isSidebarHovered, isSidebarOpen, subjects, userInfo, setResponse }) {
+function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userInfo, setResponse }) {
   const [imageSrc, setImageSrc] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -398,7 +398,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, userInfo, setRespo
                 Manage your subjects for study
               </p>
               <div className={styles.content}>
-                <SubjectsManager subjects = {subjects}/>
+                <SubjectsManager subjects = {subjects} setSubjects={setSubjects} setResponse={setResponse}/>
               </div>
             </div>
           </div>

@@ -64,6 +64,55 @@ Router.post("/add-subject", async (req, res) => {
   }));
 })
 
+
+Router.post("/modify-subject", async (req, res) => {
+  autoSignin(req, res, (async() => {
+    try {
+      const userId = req.session.user_id;
+      const schema = {
+        type: 'object',
+        properties: {
+          name: { type: 'string', minLength: 1, maxLength: 30 },
+          color: { type: 'string', minLength: 7, maxLength: 7 },
+          icon: { type: 'string', minLength: 1, maxLength: 15 },
+          id: {type: 'string'},
+        },
+        required: ['name', 'color', 'icon', 'id'],
+        additionalProperties: false
+      };
+
+      const isValid = isValidJSON(req.body, schema);
+      const subjectInfo = {
+        ...req.body,
+        datum_point: Math.floor(new Date().getTime() / 1000),
+        timeline: JSON.stringify([0,0]),
+        user_id: userId,
+      };
+      
+      if (isValid) {
+        const connection = pool.promise();
+        try {
+          const updateSubject = await connection.query("UPDATE subjects SET name = ?, icon = ?, color = ? WHERE id = ?", [subjectInfo.name, subjectInfo.icon, subjectInfo.color, subjectInfo.id]);
+          res.send({ success: true, msg: `Modified Subject "${subjectInfo.name}"`, subjectInfo: subjectInfo  });
+          
+          const previousSubject = JSON.parse(await redisClient.hGet(`user:${userId}:subjects`, subjectInfo.id));
+          previousSubject.name = subjectInfo.name;
+          previousSubject.icon = subjectInfo.icon;
+          previousSubject.color = subjectInfo.color;
+          redisClient.hSet(`user:${userId}:subjects`, subjectInfo.id, JSON.stringify(previousSubject));
+        } catch (err) {
+          console.log(err);
+        };
+      } else {
+        res.send({ success: false, reason: "Invalid Value" });
+      }
+    } catch (error) {
+      console.log(error);
+    };
+  }));
+});
+
+
 Router.post("/start", async (req, res) => {
   autoSignin(req, res, (async() => {
     const userId = req.session.user_id;
