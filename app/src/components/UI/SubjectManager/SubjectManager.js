@@ -13,7 +13,7 @@ import {
     Alert,
   } from "../../../utils/svgs";
 
-function SubjectManager({ subject }) {
+function SubjectManager({ subject, setSelectedSubject }) {
 
     const subjectIcons = {
         "Book": <Book width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
@@ -33,11 +33,14 @@ function SubjectManager({ subject }) {
                     <tr className={styles.tableRow}>
                         <td style = {{color: subject.color}}>
                             {subject.name}
+                            <p className={styles.editButton} onClick={() => {setSelectedSubject(subject)}}>
+                                Edit
+                            </p>
                         </td>
                         <td>
                             {subjectIcons[subject.icon]}
                         </td>
-                        <td>Three</td>
+                        <td>Manage Tools</td>
                     </tr>
                 </tbody>
             </table>
