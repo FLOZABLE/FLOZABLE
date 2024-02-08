@@ -31,8 +31,10 @@ async function extensionManager() {
         date,
         data: websiteStats.join(',')
       };
-      console.log(date)
       const update = await connection.query(`INSERT INTO activities set ?`, activity);
+      redisClient.del(`user:${user}:tabs:usage`);
+      redisClient.del(`user:${user}:tabs:timer`);
+
     });
   } catch (err) {
     console.log(err);

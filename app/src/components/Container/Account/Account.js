@@ -6,7 +6,6 @@ import {
   faCamera,
   faLock,
   faUser,
-  faBook,
 } from "@fortawesome/free-solid-svg-icons";
 import { Chrome, GoogleCalendar } from "../../../utils/svgs";
 import LineInput from "../../UI/LineInput/LineInput";
@@ -20,14 +19,13 @@ import { useSearchParams } from "react-router-dom";
 import SpotifyAuthBtn from "../../UI/SpotifyAuthBtn/SpotifyAuthBtn";
 import { SpotifyLogo } from "../../../utils/svgs";
 import YoutubeAPI from "../../UI/YoutubeAPI";
-import SubjectsManager from "../../UI/SubjectsManager/SubjectsManager";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;
 const youtubeClientId = process.env.REACT_APP_YOUTUBE_CLIENT_ID;
 const appOrigin = process.env.REACT_APP_LOCATION;
 
-function Account({ isSidebarHovered, isSidebarOpen, subjects, userInfo, setResponse }) {
+function Account({ isSidebarHovered, isSidebarOpen, userInfo, setResponse }) {
   const [imageSrc, setImageSrc] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -44,7 +42,6 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, userInfo, setRespo
   const [scrollRef, setScrollRef] = useState(null);
   const profileRef = useRef(null);
   const passwordRef = useRef(null);
-  const subjectsRef = useRef(null);
   const extensionRef = useRef(null);
   const accountsRef = useRef(null);
 
@@ -249,12 +246,6 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, userInfo, setRespo
               </i>
               <p>Change Password</p>
             </li>
-            <li className={styles.navEl} onClick={() => { setScrollRef(subjectsRef) }}>
-              <i>
-                <FontAwesomeIcon icon={faBook} />
-              </i>
-              <p>Subjects</p>
-            </li>
             <li className={styles.navEl} onClick={() => { setScrollRef(extensionRef) }}>
               <i>
                 <Chrome width={"22px"} height={"22px"} fill={"#545454"} />
@@ -391,17 +382,6 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, userInfo, setRespo
               </div>
             </div>
           </div>
-          <div className={styles.box} id={styles.subjects} ref={subjectsRef}>
-            <div className={styles.title}>
-              <h1>Manage Subjects</h1>
-              <p>
-                Manage your subjects for study
-              </p>
-              <div className={styles.content}>
-                <SubjectsManager subjects = {subjects}/>
-              </div>
-            </div>
-          </div>
           <div className={styles.box} id={styles.extension} ref={extensionRef}>
             <div className={styles.title}>
               <h1>Chrome Extension</h1>
@@ -525,7 +505,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, userInfo, setRespo
                   You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar by signing in with your Google account here.
                 </div>
                 <div className={styles.authBtn}>
-                  <GoogleOAuthProvider
+                <GoogleOAuthProvider
                     clientId={googleClientId}
                   >
                     <GoogleLoginBtn />

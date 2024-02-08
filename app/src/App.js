@@ -118,7 +118,7 @@ function App() {
           setSubjects(timelineSort(data.subjects));
           bringPlans(data.subjects);
           console.log('subject', data);
-          //console.log('graphURL', createStudyGraph(timelineSort(data.subjects)));
+          console.log('graphURL', createStudyGraph(timelineSort(data.subjects)));
           //setSubjects(sortSubjects(data.subjects));
         } else {
           bringPlans([]);

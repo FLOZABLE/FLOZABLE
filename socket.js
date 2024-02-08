@@ -3,7 +3,7 @@ const cron = require('node-cron');
 const pool = require("./model/pool");
 const redisClient = require("./model/redis");
 const { generateRandomId } = require("./tool");
-const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache, dmRoomMembersCache, groupMembersCache } = require("./services/redisLoader");
+const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache, dmRoomMembersCache, groupMembersCache, zsetIncrAll } = require("./services/redisLoader");
 const { DateTime } = require("luxon");
 const { Server } = require('socket.io');
 
@@ -20,8 +20,6 @@ const wrap = middleware => (socket, next) => middleware(socket.request, {}, next
 
 io.use(wrap(sessionMiddleWare));
 
-const userIdToSocketIdMap = new Map();
-let senderStream;
 const connection = io.of('/');
 connection.on('connection', (socket) => {
   let session;
@@ -59,7 +57,6 @@ connection.on('connection', (socket) => {
 
   console.log('connected0', userId)
 
-  userIdToSocketIdMap.set(socket.userId, socket.id);
   socket.join(userId);
 
   socket.on('joinMyGroups', async () => {
@@ -103,21 +100,7 @@ connection.on('connection', (socket) => {
   });
 
   socket.on("disconnect", (reason) => {
-    let socketIds = userIdToSocketIdMap.get(socket.userId);
     redisClient.hDel(`user:${userId}`, 'ActiveSubject');
-    userIdToSocketIdMap.delete(socketIds);
-    /* try {
-      if (socketIds) {
-        socketIds = socketIds.split(',');
-        if (socketIds.length > 1) {
-          socketIds.pop(socket.id);
-        } else {
-          userIdToSocketIdMap.delete(socket.userId);
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }; */
   });
 
   //chat
@@ -211,7 +194,8 @@ connection.on('connection', (socket) => {
     const duration = now - datum_point - timeline_sum;
     subject.timeline_sum += duration;
     redisClient.hSet(`user:${userId}:subjects`, subjectId, JSON.stringify(subject));
-    redisClient.incrBy(`user:${userId}:dayTotal`, duration);
+    //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
+    zsetIncrAll(`user:${userId}:dayTotal`, duration);
 
     const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
 
@@ -427,7 +411,7 @@ cron.schedule('*/10 * * * * *', () => {
   };
 });
 
-module.exports = { io, userIdToSocketIdMap, connection, extensionIo };
+module.exports = { io, connection, extensionIo };
 require('./videoServer')
 
 //require('./SFUServer');
