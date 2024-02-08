@@ -8,17 +8,22 @@ const { google } = require('googleapis');
 const { DateTime } = require("luxon");
 const { UserRefreshClient } = require("google-auth-library");
 const { validateStrictString, validateInteger, validateLength, validateString } = require("../validate");
-const { googleAccessTokenCache } = require("../services/redisLoader");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
       const connection = pool.promise();
       let [plans] = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed FROM plans where user_id = ?`, [userId]);
-      const access_token = await googleAccessTokenCache(userId);
-      if (access_token) {
+      const [[{ google_refresh_token }]] = await connection.query(`SELECT google_refresh_token FROM users WHERE user_id = ?`, [userId]);
+      if (google_refresh_token) {
         try {
-          const auth = googleOauth2client({access_token});
+          const user = new UserRefreshClient(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            google_refresh_token,
+          );
+          const { credentials } = await user.getAccessToken();
+          const auth = googleOauth2client(credentials);
           const googleCalendar = google.calendar({
             version: 'v3',
             auth: auth
