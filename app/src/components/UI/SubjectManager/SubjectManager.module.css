@@ -1,0 +1,12 @@
+.SubjectManager {
+    margin-top: 25px;
+}
+
+.SubjectManager .table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.SubjectManager .table .tableRow td {
+    border: 1px solid black;
+}
