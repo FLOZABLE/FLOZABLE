@@ -10,3 +10,7 @@
 .SubjectManager .table .tableRow td {
     border: 1px solid black;
 }
+
+.SubjectManager .editButton:hover {
+    cursor: pointer;
+}

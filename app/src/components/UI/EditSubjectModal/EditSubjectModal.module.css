@@ -1,0 +1,41 @@
+.EditSubjectModal {
+    background-color: #fff;
+    width: 550px;
+    height: fit-content;
+    visibility: hidden;
+    z-index: 4;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: 20px;
+}
+
+.EditSubjectModal .header {
+    background-color: #6f6af8;
+    height: 30px;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+    text-align: right;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+}
+
+.EditSubjectModal .header i {
+    font-size: 30px;
+    color: #fff;
+    cursor: pointer;
+    padding: 10px;
+    margin-top: 3px;
+}
+
+.EditSubjectModal .content {
+    padding: 30px 20px;
+}
+
+.EditSubjectModal .content .inputWrapper {
+    margin-bottom: 10px;
+}
+
+.EditSubjectModal .submit {
+    display: flex;
+    justify-content: center;
+}
