@@ -3,12 +3,13 @@ const schedule = require('node-schedule');
 const pool = require('../model/pool');
 const redisClient = require('../model/redis');
 
-async function rankingSort() {
+async function updateRanking() {
+  console.log("update ranking")
   /* //this means week start + month start => week value, month value should be waited by using await incrby
   if (now.weekday === 1 && now.day === 1) {
     updateWeeklyRanking();
   } */
-  const now = DateTime.utc().set({hour: 0, minute: 0, second: 0, millisecond: 0}).toSeconds();
+  const now = DateTime.now().set({hour: 0, minute: 0, second: 0, millisecond: 0}).toSeconds();
   const users = await redisClient.sMembers(`allMembers`);
   console.log(users)
   await updateDailyRanking(now, users);
@@ -25,14 +26,16 @@ async function updateDailyRanking(now, users) {
   try {
     const filteredUsers = [];
     await Promise.all(users.map(async(userId) => {
-      const todayTotal = await redisClient.get(`user:${userId}:dayTotal`);
+      const todayTotal = await redisClient.zPopMax(`user:${userId}:dayTotal`);
       //update week total, month total
       if (todayTotal) {
         filteredUsers.push({u: userId, t: todayTotal});
-        await redisClient.incrBy(`user:${userId}:weekTotal`, todayTotal);
-        await redisClient.incrBy(`user:${userId}:monthTotal`, todayTotal);
+        /* await redisClient.incrBy(`user:${userId}:weekTotal`, todayTotal);
+        await redisClient.incrBy(`user:${userId}:monthTotal`, todayTotal); */
+        await zsetIncrAll(`user:${userId}:weekTotal`, todayTotal);
+        await zsetIncrAll(`user:${userId}:monthTotal`, todayTotal);
       };
-      redisClient.del(`user:${userId}:dayTotal`);
+      //redisClient.del(`user:${userId}:dayTotal`);
       return null;
     }));
 
@@ -53,11 +56,12 @@ async function updateWeeklyRanking(now, users) {
   try {
     const filteredUsers = [];
     await Promise.all(users.map(async(userId) => {
-      const thisWewekTotal = await redisClient.get(`user:${userId}:weekTotal`);
-      if (thisWewekTotal) {
-        filteredUsers.push({u: userId, t: thisWewekTotal});
+      //const thisWeekTotal = await redisClient.get(`user:${userId}:weekTotal`);
+      const thisWeekTotal = await redisClient.zPopMax(`user:${userId}:weekTotal`);
+      if (thisWeekTotal) {
+        filteredUsers.push({u: userId, t: thisWeekTotal});
       };
-      redisClient.del(`user:${userId}:weekTotal`);
+      //redisClient.del(`user:${userId}:weekTotal`);
       return null;
     }));
 
@@ -78,11 +82,12 @@ async function updateMonthlyRanking(now, users) {
   try {
     const filteredUsers = [];
     await Promise.all(users.map(async(userId) => {
-      const thisMonthTotal = await redisClient.get(`user:${userId}:monthTotal`);
+      //const thisMonthTotal = await redisClient.get(`user:${userId}:monthTotal`);
+      const thisMonthTotal = await redisClient.zPopMax(`user:${userId}:monthTotal`);
       if (thisMonthTotal) {
         filteredUsers.push({u: userId, t: thisMonthTotal});
       }
-      redisClient.del(`user:${userId}:monthTotal`);
+      //redisClient.del(`user:${userId}:monthTotal`);
       return null;
     }));
 
@@ -128,7 +133,7 @@ async function updateMonthlyRanking(now, users) {
 };
  */
 
-function rankingManager() {
+/* function rankingManager() {
   //sec(optional), min, hr, day of month, month, day of week
   //this runs every hour
   const dailyRule = new schedule.RecurrenceRule();
@@ -136,8 +141,8 @@ function rankingManager() {
   dailyRule.minute = 0;
   dailyRule.tz = 'Etc/UTC';
   schedule.scheduleJob(dailyRule, () => { rankingSort() });
-}
+} */
 
 module.exports = {
-  rankingManager,
+  updateRanking,
 }

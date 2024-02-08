@@ -36,7 +36,6 @@ const RedisStore = require('connect-redis').default;
 const redisClient = require("./model/redis");
 redisClient.connect().catch(console.error);
 const port = process.env.PORT;
-const { cacheManager } = require("./services/redisLoader");
 const SENDINBLUE_API = process.env.SENDINBLUE_API;
 const sendInBlue = require('sib-api-v3-sdk');
 const sendinBlueClient = sendInBlue.ApiClient.instance;
@@ -52,9 +51,6 @@ const emailInstance = new sendInBlue.TransactionalEmailsApi();
     origin: "http://localhost:3001"
   }
 }); */
-const datasets = require('./test/Datasets');
-//datasets.getSubjects();
-//datasets.getPlans();
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -111,9 +107,6 @@ const sessionMiddleWare = session({
 app.use(sessionMiddleWare);
 
 module.exports = { server, sessionMiddleWare, emailInstance };
-//services
-/* const notificationService = require('./services/notification');
-notificationService.notificationService(); */
 
 
 //Router
@@ -143,7 +136,6 @@ app.set('socketio', io);
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.SECRET_ID));
 app.use(express.static(path.join(__dirname, '/public')));
-
 app.disable('etag');
 
 app.use('/', mainRouter);
@@ -168,13 +160,6 @@ app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 app.get('/dashboard*', (req, res) => {
   res.sendFile(path.join(__dirname, process.env.BUILD, 'index.html'));
-  /* account.autoSignin(req, res, (() => {
-    res.sendFile(path.join(__dirname, process.env.BUILD, 'index.html'));
-  }),
-    (() => {
-      res.redirect('/#signin');
-    })
-  ); */
 });
 
 app.use((req, res, next) => {
@@ -224,14 +209,15 @@ const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, c
 //createBotRankings();
 
 const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode } = require('./query');
-const { rankingManager } = require("./services/rankingUpdate");
+const { updateRanking } = require("./services/rankingUpdate");
 const { extensionManager } = require("./services/extension");
 const { dailyReport } = require("./services/notification");
 
 //scheduler that runs every hour
-dailyReport(process.env.TESTER_ID);
 cron.schedule('0 * * * *', () => {
   dailyReport(process.env.TESTER_ID);
+  extensionManager();
+  updateRanking();
 });
 
 // createUsersTable();
@@ -248,10 +234,6 @@ cron.schedule('0 * * * *', () => {
 // groupsChatRoomsGeneration();
 // createActivitiesTable();
 // utf8mb4Unicode();
-
-
-rankingManager();
-extensionManager();
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);

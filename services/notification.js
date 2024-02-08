@@ -136,10 +136,11 @@ async function dailyReport(userId, timezone) {
 
   const websiteChart = new QuickChart();
   websiteChart.setConfig(websitesConfig);
+  websiteChart.setBackgroundColor('transparent');
 
-  console.log(subjectPieChart.getUrl())
-  console.log(dailyTrendChart.getUrl())
-  console.log(websiteChart.getUrl())
+  /* console.log(subjectPieChart.getUrl())
+  console.log(dailyTrendChart.getUrl()) */
+  //console.log(websiteChart.getUrl())
 };
 
 function weeklyReport() {
