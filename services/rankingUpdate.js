@@ -9,6 +9,7 @@ async function updateRanking() {
   if (now.weekday === 1 && now.day === 1) {
     updateWeeklyRanking();
   } */
+  //const timezoneOff
   const now = DateTime.now().set({hour: 0, minute: 0, second: 0, millisecond: 0}).toSeconds();
   const users = await redisClient.sMembers(`allMembers`);
   console.log(users)
