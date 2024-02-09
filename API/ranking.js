@@ -10,7 +10,43 @@ const { promises } = require("fs");
 const { autoSignin } = require("../tool");
 const { validateInteger, validateStrictString, validateLength, validateISO } = require("../validate");
 
-Router.post('/sort', async (req, res) => {
+
+Router.get('/sort', async (req, res) => {
+  const {mode, date, timezone} = req.query;
+  console.log(mode, date, timezone);
+  res.send({mode, date, timezone});
+
+  const dateTime = DateTime.fromISO(date, {zone: timezone});
+  const today = DateTime.now().setZone(timezone);
+  console.log(today.get("hour"));
+  let rankings = [];
+  if (mode === "Daily") {
+    if (today.hasSame(dateTime, "day")) {
+
+    } else {
+      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [date]);
+      if (dailyRanking) {
+        const parsedRanking = JSON.parse(dailyRanking.ranking);
+        const rankingIndex = parsedRanking.findIndex(info => {
+          return info.u === userId;
+        })
+        rankings.push({ date, ranking: rankingIndex });
+      } 
+    }
+  } else if (mode === "Weekly") {
+    if (today.hasSame(dateTime, "week")) {
+
+    }
+  } else {
+    if (today.hasSame(dateTime, "month")) {
+
+    }
+  }
+});
+
+
+/* 
+Router.get('/sort', async (req, res) => {
   const { startTime, stopTime } = req.body;
 
   const maxStartTime = DateTime.now().plus({year: 1}).millisecond;
@@ -71,7 +107,7 @@ Router.post('/sort', async (req, res) => {
     console.log(err);
     res.send({ success: false });
   }
-});
+}); */
 
 const LENGTH = 7;
 /** get ranking change of user for each period */
@@ -143,6 +179,10 @@ async function userDailySorting(dateTime, length, userId) {
     };
   };
   return rankings;
+};
+
+async function userDaySorting(users, userId) {
+  
 };
 
 async function userWeeklySorting(dateTime, length, userId) {

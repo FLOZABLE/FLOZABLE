@@ -46,7 +46,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   //fetch new ranking
   useEffect(() => {
-    const viewTime = DateTime.fromJSDate(viewDate, { zone: "UTC" });
+    const viewTime = DateTime.fromJSDate(viewDate);
 
     let startTime;
     let stopTime;
@@ -66,7 +66,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     setEndDate(stopTime);
 
 
-    fetch(`${serverOrigin}/ranking/sort`, {
+    /* fetch(`${serverOrigin}/ranking/sort`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
@@ -81,7 +81,23 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
           setResultCount(data.data.length);
         }
       })
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error)); */
+
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;;
+
+      fetch(`${serverOrigin}/ranking/sort?mode=${viewer}&date=${viewTime.toISODate()}&timezone=${timezone}`, {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            console.log(data);
+          }
+        })
+        .catch((error) => console.error(error)); 
   }, [viewDate, viewer]);
 
   useEffect(() => {
