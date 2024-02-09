@@ -40,8 +40,8 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
 
   useEffect(() => {
     if (group.length <= 0) return;
-
-    fetch(`${serverOrigin}/ranking/today`, {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    fetch(`${serverOrigin}/ranking/today?timezone=${timezone}`, {
       method: "get",
       headers: {
         'Content-Type': 'application/json'

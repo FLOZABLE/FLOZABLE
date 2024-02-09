@@ -81,11 +81,11 @@ const consumers = {};
           httpOnly: true,
           secure: false
         },
-        user_id: 'EoFObpf612bdJKt',
+        user_id: 'EoFObpf612',
         name: 't1',
         loggedin: true,
         userInfo: {
-          userId: 'EoFObpf612bdJKt',
+          userId: 'EoFObpf612',
           name: 't1',
           loggedin: true,
           email: 't1@t.t',

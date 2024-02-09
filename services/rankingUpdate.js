@@ -9,16 +9,31 @@ async function updateRanking() {
   if (now.weekday === 1 && now.day === 1) {
     updateWeeklyRanking();
   } */
-  const timezoneOffset = DateTime.utc().get('hour');
-  const now = DateTime.now().set({minute: 0, second: 0, millisecond: 0}).toSeconds();
+  /* const now = DateTime.now();
+  const allTimezones = Intl.supportedValuesOf('timeZone');
+  allTimezones.every(zone => {
+    const dtInZone = now.setZone(zone);
+    console.log(dtInZone.hour)
+    if (dtInZone.hour === 0) {
+      now.setZone(zone);
+      console.log('ddddd', zone);
+      return;
+    }
+  });
+  allTimezones.findIndex(timezone => {
+    return timezone.hour
+  }) */
+  const timezoneOffset = Math.floor(now.offset / 60).toString();
+  console.log(timezoneOffset, now.zoneName)
+  //const now = DateTime.now().set({minute: 0, second: 0, millisecond: 0}).toSeconds();
   const users = await redisClient.sMembers(`allMembers`);
   console.log(users)
-  await updateDailyRanking(now, users, timezoneOffset.toString());
+  //await updateDailyRanking(now, users, timezoneOffset.toString());
   if (now.weekday === 1) {
-    updateWeeklyRanking(now, users, timezoneOffset.toString());
+    //updateWeeklyRanking(now, users, timezoneOffset.toString());
   };
   if (now.day === 1) {
-    updateMonthlyRanking(now, users, timezoneOffset.toString());
+    //updateMonthlyRanking(now, users, timezoneOffset.toString());
     redisClient.del(`allMembers`);
   };
 }

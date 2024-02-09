@@ -5,6 +5,7 @@ const redisClient = require('../model/redis');
 const pool = require('../model/pool');
 const { sendEmail } = require('../email');
 const { validateEmail, validateStrictString } = require('../validate');
+const { DateTime } = require('luxon');
 const Router = express.Router();
 
 
@@ -268,10 +269,14 @@ Router.get('/status', async (req, res) => {
       if (!userInfo) return res.send({ success: false, reason: `no such user` });
       const friends = userInfo.friends === "" ? [] : userInfo.friends.split(',');
       const friendsInfo = [];
+
+      const today = DateTime.now().setZone(userInfo.timezone);
+      const timezoneOffset = Math.floor(today.offset / 60).toString();
+
       await Promise.all(friends.map(async (friend) => {
         friend = await userCache(friend);
         if (!friend) return;
-        const totalTime = await redisClient.get(`user:${friend.user_id}:dayTotal`);
+        const totalTime = await redisClient.zScore(`user:${friend.user_id}:dayTotal`, timezoneOffset);
         friend.totalTime = totalTime === null ? 0 : totalTime;
         const activeSubject = await activeSubjectCache(friend.user_id);
         if (activeSubject.id) {
