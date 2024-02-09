@@ -2,11 +2,40 @@ const express = require('express');
 const Router = express.Router();
 const pool = require("../model/pool");
 const axios = require("axios");
-const { autoSignin, generateRandomId } = require("../tool");
+const { hashing, autoSignin, generateRandomId, googleOauth2client, isValidTimeZone } = require("../tool");
+const { UserRefreshClient } = require("google-auth-library");
 const redisClient = require("../model/redis");
+const { googleAccessTokenCache } = require("../services/redisLoader");
 
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
+
+Router.get("/youtube-playlists", async (req, res) => {
+    autoSignin(req, res, (async (userId) => {
+        try {
+            try {
+                const access_token = await googleAccessTokenCache(userId);
+                const auth = googleOauth2client(access_token);
+
+                const googleYoutube = google.youtube({
+                    version: 'v3',
+                    auth: auth
+                });
+
+                console.log(googleYoutube);
+
+            } catch (err) {
+                if (err.response && err.response && err.response.data && err.response.data.error === "invalid_grant") {
+                    connection.query(`UPDATE users set google_refresh_token = NULL WHERE user_id = ?`, [userId]);
+                };
+            };
+            res.send({ success: true });
+        } catch (err) {
+            console.log(err);
+            res.send({ success: false });
+        };
+    }));
+});
 
 Router.post('/spotify-login', async (req, res) => {
     const { token, redirectURI, userId } = req.body;
@@ -21,7 +50,7 @@ Router.post('/spotify-login', async (req, res) => {
         }).then((response) => response.json())
             .then(async (data) => {
                 if (!!data.display_name) {
-                    return res.send({ success: true, name: data.display_name, msg: `Logged in as ${data.display_name}`});
+                    return res.send({ success: true, name: data.display_name, msg: `Logged in as ${data.display_name}` });
                 }
                 else {
                     return res.send({ success: false, reason: "An error occured" });
@@ -137,7 +166,7 @@ Router.get('/spotify-playlists', async (req, res) => {
             .then(async (data) => {
                 if (!!data.items) {
                     data.items.map((playlist) => {
-                        userPlaylists.push({name: playlist.name, url: playlist.external_urls.spotify})
+                        userPlaylists.push({ name: playlist.name, url: playlist.external_urls.spotify })
                     });
                     return res.send({ success: true, data: userPlaylists });
                 }
