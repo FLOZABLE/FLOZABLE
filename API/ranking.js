@@ -5,48 +5,111 @@ const redisClient = require("../model/redis");
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
 const { DateTime } = require('luxon');
-const { subjectsCache, userCache } = require("../services/redisLoader");
+const { subjectsCache, userCache, usersCache } = require("../services/redisLoader");
 const { promises } = require("fs");
 const { autoSignin } = require("../tool");
-const { validateInteger, validateStrictString, validateLength, validateISO } = require("../validate");
+const { validateInteger, validateStrictString, validateLength, validateISO, validateTimeZone } = require("../validate");
 
 
 Router.get('/sort', async (req, res) => {
   const {mode, date, timezone} = req.query;
   console.log(mode, date, timezone);
-  res.send({mode, date, timezone});
 
   const dateTime = DateTime.fromISO(date, {zone: timezone});
   const today = DateTime.now().setZone(timezone);
-  console.log(today.get("hour"));
+  const timezoneOffset = Math.floor(dateTime.offset / 60).toString();
+
+  console.log(timezoneOffset);
   let rankings = [];
   if (mode === "Daily") {
-    if (today.hasSame(dateTime, "day")) {
 
+    //use redis value when its today
+    if (dateTime.hasSame(today, "day")) {
+      //today
+      const users = await redisClient.sMembers('allMembers');
+      rankings = await todaySorting(users, timezoneOffset);
+      rankings = await Promise.all(rankings.map(async(ranking) => {
+        const user = await userCache(ranking.userId);
+        return {...ranking, ...user}
+      }))
     } else {
-      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [date]);
+      //get ranking from database if its not today;
+      const connection = pool.promise();
+      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [today.toSeconds()]);
       if (dailyRanking) {
-        const parsedRanking = JSON.parse(dailyRanking.ranking);
-        const rankingIndex = parsedRanking.findIndex(info => {
-          return info.u === userId;
-        })
-        rankings.push({ date, ranking: rankingIndex });
+        rankings = JSON.parse(dailyRanking.ranking);
       } 
     }
   } else if (mode === "Weekly") {
-    if (today.hasSame(dateTime, "week")) {
 
+    //use redis value when its same week
+    if (today.hasSame(dateTime, "week")) {
+      const users = await redisClient.sMembers('allMembers');
+      const filteredUsers = [];
+      await Promise.all(users.map(async (userId) => {
+        const weekTotal = await redisClient.zScore(`user:${userId}:weekTotal`, timezoneOffset.toString());
+        const todayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset.toString());
+        if (weekTotal || todayTotal) {
+          const total = weekTotal ? weekTotal : 0 + todayTotal ? todayTotal : 0;
+          const user = await userCache(userId);
+          filteredUsers.push({...user, total});
+        };
+      }));
+
+      rankings = filteredUsers.sort((a, b) => b.total - a.total);
+    } else {
+      //get ranking from database if its not today;
+      const connection = pool.promise();
+      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [today.toSeconds()]);
+      if (dailyRanking) {
+        rankings = JSON.parse(dailyRanking.ranking);
+      } 
     }
   } else {
-    if (today.hasSame(dateTime, "month")) {
+    //month
 
+    //use redis value when its same month
+    if (today.hasSame(dateTime, "month")) {
+      const users = await redisClient.sMembers('allMembers');
+      const filteredUsers = [];
+      await Promise.all(users.map(async (userId) => {
+        const monthTotal = await redisClient.zScore(`user:${userId}:monthTotal`, timezoneOffset.toString());
+        const todayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset.toString());
+        if (monthTotal || todayTotal) {
+          const total = monthTotal ? monthTotal : 0 + todayTotal ? todayTotal : 0;
+          const user = await userCache(userId);
+          filteredUsers.push({...user, total});
+        };
+      }));
+
+      rankings = filteredUsers.sort((a, b) => b.total - a.total);
+    } else {
+      //get ranking from database if its not today;
+      const connection = pool.promise();
+      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [today.toSeconds()]);
+      if (dailyRanking) {
+        rankings = JSON.parse(dailyRanking.ranking);
+      } 
     }
-  }
+  };
+
+  res.send({ success: true, data: rankings })
 });
 
+async function todaySorting (users, timezoneOffset) {
+  const filteredUsers = [];
+  await Promise.all(users.map(async (userId) => {
+    const todayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset);
+    if (todayTotal) {
+      filteredUsers.push({userId, total: todayTotal});
+    };
+  }));
 
-/* 
-Router.get('/sort', async (req, res) => {
+  return filteredUsers.sort((a, b) => b.total - a.total);
+};
+
+
+Router.post('/sort', async (req, res) => {
   const { startTime, stopTime } = req.body;
 
   const maxStartTime = DateTime.now().plus({year: 1}).millisecond;
@@ -107,11 +170,66 @@ Router.get('/sort', async (req, res) => {
     console.log(err);
     res.send({ success: false });
   }
-}); */
+});
 
 const LENGTH = 7;
 /** get ranking change of user for each period */
 Router.get('/user', async (req, res) => {
+  try {
+    const { userId, date, mode, timezone } = req.query;
+
+    console.log(userId.length)
+    const isValidUserId = validateStrictString(userId, 'user id', 10);
+
+    if (!isValidUserId.isValid) {
+      return res.send({ success: false, reason: isValidUserId.reason });
+    };
+    
+    const isValidDate = validateISO(date, 'date');
+
+    if (!isValidDate.isValid) {
+      return res.send({ success: false, reason: isValidDate.reason });
+    };
+
+    const isValidMode = validateStrictString(mode, 'mode', 10);
+
+    if (!isValidMode.isValid) {
+      return res.send({ success: false, reason: isValidMode.reason });
+    };
+
+    const isValidTimezone = validateTimeZone(timezone);
+
+    if (!isValidTimezone.isValid) {
+      return res.send({success: false, reason: isValidTimezone.reason});
+    };
+
+    if (!userId) {
+      return res.send({ success: false, reason: 'userid required' })
+    }
+
+    const dateTime = DateTime.fromISO(date, { zone: timezone });
+    const today = DateTime.now().setZone(timezone);
+    const timezoneOffset = Math.floor(dateTime.offset / 60);
+
+    const connection = pool.promise();
+    let rankings = [];
+
+    if (mode === 'day' || mode === 'daily') {
+      rankings = await userDailySorting(userId, date, timezone, LENGTH);
+      console.log(rankings)
+    } else if (mode === 'week' || mode === 'weekly') {
+      rankings = await userWeeklySorting(dateTime, LENGTH, userId, today, timezoneOffset);
+    } else {
+      rankings = await userMonthlySorting(dateTime, LENGTH, userId, today, timezoneOffset);
+    };
+    const [[usersLength]] = await connection.query(`SELECT COUNT(*) FROM users`);
+    res.send({ success: true, rankings: { data: rankings, maxLength: Object.values(usersLength)[0] } });
+  } catch (err) {
+    console.log(err);
+    res.send({ success: false, reason: 'err' })
+  };
+});
+/* Router.get('/user', async (req, res) => {
   try {
     const { userId, date, mode } = req.query;
 
@@ -153,9 +271,43 @@ Router.get('/user', async (req, res) => {
     console.log(err);
     res.send({ success: false, reason: 'err' })
   };
-});
+}); */
 
-async function userDailySorting(dateTime, length, userId) {
+async function userDailySorting(userId, date, timezone, length) {
+  const rankings = [];
+  let dateStart = DateTime.fromISO(date, { zone: timezone });
+  //this prevents from displaying future ranking
+  const today = DateTime.now().setZone(timezone).startOf('day');
+  let diff = today.diff(dateStart, 'days').toObject().days;
+  while (diff < length) {
+    dateStart = dateStart.plus({ days: -1 });
+    diff += 1;
+  };
+  const connection = pool.promise();
+  for (let i = 0; i < length; i++) {
+    const date = dateStart.plus({ days: i }).toSeconds();
+    const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [date]);
+    if (dailyRanking) {
+      const parsedRanking = JSON.parse(dailyRanking.ranking);
+      const rankingIndex = parsedRanking.findIndex(info => {
+        return info.u === userId;
+      })
+      rankings.push({ date, ranking: rankingIndex });
+    } else if (date === today.toSeconds()) {
+      const users = await redisClient.sMembers('allMembers');
+      rankings = await todaySorting(users, timezoneOffset);
+      const rankingIndex = rankings.findIndex(ranking => {
+        return ranking.userId === userId;
+      });
+      rankings.push({ date, ranking: rankingIndex });
+    } else {
+      rankings.push({ date, ranking: -1 });
+    }
+  };
+  return rankings;
+};
+
+/* async function userDailySorting(dateTime, length, userId) {
   const rankings = [];
   let dateStart = dateTime.startOf('day');
   //this prevents from displaying future ranking
@@ -179,7 +331,7 @@ async function userDailySorting(dateTime, length, userId) {
     };
   };
   return rankings;
-};
+}; */
 
 async function userDaySorting(users, userId) {
   

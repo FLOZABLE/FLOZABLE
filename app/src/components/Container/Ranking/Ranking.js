@@ -29,7 +29,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   const [resultEnd, setResultEnd] = useState(50);
   const [resultCount, setResultCount] = useState(0);
 
-  let [searchParams, setSearchParams] = useSearchParams({page: 1});
+  let [searchParams, setSearchParams] = useSearchParams({ page: 1 });
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -66,7 +66,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     setEndDate(stopTime);
 
 
-    /* fetch(`${serverOrigin}/ranking/sort`, {
+    fetch(`${serverOrigin}/ranking/sort`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
@@ -76,39 +76,40 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log(data);
+          /* setRanking(data.data);
+          setResultCount(data.data.length); */
+        }
+      })
+      .catch((error) => console.error(error));
+
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;;
+
+    fetch(`${serverOrigin}/ranking/sort?mode=${viewer}&date=${viewTime.toISODate()}&timezone=${timezone}`, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log(data, 'new ranking');
           setRanking(data.data);
           setResultCount(data.data.length);
         }
       })
-      .catch((error) => console.error(error)); */
-
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;;
-
-      fetch(`${serverOrigin}/ranking/sort?mode=${viewer}&date=${viewTime.toISODate()}&timezone=${timezone}`, {
-        method: 'get',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            console.log(data);
-          }
-        })
-        .catch((error) => console.error(error)); 
+      .catch((error) => console.error(error));
   }, [viewDate, viewer]);
 
   useEffect(() => {
-    if (!searchParams.get('page')){
-      setSearchParams({...searchParams, page: 1});
+    if (!searchParams.get('page')) {
+      setSearchParams({ ...searchParams, page: 1 });
     }
   }, [searchParams]);
 
   useEffect(() => {
-    if (searchParams.get('page') != 1){
-      setSearchParams({...searchParams, page: 1});
+    if (searchParams.get('page') != 1) {
+      setSearchParams({ ...searchParams, page: 1 });
     }
   }, [rankingSearch])
 
@@ -117,10 +118,10 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     let allResults = 0;
     setRankingEl(ranking.map(({ total, name, user_id, timezone }, i) => {
       allResults += 1;
-      if (rankingSearch.length === 0){
+      if (rankingSearch.length === 0) {
         if (i < (searchParams.get('page') - 1) * 50 || i >= (searchParams.get('page')) * 50) return;
       }
-      else{
+      else {
         if (!name.toLowerCase().includes(rankingSearch.toLowerCase())) return;
         shownResults += 1;
         if (shownResults < (searchParams.get('page') - 1) * 50 || shownResults >= (searchParams.get('page')) * 50) return;
@@ -152,10 +153,10 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
       )
     }));
 
-    if (rankingSearch.length == 0){
+    if (rankingSearch.length == 0) {
       setResultCount(allResults);
     }
-    else{
+    else {
       setResultCount(shownResults);
     }
   }, [ranking, rankingSearch, searchParams]);
@@ -182,7 +183,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
               <div className={styles.PageButtons}>
                 {
                   parseInt(searchParams.get('page')) > 1 ?
-                    <button onClick={() => { setSearchParams({'page': parseInt(searchParams.get('page')) - 1}) }}>
+                    <button onClick={() => { setSearchParams({ 'page': parseInt(searchParams.get('page')) - 1 }) }}>
                       &lt; Back
                     </button>
                     :
@@ -191,7 +192,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
                 <span className={styles.textContainer}>Page {searchParams.get('page')}</span>
                 {
                   parseInt(searchParams.get('page')) * 50 < resultCount ?
-                    <button onClick={() => { setSearchParams({'page': parseInt(searchParams.get('page')) + 1}) }}>
+                    <button onClick={() => { setSearchParams({ 'page': parseInt(searchParams.get('page')) + 1 }) }}>
                       Next &gt;
                     </button>
                     :
