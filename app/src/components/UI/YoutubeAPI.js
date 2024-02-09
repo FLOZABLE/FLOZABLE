@@ -6,19 +6,13 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function YoutubeAPI({ }) {
 
-    const function2 = () => {
-        fetch(`${serverOrigin}/account/auth/youtube`, {
-            method: 'POST',
-        });
-    }
-
     const login = useGoogleLogin({
         flow: 'auth-code',
         select_account: true,
         onSuccess: (response) => {
             console.log(response);
             const { code } = response;
-            fetch(`${serverOrigin}/account/auth/youtube`, {
+            fetch(`${serverOrigin}/account/auth/google`, {
                 method: "post",
                 headers: {
                     'Content-Type': 'application/json'

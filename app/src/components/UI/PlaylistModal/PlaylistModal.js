@@ -54,6 +54,16 @@ function PlaylistModal({ userInfo, setResponse }) {
       })
   }, [userInfo]);
 
+  useEffect(() => {
+    fetch(`${serverOrigin}/playlists/youtube-playlists`, { method: "get" })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data, 'playlist');
+      }).catch((err) => {
+        console.log(err);
+      })
+  }, [])
+
   return (
     <div className={styles.PlaylistModal}>
       <div className={styles.authGuide}>

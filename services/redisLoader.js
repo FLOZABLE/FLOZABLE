@@ -403,12 +403,12 @@ async function googleAccessTokenCache(userId) {
     const user = new UserRefreshClient(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      google_refresh_token,
+      userInfo.google_refresh_token,
     );
     const {res} = await user.getAccessToken();
     
     if (res.data.access_token) {
-      redisClient.set(`user:${userId}:googleAccessToken`, access_token, { EX: 3590 });
+      redisClient.set(`user:${userId}:googleAccessToken`, res.data.access_token, { EX: 3590 });
       return res.data.access_token;
     };
 
