@@ -18,7 +18,7 @@ Router.get("/", async (req, res) => {
       const access_token = await googleAccessTokenCache(userId);
       if (access_token) {
         try {
-          const auth = googleOauth2client({access_token});
+          const auth = googleOauth2client({ access_token });
           const googleCalendar = google.calendar({
             version: 'v3',
             auth: auth
@@ -40,7 +40,7 @@ Router.get("/", async (req, res) => {
                 const { htmlLink, id, summary, start, end, description, reminders } = event;
                 const startDateTime = Math.floor(DateTime.fromISO(start ? start.dateTime : '', { zone: start ? start.timeZone : '' }).toSeconds() / 60);
                 const endDateTime = Math.floor(DateTime.fromISO(end ? end.dateTime : '', { zone: end ? end.timeZone : '' }).toSeconds() / 60);
-                const newEvent = { id, title: summary, start: startDateTime, end: endDateTime, repeat: 0, description, notification: reminders, subject: calendar.summary, priority: 5, completed: 0, htmlLink };
+                const newEvent = { id, title: summary, start: startDateTime, end: endDateTime, repeat: 0, description, notification: reminders, subject: calendar.id, priority: 5, completed: 0, htmlLink, type: 'google' };
                 calendarEvents.push(newEvent);
                 return null;
               });
@@ -72,9 +72,36 @@ Router.post('/update', async (req, res) => {
 
       const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds();
       const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds();
-      const { title, id, start, end, repeat, description, subject, notification, priority, completed } = planInfo;
+      const { title, id, start, end, repeat, description, subject, notification, priority, completed, type } = planInfo;
 
-      const isValidTitle = validateString(title, 'Title');
+      console.log(type);
+      if (type === "google") {
+        const access_token = await googleAccessTokenCache(userId);
+        if (access_token) {
+          try {
+            const auth = googleOauth2client({ access_token });
+            const googleCalendar = google.calendar({
+              version: 'v3',
+              auth: auth
+            });
+            const updateResults = await googleCalendar.events.update({
+              auth: auth,
+              calendarId: subject, 
+              eventId: id, //log looks like: 12432dsfkjhhwqejhkj12
+              resource: {
+                summary: "Test Summary",
+                "description": "Test Description",
+                "end": req.body.end_time,  //log for end and start look like: { dateTime: '2021-08-09T11:30:00-04:00', timeZone: 'America/New_York' }
+                "start": req.body.start_time,
+              }
+            });
+          } catch (err) {
+
+          }
+        }
+      };
+
+      const isValidTitle = validateString(title, 'Title', 100);
       if (!isValidTitle.isValid) {
         return res.send({ success: false, reason: isValidTitle.reason });
       };
@@ -129,11 +156,11 @@ Router.post('/update', async (req, res) => {
         const insertInfo = { ...planData, user_id: userId };
         const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [userId, planData.id]);
         if (!deletePrev.affectedRows) {
-          removePrevNotification(userId, planData.id);
+          //removePrevNotification(userId, planData.id);
         }
         const [userInfo] = await connection.query(`SELECT user_id, name, email, notification_setting, key_salt, iv, subscription from users where user_id = ?`, [userId]);
         const startTime = planData * 1000 * 60;
-        planNotification(insertInfo, userInfo[0], startTime)
+        //planNotification(insertInfo, userInfo[0], startTime)
         const insert = await connection.query(`INSERT INTO plans SET ?`, insertInfo);
         res.send({ success: true, msg: 'Plan Saved!' })
       } catch (error) {

@@ -70,7 +70,8 @@ function App() {
     subject: null,
     id: null,
     saved: false,
-    completed: false
+    completed: false,
+    type: 'local'
   });
 
   const toggleSidebar = () => {
