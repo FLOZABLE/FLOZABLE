@@ -15,8 +15,8 @@ function GroupRankingModal({ isOpen, setIsOpen, members }) {
     const membArr = members === "" ? [] : members.split(",");
     
     const tempGroupRanking = [];
-
-    fetch(`${serverOrigin}/ranking/today`, { method: 'get' })
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    fetch(`${serverOrigin}/ranking/today?timezone=${timezone}`, { method: 'get' })
       .then((response) => response.json())
       .then((data) => {
         data.rankings.map((ranking) => {

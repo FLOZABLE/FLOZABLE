@@ -24,12 +24,13 @@ function hashing(password) {
 
 async function autoSignin(req, res, success = (() => { }), fail = (() => { res.send({ success: false, reason: 'Sign in required', msg: 'Sign in required' }) })) {
   if (req.session.user_id || (process.env.NODE_ENV === 'development' && (req.session.user_id = process.env.TESTER_ID))) {
-    return success(req.session.user_id);
+    return success(req.session.user_id, req.session.timezone);
   } else if (req.signedCookies.userId) {
     const userInfo = await userCache(req.signedCookies.userId);
     if (userInfo) {
       req.session.user_id = req.signedCookies.userId;
-      return success(req.session.user_id);
+      req.session.timezone = userInfo.timezone;
+      return success(req.session.user_id, req.session.timezone);
     } else {
       return fail();
     }
