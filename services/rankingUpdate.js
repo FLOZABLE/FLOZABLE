@@ -9,11 +9,11 @@ async function updateRanking() {
   if (now.weekday === 1 && now.day === 1) {
     updateWeeklyRanking();
   } */
-  //const timezoneOff
-  const now = DateTime.now().set({hour: 0, minute: 0, second: 0, millisecond: 0}).toSeconds();
+  const timezoneOffset = DateTime.utc().get('hour');
+  const now = DateTime.now().set({minute: 0, second: 0, millisecond: 0}).toSeconds();
   const users = await redisClient.sMembers(`allMembers`);
   console.log(users)
-  await updateDailyRanking(now, users);
+  await updateDailyRanking(now, users, timezoneOffset);
   if (now.weekday === 1) {
     updateWeeklyRanking(now, users);
   };
@@ -23,11 +23,11 @@ async function updateRanking() {
   };
 }
 
-async function updateDailyRanking(now, users) {
+async function updateDailyRanking(now, users, timezoneOffset) {
   try {
     const filteredUsers = [];
     await Promise.all(users.map(async(userId) => {
-      const todayTotal = await redisClient.zPopMax(`user:${userId}:dayTotal`);
+      const todayTotal = await redisClient.zRem(`user:${userId}:dayTotal`, timezoneOffset);
       //update week total, month total
       if (todayTotal) {
         filteredUsers.push({u: userId, t: todayTotal});
@@ -53,12 +53,12 @@ async function updateDailyRanking(now, users) {
   };
 };
 
-async function updateWeeklyRanking(now, users) {
+async function updateWeeklyRanking(now, users, timezoneOffset) {
   try {
     const filteredUsers = [];
     await Promise.all(users.map(async(userId) => {
       //const thisWeekTotal = await redisClient.get(`user:${userId}:weekTotal`);
-      const thisWeekTotal = await redisClient.zPopMax(`user:${userId}:weekTotal`);
+      const thisWeekTotal = await redisClient.zRem(`user:${userId}:weekTotal`, timezoneOffset);
       if (thisWeekTotal) {
         filteredUsers.push({u: userId, t: thisWeekTotal});
       };
@@ -79,12 +79,12 @@ async function updateWeeklyRanking(now, users) {
   };
 };
 
-async function updateMonthlyRanking(now, users) {
+async function updateMonthlyRanking(now, users, timezoneOffset) {
   try {
     const filteredUsers = [];
     await Promise.all(users.map(async(userId) => {
       //const thisMonthTotal = await redisClient.get(`user:${userId}:monthTotal`);
-      const thisMonthTotal = await redisClient.zPopMax(`user:${userId}:monthTotal`);
+      const thisMonthTotal = await redisClient.zRem(`user:${userId}:monthTotal`, timezoneOffset);
       if (thisMonthTotal) {
         filteredUsers.push({u: userId, t: thisMonthTotal});
       }
