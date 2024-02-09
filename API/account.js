@@ -130,7 +130,7 @@ Router.post('/signup-authentication', async (req, res) => {
 
     const [salt, hashed_password] = hashing(password);
 
-    const userId = generateRandomId(15);
+    const userId = generateRandomId(10);
     const keySalt = crypto.randomBytes(32).toString('hex');
     const iv = crypto.randomBytes(16).toString('hex');
 

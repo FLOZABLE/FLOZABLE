@@ -195,7 +195,7 @@ connection.on('connection', (socket) => {
     subject.timeline_sum += duration;
     redisClient.hSet(`user:${userId}:subjects`, subjectId, JSON.stringify(subject));
     //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
-    zsetIncrAll(`user:${userId}:dayTotal`, duration);
+    //zsetIncrAll(`user:${userId}:dayTotal`, duration);
 
     const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
 
@@ -215,6 +215,9 @@ connection.on('connection', (socket) => {
     redisClient.rPush(`user:${userId}:timer`, `[${timerStart},${totalTimerDuration}]`);
     redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo)); */
     redisClient.hDel(`user:${userId}`, `ActiveSubject`);
+    for (let i = -12; i < 12; i++) {
+      redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
+    };
   });
 
   socket.on("startDm", async (targetId) => {

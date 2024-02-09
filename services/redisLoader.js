@@ -417,7 +417,14 @@ async function googleAccessTokenCache(userId) {
     console.log(err);
     return false;
   };
-}
+};
+
+async function zsetIncrAll(key, val = 1) {
+  const members = await redisClient.zRange(key, 0, -1);
+  members.map(async(member) => {
+    redisClient.zIncrBy(key, val, member);
+  });
+};
 
 module.exports = {
   flushRedis,
@@ -440,5 +447,6 @@ module.exports = {
   msgReadCache,
   challengeroomsCache,
   websiteUsageCache,
-  googleAccessTokenCache
+  googleAccessTokenCache,
+  zsetIncrAll
 }

@@ -527,7 +527,10 @@ async function stopBot(userId) {
 
   const duration = now - datum_point - timeline_sum;
   console.log('stop', userId, name, duration);
-  redisClient.incrBy(`user:${userId}:dayTotal`, duration);
+  //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
+  for (let i = -12; i < 12; i++) {
+    redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
+  };
   subject.timeline_sum += duration;
   redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
   const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${id}`));
