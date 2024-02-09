@@ -11,6 +11,16 @@
     border: 1px solid black;
 }
 
+.SubjectManager .editButton {
+    color: black;
+}
+
 .SubjectManager .editButton:hover {
     cursor: pointer;
+    font-weight: bold;
+}
+
+.SubjectManager .toggleToolsText:hover {
+    cursor: pointer;
+    font-weight: bold;
 }

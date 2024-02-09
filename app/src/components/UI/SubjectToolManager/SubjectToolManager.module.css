@@ -1,0 +1,7 @@
+.SubjectToolManager {
+    position: relative;
+}
+
+.SubjectToolManager .hidden {
+    display: none;
+}
