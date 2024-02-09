@@ -5,35 +5,24 @@ const redisClient = require('../model/redis');
 
 async function updateRanking() {
   console.log("update ranking")
-  /* //this means week start + month start => week value, month value should be waited by using await incrby
-  if (now.weekday === 1 && now.day === 1) {
-    updateWeeklyRanking();
-  } */
-  /* const now = DateTime.now();
+ 
+  let now = DateTime.now();
   const allTimezones = Intl.supportedValuesOf('timeZone');
-  allTimezones.every(zone => {
-    const dtInZone = now.setZone(zone);
-    console.log(dtInZone.hour)
-    if (dtInZone.hour === 0) {
-      now.setZone(zone);
-      console.log('ddddd', zone);
-      return;
-    }
-  });
+
   allTimezones.findIndex(timezone => {
-    return timezone.hour
-  }) */
+    now = now.setZone(timezone);
+    return now.get("hour") === 0;
+  });
+
   const timezoneOffset = Math.floor(now.offset / 60).toString();
-  console.log(timezoneOffset, now.zoneName)
-  //const now = DateTime.now().set({minute: 0, second: 0, millisecond: 0}).toSeconds();
+  now = now.startOf("day").toSeconds();
   const users = await redisClient.sMembers(`allMembers`);
-  console.log(users)
-  //await updateDailyRanking(now, users, timezoneOffset.toString());
+  await updateDailyRanking(now, users, timezoneOffset);
   if (now.weekday === 1) {
-    //updateWeeklyRanking(now, users, timezoneOffset.toString());
+    updateWeeklyRanking(now, users, timezoneOffset);
   };
   if (now.day === 1) {
-    //updateMonthlyRanking(now, users, timezoneOffset.toString());
+    updateMonthlyRanking(now, users, timezoneOffset);
     redisClient.del(`allMembers`);
   };
 }

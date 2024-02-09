@@ -170,6 +170,10 @@ const StyleWrapper = styled.div`
     height: 100vh !important;
   }
 
+  .fc-event.fc-event-draggable {
+    display: block;
+  }
+
   @media (max-width: 1400px) {
     th.fc-col-header-cell p.day {
     font-size: 20px;
@@ -237,7 +241,7 @@ function EventPlanner(props) {
     return (
       <div>
         {/* <b>{eventInfo.timeText}</b> */}
-        <i
+        <p
           style={{
             whiteSpace: "nowrap",
             overflow: "hidden",
@@ -245,7 +249,7 @@ function EventPlanner(props) {
           }}
         >
           {eventInfo.event.title}
-        </i>
+        </p>
       </div>
     );
   }
@@ -263,8 +267,8 @@ function EventPlanner(props) {
   }
 
   function handleDateSelect(selectInfo) {
-    const start = selectInfo.start ? new Date(selectInfo.start) : null;
-    const end = selectInfo.end ? new Date(selectInfo.end) : null;
+    const start = selectInfo.start ? new Date(selectInfo.start) : new Date();
+    const end = selectInfo.end ? new Date(selectInfo.end) : new Date();
 
     if (!start || !end) return;
 
@@ -295,7 +299,8 @@ function EventPlanner(props) {
   }, [planModal]); */
 
   function handleEventDateDrop(data) {
-    const { id, start, end } = data.event;
+    const { id, start } = data.event;
+    const end = data.event.end ? data.event.end : start;
     const eventIndex = events.findIndex((event) => event.id == id);
     if (eventIndex !== -1) {
       const updatedEvents = [...events];
@@ -311,7 +316,8 @@ function EventPlanner(props) {
   }
 
   function handleEventResize(data) {
-    const { id, start, end } = data.event;
+    const { id, start } = data.event;
+    const end = data.event.end ? data.event.end : start;
     const eventIndex = events.findIndex((event) => event.id == id);
     if (eventIndex !== -1) {
       const updatedEvents = [...events];
@@ -360,7 +366,7 @@ function EventPlanner(props) {
       ...data.event._def.extendedProps,
       id,
       start,
-      end,
+      end: end ? end : start,
       title,
     };
     setPlanModal(prev => ({ ...prev, ...eventInfo, opened: true }));
