@@ -78,49 +78,6 @@ async function timerUpdate() {
   };
 };
 
-const MAX_SAVING = 60 * 60 * 24 * 2;//save for 2 days;
-/** removes old timeline from the redis
- * 
- * 
- */
-async function removeTimeline(userId, time) {
-  try {
-    const timer = await redisClient.lRange(`user:${userId}:timer`, 0, -1);
-    const timerInfo = await timerCache(userId, time);
-    const { dp, ts } = timerInfo;
-
-    const lastStopUnix = dp + ts;
-    let timelineSum = 0;
-
-    let trimIndex = 0;
-    timer.find(([start, duration], i) => {
-      const startUnix = dp + start + timelineSum;
-      timelineSum += start + duration;
-      if (lastStopUnix - startUnix > MAX_SAVING) {
-        trimIndex = i;
-        return true;
-      };
-    });
-
-    console.log('trim index', trimIndex);
-    if (trimIndex) {
-      redisClient.lTrim(`user:${userId}:timer`, 0, trimIndex);
-
-      timerInfo.dp = dp;
-      timerInfo.ts = ts - timelineSum;
-  
-      redisClient.hSet(`user:${userId}:timerInfo`, JSON.stringify(timerInfo));
-    };
-  } catch (err) {
-    console.log(err);
-  };
-}
-//timerUpdate();
-
-cron.schedule('0 * * * *', () => {
-  timerUpdate();
-});
-
 module.exports = {
-  timerUpdate: timerUpdate
+  timerUpdate
 };

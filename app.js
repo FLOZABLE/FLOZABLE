@@ -212,13 +212,17 @@ const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTab
 const { updateRanking } = require("./services/rankingUpdate");
 const { extensionManager } = require("./services/extension");
 const { dailyReport } = require("./services/notification");
+const { updateUserIds } = require("./update");
 
 //scheduler that runs every hour
+//updateRanking();
 cron.schedule('0 * * * *', () => {
   dailyReport(process.env.TESTER_ID);
   extensionManager();
   updateRanking();
 });
+
+//updateUserIds();
 
 // createUsersTable();
 // createSubjectsTable();

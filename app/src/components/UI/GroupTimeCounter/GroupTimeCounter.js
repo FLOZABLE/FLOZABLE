@@ -11,42 +11,44 @@ import { durationFormatter } from "../../../utils/Tool";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function GroupTimeCounter({
-    members
+  members
 }) {
 
-    const [groupTotal, setGroupTotal] = useState(0);
+  const [groupTotal, setGroupTotal] = useState(0);
 
-    useEffect(() => {
-        if (members.length <= 0) return;
+  useEffect(() => {
+    if (members.length <= 0) return;
 
-        fetch(`${serverOrigin}/ranking/today`, {
-            method: "get",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    let groupTotalTime = 0;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-                    data.rankings.map((ranking) => {
-                        if (members.includes(ranking.user.user_id)) {
-                            groupTotalTime += parseInt(ranking.total);
-                        }
-                    });
+    fetch(`${serverOrigin}/ranking/today?timezone=${timezone}`, {
+      method: "get",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          let groupTotalTime = 0;
 
-                    setGroupTotal(groupTotalTime);
-                }
-            });
+          data.rankings.map((ranking) => {
+            if (members.includes(ranking.user.user_id)) {
+              groupTotalTime += parseInt(ranking.total);
+            }
+          });
 
-    }, [members])
+          setGroupTotal(groupTotalTime);
+        }
+      });
 
-    return (
-        <div className={styles.GroupTimeCounter}>
-            {Math.round(groupTotal * 100/3600)/100}hr
-        </div>
-    );
+  }, [members])
+
+  return (
+    <div className={styles.GroupTimeCounter}>
+      {Math.round(groupTotal * 100 / 3600) / 100}hr
+    </div>
+  );
 }
 
 export default GroupTimeCounter;

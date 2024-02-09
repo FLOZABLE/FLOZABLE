@@ -19,7 +19,8 @@ function SmallRankingViewer({ userInfo }) {
   useEffect(() => {
     if (!userInfo) return;
 
-    fetch(`${serverOrigin}/ranking/today`, {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    fetch(`${serverOrigin}/ranking/today?timezone=${timezone}`, {
       method: 'get'
     })
       .then((response) => response.json())

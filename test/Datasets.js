@@ -2,7 +2,7 @@ const pool = require("../model/pool");
 const converter = require('json-2-csv');
 const fs = require("fs");
 
-const userId = "EoFObpf612bdJKt";
+const userId = "EoFObpf612";
 
 async function getSubjects() {
   const connection = pool.promise();
