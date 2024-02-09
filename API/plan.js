@@ -65,13 +65,13 @@ Router.get("/", async (req, res) => {
 });
 
 Router.post('/update', async (req, res) => {
-  autoSignin(req, res, (async (userId) => {
+  autoSignin(req, res, (async (userId, timezone) => {
     try {
       const planInfo = req.body;
       if (!planInfo) return res.send({ success: false, reason: 'Plan information missing' });
 
-      const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds();
-      const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds();
+      const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds() / 60;
+      const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds() / 60;
       const { title, id, start, end, repeat, description, subject, notification, priority, completed, type } = planInfo;
 
       console.log(type);
@@ -84,21 +84,32 @@ Router.post('/update', async (req, res) => {
               version: 'v3',
               auth: auth
             });
+
+            const startDateTime = DateTime.fromSeconds(start * 60, {zone: timezone});
+            const endDateTime = DateTime.fromSeconds(end * 60, {zone: timezone});
+            
+            console.log(subject, id)
             const updateResults = await googleCalendar.events.update({
               auth: auth,
               calendarId: subject, 
-              eventId: id, //log looks like: 12432dsfkjhhwqejhkj12
+              eventId: id,
               resource: {
-                summary: "Test Summary",
-                "description": "Test Description",
-                "end": req.body.end_time,  //log for end and start look like: { dateTime: '2021-08-09T11:30:00-04:00', timeZone: 'America/New_York' }
-                "start": req.body.start_time,
+                summary: title,
+                description,
+                start: {dateTime: startDateTime.toISO(), timeZone: timezone},
+                end: {dateTime: endDateTime.toISO(), timeZone: timezone},
               }
             });
+
+            if (updateResults.status === 200) {
+              return res.send({success: true, msg: "Plan updated!"});
+            } else {
+              return res.send({success: false, msg: "You cannot modify this plan"});
+            }
           } catch (err) {
 
           }
-        }
+        };
       };
 
       const isValidTitle = validateString(title, 'Title', 100);
