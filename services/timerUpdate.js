@@ -67,7 +67,10 @@ async function timerUpdate() {
         redisClient.hSet(`user:${userId}:subjects`, activeSubject.id, JSON.stringify(activeSubjectInfo));
         await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${duration}]`);
         redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
-        redisClient.incrBy(`user:${userId}:dayTotal`, duration);
+        //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
+        for (let i = -12; i < 12; i++) {
+          redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
+        };
       }
     });
   } catch (err) {
