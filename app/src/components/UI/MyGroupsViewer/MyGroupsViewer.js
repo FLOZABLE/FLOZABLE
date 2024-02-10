@@ -32,12 +32,14 @@ function MyGroupsViewer({
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const selectedGroupId = searchParams.get("group");
-
-    if (!groupsViewerRef || !groupsViewerRef.current || !selectedGroupId) return;
+    if (!selectedGroupId) return;
 
     setTimeout(() => {
-      groupsViewerRef.current.swiper.slideTo(myGroups.length);
-    }, 1000);
+      const groupIndex = myGroups.findIndex(group => group.group_id === selectedGroupId);
+      if (groupsViewerRef.current && groupIndex !== -1) {
+        groupsViewerRef.current.swiper.slideTo(groupIndex);
+      };
+    }, 2000);
   }, [myGroups, groupsViewerRef]);
 
   useEffect(() => {

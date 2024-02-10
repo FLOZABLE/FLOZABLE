@@ -7,8 +7,6 @@ import { Link } from "react-router-dom";
 import MembersContainer from "../MembersContainer/MembersContainer";
 import { socket } from "../../../socket";
 import { mediaSocket } from "../../../mediaSocket";
-import GroupRanking from "../GroupRankingModal/GroupRankingModal";
-import { durationFormatter } from "../../../utils/Tool";
 import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
