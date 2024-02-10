@@ -6,58 +6,51 @@ const notificationService = require('../services/notification');
 const { io } = require("../socket");
 const { generateRandomId, isValidJSON, autoSignin } = require("../tool");
 const { subjectsCache, subjectsTimelineCache } = require("../services/redisLoader");
+const { validateString, validateHEX, validateStrictString } = require("../validate");
 
 Router.post("/add-subject", async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
-      const schema = {
-        type: 'object',
-        properties: {
-          name: { type: 'string', minLength: 1, maxLength: 30 },
-          color: { type: 'string', minLength: 7, maxLength: 7 },
-          icon: { type: 'string', minLength: 1, maxLength: 15 },
-  
-        },
-        required: ['name', 'color', 'icon'],
-        additionalProperties: false
+      const { name, color, icon } = req.body;
+
+      const isValidName = validateString(name, "subject name");
+
+      if (!isValidName.isValid) {
+        return res.send({ success: false, reason: isValidName.reason });
       };
-  
-      const isValid = isValidJSON(req.body, schema);
+
+      const isValidColor = validateHEX(color, 'Color', 100, 8, 8);
+
+      if (!isValidColor.isValid) {
+        return res.send({ success: false, reason: isValidColor.reason });
+      };
+
+      const isValidIcon = validateStrictString(icon, "icon name");
+
+      if (!isValidIcon.isValid) {
+        return res.send({ success: false, reason: isValidIcon.reason });
+      };
+
       const subjectInfo = {
-        ...req.body,
+        name,
+        color,
+        icon,
         datum_point: Math.floor(new Date().getTime() / 1000),
-        timeline: JSON.stringify([0,0]),
+        timeline: JSON.stringify([0, 0]),
         id: generateRandomId(10),
         user_id: userId,
       };
-      if (isValid) {
-        const connection = pool.promise();
-        try {
-          const insertSubject = await connection.query(`INSERT INTO subjects SET ?`, subjectInfo);
-          /* const updateUser = await connection.query(`
-          UPDATE users
-          SET subjects = CASE
-            WHEN subjects = '' THEN ?
-            ELSE CONCAT(subjects, ',', ?)
-          END
-          WHERE user_id = ?
-        `, [
-            subjectInfo.id,
-            subjectInfo.id,
-            userId
-          ]); */
-          res.send({ success: true, msg: `Added Subject "${subjectInfo.name}"`, info: { subjectInfo: subjectInfo } });
-          delete subjectInfo.timeline;
-          delete subjectInfo.user_id;
-          subjectInfo.timeline_sum = 0;
-          redisClient.hSet(`user:${userId}:subjects`, subjectInfo.id, JSON.stringify(subjectInfo));
-        } catch (err) {
-          console.log(err);
-        };
-      } else {
-        res.send({ success: false, reason: "Invalid Value" });
-      }
+      const connection = pool.promise();
+      try {
+        const insertSubject = await connection.query(`INSERT INTO subjects SET ?`, subjectInfo);
+        res.send({ success: true, msg: `Added Subject "${subjectInfo.name}"`, info: { subjectInfo: subjectInfo } });
+        delete subjectInfo.timeline;
+        delete subjectInfo.user_id;
+        subjectInfo.timeline_sum = 0;
+        redisClient.hSet(`user:${userId}:subjects`, subjectInfo.id, JSON.stringify(subjectInfo));
+      } catch (err) {
+        console.log(err);
+      };
     } catch (error) {
       console.log(error);
     };
@@ -66,46 +59,54 @@ Router.post("/add-subject", async (req, res) => {
 
 
 Router.post("/modify-subject", async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      const userId = req.session.user_id;
-      const schema = {
-        type: 'object',
-        properties: {
-          name: { type: 'string', minLength: 1, maxLength: 30 },
-          color: { type: 'string', minLength: 7, maxLength: 7 },
-          icon: { type: 'string', minLength: 1, maxLength: 15 },
-          id: {type: 'string'},
-        },
-        required: ['name', 'color', 'icon', 'id'],
-        additionalProperties: false
+      const { name, color, icon, id } = req.body;
+
+      const isValidName = validateString(name, "subject name");
+
+      if (!isValidName.isValid) {
+        return res.send({ success: false, reason: isValidName.reason });
       };
 
-      const isValid = isValidJSON(req.body, schema);
-      const subjectInfo = {
-        ...req.body,
-        datum_point: Math.floor(new Date().getTime() / 1000),
-        timeline: JSON.stringify([0,0]),
-        user_id: userId,
+      const isValidColor = validateHEX(color, 'Color', 100, 6, 6);
+
+      if (!isValidColor.isValid) {
+        return res.send({ success: false, reason: isValidColor.reason });
       };
-      
-      if (isValid) {
-        const connection = pool.promise();
-        try {
-          const updateSubject = await connection.query("UPDATE subjects SET name = ?, icon = ?, color = ? WHERE id = ?", [subjectInfo.name, subjectInfo.icon, subjectInfo.color, subjectInfo.id]);
-          res.send({ success: true, msg: `Modified Subject "${subjectInfo.name}"`, subjectInfo: subjectInfo  });
-          
-          const previousSubject = JSON.parse(await redisClient.hGet(`user:${userId}:subjects`, subjectInfo.id));
-          previousSubject.name = subjectInfo.name;
-          previousSubject.icon = subjectInfo.icon;
-          previousSubject.color = subjectInfo.color;
-          redisClient.hSet(`user:${userId}:subjects`, subjectInfo.id, JSON.stringify(previousSubject));
-        } catch (err) {
-          console.log(err);
-        };
-      } else {
-        res.send({ success: false, reason: "Invalid Value" });
-      }
+
+      const isValidIcon = validateStrictString(icon, "icon name");
+
+      if (!isValidIcon.isValid) {
+        return res.send({ success: false, reason: isValidIcon.reason });
+      };
+
+      const isValidId = validateStrictString(id, "subject id", 10, 10);
+
+      if (!isValidId.isValid) {
+        return res.send({ success: false, reason: isValidId.reason });
+      };
+
+      const subjectInfo = {
+        name,
+        color,
+        icon,
+        id,
+      };
+
+      const connection = pool.promise();
+      try {
+        const updateSubject = await connection.query("UPDATE subjects SET ? WHERE id = ? AND user_id = ?", [subjectInfo, id, userId]);
+        res.send({ success: true, msg: `Modified Subject "${subjectInfo.name}"`, subjectInfo: subjectInfo });
+
+        const previousSubject = JSON.parse(await redisClient.hGet(`user:${userId}:subjects`, subjectInfo.id));
+        previousSubject.name = subjectInfo.name;
+        previousSubject.icon = subjectInfo.icon;
+        previousSubject.color = subjectInfo.color;
+        redisClient.hSet(`user:${userId}:subjects`, subjectInfo.id, JSON.stringify(previousSubject));
+      } catch (err) {
+        console.log(err);
+      };
     } catch (error) {
       console.log(error);
     };
@@ -114,7 +115,7 @@ Router.post("/modify-subject", async (req, res) => {
 
 
 Router.post("/start", async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
     const subjectId = req.body.subjectId;
     const userInfo = await redisClient.hGetAll(`user:${userId}`);
@@ -187,7 +188,7 @@ Router.post("/start", async (req, res) => {
 
 
 Router.post("/stop", async (req, res) => {
-  autoSignin(req, res, (async() => {
+  autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
     const subjectId = req.body.subjectId;
     const groups = (await redisClient.hGet(`user:${userId}`, "groups")).split(',');
@@ -217,7 +218,7 @@ Router.post("/stop", async (req, res) => {
 });
 
 Router.post('/bring-subjects', async (req, res) => {
-  autoSignin(req, res, (async(userId) => {
+  autoSignin(req, res, (async (userId) => {
     try {
       const searchId = req.body.searchId ? req.body.searchId : userId;
 

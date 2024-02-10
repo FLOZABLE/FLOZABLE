@@ -39,6 +39,7 @@ const StyleWrapper = styled.div`
 
   .fc-event {
     transition: .3s ease-in-out all;
+    display: block;
   }
   .fc-event.completed i {
     position: relative;
@@ -170,10 +171,6 @@ const StyleWrapper = styled.div`
     height: 100vh !important;
   }
 
-  .fc-event.fc-event-draggable {
-    display: block;
-  }
-
   @media (max-width: 1400px) {
     th.fc-col-header-cell p.day {
     font-size: 20px;
@@ -300,6 +297,10 @@ function EventPlanner(props) {
 
   function handleEventDateDrop(data) {
     const { id, start } = data.event;
+    if (data.event._def.extendedProps.access === "reader") {
+      setResponse({success: false, reason: "This event is view only"})
+      return;
+    }
     const end = data.event.end ? data.event.end : start;
     const eventIndex = events.findIndex((event) => event.id == id);
     if (eventIndex !== -1) {
@@ -317,6 +318,10 @@ function EventPlanner(props) {
 
   function handleEventResize(data) {
     const { id, start } = data.event;
+    if (data.event._def.extendedProps.access === "reader") {
+      setResponse({success: false, reason: "This event is view only"})
+      return;
+    }
     const end = data.event.end ? data.event.end : start;
     const eventIndex = events.findIndex((event) => event.id == id);
     if (eventIndex !== -1) {
@@ -333,7 +338,11 @@ function EventPlanner(props) {
   }
 
   function updateServer(event) {
-    const { start, end, completed } = event;
+    const { start, end, completed, editable } = event;
+    if (!editable) {
+      setResponse({success: false, reason: "This event is view only"})
+      return;
+    }
     const startSec = Math.floor(start.getTime() / (1000 * 60));
     const endSec = Math.floor(end.getTime() / (1000 * 60));
     const updateInfo = {
@@ -362,12 +371,15 @@ function EventPlanner(props) {
 
   function handleEventClick(data) {
     const { id, start, end, title } = data.event;
+    const editable = data.event._def.extendedProps.isEditable;
+    console.log(editable)
     const eventInfo = {
       ...data.event._def.extendedProps,
       id,
       start,
       end: end ? end : start,
       title,
+      editable
     };
     setPlanModal(prev => ({ ...prev, ...eventInfo, opened: true }));
   };
