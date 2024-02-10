@@ -71,7 +71,8 @@ function App() {
     id: null,
     saved: false,
     completed: false,
-    type: 'local'
+    type: 'local',
+    editable: true
   });
 
   const toggleSidebar = () => {
@@ -150,6 +151,7 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
+          console.log("plans", data.plans)
           setPlans(
             data.plans.map((plan) => {
               plan.saved = true;
