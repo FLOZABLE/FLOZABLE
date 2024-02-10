@@ -26,7 +26,7 @@ const subjectIcons = {
     "Alert": <Alert width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
 };
 
-function SubjectManager({ subject, setSelectedSubject }) {
+function SubjectManager({ subject, setSelectedSubject, setIsEditSubjectModal }) {
 
     const [isSubjectToolManager, setIsSubjectToolManager] = useState(false);
 
@@ -37,7 +37,7 @@ function SubjectManager({ subject, setSelectedSubject }) {
                     <tr className={styles.tableRow}>
                         <td style={{ color: subject.color }}>
                             {subject.name}
-                            <p className={styles.editButton} onClick={() => { setSelectedSubject(subject) }}>
+                            <p className={styles.editButton} onClick={() => { setSelectedSubject(subject); setIsEditSubjectModal(true) }}>
                                 Edit
                             </p>
                         </td>

@@ -47,12 +47,7 @@ function Stats(props) {
   //time usage pie chart
   const [timeUsagePie, setTimeUsagePie] = useState({
     labels: [], datasets: [
-      {
-        label: [],
-        backgroundColor: colorsList,
-        borderColor: colorsList,
-        data: [],
-      },
+
     ]
   });
   //hourly histogram
@@ -158,17 +153,11 @@ function Stats(props) {
   useEffect(() => {
     const labels = subjects.map((subject) => { return subject.name });
 
-    const timeUsagePieData = updateTimeUsagePie(subjects, viewDate, statsViewer);
+    const { data } = updateTimeUsagePie(subjects, viewDate, statsViewer);
+    console.log('ddd', data)
     setTimeUsagePie({
       labels: labels,
-      datasets:
-        [
-          {
-            backgroundColor: colorsList,
-            borderColor: colorsList,
-            data: timeUsagePieData.data,
-          },
-        ]
+      datasets: data
     });
 
     if (timelineRef.current) {
@@ -280,7 +269,7 @@ function Stats(props) {
 
   return (
     <div className={styles.StatsContainer}>
-      <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} subjects={subjects} showHeatmap={true}/>
+      <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} subjects={subjects} showHeatmap={true} />
       <StuckModal />
       <div className={` Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxes}>
@@ -295,10 +284,10 @@ function Stats(props) {
               <div className={styles.divided}>
                 <p className={styles.title}>{statsViewer} Time Usage by Subjects</p>
                 <div className={styles.chartContainer}>
-                  <div className={`${styles.noChart} ${timeUsagePie.datasets[0].data.reduce((accumulator, currentValue) => accumulator + currentValue, 0) ? styles.true : ''}`}>
+                  <div className={`${styles.noChart} ${timeUsagePie.datasets.reduce((accumulator, currentValue) => accumulator + currentValue, 0) ? styles.true : ''}`}>
                     <Link to="/dashboard/study">Study to see stats!</Link>
                   </div>
-                  <PieChart
+                  {/* <PieChart
                     labels={timeUsagePie.labels}
 
                     datasets={timeUsagePie.datasets}
@@ -330,7 +319,41 @@ function Stats(props) {
                     plugins={
                       ChartDataLabel
                     }
+                  /> */}
+                  <Chart
+                    type="pie"
+                    series={timeUsagePie.datasets}
+                    options={{
+                      chart: {
+                        type: 'pie',
+                        height: '500px',
+                        zoom: {
+                          enabled: false
+                        },
+                        animations: {
+                          enabled: true,
+                          easing: 'easeinout',
+                          speed: 800,
+                          animateGradually: {
+                            enabled: true,
+                            delay: 150
+                          },
+                          dynamicAnimation: {
+                            enabled: true,
+                            speed: 350
+                          }
+                        }
+                      },
+                      colors: colorsList,
+                      labels: timeUsagePie.labels,
+                      legend: {
+                        position: 'bottom',
+                        fontSize: '24px',
+                        fontWeight: 600,
+                      },
+                    }}
                   />
+
                 </div>
               </div>
               <div className={styles.divider}>
@@ -433,7 +456,7 @@ function Stats(props) {
                       }
                     />
 
-{/*                     <Chart
+                    {/*                     <Chart
                     type="bar"
                       series={[{
                         name: 'Inflation',
@@ -607,7 +630,7 @@ function Stats(props) {
                         yaxis: {
                           labels: {
                             formatter: function (sec) {
-                              const {value, type} = secondConverter(sec);
+                              const { value, type } = secondConverter(sec);
                               return `${value} ${type}`;
                             }
                           },
@@ -687,6 +710,9 @@ function Stats(props) {
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                   <p className={styles.title}>Today's Website Usage while Studying</p>
                   <div className={styles.chartContainer}>
+                  <div className={`${styles.noChart} ${websites.length ? styles.true : ''}`} style={{background: "#f7f9fd"}}>
+                    <Link to="/dashboard/study">Study to see stats!</Link>
+                  </div>
                     <DropDownButton
                       options={[
                         { name: "Active Time", value: 0 },
@@ -694,54 +720,44 @@ function Stats(props) {
                       ]}
                       setValue={setViewOption}
                     />
-                    <PieChart
-                      labels={websites.map(website => { return website.d })}
-
-                      datasets={
-                        [
-                          {
-                            label: viewOption ? "Visited Time" : "Active Time",
-                            backgroundColor: colorsList,
-                            borderColor: colorsList,
-                            data: viewOption ? websites.map(website => { return website.v }) : websites.map(website => { return Math.floor(website.t / (60 * 60)) }),
+                    <Chart
+                      type="pie"
+                      series={viewOption ? websites.map(website => { return website.v }) : websites.map(website => { return Math.floor(website.t / (60 * 60)) })}
+                      options={{
+                        chart: {
+                          type: 'pie',
+                          zoom: {
+                            enabled: false
                           },
-                        ]
-                      }
-
-                      options={
-                        {
-                          plugins: {
-                            legend: {
-                              position: 'bottom',
+                          animations: {
+                            enabled: true,
+                            easing: 'easeinout',
+                            speed: 800,
+                            animateGradually: {
+                              enabled: true,
+                              delay: 150
                             },
-                            datalabels: {
-                              color: '#ffffff',
-                              font: {
-                                size: 32,
-                                family: 'Arial',
-                                weight: 700
-                              },
-                              formatter: (value, context, index) => {
-                                const { chart, dataIndex } = context;
-                                const labels = chart.data.labels;
-                                const label = labels[dataIndex];
-                                return ``;
-                              }
+                            dynamicAnimation: {
+                              enabled: true,
+                              speed: 350
                             }
                           }
-                        }
-                      }
-
-                      plugins={
-                        ChartDataLabel
-                      }
+                        },
+                        colors: colorsList,
+                        labels: websites.map(website => { return website.d }),
+                        legend: {
+                          position: 'bottom',
+                          fontSize: '24px',
+                          fontWeight: 600,
+                        },
+                      }}
                     />
                   </div>
                 </div>
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                   <p className={styles.title}>Today's App Usage while Studying</p>
                   <div className={styles.chartContainer}>
-                    <PieChart
+                    {/* <PieChart
                       labels={
                         ["Math", "English", "History", "Sci", "Phy"]
                       }
@@ -784,7 +800,7 @@ function Stats(props) {
                       plugins={
                         ChartDataLabel
                       }
-                    />
+                    /> */}
                   </div>
                 </div>
               </div>

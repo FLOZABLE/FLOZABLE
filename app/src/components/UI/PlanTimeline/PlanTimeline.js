@@ -27,6 +27,7 @@ function PlanTimeline({
   setPlanModal,
   mode,
   setPlans,
+  maxHeight = "200px"
 }) {
   const [plansEl, setPlansEl] = useState([]);
   const [isPlan, setIsPlan] = useState(false);
@@ -255,7 +256,7 @@ function PlanTimeline({
       >
         Add a New Plan
       </h4>
-      <ul className={`${styles.plans} hiddenScroll`}>
+      <ul className={`${styles.plans} hiddenScroll`} style={{maxHeight: maxHeight}}>
         {isPlan ? (
           plansEl
         ) : (
