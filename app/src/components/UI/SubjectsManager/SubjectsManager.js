@@ -7,56 +7,38 @@ import SubjectManager from "../SubjectManager/SubjectManager";
 import EditSubjectModal from "../EditSubjectModal/EditSubjectModal";
 import { WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert } from "../../../utils/svgs";
 
-const subjectIcons = {
-    "Book": <Book width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Coding": <Coding width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Microscope": <Microscope width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "WritePen": <WritePen width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Article": <Article width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Globe": <Globe width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Workout": <Workout width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Alert": <Alert width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
-};
-
 function SubjectsManager({ subjects, setSubjects, setResponse }) {
-    const [isEditSubjectModal, setisEditSubjectModal] = useState(true);
-    const [selectedSubject, setSelectedSubject] = useState(null);
-    const [editModal, setEditModal] = useState(<div></div>);
+  const [isEditSubjectModal, setisEditSubjectModal] = useState(true);
+  const [selectedSubject, setSelectedSubject] = useState(null);
 
-    useEffect(() => {
-        if (!selectedSubject) return;
+  useEffect(() => {
+    if (!selectedSubject) return;
+    setisEditSubjectModal(true);
 
-        console.log(selectedSubject.color);
+  }, [selectedSubject])
 
-        setisEditSubjectModal(true);
-
-        setEditModal(
-            <EditSubjectModal
-                subject={selectedSubject}
-                subjects={subjects}
-                setSubjects={setSubjects}
-                setResponse={setResponse}
-                isEditSubjectModal={isEditSubjectModal}
-                setisEditSubjectModal={setisEditSubjectModal}
-                defaultColor={selectedSubject.color}
-                defaultIcon={{ name: selectedSubject.icon, el: subjectIcons[selectedSubject.icon] }}
-            />
-        );
-
-    }, [selectedSubject])
-
-    return (
-        <div className={styles.SubjectsManager}>
-            {editModal}
-            {
-                subjects.map((subject, i) => {
-                    return (
-                        <SubjectManager key={i} subject={subject} setSelectedSubject={setSelectedSubject} />
-                    )
-                })
-            }
-        </div>
-    );
+  return (
+    <div className={styles.SubjectsManager}>
+      {selectedSubject ?
+        <EditSubjectModal
+          subject={selectedSubject}
+          subjects={subjects}
+          setSubjects={setSubjects}
+          setResponse={setResponse}
+          isEditSubjectModal={isEditSubjectModal}
+          setisEditSubjectModal={setisEditSubjectModal}
+        />
+        : null
+      }
+      {
+        subjects.map((subject, i) => {
+          return (
+            <SubjectManager key={i} subject={subject} setSelectedSubject={setSelectedSubject} />
+          )
+        })
+      }
+    </div>
+  );
 }
 
 export default SubjectsManager;

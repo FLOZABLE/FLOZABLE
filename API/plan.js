@@ -15,6 +15,10 @@ Router.get("/", async (req, res) => {
     try {
       const connection = pool.promise();
       let [plans] = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed FROM plans where user_id = ?`, [userId]);
+      plans.map(plan => {
+        plan.editable = true;
+        plan.isEditable = true;
+      })
       const access_token = await googleAccessTokenCache(userId);
       if (access_token) {
         try {
@@ -40,7 +44,8 @@ Router.get("/", async (req, res) => {
                 const { htmlLink, id, summary, start, end, description, reminders } = event;
                 const startDateTime = Math.floor(DateTime.fromISO(start ? start.dateTime : '', { zone: start ? start.timeZone : '' }).toSeconds() / 60);
                 const endDateTime = Math.floor(DateTime.fromISO(end ? end.dateTime : '', { zone: end ? end.timeZone : '' }).toSeconds() / 60);
-                const newEvent = { id, title: summary, start: startDateTime, end: endDateTime, repeat: 0, description, notification: reminders, subject: calendar.id, priority: 5, completed: 0, htmlLink, type: 'google' };
+                const editable = calendar.accessRole !== "reader";
+                const newEvent = { id, title: summary, start: startDateTime, end: endDateTime, repeat: 0, description, notification: reminders, subject: calendar.id, priority: 5, completed: 0, htmlLink, type: 'google', editable, isEditable: editable };
                 calendarEvents.push(newEvent);
                 return null;
               });
@@ -85,26 +90,26 @@ Router.post('/update', async (req, res) => {
               auth: auth
             });
 
-            const startDateTime = DateTime.fromSeconds(start * 60, {zone: timezone});
-            const endDateTime = DateTime.fromSeconds(end * 60, {zone: timezone});
-            
+            const startDateTime = DateTime.fromSeconds(start * 60, { zone: timezone });
+            const endDateTime = DateTime.fromSeconds(end * 60, { zone: timezone });
+
             console.log(subject, id)
             const updateResults = await googleCalendar.events.update({
               auth: auth,
-              calendarId: subject, 
+              calendarId: subject,
               eventId: id,
               resource: {
                 summary: title,
                 description,
-                start: {dateTime: startDateTime.toISO(), timeZone: timezone},
-                end: {dateTime: endDateTime.toISO(), timeZone: timezone},
+                start: { dateTime: startDateTime.toISO(), timeZone: timezone },
+                end: { dateTime: endDateTime.toISO(), timeZone: timezone },
               }
             });
 
             if (updateResults.status === 200) {
-              return res.send({success: true, msg: "Plan updated!"});
+              return res.send({ success: true, msg: "Plan updated!" });
             } else {
-              return res.send({success: false, msg: "You cannot modify this plan"});
+              return res.send({ success: false, msg: "You cannot modify this plan" });
             }
           } catch (err) {
 

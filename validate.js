@@ -158,7 +158,7 @@ function validateHEX(value, type, maxLength, minLength) {
   if (typeof value !== 'string') {
     return { isValid: false, reason: `${type} should be hex` };
   };
-  if (!/^[0-9a-f]+$/i.test(value)) {
+  if (!/^#?[0-9a-f]+$/i.test(value)) {
     return { isValid: false, reason:  `${type} should be hex` };
   };
   if (value.length < minLength) {

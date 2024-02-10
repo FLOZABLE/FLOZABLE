@@ -30,6 +30,10 @@ function EventModal({
 }) {
 
   const submit = () => {
+    if (!planModal.editable) {
+      setResponse({ success: false, reason: "This event is view only" });
+      return;
+    };
     const startSec = Math.floor(planModal.start.getTime() / (1000 * 60));
     const endSec = Math.floor(planModal.end.getTime() / (1000 * 60));
     const completed = planModal.completed ? 1 : 0;
@@ -70,7 +74,7 @@ function EventModal({
       setEvents((prev) => {
         const foundIndex = prev.findIndex((val) => val.id === planModal.id);
         const subject = subjects.find(subject => subject.id === planModal.subject);
-        const planInfo = {...planModal};
+        const planInfo = { ...planModal };
         if (subject) {
           planInfo.backgroundColor = subject.color;
           planInfo.borderColor = subject.color;
@@ -103,7 +107,8 @@ function EventModal({
         subject: null,
         id: null,
         saved: false,
-        completed: false
+        completed: false,
+        editable: true
       });
       if (!planModal.saved) {
         setEvents((prev) => {
@@ -142,8 +147,11 @@ function EventModal({
               placeholder="Enter title"
               value={planModal.title}
               onChange={(e) => {
-                setPlanModal((prev) => ({ ...prev, title: e.target.value }));
-                //setTitle(e.target.value);
+                if (!planModal.editable) {
+                  setResponse({ success: false, reason: "This event is view only" });
+                } else {
+                  setPlanModal((prev) => ({ ...prev, title: e.target.value }));
+                }
               }}
             />
           </div>
@@ -159,11 +167,20 @@ function EventModal({
             <DateSelector
               start={planModal.start}
               setStart={(start) => {
-                setPlanModal((prev) => ({ ...prev, start }));
+                console.log(planModal)
+                if (!planModal.editable) {
+                  setResponse({ success: false, reason: "This event is view only" });
+                } else {
+                  setPlanModal((prev) => ({ ...prev, start }));
+                }
               }}
               end={planModal.end}
               setEnd={(end) => {
-                setPlanModal((prev) => ({ ...prev, end }));
+                if (!planModal.editable) {
+                  setResponse({ success: false, reason: "This event is view only" });
+                } else {
+                  setPlanModal((prev) => ({ ...prev, end }));
+                }
               }}
             />
           </div>
@@ -178,7 +195,11 @@ function EventModal({
           <div className={styles.contentWrapper}>
             <TextEditor
               setDescription={(description) => {
-                setPlanModal((prev) => ({ ...prev, description }));
+                if (!planModal.editable) {
+                  setResponse({ success: false, reason: "This event is view only" });
+                } else {
+                  setPlanModal((prev) => ({ ...prev, description }));
+                }
               }}
               description={planModal.description}
             />
@@ -200,7 +221,11 @@ function EventModal({
                 { name: `Monthly`, value: 3 },
               ]}
               setValue={(repeat) => {
-                setPlanModal((prev) => ({ ...prev, repeat }));
+                if (!planModal.editable) {
+                  setResponse({ success: false, reason: "This event is view only" });
+                } else {
+                  setPlanModal((prev) => ({ ...prev, repeat }));
+                }
               }}
             />
           </div>
@@ -220,7 +245,11 @@ function EventModal({
                   return { name, value: id };
                 })}
                 setValue={(subject) => {
-                  setPlanModal((prev) => ({ ...prev, subject }));
+                  if (!planModal.editable) {
+                    setResponse({ success: false, reason: "This event is view only" });
+                  } else {
+                    setPlanModal((prev) => ({ ...prev, subject }));
+                  }
                 }}
               />
             </div>
