@@ -12,7 +12,7 @@ function filterGroups(userInfo, groups) {
       otherGroups.push(group);
     };
 
-    if (group.leader == userInfo.user_id){
+    if (group.leader == userInfo.user_id) {
       myOwnedGroups.push(group);
     }
   });
@@ -108,4 +108,21 @@ function undefinedORNull(value) {
   return value === undefined || value === null;
 };
 
-export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange, durationFormatter, undefinedORNull };
+function requestNotification() {
+  if (!("Notification" in window)) {
+    return false;
+  };
+
+  if (Notification.permission === "granted") {
+    return true;
+  };
+
+  Notification.requestPermission().then((permission) => {
+    if (permission === "granted") {
+      return true;
+    };
+  });
+  return false;
+}
+
+export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange, durationFormatter, undefinedORNull, requestNotification};

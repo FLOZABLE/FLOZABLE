@@ -23,7 +23,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function EditSubjectModal({
   isEditSubjectModal,
-  setisEditSubjectModal,
+  setIsEditSubjectModal,
   subjects,
   setSubjects,
   subject,
@@ -56,7 +56,7 @@ function EditSubjectModal({
       .then((data) => {
         setResponse(data);
         if (data.success) {
-          setisEditSubjectModal(false);
+          setIsEditSubjectModal(false);
           let newState = [...subjects];
           newState = newState.filter((subject) => subject.id != data.subjectInfo.id);
           newState.push({ ...data.subjectInfo });
@@ -87,7 +87,7 @@ function EditSubjectModal({
       <div className={styles.header}>
         <i
           onClick={() => {
-            setisEditSubjectModal(false);
+            setIsEditSubjectModal(false);
           }}
         >
           <FontAwesomeIcon icon={faXmark} />

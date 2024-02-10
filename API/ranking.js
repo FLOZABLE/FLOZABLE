@@ -18,7 +18,7 @@ Router.get('/sort', async (req, res) => {
   const today = DateTime.now().setZone(timezone);
   const timezoneOffset = Math.floor(dateTime.offset / 60).toString();
 
-  console.log(timezoneOffset, DateTime.utc().get('hour') - 12);
+  console.log(dateTime.toSeconds(), dateTime.get("hour"));
   let rankings = [];
   if (mode === "Daily") {
 
@@ -34,7 +34,7 @@ Router.get('/sort', async (req, res) => {
     } else {
       //get ranking from database if its not today;
       const connection = pool.promise();
-      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [today.toSeconds()]);
+      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [dateTime.toSeconds()]);
       if (dailyRanking) {
         rankings = JSON.parse(dailyRanking.ranking);
       } 
@@ -52,7 +52,7 @@ Router.get('/sort', async (req, res) => {
     } else {
       //get ranking from database if its not today;
       const connection = pool.promise();
-      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [today.toSeconds()]);
+      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [dateTime.toSeconds()]);
       if (dailyRanking) {
         rankings = JSON.parse(dailyRanking.ranking);
       } 
@@ -72,7 +72,7 @@ Router.get('/sort', async (req, res) => {
     } else {
       //get ranking from database if its not today;
       const connection = pool.promise();
-      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [today.toSeconds()]);
+      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [dateTime.toSeconds()]);
       if (dailyRanking) {
         rankings = JSON.parse(dailyRanking.ranking);
       } 

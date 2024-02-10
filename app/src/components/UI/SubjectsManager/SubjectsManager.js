@@ -8,32 +8,23 @@ import EditSubjectModal from "../EditSubjectModal/EditSubjectModal";
 import { WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert } from "../../../utils/svgs";
 
 function SubjectsManager({ subjects, setSubjects, setResponse }) {
-  const [isEditSubjectModal, setisEditSubjectModal] = useState(true);
+  const [isEditSubjectModal, setIsEditSubjectModal] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
-
-  useEffect(() => {
-    if (!selectedSubject) return;
-    setisEditSubjectModal(true);
-
-  }, [selectedSubject])
 
   return (
     <div className={styles.SubjectsManager}>
-      {selectedSubject ?
         <EditSubjectModal
           subject={selectedSubject}
           subjects={subjects}
           setSubjects={setSubjects}
           setResponse={setResponse}
           isEditSubjectModal={isEditSubjectModal}
-          setisEditSubjectModal={setisEditSubjectModal}
+          setIsEditSubjectModal={setIsEditSubjectModal}
         />
-        : null
-      }
       {
         subjects.map((subject, i) => {
           return (
-            <SubjectManager key={i} subject={subject} setSelectedSubject={setSelectedSubject} />
+            <SubjectManager key={i} subject={subject} setSelectedSubject={setSelectedSubject} setIsEditSubjectModal={setIsEditSubjectModal} />
           )
         })
       }
