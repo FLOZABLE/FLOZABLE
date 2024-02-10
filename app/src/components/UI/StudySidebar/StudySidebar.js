@@ -15,6 +15,7 @@ import {
   faImage,
   faMicrophone,
   faMusic,
+  faScrewdriverWrench,
   faUpRightAndDownLeftFromCenter,
   faUsers,
   faVolumeHigh,
@@ -79,7 +80,7 @@ function HeadphoneBtn() {
   )
 };
 
-function ButtonContainer({text1, text2, icon1, icon2}) {
+function ButtonContainer({ text1, text2, icon1, icon2 }) {
   const [isClicked, setIsClicked] = useState(false);
   return (
     <div
@@ -119,7 +120,9 @@ function StudySidebar({
   setIsPlaylistModal,
   isPlaylistModal,
   isHeadphone,
-  setIsHeadphone
+  setIsHeadphone,
+  setIsToolModal,
+  isToolModal
 }) {
   const [items, setItems] = useState([
     {
@@ -193,7 +196,7 @@ function StudySidebar({
             setIsCam((prev) => !prev);
           }}
         >
-          <ButtonContainer 
+          <ButtonContainer
             text1={"Turn Off Camera"}
             text2={"Turn On Camera"}
             icon1={<IconCameraVideoFill />}
@@ -211,7 +214,7 @@ function StudySidebar({
             setIsMic((prev) => !prev);
           }}
         >
-          <ButtonContainer 
+          <ButtonContainer
             text1={"Mute"}
             text2={"Unmute"}
             icon1={<IconMicFill />}
@@ -229,7 +232,7 @@ function StudySidebar({
             setIsHeadphone((prev) => !prev);
           }}
         >
-          <ButtonContainer 
+          <ButtonContainer
             text1={"Deafen"}
             text2={"Undeafen"}
             icon1={<IconHeadphoneFill />}
@@ -320,6 +323,23 @@ function StudySidebar({
           <div className={styles.hoverEl}>
             Playlist
           </div>
+        </div>
+      ),
+    },
+    {
+      id: 11,
+      element: (
+        <div
+          onClick={() => {
+            setIsToolModal((prev) => !prev);
+          }}
+        >
+          <ButtonContainer
+            text1={"Tool"}
+            text2={"Tool"}
+            icon1={<FontAwesomeIcon icon={faScrewdriverWrench} />}
+            icon2={<FontAwesomeIcon icon={faScrewdriverWrench} />}
+          />
         </div>
       ),
     },

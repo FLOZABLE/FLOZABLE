@@ -41,6 +41,7 @@ function Study(props) {
   const [isTemplateModal, setIsTemplateModal] = useState(false);
   const [isVolumeModal, setIsVolumeModal] = useState(false);
   const [isZoom, setIsZoom] = useState(false);
+  const [isToolModal, setIsToolModal] = useState(false);
 
   const [videoId, setVideoId] = useState("MYPVQccHhAQ");
   const [volume, setVolume] = useState(0);
@@ -124,13 +125,13 @@ function Study(props) {
 
   return (
     <div className={styles.StudyContainer}>
-      <StudyModalContainer 
+      <StudyModalContainer
         startPos={{ x: "10vw", y: "5vh" }}
         isDisp={isPlaylistModal}
         element={
-          <PlaylistModal 
-          userInfo={userInfo}
-          setResponse={setResponse}
+          <PlaylistModal
+            userInfo={userInfo}
+            setResponse={setResponse}
           />
         }
       />
@@ -177,6 +178,15 @@ function Study(props) {
           />
         }
       />
+      <StudyModalContainer
+        startPos={{ x: "50vw", y: "19vh" }}
+        isDisp={isToolModal}
+        element={
+          <>
+           Tool placeholder
+          </>
+        }
+      />
       {
         <StudyModalContainer
           startPos={{ x: "5vw", y: "38vh" }}
@@ -205,6 +215,8 @@ function Study(props) {
         setIsCam={setIsCam}
         setIsMic={setIsMic}
         bringSubjects={bringSubjects}
+        isToolModal={isToolModal}
+        setIsToolModal={setIsToolModal}
       />
       <div
         className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? "sidebarOpen" : ""
