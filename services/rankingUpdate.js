@@ -31,7 +31,7 @@ async function updateDailyRanking(now, users, timezoneOffset) {
   try {
     const filteredUsers = [];
     await Promise.all(users.map(async(userId) => {
-      const todayTotal = await redisClient.zRem(`user:${userId}:dayTotal`, timezoneOffset);
+      const todayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset);
       //update week total, month total
       if (todayTotal) {
         filteredUsers.push({u: userId, t: todayTotal});
@@ -42,6 +42,7 @@ async function updateDailyRanking(now, users, timezoneOffset) {
           redisClient.zIncrBy(`user:${userId}:monthTotal`, todayTotal, i.toString());
         };
       };
+      redisClient.zRem(`user:${userId}:dayTotal`, timezoneOffset);
       //redisClient.del(`user:${userId}:dayTotal`);
       return null;
     }));
@@ -64,11 +65,12 @@ async function updateWeeklyRanking(now, users, timezoneOffset) {
     const filteredUsers = [];
     await Promise.all(users.map(async(userId) => {
       //const thisWeekTotal = await redisClient.get(`user:${userId}:weekTotal`);
-      const thisWeekTotal = await redisClient.zRem(`user:${userId}:weekTotal`, timezoneOffset);
+      const thisWeekTotal = await redisClient.zScore(`user:${userId}:weekTotal`, timezoneOffset);
       if (thisWeekTotal) {
         filteredUsers.push({u: userId, t: thisWeekTotal});
       };
       //redisClient.del(`user:${userId}:weekTotal`);
+      redisClient.zRem(`user:${userId}:weekTotal`, timezoneOffset);
       return null;
     }));
 
@@ -90,11 +92,12 @@ async function updateMonthlyRanking(now, users, timezoneOffset) {
     const filteredUsers = [];
     await Promise.all(users.map(async(userId) => {
       //const thisMonthTotal = await redisClient.get(`user:${userId}:monthTotal`);
-      const thisMonthTotal = await redisClient.zRem(`user:${userId}:monthTotal`, timezoneOffset);
+      const thisMonthTotal = await redisClient.zRange(`user:${userId}:monthTotal`, timezoneOffset);
       if (thisMonthTotal) {
         filteredUsers.push({u: userId, t: thisMonthTotal});
       }
       //redisClient.del(`user:${userId}:monthTotal`);
+      redisClient.zRem(`user:${userId}:monthTotal`, timezoneOffset);
       return null;
     }));
 

@@ -230,39 +230,43 @@ function EventModal({
             />
           </div>
         </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faBook} />
-            <div className={styles.hoverEl}>
-              <p>Select Subject</p>
+        {planModal.editable ?
+          <div className={styles.wrapper}>
+            <div className={styles.iconWrapper}>
+              <FontAwesomeIcon icon={faBook} />
+              <div className={styles.hoverEl}>
+                <p>Select Subject</p>
+              </div>
+            </div>
+            <div className={styles.contentWrapper}>
+              <div className={styles.subjectWrapper}>
+                <DropDownButton
+                  options={subjects.map((subject) => {
+                    const { name, id } = subject;
+                    return { name, value: id };
+                  })}
+                  setValue={(subject) => {
+                    if (!planModal.editable) {
+                      setResponse({ success: false, reason: "This event is view only" });
+                    } else {
+                      setPlanModal((prev) => ({ ...prev, subject }));
+
+                    }
+                  }}
+                />
+              </div>
+              <p>OR</p>
+              <div className={styles.addSubjectWrapper}>
+                <BlobBtn
+                  name={"Add Subject"}
+                  setClicked={setIsAddSubjectModal}
+                  delay={-1}
+                />
+              </div>
             </div>
           </div>
-          <div className={styles.contentWrapper}>
-            <div className={styles.subjectWrapper}>
-              <DropDownButton
-                options={subjects.map((subject) => {
-                  const { name, id } = subject;
-                  return { name, value: id };
-                })}
-                setValue={(subject) => {
-                  if (!planModal.editable) {
-                    setResponse({ success: false, reason: "This event is view only" });
-                  } else {
-                    setPlanModal((prev) => ({ ...prev, subject }));
-                  }
-                }}
-              />
-            </div>
-            <p>OR</p>
-            <div className={styles.addSubjectWrapper}>
-              <BlobBtn
-                name={"Add Subject"}
-                setClicked={setIsAddSubjectModal}
-                delay={-1}
-              />
-            </div>
-          </div>
-        </div>
+          : null
+        }
         <div className={styles.wrapper}>
           <div className={styles.iconWrapper}>
             <FontAwesomeIcon icon={faBell} />
@@ -281,6 +285,7 @@ function EventModal({
                   { name: "1 hour before", value: 60 },
                 ]}
                 setValue={(notification) => {
+                    
                   setPlanModal((prev) => ({ ...prev, notification }));
                 }}
               />

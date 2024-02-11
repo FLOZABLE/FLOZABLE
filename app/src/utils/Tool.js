@@ -109,20 +109,15 @@ function undefinedORNull(value) {
 };
 
 function requestNotification() {
-  if (!("Notification" in window)) {
-    return false;
-  };
-
-  if (Notification.permission === "granted") {
-    return true;
-  };
-
-  Notification.requestPermission().then((permission) => {
-    if (permission === "granted") {
-      return true;
-    };
-  });
-  return false;
+  if (!('serviceWorker' in navigator)) {
+    // Service Worker isn't supported on this browser, disable or hide UI.
+    return;
+  }
+  
+  if (!('PushManager' in window)) {
+    // Push isn't supported on this browser, disable or hide UI.
+    return;
+  }
 }
 
 export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange, durationFormatter, undefinedORNull, requestNotification};
