@@ -19,7 +19,7 @@ Router.post("/add-subject", async (req, res) => {
         return res.send({ success: false, reason: isValidName.reason });
       };
 
-      const isValidColor = validateHEX(color, 'Color', 100, 8, 8);
+      const isValidColor = validateHEX(color, 'Color');
 
       if (!isValidColor.isValid) {
         return res.send({ success: false, reason: isValidColor.reason });
@@ -69,7 +69,7 @@ Router.post("/modify-subject", async (req, res) => {
         return res.send({ success: false, reason: isValidName.reason });
       };
 
-      const isValidColor = validateHEX(color, 'Color', 100, 6, 6);
+      const isValidColor = validateHEX(color, 'Color');
 
       if (!isValidColor.isValid) {
         return res.send({ success: false, reason: isValidColor.reason });

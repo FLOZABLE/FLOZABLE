@@ -37,13 +37,15 @@ function EventModal({
     };
     const startSec = Math.floor(planModal.start.getTime() / (1000 * 60));
     const endSec = Math.floor(planModal.end.getTime() / (1000 * 60));
+    const notification = parseInt(planModal.notification);
+    const repeat = parseInt(planModal.repeat);
     const completed = planModal.completed ? 1 : 0;
     fetch(`${serverOrigin}/plan/update`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...planModal, start: startSec, end: endSec, completed }),
+      body: JSON.stringify({ ...planModal, start: startSec, end: endSec, completed, notification, repeat }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -215,12 +217,12 @@ function EventModal({
           </div>
           <div className={styles.contentWrapper}>
             <DropDownButton
-              options={[
-                { name: "Does not repeat", value: 0 },
-                { name: "Daily", value: 1 },
-                { name: "Weekly", value: 2 },
-                { name: `Monthly`, value: 3 },
-              ]}
+              options={{
+                "0": "Does not repeat",
+                "1": "Daily",
+                "2": "Weekly",
+                "3": "Monthly"
+              }}
               setValue={(repeat) => {
                 if (!planModal.editable) {
                   setResponse({ success: false, reason: "This event is view only" });
@@ -228,6 +230,7 @@ function EventModal({
                   setPlanModal((prev) => ({ ...prev, repeat }));
                 }
               }}
+              value={planModal.repeat}
             />
           </div>
         </div>
@@ -242,10 +245,11 @@ function EventModal({
             <div className={styles.contentWrapper}>
               <div className={styles.subjectWrapper}>
                 <DropDownButton
-                  options={subjects.map((subject) => {
+                  options={subjects.reduce((acc, subject) => {
                     const { name, id } = subject;
-                    return { name, value: id };
-                  })}
+                    acc[id] = name;
+                    return acc;
+                  }, {})}
                   setValue={(subject) => {
                     if (!planModal.editable) {
                       setResponse({ success: false, reason: "This event is view only" });
@@ -254,6 +258,7 @@ function EventModal({
 
                     }
                   }}
+                  value={planModal.subject}
                 />
               </div>
               <p>OR</p>
@@ -278,16 +283,17 @@ function EventModal({
           <div className={styles.contentWrapper}>
             <div className={styles.notificationWrapper}>
               <DropDownButton
-                options={[
-                  { name: "no notification", value: -1 },
-                  { name: "5 minutes before", value: 5 },
-                  { name: "10 minutes before", value: 10 },
-                  { name: "30 minutes before", value: 30 },
-                  { name: "1 hour before", value: 60 },
-                ]}
+                options={{
+                  "-1": "no notification",
+                  "5": "5 minutes before",
+                  "10": "10 minutes before",
+                  "30": "30 minutes before",
+                  "60": "1 hour before"
+                }}
                 setValue={(notification) => {
                   setPlanModal((prev) => ({ ...prev, notification }));
                 }}
+                value={planModal.notification}
                 onClick={() => {
                   requestNotification();
                 }}

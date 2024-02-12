@@ -9,6 +9,7 @@ const { DateTime } = require("luxon");
 const { UserRefreshClient } = require("google-auth-library");
 const { validateStrictString, validateInteger, validateLength, validateString } = require("../validate");
 const { googleAccessTokenCache } = require("../services/redisLoader");
+const schedule = require('node-schedule');
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -45,7 +46,7 @@ Router.get("/", async (req, res) => {
                 const startDateTime = Math.floor(DateTime.fromISO(start ? start.dateTime : '', { zone: start ? start.timeZone : '' }).toSeconds() / 60);
                 const endDateTime = Math.floor(DateTime.fromISO(end ? end.dateTime : '', { zone: end ? end.timeZone : '' }).toSeconds() / 60);
                 const editable = calendar.accessRole !== "reader";
-                const newEvent = { id, title: summary, start: startDateTime, end: endDateTime, repeat: 0, description, notification: reminders, subject: calendar.id, priority: 5, completed: 0, htmlLink, type: 'google', editable, isEditable: editable, color: calendar.backgroundColor };
+                const newEvent = { id, title: summary, start: startDateTime, end: endDateTime, repeat: 0, description, subject: calendar.id, priority: 5, completed: 0, htmlLink, type: 'google', editable, isEditable: editable, color: calendar.backgroundColor };
                 calendarEvents.push(newEvent);
                 return null;
               });
@@ -166,17 +167,20 @@ Router.post('/update', async (req, res) => {
         return res.send({ success: false, reason: isValidCompleted.reason });
       };
 
+      console.log(notification, 'dddd')
+
       try {
         const connection = pool.promise();
         const planData = { title, id, start, end, repeat, description, subject, notification, priority, completed };
         const insertInfo = { ...planData, user_id: userId };
         const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [userId, planData.id]);
         if (!deletePrev.affectedRows) {
+          schedule.cancelJob(userId + "-" + id);
           //removePrevNotification(userId, planData.id);
         }
         const [[userInfo]] = await connection.query(`SELECT key_salt, iv, notification_endpoint, notification_keys from users where user_id = ?`, [userId]);
         const startTime = start * 60;
-        console.log(startTime, DateTime.now().toSeconds())
+        console.log(startTime, DateTime.now().toSeconds(), notification)
         if (startTime > DateTime.now().toSeconds() && userInfo) {
           console.log('add');
           const payload = JSON.stringify({
@@ -191,7 +195,7 @@ Router.post('/update', async (req, res) => {
               link: 'https://flozable.com/dashboard/study'
             }
           });
-          planPushNotification({...userInfo, user_id: userId}, payload, startTime)
+          planPushNotification(userId + "-" + id,{...userInfo, user_id: userId}, payload, startTime)
         }
         //planNotification(insertInfo, userInfo[0], startTime)
         const insert = await connection.query(`INSERT INTO plans SET ?`, insertInfo);

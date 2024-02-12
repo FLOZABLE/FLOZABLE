@@ -3,17 +3,8 @@ import styles from "./DropDownButton.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 
-function DropDownButton({ options, setValue, onClick = () => {} }) {
+function DropDownButton({ options, setValue, onClick = () => {}, value }) {
   const [clicked, setClicked] = useState(false);
-  const [dispVal, setDispVal] = useState(null);
-
-  useEffect(() => {
-    if (dispVal === null && options && options[0]) {
-      const { value, name } = options[0];
-      setValue(value);
-      setDispVal(name);
-    }
-  }, [options]);
 
   return (
     <div className={styles.DropDownButton}>
@@ -23,26 +14,24 @@ function DropDownButton({ options, setValue, onClick = () => {} }) {
           setClicked(!clicked);
         }}
       >
-        {dispVal}
+        {options[value]}
         <i>
           <FontAwesomeIcon icon={faCaretDown} />
         </i>
       </button>
       <ul className={`${styles.options} customScroll overflowDot`}>
-        {options.map((option, i) => {
+        {Object.keys(options).map((option, i) => {
           return (
             <li
               key={i}
               onClick={() => {
-                console.log(option.value);
-                setValue(option.value);
-                setDispVal(option.name);
+                setValue(option);
                 setClicked(false);
                 onClick();
               }}
               className={styles.option}
             >
-              {option.name}
+              {options[option]}
             </li>
           );
         })}
