@@ -11,6 +11,7 @@ import VolumeControl from "../../UI/VolumeControl/VolumeControl";
 import ThemeSelector from "../../UI/ThemeSelector/ThemeSelector";
 import MusicModal from "../../UI/MusicModal/MusicModal";
 import PlaylistModal from "../../UI/PlaylistModal/PlaylistModal";
+import StudySubjectTools from "../../UI/StudySubjectTools/StudySubjectTools";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -178,7 +179,7 @@ function Study(props) {
           />
         }
       />
-      <StudyModalContainer
+      <StudySubjectTools
         startPos={{ x: "50vw", y: "19vh" }}
         isDisp={isToolModal}
         element={

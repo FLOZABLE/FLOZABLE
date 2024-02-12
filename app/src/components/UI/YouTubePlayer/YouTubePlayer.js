@@ -34,13 +34,13 @@ function YouTubePlayer({ height, width, videoId, volume }) {
 
   const onStateChange = (event) => {
     if (event.data === YouTube.PlayerState.ENDED) {
-      player.seekTo(10);
+      player.seekTo(1);
     }
     if (event.data === window.YT.PlayerState.PLAYING) {
       // Video started (start button clicked)
       // You can add custom behavior here or leave it empty
     } else if (event.data === window.YT.PlayerState.PAUSED) {
-      player.seekTo(10);
+      player.seekTo(1);
       player.playVideo();
       // Video paused (stop button clicked)
       // You can add custom behavior here or leave it empty
