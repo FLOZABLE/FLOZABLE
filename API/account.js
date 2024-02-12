@@ -7,7 +7,7 @@ const sharp = require('sharp');
 const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
-const { hashing, autoSignin, generateRandomId, googleOauth2client, googleYoutubeOauth2client, isValidTimeZone } = require("../tool");
+const { hashing, autoSignin, generateRandomId, googleOauth2client, googleYoutubeOauth2client, isValidTimeZone, deriveKey } = require("../tool");
 const { validateEmail, validateStrictString, validatePassword, validateURL } = require("../validate");
 const { UserRefreshClient } = require("google-auth-library")
 const { friendRequestsCache, NotificationCache, timerCache, activeSubjectCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
@@ -269,7 +269,7 @@ Router.post('/reset-password', async (req, res) => {
 
     console.log(matchedResetId, resetId);
     if (!matchedResetId || matchedResetId !== resetId) {
-      return res.send({success: false, reason: 'Expired or Invalid URL'});
+      return res.send({ success: false, reason: 'Expired or Invalid URL' });
     };
 
     redisClient.del(`resetPw:${email}`);
@@ -280,7 +280,7 @@ Router.post('/reset-password', async (req, res) => {
     const updateInfo = [{ hashed_password, salt }, email];
     const update = await connection.query("UPDATE users set ? WHERE email = ?", updateInfo);
 
-    res.send({success: true, msg: "Password reset successful!"});
+    res.send({ success: true, msg: "Password reset successful!" });
   } catch (err) {
     console.log(err);
     res.send({ success: false, reason: 'Error' });
@@ -288,7 +288,7 @@ Router.post('/reset-password', async (req, res) => {
 });
 
 Router.get('/reset-password', (req, res) => {
-  autoSignin(req, res, (() => res.render('reset-password', {loggedIn: true})), (() => res.render('reset-password', {loggedIn: false})));
+  autoSignin(req, res, (() => res.render('reset-password', { loggedIn: true })), (() => res.render('reset-password', { loggedIn: false })));
 });
 
 Router.post('/update/image', upload.single('image'), async (req, res) => {
@@ -541,6 +541,41 @@ Router.post('/auth/youtube', async (req, res) => {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });
     };
+  }));
+});
+
+Router.post('/notification-subscribe', async (req, res) => {
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const { subscription } = req.body;
+
+      const {endpoint, expirationTime, keys} = subscription;
+
+      const isValidEndPoint = validateURL(endpoint);
+      if (!isValidEndPoint.isValid) {
+        return res.send({success: false, reason: isValidEndPoint.reason});
+      };
+
+      const connection = pool.promise();
+
+      const [[userInfo]] = await connection.query('SELECT user_id, key_salt, iv FROM users WHERE user_id = ?', [userId]);
+
+      const encryptKey = await deriveKey(userId, userInfo.key_salt);
+
+      const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(encryptKey, 'hex'), Buffer.from(userInfo.iv, 'hex'));
+
+      let encryptedData = cipher.update(endpoint, 'utf8', 'base64');
+      encryptedData += cipher.final('base64');
+
+      const updateInfo = {
+        notification_endpoint: encryptedData,
+        notification_keys: JSON.stringify(keys),
+        //notification_exp: expirationTime
+      }
+      connection.query('UPDATE users SET ? WHERE user_id = ?', [updateInfo, userId]);
+    } catch (err) {
+      console.log(err);
+    }
   }));
 });
 

@@ -1,5 +1,7 @@
 import ct from 'countries-and-timezones';
 
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
 function filterGroups(userInfo, groups) {
   const userGroups = [];
   const otherGroups = [];
@@ -117,6 +119,70 @@ function requestNotification() {
   if (!('PushManager' in window)) {
     // Push isn't supported on this browser, disable or hide UI.
     return;
+  }
+
+  if (Notification.permission === "granted") {
+    return true;
+  };
+
+  Notification.requestPermission().then(async (permission) => {
+    console.log(permission, 'ddd', permission === 'granted')
+    if (permission === "granted") {
+      console.log("granted")
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      console.log(registration)
+      console.log('subscription', subscription);
+      if (!subscription) {
+        subscribeUserToPush();
+      } else if (permission === 'denied') {
+        // User has blocked notifications
+        // Handle this case accordingly
+        console.log('Push notifications are blocked by the user.');
+      };
+    };
+
+    
+  });
+  return false;
+
+  /* 
+  
+    if (Notification.permission === "granted") {
+    return true;
+  };
+
+  Notification.requestPermission().then((permission) => {
+    if (permission === "granted") {
+      return true;
+    };
+  });
+  return false;
+  */
+}
+
+async function subscribeUserToPush() {
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: 'BLA00cufFwkKvcgi4-4TEGnZfoKqdQofWox2I4QJk5QCM-7MkTCSjGQE7AhbHAQcx6LbJbuFKe0LDhI4J-krUAY',
+    });
+    console.log('Subscription:', subscription);
+    const response = await fetch(`${serverOrigin}/account/notification-subscribe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({subscription: subscription}),
+    }).then(res => res.json());
+
+    console.log(response)
+    if (response.success) {
+      console.log('success')
+    } else {
+      console.log('fail')
+    }
+  } catch (error) {
+    console.error('Error subscribing to push notifications:', error);
   }
 }
 

@@ -88,6 +88,9 @@ function validateLength(value, type, max, min = 0) {
 };
 
 function validateURL(url) {
+  if (!url) {
+    return { isValid: false, reason: "Please provide URL"};
+  };
   let origin;
   let domain;
   try {
@@ -127,6 +130,11 @@ function validateBoolean(value, type, isStrict) {
 
 
 function validateTimeZone(timeZone) {
+
+  if (!timeZone) {
+    return {isValid: false, reason: "Please provide timezone"};
+  }
+
   try {
     Intl.DateTimeFormat(undefined, { timeZone: timeZone });
     return { isValid: true };
