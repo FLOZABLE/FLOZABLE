@@ -24,6 +24,7 @@ Router.get('/sort', async (req, res) => {
 
     //use redis value when its today
     if (dateTime.hasSame(today, "day")) {
+      console.log('today')
       //today
       const users = await redisClient.sMembers('allMembers');
       rankings = await todaySorting(users, timezoneOffset);
@@ -35,6 +36,7 @@ Router.get('/sort', async (req, res) => {
       //get ranking from database if its not today;
       const connection = pool.promise();
       const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [dateTime.toSeconds()]);
+      console.log(dailyRanking, dateTime.toSeconds())
       if (dailyRanking) {
         rankings = JSON.parse(dailyRanking.ranking);
       } 

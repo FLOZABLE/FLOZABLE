@@ -15,7 +15,7 @@ async function updateRanking() {
   });
 
   const timezoneOffset = Math.floor(now.offset / 60).toString();
-  now = now.startOf("day").toSeconds();
+  now = now.minus({day: 1}).startOf("day").toSeconds();
   const users = await redisClient.sMembers(`allMembers`);
 
   if (now.weekday === 1) {
