@@ -42,7 +42,7 @@ async function subjectsCache(userId) {
     } else {
       try {
         const connection = pool.promise();
-        const [subjects] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
+        const [subjects] = await connection.query(`SELECT id, name, icon, tools, color, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
         subjects.map(async (subject) => {
           const redisSubject = { ...subject };
           delete redisSubject.id;
@@ -67,7 +67,7 @@ async function subjectCache(userId, subjectId) {
     } else {
       try {
         const connection = pool.promise();
-        const [subjects] = await connection.query(`SELECT id, name, icon, color, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
+        const [subjects] = await connection.query(`SELECT id, name, icon, color, tools, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
         subjects.map(async (subject) => {
           const redisSubject = { ...subject };
           delete redisSubject.id;

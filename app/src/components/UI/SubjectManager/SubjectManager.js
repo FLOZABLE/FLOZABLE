@@ -26,7 +26,7 @@ const subjectIcons = {
     "Alert": <Alert width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
 };
 
-function SubjectManager({ subject, setSelectedSubject, setIsEditSubjectModal }) {
+function SubjectManager({ subject, setSelectedSubject, setIsEditSubjectModal, setResponse }) {
 
     const [isSubjectToolManager, setIsSubjectToolManager] = useState(false);
 
@@ -48,7 +48,7 @@ function SubjectManager({ subject, setSelectedSubject, setIsEditSubjectModal }) 
                             <p className={styles.toggleToolsText} onClick={() => { setIsSubjectToolManager(!isSubjectToolManager) }}>
                                 Manage Tools
                             </p>
-                            <SubjectToolManager subject={subject} isSubjectToolManager={isSubjectToolManager} />
+                            <SubjectToolManager subject={subject} isSubjectToolManager={isSubjectToolManager} setIsSubjectToolManager={setIsEditSubjectModal} setResponse={setResponse}/>
                         </td>
                     </tr>
                 </tbody>

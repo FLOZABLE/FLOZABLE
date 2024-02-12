@@ -114,6 +114,29 @@ Router.post("/modify-subject", async (req, res) => {
 });
 
 
+Router.post("/modify-subject-tools", async (req, res) => {
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const { tools, id, name } = req.body;
+
+      const connection = pool.promise();
+      try {
+        const updateSubject = await connection.query("UPDATE subjects SET tools = ? WHERE id = ? AND user_id = ?", [tools, id, userId]);
+        res.send({ success: true, msg: `Updated Tools for "${name}"`});
+
+        const previousSubject = JSON.parse(await redisClient.hGet(`user:${userId}:subjects`, id));
+        previousSubject.tools = tools;
+        redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(previousSubject));
+      } catch (err) {
+        console.log(err);
+      };
+    } catch (error) {
+      console.log(error);
+    };
+  }));
+});
+
+
 Router.post("/start", async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
