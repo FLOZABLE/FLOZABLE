@@ -16,10 +16,11 @@ function SubjectTimer({
   setIsAddSubjectModal,
   setMyTimerTotal,
   reset,
+  subject,
+  setSubject,
 }) {
   const timerDispRef = useRef(null);
 
-  const [subject, setSubject] = useState(null);
   const [timeValues, setTimeValues] = useState([]);
   const [options, setOptions] = useState([]);
   const [subjectTimer, setSubjectTimer] = useState({ total: 0 });
@@ -38,6 +39,10 @@ function SubjectTimer({
       }),
     );
   }, [subjects]);
+
+  useEffect(() => {
+    console.log(subject, "changed from subject timer");
+  }, [subject]);
 
   useEffect(() => {
     if (timeValues.length) {
