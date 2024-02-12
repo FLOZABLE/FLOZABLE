@@ -3,7 +3,7 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { isValidJSON, hashing, generateRandomId, autoSignin, googleOauth2client } = require("../tool");
-const { removePrevNotification, planNotification } = require("../services/notification");
+const { removePrevNotification, planNotification, planPushNotification } = require("../services/notification");
 const { google } = require('googleapis');
 const { DateTime } = require("luxon");
 const { UserRefreshClient } = require("google-auth-library");
@@ -45,7 +45,7 @@ Router.get("/", async (req, res) => {
                 const startDateTime = Math.floor(DateTime.fromISO(start ? start.dateTime : '', { zone: start ? start.timeZone : '' }).toSeconds() / 60);
                 const endDateTime = Math.floor(DateTime.fromISO(end ? end.dateTime : '', { zone: end ? end.timeZone : '' }).toSeconds() / 60);
                 const editable = calendar.accessRole !== "reader";
-                const newEvent = { id, title: summary, start: startDateTime, end: endDateTime, repeat: 0, description, notification: reminders, subject: calendar.id, priority: 5, completed: 0, htmlLink, type: 'google', editable, isEditable: editable };
+                const newEvent = { id, title: summary, start: startDateTime, end: endDateTime, repeat: 0, description, notification: reminders, subject: calendar.id, priority: 5, completed: 0, htmlLink, type: 'google', editable, isEditable: editable, color: calendar.backgroundColor };
                 calendarEvents.push(newEvent);
                 return null;
               });
@@ -174,8 +174,25 @@ Router.post('/update', async (req, res) => {
         if (!deletePrev.affectedRows) {
           //removePrevNotification(userId, planData.id);
         }
-        const [userInfo] = await connection.query(`SELECT user_id, name, email, notification_setting, key_salt, iv, subscription from users where user_id = ?`, [userId]);
-        const startTime = planData * 1000 * 60;
+        const [[userInfo]] = await connection.query(`SELECT key_salt, iv, notification_endpoint, notification_keys from users where user_id = ?`, [userId]);
+        const startTime = start * 60;
+        console.log(startTime, DateTime.now().toSeconds())
+        if (startTime > DateTime.now().toSeconds() && userInfo) {
+          console.log('add');
+          const payload = JSON.stringify({
+            title,
+            body: description,
+            icon: '/img/logo.png',
+            actions: [
+              { action: 'reply', title: 'Reply' },
+              { action: 'archive', title: 'Archive' }
+            ],
+            data: {
+              link: 'https://flozable.com/dashboard/study'
+            }
+          });
+          planPushNotification({...userInfo, user_id: userId}, payload, startTime)
+        }
         //planNotification(insertInfo, userInfo[0], startTime)
         const insert = await connection.query(`INSERT INTO plans SET ?`, insertInfo);
         res.send({ success: true, msg: 'Plan Saved!' })

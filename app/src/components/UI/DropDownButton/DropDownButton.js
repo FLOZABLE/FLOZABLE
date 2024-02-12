@@ -3,7 +3,7 @@ import styles from "./DropDownButton.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 
-function DropDownButton({ options, setValue }) {
+function DropDownButton({ options, setValue, onClick = () => {} }) {
   const [clicked, setClicked] = useState(false);
   const [dispVal, setDispVal] = useState(null);
 
@@ -38,6 +38,7 @@ function DropDownButton({ options, setValue }) {
                 setValue(option.value);
                 setDispVal(option.name);
                 setClicked(false);
+                onClick();
               }}
               className={styles.option}
             >
