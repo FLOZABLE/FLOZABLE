@@ -182,11 +182,7 @@ function Study(props) {
       <StudySubjectTools
         startPos={{ x: "50vw", y: "19vh" }}
         isDisp={isToolModal}
-        element={
-          <>
-           Tool placeholder
-          </>
-        }
+        subject={subject}
       />
       {
         <StudyModalContainer
