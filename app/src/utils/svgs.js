@@ -954,4 +954,46 @@ function IconHeadphoneFill(props) {
   );
 }
 
+function IconCalculator(props) {
+  return (
+    <svg
+      viewBox="0 0 512 512"
+      fill="currentColor"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path d="M416 80a48.05 48.05 0 00-48-48H144a48.05 48.05 0 00-48 48v352a48.05 48.05 0 0048 48h224a48.05 48.05 0 0048-48zM168 432a24 24 0 1124-24 24 24 0 01-24 24zm0-80a24 24 0 1124-24 24 24 0 01-24 24zm0-80a24 24 0 1124-24 24 24 0 01-24 24zm88 160a24 24 0 1124-24 24 24 0 01-24 24zm0-80a24 24 0 1124-24 24 24 0 01-24 24zm0-80a24 24 0 1124-24 24 24 0 01-24 24zm112 136a24 24 0 01-48 0v-80a24 24 0 0148 0zm-24-136a24 24 0 1124-24 24 24 0 01-24 24zm19.31-100.69A16 16 0 01352 176H160a16 16 0 01-16-16V96a16 16 0 0116-16h192a16 16 0 0116 16v64a16 16 0 01-4.69 11.31z" />
+    </svg>
+  );
+}
+
+function IconFileBarGraphFill(props) {
+  return (
+    <svg
+      fill="currentColor"
+      viewBox="0 0 16 16"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path d="M12 0H4a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V2a2 2 0 00-2-2zm-2 11.5v-6a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v6a.5.5 0 01-.5.5h-1a.5.5 0 01-.5-.5zm-2.5.5a.5.5 0 01-.5-.5v-4a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v4a.5.5 0 01-.5.5h-1zm-3 0a.5.5 0 01-.5-.5v-2a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v2a.5.5 0 01-.5.5h-1z" />
+    </svg>
+  );
+}
+
+function IconPeriodicTable(props) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path d="M2 4v2h2V4H2m18 0v2h2V4h-2M2 7v2h2V7H2m3 0v2h2V7H5m9 0v2h2V7h-2m3 0v2h2V7h-2m3 0v2h2V7h-2M2 10v2h2v-2H2m3 0v2h2v-2H5m3 0v2h2v-2H8m3 0v2h2v-2h-2m3 0v2h2v-2h-2m3 0v2h2v-2h-2m3 0v2h2v-2h-2M2 13v2h2v-2H2m3 0v2h2v-2H5m3 0v2h2v-2H8m3 0v2h2v-2h-2m3 0v2h2v-2h-2m3 0v2h2v-2h-2m3 0v2h2v-2h-2M5 17v2h2v-2H5m3 0v2h2v-2H8m3 0v2h2v-2h-2m3 0v2h2v-2h-2m3 0v2h2v-2h-2z" />
+    </svg>
+  );
+}
+
 export { StudyPerson, RestPerson, WritePen, Book, Microscope, Article, Coding, Globe, Workout, Alert, Question, Chrome, Punch, GoogleCalendar, Knife, FriendLink, EmailInvitation, Fight1, Google, SpotifyLogo, IconMicFill, IconMicMuteFill, IconCameraVideoFill, IconCameraVideoOffFill, IconHeadphoneFill, IconHeadphonesOff };
