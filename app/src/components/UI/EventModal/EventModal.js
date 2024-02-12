@@ -16,6 +16,7 @@ import DropDownButton from "../DropDownButton/DropDownButton";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import SliderAnimation from "../SliderAnimation/SliderAnimation";
 import generateRandomId from "../../../utils/RandomId";
+import { requestNotification } from "../../../utils/Tool";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -285,8 +286,10 @@ function EventModal({
                   { name: "1 hour before", value: 60 },
                 ]}
                 setValue={(notification) => {
-                    
                   setPlanModal((prev) => ({ ...prev, notification }));
+                }}
+                onClick={() => {
+                  requestNotification();
                 }}
               />
             </div>

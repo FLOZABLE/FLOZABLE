@@ -17,6 +17,18 @@ function generateRandomId(length) {
   return result;
 };
 
+async function deriveKey(userId, key_salt) {
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(userId, key_salt, 86736, 32, 'sha256', (err, derivedKey) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(derivedKey.toString('hex'));
+      }
+    });
+  });
+}
+
 function hashing(password) {
   let salt = crypto.randomBytes(32).toString('hex')
   return [salt, crypto.pbkdf2Sync(password, salt, 99097, 32, 'sha512').toString('hex')]
@@ -139,5 +151,6 @@ module.exports = {
   googleYoutubeOauth2client,
   arraysHaveSameContents,
   hex2rgb,
-  secondConverter
+  secondConverter,
+  deriveKey
 };
