@@ -99,8 +99,58 @@ connection.on('connection', (socket) => {
     console.log(onlineMembers); */
   });
 
-  socket.on("disconnect", (reason) => {
-    redisClient.hDel(`user:${userId}`, 'ActiveSubject');
+  socket.on("disconnect", async (reason) => {
+    const activeSubject = await activeSubjectCache(userId);
+    if (!activeSubject.id) return;
+
+    const now = Math.floor(new Date().getTime() / 1000);
+    /* const subjects = await subjectsCache(userId);
+    const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId); */
+    const subjectId = activeSubject.id;
+    const subject = await subjectCache(userId, subjectId);
+    const userInfo = await userCache(userId);
+    if (!userInfo || !subject) return;
+
+
+    let { groups, friends } = userInfo;
+    friends = friends === "" ? [] : friends.split(",");
+    groups = groups === "" ? [] : groups.split(",");
+
+    if (groups.length) {
+      io.to(groups).emit(`stopStudying:${userId}`);
+    };
+    if (friends.length) {
+      io.to(friends).emit(`stopStudying:${userId}`, subject);
+    };
+    const { datum_point, timeline_sum } = subject;
+
+    const duration = now - datum_point - timeline_sum;
+    subject.timeline_sum += duration;
+    redisClient.hSet(`user:${userId}:subjects`, subjectId, JSON.stringify(subject));
+    //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
+    //zsetIncrAll(`user:${userId}:dayTotal`, duration);
+
+    const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
+
+    if (activity) {
+      const start = activity[0];
+      redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${duration}]`);
+    };
+    extensionIo.to(userId).emit("studying", { studying: false });
+    //total timer update
+    //this is unix time in sec of active subject's start
+    /* const activeSubjectStart = activeSubject.time;
+    const timerInfo = await timerCache(userId, now);
+    const {dp, ts} = timerInfo;
+    const timerStart = activeSubjectStart - dp - ts;
+    const totalTimerDuration = now - dp - ts;
+    timerInfo.ts += totalTimerDuration;
+    redisClient.rPush(`user:${userId}:timer`, `[${timerStart},${totalTimerDuration}]`);
+    redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo)); */
+    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
+    for (let i = -12; i < 12; i++) {
+      redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
+    };
   });
 
   //chat

@@ -11,11 +11,11 @@
 
 .PlanTimeline .plan {
   display: flex;
-  margin-bottom: 10px;
-  transition: height .3s ease-in-out
+  transition: height .3s ease-in-out;
+  margin: 0px 0px 10px 10px;
 }
 
-.PlanTimeline .plan:hover .description{
+.PlanTimeline .plan:hover .description {
   max-height: 300px;
   animation: showScroll 0s .3s forwards;
 }
@@ -35,6 +35,7 @@
   border-radius: 10px;
   position: relative;
   background-color: #fff;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 .PlanTimeline .iconWrapper .icon {
@@ -42,17 +43,19 @@
 }
 
 
-.PlanTimeline .iconWrapper .icon:hover ~ .hoverDisp{
+.PlanTimeline .iconWrapper .icon:hover~.hoverDisp {
   visibility: visible;
   opacity: 1;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-.PlanTimeline .iconWrapper .hoverDisp:hover{
+.PlanTimeline .iconWrapper .hoverDisp:hover {
   visibility: visible;
   opacity: 1;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-.PlanTimeline .iconWrapper .hoverDisp{
+.PlanTimeline .iconWrapper .hoverDisp {
   visibility: hidden;
   opacity: 0;
   transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
@@ -62,6 +65,7 @@
   width: 50px;
   height: 50px;
   background-color: #fff;
+  border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -102,14 +106,14 @@
 }
 
 .PlanTimeline .description ol {
- list-style: decimal;
- list-style-position: inside;
+  list-style: decimal;
+  list-style-position: inside;
 }
 
 .PlanTimeline .description ul {
   list-style: disc;
   list-style-position: inside;
- }
+}
 
 .PlanTimeline .description li {
   list-style: unset;
@@ -124,13 +128,12 @@
   height: 50px;
   opacity: 0;
 }
+
 .PlanTimeline .iconWrapper:hover .hoverDisp {
   opacity: 1;
 }
 
-.PlanTimeline .noPlan {
-
-}
+.PlanTimeline .noPlan {}
 
 .PlanTimeline .noPlanText h4 {
   background-color: red;
@@ -139,7 +142,7 @@
   background-repeat: repeat;
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-fill-color: transparent; 
+  -webkit-text-fill-color: transparent;
   -moz-background-clip: text;
   -moz-text-fill-color: transparent;
   cursor: pointer;
