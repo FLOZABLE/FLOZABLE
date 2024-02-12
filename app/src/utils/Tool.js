@@ -163,6 +163,7 @@ function requestNotification() {
 
 async function subscribeUserToPush() {
   try {
+    navigator.serviceWorker.register('/service-worker.js');
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,

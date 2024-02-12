@@ -14,30 +14,43 @@ const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 webpush.setVapidDetails('mailto: support@flozable.com', VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY)
 
 async function planPushNotification(notificationId, userInfo, payload, startTime) {
-  const {user_id, key_salt, iv, notification_endpoint, notification_keys} = userInfo;
+  const { user_id, key_salt, iv, notification_endpoint, notification_keys } = userInfo;
+  try {
+    const encryptKey = await deriveKey(user_id, key_salt);
+    const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(encryptKey, 'hex'), Buffer.from(iv, 'hex'));
+    let decryptedEndPoint = decipher.update(notification_endpoint, 'base64', 'utf8');
 
-  const encryptKey = await deriveKey(user_id, key_salt);
-  const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(encryptKey, 'hex'), Buffer.from(iv, 'hex'));
-  let decryptedEndPoint = decipher.update(notification_endpoint, 'base64', 'utf8');
+    decryptedEndPoint += decipher.final('utf8');
 
-  decryptedEndPoint += decipher.final('utf8');
+    const credentials = {
+      endpoint: decryptedEndPoint,
+      keys: JSON.parse(notification_keys)
+    };
 
-  const credentials = {
-    endpoint: decryptedEndPoint,
-    keys: JSON.parse(notification_keys)
-  };
+    sendPushNotification(credentials, payload);
+    if (startTime === -1) {
+      sendPushNotification(credentials, payload);
+      return;
+    };
 
-  console.log(credentials)
-  webpush.sendNotification(credentials, payload);
-  if (startTime === -1) {
-    webpush.sendNotification(credentials, payload);
-    return;
-  };
-  
-  schedule.scheduleJob(notificationId, DateTime.fromSeconds(startTime).toJSDate(), () => {
-    webpush.sendNotification(credentials, payload);
-  });
+    schedule.scheduleJob(notificationId, DateTime.fromSeconds(startTime).toJSDate(), () => {
+      sendPushNotification(credentials, payload);
+    });
+  } catch (err) {
+    console.log(err);
+  }
 };
+
+function sendPushNotification(credentials, payload) {
+  webpush.sendNotification(credentials, payload)
+    .then((response) => {
+      // Handle successful response
+      console.log('Push notification sent successfully:', response);
+    })
+    .catch((err) => {
+      console.error('Error sending push notification:', err);
+    });
+}
 
 async function dailyReport(userId, timezone) {
   const subjects = await subjectsTimelineCache(userId);
@@ -47,7 +60,7 @@ async function dailyReport(userId, timezone) {
   const sortedSubjects = timelineSort(subjects);
   const subjectsDatasets = sortedSubjects.map(subject => {
     const [total] = subject.daily.total.slice(-1);
-    const {r, g, b} = hex2rgb(subject.color);
+    const { r, g, b } = hex2rgb(subject.color);
     return { name: subject.name, color: `rgb(${r}, ${g}, ${b})`, total };
   });
 
@@ -83,7 +96,7 @@ async function dailyReport(userId, timezone) {
                 value = Math.floor(sec / 60);
                 type = 'm';
               };
-            
+
               return (
                 value + type
               );
