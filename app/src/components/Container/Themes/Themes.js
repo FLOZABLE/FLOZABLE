@@ -181,11 +181,12 @@ function Themes({
               />
               <div className={styles.sortOptWrapper}>
                 <DropDownButton
-                  options={[
-                    { name: "By likes", value: 0 },
-                    { name: "By Usage", value: 1 },
-                  ]}
+                  options={{
+                    "0": "By likes",
+                    "1": "By Usage"
+                  }}
                   setValue={setSortOpt}
+                  value={sortOpt}
                 />
               </div>
             </div>

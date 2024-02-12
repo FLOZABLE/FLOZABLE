@@ -714,11 +714,12 @@ function Stats(props) {
                     <Link to="/dashboard/study">Study to see stats!</Link>
                   </div>
                     <DropDownButton
-                      options={[
-                        { name: "Active Time", value: 0 },
-                        { name: "Visited Time", value: 1 },
-                      ]}
+                      options={{
+                        "0": "Active Time",
+                        "1": "Visited Time"
+                      }}
                       setValue={setViewOption}
+                      value={viewOption}
                     />
                     <Chart
                       type="pie"

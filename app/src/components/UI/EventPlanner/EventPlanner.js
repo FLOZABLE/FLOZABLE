@@ -345,11 +345,15 @@ function EventPlanner(props) {
     }
     const startSec = Math.floor(start.getTime() / (1000 * 60));
     const endSec = Math.floor(end.getTime() / (1000 * 60));
+    const notification = parseInt(planModal.notification);
+    const repeat = parseInt(planModal.repeat);
     const updateInfo = {
       ...event,
       start: startSec,
       end: endSec,
       completed: completed ? 1 : 0,
+      notification,
+      repeat
     };
     delete updateInfo.saved;
     fetch(`${serverOrigin}/plan/update`, {

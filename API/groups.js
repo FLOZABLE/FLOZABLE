@@ -67,7 +67,8 @@ Router.post('/create-validate', async (req, res) => {
         };
       };
 
-      const isValidColor = validateHEX(color, 'Color', 100, 8, 8);
+      const isValidColor = validateHEX(color, 'Color');
+
       if (!isValidMembers.isValid) {
         return res.send({ success: false, reason: isValidColor.reason });
       };
@@ -76,7 +77,6 @@ Router.post('/create-validate', async (req, res) => {
       if (!isValidGodalHr.isValid) {
         return res.send({ success: false, reason: isValidGodalHr.reason });
       };
-
 
       const hashed = hashing(password);
       const group_id = generateRandomId(8);
@@ -420,7 +420,7 @@ Router.post('/modify', async (req, res) => {
         return res.send({ success: false, reason: isValidVisibility.reason });
       };
 
-      const isValidColor = validateHEX(color, 'Color', 100, 8, 8);
+      const isValidColor = validateHEX(color, 'Color');
       if (!isValidMembers.isValid) {
         return res.send({ success: false, reason: isValidColor.reason });
       };

@@ -7,12 +7,13 @@ const webpush = require('web-push');
 const QuickChart = require('quickchart-js');
 const { colorsList } = require("../Constant");
 const schedule = require('node-schedule');
+const redisClient = require("../model/redis");
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 
 webpush.setVapidDetails('mailto: support@flozable.com', VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY)
 
-async function planPushNotification(userInfo, payload, startTime) {
+async function planPushNotification(notificationId, userInfo, payload, startTime) {
   const {user_id, key_salt, iv, notification_endpoint, notification_keys} = userInfo;
 
   const encryptKey = await deriveKey(user_id, key_salt);
@@ -28,10 +29,14 @@ async function planPushNotification(userInfo, payload, startTime) {
 
   console.log(credentials)
   webpush.sendNotification(credentials, payload);
-  schedule.scheduleJob(DateTime.fromSeconds(startTime).toJSDate(), () => {
+  if (startTime === -1) {
+    webpush.sendNotification(credentials, payload);
+    return;
+  };
+  
+  schedule.scheduleJob(notificationId, DateTime.fromSeconds(startTime).toJSDate(), () => {
     webpush.sendNotification(credentials, payload);
   });
-  //webpush.sendNotification(credentials, payload);
 };
 
 async function dailyReport(userId, timezone) {
