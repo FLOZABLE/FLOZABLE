@@ -307,6 +307,7 @@ function App() {
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
                 totalNewMsg={totalNewMsg}
+                userInfo={userInfo}
               />
               <Main
                 subjects={subjects}
@@ -378,6 +379,7 @@ function App() {
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
                 totalNewMsg={totalNewMsg}
+                userInfo={userInfo}
               />
               <Stats
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -439,6 +441,8 @@ function App() {
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
+                totalNewMsg={totalNewMsg}
+                userInfo={userInfo}
               />
               <Ranking
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -499,6 +503,8 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
+                totalNewMsg={totalNewMsg}
+                userInfo={userInfo}
               />
               <Groups
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -624,6 +630,8 @@ function App() {
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
+                totalNewMsg={totalNewMsg}
+                userInfo={userInfo}
               />
               <Planner
                 planModal={planModal}
@@ -691,6 +699,8 @@ function App() {
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
+                totalNewMsg={totalNewMsg}
+                userInfo={userInfo}
               />
               <Account
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -752,6 +762,8 @@ function App() {
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
+                totalNewMsg={totalNewMsg}
+                userInfo={userInfo}
               />
               <User
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -816,6 +828,8 @@ function App() {
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
+                totalNewMsg={totalNewMsg}
+                userInfo={userInfo}
               />
               <Challenge
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -877,6 +891,8 @@ function App() {
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
+                totalNewMsg={totalNewMsg}
+                userInfo={userInfo}
               />
               <Friends
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -943,6 +959,8 @@ function App() {
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
+                totalNewMsg={totalNewMsg}
+                userInfo={userInfo}
               />
               <Themes
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -1002,6 +1020,8 @@ function App() {
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
                 isChatModal={isChatModal}
+                totalNewMsg={totalNewMsg}
+                userInfo={userInfo}
               />
               <ChallengeRooms
                 setIsSidebarOpen={setIsSidebarOpen}

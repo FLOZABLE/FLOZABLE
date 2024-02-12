@@ -49,6 +49,7 @@ function GroupsGen({
             );
             setMyGroups((myGroups) => [...myGroups, targetGroup]);
             if (groupsViewerRef) {
+              document.body.scrollIntoView({ behavior: 'smooth', block: 'start' });
               setTimeout(() => {
                 groupsViewerRef.current.swiper.slideTo(myGroups.length);
               }, 1000);
