@@ -27,10 +27,12 @@ function AddSubjectModal(props) {
   const [isSelectIcon, setIsSelectIcon] = useState(false);
 
   const handleNameInput = (e) => {
+    console.log(e.target.value)
     setName(e.target.value);
   };
 
   const submit = useCallback(() => {
+    console.log(selectedColor, name)
     fetch(`${serverOrigin}/study/add-subject`, {
       method: "post",
       headers: {
@@ -64,7 +66,7 @@ function AddSubjectModal(props) {
         };
       })
       .catch((error) => console.error(error));
-  }, [selectedColor, selectedIcon]);
+  }, [selectedColor, selectedIcon, name]);
 
   return (
     <div
