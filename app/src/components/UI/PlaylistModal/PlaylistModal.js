@@ -78,10 +78,11 @@ function PlaylistModal({ userInfo, setResponse }) {
           spotifyLoggedIn ?
             <DropDownButton
               options={
-                playlists.map((choice) => {
+                playlists.slice((acc,choice) => {
                   const modifiedURL = choice.url.replace("https://open.spotify.com", "https://open.spotify.com/embed");
-                  return { name: choice.name, value: modifiedURL }
-                })
+                  acc[modifiedURL] = choice.name;
+                  return acc;
+                }, {})
               }
               setValue={setPlaylist}
             />
