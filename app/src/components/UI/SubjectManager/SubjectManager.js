@@ -1,30 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import styles from "./SubjectManager.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import {
-    WritePen,
-    Book,
-    Microscope,
-    Article,
-    Coding,
-    Globe,
-    Workout,
-    Alert,
-} from "../../../utils/svgs";
 import SubjectToolManager from "../SubjectToolManager/SubjectToolManager";
-
-const subjectIcons = {
-    "Book": <Book width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Coding": <Coding width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Microscope": <Microscope width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "WritePen": <WritePen width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Article": <Article width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Globe": <Globe width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Workout": <Workout width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
-    "Alert": <Alert width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
-};
+import SubjectIcon from "../SubjectIcon/SubjectIcon";
 
 function SubjectManager({ subject, setSelectedSubject, setIsEditSubjectModal, setResponse }) {
 
@@ -42,13 +20,15 @@ function SubjectManager({ subject, setSelectedSubject, setIsEditSubjectModal, se
                             </p>
                         </td>
                         <td>
-                            {subjectIcons[subject.icon]}
+                            <div className={styles.iconWrapper}>
+                                <SubjectIcon name={subject.icon} width="40px" height="40px" fill={subject.color} opt1={subject.color} />
+                            </div>
                         </td>
                         <td>
                             <p className={styles.toggleToolsText} onClick={() => { setIsSubjectToolManager(!isSubjectToolManager) }}>
                                 Manage Tools
                             </p>
-                            <SubjectToolManager subject={subject} isSubjectToolManager={isSubjectToolManager} setIsSubjectToolManager={setIsEditSubjectModal} setResponse={setResponse}/>
+                            <SubjectToolManager subject={subject} isSubjectToolManager={isSubjectToolManager} setIsSubjectToolManager={setIsEditSubjectModal} setResponse={setResponse} />
                         </td>
                     </tr>
                 </tbody>
