@@ -1,4 +1,6 @@
-export const colorsList = [
+import { Alert, Article, Book, Coding, Globe, Microscope, Workout, WritePen } from "./utils/svgs";
+
+const colorsList = [
   "#0395f9",
   "#3fc2ff",
   "#ff6844",
@@ -18,3 +20,16 @@ export const colorsList = [
   "#b3d4ff",
   "#00bfa0",
 ];
+
+const subjectIcons = {
+  "Book": <Book width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
+  "Coding": <Coding width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
+  "Microscope": <Microscope width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
+  "WritePen": <WritePen width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
+  "Article": <Article width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
+  "Globe": <Globe width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
+  "Workout": <Workout width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
+  "Alert": <Alert width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
+};
+
+export {colorsList, subjectIcons};

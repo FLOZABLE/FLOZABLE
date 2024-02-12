@@ -7,7 +7,7 @@ function StudySubjectTools({ isDisp, startPos, subject }) {
   const [toolResults, setToolResults] = useState([]);
 
   useEffect(() => {
-    if (!subject) return;
+    if (!subject || !subject.tools) return;
     if (subject.tools.length) {
       setToolResults(subject.tools.split(","));
     }

@@ -3,7 +3,7 @@
 }
 
 .selectIcon .header p {
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 700;
   color: #545454;
 }
@@ -59,4 +59,10 @@
 
 .selectIcon .icons.open .iconWrapper {
   margin: 10px;
+}
+
+@media (max-width: 1400px) {
+  .selectIcon .header p {
+    font-size: 20px;
+  }
 }

@@ -2,37 +2,10 @@
     margin-top: 25px;
 }
 
-.SubjectManager .table {
-    width: 100%;
-    table-layout: fixed;
+.SubjectManager .title {
+  width: 50%;
 }
 
-.SubjectManager .table .tableRow td {
-    border: 1px solid black;
-    background-color: grey;
+.SubjectManager > div {
+  margin-bottom: 10px;
 }
-
-.SubjectManager .editButton {
-    color: black;
-}
-
-.SubjectManager .editButton:hover {
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.SubjectManager .toggleToolsText:hover {
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.SubjectManager .iconWrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50px;
-    width: 50px;
-    border-radius: 10px;
-    position: relative;
-    background-color: #fff;
-  }
