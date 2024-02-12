@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import styles from "./SubjectToolManager.module.css";
 import { AllTools } from "../../../utils/SubjectTools";
 import BlobBtn from "../BlobBtn/BlobBtn";
@@ -14,55 +14,66 @@ function SubjectToolManager({ subject, isSubjectToolManager, setIsSubjectToolMan
     useEffect(() => {
         if (!subject.tools && subject.tools !== "") return;
 
-        const subjectTools = subject.tools.split("");
+        const subjectTools = subject.tools.split(",");
         let availableTools = [...AllTools];
+        const tempTools = [];
 
         if (subjectTools.length && !!subjectTools[0]) {
-            const tempTools = [];
 
             subjectTools.map((currentTool) => {
-                tempTools.push(AllTools[currentTool]);
-                availableTools = availableTools.filter((tool) => !tool.startsWith(currentTool));
+                tempTools.push(AllTools[parseInt(currentTool)]);
+                availableTools = availableTools.filter((tool) => tool.split(",")[0] !== currentTool);
             });
-            setSavedTools(tempTools);
         }
 
         setOtherTools(availableTools);
+        setSavedTools(tempTools);
     }, [subject]);
 
     const addTool = (toolName) => {
+        if (!toolName) return;
         const toolIndex = toolName.split(",")[0];
         setOtherTools(otherTools.filter((tool) => !tool.startsWith(toolIndex)));
         setSavedTools([...savedTools, AllTools[parseInt(toolIndex)]]);
     }
 
     const removeTool = (toolName) => {
+        if (!toolName) return;
         const toolIndex = toolName.split(",")[0];
         setSavedTools(savedTools.filter((tool) => !tool.startsWith(toolIndex)));
         setOtherTools([...otherTools, AllTools[parseInt(toolIndex)]]);
     }
 
-    const submit = useCallback(() => {
-        fetch(`${serverOrigin}/study/modify-subject-tools`, {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            tools: "",
-            id: subject.id,
-            name: subject.name,
-          }),
+    const submit = () => {
+
+        let subjectToolString = "";
+        savedTools.map((tool) => {
+            subjectToolString += tool.split(",")[0] + ",";
         })
-          .then((response) => response.json())
-          .then((data) => {
-            setResponse(data);
-            if (data.success) {
-                setIsSubjectToolManager(false);
-            };
-          })
-          .catch((error) => console.error(error));
-      }, [savedTools, otherTools]);
+        subjectToolString = subjectToolString.substring(0, subjectToolString.length - 1);
+
+        console.log(subjectToolString);
+
+        fetch(`${serverOrigin}/study/modify-subject-tools`, {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                tools: subjectToolString,
+                id: subject.id,
+                name: subject.name,
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setResponse(data);
+                if (data.success) {
+                    setIsSubjectToolManager(false);
+                };
+            })
+            .catch((error) => console.error(error));
+    }
 
     return (
         <div className={styles.SubjectToolManager}>
@@ -99,7 +110,7 @@ function SubjectToolManager({ subject, isSubjectToolManager, setIsSubjectToolMan
                         );
                     })
                 }
-                <BlobBtn delay={-1} name="Save" setClicked={submit}/>
+                <BlobBtn delay={-1} name="Save" setClicked={submit} />
             </div>
         </div>
     );
