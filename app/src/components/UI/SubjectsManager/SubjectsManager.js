@@ -24,7 +24,7 @@ function SubjectsManager({ subjects, setSubjects, setResponse }) {
       {
         subjects.map((subject, i) => {
           return (
-            <SubjectManager key={i} subject={subject} setSelectedSubject={setSelectedSubject} setIsEditSubjectModal={setIsEditSubjectModal} />
+            <SubjectManager key={i} subject={subject} setSelectedSubject={setSelectedSubject} setIsEditSubjectModal={setIsEditSubjectModal} setResponse={setResponse} />
           )
         })
       }

@@ -5,3 +5,22 @@
 .SubjectToolManager .hidden {
     display: none;
 }
+
+.SubjectToolManager li {
+    display: inline-block;
+    max-width: fit-content;
+    padding: 7px;
+    border-radius: 15px;
+    margin: 3px;
+    background-color: rgb(222,222,222);
+}
+
+.SubjectToolManager .removeTool:hover {
+    cursor: pointer;
+    color: red;
+}
+
+.SubjectToolManager .addTool:hover {
+    cursor: pointer;
+    color: green;
+}
