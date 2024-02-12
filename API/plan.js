@@ -167,8 +167,6 @@ Router.post('/update', async (req, res) => {
         return res.send({ success: false, reason: isValidCompleted.reason });
       };
 
-      console.log(notification, 'dddd')
-
       try {
         const connection = pool.promise();
         const planData = { title, id, start, end, repeat, description, subject, notification, priority, completed };
@@ -176,25 +174,33 @@ Router.post('/update', async (req, res) => {
         const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [userId, planData.id]);
         if (!deletePrev.affectedRows) {
           schedule.cancelJob(userId + "-" + id);
-          //removePrevNotification(userId, planData.id);
         }
         const [[userInfo]] = await connection.query(`SELECT key_salt, iv, notification_endpoint, notification_keys from users where user_id = ?`, [userId]);
         const startTime = start * 60;
-        console.log(startTime, DateTime.now().toSeconds(), notification)
+        //const body = description.replace(/(&nbsp;|<([^>]+)>)/ig, " ");
+        const startDateTime = DateTime.fromSeconds(startTime).setZone(timezone).toFormat("h:mm a");
+        const endDateTime = DateTime.fromSeconds(end * 60).setZone(timezone).toFormat("h:mm a")
+        const body = `${startDateTime} - ${endDateTime}`;
+        const payload = JSON.stringify({
+          title,
+          body,
+          icon: 'https://flozable.com/favicon.ico',
+          actions: [
+            { action: 'viewplan', title: 'View plan' },
+            { action: 'close', title: 'Close' }
+          ],
+          data: {
+            link: `${process.env.SERVER}/dashboard/planner?plan=${id}`
+          }
+        });
+
+        if (notification !== -1) {
+          const subNotificationStart = startTime - notification * 60;
+          if (subNotificationStart > DateTime.now().toSeconds() && userInfo) {
+            planPushNotification(userId + "-" + id,{...userInfo, user_id: userId}, payload, subNotificationStart)
+          }
+        };
         if (startTime > DateTime.now().toSeconds() && userInfo) {
-          console.log('add');
-          const payload = JSON.stringify({
-            title,
-            body: description,
-            icon: '/img/logo.png',
-            actions: [
-              { action: 'reply', title: 'Reply' },
-              { action: 'archive', title: 'Archive' }
-            ],
-            data: {
-              link: 'https://flozable.com/dashboard/study'
-            }
-          });
           planPushNotification(userId + "-" + id,{...userInfo, user_id: userId}, payload, startTime)
         }
         //planNotification(insertInfo, userInfo[0], startTime)

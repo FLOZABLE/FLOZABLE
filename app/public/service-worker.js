@@ -3,23 +3,32 @@ console.log('service worker')
 self.addEventListener('push', event => {
   console.log('event', event)
   const notificationData = event.data.json();
+  console.log(notificationData)
 
   const notificationOptions = {
     title: notificationData.title,
     body: notificationData.body,
-    icon: 'path/to/icon.png',
-    image: notificationData.image, // Assuming image is included in the push data
+    icon: notificationData.icon,
     actions: [
-      { action: 'reply', title: 'Reply' },
-      { action: 'archive', title: 'Archive' }
+      { action: 'viewplan', title: 'View plan' },
+      { action: 'close', title: 'Close' }
     ],
-    data: {
-      // Add any additional data you want to pass with the notification
-      link: notificationData.link,
-    }
+    data: notificationData.data
   };
 
   event.waitUntil(
     self.registration.showNotification(notificationData.title, notificationOptions)
   );
+});
+
+self.addEventListener('notificationclick', function(event) {
+  const notificationData = event.notification.data;
+  const action = event.action;
+
+  if (action === "viewplan") {
+    event.waitUntil(
+      clients.openWindow(notificationData.link)
+    );
+  }
+  event.notification.close();
 });
