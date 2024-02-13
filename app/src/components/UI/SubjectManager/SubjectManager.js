@@ -26,14 +26,46 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject }) {
     const { icon, name, color } = subject;
     setSelectedIcon({ el: subjectIcons[icon], name: icon });
     setSelectedColor(color);
+  const tools = subject.tools === "" ? [] : subject.tools.split(",");
+  console.log('dddd', tools, subject.tools)
+    setSelectedTool(tools);
     setName(name);
   }, [subject]);
 
   useEffect(() => {
-    if (isSelectColor || isSelectIcon) {
+    if (isSelectColor || isSelectIcon || isSelectTool) {
       setSelectedSubject(prev => ({ ...prev, id: subject.id }));
     }
-  }, [isSelectColor, isSelectIcon]);
+  }, [isSelectColor, isSelectIcon, isSelectTool]);
+
+  useEffect(() => {
+    if (!selectedSubject || selectedSubject.id !== subject.id) {
+      setIsSelectIcon(false);
+      setIsSelectTool(false);
+      setIsSelectColor(false);
+    }
+  }, [selectedSubject]);
+
+  useEffect(() => {
+    if (isSelectColor) {
+      setIsSelectIcon(false);
+      setIsSelectTool(false);
+    };
+  }, [isSelectColor]);
+
+  useEffect(() => {
+    if (isSelectIcon) {
+      setIsSelectColor(false);
+      setIsSelectTool(false);
+    };
+  }, [isSelectIcon]);
+
+  useEffect(() => {
+    if (isSelectTool) {
+      setIsSelectIcon(false);
+      setIsSelectColor(false);
+    };
+  }, [isSelectTool]);
 
   return (
     <div className={styles.SubjectManager}>
@@ -74,7 +106,7 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject }) {
         />
       </div>
       {selectedSubject?.id === subject?.id ?
-        <BlobBtn name={"SUBMIT"} setClicked={() => { setSelectedSubject({ color: selectedColor, icon: selectedIcon.name, id: subject.id, name, submit: true }) }} />
+        <BlobBtn name={"SUBMIT"} setClicked={() => { setSelectedSubject({ color: selectedColor, icon: selectedIcon.name, id: subject.id, name, tools: selectedTool, submit: true }) }} />
         : null
       }
     </div>
