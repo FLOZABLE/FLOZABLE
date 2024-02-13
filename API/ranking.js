@@ -39,6 +39,10 @@ Router.get('/sort', async (req, res) => {
       console.log(dailyRanking, dateTime.toSeconds())
       if (dailyRanking) {
         rankings = JSON.parse(dailyRanking.ranking);
+        rankings = await Promise.all(rankings.map(async(ranking) => {
+          const user = await userCache(ranking.u);
+          return {...ranking, ...user}
+        }))
       } 
     }
   } else if (mode === "Weekly") {
@@ -57,6 +61,10 @@ Router.get('/sort', async (req, res) => {
       const [[dailyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [dateTime.toSeconds()]);
       if (dailyRanking) {
         rankings = JSON.parse(dailyRanking.ranking);
+        rankings = await Promise.all(rankings.map(async(ranking) => {
+          const user = await userCache(ranking.u);
+          return {...ranking, ...user}
+        }))
       } 
     }
   } else {
@@ -77,6 +85,10 @@ Router.get('/sort', async (req, res) => {
       const [[dailyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [dateTime.toSeconds()]);
       if (dailyRanking) {
         rankings = JSON.parse(dailyRanking.ranking);
+        rankings = await Promise.all(rankings.map(async(ranking) => {
+          const user = await userCache(ranking.u);
+          return {...ranking, ...user}
+        }))
       } 
     }
   };
@@ -89,11 +101,11 @@ async function todaySorting (users, timezoneOffset) {
   await Promise.all(users.map(async (userId) => {
     const todayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset);
     if (todayTotal) {
-      filteredUsers.push({userId, total: todayTotal});
+      filteredUsers.push({userId, t: todayTotal});
     };
   }));
 
-  return filteredUsers.sort((a, b) => b.total - a.total);
+  return filteredUsers.sort((a, b) => b.t - a.t);
 };
 
 async function thisWeekSorting (users, timezoneOffset) {
@@ -108,7 +120,7 @@ async function thisWeekSorting (users, timezoneOffset) {
     };
   }));
 
-  return filteredUsers.sort((a, b) => b.total - a.total);
+  return filteredUsers.sort((a, b) => b.t - a.t);
 };
 
 async function thisMonthSorting (users, timezoneOffset) {
@@ -123,7 +135,7 @@ async function thisMonthSorting (users, timezoneOffset) {
     };
   }));
 
-  return filteredUsers.sort((a, b) => b.total - a.total);
+  return filteredUsers.sort((a, b) => b.t - a.t);
 };
 
 Router.post('/sort', async (req, res) => {
