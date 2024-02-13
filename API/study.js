@@ -6,7 +6,7 @@ const notificationService = require('../services/notification');
 const { io } = require("../socket");
 const { generateRandomId, isValidJSON, autoSignin } = require("../tool");
 const { subjectsCache, subjectsTimelineCache } = require("../services/redisLoader");
-const { validateString, validateHEX, validateStrictString } = require("../validate");
+const { validateString, validateHEX, validateStrictString, validateArray } = require("../validate");
 
 Router.post("/add-subject", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -61,7 +61,7 @@ Router.post("/add-subject", async (req, res) => {
 Router.post("/modify-subject", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
-      const { name, color, icon, id } = req.body;
+      const { name, color, icon, id, tools } = req.body;
 
       const isValidName = validateString(name, "subject name");
 
@@ -87,11 +87,18 @@ Router.post("/modify-subject", async (req, res) => {
         return res.send({ success: false, reason: isValidId.reason });
       };
 
+      const isValidTools = validateArray(tools, "tools", 10, 0);
+
+      if (!isValidTools.isValid) {
+        return res.send({ success: false, reason: isValidTools.reason });
+      };
+
       const subjectInfo = {
         name,
         color,
         icon,
         id,
+        tools: tools.join(",")
       };
 
       const connection = pool.promise();
@@ -103,6 +110,7 @@ Router.post("/modify-subject", async (req, res) => {
         previousSubject.name = subjectInfo.name;
         previousSubject.icon = subjectInfo.icon;
         previousSubject.color = subjectInfo.color;
+        previousSubject.tools = subjectInfo.tools;
         redisClient.hSet(`user:${userId}:subjects`, subjectInfo.id, JSON.stringify(previousSubject));
       } catch (err) {
         console.log(err);
@@ -112,30 +120,6 @@ Router.post("/modify-subject", async (req, res) => {
     };
   }));
 });
-
-
-Router.post("/modify-subject-tools", async (req, res) => {
-  autoSignin(req, res, (async (userId) => {
-    try {
-      const { tools, id, name } = req.body;
-
-      const connection = pool.promise();
-      try {
-        const updateSubject = await connection.query("UPDATE subjects SET tools = ? WHERE id = ? AND user_id = ?", [tools, id, userId]);
-        res.send({ success: true, msg: `Updated Tools for "${name}"`});
-
-        const previousSubject = JSON.parse(await redisClient.hGet(`user:${userId}:subjects`, id));
-        previousSubject.tools = tools;
-        redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(previousSubject));
-      } catch (err) {
-        console.log(err);
-      };
-    } catch (error) {
-      console.log(error);
-    };
-  }));
-});
-
 
 Router.post("/start", async (req, res) => {
   autoSignin(req, res, (async () => {

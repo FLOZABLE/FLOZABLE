@@ -1,27 +1,24 @@
 import React from "react";
 import { useState, useEffect } from 'react';
 import styles from "./SubjectsManager.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import SubjectManager from "../SubjectManager/SubjectManager";
-import EditSubjectModal from "../EditSubjectModal/EditSubjectModal";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function SubjectsManager({ subjects, setSubjects, setResponse }) {
-  const [isEditSubjectModal, setIsEditSubjectModal] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState({
     submit: false,
     color: null,
     icon: null,
     name: null,
     id: null,
+    tools: []
   });
 
   useEffect(() => {
     if (!selectedSubject || !selectedSubject.submit) return;
 
-    const { id, icon, color, name } = selectedSubject;
+    const { id, icon, color, name, tools } = selectedSubject;
     console.log(selectedSubject)
     fetch(`${serverOrigin}/study/modify-subject`, {
       method: "post",
@@ -33,6 +30,7 @@ function SubjectsManager({ subjects, setSubjects, setResponse }) {
         color,
         icon,
         id,
+        tools
       }),
     })
       .then((response) => response.json())
