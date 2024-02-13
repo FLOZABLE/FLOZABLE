@@ -116,7 +116,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   useEffect(() => {
     let shownResults = 0;
     let allResults = 0;
-    setRankingEl(ranking.map(({ total, name, user_id, timezone }, i) => {
+    setRankingEl(ranking.map(({ t, name, user_id, timezone }, i) => {
       allResults += 1;
       if (rankingSearch.length === 0) {
         if (i < (searchParams.get('page') - 1) * 50 || i >= (searchParams.get('page')) * 50) return;
@@ -146,7 +146,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
               <CountryViewer timezone={timezone} />
             </Link>
             <div className={styles.ranking}>
-              <p>{(total / (60 * 60)).toFixed(2)}hr</p>
+              <p>{(t / (60 * 60)).toFixed(2)}hr</p>
             </div>
           </div>
         </li>
