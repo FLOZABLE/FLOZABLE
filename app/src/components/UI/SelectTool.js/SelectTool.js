@@ -1,15 +1,11 @@
 import React from "react";
 import styles from "./SelectTool.module.css";
 import {
-  WritePen,
-  Book,
-  Microscope,
-  Article,
-  Coding,
-  Globe,
-  Workout,
-  Alert,
+  IconCalculator,
+  IconFileBarGraphFill,
+  IconPeriodicTable,
 } from "../../../utils/svgs";
+import { toolsInfo } from "../../../constant";
 
 function SelectTool({
   selectedTool,
@@ -19,14 +15,8 @@ function SelectTool({
   setIsSelectColor,
 }) {
 
-  function handleSelect(iconInfo) {
-    setSelectedTool(prev => ([...prev, iconInfo]));
-
-    //setIsSelectTool(false);
-  }
-
   return (
-    <div className={styles.selectIcon}>
+    <div className={styles.selectTool}>
       <div className={styles.header}>
         <button
           onClick={() => {
@@ -34,182 +24,54 @@ function SelectTool({
             setIsSelectColor(false);
           }}
         >
-          {!selectedTool.el ? (
+          {!selectedTool.length ? (
             <p>Select Subject's Tools!</p>
           ) : (
             <p>Selected Tools: </p>
           )}
         </button>
-        <div className={styles.selectedTool}
-          onClick={() => {
-            setIsSelectTool(!isSelectTool);
-            setIsSelectColor(false);
-          }}
-        >{selectedTool}</div>
+        {selectedTool.map((tool, i) => {
+          const toolInfo = toolsInfo[tool];
+          if (!toolInfo) return;
+
+          return (
+            <div className={styles.selectedTool}
+              onClick={() => {
+                setIsSelectTool(!isSelectTool);
+                setIsSelectColor(false);
+              }}
+              key={i}
+            >
+              {toolInfo.icon}
+              <div className={styles.hoverDisp}>
+                {toolInfo.name}
+              </div>
+            </div>
+          )
+        })}
       </div>
       <div className={`${styles.icons} ${isSelectTool ? styles.open : ""}`}>
-        <div
-          className={styles.iconWrapper}
-          onClick={() => {
-            /* handleSelect({
-              name: "WritePen",
-              el: (
-                <WritePen
-                  width={"40px"}
-                  height={"40px"}
-                  fill={"#000"}
-                  opt1={"#000"}
-                />
-              ),
-            }); */
-            setSelectedTool(prev => ([...prev, "WritePen"]));
-          }}
-        >
-          <WritePen
-            width={"40px"}
-            height={"40px"}
-            fill={"#000"}
-            opt1={"#000"}
-          />
-        </div>
-        <div
-          className={styles.iconWrapper}
-          onClick={() => {
-            /* handleSelect({
-              name: "Book",
-              el: (
-                <Book
-                  width={"40px"}
-                  height={"40px"}
-                  fill={"#000"}
-                  opt1={"#000"}
-                />
-              ),
-            }); */
-            setSelectedTool(prev => ([...prev, "Book"]));
-          }}
-        >
-          <Book width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
-        </div>
-        <div
-          className={styles.iconWrapper}
-          onClick={() => {
-            /* handleSelect({
-              name: "Microscope",
-              el: (
-                <Microscope
-                  width={"40px"}
-                  height={"40px"}
-                  fill={"#000"}
-                  opt1={"#000"}
-                />
-              ),
-            }); */
-            setSelectedTool(prev => ([...prev, "Microscope"]));
-          }}
-        >
-          <Microscope
-            width={"40px"}
-            height={"40px"}
-            fill={"#000"}
-            opt1={"#000"}
-          />
-        </div>
-        <div
-          className={styles.iconWrapper}
-          onClick={() => {
-            /* handleSelect({
-              name: "Article",
-              el: (
-                <Article
-                  width={"40px"}
-                  height={"40px"}
-                  fill={"#000"}
-                  opt1={"#000"}
-                />
-              ),
-            }); */
-            setSelectedTool(prev => ([...prev, "Article"]));
-          }}
-        >
-          <Article width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
-        </div>
-        <div
-          className={styles.iconWrapper}
-          onClick={() => {
-            /* handleSelect({
-              name: "Coding",
-              el: (
-                <Coding
-                  width={"40px"}
-                  height={"40px"}
-                  fill={"#000"}
-                  opt1={"#000"}
-                />
-              ),
-            }); */
-            setSelectedTool(prev => ([...prev, "Coding"]));
-          }}
-        >
-          <Coding width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
-        </div>
-        <div
-          className={styles.iconWrapper}
-          onClick={() => {
-            /* handleSelect({
-              name: "Globe",
-              el: (
-                <Globe
-                  width={"40px"}
-                  height={"40px"}
-                  fill={"#000"}
-                  opt1={"#000"}
-                />
-              ),
-            }); */
-            setSelectedTool(prev => ([...prev, "Globe"]));
-          }}
-        >
-          <Globe width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
-        </div>
-        <div
-          className={styles.iconWrapper}
-          onClick={() => {
-            /* handleSelect({
-              name: "Workout",
-              el: (
-                <Workout
-                  width={"40px"}
-                  height={"40px"}
-                  fill={"#000"}
-                  opt1={"#000"}
-                />
-              ),
-            }); */
-            setSelectedTool(prev => ([...prev, "Workout"]));
-          }}
-        >
-          <Workout width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
-        </div>
-        <div
-          className={styles.iconWrapper}
-          onClick={() => {
-            /* handleSelect({
-              name: "Alert",
-              el: (
-                <Alert
-                  width={"40px"}
-                  height={"40px"}
-                  fill={"#000"}
-                  opt1={"#000"}
-                />
-              ),
-            }); */
-            setSelectedTool(prev => ([...prev, "Alert"]));
-          }}
-        >
-          <Alert width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
-        </div>
+        {toolsInfo.map((tool, i) => {
+          return (
+            <div
+              className={styles.iconWrapper}
+              onClick={() => {
+                console.log(selectedTool, 'dddd')
+                if (!selectedTool.includes(i.toString())) {
+                  setSelectedTool(prev => ([...prev, i.toString()]));
+                } else {
+                  setSelectedTool(prev => prev.filter(item => item !== i.toString()));
+                }
+              }}
+              key={i}
+            >
+              {tool.icon}
+              <div className={styles.hoverDisp}>
+                {tool.name}
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   );
