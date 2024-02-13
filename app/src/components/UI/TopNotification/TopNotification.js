@@ -12,35 +12,34 @@ function TopNotification({ response, duration }) {
   const [timeoutId, setTimeoutId] = useState(null);
 
   useEffect(() => {
-    const notifResponse = response;
-    if (notifResponse) {
-      if (notifResponse.success) {
-        setNotification(
-          <div className={`${styles.success} ${styles.notification}`}>
-            <i>
-              <FontAwesomeIcon icon={faCircleCheck} />
-            </i>
-            <p className={styles.msg}>{notifResponse.msg}</p>
-          </div>,
-        );
-      } else {
-        setNotification(
-          <div className={`${styles.fail} ${styles.notification}`}>
-            <i>
-              <FontAwesomeIcon icon={faCircleXmark} />
-            </i>
-            <p className={styles.msg}>{notifResponse.reason}</p>
-          </div>,
-        );
-      }
-      clearTimeout(timeoutId);
-      setNotify(false);
-      setNotify(true);
-      const newTimeoutId = setTimeout(() => {
-        setNotify(false);
-      }, duration);
-      setTimeoutId(newTimeoutId);
+    if (!response) return;
+
+    if (response.success) {
+      setNotification(
+        <div className={`${styles.success} ${styles.notification}`}>
+          <i>
+            <FontAwesomeIcon icon={faCircleCheck} />
+          </i>
+          <p className={styles.msg}>{response.msg}</p>
+        </div>,
+      );
+    } else {
+      setNotification(
+        <div className={`${styles.fail} ${styles.notification}`}>
+          <i>
+            <FontAwesomeIcon icon={faCircleXmark} />
+          </i>
+          <p className={styles.msg}>{response.reason}</p>
+        </div>,
+      );
     }
+    //clearTimeout(timeoutId);
+    setNotify(false);
+    setNotify(true);
+    const newTimeoutId = setTimeout(() => {
+      setNotify(false);
+    }, duration);
+    setTimeoutId(newTimeoutId);
   }, [response]);
 
   return (
