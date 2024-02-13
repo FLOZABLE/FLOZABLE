@@ -14,6 +14,8 @@ import styles from "./Header.module.css";
 import PlanTimeline from "../PlanTimeline/PlanTimeline";
 import { secondConverter } from "../../../utils/Tool";
 import ChatModalBtn from "../ChatModalBtn/ChatModalBtn";
+import { IconBxHome } from "../../../utils/svgs";
+import StudyBtn from "../StudyBtn/StudyBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -115,119 +117,67 @@ function Header({
   }, [subjects]);
 
   return (
-    <header
-      className={`${styles.header} ${
-        isSidebarOpen || isSidebarHovered ? styles.isOpen : ""
-      } ${mode === "study" ? styles.studyMode : ""} ${
-        isScrolled ? styles.scrolled : ""
-      }`}
-    >
+    <header className={styles.Header}>
       <div className={styles.left}>
-        {/* <ToggleBtn
-          on={<p>on</p>}
-          off={<p>off</p>}
-          style={{ backgroundColor: "#fff" }}
-          onToggle={onToggleSidebar}
-          isToggled={isSidebarOpen}
-        /> */}
-        <div></div>
-        <div className={styles.headerEl}>
-          <div className={styles.circle}>
-            <FontAwesomeIcon icon={faBook} style={{ color: "#348d50" }} />
-          </div>
-          <div className={styles.text}>
-            <h5>{totalStudied}</h5>
-            <h6>Today Total</h6>
-          </div>
+      <div className={styles.headerEl}>
+        <div>
+          <i>
+            <IconBxHome />
+          </i>
+          <p>Today total</p>
         </div>
-        <div className={styles.headerEl}>
-          <div className={styles.circle}>
-            <FontAwesomeIcon icon={faBars} style={{ color: "#ff562d" }} />
-          </div>
-          <div className={styles.text}>
-            <h5>0s</h5>
-            <h6>App Usage</h6>
-          </div>
-        </div>
-        <div className={styles.headerEl}>
-          <div className={styles.circle}>
-            <FontAwesomeIcon icon={faFire} style={{ color: "#2c70ff" }} />
-          </div>
-          <div className={styles.text}>
-            <h5>{studyStreak} Day</h5>
-            <h6>Streak</h6>
-          </div>
-        </div>
-        <div className={styles.headerEl}>
-          <div className={styles.circle}>
-            <FontAwesomeIcon
-              icon={faArrowsToCircle}
-              style={{ color: "#705dc1" }}
-            />
-          </div>
-          <div className={styles.text}>
-            <h5>{longestSession}</h5>
-            <h6>Focus</h6>
-          </div>
+        <div>
+          1 hour
         </div>
       </div>
+      <div className={styles.headerEl}>
+        <div>
+          <i>
+            <IconBxHome />
+          </i>
+          <p>Today total</p>
+        </div>
+        <div>
+          1 hour
+        </div>
+      </div>
+      <div className={styles.headerEl}>
+        <div>
+          <i>
+            <IconBxHome />
+          </i>
+          <p>Today total</p>
+        </div>
+        <div>
+          1 hour
+        </div>
+      </div>
+      <div className={styles.headerEl}>
+        <div>
+          <i>
+            <IconBxHome />
+          </i>
+          <p>Today total</p>
+        </div>
+        <div>
+          1 hour
+        </div>
+      </div>
+      </div>
       <div className={styles.right}>
-        <div className={styles.headerEl}>
-          <div className={styles.dropDownContainer}>
-            <button>
-              <i>
-                <FontAwesomeIcon icon={faCalendar} />
-              </i>
-            </button>
-            <div className={styles.dropDownContents} id={styles.planner}>
-              <div className={`${styles.inner} customScroll`}>
-                <PlanTimeline
-                  plans={plans}
-                  viewDate={new Date()}
-                  viewMode={"timeGridDay"}
-                  subjects={subjects}
-                  setPlanModal={setPlanModal}
-                  planModal={planModal}
-                  setPlans={setPlans}
-                />
-              </div>
-            </div>
-          </div>
-          {/* <div className={styles.dropDownContainer}>
-            <button>
-              <i>
-                <FontAwesomeIcon icon={faBell} />
-              </i>
-            </button>
-            <div className={styles.dropDownContents}>
-              <div className={styles.inner}>
-                <p>0 notifications</p>
-              </div>
-            </div>
-          </div> */}
-          <div className={styles.dropDownContainer}>
-            <ChatModalBtn 
-              setIsChatModal={setIsChatModal}
-              bounce={totalNewMsg > 0}
-            />
-          </div>
-          <div className={styles.dropDownContainer}>
-            <button>
-              <Link to="/dashboard/account" className={styles.navItem}>
-                <div
-                  className={styles.profileImg}
-                  style={{
-                    backgroundImage: `url("${serverOrigin}/profile-images/${
-                      userInfo ? userInfo.user_id : ""
-                    }.jpeg")`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center center",
-                    backgroundRepeat: "no-repeat",
-                  }}
-                ></div>
-              </Link>
-            </button>
-          </div>
+        <StudyBtn />
+        <div className={styles.buttons}>
+          <i>
+          <IconBxHome />
+          </i>
+          <i>
+          <IconBxHome />
+          </i>
+          <Link>
+            <i>
+            <IconBxHome />
+            </i>
+          </Link>
         </div>
       </div>
     </header>
