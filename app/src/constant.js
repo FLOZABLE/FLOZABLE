@@ -1,4 +1,4 @@
-import { Alert, Article, Book, Coding, Globe, Microscope, Workout, WritePen } from "./utils/svgs";
+import { Alert, Article, Book, Coding, Globe, IconCalculator, IconFileBarGraphFill, IconPeriodicTable, Microscope, Workout, WritePen } from "./utils/svgs";
 
 const colorsList = [
   "#0395f9",
@@ -32,4 +32,19 @@ const subjectIcons = {
   "Alert": <Alert width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />
 };
 
-export {colorsList, subjectIcons};
+const toolsInfo = [
+  {
+    name: "Scientific Calculator",
+    icon: <IconCalculator />
+  },
+  {
+    name: "Graphing Calculator",
+    icon: <IconFileBarGraphFill />
+  },
+  {
+    name: "Periodic Table of Elements",
+    icon: <IconPeriodicTable />
+  },
+]
+
+export {colorsList, subjectIcons, toolsInfo};
