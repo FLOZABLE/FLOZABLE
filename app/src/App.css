@@ -1,10 +1,12 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
 
 :root {
   --pink: #ff9494;
   --purple: #6f6af8;
   --gray: #f1f3f5;
+  --blue0: #64b3fa;
+  --blue1: #2b4dff;
   --font-gray: #545454;
   --opacity-black: #000000c3
 }
@@ -25,7 +27,6 @@ body {
   background-color: #fff;
   max-width: 100vw;
   overflow-x: hidden;
-  color: #545454;
 }
 
 .App-logo {
@@ -37,8 +38,9 @@ body {
   margin: 0px;
   padding: 0px;
   list-style: none;
-  /* font-family: 'Roboto', sans-serif; */
-  font-family: 'Source Sans 3', sans-serif;
+  font-family: "Varela Round", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 a {
