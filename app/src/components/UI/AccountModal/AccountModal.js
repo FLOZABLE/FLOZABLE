@@ -61,10 +61,10 @@ function AccountModal({ isOpened, setIsOpened, setResponse }) {
                     console.log('gdddd', data)
                     setResponse(data);
                     if (data.success) {
-                      window.location = window.location.origin + '/dashboard';
+                      console.log('close')
+                      setIsOpened(false)
                     }
                   })
-                  .catch((error) => console.error(error));
               }}
               color1={"#fff"}
               color2={"var(--pink)"}

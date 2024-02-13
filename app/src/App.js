@@ -203,10 +203,16 @@ function App() {
   }, [userInfo]);
 
   useEffect(() => {
-    if (userInfo === false || (response && response.reason === "Sign in required")) {
+    if (userInfo === false) {
       setIsAccountModal(true);
     }
-  }, [response, userInfo]);
+  }, [userInfo]);
+
+  useEffect(() => {
+    if (response && response.reason === "Sign in required") {
+      setIsAccountModal(true);
+    }
+  }, [response]);
 
   return (
     <Router>

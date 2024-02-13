@@ -463,6 +463,7 @@ Router.post('/update/extension-setting-update', async (req, res) => {
 });
 
 Router.get('/logout', function (req, res) {
+  console.log('logout')
   req.session.destroy((err) => {
     if (err) {
       console.log("Error destroying session:", err);

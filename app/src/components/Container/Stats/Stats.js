@@ -287,39 +287,6 @@ function Stats(props) {
                   <div className={`${styles.noChart} ${timeUsagePie.datasets.reduce((accumulator, currentValue) => accumulator + currentValue, 0) ? styles.true : ''}`}>
                     <Link to="/dashboard/study">Study to see stats!</Link>
                   </div>
-                  {/* <PieChart
-                    labels={timeUsagePie.labels}
-
-                    datasets={timeUsagePie.datasets}
-
-                    options={
-                      {
-                        plugins: {
-                          legend: {
-                            position: 'bottom',
-                          },
-                          datalabels: {
-                            color: '#ffffff',
-                            font: {
-                              size: 32,
-                              family: 'Arial',
-                              weight: 700
-                            },
-                            formatter: (value, context, index) => {
-                              const { chart, dataIndex } = context;
-                              const labels = chart.data.labels;
-                              const label = labels[dataIndex];
-                              return ``;
-                            }
-                          }
-                        }
-                      }
-                    }
-
-                    plugins={
-                      ChartDataLabel
-                    }
-                  /> */}
                   <Chart
                     type="pie"
                     series={timeUsagePie.datasets}
