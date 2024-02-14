@@ -9,20 +9,36 @@ const { googleAccessTokenCache } = require("../services/redisLoader");
 
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
+const YOUTUBE_API_KEY = process.env.GOOGLE_API_KEY;
 
 Router.get("/youtube-playlists", async (req, res) => {
     autoSignin(req, res, (async (userId) => {
         try {
             try {
                 const access_token = await googleAccessTokenCache(userId);
-                const auth = googleOauth2client(access_token);
 
-                const googleYoutube = google.youtube({
-                    version: 'v3',
-                    auth: auth
-                });
+                await fetch(`https://youtube.googleapis.com/youtube/v3/playlists?maxResults=10&mine=true&key=${YOUTUBE_API_KEY}`, {
+                    headers: {
+                        'Authorization': `Bearer ${access_token}`,
+                        'Accept': 'application/json'
+                    }
+                }).then((response) => response.json())
+                    .then((data) => {
+                        data.items.map(async (playlist) => {
+                            console.log(playlist.id);
+                            await fetch(`https://youtube.googleapis.com/youtube/v3/playlistItems?maxResults=25&playlistId=${playlist.id}&key=${YOUTUBE_API_KEY}`, {
+                                headers: {
+                                    'Authorization': `Bearer ${access_token}`,
+                                    'Accept': 'application/json'
+                                }
+                            }).then((response) => response.json())
+                                .then((data) => {
+                                    console.log(playlist.id, data);
+                                })
+                        });
+                    });
 
-                console.log(googleYoutube);
+                console.log("SEND");
 
             } catch (err) {
                 if (err.response && err.response && err.response.data && err.response.data.error === "invalid_grant") {
