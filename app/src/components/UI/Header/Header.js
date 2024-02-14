@@ -14,7 +14,7 @@ import styles from "./Header.module.css";
 import PlanTimeline from "../PlanTimeline/PlanTimeline";
 import { secondConverter } from "../../../utils/Tool";
 import ChatModalBtn from "../ChatModalBtn/ChatModalBtn";
-import { IconBxHome } from "../../../utils/svgs";
+import { IconBook, IconBxHome, IconBxMessageSquareDetail, IconClipboardOutline, IconEyeOutline, IconIconStar, IconMonitor, IconUser } from "../../../utils/svgs";
 import StudyBtn from "../StudyBtn/StudyBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -35,7 +35,7 @@ function Header({
 }) {
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
-  const [studyStreak, setStudyStreak] = useState(0); //days of consecutive study
+  const [studyStreak, setStudyStreak] = useState('0 day'); //days of consecutive study
 
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -86,8 +86,10 @@ function Header({
       }
       if (!studiedToday) break;
       day -= 1;
+    };
+    if (tempStreak) {
+      setStudyStreak(tempStreak + ' days');
     }
-    setStudyStreak(tempStreak);
 
     //Solve focus
     let subjectActivity = [];
@@ -122,9 +124,20 @@ function Header({
       <div className={styles.headerEl}>
         <div>
           <i>
-            <IconBxHome />
+            <IconBook />
           </i>
           <p>Today total</p>
+        </div>
+        <div>
+         {totalStudied}
+        </div>
+      </div>
+      <div className={styles.headerEl}>
+        <div>
+          <i>
+            <IconMonitor />
+          </i>
+          <p>App Usage</p>
         </div>
         <div>
           1 hour
@@ -133,34 +146,23 @@ function Header({
       <div className={styles.headerEl}>
         <div>
           <i>
-            <IconBxHome />
+            <IconIconStar />
           </i>
-          <p>Today total</p>
+          <p>Streak</p>
         </div>
         <div>
-          1 hour
+          {studyStreak}
         </div>
       </div>
       <div className={styles.headerEl}>
         <div>
           <i>
-            <IconBxHome />
+            <IconEyeOutline />
           </i>
-          <p>Today total</p>
+          <p>Focus</p>
         </div>
         <div>
-          1 hour
-        </div>
-      </div>
-      <div className={styles.headerEl}>
-        <div>
-          <i>
-            <IconBxHome />
-          </i>
-          <p>Today total</p>
-        </div>
-        <div>
-          1 hour
+          {longestSession}
         </div>
       </div>
       </div>
@@ -168,14 +170,14 @@ function Header({
         <StudyBtn />
         <div className={styles.buttons}>
           <i>
-          <IconBxHome />
+          <IconClipboardOutline />
           </i>
           <i>
-          <IconBxHome />
+          <IconBxMessageSquareDetail />
           </i>
           <Link>
             <i>
-            <IconBxHome />
+            <IconUser />
             </i>
           </Link>
         </div>

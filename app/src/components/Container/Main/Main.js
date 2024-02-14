@@ -61,6 +61,9 @@ function Main({
       />
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
         <div className={styles.boxesContainer}>
+        <div className={styles.box}>
+            <SmallSubjectsViewer subjects={subjects} />
+          </div>
           <div className={styles.box}>
             <div className={styles.title}>
             {friendsCount ? <p>Friends Viewer</p> : null}
@@ -85,9 +88,6 @@ function Main({
             <SmallRankingViewer
               userInfo={userInfo}
             />
-          </div>
-          <div className={styles.box}>
-            <SmallSubjectsViewer subjects={subjects} />
           </div>
           <div className={styles.box}>
             <PlanTimeline
