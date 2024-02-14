@@ -23,8 +23,8 @@ const colorsList = [
 
 const coldColorsList = [
   "#57b9ff",
+  "#0085FF",
   "#1c41fd",
-  "#51a9f9"
 ];
 
 const warmColorsList = [

@@ -5,8 +5,9 @@
   --pink: #ff9494;
   --purple: #6f6af8;
   --gray: #f1f3f5;
-  --blue0: #64b3fa;
-  --blue1: #2b4dff;
+  --blue0:   #57b9ff;
+  --blue1: #0085FF;
+  --blue2: #1c41fd;
   --font-gray: #545454;
   --opacity-black: #000000c3
 }
@@ -151,7 +152,7 @@ button:hover {
 
 .Main {
   position: relative;
-  margin: 150px 0px 0px 185px;
+  margin: 150px 0px 0px 220px;
   transition: all .2s ease-in-out;
   width: calc(100vw - 250px);
   border-radius: 20px;
@@ -191,9 +192,9 @@ button:hover {
 @media (max-width: 1400px) {
   .Main {
     position: relative;
-    margin: 150px 0px 0px 100px;
+    margin: 150px 0px 0px 220px;
     transition: all .2s ease-in-out;
-    width: calc(100vw - 120px);
+    width: calc(100vw - 250px);
     border-radius: 20px;
   }
   
@@ -210,9 +211,9 @@ button:hover {
 @media (max-height: 800px) {
   .Main {
     position: relative;
-    margin: 150px 0px 0px 150px;
+    margin: 150px 0px 0px 220px;
     transition: all .2s ease-in-out;
-    width: calc(100vw - 170px);
+    width: calc(100vw - 250px);
     border-radius: 20px;
   }
   
