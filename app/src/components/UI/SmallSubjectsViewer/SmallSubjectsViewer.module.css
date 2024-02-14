@@ -2,6 +2,11 @@
   position: relative;
 }
 
+.SmallSubjectsViewer .chartContainer {
+  height: 400px;
+  width: 100%;
+}
+
 .SmallSubjectsViewer .noSubjects {
   font-weight: 700;
   display: flex;

@@ -21,6 +21,18 @@ const colorsList = [
   "#00bfa0",
 ];
 
+const coldColorsList = [
+  "#57b9ff",
+  "#1c41fd",
+  "#51a9f9"
+];
+
+const warmColorsList = [
+  "#fff9eb",
+  "#fe8912",
+  "#f9c051",
+]
+
 const subjectIcons = {
   "Book": <Book width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
   "Coding": <Coding width={"40px"} height={"40px"} fill={"#000"} opt1={"#000"} />,
@@ -47,4 +59,4 @@ const toolsInfo = [
   },
 ]
 
-export {colorsList, subjectIcons, toolsInfo};
+export {colorsList, subjectIcons, toolsInfo, coldColorsList, warmColorsList};
