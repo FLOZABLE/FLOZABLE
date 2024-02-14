@@ -7,6 +7,7 @@ import "swiper/css/navigation";
 import styles from "./GroupTimeCounter.module.css";
 import { mediaSocket } from "../../../mediaSocket";
 import { durationFormatter } from "../../../utils/Tool";
+import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -20,21 +21,21 @@ function GroupTimeCounter({
     if (members.length <= 0) return;
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    fetch(`${serverOrigin}/ranking/today?timezone=${timezone}`, {
-      method: "get",
+    
+    fetch(`${serverOrigin}/ranking/sort?mode=Daily&date=${DateTime.now().toISODate()}&timezone=${timezone}`, {
+      method: 'get',
       headers: {
         'Content-Type': 'application/json'
       },
     })
       .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
+      .then((response) => {
+        if (response.success) {
           let groupTotalTime = 0;
 
-          data.rankings.map((ranking) => {
-            if (members.includes(ranking.user.user_id)) {
-              groupTotalTime += parseInt(ranking.total);
+          response.data.map((ranking) => {
+            if (members.includes(ranking.user_id)) {
+              groupTotalTime += parseInt(ranking.t);
             }
           });
 

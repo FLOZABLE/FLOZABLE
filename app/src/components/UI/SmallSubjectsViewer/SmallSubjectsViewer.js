@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { PieChart, Pie, Tooltip, ResponsiveContainer, Label } from "recharts";
 import { PieCustomTooltip, pieCustomLabel } from "../Charts";
+import { secondConverter } from "../../../utils/Tool";
 /* 
 
 
@@ -61,13 +62,14 @@ function SmallSubjectsViewer({ subjects }) {
                 data={subjects.reduce((arr, subject) => {
                   const value = subject.daily.total[subject.daily.total.length - 1];
                   if (value) {
-                    console.log(arr.length % (warmColorsList.length - 1))
-                    const fill = coldColorsList[arr.length % (coldColorsList.length - 1)];
-                    arr.push({ value, ...subject, fill });
+                    const fill = coldColorsList[arr.length % (coldColorsList.length)];
+                    const labelVal = secondConverter(value);
+                    arr.push({ value, ...subject, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
                   };
                   return arr;
                 }, []
                 )}
+                valueKey={"value"}
                 outerRadius={200}
                 innerRadius={150}
                 fill="green"

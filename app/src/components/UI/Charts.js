@@ -13,6 +13,7 @@ const pieCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, i
 
 const PieCustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
+    console.log(payload[0].payload)
     return (
       <div style={{ 
         backgroundColor: "#fff", 
@@ -20,7 +21,7 @@ const PieCustomTooltip = ({ active, payload }) => {
         borderRadius: "10px",
         boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px"
       }}>
-        <p className="label">{`${payload[0].name} : ${payload[0].value}`}</p>
+        <p className="label">{`${payload[0].name} : ${payload[0].payload.labelVal}`}</p>
       </div>
     );
   }
