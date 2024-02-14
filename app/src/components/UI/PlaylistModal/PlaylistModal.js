@@ -16,6 +16,7 @@ function PlaylistModal({ userInfo, setResponse }) {
   const [spotifyLoggedIn, setSpotifyLoggedIn] = useState(false);
   const [link, setLink] = useState("");
   const [playLink, setPlayLink] = useState(null);
+  const [dropDownOptions, setDropDownOptions] = useState({});
 
   const submitURL = () => {
     try {
@@ -46,8 +47,15 @@ function PlaylistModal({ userInfo, setResponse }) {
       .then((data) => {
         console.log(data, 'playlist');
         if (data.success) {
-          setPlaylists(data.data);
           setSpotifyLoggedIn(true);
+
+          const tempOptions = {};
+          data.data.map((choice) => {
+            const modifiedURL = choice.url.replace("https://open.spotify.com", "https://open.spotify.com/embed");
+            tempOptions[modifiedURL] = choice.name;
+          });
+          setDropDownOptions(tempOptions);
+
         }
       }).catch((err) => {
         console.log(err);
@@ -77,13 +85,7 @@ function PlaylistModal({ userInfo, setResponse }) {
         {
           spotifyLoggedIn ?
             <DropDownButton
-              options={
-                playlists.slice((acc,choice) => {
-                  const modifiedURL = choice.url.replace("https://open.spotify.com", "https://open.spotify.com/embed");
-                  acc[modifiedURL] = choice.name;
-                  return acc;
-                }, {})
-              }
+              options={dropDownOptions}
               setValue={setPlaylist}
             />
             :
