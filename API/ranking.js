@@ -40,7 +40,7 @@ Router.get('/sort', async (req, res) => {
       if (dailyRanking) {
         rankings = JSON.parse(dailyRanking.ranking);
         rankings = await Promise.all(rankings.map(async(ranking) => {
-          const user = await userCache(ranking.u);
+          const user = await userCache(ranking.userId);
           return {...ranking, ...user}
         }))
       } 
@@ -115,8 +115,8 @@ async function thisWeekSorting (users, timezoneOffset) {
     const weekTotal = await redisClient.zScore(`user:${userId}:weekTotal`, timezoneOffset.toString());
     const todayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset.toString());
     if (weekTotal || todayTotal) {
-      const total = weekTotal ? weekTotal : 0 + todayTotal ? todayTotal : 0;
-      filteredUsers.push({userId, total});
+      const t = weekTotal ? weekTotal : 0 + todayTotal ? todayTotal : 0;
+      filteredUsers.push({userId, t});
     };
   }));
 
@@ -130,8 +130,8 @@ async function thisMonthSorting (users, timezoneOffset) {
     const monthTotal = await redisClient.zScore(`user:${userId}:monthTotal`, timezoneOffset.toString());
     const todayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset.toString());
     if (monthTotal || todayTotal) {
-      const total = monthTotal ? monthTotal : 0 + todayTotal ? todayTotal : 0;
-      filteredUsers.push({userId, total});
+      const t = monthTotal ? monthTotal : 0 + todayTotal ? todayTotal : 0;
+      filteredUsers.push({userId, t});
     };
   }));
 
