@@ -33,12 +33,14 @@ Router.get("/youtube-playlists", async (req, res) => {
                                 }
                             }).then((response) => response.json())
                                 .then((data) => {
-                                    console.log(playlist.id, data);
+                                    if (data.items){
+                                        data.items.map((video) => {
+                                            console.log(video['snippet']['resourceId']['videoId']);
+                                        })
+                                    }
                                 })
                         });
                     });
-
-                console.log("SEND");
 
             } catch (err) {
                 if (err.response && err.response && err.response.data && err.response.data.error === "invalid_grant") {
