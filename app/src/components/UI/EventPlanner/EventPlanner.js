@@ -301,7 +301,7 @@ function EventPlanner(props) {
   function handleEventDateDrop(data) {
     const { id, start } = data.event;
     if (data.event._def.extendedProps.access === "reader") {
-      setResponse({success: false, reason: "This event is view only"})
+      setResponse({ success: false, reason: "This event is view only" })
       return;
     }
     const end = data.event.end ? data.event.end : start;
@@ -322,7 +322,7 @@ function EventPlanner(props) {
   function handleEventResize(data) {
     const { id, start } = data.event;
     if (data.event._def.extendedProps.access === "reader") {
-      setResponse({success: false, reason: "This event is view only"})
+      setResponse({ success: false, reason: "This event is view only" })
       return;
     }
     const end = data.event.end ? data.event.end : start;
@@ -343,7 +343,7 @@ function EventPlanner(props) {
   function updateServer(event) {
     const { start, end, completed, editable } = event;
     if (!editable) {
-      setResponse({success: false, reason: "This event is view only"})
+      setResponse({ success: false, reason: "This event is view only" })
       return;
     }
     const startSec = Math.floor(start.getTime() / (1000 * 60));
@@ -414,17 +414,17 @@ function EventPlanner(props) {
   }, [viewDate]);
 
   useEffect(() => {
+    if (!events.length) return;
     if (!!searchParams.get("plan")) {
-      setViewPlanId(searchParams.get("plan"));
+      const searchingPlanId = searchParams.get("plan");
+      let chosenEvent = events.filter((calendarEvent) => calendarEvent.id === searchingPlanId);
+      if (chosenEvent.length) {
+        setPlanModal({ ...chosenEvent[0], opened: true });
+      }
       setSearchParams({});
-      console.log(planModal);
-      console.log(events);
     }
-  }, [searchParams]);
 
-  useEffect(() => {
-    console.log(events);
-  }, [events]);
+  }, [searchParams, events]);
 
   const handleTodayButtonClick = () => {
     const currentDate = new Date();
