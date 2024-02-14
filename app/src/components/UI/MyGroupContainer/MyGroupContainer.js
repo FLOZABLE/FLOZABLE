@@ -8,6 +8,7 @@ import MembersContainer from "../MembersContainer/MembersContainer";
 import { socket } from "../../../socket";
 import { mediaSocket } from "../../../mediaSocket";
 import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
+import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -39,20 +40,21 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
   useEffect(() => {
     if (group.length <= 0) return;
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    fetch(`${serverOrigin}/ranking/today?timezone=${timezone}`, {
-      method: "get",
+
+    fetch(`${serverOrigin}/ranking/sort?mode=Daily&date=${DateTime.now().toISODate()}&timezone=${timezone}`, {
+      method: 'get',
       headers: {
         'Content-Type': 'application/json'
       },
     })
       .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
+      .then((response) => {
+        if (response.success) {
           let groupTotalTime = 0;
           const groupMembers = group.members.split(",");
 
-          data.rankings.map((ranking) => {
-            if (groupMembers.includes(ranking.user.user_id)) {
+          response.data.map((ranking) => {
+            if (groupMembers.includes(ranking.user_id)) {
               groupTotalTime += parseInt(ranking.total);
             }
           });

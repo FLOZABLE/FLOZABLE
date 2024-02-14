@@ -15,7 +15,9 @@ import {
 
 import CircularCheckBox from "../CircularCheckBox/CircularCheckBox";
 import { DateTime } from "luxon";
-import RadialBarChart from "../RadialBarChart";
+import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadialBar, ResponsiveContainer, RadialBarChart } from "recharts";
+import { RadarChart } from "recharts";
+import { warmColorsList } from "../../../constant";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -61,7 +63,7 @@ function PlanTimeline({
         .then((data) => {
           if (data.success) {
             setPlans(updatedEvents);
-            setPlanModal((prev) => ({...prev, opened: false}));
+            //setPlanModal((prev) => ({...prev, opened: false}));
           }
         })
         .catch((error) => console.error(error));
@@ -72,14 +74,15 @@ function PlanTimeline({
     if (!subjects.length || !plans.length) return;
 
     const planSeries = [];
-    subjects.map(subject => {
+    subjects.map((subject, i) => {
       const subjectPlans = plans.filter(plan => plan.subject === subject.id && isInViewRange(plan));
       if (subjectPlans.length) {
-        const { id, icon, color, name } = subject;
+        const { id, icon, name } = subject;
         const total = subjectPlans.length;
         const completed = subjectPlans.filter(plan => plan.completed).length;
         const val = Math.floor(completed / total * 100);
-        planSeries.push({ id, icon, color, name, val, total, completed });
+        const fill = warmColorsList[i % (warmColorsList.length)];
+        planSeries.push({ id, fill, name, val, total, completed });
       }
     });
     setPlanSeries(planSeries);
@@ -243,12 +246,69 @@ function PlanTimeline({
     );
   }, [plans, viewMode, viewDate, subjects]);
 
+  const data = [
+    {
+      name: '18-24',
+      uv: 31.47,
+      pv: 2400,
+      fill: '#8884d8',
+    },
+    {
+      name: '25-29',
+      uv: 26.69,
+      pv: 4567,
+      fill: '#83a6ed',
+    },
+    {
+      name: '30-34',
+      uv: 15.69,
+      pv: 1398,
+      fill: '#8dd1e1',
+    },
+    {
+      name: '35-39',
+      uv: 8.22,
+      pv: 9800,
+      fill: '#82ca9d',
+    },
+    {
+      name: '40-49',
+      uv: 8.63,
+      pv: 3908,
+      fill: '#a4de6c',
+    },
+    {
+      name: '50+',
+      uv: 2.63,
+      pv: 4800,
+      fill: '#d0ed57',
+    },
+    {
+      name: 'unknow',
+      uv: 6.67,
+      pv: 4800,
+      fill: '#ffc658',
+    },
+  ];
   return (
     <div
       className={`${isPlan ? styles.noPlan : ""} ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ""
         }`}
     >
-      <RadialBarChart series={planSeries} selected={selected} setSelected={setSelected} />
+      {/* <RadialBarChart series={planSeries} selected={selected} setSelected={setSelected} /> */}
+      <div className={styles.chartContainer}>
+      <ResponsiveContainer width="100%" height="100%">
+        <RadialBarChart cx="50%" cy="50%" innerRadius="10%" outerRadius="80%" barSize={10} data={planSeries}>
+          <RadialBar
+            minAngle={15}
+            label={{ position: 'insideStart', fill: '#fff' }}
+            background
+            clockWise
+            dataKey="val"
+          />
+        </RadialBarChart>
+      </ResponsiveContainer>
+      </div>
       <h4
         onClick={() => {
           setPlanModal((prev) => ({ ...prev, opened: true }));

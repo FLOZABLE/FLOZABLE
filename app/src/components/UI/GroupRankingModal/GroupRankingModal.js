@@ -4,6 +4,7 @@ import { durationFormatter } from "../../../utils/Tool.js";
 import BlobBtn from "../BlobBtn/BlobBtn.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -16,7 +17,13 @@ function GroupRankingModal({ isOpen, setIsOpen, members }) {
     
     const tempGroupRanking = [];
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    fetch(`${serverOrigin}/ranking/today?timezone=${timezone}`, { method: 'get' })
+
+    fetch(`${serverOrigin}/ranking/sort?mode=Daily&date=${DateTime.now().toISODate()}&timezone=${timezone}`, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         data.rankings.map((ranking) => {

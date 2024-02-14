@@ -65,6 +65,28 @@ function Main({
             <SmallSubjectsViewer subjects={subjects} />
           </div>
           <div className={styles.box}>
+            <PlanTimeline
+              plans={plans}
+              viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
+              viewMode={"timeGridDay"}
+              subjects={subjects}
+              setPlans={setPlans}
+              setPlanModal={setPlanModal}
+              mode={"planner"}
+            />
+            <Link to="/dashboard/planner">
+              <button className={styles.toStatsBtn}>View Plans</button>
+            </Link>
+          </div>
+          <div className={styles.box}>
+            <div className={styles.title}>
+              Today's Ranking
+            </div>
+            <SmallRankingViewer
+              userInfo={userInfo}
+            />
+          </div>
+          <div className={styles.box}>
             <div className={styles.title}>
             {friendsCount ? <p>Friends Viewer</p> : null}
             </div>
@@ -80,28 +102,6 @@ function Main({
               mode={0}
             />
             {!friendsCount ? <RecommendedFriendsViewer setResponse={setResponse} /> : null}
-          </div>
-          <div className={styles.box}>
-            <div className={styles.title}>
-              Today's Ranking
-            </div>
-            <SmallRankingViewer
-              userInfo={userInfo}
-            />
-          </div>
-          <div className={styles.box}>
-            <PlanTimeline
-              plans={plans}
-              viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
-              viewMode={"timeGridDay"}
-              subjects={subjects}
-              setPlans={setPlans}
-              setPlanModal={setPlanModal}
-              mode={"planner"}
-            />
-            <Link to="/dashboard/planner">
-              <button className={styles.toStatsBtn}>View Plans</button>
-            </Link>
           </div>
           <div className={styles.box}>
             <div className={styles.title}>
