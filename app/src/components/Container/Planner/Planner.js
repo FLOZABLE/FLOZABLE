@@ -5,6 +5,7 @@ import styles from "./Planner.module.css";
 import SmallCalendar from '../../UI/SmallCalendar/SmallCalendar';
 import EventPlanner from '../../UI/EventPlanner/EventPlanner';
 import PlanTimeline from '../../UI/PlanTimeline/PlanTimeline';
+import { useSearchParams } from 'react-router-dom';
 
 function Planner(props) {
   const { subjects, setSubjects, events, setEvents, setResponse, setIsAddSubjectModal, planModal, setPlanModal } = props;
@@ -24,7 +25,7 @@ function Planner(props) {
   const updateViewDate = (date) => {
     setViewDate(date);
   };
-  
+
   useEffect(() => {
     setPlannerApi(PlannerRef.current.getApi());
   }, [PlannerRef]);
@@ -51,12 +52,12 @@ function Planner(props) {
             </div>
             <div className={styles.widget}>
               <div className={styles.smallCalendarWrapper}>
-              <SmallCalendar width={"100%"} setViewDate={updateViewDate}  planModal={planModal} viewDate={viewDate} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
+                <SmallCalendar width={"100%"} setViewDate={updateViewDate} planModal={planModal} viewDate={viewDate} PlannerApi={PlannerApi} SmallCalendarRef={SmallCalendarRef} SmallCalendarApi={SmallCalendarApi} />
               </div>
-              
+
               {/* <DropDownButton options={[{name:'Does not repeat', value: 0}, {name: 'Daily', value: 1}, {name: 'Weekly', value: 2}, {name: `Monthly`, value: 3}]} defaultIndex={0} setValue={setSubjectsOptions} /> */}
               <div className={`${styles.planTimelineWrapper}`}>
-              <PlanTimeline plans={events} viewDate={viewDate} viewMode={viewMode} subjects={subjects} setPlans={props.setEvents} setPlanModal={setPlanModal} mode={"planner"} maxHeight='400px'/>
+                <PlanTimeline plans={events} viewDate={viewDate} viewMode={viewMode} subjects={subjects} setPlans={props.setEvents} setPlanModal={setPlanModal} mode={"planner"} maxHeight='400px' />
               </div>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from 'react-router-dom';
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -233,6 +234,8 @@ function EventPlanner(props) {
     year: "numeric",
     month: "long",
   });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [viewPlanId, setViewPlanId] = useState("");
 
   function renderEventContent(eventInfo) {
     return (
@@ -409,6 +412,19 @@ function EventPlanner(props) {
       }
     }
   }, [viewDate]);
+
+  useEffect(() => {
+    if (!!searchParams.get("plan")) {
+      setViewPlanId(searchParams.get("plan"));
+      setSearchParams({});
+      console.log(planModal);
+      console.log(events);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    console.log(events);
+  }, [events]);
 
   const handleTodayButtonClick = () => {
     const currentDate = new Date();
