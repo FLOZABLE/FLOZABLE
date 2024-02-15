@@ -1,10 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
+import styles from "./YouTubeLoginBtn.module.css";
+import { Google } from "../../../utils/svgs";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function YoutubeAPI({ }) {
+function YouTubeLoginBtn({ }) {
 
     const login = useGoogleLogin({
         flow: 'auth-code',
@@ -30,10 +32,11 @@ function YoutubeAPI({ }) {
 
 
     return (
-        <div>
-            DELETE ME
+        <div className={styles.YouTubeLoginBtn} onClick={login}>
+            <p>Login with Google</p>
+            <Google />
         </div>
     );
 }
 
-export default YoutubeAPI;
+export default YouTubeLoginBtn;
