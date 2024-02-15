@@ -1,5 +1,6 @@
 .PlaylistModal {
   position: relative;
+  width: inherit;
 }
 
 .PlaylistModal .authGuide {
@@ -10,4 +11,23 @@
 
 .PlaylistModal .spotifyPlayerWrapper {
   margin-top: 10px;
+}
+
+.PlaylistModal table td {
+  text-align: center;
+  width: 33%;
+  border-radius: 25px;
+  padding: 10px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  -webkit-transition: background-color .3s ease-in-out, color .3s ease-in-out;
+  -ms-transition: background-color .3s ease-in-out, color .3s ease-in-out;
+  transition: background-color .3s ease-in-out, color .3s ease-in-out;
+}
+
+.PlaylistModal table td:hover {
+  background-color: #979797;
+}
+
+.PlaylistModal .selectedPlaylist {
+  border: 1px solid black;
 }
