@@ -22,11 +22,12 @@ import DropDownButton from '../../UI/DropDownButton/DropDownButton';
 
 import ApexChart from 'apexcharts';
 import Chart from 'react-apexcharts';
+import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from '../../../utils/svgs';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function Stats(props) {
-  const { subjects } = props;
+function Stats({ subjects, userInfo }) {
+
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const [statsViewer, setStatsViewer] = useState('Daily');
@@ -84,49 +85,8 @@ function Stats(props) {
   };
 
   useEffect(() => {
-    updateCalendarLabel();
-  }, [viewDate, statsViewer]);
-
-  const updateCalendarLabel = () => {
-    const viewDateTime = DateTime.fromJSDate(viewDate);
-    let startMillis;
-    let stopMillis;
-    if (statsViewer === 'Daily') {
-      startMillis = viewDateTime.startOf('day').toMillis();
-      stopMillis = viewDateTime.endOf('day').toMillis();
-      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
-        setCalendarLabel('Today');
-      }
-      else {
-        setCalendarLabel(viewDateTime.month + "/" + viewDateTime.day);
-      }
-
-    } else if (statsViewer === 'Weekly') {
-      startMillis = viewDateTime.startOf('week').toMillis();
-      stopMillis = viewDateTime.endOf('week').toMillis();
-      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
-        setCalendarLabel('This Week');
-      }
-      else {
-        setCalendarLabel(viewDateTime.startOf('week').month + "/" + viewDateTime.startOf('week').day + " ~ " + viewDateTime.endOf('week').month + "/" + viewDateTime.endOf('week').day);
-      }
-    } else {
-      startMillis = viewDateTime.startOf('month').toMillis();
-      stopMillis = viewDateTime.endOf('month').toMillis();
-      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
-        setCalendarLabel('This Month');
-      }
-      else {
-        setCalendarLabel(viewDateTime.monthLong);
-      }
-    };
-    setStartDate(startMillis);
-    setEndDate(stopMillis);
-  };
-
-  useEffect(() => {
-    if (!!!props.userInfo) return; // wait for userInfo to be defined
-    const { user_id } = props.userInfo;
+    if (!userInfo) return;
+    const { user_id } = userInfo;
     const viewDateTime = DateTime.fromJSDate(viewDate).toUTC().toISODate().toString();
     fetch(`${serverOrigin}/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime}`, {
       method: 'get'
@@ -153,10 +113,10 @@ function Stats(props) {
         }
       })
       .catch((error) => console.error(error));
-  }, [props.userInfo, startDate, statsViewer]);
+  }, [userInfo, startDate, statsViewer]);
 
 
-  useEffect(() => {
+  /* useEffect(() => {
     const labels = subjects.map((subject) => { return subject.name });
 
     const { data } = updateTimeUsagePie(subjects, viewDate, statsViewer);
@@ -219,7 +179,7 @@ function Stats(props) {
       const { value, type } = secondConverter(focus);
       setFocus(`${value}${type}`);
     }
-  }, [viewDate, statsViewer, subjects, timelineRef]);
+  }, [viewDate, statsViewer, subjects, timelineRef]); */
 
   const focusCalculator = (grouped) => {
     if (!grouped) return 0;
@@ -279,11 +239,98 @@ function Stats(props) {
       .catch((error) => console.error(error));
   }, [viewDate, viewOption]);
 
+  const [subjectsPie, setSubjectsPie] = useState([]);
+
+  useEffect(() => {
+    if (!viewDate || !statsViewer || !subjects) return;
+
+    const { daily, weekly, monthly } = subjects;
+    
+    if (!daily) return;
+    
+    const now = DateTime.now().startOf('day');
+    const viewDateTime = DateTime.fromJSDate(viewDate);
+
+    if (statsViewer === 'Daily') {
+      const index = viewDateTime.diff(now, 'days').toObject();
+      const { groupedTotal, grouped } = daily;
+      const actualIndex = grouped.length + index.days - 1;
+      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
+      setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
+      const focus = focusCalculator(grouped[actualIndex]);
+      const { value, type } = secondConverter(focus);
+      setFocus(`${value}${type}`);
+      const datumPoint = DateTime.fromSeconds(subjects.daily.datum_point);
+      //updateTimeTrend(datumPoint, subjects.daily.groupedTotal)
+    } else if (statsViewer === 'Weekly') {
+      const index = viewDateTime.startOf('week').diff(DateTime.now().startOf('week'), 'weeks').toObject();
+      const { groupedTotal, grouped } = weekly;
+      const actualIndex = grouped.length + index.weeks - 1;
+      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
+      setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
+      const focus = focusCalculator(grouped[actualIndex]);
+      const { value, type } = secondConverter(focus);
+      setFocus(`${value}${type}`);
+    } else {
+      const index = viewDateTime.startOf('month').diff(DateTime.now().startOf('month'), 'months').toObject();
+      const { groupedTotal, grouped } = monthly;
+      const actualIndex = grouped.length + index.months - 1;
+      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
+      setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
+      const focus = focusCalculator(grouped[actualIndex]);
+      const { value, type } = secondConverter(focus);
+      setFocus(`${value}${type}`);
+    }
+  }, [viewDate, statsViewer, subjects]);
+
   return (
     <div className={styles.StatsContainer}>
       <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} subjects={subjects} showHeatmap={true} />
-      <StuckModal />
-      <div className={` Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
+      <div className="Main">
+        <div className={styles.optionsHeader}>
+          <div className={styles.dateSelectorWrapper}>
+            <DateSelectorBtn viewMode={statsViewer} className={styles.title} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
+          </div>
+          <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
+        </div>
+        <div>
+          <div className={styles.bigBox}>
+            <div className={styles.chartWrapper}>
+            </div>
+            <div>
+              <div className={styles.overflow}>
+                <i>
+                  <IconBook />
+                </i>
+                Total Study Time {totalStudy}
+              </div>
+              <div className={styles.overflow}>
+                <i>
+                  <IconMonitor />
+                </i>
+                Website Usage Time {websitesUsage} / {websitesVisit} times
+              </div>
+              <div className={styles.overflow}>
+                <i>
+                  <IconStatsChart />
+                </i>
+                Ranking {ranking}
+              </div>
+              <div className={styles.overflow}>
+                <i>
+                  <IconEyeOutline />
+                </i>
+                Focus {focus}
+              </div>
+            </div>
+          </div>
+          <div className={styles.bigBox}>
+
+          </div>
+        </div>
+      </div>
+      {/*       <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} subjects={subjects} showHeatmap={true} />
+      <div className={styles.Main}>
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
@@ -434,89 +481,6 @@ function Stats(props) {
                         }
                       }
                     />
-
-                    {/*                     <Chart
-                    type="bar"
-                      series={[{
-                        name: 'Inflation',
-                        data: hourlyHistogram.data
-                      }]}
-                      options={{
-                        chart: {
-                          height: 350,
-                          type: 'bar',
-                        },
-                        plotOptions: {
-                          bar: {
-                            borderRadius: 10,
-                            dataLabels: {
-                              position: 'top', // top, center, bottom
-                            },
-                          }
-                        },
-                        dataLabels: {
-                          enabled: true,
-                          formatter: function (val) {
-                            return val + "%";
-                          },
-                          offsetY: -20,
-                          style: {
-                            fontSize: '12px',
-                            colors: ["#304758"]
-                          }
-                        },
-
-                        xaxis: {
-                          categories: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
-                          position: 'top',
-                          axisBorder: {
-                            show: false
-                          },
-                          axisTicks: {
-                            show: false
-                          },
-                          crosshairs: {
-                            fill: {
-                              type: 'gradient',
-                              gradient: {
-                                colorFrom: '#D8E3F0',
-                                colorTo: '#BED1E6',
-                                stops: [0, 100],
-                                opacityFrom: 0.4,
-                                opacityTo: 0.5,
-                              }
-                            }
-                          },
-                          tooltip: {
-                            enabled: true,
-                          }
-                        },
-                        yaxis: {
-                          axisBorder: {
-                            show: false
-                          },
-                          axisTicks: {
-                            show: false,
-                          },
-                          labels: {
-                            show: false,
-                            formatter: function (val) {
-                              return val + "%";
-                            }
-                          }
-
-                        },
-                        title: {
-                          text: 'Monthly Inflation in Argentina, 2002',
-                          floating: true,
-                          offsetY: 330,
-                          align: 'center',
-                          style: {
-                            color: '#444'
-                          }
-                        }
-                      }}
-                    /> */}
                   </div>
                 </div>
               </div>
@@ -526,59 +490,6 @@ function Stats(props) {
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                   <p className={styles.title}>Study Time Trend</p>
                   <div className={styles.chartContainer}>
-                    {/* <LineChart
-                      labels={
-                        timeTrend.labels
-                      }
-
-                      datasets={timeTrend.datasets}
-
-                      options={
-                        {
-                          responsive: true,
-                          plugins: {
-                            legend: {
-                              display: false,
-                            }
-                          },
-                          interaction: {
-                            intersect: false,
-                            mode: 'index',
-                          },
-                          scales: {
-                            y: {
-                              grid: {
-                                drawBorder: false,
-                                display: true,
-                                drawOnChartArea: true,
-                                drawTicks: false,
-                                borderDash: [5, 5]
-                              },
-                              ticks: {
-                                display: true,
-                                padding: 10,
-                                color: '#9ca2b7',
-                                stepSize: 1
-                              }
-                            },
-                            x: {
-                              grid: {
-                                drawBorder: false,
-                                display: true,
-                                drawOnChartArea: true,
-                                drawTicks: true,
-                                borderDash: [5, 5]
-                              },
-                              ticks: {
-                                display: true,
-                                color: '#9ca2b7',
-                                padding: 10
-                              }
-                            },
-                          },
-                        }
-                      }
-                    /> */}
                     <Chart
                       type="line"
                       series={[{
@@ -617,10 +528,6 @@ function Stats(props) {
                         stroke: {
                           curve: 'straight'
                         },
-                        /* title: {
-                          text: 'Product Trends by Month',
-                          align: 'left'
-                        }, */
                         grid: {
                           row: {
                             colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
@@ -656,10 +563,6 @@ function Stats(props) {
                         stroke: {
                           curve: 'straight'
                         },
-                        /* title: {
-                          text: 'Product Trends by Month',
-                          align: 'left'
-                        }, */
                         grid: {
                           row: {
                             colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
@@ -737,50 +640,7 @@ function Stats(props) {
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                   <p className={styles.title}>Today's App Usage while Studying</p>
                   <div className={styles.chartContainer}>
-                    {/* <PieChart
-                      labels={
-                        ["Math", "English", "History", "Sci", "Phy"]
-                      }
 
-                      datasets={
-                        [
-                          {
-                            label: "My First dataset",
-                            backgroundColor: colorsList,
-                            borderColor: colorsList,
-                            data: [2, 20, 30, 45],
-                          },
-                        ]
-                      }
-
-                      options={
-                        {
-                          plugins: {
-                            legend: {
-                              position: 'bottom',
-                            },
-                            datalabels: {
-                              color: '#ffffff',
-                              font: {
-                                size: 32,
-                                family: 'Arial',
-                                weight: 700
-                              },
-                              formatter: (value, context, index) => {
-                                const { chart, dataIndex } = context;
-                                const labels = chart.data.labels;
-                                const label = labels[dataIndex];
-                                return ``;
-                              }
-                            }
-                          }
-                        }
-                      }
-
-                      plugins={
-                        ChartDataLabel
-                      }
-                    /> */}
                   </div>
                 </div>
               </div>
@@ -789,20 +649,6 @@ function Stats(props) {
               <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                 <div>
                   <p className={styles.title}>Face-off with @____</p>
-                  {/* <ul>
-                  <li>
-                    <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
-                  </li>
-                  <li>
-                    <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
-                  </li>
-                  <li>
-                    <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
-                  </li>
-                  <li>
-                    <p>Run payroll <strong>Mar 4 at 5:00 pm</strong></p>
-                  </li>
-                </ul> */}
                 </div>
               </div>
             </div>
@@ -837,7 +683,7 @@ function Stats(props) {
             <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           </AreaChart>
         </ResponsiveContainer>
-      </div>
+      </div> */}
 
     </div>
   )

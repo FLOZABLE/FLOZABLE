@@ -1,282 +1,53 @@
-@import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
-
 .StatsContainer {
-  font-size: 30px;
-  top: 0px;
+  padding: 10px 20px;
 }
 
-.StatsContainer .boxes {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.StatsContainer .areaRechartContainer {
-  z-index: 100;
-  width: 80%;
-  height: 50vh;
-}
-
-.StatsContainer .boxes .box {
-  margin: 0px;
-  flex-grow: 1;
-  padding: 30px;
-  position: relative;
-  width: 100%;
-  padding: 0px;
-}
-
-.StatsContainer .box .title {
-  font-size: 40px;
-  font-weight: 800;
-  color: #545B77;
-  border-radius: 20px;
-  width: fit-content;
-  padding: 10px 30px;
-  cursor: pointer;
-}
-
-.StatsContainer .box button.title {
-  cursor: pointer;
-}
-
-.StatsContainer .box button.title:hover {
-  background-color: rgba(233, 232, 217, 0.612);
-}
-
-.StatsContainer .box .title .caret {
-  font-size: 30px;
-}
-
-.StatsContainer .box .buttonArea {
-  display: flex;
-  margin-bottom: 40px;
+.StatsContainer .optionsHeader {
   position: sticky;
-  top: 150px;
-  z-index: 3;
+  top: 100px;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
-.StatsContainer .box .buttonArea .dateSelectorWrapper {
+.StatsContainer .optionsHeader .dateSelectorWrapper {
   margin-right: auto;
-  background-color: #fff;
-  display: flex;
-  align-items: center;
-  border-radius: 20px;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  height: fit-content;
 }
 
-.StatsContainer .box .container {
+.StatsContainer .bigBox {
+  margin-top: 30px;
   display: flex;
-  background-color: #e5f6ff;
-  border-radius: 40px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  padding: 40px;
-  margin-bottom: 50px;
+  border-radius: 30px;
+  min-height: 500px;
 }
 
-.StatsContainer .box .secondContainer {
-  display: flex;
-  background-color: rgb(222, 244, 230);
-  border-radius: 40px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  padding: 40px;
-  margin-bottom: 50px;
-}
-
-.StatsContainer .box .thirdContainer {
-  display: flex;
-  background-color: rgb(255, 238, 230);
-  border-radius: 40px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  padding: 40px;
-  margin-bottom: 50px;
-}
-
-.StatsContainer .box .fourthContainer {
-  display: flex;
-  background-color: rgb(245, 241, 254);
-  border-radius: 40px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  padding: 40px;
-  margin-bottom: 50px;
-}
-
-.StatsContainer .box .faceOffContainer {
-  display: flex;
-  background-color: rgb(254, 255, 209);
-  border-radius: 40px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  padding: 40px;
-  margin-bottom: 50px;
-}
-
-.StatsContainer .box .container>div:not(.divider) {
+.StatsContainer .bigBox > div {
   width: 50%;
-  text-align: left;
-}
-
-.StatsContainer .box .container>div:nth-child(1) {
   display: flex;
-  align-items: center;
   flex-direction: column;
+  justify-content: space-evenly;
 }
 
-.StatsContainer .box .divider {
-  background-color: #b7e6ff;
-  width: 5px;
-  margin: 0px 50px;
-  border-radius: 3px;
+.StatsContainer .bigBox:nth-child(1) {
+  background-color: var(--blue0);
 }
 
-.StatsContainer .box .chartContainer {
-  width: 100%;
-  height: fit-content;
-  position: relative;
-}
-
-.StatsContainer .box .chartContainer .noChart {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: #e5f6ff;
-  font-weight: 700;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  display: flex;
-  text-decoration: underline;
-  z-index: 2;
-}
-
-.StatsContainer .box .chartContainer .noChart.true {
-  display: none;
-}
-
-.StatsContainer .box .todoList {
-  background-color: #f2f2fd;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-}
-
-.StatsContainer .box .todoList ul li {
-  border-radius: 20px;
-  height: 50px;
-  margin-bottom: 30px;
-  padding: 10px 10px 10px 20px;
-}
-
-.StatsContainer .box strong {
-  font-size: 100%;
-}
-
-.StatsContainer .boxes .smallBoxContainer {
-  display: flex;
-  width: 100%;
-}
-
-.StatsContainer .boxes .smallBox {
-  background-color: #f7f9fd;
-  border-radius: 40px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  margin: 50px 30px 30px 50px;
-  width: 50vw;
-  padding: 30px;
-  position: relative;
-  display: flex;
-}
-
-.StatsContainer .boxes .smallBox p {
-  font-weight: 500;
-  font-size: 30px;
-}
-
-.StatsContainer .horizontalLine {
-  width: 100%;
-  height: 3px;
-  border-radius: 3px;
-  background-color: black;
-  margin-bottom: 50px;
-}
-
-.StatsContainer .boxes .smallBox .circle {
-  background-color: #5261f4;
-  height: 50px;
-  width: 50px;
-  border-radius: 25px;
+.StatsContainer .bigBox .overflow {
+  width: 100vh;
+  background-color: #fff;
+  padding: 25px 20px;
+  border-radius: 15px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-right: 20px;
+  color: var(--font-gray);
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 }
 
-.StatsContainer .CalendarModal {
-  position: fixed;
-  width: 500px;
-  height: 500px;
-  z-index: 2;
-  border-radius: 20px;
-  display: none;
-  left: 50vw;
-  top: 50vh;
-  transform: translate(-50%, -50%);
-  background-color: #ADC4CE;
+.StatsContainer .bigBox .overflow i {
+  font-size: 23px;
+  display: flex;
+  margin-right: 10px;
+  justify-content: center;
   align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-}
-
-.StatsContainer .CalendarModal.isOpen {
-  display: block;
-}
-
-.StatsContainer .smallBox.chartsBox {
-  flex-direction: column;
-}
-
-.StatsContainer .smallBox.chartsBox .title {
-  font-size: 40px;
-  font-weight: 800;
-  color: #545B77;
-  border-radius: 20px;
-  width: fit-content;
-  padding: 10px 30px;
-}
-
-.StatsContainer .secondContainer .chartContainer {
-  height: 90%;
-}
-
-
-@media (max-width: 1400px) {
-  .StatsContainer .container p.title {
-    font-size: 25px;
-    padding: 0px;
-  }
-  .StatsContainer .boxes .smallBox {
-    padding: 10px;
-    font-size: 17px;
-  }
-
-  .StatsContainer .boxes .smallBox p {
-    padding: 0px;
-    font-size: 17px;
-  }
-
-  .StatsContainer .boxes .box >div {
-    padding: 10px;
-  }
-  .StatsContainer .boxes .box >div .smallBox {
-    margin: 10px;
-  }
-  
-  .StatsContainer .smallBox.chartsBox .title {
-    font-size: 23px;
-  }
-
-  .StatsContainer .box .buttonArea {
-    top: 120px;
-  }
+  color: var(--blue2);
 }
