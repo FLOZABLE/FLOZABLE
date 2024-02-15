@@ -72,7 +72,6 @@ function EditSubjectModal({
 
   useEffect(() => {
     if (!subject) return;
-    console.log(subject);
     const icon = subjectIcons[subject.icon];
     setSelectedIcon({el: icon, name: subject.icon});
     setSelectedColor(subject.color);

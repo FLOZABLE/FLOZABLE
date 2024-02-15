@@ -33,7 +33,6 @@ function SmallRankingViewer({ userInfo }) {
           const ranking = response.data.findIndex(ranking => {
             return userInfo.user_id === ranking.user_id;
           });
-          console.log(ranking, 'dddddd', response.data[ranking])
           if (ranking === -1) return;
           const total = response.data[ranking].t;
           if (!total) return;

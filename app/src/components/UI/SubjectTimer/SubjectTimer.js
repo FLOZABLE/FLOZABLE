@@ -39,11 +39,7 @@ function SubjectTimer({
       }),
     );
   }, [subjects]);
-
-  useEffect(() => {
-    console.log(subject, "changed from subject timer");
-  }, [subject]);
-
+  
   useEffect(() => {
     if (timeValues.length) {
       if (!!!subject) setSubject({ ...subjects[0] });

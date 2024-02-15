@@ -120,10 +120,6 @@ function Study(props) {
     ]);
   }, [subjects]);
 
-  useEffect(() => {
-    console.log('head', isHeadphone)
-  }, [isHeadphone])
-
   return (
     <div className={styles.StudyContainer}>
       <StudyModalContainer

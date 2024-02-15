@@ -100,86 +100,10 @@ function Stats({ subjects, userInfo }) {
             labels: rankingTrend[0],
             datasets: rankingTrend[1],
           });
-
-          /* if (statsViewer === 'Daily') {
-            const viewDateTime = DateTime.fromJSDate(viewDate);
-            const index = DateTime.now().startOf('day').diff(viewDateTime.startOf('day'), 'days');
-
-          } else if (statsViewer === 'Weekly') {
-
-          } else {
-
-          } */
         }
       })
       .catch((error) => console.error(error));
   }, [userInfo, startDate, statsViewer]);
-
-
-  /* useEffect(() => {
-    const labels = subjects.map((subject) => { return subject.name });
-
-    const { data } = updateTimeUsagePie(subjects, viewDate, statsViewer);
-    const areaData = updateStackedAreaGraph(subjects, statsViewer).data;
-    console.log(areaData);
-
-    setTimeUsagePie({
-      labels: labels,
-      datasets: data
-    });
-
-    setAreaGraphTrend({
-      datasets: areaData,
-    })
-
-    if (timelineRef.current) {
-      setDailyTimeline(updateHourlyMatrix(subjects, timelineRef.current.offsetWidth, viewDate));
-    }
-
-    const hourlyHistogramData = updateHourlyHistogram(subjects, statsViewer, viewDate);
-    setHourlyHistogram({
-      data: hourlyHistogramData
-    });
-
-    const timeTrend = updateTimeTrend(subjects, statsViewer);
-    setTimeTrend({
-      labels: timeTrend[0],
-      datasets: timeTrend[1]
-    });
-
-    //update main viewer components
-    const viewDateTime = DateTime.fromJSDate(viewDate);
-    const { daily, weekly, monthly } = subjects;
-    if (!daily) return;
-    if (statsViewer === 'Daily') {
-      const index = viewDateTime.diff(DateTime.now().startOf('day'), 'days').toObject();
-      const { groupedTotal, grouped } = daily;
-      const actualIndex = grouped.length + index.days - 1;
-      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
-      setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
-      const focus = focusCalculator(grouped[actualIndex]);
-      const { value, type } = secondConverter(focus);
-      setFocus(`${value}${type}`);
-    } else if (statsViewer === 'Weekly') {
-      const index = viewDateTime.startOf('week').diff(DateTime.now().startOf('week'), 'weeks').toObject();
-      const { groupedTotal, grouped } = weekly;
-      const actualIndex = grouped.length + index.weeks - 1;
-      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
-      setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
-      const focus = focusCalculator(grouped[actualIndex]);
-      const { value, type } = secondConverter(focus);
-      setFocus(`${value}${type}`);
-    } else {
-      const index = viewDateTime.startOf('month').diff(DateTime.now().startOf('month'), 'months').toObject();
-      const { groupedTotal, grouped } = monthly;
-      const actualIndex = grouped.length + index.months - 1;
-      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
-      setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
-      const focus = focusCalculator(grouped[actualIndex]);
-      const { value, type } = secondConverter(focus);
-      setFocus(`${value}${type}`);
-    }
-  }, [viewDate, statsViewer, subjects, timelineRef]); */
 
   const focusCalculator = (grouped) => {
     if (!grouped) return 0;
@@ -194,26 +118,9 @@ function Stats({ subjects, userInfo }) {
     return focus;
   };
 
-  /*   useEffect(() => {
-      const rankingTrend = updateRankingTrend(rankings, statsViewer);
-      setRankingTrend({
-        labels: rankingTrend[0],
-        datasets:
-          [
-            {
-              backgroundColor: "#fd7f6f",
-              borderColor: "#fd7f6f",
-              data: rankingTrend[1],
-            },
-          ]
-      });
-    }, [rankings]); */
-
-
   useEffect(() => {
     if (!viewDate) return;
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    console.log(timezone);
     const viewDateSec = DateTime.fromJSDate(viewDate).toSeconds();
     fetch(`${serverOrigin}/extension/usage?date=${viewDateSec}&mode=${viewOption}&timezone=${timezone}`,
       {
@@ -221,7 +128,6 @@ function Stats({ subjects, userInfo }) {
       })
       .then((response) => response.json())
       .then((response) => {
-        console.log(response)
         if (response.success) {
           setWebsites(response.websitesData);
           let websitesUsage = 0;
@@ -231,7 +137,6 @@ function Stats({ subjects, userInfo }) {
             websitesVisit += website.v;
           });
           const websitesUsagesDisp = secondConverter(websitesUsage);
-          console.log(websitesUsage, websitesUsagesDisp, 'webu')
           setWebsitesUsage(`${websitesUsagesDisp.value} ${websitesUsagesDisp.type}`);
           setWebsitesVisit(`${websitesVisit} times`);
         }
@@ -261,6 +166,7 @@ function Stats({ subjects, userInfo }) {
       const { value, type } = secondConverter(focus);
       setFocus(`${value}${type}`);
       const datumPoint = DateTime.fromSeconds(subjects.daily.datum_point);
+      const dayTimeTrend = updateTimeTrend(subjects, 'daily', 'day');
       //updateTimeTrend(datumPoint, subjects.daily.groupedTotal)
     } else if (statsViewer === 'Weekly') {
       const index = viewDateTime.startOf('week').diff(DateTime.now().startOf('week'), 'weeks').toObject();

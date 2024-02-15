@@ -13,7 +13,6 @@ const pieCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, i
 
 const PieCustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
-    console.log(payload[0].payload)
     return (
       <div style={{ 
         backgroundColor: "#fff", 

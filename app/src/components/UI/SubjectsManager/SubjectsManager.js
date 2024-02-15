@@ -19,7 +19,6 @@ function SubjectsManager({ subjects, setSubjects, setResponse }) {
     if (!selectedSubject || !selectedSubject.submit) return;
 
     const { id, icon, color, name, tools } = selectedSubject;
-    console.log(selectedSubject)
     fetch(`${serverOrigin}/study/modify-subject`, {
       method: "post",
       headers: {

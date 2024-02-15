@@ -56,7 +56,6 @@ function SelectTool({
             <div
               className={styles.iconWrapper}
               onClick={() => {
-                console.log(selectedTool, 'dddd')
                 if (!selectedTool.includes(i.toString())) {
                   setSelectedTool(prev => ([...prev, i.toString()]));
                 } else {

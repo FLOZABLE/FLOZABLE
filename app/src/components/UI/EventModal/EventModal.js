@@ -172,7 +172,6 @@ function EventModal({
             <DateSelector
               start={planModal.start}
               setStart={(start) => {
-                console.log(planModal)
                 if (!planModal.editable) {
                   setResponse({ success: false, reason: "This event is view only" });
                 } else {

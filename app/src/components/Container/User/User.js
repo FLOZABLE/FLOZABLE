@@ -212,7 +212,6 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
         if (data.success) {
           //setRankings(data.rankings);
           const [labels, datasets] = updateRankingTrend(data.rankings, viewDate);

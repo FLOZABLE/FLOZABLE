@@ -26,19 +26,6 @@ function CreateChallengeModal({
 }) {
 
   const submit = () => {
-    /* if (start < currMillis) {
-      setResponse({ success: false, reason: "Must be at least 1 hour in the future" });
-      return;
-    }
-    if (title === "") {
-      setResponse({ success: false, reason: "Please enter a title" });
-      return;
-    }
-    console.log(description);
-    if (description === "<p><br></p>") {
-      setResponse({ success: false, reason: "Please enter a description" });
-      return;
-    } */
 
     const reqBody = { title, description, startDate: DateTime.fromJSDate(start).toSeconds() };
     fetch(`${serverOrigin}/challenges/create-challenge`, {

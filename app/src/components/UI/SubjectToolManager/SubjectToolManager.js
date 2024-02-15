@@ -51,8 +51,6 @@ function SubjectToolManager({ subject, isSubjectToolManager, setIsSubjectToolMan
     })
     subjectToolString = subjectToolString.substring(0, subjectToolString.length - 1);
 
-    console.log(subjectToolString);
-
     fetch(`${serverOrigin}/study/modify-subject-tools`, {
       method: "post",
       headers: {

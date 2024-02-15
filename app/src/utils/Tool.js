@@ -126,19 +126,14 @@ function requestNotification() {
   };
 
   Notification.requestPermission().then(async (permission) => {
-    console.log(permission, 'ddd', permission === 'granted')
     if (permission === "granted") {
-      console.log("granted")
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.getSubscription();
-      console.log(registration)
-      console.log('subscription', subscription);
       if (!subscription) {
         subscribeUserToPush();
       } else if (permission === 'denied') {
         // User has blocked notifications
         // Handle this case accordingly
-        console.log('Push notifications are blocked by the user.');
       };
     };
 
@@ -169,19 +164,12 @@ async function subscribeUserToPush() {
       userVisibleOnly: true,
       applicationServerKey: 'BLA00cufFwkKvcgi4-4TEGnZfoKqdQofWox2I4QJk5QCM-7MkTCSjGQE7AhbHAQcx6LbJbuFKe0LDhI4J-krUAY',
     });
-    console.log('Subscription:', subscription);
     const response = await fetch(`${serverOrigin}/account/notification-subscribe`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({subscription: subscription}),
     }).then(res => res.json());
 
-    console.log(response)
-    if (response.success) {
-      console.log('success')
-    } else {
-      console.log('fail')
-    }
   } catch (error) {
     console.error('Error subscribing to push notifications:', error);
   }

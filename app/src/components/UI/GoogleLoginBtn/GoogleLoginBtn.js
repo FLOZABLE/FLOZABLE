@@ -9,7 +9,6 @@ function GoogleLoginBtn() {
     flow: 'auth-code',
     select_account: true,
     onSuccess: (response) => {
-      console.log(response);
       const {code} = response;
       fetch(`${serverOrigin}/account/auth/google`, {
         method: "post",
@@ -20,7 +19,6 @@ function GoogleLoginBtn() {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
         })
         .catch((error) => console.error(error));
     },
