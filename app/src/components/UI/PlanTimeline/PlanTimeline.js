@@ -18,6 +18,8 @@ import { DateTime } from "luxon";
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadialBar, ResponsiveContainer, RadialBarChart } from "recharts";
 import { RadarChart } from "recharts";
 import { warmColorsList } from "../../../constant";
+import { Cell } from "recharts";
+import { randomIntInRange } from "../../../utils/Tool";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -80,9 +82,11 @@ function PlanTimeline({
         const { id, icon, name } = subject;
         const total = subjectPlans.length;
         const completed = subjectPlans.filter(plan => plan.completed).length;
-        const val = Math.floor(completed / total * 100);
+        const val = randomIntInRange(0, 2)
+        console.log(val, randomIntInRange(0, 2), Math.floor(completed / total))
         const fill = warmColorsList[i % (warmColorsList.length)];
-        planSeries.push({ id, fill, name, val, total, completed });
+        const pv = 5000;
+        planSeries.push({ id, fill, name, val, total, completed, pv });
       }
     });
     setPlanSeries(planSeries);
@@ -300,12 +304,14 @@ function PlanTimeline({
       <ResponsiveContainer width="100%" height="100%">
         <RadialBarChart cx="50%" cy="50%" innerRadius="10%" outerRadius="80%" barSize={10} data={planSeries}>
           <RadialBar
-            minAngle={15}
             label={{ position: 'insideStart', fill: '#fff' }}
             background
             clockWise
             dataKey="val"
-          />
+            isAnimationActive={true}
+            animationDuration={3000}
+          >
+          </RadialBar>
         </RadialBarChart>
       </ResponsiveContainer>
       </div>
