@@ -28,7 +28,6 @@ function AudioPlayer({audio}) {
       if (id !== audio.id) {
         return;
       };
-      console.log('changed', volume)
       setVolume(volume);
     };
 

@@ -63,7 +63,6 @@ function CreateGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
       .then((response) => response.json())
       .then((data) => {
         setCreateGroupResponse(data);
-        console.log(data)
         if (data.success) {
           setIsOpen(false);
           setName("");

@@ -10,7 +10,6 @@ function YoutubeAPI({ }) {
         flow: 'auth-code',
         select_account: true,
         onSuccess: (response) => {
-            console.log(response);
             const { code } = response;
             fetch(`${serverOrigin}/account/auth/google`, {
                 method: "post",

@@ -41,7 +41,7 @@ function GroupRankingModal({ isOpen, setIsOpen, members }) {
   return (
     <div className={`${styles.GroupRankingModal} modal ${isOpen ? "open" : ""}`}>
       <div className={styles.header}>
-        <i onClick={() => {setIsOpen(false); console.log('dd')}}>
+        <i onClick={() => {setIsOpen(false)}}>
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>

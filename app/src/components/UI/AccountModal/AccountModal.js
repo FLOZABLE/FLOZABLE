@@ -58,10 +58,8 @@ function AccountModal({ isOpened, setIsOpened, setResponse }) {
                 })
                   .then((response) => response.json())
                   .then((data) => {
-                    console.log('gdddd', data)
                     setResponse(data);
                     if (data.success) {
-                      console.log('close')
                       setIsOpened(false)
                     }
                   })

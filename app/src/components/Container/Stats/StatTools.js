@@ -1,7 +1,4 @@
 import { DateTime } from 'luxon';
-import styles from './Stats.module.css';
-
-const DATETOSEC = 60 * 60 * 24;
 
 //time usage pie
 function updateTimeUsagePie(subjects, viewDate, type) {
@@ -62,12 +59,12 @@ function updateWeeklyTimeTrend(subjects) {
   return {data, labels};
 };
 
-function updateTimeTrend(subjects, groupedTotal, mode) {
+function updateTimeTrend(subjects, mode, sum) {
   const data = [];
   const labels = [];
-  const datumPoint = DateTime.fromSeconds(subjects.daily.datum_point);
-  groupedTotal.map((val, i) => {
-    const date = datumPoint.plus({ [mode]: i });
+  const datumPoint = DateTime.fromSeconds(subjects[mode].datum_point);
+  subjects[mode].groupedTotal.map((val, i) => {
+    const date = datumPoint.plus({ [sum]: i });
     const label = `${date.month}/${date.day}`;
     data.push(val);
     labels.push(label);
@@ -113,7 +110,6 @@ function updateTimeTrendd(subjects, type) {
 function updateStackedAreaGraph(subjects, type) {
   const data = [];
   const labels = [];
-  console.log(type);
   if (subjects.daily) {
     if (type === 'Daily') {
       const datumPoint = DateTime.now().minus({ days: 6 });

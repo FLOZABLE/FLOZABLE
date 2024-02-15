@@ -293,11 +293,6 @@ function EventPlanner(props) {
     };
   };
 
-  /* useEffect(() => {
-    console.log(planModal)
-    console.log('changed plan')
-  }, [planModal]); */
-
   function handleEventDateDrop(data) {
     const { id, start } = data.event;
     if (data.event._def.extendedProps.access === "reader") {
@@ -379,7 +374,6 @@ function EventPlanner(props) {
   function handleEventClick(data) {
     const { id, start, end, title } = data.event;
     const editable = data.event._def.extendedProps.isEditable;
-    console.log(editable)
     const eventInfo = {
       ...data.event._def.extendedProps,
       id,
@@ -395,7 +389,6 @@ function EventPlanner(props) {
     if (PlannerApi) {
       const plannerDateTime = DateTime.fromJSDate(PlannerApi.getDate());
       const viewDateTime = DateTime.fromJSDate(viewDate);
-      console.log(PlannerApi.getDate(), viewDate)
       if (viewMode == 'timeGridDay') {
         if (plannerDateTime.toISODate() !== viewDateTime.toISODate()) {
           PlannerApi.gotoDate(viewDate);
