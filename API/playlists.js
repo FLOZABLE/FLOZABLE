@@ -17,37 +17,39 @@ Router.get("/youtube-playlists", async (req, res) => {
             try {
                 const access_token = await googleAccessTokenCache(userId);
 
-                await fetch(`https://youtube.googleapis.com/youtube/v3/playlists?maxResults=10&mine=true&key=${YOUTUBE_API_KEY}`, {
+                fetch(`https://youtube.googleapis.com/youtube/v3/playlists?part=id,snippet&fields=items(id,snippet(title,channelId,channelTitle))&maxResults=10&mine=true&key=${YOUTUBE_API_KEY}`, {
                     headers: {
                         'Authorization': `Bearer ${access_token}`,
                         'Accept': 'application/json'
                     }
                 }).then((response) => response.json())
-                    .then((data) => {
-                        data.items.map(async (playlist) => {
-                            console.log(playlist.id);
-                            await fetch(`https://youtube.googleapis.com/youtube/v3/playlistItems?maxResults=25&playlistId=${playlist.id}&key=${YOUTUBE_API_KEY}`, {
+                    .then(async (data) => {
+                        return await Promise.all(data.items.map(async (playlist) => {
+                            return fetch(`https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=${playlist.id}&key=${YOUTUBE_API_KEY}`, {
                                 headers: {
                                     'Authorization': `Bearer ${access_token}`,
                                     'Accept': 'application/json'
                                 }
                             }).then((response) => response.json())
                                 .then((data) => {
-                                    if (data.items){
+                                    let videoResults = [];
+                                    if (data.items) {
                                         data.items.map((video) => {
-                                            console.log(video['snippet']['resourceId']['videoId']);
+                                            videoResults.push(video.snippet.resourceId.videoId);
                                         })
                                     }
-                                })
-                        });
-                    });
+                                    return [playlist.snippet.title, ...videoResults];
+                                });
+                        }));
+                    }).then((result) => {
+                        res.send({ success: true, data: result });
+                    })
 
             } catch (err) {
                 if (err.response && err.response && err.response.data && err.response.data.error === "invalid_grant") {
                     connection.query(`UPDATE users set google_refresh_token = NULL WHERE user_id = ?`, [userId]);
                 };
             };
-            res.send({ success: true });
         } catch (err) {
             console.log(err);
             res.send({ success: false });
