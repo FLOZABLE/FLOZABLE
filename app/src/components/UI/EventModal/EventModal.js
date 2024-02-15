@@ -98,21 +98,23 @@ function EventModal({
   useEffect(() => {
     if (!planModal) return;
     if (!planModal.opened) {
-      setPlanModal({
-        opened: false,
-        title: '',
-        description: '',
-        start: new Date(),
-        end: new Date(new Date().getTime() + 60 * 1000 * 30),
-        repeat: 0,
-        priority: 50,
-        notification: -1,
-        subject: null,
-        id: null,
-        saved: false,
-        completed: false,
-        editable: true
-      });
+      setPlanModal(prev => (
+        {
+          ...prev,
+          opened: false,
+          title: '',
+          description: '',
+          start: new Date(),
+          end: new Date(new Date().getTime() + 60 * 1000 * 30),
+          repeat: 0,
+          priority: 50,
+          notification: -1,
+          id: null,
+          saved: false,
+          completed: false,
+          editable: true
+        }
+      ));
       if (!planModal.saved) {
         setEvents((prev) => {
           const foundIndex = prev.findIndex((val) => val.id === planModal.id);
