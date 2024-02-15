@@ -5,15 +5,21 @@ import DropDownButton from "../DropDownButton/DropDownButton";
 import CustomInput from "../CustomInput/CustomInput";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import SpotifyPlayer from "../SpotifyPlayer/SpotifyPlayer";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import YouTubeLoginBtn from "../YouTubeLoginBtn/YouTubeLoginBtn";
 
 const appOrigin = process.env.REACT_APP_LOCATION;
 const serverOrigin = process.env.REACT_APP_ORIGIN;
+const googleClientId = process.env.REACT_APP_CLIENT_ID;
 
 
 function PlaylistModal({ userInfo, setResponse }) {
   const [playlists, setPlaylists] = useState([]);
   const [playlist, setPlaylist] = useState("");
+  const [youtubePlaylist, setYoutubePlaylist] = useState([]);
+  const [youtubePlaylists, setYoutubePlaylists] = useState([]);
   const [spotifyLoggedIn, setSpotifyLoggedIn] = useState(false);
+  const [youtubeLoggedIn, setYoutubeLoggedIn] = useState(false);
   const [link, setLink] = useState("");
   const [playLink, setPlayLink] = useState(null);
   const [dropDownOptions, setDropDownOptions] = useState({});
@@ -67,19 +73,19 @@ function PlaylistModal({ userInfo, setResponse }) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data, 'playlist youtube');
-        if (data.success) {
-          data.data.map((playlist) => {
-            playlist.map((playlistItem, i) => {
-              if (i !== 0) {
-                //console.log(`https://i.ytimg.com/vi/${playlistItem}/maxresdefault.jpg`);
-              }
-            });
-          })
+        if (data.success !== false) {
+          const playlistOpts = {};
+          data.map((playlist) => {
+            playlistOpts[playlist.slice(1, playlist.length).join(",")] = playlist[0];
+          });
+          setYoutubePlaylists(playlistOpts);
+          console.log("Auth success");
+          setYoutubeLoggedIn(true);
         }
       }).catch((err) => {
         console.log(err);
       })
-  }, [])
+  }, []);
 
   return (
     <div className={styles.PlaylistModal}>
@@ -91,6 +97,11 @@ function PlaylistModal({ userInfo, setResponse }) {
             <p>Connect your Spotify account to bring your playlists!</p>
         }
         <SpotifyAuthBtn setResponse={setResponse} redirectURI={`${appOrigin}/dashboard/study`} userInfo={userInfo} />
+        <GoogleOAuthProvider
+          clientId={googleClientId}
+        >
+          <YouTubeLoginBtn />
+        </GoogleOAuthProvider>
         {
           spotifyLoggedIn ?
             <DropDownButton
@@ -114,6 +125,18 @@ function PlaylistModal({ userInfo, setResponse }) {
           link={playlist}
         />
       </div>
+      {
+        youtubeLoggedIn ?
+          <div>
+            <DropDownButton
+              options={youtubePlaylists}
+              setValue={setYoutubePlaylist}
+            />
+            <iframe width="720" height="405" src={`https://www.youtube.com/embed/VIDEO_ID?playlist=${youtubePlaylist}`} allowFullScreen></iframe>
+          </div>
+          :
+          <div></div>
+      }
     </div>
   )
 };
