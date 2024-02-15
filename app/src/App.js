@@ -112,6 +112,13 @@ function App() {
     setIsHovered(false);
   };
 
+  useEffect(() => {
+    if (!subjects.length) return;
+
+    const lastSubject = subjects[subjects.length - 1];
+    setPlanModal(prev => ({...prev, subject: lastSubject.id}));
+  }, [subjects]);
+
   const bringSubjects = useCallback(() => {
     fetch(`${serverOrigin}/study/bring-subjects`, { method: "post" })
       .then((response) => response.json())

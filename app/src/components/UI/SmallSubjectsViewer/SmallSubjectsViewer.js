@@ -69,7 +69,7 @@ function SmallSubjectsViewer({ subjects }) {
                   return arr;
                 }, []
                 )}
-                valueKey={"value"}
+                dataKey={"value"}
                 outerRadius={200}
                 innerRadius={150}
                 fill="green"
