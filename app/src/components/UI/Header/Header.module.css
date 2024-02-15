@@ -1,13 +1,14 @@
 .Header {
   height: 100px;
   width: calc(100vw - 220px - 1px);
-  background-color: #f1f1f1;
+  background-color: var(--gray);
   position: fixed;
   top: 0px;
   left: 221px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid #a1a1a1;;
+  z-index: 5;
 }
 
 
@@ -46,7 +47,7 @@
 }
 
 .Header .left .headerEl:nth-child(2) {
-  color: var(--blue0);
+  color: var(--blue1);
 }
 
 .Header .left .headerEl:nth-child(3) {

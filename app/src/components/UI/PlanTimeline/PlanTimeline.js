@@ -82,7 +82,7 @@ function PlanTimeline({
         const { id, icon, name } = subject;
         const total = subjectPlans.length;
         const completed = subjectPlans.filter(plan => plan.completed).length;
-        const val = randomIntInRange(0, 2)
+        const val = Math.floor(completed / total * 100);
         console.log(val, randomIntInRange(0, 2), Math.floor(completed / total))
         const fill = warmColorsList[i % (warmColorsList.length)];
         const pv = 5000;
