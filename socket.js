@@ -20,8 +20,8 @@ const wrap = middleware => (socket, next) => middleware(socket.request, {}, next
 
 io.use(wrap(sessionMiddleWare));
 
-const connection = io.of('/');
-connection.on('connection', (socket) => {
+const mainIo = io.of('/');
+mainIo.on('connection', (socket) => {
   let session;
 
   if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
@@ -195,7 +195,7 @@ connection.on('connection', (socket) => {
       friends = friends === "" ? [] : friends.split(",");
       groups = groups === "" ? [] : groups.split(",");
       if (groups.length) {
-        connection.to(groups).emit(`studying:${userId}`, subject);
+        mainIo.to(groups).emit(`studying:${userId}`, subject);
       };
       if (friends.length) {
         io.to(friends).emit(`studying:${userId}`, subject);
@@ -464,7 +464,7 @@ cron.schedule('*/10 * * * * *', () => {
   };
 });
 
-module.exports = { io, connection, extensionIo };
+module.exports = { io, mainIo, extensionIo };
 require('./videoServer')
 
 //require('./SFUServer');

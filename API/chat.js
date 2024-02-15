@@ -5,6 +5,7 @@ const redisClient = require("../model/redis");
 const { autoSignin, arraysHaveSameContents, generateRandomId } = require("../tool");
 const { groupCache, chatRoomsCache, usersCache, NotificationCache, dmRoomsCache, userCache, dmRoomMembersCache, groupMembersCache, msgReadCache } = require("../services/redisLoader");
 const { validateStrictString } = require("../validate");
+const { mainIo } = require("../socket");
 
 Router.post("/bring-rooms", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -66,10 +67,9 @@ Router.post("/chat-request", async (req, res) => {
     
     const id = generateRandomId(5);
     const date = Math.floor(new Date().getTime() / (1000 * 60));
-    const io = req.app.get('socketio');
     const notification = { i: id, t: 4, f: userId, d: date };
     const socketNotification = { i: id, t: 4, f: await userCache(userId), d: date };
-    io.to(targetId).emit('notification', socketNotification);
+    mainIo.to(targetId).emit('notification', socketNotification);
     redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
     res.send({success: true, msg: `DM request sent!`})
   }));
