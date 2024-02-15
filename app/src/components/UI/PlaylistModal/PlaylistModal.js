@@ -66,7 +66,16 @@ function PlaylistModal({ userInfo, setResponse }) {
     fetch(`${serverOrigin}/playlists/youtube-playlists`, { method: "get" })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data, 'playlist');
+        console.log(data, 'playlist youtube');
+        if (data.success) {
+          data.data.map((playlist) => {
+            playlist.map((playlistItem, i) => {
+              if (i !== 0) {
+                //console.log(`https://i.ytimg.com/vi/${playlistItem}/maxresdefault.jpg`);
+              }
+            });
+          })
+        }
       }).catch((err) => {
         console.log(err);
       })

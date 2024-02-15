@@ -10,6 +10,12 @@
   flex-wrap: wrap;
 }
 
+.StatsContainer .areaRechartContainer {
+  z-index: 100;
+  width: 80%;
+  height: 50vh;
+}
+
 .StatsContainer .boxes .box {
   margin: 0px;
   flex-grow: 1;
