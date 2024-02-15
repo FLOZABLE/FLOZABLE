@@ -43,10 +43,12 @@ Router.post("/add-subject", async (req, res) => {
       const connection = pool.promise();
       try {
         const insertSubject = await connection.query(`INSERT INTO subjects SET ?`, subjectInfo);
+        subjectInfo.tools = '';
         res.send({ success: true, msg: `Added Subject "${subjectInfo.name}"`, info: { subjectInfo: subjectInfo } });
         delete subjectInfo.timeline;
         delete subjectInfo.user_id;
         subjectInfo.timeline_sum = 0;
+        subjectInfo.tools = '';
         redisClient.hSet(`user:${userId}:subjects`, subjectInfo.id, JSON.stringify(subjectInfo));
       } catch (err) {
         console.log(err);
@@ -104,7 +106,7 @@ Router.post("/modify-subject", async (req, res) => {
       const connection = pool.promise();
       try {
         const updateSubject = await connection.query("UPDATE subjects SET ? WHERE id = ? AND user_id = ?", [subjectInfo, id, userId]);
-        res.send({ success: true, msg: `Modified Subject "${subjectInfo.name}"`, subjectInfo: subjectInfo });
+        res.send({ success: true, msg: `Modified Subject "${name}"`, subjectInfo: subjectInfo });
 
         const previousSubject = JSON.parse(await redisClient.hGet(`user:${userId}:subjects`, subjectInfo.id));
         previousSubject.name = subjectInfo.name;

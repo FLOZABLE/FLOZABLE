@@ -25,7 +25,6 @@ function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode = 1,
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (data.success) {
           setFriends(data.friendsInfo);
           setCount(data.friendsInfo.length)

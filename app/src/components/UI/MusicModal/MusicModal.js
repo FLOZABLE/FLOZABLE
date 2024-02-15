@@ -29,7 +29,6 @@ function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
       if (id !== "original") {
         return;
       };
-      console.log('changed', volume)
       setOriginalVideoVolume(volume);
     };
 

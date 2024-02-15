@@ -198,9 +198,8 @@ function Challenge({ userInfo, isSidebarOpen, isSidebarHovered }) { //userInfo, 
 
     useEffect(() => {
         if (challenge.first === "An Error Occured") return;
-        if (!!!user1Subjects || !!!user2Subjects) return;
+        if (!user1Subjects || !user2Subjects) return;
 
-        console.log(user1Subjects, user2Subjects);
 
         const tempUser1 = {};
         const tempUser2 = {};
