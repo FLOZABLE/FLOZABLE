@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook, faFire, faGlobe, faRankingStar } from '@fortawesome/free-solid-svg-icons';
@@ -12,7 +12,7 @@ import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { colorsList } from '../../../constant';
 import styles from './Stats.module.css';
 import { plugins } from 'chart.js';
-import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, updateRankingTrend } from './StatTools';
+import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, updateRankingTrend, updateStackedAreaGraph } from './StatTools';
 import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
 import { DateTime } from 'luxon';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
@@ -65,6 +65,12 @@ function Stats(props) {
   const [rankingTrend, setRankingTrend] = useState({
     labels: [],
     datasets: []
+  })
+
+  //stacked area graph
+  const [areaGraphTrend, setAreaGraphTrend] = useState({
+    datasets: [],
+    labels: [],
   })
 
   const timelineRef = useRef(null);
@@ -154,11 +160,17 @@ function Stats(props) {
     const labels = subjects.map((subject) => { return subject.name });
 
     const { data } = updateTimeUsagePie(subjects, viewDate, statsViewer);
-    console.log('ddd', data)
+    const areaData = updateStackedAreaGraph(subjects, statsViewer).data;
+    console.log(areaData);
+
     setTimeUsagePie({
       labels: labels,
       datasets: data
     });
+
+    setAreaGraphTrend({
+      datasets: areaData,
+    })
 
     if (timelineRef.current) {
       setDailyTimeline(updateHourlyMatrix(subjects, timelineRef.current.offsetWidth, viewDate));
@@ -677,9 +689,9 @@ function Stats(props) {
                 <div className={`${styles.smallBox} ${styles.chartsBox}`}>
                   <p className={styles.title}>Today's Website Usage while Studying</p>
                   <div className={styles.chartContainer}>
-                  <div className={`${styles.noChart} ${websites.length ? styles.true : ''}`} style={{background: "#f7f9fd"}}>
-                    <Link to="/dashboard/study">Study to see stats!</Link>
-                  </div>
+                    <div className={`${styles.noChart} ${websites.length ? styles.true : ''}`} style={{ background: "#f7f9fd" }}>
+                      <Link to="/dashboard/study">Study to see stats!</Link>
+                    </div>
                     <DropDownButton
                       options={{
                         "0": "Active Time",
@@ -797,6 +809,36 @@ function Stats(props) {
           </div>
         </div>
       </div>
+
+
+      <div className={styles.areaRechartContainer}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart
+            width={500}
+            height={400}
+            data={
+              areaGraphTrend.datasets.map((day) => {
+                return {...day}
+              })
+            }
+            margin={{
+              top: 10,
+              right: 30,
+              left: 0,
+              bottom: 0,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
+            <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
+            <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
     </div>
   )
 }
