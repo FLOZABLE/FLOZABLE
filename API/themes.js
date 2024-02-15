@@ -5,6 +5,7 @@ const { autoSignin, generateRandomId, isValidJSON } = require("../tool");
 const pool = require("../model/pool");
 const { DateTime } = require("luxon");
 const { validateStrictString, validateLength, validateString, validateBoolean, validateInteger, validateURL } = require("../validate");
+const { mainIo } = require("../socket");
 
 Router.get('/', async (req, res) => {
   try {
@@ -130,8 +131,7 @@ Router.post('/like/:id', async (req, res) => {
             END WHERE id = ?`,
           [userId, userId, themeId]
         );
-        const io = req.app.get('socketio');
-        io.emit(`liked:${themeId}`, userId);
+        mainIo.emit(`liked:${themeId}`, userId);
       } else {
         const [update] = await connection.query(
           `UPDATE themes 
@@ -140,8 +140,7 @@ Router.post('/like/:id', async (req, res) => {
             WHERE id = ?`,
           [themeId]
         );
-        const io = req.app.get('socketio');
-        io.emit(`unliked:${themeId}`, userId);
+        mainIo.emit(`unliked:${themeId}`, userId);
       };
       res.send({ success: true });
     } catch (err) {
@@ -221,8 +220,7 @@ Router.post('/save', async (req, res) => {
 
       const weekDay = DateTime.now().weekday - 1;
       redisClient.zIncrBy(`theme:${themeId}:weekUsage`, 1, weekDay.toString());
-      const io = req.app.get('socketio');
-      io.emit(`used:${themeId}`);
+      mainIo.emit(`used:${themeId}`);
       res.send({ success: true, msg: 'Theme Saved' });
     } catch (error) {
       console.log(error)

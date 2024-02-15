@@ -7,6 +7,7 @@ const { NotificationCache, userCache, challengeroomsCache } = require('../servic
 const { DateTime } = require('luxon');
 const { redis } = require('googleapis/build/src/apis/redis');
 const { validateStrictString, validateBoolean, validateInteger } = require('../validate');
+const { mainIo } = require('../socket');
 
 //send challenge
 Router.post('/challenge-request', async (req, res) => {
@@ -31,11 +32,10 @@ Router.post('/challenge-request', async (req, res) => {
       if (!prevChallengeReq) { //self-detection later
         const id = generateRandomId(5);
         const date = Math.floor(new Date().getTime() / (1000 * 60));
-        const io = req.app.get('socketio');
         const notificationUser = await userCache(userId);
         const socketNotif = { i: id, t: 2, f: notificationUser, d: date };
         const notification = { i: id, t: 2, f: userId, d: date };
-        io.to(targetId).emit('notification', socketNotif);
+        mainIo.to(targetId).emit('notification', socketNotif);
         redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
         res.send({ success: true, msg: `Challenge sent to ${name}!` });
       }
@@ -79,12 +79,11 @@ Router.post('/challenge-request-reply', async (req, res) => {
 
       const id = generateRandomId(5);
       const date = Math.floor(new Date().getTime() / (1000 * 60));
-      const io = req.app.get('socketio');
       const challengeId = generateRandomId(10);
       const notificationUser = await userCache(userId);
       const socketNotif = { i: id, t: 3, f: notificationUser, d: date, c: challengeId };
       const notification = { i: id, t: 3, f: userId, d: date, c: challengeId };
-      io.to(targetId).emit('notification', socketNotif);
+      mainIo.to(targetId).emit('notification', socketNotif);
       redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
 
       const connection = pool.promise();
@@ -282,11 +281,10 @@ Router.post('/join-challenge', async (req, res) => {
 
       const id = generateRandomId(5);
       const date = Math.floor(new Date().getTime() / (1000 * 60));
-      const io = req.app.get('socketio');
       const notification = { i: id, t: 3, f: userId, d: date, c: joinId };
       const notificationUser = await userCache(userId);
       const socketNotif = { i: id, t: 3, f: notificationUser, d: date, c: joinId };
-      io.to(challengeRoom.host_id).emit('notification', socketNotif);
+      mainIo.to(challengeRoom.host_id).emit('notification', socketNotif);
       redisClient.sAdd(`user:${challengeRoom.hostId}:notifications`, JSON.stringify(notification));
 
       res.send({ success: true, msg: "Challenge Accepted!" });

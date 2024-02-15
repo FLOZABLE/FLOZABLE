@@ -8,6 +8,7 @@
   display: flex;
   align-items: center;
   width: 100%;
+  z-index: 2;
 }
 
 .StatsContainer .optionsHeader .dateSelectorWrapper {
@@ -19,6 +20,10 @@
   display: flex;
   border-radius: 30px;
   min-height: 500px;
+}
+
+.StatsContainer .bigBox .chartWrapper {
+  width: 100%;
 }
 
 .StatsContainer .bigBox > div {

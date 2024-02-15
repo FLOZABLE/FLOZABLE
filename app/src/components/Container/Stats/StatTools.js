@@ -1,13 +1,12 @@
 import { DateTime } from 'luxon';
 
 //time usage pie
-function updateTimeUsagePie(subjects, viewDate, type) {
+function updateTimeUsagePie(subjects, viewDateTime, type) {
   const data = [];
   const labels = [];
   if (type === 'Daily') {
     subjects.map(subject => {
       const { daily } = subject;
-      const viewDateTime = DateTime.fromJSDate(viewDate).startOf('day');
       const index = daily.total.length + Math.floor(viewDateTime.diffNow('days').days);
       data.push(daily.total[index] ? daily.total[index] : 0);
       labels.push(subject.name);
@@ -15,7 +14,6 @@ function updateTimeUsagePie(subjects, viewDate, type) {
   } else if (type === 'Weekly') {
     subjects.map(subject => {
       const { weekly } = subject;
-      const viewDateTime = DateTime.fromJSDate(viewDate).startOf('week');
       const index = weekly.total.length + Math.floor(viewDateTime.diffNow('weeks').weeks);
       data.push(weekly.total[index] ? weekly.total[index] : 0);
       labels.push(subject.name);
@@ -23,7 +21,6 @@ function updateTimeUsagePie(subjects, viewDate, type) {
   } else {
     subjects.map(subject => {
       const { monthly } = subject;
-      const viewDateTime = DateTime.fromJSDate(viewDate).startOf('month');
       const index = monthly.total.length + Math.floor(viewDateTime.diffNow('months').months);
       data.push(monthly.total[index] ? monthly.total[index] : 0);
       labels.push(subject.name);
@@ -31,32 +28,6 @@ function updateTimeUsagePie(subjects, viewDate, type) {
   }
 
   return ({ data, labels });
-};
-
-function updateDailyTimeTrend(subjects) {
-  const data = [];
-  const labels = [];
-  const datumPoint = DateTime.fromSeconds(subjects.daily.datum_point);
-  subjects.daily.groupedTotal.map((val, i) => {
-    const date = datumPoint.plus({ days: i });
-    const label = `${date.month}/${date.day}`;
-    data.push(val);
-    labels.push(label);
-  });
-  return {data, labels};
-};
-
-function updateWeeklyTimeTrend(subjects) {
-  const data = [];
-  const labels = [];
-  const datumPoint = DateTime.fromSeconds(subjects.daily.datum_point);
-  subjects.weekly.groupedTotal.map((val, i) => {
-    const date = datumPoint.plus({ days: i });
-    const label = `${date.month}/${date.day}`;
-    data.push(val);
-    labels.push(label);
-  });
-  return {data, labels};
 };
 
 function updateTimeTrend(subjects, mode, sum) {
@@ -71,41 +42,6 @@ function updateTimeTrend(subjects, mode, sum) {
   });
   return {data, labels};
 };
-
-
-function updateTimeTrendd(subjects, type) {
-  const data = [];
-  const labels = [];
-  if (subjects.daily) {
-    if (type === 'Daily') {
-      const datumPoint = DateTime.fromSeconds(subjects.daily.datum_point);
-      subjects.daily.groupedTotal.map((val, i) => {
-        const date = datumPoint.plus({ days: i });
-        const label = `${date.month}/${date.day}`;
-        data.push(val);
-        labels.push(label);
-      });
-    } else if (type === 'Weekly') {
-      const datumPoint = DateTime.fromSeconds(subjects.weekly.datum_point).startOf('week');
-      subjects.weekly.groupedTotal.map((val, i) => {
-        const date = datumPoint.plus({ weeks: i });
-        const label = `${date.month}/${date.day}`;
-        data.push(val);
-        labels.push(label);
-      });
-    } else {
-      const datumPoint = DateTime.fromSeconds(subjects.monthly.datum_point).startOf('month');
-      subjects.monthly.groupedTotal.map((val, i) => {
-        const date = datumPoint.plus({ months: i });
-        const label = `${date.month}/${date.day}`;
-        data.push(val);
-        labels.push(label);
-      });
-    };
-  };
-  return [labels, data];
-};
-
 
 function updateStackedAreaGraph(subjects, type) {
   const data = [];
