@@ -7,6 +7,10 @@
   padding: 20px;
   transition: .3s background-color ease-in-out, box-shadow .3s ease-in-out;
   font-weight: 700;
+  background-color: var(--gray);
+  padding: 15px 20px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  border-radius: 30px;
 }
 
 .DateSelectorBtn i {
@@ -16,7 +20,7 @@
 
 .DateSelectorBtn:hover {
   background-color: var(--gray);
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
 }
 
 .DateSelectorBtn.open i {

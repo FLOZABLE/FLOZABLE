@@ -5,9 +5,8 @@ const DATETOSEC = 60 * 60 * 24;
 
 //time usage pie
 function updateTimeUsagePie(subjects, viewDate, type) {
-  let data = [];
-  let labels = [];
-  const { firstDatumPoint } = subjects;
+  const data = [];
+  const labels = [];
   if (type === 'Daily') {
     subjects.map(subject => {
       const { daily } = subject;
@@ -37,155 +36,47 @@ function updateTimeUsagePie(subjects, viewDate, type) {
   return ({ data, labels });
 };
 
-function updateHourlyMatrix(subjects, matrixChartWidth, viewDate) {
-  const matrixChart = [];
-  let key = 1;
-  subjects.map((subject) => {
-    const datumPoint = new Date(subject.datum_point * 1000).setHours(0, 0, 0, 0);
-    const diff = (viewDate.getTime() - datumPoint) / (1000 * 60 * 60 * 24);
-    if (subject.daily.total[diff]) {
-      subject.daily.grouped[diff].map(([start, stop], i) => {
-        let startTimeHr = new Date(start * 1000).getHours();
-        let startTimeMin = new Date(start * 1000).getMinutes();
-        let stopTimeHr = new Date(stop * 1000).getHours();
-        let stopTimeMin = new Date(stop * 1000).getMinutes();
-        if (startTimeHr == stopTimeHr) {
-          const top = 27 + startTimeHr * 30 + 'px';
-          const left = 50 + matrixChartWidth / 60 * startTimeMin + 'px';
-          const width = (matrixChartWidth / 60 * (stopTimeMin - startTimeMin) - 50) / (matrixChartWidth - 50) * 100 + '%';
-          matrixChart.push(
-            <div className={styles.activity} style={{ position: 'absolute', top: top, left: left, width: width, height: '30px', backgroundColor: 'red' }} key={key}>
-            </div>
-          );
-          key++;
-        } else {
-          let top = 50 + startTimeHr * 30 + 'px';
-          let left = 50 + matrixChartWidth / 60 * startTimeMin + 'px';
-          let width = (matrixChartWidth / 60 * (60 - startTimeMin) - 50) / matrixChartWidth * 100 + '%';
-          matrixChart.push(
-            <div className={styles.activity} style={{ position: 'absolute', top: top, left: left, width: width, height: '30px', backgroundColor: 'red' }} key={key}>
-            </div>
-          );
-          key++;
-          while (startTimeHr < stopTimeHr - 1) {
-            startTimeHr++;
-            top = 50 + startTimeHr * 30 + 'px';
-            left = '50px';
-            width = (matrixChartWidth - 50) / matrixChartWidth * 100 + '%';
-            matrixChart.push(
-              <div className={styles.activity} style={{ position: 'absolute', top: top, left: left, width: width, height: '30px', backgroundColor: 'red' }} key={key}>
-              </div>
-            );
-            key++;
-          };
-          top = 50 + (startTimeHr + 1) * 30 + 'px';
-          left = '50px';
-          width = (matrixChartWidth / 60 * stopTimeMin - 50) / (matrixChartWidth - 50) * 100 >= 0 ? (matrixChartWidth / 60 * stopTimeMin - 50) / (matrixChartWidth - 50) * 100 + '%' : '0%';
-          matrixChart.push(
-            <div className={styles.activity} style={{ position: 'absolute', top: top, left: left, width: width, height: '30px', backgroundColor: 'red' }} key={key}>
-            </div>
-          );
-          key++;
-        }
-      })
-    }
-
+function updateDailyTimeTrend(subjects) {
+  const data = [];
+  const labels = [];
+  const datumPoint = DateTime.fromSeconds(subjects.daily.datum_point);
+  subjects.daily.groupedTotal.map((val, i) => {
+    const date = datumPoint.plus({ days: i });
+    const label = `${date.month}/${date.day}`;
+    data.push(val);
+    labels.push(label);
   });
-  return matrixChart;
+  return {data, labels};
 };
 
-function updateHourlyHistogram(subjects, type, viewDate) {
-  const histogramData = new Array(24).fill(0);
-  if (type == 'Daily') {
-    subjects.map(subject => {
-      const datumPoint = new Date(subject.datum_point * 1000).setHours(0, 0, 0, 0);
-      const diff = (viewDate.getTime() - datumPoint) / (1000 * 60 * 60 * 24);
-      if (subject.daily.total[diff]) {
-        subject.daily.grouped[diff].map(([start, stop], i) => {
-          let startTime = new Date(start * 1000);
-          let startTimeHr = startTime.getHours();
-          //let startTimeMin = startTime.getMinutes();
-          let stopTime = new Date(stop * 1000);
-          let stopTimeHr = stopTime.getHours();
-          //let stopTimeMin = stopTime.getMinutes();
-          if (startTimeHr == stopTimeHr) {
-            histogramData[startTimeHr] += stop - start;
-          } else {
-            histogramData[startTimeHr] += Math.floor((new Date(start * 1000).setMinutes(60) - startTime.getTime()) / 1000);
-            while (startTimeHr < stopTimeHr - 1) {
-              startTimeHr++;
-              histogramData[startTimeHr] += 3600;
-            }
-            histogramData[startTimeHr + 1] += stop - new Date(stop * 1000).setMinutes(0) / 1000;
-          }
-        });
-      }
-    });
-  } else if (type == 'Weekly') {
-    subjects.map(subject => {
-      const datumPoint = new Date(subject.datum_point * 1000);
-      const datumWeekStart = new Date(datumPoint.setDate(datumPoint.getDate() - datumPoint.getDay())).setHours(0, 0, 0, 0);
-      const viewWeekStart = new Date(new Date(viewDate).setDate(viewDate.getDate() - viewDate.getDay())).setHours(0, 0, 0, 0);
-      let diff = (viewWeekStart - datumWeekStart) / (1000 * 60 * 60 * 24);
-      for (let i = 0; i < 7; i++) {
-        if (subject.daily.total[diff]) {
-          subject.daily.grouped[diff].map(([start, stop]) => {
-            let startTime = new Date(start * 1000);
-            let startTimeHr = startTime.getHours();
-            //let startTimeMin = startTime.getMinutes();
-            let stopTime = new Date(stop * 1000);
-            let stopTimeHr = stopTime.getHours();
-            //let stopTimeMin = stopTime.getMinutes();
-            if (startTimeHr == stopTimeHr) {
-              histogramData[startTimeHr] += stop - start;
-            } else {
-              histogramData[startTimeHr] += Math.floor((new Date(start * 1000).setMinutes(60) - startTime.getTime()) / 1000);
-              while (startTimeHr < stopTimeHr - 1) {
-                startTimeHr++;
-                histogramData[startTimeHr] += 3600;
-              }
-              histogramData[startTimeHr + 1] += stop - new Date(stop * 1000).setMinutes(0) / 1000;
-            }
-          });
-        };
-        diff++;
-      }
-    });
-  } else {
-    subjects.map(subject => {
-      const datumPoint = new Date(subject.datum_point * 1000);
-      const datumWeekStart = new Date(datumPoint.setDate(datumPoint.getDate() - datumPoint.getDay())).setHours(0, 0, 0, 0);
-      const viewWeekStart = new Date(new Date(viewDate).setDate(viewDate.getDate() - viewDate.getDay())).setHours(0, 0, 0, 0);
-      let diff = (viewWeekStart - datumWeekStart) / (1000 * 60 * 60 * 24);
-      for (let i = 0; i < 7; i++) {
-        if (subject.daily.total[diff]) {
-          subject.daily.grouped[diff].map(([start, stop]) => {
-            let startTime = new Date(start * 1000);
-            let startTimeHr = startTime.getHours();
-            //let startTimeMin = startTime.getMinutes();
-            let stopTime = new Date(stop * 1000);
-            let stopTimeHr = stopTime.getHours();
-            //let stopTimeMin = stopTime.getMinutes();
-            if (startTimeHr == stopTimeHr) {
-              histogramData[startTimeHr] += stop - start;
-            } else {
-              histogramData[startTimeHr] += Math.floor((new Date(start * 1000).setMinutes(60) - startTime.getTime()) / 1000);
-              while (startTimeHr < stopTimeHr - 1) {
-                startTimeHr++;
-                histogramData[startTimeHr] += 3600;
-              }
-              histogramData[startTimeHr + 1] += stop - new Date(stop * 1000).setMinutes(0) / 1000;
-            }
-          });
-        };
-        diff++;
-      }
-    });
-  }
-  return histogramData;
+function updateWeeklyTimeTrend(subjects) {
+  const data = [];
+  const labels = [];
+  const datumPoint = DateTime.fromSeconds(subjects.daily.datum_point);
+  subjects.weekly.groupedTotal.map((val, i) => {
+    const date = datumPoint.plus({ days: i });
+    const label = `${date.month}/${date.day}`;
+    data.push(val);
+    labels.push(label);
+  });
+  return {data, labels};
 };
 
-function updateTimeTrend(subjects, type) {
+function updateTimeTrend(subjects, groupedTotal, mode) {
+  const data = [];
+  const labels = [];
+  const datumPoint = DateTime.fromSeconds(subjects.daily.datum_point);
+  groupedTotal.map((val, i) => {
+    const date = datumPoint.plus({ [mode]: i });
+    const label = `${date.month}/${date.day}`;
+    data.push(val);
+    labels.push(label);
+  });
+  return {data, labels};
+};
+
+
+function updateTimeTrendd(subjects, type) {
   const data = [];
   const labels = [];
   if (subjects.daily) {
@@ -280,47 +171,6 @@ function updateStackedAreaGraph(subjects, type) {
   return {labels, data};
 };
 
-function sortRanking(ranking, userInfo) {
-  const myRanking = {
-    daily: [],
-    weekly: [],
-    monthly: []
-  };
-  const userId = userInfo.user_id;
-  const dailyRanking = ranking.dailyRanking;
-  const weeklyRanking = ranking.weeklyRanking;
-  const monthlyRanking = ranking.monthlyRanking;
-
-  dailyRanking.map(dayRanking => {
-    dayRanking.map((user, rank) => {
-      if (user.user_id == userId) {
-        myRanking.daily.push(rank + 1);
-      }
-    })
-  })
-
-  weeklyRanking.map(weekRanking => {
-    weekRanking.map((user, rank) => {
-      if (user.user_id == userId) {
-        myRanking.weekly.push(rank + 1);
-      }
-    })
-  })
-
-  monthlyRanking.map(monthRanking => {
-    monthRanking.map((user, rank) => {
-      if (user.user_id == userId) {
-        myRanking.monthly.push(rank + 1);
-      }
-    })
-  })
-
-  myRanking.daily.reverse();
-  myRanking.weekly.reverse();
-  myRanking.monthly.reverse();
-  return myRanking;
-}
-
 function updateRankingTrend(rankings) {
   const data = [];
   const labels = [];
@@ -340,4 +190,4 @@ function updateRankingTrend(rankings) {
   return [labels, data];
 }
 
-export { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, sortRanking, updateRankingTrend, updateStackedAreaGraph };
+export { updateTimeUsagePie, updateTimeTrend, updateRankingTrend, updateStackedAreaGraph };

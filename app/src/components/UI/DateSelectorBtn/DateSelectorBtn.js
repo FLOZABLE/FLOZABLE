@@ -16,35 +16,26 @@ function DateSelectorBtn({
 
   useEffect(() => {
     const viewDateTime = DateTime.fromJSDate(viewDate);
-    let startMillis;
-    let stopMillis;
+    const now = DateTime.now();
+
     if (viewMode === 'Monthly') {
-      startMillis = viewDateTime.startOf('month').toMillis();
-      stopMillis = viewDateTime.endOf('month').toMillis();
-      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
+      if (viewDateTime.hasSame(now, 'month') && viewDateTime.hasSame(now, 'year')) {
         setViewString('This Month');
-      }
-      else {
+      } else {
         setViewString(viewDateTime.monthLong);
-      }
+      };
     } else if (viewMode === 'Weekly') {
-      startMillis = viewDateTime.startOf('week').toMillis();
-      stopMillis = viewDateTime.endOf('week').toMillis();
-      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
+      if (viewDateTime.hasSame(now, 'week') && viewDateTime.hasSame(now, 'year')) {
         setViewString('This Week');
-      }
-      else {
+      } else {
         setViewString(viewDateTime.startOf('week').month + "/" + viewDateTime.startOf('week').day + " ~ " + viewDateTime.endOf('week').month + "/" + viewDateTime.endOf('week').day);
-      }
+      };
     } else {
-      startMillis = viewDateTime.startOf('day').toMillis();
-      stopMillis = viewDateTime.endOf('day').toMillis();
-      if (startMillis < new Date().getTime() && new Date().getTime() < stopMillis) {
+      if (viewDateTime.hasSame(now, 'day')) {
         setViewString('Today');
-      }
-      else {
+      } else {
         setViewString(viewDateTime.month + "/" + viewDateTime.day);
-      }
+      };
     };
   }, [startDate, viewDate, viewMode]);
 

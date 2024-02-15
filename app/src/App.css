@@ -4,11 +4,12 @@
 :root {
   --pink: #ff9494;
   --purple: #6f6af8;
-  --gray: #f1f3f5;
-  --blue0:   #57b9ff;
-  --blue1: #0085FF;
-  --blue2: #1c41fd;
-  --font-gray: #545454;
+  --gray: #f9f9f9;
+  --blue0: #e6f4fe;
+  --blue1:   #57b9ff;
+  --blue2: #0085FF;
+  --blue3: #1c41fd;
+  --font-gray: #6A6A6A;
   --opacity-black: #000000c3
 }
 
