@@ -24,25 +24,29 @@ Router.get("/youtube-playlists", async (req, res) => {
                     }
                 }).then((response) => response.json())
                     .then(async (data) => {
-                        return await Promise.all(data.items.map(async (playlist) => {
-                            return fetch(`https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=${playlist.id}&key=${YOUTUBE_API_KEY}`, {
-                                headers: {
-                                    'Authorization': `Bearer ${access_token}`,
-                                    'Accept': 'application/json'
-                                }
-                            }).then((response) => response.json())
-                                .then((data) => {
-                                    let videoResults = [];
-                                    if (data.items) {
-                                        data.items.map((video) => {
-                                            videoResults.push(video.snippet.resourceId.videoId);
-                                        })
+                        try {
+                            return await Promise.all(data.items.map(async (playlist) => {
+                                return fetch(`https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=${playlist.id}&key=${YOUTUBE_API_KEY}`, {
+                                    headers: {
+                                        'Authorization': `Bearer ${access_token}`,
+                                        'Accept': 'application/json'
                                     }
-                                    return [playlist.snippet.title, ...videoResults];
-                                });
-                        }));
+                                }).then((response) => response.json())
+                                    .then((data) => {
+                                        let videoResults = [];
+                                        if (data.items) {
+                                            data.items.map((video) => {
+                                                videoResults.push(video.snippet.resourceId.videoId);
+                                            })
+                                        }
+                                        return [playlist.snippet.title, ...videoResults];
+                                    });
+                            }));
+                        } catch (err) {
+                            return {success: false, reason: "An error occured"}
+                        }
                     }).then((result) => {
-                        res.send({ success: true, data: result });
+                        res.send(result);
                     })
 
             } catch (err) {

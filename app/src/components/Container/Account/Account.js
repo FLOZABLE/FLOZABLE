@@ -21,6 +21,7 @@ import SpotifyAuthBtn from "../../UI/SpotifyAuthBtn/SpotifyAuthBtn";
 import { SpotifyLogo } from "../../../utils/svgs";
 import YoutubeAPI from "../../UI/YoutubeAPI";
 import SubjectsManager from "../../UI/SubjectsManager/SubjectsManager";
+import YouTubeLoginBtn from "../../UI/YouTubeLoginBtn/YouTubeLoginBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;
@@ -398,7 +399,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                 Manage your subjects for study
               </p>
               <div className={styles.content}>
-                <SubjectsManager subjects = {subjects} setSubjects={setSubjects} setResponse={setResponse}/>
+                <SubjectsManager subjects={subjects} setSubjects={setSubjects} setResponse={setResponse} />
               </div>
             </div>
           </div>
@@ -530,10 +531,23 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                   >
                     <GoogleLoginBtn />
                   </GoogleOAuthProvider>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.content}>
+              <div className={styles.layer}>
+                <div className={styles.iconWrapper}>
+                  <SpotifyLogo />
+                </div>
+                <div className={styles.explanation}>
+                  You haven't connected your YouTube Account yet or you aren't authorized. Please authorize our application to access your YouTube Playlists here.
+                </div>
+                <div className={styles.authBtn}>
                   <GoogleOAuthProvider
                     clientId={googleClientId}
                   >
-                    <YoutubeAPI />
+                    <YouTubeLoginBtn />
                   </GoogleOAuthProvider>
                 </div>
               </div>
