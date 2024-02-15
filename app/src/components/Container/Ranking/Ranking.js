@@ -65,23 +65,6 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     setStartDate(startTime);
     setEndDate(stopTime);
 
-
-    fetch(`${serverOrigin}/ranking/sort`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ startTime, stopTime })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          /* setRanking(data.data);
-          setResultCount(data.data.length); */
-        }
-      })
-      .catch((error) => console.error(error));
-
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;;
 
     fetch(`${serverOrigin}/ranking/sort?mode=${viewer}&date=${viewTime.toISODate()}&timezone=${timezone}`, {

@@ -6,6 +6,7 @@ const pool = require('../model/pool');
 const { sendEmail } = require('../email');
 const { validateEmail, validateStrictString } = require('../validate');
 const { DateTime } = require('luxon');
+const { mainIo } = require('../socket');
 const Router = express.Router();
 
 
@@ -36,11 +37,10 @@ Router.post('/request', async (req, res) => {
 
       const id = generateRandomId(5);
       const date = Math.floor(new Date().getTime() / (1000 * 60));
-      const io = req.app.get('socketio');
       const notificationUser = await userCache(userId);
       const socketNotif = { i: id, t: 0, f: notificationUser, d: date };
       const notification = { i: id, t: 0, f: userId, d: date };
-      io.to(targetId).emit('notification', socketNotif);
+      mainIo.to(targetId).emit('notification', socketNotif);
       //to target user
       redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
 
@@ -48,7 +48,7 @@ Router.post('/request', async (req, res) => {
       const ongoing = { i: id, t: -2, f: targetId };
       redisClient.sAdd(`user:${userId}:notifications`, JSON.stringify(ongoing));
       ongoing.f = await userCache(targetId);
-      io.to(userId).emit('notification', ongoing);
+      mainIo.to(userId).emit('notification', ongoing);
       res.send({ success: true, msg: `Sent friend request to ${name}!` });
     } catch (error) {
       console.log(error)
@@ -146,11 +146,10 @@ Router.post('/request-reply', async (req, res) => {
         res.send({ success: true, msg: `You and ${targetInfo.name} are now friends!` });
         const id = generateRandomId(5);
         const date = Math.floor(new Date().getTime() / (1000 * 60));
-        const io = req.app.get('socketio');
         const notification = { i: id, t: 1, f: userId, d: date };
         const notificationUser = await userCache(userId);
         const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
-        io.to(targetId).emit('notification', socketNotif);
+        mainIo.to(targetId).emit('notification', socketNotif);
         redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
 
         //update cached value of user
@@ -421,11 +420,10 @@ Router.get('/add', async (req, res) => {
       //friend accepted notification
       const nodificationId = generateRandomId(5);
       const date = Math.floor(new Date().getTime() / (1000 * 60));
-      const io = req.app.get('socketio');
       const notification = { i: nodificationId, t: 1, f: userId, d: date };
       const notificationUser = await userCache(userId);
       const socketNotif = { i: nodificationId, t: 1, f: notificationUser, d: date };
-      io.to(targetId).emit('notification', socketNotif);
+      mainIo.to(targetId).emit('notification', socketNotif);
       redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
 
       //update cached value of user

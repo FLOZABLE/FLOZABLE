@@ -3,7 +3,7 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const notificationService = require('../services/notification');
-const { io } = require("../socket");
+const { mainIo } = require("../socket");
 const { generateRandomId, isValidJSON, autoSignin } = require("../tool");
 const { subjectsCache, subjectsTimelineCache } = require("../services/redisLoader");
 const { validateString, validateHEX, validateStrictString, validateArray } = require("../validate");
@@ -185,8 +185,7 @@ Router.post("/start", async (req, res) => {
                 console.log(`Socket ID: ${socket.id}, User ID: ${socket.userId}`);
               }
             }) */
-            const io = req.app.get('socketio')
-            io.to(groups).emit('reset', userId, groups);
+            mainIo.to(groups).emit('reset', userId, groups);
           }
         };
       };
@@ -210,7 +209,7 @@ Router.post("/stop", async (req, res) => {
       redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${stop}]`);
       redisClient.hSet(`user:${userId}`, `ActiveSubject`, '0');
       if (groups.length) {
-        io.to(groups).emit('stopStudying', userId, groups);
+        mainIo.to(groups).emit('stopStudying', userId, groups);
       };
       const timerInfo = await redisClient.hGet(`user:${userId}`, 'timerInfo');
       if (timerInfo) {

@@ -12,12 +12,11 @@ const { DateTime, Duration } = require('luxon');
 const sharp = require("sharp");
 const axios = require('axios');
 const cron = require('node-cron');
-const { connection } = require('../socket');
+const { mainIo } = require('../socket');
 const schedule = require('node-schedule');
 const redisClient = require('../model/redis');
 const timeZones = require('../data/timeZones.json');
 const csv = require("csvtojson");
-const socketio = require('../socket');
 const { activeSubjectCache, subjectsCache, timerCache, userCache, usersCache, NotificationCache, dmRoomMembersCache, dmRoomsCache } = require('../services/redisLoader');
 
 /**create bots */
@@ -317,7 +316,7 @@ async function sendFriendRequest(userId, userInfo, targetId, targetInfo) {
     const notificationUser = await userCache(userId);
     const socketNotif = { i: id, t: 0, f: notificationUser, d: date };
     const notification = { i: id, t: 0, f: userId, d: date };
-    connection.to(targetId).emit('notification', socketNotif);
+    mainIo.to(targetId).emit('notification', socketNotif);
     //to target user
     redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
 
@@ -371,11 +370,10 @@ async function botAcceptFriendRequest(botId, request) {
 
     const id = generateRandomId(5);
     const date = Math.floor(new Date().getTime() / (1000 * 60));
-    const io = socketio.connection;
     const notification = { i: id, t: 1, f: botId, d: date };
     const notificationUser = await userCache(botId);
     const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
-    io.to(request.f.user_id).emit('notification', socketNotif);
+    mainIo.to(request.f.user_id).emit('notification', socketNotif);
     redisClient.sAdd(`user:${request.f.user_id}:notifications`, JSON.stringify(notification));
 
     let { friends } = notificationUser; //this is user id of recipient (bot)
@@ -483,10 +481,10 @@ async function startBot(userId) {
     friends = friends === "" ? [] : friends.split(",");
     groups = groups === "" ? [] : groups.split(",");
     if (groups.length) {
-      connection.to(groups).emit(`studying:${userId}`, subject);
+      mainIo.to(groups).emit(`studying:${userId}`, subject);
     };
     if (friends.length) {
-      connection.to(friends).emit(`studying:${userId}`, subject);
+      mainIo.to(friends).emit(`studying:${userId}`, subject);
     };
     const now = Math.floor(new Date().getTime() / 1000);
     const { timeline_sum, datum_point, id } = subject;
@@ -516,10 +514,10 @@ async function stopBot(userId) {
   groups = groups === "" ? [] : groups.split(",");
 
   if (groups.length) {
-    connection.to(groups).emit(`stopStudying:${userId}`);
+    mainIo.to(groups).emit(`stopStudying:${userId}`);
   };
   if (friends.length) {
-    connection.to(friends).emit(`studying:${userId}`, subject);
+    mainIo.to(friends).emit(`studying:${userId}`, subject);
   };
 
   const { datum_point, timeline_sum, id } = subject;

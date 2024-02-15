@@ -55,7 +55,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
 
           response.data.map((ranking) => {
             if (groupMembers.includes(ranking.user_id)) {
-              groupTotalTime += parseInt(ranking.total);
+              groupTotalTime += parseInt(ranking.t);
             }
           });
 
