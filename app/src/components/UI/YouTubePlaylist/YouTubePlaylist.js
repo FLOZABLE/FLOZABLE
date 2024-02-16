@@ -20,11 +20,11 @@ function YouTubePlaylist({ }) {
 
   const submitURL = () => {
     const searchParams = new URL(link);
-    if (searchParams.searchParams.get('list')){
+    if (searchParams.searchParams.get('list')) {
       setPlayLink(`https://www.youtube.com/embed/videoseries?list=${searchParams.searchParams.get('list')}&autoplay=1`);
       setPlayingFromLink(true);
     }
-    else if (searchParams.searchParams.get('v')){
+    else if (searchParams.searchParams.get('v')) {
       setPlayLink(`https://www.youtube.com/embed/${searchParams.searchParams.get('v')}?autoplay=1`);
       setPlayingFromLink(true);
     }
@@ -64,12 +64,17 @@ function YouTubePlaylist({ }) {
           <YouTubeLoginBtn />
         </GoogleOAuthProvider>
         {
+          youtubeLoggedIn ?
+            <DropDownButton
+              options={youtubePlaylists}
+              setValue={setYoutubePlaylist}
+            />
+            :
+            <div></div>
+        }
+        {
           youtubeLoggedIn && !playingFromLink ?
             <div>
-              <DropDownButton
-                options={youtubePlaylists}
-                setValue={setYoutubePlaylist}
-              />
               {
                 youtubePlaylist.length ?
                   <iframe width="720" height="405" src={`https://www.youtube.com/embed/VIDEO_ID?playlist=${youtubePlaylist}`} allowFullScreen></iframe>
@@ -79,7 +84,12 @@ function YouTubePlaylist({ }) {
             </div>
             :
             <div>
-              <iframe width="720" height="405" src={playLink} allowFullScreen></iframe>
+              {
+                playingFromLink ?
+                  <iframe width="720" height="405" src={playLink} allowFullScreen></iframe>
+                  :
+                  <span></span>
+              }
             </div>
         }
         <CustomInput
