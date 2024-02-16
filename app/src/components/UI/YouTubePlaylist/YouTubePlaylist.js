@@ -15,9 +15,19 @@ function YouTubePlaylist({ }) {
   const [youtubePlaylists, setYoutubePlaylists] = useState([]);
   const [youtubeLoggedIn, setYoutubeLoggedIn] = useState(false);
   const [link, setLink] = useState("");
+  const [playingFromLink, setPlayingFromLink] = useState(false);
+  const [playLink, setPlayLink] = useState("");
 
   const submitURL = () => {
-
+    const searchParams = new URL(link);
+    if (searchParams.searchParams.get('list')){
+      setPlayLink(`https://www.youtube.com/embed/videoseries?list=${searchParams.searchParams.get('list')}&autoplay=1`);
+      setPlayingFromLink(true);
+    }
+    else if (searchParams.searchParams.get('v')){
+      setPlayLink(`https://www.youtube.com/embed/${searchParams.searchParams.get('v')}?autoplay=1`);
+      setPlayingFromLink(true);
+    }
   };
 
   const handleLinkInput = (e) => {
@@ -43,6 +53,10 @@ function YouTubePlaylist({ }) {
       })
   }, []);
 
+  useEffect(() => {
+    setPlayingFromLink(false);
+  }, [youtubePlaylist]);
+
   return (
     <div className={styles.PlaylistModal}>
       <div className={styles.authGuide}>
@@ -50,7 +64,7 @@ function YouTubePlaylist({ }) {
           <YouTubeLoginBtn />
         </GoogleOAuthProvider>
         {
-          youtubeLoggedIn ?
+          youtubeLoggedIn && !playingFromLink ?
             <div>
               <DropDownButton
                 options={youtubePlaylists}
@@ -64,7 +78,9 @@ function YouTubePlaylist({ }) {
               }
             </div>
             :
-            <div></div>
+            <div>
+              <iframe width="720" height="405" src={playLink} allowFullScreen></iframe>
+            </div>
         }
         <CustomInput
           input={link}
