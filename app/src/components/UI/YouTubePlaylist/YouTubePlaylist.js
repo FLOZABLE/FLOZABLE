@@ -17,7 +17,7 @@ function YouTubePlaylist({ }) {
   const [link, setLink] = useState("");
 
   const submitURL = () => {
-    
+
   };
 
   const handleLinkInput = (e) => {
@@ -49,7 +49,23 @@ function YouTubePlaylist({ }) {
         <GoogleOAuthProvider clientId={googleClientId}>
           <YouTubeLoginBtn />
         </GoogleOAuthProvider>
-
+        {
+          youtubeLoggedIn ?
+            <div>
+              <DropDownButton
+                options={youtubePlaylists}
+                setValue={setYoutubePlaylist}
+              />
+              {
+                youtubePlaylist.length ?
+                  <iframe width="720" height="405" src={`https://www.youtube.com/embed/VIDEO_ID?playlist=${youtubePlaylist}`} allowFullScreen></iframe>
+                  :
+                  <div></div>
+              }
+            </div>
+            :
+            <div></div>
+        }
         <CustomInput
           input={link}
           handleInput={handleLinkInput}
@@ -58,19 +74,6 @@ function YouTubePlaylist({ }) {
           placeHolder={"or Paste a playlist Link!"}
           type={"text"}
         />
-
-        {
-          youtubeLoggedIn ?
-            <div>
-              <DropDownButton
-                options={youtubePlaylists}
-                setValue={setYoutubePlaylist}
-              />
-              <iframe width="720" height="405" src={`https://www.youtube.com/embed/VIDEO_ID?playlist=${youtubePlaylist}`} allowFullScreen></iframe>
-            </div>
-            :
-            <div></div>
-        }
       </div>
     </div>
   )

@@ -78,6 +78,11 @@ function SpotifyPlaylist({ userInfo, setResponse }) {
             <div></div>
         }
       </div>
+      <div className={styles.spotifyPlayerWrapper}>
+        <SpotifyPlayer
+          link={playlist}
+        />
+      </div>
       <CustomInput
         input={link}
         handleInput={handleLinkInput}
@@ -86,11 +91,6 @@ function SpotifyPlaylist({ userInfo, setResponse }) {
         placeHolder={"or Paste a playlist Link!"}
         type={"text"}
       />
-      <div className={styles.spotifyPlayerWrapper}>
-        <SpotifyPlayer
-          link={playlist}
-        />
-      </div>
     </div>
   )
 };

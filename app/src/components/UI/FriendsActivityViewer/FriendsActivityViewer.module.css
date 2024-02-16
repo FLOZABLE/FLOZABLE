@@ -2,6 +2,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  max-height: 50vh;
+  overflow-y: scroll;
 }
 
 .FriendsActivityViewer .friend {

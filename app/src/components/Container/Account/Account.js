@@ -19,7 +19,6 @@ import GoogleLoginBtn from "../../UI/GoogleLoginBtn/GoogleLoginBtn";
 import { useSearchParams } from "react-router-dom";
 import SpotifyAuthBtn from "../../UI/SpotifyAuthBtn/SpotifyAuthBtn";
 import { SpotifyLogo } from "../../../utils/svgs";
-import YoutubeAPI from "../../UI/YoutubeAPI";
 import SubjectsManager from "../../UI/SubjectsManager/SubjectsManager";
 import YouTubeLoginBtn from "../../UI/YouTubeLoginBtn/YouTubeLoginBtn";
 
