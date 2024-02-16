@@ -8,7 +8,7 @@ import {
   faUser,
   faBook,
 } from "@fortawesome/free-solid-svg-icons";
-import { Chrome, GoogleCalendar } from "../../../utils/svgs";
+import { Chrome, GoogleCalendar, YouTubeIcon } from "../../../utils/svgs";
 import LineInput from "../../UI/LineInput/LineInput";
 import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 import LabelMovingInput from "../../UI/LabelMovingInput/LabelMovingInput";
@@ -537,7 +537,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
             <div className={styles.content}>
               <div className={styles.layer}>
                 <div className={styles.iconWrapper}>
-                  <SpotifyLogo />
+                  <YouTubeIcon></YouTubeIcon>
                 </div>
                 <div className={styles.explanation}>
                   You haven't connected your YouTube Account yet or you aren't authorized. Please authorize our application to access your YouTube Playlists here.
