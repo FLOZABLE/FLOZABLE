@@ -19,11 +19,12 @@
   margin-top: 30px;
   display: flex;
   border-radius: 30px;
-  min-height: 500px;
+  height: 600px;
 }
 
 .StatsContainer .bigBox .chartWrapper {
   width: 100%;
+  height: 100%;
 }
 
 .StatsContainer .bigBox > div {
@@ -33,8 +34,9 @@
   justify-content: space-evenly;
 }
 
-.StatsContainer .bigBox:nth-child(1) {
+.StatsContainer .bigBox {
   background-color: var(--blue0);
+  padding: 30px 50px;
 }
 
 .StatsContainer .bigBox .overflow {
