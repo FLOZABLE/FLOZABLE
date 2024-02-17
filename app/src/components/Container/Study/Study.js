@@ -229,6 +229,8 @@ function Study(props) {
             setIsChatModal={setIsChatModal}
             groupsViewerRef={groupsViewerRef}
             isHeadphone={isHeadphone}
+            setIsCam={setIsCam}
+            setIsMic={setIsMic}
           />
         </div>
         <div className={styles.PlanTimelineBarWrapper}>

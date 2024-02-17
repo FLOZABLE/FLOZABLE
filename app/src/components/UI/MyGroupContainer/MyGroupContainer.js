@@ -16,7 +16,6 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
-  const [isLeader, setIsLeader] = useState(false);
   const [groupTotal, setGroupTotal] = useState(0);
 
   useEffect(() => {
@@ -29,13 +28,6 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
     setIsGroupRankingModal(false);
   }, [group, isFocus]);
 
-  useEffect(() => {
-    if (!userInfo || !group) return;
-    const { leader } = group;
-    if (leader === userInfo.user_id) {
-      setIsLeader(true);
-    };
-  }, [userInfo, group]);
 
   useEffect(() => {
     if (group.length <= 0) return;
