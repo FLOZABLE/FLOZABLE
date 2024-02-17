@@ -15,7 +15,8 @@ import {
 
 import CircularCheckBox from "../CircularCheckBox/CircularCheckBox";
 import { DateTime } from "luxon";
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadialBar, ResponsiveContainer, RadialBarChart } from "recharts";
+import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadialBar, ResponsiveContainer } from "recharts";
+import RadialBarChart from "../RadialBarChart";
 import { RadarChart } from "recharts";
 import { warmColorsList } from "../../../constant";
 import { Cell } from "recharts";
@@ -249,71 +250,32 @@ function PlanTimeline({
     );
   }, [plans, viewMode, viewDate, subjects]);
 
-  const data = [
-    {
-      name: '18-24',
-      uv: 31.47,
-      pv: 2400,
-      fill: '#8884d8',
-    },
-    {
-      name: '25-29',
-      uv: 26.69,
-      pv: 4567,
-      fill: '#83a6ed',
-    },
-    {
-      name: '30-34',
-      uv: 15.69,
-      pv: 1398,
-      fill: '#8dd1e1',
-    },
-    {
-      name: '35-39',
-      uv: 8.22,
-      pv: 9800,
-      fill: '#82ca9d',
-    },
-    {
-      name: '40-49',
-      uv: 8.63,
-      pv: 3908,
-      fill: '#a4de6c',
-    },
-    {
-      name: '50+',
-      uv: 2.63,
-      pv: 4800,
-      fill: '#d0ed57',
-    },
-    {
-      name: 'unknow',
-      uv: 6.67,
-      pv: 4800,
-      fill: '#ffc658',
-    },
-  ];
   return (
     <div
       className={`${isPlan ? styles.noPlan : ""} ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ""
         }`}
     >
-      {/* <RadialBarChart series={planSeries} selected={selected} setSelected={setSelected} /> */}
+
       <div className={styles.chartContainer}>
-      <ResponsiveContainer width="100%" height="100%">
-        <RadialBarChart cx="50%" cy="50%" innerRadius="10%" outerRadius="80%" barSize={10} data={planSeries}>
-          <RadialBar
-            label={{ position: 'insideStart', fill: '#fff' }}
-            background
-            clockWise
-            dataKey="val"
-            isAnimationActive={true}
-            animationDuration={3000}
-          >
-          </RadialBar>
-        </RadialBarChart>
-      </ResponsiveContainer>
+        <RadialBarChart series={planSeries} selected={selected} setSelected={setSelected} />
+        { /*
+          <ResponsiveContainer width="100%" height="100%">
+            <RadialBarChart cx="50%" cy="50%" innerRadius="10%" outerRadius="80%" barSize={10} data={planSeries}>
+              <RadialBar
+                label={{ position: 'insideStart', fill: '#fff' }}
+                background
+                clockWise
+                dataKey="val"
+                isAnimationActive={true}
+                animationDuration={3000}
+              >
+              </RadialBar>
+            </RadialBarChart>
+          </ResponsiveContainer>
+
+     */ }
       </div>
+
       <h4
         onClick={() => {
           setPlanModal((prev) => ({ ...prev, opened: true }));
@@ -321,7 +283,7 @@ function PlanTimeline({
       >
         Add a New Plan
       </h4>
-      <ul className={`${styles.plans} hiddenScroll`} style={{maxHeight: maxHeight}}>
+      <ul className={`${styles.plans} hiddenScroll`} style={{ maxHeight: maxHeight }}>
         {isPlan ? (
           plansEl
         ) : (

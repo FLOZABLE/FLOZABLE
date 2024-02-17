@@ -8,6 +8,7 @@ const StyleWrapper = styled.div`
 .wrapper {
   position: relative;
   font-size: 13px;
+  border: 1px solid black;
 }
 
 .unselected :not(path[selected="true"]) {
