@@ -57,8 +57,9 @@ Router.get("/", async (req, res) => {
             plans = plans.concat(calendarEvents);
           };
         } catch (err) {
-          if (err.response && err.response && err.response.data && err.response.data.error === "invalid_grant") {
+          if (err.response && err.response && err.response.data && (err.response.data.error === "invalid_grant" || err.response.data.error_description === 'Token has been expired or revoked.')) {
             connection.query(`UPDATE users set google_refresh_token = NULL WHERE user_id = ?`, [userId]);
+            redisClient.del(`user:${userId}:googleAccessToken`);
           };
         };
       };

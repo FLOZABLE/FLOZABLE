@@ -66,43 +66,15 @@ function Stats({ subjects, userInfo }) {
 
   const [statsViewer, setStatsViewer] = useState('Daily');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
-  const [calendarLabel, setCalendarLabel] = useState('Today');
-  const [dailyTimeline, setDailyTimeline] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalStudy, setTotalStudy] = useState("");
   const [focus, setFocus] = useState("");
   const [ranking, setRanking] = useState(0);
-  const [rankings, setRankings] = useState(0);
   const [websites, setWebsites] = useState([]);
   const [viewOption, setViewOption] = useState(0);
   const [websitesUsage, setWebsitesUsage] = useState(0);
   const [websitesVisit, setWebsitesVisit] = useState(0);
-
-  //time usage pie chart
-  const [timeUsagePie, setTimeUsagePie] = useState({
-    labels: [], datasets: [
-
-    ]
-  });
-  //hourly histogram
-  const [hourlyHistogram, setHourlyHistogram] = useState({
-    data: [],
-  });
-
-  //time trend
-  const [timeTrend, setTimeTrend] = useState({
-    labels: [],
-    datasets: []
-  });
-
-  //rankings trend
-  const [rankingTrend, setRankingTrend] = useState({
-    labels: [],
-    datasets: []
-  })
-
-  const timelineRef = useRef(null);
 
   const updateViewer = async (item) => {
     setStatsViewer(item);
@@ -122,12 +94,7 @@ function Stats({ subjects, userInfo }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          //setRankings(data.rankings);
           const rankingTrend = updateRankingTrend(data.rankings, statsViewer);
-          setRankingTrend({
-            labels: rankingTrend[0],
-            datasets: rankingTrend[1],
-          });
         }
       })
       .catch((error) => console.error(error));
