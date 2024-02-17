@@ -9,6 +9,7 @@
   align-items: center;
   flex-direction: column;
   border-right: 1px solid #a1a1a1;
+  z-index: 3;
 }
 
 .Sidebar .logo {
