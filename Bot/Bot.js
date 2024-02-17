@@ -20,7 +20,7 @@ const csv = require("csvtojson");
 const { activeSubjectCache, subjectsCache, timerCache, userCache, usersCache, NotificationCache, dmRoomMembersCache, dmRoomsCache } = require('../services/redisLoader');
 
 /**create bots */
-async function createBots(startIndex, length) {
+async function createBots(length) {
   const connection = pool.promise();
 
   const chosenBotIds = {};
@@ -29,7 +29,7 @@ async function createBots(startIndex, length) {
     chosenBotIds[obj.user_id] = true; //make sure we don't choose the same id when generating bots
   })
 
-  for (let Z = startIndex; Z < length; Z++) {
+  for (let Z = 0; Z < length; Z++) {
     const { name, userId, timeZone, gender, profileImage } = combinedNameData[randomIntInRange(0, combinedNameData.length - 1)];
     if (chosenBotIds.hasOwnProperty(userId)) {
       // since we're choosing randomly we have to make sure there's no repeats
@@ -40,7 +40,6 @@ async function createBots(startIndex, length) {
     else {
       chosenBotIds[userId] = true;
     }
-
 
     if (name.toLowerCase().includes("chess")) {
       Z--;
@@ -80,15 +79,15 @@ async function createBots(startIndex, length) {
 
     const maxSubjects = randomIntInRange(1, 5);
     const possibleSubjects = [
-      ["Math","Math","Math","Math","Calculus","Trig"],
-      ["Science","Science","Biology","Environment","Biology","Anatomy","Biology","Biology"],
-      ["Science","Science","Chemistry","Chemistry","Chemistry","Biochemistry"],
-      ["Physics","Physics","Physics","Physics 1","Physics 2","Physics C"],
-      ["French","French","Chinese","Chinese","Spanish","Spanish","Spanish","Spanish","Latin","Latin"],
-      ["English","English","English","ELA","ELA","Lit","Literature","Literature","Language Arts"],
-      ["History","History","APUSH","US History","U.S. History","Social Studies","Social Studies"],
-      ["Reading","Piano","Cooking","Art","Art","Reading","Piano","Piano","PE","Coding"],
-      ["Astronomy","Computer Science","Essays","Comp Sci","Engineering","DE","College Apps","Shakespeare","Essays","Computer Science","Music Theory","Music Theory","Art"]
+      ["Math", "Math", "Math", "Math", "Calculus", "Trig"],
+      ["Science", "Science", "Biology", "Environment", "Biology", "Anatomy", "Biology", "Biology"],
+      ["Science", "Science", "Chemistry", "Chemistry", "Chemistry", "Biochemistry"],
+      ["Physics", "Physics", "Physics", "Physics 1", "Physics 2", "Physics C"],
+      ["French", "French", "Chinese", "Chinese", "Spanish", "Spanish", "Spanish", "Spanish", "Latin", "Latin"],
+      ["English", "English", "English", "ELA", "ELA", "Lit", "Literature", "Literature", "Language Arts"],
+      ["History", "History", "APUSH", "US History", "U.S. History", "Social Studies", "Social Studies"],
+      ["Reading", "Piano", "Cooking", "Art", "Art", "Reading", "Piano", "Piano", "PE", "Coding"],
+      ["Astronomy", "Computer Science", "Essays", "Comp Sci", "Engineering", "DE", "College Apps", "Shakespeare", "Essays", "Computer Science", "Music Theory", "Music Theory", "Art"]
     ]
 
     for (let subjectNum = 0; subjectNum < maxSubjects; subjectNum++) {
@@ -96,18 +95,21 @@ async function createBots(startIndex, length) {
       const datum_point = unixTimestamp;
 
       const subjectTimeline = [];
-      
-      let prevTime = unixTimestamp
-      let currTime = unixTimestamp;
+
       let timelineSum = 0;
-      const timeNow = new Date().getTime() / 1000;
-      const possibleDurations = [0, 0, 0, 0, 0, 0, 60, 120, 180, 180, 180, 240, 240, 360, 1200, 1500, 3600, 4200, 5400, 8000];
-      while (currTime < timeNow - 86400) { //end at yesterday
-        const duration = Math.floor((1 + Math.random() - 0.5) * possibleDurations[randomIntInRange(0, possibleDurations.length - 1)]);
-        subjectTimeline.push([currTime - prevTime, duration]);
-        timelineSum += duration + currTime - prevTime;
-        prevTime = currTime + duration;
-        currTime += 86400; //currTime will always be the start of the day
+
+      if (subjectNum === 0) {
+        let prevTime = unixTimestamp
+        let currTime = unixTimestamp;
+        const timeNow = new Date().getTime() / 1000;
+        const possibleDurations = [0, 0, 0, 60, 120, 180, 240, 360, 1200, 1500, 1800, 2400];
+        while (currTime < timeNow - 86400) { //end at yesterday
+          const duration = Math.floor((1 + Math.random() - 0.5) * possibleDurations[randomIntInRange(0, possibleDurations.length - 1)]);
+          subjectTimeline.push([currTime - prevTime, duration]);
+          timelineSum += duration + currTime - prevTime;
+          prevTime = currTime + duration;
+          currTime += 3600; //currTime will always be the start of the hour
+        }
       }
 
       let stringTimeline = JSON.stringify(subjectTimeline);
@@ -804,133 +806,114 @@ async function randomFriend(min, max) {
 
 async function createBotRankings() {
 
+  console.log("CREATE BOT RANKINGS IS NOT FINISHED");
+  //return;
+
   const connection = pool.promise();
   const [botIds] = await connection.query(`SELECT user_id FROM users WHERE type = -1`);
   const botUsers = [];
 
   await Promise.all(botIds.map(async (bot) => {
     const thisBotId = bot.user_id;
-    const [[othersTimeline]] = await connection.query(`SELECT timeline, datum_point FROM subjects WHERE user_id = ?`, [thisBotId]);
+    let [othersTimeline] = await connection.query(`SELECT timeline, datum_point FROM subjects WHERE user_id = ?`, [thisBotId]);
+    othersTimeline = othersTimeline.filter((tl) => tl.timeline.length > 0)[0]; //only the first subject will have a timeline
     botUsers.push({ id: thisBotId, timeline: JSON.parse("[" + othersTimeline.timeline + "]"), datum_point: parseInt(othersTimeline.datum_point) });
   }));
 
   // we will use this to create the ranking tables
-  const botDailyRanking = [];
-  const botWeeklyRanking = [];
-  const botMonthlyRanking = [];
+  let botDailyRanking = {};
+  let botWeeklyRanking = {};
+  let botMonthlyRanking = {};
 
   const LUXON_NOW = DateTime.fromJSDate(new Date()).toUTC().startOf('day');
 
-  botUsers.map((bot) => { //ranking calculations (we only have one session per day, meaning only one [start, duration] per day)
-    const botTimeline = {};
-    let totalSum = bot.datum_point;
-    bot.timeline.map((tl) => {
-      let duration = tl[1];
-      const daysDiff = Math.floor(LUXON_NOW.diff(DateTime.fromSeconds(totalSum), ['days']).days);
-      const startDayUnixUTC = LUXON_NOW.minus({ days: daysDiff });
-      botTimeline[startDayUnixUTC.toSeconds()] = duration;
-      totalSum += 86400; //add 1 day
+  botUsers.map((bot, i) => {
+    const botStudyByHour = {};
+    const botWeeklyTrend = {};
+    const botMonthlyTrend = {};
+    const DP = DateTime.fromSeconds(bot.datum_point).startOf('hour').toSeconds();
+    let botWeekTotal = 0;
+    let botMonthTotal = 0;
+    bot.timeline.map((tl, i) => { //it's garunteed that each hour will have a value
+      const currSeconds = DP + i * 3600;
+      botStudyByHour[currSeconds] = tl[1];
+      botWeekTotal += tl[1];
+      botMonthTotal += tl[1];
+
+      const UTC_CURRENT_DAY = DateTime.fromSeconds(currSeconds, { zone: "utc" });
+      if (UTC_CURRENT_DAY.weekday === 1) { //start of week, save to weekly ranking
+        botWeeklyTrend[currSeconds] = botWeekTotal;
+        botWeekTotal -= (botStudyByHour[UTC_CURRENT_DAY.minus({ weeks: 1 }).toSeconds()] || 0); //remove last week's info
+      }
+      else if (UTC_CURRENT_DAY.weekday === 2 && UTC_CURRENT_DAY.hour === 0) {
+        botWeekTotal = 0;
+      }
+
+      const FIRST_DAY_OF_MONTH = DateTime.fromSeconds(currSeconds).startOf('month');
+      if (UTC_CURRENT_DAY.hasSame(FIRST_DAY_OF_MONTH, 'day')) { //start of month, save to monthly ranking
+        botMonthlyTrend[currSeconds] = botMonthTotal;
+        botMonthTotal -= (botStudyByHour[UTC_CURRENT_DAY.minus({ months: 1 }).toSeconds()] || 0); //remove last month's info
+      }
+      else if (UTC_CURRENT_DAY.diff(FIRST_DAY_OF_MONTH, ['days']).days === 2 && UTC_CURRENT_DAY.hour === 0) {
+        botMonthTotal = 0;
+      }
     });
 
-    for (let i = 1; i < 60; i++) {
-      const previousUnix = LUXON_NOW.minus({ days: i }).toSeconds();
-      let valThisDay = 0;
-      if (botTimeline.hasOwnProperty(previousUnix)) {
-        valThisDay = botTimeline[previousUnix];
-      }
+    console.log(bot.id, botMonthlyTrend);
 
-      if (!!!botDailyRanking[i]) {
-        botDailyRanking[i] = [];
+    for (const [key, value] of Object.entries(botStudyByHour)) {
+      if (!!botDailyRanking[key]) {
+        botDailyRanking[key].push({ id: bot.id, t: value });
       }
-      botDailyRanking[i].push({ u: bot.id, t: valThisDay }); //at i index we subject 86400*i seconds from LUXON_NOW
+      else {
+        botDailyRanking[key] = [{ id: bot.id, t: value }];
+      }
     }
 
-    let mappedTotal = 0;
-    Object.entries(botTimeline).map(([key, val]) => { //create a prefix sum to calculate weekly and monthly times
-      mappedTotal += val;
-      botTimeline[key] = mappedTotal;
-    });
-
-    for (let i = 1; i < 8; i++) {
-      const weekStartUnix = Math.round(LUXON_NOW.minus({ weeks: i }).startOf('week').toSeconds());
-      const weekEndUnix = Math.round(LUXON_NOW.minus({ weeks: i }).endOf('week').toSeconds());
-      let weekDuration = 0;
-      //console.log(weekEndUnix);
-      if (botTimeline.hasOwnProperty(weekEndUnix)) { //if it doens't include the end unix then it won't include the start
-        let startVal = 0;
-        if (botTimeline.hasOwnProperty(weekStartUnix)) {
-          startVal = botTimeline[weekStartUnix];
-        }
-        weekDuration = botTimeline[weekEndUnix] - startVal;
+    for (const [key, value] of Object.entries(botWeeklyTrend)) {
+      if (!!botWeeklyRanking[key]) {
+        botWeeklyRanking[key].push({ id: bot.id, t: value });
       }
-
-      if (!!!botWeeklyRanking[i]) {
-        botWeeklyRanking[i] = [];
+      else {
+        botWeeklyRanking[key] = [{ id: bot.id, t: value }];
       }
-      botWeeklyRanking[i].push({ u: bot.id, t: weekDuration });
     }
 
-    for (let i = 1; i < 3; i++) {
-      const monthStartUnix = Math.round(LUXON_NOW.minus({ months: i }).startOf('month').toSeconds());
-      const monthEndUnix = Math.round(LUXON_NOW.minus({ months: i }).endOf('month').toSeconds());
-      let monthDuration = 0;
-      //console.log(weekEndUnix);
-      if (botTimeline.hasOwnProperty(monthEndUnix)) { //if it doens't include the end unix then it won't include the start
-        let startVal = 0;
-        if (botTimeline.hasOwnProperty(monthStartUnix)) {
-          startVal = botTimeline[monthEndUnix];
-        }
-        monthDuration = botTimeline[monthEndUnix] - startVal;
+    for (const [key, value] of Object.entries(botMonthlyTrend)) {
+      if (!!botMonthlyRanking[key]) {
+        botMonthlyRanking[key].push({ id: bot.id, t: value });
       }
-
-      if (!!!botMonthlyRanking[i]) {
-        botMonthlyRanking[i] = [];
+      else {
+        botMonthlyRanking[key] = [{ id: bot.id, t: value }];
       }
-      botMonthlyRanking[i].push({ u: bot.id, t: monthDuration });
     }
   });
 
-  botDailyRanking.map((arr) => {
-    return arr.sort((a, b) => { return b.t - a.t });
-  });
-  botWeeklyRanking.map((arr) => {
-    return arr.sort((a, b) => { return b.t - a.t });
-  });
-  botMonthlyRanking.map((arr) => {
-    return arr.sort((a, b) => { return b.t - a.t });
-  });
+  let entries = Object.entries(botDailyRanking);
+  for (let en = 0; en < entries.length; en++){
+    let key = entries[en][0];
+    botDailyRanking[key] = botDailyRanking[key].sort((a,b) => b.t - a.t);
+  }
+
+  entries = Object.entries(botWeeklyRanking);
+  for (let en = 0; en < entries.length; en++){
+    let key = entries[en][0];
+    botWeeklyRanking[key] = botWeeklyRanking[key].sort((a,b) => b.t - a.t);
+  }
+
+  entries = Object.entries(botMonthlyRanking);
+  for (let en = 0; en < entries.length; en++){
+    let key = entries[en][0];
+    botMonthlyRanking[key] = botMonthlyRanking[key].sort((a,b) => b.t - a.t);
+  }
+  
+  console.log(botMonthlyRanking);
 
   await connection.query(`DELETE FROM dailyRanking`);
   await connection.query(`DELETE FROM weeklyRanking`);
   await connection.query(`DELETE FROM monthlyRanking`);
   //remove old rankings or it won't work
 
-  botDailyRanking.map(async (arr, i) => {
-    const rowDate = LUXON_NOW.minus({ days: i }).toSeconds();
-    const rankingRow = {
-      date: rowDate,
-      ranking: JSON.stringify(arr)
-    };
-    await connection.query(`INSERT INTO dailyRanking SET ?`, [rankingRow]);
-  });
-
-  botWeeklyRanking.map(async (arr, i) => {
-    const rowDate = LUXON_NOW.minus({ weeks: i }).startOf('week').toSeconds();
-    const rankingRow = {
-      date: rowDate,
-      ranking: JSON.stringify(arr)
-    };
-    await connection.query(`INSERT INTO weeklyRanking SET ?`, [rankingRow]);
-  });
-
-  botMonthlyRanking.map(async (arr, i) => {
-    const rowDate = LUXON_NOW.minus({ months: i }).startOf('month').toSeconds();
-    const rankingRow = {
-      date: rowDate,
-      ranking: JSON.stringify(arr)
-    };
-    await connection.query(`INSERT INTO monthlyRanking SET ?`, [rankingRow]);
-  });
 }
 
 module.exports = {

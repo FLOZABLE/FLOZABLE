@@ -224,10 +224,15 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
   }, [userInfo, statsViewer, viewDate]);
 
   useEffect(() => {
-    const [labels, datasets] = updateTimeTrend(userSubjects, statsViewer);
+    if (!userSubjects.length || !statsViewer) return;
+    console.log(userSubjects, statsViewer);
+    
+    /* Throws Error
+    const [labels, datasets] = updateTimeTrend(userSubjects, statsViewer.toLowerCase());
     setTimeTrend({
       labels, datasets
     });
+    */
   }, [userSubjects, statsViewer]);
 
   return (
