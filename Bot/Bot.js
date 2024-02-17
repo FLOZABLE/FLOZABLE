@@ -807,7 +807,7 @@ async function randomFriend(min, max) {
 async function createBotRankings() {
 
   console.log("CREATE BOT RANKINGS IS NOT FINISHED");
-  //return;
+  return;
 
   const connection = pool.promise();
   const [botIds] = await connection.query(`SELECT user_id FROM users WHERE type = -1`);
@@ -889,10 +889,16 @@ async function createBotRankings() {
     }
   });
 
+  await connection.query(`DELETE FROM dailyRanking`);
+  await connection.query(`DELETE FROM weeklyRanking`);
+  await connection.query(`DELETE FROM monthlyRanking`);
+  //remove old rankings or it won't work
+
   let entries = Object.entries(botDailyRanking);
   for (let en = 0; en < entries.length; en++){
     let key = entries[en][0];
     botDailyRanking[key] = botDailyRanking[key].sort((a,b) => b.t - a.t);
+    await connection.query(`INSERT INTO dailyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botDailyRanking[key])]);
   }
 
   entries = Object.entries(botWeeklyRanking);
@@ -905,15 +911,7 @@ async function createBotRankings() {
   for (let en = 0; en < entries.length; en++){
     let key = entries[en][0];
     botMonthlyRanking[key] = botMonthlyRanking[key].sort((a,b) => b.t - a.t);
-  }
-  
-  console.log(botMonthlyRanking);
-
-  await connection.query(`DELETE FROM dailyRanking`);
-  await connection.query(`DELETE FROM weeklyRanking`);
-  await connection.query(`DELETE FROM monthlyRanking`);
-  //remove old rankings or it won't work
-
+  }  
 }
 
 module.exports = {
