@@ -45,7 +45,7 @@ function SearchUsers({ searchQuery, setResponse, setCount }) {
               className={styles.userInfo}>
               <div className={styles.profileImg}
                 style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
+                  backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`, backgroundSize: 'cover',
                   backgroundPosition: 'center center',
                   backgroundRepeat: 'no-repeat',
                 }}

@@ -14,6 +14,8 @@ function MyGroupsViewer({
   userInfo,
   isCam,
   isMic,
+  setIsCam = () => {},
+  setIsMic = () => {},
   mode,
   setIsChatModal,
   groupsViewerRef,
@@ -53,7 +55,6 @@ function MyGroupsViewer({
               isFocus={true}
               studyingUsers={[]}
               userInfo={userInfo}
-              localStream={localStream}
               isCam={isCam}
               isMic={isMic}
               setIsChatModal={setIsChatModal}
@@ -66,7 +67,7 @@ function MyGroupsViewer({
         </SwiperSlide>
       )
     }));
-  }, [myGroups, selectedGroupIndex, localStream, isMic, isCam, mode, isHeadphone]);
+  }, [myGroups, selectedGroupIndex, isMic, isCam, mode, isHeadphone]);
 
   return (
     <div
@@ -92,6 +93,8 @@ function MyGroupsViewer({
           onSnapIndexChange={(swiperCore) => {
             const { realIndex, snapIndex, activeIndex } = swiperCore;
             setSelectedGroupIndex(realIndex);
+            setIsCam(false);
+            setIsMic(false);
           }}
           ref={groupsViewerRef}
         >
