@@ -1,29 +1,64 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBook, faFire, faGlobe, faRankingStar } from '@fortawesome/free-solid-svg-icons';
-import LineChart from '../../UI/LineChart';
-import BarChart from '../../UI/BarChart';
-import StuckModal from '../../UI/StuckModal/StuckModal';
-import Timeline from '../../UI/Timeline/Timeline';
 import RadioBtn from '../../UI/RadioBtn/RadioBtn';
-import ChartDataLabel from 'chartjs-plugin-datalabels';
 import { coldColorsList, colorsList } from '../../../constant';
 import styles from './Stats.module.css';
-import { plugins } from 'chart.js';
-import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, updateRankingTrend, updateStackedAreaGraph } from './StatTools';
+import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, updateRankingTrend, updateStackedAreaGraph, updateSubjectsTrendChart } from './StatTools';
 import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
 import { DateTime } from 'luxon';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
 import { secondConverter } from '../../../utils/Tool';
-import { PieChart, Pie, Tooltip, ResponsiveContainer, Label, AreaChart, Area, YAxis, XAxis, CartesianGrid } from "recharts";
+import { PieChart, Pie, Tooltip, ResponsiveContainer, YAxis, XAxis, CartesianGrid, LineChart, Line, Legend } from "recharts";
 
-import ApexChart from 'apexcharts';
-import Chart from 'react-apexcharts';
 import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from '../../../utils/svgs';
 import { PieCustomTooltip, pieCustomLabel } from '../../UI/Charts';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
+
+
+const data = [
+  {
+    name: 'Page A',
+    uv: 4000,
+    pv: 2400,
+    amt: 2400,
+  },
+  {
+    name: 'Page B',
+    uv: 3000,
+    pv: 1398,
+    amt: 2210,
+  },
+  {
+    name: 'Page C',
+    uv: 2000,
+    pv: 9800,
+    amt: 2290,
+  },
+  {
+    name: 'Page D',
+    uv: 2780,
+    pv: 3908,
+    amt: 2000,
+  },
+  {
+    name: 'Page E',
+    uv: 1890,
+    pv: 4800,
+    amt: 2181,
+  },
+  {
+    name: 'Page F',
+    uv: 2390,
+    pv: 3800,
+    amt: 2500,
+  },
+  {
+    name: 'Page G',
+    uv: 3490,
+    pv: 4300,
+    amt: 2100,
+  },
+];
 
 function Stats({ subjects, userInfo }) {
 
@@ -137,12 +172,10 @@ function Stats({ subjects, userInfo }) {
       .catch((error) => console.error(error));
   }, [viewDate, viewOption]);
 
-  const [subjectsPie, setSubjectsPie] = useState({ data: [], labels: [] });
+  const [subjectsPie, setSubjectsPie] = useState([]);
   //stacked area graph
-  const [areaGraphTrend, setAreaGraphTrend] = useState({
-    datasets: [],
-    labels: [],
-  })
+  const [subjectsTrend, setSubjectsTrend] = useState([]);
+  const [filteredTrends, setFilteredTrends] = useState([]);
 
   useEffect(() => {
     if (!viewDate || !statsViewer || !subjects) return;
@@ -154,14 +187,13 @@ function Stats({ subjects, userInfo }) {
     const now = DateTime.now().startOf('day');
     const viewDateTime = DateTime.fromJSDate(viewDate);
 
-    const subjectPie = updateTimeUsagePie(subjects, viewDateTime, statsViewer);
-    setSubjectsPie(subjectPie);
-
-    const areaGroupTrend = updateStackedAreaGraph(subjects, 'Daily');
-    setAreaGraphTrend(areaGroupTrend);
-    console.log('area graph trend', areaGroupTrend)
+    //subject time usage pie chart
+    const subjectsPie = updateTimeUsagePie(subjects, viewDateTime, statsViewer);
+    setSubjectsPie(subjectsPie);
 
     if (statsViewer === 'Daily') {
+
+      //top box renderer
       const index = viewDateTime.diff(now, 'days').toObject();
       const { groupedTotal, grouped } = daily;
       const actualIndex = grouped.length + index.days - 1;
@@ -170,11 +202,13 @@ function Stats({ subjects, userInfo }) {
       const focus = focusCalculator(grouped[actualIndex]);
       const { value, type } = secondConverter(focus);
       setFocus(`${value}${type}`);
-      const datumPoint = DateTime.fromSeconds(subjects.daily.datum_point);
-      const dayTimeTrend = updateTimeTrend(subjects, 'daily', 'day');
-      console.log(dayTimeTrend, 'trend', subjects.daily.groupedTotal);
-      //updateTimeTrend(datumPoint, subjects.daily.groupedTotal)
+
+      //subject trend data handler
+      const subjectsTrend = updateSubjectsTrendChart(subjects, statsViewer, 'day');
+      setSubjectsTrend(subjectsTrend);
     } else if (statsViewer === 'Weekly') {
+
+      //top box renderer
       const index = viewDateTime.startOf('week').diff(DateTime.now().startOf('week'), 'weeks').toObject();
       const { groupedTotal, grouped } = weekly;
       const actualIndex = grouped.length + index.weeks - 1;
@@ -183,7 +217,13 @@ function Stats({ subjects, userInfo }) {
       const focus = focusCalculator(grouped[actualIndex]);
       const { value, type } = secondConverter(focus);
       setFocus(`${value}${type}`);
+
+      //subject trend data handler
+      const subjectsTrend = updateSubjectsTrendChart(subjects, statsViewer, 'week');
+      setSubjectsTrend(subjectsTrend);
     } else {
+
+      //top box renderer
       const index = viewDateTime.startOf('month').diff(DateTime.now().startOf('month'), 'months').toObject();
       const { groupedTotal, grouped } = monthly;
       const actualIndex = grouped.length + index.months - 1;
@@ -192,6 +232,10 @@ function Stats({ subjects, userInfo }) {
       const focus = focusCalculator(grouped[actualIndex]);
       const { value, type } = secondConverter(focus);
       setFocus(`${value}${type}`);
+
+      //subject trend data handler
+      const subjectsTrend = updateSubjectsTrendChart(subjects, statsViewer, 'month');
+      setSubjectsTrend(subjectsTrend);
     }
   }, [viewDate, statsViewer, subjects]);
 
@@ -215,9 +259,10 @@ function Stats({ subjects, userInfo }) {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    data={subjectsPie.data.reduce((accumulator, value, i) => {
+                    data={subjectsPie.reduce((accumulator, data, i) => {
+                      const value = data.value;
                       if (value) {
-                        const name = subjectsPie.labels[i];
+                        const name = data.info.name;
                         const fill = coldColorsList[accumulator.length % (coldColorsList.length)];
                         const labelVal = secondConverter(value);
                         accumulator.push({ value, name, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
@@ -262,390 +307,59 @@ function Stats({ subjects, userInfo }) {
             </div>
           </div>
           <div className={styles.bigBox}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                width={500}
-                height={400}
-                data={
-                  areaGraphTrend.datasets.map((day) => {
-                    return { ...day }
-                  })
-                }
-                margin={{
-                  top: 10,
-                  right: 30,
-                  left: 0,
-                  bottom: 0,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
-                <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-                <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-      {/*       <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} subjects={subjects} showHeatmap={true} />
-      <div className={styles.Main}>
-        <div className={styles.boxes}>
-          <div className={styles.box} id="daily">
-            <div className={styles.buttonArea}>
-              <div className={styles.dateSelectorWrapper}>
-                <DateSelectorBtn viewMode={statsViewer} className={styles.title} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
-              </div>
-              <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
-            </div>
-            <div className={styles.container}>
-              <div className={styles.divided}>
-                <p className={styles.title}>{statsViewer} Time Usage by Subjects</p>
-                <div className={styles.chartContainer}>
-                  <div className={`${styles.noChart} ${timeUsagePie.datasets.reduce((accumulator, currentValue) => accumulator + currentValue, 0) ? styles.true : ''}`}>
-                    <Link to="/dashboard/study">Study to see stats!</Link>
-                  </div>
-                  <Chart
-                    type="pie"
-                    series={timeUsagePie.datasets}
-                    options={{
-                      chart: {
-                        type: 'pie',
-                        height: '500px',
-                        zoom: {
-                          enabled: false
-                        },
-                        animations: {
-                          enabled: true,
-                          easing: 'easeinout',
-                          speed: 800,
-                          animateGradually: {
-                            enabled: true,
-                            delay: 150
-                          },
-                          dynamicAnimation: {
-                            enabled: true,
-                            speed: 350
-                          }
-                        }
-                      },
-                      colors: colorsList,
-                      labels: timeUsagePie.labels,
-                      legend: {
-                        position: 'bottom',
-                        fontSize: '24px',
-                        fontWeight: 600,
-                      },
+            <div className={styles.chartWrapper}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={subjectsTrend.map((day, i) => {
+                    const data = day.data.reduce((accumulator, subject) => {
+                      if (!filteredTrends.includes(subject.info.id)) {
+                        accumulator[subject.info.id] = subject.value;
+                      };
+                      return accumulator;
+                    }, {});
+                    return { label: day.label, ...data }
+                  })}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="label" />
+                  <YAxis tickFormatter={(data) => {
+                    const { value, type } = secondConverter(data);
+                    return `${value} ${type}`
+                  }} />
+                  <Tooltip formatter={(data) => {
+                    const { value, type } = secondConverter(data);
+                    return `${value} ${type}`
+                  }} />
+                  <Legend
+                    onClick={(e) => {
+                      if (filteredTrends.includes(e.dataKey)) {
+                        setFilteredTrends(prev => {
+                          return prev.filter(item => item !== e.dataKey);
+                        })
+                      } else {
+                        setFilteredTrends(prev => {
+                          return [...prev, e.dataKey]
+                        })
+                      }
                     }}
                   />
-
-                </div>
-              </div>
-              <div className={styles.divider}>
-                <div className={styles.smallBox}>
-                  <div className={styles.circle}>
-                    <FontAwesomeIcon icon={faBook} style={{ color: "#fff", }} />
-                  </div>
-                  <p>Total<br /><strong>{totalStudy}</strong></p>
-                </div>
-                <div className={styles.smallBox}>
-                  <div className={styles.circle}>
-                    <FontAwesomeIcon icon={faGlobe} style={{ color: "#fff", }} />
-                  </div>
-                  <p>Website Usage<br /><strong>{websitesUsage} / {websitesVisit}</strong></p>
-                </div>
-                <div className={styles.smallBox}>
-                  <div className={styles.circle}>
-                    <FontAwesomeIcon icon={faRankingStar} style={{ color: "#fff", }} />
-                  </div>
-                  <p>Ranking<br /><strong>#{ranking}</strong></p>
-                </div>
-                <div className={styles.smallBox}>
-                  <div className={styles.circle}>
-                    <FontAwesomeIcon icon={faFire} style={{ color: "#fff", }} />
-                  </div>
-                  <p>Focus <br /><strong>{focus}</strong></p>
-                </div>
-              </div>
-            </div>
-            <div className={styles.secondContainer}>
-              <div className={styles.smallBoxContainer}>
-                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-                  <p className={styles.title}>Timeline</p>
-                  <div className={styles.chartContainer}>
-                    <Timeline refT={timelineRef} dailyTimeline={dailyTimeline} />
-                  </div>
-                </div>
-                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-                  <p className={styles.title}>Hourly Histogram</p>
-                  <div className={styles.chartContainer}>
-                    <BarChart
-                      labels={
-                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-                      }
-
-                      datasets={
-                        [
-                          {
-                            data: hourlyHistogram.data,
-                            backgroundColor: colorsList
-                          }
-                        ]
-                      }
-
-                      options={
-                        {
-                          maintainAspectRatio: false,
-                          responsive: true,
-                          plugins: {
-                            legend: {
-                              display: false,
-                            }
-                          },
-                          interaction: {
-                            intersect: false,
-                            mode: 'index',
-                          },
-                          scales: {
-                            y: {
-                              grid: {
-                                drawBorder: false,
-                                display: true,
-                                drawOnChartArea: true,
-                                drawTicks: false,
-                                borderDash: [5, 5]
-                              },
-                              ticks: {
-                                display: true,
-                                padding: 10,
-                                color: '#9ca2b7',
-                                stepSize: 1
-                              }
-                            },
-                            x: {
-                              grid: {
-                                drawBorder: false,
-                                display: true,
-                                drawOnChartArea: true,
-                                drawTicks: true,
-                                borderDash: [5, 5]
-                              },
-                              ticks: {
-                                display: true,
-                                color: '#9ca2b7',
-                                padding: 10
-                              }
-                            },
-                          },
-                        }
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className={styles.thirdContainer}>
-              <div className={styles.smallBoxContainer}>
-                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-                  <p className={styles.title}>Study Time Trend</p>
-                  <div className={styles.chartContainer}>
-                    <Chart
-                      type="line"
-                      series={[{
-                        name: "Study Time",
-                        data: timeTrend.datasets
-                      }]}
-                      options={{
-                        chart: {
-                          height: 350,
-                          type: 'line',
-                          zoom: {
-                            enabled: false
-                          },
-                          animations: {
-                            enabled: true,
-                            easing: 'easeinout',
-                            speed: 800,
-                            animateGradually: {
-                              enabled: true,
-                              delay: 150
-                            },
-                            dynamicAnimation: {
-                              enabled: true,
-                              speed: 350
-                            }
-                          }
-                        },
-                        yaxis: {
-                          labels: {
-                            formatter: function (sec) {
-                              const { value, type } = secondConverter(sec);
-                              return `${value} ${type}`;
-                            }
-                          },
-                        },
-                        stroke: {
-                          curve: 'straight'
-                        },
-                        grid: {
-                          row: {
-                            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                            opacity: 0.5
-                          },
-                        },
-                        xaxis: {
-                          categories: timeTrend.labels,
-                          range: 7
-                        },
-
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-                  <p className={styles.title}>Ranking Trend</p>
-                  <div className={styles.chartContainer}>
-                    <Chart
-                      type="line"
-                      series={[{
-                        name: "Study Time",
-                        data: rankingTrend.datasets
-                      }]}
-                      options={{
-                        chart: {
-                          height: 350,
-                          type: 'line',
-                          zoom: {
-                            enabled: false
-                          }
-                        },
-                        stroke: {
-                          curve: 'straight'
-                        },
-                        grid: {
-                          row: {
-                            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                            opacity: 0.5
-                          },
-                        },
-                        xaxis: {
-                          categories: rankingTrend.labels,
-                          range: 7
-                        },
-                        yaxis: {
-                          reversed: true,
-                          labels: {
-                            formatter: function (val) {
-                              return `#${val}`;
-                            }
-                          },
-                        },
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className={styles.fourthContainer}>
-              <div className={styles.smallBoxContainer}>
-                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-                  <p className={styles.title}>Today's Website Usage while Studying</p>
-                  <div className={styles.chartContainer}>
-                    <div className={`${styles.noChart} ${websites.length ? styles.true : ''}`} style={{ background: "#f7f9fd" }}>
-                      <Link to="/dashboard/study">Study to see stats!</Link>
-                    </div>
-                    <DropDownButton
-                      options={{
-                        "0": "Active Time",
-                        "1": "Visited Time"
-                      }}
-                      setValue={setViewOption}
-                      value={viewOption}
-                    />
-                    <Chart
-                      type="pie"
-                      series={viewOption ? websites.map(website => { return website.v }) : websites.map(website => { return Math.floor(website.t / (60 * 60)) })}
-                      options={{
-                        chart: {
-                          type: 'pie',
-                          zoom: {
-                            enabled: false
-                          },
-                          animations: {
-                            enabled: true,
-                            easing: 'easeinout',
-                            speed: 800,
-                            animateGradually: {
-                              enabled: true,
-                              delay: 150
-                            },
-                            dynamicAnimation: {
-                              enabled: true,
-                              speed: 350
-                            }
-                          }
-                        },
-                        colors: colorsList,
-                        labels: websites.map(website => { return website.d }),
-                        legend: {
-                          position: 'bottom',
-                          fontSize: '24px',
-                          fontWeight: 600,
-                        },
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-                  <p className={styles.title}>Today's App Usage while Studying</p>
-                  <div className={styles.chartContainer}>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className={styles.faceOffContainer}>
-              <div className={`${styles.smallBox} ${styles.chartsBox}`}>
-                <div>
-                  <p className={styles.title}>Face-off with @____</p>
-                </div>
-              </div>
+                  {subjectsTrend.length ? subjectsTrend[0].data.map((subject) => {
+                    return (
+                      <Line name={subject.info.name} type="monotone" key={subject.info.id} dataKey={subject.info.id} stroke="#8884d8" activeDot={{ r: 8 }} />
+                    )
+                  }) : null}
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
       </div>
-
-
-      <div className={styles.areaRechartContainer}>
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            width={500}
-            height={400}
-            data={
-              areaGraphTrend.datasets.map((day) => {
-                return {...day}
-              })
-            }
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
-            <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-            <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div> */}
-
     </div>
   )
 }
