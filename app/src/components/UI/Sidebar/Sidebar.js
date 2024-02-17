@@ -31,6 +31,7 @@ function Sidebar({
       <div className={styles.sidebarContainer}>
         <Link
           className={styles.sidebarEl}
+          to={"/dashboard"}
         >
           <i>
             <IconBxHome /> 
@@ -39,6 +40,7 @@ function Sidebar({
         </Link>
         <Link
           className={styles.sidebarEl}
+          to={"/dashboard/stats"}
         >
           <i>
             <IconMonitor /> 
@@ -47,6 +49,7 @@ function Sidebar({
         </Link>
         <Link
           className={styles.sidebarEl}
+          to={"/dashboard/planner"}
         >
           <i>
             <IconClipboardOutline /> 
@@ -55,6 +58,7 @@ function Sidebar({
         </Link>
         <Link
           className={styles.sidebarEl}
+          to={"/dashboard/ranking"}
         >
           <i>
             <IconStatsChart /> 
@@ -63,6 +67,7 @@ function Sidebar({
         </Link>
         <Link
           className={styles.sidebarEl}
+          to={"/dashboard/groups"}
         >
           <i>
             <IconPeople16 /> 
@@ -71,6 +76,7 @@ function Sidebar({
         </Link>
         <Link
           className={styles.sidebarEl}
+          to={"/dashboard/friends"}
         >
           <i>
             <IconUserAdd /> 
@@ -79,6 +85,7 @@ function Sidebar({
         </Link>
         <Link
           className={styles.sidebarEl}
+          to={"/dashboard/themes"}
         >
           <i>
             <IconGalleryLine /> 
