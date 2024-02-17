@@ -16,6 +16,7 @@
     "@mui/material": "^5.14.8",
     "@mui/styled-engine-sc": "^5.14.8",
     "@mui/x-date-pickers": "^6.12.1",
+    "@nivo/radial-bar": "^0.84.0",
     "@react-oauth/google": "^0.12.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
