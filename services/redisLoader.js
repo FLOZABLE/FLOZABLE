@@ -394,7 +394,7 @@ async function googleAccessTokenCache(userId) {
       return googleAccessToken;
     };
   
-    const connection = await pool.promise();
+    const connection = pool.promise();
     const [[userInfo]] = await connection.query(`SELECT google_refresh_token FROM users WHERE user_id = ?`, [userId]);
     if (!userInfo || !userInfo.google_refresh_token) {
       return false;
@@ -414,6 +414,11 @@ async function googleAccessTokenCache(userId) {
 
     return false;
   } catch (err) {
+    if (err.response && err.response && err.response.data && (err.response.data.error === "invalid_grant" || err.response.data.error_description === 'Token has been expired or revoked.')) {
+      const connection = pool.promise();
+      redisClient.del(`user:${userId}:googleAccessToken`);
+      connection.query(`UPDATE users set google_refresh_token = NULL WHERE user_id = ?`, [userId]);
+    };
     console.log(err);
     return false;
   };

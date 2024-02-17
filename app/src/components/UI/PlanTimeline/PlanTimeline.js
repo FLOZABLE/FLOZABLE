@@ -16,11 +16,10 @@ import {
 import CircularCheckBox from "../CircularCheckBox/CircularCheckBox";
 import { DateTime } from "luxon";
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadialBar, ResponsiveContainer } from "recharts";
-import RadialBarChart from "../RadialBarChart";
-import { RadarChart } from "recharts";
 import { warmColorsList } from "../../../constant";
 import { Cell } from "recharts";
 import { randomIntInRange } from "../../../utils/Tool";
+import { ResponsiveRadialBar } from "@nivo/radial-bar";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -80,16 +79,20 @@ function PlanTimeline({
     subjects.map((subject, i) => {
       const subjectPlans = plans.filter(plan => plan.subject === subject.id && isInViewRange(plan));
       if (subjectPlans.length) {
-        const { id, icon, name } = subject;
+        const { id, name } = subject;
         const total = subjectPlans.length;
         const completed = subjectPlans.filter(plan => plan.completed).length;
-        const val = Math.floor(completed / total * 100);
-        const fill = warmColorsList[i % (warmColorsList.length)];
-        const pv = 5000;
-        planSeries.push({ id, fill, name, val, total, completed, pv });
+        const ratio = Math.floor(completed / total * 100);
+        const data = [{
+          x: name,
+          y: ratio,
+          axisStartValue: 's'
+        }]
+        planSeries.push({ id, data });
       }
     });
     setPlanSeries(planSeries);
+    console.log('plan series', planSeries)
   }, [subjects, plans, plansEl]);
 
   const isInViewRange = (plan) => {
@@ -257,7 +260,18 @@ function PlanTimeline({
     >
 
       <div className={styles.chartContainer}>
-        <RadialBarChart series={planSeries} selected={selected} setSelected={setSelected} />
+        <ResponsiveRadialBar
+          data={planSeries}
+          padding={0.4}
+          cornerRadius={2}
+          margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+          enableRadialGrid={false}
+          enableCircularGrid={false}
+          radialAxisStart={{ tickSize: 5, tickPadding: 5, tickRotation: 0}}
+          circularAxisOuter={null}
+          legends={[]}
+          valueFormat={val => val + '%'}
+        />
         { /*
           <ResponsiveContainer width="100%" height="100%">
             <RadialBarChart cx="50%" cy="50%" innerRadius="10%" outerRadius="80%" barSize={10} data={planSeries}>
