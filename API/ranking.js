@@ -36,11 +36,10 @@ Router.get('/sort', async (req, res) => {
       //get ranking from database if its not today;
       const connection = pool.promise();
       const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [dateTime.toSeconds()]);
-      console.log(dailyRanking, dateTime.toSeconds())
       if (dailyRanking) {
         rankings = JSON.parse(dailyRanking.ranking);
         rankings = await Promise.all(rankings.map(async(ranking) => {
-          const user = await userCache(ranking.userId);
+          const user = await userCache(ranking.u);
           return {...ranking, ...user}
         }))
       } 
