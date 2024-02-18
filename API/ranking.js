@@ -18,13 +18,11 @@ Router.get('/sort', async (req, res) => {
   const today = DateTime.now().setZone(timezone);
   const timezoneOffset = Math.floor(dateTime.offset / 60).toString();
 
-  console.log(dateTime.toSeconds(), dateTime.get("hour"));
   let rankings = [];
   if (mode === "Daily") {
 
     //use redis value when its today
     if (dateTime.hasSame(today, "day")) {
-      console.log('today')
       //today
       const users = await redisClient.sMembers('allMembers');
       rankings = await todaySorting(users, timezoneOffset);
@@ -137,67 +135,6 @@ async function thisMonthSorting (users, timezoneOffset) {
   return filteredUsers.sort((a, b) => b.t - a.t);
 };
 
-Router.post('/sort', async (req, res) => {
-  const { startTime, stopTime } = req.body;
-
-  const maxStartTime = DateTime.now().plus({year: 1}).millisecond;
-  const maxStopTime = DateTime.now().minus({year: 1}).millisecond;
-
-  const isValidStartTime = validateInteger(startTime, "start time", maxStartTime, maxStopTime);
-
-  if (!isValidStartTime.isValid) {
-    return res.send({success: false, reason: isValidStartTime.reason});
-  };
-
-  const isValidStopTime = validateInteger(stopTime, "stop time", startTime, startTime + 1000 * 60 * 60 * 24 * 50);
-
-  if (!isValidStopTime.isValid) {
-    return res.send({success: false, reason: isValidStopTime.reason});
-  };
-
-  try {
-    const connection = pool.promise();
-    const [users] = await connection.query(`SELECT name, user_id, timezone from users`);
-    const subjectPromises = users.map(async (user) => {
-      const { user_id } = user;
-      const [subjects] = await connection.query(`SELECT datum_point, timeline, id FROM subjects WHERE user_id = ?`, [user_id]);
-      user.total = 0;
-      user.focus = 0;
-      const timelinePromises = subjects.map(async ({ timeline, datum_point, id }) => {
-        let timelineSum = 0;
-        const prevTimeline = timeline === "" ? [[]] : JSON.parse(timeline.replace(/^/, "[").replace(/$/, "]")); //wrapping the string with "[]"
-        const todayTimeline = (await redisClient.lRange(`user:${user_id}:subject:${id}`, 0, -1)).map(JSON.parse);
-        const totalTimeline = prevTimeline.concat(todayTimeline);
-        totalTimeline.find(([start, duration]) => {
-          const startUnix = datum_point + start + timelineSum;
-          const stopUnix = startUnix + duration;
-          timelineSum += start + duration;
-          if (startTime / 1000 <= startUnix && stopUnix <= stopTime / 1000) {
-            user.total += duration;
-            user.focus = Math.max(user.focus, duration);
-          } else if (startTime / 1000 <= stopUnix) {
-            //this is the case when time range is between the starttime and stop time
-            //console.log(stopUnix, startUnix, timelineSum)
-            //user.total += stopUnix - startTime;
-          } else if (startTime / 1000 <= startUnix) {
-            //stop running the loop
-            return true;
-          };
-        });
-      });
-      await Promise.all(timelinePromises);
-    });
-    await Promise.all(subjectPromises);
-
-    //sort
-    await users.sort((a, b) => b.total - a.total);
-    res.send({ success: true, data: users })
-  } catch (err) {
-    console.log(err);
-    res.send({ success: false });
-  }
-});
-
 const LENGTH = 7;
 /** get ranking change of user for each period */
 Router.get('/user', async (req, res) => {
@@ -249,49 +186,6 @@ Router.get('/user', async (req, res) => {
     res.send({ success: false, reason: 'err' })
   };
 });
-/* Router.get('/user', async (req, res) => {
-  try {
-    const { userId, date, mode } = req.query;
-
-    const isValidUserId = validateStrictString(userId, 'user id', 10);
-
-    if (!isValidUserId.isValid) {
-      return res.send({ success: false, reason: isValidUserId.reason });
-    };
-    
-    const isValidDate = validateISO(date, 'date');
-
-    if (!isValidDate.isValid) {
-      return res.send({ success: false, reason: isValidDate.reason });
-    };
-
-    const isValidMode = validateStrictString(mode, 'mode', 10);
-
-    if (!isValidMode.isValid) {
-      return res.send({ success: false, reason: isValidMode.reason });
-    };
-
-    const dateTime = DateTime.fromISO(date, { zone: 'utc' });
-    if (!userId) {
-      return res.send({ success: false, reason: 'userid required' })
-    }
-    const connection = pool.promise();
-    let rankings = [];
-    const [[usersLength]] = await connection.query(`SELECT COUNT(*) FROM users`);
-
-    if (mode === 'day' || mode === 'daily') {
-      rankings = await userDailySorting(dateTime, LENGTH, userId);
-    } else if (mode === 'week' || mode === 'weekly') {
-      rankings = await userWeeklySorting(dateTime, LENGTH, userId);
-    } else {
-      rankings = await userMonthlySorting(dateTime, LENGTH, userId);
-    };
-    res.send({ success: true, rankings: { data: rankings, maxLength: Object.values(usersLength)[0] } });
-  } catch (err) {
-    console.log(err);
-    res.send({ success: false, reason: 'err' })
-  };
-}); */
 
 async function userDailySorting(userId, date, timezone, length) {
   const rankings = [];
@@ -299,6 +193,9 @@ async function userDailySorting(userId, date, timezone, length) {
   //this prevents from displaying future ranking
   const today = DateTime.now().setZone(timezone).startOf('day');
   const timezoneOffset = Math.floor(today.offset / 60).toString();
+  const minOffset = today.offset % 60;
+  dateStart = dateStart.minus({minute: minOffset})
+  console.log(dateStart.toSeconds());
   let diff = today.diff(dateStart, 'days').toObject().days;
   while (diff < length) {
     dateStart = dateStart.plus({ days: -1 });
@@ -334,6 +231,9 @@ async function userWeeklySorting(userId, date, timezone, length) {
   //this prevents from displaying future ranking
   const thisWeek = DateTime.now().setZone(timezone).startOf('week');
   const timezoneOffset = Math.floor(thisWeek.offset / 60).toString();
+  const minOffset = today.offset % 60;
+  dateStart = dateStart.minus({minute: minOffset})
+  console.log(dateStart.toSeconds());
   let diff = thisWeek.diff(weekStart, 'weeks').toObject().weeks;
   while (diff < length) {
     weekStart = weekStart.plus({ weeks: -1 });
@@ -369,6 +269,9 @@ async function userMonthlySorting(userId, date, timezone, length) {
   //this prevents from displaying future ranking
   const thisMonth = DateTime.now().setZone(timezone).startOf('month');
   const timezoneOffset = Math.floor(thisMonth.offset / 60).toString();
+  const minOffset = today.offset % 60;
+  dateStart = dateStart.minus({minute: minOffset})
+  console.log(dateStart.toSeconds());
   let diff = thisMonth.diff(monthStart, 'months').toObject().months;
   while (diff < length) {
     monthStart = monthStart.plus({ months: -1 });
