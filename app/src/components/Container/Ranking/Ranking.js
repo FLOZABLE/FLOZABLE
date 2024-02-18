@@ -46,7 +46,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   //fetch new ranking
   useEffect(() => {
-    const viewTime = DateTime.fromJSDate(viewDate);
+    let viewTime = DateTime.fromJSDate(viewDate);
 
     let startTime;
     let stopTime;
@@ -57,15 +57,18 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     else if (viewer == "Weekly") {
       startTime = viewTime.startOf('week').toMillis();
       stopTime = viewTime.endOf('week').toMillis();
+      viewTime = viewTime.endOf('week');
     }
     else {
       startTime = viewTime.startOf('month').toMillis();
       stopTime = viewTime.endOf('month').toMillis();
+      viewTime = viewTime.endOf('month');
     }
     setStartDate(startTime);
     setEndDate(stopTime);
 
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    console.log(viewDate, viewTime.toSeconds());
 
     fetch(`${serverOrigin}/ranking/sort?mode=${viewer}&date=${viewTime.toISODate()}&timezone=${timezone}`, {
       method: 'get',

@@ -806,9 +806,6 @@ async function randomFriend(min, max) {
 
 async function createBotRankings() {
 
-  console.log("CREATE BOT RANKINGS IS NOT FINISHED");
-  return;
-
   const connection = pool.promise();
   const [botIds] = await connection.query(`SELECT user_id FROM users WHERE type = -1`);
   const botUsers = [];
@@ -842,7 +839,7 @@ async function createBotRankings() {
 
       const UTC_CURRENT_DAY = DateTime.fromSeconds(currSeconds, { zone: "utc" });
       if (UTC_CURRENT_DAY.weekday === 1) { //start of week, save to weekly ranking
-        botWeeklyTrend[currSeconds] = botWeekTotal;
+        botWeeklyTrend[currSeconds - 86400] = botWeekTotal;
         botWeekTotal -= (botStudyByHour[UTC_CURRENT_DAY.minus({ weeks: 1 }).toSeconds()] || 0); //remove last week's info
       }
       else if (UTC_CURRENT_DAY.weekday === 2 && UTC_CURRENT_DAY.hour === 0) {
@@ -851,7 +848,7 @@ async function createBotRankings() {
 
       const FIRST_DAY_OF_MONTH = DateTime.fromSeconds(currSeconds).startOf('month');
       if (UTC_CURRENT_DAY.hasSame(FIRST_DAY_OF_MONTH, 'day')) { //start of month, save to monthly ranking
-        botMonthlyTrend[currSeconds] = botMonthTotal;
+        botMonthlyTrend[currSeconds - 86400] = botMonthTotal;
         botMonthTotal -= (botStudyByHour[UTC_CURRENT_DAY.minus({ months: 1 }).toSeconds()] || 0); //remove last month's info
       }
       else if (UTC_CURRENT_DAY.diff(FIRST_DAY_OF_MONTH, ['days']).days === 2 && UTC_CURRENT_DAY.hour === 0) {
@@ -859,32 +856,30 @@ async function createBotRankings() {
       }
     });
 
-    console.log(bot.id, botMonthlyTrend);
-
     for (const [key, value] of Object.entries(botStudyByHour)) {
       if (!!botDailyRanking[key]) {
-        botDailyRanking[key].push({ id: bot.id, t: value });
+        botDailyRanking[key].push({ u: bot.id, t: value });
       }
       else {
-        botDailyRanking[key] = [{ id: bot.id, t: value }];
+        botDailyRanking[key] = [{ u: bot.id, t: value }];
       }
     }
 
     for (const [key, value] of Object.entries(botWeeklyTrend)) {
       if (!!botWeeklyRanking[key]) {
-        botWeeklyRanking[key].push({ id: bot.id, t: value });
+        botWeeklyRanking[key].push({ u: bot.id, t: value });
       }
       else {
-        botWeeklyRanking[key] = [{ id: bot.id, t: value }];
+        botWeeklyRanking[key] = [{ u: bot.id, t: value }];
       }
     }
 
     for (const [key, value] of Object.entries(botMonthlyTrend)) {
       if (!!botMonthlyRanking[key]) {
-        botMonthlyRanking[key].push({ id: bot.id, t: value });
+        botMonthlyRanking[key].push({ u: bot.id, t: value });
       }
       else {
-        botMonthlyRanking[key] = [{ id: bot.id, t: value }];
+        botMonthlyRanking[key] = [{ u: bot.id, t: value }];
       }
     }
   });
@@ -905,12 +900,14 @@ async function createBotRankings() {
   for (let en = 0; en < entries.length; en++){
     let key = entries[en][0];
     botWeeklyRanking[key] = botWeeklyRanking[key].sort((a,b) => b.t - a.t);
+    await connection.query(`INSERT INTO weeklyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botWeeklyRanking[key])]);
   }
 
   entries = Object.entries(botMonthlyRanking);
   for (let en = 0; en < entries.length; en++){
     let key = entries[en][0];
     botMonthlyRanking[key] = botMonthlyRanking[key].sort((a,b) => b.t - a.t);
+    await connection.query(`INSERT INTO monthlyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botMonthlyRanking[key])]);
   }  
 }
 
