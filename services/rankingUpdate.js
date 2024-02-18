@@ -15,18 +15,20 @@ async function updateRanking() {
   });
 
   const timezoneOffset = Math.floor(now.offset / 60).toString();
-  now = now.minus({day: 1}).startOf("day").toSeconds();
   const users = await redisClient.sMembers(`allMembers`);
 
   if (now.weekday === 1) {
-    await updateWeeklyRanking(now, users, timezoneOffset);
+    const rankingDate = now.minus({week: 1}).startOf("week").toSeconds();
+    await updateWeeklyRanking(rankingDate, users, timezoneOffset);
   };
 
   if (now.day === 1) {
-    await updateMonthlyRanking(now, users, timezoneOffset);
+    const rankingDate = now.minus({month: 1}).startOf("month").toSeconds();
+    await updateMonthlyRanking(rankingDate, users, timezoneOffset);
   };
 
-  await updateDailyRanking(now, users, timezoneOffset);
+  const rankingDate = now.minus({day: 1}).startOf("week").toSeconds();
+  await updateDailyRanking(rankingDate, users, timezoneOffset);
 }
 
 async function updateDailyRanking(now, users, timezoneOffset) {
