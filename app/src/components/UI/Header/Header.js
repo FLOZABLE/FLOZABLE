@@ -14,7 +14,7 @@ import styles from "./Header.module.css";
 import PlanTimeline from "../PlanTimeline/PlanTimeline";
 import { secondConverter } from "../../../utils/Tool";
 import ChatModalBtn from "../ChatModalBtn/ChatModalBtn";
-import { IconBook, IconBxHome, IconBxMessageSquareDetail, IconClipboardOutline, IconEyeOutline, IconIconStar, IconMonitor, IconUser } from "../../../utils/svgs";
+import { HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor, IconBell, IconBook, IconBxHome, IconBxMessageSquareDetail, IconClipboardOutline, IconEyeOutline, IconIconStar, IconMonitor, IconUser } from "../../../utils/svgs";
 import StudyBtn from "../StudyBtn/StudyBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -31,7 +31,7 @@ function Header({
   mode,
   isSidebarOpen,
   onToggleSidebar,
-  totalNewMsg
+  totalNewMsg,
 }) {
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
@@ -59,9 +59,9 @@ function Header({
     if (!subjects.daily) return;
 
     //Solve daily
-    let totalSeconds =subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1];
+    let totalSeconds = subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1];
     totalSeconds = totalSeconds ? totalSeconds : 0;
-    const {value, type} = secondConverter(totalSeconds);
+    const { value, type } = secondConverter(totalSeconds);
     setTotalStudied(value + type);
 
     //Solve streak
@@ -121,65 +121,74 @@ function Header({
   return (
     <header className={styles.Header}>
       <div className={styles.left}>
-      <div className={styles.headerEl}>
-        <div>
-          <i>
-            <IconBook />
-          </i>
-          <p>Today total</p>
+        <div className={styles.headerEl}>
+          <div>
+            <i>
+              <HeaderBook />
+            </i>
+            <div>
+              <p>Today total</p>
+              <strong>{totalStudied}</strong>
+            </div>
+          </div>
         </div>
-        <div>
-         {totalStudied}
+        <div className={styles.divider}>
         </div>
-      </div>
-      <div className={styles.headerEl}>
-        <div>
-          <i>
-            <IconMonitor />
-          </i>
-          <p>App Usage</p>
+        <div className={styles.headerEl}>
+          <div>
+            <i>
+              <HeaderMonitor />
+            </i>
+            <div>
+              <p>App Usage</p>
+              <strong>0 hour</strong>
+            </div>
+          </div>
         </div>
-        <div>
-          1 hour
+        <div className={styles.divider}>
         </div>
-      </div>
-      <div className={styles.headerEl}>
-        <div>
-          <i>
-            <IconIconStar />
-          </i>
-          <p>Streak</p>
+        <div className={styles.headerEl}>
+          <div>
+            <i>
+              <HeaderMeteor />
+            </i>
+            <div>
+              <p>Streak</p>
+              <strong>{studyStreak}</strong>
+            </div>
+          </div>
         </div>
-        <div>
-          {studyStreak}
+        <div className={styles.divider}>
         </div>
-      </div>
-      <div className={styles.headerEl}>
-        <div>
-          <i>
-            <IconEyeOutline />
-          </i>
-          <p>Focus</p>
+        <div className={styles.headerEl}>
+          <div>
+            <i>
+              <HeaderFocus />
+            </i>
+            <div>
+              <p>Focus</p>
+              <strong>{longestSession}</strong>
+            </div>
+          </div>
         </div>
-        <div>
-          {longestSession}
-        </div>
-      </div>
       </div>
       <div className={styles.right}>
-        <StudyBtn />
-        <div className={styles.buttons}>
-          <i>
-          <IconClipboardOutline />
-          </i>
-          <i>
-          <IconBxMessageSquareDetail />
-          </i>
-          <Link>
-            <i>
-            <IconUser />
-            </i>
-          </Link>
+        <div className={styles.headerEl}>
+          <IconBell />
+        </div>
+        <div className={styles.divider}>
+        </div>
+        <div className={styles.headerEl} id={styles.user}>
+          <div>
+            <p>{userInfo?.name}</p>
+          </div>
+          <div className={styles.profileImg}
+            style={{
+              backgroundImage: `url("${serverOrigin}/profile-images/{}.jpeg")`, backgroundSize: 'cover',
+              backgroundPosition: 'center center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          ></div>
         </div>
       </div>
     </header>

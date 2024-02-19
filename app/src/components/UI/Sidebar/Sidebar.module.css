@@ -3,7 +3,7 @@
   top: 0px;
   left: 0px;
   height: 100vh;
-  width: 220px;
+  width: 130px;
   background-color: #fff;
   display: flex;
   align-items: center;
@@ -28,16 +28,23 @@
   display: flex;
   flex-direction: column;
   border-radius: 20px;
-  width: 190px;
+  width: 60px;
+  height: 100%;
+  margin-bottom: 50px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .Sidebar .sidebarContainer .sidebarEl {
   display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 30px 20px;
+  padding: 20px 20px;
   opacity: 0.2;
   transition: .3s ease-in-out opacity;
+}
+
+.Sidebar .sidebarContainer .sidebarEl h1 {
+  display: none;
 }
 
 .Sidebar .sidebarContainer .sidebarEl:hover {
@@ -46,7 +53,6 @@
 
 .Sidebar .sidebarContainer .sidebarEl i {
   color: var(--blue1);
-  padding-right: 15px;
   font-size: 30px;
   display: flex;
   justify-content: center;

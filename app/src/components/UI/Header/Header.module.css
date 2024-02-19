@@ -1,38 +1,43 @@
 .Header {
-  height: 100px;
-  width: calc(100vw - 220px - 1px);
+  height: 60px;
+  width: calc(100vw - 130px - 1px);
   background-color: var(--gray);
   position: fixed;
   top: 0px;
-  left: 221px;
+  left: 131px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #a1a1a1;;
   z-index: 5;
 }
 
-
 .Header .left {
   display: flex;
+  height: 100%;
 }
 
 .Header .left .headerEl {
   display: flex;
   flex-direction: column;
-  background-color: #fff;
-  height: 80px;
+  height: 60px;
   align-items: center;
   justify-content: center;
   padding: 0px 10px;
+}
+
+.Header .left .headerEl:nth-child(1) {
   margin-left: 50px;
-  border-radius: 15px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .Header .left .headerEl > div {
   display: flex;
   align-items: center;
-  font-size: 20px;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.Header .left .headerEl > div strong {
+  font-weight: 700;
+  font-size: 13px;
 }
 
 .Header .left .headerEl > div i {
@@ -42,41 +47,41 @@
   display: flex;
 }
 
-.Header .left .headerEl:nth-child(1) {
-  color: #00c738;
+.Header .divider {
+  height: calc(100% - 30px);
+  margin: 15px 5px;
+  border-right: 2px solid #b2b2b2;
 }
-
-.Header .left .headerEl:nth-child(2) {
-  color: var(--blue1);
-}
-
-.Header .left .headerEl:nth-child(3) {
-  color: #FF9900;
-}
-
-.Header .left .headerEl:nth-child(4) {
-  color: #5200FF
-}
-
 
 .Header .right {
   display: flex;
   position: absolute;
   right: 30px;
+  height: 100%;
 }
 
-.Header .right .buttons {
+.Header .right .headerEl {
   display: flex;
   align-items: center;
-  background-color: #fff;
-  border-radius: 20px;
-  margin-left: 30px;
-  padding: 0px 10px;
-  box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
+  margin: 0px 20px;
 }
 
-.Header .right .buttons i {
-  font-size: 30px;
-  padding: 10px 8px;  
+.Header .right #user > div {
+  margin-right: 10px;
+}
+
+.Header .right #user p {
+  font-weight: 900;
+}
+
+.Header .right .profileImg {
   display: flex;
+  background-color: #e5e6e7;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-right: auto;
+  margin-left: auto;
 }

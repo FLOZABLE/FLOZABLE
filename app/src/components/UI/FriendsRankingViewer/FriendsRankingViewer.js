@@ -6,146 +6,59 @@ import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import CountryViewer from "../CountryViewer/CountryViewer";
 import { secondConverter } from "../../../utils/Tool";
+import DropDownButton from "../DropDownButton/DropDownButton";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function FriendsRankingViewer({userInfo}) {
-  const [viewDate, setViewDate] = useState(new Date());
-  const [dailyRankingsEl, setDailyRankingsEl] = useState([]);
-  const [weeklyRankingsEl, setWeeklyRankingsEl] = useState([]);
-  const [monthlyRankingsEl, setMonthlyRankingsEl] = useState([]);
+function FriendsRankingViewer({ friendsRanking }) {
 
-  /* const [daily] */
-  const friendsSort = () => {
-    const isoDateTime = DateTime.fromJSDate(viewDate, {zone: 'utc'}).toISODate();
-    fetch(`${serverOrigin}/ranking/friends?date=${isoDateTime}`, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      }
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const {todayRankings, thisWeekRankings, thisMonthRankings} = data;
-        setDailyRankingsEl(todayRankings.map((userInfo, i) => {
-          const {name, user_id, timezone, dayTotal} = userInfo;
-          const {value, type} = secondConverter(parseInt(dayTotal));
-          return (
-            <Link to={`/dashboard/user/${user_id}`} className={styles.ranking} key={i}>
-              <p className={styles.rank}>#{i + 1}</p>
-              <div
-                className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              ></div>
-              <div className={styles.name}>{name}</div>
-              <div className={styles.countryWrapper}>
-              <CountryViewer timezone={timezone}/>
-              </div>
-              <div className={styles.time}>{value}{type}</div>
-            </Link>
-          );
-        }));
-
-        setWeeklyRankingsEl(thisWeekRankings.map((userInfo, i) => {
-          const {name, user_id, timezone, weekTotal} = userInfo;
-          const {value, type} = secondConverter(parseInt(weekTotal));
-          return (
-            <Link to={`/dashboard/user/${user_id}`} className={styles.ranking} key={i}>
-              <p className={styles.rank}>#{i + 1}</p>
-              <div
-                className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              ></div>
-              <div className={styles.name}>{name}</div>
-              <div className={styles.countryWrapper}>
-              <CountryViewer timezone={timezone}/>
-              </div>
-              <div className={styles.time}>{value}{type}</div>
-            </Link>
-          );
-        }));
-
-        setMonthlyRankingsEl(thisMonthRankings.map((userInfo, i) => {
-          const {name, user_id, timezone, monthTotal} = userInfo;
-          const {value, type} = secondConverter(parseInt(monthTotal));
-          return (
-            <Link to={`/dashboard/user/${user_id}`} className={styles.ranking} key={i}>
-              <p className={styles.rank}>#{i + 1}</p>
-              <div
-                className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              ></div>
-              <div className={styles.name}>{name}</div>
-              <div className={styles.countryWrapper}>
-              <CountryViewer timezone={timezone}/>
-              </div>
-              <div className={styles.time}>{value}{type}</div>
-            </Link>
-          );
-        }));
-
-      })
-      .catch((error) => console.error(error));
-  };
-
-  useEffect(() => {
-    friendsSort();
-  }, [viewDate]);
+  const [viewer, setViewer] = useState('day');
 
   return (
     <div className={styles.FriendsRankingViewer}>
-      <div className={styles.title}>
-        Top Friends
-      </div>
-      <div className={styles.boxContainer}>
-        <div className={styles.box}>
-          <div className={styles.header}>
-            <p>Today</p>
-            <i>
-              <FontAwesomeIcon icon={faAngleRight} />
-            </i>
-          </div>
-          <div className={styles.rankings}>
-            {dailyRankingsEl}
-          </div>
-        </div>
-        <div className={styles.box}>
-          <div className={styles.header}>
-            <p>This Week</p>
-            <i>
-              <FontAwesomeIcon icon={faAngleRight} />
-            </i>
-          </div>
-          <div className={styles.rankings}>
-            {weeklyRankingsEl}
-          </div>
-        </div>
-        <div className={styles.box}>
-          <div className={styles.header}>
-            <p>This Month</p>
-            <i>
-              <FontAwesomeIcon icon={faAngleRight} />
-            </i>
-          </div>
-          <div className={styles.rankings}>
-            {monthlyRankingsEl}
-          </div>
-        </div>
+      <DropDownButton
+        options={{
+          "day": "Today",
+          "week": "This Week",
+          "month": "This Month"
+        }}
+        setValue={setViewer}
+        value={viewer}
+      />
+      <div className={styles.rankings}>
+        {friendsRanking?.[viewer]?.map((friend, i) => {
+          console.log(friend);
+          let value = friend.dayTotal;
+          if (viewer === "month") {
+            value = friend.monthTotal;
+          } else if (viewer === "week") {
+            value = friend.weekTotal;
+          };
+
+          const formattedVal = secondConverter(value);
+
+          return (
+            <div className={styles.userContainer} key={i}>
+              <div className={styles.rank}>
+                #{i + 1}
+              </div>
+              <Link className={styles.userInfo}>
+                <div className={styles.profileImg}
+                  style={{
+                    backgroundImage: `url("${serverOrigin}/profile-images/${friend.user_id}.jpeg")`, backgroundSize: 'cover',
+                    backgroundPosition: 'center center',
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                ></div>
+                <p>{friend.name}</p>
+                <CountryViewer timezone={friend.timezone} />
+              </Link>
+              <div className={styles.diff}>
+                {formattedVal.value} {formattedVal.type}
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   );
