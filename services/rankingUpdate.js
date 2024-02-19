@@ -17,6 +17,9 @@ async function updateRanking() {
   const timezoneOffset = Math.floor(now.offset / 60).toString();
   const users = await redisClient.sMembers(`allMembers`);
 
+  const rankingDate = now.minus({day: 1}).startOf("day").toSeconds();
+  await updateDailyRanking(rankingDate, users, timezoneOffset);
+
   if (now.weekday === 1) {
     const rankingDate = now.minus({week: 1}).startOf("week").toSeconds();
     await updateWeeklyRanking(rankingDate, users, timezoneOffset);
@@ -26,9 +29,6 @@ async function updateRanking() {
     const rankingDate = now.minus({month: 1}).startOf("month").toSeconds();
     await updateMonthlyRanking(rankingDate, users, timezoneOffset);
   };
-
-  const rankingDate = now.minus({day: 1}).startOf("day").toSeconds();
-  await updateDailyRanking(rankingDate, users, timezoneOffset);
 }
 
 async function updateDailyRanking(now, users, timezoneOffset) {
@@ -39,8 +39,8 @@ async function updateDailyRanking(now, users, timezoneOffset) {
       //update week total, month total
       if (todayTotal) {
         filteredUsers.push({u: userId, t: todayTotal});
-        /* await redisClient.incrBy(`user:${userId}:weekTotal`, todayTotal);
-        await redisClient.incrBy(`user:${userId}:monthTotal`, todayTotal); */
+        await redisClient.zIncrBy(`user:${userId}:weekTotal`, todayTotal, timezoneOffset);
+        await redisClient.zIncrBy(`user:${userId}:monthTotal`, todayTotal, timezoneOffset);
       };
       redisClient.zRem(`user:${userId}:dayTotal`, timezoneOffset);
       //redisClient.del(`user:${userId}:dayTotal`);
@@ -66,9 +66,8 @@ async function updateWeeklyRanking(now, users, timezoneOffset) {
     await Promise.all(users.map(async(userId) => {
       //const thisWeekTotal = await redisClient.get(`user:${userId}:weekTotal`);
       const thisWeekTotal = await redisClient.zScore(`user:${userId}:weekTotal`, timezoneOffset);
-      const todayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset);
-      if (thisWeekTotal || todayTotal) {
-        const total = thisWeekTotal ? thisWeekTotal : 0 + todayTotal ? todayTotal : 0;
+      if (thisWeekTotal) {
+        const total = thisWeekTotal ? thisWeekTotal : 0;
         filteredUsers.push({u: userId, t: total});
       };
       //redisClient.del(`user:${userId}:weekTotal`);
@@ -95,9 +94,8 @@ async function updateMonthlyRanking(now, users, timezoneOffset) {
     await Promise.all(users.map(async(userId) => {
       //const thisMonthTotal = await redisClient.get(`user:${userId}:monthTotal`);
       const thisMonthTotal = await redisClient.zRange(`user:${userId}:monthTotal`, timezoneOffset);
-      const todayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset);
-      if (thisMonthTotal || todayTotal) {
-        const total = thisMonthTotal ? thisMonthTotal : 0 + todayTotal ? todayTotal : 0;
+      if (thisMonthTotal) {
+        const total = thisMonthTotal ? thisMonthTotal : 0;
         filteredUsers.push({u: userId, t: total});
       }
       //redisClient.del(`user:${userId}:monthTotal`);
