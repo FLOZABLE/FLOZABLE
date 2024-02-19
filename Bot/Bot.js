@@ -546,7 +546,7 @@ const MAX_START_DELAY = 60; //1 hr = starts atleast 1hr from being assigned */
 
 const BOT_MIN_STUDY = 60 * 10; //10 min = min time bot will study
 const BOT_MAX_STUDY = 60 * 60 * 2; //2 hr = max time bot will study
-const MAX_START_DELAY = 60 * 60 * 2; //2 hr = starts atleast 1hr from being assigned
+const MAX_START_DELAY = 60 * 60 * 1; //1 hr = starts atleast 1hr from being assigned
 
 async function botSelector(numbers) {
   const connection = pool.promise();
@@ -586,7 +586,7 @@ async function botManager(numbers) {
     await stopBot(botId);
   }));
   botSelector(numbers);
-  schedule.scheduleJob('0 */5 * * *', async () => {
+  schedule.scheduleJob('0 */3 * * *', async () => {
     console.log('run bot')
     botSelector(numbers);
   });
