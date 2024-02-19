@@ -27,7 +27,7 @@ async function updateRanking() {
     await updateMonthlyRanking(rankingDate, users, timezoneOffset);
   };
 
-  const rankingDate = now.minus({day: 1}).startOf("week").toSeconds();
+  const rankingDate = now.minus({day: 1}).startOf("day").toSeconds();
   await updateDailyRanking(rankingDate, users, timezoneOffset);
 }
 

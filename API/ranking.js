@@ -468,11 +468,11 @@ Router.get('/friends', async (req, res) => {
         return null;
       }));
 
-      const todayRankings = [...friendsData].sort((a, b) => b.dayTotal - a.dayTotal);
-      const thisWeekRankings = [...friendsData].sort((a, b) => b.weekTotal - a.weekTotal);
-      const thisMonthRankings = [...friendsData].sort((a, b) => b.monthTotal - a.monthTotal);
+      const day = [...friendsData].sort((a, b) => b.dayTotal - a.dayTotal);
+      const week = [...friendsData].sort((a, b) => b.weekTotal - a.weekTotal);
+      const month = [...friendsData].sort((a, b) => b.monthTotal - a.monthTotal);
 
-      res.send({ success: true, todayRankings, thisWeekRankings, thisMonthRankings });
+      res.send({ success: true, day, week, month });
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });

@@ -13,6 +13,7 @@ import Search from "../../UI/Search/Search";
 import SearchUsers from "../../UI/SearchUsers/SearchUsers";
 import FriendEmailModal from "../../UI/FriendEmailModal/FriendEmailModal";
 import { Link } from "react-router-dom";
+import SearchBar from "../../UI/SearchBar/SearchBar";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -36,6 +37,7 @@ function Friends({
 
   const [friendCount, setFriendCount] = useState(0);
   const [suggestionsCount, setSuggestionsCount] = useState(0);
+  const [friendsRanking, setFriendsRanking] = useState({});
 
   useEffect(() => {
     if (!joinTarget) return;
@@ -64,6 +66,26 @@ function Friends({
     };
   }, [joinTarget]);
 
+  const getFriendsRanking = () => {
+    fetch(`${serverOrigin}/ranking/friends`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
+          const { day, week, month } = response;
+          setFriendsRanking({ day, week, month });
+        };
+      })
+  }
+  useEffect(() => {
+    if (!userInfo) return;
+    getFriendsRanking();
+  }, [userInfo]);
+
   return (
     <div className={styles.Friends}>
       <FriendLinkModal
@@ -89,8 +111,31 @@ function Friends({
         className={`Main ${styles.Main}`}
       >
         <div>
+          <div className={styles.smallBox}>
+            <div className={styles.title}>
+              <h3>Friend's Rank</h3>
+              <i>
+                <IconStatsChart />
+              </i>
+            </div>
+            <div>
+              <FriendsRankingViewer friendsRanking={friendsRanking} />
+            </div>
+          </div>
+        </div>
+        <div>
           <div className={styles.box} id={styles.activeFriends}>
             <h3>Current Active Friends</h3>
+            <FriendsActivityViewer
+              setResponse={setResponse}
+              userInfo={userInfo}
+              setJoinTarget={setJoinTarget}
+              searchQuery={searchQuery}
+              setCount={setFriendCount}
+              myGroups={myGroups}
+              setMyGroups={setMyGroups}
+              setOtherGroups={setOtherGroups}
+            />
             <div className={styles.userContainer}>
               <Link
                 className={styles.profile}
@@ -147,35 +192,52 @@ function Friends({
         </div>
         <div>
           <div className={styles.smallBox}>
-            <p>Email Invitation</p>
-            <i>
-              <IconEmailOutline />
-            </i>
+            <div className={styles.title}>
+              <h3>Email Invitation</h3>
+              <i>
+                <IconEmailOutline />
+              </i>
+            </div>
           </div>
           <div className={styles.smallBox}>
-            <p>Friend Link</p>
-            <i>
-              <IconUser />
-            </i>
+            <div className={styles.title}>
+              <h3>Friend Link</h3>
+              <i>
+                <IconUser />
+              </i>
+            </div>
           </div>
           <div className={styles.smallBox}>
-            <p>Challenge URL</p>
-            <i>
-              <IconFire />
-            </i>
+            <div className={styles.title}>
+              <h3>Challenge URL</h3>
+              <i>
+                <IconFire />
+              </i>
+            </div>
           </div>
-          <div className={styles.smallBox} id={styles.friendRank}>
-            <h3>Friend's Rank</h3>
-            <i>
-              <IconStatsChart />
-            </i>
-            {/* <FriendsRankingViewer userInfo={userInfo}/> */}
-          </div>
-        </div>
-        <div>
           <div className={styles.smallBox}>
-            <h3>Search for Friends</h3>
-            
+            <div className={styles.title}>
+              <h3>Search for Friends</h3>
+              <i>
+              </i>
+            </div>
+            <SearchBar 
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+          </div>
+          <div className={styles.smallBox}>
+            <div className={styles.title}>
+              <h3>Friend Requests</h3>
+              <i>
+              </i>
+            </div>
+            <FriendRequestsViewer
+              notifications={notifications}
+              setNotifications={setNotifications}
+              setResponse={setResponse}
+              userInfo={userInfo}
+            />
           </div>
         </div>
         {/* <div className={styles.fixedBoxContainer}>

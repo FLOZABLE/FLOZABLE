@@ -2,46 +2,42 @@
   position: relative;
 }
 
-.FriendsRankingViewer .title {
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.FriendsRankingViewer .box .header {
+.FriendsRankingViewer .profileImg {
   display: flex;
-  flex-direction: row;
-}
-
-.FriendsRankingViewer .box .header i {
+  background-color: #e5e6e7;
+  width: 35px;
+  height: 35px;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-right: auto;
   margin-left: auto;
+  margin-right: 10px;
 }
 
-.FriendsRankingViewer .ranking {
+.FriendsRankingViewer .rankings .userContainer {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.FriendsRankingViewer .rankings .userContainer > div {
   display: flex;
   align-items: center;
-  margin: 3px 0px;
-}
-
-.FriendsRankingViewer .ranking .profileImg {
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
   margin-right: 10px;
 }
 
-.FriendsRankingViewer .ranking .name {
-  margin-right: 10px;
+.FriendsRankingViewer .rankings .userContainer .userInfo {
+  display: flex;
+  align-items: center;
+  font-size: 17px;
 }
 
-.FriendsRankingViewer .ranking .countryWrapper {
-  font-size: 24px;
-}
-
-.FriendsRankingViewer .ranking .time {
-  margin-left: auto;
-  margin-right: 10px;
-}
-
-.FriendsRankingViewer .ranking .rank {
+.FriendsRankingViewer .rankings .userContainer .userInfo p {
   margin-right: 5px;
+}
+
+.FriendsRankingViewer .rankings .userContainer .diff {
+  margin-left: auto;
+  font-size: 15px;
+  margin-right: 0px;
 }

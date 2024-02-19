@@ -1,0 +1,31 @@
+.SlidingOptBtn {
+  position: relative;
+  width: 100%;
+  height: 40px;
+}
+
+.SlidingOptBtn .optionsWrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.SlidingOptBtn .optionsWrapper .option {
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+}
+
+.SlidingOptBtn .focusDisp {
+  height: 100%;
+  position: absolute;
+  background-color: var(--blue0);
+  border-radius: 50px;
+  top: 0px;
+  transition: .3s ease-in-out left;
+}
