@@ -4,13 +4,17 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import CountryViewer from "../CountryViewer/CountryViewer";
+import SlidingOptBtn from "../SlidingOptBtn/SlidingOptBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function FriendRequestsViewer({ setResponse, notifications, setNotifications }) {
   const [isIncoming, setIsIncoming] = useState(true);
+  const [viewer, setViewer] = useState(0);
   const [friendRequestEl, setFriendRequestEl] = useState([]);
   const [sentRequestsEl, setSentRequestsEl] = useState([]);
+  const [friendRequests, setFriendRequests] = useState([]);
+  const [sentRequests, setSentRequests] = useState([]);
 
   useEffect(() => {
     if (!notifications) return;
@@ -28,7 +32,10 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
       };
       return;
     });
-    
+
+    setFriendRequests(friendRequests);
+    setSentRequests(sentRequests);
+    /* 
     setSentRequestsEl(sentRequests.map((sentRequest, index) => {
       const { f, i } = sentRequest;
       const { name, timezone, user_id } = f;
@@ -101,7 +108,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
           </div>
         </div>
       )
-    }))
+    })) */
   }, [notifications]);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
@@ -134,37 +141,104 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
 
     setNotifications(notifications.filter(notif => notif.i !== notificationId));
   };
-
+  console.log('viewer', viewer)
   return (
     <div className={styles.FriendRequestsViewer}>
-      <div className={styles.title}>
-        Friend Requests
-      </div>
-      <div className={styles.optionsWrapper}>
-        <div className={styles.buttonsContainer}>
-          <button onClick={() => { setIsIncoming(true) }}>
-            <p>Incoming</p>
-            <div className={styles.count}>
-              {friendRequestEl.length}
+      <SlidingOptBtn
+        options={
+          {
+            0: `Incoming (${friendRequests.length})`,
+            1: `Outgoing (${sentRequests.length})`
+          }
+        }
+        value={viewer}
+        setValue={setViewer}
+      />
+      {viewer ? sentRequests.map((request, index) => {
+        const { f, i } = request;
+        const { name, timezone, user_id } = f;
+        return (
+          <div className={styles.friendRequest} style={{ zIndex: request.length - index + 1 }} key={i}>
+            <Link to={`/dashboard/user/${user_id}`} >
+              <div className={styles.content}>
+                <div className={styles.profileImg}
+                  style={{
+                    backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center center',
+                    backgroundRepeat: 'no-repeat',
+                  }}>
+                </div>
+                <p className={`${styles.name} overflowDot`}>{name}</p>
+                <CountryViewer timezone={timezone} />
+              </div>
+            </Link>
+            <div className={styles.buttons}>
+              <div className={`${styles.btnWrapper} ${styles.decline}`}>
+                <button onClick={() => { sentRequestClear(user_id, i) }}>
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
+                <div className={styles.hoverDisp}>
+                  Abort
+                </div>
+              </div>
             </div>
-          </button>
-          <button onClick={() => { setIsIncoming(false) }}>
-            <p>Outgoing</p>
-            <div className={styles.count}>
-              {sentRequestsEl.length}
+          </div>
+        )
+      }) :
+        friendRequests.map((request, index) => {
+          const { f, i } = request;
+          const { name, timezone, user_id } = f;
+          return (
+            <div className={styles.friendRequest} style={{ zIndex: request.length - index + 1 }} key={i}>
+              <Link to={`/dashboard/user/{fromId}`} >
+                <div className={styles.content}>
+                  <div className={styles.profileImg}
+                    style={{
+                      backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center center',
+                      backgroundRepeat: 'no-repeat',
+                    }}>
+                  </div>
+                  <p className={`${styles.name} overflowDot`}>{name}</p>
+                  <CountryViewer timezone={timezone} />
+                </div>
+              </Link>
+              <div className={styles.buttons}>
+                <div className={`${styles.btnWrapper} ${styles.decline}`}>
+                  <button onClick={() => { friendRequestReply(user_id, false, i) }}>
+                    <FontAwesomeIcon icon={faXmark} />
+                  </button>
+                  <div className={styles.hoverDisp}>
+                    Decline
+                  </div>
+                </div>
+                <div className={`${styles.btnWrapper} ${styles.accept}`}>
+                  <button onClick={() => { friendRequestReply(user_id, true, i) }}>
+                    <FontAwesomeIcon icon={faCheck} />
+                  </button>
+                  <div className={styles.hoverDisp}>
+                    Accept
+                  </div>
+                </div>
+              </div>
             </div>
-          </button>
+          )
+        })
+      }
+      {parseInt(viewer) === 1 && !sentRequests.length ? (
+        <div className={styles.dispMsg}>
+          No outgoing requests
         </div>
-        <div className={`${styles.lineContainer} ${isIncoming ? styles.incoming : ''}`}>
-          <div className={styles.line}></div>
-        </div>
-      </div>
-      <div className={`${styles.friendRequests} ${isIncoming ? styles.open : ''} hiddenScroll`}>
-      {friendRequestEl.length ? friendRequestEl : <p>No incoming requests</p>}
-      </div>
-      <div className={`${styles.friendRequests} ${!isIncoming ? styles.open : ''}`} id={styles.outgoing}>
-        {sentRequestsEl.length ? sentRequestsEl : <p>No outgoing requests</p>}
-      </div>
+      ) : (
+        parseInt(viewer) === 0 && !friendRequests.length ? (
+          <div className={styles.dispMsg}>
+            No incoming requests
+          </div>
+        ) : null
+      )}
+
     </div>
   )
 };

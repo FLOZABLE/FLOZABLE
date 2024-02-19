@@ -7,12 +7,12 @@
 }
 
 .Friends .Main > div:nth-child(1) {
-  width: 50%;
+  width: 25%;
   padding: 20px;
 }
 
 .Friends .Main > div:nth-child(2) {
-  width: 25%;
+  width: 50%;
   padding: 20px;
 }
 
@@ -33,9 +33,7 @@
 
 .Friends .box#activeFriends h3 {
   font-size: 30px;
-  background: linear-gradient(to right, var(--blue2) , var(--blue1));
-  -webkit-text-fill-color: transparent;
-  -webkit-background-clip: text;
+  font-family: "Inter", sans-serif;
 }
 
 .Friends .box#activeFriends .userContainer {
@@ -71,10 +69,19 @@
   border-radius: 20px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   padding: 15px 20px;
   margin-bottom: 20px;
   font-size: 20px;
+}
+
+.Friends .smallBox .title {
+  display: flex;
+  font-weight: 900;
+}
+
+.Friends .smallBox .title h3 {
+  font-family: "Inter", sans-serif;
 }
 
 .Friends .smallBox i {

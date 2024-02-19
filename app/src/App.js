@@ -516,6 +516,7 @@ function App() {
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 setIsChatModal={setIsChatModal}
+                isChatModal={isChatModal}
                 totalNewMsg={totalNewMsg}
                 userInfo={userInfo}
               />
