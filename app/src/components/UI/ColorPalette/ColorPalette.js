@@ -87,7 +87,10 @@ function ColorPalette({
             }
           }}
         >
-          {!selectedColor ? <p>Select Color!</p> : <p>Selected Color: </p>}
+          <div className={styles.pTag}>
+            {!selectedColor ? <p>Select Color!</p> : <p>Selected Color: </p>}
+          </div>
+
         </button>
         <div
           onClick={() => {

@@ -14,7 +14,7 @@ import styles from "./Header.module.css";
 import PlanTimeline from "../PlanTimeline/PlanTimeline";
 import { secondConverter } from "../../../utils/Tool";
 import ChatModalBtn from "../ChatModalBtn/ChatModalBtn";
-import { HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor, IconBell, IconBook, IconBxHome, IconBxMessageSquareDetail, IconClipboardOutline, IconEyeOutline, IconIconStar, IconMonitor, IconUser } from "../../../utils/svgs";
+import { ButtonLogout, HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor, IconBell, IconBook, IconBxHome, IconBxMessageSquareDetail, IconClipboardOutline, IconEyeOutline, IconIconStar, IconMonitor, IconUser } from "../../../utils/svgs";
 import StudyBtn from "../StudyBtn/StudyBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -188,7 +188,15 @@ function Header({
               backgroundPosition: 'center center',
               backgroundRepeat: 'no-repeat',
             }}
-          ></div>
+          >
+          </div>
+          <div>
+            <Link to="/dashboard/study">
+              <i>
+              <ButtonLogout />
+              </i>
+            </Link>      
+          </div>
         </div>
       </div>
     </header>

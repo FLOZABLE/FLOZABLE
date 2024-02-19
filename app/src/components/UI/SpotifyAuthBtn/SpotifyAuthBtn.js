@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SpotifyLogo } from "../../../utils/svgs";
+import { SpotifyLogo, SpotifyLogoSmall } from "../../../utils/svgs";
 import styles from "./SpotifyAuthBtn.module.css";
 import { useSearchParams } from 'react-router-dom';
 
@@ -64,8 +64,8 @@ function SpotifyAuthBtn({ userInfo, redirectURI, setResponse }) {
         :
         <p>Login with Spotify</p>
       }
-      <i>
-        <SpotifyLogo />
+      <i className={styles.LogoSize}>
+        <SpotifyLogoSmall />
       </i>
     </a>
   )

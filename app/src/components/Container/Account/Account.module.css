@@ -1,6 +1,6 @@
-.Account .fixedNav {
+  .Account .fixedNav {
   width: 500px;
-  background-color: #fff;
+  background-color: #F8F9FA;
   position: fixed;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   border-radius: 10px;
@@ -22,7 +22,7 @@
 
 .Account .fixedNav .navEl:hover {
   background-color: var(--pink);
-  color: #fff;
+  color: #F8F9FA;
 }
 
 .Account .navEl i {
@@ -35,7 +35,7 @@
 
 .Account .boxContainer {
   width: calc(100% - 550px);
-  margin-left: 550px;
+  margin-left: 560px;
   margin-bottom: 50px;
 }
 
@@ -43,19 +43,106 @@
   width: calc(100% - 40px);
   padding: 20px;
   border-radius: 20px;
-  background-color: #fff;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  margin-bottom: 30px;
+  border: 1px solid rgb(99, 99, 99);
+  background-color: #F8F9FA;
+  margin-top: 40px;  
+  margin-left: -270px;
 }
 
+.Account .title {
+  margin: 10px;
+}
+
+.Account .ProfilePass h1 {
+  font-size: 160%;
+  margin: 10px;
+}
+
+.Account .Profile {
+  width: calc((100% - 40px)/2.15);
+  height: 290px;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid rgb(99, 99, 99);
+  background-color: #F8F9FA;
+  margin-bottom: 30px;  
+  margin-left: -270px;
+  font-size: 90%;
+  font-weight: 100;
+  color: rgb(88, 88, 88);
+}
+
+.Account .Pass {
+  width: calc((100% - 40px)/2.15);
+  height: 290px;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid rgb(99, 99, 99);
+  background-color: #F8F9FA;
+  margin-top: -363px;  
+  margin-left: 374px;
+  font-size: 90%;
+  font-weight: 100;
+  color: rgb(88, 88, 88);
+  display: flexbox;
+}
+.Account .TextPositionAdjust {
+  margin: 10-10px;
+}
+
+.Account .title h1 {
+  color: rgb(88,88,88)
+}
+
+.Account .title p {
+  margin-left: 1.4px;
+  font-size: 120%;
+}
+.Account .backArrow {
+  position: absolute;
+  margin-top: -70px;
+  margin-left: -500px;
+}
+
+.Account .backArrow h1 {
+  margin-top: -62px;
+  margin-left: 80px;
+}
+.Account .ProfilePass {
+  width: calc((100% - 40px)/2.1);
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid rgb(99, 99, 99);
+  background-color: #F8F9FA;
+  margin-bottom: 30px;  
+  margin-left: -270px;
+}
+
+.Account .ProfileBox {
+  width: calc(100% - 40px);
+  padding: 20px;
+  border-radius: 20px;
+  background-color: #F8F9FA;
+  margin-bottom: 30px;  
+  margin-left: -270px;
+}
+
+.Account .extensionWrapper ul {
+  
+}
 /* profile pic selector */
+
+.Account .pfp {
+  margin-left: 510px;
+  display : flex;
+}
 
 .Account .imgSelector {
   position: relative;
 }
 
 .Account .profilePic {
-  width: 128px;
+  width: 180px;
   height: auto;
   object-fit: cover;
 }
@@ -67,16 +154,21 @@
 .Account .circle {
   border-radius: 100% !important;
   overflow: hidden;
-  width: 128px;
-  height: 128px;
+  width: 180px;
+  height: 180px;
   border: 2px solid rgba(255, 255, 255, 0.2);
   position: relative;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  /* box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.Account .welcome {
+  margin-left: 460px;
+  margin-top: 40px;
+  font-weight: 500;
+}
 .Account .pImage {
   position: absolute;
   top: 110px;
@@ -90,6 +182,9 @@
   justify-content: center;
   align-items: center;
   border-radius: 100%;
+  margin-left: 550px;
+  margin-top: 40px;
+  
 }
 
 .Account .pImage:hover {
@@ -105,16 +200,35 @@
   color: #999;
 }
 
+.Account .borderbox {
+  
+  border: 1px solid black;
+}
 .Account .content {
   display: flex;
   flex-direction: column;
+  background-color: transparent;
 }
 
+.Account .bullet {
+  margin-left: 15px;
+}
+
+.Account .RequireField {
+  margin-top: -22px;
+  margin-left: 2px;
+}
 .Account .content .layer {
   display: flex;
   width: 100%;
-  margin: 20px 0px;
+  margin: 10px 0px;
+  margin-left: -10px;
   position: relative;
+  background-color: #F8F9FA;
+}
+
+.submitWrapperPass .pw {
+  margin-left: 13px;
 }
 
 .Account .content .layer>div {
@@ -124,7 +238,8 @@
 
 .Account .submitWrapper {
   margin-left: auto;
-  margin-right: 20px;
+  margin-right: 10px;
+  margin-top: 0px;
 }
 
 .Account .passwordReq ul li {
@@ -138,13 +253,20 @@
   margin-right: 0px;
 }
 
+.Account .submitWrapperPass {
+  position: absolute;
+  margin-top: -11px;
+  margin-left: 403px;
+}
 .Account #extensionHeader {
+  padding: 10px;
   border-bottom: 1px #999 solid;
 }
 
 .Account #extensionHeader>div {
   display: flex;
   justify-content: center;
+  font-size: 120%;
 }
 
 .Account .websiteOptions {
@@ -155,7 +277,11 @@
 .Account .websiteOptions>div {
   width: 100%;
   display: flex;
-  ;
+  
+}
+
+.Account .websiteOptions .domain {
+  justify-content: center;
 }
 
 .Account .websiteOptions .block {
@@ -168,6 +294,22 @@
 
 .Account #accounts .iconWrapper {
   width: fit-content;
+
+}
+
+.Account .iconWrapper .positionGC {
+  justify-content: center;
+  margin-left: 10px;
+}
+
+.Account .iconWrapper .positionYT {
+  justify-content: center;
+  margin-left: 5px;
+}
+
+.Account .iconWrapper .positionSP {
+  justify-content: center;
+  margin-left: 7px;
 }
 
 .Account #accounts .authBtn {

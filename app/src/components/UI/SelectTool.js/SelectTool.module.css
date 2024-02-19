@@ -1,10 +1,11 @@
 .selectTool .header {
   display: flex;
   z-index: 2;
+  margin-top: 40px;
 }
 
 .selectTool .header p {
-  font-size: 26px;
+  font-size: 23px;
   font-weight: 700;
   color: #545454;
 }

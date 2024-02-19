@@ -69,12 +69,14 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject }) {
   return (
     <div className={styles.SubjectManager}>
       <div className={styles.title}>
-        <LineInput
-          title={"Name"}
-          value={name}
-          setValue={(name) => { setName(name); setSelectedSubject(prev => ({ ...prev, id: subject.id })); }}
-          type={"text"}
-        />
+        <div className={styles.MathTitle}>
+          <LineInput
+            title={""}
+            value={name}
+            setValue={(name) => { setName(name); setSelectedSubject(prev => ({ ...prev, id: subject.id })); }}
+            type={"text"}
+          />
+        </div>
       </div>
       <div className={styles.column}>
         <SelectIcon
