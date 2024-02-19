@@ -438,8 +438,8 @@ const Punch = (props) => (
 
 const GoogleCalendar = (props) => (
   <svg
-    width="64px"
-    height="64px"
+    width="40px"
+    height="40px"
     viewBox="0 0 256 256"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -497,8 +497,8 @@ function YouTubeIcon(props) {
     <svg
       viewBox="0 0 1024 1024"
       fill="red"
-      height="64px"
-      width="64px"
+      height="50px"
+      width="50px"
       {...props}
     >
       <path d="M941.3 296.1a112.3 112.3 0 00-79.2-79.3C792.2 198 512 198 512 198s-280.2 0-350.1 18.7A112.12 112.12 0 0082.7 296C64 366 64 512 64 512s0 146 18.7 215.9c10.3 38.6 40.7 69 79.2 79.3C231.8 826 512 826 512 826s280.2 0 350.1-18.8c38.6-10.3 68.9-40.7 79.2-79.3C960 658 960 512 960 512s0-146-18.7-215.9zM423 646V378l232 133-232 135z" />
@@ -778,8 +778,8 @@ const Fight1 = (props) => (
 
 const Google = (props) => (
   <svg
-    width="40px"
-    height="40px"
+    width="30px"
+    height="30px"
     viewBox="-0.313 0 30 30"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -834,8 +834,8 @@ const Google = (props) => (
 
 const SpotifyLogo = (props) => (
   <svg
-    width="64px"
-    height="64px"
+    width="46px"
+    height="46px"
     viewBox="0 0 48 48"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -871,6 +871,47 @@ const SpotifyLogo = (props) => (
     </g>
   </svg>
 );
+
+const SpotifyLogoSmall = (props) => (
+  <svg
+    width="32px"
+    height="32px"
+    viewBox="0 0 48 48"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+    fill="#000000"
+    {...props}
+  >
+    <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+    <g
+      id="SVGRepo_tracerCarrier"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <g id="SVGRepo_iconCarrier">
+      <defs />
+      <g
+        id="Icons"
+        stroke="none"
+        strokeWidth={1}
+        fill="none"
+        fillRule="evenodd"
+      >
+        <g
+          id="Color-"
+          transform="translate(-200.000000, -460.000000)"
+          fill="#00DA5A"
+        >
+          <path
+            d="M238.16,481.36 C230.48,476.8 217.64,476.32 210.32,478.6 C209.12,478.96 207.92,478.24 207.56,477.16 C207.2,475.96 207.92,474.76 209,474.4 C217.52,471.88 231.56,472.36 240.44,477.64 C241.52,478.24 241.88,479.68 241.28,480.76 C240.68,481.6 239.24,481.96 238.16,481.36 M237.92,488.08 C237.32,488.92 236.24,489.28 235.4,488.68 C228.92,484.72 219.08,483.52 211.52,485.92 C210.56,486.16 209.48,485.68 209.24,484.72 C209,483.76 209.48,482.68 210.44,482.44 C219.2,479.8 230,481.12 237.44,485.68 C238.16,486.04 238.52,487.24 237.92,488.08 M235.04,494.68 C234.56,495.4 233.72,495.64 233,495.16 C227.36,491.68 220.28,490.96 211.88,492.88 C211.04,493.12 210.32,492.52 210.08,491.8 C209.84,490.96 210.44,490.24 211.16,490 C220.28,487.96 228.2,488.8 234.44,492.64 C235.28,493 235.4,493.96 235.04,494.68 M224,460 C210.8,460 200,470.8 200,484 C200,497.2 210.8,508 224,508 C237.2,508 248,497.2 248,484 C248,470.8 237.32,460 224,460"
+            id="Spotify"
+          />
+        </g>
+      </g>
+    </g>
+  </svg>
+);
+
 
 // icon:mic-fill | Bootstrap https://icons.getbootstrap.com/ | Bootstrap
 
@@ -1250,6 +1291,33 @@ function IconEmailOutline(props) {
   );
 };
 
+const BackArrow = (props) => (
+<svg 
+  viewBox="0 0 24 24"
+  width="80px"
+  fill="none" 
+  xmlns="http://www.w3.org/2000/svg">
+  <g id="SVGRepo_bgCarrier" 
+    stroke-width="0">
+  </g>
+  <g id="SVGRepo_tracerCarrier" 
+  stroke-linecap="round" 
+  stroke-linejoin="round">
+    </g><g id="SVGRepo_iconCarrier"> <path d="M6 12H18M6 12L11 7M6 12L11 17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+);
+
+const ButtonLogout = (props) => (
+<svg 
+    width="42"
+    height="42" 
+    viewBox="0 0 81 80" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg">
+
+    <rect x="0.470459" y="-6.10352e-05" width="80" height="80" rx="40" fill="#00FF47" fill-opacity="0.15"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M32.0969 26.3231C30.7008 27.0604 29.4096 28.0073 28.2718 29.1432C25.2889 32.1261 23.614 36.1738 23.614 40.3918V42.2632C23.614 46.4812 25.2889 50.5271 28.2718 53.51C31.2547 56.4929 35.3006 58.1696 39.5204 58.1696H41.3918C45.6098 58.1696 49.6557 56.4929 52.6386 53.51C55.6215 50.5271 57.2982 46.4812 57.2982 42.2632V40.3918C57.2982 36.1738 55.6215 32.1261 52.6386 29.1432C51.5008 28.0073 50.2096 27.0604 48.8136 26.3231C47.9003 25.8421 46.7682 26.1921 46.2854 27.1053C45.8045 28.0185 46.1544 29.1507 47.0676 29.6335C48.1362 30.1968 49.1223 30.921 49.9925 31.7911C52.2737 34.0723 53.5555 37.1656 53.5555 40.3918V42.2632C53.5555 45.4894 52.2737 48.5827 49.9925 50.8639C47.7113 53.1451 44.6161 54.4269 41.3918 54.4269H39.5204C36.2942 54.4269 33.1991 53.1451 30.9179 50.8639C28.6367 48.5827 27.3567 45.4894 27.3567 42.2632V40.3918C27.3567 37.1656 28.6367 34.0723 30.9179 31.7911C31.7881 30.921 32.7761 30.1968 33.8428 29.6335C34.756 29.1507 35.1078 28.0185 34.625 27.1053C34.1422 26.1921 33.0101 25.8421 32.0969 26.3231ZM38.5848 22.6141V37.5848C38.5848 38.6178 39.4231 39.4562 40.4561 39.4562C41.4891 39.4562 42.3275 38.6178 42.3275 37.5848V22.6141C42.3275 21.5811 41.4872 20.7427 40.4561 20.7427C39.4231 20.7427 38.5848 21.5811 38.5848 22.6141Z" fill="#04DD00"/>
+</svg>
+);
 const HeaderBook = (props) => (
 <svg
     height="33px"
@@ -1703,10 +1771,13 @@ export {
   IconGalleryLine,
   IconFire,
   IconEmailOutline,
+  ButtonLogout,
+  BackArrow,
   HeaderBook,
   HeaderMonitor,
   HeaderMeteor,
   HeaderFocus,
   IconBell,
+  SpotifyLogoSmall,
   IconSearch
 };

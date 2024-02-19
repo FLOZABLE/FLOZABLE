@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "./LineInput.module.css";
 
-function LineInput({ title, value, setValue, type }) {
+function LineInput({ title, value, setValue, type}) {
   const [isFocused, setIsFocused] = useState(false);
 
   return (

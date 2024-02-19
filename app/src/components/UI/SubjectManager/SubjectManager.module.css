@@ -1,11 +1,17 @@
 .SubjectManager {
     margin-top: 25px;
+    background-color: transparent;
 }
 
 .SubjectManager .title {
   width: 50%;
+  background-color: transparent;
 }
 
 .SubjectManager > div {
   margin-bottom: 10px;
+  background-color: transparent;
+}
+
+.SubjectManager .title .MathTitle {
 }

@@ -8,7 +8,7 @@ import {
   faUser,
   faBook,
 } from "@fortawesome/free-solid-svg-icons";
-import { Chrome, GoogleCalendar, YouTubeIcon } from "../../../utils/svgs";
+import { BackArrow, Chrome, GoogleCalendar, YouTubeIcon } from "../../../utils/svgs";
 import LineInput from "../../UI/LineInput/LineInput";
 import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 import LabelMovingInput from "../../UI/LabelMovingInput/LabelMovingInput";
@@ -235,6 +235,8 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
         className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
           }`}
       >
+
+        {/*  
         <div className={styles.fixedNav}>
           <ul className={styles.navWrapper}>
             <li className={styles.navEl} onClick={() => { setScrollRef(profileRef) }}>
@@ -261,12 +263,12 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
               </i>
               <p>Chrome Extension</p>
             </li>
-            {/* <li className={styles.navEl} onClick={() => {setScrollRef(profileRef)}}>
+            <li className={styles.navEl} onClick={() => {setScrollRef(profileRef)}}>
               <i>
                 <FontAwesomeIcon icon={faBell} />
               </i>
               <p>Notifications</p>
-            </li> */}
+            </li> 
             <li className={styles.navEl} onClick={() => { setScrollRef(accountsRef) }}>
               <i>
                 <FontAwesomeIcon icon={faBell} />
@@ -275,12 +277,21 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
             </li>
           </ul>
         </div>
+
+        */}
         <div className={styles.boxContainer}>
-          <div className={styles.box}>
+          <div className={styles.backArrow}>
+            <BackArrow />
+            <h1>Account</h1>
+          </div>
+          <div className={styles.ProfileBox}>
             <div className={styles.imgSelector}>
-              <div className={styles.circle}>
-                <img className={styles.profilePic} src={imageSrc} alt="" />
-              </div>
+              <div className={styles.pfp}>
+                <div className={styles.circle}>
+                  <img className={styles.profilePic} src={imageSrc} alt="" />
+                </div>
+              </div>  
+              <h1 className={styles.welcome}>Welcome, David. K.</h1>     
               <div
                 className={styles.pImage}
                 onClick={() => {
@@ -302,39 +313,30 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
               </div>
             </div>
           </div>
-          <div className={styles.box} ref={profileRef}>
-            <div className={styles.title}>
-              <p>Profile</p>
-            </div>
-            <div className={styles.content}>
-              <div className={styles.layer}>
-                <div>
-                  <LineInput
-                    title={"Name"}
-                    value={name}
-                    setValue={setName}
-                    type={"text"}
-                  />
-                </div>
-                <div></div>
+            <div className={styles.Profile}>
+              <div className={styles.title}>  
+                <h1 >Profile</h1>
               </div>
-              <div className={styles.layer}>
-                <div className={styles.left}>
-                  <LineInput
-                    title={"Email"}
-                    value={email}
-                    setValue={setEmail}
-                    type={"email"}
-                  />
+              <div className={styles.content}>
+                <div className={styles.layer}>
+                  <div>
+                    <LineInput
+                      title={"Name"}
+                      value={name}
+                      setValue={setName}
+                      type={"text"}
+                   />
+                  </div>
                 </div>
-                <div className={styles.left}>
-                  <LineInput
-                    title={"Confirm Email"}
-                    value={confirmEmail}
-                    setValue={setConfirmEmail}
-                    type={"email"}
-                  />
-                </div>
+                <div className={styles.layer}>
+                  <div className={styles.left}>
+                   <LineInput
+                      title={"Email"}
+                      value={email}
+                      setValue={setEmail}
+                      type={"email"}
+                    />
+                  </div>  
               </div>
               <div className={styles.submitWrapper}>
                 <BlobBtn
@@ -347,9 +349,10 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
               </div>
             </div>
           </div>
-          <div className={styles.box} id={styles.password} ref={passwordRef}>
+
+          <div className={styles.Pass}>
             <div className={styles.title}>
-              <p>Change Password</p>
+              <h1>Change Password</h1>
             </div>
             <div className={styles.content}>
               <div className={styles.layer}>
@@ -374,29 +377,33 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
               </div>
               <div className={styles.layer}>
                 <div className={styles.passwordReq}>
-                  <h5>Password requirements</h5>
-                  <ul>
-                    <li>One special characters</li>
-                    <li>Min 6 characters</li>
-                  </ul>
+                  <div className={styles.RequireField}>
+                    <h3>Password requirements</h3>
+                      <ul className={styles.bullet}>
+                        <li> One special characters</li>
+                        <li> Minimum 6 characters</li>
+                      </ul>    
+                    </div>   
                 </div>
-                <div className={styles.submitWrapper}>
-                  <BlobBtn
-                    name={"SUBMIT"}
-                    setClicked={setIsSubmitPw}
-                    color1={"#fff"}
-                    color2={"var(--pink)"}
-                  />
+                <div className={styles.submitWrapperPass}>
+                  <div className={styles.pw}>
+                    <BlobBtn
+                      name={"SUBMIT"}
+                      setClicked={setIsSubmitPw}
+                      color1={"#fff"}
+                      color2={"var(--pink)"}
+                    />
+                  </div>
+                  
                 </div>
               </div>
-            </div>
           </div>
+
+        </div>          
           <div className={styles.box} id={styles.subjects} ref={subjectsRef}>
             <div className={styles.title}>
               <h1>Manage Subjects</h1>
-              <p>
-                Manage your subjects for study
-              </p>
+              <p>Manage your subjects for study</p>
               <div className={styles.content}>
                 <SubjectsManager subjects={subjects} setSubjects={setSubjects} setResponse={setResponse} />
               </div>
@@ -407,26 +414,25 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
               <h1>Chrome Extension</h1>
               <p>
                 Here you can setup and manage your chrome extension's tracking
-                option.(Default options for all websitesEl are true for all
-                options)
+                option (Default option for all websites is all enabled)
               </p>
             </div>
             <div className={styles.content}>
               <div className={styles.layer}>
                 <div>
                   <LabelMovingInput
-                    title={"ADD WEBSITE"}
+                    title={"Please Provide A URL"}
                     value={url}
                     setValue={setUrl}
                     type={"text"}
                   />
                 </div>
-                <div>
+              <div>
                   <BlobBtn
                     name={"SUBMIT"}
                     setClicked={() => { onSubmitUrl() }}
                     color1={"#fff"}
-                    color2={"var(--purple)"}
+                    color2={"var(--pink)"}
                   />
                 </div>
               </div>
@@ -513,23 +519,27 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
             <div className={styles.title}>
               <h1>Accounts</h1>
               <p>
-                Here you can setup and manage your integration settings.
+                Here you can setup and manage your integration settings
               </p>
             </div>
             <div className={styles.content}>
               <div className={styles.layer}>
                 <div className={styles.iconWrapper}>
-                  <GoogleCalendar />
+                  <div className={styles.positionGC}>
+                    <GoogleCalendar />
+                  </div>
                 </div>
                 <div className={styles.explanation}>
                   You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar by signing in with your Google account here.
                 </div>
                 <div className={styles.authBtn}>
-                  <GoogleOAuthProvider
-                    clientId={googleClientId}
-                  >
-                    <GoogleLoginBtn />
-                  </GoogleOAuthProvider>
+                  <div>
+                    <GoogleOAuthProvider
+                      clientId={googleClientId}
+                    >
+                     <GoogleLoginBtn />
+                    </GoogleOAuthProvider>
+                  </div>   
                 </div>
               </div>
             </div>
@@ -537,7 +547,9 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
             <div className={styles.content}>
               <div className={styles.layer}>
                 <div className={styles.iconWrapper}>
-                  <YouTubeIcon></YouTubeIcon>
+                  <div className={styles.positionYT} > 
+                    <YouTubeIcon/>
+                  </div> 
                 </div>
                 <div className={styles.explanation}>
                   You haven't connected your YouTube Account yet or you aren't authorized. Please authorize our application to access your YouTube Playlists here.
@@ -555,7 +567,9 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
             <div className={styles.content}>
               <div className={styles.layer}>
                 <div className={styles.iconWrapper}>
-                  <SpotifyLogo />
+                  <div className={styles.positionSP}>
+                    <SpotifyLogo />
+                  </div> 
                 </div>
                 <div className={styles.explanation}>
                   You haven't connected your Spotify Account yet or you aren't authorized. Please authorize our application to access your Spotify Playlists here.

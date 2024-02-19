@@ -1,9 +1,10 @@
 .selectIcon .header {
   display: flex;
+  margin-top: ;
 }
 
 .selectIcon .header p {
-  font-size: 26px;
+  font-size: 23px;
   font-weight: 700;
   color: #545454;
 }
