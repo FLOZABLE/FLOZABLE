@@ -24,11 +24,14 @@ function SelectTool({
             setIsSelectColor(false);
           }}
         >
-          {!selectedTool.length ? (
-            <p>Select Subject's Tools!</p>
-          ) : (
-            <p>Selected Tools: </p>
-          )}
+          <div>
+            {!selectedTool.length ? (
+              <p>Select Subject's Tools!</p>
+            ) : (
+              <p>Selected Tools : </p>          
+            )}
+          </div>
+          
         </button>
         {selectedTool.map((tool, i) => {
           const toolInfo = toolsInfo[tool];

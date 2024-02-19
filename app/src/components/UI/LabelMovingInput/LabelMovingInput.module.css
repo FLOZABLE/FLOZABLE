@@ -4,20 +4,26 @@
   height: 60px;
 }
 
+input[type="search"], textarea {    
+  background-color :rgb(38, 0, 255);
+  border:0px;    
+}
+
 .LabelMovingInput label {
   position: absolute;
-  background-color: #fff;
+  background-color: transparent;
   border-radius: 5px;
   padding: 3px 5px;
   top: 7px;
   left: 10px;
   transition: top .3s ease-in-out, left .3s ease-in-out, font-size .3s ease-in-out;
-  font-size: 15px;
+  font-size: 18px;
+  margin-top: 1px;
   pointer-events: none;
 }
 
 .LabelMovingInput input {
-  background-color: #fff;
+  background-color: transparent;
   border: 2px solid #e7e7e7;
   transition: .3s border ease-in-out;
   height: 40px;
@@ -31,6 +37,7 @@
 }
 
 .LabelMovingInput input:focus~label {
-  top: -10px;
-  font-size: 12px;
+  top: -18px;
+  margin-left: -10px;
+  font-size: 13px;
 }
