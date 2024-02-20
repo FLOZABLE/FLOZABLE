@@ -193,9 +193,9 @@ function Header({
           >
           </div>
         </Link>
-        <div className={styles.headerEl}>
+          <div className={styles.headerEl}>
             <Link to="/dashboard/study">
-              <i>
+              <i className={styles.LogoutButton}>
               <ButtonLogout />
               </i>
             </Link>      

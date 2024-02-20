@@ -16,7 +16,7 @@ import SimpleToggleBtn from "../../UI/SimpleToggleBtn/SimpleToggleBtn";
 import StuckModal from "../../UI/StuckModal/StuckModal";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import GoogleLoginBtn from "../../UI/GoogleLoginBtn/GoogleLoginBtn";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import SpotifyAuthBtn from "../../UI/SpotifyAuthBtn/SpotifyAuthBtn";
 import { SpotifyLogo } from "../../../utils/svgs";
 import SubjectsManager from "../../UI/SubjectsManager/SubjectsManager";
@@ -50,6 +50,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
   const accountsRef = useRef(null);
 
   const inputRef = useRef(null);
+  const PageMain = useRef(null);
 
   const readURL = useCallback((input) => {
     if (input.files && input.files[0]) {
@@ -175,8 +176,10 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
       >
         <div className={styles.boxContainer}>
           <div className={styles.backArrow}>
-            <BackArrow />
-            <h1>Account</h1>
+            <Link to="/dashboard">
+              <BackArrow />
+              <h1>Account</h1>
+            </Link>
           </div>
           <div className={styles.boxWrapper}> 
             <div className={styles.box} id={styles.profileImg}>
@@ -342,7 +345,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
               <div className={styles.content}>
                 <div>
                   <div className={styles.iconWrapper}>
-                    <div className={styles.positionYT}>
+                    <div>
                       <GoogleCalendar />
                     </div>
                   </div>
@@ -365,7 +368,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
               <div className={styles.content}>
                 <div >
                   <div className={styles.iconWrapper}>
-                    <div className={styles.positionYT} >
+                    <div>
                       <YouTubeIcon />
                     </div>
                   </div>
@@ -385,7 +388,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
               <div className={styles.content}>
                 <div >
                   <div className={styles.iconWrapper}>
-                    <div className={styles.positionYT}>
+                    <div>
                       <SpotifyLogo />
                     </div>
                   </div>

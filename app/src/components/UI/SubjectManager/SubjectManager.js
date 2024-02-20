@@ -69,7 +69,7 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject }) {
   return (
     <div className={styles.SubjectManager}>
       <div className={styles.title}>
-        <div className={styles.MathTitle}>
+        <div>
           <LineInput
             title={""}
             value={name}

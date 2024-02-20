@@ -1292,24 +1292,34 @@ function IconEmailOutline(props) {
 };
 
 const BackArrow = (props) => (
-<svg 
+  <svg
   viewBox="0 0 24 24"
-  width="80px"
-  fill="none" 
-  xmlns="http://www.w3.org/2000/svg">
-  <g id="SVGRepo_bgCarrier" 
-    stroke-width="0">
+  width="60px"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  {...props}
+>
+  <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+  <g
+    id="SVGRepo_tracerCarrier"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  />
+  <g id="SVGRepo_iconCarrier">
+    <path
+      d="M6 12H18M6 12L11 7M6 12L11 17"
+      stroke="#000000"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </g>
-  <g id="SVGRepo_tracerCarrier" 
-  stroke-linecap="round" 
-  stroke-linejoin="round">
-    </g><g id="SVGRepo_iconCarrier"> <path d="M6 12H18M6 12L11 7M6 12L11 17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+</svg>
 );
-
 const ButtonLogout = (props) => (
 <svg 
-    width="42"
-    height="42" 
+    width="60"
+    height="60" 
     viewBox="0 0 81 80" 
     fill="none" 
     xmlns="http://www.w3.org/2000/svg">
@@ -1500,7 +1510,7 @@ const HeaderMeteor = (props) => (
     viewBox="0 0 511.989 511.989"
     xmlSpace="preserve"
     fill="#000000"
-    transform="rotate(45)matrix(1, 0, 0, -1, 0, 0)"
+    transform="rotate(135)matrix(1, 0, 0, -1, 0, 0)"
     {...props}
   >
     <g id="SVGRepo_bgCarrier" strokeWidth={0} />
@@ -1703,8 +1713,8 @@ function IconBell(props) {
     <svg
       fill="currentColor"
       viewBox="0 0 16 16"
-      height="1em"
-      width="1em"
+      height="1.5em"
+      width="1.5em"
       {...props}
     >
       <path d="M8 16a2 2 0 002-2H6a2 2 0 002 2zM8 1.918l-.797.161A4.002 4.002 0 004 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 00-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 111.99 0A5.002 5.002 0 0113 6c0 .88.32 4.2 1.22 6z" />
