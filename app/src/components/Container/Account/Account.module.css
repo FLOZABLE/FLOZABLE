@@ -24,9 +24,10 @@
   margin-top: -80px;
 }
 
+
 .Account .backArrow h1 {
-  margin-top: -64px;
-  margin-left: 80px;
+  margin-top: -54px;
+  margin-left: 70px;
 }
 .Account .title {
   margin: 10px 10px 20px 10px;
@@ -62,8 +63,11 @@
 
 .Account .explanation {
   max-width: 70%;
-  margin-top: -40px;
+  float: bottom ;
+  margin: -10px;
+  margin-top: -84px;
   margin-left: 10%;
+  padding: 20px;
 }
 
 .Account .box#profile .emailWrapper .ProfileConfirm {
@@ -155,17 +159,23 @@
   margin-top: 40px;
 }
 
-.Account .positionYT {
-  margin-left: -91%;
+.Account .content .iconWrapper>div {
+  padding: 20px;
+  margin-top: 20px;
+  margin-left: -90%;
+  float: bottom;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .Account .authBtn { 
-  margin-left: 83%;
-  margin-top: -4%;
+  margin-left: 81%;
+  margin-top: -93px;
+  padding: 20px;
 }
 
 .boxWrapper .box#accounts .content>div {
-   padding: 20px;
+  left: 0;
+  right: 0;
 }
