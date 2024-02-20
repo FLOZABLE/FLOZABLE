@@ -88,7 +88,7 @@ function ExtensionSetting({ websites, setWebsites, setResponse }) {
             type={"text"}
           />
         </div>
-        <div>
+        <div className={styles.BtnPos}>
           <BlobBtn
             name={"SUBMIT"}
             setClicked={() => { onSubmitUrl() }}
@@ -99,9 +99,9 @@ function ExtensionSetting({ websites, setWebsites, setResponse }) {
       </div>
       <div>
         <div className={styles.extensionHeader}>
-          <div>Websites</div>
+        <div>Websites</div>
           <div>Block</div>
-          <div>Block when studying</div>
+          <div>Block when studying</div>  
           <div>Timer</div>
           <div>Timer when studying</div>
         </div>
