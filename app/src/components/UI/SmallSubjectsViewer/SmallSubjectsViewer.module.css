@@ -8,10 +8,10 @@
 }
 
 .SmallSubjectsViewer .noSubjects {
-  font-weight: 700;
+  font-weight: 600;
   display: flex;
   justify-content: center;
-  font-size: 30px;
+  font-size: 24px;
   text-decoration: underline;
   text-underline-offset: 3px;
 }

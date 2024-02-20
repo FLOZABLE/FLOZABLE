@@ -183,6 +183,7 @@ function Header({
         className={styles.headerEl} id={styles.user}>
           <div>
             <p>{userInfo?.name}</p>
+            <p>{userInfo?.name}</p>
           </div>
           <div className={styles.profileImg}
             style={{

@@ -1,0 +1,66 @@
+.StatsContainer {
+    padding: 10px 20px;
+    position: absolute;
+    top: -20px;
+  }
+  
+  .StatsContainer .optionsHeader {
+    position: sticky;
+    top: 100px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    z-index: 2;
+  }
+  
+  .StatsContainer .optionsHeader .dateSelectorWrapper {
+    margin-right: auto;
+  }
+  
+  .StatsContainer .bigBox {
+    margin-top: 30px;
+    display: flex;
+    border-radius: 30px;
+    height: 600px;
+  }
+  
+  .StatsContainer .bigBox .chartWrapper {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .StatsContainer .bigBox > div {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+  }
+  
+  .StatsContainer .bigBox {
+    background-color: var(--white);
+    /* 
+    box-shadow: 5px 5px 10px 2px rgba(211, 211, 211, 0.8); */
+    padding: 10px 10px;
+    width: 70%;
+    margin-left: 4%;
+  }
+  
+  .StatsContainer .bigBox .overflow {
+    width: 100vh;
+    background-color: #fff;
+    padding: 25px 20px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    color: var(--font-gray);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+  }
+  
+  .StatsContainer .bigBox .overflow i {
+    font-size: 23px;
+    display: flex;
+    margin-right: 10px;
+    justify-content: center;
+    align-items: center;
+    color: var(--blue2);
+  }
