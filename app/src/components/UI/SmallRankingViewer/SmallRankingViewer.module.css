@@ -67,7 +67,13 @@
   align-items: center;
 }
 
-.SmallRankingViewer .noStudy a {
-  font-weight: 600;
+.SmallRankingViewer .noStudy p {
+  font-weight: 500;
+  font-size: 110%;
+  margin-top: 20px;
+  margin-left: 19px;
   text-decoration: underline;
+  align-items: center;
+  vertical-align: middle;
+
 }

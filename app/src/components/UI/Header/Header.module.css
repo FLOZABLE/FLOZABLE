@@ -21,6 +21,19 @@
   margin-top: 5px;
 } 
 
+.Header .bigBox {
+  margin-top: 30px;
+  display: flex;
+  border-radius: 30px;
+  height: 600px;
+}
+
+.Header .bigBox .chartWrapper {
+  width: 100%;
+  height: 100%;
+}
+
+
 .Header .left .headerEl i {
   display: flex;
   vertical-align: middle;

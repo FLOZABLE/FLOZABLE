@@ -3,19 +3,21 @@
 }
 
 .RecommendedFriendsViewer .title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   display: flex;
 }
 
 .RecommendedFriendsViewer .title p {
   margin-right: 5px;
+  display: flex;
+  vertical-align: middle;
+  justify-self: center;
 }
 
 .RecommendedFriendsViewer .recommendedFriend {
   display: flex;
   align-items: center;
-  width: 100%;
   margin-bottom: 5px;
 }
 
