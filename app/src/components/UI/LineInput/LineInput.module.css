@@ -1,8 +1,6 @@
-{/*
-  .LineInput {
+.LineInput {
   position: relative;
   height: 50px;
-  background-color: transparent;
 }
 
 .LineInput input {
@@ -10,18 +8,16 @@
   border: none;
   width: 100%;
   height: 100%;
+  background-color: transparent;
 }
 
 .LineInput .lineContainer {
   display: flex;
   width: 100%;
   background-color: transparent;
-  border: 1px;
-  border: 2px solid #e7e7e7;;
-  height: 40px;
+  height: 3px;
   position: absolute;
   bottom: 0px;
-  margin-top: 15px;
 }
 
 .LineInput input:focus~.lineContainer .line {
@@ -49,51 +45,9 @@
   z-index: 1;
   position: absolute;
   top: 0px;
+  font-weight: 700;
 }
 
 .LineInput input:focus~.title {
   color: #e91e63;
-}
-
-*/}
-
-
-.LineInput {
-  position: relative;
-  width: 100%;
-  height: 60px;
-  margin-top: -1px;
-}
-
-
-.LineInput label {
-  position: absolute;
-  background-color: transparent;
-  border-radius: 5px;
-  padding: 3px 5px;
-  top: 7px;
-  left: 10px;
-  transition: top .3s ease-in-out, left .3s ease-in-out, font-size .3s ease-in-out;
-  font-size: 18px;
-  pointer-events: none;
-}
-
-.LineInput input {
-  background-color: transparent;
-  border: 2px solid #e7e7e7;
-  transition: .3s border ease-in-out;
-  height: 40px;
-  padding-left: 10px;
-  border-radius: 5px;
-  width: 100%;
-  font-size: 18px;
-}
-
-.LineInput input:focus {
-  border: 2px solid #e91e63;
-}
-
-.LineInput input:focus~label {
-  top: -10px;
-  font-size: 18px;
 }
