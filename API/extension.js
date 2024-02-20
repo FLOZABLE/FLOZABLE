@@ -5,7 +5,7 @@ const redisClient = require("../model/redis");
 const { autoSignin, arraysHaveSameContents, generateRandomId } = require("../tool");
 const { userCache, websiteUsageCache } = require("../services/redisLoader");
 const { DateTime } = require("luxon");
-const { validateStrictString, validateTimeZone } = require("../validate");
+const { validateStrictString, validateTimeZone, validateISO } = require("../validate");
 
 Router.post("/auth", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -48,7 +48,8 @@ Router.get("/usage", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
       const { date, mode, timezone } = req.query;
-      const isValidDate = validateStrictString(date, 'date', 20);
+
+      const isValidDate = validateISO(date, 'date', 20);
 
       if (!isValidDate.isValid) {
         return res.send({success: false, reason: isValidDate.reason});
@@ -66,7 +67,7 @@ Router.get("/usage", async (req, res) => {
         return res.send({ success: false, reason: isValidTimeZone.reason });
       };
 
-      const viewDateTime = DateTime.fromSeconds(parseInt(date)).setZone(timezone).startOf("day");
+      const viewDateTime = DateTime.fromISO(date).setZone(timezone).startOf("day");
       const todayDateTime = DateTime.now().setZone(timezone).startOf("day");
 
       const websitesUsage = {};
@@ -132,7 +133,7 @@ Router.get("/usage", async (req, res) => {
         const connection = pool.promise();
 
         const [websiteStats] = await connection.query(`SELECT data FROM activities WHERE user_id = ? AND date IN (?)`, [userId, selectedDates]);
-  
+        console.log('stats',websiteStats, selectedDates)
         websiteStats.map(({ data }) => {
           const websiteData = JSON.parse(data.replace(/^/, "[").replace(/$/, "]"));
           websiteData.map(({ d, t, v }) => {

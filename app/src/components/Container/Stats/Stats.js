@@ -8,11 +8,12 @@ import { DateTime } from 'luxon';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
 import { secondConverter } from '../../../utils/Tool';
 import { PieChart, Pie, Tooltip, ResponsiveContainer, YAxis, XAxis, CartesianGrid, LineChart, Line, Legend } from "recharts";
-
+import { Link } from 'react-router-dom';
 import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from '../../../utils/svgs';
 import { PieCustomTooltip, pieCustomLabel } from '../../UI/Charts';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
+let rankingTrend = [];
 
 function Stats({ subjects, userInfo }) {
 
@@ -20,8 +21,6 @@ function Stats({ subjects, userInfo }) {
 
   const [statsViewer, setStatsViewer] = useState('Daily');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [totalStudy, setTotalStudy] = useState("");
   const [focus, setFocus] = useState("");
   const [ranking, setRanking] = useState(0);
@@ -29,6 +28,7 @@ function Stats({ subjects, userInfo }) {
   const [viewOption, setViewOption] = useState(0);
   const [websitesUsage, setWebsitesUsage] = useState(0);
   const [websitesVisit, setWebsitesVisit] = useState(0);
+  const [rankingsTrend, setRankingsTrend] = useState([]);
 
   const updateViewer = async (item) => {
     setStatsViewer(item);
@@ -41,19 +41,32 @@ function Stats({ subjects, userInfo }) {
   useEffect(() => {
     if (!userInfo) return;
     const { user_id } = userInfo;
-    const viewDateTime = DateTime.fromJSDate(viewDate).toISODate();
+    const viewDateTime = DateTime.fromJSDate(viewDate);
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    fetch(`${serverOrigin}/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime}&timezone=${timezone}`, {
+    fetch(`${serverOrigin}/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime.toISODate()}&timezone=${timezone}`, {
       method: 'get'
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          const rankingTrend = updateRankingTrend(data.rankings, statsViewer);
+          rankingTrend = updateRankingTrend(data.rankings, statsViewer);
+          let ranking = 0;
+          if (statsViewer === "Daily") {
+            ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.toISODate());
+          } else if (statsViewer === "Weekly") {
+            ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.startOf('week').toISODate());
+          } else {
+            ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.startOf('month').toISODate());
+          };
+          setRanking(ranking.data);
+
+          setTimeout(() => {
+            setRankingsTrend(rankingTrend);
+          }, 100);
         }
       })
       .catch((error) => console.error(error));
-  }, [userInfo, startDate, statsViewer]);
+  }, [userInfo, viewDate, statsViewer]);
 
   const focusCalculator = (grouped) => {
     if (!grouped) return 0;
@@ -71,13 +84,14 @@ function Stats({ subjects, userInfo }) {
   useEffect(() => {
     if (!viewDate) return;
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const viewDateSec = DateTime.fromJSDate(viewDate).toSeconds();
-    fetch(`${serverOrigin}/extension/usage?date=${viewDateSec}&mode=${viewOption}&timezone=${timezone}`,
+    const viewDateTime = DateTime.fromJSDate(viewDate);
+    fetch(`${serverOrigin}/extension/usage?date=${viewDateTime.toISODate()}&mode=${statsViewer}&timezone=${timezone}`,
       {
         method: "get",
       })
       .then((response) => response.json())
       .then((response) => {
+        console.log(response, 'usage')
         if (response.success) {
           setWebsites(response.websitesData);
           let websitesUsage = 0;
@@ -92,10 +106,10 @@ function Stats({ subjects, userInfo }) {
         }
       })
       .catch((error) => console.error(error));
-  }, [viewDate, viewOption]);
+  }, [viewDate, statsViewer]);
 
   const [subjectsPie, setSubjectsPie] = useState([]);
-  //stacked area graph
+
   const [subjectsTrend, setSubjectsTrend] = useState([]);
   const [filteredTrends, setFilteredTrends] = useState([]);
 
@@ -108,10 +122,11 @@ function Stats({ subjects, userInfo }) {
 
     const now = DateTime.now().startOf('day');
     const viewDateTime = DateTime.fromJSDate(viewDate);
-
     //subject time usage pie chart
     const subjectsPie = updateTimeUsagePie(subjects, viewDateTime, statsViewer);
-    setSubjectsPie(subjectsPie);
+    setTimeout(() => {
+      setSubjectsPie(subjectsPie);
+    }, 300);
 
     if (statsViewer === 'Daily') {
 
@@ -127,7 +142,9 @@ function Stats({ subjects, userInfo }) {
 
       //subject trend data handler
       const subjectsTrend = updateSubjectsTrendChart(subjects, statsViewer, 'day');
-      setSubjectsTrend(subjectsTrend);
+      setTimeout(() => {
+        setSubjectsTrend(subjectsTrend);
+      }, 300);
     } else if (statsViewer === 'Weekly') {
 
       //top box renderer
@@ -142,7 +159,10 @@ function Stats({ subjects, userInfo }) {
 
       //subject trend data handler
       const subjectsTrend = updateSubjectsTrendChart(subjects, statsViewer, 'week');
-      setSubjectsTrend(subjectsTrend);
+      setTimeout(() => {
+        setSubjectsTrend(subjectsTrend);
+      }, 300);
+      //setSubjectsTrend(subjectsTrend);
     } else {
 
       //top box renderer
@@ -157,7 +177,9 @@ function Stats({ subjects, userInfo }) {
 
       //subject trend data handler
       const subjectsTrend = updateSubjectsTrendChart(subjects, statsViewer, 'month');
-      setSubjectsTrend(subjectsTrend);
+      setTimeout(() => {
+        setSubjectsTrend(subjectsTrend);
+      }, 300);
     }
   }, [viewDate, statsViewer, subjects]);
 
@@ -167,39 +189,57 @@ function Stats({ subjects, userInfo }) {
       <div className="Main">
         <div className={styles.optionsHeader}>
           <div className={styles.dateSelectorWrapper}>
-            <DateSelectorBtn viewMode={statsViewer} className={styles.title} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
+            <DateSelectorBtn viewMode={statsViewer} className={styles.title} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
           </div>
           <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
         </div>
         <div>
           <div className={styles.bigBox}>
             <div className={styles.chartWrapper}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Tooltip content={<PieCustomTooltip />} />
-                  <Pie
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    data={subjectsPie.reduce((accumulator, data, i) => {
-                      const value = data.value;
-                      if (value) {
-                        const name = data.info.name;
-                        const fill = coldColorsList[accumulator.length % (coldColorsList.length)];
-                        const labelVal = secondConverter(value);
-                        accumulator.push({ value, name, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
-                      }
-                      return accumulator;
-                    }, [])}
-                    dataKey={"value"}
-                    outerRadius={200}
-                    innerRadius={150}
-                    fill="green"
-                    label={pieCustomLabel}
-                  >
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+              {subjectsPie.reduce((accumulator, data, i) => {
+                const value = data.value;
+                if (value) {
+                  const name = data.info.name;
+                  const fill = coldColorsList[accumulator.length % (coldColorsList.length)];
+                  const labelVal = secondConverter(value);
+                  accumulator.push({ value, name, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
+                }
+                return accumulator;
+              }, []).length
+                ?
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Tooltip content={<PieCustomTooltip />} />
+                    <Pie
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      data={subjectsPie.reduce((accumulator, data, i) => {
+                        const value = data.value;
+                        if (value) {
+                          const name = data.info.name;
+                          const fill = coldColorsList[accumulator.length % (coldColorsList.length)];
+                          const labelVal = secondConverter(value);
+                          accumulator.push({ value, name, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
+                        }
+                        return accumulator;
+                      }, [])}
+                      dataKey={"value"}
+                      outerRadius={200}
+                      innerRadius={150}
+                      fill="green"
+                      label={pieCustomLabel}
+                    >
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                :
+                <Link
+                  to="/dashboard/study"
+                  className={styles.noChart}>
+                  <h3>Study to see stats!</h3>
+                </Link>
+              }
             </div>
             <div>
               <div className={styles.overflow}>
@@ -277,6 +317,61 @@ function Stats({ subjects, userInfo }) {
                     )
                   }) : null}
                 </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className={styles.bigBox}>
+            <div className={styles.chartWrapper}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={rankingsTrend}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="label" tickFormatter={(data) => {
+                    const dateTime = DateTime.fromISO(data);
+
+                    return dateTime.toFormat('M/d');
+                  }} />
+                  <YAxis reversed={true} />
+                  <Tooltip />
+                  <Line type="monotone" dataKey={"ranking"} stroke="#8884d8" activeDot={{ r: 8 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className={styles.bigBox}>
+            <div className={styles.chartWrapper}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Tooltip content={<PieCustomTooltip />} />
+                  <Pie
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    data={subjectsPie.reduce((accumulator, data, i) => {
+                      const value = data.value;
+                      if (value) {
+                        const name = data.info.name;
+                        const fill = coldColorsList[accumulator.length % (coldColorsList.length)];
+                        const labelVal = secondConverter(value);
+                        accumulator.push({ value, name, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
+                      }
+                      return accumulator;
+                    }, [])}
+                    dataKey={"value"}
+                    outerRadius={200}
+                    innerRadius={150}
+                    fill="green"
+                    label={pieCustomLabel}
+                  >
+                  </Pie>
+                </PieChart>
               </ResponsiveContainer>
             </div>
           </div>

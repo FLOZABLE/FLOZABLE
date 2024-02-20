@@ -27,6 +27,11 @@
   height: 100%;
 }
 
+.StatsContainer .bigBox .chartWrapper .noChart {
+  justify-content: center;
+  display: flex;
+  font-size: 50px;
+}
 .StatsContainer .bigBox > div {
   width: 50%;
   display: flex;
