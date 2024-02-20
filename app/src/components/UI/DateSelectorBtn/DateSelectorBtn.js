@@ -6,8 +6,6 @@ import { DateTime } from "luxon";
 
 function DateSelectorBtn({
   viewDate,
-  startDate,
-  endDate,
   isCalendarOpen,
   setIsCalendarOpen,
   viewMode
@@ -37,7 +35,7 @@ function DateSelectorBtn({
         setViewString(viewDateTime.month + "/" + viewDateTime.day);
       };
     };
-  }, [startDate, viewDate, viewMode]);
+  }, [viewDate, viewMode]);
 
   return (
     <button
