@@ -161,7 +161,7 @@ button:hover {
   position: relative;
   margin: 150px 0px 0px 120px;
   transition: all .2s ease-in-out;
-  width: calc(100vw - 120px);
+  width: calc(100vw - 150px);
   border-radius: 20px;
 }
 /* 
