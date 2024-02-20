@@ -1,6 +1,6 @@
 .Account .boxContainer {
-  width: 60%;
-  margin-left: 20%;
+  width: 80%;
+  margin-left: 10%;
 }
 
 .Account .boxWrapper {
@@ -13,11 +13,21 @@
   padding: 20px;
   border-radius: 20px;
   border: 1px solid rgb(99, 99, 99);
-  background-color: #fff;
+  background-color:#F8F9FA;
   margin: 20px;
   position: relative;
 }
 
+.Account .backArrow {
+  position: absolute;
+  margin-left: -120px;
+  margin-top: -80px;
+}
+
+.Account .backArrow h1 {
+  margin-top: -64px;
+  margin-left: 80px;
+}
 .Account .title {
   margin: 10px 10px 20px 10px;
 }
@@ -28,26 +38,49 @@
 
 .Account .submitWrapper {
   position: absolute;
-  right: 0px;
-  bottom: 10px;
+  right: 30px;
+  bottom: 30px;
   margin: 0px !important;
 }
 
+.Account .content #passwordReq {
+  margin-left: 20px;
+}
+
+.Account .content #passwordReq h3{
+  font-weight: 300;
+}
 .Account .box#profile .emailWrapper {
   display: flex;
 }
 
 .Account .box#profile .emailWrapper>div {
   width: 100%;
+  margin-top: 10px;
+  justify-content: left;
+} 
+
+.Account .explanation {
+  max-width: 70%;
+  margin-top: -40px;
+  margin-left: 10%;
 }
 
+.Account .box#profile .emailWrapper .ProfileConfirm {
+  margin-left: 3vh;
+}
 .Account .box#profile .contents>div {
-  margin: 20px;
+  margin-right: 7%;
+}
+
+.Account .box#profile .contents {
+  margin-right: 100px;
+  width: 100%;
 }
 
 .Account #passwordReq ul li {
   list-style: disc;
-  margin-left: 30px;
+  margin-left: 30px ;
 }
 
 /* profile pic selector */
@@ -120,4 +153,19 @@
 .Account #welcome {
   font-size: 30px;
   margin-top: 40px;
+}
+
+.Account .positionYT {
+  margin-left: -91%;
+  display: flex;
+  justify-content: center;
+}
+
+.Account .authBtn { 
+  margin-left: 83%;
+  margin-top: -4%;
+}
+
+.boxWrapper .box#accounts .content>div {
+   padding: 20px;
 }

@@ -1,28 +1,35 @@
 .LabelMovingInput {
   position: relative;
-  width: 100%;
+  width: 90%;
   height: 60px;
+  margin: 12px;
+  margin-left: 3%;
+  top: 0;
 }
 
 .LabelMovingInput label {
   position: absolute;
   background-color: transparent;
-  border-radius: 5px;
+  border-radius: 15px;
   padding: 3px 5px;
-  top: 7px;
-  left: 10px;
+  top: 10px;
+  left: 15px;
   transition: top .3s ease-in-out, left .3s ease-in-out, font-size .3s ease-in-out, background-color .3s ease-in-out;
-  font-size: 15px;
+  font-size: 18px;
+  font-weight: 100;
+  color: rgb(95, 95, 95);
+  display: flex;
+  align-items: center;
   pointer-events: none;
 }
 
 .LabelMovingInput input {
   background-color: transparent;
-  border: 2px solid #e7e7e7;
+  border: 1px solid #b9b9b9;
   transition: .3s border ease-in-out;
-  height: 40px;
+  height: 45px;
   padding-left: 10px;
-  border-radius: 5px;
+  border-radius: 15px;
   width: 100%;
 }
 
@@ -32,6 +39,6 @@
 
 .LabelMovingInput input:focus~label {
   top: -10px;
-  font-size: 12px;
+  font-size: 16px;
   background-color: #fff;
 }

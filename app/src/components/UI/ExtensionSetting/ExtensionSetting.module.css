@@ -13,11 +13,19 @@
   width: 100%;
 }
 
+.ExtensionSetting .extensionHeader p{
+  justify-content: center;
+  margin-left: 20px;
+}
+
 .ExtensionSetting .websiteOptions {
   display: flex;
   margin-top: 10px;
 }
 
+.ExtensionSetting .BtnPos {
+  margin-left: 85%;
+}
 .ExtensionSetting .websiteOptions > div{
   display: flex;
   justify-content: center;
@@ -25,5 +33,5 @@
 }
 
 .ExtensionSetting .websiteOptions div:nth-child(1) {
-  justify-content: left;
+  justify-content: center;
 }

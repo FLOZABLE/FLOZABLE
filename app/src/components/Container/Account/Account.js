@@ -178,7 +178,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
             <BackArrow />
             <h1>Account</h1>
           </div>
-          <div className={styles.boxWrapper}>
+          <div className={styles.boxWrapper}> 
             <div className={styles.box} id={styles.profileImg}>
               <div className={styles.imgSelector}>
                 <div className={styles.circle}>
@@ -236,7 +236,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                       type={"email"}
                     />
                   </div>
-                  <div>
+                  <div className={styles.ProfileConfirm}>
                     <LineInput
                       title={"Confirm Email"}
                       value={confirmEmail}
@@ -261,7 +261,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                 <h1>Change Password</h1>
               </div>
               <div className={styles.content}>
-                <div >
+                <div>
                   <div>
                     <LabelMovingInput
                       title={"Password"}
@@ -324,7 +324,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                   option (Default option for all websites is all enabled)
                 </p>
               </div>
-              <ExtensionSetting
+              <ExtensionSetting   
                 websites={websites}
                 setWebsites={setWebsites}
                 setResponse={setResponse}
@@ -340,14 +340,15 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                 </p>
               </div>
               <div className={styles.content}>
-                <div >
+                <div>
                   <div className={styles.iconWrapper}>
-                    <div className={styles.positionGC}>
+                    <div className={styles.positionYT}>
                       <GoogleCalendar />
                     </div>
                   </div>
                   <div className={styles.explanation}>
-                    You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar by signing in with your Google account here.
+                    You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar 
+                    by signing in with your Google account here.
                   </div>
                   <div className={styles.authBtn}>
                     <div>
@@ -384,7 +385,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
               <div className={styles.content}>
                 <div >
                   <div className={styles.iconWrapper}>
-                    <div className={styles.positionSP}>
+                    <div className={styles.positionYT}>
                       <SpotifyLogo />
                     </div>
                   </div>
