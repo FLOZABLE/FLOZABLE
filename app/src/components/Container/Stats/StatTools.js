@@ -14,14 +14,14 @@ function updateTimeUsagePie(subjects, viewDateTime, type) {
   } else if (type === 'Weekly') {
     subjects.map(subject => {
       const { weekly } = subject;
-      const index = weekly.total.length + Math.floor(viewDateTime.diffNow('weeks').weeks);
+      const index = weekly.total.length + Math.floor(viewDateTime.startOf('week').diffNow('weeks').weeks);
       const value = weekly.total[index] ? weekly.total[index] : 0;
       data.push({value, info: subject});
     });
   } else {
     subjects.map(subject => {
       const { monthly } = subject;
-      const index = monthly.total.length + Math.floor(viewDateTime.diffNow('months').months);
+      const index = monthly.total.length + Math.floor(viewDateTime.startOf('month').diffNow('months').months);
       const value = monthly.total[index] ? monthly.total[index] : 0;
       data.push({value, info: subject});
     });
@@ -61,21 +61,20 @@ function updateSubjectsTrendChart(subjects, type, change) {
 
 function updateRankingTrend(rankings) {
   const data = [];
-  const labels = [];
+  const copiedArr = JSON.parse(JSON.stringify(rankings));
 
-  if (rankings) {
-    rankings.data.map(rankingData => {
-      const { date, ranking } = rankingData;
-      labels.push(DateTime.fromSeconds(date, { zone: 'utc' }).toFormat('M/d'));
-      if (ranking === -1) {
-        data.push(rankings.maxLength);
-      } else {
-        data.push(ranking + 1);
-      }
-    })
-  };
+  copiedArr.data.map(rankingData => {
+    const { date, ranking } = rankingData;
+    const label = DateTime.fromSeconds(date).toISODate();
+    //const label = DateTime.fromSeconds(date).toFormat('M/d');
+    if (ranking === -1) {
+      data.push({ranking: copiedArr.maxLength, label });
+    } else {
+      data.push({ranking: ranking + 1, label });
+    }
+  })
 
-  return [labels, data];
+  return data;
 }
 
 export { updateTimeUsagePie, updateTimeTrend, updateRankingTrend, updateSubjectsTrendChart };

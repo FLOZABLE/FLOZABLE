@@ -273,8 +273,8 @@ async function userWeeklySorting(userId, date, timezone, length) {
   const thisWeek = DateTime.now().setZone(timezone).startOf('week');
   const timezoneOffset = Math.floor(thisWeek.offset / 60).toString();
   const minOffset = thisWeek.offset % 60;
-  dateStart = dateStart.minus({ minute: minOffset })
-  console.log(dateStart.toSeconds());
+  weekStart = weekStart.minus({ minute: minOffset })
+  console.log(weekStart.toSeconds());
   let diff = thisWeek.diff(weekStart, 'weeks').toObject().weeks;
   while (diff < length) {
     weekStart = weekStart.plus({ weeks: -1 });
@@ -311,8 +311,8 @@ async function userMonthlySorting(userId, date, timezone, length) {
   const thisMonth = DateTime.now().setZone(timezone).startOf('month');
   const timezoneOffset = Math.floor(thisMonth.offset / 60).toString();
   const minOffset = thisMonth.offset % 60;
-  dateStart = dateStart.minus({ minute: minOffset })
-  console.log(dateStart.toSeconds());
+  monthStart = monthStart.minus({ minute: minOffset })
+  console.log(monthStart.toSeconds());
   let diff = thisMonth.diff(monthStart, 'months').toObject().months;
   while (diff < length) {
     monthStart = monthStart.plus({ months: -1 });
