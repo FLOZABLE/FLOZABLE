@@ -178,7 +178,9 @@ function Header({
         </div>
         <div className={styles.divider}>
         </div>
-        <div className={styles.headerEl} id={styles.user}>
+        <Link 
+        to="/dashboard/account"
+        className={styles.headerEl} id={styles.user}>
           <div>
             <p>{userInfo?.name}</p>
           </div>
@@ -190,14 +192,14 @@ function Header({
             }}
           >
           </div>
-          <div>
+        </Link>
+        <div className={styles.headerEl}>
             <Link to="/dashboard/study">
               <i>
               <ButtonLogout />
               </i>
             </Link>      
           </div>
-        </div>
       </div>
     </header>
   );
