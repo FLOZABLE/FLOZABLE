@@ -13,5 +13,10 @@
   background-color: transparent;
 }
 
-.SubjectManager .title .MathTitle {
+.SubjectManager .title>div{
+  font-size: 120%;
+  font-weight: 800;
+  left: 0;
+  right: 0;
+  margin-left: -16px;
 }

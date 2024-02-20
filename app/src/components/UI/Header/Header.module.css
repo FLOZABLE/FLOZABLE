@@ -1,5 +1,5 @@
 .Header {
-  height: 60px;
+  height: 80px;
   width: calc(100vw - 130px - 1px);
   background-color: #F8F9FA;
   position: fixed;
@@ -8,15 +8,27 @@
   display: flex;
   align-items: center;
   z-index: 5;
+  margin-top: -10px ;
 }
 
 .Header .left {
   display: flex;
   height: 100%;
+  margin-top: 0px;
+}
+
+.Header .left :not(.divider) {
+  margin-top: 5px;
+} 
+
+.Header .left .headerEl i {
+  display: flex;
+  vertical-align: middle;
+  justify-content: center;
 }
 
 .Header .left .headerEl {
-  display: flex;
+  display: flex;  
   flex-direction: column;
   height: 60px;
   align-items: center;
@@ -45,6 +57,10 @@
   font-size: 30px;
   width: 50px;
   display: flex;
+}
+
+.headerEl .LogoutButton {
+  margin-top: 10px;
 }
 
 .Header .divider {
@@ -76,12 +92,8 @@
 
 .Header .right .profileImg {
   display: flex;
-  background-color: #e5e6e7;
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  justify-content: center;
-  align-items: center;
-  margin-right: auto;
-  margin-left: auto;
+  background-color: #0080ff;
+  width: 60px;
+  height: 60px;
+  border-radius: 100px;
 }
