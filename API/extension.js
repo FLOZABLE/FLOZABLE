@@ -133,7 +133,6 @@ Router.get("/usage", async (req, res) => {
         const connection = pool.promise();
 
         const [websiteStats] = await connection.query(`SELECT data FROM activities WHERE user_id = ? AND date IN (?)`, [userId, selectedDates]);
-        console.log('stats',websiteStats, selectedDates)
         websiteStats.map(({ data }) => {
           const websiteData = JSON.parse(data.replace(/^/, "[").replace(/$/, "]"));
           websiteData.map(({ d, t, v }) => {

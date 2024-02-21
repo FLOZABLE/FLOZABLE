@@ -43,9 +43,14 @@ function updateTimeTrend(subjects, mode, sum) {
   return {data, labels};
 };
 
-function updateSubjectsTrendChart(subjects, type, change) {
+function updateSubjectsTrendChart(subjects, viewDate,type,change) {
   const data = [];
-  const datumPoint = DateTime.now().startOf(change).minus({ [change]: 6 });
+  const now = DateTime.now().startOf(change)
+  let datumPoint = DateTime.fromJSDate(viewDate).startOf(change);
+  const diff = datumPoint.diff(now, change).toObject()[change];
+  if (diff > -7) {
+    datumPoint = now.minus({[change]: 6})
+  }
   for (let i = 0; i < 7; i++) {
     const date = datumPoint.plus({ [change]: i });
     const label = `${date.month}/${date.day}`;
@@ -62,7 +67,7 @@ function updateSubjectsTrendChart(subjects, type, change) {
 function updateRankingTrend(rankings) {
   const data = [];
   const copiedArr = JSON.parse(JSON.stringify(rankings));
-
+  console.log(copiedArr)
   copiedArr.data.map(rankingData => {
     const { date, ranking } = rankingData;
     const label = DateTime.fromSeconds(date).toISODate();

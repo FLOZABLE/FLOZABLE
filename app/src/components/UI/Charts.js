@@ -1,11 +1,11 @@
 const RADIAN = Math.PI / 180;
 const pieCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.3;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.35;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
   return (
-    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" pointerEvents="none" >
       {`${(percent * 100).toFixed(0)}%`}
     </text>
   );
@@ -19,9 +19,8 @@ const PieCustomTooltip = ({ active, payload }) => {
         padding: "6px 10px", 
         borderRadius: "10px",
         boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
-        pointerEvents: 'none'
       }}>
-        <p className="label" style={{pointerEvents: 'none'}}>{`${payload[0].name} : ${payload[0].payload.labelVal}`}</p>
+        <p className="label">{`${payload[0].name} : ${payload[0].payload.labelVal}`}</p>
       </div>
     );
   }

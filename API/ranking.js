@@ -18,6 +18,7 @@ Router.get('/sort', async (req, res) => {
   const { mode, date, timezone } = req.query;
 
   let dateTime = DateTime.fromISO(date, { zone: timezone });
+  console.log(dateTime.get('day'))
   const minOffset = dateTime.offset % 60;
   dateTime = dateTime.plus({ minute: minOffset });
 
@@ -236,15 +237,15 @@ async function userDailySorting(userId, date, timezone, length) {
   const timezoneOffset = Math.floor(today.offset / 60).toString();
   const minOffset = today.offset % 60;
   dateStart = dateStart.minus({ minute: minOffset })
-  console.log(dateStart.toSeconds());
+  console.log(dateStart.toSeconds(), dateStart.get("day"));
   let diff = today.diff(dateStart, 'days').toObject().days;
-  while (diff < length) {
+  while (diff < length - 1) {
     dateStart = dateStart.plus({ days: -1 });
     diff += 1;
   };
   const connection = pool.promise();
   for (let i = 0; i < length; i++) {
-    const date = dateStart.plus({ days: i + 1 }).toSeconds();
+    const date = dateStart.plus({ days: i }).toSeconds();
     const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [date]);
     if (dailyRanking) {
       const parsedRanking = JSON.parse(dailyRanking.ranking);
@@ -276,13 +277,13 @@ async function userWeeklySorting(userId, date, timezone, length) {
   weekStart = weekStart.minus({ minute: minOffset })
   console.log(weekStart.toSeconds());
   let diff = thisWeek.diff(weekStart, 'weeks').toObject().weeks;
-  while (diff < length) {
+  while (diff < length - 1) {
     weekStart = weekStart.plus({ weeks: -1 });
     diff += 1;
   };
   const connection = pool.promise();
   for (let i = 0; i < length; i++) {
-    const date = weekStart.plus({ weeks: i + 1 }).toSeconds();
+    const date = weekStart.plus({ weeks: i }).toSeconds();
     const [[weeklyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [date]);
     if (weeklyRanking) {
       const parsedRanking = JSON.parse(weeklyRanking.ranking);
@@ -314,13 +315,13 @@ async function userMonthlySorting(userId, date, timezone, length) {
   monthStart = monthStart.minus({ minute: minOffset })
   console.log(monthStart.toSeconds());
   let diff = thisMonth.diff(monthStart, 'months').toObject().months;
-  while (diff < length) {
+  while (diff < length - 1) {
     monthStart = monthStart.plus({ months: -1 });
     diff += 1;
   };
   const connection = pool.promise();
   for (let i = 0; i < length; i++) {
-    const date = monthStart.plus({ months: i + 1 }).toSeconds();
+    const date = monthStart.plus({ months: i }).toSeconds();
     const [[monthlyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [date]);
     if (monthlyRanking) {
       const parsedRanking = JSON.parse(monthlyRanking.ranking);
