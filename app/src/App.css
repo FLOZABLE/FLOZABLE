@@ -13,7 +13,8 @@
   --blue2: #0085FF;
   --blue3: #1c41fd;
   --font-gray: #6A6A6A;
-  --opacity-black: #000000c3
+  --opacity-black: #000000c3;
+  --shadow3: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .App {
@@ -159,9 +160,9 @@ button:hover {
 
 .Main {
   position: relative;
-  margin: 150px 0px 0px 120px;
+  margin: 150px 0px 0px 130px;
   transition: all .2s ease-in-out;
-  width: calc(100vw - 150px);
+  width: calc(100vw - 140px);
   border-radius: 20px;
 }
 /* 

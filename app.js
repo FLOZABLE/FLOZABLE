@@ -237,7 +237,7 @@ cron.schedule('0 * * * *', () => {
 // createThemesTable();
 // groupsChatRoomsGeneration();
 // createActivitiesTable();
-// utf8mb4Unicode();
+//utf8mb4Unicode();
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);

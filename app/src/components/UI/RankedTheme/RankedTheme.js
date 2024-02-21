@@ -13,24 +13,17 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 function RankedTheme({ theme, setResponse, liked, rank, setIsActive, themeCategory }) {
 
   return (
-    <div className={styles.RankedTheme}>
-      <div className={styles.img}
-        style={{
-          backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`, backgroundSize: 'cover',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat',
-        }}
-        onClick={() => {
-          setIsActive(theme);
-        }}
-      >
-      </div>
-      <div className={styles.name}>
-        #{rank + 1} {theme?.name}
-      </div>
-      <div className={styles.description}>
-        <ul className={styles.info}>
-          <li>
+    <div className={styles.RankedTheme}
+      style={{
+        backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`, backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      <div className={styles.contents}>
+        <h4>{theme?.name}</h4>
+        <div className={styles.counts}>
+          <div>
             <i>
               <FontAwesomeIcon icon={faHeart} />
             </i>
@@ -38,8 +31,8 @@ function RankedTheme({ theme, setResponse, liked, rank, setIsActive, themeCatego
               initialMembers={(theme?.likes)}
               groupId={theme?.id}
             />
-          </li>
-          <li>
+          </div>
+          <div>
             <i>
               <FontAwesomeIcon icon={faPeopleGroup} />
             </i>
@@ -47,31 +40,31 @@ function RankedTheme({ theme, setResponse, liked, rank, setIsActive, themeCatego
               initialVal={theme?.weekUsage}
               themeId={theme?.id}
             />
-          </li>
-        </ul>
-        <div className={`${styles.content} hiddenScroll`}>
+          </div>
+        </div>
+        <div className={`${styles.description} hiddenScroll`}>
           {parse(theme?.description)}
         </div>
-      </div>
-      <div className={`${styles.tags} hiddenScroll`}>
-        {(theme?.tags ? theme.tags.split(',') : []).map((tag, i) => (
-          <div className={styles.tag} key={i}>#{tag}</div>
-        ))}
-      </div>
-      <div className={styles.bottom}>
-        <div className={styles.likeBtnWrapper}>
-          <LikeBtn liked={liked} id={theme?.id}
-            url={`${serverOrigin}/themes/like/${theme?.id}`}
-          />
+        <div className={`${styles.tags} hiddenScroll`}>
+          {(theme?.tags ? theme.tags.split(',') : []).map((tag, i) => (
+            <div className={styles.tag} key={i}>#{tag}</div>
+          ))}
         </div>
-        <div>
-          <ThemeCategoryBtn
-            themeId={theme?.id}
-            setResponse={setResponse}
-            themeCategory={parseInt(themeCategory)}
-          />
+        <div className={styles.buttons}>
+          <GroupUrlBtn text={`${serverOrigin}/dashboard/themes?id=${theme?.id}`} />
+          <div>
+            <ThemeCategoryBtn
+              themeId={theme?.id}
+              setResponse={setResponse}
+              themeCategory={parseInt(themeCategory)}
+            />
+          </div>
+          <div>
+            <LikeBtn liked={liked} id={theme?.id}
+              url={`${serverOrigin}/themes/like/${theme?.id}`}
+            />
+          </div>
         </div>
-        <GroupUrlBtn text={`${serverOrigin}/dashboard/themes?id=${theme?.id}`} />
       </div>
     </div>
   )

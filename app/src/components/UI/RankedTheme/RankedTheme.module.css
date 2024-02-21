@@ -5,8 +5,57 @@
   width: 100%;
   border-radius: 20px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  color: #fff;
 }
 
+.RankedTheme .contents {
+  position: absolute;
+  bottom: 70px;
+  padding: 30px;
+}
+
+.RankedTheme .contents .counts {
+  display: flex;
+}
+
+.RankedTheme .contents .counts > div {
+  display: flex;
+  margin-right: 10px;
+}
+
+.RankedTheme .contents .counts > div i {
+  margin-right: 5px;
+}
+
+
+.RankedTheme .description {
+  height: 100px;
+  overflow-x: auto;
+}
+
+.RankedTheme .tags {
+  display: flex;
+  overflow-y: auto;
+  height: 20px;
+  flex-wrap: wrap;
+}
+
+.RankedTheme .tags > div {
+  margin: 0px 8px;
+  white-space: nowrap;
+}
+
+.RankedTheme .buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.RankedTheme .buttons > div {
+  margin: 0px 5px;
+}
+
+/* 
 .RankedTheme .img {
   width: 100%;
   height: 50%;
@@ -125,4 +174,4 @@
   .RankedTheme .name {
     font-size: 17px;
   }
-}
+} */

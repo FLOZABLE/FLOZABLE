@@ -20,7 +20,7 @@ AllCategories.map((string) => {
   */
 });
 
-function ThemeCategoryBtn({ themeId, setResponse, themeCategory }) {
+function ThemeCategoryBtn({ themeId, setResponse, themeCategory,  bgColor='#ffffffC0', color='#000' }) {
   const [category, setCategory] = useState(-2);
   const [disp, setDisp] = useState("Save");
   const [isOpen, setIsOpen] = useState(false);
@@ -62,8 +62,9 @@ function ThemeCategoryBtn({ themeId, setResponse, themeCategory }) {
       onBlur={() => {
         setIsOpen(false);
       }}
+      style={{backgroundColor: bgColor, color}}
     >
-      <p className={styles.categoryDisp}>{disp}</p>
+      <p className={styles.categoryDisp} style={{ color}}>{disp}</p>
       <ul className={styles.options}>
         {options.map((option, i) => {
           const optionArr = option.split(":");

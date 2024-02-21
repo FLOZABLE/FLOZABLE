@@ -221,9 +221,14 @@ function Friends({
               <i>
               </i>
             </div>
-            <SearchBar 
+            <SearchBar
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
+            />
+            <SearchUsers
+              searchQuery={searchQuery}
+              setCount={setSuggestionsCount}
+              setResponse={setResponse}
             />
           </div>
           <div className={styles.smallBox}>
