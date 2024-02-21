@@ -1,108 +1,59 @@
 @import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
 
-.MainContainer {
-  height: 100vh; /* calc(100vh - 100px); */
-} 
+.Main {
+  height: calc(100vh - 90px);
+}
 
-.MainContainer .boxesContainer {
+.Main .boxesWrapper {
   display: flex;
-  justify-content: center;  
-  flex-wrap: wrap;
-  flex-direction: column;
-  margin: -20px;
+  padding: 50px 30px;
+  height: calc(100% - 150px);
 }
 
-.MainContainer .boxesContainer .backArrow {
-  margin-left: 90px;
-  margin-top: -50px;
+.Main .boxesContainer:nth-child(1) {
+  width: 70%;
+  padding-right: 30px;
 }
 
-
-.MainContainer .DashboardChart {
-    margin-left: -20px;
+.Main .boxesContainer:nth-child(2) {
+  width: 30%;
 }
 
-.MainContainer .boxesContainer .backArrow h1{
-  margin-left: 70px;
-  margin-top: -53px;
-}
-
-.MainContainer .boxesContainer .box {
-  width: 335px;
-  margin-top: -10px;
+.Main .boxesContainer .box {
+  width: calc(100% - 20px);
   background-color: #ffffff;
   border-radius: 20px;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  padding: 20px;
-  margin: 20px;
+  box-shadow: var(--shadow1);
+  height: 100%;
+  min-height: 200px;
+  padding: 10px;
+}
+
+.Main .boxesContainer .box .title {
   display: flex;
-  justify-content: center;
-  vertical-align: middle;
-  margin-left: 77.3%; 
-}
-
-.MainContainer .boxesContainer#SmallRanking .box {
-  display: block  ;
-}
-
-.MainContainer .boxesContainer .box .title>div {
-  vertical-align: middle;
-  display: flex;
-  align-items: center;
-  justify-self: center;
-  margin-bottom: 10px;
-}
-
-.MainContainer .boxesContainer .box:nth-child(1) {
-  z-index: 2;
-}
-
-.MainContainer .boxesContainer .box:nth-child(4) {
-  padding-top: 0px;
-}
-
-.MainContainer .title {
-  margin-top: 10px;
-  font-size: 27px;
-  font-weight: 700;
-}
-
-.boxesContainer .box .toStatsBtn{
-  font-size: 23px;
+  font-size: 25px;
   font-weight: 600;
 }
 
-.MainContainer .box .title {
+.Main .boxesContainer:nth-child(2) .box {
+  margin-bottom: 30px;
+  height: min-content;
+}
+
+.Main .box#subjectsTrend {
+  height: 40%;
+}
+
+.Main .smallBoxesWrapper {
   display: flex;
-  justify-content: center;
-  margin-top: 10px;
-  font-size: 23px;
-  font-weight: 600;
+  height: 60%;
+  margin-top: 30px;
 }
 
-.MainContainer .boxesContainer#toStats .box {
-  display: flex;
-  justify-content: center;
-
-  margin-top: 330px;
-  margin-left: 54%;
+.Main .smallBoxesWrapper > div:nth-child(1){
+  margin-right: 15px;
 }
 
-@media (max-width: 1650px) {
-  .MainContainer .boxesContainer .box {
-    width: 300px;
-  }
-}
-
-@media (max-width: 1250px) {
-  .MainContainer .boxesContainer .box {
-    margin: 10px;
-    padding: 10px;
-  }
-}
-
-@media (max-width: 1150px) {
-  .MainContainer .boxesContainer .box {
-    padding: 5px;
-  }
+.Main .smallBoxesWrapper > div:nth-child(2){
+  margin-left: 15px;
 }
