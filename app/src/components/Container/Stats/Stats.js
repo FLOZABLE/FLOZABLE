@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import RadioBtn from '../../UI/RadioBtn/RadioBtn';
-import { coldColorsList, colorsList } from '../../../constant';
+import { coldColorsList, colorsList, warmColorsList } from '../../../constant';
 import styles from './Stats.module.css';
 import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, updateRankingTrend, updateStackedAreaGraph, updateSubjectsTrendChart } from './StatTools';
 import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
@@ -43,12 +43,37 @@ function Stats({ subjects, userInfo }) {
     const { user_id } = userInfo;
     const viewDateTime = DateTime.fromJSDate(viewDate);
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    fetch(`${serverOrigin}/extension/usage?date=${viewDateTime.toISODate()}&mode=${statsViewer}&timezone=${timezone}`,
+      {
+        method: "get",
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
+          setTimeout(() => {
+            setWebsites(response.websitesData);
+          }, 1000);
+
+          let websitesUsage = 0;
+          let websitesVisit = 0;
+          response.websitesData.map(website => {
+            websitesUsage += website.t;
+            websitesVisit += website.v;
+          });
+          const websitesUsagesDisp = secondConverter(websitesUsage);
+          setWebsitesUsage(`${websitesUsagesDisp.value} ${websitesUsagesDisp.type}`);
+          setWebsitesVisit(`${websitesVisit} times`);
+        }
+      })
+      .catch((error) => console.error(error));
+
     fetch(`${serverOrigin}/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime.toISODate()}&timezone=${timezone}`, {
       method: 'get'
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
+          console.log(data)
           rankingTrend = updateRankingTrend(data.rankings, statsViewer);
           let ranking = 0;
           if (statsViewer === "Daily") {
@@ -58,14 +83,19 @@ function Stats({ subjects, userInfo }) {
           } else {
             ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.startOf('month').toISODate());
           };
-          setRanking(ranking.data);
+
+          if (ranking) {
+            setRanking(ranking.data);
+          }
 
           setTimeout(() => {
             setRankingsTrend(rankingTrend);
-          }, 100);
+          }, 0);
         }
       })
       .catch((error) => console.error(error));
+
+
   }, [userInfo, viewDate, statsViewer]);
 
   const focusCalculator = (grouped) => {
@@ -81,7 +111,7 @@ function Stats({ subjects, userInfo }) {
     return focus;
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!viewDate) return;
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const viewDateTime = DateTime.fromJSDate(viewDate);
@@ -93,7 +123,9 @@ function Stats({ subjects, userInfo }) {
       .then((response) => {
         console.log(response, 'usage')
         if (response.success) {
-          setWebsites(response.websitesData);
+          setTimeout(() => {
+            setWebsites(response.websitesData);
+          }, 1000);
           let websitesUsage = 0;
           let websitesVisit = 0;
           response.websitesData.map(website => {
@@ -106,7 +138,7 @@ function Stats({ subjects, userInfo }) {
         }
       })
       .catch((error) => console.error(error));
-  }, [viewDate, statsViewer]);
+  }, [viewDate, statsViewer]); */
 
   const [subjectsPie, setSubjectsPie] = useState([]);
 
@@ -125,7 +157,16 @@ function Stats({ subjects, userInfo }) {
     //subject time usage pie chart
     const subjectsPie = updateTimeUsagePie(subjects, viewDateTime, statsViewer);
     setTimeout(() => {
-      setSubjectsPie(subjectsPie);
+      setSubjectsPie(subjectsPie.reduce((accumulator, data, i) => {
+        const value = data.value;
+        if (value) {
+          const name = data.info.name;
+          const fill = coldColorsList[accumulator.length % (coldColorsList.length)];
+          const labelVal = secondConverter(value);
+          accumulator.push({ value, name, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
+        }
+        return accumulator;
+      }, []));
     }, 300);
 
     if (statsViewer === 'Daily') {
@@ -141,7 +182,7 @@ function Stats({ subjects, userInfo }) {
       setFocus(`${value}${type}`);
 
       //subject trend data handler
-      const subjectsTrend = updateSubjectsTrendChart(subjects, statsViewer, 'day');
+      const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, statsViewer, 'days');
       setTimeout(() => {
         setSubjectsTrend(subjectsTrend);
       }, 300);
@@ -158,7 +199,7 @@ function Stats({ subjects, userInfo }) {
       setFocus(`${value}${type}`);
 
       //subject trend data handler
-      const subjectsTrend = updateSubjectsTrendChart(subjects, statsViewer, 'week');
+      const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, statsViewer, 'weeks');
       setTimeout(() => {
         setSubjectsTrend(subjectsTrend);
       }, 300);
@@ -176,7 +217,7 @@ function Stats({ subjects, userInfo }) {
       setFocus(`${value}${type}`);
 
       //subject trend data handler
-      const subjectsTrend = updateSubjectsTrendChart(subjects, statsViewer, 'month');
+      const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, statsViewer, 'months');
       setTimeout(() => {
         setSubjectsTrend(subjectsTrend);
       }, 300);
@@ -195,132 +236,120 @@ function Stats({ subjects, userInfo }) {
         </div>
         <div>
           <div className={styles.bigBox}>
-            <div className={styles.chartWrapper}>
-              {subjectsPie.reduce((accumulator, data, i) => {
-                const value = data.value;
-                if (value) {
-                  const name = data.info.name;
-                  const fill = coldColorsList[accumulator.length % (coldColorsList.length)];
-                  const labelVal = secondConverter(value);
-                  accumulator.push({ value, name, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
+            <div className={styles.contents}>
+              <div className={styles.chartWrapper}>
+                {subjectsPie.length
+                  ?
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Tooltip content={<PieCustomTooltip />} />
+                      <Pie
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        data={subjectsPie}
+                        dataKey={"value"}
+                        outerRadius={200}
+                        innerRadius={150}
+                        fill="green"
+                        label={pieCustomLabel}
+                      >
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                  :
+                  <Link
+                    to="/dashboard/study"
+                    className={styles.noChart}>
+                    <h3>Study to see stats!</h3>
+                  </Link>
                 }
-                return accumulator;
-              }, []).length
-                ?
+              </div>
+              <div>
+                <div className={styles.overflow}>
+                  <i>
+                    <IconBook />
+                  </i>
+                  Total Study Time {totalStudy}
+                </div>
+                <div className={styles.overflow}>
+                  <i>
+                    <IconMonitor />
+                  </i>
+                  Website Usage Time {websitesUsage} / {websitesVisit} times
+                </div>
+                <div className={styles.overflow}>
+                  <i>
+                    <IconStatsChart />
+                  </i>
+                  Ranking {ranking}
+                </div>
+                <div className={styles.overflow}>
+                  <i>
+                    <IconEyeOutline />
+                  </i>
+                  Focus {focus}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={styles.bigBox}>
+            <h3>Study Time Trend</h3>
+            <div className={styles.contents}>
+              <div className={styles.chartWrapper}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Tooltip content={<PieCustomTooltip />} />
-                    <Pie
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      data={subjectsPie.reduce((accumulator, data, i) => {
-                        const value = data.value;
-                        if (value) {
-                          const name = data.info.name;
-                          const fill = coldColorsList[accumulator.length % (coldColorsList.length)];
-                          const labelVal = secondConverter(value);
-                          accumulator.push({ value, name, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
-                        }
+                  <LineChart
+                    data={subjectsTrend.map((day, i) => {
+                      const data = day.data.reduce((accumulator, subject) => {
+                        if (!filteredTrends.includes(subject.info.id)) {
+                          accumulator[subject.info.id] = subject.value;
+                        };
                         return accumulator;
-                      }, [])}
-                      dataKey={"value"}
-                      outerRadius={200}
-                      innerRadius={150}
-                      fill="green"
-                      label={pieCustomLabel}
-                    >
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-                :
-                <Link
-                  to="/dashboard/study"
-                  className={styles.noChart}>
-                  <h3>Study to see stats!</h3>
-                </Link>
-              }
-            </div>
-            <div>
-              <div className={styles.overflow}>
-                <i>
-                  <IconBook />
-                </i>
-                Total Study Time {totalStudy}
-              </div>
-              <div className={styles.overflow}>
-                <i>
-                  <IconMonitor />
-                </i>
-                Website Usage Time {websitesUsage} / {websitesVisit} times
-              </div>
-              <div className={styles.overflow}>
-                <i>
-                  <IconStatsChart />
-                </i>
-                Ranking {ranking}
-              </div>
-              <div className={styles.overflow}>
-                <i>
-                  <IconEyeOutline />
-                </i>
-                Focus {focus}
-              </div>
-            </div>
-          </div>
-          <div className={styles.bigBox}>
-            <div className={styles.chartWrapper}>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={subjectsTrend.map((day, i) => {
-                    const data = day.data.reduce((accumulator, subject) => {
-                      if (!filteredTrends.includes(subject.info.id)) {
-                        accumulator[subject.info.id] = subject.value;
-                      };
-                      return accumulator;
-                    }, {});
-                    return { label: day.label, ...data }
-                  })}
-                  margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="label" />
-                  <YAxis tickFormatter={(data) => {
-                    const { value, type } = secondConverter(data);
-                    return `${value} ${type}`
-                  }} />
-                  <Tooltip formatter={(data) => {
-                    const { value, type } = secondConverter(data);
-                    return `${value} ${type}`
-                  }} />
-                  <Legend
-                    onClick={(e) => {
-                      if (filteredTrends.includes(e.dataKey)) {
-                        setFilteredTrends(prev => {
-                          return prev.filter(item => item !== e.dataKey);
-                        })
-                      } else {
-                        setFilteredTrends(prev => {
-                          return [...prev, e.dataKey]
-                        })
-                      }
+                      }, {});
+                      return { label: day.label, ...data }
+                    })}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
                     }}
-                  />
-                  {subjectsTrend.length ? subjectsTrend[0].data.map((subject) => {
-                    return (
-                      <Line name={subject.info.name} type="monotone" key={subject.info.id} dataKey={subject.info.id} stroke="#8884d8" activeDot={{ r: 8 }} />
-                    )
-                  }) : null}
-                </LineChart>
-              </ResponsiveContainer>
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="label" />
+                    <YAxis tickFormatter={(data) => {
+                      const { value, type } = secondConverter(data);
+                      return `${value} ${type}`
+                    }} />
+                    <Tooltip formatter={(data) => {
+                      const { value, type } = secondConverter(data);
+                      return `${value} ${type}`
+                    }} />
+                    <Legend
+                      onClick={(e) => {
+                        if (filteredTrends.includes(e.dataKey)) {
+                          setFilteredTrends(prev => {
+                            return prev.filter(item => item !== e.dataKey);
+                          })
+                        } else {
+                          setFilteredTrends(prev => {
+                            return [...prev, e.dataKey]
+                          })
+                        }
+                      }}
+                    />
+                    {subjectsTrend.length ? subjectsTrend[0].data.map((subject) => {
+                      return (
+                        <Line name={subject.info.name} type="monotone" key={subject.info.id} dataKey={subject.info.id} stroke="#8884d8" activeDot={{ r: 8 }} />
+                      )
+                    }) : null}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
           <div className={styles.bigBox}>
+            <h3>Ranking Trend</h3>
             <div className={styles.chartWrapper}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
@@ -345,35 +374,73 @@ function Stats({ subjects, userInfo }) {
               </ResponsiveContainer>
             </div>
           </div>
-          <div className={styles.bigBox}>
-            <div className={styles.chartWrapper}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Tooltip content={<PieCustomTooltip />} />
-                  <Pie
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    data={subjectsPie.reduce((accumulator, data, i) => {
-                      const value = data.value;
-                      if (value) {
-                        const name = data.info.name;
-                        const fill = coldColorsList[accumulator.length % (coldColorsList.length)];
-                        const labelVal = secondConverter(value);
-                        accumulator.push({ value, name, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
-                      }
-                      return accumulator;
-                    }, [])}
-                    dataKey={"value"}
-                    outerRadius={200}
-                    innerRadius={150}
-                    fill="green"
-                    label={pieCustomLabel}
-                  >
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+          <div className={styles.bigBox} id={styles.othersUsage}>
+            <h3>Website Usage</h3>
+            {websites.length
+                ?
+                <div className={styles.contents}>
+                <div className={styles.chartWrapper}>
+                  <h3>Visits</h3>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Tooltip content={<PieCustomTooltip />} />
+                      <Pie
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        data={JSON.parse(JSON.stringify(websites)).sort((a, b) => b.v - a.v).map((website, i) => {
+                          const { v, d } = website;
+                          const labelVal = `${v} times`;
+                          const fill = coldColorsList[i % (coldColorsList.length)];
+                          return { ...website, labelVal, name: d, fill };
+                        })}
+                        dataKey={"v"}
+                        outerRadius={200}
+                        innerRadius={150}
+                        fill="green"
+                        label={pieCustomLabel}
+                        minAngle={3}
+                      >
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className={styles.chartWrapper}>
+                  <h3>Time</h3>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Tooltip content={<PieCustomTooltip />} />
+                      <Pie
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        data={JSON.parse(JSON.stringify(websites)).sort((a, b) => b.t - a.t).map((website, i) => {
+                          const { t, d } = website;
+                          const { value, type } = secondConverter(t);
+                          const labelVal = `${value} ${type}`;
+                          const fill = coldColorsList[i % (coldColorsList.length)];
+                          return { ...website, labelVal, name: d, fill };
+                        })}
+                        dataKey={"t"}
+                        outerRadius={200}
+                        innerRadius={150}
+                        fill="green"
+                        label={pieCustomLabel}
+                        minAngle={3}
+                      >
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+                :
+                <a
+                target='blank'
+                  href="https://chromewebstore.google.com/detail/flozable-tab-monitor/cmbdaanokelibhphiidlikongdoandlj"
+                  className={styles.noChart}>
+                  <h3>Use chrome extension to see website usage!</h3>
+                </a>
+              }
           </div>
         </div>
       </div>
