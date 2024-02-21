@@ -11,6 +11,7 @@ import { PieChart, Pie, Tooltip, ResponsiveContainer, YAxis, XAxis, CartesianGri
 import { Link } from 'react-router-dom';
 import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from '../../../utils/svgs';
 import { PieCustomTooltip, pieCustomLabel } from '../../UI/Charts';
+import StudyTrendChart from '../../UI/StudyTrendChart';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 let rankingTrend = [];
@@ -52,7 +53,7 @@ function Stats({ subjects, userInfo }) {
         if (response.success) {
           setTimeout(() => {
             setWebsites(response.websitesData);
-          }, 1000);
+          }, 1300);
 
           let websitesUsage = 0;
           let websitesVisit = 0;
@@ -111,35 +112,6 @@ function Stats({ subjects, userInfo }) {
     return focus;
   };
 
-  /* useEffect(() => {
-    if (!viewDate) return;
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const viewDateTime = DateTime.fromJSDate(viewDate);
-    fetch(`${serverOrigin}/extension/usage?date=${viewDateTime.toISODate()}&mode=${statsViewer}&timezone=${timezone}`,
-      {
-        method: "get",
-      })
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response, 'usage')
-        if (response.success) {
-          setTimeout(() => {
-            setWebsites(response.websitesData);
-          }, 1000);
-          let websitesUsage = 0;
-          let websitesVisit = 0;
-          response.websitesData.map(website => {
-            websitesUsage += website.t;
-            websitesVisit += website.v;
-          });
-          const websitesUsagesDisp = secondConverter(websitesUsage);
-          setWebsitesUsage(`${websitesUsagesDisp.value} ${websitesUsagesDisp.type}`);
-          setWebsitesVisit(`${websitesVisit} times`);
-        }
-      })
-      .catch((error) => console.error(error));
-  }, [viewDate, statsViewer]); */
-
   const [subjectsPie, setSubjectsPie] = useState([]);
 
   const [subjectsTrend, setSubjectsTrend] = useState([]);
@@ -167,7 +139,7 @@ function Stats({ subjects, userInfo }) {
         }
         return accumulator;
       }, []));
-    }, 300);
+    }, 310);
 
     if (statsViewer === 'Daily') {
 
@@ -185,7 +157,7 @@ function Stats({ subjects, userInfo }) {
       const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, statsViewer, 'days');
       setTimeout(() => {
         setSubjectsTrend(subjectsTrend);
-      }, 300);
+      }, 310);
     } else if (statsViewer === 'Weekly') {
 
       //top box renderer
@@ -202,7 +174,7 @@ function Stats({ subjects, userInfo }) {
       const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, statsViewer, 'weeks');
       setTimeout(() => {
         setSubjectsTrend(subjectsTrend);
-      }, 300);
+      }, 310);
       //setSubjectsTrend(subjectsTrend);
     } else {
 
@@ -220,7 +192,7 @@ function Stats({ subjects, userInfo }) {
       const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, statsViewer, 'months');
       setTimeout(() => {
         setSubjectsTrend(subjectsTrend);
-      }, 300);
+      }, 310);
     }
   }, [viewDate, statsViewer, subjects]);
 
@@ -297,54 +269,9 @@ function Stats({ subjects, userInfo }) {
             <h3>Study Time Trend</h3>
             <div className={styles.contents}>
               <div className={styles.chartWrapper}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={subjectsTrend.map((day, i) => {
-                      const data = day.data.reduce((accumulator, subject) => {
-                        if (!filteredTrends.includes(subject.info.id)) {
-                          accumulator[subject.info.id] = subject.value;
-                        };
-                        return accumulator;
-                      }, {});
-                      return { label: day.label, ...data }
-                    })}
-                    margin={{
-                      top: 5,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="label" />
-                    <YAxis tickFormatter={(data) => {
-                      const { value, type } = secondConverter(data);
-                      return `${value} ${type}`
-                    }} />
-                    <Tooltip formatter={(data) => {
-                      const { value, type } = secondConverter(data);
-                      return `${value} ${type}`
-                    }} />
-                    <Legend
-                      onClick={(e) => {
-                        if (filteredTrends.includes(e.dataKey)) {
-                          setFilteredTrends(prev => {
-                            return prev.filter(item => item !== e.dataKey);
-                          })
-                        } else {
-                          setFilteredTrends(prev => {
-                            return [...prev, e.dataKey]
-                          })
-                        }
-                      }}
-                    />
-                    {subjectsTrend.length ? subjectsTrend[0].data.map((subject) => {
-                      return (
-                        <Line name={subject.info.name} type="monotone" key={subject.info.id} dataKey={subject.info.id} stroke="#8884d8" activeDot={{ r: 8 }} />
-                      )
-                    }) : null}
-                  </LineChart>
-                </ResponsiveContainer>
+                <StudyTrendChart 
+                  subjectsTrend={subjectsTrend}
+                />
               </div>
             </div>
           </div>

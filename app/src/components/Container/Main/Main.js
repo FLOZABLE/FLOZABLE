@@ -9,8 +9,10 @@ import AIRecommendation from "../../UI/AIRecommendation/AIRecommendation.js";
 import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal.js";
 import RecommendedFriendsViewer from "../../UI/RecommendedFriendsViewer/RecommendedFriendsViewer.js";
 import StuckModal from "../../UI/StuckModal/StuckModal.js";
-import { BackArrow } from "../../../utils/svgs.js";
-import DashboardChart, { App } from '../DashboardChart/DasboardChart.js'
+import { BackArrow, IconStatsChart } from "../../../utils/svgs.js";
+import FriendsRankingViewer from "../../UI/FriendsRankingViewer/FriendsRankingViewer.js";
+import StudyTrendChart from "../../UI/StudyTrendChart.js";
+import { updateSubjectsTrendChart } from "../Stats/StatTools.js";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -27,16 +29,24 @@ function Main({
   setMyGroups,
   setOtherGroups
 }) {
-  
+
   const [joinTarget, setJoinTarget] = useState(null);
   const [isGroupPwModal, setIsGroupPwModal] = useState(false);
   const [friendsCount, setFriendsCount] = useState(0);
   const [subjectsTrend, setSubjectsTrend] = useState([]);
   const [filteredTrends, setFilteredTrends] = useState([]);
+  const [friendsRanking, setFriendsRanking] = useState({});
 
   useEffect(() => {
-    if (!subjects.length) return;
-    fetch(`${serverOrigin}/AI/input`, {
+    if (!subjects) return;
+
+    const { daily } = subjects;
+
+    if (!daily) return;
+
+    const subjectsTrend = updateSubjectsTrendChart(subjects, new Date(), 'Daily', 'day');
+    setSubjectsTrend(subjectsTrend);
+    /* fetch(`${serverOrigin}/AI/input`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
@@ -49,14 +59,32 @@ function Main({
           console.log(data);
         }
       })
-      .catch((error) => console.error(error));
-  
-}, [subjects]);
+      .catch((error) => console.error(error)); */
+
+  }, [subjects]);
+
+  const getFriendsRanking = () => {
+    fetch(`${serverOrigin}/ranking/friends`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
+          const { day, week, month } = response;
+          setFriendsRanking({ day, week, month });
+        };
+      })
+  }
+  useEffect(() => {
+    if (!userInfo) return;
+    getFriendsRanking();
+  }, [userInfo]);
 
   return (
-    
-    <div className={styles.MainContainer}>
-      <StuckModal />
+    <div>
       <GroupPwModal
         myGroups={myGroups}
         setMyGroups={setMyGroups}
@@ -67,115 +95,73 @@ function Main({
         setJoinGroupResponse={setResponse}
       />
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
+        <div className={styles.Main}>
+          {/* <div className={styles.backArrow}>
+            <Link to="/dashboard">
+              <BackArrow />
+              <h1>Dashboard</h1>
 
-      <div className={styles.boxesContainer}>
-        <div className={styles.backArrow}>
-         <Link to="/dashboard">
-            <BackArrow />
-            <h1>Dashboard</h1>
-
-          </Link>
-        </div>
-        <div className={styles.box}>
-          <div className={styles.title}>
-          {friendsCount ? <p>Friends Viewer</p> : null}
-          </div>
-          <FriendsActivityViewer
-            setResponse={setResponse}
-            userInfo={userInfo}
-            setJoinTarget={setJoinTarget}
-            searchQuery={''}
-            setCount={setFriendsCount}
-            myGroups={myGroups}
-            setMyGroups={setMyGroups}
-            setOtherGroups={setOtherGroups}
-            mode={0}
-          />
-          {!friendsCount ? <RecommendedFriendsViewer setResponse={setResponse} /> : null}
-        </div>
-      </div>
-      
-      <div className={styles.boxesContainer} id={styles.SmallRanking}>
-        <div className={styles.box}>
-          <div className={styles.title}>
-            Today's Ranking
-          </div>
-          <SmallRankingViewer
-            userInfo={userInfo}
-          />
-        </div>
-      </div>
-      <div className={styles.boxesContainer}>
-        <div className={styles.box}>
-          <div className={styles.title}>
-            <div>
-              <p>AI recommendation</p>
-            </div>      
-          </div>
-            <AIRecommendation/>
-          </div>
-        </div>
-      </div>
-      <div className={styles.DashboardChart}>
-        <DashboardChart subjects={subjects} userInfo={userInfo}/>
-      </div>
-
-      <div className={styles.boxesContainer} id={styles.toStats}>
-        <div className={styles.box}>
-          <Link to="/dashboard/planner">
-            <button className={styles.toStatsBtn}>View Plans</button>
-          </Link>
-        </div>
-      </div>
-  </div>
-
-);
-
-  {/* 
-   <div className={styles.boxesContainer}>
-          <div className={styles.box}>
-            <SmallSubjectsViewer subjects={subjects} />
-          </div>
-          <div className={styles.box}>
-            
-            <Link to="/dashboard/planner">
-              <button className={styles.toStatsBtn}>View Plans</button>
             </Link>
-          </div>
-          <div className={styles.box}>
-            <div className={styles.title}>
-              Today's Ranking
+          </div> */}
+          <div className={styles.boxesWrapper}>
+            <div className={styles.boxesContainer} >
+              <div className={styles.box} id={styles.subjectsTrend}>
+                <StudyTrendChart
+                  subjectsTrend={subjectsTrend}
+                />
+              </div>
+              <div className={styles.smallBoxesWrapper}  >
+                <div className={styles.box}>
+                  <SmallSubjectsViewer
+                    subjects={subjects}
+                  />
+                </div>
+                <div className={styles.box}>
+                  <PlanTimeline
+                    plans={plans}
+                    viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
+                    viewMode={"timeGridDay"}
+                    subjects={subjects}
+                    setPlans={setPlans}
+                    mode={"study"}
+                    setPlanModal={setPlanModal}
+                  />
+                </div>
+              </div>
             </div>
-            <SmallRankingViewer
-              userInfo={userInfo}
-            />
-          </div>
-          <div className={styles.box}>
-            <div className={styles.title}>
-            {friendsCount ? <p>Friends Viewer</p> : null}
+            <div className={styles.boxesContainer}>
+              <div className={styles.box}>
+                <div className={styles.title}>
+                  {friendsCount ? <p>Friends Viewer</p> : null}
+                </div>
+                <FriendsActivityViewer
+                  setResponse={setResponse}
+                  userInfo={userInfo}
+                  setJoinTarget={setJoinTarget}
+                  searchQuery={''}
+                  setCount={setFriendsCount}
+                  myGroups={myGroups}
+                  setMyGroups={setMyGroups}
+                  setOtherGroups={setOtherGroups}
+                  mode={0}
+                />
+                {!friendsCount ? <RecommendedFriendsViewer setResponse={setResponse} /> : null}
+              </div>
+              <div className={styles.box}>
+                <div className={styles.title}>
+                  <p>Friend's Rank</p>
+                  <i>
+                    <IconStatsChart />
+                  </i>
+                </div>
+                <FriendsRankingViewer friendsRanking={friendsRanking} />
+              </div>
             </div>
-            <FriendsActivityViewer
-              setResponse={setResponse}
-              userInfo={userInfo}
-              setJoinTarget={setJoinTarget}
-              searchQuery={''}
-              setCount={setFriendsCount}
-              myGroups={myGroups}
-              setMyGroups={setMyGroups}
-              setOtherGroups={setOtherGroups}
-              mode={0}
-            />
-            {!friendsCount ? <RecommendedFriendsViewer setResponse={setResponse} /> : null}
           </div>
-          <div className={styles.box}>
-            <div className={styles.title}>
-              <p>AI recommendation</p>
-            </div>
-            <AIRecommendation
-            />
-          </div>
-        </div>*/} 
-
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Main;

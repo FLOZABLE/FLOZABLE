@@ -15,6 +15,7 @@
   --font-gray: #6A6A6A;
   --opacity-black: #000000c3;
   --shadow3: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  --shadow1: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .App {
@@ -160,7 +161,7 @@ button:hover {
 
 .Main {
   position: relative;
-  margin: 150px 0px 0px 130px;
+  margin: 90px 0px 0px 130px;
   transition: all .2s ease-in-out;
   width: calc(100vw - 140px);
   border-radius: 20px;

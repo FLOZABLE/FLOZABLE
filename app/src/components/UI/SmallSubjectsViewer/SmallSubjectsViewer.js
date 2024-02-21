@@ -7,44 +7,6 @@ import { Link } from "react-router-dom";
 import { PieChart, Pie, Tooltip, ResponsiveContainer, Label } from "recharts";
 import { PieCustomTooltip, pieCustomLabel } from "../Charts";
 import { secondConverter } from "../../../utils/Tool";
-/* 
-
-
-        <PieChart
-          labels={subjects.map((subject) => subject.name)}
-          datasets={[
-            {
-              label: "Seconds",
-              backgroundColor: colorsList,
-              borderColor: colorsList,
-              borderWidth: 5,
-              data: subjects.map(
-                (subject) =>
-                  subject.daily.total[subject.daily.total.length - 1],
-              ),
-            },
-          ]}
-          options={{
-            plugins: {
-              datalabels: {
-                color: "#ffffff",
-                font: {
-                  size: 32,
-                  family: "Arial",
-                  weight: 700,
-                },
-                formatter: (value, context, index) => {
-                  const { chart, dataIndex } = context;
-                  const labels = chart.data.labels;
-                  const label = labels[dataIndex];
-                  return ``;
-                },
-              },
-            },
-          }}
-          plugins={ChartDataLabel}
-        />
-*/
 
 function SmallSubjectsViewer({ subjects }) {
 
