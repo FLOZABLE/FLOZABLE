@@ -76,7 +76,7 @@ Router.post('/create', async (req, res) => {
         return res.send({ success: false, reason: isValidName.reason });
       };
 
-      const isValidDescription = validateString(description, 'theme description', 100);
+      const isValidDescription = validateString(description, 'theme description', 500);
 
       if (!isValidDescription.isValid) {
         return res.send({ success: false, reason: isValidDescription.reason });

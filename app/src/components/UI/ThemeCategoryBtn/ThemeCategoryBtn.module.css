@@ -1,8 +1,9 @@
 .ThemeCategoryBtn {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 30px;
   z-index: 3;
+  padding: 0px 10px;
 }
 
 .ThemeCategoryBtn p {

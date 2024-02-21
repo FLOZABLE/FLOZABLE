@@ -211,6 +211,9 @@ async function utf8mb4Unicode() {
   ALTER TABLE users MODIFY COLUMN name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
   ALTER TABLE subjects MODIFY COLUMN name char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+  ALTER TABLE themes MODIFY COLUMN name varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  ALTER TABLE themes MODIFY COLUMN description varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   `);
 
   console.log('migration complete');

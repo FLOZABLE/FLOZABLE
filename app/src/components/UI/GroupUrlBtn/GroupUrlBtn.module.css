@@ -3,11 +3,16 @@
   position: relative;
   justify-content: center;
   align-items: center;
-  background-color: var(--pink);
   width: 50px;
+  height: 30px;
   border-radius: 50px;
-  color: #fff;
   cursor: pointer;
+}
+
+.GroupUrlBtn i {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .GroupUrlBtn .hoverEl {
@@ -19,7 +24,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #000000C0;
   padding: 3px 10px;
   border-radius: 5px;
 }
