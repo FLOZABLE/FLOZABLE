@@ -32,32 +32,28 @@ function ThemeContainer({
   return (
     <div
       className={`${styles.ThemeContainer} ${isSearched ? "" : styles.hidden}`}
+      style={{
+        backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`, backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+      }}
+      onClick={() => {
+        setIsActive((prev) => (!prev ? theme : !prev));
+      }}
     >
-      <div className={styles.name}>{theme?.name}</div>
-      <div
-        className={styles.img}
-        onClick={() => {
-          setIsActive((prev) => (!prev ? theme : !prev));
-        }}
-        style={{
-          backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`,
-          backgroundSize: "cover",
-          backgroundPosition: "center center",
-          backgroundRepeat: "no-repeat",
-        }}
-      ></div>
-      <div className={`${styles.description} ${isSaved ? styles.saved : ""}`}>
-        <ul className={styles.info}>
-          <li>
+      <div className={styles.contents}>
+        <h4>{theme?.name}</h4>
+        <div className={styles.counts}>
+          <div>
             <i>
               <FontAwesomeIcon icon={faHeart} />
             </i>
             <GroupLikesCounter
-              initialMembers={theme?.likes}
+              initialMembers={(theme?.likes)}
               groupId={theme?.id}
             />
-          </li>
-          <li>
+          </div>
+          <div>
             <i>
               <FontAwesomeIcon icon={faPeopleGroup} />
             </i>
@@ -65,37 +61,31 @@ function ThemeContainer({
               initialVal={theme?.weekUsage}
               themeId={theme?.id}
             />
-          </li>
-        </ul>
-        <div className={`${styles.content} hiddenScroll`}>
+          </div>
+        </div>
+        <div className={`${styles.description} hiddenScroll`}>
           {parse(theme?.description)}
         </div>
-      </div>
-      <div className={`${styles.tags} hiddenScroll`}>
-        {(theme?.tags ? theme.tags.split(",") : []).map((tag, i) => (
-          <p className={styles.tag} key={i}>
-            #{tag}
-          </p>
-        ))}
-      </div>
-      <div className={styles.bottom}>
-        <div className={styles.likeBtnWrapper}>
-          <LikeBtn
-            liked={liked}
-            id={theme?.id}
-            url={`${serverOrigin}/themes/like/${theme?.id}`}
-          />
+        <div className={`${styles.tags} hiddenScroll`}>
+          {(theme?.tags ? theme.tags.split(',') : []).map((tag, i) => (
+            <div className={styles.tag} key={i}>#{tag}</div>
+          ))}
         </div>
-        <div>
-          <ThemeCategoryBtn
-            themeId={theme.id}
-            setResponse={setResponse}
-            themeCategory={parseInt(themeCategory)}
-          />
+        <div className={styles.buttons} onClick={(e) => {e.stopPropagation()}}>
+          <GroupUrlBtn text={`${serverOrigin}/dashboard/themes?id=${theme?.id}`} />
+          <div>
+            <ThemeCategoryBtn
+              themeId={theme.id}
+              setResponse={setResponse}
+              themeCategory={parseInt(themeCategory)}
+            />
+          </div>
+          <div>
+            <LikeBtn liked={liked} id={theme?.id}
+              url={`${serverOrigin}/themes/like/${theme?.id}`}
+            />
+          </div>
         </div>
-        <GroupUrlBtn
-          text={`${serverOrigin}/dashboard/themes?id=${theme?.id}`}
-        />
       </div>
     </div>
   );

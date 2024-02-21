@@ -16,6 +16,7 @@ import CreateThemeModal from "../../UI/CreateThemeModal/CreateThemeModal";
 import StuckModal from "../../UI/StuckModal/StuckModal";
 import RankedTheme from "../../UI/RankedTheme/RankedTheme";
 import ThemePreview from "../../UI/ThemePreview/ThemePreview";
+import SearchBar from "../../UI/SearchBar/SearchBar";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -79,10 +80,10 @@ function Themes({
     const newThemes = JSON.parse(JSON.stringify(themes));
     newThemes.sort((a, b) => b.likes.length - a.likes.length);
     setRankedThemes(newThemes);
-    
+
     const searchParams = new URLSearchParams(window.location.search);
     const themeId = searchParams.get("id");
-    
+
     if (!themeId) return;
     const selectedTheme = themes.find(theme => theme.id === themeId);
     if (!selectedTheme) return;
@@ -90,7 +91,7 @@ function Themes({
   }, [themes]);
 
   return (
-    <div className={styles.Themes}>
+    <div>
       <CreateThemeModal
         isOpen={isCreateThemeModal}
         setIsOpen={setIsCreateThemeModal}
@@ -102,114 +103,105 @@ function Themes({
         setIsActive={setIsThemePreview}
         setResponse={setResponse}
       />
-      <StuckModal />
-      <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
-        <div className={styles.box} id={styles.likedList}>
-          <div className={styles.title}>
-            <h1>Check out the most liked themes this week!</h1>
-          </div>
-          {/* {slidesEl.length ?
-            <Swiper>
-              {slidesEl}
-            </Swiper>
-            : null
-          } */}
-          {rankedThemes.length ?
-            <Swiper
-              modules={[Pagination, Navigation, Autoplay, EffectCoverflow]}
-              navigation={true}
-              effect="coverflow"
-              coverflowEffect={{
-                rotate: -20,
-                stretch: 1,
-                depth: 100,
-                slideShadows: false
-              }}
-              spaceBetween={30}
-              pagination={{ clickable: true }}
-              slidesPerView={3}
-              autoplay={{ delay: 1300, disableOnInteraction: false }}
-              speed={500}
-              loop={true}
-              className={styles.Swiper}>
-              {rankedThemes.map((theme, i) => {
-                const liked = theme.likes.includes(userInfo?.user_id);
-                const userThemeIds = userThemes.map((theme) => {
-                  return theme.split(":")[1];
-                });
-                const userThemeCategories = userThemes.map((theme) => {
-                  return theme.split(":")[0];
-                });
-                const savedIndex = userThemeIds.indexOf(theme.id);
-                const themeCategory = userThemeCategories[savedIndex];
-
-                return (
-                  <SwiperSlide className={styles.Slide} key={i}>
-                    <RankedTheme
-                      rank={i}
-                      theme={theme}
-                      liked={liked}
-                      setResponse={setResponse}
-                      tags={tags}
-                      setIsActive={setIsThemePreview}
-                      themeCategory={themeCategory}
-                    />
-                  </SwiperSlide>
-                )
-              })}
-            </Swiper>
-            : null
-          }
-        </div>
-        <div className={styles.box}>
-          <div className={styles.searchOptions}>
-            <div className={styles.tagContainerWrapper}>
-              <div className={styles.title}>
-                <FontAwesomeIcon icon={faTags} className={styles.faTags} />
-                <h2>Tags</h2>
-              </div>
-              <TagContainerGen
-                maxTags={10}
-                setTags={setTags}
-                handleCreatedTagsChange={handleCreatedTagsChange}
-              />
+      <div className={`Main`}>
+        <div className={styles.Themes}>
+          <div className={styles.box} id={styles.likedList}>
+            <div className={styles.title}>
+              <h1>Theme of the Week!</h1>
             </div>
-            <div>
-              <Search
-                setSearchQuery={setSearchQuery}
-                searchQuery={searchQuery}
-              />
-              <div className={styles.sortOptWrapper}>
+            {rankedThemes.length ?
+              <Swiper
+                modules={[Pagination, Navigation, Autoplay, EffectCoverflow]}
+                navigation={true}
+                effect="coverflow"
+                coverflowEffect={{
+                  rotate: -20,
+                  stretch: 1,
+                  depth: 100,
+                  slideShadows: false
+                }}
+                spaceBetween={30}
+                pagination={{ clickable: true }}
+                slidesPerView={3}
+                autoplay={{ delay: 1300, disableOnInteraction: true }}
+                speed={500}
+                loop={true}
+                className={styles.Swiper}>
+                {rankedThemes.map((theme, i) => {
+                  const liked = theme.likes.includes(userInfo?.user_id);
+                  const userThemeIds = userThemes.map((theme) => {
+                    return theme.split(":")[1];
+                  });
+                  const userThemeCategories = userThemes.map((theme) => {
+                    return theme.split(":")[0];
+                  });
+                  const savedIndex = userThemeIds.indexOf(theme.id);
+                  const themeCategory = userThemeCategories[savedIndex];
+
+                  return (
+                    <SwiperSlide className={styles.Slide} key={i}>
+                      <RankedTheme
+                        rank={i}
+                        theme={theme}
+                        liked={liked}
+                        setResponse={setResponse}
+                        tags={tags}
+                        setIsActive={setIsThemePreview}
+                        themeCategory={themeCategory}
+                      />
+                    </SwiperSlide>
+                  )
+                })}
+              </Swiper>
+              : null
+            }
+          </div>
+          <div className={styles.box}>
+            <div className={styles.searchOptions}>
+              <div>
                 <DropDownButton
                   options={{
-                    "0": "By likes",
-                    "1": "By Usage"
+                    "0": "Sort By: Likes",
+                    "1": "Sort By: Usage"
                   }}
                   setValue={setSortOpt}
                   value={sortOpt}
                 />
               </div>
+              <div>
+                <SearchBar
+                  setSearchQuery={setSearchQuery}
+                  searchQuery={searchQuery}
+                />
+                <div>
+                </div>
+              </div>
+              <div className={styles.blobWrapper}>
+              {/* <TagContainerGen
+                maxTags={10}
+                setTags={setTags}
+                handleCreatedTagsChange={handleCreatedTagsChange}
+              /> */}
+                <BlobBtn
+                  name={"+ Upload theme!"}
+                  setClicked={setIsCreateThemeModal}
+                  color1={"#fff"}
+                  color2={"var(--pink)"}
+                  delay={-1}
+                />
+              </div>
             </div>
-            <div className={styles.blobWrapper}>
-              <BlobBtn
-                name={"Upload theme!"}
-                setClicked={setIsCreateThemeModal}
-                color1={"#fff"}
-                color2={"var(--pink)"}
-                delay={-1}
-              />
-            </div>
+            <ThemesContainer
+              themes={themes}
+              userInfo={userInfo}
+              setResponse={setResponse}
+              tags={tags}
+              sortOpt={sortOpt}
+              searchQuery={searchQuery}
+              userThemes={userThemes}
+              setIsActive={setIsThemePreview}
+            />
           </div>
-          <ThemesContainer
-            themes={themes}
-            userInfo={userInfo}
-            setResponse={setResponse}
-            tags={tags}
-            sortOpt={sortOpt}
-            searchQuery={searchQuery}
-            userThemes={userThemes}
-            setIsActive={setIsThemePreview}
-          />
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ function SearchUsers({ searchQuery, setResponse, setCount }) {
 
   useEffect(() => {
     const isRateLimited = lastUpd && new Date().getTime() - lastUpd < 1000;
-    if (isRateLimited || !searchQuery || searchQuery.length < 3) return;
+    if (isRateLimited || !searchQuery || searchQuery.length < 2) return;
 
     setLastUpd(new Date().getTime());
     fetch(`${serverOrigin}/friend/search?query=${searchQuery}`, {
@@ -29,6 +29,7 @@ function SearchUsers({ searchQuery, setResponse, setCount }) {
         if (data.success) {
           setUsers(data.users);
           setCount(data.users.length);
+          console.log(data.users)
         }
       })
       .catch((error) => console.error(error));
@@ -36,10 +37,10 @@ function SearchUsers({ searchQuery, setResponse, setCount }) {
 
   return (
     <div className={styles.SearchUsers}>
-      {users.map(user => {
+      {users.map((user, i) => {
         const { user_id, name, timezone } = user;
         return (
-          <div className={styles.user}>
+          <div className={styles.user} key={i}>
             <Link
               to={`/dashboard/user/${user_id}`}
               className={styles.userInfo}>
