@@ -235,7 +235,7 @@ function EventPlanner(props) {
     month: "long",
   });
   const [searchParams, setSearchParams] = useSearchParams();
-  const [viewPlanId, setViewPlanId] = useState("");
+  const [lastClick, setLastClick] = useState(new Date().getTime());
 
   function renderEventContent(eventInfo) {
     return (
@@ -267,6 +267,15 @@ function EventPlanner(props) {
   }
 
   function handleDateSelect(selectInfo) {
+    const now  = new Date().getTime();
+
+    if ( now - lastClick < 1000) {
+      PlannerRef.current.getApi().unselect();
+      return;
+    };
+
+    setLastClick(now);
+
     const start = selectInfo.start ? new Date(selectInfo.start) : new Date();
     const end = selectInfo.end ? new Date(selectInfo.end) : new Date();
 
