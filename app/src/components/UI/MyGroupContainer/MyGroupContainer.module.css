@@ -4,115 +4,64 @@
   padding: 5px;
 }
 
-.MyGroupContainer .name a {
-  font-size: 50px;
-  color: #545454;
-  font-weight: 700;
-}
-
 .MyGroupContainer .header {
-  position: absolute;
-  display: flex;
-  width: 80%;
-  top: 70px;
   z-index: 2;
+  position: relative;
+  height: 90px;
 }
 
-.MyGroupContainer .membersWrapper {
-  height: calc(100% - 180px);
-  overflow-y: auto;
-}
-
-.MyGroupContainer .status {
+.MyGroupContainer .header > div {
   display: flex;
-  background-color: var(--pink);
-  color: #fff;
-  border-radius: 20px;
-  padding: 5px 10px;
-  margin-right: auto;
 }
 
-.MyGroupContainer .status li {
+.MyGroupContainer .name {
+  font-size: 30px;
+  margin-right: 10px;
+  max-width: 50%;
+}
+
+.MyGroupContainer .info {
+  display: flex;
+}
+
+.MyGroupContainer .info i {
   font-size: 40px;
-  margin: 0px 10px;
+  height: 40px;
+  color: var(--purple2);
+}
+
+.MyGroupContainer .info > div {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-}
-
-.MyGroupContainer .status p {
-  color: #fff;
-}
-
-.MyGroupContainer .membersWrapper {
-  padding: 60px 0px;
-}
-
-.MyGroupContainer .buttons {
-  position: absolute;
-  bottom: 30px;
-  display: flex;
-  justify-content: center;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
+  margin: 0px 5px;
 }
 
 .MyGroupContainer .buttons button {
-  border-radius: 20px;
-  height: 40px;
-  width: fit-content;
-  background-color: var(--pink);
-  color: #fff;
-  font-weight: 700;
-  margin-left: auto;
-  font-size: 17px;
-  padding: 0px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0px 10px;
+  background-color: var(--dark-gray);
+  height: 30px;
+  padding: 0px 10px;
+  border-radius: 30px;
+  box-shadow: var(--shadow9);
+  margin: 0px 20px;
+  transition: .3s ease-in-out box-shadow;
 }
 
-.MyGroupContainer li:hover{
-  cursor: pointer;
+.MyGroupContainer .buttons .urlBtnWrapper {
+  box-shadow: var(--shadow9);
+  border-radius: 30px;
+  transition: .3s ease-in-out box-shadow;
 }
 
-.MyGroupContainer.study .buttons {
-  display: none;
+.MyGroupContainer .buttons .urlBtnWrapper:hover {
+  box-shadow: var(--shadow3);
 }
 
-.MyGroupContainer .groupTotal {
-  /*
-  font-size: 15px;
-  */
-  display: block;
+.MyGroupContainer .buttons button:hover {
+  box-shadow: var(--shadow3);
 }
 
-@media (max-width: 1400px) {
-  .MyGroupContainer .name a {
-    font-size: 30px;
-  }
-
-  .MyGroupContainer .status {
-    padding: 2px 5px;
-    font-size: 20px;
-  }
-  
-  .MyGroupContainer .status p {
-    font-size: 20px;
-  }
-
-  .MyGroupContainer .members {
-    grid-template-columns: repeat(auto-fill, 250px);
-    justify-content: center;
-    flex-wrap: wrap;
-    overflow-y: auto;
-    max-height: 350px;
-    gap: 20px;
-  }
-
-  .MyGroupContainer .header {
-    top: 50px;
-  }
+.MyGroupContainer .membersWrapper {
+  height: calc(100% - 100px);
+  overflow-y: auto;
 }

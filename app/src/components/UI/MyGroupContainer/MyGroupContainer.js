@@ -1,6 +1,6 @@
 import styles from "./MyGroupContainer.module.css";
 import { useEffect, useState } from "react";
-import { StudyPerson } from "../../../utils/svgs";
+import { IconMessage, IconTimerOutline, StudyPerson } from "../../../utils/svgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullhorn, faCommentDots, faComments, faGear, faPen, faRankingStar } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -59,7 +59,68 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
 
   return (
     <div className={`${styles.MyGroupContainer} ${mode === "study" ? styles.study : ''}`}>
-      <div className={styles.name}>
+      <div className={styles.header}>
+        <div>
+          <div className={`${styles.name} overflowDot`}>
+            {name}
+          </div>
+          <div className={styles.info}>
+            <div>
+              <StudyPerson
+                opt1={"var(--purple2)"}
+                opt2={"var(--purple2)"}
+                width={"40px"}
+                height={"40px"}
+              />
+              <p>
+                {studyingMembers.length}/
+                {members.length}
+              </p>
+            </div>
+            <div>
+              <i>
+                <IconTimerOutline />
+              </i>
+              <p>
+                {Math.round(groupTotal * 100 / 3600) / 100}hr
+              </p>
+            </div>
+            <div onClick={() => {
+              setIsChatModal(prev => !prev ? group : '');
+            }}>
+              <i>
+                <IconMessage />
+              </i>
+            </div>
+          </div>
+        </div>
+        <div className={styles.buttons}>
+          <div>
+            <Link to={`/dashboard/study?group=${group.group_id}`}>
+              <button>
+              Go to Group
+              </button>
+            </Link>
+          </div>
+          <div className={styles.urlBtnWrapper}>
+          <GroupUrlBtn text={`${serverOrigin}/dashboard/groups?joinId=${group.group_id}`} copyText="Share" bgColor="var(--dark-gray)" />
+          </div>
+        </div>
+      </div>
+      <div className={`${styles.membersWrapper} customScroll`}>
+        <MembersContainer
+          isFocus={isFocus}
+          userInfo={userInfo}
+          groupInfo={group}
+          setStudyingMembers={setStudyingMembers}
+          members={members}
+          setMembers={setMembers}
+          isMic={isMic}
+          isCam={isCam}
+          isHeadphone={isHeadphone}
+        />
+      </div>
+      {/* <div className={styles.name}>
         <Link to={`/dashboard/study?group=${group.group_id}`}>{name}</Link>
         {userInfo?.user_id === group?.leader ? <i onClick={() => {
           setIsEditGroupModal(group);
@@ -75,8 +136,6 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
               height={"40px"}
             />
             <p>
-              {/* {stud}
-                  /{membersInfo.length} */}
               {studyingMembers.length}/
               {members.length}
             </p>
@@ -95,9 +154,6 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
             </div>
           </li>
         </ul>
-        {/* <div className={styles.right}>
-              <FontAwesomeIcon icon={faGear} />
-            </div> */}
       </div>
       <div className={`${styles.membersWrapper} customScroll`}>
         <MembersContainer
@@ -117,7 +173,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
           <button>Go to Group</button>
         </Link>
         <GroupUrlBtn text = {`${serverOrigin}/dashboard/groups?joinId=${group.group_id}`} copyText="Share"/>
-      </div>
+      </div> */}
     </div>
   )
 };

@@ -1,8 +1,8 @@
 .GroupContainer {
   height: 250px;
-  background-color: beige;
-  border-radius: 40px;
-  padding: 5px 10px;
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 10px 10px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   position: relative;
   display: flex;
@@ -14,140 +14,74 @@
   display: none;
 }
 
-.GroupContainer .groupColor {
+.GroupContainer .contents {
   width: 100%;
-  height: 50px;
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  border-top-right-radius: 40px;
-  border-top-left-radius: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .GroupContainer .name {
-  font-weight: 800;
-  font-size: 17px;
-  max-width: calc(100% - 30px);
-  background-color: aliceblue;
-  padding: 3px 10px;
-  border-radius: 30px;
-  z-index: 1;
+  width: calc(100% - 30px);
   display: flex;
-  justify-content: center;
   align-items: center;
-  min-height: 39px;
+  justify-content: center;
+  font-size: 17px;
+  border-radius: 30px;
+  height: 40px;
+  color: #fff;
+  margin-bottom: 20px;
 }
 
-.GroupContainer .name i {
-  font-size: 23px;
-  margin-right: 10px;
-}
-
-.GroupContainer .explanation {
-  /* border-top: 1px solid #545454; */
-  position: relative;
-  margin-top: 16px;
-  padding-top: 20px;
+.GroupContainer .description {
+  height: 100px;
   width: 100%;
 }
 
-.GroupContainer .explanation .content {
-  word-break: break-all;
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 100px;
+.GroupContainer .info {
+  display: flex;
 }
 
-.GroupContainer .bottom {
-  position: absolute;
-  bottom: 0px;
+.GroupContainer .info > div {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: calc(100% - 40px);
+  margin: 5px;
+  font-size: 15px;
 }
 
 .GroupContainer .tags {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: fit-content;
-  position: absolute;
-  bottom: 40px;
-  text-wrap: nowrap;
-  flex-wrap: wrap;
-  width: 100%;
+  flex-wrap: nowrap;
+  height: 17px;
   overflow-y: auto;
-  max-height: 50px;
+  font-size: 13px;
 }
 
-.GroupContainer .tags .tag {
-  background-color: var(--purple);
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
-  height: 20px;
-  padding: 0px 10px;
-  margin: 2px 5px;
-}
-
-.GroupContainer .info {
-  position: absolute;
-  display: flex;
-  background-color: var(--purple);
-  height: 33px;
-  border-radius: 17px;
-  padding: 0px 10px;
-  top: -16px;
-}
-
-.GroupContainer .info li {
-  margin: 0px 3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.GroupContainer .info li p {
-  margin-left: 3px;
-  color: #fff;
-}
-
-.GroupContainer .info li i {
-  color: #fff;
+.GroupContainer .tags > div {
+  margin: 0px 5px;
 }
 
 .GroupContainer .buttons {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
-.GroupContainer .buttons button {
-  background-color: #fd8a8a;
-  font-weight: 800;
-  color: #fff;
-  padding: 0px 20px;
+.GroupContainer .buttons > div {
+  margin: 0px 10px;
+}
+
+.GroupContainer .joinBtn {
+  background-color: #f8f9fa;
+  box-shadow: var(--shadow9);
+  padding: 0px 10px;
+  height: 37px;
   border-radius: 20px;
-  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: .3s ease-in-out box-shadow;
 }
 
-.GroupContainer .buttons > * {
-  margin: 5px;
-}
-
-@media (max-width: 1400px) {
-  .GroupContainer {
-    font-size: 13px;
-  }
-  .GroupContainer .name {
-    font-size: 15px;
-  }
-
-  .GroupContainer .name i {
-    font-size: 15px;
-    margin-right: 5px;
-  }
+.GroupContainer .joinBtn:hover {
+  box-shadow: var(--shadow3);
 }

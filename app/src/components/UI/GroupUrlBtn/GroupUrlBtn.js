@@ -25,7 +25,7 @@ function GroupUrlBtn({ text, copyText = 'Copy!', copiedText = 'Copied!', bgColor
       <i>
         <FontAwesomeIcon icon={faLink} />
       </i>
-      <div className={styles.hoverEl} style={{backgroundColor: bgColor, color}} >
+      <div className={styles.hoverEl} style={{color}} >
         {isCopied ? copiedText : copyText}
       </div>
     </div>

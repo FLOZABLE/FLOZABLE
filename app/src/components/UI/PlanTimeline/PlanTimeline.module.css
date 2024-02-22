@@ -1,8 +1,8 @@
 .PlanTimeline {
   position: relative;
   height: 100%;
+  width: 100%;
   overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .PlanTimeline .chartContainer {
@@ -40,11 +40,15 @@
   border-radius: 10px;
   position: relative;
   background-color: #fff;
+  font-size: 40px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 .PlanTimeline .iconWrapper .icon {
   position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 
@@ -151,8 +155,4 @@
   -moz-background-clip: text;
   -moz-text-fill-color: transparent;
   cursor: pointer;
-}
-
-.PlanTimeline.studyMode {
-  width: 300px;
 }
