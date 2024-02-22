@@ -118,7 +118,7 @@ function DashboardChart({ subjects, userInfo }) {
       setFocus(`${value}${type}`);
 
       //subject trend data handler
-      const subjectsTrend = updateSubjectsTrendChart(subjects, statsViewer, 'day');
+      const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, statsViewer, 'day');
       setSubjectsTrend(subjectsTrend);
     } else if (statsViewer === 'Weekly') {
 
@@ -133,7 +133,7 @@ function DashboardChart({ subjects, userInfo }) {
       setFocus(`${value}${type}`);
 
       //subject trend data handler
-      const subjectsTrend = updateSubjectsTrendChart(subjects, statsViewer, 'week');
+      const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, statsViewer, 'week');
       setSubjectsTrend(subjectsTrend);
     } else {
 
