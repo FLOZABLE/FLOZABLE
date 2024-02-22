@@ -16,7 +16,7 @@ import {
 import CircularCheckBox from "../CircularCheckBox/CircularCheckBox";
 import { DateTime } from "luxon";
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadialBar, ResponsiveContainer } from "recharts";
-import { warmColorsList } from "../../../constant";
+import { subjectIcons, warmColorsList } from "../../../constant";
 import { Cell } from "recharts";
 import { randomIntInRange } from "../../../utils/Tool";
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
@@ -33,10 +33,8 @@ function PlanTimeline({
   setPlans,
   maxHeight = "200px"
 }) {
-  const [plansEl, setPlansEl] = useState([]);
-  const [isPlan, setIsPlan] = useState(false);
   const [planSeries, setPlanSeries] = useState([]);
-  const [selected, setSelected] = useState(-2);
+  const [filteredPlans, setFilteredPlans] = useState([]);
 
   const togglePlan = (plan) => {
     const eventIndex = plans.findIndex((planInfo) => planInfo.id === plan.id);
@@ -93,7 +91,7 @@ function PlanTimeline({
     });
     setPlanSeries(planSeries);
     console.log('plan series', planSeries)
-  }, [subjects, plans, plansEl]);
+  }, [subjects, plans]);
 
   const isInViewRange = (plan) => {
     const viewDateTime = DateTime.fromJSDate(viewDate);
@@ -122,190 +120,89 @@ function PlanTimeline({
   };
 
   useEffect(() => {
-    setIsPlan(false);
-    setPlansEl(
-      plans.map((plan, i) => {
-        const planSubject = subjects.find((subject) => {
-          return subject.id === plan.subject;
-        });
-        const isInRange = isInViewRange(plan);
-
-        if (isInRange) {
-          setIsPlan(true);
-          const dispStart = DateTime.fromJSDate(plan.start).toLocaleString(DateTime.TIME_SIMPLE);
-          const dispEnd = DateTime.fromJSDate(plan.end).toLocaleString(DateTime.TIME_SIMPLE);
-          let icon;
-          let subjectBg = "#fff";
-          if (planSubject) {
-            subjectBg = planSubject.color;
-            if (planSubject.icon === "WritePen") {
-              icon = (
-                <WritePen
-                  width={"40px"}
-                  height={"40px"}
-                  fill={subjectBg}
-                  opt1={subjectBg}
-                />
-              );
-            } else if (planSubject.icon === "Book") {
-              icon = (
-                <Book
-                  width={"40px"}
-                  height={"40px"}
-                  fill={subjectBg}
-                  opt1={subjectBg}
-                />
-              );
-            } else if (planSubject.icon === "Microscope") {
-              icon = (
-                <Microscope
-                  width={"40px"}
-                  height={"40px"}
-                  fill={subjectBg}
-                  opt1={subjectBg}
-                />
-              );
-            } else if (planSubject.icon === "Article") {
-              icon = (
-                <Article
-                  width={"40px"}
-                  height={"40px"}
-                  fill={subjectBg}
-                  opt1={subjectBg}
-                />
-              );
-            } else if (planSubject.icon === "Coding") {
-              icon = (
-                <Coding
-                  width={"40px"}
-                  height={"40px"}
-                  fill={subjectBg}
-                  opt1={subjectBg}
-                />
-              );
-            } else if (planSubject.icon === "Globe") {
-              icon = (
-                <Globe
-                  width={"40px"}
-                  height={"40px"}
-                  fill={subjectBg}
-                  opt1={subjectBg}
-                />
-              );
-            } else if (planSubject.icon === "Workout") {
-              icon = (
-                <Workout
-                  width={"40px"}
-                  height={"40px"}
-                  fill={subjectBg}
-                  opt1={subjectBg}
-                />
-              );
-            } else {
-              icon = (
-                <Alert
-                  width={"40px"}
-                  height={"40px"}
-                  fill={subjectBg}
-                  opt1={subjectBg}
-                />
-              );
-            }
-          } else {
-            icon = (
-              <Alert
-                width={"40px"}
-                height={"40px"}
-                fill={"#000"}
-                opt1={"#000"}
-              />
-            );
-          }
-          return (
-            <li className={styles.plan} key={i}>
-              <div className={styles.iconWrapper}>
-                <div className={styles.icon}>{icon}</div>
-                <div
-                  className={styles.hoverDisp}
-                  onClick={() => {
-                    togglePlan(plan);
-                  }}
-                >
-                  <CircularCheckBox checked={plan.completed} />
-                </div>
-              </div>
-              <div className={styles.content}>
-                <div className={styles.title}>
-                  <h2>{plan.title}</h2>
-                  <div className={`${styles.line} ${plan.completed ? styles.completed : ''}`}></div>
-                </div>
-                <p>
-                  ({dispStart}-{dispEnd})
-                </p>
-                <div className={`${styles.description} customScroll`}>
-                  {plan.description ? parse(plan.description) : ''}
-                </div>
-              </div>
-            </li>
-          );
-        }
-      }),
-    );
+    setFilteredPlans(plans.filter(plan => isInViewRange(plan)))
   }, [plans, viewMode, viewDate, subjects]);
 
   return (
     <div
-      className={`${isPlan ? styles.noPlan : ""} ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ""
+      className={`hiddenScroll ${filteredPlans.length ? styles.noPlan : ""} ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ""
         }`}
     >
-
       <div className={styles.chartContainer}>
-        <ResponsiveRadialBar
-          data={planSeries}
-          padding={0.4}
-          cornerRadius={2}
-          margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-          enableRadialGrid={false}
-          enableCircularGrid={false}
-          radialAxisStart={{ tickSize: 5, tickPadding: 5, tickRotation: 0}}
-          circularAxisOuter={null}
-          legends={[]}
-          valueFormat={val => val + '%'}
-        />
-        { /*
-          <ResponsiveContainer width="100%" height="100%">
-            <RadialBarChart cx="50%" cy="50%" innerRadius="10%" outerRadius="80%" barSize={10} data={planSeries}>
-              <RadialBar
-                label={{ position: 'insideStart', fill: '#fff' }}
-                background
-                clockWise
-                dataKey="val"
-                isAnimationActive={true}
-                animationDuration={3000}
-              >
-              </RadialBar>
-            </RadialBarChart>
-          </ResponsiveContainer>
-
-     */ }
+        {filteredPlans.length ?
+          <ResponsiveRadialBar
+            data={planSeries}
+            padding={0.4}
+            cornerRadius={2}
+            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+            enableRadialGrid={false}
+            enableCircularGrid={false}
+            radialAxisStart={{ tickSize: 5, tickPadding: 5, tickRotation: 0 }}
+            circularAxisOuter={null}
+            legends={[]}
+            valueFormat={val => val + '%'}
+          />
+          : null
+        }
       </div>
+      <div className={styles.contents}>
+        <h4
+          onClick={() => {
+            setPlanModal((prev) => ({ ...prev, opened: true }));
+          }}
+        >
+          Add a New Plan
+        </h4>
+        <ul className={`${styles.plans} hiddenScroll`} style={{ maxHeight: maxHeight }}>
+          {filteredPlans.map((plan, i) => {
+            const planSubject = subjects.find((subject) => {
+              return subject.id === plan.subject;
+            });
 
-      <h4
-        onClick={() => {
-          setPlanModal((prev) => ({ ...prev, opened: true }));
-        }}
-      >
-        Add a New Plan
-      </h4>
-      <ul className={`${styles.plans} hiddenScroll`} style={{ maxHeight: maxHeight }}>
-        {isPlan ? (
-          plansEl
-        ) : (
-          <div className={styles.noPlanText} key={10}>
-            <h3>You don't have any plans!</h3>
-          </div>
-        )}
-      </ul>
+            const dispStart = DateTime.fromJSDate(plan.start).toLocaleString(DateTime.TIME_SIMPLE);
+            const dispEnd = DateTime.fromJSDate(plan.end).toLocaleString(DateTime.TIME_SIMPLE);
+            let icon;
+            let color = "#fff";
+            if (planSubject) {
+              color = planSubject.color;
+              icon = subjectIcons[planSubject.icon];
+            };
+
+            if (!icon) {
+              icon = (
+                <Alert />
+              );
+            }
+            return (
+              <li className={styles.plan} key={i}>
+                <div className={styles.iconWrapper}>
+                  <div style={{ color }} className={styles.icon}>{icon}</div>
+                  <div
+                    className={styles.hoverDisp}
+                    onClick={() => {
+                      togglePlan(plan);
+                    }}
+                  >
+                    <CircularCheckBox checked={plan.completed} />
+                  </div>
+                </div>
+                <div className={styles.content}>
+                  <div className={styles.title}>
+                    <h2>{plan.title}</h2>
+                    <div className={`${styles.line} ${plan.completed ? styles.completed : ''}`}></div>
+                  </div>
+                  <p>
+                    ({dispStart}-{dispEnd})
+                  </p>
+                  <div className={`${styles.description} customScroll`}>
+                    {plan.description ? parse(plan.description) : ''}
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 }

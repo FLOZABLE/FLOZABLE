@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTags } from "@fortawesome/free-solid-svg-icons";
 import StuckModal from "../../UI/StuckModal/StuckModal";
-import Search from "../../UI/Search/Search";
+import SearchBar from "../../UI/SearchBar/SearchBar";
 import TagContainerGen from "../../UI/TagContainerGen/TagContainerGen";
 import styles from "./Groups.module.css";
 import GroupsGen from "../../UI/GroupsGen/GroupsGen";
@@ -61,7 +61,7 @@ function Groups({
     const searchParams = new URLSearchParams(window.location.search);
     const selectedGroupId = searchParams.get("joinId");
 
-    if(!selectedGroupId) return;
+    if (!selectedGroupId) return;
 
     otherGroups.map((group) => {
       if (group.group_id === selectedGroupId) {
@@ -73,7 +73,7 @@ function Groups({
   }, [otherGroups]);
 
   return (
-    <div className={styles.GroupsContainer}>
+    <div>
       <StuckModal />
       <CreateGroupModal
         isOpen={isCreateNewGroup}
@@ -94,51 +94,48 @@ function Groups({
         userInfo={userInfo}
         groupsViewerRef={groupsViewerRef}
       />
-      <EditGroupModal 
+      <EditGroupModal
         setCreateGroupResponse={setResponse}
         setIsOpen={setIsEditGroupModal}
         isOpen={isEditGroupModal}
       />
       <div
-        className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
-          }`}
+        className={`Main`}
       >
-        <div className={styles.boxes}>
-          <div className={styles.box} id="daily">
-            <div className={styles.buttonArea}>
-              <p className={styles.title}>Groups</p>
-            </div>
-            <div className={`${styles.container} ${styles.myGroups}`}>
-              <MyGroupsViewer
-                myGroups={myGroups}
-                userInfo={userInfo}
-                myTimerTotal={myTimerTotal}
-                setIsChatModal={setIsChatModal}
-                groupsViewerRef={groupsViewerRef}
-                setIsEditGroupModal={setIsEditGroupModal}
-              />
-            </div>
-            <div className={`${styles.container} ${styles.allGroups}`}>
-              <div className={styles.searchZone}>
-                <div className={styles.tagContainerWrapper}>
-                  <div className={styles.title}>
-                    <i>
-                      <FontAwesomeIcon icon={faTags} className={styles.faTags} />
-                    </i>
-                    <h2>Tags</h2>
-                  </div>
-                  <TagContainerGen
-                    maxTags={10}
-                    setTags={setTags}
-                    handleCreatedTagsChange={handleCreatedTagsChange}
+        <div className="title">
+          Groups
+        </div>
+        <div className={styles.Groups}>
+          <div className={styles.box}>
+            <MyGroupsViewer
+              myGroups={myGroups}
+              userInfo={userInfo}
+              myTimerTotal={myTimerTotal}
+              setIsChatModal={setIsChatModal}
+              groupsViewerRef={groupsViewerRef}
+              setIsEditGroupModal={setIsEditGroupModal}
+            />
+          </div>
+          <div className={styles.box}>
+            <div className={styles.searchOpt}>
+              <div className={styles.tagContainerWrapper}>
+                <TagContainerGen
+                  maxTags={10}
+                  setTags={setTags}
+                  handleCreatedTagsChange={handleCreatedTagsChange}
+                />
+              </div>
+              <div>
+                <div className={styles.searchWrapper}>
+                  <SearchBar
+                    setSearchQuery={setSearchQuery}
+                    searchQuery={searchQuery}
                   />
                 </div>
-                <Search
-                  setSearchQuery={setSearchQuery}
-                  searchQuery={searchQuery}
-                />
+              </div>
+              <div>
                 <button
-                  id={styles.CreateGroupBtn}
+                  id={styles.createGroupBtn}
                   onClick={() => {
                     setIsCreateNewGroup(!isCreateNewGroup);
                   }}
@@ -147,22 +144,22 @@ function Groups({
                   Create new group
                 </button>
               </div>
-              <div className={styles.groupsWrapper}>
-                <GroupsGen
-                  myGroups={myGroups}
-                  setMyGroups={setMyGroups}
-                  groups={otherGroups}
-                  setOtherGroups={setOtherGroups}
-                  setJoinGroupResponse={setResponse}
-                  setIsGroupPwModal={setIsGroupPwModal}
-                  setJoinTarget={setJoinTarget}
-                  setJoinByLink={setJoinByLink}
-                  searchQuery={searchQuery}
-                  userInfo={userInfo}
-                  queryTags={tags}
-                  groupsViewerRef={groupsViewerRef}
-                />
-              </div>
+            </div>
+            <div className={styles.groupsWrapper}>
+              <GroupsGen
+                myGroups={myGroups}
+                setMyGroups={setMyGroups}
+                groups={otherGroups}
+                setOtherGroups={setOtherGroups}
+                setJoinGroupResponse={setResponse}
+                setIsGroupPwModal={setIsGroupPwModal}
+                setJoinTarget={setJoinTarget}
+                setJoinByLink={setJoinByLink}
+                searchQuery={searchQuery}
+                userInfo={userInfo}
+                queryTags={tags}
+                groupsViewerRef={groupsViewerRef}
+              />
             </div>
           </div>
         </div>

@@ -4,17 +4,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const TagContainerGen = ({ handleCreatedTagsChange, maxTags }) => {
-  const [maximumTags] = useState(maxTags);
   const [createdTags, setCreatedTags] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [tagCount, setTagCount] = useState(maximumTags);
+  const [tagCount, setTagCount] = useState(maxTags);
 
   useEffect(() => {
     countTags();
   }, [createdTags]);
 
   const countTags = () => {
-    setTagCount(maximumTags - createdTags.length);
+    setTagCount(maxTags - createdTags.length);
   };
 
   const remove = (tag) => {
