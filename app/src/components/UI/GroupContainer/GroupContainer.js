@@ -39,83 +39,60 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
         className={`${styles.GroupContainer} ${isSearched ? "" : styles.hidden
           }`}
       >
-        <div
-          className={styles.groupColor}
-          style={{ backgroundColor: color }}
-        ></div>
-        <div className={`${styles.name} overflowDot`}>
-          {!visibility ? (
-            <i>
-              <FontAwesomeIcon icon={faLock} />
-            </i>
-          ) : (
-            ""
-          )}
-          {name}
-        </div>
-        <div className={styles.explanation}>
-          <ul className={styles.info}>
-            <li>
+        <div className={styles.contents}>
+          <div className={`${styles.name} overflowDot`} style={{ background: `linear-gradient(to left, ${color}, 70%, ${color}00)` }} >
+            {name}
+          </div>
+          <div className={`${styles.description} hiddenScroll`}>
+            {explanation}
+          </div>
+          <div className={styles.info}>
+            <div>
               <i>
                 <FontAwesomeIcon icon={faPeopleGroup} />
               </i>
               <GroupMemCounter initialMembers={members} groupId={group_id} />
-            </li>
-            <li>
+            </div>
+            <div>
               <i>
                 <FontAwesomeIcon icon={faBullseye} />
               </i>
               <p>{goal_hr}hr</p>
-            </li>
-            <li>
+            </div>
+            <div>
               <i>
                 <FontAwesomeIcon icon={faStopwatch} />
               </i>
-              <GroupTimeCounter members={members}/>
-            </li>
-            <li>
+              <GroupTimeCounter members={members} />
+            </div>
+            <div>
               <i>
                 <FontAwesomeIcon icon={faHeart} />
               </i>
               <GroupLikesCounter initialMembers={likes} groupId={group_id} />
-            </li>
-          </ul>
-          <div className={`${styles.content} hiddenScroll`}>
-            {explanation}
+            </div>
+          </div>
+          <div className={`${styles.tags} hiddenScroll`} style={{ color }}>
+            {tags.map((tag, i) => {
+              return (
+                <div key={i}>
+                  #{tag}
+                </div>
+              )
+            })}
           </div>
         </div>
-        <ul className={`${styles.tags} hiddenScroll`}>
-          {tags.map((tag, i) => {
-            return (
-              <li className={styles.tag} key={i}>
-                #{tag}
-              </li>
-            );
-          })}
-        </ul>
-        <div className={styles.bottom}>
-          <div className={styles.buttons}>
-            <div className={styles.likeBtnWrapper}>
-              <LikeBtn liked={liked} id={group_id} />
-            </div>
-            {/* <button
-              onClick={() => {
-                if (joined)
-                joinGroup(groupInfo);
-              }}
-            >
-              {joined ? <Link to={"/dashboard/study"}>
-                Go study session
-              </Link> : 'Join'}
-            </button> */}
-            {!joined && !viewOnly ? <button
-              onClick={() => {
-                joinGroup(groupInfo);
-              }}
-            >
-              Join
-            </button> : null}
-            <GroupUrlBtn text={`${serverOrigin}/dashboard/groups?joinId=${group_id}`} />
+        <div className={styles.buttons}>
+          <GroupUrlBtn text={`${serverOrigin}/dashboard/groups?joinId=${group_id}`} />
+          {!joined && !viewOnly ? <button className={styles.joinBtn}
+            onClick={() => {
+              joinGroup(groupInfo);
+            }}
+          >
+            Join
+          </button> : null}
+          <div className={styles.likeBtnWrapper}>
+            <LikeBtn liked={liked} id={group_id} />
           </div>
         </div>
       </div>

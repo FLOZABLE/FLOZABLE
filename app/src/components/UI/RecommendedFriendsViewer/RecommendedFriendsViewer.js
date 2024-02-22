@@ -11,7 +11,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function RecommendedFriendsViewer({setResponse}) {
 
-  const [refresh, setRefresh] = useState(true);
+  const [refresh, setRefresh] = useState(false);
   const [recommendedFriends, setRecommendedFriends] = useState([]);
 
   useEffect(() => {

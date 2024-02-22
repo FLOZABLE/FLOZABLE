@@ -26,6 +26,7 @@
   align-items: center;
   padding: 3px 10px;
   border-radius: 5px;
+  background-color: #ffffffC0;
 }
 
 .GroupUrlBtn:hover .hoverEl {
