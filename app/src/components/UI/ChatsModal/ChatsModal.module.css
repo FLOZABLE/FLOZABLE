@@ -21,15 +21,16 @@
 }
 
 .ChatsModal .header {
-  background-color: var(--pink);
-  height: 30px;
+  background-color: var(--light-blue);
+  height: 60px;
   display: flex;
   align-items: center;
+  margin: 10px;
+  border-radius: 20px;
 }
 
 .ChatsModal .header i {
   font-size: 25px;
-  color: #fff;
   cursor: pointer;
   padding-right: 10px;
   margin-left: auto;
@@ -37,7 +38,6 @@
 
 .ChatsModal .header p {
   margin-left: 10px;
-  color: #fff;
 }
 
 .ChatsModal .content {
@@ -50,7 +50,7 @@
   margin-left: 10px;
   padding: 10px 0px;
   overflow-y: auto;
-  height: 450px;
+  height: 390px;
 }
 
 .ChatsModal .chatRoomsContainer .roomInfo .roomName {
@@ -69,7 +69,7 @@
 .ChatsModal .chatsWrapper {
   position: absolute;
   left: 350px;
-  top: -30px;
+  top: -80px;
   height: 100%;
   width: 100%;
   opacity: 0;
@@ -133,7 +133,7 @@
 }
 
 .ChatsModal .chatsContainer {
-  height: calc(100% - 100px);
+  height: calc(100% - 115px);
   background-color: #fff;
   width: 100%;
   padding: 0px 10px;
@@ -251,26 +251,23 @@
 }
 
 .ChatsModal .chatsWrapper .inputWrapper {
-  background-color: var(--purple);
   display: flex;
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
-  border-bottom-right-radius: 0px;
+  border-radius: 15px;
   height: 50px;
   align-items: center;
+  margin: 0px 10px;
+  border: 1px solid var(--gray2);
+
 }
 
 .ChatsModal .chatsWrapper .inputWrapper input {
   height: 46px;
-  margin: 0px 20px;
-  padding-left: 10px;
+  margin: 0px 10px;
   border: none;
   font-size: 30px;
-  width: 250px;
-  background-color: var(--purple);
+  width: calc(100% - 50px);
   cursor: pointer;
-  color: #fff;
-  caret-color: #fff;
+  /* caret-color: #fff; */
 }
 
 @media (max-width: 1400px) {

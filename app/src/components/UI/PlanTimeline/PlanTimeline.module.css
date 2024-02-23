@@ -152,6 +152,7 @@
   justify-content: center;
   height: 100%;
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .PlanTimeline .noPlanText h4 {
