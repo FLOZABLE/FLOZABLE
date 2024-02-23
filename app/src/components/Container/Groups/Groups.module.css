@@ -1,5 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
-
 .Groups {
   padding: 30px;
 }
@@ -18,6 +16,7 @@
 
 .Groups .box .searchOpt {
   display: flex;
+  margin-bottom: 100px;
 }
 
 .Groups .box .searchOpt > div {
@@ -43,4 +42,8 @@
 
 .Groups .box:nth-child(2) {
   min-height: 60vh;
+}
+
+.Groups .tagContainerWrapper {
+  width: 300px;
 }

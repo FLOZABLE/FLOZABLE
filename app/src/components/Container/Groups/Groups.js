@@ -10,6 +10,7 @@ import GroupPwModal from "../../UI/GroupPwModal/GroupPwModal";
 import MyGroupsViewer from "../../UI/MyGroupsViewer/MyGroupsViewer";
 import CreateGroupModal from "../../UI/CreateGroupModal/CreateGroupModal";
 import EditGroupModal from "../../UI/EditGroupModal/EditGroupModal";
+import BlobBtn from "../../UI/BlobBtn/BlobBtn";
 
 function Groups({
   userInfo,
@@ -74,7 +75,6 @@ function Groups({
 
   return (
     <div>
-      <StuckModal />
       <CreateGroupModal
         isOpen={isCreateNewGroup}
         setIsOpen={setIsCreateNewGroup}
@@ -118,12 +118,14 @@ function Groups({
           </div>
           <div className={styles.box}>
             <div className={styles.searchOpt}>
-              <div className={styles.tagContainerWrapper}>
-                <TagContainerGen
-                  maxTags={10}
-                  setTags={setTags}
-                  handleCreatedTagsChange={handleCreatedTagsChange}
-                />
+              <div>
+                <div className={styles.tagContainerWrapper}>
+                  <TagContainerGen
+                    maxTags={10}
+                    setTags={setTags}
+                    handleCreatedTagsChange={handleCreatedTagsChange}
+                  />
+                </div>
               </div>
               <div>
                 <div className={styles.searchWrapper}>
@@ -134,15 +136,14 @@ function Groups({
                 </div>
               </div>
               <div>
-                <button
-                  id={styles.createGroupBtn}
-                  onClick={() => {
+                <BlobBtn
+                  name={"+ Create new group"}
+                  setClicked={() => {
                     setIsCreateNewGroup(!isCreateNewGroup);
                   }}
-                >
-                  <FontAwesomeIcon icon={faPlus} className={styles.plus} />
-                  Create new group
-                </button>
+                  color1={"#fff"}
+                  color2={"var(--purple2)"}
+                />
               </div>
             </div>
             <div className={styles.groupsWrapper}>

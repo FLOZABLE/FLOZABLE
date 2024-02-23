@@ -1,23 +1,20 @@
 @import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
 
+.Planner {
+  padding: 0px 50px;
+}
 
-.PlannerContainer .header {
+.Planner .header {
   display: flex;
   justify-content: center;
   margin-bottom: 50px;
 }
 
-.PlannerContainer .title {
-  font-size: 50px;
-  font-weight: 800;
-  border-radius: 20px;
-  width: fit-content;
-  padding: 10px 30px;
-  color: #545454;
-  margin-right: auto;
+.Planner .header .modeBtnWrapper {
+  margin-left: auto;
 }
 
-.PlannerContainer .container {
+.Planner .container {
   display: flex;
   background-color: #f7f9fd;
   border-radius: 40px;
@@ -27,17 +24,17 @@
 
 }
 
-.PlannerContainer .container .planner {
+.Planner .container .planner {
   flex-grow: 1;
   margin-right: 50px;
 }
 
-.PlannerContainer .container .widget {
+.Planner .container .widget {
   width: fit-content;
   margin-left: auto;
 }
 
-.PlannerContainer .smallCalendarWrapper {
+.Planner .smallCalendarWrapper {
   display: flex;
   width: 300px;
   position: relative;
@@ -45,7 +42,7 @@
   align-items: center;
 }
 
-.PlannerContainer .planTimelineWrapper {
+.Planner .planTimelineWrapper {
   width: 300px;
   margin-top: 30px;
   transition: width .3s ease-in-out;
@@ -57,21 +54,21 @@
   }
 }
 
-/* .PlannerContainer .planTimelineWrapper:hover {
+/* .Planner .planTimelineWrapper:hover {
   width: 400px;
   animation: showScroll 2s .3s forwards;
 } */
 
 @media (max-width: 1400px) {
-  .PlannerContainer .title {
+  .Planner .title {
     font-size: 30px;
   }
 
-  .PlannerContainer .smallCalendarWrapper {
+  .Planner .smallCalendarWrapper {
     width: 250px;
   }
 
-  .PlannerContainer .planTimelineWrapper {
+  .Planner .planTimelineWrapper {
     width: 250px;
   }
 }

@@ -66,12 +66,9 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
           </div>
           <div className={styles.info}>
             <div>
-              <StudyPerson
-                opt1={"var(--purple2)"}
-                opt2={"var(--purple2)"}
-                width={"40px"}
-                height={"40px"}
-              />
+              <i>
+              <StudyPerson />
+              </i>
               <p>
                 {studyingMembers.length}/
                 {members.length}
@@ -103,7 +100,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
             </Link>
           </div>
           <div className={styles.urlBtnWrapper}>
-          <GroupUrlBtn text={`${serverOrigin}/dashboard/groups?joinId=${group.group_id}`} copyText="Share" bgColor="var(--dark-gray)" />
+          <GroupUrlBtn text={`${serverOrigin}/dashboard/groups?joinId=${group.group_id}`} copyText="Share" bgColor="var(--dark-gray)"/>
           </div>
         </div>
       </div>
@@ -120,60 +117,6 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
           isHeadphone={isHeadphone}
         />
       </div>
-      {/* <div className={styles.name}>
-        <Link to={`/dashboard/study?group=${group.group_id}`}>{name}</Link>
-        {userInfo?.user_id === group?.leader ? <i onClick={() => {
-          setIsEditGroupModal(group);
-        }}> <FontAwesomeIcon icon={faPen} /></i> : null}
-      </div>
-      <div className={styles.header}>
-        <ul className={styles.status}>
-          <li>
-            <StudyPerson
-              opt1={"#fff"}
-              opt2={"#fff"}
-              width={"40px"}
-              height={"40px"}
-            />
-            <p>
-              {studyingMembers.length}/
-              {members.length}
-            </p>
-          </li>
-          <li onClick={() => {
-            setIsChatModal(prev => !prev ? group : '');
-          }}>
-            <FontAwesomeIcon icon={faCommentDots} />
-          </li>
-          <li className={styles.showRankingModalListElement}>
-            <FontAwesomeIcon icon={faRankingStar} onClick={() => { setIsGroupRankingModal(prev => !prev ? members : false) }} />
-          </li>
-          <li>
-            <div className={styles.groupTotal}>
-              {Math.round(groupTotal * 100 / 3600) / 100}hr
-            </div>
-          </li>
-        </ul>
-      </div>
-      <div className={`${styles.membersWrapper} customScroll`}>
-        <MembersContainer
-          isFocus={isFocus}
-          userInfo={userInfo}
-          groupInfo={group}
-          setStudyingMembers={setStudyingMembers}
-          members={members}
-          setMembers={setMembers}
-          isMic={isMic}
-          isCam={isCam}
-          isHeadphone={isHeadphone}
-        />
-      </div>
-      <div className={styles.buttons}>
-        <Link to={`/dashboard/study?group=${group.group_id}`}>
-          <button>Go to Group</button>
-        </Link>
-        <GroupUrlBtn text = {`${serverOrigin}/dashboard/groups?joinId=${group.group_id}`} copyText="Share"/>
-      </div> */}
     </div>
   )
 };

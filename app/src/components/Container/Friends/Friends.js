@@ -87,7 +87,7 @@ function Friends({
   }, [userInfo]);
 
   return (
-    <div className={styles.Friends}>
+    <div>
       <FriendLinkModal
         userInfo={userInfo}
         isOpen={isFriendLinkModal}
@@ -108,144 +108,149 @@ function Friends({
         setJoinGroupResponse={setResponse}
       />
       <div
-        className={`Main ${styles.Main}`}
+        className={`Main`}
       >
-        <div>
-          <div className={styles.smallBox}>
-            <div className={styles.title}>
-              <h3>Friend's Rank</h3>
-              <i>
-                <IconStatsChart />
-              </i>
+        <div className="title">
+          Friends
+        </div>
+        <div className={styles.Friends}>
+          <div className={styles.container}>
+            <div>
+              <div className={styles.smallBox}>
+                <div className={styles.title}>
+                  <h3>Friend's Rank</h3>
+                  <i>
+                    <IconStatsChart />
+                  </i>
+                </div>
+                <div>
+                  <FriendsRankingViewer friendsRanking={friendsRanking} />
+                </div>
+              </div>
             </div>
             <div>
-              <FriendsRankingViewer friendsRanking={friendsRanking} />
-            </div>
-          </div>
-        </div>
-        <div>
-          <div className={styles.box} id={styles.activeFriends}>
-            <h3>Current Active Friends</h3>
-            <FriendsActivityViewer
-              setResponse={setResponse}
-              userInfo={userInfo}
-              setJoinTarget={setJoinTarget}
-              searchQuery={searchQuery}
-              setCount={setFriendCount}
-              myGroups={myGroups}
-              setMyGroups={setMyGroups}
-              setOtherGroups={setOtherGroups}
-            />
-            <div className={styles.userContainer}>
-              <Link
-                className={styles.profile}
-              >
-                <div className={styles.profileImg}
-                  style={{
-                    backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
-                    backgroundPosition: 'center center',
-                    backgroundRepeat: 'no-repeat',
-                  }}
-                >
+              <div className={styles.box} id={styles.activeFriends}>
+                <h3>Current Active Friends</h3>
+                <FriendsActivityViewer
+                  setResponse={setResponse}
+                  userInfo={userInfo}
+                  setJoinTarget={setJoinTarget}
+                  searchQuery={searchQuery}
+                  setCount={setFriendCount}
+                  myGroups={myGroups}
+                  setMyGroups={setMyGroups}
+                  setOtherGroups={setOtherGroups}
+                />
+                <div className={styles.userContainer}>
+                  <Link
+                    className={styles.profile}
+                  >
+                    <div className={styles.profileImg}
+                      style={{
+                        backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
+                        backgroundPosition: 'center center',
+                        backgroundRepeat: 'no-repeat',
+                      }}
+                    >
+                    </div>
+                    <p>name</p>
+                  </Link>
+                  <i>
+                    <FontAwesomeIcon icon={faCaretRight} />
+                  </i>
+                  <div className={styles.activeInfo}>
+                    <div>
+                      Studying <strong>sdfsdf</strong> for 0:00:00
+                    </div>
+                    <div>
+                      since 12:00 am
+                    </div>
+                  </div>
                 </div>
-                <p>name</p>
-              </Link>
-              <i>
-                <FontAwesomeIcon icon={faCaretRight} />
-              </i>
-              <div className={styles.activeInfo}>
-                <div>
-                  Studying <strong>sdfsdf</strong> for 0:00:00
-                </div>
-                <div>
-                  since 12:00 am
-                </div>
-              </div>
-            </div>
-            <div className={styles.userContainer}>
-              <Link
-                className={styles.profile}
-              >
-                <div className={styles.profileImg}
-                  style={{
-                    backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
-                    backgroundPosition: 'center center',
-                    backgroundRepeat: 'no-repeat',
-                  }}
-                >
-                </div>
-                <p>name</p>
-              </Link>
-              <i>
-                <FontAwesomeIcon icon={faCaretRight} />
-              </i>
-              <div className={styles.activeInfo}>
-                <div>
-                  Studying <strong>sdfsdf</strong> for 0:00:00
-                </div>
-                <div>
-                  since 12:00 am
+                <div className={styles.userContainer}>
+                  <Link
+                    className={styles.profile}
+                  >
+                    <div className={styles.profileImg}
+                      style={{
+                        backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
+                        backgroundPosition: 'center center',
+                        backgroundRepeat: 'no-repeat',
+                      }}
+                    >
+                    </div>
+                    <p>name</p>
+                  </Link>
+                  <i>
+                    <FontAwesomeIcon icon={faCaretRight} />
+                  </i>
+                  <div className={styles.activeInfo}>
+                    <div>
+                      Studying <strong>sdfsdf</strong> for 0:00:00
+                    </div>
+                    <div>
+                      since 12:00 am
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div>
-          <div className={styles.smallBox}>
-            <div className={styles.title}>
-              <h3>Email Invitation</h3>
-              <i>
-                <IconEmailOutline />
-              </i>
+            <div>
+              <div className={styles.smallBox}>
+                <div className={styles.title}>
+                  <h3>Email Invitation</h3>
+                  <i>
+                    <IconEmailOutline />
+                  </i>
+                </div>
+              </div>
+              <div className={styles.smallBox}>
+                <div className={styles.title}>
+                  <h3>Friend Link</h3>
+                  <i>
+                    <IconUser />
+                  </i>
+                </div>
+              </div>
+              <div className={styles.smallBox}>
+                <div className={styles.title}>
+                  <h3>Challenge URL</h3>
+                  <i>
+                    <IconFire />
+                  </i>
+                </div>
+              </div>
+              <div className={styles.smallBox}>
+                <div className={styles.title}>
+                  <h3>Search for Friends</h3>
+                  <i>
+                  </i>
+                </div>
+                <SearchBar
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                />
+                <SearchUsers
+                  searchQuery={searchQuery}
+                  setCount={setSuggestionsCount}
+                  setResponse={setResponse}
+                />
+              </div>
+              <div className={styles.smallBox}>
+                <div className={styles.title}>
+                  <h3>Friend Requests</h3>
+                  <i>
+                  </i>
+                </div>
+                <FriendRequestsViewer
+                  notifications={notifications}
+                  setNotifications={setNotifications}
+                  setResponse={setResponse}
+                  userInfo={userInfo}
+                />
+              </div>
             </div>
-          </div>
-          <div className={styles.smallBox}>
-            <div className={styles.title}>
-              <h3>Friend Link</h3>
-              <i>
-                <IconUser />
-              </i>
-            </div>
-          </div>
-          <div className={styles.smallBox}>
-            <div className={styles.title}>
-              <h3>Challenge URL</h3>
-              <i>
-                <IconFire />
-              </i>
-            </div>
-          </div>
-          <div className={styles.smallBox}>
-            <div className={styles.title}>
-              <h3>Search for Friends</h3>
-              <i>
-              </i>
-            </div>
-            <SearchBar
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-            />
-            <SearchUsers
-              searchQuery={searchQuery}
-              setCount={setSuggestionsCount}
-              setResponse={setResponse}
-            />
-          </div>
-          <div className={styles.smallBox}>
-            <div className={styles.title}>
-              <h3>Friend Requests</h3>
-              <i>
-              </i>
-            </div>
-            <FriendRequestsViewer
-              notifications={notifications}
-              setNotifications={setNotifications}
-              setResponse={setResponse}
-              userInfo={userInfo}
-            />
-          </div>
-        </div>
-        {/* <div className={styles.fixedBoxContainer}>
+            {/* <div className={styles.fixedBoxContainer}>
           <div className={styles.box}>
             <FriendRequestsViewer
               notifications={notifications}
@@ -347,6 +352,8 @@ function Friends({
             />
           </div>
         </div> */}
+          </div>
+        </div>
       </div>
     </div>
   );

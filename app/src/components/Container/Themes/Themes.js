@@ -104,6 +104,9 @@ function Themes({
         setResponse={setResponse}
       />
       <div className={`Main`}>
+        <div className="title">
+          Themes
+        </div>
         <div className={styles.Themes}>
           <div className={styles.box} id={styles.likedList}>
             <div className={styles.title}>
@@ -159,14 +162,13 @@ function Themes({
           <div className={styles.box}>
             <div className={styles.searchOptions}>
               <div>
-                <DropDownButton
-                  options={{
-                    "0": "Sort By: Likes",
-                    "1": "Sort By: Usage"
-                  }}
-                  setValue={setSortOpt}
-                  value={sortOpt}
-                />
+                <div id={styles.tagWrapper}>
+                <TagContainerGen
+                maxTags={10}
+                setTags={setTags}
+                handleCreatedTagsChange={handleCreatedTagsChange}
+              />
+                </div>
               </div>
               <div>
                 <SearchBar
@@ -177,16 +179,19 @@ function Themes({
                 </div>
               </div>
               <div className={styles.blobWrapper}>
-              {/* <TagContainerGen
-                maxTags={10}
-                setTags={setTags}
-                handleCreatedTagsChange={handleCreatedTagsChange}
-              /> */}
+                              <DropDownButton
+                  options={{
+                    "0": "Sort By: Likes",
+                    "1": "Sort By: Usage"
+                  }}
+                  setValue={setSortOpt}
+                  value={sortOpt}
+                />
                 <BlobBtn
                   name={"+ Upload theme!"}
                   setClicked={setIsCreateThemeModal}
                   color1={"#fff"}
-                  color2={"var(--pink)"}
+                  color2={"var(--purple2)"}
                   delay={-1}
                 />
               </div>

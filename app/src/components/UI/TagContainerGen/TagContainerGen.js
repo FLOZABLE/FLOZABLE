@@ -59,27 +59,31 @@ const TagContainerGen = ({ handleCreatedTagsChange, maxTags }) => {
   return (
     <div className={styles.TagContainerGen}>
       <div className={styles.content}>
-        <p>Press enter after each tag</p>
+        {/* <p>Press enter after each tag</p> */}
         <ul className={styles.tags}>
           {createTag()}
           <input
             className={styles.tagsInput}
             type="text"
             spellCheck="false"
+
             onKeyUp={addTag}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
           />
+          <div className={styles.details}>
+            <p>
+              <span>{tagCount}</span> tags are remaining
+            </p>
+          </div>
         </ul>
+        <div className={`${styles.placeHolder} ${(tagCount === maxTags && inputValue === "") ? styles.visible : ''}`}>
+          <p>Press enter after each tag</p>
+        </div>
       </div>
-      <div className={styles.details}>
-        <p>
-          <span>{tagCount}</span> tags are remaining
-        </p>
-        <button className={styles.removeAllBtn} onClick={() => removeAll()}>
-          Remove All
-        </button>
-      </div>
+      <button className={styles.removeAllBtn} onClick={() => removeAll()}>
+        Remove All
+      </button>
     </div>
   );
 };

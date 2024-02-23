@@ -55,8 +55,11 @@ body {
   margin: 0px;
   padding: 0px;
   list-style: none;
-  font-family: "Varela Round", sans-serif;
   font-style: normal;
+}
+
+div, button, a {
+  font-family: "Varela Round", sans-serif;
 }
 
 a {
