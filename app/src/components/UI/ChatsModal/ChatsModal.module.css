@@ -21,7 +21,8 @@
 }
 
 .ChatsModal .header {
-  background-color: var(--light-blue);
+  background-color: var(--purple);
+  color: #fff;
   height: 60px;
   display: flex;
   align-items: center;
