@@ -142,7 +142,17 @@
   opacity: 1;
 }
 
-.PlanTimeline .noPlan {}
+.PlanTimeline .noPlans {
+  font-size: 30px;
+  font-weight: 700;
+  font-family: "Roboto", sans-serif;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  height: 100%;
+  text-decoration: underline;
+}
 
 .PlanTimeline .noPlanText h4 {
   background-color: red;

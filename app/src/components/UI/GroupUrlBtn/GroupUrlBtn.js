@@ -22,7 +22,7 @@ function GroupUrlBtn({ text, copyText = 'Copy!', copiedText = 'Copied!', bgColor
       navigator.clipboard.writeText(text);
       setIsCopied(true);
     }}>
-      <i>
+      <i style={{color}}>
         <FontAwesomeIcon icon={faLink} />
       </i>
       <div className={styles.hoverEl} style={{color}} >

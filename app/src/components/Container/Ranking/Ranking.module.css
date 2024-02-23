@@ -1,16 +1,14 @@
-@import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
-
-.RankingContainer {
+.Ranking {
+  padding: 30px 50px;
   font-size: 30px;
-  top: 0px;
 }
 
-.RankingContainer .boxes {
+.Ranking .boxes {
   display: flex;
   flex-wrap: wrap;
 }
 
-.RankingContainer .boxes .box {
+.Ranking .boxes .box {
   margin: 0px;
   flex-grow: 1;
   padding: 30px;
@@ -19,7 +17,7 @@
   padding: 0px;
 }
 
-.RankingContainer .box .title {
+.Ranking .box .title {
   font-size: 40px;
   font-weight: 800;
   border-radius: 20px;
@@ -29,28 +27,28 @@
   color: #545454;
 }
 
-.RankingContainer .box button.title {
+.Ranking .box button.title {
   cursor: pointer;
 }
 
-.RankingContainer .box button.title:hover {
+.Ranking .box button.title:hover {
   background-color: rgba(233, 232, 217, 0.612);
 }
 
-.RankingContainer .box .title .caret {
+.Ranking .box .title .caret {
   font-size: 30px;
 }
 
-.RankingContainer .box .buttonArea {
+.Ranking .box .buttonArea {
   display: flex;
   margin-bottom: 40px;
 }
 
-.RankingContainer .box .buttonArea>button {
+.Ranking .box .buttonArea>button {
   margin-right: auto;
 }
 
-.RankingContainer .box .container {
+.Ranking .box .container {
   display: flex;
   background-color: #f7f9fd;
   border-radius: 40px;
@@ -59,12 +57,12 @@
   margin-bottom: 50px;
 }
 
-.RankingContainer .boxes .smallBoxContainer {
+.Ranking .boxes .smallBoxContainer {
   display: flex;
   width: 100%;
 }
 
-.RankingContainer .boxes .smallBox {
+.Ranking .boxes .smallBox {
   background-color: #f7f9fd;
   border-radius: 40px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -75,7 +73,7 @@
   display: flex;
 }
 
-.RankingContainer .boxes .smallBox .circle {
+.Ranking .boxes .smallBox .circle {
   background-color: #5261f4;
   height: 50px;
   width: 50px;
@@ -86,34 +84,34 @@
   margin-right: 20px;
 }
 
-.RankingContainer .container ul {
+.Ranking .container ul {
   width: 100%;
 }
 
-.RankingContainer .container ul li {
+.Ranking .container ul li {
   display: flex;
   flex-direction: row;
   width: 100%;
   margin-bottom: 10px;
 }
 
-.RankingContainer .rankingContainer {
+.Ranking .Ranking {
   display: flex;
   flex-direction: column;
 }
 
-.RankingContainer .rankingContainer .header {
+.Ranking .Ranking .header {
   display: flex;
   margin-left: auto;
 }
 
-.RankingContainer .rankingContainer .header p {
+.Ranking .Ranking .header p {
   margin-left: 10px;
   color: #AEB4B7;
   font-weight: 100;
 }
 
-.RankingContainer .rankingContainer li .circle {
+.Ranking .Ranking li .circle {
   background: linear-gradient(to right, #8C52FF, #5C97E6);
   border-radius: 25px;
   height: 50px;
@@ -124,14 +122,14 @@
   color: #fff;
 }
 
-.RankingContainer .PageButtons button {
+.Ranking .PageButtons button {
   /* background-color: var(--pink); */
   padding: 5px;
   width: 60px;
   border: 1px solid black;
 }
 
-.RankingContainer .PageButtons .textContainer {
+.Ranking .PageButtons .textContainer {
   /* background-color: var(--pink); */
   padding: 5px;
   width: 60px;
@@ -139,23 +137,23 @@
   margin-right: 10px;
 }
 
-.RankingContainer .PageButtons {
+.Ranking .PageButtons {
   text-align: center;
   font-size: 15px;
 }
 
-.RankingContainer .rankingContainer li .circle p {
+.Ranking .Ranking li .circle p {
   color: #fff;
 }
 
-.RankingContainer .rankingContainer .userInfo {
+.Ranking .Ranking .userInfo {
   display: flex;
   margin-left: 20px;
   flex-grow: 1;
   align-items: center;
 }
 
-.RankingContainer .rankingContainer .userInfo .profileImg {
+.Ranking .Ranking .userInfo .profileImg {
   display: flex;
   background-color: #e5e6e7;
   width: 40px;
@@ -166,15 +164,15 @@
   margin-right: 7px;
 }
 
-.RankingContainer .userInfo .profileInfo {
+.Ranking .userInfo .profileInfo {
   display: flex;
 }
 
-.RankingContainer .profileInfo .name {
+.Ranking .profileInfo .name {
   margin-right: 10px;
 }
 
-.RankingContainer .dash {
+.Ranking .dash {
   background-color: #545454;
   width: 4px;
   height: 100%;
@@ -183,7 +181,7 @@
   margin: 0px 12px;
 }
 
-.RankingContainer .divider {
+.Ranking .divider {
   width: calc(100% - 60px);
   margin: 15px 0px 15px 60px;
   background-color: #e5e6e7;
@@ -191,7 +189,7 @@
   border-radius: 2px;
 }
 
-.RankingContainer .rankingContainer li .userInfo .ranking {
+.Ranking .Ranking li .userInfo .ranking {
   display: flex;
   font-weight: 900;
   font-size: 32px;
@@ -199,11 +197,11 @@
 }
 
 @media (max-width: 1400px) {
-  .RankingContainer .userInfo p {
+  .Ranking .userInfo p {
     font-size: 20px;
   }
 
-  .RankingContainer .header {
+  .Ranking .header {
     font-size: 25px;
   }
 }

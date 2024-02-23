@@ -148,17 +148,20 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
   }, [ranking, rankingSearch, searchParams]);
 
   return (
-    <div className={styles.RankingContainer}>
+    <div>
       <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} showHeatmap={false} subjects={[]} />
-      <StuckModal />
       <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
+        <div className="title">
+          Ranking
+        </div>
+        <div className={styles.Ranking}>
         <div className={styles.boxes}>
           <div className={styles.box} id="daily">
             <div className={styles.buttonArea}>
               <DateSelectorBtn className={styles.title} viewMode={viewer} startDate={startDate} endDate={endDate} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
               <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={updateViewer} defaultViewer={0} />
             </div>
-            <div className={`${styles.container} ${styles.rankingContainer}`}>
+            <div className={`${styles.container} ${styles.Ranking}`}>
               <Search className={styles.Search} searchQuery={rankingSearch} setSearchQuery={setRankingSearch}></Search>
               <div className={styles.header}>
                 <p>Hours</p>
@@ -187,6 +190,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

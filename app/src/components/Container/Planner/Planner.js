@@ -35,16 +35,18 @@ function Planner(props) {
   }, [SmallCalendarRef]);
 
   return (
-    <div className={styles.PlannerContainer}>
-      <StuckModal />
+    <div>
       {/* <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} /> */}
       <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
-        <div className={styles.wrapper}>
+        <div className="title">
+          Planner
+        </div>
+        <div className={styles.Planner}>
           <div className={styles.header}>
-            <div className={styles.title}>
-              Planner
-            </div>
+            <div className={styles.modeBtnWrapper}>
             <RadioBtn items={[{ view: 'Day', value: 'timeGridDay' }, { view: 'Week', value: 'timeGridWeek' }, { view: 'Month', value: 'dayGridMonth' }]} changeEvent={updateViewer} defaultViewer={1} />
+
+            </div>
           </div>
           <div className={styles.container}>
             <div className={styles.planner}>
