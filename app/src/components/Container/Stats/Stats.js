@@ -197,9 +197,13 @@ function Stats({ subjects, userInfo }) {
   }, [viewDate, statsViewer, subjects]);
 
   return (
-    <div className={styles.StatsContainer}>
+    <div>
       <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} subjects={subjects} showHeatmap={true} />
       <div className="Main">
+        <div className="title">
+          Stats
+        </div>
+        <div className={styles.Stats}>
         <div className={styles.optionsHeader}>
           <div className={styles.dateSelectorWrapper}>
             <DateSelectorBtn viewMode={statsViewer} className={styles.title} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
@@ -369,6 +373,7 @@ function Stats({ subjects, userInfo }) {
                 </a>
               }
           </div>
+        </div>
         </div>
       </div>
     </div>

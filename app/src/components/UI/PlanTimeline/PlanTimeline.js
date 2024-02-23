@@ -86,7 +86,7 @@ function PlanTimeline({
           y: ratio,
           axisStartValue: 's'
         }]
-        planSeries.push({ id, data });
+        planSeries.push({ id: name, data });
       }
     });
     setPlanSeries(planSeries);
@@ -120,16 +120,16 @@ function PlanTimeline({
   };
 
   useEffect(() => {
-    setFilteredPlans(plans.filter(plan => isInViewRange(plan)))
+    setFilteredPlans(plans.filter(plan => isInViewRange(plan)));
   }, [plans, viewMode, viewDate, subjects]);
 
   return (
     <div
-      className={`hiddenScroll ${filteredPlans.length ? styles.noPlan : ""} ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ""
+      className={`hiddenScroll ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ""
         }`}
     >
-      <div className={styles.chartContainer}>
-        {filteredPlans.length ?
+      {filteredPlans.length ?
+        <div className={styles.chartContainer}>
           <ResponsiveRadialBar
             data={planSeries}
             padding={0.4}
@@ -142,67 +142,76 @@ function PlanTimeline({
             legends={[]}
             valueFormat={val => val + '%'}
           />
-          : null
-        }
-      </div>
-      <div className={styles.contents}>
-        <h4
-          onClick={() => {
-            setPlanModal((prev) => ({ ...prev, opened: true }));
-          }}
-        >
-          Add a New Plan
-        </h4>
-        <ul className={`${styles.plans} hiddenScroll`} style={{ maxHeight: maxHeight }}>
-          {filteredPlans.map((plan, i) => {
-            const planSubject = subjects.find((subject) => {
-              return subject.id === plan.subject;
-            });
+        </div>
+        : null
+      }
+      {filteredPlans.length ?
+        <div className={styles.contents}>
+          <h4
+            onClick={() => {
+              setPlanModal((prev) => ({ ...prev, opened: true }));
+            }}
+          >
+            Add a New Plan
+          </h4>
+          <ul className={`${styles.plans} hiddenScroll`} style={{ maxHeight: maxHeight }}>
+            {filteredPlans.map((plan, i) => {
+              const planSubject = subjects.find((subject) => {
+                return subject.id === plan.subject;
+              });
 
-            const dispStart = DateTime.fromJSDate(plan.start).toLocaleString(DateTime.TIME_SIMPLE);
-            const dispEnd = DateTime.fromJSDate(plan.end).toLocaleString(DateTime.TIME_SIMPLE);
-            let icon;
-            let color = "#fff";
-            if (planSubject) {
-              color = planSubject.color;
-              icon = subjectIcons[planSubject.icon];
-            };
+              const dispStart = DateTime.fromJSDate(plan.start).toLocaleString(DateTime.TIME_SIMPLE);
+              const dispEnd = DateTime.fromJSDate(plan.end).toLocaleString(DateTime.TIME_SIMPLE);
+              let icon;
+              let color = "#fff";
+              if (planSubject) {
+                color = planSubject.color;
+                icon = subjectIcons[planSubject.icon];
+              };
 
-            if (!icon) {
-              icon = (
-                <Alert />
+              if (!icon) {
+                icon = (
+                  <Alert />
+                );
+              }
+              return (
+                <li className={styles.plan} key={i}>
+                  <div className={styles.iconWrapper}>
+                    <div style={{ color }} className={styles.icon}>{icon}</div>
+                    <div
+                      className={styles.hoverDisp}
+                      onClick={() => {
+                        togglePlan(plan);
+                      }}
+                    >
+                      <CircularCheckBox checked={plan.completed} />
+                    </div>
+                  </div>
+                  <div className={styles.content}>
+                    <div className={styles.title}>
+                      <h2>{plan.title}</h2>
+                      <div className={`${styles.line} ${plan.completed ? styles.completed : ''}`}></div>
+                    </div>
+                    <p>
+                      ({dispStart}-{dispEnd})
+                    </p>
+                    <div className={`${styles.description} customScroll`}>
+                      {plan.description ? parse(plan.description) : ''}
+                    </div>
+                  </div>
+                </li>
               );
-            }
-            return (
-              <li className={styles.plan} key={i}>
-                <div className={styles.iconWrapper}>
-                  <div style={{ color }} className={styles.icon}>{icon}</div>
-                  <div
-                    className={styles.hoverDisp}
-                    onClick={() => {
-                      togglePlan(plan);
-                    }}
-                  >
-                    <CircularCheckBox checked={plan.completed} />
-                  </div>
-                </div>
-                <div className={styles.content}>
-                  <div className={styles.title}>
-                    <h2>{plan.title}</h2>
-                    <div className={`${styles.line} ${plan.completed ? styles.completed : ''}`}></div>
-                  </div>
-                  <p>
-                    ({dispStart}-{dispEnd})
-                  </p>
-                  <div className={`${styles.description} customScroll`}>
-                    {plan.description ? parse(plan.description) : ''}
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+            })}
+          </ul>
+        </div>
+        : <div className={styles.noPlans}
+        onClick={() => {
+          setPlanModal((prev) => ({ ...prev, opened: true }));
+        }}
+        >
+          Add new Plans to view!
+        </div>
+      }
     </div>
   );
 }

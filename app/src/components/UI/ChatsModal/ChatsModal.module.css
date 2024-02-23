@@ -170,9 +170,9 @@
   color: #000;
   font-size: 11px;
   width: 50px;
-  overflow-y: hidden;
   bottom: -15px;
   right: 0px;
+  white-space: nowrap;
 }
 
 .ChatsModal .chatsContainer .msg.me p {
@@ -246,8 +246,8 @@
   top: 38px;
   font-size: 11px;
   width: 40px;
-  overflow-y: hidden;
   height: 11px;
+  white-space: nowrap;
 }
 
 .ChatsModal .chatsWrapper .inputWrapper {

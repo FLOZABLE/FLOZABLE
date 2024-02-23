@@ -95,6 +95,9 @@ function Main({
         setJoinGroupResponse={setResponse}
       />
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
+        <div className="title">
+          Dashboard
+        </div>
         <div className={styles.Main}>
           {/* <div className={styles.backArrow}>
             <Link to="/dashboard">
@@ -116,21 +119,39 @@ function Main({
                     subjects={subjects}
                   />
                 </div>
+                <div className={styles.box} id={styles.rankingContainer}>
+                  <div>
+                  <div className={styles.title}>
+                    <h3>Friend's Rank</h3>
+                    <i>
+                      <IconStatsChart />
+                    </i>
+                  </div>
+                  <div>
+                    <FriendsRankingViewer friendsRanking={friendsRanking} />
+                  </div>
+                  </div>
+                </div>
                 <div className={styles.box}>
-                  <PlanTimeline
-                    plans={plans}
-                    viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
-                    viewMode={"timeGridDay"}
-                    subjects={subjects}
-                    setPlans={setPlans}
-                    mode={"study"}
-                    setPlanModal={setPlanModal}
+                  <RecommendedFriendsViewer 
+                  setResponse={setResponse}
                   />
                 </div>
               </div>
             </div>
             <div className={styles.boxesContainer}>
               <div className={styles.box}>
+                <PlanTimeline
+                  plans={plans}
+                  viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
+                  viewMode={"timeGridDay"}
+                  subjects={subjects}
+                  setPlans={setPlans}
+                  mode={"study"}
+                  setPlanModal={setPlanModal}
+                />
+              </div>
+              {/* <div className={styles.box}>
                 <div className={styles.title}>
                   {friendsCount ? <p>Friends Viewer</p> : null}
                 </div>
@@ -155,7 +176,7 @@ function Main({
                   </i>
                 </div>
                 <FriendsRankingViewer friendsRanking={friendsRanking} />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
