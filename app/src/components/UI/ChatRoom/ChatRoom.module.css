@@ -3,6 +3,10 @@
   display: flex;
   margin-bottom: 10px;
   position: relative;
+  border: 1px solid var(--gray2);
+  border-radius: 15px;
+  padding: 10px;
+  margin-right: 30px;
 }
 
 .ChatRoom .header {
@@ -43,4 +47,11 @@
   overflow: hidden; 
   max-width: 70px; 
   white-space: nowrap;
+}
+
+.ChatRoom .msgInfo .time {
+  position: absolute;
+  bottom: 20px;
+  right: 10px;
+  font-size: 12px;
 }

@@ -1,7 +1,6 @@
 .SendBtn {
   width: 40px;
   height: 40px;
-  background-color: var(--purple);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -49,7 +48,7 @@
 }
 
 .SendBtn:hover i {
-  color: #fff;
+  color: var(--purple);
 }
 
 .SendBtn i.submit {
