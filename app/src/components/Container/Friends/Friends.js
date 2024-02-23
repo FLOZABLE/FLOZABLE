@@ -14,6 +14,8 @@ import SearchUsers from "../../UI/SearchUsers/SearchUsers";
 import FriendEmailModal from "../../UI/FriendEmailModal/FriendEmailModal";
 import { Link } from "react-router-dom";
 import SearchBar from "../../UI/SearchBar/SearchBar";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -38,6 +40,8 @@ function Friends({
   const [friendCount, setFriendCount] = useState(0);
   const [suggestionsCount, setSuggestionsCount] = useState(0);
   const [friendsRanking, setFriendsRanking] = useState({});
+
+  const [search, setSearch] = useState(false);
 
   useEffect(() => {
     if (!joinTarget) return;
@@ -130,6 +134,7 @@ function Friends({
             </div>
             <div>
               <div className={styles.box} id={styles.activeFriends}>
+                <div>
                 <h3>Current Active Friends</h3>
                 <FriendsActivityViewer
                   setResponse={setResponse}
@@ -193,10 +198,50 @@ function Friends({
                     </div>
                   </div>
                 </div>
+                </div>
+              </div>
+              <div className={styles.box} id={styles.friendsStats}>
+                <div>
+                  <div className={styles.title}>
+                  <h3>Friends' Stats</h3>
+                  </div>
+                <div className={styles.chartWrapper}>
+                <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={[{
+                    name: 'Page A',
+                    uv: 4000,
+                    pv: 2400,
+                    amt: 2400,
+                  }]}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="label" tickFormatter={(data) => {
+                    const dateTime = DateTime.fromISO(data);
+
+                    return dateTime.toFormat('M/d');
+                  }} />
+                  <YAxis reversed={true} />
+                  <Tooltip />
+                  <Line type="monotone" dataKey={"ranking"} stroke="#8884d8" activeDot={{ r: 8 }} />
+                </LineChart>
+              </ResponsiveContainer>
+                </div>
+                </div>
               </div>
             </div>
             <div>
-              <div className={styles.smallBox}>
+              <div className={styles.smallBox}
+                onClick={() => {
+                  setIsFriendEmailModal(true);
+                }}
+              >
                 <div className={styles.title}>
                   <h3>Email Invitation</h3>
                   <i>
@@ -204,7 +249,11 @@ function Friends({
                   </i>
                 </div>
               </div>
-              <div className={styles.smallBox}>
+              <div className={styles.smallBox}
+                onClick={() => {
+                  setIsFriendLinkModal(true);
+                }}
+              >
                 <div className={styles.title}>
                   <h3>Friend Link</h3>
                   <i>
@@ -212,14 +261,14 @@ function Friends({
                   </i>
                 </div>
               </div>
-              <div className={styles.smallBox}>
+              {/* <div className={styles.smallBox}>
                 <div className={styles.title}>
                   <h3>Challenge URL</h3>
                   <i>
                     <IconFire />
                   </i>
                 </div>
-              </div>
+              </div> */}
               <div className={styles.smallBox}>
                 <div className={styles.title}>
                   <h3>Search for Friends</h3>
@@ -229,11 +278,14 @@ function Friends({
                 <SearchBar
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
+                  onEnter={() => {setSearch(true)}}
                 />
                 <SearchUsers
                   searchQuery={searchQuery}
                   setCount={setSuggestionsCount}
                   setResponse={setResponse}
+                  search={search}
+                  setSearch={setSearch}
                 />
               </div>
               <div className={styles.smallBox}>

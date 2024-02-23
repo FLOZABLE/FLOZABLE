@@ -310,14 +310,14 @@ Router.get('/search', async (req, res) => {
   try {
     const { query } = req.query;
 
-    const isValidQuery = validateStrictString(query, 'query', 10, 3);
+    const isValidQuery = validateStrictString(query, 'query', 10, 2);
 
     if (!isValidQuery.isValid) {
       return res.send({ success: false, reason: isValidQuery.reason });
     };
 
     const connection = pool.promise();
-    const [users] = await connection.query(`SELECT user_id, name, timezone from users where name like ?`, `%${query}%`);
+    const [users] = await connection.query(`SELECT user_id, name, timezone from users where name like ? LIMIT 10`, `%${query}%`);
     res.send({ success: true, users });
   } catch (err) {
     console.log(err);
@@ -517,6 +517,36 @@ Router.post('/email-invitation', async (req, res) => {
       const params = { name: userInfo.name, userId: userInfo.user_id, link: linkId };
       const to = [{ email }];
       sendEmail(to, params, 3);
+      res.send({ success: true });
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false });
+    };
+  }));
+});
+
+Router.get('/ranking', async (req, res) => {
+  autoSignin(req, res, (async (userId, timezone) => {
+    try {
+      let now = DateTime.now().setZone(timezone);
+      const minOffset = now.offset % 60;
+      now = now.plus({ minute: minOffset });
+      console.log('friend ranking', now.get('day'));
+      
+      const userInfo = await userCache(userId);
+
+      if (!userInfo) return;
+      const data = [];
+      const dates = [];
+      const connection = pool.promise();
+
+      for (let i = 0; i < 7; i++) {
+        const currDay = now.minus({day: i});
+        dates.push(currDay.toSeconds());
+      };
+
+      const [rankings] = await connection.query(`SELECT date, rankinds FROM dailyRankigns WHERE date IN(?)`, [dates])
+      console.log(rankings);
       res.send({ success: true });
     } catch (err) {
       console.log(err);

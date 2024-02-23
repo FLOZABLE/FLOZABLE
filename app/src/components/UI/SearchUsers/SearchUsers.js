@@ -9,15 +9,11 @@ import FriendRequestBtn from "../FriendRequestBtn/FriendRequestBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function SearchUsers({ searchQuery, setResponse, setCount }) {
+function SearchUsers({ searchQuery, setResponse, setCount, search, setSearch }) {
   const [lastUpd, setLastUpd] = useState(false);
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    const isRateLimited = lastUpd && new Date().getTime() - lastUpd < 1000;
-    if (isRateLimited || !searchQuery || searchQuery.length < 2) return;
-
-    setLastUpd(new Date().getTime());
+  const fetchServer = () => {
     fetch(`${serverOrigin}/friend/search?query=${searchQuery}`, {
       method: "get",
       headers: {
@@ -29,11 +25,27 @@ function SearchUsers({ searchQuery, setResponse, setCount }) {
         if (data.success) {
           setUsers(data.users);
           setCount(data.users.length);
-          console.log(data.users)
+          console.log(data.users, 'dddddd')
         }
       })
       .catch((error) => console.error(error));
+  };
+
+  useEffect(() => {
+    const isRateLimited = lastUpd && new Date().getTime() - lastUpd < 1000;
+    if (isRateLimited || !searchQuery || searchQuery.length < 2) return;
+
+    setLastUpd(new Date().getTime());
+
+    fetchServer();
   }, [searchQuery, lastUpd]);
+
+  useEffect(() => {
+    if (!search) return;
+
+    fetchServer();
+    setSearch(false);
+  }, [search]);
 
   return (
     <div className={styles.SearchUsers}>
@@ -41,9 +53,7 @@ function SearchUsers({ searchQuery, setResponse, setCount }) {
         const { user_id, name, timezone } = user;
         return (
           <div className={styles.user} key={i}>
-            <Link
-              to={`/dashboard/user/${user_id}`}
-              className={styles.userInfo}>
+            <Link className={styles.userInfo} to={`/dashboard/user/${user_id}`}>
               <div className={styles.profileImg}
                 style={{
                   backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`, backgroundSize: 'cover',
@@ -52,49 +62,27 @@ function SearchUsers({ searchQuery, setResponse, setCount }) {
                 }}
               >
               </div>
-              <div className={styles.name}>
+              <div className={`${styles.name} overflowDot`}>
                 {name}
               </div>
               <div className={styles.flagWrapper}>
                 <CountryViewer timezone={timezone} />
               </div>
             </Link>
-            {/* <div className={styles.subject}>
-            <UserSubjectViewer
-              userInfo={friend}
-              setResponse={setResponse}
-            />
-          </div> */}
-            <div className={styles.right}>
-              {/* <div className={styles.today}>
-              <p>Today: </p>
-              <p>&nbsp;</p>
-              <MemberTimer
-                userInfo={friend}
-                initialStatus={id ? true : false}
-                initialSec={liveTotal}
-                setResponse={setResponse}
-              />
-            </div> */}
-              <div className={styles.buttonsWrapper}>
-                <div className={styles.requestBtn}>
-                  <ChallengeBtn
-                    userInfo={user}
-                    setResponse={setResponse}
-                  />
-                </div>
-                <div className={styles.requestBtn}>
-                  <DmBtn
-                    userInfo={user}
-                    setResponse={setResponse}
-                  />
-                </div>
-                <div className={styles.requestBtn}>
-                  <FriendRequestBtn
-                    userInfo={user}
-                    setResponse={setResponse}
-                  />
-                </div>
+            <div className={styles.buttons}>
+              <div>
+                <DmBtn
+                  userInfo={user}
+                  setResponse={setResponse}
+                  padding={'5px 10px'}
+                />
+              </div>
+              <div>
+                <FriendRequestBtn
+                  userInfo={user}
+                  setResponse={setResponse}
+                  padding={'5px 10px'}
+                />
               </div>
             </div>
           </div>
