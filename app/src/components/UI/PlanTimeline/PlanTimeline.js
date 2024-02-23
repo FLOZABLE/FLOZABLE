@@ -71,11 +71,11 @@ function PlanTimeline({
   };
 
   useEffect(() => {
-    if (!subjects.length || !plans.length) return;
+    if (!subjects.length || !filteredPlans.length) return;
 
     const planSeries = [];
     subjects.map((subject, i) => {
-      const subjectPlans = plans.filter(plan => plan.subject === subject.id && isInViewRange(plan));
+      const subjectPlans = filteredPlans.filter(plan => plan.subject === subject.id);
       if (subjectPlans.length) {
         const { id, name } = subject;
         const total = subjectPlans.length;
@@ -91,7 +91,7 @@ function PlanTimeline({
     });
     setPlanSeries(planSeries);
     console.log('plan series', planSeries)
-  }, [subjects, plans]);
+  }, [subjects, filteredPlans]);
 
   const isInViewRange = (plan) => {
     const viewDateTime = DateTime.fromJSDate(viewDate);
