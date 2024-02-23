@@ -56,7 +56,7 @@ function ChatRoom({ room, setSelectedRoom, setRoomName, lastMsg, lastRead, setTo
           <div className={styles.name}>
             {room?.name}
           </div>
-          <strong>{room?.members.length}</strong>
+          <strong>({room?.members.length})</strong>
           <div className={styles.msgCount}>
           {newMsgs ? <div>{newMsgs} new messages</div> : null}
           </div>
