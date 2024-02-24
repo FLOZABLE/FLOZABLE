@@ -169,7 +169,6 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
 
   return (
     <div className={styles.Account}>
-      <StuckModal />
       <div
         className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
           }`}

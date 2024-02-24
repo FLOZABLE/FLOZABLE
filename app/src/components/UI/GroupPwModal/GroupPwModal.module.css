@@ -31,6 +31,17 @@
   color: var(--pink);
 }
 
+.GroupPwModal .content .nameContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.GroupPwModal .content .name {
+  display: inline-block;
+  max-width: 300px;
+}
+
 .GroupPwModal .submitBtnWrapper {
   display: flex;
   justify-content: center;

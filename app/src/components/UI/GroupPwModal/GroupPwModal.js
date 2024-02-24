@@ -19,7 +19,7 @@ function GroupPwModal({
   myGroups,
   group,
   joinByLink,
-  setJoinByLink,
+  setJoinByLink = () => {},
   userInfo,
   groupsViewerRef
 }) {
@@ -87,11 +87,11 @@ function GroupPwModal({
       className={`${styles.GroupPwModal} modal ${isGroupPwModal ? "open" : ""} hiddenScroll`}
     >
       <div className={styles.header}>
-        {!joinByLink ?
+        {/* {!joinByLink ?
           <p>&nbsp;&nbsp;{joinTarget ? joinTarget.name : ''}</p>
           :
           <span></span>
-        }
+        } */}
         <i
           onClick={() => {
             setJoinByLink(false);
@@ -109,25 +109,11 @@ function GroupPwModal({
               <i>
                 <FontAwesomeIcon icon={faLock} />
               </i>
-              <p>This is a private group</p>
+              <p>{joinTarget ? joinTarget.name : ''} is a private group</p>
             </div>
             <div>
               <p>Enter the group password to join</p>
             </div>
-            {/* <div className={styles.formGroup}>
-          <span className={styles.pwIcon}>
-            <i>
-              <FontAwesomeIcon icon={faKey} />
-            </i>
-          </span>
-          <input
-            className={styles.formField}
-            value={pw}
-            onChange={handlePwInput}
-            type="text"
-            placeholder="Password"
-          />
-        </div> */}
             <CustomInput
               input={pw}
               handleInput={handlePwInput}
