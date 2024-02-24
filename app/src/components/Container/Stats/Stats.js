@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import RadioBtn from '../../UI/RadioBtn/RadioBtn';
 import { coldColorsList, colorsList, warmColorsList } from '../../../constant';
 import styles from './Stats.module.css';
-import { updateTimeUsagePie, updateHourlyMatrix, updateHourlyHistogram, updateTimeTrend, updateRankingTrend, updateStackedAreaGraph, updateSubjectsTrendChart } from './StatTools';
+import { updateTimeUsagePie, updateRankingTrend, updateSubjectsTrendChart } from './StatTools';
 import DateSelectorBtn from '../../UI/DateSelectorBtn/DateSelectorBtn';
 import { DateTime } from 'luxon';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
