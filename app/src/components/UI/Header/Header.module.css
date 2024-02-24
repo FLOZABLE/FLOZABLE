@@ -3,7 +3,7 @@
   width: calc(100vw - 130px - 1px);
   background-color: #F8F9FA;
   position: fixed;
-  top: 10px;
+  top: 20px;
   left: 131px;
   display: flex;
   align-items: center;
@@ -14,7 +14,7 @@
 .Header .left {
   display: flex;
   height: 100%;
-  margin-top: 0px;
+  margin-top: -5px;
 }
 
 .Header .left :not(.divider) {
@@ -73,20 +73,26 @@
 }
 
 .headerEl .LogoutButton {
-  margin-top: 10px;
+  margin-top: 8px;
+  padding: 0px 0px 0px 5px;
 }
 
 .Header .divider {
-  height: calc(100% - 30px);
+  height: calc(100% - 55px);
   margin: 15px 5px;
   border-right: 2px solid #b2b2b2;
+  margin-top: 32px;
 }
 
 .Header .right {
   display: flex;
   position: absolute;
-  right: 30px;
+  right: 20px;
   height: 100%;
+}
+
+.Header .right .divider {
+  margin-top: 26px;
 }
 
 .Header .right .headerEl {
@@ -96,16 +102,31 @@
 }
 
 .Header .right #user > div {
-  margin-right: 10px;
+  margin-right: -25px;
 }
 
 .Header .right #user p {
-  font-weight: 900;
+  font-weight: 600;
+  font-size: 140%;
+  margin-top: -5px;
+  margin-right: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.Header .right #user>div :nth-child(2){
+  font-weight: 300;
+  font-size: 80%;
+  margin-top: -4px;
+  margin-right: 50px;
+  display: flex;
+  align-items: center;
 }
 
 .Header .right .profileImg {
   display: flex;
-  background-color: #0080ff;
+  background-color: #c0c0c0;
+  justify-content: right;
   width: 60px;
   height: 60px;
   border-radius: 100px;
