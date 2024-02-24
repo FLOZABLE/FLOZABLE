@@ -74,11 +74,11 @@ function MyGroupsViewer({
       className={`${styles.MyGroupsViewer} ${mode === "study" ? styles.study : ""
         }`}
     >
-      <GroupRankingModal
+      {/* <GroupRankingModal
         isOpen={isGroupRankingModal}
         setIsOpen={setIsGroupRankingModal}
         members={myGroups[selectedGroupIndex]?.members}
-      />
+      /> */}
       {swiperEl.length ?
         <Swiper
           slidesPerView={1}

@@ -8,6 +8,8 @@ import MemberTimer from "../MemberTimer/MemberTimer";
 import UserSubjectViewer from "../UserSubjectViewer/UserSubjectViewer";
 import { DateTime } from "luxon";
 import UserGroupViewer from "../UserGroupViewer/UserGroupViewer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretRight } from "@fortawesome/free-solid-svg-icons";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -33,93 +35,71 @@ function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode = 1,
       .catch((error) => console.error(error));
   }, []);
 
-  useEffect(() => {
-    if (!userInfo) return;
-    let totalSearched = 0;
-    setFriendsEl(friends.map((friend, i) => {
-      const { user_id, timezone, name, totalTime, activeSubject } = friend;
-      const { time, id } = activeSubject;
-      let liveTotal = parseInt(totalTime);
-      if (id) {
-        liveTotal += DateTime.now().toSeconds().toFixed() - time;
-      };
-      const searched = !searchQuery || name.includes(searchQuery);
-      if (searched) {
-        totalSearched += 1;
-      };
-
-      return (
-        <div
-          className={`${styles.friend} ${searched  ? styles.searched : ''}`} key={i}
-          >
-          <Link
-            to={`/dashboard/user/${user_id}`}
-            className={styles.userInfo}>
-            <div className={styles.profileImg}
-              style={{
-                backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`, backgroundSize: 'cover',
-                backgroundPosition: 'center center',
-                backgroundRepeat: 'no-repeat',
-              }}
-            >
-            </div>
-            <div className={styles.name}>
-              {name}
-            </div>
-            <div className={styles.flagWrapper}>
-              <CountryViewer timezone={timezone} />
-            </div>
-          </Link>
-          <div className={styles.subject}>
-            <UserSubjectViewer
-              userInfo={friend}
-              setResponse={setResponse}
-            />
-          </div>
-          <div className={styles.group}>
-            <UserGroupViewer
-              userInfo={friend}
-              myInfo={userInfo}
-              setResponse={setResponse}
-              setJoinTarget={setJoinTarget}
-              myGroups={myGroups}
-              setMyGroups={setMyGroups}
-              setOtherGroups={setOtherGroups}
-            />
-          </div>
-          <div className={styles.right}>
-            <div className={styles.today}>
-              <p>Today: </p>
-              <p>&nbsp;</p>
-              <MemberTimer
-                userInfo={friend}
-                initialStatus={id ? true : false}
-                initialSec={liveTotal}
-                setResponse={setResponse}
-              />
-            </div>
-            <div className={`${styles.buttonsWrapper} ${!mode ? styles.hidden : ''}`}>
-              <div className={styles.requestBtn}>
-                <ChallengeBtn userInfo={friend}
-                  setResponse={setResponse}
-                />
-              </div>
-              <div className={styles.requestBtn}>
-                <DmBtn userInfo={friend}
-                  setResponse={setResponse}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-    }));
-    setCount(totalSearched);
-  }, [friends, userInfo, searchQuery]);
-
   return (
     <div className={styles.FriendsActivityViewer}>
-      {friendsEl}
+      {
+        friends.map((friend, i) => {
+          const { user_id, timezone, name, totalTime, activeSubject } = friend;
+          console.log('friend', friend)
+
+          let liveTotal = parseInt(totalTime);
+          if (activeSubject && activeSubject.id) {
+            liveTotal += DateTime.now().toSeconds().toFixed() - activeSubject.time;
+          };
+
+          return (
+            <div
+              className={styles.friend} key={i}
+            >
+              <Link
+                className={styles.profile}
+              >
+                <div className={styles.profileImg}
+                  style={{
+                    backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
+                    backgroundPosition: 'center center',
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                >
+                </div>
+                <div>{name}</div>
+                <i>
+                  <CountryViewer timezone={timezone} />
+                </i>
+              </Link>
+              <i>
+                <FontAwesomeIcon icon={faCaretRight} />
+              </i>
+              <div className={styles.activeInfo}>
+                {/* {
+                  id ?
+                    <div>
+                      <div>
+                        Studying <strong>sdfsdf</strong> for 0:00:00
+                      </div>
+                      <div>
+                        since 12:00 am
+                      </div>
+                    </div> :
+                  null
+                } */}
+                <UserSubjectViewer
+                  userInfo={friend}
+                />
+                <UserGroupViewer
+                  userInfo={friend}
+                  myInfo={userInfo}
+                  setResponse={setResponse}
+                  setJoinTarget={setJoinTarget}
+                  myGroups={myGroups}
+                  setMyGroups={setMyGroups}
+                  setOtherGroups={setOtherGroups}
+                />
+              </div>
+            </div>
+          )
+        })
+      }
     </div>
   )
 };

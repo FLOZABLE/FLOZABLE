@@ -1,5 +1,13 @@
 .UserGroupViewer {
   position: relative;
+  opacity: 0;
+  visibility: hidden;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
+}
+
+.UserGroupViewer.visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 .UserGroupViewer p:hover~.hoverEl {

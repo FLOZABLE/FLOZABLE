@@ -32,7 +32,8 @@ function Header({
   isSidebarOpen,
   onToggleSidebar,
   totalNewMsg,
-  EmailInfo,
+  setIsNotificationModal,
+  notifications,
 }) {
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
@@ -174,8 +175,15 @@ function Header({
         </div>
       </div>
       <div className={styles.right}>
-        <div className={styles.headerEl}>
-          <IconBell />
+        <div className={styles.headerEl} id={styles.notifications}
+          onClick={() => { setIsNotificationModal(prev => !prev) }}
+        >
+          <i>
+            <FontAwesomeIcon icon={faBell} bounce={notifications?.length} />
+          </i>
+          <div>
+            {notifications?.length}
+          </div>
         </div>
         <div className={styles.divider}>
         </div>
@@ -184,7 +192,7 @@ function Header({
           className={styles.headerEl} id={styles.user}>
           <div>
             <p>{userInfo?.name}</p>
-            <p>@{userInfo?.email.split("@")[0]}</p>
+            <p>@{userInfo?.email?.split("@")[0]}</p>
           </div>
           <div className={styles.profileImg}
             style={{
@@ -195,12 +203,10 @@ function Header({
           >
           </div>
         </Link>
-          <div className={styles.headerEl}>
-            <Link to="/dashboard/study">
-              <i>
-                <div className={styles.LogoutButton}>
-                  <ButtonLogout />
-                </div>
+        <div className={styles.headerEl}>
+          <Link to="/dashboard/study">
+            <i className={styles.LogoutButton}>
+              <ButtonLogout />
             </i>
           </Link>
         </div>

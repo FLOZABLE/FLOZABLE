@@ -14,8 +14,9 @@ import SearchUsers from "../../UI/SearchUsers/SearchUsers";
 import FriendEmailModal from "../../UI/FriendEmailModal/FriendEmailModal";
 import { Link } from "react-router-dom";
 import SearchBar from "../../UI/SearchBar/SearchBar";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, CartesianGrid, Legend, BarChart, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { DateTime } from "luxon";
+import { secondConverter } from "../../../utils/Tool";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -42,6 +43,7 @@ function Friends({
   const [friendsRanking, setFriendsRanking] = useState({});
 
   const [search, setSearch] = useState(false);
+  const [friendsTrends, setFriendsTrends] = useState([]);
 
   useEffect(() => {
     if (!joinTarget) return;
@@ -80,8 +82,9 @@ function Friends({
       .then((response) => response.json())
       .then((response) => {
         if (response.success) {
-          const { day, week, month } = response;
+          const { day, week, month, dayTrend } = response;
           setFriendsRanking({ day, week, month });
+          setFriendsTrends(dayTrend);
         };
       })
   }
@@ -135,104 +138,114 @@ function Friends({
             <div>
               <div className={styles.box} id={styles.activeFriends}>
                 <div>
-                <h3>Current Active Friends</h3>
-                <FriendsActivityViewer
-                  setResponse={setResponse}
-                  userInfo={userInfo}
-                  setJoinTarget={setJoinTarget}
-                  searchQuery={searchQuery}
-                  setCount={setFriendCount}
-                  myGroups={myGroups}
-                  setMyGroups={setMyGroups}
-                  setOtherGroups={setOtherGroups}
-                />
-                <div className={styles.userContainer}>
-                  <Link
-                    className={styles.profile}
-                  >
-                    <div className={styles.profileImg}
-                      style={{
-                        backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
-                        backgroundPosition: 'center center',
-                        backgroundRepeat: 'no-repeat',
-                      }}
+                  <h3>Current Active Friends</h3>
+                  <FriendsActivityViewer
+                    setResponse={setResponse}
+                    userInfo={userInfo}
+                    setJoinTarget={setJoinTarget}
+                    searchQuery={searchQuery}
+                    setCount={setFriendCount}
+                    myGroups={myGroups}
+                    setMyGroups={setMyGroups}
+                    setOtherGroups={setOtherGroups}
+                  />
+                  <div className={styles.userContainer}>
+                    <Link
+                      className={styles.profile}
                     >
-                    </div>
-                    <p>name</p>
-                  </Link>
-                  <i>
-                    <FontAwesomeIcon icon={faCaretRight} />
-                  </i>
-                  <div className={styles.activeInfo}>
-                    <div>
-                      Studying <strong>sdfsdf</strong> for 0:00:00
-                    </div>
-                    <div>
-                      since 12:00 am
+                      <div className={styles.profileImg}
+                        style={{
+                          backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
+                          backgroundPosition: 'center center',
+                          backgroundRepeat: 'no-repeat',
+                        }}
+                      >
+                      </div>
+                      <p>name</p>
+                    </Link>
+                    <i>
+                      <FontAwesomeIcon icon={faCaretRight} />
+                    </i>
+                    <div className={styles.activeInfo}>
+                      <div>
+                        Studying <strong>sdfsdf</strong> for 0:00:00
+                      </div>
+                      <div>
+                        since 12:00 am
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className={styles.userContainer}>
-                  <Link
-                    className={styles.profile}
-                  >
-                    <div className={styles.profileImg}
-                      style={{
-                        backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
-                        backgroundPosition: 'center center',
-                        backgroundRepeat: 'no-repeat',
-                      }}
+                  <div className={styles.userContainer}>
+                    <Link
+                      className={styles.profile}
                     >
-                    </div>
-                    <p>name</p>
-                  </Link>
-                  <i>
-                    <FontAwesomeIcon icon={faCaretRight} />
-                  </i>
-                  <div className={styles.activeInfo}>
-                    <div>
-                      Studying <strong>sdfsdf</strong> for 0:00:00
-                    </div>
-                    <div>
-                      since 12:00 am
+                      <div className={styles.profileImg}
+                        style={{
+                          backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
+                          backgroundPosition: 'center center',
+                          backgroundRepeat: 'no-repeat',
+                        }}
+                      >
+                      </div>
+                      <p>name</p>
+                    </Link>
+                    <i>
+                      <FontAwesomeIcon icon={faCaretRight} />
+                    </i>
+                    <div className={styles.activeInfo}>
+                      <div>
+                        Studying <strong>sdfsdf</strong> for 0:00:00
+                      </div>
+                      <div>
+                        since 12:00 am
+                      </div>
                     </div>
                   </div>
-                </div>
                 </div>
               </div>
               <div className={styles.box} id={styles.friendsStats}>
                 <div>
                   <div className={styles.title}>
-                  <h3>Friends' Stats</h3>
+                    <h3>Friends' Stats</h3>
                   </div>
-                <div className={styles.chartWrapper}>
-                <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={[{
-                    name: 'Page A',
-                    uv: 4000,
-                    pv: 2400,
-                    amt: 2400,
-                  }]}
-                  margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="label" tickFormatter={(data) => {
-                    const dateTime = DateTime.fromISO(data);
-
-                    return dateTime.toFormat('M/d');
-                  }} />
-                  <YAxis reversed={true} />
-                  <Tooltip />
-                  <Line type="monotone" dataKey={"ranking"} stroke="#8884d8" activeDot={{ r: 8 }} />
-                </LineChart>
-              </ResponsiveContainer>
-                </div>
+                  <div className={styles.chartWrapper}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        width={500}
+                        height={300}
+                        data={friendsTrends.map(dayVal => {
+                          const friendsData = {};
+                          Object.keys(dayVal.friends).map((friend) => {
+                            friendsData[friend] = dayVal.friends[friend].t
+                          });
+                          return { ...friendsData, ...dayVal };
+                        })}
+                        margin={{
+                          top: 5,
+                          right: 30,
+                          left: 20,
+                          bottom: 5,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis tickFormatter={(data) => {
+                          const { value, type } = secondConverter(data);
+                          return `${value} ${type}`
+                        }} />
+                        <Tooltip formatter={(data) => {
+                          const { value, type } = secondConverter(data);
+                          return `${value} ${type}`
+                        }} />
+                        <Legend />
+                        {friendsTrends.length ? Object.keys(friendsTrends[0].friends).map((friend, i) => {
+                          return (
+                            <Bar name={friendsTrends[0].friends[friend].name} key={i} dataKey={friend} fill="#8884d8" />
+                          )
+                        }) : null}
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
             </div>
@@ -278,7 +291,7 @@ function Friends({
                 <SearchBar
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
-                  onEnter={() => {setSearch(true)}}
+                  onEnter={() => { setSearch(true) }}
                 />
                 <SearchUsers
                   searchQuery={searchQuery}

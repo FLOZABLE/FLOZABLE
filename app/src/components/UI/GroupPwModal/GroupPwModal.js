@@ -19,7 +19,7 @@ function GroupPwModal({
   myGroups,
   group,
   joinByLink,
-  setJoinByLink = () => {},
+  setJoinByLink = () => { },
   userInfo,
   groupsViewerRef
 }) {
@@ -87,11 +87,6 @@ function GroupPwModal({
       className={`${styles.GroupPwModal} modal ${isGroupPwModal ? "open" : ""} hiddenScroll`}
     >
       <div className={styles.header}>
-        {/* {!joinByLink ?
-          <p>&nbsp;&nbsp;{joinTarget ? joinTarget.name : ''}</p>
-          :
-          <span></span>
-        } */}
         <i
           onClick={() => {
             setJoinByLink(false);
@@ -101,48 +96,51 @@ function GroupPwModal({
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
-      {groupDesc}
-      {
-        (joinTarget && !joinTarget.visibility) ?
-          <div className={styles.content}>
+      <div>
+        <div className={styles.groupWrapper}>
+          {groupDesc}
+        </div>
+        {
+          (joinTarget && !joinTarget.visibility) ?
             <div>
-              <i>
-                <FontAwesomeIcon icon={faLock} />
-              </i>
-              <p>{joinTarget ? joinTarget.name : ''} is a private group</p>
+              <div className={styles.description}>
+                <i>
+                  <FontAwesomeIcon icon={faLock} />
+                </i>
+                {joinTarget.name} is a private group
+              </div>
+              <div className={styles.inputWrapper}>
+                <CustomInput
+                  input={pw}
+                  handleInput={handlePwInput}
+                  handleEnter={submit}
+                  icon={faKey}
+                  placeHolder={"Enter the group password to join"}
+                  type={"text"}
+                />
+              </div>
+              <div className={styles.joinBtnWrapper}>
+                <BlobBtn
+                  name={"Join"}
+                  setClicked={submit}
+                  color1={"#fff"}
+                  color2={"var(--pink)"}
+                  delay={-1}
+                />
+              </div>
             </div>
-            <div>
-              <p>Enter the group password to join</p>
-            </div>
-            <CustomInput
-              input={pw}
-              handleInput={handlePwInput}
-              handleEnter={submit}
-              icon={faKey}
-              placeHolder={"Password"}
-              type={"text"}
-            />
-            <div className={styles.submitBtnWrapper}>
+            :
+            <div className={styles.joinBtnWrapper}>
               <BlobBtn
-                name={"SUBMIT"}
+                name={"Join"}
                 setClicked={submit}
                 color1={"#fff"}
                 color2={"var(--pink)"}
                 delay={-1}
               />
             </div>
-          </div>
-          :
-          <div className={styles.submitBtnWrapper}>
-            <BlobBtn
-              name={"JOIN"}
-              setClicked={submit}
-              color1={"#fff"}
-              color2={"var(--pink)"}
-              delay={-1}
-            />
-          </div>
-      }
+        }
+      </div>
     </div>
   );
 }

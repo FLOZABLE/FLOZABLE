@@ -8,30 +8,37 @@ import { DateTime } from "luxon";
 import { socket } from "../../../socket";
 
 function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTransport, isHeadphone }) {
-  const [run, setRun] = useState(0);
+  const [run, setRun] = useState(false);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
     <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
   );
+  
   useEffect(() => {
     if (!memberInfo) return;
+
     const { totalTime, activeSubject, user_id } = memberInfo;
-    const {id, time} = activeSubject;
-    if (id) {
-      setRun(true);
-      const liveTotal = parseInt(totalTime) + parseInt(DateTime.now().toSeconds()) - parseInt(time);
-      setTotal(liveTotal);
-      setStudyIcon(
-        <StudyPerson
-        opt1={"#fff"}
-        opt2={"#fff"}
-        width={"40px"}
-        height={"40px"}
-      />
-      )
-    } else {
-      setTotal(parseInt(totalTime));
-    };
+
+    if (activeSubject) {
+      const { id, time } = activeSubject;
+
+      if (id !== '0') {
+        setRun(true);
+        const liveTotal = parseInt(totalTime) + parseInt(DateTime.now().toSeconds()) - parseInt(time);
+        setTotal(liveTotal);
+        setStudyIcon(
+          <StudyPerson
+            opt1={"#fff"}
+            opt2={"#fff"}
+            width={"40px"}
+            height={"40px"}
+          />
+        )
+      } else {
+        setTotal(parseInt(totalTime));
+      };
+    }
+
 
     const onStudying = () => {
       setStudyIcon(
@@ -43,6 +50,7 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
         />
       );
       setStudyingMembers(prev => [...prev, memberInfo]);
+      setRun(true);
     };
 
     const onStopStudying = () => {
@@ -54,6 +62,7 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
           return member.user_id !== user_id;
         });
       });
+      setRun(false);
     };
 
     socket.on(`studying:${user_id}`, onStudying);
@@ -76,8 +85,7 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
         <div className={styles.timer}>
           <MemberTimer
             initialSec={total}
-            initialStatus={run}
-            userInfo={memberInfo}
+            run={run}
           />
         </div>
       </div>

@@ -336,7 +336,7 @@ Router.post('/like/:id', async (req, res) => {
             WHERE group_id = ?`,
           [groupId]
         );
-        io.emit(`unliked:${groupId}`, userId);
+        mainIo.emit(`unliked:${groupId}`, userId);
       };
       res.send({ success: true });
     } catch (err) {
