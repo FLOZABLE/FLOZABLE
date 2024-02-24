@@ -199,7 +199,7 @@ function Stats({ subjects, userInfo }) {
     <div>
       <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} subjects={subjects} showHeatmap={true} />
       <div className="Main">
-        <div className="title">
+        <div className={styles.title}>
           Stats
         </div>
         <div className={styles.Stats}>

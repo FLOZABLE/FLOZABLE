@@ -1,5 +1,10 @@
-.FriendsRankingViewer {
+  .FriendsRankingViewer {
   position: relative;
+  margin-left: 19px;
+}
+
+.FriendsRankingViewer .Button {
+  margin-left: 13px;
 }
 
 .FriendsRankingViewer .profileImg {
@@ -12,7 +17,7 @@
   align-items: center;
   margin-right: auto;
   margin-left: auto;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 
 .FriendsRankingViewer .rankings .userContainer {
@@ -23,7 +28,7 @@
 .FriendsRankingViewer .rankings .userContainer > div {
   display: flex;
   align-items: center;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 
 .FriendsRankingViewer .rankings .userContainer .userInfo {
@@ -39,5 +44,5 @@
 .FriendsRankingViewer .rankings .userContainer .diff {
   margin-left: auto;
   font-size: 15px;
-  margin-right: 0px;
+  margin-left: 35%;
 }
