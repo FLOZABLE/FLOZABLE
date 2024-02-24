@@ -4,7 +4,7 @@ const { NotificationCache, userCache, activeSubjectCache, subjectCache } = requi
 const redisClient = require('../model/redis');
 const pool = require('../model/pool');
 const { sendEmail } = require('../email');
-const { validateEmail, validateStrictString } = require('../validate');
+const { validateEmail, validateStrictString, validateBoolean } = require('../validate');
 const { DateTime } = require('luxon');
 const { mainIo } = require('../socket');
 const Router = express.Router();
@@ -278,16 +278,15 @@ Router.get('/status', async (req, res) => {
         const totalTime = await redisClient.zScore(`user:${friend.user_id}:dayTotal`, timezoneOffset);
         friend.totalTime = totalTime === null ? 0 : totalTime;
         const activeSubject = await activeSubjectCache(friend.user_id);
-        if (activeSubject.id) {
+        if (activeSubject) {
           const subject = await subjectCache(friend.user_id, activeSubject.id);
           if (subject) {
             friend.activeSubject = { ...subject, total: activeSubject.total, time: activeSubject.time };
           } else {
-            friend.activeSubject = { id: -1, total: activeSubject.total, time: activeSubject.time };
+            friend.activeSubject = activeSubject;
           };
-        } else {
-          friend.activeSubject = activeSubject;
         };
+        
         if (friend.ActiveGroup) {
           const ActiveGroup = JSON.parse(friend.ActiveGroup);
           const connection = pool.promise();
@@ -517,36 +516,6 @@ Router.post('/email-invitation', async (req, res) => {
       const params = { name: userInfo.name, userId: userInfo.user_id, link: linkId };
       const to = [{ email }];
       sendEmail(to, params, 3);
-      res.send({ success: true });
-    } catch (err) {
-      console.log(err);
-      res.send({ success: false });
-    };
-  }));
-});
-
-Router.get('/ranking', async (req, res) => {
-  autoSignin(req, res, (async (userId, timezone) => {
-    try {
-      let now = DateTime.now().setZone(timezone);
-      const minOffset = now.offset % 60;
-      now = now.plus({ minute: minOffset });
-      console.log('friend ranking', now.get('day'));
-      
-      const userInfo = await userCache(userId);
-
-      if (!userInfo) return;
-      const data = [];
-      const dates = [];
-      const connection = pool.promise();
-
-      for (let i = 0; i < 7; i++) {
-        const currDay = now.minus({day: i});
-        dates.push(currDay.toSeconds());
-      };
-
-      const [rankings] = await connection.query(`SELECT date, rankinds FROM dailyRankigns WHERE date IN(?)`, [dates])
-      console.log(rankings);
       res.send({ success: true });
     } catch (err) {
       console.log(err);

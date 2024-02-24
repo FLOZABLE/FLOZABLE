@@ -116,7 +116,7 @@ function App() {
     if (!subjects.length) return;
 
     const lastSubject = subjects[subjects.length - 1];
-    setPlanModal(prev => ({...prev, subject: lastSubject.id}));
+    setPlanModal(prev => ({ ...prev, subject: lastSubject.id }));
   }, [subjects]);
 
   const bringSubjects = useCallback(() => {
@@ -268,6 +268,24 @@ function App() {
         setIsOpened={setIsAccountModal}
         setResponse={setResponse}
       />
+      <Header
+        setPlanModal={(planModal) => {
+          setPlanModal((prev) => ({ ...prev, opened: planModal }))
+        }}
+        planModal={planModal.opened}
+        setPlans={setPlans}
+        plans={plans}
+        subjects={subjects}
+        onToggleSidebar={toggleSidebar}
+        isSidebarOpen={isSidebarOpen}
+        isSidebarHovered={isHovered}
+        setIsChatModal={setIsChatModal}
+        isChatModal={isChatModal}
+        totalNewMsg={totalNewMsg}
+        userInfo={userInfo}
+        setIsNotificationModal={setIsNotificationModal}
+        notifications={notifications.filter(notification => {return notification.t >= 0})}
+      />
       <div className={`touchBlocker ${isAccountModal ? "blocked" : ""}`}></div>
       <Routes>
         <Route
@@ -306,22 +324,6 @@ function App() {
                 isSidebarHovered={isHovered}
               />
 
-              <Header
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
-                planModal={planModal.opened}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-                totalNewMsg={totalNewMsg}
-                userInfo={userInfo}
-              />
               <Main
                 subjects={subjects}
                 plans={plans}
@@ -378,22 +380,6 @@ function App() {
                 isSidebarHovered={isHovered}
               />
 
-              <Header
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
-                planModal={planModal.opened}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-                totalNewMsg={totalNewMsg}
-                userInfo={userInfo}
-              />
               <Stats
                 setIsSidebarOpen={setIsSidebarOpen}
                 isSidebarOpen={isSidebarOpen}
@@ -440,22 +426,6 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
-              />
-              <Header
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
-                planModal={planModal.opened}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-                totalNewMsg={totalNewMsg}
-                userInfo={userInfo}
               />
               <Ranking
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -504,22 +474,6 @@ function App() {
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
               />
-              <Header
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
-                planModal={planModal.opened}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-                totalNewMsg={totalNewMsg}
-                userInfo={userInfo}
-              />
               <Groups
                 setIsSidebarOpen={setIsSidebarOpen}
                 isSidebarOpen={isSidebarOpen}
@@ -544,7 +498,7 @@ function App() {
         <Route
           path="/dashboard/study"
           element={
-            <div>
+            <div style={{zIndex: 6, position: 'relative'}}>
               <HelmetProvider>
                 <Helmet>
                   <title>Study - FLOZABLE</title>
@@ -631,22 +585,6 @@ function App() {
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
               />
-              <Header
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
-                planModal={planModal.opened}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-                totalNewMsg={totalNewMsg}
-                userInfo={userInfo}
-              />
               <Planner
                 planModal={planModal}
                 setIsAddSubjectModal={setIsAddSubjectModal}
@@ -700,22 +638,6 @@ function App() {
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
               />
-              <Header
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
-                planModal={planModal.opened}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-                totalNewMsg={totalNewMsg}
-                userInfo={userInfo}
-              />
               <Account
                 setIsSidebarOpen={setIsSidebarOpen}
                 isSidebarOpen={isSidebarOpen}
@@ -762,22 +684,6 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
-              />
-              <Header
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
-                planModal={planModal.opened}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-                totalNewMsg={totalNewMsg}
-                userInfo={userInfo}
               />
               <User
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -829,22 +735,6 @@ function App() {
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
               />
-              <Header
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
-                planModal={planModal.opened}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-                totalNewMsg={totalNewMsg}
-                userInfo={userInfo}
-              />
               <Challenge
                 setIsSidebarOpen={setIsSidebarOpen}
                 isSidebarOpen={isSidebarOpen}
@@ -891,22 +781,6 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
-              />
-              <Header
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
-                planModal={planModal.opened}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-                totalNewMsg={totalNewMsg}
-                userInfo={userInfo}
               />
               <Friends
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -960,22 +834,6 @@ function App() {
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
               />
-              <Header
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
-                planModal={planModal.opened}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-                totalNewMsg={totalNewMsg}
-                userInfo={userInfo}
-              />
               <Themes
                 setIsSidebarOpen={setIsSidebarOpen}
                 isSidebarOpen={isSidebarOpen}
@@ -1020,22 +878,6 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
-              />
-              <Header
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
-                planModal={planModal.opened}
-                setPlans={setPlans}
-                plans={plans}
-                subjects={subjects}
-                onToggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen}
-                isSidebarHovered={isHovered}
-                setIsChatModal={setIsChatModal}
-                isChatModal={isChatModal}
-                totalNewMsg={totalNewMsg}
-                userInfo={userInfo}
               />
               <ChallengeRooms
                 setIsSidebarOpen={setIsSidebarOpen}

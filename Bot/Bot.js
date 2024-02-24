@@ -508,18 +508,17 @@ async function stopBot(userId) {
   const userInfo = await userCache(userId);
   const subjects = await subjectsCache(userId);
   const [subject] = subjects.filter((sub) => sub.id === activeSubject.id);
-  redisClient.hDel(`user:${userId}`, `ActiveSubject`);
-  if (!userInfo || !subject || !activeSubject.id) return;
+  if (!userInfo || !subject || !activeSubject || !activeSubject.id) return;
   console.log(subject);
   let { groups, friends, name } = userInfo;
   friends = friends === "" ? [] : friends.split(",");
   groups = groups === "" ? [] : groups.split(",");
 
   if (groups.length) {
-    mainIo.to(groups).emit(`stopStudying:${userId}`);
+    mainIo.to(groups).emit(`stopStudying:${userId}`, "disconnect");
   };
   if (friends.length) {
-    mainIo.to(friends).emit(`studying:${userId}`, subject);
+    mainIo.to(friends).emit(`stopStudying:${userId}`, "disconnect");
   };
 
   const { datum_point, timeline_sum, id } = subject;
@@ -534,6 +533,7 @@ async function stopBot(userId) {
   subject.timeline_sum += duration;
   redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
   const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${id}`));
+  redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
   if (activity) {
     const start = activity[0];
     redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${duration}]`);

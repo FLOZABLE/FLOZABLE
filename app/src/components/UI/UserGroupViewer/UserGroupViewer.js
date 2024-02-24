@@ -22,9 +22,7 @@ function UserGroupViewer({
     if (ActiveGroup) {
       setActiveGroup([ActiveGroup]);
       setGroupName(
-        <p>
-          inside <strong>{ActiveGroup.name}</strong>
-        </p>,
+        ActiveGroup.name
       );
     }
   }, [userInfo]);
@@ -37,16 +35,25 @@ function UserGroupViewer({
       setGroupName("");
     };
 
+    const onActiveGroup = ({groupInfo, time}) => {
+      setActiveGroup([groupInfo]);
+      setGroupName(groupInfo.name);
+    };
+
     socket.on(`deActiveGroup:${userInfo.user_id}`, onDeActiveGroup);
+    socket.on(`activeGroup:${userInfo.user_id}`, onActiveGroup);
 
     return () => {
       socket.off(`deActiveGroup:${userInfo.user_id}`, onDeActiveGroup);
+      socket.off(`activeGroup:${userInfo.user_id}`, onActiveGroup);
     };
   }, [userInfo]);
 
   return (
-    <div className={styles.UserGroupViewer}>
-      {groupName}
+    <div className={`${styles.UserGroupViewer} ${activeGroup.length ? styles.visible : ''}`}>
+      <p>
+      inside <strong>{groupName}</strong>
+      </p>
       <div className={styles.hoverEl}>
         <GroupsGen
           groups={activeGroup}

@@ -29,7 +29,7 @@ async function timerUpdate() {
       const activeSubject = await activeSubjectCache(userId);
       //user is studying
       let activity = false;
-      if (activeSubject.id) {
+      if (activeSubject && activeSubject.id) {
         activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
       };
       await Promise.all(subjects.map(async ({ id, timeline_sum }) => {

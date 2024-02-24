@@ -3,39 +3,11 @@ import styles from "./MemberTimer.module.css";
 import worker from "./TimeWorker";
 import {socket} from "../../../socket.js";
 
-function MemberTimer({ initialSec = 0, userInfo, initialStatus = false, reset = false }) {
+function MemberTimer({ initialSec = 0, run }) {
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
   const [total, setTotal] = useState(0);
-  const [run, setRun] = useState(false);
-
-  useEffect(() => {
-    setRun(initialStatus);
-  }, [initialStatus]);
-
-  useEffect(() => {
-    if (!userInfo) return;
-    const {user_id} = userInfo;
-    const onStudying = () => {
-      setRun(true);
-    };
-
-    const onStopStudying = () => {
-      setRun(false);
-      if (reset) {
-        setTotal(0);
-      };
-    };
-
-    socket.on(`studying:${user_id}`, onStudying);
-    socket.on(`stopStudying:${user_id}`, onStopStudying);
-
-    return () => {
-      socket.off(`studying:${user_id}`, onStudying);
-      socket.off(`stopStudying:${user_id}`, onStopStudying);
-    };
-  }, [userInfo]);
 
   useEffect(() => {
     const onMessage = (e) => {
@@ -51,7 +23,8 @@ function MemberTimer({ initialSec = 0, userInfo, initialStatus = false, reset = 
   }, [run]);
 
   useEffect(() => {
-    setTotal(initialSec);
+    setTotal(Math.floor(initialSec));
+    console.log('initial sec', initialSec)
   }, [initialSec]);
 
   useEffect(() => {

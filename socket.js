@@ -70,27 +70,7 @@ mainIo.on('connection', (socket) => {
       console.log(err);
     };
   });
-
-  socket.on('myGroupsOnline', async () => {
-
-    const connection = pool.promise();
-
-    try {
-      const [[userInfo]] = await connection.query(`SELECT groups from users where user_id = ?`, [session.user_id]);
-      if (userInfo) {
-        const myGroups = userInfo.groups.split(',');
-        myGroups.map(group => {
-          const socketsInRoom = io.sockets.in(group).sockets;
-          //console.log(socketsInRoom);
-        });
-      };
-    } catch (err) {
-      console.log(err);
-    } finally {
-      connection.releaseConnection();
-    }
-  });
-
+  
   socket.on('onlineMembers', () => {
     /* const onlineMembers = io.engine.clientsCount;
     io.emit() */
@@ -101,7 +81,7 @@ mainIo.on('connection', (socket) => {
 
   socket.on("disconnect", async (reason) => {
     const activeSubject = await activeSubjectCache(userId);
-    if (!activeSubject.id) return;
+    if (!activeSubject) return;
 
     const now = Math.floor(new Date().getTime() / 1000);
     /* const subjects = await subjectsCache(userId);
@@ -117,10 +97,10 @@ mainIo.on('connection', (socket) => {
     groups = groups === "" ? [] : groups.split(",");
 
     if (groups.length) {
-      io.to(groups).emit(`stopStudying:${userId}`);
+      io.to(groups).emit(`stopStudying:${userId}`, 'disconnect');
     };
     if (friends.length) {
-      io.to(friends).emit(`stopStudying:${userId}`, subject);
+      io.to(friends).emit(`stopStudying:${userId}`, 'disconnect');
     };
     const { datum_point, timeline_sum } = subject;
 
@@ -226,7 +206,7 @@ mainIo.on('connection', (socket) => {
     const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId); */
     const subject = await subjectCache(userId, subjectId);
     const userInfo = await userCache(userId);
-    if (!userInfo || !subject || !activeSubject.id === subjectId) return;
+    if (!userInfo || !subject || !activeSubject || !activeSubject.id === subjectId) return;
 
 
     let { groups, friends } = userInfo;
@@ -234,10 +214,10 @@ mainIo.on('connection', (socket) => {
     groups = groups === "" ? [] : groups.split(",");
 
     if (groups.length) {
-      io.to(groups).emit(`stopStudying:${userId}`);
+      io.to(groups).emit(`stopStudying:${userId}`, 'rest');
     };
     if (friends.length) {
-      io.to(friends).emit(`stopStudying:${userId}`, subject);
+      io.to(friends).emit(`stopStudying:${userId}`, 'rest');
     };
     const { datum_point, timeline_sum } = subject;
 
@@ -264,7 +244,7 @@ mainIo.on('connection', (socket) => {
     timerInfo.ts += totalTimerDuration;
     redisClient.rPush(`user:${userId}:timer`, `[${timerStart},${totalTimerDuration}]`);
     redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo)); */
-    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
+    redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
     for (let i = -12; i < 12; i++) {
       redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
     };
@@ -294,7 +274,7 @@ mainIo.on('connection', (socket) => {
     const connection = pool.promise();
     const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [groupId]);
     if (!groupInfo) return;
-    io.to(friends).emit(`activeGroup`, { groupInfo, time: now });
+    io.to(friends).emit(`activeGroup:${userId}`, { groupInfo, time: now });
   });
 
   socket.on('readMsg', async ({ roomId, type }) => {
@@ -358,8 +338,7 @@ extensionIo.on("connection", (socket) => {
     socket.userId = userId;
     socket.join(userId);
     const activeSubject = await activeSubjectCache(userId);
-    console.log("authed", 'is studying', activeSubject.id ? true : false, activeSubject, userInfo.name)
-    extensionIo.to(userId).emit("studying", { studying: activeSubject.id ? true : false });
+    extensionIo.to(userId).emit("studying", { studying: activeSubject && activeSubject.id ? true : false });
   });
 
   /*   socket.on("setting-update", async({d, target, value}) => {

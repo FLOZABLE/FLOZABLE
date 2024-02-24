@@ -42,7 +42,9 @@ function FriendsRankingViewer({ friendsRanking }) {
               <div className={styles.rank}>
                 #{i + 1}
               </div>
-              <Link className={styles.userInfo}>
+              <Link
+              to={`/dashboard/user/${friend.user_id}`} 
+              className={styles.userInfo}>
                 <div className={styles.profileImg}
                   style={{
                     backgroundImage: `url("${serverOrigin}/profile-images/${friend.user_id}.jpeg")`, backgroundSize: 'cover',
