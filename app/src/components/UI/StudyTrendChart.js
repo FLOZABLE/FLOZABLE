@@ -6,7 +6,7 @@ function StudyTrendChart({subjectsTrend}) {
   const [filteredTrends, setFilteredTrends] = useState([]);
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="98%" height="98%">
       <LineChart
         data={subjectsTrend.map((day, i) => {
           const data = day.data.reduce((accumulator, subject) => {

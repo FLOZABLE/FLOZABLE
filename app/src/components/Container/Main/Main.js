@@ -95,7 +95,7 @@ function Main({
         setJoinGroupResponse={setResponse}
       />
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
-        <div className="title">
+        <div className={styles.title}>
           Dashboard
         </div>
         <div className={styles.Main}>
@@ -127,9 +127,9 @@ function Main({
                       <IconStatsChart />
                     </i>
                   </div>
-                  <div>
-                    <FriendsRankingViewer friendsRanking={friendsRanking} />
-                  </div>
+                    <div>
+                      <FriendsRankingViewer friendsRanking={friendsRanking} />
+                    </div>
                   </div>
                 </div>
                 <div className={styles.box} id={styles.recommendedFriends}>
@@ -140,7 +140,7 @@ function Main({
               </div>
             </div>
             <div className={styles.boxesContainer}>
-              <div className={styles.box}>
+              <div className={styles.box} id={styles.Timeline}>
                 <PlanTimeline
                   plans={plans}
                   viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
