@@ -503,40 +503,44 @@ async function startBot(userId) {
 };
 
 async function stopBot(userId) {
-  redisClient.sRem('activeBots', userId);
-  const activeSubject = await activeSubjectCache(userId);
-  const userInfo = await userCache(userId);
-  const subjects = await subjectsCache(userId);
-  const [subject] = subjects.filter((sub) => sub.id === activeSubject.id);
-  if (!userInfo || !subject || !activeSubject || !activeSubject.id) return;
-  console.log(subject);
-  let { groups, friends, name } = userInfo;
-  friends = friends === "" ? [] : friends.split(",");
-  groups = groups === "" ? [] : groups.split(",");
-
-  if (groups.length) {
-    mainIo.to(groups).emit(`stopStudying:${userId}`, "disconnect");
-  };
-  if (friends.length) {
-    mainIo.to(friends).emit(`stopStudying:${userId}`, "disconnect");
-  };
-
-  const { datum_point, timeline_sum, id } = subject;
-  const now = Math.floor(new Date().getTime() / 1000);
-
-  const duration = now - datum_point - timeline_sum;
-  console.log('stop', userId, name, duration);
-  //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
-  for (let i = -12; i < 12; i++) {
-    redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
-  };
-  subject.timeline_sum += duration;
-  redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
-  const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${id}`));
-  redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
-  if (activity) {
-    const start = activity[0];
-    redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${duration}]`);
+  try {
+    redisClient.sRem('activeBots', userId);
+    const activeSubject = await activeSubjectCache(userId);
+    const userInfo = await userCache(userId);
+    const subjects = await subjectsCache(userId);
+    const [subject] = subjects.filter((sub) => sub.id === activeSubject.id);
+    if (!userInfo || !subject || !activeSubject || !activeSubject.id) return;
+    console.log(subject);
+    let { groups, friends, name } = userInfo;
+    friends = friends === "" ? [] : friends.split(",");
+    groups = groups === "" ? [] : groups.split(",");
+  
+    if (groups.length) {
+      mainIo.to(groups).emit(`stopStudying:${userId}`, "disconnect");
+    };
+    if (friends.length) {
+      mainIo.to(friends).emit(`stopStudying:${userId}`, "disconnect");
+    };
+  
+    const { datum_point, timeline_sum, id } = subject;
+    const now = Math.floor(new Date().getTime() / 1000);
+  
+    const duration = now - datum_point - timeline_sum;
+    console.log('stop', userId, name, duration);
+    //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
+    for (let i = -12; i < 12; i++) {
+      redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
+    };
+    subject.timeline_sum += duration;
+    redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
+    const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${id}`));
+    redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
+    if (activity) {
+      const start = activity[0];
+      redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${duration}]`);
+    };
+  } catch (err) {
+    console.log(err);
   };
 };
 
