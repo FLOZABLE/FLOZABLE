@@ -48,7 +48,7 @@ function SubjectsManager({ subjects, setSubjects, setResponse }) {
   }, [selectedSubject]);
 
   return (
-    <div className={styles.SubjectsManager}>
+    <div className={`${styles.SubjectsManager} customScroll`}>
       {/* <EditSubjectModal
         subject={selectedSubject}
         subjects={subjects}

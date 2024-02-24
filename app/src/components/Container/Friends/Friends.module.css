@@ -58,34 +58,6 @@
   height: calc(100%);
 }
 
-.Friends .box#activeFriends .userContainer {
-  display: flex;
-}
-
-.Friends .box#activeFriends .userContainer .profile {
-  display: flex;
-  align-items: center;
-  font-size: 23px;
-}
-
-.Friends .box#activeFriends .userContainer .profileImg {
-  width: 30px;
-  height: 30px;
-  border-radius: 25px;
-  margin: 0px 10px;
-}
-
-.Friends .box#activeFriends .userContainer i {
-  display: flex;
-  align-items: center;
-  margin: 0px 10px;
-  font-size: 23px;
-}
-
-.Friends .box#activeFriends .userContainer .activeInfo > div {
-  margin: 10px 10px;
-}
-
 .Friends .smallBox {
   background-color: #fff;
   border-radius: 20px;

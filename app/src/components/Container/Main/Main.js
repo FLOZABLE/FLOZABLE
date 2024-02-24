@@ -95,7 +95,7 @@ function Main({
         setJoinGroupResponse={setResponse}
       />
       <div className={` Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
-        <div className={styles.title}>
+        <div className="title">
           Dashboard
         </div>
         <div className={styles.Main}>
