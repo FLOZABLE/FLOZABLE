@@ -52,19 +52,27 @@
   opacity: 1;
 }
 
-.sidebar .sidebarContainer  .homePop i{
-  background-color: red;
-  opacity: 0;
-  margin-left: 100px;
-}
-
-.sidebar .sidebarContainer .homePop i:hover {
-  opacity: 1;
-}
-
 .Sidebar .sidebarContainer .sidebarEl i {
   color: var(--blue1);
   font-size: 30px;
   display: flex;
   justify-content: center;
+}
+
+@media (max-height: 1200px) {
+  .Sidebar .sidebarContainer .sidebarEl {
+    padding: 20px 20px;
+  }
+}
+
+@media (max-height: 700px) {
+  .Sidebar .sidebarContainer .sidebarEl {
+    padding: 10px 20px;
+  }
+}
+
+@media (max-height: 550px) {
+  .Sidebar .sidebarContainer .sidebarEl {
+    padding: 5px 20px;
+  }
 }

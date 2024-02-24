@@ -141,7 +141,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
 
     setNotifications(notifications.filter(notif => notif.i !== notificationId));
   };
-  console.log('viewer', viewer)
+
   return (
     <div className={styles.FriendRequestsViewer}>
       <SlidingOptBtn
@@ -154,11 +154,11 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
         value={viewer}
         setValue={setViewer}
       />
-      {viewer ? sentRequests.map((request, index) => {
+      {parseInt(viewer) ? sentRequests.map((request, index) => {
         const { f, i } = request;
         const { name, timezone, user_id } = f;
         return (
-          <div className={styles.friendRequest} style={{ zIndex: request.length - index + 1 }} key={i}>
+          <div className={styles.friendRequest} style={{ zIndex: sentRequests.length - index + 1 }} key={i}>
             <Link to={`/dashboard/user/${user_id}`} >
               <div className={styles.content}>
                 <div className={styles.profileImg}
@@ -190,7 +190,7 @@ function FriendRequestsViewer({ setResponse, notifications, setNotifications }) 
           const { f, i } = request;
           const { name, timezone, user_id } = f;
           return (
-            <div className={styles.friendRequest} style={{ zIndex: request.length - index + 1 }} key={i}>
+            <div className={styles.friendRequest} style={{ zIndex: friendRequests.length - index + 1 }} key={i}>
               <Link to={`/dashboard/user/{fromId}`} >
                 <div className={styles.content}>
                   <div className={styles.profileImg}
