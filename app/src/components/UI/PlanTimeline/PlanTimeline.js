@@ -31,7 +31,7 @@ function PlanTimeline({
   setPlanModal,
   mode,
   setPlans,
-  maxHeight = "200px"
+  maxHeight = "300px"
 }) {
   const [planSeries, setPlanSeries] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);

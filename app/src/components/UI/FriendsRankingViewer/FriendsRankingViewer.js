@@ -16,15 +16,19 @@ function FriendsRankingViewer({ friendsRanking }) {
 
   return (
     <div className={styles.FriendsRankingViewer}>
-      <DropDownButton
-        options={{
-          "day": "Today",
-          "week": "This Week",
-          "month": "This Month"
-        }}
-        setValue={setViewer}
-        value={viewer}
-      />
+      <div className={styles.Button}>
+        <div>
+          <DropDownButton
+          options={{
+            "day": "Today",
+            "week": "This Week",
+            "month": "This Month"
+          }}
+          setValue={setViewer}
+          value={viewer}
+          />
+        </div>
+      </div>
       <div className={styles.rankings}>
         {friendsRanking?.[viewer]?.map((friend, i) => {
           console.log(friend);

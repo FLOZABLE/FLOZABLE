@@ -109,3 +109,11 @@
     height: 500px;
   }
 }
+
+.title {
+  font-family: "Roboto", sans-serif;
+  padding-bottom: 0px;
+  padding-left: 50px;
+  font-size: 270%;
+  font-weight: 800;
+}
