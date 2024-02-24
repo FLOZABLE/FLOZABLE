@@ -1,159 +1,86 @@
-.UserContainer {
+.User {
   position: relative;
 }
 
-.UserContainer .profileContainer {
+.User .searchOpt {
   position: fixed;
-  width: 300px;
+  top: 100px;
+  right: 50px;
+  z-index: 2;
+}
+
+.User .profileCard {
+  position: fixed;
+  top: 215px;
+  left: 180px;
   background-color: #fff;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  padding: 20px;
-  border-radius: 20px;
+  box-shadow: var(--shadow9);
+  padding: 30px;
+  width: 380px;
+  border-radius: 30px;
 }
 
-.UserContainer #profileImg {
-  border-radius: 50%;
-  background-color: aqua;
-  width: 100px;
-  height: 100px;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-}
-
-.UserContainer .row {
-  display: flex;
-  width: 100%;
-  padding-bottom: 30px;
-}
-
-.UserContainer .rowTitle {
-  width: 100%;
-  display: flex;
-}
-
-.UserContainer .row .divided {
-  width: 100%;
-}
-
-.UserContainer .row#buttons .divided {
-  display: flex;
-  justify-content: center;
-  position: relative;
-}
-
-.UserContainer .divided#profileInfo {
+.User .profileCard > div {
   display: flex;
   align-items: center;
-  font-size: 23px;
+  margin-bottom: 20px;
 }
 
-.UserContainer .divided#description {
-  border: 1px solid var(--pink);
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  border-radius: 10px;
-  padding: 10px;
+.User .profileCard .profileImg {
+  width: 150px;
+  height: 150px;
+  border-radius: 50px;
 }
 
-.UserContainer .infoContainer {
-  position: relative;
-  display: flex;
-  flex-direction: row;
+.User .profileCard .name {
+  max-width: calc(100% - 150px);
 }
 
-.UserContainer .infoContainer .iconWrapper {
-  width: 70px;
-  height: 70px;
-  background-color: var(--pink);
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 30px;
-  border-radius: 20px;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-}
-
-.UserContainer .infoContainer .info {
-  margin-left: 10px;
-  display: flex;
-  align-items: center;
-}
-
-.UserContainer .info .infoTitle {
-  position: absolute;
-  top: 0px;
+.User .profileCard .timezone {
   font-size: 20px;
 }
 
-.UserContainer .statsContainer {
-  width: calc(100% - 420px);
-  margin-left: 380px;
-}
-
-.UserContainer .statsContainer .box {
-  padding: 30px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  border-radius: 20px;
-  margin-bottom: 35px;
-}
-
-.UserContainer .statsContainer .box:nth-child(2) {
-  max-height: 50vh;
-  overflow-y: auto;
-}
-
-.UserContainer .chartContainer {
-  width: 100%;
-}
-
-.UserContainer #dateSelector {
+.User .profileCard .timezone i {
   font-size: 30px;
-  border-radius: 10px;
-  background-color: var(--gray);
-  padding: 0px 20px;
-  height: 50px;
+  margin: 0px 5px;
+}
+
+.User .profileCard > div:nth-child(1) {
+  font-size: 27px;
+}
+
+.User .boxContainer {
+  position: absolute;
+  left: 530px;
+  top: 80px;
+  width: calc(100%  - 560px);
+}
+
+.User .boxContainer .box {
+  background-color: #fff;
+  border-radius: 30px;
+  padding: 30px;
+  box-shadow: var(--shadow9);
+  margin-bottom: 30px;
+  height: 500px;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
 }
 
-.UserContainer #viewerSelector {
-  margin-left: auto;
+.User .box .title {
+  font-size: 30px;
+  font-weight: 600;
 }
 
-.UserContainer .row#groupsContainer {
-  overflow-x: auto;
-  overflow-y: hidden;
+.User .boxContainer .box .chartContainer {
+  flex-grow: 1;
 }
 
-.UserContainer canvas {
-  width: 100% !important;
-  height: 100% !important;
+.User .boxContainer .box .groupsContainer {
+  overflow-y: auto;
+  flex-grow: 1;
 }
 
-@media (max-width: 1400px) {
-  .UserContainer .profileContainer {
-    width: 240px;
-    padding: 10px;
-  }
-
-  .UserContainer #profileImg {
-    width: 60px;
-    height: 60px;
-  }
-
-  .UserContainer .statsContainer {
-    width: calc(100% - 320px);
-    margin-left: 280px;
-  }
-  
-  .UserContainer .statsContainer .box {
-    padding: 30px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    border-radius: 20px;
-    margin-bottom: 35px;
-  }
-
-  .UserContainer h1 {
-    font-size: 25px;
-  }
+.User .box#friendsBox {
+  height: min-content;
 }

@@ -65,9 +65,7 @@
   border-radius: 7px;
   z-index: 2;
   visibility: hidden;
-}
-
-.EventModal .wrapper .iconWrapper:hover .hoverEl p {
+  pointer-events: none;
   color: #fff;
 }
 
