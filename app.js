@@ -206,7 +206,7 @@ const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, c
 //deleteBots();
 //addId();
 //createBots(200); 
-createBotRankings();
+//createBotRankings();
 
 const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode } = require('./query');
 const { updateRanking } = require("./services/rankingUpdate");
