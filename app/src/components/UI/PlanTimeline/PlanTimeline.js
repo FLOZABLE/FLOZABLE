@@ -123,6 +123,10 @@ function PlanTimeline({
     setFilteredPlans(plans.filter(plan => isInViewRange(plan)));
   }, [plans, viewMode, viewDate, subjects]);
 
+  useEffect(() => {
+    console.log(planSeries)
+  }, [planSeries]);
+
   return (
     <div
       className={`hiddenScroll ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ""
@@ -139,6 +143,7 @@ function PlanTimeline({
             enableCircularGrid={false}
             radialAxisStart={{ tickSize: 5, tickPadding: 5, tickRotation: 0 }}
             circularAxisOuter={null}
+            maxValue={100}
             legends={[]}
             valueFormat={val => val + '%'}
           />
