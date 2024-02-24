@@ -102,7 +102,7 @@ function Groups({
       <div
         className={`Main`}
       >
-        <div className={styles.title}>
+        <div className="title">
           Groups
         </div>
         <div className={styles.Groups}>

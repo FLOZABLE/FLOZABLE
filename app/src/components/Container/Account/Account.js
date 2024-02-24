@@ -168,19 +168,17 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
   }, [scrollRef]);
 
   return (
-    <div className={styles.Account}>
+    <div>
       <div
         className={`Main ${isSidebarOpen || isSidebarHovered ? "sidebarOpen" : ""
           }`}
       >
+        <div className="title">
+          Account
+        </div>
+        <div className={styles.Account}>
         <div className={styles.boxContainer}>
-          <div className={styles.backArrow}>
-            <Link to="/dashboard">
-              <BackArrow />
-              <h1>Account</h1>
-            </Link>
-          </div>
-          <div className={styles.boxWrapper}> 
+          <div className={styles.boxWrapper}>
             <div className={styles.box} id={styles.profileImg}>
               <div className={styles.imgSelector}>
                 <div className={styles.circle}>
@@ -326,7 +324,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                   option (Default option for all websites is all enabled)
                 </p>
               </div>
-              <ExtensionSetting   
+              <ExtensionSetting
                 websites={websites}
                 setWebsites={setWebsites}
                 setResponse={setResponse}
@@ -341,66 +339,63 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                   Here you can setup and manage your integration settings
                 </p>
               </div>
-              <div className={styles.content}>
-                <div>
-                  <div className={styles.iconWrapper}>
-                    <div>
-                      <GoogleCalendar />
-                    </div>
-                  </div>
-                  <div className={styles.explanation}>
-                    You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar 
-                    by signing in with your Google account here.
-                  </div>
-                  <div className={styles.authBtn}>
-                    <div>
-                      <GoogleOAuthProvider
-                        clientId={googleClientId}
-                      >
-                        <GoogleLoginBtn />
-                      </GoogleOAuthProvider>
-                    </div>
+              <div>
+
+              <div>
+                <div className={styles.iconWrapper}>
+                  <div>
+                    <GoogleCalendar />
                   </div>
                 </div>
-              </div>
-
-              <div className={styles.content}>
-                <div >
-                  <div className={styles.iconWrapper}>
-                    <div>
-                      <YouTubeIcon />
-                    </div>
-                  </div>
-                  <div className={styles.explanation}>
-                    You haven't connected your YouTube Account yet or you aren't authorized. Please authorize our application to access your YouTube Playlists here.
-                  </div>
-                  <div className={styles.authBtn}>
+                <div className={styles.explanation}>
+                  You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar
+                  by signing in with your Google account here.
+                </div>
+                <div className={styles.authBtn}>
+                  <div>
                     <GoogleOAuthProvider
                       clientId={googleClientId}
                     >
-                      <YouTubeLoginBtn />
+                      <GoogleLoginBtn />
                     </GoogleOAuthProvider>
                   </div>
                 </div>
               </div>
 
-              <div className={styles.content}>
-                <div >
-                  <div className={styles.iconWrapper}>
-                    <div>
-                      <SpotifyLogo />
-                    </div>
-                  </div>
-                  <div className={styles.explanation}>
-                    You haven't connected your Spotify Account yet or you aren't authorized. Please authorize our application to access your Spotify Playlists here.
-                  </div>
-                  <div className={styles.authBtn}>
-                    <SpotifyAuthBtn setResponse={setResponse} userInfo={userInfo} redirectURI={`${appOrigin}/dashboard/account`} />
+              <div >
+                <div className={styles.iconWrapper}>
+                  <div>
+                    <YouTubeIcon />
                   </div>
                 </div>
+                <div className={styles.explanation}>
+                  You haven't connected your YouTube Account yet or you aren't authorized. Please authorize our application to access your YouTube Playlists here.
+                </div>
+                <div className={styles.authBtn}>
+                  <GoogleOAuthProvider
+                    clientId={googleClientId}
+                  >
+                    <YouTubeLoginBtn />
+                  </GoogleOAuthProvider>
+                </div>
+              </div>
+              <div >
+                <div className={styles.iconWrapper}>
+                  <div>
+                    <SpotifyLogo />
+                  </div>
+                </div>
+                <div className={styles.explanation}>
+                  You haven't connected your Spotify Account yet or you aren't authorized. Please authorize our application to access your Spotify Playlists here.
+                </div>
+                <div className={styles.authBtn}>
+                  <SpotifyAuthBtn setResponse={setResponse} userInfo={userInfo} redirectURI={`${appOrigin}/dashboard/account`} />
+                </div>
+              </div>
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

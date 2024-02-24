@@ -183,7 +183,7 @@ function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, me
     const studyingMembers = [];
     const newMembers = JSON.parse(JSON.stringify(members));
     newMembers.map((member, i) => {
-      if (member.activeSubject.id) {
+      if (member.activeSubject && member.activeSubject.id !== '0') {
         newMembers.splice(i, 1);
         studyingMembers.push(member);
       }
