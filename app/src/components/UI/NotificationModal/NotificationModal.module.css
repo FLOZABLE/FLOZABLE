@@ -2,12 +2,20 @@
   z-index: 5;
   position: fixed;
   bottom: 50px;
-  right: 100px;
+  right: 50px;
   background-color: #fff;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   border-radius: 10px;
-  min-width: 50px;
-  min-height: 50px;
+  width: 400px;
+  height: 300px;
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
+}
+
+.NotificationModal.opened {
+  visibility: visible;
+  opacity: 1;
 }
 
 .NotificationModal .toggleBtn {
@@ -25,18 +33,8 @@
 .NotificationModal .notifications {
   display: flex;
   flex-direction: column;
-  visibility: hidden;
-  opacity: 0;
-  transition: .3s ease-in-out opacity, .3s ease-in-out visibility, .3s ease-in-out width, .3s ease-in-out height;
-  width: 0px;
-  height: 0px;
-}
-
-.NotificationModal.open .notifications {
-  visibility: visible;
-  opacity: 1;
-  width: 400px;
-  height: 300px;
+  width: 100%;
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
 }

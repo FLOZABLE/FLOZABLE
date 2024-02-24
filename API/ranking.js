@@ -481,7 +481,7 @@ Router.get('/friends', async (req, res) => {
       let { friends } = userInfo;
       friends = friends === "" ? [] : friends.split(',');
 
-      const today = DateTime.now().setZone(timezone);
+      let today = DateTime.now().setZone(timezone).startOf('day');
       const timezoneOffset = Math.floor(today.offset / 60).toString();
 
       userInfo.dayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset);
@@ -514,7 +514,54 @@ Router.get('/friends', async (req, res) => {
       const week = [...friendsData].sort((a, b) => b.weekTotal - a.weekTotal);
       const month = [...friendsData].sort((a, b) => b.monthTotal - a.monthTotal);
 
-      res.send({ success: true, day, week, month });
+      const minOffset = today.offset % 60;
+      today = today.plus({ minute: minOffset });
+
+      const data = [];
+      const dates = [];
+      const connection = pool.promise();
+
+      for (let i = 1; i < 6; i++) {
+        today = today.minus({day: 1});
+        dates.push(today.toSeconds());
+      };
+
+      const [rankings] = await connection.query(`SELECT date, ranking FROM dailyranking WHERE date IN(?)`, [dates])
+      
+
+      //today study times
+      for (let i = 1; i < 6; i++) {
+        let rankingInfo = rankings.find(ranking => ranking.date === today.toSeconds());
+        
+        data.push({date: today.toFormat('M/d'), friends: {}});
+        today = today.plus({day: 1});
+
+        if (!rankingInfo) {
+          friendsData.map(friend => {
+            data[data.length - 1].friends[friend.user_id] = {t: 0, ...friend}
+          })
+          continue
+        };
+
+        rankingInfo = JSON.parse(rankingInfo.ranking);
+        friendsData.map(friend => {
+          const rankedInfo = rankingInfo.find(ranking => ranking.u === friend.user_id);
+          if (!rankedInfo) {
+            data[data.length - 1].friends[friend.user_id] = {t: 0, ...friend}
+          } else {
+            data[data.length - 1].friends[friend.user_id] = {t: rankedInfo.t, ...friend}
+          }
+        })
+      };
+      
+      //today study times
+      data.push({date: today.toFormat('M/d'), friends: {}});
+
+      friendsData.map(friend => {
+        data[data.length - 1].friends[friend.user_id] = {t: friend.dayTotal, ...friend}
+      })
+
+      res.send({ success: true, day, week, month, dayTrend: data });
     } catch (error) {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });

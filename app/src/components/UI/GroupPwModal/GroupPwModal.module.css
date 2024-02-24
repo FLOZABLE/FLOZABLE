@@ -1,141 +1,55 @@
 .GroupPwModal {
   position: fixed;
-  width: 600px;
+  width: 500px;
   z-index: 3;
   background-color: #fff;
   overflow: hidden;
   overflow-y: auto;
   border-radius: 30px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: var(--shadow3);
   max-height: 60vh;
 }
 
 .GroupPwModal .header {
-  display: flex;
-  width: 100%;
   background-color: var(--pink);
   height: 40px;
+  display: flex;
   align-items: center;
 }
 
 .GroupPwModal .header i {
-  margin-left: auto;
-  font-size: 40px;
+  font-size: 30px;
   color: #fff;
+  margin-left: auto;
   margin-right: 10px;
   cursor: pointer;
 }
 
-.GroupPwModal .content {
-  padding: 30px;
-  color: var(--pink);
-}
-
-.GroupPwModal .content .nameContainer {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-}
-
-.GroupPwModal .content .name {
-  display: inline-block;
-  max-width: 300px;
-}
-
-.GroupPwModal .submitBtnWrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.GroupPwModal .content>div {
-  display: flex;
-  font-weight: 800;
-}
-
-.GroupPwModal .content>div:nth-child(1) {
-  font-size: 50px;
-}
-
-.GroupPwModal .content>div:nth-child(2) {
-  font-size: 25px;
-  margin-bottom: 15px;
-}
-
-.GroupPwModal .formGroup {
-  position: relative;
-  display: flex;
-  width: 100%;
-}
-
-.GroupPwModal .formField {
-  outline: none;
-  border: none;
-  background-color: #f9f9f9;
-  font-size: 20px;
-  padding: 15px;
-}
-
-.GroupPwModal .formField:focus {
-  border: var(--pink) 1px solid;
-}
-
-.GroupPwModal .formGroup>span,
-.GroupPwModal .formGroup .formField {
-  white-space: nowrap;
-  display: block;
-}
-
-.GroupPwModal .formGroup>span:not(:first-child):not(:last-child),
-.GroupPwModal .formGroup .formField:not(:first-child):not(:last-child) {
-  border-radius: 0;
-}
-
-.GroupPwModal .formGroup>span:first-child,
-.GroupPwModal .formGroup .formField:first-child {
-  border-radius: 6px 0 0 6px;
-}
-
-.GroupPwModal .formGroup>span:last-child,
-.GroupPwModal .formGroup .formField:last-child {
-  border-radius: 0 6px 6px 0;
-}
-
-.GroupPwModal .formGroup>span:not(:first-child),
-.GroupPwModal .formGroup .formField:not(:first-child) {
-  margin-left: -1px;
-}
-
-.GroupPwModal .formGroup .formField {
-  position: relative;
-  z-index: 1;
-  flex: 1 1 auto;
-  width: 1%;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.GroupPwModal .formGroup>span {
-  text-align: center;
+.GroupPwModal .description {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 12px 20px;
   font-size: 20px;
-  line-height: 25px;
-  color: var(--pink);
-  background: #EEF4FF;
-  transition: background 0.5s ease, border 0.5s ease, color 0.5s ease;
+  font-weight: 600;
+  margin: 20px 0px;
 }
 
-.GroupPwModal .formGroup:focus-within>span {
-  color: #fff;
-  background: var(--pink);
+.GroupPwModal .description i {
+  font-size: 30px;
+  margin-right: 5px;
 }
 
-.GroupPwModal .joinGroupDescription {
-  width: 50%;
-  position: relative;
-  left: 25%;
-  margin-top: 15px;
+.GroupPwModal .inputWrapper {
+  margin: 0px 20px;
+}
+
+.GroupPwModal .joinBtnWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0px;
+}
+
+.GroupPwModal .groupWrapper {
+  margin: 10px 20px;
 }

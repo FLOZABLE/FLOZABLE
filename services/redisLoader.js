@@ -186,10 +186,17 @@ async function msgQueue(roomId, msgInfo) {
   };
 };
 
+/**
+ * rest: id = 0
+ * offline: null/undefined
+ * @param {string} userId 
+ * @returns 
+ * 
+ */
 async function activeSubjectCache(userId) {
   try {
     let activeSubject = await redisClient.hGet(`user:${userId}`, `ActiveSubject`);
-    activeSubject = activeSubject ? { id: activeSubject.split(':')[0], time: activeSubject.split(':')[1] } : { id: 0, time: 0 };
+    activeSubject = activeSubject ? { id: activeSubject.split(':')[0], time: activeSubject.split(':')[1] } : false;
     return activeSubject;
   } catch (err) {
     console.log(err);

@@ -1,11 +1,36 @@
 .FriendsActivityViewer {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  max-height: 50vh;
-  overflow-y: scroll;
 }
 
+
+.FriendsActivityViewer .friend {
+  display: flex;
+}
+
+.FriendsActivityViewer .friend .profile {
+  display: flex;
+  align-items: center;
+  font-size: 23px;
+}
+
+.FriendsActivityViewer .friend .profileImg {
+  width: 30px;
+  height: 30px;
+  border-radius: 25px;
+  margin: 0px 10px;
+}
+
+.FriendsActivityViewer .friend i {
+  display: flex;
+  align-items: center;
+  margin: 0px 10px;
+  font-size: 23px;
+}
+
+.FriendsActivityViewer .friend .activeInfo > div {
+  margin: 10px 10px;
+}
+/* 
 .FriendsActivityViewer .friend {
   position: relative;
   width: 100%;
@@ -100,4 +125,4 @@
     align-items: center;
     font-size: 13px;
   }
-}
+} */
