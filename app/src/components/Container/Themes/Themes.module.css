@@ -75,3 +75,25 @@
   position: relative;
   width: 300px;
 }
+
+
+@media (max-width: 1400px) {
+  .Themes .Swiper {
+    height: 500px;
+  }
+
+  .Themes .box {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .Themes .Swiper {
+    height: 400px;
+    min-height: 400px;
+  }
+
+  .Themes .box {
+    padding: 10px;
+  }
+}

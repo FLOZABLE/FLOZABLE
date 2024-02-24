@@ -16,22 +16,28 @@ function MyEl({ memberInfo, setStudyingMembers, audioStream, videoStream, isFocu
   useEffect(() => {
     if (!memberInfo) return;
     const { totalTime, activeSubject, user_id } = memberInfo;
-    const {id, time} = activeSubject;
-    if (id) {
-      setRun(true);
-      const liveTotal = parseInt(totalTime) + parseInt(DateTime.now().toSeconds()) - parseInt(time);
-      setTotal(liveTotal);
-      setStudyIcon(
-        <StudyPerson
-        opt1={"#fff"}
-        opt2={"#fff"}
-        width={"40px"}
-        height={"40px"}
-      />
-      )
+
+    if (activeSubject) {
+      const { id, time } = activeSubject;
+      if (id !== '0') {
+        setRun(true);
+        const liveTotal = parseInt(totalTime) + parseInt(DateTime.now().toSeconds()) - parseInt(time);
+        setTotal(liveTotal);
+        setStudyIcon(
+          <StudyPerson
+            opt1={"#fff"}
+            opt2={"#fff"}
+            width={"40px"}
+            height={"40px"}
+          />
+        )
+      } else {
+        setTotal(parseInt(totalTime));
+      };
     } else {
       setTotal(parseInt(totalTime));
     };
+
     const onStudying = () => {
       setRun(true);
       setStudyIcon(

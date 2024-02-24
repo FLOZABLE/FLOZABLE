@@ -20,7 +20,7 @@
   border-radius: 30px;
 }
 
-.User .profileCard > div {
+.User .profileCard>div {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
@@ -29,7 +29,7 @@
 .User .profileCard .profileImg {
   width: 150px;
   height: 150px;
-  border-radius: 50px;
+  border-radius: 100px;
 }
 
 .User .profileCard .name {
@@ -40,20 +40,21 @@
   font-size: 20px;
 }
 
+.User .profileCard .timezone p {
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
+
 .User .profileCard .timezone i {
   font-size: 30px;
   margin: 0px 5px;
-}
-
-.User .profileCard > div:nth-child(1) {
-  font-size: 27px;
 }
 
 .User .boxContainer {
   position: absolute;
   left: 530px;
   top: 80px;
-  width: calc(100%  - 560px);
+  width: calc(100% - 560px);
 }
 
 .User .boxContainer .box {
@@ -83,4 +84,89 @@
 
 .User .box#friendsBox {
   height: min-content;
+}
+
+@media (max-width: 1400px) {
+  .User .profileCard {
+    top: 190px;
+    padding: 15px;
+    width: 300px;
+    left: 170px;
+    border-radius: 20px;
+  }
+
+  .User .profileCard .profileImg {
+    width: 100px;
+    height: 100px;
+  }
+
+  .User .profileCard .name {
+    max-width: calc(100% - 100px);
+    font-size: 18px;
+  }
+
+  .User .profileCard .timezone {
+    font-size: 16px;
+  }
+
+  .User .profileCard .timezone i {
+    font-size: 30px;
+    margin: 0px 5px;
+  }
+
+  .User .boxContainer {
+    left: 400px;
+    top: 55px;
+    width: calc(100% - 450px);
+  }
+  
+  .User .boxContainer .box {
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    height: 400px;
+  }
+  
+}
+
+@media (max-width: 1200px) {
+  .User .profileCard {
+    padding: 10px;
+    width: 200px;
+    left: 160px;
+  }
+
+  .User .profileCard .profileImg {
+    width: 70px;
+    height: 70px;
+  }
+
+  .User .profileCard .name {
+    max-width: calc(100% - 70px);
+    font-size: 16px;
+  }
+
+  .User .profileCard .timezone {
+    font-size: 14px;
+  }
+
+  .User .profileCard .timezone i {
+    font-size: 25px;
+    margin: 0px 5px;
+  }
+
+  .User .boxContainer {
+    left: 280px;
+    top: 55px;
+    width: calc(100% - 320px);
+  }
+  
+  .User .boxContainer .box {
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    height: 400px;
+  }
+  
+
 }

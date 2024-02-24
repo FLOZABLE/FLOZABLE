@@ -53,11 +53,11 @@
   margin-top: 30px;
 }
 
-.Main .smallBoxesWrapper > div:nth-child(1){
+.Main .smallBoxesWrapper>div:nth-child(1) {
   margin-right: 30px;
 }
 
-.Main .smallBoxesWrapper > div:nth-child(2){
+.Main .smallBoxesWrapper>div:nth-child(2) {
   margin-right: 30px;
 }
 
@@ -65,8 +65,13 @@
   font-family: "Roboto", sans-serif;
 }
 
-.Main .box#rankingContainer > div{
+.Main .box#rankingContainer > div {
   width: 100%;
   height: 100%;
   padding: 20px 50px;
+}
+
+.Main .box#recommendedFriends > div {
+  width: 100%;
+  height: 100%;
 }

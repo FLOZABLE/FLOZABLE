@@ -26,7 +26,6 @@ function Stats({ subjects, userInfo }) {
   const [focus, setFocus] = useState("");
   const [ranking, setRanking] = useState(0);
   const [websites, setWebsites] = useState([]);
-  const [viewOption, setViewOption] = useState(0);
   const [websitesUsage, setWebsitesUsage] = useState(0);
   const [websitesVisit, setWebsitesVisit] = useState(0);
   const [rankingsTrend, setRankingsTrend] = useState([]);
@@ -225,8 +224,8 @@ function Stats({ subjects, userInfo }) {
                         labelLine={false}
                         data={subjectsPie}
                         dataKey={"value"}
-                        outerRadius={200}
-                        innerRadius={150}
+                        outerRadius={"100%"}
+                        innerRadius={"75%"}
                         fill="green"
                         label={pieCustomLabel}
                       >

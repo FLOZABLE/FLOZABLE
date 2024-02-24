@@ -3,9 +3,10 @@
 }
 
 .RecommendedFriendsViewer .title {
-  font-size: 22px;
+  font-size: 30px;
   font-weight: 600;
   display: flex;
+  font-family: "Roboto", sans-serif;
 }
 
 .RecommendedFriendsViewer .title p {

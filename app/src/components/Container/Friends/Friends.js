@@ -138,7 +138,9 @@ function Friends({
             <div>
               <div className={styles.box} id={styles.activeFriends}>
                 <div>
-                  <h3>Current Active Friends</h3>
+                  <div className={styles.title}>
+                    <h3>Friends Status</h3>
+                  </div>
                   <FriendsActivityViewer
                     setResponse={setResponse}
                     userInfo={userInfo}
@@ -149,58 +151,6 @@ function Friends({
                     setMyGroups={setMyGroups}
                     setOtherGroups={setOtherGroups}
                   />
-                  <div className={styles.userContainer}>
-                    <Link
-                      className={styles.profile}
-                    >
-                      <div className={styles.profileImg}
-                        style={{
-                          backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
-                          backgroundPosition: 'center center',
-                          backgroundRepeat: 'no-repeat',
-                        }}
-                      >
-                      </div>
-                      <p>name</p>
-                    </Link>
-                    <i>
-                      <FontAwesomeIcon icon={faCaretRight} />
-                    </i>
-                    <div className={styles.activeInfo}>
-                      <div>
-                        Studying <strong>sdfsdf</strong> for 0:00:00
-                      </div>
-                      <div>
-                        since 12:00 am
-                      </div>
-                    </div>
-                  </div>
-                  <div className={styles.userContainer}>
-                    <Link
-                      className={styles.profile}
-                    >
-                      <div className={styles.profileImg}
-                        style={{
-                          backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
-                          backgroundPosition: 'center center',
-                          backgroundRepeat: 'no-repeat',
-                        }}
-                      >
-                      </div>
-                      <p>name</p>
-                    </Link>
-                    <i>
-                      <FontAwesomeIcon icon={faCaretRight} />
-                    </i>
-                    <div className={styles.activeInfo}>
-                      <div>
-                        Studying <strong>sdfsdf</strong> for 0:00:00
-                      </div>
-                      <div>
-                        since 12:00 am
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div className={styles.box} id={styles.friendsStats}>

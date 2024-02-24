@@ -1,9 +1,11 @@
 .SmallSubjectsViewer {
   position: relative;
+  height: 100%;
+  width: 100%;
 }
 
 .SmallSubjectsViewer .chartContainer {
-  height: 400px;
+  height: 100%;
   width: 100%;
 }
 

@@ -54,16 +54,7 @@
   }
 }
 
-/* .Planner .planTimelineWrapper:hover {
-  width: 400px;
-  animation: showScroll 2s .3s forwards;
-} */
-
 @media (max-width: 1400px) {
-  .Planner .title {
-    font-size: 30px;
-  }
-
   .Planner .smallCalendarWrapper {
     width: 250px;
   }
