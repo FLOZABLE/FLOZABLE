@@ -1163,8 +1163,8 @@ const BackArrow = (props) => (
 );
 const ButtonLogout = (props) => (
   <svg
-    width={60}
-    height={60}
+    width={63}
+    height={63}
     viewBox="0 0 81 80"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

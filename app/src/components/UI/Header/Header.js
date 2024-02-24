@@ -32,6 +32,7 @@ function Header({
   isSidebarOpen,
   onToggleSidebar,
   totalNewMsg,
+  EmailInfo,
 }) {
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
@@ -183,10 +184,11 @@ function Header({
           className={styles.headerEl} id={styles.user}>
           <div>
             <p>{userInfo?.name}</p>
+            <p>@{userInfo?.email.split("@")[0]}</p>
           </div>
           <div className={styles.profileImg}
             style={{
-              backgroundImage: `url("${serverOrigin}/profile-images/{}.jpeg")`, backgroundSize: 'cover',
+              backgroundImage: `url("${serverOrigin}/profile-images/${userInfo?.user_id}.jpeg")`, backgroundSize: 'cover',
               backgroundPosition: 'center center',
               backgroundRepeat: 'no-repeat',
             }}
@@ -195,8 +197,10 @@ function Header({
         </Link>
           <div className={styles.headerEl}>
             <Link to="/dashboard/study">
-              <i className={styles.LogoutButton}>
-              <ButtonLogout />
+              <i>
+                <div className={styles.LogoutButton}>
+                  <ButtonLogout />
+                </div>
             </i>
           </Link>
         </div>

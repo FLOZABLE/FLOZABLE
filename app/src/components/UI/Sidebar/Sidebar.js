@@ -14,7 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
-import { IconBxHome, IconClipboardOutline, IconGalleryLine, IconMonitor, IconPeople16, IconStatsChart, IconUserAdd, Knife } from "../../../utils/svgs";
+import { ButtonLogout, IconBxHome, IconClipboardOutline, IconGalleryLine, IconMonitor, IconPeople16, IconStatsChart, IconUserAdd, Knife } from "../../../utils/svgs";
 
 function Sidebar({
   onMouseEnter,
@@ -26,7 +26,9 @@ function Sidebar({
   return (
     <aside className={styles.Sidebar}>
       <div className={styles.logo}>
-        <img src="/logo.png" alt="" />
+        <a href="https://flozable.com">
+          <img src="/logo.png" alt="" />
+        </a>
       </div>
       <div className={styles.sidebarContainer}>
         <Link
@@ -34,7 +36,7 @@ function Sidebar({
           to={"/dashboard"}
         >
           <i>
-            <IconBxHome /> 
+            <IconBxHome />    
           </i>
           <h1>Home</h1>
         </Link>
