@@ -1,8 +1,7 @@
 .SubjectsManager {
-    position: relative;
-    background-color: transparent;
-    left: 0;
-    right: 0;
-    margin-left: 2%;
+  position: relative;
+  background-color: transparent;
+  margin-left: 2%;
+  max-height: 50vh;
+  overflow-y: auto;
 }
-

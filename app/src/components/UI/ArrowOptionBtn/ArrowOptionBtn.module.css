@@ -13,7 +13,7 @@
 
 .ArrowOptionBtn .options p {
   margin: 0px 50px;
-  color: #102770;
+  color: #000;
   cursor: pointer;
   font-weight: 900;
   font-size: 25px;
@@ -22,8 +22,8 @@
 .ArrowOptionBtn .slider {
   position: relative;
   height: 20px;
-  width: 100px;
-  background-color: #ffeba7;
+  width: 70px;
+  background-color: #fff;
   border-radius: 10px;
   margin: 10px;
   cursor: pointer;
@@ -37,13 +37,13 @@
   justify-content: center;
   align-content: center;
   border-radius: 20px;
-  background-color: #102770;
+  background-color: #000;
   font-size: 30px;
   right: calc(100% - 20px);
   top: 50%;
   transition: right .3s ease-in-out, transform .5s ease-in-out;
   transform: translateY(-50%) rotate(-40deg);
-  color: #ffeba7;
+  color: #fff;
 }
 
 .ArrowOptionBtn .slider .arrow.clicked {

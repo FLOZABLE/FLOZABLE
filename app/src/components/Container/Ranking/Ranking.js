@@ -151,7 +151,7 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     <div>
       <CalendarModal isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} updateViewDate={updateViewDate} viewDate={viewDate} showHeatmap={false} subjects={[]} />
       <div className={`Main ${isSidebarOpen || isSidebarHovered ? 'sidebarOpen' : ''}`}>
-        <div className={styles.title}>
+        <div className="title">
           Ranking
         </div>
         <div className={styles.Ranking}>

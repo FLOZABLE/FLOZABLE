@@ -104,7 +104,7 @@ function Themes({
         setResponse={setResponse}
       />
       <div className={`Main`}>
-        <div className={styles.title}>
+        <div className="title">
           Themes
         </div>
         <div className={styles.Themes}>

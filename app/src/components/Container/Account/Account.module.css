@@ -12,25 +12,10 @@
   width: 100%;
   padding: 20px;
   border-radius: 20px;
-  border: 1px solid rgb(99, 99, 99);
-  background-color:#F8F9FA;
+  box-shadow: var(--shadow9);
+  background-color:#fff;
   margin: 20px;
   position: relative;
-}
-
-.Account .backArrow {
-  position: absolute;
-  margin-left: -110px;
-  margin-top: -70px;
-}
-
-
-.Account .backArrow h1 {
-  margin-top: -54px;
-  margin-left: 70px;
-}
-.Account .title {
-  margin: 10px 10px 20px 10px;
 }
 
 .Account .box#extension .title {
@@ -61,13 +46,18 @@
   justify-content: left;
 } 
 
-.Account .explanation {
-  max-width: 70%;
-  float: bottom ;
-  margin: -10px;
-  margin-top: -84px;
-  margin-left: 10%;
-  padding: 20px;
+.Account .box#accounts > div:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+}
+
+.Account .box#accounts > div:nth-child(2) > div {
+  display: flex;
+  margin-bottom: 30px;
+}
+
+.Account .box#accounts .iconWrapper {
+  margin-right: 10px;
 }
 
 .Account .box#profile .emailWrapper .ProfileConfirm {
@@ -94,7 +84,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: none;
+  box-shadow: none;
   background-color: transparent;
 }
 
@@ -159,23 +149,30 @@
   margin-top: 40px;
 }
 
-.Account .content .iconWrapper>div {
-  padding: 20px;
-  margin-top: 20px;
-  margin-left: -90%;
-  float: bottom;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+@media (max-width: 1400px) {
+  .Account .boxContainer {
+    width: 90%;
+    margin-left: 5%;
+  }
+
+  .Account .box {
+    padding: 15px;
+    margin: 15px;
+  }
 }
 
-.Account .authBtn { 
-  margin-left: 81%;
-  margin-top: -93px;
-  padding: 20px;
-}
+@media (max-width: 1200px) {
+  .Account {
+    padding: 30px;
+  }
 
-.boxWrapper .box#accounts .content>div {
-  left: 0;
-  right: 0;
+  .Account .boxContainer {
+    width: 100%;
+    margin: 0px;
+  }
+
+  .Account .box {
+    padding: 10px;
+    margin: 15px;
+  }
 }

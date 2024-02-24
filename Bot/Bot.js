@@ -546,7 +546,7 @@ const MAX_START_DELAY = 60; //1 hr = starts atleast 1hr from being assigned */
 
 const BOT_MIN_STUDY = 60 * 10; //10 min = min time bot will study
 const BOT_MAX_STUDY = 60 * 60 * 2; //2 hr = max time bot will study
-const MAX_START_DELAY = 60 * 60 * 1; //1 hr = starts atleast 1hr from being assigned
+const MAX_START_DELAY = 60 * 60 * 2; //1 hr = starts atleast 1hr from being assigned
 
 async function botSelector(numbers) {
   const connection = pool.promise();
@@ -586,7 +586,7 @@ async function botManager(numbers) {
     await stopBot(botId);
   }));
   botSelector(numbers);
-  schedule.scheduleJob('0 */3 * * *', async () => {
+  schedule.scheduleJob('0 */5 * * *', async () => {
     console.log('run bot')
     botSelector(numbers);
   });
@@ -640,13 +640,26 @@ async function deleteBots() {
   });
 };
 
-async function createGroups(startIndex, length) {
+async function createGroups(length) {
   const connection = pool.promise();
   const [bots] = await connection.query(`SELECT user_id, groups FROM users WHERE type = -1`);
-  console.log("Starting Groups Generation");
-  for (let i = startIndex; i < length; i++) {
+  const [groups] = await connection.query(`SELECT group_id FROM groups`);
+
+  console.log("Starting Groups Generation", groups);
+  const groupIds = [];
+
+  for (let i = 0; i < length; i++) {
     const groupId = generateRandomId(8);
-    const groupData = groupsData[i];
+    const index = randomIntInRange(0, groupsData.length - 1);
+    const groupData = groupsData[index];
+
+    if (groups.find(group => group.group_id === groupData.group_id)) {
+      console.log('Duplicated');
+      continue;
+    };
+
+    groups.push({group_id: groupId})
+
     const hashed = hashing('0');
     const max_members = randomIntInRange(10, 50);
     const membersLength = randomIntInRange(10, max_members);
@@ -759,7 +772,8 @@ async function randomFriend(min, max) {
         user_id,
       ]);
     }
-  }
+  };
+  console.log("BOTS FRIENDS ADDED!")
   /*   bots.map(async (bot) => {
       const {user_id} = bot;
       const nFriends = randomIntInRange(min, max);
@@ -908,7 +922,9 @@ async function createBotRankings() {
     let key = entries[en][0];
     botMonthlyRanking[key] = botMonthlyRanking[key].sort((a,b) => b.t - a.t);
     await connection.query(`INSERT INTO monthlyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botMonthlyRanking[key])]);
-  }  
+  }
+
+  console.log("BOTS RANKING GENERATED");
 }
 
 module.exports = {

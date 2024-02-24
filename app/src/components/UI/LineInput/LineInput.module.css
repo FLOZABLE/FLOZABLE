@@ -9,11 +9,10 @@
   position: absolute;
   padding: 0px 14px;
   margin-top: 10px;
-  border: 1px solid #b9b9b9;
-  border-radius: 15px;
   height: 90%;
   width: 100%;
   background-color: transparent;
+  border: none;
   text-align: left;
   font-weight: 400;
   font-size: 110%;

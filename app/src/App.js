@@ -31,8 +31,9 @@ import Themes from "./components/Container/Themes/Themes";
 import ChallengeRooms from "./components/Container/ChallengeRooms/ChallengeRooms";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import AccountModal from "./components/UI/AccountModal/AccountModal";
-import worker from "./serviceWorker";
+import ReactGA from 'react-ga';
 
+ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function App() {
@@ -74,6 +75,10 @@ function App() {
     type: 'local',
     editable: true
   });
+
+  useEffect(() => {
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState);

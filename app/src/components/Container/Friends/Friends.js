@@ -117,7 +117,7 @@ function Friends({
       <div
         className={`Main`}
       >
-        <div className={styles.title} id={styles.friend}>
+        <div className="title" id={styles.friend}>
           Friends
         </div>
         <div className={styles.Friends}>
@@ -151,58 +151,6 @@ function Friends({
                     setMyGroups={setMyGroups}
                     setOtherGroups={setOtherGroups}
                   />
-                  <div className={styles.userContainer}>
-                    <Link
-                      className={styles.profile}
-                    >
-                      <div className={styles.profileImg}
-                        style={{
-                          backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
-                          backgroundPosition: 'center center',
-                          backgroundRepeat: 'no-repeat',
-                        }}
-                      >
-                      </div>
-                      <p>name</p>
-                    </Link>
-                    <i>
-                      <FontAwesomeIcon icon={faCaretRight} />
-                    </i>
-                    <div className={styles.activeInfo}>
-                      <div>
-                        Studying <strong>sdfsdf</strong> for 0:00:00
-                      </div>
-                      <div>
-                        since 12:00 am
-                      </div>
-                    </div>
-                  </div>
-                  <div className={styles.userContainer}>
-                    <Link
-                      className={styles.profile}
-                    >
-                      <div className={styles.profileImg}
-                        style={{
-                          backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
-                          backgroundPosition: 'center center',
-                          backgroundRepeat: 'no-repeat',
-                        }}
-                      >
-                      </div>
-                      <p>name</p>
-                    </Link>
-                    <i>
-                      <FontAwesomeIcon icon={faCaretRight} />
-                    </i>
-                    <div className={styles.activeInfo}>
-                      <div>
-                        Studying <strong>sdfsdf</strong> for 0:00:00
-                      </div>
-                      <div>
-                        since 12:00 am
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div className={styles.box} id={styles.friendsStats}>

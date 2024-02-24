@@ -11,16 +11,7 @@
   font-size: 30px;
 }
 
-.TagContainerGen .tagTab {
-  display: flex;
-  align-items: center;
-  justify-self: center;
-}
-
 .TagContainerGen .removeAllBtn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-color: rgb(0, 157, 255);
   font-weight: 800;
   height: 40px;
@@ -31,18 +22,14 @@
   position: absolute;
   bottom: -60px;
   right: 0px;
-  margin-bottom: 74px;
-  margin-right: -140px;
+  cursor: pointer;
 }
 
+
 .TagContainerGen .content {
-  display: flex;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
+  margin: 10px 0;
   height: 100%;
   position: relative;
-  margin-right: 150px;
 }
 
 .TagContainerGen .content .placeHolder {
@@ -58,27 +45,6 @@
   opacity: 0;
   visibility: hidden;
   transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
-}
-
-  .TagContainerGen .content .placeHolder {
-    position: absolute;
-    top: 0px;
-    left: 20px;
-    height: 100%;
-    border-radius: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-    transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
-  }
-
-.TagContainerGen .content .tagTab .placeHolder p {
-  text-align: center;
-  margin-right: 10px;
-  font-size: 87%;
 }
 
 .TagContainerGen .content .placeHolder.visible {
@@ -138,7 +104,6 @@
   position: absolute;
   opacity: 0;
   visibility: hidden;
-  margin-top: 10px;
   top: 100%;
   transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
 }

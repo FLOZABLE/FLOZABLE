@@ -201,12 +201,12 @@ require('./Logger');
 require('./services/timerUpdate');
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
-//createGroups(1, 10);
-//botManager(120);
+//createGroups(5);
+//botManager(100);
 //deleteBots();
 //addId();
-//createBots(10); //changed to amount only
-//createBotRankings();
+//createBots(200); 
+createBotRankings();
 
 const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode } = require('./query');
 const { updateRanking } = require("./services/rankingUpdate");

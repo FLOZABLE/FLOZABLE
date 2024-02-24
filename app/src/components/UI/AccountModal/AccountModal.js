@@ -64,9 +64,8 @@ function AccountModal({ isOpened, setIsOpened, setResponse }) {
                     }
                   })
               }}
-              color1={"#fff"}
-              color2={"var(--pink)"}
-              delay={-1}
+              color1={"#66c8ff"}
+              color2={"#fff"}
             />
           </div>
         </div>
@@ -112,9 +111,8 @@ function AccountModal({ isOpened, setIsOpened, setResponse }) {
                   })
                   .catch((error) => console.error(error));
               }}
-              color1={"#fff"}
-              color2={"var(--pink)"}
-              delay={-1}
+              color1={"#66c8ff"}
+              color2={"#fff"}
             />
           </div>
         </div>
