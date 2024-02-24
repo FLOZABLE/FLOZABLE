@@ -240,13 +240,13 @@ Router.get('/recommended', async (req, res) => {
       const { friends } = userInfo;
       const userIds = await redisClient.sMembers(`allMembers`);
       const users = [];
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 100; i++) {
         if (users.length >= 3) {
           break;
         };
         const index = randomIntInRange(0, userIds.length - 1);
         const userId = userIds[index];
-        if (!friends.includes(userId) && userId !== userId && !users.includes(userId)) {
+        if (!friends.includes(userId) && userId !== userInfo.userId && !users.find(user => user.user_id === userId)) {
           const recommendedUserInfo = await userCache(userId);
           if (recommendedUserInfo) {
             users.push(recommendedUserInfo);

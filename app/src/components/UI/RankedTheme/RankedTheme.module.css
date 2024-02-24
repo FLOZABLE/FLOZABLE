@@ -55,123 +55,24 @@
   margin: 0px 5px;
 }
 
-/* 
-.RankedTheme .img {
-  width: 100%;
-  height: 50%;
-  border-top-right-radius: 20px;
-  border-top-left-radius: 20px;
-  cursor: pointer;
-}
-
-
-.RankedTheme .name {
-  position: absolute;
-  top: 5px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: aliceblue;
-  color: var(--purple);
-  border-radius: 20px;
-  height: fit-content;
-  padding: 0px 10px;
-  font-size: 25px;
-  width: max-content;
-  max-width: 80%;
-  word-break: break-all;
-}
-
-.RankedTheme .description {
-  margin-top: 15px;
-  position: relative;
-  height: 100%;
-}
-
-.RankedTheme .description .content {
-  margin: 15px;
-  word-break: break-all;
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: calc(50% - 120px);
-}
-
-.RankedTheme .tags {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: fit-content;
-  position: absolute;
-  bottom: 50px;
-  text-wrap: nowrap;
-  flex-wrap: wrap;
-  width: 100%;
-  overflow-y: auto;
-  max-height: 50px;
-}
-
-.RankedTheme .tags .tag {
-  background-color: var(--purple);
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
-  height: 20px;
-  padding: 0px 10px;
-  margin: 2px 5px;
-}
-
-.RankedTheme .info {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: -30px;
-  left: 20px;
-  height: 30px;
-  padding: 0px 10px;
-  border-radius: 20px;
-  background-color: var(--purple);
-  color: #fff;
-}
-
-.RankedTheme .info li {
-  display: flex;
-  margin: 0px 5px;
-}
-
-.RankedTheme .info li i {
-  margin-right: 5px;
-}
-
-.RankedTheme .info li p {
-  color: #fff;
-}
-
-.RankedTheme .bottom {
-  position: absolute;
-  bottom: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.RankedTheme .bottom > div {
-  margin: 0px 5px;
-}
-
-.RankedTheme .bottom button {
-  background-color: #fd8a8a;
-  font-weight: 800;
-  color: #fff;
-  padding: 0px 20px;
-  border-radius: 20px;
-  font-size: 16px;
-}
-
 @media (max-width: 1400px) {
-  .RankedTheme .name {
-    font-size: 17px;
+  .RankedTheme .contents {
+    bottom: 30px;
+    padding: 20px;
   }
-} */
+}
+
+@media (max-width: 1200px) {
+  .RankedTheme .contents {
+    bottom: 10px;
+    padding: 10px;
+  }
+
+  .RankedTheme .description {
+    font-size: 13px;
+  }
+
+  .RankedTheme .buttons > div {
+    margin: 0px 2px;
+  }
+}

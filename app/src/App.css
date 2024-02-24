@@ -199,38 +199,6 @@ button:hover {
 }
 
 @media (max-width: 1400px) {
-  .Main {
-    position: relative;
-    margin: 150px 0px 0px 220px;
-    transition: all .2s ease-in-out;
-    width: calc(100vw - 250px);
-    border-radius: 20px;
-  }
-  
-  /* .Main.sidebarOpen {
-    margin-left: 200px;
-    width: calc(100vw - 220px);
-  } */
-  
-  .modal.open {
-    top: 150px;
-  }
-}
-
-@media (max-height: 800px) {
-  .Main {
-    position: relative;
-    margin: 150px 0px 0px 220px;
-    transition: all .2s ease-in-out;
-    width: calc(100vw - 250px);
-    border-radius: 20px;
-  }
-  
-  /* .Main.sidebarOpen {
-    margin-left: 200px;
-    width: calc(100vw - 220px);
-  } */
-  
   .modal.open {
     top: 150px;
   }

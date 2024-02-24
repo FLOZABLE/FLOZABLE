@@ -32,8 +32,8 @@ function SmallSubjectsViewer({ subjects }) {
                 }, []
                 )}
                 dataKey={"value"}
-                outerRadius={200}
-                innerRadius={150}
+                outerRadius={'100%'}
+                innerRadius={'75%'}
                 fill="green"
                 label={pieCustomLabel}
               >

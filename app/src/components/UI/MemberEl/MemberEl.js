@@ -21,7 +21,6 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
 
     if (activeSubject) {
       const { id, time } = activeSubject;
-
       if (id !== '0') {
         setRun(true);
         const liveTotal = parseInt(totalTime) + parseInt(DateTime.now().toSeconds()) - parseInt(time);
@@ -37,7 +36,9 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
       } else {
         setTotal(parseInt(totalTime));
       };
-    }
+    } else {
+      setTotal(parseInt(totalTime));
+    };
 
 
     const onStudying = () => {

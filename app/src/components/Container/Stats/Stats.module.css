@@ -22,6 +22,7 @@
   border-radius: 30px;
   height: 600px;
 }
+
 .Stats .bigBox .contents {
   display: flex;
   flex-direction: row;
@@ -81,4 +82,30 @@
 
 .Stats .bigBox#othersUsage .chartWrapper {
   width: 50%;
+}
+
+@media (max-width: 1400px) {
+  .Stats .bigBox {
+    padding: 10px 30px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .Stats .bigBox {
+    padding: 10px 15px;
+  }
+  .Stats .bigBox:nth-child(1) {
+    height: 1000px;
+  }
+  .Stats .bigBox:nth-child(1) .contents {
+    flex-direction: column;
+  }
+
+  .Stats .bigBox:nth-child(1) .contents .chartWrapper {
+    height: 500px;
+  }
+
+  .Stats .bigBox:nth-child(1) .contents > div:nth-child(2) {
+    height: 500px;
+  }
 }

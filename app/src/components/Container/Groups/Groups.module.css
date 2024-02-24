@@ -1,9 +1,9 @@
 .Groups {
-  padding: 30px;
+  padding: 50px;
 }
 
 .Groups .box {
-  margin: 30px 50px;
+  margin: 30px 0px;
   background-color: #fff;
   box-shadow: var(--shadow9);
   border-radius: 40px;
@@ -46,4 +46,14 @@
 
 .Groups .tagContainerWrapper {
   width: 300px;
+}
+
+@media (max-width: 1400px) {
+  .Groups .tagContainerWrapper {
+    width: 220px;
+  }
+}
+
+@media (max-width: 1200px) {
+
 }
