@@ -163,11 +163,11 @@ function Themes({
             <div className={styles.searchOptions}>
               <div>
                 <div id={styles.tagWrapper}>
-                <TagContainerGen
-                maxTags={10}
-                setTags={setTags}
-                handleCreatedTagsChange={handleCreatedTagsChange}
-              />
+                  <TagContainerGen
+                    maxTags={10}
+                    setTags={setTags}
+                    handleCreatedTagsChange={handleCreatedTagsChange}
+                  />
                 </div>
               </div>
               <div>
@@ -179,7 +179,7 @@ function Themes({
                 </div>
               </div>
               <div className={styles.blobWrapper}>
-                              <DropDownButton
+                <DropDownButton
                   options={{
                     "0": "Sort By: Likes",
                     "1": "Sort By: Usage"

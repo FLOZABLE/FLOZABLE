@@ -178,7 +178,9 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
                 <i>
                   <CountryViewer timezone={userInfo.timezone} />
                 </i>
+                <p>
                 {userInfo.timezone}
+                </p>
               </> : 'UTC'}
             </div>
           </div>

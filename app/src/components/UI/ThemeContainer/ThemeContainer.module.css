@@ -58,3 +58,28 @@
 .ThemeContainer .buttons>div {
   margin: 0px 5px;
 }
+
+@media (max-width: 1400px) {
+  .ThemeContainer {
+    height: 400px;
+  }
+
+  .ThemeContainer .contents {
+    padding: 0px 20px;
+  }
+  
+}
+
+@media (max-width: 1200px) {
+  .ThemeContainer .contents {
+    padding: 0px 5px;
+  }
+
+  .ThemeContainer .description {
+    font-size: 13px;
+  }
+
+  .ThemeContainer .buttons > div {
+    margin: 0px 2px;
+  }
+}

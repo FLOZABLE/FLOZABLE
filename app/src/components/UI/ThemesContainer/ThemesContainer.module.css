@@ -9,16 +9,13 @@
 
 @media (max-width: 1400px) {
   .ThemesContainer {
-    grid-template-columns: repeat(auto-fill, 200px);
+    grid-template-columns: repeat(auto-fill, 260px);
   }
 }
 
-@media (max-height: 700px) {
-  .CreateThemeModal {
-    height: 300px;
-  }
-
-  .CreateThemeModal .content {
-    max-height: 270px;
+@media (max-width: 1200px) {
+  .ThemesContainer {
+    grid-template-columns: repeat(auto-fill, 230px);
+    gap: 10px;
   }
 }

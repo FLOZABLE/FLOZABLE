@@ -132,7 +132,7 @@ function Main({
                   </div>
                   </div>
                 </div>
-                <div className={styles.box}>
+                <div className={styles.box} id={styles.recommendedFriends}>
                   <RecommendedFriendsViewer 
                   setResponse={setResponse}
                   />
