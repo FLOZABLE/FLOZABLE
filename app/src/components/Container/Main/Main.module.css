@@ -1,5 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
-
 .Main {
   padding: 0px 50px;
 }
@@ -74,4 +72,47 @@
 .Main .box#recommendedFriends > div {
   width: 100%;
   height: 100%;
+}
+
+@media (max-width: 1700px) {
+  .Main .boxesContainer:nth-child(1) {
+    width: 80%;
+  }
+  
+  .Main .boxesContainer:nth-child(2) {
+    width: 20%;
+  }
+  
+}
+
+@media (max-width: 1400px) {
+  .Main {
+    padding: 0px 20px;
+  }
+
+  .Main .smallBoxesWrapper>div:nth-child(1) {
+    margin-right: 15px;
+  }
+  
+  .Main .smallBoxesWrapper>div:nth-child(2) {
+    margin-right: 15px;
+  }
+
+  .Main .smallBoxesWrapper {
+    margin-top: 15px;
+  }
+  
+  .Main .boxesContainer:nth-child(1) {
+    padding-right: 15px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .Main .boxesContainer:nth-child(2) .box {
+    height: 50%;
+  }
+
+  .Main .smallBoxesWrapper {
+    width: 127.5%;
+  }
 }

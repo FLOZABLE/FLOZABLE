@@ -53,35 +53,9 @@
   margin-left: 0%;
 }
 
-.FriendRequestsViewer .friendRequests {
-  visibility:hidden;
-  opacity: 0;
-  height: 0px;
-  transition: .3s visibility ease-in-out, .3s opacity ease-in-out;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.FriendRequestsViewer .friendRequests .friendRequest:nth-last-child(1) {
-  overflow: hidden;
-  padding-bottom: 30px;
-}
-
-.FriendRequestsViewer .friendRequests.open {
-  visibility: visible;
-  opacity: 1;
-  height: unset;
-}
- 
-.FriendRequestsViewer .friendRequests .friendRequest {
-  display: flex;
-  padding: 10px;
-  align-items: center;
-  position: relative;
-}
-
-.FriendRequestsViewer .friendRequests .friendRequest .name {
+.FriendRequestsViewer .name {
   max-width: 100px;
+  font-size: 17px;
 }
 
 .FriendRequestsViewer .friendRequest .profileImg {
@@ -91,11 +65,17 @@
   margin-right: 10px;
 }
 
+.FriendRequestsViewer .friendRequest {
+  position: relative;
+}
+
 .FriendRequestsViewer .friendRequest .buttons {
   display: flex;
   justify-content: center;
   align-items: center;
   position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   right: 10px;
 }
 
