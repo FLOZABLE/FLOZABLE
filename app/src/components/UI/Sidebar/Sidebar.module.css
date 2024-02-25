@@ -54,7 +54,7 @@
 
 .Sidebar .sidebarContainer .sidebarEl i {
   color: var(--blue1);
-  font-size: 30px;
+  font-size: 1.875rem;
   display: flex;
   justify-content: center;
 }

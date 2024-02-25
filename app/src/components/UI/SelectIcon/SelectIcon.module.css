@@ -1,10 +1,9 @@
 .selectIcon .header {
   display: flex;
-  margin-top: ;
 }
 
 .selectIcon .header p {
-  font-size: 23px;
+  font-size: 1.438rem;
   font-weight: 700;
   color: #545454;
 }
@@ -64,6 +63,6 @@
 
 @media (max-width: 1400px) {
   .selectIcon .header p {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
 }

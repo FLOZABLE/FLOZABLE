@@ -15,7 +15,7 @@
 }
 
 .MyGroupContainer .name {
-  font-size: 30px;
+  font-size: 1.875rem;
   margin-right: 10px;
   max-width: 50%;
 }
@@ -25,7 +25,6 @@
 }
 
 .MyGroupContainer .info i {
-  font-size: 40px;
   height: 40px;
 }
 

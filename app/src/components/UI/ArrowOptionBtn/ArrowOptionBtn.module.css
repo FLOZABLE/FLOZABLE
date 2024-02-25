@@ -16,7 +16,7 @@
   color: #000;
   cursor: pointer;
   font-weight: 900;
-  font-size: 25px;
+  font-size: 1.563rem;
 }
 
 .ArrowOptionBtn .slider {
@@ -38,7 +38,7 @@
   align-content: center;
   border-radius: 20px;
   background-color: #000;
-  font-size: 30px;
+  font-size: 1.875rem;
   right: calc(100% - 20px);
   top: 50%;
   transition: right .3s ease-in-out, transform .5s ease-in-out;

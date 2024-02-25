@@ -24,7 +24,7 @@
   left: 45px;
   width: calc(113% - 50px);
   display: flex;
-  font-size: 20px;
+  font-size:  1.25rem;
 }
 
 .TimelineContainer .rowHeader div {
@@ -42,7 +42,7 @@
   position: absolute;
   top: 40px;
   height: calc(100% - 50px);
-  font-size: 20px;
+  font-size:  1.25rem;
   text-align: right;
 }
 
