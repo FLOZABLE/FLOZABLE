@@ -26,8 +26,8 @@ const mediaCodecs = [
 
 async function createWorker() {
   const worker = await mediaSoup.createWorker({
-    rtcMinPort: 2000,
-    rtcMaxPort: 2100,
+    rtcMinPort: 50000,
+    rtcMaxPort: 55000,
     logLevel: 'warn',
     logTags: [
       'info',
