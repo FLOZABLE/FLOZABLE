@@ -1139,7 +1139,7 @@ function IconEmailOutline(props) {
 const BackArrow = (props) => (
   <svg
   viewBox="0 0 24 24"
-  width="60px"
+  width=" 3.75rem"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   {...props}

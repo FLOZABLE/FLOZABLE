@@ -2,32 +2,32 @@
   display: flex;
   flex-direction: column;
   background-color: beige;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   position: relative;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0em 8px 24px;
 }
 
 .ThemeContainer .name {
   position: absolute;
-  top: 5px;
+  top: 0.313rem;
   left: 50%;
   transform: translateX(-50%);
   background-color: aliceblue;
   color: var(--purple);
-  border-radius: 20px;
-  height: 25px;
-  padding: 0px 10px;
+  border-radius: 1.25rem;
+  height: 1.563rem;
+  padding: 0em 0.625rem;
 }
 
 .ThemeContainer .img {
-  height: 200px;
+  height: 12.5rem;
   width: 100%;
-  border-radius: 20px;
+  border-radius: 1.25rem;
 }
 
 .ThemeContainer .description {
   position: relative;
-  height: 100px;
+  height: 6.25rem;
 }
 
 .ThemeContainer .description .content {
@@ -38,8 +38,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 30px;
-  margin-bottom: 50px;
+  height: 1.875rem;
+  margin-bottom: 3.125rem;
 }
 
 .ThemeContainer .tags .tag {
@@ -48,10 +48,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 20px;
-  height: 20px;
-  padding: 0px 10px;
-  margin: 0px 5px;
+  border-radius: 1.25rem;
+  height: 1.25rem;
+  padding: 0em 0.625rem;
+  margin: 0em 0.313rem;
 }
 
 .ThemeContainer .info {
@@ -60,21 +60,21 @@
   align-items: center;
   position: absolute;
   top: -15px;
-  left: 20px;
-  height: 30px;
-  padding: 0px 10px;
-  border-radius: 20px;
+  left: 1.25rem;
+  height: 1.875rem;
+  padding: 0em 0.625rem;
+  border-radius: 1.25rem;
   background-color: var(--purple);
   color: #fff;
 }
 
 .ThemeContainer .info li {
   display: flex;
-  margin: 0px 5px;
+  margin: 0em 0.313rem;
 }
 
 .ThemeContainer .info li i {
-  margin-right: 5px;
+  margin-right: 0.313rem;
 }
 
 .ThemeContainer .info li p {
@@ -83,7 +83,7 @@
 
 .ThemeContainer .bottom {
   position: absolute;
-  bottom: 10px;
+  bottom: 0.625rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -91,14 +91,14 @@
 }
 
 .ThemeContainer .bottom>div {
-  margin: 0px 10px;
+  margin: 0em 0.625rem;
 }
 
 .ThemeContainer .bottom button {
   background-color: #fd8a8a;
   font-weight: 800;
   color: #fff;
-  padding: 0px 20px;
-  border-radius: 20px;
+  padding: 0em 1.25rem;
+  border-radius: 1.25rem;
   font-size: 1rem;
 }

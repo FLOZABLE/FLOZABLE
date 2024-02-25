@@ -1,8 +1,8 @@
 .ChallengesContainer {
   position: relative;
-  grid-template-columns: repeat(auto-fill, 200px);
+  grid-template-columns: repeat(auto-fill, 12.5rem);
   justify-content: center;
-  gap: 80px;
+  gap: 5rem;
   width: 100%;
   display: grid;
 }

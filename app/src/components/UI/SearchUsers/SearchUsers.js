@@ -74,14 +74,14 @@ function SearchUsers({ searchQuery, setResponse, setCount, search, setSearch }) 
                 <DmBtn
                   userInfo={user}
                   setResponse={setResponse}
-                  padding={'5px 10px'}
+                  padding={'5px 0.625rem'}
                 />
               </div>
               <div>
                 <FriendRequestBtn
                   userInfo={user}
                   setResponse={setResponse}
-                  padding={'5px 10px'}
+                  padding={'5px 0.625rem'}
                 />
               </div>
             </div>

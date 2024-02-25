@@ -4,7 +4,7 @@
 
 .ChallengeRooms .box {
   background-color: aliceblue;
-  border-radius: 30px;
+  border-radius: 1.875rem;
   padding: 1.25rem;
   margin: 1.25rem;
 }
@@ -17,7 +17,7 @@
 
 .ChallengeRooms .recommendedChallenges {
   background-color: rgb(255, 124, 124);
-  border-radius: 30px;
+  border-radius: 1.875rem;
   padding: 1.25rem;
   margin: 1.25rem;
   width: 60%;

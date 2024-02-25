@@ -1,6 +1,6 @@
 .SendBtn {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,21 +13,21 @@
   }
 
   40% {
-    transform: translate(50px, 50px);
+    transform: translate(50px, 3.125rem);
   }
 
   60% {
-    transform: translate(-50px, 50px);
+    transform: translate(-50px, 3.125rem);
   }
 
 
   /* 98% {
     opacity: 0;
-    transform: translate(0px, 0px);
+    transform: translate(0px, 0em);
   }
   99% {
     opacity: 1;
-    transform: translate(0px, 0px);
+    transform: translate(0px, 0em);
   } */
 }
 

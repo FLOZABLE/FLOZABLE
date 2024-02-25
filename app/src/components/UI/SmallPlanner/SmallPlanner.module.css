@@ -1,7 +1,7 @@
 .SmallPlanner {
   background-color: #414856;
   width: 400px;
-  border-radius: 20px;
+  border-radius: 1.25rem;
 }
 
 .SmallPlanner .header {
@@ -12,19 +12,19 @@
 .SmallPlanner .header i {
   color: #fff;
   font-size: 2.5rem;
-  margin-right: 5px;
+  margin-right: 0.313rem;
 }
 
 .SmallPlanner .plans {
   display: flex;
   flex-direction: column;
-  max-height: 300px;
+  max-height: 18.75rem;
   overflow-y: scroll;
-  margin: 0px;
+  margin: 0em;
 }
 
 .SmallPlanner .planCount {
-  height: 50px;
+  height: 3.125rem;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -46,7 +46,7 @@
   color: #36da36;
   font-size: 3.75rem;
   font-weight: 900;
-  text-shadow: #e3461b 4px 10px;
+  text-shadow: #e3461b 4px 0.625rem;
 }
 
 .SmallPlanner .planCount>div strong {
@@ -74,8 +74,8 @@
 
 .SmallPlanner .plan {
   display: flex;
-  width: calc(100% - 60px);
-  margin: 12px 0 12px 30px;
+  width: calc(100% -  3.75rem);
+  margin: 12px 0 12px 1.875rem;
 }
 
 :root {
@@ -83,7 +83,7 @@
   --text: #fff;
   --check: rgb(226, 72, 16);
   --disabled: #0fc310;
-  --border-radius: 10px;
+  --border-radius: 0.625rem;
 }
 
 .SmallPlanner .TaskCheckBoxWrapper {
@@ -92,10 +92,10 @@
   padding: 0.313rem;
   display: grid;
   width: 100%;
-  grid-template-columns: 30px auto;
+  grid-template-columns: 1.875rem auto;
   align-items: center;
   background-color: #414856;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0em 54px 3.438rem, rgba(0, 0, 0, 0.12) 0em -12px 1.875rem, rgba(0, 0, 0, 0.12) 0em 4px 6px, rgba(0, 0, 0, 0.17) 0em 12px 13px, rgba(0, 0, 0, 0.09) 0em -3px 0.313rem;
   height: 48px;
   overflow-y: hidden;
   transition: height .2s ease-in-out;
@@ -103,7 +103,7 @@
 }
 
 .SmallPlanner .TaskCheckBoxWrapper label {
-  margin-left: 10px;
+  margin-left: 0.625rem;
   color: var(--text);
   position: relative;
   cursor: pointer;
@@ -142,8 +142,8 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   position: relative;
-  height: 30px;
-  width: 30px;
+  height: 1.875rem;
+  width: 1.875rem;
   outline: none;
   border: 0;
   margin: 0 0 0 0;
@@ -166,13 +166,13 @@
 }
 
 .SmallPlanner .TaskCheckBoxWrapper input[type=checkbox]::before {
-  width: 0px;
+  width: 0em;
   right: 60%;
   transform-origin: right bottom;
 }
 
 .SmallPlanner .TaskCheckBoxWrapper input[type=checkbox]::after {
-  width: 20px;
+  width: 1.25rem;
   left: 40%;
   transform-origin: left bottom;
 }
@@ -207,7 +207,7 @@
 @-webkit-keyframes move-11 {
   50% {
     padding-left: 8px;
-    padding-right: 0px;
+    padding-right: 0em;
   }
 
   100% {
@@ -218,7 +218,7 @@
 @keyframes move-11 {
   50% {
     padding-left: 8px;
-    padding-right: 0px;
+    padding-right: 0em;
   }
 
   100% {
@@ -260,19 +260,19 @@
   }
 
   50% {
-    width: 0px;
+    width: 0em;
     top: auto;
     transform: rotate(0);
   }
 
   51% {
-    width: 0px;
+    width: 0em;
     top: 8px;
     transform: rotate(45deg);
   }
 
   100% {
-    width: 30px;
+    width: 1.875rem;
     top: 8px;
     transform: rotate(45deg);
     background-color: var(--checkColor);
@@ -287,19 +287,19 @@
   }
 
   50% {
-    width: 0px;
+    width: 0em;
     top: auto;
     transform: rotate(0);
   }
 
   51% {
-    width: 0px;
+    width: 0em;
     top: 8px;
     transform: rotate(45deg);
   }
 
   100% {
-    width: 30px;
+    width: 1.875rem;
     top: 8px;
     transform: rotate(45deg);
     background-color: var(--checkColor);
@@ -314,19 +314,19 @@
   }
 
   50% {
-    width: 0px;
+    width: 0em;
     top: auto;
     transform: rotate(0);
   }
 
   51% {
-    width: 0px;
+    width: 0em;
     top: 8px;
     transform: rotate(-45deg);
   }
 
   100% {
-    width: 60px;
+    width:  3.75rem;
     top: 8px;
     transform: rotate(-45deg);
     background-color: var(--checkColor);
@@ -341,19 +341,19 @@
   }
 
   50% {
-    width: 0px;
+    width: 0em;
     top: auto;
     transform: rotate(0);
   }
 
   51% {
-    width: 0px;
+    width: 0em;
     top: 8px;
     transform: rotate(-45deg);
   }
 
   100% {
-    width: 60px;
+    width:  3.75rem;
     top: 8px;
     transform: rotate(-45deg);
     background-color: var(--checkColor);
@@ -372,7 +372,7 @@
 
   100% {
     opacity: 0;
-    box-shadow: 0 -15px 0 0px var(--checkColor), 14px -8px 0 0px var(--checkColor), 14px 8px 0 0px var(--checkColor), 0 15px 0 0px var(--checkColor), -14px 8px 0 0px var(--checkColor), -14px -8px 0 0px var(--checkColor);
+    box-shadow: 0 -15px 0 0em var(--checkColor), 14px -8px 0 0em var(--checkColor), 14px 8px 0 0em var(--checkColor), 0 0.938rem 0 0em var(--checkColor), -14px 8px 0 0em var(--checkColor), -14px -8px 0 0em var(--checkColor);
   }
 }
 
@@ -388,13 +388,13 @@
 
   100% {
     opacity: 0;
-    box-shadow: 0 -15px 0 0px var(--checkColor), 14px -8px 0 0px var(--checkColor), 14px 8px 0 0px var(--checkColor), 0 15px 0 0px var(--checkColor), -14px 8px 0 0px var(--checkColor), -14px -8px 0 0px var(--checkColor);
+    box-shadow: 0 -15px 0 0em var(--checkColor), 14px -8px 0 0em var(--checkColor), 14px 8px 0 0em var(--checkColor), 0 0.938rem 0 0em var(--checkColor), -14px 8px 0 0em var(--checkColor), -14px -8px 0 0em var(--checkColor);
   }
 }
 
 .SmallPlanner .TaskCheckBoxWrapper .info {
-  margin: -40px 0px 0px 40px;
-  padding-top: 40px;
+  margin: -40px 0em 0em 2.5rem;
+  padding-top: 2.5rem;
   color: #fff;
 }
 
@@ -403,17 +403,17 @@
 }
 
 .SmallPlanner .TaskCheckBoxWrapper:hover {
-  height: 200px;
+  height: 12.5rem;
 }
 
 .SmallPlanner .TaskCheckBoxWrapper .description {
-  margin-top: 20px;
+  margin-top: 1.25rem;
   overflow-y: auto;
-  width: 240px;
-  height: 0px;
+  width: 15rem;
+  height: 0em;
 }
 
 .SmallPlanner .TaskCheckBoxWrapper:hover .description {
-  height: 130px;
-  width: 280px;
+  height: 8.125rem;
+  width: 17.5rem;
 }

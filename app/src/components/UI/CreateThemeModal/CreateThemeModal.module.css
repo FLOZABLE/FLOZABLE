@@ -3,23 +3,23 @@
   width: 500px;
   height: 500px;
   z-index: 3;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   overflow: hidden;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
 }
 
 .CreateThemeModal .header {
   display: flex;
-  height: 30px;
+  height: 1.875rem;
   background-color: var(--purple);
-  border-top-right-radius: 20px;
-  border-top-left-radius: 20px;
+  border-top-right-radius: 1.25rem;
+  border-top-left-radius: 1.25rem;
   justify-content: right;
 }
 
 .CreateThemeModal .header i {
   font-size:  1.563rem;
-  padding: 0px 10px;
+  padding: 0em 0.625rem;
   cursor: pointer;
   color: #fff;
   display: flex;
@@ -30,14 +30,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0px 10px;
+  padding: 0em 0.625rem;
   overflow-y: auto;
   max-height: 470px;
 }
 
 .CreateThemeModal .content .layer {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .CreateThemeModal .submitWrapper {
@@ -46,15 +46,15 @@
 
 @media (max-width: 1400px) {
   .CreateThemeModal {
-    width: 370px;
+    width: 23.125rem;
   }
 }
 @media (max-height: 700px) {
   .CreateThemeModal {
-    height: 300px;
+    height: 18.75rem;
   }
 
   .CreateThemeModal .content {
-    max-height: 270px;
+    max-height: 16.875rem;
   }
 }

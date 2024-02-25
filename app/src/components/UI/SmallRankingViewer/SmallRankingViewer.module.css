@@ -21,12 +21,12 @@
 .SmallRankingViewer .ranking .rank {
   background-color: var(--purple);
   color: #fff;
-  width: 30px;
-  height: 30px;
+  width: 1.875rem;
+  height: 1.875rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 25px;
+  border-radius: 1.563rem;
   flex: 1;
   margin-right: 3px;
 }
@@ -34,9 +34,9 @@
 .SmallRankingViewer .profileImg {
   display: inline-block;
   background-color: #e5e6e7;
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 1.25rem;
   justify-content: center;
   align-items: center;
   margin-right: 7px;
@@ -46,7 +46,7 @@
   font-size: 0.75rem;
   display: flex;
   align-items: center;
-  margin: 0px 3px;
+  margin: 0em 3px;
 }
 
 .SmallRankingViewer .differenceGreen {
@@ -70,7 +70,7 @@
 .SmallRankingViewer .noStudy p {
   font-weight: 500;
   font-size: 110%;
-  margin-top: 20px;
+  margin-top: 1.25rem;
   margin-left: 19px;
   text-decoration: underline;
   align-items: center;

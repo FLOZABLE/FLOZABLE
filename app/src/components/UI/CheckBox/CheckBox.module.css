@@ -8,7 +8,7 @@
 }
 
 .CheckBoxWrapper label {
-  --size: 50px;
+  --size: 3.125rem;
   --shadow: calc(var(--size) * .07) calc(var(--size) * .1);
 
   position: relative;
@@ -79,7 +79,7 @@
   bottom: 0;
   width: calc(var(--size) * .1);
   height: calc(var(--size) * .3);
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.23);
+  box-shadow: -2px 0 0.313rem rgba(0, 0, 0, 0.23);
   transform: translateY(calc(var(--size) * -.68));
 }
 
@@ -88,7 +88,7 @@
   bottom: 0;
   width: 100%;
   height: calc(var(--size) * .1);
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.23);
+  box-shadow: 0 3px 0.313rem rgba(0, 0, 0, 0.23);
   transform: translateX(calc(var(--size) * .78));
 }
 

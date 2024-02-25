@@ -4,7 +4,7 @@
 
 .Main .boxesWrapper {
   display: flex;
-  height: calc(100vh - 150px - 1.875rem);
+  height: calc(100vh - 9.375rem - 1.875rem);
 }
 
 .Main .boxesContainer:nth-child(1) {
@@ -18,7 +18,7 @@
 
 .Main .boxesContainer .box {
   background-color: #ffffff;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   box-shadow: var(--shadow1);
   height: 90%;
   padding: 0.625rem;
@@ -80,7 +80,7 @@
 
 @media (max-width: 1700px) {
   .Main .boxesContainer:nth-child(2) {
-    width: 270px;
+    width: 16.875rem;
   }
 }
 
@@ -90,6 +90,6 @@
   }
 
   .Main .smallBoxesWrapper {
-    width: calc(100% + 240px + 3.5rem);
+    width: calc(100% + 15rem + 3.5rem);
   }
 }

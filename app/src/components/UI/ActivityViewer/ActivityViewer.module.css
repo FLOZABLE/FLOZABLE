@@ -1,6 +1,6 @@
 .ActivityViewer {
-  width: 300px;
-  max-height: calc(50vh - 200px);
+  width: 18.75rem;
+  max-height: calc(50vh - 12.5rem);
 
 }
 
@@ -14,12 +14,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 10px;
+  margin-right: 0.625rem;
 }
 
 .ActivityViewer .noActivity {
-  margin-left: 10px;
-  margin-bottom: 10px;
+  margin-left: 0.625rem;
+  margin-bottom: 0.625rem;
   text-decoration: underline;
   font-weight: 700;
   font-size: 1.25rem;

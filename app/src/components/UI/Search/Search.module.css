@@ -1,26 +1,26 @@
 .inputBox {
   position: relative;
   width: 100%;
-  max-width: 60px;
-  height: 55px;
-  margin: 0 50px;
+  max-width:  3.75rem;
+  height: 3.438rem;
+  margin: 0 3.125rem;
   background-color: #fff;
   border-radius: 6px;
   transition: all 0.5s ease-in-out;
 }
 
 .inputBox.open {
-  max-width: 350px;
+  max-width: 21.875rem;
 }
 
 .inputBox input {
   position: relative;
-  width: calc(100% - 70px);
+  width: calc(100% - 4.375rem);
   height: 100%;
   font-size: 1rem;
   font-weight: 400;
   color: #333;
-  padding: 0 15px;
+  padding: 0 0.938rem;
   border: none;
   border-radius: 6px;
   outline: none;
@@ -28,14 +28,14 @@
 }
 
 .inputBox.open input {
-  padding: 0 15px 0 65px;
+  padding: 0 0.938rem 0  4.063rem;
 }
 
 .inputBox .search {
   position: absolute;
   top: 0;
   left: 0;
-  width: 60px;
+  width:  3.75rem;
   height: 100%;
   display: flex;
   justify-content: center;

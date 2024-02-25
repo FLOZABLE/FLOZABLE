@@ -1,28 +1,28 @@
 .StudyContainer {
   background-color: #000;
-  margin-top: 0px;
+  margin-top: 0em;
 }
 
 .StudyContainer .Main {
-  margin-top: 0px;
+  margin-top: 0em;
   height: 100vh;
   z-index: 2;
   overflow: hidden;
-  margin-left: 100px;
+  margin-left: 6.25rem;
 }
 
 .StudyContainer .ytBg {
   position: fixed;
-  top: 0px;
-  left: 0px;
+  top: 0em;
+  left: 0em;
   height: 100vh;
   width: 100vw;
 }
 
 .StudyContainer .myGroupsViewerWrapper {
-  margin-top: 50px;
+  margin-top: 3.125rem;
   display: none;
-  height: calc(100vh - 150px);
+  height: calc(100vh - 9.375rem);
 }
 
 .StudyContainer .myGroupsViewerWrapper.open {
@@ -32,7 +32,7 @@
 .StudyContainer .PlanTimelineBarWrapper {
   position: fixed;
   bottom:50px;
-  left: 0px;
+  left: 0em;
   width: 100vw;
   z-index: 2;
 }

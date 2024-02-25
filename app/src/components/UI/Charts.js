@@ -16,9 +16,9 @@ const PieCustomTooltip = ({ active, payload }) => {
     return (
       <div style={{ 
         backgroundColor: "#fff", 
-        padding: "6px 10px", 
+        padding: "6px 0.625rem", 
         borderRadius: "10px",
-        boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
+        boxShadow: "rgba(149, 157, 165, 0.2) 0em 8px 24px",
       }}>
         <p className="label">{`${payload[0].name} : ${payload[0].payload.labelVal}`}</p>
       </div>

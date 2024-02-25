@@ -96,7 +96,7 @@
 .swithCheck input:checked+.switchLeft {
   background-color: var(--success);
   color: #fff;
-  bottom: 0px;
+  bottom: 0em;
   left: 0.5em;
   height: 2.5em;
   width: 3em;

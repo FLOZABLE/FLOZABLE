@@ -4,23 +4,23 @@
   height: fit-content;
   width: 500px;
   z-index: 3;
-  border-radius: 20px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  border-radius: 1.25rem;
+  box-shadow: rgba(50, 50, 93, 0.25) 0em 6px 12px -2px, rgba(0, 0, 0, 0.3) 0em 3px 7px -3px;
 }
 
 .EventModal .header {
   background-color: #6f6af8ff;
-  height: 30px;
+  height: 1.875rem;
   display: flex;
   justify-content: right;
   align-items: center;
   color: #fff;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
+  border-top-left-radius: 1.25rem;
+  border-top-right-radius: 1.25rem;
 }
 
 .EventModal .header i {
-  margin-right: 10px;
+  margin-right: 0.625rem;
   font-size: 1.875rem;
   cursor: pointer;
 }
@@ -28,19 +28,19 @@
 .EventModal .container {
   display: flex;
   flex-direction: column;
-  margin: 30px 20px 0px 0px;
+  margin: 1.875rem 1.25rem 0em 0em;
 }
 
 .EventModal .wrapper {
   display: flex;
   flex-direction: row;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
   align-items: center;
 }
 
 .EventModal .wrapper .iconWrapper {
-  width: 70px;
-  height: 40px;
+  width: 4.375rem;
+  height: 2.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -57,11 +57,11 @@
   position: absolute;
   font-size: 1.063rem;
   white-space: nowrap;
-  top: 50px;
+  top: 3.125rem;
   opacity: 0;
   transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
   background-color: #000000c3;
-  padding: 5px 10px;
+  padding: 0.313rem 0.625rem;
   border-radius: 7px;
   z-index: 2;
   visibility: hidden;
@@ -70,7 +70,7 @@
 }
 
 .EventModal .title {
-  height: 50px;
+  height: 3.125rem;
 
 }
 
@@ -83,13 +83,13 @@
 
 .EventModal .wrapper .contentWrapper {
   position: relative;
-  width: calc(100% - 70px);
+  width: calc(100% - 4.375rem);
   display: flex;
   align-items: center;
 }
 
 .EventModal .subjectWrapper {
-  width: 200px;
+  width: 12.5rem;
 }
 
 .EventModal .notificationWrapper {
@@ -97,7 +97,7 @@
 }
 
 .EventModal .submit {
-  margin-bottom: 30px;
+  margin-bottom: 1.875rem;
   justify-content: center;
   width: 100%;
   align-items: center;
@@ -117,8 +117,8 @@
   }
 
   .EventModal .container {
-    padding-top: 10px;
-    margin: 0px;
+    padding-top: 0.625rem;
+    margin: 0em;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -133,17 +133,17 @@
 
 @media (max-height: 800px) {
   .EventModal {
-    height: calc(100% - 300px);
+    height: calc(100% - 18.75rem);
     overflow: hidden;
   }
 
   .EventModal .container {
-    padding-top: 10px;
-    margin: 0px;
+    padding-top: 0.625rem;
+    margin: 0em;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
-    height: calc(100% - 20px);
+    height: calc(100% - 1.25rem);
   }
 }

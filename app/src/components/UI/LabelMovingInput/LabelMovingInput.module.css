@@ -1,7 +1,7 @@
 .LabelMovingInput {
   position: relative;
   width: 90%;
-  height: 60px;
+  height:  3.75rem;
   margin: 12px;
   margin-left: 3%;
   top: 0;
@@ -10,10 +10,10 @@
 .LabelMovingInput label {
   position: absolute;
   background-color: transparent;
-  border-radius: 15px;
-  padding: 3px 5px;
-  top: 10px;
-  left: 15px;
+  border-radius: 0.938rem;
+  padding: 3px 0.313rem;
+  top: 0.625rem;
+  left: 0.938rem;
   transition: top .3s ease-in-out, left .3s ease-in-out, font-size .3s ease-in-out, background-color .3s ease-in-out;
   font-size: 1.125rem;
   font-weight: 100;
@@ -27,9 +27,9 @@
   background-color: transparent;
   border: 1px solid #b9b9b9;
   transition: .3s border ease-in-out;
-  height: 45px;
-  padding-left: 10px;
-  border-radius: 15px;
+  height: 2.813rem;
+  padding-left: 0.625rem;
+  border-radius: 0.938rem;
   width: 100%;
 }
 

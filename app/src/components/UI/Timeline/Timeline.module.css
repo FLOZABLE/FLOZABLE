@@ -8,21 +8,21 @@
 }
 
 .TimelineContainer .timelineWrapper {
-  padding: 50px 0px 0px 50px;
+  padding: 3.125rem 0em 0em 3.125rem;
   position: relative;
 }
 
 .TimelineContainer .box {
-  height: 20px;
+  height: 1.25rem;
   width: 100%;
   border: 1px solid #dee0e3;
 }
 
 .TimelineContainer .rowHeader {
   position: absolute;
-  top: 0px;
-  left: 45px;
-  width: calc(113% - 50px);
+  top: 0em;
+  left: 2.813rem;
+  width: calc(113% - 3.125rem);
   display: flex;
   font-size:  1.25rem;
 }
@@ -40,8 +40,8 @@
 
 .TimelineContainer .colHeader {
   position: absolute;
-  top: 40px;
-  height: calc(100% - 50px);
+  top: 2.5rem;
+  height: calc(100% - 3.125rem);
   font-size:  1.25rem;
   text-align: right;
 }

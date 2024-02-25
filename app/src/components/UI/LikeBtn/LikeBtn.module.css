@@ -14,7 +14,7 @@
 
 .likeButton {
   border: 2px solid #c7c7c7;
-  border-radius: 40px;
+  border-radius: 2.5rem;
   padding: 0.45rem 0.75rem;
   color: #878787;
   font-weight: bold;
@@ -119,7 +119,7 @@
 .liked .likeIcon .heartAnimation1::before,
 .liked .likeIcon .heartAnimation1::after {
   width: 12px;
-  height: 10px;
+  height: 0.625rem;
   visibility: hidden;
 }
 
@@ -142,7 +142,7 @@
 
 .liked .likeIcon .heartAnimation2::before,
 .liked .likeIcon .heartAnimation2::after {
-  width: 10px;
+  width: 0.625rem;
   height: 8px;
   visibility: hidden;
 }

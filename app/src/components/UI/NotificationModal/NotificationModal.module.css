@@ -1,13 +1,13 @@
 .NotificationModal {
   z-index: 5;
   position: fixed;
-  bottom: 50px;
-  right: 50px;
+  bottom: 3.125rem;
+  right: 3.125rem;
   background-color: #fff;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  border-radius: 10px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0em 8px 24px;
+  border-radius: 0.625rem;
   width: 400px;
-  height: 300px;
+  height: 18.75rem;
   visibility: hidden;
   opacity: 0;
   transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
@@ -19,14 +19,14 @@
 }
 
 .NotificationModal .toggleBtn {
-  width: 50px;
-  height: 50px;
+  width: 3.125rem;
+  height: 3.125rem;
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
-  bottom: 0px;
-  right: 0px;
+  bottom: 0em;
+  right: 0em;
   z-index: 99999;
 }
 
@@ -45,9 +45,9 @@
 }
 
 .NotificationModal .notification .profileImg {
-  height: 50px;
-  width: 50px;
-  border-radius: 25px;
+  height: 3.125rem;
+  width: 3.125rem;
+  border-radius: 1.563rem;
 }
 
 .NotificationModal .notification .buttons {
@@ -59,14 +59,14 @@
 .NotificationModal .notification .buttons button {
   background-color: var(--gray);
   font-size: 1.875rem;
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   color: var(--pink);
-  margin: 0px 5px;
+  margin: 0em 0.313rem;
 }
 
 .NotificationModal .notification .content {
-  margin: 0px 20px;
+  margin: 0em 1.25rem;
   flex-grow: 1;
   display: flex;
   align-items: center;
@@ -88,13 +88,13 @@
   position: absolute;
   font-size: 1.063rem;
   white-space: nowrap;
-  top: 50px;
+  top: 3.125rem;
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;
   transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
   background-color: var(--opacity-black);
-  padding: 5px 10px;
+  padding: 0.313rem 0.625rem;
   border-radius: 7px;
   color: #fff;
   z-index: 5;

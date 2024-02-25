@@ -8,7 +8,7 @@
 }
 
 .CopyBtn:hover .hoverEl {
-  top: 20px;
+  top: 1.25rem;
   opacity: 1;
   visibility: visible;
 }
@@ -20,7 +20,7 @@
 
 .CopyBtn .hoverEl {
   position: absolute;
-  top: 50px;
+  top: 3.125rem;
   transition: top .3s ease-in-out, visibility .3s ease-in-out, opacity .3s ease-in-out;
   opacity: 0;
   visibility: hidden;
@@ -28,8 +28,8 @@
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.625rem;
-  padding: 3px 5px;
+  padding: 3px 0.313rem;
   background-color: var(--purple);
   color: #fff;
-  border-radius: 10px;
+  border-radius: 0.625rem;
 }

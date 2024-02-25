@@ -1,10 +1,10 @@
 .ChallengeContainer {
   background-color: aliceblue;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
   position: relative;
-  width: 250px;
-  height: 300px;
-  border-radius: 30px;
+  width: 15.625rem;
+  height: 18.75rem;
+  border-radius: 1.875rem;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -12,36 +12,36 @@
 
 .ChallengeContainer .imgWrapper {
   width: 100%;
-  height: 100px;
+  height: 6.25rem;
   position: relative;
   background-color: bisque;
 }
 
 .ChallengeContainer .profileImg {
-  width: 50px;
-  height: 50px;
-  border-radius: 5px;
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 0.313rem;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0em 8px 24px;
 }
 
 .ChallengeContainer .button {
   position: absolute;
-  bottom: 10px;
-  width: 50px;
+  bottom: 0.625rem;
+  width: 3.125rem;
   background-color: #81b64c;
   left: 50%;
   transform: translateX(-50%);
-  height: 30px;
+  height: 1.875rem;
   display: flex;
   justify-content: center;
   align-items: center;
   color: #fff;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 0.625rem;
 }
 
 .ChallengeContainer .button p {
@@ -81,6 +81,6 @@
 }
 
 .ChallengeContainer .info .description {
-  height: 70px;
+  height: 4.375rem;
   overflow-y: auto;
 }

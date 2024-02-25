@@ -6,18 +6,18 @@ import styled from "@emotion/styled";
 
 const StyleWrapper = styled.div`
   .ql-container {
-    max-height: 250px;
+    max-height: 15.625rem;
     overflow-y: auto;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 0.625rem;
+    border-bottom-left-radius: 0.625rem;
   }
   .ql-toolbar {
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
+    border-top-right-radius: 0.625rem;
+    border-top-left-radius: 0.625rem;
   }
   .ql-container::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
+    border-radius: 0.625rem;
   }
 
   .ql-container::-webkit-scrollbar {
@@ -25,7 +25,7 @@ const StyleWrapper = styled.div`
   }
 
   .ql-container::-webkit-scrollbar-thumb {
-    border-radius: 10px;
+    border-radius: 0.625rem;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: #555555;
   }

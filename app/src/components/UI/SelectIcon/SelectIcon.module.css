@@ -9,39 +9,39 @@
 }
 
 .selectIcon .header .selectedIcon {
-  margin-left: 10px;
+  margin-left: 0.625rem;
   background-color: #fff;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  width: 50px;
-  height: 50px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  width: 3.125rem;
+  height: 3.125rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   cursor: pointer;;
 }
 
 .selectIcon .icons {
   display: flex;
   flex-wrap: wrap;
-  height: 0px;
+  height: 0em;
   transition: .3s height ease-in-out, .3s width ease-in-out;
   overflow-y: hidden;
 }
 
 .selectIcon .icons.open {
-  height: 150px;
+  height: 9.375rem;
 }
 
 .selectIcon .iconWrapper {
   background-color: #fff;
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 0.625rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
   margin: 0.625rem;
   transition: box-shadow .3s ease-in-out, width .3s ease-in-out, height .3s ease-in-out, margin-left 0.2s ease 0.2s, margin-top .3s ease-in-out;
   position: relative;
@@ -50,11 +50,11 @@
 }
 
 .selectIcon .iconWrapper:hover {
-  width: 55px;
-  height: 55px;
-  margin-top: 5px !important;
+  width: 3.438rem;
+  height: 3.438rem;
+  margin-top: 0.313rem !important;
 
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0em 0.625rem 36px 0em, rgba(0, 0, 0, 0.06) 0em 0em 0em 1px;
 }
 
 .selectIcon .icons.open .iconWrapper {

@@ -56,9 +56,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 12px 20px;
+  padding: 12px 1.25rem;
   font-size:  1.25rem;
-  line-height: 25px;
+  line-height: 1.563rem;
   color: var(--pink);
   background: #EEF4FF;
   transition: background 0.5s ease, border 0.5s ease, color 0.5s ease;

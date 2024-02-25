@@ -1,13 +1,13 @@
 @import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
 
 .Planner {
-  padding: 0px 50px;
+  padding: 0em 3.125rem;
 }
 
 .Planner .header {
   display: flex;
   justify-content: center;
-  margin-bottom: 50px;
+  margin-bottom: 3.125rem;
 }
 
 .Planner .header .modeBtnWrapper {
@@ -17,16 +17,16 @@
 .Planner .container {
   display: flex;
   background-color: #f7f9fd;
-  border-radius: 40px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  border-radius: 2.5rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
   padding: 2.5rem;
-  margin-bottom: 50px;
+  margin-bottom: 3.125rem;
 
 }
 
 .Planner .container .planner {
   flex-grow: 1;
-  margin-right: 50px;
+  margin-right: 3.125rem;
 }
 
 .Planner .container .widget {
@@ -36,15 +36,15 @@
 
 .Planner .smallCalendarWrapper {
   display: flex;
-  width: 300px;
+  width: 18.75rem;
   position: relative;
   justify-content: center;
   align-items: center;
 }
 
 .Planner .planTimelineWrapper {
-  width: 300px;
-  margin-top: 30px;
+  width: 18.75rem;
+  margin-top: 1.875rem;
   transition: width .3s ease-in-out;
 }
 
@@ -56,16 +56,16 @@
 
 @media (max-width: 1400px) {
   .Planner .smallCalendarWrapper {
-    width: 250px;
+    width: 15.625rem;
   }
 
   .Planner .planTimelineWrapper {
-    width: 250px;
+    width: 15.625rem;
   }
 }
 
 .title {
   font-family: "Roboto", sans-serif;
   padding-bottom: -20px;
-  padding-left: 50px;
+  padding-left: 3.125rem;
 }

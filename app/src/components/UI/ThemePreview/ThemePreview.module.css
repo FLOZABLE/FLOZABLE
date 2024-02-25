@@ -4,8 +4,8 @@
 
 .ThemePreview .transitionCircle {
   position: fixed;
-  width: 30px;
-  height: 30px;
+  width: 1.875rem;
+  height: 1.875rem;
   border-radius: 50%;
   background-color: var(--purple);
   top: -15px;
@@ -46,7 +46,7 @@
   justify-content: space-evenly;
   background-color: rgba(255, 255, 255, 0.234);
   padding: 0.938rem;
-  border-radius: 5px;
+  border-radius: 0.313rem;
   white-space: nowrap;
 }
 
@@ -58,8 +58,8 @@
   background-color: #fd8a8a;
   font-weight: 800;
   color: #fff;
-  padding: 0px 20px;
-  border-radius: 20px;
+  padding: 0em 1.25rem;
+  border-radius: 1.25rem;
   font-size: 1rem;
   padding: 0.313rem;
   margin: 0.313rem;

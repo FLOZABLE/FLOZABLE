@@ -3,14 +3,14 @@
   background-color: beige;
   height: 100%;
   width: 100%;
-  border-radius: 20px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  border-radius: 1.25rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
   color: #fff;
 }
 
 .RankedTheme .contents {
   position: absolute;
-  bottom: 70px;
+  bottom: 4.375rem;
   padding: 1.875rem;
 }
 
@@ -20,28 +20,28 @@
 
 .RankedTheme .contents .counts > div {
   display: flex;
-  margin-right: 10px;
+  margin-right: 0.625rem;
 }
 
 .RankedTheme .contents .counts > div i {
-  margin-right: 5px;
+  margin-right: 0.313rem;
 }
 
 
 .RankedTheme .description {
-  height: 100px;
+  height: 6.25rem;
   overflow-x: auto;
 }
 
 .RankedTheme .tags {
   display: flex;
   overflow-y: auto;
-  height: 20px;
+  height: 1.25rem;
   flex-wrap: wrap;
 }
 
 .RankedTheme .tags > div {
-  margin: 0px 8px;
+  margin: 0em 8px;
   white-space: nowrap;
 }
 
@@ -52,19 +52,19 @@
 }
 
 .RankedTheme .buttons > div {
-  margin: 0px 5px;
+  margin: 0em 0.313rem;
 }
 
 @media (max-width: 1400px) {
   .RankedTheme .contents {
-    bottom: 30px;
+    bottom: 1.875rem;
     padding: 1.25rem;
   }
 }
 
 @media (max-width: 1200px) {
   .RankedTheme .contents {
-    bottom: 10px;
+    bottom: 0.625rem;
     padding: 0.625rem;
   }
 
@@ -73,6 +73,6 @@
   }
 
   .RankedTheme .buttons > div {
-    margin: 0px 2px;
+    margin: 0em 2px;
   }
 }
