@@ -1,5 +1,5 @@
 .CreateChallengeModal {
-  width: 500px;
+  width: 31.25rem;
   height: fit-content;
   z-index: 2;
   border-radius: 1.25rem;
@@ -10,7 +10,7 @@
   flex-direction: column;
   align-items: center;
   overflow: hidden;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   display: flex;
 }
 
@@ -52,7 +52,7 @@
   transition: opacity .3s ease-in-out;
   background-color: #000000c3;
   padding: 0.313rem 0.625rem;
-  border-radius: 7px;
+  border-radius: 0.4375rem;
   color: #ffffff;
   z-index: 2;
   visibility: hidden;
@@ -61,7 +61,7 @@
 .CreateChallengeModal .modalHeader i {
   margin-left: auto;
   color: #fff;
-  margin-top: 3px;
+  margin-top: 0.1875rem;
   padding: 0.625rem;
   cursor: pointer;
 }

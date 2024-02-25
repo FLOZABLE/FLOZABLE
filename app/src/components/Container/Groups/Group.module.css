@@ -4,7 +4,7 @@
   background-color: #f7f9fd;
   border-radius: 2.5rem;
   padding: 1.25rem;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   position: relative;
   margin: 1.25rem;
   overflow: hidden;
@@ -33,9 +33,9 @@
 }
 
 .group .explanation {
-  border-top: 1px solid #545454;
+  border-top: 0.0625rem solid #545454;
   position: relative;
-  margin-top: 16px;
+  margin-top: 1rem;
   padding-top: 1.25rem;
 }
 
@@ -58,7 +58,7 @@
 
 .group .tags .tag {
   margin: 0em 0.313rem;
-  padding: 2px 0.625rem;
+  padding: 0.125rem 0.625rem;
   border-radius: 0.625rem;
   background-color: blanchedalmond;
 }
@@ -67,18 +67,18 @@
   position: absolute;
   display: flex;
   background-color: blanchedalmond;
-  height: 33px;
-  border-radius: 17px;
+  height: 2.0625rem;
+  border-radius: 1.0625rem;
   padding: 0em 0.625rem;
-  top: -16px;
+  top: -1rem;
 }
 
 .group .info li {
-  margin: 0em 3px;
+  margin: 0em 0.1875rem;
 }
 
 .group .info li p {
-  margin-right: 3px;
+  margin-right: 0.1875rem;
 }
 
 .group .buttons {

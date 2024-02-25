@@ -1,6 +1,6 @@
 .TopNotification {
   position: fixed;
-  top: -100px;
+  top: -6.25rem;
   width: 50vw;
   left: 50vw;
   transform: translateX(-50%);

@@ -24,7 +24,7 @@ const StyleWrapper = styled.div`
 
   .fc.fc-media-screen.fc-direction-ltr.fc-theme-standard {
     position: relative;
-    height: 500px;
+    height: 31.25rem;
   }
 `;
 

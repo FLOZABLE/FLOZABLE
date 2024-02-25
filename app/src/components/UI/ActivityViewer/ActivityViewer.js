@@ -33,8 +33,8 @@ function ActivityViewer({ subjects }) {
         if (icon === "WritePen") {
           svgIcon = (
             <WritePen
-              width={"40px"}
-              height={"40px"}
+              width={"2.5rem"}
+              height={"2.5rem"}
               fill={color}
               opt1={color}
             />
@@ -42,8 +42,8 @@ function ActivityViewer({ subjects }) {
         } else if (icon === "Book") {
           svgIcon = (
             <Book
-              width={"40px"}
-              height={"40px"}
+              width={"2.5rem"}
+              height={"2.5rem"}
               fill={color}
               opt1={color}
             />
@@ -51,8 +51,8 @@ function ActivityViewer({ subjects }) {
         } else if (icon === "Microscope") {
           svgIcon = (
             <Microscope
-              width={"40px"}
-              height={"40px"}
+              width={"2.5rem"}
+              height={"2.5rem"}
               fill={color}
               opt1={color}
             />
@@ -60,8 +60,8 @@ function ActivityViewer({ subjects }) {
         } else if (icon === "Article") {
           svgIcon = (
             <Article
-              width={"40px"}
-              height={"40px"}
+              width={"2.5rem"}
+              height={"2.5rem"}
               fill={color}
               opt1={color}
             />
@@ -69,8 +69,8 @@ function ActivityViewer({ subjects }) {
         } else if (icon === "Coding") {
           svgIcon = (
             <Coding
-              width={"40px"}
-              height={"40px"}
+              width={"2.5rem"}
+              height={"2.5rem"}
               fill={color}
               opt1={color}
             />
@@ -78,8 +78,8 @@ function ActivityViewer({ subjects }) {
         } else if (icon === "Globe") {
           svgIcon = (
             <Globe
-              width={"40px"}
-              height={"40px"}
+              width={"2.5rem"}
+              height={"2.5rem"}
               fill={color}
               opt1={color}
             />
@@ -87,8 +87,8 @@ function ActivityViewer({ subjects }) {
         } else if (icon === "Workout") {
           svgIcon = (
             <Workout
-              width={"40px"}
-              height={"40px"}
+              width={"2.5rem"}
+              height={"2.5rem"}
               fill={color}
               opt1={color}
             />
@@ -96,8 +96,8 @@ function ActivityViewer({ subjects }) {
         } else {
           svgIcon = (
             <Alert
-              width={"40px"}
-              height={"40px"}
+              width={"2.5rem"}
+              height={"2.5rem"}
               fill={'var(--purple)'}
               opt1={'var(--purple)'}
             />

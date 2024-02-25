@@ -11,7 +11,7 @@
 .selectIcon .header .selectedIcon {
   margin-left: 0.625rem;
   background-color: #fff;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   width: 3.125rem;
   height: 3.125rem;
   display: flex;
@@ -41,11 +41,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   margin: 0.625rem;
   transition: box-shadow .3s ease-in-out, width .3s ease-in-out, height .3s ease-in-out, margin-left 0.2s ease 0.2s, margin-top .3s ease-in-out;
   position: relative;
-  margin-left: -100px;
+  margin-left: -6.25rem;
   cursor: pointer;
 }
 
@@ -54,14 +54,14 @@
   height: 3.438rem;
   margin-top: 0.313rem !important;
 
-  box-shadow: rgba(0, 0, 0, 0.16) 0em 0.625rem 36px 0em, rgba(0, 0, 0, 0.06) 0em 0em 0em 1px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0em 0.625rem 2.25rem 0em, rgba(0, 0, 0, 0.06) 0em 0em 0em 0.0625rem;
 }
 
 .selectIcon .icons.open .iconWrapper {
   margin: 0.625rem;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .selectIcon .header p {
     font-size: 1.25rem;
   }

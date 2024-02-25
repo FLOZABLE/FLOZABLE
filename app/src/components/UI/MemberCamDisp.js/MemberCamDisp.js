@@ -133,10 +133,10 @@ function MemberCamDisp({ memberInfo, device, isFocus, recvTransport, isHeadphone
   return (
     <div className={styles.MemberCamDisp}>
       <div className={styles.icons}>
-      <i style={{fontSize: '15px'}}>
+      <i style={{fontSize: '0.9375rem'}}>
       {isAudio ? <IconMicFill /> : <IconMicMuteFill />}
       </i>
-      <i style={{fontSize: '15px'}}>
+      <i style={{fontSize: '0.9375rem'}}>
       {isVideo ? <IconCameraVideoFill /> : <IconCameraVideoOffFill />}
       </i>
       </div>

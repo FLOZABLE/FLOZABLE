@@ -1,10 +1,10 @@
 .AddSubjectModal {
   background-color: #fff;
-  width: 550px;
+  width: 34.375rem;
   height: fit-content;
   visibility: hidden;
   z-index: 4;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   border-radius: 1.25rem;
 }
 
@@ -24,7 +24,7 @@
   color: #fff;
   cursor: pointer;
   padding: 0.625rem;
-  margin-top: 3px;
+  margin-top: 0.1875rem;
 }
 
 .AddSubjectModal .content {

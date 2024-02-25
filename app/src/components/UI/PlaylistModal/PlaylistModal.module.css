@@ -18,7 +18,7 @@
   width: 33%;
   border-radius: 1.563rem;
   padding: 0.625rem;
-  box-shadow: rgba(0, 0, 0, 0.24) 0em 3px 8px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0em 0.1875rem 0.5rem;
   -webkit-transition: background-color .3s ease-in-out, color .3s ease-in-out;
   -ms-transition: background-color .3s ease-in-out, color .3s ease-in-out;
   transition: background-color .3s ease-in-out, color .3s ease-in-out;
@@ -29,5 +29,5 @@
 }
 
 .PlaylistModal .selectedPlaylist {
-  border: 1px solid black;
+  border: 0.0625rem solid black;
 }

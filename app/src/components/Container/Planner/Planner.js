@@ -58,7 +58,7 @@ function Planner(props) {
 
               {/* <DropDownButton options={[{name:'Does not repeat', value: 0}, {name: 'Daily', value: 1}, {name: 'Weekly', value: 2}, {name: `Monthly`, value: 3}]} defaultIndex={0} setValue={setSubjectsOptions} /> */}
               <div className={`${styles.planTimelineWrapper}`}>
-                <PlanTimeline plans={events} viewDate={viewDate} viewMode={viewMode} subjects={subjects} setPlans={props.setEvents} setPlanModal={setPlanModal} mode={"planner"} maxHeight='400px' />
+                <PlanTimeline plans={events} viewDate={viewDate} viewMode={viewMode} subjects={subjects} setPlans={props.setEvents} setPlanModal={setPlanModal} mode={"planner"} maxHeight='25rem' />
               </div>
             </div>
           </div>

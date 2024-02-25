@@ -70,7 +70,7 @@ function HeadphoneBtn() {
         setIsHeadphone(prev => !prev);
       }}
     >
-      <i style={{ fontSize: '23px' }}>
+      <i style={{ fontSize: '1.4375rem' }}>
         {isHeadphone ? <IconHeadphoneFill /> : <IconHeadphonesOff />}
       </i>
       <div className={styles.hoverEl}>
@@ -89,7 +89,7 @@ function ButtonContainer({ text1, text2, icon1, icon2 }) {
         setIsClicked(prev => !prev);
       }}
     >
-      <i style={{ fontSize: '23px' }}>
+      <i style={{ fontSize: '1.4375rem' }}>
         {isClicked ? icon1 : icon2}
       </i>
       <div className={styles.hoverEl}>

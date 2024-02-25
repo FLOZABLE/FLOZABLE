@@ -3,7 +3,7 @@
   background-color: #f7f9fd;
   border-radius: 2.5rem;
   padding: 1.25rem;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -35,9 +35,9 @@
 }
 
 .FriendGroupContainer .explanation {
-  border-top: 1px solid #545454;
+  border-top: 0.0625rem solid #545454;
   position: relative;
-  margin-top: 16px;
+  margin-top: 1rem;
   padding-top: 1.25rem;
   width: 100%;
 }
@@ -61,7 +61,7 @@
 
 .FriendGroupContainer .tags .tag {
   margin: 0em 0.313rem;
-  padding: 2px 0.625rem;
+  padding: 0.125rem 0.625rem;
   border-radius: 0.625rem;
   background-color: blanchedalmond;
 }
@@ -70,21 +70,21 @@
   position: absolute;
   display: flex;
   background-color: blanchedalmond;
-  height: 33px;
-  border-radius: 17px;
+  height: 2.0625rem;
+  border-radius: 1.0625rem;
   padding: 0em 0.625rem;
-  top: -16px;
+  top: -1rem;
 }
 
 .FriendGroupContainer .info li {
-  margin: 0em 3px;
+  margin: 0em 0.1875rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .FriendGroupContainer .info li p {
-  margin-left: 3px;
+  margin-left: 0.1875rem;
 }
 
 .FriendGroupContainer .buttons {
@@ -105,7 +105,7 @@
   margin: 0.313rem;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .FriendGroupContainer {
     width: 12.5rem;
     height: 10.625rem;

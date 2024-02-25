@@ -308,7 +308,7 @@ function Friends({
                   }}
                 >
                   <i>
-                    <EmailInvitation width={"50px"} height={"50px"} />
+                    <EmailInvitation width={"3.125rem"} height={"3.125rem"} />
                   </i>
                   <p>Email Invitation</p>
                   <i>

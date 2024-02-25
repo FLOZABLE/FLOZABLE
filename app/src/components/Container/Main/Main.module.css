@@ -78,13 +78,13 @@
   padding: 1.25rem 3.125rem;
 }
 
-@media (max-width: 1700px) {
+@media (max-width: 106.25rem) {
   .Main .boxesContainer:nth-child(2) {
     width: 16.875rem;
   }
 }
 
-@media (max-width: 1300px) {
+@media (max-width: 81.25rem) {
   .Main .boxesContainer:nth-child(2) .box#planTimeline {
     height: 50%;
   }

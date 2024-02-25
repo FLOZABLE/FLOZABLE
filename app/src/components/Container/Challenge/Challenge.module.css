@@ -9,7 +9,7 @@
 
 .ChallengeContainer .IntroContainer {
     border-radius: 2.5rem;
-    box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+    box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
     padding: 2.5rem;
     margin-bottom: 3.125rem;
     background-image: linear-gradient(to right, rgb(255, 184, 151), #95daff);
@@ -60,7 +60,7 @@
 
 .ChallengeContainer .compareContainer {
     border-radius: 2.5rem;
-    box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+    box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
     padding: 2.5rem;
     margin-bottom: 3.125rem;
     background-color: rgb(222, 244, 230);
@@ -76,7 +76,7 @@
 
 .ChallengeContainer .statContainer {
     width: 100%;
-    border: 1px solid black;
+    border: 0.0625rem solid black;
     border-radius: 2.5rem;
     text-align: center;
 }
@@ -84,7 +84,7 @@
 .ChallengeContainer .ChallengeHistory {
     text-align: center;
     border-radius: 2.5rem;
-    box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+    box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
     padding: 2.5rem;
     margin-bottom: 3.125rem;
     background-color: rgb(226, 226, 226);
@@ -105,41 +105,41 @@
 
 .ChallengeContainer .multipleCompare {
     width: 100%;
-    border: 1px solid black;
+    border: 0.0625rem solid black;
 }
 
 .ChallengeContainer .leftCompare {
     width: 32%;
-    border: 1px solid black;
+    border: 0.0625rem solid black;
     display: inline-block;
 }
 
 .ChallengeContainer .rightCompare {
     width: 32%;
-    border: 1px solid black;
+    border: 0.0625rem solid black;
     display: inline-block;
 }
 
 .ChallengeContainer .middleCompare {
     width: 18%;
-    border: 1px solid black;
+    border: 0.0625rem solid black;
     display: inline-block;
     height: auto;
 }
 
 .ChallengeContainer .compareElement {
-    padding: 7px;
+    padding: 0.4375rem;
     height: 1.875rem;
 }
 
 .ChallengeContainer .circle {
-    height: 21px;
+    height: 1.3125rem;
     width: 90%;
     border-radius: 100% !important;
     overflow: hidden;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 0.125rem solid rgba(255, 255, 255, 0.2);
     position: relative;
-    box-shadow: rgba(0, 0, 0, 0.24) 0em 3px 8px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0em 0.1875rem 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;

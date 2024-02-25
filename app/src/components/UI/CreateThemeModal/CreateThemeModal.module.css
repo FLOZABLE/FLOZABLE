@@ -1,11 +1,11 @@
 .CreateThemeModal {
   background-color: #fff;
-  width: 500px;
-  height: 500px;
+  width: 31.25rem;
+  height: 31.25rem;
   z-index: 3;
   border-radius: 1.25rem;
   overflow: hidden;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
 }
 
 .CreateThemeModal .header {
@@ -32,7 +32,7 @@
   align-items: center;
   padding: 0em 0.625rem;
   overflow-y: auto;
-  max-height: 470px;
+  max-height: 29.375rem;
 }
 
 .CreateThemeModal .content .layer {
@@ -44,12 +44,12 @@
   position: relative;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .CreateThemeModal {
     width: 23.125rem;
   }
 }
-@media (max-height: 700px) {
+@media (max-height: 43.75rem) {
   .CreateThemeModal {
     height: 18.75rem;
   }

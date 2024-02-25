@@ -13,7 +13,7 @@
 }
 
 .CustomInput .formField:focus {
-  border: var(--pink) 1px solid;
+  border: var(--pink) 0.0625rem solid;
 }
 
 .CustomInput>span,
@@ -29,17 +29,17 @@
 
 .CustomInput>span:first-child,
 .CustomInput .formField:first-child {
-  border-radius: 6px 0 0 6px;
+  border-radius: 0.375rem 0 0 0.375rem;
 }
 
 .CustomInput>span:last-child,
 .CustomInput .formField:last-child {
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 0.375rem 0.375rem 0;
 }
 
 .CustomInput>span:not(:first-child),
 .CustomInput .formField:not(:first-child) {
-  margin-left: -1px;
+  margin-left: -0.0625rem;
 }
 
 .CustomInput .formField {
@@ -56,7 +56,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 12px 1.25rem;
+  padding: 0.75rem 1.25rem;
   font-size:  1.25rem;
   line-height: 1.563rem;
   color: var(--pink);
@@ -69,7 +69,7 @@
   background: var(--pink);
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .CustomInput .formField input {
     font-size: 1.25rem;
   }

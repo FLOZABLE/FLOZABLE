@@ -90,7 +90,7 @@
   line-height: 2em;
   font-weight: bold;
   color: #fff;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0.0625rem 0 rgba(0, 0, 0, 0.4);
 }
 
 .OptionToggleBtn .tglSkewed+.tglBtn:after {

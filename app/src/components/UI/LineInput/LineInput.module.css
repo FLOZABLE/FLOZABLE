@@ -1,13 +1,13 @@
 .LineInput {
   position: relative;
   height: 3.125rem;
-  margin-top: -7px;
+  margin-top: -0.4375rem;
   margin: 1.25rem 0.938rem 0em 0.938rem;
 }
 
 .LineInput input {
   position: absolute;
-  padding: 0em 14px;
+  padding: 0em 0.875rem;
   margin-top: 0.625rem;
   height: 90%;
   width: 100%;
@@ -22,7 +22,7 @@
   display: flex;
   width: 100%;
   background-color: transparent;
-  height: 3px;
+  height: 0.1875rem;
   position: absolute;
   bottom: 0em;
 }
@@ -36,7 +36,7 @@
   transition: .3s ease-in-out width;
   background-color: #e91e63;
   position: absolute;
-  height: 3px;
+  height: 0.1875rem;
 }
 
 .LineInput .line.left {
@@ -51,8 +51,8 @@
   transition: .3s ease-in-out color;
   z-index: 1;
   font-weight: 500;
-  margin-top: -8px;
-  margin-left: 13px;
+  margin-top: -0.5rem;
+  margin-left: 0.8125rem;
   color: rgb(90, 90, 90);
 }
 

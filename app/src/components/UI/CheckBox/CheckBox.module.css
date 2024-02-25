@@ -54,7 +54,7 @@
 
 .CheckBoxWrapper .tickMark {
   position: absolute;
-  top: -1px;
+  top: -0.0625rem;
   right: 0;
   left: calc(var(--size) * -.05);
   width: calc(var(--size) * .6);
@@ -69,7 +69,7 @@
   content: "";
   position: absolute;
   background-color: #fff;
-  border-radius: 2px;
+  border-radius: 0.125rem;
   opacity: 0;
   transition: 0.2s ease transform, 0.2s ease opacity;
 }
@@ -79,7 +79,7 @@
   bottom: 0;
   width: calc(var(--size) * .1);
   height: calc(var(--size) * .3);
-  box-shadow: -2px 0 0.313rem rgba(0, 0, 0, 0.23);
+  box-shadow: -0.125rem 0 0.313rem rgba(0, 0, 0, 0.23);
   transform: translateY(calc(var(--size) * -.68));
 }
 
@@ -88,7 +88,7 @@
   bottom: 0;
   width: 100%;
   height: calc(var(--size) * .1);
-  box-shadow: 0 3px 0.313rem rgba(0, 0, 0, 0.23);
+  box-shadow: 0 0.1875rem 0.313rem rgba(0, 0, 0, 0.23);
   transform: translateX(calc(var(--size) * .78));
 }
 

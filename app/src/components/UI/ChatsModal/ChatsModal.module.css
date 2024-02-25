@@ -1,11 +1,11 @@
 .ChatsModal {
   position: fixed;
   bottom: 6.25rem;
-  right: -500px;
-  height: 500px;
+  right: -31.25rem;
+  height: 31.25rem;
   width: 21.875rem;
   background-color: #fff;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   border-radius: 1.25rem;
   z-index: 6;
   overflow: hidden;
@@ -51,7 +51,7 @@
   margin-left: 0.625rem;
   padding: 0.625rem 0em;
   overflow-y: auto;
-  height: 390px;
+  height: 24.375rem;
 }
 
 .ChatsModal .chatRoomsContainer .roomInfo .roomName {
@@ -70,7 +70,7 @@
 .ChatsModal .chatsWrapper {
   position: absolute;
   left: 21.875rem;
-  top: -80px;
+  top: -5rem;
   height: 100%;
   width: 100%;
   opacity: 0;
@@ -171,7 +171,7 @@
   color: #000;
   font-size: 0.688rem;
   width: 3.125rem;
-  bottom: -15px;
+  bottom: -0.9375rem;
   right: 0em;
   white-space: nowrap;
 }
@@ -190,8 +190,8 @@
 .ChatsModal .chatsContainer .msg.me::after {
   background-color: #fff;
   border-bottom-left-radius: 0.5rem;
-  right: -40px;
-  transform:translate(-30px, -2px);
+  right: -2.5rem;
+  transform:translate(-1.875rem, -0.125rem);
   width: 0.625rem;
 }
 
@@ -217,7 +217,7 @@
   background-color: #fff;
   border-bottom-right-radius: 0.5rem;
   left: 1.25rem;
-  transform: translate(-30px, -2px);
+  transform: translate(-1.875rem, -0.125rem);
   width: 0.625rem;
 }
 
@@ -226,28 +226,28 @@
   height: 1.875rem;
   border-radius: 0.938rem;
   position: absolute;
-  left: -30px;
+  left: -1.875rem;
   top: 0em;
   z-index: 2;
 }
 
 .ChatsModal .msg.others .name {
   position: absolute;
-  left: -20px;
-  top: 36px;
+  left: -1.25rem;
+  top: 2.25rem;
   font-size:  0.688rem;
   width: 2.5rem;
   overflow-y: hidden;
-  height: 11px;
+  height: 0.6875rem;
 }
 
 .ChatsModal .msg.others .time {
   position: absolute;
-  left: 23px;
-  top: 38px;
+  left: 1.4375rem;
+  top: 2.375rem;
   font-size:  0.688rem;
   width: 2.5rem;
-  height: 11px;
+  height: 0.6875rem;
   white-space: nowrap;
 }
 
@@ -257,12 +257,12 @@
   height: 3.125rem;
   align-items: center;
   margin: 0em 0.625rem;
-  border: 1px solid var(--gray2);
+  border: 0.0625rem solid var(--gray2);
 
 }
 
 .ChatsModal .chatsWrapper .inputWrapper input {
-  height: 46px;
+  height: 2.875rem;
   margin: 0em 0.625rem;
   border: none;
   font-size: 1.875rem;
@@ -271,9 +271,9 @@
   /* caret-color: #fff; */
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .ChatsModal {
-    height: 400px;
+    height: 25rem;
     width: 18.75rem;
     bottom: 3.125rem;
   }
@@ -292,7 +292,7 @@
 }
 
 
-@media (max-height: 800px) {
+@media (max-height: 50rem) {
   .ChatsModal {
     height: calc(100% - 12.5rem);
     width: 18.75rem;

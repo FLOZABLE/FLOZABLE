@@ -34,7 +34,7 @@
   flex-wrap: wrap;
   flex-flow: column;
   transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), margin-left 0.2s ease 0.2s;
-  margin-left: -100px;
+  margin-left: -6.25rem;
 }
 
 .ColorPalette .paletteGrid.open .palette {
@@ -42,8 +42,8 @@
 }
 
 .ColorPalette .palette:hover {
-  top: -5px;
-  box-shadow: 0 8px 1.25rem rgba(128, 128, 128, 0.12);
+  top: -0.3125rem;
+  box-shadow: 0 0.5rem 1.25rem rgba(128, 128, 128, 0.12);
 }
 
 .ColorPalette .palette {
@@ -56,12 +56,12 @@
   flex: 0 0 auto;
   font-size: 1.438rem;
   font-weight: 700;
-  padding: 12px;
+  padding: 0.75rem;
   cursor: pointer;
 }
 
 .ColorPalette .paletteInfoHexcode {
-  margin-top: 3px;
+  margin-top: 0.1875rem;
   font-size: 0.75rem;
   color: gray;
 }
@@ -127,7 +127,7 @@
   color: #fff;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 48rem) {
   .paletteGrid {
     grid-template-rows: auto 18.75rem auto repeat(2, 15rem) auto repeat(4, 12.5rem);
   }
@@ -144,8 +144,8 @@
 .palette-headers h1 {
   margin: 0.625rem 0;
   text-transform: uppercase;
-  font: 700 32px "Comfortaa", sans-serif;
-  letter-spacing: 4px;
+  font: 700 2rem "Comfortaa", sans-serif;
+  letter-spacing: 0.25rem;
 }
 .palette-headers h2 {
   color: #999;
@@ -164,7 +164,7 @@
 .ColorPalette .header .selectedColor {
   margin-left: 0.625rem;
   background-color: #fff;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   width: 3.125rem;
   height: 3.125rem;
   display: flex;
@@ -174,7 +174,7 @@
   cursor: pointer;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .ColorPalette .header p {
   }
 

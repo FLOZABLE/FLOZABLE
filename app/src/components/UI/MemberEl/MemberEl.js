@@ -11,7 +11,7 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
   const [run, setRun] = useState(false);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
-    <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
+    <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />,
   );
   
   useEffect(() => {
@@ -29,8 +29,8 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
           <StudyPerson
             opt1={"#fff"}
             opt2={"#fff"}
-            width={"40px"}
-            height={"40px"}
+            width={"2.5rem"}
+            height={"2.5rem"}
           />
         )
       } else {
@@ -46,8 +46,8 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
         <StudyPerson
           opt1={"#fff"}
           opt2={"#fff"}
-          width={"40px"}
-          height={"40px"}
+          width={"2.5rem"}
+          height={"2.5rem"}
         />
       );
       setStudyingMembers(prev => [...prev, memberInfo]);
@@ -56,7 +56,7 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
 
     const onStopStudying = () => {
       setStudyIcon(
-        <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />
+        <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />
       );
       setStudyingMembers(prevMembers => {
         return prevMembers.filter(member => {

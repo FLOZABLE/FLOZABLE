@@ -1,10 +1,10 @@
 .ThemeContainer {
   position: relative;
   background-color: beige;
-  height: 500px;
+  height: 31.25rem;
   width: 100%;
   border-radius: 1.25rem;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   color: #fff;
 }
 
@@ -45,7 +45,7 @@
 }
 
 .ThemeContainer .tags>div {
-  margin: 0em 8px;
+  margin: 0em 0.5rem;
   white-space: nowrap;
 }
 
@@ -59,9 +59,9 @@
   margin: 0em 0.313rem;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .ThemeContainer {
-    height: 400px;
+    height: 25rem;
   }
 
   .ThemeContainer .contents {
@@ -70,7 +70,7 @@
   
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 75rem) {
   .ThemeContainer .contents {
     padding: 0em 0.313rem;
   }
@@ -80,6 +80,6 @@
   }
 
   .ThemeContainer .buttons > div {
-    margin: 0em 2px;
+    margin: 0em 0.125rem;
   }
 }
