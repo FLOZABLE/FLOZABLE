@@ -41,7 +41,7 @@ function Templates(props) {
               <Search setSearchQuery={setSearchQuery} searchQuery={searchQuery} />
               <div className={styles.createWrapper}>
                 <BlobBtn
-                  name={<div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}><FontAwesomeIcon icon={faPlus} className={styles.plus} style={{ marginRight: '5px' }} />Publish your own</div>}
+                  name={<div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}><FontAwesomeIcon icon={faPlus} className={styles.plus} style={{ marginRight: '0.3125rem' }} />Publish your own</div>}
                   setClicked={() => { setIsCreateTemplate(!isCreateTemplate) }}
                   color1={'#fff'}
                   color2={"var(--pink)"}

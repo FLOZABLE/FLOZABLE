@@ -100,7 +100,7 @@
   margin-right: 0.625rem;
 }
 
-@media (max-width: 1650px) {
+@media (max-width: 103.125rem) {
   .FriendsActivityViewer .friend .profileImg {
     width: 1.875rem;
     height: 1.875rem;

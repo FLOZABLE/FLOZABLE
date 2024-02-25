@@ -1,6 +1,6 @@
 .RadioBtnContainer .container {
   position: relative;
-  width: 400px;
+  width: 25rem;
   height: 100%;
   display: flex;
   justify-content: center;
@@ -18,7 +18,7 @@
   justify-content: space-around;
   align-items: center;
   border-radius: 6.25rem;
-  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
 }
 
 .RadioBtnContainer .selectorItem {
@@ -48,25 +48,25 @@
   transform: none;
   align-items: center;
   justify-content: space-evenly;
-  margin-top: 3px;
-  margin-left: -7px;
+  margin-top: 0.1875rem;
+  margin-left: -0.4375rem;
   font-size: 1.1rem;
 }
 
 .RadioBtnContainer .selectorItemRadio:checked+.selectorItemLabel {
   background-color: #4169e1;
   color: #fff;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.5);
-  transform: translateY(-2px);
+  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.5), 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
+  transform: translateY(-0.125rem);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .RadioBtnContainer .selector {
     width: 90%;
   }
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .RadioBtnContainer .container {
     width: 18.75rem;
   }

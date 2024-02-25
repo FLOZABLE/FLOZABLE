@@ -19,16 +19,16 @@
   position: relative;
   height: 100%;
   width: 100%;
-  top: 3px;
-  height: 22px;
-  width: 22px;
+  top: 0.1875rem;
+  height: 1.375rem;
+  width: 1.375rem;
 }
 
 .SidebarToggleBtn .spinner {
   transition: all 0.3s;
   box-sizing: border-box;
   position: absolute;
-  height: 3px;
+  height: 0.1875rem;
   width: 100%;
   background-color: #fff;
 }
@@ -38,7 +38,7 @@
   box-sizing: border-box;
   position: relative;
   float: left;
-  margin-top: 3px;
+  margin-top: 0.1875rem;
 }
 
 .SidebarToggleBtn .diagonal.part1 {
@@ -53,7 +53,7 @@
   box-sizing: border-box;
   position: relative;
   float: left;
-  margin-top: 3px;
+  margin-top: 0.1875rem;
 }
 
 .SidebarToggleBtn .openSidebarMenu:checked~.sidebarIconToggle>.horizontal {
@@ -66,12 +66,12 @@
   transition: all 0.3s;
   box-sizing: border-box;
   transform: rotate(135deg);
-  margin-top: 8px;
+  margin-top: 0.5rem;
 }
 
 .SidebarToggleBtn .openSidebarMenu:checked~.sidebarIconToggle>.diagonal.part2 {
   transition: all 0.3s;
   box-sizing: border-box;
   transform: rotate(-135deg);
-  margin-top: -9px;
+  margin-top: -0.5625rem;
 }

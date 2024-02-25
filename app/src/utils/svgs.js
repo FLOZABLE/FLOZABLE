@@ -207,8 +207,8 @@ function Alert(props) {
 function Question(props) {
   return (
     <svg
-      width="64px"
-      height="64px"
+      width="4rem"
+      height="4rem"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -235,8 +235,8 @@ function Question(props) {
 const Chrome = (props) => (
   <svg
     fill="#000000"
-    width="22px"
-    height="22px"
+    width="1.375rem"
+    height="1.375rem"
     viewBox="0 0 7.736 7.736"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
@@ -260,8 +260,8 @@ const Chrome = (props) => (
 const Punch = (props) => (
   <svg
     fill="#000000"
-    width="64px"
-    height="64px"
+    width="4rem"
+    height="4rem"
     viewBox="0 0 14 14"
     role="img"
     focusable="false"
@@ -283,8 +283,8 @@ const Punch = (props) => (
 
 const GoogleCalendar = (props) => (
   <svg
-    width="40px"
-    height="40px"
+    width="2.5rem"
+    height="2.5rem"
     viewBox="0 0 256 256"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -342,8 +342,8 @@ function YouTubeIcon(props) {
     <svg
       viewBox="0 0 1024 1024"
       fill="red"
-      height="50px"
-      width="50px"
+      height="3.125rem"
+      width="3.125rem"
       {...props}
     >
       <path d="M941.3 296.1a112.3 112.3 0 00-79.2-79.3C792.2 198 512 198 512 198s-280.2 0-350.1 18.7A112.12 112.12 0 0082.7 296C64 366 64 512 64 512s0 146 18.7 215.9c10.3 38.6 40.7 69 79.2 79.3C231.8 826 512 826 512 826s280.2 0 350.1-18.8c38.6-10.3 68.9-40.7 79.2-79.3C960 658 960 512 960 512s0-146-18.7-215.9zM423 646V378l232 133-232 135z" />
@@ -356,8 +356,8 @@ const Knife = (props) => (
     id="Uploaded to svgrepo.com"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
-    width="64px"
-    height="64px"
+    width="4rem"
+    height="4rem"
     viewBox="0 0 32 32"
     xmlSpace="preserve"
     fill="#000000"
@@ -430,8 +430,8 @@ const FriendLink = (props) => (
 
 const EmailInvitation = (props) => (
   <svg
-    height="64px"
-    width="64px"
+    height="4rem"
+    width="4rem"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -498,8 +498,8 @@ const Fight1 = (props) => (
     id="Uploaded to svgrepo.com"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
-    width="50px"
-    height="50px"
+    width="3.125rem"
+    height="3.125rem"
     viewBox="0 0 32 32"
     xmlSpace="preserve"
     fill="#000000"
@@ -623,8 +623,8 @@ const Fight1 = (props) => (
 
 const Google = (props) => (
   <svg
-    width="30px"
-    height="30px"
+    width="1.875rem"
+    height="1.875rem"
     viewBox="-0.313 0 30 30"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -679,8 +679,8 @@ const Google = (props) => (
 
 const SpotifyLogo = (props) => (
   <svg
-    width="46px"
-    height="46px"
+    width="2.875rem"
+    height="2.875rem"
     viewBox="0 0 48 48"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -719,8 +719,8 @@ const SpotifyLogo = (props) => (
 
 const SpotifyLogoSmall = (props) => (
   <svg
-    width="32px"
-    height="32px"
+    width="2rem"
+    height="2rem"
     viewBox="0 0 48 48"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -1190,8 +1190,8 @@ const ButtonLogout = (props) => (
 
 const HeaderBook = (props) => (
 <svg
-    height="33px"
-    width="33px"
+    height="2.0625rem"
+    width="2.0625rem"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -1245,8 +1245,8 @@ const HeaderBook = (props) => (
 
 const HeaderMonitor = (props) => (
   <svg
-    height="32px"
-    width="32px"
+    height="2rem"
+    width="2rem"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -1362,8 +1362,8 @@ const HeaderMonitor = (props) => (
 
 const HeaderMeteor = (props) => (
   <svg
-    height="31px"
-    width="31px"
+    height="1.9375rem"
+    width="1.9375rem"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -1461,8 +1461,8 @@ const HeaderFocus = (props) => (
     xmlnsXlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 53 53"
     xmlSpace="preserve"
-    width="31px"
-    height="31px"
+    width="1.9375rem"
+    height="1.9375rem"
     fill="#000000"
     {...props}
   >

@@ -3,7 +3,7 @@
 }
 
 .CopyBtn:hover i {
-  margin-top: -20px;
+  margin-top: -1.25rem;
   color: var(--pink);
 }
 
@@ -28,7 +28,7 @@
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.625rem;
-  padding: 3px 0.313rem;
+  padding: 0.1875rem 0.313rem;
   background-color: var(--purple);
   color: #fff;
   border-radius: 0.625rem;

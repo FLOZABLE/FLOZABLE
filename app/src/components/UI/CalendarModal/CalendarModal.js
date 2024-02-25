@@ -27,7 +27,7 @@ function CalendarModal({
         </i>
       </div>
       <SmallCalendar
-        width={"400px"}
+        width={"25rem"}
         setViewDate={updateViewDate}
         viewDate={viewDate}
         setIsCalendarOpen={setIsCalendarOpen}

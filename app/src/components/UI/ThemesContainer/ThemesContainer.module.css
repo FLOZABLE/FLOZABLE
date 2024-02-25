@@ -7,13 +7,13 @@
   display: grid;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .ThemesContainer {
     grid-template-columns: repeat(auto-fill, 2 3.75rem);
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 75rem) {
   .ThemesContainer {
     grid-template-columns: repeat(auto-fill, 14.375rem);
     gap: 0.625rem;

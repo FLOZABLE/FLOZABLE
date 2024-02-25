@@ -10,7 +10,7 @@
   height: 0.625rem;
   padding: 0.625rem 0em;
   background: rgba(var(--main-color), 0.07);
-  border: 1px solid rgba(var(--main-color), 0.03);
+  border: 0.0625rem solid rgba(var(--main-color), 0.03);
   border-radius: 1in;
   align-items: center;
   justify-content: center;
@@ -27,7 +27,7 @@
   top: 0em;
   transition: opacity 500ms;
   width: 100%;
-  background: radial-gradient(500px circle at var(--mouse-x) var(--mouse-y),
+  background: radial-gradient(31.25rem circle at var(--mouse-x) var(--mouse-y),
       rgba(var(--main-color), 0.06),
       transparent 40%);
   z-index: -1;
@@ -63,7 +63,7 @@
   /*
   background: rgba(var(--el-bg-color), 0.5);
   background-image: linear-gradient(rgb(var(--main-color)), rgb(var(--main-color)));
-  background-size: calc(var(--percentage) - 9px) 100%;
+  background-size: calc(var(--percentage) - 0.5625rem) 100%;
   background-repeat: no-repeat;
   */
 }
@@ -88,7 +88,7 @@
   cursor: ew-resize;
   background: var(--pink);
   box-shadow: 1 3.75rem 0 0 9.375rem rgb(216, 216, 216);
-  transform: translate(0px, -5px);
+  transform: translate(0rem, -0.3125rem);
   border-radius: 50%;
 }
 
@@ -96,7 +96,7 @@
   height: 0.625rem;
   -webkit-appearance: none;
   color: #13bba4;
-  margin-top: -1px;
+  margin-top: -0.0625rem;
 }
 
 .soundSliderContainer .soundSlider {

@@ -49,10 +49,10 @@ const StyleWrapper = styled.div`
     content: "";
     background: #000;
     width: 100%;
-    height: 3px;
+    height: 0.1875rem;
     display: inline-block;
     position: absolute;
-    top: 8px;
+    top: 0.5rem;
   }
 
   th.fc-col-header-cell p.day {
@@ -60,12 +60,12 @@ const StyleWrapper = styled.div`
     justify-content: center;
     align-items: center;
     font-size: 1.875rem;
-    width: 43px;
-    height: 43px;
+    width: 2.6875rem;
+    height: 2.6875rem;
   }
 
   th.fc-col-header-cell.fc-day-today .day {
-    width: 43px;
+    width: 2.6875rem;
     background-color: #4169e1;
     color: #fff;
     border-radius: 1.875rem;
@@ -84,32 +84,32 @@ const StyleWrapper = styled.div`
   }
 
   .fc-theme-standard table tr td {
-    border: transparent 1px solid;
-    border-right: 1px solid #c5c5c6;
+    border: transparent 0.0625rem solid;
+    border-right: 0.0625rem solid #c5c5c6;
   }
 
   .fc-theme-standard table tr:nth-of-type(4n) td {
-    border-bottom: 1px solid #c5c5c6;
+    border-bottom: 0.0625rem solid #c5c5c6;
   }
 
   thead .fc-scroller {
     overflow: hidden !important;
-    padding-right: 12px;
+    padding-right: 0.75rem;
     margin-bottom: 1.25rem;
   }
 
   .fc-scroller::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 0 0.375rem rgba(0, 0, 0, 0.3);
     border-radius: 0.625rem;
   }
 
   .fc-scroller::-webkit-scrollbar {
-    width: 12px;
+    width: 0.75rem;
   }
 
   .fc-scroller::-webkit-scrollbar-thumb {
     border-radius: 0.625rem;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 0 0.375rem rgba(0, 0, 0, 0.3);
     background-color: #555555;
   }
 
@@ -119,7 +119,7 @@ const StyleWrapper = styled.div`
 
   .fc-timegrid-slot-label-cushion {
     position: absolute;
-    top: -25px;
+    top: -1.5625rem;
     left: 0em;
     background-color: #f7f9fd;
   }
@@ -172,11 +172,11 @@ const StyleWrapper = styled.div`
     height: 100vh !important;
   }
 
-  @media (max-width: 1400px) {
+  @media (max-width: 87.5rem) {
     th.fc-col-header-cell p.day {
     font-size:  1.25rem;
-    height: 34px;
-    width: 34px !important;
+    height: 2.125rem;
+    width: 2.125rem !important;
     }
 
     th.fc-col-header-cell p.weekDay {

@@ -22,7 +22,7 @@
 .PlanTimelineBar .now {
   position: absolute;
   top: 0em;
-  width: 3px;
+  width: 0.1875rem;
   margin-top:  3.75rem;
   height: 2.5rem;
   background-color: brown;
@@ -31,7 +31,7 @@
 
 .PlanTimelineBar .timeDisp {
   position: absolute;
-  bottom: -30px;
+  bottom: -1.875rem;
   color: #fff;
 }
 
@@ -45,8 +45,8 @@
 }
 
 .PlanTimelineBar .timelineWrapper .inner{
-  /* border: 1px solid transparent; */
-  height:40px;
+  /* border: 0.0625rem solid transparent; */
+  height:2.5rem;
   margin-top:  3.75rem;
   position: relative;
   background-color: #ffffffd0;
@@ -54,7 +54,7 @@
 
 .PlanTimelineBar .timelineWrapper .inner .hour {
   position: absolute;
-  top: -30px;
+  top: -1.875rem;
   font-size:  1.25rem;
   color: #fff;
   display: flex;
@@ -77,14 +77,14 @@
   flex-direction: column;
   height: 2.5rem;
   overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.16) 0em 0.625rem 36px 0em, rgba(0, 0, 0, 0.06) 0em 0em 0em 1px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0em 0.625rem 2.25rem 0em, rgba(0, 0, 0, 0.06) 0em 0em 0em 0.0625rem;
   cursor: pointer;
 }
 
 .PlanTimelineBar .border {
   position: absolute;
   right: 0em;
-  width: 2px;
+  width: 0.125rem;
   background-color: rgb(63, 61, 61);
   height: 2.5rem;
   top:  3.75rem;

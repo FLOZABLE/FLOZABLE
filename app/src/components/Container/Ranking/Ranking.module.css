@@ -52,7 +52,7 @@
   display: flex;
   background-color: #f7f9fd;
   border-radius: 2.5rem;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   padding: 2.5rem;
   margin-bottom: 3.125rem;
 }
@@ -65,7 +65,7 @@
 .Ranking .boxes .smallBox {
   background-color: #f7f9fd;
   border-radius: 2.5rem;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   margin: 0em 1.875rem 3.125rem;
   width: 100%;
   padding: 1.875rem;
@@ -126,7 +126,7 @@
   /* background-color: var(--pink); */
   padding: 0.313rem;
   width:  3.75rem;
-  border: 1px solid black;
+  border: 0.0625rem solid black;
 }
 
 .Ranking .PageButtons .textContainer {
@@ -161,7 +161,7 @@
   border-radius: 1.25rem;
   justify-content: center;
   align-items: center;
-  margin-right: 7px;
+  margin-right: 0.4375rem;
 }
 
 .Ranking .userInfo .profileInfo {
@@ -174,19 +174,19 @@
 
 .Ranking .dash {
   background-color: #545454;
-  width: 4px;
+  width: 0.25rem;
   height: 100%;
   rotate: 20deg;
-  border-radius: 2px;
-  margin: 0em 12px;
+  border-radius: 0.125rem;
+  margin: 0em 0.75rem;
 }
 
 .Ranking .divider {
   width: calc(100% -  3.75rem);
   margin: 0.938rem 0em 0.938rem  3.75rem;
   background-color: #e5e6e7;
-  height: 3px;
-  border-radius: 2px;
+  height: 0.1875rem;
+  border-radius: 0.125rem;
 }
 
 .Ranking .Ranking li .userInfo .ranking {
@@ -196,7 +196,7 @@
   margin-left: auto;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .Ranking .userInfo p {
 
   }

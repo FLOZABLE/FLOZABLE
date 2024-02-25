@@ -7,7 +7,7 @@
   display: grid;
 }
 
-/* @media (max-width: 1400px) {
+/* @media (max-width: 87.5rem) {
   .GroupsContainer {
     grid-template-columns: repeat(auto-fill, 2 3.75rem);
   }

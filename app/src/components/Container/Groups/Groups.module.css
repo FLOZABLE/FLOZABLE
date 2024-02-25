@@ -31,7 +31,7 @@
 }
 
 .Groups button#createGroupBtn {
-  border: 1px solid var(--purple2);
+  border: 0.0625rem solid var(--purple2);
   display: flex;
   align-items: center;
   padding: 0em 0.625rem;
@@ -48,12 +48,12 @@
   width: 18.75rem;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .Groups .tagContainerWrapper {
     width: 13.75rem;
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 75rem) {
 
 }

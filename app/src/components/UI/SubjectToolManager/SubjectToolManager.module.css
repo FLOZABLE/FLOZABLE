@@ -9,9 +9,9 @@
 .SubjectToolManager li {
     display: inline-block;
     max-width: fit-content;
-    padding: 7px;
+    padding: 0.4375rem;
     border-radius: 0.938rem;
-    margin: 3px;
+    margin: 0.1875rem;
     background-color: rgb(222,222,222);
 }
 

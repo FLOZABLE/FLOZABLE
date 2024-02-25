@@ -8,8 +8,8 @@
   height: 1.875rem;
   border-radius: 50%;
   background-color: var(--purple);
-  top: -15px;
-  left: -15px;
+  top: -0.9375rem;
+  left: -0.9375rem;
   transition: 1s linear;
   z-index: 7;
   visibility: hidden;

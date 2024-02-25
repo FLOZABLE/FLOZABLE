@@ -107,9 +107,9 @@
   overflow: hidden;
   width: 12.5rem;
   height: 12.5rem;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 0.125rem solid rgba(255, 255, 255, 0.2);
   position: relative;
-  box-shadow: rgba(0, 0, 0, 0.24) 0em 3px 8px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0em 0.1875rem 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -149,7 +149,7 @@
   margin-top: 2.5rem;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .Account .boxContainer {
     width: 90%;
     margin-left: 5%;
@@ -161,7 +161,7 @@
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 75rem) {
   .Account {
     padding: 1.875rem;
   }

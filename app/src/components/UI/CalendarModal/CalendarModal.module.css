@@ -1,5 +1,5 @@
 .CalendarModal {
-  width: 500px;
+  width: 31.25rem;
   height: fit-content;
   z-index: 3;
   border-radius: 1.25rem;
@@ -10,7 +10,7 @@
   flex-direction: column;
   align-items: center;
   overflow: hidden;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   display: flex;
 }
 
@@ -28,18 +28,18 @@
 .CalendarModal .modalHeader i {
   margin-left: auto;
   color: #fff;
-  margin-top: 3px;
+  margin-top: 0.1875rem;
   padding: 0.625rem;
   cursor: pointer;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .CalendarModal {
-    width: 400px;
+    width: 25rem;
   }
 }
 
-@media (max-height: 600px) {
+@media (max-height: 37.5rem) {
   .CalendarModal {
     top: 6.25rem !important;
   }
