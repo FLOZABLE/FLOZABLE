@@ -13,7 +13,7 @@
   display: flex;
   justify-content: left;
   align-items: center;
-  font-size: 23px;
+  font-size:  1.438rem;
   width: min-content;
   white-space: nowrap;
   transition: .3s background-color ease-in-out, .3s border-radius ease-in-out;
@@ -35,7 +35,7 @@
 }
 
 .SubjectTimer button.clicked~.options {
-  font-size: 17px;
+  font-size: 1.063rem;
   transition: font-size .3s ease-in-out;
 }
 
@@ -73,7 +73,7 @@
   transform: rotate(0deg);
   transition: transform .4s cubic-bezier(0.075, 0.82, 0.165, 1);
   margin-left: 20px;
-  font-size: 30px;
+  font-size: 1.875rem;
 }
 
 .SubjectTimer .optBtn.clicked i {

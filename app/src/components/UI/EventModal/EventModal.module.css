@@ -21,7 +21,7 @@
 
 .EventModal .header i {
   margin-right: 10px;
-  font-size: 30px;
+  font-size: 1.875rem;
   cursor: pointer;
 }
 
@@ -44,7 +44,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 27px;
+  font-size: 1.688rem;
   position: relative;
 }
 
@@ -55,7 +55,7 @@
 
 .EventModal .wrapper .iconWrapper .hoverEl {
   position: absolute;
-  font-size: 17px;
+  font-size: 1.063rem;
   white-space: nowrap;
   top: 50px;
   opacity: 0;
@@ -78,7 +78,7 @@
   width: 100%;
   border: none;
   height: 100%;
-  font-size: 30px;
+  font-size: 1.875rem;
 }
 
 .EventModal .wrapper .contentWrapper {
@@ -127,7 +127,7 @@
   }
 
   .EventModal .title input {
-    font-size: 20px;
+    font-size:  1.25rem;
   }
 }
 

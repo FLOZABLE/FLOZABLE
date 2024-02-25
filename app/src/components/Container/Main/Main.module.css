@@ -33,9 +33,13 @@
 .boxesContainer .box#Timeline {
   height: 101.2%;
 }
+
+.Main {
+  margin-top: 20px;
+}
 .Main .boxesContainer .box .title { 
   display: flex;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 600;
   justify-content: center;
   margin-right: 40px;
@@ -133,6 +137,4 @@
   font-family: "Roboto", sans-serif;
   padding-bottom: 20px;
   padding-left: 50px;
-  font-size: 270%;
-  font-weight: 800;
 }
