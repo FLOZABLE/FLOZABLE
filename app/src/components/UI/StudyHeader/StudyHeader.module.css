@@ -26,7 +26,7 @@
 .StudyHeader li {
   display: flex;
   position: relative;
-  margin: 20px;
+  margin: 1.25rem;
 }
 
 .StudyHeader li .dispBtn {
@@ -70,7 +70,7 @@
   background-color: var(--bgColor);
   left: 50%;
   transform: translateX(-50%);
-  padding: 20px;
+  padding: 1.25rem;
   border-radius: 20px;
   opacity: 0;
   z-index: -1;
@@ -90,7 +90,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 5px;
+  margin: 0.313rem;
   height: 70px;
   width: 100px;
   overflow: hidden;

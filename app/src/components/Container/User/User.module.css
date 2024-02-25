@@ -15,7 +15,7 @@
   left: 180px;
   background-color: #fff;
   box-shadow: var(--shadow9);
-  padding: 30px;
+  padding: 1.875rem;
   width: 380px;
   border-radius: 30px;
 }
@@ -60,7 +60,7 @@
 .User .boxContainer .box {
   background-color: #fff;
   border-radius: 30px;
-  padding: 30px;
+  padding: 1.875rem;
   box-shadow: var(--shadow9);
   margin-bottom: 30px;
   height: 500px;
@@ -89,7 +89,7 @@
 @media (max-width: 1400px) {
   .User .profileCard {
     top: 190px;
-    padding: 15px;
+    padding: 0.938rem;
     width: 300px;
     left: 170px;
     border-radius: 20px;
@@ -119,7 +119,7 @@
   
   .User .boxContainer .box {
     border-radius: 20px;
-    padding: 20px;
+    padding: 1.25rem;
     margin-bottom: 20px;
     height: 400px;
   }
@@ -128,7 +128,7 @@
 
 @media (max-width: 1200px) {
   .User .profileCard {
-    padding: 10px;
+    padding: 0.625rem;
     width: 200px;
     left: 160px;
   }
@@ -157,7 +157,7 @@
   
   .User .boxContainer .box {
     border-radius: 20px;
-    padding: 20px;
+    padding: 1.25rem;
     margin-bottom: 20px;
     height: 400px;
   }

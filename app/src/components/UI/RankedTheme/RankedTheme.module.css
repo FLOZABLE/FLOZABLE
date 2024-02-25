@@ -11,7 +11,7 @@
 .RankedTheme .contents {
   position: absolute;
   bottom: 70px;
-  padding: 30px;
+  padding: 1.875rem;
 }
 
 .RankedTheme .contents .counts {
@@ -58,14 +58,14 @@
 @media (max-width: 1400px) {
   .RankedTheme .contents {
     bottom: 30px;
-    padding: 20px;
+    padding: 1.25rem;
   }
 }
 
 @media (max-width: 1200px) {
   .RankedTheme .contents {
     bottom: 10px;
-    padding: 10px;
+    padding: 0.625rem;
   }
 
   .RankedTheme .description {
