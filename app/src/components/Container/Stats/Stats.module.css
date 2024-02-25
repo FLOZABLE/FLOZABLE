@@ -63,12 +63,12 @@
 .Stats .bigBox .overflow {
   width: 100vh;
   background-color: #fff;
-  padding: 25px 1.25rem;
-  border-radius: 15px;
+  padding: 1.563rem 1.25rem;
+  border-radius: 0.938rem;
   display: flex;
   align-items: center;
   color: var(--font-gray);
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0em 13px 27px -5px, rgba(0, 0, 0, 0.3) 0em 8px 16px -8px;
 }
 
 .Stats .bigBox .overflow i {
@@ -92,7 +92,7 @@
 
 @media (max-width: 1200px) {
   .Stats .bigBox {
-    padding: 0.625rem 15px;
+    padding: 0.625rem 0.938rem;
   }
   .Stats .bigBox:nth-child(1) {
     height: 1000px;
@@ -112,6 +112,6 @@
 
 .title {
   font-family: "Roboto", sans-serif;
-  padding-bottom: 0px;
+  padding-bottom: 0em;
   padding-left: 3.125rem;
 }

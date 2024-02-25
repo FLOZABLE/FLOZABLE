@@ -1,9 +1,9 @@
 .Header {
-  height: 80px;
-  width: calc(100vw - 130px - 1px);
+  height: 5rem;
+  width: calc(100vw - 8.125rem - 1px);
   background-color: #F8F9FA;
   position: fixed;
-  top: 20px;
+  top: 1.25rem;
   left: 131px;
   display: flex;
   align-items: center;
@@ -18,13 +18,13 @@
 }
 
 .Header .left :not(.divider) {
-  margin-top: 5px;
+  margin-top: 0.313rem;
 } 
 
 .Header .bigBox {
-  margin-top: 30px;
+  margin-top: 1.875rem;
   display: flex;
-  border-radius: 30px;
+  border-radius: 1.875rem;
   height: 600px;
 }
 
@@ -43,14 +43,14 @@
 .Header .left .headerEl {
   display: flex;  
   flex-direction: column;
-  height: 60px;
+  height:  3.75rem;
   align-items: center;
   justify-content: center;
-  padding: 0px 10px;
+  padding: 0em 0.625rem;
 }
 
 .Header .left .headerEl:nth-child(1) {
-  margin-left: 50px;
+  margin-left: 3.125rem;
 }
 
 .Header .left .headerEl > div {
@@ -66,21 +66,21 @@
 }
 
 .Header .left .headerEl > div i {
-  margin-right: 10px;
+  margin-right: 0.625rem;
   font-size: 2rem;
-  width: 50px;
+  width: 3.125rem;
   display: flex;
 }
 
 .headerEl .LogoutButton {
-  padding-left: 5px;
+  padding-left: 0.313rem;
   font-size: 5.1rem;
   display: flex;
 }
 
 .Header .divider {
-  height: calc(100% - 55px);
-  margin: 15px 5px;
+  height: calc(100% - 3.438rem);
+  margin: 0.938rem 0.313rem;
   border-right: 2px solid #b2b2b2;
   margin-top: 32px;
 }
@@ -88,7 +88,7 @@
 .Header .right {
   display: flex;
   position: absolute;
-  right: 20px;
+  right: 1.25rem;
   height: 100%;
 }
 
@@ -99,7 +99,7 @@
 .Header .right .headerEl {
   display: flex;
   align-items: center;
-  margin: 0px 20px;
+  margin: 0em 1.25rem;
   position: relative;
 }
 
@@ -111,7 +111,7 @@
   font-weight: 600;
   font-size: 140%;
   margin-top: -5px;
-  margin-right: 50px;
+  margin-right: 3.125rem;
   display: flex;
   align-items: center;
 }
@@ -120,7 +120,7 @@
   font-weight: 300;
   font-size: 80%;
   margin-top: -4px;
-  margin-right: 50px;
+  margin-right: 3.125rem;
   display: flex;
   align-items: center;
 }
@@ -129,9 +129,9 @@
   display: flex;
   background-color: #c0c0c0;
   justify-content: right;
-  width: 60px;
-  height: 60px;
-  border-radius: 100px;
+  width:  3.75rem;
+  height:  3.75rem;
+  border-radius: 6.25rem;
 }
 
 .Header .headerEl#notifications {
@@ -148,7 +148,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   border: 3px solid #000;
   font-size: 0.688rem;
 }
@@ -159,8 +159,8 @@
 
 @media (max-width: 1400px) {
   .Header .right .profileImg {
-    height: 40px;
-    width: 40px;
+    height: 2.5rem;
+    width: 2.5rem;
   }
 
   .Header .LogoutButton {
@@ -178,11 +178,11 @@
 
 @media (max-width: 1200px) {
   .Header .left .headerEl:nth-child(1) {
-    margin-left: 10px;
+    margin-left: 0.625rem;
   }
 
   .Header .divider {
-    margin: 15px 0px;
+    margin: 0.938rem 0em;
     margin-top: 32px;
   }
 }

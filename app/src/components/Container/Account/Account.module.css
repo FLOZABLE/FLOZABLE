@@ -11,7 +11,7 @@
   background-color: rebeccapurple;
   width: 100%;
   padding: 1.25rem;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   box-shadow: var(--shadow9);
   background-color:#fff;
   margin: 1.25rem;
@@ -19,18 +19,18 @@
 }
 
 .Account .box#extension .title {
-  margin-bottom: 40px;
+  margin-bottom: 2.5rem;
 }
 
 .Account .submitWrapper {
   position: absolute;
-  right: 30px;
-  bottom: 30px;
-  margin: 0px !important;
+  right: 1.875rem;
+  bottom: 1.875rem;
+  margin: 0em !important;
 }
 
 .Account .content #passwordReq {
-  margin-left: 20px;
+  margin-left: 1.25rem;
 }
 
 .Account .content #passwordReq h3{
@@ -42,7 +42,7 @@
 
 .Account .box#profile .emailWrapper>div {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 0.625rem;
   justify-content: left;
 } 
 
@@ -53,11 +53,11 @@
 
 .Account .box#accounts > div:nth-child(2) > div {
   display: flex;
-  margin-bottom: 30px;
+  margin-bottom: 1.875rem;
 }
 
 .Account .box#accounts .iconWrapper {
-  margin-right: 10px;
+  margin-right: 0.625rem;
 }
 
 .Account .box#profile .emailWrapper .ProfileConfirm {
@@ -68,13 +68,13 @@
 }
 
 .Account .box#profile .contents {
-  margin-right: 100px;
+  margin-right: 6.25rem;
   width: 100%;
 }
 
 .Account #passwordReq ul li {
   list-style: disc;
-  margin-left: 30px ;
+  margin-left: 1.875rem ;
 }
 
 /* profile pic selector */
@@ -93,7 +93,7 @@
 }
 
 .Account .profilePic {
-  width: 200px;
+  width: 12.5rem;
   height: auto;
   object-fit: cover;
 }
@@ -105,11 +105,11 @@
 .Account .circle {
   border-radius: 100% !important;
   overflow: hidden;
-  width: 200px;
-  height: 200px;
+  width: 12.5rem;
+  height: 12.5rem;
   border: 2px solid rgba(255, 255, 255, 0.2);
   position: relative;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0em 3px 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,13 +117,13 @@
 
 .Account .pImage {
   position: absolute;
-  top: 170px;
-  left: 170px;
+  top: 10.625rem;
+  left: 10.625rem;
   color: #666666;
   transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
   background-color: #fff;
-  width: 30px;
-  height: 30px;
+  width: 1.875rem;
+  height: 1.875rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -146,7 +146,7 @@
 
 .Account #welcome {
   font-size: 1.875rem;
-  margin-top: 40px;
+  margin-top: 2.5rem;
 }
 
 @media (max-width: 1400px) {
@@ -168,7 +168,7 @@
 
   .Account .boxContainer {
     width: 100%;
-    margin: 0px;
+    margin: 0em;
   }
 
   .Account .box {

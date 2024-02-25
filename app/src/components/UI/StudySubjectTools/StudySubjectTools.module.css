@@ -1,7 +1,7 @@
 .StudyModalContainer {
     background-color: #fff;
     padding: 0.625rem;
-    border-radius: 20px;
+    border-radius: 1.25rem;
     position: fixed;
     z-index: 2;
     visibility: hidden;

@@ -8,15 +8,15 @@
 }
 
 .ChallengeContainer .IntroContainer {
-    border-radius: 40px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: 2.5rem;
+    box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
     padding: 2.5rem;
-    margin-bottom: 50px;
+    margin-bottom: 3.125rem;
     background-image: linear-gradient(to right, rgb(255, 184, 151), #95daff);
 }
 
 .ChallengeContainer .ChallengeIntroduction {
-    margin-top: 50px;
+    margin-top: 3.125rem;
 }
 
 .ChallengeContainer .ChallengeTitle {
@@ -43,9 +43,9 @@
 .ChallengeContainer .profileImg {
     display: flex;
     background-color: #e5e6e7;
-    width: 40px;
-    height: 40px;
-    border-radius: 20px;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 1.25rem;
     justify-content: center;
     align-items: center;
     margin-right: auto;
@@ -54,15 +54,15 @@
 
 .ChallengeContainer .vsTitle {
     position: relative;
-    top: 100px;
+    top: 6.25rem;
     font-size: 2rem;
 }
 
 .ChallengeContainer .compareContainer {
-    border-radius: 40px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: 2.5rem;
+    box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
     padding: 2.5rem;
-    margin-bottom: 50px;
+    margin-bottom: 3.125rem;
     background-color: rgb(222, 244, 230);
 }
 
@@ -77,16 +77,16 @@
 .ChallengeContainer .statContainer {
     width: 100%;
     border: 1px solid black;
-    border-radius: 40px;
+    border-radius: 2.5rem;
     text-align: center;
 }
 
 .ChallengeContainer .ChallengeHistory {
     text-align: center;
-    border-radius: 40px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: 2.5rem;
+    box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
     padding: 2.5rem;
-    margin-bottom: 50px;
+    margin-bottom: 3.125rem;
     background-color: rgb(226, 226, 226);
 }
 
@@ -99,7 +99,7 @@
 }
 
 .ChallengeContainer .historyContainer {
-    max-height: 200px;
+    max-height: 12.5rem;
     overflow-y: auto;
 }
 
@@ -129,7 +129,7 @@
 
 .ChallengeContainer .compareElement {
     padding: 7px;
-    height: 30px;
+    height: 1.875rem;
 }
 
 .ChallengeContainer .circle {
@@ -139,10 +139,10 @@
     overflow: hidden;
     border: 2px solid rgba(255, 255, 255, 0.2);
     position: relative;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0em 3px 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 5px;
+    margin-bottom: 0.313rem;
     background-color: aquamarine;
 }

@@ -10,15 +10,15 @@
 }
 
 .DateSelector .selectorWrapper .timeStart input {
-  width: 80px;
+  width: 5rem;
 }
 
 .DateSelector .selectorWrapper .timeStop input {
-  width: 80px;
+  width: 5rem;
 }
 
 .DateSelector .DateWrapper input {
-  width: 60px;
+  width:  3.75rem;
 }
 
 .DateSelector .selectorWrapper .inputWrapper:hover .hoverEl {
@@ -33,9 +33,9 @@
   background-color: #000000C0;
   opacity: 0;
   width: fit-content;
-  border-radius: 20px;
-  height: 20px;
-  padding: 0px 20px;
+  border-radius: 1.25rem;
+  height: 1.25rem;
+  padding: 0em 1.25rem;
   font-size: 0.938rem;
   display: flex;
   justify-content: center;
@@ -43,16 +43,16 @@
   visibility: hidden;
   color: #fff;
   pointer-events: none;
-  top: 40px;
+  top: 2.5rem;
 }
 
 .DateSelector ul.MuiMultiSectionDigitalClock-root {
-  width: 60px !important;
+  width:  3.75rem !important;
 }
 
 .DateSelector ul.MuiMultiSectionDigitalClock-root::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
+  border-radius: 0.625rem;
 
 }
 
@@ -62,7 +62,7 @@
 }
 
 .DateSelector ul.MuiMultiSectionDigitalClock-root::-webkit-scrollbar-thumb {
-  border-radius: 10px;
+  border-radius: 0.625rem;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
   background-color: #555555;
 }

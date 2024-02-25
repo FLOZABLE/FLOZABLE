@@ -7,7 +7,7 @@
 
 .CountryViewer .hoverEl {
   position: absolute;
-  top: 50px;
+  top: 3.125rem;
   visibility: hidden;
   opacity: 0;
   transition: .3s ease-in-out top, .3s ease-in-out visibility, .3s ease-in-out opacity;
@@ -16,13 +16,13 @@
   left: 50%;
   color: #fff;
   background-color: #00000090;
-  padding: 5px 10px;
-  border-radius: 10px;
+  padding: 0.313rem 0.625rem;
+  border-radius: 0.625rem;
   pointer-events: none;
 }
 
 .CountryViewer:hover .hoverEl {
-  top: 20px;
+  top: 1.25rem;
   visibility: visible;
   opacity: 1;
 }

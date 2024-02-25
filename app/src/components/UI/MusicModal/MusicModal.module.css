@@ -6,14 +6,14 @@
 }
 
 .YouTubeMusicModal .audioWrapper {
-    padding-bottom: 10px;
+    padding-bottom: 0.625rem;
 }
 
 .YouTubeMusicModal .audioDescription {
     font-size: 0.938rem;
-    padding-left: 5px;
+    padding-left: 0.313rem;
 }
 
 .YouTubeMusicModal .audioDescriptionName {
-    padding-left: 20px;
+    padding-left: 1.25rem;
 }

@@ -68,7 +68,7 @@ const StyleWrapper = styled.div`
     width: 43px;
     background-color: #4169e1;
     color: #fff;
-    border-radius: 30px;
+    border-radius: 1.875rem;
   }
 
   th.fc-col-header-cell.fc-day-today .weekDay {
@@ -95,12 +95,12 @@ const StyleWrapper = styled.div`
   thead .fc-scroller {
     overflow: hidden !important;
     padding-right: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
   }
 
   .fc-scroller::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
+    border-radius: 0.625rem;
   }
 
   .fc-scroller::-webkit-scrollbar {
@@ -108,7 +108,7 @@ const StyleWrapper = styled.div`
   }
 
   .fc-scroller::-webkit-scrollbar-thumb {
-    border-radius: 10px;
+    border-radius: 0.625rem;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: #555555;
   }
@@ -120,12 +120,12 @@ const StyleWrapper = styled.div`
   .fc-timegrid-slot-label-cushion {
     position: absolute;
     top: -25px;
-    left: 0px;
+    left: 0em;
     background-color: #f7f9fd;
   }
 
   .fc-timegrid-slots {
-    margin-top: 10px;
+    margin-top: 0.625rem;
   }
 
   .fc-daygrid-day-top {
@@ -134,9 +134,9 @@ const StyleWrapper = styled.div`
 
   .fc .fc-custom-today-button {
     background-color: #4169e1;
-    padding: 10px 30px;
+    padding: 0.625rem 1.875rem;
     font-size:  1.25rem;
-    border-radius: 30px;
+    border-radius: 1.875rem;
     border: none;
     transition: 0.3s background-color ease-in-out;
   }
@@ -185,7 +185,7 @@ const StyleWrapper = styled.div`
     }
 
     .fc .fc-custom-today-button {
-      padding: 5px 10px;
+      padding: 0.313rem 0.625rem;
       font-size:1.063rem;
       height: fit-content;
     }

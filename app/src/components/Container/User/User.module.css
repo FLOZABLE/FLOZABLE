@@ -4,36 +4,36 @@
 
 .User .searchOpt {
   position: fixed;
-  top: 100px;
-  right: 50px;
+  top: 6.25rem;
+  right: 3.125rem;
   z-index: 2;
 }
 
 .User .profileCard {
   position: fixed;
-  top: 215px;
-  left: 180px;
+  top: 13.438rem;
+  left: 11.25rem;
   background-color: #fff;
   box-shadow: var(--shadow9);
   padding: 1.875rem;
-  width: 380px;
-  border-radius: 30px;
+  width: 23.75rem;
+  border-radius: 1.875rem;
 }
 
 .User .profileCard>div {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .User .profileCard .profileImg {
-  width: 150px;
-  height: 150px;
-  border-radius: 100px;
+  width: 9.375rem;
+  height: 9.375rem;
+  border-radius: 6.25rem;
 }
 
 .User .profileCard .name {
-  max-width: calc(100% - 150px);
+  max-width: calc(100% - 9.375rem);
 }
 
 .User .profileCard .timezone {
@@ -47,22 +47,22 @@
 
 .User .profileCard .timezone i {
   font-size: 1.875rem;
-  margin: 0px 5px;
+  margin: 0em 0.313rem;
 }
 
 .User .boxContainer {
   position: absolute;
   left: 530px;
-  top: 80px;
-  width: calc(100% - 560px);
+  top: 5rem;
+  width: calc(100% - 5 3.75rem);
 }
 
 .User .boxContainer .box {
   background-color: #fff;
-  border-radius: 30px;
+  border-radius: 1.875rem;
   padding: 1.875rem;
   box-shadow: var(--shadow9);
-  margin-bottom: 30px;
+  margin-bottom: 1.875rem;
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -88,39 +88,39 @@
 
 @media (max-width: 1400px) {
   .User .profileCard {
-    top: 190px;
+    top: 11.875rem;
     padding: 0.938rem;
-    width: 300px;
-    left: 170px;
-    border-radius: 20px;
+    width: 18.75rem;
+    left: 10.625rem;
+    border-radius: 1.25rem;
   }
 
   .User .profileCard .profileImg {
-    width: 100px;
-    height: 100px;
+    width: 6.25rem;
+    height: 6.25rem;
   }
 
   .User .profileCard .name {
-    max-width: calc(100% - 100px);
+    max-width: calc(100% - 6.25rem);
   }
 
   .User .profileCard .timezone {
   }
 
   .User .profileCard .timezone i {
-    margin: 0px 5px;
+    margin: 0em 0.313rem;
   }
 
   .User .boxContainer {
     left: 400px;
-    top: 55px;
+    top: 3.438rem;
     width: calc(100% - 450px);
   }
   
   .User .boxContainer .box {
-    border-radius: 20px;
+    border-radius: 1.25rem;
     padding: 1.25rem;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
     height: 400px;
   }
   
@@ -129,36 +129,36 @@
 @media (max-width: 1200px) {
   .User .profileCard {
     padding: 0.625rem;
-    width: 200px;
-    left: 160px;
+    width: 12.5rem;
+    left: 1 3.75rem;
   }
 
   .User .profileCard .profileImg {
-    width: 70px;
-    height: 70px;
+    width: 4.375rem;
+    height: 4.375rem;
   }
 
   .User .profileCard .name {
-    max-width: calc(100% - 70px);
+    max-width: calc(100% - 4.375rem);
   }
 
   .User .profileCard .timezone {
   }
 
   .User .profileCard .timezone i {
-    margin: 0px 5px;
+    margin: 0em 0.313rem;
   }
 
   .User .boxContainer {
-    left: 280px;
-    top: 55px;
-    width: calc(100% - 320px);
+    left: 17.5rem;
+    top: 3.438rem;
+    width: calc(100% - 20em);
   }
   
   .User .boxContainer .box {
-    border-radius: 20px;
+    border-radius: 1.25rem;
     padding: 1.25rem;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
     height: 400px;
   }
 }

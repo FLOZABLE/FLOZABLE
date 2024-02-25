@@ -19,7 +19,7 @@
 .RecommendedFriendsViewer .recommendedFriend {
   display: flex;
   align-items: center;
-  margin-bottom: 5px;
+  margin-bottom: 0.313rem;
 }
 
 .RecommendedFriendsViewer .recommendedFriend .buttons{
@@ -27,8 +27,8 @@
 }
 
 .RecommendedFriendsViewer .profileImg {
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  margin-right: 10px;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 1.25rem;
+  margin-right: 0.625rem;
 }

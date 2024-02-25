@@ -1,5 +1,5 @@
 .Themes {
-  padding: 30px 50px;
+  padding: 1.875rem 3.125rem;
 }
 
 .Themes h1 {
@@ -9,9 +9,9 @@
 .Themes .Swiper {
   display: flex;
   width: 100%;
-  height: calc(100vh - 300px);
+  height: calc(100vh - 18.75rem);
   min-height: 500px;
-  padding-bottom: 85px;
+  padding-bottom: 5.313rem;
   z-index: 2;
 }
 
@@ -46,10 +46,10 @@
   display: flex;
   background-color: #fff;
   padding: 1.875rem;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   justify-content: center;
   flex-direction: column;
-  margin-bottom: 30px;
+  margin-bottom: 1.875rem;
   box-shadow: var(--shadow3);
 }
 
@@ -57,7 +57,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 80px;
+  margin-bottom: 5rem;
 }
 
 .Themes .box .searchOptions > div{
@@ -68,12 +68,12 @@
 }
 
 .Themes .box .searchOptions#tagWrapper {
-  width: 350px;
+  width: 21.875rem;
 }
 
 .Themes .box .searchOptions .tagContainerWrapper {
   position: relative;
-  width: 300px;
+  width: 18.75rem;
 }
 
 
@@ -100,6 +100,6 @@
 
 .title {
   font-family: "Roboto", sans-serif;
-  padding-bottom: 0px;
-  padding-left: 50px;
+  padding-bottom: 0em;
+  padding-left: 3.125rem;
 }

@@ -1,7 +1,7 @@
 .ChallengeRoom {
-    border-radius: 40px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: 2.5rem;
+    box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
     padding: 2.5rem;
-    margin-bottom: 50px;
+    margin-bottom: 3.125rem;
     background-color: rgb(222, 244, 230);
 }

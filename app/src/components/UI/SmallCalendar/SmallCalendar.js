@@ -14,7 +14,7 @@ const StyleWrapper = styled.div`
     background: #fff;
   }
   .fc-header-toolbar {
-    height: 50px;
+    height: 3.125rem;
   }
   .fc .fc-scroller-liquid-absolute {
     position: relative;
@@ -43,17 +43,17 @@ const StyleWrapper = styled.div`
   }
   .fc-custom-today-button {
     background-color: #4169e1;
-    border-radius: 20px;
-    height: 40px;
-    padding: 0px 30px;
+    border-radius: 1.25rem;
+    height: 2.5rem;
+    padding: 0em 1.875rem;
     font-size: 1.875rem;
     display: flex;
     justify-content: center;
-    line-height: 40px;
+    line-height: 2.5rem;
     font-weight: 800;
   }
   .fc-view-harness {
-    border-radius: 30px;
+    border-radius: 1.875rem;
     /* overflow: hidden; */
   }
   .fc-scroller.fc-scroller-liquid-absolute {
@@ -67,7 +67,7 @@ const StyleWrapper = styled.div`
   }
   .fc-daygrid-day-events {
     position: absolute !important;
-    top: 0px;
+    top: 0em;
     width: 100%;
     border-radius: 50%;
     opacity: 0.75;
@@ -80,7 +80,7 @@ const StyleWrapper = styled.div`
   .fc-bg-event {
     background-color: #4169e1;
     opacity: 1;
-    border-radius: 30px;
+    border-radius: 1.875rem;
     display: flex;
     justify-content: center;
     align-item: center;
@@ -89,7 +89,7 @@ const StyleWrapper = styled.div`
     font-style: unset;
     font-size: 1em;
     color: #fff;
-    margin: 0px;
+    margin: 0em;
     position: absolute;
     top: 50%;
     transform: translatey(-50%);
@@ -104,7 +104,7 @@ const StyleWrapper = styled.div`
   }
 
   .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr{
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
   }
 
   @media (max-width: 1400px) {
@@ -120,11 +120,11 @@ const StyleWrapper = styled.div`
     }
 
     .fc-daygrid-day-events {
-      height: 30px !important;
+      height: 1.875rem !important;
     }
 
     .fc-toolbar-title {
-      margin-left: 10px;
+      margin-left: 0.625rem;
     }
   }
 

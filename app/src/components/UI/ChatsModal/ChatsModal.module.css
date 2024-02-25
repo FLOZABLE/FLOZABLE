@@ -1,12 +1,12 @@
 .ChatsModal {
   position: fixed;
-  bottom: 100px;
+  bottom: 6.25rem;
   right: -500px;
   height: 500px;
-  width: 350px;
+  width: 21.875rem;
   background-color: #fff;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  border-radius: 20px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  border-radius: 1.25rem;
   z-index: 6;
   overflow: hidden;
   visibility: hidden;
@@ -17,28 +17,28 @@
 .ChatsModal.open {
   visibility: visible;
   opacity: 1;
-  right: 100px;
+  right: 6.25rem;
 }
 
 .ChatsModal .header {
   background-color: var(--purple);
   color: #fff;
-  height: 60px;
+  height:  3.75rem;
   display: flex;
   align-items: center;
   margin: 0.625rem;
-  border-radius: 20px;
+  border-radius: 1.25rem;
 }
 
 .ChatsModal .header i {
   font-size: 1.563rem;
   cursor: pointer;
-  padding-right: 10px;
+  padding-right: 0.625rem;
   margin-left: auto;
 }
 
 .ChatsModal .header p {
-  margin-left: 10px;
+  margin-left: 0.625rem;
 }
 
 .ChatsModal .content {
@@ -48,8 +48,8 @@
 
 .ChatsModal .chatRoomsContainer {
   background-color: #fff;
-  margin-left: 10px;
-  padding: 10px 0px;
+  margin-left: 0.625rem;
+  padding: 0.625rem 0em;
   overflow-y: auto;
   height: 390px;
 }
@@ -64,12 +64,12 @@
 
 .ChatsModal .chatRoomsContainer .roomInfo strong {
   font-size: 0.875rem;
-  margin-left: 5px;
+  margin-left: 0.313rem;
 }
 
 .ChatsModal .chatsWrapper {
   position: absolute;
-  left: 350px;
+  left: 21.875rem;
   top: -80px;
   height: 100%;
   width: 100%;
@@ -79,15 +79,15 @@
 }
 
 .ChatsModal .chatsWrapper.open {
-  left: 0px;
+  left: 0em;
   background-color: #fff;
   visibility: visible;
   opacity: 1;
-  left: 0px;
+  left: 0em;
 }
 
 .ChatsModal .chatsHeader {
-  height: 50px;
+  height: 3.125rem;
   width: 100%;
   background-color: var(--purple);
   display: flex;
@@ -96,9 +96,9 @@
 }
 
 .ChatsModal .chatsHeader .imgContainer {
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 1.25rem;
 }
 
 .ChatsModal .chatsHeader i {
@@ -109,13 +109,13 @@
 
 .ChatsModal .chatsHeader #exitBtn {
   position: absolute;
-  left: 20px;
+  left: 1.25rem;
   cursor: pointer;
 }
 
 .ChatsModal .chatsHeader #closeBtn {
   position: absolute;
-  right: 10px;
+  right: 0.625rem;
   font-size: 2.188rem;
   cursor: pointer;
 }
@@ -130,14 +130,14 @@
 }
 
 .ChatsModal .chatsHeader .roomInfo .imgContainer {
-  margin-right: 10px;
+  margin-right: 0.625rem;
 }
 
 .ChatsModal .chatsContainer {
-  height: calc(100% - 115px);
+  height: calc(100% - 6.25rem);
   background-color: #fff;
   width: 100%;
-  padding: 0px 10px;
+  padding: 0em 0.625rem;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -152,7 +152,7 @@
   position: relative;
   word-wrap: break-word;
   background-color: #248bf5;
-  margin: 5px 0px;
+  margin: 0.313rem 0em;
 }
 
 .ChatsModal .chatsContainer .msg::before, .ChatsModal .chatsContainer .msg::after {
@@ -163,16 +163,16 @@
 }
 
 .ChatsModal .chatsContainer .msg.me {
-  margin: 5px 15px 10px auto;
+  margin: 0.313rem 0.938rem 0.625rem auto;
 }
 
 .ChatsModal .chatsContainer .msg.me .time {
   position: absolute;
   color: #000;
   font-size: 0.688rem;
-  width: 50px;
+  width: 3.125rem;
   bottom: -15px;
-  right: 0px;
+  right: 0em;
   white-space: nowrap;
 }
 
@@ -192,14 +192,14 @@
   border-bottom-left-radius: 0.5rem;
   right: -40px;
   transform:translate(-30px, -2px);
-  width: 10px;
+  width: 0.625rem;
 }
 
 .ChatsModal .chatsContainer .msg.others{
   background-color: #e5e5ea;
   color: #000;
-  margin-bottom: 20px;
-  margin-left: 20px;
+  margin-bottom: 1.25rem;
+  margin-left: 1.25rem;
 }
 
 .ChatsModal .chatsContainer .msg.others p {
@@ -216,18 +216,18 @@
 .ChatsModal .chatsContainer .msg.others::after {
   background-color: #fff;
   border-bottom-right-radius: 0.5rem;
-  left: 20px;
+  left: 1.25rem;
   transform: translate(-30px, -2px);
-  width: 10px;
+  width: 0.625rem;
 }
 
 .ChatsModal .msg.others .profileImg {
-  width: 30px;
-  height: 30px;
-  border-radius: 15px;
+  width: 1.875rem;
+  height: 1.875rem;
+  border-radius: 0.938rem;
   position: absolute;
   left: -30px;
-  top: 0px;
+  top: 0em;
   z-index: 2;
 }
 
@@ -236,7 +236,7 @@
   left: -20px;
   top: 36px;
   font-size:  0.688rem;
-  width: 40px;
+  width: 2.5rem;
   overflow-y: hidden;
   height: 11px;
 }
@@ -246,27 +246,27 @@
   left: 23px;
   top: 38px;
   font-size:  0.688rem;
-  width: 40px;
+  width: 2.5rem;
   height: 11px;
   white-space: nowrap;
 }
 
 .ChatsModal .chatsWrapper .inputWrapper {
   display: flex;
-  border-radius: 15px;
-  height: 50px;
+  border-radius: 0.938rem;
+  height: 3.125rem;
   align-items: center;
-  margin: 0px 10px;
+  margin: 0em 0.625rem;
   border: 1px solid var(--gray2);
 
 }
 
 .ChatsModal .chatsWrapper .inputWrapper input {
   height: 46px;
-  margin: 0px 10px;
+  margin: 0em 0.625rem;
   border: none;
   font-size: 1.875rem;
-  width: calc(100% - 50px);
+  width: calc(100% - 3.125rem);
   cursor: pointer;
   /* caret-color: #fff; */
 }
@@ -274,40 +274,40 @@
 @media (max-width: 1400px) {
   .ChatsModal {
     height: 400px;
-    width: 300px;
-    bottom: 50px;
+    width: 18.75rem;
+    bottom: 3.125rem;
   }
 
   .ChatsModal.open {
-    right: 50px;
+    right: 3.125rem;
   }
 
   .ChatsModal .chatRoomsContainer {
-    height: 350px;
+    height: 21.875rem;
   }
 
   .ChatsModal .chatsWrapper .inputWrapper input {
-    width: 200px;
+    width: 12.5rem;
   }
 }
 
 
 @media (max-height: 800px) {
   .ChatsModal {
-    height: calc(100% - 200px);
-    width: 300px;
-    bottom: 50px;
+    height: calc(100% - 12.5rem);
+    width: 18.75rem;
+    bottom: 3.125rem;
   }
 
   .ChatsModal.open {
-    right: 50px;
+    right: 3.125rem;
   }
 
   .ChatsModal .chatRoomsContainer {
-    height: calc(100% - 50px);
+    height: calc(100% - 3.125rem);
   }
 
   .ChatsModal .chatsWrapper .inputWrapper input {
-    width: 200px;
+    width: 12.5rem;
   }
 }

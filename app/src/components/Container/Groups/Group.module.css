@@ -1,10 +1,10 @@
 .group {
-  width: 300px;
-  height: 200px;
+  width: 18.75rem;
+  height: 12.5rem;
   background-color: #f7f9fd;
-  border-radius: 40px;
+  border-radius: 2.5rem;
   padding: 1.25rem;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
   position: relative;
   margin: 1.25rem;
   overflow: hidden;
@@ -14,39 +14,39 @@
 }
 
 .group .groupColor {
-  width: 50px;
-  height: 50px;
+  width: 3.125rem;
+  height: 3.125rem;
   position: absolute;
-  right: 0px;
-  top: 0px;
+  right: 0em;
+  top: 0em;
 }
 
 .group .name {
   font-weight: 800;
   font-size: 0.09rem;
-  max-width: calc(100% - 60px);
+  max-width: calc(100% -  3.75rem);
 }
 
 .group .name i {
   font-size: 0.09rem;
-  margin-right: 10px;
+  margin-right: 0.625rem;
 }
 
 .group .explanation {
   border-top: 1px solid #545454;
   position: relative;
   margin-top: 16px;
-  padding-top: 20px;
+  padding-top: 1.25rem;
 }
 
 .group .bottom {
   position: absolute;
-  bottom: 0px;
+  bottom: 0em;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: calc(100% - 40px);
+  width: calc(100% - 2.5rem);
 }
 
 .group .tags {
@@ -57,9 +57,9 @@
 }
 
 .group .tags .tag {
-  margin: 0px 5px;
-  padding: 2px 10px;
-  border-radius: 10px;
+  margin: 0em 0.313rem;
+  padding: 2px 0.625rem;
+  border-radius: 0.625rem;
   background-color: blanchedalmond;
 }
 
@@ -69,12 +69,12 @@
   background-color: blanchedalmond;
   height: 33px;
   border-radius: 17px;
-  padding: 0px 10px;
+  padding: 0em 0.625rem;
   top: -16px;
 }
 
 .group .info li {
-  margin: 0px 3px;
+  margin: 0em 3px;
 }
 
 .group .info li p {
@@ -89,8 +89,8 @@
   background-color: #fd8a8a;
   font-weight: 800;
   color: #fff;
-  padding: 0px 20px;
-  border-radius: 20px;
+  padding: 0em 1.25rem;
+  border-radius: 1.25rem;
   font-size: 0.9rem;
 }
 
@@ -107,6 +107,6 @@
 .group .buttons .copyModal.copied {
   display: block;
   background-color: #fd8a8a;
-  height: 100px;
-  width: 100px;
+  height: 6.25rem;
+  width: 6.25rem;
 }

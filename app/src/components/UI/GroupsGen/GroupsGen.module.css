@@ -1,14 +1,14 @@
 .GroupsContainer {
   position: relative;
-  grid-template-columns: repeat(auto-fill, 340px);
+  grid-template-columns: repeat(auto-fill, 21.25rem);
   justify-content: center;
-  gap: 20px;
+  gap: 1.25rem;
   width: 100%;
   display: grid;
 }
 
-@media (max-width: 1400px) {
+/* @media (max-width: 1400px) {
   .GroupsContainer {
-    grid-template-columns: repeat(auto-fill, 260px);
+    grid-template-columns: repeat(auto-fill, 2 3.75rem);
   }
-}
+} */

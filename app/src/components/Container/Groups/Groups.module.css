@@ -3,20 +3,20 @@
 }
 
 .Groups .box {
-  margin: 30px 0px;
+  margin: 1.875rem 0em;
   background-color: #fff;
   box-shadow: var(--shadow9);
-  border-radius: 40px;
+  border-radius: 2.5rem;
   padding: 1.25rem;
 }
 
 .Groups .box:nth-child(1) {
-  height: calc(100vh - 300px);
+  height: calc(100vh - 18.75rem);
 }
 
 .Groups .box .searchOpt {
   display: flex;
-  margin-bottom: 100px;
+  margin-bottom: 6.25rem;
 }
 
 .Groups .box .searchOpt > div {
@@ -27,16 +27,16 @@
 }
 
 .Groups .box .searchOpt .searchWrapper {
-  width: 300px;
+  width: 18.75rem;
 }
 
 .Groups button#createGroupBtn {
   border: 1px solid var(--purple2);
   display: flex;
   align-items: center;
-  padding: 0px 10px;
-  height: 40px;
-  border-radius: 30px;
+  padding: 0em 0.625rem;
+  height: 2.5rem;
+  border-radius: 1.875rem;
   color: var(--purple2);
 }
 
@@ -45,12 +45,12 @@
 }
 
 .Groups .tagContainerWrapper {
-  width: 300px;
+  width: 18.75rem;
 }
 
 @media (max-width: 1400px) {
   .Groups .tagContainerWrapper {
-    width: 220px;
+    width: 13.75rem;
   }
 }
 
