@@ -27,7 +27,7 @@ function ChallengeBtn({ userInfo, setResponse }) {
   return (
     <div className={styles.ChallengeBtn}>
       <div className={styles.blobWrapper}>
-        <BlobBtn delay={-1} name={<Punch width={'18px'} height={'18px'} fill={'red'} />} setClicked={() => { requestChallenge() }} color1={'#fff'} color2={"var(--pink)"} opt={2} />
+        <BlobBtn delay={-1} name={<Punch width={'1.125rem'} height={'1.125rem'} fill={'red'} />} setClicked={() => { requestChallenge() }} color1={'#fff'} color2={"var(--pink)"} opt={2} />
       </div>
 
       <div className={styles.hoverEl}>

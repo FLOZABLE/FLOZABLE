@@ -23,8 +23,8 @@ const DraggableBox = ({ initialX, initialY, children }) => {
         position: 'absolute',
         left: position.x,
         top: position.y,
-        width: '100px',
-        height: '100px',
+        width: '6.25rem',
+        height: '6.25rem',
         backgroundColor: isDragging ? 'lightgray' : 'lightblue',
       }}
     >

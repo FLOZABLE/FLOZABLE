@@ -59,25 +59,25 @@
 .TagContainerGen .content ul {
   display: flex;
   flex-wrap: wrap;
-  padding: 7px;
-  margin: 12px 0;
+  padding: 0.4375rem;
+  margin: 0.75rem 0;
   border-radius: 0.625rem;
-  border: 1px solid #a6a6a6;
+  border: 0.0625rem solid #a6a6a6;
 }
 .TagContainerGen .content ul li {
   color: #333;
-  margin: 4px 3px;
+  margin: 0.25rem 0.1875rem;
   list-style: none;
   border-radius: 0.313rem;
   background: #f2f2f2;
-  padding: 0.313rem 8px 0.313rem 0.625rem;
-  border: 1px solid #e3e1e1;
+  padding: 0.313rem 0.5rem 0.313rem 0.625rem;
+  border: 0.0625rem solid #e3e1e1;
 }
 .TagContainerGen .content ul li .closeIcon {
   height: 1.25rem;
   width: 1.25rem;
   color: #808080;
-  margin-left: 8px;
+  margin-left: 0.5rem;
   font-size: 0.75rem;
   cursor: pointer;
   border-radius: 50%;

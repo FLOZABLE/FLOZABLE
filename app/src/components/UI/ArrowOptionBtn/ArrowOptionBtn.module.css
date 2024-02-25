@@ -47,6 +47,6 @@
 }
 
 .ArrowOptionBtn .slider .arrow.clicked {
-  right: -10px;
+  right: -0.625rem;
   transform: translateY(-50%) rotate(400deg);
 }

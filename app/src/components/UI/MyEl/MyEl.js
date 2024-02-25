@@ -10,7 +10,7 @@ function MyEl({ memberInfo, setStudyingMembers, audioStream, videoStream, isFocu
   const [run, setRun] = useState(0);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
-    <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />,
+    <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />,
   );
 
   useEffect(() => {
@@ -27,8 +27,8 @@ function MyEl({ memberInfo, setStudyingMembers, audioStream, videoStream, isFocu
           <StudyPerson
             opt1={"#fff"}
             opt2={"#fff"}
-            width={"40px"}
-            height={"40px"}
+            width={"2.5rem"}
+            height={"2.5rem"}
           />
         )
       } else {
@@ -44,8 +44,8 @@ function MyEl({ memberInfo, setStudyingMembers, audioStream, videoStream, isFocu
         <StudyPerson
           opt1={"#fff"}
           opt2={"#fff"}
-          width={"40px"}
-          height={"40px"}
+          width={"2.5rem"}
+          height={"2.5rem"}
         />
       );
       setStudyingMembers(prev => [...prev, memberInfo]);
@@ -54,7 +54,7 @@ function MyEl({ memberInfo, setStudyingMembers, audioStream, videoStream, isFocu
     const onStopStudying = () => {
       setRun(false);
       setStudyIcon(
-        <RestPerson width={"40px"} height={"40px"} opt1={"#fff"} />
+        <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />
       );
       setStudyingMembers(prevMembers => {
         return prevMembers.filter(member => {

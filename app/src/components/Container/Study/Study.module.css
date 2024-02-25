@@ -31,7 +31,7 @@
 
 .StudyContainer .PlanTimelineBarWrapper {
   position: fixed;
-  bottom:50px;
+  bottom:3.125rem;
   left: 0em;
   width: 100vw;
   z-index: 2;

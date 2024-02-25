@@ -52,7 +52,7 @@
 
 .User .boxContainer {
   position: absolute;
-  left: 530px;
+  left: 33.125rem;
   top: 5rem;
   width: calc(100% - 5 3.75rem);
 }
@@ -63,7 +63,7 @@
   padding: 1.875rem;
   box-shadow: var(--shadow9);
   margin-bottom: 1.875rem;
-  height: 500px;
+  height: 31.25rem;
   display: flex;
   flex-direction: column;
 }
@@ -86,7 +86,7 @@
   height: min-content;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .User .profileCard {
     top: 11.875rem;
     padding: 0.938rem;
@@ -112,21 +112,21 @@
   }
 
   .User .boxContainer {
-    left: 400px;
+    left: 25rem;
     top: 3.438rem;
-    width: calc(100% - 450px);
+    width: calc(100% - 28.125rem);
   }
   
   .User .boxContainer .box {
     border-radius: 1.25rem;
     padding: 1.25rem;
     margin-bottom: 1.25rem;
-    height: 400px;
+    height: 25rem;
   }
   
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 75rem) {
   .User .profileCard {
     padding: 0.625rem;
     width: 12.5rem;
@@ -159,6 +159,6 @@
     border-radius: 1.25rem;
     padding: 1.25rem;
     margin-bottom: 1.25rem;
-    height: 400px;
+    height: 25rem;
   }
 }

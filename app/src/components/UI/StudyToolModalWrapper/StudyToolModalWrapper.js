@@ -1,7 +1,7 @@
 import { useDrag } from "react-dnd";
 const style = {
   position: "absolute",
-  border: "1px dashed gray",
+  border: "0.0625rem dashed gray",
   backgroundColor: "white",
   padding: "0.5rem 1rem",
   cursor: "move",

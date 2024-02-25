@@ -7,7 +7,7 @@
   gap: 1.25rem;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .MembersContainer {
     position: relative;
     display: grid;

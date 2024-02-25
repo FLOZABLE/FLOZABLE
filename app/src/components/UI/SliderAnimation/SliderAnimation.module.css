@@ -8,7 +8,7 @@
 
 .slider input[type=range] {
   outline: none;
-  height: 3px;
+  height: 0.1875rem;
   flex: 1 1 auto;
   color: inherit;
   margin-right: 1em;
@@ -42,8 +42,8 @@
 }
 
 .slider ::-webkit-slider-thumb {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   border: 0;
   background: currentColor;
   border-radius: 50% 50%;
@@ -52,8 +52,8 @@
 }
 
 .slider ::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   border: 0;
   background: currentColor;
   border-radius: 50% 50%;

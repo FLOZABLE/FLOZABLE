@@ -4,7 +4,7 @@
   height: 100%;
   width: 100%;
   border-radius: 1.25rem;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   color: #fff;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .RankedTheme .tags > div {
-  margin: 0em 8px;
+  margin: 0em 0.5rem;
   white-space: nowrap;
 }
 
@@ -55,14 +55,14 @@
   margin: 0em 0.313rem;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .RankedTheme .contents {
     bottom: 1.875rem;
     padding: 1.25rem;
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 75rem) {
   .RankedTheme .contents {
     bottom: 0.625rem;
     padding: 0.625rem;
@@ -73,6 +73,6 @@
   }
 
   .RankedTheme .buttons > div {
-    margin: 0em 2px;
+    margin: 0em 0.125rem;
   }
 }

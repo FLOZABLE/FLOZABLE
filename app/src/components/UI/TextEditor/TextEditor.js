@@ -16,17 +16,17 @@ const StyleWrapper = styled.div`
     border-top-left-radius: 0.625rem;
   }
   .ql-container::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 0 0.375rem rgba(0, 0, 0, 0.3);
     border-radius: 0.625rem;
   }
 
   .ql-container::-webkit-scrollbar {
-    width: 12px;
+    width: 0.75rem;
   }
 
   .ql-container::-webkit-scrollbar-thumb {
     border-radius: 0.625rem;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 0 0.375rem rgba(0, 0, 0, 0.3);
     background-color: #555555;
   }
 `;

@@ -83,7 +83,7 @@
   width: 20.625rem;
   justify-content: center;
   align-items: center;
-  max-height: 600px;
+  max-height: 37.5rem;
 }
 
 .StudyHeader .videoContainer .video {
@@ -131,6 +131,6 @@
 
 .StudyHeader .timer .clickedEl {
   background-color: #000000C0;
-  left: -30px;
+  left: -1.875rem;
   transform: unset;
 }

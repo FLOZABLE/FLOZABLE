@@ -8,7 +8,7 @@
 .SearchBar .inputContainer {
   background-color: var(--blue0);
   border-radius: 1.875rem;
-  height: 48px;
+  height: 3rem;
   overflow: hidden;
 
 }
@@ -29,7 +29,7 @@
   transform: translateY(-50%);
   font-size:  1.563rem;
   height: 2.5rem;
-  width: 48px;
+  width: 3rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -50,27 +50,27 @@
 
 @keyframes ballDrop {
   0% {
-    transform: translate(0px, 0em);
+    transform: translate(0rem, 0em);
   }
 
   20% {
-    transform: translate(0px, -30px);
+    transform: translate(0rem, -1.875rem);
   }
 
   30% {
-    transform: translate(0px, 0em);
+    transform: translate(0rem, 0em);
   }
 
   34% {
-    transform: translate(-20px, -10px);
+    transform: translate(-1.25rem, -0.625rem);
   }
 
   40% {
-    transform: translate(-30px, 3px);
+    transform: translate(-1.875rem, 0.1875rem);
   }
 
   60% {
-    transform: translate(0px, 0em);
+    transform: translate(0rem, 0em);
   }
 }
 

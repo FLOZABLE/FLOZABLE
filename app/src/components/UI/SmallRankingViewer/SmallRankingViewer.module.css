@@ -28,7 +28,7 @@
   align-items: center;
   border-radius: 1.563rem;
   flex: 1;
-  margin-right: 3px;
+  margin-right: 0.1875rem;
 }
 
 .SmallRankingViewer .profileImg {
@@ -39,14 +39,14 @@
   border-radius: 1.25rem;
   justify-content: center;
   align-items: center;
-  margin-right: 7px;
+  margin-right: 0.4375rem;
 }
 
 .SmallRankingViewer .timezoneWrapper {
   font-size: 0.75rem;
   display: flex;
   align-items: center;
-  margin: 0em 3px;
+  margin: 0em 0.1875rem;
 }
 
 .SmallRankingViewer .differenceGreen {
@@ -71,7 +71,7 @@
   font-weight: 500;
   font-size: 110%;
   margin-top: 1.25rem;
-  margin-left: 19px;
+  margin-left: 1.1875rem;
   text-decoration: underline;
   align-items: center;
   vertical-align: middle;

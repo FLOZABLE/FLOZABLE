@@ -3,7 +3,7 @@
   background-color: #fff;
   border-radius: 1.25rem;
   padding: 0.625rem 0.625rem;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -51,7 +51,7 @@
 .GroupContainer .tags {
   display: flex;
   flex-wrap: nowrap;
-  height: 17px;
+  height: 1.0625rem;
   overflow-y: auto;
   font-size:0.813rem;
 }
@@ -74,7 +74,7 @@
   background-color: #f8f9fa;
   box-shadow: var(--shadow9);
   padding: 0em 0.625rem;
-  height: 37px;
+  height: 2.3125rem;
   border-radius: 1.25rem;
   display: flex;
   justify-content: center;
