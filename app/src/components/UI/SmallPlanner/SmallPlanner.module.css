@@ -89,7 +89,7 @@
 .SmallPlanner .TaskCheckBoxWrapper {
   border-radius: var(--border-radius);
   position: relative;
-  padding: 5px;
+  padding: 0.313rem;
   display: grid;
   width: 100%;
   grid-template-columns: 30px auto;

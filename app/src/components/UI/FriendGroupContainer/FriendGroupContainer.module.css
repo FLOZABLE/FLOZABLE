@@ -2,7 +2,7 @@
   height: 200px;
   background-color: #f7f9fd;
   border-radius: 40px;
-  padding: 20px;
+  padding: 1.25rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   position: relative;
   display: flex;
@@ -102,7 +102,7 @@
 }
 
 .FriendGroupContainer .buttons > * {
-  margin: 5px;
+  margin: 0.313rem;
 }
 
 @media (max-width: 1400px) {

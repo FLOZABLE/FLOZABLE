@@ -21,6 +21,6 @@
   }
 }
 
-.RefreshBtn i.refresh {
+.RefreshBtn.refresh {
   animation: rotate 2s .3s forwards;
 }

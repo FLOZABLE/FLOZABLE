@@ -1,6 +1,6 @@
 .myGroupContainer {
   position: relative;
-  margin: 20px;
+  margin: 1.25rem;
 }
 
 .myGroupContainer .group {
@@ -8,7 +8,7 @@
   height: 200px;
   background-color: #f7f9fd;
   border-radius: 40px;
-  padding: 20px;
+  padding: 1.25rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   position: relative;
   overflow: hidden;
@@ -100,7 +100,7 @@
 }
 
 .myGroupContainer .buttons>* {
-  margin: 5px;
+  margin: 0.313rem;
   position: relative;
 }
 
@@ -138,5 +138,5 @@
   height: 50px;
   background-color: aqua;
   border-radius: 10px;
-  margin: 10px;
+  margin: 0.625rem;
 } */

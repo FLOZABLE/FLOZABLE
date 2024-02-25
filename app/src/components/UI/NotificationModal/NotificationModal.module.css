@@ -41,7 +41,7 @@
 
 .NotificationModal .notifications .notification {
   display: flex;
-  padding: 10px;
+  padding: 0.625rem;
 }
 
 .NotificationModal .notification .profileImg {

@@ -1,140 +1,95 @@
 .Main {
-  padding: 0px 50px;
+  padding: 0rem 3.125rem;
 }
 
 .Main .boxesWrapper {
   display: flex;
-  height: calc(100vh - 250px);
+  height: calc(100vh - 150px - 1.875rem);
 }
 
 .Main .boxesContainer:nth-child(1) {
-  width: 70%;
-  padding-right: 30px;
+  width: 80%;
+  padding-right: 1.875rem;
 }
 
 .Main .boxesContainer:nth-child(2) {
-  width: 30%;
+  width: 20%;
 }
 
 .Main .boxesContainer .box {
-  width: calc(100% - 20px);
   background-color: #ffffff;
   border-radius: 20px;
   box-shadow: var(--shadow1);
   height: 90%;
-  min-height: 200px;
-  padding: 10 px;
+  padding: 0.625rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.boxesContainer .box#Timeline {
-  height: 101.2%;
-}
-
-.Main {
-  margin-top: 20px;
-}
 .Main .boxesContainer .box .title { 
   display: flex;
   font-size: 1.5rem;
   font-weight: 600;
   justify-content: center;
-  margin-right: 40px;
-  margin-bottom: -90px;
+  margin-right: 2.5rem;
 }
 
 .Main .boxesContainer .box .title i {
-  margin-top: 6px;
-  padding-left: 7px;
-}
-
-.Main .boxesContainer:nth-child(2) .box {
-  margin-bottom: 50px;
+  padding-left: 0.438rem;
 }
 
 .Main .box#subjectsTrend {
-  height: 52.5%;
-  width: 100.1%;
+  height: 50%;
+}
+
+.Main .box#planTimeline {
+  height: min-content;
 }
 
 .Main .smallBoxesWrapper {
   display: flex;
-  height: 50%;
-  margin-top: 30px;
+  height: calc(50% - 1.875rem);
+  margin-top: 1.875rem;
+}
+
+.Main .smallBoxesWrapper>div {
+  width: 33.3%;
 }
 
 .Main .smallBoxesWrapper>div:nth-child(1) {
-  margin-right: 30px;
+  margin-right: 1.875rem;
 }
 
 .Main .smallBoxesWrapper>div:nth-child(2) {
-  margin-right: 30px;
-}
-
-.Main .box .title {
-  font-family: "Roboto", sans-serif;
-  padding-bottom: 100px;
+  margin-right: 1.875rem;
 }
 
 .Main .box#rankingContainer > div{
   width: 100%;
   height: 100%;
-  padding: 20px 50px;
+  padding: 1.25rem 3.125rem;
 }
 
 .Main .box#recommendedFriends > div {
   width: 100%;
   height: 100%;
+  padding: 1.25rem 3.125rem;
 }
 
 @media (max-width: 1700px) {
-  .Main .boxesContainer:nth-child(1) {
-    width: 80%;
-  }
-  
   .Main .boxesContainer:nth-child(2) {
-    width: 20%;
-  }
-  
-}
-
-@media (max-width: 1400px) {
-  .Main {
-    padding: 0px 20px;
-  }
-
-  .Main .smallBoxesWrapper>div:nth-child(1) {
-    margin-right: 15px;
-  }
-  
-  .Main .smallBoxesWrapper>div:nth-child(2) {
-    margin-right: 15px;
-  }
-
-  .Main .smallBoxesWrapper {
-    margin-top: 15px;
-  }
-  
-  .Main .boxesContainer:nth-child(1) {
-    padding-right: 15px;
+    width: 270px;
   }
 }
 
-@media (max-width: 1200px) {
-  .Main .boxesContainer:nth-child(2) .box {
+@media (max-width: 1300px) {
+  .Main .boxesContainer:nth-child(2) .box#planTimeline {
     height: 50%;
   }
 
   .Main .smallBoxesWrapper {
-    width: 127.5%;
+    width: calc(100% + 240px + 3.5rem);
   }
-}
-
-.title {
-  font-family: "Roboto", sans-serif;
-  padding-bottom: 20px;
-  padding-left: 50px;
 }

@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function RecommendedFriendsViewer({setResponse}) {
+function RecommendedFriendsViewer({ setResponse }) {
 
   const [refresh, setRefresh] = useState(false);
   const [recommendedFriends, setRecommendedFriends] = useState([]);
@@ -33,9 +33,7 @@ function RecommendedFriendsViewer({setResponse}) {
   return (
     <div className={styles.RecommendedFriendsViewer}>
       <div className={styles.title}>
-        <p>
-          Recommended Friends
-        </p>
+        Recommended Friends
         <RefreshBtn
           refresh={refresh}
           setRefresh={setRefresh}
@@ -43,30 +41,30 @@ function RecommendedFriendsViewer({setResponse}) {
       </div>
       <div className={styles.recommendedFriends}>
         {recommendedFriends.map((user, i) => {
-          const {user_id, name, timezone} = user;
+          const { user_id, name, timezone } = user;
           return (
-            <Link 
+            <Link
               to={`${serverOrigin}/dashboard/user/${user_id}`}
-            className={styles.recommendedFriend} key={i}>
-            <div
-              className={styles.profileImg}
-              style={{
-                backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center center',
-                backgroundRepeat: 'no-repeat',
-              }}
-            ></div>
-            <p className={styles.name}>{name}</p>
-            <CountryViewer timezone={timezone} />
-            <div className={styles.buttons}>
-            <FriendRequestBtn 
-              userInfo={user}
-              setResponse={setResponse}
-              padding={"3px 5px"}
-            />
-            </div>
-          </Link>
+              className={styles.recommendedFriend} key={i}>
+              <div
+                className={styles.profileImg}
+                style={{
+                  backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center center',
+                  backgroundRepeat: 'no-repeat',
+                }}
+              ></div>
+              <p className={styles.name}>{name}</p>
+              <CountryViewer timezone={timezone} />
+              <div className={styles.buttons}>
+                <FriendRequestBtn
+                  userInfo={user}
+                  setResponse={setResponse}
+                  padding={"3px 5px"}
+                />
+              </div>
+            </Link>
           )
         })}
       </div>

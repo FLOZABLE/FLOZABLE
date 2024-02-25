@@ -10,11 +10,11 @@
 .Account .box {
   background-color: rebeccapurple;
   width: 100%;
-  padding: 20px;
+  padding: 1.25rem;
   border-radius: 20px;
   box-shadow: var(--shadow9);
   background-color:#fff;
-  margin: 20px;
+  margin: 1.25rem;
   position: relative;
 }
 
@@ -156,14 +156,14 @@
   }
 
   .Account .box {
-    padding: 15px;
-    margin: 15px;
+    padding: 0.938rem;
+    margin: 0.938rem;
   }
 }
 
 @media (max-width: 1200px) {
   .Account {
-    padding: 30px;
+    padding: 1.875rem;
   }
 
   .Account .boxContainer {
@@ -172,7 +172,7 @@
   }
 
   .Account .box {
-    padding: 10px;
-    margin: 15px;
+    padding: 0.625rem;
+    margin: 0.938rem;
   }
 }

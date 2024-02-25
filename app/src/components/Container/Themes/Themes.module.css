@@ -45,7 +45,7 @@
 .Themes .box {
   display: flex;
   background-color: #fff;
-  padding: 30px;
+  padding: 1.875rem;
   border-radius: 20px;
   justify-content: center;
   flex-direction: column;
@@ -83,7 +83,7 @@
   }
 
   .Themes .box {
-    padding: 20px;
+    padding: 1.25rem;
   }
 }
 
@@ -94,7 +94,7 @@
   }
 
   .Themes .box {
-    padding: 10px;
+    padding: 0.625rem;
   }
 }
 

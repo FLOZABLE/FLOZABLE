@@ -1,6 +1,6 @@
 .member {
   height: 120px;
-  margin: 10px;
+  margin: 0.625rem;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -12,7 +12,7 @@
 }
 
 .member .inner {
-  padding: 10px;
+  padding: 0.625rem;
   display: flex;
   align-items: center;
   flex-direction: column;

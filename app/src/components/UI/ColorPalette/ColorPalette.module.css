@@ -10,7 +10,7 @@
   grid-template-rows: auto;
   grid-gap: 20px;
   justify-content: center;
-  padding: 20px;
+  padding: 1.25rem;
   height: 0px;
   overflow-y: hidden;
   transition: height .3s ease-in-out;

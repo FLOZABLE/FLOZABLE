@@ -17,8 +17,7 @@ import CircularCheckBox from "../CircularCheckBox/CircularCheckBox";
 import { DateTime } from "luxon";
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadialBar, ResponsiveContainer } from "recharts";
 import { subjectIcons, warmColorsList } from "../../../constant";
-import { Cell } from "recharts";
-import { randomIntInRange } from "../../../utils/Tool";
+import BlobBtn from "../BlobBtn/BlobBtn";
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -150,72 +149,66 @@ function PlanTimeline({
         </div>
         : null
       }
+      <div id={styles.addBtnWrapper}>
+      <BlobBtn
+        name={"Add a New Plan"}
+        setClicked={() => { setPlanModal((prev) => ({ ...prev, opened: true })) }}
+        color1={"#fff"}
+        color2={"var(--blue2)"}
+        delay={-1}
+      />
+      </div>
       {filteredPlans.length ?
-        <div className={styles.contents}>
-          <h4
-            onClick={() => {
-              setPlanModal((prev) => ({ ...prev, opened: true }));
-            }}
-          >
-            Add a New Plan
-          </h4>
           <ul className={`${styles.plans} hiddenScroll`} style={{ maxHeight: maxHeight }}>
-            {filteredPlans.map((plan, i) => {
-              const planSubject = subjects.find((subject) => {
-                return subject.id === plan.subject;
-              });
+          {filteredPlans.map((plan, i) => {
+            const planSubject = subjects.find((subject) => {
+              return subject.id === plan.subject;
+            });
 
-              const dispStart = DateTime.fromJSDate(plan.start).toLocaleString(DateTime.TIME_SIMPLE);
-              const dispEnd = DateTime.fromJSDate(plan.end).toLocaleString(DateTime.TIME_SIMPLE);
-              let icon;
-              let color = "#fff";
-              if (planSubject) {
-                color = planSubject.color;
-                icon = subjectIcons[planSubject.icon];
-              };
+            const dispStart = DateTime.fromJSDate(plan.start).toLocaleString(DateTime.TIME_SIMPLE);
+            const dispEnd = DateTime.fromJSDate(plan.end).toLocaleString(DateTime.TIME_SIMPLE);
+            let icon;
+            let color = "#fff";
+            if (planSubject) {
+              color = planSubject.color;
+              icon = subjectIcons[planSubject.icon];
+            };
 
-              if (!icon) {
-                icon = (
-                  <Alert />
-                );
-              }
-              return (
-                <li className={styles.plan} key={i}>
-                  <div className={styles.iconWrapper}>
-                    <div style={{ color }} className={styles.icon}>{icon}</div>
-                    <div
-                      className={styles.hoverDisp}
-                      onClick={() => {
-                        togglePlan(plan);
-                      }}
-                    >
-                      <CircularCheckBox checked={plan.completed} />
-                    </div>
-                  </div>
-                  <div className={styles.content}>
-                    <div className={styles.title}>
-                      <h2>{plan.title}</h2>
-                      <div className={`${styles.line} ${plan.completed ? styles.completed : ''}`}></div>
-                    </div>
-                    <p>
-                      ({dispStart}-{dispEnd})
-                    </p>
-                    <div className={`${styles.description} customScroll`}>
-                      {plan.description ? parse(plan.description) : ''}
-                    </div>
-                  </div>
-                </li>
+            if (!icon) {
+              icon = (
+                <Alert />
               );
-            })}
-          </ul>
-        </div>
-        : <div className={styles.noPlans}
-        onClick={() => {
-          setPlanModal((prev) => ({ ...prev, opened: true }));
-        }}
-        >
-          Add new Plans to view!
-        </div>
+            }
+            return (
+              <li className={styles.plan} key={i}>
+                <div className={styles.iconWrapper}>
+                  <div style={{ color }} className={styles.icon}>{icon}</div>
+                  <div
+                    className={styles.hoverDisp}
+                    onClick={() => {
+                      togglePlan(plan);
+                    }}
+                  >
+                    <CircularCheckBox checked={plan.completed} />
+                  </div>
+                </div>
+                <div className={styles.content}>
+                  <div className={styles.title}>
+                    <h2>{plan.title}</h2>
+                    <div className={`${styles.line} ${plan.completed ? styles.completed : ''}`}></div>
+                  </div>
+                  <p>
+                    ({dispStart}-{dispEnd})
+                  </p>
+                  <div className={`${styles.description} customScroll`}>
+                    {plan.description ? parse(plan.description) : ''}
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+        : null
       }
     </div>
   );

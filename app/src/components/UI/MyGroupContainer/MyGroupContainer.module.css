@@ -1,7 +1,7 @@
 .MyGroupContainer {
   position: relative;
   height: 100%;
-  padding: 5px;
+  padding: 0.313rem;
 }
 
 .MyGroupContainer .header {
