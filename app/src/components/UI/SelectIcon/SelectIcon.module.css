@@ -42,7 +42,7 @@
   justify-content: center;
   align-items: center;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  margin: 10px;
+  margin: 0.625rem;
   transition: box-shadow .3s ease-in-out, width .3s ease-in-out, height .3s ease-in-out, margin-left 0.2s ease 0.2s, margin-top .3s ease-in-out;
   position: relative;
   margin-left: -100px;
@@ -58,7 +58,7 @@
 }
 
 .selectIcon .icons.open .iconWrapper {
-  margin: 10px;
+  margin: 0.625rem;
 }
 
 @media (max-width: 1400px) {

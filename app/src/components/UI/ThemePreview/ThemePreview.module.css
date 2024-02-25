@@ -45,7 +45,7 @@
   flex-direction: row;
   justify-content: space-evenly;
   background-color: rgba(255, 255, 255, 0.234);
-  padding: 15px;
+  padding: 0.938rem;
   border-radius: 5px;
   white-space: nowrap;
 }
@@ -61,8 +61,8 @@
   padding: 0px 20px;
   border-radius: 20px;
   font-size: 1rem;
-  padding: 5px;
-  margin: 5px;
+  padding: 0.313rem;
+  margin: 0.313rem;
 }
 
 .ThemePreview .controlButtons .volumeIcon {

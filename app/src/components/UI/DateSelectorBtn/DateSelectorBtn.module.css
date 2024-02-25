@@ -4,7 +4,7 @@
   height: 40px;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 1.25rem;
   transition: .3s background-color ease-in-out, box-shadow .3s ease-in-out;
   font-weight: 700;
   background-color: var(--gray);

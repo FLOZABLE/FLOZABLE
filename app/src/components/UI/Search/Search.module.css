@@ -61,7 +61,7 @@
   right: -45px;
   font-size: 1.875rem;
   color: var(--pink);
-  padding: 5px;
+  padding: 0.313rem;
   transform: translateY(-50%);
   transition: all 0.5s ease-in-out;
   cursor: pointer;

@@ -140,7 +140,7 @@ function Main({
               </div>
             </div>
             <div className={styles.boxesContainer}>
-              <div className={styles.box} id={styles.Timeline}>
+              <div className={styles.box} id={styles.planTimeline}>
                 <PlanTimeline
                   plans={plans}
                   viewDate={new Date(new Date().setHours(0, 0, 0, 0))}

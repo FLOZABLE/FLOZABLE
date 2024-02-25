@@ -1,10 +1,10 @@
 .Stats {
-  padding: 10px 50px;
+  padding: 0.625rem 3.125rem;
 }
 
 .Stats .optionsHeader {
   position: sticky;
-  top: 100px;
+  top: 6.25rem;
   display: flex;
   align-items: center;
   width: 100%;
@@ -16,11 +16,11 @@
 }
 
 .Stats .bigBox {
-  margin-top: 30px;
+  margin-top: 1.875rem;
   display: flex;
   flex-direction: column;
-  border-radius: 30px;
-  height: 600px;
+  border-radius: 1.875rem;
+  height: 37.5rem;
 }
 
 .Stats .bigBox .contents {
@@ -57,13 +57,13 @@
 
 .Stats .bigBox {
   background-color: var(--blue0);
-  padding: 30px 50px;
+  padding: 1.875rem 3.125rem;
 }
 
 .Stats .bigBox .overflow {
   width: 100vh;
   background-color: #fff;
-  padding: 25px 20px;
+  padding: 25px 1.25rem;
   border-radius: 15px;
   display: flex;
   align-items: center;
@@ -74,7 +74,7 @@
 .Stats .bigBox .overflow i {
   font-size: 2rem;
   display: flex;
-  margin-right: 10px;
+  margin-right: 0.625rem;
   justify-content: center;
   align-items: center;
   color: var(--blue2);
@@ -86,13 +86,13 @@
 
 @media (max-width: 1400px) {
   .Stats .bigBox {
-    padding: 10px 30px;
+    padding: 0.625rem 1.875rem;
   }
 }
 
 @media (max-width: 1200px) {
   .Stats .bigBox {
-    padding: 10px 15px;
+    padding: 0.625rem 15px;
   }
   .Stats .bigBox:nth-child(1) {
     height: 1000px;
@@ -113,5 +113,5 @@
 .title {
   font-family: "Roboto", sans-serif;
   padding-bottom: 0px;
-  padding-left: 50px;
+  padding-left: 3.125rem;
 }

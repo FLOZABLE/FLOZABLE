@@ -89,7 +89,7 @@
 }
 .TagContainerGen .content ul input {
   flex: 1;
-  padding: 5px;
+  padding: 0.313rem;
   border: none;
   outline: none;
   font-size: 1rem;
