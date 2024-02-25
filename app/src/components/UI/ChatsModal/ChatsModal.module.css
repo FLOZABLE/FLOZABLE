@@ -31,7 +31,7 @@
 }
 
 .ChatsModal .header i {
-  font-size: 25px;
+  font-size: 1.563rem;
   cursor: pointer;
   padding-right: 10px;
   margin-left: auto;
@@ -55,7 +55,7 @@
 }
 
 .ChatsModal .chatRoomsContainer .roomInfo .roomName {
-  font-size: 17px;
+  font-size: 1.063rem;
 }
 
 .ChatsModal .chatRoomsContainer .roomInfo {
@@ -63,7 +63,7 @@
 }
 
 .ChatsModal .chatRoomsContainer .roomInfo strong {
-  font-size: 14px;
+  font-size: 0.875rem;
   margin-left: 5px;
 }
 
@@ -102,7 +102,7 @@
 }
 
 .ChatsModal .chatsHeader i {
-  font-size: 30px;
+  font-size: 1.875rem;
   color: #fff;
   display: flex;
 }
@@ -116,7 +116,7 @@
 .ChatsModal .chatsHeader #closeBtn {
   position: absolute;
   right: 10px;
-  font-size: 35px;
+  font-size: 2.188rem;
   cursor: pointer;
 }
 
@@ -169,7 +169,7 @@
 .ChatsModal .chatsContainer .msg.me .time {
   position: absolute;
   color: #000;
-  font-size: 11px;
+  font-size: 0.688rem;
   width: 50px;
   bottom: -15px;
   right: 0px;
@@ -235,7 +235,7 @@
   position: absolute;
   left: -20px;
   top: 36px;
-  font-size: 11px;
+  font-size:  0.688rem;
   width: 40px;
   overflow-y: hidden;
   height: 11px;
@@ -245,7 +245,7 @@
   position: absolute;
   left: 23px;
   top: 38px;
-  font-size: 11px;
+  font-size:  0.688rem;
   width: 40px;
   height: 11px;
   white-space: nowrap;
@@ -265,7 +265,7 @@
   height: 46px;
   margin: 0px 10px;
   border: none;
-  font-size: 30px;
+  font-size: 1.875rem;
   width: calc(100% - 50px);
   cursor: pointer;
   /* caret-color: #fff; */

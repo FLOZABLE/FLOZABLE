@@ -5,7 +5,7 @@
 }
 
 .selectTool .header p {
-  font-size: 23px;
+  font-size:  1.438rem;
   font-weight: 700;
   color: #545454;
 }
@@ -21,7 +21,7 @@
   align-items: center;
   border-radius: 10px;
   cursor: pointer;
-  font-size: 30px;
+  font-size: 1.875rem;
   position: relative;
 }
 
@@ -57,13 +57,13 @@
   position: relative;
   margin-left: -100px;
   cursor: pointer;
-  font-size: 30px;
+  font-size: 1.875rem;
 }
 
 .selectTool .hoverDisp {
   position: absolute;
   top: 0px;
-  font-size: 13px;
+  font-size: 0.813rem;
   white-space: nowrap;
   background-color: var(--opacity-black);
   padding: 3px 5px;
@@ -95,6 +95,6 @@
 
 @media (max-width: 1400px) {
   .selectTool .header p {
-    font-size: 20px;
+    font-size:  1.25rem;
   }
 }

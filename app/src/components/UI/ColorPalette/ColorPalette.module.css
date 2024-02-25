@@ -54,7 +54,7 @@
   color: #333;
   position: relative;
   flex: 0 0 auto;
-  font-size: 23px;
+  font-size: 1.438rem;
   font-weight: 700;
   padding: 12px;
   cursor: pointer;
@@ -62,7 +62,7 @@
 
 .ColorPalette .paletteInfoHexcode {
   margin-top: 3px;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: gray;
 }
 
@@ -156,7 +156,7 @@
 }
 
 .ColorPalette .header .pTag p {
-  font-size: 23px;
+  font-size:  1.438rem;
   font-weight: 700;
   color: #545454;
 }
@@ -176,10 +176,8 @@
 
 @media (max-width: 1400px) {
   .ColorPalette .header p {
-    font-size: 23px;
   }
 
   .ColorPalette .paletteShadesItem {
-    font-size: 60%;
   }
 }

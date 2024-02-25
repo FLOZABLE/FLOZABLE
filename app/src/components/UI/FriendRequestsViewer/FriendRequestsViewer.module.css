@@ -3,7 +3,7 @@
 }
 
 .FriendRequestsViewer .title {
-  font-size: 20px;
+  font-size:  1.25rem;
   font-weight: 600;
 }
 
@@ -55,7 +55,7 @@
 
 .FriendRequestsViewer .name {
   max-width: 100px;
-  font-size: 17px;
+  font-size: 1.063rem;
 }
 
 .FriendRequestsViewer .friendRequest .profileImg {
@@ -81,7 +81,7 @@
 
 .FriendRequestsViewer .friendRequest .buttons button {
   background-color: var(--gray);
-  font-size: 20px;
+  font-size: 1.25rem;
   width: 32px;
   height: 32px;
   color: var(--pink);
@@ -112,7 +112,7 @@
 
 .FriendRequestsViewer .friendRequest .btnWrapper .hoverDisp {
   position: absolute;
-  font-size: 13px;
+  font-size: 0.813rem;
   white-space: nowrap;
   top: 30px;
   left: 50%;

@@ -17,7 +17,7 @@
   position: relative;
   width: calc(100% - 70px);
   height: 100%;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 400;
   color: #333;
   padding: 0 15px;
@@ -51,7 +51,7 @@
 }
 
 .search .search-icon {
-  font-size: 30px;
+  font-size: 1.875rem;
   color: #fff;
 }
 
@@ -59,7 +59,7 @@
   position: absolute;
   top: 50%;
   right: -45px;
-  font-size: 30px;
+  font-size: 1.875rem;
   color: var(--pink);
   padding: 5px;
   transform: translateY(-50%);

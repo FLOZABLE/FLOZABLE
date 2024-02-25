@@ -58,7 +58,7 @@
 
 .NotificationModal .notification .buttons button {
   background-color: var(--gray);
-  font-size: 30px;
+  font-size: 1.875rem;
   width: 40px;
   height: 40px;
   color: var(--pink);
@@ -86,7 +86,7 @@
 
 .NotificationModal .notification .btnWrapper .hoverDisp {
   position: absolute;
-  font-size: 17px;
+  font-size: 1.063rem;
   white-space: nowrap;
   top: 50px;
   left: 50%;

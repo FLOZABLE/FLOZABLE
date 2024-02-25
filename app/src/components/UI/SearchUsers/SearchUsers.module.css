@@ -9,7 +9,7 @@
 }
 
 .SearchUsers .name {
-  font-size: 16px;
+  font-size: 1rem;
   max-width: 100px;
   margin-right: 10px;
 }
@@ -69,11 +69,11 @@
 
 .SearchUsers .user .name {
   margin-right: 10px;
-  font-size: 25px;
+  font-size: 1.563rem;
 }
 
 .SearchUsers .user .flagWrapper {
-  font-size: 25px;
+  font-size:  1.563rem;
   margin-right: 10px;
 }
 

@@ -32,7 +32,7 @@ const StyleWrapper = styled.div`
     justify-content: center;
   }
   .fc-toolbar-title {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
   .fc .fc-prev-button.fc-button-primary,
   .fc .fc-next-button.fc-button-primary {
@@ -46,7 +46,7 @@ const StyleWrapper = styled.div`
     border-radius: 20px;
     height: 40px;
     padding: 0px 30px;
-    font-size: 30px;
+    font-size: 1.875rem;
     display: flex;
     justify-content: center;
     line-height: 40px;
@@ -109,14 +109,14 @@ const StyleWrapper = styled.div`
 
   @media (max-width: 1400px) {
     .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr {
-      font-size: 17px
+      font-size:1.063rem;
     }
     .fc-col-header-cell-cushion {
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     .fc-daygrid-day-number {
-      font-size: 20px;
+      font-size:  1.25rem;
     }
 
     .fc-daygrid-day-events {

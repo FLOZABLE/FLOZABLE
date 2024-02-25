@@ -34,7 +34,7 @@
 .FriendsRankingViewer .rankings .userContainer .userInfo {
   display: flex;
   align-items: center;
-  font-size: 17px;
+  font-size: 1.25rem;
 }
 
 .FriendsRankingViewer .rankings .userContainer .userInfo p {
@@ -43,6 +43,6 @@
 
 .FriendsRankingViewer .rankings .userContainer .diff {
   margin-left: auto;
-  font-size: 15px;
+  font-size: 1rem;
   margin-left: 35%;
 }

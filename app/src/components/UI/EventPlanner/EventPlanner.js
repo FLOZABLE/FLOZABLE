@@ -34,7 +34,7 @@ const StyleWrapper = styled.div`
   }
 
   th.fc-col-header-cell p.weekDay {
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 300;
   }
 
@@ -59,7 +59,7 @@ const StyleWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 30px;
+    font-size: 1.875rem;
     width: 43px;
     height: 43px;
   }
@@ -135,7 +135,7 @@ const StyleWrapper = styled.div`
   .fc .fc-custom-today-button {
     background-color: #4169e1;
     padding: 10px 30px;
-    font-size: 20px;
+    font-size:  1.25rem;
     border-radius: 30px;
     border: none;
     transition: 0.3s background-color ease-in-out;
@@ -174,19 +174,19 @@ const StyleWrapper = styled.div`
 
   @media (max-width: 1400px) {
     th.fc-col-header-cell p.day {
-    font-size: 20px;
+    font-size:  1.25rem;
     height: 34px;
     width: 34px !important;
     }
 
     th.fc-col-header-cell p.weekDay {
-      font-size: 17px;
+      font-size: 1.063rem;
       font-weight: 300;
     }
 
     .fc .fc-custom-today-button {
       padding: 5px 10px;
-      font-size: 17px;
+      font-size:1.063rem;
       height: fit-content;
     }
 
@@ -199,7 +199,7 @@ const StyleWrapper = styled.div`
     }
 
     .fc-toolbar-title {
-      font-size: 20px;
+      font-size:  1.25rem;
     }
 
     div.fc-view.fc-timegrid {

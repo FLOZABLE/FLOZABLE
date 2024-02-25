@@ -1,7 +1,7 @@
 .slider {
   display: flex;
   align-items: center;
-  font-size: 16px;
+  font-size: 1rem;
   color: #664aff;
   width: 100%;
 }

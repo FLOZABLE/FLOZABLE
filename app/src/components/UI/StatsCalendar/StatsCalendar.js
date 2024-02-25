@@ -10,7 +10,7 @@ import styled from "@emotion/styled";
 
 const StyleWrapper = styled.div`
   * {
-    font-size: 10px;
+    font-size:  0.625rem;
   }
   .fc td {
     background: #fff;

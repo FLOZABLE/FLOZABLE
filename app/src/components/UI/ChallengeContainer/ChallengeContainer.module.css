@@ -65,7 +65,7 @@
 .ChallengeContainer .info .stat {
   display: flex;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 .ChallengeContainer .info .stat p:nth-child(1) {

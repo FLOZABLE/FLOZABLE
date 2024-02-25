@@ -21,7 +21,7 @@
 .CreateGroupModal .header .closeBtn {
   margin-left: auto;
   margin-right: 10px;
-  font-size: 23px;
+  font-size:  1.438rem;
   color: #fff;
   cursor: pointer;
 }
@@ -46,7 +46,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 27px;
+  font-size: 1.688rem;
   position: relative;
 }
 
@@ -57,7 +57,7 @@
 
 .CreateGroupModal .wrapper .iconWrapper .hoverEl {
   position: absolute;
-  font-size: 17px;
+  font-size: 1.063rem;
   white-space: nowrap;
   top: 50px;
   left: 0px;
@@ -80,7 +80,7 @@
   width: 100%;
   border: none;
   height: 100%;
-  font-size: 30px;
+  font-size: 1.875rem;
 }
 
 .CreateGroupModal .wrapper .contentWrapper {
@@ -128,7 +128,7 @@
   }
 
   .CreateGroupModal .title input {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
 }
 

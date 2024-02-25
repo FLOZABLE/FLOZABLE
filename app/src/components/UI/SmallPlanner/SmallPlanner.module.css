@@ -11,7 +11,7 @@
 
 .SmallPlanner .header i {
   color: #fff;
-  font-size: 40px;
+  font-size: 2.5rem;
   margin-right: 5px;
 }
 
@@ -39,18 +39,18 @@
   align-items: center;
   width: 50%;
   color: #414856;
-  font-size: 60px;
+  font-size: 3.75rem;
 }
 
 .SmallPlanner .planCount .comma {
   color: #36da36;
-  font-size: 60px;
+  font-size: 3.75rem;
   font-weight: 900;
   text-shadow: #e3461b 4px 10px;
 }
 
 .SmallPlanner .planCount>div strong {
-  font-size: 20px;
+  font-size:  1.25rem;
   color: #fff;
 }
 
@@ -65,7 +65,7 @@
 .SmallPlanner .planCount .left p {
   color: var(--disabled);
   font-weight: 800;
-  font-size: 20px;
+  font-size:  1.25rem;
 }
 
 .SmallPlanner .planCount .right p {

@@ -3,7 +3,7 @@
 }
 
 .Themes h1 {
-  font-size: 37px;
+  font-size: 2.313rem;
 }
 
 .Themes .Swiper {
@@ -39,7 +39,7 @@
 .Themes .box#likedList .title {
   display: flex;
   justify-content: center;
-  font-size: 30px;
+  font-size: 1.875rem;
 }
 
 .Themes .box {
@@ -102,6 +102,4 @@
   font-family: "Roboto", sans-serif;
   padding-bottom: 0px;
   padding-left: 50px;
-  font-size: 270%;
-  font-weight: 800;
 }

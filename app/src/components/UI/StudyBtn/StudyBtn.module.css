@@ -7,7 +7,7 @@
 }
 
 .StudyBtn h3 {
-  font-size: 20px;
+  font-size:  1.25rem;
   background: linear-gradient(to right, var(--blue2) , var(--blue1));
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;

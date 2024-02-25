@@ -10,7 +10,7 @@
 .FriendsActivityViewer .friend .profile {
   display: flex;
   align-items: center;
-  font-size: 23px;
+  font-size:  1.438rem;
 }
 
 .FriendsActivityViewer .friend .profileImg {
@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   margin: 0px 10px;
-  font-size: 23px;
+  font-size:  1.438rem;
 }
 
 .FriendsActivityViewer .friend .activeInfo > div {
@@ -67,11 +67,11 @@
 
 .FriendsActivityViewer .friend .name {
   margin-right: 10px;
-  font-size: 25px;
+  font-size:  1.563rem;
 }
 
 .FriendsActivityViewer .friend .flagWrapper {
-  font-size: 25px;
+  font-size:  1.563rem;
   margin-right: 10px;
 }
 
@@ -109,11 +109,11 @@
 
   .FriendsActivityViewer .friend .name {
     margin-right: 5px;
-    font-size: 17px;
+    font-size: 1.063rem;
   }
 
   .FriendsActivityViewer .friend .flagWrapper {
-    font-size: 20px;
+    font-size:  1.25rem;
     margin-right: 5px;
   }
 
@@ -123,6 +123,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 13px;
+    font-size:0.813rem;
   }
 } */

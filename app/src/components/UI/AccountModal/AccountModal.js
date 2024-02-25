@@ -44,7 +44,7 @@ function AccountModal({ isOpened, setIsOpened, setResponse }) {
               <div className={styles.icon}>
                 <FontAwesomeIcon icon={faLock} />
               </div>
-              <input type="text" placeholder="Password" onChange={(e) => {setLogin(prev => ({...prev, password: e.target.value}))}} />
+              <input type="password" placeholder="Password" onChange={(e) => {setLogin(prev => ({...prev, password: e.target.value}))}} />
             </div>
             <BlobBtn
               name={"SUBMIT"}

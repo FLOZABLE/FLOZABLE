@@ -41,7 +41,7 @@
   transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
   background-color: #000000C0;
   color: #fff;
-  font-size: 12px;
+  font-size: 0.75rem;
   padding: 3px 6px;
   border-radius: 5px;
   white-space: nowrap;

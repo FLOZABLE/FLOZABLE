@@ -43,7 +43,7 @@
 }
 
 .SmallRankingViewer .timezoneWrapper {
-  font-size: 12px;
+  font-size: 0.75rem;
   display: flex;
   align-items: center;
   margin: 0px 3px;
@@ -51,14 +51,14 @@
 
 .SmallRankingViewer .differenceGreen {
   color: green;
-  font-size: 10px;
+  font-size:  0.625rem;
   display: flex;
   align-items: center;
 }
 
 .SmallRankingViewer .differenceRed {
   color: red;
-  font-size: 10px;
+  font-size:  0.625rem;
   align-items: center;
 }
 
