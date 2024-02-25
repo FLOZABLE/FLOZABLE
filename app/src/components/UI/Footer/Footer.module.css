@@ -1,10 +1,10 @@
 .FooterContainer {
   width: 100vw;
   position: relative;
-  bottom: 0px;
-  left: 0px;
+  bottom: 0em;
+  left: 0em;
   background-color: #f0f2f5;
-  height: 100px;
+  height: 6.25rem;
 }
 
 .FooterContainer .inner {
@@ -24,7 +24,7 @@
 
 .FooterContainer .inner .divider {
   width: 1px;
-  height: 30px;
-  margin: 0px 20px;
+  height: 1.875rem;
+  margin: 0em 1.25rem;
   background-color: #7f849d;
 }

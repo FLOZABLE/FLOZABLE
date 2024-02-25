@@ -1,9 +1,9 @@
 .ThemeCategoryBtn {
   position: relative;
   width: 100%;
-  height: 30px;
+  height: 1.875rem;
   z-index: 3;
-  padding: 0px 10px;
+  padding: 0em 0.625rem;
 }
 
 .ThemeCategoryBtn p {
@@ -17,22 +17,22 @@
   background-color: #fff;
   left: 50%;
   transform: translateX(-50%);
-  width: 100px;
-  border-radius: 10px;
+  width: 6.25rem;
+  border-radius: 0.625rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 0px;
+  height: 0em;
   transition: .3s ease-in-out all;
 }
 
 .ThemeCategoryBtn.open .options {
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0em 8px 24px;
   visibility: visible;
   opacity: 1;
-  top: 20px;
-  height: 140px;
+  top: 1.25rem;
+  height: 8.75rem;
   color: var(--font-gray);
 }
 

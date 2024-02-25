@@ -6,19 +6,19 @@
 .PlaylistModal .authGuide {
   font-size: 0.938rem;
   font-weight: 800;
-  margin: 0px 0px 20px 0px;
+  margin: 0em 0em 1.25rem 0em;
 }
 
 .PlaylistModal .spotifyPlayerWrapper {
-  margin-top: 10px;
+  margin-top: 0.625rem;
 }
 
 .PlaylistModal table td {
   text-align: center;
   width: 33%;
-  border-radius: 25px;
+  border-radius: 1.563rem;
   padding: 0.625rem;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0em 3px 8px;
   -webkit-transition: background-color .3s ease-in-out, color .3s ease-in-out;
   -ms-transition: background-color .3s ease-in-out, color .3s ease-in-out;
   transition: background-color .3s ease-in-out, color .3s ease-in-out;

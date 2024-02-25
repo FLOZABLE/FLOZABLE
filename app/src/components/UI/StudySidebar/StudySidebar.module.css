@@ -1,27 +1,27 @@
 .StudySidebar {
   position: fixed;
-  left: 0px;
-  top: 0px;
+  left: 0em;
+  top: 0em;
   background-color: #fff;
-  width: 70px;
-  height: calc(100vh - 100px);
-  left: 20px;
+  width: 4.375rem;
+  height: calc(100vh - 6.25rem);
+  left: 1.25rem;
   transform: translateY(50px);
   z-index: 3;
   display: flex;
   align-items: center;
   flex-direction: column;
-  border-radius: 10px;
+  border-radius: 0.625rem;
 }
 
 .StudySidebar .studyTool {
   cursor: pointer;
-  width: 50px;
-  height: 50px;
+  width: 3.125rem;
+  height: 3.125rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   transition: box-shadow .3s ease-in-out;
   margin: 3px 4px;
   background-color: #fff;
@@ -35,7 +35,7 @@
 .StudySidebar .studyTool .hoverEl {
   position: absolute;
   pointer-events: none;
-  top: 50px;
+  top: 3.125rem;
   visibility: hidden;
   opacity: 0;
   transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
@@ -43,7 +43,7 @@
   color: #fff;
   font-size: 0.75rem;
   padding: 3px 6px;
-  border-radius: 5px;
+  border-radius: 0.313rem;
   white-space: nowrap;
 }
 
@@ -53,7 +53,7 @@
 }
 
 .StudySidebar .studyTool:hover {
-  box-shadow: rgba(255, 0, 0, 0.24) 0px 3px 8px;
+  box-shadow: rgba(255, 0, 0, 0.24) 0em 3px 8px;
 }
 
 .StudySidebar .studyTool:hover i,
@@ -67,7 +67,7 @@
   background-color: var(--bgColor);
   left: 100%;
   padding: 1.25rem;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   opacity: 1;
   z-index: -1;
 }
@@ -75,7 +75,7 @@
 /*
 .StudySidebar .dispBtn{
   background: blue;
-  width: 100px;
-  height: 100px;
+  width: 6.25rem;
+  height: 6.25rem;
 }
 */

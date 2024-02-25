@@ -1,8 +1,8 @@
 .Friends .container {
   display: flex;
   width: 96%;
-  height: calc(100vh - 210px);
-  padding: 30px 50px;
+  height: calc(100vh - 13.125rem);
+  padding: 1.875rem 3.125rem;
   justify-content: center;
   margin-left: -20px; 
 }
@@ -24,8 +24,8 @@
 
 .Friends .box {
   background-color: #fff;
-  border-radius: 20px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  border-radius: 1.25rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
 }
 
 .Friends .container > div:nth-child(2) {
@@ -35,17 +35,17 @@
 }
 
 .Friends .container > div:nth-child(2) > div {
-  margin-bottom: 30px;
-  height: calc(50% - 15px);
+  margin-bottom: 1.875rem;
+  height: calc(50% - 0.938rem);
 }
 
 .Friends .container > div:nth-child(2) .box > div {
   padding: 1.875rem;
-  height: calc(100% - 80px);
+  height: calc(100% - 5rem);
 }
 
 .Friends .container > div:nth-child(2) .box .title {
-  height: 30px;
+  height: 1.875rem;
 }
 
 .Friends .container > div:nth-child(2) .box .title h3 {
@@ -60,12 +60,12 @@
 
 .Friends .smallBox {
   background-color: #fff;
-  border-radius: 20px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  border-radius: 1.25rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
   display: flex;
   flex-direction: column;
-  padding: 15px 20px;
-  margin-bottom: 20px;
+  padding: 0.938rem 1.25rem;
+  margin-bottom: 1.25rem;
   font-size: 1.5rem;
 }
 
@@ -83,7 +83,7 @@
 
 .Friends .smallBox i {
   display: flex;
-  margin-left: 10px;
+  margin-left: 0.625rem;
   font-size: 1.563rem;
 }
 
@@ -101,13 +101,13 @@
   }
 
   .Friends .container > div:nth-child(2) > div {
-    margin-bottom: 15px;
+    margin-bottom: 0.938rem;
     height: calc(50% - 7.5px);
   }
   
   .Friends .container > div:nth-child(2) .box > div {
     padding: 0.938rem;
-    height: calc(100% - 60px);
+    height: calc(100% -  3.75rem);
   }
 }
 
@@ -136,8 +136,8 @@
 
 .title#friend {
   font-family: "Roboto", sans-serif;
-  padding-bottom: 0px;
-  padding-left: 50px;
+  padding-bottom: 0em;
+  padding-left: 3.125rem;
 }
 
 .Friends .box#activeFriends>div h3 {

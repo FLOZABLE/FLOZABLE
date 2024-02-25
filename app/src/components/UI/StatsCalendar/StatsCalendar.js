@@ -16,7 +16,7 @@ const StyleWrapper = styled.div`
     background: #fff;
   }
   .fc-header-toolbar {
-    height: 50px;
+    height: 3.125rem;
   }
   .fc .fc-scroller-liquid-absolute {
     position: relative;

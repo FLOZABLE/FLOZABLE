@@ -1,10 +1,10 @@
 
 .ChatRoom {
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
   position: relative;
   border: 1px solid var(--gray2);
-  border-radius: 15px;
+  border-radius: 0.938rem;
   padding: 0.625rem;
   margin-right: 1.875rem;
 }
@@ -17,25 +17,25 @@
 .ChatRoom .header .name {
   text-overflow: ellipsis;
   overflow: hidden; 
-  max-width: 150px; 
+  max-width: 9.375rem; 
   white-space: nowrap;
 }
 
 .ChatRoom .header .msgCount {
   position: absolute;
-  right: 10px;
+  right: 0.625rem;
 }
 
 .ChatRoom .header strong {
-  margin: 0px 3px;
+  margin: 0em 3px;
 }
 
 .ChatRoom .imgContainer {
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  margin-right: 10px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 1.563rem;
+  margin-right: 0.625rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 7px 29px 0em;
 }
 
 .ChatRoom .msgInfo {
@@ -45,13 +45,13 @@
 .ChatRoom .msgInfo .msg {
   text-overflow: ellipsis;
   overflow: hidden; 
-  max-width: 70px; 
+  max-width: 4.375rem; 
   white-space: nowrap;
 }
 
 .ChatRoom .msgInfo .time {
   position: absolute;
-  bottom: 20px;
-  right: 10px;
+  bottom: 1.25rem;
+  right: 0.625rem;
   font-size: 0.75rem;
 }

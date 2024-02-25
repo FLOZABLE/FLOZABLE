@@ -14,28 +14,28 @@
 }
 
 .FriendsActivityViewer .friend .profileImg {
-  width: 30px;
-  height: 30px;
-  border-radius: 25px;
-  margin: 0px 10px;
+  width: 1.875rem;
+  height: 1.875rem;
+  border-radius: 1.563rem;
+  margin: 0em 0.625rem;
 }
 
 .FriendsActivityViewer .friend i {
   display: flex;
   align-items: center;
-  margin: 0px 10px;
+  margin: 0em 0.625rem;
   font-size:  1.438rem;
 }
 
 .FriendsActivityViewer .friend .activeInfo > div {
-  margin: 10px 10px;
+  margin: 0.625rem 0.625rem;
 }
 /* 
 .FriendsActivityViewer .friend {
   position: relative;
   width: 100%;
   display: none;
-  margin: 10px 0px;
+  margin: 0.625rem 0em;
   justify-content: center;
   align-items: center;
 }
@@ -51,14 +51,14 @@
 }
 
 .FriendsActivityViewer .friend .profileImg {
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  margin: 0px 10px;
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 1.563rem;
+  margin: 0em 0.625rem;
 }
 
 .FriendsActivityViewer .friend .group {
-  margin-left: 10px;
+  margin-left: 0.625rem;
 }
 
 .FriendsActivityViewer .friend .group strong {
@@ -66,18 +66,18 @@
 }
 
 .FriendsActivityViewer .friend .name {
-  margin-right: 10px;
+  margin-right: 0.625rem;
   font-size:  1.563rem;
 }
 
 .FriendsActivityViewer .friend .flagWrapper {
   font-size:  1.563rem;
-  margin-right: 10px;
+  margin-right: 0.625rem;
 }
 
 .FriendsActivityViewer .friend .right {
   margin-left: auto;
-  margin-right: 10px;
+  margin-right: 0.625rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -85,7 +85,7 @@
 
 .FriendsActivityViewer .right .today {
   display: flex;
-  margin-right: 10px;
+  margin-right: 0.625rem;
 }
 
 .FriendsActivityViewer .right .buttonsWrapper {
@@ -97,29 +97,29 @@
 }
 
 .FriendsActivityViewer .right .requestBtn {
-  margin-right: 10px;
+  margin-right: 0.625rem;
 }
 
 @media (max-width: 1650px) {
   .FriendsActivityViewer .friend .profileImg {
-    width: 30px;
-    height: 30px;
-    margin: 0px 5px;
+    width: 1.875rem;
+    height: 1.875rem;
+    margin: 0em 0.313rem;
   }
 
   .FriendsActivityViewer .friend .name {
-    margin-right: 5px;
+    margin-right: 0.313rem;
     font-size: 1.063rem;
   }
 
   .FriendsActivityViewer .friend .flagWrapper {
     font-size:  1.25rem;
-    margin-right: 5px;
+    margin-right: 0.313rem;
   }
 
   .FriendsActivityViewer .friend .right {
     margin-left: auto;
-    margin-right: 5px;
+    margin-right: 0.313rem;
     display: flex;
     justify-content: center;
     align-items: center;

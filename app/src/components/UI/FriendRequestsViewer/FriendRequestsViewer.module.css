@@ -19,19 +19,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px 0px;
+  margin: 0.625rem 0em;
 }
 
 .FriendRequestsViewer .optionsWrapper .buttonsContainer .count {
   background-color: var(--purple);
   color: #fff;
-  border-radius: 10px;
-  height: 30px;
-  width: 30px;
+  border-radius: 0.625rem;
+  height: 1.875rem;
+  width: 1.875rem;
   justify-content: center;
   align-items: center;
   display: flex;
-  margin-left: 5px;
+  margin-left: 0.313rem;
 }
 
 .FriendRequestsViewer .lineContainer {
@@ -54,15 +54,15 @@
 }
 
 .FriendRequestsViewer .name {
-  max-width: 100px;
+  max-width: 6.25rem;
   font-size: 1.063rem;
 }
 
 .FriendRequestsViewer .friendRequest .profileImg {
-  height: 40px;
-  width: 40px;
-  border-radius: 20px;
-  margin-right: 10px;
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 1.25rem;
+  margin-right: 0.625rem;
 }
 
 .FriendRequestsViewer .friendRequest {
@@ -76,7 +76,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  right: 10px;
+  right: 0.625rem;
 }
 
 .FriendRequestsViewer .friendRequest .buttons button {
@@ -85,7 +85,7 @@
   width: 32px;
   height: 32px;
   color: var(--pink);
-  margin: 0px 5px;
+  margin: 0em 0.313rem;
 }
 
 .FriendRequestsViewer .friendRequest .content {
@@ -95,7 +95,7 @@
 }
 
 .FriendRequestsViewer .friendRequest .content p {
-  margin-right: 5px;
+  margin-right: 0.313rem;
 }
 
 .FriendRequestsViewer .friendRequest .btnWrapper {
@@ -114,14 +114,14 @@
   position: absolute;
   font-size: 0.813rem;
   white-space: nowrap;
-  top: 30px;
+  top: 1.875rem;
   left: 50%;
   transform: translateX(-50%);
   pointer-events: none;
   opacity: 0;
   transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
   background-color: var(--opacity-black);
-  padding: 5px 10px;
+  padding: 0.313rem 0.625rem;
   border-radius: 7px;
   color: #fff;
   z-index: 5;

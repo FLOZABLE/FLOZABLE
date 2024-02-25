@@ -3,9 +3,9 @@
   position: relative;
   justify-content: center;
   align-items: center;
-  width: 50px;
-  height: 30px;
-  border-radius: 50px;
+  width: 3.125rem;
+  height: 1.875rem;
+  border-radius: 3.125rem;
   cursor: pointer;
 }
 
@@ -17,20 +17,20 @@
 
 .GroupUrlBtn .hoverEl {
   position: absolute;
-  top: 80px;
+  top: 5rem;
   visibility: hidden;
   opacity: 0;
   transition: visibility .3s ease-in-out, opacity .3s ease-in-out, top .3s ease-in-out;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 3px 10px;
-  border-radius: 5px;
+  padding: 3px 0.625rem;
+  border-radius: 0.313rem;
   background-color: #ffffffC0;
 }
 
 .GroupUrlBtn:hover .hoverEl {
   visibility: visible;
   opacity: 1;
-  top: 30px;
+  top: 1.875rem;
 }

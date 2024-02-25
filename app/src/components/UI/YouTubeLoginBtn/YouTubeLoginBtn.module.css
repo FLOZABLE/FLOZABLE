@@ -4,20 +4,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  border-radius: 1.875rem;
+  box-shadow: rgba(149, 157, 165, 0.2) 0em 8px 24px;
   padding: 0.625rem;
   cursor: pointer;
   transition: .3s ease-in-out box-shadow;
 }
 
 .YouTubeLoginBtn:hover {
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0em 54px 3.438rem, rgba(0, 0, 0, 0.12) 0em -12px 1.875rem, rgba(0, 0, 0, 0.12) 0em 4px 6px, rgba(0, 0, 0, 0.17) 0em 12px 13px, rgba(0, 0, 0, 0.09) 0em -3px 0.313rem;
 }
 
 .YouTubeLoginBtn p {
   word-break: keep-all;
   font-weight: 600;
   font-size: 1.063rem;
-  margin-right: 5px;
+  margin-right: 0.313rem;
 }

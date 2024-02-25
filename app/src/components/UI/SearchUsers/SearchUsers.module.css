@@ -10,21 +10,21 @@
 
 .SearchUsers .name {
   font-size: 1rem;
-  max-width: 100px;
-  margin-right: 10px;
+  max-width: 6.25rem;
+  margin-right: 0.625rem;
 }
 
 .SearchUsers .profileImg {
-  height: 30px;
-  width: 30px;
-  border-radius: 20px;
+  height: 1.875rem;
+  width: 1.875rem;
+  border-radius: 1.25rem;
 }
 
 .SearchUsers .buttons {
   display: flex;
   align-items: center;
   position: absolute;
-  right: 0px;
+  right: 0em;
 }
 
 .SearchUsers .buttons > div {
@@ -41,7 +41,7 @@
   position: relative;
   width: 100%;
   display: flex;
-  margin: 10px 0px;
+  margin: 0.625rem 0em;
   justify-content: center;
   align-items: center;
 }
@@ -53,14 +53,14 @@
 }
 
 .SearchUsers .user .profileImg {
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  margin: 0px 10px;
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 1.563rem;
+  margin: 0em 0.625rem;
 }
 
 .SearchUsers .user .group {
-  margin-left: 10px;
+  margin-left: 0.625rem;
 }
 
 .SearchUsers .user .group strong {
@@ -68,18 +68,18 @@
 }
 
 .SearchUsers .user .name {
-  margin-right: 10px;
+  margin-right: 0.625rem;
   font-size: 1.563rem;
 }
 
 .SearchUsers .user .flagWrapper {
   font-size:  1.563rem;
-  margin-right: 10px;
+  margin-right: 0.625rem;
 }
 
 .SearchUsers .user .right {
   margin-left: auto;
-  margin-right: 10px;
+  margin-right: 0.625rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,7 +87,7 @@
 
 .SearchUsers .right .today {
   display: flex;
-  margin-right: 10px;
+  margin-right: 0.625rem;
 }
 
 .SearchUsers .right .buttonsWrapper {
@@ -99,5 +99,5 @@
 }
 
 .SearchUsers .right .requestBtn {
-  margin-right: 10px;
+  margin-right: 0.625rem;
 } */

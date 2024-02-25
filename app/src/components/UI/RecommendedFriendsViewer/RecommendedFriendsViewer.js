@@ -61,7 +61,7 @@ function RecommendedFriendsViewer({ setResponse }) {
                 <FriendRequestBtn
                   userInfo={user}
                   setResponse={setResponse}
-                  padding={"3px 5px"}
+                  padding={"3px 0.313rem"}
                 />
               </div>
             </Link>
