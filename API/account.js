@@ -7,7 +7,7 @@ const sharp = require('sharp');
 const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
-const { hashing, autoSignin, generateRandomId, googleOauth2client, googleYoutubeOauth2client, isValidTimeZone, deriveKey } = require("../tool");
+const { hashing, autoSignin, generateRandomId, googleOauth2client, googleYoutubeOauth2client, isValidTimeZone, deriveKey, randomIntInRange } = require("../tool");
 const { validateEmail, validateStrictString, validatePassword, validateURL } = require("../validate");
 const { UserRefreshClient } = require("google-auth-library")
 const { NotificationCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
@@ -88,28 +88,11 @@ Router.post('/signin-authentication', async (req, res) => {
   };
 });
 
-Router.post('/signup-authentication', async (req, res) => {
+Router.post('/verify-email', async (req, res) => {
   try {
-    const { email, name, password, timeZone } = req.body;
 
-    if (!isValidTimeZone(timeZone)) {
-      timeZone = 'UTC';
-    }
-    const userDateTime = DateTime.now().setZone(timeZone);
-
-    // Set the time to 12:00 AM
-    const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-
-    // Get the Unix timestamp in seconds
-    const unixTimestamp = twelveAmDateTime.toSeconds();
-    // Sanitize inputs
-
-    //check email
-    const isValidEmail = validateEmail(email);
-    if (!isValidEmail.isValid) {
-      return res.send({ success: false, reason: isValidEmail.reason });
-    };
-
+    const { email, name, password, timeZone, code } = req.body;
+    
     const isValidName = validateStrictString(name, 'Name');
     if (!isValidName.isValid) {
       return res.send({ success: false, reason: isValidName.reason });
@@ -120,13 +103,11 @@ Router.post('/signup-authentication', async (req, res) => {
       return res.send({ success: false, reason: isValidPassword.reason });
     };
 
-    const connection = pool.promise();
-
-    const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
-
-    if (checkEmail) {
-      return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
-    };
+    const loginInfo = await redisClient.hGetAll(`email:${email}:verify`);
+    if (!loginInfo){
+      return res.send({ success: false, reason: "No Such Email" });
+    }
+    console.log(loginInfo);
 
     const [salt, hashed_password] = hashing(password);
 
@@ -145,6 +126,7 @@ Router.post('/signup-authentication', async (req, res) => {
       key_salt: keySalt,
       iv: iv,
     };
+
     connection.query('INSERT INTO users SET ?', user);
     //create default subject
     const subjectId = generateRandomId(10);
@@ -179,6 +161,45 @@ Router.post('/signup-authentication', async (req, res) => {
     });
 
     extensionIo.to(userId).emit("tryAuth");
+  } catch (err) {
+    console.log(err);
+    res.send({ success: false, reason: "Error" });
+  };
+})
+
+Router.post('/signup-authentication', async (req, res) => {
+  try {
+    const { email, name, password, timeZone } = req.body;
+
+    if (!isValidTimeZone(timeZone)) {
+      timeZone = 'UTC';
+    }
+    const userDateTime = DateTime.now().setZone(timeZone);
+
+    // Set the time to 12:00 AM
+    const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+
+    // Get the Unix timestamp in seconds
+    const unixTimestamp = twelveAmDateTime.toSeconds();
+    // Sanitize inputs
+
+    //check email
+    const isValidEmail = validateEmail(email);
+    if (!isValidEmail.isValid) {
+      return res.send({ success: false, reason: isValidEmail.reason });
+    };
+
+    const connection = pool.promise();
+
+    const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
+
+    if (checkEmail) {
+      return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
+    };
+
+    
+    const emailCode = randomIntInRange(1000000, 9999999)
+    redisClient.hSet(`email:${email}:verify`, 'data', JSON.stringify({ ...user, code: emailCode }));
 
     res.send({ success: true });
     /* req.session.regenerate((err) => {
@@ -202,6 +223,7 @@ Router.post('/signup-authentication', async (req, res) => {
       res.send({ success: true });
     }); */
   } catch (err) {
+    console.log(err);
     res.send({ success: false, reason: "Error" });
   };
 });
@@ -550,11 +572,11 @@ Router.post('/notification-subscribe', async (req, res) => {
     try {
       const { subscription } = req.body;
 
-      const {endpoint, expirationTime, keys} = subscription;
+      const { endpoint, expirationTime, keys } = subscription;
 
       const isValidEndPoint = validateURL(endpoint);
       if (!isValidEndPoint.isValid) {
-        return res.send({success: false, reason: isValidEndPoint.reason});
+        return res.send({ success: false, reason: isValidEndPoint.reason });
       };
 
       const connection = pool.promise();
