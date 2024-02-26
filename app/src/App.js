@@ -31,9 +31,12 @@ import Themes from "./components/Container/Themes/Themes";
 import ChallengeRooms from "./components/Container/ChallengeRooms/ChallengeRooms";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import AccountModal from "./components/UI/AccountModal/AccountModal";
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 
-ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
+if (process.env.REACT_APP_ENV === "production") {
+  ReactGA.initialize("G-ZTZSFB8JKP");
+};
+
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function App() {
@@ -77,7 +80,12 @@ function App() {
   });
 
   useEffect(() => {
-    ReactGA.pageview(window.location.pathname + window.location.search);
+    ReactGA.send(
+      {
+        hitType: "pageview",
+        page: window.location.pathname + window.location.search,
+      }
+    );
   }, []);
 
   const toggleSidebar = () => {

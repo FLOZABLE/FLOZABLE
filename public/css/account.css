@@ -38,10 +38,10 @@
 	text-decoration: none;
 }
 #accountModal .link {
-  color: #c4c3ca;
+  color: #000;
 }
 #accountModal .link:hover {
-  color: #ffeba7;
+  color: #66c8ff;
 }
 #accountModal p {
   font-weight: 500;
@@ -83,7 +83,7 @@
   padding: 0;
   margin: 10px auto;
   cursor: pointer;
-  background-color: #ffeba7;
+  background-color: #fff;
 }
 #accountModal .checkbox:checked + label .arrow,
 #accountModal .checkbox:not(:checked) + label .arrow{
@@ -92,8 +92,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  color: #ffeba7;
-  background-color: #102770;
+  color: #fff;
+  background-color: #000;
   z-index: 20;
   top: -10px;
   left: -10px;
@@ -130,8 +130,7 @@
 #accountModal .card-front, #accountModal .card-back {
   width: 100%;
   height: 100%;
-  background-color: #2a2b38;
-  background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/1462889/pat.svg');
+  background-color: #fff;
   background-position: bottom center;
   background-repeat: no-repeat;
   background-size: 300%;
@@ -181,8 +180,8 @@
   line-height: 22px;
   letter-spacing: 0.5px;
   outline: none;
-  color: #c4c3ca;
-  background-color: #1f2029;
+  color: #000;
+  background-color: #fff;
   border: none;
   -webkit-transition: all 200ms linear;
   transition: all 200ms linear;
@@ -202,31 +201,31 @@
   font-size: 24px;
   line-height: 48px;
   text-align: left;
-  color: #ffeba7;
+  color: #000;
   -webkit-transition: all 200ms linear;
     transition: all 200ms linear;
 }
 
 #accountModal .form-group input:-ms-input-placeholder  {
-  color: #c4c3ca;
+  color: #000;
   opacity: 0.7;
   -webkit-transition: all 200ms linear;
     transition: all 200ms linear;
 }
 #accountModal .form-group input::-moz-placeholder  {
-  color: #c4c3ca;
+  color: #000;
   opacity: 0.7;
   -webkit-transition: all 200ms linear;
     transition: all 200ms linear;
 }
 #accountModal .form-group input:-moz-placeholder  {
-  color: #c4c3ca;
+  color: #000;
   opacity: 0.7;
   -webkit-transition: all 200ms linear;
     transition: all 200ms linear;
 }
 #accountModal .form-group input::-webkit-input-placeholder  {
-  color: #c4c3ca;
+  color: #000;
   opacity: 0.7;
   -webkit-transition: all 200ms linear;
     transition: all 200ms linear;
@@ -276,19 +275,19 @@
   -ms-flex-pack: center;
   text-align: center;
   border: none;
-  background-color: #ffeba7;
-  color: #102770;
+  background-color: #66c8ff;
+  color: #fff;
   box-shadow: 0 8px 24px 0 rgba(255,235,167,.2);
 }
 #accountModal .btn:active,
 #accountModal .btn:focus{  
-  background-color: #102770;
-  color: #ffeba7;
+  background-color: #fff;
+  color: #66c8ff;
   box-shadow: 0 8px 24px 0 rgba(16,39,112,.2);
 }
 #accountModal .btn:hover{  
-  background-color: #102770;
-  color: #ffeba7;
+  background-color: #fff;
+  color: #66c8ff;
   box-shadow: 0 8px 24px 0 rgba(16,39,112,.2);
 }
 
@@ -318,12 +317,10 @@
 }
 
 
-@media (max-width: 1400px) {
-}
 @media (max-height: 700px) {
   #accountModal {
     position: fixed;
-    top: 50px;
+    top: 80px;
     left: 50vw;
     transform: translate(-50%, 0%);
   }

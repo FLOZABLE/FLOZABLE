@@ -29,8 +29,13 @@
   font-size: 1.063rem;
   border-radius: 1.875rem;
   height: 2.5rem;
-  color: #fff;
+  color: #000;
   margin-bottom: 1.25rem;
+}
+
+.GroupContainer .name div {
+  overflow-x: hidden;
+  max-width: calc(100% - 2rem);
 }
 
 .GroupContainer .description {
@@ -50,14 +55,20 @@
 
 .GroupContainer .tags {
   display: flex;
-  flex-wrap: nowrap;
+  width: 100%;
+  flex-wrap: wrap;
   height: 1.0625rem;
+  overflow-x: hidden;
   overflow-y: auto;
   font-size:0.813rem;
 }
 
 .GroupContainer .tags > div {
-  margin: 0em 0.313rem;
+  margin: 0.11rem 0.313rem;
+  padding: 0rem 0.2rem;
+  width: min-content;
+  white-space: nowrap;
+  border-radius: 0.5rem;
 }
 
 .GroupContainer .buttons {
@@ -67,7 +78,7 @@
 }
 
 .GroupContainer .buttons > div {
-  margin: 0em 0.625rem;
+  margin: 0rem 0.625rem;
 }
 
 .GroupContainer .joinBtn {

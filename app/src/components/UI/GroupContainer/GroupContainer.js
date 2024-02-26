@@ -42,7 +42,9 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
       >
         <div className={styles.contents}>
           <div className={`${styles.name} overflowDot`} style={{ background: `linear-gradient(to left, ${color}, 70%, ${color}00)` }} >
-            {name}
+            <div className={`overflowDot`}>
+              {name}
+            </div>
           </div>
           <div className={`${styles.description} hiddenScroll`}>
             {parse(explanation)}
@@ -73,10 +75,10 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
               <GroupLikesCounter initialMembers={likes} groupId={group_id} />
             </div>
           </div>
-          <div className={`${styles.tags} hiddenScroll`} style={{ color }}>
+          <div className={`${styles.tags} hiddenScroll`}>
             {tags.map((tag, i) => {
               return (
-                <div key={i}>
+                <div key={i} style={{ backgroundColor: color }}>
                   #{tag}
                 </div>
               )
