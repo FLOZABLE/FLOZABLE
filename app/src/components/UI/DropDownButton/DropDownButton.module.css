@@ -1,86 +1,72 @@
 .DropDownButton {
   position: relative;
-  width: min-content;
-  display: flex;
+  width: fit-content;
   font-weight: 600;
-  font-family: "Inter", sans-serif;
-  margin-left: -1.25rem;
-}
-
-.DropDownButton button {
-  padding: 0em 1.875rem;
+  transition: .3s ease-in-out background-color;
+  padding: 0rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 1.3rem;
-  width: min-content;
+  height: 2rem;
+  max-width: 10rem;
+  /* overflow-x: hidden;
+  overflow-y: auto; */
+}
+
+.DropDownButton.clicked {
+  background-color: var(--dark-gray);
+}
+
+.DropDownButton:hover {
+  background-color: var(--dark-gray);
+}
+
+.DropDownButton i {
+  padding-left: 0.5rem;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.DropDownButton .disp {
   white-space: nowrap;
-  transition: .3s background-color ease-in-out, border-radius .3s ease-in-out .3s;
-  font-weight: 600;
-  height: 2.5rem;
-  font-family: "Inter", sans-serif;
-  width: 70%;
-}
-
-.DropDownButton:hover button {
-  background-color: rgb(230, 226, 226);
-}
-
-.DropDownButton:hover .options {
-  background-color: rgb(230, 226, 226);
-}
-
-.DropDownButton button.clicked {
-  border-bottom-left-radius: 0em;
-  border-bottom-right-radius: 0em;
-}
-
-.DropDownButton button.clicked {
-  box-shadow: rgba(0, 0, 0, 0.15) 0.1625rem 0.1219rem 0.1219rem;
-}
-
-.DropDownButton button.clicked ~ .options {
-  box-shadow: rgba(0, 0, 0, 0.15) 0.1219rem 0.1219rem 0.1625rem;
+  font-size: 1rem;
+  width: 100%;
+  display: flex;
 }
 
 .DropDownButton .options {
   position: absolute;
-  top: 2.188rem;
-  height: 0em;
-  background-color: #fff;
-  justify-content: left;
-  max-height: 6.25rem;
-  overflow-y: auto;
+  visibility: hidden;
+  opacity: 0;
+  background-color: var(--dark-gray);
+  left: 0px;
+  width: 100%;
+  top: 0rem;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  transition: visibility .3s ease-in-out, opacity .3s ease-in-out, top .3s ease-in-out;
   z-index: 2;
-  width: 100%;
-  transition: .3s height ease-in-out, .3s background-color ease-in-out;
-  border-bottom-left-radius: 0.625rem;
-  border-bottom-right-radius: 0.625rem;
-  width: 70%;
+  max-height: 5rem;
+  overflow-y: auto;
 }
 
-.DropDownButton button.clicked~.options {
-  height: 6.25rem;
+.DropDownButton.clicked .options {
+  visibility: visible;
+  opacity: 1;
+  top: 1.7rem;
 }
 
-.DropDownButton .options .option {
-  padding-left: 1.875rem;
-  cursor: pointer;
-  white-space: nowrap;
-  width: 100%;
-  font-family: "Inter", sans-serif;
-  padding-bottom: 0.1875rem;
-  margin-top: 0.625rem;
-  margin-left: -1.25rem;
+.DropDownButton .option {
+  max-width: 100%;
+  padding: 0rem 0.5rem;
 }
 
-.DropDownButton button i {
-  transform: rotate(0deg);
-  transition: transform .4s cubic-bezier(0.075, 0.82, 0.165, 1);
-  margin-left: 1.25rem;
-  font-size: 1.8rem;
+.DropDownButton i svg {
+  transition: .3s ease-in-out transform;
 }
 
-.DropDownButton button.clicked i {
+.DropDownButton.clicked i svg {
   transform: rotate(180deg);
 }

@@ -47,10 +47,10 @@
   background-color: #fff;
   padding: 1.875rem;
   border-radius: 1.25rem;
-  justify-content: center;
   flex-direction: column;
   margin-bottom: 1.875rem;
   box-shadow: var(--shadow3);
+  min-height: 30rem;
 }
 
 .Themes .box .searchOptions {

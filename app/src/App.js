@@ -232,18 +232,13 @@ function App() {
         duration={2500}
         response={response}
       />
-      {
-        notifications.filter((notif) => notif.t != -2).length ?
-          <NotificationModal
-            setIsNotificationModal={setIsNotificationModal}
-            isNotificationModal={isNotificationModal}
-            notifications={notifications}
-            setNotifications={setNotifications}
-            setResponse={setResponse}
-          />
-          :
-          <div></div>
-      }
+      <NotificationModal
+        setIsNotificationModal={setIsNotificationModal}
+        isNotificationModal={isNotificationModal}
+        notifications={notifications.filter(notification => notification.t !== -2)}
+        setNotifications={setNotifications}
+        setResponse={setResponse}
+      />
       <AddSubjectModal
         setIsAddSubjectModal={setIsAddSubjectModal}
         isAddSubjectModal={isAddSubjectModal}
@@ -289,7 +284,7 @@ function App() {
         totalNewMsg={totalNewMsg}
         userInfo={userInfo}
         setIsNotificationModal={setIsNotificationModal}
-        notifications={notifications.filter(notification => {return notification.t >= 0})}
+        notifications={notifications.filter(notification => { return notification.t >= 0 })}
       />
       <div className={`touchBlocker ${isAccountModal ? "blocked" : ""}`}></div>
       <Routes>
@@ -503,7 +498,7 @@ function App() {
         <Route
           path="/dashboard/study"
           element={
-            <div style={{zIndex: 6, position: 'relative'}}>
+            <div style={{ zIndex: 5, position: 'relative' }}>
               <HelmetProvider>
                 <Helmet>
                   <title>Study - FLOZABLE</title>

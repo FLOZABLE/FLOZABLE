@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import styles from "./StudyModalContainer.module.css";
 import Draggable from "react-draggable";
+
 function StudyModalContainer({ element, isDisp, startPos }) {
   const ref = useRef();
   return (

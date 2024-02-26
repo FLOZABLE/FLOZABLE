@@ -269,9 +269,10 @@ function NotificationModal({ notifications, setNotifications, setIsNotificationM
 
   return (
     <div className={`${styles.NotificationModal} ${isNotificationModal ? styles.opened : ''}`}>
+      {notificationsEl.length ?      
       <div className={`${styles.notifications} customScroll`}>
         {notificationsEl}
-      </div>
+      </div> : <div className={styles.noNotifications}>You don't have any notifications</div>}
     </div>
   );
 };

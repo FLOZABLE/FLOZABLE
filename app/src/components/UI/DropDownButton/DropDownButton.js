@@ -7,18 +7,17 @@ function DropDownButton({ options, setValue, onClick = () => { }, value }) {
   const [clicked, setClicked] = useState(false);
 
   return (
-    <div className={styles.DropDownButton}>
-      <button
-        className={`${clicked ? styles.clicked : ""}`}
-        onClick={() => {
-          setClicked(!clicked);
-        }}
-      >
+    <div className={`${styles.DropDownButton} ${clicked ? styles.clicked : ''}`}
+      onClick={() => {
+        setClicked(!clicked);
+      }}
+    >
+      <div className={styles.disp}>
         {options[value]}
         <i>
           <FontAwesomeIcon icon={faCaretDown} />
         </i>
-      </button>
+      </div>
       <ul className={`${styles.options} hiddenScroll overflowDot`}>
         {Object.keys(options).map((option, i) => {
           return (
@@ -29,7 +28,7 @@ function DropDownButton({ options, setValue, onClick = () => { }, value }) {
                 setClicked(false);
                 onClick();
               }}
-              className={styles.option}
+              className={`${styles.option} overflowDot`}
             >
               {options[option]}
             </li>

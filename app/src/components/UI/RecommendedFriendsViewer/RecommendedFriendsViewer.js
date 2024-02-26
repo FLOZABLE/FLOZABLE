@@ -11,7 +11,7 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function RecommendedFriendsViewer({ setResponse }) {
 
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(true);
   const [recommendedFriends, setRecommendedFriends] = useState([]);
 
   useEffect(() => {
@@ -26,6 +26,9 @@ function RecommendedFriendsViewer({ setResponse }) {
       .then((data) => {
         if (data.success) {
           setRecommendedFriends(data.users);
+          setTimeout(() => {
+            setRefresh(false)
+          }, 3000);
         }
       });
   }, [refresh]);
@@ -44,7 +47,7 @@ function RecommendedFriendsViewer({ setResponse }) {
           const { user_id, name, timezone } = user;
           return (
             <Link
-              to={`${serverOrigin}/dashboard/user/${user_id}`}
+              to={`/dashboard/user/${user_id}`}
               className={styles.recommendedFriend} key={i}>
               <div
                 className={styles.profileImg}

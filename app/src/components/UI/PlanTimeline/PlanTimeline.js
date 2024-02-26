@@ -89,7 +89,6 @@ function PlanTimeline({
       }
     });
     setPlanSeries(planSeries);
-    console.log('plan series', planSeries)
   }, [subjects, filteredPlans]);
 
   const isInViewRange = (plan) => {
@@ -121,10 +120,6 @@ function PlanTimeline({
   useEffect(() => {
     setFilteredPlans(plans.filter(plan => isInViewRange(plan)));
   }, [plans, viewMode, viewDate, subjects]);
-
-  useEffect(() => {
-    console.log(planSeries)
-  }, [planSeries]);
 
   return (
     <div

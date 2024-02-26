@@ -9,12 +9,13 @@ import '@fullcalendar/interaction/main.css'; */
 import styled from "@emotion/styled";
 import { DateTime } from "luxon";
 
+
 const StyleWrapper = styled.div`
   .fc td {
     background: #fff;
   }
   .fc-header-toolbar {
-    height: 3.125rem;
+    height: 50px;
   }
   .fc .fc-scroller-liquid-absolute {
     position: relative;
@@ -22,7 +23,6 @@ const StyleWrapper = styled.div`
 
   .fc.fc-media-screen.fc-direction-ltr.fc-theme-standard {
     position: relative;
-    height: 25rem;
   }
   .fc-theme-standard td,
   .fc-theme-standard th {
@@ -32,7 +32,7 @@ const StyleWrapper = styled.div`
     justify-content: center;
   }
   .fc-toolbar-title {
-    font-size: 1.25rem;
+    font-size: 20px;
   }
   .fc .fc-prev-button.fc-button-primary,
   .fc .fc-next-button.fc-button-primary {
@@ -43,17 +43,17 @@ const StyleWrapper = styled.div`
   }
   .fc-custom-today-button {
     background-color: #4169e1;
-    border-radius: 1.25rem;
-    height: 2.5rem;
-    padding: 0em 1.875rem;
-    font-size: 1.875rem;
+    border-radius: 20px;
+    height: 40px;
+    padding: 0px 30px;
+    font-size: 30px;
     display: flex;
     justify-content: center;
-    line-height: 2.5rem;
+    line-height: 40px;
     font-weight: 800;
   }
   .fc-view-harness {
-    border-radius: 1.875rem;
+    border-radius: 30px;
     /* overflow: hidden; */
   }
   .fc-scroller.fc-scroller-liquid-absolute {
@@ -67,12 +67,11 @@ const StyleWrapper = styled.div`
   }
   .fc-daygrid-day-events {
     position: absolute !important;
-    top: 0em;
+    top: 0px;
     width: 100%;
     border-radius: 50%;
     opacity: 0.75;
     z-index: 1;
-    height: 2.625rem !important;
   }
   .fc-daygrid-day-bg {
     z-index: 5;
@@ -80,7 +79,7 @@ const StyleWrapper = styled.div`
   .fc-bg-event {
     background-color: #4169e1;
     opacity: 1;
-    border-radius: 1.875rem;
+    border-radius: 30px;
     display: flex;
     justify-content: center;
     align-item: center;
@@ -89,14 +88,12 @@ const StyleWrapper = styled.div`
     font-style: unset;
     font-size: 1em;
     color: #fff;
-    margin: 0em;
+    margin: 0px;
     position: absolute;
     top: 50%;
     transform: translatey(-50%);
   }
   .fc-daygrid-day-frame.fc-scrollgrid-sync-inner {
-    min-height: 40.1781rem;
-    height: 40.1781rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -104,35 +101,44 @@ const StyleWrapper = styled.div`
   }
 
   .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr{
-    margin-bottom: 0.625rem;
+    margin-bottom: 10px;
   }
 
-  @media (max-width: 87.5rem) {
+  @media (max-width: 1400px) {
     .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr {
-      font-size:1.063rem;
+      font-size: 15px
     }
+
+    .fc-toolbar-chunk button {
+      padding: 0px;
+    }
+
+    .fc-header-toolbar .fc-toolbar-chunk  {
+      display: flex;
+      font-size: 13px;
+    }
+
+    .fc-header-toolbar .fc-toolbar-title  {
+      font-size: 15px;
+    }
+
     .fc-col-header-cell-cushion {
-      font-size: 1.125rem;
+      font-size: 12px;
     }
 
     .fc-daygrid-day-number {
-      font-size:  1.25rem;
+      font-size: 12px;
     }
 
     .fc-daygrid-day-events {
-      height: 1.875rem !important;
+      height: 30px !important;
     }
 
     .fc-toolbar-title {
-      margin-left: 0.625rem;
+      margin-left: 10px;
     }
   }
-
-  @media (max-height: 37.5rem) {
-
-  }
 `;
-
 function SmallCalendar({
   SmallCalendarRef,
   PlannerApi,
@@ -206,6 +212,7 @@ function SmallCalendar({
           dateClick={handleDateClick}
           select={handleDateClick}
           events={events}
+          height={'18.75rem'}
         />
       </div>
     </StyleWrapper>
