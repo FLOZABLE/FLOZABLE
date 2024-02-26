@@ -121,7 +121,7 @@ function Study(props) {
   }, [subjects]);
 
   return (
-    <div className={styles.StudyContainer}>
+    <div className={styles.Study}>
       <StudyModalContainer
         startPos={{ x: "10vw", y: "5vh" }}
         isDisp={isPlaylistModal}

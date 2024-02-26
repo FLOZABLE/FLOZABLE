@@ -25,7 +25,6 @@ import ExtensionSetting from "../../UI/ExtensionSetting/ExtensionSetting";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;
-const youtubeClientId = process.env.REACT_APP_YOUTUBE_CLIENT_ID;
 const appOrigin = process.env.REACT_APP_LOCATION;
 
 function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userInfo, setResponse }) {
@@ -43,8 +42,6 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [scrollRef, setScrollRef] = useState(null);
-  const profileRef = useRef(null);
-  const passwordRef = useRef(null);
   const subjectsRef = useRef(null);
   const extensionRef = useRef(null);
   const accountsRef = useRef(null);

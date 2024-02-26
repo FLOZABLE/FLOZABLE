@@ -13,9 +13,6 @@ function RefreshBtn({ refresh, setRefresh }) {
         if (now - lastUpd > 3) {
           setLastUpd(now);
           setRefresh(true);
-          setTimeout(() => {
-            setRefresh(false)
-          }, 3000);
         };
       }}
     >

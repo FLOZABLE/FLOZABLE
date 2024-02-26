@@ -7,6 +7,7 @@ import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
 import GroupMemCounter from "../GroupMemCounter/GroupMemCounter";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
 import GroupTimeCounter from "../GroupTimeCounter/GroupTimeCounter";
+import parse from "html-react-parser";
 import { Link } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -44,7 +45,7 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
             {name}
           </div>
           <div className={`${styles.description} hiddenScroll`}>
-            {explanation}
+            {parse(explanation)}
           </div>
           <div className={styles.info}>
             <div>

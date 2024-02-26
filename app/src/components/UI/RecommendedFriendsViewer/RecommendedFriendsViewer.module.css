@@ -19,7 +19,6 @@
 .RecommendedFriendsViewer .recommendedFriend {
   display: flex;
   align-items: center;
-  margin-bottom: 0.313rem;
 }
 
 .RecommendedFriendsViewer .recommendedFriend .buttons{
