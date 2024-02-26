@@ -78,18 +78,18 @@
   padding: 1.25rem 3.125rem;
 }
 
-@media (max-width: 106.25rem) {
+@media (max-width: 1700px) {
   .Main .boxesContainer:nth-child(2) {
-    width: 16.875rem;
+    width: 270px;
   }
 }
 
-@media (max-width: 81.25rem) {
+@media (max-width: 1300px) {
   .Main .boxesContainer:nth-child(2) .box#planTimeline {
     height: 50%;
   }
 
   .Main .smallBoxesWrapper {
-    width: calc(100% + 15rem + 3.5rem);
+    width: calc(100% + 220px + 5rem);
   }
 }

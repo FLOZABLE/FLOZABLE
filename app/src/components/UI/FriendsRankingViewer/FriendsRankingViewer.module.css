@@ -44,5 +44,5 @@
 .FriendsRankingViewer .rankings .userContainer .diff {
   margin-left: auto;
   font-size: 1rem;
-  margin-left: 35%;
+  white-space: nowrap;
 }

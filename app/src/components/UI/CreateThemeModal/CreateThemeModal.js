@@ -37,8 +37,8 @@ function CreateThemeModal({
       .then((data) => {
         setResponse(data);
         if (data.success) {
-          setThemes(prev => [...prev, 
-            data.themeInfo
+          setThemes(prev => [...prev,
+          data.themeInfo
           ])
         }
       })
@@ -47,9 +47,8 @@ function CreateThemeModal({
 
   return (
     <div
-      className={`${styles.CreateThemeModal} modal ${
-        isOpen ? "open" : ""
-      }`}
+      className={`${styles.CreateThemeModal} modal ${isOpen ? "open" : ""
+        }`}
     >
       <div className={styles.header}>
         <i
@@ -62,43 +61,43 @@ function CreateThemeModal({
       </div>
       <div className={`${styles.content} customScroll`}>
         <div className={styles.layer}>
-        <CustomInput
-              input={name}
-              handleInput={(e) => {setName(e.target.value)} }
-              icon={faPen}
-              placeHolder={"Theme Name"}
-              type={"text"}
-            />
+          <CustomInput
+            input={name}
+            handleInput={(e) => { setName(e.target.value) }}
+            icon={faPen}
+            placeHolder={"Theme Name"}
+            type={"text"}
+          />
         </div>
         <div className={styles.layer}>
-        <TextEditor
-              setDescription={setDescription}
-              description={description}
-            />
+          <TextEditor
+            setDescription={setDescription}
+            description={description}
+          />
         </div>
         <div className={styles.layer}>
-        <CustomInput
+          <CustomInput
             input={url}
-            handleInput={(e) => {setUrl(e.target.value)} }
+            handleInput={(e) => { setUrl(e.target.value) }}
             icon={faLink}
             placeHolder={"Youtube Link"}
             type={"text"}
           />
         </div>
         <div className={styles.layer}>
-            <TagContainerGen
-              maxTags={10}
-              setTags={setTags}
-              handleCreatedTagsChange={(tags) => {setTags(tags)}}
-            />
+          <TagContainerGen
+            maxTags={10}
+            setTags={setTags}
+            handleCreatedTagsChange={(tags) => { setTags(tags) }}
+          />
         </div>
         <div className={styles.submitWrapper}>
-          <BlobBtn 
-          delay={-1}
-          name={"SUBMIT"}
-          color1={"#fff"}
-          color2={"var(--pink)"}
-          setClicked={submit}
+          <BlobBtn
+            delay={-1}
+            name={"SUBMIT"}
+            color1={"#fff"}
+            color2={"var(--purple2)"}
+            setClicked={submit}
           />
         </div>
       </div>

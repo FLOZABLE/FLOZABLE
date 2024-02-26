@@ -3,7 +3,7 @@
   width: 34.375rem;
   height: fit-content;
   visibility: hidden;
-  z-index: 4;
+  z-index: 7;
   box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   border-radius: 1.25rem;
 }
