@@ -902,15 +902,11 @@ async function createBotRankings() {
     }
   });
 
-  await connection.query(`DELETE FROM dailyRanking`);
-  await connection.query(`DELETE FROM weeklyRanking`);
-  await connection.query(`DELETE FROM monthlyRanking`);
-  //remove old rankings or it won't work
-
   let entries = Object.entries(botDailyRanking);
   for (let en = 0; en < entries.length; en++){
     let key = entries[en][0];
     botDailyRanking[key] = botDailyRanking[key].sort((a,b) => b.t - a.t);
+    await connection.query(`DELETE FROM dailyRanking WHERE date = ?`, [key]);
     await connection.query(`INSERT INTO dailyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botDailyRanking[key])]);
   }
 
@@ -918,6 +914,7 @@ async function createBotRankings() {
   for (let en = 0; en < entries.length; en++){
     let key = entries[en][0];
     botWeeklyRanking[key] = botWeeklyRanking[key].sort((a,b) => b.t - a.t);
+    await connection.query(`DELETE FROM weeklyRanking WHERE date = ?`, [key]);
     await connection.query(`INSERT INTO weeklyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botWeeklyRanking[key])]);
   }
 
@@ -925,6 +922,7 @@ async function createBotRankings() {
   for (let en = 0; en < entries.length; en++){
     let key = entries[en][0];
     botMonthlyRanking[key] = botMonthlyRanking[key].sort((a,b) => b.t - a.t);
+    await connection.query(`DELETE FROM monthlyRanking WHERE date = ?`, [key]);
     await connection.query(`INSERT INTO monthlyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botMonthlyRanking[key])]);
   }
 
