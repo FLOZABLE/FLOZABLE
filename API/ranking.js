@@ -17,123 +17,130 @@ const REFRESH_INTERVAL = 60 * 3; //3min
 Router.get('/sort', async (req, res) => {
   const { mode, date, timezone } = req.query;
 
-  let dateTime = DateTime.fromISO(date, { zone: timezone });
-  console.log(dateTime.get('day'))
-  const minOffset = dateTime.offset % 60;
-  dateTime = dateTime.plus({ minute: minOffset });
-
-  const today = DateTime.now().setZone(timezone);
-  const timezoneOffset = Math.floor(dateTime.offset / 60).toString();
-
-  let rankings = [];
-  if (mode === "Daily") {
-
-    //use redis value when its today
-    if (dateTime.hasSame(today, "day")) {
-      //today
-      rankings = rankingCache.get(`day:${timezoneOffset}`);
-      console.log('day cached: ', rankings?.length)
-      if (!rankings) {
-        const users = await redisClient.sMembers('allMembers');
-        rankings = await todaySorting(users, timezoneOffset);
-        rankings = await Promise.all(rankings.map(async (ranking) => {
-          const user = await userCache(ranking.userId);
-          return { ...ranking, ...user }
-        }));
-
-        //cache value into node cache
-        rankingCache.set(
-          `day:${timezoneOffset}`,
-          rankings,
-          REFRESH_INTERVAL
-        );
-      };
-    } else {
-      //get ranking from database if its not today;
-      const connection = pool.promise();
-      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [dateTime.toSeconds()]);
-      if (dailyRanking) {
-        rankings = JSON.parse(dailyRanking.ranking);
-        rankings = await Promise.all(rankings.map(async (ranking) => {
-          const user = await userCache(ranking.u);
-          return { ...ranking, ...user }
-        }))
+  try {
+    let dateTime = DateTime.fromISO(date, { zone: timezone });
+    console.log(dateTime.get('day'))
+    const minOffset = dateTime.offset % 60;
+    dateTime = dateTime.plus({ minute: minOffset });
+  
+    const today = DateTime.now().setZone(timezone);
+    const timezoneOffset = Math.floor(dateTime.offset / 60).toString();
+  
+    let rankings = [];
+    if (mode === "Daily") {
+  
+      //use redis value when its today
+      if (dateTime.hasSame(today, "day")) {
+        //today
+        rankings = rankingCache.get(`day:${timezoneOffset}`);
+        console.log('day cached: ', rankings?.length)
+        if (!rankings) {
+          const users = await redisClient.sMembers('allMembers');
+          rankings = await todaySorting(users, timezoneOffset);
+          rankings = await Promise.all(rankings.map(async (ranking) => {
+            const user = await userCache(ranking.userId);
+            return { ...ranking, ...user }
+          }));
+  
+          //cache value into node cache
+          rankingCache.set(
+            `day:${timezoneOffset}`,
+            rankings,
+            REFRESH_INTERVAL
+          );
+        };
+      } else {
+        //get ranking from database if its not today;
+        const connection = pool.promise();
+        const [[dailyRanking]] = await connection.query(`SELECT ranking FROM dailyRanking WHERE date = ?`, [dateTime.toSeconds()]);
+        if (dailyRanking) {
+          rankings = JSON.parse(dailyRanking.ranking);
+          rankings = await Promise.all(rankings.map(async (ranking) => {
+            const user = await userCache(ranking.u);
+            return { ...ranking, ...user }
+          }))
+        }
       }
-    }
-  } else if (mode === "Weekly") {
-
-    //use redis value when its same week
-    if (today.hasSame(dateTime, "week")) {
-
-      rankings = rankingCache.get(`week:${timezoneOffset}`);
-      console.log('week cached: ', rankings?.length)
-      if (!rankings) {
-        const users = await redisClient.sMembers('allMembers');
-        rankings = await thisWeekSorting(users, timezoneOffset);
-        rankings = await Promise.all(rankings.map(async (ranking) => {
-          const user = await userCache(ranking.userId);
-          return { ...ranking, ...user }
-        }));
-
-        //cache value into node cache
-        rankingCache.set(
-          `week:${timezoneOffset}`,
-          rankings,
-          REFRESH_INTERVAL
-        );
-      };
-
-    } else {
-      //get ranking from database if its not today;
-      const connection = pool.promise();
-      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [dateTime.toSeconds()]);
-      if (dailyRanking) {
-        rankings = JSON.parse(dailyRanking.ranking);
-        rankings = await Promise.all(rankings.map(async (ranking) => {
-          const user = await userCache(ranking.u);
-          return { ...ranking, ...user }
-        }))
-      }
-    }
-  } else {
-    //month
-
-    //use redis value when its same month
-    if (today.hasSame(dateTime, "month")) {
-
-      rankings = rankingCache.get(`month:${timezoneOffset}`);
-      console.log('month cached: ', rankings?.length)
-      if (!rankings) {
-        const users = await redisClient.sMembers('allMembers');
-        rankings = await thisMonthSorting(users, timezoneOffset);
-        rankings = await Promise.all(rankings.map(async (ranking) => {
-          const user = await userCache(ranking.userId);
-          return { ...ranking, ...user }
-        }));
-
-        //cache value into node cache
-        rankingCache.set(
-          `month:${timezoneOffset}`,
-          rankings,
-          REFRESH_INTERVAL
-        );
+    } else if (mode === "Weekly") {
+  
+      //use redis value when its same week
+      if (today.hasSame(dateTime, "week")) {
+  
+        rankings = rankingCache.get(`week:${timezoneOffset}`);
+        console.log('week cached: ', rankings?.length)
+        if (!rankings) {
+          const users = await redisClient.sMembers('allMembers');
+          rankings = await thisWeekSorting(users, timezoneOffset);
+          rankings = await Promise.all(rankings.map(async (ranking) => {
+            const user = await userCache(ranking.userId);
+            return { ...ranking, ...user }
+          }));
+  
+          //cache value into node cache
+          rankingCache.set(
+            `week:${timezoneOffset}`,
+            rankings,
+            REFRESH_INTERVAL
+          );
+        };
+  
+      } else {
+        //get ranking from database if its not today;
+        const connection = pool.promise();
+        console.log(dateTime.startOf('week').toSeconds(), 'week')
+        const [[weeklyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [dateTime.startOf('week').toSeconds()]);
+        if (weeklyRanking) {
+          rankings = JSON.parse(weeklyRanking.ranking);
+          rankings = await Promise.all(rankings.map(async (ranking) => {
+            const user = await userCache(ranking.u);
+            return { ...ranking, ...user }
+          }))
+        }
       }
     } else {
-      //get ranking from database if its not today;
-      const connection = pool.promise();
-      const [[dailyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [dateTime.toSeconds()]);
-      if (dailyRanking) {
-        rankings = JSON.parse(dailyRanking.ranking);
-        rankings = await Promise.all(rankings.map(async (ranking) => {
-          const user = await userCache(ranking.u);
-          return { ...ranking, ...user }
-        }))
+      //month
+  
+      //use redis value when its same month
+      if (today.hasSame(dateTime, "month")) {
+  
+        rankings = rankingCache.get(`month:${timezoneOffset}`);
+        console.log('month cached: ', rankings?.length)
+        if (!rankings) {
+          const users = await redisClient.sMembers('allMembers');
+          rankings = await thisMonthSorting(users, timezoneOffset);
+          rankings = await Promise.all(rankings.map(async (ranking) => {
+            const user = await userCache(ranking.userId);
+            return { ...ranking, ...user }
+          }));
+  
+          //cache value into node cache
+          rankingCache.set(
+            `month:${timezoneOffset}`,
+            rankings,
+            REFRESH_INTERVAL
+          );
+        }
+      } else {
+        //get ranking from database if its not today;
+        const connection = pool.promise();
+        console.log(dateTime.startOf('month').toSeconds(), 'month')
+        const [[monthlyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [dateTime.startOf('month').toSeconds()]);
+        if (monthlyRanking) {
+          rankings = JSON.parse(monthlyRanking.ranking);
+          rankings = await Promise.all(rankings.map(async (ranking) => {
+            const user = await userCache(ranking.u);
+            return { ...ranking, ...user }
+          }))
+        }
       }
-    }
+    };
+  
+    res.send({ success: true, data: rankings })
+  } catch (err) {
+    console.log(err);
+    res.send({success: false, reason: 'Invalid Values'});
   };
-
-  res.send({ success: true, data: rankings })
-});
+ });
 
 async function todaySorting(users, timezoneOffset) {
   const filteredUsers = [];
@@ -526,7 +533,7 @@ Router.get('/friends', async (req, res) => {
         dates.push(today.toSeconds());
       };
 
-      const [rankings] = await connection.query(`SELECT date, ranking FROM dailyranking WHERE date IN(?)`, [dates])
+      const [rankings] = await connection.query(`SELECT date, ranking FROM dailyRanking WHERE date IN(?)`, [dates])
       
 
       //today study times
