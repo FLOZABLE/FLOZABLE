@@ -33,7 +33,9 @@ function TopNotification({ response }) {
       );
     }
     setNotify(false);
-    setNotify(true);
+    setTimeout(() => {
+      setNotify(true);
+    }, 100);
   }, [response]);
 
   return (
