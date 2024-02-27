@@ -8,10 +8,16 @@ import { Link } from "react-router-dom";
 import { socket } from "../../../socket";
 import ChatRoom from "../ChatRoom/ChatRoom";
 
-
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewMsg, setTotalNewMsg }) {
+function ChatsModal({
+  isChatModal,
+  setIsChatModal,
+  myGroups,
+  userInfo,
+  totalNewMsg,
+  setTotalNewMsg,
+}) {
   const [chatRooms, setChatRooms] = useState([]);
   const [chatRoomsEl, setChatRoomsEl] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(false);
@@ -36,50 +42,57 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
       .catch((error) => console.error(error));
   }, [myGroups]);
 
-  const onMsgReceived = useCallback((roomId, msgInfo) => {
-    const chatRoomIndex = chatRooms.findIndex(chatRoom => { return chatRoom.id === roomId });
-    if (chatRoomIndex !== -1) {
-      const newChatRooms = [...chatRooms];
-      newChatRooms[chatRoomIndex].chats.push(msgInfo);
-      setChatRooms(newChatRooms);
-    };
-    if (selectedRoom.id === roomId) {
-      const { u, m, i, t } = msgInfo;
-      const formattedTime = DateTime.fromSeconds(t * 60).toFormat('h:mm a');
-      if (u === userInfo.user_id) {
-        setMsgViewer(prevMsgViewer => [
-          ...prevMsgViewer,
-          <li className={`${styles.msg} ${styles.me}`} key={i}>
-            <p className={styles.time}>{formattedTime}</p>
-            <p>{m}</p>
-          </li>
-        ]);
+  const onMsgReceived = useCallback(
+    (roomId, msgInfo) => {
+      const chatRoomIndex = chatRooms.findIndex((chatRoom) => {
+        return chatRoom.id === roomId;
+      });
+      if (chatRoomIndex !== -1) {
+        const newChatRooms = [...chatRooms];
+        newChatRooms[chatRoomIndex].chats.push(msgInfo);
+        setChatRooms(newChatRooms);
+      }
+      if (selectedRoom.id === roomId) {
+        const { u, m, i, t } = msgInfo;
+        const formattedTime = DateTime.fromSeconds(t * 60).toFormat("h:mm a");
+        if (u === userInfo.user_id) {
+          setMsgViewer((prevMsgViewer) => [
+            ...prevMsgViewer,
+            <li className={`${styles.msg} ${styles.me}`} key={i}>
+              <p className={styles.time}>{formattedTime}</p>
+              <p>{m}</p>
+            </li>,
+          ]);
+        } else {
+          const user = roomMembers.find((member) => {
+            return member.user_id === u;
+          });
+          const { name } = user;
+          setMsgViewer((prevMsgViewer) => [
+            ...prevMsgViewer,
+            <li className={`${styles.msg} ${styles.others}`} key={i}>
+              <Link
+                to={`/dashboard/user/${u}`}
+                className={styles.profileImg}
+                style={{
+                  backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center center",
+                  backgroundRepeat: "no-repeat",
+                }}
+              ></Link>
+              <p className={styles.name}>{name}</p>
+              <p className={styles.time}>{formattedTime}</p>
+              <p>{m}</p>
+            </li>,
+          ]);
+        }
       } else {
-        const user = roomMembers.find(member => { return member.user_id === u });
-        const { name } = user;
-        setMsgViewer(prevMsgViewer => [
-          ...prevMsgViewer,
-          <li className={`${styles.msg} ${styles.others}`} key={i}>
-            <Link
-              to={`/dashboard/user/${u}`}
-              className={styles.profileImg}
-              style={{
-                backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center center',
-                backgroundRepeat: 'no-repeat',
-              }}>
-            </Link>
-            <p className={styles.name}>{name}</p>
-            <p className={styles.time}>{formattedTime}</p>
-            <p>{m}</p>
-          </li>
-        ]);
-      };
-    } else {
-      setTotalNewMsg(prev => prev + 1);
-    };
-  }, [userInfo, chatRooms, selectedRoom, roomMembers]);
+        setTotalNewMsg((prev) => prev + 1);
+      }
+    },
+    [userInfo, chatRooms, selectedRoom, roomMembers],
+  );
 
   useEffect(() => {
     chatsContainerRef.current.scrollTo({
@@ -89,20 +102,16 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
   }, [msgViewer]);
 
   useEffect(() => {
-    socket.on('msgReceived', onMsgReceived);
+    socket.on("msgReceived", onMsgReceived);
     return () => {
-      socket.off('msgReceived', onMsgReceived);
-    }
+      socket.off("msgReceived", onMsgReceived);
+    };
   }, [chatRooms, selectedRoom, roomMembers]);
 
   const onSubmit = useCallback(() => {
     if (msgInput.length) {
       setMsgInput("");
-      socket.emit(
-        "sendMsg",
-        selectedRoom.id,
-        msgInput,
-      );
+      socket.emit("sendMsg", selectedRoom.id, msgInput);
     }
   }, [msgInput, selectedRoom]);
 
@@ -116,7 +125,9 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
         const lastRead = readStatus[id];
 
         if (!type) {
-          const group = myGroups.find(group => { return group.group_id === id });
+          const group = myGroups.find((group) => {
+            return group.group_id === id;
+          });
           if (!group) return;
           const { name, color } = group;
           const members = group.members === "" ? [] : group.members.split(",");
@@ -134,11 +145,15 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
               setTotalNewMsg={setTotalNewMsg}
               isSelected={selectedRoom.id === id}
             />
-          )
+          );
         } else {
           if (!userInfo) return;
-          chatRoom.name = members.map(member => { return member.name }).join(",");
-          chatRoom.color = 'var(--purple)'
+          chatRoom.name = members
+            .map((member) => {
+              return member.name;
+            })
+            .join(",");
+          chatRoom.color = "var(--purple)";
           return (
             <ChatRoom
               key={i}
@@ -150,17 +165,17 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
               setTotalNewMsg={setTotalNewMsg}
               isSelected={selectedRoom.id === id}
             />
-          )
+          );
         }
-      })
+      }),
     );
   }, [chatRooms, myGroups, roomMembers, userInfo, readStatus, selectedRoom]);
 
   useEffect(() => {
-    const { chats, id, members, type } = selectedRoom;
+    const { chats, id, type } = selectedRoom;
     if (selectedRoom && chats && userInfo) {
       const { user_id } = userInfo;
-      socket.emit('readMsg', { roomId: selectedRoom.id, type });
+      socket.emit("readMsg", { roomId: selectedRoom.id, type });
       if (!type) {
         fetch(`${serverOrigin}/chat/members?roomId=${id}`, { method: "get" })
           .then((response) => response.json())
@@ -168,83 +183,99 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
             if (data.success) {
               const { membersInfo } = data;
               setRoomMembers([...membersInfo]);
-              setMsgViewer(chats.map((msg) => {
-                const { u, m, i, t } = msg;
-                const formattedTime = DateTime.fromSeconds(t * 60).toFormat('h:mm a');
-                if (u === user_id) {
-                  return (
-                    <li className={`${styles.msg} ${styles.me}`} key={i}>
-                      <p className={styles.time}>{formattedTime}</p>
-                      <p>{m}</p>
-                    </li>
-                  )
-                } else {
-                  const user = membersInfo.find(member => { return member.user_id === u });
-                  const { name } = user;
-                  return (
-                    <li className={`${styles.msg} ${styles.others}`} key={i}>
-                      <Link to={`/dashboard/user/${u}`}
-                        className={styles.profileImg}
-                        style={{
-                          backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center center',
-                          backgroundRepeat: 'no-repeat',
-                        }}>
-                      </Link>
-                      <p className={styles.name}>{name}</p>
-                      <p className={styles.time}>{formattedTime}</p>
-                      <p>{m}</p>
-                    </li>
-                  )
-                };
-              }));
+              setMsgViewer(
+                chats.map((msg) => {
+                  const { u, m, i, t } = msg;
+                  const formattedTime = DateTime.fromSeconds(t * 60).toFormat(
+                    "h:mm a",
+                  );
+                  if (u === user_id) {
+                    return (
+                      <li className={`${styles.msg} ${styles.me}`} key={i}>
+                        <p className={styles.time}>{formattedTime}</p>
+                        <p>{m}</p>
+                      </li>
+                    );
+                  } else {
+                    const user = membersInfo.find((member) => {
+                      return member.user_id === u;
+                    });
+                    const { name } = user;
+                    return (
+                      <li className={`${styles.msg} ${styles.others}`} key={i}>
+                        <Link
+                          to={`/dashboard/user/${u}`}
+                          className={styles.profileImg}
+                          style={{
+                            backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center center",
+                            backgroundRepeat: "no-repeat",
+                          }}
+                        ></Link>
+                        <p className={styles.name}>{name}</p>
+                        <p className={styles.time}>{formattedTime}</p>
+                        <p>{m}</p>
+                      </li>
+                    );
+                  }
+                }),
+              );
             }
           })
           .catch((error) => console.error(error));
       } else {
         const { members } = selectedRoom;
         setRoomMembers([...members]);
-        setMsgViewer(chats.map((msg) => {
-          const { u, m, i, t } = msg;
-          const formattedTime = DateTime.fromSeconds(t * 60).toFormat('h:mm a');
-          if (u === user_id) {
-            return (
-              <li className={`${styles.msg} ${styles.me}`} key={i}>
-                <p className={styles.time}>{formattedTime}</p>
-                <p>{m}</p>
-              </li>
-            )
-          } else {
-            const user = members.find(member => { return member.user_id === u });
-            const { name } = user;
-            return (
-              <li className={`${styles.msg} ${styles.others}`} key={i}>
-                <Link to={`/dashboard/user/${u}`}
-                  className={styles.profileImg}
-                  style={{
-                    backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center center',
-                    backgroundRepeat: 'no-repeat',
-                  }}>
-                </Link>
-                <p className={styles.name}>{name}</p>
-                <p className={styles.time}>{formattedTime}</p>
-                <p>{m}</p>
-              </li>
-            )
-          };
-        }));
-      };
-    };
+        setMsgViewer(
+          chats.map((msg) => {
+            const { u, m, i, t } = msg;
+            const formattedTime = DateTime.fromSeconds(t * 60).toFormat(
+              "h:mm a",
+            );
+            if (u === user_id) {
+              return (
+                <li className={`${styles.msg} ${styles.me}`} key={i}>
+                  <p className={styles.time}>{formattedTime}</p>
+                  <p>{m}</p>
+                </li>
+              );
+            } else {
+              const user = members.find((member) => {
+                return member.user_id === u;
+              });
+              const { name } = user;
+              return (
+                <li className={`${styles.msg} ${styles.others}`} key={i}>
+                  <Link
+                    to={`/dashboard/user/${u}`}
+                    className={styles.profileImg}
+                    style={{
+                      backgroundImage: `url("${serverOrigin}/profile-images/${u}.jpeg")`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center center",
+                      backgroundRepeat: "no-repeat",
+                    }}
+                  ></Link>
+                  <p className={styles.name}>{name}</p>
+                  <p className={styles.time}>{formattedTime}</p>
+                  <p>{m}</p>
+                </li>
+              );
+            }
+          }),
+        );
+      }
+    }
   }, [selectedRoom, userInfo]);
 
   useEffect(() => {
     if (!isChatModal) {
       setSelectedRoom(false);
-    } else if(isChatModal.group_id) {
-      const chatRoom = chatRooms.find(room => room.id === isChatModal.group_id);
+    } else if (isChatModal.group_id) {
+      const chatRoom = chatRooms.find(
+        (room) => room.id === isChatModal.group_id,
+      );
       if (!chatRoom) return;
       setSelectedRoom(chatRoom);
       setRoomName(isChatModal.name);
@@ -252,12 +283,14 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
   }, [isChatModal, chatRooms]);
 
   return (
-    <div className={`${styles.ChatsModal} ${isChatModal ? styles.open : ''}`}>
+    <div className={`${styles.ChatsModal} ${isChatModal ? styles.open : ""}`}>
       <div className={styles.header}>
         <p>You have {totalNewMsg} new messages</p>
-        <i onClick={() => {
-          setIsChatModal(false);
-        }}>
+        <i
+          onClick={() => {
+            setIsChatModal(false);
+          }}
+        >
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
@@ -265,11 +298,18 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
         <ul className={`${styles.chatRoomsContainer} customScroll`}>
           {chatRoomsEl}
         </ul>
-        <div className={`${styles.chatsWrapper} ${selectedRoom ? styles.open : ''}`}>
+        <div
+          className={`${styles.chatsWrapper} ${
+            selectedRoom ? styles.open : ""
+          }`}
+        >
           <div className={styles.chatsHeader}>
-            <i id={styles.exitBtn} onClick={() => {
-              setSelectedRoom(false);
-            }}>
+            <i
+              id={styles.exitBtn}
+              onClick={() => {
+                setSelectedRoom(false);
+              }}
+            >
               <FontAwesomeIcon icon={faChevronLeft} />
             </i>
             <div className={styles.roomInfo}>
@@ -280,13 +320,19 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
                 <p>{roomName}</p>
               </div>
             </div>
-            <i id={styles.closeBtn} onClick={() => {
-              setIsChatModal(false);
-            }}>
+            <i
+              id={styles.closeBtn}
+              onClick={() => {
+                setIsChatModal(false);
+              }}
+            >
               <FontAwesomeIcon icon={faXmark} />
             </i>
           </div>
-          <ul className={`${styles.chatsContainer} customScroll`} ref={chatsContainerRef}>
+          <ul
+            className={`${styles.chatsContainer} customScroll`}
+            ref={chatsContainerRef}
+          >
             {msgViewer}
           </ul>
           <div className={styles.inputWrapper}>
@@ -305,7 +351,7 @@ function ChatsModal({ isChatModal, setIsChatModal, myGroups, userInfo, totalNewM
         </div>
       </div>
     </div>
-  )
-};
+  );
+}
 
 export default ChatsModal;

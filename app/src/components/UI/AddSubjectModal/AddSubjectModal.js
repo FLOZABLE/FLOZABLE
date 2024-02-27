@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import styles from "./AddSubjectModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -10,16 +10,13 @@ import { sortNewSubject } from "../../../utils/timelineSorting";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function AddSubjectModal(props) {
-  const {
-    isAddSubjectModal,
-    setIsAddSubjectModal,
-    setAddSubjectResponse,
-    subjects,
-    setSubjects,
-    setSubject,
-  } = props;
-
+function AddSubjectModal({
+  isAddSubjectModal,
+  setIsAddSubjectModal,
+  setAddSubjectResponse,
+  subjects,
+  setSubjects,
+}) {
   const [name, setName] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
   const [isSelectColor, setIsSelectColor] = useState(false);
@@ -61,7 +58,7 @@ function AddSubjectModal(props) {
           setSelectedColor(null);
           setSelectedIcon({ name: null, el: null });
           setName("");
-        };
+        }
       })
       .catch((error) => console.error(error));
   }, [selectedColor, selectedIcon, name]);

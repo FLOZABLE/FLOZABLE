@@ -9,7 +9,6 @@ function ColorPalette({
   setIsSelectColor,
   setIsSelectIcon,
 }) {
-
   const [paletteColorsEl, setPaletteColorsEl] = useState([]);
 
   const selectColor = useCallback((color) => {
@@ -90,7 +89,6 @@ function ColorPalette({
           <div className={styles.pTag}>
             {!selectedColor ? <p>Select Color!</p> : <p>Selected Color: </p>}
           </div>
-
         </button>
         <div
           onClick={() => {

@@ -6,10 +6,9 @@ import {
   faCircleXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
-function TopNotification({ response, duration }) {
+function TopNotification({ response }) {
   const [notification, setNotification] = useState(null);
   const [notify, setNotify] = useState(false);
-  const [timeoutId, setTimeoutId] = useState(null);
 
   useEffect(() => {
     if (!response) return;
@@ -33,13 +32,8 @@ function TopNotification({ response, duration }) {
         </div>,
       );
     }
-    //clearTimeout(timeoutId);
     setNotify(false);
     setNotify(true);
-    const newTimeoutId = setTimeout(() => {
-      setNotify(false);
-    }, duration);
-    setTimeoutId(newTimeoutId);
   }, [response]);
 
   return (
