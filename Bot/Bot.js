@@ -857,7 +857,7 @@ async function createBotRankings() {
 
       const UTC_CURRENT_DAY = DateTime.fromSeconds(currSeconds, { zone: "utc" });
       if (UTC_CURRENT_DAY.weekday === 1) { //start of week, save to weekly ranking
-        botWeeklyTrend[currSeconds - 86400] = botWeekTotal;
+        botWeeklyTrend[DateTime.fromSeconds(currSeconds, { zone: "utc" }).minus({weeks: 1}).toSeconds()] = botWeekTotal;
         botWeekTotal -= (botStudyByHour[UTC_CURRENT_DAY.minus({ weeks: 1 }).toSeconds()] || 0); //remove last week's info
       }
       else if (UTC_CURRENT_DAY.weekday === 2 && UTC_CURRENT_DAY.hour === 0) {
@@ -866,7 +866,7 @@ async function createBotRankings() {
 
       const FIRST_DAY_OF_MONTH = DateTime.fromSeconds(currSeconds).startOf('month');
       if (UTC_CURRENT_DAY.hasSame(FIRST_DAY_OF_MONTH, 'day')) { //start of month, save to monthly ranking
-        botMonthlyTrend[currSeconds - 86400] = botMonthTotal;
+        botMonthlyTrend[DateTime.fromSeconds(currSeconds, { zone: "utc" }).minus({months: 1}).toSeconds()] = botMonthTotal;
         botMonthTotal -= (botStudyByHour[UTC_CURRENT_DAY.minus({ months: 1 }).toSeconds()] || 0); //remove last month's info
       }
       else if (UTC_CURRENT_DAY.diff(FIRST_DAY_OF_MONTH, ['days']).days === 2 && UTC_CURRENT_DAY.hour === 0) {
@@ -902,15 +902,11 @@ async function createBotRankings() {
     }
   });
 
-  await connection.query(`DELETE FROM dailyRanking`);
-  await connection.query(`DELETE FROM weeklyRanking`);
-  await connection.query(`DELETE FROM monthlyRanking`);
-  //remove old rankings or it won't work
-
   let entries = Object.entries(botDailyRanking);
   for (let en = 0; en < entries.length; en++){
     let key = entries[en][0];
     botDailyRanking[key] = botDailyRanking[key].sort((a,b) => b.t - a.t);
+    await connection.query(`DELETE FROM dailyRanking WHERE date = ?`, [key]);
     await connection.query(`INSERT INTO dailyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botDailyRanking[key])]);
   }
 
@@ -918,6 +914,7 @@ async function createBotRankings() {
   for (let en = 0; en < entries.length; en++){
     let key = entries[en][0];
     botWeeklyRanking[key] = botWeeklyRanking[key].sort((a,b) => b.t - a.t);
+    await connection.query(`DELETE FROM weeklyRanking WHERE date = ?`, [key]);
     await connection.query(`INSERT INTO weeklyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botWeeklyRanking[key])]);
   }
 
@@ -925,6 +922,7 @@ async function createBotRankings() {
   for (let en = 0; en < entries.length; en++){
     let key = entries[en][0];
     botMonthlyRanking[key] = botMonthlyRanking[key].sort((a,b) => b.t - a.t);
+    await connection.query(`DELETE FROM monthlyRanking WHERE date = ?`, [key]);
     await connection.query(`INSERT INTO monthlyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botMonthlyRanking[key])]);
   }
 
