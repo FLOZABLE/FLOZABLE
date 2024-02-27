@@ -42,8 +42,7 @@ async function autoSignin(req, res, success = (() => { }), fail = (() => { res.s
     if (userInfo) {
       req.session.user_id = req.signedCookies.userId;
       req.session.timezone = userInfo.timezone;
-      req.session.email = userInfo.email;
-      return success(req.session.user_id, req.session.timezone, req.session.email);
+      return success(req.session.user_id, req.session.timezone);
     } else {
       return fail();
     }

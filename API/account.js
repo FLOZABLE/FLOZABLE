@@ -73,6 +73,7 @@ Router.post('/signin-authentication', async (req, res) => {
       }
 
       req.session.user_id = userId;
+      req.session.email = email;
 
       res.cookie("userId", userId, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
@@ -89,16 +90,38 @@ Router.post('/signin-authentication', async (req, res) => {
 });
 
 Router.post('/send-verification-link', async (req, res) => {
-  autoSignin(req, res, (async (userId, tl, email) => {
+  autoSignin(req, res, (async (userId) => {
     try {
-      await redisClient.setEx(`verify:${email}`, 3600, generateRandomId(10));
-      res.send({success: true, message: "Verification Link Sent!"});
+      const userInfo = await userCache(userId);
+      await redisClient.setEx(`verify:${userInfo.email}`, 3600, generateRandomId(10));
+      res.send({ success: true, message: "Verification Link Sent!" });
     } catch (err) {
       console.log(err);
       res.send({ success: false, reason: "Error" });
     };
   }));
-})
+});
+
+Router.post('/verify-by-link', async (req, res) => {
+  const { verifyId } = req.body;
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const userInfo = await userCache(userId);
+      const verifyInfo = await redisClient.get(`verify:${userInfo.email}`);
+      if (!verifyInfo) {
+        return res.send({ success: false, reason: "Link expired" });
+      }
+      if (verifyId === verifyInfo) {
+        const connection = pool.promise();
+        await connection.query("UPDATE users SET verified = true WHERE user_id = ?", [userId]);
+        res.send({ success: true, message: "Verification Success!" });
+      }
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false, reason: "Error" });
+    };
+  }));
+});
 
 Router.post('/signup-authentication', async (req, res) => {
   try {
