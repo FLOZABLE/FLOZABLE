@@ -79,12 +79,19 @@
 }
 
 @media (max-width: 1700px) {
+  .Main .boxesContainer:nth-child(1) {
+    width: calc(100% - 290px);
+  }
+
   .Main .boxesContainer:nth-child(2) {
     width: 270px;
   }
 }
 
 @media (max-width: 1300px) {
+  html {
+    font-size: 10px;
+  }
   .Main .boxesContainer:nth-child(2) .box#planTimeline {
     height: 50%;
   }

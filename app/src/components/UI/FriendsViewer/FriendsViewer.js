@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function FriendsViewer({ friends, setClickedUser }) {
+function FriendsViewer({ friends }) {
   return (
     <div className={styles.FriendsViewer}>
       {friends.map((friend, i) => {
         const { user_id, name } = friend;
         return (
-          <Link to={`/dashboard/user/${user_id}`} onClick={() => { setClickedUser(user_id) }} key={i}>
+          <Link to={`/dashboard/user/${user_id}`} key={i}>
             <div className={styles.profileWrapper}>
               <div className={styles.profileImg}
                 style={{
