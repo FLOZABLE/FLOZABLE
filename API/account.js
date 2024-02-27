@@ -88,33 +88,52 @@ Router.post('/signin-authentication', async (req, res) => {
   };
 });
 
-Router.post('/verify-email', async (req, res) => {
-  try {
+Router.post('/send-verification-link', async (req, res) => {
+  autoSignin(req, res, (async (userId, tl, email) => {
+    try {
+      await redisClient.setEx(`verify:${email}`, 3600, generateRandomId(10));
+      res.send({success: true, message: "Verification Link Sent!"});
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false, reason: "Error" });
+    };
+  }));
+})
 
-    const { email, name, password, timeZone, code } = req.body;
-    
+Router.post('/signup-authentication', async (req, res) => {
+  try {
+    const { email, name, password, timeZone } = req.body;
+    if (!isValidTimeZone(timeZone)) {
+      timeZone = 'UTC';
+    }
+    const userDateTime = DateTime.now().setZone(timeZone);
+    // Set the time to 12:00 AM
+    const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+    // Get the Unix timestamp in seconds
+    const unixTimestamp = twelveAmDateTime.toSeconds();
+    // Sanitize inputs
+    //check email
+    const isValidEmail = validateEmail(email);
+    if (!isValidEmail.isValid) {
+      return res.send({ success: false, reason: isValidEmail.reason });
+    };
     const isValidName = validateStrictString(name, 'Name');
     if (!isValidName.isValid) {
       return res.send({ success: false, reason: isValidName.reason });
     };
-
     const isValidPassword = validatePassword(password);
     if (!isValidPassword.isValid) {
       return res.send({ success: false, reason: isValidPassword.reason });
     };
-
-    const loginInfo = await redisClient.hGetAll(`email:${email}:verify`);
-    if (!loginInfo){
-      return res.send({ success: false, reason: "No Such Email" });
-    }
-    console.log(loginInfo);
-
+    const connection = pool.promise();
+    const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
+    if (checkEmail) {
+      return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
+    };
     const [salt, hashed_password] = hashing(password);
-
     const userId = generateRandomId(10);
     const keySalt = crypto.randomBytes(32).toString('hex');
     const iv = crypto.randomBytes(16).toString('hex');
-
     const user = {
       name,
       email,
@@ -126,7 +145,6 @@ Router.post('/verify-email', async (req, res) => {
       key_salt: keySalt,
       iv: iv,
     };
-
     connection.query('INSERT INTO users SET ?', user);
     //create default subject
     const subjectId = generateRandomId(10);
@@ -139,7 +157,6 @@ Router.post('/verify-email', async (req, res) => {
       color: '#000000',
       datum_point
     };
-
     connection.query(`INSERT INTO subjects SET ?`, subject);
     req.session.regenerate((err) => {
       if (err) {
@@ -147,10 +164,8 @@ Router.post('/verify-email', async (req, res) => {
         res.send({ success: false, reason: "SESSION ERROR" });
         return;
       }
-
       req.session.user_id = userId;
     });
-
     const authId = generateRandomId(10);
     await redisClient.setEx(`extension:auth:${authId}`, 10, userId);
     res.cookie("userId", userId, {
@@ -159,48 +174,7 @@ Router.post('/verify-email', async (req, res) => {
       httpOnly: true,
       signed: true,
     });
-
     extensionIo.to(userId).emit("tryAuth");
-  } catch (err) {
-    console.log(err);
-    res.send({ success: false, reason: "Error" });
-  };
-})
-
-Router.post('/signup-authentication', async (req, res) => {
-  try {
-    const { email, name, password, timeZone } = req.body;
-
-    if (!isValidTimeZone(timeZone)) {
-      timeZone = 'UTC';
-    }
-    const userDateTime = DateTime.now().setZone(timeZone);
-
-    // Set the time to 12:00 AM
-    const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-
-    // Get the Unix timestamp in seconds
-    const unixTimestamp = twelveAmDateTime.toSeconds();
-    // Sanitize inputs
-
-    //check email
-    const isValidEmail = validateEmail(email);
-    if (!isValidEmail.isValid) {
-      return res.send({ success: false, reason: isValidEmail.reason });
-    };
-
-    const connection = pool.promise();
-
-    const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
-
-    if (checkEmail) {
-      return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
-    };
-
-    
-    const emailCode = randomIntInRange(1000000, 9999999)
-    redisClient.hSet(`email:${email}:verify`, 'data', JSON.stringify({ ...user, code: emailCode }));
-
     res.send({ success: true });
     /* req.session.regenerate((err) => {
       if (err) {
@@ -223,7 +197,6 @@ Router.post('/signup-authentication', async (req, res) => {
       res.send({ success: true });
     }); */
   } catch (err) {
-    console.log(err);
     res.send({ success: false, reason: "Error" });
   };
 });
