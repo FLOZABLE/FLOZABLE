@@ -88,16 +88,16 @@ Router.post('/signin-authentication', async (req, res) => {
   };
 });
 
-Router.post('/verify-email', async (req, res) => {
-  try {
-
-    const { userInfo } = req.body;
-    const loginInfo = await redisClient.hGetAll(`email:${email}:verify`);
-
-  } catch (err) {
-    console.log(err);
-    res.send({ success: false, reason: "Error" });
-  };
+Router.post('/send-verification-link', async (req, res) => {
+  autoSignin(req, res, (async (userId, tl, email) => {
+    try {
+      await redisClient.setEx(`verify:${email}`, 3600, generateRandomId(10));
+      res.send({success: true, message: "Verification Link Sent!"});
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false, reason: "Error" });
+    };
+  }));
 })
 
 Router.post('/signup-authentication', async (req, res) => {
