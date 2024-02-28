@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./PlaylistModal.module.css";
 import SpotifyPlaylist from "../SpotifyPlaylist/SpotifyPlaylist";
 import YouTubePlaylist from "../YouTubePlaylist/YouTubePlaylist";

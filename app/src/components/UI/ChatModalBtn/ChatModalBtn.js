@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./ChatModalBtn.module.css";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 function ChatModalBtn({setIsChatModal, bounce}) {
 

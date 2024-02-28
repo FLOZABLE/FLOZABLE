@@ -3,7 +3,7 @@ import styles from "./ThemeContainer.module.css";
 import { faHeart, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import LikeBtn from "../LikeBtn/LikeBtn";
 import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import parse from "html-react-parser";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
 import ThemeUsageCounter from "../ThemeUsageCounter/ThemeUsageCounter";

@@ -1,5 +1,5 @@
 import styles from "./MyGroupContainer.module.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IconMessage, IconTimerOutline, StudyPerson } from "../../../utils/svgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullhorn, faCommentDots, faComments, faGear, faPen, faRankingStar } from "@fortawesome/free-solid-svg-icons";

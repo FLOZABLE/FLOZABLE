@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./DateSelectorBtn.module.css";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { DateTime } from "luxon";
 
 function DateSelectorBtn({

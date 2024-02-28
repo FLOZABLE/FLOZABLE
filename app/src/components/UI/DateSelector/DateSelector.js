@@ -6,6 +6,7 @@ import { StyledEngineProvider } from "@mui/material/styles";
 import { DateTime } from "luxon";
 import { deDE } from "@mui/x-date-pickers/locales";
 import "./DateSelector.css";
+import React from 'react';
 
 export default function DateSelector({ start, setStart, end, setEnd }) {
   const handleDateChange = (newDate) => {

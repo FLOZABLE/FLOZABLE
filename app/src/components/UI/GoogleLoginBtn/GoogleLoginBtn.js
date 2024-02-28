@@ -1,6 +1,7 @@
 import { Google } from "../../../utils/svgs";
 import styles from "./GoogleLoginBtn.module.css";
 import { useGoogleLogin } from '@react-oauth/google';
+import React from 'react';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

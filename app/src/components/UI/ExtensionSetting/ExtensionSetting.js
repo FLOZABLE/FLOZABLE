@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import LabelMovingInput from "../LabelMovingInput/LabelMovingInput";
 import SimpleToggleBtn from "../SimpleToggleBtn/SimpleToggleBtn";

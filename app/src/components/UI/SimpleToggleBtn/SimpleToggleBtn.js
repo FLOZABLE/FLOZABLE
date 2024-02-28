@@ -1,5 +1,6 @@
 import styles from "./SimpleToggleBtn.module.css";
 import generateRandomId from "../../../utils/RandomId";
+import React from 'react';
 
 function SimpleToggleBtn({ onToggle, checked, id = generateRandomId(10) }) {
   return (

@@ -1,4 +1,5 @@
 import styles from "./SpotifyPlayer.module.css";
+import React from 'react';
 
 function SpotifyPlayer({link}) {
   return (

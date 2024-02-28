@@ -1,6 +1,6 @@
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import { secondConverter } from "../../utils/Tool";
-import { useState } from "react";
+import React, { useState } from "react";
 
 function StudyTrendChart({subjectsTrend}) {
   const [filteredTrends, setFilteredTrends] = useState([]);

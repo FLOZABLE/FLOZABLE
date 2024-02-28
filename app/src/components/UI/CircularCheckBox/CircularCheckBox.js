@@ -1,4 +1,5 @@
 import styles from "./CircularCheckBox.module.css";
+import React from 'react';
 
 function CircularCheckBox({ checked }) {
   return (

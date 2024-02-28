@@ -1,5 +1,6 @@
 import styles from "./FriendsViewer.module.css";
 import { Link } from "react-router-dom";
+import React from 'react';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

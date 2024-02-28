@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./CalendarModal.module.css";
 import SmallCalendar from "../SmallCalendar/SmallCalendar";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
 
 function CalendarModal({
   isCalendarOpen,

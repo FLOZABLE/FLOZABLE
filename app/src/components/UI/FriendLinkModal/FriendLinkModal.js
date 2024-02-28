@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FriendLink } from "../../../utils/svgs";
 import CopyBtn from "../CopyBtn/CopyBtn";
 import styles from "./FriendLinkModal.module.css";

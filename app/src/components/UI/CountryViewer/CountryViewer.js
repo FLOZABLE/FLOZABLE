@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./CountryViewer.module.css";
 import ReactCountryFlag from "react-country-flag";
 import { getCountryCode } from "../../../utils/Tool";

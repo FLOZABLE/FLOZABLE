@@ -1,5 +1,6 @@
 import { IconSearch } from "../../../utils/svgs";
 import styles from "./SearchBar.module.css";
+import React from 'react';
 
 function SearchBar({ searchQuery, setSearchQuery, onEnter = () => { } }) {
   return (

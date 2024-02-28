@@ -1,6 +1,6 @@
 import ChallengeContainer from "../ChallengeContainer/ChallengeContainer";
 import styles from "./ChallengesContainer.module.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function ChallengesContainer({ challenges, setChallenges, setResponse, userInfo, setUserInfo }) {
 

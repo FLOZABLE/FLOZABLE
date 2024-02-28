@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import styles from "./StudyBtn.module.css";
+import React from 'react';
 
 function StudyBtn() {
   return (
