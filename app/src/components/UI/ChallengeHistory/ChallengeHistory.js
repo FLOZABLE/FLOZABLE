@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./ChallengeHistory.module.css";
 import { DateTime } from 'luxon';
 import { Link } from 'react-router-dom';

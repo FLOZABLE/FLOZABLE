@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./ArrowOptionBtn.module.css";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
 
 function ArrowOptionBtn({ clicked, setClicked }) {
   return (

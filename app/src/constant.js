@@ -1,4 +1,5 @@
 import { Alert, Article, Book, Coding, Globe, IconCalculator, IconFileBarGraphFill, IconPeriodicTable, Microscope, Workout, WritePen } from "./utils/svgs";
+import React from 'react';
 
 const colorsList = [
   "#0395f9",
