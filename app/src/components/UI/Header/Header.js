@@ -204,12 +204,10 @@ function Header({
           </div>
         </Link>
         <div className={styles.headerEl}>
-          <Link to="/dashboard/study">
-            <i className={styles.LogoutButton}>
-              <div className={styles.StudyButton}>
-                Study
-              </div>
-            </i>
+          <Link to="/dashboard/study" id="study">
+            <div className={styles.StudyButton} id="study">
+              Study
+            </div>
           </Link>
         </div>
       </div>

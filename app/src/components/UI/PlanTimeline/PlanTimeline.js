@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./PlanTimeline.module.css";
 import Chart from 'react-apexcharts';
 import parse from "html-react-parser";
@@ -19,6 +19,7 @@ import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadialBar, Responsiv
 import { subjectIcons, warmColorsList } from "../../../constant";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
+import { useSearchParams } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -34,6 +35,9 @@ function PlanTimeline({
 }) {
   const [planSeries, setPlanSeries] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isTutorial, setIsTutorial] = useState(false);
+  const addBtnRef = useRef(null);
 
   const togglePlan = (plan) => {
     const eventIndex = plans.findIndex((planInfo) => planInfo.id === plan.id);
@@ -121,6 +125,29 @@ function PlanTimeline({
     setFilteredPlans(plans.filter(plan => isInViewRange(plan)));
   }, [plans, viewMode, viewDate, subjects]);
 
+  useEffect(() => {
+    if (!searchParams) return;
+
+    const tutorial = searchParams.get("tutorial");
+    if (tutorial && parseInt(tutorial) === 1) {
+      setIsTutorial(true);
+      const hole =  document.getElementById("tutorialHole");
+      const text = document.getElementById("tutorialText");
+
+      const {width, top, left, height} = addBtnRef.current.getBoundingClientRect();
+      hole.style.left = left + 'px';
+      hole.style.top = top + 'px';
+      hole.style.width = width + 'px';
+      hole.style.height = height + 'px';
+
+      text.style.top = top + 50 + 'px';
+      text.style.left = left - 30 + 'px';
+      text.innerText = "Press this button to create a new plan!";
+      /* hole.style.height = top + 'px'; */
+    };
+  }, [searchParams]);
+
+  
   return (
     <div
       className={`hiddenScroll ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ""
@@ -144,13 +171,19 @@ function PlanTimeline({
         </div>
         : null
       }
-      <div id={styles.addBtnWrapper}>
+      <div id={styles.addBtnWrapper} ref={addBtnRef}>
       <BlobBtn
         name={"Add a New Plan"}
-        setClicked={() => { setPlanModal((prev) => ({ ...prev, opened: true })) }}
+        setClicked={() => { setPlanModal((prev) => ({ ...prev, opened: true }));
+        const tutorial = searchParams.get("tutorial");
+        if (tutorial && parseInt(tutorial) === 1) {
+          setSearchParams({...searchParams, tutorial: 2})
+        }
+      }}
         color1={"#fff"}
         color2={"var(--blue2)"}
         delay={-1}
+        id={"addPlan"}
       />
       </div>
       {filteredPlans.length ?

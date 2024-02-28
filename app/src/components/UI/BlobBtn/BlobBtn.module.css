@@ -136,3 +136,7 @@
     padding: 0.625rem 1.25rem;
   }
 }
+
+.BlobBtn * {
+  pointer-events: none;
+}
