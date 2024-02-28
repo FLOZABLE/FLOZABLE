@@ -22,6 +22,7 @@ import { SpotifyLogo } from "../../../utils/svgs";
 import SubjectsManager from "../../UI/SubjectsManager/SubjectsManager";
 import YouTubeLoginBtn from "../../UI/YouTubeLoginBtn/YouTubeLoginBtn";
 import ExtensionSetting from "../../UI/ExtensionSetting/ExtensionSetting";
+import VerifyEmailButton from "../../UI/VerifyEmailButton/VerifyEmailButton";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;
@@ -225,6 +226,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                   </div>
                 </div>
                 <div className={styles.emailWrapper}>
+                  <VerifyEmailButton />
                   <div>
                     <LineInput
                       title={"Email"}

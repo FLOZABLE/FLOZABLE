@@ -202,7 +202,7 @@ require('./services/timerUpdate');
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(5);
-//botManager(100);
+botManager(100);
 //deleteBots();
 //addId();
 //createBots(200); 
@@ -212,7 +212,7 @@ const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTab
 const { updateRanking } = require("./services/rankingUpdate");
 const { extensionManager } = require("./services/extension");
 const { dailyReport } = require("./services/notification");
-const { updateUserIds } = require("./update");
+const { updateUserIds, removeDupedFriends } = require("./update");
 
 //scheduler that runs every hour
 //updateRanking();
@@ -223,6 +223,7 @@ cron.schedule('0 * * * *', () => {
 });
 
 //updateUserIds();
+//removeDupedFriends();
 
 // createUsersTable();
 // createSubjectsTable();

@@ -1,6 +1,6 @@
 const express = require('express');
 const { autoSignin, generateRandomId, randomIntInRange } = require('../tool');
-const { NotificationCache, userCache, activeSubjectCache, subjectCache } = require('../services/redisLoader');
+const { NotificationCache, userCache, activeSubjectCache, subjectCache, dmRoomsCache } = require('../services/redisLoader');
 const redisClient = require('../model/redis');
 const pool = require('../model/pool');
 const { sendEmail } = require('../email');
@@ -109,8 +109,9 @@ Router.post('/request-reply', async (req, res) => {
       const ongoing = { i: friendReq.i, t: -2, f: userId };
       redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(ongoing));
       if (!accepted) {
-        return res.send({ success: true });
+        return res.send({ success: true, msg: 'Declined Friend Request!' });
       };
+      
       const connection = pool.promise();
       const userInfo = await userCache(userId);
       const targetInfo = await userCache(targetId);
@@ -190,11 +191,15 @@ Router.post('/request-reply', async (req, res) => {
           //remove chat request if any
           const myChatRequests = await NotificationCache(userId, 4, false);
           const chatRequest = myChatRequests.find(chatRequest => { return chatRequest.f === targetId });
-          redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(chatRequest));
+          if (chatRequest) {
+            redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(chatRequest));
+          };
 
           const targetChatRequests = await NotificationCache(targetId, 4, false);
           const targetchatRequest = targetChatRequests.find(chatRequest => { return chatRequest.f === targetId });
-          redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(targetchatRequest));
+          if (targetchatRequest) {
+            redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(targetchatRequest));
+          }
         };
       } else {
         res.send({ success: true, msg: `You and ${targetInfo.name} were already friends!` });
