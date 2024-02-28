@@ -8,7 +8,7 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import ArrowOptionBtn from "../ArrowOptionBtn/ArrowOptionBtn";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

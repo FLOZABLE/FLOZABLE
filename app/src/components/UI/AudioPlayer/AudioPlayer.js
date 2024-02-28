@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import VolumeControl from "../VolumeControl/VolumeControl";
 import styles from "./AudioPlayer.module.css";
 import { socket } from "../../../socket";

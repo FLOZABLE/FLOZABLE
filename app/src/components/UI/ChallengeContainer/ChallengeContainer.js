@@ -2,7 +2,7 @@ import styles from "./ChallengeContainer.module.css";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import parse from 'html-react-parser';
 import { DateTime } from 'luxon'
 

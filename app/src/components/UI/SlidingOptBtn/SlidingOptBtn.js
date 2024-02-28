@@ -1,4 +1,5 @@
 import styles from "./SlidingOptBtn.module.css";
+import React from 'react';
 
 function SlidingOptBtn({ options, setValue, value }) {
   return (

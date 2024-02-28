@@ -1,4 +1,5 @@
 import styles from "./AIRecommendation.module.css";
+import React from 'react';
 
 function AIRecommendation() {
   return (

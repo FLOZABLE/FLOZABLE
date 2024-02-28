@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import styles from "./LineInput.module.css";
 
 function LineInput({ title, value, setValue, type}) {

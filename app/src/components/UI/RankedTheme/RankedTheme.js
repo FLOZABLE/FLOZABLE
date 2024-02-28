@@ -7,6 +7,7 @@ import parse from "html-react-parser";
 import ThemeCategoryBtn from "../ThemeCategoryBtn/ThemeCategoryBtn";
 import GroupUrlBtn from "../GroupUrlBtn/GroupUrlBtn";
 import LikeBtn from "../LikeBtn/LikeBtn";
+import React from 'react';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

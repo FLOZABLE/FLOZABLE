@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./ThemeCategoryBtn.module.css";
 import { AllCategories } from "../../../utils/Themes";
 

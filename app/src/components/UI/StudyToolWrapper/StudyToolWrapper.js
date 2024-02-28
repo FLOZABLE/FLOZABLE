@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "./ItemTypes.js";
 import styles from "./StudyToolWrapper.module.css";
