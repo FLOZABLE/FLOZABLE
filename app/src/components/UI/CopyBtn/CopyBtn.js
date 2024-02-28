@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./CopyBtn.module.css";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function CopyBtn({text, copyText = 'Copy!', copiedText = 'Copied!'}) {
   const [isCopied, setIsCopied] = useState(false);

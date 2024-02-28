@@ -1,6 +1,7 @@
 import { Punch } from "../../../utils/svgs";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import styles from "./ChallengeBtn.module.css";
+import React from 'react';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

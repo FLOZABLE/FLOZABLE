@@ -1,6 +1,6 @@
 import styles from "./ChatRoom.module.css";
 import { socket } from "../../../socket";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 
 function ChatRoom({ room, setSelectedRoom, setRoomName, lastMsg, lastRead, setTotalNewMsg, isSelected }) {
