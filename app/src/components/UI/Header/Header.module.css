@@ -73,10 +73,20 @@
 }
 
 .headerEl .LogoutButton {
-  padding-left: 0.313rem;
-  font-size: 4rem;
   display: flex;
+  background-color: rgb(209, 255, 216);
+  border-radius: 10rem;
+  width: 4rem;
+  height: 4rem;
 }
+
+.headerEl .LogoutButton .StudyButton {  
+  color: rgb(0, 213, 71);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 0.625rem;
+} 
 
 .Header .divider {
   height: calc(100% - 3.438rem);
@@ -129,8 +139,8 @@
   display: flex;
   background-color: #c0c0c0;
   justify-content: right;
-  width:  3.75rem;
-  height:  3.75rem;
+  width: 4rem;
+  height: 4rem;
   border-radius: 6.25rem;
 }
 
