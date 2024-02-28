@@ -46,31 +46,12 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
 
   //fetch new ranking
   useEffect(() => {
-    let viewTime = DateTime.fromJSDate(viewDate);
-
-    let startTime;
-    let stopTime;
-    if (viewer == "Daily") {
-      startTime = viewTime.startOf('day').toMillis();
-      stopTime = viewTime.endOf('day').toMillis();
-    }
-    else if (viewer == "Weekly") {
-      startTime = viewTime.startOf('week').toMillis();
-      stopTime = viewTime.endOf('week').toMillis();
-      viewTime = viewTime.endOf('week');
-    }
-    else {
-      startTime = viewTime.startOf('month').toMillis();
-      stopTime = viewTime.endOf('month').toMillis();
-      viewTime = viewTime.endOf('month');
-    }
-    setStartDate(startTime);
-    setEndDate(stopTime);
+    const viewDateTime = DateTime.fromJSDate(viewDate);
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    console.log(viewDate, viewTime.toSeconds());
+    console.log(viewDateTime.toSeconds());
 
-    fetch(`${serverOrigin}/ranking/sort?mode=${viewer}&date=${viewTime.toISODate()}&timezone=${timezone}`, {
+    fetch(`${serverOrigin}/ranking/sort?mode=${viewer}&date=${viewDateTime.toISODate()}&timezone=${timezone}`, {
       method: 'get',
       headers: {
         'Content-Type': 'application/json'

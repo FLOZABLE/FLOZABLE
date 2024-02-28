@@ -12,7 +12,7 @@ function SendBtn({ onSubmit }) {
     setTimeout(() => {
       setSubmit(false);
     }, 1000);
-  }
+  };
 
   return (
     <div

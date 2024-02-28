@@ -21,6 +21,11 @@
   align-items: center;
 }
 
+.RecommendedFriendsViewer .recommendedFriend > * {
+  display: flex;
+  align-items: center;
+}
+
 .RecommendedFriendsViewer .recommendedFriend .buttons{
   margin-left: auto;
 }

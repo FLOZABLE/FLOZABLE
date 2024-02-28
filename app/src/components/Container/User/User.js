@@ -20,10 +20,11 @@ import { secondConverter } from "../../../utils/Tool";
 import CountryViewer from "../../UI/CountryViewer/CountryViewer";
 import { CartesianGrid, Line, Tooltip, XAxis, YAxis, ResponsiveContainer, LineChart } from "recharts";
 import StudyTrendChart from "../../UI/StudyTrendChart";
+import { useLocation } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGroups, setMyGroups, myGroups, myInfo }) {
+function User({ groups, setResponse, setOtherGroups, setMyGroups, myGroups, myInfo }) {
   const [userInfo, setUserInfo] = useState(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [userSubjects, setUserSubjects] = useState([]);
@@ -31,13 +32,14 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [userGroups, setUserGroups] = useState([]);
   const [userFriends, setUserFriends] = useState([]);
-  const [clickedUser, setClickedUser] = useState(null);
 
   const [rankingsTrend, setRankingsTrend] = useState([]);
   const [subjectsTrend, setSubjectsTrend] = useState([]);
 
   const [isGroupPwModal, setIsGroupPwModal] = useState(false);
   const [joinTarget, setJoinTarget] = useState(null);
+
+  const location = useLocation();
 
   useEffect(() => {
     if (!joinTarget) return;
@@ -68,7 +70,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
 
   useEffect(() => {
     if (!groups) return;
-    const pathName = window.location.pathname.split('/');
+    const pathName = location.pathname.split('/');
     const selectedUserId = pathName[pathName.length - 1];
 
     fetch(`${serverOrigin}/account/profile/${selectedUserId}`, { method: 'get' })
@@ -89,7 +91,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
         };
       })
       .catch((error) => console.error(error));
-  }, [groups, clickedUser]);
+  }, [groups, location.pathname]);
 
   const updateViewer = async (item) => {
     setStatsViewer(item);
@@ -247,7 +249,7 @@ function User({ isSidebarOpen, isSidebarHovered, groups, setResponse, setOtherGr
                 {userInfo ? userInfo.name : ''}'s friends
               </div>
               <div className={styles.friendsContainer}>
-                <FriendsViewer friends={userFriends} setClickedUser={setClickedUser} />
+                <FriendsViewer friends={userFriends} />
               </div>
             </div>
           </div>

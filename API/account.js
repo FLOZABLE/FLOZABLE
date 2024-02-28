@@ -7,7 +7,7 @@ const sharp = require('sharp');
 const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
-const { hashing, autoSignin, generateRandomId, googleOauth2client, googleYoutubeOauth2client, isValidTimeZone, deriveKey } = require("../tool");
+const { hashing, autoSignin, generateRandomId, googleOauth2client, googleYoutubeOauth2client, isValidTimeZone, deriveKey, randomIntInRange } = require("../tool");
 const { validateEmail, validateStrictString, validatePassword, validateURL } = require("../validate");
 const { UserRefreshClient } = require("google-auth-library")
 const { NotificationCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
@@ -73,6 +73,7 @@ Router.post('/signin-authentication', async (req, res) => {
       }
 
       req.session.user_id = userId;
+      req.session.email = email;
 
       res.cookie("userId", userId, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
@@ -88,52 +89,74 @@ Router.post('/signin-authentication', async (req, res) => {
   };
 });
 
+Router.post('/send-verification-link', async (req, res) => {
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const userInfo = await userCache(userId);
+      await redisClient.setEx(`verify:${userInfo.email}`, 3600, generateRandomId(10));
+      res.send({ success: true, message: "Verification Link Sent!" });
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false, reason: "Error" });
+    };
+  }));
+});
+
+Router.post('/verify-by-link', async (req, res) => {
+  const { verifyId } = req.body;
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const userInfo = await userCache(userId);
+      const verifyInfo = await redisClient.get(`verify:${userInfo.email}`);
+      if (!verifyInfo) {
+        return res.send({ success: false, reason: "Link expired" });
+      }
+      if (verifyId === verifyInfo) {
+        const connection = pool.promise();
+        await connection.query("UPDATE users SET verified = true WHERE user_id = ?", [userId]);
+        res.send({ success: true, message: "Verification Success!" });
+      }
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false, reason: "Error" });
+    };
+  }));
+});
+
 Router.post('/signup-authentication', async (req, res) => {
   try {
     const { email, name, password, timeZone } = req.body;
-
     if (!isValidTimeZone(timeZone)) {
       timeZone = 'UTC';
     }
     const userDateTime = DateTime.now().setZone(timeZone);
-
     // Set the time to 12:00 AM
     const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-
     // Get the Unix timestamp in seconds
     const unixTimestamp = twelveAmDateTime.toSeconds();
     // Sanitize inputs
-
     //check email
     const isValidEmail = validateEmail(email);
     if (!isValidEmail.isValid) {
       return res.send({ success: false, reason: isValidEmail.reason });
     };
-
     const isValidName = validateStrictString(name, 'Name');
     if (!isValidName.isValid) {
       return res.send({ success: false, reason: isValidName.reason });
     };
-
     const isValidPassword = validatePassword(password);
     if (!isValidPassword.isValid) {
       return res.send({ success: false, reason: isValidPassword.reason });
     };
-
     const connection = pool.promise();
-
     const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
-
     if (checkEmail) {
       return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
     };
-
     const [salt, hashed_password] = hashing(password);
-
     const userId = generateRandomId(10);
     const keySalt = crypto.randomBytes(32).toString('hex');
     const iv = crypto.randomBytes(16).toString('hex');
-
     const user = {
       name,
       email,
@@ -157,7 +180,6 @@ Router.post('/signup-authentication', async (req, res) => {
       color: '#000000',
       datum_point
     };
-
     connection.query(`INSERT INTO subjects SET ?`, subject);
     req.session.regenerate((err) => {
       if (err) {
@@ -165,10 +187,8 @@ Router.post('/signup-authentication', async (req, res) => {
         res.send({ success: false, reason: "SESSION ERROR" });
         return;
       }
-
       req.session.user_id = userId;
     });
-
     const authId = generateRandomId(10);
     await redisClient.setEx(`extension:auth:${authId}`, 10, userId);
     res.cookie("userId", userId, {
@@ -177,9 +197,7 @@ Router.post('/signup-authentication', async (req, res) => {
       httpOnly: true,
       signed: true,
     });
-
     extensionIo.to(userId).emit("tryAuth");
-
     res.send({ success: true });
     /* req.session.regenerate((err) => {
       if (err) {
@@ -550,11 +568,11 @@ Router.post('/notification-subscribe', async (req, res) => {
     try {
       const { subscription } = req.body;
 
-      const {endpoint, expirationTime, keys} = subscription;
+      const { endpoint, expirationTime, keys } = subscription;
 
       const isValidEndPoint = validateURL(endpoint);
       if (!isValidEndPoint.isValid) {
-        return res.send({success: false, reason: isValidEndPoint.reason});
+        return res.send({ success: false, reason: isValidEndPoint.reason });
       };
 
       const connection = pool.promise();
