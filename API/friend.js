@@ -109,7 +109,7 @@ Router.post('/request-reply', async (req, res) => {
       const ongoing = { i: friendReq.i, t: -2, f: userId };
       redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(ongoing));
       if (!accepted) {
-        return res.send({ success: true });
+        return res.send({ success: true, msg: 'Declined Friend Request!' });
       };
       
       const connection = pool.promise();

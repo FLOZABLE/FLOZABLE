@@ -212,7 +212,7 @@ const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTab
 const { updateRanking } = require("./services/rankingUpdate");
 const { extensionManager } = require("./services/extension");
 const { dailyReport } = require("./services/notification");
-const { updateUserIds } = require("./update");
+const { updateUserIds, removeDupedFriends } = require("./update");
 
 //scheduler that runs every hour
 //updateRanking();
@@ -223,6 +223,7 @@ cron.schedule('0 * * * *', () => {
 });
 
 //updateUserIds();
+//removeDupedFriends();
 
 // createUsersTable();
 // createSubjectsTable();
