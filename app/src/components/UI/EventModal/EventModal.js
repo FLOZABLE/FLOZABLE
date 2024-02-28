@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./EventModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -17,6 +17,7 @@ import BlobBtn from "../BlobBtn/BlobBtn";
 import SliderAnimation from "../SliderAnimation/SliderAnimation";
 import generateRandomId from "../../../utils/RandomId";
 import { requestNotification } from "../../../utils/Tool";
+import { useSearchParams } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -29,6 +30,38 @@ function EventModal({
   planModal,
   setPlanModal
 }) {
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const eventModalRef = useRef(null);
+  const titleRef = useRef(null);
+
+  useEffect(() => {
+    if (!searchParams) return;
+
+    const tutorial = searchParams.get("tutorial");
+    if (tutorial && parseInt(tutorial) === 2) {
+      setTimeout(() => {
+        if (!planModal.opened) {
+          setSearchParams({ ...searchParams, tutorial: 0 });
+          return;
+        }
+        const hole = document.getElementById("tutorialHole");
+        const text = document.getElementById("tutorialText");
+
+        const { width, top, left, height, bottom } = eventModalRef.current.getBoundingClientRect();
+        hole.style.left = left + 'px';
+        hole.style.top = top + 'px';
+        hole.style.width = width + 'px';
+        hole.style.height = height + 'px';
+
+        text.style.top = top + height + 30 + 'px';
+        text.style.left = left - 30 + 'px';
+        text.innerText = "Enter information of the plan!";
+      }, 500)
+      /* hole.style.height = top + 'px'; */
+    };
+  }, [searchParams]);
+
 
   const submit = () => {
     if (!planModal.editable) {
@@ -133,9 +166,11 @@ function EventModal({
   return (
     <div
       className={`${styles.EventModal} modal ${planModal.opened ? "open" : ""}`}
+      ref={eventModalRef}
     >
       <div className={styles.header}>
         <i
+          id="tutorial-2"
           onClick={() => {
             setPlanModal((prev) => ({ ...prev, opened: false }));
           }}
@@ -148,6 +183,7 @@ function EventModal({
           <div className={styles.iconWrapper}></div>
           <div className={styles.contentWrapper}>
             <input
+              ref={titleRef}
               type="text"
               placeholder="Enter title"
               value={planModal.title}

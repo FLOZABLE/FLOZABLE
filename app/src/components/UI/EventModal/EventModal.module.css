@@ -28,6 +28,10 @@
   align-items: center;
 }
 
+.EventModal .header i * {
+  pointer-events: none;
+}
+
 .EventModal .container {
   display: flex;
   flex-direction: column;

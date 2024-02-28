@@ -26,6 +26,7 @@ import ChallengeRooms from "./components/Container/ChallengeRooms/ChallengeRooms
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import AccountModal from "./components/UI/AccountModal/AccountModal";
 import ReactGA from 'react-ga4';
+import Tutorial from "./components/UI/Tutorial/Tutorial";
 
 if (process.env.REACT_APP_ENV === "production") {
   ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
@@ -286,6 +287,7 @@ function App() {
         notifications={notifications.filter(notification => { return notification.t >= 0 })}
       />
       <div className={`touchBlocker ${isAccountModal ? "blocked" : ""}`}></div>
+      <Tutorial />
       <Routes>
         <Route
           path="/dashboard"

@@ -1,0 +1,60 @@
+.Tutorial {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0rem;
+  left: 0rem;
+  z-index: 6;
+  background-color: #00000050;
+  mix-blend-mode: hard-light;
+  display: none;
+  --swiper-navigation-color: #000;
+  pointer-events: none;
+}
+
+.Tutorial.open {
+  display: block;
+}
+
+@keyframes bounce {
+  10% {
+    margin-top: 0rem;
+  }
+
+  30% {
+    margin-top: -1.5rem;
+  }
+
+  40% {
+    margin-top: -2rem;
+  }
+
+  70% {
+    margin-top: 1rem;
+  }
+  
+  100% {
+    margin-top: 0rem;
+  }
+}
+.Tutorial .hole {
+  position: fixed;
+  background-color: gray;
+  border-radius: 0.5rem;
+  animation: bounce 0.8s ease-in-out infinite forwards;
+}
+
+.Tutorial .text {
+  position: fixed;
+  font-size: 20px;
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  font-weight: 900;
+  border-radius: 0.5rem;
+  width: fit-content;
+}
+
+.Tutorial .Swiper {
+  height: 100%;
+}
+
