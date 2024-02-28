@@ -29,7 +29,7 @@
   display: flex;
   flex-direction: column;
   border-radius: 1.25rem;
-  width: 5rem;
+  width: 5.2rem;
   height: 100%;
   margin-bottom: 3.125rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
@@ -49,7 +49,7 @@
   width: 10rem;
   margin-right: 9.7rem;
   align-items: center;
-  margin-top: 0.625rem;
+  margin-top: 2rem;
   padding: 1.875rem 1.25rem;
   opacity: 0.2;
   transition: .3s ease-in-out;
