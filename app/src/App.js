@@ -10,14 +10,8 @@ import Challenge from "./components/Container/Challenge/Challenge";
 import "./App.css";
 import Sidebar from "./components/UI/Sidebar/Sidebar";
 import Header from "./components/UI/Header/Header";
-import Footer from "./components/UI/Footer/Footer";
 import Planner from "./components/Container/Planner/Planner";
 import { socket } from "./socket";
-import {
-  setGroupMembers,
-  getMyGroups,
-  getLikedGroups,
-} from "./components/Container/Groups/GroupsTool";
 import { createStudyGraph, timelineSort } from "./utils/timelineSorting";
 import EventModal from "./components/UI/EventModal/EventModal";
 import AddSubjectModal from "./components/UI/AddSubjectModal/AddSubjectModal";
@@ -34,7 +28,7 @@ import AccountModal from "./components/UI/AccountModal/AccountModal";
 import ReactGA from 'react-ga4';
 
 if (process.env.REACT_APP_ENV === "production") {
-  ReactGA.initialize("G-ZTZSFB8JKP");
+  ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
 };
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -140,7 +134,6 @@ function App() {
           setSubjects(timelineSort(data.subjects));
           bringPlans(data.subjects);
           console.log('subject', data);
-          console.log('graphURL', createStudyGraph(timelineSort(data.subjects)));
           //setSubjects(sortSubjects(data.subjects));
         } else {
           bringPlans([]);
@@ -237,11 +230,9 @@ function App() {
   return (
     <Router>
       <TopNotification
-        duration={2500}
         response={response}
       />
       <NotificationModal
-        setIsNotificationModal={setIsNotificationModal}
         isNotificationModal={isNotificationModal}
         notifications={notifications.filter(notification => notification.t !== -2)}
         setNotifications={setNotifications}

@@ -38,12 +38,15 @@ function SelectIcon({
             <p>Selected Icon: </p>
           )}
         </button>
-        <div className={styles.selectedIcon}
+        <div
+          className={styles.selectedIcon}
           onClick={() => {
             setIsSelectIcon(!isSelectIcon);
             setIsSelectColor(false);
           }}
-        >{selectedIcon.el}</div>
+        >
+          {selectedIcon.el}
+        </div>
       </div>
       <div className={`${styles.icons} ${isSelectIcon ? styles.open : ""}`}>
         <div
@@ -85,7 +88,12 @@ function SelectIcon({
             });
           }}
         >
-          <Book width={"2.5rem"} height={"2.5rem"} fill={"#000"} opt1={"#000"} />
+          <Book
+            width={"2.5rem"}
+            height={"2.5rem"}
+            fill={"#000"}
+            opt1={"#000"}
+          />
         </div>
         <div
           className={styles.iconWrapper}
@@ -126,7 +134,12 @@ function SelectIcon({
             });
           }}
         >
-          <Article width={"2.5rem"} height={"2.5rem"} fill={"#000"} opt1={"#000"} />
+          <Article
+            width={"2.5rem"}
+            height={"2.5rem"}
+            fill={"#000"}
+            opt1={"#000"}
+          />
         </div>
         <div
           className={styles.iconWrapper}
@@ -144,7 +157,12 @@ function SelectIcon({
             });
           }}
         >
-          <Coding width={"2.5rem"} height={"2.5rem"} fill={"#000"} opt1={"#000"} />
+          <Coding
+            width={"2.5rem"}
+            height={"2.5rem"}
+            fill={"#000"}
+            opt1={"#000"}
+          />
         </div>
         <div
           className={styles.iconWrapper}
@@ -162,7 +180,12 @@ function SelectIcon({
             });
           }}
         >
-          <Globe width={"2.5rem"} height={"2.5rem"} fill={"#000"} opt1={"#000"} />
+          <Globe
+            width={"2.5rem"}
+            height={"2.5rem"}
+            fill={"#000"}
+            opt1={"#000"}
+          />
         </div>
         <div
           className={styles.iconWrapper}
@@ -180,7 +203,12 @@ function SelectIcon({
             });
           }}
         >
-          <Workout width={"2.5rem"} height={"2.5rem"} fill={"#000"} opt1={"#000"} />
+          <Workout
+            width={"2.5rem"}
+            height={"2.5rem"}
+            fill={"#000"}
+            opt1={"#000"}
+          />
         </div>
         <div
           className={styles.iconWrapper}
@@ -198,7 +226,12 @@ function SelectIcon({
             });
           }}
         >
-          <Alert width={"2.5rem"} height={"2.5rem"} fill={"#000"} opt1={"#000"} />
+          <Alert
+            width={"2.5rem"}
+            height={"2.5rem"}
+            fill={"#000"}
+            opt1={"#000"}
+          />
         </div>
       </div>
     </div>
