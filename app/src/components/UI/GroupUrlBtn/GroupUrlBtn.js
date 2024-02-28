@@ -1,7 +1,7 @@
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import styles from "./GroupUrlBtn.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function GroupUrlBtn({ text, copyText = 'Copy!', copiedText = 'Copied!', bgColor='#ffffffC0', color='#000' }) {
   const [isCopied, setIsCopied] = useState(false);

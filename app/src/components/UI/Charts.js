@@ -1,3 +1,5 @@
+import React from 'react';
+
 const RADIAN = Math.PI / 180;
 const pieCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 0.35;

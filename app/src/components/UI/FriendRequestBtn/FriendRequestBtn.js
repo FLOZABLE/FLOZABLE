@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import styles from "./FriendRequestBtn.module.css";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
