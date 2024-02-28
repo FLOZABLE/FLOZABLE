@@ -205,6 +205,12 @@ async function addFriends(botId) {
 
 async function sendFriendRequest(botId) {
   try {
+
+    const isSend = randomIntInRange(0, 9);
+
+    //change = 10%
+    if (isSend !== 0) return;
+
     const allMembers = await redisClient.sMembers("allMembers");
 
     if (!allMembers.length) return;

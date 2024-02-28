@@ -46,9 +46,11 @@ function RecommendedFriendsViewer({ setResponse }) {
         {recommendedFriends.map((user, i) => {
           const { user_id, name, timezone } = user;
           return (
-            <Link
-              to={`/dashboard/user/${user_id}`}
+            <div
               className={styles.recommendedFriend} key={i}>
+              <Link
+              to={`/dashboard/user/${user_id}`}
+              >
               <div
                 className={styles.profileImg}
                 style={{
@@ -59,6 +61,7 @@ function RecommendedFriendsViewer({ setResponse }) {
                 }}
               ></div>
               <p className={styles.name}>{name}</p>
+              </Link>
               <CountryViewer timezone={timezone} />
               <div className={styles.buttons}>
                 <FriendRequestBtn
@@ -67,7 +70,7 @@ function RecommendedFriendsViewer({ setResponse }) {
                   padding={"0.1875rem 0.313rem"}
                 />
               </div>
-            </Link>
+            </div>
           )
         })}
       </div>
