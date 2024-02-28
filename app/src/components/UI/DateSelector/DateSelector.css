@@ -43,6 +43,7 @@
   visibility: hidden;
   color: #fff;
   pointer-events: none;
+  white-space: nowrap;
   top: 2.5rem;
 }
 

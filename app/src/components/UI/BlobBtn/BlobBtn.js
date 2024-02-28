@@ -9,6 +9,7 @@ function BlobBtn({
   color2 = "#ecbd00",
   opt = 0,
   padding,
+  id
 }) {
   const handleClick = () => {
     setClicked(true);
@@ -25,6 +26,7 @@ function BlobBtn({
       }`}
       onClick={handleClick}
       style={{ "--color1": color1, "--color2": color2, padding: padding }}
+      id={id}
     >
       {name}
       <span className={styles.blobBtnInner}>

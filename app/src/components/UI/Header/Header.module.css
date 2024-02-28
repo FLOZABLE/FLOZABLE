@@ -72,20 +72,22 @@
   display: flex;
 }
 
-.headerEl .LogoutButton {
+/* .headerEl .LogoutButton {
   display: flex;
   background-color: rgb(209, 255, 216);
   border-radius: 10rem;
   width: 4rem;
   height: 4rem;
-}
+} */
 
-.headerEl .LogoutButton .StudyButton {  
+.headerEl .StudyButton {  
+  background-color: rgb(209, 255, 216);
+  border-radius: 10rem;
   color: rgb(0, 213, 71);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-left: 0.625rem;
+  padding: 0.5rem 1rem;
 } 
 
 .Header .divider {
