@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./ChatsModal.module.css";
 import { faChevronLeft, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import SendBtn from "../SendBtn/SendBtn";
 import { DateTime } from "luxon";
 import { Link } from "react-router-dom";

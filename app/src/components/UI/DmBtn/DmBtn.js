@@ -2,6 +2,7 @@ import BlobBtn from "../BlobBtn/BlobBtn";
 import styles from "./DmBtn.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

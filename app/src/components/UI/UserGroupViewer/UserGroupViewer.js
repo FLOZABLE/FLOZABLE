@@ -1,6 +1,6 @@
 import styles from "./UserGroupViewer.module.css";
 import { socket } from "../../../socket";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import GroupsGen from "../GroupsGen/GroupsGen";
 
 function UserGroupViewer({

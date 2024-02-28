@@ -2,7 +2,7 @@ import styles from "./ThemeSelector.module.css";
 import { AllCategories, AllThemes } from "../../../utils/Themes";
 import CustomInput from "../CustomInput/CustomInput";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

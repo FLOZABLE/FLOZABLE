@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SpotifyLogo, SpotifyLogoSmall } from "../../../utils/svgs";
 import styles from "./SpotifyAuthBtn.module.css";
 import { useSearchParams } from 'react-router-dom';
