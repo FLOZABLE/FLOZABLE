@@ -1,4 +1,5 @@
 const pool = require("./model/pool");
+const redisClient = require("./model/redis");
 
 async function updateUserIds() {
   const connection = pool.promise();
@@ -29,4 +30,21 @@ async function updateUserIds() {
   })
 };
 
-module.exports = { updateUserIds };
+async function removeDupedFriends() {
+  const connection = pool.promise();
+
+  const [users] = await connection.query(`SELECT friends, user_id FROM users`);
+
+  users.map(user => {
+    const friends = user.friends === "" ? [] : user.friends.split(",");
+    const uniqFriends = [...new Set(friends)];
+    if (uniqFriends.length !== friends.length) {
+      console.log('dupe detected')
+      const stringFriends = uniqFriends.join(',');
+      redisClient.hSet(`user:${user.user_id}`, 'friends', stringFriends);
+      connection.query(`UPDATE users set friends = ? WHERE user_id = ?`, [stringFriends, user.user_id]);
+    }
+  })
+};
+
+module.exports = { updateUserIds, removeDupedFriends };
