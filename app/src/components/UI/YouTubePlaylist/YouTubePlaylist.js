@@ -11,12 +11,13 @@ const googleClientId = process.env.REACT_APP_CLIENT_ID;
 
 
 function YouTubePlaylist({ }) {
-  const [youtubePlaylist, setYoutubePlaylist] = useState([]);
+  const [youtubePlaylist, setYoutubePlaylist] = useState("");
   const [youtubePlaylists, setYoutubePlaylists] = useState([]);
   const [youtubeLoggedIn, setYoutubeLoggedIn] = useState(false);
   const [link, setLink] = useState("");
   const [playingFromLink, setPlayingFromLink] = useState(false);
   const [playLink, setPlayLink] = useState("");
+  const [videoIds, setVideoIds] = useState([]);
 
   const submitURL = () => {
     const searchParams = new URL(link);
@@ -33,6 +34,27 @@ function YouTubePlaylist({ }) {
   const handleLinkInput = (e) => {
     setLink(e.target.value);
   };
+
+  const randomizeVideos = () => {
+    if (!videoIds.length) return;
+    console.log(videoIds);
+    const shuffleVids = shuffle([...videoIds]);
+    setYoutubePlaylist(shuffleVids.join(","));
+  }
+
+  function shuffle(array) {
+    let currentIndex = array.length,  randomIndex;
+    // While there remain elements to shuffle.
+    while (currentIndex > 0) {
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+    return array;
+  }
 
   useEffect(() => {
     fetch(`${serverOrigin}/playlists/youtube-playlists`, { method: "get" })
@@ -55,6 +77,10 @@ function YouTubePlaylist({ }) {
 
   useEffect(() => {
     setPlayingFromLink(false);
+    if (youtubePlaylist.length) {
+      const videoIdString = youtubePlaylist
+      setVideoIds(videoIdString.split(','));
+    }
   }, [youtubePlaylist]);
 
   return (
@@ -65,10 +91,13 @@ function YouTubePlaylist({ }) {
         </GoogleOAuthProvider>
         {
           youtubeLoggedIn ?
-            <DropDownButton
-              options={youtubePlaylists}
-              setValue={setYoutubePlaylist}
-            />
+            <div>
+              <DropDownButton
+                options={youtubePlaylists}
+                setValue={setYoutubePlaylist}
+              />
+              <button onClick={randomizeVideos()}>Shuffle</button>
+            </div>
             :
             <div></div>
         }
