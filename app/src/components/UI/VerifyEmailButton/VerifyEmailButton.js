@@ -5,7 +5,7 @@ import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function VerifyEmailButton() {
+function VerifyEmailButton({setResponse}) {
 
   function sendEmail() {
     fetch(`${serverOrigin}/account/send-verification-link`, {
@@ -13,14 +13,14 @@ function VerifyEmailButton() {
     })
       .then((response) => response.json())
       .then((data) => {
-
+        setResponse(data);
       })
       .catch((error) => console.error(error));
   }
 
   return (
     <div className={styles.VerifyEmailButton}>
-      <button onClick={sendEmail}>Click to Verify</button>
+      <button onClick={sendEmail}>Send Verification Link</button>
     </div>
   );
 }
