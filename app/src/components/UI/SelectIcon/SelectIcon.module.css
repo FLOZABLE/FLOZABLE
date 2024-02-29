@@ -1,14 +1,22 @@
-.selectIcon .header {
+.SelectIcon .header {
   display: flex;
 }
 
-.selectIcon .header p {
+.SelectIcon .iconWrapper * {
+  pointer-events: none;
+}
+
+.SelectIcon svg {
+  pointer-events: none;
+}
+
+.SelectIcon .header p {
   font-size: 1.438rem;
   font-weight: 700;
   color: #545454;
 }
 
-.selectIcon .header .selectedIcon {
+.SelectIcon .header .selectedIcon {
   margin-left: 0.625rem;
   background-color: #fff;
   box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
@@ -21,7 +29,7 @@
   cursor: pointer;;
 }
 
-.selectIcon .icons {
+.SelectIcon .icons {
   display: flex;
   flex-wrap: wrap;
   height: 0em;
@@ -29,11 +37,11 @@
   overflow-y: hidden;
 }
 
-.selectIcon .icons.open {
+.SelectIcon .icons.open {
   height: 9.375rem;
 }
 
-.selectIcon .iconWrapper {
+.SelectIcon .iconWrapper {
   background-color: #fff;
   width: 3.125rem;
   height: 3.125rem;
@@ -49,7 +57,7 @@
   cursor: pointer;
 }
 
-.selectIcon .iconWrapper:hover {
+.SelectIcon .iconWrapper:hover {
   width: 3.438rem;
   height: 3.438rem;
   margin-top: 0.313rem !important;
@@ -57,12 +65,12 @@
   box-shadow: rgba(0, 0, 0, 0.16) 0em 0.625rem 2.25rem 0em, rgba(0, 0, 0, 0.06) 0em 0em 0em 0.0625rem;
 }
 
-.selectIcon .icons.open .iconWrapper {
+.SelectIcon .icons.open .iconWrapper {
   margin: 0.625rem;
 }
 
 @media (max-width: 87.5rem) {
-  .selectIcon .header p {
+  .SelectIcon .header p {
     font-size: 1.25rem;
   }
 }

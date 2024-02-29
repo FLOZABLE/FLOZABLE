@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
@@ -40,6 +40,32 @@ function Header({
   const [studyStreak, setStudyStreak] = useState('0 day'); //days of consecutive study
 
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const studyBtnRef = useRef(null);
+
+  const [tutorial, setTutorial] = useState(null);
+
+  useEffect(() => {
+    if (!searchParams) return;
+
+    const tutorial = searchParams.get("tutorial");
+    if (tutorial && parseInt(tutorial) === 6) {
+      setTutorial(tutorial);
+      const hole = document.getElementById("tutorialHole");
+      const text = document.getElementById("tutorialText");
+
+      const { width, top, left, height, right } = studyBtnRef.current.getBoundingClientRect();
+      hole.style.left = left + 'px';
+      hole.style.top = top + 'px';
+      hole.style.width = width + 'px';
+      hole.style.height = height + 'px';
+
+      text.style.top = top + height + 30 + 'px';
+      text.style.right = 0 + '30px';
+      text.innerText = "Click this button to study!";
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -204,8 +230,8 @@ function Header({
           </div>
         </Link>
         <div className={styles.headerEl}>
-          <Link to="/dashboard/study" id="study">
-            <div className={styles.StudyButton} id="study">
+          <Link to={tutorial ? `/dashboard/study?tutorial=${tutorial}`: "/dashboard/study"} id="tutorial-6" ref={studyBtnRef}>
+            <div className={styles.StudyButton} id="tutorial-6">
               Study
             </div>
           </Link>

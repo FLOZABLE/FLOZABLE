@@ -134,7 +134,8 @@ function PlanTimeline({
       const hole =  document.getElementById("tutorialHole");
       const text = document.getElementById("tutorialText");
 
-      const {width, top, left, height} = addBtnRef.current.getBoundingClientRect();
+      setTimeout(() => {
+        const {width, top, left, height} = addBtnRef.current.getBoundingClientRect();
       hole.style.left = left + 'px';
       hole.style.top = top + 'px';
       hole.style.width = width + 'px';
@@ -143,6 +144,7 @@ function PlanTimeline({
       text.style.top = top + 50 + 'px';
       text.style.left = left - 30 + 'px';
       text.innerText = "Press this button to create a new plan!";
+      }, 1000);
       /* hole.style.height = top + 'px'; */
     };
   }, [searchParams]);
@@ -183,7 +185,7 @@ function PlanTimeline({
         color1={"#fff"}
         color2={"var(--blue2)"}
         delay={-1}
-        id={"addPlan"}
+        id={"tutorial-1"}
       />
       </div>
       {filteredPlans.length ?

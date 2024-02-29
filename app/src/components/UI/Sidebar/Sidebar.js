@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChartColumn,
@@ -12,7 +12,7 @@ import {
   faPencil,
   faPen,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import { ButtonLogout, IconBxHome, IconClipboardOutline, IconGalleryLine, IconMonitor, IconPeople16, IconRankingChart, IconStatsChart, IconUserAdd, Knife } from "../../../utils/svgs";
 
@@ -23,6 +23,30 @@ function Sidebar({
   isSidebarOpen,
   mode,
 }) {
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const toPlannerRef = useRef(null);
+
+  /* useEffect(() => {
+    if (!searchParams) return;
+
+    const tutorial = searchParams.get("tutorial");
+    if (tutorial && parseInt(tutorial) === 6) {
+      const hole = document.getElementById("tutorialHole");
+      const text = document.getElementById("tutorialText");
+
+      const { width, top, left, height, bottom } = toPlannerRef.current.getBoundingClientRect();
+      hole.style.left = 0 + 'px';
+      hole.style.top = top + 'px';
+      hole.style.width = width + 'px';
+      hole.style.height = height + 'px';
+
+      text.style.top = top + height + 30 + 'px';
+      text.style.left = 0 + 'px';
+      text.innerText = "Go plan!";
+    }
+  }, [searchParams]); */
+
   return (
     <aside className={styles.Sidebar}>
       <div className={styles.logo}>
@@ -64,6 +88,8 @@ function Sidebar({
           <Link
             className={styles.sidebarEl}
             to={"/dashboard/planner"}
+            id="tutorial-6"
+            ref={toPlannerRef}
           >
             <div className={styles.hoverField}>
               <h4>Planner</h4>

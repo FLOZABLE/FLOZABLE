@@ -155,6 +155,7 @@ function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, me
         console.log(err);
       };
     } else {
+      setVideoStream(null);
       mediaSocket.emit("removeMyProducer", { kind: 'video' });
     };
   }, [isCam]);
@@ -174,6 +175,7 @@ function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, me
         console.log(err);
       };
     } else {
+      setAudioStream(null);
       mediaSocket.emit("removeMyProducer", { kind: 'audio' });
     };
   }, [isMic]);
