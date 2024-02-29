@@ -34,6 +34,8 @@ function EventModal({
   const [searchParams, setSearchParams] = useSearchParams();
   const eventModalRef = useRef(null);
   const titleRef = useRef(null);
+  const addSubjectRef = useRef(null);
+  const submitRef = useRef(null);
 
   useEffect(() => {
     if (!searchParams) return;
@@ -42,9 +44,16 @@ function EventModal({
     if (tutorial && parseInt(tutorial) === 2) {
       setTimeout(() => {
         if (!planModal.opened) {
-          setSearchParams({ ...searchParams, tutorial: 0 });
+          searchParams.delete('tutorial');
+          setSearchParams(searchParams);
           return;
         }
+
+        setPlanModal(prev => ({...prev, 
+        title: 'example',
+        description: 'example'
+        }))
+
         const hole = document.getElementById("tutorialHole");
         const text = document.getElementById("tutorialText");
 
@@ -55,11 +64,48 @@ function EventModal({
         hole.style.height = height + 'px';
 
         text.style.top = top + height + 30 + 'px';
-        text.style.left = left - 30 + 'px';
+        text.style.left = left + 'px';
         text.innerText = "Enter information of the plan!";
-      }, 500)
+        setTimeout(() => {
+          setSearchParams({...searchParams, tutorial: 3})
+        }, 5000);
+      }, 500);
       /* hole.style.height = top + 'px'; */
-    };
+    } else if (tutorial  && parseInt(tutorial) === 3) {
+      setTimeout(() => {
+        if (!planModal.opened) {
+          searchParams.delete('tutorial');
+          setSearchParams(searchParams);
+          return;
+        }
+
+        const hole = document.getElementById("tutorialHole");
+        const text = document.getElementById("tutorialText");
+
+        const { width, top, left, height } = addSubjectRef.current.getBoundingClientRect();
+        hole.style.left = left + 'px';
+        hole.style.top = top + 'px';
+        hole.style.width = width + 'px';
+        hole.style.height = height + 'px';
+
+        text.style.top = top + height + 30 + 'px';
+        text.style.left = left + 'px';
+        text.innerText = "Add subject!";
+      }, 500);
+    } else if (tutorial  && parseInt(tutorial) === 5) {
+      const hole = document.getElementById("tutorialHole");
+      const text = document.getElementById("tutorialText");
+
+      const { width, top, left, height } = submitRef.current.getBoundingClientRect();
+      hole.style.left = left + 'px';
+      hole.style.top = top + 'px';
+      hole.style.width = width + 'px';
+      hole.style.height = height + 'px';
+
+      text.style.top = top + height + 30 + 'px';
+      text.style.left = left + 'px';
+      text.innerText = "Save the plan!";
+    }
   }, [searchParams]);
 
 
@@ -91,6 +137,7 @@ function EventModal({
             setEvents(updatedEvents);
           }
           setPlanModal(prev => ({ ...prev, opened: false, id: null }));
+          setSearchParams(prev => ({...prev, tutorial: 6}));
         }
       })
       .catch((error) => console.error(error));
@@ -170,7 +217,6 @@ function EventModal({
     >
       <div className={styles.header}>
         <i
-          id="tutorial-2"
           onClick={() => {
             setPlanModal((prev) => ({ ...prev, opened: false }));
           }}
@@ -299,11 +345,15 @@ function EventModal({
                 />
               </div>
               <p>OR</p>
-              <div className={styles.addSubjectWrapper}>
+              <div className={styles.addSubjectWrapper} ref={addSubjectRef}>
                 <BlobBtn
                   name={"Add Subject"}
-                  setClicked={setIsAddSubjectModal}
+                  setClicked={() => {
+                    setIsAddSubjectModal(true);
+                    setSearchParams({...searchParams, tutorial: 4})
+                  }}
                   delay={-1}
+                  id="tutorial-3"
                 />
               </div>
             </div>
@@ -359,12 +409,13 @@ function EventModal({
             </div>
           </div>
         </div>
-        <div className={styles.submit}>
+        <div className={styles.submit} ref={submitRef}>
           <BlobBtn
             name={"SUBMIT"}
             setClicked={() => {
               submit();
             }}
+            id="tutorial-5"
           />
         </div>
       </div>

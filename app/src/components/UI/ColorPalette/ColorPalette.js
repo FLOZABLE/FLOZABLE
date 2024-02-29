@@ -8,6 +8,7 @@ function ColorPalette({
   isSelectColor,
   setIsSelectColor,
   setIsSelectIcon,
+  id=""
 }) {
   const [paletteColorsEl, setPaletteColorsEl] = useState([]);
 
@@ -23,6 +24,7 @@ function ColorPalette({
           <div className={styles.palette} key={i}>
             <div className={styles.paletteColors}>
               <div
+                id={id}
                 className={styles.paletteColor}
                 onClick={() => {
                   selectColor(colorOption.colors[0]);
@@ -31,6 +33,7 @@ function ColorPalette({
               ></div>
               <div className={styles.paletteShades}>
                 <div
+                id={id}
                   className={styles.paletteShadesItem}
                   onClick={() => {
                     selectColor(colorOption.colors[1]);
@@ -40,6 +43,7 @@ function ColorPalette({
                   {colorOption.colors[1]}
                 </div>
                 <div
+                id={id}
                   className={styles.paletteShadesItem}
                   onClick={() => {
                     selectColor(colorOption.colors[2]);
@@ -49,6 +53,7 @@ function ColorPalette({
                   {colorOption.colors[2]}
                 </div>
                 <div
+                id={id}
                   className={styles.paletteShadesItem}
                   onClick={() => {
                     selectColor(colorOption.colors[3]);
@@ -62,6 +67,7 @@ function ColorPalette({
             <div className={styles.paletteInfo}>
               <div className={styles.paletteInfoName}>{colorOption.name}</div>
               <div
+              id={id}
                 className={styles.palletteInfoHexcode}
                 onClick={() => {
                   setSelectedColor(colorOption.colors[0]);
@@ -75,10 +81,12 @@ function ColorPalette({
       }),
     );
   }, [ColorPaletteOptions]);
+
   return (
     <div className={styles.ColorPalette}>
       <div className={styles.header}>
         <button
+          id={id}
           onClick={() => {
             setIsSelectColor(!isSelectColor);
             if (setIsSelectIcon) {
@@ -91,6 +99,7 @@ function ColorPalette({
           </div>
         </button>
         <div
+          id={id}
           onClick={() => {
             setIsSelectColor(!isSelectColor);
             if (setIsSelectIcon) {
