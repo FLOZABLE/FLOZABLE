@@ -17,6 +17,7 @@ function SelectIcon({
   isSelectIcon,
   setIsSelectIcon,
   setIsSelectColor,
+  id = ""
 }) {
   function handleSelect(iconInfo) {
     setSelectedIcon(iconInfo);
@@ -24,9 +25,10 @@ function SelectIcon({
   }
 
   return (
-    <div className={styles.selectIcon}>
+    <div className={styles.SelectIcon}>
       <div className={styles.header}>
         <button
+          id={id}
           onClick={() => {
             setIsSelectIcon(!isSelectIcon);
             setIsSelectColor(false);
@@ -40,6 +42,7 @@ function SelectIcon({
         </button>
         <div
           className={styles.selectedIcon}
+          id={id}
           onClick={() => {
             setIsSelectIcon(!isSelectIcon);
             setIsSelectColor(false);
@@ -51,6 +54,7 @@ function SelectIcon({
       <div className={`${styles.icons} ${isSelectIcon ? styles.open : ""}`}>
         <div
           className={styles.iconWrapper}
+          id={id}
           onClick={() => {
             handleSelect({
               name: "WritePen",
@@ -74,6 +78,7 @@ function SelectIcon({
         </div>
         <div
           className={styles.iconWrapper}
+          id={id}
           onClick={() => {
             handleSelect({
               name: "Book",
@@ -97,6 +102,7 @@ function SelectIcon({
         </div>
         <div
           className={styles.iconWrapper}
+          id={id}
           onClick={() => {
             handleSelect({
               name: "Microscope",
@@ -120,6 +126,7 @@ function SelectIcon({
         </div>
         <div
           className={styles.iconWrapper}
+          id={id}
           onClick={() => {
             handleSelect({
               name: "Article",
@@ -143,6 +150,7 @@ function SelectIcon({
         </div>
         <div
           className={styles.iconWrapper}
+          id={id}
           onClick={() => {
             handleSelect({
               name: "Coding",
@@ -166,6 +174,7 @@ function SelectIcon({
         </div>
         <div
           className={styles.iconWrapper}
+          id={id}
           onClick={() => {
             handleSelect({
               name: "Globe",
@@ -189,6 +198,7 @@ function SelectIcon({
         </div>
         <div
           className={styles.iconWrapper}
+          id={id}
           onClick={() => {
             handleSelect({
               name: "Workout",
@@ -212,6 +222,7 @@ function SelectIcon({
         </div>
         <div
           className={styles.iconWrapper}
+          id={id}
           onClick={() => {
             handleSelect({
               name: "Alert",

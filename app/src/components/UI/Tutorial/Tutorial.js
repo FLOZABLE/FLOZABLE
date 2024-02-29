@@ -14,16 +14,20 @@ function Tutorial() {
 
 
   function handler(e) {
-    console.log("tutorial",e.target.id, tutorial)
     const button = e.target.id;
-    if (button === "addPlan" && tutorial === 1) {
-      console.log('correct');
-    } if (button === "tutorial-2" && tutorial == 2) {
-
-    } else {
+    if (!button) {
       e.stopPropagation();
       e.preventDefault();
-    }
+      return;
+    };
+    
+    const btnTutorial = button.split("-")[1];
+    console.log(parseInt(btnTutorial), tutorial)
+    if (parseInt(btnTutorial) !== tutorial) {
+      console.log('locked', button, tutorial)
+      e.stopPropagation();
+      e.preventDefault();
+    };
   }
 
   useEffect(() => {
@@ -31,9 +35,12 @@ function Tutorial() {
     const searchParams = new URLSearchParams(location.search);
 
     const tutorial = searchParams.get("tutorial");
-    if (tutorial && parseInt(tutorial)) {
-      setTutorial(parseInt(tutorial));
+
+    if (!tutorial) {
+      setTutorial(0);
     };
+
+    setTutorial(parseInt(tutorial));
   }, [location]);
 
   useEffect(() => {
@@ -42,7 +49,7 @@ function Tutorial() {
     document.addEventListener("click", handler, true);
 
     return () => {
-      document.removeEventListener("click", handler);
+      document.removeEventListener("click", handler, true);
     }
   }, [tutorial]);
 

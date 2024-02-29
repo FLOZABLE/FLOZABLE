@@ -53,6 +53,10 @@ body {
   font-style: normal;
 }
 
+button * {
+  pointer-events: none;
+}
+
 div, button, a {
   font-family: "Varela Round", sans-serif;
 }
