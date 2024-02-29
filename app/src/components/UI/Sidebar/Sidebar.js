@@ -45,11 +45,11 @@ function Sidebar({
              </i>
              {/* <h1>Home</h1> */}
            </Link> 
-          </div>
+        </div>
         <div>
           <Link
             className={styles.sidebarEl}
-            to={"/dashboard/stats"}
+            to={"/dashboard/stats"} 
           >
             <div className={styles.hoverField}>
               <h4>Stats</h4>
