@@ -82,12 +82,13 @@
 
 .headerEl .StudyButton {  
   background-color: rgb(209, 255, 216);
-  border-radius: 10rem;
+  border-radius: 100rem;
+  width: 4rem;
+  height: 4rem;
   color: rgb(0, 213, 71);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.5rem 1rem;
 } 
 
 .Header .divider {
@@ -171,6 +172,11 @@
 
 @media (max-width: 87.5rem) {
   .Header .right .profileImg {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+
+  .Header .right .StudyButton{
     height: 2.5rem;
     width: 2.5rem;
   }
