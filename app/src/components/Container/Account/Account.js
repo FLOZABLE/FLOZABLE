@@ -226,7 +226,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                   </div>
                 </div>
                 <div className={styles.emailWrapper}>
-                  <VerifyEmailButton />
+                  <VerifyEmailButton setResponse={setResponse}/>
                   <div>
                     <LineInput
                       title={"Email"}
