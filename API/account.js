@@ -93,8 +93,13 @@ Router.post('/send-verification-link', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
       const userInfo = await userCache(userId);
-      await redisClient.setEx(`verify:${userInfo.email}`, 3600, generateRandomId(10));
-      res.send({ success: true, message: "Verification Link Sent!" });
+      const randomId = generateRandomId(10)
+      await redisClient.setEx(`verify:${userInfo.email}`, 3600, randomId);
+      const params = { resetURL: `${process.env.SERVER}/account/reset-password?verifyId=${randomId}` };
+      const to = [{ email: userInfo.email }];
+      sendEmail(to, params, 4);
+
+      res.send({ success: true, msg: "Link Sent To Email!" });
     } catch (err) {
       console.log(err);
       res.send({ success: false, reason: "Error" });
@@ -106,21 +111,29 @@ Router.post('/verify-by-link', async (req, res) => {
   const { verifyId } = req.body;
   autoSignin(req, res, (async (userId) => {
     try {
-      const userInfo = await userCache(userId);
-      const verifyInfo = await redisClient.get(`verify:${userInfo.email}`);
+      const email = await userCache(userId);
+      const verifyInfo = await redisClient.get(`verify:${email.email}`);
       if (!verifyInfo) {
         return res.send({ success: false, reason: "Link expired" });
       }
       if (verifyId === verifyInfo) {
         const connection = pool.promise();
         await connection.query("UPDATE users SET verified = true WHERE user_id = ?", [userId]);
-        res.send({ success: true, message: "Verification Success!" });
+        await redisClient.del(`verify:${email.email}`);
+        res.send({ success: true, msg: "Verification Success!" });
+      }
+      else{
+        res.send({ success: false, reason: "Incorrect Data" });
       }
     } catch (err) {
       console.log(err);
       res.send({ success: false, reason: "Error" });
     };
   }));
+});
+
+Router.get('/verify-by-link', (req, res) => {
+  autoSignin(req, res, (() => res.render('verify-email', { loggedIn: true })), (() => res.render('verify-email', { loggedIn: false })));
 });
 
 Router.post('/signup-authentication', async (req, res) => {
