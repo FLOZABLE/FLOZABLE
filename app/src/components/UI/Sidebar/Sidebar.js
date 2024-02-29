@@ -14,7 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
-import { ButtonLogout, IconBxHome, IconClipboardOutline, IconGalleryLine, IconMonitor, IconPeople16, IconStatsChart, IconUserAdd, Knife } from "../../../utils/svgs";
+import { ButtonLogout, IconBxHome, IconClipboardOutline, IconGalleryLine, IconMonitor, IconPeople16, IconRankingChart, IconStatsChart, IconUserAdd, Knife } from "../../../utils/svgs";
 
 function Sidebar({
   onMouseEnter,
@@ -55,7 +55,7 @@ function Sidebar({
               <h4>Stats</h4>
             </div>
             <i>
-              <IconMonitor /> 
+              <IconStatsChart />
             </i>
             {/* <h1>Stats</h1> */}
           </Link>
@@ -83,7 +83,7 @@ function Sidebar({
               <h4>Rank</h4>
             </div>
             <i>
-              <IconStatsChart /> 
+              <IconRankingChart />
             </i>
           {/* <h1>Rank</h1> */}
           </Link>
