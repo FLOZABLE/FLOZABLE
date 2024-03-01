@@ -141,8 +141,8 @@ function PlanTimeline({
       hole.style.width = width + 40 + 'px';
       hole.style.height =  height + 40 + 'px';
 
-      text.textContent = "Click here to add Plans!";
-      text.style.left = left + 35 + 'px';
+      text.textContent = "First, add an event to your planner!";
+      text.style.left = left - 15 + 'px';
       text.style.top = top + 80 + 'px'
 
       }, 1000);
