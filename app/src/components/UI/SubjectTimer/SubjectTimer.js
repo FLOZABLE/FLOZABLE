@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import worker from "../../../utils/subjectTimerWorker";
 import { socket } from "../../../socket";
+import { useSearchParams } from "react-router-dom";
 
 function SubjectTimer({
   subjects,
@@ -26,6 +27,68 @@ function SubjectTimer({
   const [subjectTimer, setSubjectTimer] = useState({ total: 0 });
   const [clicked, setClicked] = useState(false);
 
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const chooseSubjectRef = useRef(null);
+  const subjectOptionsRef = useRef(null);
+  const startSubjectRef = useRef(null);
+
+  useEffect(() => {
+    if (!searchParams) return;
+
+    const tutorial = searchParams.get("tutorial");
+    if (!tutorial) return;
+
+    if (parseInt(tutorial) === 6) {
+      const hole = document.getElementById("tutorialHole");
+      const text = document.getElementById("tutorialText");
+
+      setTimeout(() => {
+        const { width, top, left, height, bottom } = chooseSubjectRef.current.getBoundingClientRect();
+        hole.style.left = left + 'px';
+        hole.style.top = top + 'px';
+        hole.style.width = width + 'px';
+        hole.style.height = height + 'px';
+
+        text.style.top = top + 'px';
+        text.style.left = left + width + 50 + 'px';
+        text.innerText = "Click here to choose subject to study!";
+      }, 500);
+    } else if (parseInt(tutorial) === 7) {
+      setClicked(true);
+      const hole = document.getElementById("tutorialHole");
+      const text = document.getElementById("tutorialText");
+
+      setTimeout(() => {
+        const { width, top, left, height, bottom } = subjectOptionsRef.current.getBoundingClientRect();
+        hole.style.left = left + 'px';
+        hole.style.top = top + 'px';
+        hole.style.width = width + 'px';
+        hole.style.height = height + 'px';
+
+        text.style.top = top + 'px';
+        text.style.left = left + width + 50 + 'px';
+        text.innerText = "Click here to choose subject to study!";
+      }, 500);
+    } else if (parseInt(tutorial) === 8) {
+      const hole = document.getElementById("tutorialHole");
+      const text = document.getElementById("tutorialText");
+
+      setTimeout(() => {
+        const { width, top, left, height, bottom } = startSubjectRef.current.getBoundingClientRect();
+        hole.style.left = left + 'px';
+        hole.style.top = top + 'px';
+        hole.style.width = width + 'px';
+        hole.style.height = height + 'px';
+
+        text.style.top = top + 'px';
+        text.style.left = left + width + 50 + 'px';
+        text.innerText = "Click to start/stop the timer!";
+      }, 500);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     setTimeValues(
       subjects.map((subject, i) => {
@@ -39,7 +102,7 @@ function SubjectTimer({
       }),
     );
   }, [subjects]);
-  
+
   useEffect(() => {
     if (timeValues.length) {
       if (!!!subject) setSubject({ ...subjects[0] });
@@ -56,7 +119,7 @@ function SubjectTimer({
         ) {
           const timeValue =
             subjects[subjectIndex].daily.total[
-              subjects[subjectIndex].daily.total.length - 1
+            subjects[subjectIndex].daily.total.length - 1
             ];
           setSubjectTimer({ total: timeValue });
         }
@@ -85,8 +148,15 @@ function SubjectTimer({
             setSubject(option)
             const targetElement = e.currentTarget.querySelector("p");
             timerDispRef.current = targetElement;
+
+
+            const tutorial = searchParams.get("tutorial");
+            if (tutorial && parseInt(tutorial) === 7) {
+              setSearchParams({...searchParams, tutorial: 8})
+            }
           }}
           className={styles.option}
+          id="tutorial-7"
         >
           {option.name}{" "}
           <p className={styles.timeDisp}>
@@ -173,12 +243,19 @@ function SubjectTimer({
 
   return (
     <div className={styles.SubjectTimer}>
-      <div className={styles.timerWrapper}>
+      <div className={styles.timerWrapper}
+        ref={chooseSubjectRef}
+      >
         <button
           className={`${clicked ? styles.clicked : ""} ${styles.optBtn}`}
           onClick={() => {
             setClicked(!clicked);
+            const tutorial = searchParams.get("tutorial");
+            if (tutorial && parseInt(tutorial) === 6) {
+              setSearchParams({...searchParams, tutorial: 7})
+            }
           }}
+          id="tutorial-6"
         >
           <p>{subject ? subject.name : "Others"}</p>
           <p className={styles.mainTimeDisp}>
@@ -192,10 +269,10 @@ function SubjectTimer({
             <FontAwesomeIcon icon={faCaretDown} />
           </i>
         </button>
-        <ul className={`${styles.options} customScroll`}>{options}</ul>
+        <ul className={`${styles.options} customScroll`} ref={subjectOptionsRef}>{options}</ul>
       </div>
       <div className={styles.buttonWrapper}>
-        <button onClick={() => {toggleTimer(subject)}} className={styles.toggleBtn}>
+        <button onClick={() => { toggleTimer(subject) }} className={styles.toggleBtn} ref={startSubjectRef} id="tutorial-8">
           {isStudy ? (
             <FontAwesomeIcon icon={faPause} />
           ) : (
