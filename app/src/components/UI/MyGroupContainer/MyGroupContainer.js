@@ -23,13 +23,15 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
     //group_id, average_hr, color, date, explanation, font, goal_hr, leader, max_member, name, visibility, tags, members, likes
     const { name } = group;
     setName(name);
-    socket.emit('changeGroup', group.group_id);
-    mediaSocket.emit('changeGroup', group.group_id);
+    setTimeout(() => {
+      socket.emit('changeGroup', group.group_id);
+      mediaSocket.emit('changeGroup', group.group_id);
+    }, 500)
     setIsGroupRankingModal(false);
   }, [group, isFocus]);
 
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (group.length <= 0) return;
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -55,7 +57,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
         }
       });
 
-  }, [group]);
+  }, [group]); */
 
   return (
     <div className={`${styles.MyGroupContainer} ${mode === "study" ? styles.study : ''}`}>

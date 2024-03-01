@@ -28,6 +28,10 @@
   position: relative;
 }
 
+.StudySidebar .studyTool * {
+  pointer-events: none;
+}
+
 .StudySidebar .studyTool i {
   color: #636363;
   transition: color .3s ease-in-out;

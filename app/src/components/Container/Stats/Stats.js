@@ -8,7 +8,7 @@ import { DateTime } from 'luxon';
 import CalendarModal from '../../UI/CalendarModal/CalendarModal';
 import { secondConverter } from '../../../utils/Tool';
 import { PieChart, Pie, Tooltip, ResponsiveContainer, YAxis, XAxis, CartesianGrid, LineChart, Line, Legend } from "recharts";
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from '../../../utils/svgs';
 import { PieCustomTooltip, pieCustomLabel } from '../../UI/Charts';
 import StudyTrendChart from '../../UI/StudyTrendChart';
@@ -29,6 +29,35 @@ function Stats({ subjects, userInfo }) {
   const [websitesUsage, setWebsitesUsage] = useState(0);
   const [websitesVisit, setWebsitesVisit] = useState(0);
   const [rankingsTrend, setRankingsTrend] = useState([]);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const statsRef = useRef(null);
+
+  useEffect(() => {
+    if (!searchParams) return;
+
+    const tutorial = searchParams.get("tutorial");
+    if (tutorial && parseInt(tutorial) === 11) {
+      const hole = document.getElementById("tutorialHole");
+      const text = document.getElementById("tutorialText");
+
+      setTimeout(() => {
+        const { width, top, left, height, bottom } = statsRef.current.getBoundingClientRect();
+        hole.style.left = left + 'px';
+        hole.style.top = top  + 'px';
+        hole.style.width = width + 'px';
+        hole.style.height = height + 'px';
+  
+        text.style.top = top - 70 + 'px';
+        text.style.left = left + 'px';
+        text.innerText = "You can see your daily/weekly/monthly stats from here!";
+      }, 500);
+
+      setTimeout(() => {
+        setSearchParams(prev => ({ ...prev, tutorial: 12 }));
+      }, 4000);
+    }
+  }, [searchParams]);
 
   const updateViewer = async (item) => {
     setStatsViewer(item);
@@ -202,7 +231,7 @@ function Stats({ subjects, userInfo }) {
         <div className="title">
           Stats
         </div>
-        <div className={styles.Stats}>
+        <div className={styles.Stats} ref={statsRef}>
         <div className={styles.optionsHeader}>
           <div className={styles.dateSelectorWrapper}>
             <DateSelectorBtn viewMode={statsViewer} className={styles.title} viewDate={viewDate} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen}></DateSelectorBtn>
