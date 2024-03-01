@@ -92,7 +92,7 @@ async function updateMonthlyRanking(now, users, timezoneOffset) {
     const filteredUsers = [];
     await Promise.all(users.map(async(userId) => {
       //const thisMonthTotal = await redisClient.get(`user:${userId}:monthTotal`);
-      const thisMonthTotal = await redisClient.zRange(`user:${userId}:monthTotal`, timezoneOffset);
+      const thisMonthTotal = await redisClient.zScore(`user:${userId}:monthTotal`, timezoneOffset);
       if (thisMonthTotal) {
         filteredUsers.push({u: userId, t: thisMonthTotal});
       }

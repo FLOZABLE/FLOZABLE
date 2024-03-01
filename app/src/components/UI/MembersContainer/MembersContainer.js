@@ -155,6 +155,9 @@ function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, me
         console.log(err);
       };
     } else {
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+      }
       setVideoStream(null);
       mediaSocket.emit("removeMyProducer", { kind: 'video' });
     };
@@ -175,6 +178,9 @@ function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, me
         console.log(err);
       };
     } else {
+      if (audioStream) {
+        audioStream.getTracks().forEach(track => track.stop());
+      }
       setAudioStream(null);
       mediaSocket.emit("removeMyProducer", { kind: 'audio' });
     };
