@@ -26,26 +26,47 @@ function Sidebar({
 
   const [searchParams, setSearchParams] = useSearchParams();
   const toPlannerRef = useRef(null);
+  const toStatsRef = useRef(null);
+  const toGroupsRef = useRef(null);
+  const [tutorial, setTutorial] = useState(null);
 
-  /* useEffect(() => {
+  useEffect(() => {
     if (!searchParams) return;
 
     const tutorial = searchParams.get("tutorial");
-    if (tutorial && parseInt(tutorial) === 6) {
-      const hole = document.getElementById("tutorialHole");
-      const text = document.getElementById("tutorialText");
+    if (!tutorial) {
+      return;
+    };
 
-      const { width, top, left, height, bottom } = toPlannerRef.current.getBoundingClientRect();
-      hole.style.left = 0 + 'px';
-      hole.style.top = top + 'px';
+    const hole = document.getElementById("tutorialHole");
+    const text = document.getElementById("tutorialText");
+
+    if (parseInt(tutorial) === 10) {
+      setTutorial(10);
+      setTimeout(() => {
+        const { width, top, left, height, bottom } = toStatsRef.current.getBoundingClientRect();
+        hole.style.left = left + 'px';
+        hole.style.top = top  + 'px';
+        hole.style.width = width + 'px';
+        hole.style.height = height + 'px';
+  
+        text.style.top = top + height + 30 + 'px';
+        text.style.left = left + 'px';
+        text.innerText = "Let's go to stats page!";
+      }, 500);
+    } /* else if (tutorial === "12") {
+      setTutorial(12);
+      const { width, top, left, height, bottom } = toGroupsRef.current.getBoundingClientRect();
+      hole.style.left = left + 'px';
+      hole.style.top = top  + 'px';
       hole.style.width = width + 'px';
       hole.style.height = height + 'px';
 
       text.style.top = top + height + 30 + 'px';
-      text.style.left = 0 + 'px';
-      text.innerText = "Go plan!";
-    }
-  }, [searchParams]); */
+      text.style.left = left + 'px';
+      text.innerText = "Let's go to groups page!";
+    } */
+  }, [searchParams]);
 
   return (
     <aside className={styles.Sidebar}>
@@ -73,12 +94,13 @@ function Sidebar({
         <div>
           <Link
             className={styles.sidebarEl}
-            to={"/dashboard/stats"} 
+            to={tutorial ? `/dashboard/stats?tutorial=${tutorial + 1}` : "/dashboard/stats"} 
+            id="tutorial-10"
           >
             <div className={styles.hoverField}>
               <h4>Stats</h4>
             </div>
-            <i>
+            <i ref={toStatsRef}>
               <IconStatsChart />
             </i>
             {/* <h1>Stats</h1> */}
@@ -122,7 +144,7 @@ function Sidebar({
             <div className={styles.hoverField}>
              <h4>Groups</h4>
            </div>
-            <i>
+            <i ref={toGroupsRef}>
              <IconPeople16 /> 
            </i>
             {/* <h1>Groups</h1> */}

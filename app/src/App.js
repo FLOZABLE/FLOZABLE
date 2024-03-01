@@ -287,7 +287,9 @@ function App() {
         notifications={notifications.filter(notification => { return notification.t >= 0 })}
       />
       <div className={`touchBlocker ${isAccountModal ? "blocked" : ""}`}></div>
-      <Tutorial />
+      <Tutorial
+        setResponse={setResponse}
+      />
       <Routes>
         <Route
           path="/dashboard"
