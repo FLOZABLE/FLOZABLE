@@ -45,13 +45,13 @@ function Sidebar({
       setTutorial(10);
       setTimeout(() => {
         const { width, top, left, height, bottom } = toStatsRef.current.getBoundingClientRect();
-        hole.style.left = left + 'px';
-        hole.style.top = top  + 'px';
-        hole.style.width = width + 'px';
-        hole.style.height = height + 'px';
+        hole.style.left = left - 20 + 'px';
+        hole.style.top = top - 20 + 'px';
+        hole.style.width = width + 40 + 'px';
+        hole.style.height = height + 40 + 'px';
   
         text.style.top = top + height + 30 + 'px';
-        text.style.left = left + 'px';
+        text.style.left = left - 20 + 'px';
         text.innerText = "Let's go to stats page!";
       }, 500);
     } /* else if (tutorial === "12") {

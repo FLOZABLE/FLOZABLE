@@ -39,8 +39,8 @@ function AddSubjectModal({
         const { width, top, left, height, bottom } = addSubjectModalRef.current.getBoundingClientRect();
         hole.style.left = left + 'px';
         hole.style.top = top - 25 + 'px';
-        hole.style.width = 0 + 'px';
-        hole.style.height = 0 + 'px';
+        hole.style.width = 0;
+        hole.style.height = height + 'px';
   
         text.style.top = top - 50 + 'px';
         text.style.left = left + 'px';

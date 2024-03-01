@@ -136,14 +136,15 @@ function PlanTimeline({
 
       setTimeout(() => {
         const {width, top, left, height} = addBtnRef.current.getBoundingClientRect();
-      hole.style.left = left + 'px';
-      hole.style.top = top + 'px';
-      hole.style.width = width + 'px';
-      hole.style.height = height + 'px';
+      hole.style.left = left -20 + 'px';
+      hole.style.top =  top - 18 + 'px';
+      hole.style.width = width + 40 + 'px';
+      hole.style.height =  height + 40 + 'px';
 
-      text.style.top = top + 50 + 'px';
-      text.style.left = left - 30 + 'px';
-      text.innerText = "Press this button to create a new plan!";
+      text.textContent = "Click here to add Plans!";
+      text.style.left = left + 35 + 'px';
+      text.style.top = top + 80 + 'px'
+
       }, 1000);
       /* hole.style.height = top + 'px'; */
     };
