@@ -84,11 +84,14 @@ function AddSubjectModal({
           setSelectedColor(null);
           setSelectedIcon({ name: null, el: null });
           setName("");
-          setSearchParams(prev => ({...prev, tutorial: 5}))
+          const tutorial = searchParams.get("tutorial");
+          if (tutorial === "4") {
+            setSearchParams({...searchParams, tutorial: 5})
+          }
         }
       })
       .catch((error) => console.error(error));
-  }, [selectedColor, selectedIcon, name]);
+  }, [selectedColor, selectedIcon, name, searchParams]);
 
   return (
     <div
