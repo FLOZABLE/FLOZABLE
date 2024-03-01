@@ -17,7 +17,7 @@
 }
 
 @keyframes bounce {
-  10% {
+  /* 10% {
     margin-top: 0rem;
   }
 
@@ -35,23 +35,36 @@
   
   100% {
     margin-top: 0rem;
+  } */
+
+  0% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.4;
   }
 }
+
 .Tutorial .hole {
   position: fixed;
   background-color: gray;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   animation: bounce 0.8s ease-in-out infinite forwards;
-  transition: .3s ease-in-out all;
+  height: fit-content;  
 }
 
 .Tutorial .text {
   position: fixed;
-  font-size: 20px;
-  padding: 0.5rem 1rem;
+  font-size: 1.3rem;
+  padding: 0.7rem 1rem;
   background-color: #fff;
   font-weight: 900;
-  border-radius: 0.5rem;
+  border-radius: 0.8rem;
   width: fit-content;
   transition: .3s ease-in-out all;
 }
@@ -63,15 +76,19 @@
 .Tutorial .end {
   position: fixed;
   background-color: #fff;
-  border-radius: 0.5rem;
+  border-radius: 2rem;
   left: 50vw;
   top: 50vh;
   transform: translate(-50%, -50%);
-  font-size: 4rem;
+  font-size: 3rem;
   pointer-events: all;
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-weight: 800;
-  padding: 2rem 3rem;
+  font-weight: 800; 
+  padding: 3rem 4rem;
+}
+
+.Tutorial .end p {
+  margin-bottom: 2rem;
 }

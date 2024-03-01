@@ -56,10 +56,10 @@ function Header({
       const text = document.getElementById("tutorialText");
 
       const { width, top, left, height, right } = studyBtnRef.current.getBoundingClientRect();
-      hole.style.left = left + 'px';
-      hole.style.top = top + 'px';
-      hole.style.width = width + 'px';
-      hole.style.height = height + 'px';
+      hole.style.left = left - 10 + 'px';
+      hole.style.top = top- 10 + 'px';
+      hole.style.width = width + 20 + 'px';
+      hole.style.height = height + 20 + 'px';
 
       text.style.top = top + height + 30 + 'px';
       text.style.right = 30 + 'px';

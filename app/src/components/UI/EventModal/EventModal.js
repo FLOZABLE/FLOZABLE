@@ -58,14 +58,15 @@ function EventModal({
         const text = document.getElementById("tutorialText");
 
         const { width, top, left, height, bottom } = eventModalRef.current.getBoundingClientRect();
-        hole.style.left = left + 'px';
-        hole.style.top = top + 'px';
-        hole.style.width = width + 'px';
-        hole.style.height = height + 'px';
+        hole.style.left = left - 25 + 'px';
+        hole.style.top = top - 25 + 'px';
+        hole.style.width = width + 50 + 'px';
+        hole.style.height = height + 50 + 'px';
 
-        text.style.top = top + height + 30 + 'px';
-        text.style.left = left + 'px';
-        text.innerText = "Enter information of the plan!";
+        text.style.top = top + height - 700 + 'px';
+        text.style.left = left - 25 + 'px';
+        text.innerText = "Enter information about the plan!";
+
         setTimeout(() => {
           setSearchParams({...searchParams, tutorial: 3})
         }, 5000);
@@ -83,10 +84,10 @@ function EventModal({
         const text = document.getElementById("tutorialText");
 
         const { width, top, left, height } = addSubjectRef.current.getBoundingClientRect();
-        hole.style.left = left + 'px';
-        hole.style.top = top + 'px';
-        hole.style.width = width + 'px';
-        hole.style.height = height + 'px';
+        hole.style.left = left - 10 + 'px';
+        hole.style.top = top - 9 + 'px';
+        hole.style.width = width + 10 + 'px';
+        hole.style.height = height + 20 + 'px';
 
         text.style.top = top + height + 30 + 'px';
         text.style.left = left + 'px';
@@ -97,13 +98,13 @@ function EventModal({
       const text = document.getElementById("tutorialText");
 
       const { width, top, left, height } = submitRef.current.getBoundingClientRect();
-      hole.style.left = left + 'px';
-      hole.style.top = top + 'px';
-      hole.style.width = width + 'px';
-      hole.style.height = height + 'px';
+      hole.style.left = left + 159 + 'px';
+      hole.style.top = top -10 + 'px';
+      hole.style.width = width - 330 + 'px';
+      hole.style.height = height + 20 + 'px';
 
       text.style.top = top + height + 30 + 'px';
-      text.style.left = left + 'px';
+      text.style.left = left + 150 + 'px';
       text.innerText = "Save the plan!";
     }
   }, [searchParams]);

@@ -50,7 +50,7 @@ function Stats({ subjects, userInfo }) {
   
         text.style.top = top - 70 + 'px';
         text.style.left = left + 'px';
-        text.innerText = "You can see your daily/weekly/monthly stats from here!";
+        text.innerText = "You can see your all your Stats from here!";
       }, 500);
 
       setTimeout(() => {
