@@ -52,7 +52,7 @@ function SubjectTimer({
 
         text.style.top = top + 'px';
         text.style.left = left + width + 50 + 'px';
-        text.innerText = "Click here to select Subject!";
+        text.innerText = "Select a subject to study";
       }, 500);
     } else if (parseInt(tutorial) === 7) {
       setClicked(true);
@@ -68,7 +68,7 @@ function SubjectTimer({
 
         text.style.top = top + 'px';
         text.style.left = left + width + 50 + 'px';
-        text.innerText = "Select Subject!";
+        text.innerText = "You will see your subjects here";
       }, 500);
     } else if (parseInt(tutorial) === 8) {
       const hole = document.getElementById("tutorialHole");

@@ -65,7 +65,7 @@ function EventModal({
 
         text.style.top = top + height - 700 + 'px';
         text.style.left = left - 25 + 'px';
-        text.innerText = "Enter information about the plan!";
+        text.innerText = "Enter the event information!";
 
         setTimeout(() => {
           setSearchParams({...searchParams, tutorial: 3})
@@ -89,9 +89,9 @@ function EventModal({
         hole.style.width = width + 10 + 'px';
         hole.style.height = height + 20 + 'px';
 
-        text.style.top = top + height + 30 + 'px';
-        text.style.left = left + 'px';
-        text.innerText = "Add subject!";
+        text.style.top = top + height + 20 + 'px';
+        text.style.left = left - 10 + 'px';
+        text.innerText = "Add a subject!";
       }, 500);
     } else if (tutorial  && parseInt(tutorial) === 5) {
       const hole = document.getElementById("tutorialHole");

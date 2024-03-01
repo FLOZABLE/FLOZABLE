@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "./YouTubePlaylist.module.css";
 import DropDownButton from "../DropDownButton/DropDownButton";
 import CustomInput from "../CustomInput/CustomInput";
@@ -35,15 +35,15 @@ function YouTubePlaylist({ }) {
     setLink(e.target.value);
   };
 
-  const randomizeVideos = () => {
+  const randomizeVideos = useCallback(() => {
     if (!videoIds.length) return;
-    console.log(videoIds);
     const shuffleVids = shuffle([...videoIds]);
+    console.log(shuffleVids);
     setYoutubePlaylist(shuffleVids.join(","));
-  }
+  }, [youtubePlaylist]);
 
   function shuffle(array) {
-    let currentIndex = array.length,  randomIndex;
+    let currentIndex = array.length, randomIndex;
     // While there remain elements to shuffle.
     while (currentIndex > 0) {
       // Pick a remaining element.
@@ -76,6 +76,7 @@ function YouTubePlaylist({ }) {
   }, []);
 
   useEffect(() => {
+    console.log("Playlist: ", `https://www.youtube.com/embed/VIDEO_ID?playlist=${youtubePlaylist}`);
     setPlayingFromLink(false);
     if (youtubePlaylist.length) {
       const videoIdString = youtubePlaylist
@@ -96,7 +97,7 @@ function YouTubePlaylist({ }) {
                 options={youtubePlaylists}
                 setValue={setYoutubePlaylist}
               />
-              <button onClick={randomizeVideos()}>Shuffle</button>
+              <button onClick={randomizeVideos}>Shuffle</button>
             </div>
             :
             <div></div>

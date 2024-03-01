@@ -44,7 +44,7 @@ function AddSubjectModal({
   
         text.style.top = top - 50 + 'px';
         text.style.left = left + 'px';
-        text.innerText = "Enter information of the subject!";
+        text.innerText = "Enter the subject details!";
       }, 500);
     }
   }, [searchParams]);
