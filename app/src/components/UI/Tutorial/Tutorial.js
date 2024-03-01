@@ -76,7 +76,7 @@ function Tutorial({ setResponse }) {
           className={styles.end}
         >
           <p>
-          You are done with tutorial!
+            You are done with tutorial!
           </p>
           <div className={styles.blobWrapper}>
             <BlobBtn
