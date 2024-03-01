@@ -1,17 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./Tutorial.module.css";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import BlobBtn from "../BlobBtn/BlobBtn";
 
-function Tutorial() {
+function Tutorial({ setResponse }) {
   const location = useLocation();
   const [tutorial, setTutorial] = useState(null);
-  const swiperRef = useRef(null);
-
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   function handler(e) {
     const button = e.target.id;
@@ -20,7 +21,7 @@ function Tutorial() {
       e.preventDefault();
       return;
     };
-    
+
     const btnTutorial = button.split("-")[1];
     console.log(parseInt(btnTutorial), tutorial)
     if (parseInt(btnTutorial) !== tutorial) {
@@ -32,19 +33,31 @@ function Tutorial() {
 
   useEffect(() => {
     console.log(location);
-    const searchParams = new URLSearchParams(location.search);
-
     const tutorial = searchParams.get("tutorial");
 
     if (!tutorial) {
       setTutorial(0);
     };
 
+    if (tutorial >= 12) {
+      /* searchParams.delete("tutorial");
+      setSearchParams(searchParams);
+      navigate("/dashboard/groups")
+      setResponse({success: true, msg: "You are done with tutorial!"});
+      setTimeout(() => {
+        setResponse({success: true, msg: "Join groups you want to!"});
+      }, 4000); */
+    }
+
     setTutorial(parseInt(tutorial));
-  }, [location]);
+  }, [searchParams]);
 
   useEffect(() => {
     if (!tutorial) return;
+
+    if (tutorial >= 12) {
+      return;
+    }
 
     document.addEventListener("click", handler, true);
 
@@ -56,41 +69,36 @@ function Tutorial() {
 
   return (
     <div className={`${styles.Tutorial} ${tutorial ? styles.open : ''}`}>
-      <div className={styles.hole} id="tutorialHole">
-      </div>
-      <div className={styles.text} id="tutorialText">
-        
-      </div>
-      {/* <Swiper
-        slidesPerView={1}
-        loop={true}
-        pagination={{
-          clickable: true,
-          dynamicBullets: true
-        }}
-        navigation={true}
-        modules={[Pagination, Navigation]}
-        className={styles.Swiper}
-        onSnapIndexChange={(swiperCore) => {
-          const { realIndex, snapIndex, activeIndex } = swiperCore;
-        }}
-        ref={swiperRef}
-      >
-        <SwiperSlide>
-          <div className={styles.hole} style={{ right: '10rem', top: '10rem', height: '5rem', width: '15rem' }}>
+      {tutorial >= 12
+        ?
+        <div
+          to="/dashboard/groups"
+          className={styles.end}
+        >
+          <p>
+          You are done with tutorial!
+          </p>
+          <div className={styles.blobWrapper}>
+            <BlobBtn
+              name={"Join Groups to study with others!"}
+              setClicked={() => {
+                navigate("/dashboard/groups")
+              }}
+              color1={"#fff"}
+              color2={"var(--purple2)"}
+            />
           </div>
-          <div className={styles.text} style={{ right: '2rem', top: '7rem' }}>
-            Click this button to add plan!
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className={styles.hole} style={{ right: '2rem', top: '1rem', height: '4rem', width: '6rem' }}>
-          </div>
-          <div className={styles.text} style={{ right: '2rem', top: '7rem' }}>
-            Click this button to study!
-          </div>
-        </SwiperSlide>
-      </Swiper> */}
+        </div>
+        : (
+          <>
+            <div className={styles.hole} id="tutorialHole">
+            </div>
+            <div className={styles.text} id="tutorialText">
+
+            </div>
+          </>
+        )
+      }
     </div>
   )
 }

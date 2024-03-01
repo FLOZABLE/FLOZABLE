@@ -86,6 +86,10 @@ function SubjectTimer({
         text.style.left = left + width + 50 + 'px';
         text.innerText = "Click to start/stop the timer!";
       }, 500);
+
+      setTimeout(() => {
+        setSearchParams({...searchParams, tutorial: 9});
+      }, 3000);
     }
   }, [searchParams]);
 
@@ -150,7 +154,9 @@ function SubjectTimer({
             timerDispRef.current = targetElement;
 
 
+            const searchParams = new URLSearchParams(window.location.search);
             const tutorial = searchParams.get("tutorial");
+            console.log(tutorial, 'gd')
             if (tutorial && parseInt(tutorial) === 7) {
               setSearchParams({...searchParams, tutorial: 8})
             }

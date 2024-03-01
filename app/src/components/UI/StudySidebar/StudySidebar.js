@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import styles from "./StudySidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -43,15 +43,45 @@ function StudySidebar({
   isToolModal
 }) {
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [tutorial, setTutorial] = useState(null);
+  const toHomeBtnRef = useRef(null);
+
+  useEffect(() => {
+    if (!searchParams) return;
+
+    const tutorial = searchParams.get("tutorial");
+    if (tutorial && parseInt(tutorial) === 9) {
+      setTutorial(9);
+      const hole = document.getElementById("tutorialHole");
+      const text = document.getElementById("tutorialText");
+
+      setTimeout(() => {
+        const { width, top, left, height, bottom } = toHomeBtnRef.current.getBoundingClientRect();
+        hole.style.left = left + 'px';
+        hole.style.top = top  + 'px';
+        hole.style.width = width + 'px';
+        hole.style.height = height + 'px';
+  
+        text.style.top = top  + 'px';
+        text.style.left = left + width + 30 + 'px';
+        text.innerText = "Let's to back to dashboard!";
+      }, 500);
+    }
+  }, [searchParams]);
+
+
   return (
     <div className={styles.StudySidebar}>
       <Link
-        to="/dashboard"
+        to={tutorial ? `/dashboard?tutorial=${tutorial + 1}` : "/dashboard"}
         className={`${styles.studyTool}`}
         onClick={() => {
           bringSubjects();
           socket.emit('exitSession');
         }}
+        ref={toHomeBtnRef}
+        id="tutorial-9"
       >
         <i style={{ fontSize: '1.4375rem' }}>
           <FontAwesomeIcon icon={faHome} />
