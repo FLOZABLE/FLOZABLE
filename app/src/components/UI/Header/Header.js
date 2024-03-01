@@ -63,7 +63,7 @@ function Header({
 
       text.style.top = top + height + 30 + 'px';
       text.style.right = 30 + 'px';
-      text.innerText = "Click this button to start study session!";
+      text.innerText = "Click here to start a study session!";
     }
   }, [searchParams]);
 

@@ -65,7 +65,7 @@ function StudySidebar({
   
         text.style.top = top  + 'px';
         text.style.left = left + width + 30 + 'px';
-        text.innerText = "Let's to back to dashboard!";
+        text.innerText = "Let's go back to the dashboard!";
       }, 500);
     }
   }, [searchParams]);

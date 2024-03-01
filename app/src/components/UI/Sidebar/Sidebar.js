@@ -52,7 +52,7 @@ function Sidebar({
   
         text.style.top = top + height + 30 + 'px';
         text.style.left = left - 20 + 'px';
-        text.innerText = "Let's go to stats page!";
+        text.innerText = "Navigate to your stats with the sidebar";
       }, 500);
     } /* else if (tutorial === "12") {
       setTutorial(12);

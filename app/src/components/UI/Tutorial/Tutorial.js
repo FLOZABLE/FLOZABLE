@@ -76,11 +76,11 @@ function Tutorial({ setResponse }) {
           className={styles.end}
         >
           <p>
-            You are done with tutorial!
+            All done!
           </p>
           <div className={styles.blobWrapper}>
             <BlobBtn
-              name={"Join Groups to study with others!"}
+              name={"View Rooms for Group-Studying"}
               setClicked={() => {
                 navigate("/dashboard/groups")
               }}
