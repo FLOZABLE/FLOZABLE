@@ -34,7 +34,7 @@ function Study(props) {
     setResponse,
   } = props;
 
-  const [isTimerModal, setIsTimerModal] = useState(false);
+  const [isTimerModal, setIsTimerModal] = useState(true);
   const [isPlaylistModal, setIsPlaylistModal] = useState(false);
   const [isMicModal, setIsMicModal] = useState(false);
   const [isCamModal, setIsCamModal] = useState(false);

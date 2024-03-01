@@ -1,12 +1,16 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "./ItemTypes.js";
 import styles from "./StudyToolWrapper.module.css";
 
-function StudyTool({ id, element, index, moveCard }) {
+function StudyTool({ id, element, index, moveCard, clicked, setClicked = () => { }, onClick = () => { }, text1, text2, icon1, icon2 }) {
   const [isClicked, setIsClicked] = useState(false);
 
   const ref = useRef(null);
+
+  useEffect(() => {
+    console.log('clicked', clicked)
+  }, [clicked])
   const [{ handlerId }, drop] = useDrop({
     accept: ItemTypes.CARD,
     collect(monitor) {
@@ -67,15 +71,22 @@ function StudyTool({ id, element, index, moveCard }) {
     <div
       ref={ref}
       data-handler-id={handlerId}
-      style={{ opacity: isDragging ? 0 : 1 , zIndex: 100 - index}}
-      className={`${styles.studyToolWrapper} ${
-        isClicked ? styles.clicked : ""
-      }`}
+      style={{ opacity: isDragging ? 0 : 1, zIndex: 100 - index }}
+      className={`${styles.StudyToolWrapper} ${clicked ? styles.clicked : ""
+        }`}
       onClick={() => {
         setIsClicked(!isClicked);
+        setClicked(prev => !prev)
+        onClick();
       }}
     >
-      {element}
+      <i>
+        {icon1}
+      </i>
+      <div className={styles.hoverEl}>
+        {clicked ? text1 : text2}
+      </div>
+      {/* {element} */}
     </div>
   );
 }
