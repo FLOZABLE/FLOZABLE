@@ -350,7 +350,10 @@ function EventModal({
                   name={"Add Subject"}
                   setClicked={() => {
                     setIsAddSubjectModal(true);
-                    setSearchParams({...searchParams, tutorial: 4})
+                    const tutorial = searchParams.get("tutorial");
+                    if (tutorial === "3") {
+                      setSearchParams({...searchParams, tutorial: 4})
+                    }
                   }}
                   delay={-1}
                   id="tutorial-3"
