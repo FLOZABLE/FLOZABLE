@@ -28,7 +28,9 @@ function EventModal({
   setEvents,
   setResponse,
   planModal,
-  setPlanModal
+  setPlanModal,
+  tutorialBoxRef,
+  tutorialTextRef,
 }) {
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -49,30 +51,28 @@ function EventModal({
           return;
         }
 
-        setPlanModal(prev => ({...prev, 
-        title: 'example',
-        description: 'example'
+        setPlanModal(prev => ({
+          ...prev,
+          title: 'example',
+          description: 'example'
         }))
 
-        const hole = document.getElementById("tutorialHole");
-        const text = document.getElementById("tutorialText");
-
         const { width, top, left, height, bottom } = eventModalRef.current.getBoundingClientRect();
-        hole.style.left = left - 25 + 'px';
-        hole.style.top = top - 25 + 'px';
-        hole.style.width = width + 50 + 'px';
-        hole.style.height = height + 50 + 'px';
+        tutorialBoxRef.current.style.left = left - 25 + 'px';
+        tutorialBoxRef.current.style.top = top - 25 + 'px';
+        tutorialBoxRef.current.style.width = width + 50 + 'px';
+        tutorialBoxRef.current.style.height = height + 50 + 'px';
 
-        text.style.top = top + height - 700 + 'px';
-        text.style.left = left - 25 + 'px';
-        text.innerText = "Enter the event information!";
+        tutorialTextRef.current.style.top = top + height - 700 + 'px';
+        tutorialTextRef.current.style.left = left - 25 + 'px';
+        tutorialTextRef.current.innerText = "Enter the event information!";
 
         setTimeout(() => {
-          setSearchParams({...searchParams, tutorial: 3})
+          setSearchParams({ ...searchParams, tutorial: 3 })
         }, 5000);
       }, 500);
       /* hole.style.height = top + 'px'; */
-    } else if (tutorial  && parseInt(tutorial) === 3) {
+    } else if (tutorial && parseInt(tutorial) === 3) {
       setTimeout(() => {
         if (!planModal.opened) {
           searchParams.delete('tutorial');
@@ -80,32 +80,27 @@ function EventModal({
           return;
         }
 
-        const hole = document.getElementById("tutorialHole");
-        const text = document.getElementById("tutorialText");
-
         const { width, top, left, height } = addSubjectRef.current.getBoundingClientRect();
-        hole.style.left = left - 10 + 'px';
-        hole.style.top = top - 9 + 'px';
-        hole.style.width = width + 10 + 'px';
-        hole.style.height = height + 20 + 'px';
+        tutorialBoxRef.current.style.left = left - 10 + 'px';
+        tutorialBoxRef.current.style.top = top - 9 + 'px';
+        tutorialBoxRef.current.style.width = width + 10 + 'px';
+        tutorialBoxRef.currentole.style.height = height + 20 + 'px';
 
-        text.style.top = top + height + 20 + 'px';
-        text.style.left = left - 10 + 'px';
-        text.innerText = "Add a subject!";
+        tutorialTextRef.current.style.top = top + height + 20 + 'px';
+        tutorialTextRef.current.style.left = left - 10 + 'px';
+        tutorialTextRef.current.innerText = "Add a subject!";
       }, 500);
-    } else if (tutorial  && parseInt(tutorial) === 5) {
-      const hole = document.getElementById("tutorialHole");
-      const text = document.getElementById("tutorialText");
+    } else if (tutorial && parseInt(tutorial) === 5) {
 
       const { width, top, left, height } = submitRef.current.getBoundingClientRect();
-      hole.style.left = left + 159 + 'px';
-      hole.style.top = top -10 + 'px';
-      hole.style.width = width - 330 + 'px';
-      hole.style.height = height + 20 + 'px';
+      tutorialBoxRef.current.style.left = left + 159 + 'px';
+      tutorialBoxRef.current.style.top = top - 10 + 'px';
+      tutorialBoxRef.current.style.width = width - 330 + 'px';
+      tutorialBoxRef.current.style.height = height + 20 + 'px';
 
-      text.style.top = top + height + 30 + 'px';
-      text.style.left = left + 150 + 'px';
-      text.innerText = "Save the plan!";
+      tutorialTextRef.current.style.top = top + height + 30 + 'px';
+      tutorialTextRef.current.style.left = left + 150 + 'px';
+      tutorialTextRef.current.innerText = "Save the plan!";
     }
   }, [searchParams]);
 
@@ -138,7 +133,7 @@ function EventModal({
             setEvents(updatedEvents);
           }
           setPlanModal(prev => ({ ...prev, opened: false, id: null }));
-          setSearchParams(prev => ({...prev, tutorial: 6}));
+          setSearchParams(prev => ({ ...prev, tutorial: 6 }));
         }
       })
       .catch((error) => console.error(error));
@@ -353,7 +348,7 @@ function EventModal({
                     setIsAddSubjectModal(true);
                     const tutorial = searchParams.get("tutorial");
                     if (tutorial === "3") {
-                      setSearchParams({...searchParams, tutorial: 4})
+                      setSearchParams({ ...searchParams, tutorial: 4 })
                     }
                   }}
                   delay={-1}

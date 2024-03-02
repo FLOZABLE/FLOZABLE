@@ -40,7 +40,9 @@ function StudySidebar({
   isHeadphone,
   setIsHeadphone,
   setIsToolModal,
-  isToolModal
+  isToolModal,
+  tutorialBoxRef,
+  tutorialTextRef,
 }) {
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -53,19 +55,17 @@ function StudySidebar({
     const tutorial = searchParams.get("tutorial");
     if (tutorial && parseInt(tutorial) === 9) {
       setTutorial(9);
-      const hole = document.getElementById("tutorialHole");
-      const text = document.getElementById("tutorialText");
 
       setTimeout(() => {
         const { width, top, left, height, bottom } = toHomeBtnRef.current.getBoundingClientRect();
-        hole.style.left = left + 'px';
-        hole.style.top = top  + 'px';
-        hole.style.width = width + 'px';
-        hole.style.height = height + 'px';
+        tutorialBoxRef.current.style.left = left + 'px';
+        tutorialBoxRef.current.style.top = top  + 'px';
+        tutorialBoxRef.current.style.width = width + 'px';
+        tutorialBoxRef.current.style.height = height + 'px';
   
-        text.style.top = top  + 'px';
-        text.style.left = left + width + 30 + 'px';
-        text.innerText = "Let's go back to the dashboard!";
+        tutorialTextRef.current.style.top = top  + 'px';
+        tutorialTextRef.current.style.left = left + width + 30 + 'px';
+        tutorialTextRef.current.innerText = "Let's go back to the dashboard!";
       }, 500);
     }
   }, [searchParams]);

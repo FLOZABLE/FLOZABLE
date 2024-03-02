@@ -26,7 +26,8 @@ function GroupsGen({
   userInfo,
   queryTags,
   myGroups,
-  groupsViewerRef
+  groupsViewerRef,
+  setResponse,
 }) {
   const [otherGroupsEl, setOtherGroupsEl] = useState(null);
   const [maxGroups, setMaxGroups] = useState(-1);
@@ -100,7 +101,7 @@ function GroupsGen({
         };
 
         return (
-          <GroupContainer key={i} isSearched={isSearched} joinGroup={joinGroup} groupInfo={group} userInfo={userInfo} myGroups={myGroups} />
+          <GroupContainer key={i} isSearched={isSearched} joinGroup={joinGroup} groupInfo={group} userInfo={userInfo} myGroups={myGroups} setResponse={setResponse}/>
         );
       }),
     );

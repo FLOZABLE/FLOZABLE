@@ -32,6 +32,8 @@ function Study(props) {
     bringSubjects,
     setIsChatModal,
     setResponse,
+    tutorialBoxRef,
+    tutorialTextRef,
   } = props;
 
   const [isTimerModal, setIsTimerModal] = useState(true);
@@ -146,6 +148,8 @@ function Study(props) {
             setIsAddSubjectModal={setIsAddSubjectModal}
             isAddSubjectModal={isAddSubjectModal}
             setMyTimerTotal={setMyTimerTotal}
+            tutorialBoxRef={tutorialBoxRef}
+            tutorialTextRef={tutorialTextRef}
           />
         }
       />
@@ -210,6 +214,8 @@ function Study(props) {
         bringSubjects={bringSubjects}
         isToolModal={isToolModal}
         setIsToolModal={setIsToolModal}
+        tutorialBoxRef={tutorialBoxRef}
+        tutorialTextRef={tutorialTextRef}
       />
       <div
         className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? "sidebarOpen" : ""

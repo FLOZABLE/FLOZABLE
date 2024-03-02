@@ -19,6 +19,8 @@ function SubjectTimer({
   reset,
   subject,
   setSubject,
+  tutorialBoxRef,
+  tutorialTextRef,
 }) {
   const timerDispRef = useRef(null);
 
@@ -41,49 +43,43 @@ function SubjectTimer({
     if (!tutorial) return;
 
     if (parseInt(tutorial) === 6) {
-      const hole = document.getElementById("tutorialHole");
-      const text = document.getElementById("tutorialText");
 
       setTimeout(() => {
         const { width, top, left, height, bottom } = chooseSubjectRef.current.getBoundingClientRect();
-        hole.style.left = left + 'px';
-        hole.style.top = top + 'px';
-        hole.style.width = width + 'px';
+        tutorialBoxRef.current.style.left = left + 'px';
+        tutorialBoxRef.current.style.top = top + 'px';
+        tutorialBoxRef.current.style.width = width + 'px';
 
-        text.style.top = top + 'px';
-        text.style.left = left + width + 50 + 'px';
-        text.innerText = "Select a subject to study";
+        tutorialTextRef.current.style.top = top + 'px';
+        tutorialTextRef.current.style.left = left + width + 50 + 'px';
+        tutorialTextRef.current.innerText = "Select a subject to study";
       }, 500);
     } else if (parseInt(tutorial) === 7) {
       setClicked(true);
-      const hole = document.getElementById("tutorialHole");
-      const text = document.getElementById("tutorialText");
 
       setTimeout(() => {
         const { width, top, left, height, bottom } = subjectOptionsRef.current.getBoundingClientRect();
-        hole.style.left = left + 'px';
-        hole.style.top = top + 'px';
-        hole.style.width = width + 'px';
-        hole.style.height = height + 'px';
+        tutorialBoxRef.current.style.left = left + 'px';
+        tutorialBoxRef.current.style.top = top + 'px';
+        tutorialBoxRef.current.style.width = width + 'px';
+        tutorialBoxRef.current.style.height = height + 'px';
 
-        text.style.top = top + 'px';
-        text.style.left = left + width + 50 + 'px';
-        text.innerText = "You will see your subjects here";
+        tutorialTextRef.current.style.top = top + 'px';
+        tutorialTextRef.current.style.left = left + width + 50 + 'px';
+        tutorialTextRef.current.innerText = "You will see your subjects here";
       }, 500);
     } else if (parseInt(tutorial) === 8) {
-      const hole = document.getElementById("tutorialHole");
-      const text = document.getElementById("tutorialText");
 
       setTimeout(() => {
         const { width, top, left, height, bottom } = startSubjectRef.current.getBoundingClientRect();
-        hole.style.left = left + 'px';
-        hole.style.top = top + 'px';
-        hole.style.width = width + 'px';
-        hole.style.height = height + 'px';
+        tutorialBoxRef.current.style.left = left + 'px';
+        tutorialBoxRef.current.style.top = top + 'px';
+        tutorialBoxRef.current.style.width = width + 'px';
+        tutorialBoxRef.current.style.height = height + 'px';
 
-        text.style.top = top + 'px';
-        text.style.left = left + width + 50 + 'px';
-        text.innerText = "Click to start/stop the timer!";
+        tutorialTextRef.current.style.top = top + 'px';
+        tutorialTextRef.current.style.left = left + width + 50 + 'px';
+        tutorialTextRef.current.innerText = "Click to start/stop the timer!";
       }, 500);
 
       setTimeout(() => {

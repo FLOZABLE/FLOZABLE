@@ -17,6 +17,8 @@ function AddSubjectModal({
   setAddSubjectResponse,
   subjects,
   setSubjects,
+  tutorialBoxRef,
+  tutorialTextRef,
 }) {
   const [name, setName] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
@@ -32,19 +34,17 @@ function AddSubjectModal({
 
     const tutorial = searchParams.get("tutorial");
     if (tutorial && parseInt(tutorial) === 4) {
-      const hole = document.getElementById("tutorialHole");
-      const text = document.getElementById("tutorialText");
 
       setTimeout(() => {
         const { width, top, left, height, bottom } = addSubjectModalRef.current.getBoundingClientRect();
-        hole.style.left = left + 'px';
-        hole.style.top = top - 25 + 'px';
-        hole.style.width = 0;
-        hole.style.height = height + 'px';
+        tutorialBoxRef.current.style.left = left + 'px';
+        tutorialBoxRef.current.style.top = top - 25 + 'px';
+        tutorialBoxRef.current.style.width = 0;
+        tutorialBoxRef.current.style.height = height + 'px';
   
-        text.style.top = top - 50 + 'px';
-        text.style.left = left + 'px';
-        text.innerText = "Enter the subject details!";
+        tutorialTextRef.current.style.top = top - 50 + 'px';
+        tutorialTextRef.current.style.left = left + 'px';
+        tutorialTextRef.current.innerText = "Enter the subject details!";
       }, 500);
     }
   }, [searchParams]);

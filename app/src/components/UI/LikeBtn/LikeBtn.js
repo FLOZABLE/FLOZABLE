@@ -3,11 +3,10 @@ import styles from "./LikeBtn.module.css";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-const LikeBtn = ({id, liked, url=`${serverOrigin}/groups/like/${id}`}) => {
+const LikeBtn = ({id, liked, setResponse, url=`${serverOrigin}/groups/like/${id}`}) => {
   const [likedBtn, setLikedBtn] = useState(false);
 
   const handleLike = () => {
-    setLikedBtn(!likedBtn);
     fetch(url, {
       method: "post",
       headers: {
@@ -16,7 +15,14 @@ const LikeBtn = ({id, liked, url=`${serverOrigin}/groups/like/${id}`}) => {
     body: JSON.stringify({ liked: !likedBtn }),
     })
       .then((response) => response.json())
-      .then(() => {})
+      .then((data) => {
+        if (!data.success){
+          setResponse(data);
+        }
+        else{
+          setLikedBtn(!likedBtn);
+        }
+      })
       .catch((error) => console.error(error));
   };
 

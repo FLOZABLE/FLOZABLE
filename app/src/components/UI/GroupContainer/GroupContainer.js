@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, myGroups, viewOnly = false }) {
+function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, myGroups, setResponse, viewOnly = false }) {
   const [groupEl, setGroupEl] = useState(null);
 
   useEffect(() => {
@@ -95,7 +95,7 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, myGroups, 
             Join
           </button> : null}
           <div className={styles.likeBtnWrapper}>
-            <LikeBtn liked={groupInfo?.likes .includes(userInfo.user_id)} id={group_id} />
+            <LikeBtn liked={groupInfo?.likes .includes(userInfo.user_id)} id={group_id} setResponse={setResponse}/>
           </div>
         </div>
       </div>

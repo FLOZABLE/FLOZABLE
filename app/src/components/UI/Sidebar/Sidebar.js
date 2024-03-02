@@ -22,6 +22,8 @@ function Sidebar({
   isSidebarHovered,
   isSidebarOpen,
   mode,
+  tutorialBoxRef,
+  tutorialTextRef,
 }) {
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,21 +40,18 @@ function Sidebar({
       return;
     };
 
-    const hole = document.getElementById("tutorialHole");
-    const text = document.getElementById("tutorialText");
-
     if (parseInt(tutorial) === 10) {
       setTutorial(10);
       setTimeout(() => {
         const { width, top, left, height, bottom } = toStatsRef.current.getBoundingClientRect();
-        hole.style.left = left - 20 + 'px';
-        hole.style.top = top - 20 + 'px';
-        hole.style.width = width + 40 + 'px';
-        hole.style.height = height + 40 + 'px';
+        tutorialBoxRef.current.style.left = left - 20 + 'px';
+        tutorialBoxRef.current.style.top = top - 20 + 'px';
+        tutorialBoxRef.current.style.width = width + 40 + 'px';
+        tutorialBoxRef.current.style.height = height + 40 + 'px';
   
-        text.style.top = top + height + 30 + 'px';
-        text.style.left = left - 20 + 'px';
-        text.innerText = "Navigate to your stats with the sidebar";
+        tutorialTextRef.current.style.top = top + height + 30 + 'px';
+        tutorialTextRef.current.style.left = left - 20 + 'px';
+        tutorialTextRef.current.innerText = "Navigate to your stats with the sidebar";
       }, 500);
     } /* else if (tutorial === "12") {
       setTutorial(12);

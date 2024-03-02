@@ -34,6 +34,8 @@ function Header({
   totalNewMsg,
   setIsNotificationModal,
   notifications,
+  tutorialBoxRef,
+  tutorialTextRef,
 }) {
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
@@ -52,18 +54,16 @@ function Header({
     const tutorial = searchParams.get("tutorial");
     if (tutorial && parseInt(tutorial) === 6) {
       setTutorial(tutorial);
-      const hole = document.getElementById("tutorialHole");
-      const text = document.getElementById("tutorialText");
 
       const { width, top, left, height, right } = studyBtnRef.current.getBoundingClientRect();
-      hole.style.left = left - 10 + 'px';
-      hole.style.top = top- 10 + 'px';
-      hole.style.width = width + 20 + 'px';
-      hole.style.height = height + 20 + 'px';
+      tutorialBoxRef.current.style.left = left - 10 + 'px';
+      tutorialBoxRef.current.style.top = top- 10 + 'px';
+      tutorialBoxRef.current.style.width = width + 20 + 'px';
+      tutorialBoxRef.current.style.height = height + 20 + 'px';
 
-      text.style.top = top + height + 30 + 'px';
-      text.style.right = 30 + 'px';
-      text.innerText = "Click here to start a study session!";
+      tutorialTextRef.current.style.top = top + height + 30 + 'px';
+      tutorialTextRef.current.style.right = 30 + 'px';
+      tutorialTextRef.current.innerText = "Click here to start a study session!";
     }
   }, [searchParams]);
 

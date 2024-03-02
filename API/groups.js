@@ -315,6 +315,10 @@ Router.post('/like/:id', async (req, res) => {
         [userId, `%,${userId},%`, `${userId},%`, `%,${userId}`, userId, userId, groupId]
       ); */
       if (liked) {
+        const [[{ verified }]] = await connection.query(`SELECT verified FROM users WHERE user_id = ?`, [userId]);
+        if (!verified) {
+          return res.send({ success: false, reason: "Please verify your email" });
+        }
         const [{ changedRows }] = await connection.query(
           `UPDATE \`groups\` 
           SET likes = CASE 
