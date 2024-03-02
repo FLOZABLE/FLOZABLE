@@ -75,13 +75,12 @@ function Sidebar({
         </a>
       </div>
       <div className={styles.sidebarContainer}>
-      <div>
         <div>
            <Link
              className={styles.sidebarEl}
              to={"/dashboard"}
            >
-              <div className={styles.hoverField}>
+              <div className={styles.hoverField}> 
                 <h4>Dashboard</h4>
               </div>
              <i>
@@ -177,7 +176,6 @@ function Sidebar({
             {/* <h1>Themes</h1> */}
           </Link>
         </div>
-      </div>
     </div>
     </aside>
   );
