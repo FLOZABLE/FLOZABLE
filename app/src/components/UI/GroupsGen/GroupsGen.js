@@ -25,7 +25,6 @@ function GroupsGen({
   groups,
   userInfo,
   queryTags,
-  type = 0,
   myGroups,
   groupsViewerRef
 }) {
@@ -101,11 +100,11 @@ function GroupsGen({
         };
 
         return (
-          <GroupContainer key={i} isSearched={isSearched} joinGroup={joinGroup} groupInfo={group} userInfo={userInfo} type={type} myGroups={myGroups} />
+          <GroupContainer key={i} isSearched={isSearched} joinGroup={joinGroup} groupInfo={group} userInfo={userInfo} myGroups={myGroups} />
         );
       }),
     );
-  }, [queryTags, searchQuery, groups, maxGroups, userInfo, type, myGroups]);
+  }, [queryTags, searchQuery, groups, maxGroups, userInfo, myGroups]);
 
   return (
     <div className={styles.GroupsContainer}>

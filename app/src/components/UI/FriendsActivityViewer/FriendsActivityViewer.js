@@ -2,9 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "./FriendsActivityViewer.module.css";
 import CountryViewer from "../CountryViewer/CountryViewer";
-import DmBtn from "../DmBtn/DmBtn";
-import ChallengeBtn from "../ChallengeBtn/ChallengeBtn";
-import MemberTimer from "../MemberTimer/MemberTimer";
 import UserSubjectViewer from "../UserSubjectViewer/UserSubjectViewer";
 import { DateTime } from "luxon";
 import UserGroupViewer from "../UserGroupViewer/UserGroupViewer";
@@ -14,8 +11,7 @@ import { faCaretRight } from "@fortawesome/free-solid-svg-icons";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 //mode 0 is for friends page's component, mode 1 is for main page's component
-function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode = 1, setCount, searchQuery, myGroups, setMyGroups, setOtherGroups }) {
-  const [friendsEl, setFriendsEl] = useState([]);
+function FriendsActivityViewer({ userInfo }) {
   const [friends, setFriends] = useState([]);
 
   useEffect(() => {
@@ -29,7 +25,6 @@ function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode = 1,
       .then((data) => {
         if (data.success) {
           setFriends(data.friendsInfo);
-          setCount(data.friendsInfo.length)
         };
       })
       .catch((error) => console.error(error));
@@ -39,7 +34,7 @@ function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode = 1,
     <div className={styles.FriendsActivityViewer}>
       {
         friends.map((friend, i) => {
-          const { user_id, timezone, name, totalTime, activeSubject } = friend;
+          const { timezone, name, totalTime, activeSubject } = friend;
           console.log('friend', friend)
 
           let liveTotal = parseInt(totalTime);
@@ -71,29 +66,12 @@ function FriendsActivityViewer({ setResponse, userInfo, setJoinTarget, mode = 1,
                 <FontAwesomeIcon icon={faCaretRight} />
               </i>
               <div className={styles.activeInfo}>
-                {/* {
-                  id ?
-                    <div>
-                      <div>
-                        Studying <strong>sdfsdf</strong> for 0:00:00
-                      </div>
-                      <div>
-                        since 12:00 am
-                      </div>
-                    </div> :
-                  null
-                } */}
                 <UserSubjectViewer
                   userInfo={friend}
                 />
                 <UserGroupViewer
                   userInfo={friend}
                   myInfo={userInfo}
-                  setResponse={setResponse}
-                  setJoinTarget={setJoinTarget}
-                  myGroups={myGroups}
-                  setMyGroups={setMyGroups}
-                  setOtherGroups={setOtherGroups}
                 />
               </div>
             </div>
