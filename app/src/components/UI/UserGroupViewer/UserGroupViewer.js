@@ -2,25 +2,20 @@ import styles from "./UserGroupViewer.module.css";
 import { socket } from "../../../socket";
 import React, { useEffect, useState } from "react";
 import GroupsGen from "../GroupsGen/GroupsGen";
+import GroupViewer from "../GroupViewer/GroupViewer";
 
 function UserGroupViewer({
   userInfo,
-  setResponse,
   myInfo,
-  setJoinTarget,
-  myGroups,
-  setMyGroups,
-  setOtherGroups,
-  setIsGroupPwModal,
 }) {
   const [groupName, setGroupName] = useState("");
-  const [activeGroup, setActiveGroup] = useState([]);
+  const [activeGroup, setActiveGroup] = useState(null);
 
   useEffect(() => {
     if (!userInfo) return;
     const { ActiveGroup } = userInfo;
     if (ActiveGroup) {
-      setActiveGroup([ActiveGroup]);
+      setActiveGroup(ActiveGroup);
       setGroupName(
         ActiveGroup.name
       );
@@ -31,11 +26,11 @@ function UserGroupViewer({
     if (!userInfo) return;
 
     const onDeActiveGroup = () => {
-      setActiveGroup([]);
+      setActiveGroup(null);
       setGroupName("");
     };
 
-    const onActiveGroup = ({groupInfo, time}) => {
+    const onActiveGroup = ({ groupInfo, time }) => {
       setActiveGroup([groupInfo]);
       setGroupName(groupInfo.name);
     };
@@ -50,23 +45,19 @@ function UserGroupViewer({
   }, [userInfo]);
 
   return (
-    <div className={`${styles.UserGroupViewer} ${activeGroup.length ? styles.visible : ''}`}>
+    <div className={`${styles.UserGroupViewer} ${activeGroup ? styles.visible : ''}`}>
       <p>
-      inside <strong>{groupName}</strong>
+        inside <strong>{groupName}</strong>
       </p>
       <div className={styles.hoverEl}>
-        <GroupsGen
-          groups={activeGroup}
-          myGroups={myGroups}
-          setMyGroups={setMyGroups}
-          setOtherGroups={setOtherGroups}
-          setJoinGroupResponse={setResponse}
-          setIsGroupPwModal={setIsGroupPwModal}
-          setJoinTarget={setJoinTarget}
-          userInfo={myInfo}
-          queryTags={[]}
-          type={1}
-        />
+        {activeGroup ?
+          <GroupViewer
+            groupInfo={activeGroup}
+            userInfo={myInfo}
+          />
+          :
+          null
+        }
       </div>
     </div>
   );

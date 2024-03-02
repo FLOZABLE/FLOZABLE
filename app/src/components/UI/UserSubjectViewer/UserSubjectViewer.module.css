@@ -1,7 +1,3 @@
 .UserSubjectViewer {
-  display: none;
-}
-
-.UserSubjectViewer.open {
   display: flex;
 }
