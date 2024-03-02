@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, myGroups, viewOnly = false }) {
+function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, myGroups, viewOnly = false }) {
   const [groupEl, setGroupEl] = useState(null);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
 
     let joined = false;
     if (!viewOnly) {
-      if (myGroups && type && (myGroups.find(group => group.group_id === group_id) || userInfo.groups.includes(group_id))) {
+      if (myGroups && (myGroups.find(group => group.group_id === group_id) || userInfo.groups.includes(group_id))) {
         joined = true;
       }
     }
@@ -95,12 +95,12 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, type = 0, 
             Join
           </button> : null}
           <div className={styles.likeBtnWrapper}>
-            <LikeBtn liked={liked} id={group_id} />
+            <LikeBtn liked={groupInfo?.likes .includes(userInfo.user_id)} id={group_id} />
           </div>
         </div>
       </div>
     );
-  }, [groupInfo, isSearched, userInfo, type, myGroups]);
+  }, [groupInfo, isSearched, userInfo, myGroups]);
 
   return groupEl;
 };

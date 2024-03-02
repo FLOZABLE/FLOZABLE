@@ -3,6 +3,7 @@
   opacity: 0;
   visibility: hidden;
   transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
+  z-index: 2;
 }
 
 .UserGroupViewer.visible {

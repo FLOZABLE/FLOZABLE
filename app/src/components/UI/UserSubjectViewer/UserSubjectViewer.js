@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 
 function UserSubjectViewer({ userInfo }) {
   const [isStudying, setIsStudying] = useState(false);
-  const [subjectName, setSubjectName] = useState("");
+  const [subjectName, setSubjectName] = useState("Offline");
   const [subjectTotal, setSubjectTotal] = useState(0);
   const [subjectStart, setSubjectStart] = useState("");
 
@@ -42,7 +42,7 @@ function UserSubjectViewer({ userInfo }) {
         setSubjectStart("");
         return;
       };
-      
+
       //rest
       setSubjectTotal(Math.random());
       setSubjectName(`Taking break`);
@@ -61,14 +61,18 @@ function UserSubjectViewer({ userInfo }) {
 
   return (
     <div
-      className={`${styles.UserSubjectViewer} ${isStudying ? styles.open : ""}`}
+      className={styles.UserSubjectViewer}
     >
       <p>{subjectName}</p>
       {subjectStart}
-      <MemberTimer
-        initialSec={subjectTotal}
-        run={isStudying}
-      />
+      {isStudying ?
+        <MemberTimer
+          initialSec={subjectTotal}
+          run={isStudying}
+        />
+        :
+        null
+      }
     </div>
   );
 }

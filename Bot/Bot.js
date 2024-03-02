@@ -425,7 +425,7 @@ async function stopBot(userId) {
     subject.timeline_sum += duration;
     redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
     const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${id}`));
-    redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
+    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
     if (activity) {
       const start = activity[0];
       redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${duration}]`);

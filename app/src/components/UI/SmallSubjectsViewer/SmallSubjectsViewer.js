@@ -1,6 +1,4 @@
 import styles from "./SmallSubjectsViewer.module.css";
-import ChartDataLabel from "chartjs-plugin-datalabels";
-import plugin from "chartjs-plugin-datalabels";
 import { coldColorsList, colorsList, warmColorsList } from "../../../constant";
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
