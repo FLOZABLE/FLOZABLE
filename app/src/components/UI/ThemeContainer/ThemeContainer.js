@@ -81,7 +81,7 @@ function ThemeContainer({
             />
           </div>
           <div>
-            <LikeBtn liked={liked} id={theme?.id}
+            <LikeBtn liked={liked} id={theme?.id} setResponse={setResponse}
               url={`${serverOrigin}/themes/like/${theme?.id}`}
             />
           </div>

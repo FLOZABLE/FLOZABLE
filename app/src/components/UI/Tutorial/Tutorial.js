@@ -8,7 +8,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import BlobBtn from "../BlobBtn/BlobBtn";
 
-function Tutorial({ setResponse }) {
+function Tutorial({ setResponse, tutorialBoxRef, tutorialTextRef, }) {
   const location = useLocation();
   const [tutorial, setTutorial] = useState(null);
   const navigate = useNavigate();
@@ -91,9 +91,9 @@ function Tutorial({ setResponse }) {
         </div>
         : (
           <>
-            <div className={styles.hole} id="tutorialHole">
+            <div className={styles.hole} id="tutorialHole" ref={tutorialBoxRef}>
             </div>
-            <div className={styles.text} id="tutorialText">
+            <div className={styles.text} id="tutorialText" ref={tutorialTextRef}>
 
             </div>
           </>

@@ -31,7 +31,9 @@ function PlanTimeline({
   setPlanModal,
   mode,
   setPlans,
-  maxHeight = "18.75rem"
+  maxHeight = "18.75rem",
+  tutorialBoxRef,
+  tutorialTextRef,
 }) {
   const [planSeries, setPlanSeries] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
@@ -131,26 +133,24 @@ function PlanTimeline({
     const tutorial = searchParams.get("tutorial");
     if (tutorial && parseInt(tutorial) === 1) {
       setIsTutorial(true);
-      const hole =  document.getElementById("tutorialHole");
-      const text = document.getElementById("tutorialText");
 
       setTimeout(() => {
-        const {width, top, left, height} = addBtnRef.current.getBoundingClientRect();
-      hole.style.left = left -20 + 'px';
-      hole.style.top =  top - 18 + 'px';
-      hole.style.width = width + 40 + 'px';
-      hole.style.height =  height + 40 + 'px';
+        const { width, top, left, height } = addBtnRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left - 20 + 'px';
+        tutorialBoxRef.current.style.top = top - 18 + 'px';
+        tutorialBoxRef.current.style.width = width + 40 + 'px';
+        tutorialBoxRef.current.style.height = height + 40 + 'px';
 
-      text.textContent = "First, add an event to your planner!";
-      text.style.left = left - 15 + 'px';
-      text.style.top = top + 80 + 'px'
+        tutorialTextRef.current.textContent = "First, add an event to your planner!";
+        tutorialTextRef.current.style.left = left - 15 + 'px';
+        tutorialTextRef.current.style.top = top + 80 + 'px'
 
       }, 1000);
       /* hole.style.height = top + 'px'; */
     };
   }, [searchParams]);
 
-  
+
   return (
     <div
       className={`hiddenScroll ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ""
@@ -175,22 +175,23 @@ function PlanTimeline({
         : null
       }
       <div id={styles.addBtnWrapper} ref={addBtnRef}>
-      <BlobBtn
-        name={"Add a New Plan"}
-        setClicked={() => { setPlanModal((prev) => ({ ...prev, opened: true }));
-        const tutorial = searchParams.get("tutorial");
-        if (tutorial && parseInt(tutorial) === 1) {
-          setSearchParams({...searchParams, tutorial: 2})
-        }
-      }}
-        color1={"#fff"}
-        color2={"var(--blue2)"}
-        delay={-1}
-        id={"tutorial-1"}
-      />
+        <BlobBtn
+          name={"Add a New Plan"}
+          setClicked={() => {
+            setPlanModal((prev) => ({ ...prev, opened: true }));
+            const tutorial = searchParams.get("tutorial");
+            if (tutorial && parseInt(tutorial) === 1) {
+              setSearchParams({ ...searchParams, tutorial: 2 })
+            }
+          }}
+          color1={"#fff"}
+          color2={"var(--blue2)"}
+          delay={-1}
+          id={"tutorial-1"}
+        />
       </div>
       {filteredPlans.length ?
-          <ul className={`${styles.plans} hiddenScroll`} style={{ maxHeight: maxHeight }}>
+        <ul className={`${styles.plans} hiddenScroll`} style={{ maxHeight: maxHeight }}>
           {filteredPlans.map((plan, i) => {
             const planSubject = subjects.find((subject) => {
               return subject.id === plan.subject;

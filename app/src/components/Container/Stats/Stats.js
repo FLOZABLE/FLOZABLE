@@ -16,7 +16,12 @@ import StudyTrendChart from '../../UI/StudyTrendChart';
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 let rankingTrend = [];
 
-function Stats({ subjects, userInfo }) {
+function Stats({ 
+  subjects, 
+  userInfo,
+  tutorialBoxRef,
+  tutorialTextRef,
+}) {
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -38,19 +43,17 @@ function Stats({ subjects, userInfo }) {
 
     const tutorial = searchParams.get("tutorial");
     if (tutorial && parseInt(tutorial) === 11) {
-      const hole = document.getElementById("tutorialHole");
-      const text = document.getElementById("tutorialText");
 
       setTimeout(() => {
         const { width, top, left, height, bottom } = statsRef.current.getBoundingClientRect();
-        hole.style.left = left + 'px';
-        hole.style.top = top  + 'px';
-        hole.style.width = width + 'px';
-        hole.style.height = height + 'px';
+        tutorialBoxRef.current.style.left = left + 'px';
+        tutorialBoxRef.current.style.top = top  + 'px';
+        tutorialBoxRef.current.style.width = width + 'px';
+        tutorialBoxRef.current.style.height = height + 'px';
   
-        text.style.top = top - 70 + 'px';
-        text.style.left = left + 'px';
-        text.innerText = "You can analyze your study habits here!";
+        tutorialTextRef.current.style.top = top - 70 + 'px';
+        tutorialTextRef.current.style.left = left + 'px';
+        tutorialTextRef.current.innerText = "You can analyze your study habits here!";
       }, 500);
 
       setTimeout(() => {
