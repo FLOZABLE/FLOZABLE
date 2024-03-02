@@ -27,7 +27,9 @@ function Main({
   setPlanModal,
   myGroups,
   setMyGroups,
-  setOtherGroups
+  setOtherGroups,
+  tutorialBoxRef,
+  tutorialTextRef
 }) {
 
   const [joinTarget, setJoinTarget] = useState(null);
@@ -121,20 +123,20 @@ function Main({
                 </div>
                 <div className={styles.box} id={styles.rankingContainer}>
                   <div>
-                  <div className={styles.title}>
-                    <h3>Friend's Rank</h3>
-                    <i>
-                      <IconStatsChart />
-                    </i>
-                  </div>
+                    <div className={styles.title}>
+                      <h3>Friend's Rank</h3>
+                      <i>
+                        <IconStatsChart />
+                      </i>
+                    </div>
                     <div>
                       <FriendsRankingViewer friendsRanking={friendsRanking} />
                     </div>
                   </div>
                 </div>
                 <div className={styles.box} id={styles.recommendedFriends}>
-                  <RecommendedFriendsViewer 
-                  setResponse={setResponse}
+                  <RecommendedFriendsViewer
+                    setResponse={setResponse}
                   />
                 </div>
               </div>
@@ -149,6 +151,8 @@ function Main({
                   setPlans={setPlans}
                   mode={"study"}
                   setPlanModal={setPlanModal}
+                  tutorialBoxRef={tutorialBoxRef}
+                  tutorialTextRef={tutorialTextRef}
                 />
               </div>
               {/* <div className={styles.box}>

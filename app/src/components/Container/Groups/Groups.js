@@ -23,7 +23,7 @@ function Groups({
   isSidebarOpen,
   isSidebarHovered,
   bringGroups,
-  setIsChatModal
+  setIsChatModal,
 }) {
 
   const [tags, setTags] = useState([]);
@@ -160,6 +160,7 @@ function Groups({
                 userInfo={userInfo}
                 queryTags={tags}
                 groupsViewerRef={groupsViewerRef}
+                setResponse={setResponse}
               />
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Main from "./components/Container/Main/Main";
 import Stats from "./components/Container/Stats/Stats";
@@ -73,6 +73,9 @@ function App() {
     type: 'local',
     editable: true
   });
+
+  const tutorialBoxRef = useRef(null);
+  const tutorialTextRef = useRef(null);
 
   useEffect(() => {
     ReactGA.send(
@@ -245,6 +248,8 @@ function App() {
         setAddSubjectResponse={setResponse}
         subjects={subjects}
         setSubjects={setSubjects}
+        tutorialBoxRef={tutorialBoxRef}
+        tutorialTextRef={tutorialTextRef}
       />
       <ChatsModal
         setIsChatModal={setIsChatModal}
@@ -262,6 +267,8 @@ function App() {
         events={plans}
         setIsAddSubjectModal={setIsAddSubjectModal}
         setResponse={setResponse}
+        tutorialBoxRef={tutorialBoxRef}
+        tutorialTextRef={tutorialTextRef}
       />
       <AccountModal
         isOpened={isAccountModal}
@@ -285,10 +292,14 @@ function App() {
         userInfo={userInfo}
         setIsNotificationModal={setIsNotificationModal}
         notifications={notifications.filter(notification => { return notification.t >= 0 })}
+        tutorialBoxRef={tutorialBoxRef}
+        tutorialTextRef={tutorialTextRef}
       />
       <div className={`touchBlocker ${isAccountModal ? "blocked" : ""}`}></div>
       <Tutorial
         setResponse={setResponse}
+        tutorialBoxRef={tutorialBoxRef}
+        tutorialTextRef={tutorialTextRef}
       />
       <Routes>
         <Route
@@ -325,6 +336,8 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
 
               <Main
@@ -342,6 +355,8 @@ function App() {
                 setPlanModal={(planModal) => {
                   setPlanModal((prev) => ({ ...prev, opened: planModal }))
                 }}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
               {/* <Footer /> */}
             </div>
@@ -381,6 +396,8 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
 
               <Stats
@@ -391,6 +408,8 @@ function App() {
                 reset={reset}
                 subjects={subjects}
                 setResponse={setResponse}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
             </div>
           }
@@ -429,6 +448,8 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
               <Ranking
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -476,6 +497,8 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
               <Groups
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -549,6 +572,8 @@ function App() {
                 bringSubjects={bringSubjects}
                 isChatModal={isChatModal}
                 setIsChatModal={setIsChatModal}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
             </div>
           }
@@ -587,6 +612,8 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
               <Planner
                 planModal={planModal}
@@ -640,6 +667,8 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
               <Account
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -687,6 +716,8 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
               <User
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -737,6 +768,8 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
               <Challenge
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -784,6 +817,8 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
               <Friends
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -836,6 +871,8 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
               <Themes
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -881,6 +918,8 @@ function App() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 isSidebarHovered={isHovered}
+                tutorialBoxRef={tutorialBoxRef}
+                tutorialTextRef={tutorialTextRef}
               />
               <ChallengeRooms
                 setIsSidebarOpen={setIsSidebarOpen}
