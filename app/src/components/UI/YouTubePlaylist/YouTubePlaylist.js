@@ -40,7 +40,7 @@ function YouTubePlaylist({ }) {
     const shuffleVids = shuffle([...videoIds]);
     console.log(shuffleVids);
     setYoutubePlaylist(shuffleVids.join(","));
-  }, [youtubePlaylist]);
+  }, [videoIds]);
 
   function shuffle(array) {
     let currentIndex = array.length, randomIndex;
@@ -97,7 +97,7 @@ function YouTubePlaylist({ }) {
                 options={youtubePlaylists}
                 setValue={setYoutubePlaylist}
               />
-              <button onClick={randomizeVideos}>Shuffle</button>
+              <button onClick={() =>{randomizeVideos()}}>Shuffle</button>
             </div>
             :
             <div></div>
