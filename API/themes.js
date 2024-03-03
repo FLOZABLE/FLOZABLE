@@ -125,7 +125,7 @@ Router.post('/like/:id', async (req, res) => {
       if (liked) {
         const [[{ verified }]] = await connection.query(`SELECT verified FROM users WHERE user_id = ?`, [userId]);
         if (!verified) {
-          return res.send({ success: false, reason: "Please verify your email" });
+          //return res.send({ success: false, reason: "Please verify your email" });
         }
         const [update] = await connection.query(
           `UPDATE themes 
