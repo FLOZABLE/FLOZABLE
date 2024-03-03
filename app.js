@@ -202,20 +202,21 @@ require('./services/timerUpdate');
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(5);
-botManager(100);
+//botManager(100);
 //deleteBots();
 //addId();
 //createBots(200); 
 //createBotRankings();
 
 const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode } = require('./query');
-const { updateRanking } = require("./services/rankingUpdate");
+const { updateRanking, createRankings } = require("./services/rankingUpdate");
 const { extensionManager } = require("./services/extension");
 const { dailyReport } = require("./services/notification");
 const { updateUserIds, removeDupedFriends } = require("./update");
 
 //scheduler that runs every hour
 //updateRanking();
+//createRankings("America/Los_Angeles");
 cron.schedule('0 * * * *', () => {
   dailyReport(process.env.TESTER_ID);
   extensionManager();
