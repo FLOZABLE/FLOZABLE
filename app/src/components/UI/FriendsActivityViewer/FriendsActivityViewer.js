@@ -34,7 +34,7 @@ function FriendsActivityViewer({ userInfo }) {
     <div className={styles.FriendsActivityViewer}>
       {
         friends.map((friend, i) => {
-          const { timezone, name, totalTime, activeSubject } = friend;
+          const { timezone, name, totalTime, activeSubject, user_id } = friend;
           console.log('friend', friend)
 
           let liveTotal = parseInt(totalTime);
@@ -48,10 +48,11 @@ function FriendsActivityViewer({ userInfo }) {
             >
               <Link
                 className={styles.profile}
+                to={`${serverOrigin}/dashboard/user/${user_id}`}
               >
                 <div className={styles.profileImg}
                   style={{
-                    backgroundImage: `url("${serverOrigin}/profile-images/{user_id}.jpeg")`, backgroundSize: 'cover',
+                    backgroundImage: `url("${serverOrigin}/profile-images/${user_id}.jpeg")`, backgroundSize: 'cover',
                     backgroundPosition: 'center center',
                     backgroundRepeat: 'no-repeat',
                   }}

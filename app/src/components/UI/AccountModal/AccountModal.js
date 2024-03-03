@@ -9,10 +9,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import ArrowOptionBtn from "../ArrowOptionBtn/ArrowOptionBtn";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function AccountModal({ isOpened, setIsOpened, setResponse }) {
+function AccountModal({ isOpened, setIsOpened, setResponse, bringAccountInfo, bringSubjects }) {
+
+  const navigate = useNavigate();
+
   const [isLogin, setIsLogin] = useState(false);
 
   const [signUp, setSignUp] = useState({
@@ -88,6 +92,8 @@ function AccountModal({ isOpened, setIsOpened, setResponse }) {
                     setResponse(data);
                     if (data.success) {
                       setIsOpened(false);
+                      bringAccountInfo()
+                      bringSubjects();
                     }
                   });
               }}
@@ -156,7 +162,9 @@ function AccountModal({ isOpened, setIsOpened, setResponse }) {
                   .then((data) => {
                     setResponse(data);
                     if (data.success) {
-                      window.location = window.location.origin + "/dashboard";
+                      bringAccountInfo();
+                      bringSubjects();
+                      navigate('/dashboard?tutorial=1');
                     }
                   })
                   .catch((error) => console.error(error));
