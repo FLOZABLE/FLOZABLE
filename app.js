@@ -216,7 +216,9 @@ const { updateUserIds, removeDupedFriends } = require("./update");
 
 //scheduler that runs every hour
 //updateRanking();
-//createRankings("America/Los_Angeles");
+
+createRankings("America/Los_Angeles");
+
 cron.schedule('0 * * * *', () => {
   dailyReport(process.env.TESTER_ID);
   extensionManager();
