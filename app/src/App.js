@@ -105,11 +105,13 @@ function App() {
     socket.on("reset", socketResetAction);
     socket.on("studying", () => { });
     socket.on("notification", onNotification);
+    socket.on('reset', bringSubjects);
 
     return () => {
       socket.off("joinMyGroups", socketConnectAction);
       socket.off("reset", socketResetAction);
       socket.off("notification", onNotification);
+      socket.on('reset', bringSubjects);
     };
   }, []);
 
