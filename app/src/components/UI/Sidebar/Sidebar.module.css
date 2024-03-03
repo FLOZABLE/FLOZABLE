@@ -54,6 +54,7 @@
   align-items: center;
   opacity: 0.4;
   transition: .3s ease-in-out;
+  padding: 1.5rem 0.5rem;
 }
 
 .Sidebar .sidebarContainer .sidebarEl:hover {

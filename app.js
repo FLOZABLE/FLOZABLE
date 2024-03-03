@@ -29,8 +29,15 @@ if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.env.test' });
 }
 
-//const server = http.createServer(app);
-const server = https.createServer(options, app);
+let server;
+
+if (process.env.isHttps === "true") {
+  server = https.createServer(options, app);
+  console.log('https')
+} else {
+  console.log('http')
+  server = http.createServer(app);
+}
 
 const RedisStore = require('connect-redis').default;
 const redisClient = require("./model/redis");
@@ -217,7 +224,7 @@ const { updateUserIds, removeDupedFriends } = require("./update");
 //scheduler that runs every hour
 //updateRanking();
 
-createRankings("America/Los_Angeles");
+//createRankings("America/Los_Angeles");
 
 cron.schedule('0 * * * *', () => {
   dailyReport(process.env.TESTER_ID);

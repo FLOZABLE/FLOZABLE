@@ -27,6 +27,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import AccountModal from "./components/UI/AccountModal/AccountModal";
 import ReactGA from 'react-ga4';
 import Tutorial from "./components/UI/Tutorial/Tutorial";
+import NotFound from "./components/Container/404/404";
 
 if (process.env.REACT_APP_ENV === "production") {
   ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
@@ -931,6 +932,14 @@ function App() {
                 setUserInfo={setUserInfo}
                 setResponse={setResponse}
               />
+            </div>
+          }
+        />
+        <Route
+          path="/dashboard/*"
+          element={
+            <div>
+              <NotFound />
             </div>
           }
         />
