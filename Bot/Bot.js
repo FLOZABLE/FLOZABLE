@@ -777,7 +777,7 @@ async function createBotRankings() {
   }
 
   console.log("BOTS RANKING GENERATED");
-}
+};
 
 module.exports = {
   createBots,
