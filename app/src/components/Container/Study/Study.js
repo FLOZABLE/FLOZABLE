@@ -69,6 +69,32 @@ function Study(props) {
   const [priority, setPriority] = useState(50);
   const [notification, setNotification] = useState(-1);
 
+  //localstorage positions
+  const [dragPos] = useState({
+    playlist: {
+      x: parseFloat(localStorage.getItem("playlist_positionX") || 0) * 100 + "vw",
+      y: parseFloat(localStorage.getItem("playlist_positionY") || 0) * 100 + "vh"
+    },
+    subject: {
+      x: parseFloat(localStorage.getItem("subject_positionX") || 0) * 100 + "vw",
+      y: parseFloat(localStorage.getItem("subject_positionY") || 0) * 100 + "vh"
+    },
+    theme: {
+      x: parseFloat(localStorage.getItem("theme_positionX") || 0) * 100 + "vw",
+      y: parseFloat(localStorage.getItem("theme_positionY") || 0) * 100 + "vh"
+    },
+    plan: {
+      x: parseFloat(localStorage.getItem("plan_positionX") || 0) * 100 + "vw",
+      y: parseFloat(localStorage.getItem("plan_positionY") || 0) * 100 + "vh"
+    },
+    music: {
+      x: parseFloat(localStorage.getItem("music_positionX") || 0) * 100 + "vw",
+      y: parseFloat(localStorage.getItem("music_positionY") || 0) * 100 + "vh"
+    }
+  });
+
+
+
   const groupsViewerRef = useRef(null);
 
   const handleLinkInput = (e) => {
@@ -122,10 +148,19 @@ function Study(props) {
     ]);
   }, [subjects]);
 
+  const handleStop = (event, dragElement, name) => {
+    //Calculate global pos instead of relative pos to previous offset
+    const previousX = parseFloat(dragPos[name].x) / 100;
+    const previousY = parseFloat(dragPos[name].y) / 100;
+    localStorage.setItem(name + "_positionX", previousX + dragElement.x / window.innerWidth);
+    localStorage.setItem(name + "_positionY", previousY + dragElement.y / window.innerHeight);
+  };
+
   return (
     <div className={styles.Study}>
       <StudyModalContainer
-        startPos={{ x: "10vw", y: "5vh" }}
+        startPos={dragPos.playlist}
+        onDragEnd={(event, dragElement) => { handleStop(event, dragElement, "playlist") }}
         isDisp={isPlaylistModal}
         element={
           <PlaylistModal
@@ -135,7 +170,8 @@ function Study(props) {
         }
       />
       <StudyModalContainer
-        startPos={{ x: "5vw", y: "5vh" }}
+        startPos={dragPos.subject}
+        onDragEnd={(event, dragElement) => { handleStop(event, dragElement, "subject") }}
         isDisp={isTimerModal}
         element={
           <SubjectTimer
@@ -154,7 +190,8 @@ function Study(props) {
         }
       />
       <StudyModalContainer
-        startPos={{ x: "5vw", y: "12vh" }}
+        startPos={dragPos.plan}
+        onDragEnd={(event, dragElement) => { handleStop(event, dragElement, "plan") }}
         isDisp={isPlannerModal}
         element={
           <PlanTimeline
@@ -169,7 +206,8 @@ function Study(props) {
         }
       />
       <StudyModalContainer
-        startPos={{ x: "50vw", y: "19vh" }}
+        startPos={dragPos.theme}
+        onDragEnd={(event, dragElement) => { handleStop(event, dragElement, "theme") }}
         isDisp={isTemplateModal}
         element={
           <ThemeSelector
@@ -186,7 +224,8 @@ function Study(props) {
       />
       {
         <StudyModalContainer
-          startPos={{ x: "5vw", y: "38vh" }}
+          startPos={dragPos.music}
+          onDragEnd={(event, dragElement) => { handleStop(event, dragElement, "music") }}
           isDisp={isVolumeModal}
           element={<MusicModal originalVideoVolume={volume} setOriginalVideoVolume={setVolume} />}
         />
