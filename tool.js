@@ -139,6 +139,35 @@ const secondConverter = (sec, options = ['s', 'm', 'h']) => {
   return { value, type: options[type] };
 };
 
+const timezones24 = [
+  "Pacific/Apia",
+  "Pacific/Honolulu",
+  "America/Adak",
+  "America/Anchorage",
+  "America/Phoenix",
+  "America/Denver",
+  "America/Chicago",
+  "America/New_York",
+  "America/Caracas",
+  "America/Miquelon",
+  "Atlantic/Cape_Verde",
+  "Africa/Casablanca",
+  "Africa/Lagos",
+  "Europe/Paris",
+  "Europe/Bucharest",
+  "Europe/Simferopol",
+  "Asia/Aqtau",
+  "Asia/Aqtobe",
+  "Asia/Alma-Ata",
+  "Asia/Krasnoyarsk",
+  "Asia/Irkutsk",
+  "Asia/Yakutsk",
+  "Australia/Sydney",
+  "Pacific/Noumea"
+];
+
+
+
 module.exports = {
   generateRandomId,
   hashing,
@@ -152,5 +181,6 @@ module.exports = {
   arraysHaveSameContents,
   hex2rgb,
   secondConverter,
-  deriveKey
+  deriveKey,
+  timezones24
 };
