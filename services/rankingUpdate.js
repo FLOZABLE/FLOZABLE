@@ -164,8 +164,11 @@ async function createRankings(zone) {
     const weeklyRankings = {};
     const monthlyRankings = {};
 
-    subjects.map((subject) => {
-      const parsedTimeline = subject.timeline ? JSON.parse(subject.timeline.replace(/^/, "[").replace(/$/, "]")) : [];
+    await Promise.all(subjects.map(async(subject) => {
+      let parsedTimeline = subject.timeline ? JSON.parse(subject.timeline.replace(/^/, "[").replace(/$/, "]")) : [];
+      const todayTimeline = (await redisClient.lRange(`user:${subject.user_id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
+      parsedTimeline = parsedTimeline.concat(todayTimeline);
+
       let timelineSum = 0;
       parsedTimeline.map(([start, duration]) => {
         const startDateTime = DateTime.fromSeconds(subject.datum_point + start + timelineSum).setZone(zone);
@@ -231,7 +234,7 @@ async function createRankings(zone) {
         };
 
       })
-    });
+    }));
 
     console.log('gd')
     //format rankings
