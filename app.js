@@ -205,7 +205,6 @@ app.get('*', function (req, res) {
 });
 
 require('./Logger');
-require('./services/timerUpdate');
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(5);
@@ -220,16 +219,22 @@ const { updateRanking, createRankings } = require("./services/rankingUpdate");
 const { extensionManager } = require("./services/extension");
 const { dailyReport } = require("./services/notification");
 const { updateUserIds, removeDupedFriends } = require("./update");
+const { timerUpdate } = require("./services/timerUpdate");
+const { timezones24 } = require("./tool");
 
 //scheduler that runs every hour
 //updateRanking();
 
 //createRankings("America/Los_Angeles");
 
+//all timezones
+//createRankings(timezones24[1]);
+
 cron.schedule('0 * * * *', () => {
   dailyReport(process.env.TESTER_ID);
   extensionManager();
   updateRanking();
+  timerUpdate();
 });
 
 //updateUserIds();
