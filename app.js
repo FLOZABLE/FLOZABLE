@@ -225,10 +225,8 @@ const { timezones24 } = require("./tool");
 //scheduler that runs every hour
 //updateRanking();
 
-//createRankings("America/Los_Angeles");
-
 //all timezones
-//createRankings(timezones24[1]);
+//createRankings(-8);
 
 cron.schedule('0 * * * *', () => {
   dailyReport(process.env.TESTER_ID);
