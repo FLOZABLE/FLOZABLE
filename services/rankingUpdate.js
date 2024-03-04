@@ -153,12 +153,26 @@ async function updateMonthlyRanking(now, users, timezoneOffset) {
   schedule.scheduleJob(dailyRule, () => { rankingSort() });
 } */
 
-async function createRankings(zone) {
+async function createRankings(offset) {
   try {
+
+    const now = DateTime.now();
+    const allTimezones = Intl.supportedValuesOf('timeZone');
+  
+    const zone = allTimezones.find(timezone => {
+      return now.setZone(timezone).offset / 60 === offset;
+    });
+
+    console.log('zone: ', zone);
+
+    if (!zone) {
+      return;
+    };
+
     const connection = pool.promise();
 
     const [subjects] = await connection.query(`SELECT id, user_id, timeline, datum_point FROM subjects`);
-    console.log(subjects.length);
+    console.log(subjects.length, zone);
 
     const dailyRankings = {};
     const weeklyRankings = {};
@@ -252,7 +266,7 @@ async function createRankings(zone) {
 
       console.log(DateTime.fromSeconds(parseInt(date)).toFormat('M/d'), formatted)
       //prevent today's ranking gen
-      if (parseInt(date) === DateTime.now().setZone(zone).startOf('day').toSeconds()) {
+      if (parseInt(date) >= DateTime.now().setZone(zone).startOf('day').toSeconds()) {
         return;
       }
 
@@ -272,7 +286,7 @@ async function createRankings(zone) {
       });
 
       //prevent this week ranking gen
-      if (DateTime.fromSeconds(parseInt(date)).hasSame(DateTime.now({zone}), 'week')) {
+      if (parseInt(date) >= DateTime.now().setZone(zone).startOf('week').startOf('day').toSeconds()) {
         return;
       }
 
@@ -292,7 +306,7 @@ async function createRankings(zone) {
       });
 
       //prevent today's ranking gen
-      if (DateTime.fromSeconds(parseInt(date)).hasSame(DateTime.now({zone}), 'month')) {
+      if (parseInt(date) >= DateTime.now().setZone(zone).startOf('month').startOf('day').toSeconds()) {
         return;
       }
 
