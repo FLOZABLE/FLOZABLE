@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
 import styles from "./MusicModal.module.css";
 import VolumeControl from "../VolumeControl/VolumeControl";
-import { Music } from "../../../utils/Music";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { socket } from "../../../socket";
 
 function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
 
   const [audioVolumes, setAudioVolumes] = useState([]);
-  const [audioChoices, setAudioChoices] = useState([])
+  const [audioChoices, setAudioChoices] = useState([]);
+
+  const [Music] = useState([
+    { id: "p29JUpsOSTE", name: "Fire", icon: "🔥", audio: new Audio("../../../../../audio/Fire.mp3") },
+    { id: "HVau-JRGirg", name: "Forest", icon: "🌱", audio: new Audio("../../../../audio/Forest.mp3") },
+    { id: "xDWG9SrB4io", name: "Rain", icon: "💧", audio: new Audio("../../../../audio/Rain.mp3") },
+    { id: "SE9nDvo94hw", name: "Wave", icon: "🌊", audio: new Audio("../../../../audio/Wave.mp3") },
+    { id: "WNcsUNKlAKw", name: "Wind", icon: "🍃", audio: new Audio("../../../../audio/Wind.mp3") },
+  ])
 
   useEffect(() => {
     const tempAudioChoices = [...Music];
@@ -21,11 +28,11 @@ function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
   }, [audioChoices]);
 
   const onMouseUp = () => {
-    socket.emit("volumeChange", {id: "original", volume: originalVideoVolume});
+    socket.emit("volumeChange", { id: "original", volume: originalVideoVolume });
   };
 
   useEffect(() => {
-    const onVolumeChanged = ({id, volume}) => {
+    const onVolumeChanged = ({ id, volume }) => {
       if (id !== "original") {
         return;
       };
@@ -58,15 +65,15 @@ function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
       {audioChoices.map((audio, i) => {
         return (
           <div className={styles.audioWrapper} key={i}>
-          <div className={styles.audioDescription}>
-            {audio.icon}
-            <span className={styles.audioDescriptionName}>
-              {audio.name}
-            </span>
+            <div className={styles.audioDescription}>
+              {audio.icon}
+              <span className={styles.audioDescriptionName}>
+                {audio.name}
+              </span>
+            </div>
+            <AudioPlayer audio={audio} />
+            {/* <YouTubeAudioPlayer height={"1vh"} width={"1vw"} videoId={audio.id} volume={audioVolumes ? audioVolumes[i] : 0} /> */}
           </div>
-          <AudioPlayer audio={audio} />
-          {/* <YouTubeAudioPlayer height={"1vh"} width={"1vw"} videoId={audio.id} volume={audioVolumes ? audioVolumes[i] : 0} /> */}
-        </div>
         )
       })}
     </div>
