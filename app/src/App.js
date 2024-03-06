@@ -28,6 +28,7 @@ import AccountModal from "./components/UI/AccountModal/AccountModal";
 import ReactGA from 'react-ga4';
 import Tutorial from "./components/UI/Tutorial/Tutorial";
 import NotFound from "./components/Container/404/404";
+import AudioStopper from "./components/UI/AudioStopper/AudioStopper";
 
 if (process.env.REACT_APP_ENV === "production") {
   ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
@@ -74,6 +75,14 @@ function App() {
     type: 'local',
     editable: true
   });
+
+  const [musicFiles] = useState([
+    { id: "p29JUpsOSTE", name: "Fire", icon: "🔥", audio: new Audio("../../audio/Fire.mp3") },
+    { id: "HVau-JRGirg", name: "Forest", icon: "🌱", audio: new Audio("../../audio/Forest.mp3") },
+    { id: "xDWG9SrB4io", name: "Rain", icon: "💧", audio: new Audio("../../audio/Rain.mp3") },
+    { id: "SE9nDvo94hw", name: "Wave", icon: "🌊", audio: new Audio("../../audio/Wave.mp3") },
+    { id: "WNcsUNKlAKw", name: "Wind", icon: "🍃", audio: new Audio("../../audio/Wind.mp3") },
+  ])
 
   const tutorialBoxRef = useRef(null);
   const tutorialTextRef = useRef(null);
@@ -236,6 +245,7 @@ function App() {
 
   return (
     <Router>
+      <AudioStopper musicFiles={musicFiles} />
       <TopNotification
         response={response}
       />
@@ -577,6 +587,7 @@ function App() {
                 setIsChatModal={setIsChatModal}
                 tutorialBoxRef={tutorialBoxRef}
                 tutorialTextRef={tutorialTextRef}
+                musicFiles={musicFiles}
               />
             </div>
           }

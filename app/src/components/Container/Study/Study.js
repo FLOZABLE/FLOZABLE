@@ -34,6 +34,7 @@ function Study(props) {
     setResponse,
     tutorialBoxRef,
     tutorialTextRef,
+    musicFiles,
   } = props;
 
   const [isTimerModal, setIsTimerModal] = useState(true);
@@ -227,7 +228,13 @@ function Study(props) {
           startPos={dragPos.music}
           onDragEnd={(event, dragElement) => { handleStop(event, dragElement, "music") }}
           isDisp={isVolumeModal}
-          element={<MusicModal originalVideoVolume={volume} setOriginalVideoVolume={setVolume} />}
+          element={
+            <MusicModal
+              originalVideoVolume={volume}
+              setOriginalVideoVolume={setVolume}
+              musicFiles={musicFiles}
+            />
+          }
         />
       }
       <StudySidebar
