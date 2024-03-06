@@ -39,16 +39,6 @@ function Tutorial({ setResponse, tutorialBoxRef, tutorialTextRef, }) {
       setTutorial(0);
     };
 
-    if (tutorial >= 12) {
-      /* searchParams.delete("tutorial");
-      setSearchParams(searchParams);
-      navigate("/dashboard/groups")
-      setResponse({success: true, msg: "You are done with tutorial!"});
-      setTimeout(() => {
-        setResponse({success: true, msg: "Join groups you want to!"});
-      }, 4000); */
-    }
-
     setTutorial(parseInt(tutorial));
   }, [searchParams]);
 
