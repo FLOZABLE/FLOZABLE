@@ -13,6 +13,7 @@ import { BackArrow, IconStatsChart } from "../../../utils/svgs.js";
 import FriendsRankingViewer from "../../UI/FriendsRankingViewer/FriendsRankingViewer.js";
 import StudyTrendChart from "../../UI/StudyTrendChart.js";
 import { updateSubjectsTrendChart } from "../Stats/StatTools.js";
+import AudioStopper from "../../UI/AudioStopper/AudioStopper.js";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -87,6 +88,7 @@ function Main({
 
   return (
     <div>
+      <AudioStopper />
       <GroupPwModal
         myGroups={myGroups}
         setMyGroups={setMyGroups}
