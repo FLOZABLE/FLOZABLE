@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === 'development') {
 
 let server;
 
-if (process.env.isHttps === "true") {
+if (process.env.isHttps) {
   server = https.createServer(options, app);
   console.log('https')
 } else {
