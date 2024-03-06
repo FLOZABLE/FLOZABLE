@@ -4,28 +4,14 @@ import VolumeControl from "../VolumeControl/VolumeControl";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { socket } from "../../../socket";
 
-function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
+function MusicModal({ originalVideoVolume, setOriginalVideoVolume, musicFiles }) {
 
   const [audioVolumes, setAudioVolumes] = useState([]);
-  const [audioChoices, setAudioChoices] = useState([]);
-
-  const [Music] = useState([
-    { id: "p29JUpsOSTE", name: "Fire", icon: "🔥", audio: new Audio("../../../../../audio/Fire.mp3") },
-    { id: "HVau-JRGirg", name: "Forest", icon: "🌱", audio: new Audio("../../../../audio/Forest.mp3") },
-    { id: "xDWG9SrB4io", name: "Rain", icon: "💧", audio: new Audio("../../../../audio/Rain.mp3") },
-    { id: "SE9nDvo94hw", name: "Wave", icon: "🌊", audio: new Audio("../../../../audio/Wave.mp3") },
-    { id: "WNcsUNKlAKw", name: "Wind", icon: "🍃", audio: new Audio("../../../../audio/Wind.mp3") },
-  ])
 
   useEffect(() => {
-    const tempAudioChoices = [...Music];
-
-    setAudioChoices(tempAudioChoices);
-  }, []);
-
-  useEffect(() => {
-    setAudioVolumes(new Array(audioChoices.length).fill[0]);
-  }, [audioChoices]);
+    if (!!musicFiles) return;
+    setAudioVolumes(new Array(musicFiles.length).fill[0]);
+  }, [musicFiles]);
 
   const onMouseUp = () => {
     socket.emit("volumeChange", { id: "original", volume: originalVideoVolume });
@@ -62,7 +48,7 @@ function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
           onMouseUp={onMouseUp}
         />
       </div>
-      {audioChoices.map((audio, i) => {
+      {musicFiles.map((audio, i) => {
         return (
           <div className={styles.audioWrapper} key={i}>
             <div className={styles.audioDescription}>
