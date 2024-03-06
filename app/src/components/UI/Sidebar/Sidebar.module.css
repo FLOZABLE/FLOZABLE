@@ -14,27 +14,32 @@
 }
 
 .Sidebar .logo {
+  position: absolute;
+  top: 0rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 9.375rem;
+  height: 6rem;
+  width: 6rem;
+  overflow: hidden;
 }
 
 .Sidebar .logo img { 
-  width: 6.25rem;
+  width: 100%;
 }
 
 .Sidebar .sidebarContainer {
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-evenly;
   border-radius: 1.25rem;
   width: 5.2rem;
-  height: 100%;
   margin-bottom: 2rem;
-  padding-bottom: 3rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+  margin-top: 6rem;
+  height: calc(100% - 6rem);
+  max-height: 1000px;
 }
 
 .Sidebar .sidebarContainer div {
@@ -47,10 +52,9 @@
 
 .Sidebar .sidebarContainer .sidebarEl{
   display: flex;
-  justify-content: right;
+  justify-content: right !important;
   width: 10rem;
   margin-right: 9.7rem;
-  margin-top: 2.7rem;
   align-items: center;
   opacity: 0.4;
   transition: .3s ease-in-out;
@@ -61,7 +65,6 @@
   opacity: 1;
   background-color: white;  
   display: flex;
-  justify-content: right;
   box-shadow: var(--shadow1);
   border-radius: 0.625rem;  
   width: 15rem; 
@@ -76,25 +79,16 @@
   display: flex;
   justify-content: left;
   margin-left: 4.5rem;
-} 
+}
 
-@media (max-height: 75rem) {
+ @media (max-height: 800px) {
   .Sidebar .sidebarContainer .sidebarEl {
-    padding: 1.25rem 1.25rem;
-    margin-top: 2.7rem;
+    padding: 1rem 1rem;
   }
 }
 
-@media (max-height: 43.75rem) {
+@media (max-height: 600px) {
   .Sidebar .sidebarContainer .sidebarEl {
-    padding: 0.625rem 1.25rem;
-    margin-top: 2.8rem;
-  }
-}
-
-@media (max-height: 34.375rem) {
-  .Sidebar .sidebarContainer .sidebarEl {
-    padding: 0.313rem 1.25rem;
-    margin-top: 1rem;
+    padding: 0.5rem 0.5rem;
   }
 }
