@@ -5,7 +5,8 @@ import TextEditor from "../TextEditor/TextEditor";
 import DateSelector from "../DateSelector/DateSelector";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import { DateTime } from "luxon";
-import React from 'react';
+import React, { useRef } from 'react';
+import Draggable from "react-draggable";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -25,6 +26,8 @@ function CreateChallengeModal({
   setChallenges,
   userInfo,
 }) {
+
+  const modalRef = useRef(null);
 
   const submit = () => {
 
@@ -54,61 +57,63 @@ function CreateChallengeModal({
       });
   }
   return (
-    <div className={`${styles.CreateChallengeModal} modal ${isModalOpen ? "open" : ""}`}>
-      <div className={styles.modalHeader}>
-        <i onClick={() => { setIsModalOpen(false) }}>
-          <FontAwesomeIcon icon={faXmark} />
-        </i>
-      </div>
-      <div className={styles.container}>
-        <div className={`${styles.wrapper} ${styles.title}`}>
-          <div className={styles.contentWrapper}>
-            <input
-              type="text"
-              placeholder="Enter Title"
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-              }}
-            />
-          </div>
+    <Draggable nodeRef={modalRef} handle=".header">
+      <div className={`${styles.CreateChallengeModal} modal ${isModalOpen ? "open" : ""}`} ref={modalRef}>
+        <div className={`${styles.modalHeader} header`}>
+          <i onClick={() => { setIsModalOpen(false) }}>
+            <FontAwesomeIcon icon={faXmark} />
+          </i>
         </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faFileLines} />
-            <div className={styles.hoverEl}>
-              <p>Add Description</p>
+        <div className={styles.container}>
+          <div className={`${styles.wrapper} ${styles.title}`}>
+            <div className={styles.contentWrapper}>
+              <input
+                type="text"
+                placeholder="Enter Title"
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                }}
+              />
             </div>
           </div>
-          <div className={styles.contentWrapper}>
-            <TextEditor
-              setDescription={setDescription}
-              description={description}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faClock} />
-            <div className={styles.hoverEl}>
-              <p>Select Time</p>
+          <div className={styles.wrapper}>
+            <div className={styles.iconWrapper}>
+              <FontAwesomeIcon icon={faFileLines} />
+              <div className={styles.hoverEl}>
+                <p>Add Description</p>
+              </div>
+            </div>
+            <div className={styles.contentWrapper}>
+              <TextEditor
+                setDescription={setDescription}
+                description={description}
+              />
             </div>
           </div>
-          <div className={styles.contentWrapper}>
-            <DateSelector
-              start={start}
-              setStart={setStart}
-              end={end}
-              setEnd={setEnd}
-            />
+          <div className={styles.wrapper}>
+            <div className={styles.iconWrapper}>
+              <FontAwesomeIcon icon={faClock} />
+              <div className={styles.hoverEl}>
+                <p>Select Time</p>
+              </div>
+            </div>
+            <div className={styles.contentWrapper}>
+              <DateSelector
+                start={start}
+                setStart={setStart}
+                end={end}
+                setEnd={setEnd}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className={styles.submit}>
-          <BlobBtn name={"SUBMIT"} setClicked={submit} delay={-1} />
+          <div className={styles.submit}>
+            <BlobBtn name={"SUBMIT"} setClicked={submit} delay={-1} />
+          </div>
         </div>
       </div>
-    </div>
+    </Draggable>
   );
 }
 

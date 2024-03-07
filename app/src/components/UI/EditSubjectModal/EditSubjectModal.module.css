@@ -19,6 +19,10 @@
     align-items: center;
 }
 
+.EditSubjectModal .header:hover {
+    cursor: move;
+}
+
 .EditSubjectModal .header i {
     font-size: 1.875rem;
     color: #fff;

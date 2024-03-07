@@ -26,6 +26,10 @@
   cursor: pointer;
 }
 
+.CreateGroupModal .header:hover {
+  cursor: move;
+}
+
 .CreateGroupModal .container {
   display: flex;
   flex-direction: column;

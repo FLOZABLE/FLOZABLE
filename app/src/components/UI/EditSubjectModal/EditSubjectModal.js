@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
+import Draggable from "react-draggable";
 import styles from "./EditSubjectModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -30,10 +31,11 @@ function EditSubjectModal({
   setResponse
 }) {
   const [name, setName] = useState("");
-  const [selectedColor, setSelectedColor] = useState({el: null});
+  const [selectedColor, setSelectedColor] = useState({ el: null });
   const [isSelectColor, setIsSelectColor] = useState(false);
-  const [selectedIcon, setSelectedIcon] = useState({el: null});
+  const [selectedIcon, setSelectedIcon] = useState({ el: null });
   const [isSelectIcon, setIsSelectIcon] = useState(false);
+  const modalRef = useRef(null);
 
   const handleNameInput = (e) => {
     setName(e.target.value);
@@ -73,54 +75,59 @@ function EditSubjectModal({
   useEffect(() => {
     if (!subject) return;
     const icon = subjectIcons[subject.icon];
-    setSelectedIcon({el: icon, name: subject.icon});
+    setSelectedIcon({ el: icon, name: subject.icon });
     setSelectedColor(subject.color);
     setName(subject.name);
   }, [subject]);
 
   return (
-    <div
-      className={`${styles.EditSubjectModal} modal ${isEditSubjectModal ? "open" : ""
-        }`}
-    >
-      <div className={styles.header}>
-        <i
-          onClick={() => {
-            setIsEditSubjectModal(false);
-          }}
-        >
-          <FontAwesomeIcon icon={faXmark} />
-        </i>
-      </div>
-      <div className={styles.content}>
-        <div className={styles.inputWrapper}>
-          <CustomInput
-            input={name}
-            handleInput={handleNameInput}
-            icon={faBook}
-            placeHolder={subject?.name}
-            type={"text"}
+    <Draggable
+      nodeRef={modalRef}
+      handle=".header">
+      <div
+        className={`${styles.EditSubjectModal} modal ${isEditSubjectModal ? "open" : ""
+          }`}
+          ref={modalRef}
+      >
+        <div className={`${styles.header} header`}>
+          <i
+            onClick={() => {
+              setIsEditSubjectModal(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </i>
+        </div>
+        <div className={styles.content}>
+          <div className={styles.inputWrapper}>
+            <CustomInput
+              input={name}
+              handleInput={handleNameInput}
+              icon={faBook}
+              placeHolder={subject?.name}
+              type={"text"}
+            />
+          </div>
+          <SelectIcon
+            selectedIcon={selectedIcon}
+            setSelectedIcon={setSelectedIcon}
+            isSelectIcon={isSelectIcon}
+            setIsSelectIcon={setIsSelectIcon}
+            setIsSelectColor={setIsSelectColor}
           />
-        </div>
-        <SelectIcon
-          selectedIcon={selectedIcon}
-          setSelectedIcon={setSelectedIcon}
-          isSelectIcon={isSelectIcon}
-          setIsSelectIcon={setIsSelectIcon}
-          setIsSelectColor={setIsSelectColor}
-        />
-        <ColorPalette
-          setSelectedColor={setSelectedColor}
-          selectedColor={selectedColor}
-          isSelectColor={isSelectColor}
-          setIsSelectColor={setIsSelectColor}
-          setIsSelectIcon={setIsSelectIcon}
-        />
-        <div className={styles.submit}>
-          <BlobBtn name={"SUBMIT"} setClicked={submit} />
+          <ColorPalette
+            setSelectedColor={setSelectedColor}
+            selectedColor={selectedColor}
+            isSelectColor={isSelectColor}
+            setIsSelectColor={setIsSelectColor}
+            setIsSelectIcon={setIsSelectIcon}
+          />
+          <div className={styles.submit}>
+            <BlobBtn name={"SUBMIT"} setClicked={submit} />
+          </div>
         </div>
       </div>
-    </div>
+    </Draggable>
   );
 }
 

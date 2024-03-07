@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
+import Draggable from "react-draggable";
 import styles from "./CreateGroupModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -30,6 +31,8 @@ function CreateGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
   const [visibility, setVisibility] = useState(1);
   const [password, setPassword] = useState("");
   const [goalHr, setGoalHr] = useState(3);
+
+  const modalRef = useRef(null);
 
   const handleNameInput = useCallback((e) => {
     setName(e.target.value);
@@ -80,150 +83,152 @@ function CreateGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
   }
 
   return (
-    <div className={`${styles.CreateGroupModal} modal ${isOpen ? "open" : ""}`}>
-      <div className={styles.header}>
-        <i
-          className={styles.closeBtn}
-          onClick={() => {
-            setIsOpen(false);
-          }}
-        >
-          <FontAwesomeIcon icon={faXmark} />
-        </i>
-      </div>
-      <div className={`${styles.container} customScroll`}>
-        <div className={`${styles.wrapper} ${styles.title}`}>
-          <div className={styles.iconWrapper}></div>
-          <div className={styles.contentWrapper}>
-            <CustomInput
-              input={name}
-              handleInput={handleNameInput}
-              icon={null}
-              placeHolder={"Study Group Name"}
-              type={"text"}
-            />
-          </div>
+    <Draggable nodeRef={modalRef} handle=".header">
+      <div className={`${styles.CreateGroupModal} modal ${isOpen ? "open" : ""}`} ref={modalRef}>
+        <div className={`${styles.header} header`}>
+          <i
+            className={styles.closeBtn}
+            onClick={() => {
+              setIsOpen(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </i>
         </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faFileLines} />
-            <div className={styles.hoverEl}>
-              <p>Description</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <TextEditor
-              setDescription={setDescription}
-              description={description}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faPalette} />
-            <div className={styles.hoverEl}>
-              <p>Color</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <ColorPalette
-              setSelectedColor={setColor}
-              selectedColor={color}
-              isSelectColor={isSelectColor}
-              setIsSelectColor={setIsSelectColor}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faUserGroup} />
-            <div className={styles.hoverEl}>
-              <p>Max maxMembers</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <SliderAnimation
-              min={0}
-              max={100}
-              step={1}
-              sliderValue={maxMembers}
-              setSliderValue={setMaxMembers}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faTags} />
-            <div className={styles.hoverEl}>
-              <p>Tags</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <TagContainerGen
-              maxTags={10}
-              setTags={setTags}
-              handleCreatedTagsChange={handleCreatedTagsChange}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faLock} />
-            <div className={styles.hoverEl}>
-              <p>Visibility</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <OptionToggleBtn
-              opt1={{ val: 0, name: "PRIVATE" }}
-              opt2={{ val: 1, name: "PUBLIC" }}
-              value={visibility}
-              setValue={setVisibility}
-            />
-            <div
-              className={`${styles.inputArea} ${visibility ? "" : styles.open}`}
-            >
+        <div className={`${styles.container} customScroll`}>
+          <div className={`${styles.wrapper} ${styles.title}`}>
+            <div className={styles.iconWrapper}></div>
+            <div className={styles.contentWrapper}>
               <CustomInput
-                input={password}
-                handleInput={handlePwInput}
+                input={name}
+                handleInput={handleNameInput}
                 icon={null}
-                placeHolder={"Enter Password"}
+                placeHolder={"Study Group Name"}
                 type={"text"}
               />
             </div>
           </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faStopwatch} />
-            <div className={styles.hoverEl}>
-              <p>Daily Group Goal</p>
+          <div className={styles.wrapper}>
+            <div className={styles.iconWrapper}>
+              <FontAwesomeIcon icon={faFileLines} />
+              <div className={styles.hoverEl}>
+                <p>Description</p>
+              </div>
+            </div>
+            <div className={styles.contentWrapper}>
+              <TextEditor
+                setDescription={setDescription}
+                description={description}
+              />
             </div>
           </div>
-          <div className={styles.contentWrapper}>
-            <SliderAnimation
-              min={0}
-              max={10}
-              step={1}
-              sliderValue={goalHr}
-              setSliderValue={setGoalHr}
+          <div className={styles.wrapper}>
+            <div className={styles.iconWrapper}>
+              <FontAwesomeIcon icon={faPalette} />
+              <div className={styles.hoverEl}>
+                <p>Color</p>
+              </div>
+            </div>
+            <div className={styles.contentWrapper}>
+              <ColorPalette
+                setSelectedColor={setColor}
+                selectedColor={color}
+                isSelectColor={isSelectColor}
+                setIsSelectColor={setIsSelectColor}
+              />
+            </div>
+          </div>
+          <div className={styles.wrapper}>
+            <div className={styles.iconWrapper}>
+              <FontAwesomeIcon icon={faUserGroup} />
+              <div className={styles.hoverEl}>
+                <p>Max maxMembers</p>
+              </div>
+            </div>
+            <div className={styles.contentWrapper}>
+              <SliderAnimation
+                min={0}
+                max={100}
+                step={1}
+                sliderValue={maxMembers}
+                setSliderValue={setMaxMembers}
+              />
+            </div>
+          </div>
+          <div className={styles.wrapper}>
+            <div className={styles.iconWrapper}>
+              <FontAwesomeIcon icon={faTags} />
+              <div className={styles.hoverEl}>
+                <p>Tags</p>
+              </div>
+            </div>
+            <div className={styles.contentWrapper}>
+              <TagContainerGen
+                maxTags={10}
+                setTags={setTags}
+                handleCreatedTagsChange={handleCreatedTagsChange}
+              />
+            </div>
+          </div>
+          <div className={styles.wrapper}>
+            <div className={styles.iconWrapper}>
+              <FontAwesomeIcon icon={faLock} />
+              <div className={styles.hoverEl}>
+                <p>Visibility</p>
+              </div>
+            </div>
+            <div className={styles.contentWrapper}>
+              <OptionToggleBtn
+                opt1={{ val: 0, name: "PRIVATE" }}
+                opt2={{ val: 1, name: "PUBLIC" }}
+                value={visibility}
+                setValue={setVisibility}
+              />
+              <div
+                className={`${styles.inputArea} ${visibility ? "" : styles.open}`}
+              >
+                <CustomInput
+                  input={password}
+                  handleInput={handlePwInput}
+                  icon={null}
+                  placeHolder={"Enter Password"}
+                  type={"text"}
+                />
+              </div>
+            </div>
+          </div>
+          <div className={styles.wrapper}>
+            <div className={styles.iconWrapper}>
+              <FontAwesomeIcon icon={faStopwatch} />
+              <div className={styles.hoverEl}>
+                <p>Daily Group Goal</p>
+              </div>
+            </div>
+            <div className={styles.contentWrapper}>
+              <SliderAnimation
+                min={0}
+                max={10}
+                step={1}
+                sliderValue={goalHr}
+                setSliderValue={setGoalHr}
+              />
+            </div>
+          </div>
+          <div className={styles.wrapper}>
+            <div className={styles.iconWrapper}></div>
+            <div className={styles.contentWrapper}></div>
+          </div>
+          <div className={styles.submit}>
+            <BlobBtn
+              name={"SUBMIT"}
+              setClicked={submit}
+              color1={"#fff"}
+              color2={"var(--pink)"}
             />
           </div>
         </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}></div>
-          <div className={styles.contentWrapper}></div>
-        </div>
-        <div className={styles.submit}>
-          <BlobBtn
-            name={"SUBMIT"}
-            setClicked={submit}
-            color1={"#fff"}
-            color2={"var(--pink)"}
-          />
-        </div>
       </div>
-    </div>
+    </Draggable>
   );
 }
 
