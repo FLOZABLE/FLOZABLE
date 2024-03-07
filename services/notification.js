@@ -55,7 +55,7 @@ function sendPushNotification(credentials, payload) {
 async function dailyReport(userId, timezone) {
   const subjects = await subjectsTimelineCache(userId);
   const websiteUsage = await websiteUsageCache(userId);
-  console.log(websiteUsage);
+  console.log(websiteUsage, subjects);
 
   const sortedSubjects = timelineSort(subjects);
   const subjectsDatasets = sortedSubjects.map(subject => {

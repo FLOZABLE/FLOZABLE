@@ -17,6 +17,7 @@ import { DateTime } from "luxon";
 import QuickChart from "quickchart-js";
 
 function timelineSort(subjects) {
+  console.log(subjects);
   let firstDatumPoint = Math.floor(new Date().getTime() / 1000);
   subjects.map(({ datum_point }) => {
     //this code compares the current firstdatumPoint and current looped subject's datumpoint and updtate the firstDatunmPoint with
@@ -67,13 +68,28 @@ function timelineSort(subjects) {
     };
 
     subjects.daily.grouped = dailySorted.map((val, i) => {
-      return [...val, ...subjects.daily.grouped[i]];
+      if (i < subjects.daily.grouped.length) {
+        return [...val, ...subjects.daily.grouped[i]];
+      }
+      else {
+        return [...val];
+      }
     });
     subjects.weekly.grouped = weeklySorted.map((val, i) => {
-      return [...val, ...subjects.weekly.grouped[i]];
+      if (i < subjects.weekly.grouped.length) {
+        return [...val, ...subjects.weekly.grouped[i]];
+      }
+      else {
+        return [...val];
+      }
     });
     subjects.monthly.grouped = monthlySorted.map((val, i) => {
-      return [...val, ...subjects.monthly.grouped[i]];
+      if (i < subjects.monthly.grouped.length) {
+        return [...val, ...subjects.monthly.grouped[i]];
+      }
+      else {
+        return [...val];
+      }
     });
 
     subject.daily.focus = Array(subject.daily.grouped.length).fill(0);
