@@ -341,7 +341,6 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                   </p>
                 </div>
                 <div>
-
                   <div>
                     <div className={styles.iconWrapper}>
                       <div>
@@ -349,8 +348,10 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                       </div>
                     </div>
                     <div className={styles.explanation}>
-                      You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar
-                      by signing in with your Google account here.
+                      <p>
+                        You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar
+                        by signing in with your Google account here.
+                      </p>
                     </div>
                     <div className={styles.authBtn}>
                       <div>
@@ -370,7 +371,9 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                       </div>
                     </div>
                     <div className={styles.explanation}>
-                      You haven't connected your YouTube Account yet or you aren't authorized. Please authorize our application to access your YouTube Playlists here.
+                      <p>
+                        You haven't connected your YouTube Account yet or you aren't authorized. Please authorize our application to access your YouTube Playlists here.
+                      </p>
                     </div>
                     <div className={styles.authBtn}>
                       <GoogleOAuthProvider
@@ -387,7 +390,9 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                       </div>
                     </div>
                     <div className={styles.explanation}>
-                      You haven't connected your Spotify Account yet or you aren't authorized. Please authorize our application to access your Spotify Playlists here.
+                      <p>
+                        You haven't connected your Spotify Account yet or you aren't authorized. Please authorize our application to access your Spotify Playlists here.
+                      </p>
                     </div>
                     <div className={styles.authBtn}>
                       <SpotifyAuthBtn setResponse={setResponse} userInfo={userInfo} redirectURI={`${appOrigin}/dashboard/account`} />

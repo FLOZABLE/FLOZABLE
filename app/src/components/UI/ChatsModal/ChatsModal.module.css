@@ -21,11 +21,13 @@
 }
 
 .ChatsModal .header {
-  background-color: var(--purple);
+  background-color: var(--blue1);
   color: #fff;
   height:  3.75rem;
   display: flex;
   align-items: center;
+  padding-left: 3.3rem;
+  padding-right: 0.6rem;
   margin: 0.625rem;
   border-radius: 1.25rem;
 }
@@ -38,7 +40,8 @@
 }
 
 .ChatsModal .header p {
-  margin-left: 0.625rem;
+  margin-left: 1.2rem;
+  font-size: 1.4rem;
 }
 
 .ChatsModal .content {
@@ -52,10 +55,6 @@
   padding: 0.625rem 0em;
   overflow-y: auto;
   height: 24.375rem;
-}
-
-.ChatsModal .chatRoomsContainer .roomInfo .roomName {
-  font-size: 1.063rem;
 }
 
 .ChatsModal .chatRoomsContainer .roomInfo {
@@ -87,22 +86,22 @@
 }
 
 .ChatsModal .chatsHeader {
-  height: 3.125rem;
+  height: 5rem;
   width: 100%;
-  background-color: var(--purple);
+  background-color: var(--blue1);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .ChatsModal .chatsHeader .imgContainer {
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 1.25rem;
+  border-radius: 10.25rem;
 }
 
 .ChatsModal .chatsHeader i {
-  font-size: 1.875rem;
+  font-size: 1.8rem;
   color: #fff;
   display: flex;
 }
@@ -111,18 +110,21 @@
   position: absolute;
   left: 1.25rem;
   cursor: pointer;
+  top: 1rem;
 }
 
 .ChatsModal .chatsHeader #closeBtn {
   position: absolute;
-  right: 0.625rem;
+  right: 1rem;
   font-size: 2.188rem;
   cursor: pointer;
+  top: 1rem;
 }
 
 .ChatsModal .chatsHeader .roomInfo {
   display: flex;
   align-items: center;
+  margin-top: 1.5rem;
 }
 
 .ChatsModal .chatsHeader .roomInfo p {
@@ -256,9 +258,8 @@
   border-radius: 0.938rem;
   height: 3.125rem;
   align-items: center;
-  margin: 0em 0.625rem;
+  margin: -2.625rem 0.625rem;
   border: 0.0625rem solid var(--gray2);
-
 }
 
 .ChatsModal .chatsWrapper .inputWrapper input {

@@ -285,7 +285,7 @@ function ChatsModal({
   return (
     <div className={`${styles.ChatsModal} ${isChatModal ? styles.open : ""}`}>
       <div className={styles.header}>
-        <p>You have {totalNewMsg} new messages</p>
+        <p>{totalNewMsg} new messages</p>
         <i
           onClick={() => {
             setIsChatModal(false);
