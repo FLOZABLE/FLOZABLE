@@ -58,7 +58,7 @@ function ChatRoom({ room, setSelectedRoom, setRoomName, lastMsg, lastRead, setTo
           </div>
           <strong>({room?.members.length})</strong>
           <div className={styles.msgCount}>
-          {newMsgs ? <div>{newMsgs} new messages</div> : null}
+            {newMsgs ? <div>{newMsgs} new messages</div> : null}  
           </div>
         </div>
         <div className={styles.msgInfo}>

@@ -19,7 +19,11 @@
 }
 
 .Account .box#extension .title {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.Account .boxWrapper .box#accounts .title p {
+  margin-bottom: 1.2rem;
 }
 
 .Account .submitWrapper {
@@ -57,12 +61,22 @@
 }
 
 .Account .box#accounts .iconWrapper {
-  margin-right: 0.625rem;
+  margin-left: 1rem;
+  margin-top: 0rem;
+}
+
+.Account .box#accounts .explanation {
+  margin-top: 1rem;
+  padding-right: 1.5rem;
+  padding-left: 1rem;
+  max-width: 78%;
+  left: 1px;
 }
 
 .Account .box#profile .emailWrapper .ProfileConfirm {
   margin-left: 3vh;
 }
+
 .Account .box#profile .contents>div {
   margin-right: 7%;
 }
