@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import Draggable from "react-draggable";
 import styles from "./AddSubjectModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -41,7 +42,7 @@ function AddSubjectModal({
         tutorialBoxRef.current.style.top = top - 25 + 'px';
         tutorialBoxRef.current.style.width = 0;
         tutorialBoxRef.current.style.height = height + 'px';
-  
+
         tutorialTextRef.current.style.top = top - 50 + 'px';
         tutorialTextRef.current.style.left = left + 'px';
         tutorialTextRef.current.innerText = "Enter the subject details!";
@@ -86,7 +87,7 @@ function AddSubjectModal({
           setName("");
           const tutorial = searchParams.get("tutorial");
           if (tutorial === "4") {
-            setSearchParams({...searchParams, tutorial: 5})
+            setSearchParams({ ...searchParams, tutorial: 5 })
           }
         }
       })
@@ -94,52 +95,53 @@ function AddSubjectModal({
   }, [selectedColor, selectedIcon, name, searchParams]);
 
   return (
-    <div
-      className={`${styles.AddSubjectModal} modal ${
-        isAddSubjectModal ? "open" : ""
-      }`}
-      ref={addSubjectModalRef}
-    >
-      <div className={styles.header}>
-        <i
-          onClick={() => {
-            setIsAddSubjectModal(false);
-          }}
-        >
-          <FontAwesomeIcon icon={faXmark} />
-        </i>
-      </div>
-      <div className={styles.content}>
-        <div className={styles.inputWrapper}>
-          <CustomInput
-            input={name}
-            handleInput={handleNameInput}
-            icon={faBook}
-            placeHolder={"Subject Name"}
-            type={"text"}
+    <Draggable nodeRef={addSubjectModalRef} handle=".header">
+      <div
+        className={`${styles.AddSubjectModal} modal ${isAddSubjectModal ? "open" : ""
+          }`}
+        ref={addSubjectModalRef}
+      >
+        <div className={`${styles.header} header`}>
+          <i
+            onClick={() => {
+              setIsAddSubjectModal(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </i>
+        </div>
+        <div className={styles.content}>
+          <div className={styles.inputWrapper}>
+            <CustomInput
+              input={name}
+              handleInput={handleNameInput}
+              icon={faBook}
+              placeHolder={"Subject Name"}
+              type={"text"}
+            />
+          </div>
+          <SelectIcon
+            selectedIcon={selectedIcon}
+            setSelectedIcon={setSelectedIcon}
+            isSelectIcon={isSelectIcon}
+            setIsSelectIcon={setIsSelectIcon}
+            setIsSelectColor={setIsSelectColor}
+            id="tutorial-4"
           />
-        </div>
-        <SelectIcon
-          selectedIcon={selectedIcon}
-          setSelectedIcon={setSelectedIcon}
-          isSelectIcon={isSelectIcon}
-          setIsSelectIcon={setIsSelectIcon}
-          setIsSelectColor={setIsSelectColor}
-          id="tutorial-4"
-        />
-        <ColorPalette
-          setSelectedColor={setSelectedColor}
-          selectedColor={selectedColor}
-          isSelectColor={isSelectColor}
-          setIsSelectColor={setIsSelectColor}
-          setIsSelectIcon={setIsSelectIcon}
-          id="tutorial-4"
-        />
-        <div className={styles.submit}>
-          <BlobBtn name={"SUBMIT"} setClicked={submit} id="tutorial-4" />
+          <ColorPalette
+            setSelectedColor={setSelectedColor}
+            selectedColor={selectedColor}
+            isSelectColor={isSelectColor}
+            setIsSelectColor={setIsSelectColor}
+            setIsSelectIcon={setIsSelectIcon}
+            id="tutorial-4"
+          />
+          <div className={styles.submit}>
+            <BlobBtn name={"SUBMIT"} setClicked={submit} id="tutorial-4" />
+          </div>
         </div>
       </div>
-    </div>
+    </Draggable>
   );
 }
 

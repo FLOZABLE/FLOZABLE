@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import Draggable from "react-draggable";
 import styles from "./CreateThemeModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faLink, faPen, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -23,6 +24,8 @@ function CreateThemeModal({
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
 
+  const modalRef = useRef(null);
+
   const submit = () => {
     fetch(`${serverOrigin}/themes/create`, {
       method: "post",
@@ -46,62 +49,65 @@ function CreateThemeModal({
   };
 
   return (
-    <div
-      className={`${styles.CreateThemeModal} modal ${isOpen ? "open" : ""
-        }`}
-    >
-      <div className={styles.header}>
-        <i
-          onClick={() => {
-            setIsOpen(false);
-          }}
-        >
-          <FontAwesomeIcon icon={faXmark} />
-        </i>
+    <Draggable nodeRef={modalRef} handle=".header">
+      <div
+        className={`${styles.CreateThemeModal} modal ${isOpen ? "open" : ""
+          }`}
+        ref={modalRef}
+      >
+        <div className={`${styles.header} header`}>
+          <i
+            onClick={() => {
+              setIsOpen(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </i>
+        </div>
+        <div className={`${styles.content} customScroll`}>
+          <div className={styles.layer}>
+            <CustomInput
+              input={name}
+              handleInput={(e) => { setName(e.target.value) }}
+              icon={faPen}
+              placeHolder={"Theme Name"}
+              type={"text"}
+            />
+          </div>
+          <div className={styles.layer}>
+            <TextEditor
+              setDescription={setDescription}
+              description={description}
+            />
+          </div>
+          <div className={styles.layer}>
+            <CustomInput
+              input={url}
+              handleInput={(e) => { setUrl(e.target.value) }}
+              icon={faLink}
+              placeHolder={"Youtube Link"}
+              type={"text"}
+            />
+          </div>
+          <div className={styles.layer}>
+            <TagContainerGen
+              maxTags={10}
+              setTags={setTags}
+              handleCreatedTagsChange={(tags) => { setTags(tags) }}
+            />
+          </div>
+          <div className={styles.submitWrapper}>
+            <BlobBtn
+              delay={-1}
+              name={"SUBMIT"}
+              color1={"#fff"}
+              color2={"var(--purple2)"}
+              setClicked={submit}
+            />
+          </div>
+        </div>
       </div>
-      <div className={`${styles.content} customScroll`}>
-        <div className={styles.layer}>
-          <CustomInput
-            input={name}
-            handleInput={(e) => { setName(e.target.value) }}
-            icon={faPen}
-            placeHolder={"Theme Name"}
-            type={"text"}
-          />
-        </div>
-        <div className={styles.layer}>
-          <TextEditor
-            setDescription={setDescription}
-            description={description}
-          />
-        </div>
-        <div className={styles.layer}>
-          <CustomInput
-            input={url}
-            handleInput={(e) => { setUrl(e.target.value) }}
-            icon={faLink}
-            placeHolder={"Youtube Link"}
-            type={"text"}
-          />
-        </div>
-        <div className={styles.layer}>
-          <TagContainerGen
-            maxTags={10}
-            setTags={setTags}
-            handleCreatedTagsChange={(tags) => { setTags(tags) }}
-          />
-        </div>
-        <div className={styles.submitWrapper}>
-          <BlobBtn
-            delay={-1}
-            name={"SUBMIT"}
-            color1={"#fff"}
-            color2={"var(--purple2)"}
-            setClicked={submit}
-          />
-        </div>
-      </div>
-    </div>
+    </Draggable>
   );
 }
 
