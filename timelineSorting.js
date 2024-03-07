@@ -13,7 +13,7 @@
  * maxlength: get the subjects with the earliest datumpoint and return the dates/months/weeks passed from that datumpoint
  * groupedTotal: add all the subjects' timeline and divide them based on daily/weekly/monthly
 */
-const {DateTime} = require("luxon");
+const { DateTime } = require("luxon");
 
 function timelineSort(subjects) {
   let firstDatumPoint = Math.floor(new Date().getTime() / 1000);
@@ -56,6 +56,7 @@ function timelineSort(subjects) {
 
     //fills array only when index is 0
     if (!i) {
+      console.log('timelinesort', i)
       subjects.daily.grouped = Array(dailySorted.length).fill([]);
       subjects.weekly.grouped = Array(weeklySorted.length).fill([]);
       subjects.monthly.grouped = Array(monthlySorted.length).fill([]);
@@ -65,15 +66,28 @@ function timelineSort(subjects) {
       subjects.monthly.groupedTotal = Array(monthlyTotal.length).fill(0);
     };
 
-    subjects.daily.grouped = dailySorted.map((val, i) => {
-      return [...val, ...subjects.daily.grouped[i]];
+    subjects.daily.grouped = subjects.daily.grouped.map((val, i) => {
+      if (!dailySorted[i]) {
+        return [...val];
+      };
+      return [...val, ...dailySorted[i]];
     });
-    subjects.weekly.grouped = weeklySorted.map((val, i) => {
-      return [...val, ...subjects.weekly.grouped[i]];
+
+    subjects.weekly.grouped = subjects.weekly.grouped.map((val, i) => {
+      if (!weeklySorted[i]) {
+        return [...val];
+      };
+      return [...val, ...weeklySorted[i]];
     });
-    subjects.monthly.grouped = monthlySorted.map((val, i) => {
-      return [...val, ...subjects.monthly.grouped[i]];
+
+    subjects.monthly.grouped = subjects.monthly.grouped.map((val, i) => {
+      if (!monthlySorted[i]) {
+        return [...val];
+      };
+      return [...val, ...monthlySorted[i]];
     });
+
+    console.log("timelinesort", i, subjects.daily.grouped.length)
 
     subject.daily.focus = Array(subject.daily.grouped.length).fill(0);
     subject.daily.focus = subject.daily.grouped.map((val, i) => {
@@ -235,24 +249,7 @@ function sortNewSubject(subjects, newSubject) {
 
 
   return newSubject;
-}
-
-
-
-function findDiff(subjects) {
-  const dailySorted = subjects.daily.groupedTotal; //reference but no edit
-  //return daily, weekly, and monthly diff 
-  const thisDayTotal = dailySorted[dailySorted.length - 1];
-
-  const lastSevenIndex = dailySorted.length - 7;
-  let lastWeekTotal = 0; //not acutally last week but last 7 days
-
-
-  const lastDayTotal = subjects.daily.groupedTotal.length > 1 ? subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 2] : 0;
-
-
-  const dayDiff = thisDayTotal - lastDayTotal; //how much more today
-}
+};
 
 function createStudyGraph(subjects) {
 
