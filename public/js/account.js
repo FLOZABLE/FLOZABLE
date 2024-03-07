@@ -153,3 +153,16 @@ pwResetBtn.addEventListener("click", async () => {
     };
   }) 
 });
+
+const closeBtnFront = document.querySelector("#accountModal .card-front .closeBtn");
+const closeBtnBack = document.querySelector("#accountModal .card-back .closeBtn");
+
+closeBtnFront.addEventListener('click', () => {
+  dispBlock.classList.remove('visible');
+  accountModal.classList.remove('visible');
+});
+
+closeBtnBack.addEventListener('click', () => {
+  dispBlock.classList.remove('visible');
+  accountModal.classList.remove('visible');
+});

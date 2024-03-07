@@ -608,3 +608,9 @@ h6,
   padding-right: 0;
   border-right: none;
 }
+
+a#account {
+  position: absolute;
+  right: 10px;
+  display: block !important;
+}

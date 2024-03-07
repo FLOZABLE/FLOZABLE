@@ -69,85 +69,9 @@
   <div id="dispBlock">
 
   </div>
-  <div id="accountModal">
 
-    <div class="section">
-      <div class="container">
-        <div class="row full-height justify-content-center">
-          <div class="col-12 text-center align-self-center">
-            <div class="section pb-5 pt-5 pt-sm-2 text-center">
-              <h6 class="mb-0 pb-3"><span id="tosignin">Log In </span><span id="tosignup">Sign Up</span></h6>
-              <input class="checkbox" id="issignin" type="checkbox" id="reg-log" name="reg-log" />
-              <label for="reg-log">
-                <i class="material-symbols-outlined arrow">
-                  north_west
-                </i>
-              </label>
-              <div class="card-3d-wrap mx-auto">
-                <div class="card-3d-wrapper">
-                  <div class="card-front">
-                    <div class="center-wrap">
-                      <div class="section text-center">
-                        <!-- <h4 class="mb-4 pb-3">Log In</h4> -->
-                        <div class="form-group">
-                          <input type="email" name="logemail" class="form-style" placeholder="Email" id="logemail"
-                            autocomplete="off">
-                          <i class="material-symbols-outlined input-icon">
-                            alternate_email
-                          </i>
-                        </div>
-                        <div class="form-group mt-2">
-                          <input type="password" name="logpass" class="form-style" placeholder="Password" id="logpass"
-                            autocomplete="off">
-                          <i class="material-symbols-outlined input-icon uil uil-lock-alt">
-                            lock
-                          </i>
-                        </div>
-                        <a class="btn mt-4" id="signin">submit</a>
-                        <p class="mb-0 mt-4 text-center"><a href="#0" class="link">Forgot your password?</a></p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card-back">
-                    <div class="center-wrap">
-                      <div class="section text-center">
-                        <!-- <h4 class="mb-4 pb-3">Sign Up</h4> -->
-                        <div class="form-group">
-                          <input type="text" name="logname" class="form-style" placeholder="Name" id="logname"
-                            autocomplete="off">
-                          <i class="material-symbols-outlined input-icon">
-                            person
-                          </i>
-                        </div>
-                        <div class="form-group mt-2">
-                          <input type="email" name="logemail" class="form-style" placeholder="Email" id="logemail"
-                            autocomplete="off">
-                          <i class="material-symbols-outlined input-icon">
-                            alternate_email
-                          </i>
-                        </div>
-                        <div class="form-group mt-2">
-                          <input type="password" name="logpass" class="form-style" placeholder="Password" id="logpass"
-                            autocomplete="off">
-                          <i class="material-symbols-outlined input-icon uil uil-lock-alt">
-                            lock
-                          </i>
-                        </div>
-                        <a class="btn mt-4" id="signup">submit</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="signUpModal">
-
-  </div>
+  <%- include("./elements/accountModal");%>
+  
   <div class="container-xxl bg-white p-0">
     <!-- Spinner Start -->
     <div id="spinner"

@@ -16,9 +16,6 @@
       <h1 class="m-0">FLOZABLE</h1>
       <!-- <img src="img/main/logo.png" alt="Logo"> -->
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-      <span class="fa fa-bars"></span>
-    </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <div class="navbar-nav mx-auto py-0">
         <a href="../#home" class="nav-item nav-link active">Home</a>
@@ -31,15 +28,15 @@
       <script>
         let isLogged = true;
       </script>
-      <% if (loggedIn) {%>
-        <a class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block" id="account">Log Out</a>
-        <% } else { %>
-          <a class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block" id="account">Sign
-            In</a>
-          <script>
-            isLogged = false;
-          </script>
-        <% } %>
     </div>
+    <% if (loggedIn) {%>
+      <a class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block" id="account">Log Out</a>
+      <% } else { %>
+        <a class="btn btn-primary-gradient rounded-pill py-2 px-4 ms-3 d-none d-lg-block" id="account">Sign
+          In</a>
+        <script>
+          isLogged = false;
+        </script>
+      <% } %>
   </nav>
 </div>
