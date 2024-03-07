@@ -25,6 +25,10 @@
   align-items: center;
 }
 
+.CreateChallengeModal .modalHeader:hover {
+  cursor: move;
+}
+
 .CreateChallengeModal .container {
   display: flex;
   flex-direction: column;

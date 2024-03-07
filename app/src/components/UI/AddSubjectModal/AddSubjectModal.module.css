@@ -19,6 +19,10 @@
   align-items: center;
 }
 
+.AddSubjectModal .header:hover {
+  cursor: move;
+}
+
 .AddSubjectModal .header i {
   font-size: 1.875rem;
   color: #fff;

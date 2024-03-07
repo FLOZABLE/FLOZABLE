@@ -19,6 +19,10 @@
   border-top-right-radius: 1.25rem;
 }
 
+.EventModal .header:hover {
+  cursor: move;
+}
+
 .EventModal .header i {
   margin-right: 0.625rem;
   font-size: 1.875rem;
