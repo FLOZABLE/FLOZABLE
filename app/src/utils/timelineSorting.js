@@ -14,10 +14,8 @@
  * groupedTotal: add all the subjects' timeline and divide them based on daily/weekly/monthly
 */
 import { DateTime } from "luxon";
-import QuickChart from "quickchart-js";
 
 function timelineSort(subjects) {
-  console.log(subjects);
   let firstDatumPoint = Math.floor(new Date().getTime() / 1000);
   subjects.map(({ datum_point }) => {
     //this code compares the current firstdatumPoint and current looped subject's datumpoint and updtate the firstDatunmPoint with
@@ -58,6 +56,7 @@ function timelineSort(subjects) {
 
     //fills array only when index is 0
     if (!i) {
+      console.log('timelinesort', i)
       subjects.daily.grouped = Array(dailySorted.length).fill([]);
       subjects.weekly.grouped = Array(weeklySorted.length).fill([]);
       subjects.monthly.grouped = Array(monthlySorted.length).fill([]);
@@ -67,30 +66,28 @@ function timelineSort(subjects) {
       subjects.monthly.groupedTotal = Array(monthlyTotal.length).fill(0);
     };
 
-    subjects.daily.grouped = dailySorted.map((val, i) => {
-      if (i < subjects.daily.grouped.length) {
-        return [...val, ...subjects.daily.grouped[i]];
-      }
-      else {
+    subjects.daily.grouped = subjects.daily.grouped.map((val, i) => {
+      if (!dailySorted[i]) {
         return [...val];
-      }
+      };
+      return [...val, ...dailySorted[i]];
     });
-    subjects.weekly.grouped = weeklySorted.map((val, i) => {
-      if (i < subjects.weekly.grouped.length) {
-        return [...val, ...subjects.weekly.grouped[i]];
-      }
-      else {
+
+    subjects.weekly.grouped = subjects.weekly.grouped.map((val, i) => {
+      if (!weeklySorted[i]) {
         return [...val];
-      }
+      };
+      return [...val, ...weeklySorted[i]];
     });
-    subjects.monthly.grouped = monthlySorted.map((val, i) => {
-      if (i < subjects.monthly.grouped.length) {
-        return [...val, ...subjects.monthly.grouped[i]];
-      }
-      else {
+
+    subjects.monthly.grouped = subjects.monthly.grouped.map((val, i) => {
+      if (!monthlySorted[i]) {
         return [...val];
-      }
+      };
+      return [...val, ...monthlySorted[i]];
     });
+
+    console.log("timelinesort", i, subjects.daily.grouped.length)
 
     subject.daily.focus = Array(subject.daily.grouped.length).fill(0);
     subject.daily.focus = subject.daily.grouped.map((val, i) => {
@@ -252,102 +249,6 @@ function sortNewSubject(subjects, newSubject) {
 
 
   return newSubject;
-}
+};
 
-
-
-function findDiff(subjects) {
-  const dailySorted = subjects.daily.groupedTotal; //reference but no edit
-  //return daily, weekly, and monthly diff 
-  const thisDayTotal = dailySorted[dailySorted.length - 1];
-
-  const lastSevenIndex = dailySorted.length - 7;
-  let lastWeekTotal = 0; //not acutally last week but last 7 days
-
-
-  const lastDayTotal = subjects.daily.groupedTotal.length > 1 ? subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 2] : 0;
-
-
-  const dayDiff = thisDayTotal - lastDayTotal; //how much more today
-}
-
-function createStudyGraph(subjects) {
-
-  const Chart = {
-    type: 'line',
-    data: {
-      labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-      datasets: [{
-        label: 'Hours',
-        data: [1.5, 2.1, 0.2, 3.2, 0.0, 1.1, 0.8]
-      }]
-    }
-  }
-
-  const Chart2 = {
-    type: 'donut',
-    data:
-    {
-      labels: subjects.filter((subject) => subject.daily.total[subject.daily.total.length - 1] > 0).map((subject) => subject.name),
-      datasets: [{
-        data: subjects.filter((subject) => subject.daily.total[subject.daily.total.length - 1] > 0).map((subject) => subject.daily.total[subject.daily.total.length - 1])
-      }]
-    },
-    options: {
-      legend: {
-        labels: {
-          fontColor: "white",
-          fontSize: 12
-        }
-      },
-      plugins: {
-        doughnutlabel: {
-          labels: [
-            {
-              text: subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1],
-              font: { size: 20 }
-            },
-            { text: 'Total' },
-          ],
-        },
-        datalabels: {
-          color: "black",
-
-          formatter: (value) => {
-            let sec = parseInt(value);
-            let res = "";
-            let hours = 0;
-            if (sec >= 3600) {
-              hours = Math.floor(sec / 3600);
-              sec = sec % 3600;
-            }
-            let mins = 0;
-            if (sec >= 60) {
-              mins = Math.floor(sec / 60);
-              sec = sec % 60;
-            }
-
-            if (hours > 0) {
-              res = hours + "hr " + mins.toString().padStart(2, "0") + "m";
-            }
-            else if (mins > 0) {
-              res = mins + "m " + sec.toString().padStart(2, "0") + "s";
-            }
-            else {
-              res = sec + " sec";
-            }
-
-            return res;
-          },
-        }
-      },
-    },
-  }
-  const chart2Obj = new QuickChart();
-  chart2Obj.setConfig(Chart2)
-
-  const ChartURL = chart2Obj.getUrl();
-  return ChartURL;
-}
-
-export { timelineSort, sortNewSubject, createStudyGraph };
+export { timelineSort, sortNewSubject };
