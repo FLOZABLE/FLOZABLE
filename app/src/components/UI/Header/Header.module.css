@@ -170,6 +170,29 @@
   font-size:  1.563rem;
 }
 
+.Header .headerEl#chats {
+  cursor: pointer;
+}
+
+.Header .headerEl#chats > div {
+  background-color: #ffcc00;
+  position: absolute;
+  top: 1.0625rem;
+  right: -0.625rem;
+  height: 1.0625rem;
+  width: 1.0625rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1.25rem;
+  border: 0.1875rem solid #000;
+  font-size: 0.688rem;
+}
+
+.Header .headerEl#chats i {
+  font-size:  1.563rem;
+}
+
 @media (max-width: 87.5rem) {
   .Header .right .profileImg {
     height: 2.5rem;
