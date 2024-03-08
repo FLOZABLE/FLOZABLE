@@ -49,7 +49,6 @@ function Ranking({ isSidebarOpen, isSidebarHovered }) {
     const viewDateTime = DateTime.fromJSDate(viewDate);
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    console.log(viewDateTime.toSeconds());
 
     fetch(`${serverOrigin}/ranking/sort?mode=${viewer}&date=${viewDateTime.toISODate()}&timezone=${timezone}`, {
       method: 'get',

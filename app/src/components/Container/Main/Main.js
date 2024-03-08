@@ -47,7 +47,7 @@ function Main({
 
     if (!daily) return;
 
-    const subjectsTrend = updateSubjectsTrendChart(subjects, new Date(), 'Daily', 'day');
+    const subjectsTrend = updateSubjectsTrendChart(subjects, new Date(), 'Daily', 'days');
     setSubjectsTrend(subjectsTrend);
     /* fetch(`${serverOrigin}/AI/input`, {
       method: 'post',
