@@ -69,6 +69,18 @@
   transition: .3s ease-in-out all;
 }
 
+.Tutorial .skipOption {
+  z-index: 600;
+  color: red;
+  font-weight: 450;
+  top: 90vh;
+  left: 10px;
+}
+
+.Tutorial .skipOption:hover {
+  cursor: pointer;
+}
+
 .Tutorial .Swiper {
   height: 100%;
 }
