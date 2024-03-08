@@ -9,6 +9,7 @@ import {
   faFire,
   faArrowsToCircle,
   faBars,
+  faMessage,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Header.module.css";
 import PlanTimeline from "../PlanTimeline/PlanTimeline";
@@ -57,7 +58,7 @@ function Header({
 
       const { width, top, left, height, right } = studyBtnRef.current.getBoundingClientRect();
       tutorialBoxRef.current.style.left = left - 10 + 'px';
-      tutorialBoxRef.current.style.top = top- 10 + 'px';
+      tutorialBoxRef.current.style.top = top - 10 + 'px';
       tutorialBoxRef.current.style.width = width + 20 + 'px';
       tutorialBoxRef.current.style.height = height + 20 + 'px';
 
@@ -201,6 +202,16 @@ function Header({
         </div>
       </div>
       <div className={styles.right}>
+        <div className={styles.headerEl} id={styles.chats}
+          onClick={() => { setIsChatModal(prev => !prev) }}
+        >
+          <i>
+            <FontAwesomeIcon icon={faMessage} />
+          </i>
+          <div>
+            {totalNewMsg}
+          </div>
+        </div>
         <div className={styles.headerEl} id={styles.notifications}
           onClick={() => { setIsNotificationModal(prev => !prev) }}
         >
@@ -230,7 +241,7 @@ function Header({
           </div>
         </Link>
         <div className={styles.headerEl}>
-          <Link to={tutorial ? `/dashboard/study?tutorial=${tutorial}`: "/dashboard/study"} id="tutorial-6" ref={studyBtnRef}>
+          <Link to={tutorial ? `/dashboard/study?tutorial=${tutorial}` : "/dashboard/study"} id="tutorial-6" ref={studyBtnRef}>
             <div className={styles.StudyButton} id="tutorial-6">
               Study
             </div>
