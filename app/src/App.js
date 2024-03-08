@@ -117,12 +117,14 @@ function App() {
     socket.on("studying", () => { });
     socket.on("notification", onNotification);
     socket.on('reset', bringSubjects);
+    socket.on('update tools', bringSubjects);
 
     return () => {
       socket.off("joinMyGroups", socketConnectAction);
       socket.off("reset", socketResetAction);
       socket.off("notification", onNotification);
-      socket.on('reset', bringSubjects);
+      socket.off('reset', bringSubjects);
+      socket.off('update tools', bringSubjects);
     };
   }, []);
 
