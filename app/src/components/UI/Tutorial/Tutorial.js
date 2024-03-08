@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Tutorial.module.css";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -24,7 +24,7 @@ function Tutorial({ setResponse, tutorialBoxRef, tutorialTextRef, }) {
 
     const btnTutorial = button.split("-")[1];
     console.log(parseInt(btnTutorial), tutorial)
-    if (parseInt(btnTutorial) !== tutorial) {
+    if (parseInt(btnTutorial) !== tutorial && button != "skipTutorialButton") {
       console.log('locked', button, tutorial)
       e.stopPropagation();
       e.preventDefault();
@@ -56,6 +56,12 @@ function Tutorial({ setResponse, tutorialBoxRef, tutorialTextRef, }) {
     }
   }, [tutorial]);
 
+  const skipTutorial = useCallback(() => {
+    setSearchParams({});
+  }, [searchParams]);
+
+  //setTimeout(skipTutorial, 120000); //Testing
+
 
   return (
     <div className={`${styles.Tutorial} ${tutorial ? styles.open : ''}`}>
@@ -84,7 +90,9 @@ function Tutorial({ setResponse, tutorialBoxRef, tutorialTextRef, }) {
             <div className={styles.hole} id="tutorialHole" ref={tutorialBoxRef}>
             </div>
             <div className={styles.text} id="tutorialText" ref={tutorialTextRef}>
-
+            </div>
+            <div className={styles.skipOption} id = "skipTutorialButton" onClick={skipTutorial}>
+              Skip Tutorial
             </div>
           </>
         )
