@@ -18,7 +18,7 @@ import SliderAnimation from "../SliderAnimation/SliderAnimation";
 import generateRandomId from "../../../utils/RandomId";
 import { requestNotification } from "../../../utils/Tool";
 import { useSearchParams } from "react-router-dom";
-import Draggable, {DraggableCore} from "react-draggable";
+import Draggable, { DraggableCore } from "react-draggable";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -65,7 +65,7 @@ function EventModal({
         tutorialBoxRef.current.style.width = width + 50 + 'px';
         tutorialBoxRef.current.style.height = height + 50 + 'px';
 
-        tutorialTextRef.current.style.top = top + height - 700 + 'px';
+        tutorialTextRef.current.style.top = top - 70 + 'px';
         tutorialTextRef.current.style.left = left - 25 + 'px';
         tutorialTextRef.current.innerText = "Enter the event information!";
 
@@ -86,7 +86,7 @@ function EventModal({
         tutorialBoxRef.current.style.left = left - 10 + 'px';
         tutorialBoxRef.current.style.top = top - 9 + 'px';
         tutorialBoxRef.current.style.width = width + 10 + 'px';
-        tutorialBoxRef.currentole.style.height = height + 20 + 'px';
+        tutorialBoxRef.current.style.height = height + 20 + 'px';
 
         tutorialTextRef.current.style.top = top + height + 20 + 'px';
         tutorialTextRef.current.style.left = left - 10 + 'px';
@@ -94,15 +94,25 @@ function EventModal({
       }, 500);
     } else if (tutorial && parseInt(tutorial) === 5) {
 
-      const { width, top, left, height } = submitRef.current.getBoundingClientRect();
-      tutorialBoxRef.current.style.left = left + 159 + 'px';
-      tutorialBoxRef.current.style.top = top - 10 + 'px';
-      tutorialBoxRef.current.style.width = width - 330 + 'px';
-      tutorialBoxRef.current.style.height = height + 20 + 'px';
+      submitRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-      tutorialTextRef.current.style.top = top + height + 30 + 'px';
-      tutorialTextRef.current.style.left = left + 150 + 'px';
+      const { left } = submitRef.current.getBoundingClientRect();
+      const eventModalDimmensions = eventModalRef.current.getBoundingClientRect();
+      const top2 = eventModalDimmensions.top;
+
+      tutorialTextRef.current.style.top = top2 - 30 + 'px';
+      tutorialTextRef.current.style.left = left + 'px';
       tutorialTextRef.current.innerText = "Save the plan!";
+
+      function moveTutorialBoxes() {
+        const { width, top, left, height } = submitRef.current.getBoundingClientRect();
+
+        tutorialBoxRef.current.style.left = left + 50 + 'px';
+        tutorialBoxRef.current.style.top = top - 10 + 'px';
+        tutorialBoxRef.current.style.width = width - 100 + 'px';
+        tutorialBoxRef.current.style.height = height + 20 + 'px';
+      }
+      setTimeout(moveTutorialBoxes, 2000);
     }
   }, [searchParams]);
 
