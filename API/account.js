@@ -8,7 +8,7 @@ const multer = require('multer');
 const webpush = require("web-push");
 const { DateTime } = require('luxon');
 const { hashing, autoSignin, generateRandomId, googleOauth2client, googleYoutubeOauth2client, isValidTimeZone, deriveKey, randomIntInRange } = require("../tool");
-const { validateEmail, validateStrictString, validatePassword, validateURL } = require("../validate");
+const { validateEmail, validateStrictString, validatePassword, validateURL, validateString, validateLength } = require("../validate");
 const { UserRefreshClient } = require("google-auth-library")
 const { NotificationCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
 const { extensionIo } = require('../socket');
@@ -611,4 +611,76 @@ Router.post('/notification-subscribe', async (req, res) => {
   }));
 });
 
+
+Router.post('/app/auth', async (req, res) => {
+  try {
+    const {email, password, deviceInfo} = req.body;
+
+    console.log(email, password, deviceInfo);
+    const connection = pool.promise();
+
+    const isValidEmail = validateEmail(email);
+
+    if (!isValidEmail.isValid) {
+      return res.send({ success: false, reason: isValidEmail.reason });
+    };
+
+    if (!password) return res.send({success: false, reason: 'Password Missing'});
+
+    if (!deviceInfo || typeof deviceInfo !== 'object') return res.send({success: false, reason: 'Device Info Missing'});
+
+    const [[userInfo]] = await connection.query('SELECT user_id, salt, hashed_password, email, hashed_password FROM users WHERE email = ?', email);
+  
+    if (!userInfo) {
+      return res.send({ success: false, reason: "NO SUCH USER" });
+    };
+  
+    const hashedPassword = crypto.pbkdf2Sync(password, userInfo.salt, 99097, 32, 'sha512').toString('hex');
+  
+    console.log(hashedPassword === userInfo.hashed_password)
+    if (hashedPassword !== userInfo.hashed_password) {
+      return res.send({ success: false, reason: 'WRONG PASSWORD' });
+    };
+
+    const {brand, deviceName} = deviceInfo;
+
+    const isValidBrand = validateString(brand ? brand : '', 'brand', 30);
+
+    if (!isValidBrand.isValid) {
+      return res.send({ success: false, reason: isValidBrand.reason });
+    };
+
+    const isValidDeviceName = validateLength(deviceName ? deviceName : '', 'device name', 30);
+
+    if (!isValidDeviceName.isValid) {
+      return res.send({ success: false, reason: isValidDeviceName.reason });
+    };
+
+
+    const device_id = deviceInfo.deviceId ? deviceInfo.deviceId : generateRandomId(10);
+
+    const isValidDeviceId = validateStrictString(device_id, 'device id', 10, 10);
+    if (!isValidDeviceId.isValid) {
+      return res.send({success: false, reason: isValidDeviceId.reason});
+    };
+
+    const auth_key = generateRandomId(20);
+    const last_auth = DateTime.now().set({second: 0}).toSeconds();
+    const insertInfo = {
+      device_id,
+      last_auth,
+      name: deviceName,
+      brand,
+      auth_key,
+      user_id: userInfo.user_id
+    }
+
+    await connection.query(`DELETE FROM devices WHERE device_id = ? AND user_id = ?`, [device_id, userInfo.user_id]);
+    connection.query(`INSERT INTO devices SET ?`, insertInfo);
+
+    return res.send({success: true, msg: 'Authed', device_id, auth_key});
+  } catch (err) {
+    console.log(err);
+  }
+});
 module.exports = Router;
