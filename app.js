@@ -15,6 +15,7 @@ const cron = require("node-cron");
 const fs = require('fs');
 const axios = require('axios');
 const sharp = require("sharp");
+const logger = require("morgan");
 
 const options = {
   key: fs.readFileSync('./SSL/key.pem', 'utf-8'),
@@ -214,7 +215,7 @@ const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, c
 //createBots(200); 
 //createBotRankings();
 
-const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode } = require('./query');
+const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode, createDevicesTable } = require('./query');
 const { updateRanking, createRankings } = require("./services/rankingUpdate");
 const { extensionManager } = require("./services/extension");
 const { dailyReport } = require("./services/notification");
@@ -252,6 +253,7 @@ cron.schedule('0 * * * *', () => {
 // groupsChatRoomsGeneration();
 // createActivitiesTable();
 //utf8mb4Unicode();
+//createDevicesTable();
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
