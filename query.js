@@ -146,6 +146,20 @@ function createChallengesTable() {
     datum_point INT
   );
   `);
+};
+
+function createDevicesTable() {
+  const connection = pool.promise();
+  connection.query(`
+  create table devices (
+    device_id varchar(10),
+    last_auth INT(11), 
+    name varchar(30), 
+    brand varchar(30), 
+    auth_key varchar(20), 
+    user_id varchar(20)
+    );
+  `);
 }
 
 async function groupsChatRoomsGeneration() {
@@ -219,4 +233,4 @@ async function utf8mb4Unicode() {
   console.log('migration complete');
 }
 
-module.exports = { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, groupsChatRoomsGeneration, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode };
+module.exports = { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, createDevicesTable, groupsChatRoomsGeneration, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode };
