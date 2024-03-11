@@ -13,17 +13,22 @@ const { UserRefreshClient } = require("google-auth-library")
 const { NotificationCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
 const { extensionIo } = require('../socket');
 const { sendEmail } = require('../email');
+const { responseCodes } = require('../Constant');
 const upload = multer();
 
 Router.get('/accountinfo', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     const notifications = await NotificationCache(userId);
     const userInfo = await userCache(userId);
+    if (!userInfo) {
+      return res.send(responseCodes['no-user']);
+    };
+    req.session.timezone = userInfo.timezone;
     usersCache(userId);
     res.send({ success: true, userInfo: userInfo, notifications: notifications });
   }
   ), () => {
-    res.send({ success: false, code: 401 });
+    res.send(responseCodes['no-user']);
   }
   );
 });
@@ -73,7 +78,7 @@ Router.post('/signin-authentication', async (req, res) => {
       }
 
       req.session.user_id = userId;
-      req.session.email = email;
+      req.session.timezone = userInfo.timezone;
 
       res.cookie("userId", userId, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
@@ -122,7 +127,7 @@ Router.post('/verify-by-link', async (req, res) => {
         await redisClient.del(`verify:${email.email}`);
         res.send({ success: true, msg: "Verification Success!" });
       }
-      else{
+      else {
         res.send({ success: false, reason: "Incorrect Data" });
       }
     } catch (err) {
@@ -614,7 +619,7 @@ Router.post('/notification-subscribe', async (req, res) => {
 
 Router.post('/app/auth', async (req, res) => {
   try {
-    const {email, password, deviceInfo} = req.body;
+    const { email, password, deviceInfo } = req.body;
 
     console.log(email, password, deviceInfo);
     const connection = pool.promise();
@@ -625,24 +630,24 @@ Router.post('/app/auth', async (req, res) => {
       return res.send({ success: false, reason: isValidEmail.reason });
     };
 
-    if (!password) return res.send({success: false, reason: 'Password Missing'});
+    if (!password) return res.send({ success: false, reason: 'Password Missing' });
 
-    if (!deviceInfo || typeof deviceInfo !== 'object') return res.send({success: false, reason: 'Device Info Missing'});
+    if (!deviceInfo || typeof deviceInfo !== 'object') return res.send({ success: false, reason: 'Device Info Missing' });
 
     const [[userInfo]] = await connection.query('SELECT user_id, salt, hashed_password, email, hashed_password FROM users WHERE email = ?', email);
-  
+
     if (!userInfo) {
       return res.send({ success: false, reason: "NO SUCH USER" });
     };
-  
+
     const hashedPassword = crypto.pbkdf2Sync(password, userInfo.salt, 99097, 32, 'sha512').toString('hex');
-  
+
     console.log(hashedPassword === userInfo.hashed_password)
     if (hashedPassword !== userInfo.hashed_password) {
       return res.send({ success: false, reason: 'WRONG PASSWORD' });
     };
 
-    const {brand, deviceName} = deviceInfo;
+    const { brand, deviceName } = deviceInfo;
 
     const isValidBrand = validateString(brand ? brand : '', 'brand', 30);
 
@@ -661,11 +666,11 @@ Router.post('/app/auth', async (req, res) => {
 
     const isValidDeviceId = validateStrictString(device_id, 'device id', 10, 10);
     if (!isValidDeviceId.isValid) {
-      return res.send({success: false, reason: isValidDeviceId.reason});
+      return res.send({ success: false, reason: isValidDeviceId.reason });
     };
 
     const auth_key = generateRandomId(20);
-    const last_auth = DateTime.now().set({second: 0}).toSeconds();
+    const last_auth = DateTime.now().set({ second: 0 }).toSeconds();
     const insertInfo = {
       device_id,
       last_auth,
@@ -678,7 +683,10 @@ Router.post('/app/auth', async (req, res) => {
     await connection.query(`DELETE FROM devices WHERE device_id = ? AND user_id = ?`, [device_id, userInfo.user_id]);
     connection.query(`INSERT INTO devices SET ?`, insertInfo);
 
-    return res.send({success: true, msg: 'Authed', device_id, auth_key});
+    req.session.user_id = userInfo.user_id;
+    req.session.timezone = userInfo.timezone;
+
+    return res.send({ success: true, msg: 'Authed', device_id, auth_key });
   } catch (err) {
     console.log(err);
   }
