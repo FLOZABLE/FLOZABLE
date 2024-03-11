@@ -3,18 +3,19 @@ import styles from "./StudySubjectTool.module.css";
 import Draggable from "react-draggable";
 function StudySubjectTool({ toolType }) {
     const [toolEl, setToolEl] = useState(<div></div>);
+    const remRatio = parseFloat(getComputedStyle(document.documentElement).fontSize);
     useEffect(() => {
         if (toolType === "-1") {
             setToolEl(<div>No tools for current subject</div>);
         }
         else if (toolType === "0") {
-            setToolEl(<iframe src="https://www.desmos.com/scientific" height="21.875rem" width="25rem" allowfullscreen></iframe>)
+            setToolEl(<iframe src="https://www.desmos.com/scientific" height={21.875*remRatio} width={25*remRatio} allowfullscreen></iframe>)
         }
         else if (toolType === "1") {
-            setToolEl(<iframe src="https://www.desmos.com/calculator" height="25rem" width="46.875rem" allowfullscreen></iframe>)
+            setToolEl(<iframe src="https://www.desmos.com/calculator" height={25*remRatio} width={46.875*remRatio} allowfullscreen></iframe>)
         }
         else if (toolType === "2") {
-            setToolEl(<iframe src="https://pubchem.ncbi.nlm.nih.gov/periodic-table/#view=table&embed=true" height="34.375rem" width="46.875rem"></iframe>);
+            setToolEl(<iframe src="https://pubchem.ncbi.nlm.nih.gov/periodic-table/#view=table&embed=true" height={34.375*remRatio} width={46.874*remRatio}></iframe>);
         }
         else if (toolType === "3") {
             setToolEl(<div>Tool 1</div>);
@@ -28,7 +29,7 @@ function StudySubjectTool({ toolType }) {
     }, [toolType]);
 
     return (
-        <div>
+        <div className={styles.StudySubjectTool}>
             {toolEl}
         </div>
     );
