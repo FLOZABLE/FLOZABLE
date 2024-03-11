@@ -285,6 +285,25 @@ Router.post('/bring-groups', async (req, res) => {
   };
 });
 
+Router.get('/mine', async (req, res) => {
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const user = await userCache(userId);
+      if (!user) return res.send({success: false, reason: 'Invalid User'});
+
+      const groupIds = user.groups === "" ? [] : user.groups.split(",");
+      const connection = pool.promise();
+      const [groups] = await connection.query(
+        "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id IN(?)", [groupIds]
+      );
+
+      return res.send({success: true, groups})
+    } catch (err) {
+      console.log(err);
+    }
+  }));
+});
+
 Router.post('/like/:id', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     const groupId = req.params.id;

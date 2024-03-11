@@ -19,4 +19,12 @@ const colorsList = [
   "#00bfa0",
 ];
 
-module.exports = {colorsList};
+const responseCodes = {
+  'no-user': {
+    success: false,
+    reason: 'Invalid User',
+    code: 401
+  },
+}
+
+module.exports = {colorsList, responseCodes};

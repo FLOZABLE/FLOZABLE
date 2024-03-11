@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const Ajv = require('ajv');
 const ajv = new Ajv();
-const {google} = require('googleapis');
+const { google } = require('googleapis');
 const pool = require("./model/pool");
 const { userCache } = require("./services/redisLoader");
 
@@ -35,20 +35,31 @@ function hashing(password) {
 };
 
 async function autoSignin(req, res, success = (() => { }), fail = (() => { res.send({ success: false, reason: 'Sign in required', msg: 'Sign in required' }) })) {
+  console.log(req.session.user_id)
   if (req.session.user_id || (process.env.NODE_ENV === 'development' && (req.session.user_id = process.env.TESTER_ID))) {
     return success(req.session.user_id, req.session.timezone);
-  } else if (req.signedCookies.userId) {
-    const userInfo = await userCache(req.signedCookies.userId);
-    if (userInfo) {
-      req.session.user_id = req.signedCookies.userId;
-      req.session.timezone = userInfo.timezone;
-      return success(req.session.user_id, req.session.timezone);
-    } else {
-      return fail();
-    }
-  } else {
-    return fail();
+  };
+
+  if (req.signedCookies.userId) {
+    return success(req.session.user_id, req.session.timezone);
+  };
+
+  console.log(req.headers.authorization);
+
+  if (req.headers.authorization) {
+    const credentials = req.headers.authorization.split(' ')[1];
+    if (!credentials) return fail();
+    const [deviceId, authKey] = credentials.split('-');
+    if (!deviceId || !authKey) return fail();
+    
+    const connection = await pool.promise();
+    const [[device]] = await connection.query(`SELECT user_id FROM devices WHERE device_id = ? AND auth_key = ?`, [deviceId, authKey]);
+    if (device) {
+      req.session.user_id = device.user_id;
+      return success(device.user_id);
+    };
   }
+  return fail();
 };
 
 function isValidJSON(data, schema) {
@@ -117,7 +128,7 @@ const hex2rgb = (hex) => {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
-  
+
   return { r, g, b };
 };
 
