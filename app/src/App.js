@@ -30,6 +30,7 @@ import ReactGA from 'react-ga4';
 import Tutorial from "./components/UI/Tutorial/Tutorial";
 import NotFound from "./components/Container/404/404";
 import AudioStopper from "./components/UI/AudioStopper/AudioStopper";
+import WelcomeModal from "./components/UI/WelcomeModal/WelcomeModal";
 
 if (process.env.REACT_APP_ENV === "production") {
   ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
@@ -52,6 +53,7 @@ function App() {
   const [otherGroups, setOtherGroups] = useState([]);
   const [likedGroups, setLikedGroups] = useState([]);
   //const [planModal, setPlanModal] = useState(false);
+  const [welcomePopup, setWelcomePopup] = useState(<div></div>);
 
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [isNotificationModal, setIsNotificationModal] = useState(false);
@@ -100,6 +102,10 @@ function App() {
   const toggleSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState);
   };
+
+  useEffect(() => {
+    setWelcomePopup(<WelcomeModal />);
+  }, []);
 
   useEffect(() => {
     const socketConnectAction = () => {
@@ -248,6 +254,7 @@ function App() {
 
   return (
     <Router>
+      {welcomePopup}
       <AudioStopper musicFiles={musicFiles} />
       <TopNotification
         response={response}
