@@ -126,14 +126,12 @@ function Main({
                 <div className={styles.box} id={styles.rankingContainer}>
                   <div>
                     <div className={styles.title}>
-                      <h3>Friend's Rank</h3>
+                      <h3>Friend Ranking</h3>
                       <i>
                         <IconStatsChart />
                       </i>
                     </div>
-                    <div>
-                      <FriendsRankingViewer friendsRanking={friendsRanking} />
-                    </div>
+                    <FriendsRankingViewer friendsRanking={friendsRanking} />
                   </div>
                 </div>
                 <div className={styles.box} id={styles.recommendedFriends}>
