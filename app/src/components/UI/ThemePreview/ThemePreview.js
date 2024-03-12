@@ -36,7 +36,7 @@ function ThemePreview({ isActive, setIsActive, setResponse }) {
               <ThemeCategoryBtn
                 themeId={isActive.id}
                 setResponse={setResponse}
-                themeCategory={-2}
+                themeCategory={-1}
               />
             </div>
           </Draggable>
