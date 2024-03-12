@@ -17,7 +17,7 @@ import BlobBtn from "../BlobBtn/BlobBtn";
 import SliderAnimation from "../SliderAnimation/SliderAnimation";
 import generateRandomId from "../../../utils/RandomId";
 import { requestNotification } from "../../../utils/Tool";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 import Draggable, { DraggableCore } from "react-draggable";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -40,6 +40,7 @@ function EventModal({
   const addSubjectRef = useRef(null);
   const submitRef = useRef(null);
   const dragRef = useRef(null);
+  const location = useLocation();
 
   useEffect(() => {
     if (!searchParams) return;
@@ -217,6 +218,10 @@ function EventModal({
       };
     }
   }, [planModal.opened]);
+
+  useEffect(() => {
+    setPlanModal( {...planModal, opened: false} );
+  }, [location]);
 
   return (
     <Draggable nodeRef={eventModalRef} handle=".header">

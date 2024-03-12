@@ -8,7 +8,7 @@ import ColorPalette from "../ColorPalette/ColorPalette";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import SelectIcon from "../SelectIcon/SelectIcon";
 import { sortNewSubject } from "../../../utils/timelineSorting";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -26,9 +26,14 @@ function AddSubjectModal({
   const [isSelectColor, setIsSelectColor] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState({ name: null, el: null });
   const [isSelectIcon, setIsSelectIcon] = useState(false);
+  const location = useLocation();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const addSubjectModalRef = useRef(null);
+
+  useEffect(() => {
+    setIsAddSubjectModal(false);
+  }, [location]);
 
   useEffect(() => {
     if (!searchParams) return;
