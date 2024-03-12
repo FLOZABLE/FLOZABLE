@@ -19,13 +19,13 @@ function FriendsRankingViewer({ friendsRanking }) {
       <div className={styles.Button}>
         <div>
           <DropDownButton
-          options={{
-            "day": "Today",
-            "week": "This Week",
-            "month": "This Month"
-          }}
-          setValue={setViewer}
-          value={viewer}
+            options={{
+              "day": "Today",
+              "week": "This Week",
+              "month": "This Month"
+            }}
+            setValue={setViewer}
+            value={viewer}
           />
         </div>
       </div>
@@ -47,8 +47,8 @@ function FriendsRankingViewer({ friendsRanking }) {
                 #{i + 1}
               </div>
               <Link
-              to={`/dashboard/user/${friend.user_id}`} 
-              className={styles.userInfo}>
+                to={`/dashboard/user/${friend.user_id}`}
+                className={styles.userInfo}>
                 <div className={styles.profileImg}
                   style={{
                     backgroundImage: `url("${serverOrigin}/profile-images/${friend.user_id}.jpeg")`, backgroundSize: 'cover',
