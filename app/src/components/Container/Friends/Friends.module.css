@@ -5,6 +5,7 @@
   padding: 1.875rem 3.125rem;
   justify-content: center;
   margin-left: -1.25rem; 
+  overflow-y: scroll;
 }
 
 .Friends .container > div:nth-child(1) {
