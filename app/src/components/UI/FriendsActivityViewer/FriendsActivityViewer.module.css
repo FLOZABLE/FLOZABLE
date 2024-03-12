@@ -1,7 +1,9 @@
 .FriendsActivityViewer {
   position: relative;
+  height: 90%;
+  overflow-y: scroll;
+  padding-bottom: 25px;
 }
-
 
 .FriendsActivityViewer .friend {
   display: flex;
@@ -10,7 +12,7 @@
 .FriendsActivityViewer .friend .profile {
   display: flex;
   align-items: center;
-  font-size:  1.438rem;
+  font-size: 1.438rem;
 }
 
 .FriendsActivityViewer .friend .profileImg {
@@ -24,10 +26,10 @@
   display: flex;
   align-items: center;
   margin: 0em 0.625rem;
-  font-size:  1.438rem;
+  font-size: 1.438rem;
   z-index: 0;
 }
 
-.FriendsActivityViewer .friend .activeInfo > div {
+.FriendsActivityViewer .friend .activeInfo>div {
   margin: 0.625rem 0.625rem;
 }
