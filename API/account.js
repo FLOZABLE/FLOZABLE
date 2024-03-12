@@ -149,7 +149,7 @@ Router.post('/signup-authentication', async (req, res) => {
     }
     const userDateTime = DateTime.now().setZone(timeZone);
     // Set the time to 12:00 AM
-    const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+    const twelveAmDateTime = userDateTime.set({ millisecond: 0 });
     // Get the Unix timestamp in seconds
     const unixTimestamp = twelveAmDateTime.toSeconds();
     // Sanitize inputs
