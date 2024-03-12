@@ -59,11 +59,11 @@ function StudySidebar({
       setTimeout(() => {
         const { width, top, left, height, bottom } = toHomeBtnRef.current.getBoundingClientRect();
         tutorialBoxRef.current.style.left = left + 'px';
-        tutorialBoxRef.current.style.top = top  + 'px';
+        tutorialBoxRef.current.style.top = top + 'px';
         tutorialBoxRef.current.style.width = width + 'px';
         tutorialBoxRef.current.style.height = height + 'px';
-  
-        tutorialTextRef.current.style.top = top  + 'px';
+
+        tutorialTextRef.current.style.top = top + 'px';
         tutorialTextRef.current.style.left = left + width + 30 + 'px';
         tutorialTextRef.current.innerText = "Let's go back to the dashboard!";
       }, 500);
@@ -161,6 +161,20 @@ function StudySidebar({
       </div>
 
       <div
+        className={`${styles.studyTool} ${isGroupModal ? styles.clicked : ""}`}
+        onClick={() => {
+          setIsViewGroups(prev => !prev);
+        }}
+      >
+        <i style={{ fontSize: '1.4375rem' }}>
+          <FontAwesomeIcon icon={faUsers} />
+        </i>
+        <div className={styles.hoverEl}>
+          {isGroupModal ? "View Groups" : "Hide Groups"}
+        </div>
+      </div>
+
+      <div
         className={`${styles.studyTool} ${isTemplateModal ? styles.clicked : ""}`}
         onClick={() => {
           setIsTemplateModal(prev => !prev);
@@ -185,40 +199,6 @@ function StudySidebar({
         </i>
         <div className={styles.hoverEl}>
           Sound
-        </div>
-      </div>
-
-      <div
-        className={`${styles.studyTool} ${isGroupModal ? styles.clicked : ""}`}
-        onClick={() => {
-          setIsViewGroups(prev => !prev);
-        }}
-      >
-        <i style={{ fontSize: '1.4375rem' }}>
-          <FontAwesomeIcon icon={faUsers} />
-        </i>
-        <div className={styles.hoverEl}>
-          {isGroupModal ? "View Groups" : "Hide Groups"}
-        </div>
-      </div>
-
-      <div
-        className={`${styles.studyTool} ${isZoom ? styles.clicked : ""}`}
-        onClick={() => {
-          setIsZoom(prev => !prev);
-        }}
-      >
-        <i style={{ fontSize: '1.4375rem' }}>
-          <FontAwesomeIcon
-            icon={
-              isZoom
-                ? faDownLeftAndUpRightToCenter
-                : faUpRightAndDownLeftFromCenter
-            }
-          />
-        </i>
-        <div className={styles.hoverEl}>
-          {isZoom ? "Exit Fullscreen" : "Fullscreen"}
         </div>
       </div>
 
@@ -251,6 +231,26 @@ function StudySidebar({
         </i>
         <div className={styles.hoverEl}>
           Tool
+        </div>
+      </div>
+
+      <div
+        className={`${styles.studyTool} ${isZoom ? styles.clicked : ""}`}
+        onClick={() => {
+          setIsZoom(prev => !prev);
+        }}
+      >
+        <i style={{ fontSize: '1.4375rem' }}>
+          <FontAwesomeIcon
+            icon={
+              isZoom
+                ? faDownLeftAndUpRightToCenter
+                : faUpRightAndDownLeftFromCenter
+            }
+          />
+        </i>
+        <div className={styles.hoverEl}>
+          {isZoom ? "Exit Fullscreen" : "Fullscreen"}
         </div>
       </div>
     </div>
