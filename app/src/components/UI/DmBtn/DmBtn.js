@@ -6,7 +6,7 @@ import React from 'react';
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function DmBtn({userInfo, setResponse, padding}) {
+function DmBtn({userInfo, setResponse, padding, setIsChatModal}) {
   const requestChat = () => {
     fetch(`${serverOrigin}/chat/chat-request`, {
       method: "post",
@@ -17,9 +17,12 @@ function DmBtn({userInfo, setResponse, padding}) {
     })
       .then((response) => response.json())
       .then((data) => {
-        setResponse(data);
-        if (data.success) {
-
+        if (data.reason === "DM already created!") {
+          console.log(21, data.room);
+          setIsChatModal(data.room);
+        }
+        else{
+          setResponse(data);
         }
       })
       .catch((error) => console.error(error));

@@ -56,7 +56,7 @@ Router.post("/chat-request", async (req, res) => {
       let {members} = chatRoom;
       return arraysHaveSameContents(members.map(member => {return member.user_id}), [userId, targetId]);
     });
-    if (isRoomExist) return res.send({success: false, reason: 'DM already created!', opr: 1});
+    if (isRoomExist) return res.send({success: false, reason: 'DM already created!', opr: 1, room: isRoomExist});
 
     const userExist = await usersCache(targetId);
     if (!userExist) return res.send({success: false, reason: 'No such user'});

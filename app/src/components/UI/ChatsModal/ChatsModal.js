@@ -279,6 +279,13 @@ function ChatsModal({
       if (!chatRoom) return;
       setSelectedRoom(chatRoom);
       setRoomName(isChatModal.name);
+    } else if (isChatModal.id) {
+      const chatRoom = chatRooms.find(
+        (room) => room.id === isChatModal.id,
+      );
+      if (!chatRoom) return;
+      setSelectedRoom(chatRoom);
+      setRoomName(isChatModal.members[0].name + ", " + isChatModal.members[1].name);
     }
   }, [isChatModal, chatRooms]);
 
