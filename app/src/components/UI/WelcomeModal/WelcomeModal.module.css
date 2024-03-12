@@ -21,7 +21,7 @@
   border-radius: 2rem;
   left: 50vw !important;
   top: 50vh !important;
-  width: 500px !important;
+  width: 600px !important;
   height: fit-content !important;
   transform: translate(-50%, -50%);
   font-size: 3rem;
@@ -31,4 +31,11 @@
   align-items: center;
   font-weight: 800; 
   padding: 3rem 4rem;
+}
+
+.WelcomeModal .modal .description {
+  font-size: 1.5rem;
+  padding-top: 10px;
+  color: rgb(29, 29, 29);
+  padding-bottom: 25px;
 }

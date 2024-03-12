@@ -4,9 +4,15 @@ import { Link, useLocation, useNavigate, useSearchParams } from "react-router-do
 import BlobBtn from '../BlobBtn/BlobBtn';
 import Confetti from 'react-confetti';
 
-function WelcomeModal({ }) {
+function WelcomeModal({ userInfo }) {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("user");
   const [isModal, setIsModal] = useState(true);
+
+  useEffect(() => {
+    if (!userInfo) return;
+    setUserName(userInfo.name);
+  }, [userInfo])
 
   return (
     <div
@@ -24,9 +30,14 @@ function WelcomeModal({ }) {
         <p>
           Welcome to FLOZABLE!
         </p>
+        <p className={styles.description}>
+          Hey {userName}, let's get you all set up with this tutorial
+          <br/>
+          We hope your journey in studying is successful
+        </p>
         <div className={styles.blobWrapper}>
           <BlobBtn
-            name={"Begin Tutorial"}
+            name={"Begin!"}
             setClicked={() => {
               setIsModal(false);
               navigate("/dashboard?tutorial=1")
