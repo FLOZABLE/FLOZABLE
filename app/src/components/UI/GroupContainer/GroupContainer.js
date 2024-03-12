@@ -30,7 +30,7 @@ function GroupContainer({ isSearched, groupInfo, joinGroup, userInfo, myGroups, 
 
     let joined = false;
     if (!viewOnly) {
-      if (myGroups && (myGroups.find(group => group.group_id === group_id) || userInfo.groups.includes(group_id))) {
+      if (userInfo && myGroups && (myGroups.find(group => group.group_id === group_id) || userInfo.groups.includes(group_id))) {
         joined = true;
       }
     }

@@ -92,7 +92,7 @@ function AccountModal({ isOpened, setIsOpened, setResponse, bringAccountInfo, br
                     setResponse(data);
                     if (data.success) {
                       setIsOpened(false);
-                      bringAccountInfo()
+                      bringAccountInfo();
                       bringSubjects();
                     }
                   });
@@ -164,7 +164,7 @@ function AccountModal({ isOpened, setIsOpened, setResponse, bringAccountInfo, br
                     if (data.success) {
                       bringAccountInfo();
                       bringSubjects();
-                      navigate('/dashboard?tutorial=1');
+                      navigate('/dashboard?welcome=true');
                     }
                   })
                   .catch((error) => console.error(error));

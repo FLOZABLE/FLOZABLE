@@ -53,7 +53,6 @@ function App() {
   const [otherGroups, setOtherGroups] = useState([]);
   const [likedGroups, setLikedGroups] = useState([]);
   //const [planModal, setPlanModal] = useState(false);
-  const [welcomePopup, setWelcomePopup] = useState(<div></div>);
 
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [isNotificationModal, setIsNotificationModal] = useState(false);
@@ -102,14 +101,6 @@ function App() {
   const toggleSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState);
   };
-
-  useEffect(() => {
-    if (!userInfo) return;
-    console.log(Date.now()/1000 - parseInt(userInfo.datum_point));
-    if (Date.now()/1000 - parseInt(userInfo.datum_point) < 30) {
-      setWelcomePopup(<WelcomeModal userInfo={userInfo} />);
-    }
-  }, [userInfo]);
 
   useEffect(() => {
     const socketConnectAction = () => {
@@ -258,7 +249,6 @@ function App() {
 
   return (
     <Router>
-      {welcomePopup}
       <AudioStopper musicFiles={musicFiles} />
       <TopNotification
         response={response}
@@ -301,6 +291,11 @@ function App() {
         isOpened={isAccountModal}
         setIsOpened={setIsAccountModal}
         setResponse={setResponse}
+        bringAccountInfo={bringAccountInfo}
+        bringSubjects={bringSubjects}
+      />
+      <WelcomeModal 
+        userInfo={userInfo}
       />
       <Header
         setPlanModal={(planModal) => {

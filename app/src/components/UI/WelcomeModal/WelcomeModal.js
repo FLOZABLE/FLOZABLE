@@ -6,13 +6,20 @@ import Confetti from 'react-confetti';
 
 function WelcomeModal({ userInfo }) {
   const navigate = useNavigate();
-  const [userName, setUserName] = useState("user");
-  const [isModal, setIsModal] = useState(true);
+  const [isModal, setIsModal] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    if (!userInfo) return;
-    setUserName(userInfo.name);
-  }, [userInfo])
+    const isNew = searchParams.get('welcome');
+    console.log('new', isNew);
+    if (isNew === "true") {
+      console.log('new', isNew);
+      setIsModal(true);
+    } else {
+      setIsModal(false);
+    }
+  }, [searchParams]);
 
   return (
     <div
@@ -24,27 +31,35 @@ function WelcomeModal({ userInfo }) {
         height={window.innerHeight}
         recycle={false}
         numberOfPieces={500}
-        confettiSource={{x: 0, y: -10, w: window.innerWidth, h: 0}}
+        confettiSource={{ x: 0, y: -10, w: window.innerWidth, h: 0 }}
       />
       <div className={styles.modal}>
         <p>
           Welcome to FLOZABLE!
         </p>
         <p className={styles.description}>
-          Hey {userName}, let's get you all set up with this tutorial
+          Hey {userInfo?.name}, let's get you all set up with this tutorial
           <br/>
           We hope your journey in studying is successful
         </p>
-        <div className={styles.blobWrapper}>
-          <BlobBtn
-            name={"Begin!"}
-            setClicked={() => {
-              setIsModal(false);
-              navigate("/dashboard?tutorial=1")
-            }}
-            color1={"#fff"}
-            color2={"var(--purple2)"}
-          />
+        <div className={styles.buttons}>
+          <div className={styles.blobWrapper}>
+            <BlobBtn
+              name={"Begin!"}
+              setClicked={() => {
+                setIsModal(false);
+                navigate("/dashboard?tutorial=1")
+              }}
+              color1={"#fff"}
+              color2={"var(--purple2)"}
+            />
+          </div>
+          <button className={styles.skipBtn} onClick={() => {
+            searchParams.delete('welcome');
+            setSearchParams(searchParams);
+          }}>
+            or Skip Tutorial
+          </button>
         </div>
       </div>
     </div>

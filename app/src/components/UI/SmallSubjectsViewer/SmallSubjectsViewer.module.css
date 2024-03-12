@@ -22,4 +22,5 @@
 
 .SmallSubjectsViewer .noSubjects a {
   font-family: "Roboto", sans-serif;
+  white-space: nowrap;
 }
