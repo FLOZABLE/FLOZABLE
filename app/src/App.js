@@ -104,8 +104,12 @@ function App() {
   };
 
   useEffect(() => {
-    setWelcomePopup(<WelcomeModal />);
-  }, []);
+    if (!userInfo) return;
+    console.log(Date.now()/1000 - parseInt(userInfo.datum_point));
+    if (Date.now()/1000 - parseInt(userInfo.datum_point) < 30) {
+      setWelcomePopup(<WelcomeModal userInfo={userInfo} />);
+    }
+  }, [userInfo]);
 
   useEffect(() => {
     const socketConnectAction = () => {
