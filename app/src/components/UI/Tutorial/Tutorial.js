@@ -23,8 +23,9 @@ function Tutorial({ setResponse, tutorialBoxRef, tutorialTextRef, }) {
     };
 
     const btnTutorial = button.split("-")[1];
+    console.log(button)
     console.log(parseInt(btnTutorial), tutorial)
-    if (parseInt(btnTutorial) !== tutorial && button != "skipTutorialButton") {
+    if (parseInt(btnTutorial) !== tutorial && button !== "skipTutorialButton") {
       console.log('locked', button, tutorial)
       e.stopPropagation();
       e.preventDefault();
@@ -91,8 +92,16 @@ function Tutorial({ setResponse, tutorialBoxRef, tutorialTextRef, }) {
             </div>
             <div className={styles.text} id="tutorialText" ref={tutorialTextRef}>
             </div>
-            <div className={styles.skipOption} id = "skipTutorialButton" onClick={skipTutorial}>
-              Skip Tutorial
+            <div className={styles.skipOption}>
+              <BlobBtn
+                name={"Skip Tutorial"}
+                setClicked={() => {
+                  skipTutorial();
+                }}
+                color1={"#fff"}
+                color2={"var(--purple2)"}
+                id="skipTutorialButton"
+              />
             </div>
           </>
         )

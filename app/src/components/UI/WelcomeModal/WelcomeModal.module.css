@@ -6,9 +6,7 @@
   left: 0rem;
   z-index: 6;
   background-color: #00000050;
-  mix-blend-mode: hard-light;
   display: none;
-  --swiper-navigation-color: #000;
 }
 
 .WelcomeModal.open {
@@ -21,16 +19,16 @@
   border-radius: 2rem;
   left: 50vw !important;
   top: 50vh !important;
-  width: 600px !important;
   height: fit-content !important;
   transform: translate(-50%, -50%);
-  font-size: 3rem;
-  pointer-events: all;
+  font-size: 2rem;
   display: flex;
+  align-items: center;
+  justify-content: center;
   flex-direction: column;
   align-items: center;
   font-weight: 800; 
-  padding: 3rem 4rem;
+  padding: 2rem 3rem;
 }
 
 .WelcomeModal .modal .description {
@@ -38,4 +36,13 @@
   padding-top: 10px;
   color: rgb(29, 29, 29);
   padding-bottom: 25px;
+}
+
+.WelcomeModal .buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+.WelcomeModal .buttons .skipBtn {
+  margin-top: 1rem;
 }

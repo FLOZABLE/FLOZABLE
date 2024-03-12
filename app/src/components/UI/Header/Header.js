@@ -206,7 +206,7 @@ function Header({
           onClick={() => { setIsChatModal(prev => !prev) }}
         >
           <i>
-            <FontAwesomeIcon icon={faMessage} />
+            <FontAwesomeIcon icon={faMessage} bounce={totalNewMsg ? true : false} />
           </i>
           <div>
             {totalNewMsg}
@@ -216,7 +216,7 @@ function Header({
           onClick={() => { setIsNotificationModal(prev => !prev) }}
         >
           <i>
-            <FontAwesomeIcon icon={faBell} bounce={notifications?.length} />
+            <FontAwesomeIcon icon={faBell} bounce={notifications?.length ? true : false} />
           </i>
           <div>
             {notifications?.length}

@@ -70,19 +70,17 @@
 }
 
 .Tutorial .skipOption {
-  z-index: 600;
-  color: red;
-  font-weight: 450;
   top: 90vh;
-  left: 10px;
-}
-
-.Tutorial .skipOption:hover {
-  cursor: pointer;
-}
-
-.Tutorial .Swiper {
-  height: 100%;
+  pointer-events: all;
+  position: fixed;
+  bottom: 3rem;
+  right: 0rem;
+  background-color: gray;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3rem;
 }
 
 .Tutorial .end {
