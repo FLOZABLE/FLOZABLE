@@ -753,6 +753,7 @@ function App() {
                 setMyGroups={setMyGroups}
                 myGroups={myGroups}
                 myInfo={userInfo}
+                setIsChatModal={setIsChatModal}
               />
             </div>
           }
