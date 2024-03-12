@@ -24,7 +24,7 @@ import { useLocation } from "react-router-dom";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function User({ groups, setResponse, setOtherGroups, setMyGroups, myGroups, myInfo }) {
+function User({ groups, setResponse, setOtherGroups, setMyGroups, myGroups, myInfo, setIsChatModal }) {
   const [userInfo, setUserInfo] = useState(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [userSubjects, setUserSubjects] = useState([]);
@@ -172,7 +172,7 @@ function User({ groups, setResponse, setOtherGroups, setMyGroups, myGroups, myIn
             </div>
             <div>
               <FriendRequestBtn setResponse={setResponse} userInfo={userInfo} />
-              <DmBtn setResponse={setResponse} userInfo={userInfo} />
+              <DmBtn setIsChatModal={setIsChatModal} setResponse={setResponse} userInfo={userInfo} />
             </div>
             <div className={styles.timezone}>
               Timezone:
