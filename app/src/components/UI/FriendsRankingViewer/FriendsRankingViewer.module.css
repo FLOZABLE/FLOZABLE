@@ -1,6 +1,9 @@
   .FriendsRankingViewer {
   position: relative;
   margin-left: 1.1875rem;
+  max-height: 80%;
+  overflow-y: scroll;
+  padding-bottom: 25px;
 }
 
 .FriendsRankingViewer .Button {
