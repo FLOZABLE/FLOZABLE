@@ -576,9 +576,7 @@ function App() {
                 isAddSubjectModal={isAddSubjectModal}
                 setIsAddSubjectModal={setIsAddSubjectModal}
                 setIsSidebarOpen={setIsSidebarOpen}
-                setPlanModal={(planModal) => {
-                  setPlanModal((prev) => ({ ...prev, opened: planModal }))
-                }}
+                setPlanModal={setPlanModal}
                 isSidebarOpen={isSidebarOpen}
                 isSidebarHovered={isHovered}
                 userInfo={userInfo}

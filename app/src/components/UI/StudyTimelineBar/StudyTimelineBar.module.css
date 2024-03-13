@@ -2,4 +2,5 @@
     width: 80%;
     position: relative;
     left: 10%;
+    transform: translate(0px, 40%);
 }

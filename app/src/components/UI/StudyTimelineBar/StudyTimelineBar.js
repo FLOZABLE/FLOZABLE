@@ -10,8 +10,10 @@ function StudyTimelineBar({ events, setPlanModal }) {
   const groups = [{ id: 1, title: 'Events' }]
   const [items, setItems] = useState([]);
 
-  function openModal(event){
-    setPlanModal({ ...event, opened: true });
+  function openModal(eventObj) {
+    eventObj.opened = true;
+    console.log(eventObj)
+    setPlanModal({ ...eventObj });
   }
 
   useEffect(() => {
@@ -51,8 +53,8 @@ function StudyTimelineBar({ events, setPlanModal }) {
           minute: 5,
           second: 1,
         }}
-        defaultTimeStart={DateTime.now().startOf('hour').toMillis()}
-        defaultTimeEnd={DateTime.now().endOf('hour').toMillis()}
+        defaultTimeStart={DateTime.now().minus({ minutes: 30 }).toMillis()}
+        defaultTimeEnd={DateTime.now().plus({ minutes: 30 }).toMillis()}
         minZoom={60 * 1000}
         maxZoom={24 * 60 * 60 * 1000}
         traditionalZoom={true}
