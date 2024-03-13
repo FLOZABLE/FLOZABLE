@@ -289,7 +289,7 @@ function Study(props) {
         <div className={styles.PlanTimelineBarWrapper}>
           {
             <PlanTimelineBar events={events} subjects={subjects} /> 
-            // <StudyTimelineBar></StudyTimelineBar>
+            //<StudyTimelineBar></StudyTimelineBar>
           }
         </div>
       </div>
