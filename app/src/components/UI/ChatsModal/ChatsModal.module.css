@@ -21,8 +21,8 @@
 }
 
 .ChatsModal .header {
-  background-color: var(--blue1);
-  color: #fff;
+  background-color: transparent;
+  color: #000000;
   height:  3.75rem;
   display: flex;
   align-items: center;
@@ -32,34 +32,39 @@
   border-radius: 1.25rem;
 }
 
-.ChatsModal .header i {
-  font-size: 1.563rem;
+.ChatsModal .header :nth-child(3) {
+  font-size: 1.963rem;
   cursor: pointer;
   padding-right: 0.625rem;
   margin-left: auto;
 }
 
+.ChatsModal .header :nth-child(1) {
+  margin-left: -1.5rem;
+}
+
 .ChatsModal .header p {
-  margin-left: 1.2rem;
+  margin-left: 3.8rem;
   font-size: 1.4rem;
 }
 
 .ChatsModal .content {
   position: relative;
   height: 100%;
+  margin-top: -1.2rem;
 }
 
 .ChatsModal .chatRoomsContainer {
   background-color: #fff;
-  margin-left: 0.625rem;
-  padding: 0.625rem 0em;
+  margin: 0.9rem;
+  padding: 0.5rem;
   overflow-y: auto;
   height: 24.375rem;
 }
 
 .ChatsModal .chatRoomsContainer .roomInfo {
   cursor: pointer;
-}
+} 
 
 .ChatsModal .chatRoomsContainer .roomInfo strong {
   font-size: 0.875rem;
@@ -88,7 +93,8 @@
 .ChatsModal .chatsHeader {
   height: 5rem;
   width: 100%;
-  background-color: var(--blue1);
+  background-color: white;
+  margin-top: 1rem;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -102,23 +108,24 @@
 
 .ChatsModal .chatsHeader i {
   font-size: 1.8rem;
-  color: #fff;
+  color: black;
   display: flex;
+  justify-content: center;
 }
 
 .ChatsModal .chatsHeader #exitBtn {
   position: absolute;
-  left: 1.25rem;
+  left: 1rem;
   cursor: pointer;
-  top: 1rem;
+  margin-top: 0.7rem;
 }
 
 .ChatsModal .chatsHeader #closeBtn {
   position: absolute;
-  right: 1rem;
-  font-size: 2.188rem;
+  right: 1.25rem;
+  font-size: 1.888rem;
   cursor: pointer;
-  top: 1rem;
+  margin-top: 1.2rem;
 }
 
 .ChatsModal .chatsHeader .roomInfo {
@@ -128,7 +135,7 @@
 }
 
 .ChatsModal .chatsHeader .roomInfo p {
-  color: #fff; 
+  color: black;
 }
 
 .ChatsModal .chatsHeader .roomInfo .imgContainer {
@@ -139,7 +146,7 @@
   height: calc(100% - 6.25rem);
   background-color: #fff;
   width: 100%;
-  padding: 0em 0.625rem;
+  padding: 0rem 0rem;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -154,24 +161,23 @@
   position: relative;
   word-wrap: break-word;
   background-color: #248bf5;
-  margin: 0.313rem 0em;
 }
 
 .ChatsModal .chatsContainer .msg::before, .ChatsModal .chatsContainer .msg::after {
-  bottom: -0.1rem;
+  bottom: -0.2rem;
   content: "";
   height: 1rem;
   position: absolute;
 }
 
 .ChatsModal .chatsContainer .msg.me {
-  margin: 0.313rem 0.938rem 0.625rem auto;
+  margin: 0.353rem 0.938rem 0.925rem auto;
 }
 
 .ChatsModal .chatsContainer .msg.me .time {
   position: absolute;
   color: #000;
-  font-size: 0.688rem;
+  font-size: 0.588rem;
   width: 3.125rem;
   bottom: -0.9375rem;
   right: 0em;

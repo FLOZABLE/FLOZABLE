@@ -7,6 +7,8 @@ import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
 import { socket } from "../../../socket";
 import ChatRoom from "../ChatRoom/ChatRoom";
+import { BackArrow, IconMessage } from "../../../utils/svgs";
+import Draggable from "react-draggable";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -27,6 +29,7 @@ function ChatsModal({
   const chatsContainerRef = useRef(null);
   const [roomMembers, setRoomMembers] = useState([]);
   const [readStatus, setReadStatus] = useState({});
+  const [moveRef, setMoveRef] = useState({});
 
   useEffect(() => {
     if (!myGroups) return;
@@ -170,7 +173,7 @@ function ChatsModal({
       }),
     );
   }, [chatRooms, myGroups, roomMembers, userInfo, readStatus, selectedRoom]);
-
+  
   useEffect(() => {
     const { chats, id, type } = selectedRoom;
     if (selectedRoom && chats && userInfo) {
@@ -269,36 +272,25 @@ function ChatsModal({
     }
   }, [selectedRoom, userInfo]);
 
-  useEffect(() => {
-    if (!isChatModal) {
-      setSelectedRoom(false);
-    } else if (isChatModal.group_id) {
-      const chatRoom = chatRooms.find(
-        (room) => room.id === isChatModal.group_id,
-      );
-      if (!chatRoom) return;
-      setSelectedRoom(chatRoom);
-      setRoomName(isChatModal.name);
-    } else if (isChatModal.id) {
-      const chatRoom = chatRooms.find(
-        (room) => room.id === isChatModal.id,
-      );
-      if (!chatRoom) return;
-      setSelectedRoom(chatRoom);
-      setRoomName(isChatModal.members[0].name + ", " + isChatModal.members[1].name);
-    }
-  }, [isChatModal, chatRooms]);
-
   return (
-    <div className={`${styles.ChatsModal} ${isChatModal ? styles.open : ""}`}>
-      <div className={styles.header}>
-        <p>{totalNewMsg} new messages</p>
+    <Draggable nodeRef={moveRef}>
+    <div className={`${styles.ChatsModal} ${isChatModal ? styles.open : ""}`}
+      ref={moveRef}
+    >
+      <div className={styles.header}> 
+        <i 
+          onClick={() => {
+            setIsChatModal(false);
+          }}>
+          <BackArrow/>  
+        </i>
+        <p>Messages</p>
         <i
           onClick={() => {
             setIsChatModal(false);
           }}
         >
-          <FontAwesomeIcon icon={faXmark} />
+        <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
       <div className={styles.content}>
@@ -317,11 +309,11 @@ function ChatsModal({
                 setSelectedRoom(false);
               }}
             >
-              <FontAwesomeIcon icon={faChevronLeft} />
+              <BackArrow/>
             </i>
             <div className={styles.roomInfo}>
               {/* <div className={styles.imgContainer}>
-
+   
               </div> */}
               <div className={styles.roomName}>
                 <p>{roomName}</p>
@@ -358,6 +350,7 @@ function ChatsModal({
         </div>
       </div>
     </div>
+    </Draggable>
   );
 }
 
