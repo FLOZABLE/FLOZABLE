@@ -6,8 +6,8 @@
   padding: 0em 0.625rem;
 }
 
-.ThemeCategoryBtn p {
-  pointer-events: none;
+.ThemeCategoryBtn * {
+  pointer-events: all;
 }
 
 .ThemeCategoryBtn .options {
