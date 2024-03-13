@@ -21,7 +21,7 @@ function StudySubjectTools({ isDisp, startPos, subject }) {
       {
         toolResults.map((tool, i) => {
           return (
-            <Draggable key={i} positionOffset={{ x: startPos.x, y: startPos.y }} ref={(element) => {refArr.current.push(element); return element}} nodeRef={refArr.current[i]} >
+            <Draggable key={i} positionOffset={{ x: startPos.x, y: startPos.y }} ref={(element) => { refArr.current.push(element); return element }} nodeRef={refArr.current[i]} >
               <div
                 ref={refArr.current[i]}
                 className={`${styles.StudyModalContainer} ${isDisp ? styles.visible : ""}`}

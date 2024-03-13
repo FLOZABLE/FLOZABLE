@@ -29,7 +29,7 @@ function ChatsModal({
   const chatsContainerRef = useRef(null);
   const [roomMembers, setRoomMembers] = useState([]);
   const [readStatus, setReadStatus] = useState({});
-  const [moveRef, setMoveRef] = useState({});
+  const moveRef = useRef(null);
 
   useEffect(() => {
     if (!myGroups) return;
