@@ -27,8 +27,7 @@ Router.post('/request', async (req, res) => {
       const targetUserInfo = await userCache(targetId);
       if (!targetUserInfo) return res.send({ success: false, reason: 'No such user' });
 
-      let { friends, name } = targetUserInfo;
-      friends = friends === "" ? [] : friends.split(',');
+      const { friends, name } = targetUserInfo;
       if (friends.includes(userId)) return res.send({ success: false, reason: "You're already friends with this user" });
 
       const friendRequests = await NotificationCache(targetId, 0, false);
@@ -115,8 +114,7 @@ Router.post('/request-reply', async (req, res) => {
       const connection = pool.promise();
       const userInfo = await userCache(userId);
       const targetInfo = await userCache(targetId);
-      let { friends } = userInfo;
-      friends = friends === "" ? [] : friends.split(',');
+      const { friends } = userInfo;
 
       if (!friends.includes(userId)) {
         await connection.query(`
@@ -156,7 +154,6 @@ Router.post('/request-reply', async (req, res) => {
         //update cached value of user
         friends.push(targetId);
         redisClient.hSet(`user:${userId}`, 'friends', friends.join(','));
-        targetInfo.friends = targetInfo.friends === "" ? [] : targetInfo.friends.split(",");
         targetInfo.friends.push(userId);
         redisClient.hSet(`user:${targetId}`, 'friends', targetInfo.friends.join(','));
 
@@ -271,13 +268,12 @@ Router.get('/status', async (req, res) => {
     try {
       const userInfo = await userCache(userId);
       if (!userInfo) return res.send({ success: false, reason: `no such user` });
-      const friends = userInfo.friends === "" ? [] : userInfo.friends.split(',');
       const friendsInfo = [];
 
       const today = DateTime.now().setZone(userInfo.timezone);
       const timezoneOffset = Math.floor(today.offset / 60).toString();
 
-      await Promise.all(friends.map(async (friend) => {
+      await Promise.all(userInfo.friends.map(async (friend) => {
         friend = await userCache(friend);
         if (!friend) return;
         const totalTime = await redisClient.zScore(`user:${friend.user_id}:dayTotal`, timezoneOffset);
@@ -386,7 +382,6 @@ Router.get('/add', async (req, res) => {
       if (!targetUserInfo) return res.send({ success: false, reason: 'No such user' });
 
       const myInfo = await userCache(userId);
-      myInfo.friends = myInfo.friends === "" ? [] : myInfo.friends.split(",");
       if (myInfo.friends.includes(targetId)) return res.send({ success: false, reason: 'already friend' });
 
       //check if its valid linkid
@@ -435,7 +430,6 @@ Router.get('/add', async (req, res) => {
       //update cached value of user
 
       const targetInfo = await userCache(targetId);
-      targetInfo.friends = targetInfo.friends === "" ? [] : targetInfo.friends.split(",");
 
       myInfo.friends.push(targetId);
       redisClient.hSet(`user:${userId}`, 'friends', myInfo.friends.join(','));

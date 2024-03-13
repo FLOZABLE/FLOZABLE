@@ -41,7 +41,7 @@ function Planner(props) {
   return (
     <div>
       {/* <AddSubjectModal setIsAddSubjectModal={setIsAddSubjectModal} isAddSubjectModal={isAddSubjectModal} setAddSubjectResponse={setResponse} subjects={subjects} setSubjects={setSubjects} setSubject={setSubject} /> */}
-      <div className={`Main ${props.isSidebarOpen || props.isSidebarHovered ? 'sidebarOpen' : ''}`}>
+      <div className={`Main`}>
         <div className="title">
           Planner
         </div>
