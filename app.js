@@ -140,7 +140,7 @@ app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
 const { io } = require("./socket");
 app.set('socketio', io);
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.SECRET_ID));
 app.use(express.static(path.join(__dirname, '/public')));

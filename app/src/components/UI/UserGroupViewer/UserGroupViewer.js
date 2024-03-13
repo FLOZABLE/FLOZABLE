@@ -31,7 +31,7 @@ function UserGroupViewer({
     };
 
     const onActiveGroup = ({ groupInfo, time }) => {
-      setActiveGroup([groupInfo]);
+      setActiveGroup(groupInfo);
       setGroupName(groupInfo.name);
     };
 

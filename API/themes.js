@@ -123,10 +123,10 @@ Router.post('/like/:id', async (req, res) => {
     try {
       const connection = pool.promise();
       if (liked) {
-        const [[{ verified }]] = await connection.query(`SELECT verified FROM users WHERE user_id = ?`, [userId]);
+        /* const [[{ verified }]] = await connection.query(`SELECT verified FROM users WHERE user_id = ?`, [userId]);
         if (!verified) {
           //return res.send({ success: false, reason: "Please verify your email" });
-        }
+        } */
         const [update] = await connection.query(
           `UPDATE themes 
           SET likes = CASE 
