@@ -9,6 +9,7 @@ const { timerCache, activeSubjectCache, groupCache, userCache } = require("../se
 const { validateArray, validateStrictString, validateInteger, validateLength, validateHEX, validatePassword, validateBoolean, validateString } = require("../validate");
 const { DateTime } = require("luxon");
 const { mainIo } = require("../socket");
+const { responseCodes } = require("../Constant");
 
 Router.post('/create-validate', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -51,7 +52,7 @@ Router.post('/create-validate', async (req, res) => {
         return res.send({ success: false, reason: isValidTags.reason });
       };
 
-      const isValidMembers = validateInteger(max_members, 'max members', 100, 0);
+      const isValidMembers = validateInteger(max_members, 'max members', 100, 1);
       if (!isValidMembers.isValid) {
         return res.send({ success: false, reason: isValidMembers.reason });
       };
@@ -107,6 +108,15 @@ Router.post('/create-validate', async (req, res) => {
       group.leader = userId;
       group.members = userId; */
 
+      //update cached values
+      const userInfo = await userCache(userId);
+      if (!userInfo) {
+        return res.send(responseCodes['no-user']);
+      };
+
+      groups.push(group_id);
+      redisClient.hSet(`user:${userId}`, 'groups', groups.join(','));
+
       try {
         const connection = pool.promise();
 
@@ -130,10 +140,6 @@ Router.post('/create-validate', async (req, res) => {
 
         const updateRoom = connection.query(`INSERT INTO chatrooms SET ?`, roomInfo);
 
-        //update cached values
-        const groups = await groupCache(userId);
-        groups.push(group_id);
-        redisClient.hSet(`user:${userId}`, 'groups', groups.join(','));
         res.send({ success: true, data: { id: group_id }, msg: `Group ${group.name} created!` })
       } catch (error) {
         console.log(error)
@@ -289,15 +295,14 @@ Router.get('/mine', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
       const user = await userCache(userId);
-      if (!user) return res.send({success: false, reason: 'Invalid User'});
+      if (!user) return res.send({ success: false, reason: 'Invalid User' });
 
-      const groupIds = user.groups === "" ? [] : user.groups.split(",");
       const connection = pool.promise();
       const [groups] = await connection.query(
-        "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id IN(?)", [groupIds]
+        "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id IN(?)", [user.groups]
       );
 
-      return res.send({success: true, groups})
+      return res.send({ success: true, groups })
     } catch (err) {
       console.log(err);
     }

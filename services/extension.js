@@ -1,6 +1,7 @@
 const { DateTime } = require("luxon");
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
+const { getMidnightTimezones } = require("../tool");
 
 async function extensionManager() {
   try {
@@ -11,6 +12,7 @@ async function extensionManager() {
     } else if (hour > 12) {
       dateTime.plus({day: 1});
     };
+    const midnightTimezones = getMidnightTimezones();
     const date = dateTime.toFormat("M/d/yyyy");
     const users = await redisClient.zRange(`extensionUsers`, hour, hour);
     const connection = pool.promise();
@@ -34,7 +36,6 @@ async function extensionManager() {
       const update = await connection.query(`INSERT INTO activities set ?`, activity);
       redisClient.del(`user:${user}:tabs:usage`);
       redisClient.del(`user:${user}:tabs:timer`);
-
     });
   } catch (err) {
     console.log(err);

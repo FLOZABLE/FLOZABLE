@@ -229,8 +229,9 @@ const { timezones24 } = require("./tool");
 //all timezones
 //createRankings(-8);
 
+//timerUpdate();
 cron.schedule('0 * * * *', () => {
-  dailyReport(process.env.TESTER_ID);
+  //dailyReport(process.env.TESTER_ID);
   extensionManager();
   updateRanking();
   timerUpdate();

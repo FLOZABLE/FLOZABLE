@@ -4,6 +4,7 @@ const ajv = new Ajv();
 const { google } = require('googleapis');
 const pool = require("./model/pool");
 const { userCache } = require("./services/redisLoader");
+const { DateTime } = require("luxon");
 
 function generateRandomId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -177,6 +178,19 @@ const timezones24 = [
   "Pacific/Noumea"
 ];
 
+function getMidnightTimezones() {
+  const now = DateTime.utc();
+  const allTimezones = Intl.supportedValuesOf('timeZone');
+  const midnightTimezones = [];
+  allTimezones.forEach(zone => {
+    const dtInZone = now.setZone(zone);
+    if (dtInZone.hour === 0) {
+      midnightTimezones.push(zone);
+    }
+  });
+
+  return midnightTimezones;
+}
 
 
 module.exports = {
@@ -193,5 +207,6 @@ module.exports = {
   hex2rgb,
   secondConverter,
   deriveKey,
-  timezones24
+  timezones24,
+  getMidnightTimezones
 };

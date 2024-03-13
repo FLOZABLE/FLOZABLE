@@ -11,8 +11,7 @@ async function updateUserIds() {
     const newUserId = userId.slice(0, 10);
     await connection.query(`UPDATE subjects SET user_id = ? WHERE user_id = ?`, [newUserId, userId]);
     await connection.query(`UPDATE plans SET user_id = ? WHERE user_id = ?`, [newUserId, userId]);
-    const groups = user.groups === "" ? [] : user.groups.split(",");
-    groups.map(async (groupId) => {
+    user.groups.map(async (groupId) => {
       const [[group]] = await connection.query(`SELECT members, group_id FROM groups WHERE group_id = ?`, [groupId]);
       if (group) {
         const members = group.members === "" ? [] : group.members.split(",");
@@ -36,9 +35,8 @@ async function removeDupedFriends() {
   const [users] = await connection.query(`SELECT friends, user_id FROM users`);
 
   users.map(user => {
-    const friends = user.friends === "" ? [] : user.friends.split(",");
-    const uniqFriends = [...new Set(friends)];
-    if (uniqFriends.length !== friends.length) {
+    const uniqFriends = [...new Set(user.friends)];
+    if (uniqFriends.length !== user.friends.length) {
       console.log('dupe detected')
       const stringFriends = uniqFriends.join(',');
       redisClient.hSet(`user:${user.user_id}`, 'friends', stringFriends);

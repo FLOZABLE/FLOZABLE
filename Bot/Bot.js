@@ -222,8 +222,7 @@ async function sendFriendRequest(botId) {
     const targetUserInfo = await userCache(targetId);
     if (!targetUserInfo) return null;
 
-    let { friends, name } = targetUserInfo;
-    friends = friends === "" ? [] : friends.split(',');
+    const { friends, name } = targetUserInfo;
     if (friends.includes(botId)) return;
 
     const friendRequests = await NotificationCache(targetId, 0, false);
@@ -270,8 +269,7 @@ async function replyFriendRequests(userId) {
       const connection = pool.promise();
       const userInfo = await userCache(userId);
       const targetInfo = await userCache(targetId);
-      let { friends } = userInfo;
-      friends = friends === "" ? [] : friends.split(',');
+      const { friends } = userInfo;
 
       if (!friends.includes(userId)) {
         await connection.query(`
@@ -311,7 +309,6 @@ async function replyFriendRequests(userId) {
         //update cached value of user
         friends.push(targetId);
         redisClient.hSet(`user:${userId}`, 'friends', friends.join(','));
-        targetInfo.friends = targetInfo.friends === "" ? [] : targetInfo.friends.split(",");
         targetInfo.friends.push(userId);
         redisClient.hSet(`user:${targetId}`, 'friends', targetInfo.friends.join(','));
 
@@ -369,10 +366,8 @@ async function startBot(userId) {
     const subject = subjects[randomIntInRange(0, subjects.length - 1)];
     const userInfo = await userCache(userId);
     if (!subject || !userInfo) return;
-    let { groups, friends, name } = userInfo;
+    const { groups, friends, name } = userInfo;
     console.log('start', userId, name)
-    friends = friends === "" ? [] : friends.split(",");
-    groups = groups === "" ? [] : groups.split(",");
     if (groups.length) {
       mainIo.to(groups).emit(`studying:${userId}`, subject);
     };
@@ -402,9 +397,7 @@ async function stopBot(userId) {
     const [subject] = subjects.filter((sub) => sub.id === activeSubject.id);
     if (!userInfo || !subject || !activeSubject || !activeSubject.id) return;
     console.log(subject);
-    let { groups, friends, name } = userInfo;
-    friends = friends === "" ? [] : friends.split(",");
-    groups = groups === "" ? [] : groups.split(",");
+    const { groups, friends, name } = userInfo;
 
     if (groups.length) {
       mainIo.to(groups).emit(`stopStudying:${userId}`, "disconnect");
