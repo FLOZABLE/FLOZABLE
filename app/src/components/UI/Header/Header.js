@@ -15,7 +15,7 @@ import styles from "./Header.module.css";
 import PlanTimeline from "../PlanTimeline/PlanTimeline";
 import { secondConverter } from "../../../utils/Tool";
 import ChatModalBtn from "../ChatModalBtn/ChatModalBtn";
-import { ButtonLogout, HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor, IconBell, IconBook, IconBxHome, IconBxMessageSquareDetail, IconClipboardOutline, IconEyeOutline, IconIconStar, IconMonitor, IconUser } from "../../../utils/svgs";
+import { ButtonLogout, HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor, IconMessage, IconBell, IconBook, IconBxHome, IconBxMessageSquareDetail, IconClipboardOutline, IconEyeOutline, IconIconStar, IconMonitor, IconUser } from "../../../utils/svgs";
 import StudyBtn from "../StudyBtn/StudyBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
@@ -206,7 +206,7 @@ function Header({
           onClick={() => { setIsChatModal(prev => !prev) }}
         >
           <i>
-            <FontAwesomeIcon icon={faMessage} bounce={totalNewMsg ? true : false} />
+            <IconMessage bounce={totalNewMsg ? true : false} />
           </i>
           <div>
             {totalNewMsg}
@@ -216,7 +216,7 @@ function Header({
           onClick={() => { setIsNotificationModal(prev => !prev) }}
         >
           <i>
-            <FontAwesomeIcon icon={faBell} bounce={notifications?.length ? true : false} />
+            <IconBell icon={faBell} bounce={notifications?.length ? true : false} />
           </i>
           <div>
             {notifications?.length}
