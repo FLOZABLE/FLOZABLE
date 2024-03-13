@@ -1,6 +1,7 @@
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import { secondConverter } from "../../utils/Tool";
 import React, { useState } from "react";
+import { colorsList } from "../../constant";
 
 function StudyTrendChart({subjectsTrend}) {
   const [filteredTrends, setFilteredTrends] = useState([]);
@@ -47,9 +48,9 @@ function StudyTrendChart({subjectsTrend}) {
             }
           }}
         />
-        {subjectsTrend.length ? subjectsTrend[0].data.map((subject) => {
+        {subjectsTrend.length ? subjectsTrend[0].data.map((subject, i) => {
           return (
-            <Line name={subject.info.name} type="monotone" key={subject.info.id} dataKey={subject.info.id} stroke="#8884d8" activeDot={{ r: 8 }} />
+            <Line name={subject.info.name} type="monotone" key={subject.info.id} dataKey={subject.info.id} stroke={colorsList[i % colorsList.length]} activeDot={{ r: 8 }} />
           )
         }) : null}
       </LineChart>
