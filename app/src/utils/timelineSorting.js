@@ -87,8 +87,6 @@ function timelineSort(subjects) {
       return [...val, ...monthlySorted[i]];
     });
 
-    console.log("timelinesort", i, subjects.daily.grouped.length)
-
     subject.daily.focus = Array(subject.daily.grouped.length).fill(0);
     subject.daily.focus = subject.daily.grouped.map((val, i) => {
       let maxVal = 0;
