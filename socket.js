@@ -55,9 +55,22 @@ mainIo.on('connection', (socket) => {
   socket.userId = session.user_id;
   const userId = session.user_id;
 
-  console.log('connected0', userId)
+  if (userId) {
+    (async() => {
+      const now = Math.floor(new Date().getTime() / 1000);
+      redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
+      socket.join(userId);
+      const userInfo = await userCache(userId);
+      if (!userInfo) return;
+  
+      let { friends } = userInfo;
+      friends = friends === "" ? [] : friends.split(",");
+      if (friends.length) {
+        io.to(friends).emit(`studying:${userId}`, {id: '0'});
+      };
+    })();
+  }
 
-  socket.join(userId);
 
   socket.on('joinMyGroups', async () => {
     try {
@@ -70,7 +83,7 @@ mainIo.on('connection', (socket) => {
       console.log(err);
     };
   });
-  
+
   socket.on('onlineMembers', () => {
     /* const onlineMembers = io.engine.clientsCount;
     io.emit() */
@@ -80,17 +93,12 @@ mainIo.on('connection', (socket) => {
   });
 
   socket.on("disconnect", async (reason) => {
-    const activeSubject = await activeSubjectCache(userId);
-    if (!activeSubject) return;
-
-    const now = Math.floor(new Date().getTime() / 1000);
-    /* const subjects = await subjectsCache(userId);
-    const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId); */
-    const subjectId = activeSubject.id;
-    const subject = await subjectCache(userId, subjectId);
     const userInfo = await userCache(userId);
-    if (!userInfo || !subject) return;
 
+    if (!userInfo) {
+      redisClient.hDel(`user:${userId}`, `ActiveSubject`);
+      return;
+    };
 
     let { groups, friends } = userInfo;
     friends = friends === "" ? [] : friends.split(",");
@@ -102,6 +110,19 @@ mainIo.on('connection', (socket) => {
     if (friends.length) {
       io.to(friends).emit(`stopStudying:${userId}`, 'disconnect');
     };
+
+    const activeSubject = await activeSubjectCache(userId);
+    if (!activeSubject) return;
+    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
+
+    const now = Math.floor(new Date().getTime() / 1000);
+    /* const subjects = await subjectsCache(userId);
+    const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId); */
+    const subjectId = activeSubject.id;
+    const subject = await subjectCache(userId, subjectId);
+
+    if (!subject) return;
+
     const { datum_point, timeline_sum } = subject;
 
     const duration = now - datum_point - timeline_sum;
@@ -127,7 +148,6 @@ mainIo.on('connection', (socket) => {
     timerInfo.ts += totalTimerDuration;
     redisClient.rPush(`user:${userId}:timer`, `[${timerStart},${totalTimerDuration}]`);
     redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo)); */
-    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
     for (let i = -12; i < 12; i++) {
       redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
     };
@@ -137,7 +157,6 @@ mainIo.on('connection', (socket) => {
 
   socket.on("sendMsg", async (roomId, msg) => {
     const isIn = await isInChatRoom(userId, roomId);
-    console.log(isIn)
     if (isIn) {
       const msgId = generateRandomId(6);
       const time = Math.floor(new Date().getTime() / (1000 * 60));
@@ -278,7 +297,6 @@ mainIo.on('connection', (socket) => {
   });
 
   socket.on('readMsg', async ({ roomId, type }) => {
-    console.log('read', roomId, type);
     if (!roomId) return;
     //dm
     let members = [];
@@ -292,22 +310,19 @@ mainIo.on('connection', (socket) => {
     if (!members.includes(userId)) return;
 
     const [lastMsg] = await redisClient.lRange(`room:${roomId}:chats`, -1, -1);
-    console.log(lastMsg, 'gd')
     if (!lastMsg) return;
-    console.log('gd', lastMsg)
     //i ==  msg id
     const { i } = JSON.parse(lastMsg);
     const now = Math.floor(new Date().getTime() / 1000 / 60);
     redisClient.hSet(`user:${userId}:chats`, roomId, `${i}:${now}`);
   });
 
-  socket.on("volumeChange", ({id, volume}) => {
+  socket.on("volumeChange", ({ id, volume }) => {
     if (!id || typeof volume !== "number") {
       return;
     };
-    console.log(id,volume, 'changed');
-    socket.to(userId).emit(`volumeChange`, {id, volume});
-    extensionIo.to(userId).emit(`volumeChange`, {id, volume});
+    socket.to(userId).emit(`volumeChange`, { id, volume });
+    extensionIo.to(userId).emit(`volumeChange`, { id, volume });
   })
 
   socket.on('exitSession', async () => {
@@ -332,13 +347,12 @@ extensionIo.on("connection", (socket) => {
     if (!userInfo) return;
 
     const dateTime = DateTime.now().setZone(userInfo.timezone);
-    const score = Math.floor(dateTime.offset) / 60 + 12;
-    console.log('timezone off', score);
+    const score = Math.floor(dateTime.offset / 60) + 12;
     redisClient.zAdd(`extensionUsers`, [{ value: userId, score }]);
     socket.userId = userId;
     socket.join(userId);
     const activeSubject = await activeSubjectCache(userId);
-    extensionIo.to(userId).emit("studying", { studying: activeSubject && activeSubject.id ? true : false });
+    extensionIo.to(userId).emit("studying", { studying: activeSubject && activeSubject.id !== '0' ? true : false });
   });
 
   /*   socket.on("setting-update", async({d, target, value}) => {
@@ -353,16 +367,15 @@ extensionIo.on("connection", (socket) => {
     }); */
 
   socket.on("update-tabs", async ({ domain, duration }) => {
-    console.log(duration)
     if (!socket.userId || !domain || !duration) return;
     redisClient.zIncrBy(`user:${socket.userId}:tabs:timer`, duration, domain);
     redisClient.zIncrBy(`user:${socket.userId}:tabs:usage`, 1, domain);
 
   });
 
-  socket.on("volumeChange", async({id, volume}) => {
+  socket.on("volumeChange", async ({ id, volume }) => {
     if (!socket.userId || !id) return;
-    io.to(socket.userId).emit(`volumeChange`, {id, volume});
+    io.to(socket.userId).emit(`volumeChange`, { id, volume });
   })
 })
 

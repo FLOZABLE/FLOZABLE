@@ -13,7 +13,6 @@ import { Link } from "react-router-dom";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function GroupViewer({ groupInfo, userInfo }) {
-  
   return (
     <div
       className={styles.GroupViewer}
@@ -25,7 +24,7 @@ function GroupViewer({ groupInfo, userInfo }) {
           </div>
         </div>
         <div className={`${styles.description} hiddenScroll`}>
-          {parse(groupInfo?.explanation)}
+          {groupInfo ? parse(groupInfo.explanation) : null}
         </div>
         <div className={styles.info}>
           <div>

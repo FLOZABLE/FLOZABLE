@@ -28,17 +28,23 @@ function UserSubjectViewer({ userInfo }) {
     }
 
     const onStudying = (subjectInfo) => {
-      const { name } = subjectInfo;
+      const { name, id } = subjectInfo;
+      if (id !== '0') {
+        setSubjectName(`Studying ${name}`);
+      } else {
+        setSubjectName(`Taking break`);
+      };
       console.log('subject', subjectInfo);
-      setSubjectName(`Studying ${name}`);
       setSubjectTotal(Math.random());
       setIsStudying(true);
       setSubjectStart(DateTime.now().toFormat(DateTime.TIME_SIMPLE));
     };
 
     const onStopStudying = (status) => {
+      console.log(status)
       if (status === 'disconnect') {
         setIsStudying(false);
+        setSubjectName("Offline");
         setSubjectStart("");
         return;
       };
