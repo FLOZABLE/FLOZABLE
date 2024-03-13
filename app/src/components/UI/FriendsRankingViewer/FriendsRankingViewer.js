@@ -29,7 +29,7 @@ function FriendsRankingViewer({ friendsRanking }) {
           />
         </div>
       </div>
-      <div className={styles.rankings}>
+      <div className={`${styles.rankings} customScroll`}>
         {friendsRanking?.[viewer]?.map((friend, i) => {
           console.log(friend);
           let value = friend.dayTotal;

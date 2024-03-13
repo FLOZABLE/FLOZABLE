@@ -20,13 +20,12 @@ import { Link, useSearchParams } from "react-router-dom";
 import SpotifyAuthBtn from "../../UI/SpotifyAuthBtn/SpotifyAuthBtn";
 import { SpotifyLogo } from "../../../utils/svgs";
 import SubjectsManager from "../../UI/SubjectsManager/SubjectsManager";
-import YouTubeLoginBtn from "../../UI/YouTubeLoginBtn/YouTubeLoginBtn";
 import ExtensionSetting from "../../UI/ExtensionSetting/ExtensionSetting";
 import VerifyEmailButton from "../../UI/VerifyEmailButton/VerifyEmailButton";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
-const googleClientId = process.env.REACT_APP_CLIENT_ID;
 const appOrigin = process.env.REACT_APP_LOCATION;
+const googleClientId = process.env.REACT_APP_CLIENT_ID;
 
 function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userInfo, setResponse }) {
   const [imageSrc, setImageSrc] = useState(null);
@@ -379,7 +378,7 @@ function Account({ isSidebarHovered, isSidebarOpen, subjects, setSubjects, userI
                       <GoogleOAuthProvider
                         clientId={googleClientId}
                       >
-                        <YouTubeLoginBtn />
+                        <GoogleLoginBtn scope="https://www.googleapis.com/auth/youtube.force-ssl" />
                       </GoogleOAuthProvider>
                     </div>
                   </div>
