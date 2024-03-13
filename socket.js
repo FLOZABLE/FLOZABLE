@@ -3,7 +3,7 @@ const cron = require('node-cron');
 const pool = require("./model/pool");
 const redisClient = require("./model/redis");
 const { generateRandomId } = require("./tool");
-const { lastMsgCache, groupCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache, dmRoomMembersCache, groupMembersCache, zsetIncrAll } = require("./services/redisLoader");
+const { lastMsgCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache, dmRoomMembersCache, groupMembersCache, zsetIncrAll } = require("./services/redisLoader");
 const { DateTime } = require("luxon");
 const { Server } = require('socket.io');
 
@@ -63,8 +63,7 @@ mainIo.on('connection', (socket) => {
       const userInfo = await userCache(userId);
       if (!userInfo) return;
   
-      let { friends } = userInfo;
-      friends = friends === "" ? [] : friends.split(",");
+      const { friends } = userInfo;
       if (friends.length) {
         io.to(friends).emit(`studying:${userId}`, {id: '0'});
       };
@@ -100,9 +99,7 @@ mainIo.on('connection', (socket) => {
       return;
     };
 
-    let { groups, friends } = userInfo;
-    friends = friends === "" ? [] : friends.split(",");
-    groups = groups === "" ? [] : groups.split(",");
+    const { groups, friends } = userInfo;
 
     if (groups.length) {
       io.to(groups).emit(`stopStudying:${userId}`, 'disconnect');
@@ -190,9 +187,7 @@ mainIo.on('connection', (socket) => {
       const now = Math.floor(new Date().getTime() / 1000);
 
       if (!subject || !userInfo) return;
-      let { groups, friends } = userInfo;
-      friends = friends === "" ? [] : friends.split(",");
-      groups = groups === "" ? [] : groups.split(",");
+      const { groups, friends } = userInfo;
       if (groups.length) {
         mainIo.to(groups).emit(`studying:${userId}`, subject);
       };
@@ -228,9 +223,7 @@ mainIo.on('connection', (socket) => {
     if (!userInfo || !subject || !activeSubject || !activeSubject.id === subjectId) return;
 
 
-    let { groups, friends } = userInfo;
-    friends = friends === "" ? [] : friends.split(",");
-    groups = groups === "" ? [] : groups.split(",");
+    const { groups, friends } = userInfo;
 
     if (groups.length) {
       io.to(groups).emit(`stopStudying:${userId}`, 'rest');
@@ -278,7 +271,8 @@ mainIo.on('connection', (socket) => {
   socket.on("changeGroup", async (groupId) => {
     const userInfo = await userCache(userId);
     if (!userInfo) return;
-    const groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
+    const {groups, friends} = userInfo;
+
     if (!groups.includes(groupId)) return;
     groups.map(group => {
       if (group !== groupId) {
@@ -288,7 +282,6 @@ mainIo.on('connection', (socket) => {
     socket.join(groupId);
     const now = DateTime.now().toSeconds().toFixed();
     redisClient.hSet(`user:${userId}`, `ActiveGroup`, JSON.stringify({ id: groupId, time: now }));
-    let friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
     if (!friends.length) return;
     const connection = pool.promise();
     const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [groupId]);
@@ -382,12 +375,11 @@ extensionIo.on("connection", (socket) => {
 async function deActiveGroup(userId, socket) {
   const userInfo = await userCache(userId);
   if (!userInfo) return;
-  const groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
+  const {groups, friends} = userInfo; 
   groups.map(group => {
     socket.leave(group);
   });
   redisClient.hDel(`user:${userId}`, `ActiveGroup`);
-  const friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
   if (!friends.length) return;
   io.to(friends).emit(`deActiveGroup:${userId}`);
 }

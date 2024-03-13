@@ -1,6 +1,6 @@
 const mediaSoup = require('mediasoup');
 const { io } = require('./socket');
-const { groupCache, userCache } = require("./services/redisLoader");
+const { userCache } = require("./services/redisLoader");
 const { sessionMiddleWare } = require('./app');
 const mediaSocket = io.of('/mediaSocket');
 
@@ -98,7 +98,8 @@ const consumers = {};
     socket.on("changeGroup", async (groupId) => {
       const userInfo = await userCache(userId);
       if (!userInfo) return;
-      const groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
+      const {groups} = userInfo;
+      
       if (!groups.includes(groupId)) return;
       groups.map(group => {
         if (group !== groupId) {

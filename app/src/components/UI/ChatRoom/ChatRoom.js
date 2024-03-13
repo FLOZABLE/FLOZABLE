@@ -41,16 +41,16 @@ function ChatRoom({ room, setSelectedRoom, setRoomName, lastMsg, lastRead, setTo
   return (
     <li
       className={styles.ChatRoom}
+      onClick={() => {
+        setSelectedRoom(room);
+        setRoomName(room?.name);
+        setTotalNewMsg(prev => prev - newMsgs)
+        setNewMsgs(0);
+      }}
     >
       <div className={styles.imgContainer} style={{ backgroundColor: room?.color }}>
       </div>
       <div className={styles.roomInfo}
-        onClick={() => {
-          setSelectedRoom(room);
-          setRoomName(room?.name);
-          setTotalNewMsg(prev => prev - newMsgs)
-          setNewMsgs(0);
-        }}
       >
         <div className={styles.header}>
           <div className={styles.name}>

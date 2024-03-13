@@ -82,9 +82,8 @@ function User({ groups, setResponse, setOtherGroups, setMyGroups, myGroups, myIn
           setUserInfo(userInfo);
           const sortedSubject = timelineSort(subjectsInfo);
           setUserSubjects(sortedSubject);
-          const groupsArr = userInfo.groups.split(',');
           const userGroups = groups.filter(group => {
-            return groupsArr.includes(group.group_id);
+            return userInfo.groups.includes(group.group_id);
           });
           setUserFriends(friendsInfo)
           setUserGroups(userGroups);

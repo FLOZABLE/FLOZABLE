@@ -23,6 +23,7 @@ Router.get('/accountinfo', async (req, res) => {
     if (!userInfo) {
       return res.send(responseCodes['no-user']);
     };
+    console.log(userInfo, 'userInfo')
     req.session.timezone = userInfo.timezone;
     usersCache(userId);
     res.send({ success: true, userInfo: userInfo, notifications: notifications });
@@ -516,9 +517,8 @@ Router.get('/profile/:userId', async (req, res) => {
     if (!targetUserId) return { success: false, reason: 'Invalid User' };
     const userInfo = await userCache(targetUserId);
     if (!userInfo) return res.send({ success: false, msg: 'No such user' });
-    const friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
     const friendsInfo = [];
-    await Promise.all(friends.map(async (friendId) => {
+    await Promise.all(userInfo.friends.map(async (friendId) => {
       const friendInfo = await userCache(friendId);
       if (friendInfo) {
         friendsInfo.push(friendInfo);

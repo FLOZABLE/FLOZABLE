@@ -3,6 +3,10 @@ const pool = require('../model/pool');
 const { writeLog } = require('../Logger');
 const { UserRefreshClient } = require("google-auth-library");
 
+const USER_EXP = 60 * 60 * 3;
+const USER_EXP_PLUS = 60 * 60;
+const USER_EXP_DIS = 60 * 60;
+
 async function flushRedis() {
   await redisClient.flushDb();
 };
@@ -262,19 +266,24 @@ async function userCache(userId) {
   try {
     const isCached = await redisClient.hExists(`user:${userId}`, 'name');
     if (isCached) {
-      const userInfo = { ...await redisClient.hGetAll(`user:${userId}`, 'name'), user_id: userId };
-      return userInfo;
+      const userInfo = await redisClient.hGetAll(`user:${userId}`);
+      userInfo.groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
+      userInfo.friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
+      return {...userInfo, user_id: userId};
     } else {
       const connection = pool.promise();
       const [[userInfo]] = await connection.query("SELECT name, email, groups, friends, timezone, datum_point FROM users WHERE user_id = ?", [userId]);
       if (userInfo) {
-        const { name, email, groups, friends, timezone, datum_point } = userInfo;
+        const { name, email, timezone, datum_point } = userInfo;
         redisClient.hSet(`user:${userId}`, 'name', name);
         redisClient.hSet(`user:${userId}`, 'email', email);
-        redisClient.hSet(`user:${userId}`, 'groups', groups);
-        redisClient.hSet(`user:${userId}`, 'friends', friends);
+        redisClient.hSet(`user:${userId}`, 'groups', userInfo.groups);
+        redisClient.hSet(`user:${userId}`, 'friends', userInfo.friends);
         redisClient.hSet(`user:${userId}`, 'timezone', timezone);
         redisClient.hSet(`user:${userId}`, 'datum_point', datum_point);
+        redisClient.expire(`user:${userId}`, 60 * 60 * 10);
+        userInfo.groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
+        userInfo.friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
         return { ...userInfo, user_id: userId };
       } else {
         return false;

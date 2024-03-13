@@ -15,12 +15,11 @@ function getLikedGroups(userInfo, groups) {
 
 function getMyGroups(userInfo, groups) {
   const otherGroups = [...groups];
-  const myGroupsId = userInfo.groups.split(",");
   const myGroups = otherGroups.filter((group) =>
-    myGroupsId.includes(group.group_id),
+  userInfo.groups.includes(group.group_id),
   );
   const otherGroupsFiltered = otherGroups.filter(
-    (group) => !myGroupsId.includes(group.group_id),
+    (group) => !userInfo.groups.includes(group.group_id),
   );
   return { myGroups: myGroups, otherGroups: otherGroupsFiltered };
 }

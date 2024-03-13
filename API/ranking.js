@@ -19,7 +19,6 @@ Router.get('/sort', async (req, res) => {
 
   try {
     let dateTime = DateTime.fromISO(date, { zone: timezone });
-    console.log(dateTime.get('day'))
     const minOffset = dateTime.offset % 60;
     dateTime = dateTime.plus({ minute: minOffset });
   
@@ -33,7 +32,6 @@ Router.get('/sort', async (req, res) => {
       if (dateTime.hasSame(today, "day")) {
         //today
         rankings = rankingCache.get(`day:${timezoneOffset}`);
-        console.log('day cached: ', rankings?.length)
         if (!rankings) {
           const users = await redisClient.sMembers('allMembers');
           rankings = await todaySorting(users, timezoneOffset);
@@ -67,7 +65,6 @@ Router.get('/sort', async (req, res) => {
       if (today.hasSame(dateTime, "week")) {
   
         rankings = rankingCache.get(`week:${timezoneOffset}`);
-        console.log('week cached: ', rankings?.length)
         if (!rankings) {
           const users = await redisClient.sMembers('allMembers');
           rankings = await thisWeekSorting(users, timezoneOffset);
@@ -87,7 +84,6 @@ Router.get('/sort', async (req, res) => {
       } else {
         //get ranking from database if its not today;
         const connection = pool.promise();
-        console.log(dateTime.startOf('week').toSeconds(), 'week')
         const [[weeklyRanking]] = await connection.query(`SELECT ranking FROM weeklyRanking WHERE date = ?`, [dateTime.startOf('week').toSeconds()]);
         if (weeklyRanking) {
           rankings = JSON.parse(weeklyRanking.ranking);
@@ -104,7 +100,6 @@ Router.get('/sort', async (req, res) => {
       if (today.hasSame(dateTime, "month")) {
   
         rankings = rankingCache.get(`month:${timezoneOffset}`);
-        console.log('month cached: ', rankings?.length)
         if (!rankings) {
           const users = await redisClient.sMembers('allMembers');
           rankings = await thisMonthSorting(users, timezoneOffset);
@@ -123,7 +118,6 @@ Router.get('/sort', async (req, res) => {
       } else {
         //get ranking from database if its not today;
         const connection = pool.promise();
-        console.log(dateTime.startOf('month').toSeconds(), 'month')
         const [[monthlyRanking]] = await connection.query(`SELECT ranking FROM monthlyRanking WHERE date = ?`, [dateTime.startOf('month').toSeconds()]);
         if (monthlyRanking) {
           rankings = JSON.parse(monthlyRanking.ranking);
@@ -244,7 +238,6 @@ async function userDailySorting(userId, date, timezone, length) {
   const timezoneOffset = Math.floor(today.offset / 60).toString();
   const minOffset = today.offset % 60;
   dateStart = dateStart.minus({ minute: minOffset })
-  console.log(dateStart.toSeconds(), dateStart.get("day"));
   let diff = today.diff(dateStart, 'days').toObject().days;
   while (diff < length - 1) {
     dateStart = dateStart.plus({ days: -1 });
@@ -282,7 +275,6 @@ async function userWeeklySorting(userId, date, timezone, length) {
   const timezoneOffset = Math.floor(thisWeek.offset / 60).toString();
   const minOffset = thisWeek.offset % 60;
   weekStart = weekStart.minus({ minute: minOffset })
-  console.log(weekStart.toSeconds());
   let diff = thisWeek.diff(weekStart, 'weeks').toObject().weeks;
   while (diff < length - 1) {
     weekStart = weekStart.plus({ weeks: -1 });
@@ -320,7 +312,6 @@ async function userMonthlySorting(userId, date, timezone, length) {
   const timezoneOffset = Math.floor(thisMonth.offset / 60).toString();
   const minOffset = thisMonth.offset % 60;
   monthStart = monthStart.minus({ minute: minOffset })
-  console.log(monthStart.toSeconds());
   let diff = thisMonth.diff(monthStart, 'months').toObject().months;
   while (diff < length - 1) {
     monthStart = monthStart.plus({ months: -1 });
@@ -485,8 +476,7 @@ Router.get('/friends', async (req, res) => {
     try {
       const userInfo = await userCache(userId);
       if (!userInfo) return res.send({ success: false, reason: 'no user found' });
-      let { friends } = userInfo;
-      friends = friends === "" ? [] : friends.split(',');
+      const { friends } = userInfo;
 
       let today = DateTime.now().setZone(timezone).startOf('day');
       const timezoneOffset = Math.floor(today.offset / 60).toString();

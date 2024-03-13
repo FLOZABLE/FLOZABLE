@@ -1,6 +1,5 @@
 const {createWorker} = require('mediasoup');
 const {io} = require('./socket');
-const { groupCache } = require("./services/redisLoader");
 const os = require("os");
 const {sessionMiddleWare} = require('./app');
 const mediaSocket = io.of('/mediaSocket');

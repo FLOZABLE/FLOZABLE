@@ -7,23 +7,17 @@ const pool = require("../model/pool");
 const { io } = require("../socket");
 const cron = require("node-cron");
 const { activeSubjectCache, subjectsCache, timerCache } = require("./redisLoader");
+const { getMidnightTimezones } = require("../tool");
 
 async function timerUpdate() {
-  const now = DateTime.utc();
-  const allTimezones = Intl.supportedValuesOf('timeZone');
-  const midnightTimezones = [];
-  allTimezones.forEach(zone => {
-    const dtInZone = now.setZone(zone);
-    if (dtInZone.hour === 0) {
-      midnightTimezones.push(zone);
-    }
-  });
+  const now = Math.floor(new Date().getTime() / 1000);
+  const midnightTimezones = getMidnightTimezones();
   const connection = pool.promise();
   try {
     const [usersInfo] = await connection.query(`SELECT name, user_id, timezone FROM users where timezone IN (?)`, [midnightTimezones]);
+    //const [usersInfo] = await connection.query(`SELECT name, user_id, timezone FROM users`);
     usersInfo.map(async ({ user_id }) => {
       const userId = user_id;
-      const now = Math.floor(new Date().getTime() / 1000);
       const subjects = await subjectsCache(userId);
       const activeSubject = await activeSubjectCache(userId);
       //user is studying
