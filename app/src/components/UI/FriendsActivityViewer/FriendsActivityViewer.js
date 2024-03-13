@@ -31,7 +31,7 @@ function FriendsActivityViewer({ userInfo }) {
   }, []);
 
   return (
-    <div className={styles.FriendsActivityViewer}>
+    <div className={`${styles.FriendsActivityViewer} customScroll`}>
       {
         friends.map((friend, i) => {
           const { timezone, name, totalTime, activeSubject, user_id } = friend;

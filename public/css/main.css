@@ -340,7 +340,7 @@ h6,
       /* left 0px top 0px,
       right 0px top 50%, */
       center bottom;
-  background-repeat: no-repeat;
+      background-repeat: no-repeat;
   background-size: contain;
 }
 
@@ -533,7 +533,7 @@ h6,
 /*** Footer ***/
 .footer {
   margin-top: 6rem;
-  padding-top: 9rem;
+  padding-top: 20rem;
   background:
       /* url(../img/main/bg-circle.png),
       url(../img/main/bg-triangle.png), */
@@ -543,8 +543,7 @@ h6,
       /* left 0px bottom 0px,
       right 0px top 50%, */
       center top;
-  background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 .footer .btn.btn-social {

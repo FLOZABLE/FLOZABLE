@@ -131,7 +131,9 @@ function Main({
                         <IconStatsChart />
                       </i>
                     </div>
+                    <div className={styles.friendsRankingWrapper}>
                     <FriendsRankingViewer friendsRanking={friendsRanking} />
+                    </div>
                   </div>
                 </div>
                 <div className={styles.box} id={styles.recommendedFriends}>

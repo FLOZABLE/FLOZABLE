@@ -1,8 +1,7 @@
 .FriendsActivityViewer {
   position: relative;
-  height: 90%;
-  overflow-y: scroll;
-  padding-bottom: 25px;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .FriendsActivityViewer .friend {
