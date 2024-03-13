@@ -5,29 +5,40 @@ import Timeline, { TimelineMarkers, TodayMarker, TimelineHeaders, DateHeader, Cu
 import 'react-calendar-timeline/lib/Timeline.css';
 import { DateTime } from 'luxon';
 
-function StudyTimelineBar({ events }) {
+function StudyTimelineBar({ events, setPlanModal }) {
 
-  const groups = [{ id: 1, title: 'group 1' }]
+  const groups = [{ id: 1, title: 'Events' }]
+  const [items, setItems] = useState([]);
 
-  const items = [
-    {
-      id: 1,
-      group: 1,
-      canResize: false,
-      canMove: false,
-      title: 'item 1',
-      start_time: DateTime.now().toMillis(),
-      end_time: DateTime.now().plus({ hours: 1 }).toMillis(),
-      itemProps: {
-        onDoubleClick: () => { console.log('You clicked double!') },
-        style: {
-          background: 'cornflowerblue',
-          textAlign: 'center',
-          fontSize: '1rem'
+  function openModal(event){
+    setPlanModal({ ...event, opened: true });
+  }
+
+  useEffect(() => {
+    console.log(events);
+    const tempItems = events.map((event, i) => {
+      return {
+        id: i,
+        group: 1,
+        canResize: false,
+        canMove: false,
+        title: event.title,
+        start_time: event.start.getTime(),
+        end_time: event.end.getTime(),
+        itemProps: {
+          onDoubleClick: () => { openModal(event) },
+          style: {
+            background: event.backgroundColor,
+            textAlign: 'center',
+            fontSize: '1rem',
+            zIndex: event.completed ? 0 : event.priority,
+            textDecoration: event.completed ? "line-through" : ""
+          }
         }
       }
-    }
-  ]
+    });
+    setItems(tempItems);
+  }, [events])
 
   return (
     <div className={styles.StudyTimelineBar}>
@@ -60,9 +71,9 @@ function StudyTimelineBar({ events }) {
               return (
                 <div {...getRootProps()}>
                   {intervals.map(interval => {
-                    if (intervals.length > 70){
-                      if (interval.startTime.format("mm") !== "00"){
-                        return <div/>
+                    if (intervals.length > 70) {
+                      if (interval.startTime.format("mm") !== "00") {
+                        return <div />
                       }
                     }
                     const intervalStyle = {
