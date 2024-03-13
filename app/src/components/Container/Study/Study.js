@@ -12,6 +12,7 @@ import ThemeSelector from "../../UI/ThemeSelector/ThemeSelector";
 import MusicModal from "../../UI/MusicModal/MusicModal";
 import PlaylistModal from "../../UI/PlaylistModal/PlaylistModal";
 import StudySubjectTools from "../../UI/StudySubjectTools/StudySubjectTools";
+//import StudyTimelineBar from "../../UI/StudyTimelineBar/StudyTimelineBar";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -286,7 +287,10 @@ function Study(props) {
           />
         </div>
         <div className={styles.PlanTimelineBarWrapper}>
-          <PlanTimelineBar events={events} subjects={subjects} />
+          {
+            <PlanTimelineBar events={events} subjects={subjects} /> 
+            // <StudyTimelineBar></StudyTimelineBar>
+          }
         </div>
       </div>
       <div className={styles.ytBg}>
