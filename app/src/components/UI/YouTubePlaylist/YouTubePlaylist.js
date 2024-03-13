@@ -4,7 +4,7 @@ import DropDownButton from "../DropDownButton/DropDownButton";
 import CustomInput from "../CustomInput/CustomInput";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import YouTubeLoginBtn from "../YouTubeLoginBtn/YouTubeLoginBtn";
+import GoogleLoginBtn from "../GoogleLoginBtn/GoogleLoginBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;
@@ -87,8 +87,10 @@ function YouTubePlaylist({ }) {
   return (
     <div className={styles.PlaylistModal}>
       <div className={styles.authGuide}>
-        <GoogleOAuthProvider clientId={googleClientId}>
-          <YouTubeLoginBtn />
+        <GoogleOAuthProvider
+          clientId={googleClientId}
+        >
+          <GoogleLoginBtn scope="https://www.googleapis.com/auth/youtube.force-ssl" />
         </GoogleOAuthProvider>
         {
           youtubeLoggedIn ?
@@ -97,7 +99,7 @@ function YouTubePlaylist({ }) {
                 options={youtubePlaylists}
                 setValue={setYoutubePlaylist}
               />
-              <button onClick={() =>{randomizeVideos()}}>Shuffle</button>
+              <button onClick={() => { randomizeVideos() }}>Shuffle</button>
             </div>
             :
             <div></div>
