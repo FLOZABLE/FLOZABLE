@@ -3,7 +3,6 @@
   display: flex;
   margin-bottom: 0.625rem;
   position: relative;
-  /* border: 0.0625rem solid var(--gray2); */
   border-radius: 0.938rem;
   padding: 0.625rem;
   cursor: pointer;
@@ -27,6 +26,8 @@
 
 .ChatRoom .header .msgCount {
   position: absolute;
+  bottom: 0rem;
+  left: 4rem;
 }
 
 .ChatRoom .header strong {
