@@ -87,7 +87,7 @@ function StudySidebar({
           <FontAwesomeIcon icon={faHome} />
         </i>
         <div className={styles.hoverEl}>
-          to Home
+          Home
         </div>
       </Link>
       <div
@@ -230,7 +230,7 @@ function StudySidebar({
           }
         </i>
         <div className={styles.hoverEl}>
-          Tool
+          Tools
         </div>
       </div>
 

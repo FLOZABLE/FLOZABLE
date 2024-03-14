@@ -85,6 +85,6 @@
   animation-delay: .4s;
 }
 
-.SearchBar .circles.hidden .circle {
-  opacity: 0;
+.SearchBar .circles.hidden  {
+  visibility: hidden;
 }
