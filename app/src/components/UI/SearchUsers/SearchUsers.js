@@ -31,13 +31,13 @@ function SearchUsers({ searchQuery, setResponse, setCount, search, setSearch }) 
       .catch((error) => console.error(error));
   };
 
+  const [searchCountdown, setSearchCountdown] = useState(null);
+
   useEffect(() => {
-    const isRateLimited = lastUpd && new Date().getTime() - lastUpd < 1000;
-    if (isRateLimited || !searchQuery || searchQuery.length < 2) return;
-
-    setLastUpd(new Date().getTime());
-
-    fetchServer();
+    if (searchCountdown){
+      clearTimeout(searchCountdown);
+    }
+    setSearchCountdown(setTimeout(fetchServer, 1000));
   }, [searchQuery, lastUpd]);
 
   useEffect(() => {
