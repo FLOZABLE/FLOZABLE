@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from "./StudyTimelineBar.module.css";
 import Timeline, { TimelineMarkers, TodayMarker, TimelineHeaders, DateHeader, CustomHeader } from 'react-calendar-timeline';
 // make sure you include the timeline stylesheet or the timeline will not be styled
@@ -9,12 +9,14 @@ function StudyTimelineBar({ events, setPlanModal }) {
 
   const groups = [{ id: 1, title: 'Events' }]
   const [items, setItems] = useState([]);
+  const timelineRef = useRef();
 
   function openModal(eventObj) {
     eventObj.opened = true;
     console.log(eventObj)
     setPlanModal({ ...eventObj });
   }
+
 
   useEffect(() => {
     console.log(events);
@@ -40,11 +42,26 @@ function StudyTimelineBar({ events, setPlanModal }) {
       }
     });
     setItems(tempItems);
-  }, [events])
+  }, [events]);
+
+  const zoomTimeline = useCallback((e) => {
+    const movement = e.nativeEvent.deltaY;
+    console.log(movement)
+    if (movement > 0){
+      timelineRef.current.changeZoom(1.2);
+    }
+    else{
+      timelineRef.current.changeZoom(0.8);
+    }
+  }, [timelineRef]);
 
   return (
-    <div className={styles.StudyTimelineBar}>
+    <div
+      className={styles.StudyTimelineBar}
+      onWheel={(e) => {zoomTimeline(e)}}
+    >
       <Timeline
+        ref={timelineRef}
         groups={groups}
         items={items}
         timeSteps={{
