@@ -12,9 +12,9 @@ function SearchBar({ searchQuery, setSearchQuery, onEnter = () => { } }) {
           }
         }} />
         <div className={`${styles.circles} ${searchQuery.length ? styles.hidden : ''}`}>
-          <div className={styles.circle}></div>
-          <div className={styles.circle}></div>
-          <div className={styles.circle}></div>
+          <div className={styles.circleOne}></div>
+          <div className={styles.circleTwo}></div>
+          <div className={styles.circleThree}></div>
         </div>
       </div>
       <i onClick={() => {
