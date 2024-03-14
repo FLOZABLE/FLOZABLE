@@ -17,8 +17,6 @@
   border-radius: 1.25rem;
   justify-content: center;
   align-items: center;
-  margin-right: auto;
-  margin-left: auto;
   margin-right: 1.25rem;
 }
 
@@ -40,12 +38,18 @@
 
 .FriendsRankingViewer .rankings .userContainer .userInfo {
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   font-size: 1.25rem;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 
-.FriendsRankingViewer .rankings .userContainer .userInfo p {
+.FriendsRankingViewer .rankings .userContainer .userInfo .name {
   margin-right: 0.313rem;
+  position: relative;
+  max-width: 50%;
 }
 
 .FriendsRankingViewer .rankings .userContainer .diff {
