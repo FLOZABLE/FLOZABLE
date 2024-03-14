@@ -48,33 +48,19 @@
   pointer-events: none;
 }
 
-@keyframes ballDrop {
+@keyframes blink {
   0% {
-    transform: translate(0rem, 0em);
+    opacity: .1;
   }
-
   20% {
-    transform: translate(0rem, -1.875rem);
+    opacity: 1;
   }
-
-  30% {
-    transform: translate(0rem, 0em);
-  }
-
-  34% {
-    transform: translate(-1.25rem, -0.625rem);
-  }
-
-  40% {
-    transform: translate(-1.875rem, 0.1875rem);
-  }
-
-  60% {
-    transform: translate(0rem, 0em);
+  100% {
+    opacity: .1;
   }
 }
 
-.SearchBar .circles .circle {
+.SearchBar .circles div {
   width: 0.625rem;
   height: 0.625rem;
   margin: 0.313rem;
@@ -84,8 +70,19 @@
   opacity: 1;
 }
 
-.SearchBar input:focus ~ .circles .circle {
-  animation: ballDrop 2s ease-in-out infinite forwards;
+
+.SearchBar input:focus ~ .circles .circleOne {
+  animation: blink 1.5s infinite;
+}
+
+.SearchBar input:focus ~ .circles .circleTwo {
+  animation: blink 1.5s infinite;
+  animation-delay: .2s;
+}
+
+.SearchBar input:focus ~ .circles .circleThree {
+  animation: blink 1.5s infinite;
+  animation-delay: .4s;
 }
 
 .SearchBar .circles.hidden .circle {
