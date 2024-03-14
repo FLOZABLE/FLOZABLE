@@ -1,8 +1,9 @@
 .FriendEmailModal {
-  width: 18.75rem;
+  width: 20rem;
   height: 18.75rem;
   background-color: #fff;
   z-index: 4;
+  padding: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
