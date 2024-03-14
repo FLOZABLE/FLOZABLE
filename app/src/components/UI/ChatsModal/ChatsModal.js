@@ -173,7 +173,7 @@ function ChatsModal({
       }),
     );
   }, [chatRooms, myGroups, roomMembers, userInfo, readStatus, selectedRoom]);
-  
+
   useEffect(() => {
     const { chats, id, type } = selectedRoom;
     if (selectedRoom && chats && userInfo) {
@@ -274,51 +274,42 @@ function ChatsModal({
 
   return (
     <Draggable nodeRef={moveRef}>
-    <div className={`${styles.ChatsModal} ${isChatModal ? styles.open : ""}`}
-      ref={moveRef}
-    >
-      <div className={styles.header}> 
-        <i 
-          onClick={() => {
-            setIsChatModal(false);
-          }}>
-          <BackArrow/>  
-        </i>
-        <p>Messages</p>
-        <i
-          onClick={() => {
-            setIsChatModal(false);
-          }}
-        >
-        <FontAwesomeIcon icon={faXmark} />
-        </i>
-      </div>
-      <div className={styles.content}>
+      <div className={`${styles.ChatsModal} ${isChatModal ? styles.open : ""}`}
+        ref={moveRef}
+      >
+        <div className={styles.header}>
+          <i
+            onClick={() => {
+              setIsChatModal(false);
+            }}>
+            <BackArrow />
+          </i>
+          <p>Messages</p>
+          <i
+            onClick={() => {
+              setIsChatModal(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </i>
+        </div>
         <ul className={`${styles.chatRoomsContainer} customScroll`}>
           {chatRoomsEl}
         </ul>
         <div
-          className={`${styles.chatsWrapper} ${
-            selectedRoom ? styles.open : ""
-          }`}
+          className={`${styles.chatsWrapper} ${selectedRoom ? styles.open : ""
+            }`}
         >
-          <div className={styles.chatsHeader}>
+          <div className={styles.header}>
             <i
               id={styles.exitBtn}
               onClick={() => {
                 setSelectedRoom(false);
               }}
             >
-              <BackArrow/>
+              <BackArrow />
             </i>
-            <div className={styles.roomInfo}>
-              {/* <div className={styles.imgContainer}>
-   
-              </div> */}
-              <div className={styles.roomName}>
-                <p>{roomName}</p>
-              </div>
-            </div>
+            <p>{roomName}</p>
             <i
               id={styles.closeBtn}
               onClick={() => {
@@ -349,7 +340,6 @@ function ChatsModal({
           </div>
         </div>
       </div>
-    </div>
     </Draggable>
   );
 }

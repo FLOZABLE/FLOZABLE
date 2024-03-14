@@ -11,6 +11,8 @@
   overflow: hidden;
   visibility: hidden;
   opacity: 0;
+  display: flex;
+  flex-direction: column;
   transition: .3s ease-in-out visibility, .3s ease-in-out opacity, right .3s ease-in-out;
 }
 
@@ -21,136 +23,65 @@
 }
 
 .ChatsModal .header {
-  background-color: transparent;
-  color: #000000;
-  height:  3.75rem;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding-left: 3.3rem;
-  padding-right: 0.6rem;
-  margin: 0.625rem;
-  border-radius: 1.25rem;
 }
 
-.ChatsModal .header :nth-child(3) {
-  font-size: 1.963rem;
+.ChatsModal .header i {
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 3rem;
   cursor: pointer;
-  padding-right: 0.625rem;
-  margin-left: auto;
-}
-
-.ChatsModal .header :nth-child(1) {
-  margin-left: -1.5rem;
-}
-
-.ChatsModal .header p {
-  margin-left: 3.8rem;
-  font-size: 1.4rem;
-}
-
-.ChatsModal .content {
-  position: relative;
-  height: 100%;
-  margin-top: -1.2rem;
 }
 
 .ChatsModal .chatRoomsContainer {
-  background-color: #fff;
-  margin: 0.9rem;
-  padding: 0.5rem;
   overflow-y: auto;
-  height: 24.375rem;
-}
-
-.ChatsModal .chatRoomsContainer .roomInfo {
-  cursor: pointer;
-} 
-
-.ChatsModal .chatRoomsContainer .roomInfo strong {
-  font-size: 0.875rem;
-  margin-left: 0.313rem;
+  flex: 1;
 }
 
 .ChatsModal .chatsWrapper {
   position: absolute;
   left: 21.875rem;
-  top: -5rem;
   height: 100%;
   width: 100%;
-  opacity: 0;
-  visibility: hidden;
-  transition: .3s ease-in-out visibility, .3s ease-in-out opacity, left .3s ease-in-out;
+  transition: left .3s ease-in-out;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
 .ChatsModal .chatsWrapper.open {
   left: 0em;
-  background-color: #fff;
-  visibility: visible;
-  opacity: 1;
   left: 0em;
 }
 
-.ChatsModal .chatsHeader {
-  height: 5rem;
-  width: 100%;
-  background-color: white;
-  margin-top: 1rem;
+.ChatsModal .chatsWrapper .chatsContainer {
+  flex: 1;
+}
+
+.ChatsModal .inputWrapper {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.ChatsModal .chatsHeader .imgContainer {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 10.25rem;
-}
-
-.ChatsModal .chatsHeader i {
-  font-size: 1.8rem;
-  color: black;
-  display: flex;
-  justify-content: center;
-}
-
-.ChatsModal .chatsHeader #exitBtn {
-  position: absolute;
-  left: 1rem;
-  cursor: pointer;
-  margin-top: 0.7rem;
-}
-
-.ChatsModal .chatsHeader #closeBtn {
-  position: absolute;
-  right: 1.25rem;
-  font-size: 1.888rem;
-  cursor: pointer;
-  margin-top: 1.2rem;
-}
-
-.ChatsModal .chatsHeader .roomInfo {
-  display: flex;
+  border-radius: 0.938rem;
+  height: 3.125rem;
   align-items: center;
-  margin-top: 1.5rem;
+  border: 0.0625rem solid var(--gray2);
+  margin: 0rem 0.5rem 0.5rem 0.5rem;
 }
 
-.ChatsModal .chatsHeader .roomInfo p {
-  color: black;
+.ChatsModal .inputWrapper input {
+  flex: 1;
+  border: none;
+  padding-left: 0.5rem;
+  background-color: transparent;
+  height: 100%;
+  font-size: 1.875rem;
+  width: calc(100% - 3.125rem);
+  cursor: pointer;
 }
 
-.ChatsModal .chatsHeader .roomInfo .imgContainer {
-  margin-right: 0.625rem;
-}
-
-.ChatsModal .chatsContainer {
-  height: calc(100% - 6.25rem);
-  background-color: #fff;
-  width: 100%;
-  padding: 0rem 0rem;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
 
 .ChatsModal .chatsContainer .msg {
   border-radius: 1.15rem;
@@ -207,7 +138,7 @@
   background-color: #e5e5ea;
   color: #000;
   margin-bottom: 1.25rem;
-  margin-left: 1.25rem;
+  margin-left: 2rem;
 }
 
 .ChatsModal .chatsContainer .msg.others p {
@@ -257,64 +188,4 @@
   width: 2.5rem;
   height: 0.6875rem;
   white-space: nowrap;
-}
-
-.ChatsModal .chatsWrapper .inputWrapper {
-  display: flex;
-  border-radius: 0.938rem;
-  height: 3.125rem;
-  align-items: center;
-  margin: -2.625rem 0.625rem;
-  border: 0.0625rem solid var(--gray2);
-}
-
-.ChatsModal .chatsWrapper .inputWrapper input {
-  height: 2.875rem;
-  margin: 0em 0.625rem;
-  border: none;
-  font-size: 1.875rem;
-  width: calc(100% - 3.125rem);
-  cursor: pointer;
-  /* caret-color: #fff; */
-}
-
-@media (max-width: 87.5rem) {
-  .ChatsModal {
-    height: 25rem;
-    width: 18.75rem;
-    bottom: 3.125rem;
-  }
-
-  .ChatsModal.open {
-    right: 3.125rem;
-  }
-
-  .ChatsModal .chatRoomsContainer {
-    height: 21.875rem;
-  }
-
-  .ChatsModal .chatsWrapper .inputWrapper input {
-    width: 12.5rem;
-  }
-}
-
-
-@media (max-height: 50rem) {
-  .ChatsModal {
-    height: calc(100% - 12.5rem);
-    width: 18.75rem;
-    bottom: 3.125rem;
-  }
-
-  .ChatsModal.open {
-    right: 3.125rem;
-  }
-
-  .ChatsModal .chatRoomsContainer {
-    height: calc(100% - 3.125rem);
-  }
-
-  .ChatsModal .chatsWrapper .inputWrapper input {
-    width: 12.5rem;
-  }
 }
