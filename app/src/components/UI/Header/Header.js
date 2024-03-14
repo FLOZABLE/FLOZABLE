@@ -2,14 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faBell,
-  faCommentDots,
-  faCalendar,
-  faBook,
-  faFire,
-  faArrowsToCircle,
-  faBars,
-  faMessage,
+  faBell, faMessage,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Header.module.css";
 import PlanTimeline from "../PlanTimeline/PlanTimeline";
@@ -206,7 +199,7 @@ function Header({
           onClick={() => { setIsChatModal(prev => !prev) }}
         >
           <i>
-            <IconMessage bounce={totalNewMsg ? true : false} />
+            <FontAwesomeIcon icon={faMessage} bounce={totalNewMsg ? true : false} />
           </i>
           <div>
             {totalNewMsg}
@@ -216,7 +209,7 @@ function Header({
           onClick={() => { setIsNotificationModal(prev => !prev) }}
         >
           <i>
-            <IconBell icon={faBell} bounce={notifications?.length ? true : false} />
+            <FontAwesomeIcon icon={faBell} bounce={notifications?.length ? true : false} />
           </i>
           <div>
             {notifications?.length}
