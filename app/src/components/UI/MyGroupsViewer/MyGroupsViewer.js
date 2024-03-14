@@ -101,7 +101,7 @@ function MyGroupsViewer({
           {swiperEl}
         </Swiper>
         :
-        <div className={styles.noGroup}>You haven't join any groups yet!</div>
+        <div className={styles.noGroup}>You haven't joined any groups yet!</div>
       }
     </div>
   );

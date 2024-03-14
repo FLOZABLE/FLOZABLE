@@ -49,7 +49,7 @@ function FriendLinkModal({ isOpen, setIsOpen, userInfo }) {
       </div>
       <p className={styles.title}>Friend Link</p>
       <p className={styles.explanation}>
-        Send this link to anyone, and they will become your friend when they sign up.
+        Send this link to anyone and they will become your friend when they sign up.
       </p>
       <div className={styles.linkContainer}>
         <div className={`${styles.content} overflowDot`}>
