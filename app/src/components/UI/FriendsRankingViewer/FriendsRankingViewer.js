@@ -56,7 +56,7 @@ function FriendsRankingViewer({ friendsRanking }) {
                     backgroundRepeat: 'no-repeat',
                   }}
                 ></div>
-                <p>{friend.name}</p>
+                <div className={`${styles.name} overflowDot`}>{friend.name}</div>
                 <CountryViewer timezone={friend.timezone} />
               </Link>
               <div className={styles.diff}>

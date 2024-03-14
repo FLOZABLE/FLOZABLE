@@ -216,7 +216,6 @@ Router.post('/signup-authentication', async (req, res) => {
       httpOnly: true,
       signed: true,
     });
-    extensionIo.to(userId).emit("tryAuth");
     res.send({ success: true });
     /* req.session.regenerate((err) => {
       if (err) {
@@ -427,6 +426,10 @@ Router.post('/update/extension-add', async (req, res) => {
       };
 
       const { domain, origin } = isValidURL;
+
+      if (domain.includes('flozable')) {
+        return res.send({success: false, reason: `FLOZABLE can't be added`});
+      }
 
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
       let activitySettings = userInfo.activitySettings === "" ? [] : JSON.parse(userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]"));
