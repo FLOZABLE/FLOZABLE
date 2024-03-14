@@ -21,7 +21,7 @@ function LabelMovingInput({ title, type, value, setValue, onEnter }) {
             }
           }}
         />
-        <label className={styles.label}>{title}</label>
+        <label className={`${styles.label} ${value.length ? styles.hidden : ''}`}>{title}</label>
       </form>
     </div>
   );
