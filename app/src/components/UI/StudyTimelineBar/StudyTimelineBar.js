@@ -63,10 +63,10 @@ function StudyTimelineBar({ events, setPlanModal }) {
         itemProps: {
           onDoubleClick: () => { openModal(event) },
           style: {
-            background: event.backgroundColor,
+            background: event.backgroundColor ? event.backgroundColor : 'rgb(159, 225, 231)',
             textAlign: 'center',
             fontSize: '1rem',
-            zIndex: event.completed ? 0 : event.priority,
+            zIndex: event.completed ? 0 : event.priority ? event.priority + 100 : 99,
             textDecoration: event.completed ? "line-through" : "",
           }
         }
@@ -154,7 +154,7 @@ function StudyTimelineBar({ events, setPlanModal }) {
           <TodayMarker interval={5000}>
             {
               ({ styles, date }) => {
-                return <div style={{ ...styles, zIndex: 150, width: '0.2rem', backgroundColor: 'brown' }} />
+                return <div style={{ ...styles, zIndex: 250, width: '0.2rem', backgroundColor: 'brown' }} />
               }
             }
           </TodayMarker>
