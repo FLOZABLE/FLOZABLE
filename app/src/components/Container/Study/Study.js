@@ -288,8 +288,12 @@ function Study(props) {
         </div>
         <div className={styles.PlanTimelineBarWrapper}>
           {
-            //<PlanTimelineBar events={events} subjects={subjects} /> 
-            <StudyTimelineBar events={events} subjects={subjects} setPlanModal={setPlanModal}/>
+            <div>
+              {
+                //<PlanTimelineBar events={events} subjects={subjects} />
+              }
+              <StudyTimelineBar events={events} subjects={subjects} setPlanModal={setPlanModal} />
+            </div>
           }
         </div>
       </div>
