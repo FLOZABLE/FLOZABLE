@@ -101,7 +101,7 @@ Router.post('/send-verification-link', async (req, res) => {
       const userInfo = await userCache(userId);
       const randomId = generateRandomId(10)
       await redisClient.setEx(`verify:${userInfo.email}`, 3600, randomId);
-      const params = { resetURL: `${process.env.SERVER}/account/verify-by-link?verifyId=${randomId}` };
+      const params = { resetURL: `${process.env.EMAIL_SERVER}/account/verify-by-link?verifyId=${randomId}` };
       const to = [{ email: userInfo.email }];
       sendEmail(to, params, 4);
 
