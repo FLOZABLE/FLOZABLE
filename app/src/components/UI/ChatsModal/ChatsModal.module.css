@@ -26,6 +26,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 3rem;
 }
 
 .ChatsModal .header i {
@@ -60,6 +61,7 @@
 
 .ChatsModal .chatsWrapper .chatsContainer {
   flex: 1;
+  overflow-y: auto;
 }
 
 .ChatsModal .inputWrapper {
