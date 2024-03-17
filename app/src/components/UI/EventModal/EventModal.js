@@ -146,7 +146,7 @@ function EventModal({
             setEvents(updatedEvents);
           }
           setPlanModal(prev => ({ ...prev, opened: false, id: null }));
-          setSearchParams(prev => ({ ...prev, tutorial: 6 }));
+          if (searchParams.get("tutorial")) setSearchParams(prev => ({ ...prev, tutorial: 6 }));
         }
       })
       .catch((error) => console.error(error));
