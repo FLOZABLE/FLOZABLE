@@ -322,6 +322,7 @@ function App() {
         setResponse={setResponse}
         tutorialBoxRef={tutorialBoxRef}
         tutorialTextRef={tutorialTextRef}
+        isAccountModal={isAccountModal}
       />
       <Routes>
         <Route
