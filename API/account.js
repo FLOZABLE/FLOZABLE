@@ -23,7 +23,6 @@ Router.get('/accountinfo', async (req, res) => {
     if (!userInfo) {
       return res.send(responseCodes['no-user']);
     };
-    console.log(userInfo, 'userInfo')
     req.session.timezone = userInfo.timezone;
     usersCache(userId);
     res.send({ success: true, userInfo: userInfo, notifications: notifications });
