@@ -64,7 +64,9 @@ async function subjectsCache(userId) {
 
 async function subjectCache(userId, subjectId) {
   try {
+    if (subjectId === '0') return false;
     const isCached = await redisClient.hExists(`user:${userId}:subjects`, subjectId);
+    //console.log('iscached', isCached, userId, subjectId)
     if (isCached) {
       const subjectInfo = await redisClient.hGet(`user:${userId}:subjects`, subjectId);
       return { ...JSON.parse(subjectInfo), id: subjectId };

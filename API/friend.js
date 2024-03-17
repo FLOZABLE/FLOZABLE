@@ -280,7 +280,7 @@ Router.get('/status', async (req, res) => {
         friend.totalTime = totalTime === null ? 0 : totalTime;
         const activeSubject = await activeSubjectCache(friend.user_id);
         console.log(activeSubject, 'aaa')
-        if (activeSubject) {
+        if (activeSubject && activeSubject.id !== '0') {
           const subject = await subjectCache(friend.user_id, activeSubject.id);
           if (subject) {
             friend.activeSubject = { ...subject, total: activeSubject.total, time: activeSubject.time };
