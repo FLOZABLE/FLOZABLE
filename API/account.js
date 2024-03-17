@@ -23,7 +23,9 @@ Router.get('/accountinfo', async (req, res) => {
     if (!userInfo) {
       return res.send(responseCodes['no-user']);
     };
-    req.session.timezone = userInfo.timezone;
+    if (!req.session.timezone) {
+      req.session.timezone = userInfo.timezone;
+    }
     usersCache(userId);
     res.send({ success: true, userInfo: userInfo, notifications: notifications });
   }
@@ -85,6 +87,7 @@ Router.post('/signin-authentication', async (req, res) => {
         secure: true,
         httpOnly: true,
         signed: true,
+        sameSite: 'strict'
       });
 
       res.send({ success: true, msg: 'Success' });
@@ -206,6 +209,7 @@ Router.post('/signup-authentication', async (req, res) => {
         return;
       }
       req.session.user_id = userId;
+      req.session.timezone = timeZone;
     });
     const authId = generateRandomId(10);
     await redisClient.setEx(`extension:auth:${authId}`, 10, userId);
