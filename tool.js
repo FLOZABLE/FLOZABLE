@@ -41,7 +41,13 @@ async function autoSignin(req, res, success = (() => { }), fail = (() => { res.s
   };
 
   if (req.signedCookies.userId) {
-    return success(req.signedCookies.userId, req.session.timezone);
+    const userInfo = userCache(req.session.user_id);
+    if (userInfo) {
+      req.session.user_id = req.signedCookies.userId;
+      return success(req.signedCookies.userId, userInfo.timezone);
+    } else {
+      return fail();
+    }
   };
 
   if (req.headers.authorization) {
@@ -49,7 +55,7 @@ async function autoSignin(req, res, success = (() => { }), fail = (() => { res.s
     if (!credentials) return fail();
     const [deviceId, authKey] = credentials.split('-');
     if (!deviceId || !authKey) return fail();
-    
+
     const connection = await pool.promise();
     const [[device]] = await connection.query(`SELECT user_id FROM devices WHERE device_id = ? AND auth_key = ?`, [deviceId, authKey]);
     if (device) {

@@ -279,8 +279,7 @@ Router.get('/status', async (req, res) => {
         const totalTime = await redisClient.zScore(`user:${friend.user_id}:dayTotal`, timezoneOffset);
         friend.totalTime = totalTime === null ? 0 : totalTime;
         const activeSubject = await activeSubjectCache(friend.user_id);
-        console.log(activeSubject, 'aaa')
-        if (activeSubject && activeSubject.id !== '0') {
+        if (activeSubject) {
           const subject = await subjectCache(friend.user_id, activeSubject.id);
           if (subject) {
             friend.activeSubject = { ...subject, total: activeSubject.total, time: activeSubject.time };
@@ -299,7 +298,6 @@ Router.get('/status', async (req, res) => {
         };
         friendsInfo.push(friend);
       }));
-      console.log(friendsInfo)
       res.send({ success: true, friendsInfo })
     } catch (error) {
       console.log(error)
