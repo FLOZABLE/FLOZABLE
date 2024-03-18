@@ -220,6 +220,7 @@ function EventModal({
   }, [planModal.opened]);
 
   useEffect(() => {
+    if (location.search.includes('tutorial')) return;
     setPlanModal( {...planModal, opened: false} );
   }, [location]);
 
