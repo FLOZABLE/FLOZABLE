@@ -8,7 +8,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import BlobBtn from "../BlobBtn/BlobBtn";
 
-function Tutorial({ setResponse, tutorialBoxRef, tutorialTextRef, }) {
+function Tutorial({ setResponse, tutorialBoxRef, tutorialTextRef, isAccountModal}) {
   const location = useLocation();
   const [tutorial, setTutorial] = useState(null);
   const navigate = useNavigate();
@@ -38,10 +38,18 @@ function Tutorial({ setResponse, tutorialBoxRef, tutorialTextRef, }) {
 
     if (!tutorial) {
       setTutorial(0);
+
+      return;
     };
 
     setTutorial(parseInt(tutorial));
-  }, [searchParams]);
+  }, [searchParams, isAccountModal]);
+
+  useEffect(() => {
+    if(isAccountModal) {
+      skipTutorial();
+    }
+  }, [isAccountModal]);
 
   useEffect(() => {
     if (!tutorial) return;
@@ -58,7 +66,9 @@ function Tutorial({ setResponse, tutorialBoxRef, tutorialTextRef, }) {
   }, [tutorial]);
 
   const skipTutorial = useCallback(() => {
-    setSearchParams({});
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.delete('tutorial');
+    setSearchParams(searchParams);
   }, [searchParams]);
 
   //setTimeout(skipTutorial, 120000); //Testing

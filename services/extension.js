@@ -5,14 +5,10 @@ const { getMidnightTimezones } = require("../tool");
 
 async function extensionManager() {
   try {
-    const dateTime =  DateTime.utc()
+    const dateTime =  DateTime.now();
+    const [midnightTimezone] = getMidnightTimezones();
+    dateTime.setZone(midnightTimezone);
     const hour = dateTime.get('hour');
-    if (hour < 12) {
-      dateTime.minus({day: 1});
-    } else if (hour > 12) {
-      dateTime.plus({day: 1});
-    };
-    const midnightTimezones = getMidnightTimezones();
     const date = dateTime.toFormat("M/d/yyyy");
     const users = await redisClient.zRange(`extensionUsers`, hour, hour);
     const connection = pool.promise();
