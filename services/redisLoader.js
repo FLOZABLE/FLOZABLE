@@ -10,6 +10,7 @@ const USER_EXP_DIS = 60 * 60;
 const SBJ_EXP = 60 * 60 * 1;
 
 const DM_MEMBERS_EXP = 60 * 60 * 1;
+const GROUP_MEMBERS_EXP = 60 * 60 * 1;
 
 async function flushRedis() {
   await redisClient.flushDb();
@@ -163,7 +164,7 @@ async function chatRoomsCache(userId) {
     });
     const dmRoomPromises = dmRooms.map(async (dmRoom) => {
       const members = await dmRoomMembersCache(dmRoom);
-      const membersInfo = []
+      const membersInfo = [];
       await Promise.all(members.map(async(member) => {
         member = await userCache(member);
         if (member) {
@@ -265,6 +266,7 @@ async function usersCache(userId) {
 
 async function userCache(userId) {
   try {
+    if (!userId) return false;
     const isCached = await redisClient.hExists(`user:${userId}`, 'name');
     if (isCached) {
       const userInfo = await redisClient.hGetAll(`user:${userId}`);
