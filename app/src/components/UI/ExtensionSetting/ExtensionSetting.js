@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import LabelMovingInput from "../LabelMovingInput/LabelMovingInput";
 import SimpleToggleBtn from "../SimpleToggleBtn/SimpleToggleBtn";
@@ -9,7 +9,8 @@ const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function ExtensionSetting({ websites, setWebsites, setResponse }) {
   const [url, setUrl] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams();
+  const extensionRef = useRef(null);
 
   const onSubmitUrl = (urlPar) => {
     fetch(`${serverOrigin}/account/update/extension-add`, {
@@ -45,9 +46,14 @@ function ExtensionSetting({ websites, setWebsites, setResponse }) {
 
     const domain = searchParams.get("website");
     searchParams.delete("website");
-    if (!domain) return;
-
-    if (!domain) return;
+    if (!domain) {
+      extensionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "start"
+      });
+      return;
+    };
 
     const isExist = websites.find(website => website.d.replace(/^www\.(.*)$/, "$1") === domain.replace(/^www\.(.*)$/, "$1"));
 
@@ -105,7 +111,7 @@ function ExtensionSetting({ websites, setWebsites, setResponse }) {
           <div>Timer</div>
           <div>Timer when studying</div>
         </div>
-        <ul>
+        <ul ref={extensionRef}>
           {websites.map(({ d, b, bs, t, ts }, i) => {
             return (
               <li className={styles.websiteOptions} key={i} id={d.replace(/\./g, '_')}>

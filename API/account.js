@@ -23,8 +23,9 @@ Router.get('/accountinfo', async (req, res) => {
     if (!userInfo) {
       return res.send(responseCodes['no-user']);
     };
-    console.log(userInfo, 'userInfo')
-    req.session.timezone = userInfo.timezone;
+    if (!req.session.timezone) {
+      req.session.timezone = userInfo.timezone;
+    }
     usersCache(userId);
     res.send({ success: true, userInfo: userInfo, notifications: notifications });
   }
@@ -86,6 +87,7 @@ Router.post('/signin-authentication', async (req, res) => {
         secure: true,
         httpOnly: true,
         signed: true,
+        sameSite: 'strict'
       });
 
       res.send({ success: true, msg: 'Success' });
@@ -101,7 +103,7 @@ Router.post('/send-verification-link', async (req, res) => {
       const userInfo = await userCache(userId);
       const randomId = generateRandomId(10)
       await redisClient.setEx(`verify:${userInfo.email}`, 3600, randomId);
-      const params = { resetURL: `${process.env.SERVER}/account/verify-by-link?verifyId=${randomId}` };
+      const params = { resetURL: `${process.env.EMAIL_SERVER}/account/verify-by-link?verifyId=${randomId}` };
       const to = [{ email: userInfo.email }];
       sendEmail(to, params, 4);
 
@@ -207,6 +209,7 @@ Router.post('/signup-authentication', async (req, res) => {
         return;
       }
       req.session.user_id = userId;
+      req.session.timezone = timeZone;
     });
     const authId = generateRandomId(10);
     await redisClient.setEx(`extension:auth:${authId}`, 10, userId);

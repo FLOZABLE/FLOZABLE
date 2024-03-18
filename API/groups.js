@@ -114,6 +114,8 @@ Router.post('/create-validate', async (req, res) => {
         return res.send(responseCodes['no-user']);
       };
 
+      const {groups} = userInfo;
+      
       groups.push(group_id);
       redisClient.hSet(`user:${userId}`, 'groups', groups.join(','));
 

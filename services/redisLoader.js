@@ -7,6 +7,11 @@ const USER_EXP = 60 * 60 * 3;
 const USER_EXP_PLUS = 60 * 60;
 const USER_EXP_DIS = 60 * 60;
 
+const SBJ_EXP = 60 * 60 * 1;
+
+const DM_MEMBERS_EXP = 60 * 60 * 1;
+const GROUP_MEMBERS_EXP = 60 * 60 * 1;
+
 async function flushRedis() {
   await redisClient.flushDb();
 };
@@ -57,6 +62,7 @@ async function subjectsCache(userId) {
         console.log(err);
       };
     };
+    redisClient.expire(`user:${userId}:subjects`, SBJ_EXP);
   } catch (err) {
     console.log(err);
   }
@@ -64,7 +70,9 @@ async function subjectsCache(userId) {
 
 async function subjectCache(userId, subjectId) {
   try {
+    if (subjectId === '0') return false;
     const isCached = await redisClient.hExists(`user:${userId}:subjects`, subjectId);
+    //console.log('iscached', isCached, userId, subjectId)
     if (isCached) {
       const subjectInfo = await redisClient.hGet(`user:${userId}:subjects`, subjectId);
       return { ...JSON.parse(subjectInfo), id: subjectId };
@@ -78,6 +86,7 @@ async function subjectCache(userId, subjectId) {
           redisClient.hSet(`user:${userId}:subjects`, subject.id, JSON.stringify(redisSubject));
         });
         const subject = subjects.find(subject => subject.id === subjectId);
+        redisClient.expire(`user:${userId}:subjects`, SBJ_EXP);
         if (subject) return subject;
         return false;
       } catch (err) {
@@ -110,6 +119,7 @@ async function dmRoomsCache(userId) {
 async function dmRoomMembersCache(id) {
   try {
     const members = await redisClient.sMembers(`room:${id}`);
+    redisClient.expire(`room:${id}`, DM_MEMBERS_EXP);
     if (members.length) return members;
     const connection = pool.promise();
     const [[dmRoom]] = await connection.query(`SELECT members FROM chatrooms WHERE id = ?`, [id]);
@@ -128,6 +138,7 @@ async function dmRoomMembersCache(id) {
 async function groupMembersCache(id) {
   try {
     const members = await redisClient.sMembers(`room:${id}`);
+    redisClient.expire(`room:${id}`, GROUP_MEMBERS_EXP);
     if (members.length) return members;
     const connection = pool.promise();
     const [[group]] = await connection.query(`SELECT members FROM groups WHERE group_id = ?`, [id]);
@@ -153,7 +164,7 @@ async function chatRoomsCache(userId) {
     });
     const dmRoomPromises = dmRooms.map(async (dmRoom) => {
       const members = await dmRoomMembersCache(dmRoom);
-      const membersInfo = []
+      const membersInfo = [];
       await Promise.all(members.map(async(member) => {
         member = await userCache(member);
         if (member) {
@@ -247,23 +258,15 @@ async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000),
 
 async function usersCache(userId) {
   try {
-    let isIn = await redisClient.sIsMember(`allMembers`, userId);
-    if (!isIn) {
-      const connection = pool.promise();
-      const [[userInfo]] = await connection.query(`SELECT user_id FROM users WHERE user_id = ?`, [userId]);
-      if (userInfo) {
-        redisClient.sAdd(`allMembers`, userId);
-        isIn = true;
-      };
-    };
-    return isIn;
+    redisClient.sAdd(`allMembers`, userId);
   } catch (err) {
-
+    console.log(err);
   }
 }
 
 async function userCache(userId) {
   try {
+    if (!userId) return false;
     const isCached = await redisClient.hExists(`user:${userId}`, 'name');
     if (isCached) {
       const userInfo = await redisClient.hGetAll(`user:${userId}`);

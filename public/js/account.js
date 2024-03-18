@@ -97,7 +97,7 @@ signUpBtn.addEventListener('click', async () => {
   .then((data) => {
     console.log(data)
     if (data.success) {
-      window.location.href = window.location.origin + '/dashboard';
+      window.location.href = window.location.origin + '/dashboard?tutorial=1';
     } else {
       errMsg(data.reason);
     }

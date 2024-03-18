@@ -20,6 +20,10 @@ Router.get('/cookies', async(req, res) => {
   autoSignin(req, res, (() => res.render('cookies', {loggedIn: true})), (() => res.render('cookies', {loggedIn: false})));
 })
 
+Router.get('/release-notes', async(req, res) => {
+  autoSignin(req, res, (() => res.render('release-notes', {loggedIn: true})), (() => res.render('release-notes', {loggedIn: false})));
+})
+
 Router.get('/contact', async(req, res) => {
   res.render("contact", {});
 })

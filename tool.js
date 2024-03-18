@@ -36,23 +36,26 @@ function hashing(password) {
 };
 
 async function autoSignin(req, res, success = (() => { }), fail = (() => { res.send({ success: false, reason: 'Sign in required', msg: 'Sign in required' }) })) {
-  console.log(req.session.user_id)
   if (req.session.user_id || (process.env.NODE_ENV === 'development' && (req.session.user_id = process.env.TESTER_ID))) {
     return success(req.session.user_id, req.session.timezone);
   };
 
   if (req.signedCookies.userId) {
-    return success(req.session.user_id, req.session.timezone);
+    const userInfo = userCache(req.session.user_id);
+    if (userInfo) {
+      req.session.user_id = req.signedCookies.userId;
+      return success(req.signedCookies.userId, userInfo.timezone);
+    } else {
+      return fail();
+    }
   };
-
-  console.log(req.headers.authorization);
 
   if (req.headers.authorization) {
     const credentials = req.headers.authorization.split(' ')[1];
     if (!credentials) return fail();
     const [deviceId, authKey] = credentials.split('-');
     if (!deviceId || !authKey) return fail();
-    
+
     const connection = await pool.promise();
     const [[device]] = await connection.query(`SELECT user_id FROM devices WHERE device_id = ? AND auth_key = ?`, [deviceId, authKey]);
     if (device) {

@@ -56,7 +56,6 @@ function timelineSort(subjects) {
 
     //fills array only when index is 0
     if (!i) {
-      console.log('timelinesort', i)
       subjects.daily.grouped = Array(dailySorted.length).fill([]);
       subjects.weekly.grouped = Array(weeklySorted.length).fill([]);
       subjects.monthly.grouped = Array(monthlySorted.length).fill([]);
@@ -67,23 +66,23 @@ function timelineSort(subjects) {
     };
 
     subjects.daily.grouped = subjects.daily.grouped.map((val, i) => {
-      if (!dailySorted[i]) {
+      /* if (!dailySorted[i]) {
         return [...val];
-      };
+      }; */
       return [...val, ...dailySorted[i]];
     });
 
     subjects.weekly.grouped = subjects.weekly.grouped.map((val, i) => {
-      if (!weeklySorted[i]) {
+      /* if (!weeklySorted[i]) {
         return [...val];
-      };
+      }; */
       return [...val, ...weeklySorted[i]];
     });
 
     subjects.monthly.grouped = subjects.monthly.grouped.map((val, i) => {
-      if (!monthlySorted[i]) {
+      /* if (!monthlySorted[i]) {
         return [...val];
-      };
+      }; */
       return [...val, ...monthlySorted[i]];
     });
 
@@ -164,20 +163,19 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
     const dateStart = DateTime.fromSeconds(datum_point);
     startTime = dateStart.startOf('day').toSeconds();
     stopTime = dateStart.endOf('day').set({ millisecond: 0 }).toSeconds();
-    const formattedFirstDatum = new Date(firstDatumPoint * 1000).setHours(0, 0, 0, 0) / 1000;
-    indexDiff = (startTime - formattedFirstDatum) / DATETOSEC;
-    const now = new Date().setHours(0, 0, 0, 0) / 1000;
-    expectedLength = (now - formattedFirstDatum) / DATETOSEC + 1;
+    const formattedFirstDatum = DateTime.fromSeconds(firstDatumPoint).startOf('day');
+    indexDiff = (startTime - formattedFirstDatum.toSeconds()) / DATETOSEC;
+    expectedLength =  DateTime.now().startOf('day').diff(formattedFirstDatum, 'day').days + 1;
   } else if (option === 'weekly') {
     startTime = DateTime.fromSeconds(datum_point).startOf('week').toSeconds();
     stopTime = Math.floor(DateTime.fromSeconds(datum_point).endOf('week').toSeconds());
-    const formattedFirstDatum = DateTime.fromSeconds(firstDatumPoint).startOf('week');
+    const formattedFirstDatum = DateTime.fromSeconds(firstDatumPoint).startOf('week').startOf('day');
     indexDiff = (startTime - formattedFirstDatum.toSeconds()) / (WEEKTOSEC);
     expectedLength = DateTime.now().startOf('week').diff(formattedFirstDatum, 'week').weeks + 1;
   } else {
     startTime = DateTime.fromSeconds(datum_point).startOf('month').toSeconds();
     stopTime = Math.floor(DateTime.fromSeconds(datum_point).endOf('month').toSeconds());
-    const formattedFirstDatum = DateTime.fromSeconds(firstDatumPoint).startOf('month');
+    const formattedFirstDatum = DateTime.fromSeconds(firstDatumPoint).startOf('month').startOf('day');
     indexDiff = DateTime.fromSeconds(datum_point).startOf('month').diff(formattedFirstDatum, 'month').toObject().months;
     expectedLength = DateTime.now().startOf('month').diff(formattedFirstDatum, 'month').months + 1;
   };
@@ -188,6 +186,7 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
 
   //there could be a gap between first datumpoint and datumpoint.
   //So this code removes the gap by adding 0 as the activity
+  //console.log('timelinex index diff', option,indexDiff, expectedLength)
   while (indexDiff > 0) {
     sortedTimeline.push([]);
     totalTime.push(0);
@@ -197,6 +196,7 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
   timeline.map(([start, duration]) => {
     const unixStart = datum_point + start + timelineSum;
     const unixStop = unixStart + duration;
+    console.log('timelinex',DateTime.fromSeconds(unixStop).toFormat('M/dd hh:mm'))
     timelineSum += start + duration;
     let isIn = true;
     while (isIn) {
@@ -218,8 +218,10 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
     }
     return;
   });
+  //console.log('timelinex',totalTime.length, option, expectedLength)
 
   //this code removes the gap between current time and the last activity
+  //console.log('timelinex', expectedLength - totalTime.length, option)
   while (expectedLength - totalTime.length > 0) {
     totalTime.push(0);
     sortedTimeline.push([]);
