@@ -58,8 +58,8 @@ Router.post("/chat-request", async (req, res) => {
     });
     if (isRoomExist) return res.send({success: false, reason: 'DM already created!', opr: 1, room: isRoomExist});
 
-    const userExist = await usersCache(targetId);
-    if (!userExist) return res.send({success: false, reason: 'No such user'});
+    const targetUser = await userCache(targetId);
+    if (!targetUser) return res.send({success: false, reason: 'No such user'});
 
     const targetDmRequests = await NotificationCache(targetId, 4);
     const prevDmRequest = targetDmRequests.find(dmRequest => { return dmRequest.f.user_id === userId });
@@ -100,8 +100,8 @@ Router.post("/chat-request-reply", async (req, res) => {
         return res.send({ success: true, msg: `Declined chat request`});
       };
       const connection = pool.promise();
-      const targetExist = await usersCache(targetId);
-      if (!targetExist) return res.send({ success: false, reason: 'No such user' });
+      const targetUser = await userCache(targetId);
+      if (!targetUser) return res.send({ success: false, reason: 'No such user' });
       const members = [userId, targetId];
       const roomInfo = {
         id: generateRandomId(10),
