@@ -18,7 +18,7 @@ function StudySubjectTool({ toolType }) {
       setToolEl(<iframe src="https://pubchem.ncbi.nlm.nih.gov/periodic-table/#view=table&embed=true" height={34.375 * remRatio} width={46.874 * remRatio}></iframe>);
     }
     else if (toolType === "3") {
-      setToolEl(<div>Tool 1</div>);
+      setToolEl(<iframe src="https://www.web-whiteboard.io" height={34.375 * remRatio} width={46.874 * remRatio}></iframe>);
     }
     else if (toolType === "4") {
       setToolEl(<div>Tool 2</div>);
