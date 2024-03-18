@@ -26,7 +26,7 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject }) {
     const { icon, name, color } = subject;
     setSelectedIcon({ el: subjectIcons[icon], name: icon });
     setSelectedColor(color);
-    const tools = subject.tools === "" ? [] : subject.tools.split(",");
+    const tools = !subject.tools ? [] : subject.tools.split(",");
     setSelectedTool(tools);
     setName(name);
   }, [subject]);
