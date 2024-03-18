@@ -32,6 +32,7 @@ function AddSubjectModal({
   const addSubjectModalRef = useRef(null);
 
   useEffect(() => {
+    if (location.search.includes('tutorial')) return;
     setIsAddSubjectModal(false);
   }, [location]);
 
