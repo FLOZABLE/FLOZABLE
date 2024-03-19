@@ -3,6 +3,7 @@ import styles from "./NotificationModal.module.css";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Draggable from "react-draggable";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -13,6 +14,7 @@ function NotificationModal({
   setResponse,
 }) {
   const [notificationsEl, setNotificationsEl] = useState([]);
+  const [moveRef, setMoveRef] = useState(null);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
     fetch(`${serverOrigin}/friend/request-reply`, {
@@ -323,10 +325,12 @@ function NotificationModal({
   }, [notifications]);
 
   return (
+    <Draggable nodeRef={moveRef}>
     <div
       className={`${styles.NotificationModal} ${
         isNotificationModal ? styles.opened : ""
       }`}
+      ref={moveRef}
     >
       {notificationsEl.length ? (
         <div className={`${styles.notifications} customScroll`}>
@@ -338,6 +342,7 @@ function NotificationModal({
         </div>
       )}
     </div>
+    </Draggable>
   );
 }
 

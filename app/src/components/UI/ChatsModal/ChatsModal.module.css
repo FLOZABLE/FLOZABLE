@@ -26,7 +26,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 3rem;
+  padding: 0.9rem;
+  margin-bottom: -1rem;
+}
+
+.ChatsModal .header p {
+  font-size: 1.5rem;
 }
 
 .ChatsModal .header i {
@@ -90,7 +95,7 @@
   line-height: 1.25;
   max-width: 75%;
   width: fit-content;
-  padding: 0.5rem .875rem;
+  padding: 0.5rem;
   position: relative;
   word-wrap: break-word;
   background-color: #248bf5;

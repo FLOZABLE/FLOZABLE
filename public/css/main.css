@@ -71,8 +71,8 @@ html {
 
 /********** Template CSS **********/
 :root {
-  --primary: #4294E3;
-  --secondary: #8F12FD;
+  --primary: #517dff;
+  --secondary: rgb(66, 186, 255);
   --light: #F0F6FF;
   --dark: #262B47;
 }
@@ -336,7 +336,7 @@ h6,
       url(../img/main/bg-triangle.png), */
       url(../img/main/bg-bottom.png),
       linear-gradient(to bottom right, var(--primary), var(--secondary));
-  background-position:
+      background-position:
       /* left 0px top 0px,
       right 0px top 50%, */
       center bottom;
