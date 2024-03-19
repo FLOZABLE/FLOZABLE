@@ -1,7 +1,7 @@
 import styles from "./LabelMovingInput.module.css";
 import React from 'react';
 
-function LabelMovingInput({ title, type, value, setValue, onEnter }) {
+function  LabelMovingInput({ title, type, value, setValue, onEnter }) {
   return (
     <div className={styles.LabelMovingInput}>
       <form onKeyDown={(e) => {

@@ -1,4 +1,4 @@
-import { Alert, Article, Book, Coding, Globe, IconCalculator, IconFileBarGraphFill, IconPeriodicTable, Microscope, Workout, WritePen } from "./utils/svgs";
+import { Alert, Article, Book, Coding, Globe, IconCalculator, IconFileBarGraphFill, IconPeriodicTable, IconWhiteboard, Microscope, Workout, WritePen } from "./utils/svgs";
 import React from 'react';
 
 const colorsList = [
@@ -58,6 +58,10 @@ const toolsInfo = [
     name: "Periodic Table of Elements",
     icon: <IconPeriodicTable />
   },
+  {
+    name: "Whiteboard",
+    icon: <IconWhiteboard />
+  },
 ]
 
-export {colorsList, subjectIcons, toolsInfo, coldColorsList, warmColorsList};
+export { colorsList, subjectIcons, toolsInfo, coldColorsList, warmColorsList };
