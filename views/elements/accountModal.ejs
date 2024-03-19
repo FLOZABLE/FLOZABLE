@@ -41,15 +41,7 @@
 
                         <div id="profileInfo"></div>
                         <div class="g-signin2" data-onsuccess="onSignIn"></div>
-                        <script>
-                          function onSignIn(googleUser){
-                            let profile = googleUser.getBasicProfile();
-
-                            $('#profileInfo').append("<h2>Name- " + profile.getName() + "</h2>");
-                            $('#profileInfo').append("<img style='width: 150px; height: 150px' src='" + profile.getImageUrl() + "'><br><br>");
-                            $('#profileInfo').append("<p>Your email is: " + profile.getEmail() + "</p>");
-                          }
-                        </script>
+                        <script defer src="/js/account.js" crossorigin="anonymous"></script>
 
 
                       </div>

@@ -49,25 +49,25 @@ signInBtn.addEventListener('click', async () => {
   console.log(email, password);
   let response = await fetch('/account/signin-authentication', {
     method: 'post',
-    body: JSON.stringify({email, password}),
+    body: JSON.stringify({ email, password }),
     headers: {
       'Content-Type': 'application/json'
     }
   })
-  .then((response) => response.json())
-  .then((data) => {
-    console.log(data);
-    if (data.success) {
-      //let redirectUrl = window.location.protocol + '//' + window.location.hostname;
-      console.log(window.location.hostname, window.location.origin);
-      window.location.href = window.location.origin + '/dashboard';
-    } else {
-      errMsg(data.reason);
-    }
-    /* if (data.success) {
-      window.loca
-    } */
-  }) 
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      if (data.success) {
+        //let redirectUrl = window.location.protocol + '//' + window.location.hostname;
+        console.log(window.location.hostname, window.location.origin);
+        window.location.href = window.location.origin + '/dashboard';
+      } else {
+        errMsg(data.reason);
+      }
+      /* if (data.success) {
+        window.loca
+      } */
+    })
   /* response  = await response.json();
   console.log(response);
 
@@ -86,23 +86,23 @@ signUpBtn.addEventListener('click', async () => {
   const email = document.querySelector('.card-back #logemail').value;
   const password = document.querySelector('.card-back #logpass').value;
   const timeZone = getUserTimezone();
-  console.log(name,email, password);
+  console.log(name, email, password);
   let response = await fetch('/account/signup-authentication', {
     method: 'post',
-    body: JSON.stringify({name, email, password, timeZone}),
+    body: JSON.stringify({ name, email, password, timeZone }),
     headers: {
       'Content-Type': 'application/json'
     }
   })
-  .then((response) => response.json())
-  .then((data) => {
-    console.log(data)
-    if (data.success) {
-      window.location.href = window.location.origin + '/dashboard?tutorial=1';
-    } else {
-      errMsg(data.reason);
-    }
-  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data)
+      if (data.success) {
+        window.location.href = window.location.origin + '/dashboard?tutorial=1';
+      } else {
+        errMsg(data.reason);
+      }
+    })
 });
 
 function getUserTimezone() {
@@ -139,20 +139,20 @@ pwResetBtn.addEventListener("click", async () => {
   console.log(email);
   fetch('/account/reset-password-request', {
     method: 'post',
-    body: JSON.stringify({email}),
+    body: JSON.stringify({ email }),
     headers: {
       'Content-Type': 'application/json'
     }
   })
-  .then((response) => response.json())
-  .then((data) => {
-    console.log(data);
-    if (data.success) {
-      successMsg(data.msg);
-    } else {
-      errMsg(data.reason);
-    };
-  }) 
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      if (data.success) {
+        successMsg(data.msg);
+      } else {
+        errMsg(data.reason);
+      };
+    })
 });
 
 const closeBtnFront = document.querySelector("#accountModal .card-front .closeBtn");
@@ -167,3 +167,30 @@ closeBtnBack.addEventListener('click', () => {
   dispBlock.classList.remove('visible');
   accountModal.classList.remove('visible');
 });
+
+
+function onSignIn(googleUser) {
+  let profile = googleUser.getBasicProfile();
+
+  $('#profileInfo').append("<h2>Name- " + profile.getName() + "</h2>");
+  $('#profileInfo').append("<img style='width: 150px; height: 150px' src='" + profile.getImageUrl() + "'><br><br>");
+  $('#profileInfo').append("<p>Your email is: " + profile.getEmail() + "</p>");
+
+  const loginEmail = profile.getEmail();
+
+  fetch('/account/signin-with-google', {
+    method: 'post',
+    body: JSON.stringify({ token: "[TOKEN]" }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        successMsg(data.msg);
+      } else {
+        errMsg(data.reason);
+      };
+    });
+}
