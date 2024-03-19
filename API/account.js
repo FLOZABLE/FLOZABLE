@@ -97,6 +97,10 @@ Router.post('/signin-authentication', async (req, res) => {
   };
 });
 
+Router.post("/signin-with-google", async (req, res) => {
+  const { token } = req.body;
+})
+
 Router.post('/send-verification-link', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
