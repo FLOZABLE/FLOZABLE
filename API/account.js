@@ -9,7 +9,7 @@ const webpush = require("web-push");
 const { DateTime } = require('luxon');
 const { hashing, autoSignin, generateRandomId, googleOauth2client, googleYoutubeOauth2client, isValidTimeZone, deriveKey, randomIntInRange } = require("../tool");
 const { validateEmail, validateStrictString, validatePassword, validateURL, validateString, validateLength } = require("../validate");
-const { UserRefreshClient } = require("google-auth-library")
+const { UserRefreshClient, auth } = require("google-auth-library")
 const { NotificationCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
 const { extensionIo } = require('../socket');
 const { sendEmail } = require('../email');
@@ -697,4 +697,36 @@ Router.post('/app/auth', async (req, res) => {
     console.log(err);
   }
 });
+
+Router.post('/app/validate-tokens', async (req, res) => {
+  try {
+    const { deviceId, authKey } = req.body;
+
+    const isValidDeviceId = validateStrictString(deviceId, 'device id', 10, 10);
+
+    if (!isValidDeviceId.isValid) {
+      return res.send({success: false, reason: isValidDeviceId.reason});
+    };
+
+    const isValidAuthKey = validateStrictString(authKey, 'auth key', 20, 20);
+
+    if (!isValidAuthKey.isValid) {
+      return res.send({success: false, reason: isValidAuthKey.reason});
+    };
+
+    const connection = pool.promise();
+
+    const [[device]] =  await connection.query(`SELECT user_id FROM devices WHERE device_id = ? AND auth_key = ?`, [deviceId, authKey]);
+
+    console.log(device);
+    if (!device) {
+      return res.send({successs: false, reason: 'Invalid Token'});
+    };
+
+    return res.send({success: true});
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 module.exports = Router;
