@@ -447,6 +447,6 @@ cron.schedule('*/10 * * * * *', () => {
 });
 
 module.exports = { io, mainIo, extensionIo };
-require('./videoServer')
+//require('./videoServer')
 
 //require('./SFUServer');
