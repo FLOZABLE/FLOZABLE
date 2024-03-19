@@ -36,6 +36,22 @@
                         <i class="material-symbols-outlined input-icon uil uil-lock-alt">
                           lock
                         </i>
+
+                        
+
+                        <div id="profileInfo"></div>
+                        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                        <script>
+                          function onSignIn(googleUser){
+                            let profile = googleUser.getBasicProfile();
+
+                            $('#profileInfo').append("<h2>Name- " + profile.getName() + "</h2>");
+                            $('#profileInfo').append("<img style='width: 150px; height: 150px' src='" + profile.getImageUrl() + "'><br><br>");
+                            $('#profileInfo').append("<p>Your email is: " + profile.getEmail() + "</p>");
+                          }
+                        </script>
+
+
                       </div>
                       <a class="btn mt-4" id="signin">submit</a>
                       <p class="mb-0 mt-4 text-center">
@@ -73,6 +89,7 @@
                         <i class="material-symbols-outlined input-icon uil uil-lock-alt">
                           lock
                         </i>
+                        <p>Sign Up With Google</p>
                       </div>
                       <a class="btn mt-4" id="signup">submit</a>
                     </div>
