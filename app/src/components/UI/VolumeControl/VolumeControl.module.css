@@ -87,7 +87,7 @@
   height: 1.25rem;
   cursor: ew-resize;
   background: var(--pink);
-  box-shadow: 10rem 0rem 0rem 10rem rgb(216, 216, 216);
+  /* box-shadow: 10rem 0rem 0rem 10rem rgb(216, 216, 216); */
   transform: translate(0rem, -0.3125rem);
   border-radius: 50%;
 }
