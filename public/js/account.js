@@ -170,17 +170,9 @@ closeBtnBack.addEventListener('click', () => {
 
 
 function onSignIn(googleUser) {
-  let profile = googleUser.getBasicProfile();
-
-  $('#profileInfo').append("<h2>Name- " + profile.getName() + "</h2>");
-  $('#profileInfo').append("<img style='width: 150px; height: 150px' src='" + profile.getImageUrl() + "'><br><br>");
-  $('#profileInfo').append("<p>Your email is: " + profile.getEmail() + "</p>");
-
-  const loginEmail = profile.getEmail();
-
   fetch('/account/signin-with-google', {
     method: 'post',
-    body: JSON.stringify({ token: "[TOKEN]" }),
+    body: JSON.stringify({ token: googleUser.credential }),
     headers: {
       'Content-Type': 'application/json'
     }
