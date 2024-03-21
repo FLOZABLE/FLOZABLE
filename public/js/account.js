@@ -168,21 +168,37 @@ closeBtnBack.addEventListener('click', () => {
   accountModal.classList.remove('visible');
 });
 
+/*
+ * Create form to request access token from Google's OAuth 2.0 server.
+ */
+function oauthSignIn() {
+  // Google's OAuth 2.0 endpoint for requesting an access token
+  const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+  // Create <form> element to submit parameters to OAuth 2.0 endpoint.
+  let newForm = document.createElement('form');
+  newForm.setAttribute('method', 'GET'); // Send as a GET request.
+  newForm.setAttribute('action', oauth2Endpoint);
 
-function onSignIn(googleUser) {
-  fetch('/account/signin-with-google', {
-    method: 'post',
-    body: JSON.stringify({ token: googleUser.credential }),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        successMsg(data.msg);
-      } else {
-        errMsg(data.reason);
-      };
-    });
+  // Parameters to pass to OAuth 2.0 endpoint.
+  const formParams = {
+    'client_id': '569997433857-a5jdjf2k8oa46dopid8tt7s1lbcv8129.apps.googleusercontent.com',
+    'redirect_uri': 'https://flozable.com/google-signin',
+    'response_type': 'token',
+    'scope': 'https://www.googleapis.com/auth/drive.metadata.readonly',
+    'include_granted_scopes': 'true',
+    'state': 'pass-through value'
+  }
+
+  // Add form parameters as hidden input values.
+  for (let p in formParams) {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'hidden');
+    input.setAttribute('name', p);
+    input.setAttribute('value', formParams[p]);
+    newForm.appendChild(input);
+  }
+
+  // Add form to page and submit it to open the OAuth 2.0 endpoint.
+  document.body.appendChild(newForm);
+  newForm.submit();
 }

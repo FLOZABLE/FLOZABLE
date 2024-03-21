@@ -16,6 +16,8 @@ const { sendEmail } = require('../email');
 const { responseCodes } = require('../Constant');
 const upload = multer();
 
+const serverOrigin = process.env.SERVER;
+
 Router.get('/accountinfo', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     const notifications = await NotificationCache(userId);
@@ -95,23 +97,6 @@ Router.post('/signin-authentication', async (req, res) => {
   } else {
     res.send({ success: false, reason: 'WRONG PASSWORD' });
   };
-});
-
-Router.post("/signin-with-google", async (req, res) => {
-  const { token } = req.body;
-
-  function parseJwt(token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-  
-    return JSON.parse(jsonPayload);
-  }
-
-  const bodyData = parseJwt(token);
-  console.log(bodyData.email);
 });
 
 Router.post('/send-verification-link', async (req, res) => {
@@ -345,6 +330,13 @@ Router.post('/reset-password', async (req, res) => {
 
 Router.get('/reset-password', (req, res) => {
   autoSignin(req, res, (() => res.render('reset-password', { loggedIn: true })), (() => res.render('reset-password', { loggedIn: false })));
+});
+
+Router.get('/google-signin', (req, res) => {
+  const {access_token} = req.query;
+  console.log(access_token);
+
+  return res.send({success: true, access_token: access_token})
 });
 
 Router.post('/update/image', upload.single('image'), async (req, res) => {
