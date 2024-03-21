@@ -40,7 +40,7 @@ function UserSubjectViewer({ userInfo }) {
       setSubjectStart(DateTime.now().toFormat(DateTime.TIME_SIMPLE));
     };
 
-    const onStopStudying = (status) => {
+    const onStopStudying = ({status}) => {
       console.log(status)
       if (status === 'disconnect') {
         setIsStudying(false);
