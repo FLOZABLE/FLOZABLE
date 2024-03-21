@@ -14,9 +14,9 @@ const { NotificationCache, usersCache, userCache, subjectsTimelineCache } = requ
 const { extensionIo } = require('../socket');
 const { sendEmail } = require('../email');
 const { responseCodes } = require('../Constant');
+const fetch = require('node-fetch');
+const https = require('https');
 const upload = multer();
-
-const serverOrigin = process.env.SERVER;
 
 Router.get('/accountinfo', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -333,11 +333,31 @@ Router.get('/reset-password', (req, res) => {
 });
 
 Router.get('/google-signin', (req, res) => {
-  const {access_token} = req.query;
-  console.log(access_token);
+  const { access_token } = req.query;
 
-  return res.send({success: true, access_token: access_token})
+  const httpsAgent = new https.Agent({
+    rejectUnauthorized: false,
+  });
+
+  fetch(`https://${process.env.IP}:3000/account/signin-with-google`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ access_token }),
+    agent: httpsAgent,
+  }).then((response) => {
+    console.log(response);
+  })
+    .catch((error) => console.error(error));
+
+  return res.send({ success: true, access_token: access_token })
 });
+
+Router.post('signin-with-google', (req, res) => {
+  console.log("signin-with-google",req.body);
+  return res.send({success: true, access_token})
+})
 
 Router.post('/update/image', upload.single('image'), async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -440,7 +460,7 @@ Router.post('/update/extension-add', async (req, res) => {
       const { domain, origin } = isValidURL;
 
       if (domain.includes('flozable')) {
-        return res.send({success: false, reason: `FLOZABLE can't be added`});
+        return res.send({ success: false, reason: `FLOZABLE can't be added` });
       }
 
       const [[userInfo]] = await connection.query(`SELECT activity_setting FROM users WHERE user_id = ?`, [userId]);
@@ -714,25 +734,25 @@ Router.post('/app/validate-tokens', async (req, res) => {
     const isValidDeviceId = validateStrictString(deviceId, 'device id', 10, 10);
 
     if (!isValidDeviceId.isValid) {
-      return res.send({success: false, reason: isValidDeviceId.reason});
+      return res.send({ success: false, reason: isValidDeviceId.reason });
     };
 
     const isValidAuthKey = validateStrictString(authKey, 'auth key', 20, 20);
 
     if (!isValidAuthKey.isValid) {
-      return res.send({success: false, reason: isValidAuthKey.reason});
+      return res.send({ success: false, reason: isValidAuthKey.reason });
     };
 
     const connection = pool.promise();
 
-    const [[device]] =  await connection.query(`SELECT user_id FROM devices WHERE device_id = ? AND auth_key = ?`, [deviceId, authKey]);
+    const [[device]] = await connection.query(`SELECT user_id FROM devices WHERE device_id = ? AND auth_key = ?`, [deviceId, authKey]);
 
     console.log(device);
     if (!device) {
-      return res.send({successs: false, reason: 'Invalid Token'});
+      return res.send({ successs: false, reason: 'Invalid Token' });
     };
 
-    return res.send({success: true});
+    return res.send({ success: true });
   } catch (err) {
     console.log(err);
   }

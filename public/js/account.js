@@ -182,7 +182,7 @@ function oauthSignIn() {
   // Parameters to pass to OAuth 2.0 endpoint.
   const formParams = {
     'client_id': '569997433857-a5jdjf2k8oa46dopid8tt7s1lbcv8129.apps.googleusercontent.com',
-    'redirect_uri': 'https://flozable.com/google-signin',
+    'redirect_uri': 'https://localhost:3000/account/google-signin',
     'response_type': 'token',
     'scope': 'https://www.googleapis.com/auth/drive.metadata.readonly',
     'include_granted_scopes': 'true',
