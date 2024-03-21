@@ -333,31 +333,52 @@ Router.get('/reset-password', (req, res) => {
 });
 
 Router.get('/google-signin', (req, res) => {
-  const { access_token } = req.query;
+  autoSignin(req, res, (() => res.render('google-signin', { loggedIn: true })), (() => res.render('google-signin', { loggedIn: false })));
+});
 
-  const httpsAgent = new https.Agent({
-    rejectUnauthorized: false,
-  });
+Router.post('/signin-with-google', async (req, res) => {
+  const { access_token, timezone } = req.body;
 
-  fetch(`https://${process.env.IP}:3000/account/signin-with-google`, {
-    method: "POST",
+  //https://developers.google.com/gmail/api/reference/rest
+  fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ access_token }),
-    agent: httpsAgent,
-  }).then((response) => {
-    console.log(response);
-  })
-    .catch((error) => console.error(error));
+  }).then((response) => response.json())
+    .then(async (data) => {
+      const email = "[]";
+      const connection = pool.promise();
+      console.log(data);
 
-  return res.send({ success: true, access_token: access_token })
+      const [[userInfo]] = await connection.query(`SELECT user_id, timezone FROM users WHERE email = ?`, [email]);
+
+      if (!userInfo) {
+        return res.send({ success: false, reason: "No user found" });
+      }
+
+      req.session.regenerate((err) => {
+        if (err) {
+          console.log("Error regenerating session ID:", err);
+          res.send({ success: false, reason: "SESSION ERROR" });
+          return;
+        }
+
+        req.session.user_id = userInfo.user_id;
+        req.session.timezone = userInfo.timezone;
+
+        res.cookie("userId", userInfo.user_id, {
+          maxAge: 1000 * 60 * 60 * 24 * 30,
+          secure: true,
+          httpOnly: true,
+          signed: true,
+          sameSite: 'strict'
+        });
+        res.redirect("/dashboard")
+        //res.send({ success: true, msg: 'Success' });
+      });
+    })
 });
-
-Router.post('signin-with-google', (req, res) => {
-  console.log("signin-with-google",req.body);
-  return res.send({success: true, access_token})
-})
 
 Router.post('/update/image', upload.single('image'), async (req, res) => {
   autoSignin(req, res, (async (userId) => {
