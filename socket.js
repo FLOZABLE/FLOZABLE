@@ -101,15 +101,16 @@ mainIo.on('connection', (socket) => {
 
     const { groups, friends } = userInfo;
 
-    if (groups.length) {
-      io.to(groups).emit(`stopStudying:${userId}`, 'disconnect');
-    };
-    if (friends.length) {
-      io.to(friends).emit(`stopStudying:${userId}`, 'disconnect');
-    };
-
     const activeSubject = await activeSubjectCache(userId);
-    if (!activeSubject) return;
+    if (!activeSubject) {
+      if (groups.length) {
+        io.to(groups).emit(`stopStudying:${userId}`, {status: 'disconnect'});
+      };
+      if (friends.length) {
+        io.to(friends).emit(`stopStudying:${userId}`, {status: 'disconnect'});
+      };
+      return;
+    };
     redisClient.hDel(`user:${userId}`, `ActiveSubject`);
 
     const now = Math.floor(new Date().getTime() / 1000);
@@ -124,6 +125,14 @@ mainIo.on('connection', (socket) => {
 
     const duration = now - datum_point - timeline_sum;
     subject.timeline_sum += duration;
+
+    if (groups.length) {
+      io.to(groups).emit(`stopStudying:${userId}`, {status: 'disconnect', duration});
+    };
+    if (friends.length) {
+      io.to(friends).emit(`stopStudying:${userId}`, {status: 'disconnect', duration});
+    };
+    
     redisClient.hSet(`user:${userId}:subjects`, subjectId, JSON.stringify(subject));
     //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
     //zsetIncrAll(`user:${userId}:dayTotal`, duration);
@@ -220,15 +229,6 @@ mainIo.on('connection', (socket) => {
     const userInfo = await userCache(userId);
     if (!userInfo || !subject) return;
 
-
-    const { groups, friends } = userInfo;
-
-    if (groups.length) {
-      io.to(groups).emit(`stopStudying:${userId}`, 'rest');
-    };
-    if (friends.length) {
-      io.to(friends).emit(`stopStudying:${userId}`, 'rest');
-    };
     const { datum_point, timeline_sum } = subject;
 
     const duration = now - datum_point - timeline_sum;
@@ -236,6 +236,15 @@ mainIo.on('connection', (socket) => {
     redisClient.hSet(`user:${userId}:subjects`, subjectId, JSON.stringify(subject));
     //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
     //zsetIncrAll(`user:${userId}:dayTotal`, duration);
+
+    const { groups, friends } = userInfo;
+
+    if (groups.length) {
+      io.to(groups).emit(`stopStudying:${userId}`, {status: 'rest', duration});
+    };
+    if (friends.length) {
+      io.to(friends).emit(`stopStudying:${userId}`, {status: 'rest', duration});
+    };
 
     const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
 
