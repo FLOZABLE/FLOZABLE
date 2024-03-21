@@ -168,9 +168,6 @@ closeBtnBack.addEventListener('click', () => {
   accountModal.classList.remove('visible');
 });
 
-/*
- * Create form to request access token from Google's OAuth 2.0 server.
- */
 function oauthSignIn() {
   // Google's OAuth 2.0 endpoint for requesting an access token
   const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -184,7 +181,7 @@ function oauthSignIn() {
     'client_id': '569997433857-a5jdjf2k8oa46dopid8tt7s1lbcv8129.apps.googleusercontent.com',
     'redirect_uri': 'https://localhost:3000/account/google-signin',
     'response_type': 'token',
-    'scope': 'https://www.googleapis.com/auth/drive.metadata.readonly',
+    'scope': 'https://www.googleapis.com/auth/gmail.readonly',
     'include_granted_scopes': 'true',
     'state': 'pass-through value'
   }
