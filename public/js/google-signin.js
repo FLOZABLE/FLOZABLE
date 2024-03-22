@@ -38,7 +38,12 @@ function googleLogin() {
         .then((data) => {
             if (data.success) {
                 successMsg(data.msg); //if browser is slow and the loading takes long
-                window.location.href = "/dashboard";
+                if (data.newUser) {
+                    window.location.href = "/dashboard";
+                }
+                else {
+                    window.location.href = "/dashboard";
+                }
             }
             else {
                 errMsg(data.reason);
