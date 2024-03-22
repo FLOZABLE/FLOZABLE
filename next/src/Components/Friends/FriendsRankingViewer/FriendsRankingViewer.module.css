@@ -1,0 +1,63 @@
+.FriendsRankingViewer {
+  position: relative;
+  margin-left: 1.1875rem;
+  height: 100%;
+}
+
+.FriendsRankingViewer .Button {
+  margin-left: 0.8125rem;
+  height: 3rem;
+}
+
+.FriendsRankingViewer .profileImg {
+  display: flex;
+  background-color: #e5e6e7;
+  width: 2.188rem;
+  height: 2.188rem;
+  border-radius: 1.25rem;
+  justify-content: center;
+  align-items: center;
+  margin-right: 1.25rem;
+}
+
+.FriendsRankingViewer .rankings {
+  overflow-y: auto;
+  height: calc(100% - 3rem);
+}
+
+.FriendsRankingViewer .rankings .userContainer {
+  display: flex;
+  margin-bottom: 0.625rem;
+}
+
+.FriendsRankingViewer .rankings .userContainer > div {
+  display: flex;
+  align-items: center;
+  margin-right: 1.25rem;
+}
+
+.FriendsRankingViewer .rankings .userContainer .userInfo {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  font-size: 1.25rem;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.FriendsRankingViewer .rankings .userContainer .userInfo .name {
+  margin-right: 0.313rem;
+  position: relative;
+  max-width: 50%;
+}
+
+.FriendsRankingViewer .rankings .userContainer .diff {
+  margin-left: auto;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.FriendsRankingViewer .rankings .userContainer:nth-last-child(1) {
+  padding-bottom: 3rem;
+}
