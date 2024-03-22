@@ -347,33 +347,116 @@ Router.post('/signin-with-google', async (req, res) => {
     },
   }).then((response) => response.json())
     .then(async (data) => {
+      //console.log(data);
       const email = data.email;
+      const name = data.given_name; // TODO: create robust way of getting name
       const connection = pool.promise();
 
       const [[userInfo]] = await connection.query(`SELECT user_id, timezone FROM users WHERE email = ?`, [email]);
+
       if (!userInfo) {
-        return res.send({ success: false, reason: "No user found" });
-      }
-
-      req.session.regenerate((err) => {
-        if (err) {
-          console.log("Error regenerating session ID:", err);
-          res.send({ success: false, reason: "SESSION ERROR" });
-          return;
+        //No existing user, create account
+        if (!isValidTimeZone(timezone)) {
+          timezone = 'UTC';
         }
+        const userDateTime = DateTime.now().setZone(timezone);
 
-        req.session.user_id = userInfo.user_id;
-        req.session.timezone = userInfo.timezone;
+        const twelveAmDateTime = userDateTime.set({ millisecond: 0 });
 
-        res.cookie("userId", userInfo.user_id, {
+        const unixTimestamp = twelveAmDateTime.toSeconds();
+
+        const isValidEmail = validateEmail(email);
+        if (!isValidEmail.isValid) {
+          return res.send({ success: false, reason: isValidEmail.reason });
+        };
+        const isValidName = validateStrictString(name, 'Name');
+        if (!isValidName.isValid) {
+          return res.send({ success: false, reason: isValidName.reason });
+        };
+
+        // Create a new ArrayBuffer with a length of 10 bytes.
+        const password = new ArrayBuffer(15);
+        // Fill the buffer with random numbers.
+        crypto.getRandomValues(new Uint8Array(password));
+
+        const isValidPassword = validatePassword(password);
+        if (!isValidPassword.isValid) {
+          return res.send({ success: false, reason: isValidPassword.reason });
+        };
+        const connection = pool.promise();
+        const [[checkEmail]] = await connection.query("SELECT email FROM users WHERE email = ?", email);
+        if (checkEmail) {
+          return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
+        };
+        const [salt, hashed_password] = hashing(password);
+        const userId = generateRandomId(10);
+        const keySalt = crypto.randomBytes(32).toString('hex');
+        const iv = crypto.randomBytes(16).toString('hex');
+        const user = {
+          name,
+          email,
+          hashed_password,
+          salt,
+          user_id: userId,
+          timezone,
+          datum_point: unixTimestamp,
+          key_salt: keySalt,
+          iv: iv,
+        };
+        connection.query('INSERT INTO users SET ?', user);
+        //create default subject
+        const subjectId = generateRandomId(10);
+        const datum_point = Math.floor(new Date().getTime() / 1000);
+        const subject = {
+          id: subjectId,
+          name: 'others',
+          user_id: userId,
+          icon: 'others',
+          color: '#000000',
+          datum_point
+        };
+        connection.query(`INSERT INTO subjects SET ?`, subject);
+        req.session.regenerate((err) => {
+          if (err) {
+            console.log("Error regenerating session ID:", err);
+            res.send({ success: false, reason: "SESSION ERROR" });
+            return;
+          }
+          req.session.user_id = userId;
+          req.session.timezone = timezone;
+        });
+        const authId = generateRandomId(10);
+        await redisClient.setEx(`extension:auth:${authId}`, 10, userId);
+        res.cookie("userId", userId, {
           maxAge: 1000 * 60 * 60 * 24 * 30,
           secure: true,
           httpOnly: true,
           signed: true,
-          sameSite: 'strict'
         });
-        res.send({ success: true, msg: 'Success' });
-      });
+
+        res.send({ success: true, msg: "Success", newUser: true });
+      }
+      else {
+        req.session.regenerate((err) => {
+          if (err) {
+            console.log("Error regenerating session ID:", err);
+            res.send({ success: false, reason: "SESSION ERROR" });
+            return;
+          }
+
+          req.session.user_id = userInfo.user_id;
+          req.session.timezone = userInfo.timezone;
+
+          res.cookie("userId", userInfo.user_id, {
+            maxAge: 1000 * 60 * 60 * 24 * 30,
+            secure: true,
+            httpOnly: true,
+            signed: true,
+            sameSite: 'strict'
+          });
+          res.send({ success: true, msg: 'Success' });
+        });
+      }
     })
 });
 

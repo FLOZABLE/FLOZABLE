@@ -10,6 +10,7 @@ import {
 import ArrowOptionBtn from "../ArrowOptionBtn/ArrowOptionBtn";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import SigninWithGoogleBtn from "../SigninWithGoogleBtn/SigninWithGoogleBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
@@ -77,6 +78,7 @@ function AccountModal({ isOpened, setIsOpened, setResponse, bringAccountInfo, br
                 }}
               />
             </div>
+            <SigninWithGoogleBtn infoText={"Continue With Google"}/>
             <BlobBtn
               name={"SUBMIT"}
               setClicked={() => {
@@ -148,6 +150,7 @@ function AccountModal({ isOpened, setIsOpened, setResponse, bringAccountInfo, br
                 }}
               />
             </div>
+            <SigninWithGoogleBtn infoText={"Register With Google"}/>
             <BlobBtn
               name={"SUBMIT"}
               setClicked={() => {
