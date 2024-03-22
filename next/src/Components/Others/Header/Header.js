@@ -11,8 +11,8 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor } from "@/utils/Svg";
 import { NotificationsContext, SubjectsContext, UserInfoContext } from "@/utils/Contexts";
+import config from "@/utils/config";
 
-const serverOrigin = process.env.REACT_APP_ORIGIN;
 function Header({
   setIsChatModal,
   totalNewMsg,
@@ -203,7 +203,7 @@ function Header({
           </div>
           <div className={styles.profileImg}
             style={{
-              backgroundImage: `url("${serverOrigin}/profile-images/${userInfo?.user_id}.jpeg")`, backgroundSize: 'cover',
+              backgroundImage: `url("${config.server}/profile-images/${userInfo?.user_id}.jpeg")`, backgroundSize: 'cover',
               backgroundPosition: 'center center',
               backgroundRepeat: 'no-repeat',
             }}

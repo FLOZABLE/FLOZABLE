@@ -1,0 +1,141 @@
+.BlobBtn {
+  position: relative;
+  display: table;
+  padding: 0.8125rem 2.125rem;
+  text-align: center;
+  vertical-align: middle;
+  text-transform: uppercase;
+  color: var(--color2);
+  font-size: 0.813rem;
+  font-weight: bold;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  transition: color 0.5s;
+  cursor: pointer;
+  border-radius: 1.875rem;
+  z-index: 1;
+}
+
+.BlobBtn:before {
+  content: "";
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(100% - 0.125rem);
+  height: calc(100% - 0.125rem);
+  border: 0.125rem solid var(--color2);
+  border-radius: 1.875rem;
+}
+
+.BlobBtn:after {
+  content: "";
+  z-index: -2;
+  position: absolute;
+  left: 0.1875rem;
+  top: 0.1875rem;
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s 0.2s;
+  border-radius: 1.875rem;
+}
+
+.BlobBtn:hover {
+  color: var(--color1);
+  border-radius: 1.875rem;
+}
+
+.BlobBtn:hover:after {
+  transition: all 0.3s;
+  left: 0;
+  top: 0;
+  border-radius: 1.875rem;
+}
+
+.blobBtnInner {
+  z-index: -1;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 1.875rem;
+  background: var(--color1);
+}
+
+.blobBtnBlobs {
+  position: relative;
+  display: block;
+  height: 100%;
+  filter: url("#goo");
+}
+
+.blobBtnBlob {
+  position: absolute;
+  top: 0.125rem;
+  width: 25%;
+  height: 100%;
+  background: var(--color2);
+  border-radius: 100%;
+  transform: translate3d(0, 150%, 0) scale(1.7);
+  transition: transform 0.45s;
+}
+
+@supports (filter: url("#goo")) {
+  .blobBtnBlob {
+    transform: translate3d(0, 150%, 0) scale(1.4);
+  }
+}
+
+.blobBtnBlob:nth-child(1) {
+  left: 0%;
+  transition-delay: 0s;
+}
+
+.blobBtnBlob:nth-child(2) {
+  left: 30%;
+  transition-delay: 0.08s;
+}
+
+.blobBtnBlob:nth-child(3) {
+  left: 60%;
+  transition-delay: 0.16s;
+}
+
+.blobBtnBlob:nth-child(4) {
+  left: 90%;
+  transition-delay: 0.24s;
+}
+
+.BlobBtn:hover .blobBtnBlob {
+  transform: translateZ(0) scale(1.7);
+}
+
+@supports (filter: url("#goo")) {
+  .BlobBtn:hover .blobBtnBlob {
+    transform: translateZ(0) scale(2);
+  }
+}
+
+.BlobBtn.opt1 {
+  padding: 0em 0.625rem;
+  white-space: nowrap;
+}
+
+
+.BlobBtn.opt2 {
+  padding: 0.625rem 1.875rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 87.5rem) {
+  .BlobBtn {
+    padding: 0.625rem 1.25rem;
+  }
+}
+
+.BlobBtn * {
+  pointer-events: none;
+}

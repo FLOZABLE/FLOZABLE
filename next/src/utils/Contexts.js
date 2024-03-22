@@ -11,12 +11,17 @@ const PlansContext = createContext([]);
 const UserInfoContext = createContext({});
 const NotificationsContext = createContext([]);
 const TutorialsContext = createContext({});
+const ResponseContext = createContext({});
 
 function AppProvider({ children }) {
   return (
     <AccountProvider>
       <SubjectsProvider>
-        {children}
+        <ResponseProvider>
+          <TutorialsProvider>
+            {children}
+          </TutorialsProvider>
+        </ResponseProvider>
       </SubjectsProvider>
     </AccountProvider>
   )
@@ -116,14 +121,30 @@ function SubjectsProvider({ children }) {
   )
 };
 
-/* function tutorialsProvider({children}) {
-  const [tutorialBoxRef, setTutorialBoxRef] = useState(nu)
+function ResponseProvider({ children }) {
+  const [response, setResponse] = useState({});
+
   return (
-    <TutorialsContext.Provider>
+    <ResponseContext.Provider value={{ response, setResponse }}>
+      {children}
+    </ResponseContext.Provider>
+  )
+};
+
+function ModalsProvider({children}) {
+  const [isModal, setIsModal] = useState({});
+}
+
+function TutorialsProvider({children}) {
+  const [tutorialBoxRef, setTutorialBoxRef] = useState(null);
+  const [tutorialTextRef, setTutorialTextRef] = useState(null);
+
+  return (
+    <TutorialsContext.Provider value={{tutorialBoxRef, setTutorialBoxRef, tutorialTextRef, setTutorialTextRef}}>
       {children}
     </TutorialsContext.Provider>
   )
-} */
+}
 
 
-export { AppProvider, AuthContext, UserInfoContext, NotificationsContext, SubjectsContext };
+export { AppProvider, AuthContext, UserInfoContext, NotificationsContext, SubjectsContext, PlansContext, ResponseContext, TutorialsContext };
