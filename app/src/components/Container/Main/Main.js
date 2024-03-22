@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Main.module.css";
 import PlanTimeline from "../../UI/PlanTimeline/PlanTimeline.js";
-import FriendsActivityViewer from "../../UI/FriendsActivityViewer/FriendsActivityViewer.js";
-import SmallRankingViewer from "../../UI/SmallRankingViewer/SmallRankingViewer.js";
 import SmallSubjectsViewer from "../../UI/SmallSubjectsViewer/SmallSubjectsViewer.js";
 import { Link } from "react-router-dom";
 import AIRecommendation from "../../UI/AIRecommendation/AIRecommendation.js";

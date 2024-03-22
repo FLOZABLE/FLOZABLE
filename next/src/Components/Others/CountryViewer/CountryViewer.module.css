@@ -1,0 +1,28 @@
+.CountryViewer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.CountryViewer .hoverEl {
+  position: absolute;
+  top: 3.125rem;
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s ease-in-out top, .3s ease-in-out visibility, .3s ease-in-out opacity;
+  font-size: 0.813rem;
+  transform: translateX(-50%);
+  left: 50%;
+  color: #fff;
+  background-color: #00000090;
+  padding: 0.313rem 0.625rem;
+  border-radius: 0.625rem;
+  pointer-events: none;
+}
+
+.CountryViewer:hover .hoverEl {
+  top: 1.25rem;
+  visibility: visible;
+  opacity: 1;
+}
