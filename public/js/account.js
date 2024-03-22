@@ -181,7 +181,7 @@ function oauthSignIn() {
     'client_id': '569997433857-a5jdjf2k8oa46dopid8tt7s1lbcv8129.apps.googleusercontent.com',
     'redirect_uri': 'https://localhost:3000/account/google-signin',
     'response_type': 'token',
-    'scope': 'https://www.googleapis.com/auth/gmail.readonly',
+    'scope': 'https://www.googleapis.com/auth/userinfo.email',
     'include_granted_scopes': 'true',
     'state': 'pass-through value'
   }

@@ -18,26 +18,36 @@ function errMsg(msg) {
 }
 
 function googleLogin() {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const access_token = urlParams.get('access_token')
-    alert(access_token);
+    const queryString = window.location.href;
+    let access_token;
+    try {
+        access_token = queryString.split('access_token=')[1].split("&")[0];
+    } catch (err) {
+        console.log(err);
+        errMsg("An error occured");
+        //window.location.href = "/";
+    }
 
-    fetch(`https://super-duper-goldfish-699p4pr75rrxfr45x-3000.app.github.dev/account/signin-with-google`, {
+    fetch(`https://localhost:3000/account/signin-with-google`, {
         method: 'POST',
         body: JSON.stringify({ access_token, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
         headers: {
             'Content-Type': 'application/json'
         }
     }).then((response) => response.json())
-    .then((data) => {
-        if (data.success){
-            successMsg(data.msg);
-        }
-        else{
-            errMsg(data.reason);
-        }
-    })
+        .then((data) => {
+            if (data.success) {
+                successMsg(data.msg); //if browser is slow and the loading takes long
+                window.location.href = "/dashboard";
+            }
+            else {
+                errMsg(data.reason);
+                function redirect() {
+                    window.location.href = "/";
+                }
+                setTimeout(redirect, 3000);
+            }
+        })
 }
 
 window.addEventListener('load', googleLogin);
