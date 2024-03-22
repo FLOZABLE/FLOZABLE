@@ -347,12 +347,10 @@ Router.post('/signin-with-google', async (req, res) => {
     },
   }).then((response) => response.json())
     .then(async (data) => {
-      const email = "[]";
+      const email = data.email;
       const connection = pool.promise();
-      console.log(data);
 
       const [[userInfo]] = await connection.query(`SELECT user_id, timezone FROM users WHERE email = ?`, [email]);
-
       if (!userInfo) {
         return res.send({ success: false, reason: "No user found" });
       }
@@ -374,8 +372,7 @@ Router.post('/signin-with-google', async (req, res) => {
           signed: true,
           sameSite: 'strict'
         });
-        res.redirect("/dashboard")
-        //res.send({ success: true, msg: 'Success' });
+        res.send({ success: true, msg: 'Success' });
       });
     })
 });
