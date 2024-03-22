@@ -1,0 +1,72 @@
+.DropDownButton {
+  position: relative;
+  width: fit-content;
+  font-weight: 600;
+  transition: .3s ease-in-out background-color;
+  padding: 0rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  height: 2rem;
+  max-width: 10rem;
+  /* overflow-x: hidden;
+  overflow-y: auto; */
+}
+
+.DropDownButton.clicked {
+  background-color: var(--dark-gray);
+}
+
+.DropDownButton:hover {
+  background-color: var(--dark-gray);
+}
+
+.DropDownButton i {
+  padding-left: 0.5rem;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.DropDownButton .disp {
+  white-space: nowrap;
+  font-size: 1rem;
+  width: 100%;
+  display: flex;
+}
+
+.DropDownButton .options {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  background-color: var(--dark-gray);
+  left: 0px;
+  width: 100%;
+  top: 0rem;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  transition: visibility .3s ease-in-out, opacity .3s ease-in-out, top .3s ease-in-out;
+  z-index: 2;
+  max-height: 5rem;
+  overflow-y: auto;
+}
+
+.DropDownButton.clicked .options {
+  visibility: visible;
+  opacity: 1;
+  top: 1.7rem;
+}
+
+.DropDownButton .option {
+  max-width: 100%;
+  padding: 0rem 0.5rem;
+}
+
+.DropDownButton i svg {
+  transition: .3s ease-in-out transform;
+}
+
+.DropDownButton.clicked i svg {
+  transform: rotate(180deg);
+}
