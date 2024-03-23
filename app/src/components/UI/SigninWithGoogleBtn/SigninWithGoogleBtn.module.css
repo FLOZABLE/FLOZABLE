@@ -1,10 +1,11 @@
 .SigninWithGoogleBtn {
-    margin: 1rem;
+    margin-bottom: 1rem;
 }
 
 .SigninWithGoogleBtn .googleIcon {
     width: 1.5rem;
     display: inline;
+    margin-right: 1rem;
 }
 
 .SigninWithGoogleBtn .googleBtnWrapper {

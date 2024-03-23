@@ -37,7 +37,6 @@ accountButton.addEventListener('click', async () => {
     accountModal.classList.toggle('visible');
   }
 });
-accountModal.classList.toggle('visible');
 
 
 const signInBtn = document.getElementById("signin");
