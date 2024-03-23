@@ -114,8 +114,8 @@ Router.post('/create-validate', async (req, res) => {
         return res.send(responseCodes['no-user']);
       };
 
-      const {groups} = userInfo;
-      
+      const { groups } = userInfo;
+
       groups.push(group_id);
       redisClient.hSet(`user:${userId}`, 'groups', groups.join(','));
 
@@ -260,7 +260,9 @@ Router.post('/join/:id', async (req, res) => {
       const isCached = await redisClient.exists(`room:${groupId}`);
       if (isCached) {
         redisClient.sAdd(`room:${groupId}`, userId);
-      };
+      }
+
+      mainIo.to(userId).emit("joinMyGroups");
 
     } catch (err) {
       // Handle any errors that may occur during the execution of queries

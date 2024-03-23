@@ -70,6 +70,7 @@ function GroupPwModal({
               })
             }
           );
+          console.log([...myGroups, joinTarget])
           setMyGroups((myGroups) => { return [...myGroups, joinTarget] });
           if (groupsViewerRef) {
             document.body.scrollIntoView({ behavior: 'smooth', block: 'start' });
