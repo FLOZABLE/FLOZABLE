@@ -63,7 +63,7 @@ Router.post('/create-validate', async (req, res) => {
       };
 
       if (!visibility) {
-        const isValidPassword = validatePassword(password);
+        const isValidPassword = validatePassword(password, 20, 4, false);
         if (!isValidPassword.isValid) {
           return res.send({ success: false, reason: isValidPassword.reason });
         };
