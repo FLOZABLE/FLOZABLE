@@ -10,7 +10,7 @@
   align-items: center;
   flex-direction: column;
   border-right: 0.0625rem solid #a1a1a1;
-  z-index: 10;
+  z-index: 5;
 }
 
 .Sidebar .logo {
