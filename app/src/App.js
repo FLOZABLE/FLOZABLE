@@ -288,7 +288,7 @@ function App() {
         tutorialTextRef={tutorialTextRef}
       />
       <AccountModal
-        isOpened={true}
+        isOpened={isAccountModal}
         setIsOpened={setIsAccountModal}
         setResponse={setResponse}
         bringAccountInfo={bringAccountInfo}

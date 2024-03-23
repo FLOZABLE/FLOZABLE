@@ -273,19 +273,44 @@ function ChatsModal({
   }, [selectedRoom, userInfo]);
 
   return (
-    <Draggable nodeRef={moveRef}>
-      <div className={`${styles.ChatsModal} ${isChatModal ? styles.open : ""}`}
-        ref={moveRef}
+    <div className={`${styles.ChatsModal} ${isChatModal ? styles.open : ""}`}
+      ref={moveRef}
+    >
+      <div className={styles.header}>
+        <i
+          onClick={() => {
+            setIsChatModal(false);
+          }}>
+          <BackArrow />
+        </i>
+        <p>Messages</p>
+        <i
+          onClick={() => {
+            setIsChatModal(false);
+          }}
+        >
+          <FontAwesomeIcon icon={faXmark} />
+        </i>
+      </div>
+      <ul className={`${styles.chatRoomsContainer} customScroll`}>
+        {chatRoomsEl}
+      </ul>
+      <div
+        className={`${styles.chatsWrapper} ${selectedRoom ? styles.open : ""
+          }`}
       >
         <div className={styles.header}>
           <i
+            id={styles.exitBtn}
             onClick={() => {
-              setIsChatModal(false);
-            }}>
+              setSelectedRoom(false);
+            }}
+          >
             <BackArrow />
           </i>
-          <p>Messages</p>
+          <p>{roomName}</p>
           <i
+            id={styles.closeBtn}
             onClick={() => {
               setIsChatModal(false);
             }}
@@ -293,54 +318,27 @@ function ChatsModal({
             <FontAwesomeIcon icon={faXmark} />
           </i>
         </div>
-        <ul className={`${styles.chatRoomsContainer} customScroll`}>
-          {chatRoomsEl}
-        </ul>
-        <div
-          className={`${styles.chatsWrapper} ${selectedRoom ? styles.open : ""
-            }`}
+        <ul
+          className={`${styles.chatsContainer} customScroll`}
+          ref={chatsContainerRef}
         >
-          <div className={styles.header}>
-            <i
-              id={styles.exitBtn}
-              onClick={() => {
-                setSelectedRoom(false);
-              }}
-            >
-              <BackArrow />
-            </i>
-            <p>{roomName}</p>
-            <i
-              id={styles.closeBtn}
-              onClick={() => {
-                setIsChatModal(false);
-              }}
-            >
-              <FontAwesomeIcon icon={faXmark} />
-            </i>
-          </div>
-          <ul
-            className={`${styles.chatsContainer} customScroll`}
-            ref={chatsContainerRef}
-          >
-            {msgViewer}
-          </ul>
-          <div className={styles.inputWrapper}>
-            <input
-              type="text"
-              value={msgInput}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  onSubmit();
-                }
-              }}
-              onChange={(e) => setMsgInput(e.target.value)}
-            />
-            <SendBtn onSubmit={onSubmit} />
-          </div>
+          {msgViewer}
+        </ul>
+        <div className={styles.inputWrapper}>
+          <input
+            type="text"
+            value={msgInput}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                onSubmit();
+              }
+            }}
+            onChange={(e) => setMsgInput(e.target.value)}
+          />
+          <SendBtn onSubmit={onSubmit} />
         </div>
       </div>
-    </Draggable>
+    </div>
   );
 }
 
