@@ -167,7 +167,7 @@ Router.post('/signup-authentication', async (req, res) => {
     if (!isValidName.isValid) {
       return res.send({ success: false, reason: isValidName.reason });
     };
-    const isValidPassword = validatePassword(password);
+    const isValidPassword = validatePassword(password, 30);
     if (!isValidPassword.isValid) {
       return res.send({ success: false, reason: isValidPassword.reason });
     };

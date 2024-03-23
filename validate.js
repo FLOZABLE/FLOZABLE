@@ -60,13 +60,13 @@ function validateInteger(value, type, max, min = 0) {
 
 function validatePassword(password, max = 20, min = 5, specialNeeded = true) {
   if (!password) {
-    return { isValid: false, reason: `Please provide password` };
+    return { isValid: false, reason: `Please provide a password` };
   };
   if (password.length < min) {
-    return { isValid: false, reason: "Password is too short" };
+    return { isValid: false, reason: "Password is too short (" + min + " characters minimum)" };
   };
   if (password.length > max) {
-    return { isValid: false, reason: "Password is too long" };
+    return { isValid: false, reason: "Password is too long (" + max + " characters maximum)" };
   };
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password) && specialNeeded) {
     return { isValid: false, reason: "You need special characters" };
