@@ -185,6 +185,9 @@ Router.post('/request-reply', async (req, res) => {
           redisClient.hSet(`user:${targetId}`, 'dmRooms', JSON.stringify(targetDmRooms));
           redisClient.sAdd(`room:${roomInfo.id}`, members);
 
+          mainIo.to(userId).emit("joinChatRoom", roomInfo.id, true);
+          mainIo.to(targetId).emit("joinChatRoom", roomInfo.id, true);
+
           //remove chat request if any
           const myChatRequests = await NotificationCache(userId, 4, false);
           const chatRequest = myChatRequests.find(chatRequest => { return chatRequest.f === targetId });

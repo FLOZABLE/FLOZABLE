@@ -262,7 +262,7 @@ Router.post('/join/:id', async (req, res) => {
         redisClient.sAdd(`room:${groupId}`, userId);
       }
 
-      mainIo.to(userId).emit("joinMyGroups");
+      mainIo.to(userId).emit("joinChatRoom", groupId);
 
     } catch (err) {
       // Handle any errors that may occur during the execution of queries

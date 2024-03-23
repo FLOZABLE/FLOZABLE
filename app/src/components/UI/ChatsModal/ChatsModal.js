@@ -19,6 +19,7 @@ function ChatsModal({
   userInfo,
   totalNewMsg,
   setTotalNewMsg,
+  newFriendChat, //This will be used to trigger the useEffect
 }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [chatRoomsEl, setChatRoomsEl] = useState([]);
@@ -30,6 +31,27 @@ function ChatsModal({
   const [roomMembers, setRoomMembers] = useState([]);
   const [readStatus, setReadStatus] = useState({});
   const moveRef = useRef(null);
+
+  useEffect(() => {
+    if (!newFriendChat) return;
+    console.log("new friend chat", newFriendChat)
+    fetch(`${serverOrigin}/chat/bring-room`,
+      {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ searchId: newFriendChat })
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          setChatRooms([...chatRooms, data.room]);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [newFriendChat]);
 
   useEffect(() => {
     if (!myGroups) return;
