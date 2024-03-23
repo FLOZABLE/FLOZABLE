@@ -60,6 +60,7 @@ function App() {
   const [isAccountModal, setIsAccountModal] = useState(false);
 
   const [totalNewMsg, setTotalNewMsg] = useState(0);
+  const [newFriendChat, setNewFriendChat] = useState(null);
 
   const [planModal, setPlanModal] = useState({
     opened: false,
@@ -107,8 +108,13 @@ function App() {
       socket.emit("joinMyGroups");
     };
 
-    const socketUpdateGroups = () => {
-      socket.emit("joinMyGroups");
+    const socketJoinChatRoom = (id, updateState) => {
+      socket.emit("joinChatRoom", id);
+      if (updateState){
+        //Update the chatsModal state
+        setNewFriendChat(id);
+        //This will trigger the fetch inside the component
+      }
     };
 
     const socketResetAction = () => { };
@@ -123,7 +129,7 @@ function App() {
     socket.on("notification", onNotification);
     socket.on('reset', bringSubjects);
     socket.on('update tools', bringSubjects);
-    socket.on('joinMyGroups', socketUpdateGroups);
+    socket.on('joinChatRoom', (id, updateState = false) => { socketJoinChatRoom(id, updateState) });
 
     return () => {
       socket.off("joinMyGroups", socketConnectAction);
@@ -131,7 +137,7 @@ function App() {
       socket.off("notification", onNotification);
       socket.off('reset', bringSubjects);
       socket.off('update tools', bringSubjects);
-      socket.off('joinMyGroups', socketUpdateGroups);
+      socket.off('joinChatRoom', (id) => { socketJoinChatRoom(id) });
     };
   }, []);
 
@@ -281,6 +287,7 @@ function App() {
         myGroups={myGroups}
         totalNewMsg={totalNewMsg}
         setTotalNewMsg={setTotalNewMsg}
+        newFriendChat={newFriendChat}
       />
       <EventModal
         setPlanModal={setPlanModal}
@@ -300,7 +307,7 @@ function App() {
         bringAccountInfo={bringAccountInfo}
         bringSubjects={bringSubjects}
       />
-      <WelcomeModal 
+      <WelcomeModal
         userInfo={userInfo}
       />
       <Header
