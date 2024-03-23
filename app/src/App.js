@@ -107,6 +107,10 @@ function App() {
       socket.emit("joinMyGroups");
     };
 
+    const socketUpdateGroups = () => {
+      socket.emit("joinMyGroups");
+    };
+
     const socketResetAction = () => { };
 
     const onNotification = (data) => {
@@ -119,6 +123,7 @@ function App() {
     socket.on("notification", onNotification);
     socket.on('reset', bringSubjects);
     socket.on('update tools', bringSubjects);
+    socket.on('joinMyGroups', socketUpdateGroups);
 
     return () => {
       socket.off("joinMyGroups", socketConnectAction);
@@ -126,6 +131,7 @@ function App() {
       socket.off("notification", onNotification);
       socket.off('reset', bringSubjects);
       socket.off('update tools', bringSubjects);
+      socket.off('joinMyGroups', socketUpdateGroups);
     };
   }, []);
 
