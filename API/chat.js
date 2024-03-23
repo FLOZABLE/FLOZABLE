@@ -26,7 +26,6 @@ Router.post("/bring-room", async (req, res) => { //Bring ONE room by ID
     let foundRoom = false;
     let rooms = await chatRoomsCache(userId);
     rooms.map(async (room) => {
-      console.log(room.id, room.id === searchId, searchId);
       if (room.id === searchId && !foundRoom) {
         const chats = (await redisClient.lRange(`room:${room.id}:chats`, 0, -1)).map(JSON.parse);
         res.send({ success: true, room: { ...room, chats } });

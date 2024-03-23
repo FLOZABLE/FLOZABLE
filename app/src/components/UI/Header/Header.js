@@ -199,7 +199,7 @@ function Header({
           onClick={() => { setIsChatModal(prev => !prev) }}
         >
           <i>
-            <FontAwesomeIcon icon={faMessage} bounce={totalNewMsg ? true : false} />
+            <FontAwesomeIcon icon={faMessage} />
           </i>
           <div>
             {totalNewMsg}

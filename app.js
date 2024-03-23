@@ -209,7 +209,7 @@ require('./Logger');
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(5);
-//botManager(100);
+//botManager(210);
 //deleteBots();
 //addId();
 //createBots(200); 
