@@ -58,7 +58,7 @@ function validateInteger(value, type, max, min = 0) {
   return { isValid: true };
 };
 
-function validatePassword(password, max = 20, min = 5) {
+function validatePassword(password, max = 20, min = 5, specialNeeded = true) {
   if (!password) {
     return { isValid: false, reason: `Please provide password` };
   };
@@ -68,7 +68,7 @@ function validatePassword(password, max = 20, min = 5) {
   if (password.length > max) {
     return { isValid: false, reason: "Password is too long" };
   };
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password) && specialNeeded) {
     return { isValid: false, reason: "You need special characters" };
   };
   return { isValid: true };
