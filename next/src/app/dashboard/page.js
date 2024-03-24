@@ -10,6 +10,7 @@ import FriendsRankingViewer from "@/Components/Friends/FriendsRankingViewer/Frie
 import RecommendedFriendsViewer from "@/Components/Friends/RecommendedFriendsViewer/RecommendedFriendsViewer";
 import PlanTimeline from "@/Components/Plans/PlanTimeline/PlanTimeline";
 import config from "@/utils/config";
+import { updateSubjectsTrendChart } from "@/utils/StatTools";
 
 export default function Dashboard() {
   const {userInfo} = useContext(UserInfoContext);
@@ -36,10 +37,20 @@ export default function Dashboard() {
   }
   useEffect(() => {
     if (!userInfo) return;
-    setTimeout(() => {
-      getFriendsRanking();
-    }, 10000);
+    getFriendsRanking();
   }, [userInfo]);
+
+  useEffect(() => {
+    if (!subjects) return;
+
+    const { daily } = subjects;
+
+    if (!daily) return;
+
+    const subjectsTrend = updateSubjectsTrendChart(subjects, new Date(), 'Daily', 'days');
+    setSubjectsTrend(subjectsTrend);
+
+  }, [subjects]);
 
   return (
     <div className={`Main`}>
@@ -69,7 +80,9 @@ export default function Dashboard() {
                     </i>
                   </div>
                   <div className={styles.friendsRankingWrapper}>
-                    <FriendsRankingViewer />
+                    <FriendsRankingViewer 
+                      friendsRanking={friendsRanking}
+                    />
                   </div>
                 </div>
               </div>
