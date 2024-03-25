@@ -10,27 +10,24 @@ import { secondConverter } from "../../../utils/Tool";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor } from "@/utils/Svg";
-import { NotificationsContext, SubjectsContext, UserInfoContext } from "@/utils/Contexts";
+import { ModalsContext, NotificationsContext, SubjectsContext, TutorialsContext, UserInfoContext } from "@/utils/Contexts";
 import config from "@/utils/config";
 
 function Header({
-  setIsChatModal,
   totalNewMsg,
-  setIsNotificationModal,
-  tutorialBoxRef,
-  tutorialTextRef,
 }) {
   const {subjects} = useContext(SubjectsContext);
   const {userInfo} = useContext(UserInfoContext);
   const {notifications} = useContext(NotificationsContext);
-  
+  const {setIsChatModal, setIsNotificationModal} = useContext(ModalsContext);
+  const {tutorialBoxRef, tutorialTextRef} = useContext(TutorialsContext);
   
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
   const [studyStreak, setStudyStreak] = useState('0 day'); //days of consecutive study
 
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const studyBtnRef = useRef(null);
 
   const [tutorial, setTutorial] = useState(null);

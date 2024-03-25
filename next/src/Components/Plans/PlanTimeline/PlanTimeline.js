@@ -1,10 +1,12 @@
+"use client";
+
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./PlanTimeline.module.css";
 import parse from "html-react-parser";
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 import { Alert } from "@/utils/Svg";
 import { useSearchParams } from "next/navigation";
-import { PlansContext } from "@/utils/Contexts";
+import { PlansContext, SubjectsContext, TutorialsContext } from "@/utils/Contexts";
 import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
 import { DateTime } from "luxon";
 import config from "@/utils/config";
@@ -12,18 +14,16 @@ import config from "@/utils/config";
 function PlanTimeline({
   viewMode,
   viewDate,
-  subjects,
-  setPlanModal,
   mode,
   maxHeight = "18.75rem",
-  tutorialBoxRef,
-  tutorialTextRef,
 }) {
-  const {plans, setPlans} = useContext(PlansContext);
+  const {tutorialBoxRef, tutorialTextRef} = useContext(TutorialsContext);
+  const {subjects} = useContext(SubjectsContext);
+  const {plans, setPlans, setPlanModal} = useContext(PlansContext);
+
   const [planSeries, setPlanSeries] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isTutorial, setIsTutorial] = useState(false);
   const addBtnRef = useRef(null);
 
   const togglePlan = (plan) => {
@@ -117,7 +117,6 @@ function PlanTimeline({
 
     const tutorial = searchParams.get("tutorial");
     if (tutorial && parseInt(tutorial) === 1) {
-      setIsTutorial(true);
 
       setTimeout(() => {
         const { width, top, left, height } = addBtnRef.current.getBoundingClientRect();

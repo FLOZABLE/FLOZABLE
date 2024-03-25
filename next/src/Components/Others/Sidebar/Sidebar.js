@@ -20,10 +20,10 @@ function Sidebar({
   useEffect(() => {
     if (!searchParams) return;
 
-    const tutorial = searchParams.get("tutorial");
+    /* const tutorial = searchParams.get("tutorial");
     if (!tutorial) {
       return;
-    };
+    }; */
 
     if (parseInt(tutorial) === 10) {
       setTutorial(10);
