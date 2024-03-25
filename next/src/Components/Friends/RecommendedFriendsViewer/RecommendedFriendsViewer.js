@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useContext, useEffect, useState } from 'react';
 import styles from "./RecommendedFriendsViewer.module.css";
 import config from '@/utils/config';
