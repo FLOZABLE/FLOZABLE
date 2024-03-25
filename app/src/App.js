@@ -238,6 +238,10 @@ function App() {
   }, [userInfo]);
 
   useEffect(() => {
+    console.log(myGroups);
+  }, [myGroups]);
+
+  useEffect(() => {
     bringAccountInfo();
     bringSubjects();
   }, []);

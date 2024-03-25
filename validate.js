@@ -40,7 +40,7 @@ function validateString(value, type, maxLength = 20, minLength = 1) {
     return { isValid: false, reason: `${type} is too long` };
   };
   if (!/^[a-zA-Z0-9!?#@&()<>'[\],~".,/\p{Emoji}\s]+$/u.test(value)) {
-    return { isValid: false, reason: `Invalid ${type} (Only A-Z, a-z, 0-9, and !?#@&()<>~".,/ Emoji available)` };
+    return { isValid: false, reason: `Invalid ${type} (Illegal Characters)` };
   };
   return { isValid: true };
 };
