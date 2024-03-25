@@ -1,12 +1,29 @@
 "use client";
 
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { secondConverter } from "@/utils/Tool";
 import { colorsList } from "@/utils/Constant";
+import { SubjectsContext } from "@/utils/Contexts";
+import { updateSubjectsTrendChart } from "@/utils/StatTools";
 
-function StudyTrendChart({subjectsTrend}) {
+function StudyTrendChart({}) {
+  const {subjects} = useContext(SubjectsContext);
+
+  const [subjectsTrend, setSubjectsTrend] = useState([]);
   const [filteredTrends, setFilteredTrends] = useState([]);
+
+  useEffect(() => {
+    if (!subjects) return;
+
+    const { daily } = subjects;
+
+    if (!daily) return;
+
+    const subjectsTrend = updateSubjectsTrendChart(subjects, new Date(), 'Daily', 'days');
+    setSubjectsTrend(subjectsTrend);
+
+  }, [subjects]);
 
   return (
     <ResponsiveContainer width="98%" height="98%">

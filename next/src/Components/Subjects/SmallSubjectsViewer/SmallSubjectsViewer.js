@@ -1,10 +1,15 @@
+"use client";
+
 import styles from "./SmallSubjectsViewer.module.css";
 import { PieChart, Pie, Tooltip, ResponsiveContainer } from "recharts";
 import { secondConverter } from "@/utils/Tool";
 import { PieCustomTooltip } from "@/Components/Charts/Charts";
 import Link from "next/link";
+import { useContext } from "react";
+import { SubjectsContext } from "@/utils/Contexts";
 
-function SmallSubjectsViewer({ subjects }) {
+function SmallSubjectsViewer({}) {
+  const {subjects} = useContext(SubjectsContext);
 
   return (
     <div className={styles.SmallSubjectsViewer}>

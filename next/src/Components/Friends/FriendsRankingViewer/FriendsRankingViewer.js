@@ -1,13 +1,32 @@
+"use client";
+
 import styles from "./FriendsRankingViewer.module.css";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { secondConverter } from "../../../utils/Tool";
 import Link from "next/link";
 import CountryViewer from "@/Components/Others/CountryViewer/CountryViewer";
 import DropDownButton from "@/Components/Buttons/DropDownButton/DropDownButton";
 import config from "@/utils/config";
+import { fetchFriendsRanking } from "@/Api/friendsApi";
+import { ResponseContext } from "@/utils/Contexts";
 
-function FriendsRankingViewer({ friendsRanking }) {
+function FriendsRankingViewer({  }) {
+  const {setResponse} = useContext(ResponseContext);
+
   const [viewer, setViewer] = useState('day');
+  const [friendsRanking, setFriendsRanking] = useState([]);
+
+  useEffect(() => {
+    async() => {
+      const response = await fetchFriendsRanking();
+      setResponse(response);
+      
+      if (response.success) {
+        const { day, week, month } = response;
+        setFriendsRanking({ day, week, month });
+      };
+    };
+  }, []);
 
   return (
     <div className={styles.FriendsRankingViewer}>
