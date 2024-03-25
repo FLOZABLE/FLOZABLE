@@ -29,6 +29,21 @@
   font-size: 2.5em;
 }
 
+.MyGroupContainer .editIcon {
+  height: 2.5rem;
+  font-size: 2.5em;
+  margin-left: auto;
+  margin-right: 1rem;
+}
+
+.MyGroupContainer .editIcon:hover {
+  cursor: pointer;
+}
+
+.MyGroupContainer .info i:hover {
+  cursor: pointer;
+}
+
 .MyGroupContainer .info > div {
   display: flex;
   flex-direction: column;

@@ -21,7 +21,7 @@ import OptionToggleBtn from "../OptionToggleBtn/OptionToggleBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function EditGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
+function EditGroupModal({ isOpen, setIsOpen, setCreateGroupResponse, setMyGroups, myGroups }) {
   const [name, setName] = useState("");
   const [submit, setSubmit] = useState(false);
   const [maxMembers, setMaxMembers] = useState(10);
@@ -70,6 +70,27 @@ function EditGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
         .then((data) => {
           setCreateGroupResponse(data);
           if (data.success) {
+            console.log(isOpen);
+            let tempGroups = [...myGroups];
+            tempGroups = tempGroups.map((group) => {
+              if (group.group_id === isOpen.group_id){
+                return {...group, 
+                  name: name, 
+                  max_members: maxMembers, 
+                  color: color, 
+                  tags: JSON.stringify(tags), 
+                  description: description,
+                  visibility: visibility,
+                  password: password,
+                  goal_hr: goalHr
+                }
+              }
+              else{
+                return {...group}
+              }
+            });
+            console.log(tempGroups);
+
             setIsOpen(false);
             setName("");
             setMaxMembers(10);
@@ -80,6 +101,8 @@ function EditGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
             setVisibility(1);
             setPassword("");
             setGoalHr(3);
+
+            setMyGroups(tempGroups);
           };
         })
         .catch((error) => console.error(error));
@@ -162,7 +185,7 @@ function EditGroupModal({ isOpen, setIsOpen, setCreateGroupResponse }) {
             <div className={styles.iconWrapper}>
               <FontAwesomeIcon icon={faUserGroup} />
               <div className={styles.hoverEl}>
-                <p>Max maxMembers</p>
+                <p>Max Members</p>
               </div>
             </div>
             <div className={styles.contentWrapper}>
