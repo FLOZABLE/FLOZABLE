@@ -1,6 +1,6 @@
 import styles from "./MyGroupContainer.module.css";
 import React, { useEffect, useState } from "react";
-import { IconMessage, IconTimerOutline, StudyPerson } from "../../../utils/svgs";
+import { IconMessage, IconTimerOutline, StudyPerson, IconPen } from "../../../utils/svgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullhorn, faCommentDots, faComments, faGear, faPen, faRankingStar } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -17,9 +17,11 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
   const [groupTotal, setGroupTotal] = useState(0);
+  const [isMyGroup, setIsMyGroup] = useState(false);
 
   useEffect(() => {
     if (!group || !isFocus) return;
+    if (group.leader === userInfo.user_id) setIsMyGroup(true);
     //group_id, average_hr, color, date, explanation, font, goal_hr, leader, max_member, name, visibility, tags, members, likes
     const { name } = group;
     setName(name);
@@ -69,7 +71,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
           <div className={styles.info}>
             <div>
               <i>
-              <StudyPerson />
+                <StudyPerson />
               </i>
               <p>
                 {studyingMembers.length}/
@@ -92,17 +94,29 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
               </i>
             </div>
           </div>
+          {
+            isMyGroup ?
+            <div className={styles.editIcon} onClick={() => {
+              setIsEditGroupModal((prev) => { return prev ? false : group });
+            }} >
+              <i>
+                <IconPen />
+              </i>
+            </div>
+            :
+            <div />
+          }
         </div>
         <div className={styles.buttons}>
           <div>
             <Link to={`/dashboard/study?group=${group.group_id}`}>
               <button>
-              Go to Group
+                Go to Group
               </button>
             </Link>
           </div>
           <div className={styles.urlBtnWrapper}>
-          <GroupUrlBtn text={`${serverOrigin}/dashboard/groups?joinId=${group.group_id}`} copyText="Share" bgColor="var(--dark-gray)"/>
+            <GroupUrlBtn text={`${serverOrigin}/dashboard/groups?joinId=${group.group_id}`} copyText="Share" bgColor="var(--dark-gray)" />
           </div>
         </div>
       </div>
