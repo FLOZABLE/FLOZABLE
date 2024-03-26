@@ -98,6 +98,8 @@ function Groups({
         setCreateGroupResponse={setResponse}
         setIsOpen={setIsEditGroupModal}
         isOpen={isEditGroupModal}
+        setMyGroups={setMyGroups}
+        myGroups={myGroups}
       />
       <div
         className={`Main`}
