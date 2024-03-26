@@ -1,5 +1,4 @@
-const { config } = require("@fortawesome/fontawesome-svg-core");
-
+import config from "@/utils/config";
 
 async function fetchFriendsRanking () {
   const response = await fetch(`${config.server}/ranking/friends`, {
