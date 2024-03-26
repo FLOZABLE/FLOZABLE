@@ -29,7 +29,7 @@ function FriendsRankingViewer({ friendsRanking }) {
           />
         </div>
       </div>
-      <div className={`${styles.rankings} customScroll`}>
+      <div className={styles.rankings}>
         {friendsRanking?.[viewer]?.map((friend, i) => {
           console.log(friend);
           let value = friend.dayTotal;
@@ -56,7 +56,7 @@ function FriendsRankingViewer({ friendsRanking }) {
                     backgroundRepeat: 'no-repeat',
                   }}
                 ></div>
-                <div className={`${styles.name} overflowDot`}>{friend.name}</div>
+                <p>{friend.name}</p>
                 <CountryViewer timezone={friend.timezone} />
               </Link>
               <div className={styles.diff}>
