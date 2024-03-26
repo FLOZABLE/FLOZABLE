@@ -206,7 +206,7 @@ Router.post('/join/:id', async (req, res) => {
         );
       } else {
         const { password } = req.body;
-        const isValidPassword = validateLength(password, 100);
+        const isValidPassword = validateLength(password, 'password', 100);
 
         if (!isValidPassword.isValid) {
           return res.send({ success: false, reason: isValidPassword.reason });
@@ -425,7 +425,7 @@ Router.post('/modify', async (req, res) => {
         return res.send({ success: false, reason: isValidGroupId.reason });
       };
 
-      const isValidName = validateStrictString(name, 'Name');
+      const isValidName = validateString(name, 'Name');
       if (!isValidName.isValid) {
         return res.send({ success: false, reason: isValidName.reason });
       };
@@ -503,7 +503,7 @@ Router.post('/modify', async (req, res) => {
 
 
       if (!visibility && password !== "") {
-        const isValidPassword = validatePassword(password);
+        const isValidPassword = validatePassword(password, 30, 4, false);
         if (!isValidPassword.isValid) {
           return res.send({ success: false, reason: isValidPassword.reason });
         };
