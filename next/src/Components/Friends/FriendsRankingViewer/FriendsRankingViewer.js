@@ -9,6 +9,7 @@ import DropDownButton from "@/Components/Buttons/DropDownButton/DropDownButton";
 import config from "@/utils/config";
 import { fetchFriendsRanking } from "@/Api/friendsApi";
 import { ResponseContext } from "@/utils/Contexts";
+import ProfileImage from "@/Components/Users/ProfileImage/ProfileImage";
 
 function FriendsRankingViewer({  }) {
   const {setResponse} = useContext(ResponseContext);
@@ -17,15 +18,14 @@ function FriendsRankingViewer({  }) {
   const [friendsRanking, setFriendsRanking] = useState([]);
 
   useEffect(() => {
-    async() => {
+    (async() => {
       const response = await fetchFriendsRanking();
       setResponse(response);
-      
       if (response.success) {
         const { day, week, month } = response;
         setFriendsRanking({ day, week, month });
       };
-    };
+    })();
   }, []);
 
   return (
@@ -56,20 +56,16 @@ function FriendsRankingViewer({  }) {
           const formattedVal = secondConverter(value);
 
           return (
-            <div className={styles.userContainer} key={i}>
+            <div className={styles.userContainer} key={i} style={{zIndex: friendsRanking[viewer].length - i}}>
               <div className={styles.rank}>
                 #{i + 1}
               </div>
               <Link
                 href={`/dashboard/user/${friend.user_id}`}
                 className={styles.userInfo}>
-                <div className={styles.profileImg}
-                  style={{
-                    backgroundImage: `url("${config.server}/profile-images/${friend.user_id}.jpeg")`, backgroundSize: 'cover',
-                    backgroundPosition: 'center center',
-                    backgroundRepeat: 'no-repeat',
-                  }}
-                ></div>
+                <ProfileImage 
+                  userId={friend.user_id}
+                />
                 <div className={`${styles.name} overflowDot`}>{friend.name}</div>
                 <CountryViewer timezone={friend.timezone} />
               </Link>
