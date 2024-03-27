@@ -195,9 +195,10 @@ function ResponseProvider({ children }) {
 function ModalsProvider({ children }) {
   const [isChatModal, setIsChatModal] = useState(false);
   const [isNotificationModal, setIsNotificationModal] = useState(false);
+  const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
 
   return (
-    <ModalsContext.Provider value={{ isChatModal, setIsChatModal, isNotificationModal, setIsNotificationModal }}>
+    <ModalsContext.Provider value={{ isChatModal, setIsChatModal, isNotificationModal, setIsNotificationModal, isAddSubjectModal, setIsAddSubjectModal }}>
       {children}
     </ModalsContext.Provider>
   )
