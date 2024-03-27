@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/Components/Others/Header/Header";
 import { AppProvider } from "@/utils/Contexts";
 import Sidebar from "@/Components/Others/Sidebar/Sidebar";
+import EventModal from "@/Components/Modals/EventModal/EventModal";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,11 +17,12 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <AppProvider>
-        <Header />
-        {children}
-        <Sidebar />
+          <Header />
+          <EventModal />
+          {children}
+          <Sidebar />
         </AppProvider>
-        
+
       </body>
     </html>
   );

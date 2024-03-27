@@ -2,6 +2,7 @@ import { Google } from "@/utils/Svg";
 import styles from "./GoogleLoginBtn.module.css";
 import { useGoogleLogin } from '@react-oauth/google';
 import React from 'react';
+import config from "@/utils/config";
 
 function GoogleLoginBtn({ scope = "openid email profile https://www.googleapis.com/auth/calendar" }) {
 
@@ -10,7 +11,7 @@ function GoogleLoginBtn({ scope = "openid email profile https://www.googleapis.c
     select_account: true,
     onSuccess: (response) => {
       const { code } = response;
-      fetch(`${serverOrigin}/account/auth/google`, {
+      fetch(`${config.server}/account/auth/google`, {
         method: "post",
         headers: {
           'Content-Type': 'application/json'

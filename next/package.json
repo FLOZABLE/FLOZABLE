@@ -18,6 +18,7 @@
     "@fullcalendar/interaction": "^6.1.11",
     "@fullcalendar/react": "^6.1.11",
     "@fullcalendar/timegrid": "^6.1.11",
+    "@mui/x-date-pickers": "^7.0.0",
     "@nivo/radial-bar": "^0.85.1",
     "countries-and-timezones": "^3.6.0",
     "html-react-parser": "^5.1.9",
@@ -25,6 +26,8 @@
     "react": "^18",
     "react-country-flag": "^3.1.0",
     "react-dom": "^18",
+    "react-draggable": "^4.4.6",
+    "react-quill": "^2.0.0",
     "recharts": "^2.12.3",
     "socket.io-client": "^4.7.5"
   },
