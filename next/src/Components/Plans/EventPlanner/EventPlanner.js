@@ -403,7 +403,7 @@ function EventPlanner({
     }
   }, [viewDate]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!plans.length) return;
     if (!!searchParams.get("plan")) {
       const searchingPlanId = searchParams.get("plan");
@@ -414,7 +414,7 @@ function EventPlanner({
       setSearchParams({});
     }
 
-  }, [searchParams, plans]);
+  }, [searchParams, plans]); */
 
   const handleTodayButtonClick = () => {
     const currentDate = new Date();
@@ -500,7 +500,7 @@ function EventPlanner({
           selectable={true}
           selectMirror={true}
           dayMaxEvents={true}
-          plans={plans}
+          events={plans}
           eventContent={renderEventContent}
           dateClick={handleDateSelect}
           select={handleDateSelect}

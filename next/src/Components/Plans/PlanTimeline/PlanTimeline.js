@@ -10,6 +10,8 @@ import { PlansContext, SubjectsContext, TutorialsContext } from "@/utils/Context
 import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
 import { DateTime } from "luxon";
 import config from "@/utils/config";
+import CircularCheckBox from "@/Components/Buttons/CircularCheckBox/CircularCheckBox";
+import { subjectIcons } from "@/utils/Constant";
 
 function PlanTimeline({
   viewMode,

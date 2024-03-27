@@ -7,8 +7,9 @@ import EventPlanner from "@/Components/Plans/EventPlanner/EventPlanner";
 import RadioBtn from "@/Components/Buttons/RadioBtn/RadioBtn";
 import GoogleLoginBtn from "@/Components/Buttons/GoogleLoginBtn/GoogleLoginBtn";
 import SmallCalendar from "@/Components/Plans/SmallCalendar/SmallCalendar";
+import PlanTimeline from "@/Components/Plans/PlanTimeline/PlanTimeline";
 
-const googleClientId = process.env.REACT_APP_CLIENT_ID;
+const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
 function Planner(props) {
   const [viewMode, setViewMode] = useState("timeGridWeek");
@@ -29,11 +30,11 @@ function Planner(props) {
   };
 
   useEffect(() => {
-    setPlannerApi(PlannerRef.current.getApi());
+    //setPlannerApi(PlannerRef.current.getApi());
   }, [PlannerRef]);
 
   useEffect(() => {
-    setSmallCalendarApi(SmallCalendarRef.current.getApi());
+    //setSmallCalendarApi(SmallCalendarRef.current.getApi());
   }, [SmallCalendarRef]);
 
   return (
@@ -80,12 +81,8 @@ function Planner(props) {
               {/* <DropDownButton options={[{name:'Does not repeat', value: 0}, {name: 'Daily', value: 1}, {name: 'Weekly', value: 2}, {name: `Monthly`, value: 3}]} defaultIndex={0} setValue={setSubjectsOptions} /> */}
               <div className={`${styles.planTimelineWrapper}`}>
                 <PlanTimeline
-                  plans={events}
                   viewDate={viewDate}
                   viewMode={viewMode}
-                  subjects={subjects}
-                  setPlans={props.setEvents}
-                  setPlanModal={setPlanModal}
                   mode={"planner"}
                   maxHeight="25rem"
                 />
