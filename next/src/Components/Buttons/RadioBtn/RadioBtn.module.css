@@ -1,0 +1,81 @@
+.RadioBtnContainer .container {
+  position: relative;
+  width: 25rem;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+}
+
+.RadioBtnContainer .selector {
+  position: relative;
+  width: 95%;
+  height: 100%;
+  background-color: #f1f3f5;
+  height: 5rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 6.25rem;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+}
+
+.RadioBtnContainer .selectorItem {
+  position: relative;
+  flex-basis: calc(70% / 3);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.RadioBtnContainer .selectorItemRadio {
+  appearance: none;
+  display: none;
+}
+
+.RadioBtnContainer .selectorItemLabel {
+  display: flex;
+  position: relative;
+  height: 70%;
+  width: 100%;
+  text-align: center;
+  border-radius: 6.25rem;
+  line-height: 300%;
+  transition-duration: 0.5s;
+  transition-property: transform, box-shadow;
+  transform: none;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-top: 0.1875rem;
+  margin-left: -0.4375rem;
+  font-size: 1.1rem;
+}
+
+.RadioBtnContainer .selectorItemRadio:checked+.selectorItemLabel {
+  background-color: #4169e1;
+  color: #fff;
+  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.5), 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
+  transform: translateY(-0.125rem);
+}
+
+@media (max-width: 30rem) {
+  .RadioBtnContainer .selector {
+    width: 90%;
+  }
+}
+
+@media (max-width: 87.5rem) {
+  .RadioBtnContainer .container {
+    width: 18.75rem;
+  }
+
+  .RadioBtnContainer .selector {
+    height:  3.75rem;
+  }
+
+  .RadioBtnContainer .selectorItemLabel {
+
+  }
+}

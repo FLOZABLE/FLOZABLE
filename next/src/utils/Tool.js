@@ -98,4 +98,17 @@ function randomIntInRange(min, max) {
   return randomVal;
 };
 
-export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange, durationFormatter };
+const focusCalculator = (grouped) => {
+  if (!grouped) return 0;
+  let focus = 0;
+  grouped.map(([start, stop]) => {
+    const duration = stop - start;
+    if (duration > focus) {
+      focus = duration;
+    };
+    return null;
+  });
+  return focus;
+};
+
+export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange, durationFormatter, focusCalculator };

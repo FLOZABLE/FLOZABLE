@@ -7,23 +7,27 @@ import { colorsList } from "@/utils/Constant";
 import { SubjectsContext } from "@/utils/Contexts";
 import { updateSubjectsTrendChart } from "@/utils/StatTools";
 
-function StudyTrendChart({}) {
+function StudyTrendChart({
+  viewDate=new Date(),
+  statsViewer="Daily"
+}) {
   const {subjects} = useContext(SubjectsContext);
 
   const [subjectsTrend, setSubjectsTrend] = useState([]);
   const [filteredTrends, setFilteredTrends] = useState([]);
 
   useEffect(() => {
-    if (!subjects) return;
+    if (!subjects || !viewDate || !statsViewer) return;
 
     const { daily } = subjects;
 
     if (!daily) return;
 
-    const subjectsTrend = updateSubjectsTrendChart(subjects, new Date(), 'Daily', 'days');
+    const change = statsViewer === "Monthly" ? "months" : statsViewer === "Weekly" ? "weeks" : "days";
+    const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, statsViewer, change);
     setSubjectsTrend(subjectsTrend);
 
-  }, [subjects]);
+  }, [subjects, viewDate, statsViewer]);
 
   return (
     <ResponsiveContainer width="98%" height="98%">

@@ -1,13 +1,10 @@
 import StudyTrendChart from "@/Components/Charts/StudyTrendChart";
 import styles from "./page.module.css";
 import SmallSubjectsViewer from "@/Components/Subjects/SmallSubjectsViewer/SmallSubjectsViewer";
-import { SubjectsContext, TutorialsContext, UserInfoContext } from "@/utils/Contexts";
 import { IconStatsChart } from "@/utils/Svg";
 import FriendsRankingViewer from "@/Components/Friends/FriendsRankingViewer/FriendsRankingViewer";
 import RecommendedFriendsViewer from "@/Components/Friends/RecommendedFriendsViewer/RecommendedFriendsViewer";
 import PlanTimeline from "@/Components/Plans/PlanTimeline/PlanTimeline";
-import config from "@/utils/config";
-import { updateSubjectsTrendChart } from "@/utils/StatTools";
 
 export default function Dashboard() {
 

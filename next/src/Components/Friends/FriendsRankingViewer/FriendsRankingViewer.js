@@ -75,6 +75,68 @@ function FriendsRankingViewer({  }) {
             </div>
           )
         })}
+                {friendsRanking?.[viewer]?.map((friend, i) => {
+          console.log(friend);
+          let value = friend.dayTotal;
+          if (viewer === "month") {
+            value = friend.monthTotal;
+          } else if (viewer === "week") {
+            value = friend.weekTotal;
+          };
+
+          const formattedVal = secondConverter(value);
+
+          return (
+            <div className={styles.userContainer} key={i} style={{zIndex: friendsRanking[viewer].length - i}}>
+              <div className={styles.rank}>
+                #{i + 1}
+              </div>
+              <Link
+                href={`/dashboard/user/${friend.user_id}`}
+                className={styles.userInfo}>
+                <ProfileImage 
+                  userId={friend.user_id}
+                />
+                <div className={`${styles.name} overflowDot`}>{friend.name}</div>
+                <CountryViewer timezone={friend.timezone} />
+              </Link>
+              <div className={styles.diff}>
+                {formattedVal.value} {formattedVal.type}
+              </div>
+            </div>
+          )
+        })}
+                {friendsRanking?.[viewer]?.map((friend, i) => {
+          console.log(friend);
+          let value = friend.dayTotal;
+          if (viewer === "month") {
+            value = friend.monthTotal;
+          } else if (viewer === "week") {
+            value = friend.weekTotal;
+          };
+
+          const formattedVal = secondConverter(value);
+
+          return (
+            <div className={styles.userContainer} key={i} style={{zIndex: friendsRanking[viewer].length - i}}>
+              <div className={styles.rank}>
+                #{i + 1}
+              </div>
+              <Link
+                href={`/dashboard/user/${friend.user_id}`}
+                className={styles.userInfo}>
+                <ProfileImage 
+                  userId={friend.user_id}
+                />
+                <div className={`${styles.name} overflowDot`}>{friend.name}</div>
+                <CountryViewer timezone={friend.timezone} />
+              </Link>
+              <div className={styles.diff}>
+                {formattedVal.value} {formattedVal.type}
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   );

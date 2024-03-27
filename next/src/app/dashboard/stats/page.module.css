@@ -1,0 +1,117 @@
+.Stats {
+  padding: 0.625rem 3.125rem;
+}
+
+.Stats .optionsHeader {
+  position: sticky;
+  top: 6.25rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  z-index: 2;
+}
+
+.Stats .optionsHeader .dateSelectorWrapper {
+  margin-right: auto;
+}
+
+.Stats .bigBox {
+  margin-top: 1.875rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.875rem;
+  height: 37.5rem;
+}
+
+.Stats .bigBox .contents {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+}
+
+.Stats .bigBox .contents > div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.Stats .bigBox .contents > div:nth-child(2) {
+  width: 50%;
+}
+
+.Stats .bigBox .chartWrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.Stats .noChart {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  font-size: 2.5rem;
+  height: 100%;
+  text-decoration: underline;
+}
+
+.Stats .bigBox {
+  background-color: var(--blue0);
+  padding: 1.875rem 3.125rem;
+}
+
+.Stats .bigBox .overflow {
+  width: 100vh;
+  background-color: #fff;
+  padding: 1.563rem 1.25rem;
+  border-radius: 0.938rem;
+  display: flex;
+  align-items: center;
+  color: var(--font-gray);
+  box-shadow: rgba(50, 50, 93, 0.25) 0em 0.8125rem 1.6875rem -0.3125rem, rgba(0, 0, 0, 0.3) 0em 0.5rem 1rem -0.5rem;
+}
+
+.Stats .bigBox .overflow i {
+  font-size: 2rem;
+  display: flex;
+  margin-right: 0.625rem;
+  justify-content: center;
+  align-items: center;
+  color: var(--blue2);
+}
+
+.Stats .bigBox#othersUsage .chartWrapper {
+  width: 50%;
+}
+
+@media (max-width: 87.5rem) {
+  .Stats .bigBox {
+    padding: 0.625rem 1.875rem;
+  }
+}
+
+@media (max-width: 75rem) {
+  .Stats .bigBox {
+    padding: 0.625rem 0.938rem;
+  }
+  .Stats .bigBox:nth-child(1) {
+    height: 62.5rem;
+  }
+  .Stats .bigBox:nth-child(1) .contents {
+    flex-direction: column;
+  }
+
+  .Stats .bigBox:nth-child(1) .contents .chartWrapper {
+    height: 31.25rem;
+  }
+
+  .Stats .bigBox:nth-child(1) .contents > div:nth-child(2) {
+    height: 31.25rem;
+  }
+}
+
+.title {
+  font-family: "Roboto", sans-serif;
+  padding-bottom: 0em;
+  padding-left: 3.125rem;
+}
