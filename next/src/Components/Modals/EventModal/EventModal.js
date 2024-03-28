@@ -22,7 +22,7 @@ import TextEditor from "@/Components/Inputs/TextEditor/TextEditor";
 import DropDownButton from "@/Components/Buttons/DropDownButton/DropDownButton";
 import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
 import SliderAnimation from "@/Components/Inputs/SliderAnimation/SliderAnimation";
-import { generateRandomId } from "@/utils/Tool";
+import { generateRandomId, requestNotification } from "@/utils/Tool";
 
 function EventModal({
 }) {
@@ -33,7 +33,7 @@ function EventModal({
   const {tutorialBoxRef, tutorialTextRef} = useContext(TutorialsContext);
 
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const eventModalRef = useRef(null);
   const titleRef = useRef(null);
   const addSubjectRef = useRef(null);

@@ -4,6 +4,7 @@ import Header from "@/Components/Others/Header/Header";
 import { AppProvider } from "@/utils/Contexts";
 import Sidebar from "@/Components/Others/Sidebar/Sidebar";
 import EventModal from "@/Components/Modals/EventModal/EventModal";
+import AddSubjectModal from "@/Components/Modals/AddSubjectModal/AddSubjectModal";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
         <AppProvider>
           <Header />
           <EventModal />
+          <AddSubjectModal />
           {children}
           <Sidebar />
         </AppProvider>

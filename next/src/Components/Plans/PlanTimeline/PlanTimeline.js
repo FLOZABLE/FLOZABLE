@@ -25,7 +25,7 @@ function PlanTimeline({
 
   const [planSeries, setPlanSeries] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const addBtnRef = useRef(null);
 
   const togglePlan = (plan) => {
