@@ -1,0 +1,55 @@
+.GroupPwModal {
+  position: fixed;
+  width: 31.25rem;
+  z-index: 3;
+  background-color: #fff;
+  overflow: hidden;
+  overflow-y: auto;
+  border-radius: 1.875rem;
+  box-shadow: var(--shadow3);
+  max-height: 60vh;
+}
+
+.GroupPwModal .header {
+  background-color: var(--pink);
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.GroupPwModal .header i {
+  font-size: 1.875rem;
+  color: #fff;
+  margin-left: auto;
+  margin-right: 0.625rem;
+  cursor: pointer;
+}
+
+.GroupPwModal .description {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size:  1.25rem;
+  font-weight: 600;
+  margin: 1.25rem 0em;
+}
+
+.GroupPwModal .description i {
+  font-size: 1.875rem;
+  margin-right: 0.313rem;
+}
+
+.GroupPwModal .inputWrapper {
+  margin: 0em 1.25rem;
+}
+
+.GroupPwModal .joinBtnWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1.25rem 0em;
+}
+
+.GroupPwModal .groupWrapper {
+  margin: 0.625rem 1.25rem;
+}

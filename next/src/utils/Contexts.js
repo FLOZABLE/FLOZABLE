@@ -230,4 +230,4 @@ function TutorialsProvider({ children }) {
 };
 
 
-export { AppProvider, AuthContext, UserInfoContext, NotificationsContext, SubjectsContext, PlansContext, ResponseContext, ModalsContext, TutorialsContext };
+export { AppProvider, AuthContext, UserInfoContext, NotificationsContext, SubjectsContext, PlansContext, GroupsContext, ResponseContext, ModalsContext, TutorialsContext };
