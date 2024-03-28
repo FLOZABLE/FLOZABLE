@@ -4,6 +4,7 @@ import MemberEl from "../MemberEl/MemberEl";
 import MyEl from "../MyEl/MyEl";
 import { mediaSocket } from "../../../mediaSocket";
 import { Device } from "mediasoup-client";
+import ContextMenu from "../ContextMenu/ContextMenu";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 window.localStorage.setItem('debug', 'mediasoup-client:WARN* mediasoup-client:ERROR*');
@@ -234,6 +235,7 @@ function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, me
   return (
     <div className={styles.MembersContainer}>
       {membersEl}
+      <ContextMenu MENU_ID="ffffff" />
     </div>
   )
 };
