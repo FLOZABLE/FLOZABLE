@@ -1,0 +1,98 @@
+.GroupViewer {
+  height: 15.625rem;
+  background-color: #fff;
+  border-radius: 1.25rem;
+  padding: 0.625rem 0.625rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.GroupViewer.hidden {
+  display: none;
+}
+
+.GroupViewer .contents {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.GroupViewer .name {
+  width: calc(100% - 1.875rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.063rem;
+  border-radius: 1.875rem;
+  height: 2.5rem;
+  color: #000;
+  margin-bottom: 1.25rem;
+}
+
+.GroupViewer .name div {
+  overflow-x: hidden;
+  max-width: calc(100% - 2rem);
+}
+
+.GroupViewer .description {
+  height: 6.25rem;
+  width: 100%;
+}
+
+.GroupViewer .info {
+  display: flex;
+}
+
+.GroupViewer .info > div {
+  display: flex;
+  margin: 0.313rem;
+  font-size: 0.938rem;
+}
+
+.GroupViewer .tags {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  height: 1.0625rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-size:0.813rem;
+}
+
+.GroupViewer .tags > div {
+  margin: 0.11rem 0.313rem;
+  padding: 0rem 0.2rem;
+  width: min-content;
+  white-space: nowrap;
+  border-radius: 0.5rem;
+}
+
+.GroupViewer .buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.GroupViewer .buttons > div {
+  margin: 0rem 0.625rem;
+}
+
+.GroupViewer .joinBtn {
+  background-color: #f8f9fa;
+  box-shadow: var(--shadow9);
+  padding: 0em 0.625rem;
+  height: 2.3125rem;
+  border-radius: 1.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: .3s ease-in-out box-shadow;
+}
+
+.GroupViewer .joinBtn:hover {
+  box-shadow: var(--shadow3);
+}

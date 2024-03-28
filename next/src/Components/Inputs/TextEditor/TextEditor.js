@@ -1,8 +1,16 @@
 import React from "react";
-import ReactQuill from "react-quill";
+//import ReactQuill from "react-quill";
 import styles from "./TextEditor.module.css";
-//import "react-quill/dist/quill.snow.css";
+import "react-quill/dist/quill.snow.css";
 import styled from "@emotion/styled";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(
+  () => import("react-quill"),
+  {
+    ssr: false,
+  }
+);
 
 const StyleWrapper = styled.div`
   .ql-container {

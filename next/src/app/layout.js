@@ -1,10 +1,10 @@
 //import { Inter } from "next/font/google";
-//import "./globals.css";
-//import Header from "@/Components/Others/Header/Header";
+import "./globals.css";
+import Header from "@/Components/Others/Header/Header";
 import { AppProvider } from "@/utils/Contexts";
-//import Sidebar from "@/Components/Others/Sidebar/Sidebar";
-//import EventModal from "@/Components/Modals/EventModal/EventModal";
-//import AddSubjectModal from "@/Components/Modals/AddSubjectModal/AddSubjectModal";
+import Sidebar from "@/Components/Others/Sidebar/Sidebar";
+import EventModal from "@/Components/Modals/EventModal/EventModal";
+import AddSubjectModal from "@/Components/Modals/AddSubjectModal/AddSubjectModal";
 
 //const inter = Inter({ subsets: ["latin"] });
 
@@ -16,13 +16,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <AppProvider>
-          {/* <Header />
-          <EventModal /> */}
-          {/* <AddSubjectModal /> */}
+          <Header />
+          <EventModal />
+          <AddSubjectModal />
           {children}
-          {/* <Sidebar /> */}
+          <Sidebar />
         </AppProvider>
       </body>
     </html>
