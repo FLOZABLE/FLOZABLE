@@ -213,14 +213,14 @@ function ModalsProvider({ children }) {
 function TutorialsProvider({ children }) {
   const [tutorialBoxRef, setTutorialBoxRef] = useState(null);
   const [tutorialTextRef, setTutorialTextRef] = useState(null);
-  const [searchParams, setSearchParams] = useSearchParams();
+  //const [searchParams, setSearchParams] = useSearchParams();
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!searchParams) return;
 
     const tutorial = searchParams.get("tutorial");
     console.log(tutorial, 'gddddddddddddd')
-  }, [searchParams]);
+  }, [searchParams]); */
 
   return (
     <TutorialsContext.Provider value={{ tutorialBoxRef, setTutorialBoxRef, tutorialTextRef, setTutorialTextRef }}>

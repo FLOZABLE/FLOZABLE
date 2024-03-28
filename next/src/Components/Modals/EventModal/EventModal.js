@@ -33,7 +33,7 @@ function EventModal({
   const {tutorialBoxRef, tutorialTextRef} = useContext(TutorialsContext);
 
 
-  const searchParams = useSearchParams();
+  /* const searchParams = useSearchParams(); */
   const eventModalRef = useRef(null);
   const titleRef = useRef(null);
   const addSubjectRef = useRef(null);
@@ -144,7 +144,7 @@ function EventModal({
             setPlans(updatedEvents);
           }
           setPlanModal(prev => ({ ...prev, opened: false, id: null }));
-          if (searchParams.get("tutorial")) setSearchParams(prev => ({ ...prev, tutorial: 6 }));
+          //if (searchParams.get("tutorial")) setSearchParams(prev => ({ ...prev, tutorial: 6 }));
         }
       })
       .catch((error) => console.error(error));
@@ -363,10 +363,10 @@ function EventModal({
                     name={"Add Subject"}
                     setClicked={() => {
                       setIsAddSubjectModal(true);
-                      const tutorial = searchParams.get("tutorial");
+                      /* const tutorial = searchParams.get("tutorial");
                       if (tutorial === "3") {
                         setSearchParams({ ...searchParams, tutorial: 4 })
-                      }
+                      } */
                     }}
                     delay={-1}
                     id="tutorial-3"
