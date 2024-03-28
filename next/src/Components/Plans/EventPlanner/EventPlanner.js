@@ -222,7 +222,7 @@ function EventPlanner({
     year: "numeric",
     month: "long",
   });
-  const [searchParams, setSearchParams] = useSearchParams();
+  //const [searchParams, setSearchParams] = useSearchParams();
   const [lastClick, setLastClick] = useState(new Date().getTime());
 
   function renderEventContent(eventInfo) {

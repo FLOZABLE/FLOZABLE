@@ -1,7 +1,7 @@
 import React from "react";
 import ReactQuill from "react-quill";
 import styles from "./TextEditor.module.css";
-import "react-quill/dist/quill.snow.css";
+//import "react-quill/dist/quill.snow.css";
 import styled from "@emotion/styled";
 
 const StyleWrapper = styled.div`
