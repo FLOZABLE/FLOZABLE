@@ -6,6 +6,8 @@ import MemberTimer from "../MemberTimer/MemberTimer";
 import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 import { DateTime } from "luxon";
 import { socket } from "../../../socket";
+import ContextMenu from "../ContextMenu/ContextMenu";
+import { useContextMenu } from "react-contexify";
 
 function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTransport, isHeadphone }) {
   const [run, setRun] = useState(false);
@@ -13,7 +15,20 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
   const [studyIcon, setStudyIcon] = useState(
     <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />,
   );
-  
+
+  const { show } = useContextMenu({
+    id: "ffffff",
+  });
+
+  function handleContextMenu(event) {
+    show({
+      event,
+      props: {
+        key: 'value'
+      }
+    })
+  }
+
   useEffect(() => {
     if (!memberInfo) return;
 
@@ -76,7 +91,7 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
   }, [memberInfo]);
 
   return (
-    <div className={styles.member}>
+    <div className={styles.member} onContextMenu={handleContextMenu}>
       <MemberCamDisp memberInfo={memberInfo} device={device} isFocus={isFocus} recvTransport={recvTransport} isHeadphone={isHeadphone} />
       <div className={styles.inner}>
         <Link to={`/dashboard/user/${memberInfo.user_id}`}>
