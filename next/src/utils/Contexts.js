@@ -136,6 +136,12 @@ function SubjectsProvider({ children }) {
     }
   }, [userInfo]);
 
+  useEffect(() => {
+    if (!subjects.length) return;
+
+    setPlanModal((prev) => ({...prev, subject: subjects[0].id}))
+  }, [subjects])
+
   return (
     <SubjectsContext.Provider value={{ subjects, setSubjects }}>
       <PlansContext.Provider value={{ plans, setPlans, planModal, setPlanModal }}>
