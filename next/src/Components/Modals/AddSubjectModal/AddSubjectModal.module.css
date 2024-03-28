@@ -1,0 +1,45 @@
+.AddSubjectModal {
+  background-color: #fff;
+  width: 34.375rem;
+  height: fit-content;
+  visibility: hidden;
+  z-index: 7;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+  border-radius: 1.25rem;
+}
+
+.AddSubjectModal .header {
+  background-color: #6f6af8;
+  height: 1.875rem;
+  border-top-right-radius: 1.25rem;
+  border-top-left-radius: 1.25rem;
+  text-align: right;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+.AddSubjectModal .header:hover {
+  cursor: move;
+}
+
+.AddSubjectModal .header i {
+  font-size: 1.875rem;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.625rem;
+  margin-top: 0.1875rem;
+}
+
+.AddSubjectModal .content {
+  padding: 1.875rem 1.25rem;
+}
+
+.AddSubjectModal .content .inputWrapper {
+  margin-bottom: 0.625rem;
+}
+
+.AddSubjectModal .submit {
+  display: flex;
+  justify-content: center;
+}

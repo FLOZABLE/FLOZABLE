@@ -8,7 +8,7 @@ import { SubjectsContext } from "@/utils/Contexts";
 import { updateSubjectsTrendChart } from "@/utils/StatTools";
 
 function StudyTrendChart({
-  viewDate=new Date(),
+  viewDate,
   statsViewer="Daily"
 }) {
   const {subjects} = useContext(SubjectsContext);

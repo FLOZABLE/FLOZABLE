@@ -1,0 +1,183 @@
+.ColorPalette {
+  width: 100%;
+  background-color: transparent;
+  margin-top: 2.5rem;
+}
+
+.ColorPalette .paletteGrid {
+  display: grid;
+  grid-template-columns: repeat(18, 1fr);
+  grid-template-rows: auto;
+  grid-gap: 1.25rem;
+  justify-content: center;
+  padding: 1.25rem;
+  height: 0em;
+  overflow-y: hidden;
+  transition: height .3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.ColorPalette .paletteGrid.open {
+  height: 12.5rem;
+}
+
+.ColorPalette .palette {
+  background: #fff;
+  overflow: hidden;
+  position: relative;
+  top: 0;
+  padding: 0;
+  box-shadow: 0em 0.313rem 1.25rem rgba(128, 128, 128, 0.1);
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  flex-flow: column;
+  transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), margin-left 0.2s ease 0.2s;
+  margin-left: -6.25rem;
+}
+
+.ColorPalette .paletteGrid.open .palette {
+  margin-left: 0em;
+}
+
+.ColorPalette .palette:hover {
+  top: -0.3125rem;
+  box-shadow: 0 0.5rem 1.25rem rgba(128, 128, 128, 0.12);
+}
+
+.ColorPalette .palette {
+  grid-column: span 6;
+}
+
+.ColorPalette .paletteInfo {
+  color: #333;
+  position: relative;
+  flex: 0 0 auto;
+  font-size: 1.438rem;
+  font-weight: 700;
+  padding: 0.75rem;
+  cursor: pointer;
+}
+
+.ColorPalette .paletteInfoHexcode {
+  margin-top: 0.1875rem;
+  font-size: 0.75rem;
+  color: gray;
+}
+
+.ColorPalette .paletteColors {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.ColorPalette .paletteColor {
+  background: var(--bg-color);
+  height: 100%;
+  flex: 1;
+  cursor: pointer;
+}
+
+.ColorPalette .paletteShades {
+  flex: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ColorPalette .paletteShadesItem {
+  flex: 1 1 auto;
+  background: var(--bg-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  position: relative;
+  left: 0.625rem;
+  font-size: 80%;
+}
+
+.ColorPalette .palette:hover .paletteShades {
+  flex: 0 0 40%;
+  transition: 0.2s ease;
+}
+
+.ColorPalette .palette:hover .paletteShadesItem {
+  opacity: 1;
+  left: 0;
+  cursor: pointer;
+}
+
+.ColorPalette .palette:hover .paletteShadesItem:nth-child(1) {
+  transition: 0.2s ease 0.2s;
+}
+
+.ColorPalette .palette:hover .paletteShadesItem:nth-child(2) {
+  transition: 0.2s ease 0.4s;
+}
+
+.ColorPalette .palette:hover .paletteShadesItem:nth-child(3) {
+  transition: 0.2s ease 0.6s;
+}
+
+.ColorPalette .font-white {
+  color: #fff;
+}
+
+@media screen and (max-width: 48rem) {
+  .paletteGrid {
+    grid-template-rows: auto 18.75rem auto repeat(2, 15rem) auto repeat(4, 12.5rem);
+  }
+
+  .palette--secondary-color,
+  .palette--grays {
+    grid-column: span 6;
+  }
+}
+
+/* .palette-headers {
+  margin:  3.75rem 0 1.25rem;
+}
+.palette-headers h1 {
+  margin: 0.625rem 0;
+  text-transform: uppercase;
+  font: 700 2rem "Comfortaa", sans-serif;
+  letter-spacing: 0.25rem;
+}
+.palette-headers h2 {
+  color: #999;
+  line-height: 1.5;
+} */
+.ColorPalette .header {
+  display: flex;
+}
+
+.ColorPalette .header .pTag p {
+  font-size:  1.438rem;
+  font-weight: 700;
+  color: #545454;
+}
+
+.ColorPalette .header .selectedColor {
+  margin-left: 0.625rem;
+  background-color: #fff;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+  width: 3.125rem;
+  height: 3.125rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.625rem;
+  cursor: pointer;
+}
+
+@media (max-width: 87.5rem) {
+  .ColorPalette .header p {
+  }
+
+  .ColorPalette .paletteShadesItem {
+  }
+}

@@ -1,4 +1,5 @@
 import ct from 'countries-and-timezones';
+import config from './config';
 
 function filterGroups(userInfo, groups) {
   const userGroups = [];
@@ -123,4 +124,56 @@ function generateRandomId(length) {
   return randomId;
 };
 
-export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange, durationFormatter, focusCalculator, generateRandomId };
+
+function requestNotification() {
+  if (!('serviceWorker' in navigator)) {
+    // Service Worker isn't supported on this browser, disable or hide UI.
+    return;
+  }
+
+  if (!('PushManager' in window)) {
+    // Push isn't supported on this browser, disable or hide UI.
+    return;
+  }
+
+  if (Notification.permission === "granted") {
+    return true;
+  };
+
+  Notification.requestPermission().then(async (permission) => {
+    if (permission === "granted") {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscribeUserToPush();
+      } else if (permission === 'denied') {
+        // User has blocked notifications
+        // Handle this case accordingly
+      };
+    };
+
+
+  });
+  return false;
+}
+
+async function subscribeUserToPush() {
+  try {
+    navigator.serviceWorker.register('/service-worker.js');
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: 'BLA00cufFwkKvcgi4-4TEGnZfoKqdQofWox2I4QJk5QCM-7MkTCSjGQE7AhbHAQcx6LbJbuFKe0LDhI4J-krUAY',
+    });
+    const response = await fetch(`${config.server}/account/notification-subscribe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subscription: subscription }),
+    }).then(res => res.json());
+
+  } catch (error) {
+    console.error('Error subscribing to push notifications:', error);
+  }
+}
+
+export { cyrb128, filterGroups, getCountryCode, secondConverter, randomIntInRange, durationFormatter, focusCalculator, generateRandomId, requestNotification };

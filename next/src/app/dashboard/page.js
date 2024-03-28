@@ -18,6 +18,7 @@ export default function Dashboard() {
           <div className={styles.boxesContainer} >
             <div className={styles.box} id={styles.subjectsTrend}>
               <StudyTrendChart
+                viewDate={new Date()}
               />
             </div>
             <div className={styles.smallBoxesWrapper}  >
@@ -34,7 +35,7 @@ export default function Dashboard() {
                     </i>
                   </div>
                   <div className={styles.friendsRankingWrapper}>
-                    <FriendsRankingViewer 
+                    <FriendsRankingViewer
                     />
                   </div>
                 </div>
