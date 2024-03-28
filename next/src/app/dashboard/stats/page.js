@@ -1,19 +1,19 @@
 "use client";
 
-/* import CalendarModal from "@/Components/Modals/CalendarModal/CalendarModal";
-import styles from "./page.module.css"; */
+import CalendarModal from "@/Components/Modals/CalendarModal/CalendarModal";
+import styles from "./page.module.css";
 import { useContext, useEffect, useRef, useState } from "react";
-/* import DateSelectorBtn from "@/Components/Buttons/DateSelectorBtn/DateSelectorBtn";
+import DateSelectorBtn from "@/Components/Buttons/DateSelectorBtn/DateSelectorBtn";
 import RadioBtn from "@/Components/Buttons/RadioBtn/RadioBtn";
 import SubjectsPie from "@/Components/Charts/SubjectsPie";
-import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from "@/utils/Svg"; */
+import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from "@/utils/Svg";
 import { SubjectsContext } from "@/utils/Contexts";
 import { focusCalculator, secondConverter } from "@/utils/Tool";
 import { DateTime } from "luxon";
-/* import StudyTrendChart from "@/Components/Charts/StudyTrendChart";
+import StudyTrendChart from "@/Components/Charts/StudyTrendChart";
 import { CartesianGrid, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { PieCustomTooltip } from "@/Components/Charts/Charts";
-import RankingTrend from "@/Components/Charts/RankingTrendChart"; */
+import RankingTrend from "@/Components/Charts/RankingTrendChart";
 
 function Stats({}) {
   const {subjects} = useContext(SubjectsContext);
@@ -80,7 +80,7 @@ function Stats({}) {
 
   return (
     <div>
-      {/* <CalendarModal
+      <CalendarModal
         isCalendarOpen={isCalendarOpen}
         setIsCalendarOpen={setIsCalendarOpen}
         updateViewDate={setViewDate}
@@ -242,7 +242,7 @@ function Stats({}) {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }

@@ -7,8 +7,6 @@ import { IconBxHome, IconClipboardOutline, IconGalleryLine, IconPeople16, IconRa
 import { useSearchParams } from "next/navigation";
 
 function Sidebar({
-  tutorialBoxRef,
-  tutorialTextRef,
 }) {
 
   //const [searchParams, setSearchParams] = useSearchParams();

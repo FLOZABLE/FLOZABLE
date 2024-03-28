@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./page.module.css";
-/* import { GoogleOAuthProvider } from "@react-oauth/google";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import EventPlanner from "@/Components/Plans/EventPlanner/EventPlanner";
 import RadioBtn from "@/Components/Buttons/RadioBtn/RadioBtn";
 import GoogleLoginBtn from "@/Components/Buttons/GoogleLoginBtn/GoogleLoginBtn";
 import SmallCalendar from "@/Components/Plans/SmallCalendar/SmallCalendar";
-import PlanTimeline from "@/Components/Plans/PlanTimeline/PlanTimeline"; */
+import PlanTimeline from "@/Components/Plans/PlanTimeline/PlanTimeline";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -39,7 +39,7 @@ function Planner({}) {
 
   return (
     <div>
-      {/* <div className={`Main`}>
+      <div className={`Main`}>
         <div className="title">Planner</div>
         <div className={styles.Planner}>
           <div className={styles.header}>
@@ -89,7 +89,7 @@ function Planner({}) {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }
