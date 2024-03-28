@@ -25,7 +25,7 @@ function PlanTimeline({
 
   const [planSeries, setPlanSeries] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
-  const searchParams = useSearchParams();
+  //const searchParams = useSearchParams();
   const addBtnRef = useRef(null);
 
   const togglePlan = (plan) => {
@@ -114,7 +114,7 @@ function PlanTimeline({
     setFilteredPlans(plans.filter(plan => isInViewRange(plan)));
   }, [plans, viewMode, viewDate, subjects]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!searchParams) return;
 
     const tutorial = searchParams.get("tutorial");
@@ -132,9 +132,8 @@ function PlanTimeline({
         tutorialTextRef.current.style.top = top + 80 + 'px'
 
       }, 1000);
-      /* hole.style.height = top + 'px'; */
     };
-  }, [searchParams]);
+  }, [searchParams]); */
 
 
   return (

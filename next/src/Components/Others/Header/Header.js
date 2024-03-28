@@ -27,12 +27,12 @@ function Header({
   const [studyStreak, setStudyStreak] = useState('0 day'); //days of consecutive study
 
 
-  const searchParams = useSearchParams();
+  //const searchParams = useSearchParams();
   const studyBtnRef = useRef(null);
 
   const [tutorial, setTutorial] = useState(null);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!searchParams) return;
 
     const tutorial = searchParams.get("tutorial");
@@ -49,7 +49,7 @@ function Header({
       tutorialTextRef.current.style.right = 30 + 'px';
       tutorialTextRef.current.innerText = "Click here to start a study session!";
     }
-  }, [searchParams]);
+  }, [searchParams]); */
 
   useEffect(() => {
     if (!subjects.daily) return;

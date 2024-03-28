@@ -36,7 +36,7 @@ function SelectIcon({
           }}
         >
           {!selectedIcon.el ? (
-            <p>Select Subject's Icon!</p>
+            <p>Select Subject&#39;s Icon!</p>
           ) : (
             <p>Selected Icon: </p>
           )}
@@ -61,7 +61,7 @@ function SelectIcon({
               key={i}
               onClick={() => {
                 handleSelect({
-                  name: "WritePen",
+                  name: subject,
                   el: (
                     subjectIcons[subject]
                   ),

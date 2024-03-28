@@ -11,19 +11,19 @@ function Sidebar({
   tutorialTextRef,
 }) {
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  //const [searchParams, setSearchParams] = useSearchParams();
   const toPlannerRef = useRef(null);
   const toStatsRef = useRef(null);
   const toGroupsRef = useRef(null);
   const [tutorial, setTutorial] = useState(null);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!searchParams) return;
 
-    /* const tutorial = searchParams.get("tutorial");
+    const tutorial = searchParams.get("tutorial");
     if (!tutorial) {
       return;
-    }; */
+    };
 
     if (parseInt(tutorial) === 10) {
       setTutorial(10);
@@ -38,7 +38,7 @@ function Sidebar({
         tutorialTextRef.current.style.left = left - 20 + 'px';
         tutorialTextRef.current.innerText = "Navigate to your stats with the sidebar";
       }, 500);
-    } /* else if (tutorial === "12") {
+    } else if (tutorial === "12") {
       setTutorial(12);
       const { width, top, left, height, bottom } = toGroupsRef.current.getBoundingClientRect();
       hole.style.left = left + 'px';
@@ -49,8 +49,8 @@ function Sidebar({
       text.style.top = top + height + 30 + 'px';
       text.style.left = left + 'px';
       text.innerText = "Let's go to groups page!";
-    } */
-  }, [searchParams]);
+    }
+  }, [searchParams]); */
 
   return (
     <aside className={styles.Sidebar}>

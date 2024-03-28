@@ -1,0 +1,5 @@
+function DynamicComponent() {
+  return (
+    <></>
+  )
+}
