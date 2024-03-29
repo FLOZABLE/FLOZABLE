@@ -16,6 +16,7 @@ const TutorialsContext = createContext({});
 const ResponseContext = createContext({});
 const GroupsContext = createContext({});
 const ModalsContext = createContext({});
+const CallOptionsContext = createContext({});
 
 function AppProvider({ children }) {
   return (
@@ -25,7 +26,9 @@ function AppProvider({ children }) {
           <ModalsProvider>
             <ResponseProvider>
               <TutorialsProvider>
-                {children}
+                <CallOptionsProvider>
+                  {children}
+                </CallOptionsProvider>
               </TutorialsProvider>
             </ResponseProvider>
           </ModalsProvider>
@@ -139,7 +142,7 @@ function SubjectsProvider({ children }) {
   useEffect(() => {
     if (!subjects.length) return;
 
-    setPlanModal((prev) => ({...prev, subject: subjects[0].id}))
+    setPlanModal((prev) => ({ ...prev, subject: subjects[0].id }))
   }, [subjects])
 
   return (
@@ -229,5 +232,16 @@ function TutorialsProvider({ children }) {
   )
 };
 
+function CallOptionsProvider({ children }) {
+  const [isCam, setIsCam] = useState(false);
+  const [isMic, setIsMic] = useState(false);
+  const [isHeadphone, setIsHeadphone] = useState(false);
 
-export { AppProvider, AuthContext, UserInfoContext, NotificationsContext, SubjectsContext, PlansContext, GroupsContext, ResponseContext, ModalsContext, TutorialsContext };
+  return (
+    <CallOptionsContext.Provider value={{ isCam, setIsCam, isMic, setIsMic, isHeadphone, setIsHeadphone }}>
+      {children}
+    </CallOptionsContext.Provider>
+  )
+}
+
+export { AppProvider, AuthContext, UserInfoContext, NotificationsContext, SubjectsContext, PlansContext, GroupsContext, ResponseContext, ModalsContext, TutorialsContext, CallOptionsContext };

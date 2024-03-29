@@ -1,0 +1,44 @@
+:root {
+  --bgColor: #000000c3;
+}
+
+.MyGroupsViewer {
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+  /* Standard syntax */
+  height: 100%;
+}
+
+.MyGroupsViewer .noGroup {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-top: 32vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.MyGroupsViewer .Swiper {
+  height: 100%;
+}
+
+.MyGroupsViewer .slide {
+  position: relative;
+}
+
+.MyGroupsViewer .slide .inner {
+  width: 90%;
+  margin-left: 5%;
+}
+
+
+.MyGroupsViewer .groupsWrapper {
+  height: 100%;
+}
+
+.MyGroupsViewer.study *:not(svg, path) {
+  color: #fff;
+}
