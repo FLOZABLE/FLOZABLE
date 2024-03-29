@@ -77,7 +77,7 @@ function Groups({
 
   return (
     <div>
-      <ContextMenu MENU_ID="ffffff" rightClickedMember={rightClickedMember}/>
+      <ContextMenu MENU_ID="ffffff" rightClickedMember={rightClickedMember} setResponse={setResponse}/>
       <CreateGroupModal
         isOpen={isCreateNewGroup}
         setIsOpen={setIsCreateNewGroup}

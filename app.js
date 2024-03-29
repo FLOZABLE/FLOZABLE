@@ -208,11 +208,11 @@ app.get('*', function (req, res) {
 require('./Logger');
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
-//createGroups(5);
+//createGroups(10);
 //botManager(210);
 //deleteBots();
 //addId();
-//createBots(200); 
+//createBots(50); 
 //createBotRankings();
 
 const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode, createDevicesTable } = require('./query');
