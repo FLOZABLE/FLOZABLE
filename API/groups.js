@@ -159,14 +159,6 @@ Router.post('/create-validate', async (req, res) => {
 })
 
 Router.post('/join/:id', async (req, res) => {
-  /* const sessionDataHeader = req.headers['x-session-data'];
-  if (sessionDataHeader) {
-    const sessionData = JSON.parse(sessionDataHeader);
-    if (sessionData.user_id && sessionData.loggedin) {
-      req.session.user_id = sessionData.user_id;
-      req.session.loggedin = sessionData.loggedin;
-    }
-  }; */
 
   autoSignin(req, res, (async (userId) => {
     const groupId = req.params.id;
@@ -312,6 +304,40 @@ Router.get('/mine', async (req, res) => {
     }
   }));
 });
+
+Router.post("/remove-member", async (req, res) => {
+  const { memberId, groupId } = req.body;
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const connection = pool.promise();
+      const [[group]] = await connection.query("SELECT leader, name, members FROM groups WHERE group_id = ?", [groupId]);
+      console.log(group);
+
+      if (group.leader != userId) {
+        return res.send({ success: false, reason: "You do not have the permission to remove members" })
+      }
+      else {
+        let oldMembers = group.members.split(",");
+        oldMembers = oldMembers.filter((mem) => mem != memberId);
+        const updateGroup = await connection.query("UPDATE groups SET members = ? WHERE group_id = ?", [oldMembers.join(","), groupId]);
+
+        let groups = await groupCache(memberId);
+        groups = groups.filter((g) => g != groupId);
+        redisClient.hSet(`user:${memberId}`, 'groups', groups.join(','));
+
+        redisClient.sRem(`room:${groupId}`, memberId);
+
+        mainIo.to(userId).emit('update groups');
+        mainIo.to(memberId).emit('update groups');
+
+        return res.send({ success: true });
+      }
+
+    } catch (err) {
+      console.log(err);
+    }
+  }))
+})
 
 Router.post('/like/:id', async (req, res) => {
   autoSignin(req, res, (async (userId) => {

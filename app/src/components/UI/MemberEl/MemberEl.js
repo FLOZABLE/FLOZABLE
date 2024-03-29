@@ -9,26 +9,12 @@ import { socket } from "../../../socket";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import { useContextMenu } from "react-contexify";
 
-function MemberEl({ memberInfo, setStudyingMembers, setRightClickedMember, device, isFocus, recvTransport, isHeadphone }) {
+function MemberEl({ userInfo, memberInfo, groupInfo, setStudyingMembers, setRightClickedMember, device, isFocus, recvTransport, isHeadphone }) {
   const [run, setRun] = useState(false);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
     <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />,
   );
-
-  const { show } = useContextMenu({
-    id: "ffffff",
-  });
-
-  function handleContextMenu(event) {
-    setRightClickedMember(memberInfo);
-    show({
-      event,
-      props: {
-        key: 'value'
-      }
-    })
-  }
 
   useEffect(() => {
     if (!memberInfo) return;
@@ -92,7 +78,7 @@ function MemberEl({ memberInfo, setStudyingMembers, setRightClickedMember, devic
   }, [memberInfo]);
 
   return (
-    <div className={styles.member} onContextMenu={handleContextMenu}>
+    <div className={styles.member}>
       <MemberCamDisp memberInfo={memberInfo} device={device} isFocus={isFocus} recvTransport={recvTransport} isHeadphone={isHeadphone} />
       <div className={styles.inner}>
         <Link to={`/dashboard/user/${memberInfo.user_id}`}>
