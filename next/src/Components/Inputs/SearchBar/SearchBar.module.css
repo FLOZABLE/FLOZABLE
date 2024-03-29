@@ -1,0 +1,90 @@
+.SearchBar {
+  margin-top: 0.625rem;
+  width: 100%;
+  position: relative;
+  height: 3.125rem;
+}
+
+.SearchBar .inputContainer {
+  background-color: var(--blue0);
+  border-radius: 1.875rem;
+  height: 3rem;
+  overflow: hidden;
+
+}
+
+.SearchBar .inputContainer input {
+  margin-left: 1.25rem;
+  font-size: 1.25rem;
+  width: calc(100% - 2.5rem);
+  height: 100%;
+  border: none;
+  background-color: transparent;
+}
+
+.SearchBar i {
+  position: absolute;
+  right: 0em;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size:  1.563rem;
+  height: 2.5rem;
+  width: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 0.625rem;
+  cursor: pointer;
+  background-color: var(--blue0);
+  border-radius: 1.875rem;
+}
+
+.SearchBar .circles {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+@keyframes blink {
+  0% {
+    opacity: .1;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: .1;
+  }
+}
+
+.SearchBar .circles div {
+  width: 0.625rem;
+  height: 0.625rem;
+  margin: 0.313rem;
+  border-radius: 0.313rem;
+  background-color: #000;
+  transition: .3s ease-in-out opacity;
+  opacity: 1;
+}
+
+
+.SearchBar input:focus ~ .circles .circleOne {
+  animation: blink 1.5s infinite;
+}
+
+.SearchBar input:focus ~ .circles .circleTwo {
+  animation: blink 1.5s infinite;
+  animation-delay: .2s;
+}
+
+.SearchBar input:focus ~ .circles .circleThree {
+  animation: blink 1.5s infinite;
+  animation-delay: .4s;
+}
+
+.SearchBar .circles.hidden  {
+  visibility: hidden;
+}

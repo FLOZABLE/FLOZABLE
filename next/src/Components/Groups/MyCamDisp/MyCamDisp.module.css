@@ -1,0 +1,13 @@
+.MyCamDisp {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  top: 0em;
+  height: 100%;
+}
+
+.MyCamDisp .video {
+  min-width: 100%;
+}
