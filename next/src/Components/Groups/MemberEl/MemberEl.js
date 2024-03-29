@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styles from "./MemberEl.module.css";
-import { Link } from "react-router-dom";
-import { StudyPerson, RestPerson } from "../../../utils/svgs";
-import MemberTimer from "../MemberTimer/MemberTimer";
-import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 import { DateTime } from "luxon";
-import { socket } from "../../../socket";
-import { useContextMenu } from "react-contexify";
+import { RestPerson, StudyPerson } from "@/utils/Svg";
+import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
+import { socket } from "@/utils/socket";
+import Link from "next/link";
+import MemberTimer from "../MemberTimer/MemberTimer";
 
 function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
   const [run, setRun] = useState(false);
@@ -14,19 +13,6 @@ function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
   const [studyIcon, setStudyIcon] = useState(
     <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />,
   );
-
-  const { show } = useContextMenu({
-    id: "ffffff",
-  });
-
-  function handleContextMenu(event) {
-    show({
-      event,
-      props: {
-        key: 'value'
-      }
-    })
-  }
 
   useEffect(() => {
     if (!memberInfo) return;
@@ -90,10 +76,10 @@ function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
   }, [memberInfo]);
 
   return (
-    <div className={styles.member} onContextMenu={handleContextMenu}>
-      <MemberCamDisp memberInfo={memberInfo} device={device} isFocus={isFocus} recvTransport={recvTransport} isHeadphone={isHeadphone} />
+    <div className={styles.member}>
+      <MemberCamDisp memberInfo={memberInfo} device={device} recvTransport={recvTransport} />
       <div className={styles.inner}>
-        <Link to={`/dashboard/user/${memberInfo.user_id}`}>
+        <Link href={`/dashboard/user/${memberInfo.user_id}`}>
           <div className={styles.userName}>{memberInfo.name}</div>
         </Link>
         <div className={styles.icon}>{studyIcon}</div>

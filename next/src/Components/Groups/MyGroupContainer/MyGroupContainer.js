@@ -1,13 +1,16 @@
 import styles from "./MyGroupContainer.module.css";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import config from "@/utils/config";
+import Link from "next/link";
+import { ModalsContext } from "@/utils/Contexts";
+import GroupUrlBtn from "@/Components/Buttons/GroupUrlBtn/GroupUrlBtn";
 import {
   IconMessage,
   IconTimerOutline,
   StudyPerson,
   IconPen,
-} from "../../../utils/svgs";
-import config from "@/utils/config";
-import Link from "next/link";
+} from "@/utils/Svg";
+import MembersContainer from "../MembersContainer/MembersContainer";
 
 
 function MyGroupContainer({
@@ -16,6 +19,8 @@ function MyGroupContainer({
   setIsEditGroupModal,
   isMine
 }) {
+  const { setIsChatModal } = useContext(ModalsContext);
+
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
   const [groupTotal, setGroupTotal] = useState(0);
@@ -23,7 +28,7 @@ function MyGroupContainer({
   useEffect(() => {
     if (!group) return;
 
-    const {group_id} = group;
+    const { group_id } = group;
 
     fetch(`${config.server}/groups/members?groupId=${group_id}`, {
       method: "get",
@@ -97,7 +102,7 @@ function MyGroupContainer({
           </div>
           <div className={styles.urlBtnWrapper}>
             <GroupUrlBtn
-              text={`${serverOrigin}/dashboard/groups?joinId=${group.group_id}`}
+              text={`${config.server}/dashboard/groups?joinId=${group.group_id}`}
               copyText="Share"
               bgColor="var(--dark-gray)"
             />

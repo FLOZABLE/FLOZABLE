@@ -1,6 +1,14 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./page.module.css";
 import GroupPwModal from "@/Components/Modals/GroupPwModal/GroupPwModal";
+import MyGroupsViewer from "@/Components/Groups/MyGroupsViewer/MyGroupsViewer";
+import CreateGroupModal from "@/Components/Modals/CreateGroupModal/CreateGroupModal";
+import TagContainerGen from "@/Components/Inputs/TagContainerGen/TagContainerGen";
+import SearchBar from "@/Components/Inputs/SearchBar/SearchBar";
+import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
+import GroupsContainer from "@/Components/Groups/GroupsContainer/GroupsContainer";
 
 function Groups({
   userInfo,
@@ -18,7 +26,6 @@ function Groups({
   const [searchQuery, setSearchQuery] = useState("");
   const [isGroupPwModal, setIsGroupPwModal] = useState(false);
   const [joinTarget, setJoinTarget] = useState(null);
-  const [myTimerTotal, setMyTimerTotal] = useState(0);
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
   const [joinByLink, setJoinByLink] = useState(false);
   const [isEditGroupModal, setIsEditGroupModal] = useState(false);
@@ -28,17 +35,6 @@ function Groups({
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
   };
-
-  useEffect(() => {
-    if (
-      subjects.daily &&
-      subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1]
-    ) {
-      setMyTimerTotal(
-        subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1],
-      );
-    }
-  }, [subjects]);
 
 
   useEffect(() => {
@@ -71,13 +67,13 @@ function Groups({
         setJoinByLink={setJoinByLink}
         groupsViewerRef={groupsViewerRef}
       />
-      <EditGroupModal
+      {/* <EditGroupModal
         setCreateGroupResponse={setResponse}
         setIsOpen={setIsEditGroupModal}
         isOpen={isEditGroupModal}
         setMyGroups={setMyGroups}
         myGroups={myGroups}
-      />
+      /> */}
       <div
         className={`Main`}
       >
@@ -87,10 +83,6 @@ function Groups({
         <div className={styles.Groups}>
           <div className={styles.box}>
             <MyGroupsViewer
-              myGroups={myGroups}
-              userInfo={userInfo}
-              myTimerTotal={myTimerTotal}
-              setIsChatModal={setIsChatModal}
               groupsViewerRef={groupsViewerRef}
               setIsEditGroupModal={setIsEditGroupModal}
             />
@@ -126,20 +118,9 @@ function Groups({
               </div>
             </div>
             <div className={styles.groupsWrapper}>
-              <GroupsGen
-                myGroups={myGroups}
-                setMyGroups={setMyGroups}
-                groups={otherGroups}
-                setOtherGroups={setOtherGroups}
-                setJoinGroupResponse={setResponse}
-                setIsGroupPwModal={setIsGroupPwModal}
-                setJoinTarget={setJoinTarget}
-                setJoinByLink={setJoinByLink}
-                searchQuery={searchQuery}
-                userInfo={userInfo}
+              <GroupsContainer
                 queryTags={tags}
-                groupsViewerRef={groupsViewerRef}
-                setResponse={setResponse}
+                searchQuery={searchQuery}
               />
             </div>
           </div>
