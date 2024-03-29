@@ -15,7 +15,9 @@ const StyleWrapper = styled.div`
     }
 `;
 
-function ContextMenu({ MENU_ID, rightClickedMember }) {
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
+function ContextMenu({ MENU_ID, rightClickedMember, setResponse }) {
 
     const [memberName, setMemberName] = useState("");
     const [memberId, setMemberId] = useState("");
@@ -23,17 +25,40 @@ function ContextMenu({ MENU_ID, rightClickedMember }) {
 
 
     const handleItemClick = ({ id, event, props }) => {
-        switch (id) {
-            case "copy":
-                console.log(event, props)
-                break;
-            case "cut":
-                console.log(event, props);
-                break;
-            case "kick":
-                setKickClicked(true);
+        if (id === "kick") {
+            setKickClicked(true);
+        }
+        else if (id === "confirmKick") {
+            fetch(`${serverOrigin}/groups/remove-member`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        groupId: rightClickedMember.groupId,
+                        memberId: rightClickedMember.user_id
+                    })
+                }
+            ).then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                if (data.success){
+                    setResponse({success: true, msg: `Removed ${memberName}`});
+                }
+                else{
+                    setResponse(data);
+                }
+            }).catch((err) => {console.log(err)});
+        }
+        else {
+            setKickClicked(false);
         }
     }
+
+    useEffect(() => {
+        setKickClicked(false)
+    }, [memberId]);
 
     useEffect(() => {
         if (!rightClickedMember) return;
@@ -47,13 +72,11 @@ function ContextMenu({ MENU_ID, rightClickedMember }) {
                 <Item id="mute" onClick={handleItemClick}>Mute {memberName}</Item>
                 <Item id="deafen" onClick={handleItemClick}>Deafen {memberName}</Item>
                 <Item id="cut" onClick={handleItemClick}>Stop Video</Item>
-                <Item id="kick" type="danger" onClick={handleItemClick} closeOnClick={false}>{kickClicked ? "Kick?" : `Kick ${memberName}`}</Item>
                 {
-                    /*
-                    <Submenu label="Foobar">
-                        <Item id="something" onClick={handleItemClick}>Do something else</Item>
-                    </Submenu>
-                    */
+                    kickClicked ?
+                        <Item id="confirmKick" type="danger" onClick={handleItemClick}>Kick?</Item>
+                        :
+                        <Item id="kick" type="danger" onClick={handleItemClick} closeOnClick={false}> Kick {memberName}</Item>
                 }
             </Menu>
         </StyleWrapper>
