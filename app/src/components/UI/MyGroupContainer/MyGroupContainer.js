@@ -12,7 +12,7 @@ import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal, setIsGroupRankingModal, setIsEditGroupModal, mode, isHeadphone }) {
+function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal, setIsGroupRankingModal, setIsEditGroupModal, mode, isHeadphone, setRightClickedMember }) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -96,15 +96,15 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
           </div>
           {
             isMyGroup ?
-            <div className={styles.editIcon} onClick={() => {
-              setIsEditGroupModal((prev) => { return prev ? false : group });
-            }} >
-              <i>
-                <IconPen />
-              </i>
-            </div>
-            :
-            <div />
+              <div className={styles.editIcon} onClick={() => {
+                setIsEditGroupModal((prev) => { return prev ? false : group });
+              }} >
+                <i>
+                  <IconPen />
+                </i>
+              </div>
+              :
+              <div />
           }
         </div>
         <div className={styles.buttons}>
@@ -131,6 +131,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
           isMic={isMic}
           isCam={isCam}
           isHeadphone={isHeadphone}
+          setRightClickedMember={setRightClickedMember}
         />
       </div>
     </div>

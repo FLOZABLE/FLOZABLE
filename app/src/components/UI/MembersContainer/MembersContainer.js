@@ -9,7 +9,7 @@ import ContextMenu from "../ContextMenu/ContextMenu";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 window.localStorage.setItem('debug', 'mediasoup-client:WARN* mediasoup-client:ERROR*');
 
-function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, members, setMembers, isCam, isMic, isHeadphone }) {
+function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, members, setMembers, setRightClickedMember, isCam, isMic, isHeadphone }) {
   const [membersEl, setMembersEl] = useState([]);
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
   const [videoStream, setVideoStream] = useState(null);
@@ -219,6 +219,7 @@ function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, me
         return (
           <MemberEl
             memberInfo={memberInfo}
+            setRightClickedMember={setRightClickedMember}
             key={i}
             setStudyingMembers={setStudyingMembers}
             isFocus={isFocus}
@@ -235,7 +236,6 @@ function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, me
   return (
     <div className={styles.MembersContainer}>
       {membersEl}
-      <ContextMenu MENU_ID="ffffff" />
     </div>
   )
 };

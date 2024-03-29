@@ -11,6 +11,7 @@ import MyGroupsViewer from "../../UI/MyGroupsViewer/MyGroupsViewer";
 import CreateGroupModal from "../../UI/CreateGroupModal/CreateGroupModal";
 import EditGroupModal from "../../UI/EditGroupModal/EditGroupModal";
 import BlobBtn from "../../UI/BlobBtn/BlobBtn";
+import ContextMenu from "../../UI/ContextMenu/ContextMenu";
 
 function Groups({
   userInfo,
@@ -34,6 +35,7 @@ function Groups({
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
   const [joinByLink, setJoinByLink] = useState(false);
   const [isEditGroupModal, setIsEditGroupModal] = useState(false);
+  const [rightClickedMember, setRightClickedMember] = useState(null);
 
   const groupsViewerRef = useRef(null);
 
@@ -75,6 +77,7 @@ function Groups({
 
   return (
     <div>
+      <ContextMenu MENU_ID="ffffff" rightClickedMember={rightClickedMember}/>
       <CreateGroupModal
         isOpen={isCreateNewGroup}
         setIsOpen={setIsCreateNewGroup}
@@ -116,6 +119,7 @@ function Groups({
               setIsChatModal={setIsChatModal}
               groupsViewerRef={groupsViewerRef}
               setIsEditGroupModal={setIsEditGroupModal}
+              setRightClickedMember={setRightClickedMember}
             />
           </div>
           <div className={styles.box}>
