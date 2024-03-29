@@ -3,7 +3,7 @@ import styles from "./GroupPwModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faLock, faXmark } from "@fortawesome/free-solid-svg-icons";
 import config from "@/utils/config";
-import GroupViewer from "@/Components/Groups/GroupViewer/GroupViewer";
+import GroupContainer from "@/Components/Groups/GroupContainer/GroupContainer";
 import { GroupsContext, ResponseContext } from "@/utils/Contexts";
 import CustomInput from "@/Components/Inputs/CustomInput/CustomInput";
 import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
@@ -74,10 +74,10 @@ function GroupPwModal({
       <div>
         <div className={styles.groupWrapper}>
           {
-            joinByLink ?
+            joinByLink || ! groupInfo ?
               <></>
               :
-              <GroupViewer
+              <GroupContainer
                 groupInfo={groupInfo}
               />
           }

@@ -1,8 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./MemberCamDisp.module.css";
 import { mediaSocket } from "@/utils/mediaSocket";
+import { IconCameraVideoFill, IconCameraVideoOffFill, IconMicFill, IconMicMuteFill } from "@/utils/Svg";
+import { CallOptionsContext } from "@/utils/Contexts";
 
-function MemberCamDisp({ memberInfo, device, recvTransport, isHeadphone }) {
+function MemberCamDisp({ memberInfo, device, recvTransport }) {
+  const {isHeadphone} = useContext(CallOptionsContext);
+  
   const videoRef = useRef(null);
   const audioRef = useRef(null);
   const [isAudio, setIsAudio] = useState(false);
@@ -121,7 +125,7 @@ function MemberCamDisp({ memberInfo, device, recvTransport, isHeadphone }) {
 
   useEffect(() => {
     if (!audioRef || !audioRef.current) return;
-    
+
     if (isHeadphone) {
       audioRef.current.play();
     } else {
@@ -132,12 +136,12 @@ function MemberCamDisp({ memberInfo, device, recvTransport, isHeadphone }) {
   return (
     <div className={styles.MemberCamDisp}>
       <div className={styles.icons}>
-      <i style={{fontSize: '0.9375rem'}}>
-      {isAudio ? <IconMicFill /> : <IconMicMuteFill />}
-      </i>
-      <i style={{fontSize: '0.9375rem'}}>
-      {isVideo ? <IconCameraVideoFill /> : <IconCameraVideoOffFill />}
-      </i>
+        <i style={{ fontSize: '0.9375rem' }}>
+          {isAudio ? <IconMicFill /> : <IconMicMuteFill />}
+        </i>
+        <i style={{ fontSize: '0.9375rem' }}>
+          {isVideo ? <IconCameraVideoFill /> : <IconCameraVideoOffFill />}
+        </i>
       </div>
       <video
         muted={true}

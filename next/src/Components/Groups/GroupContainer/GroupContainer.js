@@ -1,17 +1,24 @@
 import React, { useContext } from "react";
-import styles from "./GroupViewer.module.css";
+import styles from "./GroupContainer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullseye, faHeart, faPeopleGroup, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
 import { UserInfoContext } from "@/utils/Contexts";
 import config from "@/utils/config";
+import GroupMemCounter from "../GroupMemCounter/GroupMemCounter";
+import GroupTimeCounter from "../GroupTimeCounter/GroupTimeCounter";
+import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
+import Link from "next/link";
+import LikeBtn from "@/Components/Buttons/LikeBtn/LikeBtn";
+import GroupUrlBtn from "@/Components/Buttons/GroupUrlBtn/GroupUrlBtn";
 
-function GroupViewer({ groupInfo }) {
+function GroupContainer({ groupInfo }) {
   const {userInfo} = useContext(UserInfoContext);
+  console.log('gddddd', groupInfo)
 
   return (
     <div
-      className={styles.GroupViewer}
+      className={styles.GroupContainer}
     >
       <div className={styles.contents}>
         <div className={`${styles.name} overflowDot`} style={{ background: `linear-gradient(to left, ${groupInfo?.color}, 70%, ${groupInfo?.color}00)` }} >
@@ -39,13 +46,13 @@ function GroupViewer({ groupInfo }) {
             <i>
               <FontAwesomeIcon icon={faStopwatch} />
             </i>
-            <GroupTimeCounter members={groupInfo?.members.split(",").filter(Boolean)} />
+            <GroupTimeCounter members={groupInfo ? groupInfo.members.split(",").filter(Boolean) : []} />
           </div>
           <div>
             <i>
               <FontAwesomeIcon icon={faHeart} />
             </i>
-            <GroupLikesCounter initialMembers={groupInfo?.likes.split(",").filter(Boolean)} groupId={groupInfo?.group_id} />
+            <GroupLikesCounter initialMembers={groupInfo ? groupInfo.likes.split(",").filter(Boolean) : []} groupId={groupInfo?.group_id} />
           </div>
         </div>
         <div className={`${styles.tags} hiddenScroll`}>
@@ -63,14 +70,14 @@ function GroupViewer({ groupInfo }) {
         {
           groupInfo?.members.split(",").includes(userInfo?.user_id) ?
             <Link 
-              to={`/dashboard/study?group=${groupInfo?.group_id}`}
+              href={`/dashboard/study?group=${groupInfo?.group_id}`}
             className={styles.joinBtn}
             >
               Join the session
             </Link>
             :
-            <Link 
-              to={`/dashboard/groups?joinId=${groupInfo?.group_id}`}
+            <Link
+              href={`/dashboard/groups?joinId=${groupInfo?.group_id}`}
             className={styles.joinBtn}
             >
               Join
@@ -84,4 +91,4 @@ function GroupViewer({ groupInfo }) {
   );
 };
 
-export default GroupViewer;
+export default GroupContainer;

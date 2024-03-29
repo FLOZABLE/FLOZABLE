@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from "react";
-import styles from "./MemberEl.module.css";
+import React, { useContext, useEffect, useState } from "react";
+import styles from "./MyEl.module.css";
 import { DateTime } from "luxon";
 import { RestPerson, StudyPerson } from "@/utils/Svg";
-import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 import { socket } from "@/utils/socket";
-import Link from "next/link";
-import MemberTimer from "../MemberTimer/MemberTimer";
+import MyCamDisp from "../MyCamDisp/MyCamDisp";
+import MyTimer from "../MyTimer/MyTimer";
+import { UserInfoContext } from "@/utils/Contexts";
 
-function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
-  const [run, setRun] = useState(false);
+function MyEl({ setStudyingMembers, audioStream, videoStream, device }) {
+  const {userInfo} = useContext(UserInfoContext);
+
+  const [run, setRun] = useState(0);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
     <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />,
   );
 
   useEffect(() => {
-    if (!memberInfo) return;
-
-    const { totalTime, activeSubject, user_id } = memberInfo;
+    if (!userInfo) return;
+    const { totalTime, activeSubject, user_id } = userInfo;
 
     if (activeSubject) {
       const { id, time } = activeSubject;
@@ -40,8 +41,8 @@ function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
       setTotal(parseInt(totalTime));
     };
 
-
     const onStudying = () => {
+      setRun(true);
       setStudyIcon(
         <StudyPerson
           opt1={"#fff"}
@@ -50,11 +51,11 @@ function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
           height={"2.5rem"}
         />
       );
-      setStudyingMembers(prev => [...prev, memberInfo]);
-      setRun(true);
+      setStudyingMembers(prev => [...prev, userInfo]);
     };
 
     const onStopStudying = () => {
+      setRun(false);
       setStudyIcon(
         <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />
       );
@@ -63,7 +64,6 @@ function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
           return member.user_id !== user_id;
         });
       });
-      setRun(false);
     };
 
     socket.on(`studying:${user_id}`, onStudying);
@@ -73,20 +73,18 @@ function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
       socket.off(`studying:${user_id}`, onStudying);
       socket.off(`stopStudying:${user_id}`, onStopStudying);
     };
-  }, [memberInfo]);
+  }, [userInfo]);
 
   return (
     <div className={styles.member}>
-      <MemberCamDisp memberInfo={memberInfo} device={device} recvTransport={recvTransport} />
+      <MyCamDisp audioStream={audioStream} videoStream={videoStream} device={device} />
       <div className={styles.inner}>
-        <Link href={`/dashboard/user/${memberInfo.user_id}`}>
-          <div className={styles.userName}>{memberInfo.name}</div>
-        </Link>
+        <div className={styles.userName}>{userInfo.name}</div>
         <div className={styles.icon}>{studyIcon}</div>
         <div className={styles.timer}>
-          <MemberTimer
-            initialSec={total}
+          <MyTimer
             run={run}
+            initialSec={total}
           />
         </div>
       </div>
@@ -94,4 +92,4 @@ function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
   );
 }
 
-export default MemberEl;
+export default MyEl;

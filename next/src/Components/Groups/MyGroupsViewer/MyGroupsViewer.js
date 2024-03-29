@@ -11,7 +11,6 @@ import { socket } from "@/utils/socket";
 import { mediaSocket } from "@/utils/mediaSocket";
 
 function MyGroupsViewer({
-  myGroups,
   mode,
   groupsViewerRef,
   setIsEditGroupModal,

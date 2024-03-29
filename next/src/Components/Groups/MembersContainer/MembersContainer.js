@@ -1,8 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./MembersContainer.module.css";
 import { Device } from "mediasoup-client";
 import { CallOptionsContext, UserInfoContext } from "@/utils/Contexts";
 import { mediaSocket } from "@/utils/mediaSocket";
+import MyEl from "../MyEl/MyEl";
+import MemberEl from "../MemberEl/MemberEl";
 
 //window.localStorage.setItem('debug', 'mediasoup-client:WARN* mediasoup-client:ERROR*');
 
@@ -11,7 +13,7 @@ function MembersContainer({
   members,
 }) {
   const {userInfo} = useContext(UserInfoContext);
-  const {isCam, isMic, isHeadphone} = useContext(CallOptionsContext);
+  const {isCam, isMic} = useContext(CallOptionsContext);
 
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
   const [videoStream, setVideoStream] = useState(null);
@@ -256,7 +258,6 @@ function MembersContainer({
           );
         }
       })}
-      <ContextMenu MENU_ID="ffffff" />
     </div>
   );
 }
