@@ -130,6 +130,7 @@ function App() {
     socket.on('reset', bringSubjects);
     socket.on('update tools', bringSubjects);
     socket.on('joinChatRoom', (id, updateState = false) => { socketJoinChatRoom(id, updateState) });
+    socket.on('update groups', bringGroups);
 
     return () => {
       socket.off("joinMyGroups", socketConnectAction);
@@ -138,6 +139,7 @@ function App() {
       socket.off('reset', bringSubjects);
       socket.off('update tools', bringSubjects);
       socket.off('joinChatRoom', (id) => { socketJoinChatRoom(id) });
+      socket.off('update groups', bringGroups);
     };
   }, []);
 
