@@ -8,18 +8,20 @@ import styles from "./MyGroupsViewer.module.css";
 import { mediaSocket } from "../../../mediaSocket";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
 import GroupRankingModal from "../GroupRankingModal/GroupRankingModal";
+import ContextMenu from "../ContextMenu/ContextMenu";
 
 function MyGroupsViewer({
   myGroups,
   userInfo,
   isCam,
   isMic,
-  setIsCam = () => {},
-  setIsMic = () => {},
+  setIsCam = () => { },
+  setIsMic = () => { },
   mode,
   setIsChatModal,
   groupsViewerRef,
   setIsEditGroupModal,
+  setRightClickedMember,
   isHeadphone
 }) {
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
@@ -62,6 +64,7 @@ function MyGroupsViewer({
               setIsEditGroupModal={setIsEditGroupModal}
               mode={mode}
               isHeadphone={isHeadphone}
+              setRightClickedMember={setRightClickedMember}
             /> : null
           }
         </SwiperSlide>
