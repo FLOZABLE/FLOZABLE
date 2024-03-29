@@ -9,7 +9,7 @@ import { socket } from "../../../socket";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import { useContextMenu } from "react-contexify";
 
-function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTransport, isHeadphone }) {
+function MemberEl({ memberInfo, setStudyingMembers, setRightClickedMember, device, isFocus, recvTransport, isHeadphone }) {
   const [run, setRun] = useState(false);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
@@ -21,6 +21,7 @@ function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTranspo
   });
 
   function handleContextMenu(event) {
+    setRightClickedMember(memberInfo);
     show({
       event,
       props: {
