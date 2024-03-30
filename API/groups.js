@@ -327,8 +327,8 @@ Router.post("/remove-member", async (req, res) => {
 
         redisClient.sRem(`room:${groupId}`, memberId);
 
-        mainIo.to(userId).emit('update groups');
-        mainIo.to(memberId).emit('update groups');
+        console.log(`removeMember:${groupId}`);
+        mainIo.emit(`removeMember:${groupId}`, memberId);
 
         return res.send({ success: true });
       }
