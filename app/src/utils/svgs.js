@@ -1102,6 +1102,21 @@ function IconRankingChart(props) {
   );
 }
 
+function IconLeave(props) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em">
+      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+      <g id="SVGRepo_iconCarrier">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.6666 8L17.75 10.5L15.6666 8Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M15.6666 13L17.75 10.5L15.6666 13Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M16.5 10.5L10 10.5" stroke="#000000" stroke-width="2" stroke-linecap="round"></path> <line x1="4" y1="3.5" x2="13" y2="3.5" stroke="#000000" stroke-width="2" stroke-linecap="round"></line> <line x1="4" y1="17.5" x2="13" y2="17.5" stroke="#000000" stroke-width="2" stroke-linecap="round"></line>
+        <path d="M13 3.5V7.5" stroke="#000000" stroke-width="2" stroke-linecap="round"></path>
+        <path d="M13 13.5V17.5" stroke="#000000" stroke-width="2" stroke-linecap="round"></path>
+        <path d="M4 3.5L4 17.5" stroke="#000000" stroke-width="2" stroke-linecap="round"></path>
+      </g>
+    </svg>
+  );
+}
+
 // icon:people-16 | Octicons https://primer.style/octicons/ | Github Primer
 
 function IconPeople16(props) {
@@ -1725,6 +1740,7 @@ export {
   IconBxMessageSquareDetail,
   IconUser,
   IconStatsChart,
+  IconLeave,
   IconPeople16,
   IconUserAdd,
   IconGalleryLine,
