@@ -114,6 +114,7 @@ function Groups({
           <div className={styles.box}>
             <MyGroupsViewer
               myGroups={myGroups}
+              setMyGroups={setMyGroups}
               userInfo={userInfo}
               myTimerTotal={myTimerTotal}
               setIsChatModal={setIsChatModal}

@@ -12,6 +12,7 @@ import ContextMenu from "../ContextMenu/ContextMenu";
 
 function MyGroupsViewer({
   myGroups,
+  setMyGroups,
   userInfo,
   isCam,
   isMic,
@@ -46,6 +47,11 @@ function MyGroupsViewer({
     }, 2000);
   }, [myGroups, groupsViewerRef]);
 
+  const leaveGroup = useCallback((group) => {
+    console.log("Leaving ", group);
+    setMyGroups(myGroups.filter((g) => g.group_id !== group.group_id));
+  }, [myGroups])
+
   useEffect(() => {
     setSwiperEl(myGroups.map((group, i) => {
       const focus = i === selectedGroupIndex;
@@ -54,6 +60,7 @@ function MyGroupsViewer({
           {focus ?
             <MyGroupContainer
               group={group}
+              leaveGroup={() => leaveGroup(group)}
               isFocus={true}
               studyingUsers={[]}
               userInfo={userInfo}

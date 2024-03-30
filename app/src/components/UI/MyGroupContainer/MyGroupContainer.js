@@ -1,5 +1,5 @@
 import styles from "./MyGroupContainer.module.css";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { IconMessage, IconTimerOutline, StudyPerson, IconPen, IconLeave } from "../../../utils/svgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullhorn, faCommentDots, faComments, faGear, faPen, faRankingStar } from "@fortawesome/free-solid-svg-icons";
@@ -12,7 +12,7 @@ import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal, setIsGroupRankingModal, setIsEditGroupModal, mode, isHeadphone, setRightClickedMember }) {
+function MyGroupContainer({ group, isFocus, userInfo, leaveGroup, isMic, isCam, setIsChatModal, setIsGroupRankingModal, setIsEditGroupModal, mode, isHeadphone, setRightClickedMember }) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -31,10 +31,6 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
     }, 500)
     setIsGroupRankingModal(false);
   }, [group, isFocus]);
-
-  function leaveGroup() {
-    alert("Leaving...");
-  }
 
 
   /* useEffect(() => {
@@ -97,13 +93,18 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
                 <IconMessage />
               </i>
             </div>
-            <div onClick={() => {
-              leaveGroup();
-            }}>
-              <i>
-                <IconLeave />
-              </i>
-            </div>
+            {
+              isMyGroup ?
+                <div />
+                :
+                <div onClick={() => {
+                  leaveGroup();
+                }}>
+                  <i>
+                    <IconLeave />
+                  </i>
+                </div>
+            }
           </div>
           {
             isMyGroup ?
