@@ -1,6 +1,6 @@
 import styles from "./MyGroupContainer.module.css";
 import React, { useEffect, useState } from "react";
-import { IconMessage, IconTimerOutline, StudyPerson, IconPen } from "../../../utils/svgs";
+import { IconMessage, IconTimerOutline, StudyPerson, IconPen, IconLeave } from "../../../utils/svgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullhorn, faCommentDots, faComments, faGear, faPen, faRankingStar } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -31,6 +31,10 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
     }, 500)
     setIsGroupRankingModal(false);
   }, [group, isFocus]);
+
+  function leaveGroup() {
+    alert("Leaving...");
+  }
 
 
   /* useEffect(() => {
@@ -91,6 +95,13 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
             }}>
               <i>
                 <IconMessage />
+              </i>
+            </div>
+            <div onClick={() => {
+              leaveGroup();
+            }}>
+              <i>
+                <IconLeave />
               </i>
             </div>
           </div>
