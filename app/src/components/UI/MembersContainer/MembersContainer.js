@@ -230,7 +230,7 @@ function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, me
         )
       } else {
         return (
-          <div onContextMenu={(event) => {handleContextMenu(event, memberInfo)}}>
+          <div onContextMenu={(event) => {handleContextMenu(event, memberInfo)}} key={i}>
           <MemberEl
             memberInfo={memberInfo}
             groupInfo={groupInfo}

@@ -42,7 +42,7 @@ function App() {
   const [response, setResponse] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState(undefined);
   const [subjects, setSubjects] = useState([]);
   const [isStudy, setIsStudy] = useState(false);
   const [reset, setReset] = useState(false);
@@ -110,7 +110,7 @@ function App() {
 
     const socketJoinChatRoom = (id, updateState) => {
       socket.emit("joinChatRoom", id);
-      if (updateState){
+      if (updateState) {
         //Update the chatsModal state
         setNewFriendChat(id);
         //This will trigger the fetch inside the component
@@ -221,7 +221,13 @@ function App() {
       .catch((error) => console.error(error));
   }, []);
 
+  useEffect(() => {
+    console.log("Change user info", userInfo);
+  }, [userInfo])
+
   const bringGroups = useCallback(() => {
+    console.log("User info bring groups", userInfo)
+    if (!userInfo) return;
     fetch(`${serverOrigin}/groups/bring-groups`, { method: "post" })
       .then((response) => response.json())
       .then((data) => {
