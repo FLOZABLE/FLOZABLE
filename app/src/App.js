@@ -130,7 +130,6 @@ function App() {
     socket.on('reset', bringSubjects);
     socket.on('update tools', bringSubjects);
     socket.on('joinChatRoom', (id, updateState = false) => { socketJoinChatRoom(id, updateState) });
-    socket.on('update groups', bringGroups);
 
     return () => {
       socket.off("joinMyGroups", socketConnectAction);
@@ -139,7 +138,6 @@ function App() {
       socket.off('reset', bringSubjects);
       socket.off('update tools', bringSubjects);
       socket.off('joinChatRoom', (id) => { socketJoinChatRoom(id) });
-      socket.off('update groups', bringGroups);
     };
   }, []);
 
@@ -221,12 +219,7 @@ function App() {
       .catch((error) => console.error(error));
   }, []);
 
-  useEffect(() => {
-    console.log("Change user info", userInfo);
-  }, [userInfo])
-
   const bringGroups = useCallback(() => {
-    console.log("User info bring groups", userInfo)
     if (!userInfo) return;
     fetch(`${serverOrigin}/groups/bring-groups`, { method: "post" })
       .then((response) => response.json())
