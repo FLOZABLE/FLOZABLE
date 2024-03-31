@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./GroupsContainer.module.css";
 import { GroupsContext } from "@/utils/Contexts";
 import GroupContainer from "../GroupContainer/GroupContainer";
+import { DateTime } from "luxon";
+import config from "@/utils/config";
 
 function GroupsContainer({
   searchQuery,
@@ -9,35 +11,26 @@ function GroupsContainer({
 }) {
   const { otherGroups } = useContext(GroupsContext);
 
-  /* const joinGroup = (targetGroup) => {
-    setJoinTarget(targetGroup);
-    if (targetGroup.visibility) {
-      fetch(`${serverOrigin}/groups/join/${targetGroup.group_id}`, {
-        method: "post",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setJoinGroupResponse(data);
-          if (data.success) {
-            setOtherGroups(
-              groups.filter((group) => {
-                return group.group_id != targetGroup.group_id;
-              }),
-            );
-            setMyGroups((myGroups) => [...myGroups, targetGroup]);
-            if (groupsViewerRef) {
-              document.body.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              setTimeout(() => {
-                groupsViewerRef.current.swiper.slideTo(myGroups.length);
-              }, 1000);
-            };
-          };
-        })
-        .catch((error) => console.error(error));
-    } else {
-      setIsGroupPwModal(true);
-    }
-  }; */
+  const [rankings, setRankings] = useState([]);
+
+  useEffect(() => {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    fetch(`${config.server}/ranking/sort?mode=Daily&date=${DateTime.now().toISODate()}&timezone=${timezone}`, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
+          setRankings(response.data);
+        }
+      });
+  }, []);
+
+
 
 
   return (
@@ -75,11 +68,14 @@ function GroupsContainer({
           };
         };
 
-        if (isSearched) {
-          return (
-            <></>
-          )
-        }
+        return (
+          <GroupContainer
+            groupInfo={group}
+            key={i}
+            rankings={rankings}
+            isSearched={isSearched}
+          />
+        )
       })}
     </div>
   );

@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./MyTimer.module.css";
-import dynamic from "next/dynamic";
-//import worker from "./TimeWorker";
-const WorkerInstance = dynamic(
-  () => import('./TimeWorker'),
-  { ssr: false }
-);
-
-
 
 function MyTimer({ run, initialSec }) {
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
   const [total, setTotal] = useState(0);
+
+  const workerRef = useRef();
+
+  useEffect(() => {
+    workerRef.current = new Worker(new URL('./TimeWorker.js', import.meta.url))
+    return () => {
+      workerRef.current?.terminate()
+    };
+}, [])
 
   useEffect(() => {
     const onMessage = (e) => {
@@ -27,13 +28,10 @@ function MyTimer({ run, initialSec }) {
     return () => {
       worker.removeEventListener("message", onMessage);
     }; */
-    const worker = WorkerInstance();
-    if (worker) {
-      worker.addEventListener('message', onMessage);
-      return () => {
-        worker.removeEventListener('message', onMessage);
-      };
-    }
+    workerRef.current.addEventListener('message', onMessage);
+    return () => {
+      workerRef.current.removeEventListener('message', onMessage);
+    };
   }, [run]);
 
   useEffect(() => {

@@ -1024,5 +1024,5 @@ export {
   IconCameraVideoOffFill,
   IconHeadphoneFill,
   IconHeadphonesOff,
-  IconSearch
+  IconSearch,
 };

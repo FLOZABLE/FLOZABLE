@@ -7,7 +7,7 @@ import { socket } from "@/utils/socket";
 import Link from "next/link";
 import MemberTimer from "../MemberTimer/MemberTimer";
 
-function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
+function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport, workerRef }) {
   const [run, setRun] = useState(false);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
@@ -87,6 +87,7 @@ function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
           <MemberTimer
             initialSec={total}
             run={run}
+            workerRef={workerRef}
           />
         </div>
       </div>

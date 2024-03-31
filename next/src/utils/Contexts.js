@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { socket } from "./socket";
 import { timelineSort } from "./timelineSorting";
 import config from "./config";
@@ -26,17 +32,15 @@ function AppProvider({ children }) {
           <ModalsProvider>
             <ResponseProvider>
               <TutorialsProvider>
-                <CallOptionsProvider>
-                  {children}
-                </CallOptionsProvider>
+                <CallOptionsProvider>{children}</CallOptionsProvider>
               </TutorialsProvider>
             </ResponseProvider>
           </ModalsProvider>
         </GroupsProvider>
       </SubjectsProvider>
     </AccountProvider>
-  )
-};
+  );
+}
 
 function AccountProvider({ children }) {
   const [userInfo, setUserInfo] = useState(null);
@@ -51,7 +55,7 @@ function AccountProvider({ children }) {
           setNotifications(data.notifications);
           socket.connect();
         } else if (data.code === 401) {
-          console.log('not user');
+          console.log("not user");
           setUserInfo(false);
         }
       })
@@ -64,12 +68,14 @@ function AccountProvider({ children }) {
 
   return (
     <UserInfoContext.Provider value={{ userInfo, setUserInfo }}>
-      <NotificationsContext.Provider value={{ notifications, setNotifications }}>
+      <NotificationsContext.Provider
+        value={{ notifications, setNotifications }}
+      >
         {children}
       </NotificationsContext.Provider>
     </UserInfoContext.Provider>
-  )
-};
+  );
+}
 
 function SubjectsProvider({ children }) {
   const { userInfo } = useContext(UserInfoContext);
@@ -77,8 +83,8 @@ function SubjectsProvider({ children }) {
   const [plans, setPlans] = useState([]);
   const [planModal, setPlanModal] = useState({
     opened: false,
-    title: '',
-    description: '',
+    title: "",
+    description: "",
     start: new Date(),
     end: new Date(new Date().getTime() + 60 * 1000 * 30),
     repeat: 0,
@@ -88,8 +94,8 @@ function SubjectsProvider({ children }) {
     id: null,
     saved: false,
     completed: false,
-    type: 'local',
-    editable: true
+    type: "local",
+    editable: true,
   });
 
   const bringSubjects = useCallback(() => {
@@ -101,7 +107,7 @@ function SubjectsProvider({ children }) {
           bringPlans(data.subjects);
         } else {
           bringPlans([]);
-        };
+        }
       })
       .catch((error) => console.error(error));
   }, []);
@@ -116,7 +122,9 @@ function SubjectsProvider({ children }) {
               plan.saved = true;
               plan.start = new Date(plan.start * 1000 * 60);
               plan.end = new Date(plan.end * 1000 * 60);
-              const subject = subjects.find(subject => subject.id === plan.subject);
+              const subject = subjects.find(
+                (subject) => subject.id === plan.subject,
+              );
               if (subject) {
                 plan.backgroundColor = subject.color;
                 plan.borderColor = subject.color;
@@ -142,17 +150,19 @@ function SubjectsProvider({ children }) {
   useEffect(() => {
     if (!subjects.length) return;
 
-    setPlanModal((prev) => ({ ...prev, subject: subjects[0].id }))
-  }, [subjects])
+    setPlanModal((prev) => ({ ...prev, subject: subjects[0].id }));
+  }, [subjects]);
 
   return (
     <SubjectsContext.Provider value={{ subjects, setSubjects }}>
-      <PlansContext.Provider value={{ plans, setPlans, planModal, setPlanModal }}>
+      <PlansContext.Provider
+        value={{ plans, setPlans, planModal, setPlanModal }}
+      >
         {children}
       </PlansContext.Provider>
     </SubjectsContext.Provider>
-  )
-};
+  );
+}
 
 function GroupsProvider({ children }) {
   const { userInfo } = useContext(UserInfoContext);
@@ -178,14 +188,23 @@ function GroupsProvider({ children }) {
 
   useEffect(() => {
     if (!userInfo) return;
-    console.log('gdddddd', userInfo)
+    console.log("gdddddd", userInfo);
     const { userGroups, otherGroups } = filterGroups(userInfo, groups);
     setMyGroups(userGroups);
     setOtherGroups(otherGroups);
   }, [userInfo, groups]);
 
   return (
-    <GroupsContext.Provider value={{ groups, setGroups, myGroups, setMyGroups, otherGroups, setOtherGroups }}>
+    <GroupsContext.Provider
+      value={{
+        groups,
+        setGroups,
+        myGroups,
+        setMyGroups,
+        otherGroups,
+        setOtherGroups,
+      }}
+    >
       {children}
     </GroupsContext.Provider>
   );
@@ -198,39 +217,53 @@ function ResponseProvider({ children }) {
     <ResponseContext.Provider value={{ response, setResponse }}>
       {children}
     </ResponseContext.Provider>
-  )
-};
+  );
+}
 
 function ModalsProvider({ children }) {
   const [isChatModal, setIsChatModal] = useState(false);
   const [isNotificationModal, setIsNotificationModal] = useState(false);
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
+  const [joinGroupModal, setJoinGroupModal] = useState({
+    open: false,
+    group: null
+  });
 
   return (
-    <ModalsContext.Provider value={{ isChatModal, setIsChatModal, isNotificationModal, setIsNotificationModal, isAddSubjectModal, setIsAddSubjectModal }}>
+    <ModalsContext.Provider
+      value={{
+        isChatModal,
+        setIsChatModal,
+        isNotificationModal,
+        setIsNotificationModal,
+        isAddSubjectModal,
+        setIsAddSubjectModal,
+        joinGroupModal,
+        setJoinGroupModal,
+      }}
+    >
       {children}
     </ModalsContext.Provider>
-  )
+  );
 }
 
 function TutorialsProvider({ children }) {
   const [tutorialBoxRef, setTutorialBoxRef] = useState(null);
   const [tutorialTextRef, setTutorialTextRef] = useState(null);
-  //const [searchParams, setSearchParams] = useSearchParams();
-
-  /* useEffect(() => {
-    if (!searchParams) return;
-
-    const tutorial = searchParams.get("tutorial");
-    console.log(tutorial, 'gddddddddddddd')
-  }, [searchParams]); */
 
   return (
-    <TutorialsContext.Provider value={{ tutorialBoxRef, setTutorialBoxRef, tutorialTextRef, setTutorialTextRef }}>
+    <TutorialsContext.Provider
+      value={{
+        tutorialBoxRef,
+        setTutorialBoxRef,
+        tutorialTextRef,
+        setTutorialTextRef,
+      }}
+    >
       {children}
     </TutorialsContext.Provider>
-  )
-};
+  );
+}
 
 function CallOptionsProvider({ children }) {
   const [isCam, setIsCam] = useState(false);
@@ -238,10 +271,24 @@ function CallOptionsProvider({ children }) {
   const [isHeadphone, setIsHeadphone] = useState(false);
 
   return (
-    <CallOptionsContext.Provider value={{ isCam, setIsCam, isMic, setIsMic, isHeadphone, setIsHeadphone }}>
+    <CallOptionsContext.Provider
+      value={{ isCam, setIsCam, isMic, setIsMic, isHeadphone, setIsHeadphone }}
+    >
       {children}
     </CallOptionsContext.Provider>
-  )
+  );
 }
 
-export { AppProvider, AuthContext, UserInfoContext, NotificationsContext, SubjectsContext, PlansContext, GroupsContext, ResponseContext, ModalsContext, TutorialsContext, CallOptionsContext };
+export {
+  AppProvider,
+  AuthContext,
+  UserInfoContext,
+  NotificationsContext,
+  SubjectsContext,
+  PlansContext,
+  GroupsContext,
+  ResponseContext,
+  ModalsContext,
+  TutorialsContext,
+  CallOptionsContext,
+};

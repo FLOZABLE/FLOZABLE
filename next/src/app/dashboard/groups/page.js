@@ -11,23 +11,13 @@ import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
 import GroupsContainer from "@/Components/Groups/GroupsContainer/GroupsContainer";
 
 function Groups({
-  userInfo,
-  subjects,
   otherGroups,
-  setOtherGroups,
-  myGroups,
-  setMyGroups,
   setResponse,
-  bringGroups,
-  setIsChatModal,
 }) {
 
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isGroupPwModal, setIsGroupPwModal] = useState(false);
-  const [joinTarget, setJoinTarget] = useState(null);
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
-  const [joinByLink, setJoinByLink] = useState(false);
   const [isEditGroupModal, setIsEditGroupModal] = useState(false);
 
   const groupsViewerRef = useRef(null);
@@ -36,36 +26,12 @@ function Groups({
     setTags(tags);
   };
 
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const selectedGroupId = searchParams.get("joinId");
-
-    if (!selectedGroupId) return;
-
-    otherGroups.map((group) => {
-      if (group.group_id === selectedGroupId) {
-        setJoinTarget({ ...group });
-        setIsGroupPwModal(true);
-        setJoinByLink(true);
-      }
-    });
-  }, [otherGroups]);
-
   return (
     <div>
       <CreateGroupModal
         isOpen={isCreateNewGroup}
         setIsOpen={setIsCreateNewGroup}
         setCreateGroupResponse={setResponse}
-      />
-      <GroupPwModal
-        isOpen={isGroupPwModal}
-        setIsOpen={setIsGroupPwModal}
-        groupInfo={joinTarget}
-        joinByLink={joinByLink}
-        setJoinByLink={setJoinByLink}
-        groupsViewerRef={groupsViewerRef}
       />
       {/* <EditGroupModal
         setCreateGroupResponse={setResponse}
