@@ -211,7 +211,7 @@ function GroupsProvider({ children }) {
 }
 
 function ResponseProvider({ children }) {
-  const [response, setResponse] = useState({});
+  const [response, setResponse] = useState(null);
 
   return (
     <ResponseContext.Provider value={{ response, setResponse }}>
@@ -226,7 +226,7 @@ function ModalsProvider({ children }) {
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [joinGroupModal, setJoinGroupModal] = useState({
     open: false,
-    group: null
+    group: null,
   });
 
   return (

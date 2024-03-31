@@ -30,9 +30,6 @@ function GroupsContainer({
       });
   }, []);
 
-
-
-
   return (
     <div className={styles.GroupsContainer}>
       {otherGroups.map((group, i) => {

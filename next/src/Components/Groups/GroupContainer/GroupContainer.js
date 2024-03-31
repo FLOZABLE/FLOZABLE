@@ -11,7 +11,7 @@ import Link from "next/link";
 import LikeBtn from "@/Components/Buttons/LikeBtn/LikeBtn";
 import GroupUrlBtn from "@/Components/Buttons/GroupUrlBtn/GroupUrlBtn";
 
-function GroupContainer({ groupInfo, rankings, isSearched = false }) {
+function GroupContainer({ groupInfo, rankings = [], isSearched = true }) {
   const { userInfo } = useContext(UserInfoContext);
   const {setJoinGroupModal} = useContext(ModalsContext);
 
@@ -78,7 +78,7 @@ function GroupContainer({ groupInfo, rankings, isSearched = false }) {
         </div>
       </div>
       <div className={styles.buttons}>
-        <GroupUrlBtn text={`${config.server}/dashboard/groups?joinId=${groupInfo?.group_id}`} />
+        <GroupUrlBtn text={`${config.server}/dashboard/groups?groupId=${groupInfo?.group_id}`} />
         {
           members.includes(userInfo?.user_id) ?
             <Link
@@ -91,7 +91,11 @@ function GroupContainer({ groupInfo, rankings, isSearched = false }) {
             <div
               /* href={`/dashboard/groups?joinId=${groupInfo?.group_id}`} */
               onClick={() => {
-                setJoinGroupModal(prev => {
+                setJoinGroupModal({
+                  open: true,
+                  group: groupInfo
+                })
+                /* setJoinGroupModal(prev => {
                   if (prev.open) {
                     return (
                       {
@@ -107,7 +111,7 @@ function GroupContainer({ groupInfo, rankings, isSearched = false }) {
                       }
                     )
                   }
-                })
+                }) */
               }}
               className={styles.joinBtn}
             >
