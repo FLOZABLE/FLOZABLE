@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
 
-const mediaSocket = io(process.env.REACT_APP_MEDIASOCKET, { autoConnect: false });
+const mediaSocket = io(process.env.NEXT_PUBLIC_MEDIA_SOCKET, { autoConnect: false });
 
 export { mediaSocket };

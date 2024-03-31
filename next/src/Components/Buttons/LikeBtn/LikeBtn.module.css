@@ -48,7 +48,7 @@
   position: relative;
   /* margin-right: 0.25em; */
   font-size: 1.5rem;
-  background: url("/public/img/heart.svg") no-repeat center;
+  background: url("/img/heart.svg") no-repeat center;
   background-size: 100%;
   -webkit-animation: heartUnlike 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
   animation: heartUnlike 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
@@ -60,7 +60,7 @@
 }
 
 .liked .likeIcon .heartAnimation1 {
-  background: url("/public/img/heart.svg");
+  background: url("/img/heart.svg");
   background-size: 100%;
   display: block;
   position: absolute;
@@ -72,7 +72,7 @@
 }
 
 .liked .likeIcon .heartAnimation2 {
-  background: url("/public/img/heart.svg");
+  background: url("/img/heart.svg");
   background-size: 100%;
   display: block;
   position: absolute;
