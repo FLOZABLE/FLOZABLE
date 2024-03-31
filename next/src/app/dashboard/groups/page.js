@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./page.module.css";
-import GroupPwModal from "@/Components/Modals/GroupPwModal/GroupPwModal";
 import MyGroupsViewer from "@/Components/Groups/MyGroupsViewer/MyGroupsViewer";
 import CreateGroupModal from "@/Components/Modals/CreateGroupModal/CreateGroupModal";
 import TagContainerGen from "@/Components/Inputs/TagContainerGen/TagContainerGen";
@@ -11,7 +10,6 @@ import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
 import GroupsContainer from "@/Components/Groups/GroupsContainer/GroupsContainer";
 
 function Groups({
-  otherGroups,
   setResponse,
 }) {
 

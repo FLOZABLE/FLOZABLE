@@ -29,14 +29,23 @@ function MyGroupsViewer({
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const selectedGroupId = searchParams.get("group");
-    if (!selectedGroupId) return;
+    if (!selectedGroupId) {
+      console.log('change')
+      if (groupsViewerRef.current) {
+        setTimeout(() => {
+          console.log('change')
+          groupsViewerRef.current.swiper.slideTo(myGroups.length - 1);
+        }, 1000);
+      };
+      return;
+    };
 
     setTimeout(() => {
       const groupIndex = myGroups.findIndex(group => group.group_id === selectedGroupId);
       if (groupsViewerRef.current && groupIndex !== -1) {
         groupsViewerRef.current.swiper.slideTo(groupIndex);
       };
-    }, 2000);
+    }, 1000);
   }, [myGroups, groupsViewerRef]);
 
 

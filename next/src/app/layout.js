@@ -6,6 +6,7 @@ import Sidebar from "@/Components/Others/Sidebar/Sidebar";
 import EventModal from "@/Components/Modals/EventModal/EventModal";
 import AddSubjectModal from "@/Components/Modals/AddSubjectModal/AddSubjectModal";
 import JoinGroupModal from "@/Components/Modals/JoinGroupModal/JoinGroupModal";
+import TopNotification from "@/Components/Modals/TopNotification/TopNotification";
 
 //const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
         <AppProvider>
           <Header />
           <EventModal />
+          <TopNotification />
           <JoinGroupModal />
           <AddSubjectModal />
           {children}
