@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./MemberTimer.module.css";
-import dynamic from "next/dynamic";
 
-const worker = dynamic(
-  () => import("./TimeWorker"),
-  {
-    ssr: false,
-  }
-);
-
-function MemberTimer({ initialSec = 0, run }) {
+function MemberTimer({ initialSec = 0, run, workerRef }) {
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
@@ -21,10 +13,10 @@ function MemberTimer({ initialSec = 0, run }) {
         setTotal((prev) => prev + 1);
       }
     };
-    worker.addEventListener("message", onMessage);
+    workerRef.current.addEventListener("message", onMessage);
 
     return () => {
-      worker.removeEventListener("message", onMessage);
+      workerRef.current.removeEventListener("message", onMessage);
     };
   }, [run]);
 
