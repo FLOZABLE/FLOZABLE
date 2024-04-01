@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./MemberTimer.module.css";
+import { WorkersContext } from "@/utils/Contexts";
 
-function MemberTimer({ initialSec = 0, run, workerRef }) {
+function MemberTimer({ initialSec = 0, run }) {
+  const { membersTimerWorkerRef } = useContext(WorkersContext);
+
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
@@ -13,10 +16,10 @@ function MemberTimer({ initialSec = 0, run, workerRef }) {
         setTotal((prev) => prev + 1);
       }
     };
-    workerRef.current.addEventListener("message", onMessage);
+    membersTimerWorkerRef.current.addEventListener("message", onMessage);
 
     return () => {
-      workerRef.current.removeEventListener("message", onMessage);
+      membersTimerWorkerRef.current.removeEventListener("message", onMessage);
     };
   }, [run]);
 
