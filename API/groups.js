@@ -305,6 +305,33 @@ Router.get('/mine', async (req, res) => {
   }));
 });
 
+Router.post("/leave-group", async (req, res) => {
+  const { groupId } = req.body;
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const connection = pool.promise();
+      const [[group]] = await connection.query("SELECT members FROM groups WHERE group_id = ?", [groupId]);
+
+      let oldMembers = group.members.split(",");
+      oldMembers = oldMembers.filter((mem) => mem != userId);
+      const updateGroup = await connection.query("UPDATE groups SET members = ? WHERE group_id = ?", [oldMembers.join(","), groupId]);
+
+      let groups = await groupCache(userId);
+      groups = groups.filter((g) => g != groupId);
+      redisClient.hSet(`user:${userId}`, 'groups', groups.join(','));
+
+      redisClient.sRem(`room:${groupId}`, userId);
+
+      console.log(`removeMember:${groupId}`);
+      mainIo.emit(`removeMember:${groupId}`, userId);
+
+      return res.send({success: true});
+    } catch (err) {
+      console.log(err);
+    }
+  }));
+});
+
 Router.post("/remove-member", async (req, res) => {
   const { memberId, groupId } = req.body;
   autoSignin(req, res, (async (userId) => {
