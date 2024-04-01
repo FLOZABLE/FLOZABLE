@@ -23,6 +23,7 @@ const ResponseContext = createContext({});
 const GroupsContext = createContext({});
 const ModalsContext = createContext({});
 const CallOptionsContext = createContext({});
+const ThemesContext = createContext({});
 
 function AppProvider({ children }) {
   return (
@@ -32,7 +33,11 @@ function AppProvider({ children }) {
           <ModalsProvider>
             <ResponseProvider>
               <TutorialsProvider>
-                <CallOptionsProvider>{children}</CallOptionsProvider>
+                <CallOptionsProvider>
+                  <ThemesProvider>
+                    {children}
+                  </ThemesProvider>
+                </CallOptionsProvider>
               </TutorialsProvider>
             </ResponseProvider>
           </ModalsProvider>
@@ -279,6 +284,59 @@ function CallOptionsProvider({ children }) {
   );
 }
 
+function ThemesProvider({ children }) {
+  const [themes, setThemes] = useState([]);
+  const [userThemes, setUserThemes] = useState([]);
+
+  useEffect(() => {
+    fetch(`${config.server}/themes`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          data.themes.map(theme => {
+            theme.likes = theme.likes === "" ? [] : theme.likes.split(",");
+          })
+          setThemes(data.themes);
+        };
+      })
+      .catch((error) => console.error(error));
+
+
+    fetch(`${config.server}/themes/user`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          const userThemes = data.themes.themes === "" ? [] : data.themes.themes.split(",");
+          setUserThemes(userThemes.map(theme => {
+            const [category, id] = theme.split(":");
+
+            return {
+              category,
+              id
+            }
+          }));
+        };
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  return (
+    <ThemesContext.Provider value={{ themes, setThemes, userThemes, setUserThemes }}>
+      {children}
+    </ThemesContext.Provider>
+  )
+}
+
 export {
   AppProvider,
   AuthContext,
@@ -291,4 +349,5 @@ export {
   ModalsContext,
   TutorialsContext,
   CallOptionsContext,
+  ThemesContext
 };
