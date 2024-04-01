@@ -7,21 +7,20 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Header.module.css";
 import { secondConverter } from "../../../utils/Tool";
-import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor } from "@/utils/Svg";
 import { ModalsContext, NotificationsContext, SubjectsContext, TutorialsContext, UserInfoContext } from "@/utils/Contexts";
-import config from "@/utils/config";
+import ProfileImage from "@/Components/Users/ProfileImage/ProfileImage";
 
 function Header({
   totalNewMsg,
 }) {
-  const {subjects} = useContext(SubjectsContext);
-  const {userInfo} = useContext(UserInfoContext);
-  const {notifications} = useContext(NotificationsContext);
-  const {setIsChatModal, setIsNotificationModal} = useContext(ModalsContext);
-  const {tutorialBoxRef, tutorialTextRef} = useContext(TutorialsContext);
-  
+  const { subjects } = useContext(SubjectsContext);
+  const { userInfo } = useContext(UserInfoContext);
+  const { notifications } = useContext(NotificationsContext);
+  const { setIsChatModal, setIsNotificationModal } = useContext(ModalsContext);
+  const { tutorialBoxRef, tutorialTextRef } = useContext(TutorialsContext);
+
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
   const [studyStreak, setStudyStreak] = useState('0 day'); //days of consecutive study
@@ -183,10 +182,10 @@ function Header({
           onClick={() => { setIsNotificationModal(prev => !prev) }}
         >
           <i>
-            <FontAwesomeIcon icon={faBell} bounce={notifications?.length ? true : false} />
+            <FontAwesomeIcon icon={faBell} bounce={notifications ? notifications.filter(notification => notification.t !== -2).length ? true : false : false} />
           </i>
           <div>
-            {notifications?.length}
+            {notifications ? notifications.filter(notification => notification.t !== -2).length : 0}
           </div>
         </div>
         <div className={styles.divider}>
@@ -198,14 +197,11 @@ function Header({
             <p>{userInfo?.name}</p>
             <p>@{userInfo?.email?.split("@")[0]}</p>
           </div>
-          <div className={styles.profileImg}
-            style={{
-              backgroundImage: `url("${config.server}/profile-images/${userInfo?.user_id}.jpeg")`, backgroundSize: 'cover',
-              backgroundPosition: 'center center',
-              backgroundRepeat: 'no-repeat',
-            }}
-          >
-          </div>
+          <ProfileImage
+            userId={userInfo?.user_id}
+            width="4rem"
+            height="4rem"
+          />
         </Link>
         <div className={styles.headerEl}>
           <Link href={tutorial ? `/dashboard/study?tutorial=${tutorial}` : "/dashboard/study"} id="tutorial-6" ref={studyBtnRef}>

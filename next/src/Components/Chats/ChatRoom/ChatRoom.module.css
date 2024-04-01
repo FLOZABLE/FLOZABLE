@@ -1,0 +1,63 @@
+
+.ChatRoom {
+  display: flex;
+  margin-bottom: 0.625rem;
+  position: relative;
+  border-radius: 0.938rem;
+  cursor: pointer;
+  padding: 1.6rem;
+  width: 80%;
+}
+
+.ChatRoom .header {
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+}
+
+.ChatRoom .header .name {
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  max-width: 80%; 
+  white-space: nowrap;
+  font-size: 1rem;
+  
+}
+
+.ChatRoom .header .msgCount {
+  position: absolute;
+  bottom: 0rem;
+  left: 4rem;
+}
+
+.ChatRoom .header strong {
+  margin: 0em 0.1875rem;
+}
+
+.ChatRoom .imgContainer {
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 1.563rem;
+  margin-right: 0.625rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+}
+
+.ChatRoom .msgInfo {
+  display: flex;
+}
+
+.ChatRoom .msgInfo .msg {
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  max-width: 4.375rem; 
+  white-space: nowrap;
+}
+
+.ChatRoom .msgInfo .time {
+  position: absolute;
+  bottom: 2.3rem;
+  right: 0.625rem;
+  font-size: 0.75rem;
+}

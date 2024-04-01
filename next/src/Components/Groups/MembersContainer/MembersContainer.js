@@ -15,8 +15,6 @@ function MembersContainer({
   const {userInfo} = useContext(UserInfoContext);
   const {isCam, isMic} = useContext(CallOptionsContext);
 
-  const workerRef = useRef();
-
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
   const [videoStream, setVideoStream] = useState(null);
   const [audioStream, setAudioStream] = useState(null);
@@ -235,13 +233,6 @@ function MembersContainer({
     isHeadphone,
   ]); */
 
-  useEffect(() => {
-    workerRef.current = new Worker(new URL('./TimeWorker.js', import.meta.url))
-    return () => {
-      workerRef.current?.terminate()
-    };
-}, [])
-
   return (
     <div className={styles.MembersContainer}>
       {members.map((member, i) => {
@@ -263,7 +254,6 @@ function MembersContainer({
               setStudyingMembers={setStudyingMembers}
               device={device}
               recvTransport={recvTransport}
-              workerRef={workerRef}
             />
           );
         }

@@ -8,6 +8,7 @@ import CountryViewer from '@/Components/Others/CountryViewer/CountryViewer';
 import RefreshBtn from '@/Components/Buttons/RefreshBtn/RefreshBtn';
 import FriendRequestBtn from '@/Components/Buttons/FriendRequestBtn/FriendRequestBtn';
 import { ResponseContext } from '@/utils/Contexts';
+import ProfileImage from '@/Components/Users/ProfileImage/ProfileImage';
 
 
 function RecommendedFriendsViewer({}) {
@@ -52,15 +53,9 @@ function RecommendedFriendsViewer({}) {
               <Link
               href={`/dashboard/user/${user_id}`}
               >
-              <div
-                className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${config.server}/profile-images/${user_id}.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              ></div>
+              <ProfileImage 
+                userId={user_id}
+              />
               <p className={styles.name}>{name}</p>
               </Link>
               <CountryViewer timezone={timezone} />

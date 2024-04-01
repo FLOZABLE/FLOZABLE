@@ -42,10 +42,12 @@
   display: flex;
   align-items: center;
   font-size: 1.25rem;
+  max-width: calc(100% - 10rem);
 }
 
 .FriendsRankingViewer .rankings .userContainer .userInfo .name {
   margin: 0rem 0.313rem;
+  max-width: 70%;
 }
 
 .FriendsRankingViewer .rankings .userContainer .diff {
