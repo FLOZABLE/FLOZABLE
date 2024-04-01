@@ -70,7 +70,7 @@ function MyGroupsViewer({
   }, [myGroups]);
 
   useEffect(() => {
-    if (!myGroups) return;
+    if (!myGroups || !userInfo) return;
     console.log(myGroups);
 
     const memberJoinGroup = (groupId, memberInfo) => {
@@ -81,16 +81,21 @@ function MyGroupsViewer({
     };
 
     const memberLeaveGroup = (groupId, memberId) => {
-      setMyGroups(myGroups.map((group) => {
-        if (group.group_id !== groupId) return group;
-        return { ...group, members: group.members.split(",").splice(memberId, 1).join(",") };
-      }));
+      if (memberId === userInfo.user_id) {
+        setMyGroups(myGroups.filter((group) => group.group_id != groupId));
+      }
+      else {
+        setMyGroups(myGroups.map((group) => {
+          if (group.group_id !== groupId) return group;
+          return { ...group, members: group.members.split(",").splice(memberId, 1).join(",") };
+        }));
+      }
     };
 
     const handleLeaderChange = (groupId, memberId) => {
       setMyGroups(myGroups.map((group) => {
         if (group.group_id !== groupId) return group;
-        return {...group, leader: memberId};
+        return { ...group, leader: memberId };
       }));
     };
 
@@ -102,7 +107,7 @@ function MyGroupsViewer({
       socket.off(`removeMember`, memberLeaveGroup);
       socket.off('leaderChange', handleLeaderChange);
     };
-  }, [myGroups]);
+  }, [myGroups, userInfo]);
 
   useEffect(() => {
     setSwiperEl(myGroups.map((group, i) => {
