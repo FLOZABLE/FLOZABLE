@@ -1,10 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./FriendRequestBtn.module.css";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import React from 'react';
+import React, { useContext } from 'react';
 import BlobBtn from "../BlobBtn/BlobBtn";
+import { ResponseContext } from "@/utils/Contexts";
+import config from "@/utils/config";
 
-function FriendRequestBtn({ userInfo, setResponse, padding }) {
+function FriendRequestBtn({ userInfo, padding }) {
+  const {setResponse} = useContext(ResponseContext);
 
   const requestFriend = () => {
     fetch(`${config.server}/friend/request`, {

@@ -1,0 +1,145 @@
+.Friends .container {
+  display: flex;
+  height: calc(100vh - 14rem);
+  padding: 1.875rem 3.125rem;
+  justify-content: center;
+  margin-left: -1.25rem; 
+  overflow: hidden;
+}
+
+.Friends .container > div:nth-child(1) {
+  width: 25%;
+  padding: 1.25rem;
+}
+
+.Friends .container  > div:nth-child(2) {
+  width: 50%;
+  padding: 1.25rem;
+}
+
+.Friends .container  > div:nth-child(3) {
+  width: 25%;
+  padding: 1.25rem;
+}
+
+.Friends .box {
+  background-color: #fff;
+  border-radius: 1.25rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+}
+
+.Friends .container > div:nth-child(2) {
+  height: 100%;
+  /* display: flex;
+  flex-direction: column; */
+}
+
+.Friends .container > div:nth-child(2) > div {
+  margin-bottom: 1.875rem;
+  height: calc(50% - 0.938rem);
+}
+
+.Friends .container > div:nth-child(2) .box > div {
+  padding: 1.875rem;
+  height: calc(100% - 5rem);
+}
+
+.Friends .container > div:nth-child(2) .box .title {
+  height: 1.875rem;
+}
+
+.Friends .container > div:nth-child(2) .box .title h3 {
+  font-size: 1.75rem;
+  font-family: "Inter", sans-serif;
+}
+
+.Friends .container > div:nth-child(2) .chartWrapper {
+  width: 100%;
+  height: calc(100%);
+}
+
+.Friends .smallBox {
+  background-color: #fff;
+  border-radius: 1.25rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+  display: flex;
+  flex-direction: column;
+  padding: 0.938rem 1.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 1.5rem;
+}
+
+.Friends .smallBox .title {
+  display: flex;
+  font-weight: 900;
+  justify-content: center;
+  height: 110%;
+  font-family: "Inter", sans-serif;
+}
+
+.Friends .smallBox .title h3 {
+  
+}
+
+.Friends .smallBox i {
+  display: flex;
+  margin-left: 0.625rem;
+  font-size: 1.563rem;
+}
+
+@media (max-width: 87.5rem) {
+  .Friends .container > div:nth-child(1) {
+    padding: 0.625rem;
+  }
+  
+  .Friends .container  > div:nth-child(2) {
+    padding: 0.625rem;
+  }
+  
+  .Friends .container  > div:nth-child(3) {
+    padding: 0.625rem;
+  }
+
+  .Friends .container > div:nth-child(2) > div {
+    margin-bottom: 0.938rem;
+    height: calc(50% - 0.4688rem);
+  }
+  
+  .Friends .container > div:nth-child(2) .box > div {
+    padding: 0.938rem;
+    height: calc(100% -  3.75rem);
+  }
+}
+
+@media (max-width: 81.25rem) {
+  .Friends .container > div:nth-child(2) .box .title h3 {
+  }
+
+  .Friends .smallBox {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 81.25rem) {
+  .Friends .container > div:nth-child(1) {
+    width: 30%;
+  }
+  
+  .Friends .container  > div:nth-child(2) {
+    width: 40%;
+  }
+  
+  .Friends .container  > div:nth-child(3) {
+    width: 30%;
+  }
+}
+
+.title#friend {
+  font-family: "Roboto", sans-serif;
+  padding-bottom: 0em;
+  padding-left: 3.125rem;
+}
+
+.Friends .box#activeFriends>div h3 {
+  font-size: 1.8rem;
+}

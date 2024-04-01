@@ -5,13 +5,13 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { socket } from "./socket";
 import { timelineSort } from "./timelineSorting";
 import config from "./config";
 import { filterGroups } from "./Tool";
-import { useSearchParams } from "next/navigation";
 
 const AuthContext = createContext({});
 const SubjectsContext = createContext({});
@@ -24,6 +24,7 @@ const GroupsContext = createContext({});
 const ModalsContext = createContext({});
 const CallOptionsContext = createContext({});
 const ThemesContext = createContext({});
+const WorkersContext = createContext({});
 
 function AppProvider({ children }) {
   return (
@@ -35,7 +36,9 @@ function AppProvider({ children }) {
               <TutorialsProvider>
                 <CallOptionsProvider>
                   <ThemesProvider>
-                    {children}
+                    <WorkersProvider>
+                      {children}
+                    </WorkersProvider>
                   </ThemesProvider>
                 </CallOptionsProvider>
               </TutorialsProvider>
@@ -226,7 +229,12 @@ function ResponseProvider({ children }) {
 }
 
 function ModalsProvider({ children }) {
-  const [isChatModal, setIsChatModal] = useState(false);
+  const [chatModal, setChatModal] = useState({
+    group: null,
+    open: false,
+    totalNewMsg: 0
+  });
+  
   const [isNotificationModal, setIsNotificationModal] = useState(false);
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [joinGroupModal, setJoinGroupModal] = useState({
@@ -237,8 +245,8 @@ function ModalsProvider({ children }) {
   return (
     <ModalsContext.Provider
       value={{
-        isChatModal,
-        setIsChatModal,
+        chatModal,
+        setChatModal,
         isNotificationModal,
         setIsNotificationModal,
         isAddSubjectModal,
@@ -335,6 +343,26 @@ function ThemesProvider({ children }) {
       {children}
     </ThemesContext.Provider>
   )
+};
+
+function WorkersProvider({ children }) {
+  const membersTimerWorkerRef = useRef(null);
+  const subjectsTimerWorkerRef = useRef(null);
+
+  useEffect(() => {
+    membersTimerWorkerRef.current = new Worker('/timerWorker.js');
+    subjectsTimerWorkerRef.current = new Worker('/subjectTimerWorker.js');
+    return () => {
+      membersTimerWorkerRef.current?.terminate();
+      subjectsTimerWorkerRef.current?.terminate();
+    };
+  }, []);
+
+  return (
+    <WorkersContext.Provider value={{ membersTimerWorkerRef, subjectsTimerWorkerRef }}>
+      {children}
+    </WorkersContext.Provider>
+  )
 }
 
 export {
@@ -349,5 +377,6 @@ export {
   ModalsContext,
   TutorialsContext,
   CallOptionsContext,
-  ThemesContext
+  ThemesContext,
+  WorkersContext
 };

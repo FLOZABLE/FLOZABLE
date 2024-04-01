@@ -1,0 +1,57 @@
+.SendBtn {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+@keyframes send {
+  20% {
+    transform: translate(3.125rem, -3.125rem);
+  }
+
+  40% {
+    transform: translate(3.125rem, 3.125rem);
+  }
+
+  60% {
+    transform: translate(-3.125rem, 3.125rem);
+  }
+
+
+  /* 98% {
+    opacity: 0;
+    transform: translate(0rem, 0em);
+  }
+  99% {
+    opacity: 1;
+    transform: translate(0rem, 0em);
+  } */
+}
+  
+@keyframes endsend {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.SendBtn i {
+  position: absolute;
+  transition: .3s ease-in-out color;
+
+  /* animation: endsend .3s ease-in-out; */
+}
+
+.SendBtn:hover i {
+  color: var(--blue2);
+}
+
+.SendBtn i.submit {
+  animation: send .5s ease-in-out;
+}

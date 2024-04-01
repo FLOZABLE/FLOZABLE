@@ -1,0 +1,198 @@
+.ChatsModal {
+  position: fixed;
+  bottom: 6.25rem;
+  right: -31.25rem;
+  height: 31.25rem;
+  width: 21.875rem;
+  background-color: #fff;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+  border-radius: 1.25rem;
+  z-index: 6;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity, right .3s ease-in-out;
+}
+
+.ChatsModal.open {
+  visibility: visible;
+  opacity: 1;
+  right: 6.25rem;
+}
+
+.ChatsModal .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem;
+  margin-bottom: -1rem;
+}
+
+.ChatsModal .header p {
+  font-size: 1.5rem;
+}
+
+.ChatsModal .header i {
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 3rem;
+  cursor: pointer;
+}
+
+.ChatsModal .chatRoomsContainer {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.ChatsModal .chatsWrapper {
+  position: absolute;
+  left: 21.875rem;
+  height: 100%;
+  width: 100%;
+  transition: left .3s ease-in-out;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.ChatsModal .chatsWrapper.open {
+  left: 0em;
+  left: 0em;
+}
+
+.ChatsModal .chatsWrapper .chatsContainer {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ChatsModal .inputWrapper {
+  display: flex;
+  border-radius: 0.938rem;
+  height: 3.125rem;
+  align-items: center;
+  border: 0.0625rem solid var(--gray2);
+  margin: 0rem 0.5rem 0.5rem 0.5rem;
+}
+
+.ChatsModal .inputWrapper input {
+  flex: 1;
+  border: none;
+  padding-left: 0.5rem;
+  background-color: transparent;
+  height: 100%;
+  font-size: 1.875rem;
+  width: calc(100% - 3.125rem);
+  cursor: pointer;
+}
+
+
+.ChatsModal .chatsContainer .msg {
+  border-radius: 1.15rem;
+  line-height: 1.25;
+  max-width: 75%;
+  width: fit-content;
+  padding: 0.5rem;
+  position: relative;
+  word-wrap: break-word;
+  background-color: #248bf5;
+}
+
+.ChatsModal .chatsContainer .msg::before, .ChatsModal .chatsContainer .msg::after {
+  bottom: -0.2rem;
+  content: "";
+  height: 1rem;
+  position: absolute;
+}
+
+.ChatsModal .chatsContainer .msg.me {
+  margin: 0.353rem 0.938rem 0.925rem auto;
+}
+
+.ChatsModal .chatsContainer .msg.me .time {
+  position: absolute;
+  color: #000;
+  font-size: 0.588rem;
+  width: 3.125rem;
+  bottom: -0.9375rem;
+  right: 0em;
+  white-space: nowrap;
+}
+
+.ChatsModal .chatsContainer .msg.me p {
+  color: #fff;
+}
+
+.ChatsModal .chatsContainer .msg.me::before {
+  border-bottom-left-radius: 0.8rem 0.7rem;
+  border-right: 1rem solid #248bf5;
+  right: -0.35rem;
+  transform: translate(0, -0.1rem);
+}
+
+.ChatsModal .chatsContainer .msg.me::after {
+  background-color: #fff;
+  border-bottom-left-radius: 0.5rem;
+  right: -2.5rem;
+  transform:translate(-1.875rem, -0.125rem);
+  width: 0.625rem;
+}
+
+.ChatsModal .chatsContainer .msg.others{
+  background-color: #e5e5ea;
+  color: #000;
+  margin-bottom: 1.25rem;
+  margin-left: 2rem;
+}
+
+.ChatsModal .chatsContainer .msg.others p {
+  color: #000;
+}
+
+.ChatsModal .chatsContainer .msg.others::before {
+  border-bottom-right-radius: 0.8rem 0.7rem;
+  border-left: 1rem solid #e5e5ea;
+  left: -0.35rem;
+  transform: translate(0, -0.1rem);
+}
+
+.ChatsModal .chatsContainer .msg.others::after {
+  background-color: #fff;
+  border-bottom-right-radius: 0.5rem;
+  left: 1.25rem;
+  transform: translate(-1.875rem, -0.125rem);
+  width: 0.625rem;
+}
+
+.ChatsModal .msg.others .profileImg {
+  width: 1.875rem;
+  height: 1.875rem;
+  border-radius: 0.938rem;
+  position: absolute;
+  left: -1.875rem;
+  top: 0em;
+  z-index: 2;
+}
+
+.ChatsModal .msg.others .name {
+  position: absolute;
+  left: -1.25rem;
+  top: 2.25rem;
+  font-size:  0.688rem;
+  width: 2.5rem;
+  overflow-y: hidden;
+  height: 0.6875rem;
+}
+
+.ChatsModal .msg.others .time {
+  position: absolute;
+  left: 1.4375rem;
+  top: 2.375rem;
+  font-size:  0.688rem;
+  width: 2.5rem;
+  height: 0.6875rem;
+  white-space: nowrap;
+}
