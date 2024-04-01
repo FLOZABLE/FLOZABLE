@@ -22,9 +22,37 @@ function ContextMenu({ MENU_ID, rightClickedMember, setResponse }) {
     const [memberName, setMemberName] = useState("");
     const [memberId, setMemberId] = useState("");
     const [kickClicked, setKickClicked] = useState(false);
+    const [transferClicked, setTransferClicked] = useState(false);
 
 
     const handleItemClick = ({ id, event, props }) => {
+        if (id === "transfer") {
+            setTransferClicked(true);
+        }
+        else if (id === "confirmTransfer") {
+            fetch(`${serverOrigin}/groups/transfer-ownership`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        groupId: rightClickedMember.groupId,
+                        memberId: rightClickedMember.user_id
+                    })
+                }
+            ).then((response) => response.json())
+                .then((data) => {
+                    setTransferClicked(false);
+                    if (data.success) {
+                        setResponse({ success: true, msg: `Transfered Ownership to ${memberName}` });
+                    }
+                    else {
+                        setResponse(data);
+                    }
+                }).catch((err) => { console.log(err) });
+        }
+
         if (id === "kick") {
             setKickClicked(true);
         }
@@ -41,15 +69,15 @@ function ContextMenu({ MENU_ID, rightClickedMember, setResponse }) {
                     })
                 }
             ).then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                if (data.success){
-                    setResponse({success: true, msg: `Removed ${memberName}`});
-                }
-                else{
-                    setResponse(data);
-                }
-            }).catch((err) => {console.log(err)});
+                .then((data) => {
+                    console.log(data);
+                    if (data.success) {
+                        setResponse({ success: true, msg: `Removed ${memberName}` });
+                    }
+                    else {
+                        setResponse(data);
+                    }
+                }).catch((err) => { console.log(err) });
         }
         else {
             setKickClicked(false);
@@ -57,7 +85,8 @@ function ContextMenu({ MENU_ID, rightClickedMember, setResponse }) {
     }
 
     useEffect(() => {
-        setKickClicked(false)
+        setKickClicked(false);
+        setTransferClicked(false);
     }, [memberId]);
 
     useEffect(() => {
@@ -77,6 +106,12 @@ function ContextMenu({ MENU_ID, rightClickedMember, setResponse }) {
                         <Item id="confirmKick" type="danger" onClick={handleItemClick}>Kick?</Item>
                         :
                         <Item id="kick" type="danger" onClick={handleItemClick} closeOnClick={false}> Kick {memberName}</Item>
+                }
+                {
+                    transferClicked ?
+                        <Item id="confirmTransfer" type="danger" onClick={handleItemClick}>Transfer?</Item>
+                        :
+                        <Item id="transfer" type="danger" onClick={handleItemClick} closeOnClick={false}>Make {memberName} Owner</Item>
                 }
             </Menu>
         </StyleWrapper>
