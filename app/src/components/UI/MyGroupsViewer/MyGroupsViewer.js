@@ -10,9 +10,12 @@ import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
 import GroupRankingModal from "../GroupRankingModal/GroupRankingModal";
 import { socket } from "../../../socket";
 
+const serverOrigin = process.env.REACT_APP_ORIGIN;
+
 function MyGroupsViewer({
   myGroups,
   setMyGroups,
+  setResponse,
   userInfo,
   isCam,
   isMic,
@@ -49,17 +52,31 @@ function MyGroupsViewer({
 
   const leaveGroup = useCallback((group) => {
     console.log("Leaving ", group);
+    fetch(`${serverOrigin}/groups/leave-group`,
+      {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({groupId: group.group_id})
+      }).then((response) => response.json())
+      .then((data) =>{
+        console.log(data);
+        if (data.success) {
+          setResponse({success: true, msg: "You left " + group.name})
+        }
+      })
     setMyGroups(myGroups.filter((g) => g.group_id !== group.group_id));
   }, [myGroups]);
 
   useEffect(() => {
     if (!myGroups) return;
     console.log(myGroups);
-    
+
     const memberJoinGroup = (groupId, memberInfo) => {
       setMyGroups(myGroups.map((group) => {
         if (group.group_id !== groupId) return group;
-        return {...group, members: group.members + "," + memberInfo.user_id};
+        return { ...group, members: group.members + "," + memberInfo.user_id };
       }))
     }
 
