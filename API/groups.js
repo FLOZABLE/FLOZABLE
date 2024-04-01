@@ -246,7 +246,7 @@ Router.post('/join/:id', async (req, res) => {
       }
       let totalTime = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset);
       totalTime = totalTime === null ? 0 : totalTime;
-      mainIo.to(`${groupId}`).emit(`newMemberInfo`, { ...userInfo, totalTime, activeSubject });
+      mainIo.to(`chat:${groupId}`).emit(`newMemberInfo`, groupId, { ...userInfo, totalTime, activeSubject });
 
       //update cached value only if it exists
       const isCached = await redisClient.exists(`room:${groupId}`);

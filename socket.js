@@ -75,6 +75,7 @@ mainIo.on('connection', (socket) => {
     try {
       const chatRooms = await chatRoomsCache(userId);
       const chatRoomsId = chatRooms.map(chatRoom => {
+        console.log('join', chatRoom.id);
         return `chat:${chatRoom.id}`;
       });
       socket.join(chatRoomsId);
