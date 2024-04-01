@@ -56,7 +56,11 @@ function MyGroupsViewer({
     if (!myGroups) return;
     
     const memberJoinGroup = (groupId, memberInfo) => {
-      console.log(groupId, memberInfo);
+      setMyGroups(myGroups.map((group) => {
+        if (group.group_id !== groupId) return group;
+        //return {...group, members: [...group.members.split, memberInfo]}
+        return group;
+      }))
     }
 
     socket.on(`newMemberInfo`, memberJoinGroup);
