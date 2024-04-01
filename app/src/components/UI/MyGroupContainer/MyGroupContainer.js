@@ -22,6 +22,7 @@ function MyGroupContainer({ group, isFocus, userInfo, leaveGroup, isMic, isCam, 
   useEffect(() => {
     if (!group || !isFocus) return;
     if (group.leader === userInfo.user_id) setIsMyGroup(true);
+    else setIsMyGroup(false);
     //group_id, average_hr, color, date, explanation, font, goal_hr, leader, max_member, name, visibility, tags, members, likes
     const { name } = group;
     setName(name);
