@@ -8,7 +8,7 @@ import styles from "./MyGroupsViewer.module.css";
 import { mediaSocket } from "../../../mediaSocket";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
 import GroupRankingModal from "../GroupRankingModal/GroupRankingModal";
-import ContextMenu from "../ContextMenu/ContextMenu";
+import { socket } from "../../../socket";
 
 function MyGroupsViewer({
   myGroups,
@@ -50,7 +50,20 @@ function MyGroupsViewer({
   const leaveGroup = useCallback((group) => {
     console.log("Leaving ", group);
     setMyGroups(myGroups.filter((g) => g.group_id !== group.group_id));
-  }, [myGroups])
+  }, [myGroups]);
+
+  useEffect(() => {
+    if (!myGroups) return;
+    
+    const memberJoinGroup = (groupId, memberInfo) => {
+      console.log(groupId, memberInfo);
+    }
+
+    socket.on(`newMemberInfo`, memberJoinGroup);
+    return () => {
+      socket.off("newMemberInfo", memberJoinGroup);
+    };
+  }, [myGroups]);
 
   useEffect(() => {
     setSwiperEl(myGroups.map((group, i) => {
