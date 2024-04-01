@@ -1,0 +1,75 @@
+.ThemePreview {
+  position: relative;
+}
+
+.ThemePreview .transitionCircle {
+  position: fixed;
+  width: 1.875rem;
+  height: 1.875rem;
+  border-radius: 50%;
+  background-color: var(--purple);
+  top: -0.9375rem;
+  left: -0.9375rem;
+  transition: 1s linear;
+  z-index: 7;
+  visibility: hidden;
+}
+
+.ThemePreview .active .transitionCircle {
+  width: 400vw;
+  height: 400vw;
+  top: -200vw;
+  left: -200vw;
+  visibility: visible;
+}
+
+.ThemePreview .youtubeWrapper {
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  transition-delay: 1s;
+}
+
+.ThemePreview .hidden {
+  visibility: hidden;
+}
+
+.ThemePreview .controlButtons {
+  position: fixed;
+  top: 5%;
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  background-color: rgba(255, 255, 255, 0.234);
+  padding: 0.938rem;
+  border-radius: 0.313rem;
+  white-space: nowrap;
+}
+
+.ThemePreview .controlButtons.initial {
+  transform: translateX(-50%) !important;
+}
+
+.ThemePreview .controlButtons button {
+  background-color: #fd8a8a;
+  font-weight: 800;
+  color: #fff;
+  padding: 0em 1.25rem;
+  border-radius: 1.25rem;
+  font-size: 1rem;
+  padding: 0.313rem;
+  margin: 0.313rem;
+}
+
+.ThemePreview .controlButtons .volumeIcon {
+  color: var(--gray);
+}
+
+.ThemePreview .controlButtons .volumeIcon:hover {
+  color: var(--purple);
+  cursor: pointer;
+}

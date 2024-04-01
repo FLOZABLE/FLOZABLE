@@ -1,0 +1,11 @@
+.YouTubePlayer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.YouTubePlayer .video {
+  height: calc(100% + 18.75rem);
+  width: 100%;
+  pointer-events: none;
+}

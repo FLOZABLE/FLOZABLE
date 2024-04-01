@@ -89,18 +89,19 @@ function validateLength(value, type, max, min = 0) {
 
 function validateURL(url) {
   if (!url) {
-    return { isValid: false, reason: "Please provide URL"};
+    return { isValid: false, reason: "Please provide URL" };
   };
   let origin;
   let domain;
   try {
-    if (url.includes('https://') || url.includes('http://')) {
-      origin = new URL(url).origin;
-      domain = new URL(url).hostname;
-    } else {
-      origin = new URL('https://' + url).origin;
-      domain = new URL('https://' + url).hostname;
+    if ((!url.includes('https://') || !url.includes('http://'))) {
+      url = new URL('https://' + url);
     };
+
+
+    origin = url.origin;
+    domain = url.hostname;
+
     origin = origin.replace(/^www\.(.*)$/, "$1");
     domain = domain.replace(/^www\.(.*)$/, "$1");
 
@@ -108,7 +109,7 @@ function validateURL(url) {
       return { isValid: false, reason: 'Invalid URL' };
     };
 
-    return { isValid: true, domain, origin };
+    return { isValid: true, domain, origin, url };
   } catch (err) {
     return { isValid: false, reason: 'Invalid URL' };
   }
@@ -132,7 +133,7 @@ function validateBoolean(value, type, isStrict) {
 function validateTimeZone(timeZone) {
 
   if (!timeZone) {
-    return {isValid: false, reason: "Please provide timezone"};
+    return { isValid: false, reason: "Please provide timezone" };
   }
 
   try {
@@ -167,7 +168,7 @@ function validateHEX(value, type, maxLength = 7, minLength = 7) {
     return { isValid: false, reason: `${type} should be hex` };
   };
   if (!/^#?[0-9a-f]+$/i.test(value)) {
-    return { isValid: false, reason:  `${type} should be hex` };
+    return { isValid: false, reason: `${type} should be hex` };
   };
   if (value.length < minLength) {
     return { isValid: false, reason: `${type} is too short` };
