@@ -115,6 +115,7 @@ function Groups({
             <MyGroupsViewer
               myGroups={myGroups}
               setMyGroups={setMyGroups}
+              setResponse={setResponse}
               userInfo={userInfo}
               myTimerTotal={myTimerTotal}
               setIsChatModal={setIsChatModal}
