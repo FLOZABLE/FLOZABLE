@@ -338,7 +338,6 @@ Router.post("/remove-member", async (req, res) => {
     try {
       const connection = pool.promise();
       const [[group]] = await connection.query("SELECT leader, name, members FROM groups WHERE group_id = ?", [groupId]);
-      console.log(group);
 
       if (group.leader != userId) {
         return res.send({ success: false, reason: "You do not have the permission to remove members" })
@@ -364,7 +363,29 @@ Router.post("/remove-member", async (req, res) => {
       console.log(err);
     }
   }))
-})
+});
+
+
+Router.post("/transfer-ownership", async (req, res) => {
+  const { memberId, groupId } = req.body;
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const connection = pool.promise();
+      const [[group]] = await connection.query("SELECT leader FROM groups WHERE group_id = ?", [groupId]);
+
+      if (group.leader != userId) {
+        return res.send({ success: false, reason: "You are not the owner of this group" })
+      }
+      else {
+        const updateGroup = await connection.query("UPDATE groups SET leader = ? WHERE group_id = ?", [memberId, groupId]);
+        mainIo.to(`chat:${groupId}`).emit("leaderChange", groupId, memberId);
+        return res.send({ success: true });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }))
+});
 
 Router.post('/like/:id', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -538,6 +559,7 @@ Router.post('/modify', async (req, res) => {
 
       const groupInfo = await connection.query(`SELECT leader FROM \`groups\` WHERE group_id = ? AND leader = ?`, [group_id, userId])
       if (!groupInfo) return res.send({ success: false, reason: 'You are not the leader of this group' });
+      if (groupInfo.leader != userId) return res.send({success: false, reason: "You are not the owner of this group"});
 
       const date = Math.floor(new Date().getTime() / 1000);
       const stringlifiedTags = JSON.stringify(tags);
