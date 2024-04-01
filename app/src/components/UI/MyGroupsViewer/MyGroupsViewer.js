@@ -58,12 +58,12 @@ function MyGroupsViewer({
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({groupId: group.group_id})
+        body: JSON.stringify({ groupId: group.group_id })
       }).then((response) => response.json())
-      .then((data) =>{
+      .then((data) => {
         console.log(data);
         if (data.success) {
-          setResponse({success: true, msg: "You left " + group.name})
+          setResponse({ success: true, msg: "You left " + group.name })
         }
       })
     setMyGroups(myGroups.filter((g) => g.group_id !== group.group_id));
@@ -77,12 +77,30 @@ function MyGroupsViewer({
       setMyGroups(myGroups.map((group) => {
         if (group.group_id !== groupId) return group;
         return { ...group, members: group.members + "," + memberInfo.user_id };
-      }))
-    }
+      }));
+    };
+
+    const memberLeaveGroup = (groupId, memberId) => {
+      setMyGroups(myGroups.map((group) => {
+        if (group.group_id !== groupId) return group;
+        return { ...group, members: group.members.split(",").splice(memberId, 1).join(",") };
+      }));
+    };
+
+    const handleLeaderChange = (groupId, memberId) => {
+      setMyGroups(myGroups.map((group) => {
+        if (group.group_id !== groupId) return group;
+        return {...group, leader: memberId};
+      }));
+    };
 
     socket.on(`newMemberInfo`, memberJoinGroup);
+    socket.on(`removeMember`, memberLeaveGroup);
+    socket.on('leaderChange', handleLeaderChange);
     return () => {
       socket.off("newMemberInfo", memberJoinGroup);
+      socket.off(`removeMember`, memberLeaveGroup);
+      socket.off('leaderChange', handleLeaderChange);
     };
   }, [myGroups]);
 
