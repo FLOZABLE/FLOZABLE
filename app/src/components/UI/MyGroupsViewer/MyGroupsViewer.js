@@ -54,12 +54,12 @@ function MyGroupsViewer({
 
   useEffect(() => {
     if (!myGroups) return;
+    console.log(myGroups);
     
     const memberJoinGroup = (groupId, memberInfo) => {
       setMyGroups(myGroups.map((group) => {
         if (group.group_id !== groupId) return group;
-        //return {...group, members: [...group.members.split, memberInfo]}
-        return group;
+        return {...group, members: group.members + "," + memberInfo.user_id};
       }))
     }
 
