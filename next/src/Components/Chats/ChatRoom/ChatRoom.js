@@ -13,9 +13,15 @@ function ChatRoom({ room, lastMsg, lastRead, setTotalNewMsg }) {
     if (!chatModal) return;
 
     const onNewMsg = (roomId, msgInfo) => {
-      if (chatModal.chatRoom === room.id) {
+      console.log(chatModal.chatRoom === room.id && roomId === room.id)
+      /* if (chatModal.chatRoom !== room.id && roomId === room.id) {
         setNewMsgs(prev => prev + 1);
-      };
+      }; */
+      if (chatModal.chatRoom === room.id && roomId === room.id) {
+        setTimeout(() => {
+          setNewMsgs(0);
+        }, 100);
+      }
     };
 
     socket.on('msgReceived', onNewMsg);
@@ -39,7 +45,7 @@ function ChatRoom({ room, lastMsg, lastRead, setTotalNewMsg }) {
     });
     if (lastMsgIndex === -1) return;
     const newMsgs = room.chats.length - lastMsgIndex - 1;
-    setChatModal(prev => ({...prev, totalNewMsg: prev.totalNewMsg + 1}));
+    //setChatModal(prev => ({...prev, totalNewMsg: prev.totalNewMsg + 1}));
     setNewMsgs(newMsgs);
   }, [lastRead, room]);
 
