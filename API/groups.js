@@ -323,7 +323,7 @@ Router.post("/leave-group", async (req, res) => {
       redisClient.sRem(`room:${groupId}`, userId);
 
       console.log(`removeMember:${groupId}`);
-      mainIo.emit(`removeMember:${groupId}`, userId);
+      mainIo.emit(`removeMember`, groupId, userId);
 
       return res.send({success: true});
     } catch (err) {
@@ -352,9 +352,7 @@ Router.post("/remove-member", async (req, res) => {
         redisClient.hSet(`user:${memberId}`, 'groups', groups.join(','));
 
         redisClient.sRem(`room:${groupId}`, memberId);
-
-        console.log(`removeMember:${groupId}`);
-        mainIo.emit(`removeMember:${groupId}`, memberId);
+        mainIo.emit(`removeMember`, groupId, memberId);
 
         return res.send({ success: true });
       }
@@ -559,7 +557,6 @@ Router.post('/modify', async (req, res) => {
 
       const groupInfo = await connection.query(`SELECT leader FROM \`groups\` WHERE group_id = ? AND leader = ?`, [group_id, userId])
       if (!groupInfo) return res.send({ success: false, reason: 'You are not the leader of this group' });
-      if (groupInfo.leader != userId) return res.send({success: false, reason: "You are not the owner of this group"});
 
       const date = Math.floor(new Date().getTime() / 1000);
       const stringlifiedTags = JSON.stringify(tags);
@@ -568,7 +565,6 @@ Router.post('/modify', async (req, res) => {
         name,
         explanation,
         leader: userId,
-        members: userId,
         tags: stringlifiedTags,
         max_members,
         visibility,
