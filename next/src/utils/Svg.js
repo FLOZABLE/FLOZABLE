@@ -1133,6 +1133,32 @@ function IconUser(props) {
   );
 }
 
+const BackArrow = (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    width=" 2.75rem"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+    <g
+      id="SVGRepo_tracerCarrier"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <g id="SVGRepo_iconCarrier">
+      <path
+        d="M6 12H18M6 12L11 7M6 12L11 17"
+        stroke="#000000"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
+  </svg>
+);
+
 
 export {
   HeaderBook,
@@ -1173,5 +1199,6 @@ export {
   FriendLink,
   EmailInvitation,
   IconEmailOutline,
-  IconUser
+  IconUser,
+  BackArrow
 };
