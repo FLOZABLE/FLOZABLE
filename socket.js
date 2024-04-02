@@ -70,12 +70,10 @@ mainIo.on('connection', (socket) => {
     })();
   }
 
-
-  socket.on('joinMyGroups', async () => {
+  socket.on('joinChats', async () => {
     try {
       const chatRooms = await chatRoomsCache(userId);
       const chatRoomsId = chatRooms.map(chatRoom => {
-        console.log('join', chatRoom.id);
         return `chat:${chatRoom.id}`;
       });
       socket.join(chatRoomsId);
@@ -177,7 +175,7 @@ mainIo.on('connection', (socket) => {
       const time = Math.floor(new Date().getTime() / (1000 * 60));
       const msgInfo = { u: userId, m: msg, i: msgId, t: time };
       msgQueue(roomId, msgInfo);
-      io.to(`chat:${roomId}`).emit('msgReceived', roomId, msgInfo);
+      mainIo.to(`chat:${roomId}`).emit('msgReceived', roomId, msgInfo);
       const now = Math.floor(new Date().getTime() / 1000 / 60);
       redisClient.hSet(`user:${userId}:chats`, roomId, `${msgId}:${now}`);
     };
