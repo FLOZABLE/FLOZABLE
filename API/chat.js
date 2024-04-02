@@ -17,6 +17,7 @@ Router.post("/bring-rooms", async (req, res) => {
     rooms = await Promise.all(roomPromises);
     const readStatus = await redisClient.hGetAll(`user:${userId}:chats`);
     res.send({ success: true, rooms, readStatus })
+    console.log(rooms)
   }));
 });
 
@@ -46,10 +47,7 @@ Router.get('/members', async (req, res) => {
     };
     const members = await groupMembersCache(roomId);
     if (!members.includes(userId)) return res.send({ success: false, reason: 'not in group' });
-    const membersInfo = await Promise.all(members.map(async (memberId) => {
-      const memberInfo = await userCache(memberId);
-      return memberInfo;
-    }));
+    const membersInfo = await usersCache(members);
     res.send({ success: true, membersInfo });
   }));
 })

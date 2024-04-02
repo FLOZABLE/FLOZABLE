@@ -25,6 +25,7 @@ const ModalsContext = createContext({});
 const CallOptionsContext = createContext({});
 const ThemesContext = createContext({});
 const WorkersContext = createContext({});
+const ChatsContext = createContext({});
 
 function AppProvider({ children }) {
   return (
@@ -37,7 +38,9 @@ function AppProvider({ children }) {
                 <CallOptionsProvider>
                   <ThemesProvider>
                     <WorkersProvider>
+                      <ChatsProvider>
                       {children}
+                      </ChatsProvider>
                     </WorkersProvider>
                   </ThemesProvider>
                 </CallOptionsProvider>
@@ -230,7 +233,7 @@ function ResponseProvider({ children }) {
 
 function ModalsProvider({ children }) {
   const [chatModal, setChatModal] = useState({
-    group: null,
+    chatRoom: null,
     open: false,
     totalNewMsg: 0
   });
@@ -363,6 +366,42 @@ function WorkersProvider({ children }) {
       {children}
     </WorkersContext.Provider>
   )
+};
+
+function ChatsProvider({children}) { 
+  const [chatRooms, setChatRooms] = useState([]);
+  const [chatModal, setCHatModal] = useState({
+    open: false,
+    chatRoom: false
+  });
+  const [readStatus, setReadStatus] = useState({});
+
+  useEffect(() => {
+    fetch(`${config.server}/chat/bring-rooms`, { method: "post" })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setChatRooms(data.rooms);
+          setReadStatus(data.readStatus);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  return (
+    <ChatsContext.Provider value={
+      {
+        chatRooms,
+        setChatRooms,
+        chatModal,
+        setCHatModal,
+        readStatus,
+        setReadStatus
+      }
+    }>
+      {children}
+    </ChatsContext.Provider>
+  )
 }
 
 export {
@@ -378,5 +417,6 @@ export {
   TutorialsContext,
   CallOptionsContext,
   ThemesContext,
-  WorkersContext
+  WorkersContext,
+  ChatsContext
 };

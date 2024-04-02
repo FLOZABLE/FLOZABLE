@@ -1,14 +1,19 @@
 import styles from "./ChatRoom.module.css";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { socket } from "@/utils/socket";
+import { ModalsContext } from "@/utils/Contexts";
 
-function ChatRoom({ room, setSelectedRoom, setRoomName, lastMsg, lastRead, setTotalNewMsg, isSelected }) {
+function ChatRoom({ room, lastMsg, lastRead, setTotalNewMsg }) {
+  const {chatModal, setChatModal} = useContext(ModalsContext);
+
   const [newMsgs, setNewMsgs] = useState(0);
+
   useEffect(() => {
-    if (!room || isSelected) return;
+    if (!chatModal) return;
+
     const onNewMsg = (roomId, msgInfo) => {
-      if (roomId === room.id) {
+      if (chatModal.chatRoom === room.id) {
         setNewMsgs(prev => prev + 1);
       };
     };
@@ -18,7 +23,7 @@ function ChatRoom({ room, setSelectedRoom, setRoomName, lastMsg, lastRead, setTo
     return () => {
       socket.off('msgReceived', onNewMsg);
     }
-  }, [room, isSelected]);
+  }, [room, chatModal]);
 
   useEffect(() => {
     if (!room) return;
@@ -34,7 +39,7 @@ function ChatRoom({ room, setSelectedRoom, setRoomName, lastMsg, lastRead, setTo
     });
     if (lastMsgIndex === -1) return;
     const newMsgs = room.chats.length - lastMsgIndex - 1;
-    setTotalNewMsg(prev => prev + newMsgs);
+    setChatModal(prev => ({...prev, totalNewMsg: prev.totalNewMsg + 1}));
     setNewMsgs(newMsgs);
   }, [lastRead, room]);
 
@@ -42,9 +47,7 @@ function ChatRoom({ room, setSelectedRoom, setRoomName, lastMsg, lastRead, setTo
     <li
       className={styles.ChatRoom}
       onClick={() => {
-        setSelectedRoom(room);
-        setRoomName(room?.name);
-        setTotalNewMsg(prev => prev - newMsgs)
+        setChatModal(prev => ({...prev, totalNewMsg: prev.totalNewMsg - newMsgs, chatRoom: room.id}));
         setNewMsgs(0);
       }}
     >
