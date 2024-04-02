@@ -18,7 +18,7 @@ function Header({
   const { subjects } = useContext(SubjectsContext);
   const { userInfo } = useContext(UserInfoContext);
   const { notifications } = useContext(NotificationsContext);
-  const { setIsChatModal, setIsNotificationModal } = useContext(ModalsContext);
+  const { setChatModal, setIsNotificationModal } = useContext(ModalsContext);
   const { tutorialBoxRef, tutorialTextRef } = useContext(TutorialsContext);
 
   const [totalStudied, setTotalStudied] = useState("0m"); // string
@@ -169,7 +169,7 @@ function Header({
       </div>
       <div className={styles.right}>
         <div className={styles.headerEl} id={styles.chats}
-          onClick={() => { setIsChatModal(prev => !prev) }}
+          onClick={() => { setChatModal(prev => ({...prev, open: true})) }}
         >
           <i>
             <FontAwesomeIcon icon={faMessage} bounce={totalNewMsg ? true : false} />

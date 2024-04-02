@@ -10,7 +10,7 @@ const { DateTime } = require('luxon');
 const { hashing, autoSignin, generateRandomId, googleOauth2client, googleYoutubeOauth2client, isValidTimeZone, deriveKey, randomIntInRange } = require("../tool");
 const { validateEmail, validateStrictString, validatePassword, validateURL, validateString, validateLength } = require("../validate");
 const { UserRefreshClient, auth } = require("google-auth-library")
-const { NotificationCache, usersCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
+const { NotificationCache, userCache, subjectsTimelineCache } = require('../services/redisLoader');
 const { extensionIo } = require('../socket');
 const { sendEmail } = require('../email');
 const { responseCodes } = require('../Constant');
@@ -28,7 +28,7 @@ Router.get('/accountinfo', async (req, res) => {
     if (!req.session.timezone) {
       req.session.timezone = userInfo.timezone;
     }
-    usersCache(userId);
+    
     res.send({ success: true, userInfo: userInfo, notifications: notifications });
   }
   ), () => {
