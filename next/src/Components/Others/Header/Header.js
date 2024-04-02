@@ -13,12 +13,11 @@ import { ModalsContext, NotificationsContext, SubjectsContext, TutorialsContext,
 import ProfileImage from "@/Components/Users/ProfileImage/ProfileImage";
 
 function Header({
-  totalNewMsg,
 }) {
   const { subjects } = useContext(SubjectsContext);
   const { userInfo } = useContext(UserInfoContext);
   const { notifications } = useContext(NotificationsContext);
-  const { setChatModal, setIsNotificationModal } = useContext(ModalsContext);
+  const { setChatModal, chatModal, setIsNotificationModal } = useContext(ModalsContext);
   const { tutorialBoxRef, tutorialTextRef } = useContext(TutorialsContext);
 
   const [totalStudied, setTotalStudied] = useState("0m"); // string
@@ -172,10 +171,10 @@ function Header({
           onClick={() => { setChatModal(prev => ({...prev, open: true})) }}
         >
           <i>
-            <FontAwesomeIcon icon={faMessage} bounce={totalNewMsg ? true : false} />
+            <FontAwesomeIcon icon={faMessage} bounce={chatModal?.totalNewMsg ? true : false} />
           </i>
           <div>
-            {totalNewMsg}
+            {chatModal?.totalNewMsg ? chatModal.totalNewMsg : 0}
           </div>
         </div>
         <div className={styles.headerEl} id={styles.notifications}

@@ -65,6 +65,7 @@ function AccountProvider({ children }) {
           setUserInfo(data.userInfo);
           setNotifications(data.notifications);
           socket.connect();
+          socket.emit('joinChats');
         } else if (data.code === 401) {
           console.log("not user");
           setUserInfo(false);
@@ -199,7 +200,6 @@ function GroupsProvider({ children }) {
 
   useEffect(() => {
     if (!userInfo) return;
-    console.log("gdddddd", userInfo);
     const { userGroups, otherGroups } = filterGroups(userInfo, groups);
     setMyGroups(userGroups);
     setOtherGroups(otherGroups);

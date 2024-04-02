@@ -4,15 +4,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./ChatModal.module.css";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { ChatsContext, GroupsContext, ModalsContext } from "@/utils/Contexts";
+import { ChatsContext, GroupsContext, ModalsContext, UserInfoContext } from "@/utils/Contexts";
 import { BackArrow } from "@/utils/Svg";
 import config from "@/utils/config";
 import SendBtn from "@/Components/Buttons/SendBtn/SendBtn";
 import { socket } from "@/utils/socket";
 import ChatRoom from "@/Components/Chats/ChatRoom/ChatRoom";
+import { DateTime } from "luxon";
+import ChatContainer from "@/Components/Chats/ChatContainer/ChatContainer";
+import MyChatContainer from "@/Components/Chats/MyChatContainer/MyChatContainer";
 
 function ChatModal({
 }) {
+  const {userInfo} = useContext(UserInfoContext);
   const {chatModal, setChatModal} = useContext(ModalsContext);
   const {myGroups} = useContext(GroupsContext);
 
@@ -21,6 +25,7 @@ function ChatModal({
   const [readStatus, setReadStatus] = useState({});
   const [msgInput, setMsgInput] = useState("");
   const [roomMembers, setRoomMembers] = useState([]);
+  const [msgs, setMsgs] = useState([]);
 
   useEffect(() => {
     fetch(`${config.server}/chat/bring-rooms`, { method: "post" })
@@ -45,6 +50,38 @@ function ChatModal({
       socket.emit("sendMsg", selectedRoom.id, msgInput);
     }
   }, [msgInput, selectedRoom]);
+
+  
+  const onMsgReceived = useCallback(
+    (roomId, msgInfo) => {
+      const chatRoomIndex = chatRooms.findIndex((chatRoom) => {
+        return chatRoom.id === roomId;
+      });
+      if (chatRoomIndex !== -1) {
+        const newChatRooms = JSON.parse(JSON.stringify(chatRooms));
+        newChatRooms[chatRoomIndex].chats.push(msgInfo);
+        /* if (selectedRoom.id !== roomId) {
+          newChatRooms[chatRoomIndex].
+        }; */
+        setChatRooms(newChatRooms);
+      };
+      if (selectedRoom.id !== roomId) {
+        setChatModal((prev) => ({...prev, totalNewMsg: prev.totalNewMsg + 1}));
+      };
+    },
+    [chatRooms, selectedRoom],
+  );
+
+  useEffect(() => {
+    socket.on("msgReceived", onMsgReceived);
+    chatsContainerRef.current.scrollTo({
+      top: chatsContainerRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+    return () => {
+      socket.off("msgReceived", onMsgReceived);
+    };
+  }, [chatRooms, selectedRoom]);
 
   useEffect(() => {
     if (!chatModal.chatRoom || !myGroups.length) return;
@@ -90,7 +127,7 @@ function ChatModal({
 
       setRoomMembers(chatRoom.members);
     };
-  }, [chatModal.chatRoom, myGroups]);
+  }, [chatModal.chatRoom, myGroups, chatRooms]);
 
   return (
     <div className={`${styles.ChatModal} ${chatModal.open ? styles.open : ""}`}
@@ -183,6 +220,35 @@ function ChatModal({
           className={`${styles.chatsContainer} customScroll`}
           ref={chatsContainerRef}
         >
+          {
+            selectedRoom?.chats?.map((msg) => {
+              const { u, m, i, t } = msg;
+              const formattedTime = DateTime.fromSeconds(t * 60).toFormat(
+                "h:mm a",
+              );
+              if (u === userInfo.user_id) {
+                return (
+                  <MyChatContainer 
+                    time={formattedTime}
+                    m={m}
+                    key={i}
+                  />
+                );
+              } else {
+                const user = membersInfo.find((member) => {
+                  return member.user_id === u;
+                });
+                return (
+                  <ChatContainer 
+                    userInfo={user}
+                    time={formattedTime}
+                    m={m}
+                    key={i}
+                  />
+                );
+              }
+            })
+          }
           
         </ul>
         <div className={styles.inputWrapper}>

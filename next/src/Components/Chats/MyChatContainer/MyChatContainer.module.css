@@ -1,0 +1,44 @@
+.MyChatContainer {
+  border-radius: 1.15rem;
+  line-height: 1.25;
+  max-width: 75%;
+  width: fit-content;
+  padding: 0.5rem;
+  position: relative;
+  word-wrap: break-word;
+  background-color: #248bf5;
+  margin: 0.353rem 0.938rem 0.925rem auto;
+  color: #fff;
+}
+
+.MyChatContainer::before, .MyChatContainer::after {
+  bottom: -0.2rem;
+  content: "";
+  height: 1rem;
+  position: absolute;
+}
+
+.MyChatContainer .time {
+  position: absolute;
+  color: #000;
+  font-size: 0.588rem;
+  width: 3.125rem;
+  bottom: -0.9375rem;
+  right: 0em;
+  white-space: nowrap;
+}
+
+.MyChatContainer::before {
+  border-bottom-left-radius: 0.8rem 0.7rem;
+  border-right: 1rem solid #248bf5;
+  right: -0.35rem;
+  transform: translate(0, -0.1rem);
+}
+
+.MyChatContainer::after {
+  background-color: #fff;
+  border-bottom-left-radius: 0.5rem;
+  right: -2.5rem;
+  transform:translate(-1.875rem, -0.125rem);
+  width: 0.625rem;
+}
