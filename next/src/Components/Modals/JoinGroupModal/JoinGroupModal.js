@@ -108,7 +108,7 @@ function JoinGroupModal() {
         </i>
       </div>
       {joinGroupModal?.group ?
-        <div className={styles.contents}>
+        <div className={`${styles.contents} customScroll`}>
           <div className={styles.text}>Join this group?</div>
           <div className={styles.groupWrapper}>
             <GroupContainer
