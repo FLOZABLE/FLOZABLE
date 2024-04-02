@@ -35,6 +35,7 @@
 .ThemeContainer .description {
   height: 6.25rem;
   overflow-x: auto;
+  word-break: break-all;
 }
 
 .ThemeContainer .tags {

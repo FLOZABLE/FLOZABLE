@@ -164,10 +164,10 @@ function PlanTimeline({
           name={"Add a New Plan"}
           setClicked={() => {
             setPlanModal((prev) => ({ ...prev, opened: true }));
-            const tutorial = searchParams.get("tutorial");
+            /* const tutorial = searchParams.get("tutorial");
             if (tutorial && parseInt(tutorial) === 1) {
               setSearchParams({ ...searchParams, tutorial: 2 })
-            }
+            } */
           }}
           color1={"#fff"}
           color2={"var(--blue2)"}
