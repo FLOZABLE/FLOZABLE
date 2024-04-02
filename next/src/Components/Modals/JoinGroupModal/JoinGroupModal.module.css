@@ -7,6 +7,8 @@
   border-radius: 1.875rem;
   box-shadow: var(--shadow3);
   max-height: 60vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .JoinGroupModal .header {
@@ -32,6 +34,8 @@
   display: flex;
   flex-direction: column;
   padding: 0.3rem;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .JoinGroupModal .blobWrapper {
