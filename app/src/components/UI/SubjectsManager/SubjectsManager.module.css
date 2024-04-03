@@ -4,4 +4,17 @@
   margin-left: 2%;
   max-height: 50vh;
   overflow-y: auto;
+  margin-top: 3rem;
+}
+
+.SubjectsManager .SubjectSelector {
+  display: grid;
+  grid-template-columns: 18% 18% 18% 18% 18%;
+  grid-column-gap: 1%;
+}
+
+.SubjectsManager .iconContainer {
+  border-radius: 2rem;
+  text-align: center;
+  padding: 5px;
 }
