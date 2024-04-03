@@ -201,7 +201,8 @@ Router.post('/signup-authentication', async (req, res) => {
       user_id: userId,
       icon: 'others',
       color: '#000000',
-      datum_point
+      datum_point,
+      hidden: -2 //-2 hidden means it's not editable
     };
     connection.query(`INSERT INTO subjects SET ?`, subject);
     req.session.regenerate((err) => {
