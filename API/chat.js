@@ -17,7 +17,6 @@ Router.post("/bring-rooms", async (req, res) => {
     rooms = await Promise.all(roomPromises);
     const readStatus = await redisClient.hGetAll(`user:${userId}:chats`);
     res.send({ success: true, rooms, readStatus })
-    console.log(rooms)
   }));
 });
 

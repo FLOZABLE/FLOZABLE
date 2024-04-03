@@ -82,7 +82,7 @@ function Friends({
             <div>
               <div className={styles.smallBox}>
                 <div className={styles.title}>
-                  <h3>Friend's Rank</h3>
+                  <h3>Friend&apos;s Rank</h3>
                   <i>
                     <IconStatsChart />
                   </i>
@@ -104,7 +104,7 @@ function Friends({
               <div className={styles.box} id={styles.friendsStats}>
                 <div>
                   <div className={styles.title}>
-                    <h3>Friends' Stats</h3>
+                    <h3>Friends&apos; Stats</h3>
                   </div>
                   <div className={styles.chartWrapper}>
                     <FriendsTrendChart
