@@ -64,7 +64,10 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 //app.use(cors({origin: 'chrome-extension://dalobnhjngmjgnkdjkeonfnbbkaclcpm'}));
 if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-  app.use(cors());
+  app.use(cors({
+    origin: ['https://supreme-parakeet-r4495j5pj6v25rp7-4000.app.github.dev', 'https://supreme-parakeet-r4495j5pj6v25rp7-4001.app.github.dev'],
+    credentials: true
+  }));
 } else {
   app.use(cors());
 }

@@ -9,6 +9,7 @@ import {
   IconTimerOutline,
   StudyPerson,
   IconPen,
+  IconLeave,
 } from "@/app/utils/Svg";
 import MembersContainer from "../MembersContainer/MembersContainer";
 
@@ -16,6 +17,7 @@ import MembersContainer from "../MembersContainer/MembersContainer";
 function MyGroupContainer({
   group,
   mode,
+  leaveGroup,
   setIsEditGroupModal,
   isMine
 }) {
@@ -35,7 +37,7 @@ function MyGroupContainer({
       headers: {
         "Content-Type": "application/json",
       },
-      credentials:"include"
+      credentials: "include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -77,6 +79,18 @@ function MyGroupContainer({
                 <IconMessage />
               </i>
             </div>
+            {
+              isMine ?
+                <div />
+                :
+                <div onClick={() => {
+                  leaveGroup(group);
+                }}>
+                  <i>
+                    <IconLeave />
+                  </i>
+                </div>
+            }
           </div>
           {isMine ? (
             <div
