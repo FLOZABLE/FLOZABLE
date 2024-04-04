@@ -5,10 +5,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import GoogleLoginBtn from "@/app/components/Buttons/GoogleLoginBtn/GoogleLoginBtn";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import DropDownButton from "@/app/components/Buttons/DropDownButton/DropDownButton";
-
-const serverOrigin = process.env.REACT_APP_ORIGIN;
-const googleClientId = process.env.REACT_APP_CLIENT_ID;
-
+import config from "@/app/utils/config";
 
 function YouTubePlaylist({ }) {
   const [youtubePlaylist, setYoutubePlaylist] = useState("");
@@ -57,7 +54,7 @@ function YouTubePlaylist({ }) {
   }
 
   useEffect(() => {
-    fetch(`${serverOrigin}/playlists/youtube-playlists`, { method: "get", credentials:"include" })
+    fetch(`${config.server}/playlists/youtube-playlists`, { method: "get", credentials:"include" })
       .then((response) => response.json())
       .then((data) => {
         console.log(data, 'playlist youtube');
@@ -88,7 +85,7 @@ function YouTubePlaylist({ }) {
     <div className={styles.PlaylistModal}>
       <div className={styles.authGuide}>
         <GoogleOAuthProvider
-          clientId={googleClientId}
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
         >
           <GoogleLoginBtn scope="https://www.googleapis.com/auth/youtube.force-ssl" />
         </GoogleOAuthProvider>

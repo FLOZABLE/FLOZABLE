@@ -8,7 +8,7 @@ import styled from "@emotion/styled";
 import { DateTime } from "luxon";
 import { PlansContext, ResponseContext } from "@/app/utils/Contexts";
 import { useSearchParams } from "next/navigation";
-const serverOrigin = process.env.REACT_APP_ORIGIN;
+import config from "@/app/utils/config";
 
 const StyleWrapper = styled.div`
   .fc-col-header {
@@ -351,7 +351,7 @@ function EventPlanner({
       repeat
     };
     delete updateInfo.saved;
-    fetch(`${serverOrigin}/plan/update`, {
+    fetch(`${config.server}/plan/update`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
