@@ -18,6 +18,7 @@ function FriendEmailModal({ isOpen, setIsOpen }) {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials:"include"
     })
       .then((res) => res.json())
       .then((res) => {
@@ -54,7 +55,8 @@ function FriendEmailModal({ isOpen, setIsOpen }) {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({email})
+              body: JSON.stringify({email}),
+              credentials:"include"
             })
               .then((res) => res.json())
               .then((res) => {

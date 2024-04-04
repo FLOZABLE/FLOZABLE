@@ -12,6 +12,7 @@ const LikeBtn = ({id, liked, setResponse, url=`${config.server}/groups/like/${id
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({ liked: !likedBtn }),
+    credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {

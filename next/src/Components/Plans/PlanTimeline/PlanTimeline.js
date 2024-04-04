@@ -48,7 +48,7 @@ function PlanTimeline({
         headers: {
           "Content-Type": "application/json",
         },
-
+        credentials:"include",
         body: JSON.stringify(planInfo),
       })
         .then((response) => response.json())

@@ -28,7 +28,7 @@ function ChatModal({
   const [msgs, setMsgs] = useState([]);
 
   useEffect(() => {
-    fetch(`${config.server}/chat/bring-rooms`, { method: "post" })
+    fetch(`${config.server}/chat/bring-rooms`, { method: "post",credentials:"include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -107,7 +107,7 @@ function ChatModal({
       chatRoom.members = members;
       setSelectedRoom(chatRoom);
 
-      fetch(`${config.server}/chat/members?roomId=${id}`, { method: "get" })
+      fetch(`${config.server}/chat/members?roomId=${id}`, { method: "get", credentials:"include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {

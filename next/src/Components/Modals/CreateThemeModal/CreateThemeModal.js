@@ -33,6 +33,7 @@ function CreateThemeModal({
       body: JSON.stringify({
         name, tags, description, url
       }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {

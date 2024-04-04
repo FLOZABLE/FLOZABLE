@@ -15,17 +15,7 @@ import FriendRequestsViewer from "@/Components/Friends/FriendRequestsViewer/Frie
 import config from "@/utils/config";
 import FriendsTrendChart from "@/Components/Charts/FriendsTrendChart";
 
-const serverOrigin = process.env.REACT_APP_ORIGIN;
-
 function Friends({
-  userInfo,
-  notifications,
-  setNotifications,
-  setResponse,
-  otherGroups,
-  setOtherGroups,
-  myGroups,
-  setMyGroups
 }) {
   const { setJoinGroupModal } = useContext(ModalsContext);
 
@@ -46,7 +36,8 @@ function Friends({
       method: "get",
       headers: {
         "Content-Type": "application/json",
-      }
+      },
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((response) => {

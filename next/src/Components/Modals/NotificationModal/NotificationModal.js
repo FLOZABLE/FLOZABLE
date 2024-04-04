@@ -25,6 +25,7 @@ function NotificationModal({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId, accepted }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -44,6 +45,7 @@ function NotificationModal({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -63,6 +65,7 @@ function NotificationModal({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId, accepted }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -82,6 +85,7 @@ function NotificationModal({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -101,6 +105,7 @@ function NotificationModal({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId, accepted }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {

@@ -36,6 +36,7 @@ function hashing(password) {
 };
 
 async function autoSignin(req, res, success = (() => { }), fail = (() => { res.send({ success: false, reason: 'Sign in required', msg: 'Sign in required' }) })) {
+  console.log(req.session.user_id, req.signedCookies.userId)
   if (req.session.user_id || (process.env.NODE_ENV === 'development' && (req.session.user_id = process.env.TESTER_ID))) {
     return success(req.session.user_id, req.session.timezone);
   };

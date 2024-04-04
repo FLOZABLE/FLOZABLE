@@ -18,7 +18,8 @@ function RankingTrend({ viewDate, statsViewer, setRanking }) {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     fetch(`${config.server}/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime.toISODate()}&timezone=${timezone}`, {
-      method: 'get'
+      method: 'get',
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {

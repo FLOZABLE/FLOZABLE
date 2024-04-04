@@ -16,6 +16,7 @@ function FriendRequestBtn({ userInfo, padding }) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ targetId: userInfo.user_id }),
+      credentials: 'include'
     })
       .then((response) => response.json())
       .then((data) => {

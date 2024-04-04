@@ -35,6 +35,7 @@ function JoinGroupModal() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ password: pw }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {

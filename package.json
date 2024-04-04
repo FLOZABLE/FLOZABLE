@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon app.js nodemon -e js --ignore ./next",
     "production": "cross-env NODE_ENV=production nodemon app.js nodemon -e js --ignore app",
-    "test": "cross-env NODE_ENV=test nodemon app.js nodemon -e js --ignore app"
+    "test": "cross-env NODE_ENV=test nodemon app.js nodemon -e js --ignore ./next"
   },
   "repository": {
     "type": "git",

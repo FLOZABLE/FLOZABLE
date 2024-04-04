@@ -63,8 +63,11 @@ const emailInstance = new sendInBlue.TransactionalEmailsApi();
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 //app.use(cors({origin: 'chrome-extension://dalobnhjngmjgnkdjkeonfnbbkaclcpm'}));
-if (process.env.NODE_ENV === 'development') {
-  app.use(cors());
+if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+  app.use(cors({
+    origin: 'http://localhost:4001',
+    credentials: true
+  }));
 } else {
   app.use(cors());
 }

@@ -118,6 +118,7 @@ function FriendRequestsViewer() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId, accepted }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -135,6 +136,7 @@ function FriendRequestsViewer() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .catch((error) => console.error(error));
