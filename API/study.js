@@ -149,6 +149,29 @@ Router.post("/delete-subject", async (req, res) => {
   }));
 });
 
+
+Router.post("/restore-subject", async (req, res) => {
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const { subjectId } = req.body;
+
+      const connection = pool.promise();
+      try {
+        const updateSubject = await connection.query("UPDATE subjects SET hidden = ? WHERE id = ? AND user_id = ?", [-1, subjectId, userId]);
+        res.send({ success: true });
+
+        const previousSubject = JSON.parse(await redisClient.hGet(`user:${userId}:subjects`, subjectId));
+        previousSubject.hidden = -1;
+        redisClient.hSet(`user:${userId}:subjects`, subjectId, JSON.stringify(previousSubject));
+      } catch (err) {
+        console.log(err);
+      };
+    } catch (error) {
+      console.log(error);
+    };
+  }));
+});
+
 Router.post("/start", async (req, res) => {
   autoSignin(req, res, (async () => {
     const userId = req.session.user_id;
