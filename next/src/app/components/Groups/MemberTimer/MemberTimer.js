@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./MemberTimer.module.css";
-import { WorkersContext } from "@/utils/Contexts";
+import { WorkersContext } from "@/app/utils/Contexts";
 
 function MemberTimer({ initialSec = 0, run }) {
   const { membersTimerWorkerRef } = useContext(WorkersContext);

@@ -4,14 +4,14 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./PlanTimeline.module.css";
 import parse from "html-react-parser";
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
-import { Alert } from "@/utils/Svg";
+import { Alert } from "@/app/utils/Svg";
 import { useSearchParams } from "next/navigation";
-import { PlansContext, SubjectsContext, TutorialsContext } from "@/utils/Contexts";
-import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
+import { PlansContext, SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
+import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { DateTime } from "luxon";
-import config from "@/utils/config";
-import CircularCheckBox from "@/Components/Buttons/CircularCheckBox/CircularCheckBox";
-import { subjectIcons } from "@/utils/Constant";
+import config from "@/app/utils/config";
+import CircularCheckBox from "@/app/components/Buttons/CircularCheckBox/CircularCheckBox";
+import { subjectIcons } from "@/app/utils/Constant";
 
 function PlanTimeline({
   viewMode,

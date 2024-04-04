@@ -4,15 +4,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./ChatModal.module.css";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { ChatsContext, GroupsContext, ModalsContext, UserInfoContext } from "@/utils/Contexts";
-import { BackArrow } from "@/utils/Svg";
-import config from "@/utils/config";
-import SendBtn from "@/Components/Buttons/SendBtn/SendBtn";
-import { socket } from "@/utils/socket";
-import ChatRoom from "@/Components/Chats/ChatRoom/ChatRoom";
+import { ChatsContext, GroupsContext, ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { BackArrow } from "@/app/utils/Svg";
+import config from "@/app/utils/config";
+import SendBtn from "@/app/components/Buttons/SendBtn/SendBtn";
+import { socket } from "@/app/utils/socket";
+import ChatRoom from "@/app/components/Chats/ChatRoom/ChatRoom";
 import { DateTime } from "luxon";
-import ChatContainer from "@/Components/Chats/ChatContainer/ChatContainer";
-import MyChatContainer from "@/Components/Chats/MyChatContainer/MyChatContainer";
+import ChatContainer from "@/app/components/Chats/ChatContainer/ChatContainer";
+import MyChatContainer from "@/app/components/Chats/MyChatContainer/MyChatContainer";
 
 function ChatModal({
 }) {

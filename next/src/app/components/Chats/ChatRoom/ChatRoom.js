@@ -1,8 +1,8 @@
 import styles from "./ChatRoom.module.css";
 import React, { useContext, useEffect, useState } from "react";
 import { DateTime } from "luxon";
-import { socket } from "@/utils/socket";
-import { ModalsContext } from "@/utils/Contexts";
+import { socket } from "@/app/utils/socket";
+import { ModalsContext } from "@/app/utils/Contexts";
 
 function ChatRoom({ room, lastMsg, lastRead, setTotalNewMsg }) {
   const {chatModal, setChatModal} = useContext(ModalsContext);

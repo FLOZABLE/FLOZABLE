@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styles from "./ColorPalette.module.css";
-import { colorPaletteOptions } from "@/utils/Constant";
+import { colorPaletteOptions } from "@/app/utils/Constant";
 
 function ColorPalette({
   setSelectedColor,

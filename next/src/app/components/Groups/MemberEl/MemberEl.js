@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styles from "./MemberEl.module.css";
 import { DateTime } from "luxon";
-import { RestPerson, StudyPerson } from "@/utils/Svg";
+import { RestPerson, StudyPerson } from "@/app/utils/Svg";
 import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
-import { socket } from "@/utils/socket";
+import { socket } from "@/app/utils/socket";
 import Link from "next/link";
 import MemberTimer from "../MemberTimer/MemberTimer";
 

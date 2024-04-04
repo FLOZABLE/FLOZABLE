@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import styles from "./ThemeCategoryBtn.module.css";
 import { AllCategories } from "../../../utils/Themes";
-import config from "@/utils/config";
-import { ResponseContext, ThemesContext } from "@/utils/Contexts";
+import config from "@/app/utils/config";
+import { ResponseContext, ThemesContext } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
 
 const options = AllCategories;

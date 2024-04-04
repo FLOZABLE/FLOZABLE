@@ -1,4 +1,4 @@
-import { socket } from "@/utils/socket";
+import { socket } from "@/app/utils/socket";
 import React, { useEffect, useMemo, useState } from "react";
 
 function GroupLikesCounter({ initialMembers, groupId }) {

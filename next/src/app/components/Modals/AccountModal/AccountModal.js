@@ -9,11 +9,11 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useEffect, useState } from "react";
-import config from "@/utils/config";
-import { ModalsContext, ResponseContext, UserInfoContext } from "@/utils/Contexts";
-import ArrowOptionBtn from "@/Components/Buttons/ArrowOptionBtn/ArrowOptionBtn";
-import SigninWithGoogleBtn from "@/Components/Buttons/SigninWithGoogleBtn/SigninWithGoogleBtn";
-import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
+import config from "@/app/utils/config";
+import { ModalsContext, ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
+import ArrowOptionBtn from "@/app/components/Buttons/ArrowOptionBtn/ArrowOptionBtn";
+import SigninWithGoogleBtn from "@/app/components/Buttons/SigninWithGoogleBtn/SigninWithGoogleBtn";
+import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
 
 function AccountModal({ }) {

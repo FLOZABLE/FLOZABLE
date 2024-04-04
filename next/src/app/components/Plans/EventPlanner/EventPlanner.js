@@ -6,7 +6,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import styles from "./EventPlanner.module.css";
 import styled from "@emotion/styled";
 import { DateTime } from "luxon";
-import { PlansContext, ResponseContext } from "@/utils/Contexts";
+import { PlansContext, ResponseContext } from "@/app/utils/Contexts";
 import { useSearchParams } from "next/navigation";
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

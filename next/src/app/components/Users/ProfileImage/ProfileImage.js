@@ -1,6 +1,6 @@
 import Image from "next/image";
 import styles from "./ProfileImage.module.css";
-import config from "@/utils/config";
+import config from "@/app/utils/config";
 
 function ProfileImage({userId, width = '2rem', height = '2rem'}) {
   return (

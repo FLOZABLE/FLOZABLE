@@ -1,4 +1,4 @@
-import { socket } from "@/utils/socket";
+import { socket } from "@/app/utils/socket";
 import React, { useEffect, useState } from "react";
 
 function ThemeUsageCounter({ initialVal, themeId }) {

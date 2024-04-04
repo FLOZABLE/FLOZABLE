@@ -6,9 +6,9 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import styles from "./MyGroupsViewer.module.css";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
-import { CallOptionsContext, GroupsContext, UserInfoContext } from "@/utils/Contexts";
-import { socket } from "@/utils/socket";
-import { mediaSocket } from "@/utils/mediaSocket";
+import { CallOptionsContext, GroupsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { socket } from "@/app/utils/socket";
+import { mediaSocket } from "@/app/utils/mediaSocket";
 
 function MyGroupsViewer({
   mode,

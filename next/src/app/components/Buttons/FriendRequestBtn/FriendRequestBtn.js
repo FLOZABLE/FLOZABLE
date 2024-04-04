@@ -2,9 +2,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./FriendRequestBtn.module.css";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext } from 'react';
+import config from "@/app/utils/config";
 import BlobBtn from "../BlobBtn/BlobBtn";
-import { ResponseContext } from "@/utils/Contexts";
-import config from "@/utils/config";
+import { ResponseContext } from "@/app/utils/Contexts";
 
 function FriendRequestBtn({ userInfo, padding }) {
   const {setResponse} = useContext(ResponseContext);

@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./MyEl.module.css";
 import { DateTime } from "luxon";
-import { RestPerson, StudyPerson } from "@/utils/Svg";
-import { socket } from "@/utils/socket";
+import { RestPerson, StudyPerson } from "@/app/utils/Svg";
+import { socket } from "@/app/utils/socket";
 import MyCamDisp from "../MyCamDisp/MyCamDisp";
 import MyTimer from "../MyTimer/MyTimer";
-import { UserInfoContext } from "@/utils/Contexts";
+import { UserInfoContext } from "@/app/utils/Contexts";
 
 function MyEl({ setStudyingMembers, audioStream, videoStream, device }) {
   const {userInfo} = useContext(UserInfoContext);

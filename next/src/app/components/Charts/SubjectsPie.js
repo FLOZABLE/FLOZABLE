@@ -1,11 +1,11 @@
-import { SubjectsContext } from "@/utils/Contexts";
-import { updateTimeUsagePie } from "@/utils/StatTools";
+import { SubjectsContext } from "@/app/utils/Contexts";
+import { updateTimeUsagePie } from "@/app/utils/StatTools";
 import { DateTime } from "luxon";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import { PieCustomTooltip, pieCustomLabel } from "./Charts";
-import { coldColorsList } from "@/utils/Constant";
-import { secondConverter } from "@/utils/Tool";
+import { coldColorsList } from "@/app/utils/Constant";
+import { secondConverter } from "@/app/utils/Tool";
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 function SubjectsPie({viewDate, statsViewer}) {

@@ -2,12 +2,12 @@
 
 import styles from "./FriendsRankingViewer.module.css";
 import React, { useEffect, useState } from "react";
-import { secondConverter } from "../../../utils/Tool";
 import Link from "next/link";
-import CountryViewer from "@/Components/Others/CountryViewer/CountryViewer";
-import DropDownButton from "@/Components/Buttons/DropDownButton/DropDownButton";
+import DropDownButton from "../../Buttons/DropDownButton/DropDownButton";
+import ProfileImage from "../../Users/ProfileImage/ProfileImage";
+import CountryViewer from "../../Others/CountryViewer/CountryViewer";
 import { fetchFriendsRanking } from "@/Api/friendsApi";
-import ProfileImage from "@/Components/Users/ProfileImage/ProfileImage";
+import { secondConverter } from "@/app/utils/Tool";
 
 function FriendsRankingViewer({  }) {
   const [viewer, setViewer] = useState('day');

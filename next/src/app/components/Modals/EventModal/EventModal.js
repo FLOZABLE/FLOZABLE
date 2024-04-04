@@ -13,16 +13,16 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import Draggable from "react-draggable";
-import { ModalsContext, PlansContext, ResponseContext, SubjectsContext, TutorialsContext } from "@/utils/Contexts";
-import config from "@/utils/config";
+import { ModalsContext, PlansContext, ResponseContext, SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
+import config from "@/app/utils/config";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import DateSelector from "@/Components/Plans/DateSelector/DateSelector";
-import TextEditor from "@/Components/Inputs/TextEditor/TextEditor";
-import DropDownButton from "@/Components/Buttons/DropDownButton/DropDownButton";
-import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
-import SliderAnimation from "@/Components/Inputs/SliderAnimation/SliderAnimation";
-import { generateRandomId, requestNotification } from "@/utils/Tool";
+import DateSelector from "@/app/components/Plans/DateSelector/DateSelector";
+import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
+import DropDownButton from "@/app/components/Buttons/DropDownButton/DropDownButton";
+import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
+import SliderAnimation from "@/app/components/Inputs/SliderAnimation/SliderAnimation";
+import { generateRandomId, requestNotification } from "@/app/utils/Tool";
 
 function EventModal({
 }) {

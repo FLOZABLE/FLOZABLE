@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./Sidebar.module.css";
 import Link from "next/link";
-import { IconBxHome, IconClipboardOutline, IconGalleryLine, IconPeople16, IconRankingChart, IconStatsChart, IconUserAdd } from "@/utils/Svg";
+import { IconBxHome, IconClipboardOutline, IconGalleryLine, IconPeople16, IconRankingChart, IconStatsChart, IconUserAdd } from "@/app/utils/Svg";
 import { useSearchParams } from "next/navigation";
 
 function Sidebar({

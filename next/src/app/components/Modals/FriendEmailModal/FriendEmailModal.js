@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import styles from "./FriendEmailModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { EmailInvitation } from "@/utils/Svg";
-import config from "@/utils/config";
-import SendBtn from "@/Components/Buttons/SendBtn/SendBtn";
+import { EmailInvitation } from "@/app/utils/Svg";
+import config from "@/app/utils/config";
+import SendBtn from "@/app/components/Buttons/SendBtn/SendBtn";
 
 function FriendEmailModal({ isOpen, setIsOpen }) {
 
