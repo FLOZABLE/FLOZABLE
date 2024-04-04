@@ -6,6 +6,7 @@ async function fetchFriendsRanking () {
     headers: {
       "Content-Type": "application/json",
     }
+    , credentials:"include"
   });
   const data = response.json();
   return data;

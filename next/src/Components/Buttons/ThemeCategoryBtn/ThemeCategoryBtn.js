@@ -42,6 +42,7 @@ function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
         themeId,
         category,
       }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {

@@ -17,6 +17,7 @@ function GoogleLoginBtn({ scope = "openid email profile https://www.googleapis.c
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ data: code }),
+        credentials:"include"
       })
         .then((response) => response.json())
         .then((data) => {

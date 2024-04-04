@@ -70,6 +70,7 @@ function AddSubjectModal({
         color: selectedColor,
         icon: selectedIcon.name,
       }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {

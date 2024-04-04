@@ -20,6 +20,7 @@ function FriendLinkModal({ isOpen, setIsOpen }) {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials:"include"
     })
       .then((res) => res.json())
       .then((res) => {

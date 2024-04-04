@@ -9,6 +9,7 @@ import JoinGroupModal from "@/Components/Modals/JoinGroupModal/JoinGroupModal";
 import TopNotification from "@/Components/Modals/TopNotification/TopNotification";
 import ChatModal from "@/Components/Modals/ChatModal/ChatModal";
 import NotificationModal from "@/Components/Modals/NotificationModal/NotificationModal";
+import AccountModal from "@/Components/Modals/AccountModal/AccountModal";
 
 //const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
           <Header />
           <EventModal />
           <ChatModal />
+          <AccountModal />
           <TopNotification />
           <JoinGroupModal />
           <AddSubjectModal />
