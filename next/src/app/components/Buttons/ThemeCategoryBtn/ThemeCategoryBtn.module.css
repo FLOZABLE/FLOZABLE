@@ -1,0 +1,48 @@
+.ThemeCategoryBtn {
+  position: relative;
+  width: 100%;
+  height: 1.875rem;
+  z-index: 3;
+  padding: 0em 0.625rem;
+}
+
+.ThemeCategoryBtn * {
+  pointer-events: all;
+}
+
+.ThemeCategoryBtn .options {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  background-color: #fff;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6.25rem;
+  border-radius: 0.625rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 0em;
+  transition: .3s ease-in-out all;
+}
+
+.ThemeCategoryBtn.open .options {
+  box-shadow: rgba(149, 157, 165, 0.2) 0em 0.5rem 1.5rem;
+  visibility: visible;
+  opacity: 1;
+  top: 1.25rem;
+  height: 8.75rem;
+  color: var(--font-gray);
+}
+
+.ThemeCategoryBtn .categoryDisp {
+  color: #fff;
+  white-space: nowrap;
+}
+
+@media (max-width: 87.5rem) {
+  .ThemeCategoryBtn .categoryDisp {
+    font-size: 0.813rem;
+  }
+}

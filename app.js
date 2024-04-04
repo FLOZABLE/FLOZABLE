@@ -65,7 +65,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 //app.use(cors({origin: 'chrome-extension://dalobnhjngmjgnkdjkeonfnbbkaclcpm'}));
 if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
   app.use(cors({
-    origin: 'http://localhost:4001',
+    origin: ['http://localhost:4001', 'http://localhost:4000'],
     credentials: true
   }));
 } else {

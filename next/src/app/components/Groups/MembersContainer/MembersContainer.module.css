@@ -1,0 +1,19 @@
+.MembersContainer {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 18.75rem);
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+@media (max-width: 1400px) {
+  .MembersContainer {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 17.5rem);
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+}

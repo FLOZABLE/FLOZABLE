@@ -1,0 +1,94 @@
+.Sidebar {
+  position: fixed;
+  top: 0em;
+  left: 0em;
+  height: 100vh;
+  width: 8.125rem;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-right: 0.0625rem solid #a1a1a1;
+  z-index: 3;
+}
+
+.Sidebar .logo {
+  position: absolute;
+  top: 0rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 6rem;
+  width: 6rem;
+  overflow: hidden;
+}
+
+.Sidebar .logo img { 
+  width: 100%;
+}
+
+.Sidebar .sidebarContainer {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  border-radius: 1.25rem;
+  width: 5.2rem;
+  margin-bottom: 2rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+  margin-top: 5rem;
+  height: calc(100% - 12rem);
+  max-height: 1000px;
+}
+
+.Sidebar .sidebarContainer div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-right: -1.4rem;
+}
+
+.Sidebar .sidebarContainer .sidebarEl{
+  display: flex;
+  justify-content: right !important;
+  width: 10rem;
+  margin-right: 9.7rem;
+  align-items: center;
+  opacity: 0.4;
+  transition: .3s ease-in-out;
+  padding: 1.5rem 0.5rem;
+}
+
+.Sidebar .sidebarContainer .sidebarEl:hover {
+  opacity: 1;
+  background-color: white;  
+  display: flex;
+  box-shadow: var(--shadow1);
+  border-radius: 0.625rem;  
+  width: 15rem; 
+  font-size: 150%;
+  margin-right: -5rem;
+  font-weight: 100;
+}
+
+.Sidebar .sidebarContainer .sidebarEl i {
+  color: var(--blue1);
+  font-size: 1.875rem;
+  display: flex;
+  justify-content: left;
+  margin-left: 4.5rem;
+}
+
+ @media (max-height: 800px) {
+  .Sidebar .sidebarContainer .sidebarEl {
+    padding: 1rem 1rem;
+  }
+}
+
+@media (max-height: 600px) {
+  .Sidebar .sidebarContainer .sidebarEl {
+    padding: 0.5rem 0.5rem;
+  }
+}

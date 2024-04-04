@@ -1,0 +1,34 @@
+.UserGroupViewer {
+  position: relative;
+  opacity: 0;
+  visibility: hidden;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
+  z-index: 2;
+}
+
+.UserGroupViewer.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.UserGroupViewer p:hover~.hoverEl {
+  opacity: 1;
+  visibility: visible;
+  top: 0em;
+}
+
+.UserGroupViewer .hoverEl:hover {
+  opacity: 1;
+  visibility: visible;
+  top: 0em;
+}
+
+.UserGroupViewer .hoverEl {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
+  top: 0em;
+  left: 50%;
+  transform: translate(-50%);
+}

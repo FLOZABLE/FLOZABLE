@@ -1,0 +1,56 @@
+.CreateThemeModal {
+  background-color: #fff;
+  width: 31.25rem;
+  height: 31.25rem;
+  z-index: 3;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+}
+
+.CreateThemeModal .header {
+  display: flex;
+  height: 1.875rem;
+  background-color: var(--blue2);
+  border-top-right-radius: 1.25rem;
+  border-top-left-radius: 1.25rem;
+  justify-content: right;
+}
+
+.CreateThemeModal .header:hover {
+  cursor: move;
+}
+
+.CreateThemeModal .header i {
+  font-size:  1.563rem;
+  padding: 0em 0.625rem;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.CreateThemeModal .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0em 0.625rem;
+  overflow-y: auto;
+  height: calc(100% - 1.875rem);
+}
+
+.CreateThemeModal .content .layer {
+  width: 100%;
+  margin-top: 1.25rem;
+}
+
+.CreateThemeModal .content .layer:nth-child(4) {
+  margin-bottom: 50px;
+}
+
+@media (max-width: 1400px) {
+  .CreateThemeModal {
+    width: 27rem;
+  }
+}

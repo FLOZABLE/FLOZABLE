@@ -1,0 +1,32 @@
+.FriendRequestBtn {
+  position: relative;
+}
+
+.FriendRequestBtn .hoverEl {
+  position: absolute;
+  top: 6.25rem;
+  font-size: 0.813rem;
+  z-index: 2;
+  background-color: black;
+  border-radius: 0.313rem;
+  color: #fff;
+  visibility: hidden;
+  opacity: 0;
+  padding: 0.125rem;
+  display: flex;
+  justify-content: center;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: top .3s ease-in-out, visibility .3s ease-in-out, opacity .3s ease-in-out;
+}
+
+.FriendRequestBtn .hoverEl p {
+  color: #fff;
+  overflow: hidden; white-space: nowrap;
+}
+
+.FriendRequestBtn .blobWrapper:hover ~.hoverEl {
+  visibility: visible;
+  opacity: 1;
+  top: 3.125rem;
+}
