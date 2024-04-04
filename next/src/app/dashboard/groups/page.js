@@ -8,6 +8,7 @@ import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContaine
 import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import GroupsContainer from "@/app/components/Groups/GroupsContainer/GroupsContainer";
+import EditGroupModal from "@/app/components/Groups/EditGroupModal/EditGroupModal";
 
 function Groups({
   setResponse,
@@ -31,13 +32,10 @@ function Groups({
         setIsOpen={setIsCreateNewGroup}
         setCreateGroupResponse={setResponse}
       />
-      {/* <EditGroupModal
-        setCreateGroupResponse={setResponse}
+      <EditGroupModal
         setIsOpen={setIsEditGroupModal}
         isOpen={isEditGroupModal}
-        setMyGroups={setMyGroups}
-        myGroups={myGroups}
-      /> */}
+      />
       <div
         className={`Main`}
       >

@@ -6,19 +6,22 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import styles from "./MyGroupsViewer.module.css";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
-import { CallOptionsContext, GroupsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { CallOptionsContext, GroupsContext, ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
 import { mediaSocket } from "@/app/utils/mediaSocket";
+
+const serverOrigin = process.env.NEXT_PUBLIC_SERVER;
 
 function MyGroupsViewer({
   mode,
   groupsViewerRef,
   setIsEditGroupModal,
 }) {
-  const {myGroups} = useContext(GroupsContext);
-  const {userInfo} = useContext(UserInfoContext);
+  const { myGroups, setMyGroups } = useContext(GroupsContext);
+  const { userInfo } = useContext(UserInfoContext);
+  const { setResponse } = useContext(ResponseContext);
 
-  const {setIsCam, setIsMic} = useContext(CallOptionsContext);
+  const { setIsCam, setIsMic } = useContext(CallOptionsContext);
 
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
 
@@ -48,6 +51,23 @@ function MyGroupsViewer({
     }, 1000);
   }, [myGroups, groupsViewerRef]);
 
+  const leaveGroup = useCallback((group) => {
+    fetch(`${serverOrigin}/groups/leave-group`,
+      {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ groupId: group.group_id })
+      }).then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          setResponse({ success: true, msg: "You left " + group.name })
+        }
+      })
+    setMyGroups(myGroups.filter((g) => g.group_id !== group.group_id));
+  }, [myGroups]);
 
   return (
     <div
@@ -86,6 +106,7 @@ function MyGroupsViewer({
                 {focus ?
                   <MyGroupContainer
                     group={group}
+                    leaveGroup={leaveGroup}
                     setIsEditGroupModal={setIsEditGroupModal}
                     mode={mode}
                     isMine={group.leader === userInfo?.user_id}

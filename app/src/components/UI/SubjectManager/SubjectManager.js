@@ -111,7 +111,7 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject, deleteSu
       {
         deleteConfirm ?
           <div className={styles.confirmDelete}>
-            <p>Deleting a subject will erase all its data from today</p>
+            <p>Note: Deleted subjects will still be visible in stats if you've studied the subject today</p>
             <br />
           </div>
           :
