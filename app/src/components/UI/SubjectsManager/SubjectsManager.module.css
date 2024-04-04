@@ -18,3 +18,17 @@
   text-align: center;
   padding: 5px;
 }
+
+.SubjectsManager .restoreSubjectBtn {
+  background-color: greenyellow;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.SubjectsManager .restoreSubjectBtn:hover {
+  cursor: pointer;
+}
+
+.SubjectsManager .restoreSubjectName {
+  width: 10rem;
+}
