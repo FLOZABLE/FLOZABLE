@@ -132,6 +132,7 @@ function EventModal({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ ...planModal, start: startSec, end: endSec, completed, notification, repeat }),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {

@@ -169,6 +169,7 @@ async function subscribeUserToPush() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ subscription: subscription }),
+      credentials:"include"
     }).then(res => res.json());
 
   } catch (error) {

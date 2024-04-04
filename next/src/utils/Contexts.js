@@ -58,7 +58,7 @@ function AccountProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
 
   const bringAccountInfo = useCallback(() => {
-    fetch(`${config.server}/account/accountinfo`, { method: "get" })
+    fetch(`${config.server}/account/accountinfo`, { method: "get", credentials: 'include' })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -79,7 +79,7 @@ function AccountProvider({ children }) {
   }, []);
 
   return (
-    <UserInfoContext.Provider value={{ userInfo, setUserInfo }}>
+    <UserInfoContext.Provider value={{ userInfo, setUserInfo, bringAccountInfo }}>
       <NotificationsContext.Provider
         value={{ notifications, setNotifications }}
       >
@@ -111,7 +111,7 @@ function SubjectsProvider({ children }) {
   });
 
   const bringSubjects = useCallback(() => {
-    fetch(`${config.server}/study/bring-subjects`, { method: "post" })
+    fetch(`${config.server}/study/bring-subjects`, { method: "post", credentials:"include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -125,7 +125,7 @@ function SubjectsProvider({ children }) {
   }, []);
 
   const bringPlans = useCallback((subjects) => {
-    fetch(`${config.server}/plan`, { method: "get" })
+    fetch(`${config.server}/plan`, { method: "get", credentials:"include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -184,7 +184,7 @@ function GroupsProvider({ children }) {
   const [otherGroups, setOtherGroups] = useState([]);
 
   const bringGroups = useCallback(() => {
-    fetch(`${config.server}/groups/bring-groups`, { method: "post" })
+    fetch(`${config.server}/groups/bring-groups`, { method: "post", credentials:"include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -232,6 +232,8 @@ function ResponseProvider({ children }) {
 }
 
 function ModalsProvider({ children }) {
+  const {userInfo} = useContext(UserInfoContext);
+
   const [chatModal, setChatModal] = useState({
     chatRoom: null,
     open: false,
@@ -244,7 +246,14 @@ function ModalsProvider({ children }) {
     open: false,
     group: null,
   });
+  const [isAccountModal, setIsAccountModal] = useState(false);
 
+  useEffect(() => {
+    if (userInfo === false) {
+      setIsAccountModal(true);
+    };
+  }, [userInfo]);
+  
   return (
     <ModalsContext.Provider
       value={{
@@ -256,6 +265,8 @@ function ModalsProvider({ children }) {
         setIsAddSubjectModal,
         joinGroupModal,
         setJoinGroupModal,
+        isAccountModal,
+        setIsAccountModal
       }}
     >
       {children}
@@ -305,6 +316,7 @@ function ThemesProvider({ children }) {
       headers: {
         "Content-Type": "application/json",
       },
+     credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -322,7 +334,8 @@ function ThemesProvider({ children }) {
       method: "get",
       headers: {
         "Content-Type": "application/json",
-      },
+      }
+      , credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -377,7 +390,7 @@ function ChatsProvider({children}) {
   const [readStatus, setReadStatus] = useState({});
 
   useEffect(() => {
-    fetch(`${config.server}/chat/bring-rooms`, { method: "post" })
+    fetch(`${config.server}/chat/bring-rooms`, { method: "post" , credentials:"include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {

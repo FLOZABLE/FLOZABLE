@@ -57,7 +57,7 @@ function YouTubePlaylist({ }) {
   }
 
   useEffect(() => {
-    fetch(`${serverOrigin}/playlists/youtube-playlists`, { method: "get" })
+    fetch(`${serverOrigin}/playlists/youtube-playlists`, { method: "get", credentials:"include" })
       .then((response) => response.json())
       .then((data) => {
         console.log(data, 'playlist youtube');

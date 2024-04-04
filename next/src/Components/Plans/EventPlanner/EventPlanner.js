@@ -357,6 +357,7 @@ function EventPlanner({
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updateInfo),
+      credentials:"include"
     })
       .then((response) => response.json())
       .then((data) => {
