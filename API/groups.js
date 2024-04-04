@@ -315,6 +315,11 @@ Router.post("/leave-group", async (req, res) => {
       let oldMembers = group.members.split(",");
       oldMembers = oldMembers.filter((mem) => mem != userId);
       const updateGroup = await connection.query("UPDATE groups SET members = ? WHERE group_id = ?", [oldMembers.join(","), groupId]);
+      
+      const [[userGroups]] = await connection.query("SELECT groups FROM users WHERE user_id = ?", [userId]);
+      let newGroups = !userGroups.groups ? [] : userGroups.groups.split(",");
+      newGroups = newGroups.filter((g) => g != groupId);
+      const updateUserGroups = await connection.query("UPDATE users SET groups = ? WHERE user_id = ?", [newGroups.join(","), userId]);
 
       let groups = await groupCache(userId);
       groups = groups.filter((g) => g != groupId);
@@ -322,7 +327,6 @@ Router.post("/leave-group", async (req, res) => {
 
       redisClient.sRem(`room:${groupId}`, userId);
 
-      console.log(`removeMember:${groupId}`);
       mainIo.emit(`removeMember`, groupId, userId);
 
       return res.send({success: true});
