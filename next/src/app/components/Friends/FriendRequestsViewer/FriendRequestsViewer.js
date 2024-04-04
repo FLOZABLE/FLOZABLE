@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./FriendRequestsViewer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { NotificationsContext } from "@/utils/Contexts";
+import { NotificationsContext } from "@/app/utils/Contexts";
 import Link from "next/link";
-import config from "@/utils/config";
-import SlidingOptBtn from "@/Components/Buttons/SlidingOptBtn/SlidingOptBtn";
-import CountryViewer from "@/Components/Others/CountryViewer/CountryViewer";
-import ProfileImage from "@/Components/Users/ProfileImage/ProfileImage";
+import config from "@/app/utils/config";
+import SlidingOptBtn from "@/app/components/Buttons/SlidingOptBtn/SlidingOptBtn";
+import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
+import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 
 function FriendRequestsViewer() {
   const { notifications, setNotifications } = useContext(NotificationsContext);

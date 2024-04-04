@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import styles from "./YouTubePlaylist.module.css";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import GoogleLoginBtn from "@/Components/Buttons/GoogleLoginBtn/GoogleLoginBtn";
-import CustomInput from "@/Components/Inputs/CustomInput/CustomInput";
-import DropDownButton from "@/Components/Buttons/DropDownButton/DropDownButton";
+import GoogleLoginBtn from "@/app/components/Buttons/GoogleLoginBtn/GoogleLoginBtn";
+import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
+import DropDownButton from "@/app/components/Buttons/DropDownButton/DropDownButton";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 const googleClientId = process.env.REACT_APP_CLIENT_ID;

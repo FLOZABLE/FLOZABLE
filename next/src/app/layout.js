@@ -1,15 +1,15 @@
 //import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/Components/Others/Header/Header";
-import { AppProvider } from "@/utils/Contexts";
-import Sidebar from "@/Components/Others/Sidebar/Sidebar";
-import EventModal from "@/Components/Modals/EventModal/EventModal";
-import AddSubjectModal from "@/Components/Modals/AddSubjectModal/AddSubjectModal";
-import JoinGroupModal from "@/Components/Modals/JoinGroupModal/JoinGroupModal";
-import TopNotification from "@/Components/Modals/TopNotification/TopNotification";
-import ChatModal from "@/Components/Modals/ChatModal/ChatModal";
-import NotificationModal from "@/Components/Modals/NotificationModal/NotificationModal";
-import AccountModal from "@/Components/Modals/AccountModal/AccountModal";
+import Header from "@/app/components/Others/Header/Header";
+import { AppProvider } from "@/app/utils/Contexts";
+import Sidebar from "@/app/components/Others/Sidebar/Sidebar";
+import EventModal from "@/app/components/Modals/EventModal/EventModal";
+import AddSubjectModal from "@/app/components/Modals/AddSubjectModal/AddSubjectModal";
+import JoinGroupModal from "@/app/components/Modals/JoinGroupModal/JoinGroupModal";
+import TopNotification from "@/app/components/Modals/TopNotification/TopNotification";
+import ChatModal from "@/app/components/Modals/ChatModal/ChatModal";
+import NotificationModal from "@/app/components/Modals/NotificationModal/NotificationModal";
+import AccountModal from "@/app/components/Modals/AccountModal/AccountModal";
 
 //const inter = Inter({ subsets: ["latin"] });
 

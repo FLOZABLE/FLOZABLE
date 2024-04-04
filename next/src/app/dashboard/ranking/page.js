@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from "react";
 import styles from "./page.module.css";
-import RadioBtn from "@/Components/Buttons/RadioBtn/RadioBtn";
-import Search from "@/Components/Inputs/Search/Search";
+import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
+import Search from "@/app/components/Inputs/Search/Search";
 import { useSearchParams } from "next/navigation";
 import { DateTime } from "luxon";
-import config from "@/utils/config";
-import CalendarModal from "@/Components/Modals/CalendarModal/CalendarModal";
-import DateSelectorBtn from "@/Components/Buttons/DateSelectorBtn/DateSelectorBtn";
-import ProfileImage from "@/Components/Users/ProfileImage/ProfileImage";
+import config from "@/app/utils/config";
+import CalendarModal from "@/app/components/Modals/CalendarModal/CalendarModal";
+import DateSelectorBtn from "@/app/components/Buttons/DateSelectorBtn/DateSelectorBtn";
+import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import Link from "next/link";
-import CountryViewer from "@/Components/Others/CountryViewer/CountryViewer";
+import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 
 function Ranking({ }) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);

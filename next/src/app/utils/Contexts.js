@@ -8,10 +8,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { socket } from "./socket";
-import { timelineSort } from "./timelineSorting";
 import config from "./config";
 import { filterGroups } from "./Tool";
+import { socket } from "./socket";
+import { timelineSort } from "./timelineSorting";
 
 const AuthContext = createContext({});
 const SubjectsContext = createContext({});

@@ -2,13 +2,13 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import styles from "./RecommendedFriendsViewer.module.css";
-import config from '@/utils/config';
 import Link from 'next/link';
-import CountryViewer from '@/Components/Others/CountryViewer/CountryViewer';
-import RefreshBtn from '@/Components/Buttons/RefreshBtn/RefreshBtn';
-import FriendRequestBtn from '@/Components/Buttons/FriendRequestBtn/FriendRequestBtn';
-import { ResponseContext } from '@/utils/Contexts';
-import ProfileImage from '@/Components/Users/ProfileImage/ProfileImage';
+import { ResponseContext } from '@/app/utils/Contexts';
+import config from '@/app/utils/config';
+import RefreshBtn from '../../Buttons/RefreshBtn/RefreshBtn';
+import ProfileImage from '../../Users/ProfileImage/ProfileImage';
+import CountryViewer from '../../Others/CountryViewer/CountryViewer';
+import FriendRequestBtn from '../../Buttons/FriendRequestBtn/FriendRequestBtn';
 
 
 function RecommendedFriendsViewer({}) {

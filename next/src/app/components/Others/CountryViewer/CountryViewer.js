@@ -3,7 +3,7 @@ import styles from "./CountryViewer.module.css";
 import ReactCountryFlag from "react-country-flag";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
-import { getCountryCode } from "@/utils/Tool";
+import { getCountryCode } from "@/app/utils/Tool";
 
 function CountryViewer({timezone}) {
   const [flag, setFlag] = useState(null);

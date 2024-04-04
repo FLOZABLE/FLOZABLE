@@ -8,9 +8,9 @@ import {
 import styles from "./Header.module.css";
 import { secondConverter } from "../../../utils/Tool";
 import Link from "next/link";
-import { HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor } from "@/utils/Svg";
-import { ModalsContext, NotificationsContext, SubjectsContext, TutorialsContext, UserInfoContext } from "@/utils/Contexts";
-import ProfileImage from "@/Components/Users/ProfileImage/ProfileImage";
+import { HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor } from "@/app/utils/Svg";
+import { ModalsContext, NotificationsContext, SubjectsContext, TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
+import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 
 function Header({
 }) {

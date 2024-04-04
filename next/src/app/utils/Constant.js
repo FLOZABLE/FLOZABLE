@@ -1,4 +1,4 @@
-//import { Alert, Article, Book, Coding, Globe, IconCalculator, IconFileBarGraphFill, IconPeriodicTable, IconWhiteboard, Microscope, Workout, WritePen } from "@/utils/Svg";
+//import { Alert, Article, Book, Coding, Globe, IconCalculator, IconFileBarGraphFill, IconPeriodicTable, IconWhiteboard, Microscope, Workout, WritePen } from "@/app/utils/Svg";
 import React from 'react';
 import { Alert, Article, Book, Coding, Globe, Microscope, Workout, WritePen } from './Svg';
 

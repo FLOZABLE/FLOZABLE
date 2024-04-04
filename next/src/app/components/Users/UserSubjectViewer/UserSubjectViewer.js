@@ -1,8 +1,8 @@
 import styles from "./UserSubjectViewer.module.css";
 import React, { useContext, useEffect, useState } from "react";
 import { DateTime } from "luxon";
-import MemberTimer from "@/Components/Groups/MemberTimer/MemberTimer";
-import { socket } from "@/utils/socket";
+import MemberTimer from "@/app/components/Groups/MemberTimer/MemberTimer";
+import { socket } from "@/app/utils/socket";
 
 function UserSubjectViewer({
   userInfo

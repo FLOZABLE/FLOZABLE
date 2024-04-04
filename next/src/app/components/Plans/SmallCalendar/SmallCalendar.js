@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import styled from "@emotion/styled";
 import { DateTime } from "luxon";
-import { SubjectsContext } from "@/utils/Contexts";
+import { SubjectsContext } from "@/app/utils/Contexts";
 
 
 const StyleWrapper = styled.div`

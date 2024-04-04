@@ -3,13 +3,13 @@ import styles from "./GroupContainer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullseye, faHeart, faPeopleGroup, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
-import { ModalsContext, UserInfoContext } from "@/utils/Contexts";
-import config from "@/utils/config";
+import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
+import config from "@/app/utils/config";
 import GroupMemCounter from "../GroupMemCounter/GroupMemCounter";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
 import Link from "next/link";
-import LikeBtn from "@/Components/Buttons/LikeBtn/LikeBtn";
-import GroupUrlBtn from "@/Components/Buttons/GroupUrlBtn/GroupUrlBtn";
+import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
+import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 
 function GroupContainer({ groupInfo, rankings = [], isSearched = true }) {
   const { userInfo } = useContext(UserInfoContext);

@@ -2,11 +2,11 @@
 
 import styles from "./SmallSubjectsViewer.module.css";
 import { PieChart, Pie, Tooltip, ResponsiveContainer } from "recharts";
-import { secondConverter } from "@/utils/Tool";
-import { PieCustomTooltip } from "@/Components/Charts/Charts";
+import { secondConverter } from "@/app/utils/Tool";
+import { PieCustomTooltip } from "@/app/components/Charts/Charts";
 import Link from "next/link";
 import { useContext } from "react";
-import { SubjectsContext } from "@/utils/Contexts";
+import { SubjectsContext } from "@/app/utils/Contexts";
 
 function SmallSubjectsViewer({}) {
   const {subjects} = useContext(SubjectsContext);

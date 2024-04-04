@@ -19,7 +19,6 @@ const https = require('https');
 const upload = multer();
 
 Router.get('/accountinfo', async (req, res) => {
-  console.log('gd')
   autoSignin(req, res, (async (userId) => {
     const notifications = await NotificationCache(userId);
     const userInfo = await userCache(userId);
@@ -29,7 +28,6 @@ Router.get('/accountinfo', async (req, res) => {
     if (!req.session.timezone) {
       req.session.timezone = userInfo.timezone;
     }
-    console.log('success')
     res.send({ success: true, userInfo: userInfo, notifications: notifications });
     addActiveUserCache(userId);
   }

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./ThemesContainer.module.css";
-import { ThemesContext } from "@/utils/Contexts";
+import { ThemesContext } from "@/app/utils/Contexts";
 import ThemeContainer from "../ThemeContainer/ThemeContainer";
 
 function ThemesContainer({

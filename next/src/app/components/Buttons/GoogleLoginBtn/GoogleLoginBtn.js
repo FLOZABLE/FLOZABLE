@@ -1,8 +1,8 @@
-import { Google } from "@/utils/Svg";
+import { Google } from "@/app/utils/Svg";
 import styles from "./GoogleLoginBtn.module.css";
 import { useGoogleLogin } from '@react-oauth/google';
 import React from 'react';
-import config from "@/utils/config";
+import config from "@/app/utils/config";
 
 function GoogleLoginBtn({ scope = "openid email profile https://www.googleapis.com/auth/calendar" }) {
 

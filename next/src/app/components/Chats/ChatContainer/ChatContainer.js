@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styles from "./ChatContainer.module.css";
-import ProfileImage from "@/Components/Users/ProfileImage/ProfileImage";
-import config from "@/utils/config";
+import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
+import config from "@/app/utils/config";
 
 function ChatContainer({ userInfo, time, m }) {
   return (

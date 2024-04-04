@@ -3,9 +3,9 @@ import styles from "./ThemePreview.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVolumeHigh, faVolumeXmark } from "@fortawesome/free-solid-svg-icons";
 import Draggable from "react-draggable";
-import YouTubePlayer from "@/Components/Youtube/YouTubePlayer/YouTubePlayer";
-import ThemeCategoryBtn from "@/Components/Buttons/ThemeCategoryBtn/ThemeCategoryBtn";
-import { ResponseContext, ThemesContext } from "@/utils/Contexts";
+import YouTubePlayer from "@/app/components/Youtube/YouTubePlayer/YouTubePlayer";
+import ThemeCategoryBtn from "@/app/components/Buttons/ThemeCategoryBtn/ThemeCategoryBtn";
+import { ResponseContext, ThemesContext } from "@/app/utils/Contexts";
 
 function ThemePreview({ isActive, setIsActive }) {
   const {themes} = useContext(ThemesContext);
