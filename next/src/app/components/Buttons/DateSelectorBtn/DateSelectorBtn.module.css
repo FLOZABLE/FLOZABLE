@@ -1,0 +1,29 @@
+.DateSelectorBtn {
+  display: flex;
+  font-size: 1.2rem;
+  height: 2.5rem;
+  justify-content: center;
+  align-items: center;
+  padding: 1.25rem;
+  transition: .3s background-color ease-in-out, box-shadow .3s ease-in-out;
+  font-weight: 700;
+  background-color: var(--gray);
+  margin-top: 2.5rem;
+  padding: 0.938rem 1.25rem;
+  box-shadow: rgba(149, 157, 165, 0.2) 0em 0.5rem 1.5rem;
+  border-radius: 1.875rem;
+}
+
+.DateSelectorBtn i {
+  margin-left: 0.625rem;
+  transition: rotate .3s ease-in-out;
+}
+
+.DateSelectorBtn:hover {
+  background-color: var(--gray);
+  box-shadow: rgba(0, 0, 0, 0.3) 0em 1.1875rem 2.375rem, rgba(0, 0, 0, 0.22) 0em 0.938rem 0.75rem;
+}
+
+.DateSelectorBtn.open i {
+  rotate: -180deg;
+}

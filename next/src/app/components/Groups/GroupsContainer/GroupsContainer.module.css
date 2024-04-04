@@ -1,0 +1,14 @@
+.GroupsContainer {
+  position: relative;
+  grid-template-columns: repeat(auto-fill, 21.25rem);
+  justify-content: center;
+  gap: 1.25rem;
+  width: 100%;
+  display: grid;
+}
+
+/* @media (max-width: 87.5rem) {
+  .GroupsContainer {
+    grid-template-columns: repeat(auto-fill, 2 3.75rem);
+  }
+} */

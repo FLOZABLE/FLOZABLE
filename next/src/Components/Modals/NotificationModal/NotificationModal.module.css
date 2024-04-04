@@ -18,6 +18,8 @@
   opacity: 1;
 }
 
+
+
 .NotificationModal .noNotifications {
   display: flex;
   width: 100%;
@@ -49,70 +51,12 @@
   overflow-x: hidden;
 }
 
-.NotificationModal .notifications .notification {
+.NotificationModal .header {
+  font-size: 1.5rem;
   display: flex;
-  padding: 0.625rem;
 }
 
-.NotificationModal .notification .profileImg {
-  height: 3.125rem;
-  width: 3.125rem;
-  border-radius: 1.563rem;
-}
-
-.NotificationModal .notification .buttons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.NotificationModal .notification .buttons button {
-  background-color: var(--gray);
-  font-size: 1.875rem;
-  width: 2.5rem;
-  height: 2.5rem;
-  color: var(--pink);
-  margin: 0em 0.313rem;
-}
-
-.NotificationModal .notification .content {
-  margin: 0em 1.25rem;
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-}
-
-.NotificationModal .notification .btnWrapper {
-  position: relative;
-}
-
-.NotificationModal .notification .btnWrapper.accept:hover {
-  filter: saturate(300%) hue-rotate(90deg);
-}
-
-.NotificationModal .notification .btnWrapper.decline:hover {
-  filter: saturate(300%);
-}
-
-.NotificationModal .notification .btnWrapper .hoverDisp {
-  position: absolute;
-  font-size: 1.063rem;
-  white-space: nowrap;
-  top: 3.125rem;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
-  background-color: var(--opacity-black);
-  padding: 0.313rem 0.625rem;
-  border-radius: 0.4375rem;
-  color: #fff;
-  z-index: 5;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.NotificationModal .notification .btnWrapper:hover .hoverDisp {
-  opacity: 1;
-  visibility: visible;
+.NotificationModal .header i {
+  margin: 0.3rem 0.3rem 0rem auto;
+  cursor: pointer;
 }

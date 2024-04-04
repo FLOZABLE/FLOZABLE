@@ -1,0 +1,79 @@
+.RankedTheme {
+  position: relative;
+  background-color: beige;
+  height: 100%;
+  width: 100%;
+  border-radius: 1.25rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+  color: #fff;
+}
+
+.RankedTheme .contents {
+  position: absolute;
+  bottom: 4.375rem;
+  padding: 1.875rem;
+  width: calc(100% - 3.75rem);
+}
+
+.RankedTheme .contents .counts {
+  display: flex;
+}
+
+.RankedTheme .contents .counts > div {
+  display: flex;
+  margin-right: 0.625rem;
+}
+
+.RankedTheme .contents .counts > div i {
+  margin-right: 0.313rem;
+}
+
+
+.RankedTheme .description {
+  height: 6.25rem;
+  overflow-x: auto;
+}
+
+.RankedTheme .tags {
+  display: flex;
+  overflow-y: auto;
+  height: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.RankedTheme .tags > div {
+  margin: 0em 0.5rem;
+  white-space: nowrap;
+}
+
+.RankedTheme .buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.RankedTheme .buttons > div {
+  margin: 0em 0.313rem;
+}
+
+@media (max-width: 87.5rem) {
+  .RankedTheme .contents {
+    bottom: 1.875rem;
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 75rem) {
+  .RankedTheme .contents {
+    bottom: 0.625rem;
+    padding: 0.625rem;
+  }
+
+  .RankedTheme .description {
+    font-size: 0.813rem;
+  }
+
+  .RankedTheme .buttons > div {
+    margin: 0em 0.125rem;
+  }
+}

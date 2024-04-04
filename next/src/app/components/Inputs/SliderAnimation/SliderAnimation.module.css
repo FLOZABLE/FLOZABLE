@@ -1,0 +1,113 @@
+.slider {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: #664aff;
+  width: 100%;
+}
+
+.slider input[type=range] {
+  outline: none;
+  height: 0.1875rem;
+  flex: 1 1 auto;
+  color: inherit;
+  margin-right: 1em;
+  background-color: #E3E3E3;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 100%;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 0;
+}
+
+.slider ::-webkit-slider-runnable-track {
+  border: none;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.slider ::-moz-range-track {
+  border: none;
+  background: transparent;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.slider ::-moz-focus-outer {
+  border: 0;
+}
+
+.slider ::-webkit-slider-thumb {
+  width: 1rem;
+  height: 1rem;
+  border: 0;
+  background: currentColor;
+  border-radius: 50% 50%;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.slider ::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  border: 0;
+  background: currentColor;
+  border-radius: 50% 50%;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.slider .sliderValue {
+  display: inline-block;
+  position: relative;
+  height: 1.5em;
+}
+
+.slider .sliderValue:before,
+.slider .sliderValue:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0.25em;
+}
+
+.slider .sliderValue:before {
+  top: 0;
+  background: linear-gradient(#FFF, rgba(255, 255, 255, 0));
+}
+
+.slider .sliderValue:after {
+  bottom: 0;
+  background: linear-gradient(rgba(255, 255, 255, 0), #FFF);
+}
+
+.slider .sliderValueNumber {
+  height: 1em;
+  overflow: hidden;
+  display: inline-block;
+  padding: 0.25em 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-weight: 600;
+}
+
+.slider .sliderValueNumber ul {
+  margin-top: -0.25em;
+  padding: 0;
+  list-style-type: none;
+  transition: transform 0.75s ease, opacity 0.5s ease;
+}
+
+.slider .sliderValueNumber ul li {
+  height: 1em;
+  display: block;
+  margin: 0;
+  padding: 0.25em 0;
+}

@@ -76,6 +76,16 @@ function AccountProvider({ children }) {
 
   useEffect(() => {
     bringAccountInfo();
+
+    const onNotification = (data) => {
+      setNotifications((prev) => [...prev, data]);
+    }
+
+    socket.on("notification", onNotification);
+
+    return () => {
+      socket.off("notification", onNotification);
+    };
   }, []);
 
   return (

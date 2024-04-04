@@ -354,7 +354,8 @@ async function usersCache(users, cache) {
       userInfo.groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
       userInfo.friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
       usersInfo.push(userInfo);
-    })
+    });
+    return usersInfo;
   } catch (err) {
     console.log(err);
   }

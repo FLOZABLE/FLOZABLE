@@ -5,22 +5,20 @@
   position: relative;
   border-radius: 0.938rem;
   cursor: pointer;
-  padding: 1.6rem;
-  width: 80%;
+  padding: 0.8rem 1.6rem;
 }
 
 .ChatRoom .header {
   margin-top: 0.4rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: max-content;
+  width: calc(100% - 3rem);
 }
 
 .ChatRoom .header .name {
   text-overflow: ellipsis;
   overflow: hidden; 
-  max-width: 80%; 
+  max-width: 70%; 
   white-space: nowrap;
   font-size: 1rem;
   
@@ -39,9 +37,14 @@
 .ChatRoom .imgContainer {
   width: 3.125rem;
   height: 3.125rem;
+  min-width: 3.125rem;
   border-radius: 1.563rem;
   margin-right: 0.625rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+}
+
+.ChatRoom .roomInfo {
+  flex: 1;
 }
 
 .ChatRoom .msgInfo {

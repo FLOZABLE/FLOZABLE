@@ -168,7 +168,7 @@ function Header({
       </div>
       <div className={styles.right}>
         <div className={styles.headerEl} id={styles.chats}
-          onClick={() => { setChatModal(prev => ({...prev, open: true})) }}
+          onClick={() => { setChatModal(prev => ({...prev, open: !prev.open})) }}
         >
           <i>
             <FontAwesomeIcon icon={faMessage} bounce={chatModal?.totalNewMsg ? true : false} />

@@ -24,8 +24,6 @@ function ChatModal({
   const [chatRooms, setChatRooms] = useState([]);
   const [readStatus, setReadStatus] = useState({});
   const [msgInput, setMsgInput] = useState("");
-  const [roomMembers, setRoomMembers] = useState([]);
-  const [msgs, setMsgs] = useState([]);
 
   useEffect(() => {
     fetch(`${config.server}/chat/bring-rooms`, { method: "post",credentials:"include" })
@@ -78,6 +76,12 @@ function ChatModal({
       top: chatsContainerRef.current.scrollHeight,
       behavior: "smooth",
     });
+    if (selectedRoom?.id) {
+      const chatRoom = chatRooms.find(room => room.id === chatModal.chatRoom);
+      if (chatRoom) {
+        socket.emit("readMsg", { roomId: selectedRoom.id, type: chatRoom.type });
+      };
+    }
     return () => {
       socket.off("msgReceived", onMsgReceived);
     };
@@ -90,7 +94,7 @@ function ChatModal({
 
     if (!chatRoom) return;
 
-    const { type, id, members, chats } = chatRoom;
+    const { type, id, chats } = chatRoom;
     const lastMsg = chats.length ? chats[chats.length - 1] : null;
 
     const lastRead = readStatus[id];
@@ -104,15 +108,13 @@ function ChatModal({
 
       chatRoom.name = name;
       chatRoom.color = color;
-      chatRoom.members = members;
-      setSelectedRoom(chatRoom);
 
       fetch(`${config.server}/chat/members?roomId=${id}`, { method: "get", credentials:"include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
           const { membersInfo } = data;
-          setRoomMembers(membersInfo);
+          setSelectedRoom({...chatRoom, members: membersInfo});
         }
       })
       .catch((error) => console.error(error));
@@ -123,9 +125,8 @@ function ChatModal({
         })
         .join(",");
       chatRoom.color = "var(--purple)";
+      chatRoom.members = members;
       setSelectedRoom(chatRoom);
-
-      setRoomMembers(chatRoom.members);
     };
   }, [chatModal.chatRoom, myGroups, chatRooms]);
 
@@ -235,7 +236,7 @@ function ChatModal({
                   />
                 );
               } else {
-                const user = membersInfo.find((member) => {
+                const user = selectedRoom.members.find((member) => {
                   return member.user_id === u;
                 });
                 return (

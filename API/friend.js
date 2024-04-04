@@ -243,7 +243,7 @@ Router.get('/recommended', async (req, res) => {
         return res.send({ success: false, reason: 'No user found' });
       };
       const { friends } = userInfo;
-      const userIds = await redisClient.sMembers(`allMembers`);
+      const userIds = await redisClient.sMembers(`month1`);
       const users = [];
       for (let i = 0; i < 100; i++) {
         if (users.length >= 3) {
