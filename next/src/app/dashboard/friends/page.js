@@ -2,18 +2,17 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import styles from "./page.module.css";
-import { Bar, CartesianGrid, Legend, BarChart, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { ModalsContext } from "@/utils/Contexts";
-import FriendLinkModal from "@/Components/Modals/FriendLinkModal/FriendLinkModal";
-import FriendEmailModal from "@/Components/Modals/FriendEmailModal/FriendEmailModal";
-import { IconEmailOutline, IconStatsChart, IconUser } from "@/utils/Svg";
-import FriendsRankingViewer from "@/Components/Friends/FriendsRankingViewer/FriendsRankingViewer";
-import FriendsActivityViewer from "@/Components/Friends/FriendsActivityViewer/FriendsActivityViewer";
-import SearchBar from "@/Components/Inputs/SearchBar/SearchBar";
-import SearchUsers from "@/Components/Users/SearchUsers/SearchUsers";
-import FriendRequestsViewer from "@/Components/Friends/FriendRequestsViewer/FriendRequestsViewer";
-import config from "@/utils/config";
-import FriendsTrendChart from "@/Components/Charts/FriendsTrendChart";
+import { ModalsContext } from "@/app/utils/Contexts";
+import FriendLinkModal from "@/app/components/Modals/FriendLinkModal/FriendLinkModal";
+import FriendEmailModal from "@/app/components/Modals/FriendEmailModal/FriendEmailModal";
+import { IconEmailOutline, IconStatsChart, IconUser } from "@/app/utils/Svg";
+import FriendsRankingViewer from "@/app/components/Friends/FriendsRankingViewer/FriendsRankingViewer";
+import FriendsActivityViewer from "@/app/components/Friends/FriendsActivityViewer/FriendsActivityViewer";
+import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
+import SearchUsers from "@/app/components/Users/SearchUsers/SearchUsers";
+import FriendRequestsViewer from "@/app/components/Friends/FriendRequestsViewer/FriendRequestsViewer";
+import config from "@/app/utils/config";
+import FriendsTrendChart from "@/app/components/Charts/FriendsTrendChart";
 
 function Friends({
 }) {

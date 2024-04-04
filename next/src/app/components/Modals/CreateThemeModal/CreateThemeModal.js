@@ -3,12 +3,12 @@ import Draggable from "react-draggable";
 import styles from "./CreateThemeModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faPen, faXmark } from "@fortawesome/free-solid-svg-icons";
-import config from "@/utils/config";
-import { ResponseContext, ThemesContext } from "@/utils/Contexts";
-import CustomInput from "@/Components/Inputs/CustomInput/CustomInput";
-import TextEditor from "@/Components/Inputs/TextEditor/TextEditor";
-import TagContainerGen from "@/Components/Inputs/TagContainerGen/TagContainerGen";
-import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
+import config from "@/app/utils/config";
+import { ResponseContext, ThemesContext } from "@/app/utils/Contexts";
+import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
+import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
+import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContainerGen";
+import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 
 function CreateThemeModal({
   isOpen,

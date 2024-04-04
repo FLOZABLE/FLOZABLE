@@ -1,14 +1,14 @@
 "use client";
 
-import { GroupsContext, ModalsContext, ResponseContext } from "@/utils/Contexts";
+import { GroupsContext, ModalsContext, ResponseContext } from "@/app/utils/Contexts";
 import styles from "./JoinGroupModal.module.css";
 import { faKey, faLock, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useState } from "react";
-import GroupContainer from "@/Components/Groups/GroupContainer/GroupContainer";
-import CustomInput from "@/Components/Inputs/CustomInput/CustomInput";
-import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
-import config from "@/utils/config";
+import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
+import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
+import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
+import config from "@/app/utils/config";
 import { useRouter } from "next/navigation";
 
 function JoinGroupModal() {

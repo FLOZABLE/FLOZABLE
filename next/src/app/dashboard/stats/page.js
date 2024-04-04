@@ -1,19 +1,19 @@
 "use client";
 
-import CalendarModal from "@/Components/Modals/CalendarModal/CalendarModal";
+import CalendarModal from "@/app/components/Modals/CalendarModal/CalendarModal";
 import styles from "./page.module.css";
 import { useContext, useEffect, useRef, useState } from "react";
-import DateSelectorBtn from "@/Components/Buttons/DateSelectorBtn/DateSelectorBtn";
-import RadioBtn from "@/Components/Buttons/RadioBtn/RadioBtn";
-import SubjectsPie from "@/Components/Charts/SubjectsPie";
-import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from "@/utils/Svg";
-import { SubjectsContext } from "@/utils/Contexts";
-import { focusCalculator, secondConverter } from "@/utils/Tool";
+import DateSelectorBtn from "@/app/components/Buttons/DateSelectorBtn/DateSelectorBtn";
+import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
+import SubjectsPie from "@/app/components/Charts/SubjectsPie";
+import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from "@/app/utils/Svg";
+import { SubjectsContext } from "@/app/utils/Contexts";
+import { focusCalculator, secondConverter } from "@/app/utils/Tool";
 import { DateTime } from "luxon";
-import StudyTrendChart from "@/Components/Charts/StudyTrendChart";
+import StudyTrendChart from "@/app/components/Charts/StudyTrendChart";
 import { CartesianGrid, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { PieCustomTooltip } from "@/Components/Charts/Charts";
-import RankingTrend from "@/Components/Charts/RankingTrendChart";
+import { PieCustomTooltip } from "@/app/components/Charts/Charts";
+import RankingTrend from "@/app/components/Charts/RankingTrendChart";
 
 function Stats({}) {
   const {subjects} = useContext(SubjectsContext);

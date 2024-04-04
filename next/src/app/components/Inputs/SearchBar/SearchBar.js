@@ -1,4 +1,4 @@
-import { IconSearch } from "@/utils/Svg";
+import { IconSearch } from "@/app/utils/Svg";
 import styles from "./SearchBar.module.css";
 import React from 'react';
 

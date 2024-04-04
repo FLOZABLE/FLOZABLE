@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import styles from "./SearchUsers.module.css";
-import config from "@/utils/config";
+import config from "@/app/utils/config";
 import Link from "next/link";
-import DmBtn from "@/Components/Buttons/DmBtn/DmBtn";
-import FriendRequestBtn from "@/Components/Buttons/FriendRequestBtn/FriendRequestBtn";
-import CountryViewer from "@/Components/Others/CountryViewer/CountryViewer";
+import DmBtn from "@/app/components/Buttons/DmBtn/DmBtn";
+import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRequestBtn";
+import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 import ProfileImage from "../ProfileImage/ProfileImage";
 
 function SearchUsers({ searchQuery, setCount, search, setSearch }) {

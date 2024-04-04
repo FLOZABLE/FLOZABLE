@@ -1,4 +1,4 @@
-const { config } = require("@/utils/config");
+const { config } = require("@/app/utils/config");
 
 async function fetchUserData () {
   const response = await fetch(`${config.server}/account/accountinfo`);

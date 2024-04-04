@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./FriendLinkModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { UserInfoContext } from "@/utils/Contexts";
-import config from "@/utils/config";
-import { FriendLink } from "@/utils/Svg";
-import CopyBtn from "@/Components/Buttons/CopyBtn/CopyBtn";
+import { UserInfoContext } from "@/app/utils/Contexts";
+import config from "@/app/utils/config";
+import { FriendLink } from "@/app/utils/Svg";
+import CopyBtn from "@/app/components/Buttons/CopyBtn/CopyBtn";
 
 function FriendLinkModal({ isOpen, setIsOpen }) {
   const {userInfo} = useContext(UserInfoContext);

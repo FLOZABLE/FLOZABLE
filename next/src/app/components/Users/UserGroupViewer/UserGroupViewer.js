@@ -1,7 +1,7 @@
 import styles from "./UserGroupViewer.module.css";
 import React, { useEffect, useState } from "react";
-import { socket } from "@/utils/socket";
-import GroupContainer from "@/Components/Groups/GroupContainer/GroupContainer";
+import { socket } from "@/app/utils/socket";
+import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
 
 function UserGroupViewer({
   userInfo,

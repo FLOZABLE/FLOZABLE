@@ -1,4 +1,4 @@
-import config from "@/utils/config";
+import config from "@/app/utils/config";
 
 async function fetchFriendsRanking () {
   const response = await fetch(`${config.server}/ranking/friends`, {

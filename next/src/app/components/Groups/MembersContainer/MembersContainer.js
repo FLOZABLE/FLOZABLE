@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./MembersContainer.module.css";
 import { Device } from "mediasoup-client";
-import { CallOptionsContext, UserInfoContext } from "@/utils/Contexts";
-import { mediaSocket } from "@/utils/mediaSocket";
+import { CallOptionsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { mediaSocket } from "@/app/utils/mediaSocket";
 import MyEl from "../MyEl/MyEl";
 import MemberEl from "../MemberEl/MemberEl";
 

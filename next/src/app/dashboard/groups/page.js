@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./page.module.css";
-import MyGroupsViewer from "@/Components/Groups/MyGroupsViewer/MyGroupsViewer";
-import CreateGroupModal from "@/Components/Modals/CreateGroupModal/CreateGroupModal";
-import TagContainerGen from "@/Components/Inputs/TagContainerGen/TagContainerGen";
-import SearchBar from "@/Components/Inputs/SearchBar/SearchBar";
-import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
-import GroupsContainer from "@/Components/Groups/GroupsContainer/GroupsContainer";
+import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
+import CreateGroupModal from "@/app/components/Modals/CreateGroupModal/CreateGroupModal";
+import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContainerGen";
+import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
+import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
+import GroupsContainer from "@/app/components/Groups/GroupsContainer/GroupsContainer";
 
 function Groups({
   setResponse,

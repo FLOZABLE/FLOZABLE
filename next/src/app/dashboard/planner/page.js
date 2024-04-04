@@ -3,11 +3,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./page.module.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import EventPlanner from "@/Components/Plans/EventPlanner/EventPlanner";
-import RadioBtn from "@/Components/Buttons/RadioBtn/RadioBtn";
-import GoogleLoginBtn from "@/Components/Buttons/GoogleLoginBtn/GoogleLoginBtn";
-import SmallCalendar from "@/Components/Plans/SmallCalendar/SmallCalendar";
-import PlanTimeline from "@/Components/Plans/PlanTimeline/PlanTimeline";
+import EventPlanner from "@/app/components/Plans/EventPlanner/EventPlanner";
+import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
+import GoogleLoginBtn from "@/app/components/Buttons/GoogleLoginBtn/GoogleLoginBtn";
+import SmallCalendar from "@/app/components/Plans/SmallCalendar/SmallCalendar";
+import PlanTimeline from "@/app/components/Plans/PlanTimeline/PlanTimeline";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 

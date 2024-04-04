@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./LikeBtn.module.css";
-import config from "@/utils/config";
+import config from "@/app/utils/config";
 
 const LikeBtn = ({id, liked, setResponse, url=`${config.server}/groups/like/${id}`}) => {
   const [likedBtn, setLikedBtn] = useState(false);

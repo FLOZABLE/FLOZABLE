@@ -1,15 +1,15 @@
 import styles from "./MyGroupContainer.module.css";
 import React, { useContext, useEffect, useState } from "react";
-import config from "@/utils/config";
+import config from "@/app/utils/config";
 import Link from "next/link";
-import { ModalsContext } from "@/utils/Contexts";
-import GroupUrlBtn from "@/Components/Buttons/GroupUrlBtn/GroupUrlBtn";
+import { ModalsContext } from "@/app/utils/Contexts";
+import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 import {
   IconMessage,
   IconTimerOutline,
   StudyPerson,
   IconPen,
-} from "@/utils/Svg";
+} from "@/app/utils/Svg";
 import MembersContainer from "../MembersContainer/MembersContainer";
 
 

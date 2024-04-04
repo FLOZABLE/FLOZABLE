@@ -1,6 +1,6 @@
-import { UserInfoContext } from "@/utils/Contexts";
-import { updateRankingTrend } from "@/utils/StatTools";
-import config from "@/utils/config";
+import { UserInfoContext } from "@/app/utils/Contexts";
+import { updateRankingTrend } from "@/app/utils/StatTools";
+import config from "@/app/utils/config";
 import { DateTime } from "luxon";
 import { useContext, useEffect, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";

@@ -2,8 +2,8 @@ import styles from "./DmBtn.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext } from 'react';
-import config from "@/utils/config";
-import { ResponseContext } from "@/utils/Contexts";
+import config from "@/app/utils/config";
+import { ResponseContext } from "@/app/utils/Contexts";
 import BlobBtn from "../BlobBtn/BlobBtn";
 
 function DmBtn({userInfo, padding, setIsChatModal}) {

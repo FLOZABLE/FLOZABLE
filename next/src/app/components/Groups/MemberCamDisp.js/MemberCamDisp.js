@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./MemberCamDisp.module.css";
-import { mediaSocket } from "@/utils/mediaSocket";
-import { IconCameraVideoFill, IconCameraVideoOffFill, IconMicFill, IconMicMuteFill } from "@/utils/Svg";
-import { CallOptionsContext } from "@/utils/Contexts";
+import { mediaSocket } from "@/app/utils/mediaSocket";
+import { IconCameraVideoFill, IconCameraVideoOffFill, IconMicFill, IconMicMuteFill } from "@/app/utils/Svg";
+import { CallOptionsContext } from "@/app/utils/Contexts";
 
 function MemberCamDisp({ memberInfo, device, recvTransport }) {
   const {isHeadphone} = useContext(CallOptionsContext);

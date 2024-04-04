@@ -4,11 +4,11 @@ import { DateTime } from "luxon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import config from "@/utils/config";
-import ProfileImage from "@/Components/Users/ProfileImage/ProfileImage";
-import CountryViewer from "@/Components/Others/CountryViewer/CountryViewer";
-import UserSubjectViewer from "@/Components/Users/UserSubjectViewer/UserSubjectViewer";
-import UserGroupViewer from "@/Components/Users/UserGroupViewer/UserGroupViewer";
+import config from "@/app/utils/config";
+import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
+import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
+import UserSubjectViewer from "@/app/components/Users/UserSubjectViewer/UserSubjectViewer";
+import UserGroupViewer from "@/app/components/Users/UserGroupViewer/UserGroupViewer";
 
 //mode 0 is for friends page's component, mode 1 is for main page's component
 function FriendsActivityViewer() {

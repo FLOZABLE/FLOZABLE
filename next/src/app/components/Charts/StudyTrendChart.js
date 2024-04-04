@@ -2,10 +2,10 @@
 
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import React, { useContext, useEffect, useState } from "react";
-import { secondConverter } from "@/utils/Tool";
-import { colorsList } from "@/utils/Constant";
-import { SubjectsContext } from "@/utils/Contexts";
-import { updateSubjectsTrendChart } from "@/utils/StatTools";
+import { SubjectsContext } from "@/app/utils/Contexts";
+import { updateSubjectsTrendChart } from "@/app/utils/StatTools";
+import { colorsList } from "@/app/utils/Constant";
+import { secondConverter } from "@/app/utils/Tool";
 
 function StudyTrendChart({
   viewDate,

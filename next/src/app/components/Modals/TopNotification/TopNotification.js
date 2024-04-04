@@ -7,7 +7,7 @@ import {
   faCircleCheck,
   faCircleXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { ResponseContext } from "@/utils/Contexts";
+import { ResponseContext } from "@/app/utils/Contexts";
 
 function TopNotification() {
   const {response} = useContext(ResponseContext);

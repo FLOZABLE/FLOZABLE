@@ -1,6 +1,6 @@
-import config from "@/utils/config";
+import config from "@/app/utils/config";
 import styles from "./NotificationContainer.module.css";
-import ProfileImage from "@/Components/Users/ProfileImage/ProfileImage";
+import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import NotificationBtn from "../NotificationBtn/NotificationBtn";
 
 function NotificationContainer({fromProfile, zIndex, children, buttons}) {

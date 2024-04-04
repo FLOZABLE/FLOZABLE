@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./SelectIcon.module.css";
-import { subjectIcons } from "@/utils/Constant";
+import { subjectIcons } from "@/app/utils/Constant";
 /* import {
   WritePen,
   Book,

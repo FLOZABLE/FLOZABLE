@@ -5,9 +5,9 @@ import styles from "./NotificationModal.module.css";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
-import { ModalsContext, NotificationsContext, ResponseContext } from "@/utils/Contexts";
-import NotificationContainer from "@/Components/Notifications/NotificationContainer/NotificationContainer";
-import config from "@/utils/config";
+import { ModalsContext, NotificationsContext, ResponseContext } from "@/app/utils/Contexts";
+import NotificationContainer from "@/app/components/Notifications/NotificationContainer/NotificationContainer";
+import config from "@/app/utils/config";
 
 function NotificationModal({
 }) {

@@ -1,10 +1,10 @@
-import StudyTrendChart from "@/Components/Charts/StudyTrendChart";
+import StudyTrendChart from "../components/Charts/StudyTrendChart";
+import FriendsRankingViewer from "../components/Friends/FriendsRankingViewer/FriendsRankingViewer";
+import RecommendedFriendsViewer from "../components/Friends/RecommendedFriendsViewer/RecommendedFriendsViewer";
+import PlanTimeline from "../components/Plans/PlanTimeline/PlanTimeline";
+import SmallSubjectsViewer from "../components/Subjects/SmallSubjectsViewer/SmallSubjectsViewer";
+import { IconStatsChart } from "../utils/Svg";
 import styles from "./page.module.css";
-import SmallSubjectsViewer from "@/Components/Subjects/SmallSubjectsViewer/SmallSubjectsViewer";
-import { IconStatsChart } from "@/utils/Svg";
-import FriendsRankingViewer from "@/Components/Friends/FriendsRankingViewer/FriendsRankingViewer";
-import RecommendedFriendsViewer from "@/Components/Friends/RecommendedFriendsViewer/RecommendedFriendsViewer";
-import PlanTimeline from "@/Components/Plans/PlanTimeline/PlanTimeline";
 
 export default function Dashboard() {
 

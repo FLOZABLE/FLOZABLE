@@ -1,4 +1,4 @@
-import { secondConverter } from "@/utils/Tool";
+import { secondConverter } from "@/app/utils/Tool";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 function FriendsTrendChart({friendsTrends}) {

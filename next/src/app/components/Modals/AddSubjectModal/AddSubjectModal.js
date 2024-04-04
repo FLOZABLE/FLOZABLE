@@ -5,12 +5,12 @@ import Draggable from "react-draggable";
 import styles from "./AddSubjectModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { ModalsContext, ResponseContext, SubjectsContext, TutorialsContext } from "@/utils/Contexts";
+import { ModalsContext, ResponseContext, SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
 import { useRouter, useSearchParams } from "next/navigation";
-import CustomInput from "@/Components/Inputs/CustomInput/CustomInput";
-import SelectIcon from "@/Components/Inputs/SelectIcon/SelectIcon";
-import ColorPalette from "@/Components/Inputs/ColorPalette/ColorPalette";
-import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
+import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
+import SelectIcon from "@/app/components/Inputs/SelectIcon/SelectIcon";
+import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
+import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 

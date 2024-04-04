@@ -3,13 +3,13 @@ import styles from "./ThemeContainer.module.css";
 import { faHeart, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useEffect, useState } from "react";
 import parse from "html-react-parser";
-import { UserInfoContext } from "@/utils/Contexts";
-import GroupLikesCounter from "@/Components/Groups/GroupLikesCounter/GroupLikesCounter";
+import { UserInfoContext } from "@/app/utils/Contexts";
+import GroupLikesCounter from "@/app/components/Groups/GroupLikesCounter/GroupLikesCounter";
 import ThemeUsageCounter from "../ThemeUsageCounter/ThemeUsageCounter";
-import ThemeCategoryBtn from "@/Components/Buttons/ThemeCategoryBtn/ThemeCategoryBtn";
-import LikeBtn from "@/Components/Buttons/LikeBtn/LikeBtn";
-import config from "@/utils/config";
-import GroupUrlBtn from "@/Components/Buttons/GroupUrlBtn/GroupUrlBtn";
+import ThemeCategoryBtn from "@/app/components/Buttons/ThemeCategoryBtn/ThemeCategoryBtn";
+import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
+import config from "@/app/utils/config";
+import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 
 function ThemeContainer({
   theme,

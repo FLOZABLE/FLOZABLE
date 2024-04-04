@@ -7,16 +7,16 @@ import { Navigation, Pagination, Autoplay, EffectCoverflow } from "swiper/module
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import config from "@/utils/config";
-import TagContainerGen from "@/Components/Inputs/TagContainerGen/TagContainerGen";
-import CreateThemeModal from "@/Components/Modals/CreateThemeModal/CreateThemeModal";
-import ThemePreview from "@/Components/Themes/ThemePreview/ThemePreview";
-import SearchBar from "@/Components/Inputs/SearchBar/SearchBar";
-import DropDownButton from "@/Components/Buttons/DropDownButton/DropDownButton";
-import BlobBtn from "@/Components/Buttons/BlobBtn/BlobBtn";
-import ThemesContainer from "@/Components/Themes/ThemesContainer/ThemesContainer";
-import RankedTheme from "@/Components/Themes/RankedTheme/RankedTheme";
-import { ThemesContext } from "@/utils/Contexts";
+import config from "@/app/utils/config";
+import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContainerGen";
+import CreateThemeModal from "@/app/components/Modals/CreateThemeModal/CreateThemeModal";
+import ThemePreview from "@/app/components/Themes/ThemePreview/ThemePreview";
+import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
+import DropDownButton from "@/app/components/Buttons/DropDownButton/DropDownButton";
+import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
+import ThemesContainer from "@/app/components/Themes/ThemesContainer/ThemesContainer";
+import RankedTheme from "@/app/components/Themes/RankedTheme/RankedTheme";
+import { ThemesContext } from "@/app/utils/Contexts";
 
 function Themes({
   setResponse,
