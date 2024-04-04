@@ -1,0 +1,137 @@
+.EventModal {
+  position: fixed;
+  background-color: #fff;
+  height: fit-content;
+  width: 31.25rem;
+  z-index: 6;
+  border-radius: 1.25rem;
+  box-shadow: rgba(50, 50, 93, 0.25) 0em 0.375rem 0.75rem -0.125rem, rgba(0, 0, 0, 0.3) 0em 0.1875rem 0.4375rem -0.1875rem;
+}
+
+.EventModal .header {
+  background-color: var(--blue2);
+  height: 1.875rem;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  color: #fff;
+  border-top-left-radius: 1.25rem;
+  border-top-right-radius: 1.25rem;
+}
+
+.EventModal .header:hover {
+  cursor: move;
+}
+
+.EventModal .header i {
+  margin-right: 0.625rem;
+  font-size: 1.875rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+.EventModal .header i * {
+  pointer-events: none;
+}
+
+.EventModal .container {
+  display: flex;
+  flex-direction: column;
+  margin: 1.875rem 1.25rem 0em 0em;
+}
+
+.EventModal .wrapper {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 1.25rem;
+  align-items: center;
+}
+
+.EventModal .wrapper .iconWrapper {
+  width: 4.375rem;
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.688rem;
+  position: relative;
+}
+
+.EventModal .wrapper .iconWrapper:hover .hoverEl {
+  opacity: 1;
+  visibility: visible;
+}
+
+.EventModal .wrapper .iconWrapper .hoverEl {
+  position: absolute;
+  font-size: 1.063rem;
+  white-space: nowrap;
+  top: 3.125rem;
+  opacity: 0;
+  transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
+  background-color: #000000c3;
+  padding: 0.313rem 0.625rem;
+  border-radius: 0.4375rem;
+  z-index: 2;
+  visibility: hidden;
+  pointer-events: none;
+  color: #fff;
+}
+
+.EventModal .title {
+  height: 3.125rem;
+
+}
+
+.EventModal .title input {
+  width: 100%;
+  border: none;
+  height: 100%;
+  font-size: 1.875rem;
+}
+
+.EventModal .wrapper .contentWrapper {
+  position: relative;
+  width: calc(100% - 4.375rem);
+  display: flex;
+  align-items: center;
+}
+
+.EventModal .subjectWrapper {
+  width: 12.5rem;
+}
+
+.EventModal .notificationWrapper {
+  width: 25rem;
+}
+
+.EventModal .submit {
+  margin-bottom: 1.875rem;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
+  display: flex;
+}
+
+.EventModal .addSubjectWrapper {
+  margin-left: auto;
+}
+
+@media (max-height: 800px) {
+  .EventModal {
+    height: calc(100% - 18.75rem);
+    overflow: hidden;
+  }
+
+  .EventModal .container {
+    padding-top: 0.625rem;
+    margin: 0em;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100% - 1.25rem);
+  }
+}

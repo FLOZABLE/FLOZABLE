@@ -1,0 +1,38 @@
+.RecommendedFriendsViewer {
+  position: relative;
+}
+
+.RecommendedFriendsViewer .title {
+  display: flex;
+  font-size: 1.5rem;
+  font-weight: 600;
+  justify-content: center;
+  margin-right: 2.5rem;
+  width: 100%;
+  margin-bottom: 0.625rem;
+}
+
+.RecommendedFriendsViewer .title i {
+  padding-left: 0.438rem;
+}
+
+.RecommendedFriendsViewer .recommendedFriend {
+  display: flex;
+  align-items: center;
+}
+
+.RecommendedFriendsViewer .recommendedFriend > * {
+  display: flex;
+  align-items: center;
+}
+
+.RecommendedFriendsViewer .recommendedFriend .buttons{
+  margin-left: auto;
+}
+
+.RecommendedFriendsViewer .profileImg {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 1.25rem;
+  margin-right: 0.625rem;
+}

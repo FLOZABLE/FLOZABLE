@@ -1,0 +1,230 @@
+.Header {
+  height: 5rem;
+  width: calc(100vw - 8.125rem - 0.0625rem);
+  background-color: #F8F9FA;
+  position: fixed;
+  top: 1.25rem;
+  left: 8.1875rem;
+  display: flex;
+  align-items: center;
+  z-index: 5;
+  margin-top: -0.625rem ;
+}
+
+.Header .left {
+  display: flex;
+  height: 100%;
+  margin-top: -0.3125rem;
+}
+
+.Header .left :not(.divider) {
+  margin-top: 0.313rem;
+} 
+
+.Header .bigBox {
+  margin-top: 1.875rem;
+  display: flex;
+  border-radius: 1.875rem;
+  height: 37.5rem;
+}
+
+.Header .bigBox .chartWrapper {
+  width: 100%;
+  height: 100%;
+}
+
+
+.Header .left .headerEl i {
+  display: flex;
+  vertical-align: middle;
+  justify-content: center;
+}
+
+.Header .left .headerEl {
+  display: flex;  
+  flex-direction: column;
+  height:  3.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0em 0.625rem;
+}
+
+.Header .left .headerEl:nth-child(1) {
+  margin-left: 3.125rem;
+}
+
+.Header .left .headerEl > div {
+  display: flex;
+  align-items: center;
+  font-size:1.2rem;
+  font-weight: 800;
+}
+
+.Header .left .headerEl > div strong {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.Header .left .headerEl > div i {
+  margin-right: 0.625rem;
+  font-size: 2rem;
+  width: 3.125rem;
+  display: flex;
+}
+
+/* .headerEl .LogoutButton {
+  display: flex;
+  background-color: rgb(209, 255, 216);
+  border-radius: 10rem;
+  width: 4rem;
+  height: 4rem;
+} */
+
+.headerEl .StudyButton {  
+  background-color: rgb(209, 255, 216);
+  border-radius: 100rem;
+  width: 4rem;
+  height: 4rem;
+  color: rgb(0, 213, 71);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} 
+
+.Header .divider {
+  height: calc(100% - 3.438rem);
+  margin: 0.938rem 0.313rem;
+  border-right: 0.125rem solid #b2b2b2;
+  margin-top: 2rem;
+}
+
+.Header .right {
+  display: flex;
+  position: absolute;
+  right: 1.25rem;
+  height: 100%;
+}
+
+.Header .right .divider {
+  margin-top: 1.625rem;
+}
+
+.Header .right .headerEl {
+  display: flex;
+  align-items: center;
+  margin: 0em 1.25rem;
+  position: relative;
+}
+
+.Header .right #user > div {
+  margin-right: -1.5625rem;
+}
+
+.Header .right #user p {
+  font-weight: 600;
+  font-size: 140%;
+  margin-top: -0.3125rem;
+  margin-right: 3.125rem;
+  display: flex;
+  align-items: center;
+}
+
+.Header .right #user>div :nth-child(2){
+  font-weight: 300;
+  font-size: 80%;
+  margin-top: -0.25rem;
+  margin-right: 3.125rem;
+  display: flex;
+  align-items: center;
+}
+
+.Header .right .profileImg {
+  display: flex;
+  background-color: #c0c0c0;
+  justify-content: right;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 6.25rem;
+}
+
+.Header .headerEl#notifications {
+  cursor: pointer;
+}
+
+.Header .headerEl#notifications > div {
+  background-color: #ffcc00;
+  position: absolute;
+  top: 1.0625rem;
+  right: -0.625rem;
+  height: 1.0625rem;
+  width: 1.0625rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1.25rem;
+  border: 0.1875rem solid #000;
+  font-size: 0.688rem;
+}
+
+.Header .headerEl#notifications i {
+  font-size:  1.563rem;
+}
+
+.Header .headerEl#chats {
+  cursor: pointer;
+}
+
+.Header .headerEl#chats > div {
+  background-color: #ffcc00;
+  position: absolute;
+  top: 1.0625rem;
+  right: -0.625rem;
+  height: 1.0625rem;
+  width: 1.0625rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1.25rem;
+  border: 0.1875rem solid #000;
+  font-size: 0.688rem;
+}
+
+.Header .headerEl#chats i {
+  font-size:  1.563rem;
+}
+
+@media (max-width: 87.5rem) {
+  .Header .right .profileImg {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+
+  .Header .right .StudyButton{
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+
+  .Header .LogoutButton {
+    font-size: 2.5rem;
+  }
+
+  .Header .left .headerEl > div {
+    font-size:0.813rem;
+  }
+  
+  .Header .left .headerEl > div strong {
+    font-weight: 700;
+    font-size: 0.688rem;
+  }
+}
+
+@media (max-width: 75rem) {
+  .Header .left .headerEl:nth-child(1) {
+    margin-left: 0.625rem;
+  }
+
+  .Header .divider {
+    margin: 0.938rem 0em;
+    margin-top: 2rem;
+  }
+}
