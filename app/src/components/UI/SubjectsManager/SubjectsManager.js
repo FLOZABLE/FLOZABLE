@@ -50,6 +50,30 @@ function SubjectsManager({ subjects, setSubjects, setResponse }) {
       .catch((error) => console.error(error));
   }, [selectedSubject]);
 
+  const restoreSubject = useCallback((subjectId, subjectName) => {
+    fetch(`${process.env.REACT_APP_ORIGIN}/study/restore-subject`,
+      {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          subjectId
+        })
+      }).then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setResponse({success: true, msg: `Restored Subject ${subjectName}`});
+          setSubjects(subjects.map((subject) => {
+            if (subject.id === subjectId) {
+              return { ...subject, hidden: -1 };
+            }
+            return { ...subject };
+          }));
+        }
+      })
+  }, [subjects]);
+
   const deleteSubject = useCallback(() => {
     fetch(`${process.env.REACT_APP_ORIGIN}/study/delete-subject`,
       {
@@ -93,15 +117,15 @@ function SubjectsManager({ subjects, setSubjects, setResponse }) {
                 subjects.filter((s) => s.hidden === -1).map((subject, i) => {
 
                   const StyleWrapper = styled.div`
-              div {
-                background-color: ${subject.color};
-                transition: 0.3s;
-              }
-              div:hover {
-                box-shadow: 5px 5px 5px rgb(100,100,100);
-                cursor: pointer;
-              }
-            `;
+                    div {
+                      background-color: ${subject.color};
+                      transition: 0.3s;
+                    }
+                    div:hover {
+                      box-shadow: 5px 5px 5px rgb(100,100,100);
+                      cursor: pointer;
+                    }
+                  `;
 
                   return (
                     <StyleWrapper key={i}>
@@ -115,20 +139,35 @@ function SubjectsManager({ subjects, setSubjects, setResponse }) {
                 })
               }
             </div>
-            <br/> <br/>
+
+            <br /> <br />
+
             {
               subjects.filter((s) => s.hidden > 0).length ?
                 <div>
                   <h2>Deleted Subjects</h2>
-                  {
-                    subjects.filter((s) => s.hidden > 0).map((subject, i) => {
-                      return (
-                        <div key={i}>
-                          {subject.name}
-                        </div>
-                      );
-                    })
-                  }
+                  <br />
+                  <table>
+                    <tbody>
+                      {
+                        subjects.filter((s) => s.hidden > 0).map((subject, i) => {
+                          return (
+                            <tr key={i}>
+                              <td>
+                                <SubjectIcon name={subject.icon} width="1rem" height="1rem" fill="black" opt1={subject.color} />
+                              </td>
+                              <td className={styles.restoreSubjectName}>
+                                {subject.name}
+                              </td>
+                              <td className={styles.restoreSubjectBtn} onClick={() => { restoreSubject(subject.id, subject.name) }}>
+                                Restore
+                              </td>
+                            </tr>
+                          );
+                        })
+                      }
+                    </tbody>
+                  </table>
                 </div>
                 :
                 null
