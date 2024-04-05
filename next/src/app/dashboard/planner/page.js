@@ -16,26 +16,6 @@ function Planner({}) {
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0)),
   );
-  const PlannerRef = useRef(null);
-  const [PlannerApi, setPlannerApi] = useState(null);
-  const SmallCalendarRef = useRef(null);
-  const [SmallCalendarApi, setSmallCalendarApi] = useState(null);
-
-  const updateViewer = (item) => {
-    setViewMode(item);
-  };
-
-  const updateViewDate = (date) => {
-    setViewDate(date);
-  };
-
-  useEffect(() => {
-    //setPlannerApi(PlannerRef.current.getApi());
-  }, [PlannerRef]);
-
-  useEffect(() => {
-    //setSmallCalendarApi(SmallCalendarRef.current.getApi());
-  }, [SmallCalendarRef]);
 
   return (
     <div>
@@ -50,7 +30,7 @@ function Planner({}) {
                   { view: "Week", value: "timeGridWeek" },
                   { view: "Month", value: "dayGridMonth" },
                 ]}
-                changeEvent={updateViewer}
+                changeEvent={setViewMode}
                 defaultViewer={1}
               />
             </div>
@@ -61,8 +41,6 @@ function Planner({}) {
                 viewDate={viewDate}
                 setViewDate={setViewDate}
                 viewMode={viewMode}
-                PlannerRef={PlannerRef}
-                PlannerApi={PlannerApi}
               />
             </div>
             <div className={styles.widget}>
@@ -72,9 +50,8 @@ function Planner({}) {
               <div className={styles.smallCalendarWrapper}>
                 <SmallCalendar
                   width={"100%"}
-                  setViewDate={updateViewDate}
+                  setViewDate={setViewDate}
                   viewDate={viewDate}
-                  PlannerApi={PlannerApi}
                 />
               </div>
 

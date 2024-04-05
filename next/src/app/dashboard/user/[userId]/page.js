@@ -23,7 +23,6 @@ function User({ params }) {
   const { groups } = useContext(GroupsContext);
 
   const [userInfo, setUserInfo] = useState(null);
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [userSubjects, setUserSubjects] = useState([]);
   const [statsViewer, setStatsViewer] = useState('Daily');
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
@@ -54,12 +53,6 @@ function User({ params }) {
 
   return (
     <div>
-      <CalendarModal
-        isCalendarOpen={isCalendarOpen}
-        setIsCalendarOpen={setIsCalendarOpen}
-        updateViewDate={setViewDate}
-        viewDate={viewDate}
-      />
       <div className={`Main`}>
         <div className="title">
           User
@@ -71,6 +64,8 @@ function User({ params }) {
           <div className={styles.profileCard}>
             <div>
               <ProfileImage
+                width="4rem"
+                height="4rem"
                 userId={userInfo?.user_id}
               />
               <div className={`${styles.name} overflowDot`}>

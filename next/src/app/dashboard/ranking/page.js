@@ -46,8 +46,8 @@ function Ranking({ }) {
   return (
     <div>
       <CalendarModal
-        isCalendarOpen={isCalendarOpen}
-        setIsCalendarOpen={setIsCalendarOpen}
+        isOpen={isCalendarOpen}
+        setIsOpen={setIsCalendarOpen}
         updateViewDate={setViewDate}
         viewDate={viewDate}
         showHeatmap={true}
