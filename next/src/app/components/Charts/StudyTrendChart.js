@@ -9,7 +9,8 @@ import { secondConverter } from "@/app/utils/Tool";
 
 function StudyTrendChart({
   viewDate,
-  statsViewer="Daily"
+  statsViewer="Daily",
+  subjectsProp
 }) {
   const {subjects} = useContext(SubjectsContext);
 
@@ -19,15 +20,25 @@ function StudyTrendChart({
   useEffect(() => {
     if (!subjects || !viewDate || !statsViewer) return;
 
-    const { daily } = subjects;
 
-    if (!daily) return;
+    if (!subjectsProp) {
+      const { daily } = subjects;
+    
+      if (!daily) return;
 
-    const change = statsViewer === "Monthly" ? "months" : statsViewer === "Weekly" ? "weeks" : "days";
-    const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, statsViewer, change);
-    setSubjectsTrend(subjectsTrend);
+      const change = statsViewer === "Monthly" ? "months" : statsViewer === "Weekly" ? "weeks" : "days";
+      const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, statsViewer, change);
+      setSubjectsTrend(subjectsTrend);
+    } else {
+      const { daily } = subjectsProp;
+    
+      if (!daily) return;
 
-  }, [subjects, viewDate, statsViewer]);
+      const change = statsViewer === "Monthly" ? "months" : statsViewer === "Weekly" ? "weeks" : "days";
+      const subjectsTrend = updateSubjectsTrendChart(subjectsProp, viewDate, statsViewer, change);
+      setSubjectsTrend(subjectsTrend);
+    }
+  }, [subjects, viewDate, statsViewer, subjectsProp]);
 
   return (
     <ResponsiveContainer width="98%" height="98%">

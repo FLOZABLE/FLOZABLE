@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 import { useContext, useEffect, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-function RankingTrend({ viewDate, statsViewer, setRanking }) {
+function RankingTrend({ viewDate, statsViewer, setRanking = () => {}, userInfoProp }) {
   const {userInfo} = useContext(UserInfoContext);
 
   const [rankingsTrend, setRankingsTrend] = useState([]);
@@ -13,7 +13,12 @@ function RankingTrend({ viewDate, statsViewer, setRanking }) {
   useEffect(() => {
     if (!viewDate || !statsViewer || !userInfo) return;
 
-    const { user_id } = userInfo;
+    let user_id = userInfo.user_id;
+
+    if (userInfoProp) {
+      user_id = userInfoProp.user_id;
+    };
+    
     const viewDateTime = DateTime.fromJSDate(viewDate);
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -41,7 +46,7 @@ function RankingTrend({ viewDate, statsViewer, setRanking }) {
         };
       })
       .catch((error) => console.error(error));
-  }, [viewDate, statsViewer, userInfo]);
+  }, [viewDate, statsViewer, userInfo, userInfoProp]);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
