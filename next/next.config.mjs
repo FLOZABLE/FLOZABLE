@@ -3,9 +3,9 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'supreme-parakeet-r4495j5pj6v25rp7-3000.app.github.dev',
-        port: '',
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
         pathname: '/**',
       },
     ],
