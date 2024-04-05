@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -209,12 +209,12 @@ const StyleWrapper = styled.div`
 `;
 
 function EventPlanner({
-  PlannerRef,
-  PlannerApi,
   viewMode,
   viewDate,
   setViewDate,
 }) {
+  const PlannerRef = useRef(null);
+  const [PlannerApi, setPlannerApi] = useState(null);
   const {plans, setPlans, planModal, setPlanModal} = useContext(PlansContext);
   const {setResponse} = useContext(ResponseContext);
 
@@ -224,6 +224,12 @@ function EventPlanner({
   });
   //const [searchParams, setSearchParams] = useSearchParams();
   const [lastClick, setLastClick] = useState(new Date().getTime());
+
+  useEffect(() => {
+    if (!PlannerRef || !PlannerRef.current) return;
+
+    setPlannerApi(PlannerRef.current.getApi());
+  }, [PlannerRef]);
 
   function renderEventContent(eventInfo) {
     return (
@@ -387,11 +393,11 @@ function EventPlanner({
     if (PlannerApi) {
       const plannerDateTime = DateTime.fromJSDate(PlannerApi.getDate());
       const viewDateTime = DateTime.fromJSDate(viewDate);
-      if (viewMode == 'timeGridDay') {
+      if (viewMode === 'timeGridDay') {
         if (plannerDateTime.toISODate() !== viewDateTime.toISODate()) {
           PlannerApi.gotoDate(viewDate);
         }
-      } else if (viewMode == 'timeGridWeek') {
+      } else if (viewMode === 'timeGridWeek') {
         if (!(viewDateTime.plus({ days: 1 }).startOf("week").minus({ days: 1 }).toSeconds() <= plannerDateTime.plus({ days: 1 }).startOf("week").minus({ days: 1 }).toSeconds()
           && plannerDateTime.plus({ days: 1 }).endOf("week").minus({ days: 1 }).toSeconds() <= viewDateTime.plus({ days: 1 }).endOf("week").minus({ days: 1 }).toSeconds())) {
           PlannerApi.gotoDate(viewDate);
@@ -402,7 +408,7 @@ function EventPlanner({
         }
       }
     }
-  }, [viewDate]);
+  }, [viewDate, viewMode]);
 
   /* useEffect(() => {
     if (!plans.length) return;
@@ -425,7 +431,7 @@ function EventPlanner({
 
   const handlePrevBtn = () => {
     PlannerApi.prev();
-    if (viewMode == "dayGridMonth") {
+    if (viewMode === "dayGridMonth") {
       const monthStart = new Date(
         viewDate.getFullYear(),
         viewDate.getMonth() - 1,
@@ -440,7 +446,7 @@ function EventPlanner({
 
   const handleNextBtn = () => {
     PlannerApi.next();
-    if (viewMode == "dayGridMonth") {
+    if (viewMode === "dayGridMonth") {
       const monthStart = new Date(
         viewDate.getFullYear(),
         viewDate.getMonth() + 1,

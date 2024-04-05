@@ -82,6 +82,13 @@
 .User .boxContainer .box .groupsContainer {
   overflow-y: auto;
   flex-grow: 1;
+  position: relative;
+  grid-template-columns: repeat(auto-fill, 21.25rem);
+  justify-content: center;
+  gap: 1.25rem;
+  width: 100%;
+  display: grid;
+  padding: 2rem 0rem;
 }
 
 .User .box#friendsBox {
