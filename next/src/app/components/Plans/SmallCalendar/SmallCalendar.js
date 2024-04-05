@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import styles from "./SmallCalendar.module.css";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -90,6 +90,7 @@ const StyleWrapper = styled.div`
     position: absolute;
     top: 50%;
     transform: translatey(-50%);
+    display: none;
   }
   .fc-daygrid-day-frame.fc-scrollgrid-sync-inner {
     display: flex;
@@ -146,6 +147,15 @@ function SmallCalendar({
 }) {
   const { subjects } = useContext(SubjectsContext);
   const [events, setEvents] = useState([]);
+  const [smallCalendarApi, setSmallCalendarApi] = useState(null);
+
+  const smallCalendarRef = useRef(null);
+
+  useEffect(() => {
+    if (!smallCalendarRef || !smallCalendarRef.current) return;
+
+    setSmallCalendarApi(smallCalendarRef.current.getApi());
+  }, [smallCalendarRef]);
 
   useEffect(() => {
     const allEvents = [{
@@ -169,6 +179,12 @@ function SmallCalendar({
     setEvents(allEvents);
   }, [viewDate, subjects]);
 
+  useEffect(() => {
+    if (!smallCalendarApi || !viewDate) return;
+
+    smallCalendarApi.gotoDate(viewDate);
+  }, [smallCalendarApi, viewDate])
+
   const handleDateClick = (arg) => {
     setViewDate(arg.date);
     if (setIsOpen) {
@@ -190,6 +206,7 @@ function SmallCalendar({
     <StyleWrapper style={{ width: width }}>
       <div className={styles.SmallCalendar} style={{ width: width }}>
         <FullCalendar
+        ref={smallCalendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           titleFormat={{ month: "long", year: "numeric" }}
