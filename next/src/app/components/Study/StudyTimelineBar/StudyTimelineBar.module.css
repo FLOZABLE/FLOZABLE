@@ -1,0 +1,9 @@
+.StudyTimelineBar {
+    width: 80%;
+    position: relative; 
+    left: 10%;
+}
+
+.StudyTimelineBar .timeView div {
+    border: 0px solid black !important;
+}
