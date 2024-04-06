@@ -38,6 +38,12 @@ const StyleWrapper = styled.div`
 function StudyTimelineBar() {
   const {setPlanModal, plans} = useContext(PlansContext);
 
+  const [lineHeight, setLineHeight] = useState(0);
+
+  useEffect(() => {
+    setLineHeight(parseFloat(getComputedStyle(document.documentElement).fontSize) * 3);
+  }, []);
+
   const groups = [{ id: 1, title: 'Plans' }]
   const [items, setItems] = useState([]);
   const timelineRef = useRef();
@@ -105,7 +111,7 @@ function StudyTimelineBar() {
         minZoom={60 * 1000}
         maxZoom={24 * 60 * 60 * 1000}
         sidebarWidth={0}
-        lineHeight={parseFloat(getComputedStyle(document.documentElement).fontSize) * 3}
+        lineHeight={lineHeight}
       >
         <TimelineHeaders style={{ background: "rgba(0,0,0,0)", border: "0px solid black" }} className={styles.timeView}>
           <CustomHeader height={parseFloat(getComputedStyle(document.documentElement).fontSize) * 3} headerData={{ someData: 'data' }} unit="hour" >

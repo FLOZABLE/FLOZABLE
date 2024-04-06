@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./StudySidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,34 +13,34 @@ import {
   faUsers,
   faVolumeHigh,
 } from "@fortawesome/free-solid-svg-icons";
-import { socket } from "../../../socket";
-import { IconCameraVideoFill, IconCameraVideoOffFill, IconHeadphoneFill, IconHeadphonesOff, IconMicFill, IconMicMuteFill } from "../../../utils/svgs";
+import Link from "next/link";
+import { socket } from "@/app/utils/socket";
+import { useSearchParams } from "next/navigation"
+import { CallOptionsContext, ModalsContext } from "@/app/utils/Contexts";
+import { IconCameraVideoFill, IconCameraVideoOffFill, IconHeadphoneFill, IconHeadphonesOff, IconMicFill, IconMicMuteFill }  from "@/app/utils/Svg";
 
 function StudySidebar({
   isTimerModal,
-  isPlannerModal,
   isTemplateModal,
   isGroupModal,
   isVolumeModal,
   isZoom,
   setIsTimerModal,
-  setIsPlannerModal,
   setIsTemplateModal,
   setIsVolumeModal,
   setIsZoom,
   setIsViewGroups,
-  bringSubjects,
   setIsPlaylistModal,
   isPlaylistModal,
-  isHeadphone,
-  setIsHeadphone,
   setIsToolModal,
   isToolModal,
   tutorialBoxRef,
   tutorialTextRef,
 }) {
+  const {isPlannerModal, setIsPlannerModal} = useContext(ModalsContext);
+  const {isMic, setIsMic, isCam, setIsCam, isHeadphone, setIsHeadphone} = useContext(CallOptionsContext);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const [tutorial, setTutorial] = useState(null);
   const toHomeBtnRef = useRef(null);
 
@@ -70,10 +69,9 @@ function StudySidebar({
   return (
     <div className={styles.StudySidebar}>
       <Link
-        to={tutorial ? `/dashboard?tutorial=${tutorial + 1}` : "/dashboard"}
+        href={"/dashboard"}
         className={`${styles.studyTool}`}
         onClick={() => {
-          bringSubjects();
           socket.emit('exitSession');
         }}
         ref={toHomeBtnRef}
