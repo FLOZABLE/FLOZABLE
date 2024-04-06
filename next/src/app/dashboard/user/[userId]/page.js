@@ -25,7 +25,7 @@ function User({ params }) {
   const [userInfo, setUserInfo] = useState(null);
   const [userSubjects, setUserSubjects] = useState([]);
   const [statsViewer, setStatsViewer] = useState('Daily');
-  const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
+  const [viewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [userGroups, setUserGroups] = useState([]);
   const [userFriends, setUserFriends] = useState([]);
 

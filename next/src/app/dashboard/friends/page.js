@@ -20,10 +20,8 @@ function Friends({
 
   const [isFriendLinkModal, setIsFriendLinkModal] = useState(false);
   const [isFriendEmailModal, setIsFriendEmailModal] = useState(false);
-  const [joinTarget, setJoinTarget] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [friendCount, setFriendCount] = useState(0);
   const [suggestionsCount, setSuggestionsCount] = useState(0);
   const [friendsRanking, setFriendsRanking] = useState({});
 
