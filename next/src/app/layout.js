@@ -1,7 +1,5 @@
 import "./globals.css";
-import Header from "@/app/components/Others/Header/Header";
 import { AppProvider } from "@/app/utils/Contexts";
-import Sidebar from "@/app/components/Others/Sidebar/Sidebar";
 import EventModal from "@/app/components/Modals/EventModal/EventModal";
 import AddSubjectModal from "@/app/components/Modals/AddSubjectModal/AddSubjectModal";
 import JoinGroupModal from "@/app/components/Modals/JoinGroupModal/JoinGroupModal";
@@ -25,7 +23,6 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AppProvider>
-          <Header />
           <EventModal />
           <ChatModal />
           <AccountModal />
@@ -34,7 +31,6 @@ export default function RootLayout({ children }) {
           <AddSubjectModal />
           <NotificationModal />
           {children}
-          <Sidebar />
         </AppProvider>
       </body>
     </html>

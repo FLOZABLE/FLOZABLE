@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
 import StudyModalContainer from "@/app/components/Study/StudyModalContainer/StudyModalContainer";
 import PlaylistModal from "@/app/components/Modals/PlaylistModal/PlaylistModal";
@@ -11,19 +11,22 @@ import MusicModal from "@/app/components/Modals/MusicModal/MusicModal";
 import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
 import YouTubePlayer from "@/app/components/Youtube/YouTubePlayer/YouTubePlayer";
 import StudySubjectTool from "@/app/components/Study/StudySubjectTool/StudySubjectTool";
+import StudySidebar from "@/app/components/Study/StudySidebar/StudySidebar";
+import { ModalsContext } from "@/app/utils/Contexts";
+import StudyTimelineBar from "@/app/components/Study/StudyTimelineBar/StudyTimelineBar";
 
 
 function Study() {
+  const {isPlannerModal} = useContext(ModalsContext);
+
   const [subject, setSubject] = useState(null);
   const [isTimerModal, setIsTimerModal] = useState(true);
   const [isPlaylistModal, setIsPlaylistModal] = useState(false);
-  const [isMicModal, setIsMicModal] = useState(false);
-  const [isCamModal, setIsCamModal] = useState(false);
-  const [isPlannerModal, setIsPlannerModal] = useState(false);
   const [isTemplateModal, setIsTemplateModal] = useState(false);
   const [isVolumeModal, setIsVolumeModal] = useState(false);
   const [isZoom, setIsZoom] = useState(false);
   const [isToolModal, setIsToolModal] = useState(false);
+  const [isViewGroups, setIsViewGroups] = useState(false);
 
   const groupsViewerRef = useRef(null);
 
@@ -86,6 +89,14 @@ function Study() {
       }
     )
   }, []);
+
+  const handleStop = (event, dragElement, name) => {
+    //Calculate global pos instead of relative pos to previous offset
+    const previousX = parseFloat(dragPos[name].x) / 100;
+    const previousY = parseFloat(dragPos[name].y) / 100;
+    localStorage.setItem(name + "_positionX", previousX + dragElement.x / window.innerWidth);
+    localStorage.setItem(name + "_positionY", previousY + dragElement.y / window.innerHeight);
+  };
 
   return (
     <div className={styles.Study}>
@@ -151,31 +162,19 @@ function Study() {
         setIsPlaylistModal={setIsPlaylistModal}
         isPlaylistModal={isPlaylistModal}
         isTimerModal={isTimerModal}
-        isPlannerModal={isPlannerModal}
         isTemplateModal={isTemplateModal}
         isVolumeModal={isVolumeModal}
-        isCam={isCam}
-        isMic={isMic}
         setIsTimerModal={setIsTimerModal}
-        setIsPlannerModal={setIsPlannerModal}
         setIsTemplateModal={setIsTemplateModal}
         setIsVolumeModal={setIsVolumeModal}
         isZoom={isZoom}
         setIsZoom={setIsZoom}
-        isHeadphone={isHeadphone}
-        setIsHeadphone={setIsHeadphone}
         setIsViewGroups={setIsViewGroups}
-        setIsCam={setIsCam}
-        setIsMic={setIsMic}
-        bringSubjects={bringSubjects}
         isToolModal={isToolModal}
         setIsToolModal={setIsToolModal}
-        tutorialBoxRef={tutorialBoxRef}
-        tutorialTextRef={tutorialTextRef}
       />
       <div
-        className={`StudyMain ${styles.Main} ${props.isSidebarOpen || props.isSidebarHovered ? "sidebarOpen" : ""
-          }`}
+        className={`StudyMain`}
       >
         <div
           className={`${styles.myGroupsViewerWrapper} ${isViewGroups ? styles.open : ""
