@@ -6,13 +6,19 @@ import AudioPlayer from "../../Study/AudioPlayer/AudioPlayer";
 
 function MusicModal({ originalVideoVolume, setOriginalVideoVolume }) {
   const [audioVolumes, setAudioVolumes] = useState([]);
-  const [musicFiles] = useState([
-    { id: "p29JUpsOSTE", name: "Fire", icon: "🔥", audio: new Audio("../../audio/Fire.mp3") },
-    { id: "HVau-JRGirg", name: "Forest", icon: "🌱", audio: new Audio("../../audio/Forest.mp3") },
-    { id: "xDWG9SrB4io", name: "Rain", icon: "💧", audio: new Audio("../../audio/Rain.mp3") },
-    { id: "SE9nDvo94hw", name: "Wave", icon: "🌊", audio: new Audio("../../audio/Wave.mp3") },
-    { id: "WNcsUNKlAKw", name: "Wind", icon: "🍃", audio: new Audio("../../audio/Wind.mp3") },
-  ])
+  const [musicFiles, setMusicFiles] = useState([]);
+
+  useEffect(() => {
+    setMusicFiles(
+      [
+        { id: "p29JUpsOSTE", name: "Fire", icon: "🔥", audio: new Audio("../../audio/Fire.mp3") },
+        { id: "HVau-JRGirg", name: "Forest", icon: "🌱", audio: new Audio("../../audio/Forest.mp3") },
+        { id: "xDWG9SrB4io", name: "Rain", icon: "💧", audio: new Audio("../../audio/Rain.mp3") },
+        { id: "SE9nDvo94hw", name: "Wave", icon: "🌊", audio: new Audio("../../audio/Wave.mp3") },
+        { id: "WNcsUNKlAKw", name: "Wind", icon: "🍃", audio: new Audio("../../audio/Wind.mp3") },
+      ]
+    );
+  }, []);
 
   useEffect(() => {
     if (!!musicFiles) return;

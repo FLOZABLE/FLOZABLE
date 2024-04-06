@@ -6,7 +6,6 @@ import { socket } from "@/app/utils/socket";
 
 function AudioPlayer({ audio }) {
   const [volume, setVolume] = useState(0);
-  const weblink = useLocation();
 
   useEffect(() => {
     if (!audio || (!volume && volume !== 0) || !audio.audio) return;

@@ -1,0 +1,38 @@
+.Study {
+  background-color: #000;
+  margin-top: 0em;
+}
+
+.Study .Main {
+  margin-top: 0em;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+  margin-left: 6.25rem;
+}
+
+.Study .ytBg {
+  position: fixed;
+  top: 0em;
+  left: 0em;
+  height: 100vh;
+  width: 100vw;
+}
+
+.Study .myGroupsViewerWrapper {
+  margin-top: 3.125rem;
+  display: none;
+  height: calc(100vh - 9.375rem);
+}
+
+.Study .myGroupsViewerWrapper.open {
+  display: block;
+}
+
+.Study .PlanTimelineBarWrapper {
+  position: fixed;
+  bottom:3.125rem;
+  left: 0em;
+  width: 100vw;
+  z-index: 2;
+}

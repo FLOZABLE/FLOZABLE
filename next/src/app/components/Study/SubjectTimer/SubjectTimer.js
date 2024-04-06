@@ -12,6 +12,7 @@ import { socket } from "@/app/utils/socket";
 function SubjectTimer({
 }) {
   const {subjects} = useContext(SubjectsContext);
+  console.log(subjects, 'gddddd')
   const {setIsAddSubjectModal} = useContext(ModalsContext);
   const {subjectsTimerWorkerRef} = useContext(WorkersContext);
 
@@ -144,12 +145,12 @@ function SubjectTimer({
             timerDispRef.current = targetElement;
 
 
-            const searchParams = new URLSearchParams(window.location.search);
+            c/* onst searchParams = new URLSearchParams(window.location.search);
             const tutorial = searchParams.get("tutorial");
             console.log(tutorial, 'gd')
             if (tutorial && parseInt(tutorial) === 7) {
               setSearchParams({...searchParams, tutorial: 8})
-            }
+            } */
           }}
           className={styles.option}
           id="tutorial-7"
@@ -181,23 +182,23 @@ function SubjectTimer({
   }, [timeValues, isStudy]);
 
   const toggleTimer = (subject) => {
+    console.log(subject);
+  if (!subject) return;
     if (!isStudy) {
-      worker.postMessage({ command: "startSubjectTimer" });
+      subjectsTimerWorkerRef?.current?.postMessage({ command: "startSubjectTimer" });
       socket.emit("start", subject.id);
     } else {
-      worker.postMessage({ command: "stopSubjectTimer" });
+      subjectsTimerWorkerRef?.current?.postMessage({ command: "stopSubjectTimer" });
       socket.emit("stop", subject.id);
     }
     setIsStudy(!isStudy);
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (reset && isStudy) {
       setSubjectTimer({ total: 0 });
-      /* toggleTimer();
-      toggleTimer(); */
     }
-  }, [reset]);
+  }, [reset]); */
 
   useEffect(() => {
     const messageHandler = (e) => {
@@ -222,12 +223,12 @@ function SubjectTimer({
       }
     };
 
-    worker.addEventListener("message", messageHandler);
+    subjectsTimerWorkerRef?.current?.addEventListener("message", messageHandler);
 
     return () => {
-      worker.removeEventListener("message", messageHandler);
+      subjectsTimerWorkerRef?.current?.removeEventListener("message", messageHandler);
     };
-  }, [timeValues, subject]);
+  }, [timeValues, subject, subjectsTimerWorkerRef]);
 
   /* useEffect(() => {
     if (subject && isStudy) {
@@ -245,10 +246,10 @@ function SubjectTimer({
           className={`${clicked ? styles.clicked : ""} ${styles.optBtn}`}
           onClick={() => {
             setClicked(!clicked);
-            const tutorial = searchParams.get("tutorial");
+            /* const tutorial = searchParams.get("tutorial");
             if (tutorial && parseInt(tutorial) === 6) {
               setSearchParams({...searchParams, tutorial: 7})
-            }
+            } */
           }}
           id="tutorial-6"
         >
