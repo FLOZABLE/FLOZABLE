@@ -12,13 +12,11 @@ import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewe
 import YouTubePlayer from "@/app/components/Youtube/YouTubePlayer/YouTubePlayer";
 import StudySubjectTool from "@/app/components/Study/StudySubjectTool/StudySubjectTool";
 import StudySidebar from "@/app/components/Study/StudySidebar/StudySidebar";
-import { ModalsContext } from "@/app/utils/Contexts";
 import StudyTimelineBar from "@/app/components/Study/StudyTimelineBar/StudyTimelineBar";
 
 
 function Study() {
-  const {isPlannerModal} = useContext(ModalsContext);
-
+  const [isPlannerModal, setIsPlannerModal] = useState(false);
   const [subject, setSubject] = useState(null);
   const [isTimerModal, setIsTimerModal] = useState(true);
   const [isPlaylistModal, setIsPlaylistModal] = useState(false);
@@ -159,6 +157,8 @@ function Study() {
         />
       }
       <StudySidebar
+        isPlannerModal={isPlannerModal}
+        setIsPlannerModal={setIsPlannerModal}
         setIsPlaylistModal={setIsPlaylistModal}
         isPlaylistModal={isPlaylistModal}
         isTimerModal={isTimerModal}

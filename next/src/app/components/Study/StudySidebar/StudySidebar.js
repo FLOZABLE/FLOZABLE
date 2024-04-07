@@ -16,10 +16,12 @@ import {
 import Link from "next/link";
 import { socket } from "@/app/utils/socket";
 import { useSearchParams } from "next/navigation"
-import { CallOptionsContext, ModalsContext } from "@/app/utils/Contexts";
+import { CallOptionsContext, ModalsContext, PlansContext } from "@/app/utils/Contexts";
 import { IconCameraVideoFill, IconCameraVideoOffFill, IconHeadphoneFill, IconHeadphonesOff, IconMicFill, IconMicMuteFill }  from "@/app/utils/Svg";
 
 function StudySidebar({
+  isPlannerModal,
+  setIsPlannerModal,
   isTimerModal,
   isTemplateModal,
   isGroupModal,
@@ -37,14 +39,13 @@ function StudySidebar({
   tutorialBoxRef,
   tutorialTextRef,
 }) {
-  const {isPlannerModal, setIsPlannerModal} = useContext(ModalsContext);
   const {isMic, setIsMic, isCam, setIsCam, isHeadphone, setIsHeadphone} = useContext(CallOptionsContext);
 
-  const searchParams = useSearchParams();
+  //const searchParams = useSearchParams();
   const [tutorial, setTutorial] = useState(null);
   const toHomeBtnRef = useRef(null);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!searchParams) return;
 
     const tutorial = searchParams.get("tutorial");
@@ -63,7 +64,7 @@ function StudySidebar({
         tutorialTextRef.current.innerText = "Let's go back to the dashboard!";
       }, 500);
     }
-  }, [searchParams]);
+  }, [searchParams]); */
 
 
   return (

@@ -114,7 +114,7 @@ function StudyTimelineBar() {
         lineHeight={lineHeight}
       >
         <TimelineHeaders style={{ background: "rgba(0,0,0,0)", border: "0px solid black" }} className={styles.timeView}>
-          <CustomHeader height={parseFloat(getComputedStyle(document.documentElement).fontSize) * 3} headerData={{ someData: 'data' }} unit="hour" >
+          <CustomHeader height={lineHeight} headerData={{ someData: 'data' }} unit="hour" >
             {({
               headerContext: { intervals },
               getRootProps,
@@ -124,10 +124,10 @@ function StudyTimelineBar() {
             }) => {
               return (
                 <div {...getRootProps()}>
-                  {intervals.map(interval => {
+                  {intervals.map((interval, i) => {
                     if (intervals.length > 70) {
                       if (interval.startTime.format("mm") !== "00") {
-                        return <div />
+                        return <div key={i} />
                       }
                     }
                     const intervalStyle = {
@@ -138,6 +138,7 @@ function StudyTimelineBar() {
                     }
                     return (
                       <div
+                        key={i}
                         {...getIntervalProps({
                           interval,
                           style: intervalStyle

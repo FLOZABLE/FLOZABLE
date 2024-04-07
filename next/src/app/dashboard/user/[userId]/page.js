@@ -120,7 +120,7 @@ function User({ params }) {
             </div>
             <div className={styles.box} id={styles.groupBox}>
               <div className={styles.title}>
-                {userInfo ? userInfo.name : ''}'s groups
+                {userInfo ? userInfo.name : ''}&apos;s groups
               </div>
               <div className={`${styles.groupsContainer} customScroll`}>
                 {
@@ -137,7 +137,7 @@ function User({ params }) {
             </div>
             <div className={styles.box} id={styles.friendsBox}>
               <div className={styles.title}>
-                {userInfo ? userInfo.name : ''}'s friends
+                {userInfo ? userInfo.name : ''}&apos;s friends
               </div>
               <div className={styles.friendsContainer}>
                 <FriendsViewer friends={userFriends} />
