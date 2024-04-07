@@ -12,9 +12,9 @@ function PlaylistModal() {
   const router = useRouter();
 
   const [playlistType, setPlaylistType] = useState(-1);
-  const searchParams = useSearchParams("");
+  //const searchParams = useSearchParams();
 
-  useEffect(() => {
+  /* useEffect(() => {
     const token = searchParams.get("code");
     const redirectURI = `${config.location}/dashboard/study`;
 
@@ -37,7 +37,7 @@ function PlaylistModal() {
 
     router.replace(window.location.pathname, { scroll: false });
 
-  }, [searchParams]);
+  }, [searchParams]); */
 
   return (
     <div className={styles.PlaylistModal}>
