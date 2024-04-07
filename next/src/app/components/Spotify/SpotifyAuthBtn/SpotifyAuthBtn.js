@@ -13,9 +13,9 @@ function SpotifyAuthBtn({ userInfo, redirectURI, setResponse }) {
 
   const [token, setToken] = useState("");
   const [spotifyInfo, setSpotifyInfo] = useState({})
-  const searchParmas = useSearchParams("");
+  //const searchParmas = useSearchParams("");
 
-  useEffect(() => {
+  /* useEffect(() => {
     const token = searchParmas.get("code");
 
     if (!token) return;
@@ -40,7 +40,7 @@ function SpotifyAuthBtn({ userInfo, redirectURI, setResponse }) {
     setUrlParams("");
 
   }, [searchParmas]);
-
+ */
   useEffect(() => {
     fetch(`${serverOrigin}/playlists/spotify-logged-in`, {
       method: 'get',

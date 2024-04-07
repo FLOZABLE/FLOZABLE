@@ -4,28 +4,32 @@ import styles from "./YouTubePlayer.module.css";
 
 function YouTubePlayer({ height, width, videoId, volume }) {
   const [player, setPlayer] = useState(null);
-  const [opts] = useState({
-    height: "100%",
-    width: "100%",
-    playerVars: {
-      loop: 1,
-      autoplay: 1,
-      controls: 0,
-      modestbranding: 1,
-      showinfo: 0,
-      origin: window.origin,
-      mute: 1,
-      disablekb: 1,
-      fs: 0,
-      rel: 0,
-      iv_load_policy: 3,
-      playsinline: 1,
-      enablejsapi: 0,
-      crossOriginIsolated: true,
-      autohide: 1,
-      wmode: "opaque",
-    },
-  });
+  const [opts, setOpts] = useState({});
+
+  useEffect(() => {
+    setOpts({
+      height: "100%",
+      width: "100%",
+      playerVars: {
+        loop: 1,
+        autoplay: 1,
+        controls: 0,
+        modestbranding: 1,
+        showinfo: 0,
+        origin: window.origin,
+        mute: 1,
+        disablekb: 1,
+        fs: 0,
+        rel: 0,
+        iv_load_policy: 3,
+        playsinline: 1,
+        enablejsapi: 0,
+        crossOriginIsolated: true,
+        autohide: 1,
+        wmode: "opaque",
+      },
+    })
+  }, []);
 
   const onReady = (event) => {
     setPlayer(event.target);
@@ -59,13 +63,17 @@ function YouTubePlayer({ height, width, videoId, volume }) {
 
   return (
     <div className={styles.YouTubePlayer} style={{ height, width }}>
-      <YouTube
-        videoId={videoId}
-        opts={opts}
-        onReady={onReady}
-        onStateChange={onStateChange}
-        className={styles.video}
-      />
+      {videoId && opts ?
+        <YouTube
+          videoId={videoId}
+          opts={opts}
+          onReady={onReady}
+          onStateChange={onStateChange}
+          className={styles.video}
+        />
+        :
+        null
+      }
     </div>
   );
 }
