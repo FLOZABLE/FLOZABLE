@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useContext, useState, useEffect, use } from 'react';
 import styles from "./SubjectTimer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,252 +8,70 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ModalsContext, SubjectsContext, WorkersContext } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
+import { secondConverter } from '@/app/utils/Tool';
 
-function SubjectTimer({
+function SubjecTimer({
 }) {
-  const {subjects} = useContext(SubjectsContext);
-  console.log(subjects, 'gddddd')
-  const {setIsAddSubjectModal} = useContext(ModalsContext);
-  const {subjectsTimerWorkerRef} = useContext(WorkersContext);
+  const { subjects, setSubjects } = useContext(SubjectsContext);
+  const { setIsAddSubjectModal } = useContext(ModalsContext);
+  const { subjectsTimerWorkerRef } = useContext(WorkersContext);
 
-  const timerDispRef = useRef(null);
-
-  const [isStudy, setIsStudy] = useState(false);
-  const [subject, setSubject] = useState(null)
-  const [timeValues, setTimeValues] = useState([]);
-  const [options, setOptions] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState({ daily: { total: [0] } });
+  const [timerActive, setTimerActive] = useState(false);
   const [subjectTimer, setSubjectTimer] = useState({ total: 0 });
+  const [timerValues, setTimerValues] = useState({});
   const [clicked, setClicked] = useState(false);
-
-
-  //const [searchParams, setSearchParams] = useSearchParams();
-
-  const chooseSubjectRef = useRef(null);
-  const subjectOptionsRef = useRef(null);
-  const startSubjectRef = useRef(null);
-/* 
-  useEffect(() => {
-    if (!searchParams) return;
-
-    const tutorial = searchParams.get("tutorial");
-    if (!tutorial) return;
-
-    if (parseInt(tutorial) === 6) {
-
-      setTimeout(() => {
-        const { width, top, left, height, bottom } = chooseSubjectRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left + 'px';
-        tutorialBoxRef.current.style.top = top + 'px';
-        tutorialBoxRef.current.style.width = width + 'px';
-
-        tutorialTextRef.current.style.top = top + 'px';
-        tutorialTextRef.current.style.left = left + width + 50 + 'px';
-        tutorialTextRef.current.innerText = "Select a subject to study";
-      }, 500);
-    } else if (parseInt(tutorial) === 7) {
-      setClicked(true);
-
-      setTimeout(() => {
-        const { width, top, left, height, bottom } = subjectOptionsRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left + 'px';
-        tutorialBoxRef.current.style.top = top + 'px';
-        tutorialBoxRef.current.style.width = width + 'px';
-        tutorialBoxRef.current.style.height = height + 'px';
-
-        tutorialTextRef.current.style.top = top + 'px';
-        tutorialTextRef.current.style.left = left + width + 50 + 'px';
-        tutorialTextRef.current.innerText = "You will see your subjects here";
-      }, 500);
-    } else if (parseInt(tutorial) === 8) {
-
-      setTimeout(() => {
-        const { width, top, left, height, bottom } = startSubjectRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left + 'px';
-        tutorialBoxRef.current.style.top = top + 'px';
-        tutorialBoxRef.current.style.width = width + 'px';
-        tutorialBoxRef.current.style.height = height + 'px';
-
-        tutorialTextRef.current.style.top = top + 'px';
-        tutorialTextRef.current.style.left = left + width + 50 + 'px';
-        tutorialTextRef.current.innerText = "Click to start/stop the timer!";
-      }, 500);
-
-      setTimeout(() => {
-        setSearchParams({...searchParams, tutorial: 9});
-      }, 3000);
-    }
-  }, [searchParams]); */
+  const [subjectOptions, setSubjectOptions] = useState([]);
 
   useEffect(() => {
-    setTimeValues(
-      subjects.map((subject, i) => {
-        let total = subject.daily.total[subject.daily.total.length - 1];
-        if (timeValues.length > i) {
-          //If a new subejct is added, do not reset the timer
-          total = Math.max(timeValues[i].total, total);
-        }
-        let id = subject.id;
-        return { id, total };
-      }),
-    );
+    if (!subjects.length) return;
+    setSubjectOptions([...subjects]);
+    setSelectedSubject(subjects[0]);
+    setSubjectTimer({ total: subjects[0].daily.total[subjects[0].daily.total.length - 1] });
+    const timerValueObj = {};
+    subjects.map((subject) => {
+      timerValueObj[subject.id] = subject.daily.total[subject.daily.total.length - 1];
+    })
+    setTimerValues(timerValueObj);
   }, [subjects]);
 
-  useEffect(() => {
-    if (timeValues.length) {
-      if (subject) setSubject({ ...subjects.filter((s) => s.hidden < 0)[0] });
-      let subjectIndex = subject ? subject.id : -1; //default to -1 if undefined and check later
-      if (subjectIndex !== -1) {
-        for (let i = 0; i < subjects.length; i++) {
-          if (subjects[i].id === subjectIndex) {
-            subjectIndex = i;
-          }
-        }
-        if (
-          subjects[subjectIndex].daily &&
-          subjects[subjectIndex].daily.total
-        ) {
-          const timeValue =
-            subjects[subjectIndex].daily.total[
-            subjects[subjectIndex].daily.total.length - 1
-            ];
-          setSubjectTimer({ total: timeValue });
-        }
-        setSubjectTimer({ total: timeValues[subjectIndex].total });
-      } else {
-        setSubjectTimer({ total: timeValues[0].total });
-      }
-    }
-    const subjectOptions = subjects.filter((s) => s.hidden < 0).map((option, i) => {
-      const selectedOption = timeValues.find(
-        (timeVal) => timeVal.id === option.id,
-      );
-      const timeValue = selectedOption ? selectedOption.total : 0;
-      const sec = timeValue % 60;
-      const min = Math.floor(timeValue / 60) % 60;
-      const hr = Math.floor(timeValue / 3600);
-      return (
-        <li
-          key={i}
-          onClick={(e) => {
-            setSubjectTimer({ total: timeValue });
-            setClicked(false);
-            if (isStudy) {
-              toggleTimer(subject);
-            };
-            setSubject(option)
-            const targetElement = e.currentTarget.querySelector("p");
-            timerDispRef.current = targetElement;
-
-
-            c/* onst searchParams = new URLSearchParams(window.location.search);
-            const tutorial = searchParams.get("tutorial");
-            console.log(tutorial, 'gd')
-            if (tutorial && parseInt(tutorial) === 7) {
-              setSearchParams({...searchParams, tutorial: 8})
-            } */
-          }}
-          className={styles.option}
-          id="tutorial-7"
-        >
-          {option.name}{" "}
-          <p className={styles.timeDisp}>
-            {" "}
-            {hr}:{min.toString().padStart(2, "0")}:
-            {sec.toString().padStart(2, "0")}
-          </p>
-        </li>
-      );
-    });
-
-    subjectOptions.push(
-      <li
-        key={subjects.length + 1}
-        onClick={() => {
-          setClicked(false);
-          setIsAddSubjectModal(true);
-        }}
-        className={styles.option}
-      >
-        Or Add Subject
-      </li>,
-    );
-
-    setOptions(subjectOptions);
-  }, [timeValues, isStudy]);
-
   const toggleTimer = (subject) => {
-    console.log(subject);
-  if (!subject) return;
-    if (!isStudy) {
+    if (!subject) return;
+    if (!timerActive) {
       subjectsTimerWorkerRef?.current?.postMessage({ command: "startSubjectTimer" });
       socket.emit("start", subject.id);
     } else {
       subjectsTimerWorkerRef?.current?.postMessage({ command: "stopSubjectTimer" });
       socket.emit("stop", subject.id);
     }
-    setIsStudy(!isStudy);
+    setTimerActive(!timerActive);
   };
 
-  /* useEffect(() => {
-    if (reset && isStudy) {
-      setSubjectTimer({ total: 0 });
-    }
-  }, [reset]); */
 
   useEffect(() => {
     const messageHandler = (e) => {
       if (e.data.command === "updateSubjectTimer") {
-        //
         setSubjectTimer((prevTimer) => ({ total: prevTimer.total + 1 }));
-        let timeValuesTemp = [];
-        for (let i = 0; i < timeValues.length; i++) {
-          if (timeValues[i].id === subject.id) {
-            timeValuesTemp.push({
-              id: timeValues[i].id,
-              total: timeValues[i].total + 1,
-            });
-          } else {
-            timeValuesTemp.push({
-              id: timeValues[i].id,
-              total: timeValues[i].total,
-            });
-          }
-        }
-        setTimeValues([...timeValuesTemp]);
+        const subjectId = selectedSubject.id;
+        const tempVal = { ...timerValues };
+        tempVal[subjectId] += 1;
+        setTimerValues(tempVal);
       }
     };
-
     subjectsTimerWorkerRef?.current?.addEventListener("message", messageHandler);
-
     return () => {
       subjectsTimerWorkerRef?.current?.removeEventListener("message", messageHandler);
     };
-  }, [timeValues, subject, subjectsTimerWorkerRef]);
-
-  /* useEffect(() => {
-    if (subject && isStudy) {
-      socket.emit(`stop`, subject.id);
-      socket.emit(`stop`, subject.id);
-    }
-  }, [subject, isStudy]); */
+  }, [selectedSubject, subjectsTimerWorkerRef, timerValues]);
 
   return (
     <div className={styles.SubjectTimer}>
-      <div className={styles.timerWrapper}
-        ref={chooseSubjectRef}
-      >
+      <div className={styles.timerWrapper}>
         <button
           className={`${clicked ? styles.clicked : ""} ${styles.optBtn}`}
-          onClick={() => {
-            setClicked(!clicked);
-            /* const tutorial = searchParams.get("tutorial");
-            if (tutorial && parseInt(tutorial) === 6) {
-              setSearchParams({...searchParams, tutorial: 7})
-            } */
-          }}
-          id="tutorial-6"
+          onClick={() => { setClicked(!clicked); }}
         >
-          <p>{subject ? subject.name : "Others"}</p>
+          <p>{selectedSubject.name ? selectedSubject.name : "Others"}</p>
           <p className={styles.mainTimeDisp}>
             {Math.floor(subjectTimer.total / 3600)}:
             {(Math.floor(subjectTimer.total / 60) % 60)
@@ -265,11 +83,51 @@ function SubjectTimer({
             <FontAwesomeIcon icon={faCaretDown} />
           </i>
         </button>
-        <ul className={`${styles.options} customScroll`} ref={subjectOptionsRef}>{options}</ul>
+        <ul className={`${styles.options} customScroll`}>
+          {
+            subjectOptions.map((option, i) => {
+              const timeValue = timerValues[option.id];
+              return (
+                <li
+                  key={i}
+                  onClick={(e) => {
+                    setSubjectTimer({ total: timeValue });
+                    setClicked(false);
+                    if (timerActive) {
+                      toggleTimer(option);
+                    };
+                    setSelectedSubject(option)
+                  }}
+                  className={styles.option}
+                  id="tutorial-7"
+                >
+                  {option.name}{" "}
+                  <p className={styles.timeDisp}>
+                    {" "}
+                    {Math.floor(timeValue / 3600)}:
+                    {(Math.floor(timeValue / 60) % 60)
+                      .toString()
+                      .padStart(2, "0")}
+                    :{(timeValue % 60).toString().padStart(2, "0")}
+                  </p>
+                </li>
+              );
+            })
+          }
+          <li
+            onClick={() => {
+              setClicked(false);
+              setIsAddSubjectModal(true);
+            }}
+            className={styles.option}
+          >
+            Or Add Subject
+          </li>,
+        </ul>
       </div>
       <div className={styles.buttonWrapper}>
-        <button onClick={() => { toggleTimer(subject) }} className={styles.toggleBtn} ref={startSubjectRef} id="tutorial-8">
-          {isStudy ? (
+        <button onClick={() => { toggleTimer(selectedSubject) }} className={styles.toggleBtn}>
+          {timerActive ? (
             <FontAwesomeIcon icon={faPause} />
           ) : (
             <FontAwesomeIcon icon={faPlay} />
@@ -277,7 +135,8 @@ function SubjectTimer({
         </button>
       </div>
     </div>
-  );
+  )
+
 }
 
-export default SubjectTimer;
+export default SubjecTimer

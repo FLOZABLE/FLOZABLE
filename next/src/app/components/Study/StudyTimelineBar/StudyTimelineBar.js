@@ -106,8 +106,8 @@ function StudyTimelineBar() {
           minute: 60,
           second: 1,
         }}
-        defaultTimeStart={DateTime.now().minus({ hours: 1 }).toMillis()}
-        defaultTimeEnd={DateTime.now().plus({ hours: 1 }).toMillis()}
+        defaultTimeStart={DateTime.now().minus({ hours: 1 })}
+        defaultTimeEnd={DateTime.now().plus({ hours: 1 })}
         minZoom={60 * 1000}
         maxZoom={24 * 60 * 60 * 1000}
         sidebarWidth={0}
