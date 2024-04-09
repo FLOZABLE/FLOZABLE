@@ -36,8 +36,6 @@ function StudySidebar({
   isPlaylistModal,
   setIsToolModal,
   isToolModal,
-  tutorialBoxRef,
-  tutorialTextRef,
 }) {
   const {isMic, setIsMic, isCam, setIsCam, isHeadphone, setIsHeadphone} = useContext(CallOptionsContext);
 
