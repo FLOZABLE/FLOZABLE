@@ -9,7 +9,7 @@ const { Server } = require('socket.io');
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:4000", "http://localhost:4001","https://localhost:3001", "https://localhost:3000", "http://localhost:3001", "http://localhost:3000", "https://super-meme-qx696prxr4j264qx-3001.app.github.dev", "https://super-meme-qx696prxr4j264qx-3000.app.github.dev", "http://localhost:3002"],
+    origin: ["http://localhost:4000", "https://localhost:4000","https://localhost:3001", "https://localhost:3000", "http://localhost:3001", "http://localhost:3000", "https://super-meme-qx696prxr4j264qx-3001.app.github.dev", "https://super-meme-qx696prxr4j264qx-3000.app.github.dev", "http://localhost:3002"],
     credentials: true,
     methods: ["GET", "POST"],
   },
@@ -463,6 +463,5 @@ cron.schedule('*/10 * * * * *', () => {
 });
 
 module.exports = { io, mainIo, extensionIo };
-//require('./videoServer')
 
-//require('./SFUServer');
+require('./videoServer')
