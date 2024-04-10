@@ -24,13 +24,13 @@ function StudySidebar({
   setIsPlannerModal,
   isTimerModal,
   isTemplateModal,
-  isGroupModal,
   isVolumeModal,
   isZoom,
   setIsTimerModal,
   setIsTemplateModal,
   setIsVolumeModal,
   setIsZoom,
+  isViewGroups,
   setIsViewGroups,
   setIsPlaylistModal,
   isPlaylistModal,
@@ -154,7 +154,7 @@ function StudySidebar({
       </div>
 
       <div
-        className={`${styles.studyTool} ${isGroupModal ? styles.clicked : ""}`}
+        className={`${styles.studyTool} ${isViewGroups ? styles.clicked : ""}`}
         onClick={() => {
           setIsViewGroups(prev => !prev);
         }}
@@ -163,7 +163,7 @@ function StudySidebar({
           <FontAwesomeIcon icon={faUsers} />
         </i>
         <div className={styles.hoverEl}>
-          {isGroupModal ? "View Groups" : "Hide Groups"}
+          {isViewGroups ? "View Groups" : "Hide Groups"}
         </div>
       </div>
 
