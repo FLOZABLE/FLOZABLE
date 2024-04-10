@@ -50,6 +50,7 @@ function MembersContainer({
 
       await device.load({ routerRtpCapabilities: rtpCapabilities });
       setDevice(device);
+      console.log("SFU: device", device)
     } catch (error) {
       console.log(error);
       if (error.name === "UnsupportedError") {
@@ -78,11 +79,11 @@ function MembersContainer({
          * using the parameters provided by the server.
          */
         const transport = await device.createRecvTransport(params);
-        console.log("create recv transport", transport);
+        console.log("SFU: create recv transport", transport);
         await transport.on(
           "connect",
           async ({ dtlsParameters }, callback, errback) => {
-            console.log("transport connect");
+            console.log("SFU: transport connect");
             try {
               // Notify the server that the transport is ready to connect with the provided DTLS parameters
               await mediaSocket.emit("transport-recv-connect", {

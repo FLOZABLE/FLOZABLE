@@ -118,10 +118,11 @@ const createSendTransport = async () => {
 
 const transportProduce = async() => {
   const track = await videoStream.getVideoTracks()[0];
+  console.log(track, 'gdddd', producerTransport)
   const localProducer = await producerTransport.produce({track, ...videoParams});
   localProducer.on("trackended", () => { console.log("video track ended"); });
   localProducer.on("transportclose", () => { console.log("video transport ended"); });
-  console.log('local video producer', localProducer)
+  console.log('SFU: local video producer', localProducer, track)
 }
 
 const audioTransportProduce = async() => {
@@ -134,7 +135,7 @@ const audioTransportProduce = async() => {
 
   useEffect(() => {
     if(!device) return;
-    console.log('create send transport')
+    console.log('SFU: create send transport')
     createSendTransport();
     //createProducerTransport();
   }, [device]);
