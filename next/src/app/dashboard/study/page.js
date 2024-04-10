@@ -17,14 +17,14 @@ import StudyTimelineBar from "@/app/components/Study/StudyTimelineBar/StudyTimel
 
 function Study() {
   const [isPlannerModal, setIsPlannerModal] = useState(false);
-  const [subject, setSubject] = useState(null);
+  const [selectedSubject, setSelectedSubject] = useState({ daily: { total: [0] }});
   const [isTimerModal, setIsTimerModal] = useState(true);
   const [isPlaylistModal, setIsPlaylistModal] = useState(false);
   const [isTemplateModal, setIsTemplateModal] = useState(false);
   const [isVolumeModal, setIsVolumeModal] = useState(false);
   const [isZoom, setIsZoom] = useState(false);
   const [isToolModal, setIsToolModal] = useState(false);
-  const [isViewGroups, setIsViewGroups] = useState(false);
+  const [isViewGroups, setIsViewGroups] = useState(true);
 
   const groupsViewerRef = useRef(null);
 
@@ -111,7 +111,10 @@ function Study() {
         onDragEnd={(event, dragElement) => { handleStop(event, dragElement, "subject") }}
         isDisp={isTimerModal}
         element={
-          <SubjectTimer />
+          <SubjectTimer 
+            selectedSubject={selectedSubject}
+            setSelectedSubject={setSelectedSubject}
+          />
         }
       />
       <StudyModalContainer
@@ -141,7 +144,7 @@ function Study() {
       <StudySubjectTool
         startPos={{ x: "50vw", y: "19vh" }}
         isDisp={isToolModal}
-        subject={subject}
+        subject={selectedSubject}
       />
       {
         <StudyModalContainer
@@ -169,6 +172,7 @@ function Study() {
         setIsVolumeModal={setIsVolumeModal}
         isZoom={isZoom}
         setIsZoom={setIsZoom}
+        isViewGroups={isViewGroups}
         setIsViewGroups={setIsViewGroups}
         isToolModal={isToolModal}
         setIsToolModal={setIsToolModal}
