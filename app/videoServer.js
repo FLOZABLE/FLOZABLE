@@ -1,6 +1,6 @@
 const mediaSoup = require('mediasoup');
 const { io } = require('./socket');
-const { userCache, activeGroupCache } = require("./services/redisLoader");
+const { userCache } = require("./services/redisLoader");
 const { sessionMiddleWare } = require('./app');
 const mediaSocket = io.of('/mediaSocket');
 
@@ -66,7 +66,6 @@ const consumers = {};
   mediaSocket.on('connection', async (socket) => {
     let session;
     let activeGroup;
-
     if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
       try {
         session = socket.request.session;
@@ -83,24 +82,60 @@ const consumers = {};
           secure: false
         },
         user_id: 'EoFObpf612',
+        name: 't1',
+        loggedin: true,
+        userInfo: {
+          userId: 'EoFObpf612',
+          name: 't1',
+          loggedin: true,
+          email: 't1@t.t',
+          myinfo: null,
+          timeZone: 'America/Los_Angeles'
+        }
       };
     };
     const userId = session.user_id;
-
-    socket.on("changeGroup", async(groupId) => {
+    socket.on("changeGroup", async (groupId) => {
       const userInfo = await userCache(userId);
       if (!userInfo) return;
-      const {groups, friends} = userInfo;
-  
+      const { groups } = userInfo;
+
       if (!groups.includes(groupId)) return;
       groups.map(group => {
         if (group !== groupId) {
           socket.leave(group);
+          delete rooms[userId];
         };
       });
+
+      if (activeGroup) {
+        socket.to(activeGroup).emit(`removeProducer:${userId}`);
+        removeConsumer(activeGroup, userId);
+        removeProducer(activeGroup, userId);
+        const producerTransport = await getProducerTransport(userId);
+        if (producerTransport) {
+          producerTransport.close();
+        };
+        const consumerTransport = await getConsumerTransport(userId);
+        if (consumerTransport) {
+          consumerTransport.close();
+        };
+      }
       socket.join(groupId);
+      console.log(producers, 'producers')
+      if (producers[groupId]) {
+        Object.keys(producers[groupId]).map(userId => {
+          Object.keys(producers[groupId][userId]).map(kind => {
+            console.log('dddd', kind);
+            setTimeout(() => {
+              socket.emit(`newProducer:${userId}`, kind);
+            }, 3000);
+          })
+        })
+      }
+      console.log('changegroup', userId, groupId)
       activeGroup = groupId;
-    })
+    });
 
     /**
      * Event handler for fetching router RTP capabilities.
@@ -109,17 +144,13 @@ const consumers = {};
      * The callback function is used to send the router RTP capabilities to the peer.
      */
     socket.on("getRouterRtpCapabilities", async (callback) => {
-      try {
-        if (!userId || !activeGroup) return;
+      if (!activeGroup) return;
 
-        const router = await getRouter(activeGroup, worker);
-        const rtpCapabilities = router.rtpCapabilities;
-        console.log('SFU: sent router capabilities')
-        // call callback from the client and send back the rtpCapabilities
-        callback({ rtpCapabilities });
-      } catch (err) {
-        console.log(err);
-      };
+      const router = await getRouter(activeGroup, worker);
+      const rtpCapabilities = router.rtpCapabilities;
+      console.log('sent router capabilities')
+      // call callback from the client and send back the rtpCapabilities
+      callback({ rtpCapabilities })
     });
 
     /**
@@ -131,79 +162,63 @@ const consumers = {};
      */
     socket.on("createTransport", async ({ sender }, callback) => {
       // ... Creating sender/receiver transports ...
-      try {
-        if (!userId || !activeGroup) return;
-        
-        console.log('SFU: create transport', sender, userId)
-        const router = await getRouter(activeGroup, worker);
-        const { transport, params } = await createWebRtcTransport(router);
-        if (sender) {
-          //producerTransports[userId] = { transport, active: false };
-          addProducerTransport(userId, transport);
-        } else {
-          addConsumerTransport(userId, transport);
-        };
-        callback({ params });
-        console.log(Object.keys(consumerTransports), Object.keys(producerTransports))
-      } catch (err) {
-        console.log(err);
+      if (!activeGroup) return;
+      console.log('create transport', sender, userId)
+      const router = await getRouter(activeGroup, worker);
+      const { transport, params } = await createWebRtcTransport(router);
+      if (sender) {
+        //producerTransports[userId] = { transport, active: false };
+        addProducerTransport(userId, transport);
+      } else {
+        addConsumerTransport(userId, transport);
       };
+      callback({ params });
     });
 
     socket.on('transport-connect', async ({ dtlsParameters }) => {
+      if (!activeGroup) return;
+      const producerTransport = getProducerTransport(userId);
+      if (!producerTransport) return;
+      console.log('transport connect');
       try {
-        if (!userId) return;
-
-        const producerTransport = getProducerTransport(userId);
-
-        if (!producerTransport) return;
-
-        console.log('SFU: transport connect');
         const connection = await producerTransport.connect({ dtlsParameters });
       } catch (err) {
         console.log(err);
       }
-    });
+    })
 
     socket.on('transport-recv-connect', async ({ dtlsParameters }) => {
-      try {
-        if (!userId) return;
-
-        const consumerTransport = getConsumerTransport(userId);
-        
-        if (!consumerTransport) return;
-        
-        console.log('SFU: found consumer transport')
-        const connection = await consumerTransport.connect({ dtlsParameters });
-      } catch (err) {
-        console.log(err);
-      };
-    });
+      if (!activeGroup) return;
+      const consumerTransport = getConsumerTransport(userId);
+      if (!consumerTransport) return;
+      console.log('found consumer transport')
+      const connection = await consumerTransport.connect({ dtlsParameters });
+    })
 
     socket.on('transport-produce', async ({ kind, rtpParameters }, callback) => {
       try {
-        if (!userId || !activeGroup) return;
-
+        if (!activeGroup) return;
         const producerTransport = getProducerTransport(userId);
-
+    
         // Producer not found or already produced
         if (!producerTransport) return;
-
-        console.log("SFU: transport produce", activeGroup);
+    
+        console.log(kind, rtpParameters);
         const producer = await producerTransport.produce({
           kind,
           rtpParameters,
         });
-
+    
+        console.log('gddddd');
         addProducer(activeGroup, userId, producer, kind);
-
+    
         producer.on('transportclose', () => {
           console.log('transportclose close');
           producer.close();
         });
-
+    
         mediaSocket.to(activeGroup).emit(`newProducer:${userId}`, kind);
-
+    
         // Send back to the client the Producer's id
         callback({ id: producer.id });
       } catch (err) {
@@ -213,19 +228,16 @@ const consumers = {};
 
     socket.on('consume', async ({ rtpCapabilities, targetId, kind }, callback) => {
       try {
-        if (!userId || !activeGroup) return;
-
-        console.log('SFU: consume start', kind);
+        // check if the router can consume the specified producer
+        if (!activeGroup) return;
+        console.log('consume', kind);
         const producer = getProducer(activeGroup, targetId, kind);
         if (!producer) return;
-
         const router = await getRouter(activeGroup, worker);
-        // check if the router can consume the specified producer
         const canConsume = router.canConsume({
           producerId: producer.id,
           rtpCapabilities
-        });
-        console.log("SFU: can consume", canConsume)
+        })
         if (canConsume) {
           // transport can now consume and return a consumer
           const consumerTransport = getConsumerTransport(userId);
@@ -258,44 +270,30 @@ const consumers = {};
           // send the parameters to the client
           callback({ params })
         }
-      } catch (err) {
-        console.log(err.message)
+      } catch (error) {
+        console.log(error.message)
         callback({
           params: {
-            error: err
+            error: error
           }
         })
       }
     });
 
     socket.on('consumer-resume', async ({ targetId, kind }) => {
-      try {
-        if (!userId || !activeGroup) return;
-
-        const consumer = getConsumer(activeGroup, userId, targetId, kind);
-        if (!consumer) return;
-        console.log('resume', consumer.id, kind)
-        await consumer.resume();
-      } catch (err) {
-        console.log(err);
-      };
+      const consumer = getConsumer(activeGroup, userId, targetId, kind);
+      if (!consumer) return;
+      console.log('resume', consumer.id, kind)
+      await consumer.resume()
     });
 
     socket.on('removeMyProducer', async ({ kind }) => {
-      try {
-        if (!userId || !activeGroup) return;
-
-        removeProducer(activeGroup, userId, kind);
-        socket.to(activeGroup).emit(`removeProducer:${userId}`, kind);
-      } catch (err) {
-        console.log(err);
-      };
+      removeProducer(activeGroup, userId, kind);
+      socket.to(activeGroup).emit(`removeProducer:${userId}`, kind);
     });
 
     socket.on('disconnect', async () => {
-      try {
-        if (!userId || !activeGroup) return;
-
+      if (activeGroup) {
         socket.to(activeGroup).emit(`removeProducer:${userId}`);
         removeConsumer(activeGroup, userId);
         removeProducer(activeGroup, userId);
@@ -307,9 +305,7 @@ const consumers = {};
         if (consumerTransport) {
           consumerTransport.close();
         };
-      } catch (err) {
-        console.log(err);
-      };
+      }
     })
   });
 

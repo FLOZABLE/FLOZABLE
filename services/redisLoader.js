@@ -220,10 +220,9 @@ async function activeSubjectCache(userId) {
 
 async function activeGroupCache(userId) {
   try {
-    const isCached = await redisClient.hExists(`user:${userId}`, `ActiveGroup`);
-    if (isCached) {
-      const activeGroup = await redisClient.hGet(`user:${userId}`, `ActiveGroup`);
-      return activeGroup;
+    const activeGroup = await redisClient.hGet(`user:${userId}`, `ActiveGroup`);
+    if (activeGroup) {
+      return JSON.parse(activeGroup);
     } else {
       return false;
     };

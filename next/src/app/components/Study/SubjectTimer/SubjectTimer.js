@@ -8,15 +8,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ModalsContext, SubjectsContext, WorkersContext } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
-import { secondConverter } from '@/app/utils/Tool';
 
 function SubjecTimer({
+  selectedSubject,
+  setSelectedSubject
 }) {
-  const { subjects, setSubjects } = useContext(SubjectsContext);
+  const { subjects } = useContext(SubjectsContext);
   const { setIsAddSubjectModal } = useContext(ModalsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
 
-  const [selectedSubject, setSelectedSubject] = useState({ daily: { total: [0] } });
   const [timerActive, setTimerActive] = useState(false);
   const [subjectTimer, setSubjectTimer] = useState({ total: 0 });
   const [timerValues, setTimerValues] = useState({});

@@ -7,7 +7,7 @@ import MyCamDisp from "../MyCamDisp/MyCamDisp";
 import MyTimer from "../MyTimer/MyTimer";
 import { UserInfoContext } from "@/app/utils/Contexts";
 
-function MyEl({ setStudyingMembers, audioStream, videoStream, device }) {
+function MyEl({ setStudyingMembers, videoStream }) {
   const {userInfo} = useContext(UserInfoContext);
 
   const [run, setRun] = useState(0);
@@ -77,7 +77,7 @@ function MyEl({ setStudyingMembers, audioStream, videoStream, device }) {
 
   return (
     <div className={styles.member}>
-      <MyCamDisp audioStream={audioStream} videoStream={videoStream} device={device} />
+      <MyCamDisp videoStream={videoStream} />
       <div className={styles.inner}>
         <div className={styles.userName}>{userInfo.name}</div>
         <div className={styles.icon}>{studyIcon}</div>
