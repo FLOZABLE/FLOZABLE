@@ -9,8 +9,7 @@ import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
 import { CallOptionsContext, GroupsContext, ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
 import { mediaSocket } from "@/app/utils/mediaSocket";
-
-const serverOrigin = process.env.NEXT_PUBLIC_SERVER;
+import config from "@/app/utils/config";
 
 function MyGroupsViewer({
   mode,
@@ -52,7 +51,7 @@ function MyGroupsViewer({
   }, [myGroups, groupsViewerRef]);
 
   const leaveGroup = useCallback((group) => {
-    fetch(`${serverOrigin}/groups/leave-group`,
+    fetch(`${config.server}/groups/leave-group`,
       {
         method: "POST",
         headers: {

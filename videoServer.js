@@ -98,8 +98,8 @@ const consumers = {};
     socket.on("changeGroup", async (groupId) => {
       const userInfo = await userCache(userId);
       if (!userInfo) return;
-      const {groups} = userInfo;
-      
+      const { groups } = userInfo;
+
       if (!groups.includes(groupId)) return;
       groups.map(group => {
         if (group !== groupId) {
@@ -163,7 +163,7 @@ const consumers = {};
     socket.on("createTransport", async ({ sender }, callback) => {
       // ... Creating sender/receiver transports ...
       if (!activeGroup) return;
-      console.log('create transport', sender)
+      console.log('create transport', sender, userId)
       const router = await getRouter(activeGroup, worker);
       const { transport, params } = await createWebRtcTransport(router);
       if (sender) {
@@ -179,7 +179,12 @@ const consumers = {};
       if (!activeGroup) return;
       const producerTransport = getProducerTransport(userId);
       if (!producerTransport) return;
-      const connection = await producerTransport.connect({ dtlsParameters });
+      console.log('transport connect');
+      try {
+        const connection = await producerTransport.connect({ dtlsParameters });
+      } catch (err) {
+        console.log(err);
+      }
     })
 
     socket.on('transport-recv-connect', async ({ dtlsParameters }) => {
@@ -191,28 +196,35 @@ const consumers = {};
     })
 
     socket.on('transport-produce', async ({ kind, rtpParameters }, callback) => {
-      // call produce based on the prameters from the client
-      if (!activeGroup) return;
-      const producerTransport = getProducerTransport(userId);
-
-      //producer not found pr already produced
-      if (!producerTransport) return;
-      const producer = await producerTransport.produce({
-        kind,
-        rtpParameters,
-      });
-
-      addProducer(activeGroup, userId, producer, kind);
-      producer.on('transportclose', () => {
-        producer.close()
-      });
-      mediaSocket.to(activeGroup).emit(`newProducer:${userId}`, kind);
-
-      // Send back to the client the Producer's id
-      callback({
-        id: producer.id
-      })
-    })
+      try {
+        if (!activeGroup) return;
+        const producerTransport = getProducerTransport(userId);
+    
+        // Producer not found or already produced
+        if (!producerTransport) return;
+    
+        console.log(kind, rtpParameters);
+        const producer = await producerTransport.produce({
+          kind,
+          rtpParameters,
+        });
+    
+        console.log('gddddd');
+        addProducer(activeGroup, userId, producer, kind);
+    
+        producer.on('transportclose', () => {
+          console.log('transportclose close');
+          producer.close();
+        });
+    
+        mediaSocket.to(activeGroup).emit(`newProducer:${userId}`, kind);
+    
+        // Send back to the client the Producer's id
+        callback({ id: producer.id });
+      } catch (err) {
+        console.log(err);
+      }
+    });
 
     socket.on('consume', async ({ rtpCapabilities, targetId, kind }, callback) => {
       try {
@@ -237,15 +249,15 @@ const consumers = {};
           });
 
           addConsumer(activeGroup, userId, targetId, consumer, kind);
-  
+
           consumer.on('transportclose', () => {
             console.log('transport close from consumer')
           })
-  
+
           consumer.on('producerclose', () => {
             console.log('producer of consumer closed')
           })
-  
+
           // from the consumer extract the following params
           // to send back to the Client
           const params = {
@@ -254,7 +266,7 @@ const consumers = {};
             kind: consumer.kind,
             rtpParameters: consumer.rtpParameters,
           }
-  
+
           // send the parameters to the client
           callback({ params })
         }
@@ -268,14 +280,14 @@ const consumers = {};
       }
     });
 
-    socket.on('consumer-resume', async ({targetId, kind}) => {
+    socket.on('consumer-resume', async ({ targetId, kind }) => {
       const consumer = getConsumer(activeGroup, userId, targetId, kind);
       if (!consumer) return;
       console.log('resume', consumer.id, kind)
       await consumer.resume()
     });
 
-    socket.on('removeMyProducer', async({kind}) => {
+    socket.on('removeMyProducer', async ({ kind }) => {
       removeProducer(activeGroup, userId, kind);
       socket.to(activeGroup).emit(`removeProducer:${userId}`, kind);
     });
@@ -325,7 +337,7 @@ const getProducerTransport = (userId, produce = false) => {
   try {
     const producerTransport = producerTransports[userId];
     if (!producerTransport) return;
-    
+
     if (!produce || !producerTransport.active) return producerTransport.transport;
     producerTransport.active = true;
     return producerTransport.transport;
@@ -366,7 +378,7 @@ const removeProducer = async (roomId, userId, kind = false) => {
     if (!producers[roomId] || !producers[roomId][userId]) {
       return;
     };
-  
+
     if (!kind) {
       //remove both;
       if (producers[roomId][userId].audio) {
@@ -378,7 +390,7 @@ const removeProducer = async (roomId, userId, kind = false) => {
       delete producers[roomId][userId];
       return;
     };
-  
+
     if (kind === "audio") {
       if (producers[roomId][userId].audio) {
         producers[roomId][userId].audio.close();
@@ -395,7 +407,7 @@ const removeProducer = async (roomId, userId, kind = false) => {
   }
 }
 
-const addConsumer = async (roomId, userId, targetId,consumer, kind) => {
+const addConsumer = async (roomId, userId, targetId, consumer, kind) => {
   if (!consumers[roomId]) {
     consumers[roomId] = {};
   };
