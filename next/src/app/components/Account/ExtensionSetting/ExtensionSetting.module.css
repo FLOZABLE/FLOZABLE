@@ -1,0 +1,37 @@
+.ExtensionSetting .extensionHeader {
+  display: flex;
+  width: 100%;
+  position: relative;
+  padding-bottom: 0.625rem;
+  border-bottom: 0.0625rem solid rgb(99, 99, 99);
+  margin-top: 1.25rem;
+}
+
+.ExtensionSetting .extensionHeader > div {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.ExtensionSetting .extensionHeader p{
+  justify-content: center;
+  margin-left: 1.25rem;
+}
+
+.ExtensionSetting .websiteOptions {
+  display: flex;
+  margin-top: 0.625rem;
+}
+
+.ExtensionSetting .BtnPos {
+  margin-left: 85%;
+}
+.ExtensionSetting .websiteOptions > div{
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.ExtensionSetting .websiteOptions div:nth-child(1) {
+  justify-content: center;
+}

@@ -12,6 +12,9 @@ import config from "./config";
 import { filterGroups } from "./Tool";
 import { socket } from "./socket";
 import { timelineSort } from "./timelineSorting";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
+const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
 const AuthContext = createContext({});
 const SubjectsContext = createContext({});
@@ -39,7 +42,11 @@ function AppProvider({ children }) {
                   <ThemesProvider>
                     <WorkersProvider>
                       <ChatsProvider>
-                      {children}
+                        <GoogleOAuthProvider
+                          clientId={googleClientId}
+                        >
+                          {children}
+                        </GoogleOAuthProvider>
                       </ChatsProvider>
                     </WorkersProvider>
                   </ThemesProvider>
@@ -121,7 +128,7 @@ function SubjectsProvider({ children }) {
   });
 
   const bringSubjects = useCallback(() => {
-    fetch(`${config.server}/study/bring-subjects`, { method: "post", credentials:"include" })
+    fetch(`${config.server}/study/bring-subjects`, { method: "post", credentials: "include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -135,7 +142,7 @@ function SubjectsProvider({ children }) {
   }, []);
 
   const bringPlans = useCallback((subjects) => {
-    fetch(`${config.server}/plan`, { method: "get", credentials:"include" })
+    fetch(`${config.server}/plan`, { method: "get", credentials: "include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -194,7 +201,7 @@ function GroupsProvider({ children }) {
   const [otherGroups, setOtherGroups] = useState([]);
 
   const bringGroups = useCallback(() => {
-    fetch(`${config.server}/groups/bring-groups`, { method: "post", credentials:"include" })
+    fetch(`${config.server}/groups/bring-groups`, { method: "post", credentials: "include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -242,14 +249,14 @@ function ResponseProvider({ children }) {
 }
 
 function ModalsProvider({ children }) {
-  const {userInfo} = useContext(UserInfoContext);
+  const { userInfo } = useContext(UserInfoContext);
 
   const [chatModal, setChatModal] = useState({
     chatRoom: null,
     open: false,
     totalNewMsg: 0
   });
-  
+
   const [isNotificationModal, setIsNotificationModal] = useState(false);
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
   const [joinGroupModal, setJoinGroupModal] = useState({
@@ -263,7 +270,7 @@ function ModalsProvider({ children }) {
       setIsAccountModal(true);
     };
   }, [userInfo]);
-  
+
   return (
     <ModalsContext.Provider
       value={{
@@ -326,7 +333,7 @@ function ThemesProvider({ children }) {
       headers: {
         "Content-Type": "application/json",
       },
-     credentials:"include"
+      credentials: "include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -345,7 +352,7 @@ function ThemesProvider({ children }) {
       headers: {
         "Content-Type": "application/json",
       }
-      , credentials:"include"
+      , credentials: "include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -391,7 +398,7 @@ function WorkersProvider({ children }) {
   )
 };
 
-function ChatsProvider({children}) { 
+function ChatsProvider({ children }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [chatModal, setCHatModal] = useState({
     open: false,
@@ -400,7 +407,7 @@ function ChatsProvider({children}) {
   const [readStatus, setReadStatus] = useState({});
 
   useEffect(() => {
-    fetch(`${config.server}/chat/bring-rooms`, { method: "post" , credentials:"include" })
+    fetch(`${config.server}/chat/bring-rooms`, { method: "post", credentials: "include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {

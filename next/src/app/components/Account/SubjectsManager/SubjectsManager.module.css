@@ -1,0 +1,34 @@
+.SubjectsManager {
+  position: relative;
+  background-color: transparent;
+  margin-left: 2%;
+  max-height: 50vh;
+  overflow-y: auto;
+  margin-top: 3rem;
+}
+
+.SubjectsManager .SubjectSelector {
+  display: grid;
+  grid-template-columns: 18% 18% 18% 18% 18%;
+  grid-column-gap: 1%;
+}
+
+.SubjectsManager .iconContainer {
+  border-radius: 2rem;
+  text-align: center;
+  padding: 5px;
+}
+
+.SubjectsManager .restoreSubjectBtn {
+  background-color: greenyellow;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.SubjectsManager .restoreSubjectBtn:hover {
+  cursor: pointer;
+}
+
+.SubjectsManager .restoreSubjectName {
+  width: 10rem;
+}
