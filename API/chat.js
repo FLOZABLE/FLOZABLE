@@ -20,7 +20,7 @@ Router.post("/bring-rooms", async (req, res) => {
   }));
 });
 
-Router.post("/bring-room", async (req, res) => { //Bring ONE room by ID
+/* Router.post("/bring-room", async (req, res) => { //Bring ONE room by ID
   const { searchId } = req.body;
   autoSignin(req, res, (async (userId) => {
     let foundRoom = false;
@@ -33,7 +33,7 @@ Router.post("/bring-room", async (req, res) => { //Bring ONE room by ID
       }
     });
   }));
-});
+}); */
 
 Router.get('/members', async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -46,10 +46,8 @@ Router.get('/members', async (req, res) => {
     };
     const members = await groupMembersCache(roomId);
     if (!members.includes(userId)) return res.send({ success: false, reason: 'not in group' });
-    const membersInfo = await Promise.all(members.map(async (memberId) => {
-      const memberInfo = await userCache(memberId);
-      return memberInfo;
-    }));
+    const membersInfo = await usersCache(members);
+    console.log(membersInfo)
     res.send({ success: true, membersInfo });
   }));
 })

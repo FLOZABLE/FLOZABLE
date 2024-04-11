@@ -1,0 +1,103 @@
+.StudySidebar {
+  position: fixed;
+  left: 0em;
+  top: 0em;
+  background-color: #fff;
+  width: 4.375rem;
+  height: calc(100vh - 6.25rem);
+  left: 1.25rem;
+  transform: translateY(3.125rem);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 0.625rem;
+}
+
+.StudySidebar .studyTool {
+  cursor: pointer;
+  width: 3.125rem;
+  height: 3.125rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.625rem;
+  transition: box-shadow .3s ease-in-out;
+  margin: 0.1875rem 0.25rem;
+  background-color: #fff;
+  position: relative;
+}
+
+.StudySidebar .studyTool * {
+  pointer-events: none;
+}
+
+.StudySidebar .studyTool i {
+  color: #636363;
+  transition: color .3s ease-in-out;
+}
+
+.StudySidebar .studyTool .hoverEl {
+  position: absolute;
+  pointer-events: none;
+  top: 3.125rem;
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
+  background-color: #000000C0;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0.1875rem 0.375rem;
+  border-radius: 0.313rem;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.StudySidebar .studyTool:hover .hoverEl {
+  opacity: 1;
+  visibility: visible;
+}
+
+.StudySidebar .studyTool:hover {
+  box-shadow: rgba(255, 0, 0, 0.24) 0em 0.1875rem 0.5rem;
+}
+
+.StudySidebar .studyTool:hover i,
+.StudySidebar .studyTool.clicked i {
+  color: var(--pink);
+}
+
+.StudySidebar .clickedEl {
+  /* transition: opacity .3s ease-in-out; */
+  position: relative;
+  background-color: var(--bgColor);
+  left: 100%;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  opacity: 1;
+  z-index: -1;
+}
+
+/*
+.StudySidebar .dispBtn{
+  background: blue;
+  width: 6.25rem;
+  height: 6.25rem;
+}
+*/
+
+@media (max-height: 600px) {
+  .StudySidebar .studyTool {
+    width: 2.6rem;
+    height: 2.625rem;
+    margin: 0.1875rem 0.25rem;
+  }
+}
+
+@media (max-height: 500px) {
+  .StudySidebar .studyTool {
+    width: 2.3rem;
+    height: 2.325rem;
+    margin: 0.16rem 0.25rem;
+  }
+}

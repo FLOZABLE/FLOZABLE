@@ -4,17 +4,31 @@ import MemberEl from "../MemberEl/MemberEl";
 import MyEl from "../MyEl/MyEl";
 import { mediaSocket } from "../../../mediaSocket";
 import { Device } from "mediasoup-client";
+import { useContextMenu } from "react-contexify";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 window.localStorage.setItem('debug', 'mediasoup-client:WARN* mediasoup-client:ERROR*');
 
-function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, members, setMembers, isCam, isMic, isHeadphone }) {
+function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, members, setMembers, setRightClickedMember, isCam, isMic, isHeadphone }) {
   const [membersEl, setMembersEl] = useState([]);
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
   const [videoStream, setVideoStream] = useState(null);
   const [audioStream, setAudioStream] = useState(null);
   const [device, setDevice] = useState(null);
   const [recvTransport, setRecvTransport] = useState(null);
+
+  const { show } = useContextMenu({
+    id: "ffffff",
+  });
+
+  function handleContextMenu(event, memberInfo) {
+    if (groupInfo.leader !== userInfo.user_id) return;
+    setRightClickedMember({...memberInfo, groupId: groupInfo.group_id});
+    show({
+      event
+    });
+  }
+
   /**
  * Step 1: Retrieve the Router's RTP Capabilities.
  * This function requests the router's RTP capabilities from the server,
@@ -216,8 +230,11 @@ function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, me
         )
       } else {
         return (
+          <div onContextMenu={(event) => {handleContextMenu(event, memberInfo)}} key={i}>
           <MemberEl
             memberInfo={memberInfo}
+            groupInfo={groupInfo}
+            setRightClickedMember={setRightClickedMember}
             key={i}
             setStudyingMembers={setStudyingMembers}
             isFocus={isFocus}
@@ -225,6 +242,7 @@ function MembersContainer({ isFocus, userInfo, groupInfo, setStudyingMembers, me
             recvTransport={recvTransport}
             isHeadphone={isHeadphone}
           />
+          </div>
         )
       }
     }));

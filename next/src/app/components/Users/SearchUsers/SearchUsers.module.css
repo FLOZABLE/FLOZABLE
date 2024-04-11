@@ -1,0 +1,103 @@
+.SearchUsers .user {
+  display: flex;
+  position: relative;
+}
+
+.SearchUsers .userInfo {
+  display: flex;
+  align-items: center;
+}
+
+.SearchUsers .name {
+  font-size: 1rem;
+  max-width: 6.25rem;
+  margin-right: 0.625rem;
+}
+
+.SearchUsers .profileImg {
+  height: 1.875rem;
+  width: 1.875rem;
+  border-radius: 1.25rem;
+}
+
+.SearchUsers .buttons {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 0em;
+}
+
+.SearchUsers .buttons > div {
+  display: flex;
+  align-items: center;
+}
+/* .SearchUsers {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.SearchUsers .user {
+  position: relative;
+  width: 100%;
+  display: flex;
+  margin: 0.625rem 0em;
+  justify-content: center;
+  align-items: center;
+}
+
+.SearchUsers .user .userInfo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.SearchUsers .user .profileImg {
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 1.563rem;
+  margin: 0em 0.625rem;
+}
+
+.SearchUsers .user .group {
+  margin-left: 0.625rem;
+}
+
+.SearchUsers .user .group strong {
+  text-decoration: underline;
+}
+
+.SearchUsers .user .name {
+  margin-right: 0.625rem;
+  font-size: 1.563rem;
+}
+
+.SearchUsers .user .flagWrapper {
+  font-size:  1.563rem;
+  margin-right: 0.625rem;
+}
+
+.SearchUsers .user .right {
+  margin-left: auto;
+  margin-right: 0.625rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.SearchUsers .right .today {
+  display: flex;
+  margin-right: 0.625rem;
+}
+
+.SearchUsers .right .buttonsWrapper {
+  display: flex;
+}
+
+.SearchUsers .right .buttonsWrapper.hidden {
+  display: none;
+}
+
+.SearchUsers .right .requestBtn {
+  margin-right: 0.625rem;
+} */

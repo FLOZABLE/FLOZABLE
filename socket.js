@@ -9,7 +9,7 @@ const { Server } = require('socket.io');
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:4000","https://localhost:3001", "https://localhost:3000", "http://localhost:3001", "http://localhost:3000", "https://super-meme-qx696prxr4j264qx-3001.app.github.dev", "https://super-meme-qx696prxr4j264qx-3000.app.github.dev", "http://localhost:3002"],
+    origin: ["http://localhost:4000", "https://localhost:4000","https://localhost:3001", "https://localhost:3000", "http://localhost:3001", "http://localhost:3000", "https://super-meme-qx696prxr4j264qx-3001.app.github.dev", "https://super-meme-qx696prxr4j264qx-3000.app.github.dev", "http://localhost:3002"],
     credentials: true,
     methods: ["GET", "POST"],
   },
@@ -70,8 +70,7 @@ mainIo.on('connection', (socket) => {
     })();
   }
 
-
-  socket.on('joinMyGroups', async () => {
+  socket.on('joinChats', async () => {
     try {
       const chatRooms = await chatRoomsCache(userId);
       const chatRoomsId = chatRooms.map(chatRoom => {
@@ -176,7 +175,7 @@ mainIo.on('connection', (socket) => {
       const time = Math.floor(new Date().getTime() / (1000 * 60));
       const msgInfo = { u: userId, m: msg, i: msgId, t: time };
       msgQueue(roomId, msgInfo);
-      io.to(`chat:${roomId}`).emit('msgReceived', roomId, msgInfo);
+      mainIo.to(`chat:${roomId}`).emit('msgReceived', roomId, msgInfo);
       const now = Math.floor(new Date().getTime() / 1000 / 60);
       redisClient.hSet(`user:${userId}:chats`, roomId, `${msgId}:${now}`);
     };
@@ -464,6 +463,5 @@ cron.schedule('*/10 * * * * *', () => {
 });
 
 module.exports = { io, mainIo, extensionIo };
-//require('./videoServer')
 
-//require('./SFUServer');
+require('./videoServer')

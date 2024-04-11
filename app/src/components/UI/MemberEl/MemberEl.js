@@ -6,14 +6,16 @@ import MemberTimer from "../MemberTimer/MemberTimer";
 import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 import { DateTime } from "luxon";
 import { socket } from "../../../socket";
+import ContextMenu from "../ContextMenu/ContextMenu";
+import { useContextMenu } from "react-contexify";
 
-function MemberEl({ memberInfo, setStudyingMembers, device, isFocus, recvTransport, isHeadphone }) {
+function MemberEl({ userInfo, memberInfo, groupInfo, setStudyingMembers, setRightClickedMember, device, isFocus, recvTransport, isHeadphone }) {
   const [run, setRun] = useState(false);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(
     <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />,
   );
-  
+
   useEffect(() => {
     if (!memberInfo) return;
 

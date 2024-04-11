@@ -159,14 +159,6 @@ Router.post('/create-validate', async (req, res) => {
 })
 
 Router.post('/join/:id', async (req, res) => {
-  /* const sessionDataHeader = req.headers['x-session-data'];
-  if (sessionDataHeader) {
-    const sessionData = JSON.parse(sessionDataHeader);
-    if (sessionData.user_id && sessionData.loggedin) {
-      req.session.user_id = sessionData.user_id;
-      req.session.loggedin = sessionData.loggedin;
-    }
-  }; */
 
   autoSignin(req, res, (async (userId) => {
     const groupId = req.params.id;
@@ -254,7 +246,7 @@ Router.post('/join/:id', async (req, res) => {
       }
       let totalTime = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset);
       totalTime = totalTime === null ? 0 : totalTime;
-      mainIo.to(`${groupId}`).emit(`newMemberInfo`, { ...userInfo, totalTime, activeSubject });
+      mainIo.to(`chat:${groupId}`).emit(`newMemberInfo`, groupId, { ...userInfo, totalTime, activeSubject });
 
       //update cached value only if it exists
       const isCached = await redisClient.exists(`room:${groupId}`);
@@ -311,6 +303,90 @@ Router.get('/mine', async (req, res) => {
       console.log(err);
     }
   }));
+});
+
+Router.post("/leave-group", async (req, res) => {
+  const { groupId } = req.body;
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const connection = pool.promise();
+      const [[group]] = await connection.query("SELECT members FROM groups WHERE group_id = ?", [groupId]);
+
+      let oldMembers = group.members.split(",");
+      oldMembers = oldMembers.filter((mem) => mem != userId);
+      const updateGroup = await connection.query("UPDATE groups SET members = ? WHERE group_id = ?", [oldMembers.join(","), groupId]);
+      
+      const [[userGroups]] = await connection.query("SELECT groups FROM users WHERE user_id = ?", [userId]);
+      let newGroups = !userGroups.groups ? [] : userGroups.groups.split(",");
+      newGroups = newGroups.filter((g) => g != groupId);
+      const updateUserGroups = await connection.query("UPDATE users SET groups = ? WHERE user_id = ?", [newGroups.join(","), userId]);
+
+      let groups = await groupCache(userId);
+      groups = groups.filter((g) => g != groupId);
+      redisClient.hSet(`user:${userId}`, 'groups', groups.join(','));
+
+      redisClient.sRem(`room:${groupId}`, userId);
+
+      mainIo.emit(`removeMember`, groupId, userId);
+
+      return res.send({success: true});
+    } catch (err) {
+      console.log(err);
+    }
+  }));
+});
+
+Router.post("/remove-member", async (req, res) => {
+  const { memberId, groupId } = req.body;
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const connection = pool.promise();
+      const [[group]] = await connection.query("SELECT leader, name, members FROM groups WHERE group_id = ?", [groupId]);
+
+      if (group.leader != userId) {
+        return res.send({ success: false, reason: "You do not have the permission to remove members" })
+      }
+      else {
+        let oldMembers = group.members.split(",");
+        oldMembers = oldMembers.filter((mem) => mem != memberId);
+        const updateGroup = await connection.query("UPDATE groups SET members = ? WHERE group_id = ?", [oldMembers.join(","), groupId]);
+
+        let groups = await groupCache(memberId);
+        groups = groups.filter((g) => g != groupId);
+        redisClient.hSet(`user:${memberId}`, 'groups', groups.join(','));
+
+        redisClient.sRem(`room:${groupId}`, memberId);
+        mainIo.emit(`removeMember`, groupId, memberId);
+
+        return res.send({ success: true });
+      }
+
+    } catch (err) {
+      console.log(err);
+    }
+  }))
+});
+
+
+Router.post("/transfer-ownership", async (req, res) => {
+  const { memberId, groupId } = req.body;
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const connection = pool.promise();
+      const [[group]] = await connection.query("SELECT leader FROM groups WHERE group_id = ?", [groupId]);
+
+      if (group.leader != userId) {
+        return res.send({ success: false, reason: "You are not the owner of this group" })
+      }
+      else {
+        const updateGroup = await connection.query("UPDATE groups SET leader = ? WHERE group_id = ?", [memberId, groupId]);
+        mainIo.to(`chat:${groupId}`).emit("leaderChange", groupId, memberId);
+        return res.send({ success: true });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }))
 });
 
 Router.post('/like/:id', async (req, res) => {
@@ -493,7 +569,6 @@ Router.post('/modify', async (req, res) => {
         name,
         explanation,
         leader: userId,
-        members: userId,
         tags: stringlifiedTags,
         max_members,
         visibility,
