@@ -11,8 +11,7 @@ import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import SelectIcon from "@/app/components/Inputs/SelectIcon/SelectIcon";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
-
-const serverOrigin = process.env.REACT_APP_ORIGIN;
+import config from "@/app/utils/config";
 
 function AddSubjectModal({
 }) {
@@ -60,7 +59,7 @@ function AddSubjectModal({
   };
 
   const submit = useCallback(() => {
-    fetch(`${serverOrigin}/study/add-subject`, {
+    fetch(`${config.server}/study/add-subject`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",

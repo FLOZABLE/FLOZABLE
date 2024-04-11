@@ -1,0 +1,33 @@
+.FriendsViewer {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 9.375rem);
+  justify-content: center;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  max-height: 18.75rem;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  width: 100%;
+}
+
+.FriendsViewer .profileWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 1.25rem;
+}
+
+.FriendsViewer .profileImg {
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 50%;
+  box-shadow: rgba(149, 157, 165, 0.2) 0em 0.5rem 1.5rem;
+}
+
+.FriendsViewer .name {
+  font-size: 0.813rem;
+  display: flex;
+  justify-content: center;
+}

@@ -1,0 +1,103 @@
+.SubjectTimer {
+  position: relative;
+  width: min-content;
+  display: flex;
+}
+
+.SubjectTimer .timerWrapper {
+  position: relative;
+}
+
+.SubjectTimer button {
+  padding: 0.313rem 1.875rem;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  font-size:  1.438rem;
+  width: min-content;
+  white-space: nowrap;
+  transition: .3s background-color ease-in-out, .3s border-radius ease-in-out;
+  width: fit-content !important;
+  color: var(--pink);
+  font-weight: 500;
+}
+
+.SubjectTimer button:hover {
+  background-color: rgb(230, 226, 226);
+  color: #545454;
+}
+
+.SubjectTimer button.clicked {
+  border-bottom-left-radius: 0em;
+  border-bottom-right-radius: 0em;
+  background-color: rgb(230, 226, 226);
+  color: #545454;
+}
+
+.SubjectTimer button.clicked~.options {
+  font-size: 1.063rem;
+  transition: font-size .3s ease-in-out;
+}
+
+.SubjectTimer button.clicked .options .option {
+  padding: 0.1875rem 1.25rem;
+}
+
+.SubjectTimer .options .option * {
+  pointer-events: none;
+}
+
+.SubjectTimer .options {
+  position: absolute;
+  font-size: 0em;
+  transition: font-size .3s ease-in-out;
+  min-width: 100%;
+  top: 2.8rem;
+  background-color: rgb(230, 226, 226);
+  max-height: 6.25rem;
+  overflow-y: auto;
+  z-index: 2;
+}
+
+.SubjectTimer .options {
+  border-bottom-right-radius: 0.625rem;
+  border-bottom-left-radius: 0.625rem;
+}
+
+.SubjectTimer .options .option {
+  padding-left: 1.875rem;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  margin: 0em;
+  font-weight: 600;
+}
+
+.SubjectTimer .optBtn i {
+  transform: rotate(0deg);
+  transition: transform .4s cubic-bezier(0.075, 0.82, 0.165, 1);
+  margin-left: 1.25rem;
+  font-size: 1.875rem;
+}
+
+.SubjectTimer .optBtn.clicked i {
+  transform: rotate(180deg);
+}
+
+.SubjectTimer .timeDisp {
+  margin-left: auto;
+  margin-right: 0.625rem;
+}
+
+.SubjectTimer .mainTimeDisp {
+  margin-left: 0.313rem;
+}
+
+.SubjectTimer .toggleBtn {
+  width: 2.5rem !important;
+  justify-content: center;
+}
+
+.SubjectTimer .buttonWrapper {
+  display: flex;
+}
