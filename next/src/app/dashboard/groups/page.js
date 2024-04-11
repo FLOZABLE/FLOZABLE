@@ -9,6 +9,7 @@ import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import GroupsContainer from "@/app/components/Groups/GroupsContainer/GroupsContainer";
 import EditGroupModal from "@/app/components/Groups/EditGroupModal/EditGroupModal";
+import MemberContextMenu from "@/app/components/Groups/MemberContextMenu/MemberContextMenu";
 
 function Groups({
   setResponse,
@@ -18,6 +19,7 @@ function Groups({
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
   const [isEditGroupModal, setIsEditGroupModal] = useState(false);
+  const [rightClickedMember, setRightClickedMember] = useState(null);
 
   const groupsViewerRef = useRef(null);
 
@@ -27,6 +29,7 @@ function Groups({
 
   return (
     <div>
+      <MemberContextMenu MENU_ID="ffffff" rightClickedMember={rightClickedMember}/>
       <CreateGroupModal
         isOpen={isCreateNewGroup}
         setIsOpen={setIsCreateNewGroup}
@@ -47,6 +50,7 @@ function Groups({
             <MyGroupsViewer
               groupsViewerRef={groupsViewerRef}
               setIsEditGroupModal={setIsEditGroupModal}
+              setRightClickedMember={setRightClickedMember}
             />
           </div>
           <div className={styles.box}>

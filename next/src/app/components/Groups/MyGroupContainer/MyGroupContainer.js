@@ -19,7 +19,8 @@ function MyGroupContainer({
   mode,
   leaveGroup,
   setIsEditGroupModal,
-  isMine
+  isMine,
+  setRightClickedMember
 }) {
   const { setIsChatModal } = useContext(ModalsContext);
 
@@ -127,7 +128,9 @@ function MyGroupContainer({
       <div className={`${styles.membersWrapper} customScroll`}>
         <MembersContainer
           members={members}
+          group={group}
           setStudyingMembers={setStudyingMembers}
+          setRightClickedMember={setRightClickedMember}
         />
       </div>
     </div>
