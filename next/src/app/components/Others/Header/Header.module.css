@@ -81,14 +81,16 @@
 } */
 
 .headerEl .StudyButton {  
-  background-color: rgb(209, 255, 216);
   border-radius: 100rem;
-  width: 4rem;
-  height: 4rem;
-  color: rgb(0, 213, 71);
+  width: 3rem;
+  height: 3rem;
+  color: var(--blue2);
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 3rem;
+  border: 0.2rem solid var(--blue2);
+  font-weight: 600;
 } 
 
 .Header .divider {

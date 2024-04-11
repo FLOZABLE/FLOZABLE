@@ -7,6 +7,7 @@ import TopNotification from "@/app/components/Modals/TopNotification/TopNotifica
 import ChatModal from "@/app/components/Modals/ChatModal/ChatModal";
 import NotificationModal from "@/app/components/Modals/NotificationModal/NotificationModal";
 import AccountModal from "@/app/components/Modals/AccountModal/AccountModal";
+import Tutorial from "./components/Others/Tutorial/Tutorial";
 
 export const metadata = {
   title: "Create Next App",
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
           <JoinGroupModal />
           <AddSubjectModal />
           <NotificationModal />
+          <Tutorial />
           {children}
         </AppProvider>
       </body>

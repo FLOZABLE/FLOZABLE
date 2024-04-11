@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { getCountryCode } from "@/app/utils/Tool";
 
-function CountryViewer({timezone}) {
+function CountryViewer({ timezone }) {
   const [flag, setFlag] = useState(null);
 
   useEffect(() => {
@@ -13,10 +13,11 @@ function CountryViewer({timezone}) {
     const countryCode = getCountryCode(timezone);
     if (countryCode) {
       setFlag(
-        <ReactCountryFlag 
-        countryCode={countryCode}
-        svg
-      />
+        <ReactCountryFlag
+          countryCode={countryCode}
+          svg
+          alt={timezone}
+        />
       );
     } else {
       setFlag(

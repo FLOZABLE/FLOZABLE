@@ -43,10 +43,9 @@ function MembersContainer({
           );
         } else {
           return (
-            <div onContextMenu={(event) => { handleContextMenu(event, member) }}>
+            <div onContextMenu={(event) => { handleContextMenu(event, member) }} key={i}>
               <MemberEl
                 memberInfo={member}
-                key={i}
                 setStudyingMembers={setStudyingMembers}
                 device={device}
                 recvTransport={recvTransport}

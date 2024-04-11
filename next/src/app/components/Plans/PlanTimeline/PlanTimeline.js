@@ -19,7 +19,7 @@ function PlanTimeline({
   mode,
   maxHeight = "18.75rem",
 }) {
-  const {tutorialBoxRef, tutorialTextRef} = useContext(TutorialsContext);
+  const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
   const {subjects} = useContext(SubjectsContext);
   const {plans, setPlans, setPlanModal} = useContext(PlansContext);
 
@@ -114,26 +114,19 @@ function PlanTimeline({
     setFilteredPlans(plans.filter(plan => isInViewRange(plan)));
   }, [plans, viewMode, viewDate, subjects]);
 
-  /* useEffect(() => {
-    if (!searchParams) return;
+  useEffect(() => {
+    if (tutorial === 1) {
+      const { width, top, left, height } = addBtnRef.current.getBoundingClientRect();
+      tutorialBoxRef.current.style.left = left - 20 + 'px';
+      tutorialBoxRef.current.style.top = top - 18 + 'px';
+      tutorialBoxRef.current.style.width = width + 40 + 'px';
+      tutorialBoxRef.current.style.height = height + 40 + 'px';
 
-    const tutorial = searchParams.get("tutorial");
-    if (tutorial && parseInt(tutorial) === 1) {
-
-      setTimeout(() => {
-        const { width, top, left, height } = addBtnRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left - 20 + 'px';
-        tutorialBoxRef.current.style.top = top - 18 + 'px';
-        tutorialBoxRef.current.style.width = width + 40 + 'px';
-        tutorialBoxRef.current.style.height = height + 40 + 'px';
-
-        tutorialTextRef.current.textContent = "First, add an event to your planner!";
-        tutorialTextRef.current.style.left = left - 15 + 'px';
-        tutorialTextRef.current.style.top = top + 80 + 'px'
-
-      }, 1000);
+      tutorialTextRef.current.textContent = "First, add an event to your planner!";
+      tutorialTextRef.current.style.left = left - 15 + 'px';
+      tutorialTextRef.current.style.top = top + 80 + 'px'
     };
-  }, [searchParams]); */
+  }, [tutorial]);
 
 
   return (
@@ -164,10 +157,9 @@ function PlanTimeline({
           name={"Add a New Plan"}
           setClicked={() => {
             setPlanModal((prev) => ({ ...prev, opened: true }));
-            /* const tutorial = searchParams.get("tutorial");
-            if (tutorial && parseInt(tutorial) === 1) {
-              setSearchParams({ ...searchParams, tutorial: 2 })
-            } */
+            if (tutorial === 1) {
+              setTutorial(2);
+            }
           }}
           color1={"#fff"}
           color2={"var(--blue2)"}
