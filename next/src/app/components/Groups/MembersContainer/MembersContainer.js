@@ -5,21 +5,37 @@ import { CallOptionsContext, UserInfoContext } from "@/app/utils/Contexts";
 import { mediaSocket } from "@/app/utils/mediaSocket";
 import MyEl from "../MyEl/MyEl";
 import MemberEl from "../MemberEl/MemberEl";
+import { useContextMenu } from "react-contexify";
 
 //window.localStorage.setItem('debug', 'mediasoup-client:WARN* mediasoup-client:ERROR*');
 
 function MembersContainer({
   setStudyingMembers,
   members,
+  group,
+  setRightClickedMember
 }) {
-  const {userInfo} = useContext(UserInfoContext);
-  const {isCam, isMic} = useContext(CallOptionsContext);
+  const { userInfo } = useContext(UserInfoContext);
+  const { isCam, isMic } = useContext(CallOptionsContext);
 
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
   const [videoStream, setVideoStream] = useState(null);
   const [audioStream, setAudioStream] = useState(null);
   const [device, setDevice] = useState(null);
   const [recvTransport, setRecvTransport] = useState(null);
+
+  const { show } = useContextMenu({
+    id: "ffffff",
+  });
+
+  function handleContextMenu(event, memberInfo) {
+    if (group.leader !== userInfo.user_id) return;
+    setRightClickedMember({ ...memberInfo, groupId: group.group_id });
+    show({
+      event
+    });
+  }
+
   /**
    * Step 1: Retrieve the Router's RTP Capabilities.
    * This function requests the router's RTP capabilities from the server,
@@ -170,68 +186,68 @@ function MembersContainer({
       mediaSocket.emit("removeMyProducer", { kind: "audio" });
     }
   }, [isMic]);
-/* 
-  useEffect(() => {
-    if (!userInfo || !isFocus) return;
-    const studyingMembers = [];
-    const newMembers = JSON.parse(JSON.stringify(members));
-    newMembers.map((member, i) => {
-      if (member.activeSubject && member.activeSubject.id !== "0") {
-        newMembers.splice(i, 1);
-        studyingMembers.push(member);
-      }
-    });
-
-    newMembers.sort((a, b) => parseInt(b.totalTime) - parseInt(a.totalTime));
-    const now = Math.floor(new Date().getTime() / 1000);
-    studyingMembers.sort(
-      (a, b) =>
-        parseInt(b.totalTime) +
-        now -
-        parseInt(b.activeSubject.time) -
-        (parseInt(a.totalTime) + now - parseInt(a.activeSubject.time)),
-    );
-    const totalMembers = studyingMembers.concat(newMembers);
-    setMembersEl(
-      totalMembers.map((memberInfo, i) => {
-        if (userInfo.user_id === memberInfo.user_id) {
-          return (
-            <MyEl
-              memberInfo={memberInfo}
-              key={i}
-              setStudyingMembers={setStudyingMembers}
-              videoStream={videoStream}
-              audioStream={audioStream}
-              isFocus={isFocus}
-              device={device}
-            />
-          );
-        } else {
-          return (
-            <MemberEl
-              memberInfo={memberInfo}
-              key={i}
-              setStudyingMembers={setStudyingMembers}
-              isFocus={isFocus}
-              device={device}
-              recvTransport={recvTransport}
-              isHeadphone={isHeadphone}
-            />
-          );
+  /* 
+    useEffect(() => {
+      if (!userInfo || !isFocus) return;
+      const studyingMembers = [];
+      const newMembers = JSON.parse(JSON.stringify(members));
+      newMembers.map((member, i) => {
+        if (member.activeSubject && member.activeSubject.id !== "0") {
+          newMembers.splice(i, 1);
+          studyingMembers.push(member);
         }
-      }),
-    );
-    setStudyingMembers(studyingMembers);
-  }, [
-    members,
-    videoStream,
-    audioStream,
-    userInfo,
-    isFocus,
-    device,
-    recvTransport,
-    isHeadphone,
-  ]); */
+      });
+  
+      newMembers.sort((a, b) => parseInt(b.totalTime) - parseInt(a.totalTime));
+      const now = Math.floor(new Date().getTime() / 1000);
+      studyingMembers.sort(
+        (a, b) =>
+          parseInt(b.totalTime) +
+          now -
+          parseInt(b.activeSubject.time) -
+          (parseInt(a.totalTime) + now - parseInt(a.activeSubject.time)),
+      );
+      const totalMembers = studyingMembers.concat(newMembers);
+      setMembersEl(
+        totalMembers.map((memberInfo, i) => {
+          if (userInfo.user_id === memberInfo.user_id) {
+            return (
+              <MyEl
+                memberInfo={memberInfo}
+                key={i}
+                setStudyingMembers={setStudyingMembers}
+                videoStream={videoStream}
+                audioStream={audioStream}
+                isFocus={isFocus}
+                device={device}
+              />
+            );
+          } else {
+            return (
+              <MemberEl
+                memberInfo={memberInfo}
+                key={i}
+                setStudyingMembers={setStudyingMembers}
+                isFocus={isFocus}
+                device={device}
+                recvTransport={recvTransport}
+                isHeadphone={isHeadphone}
+              />
+            );
+          }
+        }),
+      );
+      setStudyingMembers(studyingMembers);
+    }, [
+      members,
+      videoStream,
+      audioStream,
+      userInfo,
+      isFocus,
+      device,
+      recvTransport,
+      isHeadphone,
+    ]); */
 
   return (
     <div className={styles.MembersContainer}>
@@ -248,13 +264,15 @@ function MembersContainer({
           );
         } else {
           return (
-            <MemberEl
-              memberInfo={member}
-              key={i}
-              setStudyingMembers={setStudyingMembers}
-              device={device}
-              recvTransport={recvTransport}
-            />
+            <div onContextMenu={(event) => { handleContextMenu(event, member) }}>
+              <MemberEl
+                memberInfo={member}
+                key={i}
+                setStudyingMembers={setStudyingMembers}
+                device={device}
+                recvTransport={recvTransport}
+              />
+            </div>
           );
         }
       })}
