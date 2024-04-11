@@ -7,6 +7,7 @@ const { mainIo } = require("../socket");
 const { generateRandomId, isValidJSON, autoSignin } = require("../tool");
 const { subjectsCache, subjectsTimelineCache } = require("../services/redisLoader");
 const { validateString, validateHEX, validateStrictString, validateArray } = require("../validate");
+const { DateTime } = require("luxon");
 
 Router.post("/add-subject", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -115,6 +116,53 @@ Router.post("/modify-subject", async (req, res) => {
         previousSubject.tools = subjectInfo.tools;
         redisClient.hSet(`user:${userId}:subjects`, subjectInfo.id, JSON.stringify(previousSubject));
         mainIo.to(userId).emit('update tools', userId);
+      } catch (err) {
+        console.log(err);
+      };
+    } catch (error) {
+      console.log(error);
+    };
+  }));
+});
+
+
+Router.post("/delete-subject", async (req, res) => {
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const { subjectId } = req.body;
+
+      const connection = pool.promise();
+      try {
+        const nowSeconds = Math.round(DateTime.now({zone: "utc"}).toSeconds());
+        const updateSubject = await connection.query("UPDATE subjects SET hidden = ? WHERE id = ? AND user_id = ?", [nowSeconds, subjectId, userId]);
+        res.send({ success: true, deleteTime: nowSeconds });
+
+        const previousSubject = JSON.parse(await redisClient.hGet(`user:${userId}:subjects`, subjectId));
+        previousSubject.hidden = nowSeconds;
+        redisClient.hSet(`user:${userId}:subjects`, subjectId, JSON.stringify(previousSubject));
+      } catch (err) {
+        console.log(err);
+      };
+    } catch (error) {
+      console.log(error);
+    };
+  }));
+});
+
+
+Router.post("/restore-subject", async (req, res) => {
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const { subjectId } = req.body;
+
+      const connection = pool.promise();
+      try {
+        const updateSubject = await connection.query("UPDATE subjects SET hidden = ? WHERE id = ? AND user_id = ?", [-1, subjectId, userId]);
+        res.send({ success: true });
+
+        const previousSubject = JSON.parse(await redisClient.hGet(`user:${userId}:subjects`, subjectId));
+        previousSubject.hidden = -1;
+        redisClient.hSet(`user:${userId}:subjects`, subjectId, JSON.stringify(previousSubject));
       } catch (err) {
         console.log(err);
       };

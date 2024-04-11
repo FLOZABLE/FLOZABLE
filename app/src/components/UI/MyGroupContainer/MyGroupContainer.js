@@ -1,6 +1,6 @@
 import styles from "./MyGroupContainer.module.css";
-import React, { useEffect, useState } from "react";
-import { IconMessage, IconTimerOutline, StudyPerson, IconPen } from "../../../utils/svgs";
+import React, { useCallback, useEffect, useState } from "react";
+import { IconMessage, IconTimerOutline, StudyPerson, IconPen, IconLeave } from "../../../utils/svgs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullhorn, faCommentDots, faComments, faGear, faPen, faRankingStar } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -12,7 +12,7 @@ import { DateTime } from "luxon";
 
 const serverOrigin = process.env.REACT_APP_ORIGIN;
 
-function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatModal, setIsGroupRankingModal, setIsEditGroupModal, mode, isHeadphone }) {
+function MyGroupContainer({ group, isFocus, userInfo, leaveGroup, isMic, isCam, setIsChatModal, setIsGroupRankingModal, setIsEditGroupModal, mode, isHeadphone, setRightClickedMember }) {
   const [name, setName] = useState("");
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -22,6 +22,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
   useEffect(() => {
     if (!group || !isFocus) return;
     if (group.leader === userInfo.user_id) setIsMyGroup(true);
+    else setIsMyGroup(false);
     //group_id, average_hr, color, date, explanation, font, goal_hr, leader, max_member, name, visibility, tags, members, likes
     const { name } = group;
     setName(name);
@@ -93,18 +94,30 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
                 <IconMessage />
               </i>
             </div>
+            {
+              isMyGroup ?
+                <div />
+                :
+                <div onClick={() => {
+                  leaveGroup();
+                }}>
+                  <i>
+                    <IconLeave />
+                  </i>
+                </div>
+            }
           </div>
           {
             isMyGroup ?
-            <div className={styles.editIcon} onClick={() => {
-              setIsEditGroupModal((prev) => { return prev ? false : group });
-            }} >
-              <i>
-                <IconPen />
-              </i>
-            </div>
-            :
-            <div />
+              <div className={styles.editIcon} onClick={() => {
+                setIsEditGroupModal((prev) => { return prev ? false : group });
+              }} >
+                <i>
+                  <IconPen />
+                </i>
+              </div>
+              :
+              <div />
           }
         </div>
         <div className={styles.buttons}>
@@ -131,6 +144,7 @@ function MyGroupContainer({ group, isFocus, userInfo, isMic, isCam, setIsChatMod
           isMic={isMic}
           isCam={isCam}
           isHeadphone={isHeadphone}
+          setRightClickedMember={setRightClickedMember}
         />
       </div>
     </div>

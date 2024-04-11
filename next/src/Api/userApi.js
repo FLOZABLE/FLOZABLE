@@ -1,6 +1,6 @@
-const { default: config } = require("@/utils/config");
+const { config } = require("@/app/utils/config");
 
-fetchUserData = async () => {
+async function fetchUserData () {
   const response = await fetch(`${config.server}/account/accountinfo`);
   if (!response.ok) {
     throw new Error('Failed to fetch user data');

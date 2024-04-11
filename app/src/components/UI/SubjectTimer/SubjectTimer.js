@@ -104,7 +104,7 @@ function SubjectTimer({
 
   useEffect(() => {
     if (timeValues.length) {
-      if (!!!subject) setSubject({ ...subjects[0] });
+      if (!!!subject) setSubject({ ...subjects.filter((s) => s.hidden < 0)[0] });
       let subjectIndex = subject ? subject.id : -1; //default to -1 if undefined and check later
       if (subjectIndex !== -1) {
         for (let i = 0; i < subjects.length; i++) {
@@ -127,7 +127,7 @@ function SubjectTimer({
         setSubjectTimer({ total: timeValues[0].total });
       }
     }
-    const subjectOptions = subjects.map((option, i) => {
+    const subjectOptions = subjects.filter((s) => s.hidden < 0).map((option, i) => {
       const selectedOption = timeValues.find(
         (timeVal) => timeVal.id === option.id,
       );

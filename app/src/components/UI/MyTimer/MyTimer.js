@@ -1,8 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styles from "./MyTimer.module.css";
-import worker from "../../../utils/subjectTimerWorker";
+import { WorkersContext } from "@/app/utils/Contexts";
 
 function MyTimer({ run, initialSec }) {
+  const { subjectsTimerWorkerRef } = useContext(WorkersContext);
+
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
@@ -14,12 +16,17 @@ function MyTimer({ run, initialSec }) {
         setTotal(prev => prev + 1);
       };
     };
+    /* console.log('gdddd', worker)
     worker.addEventListener("message", onMessage);
 
     return () => {
       worker.removeEventListener("message", onMessage);
+    }; */
+    subjectsTimerWorkerRef?.current?.addEventListener('message', onMessage);
+    return () => {
+      subjectsTimerWorkerRef?.current?.removeEventListener('message', onMessage);
     };
-  }, [run]);
+  }, [run, subjectsTimerWorkerRef]);
 
   useEffect(() => {
     if (initialSec) {
