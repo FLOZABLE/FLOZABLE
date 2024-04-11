@@ -8,18 +8,24 @@ import styles from "./MyGroupsViewer.module.css";
 import { mediaSocket } from "../../../mediaSocket";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
 import GroupRankingModal from "../GroupRankingModal/GroupRankingModal";
+import { socket } from "../../../socket";
+
+const serverOrigin = process.env.REACT_APP_ORIGIN;
 
 function MyGroupsViewer({
   myGroups,
+  setMyGroups,
+  setResponse,
   userInfo,
   isCam,
   isMic,
-  setIsCam = () => {},
-  setIsMic = () => {},
+  setIsCam = () => { },
+  setIsMic = () => { },
   mode,
   setIsChatModal,
   groupsViewerRef,
   setIsEditGroupModal,
+  setRightClickedMember,
   isHeadphone
 }) {
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
@@ -44,6 +50,65 @@ function MyGroupsViewer({
     }, 2000);
   }, [myGroups, groupsViewerRef]);
 
+  const leaveGroup = useCallback((group) => {
+    console.log("Leaving ", group);
+    fetch(`${serverOrigin}/groups/leave-group`,
+      {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ groupId: group.group_id })
+      }).then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          setResponse({ success: true, msg: "You left " + group.name })
+        }
+      })
+    setMyGroups(myGroups.filter((g) => g.group_id !== group.group_id));
+  }, [myGroups]);
+
+  useEffect(() => {
+    if (!myGroups || !userInfo) return;
+    console.log(myGroups);
+
+    const memberJoinGroup = (groupId, memberInfo) => {
+      setMyGroups(myGroups.map((group) => {
+        if (group.group_id !== groupId) return group;
+        return { ...group, members: group.members + "," + memberInfo.user_id };
+      }));
+    };
+
+    const memberLeaveGroup = (groupId, memberId) => {
+      if (memberId === userInfo.user_id) {
+        setMyGroups(myGroups.filter((group) => group.group_id != groupId));
+      }
+      else {
+        setMyGroups(myGroups.map((group) => {
+          if (group.group_id !== groupId) return group;
+          return { ...group, members: group.members.split(",").splice(memberId, 1).join(",") };
+        }));
+      }
+    };
+
+    const handleLeaderChange = (groupId, memberId) => {
+      setMyGroups(myGroups.map((group) => {
+        if (group.group_id !== groupId) return group;
+        return { ...group, leader: memberId };
+      }));
+    };
+
+    socket.on(`newMemberInfo`, memberJoinGroup);
+    socket.on(`removeMember`, memberLeaveGroup);
+    socket.on('leaderChange', handleLeaderChange);
+    return () => {
+      socket.off("newMemberInfo", memberJoinGroup);
+      socket.off(`removeMember`, memberLeaveGroup);
+      socket.off('leaderChange', handleLeaderChange);
+    };
+  }, [myGroups, userInfo]);
+
   useEffect(() => {
     setSwiperEl(myGroups.map((group, i) => {
       const focus = i === selectedGroupIndex;
@@ -52,6 +117,7 @@ function MyGroupsViewer({
           {focus ?
             <MyGroupContainer
               group={group}
+              leaveGroup={() => leaveGroup(group)}
               isFocus={true}
               studyingUsers={[]}
               userInfo={userInfo}
@@ -62,6 +128,7 @@ function MyGroupsViewer({
               setIsEditGroupModal={setIsEditGroupModal}
               mode={mode}
               isHeadphone={isHeadphone}
+              setRightClickedMember={setRightClickedMember}
             /> : null
           }
         </SwiperSlide>

@@ -51,7 +51,7 @@ async function subjectsCache(userId) {
     } else {
       try {
         const connection = pool.promise();
-        const [subjects] = await connection.query(`SELECT id, name, icon, tools, color, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
+        const [subjects] = await connection.query(`SELECT id, name, icon, tools, color, datum_point, timeline_sum, hidden FROM subjects where user_id = ?`, [userId]);
         subjects.map(async (subject) => {
           const redisSubject = { ...subject };
           delete redisSubject.id;
@@ -79,7 +79,7 @@ async function subjectCache(userId, subjectId) {
     } else {
       try {
         const connection = pool.promise();
-        const [subjects] = await connection.query(`SELECT id, name, icon, color, tools, datum_point, timeline_sum FROM subjects where user_id = ?`, [userId]);
+        const [subjects] = await connection.query(`SELECT id, name, icon, color, tools, datum_point, timeline_sum, hidden FROM subjects where user_id = ?`, [userId]);
         subjects.map(async (subject) => {
           const redisSubject = { ...subject };
           delete redisSubject.id;
@@ -157,9 +157,9 @@ async function groupMembersCache(id) {
 
 async function chatRoomsCache(userId) {
   try {
-    let dmRooms = await dmRoomsCache(userId);
+    const dmRooms = await dmRoomsCache(userId);
     const groups = await groupCache(userId);
-    const groupRooms = groups.map(group => {
+    const groupRooms = groups.map((group) => {
       return { id: group, type: 0, members: [] };
     });
     const dmRoomPromises = dmRooms.map(async (dmRoom) => {
@@ -220,10 +220,9 @@ async function activeSubjectCache(userId) {
 
 async function activeGroupCache(userId) {
   try {
-    const isCached = await redisClient.hExists(`user:${userId}`, `ActiveGroup`);
-    if (isCached) {
-      const activeGroup = await redisClient.hGet(`user:${userId}`, `ActiveGroup`);
-      return activeGroup;
+    const activeGroup = await redisClient.hGet(`user:${userId}`, `ActiveGroup`);
+    if (activeGroup) {
+      return JSON.parse(activeGroup);
     } else {
       return false;
     };
@@ -256,15 +255,50 @@ async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000),
   }
 };
 
-async function usersCache(userId) {
+
+function addActiveUserCache(userId) {
+  redisClient.sAdd('day1', userId);
+  redisClient.sAdd('day2', userId);
+
+  redisClient.sAdd('week1', userId);
+  redisClient.sAdd('week2', userId);
+
+  redisClient.sAdd('month1', userId);
+  redisClient.sAdd('month2', userId);
+};
+
+/**
+ * type 0 = day
+ * 1 = week
+ * 2= month
+ * @param {*} userId 
+ * @param {*} type 
+ */
+async function getActiveUser(userId, type) {
   try {
-    redisClient.sAdd(`allMembers`, userId);
+    if (!type) {
+      const day1 = await redisClient.sMembers('day1', userId);
+      const day2 = await redisClient.sMembers('day2', userId);
+      return [...new Set([...day1, ...day2])];
+    };
+
+    if (type === 1) {
+      const week1 = await redisClient.sMembers('week1', userId);
+      const week2 = await redisClient.sMembers('week2', userId);
+      return [...new Set([...week1, ...week2])];
+    };
+
+    const month1 = await redisClient.sMembers('month1', userId);
+    const month2 = await redisClient.sMembers('month2', userId);
+    return [...new Set([...month1, ...month2])];
+
   } catch (err) {
     console.log(err);
-  }
+    return [];
+  };
 }
 
-async function userCache(userId) {
+async function userCache(userId, query=true) {
   try {
     if (!userId) return false;
     const isCached = await redisClient.hExists(`user:${userId}`, 'name');
@@ -274,17 +308,12 @@ async function userCache(userId) {
       userInfo.friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
       return {...userInfo, user_id: userId};
     } else {
+      if (!query) return false;
+
       const connection = pool.promise();
       const [[userInfo]] = await connection.query("SELECT name, email, groups, friends, timezone, datum_point FROM users WHERE user_id = ?", [userId]);
       if (userInfo) {
-        const { name, email, timezone, datum_point } = userInfo;
-        redisClient.hSet(`user:${userId}`, 'name', name);
-        redisClient.hSet(`user:${userId}`, 'email', email);
-        redisClient.hSet(`user:${userId}`, 'groups', userInfo.groups);
-        redisClient.hSet(`user:${userId}`, 'friends', userInfo.friends);
-        redisClient.hSet(`user:${userId}`, 'timezone', timezone);
-        redisClient.hSet(`user:${userId}`, 'datum_point', datum_point);
-        redisClient.expire(`user:${userId}`, 60 * 60 * 10);
+        cacheUserInfo(userInfo);
         userInfo.groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
         userInfo.friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
         return { ...userInfo, user_id: userId };
@@ -295,6 +324,51 @@ async function userCache(userId) {
   } catch (err) {
     console.log(err);
   }
+}
+
+/**
+ * upgraded version of user cache, if user is cached, return userCache result, otherwise, combine users that are not cached and handle as one query
+ * @param {*} users 
+ */
+async function usersCache(users, cache) {
+  try {
+    const notCached = [];
+    const usersInfo = []
+    await Promise.all(users.map(async(userId) => {
+      const userInfo = await userCache(userId, false);
+      if (userInfo) {
+        usersInfo.push(userInfo);
+      } else {
+        notCached.push(userId);
+      };
+    }));
+
+    const connection = pool.promise();
+
+    const [queriedUsers] = await connection.query("SELECT name, email, groups, friends, timezone, datum_point, user_id FROM users WHERE user_id IN (?)", [notCached]);
+    queriedUsers.map(userInfo => {
+      if (cache) {
+        cacheUserInfo(userInfo);
+      };
+      userInfo.groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
+      userInfo.friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
+      usersInfo.push(userInfo);
+    });
+    return usersInfo;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+async function cacheUserInfo(userInfo) {
+  const { name, email, timezone, datum_point, user_id, groups, friends } = userInfo;
+  redisClient.hSet(`user:${user_id}`, 'name', name);
+  redisClient.hSet(`user:${user_id}`, 'email', email);
+  redisClient.hSet(`user:${user_id}`, 'groups', groups);
+  redisClient.hSet(`user:${user_id}`, 'friends', friends);
+  redisClient.hSet(`user:${user_id}`, 'timezone', timezone);
+  redisClient.hSet(`user:${user_id}`, 'datum_point', datum_point);
+  redisClient.expire(`user:${user_id}`, 60 * 60 * 10);
 }
 
 /**
@@ -472,5 +546,7 @@ module.exports = {
   challengeroomsCache,
   websiteUsageCache,
   googleAccessTokenCache,
-  zsetIncrAll
+  zsetIncrAll,
+  getActiveUser,
+  addActiveUserCache
 }

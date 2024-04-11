@@ -66,11 +66,8 @@ Router.post('/create', async (req, res) => {
       const userId = req.session.user_id;
       const { name, tags, description, url } = req.body;
       console.log(name.length, tags, description, url);
-      if (!name || name.length >= 40) return res.send({ success: false, reason: 'Invalid name' });
-      if (!description) return res.send({ success: false, reason: 'No description' })
-      if (!url) return res.send({ success: false, reason: 'no url ' });
 
-      const isValidName = validateString(name, 'theme name');
+      const isValidName = validateString(name, 'theme name', 40);
 
       if (!isValidName.isValid) {
         return res.send({ success: false, reason: isValidName.reason });
@@ -88,8 +85,8 @@ Router.post('/create', async (req, res) => {
         return res.send({ success: false, reason: isValidURL.reason });
       };
 
-      const videoId = new URLSearchParams(new URL(url).search).get("v");
-      if (!videoId) return res.send({ success: false, reason: 'Invalid URL' });
+      const videoId = new URLSearchParams(new URL(isValidURL.url).search).get("v");
+      if (!videoId) return res.send({ success: false, reason: 'Invalid Youtube link' });
       const connection = pool.promise();
       const id = generateRandomId(10);
       const themeInfo = { id, name, description, video_id: videoId, tags: tags.join(','), user_id: userId };

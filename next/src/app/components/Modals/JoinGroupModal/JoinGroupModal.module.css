@@ -1,0 +1,52 @@
+.JoinGroupModal {
+  width: 31.25rem;
+  z-index: 3;
+  background-color: #fff;
+  overflow: hidden;
+  overflow-y: hidden;
+  border-radius: 1.875rem;
+  box-shadow: var(--shadow3);
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.JoinGroupModal .header {
+  background-color: var(--pink);
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.JoinGroupModal .header i {
+  font-size: 1.875rem;
+  color: #fff;
+  margin-left: auto;
+  margin-right: 0.625rem;
+  cursor: pointer;
+}
+
+.JoinGroupModal .groupWrapper {
+  padding: 1.5rem;
+}
+
+.JoinGroupModal .contents {
+  display: flex;
+  flex-direction: column;
+  padding: 0.3rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.JoinGroupModal .blobWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem 0rem;
+}
+
+.JoinGroupModal .text {
+  display: flex;
+  justify-content: center;
+  font-size: 1.3rem;
+}

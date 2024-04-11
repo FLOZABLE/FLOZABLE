@@ -1,0 +1,20 @@
+.member {
+  height: 7.5rem;
+  margin: 0.625rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 1.25rem;
+  box-shadow: rgba(149, 157, 165, 0.2) 0em 0.5rem 1.5rem;
+  background-color: #00000050;
+  position: relative;
+  overflow: hidden;
+}
+
+.member .inner {
+  padding: 0.625rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  z-index: 1;
+}

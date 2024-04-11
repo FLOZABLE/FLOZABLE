@@ -1,0 +1,52 @@
+.ArrowOptionBtn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ArrowOptionBtn .options {
+  display: flex;
+  justify-content: center;
+}
+
+.ArrowOptionBtn .options p {
+  margin: 0em 3.125rem;
+  color: #000;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 1.563rem;
+}
+
+.ArrowOptionBtn .slider {
+  position: relative;
+  height: 1.25rem;
+  width: 4.375rem;
+  background-color: #fff;
+  border-radius: 0.625rem;
+  margin: 0.625rem;
+  cursor: pointer;
+}
+
+.ArrowOptionBtn .slider .arrow {
+  position: absolute;
+  width: 1.875rem;
+  height: 1.875rem;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  border-radius: 1.25rem;
+  background-color: #000;
+  font-size: 1.875rem;
+  right: calc(100% - 1.25rem);
+  top: 50%;
+  transition: right .3s ease-in-out, transform .5s ease-in-out;
+  transform: translateY(-50%) rotate(-40deg);
+  color: #fff;
+}
+
+.ArrowOptionBtn .slider .arrow.clicked {
+  right: -0.625rem;
+  transform: translateY(-50%) rotate(400deg);
+}

@@ -1,12 +1,12 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/Components/Others/Header/Header";
-import { AppProvider } from "@/utils/Contexts";
-import Sidebar from "@/Components/Others/Sidebar/Sidebar";
-import EventModal from "@/Components/Modals/EventModal/EventModal";
-import AddSubjectModal from "@/Components/Modals/AddSubjectModal/AddSubjectModal";
-
-const inter = Inter({ subsets: ["latin"] });
+import { AppProvider } from "@/app/utils/Contexts";
+import EventModal from "@/app/components/Modals/EventModal/EventModal";
+import AddSubjectModal from "@/app/components/Modals/AddSubjectModal/AddSubjectModal";
+import JoinGroupModal from "@/app/components/Modals/JoinGroupModal/JoinGroupModal";
+import TopNotification from "@/app/components/Modals/TopNotification/TopNotification";
+import ChatModal from "@/app/components/Modals/ChatModal/ChatModal";
+import NotificationModal from "@/app/components/Modals/NotificationModal/NotificationModal";
+import AccountModal from "@/app/components/Modals/AccountModal/AccountModal";
 
 export const metadata = {
   title: "Create Next App",
@@ -16,15 +16,22 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+      </head>
+      <body>
         <AppProvider>
-          <Header />
           <EventModal />
+          <ChatModal />
+          <AccountModal />
+          <TopNotification />
+          <JoinGroupModal />
           <AddSubjectModal />
+          <NotificationModal />
           {children}
-          <Sidebar />
         </AppProvider>
-
       </body>
     </html>
   );

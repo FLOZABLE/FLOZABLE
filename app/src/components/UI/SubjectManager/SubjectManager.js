@@ -10,7 +10,7 @@ import { subjectIcons } from "../../../constant";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import SelectTool from "../SelectTool.js/SelectTool";
 
-function SubjectManager({ subject, setSelectedSubject, selectedSubject }) {
+function SubjectManager({ subject, setSelectedSubject, selectedSubject, deleteSubject }) {
 
   const [selectedColor, setSelectedColor] = useState(null);
   const [isSelectColor, setIsSelectColor] = useState(false);
@@ -18,6 +18,7 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject }) {
   const [isSelectIcon, setIsSelectIcon] = useState(false);
   const [selectedTool, setSelectedTool] = useState([]);
   const [isSelectTool, setIsSelectTool] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   const [name, setName] = useState("");
 
@@ -26,7 +27,8 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject }) {
     const { icon, name, color } = subject;
     setSelectedIcon({ el: subjectIcons[icon], name: icon });
     setSelectedColor(color);
-    const tools = !subject.tools ? [] : subject.tools.split(",");
+    console.log(subject);
+    const tools = Array.isArray(subject.tools) ? subject.tools : subject.tools.length ? subject.tools.split(",") : [];
     setSelectedTool(tools);
     setName(name);
   }, [subject]);
@@ -106,10 +108,30 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject }) {
           setIsSelectIcon={setIsSelectIcon}
         />
       </div>
-      {selectedSubject?.id === subject?.id ?
-        <BlobBtn name={"SUBMIT"} setClicked={() => { setSelectedSubject({ color: selectedColor, icon: selectedIcon.name, id: subject.id, name, tools: selectedTool, submit: true }) }} />
-        : null
+      {
+        deleteConfirm ?
+          <div className={styles.confirmDelete}>
+            <p>Note: Deleted subjects will still be visible in stats if you've studied the subject today</p>
+            <br />
+          </div>
+          :
+          null
       }
+      <div className={styles.actionButtons}>
+        <button
+          className={styles.cancelButton}
+          onClick={() => setSelectedSubject({ submit: false, color: null, icon: null, name: null, id: null, tools: [] })}
+        >
+          Cancel
+        </button>
+        <BlobBtn name={"SUBMIT"} setClicked={() => { setSelectedSubject({ color: selectedColor, icon: selectedIcon.name, id: subject.id, name, tools: selectedTool, submit: true }) }} />
+        {
+          deleteConfirm ?
+            <BlobBtn name={"Confirm"} setClicked={() => { deleteSubject(subject.id) }} color2="red" />
+            :
+            <BlobBtn name={"DELETE"} setClicked={() => { setDeleteConfirm(true) }} color2="red" />
+        }
+      </div>
     </div>
   );
 }

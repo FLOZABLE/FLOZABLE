@@ -1,0 +1,60 @@
+.ThemeSelector {
+  width: 31.25rem;
+}
+
+.ThemeSelector .themeContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 12.5rem);
+  justify-content: center;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  max-height: 18.75rem;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.ThemeSelector .video {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 1.25rem;
+  box-shadow: rgba(149, 157, 165, 0.2) 0em 0.5rem 1.5rem;
+  background-color: #00000050;
+  position: relative;
+  overflow: hidden;
+  height: 6.25rem;
+  cursor: pointer;
+}
+
+.ThemeSelector .video img {
+  height: auto;
+}
+
+.ThemeSelector .categoryLabel {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 0.313rem;
+  width: 90%;
+  text-align: center;
+  margin-top: 0.313rem;
+}
+
+.ThemeSelector .categoryLabel p {
+  color: white;
+}
+
+.ThemeSelector button {
+  background-color: rgb(215, 215, 215);
+  width: 50%;
+}
+
+.ThemeSelector .nameLabel {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 0.313rem;
+  width: 90%;
+  text-align: center;
+  margin-top: 0.313rem;
+}
+
+.ThemeSelector .nameLabel p {
+  color: white;
+}

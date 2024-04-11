@@ -1,0 +1,59 @@
+.Groups {
+  padding: 3.125rem;
+}
+
+.Groups .box {
+  margin: 1.875rem 0em;
+  background-color: #fff;
+  box-shadow: var(--shadow9);
+  border-radius: 2.5rem;
+  padding: 1.25rem;
+}
+
+.Groups .box:nth-child(1) {
+  height: calc(100vh - 18.75rem);
+}
+
+.Groups .box .searchOpt {
+  display: flex;
+  margin-bottom: 6.25rem;
+}
+
+.Groups .box .searchOpt > div {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Groups .box .searchOpt .searchWrapper {
+  width: 18.75rem;
+}
+
+.Groups button#createGroupBtn {
+  border: 0.0625rem solid var(--purple2);
+  display: flex;
+  align-items: center;
+  padding: 0em 0.625rem;
+  height: 2.5rem;
+  border-radius: 1.875rem;
+  color: var(--purple2);
+}
+
+.Groups .box:nth-child(2) {
+  min-height: 60vh;
+}
+
+.Groups .tagContainerWrapper {
+  width: 18.75rem;
+}
+
+@media (max-width: 87.5rem) {
+  .Groups .tagContainerWrapper {
+    width: 13.75rem;
+  }
+}
+
+@media (max-width: 75rem) {
+
+}
