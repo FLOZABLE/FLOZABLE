@@ -1,0 +1,100 @@
+.selectTool .header {
+  display: flex;
+  z-index: 2;
+  margin-top: 2.5rem;
+}
+
+.selectTool .header p {
+  font-size:  1.438rem;
+  font-weight: 700;
+  color: #545454;
+}
+
+.selectTool .header .selectedTool {
+  margin-left: 0.625rem;
+  background-color: #fff;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+  width: 3.125rem;
+  height: 3.125rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.625rem;
+  cursor: pointer;
+  font-size: 1.875rem;
+  position: relative;
+}
+
+.selectTool .header .selectedTool:hover .hoverDisp {
+  visibility: visible;
+  opacity: 1;
+  z-index: 3;
+}
+
+.selectTool .icons {
+  display: flex;
+  flex-wrap: wrap;
+  height: 0em;
+  transition: .3s height ease-in-out, .3s width ease-in-out;
+  overflow-y: hidden;
+}
+
+.selectTool .icons.open {
+  height: 5.375rem;
+}
+
+.selectTool .iconWrapper {
+  background-color: #fff;
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 0.625rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+  margin: 0.625rem;
+  transition: box-shadow .3s ease-in-out, width .3s ease-in-out, height .3s ease-in-out, margin-left 0.2s ease 0.2s, margin-top .3s ease-in-out;
+  position: relative;
+  margin-left: -6.25rem;
+  cursor: pointer;
+  font-size: 1.875rem;
+}
+
+.selectTool .hoverDisp {
+  position: absolute;
+  top: 0em;
+  font-size: 0.813rem;
+  white-space: nowrap;
+  background-color: var(--opacity-black);
+  padding: 0.1875rem 0.313rem;
+  border-radius: 0.4375rem;
+  color: #fff;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
+  visibility: hidden;
+  top:  3.75rem;
+  left: 0em;
+}
+
+.selectTool .iconWrapper:hover {
+  width: 3.438rem;
+  height: 3.438rem;
+  margin-top: 0.313rem !important;
+  box-shadow: rgba(0, 0, 0, 0.16) 0em 0.625rem 2.25rem 0em, rgba(0, 0, 0, 0.06) 0em 0em 0em 0.0625rem;
+}
+
+.selectTool .iconWrapper:hover .hoverDisp{
+  visibility: visible;
+  opacity: 1;
+}
+
+.selectTool .icons.open .iconWrapper {
+  margin: 0.625rem;
+}
+
+@media (max-width: 87.5rem) {
+  .selectTool .header p {
+    font-size:  1.25rem;
+  }
+}

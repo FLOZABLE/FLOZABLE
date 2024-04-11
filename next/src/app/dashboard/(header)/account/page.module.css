@@ -1,0 +1,197 @@
+.Account .boxContainer {
+  width: 80%;
+  margin-left: 10%;
+}
+
+.Account .boxWrapper {
+  display: flex;
+}
+
+.Account .box {
+  background-color: rebeccapurple;
+  width: 100%;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow9);
+  background-color:#fff;
+  margin: 1.25rem;
+  position: relative;
+}
+
+.Account .box#extension .title {
+  margin-bottom: 2rem;
+}
+
+.Account .boxWrapper .box#accounts .title p {
+  margin-bottom: 1.2rem;
+}
+
+.Account .submitWrapper {
+  position: absolute;
+  right: 1.875rem;
+  bottom: 1.875rem;
+  margin: 0em !important;
+}
+
+.Account .content #passwordReq {
+  margin-left: 1.25rem;
+}
+
+.Account .content #passwordReq h3{
+  font-weight: 300;
+}
+.Account .box#profile .emailWrapper {
+  display: flex;
+}
+
+.Account .box#profile .emailWrapper>div {
+  width: 100%;
+  margin-top: 0.625rem;
+  justify-content: left;
+} 
+
+.Account .box#accounts > div:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+}
+
+.Account .box#accounts > div:nth-child(2) > div {
+  display: flex;
+  margin-bottom: 1.875rem;
+}
+
+.Account .box#accounts .iconWrapper {
+  margin-left: 1rem;
+  margin-top: 0rem;
+  font-size: 3rem;
+  width: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Account .box#accounts .explanation {
+  margin-top: 1rem;
+  padding-right: 1.5rem;
+  padding-left: 1rem;
+  max-width: 78%;
+  left: 1px;
+}
+
+.Account .box#profile .emailWrapper .ProfileConfirm {
+  margin-left: 3vh;
+}
+
+.Account .box#profile .contents>div {
+  margin-right: 7%;
+}
+
+.Account .box#profile .contents {
+  margin-right: 6.25rem;
+  width: 100%;
+}
+
+.Account #passwordReq ul li {
+  list-style: disc;
+  margin-left: 1.875rem ;
+}
+
+/* profile pic selector */
+
+.Account .box#profileImg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.Account .imgSelector {
+  position: relative;
+}
+
+.Account .profilePic {
+  width: 12.5rem;
+  height: auto;
+  object-fit: cover;
+}
+
+.Account .fileUpload {
+  display: none;
+}
+
+.Account .circle {
+  border-radius: 100% !important;
+  overflow: hidden;
+  width: 12.5rem;
+  height: 12.5rem;
+  border: 0.125rem solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  box-shadow: rgba(0, 0, 0, 0.24) 0em 0.1875rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Account .pImage {
+  position: absolute;
+  top: 10.625rem;
+  left: 10.625rem;
+  color: #666666;
+  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+  background-color: #fff;
+  width: 1.875rem;
+  height: 1.875rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+}
+
+.Account .pImage:hover {
+  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+}
+
+.Account .uploadBtn {
+  font-size: 1.2em;
+}
+
+.Account .uploadBtn:hover {
+  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+  color: #999;
+}
+
+
+.Account #welcome {
+  font-size: 1.875rem;
+  margin-top: 2.5rem;
+}
+
+@media (max-width: 87.5rem) {
+  .Account .boxContainer {
+    width: 90%;
+    margin-left: 5%;
+  }
+
+  .Account .box {
+    padding: 0.938rem;
+    margin: 0.938rem;
+  }
+}
+
+@media (max-width: 75rem) {
+  .Account {
+    padding: 1.875rem;
+  }
+
+  .Account .boxContainer {
+    width: 100%;
+    margin: 0em;
+  }
+
+  .Account .box {
+    padding: 0.625rem;
+    margin: 0.938rem;
+  }
+}
