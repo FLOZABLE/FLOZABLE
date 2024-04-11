@@ -1,0 +1,53 @@
+.LabelMovingInput {
+  position: relative;
+  width: 90%;
+  height:  3.75rem;
+  margin: 0.75rem;
+  margin-left: 3%;
+  top: 0;
+}
+
+.LabelMovingInput label {
+  position: absolute;
+  background-color: transparent;
+  border-radius: 0.938rem;
+  padding: 0.1875rem 0.313rem;
+  top: 0.625rem;
+  left: 0.938rem;
+  transition: top .3s ease-in-out, left .3s ease-in-out, font-size .3s ease-in-out, background-color .3s ease-in-out, opacity .3s ease-in-out;
+  font-size: 1.125rem;
+  font-weight: 100;
+  color: rgb(95, 95, 95);
+  display: flex;
+  align-items: center;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.LabelMovingInput label.hidden {
+  opacity: 0;
+}
+
+.LabelMovingInput input:focus ~ label {
+  opacity: 1;
+}
+
+.LabelMovingInput input {
+  background-color: transparent;
+  border: 0.0625rem solid #b9b9b9;
+  transition: .3s border ease-in-out;
+  height: 2.813rem;
+  padding-left: 0.625rem;
+  border-radius: 0.938rem;
+  width: 100%;
+}
+
+.LabelMovingInput input:focus {
+  border: 0.125rem solid #e91e63;
+}
+
+.LabelMovingInput input:focus~label {
+  top: -0.625rem;
+  font-size: 1rem;
+  background-color: #fff;
+}
