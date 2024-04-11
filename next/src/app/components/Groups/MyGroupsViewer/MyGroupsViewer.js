@@ -16,6 +16,7 @@ function MyGroupsViewer({
   mode,
   groupsViewerRef,
   setIsEditGroupModal,
+  setRightClickedMember
 }) {
   const { myGroups, setMyGroups } = useContext(GroupsContext);
   const { userInfo } = useContext(UserInfoContext);
@@ -110,6 +111,7 @@ function MyGroupsViewer({
                     setIsEditGroupModal={setIsEditGroupModal}
                     mode={mode}
                     isMine={group.leader === userInfo?.user_id}
+                    setRightClickedMember={setRightClickedMember}
                   /> : null
                 }
               </SwiperSlide>
