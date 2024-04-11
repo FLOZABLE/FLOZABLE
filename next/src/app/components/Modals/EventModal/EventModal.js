@@ -15,8 +15,6 @@ import {
 import Draggable from "react-draggable";
 import { ModalsContext, PlansContext, ResponseContext, SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
 import config from "@/app/utils/config";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
 import DateSelector from "@/app/components/Plans/DateSelector/DateSelector";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import DropDownButton from "@/app/components/Buttons/DropDownButton/DropDownButton";
@@ -30,22 +28,18 @@ function EventModal({
   const {plans, setPlans, planModal ,setPlanModal} = useContext(PlansContext);
   const {setResponse} = useContext(ResponseContext);
   const {setIsAddSubjectModal} = useContext(ModalsContext);
-  const {tutorialBoxRef, tutorialTextRef} = useContext(TutorialsContext);
+  const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
 
 
-  /* const searchParams = useSearchParams(); */
   const eventModalRef = useRef(null);
   const titleRef = useRef(null);
   const addSubjectRef = useRef(null);
   const submitRef = useRef(null);
-  const dragRef = useRef(null);
-  const router = useRouter();
 
-  /* useEffect(() => {
-    if (!searchParams) return;
+  useEffect(() => {
+    if (!tutorial) return;
 
-    const tutorial = searchParams.get("tutorial");
-    if (tutorial && parseInt(tutorial) === 2) {
+    if (tutorial === 2) {
       setTimeout(() => {
         if (!planModal.opened) {
           searchParams.delete('tutorial');
@@ -70,14 +64,13 @@ function EventModal({
         tutorialTextRef.current.innerText = "Enter the event information!";
 
         setTimeout(() => {
-          setSearchParams({ ...searchParams, tutorial: 3 })
+          setTutorial(3);
         }, 5000);
       }, 500);
-    } else if (tutorial && parseInt(tutorial) === 3) {
+    } else if (tutorial === 3) {
       setTimeout(() => {
         if (!planModal.opened) {
-          searchParams.delete('tutorial');
-          setSearchParams(searchParams);
+          setTutorial(false);
           return;
         }
 
@@ -91,8 +84,7 @@ function EventModal({
         tutorialTextRef.current.style.left = left - 10 + 'px';
         tutorialTextRef.current.innerText = "Add a subject!";
       }, 500);
-    } else if (tutorial && parseInt(tutorial) === 5) {
-
+    } else if (tutorial === 5) {
       submitRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
       const { left } = submitRef.current.getBoundingClientRect();
@@ -113,7 +105,7 @@ function EventModal({
       }
       setTimeout(moveTutorialBoxes, 2000);
     }
-  }, [searchParams]); */
+  }, [tutorial]);
 
 
   const submit = () => {
@@ -145,7 +137,9 @@ function EventModal({
             setPlans(updatedEvents);
           }
           setPlanModal(prev => ({ ...prev, opened: false, id: null }));
-          //if (searchParams.get("tutorial")) setSearchParams(prev => ({ ...prev, tutorial: 6 }));
+          if (tutorial === 5) {
+            setTutorial(6);
+          };
         }
       })
       .catch((error) => console.error(error));
@@ -364,10 +358,9 @@ function EventModal({
                     name={"Add Subject"}
                     setClicked={() => {
                       setIsAddSubjectModal(true);
-                      /* const tutorial = searchParams.get("tutorial");
-                      if (tutorial === "3") {
-                        setSearchParams({ ...searchParams, tutorial: 4 })
-                      } */
+                      if (tutorial === 3) {
+                        setTutorial(4);
+                      };
                     }}
                     delay={-1}
                     id="tutorial-3"

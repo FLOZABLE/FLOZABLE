@@ -48,10 +48,9 @@ function MyGroupContainer({
   leaveGroup,
   setIsEditGroupModal,
   isMine,
-  setRightClickedMember
 }) {
   const { isCam, isMic } = useContext(CallOptionsContext);
-  const { setIsChatModal } = useContext(ModalsContext);
+  const { setChatModal } = useContext(ModalsContext);
 
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -376,7 +375,7 @@ function MyGroupContainer({
             </div>
             <div
               onClick={() => {
-                setIsChatModal((prev) => (!prev ? group : ""));
+                setChatModal((prev) => ({...prev, chatRoom: group.group_id, open: true}));
               }}
             >
               <i>
