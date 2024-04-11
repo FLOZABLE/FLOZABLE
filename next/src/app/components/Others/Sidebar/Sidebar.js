@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./Sidebar.module.css";
 import Link from "next/link";
 import { IconBxHome, IconClipboardOutline, IconGalleryLine, IconPeople16, IconRankingChart, IconStatsChart, IconUserAdd } from "@/app/utils/Svg";
-import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { TutorialsContext } from "@/app/utils/Contexts";
 
 function Sidebar({
 }) {
+  const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
 
-  //const [searchParams, setSearchParams] = useSearchParams();
-  const toPlannerRef = useRef(null);
   const toStatsRef = useRef(null);
   const toGroupsRef = useRef(null);
-  const [tutorial, setTutorial] = useState(null);
 
   /* useEffect(() => {
     if (!searchParams) return;
@@ -50,33 +49,61 @@ function Sidebar({
     }
   }, [searchParams]); */
 
+  useEffect(() => {
+    if (tutorial === 11) {
+      setTimeout(() => {
+        const { width, top, left, height } = toStatsRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left - 20 + 'px';
+        tutorialBoxRef.current.style.top = top - 20 + 'px';
+        tutorialBoxRef.current.style.width = width + 40 + 'px';
+        tutorialBoxRef.current.style.height = height + 40 + 'px';
+  
+        tutorialTextRef.current.style.top = top + height + 30 + 'px';
+        tutorialTextRef.current.style.left = left - 20 + 'px';
+        tutorialTextRef.current.innerText = "Navigate to your stats with the sidebar";
+      }, 500);
+    };
+  }, [tutorial]);
+
   return (
     <aside className={styles.Sidebar}>
       <div className={styles.logo}>
         <a href="https://flozable.com">
-          <img src="/logo.png" alt="" />
+          <Image
+            src="/logo.png"
+            alt="FLOZABLE"
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: '100%', height: 'auto' }}
+          />
         </a>
       </div>
       <div className={styles.sidebarContainer}>
         <div>
-           <Link
-             className={styles.sidebarEl}
-             href={"/dashboard"}
-           >
-              <div className={styles.hoverField}> 
-                <h4>Dashboard</h4>
-              </div>
-             <i>
-               <IconBxHome />    
-             </i>
-             {/* <h1>Home</h1> */}
-           </Link> 
+          <Link
+            className={styles.sidebarEl}
+            href={"/dashboard"}
+          >
+            <div className={styles.hoverField}>
+              <h4>Dashboard</h4>
+            </div>
+            <i>
+              <IconBxHome />
+            </i>
+            {/* <h1>Home</h1> */}
+          </Link>
         </div>
         <div>
           <Link
             className={styles.sidebarEl}
-            href={tutorial ? `/dashboard/stats?tutorial=${tutorial + 1}` : "/dashboard/stats"} 
-            id="tutorial-10"
+            href="/dashboard/stats"
+            id="tutorial-11"
+            onClick={() => {
+              if (tutorial === 11) {
+                setTutorial(12);
+              };
+            }}
           >
             <div className={styles.hoverField}>
               <h4>Stats</h4>
@@ -91,16 +118,14 @@ function Sidebar({
           <Link
             className={styles.sidebarEl}
             href={"/dashboard/planner"}
-            id="tutorial-6"
-            ref={toPlannerRef}
           >
             <div className={styles.hoverField}>
               <h4>Planner</h4>
             </div>
             <i>
-              <IconClipboardOutline /> 
+              <IconClipboardOutline />
             </i>
-           {/* <h1>Planner</h1> */}
+            {/* <h1>Planner</h1> */}
           </Link>
         </div>
         <div>
@@ -114,7 +139,7 @@ function Sidebar({
             <i>
               <IconRankingChart />
             </i>
-          {/* <h1>Rank</h1> */}
+            {/* <h1>Rank</h1> */}
           </Link>
         </div>
         <div>
@@ -123,13 +148,13 @@ function Sidebar({
             href={"/dashboard/groups"}
           >
             <div className={styles.hoverField}>
-             <h4>Groups</h4>
-           </div>
+              <h4>Groups</h4>
+            </div>
             <i ref={toGroupsRef}>
-             <IconPeople16 /> 
-           </i>
+              <IconPeople16 />
+            </i>
             {/* <h1>Groups</h1> */}
-         </Link>
+          </Link>
         </div>
         <div>
           <Link
@@ -138,11 +163,11 @@ function Sidebar({
           >
             <div className={styles.hoverField}>
               <h4>Friends</h4>
-           </div>
+            </div>
             <i>
-              <IconUserAdd /> 
+              <IconUserAdd />
             </i>
-           {/* <h1>Friends</h1> */}
+            {/* <h1>Friends</h1> */}
           </Link>
         </div>
         <div>
@@ -154,12 +179,12 @@ function Sidebar({
               <h4>Themes</h4>
             </div>
             <i>
-              <IconGalleryLine /> 
+              <IconGalleryLine />
             </i>
             {/* <h1>Themes</h1> */}
           </Link>
         </div>
-    </div>
+      </div>
     </aside>
   );
 }

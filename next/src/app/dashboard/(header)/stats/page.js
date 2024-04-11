@@ -7,16 +7,17 @@ import DateSelectorBtn from "@/app/components/Buttons/DateSelectorBtn/DateSelect
 import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
 import SubjectsPie from "@/app/components/Charts/SubjectsPie";
 import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from "@/app/utils/Svg";
-import { SubjectsContext } from "@/app/utils/Contexts";
+import { SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
 import { focusCalculator, secondConverter } from "@/app/utils/Tool";
 import { DateTime } from "luxon";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart";
-import { CartesianGrid, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { PieCustomTooltip } from "@/app/components/Charts/Charts";
 import RankingTrend from "@/app/components/Charts/RankingTrendChart";
 
 function Stats({}) {
   const {subjects} = useContext(SubjectsContext);
+  const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
@@ -31,6 +32,27 @@ function Stats({}) {
   const [websitesVisit, setWebsitesVisit] = useState(0);
 
   const statsRef = useRef(null);
+
+  useEffect(() => {
+    if (tutorial === 12) {
+
+      setTimeout(() => {
+        const { width, top, left, height } = statsRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left + 'px';
+        tutorialBoxRef.current.style.top = top  + 'px';
+        tutorialBoxRef.current.style.width = width + 'px';
+        tutorialBoxRef.current.style.height = height + 'px';
+  
+        tutorialTextRef.current.style.top = top - 70 + 'px';
+        tutorialTextRef.current.style.left = left + 'px';
+        tutorialTextRef.current.innerText = "You can analyze your study habits here!";
+      }, 500);
+
+      setTimeout(() => {
+        setTutorial(13);
+      }, 4000);
+    }
+  }, [tutorial]);
 
   
   useEffect(() => {

@@ -3,10 +3,11 @@
 import styles from "./SmallSubjectsViewer.module.css";
 import { PieChart, Pie, Tooltip, ResponsiveContainer } from "recharts";
 import { secondConverter } from "@/app/utils/Tool";
-import { PieCustomTooltip } from "@/app/components/Charts/Charts";
+import { PieCustomTooltip, pieCustomLabel } from "@/app/components/Charts/Charts";
 import Link from "next/link";
 import { useContext } from "react";
 import { SubjectsContext } from "@/app/utils/Contexts";
+import { coldColorsList } from "@/app/utils/Constant";
 
 function SmallSubjectsViewer({}) {
   const {subjects} = useContext(SubjectsContext);

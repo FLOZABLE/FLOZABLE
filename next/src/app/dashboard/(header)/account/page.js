@@ -297,7 +297,7 @@ function Account() {
                 <div className={styles.title}>
                   <h1>Chrome Extension</h1>
                   <p>
-                    Here you can setup and manage your chrome extension's tracking
+                    Here you can setup and manage your chrome extension&apos;s tracking
                     option (Default option for all websites is all enabled)
                   </p>
                 </div>
@@ -323,7 +323,7 @@ function Account() {
                     </div>
                     <div className={styles.explanation}>
                       <p>
-                        You haven't connected your Google Calendar yet or you aren't authorized. Please authorize our application to access your Google Calendar
+                        You haven&apos;t connected your Google Calendar yet or you aren&apos;t authorized. Please authorize our application to access your Google Calendar
                         by signing in with your Google account here.
                       </p>
                     </div>
@@ -340,7 +340,7 @@ function Account() {
                     </div>
                     <div className={styles.explanation}>
                       <p>
-                        You haven't connected your YouTube Account yet or you aren't authorized. Please authorize our application to access your YouTube Playlists here.
+                        You haven&apos;t connected your YouTube Account yet or you aren&apos;t authorized. Please authorize our application to access your YouTube Playlists here.
                       </p>
                     </div>
                     <div className={styles.authBtn}>
@@ -354,7 +354,7 @@ function Account() {
                     </div>
                     <div className={styles.explanation}>
                       <p>
-                        You haven't connected your Spotify Account yet or you aren't authorized. Please authorize our application to access your Spotify Playlists here.
+                        You haven&apos;t connected your Spotify Account yet or you aren&apos;t authorized. Please authorize our application to access your Spotify Playlists here.
                       </p>
                     </div>
                     <div className={styles.authBtn}>

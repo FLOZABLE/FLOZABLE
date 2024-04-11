@@ -292,16 +292,18 @@ function ModalsProvider({ children }) {
 }
 
 function TutorialsProvider({ children }) {
-  const [tutorialBoxRef, setTutorialBoxRef] = useState(null);
-  const [tutorialTextRef, setTutorialTextRef] = useState(null);
+  const tutorialBoxRef = useRef(null);
+  const tutorialTextRef = useRef(null);
+
+  const [tutorial, setTutorial] = useState(false);
 
   return (
     <TutorialsContext.Provider
       value={{
         tutorialBoxRef,
-        setTutorialBoxRef,
         tutorialTextRef,
-        setTutorialTextRef,
+        tutorial,
+        setTutorial
       }}
     >
       {children}

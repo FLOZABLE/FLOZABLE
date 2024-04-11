@@ -18,26 +18,18 @@ function Header({
   const { userInfo } = useContext(UserInfoContext);
   const { notifications } = useContext(NotificationsContext);
   const { setChatModal, chatModal, setIsNotificationModal } = useContext(ModalsContext);
-  const { tutorialBoxRef, tutorialTextRef } = useContext(TutorialsContext);
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } = useContext(TutorialsContext);
 
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [longestSession, setLongestSession] = useState("0s");
   const [studyStreak, setStudyStreak] = useState('0 day'); //days of consecutive study
 
 
-  //const searchParams = useSearchParams();
   const studyBtnRef = useRef(null);
 
-  const [tutorial, setTutorial] = useState(null);
-
-  /* useEffect(() => {
-    if (!searchParams) return;
-
-    const tutorial = searchParams.get("tutorial");
-    if (tutorial && parseInt(tutorial) === 6) {
-      setTutorial(tutorial);
-
-      const { width, top, left, height, right } = studyBtnRef.current.getBoundingClientRect();
+  useEffect(() => {
+    if (tutorial === 6) {
+      const { width, top, left, height } = studyBtnRef.current.getBoundingClientRect();
       tutorialBoxRef.current.style.left = left - 10 + 'px';
       tutorialBoxRef.current.style.top = top - 10 + 'px';
       tutorialBoxRef.current.style.width = width + 20 + 'px';
@@ -47,7 +39,7 @@ function Header({
       tutorialTextRef.current.style.right = 30 + 'px';
       tutorialTextRef.current.innerText = "Click here to start a study session!";
     }
-  }, [searchParams]); */
+  }, [tutorial]);
 
   useEffect(() => {
     if (!subjects.daily) return;
@@ -168,7 +160,7 @@ function Header({
       </div>
       <div className={styles.right}>
         <div className={styles.headerEl} id={styles.chats}
-          onClick={() => { setChatModal(prev => ({...prev, open: !prev.open})) }}
+          onClick={() => { setChatModal(prev => ({ ...prev, open: !prev.open })) }}
         >
           <i>
             <FontAwesomeIcon icon={faMessage} bounce={chatModal?.totalNewMsg ? true : false} />
@@ -203,10 +195,14 @@ function Header({
           />
         </Link>
         <div className={styles.headerEl}>
-          <Link href={tutorial ? `/dashboard/study?tutorial=${tutorial}` : "/dashboard/study"} id="tutorial-6" ref={studyBtnRef}>
-            <div className={styles.StudyButton} id="tutorial-6">
-              Study
-            </div>
+          <Link href="/dashboard/study" id="tutorial-6" ref={studyBtnRef} onClick={() => {
+            if (tutorial === 6) {
+              setTutorial(7);
+            };
+          }}
+            className={styles.StudyButton}
+          >
+            Study
           </Link>
         </div>
       </div>

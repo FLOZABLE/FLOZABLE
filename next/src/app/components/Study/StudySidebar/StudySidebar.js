@@ -15,8 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { socket } from "@/app/utils/socket";
-import { useSearchParams } from "next/navigation"
-import { CallOptionsContext, ModalsContext, PlansContext } from "@/app/utils/Contexts";
+import { CallOptionsContext, TutorialsContext } from "@/app/utils/Contexts";
 import { IconCameraVideoFill, IconCameraVideoOffFill, IconHeadphoneFill, IconHeadphonesOff, IconMicFill, IconMicMuteFill }  from "@/app/utils/Svg";
 
 function StudySidebar({
@@ -37,21 +36,17 @@ function StudySidebar({
   setIsToolModal,
   isToolModal,
 }) {
+  const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
+
   const {isMic, setIsMic, isCam, setIsCam, isHeadphone, setIsHeadphone} = useContext(CallOptionsContext);
 
   //const searchParams = useSearchParams();
-  const [tutorial, setTutorial] = useState(null);
   const toHomeBtnRef = useRef(null);
 
-  /* useEffect(() => {
-    if (!searchParams) return;
-
-    const tutorial = searchParams.get("tutorial");
-    if (tutorial && parseInt(tutorial) === 9) {
-      setTutorial(9);
-
+  useEffect(() => {
+    if (tutorial === 10) {
       setTimeout(() => {
-        const { width, top, left, height, bottom } = toHomeBtnRef.current.getBoundingClientRect();
+        const { width, top, left, height } = toHomeBtnRef.current.getBoundingClientRect();
         tutorialBoxRef.current.style.left = left + 'px';
         tutorialBoxRef.current.style.top = top + 'px';
         tutorialBoxRef.current.style.width = width + 'px';
@@ -62,7 +57,7 @@ function StudySidebar({
         tutorialTextRef.current.innerText = "Let's go back to the dashboard!";
       }, 500);
     }
-  }, [searchParams]); */
+  }, [tutorial]);
 
 
   return (
@@ -72,9 +67,10 @@ function StudySidebar({
         className={`${styles.studyTool}`}
         onClick={() => {
           socket.emit('exitSession');
+          setTutorial(11);
         }}
         ref={toHomeBtnRef}
-        id="tutorial-9"
+        id="tutorial-10"
       >
         <i style={{ fontSize: '1.4375rem' }}>
           <FontAwesomeIcon icon={faHome} />

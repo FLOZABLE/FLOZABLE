@@ -43,6 +43,8 @@
 
 .Main .box#subjectsTrend {
   height: 50%;
+  position: relative;
+  z-index: 2;
 }
 
 .Main .box#planTimeline {

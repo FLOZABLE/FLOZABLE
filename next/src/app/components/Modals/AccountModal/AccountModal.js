@@ -10,16 +10,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useEffect, useState } from "react";
 import config from "@/app/utils/config";
-import { ModalsContext, ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
+import { ModalsContext, ResponseContext, TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
 import ArrowOptionBtn from "@/app/components/Buttons/ArrowOptionBtn/ArrowOptionBtn";
 import SigninWithGoogleBtn from "@/app/components/Buttons/SigninWithGoogleBtn/SigninWithGoogleBtn";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
 
 function AccountModal({ }) {
-  const {isAccountModal, setIsAccountModal} = useContext(ModalsContext);
-  const {bringAccountInfo} = useContext(UserInfoContext);
-  const {setResponse} = useContext(ResponseContext);
+  const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
+  const { setTutorial } = useContext(TutorialsContext);
+  const { bringAccountInfo } = useContext(UserInfoContext);
+  const { setResponse } = useContext(ResponseContext);
 
   const router = useRouter();
 
@@ -49,7 +50,7 @@ function AccountModal({ }) {
         <ArrowOptionBtn clicked={isLogin} setClicked={setIsLogin} />
       </div>
       <div className={`${styles.containers} ${isLogin ? styles.login : ""}`}>
-        <div className={styles.container} id={styles.front}>
+        <form className={styles.container} id={styles.front}>
           <i
             id={styles.closeBtn}
             onClick={() => {
@@ -78,12 +79,13 @@ function AccountModal({ }) {
               <input
                 type="password"
                 placeholder="Password"
+                autoComplete="current-password"
                 onChange={(e) => {
                   setLogin((prev) => ({ ...prev, password: e.target.value }));
                 }}
               />
             </div>
-            <SigninWithGoogleBtn infoText={"Continue With Google"}/>
+            <SigninWithGoogleBtn infoText={"Continue With Google"} />
             <BlobBtn
               name={"SUBMIT"}
               setClicked={() => {
@@ -93,7 +95,7 @@ function AccountModal({ }) {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify(login),
-                  credentials:"include"
+                  credentials: "include"
                 })
                   .then((response) => response.json())
                   .then((data) => {
@@ -108,8 +110,8 @@ function AccountModal({ }) {
               color2={"#fff"}
             />
           </div>
-        </div>
-        <div className={styles.container} id={styles.back}>
+        </form>
+        <form className={styles.container} id={styles.back}>
           <i
             id={styles.closeBtn}
             onClick={() => {
@@ -148,14 +150,15 @@ function AccountModal({ }) {
                 <FontAwesomeIcon icon={faLock} />
               </div>
               <input
-                type="text"
+                type="password"
                 placeholder="Password"
+                autoComplete="current-password"
                 onChange={(e) => {
                   setSignUp((prev) => ({ ...prev, password: e.target.value }));
                 }}
               />
             </div>
-            <SigninWithGoogleBtn infoText={"Register With Google"}/>
+            <SigninWithGoogleBtn infoText={"Register With Google"} />
             <BlobBtn
               name={"SUBMIT"}
               setClicked={() => {
@@ -165,12 +168,13 @@ function AccountModal({ }) {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify(signUp),
-                  credentials:"include"
+                  credentials: "include"
                 })
                   .then((response) => response.json())
                   .then((data) => {
                     if (data.success) {
                       router.push('/dashboard?welcome=true');
+                      setTutorial(1);
                       setIsLogin(true);
                     }
                   })
@@ -180,7 +184,7 @@ function AccountModal({ }) {
               color2={"#fff"}
             />
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

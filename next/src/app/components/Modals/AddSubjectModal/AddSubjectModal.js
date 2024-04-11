@@ -6,19 +6,20 @@ import styles from "./AddSubjectModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { ModalsContext, ResponseContext, SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import SelectIcon from "@/app/components/Inputs/SelectIcon/SelectIcon";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import config from "@/app/utils/config";
+import { sortNewSubject } from "@/app/utils/timelineSorting";
 
 function AddSubjectModal({
 }) {
   const { subjects, setSubjects } = useContext(SubjectsContext);
   const { setResponse } = useContext(ResponseContext);
   const { isAddSubjectModal, setIsAddSubjectModal } = useContext(ModalsContext);
-  const {tutorialBoxRef, tutorialTextRef} = useContext(TutorialsContext);
+  const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
 
   const [name, setName] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
@@ -53,6 +54,22 @@ function AddSubjectModal({
       }, 500);
     }
   }, [searchParams]); */
+
+  useEffect(() => {
+    if (tutorial === 4) {
+      setTimeout(() => {
+        const { top, left, height } = addSubjectModalRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left + 'px';
+        tutorialBoxRef.current.style.top = top - 25 + 'px';
+        tutorialBoxRef.current.style.width = 0;
+        tutorialBoxRef.current.style.height = height + 'px';
+
+        tutorialTextRef.current.style.top = top - 50 + 'px';
+        tutorialTextRef.current.style.left = left + 'px';
+        tutorialTextRef.current.innerText = "Enter the subject details!";
+      }, 500);
+    }
+  }, [tutorial]);
 
   const handleNameInput = (e) => {
     setName(e.target.value);
@@ -90,14 +107,13 @@ function AddSubjectModal({
           setSelectedColor(null);
           setSelectedIcon({ name: null, el: null });
           setName("");
-          /* const tutorial = searchParams.get("tutorial");
-          if (tutorial === "4") {
-            setSearchParams({ ...searchParams, tutorial: 5 })
-          } */
+          if (tutorial === 4) {
+            setTutorial(5);
+          };
         }
       })
       .catch((error) => console.error(error));
-  }, [selectedColor, selectedIcon, name]);
+  }, [selectedColor, selectedIcon, name, tutorial]);
 
   return (
     <Draggable nodeRef={addSubjectModalRef} handle=".header">

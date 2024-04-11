@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, use } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import styles from "./SubjectTimer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -6,7 +6,7 @@ import {
   faPause,
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
-import { ModalsContext, SubjectsContext, WorkersContext } from "@/app/utils/Contexts";
+import { ModalsContext, SubjectsContext, TutorialsContext, WorkersContext } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
 
 function SubjecTimer({
@@ -16,12 +16,63 @@ function SubjecTimer({
   const { subjects } = useContext(SubjectsContext);
   const { setIsAddSubjectModal } = useContext(ModalsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } = useContext(TutorialsContext);
 
   const [timerActive, setTimerActive] = useState(false);
   const [subjectTimer, setSubjectTimer] = useState({ total: 0 });
   const [timerValues, setTimerValues] = useState({});
   const [clicked, setClicked] = useState(false);
   const [subjectOptions, setSubjectOptions] = useState([]);
+
+  const chooseSubjectRef = useRef(null);
+  const subjectOptionsRef = useRef(null);
+  const startSubjectRef = useRef(null);
+
+  useEffect(() => {
+    if (tutorial === 7) {
+      setTimeout(() => {
+        const { width, top, left } = chooseSubjectRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left + 'px';
+        tutorialBoxRef.current.style.top = top + 'px';
+        tutorialBoxRef.current.style.width = width + 'px';
+
+        tutorialTextRef.current.style.top = top + 'px';
+        tutorialTextRef.current.style.left = left + width + 50 + 'px';
+        tutorialTextRef.current.innerText = "Select a subject to study";
+      }, 500);
+    } else if (tutorial === 8) {
+      setClicked(true);
+
+      setTimeout(() => {
+        const { width, top, left, height, } = subjectOptionsRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left + 'px';
+        tutorialBoxRef.current.style.top = top + 'px';
+        tutorialBoxRef.current.style.width = width + 'px';
+        tutorialBoxRef.current.style.height = height + 'px';
+
+        tutorialTextRef.current.style.top = top + 'px';
+        tutorialTextRef.current.style.left = left + width + 50 + 'px';
+        tutorialTextRef.current.innerText = "You will see your subjects here";
+      }, 500);
+    } else if (tutorial === 9) {
+
+      setTimeout(() => {
+        const { width, top, left, height } = startSubjectRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left + 'px';
+        tutorialBoxRef.current.style.top = top + 'px';
+        tutorialBoxRef.current.style.width = width + 'px';
+        tutorialBoxRef.current.style.height = height + 'px';
+
+        tutorialTextRef.current.style.top = top + 'px';
+        tutorialTextRef.current.style.left = left + width + 50 + 'px';
+        tutorialTextRef.current.innerText = "Click to start/stop the timer!";
+      }, 500);
+
+      setTimeout(() => {
+        setTutorial(10);
+      }, 5000);
+    }
+  }, [tutorial]);
 
   useEffect(() => {
     if (!subjects.length) return;
@@ -66,10 +117,18 @@ function SubjecTimer({
 
   return (
     <div className={styles.SubjectTimer}>
-      <div className={styles.timerWrapper}>
+      <div className={styles.timerWrapper}
+        ref={chooseSubjectRef}
+      >
         <button
+          id="tutorial-7"
           className={`${clicked ? styles.clicked : ""} ${styles.optBtn}`}
-          onClick={() => { setClicked(!clicked); }}
+          onClick={() => {
+            setClicked(!clicked);
+            if (tutorial === 7) {
+              setTutorial(8);
+            }
+          }}
         >
           <p>{selectedSubject.name ? selectedSubject.name : "Others"}</p>
           <p className={styles.mainTimeDisp}>
@@ -83,7 +142,7 @@ function SubjecTimer({
             <FontAwesomeIcon icon={faCaretDown} />
           </i>
         </button>
-        <ul className={`${styles.options} customScroll`}>
+        <ul className={`${styles.options} customScroll`} ref={subjectOptionsRef}>
           {
             subjectOptions.map((option, i) => {
               const timeValue = timerValues[option.id];
@@ -96,10 +155,13 @@ function SubjecTimer({
                     if (timerActive) {
                       toggleTimer(option);
                     };
-                    setSelectedSubject(option)
+                    setSelectedSubject(option);
+                    if (tutorial === 8) {
+                      setTutorial(9);
+                    };
                   }}
                   className={styles.option}
-                  id="tutorial-7"
+                  id="tutorial-8"
                 >
                   {option.name}{" "}
                   <p className={styles.timeDisp}>
@@ -126,7 +188,7 @@ function SubjecTimer({
         </ul>
       </div>
       <div className={styles.buttonWrapper}>
-        <button onClick={() => { toggleTimer(selectedSubject) }} className={styles.toggleBtn}>
+        <button onClick={() => { toggleTimer(selectedSubject) }} className={styles.toggleBtn} ref={startSubjectRef} id="tutorial-9">
           {timerActive ? (
             <FontAwesomeIcon icon={faPause} />
           ) : (

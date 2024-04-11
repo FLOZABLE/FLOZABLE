@@ -1,32 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
 import styles from "./MyTimer.module.css";
-import { WorkersContext } from "@/app/utils/Contexts";
 
 function MyTimer({ run, initialSec }) {
-  const { subjectsTimerWorkerRef } = useContext(WorkersContext);
 
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
   const [total, setTotal] = useState(0);
-
-  useEffect(() => {
-    const onMessage = (e) => {
-      if (run && e.data.command === "updateSubjectTimer") {
-        setTotal(prev => prev + 1);
-      };
-    };
-    /* console.log('gdddd', worker)
-    worker.addEventListener("message", onMessage);
-
-    return () => {
-      worker.removeEventListener("message", onMessage);
-    }; */
-    subjectsTimerWorkerRef?.current?.addEventListener('message', onMessage);
-    return () => {
-      subjectsTimerWorkerRef?.current?.removeEventListener('message', onMessage);
-    };
-  }, [run, subjectsTimerWorkerRef]);
 
   useEffect(() => {
     if (initialSec) {

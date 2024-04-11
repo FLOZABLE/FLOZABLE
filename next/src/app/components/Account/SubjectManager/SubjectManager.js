@@ -108,7 +108,7 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject, deleteSu
       {
         deleteConfirm ?
           <div className={styles.confirmDelete}>
-            <p>Note: Deleted subjects will still be visible in stats if you've studied the subject today</p>
+            <p>Note: Deleted subjects will still be visible in stats if you&apos;ve studied the subject today</p>
             <br />
           </div>
           :

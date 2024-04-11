@@ -1,20 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styles from "./MyTimer.module.css";
+import { WorkersContext } from "@/app/utils/Contexts";
 
 function MyTimer({ run, initialSec }) {
+  const { subjectsTimerWorkerRef } = useContext(WorkersContext);
+
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [hr, setHr] = useState(0);
   const [total, setTotal] = useState(0);
-
-  const workerRef = useRef();
-
-  useEffect(() => {
-    workerRef.current = new Worker(new URL('./TimeWorker.js', import.meta.url))
-    return () => {
-      workerRef.current?.terminate()
-    };
-}, [])
 
   useEffect(() => {
     const onMessage = (e) => {
@@ -28,11 +22,11 @@ function MyTimer({ run, initialSec }) {
     return () => {
       worker.removeEventListener("message", onMessage);
     }; */
-    workerRef.current.addEventListener('message', onMessage);
+    subjectsTimerWorkerRef?.current?.addEventListener('message', onMessage);
     return () => {
-      workerRef.current.removeEventListener('message', onMessage);
+      subjectsTimerWorkerRef?.current?.removeEventListener('message', onMessage);
     };
-  }, [run]);
+  }, [run, subjectsTimerWorkerRef]);
 
   useEffect(() => {
     if (initialSec) {

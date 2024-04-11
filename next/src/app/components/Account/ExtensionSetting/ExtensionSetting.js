@@ -5,7 +5,7 @@ import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
 import styles from "./ExtensionSetting.module.css";
 import config from "@/app/utils/config";
 import { ResponseContext } from "@/app/utils/Contexts";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function ExtensionSetting({ websites, setWebsites }) {
   const {setResponse} = useContext(ResponseContext);
@@ -13,7 +13,6 @@ function ExtensionSetting({ websites, setWebsites }) {
   const router = useRouter();
 
   const [url, setUrl] = useState('');
-  const searchParams = useSearchParams();
   const extensionRef = useRef(null);
 
   const onSubmitUrl = (urlPar) => {
@@ -48,6 +47,7 @@ function ExtensionSetting({ websites, setWebsites }) {
   useEffect(() => {
     if (!websites.length) return;
 
+    const searchParams = new URLSearchParams(document.location.search);
     const domain = searchParams.get("website");
     router.replace(window.location.pathname, { scroll: false });
     if (!domain) {
@@ -68,7 +68,7 @@ function ExtensionSetting({ websites, setWebsites }) {
     } else {
       onSubmitUrl(domain);
     };
-  }, [websites, searchParams]);
+  }, [websites]);
 
 
   const fetchExtensionSettingUpdate = useCallback((d, target, value) => {

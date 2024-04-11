@@ -21,7 +21,7 @@ function SelectTool({
         >
           <div>
             {!selectedTool.length ? (
-              <p>Select Subject's Tools!</p>
+              <p>Select Subject&apos;s Tools!</p>
             ) : (
               <p>Selected Tools : </p>          
             )}

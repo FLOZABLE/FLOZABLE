@@ -1,0 +1,105 @@
+.Tutorial {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0rem;
+  left: 0rem;
+  z-index: 6;
+  background-color: #00000050;
+  mix-blend-mode: hard-light;
+  display: none;
+  --swiper-navigation-color: #000;
+  pointer-events: none;
+}
+
+.Tutorial.open {
+  display: block;
+}
+
+@keyframes bounce {
+  /* 10% {
+    margin-top: 0rem;
+  }
+
+  30% {
+    margin-top: -1.5rem;
+  }
+
+  40% {
+    margin-top: -2rem;
+  }
+
+  70% {
+    margin-top: 1rem;
+  }
+  
+  100% {
+    margin-top: 0rem;
+  } */
+
+  0% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.4;
+  }
+}
+
+.Tutorial .hole {
+  position: fixed;
+  background-color: gray;
+  border-radius: 1rem;
+  animation: bounce 0.8s ease-in-out infinite forwards;
+  height: fit-content;  
+}
+
+.Tutorial .text {
+  position: fixed;
+  font-size: 1.3rem;
+  padding: 0.7rem 1rem;
+  background-color: #fff;
+  font-weight: 900;
+  border-radius: 0.8rem;
+  width: fit-content;
+  transition: .3s ease-in-out all;
+}
+
+.Tutorial .skipOption {
+  pointer-events: all;
+  position: fixed;
+  bottom: 3rem;
+  right: 0rem;
+  background-color: gray;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3rem;
+}
+
+.Tutorial .end {
+  position: fixed;
+  background-color: #fff;
+  border-radius: 2rem;
+  left: 50vw !important;
+  top: 50vh !important;
+  width: 500px !important;
+  height: fit-content !important;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  pointer-events: all;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 800; 
+  padding: 3rem 4rem;
+}
+
+.Tutorial .end p {
+  margin-bottom: 2rem;
+}
