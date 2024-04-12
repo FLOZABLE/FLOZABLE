@@ -202,6 +202,7 @@ cron.schedule('0 * * * *', () => {
 
 //create tables
 const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode, createDevicesTable } = require('./query');
+const { updateSubjectsTimeline } = require("./Utils/migration");
 
 //createUsersTable();
 //createSubjectsTable();
@@ -218,6 +219,8 @@ const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTab
 //createActivitiesTable();
 //utf8mb4Unicode();
 //createDevicesTable();
+
+//updateSubjectsTimeline(100);
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);

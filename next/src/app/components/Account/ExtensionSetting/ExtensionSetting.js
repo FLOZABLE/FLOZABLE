@@ -15,7 +15,7 @@ function ExtensionSetting({ websites, setWebsites }) {
   const [url, setUrl] = useState('');
   const extensionRef = useRef(null);
 
-  const onSubmitUrl = (urlPar) => {
+  const onSubmitUrl = useCallback((urlPar) => {
     fetch(`${config.server}/account/update/extension-add`, {
       method: "post",
       headers: {
@@ -29,10 +29,12 @@ function ExtensionSetting({ websites, setWebsites }) {
         if (data.success) {
           const { domain, origin } = data;
 
-          setWebsites([
-            ...websites,
-            { d: domain, o: origin, b: false, t: false, bs: false, ts: true },
-          ]);
+          setWebsites(prev => {
+            [
+              ...prev,
+              { d: domain, o: origin, b: false, t: false, bs: false, ts: true },
+            ]
+          });
 
           setTimeout(() => {
             const section = document.querySelector(`#${domain.replace(/\./g, '_')}`);
@@ -42,7 +44,7 @@ function ExtensionSetting({ websites, setWebsites }) {
         }
       })
       .catch((error) => console.error(error));
-  };
+  }, []);
 
   useEffect(() => {
     if (!websites.length) return;

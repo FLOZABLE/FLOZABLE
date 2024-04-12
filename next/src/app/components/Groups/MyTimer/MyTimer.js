@@ -4,6 +4,7 @@ import { WorkersContext } from "@/app/utils/Contexts";
 
 function MyTimer({ run, initialSec }) {
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
+  console.log('gddddd', initialSec)
 
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
