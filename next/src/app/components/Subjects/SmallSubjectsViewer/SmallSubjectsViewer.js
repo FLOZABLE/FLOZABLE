@@ -14,7 +14,7 @@ function SmallSubjectsViewer({}) {
 
   return (
     <div className={styles.SmallSubjectsViewer}>
-      {subjects && subjects.daily && subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1] ?
+      {subjects && subjects.daily && subjects.daily.total[subjects.daily.total.length - 1] ?
         <div className={styles.chartContainer}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>

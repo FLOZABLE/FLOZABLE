@@ -34,7 +34,7 @@ function updateTimeTrend(subjects, mode, sum) {
   const data = [];
   const labels = [];
   const datumPoint = DateTime.fromSeconds(subjects[mode].datum_point);
-  subjects[mode].groupedTotal.map((val, i) => {
+  subjects[mode].total.map((val, i) => {
     const date = datumPoint.plus({ [sum]: i });
     const label = `${date.month}/${date.day}`;
     data.push(val);

@@ -68,9 +68,9 @@ function Stats({}) {
     if (statsViewer === 'Daily') {
       //top box renderer
       const index = viewDateTime.diff(now, 'days').toObject();
-      const { groupedTotal, grouped } = daily;
+      const { total, grouped } = daily;
       const actualIndex = grouped.length + index.days - 1;
-      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
+      const totalStudyDisp = secondConverter(total[actualIndex]);
       setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
       const focus = focusCalculator(grouped[actualIndex]);
       const { value, type } = secondConverter(focus);
@@ -79,9 +79,9 @@ function Stats({}) {
 
       //top box renderer
       const index = viewDateTime.startOf('week').diff(DateTime.now().startOf('week'), 'weeks').toObject();
-      const { groupedTotal, grouped } = weekly;
+      const { total, grouped } = weekly;
       const actualIndex = grouped.length + index.weeks - 1;
-      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
+      const totalStudyDisp = secondConverter(total[actualIndex]);
       setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
       const focus = focusCalculator(grouped[actualIndex]);
       const { value, type } = secondConverter(focus);
@@ -90,9 +90,9 @@ function Stats({}) {
 
       //top box renderer
       const index = viewDateTime.startOf('month').diff(DateTime.now().startOf('month'), 'months').toObject();
-      const { groupedTotal, grouped } = monthly;
+      const { total, grouped } = monthly;
       const actualIndex = grouped.length + index.months - 1;
-      const totalStudyDisp = secondConverter(groupedTotal[actualIndex]);
+      const totalStudyDisp = secondConverter(total[actualIndex]);
       setTotalStudy(`${totalStudyDisp.value}${totalStudyDisp.type}`);
       const focus = focusCalculator(grouped[actualIndex]);
       const { value, type } = secondConverter(focus);

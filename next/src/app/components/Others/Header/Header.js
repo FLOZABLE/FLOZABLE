@@ -45,7 +45,7 @@ function Header({
     if (!subjects.daily) return;
 
     //Solve daily
-    let totalSeconds = subjects.daily.groupedTotal[subjects.daily.groupedTotal.length - 1];
+    let totalSeconds = subjects.daily.total[subjects.daily.total.length - 1];
     totalSeconds = totalSeconds ? totalSeconds : 0;
     const { value, type } = secondConverter(totalSeconds);
     setTotalStudied(value + type);
