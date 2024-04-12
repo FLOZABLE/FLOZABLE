@@ -2,7 +2,8 @@ import { Menu, Item, Separator, Submenu } from 'react-contexify';
 import 'react-contexify/ReactContexify.css';
 import React, { useEffect, useState, useContext } from 'react';
 import styled from '@emotion/styled';
-import { ResponseContext } from '@/app/utils/Contexts';
+import { GroupsContext, ResponseContext } from '@/app/utils/Contexts';
+import config from '@/app/utils/config';
 
 const StyleWrapper = styled.div`
     --contexify-activeItem-bgColor: #b6b6b6;
@@ -16,10 +17,8 @@ const StyleWrapper = styled.div`
     }
 `;
 
-const serverOrigin = process.env.REACT_APP_ORIGIN;
-
 function MemberContextMenu({ MENU_ID, rightClickedMember }) {
-    const {setResponse} = useContext(ResponseContext)
+    const {setResponse} = useContext(ResponseContext);
 
     const [memberName, setMemberName] = useState("");
     const [memberId, setMemberId] = useState("");
@@ -32,7 +31,7 @@ function MemberContextMenu({ MENU_ID, rightClickedMember }) {
             setTransferClicked(true);
         }
         else if (id === "confirmTransfer") {
-            fetch(`${serverOrigin}/groups/transfer-ownership`,
+            fetch(`${config.server}/groups/transfer-ownership`,
                 {
                     method: "POST",
                     headers: {
@@ -59,7 +58,7 @@ function MemberContextMenu({ MENU_ID, rightClickedMember }) {
             setKickClicked(true);
         }
         else if (id === "confirmKick") {
-            fetch(`${serverOrigin}/groups/remove-member`,
+            fetch(`${config.server}/groups/remove-member`,
                 {
                     method: "POST",
                     headers: {
