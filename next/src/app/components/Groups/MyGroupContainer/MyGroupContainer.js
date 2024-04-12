@@ -48,6 +48,7 @@ function MyGroupContainer({
   leaveGroup,
   setIsEditGroupModal,
   isMine,
+  setRightClickedMember,
 }) {
   const { isCam, isMic } = useContext(CallOptionsContext);
   const { setChatModal } = useContext(ModalsContext);
@@ -435,6 +436,7 @@ function MyGroupContainer({
           videoStream={videoStream}
           device={device}
           recvTransport={recvTransport}
+          setRightClickedMember={setRightClickedMember}
         />
       </div>
     </div>
