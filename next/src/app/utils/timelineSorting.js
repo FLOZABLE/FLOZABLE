@@ -143,8 +143,7 @@ function timelineSort(subjects) {
   });
 
 
-  /* part2 */
-
+  console.log('timelinex', subjects)
   return subjects;
 };
 
@@ -152,7 +151,6 @@ const DATETOSEC = 60 * 60 * 24;
 const WEEKTOSEC = DATETOSEC * 7;
 
 function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint, startTimeChange) {
-  let timelineSum = 0;
   let startTime;
   let stopTime;
 
@@ -194,10 +192,9 @@ function timelineSorter({ timeline, datum_point, name }, option, firstDatumPoint
   };
 
   timeline.map(([start, duration]) => {
-    const unixStart = datum_point + start + timelineSum;
+    const unixStart = datum_point + start;
     const unixStop = unixStart + duration;
-    console.log('timelinex',DateTime.fromSeconds(unixStop).toFormat('M/dd hh:mm'))
-    timelineSum += start + duration;
+    console.log('timelinex',DateTime.fromSeconds(unixStop).toFormat('M/dd/yy HH:mm'), name, duration)
     let isIn = true;
     while (isIn) {
       if (startTime <= unixStart && unixStop <= stopTime) {

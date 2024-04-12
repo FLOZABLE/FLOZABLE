@@ -5,11 +5,8 @@ import { RestPerson, StudyPerson } from "@/app/utils/Svg";
 import { socket } from "@/app/utils/socket";
 import MyCamDisp from "../MyCamDisp/MyCamDisp";
 import MyTimer from "../MyTimer/MyTimer";
-import { UserInfoContext } from "@/app/utils/Contexts";
 
-function MyEl({ setStudyingMembers, videoStream }) {
-  const {userInfo} = useContext(UserInfoContext);
-
+function MyEl({ setStudyingMembers, videoStream, userInfo }) {
   const [run, setRun] = useState(0);
   const [total, setTotal] = useState(0);
   const [studyIcon, setStudyIcon] = useState(

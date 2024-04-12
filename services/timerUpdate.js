@@ -38,12 +38,10 @@ async function timerUpdate() {
             WHEN timeline = '' THEN ?
             ELSE CONCAT(timeline, ',', ?)
           END,
-          timeline_sum = ?
           WHERE id = ?
         `, [
             modifiedTimeline,
             modifiedTimeline,
-            timeline_sum,
             id
           ]);
         };
@@ -55,9 +53,7 @@ async function timerUpdate() {
         const start = activity[0];
         const activeSubjectInfo = subjects.find(subject => {return subject.id === activeSubject.id});
         if (!activeSubjectInfo) return;
-        const duration = now - activeSubjectInfo.datum_point - activeSubjectInfo.timeline_sum;
-        activeSubjectInfo.timeline_sum += duration;
-        redisClient.hSet(`user:${userId}:subjects`, activeSubject.id, JSON.stringify(activeSubjectInfo));
+        const duration = now - activeSubjectInfo.datum_point - start;
         await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${duration}]`);
         redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
         //redisClient.incrBy(`user:${userId}:dayTotal`, duration);

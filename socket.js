@@ -195,9 +195,6 @@ mainIo.on('connection', (socket) => {
 
   socket.on("start", async (subjectId) => {
     try {
-      /* const subjects = await subjectsCache(userId);
-      const groups = await groupCache(userId);
-      const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId); */
       const subject = await subjectCache(userId, subjectId);
       const userInfo = await userCache(userId);
       const now = Math.floor(new Date().getTime() / 1000);
@@ -209,19 +206,11 @@ mainIo.on('connection', (socket) => {
       if (friends.length) {
         io.to(friends).emit(`studying:${userId}`, subject);
       };
-      const { timeline_sum, datum_point, id } = subject;
-      const start = now - datum_point - timeline_sum;
+      const { datum_point, id } = subject;
+      const start = now - datum_point;
       redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
       redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
-      subject.timeline_sum += start;
-      redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
       extensionIo.to(userId).emit("studying", { studying: true });
-      //total timer
-      /* const timerInfo = await timerCache(userId, now);
-      const {dp, ts} = timerInfo;
-      const totalTimerStart = now - dp - ts;
-      timerInfo.ts += totalTimerStart;
-      redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo)); */
     } catch (err) {
       console.log(err);
     };
@@ -229,50 +218,44 @@ mainIo.on('connection', (socket) => {
 
 
   socket.on("stop", async (subjectId) => {
-    const activeSubject = await activeSubjectCache(userId);
-    if (!activeSubject || !activeSubject.id === subjectId || activeSubject.id === '0') return;
-    const now = Math.floor(new Date().getTime() / 1000);
-    const subject = await subjectCache(userId, subjectId);
-    const userInfo = await userCache(userId);
-    if (!userInfo || !subject) return;
+    try {
+      const activeSubject = await activeSubjectCache(userId);
+      if (!activeSubject || !activeSubject.id === subjectId || activeSubject.id === '0') return;
+      const now = Math.floor(new Date().getTime() / 1000);
+      const subject = await subjectCache(userId, subjectId);
+      const userInfo = await userCache(userId);
+      if (!userInfo || !subject) return;
+  
+  
+      const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
+  
+      extensionIo.to(userId).emit("studying", { studying: false });
 
-    const { datum_point, timeline_sum } = subject;
+      if (!activity) return;
 
-    const duration = now - datum_point - timeline_sum;
-    subject.timeline_sum += duration;
-    redisClient.hSet(`user:${userId}:subjects`, subjectId, JSON.stringify(subject));
-    //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
-    //zsetIncrAll(`user:${userId}:dayTotal`, duration);
-
-    const { groups, friends } = userInfo;
-
-    if (groups.length) {
-      io.to(groups).emit(`stopStudying:${userId}`, {status: 'rest', duration});
-    };
-    if (friends.length) {
-      io.to(friends).emit(`stopStudying:${userId}`, {status: 'rest', duration});
-    };
-
-    const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
-
-    if (activity) {
       const start = activity[0];
+  
+      const { datum_point } = subject;
+
+      const duration = now - datum_point - start;
+
+      redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
+      for (let i = -12; i < 12; i++) {
+        redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
+      };
+
       redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${duration}]`);
-    };
-    extensionIo.to(userId).emit("studying", { studying: false });
-    //total timer update
-    //this is unix time in sec of active subject's start
-    /* const activeSubjectStart = activeSubject.time;
-    const timerInfo = await timerCache(userId, now);
-    const {dp, ts} = timerInfo;
-    const timerStart = activeSubjectStart - dp - ts;
-    const totalTimerDuration = now - dp - ts;
-    timerInfo.ts += totalTimerDuration;
-    redisClient.rPush(`user:${userId}:timer`, `[${timerStart},${totalTimerDuration}]`);
-    redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo)); */
-    redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
-    for (let i = -12; i < 12; i++) {
-      redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
+  
+      const { groups, friends } = userInfo;
+  
+      if (groups.length) {
+        io.to(groups).emit(`stopStudying:${userId}`, {status: 'rest', duration});
+      };
+      if (friends.length) {
+        io.to(friends).emit(`stopStudying:${userId}`, {status: 'rest', duration});
+      };
+    } catch (err) {
+      console.log(err);
     };
   });
 
