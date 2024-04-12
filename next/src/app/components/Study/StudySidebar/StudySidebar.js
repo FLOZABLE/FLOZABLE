@@ -67,7 +67,9 @@ function StudySidebar({
         className={`${styles.studyTool}`}
         onClick={() => {
           socket.emit('exitSession');
-          setTutorial(11);
+          if (tutorial === 10) {
+            setTutorial(11);
+          }
         }}
         ref={toHomeBtnRef}
         id="tutorial-10"

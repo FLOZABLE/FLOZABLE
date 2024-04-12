@@ -37,6 +37,7 @@ function MembersContainer({
           return (
             <MyEl
               key={i}
+              userInfo={member}
               setStudyingMembers={setStudyingMembers}
               videoStream={videoStream}
             />

@@ -75,8 +75,6 @@ const StyleWrapper = styled.div`
     z-index: 5;
   }
   .fc-bg-event {
-    background-color: #4169e1;
-    opacity: 1;
     border-radius: 30px;
     display: flex;
     justify-content: center;
