@@ -190,7 +190,7 @@ const { timerUpdate } = require("./services/timerUpdate");
 //updateRanking();
 
 //all timezones
-//createRankings(-8);
+//createRankings(-7);
 
 //schedulers
 cron.schedule('0 * * * *', () => {
@@ -220,7 +220,7 @@ const { updateSubjectsTimeline } = require("./Utils/migration");
 //utf8mb4Unicode();
 //createDevicesTable();
 
-//updateSubjectsTimeline(100);
+//updateSubjectsTimeline(161);
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
