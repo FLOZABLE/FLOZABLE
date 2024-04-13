@@ -2,7 +2,7 @@ import styles from "./MyGroupContainer.module.css";
 import React, { useContext, useEffect, useState } from "react";
 import config from "@/app/utils/config";
 import Link from "next/link";
-import { CallOptionsContext, ModalsContext } from "@/app/utils/Contexts";
+import { CallOptionsContext, GroupsContext, ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 import {
   IconMessage,
@@ -14,6 +14,7 @@ import {
 import MembersContainer from "../MembersContainer/MembersContainer";
 import { mediaSocket } from "@/app/utils/mediaSocket";
 import { Device } from "mediasoup-client";
+import { socket } from "@/app/utils/socket";
 
 const videoParams = {
   encodings: [
@@ -52,6 +53,8 @@ function MyGroupContainer({
 }) {
   const { isCam, isMic } = useContext(CallOptionsContext);
   const { setChatModal } = useContext(ModalsContext);
+  const { setMyGroups } = useContext(GroupsContext);
+  const { userInfo } = useContext(UserInfoContext);
 
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -351,6 +354,34 @@ function MyGroupContainer({
     audioTransportProduce();
   }, [producerTransport, audioStream]);
 
+  useEffect(() => {
+    if (!group || !userInfo) return;
+
+    const memberJoinGroup = (groupId, memberInfo) => {
+      if (group.group_id !== groupId) return;
+      setMembers(prev => {
+        [...prev, memberInfo]
+      })
+    };
+
+    const memberLeaveGroup = (groupId, memberId) => {
+      if (group.group_id !== groupId) return;
+
+      if (memberId === userInfo.user_id) {
+        setMyGroups(prev => prev.filter((group) => group.group_id !== groupId));
+      } else {
+        setMembers(prev => prev.filter(user => user.user_id !== memberId))
+      };
+    };
+
+
+    socket.on(`newMemberInfo`, memberJoinGroup);
+    socket.on(`removeMember`, memberLeaveGroup);
+    return () => {
+      socket.off("newMemberInfo", memberJoinGroup);
+      socket.off(`removeMember`, memberLeaveGroup);
+    };
+  }, [group, userInfo]);
 
   return (
     <div
@@ -376,7 +407,7 @@ function MyGroupContainer({
             </div>
             <div
               onClick={() => {
-                setChatModal((prev) => ({...prev, chatRoom: group.group_id, open: true}));
+                setChatModal((prev) => ({ ...prev, chatRoom: group.group_id, open: true }));
               }}
             >
               <i>
