@@ -41,19 +41,26 @@ function SubjectsManager() {
       .then((data) => {
         setResponse(data);
         if (data.success) {
-          console.log(data, subjects);
-          setSubjects(subjects.map((subject) => {
-            if (subject.id !== data.subjectInfo.id) return { ...subject }
-            else {
-              return {
-                ...subject,
-                color: data.subjectInfo.color,
-                icon: data.subjectInfo.icon,
-                name: data.subjectInfo.name,
-                tools: data.subjectInfo.tools,
-              }
-            }
-          }));
+          console.log("updating");
+          let tempState = [...subjects];
+          let updatedSubject = tempState.find((subject) => subject.id === data.subjectInfo.id);
+          tempState = tempState.filter((subject) => subject.id !== data.subjectInfo.id);
+          updatedSubject = {
+            ...updatedSubject,
+            color: data.subjectInfo.color,
+            icon: data.subjectInfo.icon,
+            name: data.subjectInfo.name,
+            tools: data.subjectInfo.tools,
+          }
+          let newState = subjects;
+          // Using {...subjects} results in an error because it would then be an object
+          // and no longer have the .reduce() function from Array
+          tempState.push(updatedSubject);
+          for (let i = 0; i < tempState.length; i++) {
+            newState[i] = tempState[i];
+          }
+          console.log(newState);
+          setSubjects(newState);
         };
         setSelectedSubject(prev => ({ ...prev, submit: false }))
       })
