@@ -9,7 +9,6 @@ import { subjectIcons } from "@/app/utils/Constant";
 
 function SubjectsManager() {
   const { subjects, setSubjects } = useContext(SubjectsContext);
-  console.log(subjects);
   const { setResponse } = useContext(ResponseContext);
 
   const [selectedSubject, setSelectedSubject] = useState({
@@ -42,11 +41,19 @@ function SubjectsManager() {
       .then((data) => {
         setResponse(data);
         if (data.success) {
-          /* let newState = [...subjects];
-          newState = newState.filter((subject) => subject.id != data.subjectInfo.id);
-          newState.push({ ...data.subjectInfo });
-          setSubjects(newState); */
-          //clear new subject info from modal
+          console.log(data, subjects);
+          setSubjects(subjects.map((subject) => {
+            if (subject.id !== data.subjectInfo.id) return { ...subject }
+            else {
+              return {
+                ...subject,
+                color: data.subjectInfo.color,
+                icon: data.subjectInfo.icon,
+                name: data.subjectInfo.name,
+                tools: data.subjectInfo.tools,
+              }
+            }
+          }));
         };
         setSelectedSubject(prev => ({ ...prev, submit: false }))
       })

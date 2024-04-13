@@ -1,6 +1,6 @@
 //import { Alert, Article, Book, Coding, Globe, IconCalculator, IconFileBarGraphFill, IconPeriodicTable, IconWhiteboard, Microscope, Workout, WritePen } from "@/app/utils/Svg";
 import React from 'react';
-import { Alert, Article, Book, Coding, Globe, Microscope, Workout, WritePen } from './Svg';
+import { Alert, Article, Book, Coding, Globe, Microscope, Workout, WritePen, IconCalculator, IconFileBarGraphFill, IconPeriodicTable, IconWhiteboard } from './Svg';
 
 const colorsList = [
   "#0395f9",
@@ -47,7 +47,7 @@ const subjectIcons = {
 };
 
 const toolsInfo = [
-  /* {
+  {
     name: "Scientific Calculator",
     icon: <IconCalculator />
   },
@@ -62,7 +62,7 @@ const toolsInfo = [
   {
     name: "Whiteboard",
     icon: <IconWhiteboard />
-  }, */
+  }
 ];
 
 const colorPaletteOptions = [
