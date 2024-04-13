@@ -164,7 +164,7 @@ app.use((req, res, next) => {
 //render react app
 app.get('/dashboard*', (req, res) => {
   res.sendFile(path.join(__dirname, process.env.BUILD, 'index.html'));
-});
+}); 
 
 //catch 404
 app.get('*', function (req, res) {
