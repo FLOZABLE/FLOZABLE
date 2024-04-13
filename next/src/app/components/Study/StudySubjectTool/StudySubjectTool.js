@@ -3,13 +3,14 @@ import styles from "./StudySubjectTool.module.css";
 
 function StudySubjectTool({ toolType }) {
   const [toolEl, setToolEl] = useState(<div></div>);
-  const [remRatio, setRemRatio] = useState(null);
+  const [remRatio, setRemRatio] = useState(1);
   
   useEffect(() => {
     setRemRatio(
       parseFloat(getComputedStyle(document.documentElement).fontSize)
     );
   }, []);
+  
   useEffect(() => {
     if (toolType === "-1") {
       setToolEl(<div>No tools for current subject</div>);
@@ -32,7 +33,7 @@ function StudySubjectTool({ toolType }) {
     else if (toolType === "5") {
       setToolEl(<div>Tool 3</div>);
     }
-  }, [toolType]);
+  }, [toolType, remRatio]);
 
   return (
     <div className={styles.StudySubjectTool}>
