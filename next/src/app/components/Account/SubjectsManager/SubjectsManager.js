@@ -9,6 +9,7 @@ import { subjectIcons } from "@/app/utils/Constant";
 
 function SubjectsManager() {
   const { subjects, setSubjects } = useContext(SubjectsContext);
+  console.log(subjects);
   const { setResponse } = useContext(ResponseContext);
 
   const [selectedSubject, setSelectedSubject] = useState({
