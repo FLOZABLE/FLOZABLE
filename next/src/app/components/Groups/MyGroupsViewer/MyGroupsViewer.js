@@ -51,45 +51,6 @@ function MyGroupsViewer({
     }, 1000);
   }, [myGroups, groupsViewerRef]);
 
-  useEffect(() => {
-    if (!myGroups || !userInfo) return;
-
-    const memberJoinGroup = (groupId, memberInfo) => {
-      setMyGroups(myGroups.map((group) => {
-        if (group.group_id !== groupId) return group;
-        return { ...group, members: group.members + "," + memberInfo.user_id };
-      }));
-    };
-
-    const memberLeaveGroup = (groupId, memberId) => {
-      if (memberId === userInfo.user_id) {
-        setMyGroups(myGroups.filter((group) => group.group_id != groupId));
-      }
-      else {
-        setMyGroups(myGroups.map((group) => {
-          if (group.group_id !== groupId) return group;
-          return { ...group, members: group.members.split(",").splice(memberId, 1).join(",") };
-        }));
-      }
-    };
-
-    const handleLeaderChange = (groupId, memberId) => {
-      setMyGroups(myGroups.map((group) => {
-        if (group.group_id !== groupId) return group;
-        return { ...group, leader: memberId };
-      }));
-    };
-
-    socket.on(`newMemberInfo`, memberJoinGroup);
-    socket.on(`removeMember`, memberLeaveGroup);
-    socket.on('leaderChange', handleLeaderChange);
-    return () => {
-      socket.off("newMemberInfo", memberJoinGroup);
-      socket.off(`removeMember`, memberLeaveGroup);
-      socket.off('leaderChange', handleLeaderChange);
-    };
-  }, [myGroups, userInfo]);
-
   const leaveGroup = useCallback((group) => {
     fetch(`${config.server}/groups/leave-group`,
       {
