@@ -115,7 +115,6 @@ Router.post("/modify-subject", async (req, res) => {
         previousSubject.color = subjectInfo.color;
         previousSubject.tools = subjectInfo.tools;
         redisClient.hSet(`user:${userId}:subjects`, subjectInfo.id, JSON.stringify(previousSubject));
-        mainIo.to(userId).emit('update tools', userId);
       } catch (err) {
         console.log(err);
       };
