@@ -6,6 +6,7 @@ import SelectIcon from "../../Inputs/SelectIcon/SelectIcon";
 import ColorPalette from "../../Inputs/ColorPalette/ColorPalette";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import SelectTool from "../../Inputs/SelectTool.js/SelectTool";
+import { subjectIcons } from "@/app/utils/Constant";
 
 function SubjectManager({ subject, setSelectedSubject, selectedSubject, deleteSubject }) {
 
