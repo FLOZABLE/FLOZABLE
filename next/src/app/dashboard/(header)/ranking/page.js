@@ -12,21 +12,36 @@ import DateSelectorBtn from "@/app/components/Buttons/DateSelectorBtn/DateSelect
 import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import Link from "next/link";
 import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
+import { useRouter } from "next/navigation";
 
 function Ranking({ }) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [viewer, setViewer] = useState('Daily');
   const [rankingSearch, setRankingSearch] = useState("");
-  /* const searchParams = useSearchParams({ page: 1 }); */
   const [rankings, setRankings] = useState([]);
-  const [selectedRanking, setSelectedRanking] = useState([]);
+  const [allRankings, setAllRankings] = useState([]);
+  const [page, setPage] = useState(1);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(document.location.search);
+    const searchPage = parseInt(searchParams.get('page'))
+    if (!searchPage) {
+      router.push("?page=1", { scroll: false });
+      setPage(1);
+    }
+    else {
+      setPage(searchPage);
+    }
+  }, []);
 
   useEffect(() => {
     const viewDateTime = DateTime.fromJSDate(viewDate);
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
+    alert("About to fetch");
     fetch(`${config.server}/ranking/sort?mode=${viewer}&date=${viewDateTime.toISODate()}&timezone=${timezone}`, {
       method: 'get',
       headers: {
@@ -37,11 +52,24 @@ function Ranking({ }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setRankings(data.data);
+          alert(data);
+          setAllRankings(data.data);
         }
       })
       .catch((error) => console.error(error));
   }, [viewDate, viewer]);
+
+  useEffect(() => {
+    setRankings(
+      allRankings.filter((r) => {
+        r.toLowerCase().includes(rankingSearch.toLowerCase())
+      })
+    )
+  }, [allRankings, rankingSearch]);
+
+  useEffect(() => {
+    router.push(`?page=${page}`, { scroll: false });
+  }, [page]);
 
   return (
     <div>
@@ -87,28 +115,47 @@ function Ranking({ }) {
                   <p>Hours</p>
                 </div>
                 <ul>
-                  {rankings.map(({ t, name, user_id, timezone }, i) => {
-                  return (
-                    <li key={i}>
-                      <div className={styles.circle}>
-                        <p>{i + 1}</p>
-                      </div>
-                      <div className={styles.userInfo}>
-                        <ProfileImage 
-                          userId={user_id}
-                        />
-                        <Link href={`/dashboard/user/${user_id}`} className={styles.profileInfo}>
-                          <p className={styles.name}>{name}</p>
-                          <CountryViewer timezone={timezone} />
-                        </Link>
-                        <div className={styles.ranking}>
-                          <p>{(t / (60 * 60)).toFixed(2)}hr</p>
+                  {rankings.slice((page - 1) * 50, page * 50).map(({ t, name, user_id, timezone }, i) => {
+                    return (
+                      <li key={i}>
+                        <div className={styles.circle}>
+                          <p>{(page - 1) * 50 + i + 1}</p>
                         </div>
-                      </div>
-                    </li>
-                  )
-                })}
+                        <div className={styles.userInfo}>
+                          <ProfileImage
+                            userId={user_id}
+                          />
+                          <Link href={`/dashboard/user/${user_id}`} className={styles.profileInfo}>
+                            <p className={styles.name}>{name}</p>
+                            <CountryViewer timezone={timezone} />
+                          </Link>
+                          <div className={styles.ranking}>
+                            <p>{(t / (60 * 60)).toFixed(2)}hr</p>
+                          </div>
+                        </div>
+                      </li>
+                    )
+                  })}
                 </ul>
+                <div className={styles.PageButtons}>
+                  {
+                    page > 1 ?
+                      <button onClick={() => setPage(page - 1)}>
+                        &lt; Back
+                      </button>
+                      :
+                      <div></div>
+                  }
+                  <span className={styles.textContainer}>Page {page}</span>
+                  {
+                    page * 50 < rankings.length ?
+                      <button onClick={() => { setPage(page + 1) }} >
+                        Next &gt;
+                      </button>
+                      :
+                      <div></div>
+                  }
+                </div>
               </div>
             </div>
           </div>
