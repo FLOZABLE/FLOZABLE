@@ -2,7 +2,6 @@
 
 import { useContext, useEffect, useState } from "react";
 import styles from "./page.module.css";
-import CalendarModal from "@/app/components/Modals/CalendarModal/CalendarModal";
 import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
 import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRequestBtn";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart";
