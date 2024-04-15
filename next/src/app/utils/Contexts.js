@@ -206,6 +206,7 @@ function GroupsProvider({ children }) {
       .then((data) => {
         if (data.success) {
           setGroups(data.groups);
+          setOtherGroups(data.groups);
         }
       })
       .catch((error) => console.error(error));
