@@ -41,7 +41,6 @@ function Ranking({ }) {
     const viewDateTime = DateTime.fromJSDate(viewDate);
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    alert("About to fetch");
     fetch(`${config.server}/ranking/sort?mode=${viewer}&date=${viewDateTime.toISODate()}&timezone=${timezone}`, {
       method: 'get',
       headers: {
@@ -52,7 +51,7 @@ function Ranking({ }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          alert(data);
+          console.log(data);
           setAllRankings(data.data);
         }
       })
