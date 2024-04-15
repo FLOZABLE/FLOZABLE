@@ -823,6 +823,13 @@ Router.post('/app/auth', async (req, res) => {
     req.session.user_id = userInfo.user_id;
     req.session.timezone = userInfo.timezone;
 
+    /* res.cookie("userId", userInfo.user_id, {
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      secure: true,
+      httpOnly: true,
+      signed: true,
+    }); */
+
     return res.send({ success: true, msg: 'Authed', device_id, auth_key });
   } catch (err) {
     console.log(err);
@@ -849,10 +856,11 @@ Router.post('/app/validate-tokens', async (req, res) => {
 
     const [[device]] = await connection.query(`SELECT user_id FROM devices WHERE device_id = ? AND auth_key = ?`, [deviceId, authKey]);
 
-    console.log(device);
     if (!device) {
       return res.send({ successs: false, reason: 'Invalid Token' });
     };
+
+    req.session.user_id = device.user_id;
 
     return res.send({ success: true });
   } catch (err) {

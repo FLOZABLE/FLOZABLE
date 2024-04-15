@@ -2,6 +2,7 @@ const { DateTime } = require('luxon');
 const schedule = require('node-schedule');
 const pool = require('../model/pool');
 const redisClient = require('../model/redis');
+const { getActiveUsers } = require('./redisLoader');
 
 async function updateRanking() {
   console.log("update ranking")
@@ -15,19 +16,21 @@ async function updateRanking() {
   });
 
   const timezoneOffset = Math.floor(now.offset / 60).toString();
-  const users = await redisClient.sMembers(`allMembers`);
+  const dailyUsers = await getActiveUsers('day');
+  const weeklyUsers = await getActiveUsers('week');
+  const monthlyUsers = await getActiveUsers('month');
 
   const rankingDate = now.minus({ day: 1 }).startOf("day").toSeconds();
-  await updateDailyRanking(rankingDate, users, timezoneOffset);
+  await updateDailyRanking(rankingDate, dailyUsers, timezoneOffset);
 
   if (now.weekday === 1) {
     const rankingDate = now.minus({ week: 1 }).startOf("week").toSeconds();
-    await updateWeeklyRanking(rankingDate, users, timezoneOffset);
+    await updateWeeklyRanking(rankingDate, weeklyUsers, timezoneOffset);
   };
 
   if (now.day === 1) {
     const rankingDate = now.minus({ month: 1 }).startOf("month").toSeconds();
-    await updateMonthlyRanking(rankingDate, users, timezoneOffset);
+    await updateMonthlyRanking(rankingDate, monthlyUsers, timezoneOffset);
   };
 }
 
