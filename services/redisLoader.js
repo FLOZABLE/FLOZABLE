@@ -257,6 +257,7 @@ async function timerCache(userId, now = Math.floor(new Date().getTime() / 1000),
 
 
 function addActiveUserCache(userId) {
+  if (!userId) return;
   redisClient.sAdd('day1', userId);
   redisClient.sAdd('day2', userId);
 
@@ -267,29 +268,36 @@ function addActiveUserCache(userId) {
   redisClient.sAdd('month2', userId);
 };
 
+function removeActiveUserCache(userId) {
+  if (!userId) return;
+  redisClient.sRem('day1', userId);
+  redisClient.sRem('day2', userId);
+
+  redisClient.sRem('week1', userId);
+  redisClient.sRem('week2', userId);
+
+  redisClient.sRem('month1', userId);
+  redisClient.sRem('month2', userId);
+};
+
 /**
- * type 0 = day
- * 1 = week
- * 2= month
- * @param {*} userId 
  * @param {*} type 
  */
-async function getActiveUser(userId, type) {
+async function getActiveUsers(type) {
   try {
-    if (!type) {
-      const day1 = await redisClient.sMembers('day1', userId);
-      const day2 = await redisClient.sMembers('day2', userId);
+    if (type === 'day') {
+      const day1 = await redisClient.sMembers('day1');
+      const day2 = await redisClient.sMembers('day2');
       return [...new Set([...day1, ...day2])];
     };
 
-    if (type === 1) {
-      const week1 = await redisClient.sMembers('week1', userId);
-      const week2 = await redisClient.sMembers('week2', userId);
+    if (type === 'week') {
+      const week1 = await redisClient.sMembers('week1');
+      const week2 = await redisClient.sMembers('week2');
       return [...new Set([...week1, ...week2])];
     };
-
-    const month1 = await redisClient.sMembers('month1', userId);
-    const month2 = await redisClient.sMembers('month2', userId);
+    const month1 = await redisClient.sMembers('month1');
+    const month2 = await redisClient.sMembers('month2');
     return [...new Set([...month1, ...month2])];
 
   } catch (err) {
@@ -547,6 +555,7 @@ module.exports = {
   websiteUsageCache,
   googleAccessTokenCache,
   zsetIncrAll,
-  getActiveUser,
-  addActiveUserCache
+  getActiveUsers,
+  addActiveUserCache,
+  removeActiveUserCache
 }

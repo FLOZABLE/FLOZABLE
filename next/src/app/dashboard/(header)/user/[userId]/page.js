@@ -41,15 +41,20 @@ function User({ params }) {
           setUserInfo(userInfo);
           const sortedSubject = timelineSort(subjectsInfo);
           setUserSubjects(sortedSubject);
-          const userGroups = groups.filter(group => {
-            return userInfo.groups.includes(group.group_id);
-          });
           setUserFriends(friendsInfo)
-          setUserGroups(userGroups);
         };
       })
       .catch((error) => console.error(error));
   }, [userId]);
+
+  useEffect(() => {
+    if (!userInfo || !userInfo.groups || !groups) return;
+
+    const userGroups = groups.filter(group => {
+      return userInfo.groups.includes(group.group_id);
+    });
+    setUserGroups(userGroups);
+  }, [userInfo, groups]);
 
   return (
     <div>

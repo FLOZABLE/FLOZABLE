@@ -14,6 +14,8 @@ const cors = require('cors');
 const cron = require("node-cron");
 const fs = require('fs');
 const axios = require('axios');
+const logger = require("morgan");
+const crypto = require("node:crypto");
 
 const options = {
   key: fs.readFileSync('./SSL/key.pem', 'utf-8'),
@@ -83,13 +85,16 @@ const playlistsAPI = require('./API/playlists');
 const { io } = require("./socket");
 
 //middlewares
-if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === 'development') {
   app.use(cors({
     origin: ['https://localhost:4000', 'http://localhost:4000'],
     credentials: true
   }));
 } else {
-  app.use(cors());
+  app.use(cors({
+    origin: ['https://localhost:4000', 'http://localhost:4000'],
+    credentials: true
+  }));
   app.use(helmet.permittedCrossDomainPolicies());
   app.use(helmet.referrerPolicy());
   app.use(helmet.xssFilter());
@@ -98,7 +103,6 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
   app.use(helmet.noSniff());
   //app.use(helmet.contentSecurityPolicy());
   app.use(helmet.dnsPrefetchControl());
-  app.use(helmet.expectCt());
   app.use(helmet.frameguard());
   app.use(helmet.hidePoweredBy());
   app.use((req, res, next) => {
@@ -109,7 +113,7 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
   });
   app.use(helmet.frameguard({ action: 'SAMEORIGIN' }));
 
-  const cspOptions = {
+  /* const cspOptions = {
     directives: {
       defaultSrc: ["'self'", "*.googleapis.com", "'unsafe-inline'", "*.fonts.gstatic.com", "*.googletagmanager.com", "*.fontawesome.com", "https://googleads.g.doubleclick.net", "https://pagead2.googlesyndication.com", 'https://tpc.googlesyndication.com/sodar/sodar2.js', ""],
       scriptSrc: ["'self'", "'unsafe-eval'", "*.swiper-bundle.min.js", "https://unpkg.com/swiper@6.8.4/swiper-bundle.min.js", "*.fontawesome.com", "https://pagead2.googlesyndication.com", "*.google.com", "partner.googleadservices.com", "https://tpc.googlesyndication.com", "*.googletagmanager.com"],
@@ -118,7 +122,7 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
     }
   }
 
-  app.use(helmet.contentSecurityPolicy(cspOptions))
+  app.use(helmet.contentSecurityPolicy(cspOptions)) */
 };
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -128,7 +132,7 @@ app.use(sessionMiddleWare);
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
 app.set('socketio', io);
-//app.use(logger('dev'));
+app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.SECRET_ID));
 app.use(express.static(path.join(__dirname, '/public')));
