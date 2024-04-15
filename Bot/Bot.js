@@ -17,7 +17,7 @@ const schedule = require('node-schedule');
 const redisClient = require('../model/redis');
 const timeZones = require('../data/timeZones.json');
 const csv = require("csvtojson");
-const { activeSubjectCache, subjectsCache, timerCache, userCache, usersCache, NotificationCache, dmRoomMembersCache, dmRoomsCache } = require('../services/redisLoader');
+const { activeSubjectCache, subjectsCache, timerCache, userCache, usersCache, NotificationCache, dmRoomMembersCache, dmRoomsCache, getActiveUsers, addActiveUserCache, removeActiveUserCache } = require('../services/redisLoader');
 
 /**create bots */
 async function createBots(length) {
@@ -211,7 +211,7 @@ async function sendFriendRequest(botId) {
     //change = 10%
     if (isSend !== 0) return;
 
-    const allMembers = await redisClient.sMembers("allMembers");
+    const allMembers = await getActiveUsers('month');
 
     if (!allMembers.length) return;
 
@@ -249,10 +249,6 @@ async function sendFriendRequest(botId) {
 
 async function replyFriendRequests(userId) {
   try {
-    const allMembers = await redisClient.sMembers("allMembers");
-
-    if (!allMembers.length) return;
-
     const friendRequests = await NotificationCache(userId, 0, false);
     friendRequests.map(async (friendReq) => {
       const targetId = friendReq.f;
@@ -381,7 +377,7 @@ async function startBot(userId) {
     redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
     subject.timeline_sum += start;
     redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
-    redisClient.sAdd(`allMembers`, `${userId}`);
+    addActiveUserCache(userId);
 
   } catch (err) {
     console.log(err);
@@ -501,7 +497,7 @@ async function deleteBots() {
     await redisClient.del(`user:${user_id}:monthTotal`); //remove dayTotal
     await redisClient.del(`user:${user_id}`); //remove usercache
     await redisClient.del(`user:${user_id}:subjects`); //remove dayTotal
-    await redisClient.sRem(`allMembers`, `${user_id}`); //remove from allMembers
+    await removeActiveUserCache() //remove from daily/weekly/monthly users cache
 
 
     fs.unlink(`./public/profile-images/${user_id}.jpeg`, (err) => {
