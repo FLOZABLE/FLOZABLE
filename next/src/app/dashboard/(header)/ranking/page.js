@@ -46,7 +46,7 @@ function Ranking({ }) {
       headers: {
         'Content-Type': 'application/json'
       },
-      credentials:"include"
+      credentials: "include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -59,12 +59,21 @@ function Ranking({ }) {
   }, [viewDate, viewer]);
 
   useEffect(() => {
-    setRankings(
-      allRankings.filter((r) => {
-        r.toLowerCase().includes(rankingSearch.toLowerCase())
-      })
-    )
+    const newState = [];
+    for (let i = 0; i < allRankings.length; i++) {
+      const r = allRankings[i];
+      if (r.name.toLowerCase().includes(rankingSearch.toLowerCase())) {
+        newState.push({ ...r, place: i + 1 });
+      }
+    }
+    setRankings(newState)
   }, [allRankings, rankingSearch]);
+
+  useEffect(() => {
+    if (rankingSearch.length > 0) {
+      setPage(1);
+    }
+  }, [rankingSearch])
 
   useEffect(() => {
     router.push(`?page=${page}`, { scroll: false });
@@ -114,11 +123,11 @@ function Ranking({ }) {
                   <p>Hours</p>
                 </div>
                 <ul>
-                  {rankings.slice((page - 1) * 50, page * 50).map(({ t, name, user_id, timezone }, i) => {
+                  {rankings.slice((page - 1) * 50, page * 50).map(({ t, name, user_id, timezone, place }, i) => {
                     return (
                       <li key={i}>
                         <div className={styles.circle}>
-                          <p>{(page - 1) * 50 + i + 1}</p>
+                          <p>{place}</p>
                         </div>
                         <div className={styles.userInfo}>
                           <ProfileImage
