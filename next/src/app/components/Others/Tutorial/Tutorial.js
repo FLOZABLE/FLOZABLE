@@ -31,11 +31,11 @@ function Tutorial() {
   }
 
 
-  useEffect(() => {
+  /* useEffect(() => {
     if(isAccountModal) {
       skipTutorial();
     }
-  }, [isAccountModal]);
+  }, [isAccountModal]); */
 
   useEffect(() => {
     if (!tutorial) return;
@@ -47,7 +47,7 @@ function Tutorial() {
   }, [tutorial]);
 
   const skipTutorial = useCallback(() => {
-    router.replace({scroll: false});
+    router?.replace({scroll: false});
   }, []);
 
 

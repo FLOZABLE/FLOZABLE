@@ -37,7 +37,7 @@ async function timerUpdate() {
           SET timeline = CASE
             WHEN timeline = '' THEN ?
             ELSE CONCAT(timeline, ',', ?)
-          END,
+          END
           WHERE id = ?
         `, [
             modifiedTimeline,

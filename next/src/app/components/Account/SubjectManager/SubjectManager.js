@@ -6,6 +6,7 @@ import SelectIcon from "../../Inputs/SelectIcon/SelectIcon";
 import ColorPalette from "../../Inputs/ColorPalette/ColorPalette";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import SelectTool from "../../Inputs/SelectTool.js/SelectTool";
+import { subjectIcons } from "@/app/utils/Constant";
 
 function SubjectManager({ subject, setSelectedSubject, selectedSubject, deleteSubject }) {
 
@@ -31,8 +32,14 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject, deleteSu
   }, [subject]);
 
   useEffect(() => {
-    if (isSelectColor || isSelectIcon || isSelectTool) {
-      setSelectedSubject(prev => ({ ...prev, id: subject.id }));
+    if (isSelectColor || isSelectIcon || isSelectTool || name) {
+      setSelectedSubject(prev => ({
+        ...prev,
+        color: selectedColor,
+        icon: selectedIcon.name,
+        tools: selectedTool,
+        id: subject.id
+      }));
     }
   }, [isSelectColor, isSelectIcon, isSelectTool]);
 
