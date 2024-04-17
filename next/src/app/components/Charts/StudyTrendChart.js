@@ -38,6 +38,7 @@ function StudyTrendChart({
       const subjectsTrend = updateSubjectsTrendChart(subjectsProp, viewDate, statsViewer, change);
       setSubjectsTrend(subjectsTrend);
     }
+    console.log(subjectsTrend)
   }, [subjects, viewDate, statsViewer, subjectsProp]);
 
   return (

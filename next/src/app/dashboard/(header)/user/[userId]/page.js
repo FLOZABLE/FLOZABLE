@@ -2,7 +2,6 @@
 
 import { useContext, useEffect, useState } from "react";
 import styles from "./page.module.css";
-import CalendarModal from "@/app/components/Modals/CalendarModal/CalendarModal";
 import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
 import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRequestBtn";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart";
@@ -41,15 +40,20 @@ function User({ params }) {
           setUserInfo(userInfo);
           const sortedSubject = timelineSort(subjectsInfo);
           setUserSubjects(sortedSubject);
-          const userGroups = groups.filter(group => {
-            return userInfo.groups.includes(group.group_id);
-          });
           setUserFriends(friendsInfo)
-          setUserGroups(userGroups);
         };
       })
       .catch((error) => console.error(error));
   }, [userId]);
+
+  useEffect(() => {
+    if (!userInfo || !userInfo.groups || !groups) return;
+
+    const userGroups = groups.filter(group => {
+      return userInfo.groups.includes(group.group_id);
+    });
+    setUserGroups(userGroups);
+  }, [userInfo, groups]);
 
   return (
     <div>

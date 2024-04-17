@@ -5,6 +5,7 @@ const { google } = require('googleapis');
 const pool = require("./model/pool");
 const { userCache } = require("./services/redisLoader");
 const { DateTime } = require("luxon");
+const { responseCodes } = require("./Constant");
 
 function generateRandomId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -35,7 +36,8 @@ function hashing(password) {
   return [salt, crypto.pbkdf2Sync(password, salt, 99097, 32, 'sha512').toString('hex')]
 };
 
-async function autoSignin(req, res, success = (() => { }), fail = (() => { res.send({ success: false, reason: 'Sign in required', msg: 'Sign in required' }) })) {
+async function autoSignin(req, res, success = (() => { }), fail = (() => { res.send(responseCodes['no-user']) })) {
+  console.log(req.session.user_id, req.signedCookies.userId)
   if (req.session.user_id || (process.env.NODE_ENV === 'development' && (req.session.user_id = process.env.TESTER_ID))) {
     return success(req.session.user_id, req.session.timezone);
   };

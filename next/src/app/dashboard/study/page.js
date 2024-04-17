@@ -13,6 +13,7 @@ import YouTubePlayer from "@/app/components/Youtube/YouTubePlayer/YouTubePlayer"
 import StudySubjectTool from "@/app/components/Study/StudySubjectTool/StudySubjectTool";
 import StudySidebar from "@/app/components/Study/StudySidebar/StudySidebar";
 import StudyTimelineBar from "@/app/components/Study/StudyTimelineBar/StudyTimelineBar";
+import StudySubjectTools from "@/app/components/Study/StudySubjectTools/StudySubjectTools";
 
 
 function Study() {
@@ -141,7 +142,7 @@ function Study() {
           />
         }
       />
-      <StudySubjectTool
+      <StudySubjectTools
         startPos={{ x: "50vw", y: "19vh" }}
         isDisp={isToolModal}
         subject={selectedSubject}
