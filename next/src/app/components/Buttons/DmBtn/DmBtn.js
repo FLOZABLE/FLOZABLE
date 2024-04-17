@@ -3,12 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext } from 'react';
 import config from "@/app/utils/config";
-import { ResponseContext } from "@/app/utils/Contexts";
+import { ModalsContext, ResponseContext } from "@/app/utils/Contexts";
 import BlobBtn from "../BlobBtn/BlobBtn";
 
-function DmBtn({userInfo, padding, setIsChatModal}) {
-  const {setResponse} = useContext(ResponseContext);
-  
+function DmBtn({ userInfo, padding }) {
+  const { setResponse } = useContext(ResponseContext);
+  const { setChatModal } = useContext(ModalsContext)
+
   const requestChat = () => {
     fetch(`${config.server}/chat/chat-request`, {
       method: "post",
@@ -16,15 +17,15 @@ function DmBtn({userInfo, padding, setIsChatModal}) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ targetId: userInfo.user_id }),
-      credentials:"include"
+      credentials: "include"
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.reason === "DM already created!") {
           console.log(21, data.room);
-          setIsChatModal(data.room);
+          setChatModal({ ...data.room, chatRoom: data.room.id, open: true });
         }
-        else{
+        else {
           setResponse(data);
         }
       })

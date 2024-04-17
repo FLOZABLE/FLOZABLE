@@ -94,7 +94,7 @@ function ChatModal({
 
     if (!chatRoom) return;
 
-    const { type, id, chats } = chatRoom;
+    const { type, id, chats, members } = chatRoom;
     const lastMsg = chats.length ? chats[chats.length - 1] : null;
 
     const lastRead = readStatus[id];
@@ -119,13 +119,8 @@ function ChatModal({
       })
       .catch((error) => console.error(error));
     } else {
-      chatRoom.name = members
-        .map((member) => {
-          return member.name;
-        })
-        .join(",");
+      chatRoom.name = members.map((member) => { return member.name; }).join(",");
       chatRoom.color = "var(--purple)";
-      chatRoom.members = members;
       setSelectedRoom(chatRoom);
     };
   }, [chatModal.chatRoom, myGroups, chatRooms]);

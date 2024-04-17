@@ -19,9 +19,9 @@ function PlanTimeline({
   mode,
   maxHeight = "18.75rem",
 }) {
-  const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
-  const {subjects} = useContext(SubjectsContext);
-  const {plans, setPlans, setPlanModal} = useContext(PlansContext);
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } = useContext(TutorialsContext);
+  const { subjects } = useContext(SubjectsContext);
+  const { plans, setPlans, setPlanModal } = useContext(PlansContext);
 
   const [planSeries, setPlanSeries] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
@@ -48,7 +48,7 @@ function PlanTimeline({
         headers: {
           "Content-Type": "application/json",
         },
-        credentials:"include",
+        credentials: "include",
         body: JSON.stringify(planInfo),
       })
         .then((response) => response.json())
@@ -150,7 +150,12 @@ function PlanTimeline({
             valueFormat={val => val + '%'}
           />
         </div>
-        : null
+        :
+        <div className={styles.radialPlaceholder}>
+          All done!
+          <br/>
+          There are no plans
+        </div>
       }
       <div id={styles.addBtnWrapper} ref={addBtnRef}>
         <BlobBtn

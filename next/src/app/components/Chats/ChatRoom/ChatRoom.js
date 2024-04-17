@@ -11,6 +11,7 @@ function ChatRoom({ room, lastMsg, lastRead, setTotalNewMsg }) {
 
   useEffect(() => {
     if (!chatModal) return;
+    console.log(chatModal);
 
     const onNewMsg = (roomId, msgInfo) => {
       console.log(chatModal.chatRoom === room.id && roomId === room.id)
