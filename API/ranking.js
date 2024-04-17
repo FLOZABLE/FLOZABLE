@@ -5,7 +5,7 @@ const redisClient = require("../model/redis");
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
 const { DateTime } = require('luxon');
-const { subjectsCache, userCache, usersCache } = require("../services/redisLoader");
+const { subjectsCache, userCache, usersCache, getActiveUsers } = require("../services/redisLoader");
 const { promises } = require("fs");
 const { autoSignin } = require("../tool");
 const { validateInteger, validateStrictString, validateLength, validateISO, validateTimeZone } = require("../validate");
@@ -33,7 +33,7 @@ Router.get('/sort', async (req, res) => {
         //today
         rankings = rankingCache.get(`day:${timezoneOffset}`);
         if (!rankings) {
-          const users = await redisClient.sMembers('allMembers');
+          const users = await getActiveUsers('day');
           rankings = await todaySorting(users, timezoneOffset);
           rankings = await Promise.all(rankings.map(async (ranking) => {
             const user = await userCache(ranking.userId);
@@ -66,7 +66,7 @@ Router.get('/sort', async (req, res) => {
   
         rankings = rankingCache.get(`week:${timezoneOffset}`);
         if (!rankings) {
-          const users = await redisClient.sMembers('allMembers');
+          const users = await getActiveUsers('week');
           rankings = await thisWeekSorting(users, timezoneOffset);
           rankings = await Promise.all(rankings.map(async (ranking) => {
             const user = await userCache(ranking.userId);
@@ -101,7 +101,7 @@ Router.get('/sort', async (req, res) => {
   
         rankings = rankingCache.get(`month:${timezoneOffset}`);
         if (!rankings) {
-          const users = await redisClient.sMembers('allMembers');
+          const users = await getActiveUsers('week');
           rankings = await thisMonthSorting(users, timezoneOffset);
           rankings = await Promise.all(rankings.map(async (ranking) => {
             const user = await userCache(ranking.userId);
@@ -254,7 +254,7 @@ async function userDailySorting(userId, date, timezone, length) {
       })
       rankings.push({ date, ranking: rankingIndex });
     } else if (date === today.toSeconds()) {
-      const users = await redisClient.sMembers('allMembers');
+      const users = await getActiveUsers('week');
       const rankingVal = await todaySorting(users, timezoneOffset);
       const rankingIndex = rankingVal.findIndex(ranking => {
         return ranking.userId === userId;
@@ -291,7 +291,7 @@ async function userWeeklySorting(userId, date, timezone, length) {
       })
       rankings.push({ date, ranking: rankingIndex });
     } else if (date === thisWeek.toSeconds()) {
-      const users = await redisClient.sMembers('allMembers');
+      const users = await getActiveUsers('week');
       const rankingVal = await thisWeekSorting(users, timezoneOffset);
       const rankingIndex = rankingVal.findIndex(ranking => {
         return ranking.userId === userId;
@@ -328,7 +328,7 @@ async function userMonthlySorting(userId, date, timezone, length) {
       })
       rankings.push({ date, ranking: rankingIndex });
     } else if (date === thisMonth.toSeconds()) {
-      const users = await redisClient.sMembers('allMembers');
+      const users = await getActiveUsers('week');
       const rankingVal = await thisMonthSorting(users, timezoneOffset);
       const rankingIndex = rankingVal.findIndex(ranking => {
         return ranking.userId === userId;
@@ -572,7 +572,7 @@ Router.get('/today', async (req, res) => {
     const today = DateTime.now().setZone(timezone);
     const timezoneOffset = Math.floor(today.offset / 60).toString();
 
-    const users = await redisClient.sMembers('allMembers');
+    const users = await getActiveUsers('week');
     let rankings = await todaySorting(users, timezoneOffset);
     rankings = await Promise.all(rankings.map(async (ranking) => {
       const user = await userCache(ranking.userId);
