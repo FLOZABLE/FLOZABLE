@@ -144,6 +144,15 @@ function PlanTimeline({
             enableRadialGrid={false}
             enableCircularGrid={false}
             radialAxisStart={{ tickSize: 5, tickPadding: 5, tickRotation: 0 }}
+            theme={{
+              axis: {
+                ticks: {
+                  text: {
+                    fontFamily: "Nunito, sans-serif"
+                  }
+                }
+              }
+            }}
             circularAxisOuter={null}
             maxValue={100}
             legends={[]}

@@ -146,7 +146,7 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
             <div className={styles.iconWrapper}>
               <FontAwesomeIcon icon={faUserGroup} />
               <div className={styles.hoverEl}>
-                <p>Max maxMembers</p>
+                <p>Max Members</p>
               </div>
             </div>
             <div className={styles.contentWrapper}>

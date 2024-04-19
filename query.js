@@ -30,7 +30,9 @@ function createUsersTable() {
     private SMALLINT DEFAULT 0,
     friends VARCHAR(200) DEFAULT '',
     google_refresh_token VARCHAR(150),
-    themes VARCHAR(300) DEFAULT ''
+    themes VARCHAR(300) DEFAULT '',
+    notification_endpoint VARCHAR(500),
+    notification_keys VARCHAR(500)
   );
   `);
 };

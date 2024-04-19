@@ -18,6 +18,8 @@ function GroupContainer({ groupInfo, rankings = [], isSearched = true }) {
   const [members, setMembers] = useState([]);
   const [likes, setLikes] = useState([]);
 
+  let groupTotalTime = 0;
+
   useEffect(() => {
     if (!groupInfo) return;
     setMembers(groupInfo.members.split(",").filter(Boolean));
