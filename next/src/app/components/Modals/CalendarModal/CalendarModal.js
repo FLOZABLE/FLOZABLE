@@ -20,7 +20,7 @@ function CalendarModal({
       <div className={styles.modalHeader}>
         <i
           onClick={() => {
-            setIsCalendarOpen(false);
+            setIsOpen(false);
           }}
         >
           <FontAwesomeIcon icon={faXmark} />
