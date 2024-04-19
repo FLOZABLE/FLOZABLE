@@ -50,7 +50,6 @@
 
 .Friends .container > div:nth-child(2) .box .title h3 {
   font-size: 1.75rem;
-  font-family: "Inter", sans-serif;
 }
 
 .Friends .container > div:nth-child(2) .chartWrapper {
@@ -74,11 +73,6 @@
   font-weight: 900;
   justify-content: center;
   height: 110%;
-  font-family: "Inter", sans-serif;
-}
-
-.Friends .smallBox .title h3 {
-  
 }
 
 .Friends .smallBox i {

@@ -1,6 +1,7 @@
 .TagContainerGen {
   width: 100%;
   position: relative;
+  margin-bottom: 3rem;
 }
 
 .TagContainerGen li {
@@ -20,7 +21,7 @@
   padding: 0em 1.25rem;
   font-size: 0.938rem;
   position: absolute;
-  bottom: -4rem;
+  bottom: -3rem;
   right: 0em;
   cursor: pointer;
 }
