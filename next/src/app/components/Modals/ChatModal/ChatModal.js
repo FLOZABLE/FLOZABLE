@@ -63,7 +63,7 @@ function ChatModal({
         }; */
         setChatRooms(newChatRooms);
       };
-      if (selectedRoom.id !== roomId) {
+      if (selectedRoom?.id !== roomId) {
         setChatModal((prev) => ({...prev, totalNewMsg: prev.totalNewMsg + 1}));
       };
     },

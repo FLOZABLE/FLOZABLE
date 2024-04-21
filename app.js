@@ -85,45 +85,38 @@ const playlistsAPI = require('./API/playlists');
 const { io } = require("./socket");
 
 //middlewares
-if (process.env.NODE_ENV === 'development') {
-  app.use(cors({
-    origin: ['https://localhost:4000', 'http://localhost:4000'],
-    credentials: true
-  }));
-} else {
-  app.use(cors({
-    origin: ['https://localhost:4000', 'http://localhost:4000'],
-    credentials: true
-  }));
-  app.use(helmet.permittedCrossDomainPolicies());
-  app.use(helmet.referrerPolicy());
-  app.use(helmet.xssFilter());
-  app.use(helmet.hsts());
-  app.use(helmet.ieNoOpen());
-  app.use(helmet.noSniff());
-  //app.use(helmet.contentSecurityPolicy());
-  app.use(helmet.dnsPrefetchControl());
-  app.use(helmet.frameguard());
-  app.use(helmet.hidePoweredBy());
-  app.use((req, res, next) => {
-    res.locals.cspNonce = crypto.randomBytes(16).toString("hex");
-    res.setHeader("X-XSS-protection", "1; mode=block");
-    //console.log(res.locals.cspNonce)
-    next();
-  });
-  app.use(helmet.frameguard({ action: 'SAMEORIGIN' }));
+app.use(cors({
+  origin: process.env.SERVER_CORS.split(", "),
+  credentials: true
+}));
+app.use(helmet.permittedCrossDomainPolicies());
+app.use(helmet.referrerPolicy());
+app.use(helmet.xssFilter());
+app.use(helmet.hsts());
+app.use(helmet.ieNoOpen());
+app.use(helmet.noSniff());
+//app.use(helmet.contentSecurityPolicy());
+app.use(helmet.dnsPrefetchControl());
+app.use(helmet.frameguard());
+app.use(helmet.hidePoweredBy());
+app.use((req, res, next) => {
+  res.locals.cspNonce = crypto.randomBytes(16).toString("hex");
+  res.setHeader("X-XSS-protection", "1; mode=block");
+  //console.log(res.locals.cspNonce)
+  next();
+});
+app.use(helmet.frameguard({ action: 'SAMEORIGIN' }));
 
-  /* const cspOptions = {
-    directives: {
-      defaultSrc: ["'self'", "*.googleapis.com", "'unsafe-inline'", "*.fonts.gstatic.com", "*.googletagmanager.com", "*.fontawesome.com", "https://googleads.g.doubleclick.net", "https://pagead2.googlesyndication.com", 'https://tpc.googlesyndication.com/sodar/sodar2.js', ""],
-      scriptSrc: ["'self'", "'unsafe-eval'", "*.swiper-bundle.min.js", "https://unpkg.com/swiper@6.8.4/swiper-bundle.min.js", "*.fontawesome.com", "https://pagead2.googlesyndication.com", "*.google.com", "partner.googleadservices.com", "https://tpc.googlesyndication.com", "*.googletagmanager.com"],
-      frameSrc: ["'self'", "https://googleads.g.doubleclick.net", 'https://tpc.googlesyndication.com', "https://*.google.com", "*.googletagmanager.com"],
-      "img-src": ["'self'", "data:", "https://pagead2.googlesyndication.com", "https://ad.doubleclick.net", "*.googletagmanager.com"],
-    }
+const cspOptions = {
+  directives: {
+    defaultSrc: ["'self'", "*.googleapis.com", "'unsafe-inline'", "*.fonts.gstatic.com", "*.googletagmanager.com", "*.fontawesome.com", "https://www.google-analytics.com"],
+    scriptSrc: ["'self'", "*.swiper-bundle.min.js", "https://unpkg.com/swiper@6.8.4/swiper-bundle.min.js", "*.fontawesome.com", "*.google.com", "*.googletagmanager.com", "'unsafe-inline'", "https://code.jquery.com"],
+    frameSrc: ["'self'", "https://googleads.g.doubleclick.net", "https://*.google.com", "*.googletagmanager.com"],
+    "img-src": ["'self'",  "*.googletagmanager.com"],
   }
+}
 
-  app.use(helmet.contentSecurityPolicy(cspOptions)) */
-};
+app.use(helmet.contentSecurityPolicy(cspOptions))
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(sessionMiddleWare);

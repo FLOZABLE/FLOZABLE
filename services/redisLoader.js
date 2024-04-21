@@ -102,18 +102,15 @@ async function subjectCache(userId, subjectId) {
 
 async function dmRoomsCache(userId) {
   let dmRooms = await redisClient.hGet(`user:${userId}`, 'dmRooms');
-  if (!dmRooms) {
-    const connection = pool.promise();
-    [dmRooms] = await connection.query(`SELECT id FROM chatrooms WHERE members LIKE ?`, [`%${userId}%`]);
-    dmRooms = dmRooms.map(dmRoom => {
-      return dmRoom.id;
-    });
-    redisClient.hSet(`user:${userId}`, 'dmRooms', JSON.stringify(dmRooms));
+  if (dmRooms) {
+    return  dmRooms === "" ? [] : dmRooms.split(",");
   } else {
-    dmRooms = JSON.parse(dmRooms);
-  };
+    const connection = pool.promise();
+    const [dmRooms] = await connection.query(`SELECT id FROM chatrooms WHERE members LIKE ?`, [`%${userId}%`]);
+    redisClient.hSet(`user:${userId}`, 'dmRooms',dmRooms.map(({id}) => id).join());
 
-  return dmRooms;
+    return dmRooms;
+  };
 };
 
 async function dmRoomMembersCache(id) {
@@ -123,12 +120,13 @@ async function dmRoomMembersCache(id) {
     if (members.length) return members;
     const connection = pool.promise();
     const [[dmRoom]] = await connection.query(`SELECT members FROM chatrooms WHERE id = ?`, [id]);
-    if (dmRoom && dmRoom.members !== "") {
+    if (!dmRoom) return [];
+
+    if (dmRoom.members !== "") {
       dmRoom.members = dmRoom.members.split(",");
       redisClient.sAdd(`room:${id}`, dmRoom.members);
       return dmRoom.members;
-    }
-    return [];
+    };
   } catch (err) {
     console.log(err);
     return [];
@@ -155,25 +153,18 @@ async function groupMembersCache(id) {
 }
 
 
-async function chatRoomsCache(userId) {
+async function chatRoomsCache(userId, withMembersInfo = true) {
   try {
     const dmRooms = await dmRoomsCache(userId);
     const groups = await groupCache(userId);
     const groupRooms = groups.map((group) => {
       return { id: group, type: 0, members: [] };
     });
-    const dmRoomPromises = dmRooms.map(async (dmRoom) => {
+    const dmRoomsInfo = await Promise.all(dmRooms.map(async (dmRoom) => {
       const members = await dmRoomMembersCache(dmRoom);
-      const membersInfo = [];
-      await Promise.all(members.map(async(member) => {
-        member = await userCache(member);
-        if (member) {
-          membersInfo.push(member);
-        };
-      }));
+      const membersInfo = withMembersInfo ? await usersCache(members, false) : members.map(userId => {return {user_id: userId}});
       return { id: dmRoom, members: membersInfo, type: 1 };
-    });
-    const dmRoomsInfo = await Promise.all(dmRoomPromises);
+    }));
     const rooms = groupRooms.concat(dmRoomsInfo);
     return rooms;
   } catch (err) {
@@ -340,6 +331,8 @@ async function userCache(userId, query=true) {
  */
 async function usersCache(users, cache) {
   try {
+    if (!users.length) return [];
+
     const notCached = [];
     const usersInfo = []
     await Promise.all(users.map(async(userId) => {
@@ -427,7 +420,6 @@ async function subjectsTimelineCache(userId) {
   });
 
   const subjects = await Promise.all(subjectPromises);
-  //console.log(subjects);
   return subjects;
 };
 
