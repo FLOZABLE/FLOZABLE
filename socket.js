@@ -9,7 +9,7 @@ const { Server } = require('socket.io');
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:4000", "https://localhost:4000","https://localhost:3001", "https://localhost:3000", "http://localhost:3001", "http://localhost:3000", "https://super-meme-qx696prxr4j264qx-3001.app.github.dev", "https://super-meme-qx696prxr4j264qx-3000.app.github.dev", "http://localhost:3002"],
+    origin: process.env.SOCKET_ORIGIN.split(", "),
     credentials: true,
     methods: ["GET", "POST"],
   },
@@ -27,6 +27,7 @@ mainIo.on('connection', (socket) => {
   if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
     try {
       session = socket.request.session;
+      console.log('gddd',session)
     } catch (err) {
       console.log(err);
     };
@@ -40,19 +41,8 @@ mainIo.on('connection', (socket) => {
         secure: false
       },
       user_id: 'EoFObpf612',
-      name: 't1',
-      loggedin: true,
-      userInfo: {
-        userId: 'EoFObpf612',
-        name: 't1',
-        loggedin: true,
-        email: 't1@t.t',
-        myinfo: null,
-        timeZone: 'America/Los_Angeles'
-      }
     };
   };
-  socket.userId = session.user_id;
   const userId = session.user_id;
 
   if (userId) {
@@ -88,14 +78,6 @@ mainIo.on('connection', (socket) => {
     } catch (err) {
       console.log(err);
     }
-  });
-
-  socket.on('onlineMembers', () => {
-    /* const onlineMembers = io.engine.clientsCount;
-    io.emit() */
-    /* const onlineMembers = Object.keys(socket.sockets).length;
-    io.emit({success: true, totalLiveMembers: onlineMembers});
-    console.log(onlineMembers); */
   });
 
   socket.on("disconnect", async (reason) => {
@@ -391,7 +373,7 @@ async function isUser(userId) {
 
 async function isInChatRoom(userId, roomId) {
   try {
-    const rooms = await chatRoomsCache(userId);
+    const rooms = await chatRoomsCache(userId, false);
     const roomIndex = rooms.findIndex(room => { return room.id === roomId });
     return roomIndex === -1 ? false : true;
   } catch (err) {

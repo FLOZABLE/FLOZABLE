@@ -71,8 +71,10 @@ function AccountProvider({ children }) {
         if (data.success) {
           setUserInfo(data.userInfo);
           setNotifications(data.notifications);
-          socket.connect();
-          socket.emit('joinChats');
+          setTimeout(() => {
+            socket.connect();
+            socket.emit('joinChats');
+          }, 100);
         } else if (data.code === 401) {
           console.log("not user");
           setUserInfo(false);

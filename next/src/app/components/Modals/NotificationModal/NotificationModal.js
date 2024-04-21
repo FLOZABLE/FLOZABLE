@@ -104,13 +104,13 @@ function NotificationModal({
           }`}
         ref={moveRef}
       >
-        {notifications.length ? (
-          <div className={`${styles.notifications} customScroll`}>
-            <div className={styles.header}>
+                    <div className={styles.header}>
               <i onClick={() => {setIsNotificationModal(false)}}>
                 <FontAwesomeIcon icon={faXmark} />
               </i>
             </div>
+        {notifications.length ? (
+          <div className={`${styles.notifications} customScroll`}>
             {notifications.map((notification, i) => {
               const type = notification.t;
               const sender = notification.f;
