@@ -195,9 +195,10 @@ mainIo.on('connection', (socket) => {
 
   socket.on("start", async (subjectId) => {
     try {
+      const now = Math.floor(new Date().getTime() / 1000);
+
       const subject = await subjectCache(userId, subjectId);
       const userInfo = await userCache(userId);
-      const now = Math.floor(new Date().getTime() / 1000);
       if (!subject || !userInfo) return;
       const { groups, friends } = userInfo;
       if (groups.length) {
@@ -219,9 +220,10 @@ mainIo.on('connection', (socket) => {
 
   socket.on("stop", async (subjectId) => {
     try {
+      const now = Math.floor(new Date().getTime() / 1000);
+
       const activeSubject = await activeSubjectCache(userId);
       if (!activeSubject || !activeSubject.id === subjectId || activeSubject.id === '0') return;
-      const now = Math.floor(new Date().getTime() / 1000);
       const subject = await subjectCache(userId, subjectId);
       const userInfo = await userCache(userId);
       if (!userInfo || !subject) return;

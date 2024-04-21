@@ -179,7 +179,7 @@ app.get('*', function (req, res) {
 const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
 //randomFriend(0, 3);
 //createGroups(10);
-//botManager(57);
+botManager(57);
 //deleteBots();
 //addId();
 //createBots(50); 
