@@ -8,6 +8,9 @@ import ChatModal from "@/app/components/Modals/ChatModal/ChatModal";
 import NotificationModal from "@/app/components/Modals/NotificationModal/NotificationModal";
 import AccountModal from "@/app/components/Modals/AccountModal/AccountModal";
 import Tutorial from "./components/Others/Tutorial/Tutorial";
+import {GoogleAnalytics} from "@next/third-parties/google";
+
+const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 export const metadata = {
   title: "Create Next App",
@@ -35,6 +38,7 @@ export default function RootLayout({ children }) {
           {children}
         </AppProvider>
       </body>
+      {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
     </html>
   );
 }
