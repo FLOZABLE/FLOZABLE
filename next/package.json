@@ -19,6 +19,7 @@
     "@fullcalendar/react": "^6.1.11",
     "@fullcalendar/timegrid": "^6.1.11",
     "@mui/x-date-pickers": "^7.0.0",
+    "@next/third-parties": "^14.2.2",
     "@nivo/radial-bar": "^0.85.1",
     "@react-oauth/google": "^0.12.1",
     "countries-and-timezones": "^3.6.0",
