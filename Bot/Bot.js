@@ -17,7 +17,7 @@ const schedule = require('node-schedule');
 const redisClient = require('../model/redis');
 const timeZones = require('../data/timeZones.json');
 const csv = require("csvtojson");
-const { activeSubjectCache, subjectsCache, timerCache, userCache, usersCache, NotificationCache, dmRoomMembersCache, dmRoomsCache, getActiveUsers, addActiveUserCache, removeActiveUserCache } = require('../services/redisLoader');
+const { activeSubjectCache, subjectsCache, timerCache, userCache, usersCache, NotificationCache, dmRoomMembersCache, dmRoomsCache, getActiveUsers, addActiveUserCache, removeActiveUserCache, subjectCache } = require('../services/redisLoader');
 
 /**create bots */
 async function createBots(length) {
@@ -358,6 +358,8 @@ async function replyFriendRequests(userId) {
 
 async function startBot(userId) {
   try {
+    const now = Math.floor(new Date().getTime() / 1000);
+
     const subjects = await subjectsCache(userId);
     const subject = subjects[randomIntInRange(0, subjects.length - 1)];
     const userInfo = await userCache(userId);
@@ -370,15 +372,11 @@ async function startBot(userId) {
     if (friends.length) {
       mainIo.to(friends).emit(`studying:${userId}`, subject);
     };
-    const now = Math.floor(new Date().getTime() / 1000);
-    const { timeline_sum, datum_point, id } = subject;
-    const start = now - datum_point - timeline_sum;
+    const { datum_point, id } = subject;
+    const start = now - datum_point;
     redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
     redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
-    subject.timeline_sum += start;
-    redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
     addActiveUserCache(userId);
-
   } catch (err) {
     console.log(err);
   };
@@ -386,38 +384,40 @@ async function startBot(userId) {
 
 async function stopBot(userId) {
   try {
-    redisClient.sRem('activeBots', userId);
-    const activeSubject = await activeSubjectCache(userId);
-    const userInfo = await userCache(userId);
-    const subjects = await subjectsCache(userId);
-    const [subject] = subjects.filter((sub) => sub.id === activeSubject.id);
-    if (!userInfo || !subject || !activeSubject || !activeSubject.id) return;
-    console.log(subject);
-    const { groups, friends, name } = userInfo;
-
-    if (groups.length) {
-      mainIo.to(groups).emit(`stopStudying:${userId}`, "disconnect");
-    };
-    if (friends.length) {
-      mainIo.to(friends).emit(`stopStudying:${userId}`, "disconnect");
-    };
-
-    const { datum_point, timeline_sum, id } = subject;
     const now = Math.floor(new Date().getTime() / 1000);
 
-    const duration = now - datum_point - timeline_sum;
-    console.log('stop', userId, name, duration);
-    //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
+    redisClient.sRem('activeBots', userId);
+    const activeSubject = await activeSubjectCache(userId);
+    if (!activeSubject || activeSubject.id === '0') return;
+    const subject = await subjectCache(userId, activeSubject.id);
+    const userInfo = await userCache(userId);
+    if (!userInfo || !subject) return;
+
+    const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
+
+    if (!activity) return;
+
+    const start = activity[0];
+
+    const { datum_point } = subject;
+
+    const duration = now - datum_point - start;
+
+    redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
     for (let i = -12; i < 12; i++) {
       redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
     };
-    subject.timeline_sum += duration;
-    redisClient.hSet(`user:${userId}:subjects`, id, JSON.stringify(subject));
-    const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${id}`));
-    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
-    if (activity) {
-      const start = activity[0];
-      redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},${duration}]`);
+
+    redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${duration}]`);
+
+    const { groups, friends, name } = userInfo;
+    console.log('stop', userId, name, duration);
+
+    if (groups.length) {
+      mainIo.to(groups).emit(`stopStudying:${userId}`, {status: 'rest', duration});
+    };
+    if (friends.length) {
+      mainIo.to(friends).emit(`stopStudying:${userId}`, {status: 'rest', duration});
     };
   } catch (err) {
     console.log(err);
