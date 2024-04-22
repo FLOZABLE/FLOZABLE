@@ -182,6 +182,7 @@ const { updateRanking, createRankings } = require("./services/rankingUpdate");
 const { extensionManager } = require("./services/extension");
 const { dailyReport } = require("./services/notification");
 const { timerUpdate } = require("./services/timerUpdate");
+const { cacheManager } = require("./services/redisLoader");
 
 //scheduler that runs every hour
 //updateRanking();
@@ -195,11 +196,15 @@ cron.schedule('0 * * * *', () => {
   extensionManager();
   updateRanking();
   timerUpdate();
+  if (DateTime.now().get('hour') === 1) {
+    cacheManager();
+  }
 });
-
+//cacheManager()
 //create tables
 const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode, createDevicesTable } = require('./query');
 const { updateSubjectsTimeline } = require("./Utils/migration");
+const { DateTime } = require("luxon");
 
 //createUsersTable();
 //createSubjectsTable();

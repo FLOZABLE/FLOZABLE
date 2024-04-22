@@ -2,6 +2,7 @@ const redisClient = require("../model/redis");
 const pool = require('../model/pool');
 const { writeLog } = require('../Logger');
 const { UserRefreshClient } = require("google-auth-library");
+const { DateTime } = require("luxon");
 
 const USER_EXP = 60 * 60 * 3;
 const USER_EXP_PLUS = 60 * 60;
@@ -17,7 +18,22 @@ async function flushRedis() {
 };
 
 function cacheManager() {
-  //console.log('d');
+  const now = DateTime.now();
+
+  const index = now.startOf('day').diff(DateTime.fromISO('2024-04-21'), 'days').toObject().days % 2 + 1;
+  console.log('remove',index);
+  redisClient.del(`day${index}`);
+
+  if (now.weekday === 1) {
+    redisClient.del(`week1`);
+  } else if (now.weekday === 2) {
+    redisClient.del(`week2`);
+  };
+  if (now.get('day') === 1) {
+    redisClient.del(`month1`);
+  } else if (now.get('day') === 2) {
+    redisClient.del(`month2`);
+  }
 };
 
 async function groupCache(userId) {
