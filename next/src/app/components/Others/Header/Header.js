@@ -11,6 +11,7 @@ import Link from "next/link";
 import { HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor } from "@/app/utils/Svg";
 import { ModalsContext, NotificationsContext, SubjectsContext, TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
 import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
+import Image from "next/image";
 
 function Header({
 }) {
