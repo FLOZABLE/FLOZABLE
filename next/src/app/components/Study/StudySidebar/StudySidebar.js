@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styles from "./StudySidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,8 +21,21 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { socket } from "@/app/utils/socket";
-import { CallOptionsContext, TutorialsContext } from "@/app/utils/Contexts";
-import { IconCameraVideoFill, IconCameraVideoOffFill, IconHeadphoneFill, IconHeadphonesOff, IconMicFill, IconMicMuteFill }  from "@/app/utils/Svg";
+import {
+  CallOptionsContext,
+  SubjectsContext,
+  TutorialsContext,
+} from "@/app/utils/Contexts";
+import {
+  IconCameraVideoFill,
+  IconCameraVideoOffFill,
+  IconHeadphoneFill,
+  IconHeadphonesOff,
+  IconMicFill,
+  IconMicMuteFill,
+} from "@/app/utils/Svg";
+import config from "@/app/utils/config";
+import { timelineSort } from "@/app/utils/timelineSorting";
 
 function StudySidebar({
   isPlannerModal,
@@ -36,9 +55,11 @@ function StudySidebar({
   setIsToolModal,
   isToolModal,
 }) {
-  const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
-
-  const {isMic, setIsMic, isCam, setIsCam, isHeadphone, setIsHeadphone} = useContext(CallOptionsContext);
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
+    useContext(TutorialsContext);
+  const { setSubjects } = useContext(SubjectsContext);
+  const { isMic, setIsMic, isCam, setIsCam, isHeadphone, setIsHeadphone } =
+    useContext(CallOptionsContext);
 
   //const searchParams = useSearchParams();
   const toHomeBtnRef = useRef(null);
@@ -46,19 +67,33 @@ function StudySidebar({
   useEffect(() => {
     if (tutorial === 10) {
       setTimeout(() => {
-        const { width, top, left, height } = toHomeBtnRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left + 'px';
-        tutorialBoxRef.current.style.top = top + 'px';
-        tutorialBoxRef.current.style.width = width + 'px';
-        tutorialBoxRef.current.style.height = height + 'px';
+        const { width, top, left, height } =
+          toHomeBtnRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left + "px";
+        tutorialBoxRef.current.style.top = top + "px";
+        tutorialBoxRef.current.style.width = width + "px";
+        tutorialBoxRef.current.style.height = height + "px";
 
-        tutorialTextRef.current.style.top = top + 'px';
-        tutorialTextRef.current.style.left = left + width + 30 + 'px';
+        tutorialTextRef.current.style.top = top + "px";
+        tutorialTextRef.current.style.left = left + width + 30 + "px";
         tutorialTextRef.current.innerText = "Let's go back to the dashboard!";
       }, 500);
     }
   }, [tutorial]);
 
+  const bringSubjects = useCallback(() => {
+    fetch(`${config.server}/study/bring-subjects`, {
+      method: "post",
+      credentials: "include",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setSubjects(timelineSort(data.subjects));
+        }
+      })
+      .catch((error) => console.error(error));
+  }, []);
 
   return (
     <div className={styles.StudySidebar}>
@@ -66,84 +101,79 @@ function StudySidebar({
         href={"/dashboard"}
         className={`${styles.studyTool}`}
         onClick={() => {
-          socket.emit('exitSession');
+          socket.emit("exitSession");
           if (tutorial === 10) {
             setTutorial(11);
           }
+          setTimeout(() => {
+            bringSubjects();
+          }, 100)
         }}
         ref={toHomeBtnRef}
         id="tutorial-10"
       >
-        <i style={{ fontSize: '1.4375rem' }}>
+        <i style={{ fontSize: "1.4375rem" }}>
           <FontAwesomeIcon icon={faHome} />
         </i>
-        <div className={styles.hoverEl}>
-          Home
-        </div>
+        <div className={styles.hoverEl}>Home</div>
       </Link>
       <div
         className={`${styles.studyTool} ${isTimerModal ? styles.clicked : ""}`}
         onClick={() => {
-          setIsTimerModal(prev => !prev);
+          setIsTimerModal((prev) => !prev);
         }}
       >
-        <i style={{ fontSize: '1.4375rem' }}>
+        <i style={{ fontSize: "1.4375rem" }}>
           <FontAwesomeIcon icon={faHourglass} />
         </i>
-        <div className={styles.hoverEl}>
-          Timer
-        </div>
+        <div className={styles.hoverEl}>Timer</div>
       </div>
 
       <div
-        className={`${styles.studyTool} ${isPlannerModal ? styles.clicked : ""}`}
+        className={`${styles.studyTool} ${
+          isPlannerModal ? styles.clicked : ""
+        }`}
         onClick={() => {
-          setIsPlannerModal(prev => !prev);
+          setIsPlannerModal((prev) => !prev);
         }}
       >
-        <i style={{ fontSize: '1.4375rem' }}>
+        <i style={{ fontSize: "1.4375rem" }}>
           <FontAwesomeIcon icon={faClipboardCheck} />
         </i>
-        <div className={styles.hoverEl}>
-          Planner
-        </div>
+        <div className={styles.hoverEl}>Planner</div>
       </div>
 
       <div
         className={`${styles.studyTool} ${isCam ? styles.clicked : ""}`}
         onClick={() => {
-          setIsCam(prev => !prev);
+          setIsCam((prev) => !prev);
         }}
       >
-        <i style={{ fontSize: '1.4375rem' }}>
+        <i style={{ fontSize: "1.4375rem" }}>
           {isCam ? <IconCameraVideoFill /> : <IconCameraVideoOffFill />}
         </i>
-        <div className={styles.hoverEl}>
-          {isCam ? "Cam Off" : "Cam On"}
-        </div>
+        <div className={styles.hoverEl}>{isCam ? "Cam Off" : "Cam On"}</div>
       </div>
 
       <div
         className={`${styles.studyTool} ${isMic ? styles.clicked : ""}`}
         onClick={() => {
-          setIsMic(prev => !prev);
+          setIsMic((prev) => !prev);
         }}
       >
-        <i style={{ fontSize: '1.4375rem' }}>
+        <i style={{ fontSize: "1.4375rem" }}>
           {isMic ? <IconMicFill /> : <IconMicMuteFill />}
         </i>
-        <div className={styles.hoverEl}>
-          {isMic ? "Mute" : "Unmute"}
-        </div>
+        <div className={styles.hoverEl}>{isMic ? "Mute" : "Unmute"}</div>
       </div>
 
       <div
         className={`${styles.studyTool} ${isHeadphone ? styles.clicked : ""}`}
         onClick={() => {
-          setIsHeadphone(prev => !prev);
+          setIsHeadphone((prev) => !prev);
         }}
       >
-        <i style={{ fontSize: '1.4375rem' }}>
+        <i style={{ fontSize: "1.4375rem" }}>
           {isHeadphone ? <IconHeadphoneFill /> : <IconHeadphonesOff />}
         </i>
         <div className={styles.hoverEl}>
@@ -154,10 +184,10 @@ function StudySidebar({
       <div
         className={`${styles.studyTool} ${isViewGroups ? styles.clicked : ""}`}
         onClick={() => {
-          setIsViewGroups(prev => !prev);
+          setIsViewGroups((prev) => !prev);
         }}
       >
-        <i style={{ fontSize: '1.4375rem' }}>
+        <i style={{ fontSize: "1.4375rem" }}>
           <FontAwesomeIcon icon={faUsers} />
         </i>
         <div className={styles.hoverEl}>
@@ -166,72 +196,68 @@ function StudySidebar({
       </div>
 
       <div
-        className={`${styles.studyTool} ${isTemplateModal ? styles.clicked : ""}`}
+        className={`${styles.studyTool} ${
+          isTemplateModal ? styles.clicked : ""
+        }`}
         onClick={() => {
-          setIsTemplateModal(prev => !prev);
+          setIsTemplateModal((prev) => !prev);
         }}
       >
-        <i style={{ fontSize: '1.4375rem' }}>
+        <i style={{ fontSize: "1.4375rem" }}>
           <FontAwesomeIcon icon={faImage} />
         </i>
-        <div className={styles.hoverEl}>
-          Themes
-        </div>
+        <div className={styles.hoverEl}>Themes</div>
       </div>
 
       <div
         className={`${styles.studyTool} ${isVolumeModal ? styles.clicked : ""}`}
         onClick={() => {
-          setIsVolumeModal(prev => !prev);
+          setIsVolumeModal((prev) => !prev);
         }}
       >
-        <i style={{ fontSize: '1.4375rem' }}>
+        <i style={{ fontSize: "1.4375rem" }}>
           <FontAwesomeIcon icon={faVolumeHigh} />
         </i>
-        <div className={styles.hoverEl}>
-          Sound
-        </div>
+        <div className={styles.hoverEl}>Sound</div>
       </div>
 
       <div
-        className={`${styles.studyTool} ${isPlaylistModal ? styles.clicked : ""}`}
+        className={`${styles.studyTool} ${
+          isPlaylistModal ? styles.clicked : ""
+        }`}
         onClick={() => {
-          setIsPlaylistModal(prev => !prev);
+          setIsPlaylistModal((prev) => !prev);
         }}
       >
-        <i style={{ fontSize: '1.4375rem' }}>
+        <i style={{ fontSize: "1.4375rem" }}>
           <FontAwesomeIcon icon={faMusic} />
         </i>
-        <div className={styles.hoverEl}>
-          Playlist
-        </div>
+        <div className={styles.hoverEl}>Playlist</div>
       </div>
 
       <div
         className={`${styles.studyTool} ${isToolModal ? styles.clicked : ""}`}
         onClick={() => {
-          setIsToolModal(prev => !prev);
+          setIsToolModal((prev) => !prev);
         }}
       >
-        <i style={{ fontSize: '1.4375rem' }}>
-          {isToolModal ?
+        <i style={{ fontSize: "1.4375rem" }}>
+          {isToolModal ? (
             <FontAwesomeIcon icon={faScrewdriverWrench} />
-            :
+          ) : (
             <FontAwesomeIcon icon={faScrewdriverWrench} />
-          }
+          )}
         </i>
-        <div className={styles.hoverEl}>
-          Tools
-        </div>
+        <div className={styles.hoverEl}>Tools</div>
       </div>
 
       <div
         className={`${styles.studyTool} ${isZoom ? styles.clicked : ""}`}
         onClick={() => {
-          setIsZoom(prev => !prev);
+          setIsZoom((prev) => !prev);
         }}
       >
-        <i style={{ fontSize: '1.4375rem' }}>
+        <i style={{ fontSize: "1.4375rem" }}>
           <FontAwesomeIcon
             icon={
               isZoom
