@@ -151,17 +151,20 @@ app.use('/canvas', canvasAPI);
 app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 //handle profile images
-app.use((req, res, next) => {
-  if (!req.path.startsWith('/profile-images')) { next(); return };
-  const defaultImagePath = path.join(__dirname, 'public', '/img/default_profile.jpg');
-  return res.sendFile(defaultImagePath);
+app.get('/profile-image/:userId.jpeg', (req, res) => {
+  const { userId } = req.params;
+  const imagePath = path.join(__dirname, 'public/profile-images', `${userId}.jpeg`);
+  fs.readFile(imagePath, (err, imageData) => {
+    if (err) {
+      // Handle the case when the image is not found
+      const defaultImagePath = path.join(__dirname, 'public', '/img/default_profile.jpg');
+      return res.sendFile(defaultImagePath);
+    }
+
+    res.setHeader('Content-Type', 'image/jpeg');
+    res.send(imageData);
+  });
 });
-
-
-//render react app
-app.get('/dashboard*', (req, res) => {
-  res.sendFile(path.join(__dirname, process.env.BUILD, 'index.html'));
-}); 
 
 //catch 404
 app.get('*', function (req, res) {
@@ -203,7 +206,7 @@ cron.schedule('0 * * * *', () => {
 //cacheManager()
 //create tables
 const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode, createDevicesTable } = require('./query');
-const { updateSubjectsTimeline } = require("./Utils/migration");
+const { updateSubjectsTimeline, redisUsersCache } = require("./Utils/migration");
 const { DateTime } = require("luxon");
 
 //createUsersTable();
