@@ -14,6 +14,12 @@ const nextConfig = {
         port: '3000',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'static.flozable.com',
+        port: '',
+        pathname: '/**',
+    },
     ],
   },
   async headers() {
