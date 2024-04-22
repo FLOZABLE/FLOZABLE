@@ -54,7 +54,8 @@ function ChatRoom({ room, lastMsg, lastRead, setTotalNewMsg }) {
     <li
       className={styles.ChatRoom}
       onClick={() => {
-        setChatModal(prev => ({...prev, totalNewMsg: prev.totalNewMsg - newMsgs, chatRoom: room.id}));
+        console.log("selected room: ", room);
+        setChatModal(prev => ({...prev, ...room, totalNewMsg: prev.totalNewMsg - newMsgs, chatRoom: room.id}));
         setNewMsgs(0);
       }}
     >
