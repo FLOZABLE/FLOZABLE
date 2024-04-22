@@ -32,7 +32,6 @@ function ChatModal({
         if (data.success) {
           setChatRooms(data.rooms);
           setReadStatus(data.readStatus);
-          console.log('gddddd', chatRooms)
         }
       })
       .catch((error) => console.error(error));
@@ -88,10 +87,10 @@ function ChatModal({
   }, [chatRooms, selectedRoom]);
 
   useEffect(() => {
-    if (!chatModal.chatRoom || !myGroups.length) return;
+    console.log(chatModal.chatRoom, selectedRoom, chatRooms);
+    if (!chatModal.chatRoom) return;
 
-    const chatRoom = chatRooms.find(room => room.id === chatModal.chatRoom);
-
+    const chatRoom = chatRooms.find((room) => room.id === chatModal.chatRoom);
     if (!chatRoom) return;
 
     const { type, id, chats, members } = chatRoom;
