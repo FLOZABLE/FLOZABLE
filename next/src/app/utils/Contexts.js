@@ -388,8 +388,8 @@ function WorkersProvider({ children }) {
   const subjectsTimerWorkerRef = useRef(null);
 
   useEffect(() => {
-    membersTimerWorkerRef.current = new Worker('/timerWorker.js');
-    subjectsTimerWorkerRef.current = new Worker('/subjectTimerWorker.js');
+    membersTimerWorkerRef.current = new Worker('/workers/timerWorker.js');
+    subjectsTimerWorkerRef.current = new Worker('/workers/subjectTimerWorker.js');
     return () => {
       membersTimerWorkerRef.current?.terminate();
       subjectsTimerWorkerRef.current?.terminate();

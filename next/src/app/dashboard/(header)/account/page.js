@@ -116,7 +116,7 @@ function Account() {
 
   useEffect(() => {
     if (!userInfo) return;
-    setImageSrc(`${config.server}/profile-images/${userInfo.user_id}.jpeg`);
+    setImageSrc(`${config.server}/profile-image/${userInfo.user_id}.jpeg`);
     fetch(`${config.server}/account/activity-settings`, {
       method: "get",
       headers: {

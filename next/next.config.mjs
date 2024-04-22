@@ -16,6 +16,19 @@ const nextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: '/profile-images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600', // Cache for 1 hour
+          },
+        ],
+      },
+    ];
+  },
   optimizeFonts: false,
 };
 

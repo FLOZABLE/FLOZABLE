@@ -29,6 +29,12 @@ function SubjecTimer({
   const startSubjectRef = useRef(null);
 
   useEffect(() => {
+    return () => {
+      subjectsTimerWorkerRef?.current?.postMessage({ command: "stopSubjectTimer" });
+    };
+  }, []);
+
+  useEffect(() => {
     if (tutorial === 7) {
       setTimeout(() => {
         const { width, top, left } = chooseSubjectRef.current.getBoundingClientRect();

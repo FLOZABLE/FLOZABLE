@@ -81,71 +81,8 @@ mainIo.on('connection', (socket) => {
   });
 
   socket.on("disconnect", async (reason) => {
-    const userInfo = await userCache(userId);
-
-    if (!userInfo) {
-      redisClient.hDel(`user:${userId}`, `ActiveSubject`);
-      return;
-    };
-
-    const { groups, friends } = userInfo;
-
-    const activeSubject = await activeSubjectCache(userId);
-    if (!activeSubject) {
-      if (groups.length) {
-        io.to(groups).emit(`stopStudying:${userId}`, {status: 'disconnect'});
-      };
-      if (friends.length) {
-        io.to(friends).emit(`stopStudying:${userId}`, {status: 'disconnect'});
-      };
-      return;
-    };
-    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
-
-    const now = Math.floor(new Date().getTime() / 1000);
-    /* const subjects = await subjectsCache(userId);
-    const subject = subjects.find(subjectInfo => subjectInfo.id === subjectId); */
-    const subjectId = activeSubject.id;
-    const subject = await subjectCache(userId, subjectId);
-
-    if (!subject) return;
-
-    const { datum_point, timeline_sum } = subject;
-
-    const duration = now - datum_point - timeline_sum;
-    subject.timeline_sum += duration;
-
-    if (groups.length) {
-      io.to(groups).emit(`stopStudying:${userId}`, {status: 'disconnect', duration});
-    };
-    if (friends.length) {
-      io.to(friends).emit(`stopStudying:${userId}`, {status: 'disconnect', duration});
-    };
-    
-    redisClient.hSet(`user:${userId}:subjects`, subjectId, JSON.stringify(subject));
-    //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
-    //zsetIncrAll(`user:${userId}:dayTotal`, duration);
-
-    const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
-
-    if (activity) {
-      const start = activity[0];
-      redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${duration}]`);
-    };
-    extensionIo.to(userId).emit("studying", { studying: false });
-    //total timer update
-    //this is unix time in sec of active subject's start
-    /* const activeSubjectStart = activeSubject.time;
-    const timerInfo = await timerCache(userId, now);
-    const {dp, ts} = timerInfo;
-    const timerStart = activeSubjectStart - dp - ts;
-    const totalTimerDuration = now - dp - ts;
-    timerInfo.ts += totalTimerDuration;
-    redisClient.rPush(`user:${userId}:timer`, `[${timerStart},${totalTimerDuration}]`);
-    redisClient.hSet(`user:${userId}`, 'timerInfo', JSON.stringify(timerInfo)); */
-    for (let i = -12; i < 12; i++) {
-      redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
-    };
+    stopStudying(userId, 'disconnect');
+    deActiveGroup(userId, socket);
   });
 
   //chat
@@ -202,42 +139,7 @@ mainIo.on('connection', (socket) => {
 
   socket.on("stop", async (subjectId) => {
     try {
-      const now = Math.floor(new Date().getTime() / 1000);
-
-      const activeSubject = await activeSubjectCache(userId);
-      if (!activeSubject || !activeSubject.id === subjectId || activeSubject.id === '0') return;
-      const subject = await subjectCache(userId, subjectId);
-      const userInfo = await userCache(userId);
-      if (!userInfo || !subject) return;
-  
-  
-      const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${subjectId}`));
-  
-      extensionIo.to(userId).emit("studying", { studying: false });
-
-      if (!activity) return;
-
-      const start = activity[0];
-  
-      const { datum_point } = subject;
-
-      const duration = now - datum_point - start;
-
-      redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
-      for (let i = -12; i < 12; i++) {
-        redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
-      };
-
-      redisClient.rPush(`user:${userId}:subject:${subjectId}`, `[${start},${duration}]`);
-  
-      const { groups, friends } = userInfo;
-  
-      if (groups.length) {
-        io.to(groups).emit(`stopStudying:${userId}`, {status: 'rest', duration});
-      };
-      if (friends.length) {
-        io.to(friends).emit(`stopStudying:${userId}`, {status: 'rest', duration});
-      };
+      stopStudying(userId, 'rest', subjectId);
     } catch (err) {
       console.log(err);
     };
@@ -301,10 +203,7 @@ mainIo.on('connection', (socket) => {
 
   socket.on('exitSession', async () => {
     deActiveGroup(userId, socket);
-  });
-
-  socket.on('disconnect', async () => {
-    deActiveGroup(userId, socket);
+    stopStudying(userId, 'rest');
   });
 });
 
@@ -410,24 +309,53 @@ async function isInGroupRoom(userId, groupId, roomId) {
   }
 };
 
-cron.schedule('*/10 * * * * *', () => {
-  const onlineMembers = io.engine.clientsCount;
-  io.emit('onlineMembers', onlineMembers);
+async function stopStudying(userId, mode, subjectId) {
+  const now = Math.floor(new Date().getTime() / 1000);
 
-  const allRooms = io.sockets.adapter.rooms;
-  for (const [groupId, socketIdsSet] of allRooms) {
-    const users = [];
-    for (const socketId of socketIdsSet) {
-      const socket = io.sockets.sockets.get(socketId);
-      if (socket && socket.userId) {
-        if (!users.includes(socket.userId)) {
-          users.push(socket.userId);
-        };
-      }
-    };
-    io.to(groupId).emit('groupOnlineMembers', groupId, users);
+  const activeSubject = await activeSubjectCache(userId);
+  if (!activeSubject) return;
+
+  if (!activeSubject || activeSubject.id === '0') return;
+
+  if (subjectId && activeSubject.id !== subjectId) return;
+
+  const subject = await subjectCache(userId, activeSubject.id);
+  const userInfo = await userCache(userId);
+  if (!userInfo || !subject) return;
+
+  const { groups, friends } = userInfo;
+
+  if (groups.length) {
+    io.to(groups).emit(`stopStudying:${userId}`, {status: mode});
   };
-});
+  if (friends.length) {
+    io.to(friends).emit(`stopStudying:${userId}`, {status: mode});
+  };
+
+  const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
+
+  extensionIo.to(userId).emit("studying", { studying: false });
+
+  if (!activity) return;
+
+  const start = activity[0];
+
+  const { datum_point } = subject;
+
+  const duration = now - datum_point - start;
+
+  if (mode === 'disconnect') {
+    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
+  } else {
+    redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
+  };
+  
+  for (let i = -12; i < 12; i++) {
+    redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
+  };
+
+  redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${duration}]`);
+};
 
 module.exports = { io, mainIo, extensionIo };
 

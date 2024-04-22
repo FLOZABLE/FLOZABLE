@@ -50,5 +50,6 @@ async function redisUsersCache() {
 };
 
 module.exports = {
-  updateSubjectsTimeline
+  updateSubjectsTimeline,
+  redisUsersCache
 }
