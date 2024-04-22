@@ -37,6 +37,18 @@ async function updateSubjectsTimeline(limit) {
   };
 };
 
+async function redisUsersCache() {
+  const prevAllMembers = await redisClient.sMembers('allMembers');
+  redisClient.sAdd('day1', prevAllMembers);
+  redisClient.sAdd('day2', prevAllMembers);
+
+  redisClient.sAdd('week1', prevAllMembers);
+  redisClient.sAdd('week2', prevAllMembers);
+
+  redisClient.sAdd('month1', prevAllMembers);
+  redisClient.sAdd('month2', prevAllMembers);
+};
+
 module.exports = {
   updateSubjectsTimeline
 }
