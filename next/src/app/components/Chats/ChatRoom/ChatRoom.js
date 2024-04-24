@@ -4,24 +4,25 @@ import { DateTime } from "luxon";
 import { socket } from "@/app/utils/socket";
 import { ModalsContext } from "@/app/utils/Contexts";
 
-function ChatRoom({ room, lastMsg, lastRead, setTotalNewMsg }) {
-  const {chatModal, setChatModal} = useContext(ModalsContext);
+function ChatRoom({ room, lastMsg, lastRead, setTotalNewMsg, setReadStatus, readStatus }) {
+  const { chatModal, setChatModal } = useContext(ModalsContext);
 
   const [newMsgs, setNewMsgs] = useState(0);
 
   useEffect(() => {
     if (!chatModal) return;
-    console.log(chatModal);
 
     const onNewMsg = (roomId, msgInfo) => {
-      console.log(chatModal.chatRoom === room.id && roomId === room.id)
-      /* if (chatModal.chatRoom !== room.id && roomId === room.id) {
-        setNewMsgs(prev => prev + 1);
-      }; */
+      if (chatModal.chatRoom !== room.id && roomId === room.id) {
+        setNewMsgs((prev) => prev + 1);
+      }
       if (chatModal.chatRoom === room.id && roomId === room.id) {
         setTimeout(() => {
           setNewMsgs(0);
         }, 100);
+        const tempState = {...readStatus };
+        tempState[room.id] = `${msgInfo.i}:${msgInfo.t}`;
+        setReadStatus(tempState);
       }
     };
 
@@ -54,9 +55,12 @@ function ChatRoom({ room, lastMsg, lastRead, setTotalNewMsg }) {
     <li
       className={styles.ChatRoom}
       onClick={() => {
-        console.log("selected room: ", room);
-        setChatModal(prev => ({...prev, ...room, totalNewMsg: prev.totalNewMsg - newMsgs, chatRoom: room.id}));
+        setChatModal(prev => ({ ...prev, ...room, totalNewMsg: prev.totalNewMsg - newMsgs, chatRoom: room.id }));
         setNewMsgs(0);
+        const tempState = { ...readStatus };
+        const finalMessage = room.chats[room.chats.length - 1]; 
+        tempState[room.id] = `${finalMessage.i}:${finalMessage.t}`;
+        setReadStatus(tempState);
       }}
     >
       <div className={styles.imgContainer} style={{ backgroundColor: room?.color }}>
@@ -69,7 +73,7 @@ function ChatRoom({ room, lastMsg, lastRead, setTotalNewMsg }) {
           </div>
           <strong>({room?.members.length})</strong>
           <div className={styles.msgCount}>
-            {newMsgs ? <div>{newMsgs} new messages</div> : null}  
+            {newMsgs ? <div>{newMsgs} new messages</div> : null}
           </div>
         </div>
         <div className={styles.msgInfo}>
