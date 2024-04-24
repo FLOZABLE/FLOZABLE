@@ -16,9 +16,9 @@ import MyChatContainer from "@/app/components/Chats/MyChatContainer/MyChatContai
 
 function ChatModal({
 }) {
-  const {userInfo} = useContext(UserInfoContext);
-  const {chatModal, setChatModal} = useContext(ModalsContext);
-  const {myGroups} = useContext(GroupsContext);
+  const { userInfo } = useContext(UserInfoContext);
+  const { chatModal, setChatModal } = useContext(ModalsContext);
+  const { myGroups } = useContext(GroupsContext);
 
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [chatRooms, setChatRooms] = useState([]);
@@ -26,12 +26,27 @@ function ChatModal({
   const [msgInput, setMsgInput] = useState("");
 
   useEffect(() => {
-    fetch(`${config.server}/chat/bring-rooms`, { method: "post",credentials:"include" })
+    fetch(`${config.server}/chat/bring-rooms`, { method: "post", credentials: "include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
           setChatRooms(data.rooms);
           setReadStatus(data.readStatus);
+
+          let totalNewMsg = 0;
+          console.log(data.rooms, 37);
+          data.rooms.map((room) => {
+            const lastRead = data.readStatus[room.id];
+            const [lastReadMsg, lastMsgTime] = lastRead ? lastRead.split(":") : [null, null];
+            console.log(room, lastRead, lastReadMsg, lastMsgTime, "fffff");
+            const lastMsgIndex = room.chats.findIndex(chat => {
+              return chat.i === lastReadMsg;
+            });
+            if (lastMsgIndex === -1) return;
+            const newMsgs = room.chats.length - lastMsgIndex - 1;
+            totalNewMsg += newMsgs;
+          });
+          setChatModal((prev) => ({...prev, totalNewMsg }));
         }
       })
       .catch((error) => console.error(error));
@@ -48,7 +63,7 @@ function ChatModal({
     }
   }, [msgInput, selectedRoom]);
 
-  
+
   const onMsgReceived = useCallback(
     (roomId, msgInfo) => {
       const chatRoomIndex = chatRooms.findIndex((chatRoom) => {
@@ -62,11 +77,12 @@ function ChatModal({
         }; */
         setChatRooms(newChatRooms);
       };
-      if (selectedRoom?.id !== roomId) {
-        setChatModal((prev) => ({...prev, totalNewMsg: prev.totalNewMsg + 1}));
+      console.log("msg stuff", chatModal, roomId, msgInfo, selectedRoom);
+      if (selectedRoom?.id !== roomId || !selectedRoom) {
+        setChatModal((prev) => ({ ...prev, totalNewMsg: prev.totalNewMsg + 1 }));
       };
     },
-    [chatRooms, selectedRoom],
+    [chatRooms, selectedRoom]
   );
 
   useEffect(() => {
@@ -87,7 +103,6 @@ function ChatModal({
   }, [chatRooms, selectedRoom]);
 
   useEffect(() => {
-    console.log(chatModal.chatRoom, selectedRoom, chatRooms);
     if (!chatModal.chatRoom) return;
 
     const chatRoom = chatRooms.find((room) => room.id === chatModal.chatRoom);
@@ -108,15 +123,15 @@ function ChatModal({
       chatRoom.name = name;
       chatRoom.color = color;
 
-      fetch(`${config.server}/chat/members?roomId=${id}`, { method: "get", credentials:"include" })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          const { membersInfo } = data;
-          setSelectedRoom({...chatRoom, members: membersInfo});
-        }
-      })
-      .catch((error) => console.error(error));
+      fetch(`${config.server}/chat/members?roomId=${id}`, { method: "get", credentials: "include" })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const { membersInfo } = data;
+            setSelectedRoom({ ...chatRoom, members: membersInfo });
+          }
+        })
+        .catch((error) => console.error(error));
     } else {
       chatRoom.name = members.map((member) => { return member.name; }).join(",");
       chatRoom.color = "var(--purple)";
@@ -131,14 +146,14 @@ function ChatModal({
       <div className={styles.header}>
         <i
           onClick={() => {
-            setChatModal(prev => ({...prev, open: true}));
+            setChatModal(prev => ({ ...prev, open: true }));
           }}>
           <BackArrow />
         </i>
         <p>Messages</p>
         <i
           onClick={() => {
-            setChatModal(prev => ({...prev, open: false}));
+            setChatModal(prev => ({ ...prev, open: false }));
           }}
         >
           <FontAwesomeIcon icon={faXmark} />
@@ -146,46 +161,50 @@ function ChatModal({
       </div>
       <ul className={`${styles.chatRoomsContainer} customScroll`}>
         {chatRooms.map((chatRoom, i) => {
-        if (!readStatus) return;
+          if (!readStatus) return;
 
-        const { type, id, members, chats } = chatRoom;
-        const lastMsg = chats.length ? chats[chats.length - 1] : null;
-        const lastRead = readStatus[id];
+          const { type, id, members, chats } = chatRoom;
+          const lastMsg = chats.length ? chats[chats.length - 1] : null;
+          const lastRead = readStatus[id];
 
-        if (!type) {
-          const group = myGroups.find((group) => {
-            return group.group_id === id;
-          });
-          if (!group) return;
-          const { name, color } = group;
-          const members = group.members === "" ? [] : group.members.split(",");
-          chatRoom.name = name;
-          chatRoom.color = color;
-          chatRoom.members = members;
-          return (
-            <ChatRoom
-              key={i}
-              room={chatRoom}
-              lastMsg={lastMsg}
-              lastRead={lastRead}
-            />
-          );
-        } else {
-          chatRoom.name = members
-            .map((member) => {
-              return member.name;
-            })
-            .join(",");
-          chatRoom.color = "var(--purple)";
-          return (
-            <ChatRoom
-              key={i}
-              room={chatRoom}
-              lastMsg={lastMsg}
-              lastRead={lastRead}
-            />
-          );
-        }
+          if (!type) {
+            const group = myGroups.find((group) => {
+              return group.group_id === id;
+            });
+            if (!group) return;
+            const { name, color } = group;
+            const members = group.members === "" ? [] : group.members.split(",");
+            chatRoom.name = name;
+            chatRoom.color = color;
+            chatRoom.members = members;
+            return (
+              <ChatRoom
+                key={i}
+                room={chatRoom}
+                lastMsg={lastMsg}
+                lastRead={lastRead}
+                readStatus={readStatus}
+                setReadStatus={setReadStatus}
+              />
+            );
+          } else {
+            chatRoom.name = members
+              .map((member) => {
+                return member.name;
+              })
+              .join(",");
+            chatRoom.color = "var(--purple)";
+            return (
+              <ChatRoom
+                key={i}
+                room={chatRoom}
+                lastMsg={lastMsg}
+                lastRead={lastRead}
+                readStatus={readStatus}
+                setReadStatus={setReadStatus}
+              />
+            );
+          }
         })}
       </ul>
       <div
@@ -196,7 +215,9 @@ function ChatModal({
           <i
             id={styles.exitBtn}
             onClick={() => {
-              setChatModal(prev => ({...prev, chatRoom: false}));
+              alert("close");
+              setChatModal(prev => ({ ...prev, chatRoom: false }));
+              setSelectedRoom(null);
             }}
           >
             <BackArrow />
@@ -205,7 +226,7 @@ function ChatModal({
           <i
             id={styles.closeBtn}
             onClick={() => {
-              setChatModal(prev => ({...prev, open: false}));
+              setChatModal(prev => ({ ...prev, open: false }));
             }}
           >
             <FontAwesomeIcon icon={faXmark} />
@@ -223,7 +244,7 @@ function ChatModal({
               );
               if (u === userInfo.user_id) {
                 return (
-                  <MyChatContainer 
+                  <MyChatContainer
                     time={formattedTime}
                     m={m}
                     key={i}
@@ -234,7 +255,7 @@ function ChatModal({
                   return member.user_id === u;
                 });
                 return (
-                  <ChatContainer 
+                  <ChatContainer
                     userInfo={user}
                     time={formattedTime}
                     m={m}
@@ -244,7 +265,7 @@ function ChatModal({
               }
             })
           }
-          
+
         </ul>
         <div className={styles.inputWrapper}>
           <input
