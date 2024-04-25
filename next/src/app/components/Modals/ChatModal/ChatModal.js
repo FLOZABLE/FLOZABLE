@@ -34,11 +34,9 @@ function ChatModal({
           setReadStatus(data.readStatus);
 
           let totalNewMsg = 0;
-          console.log(data.rooms, 37);
           data.rooms.map((room) => {
             const lastRead = data.readStatus[room.id];
             const [lastReadMsg, lastMsgTime] = lastRead ? lastRead.split(":") : [null, null];
-            console.log(room, lastRead, lastReadMsg, lastMsgTime, "fffff");
             const lastMsgIndex = room.chats.findIndex(chat => {
               return chat.i === lastReadMsg;
             });
@@ -77,7 +75,6 @@ function ChatModal({
         }; */
         setChatRooms(newChatRooms);
       };
-      console.log("msg stuff", chatModal, roomId, msgInfo, selectedRoom);
       if (selectedRoom?.id !== roomId || !selectedRoom) {
         setChatModal((prev) => ({ ...prev, totalNewMsg: prev.totalNewMsg + 1 }));
       };
@@ -215,7 +212,6 @@ function ChatModal({
           <i
             id={styles.exitBtn}
             onClick={() => {
-              alert("close");
               setChatModal(prev => ({ ...prev, chatRoom: false }));
               setSelectedRoom(null);
             }}
