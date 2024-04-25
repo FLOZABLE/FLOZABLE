@@ -113,6 +113,7 @@ const cspOptions = {
     scriptSrc: ["'self'", "*.swiper-bundle.min.js", "https://unpkg.com/swiper@6.8.4/swiper-bundle.min.js", "*.fontawesome.com", "*.google.com", "*.googletagmanager.com", "'unsafe-inline'", "https://code.jquery.com"],
     frameSrc: ["'self'", "https://googleads.g.doubleclick.net", "https://*.google.com", "*.googletagmanager.com"],
     "img-src": ["'self'",  "*.googletagmanager.com"],
+    "form-action": ["'self'", "https://accounts.google.com/o/oauth2/v2/auth"]
   }
 }
 

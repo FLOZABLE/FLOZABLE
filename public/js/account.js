@@ -167,6 +167,11 @@ closeBtnBack.addEventListener('click', () => {
   accountModal.classList.remove('visible');
 });
 
+const oauthSignInBtns = document.getElementsByClassName("oauthSignIn");
+
+oauthSignInBtns[0].addEventListener('click', oauthSignIn);
+oauthSignInBtns[1].addEventListener('click', oauthSignIn);
+
 function oauthSignIn() {
   // Google's OAuth 2.0 endpoint for requesting an access token
   const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
