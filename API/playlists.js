@@ -16,6 +16,7 @@ Router.get("/youtube-playlists", async (req, res) => {
     try {
       try {
         const access_token = await googleAccessTokenCache(userId);
+        console.log(access_token, "access_token");
 
         fetch(`https://youtube.googleapis.com/youtube/v3/playlists?part=id,snippet&fields=items(id,snippet(title,channelId,channelTitle))&maxResults=10&mine=true&key=${YOUTUBE_API_KEY}`, {
           headers: {
@@ -24,6 +25,7 @@ Router.get("/youtube-playlists", async (req, res) => {
           }
         }).then((response) => response.json())
           .then(async (data) => {
+            console.log(data);
             try {
               return await Promise.all(data.items.map(async (playlist) => {
                 return fetch(`https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=${playlist.id}&key=${YOUTUBE_API_KEY}`, {
