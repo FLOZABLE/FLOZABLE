@@ -17,7 +17,7 @@ function PlaylistModal() {
           </tr>
         </tbody>
       </table>
-      {playlistType === 0 ? <SpotifyPlaylist /> : SpotifyPlaylist === 1 ? <YouTubePlaylist /> : null}
+      {playlistType === 0 ? <SpotifyPlaylist /> : playlistType === 1 ? <YouTubePlaylist /> : null}
     </div>
   )
 };
