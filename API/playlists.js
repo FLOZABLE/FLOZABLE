@@ -12,11 +12,37 @@ const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const YOUTUBE_API_KEY = process.env.GOOGLE_API_KEY;
 
 Router.get("/youtube-playlists", async (req, res) => {
+
+  async function getPlaylistVideos(playlistId, access_token, nextPageToken = null, pageNum = 0) {
+    if (pageNum > 5) {
+      return []; //To prevent too many requests
+    }
+    let fetchUrl = `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=${playlistId}&key=${YOUTUBE_API_KEY}`;
+    if (nextPageToken) {
+      fetchUrl += `&pageToken=${nextPageToken}`;
+    }
+    return fetch(fetchUrl, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+        'Accept': 'application/json'
+      }
+    }).then((response) => response.json())
+      .then(async (data) => {
+        const nextPageToken = data.nextPageToken;
+        let videoResults = [];
+        if (data.items) {
+          data.items.map((video) => {
+            videoResults.push(video.snippet.resourceId.videoId);
+          })
+        }
+        return nextPageToken ? videoResults.concat(await getPlaylistVideos(playlistId, access_token, nextPageToken, pageNum + 1)) : videoResults;
+      });
+  }
+
   autoSignin(req, res, (async (userId) => {
     try {
       try {
         const access_token = await googleAccessTokenCache(userId);
-        console.log(access_token, "access_token");
 
         fetch(`https://youtube.googleapis.com/youtube/v3/playlists?part=id,snippet&fields=items(id,snippet(title,channelId,channelTitle))&maxResults=10&mine=true&key=${YOUTUBE_API_KEY}`, {
           headers: {
@@ -25,24 +51,9 @@ Router.get("/youtube-playlists", async (req, res) => {
           }
         }).then((response) => response.json())
           .then(async (data) => {
-            console.log(data);
             try {
               return await Promise.all(data.items.map(async (playlist) => {
-                return fetch(`https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=${playlist.id}&key=${YOUTUBE_API_KEY}`, {
-                  headers: {
-                    'Authorization': `Bearer ${access_token}`,
-                    'Accept': 'application/json'
-                  }
-                }).then((response) => response.json())
-                  .then((data) => {
-                    let videoResults = [];
-                    if (data.items) {
-                      data.items.map((video) => {
-                        videoResults.push(video.snippet.resourceId.videoId);
-                      })
-                    }
-                    return [playlist.snippet.title, ...videoResults];
-                  });
+                return [playlist.id, await getPlaylistVideos(playlist.id, access_token)];
               }));
             } catch (err) {
               return { success: false, reason: "An error occured" }
