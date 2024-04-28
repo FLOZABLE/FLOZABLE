@@ -1,24 +1,8 @@
-const { server, sessionMiddleWare } = require("./app");
-const cron = require('node-cron');
-const pool = require("./model/pool");
-const redisClient = require("./model/redis");
-const { generateRandomId } = require("./tool");
-const { lastMsgCache, subjectsCache, activeSubjectCache, timerCache, chatRoomsCache, msgQueue, userCache, subjectCache, dmRoomMembersCache, groupMembersCache, zsetIncrAll } = require("./services/redisLoader");
-const { DateTime } = require("luxon");
-const { Server } = require('socket.io');
-
-const io = new Server(server, {
-  cors: {
-    origin: process.env.SOCKET_ORIGIN.split(", "),
-    credentials: true,
-    methods: ["GET", "POST"],
-  },
-  allowEIO3: true
-});
-
-const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
-
-io.use(wrap(sessionMiddleWare));
+const redisClient = require('../model/redis');
+const { userCache, chatRoomsCache, msgQueue, subjectCache, dmRoomMembersCache, activeSubjectCache } = require('../services/redisLoader');
+const { generateRandomId } = require('../tool');
+const { extensionIo } = require('./extensionIo');
+const { io } = require('./io');
 
 const mainIo = io.of('/');
 mainIo.on('connection', (socket) => {
@@ -55,7 +39,7 @@ mainIo.on('connection', (socket) => {
   
       const { friends } = userInfo;
       if (friends.length) {
-        io.to(friends).emit(`studying:${userId}`, {id: '0'});
+        mainIo.to(friends).emit(`studying:${userId}`, {id: '0'});
       };
     })();
   }
@@ -70,14 +54,6 @@ mainIo.on('connection', (socket) => {
     } catch (err) {
       console.log(err);
     };
-  });
-
-  socket.on('joinChatRoom', async (roomId) => {
-    try {
-      socket.join(`chat:${roomId}`);
-    } catch (err) {
-      console.log(err);
-    }
   });
 
   socket.on("disconnect", async (reason) => {
@@ -100,18 +76,6 @@ mainIo.on('connection', (socket) => {
     };
   });
 
-  //webcam
-  socket.on("camOn", async () => {
-    const userId = socket.userId;
-    let userGroups = await redisClient.hGet(`user:${userId}`, 'groups');
-    if (userGroups) {
-      userGroups = userGroups.split(',');
-      if (userGroups.length) {
-        redisClient.hSet(`user:${userId}`, 'groups');
-      }
-    }
-  });
-
   socket.on("start", async (subjectId) => {
     try {
       const now = Math.floor(new Date().getTime() / 1000);
@@ -124,7 +88,7 @@ mainIo.on('connection', (socket) => {
         mainIo.to(groups).emit(`studying:${userId}`, subject);
       };
       if (friends.length) {
-        io.to(friends).emit(`studying:${userId}`, subject);
+        mainIo.to(friends).emit(`studying:${userId}`, subject);
       };
       const { datum_point, id } = subject;
       const start = now - datum_point;
@@ -145,12 +109,6 @@ mainIo.on('connection', (socket) => {
     };
   });
 
-  socket.on("startDm", async (targetId) => {
-    if (isUser(userId)) {
-
-    } else { }
-  });
-
   socket.on("changeGroup", async (groupId) => {
     const userInfo = await userCache(userId);
     if (!userInfo) return;
@@ -169,7 +127,7 @@ mainIo.on('connection', (socket) => {
     const connection = pool.promise();
     const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [groupId]);
     if (!groupInfo) return;
-    io.to(friends).emit(`activeGroup:${userId}`, { groupInfo, time: now });
+    mainIo.to(friends).emit(`activeGroup:${userId}`, { groupInfo, time: now });
   });
 
   socket.on('readMsg', async ({ roomId, type }) => {
@@ -197,7 +155,7 @@ mainIo.on('connection', (socket) => {
     if (!id || typeof volume !== "number") {
       return;
     };
-    socket.to(userId).emit(`volumeChange`, { id, volume });
+    mainIo.to(userId).emit(`volumeChange`, { id, volume });
     extensionIo.to(userId).emit(`volumeChange`, { id, volume });
   })
 
@@ -207,50 +165,6 @@ mainIo.on('connection', (socket) => {
   });
 });
 
-const extensionIo = io.of("/extension");
-
-extensionIo.on("connection", (socket) => {
-  socket.on("auth", async ({ authId }) => {
-    if (!authId) return;
-    const userId = await redisClient.get(`extension:auth:${authId}`);
-    //invalid auth id
-    if (!userId) return;
-    const userInfo = await userCache(userId);
-
-    if (!userInfo) return;
-
-    const dateTime = DateTime.now().setZone(userInfo.timezone);
-    const score = Math.floor(dateTime.offset / 60) + 12;
-    redisClient.zAdd(`extensionUsers`, [{ value: userId, score }]);
-    socket.userId = userId;
-    socket.join(userId);
-    const activeSubject = await activeSubjectCache(userId);
-    extensionIo.to(userId).emit("studying", { studying: activeSubject && activeSubject.id !== '0' ? true : false });
-  });
-
-  /*   socket.on("setting-update", async({d, target, value}) => {
-      if (!socket.userId) return;
-      extensionIo.to(socket.userId).emit("setting-updated", {d, target, value});
-    });
-  
-    socket.on("setting-create", async({d, block, timer}) => {
-      console.log(socket.userId, block, timer, 'created')
-      if (!socket.userId) return;
-      extensionIo.to(socket.userId).emit("setting-created", {d, block, timer});
-    }); */
-
-  socket.on("update-tabs", async ({ domain, duration }) => {
-    if (!socket.userId || !domain || !duration) return;
-    redisClient.zIncrBy(`user:${socket.userId}:tabs:timer`, duration, domain);
-    redisClient.zIncrBy(`user:${socket.userId}:tabs:usage`, 1, domain);
-
-  });
-
-  socket.on("volumeChange", async ({ id, volume }) => {
-    if (!socket.userId || !id) return;
-    io.to(socket.userId).emit(`volumeChange`, { id, volume });
-  })
-})
 
 async function deActiveGroup(userId, socket) {
   const userInfo = await userCache(userId);
@@ -261,14 +175,8 @@ async function deActiveGroup(userId, socket) {
   });
   redisClient.hDel(`user:${userId}`, `ActiveGroup`);
   if (!friends.length) return;
-  io.to(friends).emit(`deActiveGroup:${userId}`);
+  mainIo.to(friends).emit(`deActiveGroup:${userId}`);
 }
-
-async function isUser(userId) {
-  const connection = pool.promise();
-  const [[userInfo]] = await connection.query(`SELECT user_id FROM users WHERE user_id = ?`, [userId]);
-  return userInfo ? true : false;
-};
 
 async function isInChatRoom(userId, roomId) {
   try {
@@ -278,35 +186,6 @@ async function isInChatRoom(userId, roomId) {
   } catch (err) {
     console.log(err);
   };
-};
-
-async function isInGroupRoom(userId, groupId, roomId) {
-  try {
-    let userGroups = await redisClient.hGet(`user:${userId}`, 'groups');
-    if (!userGroups) {
-      const connection = pool.promise();
-      try {
-        userGroups = await connection.query(`SELECT groups FROM users WHERE user_id = ?`, [userId]);
-      } catch (err) {
-        console.log(err);
-      };
-    };
-    userGroups = userGroups.split(',');
-    if (userGroups.includes(groupId)) {
-      let rooms = await redisClient.sMembers(`group:${groupId}:rooms`);
-      let roomInfo = rooms.find(room => {
-        room = JSON.parse(room);
-        return room.id === roomId;
-      });
-      if (roomInfo) {
-        return true;
-      }
-    }
-    return false;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
 };
 
 async function stopStudying(userId, mode, subjectId) {
@@ -326,10 +205,10 @@ async function stopStudying(userId, mode, subjectId) {
   const { groups, friends } = userInfo;
 
   if (groups.length) {
-    io.to(groups).emit(`stopStudying:${userId}`, {status: mode});
+    mainIo.to(groups).emit(`stopStudying:${userId}`, {status: mode});
   };
   if (friends.length) {
-    io.to(friends).emit(`stopStudying:${userId}`, {status: mode});
+    mainIo.to(friends).emit(`stopStudying:${userId}`, {status: mode});
   };
 
   const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
@@ -357,6 +236,4 @@ async function stopStudying(userId, mode, subjectId) {
   redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${duration}]`);
 };
 
-module.exports = { io, mainIo, extensionIo };
-
-require('./videoServer')
+module.exports = { mainIo };

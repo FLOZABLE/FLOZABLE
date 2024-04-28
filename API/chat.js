@@ -5,7 +5,7 @@ const redisClient = require("../model/redis");
 const { autoSignin, arraysHaveSameContents, generateRandomId } = require("../tool");
 const { chatRoomsCache, usersCache, NotificationCache, dmRoomsCache, userCache, dmRoomMembersCache, groupMembersCache, msgReadCache } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../validate");
-const { mainIo } = require("../socket");
+const { mainIo } = require("../sockets/mainIo");
 
 Router.post("/bring-rooms", async (req, res) => {
   autoSignin(req, res, (async (userId) => {

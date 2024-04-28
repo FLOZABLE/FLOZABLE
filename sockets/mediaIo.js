@@ -1,12 +1,7 @@
 const mediaSoup = require('mediasoup');
-const { io } = require('./socket');
-const { userCache, activeGroupCache } = require("./services/redisLoader");
-const { sessionMiddleWare } = require('./app');
-const mediaSocket = io.of('/mediaSocket');
-
-const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
-mediaSocket.use(wrap(sessionMiddleWare));
-
+const { userCache } = require("../services/redisLoader");
+const { io } = require('./io');
+const mediaIo = io.of('/');
 const mediaCodecs = [
   {
     kind: 'audio',
@@ -63,7 +58,7 @@ const consumers = {};
 
 (async () => {
   const worker = await createWorker();
-  mediaSocket.on('connection', async (socket) => {
+  mediaIo.on('connection', async (socket) => {
     let session;
     let activeGroup;
 
@@ -202,7 +197,7 @@ const consumers = {};
           producer.close();
         });
 
-        mediaSocket.to(activeGroup).emit(`newProducer:${userId}`, kind);
+        mediaIo.to(activeGroup).emit(`newProducer:${userId}`, kind);
 
         // Send back to the client the Producer's id
         callback({ id: producer.id });
@@ -286,7 +281,7 @@ const consumers = {};
         if (!userId || !activeGroup) return;
 
         removeProducer(activeGroup, userId, kind);
-        socket.to(activeGroup).emit(`removeProducer:${userId}`, kind);
+        mediaIo.to(activeGroup).emit(`removeProducer:${userId}`, kind);
       } catch (err) {
         console.log(err);
       };
@@ -296,7 +291,7 @@ const consumers = {};
       try {
         if (!userId || !activeGroup) return;
 
-        socket.to(activeGroup).emit(`removeProducer:${userId}`);
+        mediaIo.to(activeGroup).emit(`removeProducer:${userId}`);
         removeConsumer(activeGroup, userId);
         removeProducer(activeGroup, userId);
         const producerTransport = await getProducerTransport(userId);
