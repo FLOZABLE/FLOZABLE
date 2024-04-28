@@ -11,7 +11,8 @@ function BlobBtn({
   padding,
   id
 }) {
-  const handleClick = () => {
+  const handleClick = (e) => {
+    e.preventDefault();
     setClicked(true);
     if (!delay || delay !== -1) {
       setTimeout(() => {

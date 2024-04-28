@@ -72,7 +72,10 @@ Router.get("/activity-settings", async (req, res) => {
       if (!userInfo)
         return res.send({ success: false, reason: "No such user" });
       const { activity_setting } = userInfo;
-      res.send({ success: true, activity_setting });
+      res.send({
+        success: true,
+        activity_setting: JSON.parse(activity_setting),
+      });
     } catch (err) {
       console.log(err);
       res.send({ success: false, reason: "err" });
@@ -266,28 +269,9 @@ Router.post("/signup-authentication", async (req, res) => {
       secure: true,
       httpOnly: true,
       signed: true,
+      sameSite: "strict",
     });
     res.send({ success: true });
-    /* req.session.regenerate((err) => {
-      if (err) {
-        res.send({ success: false, reason: "SESSION ERROR" });
-        return;
-      }
-  
-      req.session.user_id = userId;
-      req.session.loggedin = true;
-      req.session.name = name;
-      req.session.userInfo = { userId: userId, name: name, loggedin: true, email: email, timeZone: timeZone };
-  
-      res.cookie("userId", userId, {
-        maxAge: 1000 * 60 * 60 * 30,
-        secure: true,
-        httpOnly: true,
-        signed: true,
-      });
-  
-      res.send({ success: true });
-    }); */
   } catch (err) {
     res.send({ success: false, reason: "Error" });
   }
@@ -439,7 +423,7 @@ Router.post("/signin-with-google", async (req, res) => {
             req.session.user_id = userInfo.user_id;
             req.session.timezone = userInfo.timezone;
 
-            res.cookie("userId", userInfo.user_id, {
+            res.cookie("userId", userId, {
               maxAge: 1000 * 60 * 60 * 24 * 30,
               secure: true,
               httpOnly: true,
@@ -519,6 +503,7 @@ Router.post("/signin-with-google", async (req, res) => {
           secure: true,
           httpOnly: true,
           signed: true,
+          sameSite: "strict",
         });
 
         res.send({ success: true, msg: "Success", newUser: true });
@@ -648,41 +633,30 @@ Router.post("/update/extension-add", async (req, res) => {
         `SELECT activity_setting FROM users WHERE user_id = ?`,
         [userId]
       );
-      let activitySettings =
-        userInfo.activitySettings === ""
-          ? []
-          : JSON.parse(
-              userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]")
-            );
-      const selectedActivity = activitySettings.find((activitySetting) => {
-        return activitySetting.d == domain;
-      });
-      if (selectedActivity) {
+
+      if (!userInfo) res.send(responseCodes["no-user"]);
+      const activitySettings = JSON.parse(userInfo.activity_setting);
+      if (activitySettings[domain]) {
         return res.send({ success: false, reason: "Already Exist" });
-      } else {
-        //d: domain, b: block, t: timer
-        const stringlified = JSON.stringify({
-          d: domain,
-          b: 0,
-          bs: 0,
-          t: 0,
-          ts: 1,
-        });
-        await connection.query(
-          `
-        UPDATE users
-        SET activity_setting = CASE
-          WHEN activity_setting = '' THEN ?
-          ELSE CONCAT(activity_setting, ',', ?)
-        END
-        WHERE user_id = ?
-      `,
-          [stringlified, stringlified, userId]
-        );
       }
-      extensionIo
-        .to(userId)
-        .emit("setting-created", { d: domain, b: 0, bs: 0, t: 0, ts: 1 });
+
+      //d: domain, b: block, t: timer
+      activitySettings[domain] = {
+        b: 0,
+        bs: 0,
+        t: 0,
+        ts: 1,
+      };
+
+      await connection.query(
+        `
+      UPDATE users
+      SET activity_setting = ?
+      WHERE user_id = ?
+    `,
+        [JSON.stringify(activitySettings), userId]
+      );
+      extensionIo.to(userId).emit("setting-updated", activitySettings);
       res.send({
         success: true,
         origin: origin,
@@ -700,61 +674,55 @@ Router.post("/update/extension-setting-update", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { d, target, value } = req.body;
+
       const connection = pool.promise();
       const [[userInfo]] = await connection.query(
         `SELECT activity_setting FROM users WHERE user_id = ?`,
         [userId]
       );
-      if (!userInfo)
-        return res.send({ success: false, reason: "No Such User" });
-      let activitySettings =
-        userInfo.activitySettings === ""
-          ? []
-          : JSON.parse(
-              userInfo.activity_setting.replace(/^/, "[").replace(/$/, "]")
-            );
-      const activityIndex = activitySettings.findIndex((activitySetting) => {
-        return activitySetting.d == d;
-      });
-      if (activityIndex === -1) {
+      if (!userInfo) return res.send(responseCodes["no-user"]);
+      const activitySettings = JSON.parse(userInfo.activity_setting);
+
+      if (!activitySettings[d]) {
         return res.send({ success: false, reason: "No Matching Website" });
-      } else {
-        //d: domain, b: block, t: timer
-        if (target === "block") {
-          activitySettings[activityIndex] = {
-            ...activitySettings[activityIndex],
-            b: value ? 1 : 0,
-          };
-        } else if (target === "blockstudy") {
-          activitySettings[activityIndex] = {
-            ...activitySettings[activityIndex],
-            bs: value ? 1 : 0,
-          };
-        } else if (target === "timer") {
-          activitySettings[activityIndex] = {
-            ...activitySettings[activityIndex],
-            t: value ? 1 : 0,
-          };
-        } else {
-          activitySettings[activityIndex] = {
-            ...activitySettings[activityIndex],
-            ts: value ? 1 : 0,
-          };
-        }
-        const stringlified = JSON.stringify(activitySettings).slice(1, -1);
-        await connection.query(
-          `
-        UPDATE users
-        SET activity_setting = ?
-        WHERE user_id = ?
-      `,
-          [stringlified, userId]
-        );
       }
+
+      //d: domain, b: block, t: timer
+      if (target === "block") {
+        activitySettings[d] = {
+          ... activitySettings[d],
+          b: value ? 1 : 0,
+        };
+      } else if (target === "blockstudy") {
+        activitySettings[d] = {
+          ... activitySettings[d],
+          bs: value ? 1 : 0,
+        };
+      } else if (target === "timer") {
+        activitySettings[d] = {
+          ... activitySettings[d],
+          t: value ? 1 : 0,
+        };
+      } else {
+        activitySettings[d] = {
+          ... activitySettings[d],
+          ts: value ? 1 : 0,
+        };
+      };
+
+      await connection.query(
+        `
+              UPDATE users
+              SET activity_setting = ?
+              WHERE user_id = ?
+            `,
+        [JSON.stringify(activitySettings), userId]
+      );
 
       res.send({ success: true, msg: "Setting updated!" });
       extensionIo.to(userId).emit("setting-updated", activitySettings);
     } catch (error) {
+      console.log(error);
       res.send({ success: false, reason: "Invalid URL or Domain" });
     }
   });
@@ -983,13 +951,6 @@ Router.post("/app/auth", async (req, res) => {
 
     req.session.user_id = userInfo.user_id;
     req.session.timezone = userInfo.timezone;
-
-    /* res.cookie("userId", userInfo.user_id, {
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-      secure: true,
-      httpOnly: true,
-      signed: true,
-    }); */
 
     return res.send({ success: true, msg: "Authed", device_id, auth_key });
   } catch (err) {
