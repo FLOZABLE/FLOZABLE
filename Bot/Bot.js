@@ -1,23 +1,27 @@
-const { generateRandomId, hashing, randomIntInRange } = require('../tool');
-const fs = require('fs');
-const fullNameData = require('../data/DatasetsWithId.json');
-const realisticNameData = require('../data/RealUserIdWithData.json');
-const combinedNameData = require('../data/combinedNames.json');
-const groupsData = require('../data/Groups.json');
-const originalData = require('../data/Datasets.json');
-const colors = require('../data/GroupColors.json');
-const pool = require('../model/pool');
-const crypto = require('crypto');
-const { DateTime, Duration } = require('luxon');
+const { generateRandomId, hashing, randomIntInRange } = require("../tool");
+const fs = require("fs");
+const combinedNameData = require("../data/combinedNames.json");
+const groupsData = require("../data/Groups.json");
+const colors = require("../data/GroupColors.json");
+const pool = require("../model/pool");
+const crypto = require("crypto");
+const { DateTime } = require("luxon");
 const sharp = require("sharp");
-const axios = require('axios');
-const cron = require('node-cron');
-const { mainIo } = require('../socket');
-const schedule = require('node-schedule');
-const redisClient = require('../model/redis');
-const timeZones = require('../data/timeZones.json');
-const csv = require("csvtojson");
-const { activeSubjectCache, subjectsCache, timerCache, userCache, usersCache, NotificationCache, dmRoomMembersCache, dmRoomsCache, getActiveUsers, addActiveUserCache, removeActiveUserCache, subjectCache } = require('../services/redisLoader');
+const axios = require("axios");
+const schedule = require("node-schedule");
+const redisClient = require("../model/redis");
+const {
+  activeSubjectCache,
+  subjectsCache,
+  userCache,
+  NotificationCache,
+  dmRoomsCache,
+  getActiveUsers,
+  addActiveUserCache,
+  removeActiveUserCache,
+  subjectCache,
+} = require("../services/redisLoader");
+const { mainIo } = require("../sockets/mainIo");
 
 /**create bots */
 async function createBots(length) {
@@ -27,17 +31,17 @@ async function createBots(length) {
   const [allIds] = await connection.query("SELECT user_id from users");
   allIds.map((obj) => {
     chosenBotIds[obj.user_id] = true; //make sure we don't choose the same id when generating bots
-  })
+  });
 
   for (let Z = 0; Z < length; Z++) {
-    const { name, userId, timeZone, gender, profileImage } = combinedNameData[randomIntInRange(0, combinedNameData.length - 1)];
+    const { name, userId, timeZone, gender, profileImage } =
+      combinedNameData[randomIntInRange(0, combinedNameData.length - 1)];
     if (chosenBotIds.hasOwnProperty(userId)) {
       // since we're choosing randomly we have to make sure there's no repeats
       Z--;
       console.log("Duplicate " + userId + " (skipped)");
       continue;
-    }
-    else {
+    } else {
       chosenBotIds[userId] = true;
     }
 
@@ -51,17 +55,22 @@ async function createBots(length) {
       //This will cause server to crash since name is VARCHAR(40)
     }
 
-    const password = '0';
+    const password = "0";
     let hashed = hashing(password);
 
-    const keySalt = crypto.randomBytes(32).toString('hex');
-    const iv = crypto.randomBytes(16).toString('hex');
+    const keySalt = crypto.randomBytes(32).toString("hex");
+    const iv = crypto.randomBytes(16).toString("hex");
 
     let userDateTime = DateTime.now().setZone(timeZone);
     //randomize date
     const subtractedDate = Math.floor(Math.random() * 30) + 20;
     userDateTime = userDateTime.minus({ days: subtractedDate });
-    const twelveAmDateTime = userDateTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+    const twelveAmDateTime = userDateTime.set({
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    });
     const unixTimestamp = Math.floor(twelveAmDateTime.toMillis() / 1000);
     const userInfo = {
       name: name,
@@ -72,23 +81,93 @@ async function createBots(length) {
       datum_point: unixTimestamp,
       key_salt: keySalt,
       iv: iv,
-      type: -1
+      type: -1,
     };
 
-    await connection.query('INSERT INTO users SET ?', userInfo);
+    await connection.query("INSERT INTO users SET ?", userInfo);
 
     const maxSubjects = randomIntInRange(1, 5);
     const possibleSubjects = [
       ["Math", "Math", "Math", "Math", "Calculus", "Trig"],
-      ["Science", "Science", "Biology", "Environment", "Biology", "Anatomy", "Biology", "Biology"],
-      ["Science", "Science", "Chemistry", "Chemistry", "Chemistry", "Biochemistry"],
+      [
+        "Science",
+        "Science",
+        "Biology",
+        "Environment",
+        "Biology",
+        "Anatomy",
+        "Biology",
+        "Biology",
+      ],
+      [
+        "Science",
+        "Science",
+        "Chemistry",
+        "Chemistry",
+        "Chemistry",
+        "Biochemistry",
+      ],
       ["Physics", "Physics", "Physics", "Physics 1", "Physics 2", "Physics C"],
-      ["French", "French", "Chinese", "Chinese", "Spanish", "Spanish", "Spanish", "Spanish", "Latin", "Latin"],
-      ["English", "English", "English", "ELA", "ELA", "Lit", "Literature", "Literature", "Language Arts"],
-      ["History", "History", "APUSH", "US History", "U.S. History", "Social Studies", "Social Studies"],
-      ["Reading", "Piano", "Cooking", "Art", "Art", "Reading", "Piano", "Piano", "PE", "Coding"],
-      ["Astronomy", "Computer Science", "Essays", "Comp Sci", "Engineering", "DE", "College Apps", "Shakespeare", "Essays", "Computer Science", "Music Theory", "Music Theory", "Art"]
-    ]
+      [
+        "French",
+        "French",
+        "Chinese",
+        "Chinese",
+        "Spanish",
+        "Spanish",
+        "Spanish",
+        "Spanish",
+        "Latin",
+        "Latin",
+      ],
+      [
+        "English",
+        "English",
+        "English",
+        "ELA",
+        "ELA",
+        "Lit",
+        "Literature",
+        "Literature",
+        "Language Arts",
+      ],
+      [
+        "History",
+        "History",
+        "APUSH",
+        "US History",
+        "U.S. History",
+        "Social Studies",
+        "Social Studies",
+      ],
+      [
+        "Reading",
+        "Piano",
+        "Cooking",
+        "Art",
+        "Art",
+        "Reading",
+        "Piano",
+        "Piano",
+        "PE",
+        "Coding",
+      ],
+      [
+        "Astronomy",
+        "Computer Science",
+        "Essays",
+        "Comp Sci",
+        "Engineering",
+        "DE",
+        "College Apps",
+        "Shakespeare",
+        "Essays",
+        "Computer Science",
+        "Music Theory",
+        "Music Theory",
+        "Art",
+      ],
+    ];
 
     for (let subjectNum = 0; subjectNum < maxSubjects; subjectNum++) {
       const subjectId = generateRandomId(10);
@@ -99,12 +178,20 @@ async function createBots(length) {
       let timelineSum = 0;
 
       if (subjectNum === 0) {
-        let prevTime = unixTimestamp
+        let prevTime = unixTimestamp;
         let currTime = unixTimestamp;
         const timeNow = new Date().getTime() / 1000;
-        const possibleDurations = [0, 0, 0, 60, 120, 180, 240, 360, 1200, 1500, 1800, 2400];
-        while (currTime < timeNow - 86400) { //end at yesterday
-          const duration = Math.floor((1 + Math.random() - 0.5) * possibleDurations[randomIntInRange(0, possibleDurations.length - 1)]);
+        const possibleDurations = [
+          0, 0, 0, 60, 120, 180, 240, 360, 1200, 1500, 1800, 2400,
+        ];
+        while (currTime < timeNow - 86400) {
+          //end at yesterday
+          const duration = Math.floor(
+            (1 + Math.random() - 0.5) *
+              possibleDurations[
+                randomIntInRange(0, possibleDurations.length - 1)
+              ]
+          );
           subjectTimeline.push([currTime - prevTime, duration]);
           timelineSum += duration + currTime - prevTime;
           prevTime = currTime + duration;
@@ -124,29 +211,27 @@ async function createBots(length) {
         id: subjectId,
         name: subjectName,
         user_id: userId,
-        icon: 'others',
-        color: '#000000',
+        icon: "others",
+        color: "#000000",
         timeline: stringTimeline,
         timeline_sum: timelineSum,
-        datum_point
+        datum_point,
       };
       await connection.query(`INSERT INTO subjects SET ?`, [subject]);
     }
 
     if (!!profileImage) {
       createChessProfileImg(userId, profileImage);
-    }
-    else {
+    } else {
       createProfileImg(40, userId, gender);
     }
-  };
+  }
 
   console.log("BOTS SUCCESSFULLY ADDED!");
-};
+}
 
 /**create profile imggs for each users*/
 function createProfileImg(percentage, userId, gender) {
-
   const isProfile = Math.random() < percentage / 100;
   if (isProfile) {
     let filePath = `./data/profile-imgs/${gender}`;
@@ -157,42 +242,42 @@ function createProfileImg(percentage, userId, gender) {
         const sortedFiles = files.sort();
         const index = randomIntInRange(0, files.length);
         const fileAtIndex = sortedFiles[index];
-        const imgPath = filePath + '/' + fileAtIndex;
+        const imgPath = filePath + "/" + fileAtIndex;
         //console.log(imgPath);
         if (fileAtIndex) {
           // Construct the full path to the file
           //const filePath = path.join(directoryPath, fileAtIndex);
           await sharp(imgPath)
-            .toFormat('jpeg')
+            .toFormat("jpeg")
             .resize({ width: 800, height: 800 })
             .jpeg({ quality: 40 })
             .toFile(`./public/profile-images/${userId}.jpeg`);
         }
       }
-    })
+    });
   }
-};
-
+}
 
 function createChessProfileImg(userId, imgSrc) {
   if (imgSrc === "https://www.chess.com/bundles/web/images/user-image.svg") {
     // Do not put default chess image
     return;
   }
-  axios.get(imgSrc)
+  axios
+    .get(imgSrc)
     .then((response) => {
-      return axios.get(imgSrc, { responseType: 'arraybuffer' })
+      return axios.get(imgSrc, { responseType: "arraybuffer" });
     })
     .then((res) => {
       return sharp(res.data)
         .resize({ width: 800, height: 800 })
         .jpeg({ quality: 40 })
-        .toFile(`./public/profile-images/${userId}.jpeg`)
+        .toFile(`./public/profile-images/${userId}.jpeg`);
     })
     .catch((err) => {
       console.log(`Couldn't process: ${err}`);
-    })
-};
+    });
+}
 
 async function addFriends(botId) {
   try {
@@ -200,18 +285,17 @@ async function addFriends(botId) {
     replyFriendRequests(botId);
   } catch (err) {
     console.log(err);
-  };
-};
+  }
+}
 
 async function sendFriendRequest(botId) {
   try {
-
     const isSend = randomIntInRange(0, 9);
 
     //change = 10%
     if (isSend !== 0) return;
 
-    const allMembers = await getActiveUsers('month');
+    const allMembers = await getActiveUsers("month");
 
     if (!allMembers.length) return;
 
@@ -226,7 +310,9 @@ async function sendFriendRequest(botId) {
     if (friends.includes(botId)) return;
 
     const friendRequests = await NotificationCache(targetId, 0, false);
-    const prevFriendReq = friendRequests.find(friendReq => { return friendReq.f === botId });
+    const prevFriendReq = friendRequests.find((friendReq) => {
+      return friendReq.f === botId;
+    });
     if (prevFriendReq) return null;
 
     const id = generateRandomId(5);
@@ -234,18 +320,21 @@ async function sendFriendRequest(botId) {
     const notificationUser = await userCache(botId);
     const socketNotif = { i: id, t: 0, f: notificationUser, d: date };
     const notification = { i: id, t: 0, f: botId, d: date };
-    mainIo.to(targetId).emit('notification', socketNotif);
+    mainIo.to(targetId).emit("notification", socketNotif);
     //to target user
-    redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
+    redisClient.sAdd(
+      `user:${targetId}:notifications`,
+      JSON.stringify(notification)
+    );
 
     //to me
     const ongoing = { i: id, t: -2, f: targetId };
     redisClient.sAdd(`user:${botId}:notifications`, JSON.stringify(ongoing));
-    console.log('send to', targetId)
+    console.log("send to", targetId);
   } catch (error) {
-    console.log(error)
-  };
-};
+    console.log(error);
+  }
+}
 
 async function replyFriendRequests(userId) {
   try {
@@ -253,107 +342,146 @@ async function replyFriendRequests(userId) {
     friendRequests.map(async (friendReq) => {
       const targetId = friendReq.f;
 
-      redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(friendReq));
+      redisClient.sRem(
+        `user:${userId}:notifications`,
+        JSON.stringify(friendReq)
+      );
       //remove it from ongoing friend req list
       const ongoing = { i: friendReq.i, t: -2, f: userId };
-      redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(ongoing));
+      redisClient.sRem(
+        `user:${targetId}:notifications`,
+        JSON.stringify(ongoing)
+      );
 
       const accepted = randomIntInRange(0, 1);
       if (!accepted) {
         return;
-      };
+      }
       const connection = pool.promise();
       const userInfo = await userCache(userId);
       const targetInfo = await userCache(targetId);
       const { friends } = userInfo;
 
       if (!friends.includes(userId)) {
-        await connection.query(`
+        await connection.query(
+          `
         UPDATE users
         SET friends = CASE
           WHEN friends = '' THEN ?
           ELSE CONCAT(friends, ',', ?)
         END
         WHERE user_id = ?
-      `, [
-          targetId,
-          targetId,
-          userId,
-        ]);
+      `,
+          [targetId, targetId, userId]
+        );
 
-        await connection.query(`
+        await connection.query(
+          `
       UPDATE users
       SET friends = CASE
         WHEN friends = '' THEN ?
         ELSE CONCAT(friends, ',', ?)
       END
       WHERE user_id = ?
-    `, [
-          userId,
-          userId,
-          targetId,
-        ]);
-        console.log('friend accepted')
+    `,
+          [userId, userId, targetId]
+        );
+        console.log("friend accepted");
         const id = generateRandomId(5);
         const date = Math.floor(new Date().getTime() / (1000 * 60));
         const notification = { i: id, t: 1, f: userId, d: date };
         const notificationUser = await userCache(userId);
         const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
-        mainIo.to(targetId).emit('notification', socketNotif);
-        redisClient.sAdd(`user:${targetId}:notifications`, JSON.stringify(notification));
+        mainIo.to(targetId).emit("notification", socketNotif);
+        redisClient.sAdd(
+          `user:${targetId}:notifications`,
+          JSON.stringify(notification)
+        );
 
         //update cached value of user
         friends.push(targetId);
-        redisClient.hSet(`user:${userId}`, 'friends', friends.join(','));
+        redisClient.hSet(`user:${userId}`, "friends", friends.join(","));
         targetInfo.friends.push(userId);
-        redisClient.hSet(`user:${targetId}`, 'friends', targetInfo.friends.join(','));
+        redisClient.hSet(
+          `user:${targetId}`,
+          "friends",
+          targetInfo.friends.join(",")
+        );
 
         //create chat only if it does not exist
-        const [[{ record_count }]] = await connection.query(`SELECT COUNT(*) AS record_count
+        const [[{ record_count }]] = await connection.query(
+          `SELECT COUNT(*) AS record_count
       FROM chatrooms
       WHERE 
         (members LIKE ? AND members LIKE ?)
         OR
         (members LIKE ? AND members LIKE ?)
-      LIMIT 1;`, [`%${userId}%`, `%${targetId}%`, `%${targetId}%`, `%${userId}%`]);
+      LIMIT 1;`,
+          [`%${userId}%`, `%${targetId}%`, `%${targetId}%`, `%${userId}%`]
+        );
 
         if (!record_count) {
           const members = [userId, targetId];
           const roomInfo = {
             id: generateRandomId(10),
             type: 1,
-            members: JSON.stringify(members).slice(1, -1).replaceAll(`"`, "")
-          }
-          await connection.query(`
+            members: JSON.stringify(members).slice(1, -1).replaceAll(`"`, ""),
+          };
+          await connection.query(
+            `
         INSERT INTO chatrooms SET ?
-      `, [roomInfo]);
+      `,
+            [roomInfo]
+          );
 
           const myDmRooms = await dmRoomsCache(userId);
           myDmRooms.push(roomInfo.id);
           const targetDmRooms = await dmRoomsCache(targetId);
           targetDmRooms.push(roomInfo.id);
-          redisClient.hSet(`user:${userId}`, 'dmRooms', JSON.stringify(myDmRooms));
-          redisClient.hSet(`user:${targetId}`, 'dmRooms', JSON.stringify(targetDmRooms));
+          redisClient.hSet(
+            `user:${userId}`,
+            "dmRooms",
+            JSON.stringify(myDmRooms)
+          );
+          redisClient.hSet(
+            `user:${targetId}`,
+            "dmRooms",
+            JSON.stringify(targetDmRooms)
+          );
           redisClient.sAdd(`room:${roomInfo.id}`, members);
 
           //remove chat request if any
           const myChatRequests = await NotificationCache(userId, 4, false);
-          const chatRequest = myChatRequests.find(chatRequest => { return chatRequest.f === targetId });
+          const chatRequest = myChatRequests.find((chatRequest) => {
+            return chatRequest.f === targetId;
+          });
           if (chatRequest) {
-            redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(chatRequest));
-          };
+            redisClient.sRem(
+              `user:${userId}:notifications`,
+              JSON.stringify(chatRequest)
+            );
+          }
 
-          const targetChatRequests = await NotificationCache(targetId, 4, false);
-          const targetchatRequest = targetChatRequests.find(chatRequest => { return chatRequest.f === targetId });
+          const targetChatRequests = await NotificationCache(
+            targetId,
+            4,
+            false
+          );
+          const targetchatRequest = targetChatRequests.find((chatRequest) => {
+            return chatRequest.f === targetId;
+          });
           if (targetchatRequest) {
-            redisClient.sRem(`user:${targetId}:notifications`, JSON.stringify(targetchatRequest));
-          };
-        };
-      };
-    })
+            redisClient.sRem(
+              `user:${targetId}:notifications`,
+              JSON.stringify(targetchatRequest)
+            );
+          }
+        }
+      }
+    });
   } catch (error) {
-    console.log(error)
-  };
+    console.log(error);
+  }
 }
 
 async function startBot(userId) {
@@ -365,13 +493,13 @@ async function startBot(userId) {
     const userInfo = await userCache(userId);
     if (!subject || !userInfo) return;
     const { groups, friends, name } = userInfo;
-    console.log('start', userId, name)
+    console.log("start", userId, name);
     if (groups.length) {
       mainIo.to(groups).emit(`studying:${userId}`, subject);
-    };
+    }
     if (friends.length) {
       mainIo.to(friends).emit(`studying:${userId}`, subject);
-    };
+    }
     const { datum_point, id } = subject;
     const start = now - datum_point;
     redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
@@ -379,21 +507,23 @@ async function startBot(userId) {
     addActiveUserCache(userId);
   } catch (err) {
     console.log(err);
-  };
-};
+  }
+}
 
 async function stopBot(userId) {
   try {
     const now = Math.floor(new Date().getTime() / 1000);
 
-    redisClient.sRem('activeBots', userId);
+    redisClient.sRem("activeBots", userId);
     const activeSubject = await activeSubjectCache(userId);
-    if (!activeSubject || activeSubject.id === '0') return;
+    if (!activeSubject || activeSubject.id === "0") return;
     const subject = await subjectCache(userId, activeSubject.id);
     const userInfo = await userCache(userId);
     if (!userInfo || !subject) return;
 
-    const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
+    const activity = JSON.parse(
+      await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`)
+    );
 
     if (!activity) return;
 
@@ -406,23 +536,30 @@ async function stopBot(userId) {
     redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
     for (let i = -12; i < 12; i++) {
       redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
-    };
+    }
 
-    redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${duration}]`);
+    redisClient.rPush(
+      `user:${userId}:subject:${activeSubject.id}`,
+      `[${start},${duration}]`
+    );
 
     const { groups, friends, name } = userInfo;
-    console.log('stop', userId, name, duration);
+    console.log("stop", userId, name, duration);
 
     if (groups.length) {
-      mainIo.to(groups).emit(`stopStudying:${userId}`, {status: 'rest', duration});
-    };
+      mainIo
+        .to(groups)
+        .emit(`stopStudying:${userId}`, { status: "rest", duration });
+    }
     if (friends.length) {
-      mainIo.to(friends).emit(`stopStudying:${userId}`, {status: 'rest', duration});
-    };
+      mainIo
+        .to(friends)
+        .emit(`stopStudying:${userId}`, { status: "rest", duration });
+    }
   } catch (err) {
     console.log(err);
-  };
-};
+  }
+}
 
 /* const BOT_MIN_STUDY = 5; //10 min = min time bot will study
 const BOT_MAX_STUDY = 6; //2 hr = max time bot will study
@@ -434,11 +571,13 @@ const MAX_START_DELAY = 60 * 60 * 2; //1 hr = starts atleast 1hr from being assi
 
 async function botSelector(numbers) {
   const connection = pool.promise();
-  const [bots] = await connection.query(`SELECT user_id FROM users WHERE type = -1`);
+  const [bots] = await connection.query(
+    `SELECT user_id FROM users WHERE type = -1`
+  );
   //const [subjects] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects`)
   const now = DateTime.now();
 
-  const activeBots = await redisClient.sMembers('activeBots');
+  const activeBots = await redisClient.sMembers("activeBots");
   for (let i = 0; i < numbers; i++) {
     const index = randomIntInRange(0, bots.length - 1);
     const { user_id } = bots[index];
@@ -453,52 +592,59 @@ async function botSelector(numbers) {
     const stopDate = DateTime.fromSeconds(startDate.toSeconds() + duration);
     //console.log(startDate.toSeconds() - stopDate.toSeconds())
     //const [[subject]] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects WHERE user_id = ?`, [user_id]);
-    const scheduleStart = schedule.scheduleJob(startDate.toJSDate(), () => { startBot(user_id) });
-    const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => { stopBot(user_id) });
+    const scheduleStart = schedule.scheduleJob(startDate.toJSDate(), () => {
+      startBot(user_id);
+    });
+    const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => {
+      stopBot(user_id);
+    });
 
-    const scheduleFriend = schedule.scheduleJob(startDate.toJSDate(), () => { addFriends(user_id) });
+    const scheduleFriend = schedule.scheduleJob(startDate.toJSDate(), () => {
+      addFriends(user_id);
+    });
     //Send friend request after finished studying
-  };
+  }
 
   //update active bot list in redis
-  redisClient.sAdd('activeBots', activeBots);
-};
+  redisClient.sAdd("activeBots", activeBots);
+}
 
 async function botManager(numbers) {
-  const activeBots = await redisClient.sMembers('activeBots');
-  await Promise.all(activeBots.map(async (botId) => {
-    await stopBot(botId);
-  }));
+  const activeBots = await redisClient.sMembers("activeBots");
+  await Promise.all(
+    activeBots.map(async (botId) => {
+      await stopBot(botId);
+    })
+  );
   botSelector(numbers);
-  schedule.scheduleJob('0 */5 * * *', async () => {
-    console.log('run bot')
+  schedule.scheduleJob("0 */5 * * *", async () => {
+    console.log("run bot");
     botSelector(numbers);
   });
-};
+}
 
 async function deleteBots() {
   const connection = pool.promise();
 
-
-
-  const [bots] = await connection.query(`SELECT user_id, groups FROM users WHERE type = -1`);
-  const botUserIds = bots.map((bot) => { return bot.user_id });
+  const [bots] = await connection.query(
+    `SELECT user_id, groups FROM users WHERE type = -1`
+  );
+  const botUserIds = bots.map((bot) => {
+    return bot.user_id;
+  });
   if (botUserIds.length) {
     connection.query(`DELETE FROM users WHERE type = -1`);
     connection.query(`DELETE FROM subjects WHERE user_id IN (?)`, [botUserIds]);
   }
 
-
   //exit group
   bots.map(async ({ user_id, groups }) => {
-
     await redisClient.del(`user:${user_id}:dayTotal`); //remove dayTotal
     await redisClient.del(`user:${user_id}:weekTotal`); //remove dayTotal
     await redisClient.del(`user:${user_id}:monthTotal`); //remove dayTotal
     await redisClient.del(`user:${user_id}`); //remove usercache
     await redisClient.del(`user:${user_id}:subjects`); //remove dayTotal
-    await removeActiveUserCache() //remove from daily/weekly/monthly users cache
-
+    await removeActiveUserCache(); //remove from daily/weekly/monthly users cache
 
     fs.unlink(`./public/profile-images/${user_id}.jpeg`, (err) => {
       if (err) {
@@ -508,7 +654,7 @@ async function deleteBots() {
       }
     });
 
-    const groupsArr = groups.split(',');
+    const groupsArr = groups.split(",");
     groupsArr.map(async (group) => {
       await connection.query(
         `UPDATE \`groups\` 
@@ -518,15 +664,24 @@ async function deleteBots() {
               members
             ELSE CONCAT(members, ',', ?)
           END WHERE group_id = ?`,
-        [user_id, `%,${user_id},%`, `${user_id},%`, `%,${user_id}`, user_id, group]
+        [
+          user_id,
+          `%,${user_id},%`,
+          `${user_id},%`,
+          `%,${user_id}`,
+          user_id,
+          group,
+        ]
       );
     });
   });
-};
+}
 
 async function createGroups(length) {
   const connection = pool.promise();
-  const [bots] = await connection.query(`SELECT user_id, groups FROM users WHERE type = -1`);
+  const [bots] = await connection.query(
+    `SELECT user_id, groups FROM users WHERE type = -1`
+  );
   const [groups] = await connection.query(`SELECT group_id FROM groups`);
 
   console.log("Starting Groups Generation", groups);
@@ -537,14 +692,14 @@ async function createGroups(length) {
     const index = randomIntInRange(0, groupsData.length - 1);
     const groupData = groupsData[index];
 
-    if (groups.find(group => group.group_id === groupData.group_id)) {
-      console.log('Duplicated');
+    if (groups.find((group) => group.group_id === groupData.group_id)) {
+      console.log("Duplicated");
       continue;
-    };
+    }
 
-    groups.push({ group_id: groupId })
+    groups.push({ group_id: groupId });
 
-    const hashed = hashing('0');
+    const hashed = hashing("0");
     const max_members = randomIntInRange(10, 50);
     const membersLength = randomIntInRange(10, max_members);
     const members = [];
@@ -555,32 +710,35 @@ async function createGroups(length) {
 
       if (!members.includes(selectedBot.user_id)) {
         members.push(selectedBot.user_id);
-        connection.query(`
+        connection.query(
+          `
           UPDATE users
           SET \`groups\` = CASE
             WHEN \`groups\` = '' THEN ?
             ELSE CONCAT(\`groups\`, ',', ?)
           END
           WHERE user_id = ?
-        `, [
-          groupId,
-          groupId,
-          selectedBot.user_id,
-        ]);
+        `,
+          [groupId, groupId, selectedBot.user_id]
+        );
         const isLike = randomIntInRange(0, 6);
         if (!isLike) {
           likes.push(selectedBot.user_id);
-        };
-      };
-    };
+        }
+      }
+    }
     const leader = members[0];
     const colorIndex = randomIntInRange(0, colors.length - 1);
     const color = colors[colorIndex];
     const { name, explanation, tags } = groupData;
     const visibility = randomIntInRange(0, 7) <= 1;
 
-    const stringlifiedLikes = JSON.stringify(likes).slice(1, -1).replaceAll(`"`, "");
-    const stringlifiedMembers = JSON.stringify(members).slice(1, -1).replaceAll(`"`, "");
+    const stringlifiedLikes = JSON.stringify(likes)
+      .slice(1, -1)
+      .replaceAll(`"`, "");
+    const stringlifiedMembers = JSON.stringify(members)
+      .slice(1, -1)
+      .replaceAll(`"`, "");
     const goal_hr = randomIntInRange(4, 8);
     const font = randomIntInRange(0, 13);
 
@@ -600,21 +758,23 @@ async function createGroups(length) {
       color: color,
       average_hr: 0,
       goal_hr,
-      font
-    }
+      font,
+    };
     connection.query(`INSERT INTO \`groups\` SET ?`, groupInfo);
 
     const roomInfo = {
-      id: generateRandomId(10)
-    }
-    connection.query('INSERT INTO chatrooms set ?', roomInfo);
-  };
-  console.log("Groups Generation Done")
-};
+      id: generateRandomId(10),
+    };
+    connection.query("INSERT INTO chatrooms set ?", roomInfo);
+  }
+  console.log("Groups Generation Done");
+}
 
 async function randomFriend(min, max) {
   const connection = pool.promise();
-  const [bots] = await connection.query(`SELECT friends, user_id FROM users WHERE type = -1`);
+  const [bots] = await connection.query(
+    `SELECT friends, user_id FROM users WHERE type = -1`
+  );
   const lastBotIndex = bots.length - 1;
   for (const bot of bots) {
     const { user_id } = bot;
@@ -626,89 +786,117 @@ async function randomFriend(min, max) {
       const friend = bots[friendIndex].user_id;
       if (!friends.includes(friend) && !friends.includes(user_id)) {
         friends.push(friend);
-        await connection.query(`
+        await connection.query(
+          `
           UPDATE users
           SET friends = CASE
             WHEN friends = '' THEN ?
             ELSE CONCAT(friends, ',', ?)
           END
           WHERE user_id = ?
-        `, [
-          user_id,
-          user_id,
-          friend,
-        ]);
-      };
-    };
+        `,
+          [user_id, user_id, friend]
+        );
+      }
+    }
 
     if (friends.length) {
-      const stringlified = JSON.stringify(friends).slice(1, -1).replaceAll(`"`, "");
-      await connection.query(`
+      const stringlified = JSON.stringify(friends)
+        .slice(1, -1)
+        .replaceAll(`"`, "");
+      await connection.query(
+        `
       UPDATE users
       SET friends = CASE
         WHEN friends = '' THEN ?
         ELSE CONCAT(friends, ',', ?)
       END
       WHERE user_id = ?
-    `, [
-        stringlified,
-        stringlified,
-        user_id,
-      ]);
+    `,
+        [stringlified, stringlified, user_id]
+      );
     }
-  };
-  console.log("BOTS FRIENDS ADDED!")
+  }
+  console.log("BOTS FRIENDS ADDED!");
 }
 
-
 async function createBotRankings() {
-
   const connection = pool.promise();
-  const [botIds] = await connection.query(`SELECT user_id FROM users WHERE type = -1`);
+  const [botIds] = await connection.query(
+    `SELECT user_id FROM users WHERE type = -1`
+  );
   const botUsers = [];
 
-  await Promise.all(botIds.map(async (bot) => {
-    const thisBotId = bot.user_id;
-    let [othersTimeline] = await connection.query(`SELECT timeline, datum_point FROM subjects WHERE user_id = ?`, [thisBotId]);
-    othersTimeline = othersTimeline.filter((tl) => tl.timeline.length > 0)[0]; //only the first subject will have a timeline
-    botUsers.push({ id: thisBotId, timeline: JSON.parse("[" + othersTimeline.timeline + "]"), datum_point: parseInt(othersTimeline.datum_point) });
-  }));
+  await Promise.all(
+    botIds.map(async (bot) => {
+      const thisBotId = bot.user_id;
+      let [othersTimeline] = await connection.query(
+        `SELECT timeline, datum_point FROM subjects WHERE user_id = ?`,
+        [thisBotId]
+      );
+      othersTimeline = othersTimeline.filter((tl) => tl.timeline.length > 0)[0]; //only the first subject will have a timeline
+      botUsers.push({
+        id: thisBotId,
+        timeline: JSON.parse("[" + othersTimeline.timeline + "]"),
+        datum_point: parseInt(othersTimeline.datum_point),
+      });
+    })
+  );
 
   // we will use this to create the ranking tables
   let botDailyRanking = {};
   let botWeeklyRanking = {};
   let botMonthlyRanking = {};
 
-  const LUXON_NOW = DateTime.fromJSDate(new Date()).toUTC().startOf('day');
+  const LUXON_NOW = DateTime.fromJSDate(new Date()).toUTC().startOf("day");
 
   botUsers.map((bot, i) => {
     const botStudyByHour = {};
     const botWeeklyTrend = {};
     const botMonthlyTrend = {};
-    const DP = DateTime.fromSeconds(bot.datum_point).startOf('hour').toSeconds();
+    const DP = DateTime.fromSeconds(bot.datum_point)
+      .startOf("hour")
+      .toSeconds();
     let botWeekTotal = 0;
     let botMonthTotal = 0;
-    bot.timeline.map((tl, i) => { //it's garunteed that each hour will have a value
+    bot.timeline.map((tl, i) => {
+      //it's garunteed that each hour will have a value
       const currSeconds = DP + i * 3600;
       botStudyByHour[currSeconds] = tl[1];
       botWeekTotal += tl[1];
       botMonthTotal += tl[1];
 
-      const UTC_CURRENT_DAY = DateTime.fromSeconds(currSeconds, { zone: "utc" });
-      if (UTC_CURRENT_DAY.weekday === 1) { //start of week, save to weekly ranking
-        botWeeklyTrend[DateTime.fromSeconds(currSeconds, { zone: "utc" }).minus({ weeks: 1 }).toSeconds()] = botWeekTotal;
-        botWeekTotal -= (botStudyByHour[UTC_CURRENT_DAY.minus({ weeks: 1 }).toSeconds()] || 0); //remove last week's info
-      }
-      else if (UTC_CURRENT_DAY.weekday === 2 && UTC_CURRENT_DAY.hour === 0) {
+      const UTC_CURRENT_DAY = DateTime.fromSeconds(currSeconds, {
+        zone: "utc",
+      });
+      if (UTC_CURRENT_DAY.weekday === 1) {
+        //start of week, save to weekly ranking
+        botWeeklyTrend[
+          DateTime.fromSeconds(currSeconds, { zone: "utc" })
+            .minus({ weeks: 1 })
+            .toSeconds()
+        ] = botWeekTotal;
+        botWeekTotal -=
+          botStudyByHour[UTC_CURRENT_DAY.minus({ weeks: 1 }).toSeconds()] || 0; //remove last week's info
+      } else if (UTC_CURRENT_DAY.weekday === 2 && UTC_CURRENT_DAY.hour === 0) {
         botWeekTotal = 0;
       }
 
-      const FIRST_DAY_OF_MONTH = DateTime.fromSeconds(currSeconds).startOf('month');
-      if (UTC_CURRENT_DAY.hasSame(FIRST_DAY_OF_MONTH, 'day')) { //start of month, save to monthly ranking
-        botMonthlyTrend[DateTime.fromSeconds(currSeconds, { zone: "utc" }).minus({ months: 1 }).toSeconds()] = botMonthTotal;
-        botMonthTotal -= (botStudyByHour[UTC_CURRENT_DAY.minus({ months: 1 }).toSeconds()] || 0); //remove last month's info
-      }
-      else if (UTC_CURRENT_DAY.diff(FIRST_DAY_OF_MONTH, ['days']).days === 2 && UTC_CURRENT_DAY.hour === 0) {
+      const FIRST_DAY_OF_MONTH =
+        DateTime.fromSeconds(currSeconds).startOf("month");
+      if (UTC_CURRENT_DAY.hasSame(FIRST_DAY_OF_MONTH, "day")) {
+        //start of month, save to monthly ranking
+        botMonthlyTrend[
+          DateTime.fromSeconds(currSeconds, { zone: "utc" })
+            .minus({ months: 1 })
+            .toSeconds()
+        ] = botMonthTotal;
+        botMonthTotal -=
+          botStudyByHour[UTC_CURRENT_DAY.minus({ months: 1 }).toSeconds()] || 0; //remove last month's info
+      } else if (
+        UTC_CURRENT_DAY.diff(FIRST_DAY_OF_MONTH, ["days"]).days === 2 &&
+        UTC_CURRENT_DAY.hour === 0
+      ) {
         botMonthTotal = 0;
       }
     });
@@ -716,8 +904,7 @@ async function createBotRankings() {
     for (const [key, value] of Object.entries(botStudyByHour)) {
       if (!!botDailyRanking[key]) {
         botDailyRanking[key].push({ u: bot.id, t: value });
-      }
-      else {
+      } else {
         botDailyRanking[key] = [{ u: bot.id, t: value }];
       }
     }
@@ -725,8 +912,7 @@ async function createBotRankings() {
     for (const [key, value] of Object.entries(botWeeklyTrend)) {
       if (!!botWeeklyRanking[key]) {
         botWeeklyRanking[key].push({ u: bot.id, t: value });
-      }
-      else {
+      } else {
         botWeeklyRanking[key] = [{ u: bot.id, t: value }];
       }
     }
@@ -734,8 +920,7 @@ async function createBotRankings() {
     for (const [key, value] of Object.entries(botMonthlyTrend)) {
       if (!!botMonthlyRanking[key]) {
         botMonthlyRanking[key].push({ u: bot.id, t: value });
-      }
-      else {
+      } else {
         botMonthlyRanking[key] = [{ u: bot.id, t: value }];
       }
     }
@@ -746,7 +931,10 @@ async function createBotRankings() {
     let key = entries[en][0];
     botDailyRanking[key] = botDailyRanking[key].sort((a, b) => b.t - a.t);
     await connection.query(`DELETE FROM dailyRanking WHERE date = ?`, [key]);
-    await connection.query(`INSERT INTO dailyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botDailyRanking[key])]);
+    await connection.query(
+      `INSERT INTO dailyRanking SET date = ?, ranking = ?`,
+      [key, JSON.stringify(botDailyRanking[key])]
+    );
   }
 
   entries = Object.entries(botWeeklyRanking);
@@ -754,7 +942,10 @@ async function createBotRankings() {
     let key = entries[en][0];
     botWeeklyRanking[key] = botWeeklyRanking[key].sort((a, b) => b.t - a.t);
     await connection.query(`DELETE FROM weeklyRanking WHERE date = ?`, [key]);
-    await connection.query(`INSERT INTO weeklyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botWeeklyRanking[key])]);
+    await connection.query(
+      `INSERT INTO weeklyRanking SET date = ?, ranking = ?`,
+      [key, JSON.stringify(botWeeklyRanking[key])]
+    );
   }
 
   entries = Object.entries(botMonthlyRanking);
@@ -762,11 +953,14 @@ async function createBotRankings() {
     let key = entries[en][0];
     botMonthlyRanking[key] = botMonthlyRanking[key].sort((a, b) => b.t - a.t);
     await connection.query(`DELETE FROM monthlyRanking WHERE date = ?`, [key]);
-    await connection.query(`INSERT INTO monthlyRanking SET date = ?, ranking = ?`, [key, JSON.stringify(botMonthlyRanking[key])]);
+    await connection.query(
+      `INSERT INTO monthlyRanking SET date = ?, ranking = ?`,
+      [key, JSON.stringify(botMonthlyRanking[key])]
+    );
   }
 
   console.log("BOTS RANKING GENERATED");
-};
+}
 
 module.exports = {
   createBots,
@@ -774,5 +968,5 @@ module.exports = {
   botManager,
   createGroups,
   randomFriend,
-  createBotRankings
-}
+  createBotRankings,
+};

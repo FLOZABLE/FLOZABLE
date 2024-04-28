@@ -82,7 +82,7 @@ const canvasAPI = require('./API/canvas');
 const playlistsAPI = require('./API/playlists');
 
 //import socket
-const { io } = require("./socket");
+const { io } = require("./sockets/io");
 
 //middlewares
 app.use(cors({

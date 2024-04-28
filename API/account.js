@@ -12,10 +12,8 @@ const {
   autoSignin,
   generateRandomId,
   googleOauth2client,
-  googleYoutubeOauth2client,
   isValidTimeZone,
   deriveKey,
-  randomIntInRange,
 } = require("../tool");
 const {
   validateEmail,
@@ -25,18 +23,16 @@ const {
   validateString,
   validateLength,
 } = require("../validate");
-const { UserRefreshClient, auth } = require("google-auth-library");
 const {
   NotificationCache,
   userCache,
   subjectsTimelineCache,
   addActiveUserCache,
 } = require("../services/redisLoader");
-const { extensionIo } = require("../socket");
 const { sendEmail } = require("../email");
 const { responseCodes } = require("../Constant");
 const fetch = require("node-fetch");
-const https = require("https");
+const { extensionIo } = require("../sockets/extensionIo");
 const upload = multer();
 
 Router.get("/accountinfo", async (req, res) => {
@@ -757,7 +753,7 @@ Router.post("/update/extension-setting-update", async (req, res) => {
       }
 
       res.send({ success: true, msg: "Setting updated!" });
-      extensionIo.to(userId).emit("setting-updated", { d, target, value });
+      extensionIo.to(userId).emit("setting-updated", activitySettings);
     } catch (error) {
       res.send({ success: false, reason: "Invalid URL or Domain" });
     }

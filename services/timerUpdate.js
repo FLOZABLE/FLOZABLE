@@ -1,13 +1,8 @@
 const redisClient = require("../model/redis");
-const NodeCache = require('node-cache');
-const cache = new NodeCache();
-const { DateTime } = require('luxon');
-const crypto = require("crypto");
 const pool = require("../model/pool");
-const { io } = require("../socket");
-const cron = require("node-cron");
 const { activeSubjectCache, subjectsCache, timerCache } = require("./redisLoader");
 const { getMidnightTimezones } = require("../tool");
+const { mainIo } = require("../sockets/mainIo");
 
 async function timerUpdate() {
   const now = Math.floor(new Date().getTime() / 1000);
@@ -48,7 +43,7 @@ async function timerUpdate() {
         await redisClient.lTrim(`user:${userId}:subject:${id}`, 1, 0);
         //removeTimeline(userId, now);
       }));
-      io.to(userId).emit('reset');
+      mainIo.to(userId).emit('reset');
       if (activity) {
         const start = activity[0];
         const activeSubjectInfo = subjects.find(subject => {return subject.id === activeSubject.id});
