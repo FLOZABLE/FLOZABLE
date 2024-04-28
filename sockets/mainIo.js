@@ -1,8 +1,10 @@
+const { DateTime } = require('luxon');
 const redisClient = require('../model/redis');
 const { userCache, chatRoomsCache, msgQueue, subjectCache, dmRoomMembersCache, activeSubjectCache } = require('../services/redisLoader');
 const { generateRandomId } = require('../tool');
 const { extensionIo } = require('./extensionIo');
 const { io } = require('./io');
+const pool = require('../model/pool');
 
 const mainIo = io.of('/');
 mainIo.on('connection', (socket) => {
@@ -11,7 +13,6 @@ mainIo.on('connection', (socket) => {
   if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
     try {
       session = socket.request.session;
-      console.log('gddd',session)
     } catch (err) {
       console.log(err);
     };

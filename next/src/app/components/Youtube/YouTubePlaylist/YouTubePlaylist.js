@@ -7,7 +7,7 @@ import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import DropDownButton from "@/app/components/Buttons/DropDownButton/DropDownButton";
 import config from "@/app/utils/config";
 
-function YouTubePlaylist({ }) {
+function YouTubePlaylist({}) {
   const [youtubePlaylist, setYoutubePlaylist] = useState("");
   const [youtubePlaylists, setYoutubePlaylists] = useState([]);
   const [youtubeLoggedIn, setYoutubeLoggedIn] = useState(false);
@@ -18,12 +18,19 @@ function YouTubePlaylist({ }) {
 
   const submitURL = () => {
     const searchParams = new URL(link);
-    if (searchParams.searchParams.get('list')) {
-      setPlayLink(`https://www.youtube.com/embed/videoseries?list=${searchParams.searchParams.get('list')}&autoplay=1`);
+    if (searchParams.searchParams.get("list")) {
+      setPlayLink(
+        `https://www.youtube.com/embed/videoseries?list=${searchParams.searchParams.get(
+          "list"
+        )}&autoplay=1`
+      );
       setPlayingFromLink(true);
-    }
-    else if (searchParams.searchParams.get('v')) {
-      setPlayLink(`https://www.youtube.com/embed/${searchParams.searchParams.get('v')}?autoplay=1`);
+    } else if (searchParams.searchParams.get("v")) {
+      setPlayLink(
+        `https://www.youtube.com/embed/${searchParams.searchParams.get(
+          "v"
+        )}?autoplay=1`
+      );
       setPlayingFromLink(true);
     }
   };
@@ -40,7 +47,8 @@ function YouTubePlaylist({ }) {
   }, [videoIds]);
 
   function shuffle(array) {
-    let currentIndex = array.length, randomIndex;
+    let currentIndex = array.length,
+      randomIndex;
     // While there remain elements to shuffle.
     while (currentIndex > 0) {
       // Pick a remaining element.
@@ -48,36 +56,46 @@ function YouTubePlaylist({ }) {
       currentIndex--;
       // And swap it with the current element.
       [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
+        array[randomIndex],
+        array[currentIndex],
+      ];
     }
     return array;
   }
 
   useEffect(() => {
-    fetch(`${config.server}/playlists/youtube-playlists`, { method: "get", credentials:"include" })
+    fetch(`${config.server}/playlists/youtube-playlists`, {
+      method: "get",
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data, 'playlist youtube');
+        console.log(data, "playlist youtube");
         if (data.success !== false) {
           const playlistOpts = {};
           data.map((playlist) => {
-            playlistOpts[playlist.slice(1, playlist.length).join(",")] = playlist[0];
+            playlistOpts[playlist.slice(1, playlist.length).join(",")] =
+              playlist[0];
           });
           setYoutubePlaylists(playlistOpts);
           console.log("Auth success");
           setYoutubeLoggedIn(true);
         }
-      }).catch((err) => {
-        console.log(err);
       })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   useEffect(() => {
-    console.log("Playlist: ", `https://www.youtube.com/embed/VIDEO_ID?playlist=${youtubePlaylist}`);
+    console.log(
+      "Playlist: ",
+      `https://www.youtube.com/embed/VIDEO_ID?playlist=${youtubePlaylist}`
+    );
     setPlayingFromLink(false);
     if (youtubePlaylist.length) {
-      const videoIdString = youtubePlaylist
-      setVideoIds(videoIdString.split(','));
+      const videoIdString = youtubePlaylist;
+      setVideoIds(videoIdString.split(","));
     }
   }, [youtubePlaylist]);
 
@@ -89,38 +107,50 @@ function YouTubePlaylist({ }) {
         >
           <GoogleLoginBtn scope="https://www.googleapis.com/auth/youtube.force-ssl" />
         </GoogleOAuthProvider>
-        {
-          youtubeLoggedIn ?
-            <div>
-              <DropDownButton
-                options={youtubePlaylists}
-                setValue={setYoutubePlaylist}
-              />
-              <button onClick={() => { randomizeVideos() }}>Shuffle</button>
-            </div>
-            :
-            <div></div>
-        }
-        {
-          youtubeLoggedIn && !playingFromLink ?
-            <div>
-              {
-                youtubePlaylist.length ?
-                  <iframe width="720" height="405" src={`https://www.youtube.com/embed/VIDEO_ID?playlist=${youtubePlaylist}`} allowFullScreen></iframe>
-                  :
-                  <div></div>
-              }
-            </div>
-            :
-            <div>
-              {
-                playingFromLink ?
-                  <iframe width="720" height="405" src={playLink} allowFullScreen></iframe>
-                  :
-                  <span></span>
-              }
-            </div>
-        }
+        {youtubeLoggedIn ? (
+          <div>
+            <DropDownButton
+              options={youtubePlaylists}
+              setValue={setYoutubePlaylist}
+            />
+            <button
+              onClick={() => {
+                randomizeVideos();
+              }}
+            >
+              Shuffle
+            </button>
+          </div>
+        ) : (
+          <div></div>
+        )}
+        {youtubeLoggedIn && !playingFromLink ? (
+          <div>
+            {youtubePlaylist.length ? (
+              <iframe
+                width="720"
+                height="405"
+                src={`https://www.youtube.com/embed/VIDEO_ID?playlist=${youtubePlaylist}`}
+                allowFullScreen
+              ></iframe>
+            ) : (
+              <div></div>
+            )}
+          </div>
+        ) : (
+          <div>
+            {playingFromLink ? (
+              <iframe
+                width="720"
+                height="405"
+                src={playLink}
+                allowFullScreen
+              ></iframe>
+            ) : (
+              <span></span>
+            )}
+          </div>
+        )}
         <CustomInput
           input={link}
           handleInput={handleLinkInput}
@@ -131,7 +161,7 @@ function YouTubePlaylist({ }) {
         />
       </div>
     </div>
-  )
-};
+  );
+}
 
 export default YouTubePlaylist;

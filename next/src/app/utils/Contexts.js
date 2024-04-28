@@ -42,9 +42,7 @@ function AppProvider({ children }) {
                   <ThemesProvider>
                     <WorkersProvider>
                       <ChatsProvider>
-                        <GoogleOAuthProvider
-                          clientId={googleClientId}
-                        >
+                        <GoogleOAuthProvider clientId={googleClientId}>
                           {children}
                         </GoogleOAuthProvider>
                       </ChatsProvider>
@@ -65,7 +63,10 @@ function AccountProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
 
   const bringAccountInfo = useCallback(() => {
-    fetch(`${config.server}/account/accountinfo`, { method: "get", credentials: 'include' })
+    fetch(`${config.server}/account/accountinfo`, {
+      method: "get",
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -73,7 +74,7 @@ function AccountProvider({ children }) {
           setNotifications(data.notifications);
           setTimeout(() => {
             socket.connect();
-            socket.emit('joinChats');
+            socket.emit("joinChats");
           }, 100);
         } else if (data.code === 401) {
           console.log("not user");
@@ -88,7 +89,7 @@ function AccountProvider({ children }) {
 
     const onNotification = (data) => {
       setNotifications((prev) => [...prev, data]);
-    }
+    };
 
     socket.on("notification", onNotification);
 
@@ -98,7 +99,9 @@ function AccountProvider({ children }) {
   }, []);
 
   return (
-    <UserInfoContext.Provider value={{ userInfo, setUserInfo, bringAccountInfo }}>
+    <UserInfoContext.Provider
+      value={{ userInfo, setUserInfo, bringAccountInfo }}
+    >
       <NotificationsContext.Provider
         value={{ notifications, setNotifications }}
       >
@@ -130,7 +133,10 @@ function SubjectsProvider({ children }) {
   });
 
   const bringSubjects = useCallback(() => {
-    fetch(`${config.server}/study/bring-subjects`, { method: "post", credentials: "include" })
+    fetch(`${config.server}/study/bring-subjects`, {
+      method: "post",
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -154,7 +160,7 @@ function SubjectsProvider({ children }) {
               plan.start = new Date(plan.start * 1000 * 60);
               plan.end = new Date(plan.end * 1000 * 60);
               const subject = subjects.find(
-                (subject) => subject.id === plan.subject,
+                (subject) => subject.id === plan.subject
               );
               if (subject) {
                 plan.backgroundColor = subject.color;
@@ -165,7 +171,7 @@ function SubjectsProvider({ children }) {
                 plan.className = "completed";
               }
               return plan;
-            }),
+            })
           );
         }
       })
@@ -203,7 +209,10 @@ function GroupsProvider({ children }) {
   const [otherGroups, setOtherGroups] = useState([]);
 
   const bringGroups = useCallback(() => {
-    fetch(`${config.server}/groups/bring-groups`, { method: "post", credentials: "include" })
+    fetch(`${config.server}/groups/bring-groups`, {
+      method: "post",
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -257,7 +266,7 @@ function ModalsProvider({ children }) {
   const [chatModal, setChatModal] = useState({
     chatRoom: null,
     open: false,
-    totalNewMsg: 0
+    totalNewMsg: 0,
   });
 
   const [isNotificationModal, setIsNotificationModal] = useState(false);
@@ -271,7 +280,7 @@ function ModalsProvider({ children }) {
   useEffect(() => {
     if (userInfo === false) {
       setIsAccountModal(true);
-    };
+    }
   }, [userInfo]);
 
   return (
@@ -286,7 +295,7 @@ function ModalsProvider({ children }) {
         joinGroupModal,
         setJoinGroupModal,
         isAccountModal,
-        setIsAccountModal
+        setIsAccountModal,
       }}
     >
       {children}
@@ -306,7 +315,7 @@ function TutorialsProvider({ children }) {
         tutorialBoxRef,
         tutorialTextRef,
         tutorial,
-        setTutorial
+        setTutorial,
       }}
     >
       {children}
@@ -338,58 +347,64 @@ function ThemesProvider({ children }) {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include"
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          data.themes.map(theme => {
+          data.themes.map((theme) => {
             theme.likes = theme.likes === "" ? [] : theme.likes.split(",");
-          })
+          });
           setThemes(data.themes);
-        };
+        }
       })
       .catch((error) => console.error(error));
-
 
     fetch(`${config.server}/themes/user`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",
-      }
-      , credentials: "include"
+      },
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          const userThemes = data.themes.themes === "" ? [] : data.themes.themes.split(",");
-          setUserThemes(userThemes.map(theme => {
-            const [category, id] = theme.split(":");
+          const userThemes =
+            data.themes.themes === "" ? [] : data.themes.themes.split(",");
+          setUserThemes(
+            userThemes.map((theme) => {
+              const [category, id] = theme.split(":");
 
-            return {
-              category,
-              id
-            }
-          }));
-        };
+              return {
+                category,
+                id,
+              };
+            })
+          );
+        }
       })
       .catch((error) => console.error(error));
   }, []);
 
   return (
-    <ThemesContext.Provider value={{ themes, setThemes, userThemes, setUserThemes }}>
+    <ThemesContext.Provider
+      value={{ themes, setThemes, userThemes, setUserThemes }}
+    >
       {children}
     </ThemesContext.Provider>
-  )
-};
+  );
+}
 
 function WorkersProvider({ children }) {
   const membersTimerWorkerRef = useRef(null);
   const subjectsTimerWorkerRef = useRef(null);
 
   useEffect(() => {
-    membersTimerWorkerRef.current = new Worker('/workers/timerWorker.js');
-    subjectsTimerWorkerRef.current = new Worker('/workers/subjectTimerWorker.js');
+    membersTimerWorkerRef.current = new Worker("/workers/timerWorker.js");
+    subjectsTimerWorkerRef.current = new Worker(
+      "/workers/subjectTimerWorker.js"
+    );
     return () => {
       membersTimerWorkerRef.current?.terminate();
       subjectsTimerWorkerRef.current?.terminate();
@@ -397,22 +412,27 @@ function WorkersProvider({ children }) {
   }, []);
 
   return (
-    <WorkersContext.Provider value={{ membersTimerWorkerRef, subjectsTimerWorkerRef }}>
+    <WorkersContext.Provider
+      value={{ membersTimerWorkerRef, subjectsTimerWorkerRef }}
+    >
       {children}
     </WorkersContext.Provider>
-  )
-};
+  );
+}
 
 function ChatsProvider({ children }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [chatModal, setCHatModal] = useState({
     open: false,
-    chatRoom: false
+    chatRoom: false,
   });
   const [readStatus, setReadStatus] = useState({});
 
   useEffect(() => {
-    fetch(`${config.server}/chat/bring-rooms`, { method: "post", credentials: "include" })
+    fetch(`${config.server}/chat/bring-rooms`, {
+      method: "post",
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -424,19 +444,19 @@ function ChatsProvider({ children }) {
   }, []);
 
   return (
-    <ChatsContext.Provider value={
-      {
+    <ChatsContext.Provider
+      value={{
         chatRooms,
         setChatRooms,
         chatModal,
         setCHatModal,
         readStatus,
-        setReadStatus
-      }
-    }>
+        setReadStatus,
+      }}
+    >
       {children}
     </ChatsContext.Provider>
-  )
+  );
 }
 
 export {
@@ -453,5 +473,5 @@ export {
   CallOptionsContext,
   ThemesContext,
   WorkersContext,
-  ChatsContext
+  ChatsContext,
 };
