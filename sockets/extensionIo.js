@@ -4,7 +4,7 @@ const { userCache } = require("../services/redisLoader");
 const { io } = require("./io");
 
 const extensionIo = io.of("/extension");
-console.log('gd')
+
 extensionIo.on("connection", (socket) => {
   socket.on("auth", async ({ authId }) => {
     if (!authId) return;

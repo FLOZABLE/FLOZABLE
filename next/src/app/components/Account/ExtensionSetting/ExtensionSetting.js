@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import LabelMovingInput from "../../Inputs/LabelMovingInput/LabelMovingInput";
 import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
@@ -8,43 +14,46 @@ import { ResponseContext } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
 
 function ExtensionSetting({ websites, setWebsites }) {
-  const {setResponse} = useContext(ResponseContext);
+  const { setResponse } = useContext(ResponseContext);
 
   const router = useRouter();
 
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const extensionRef = useRef(null);
 
-  const onSubmitUrl = useCallback((urlPar) => {
-    fetch(`${config.server}/account/update/extension-add`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ url: urlPar ? urlPar : url }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-        if (data.success) {
-          const { domain, origin } = data;
-
-          setWebsites(prev => {
-            [
-              ...prev,
-              { d: domain, o: origin, b: false, t: false, bs: false, ts: true },
-            ]
-          });
-
-          setTimeout(() => {
-            const section = document.querySelector(`#${domain.replace(/\./g, '_')}`);
-            if (!section) return;
-            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 300);
-        }
+  const onSubmitUrl = useCallback(
+    (url) => {
+      fetch(`${config.server}/account/update/extension-add`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url }),
       })
-      .catch((error) => console.error(error));
-  }, []);
+        .then((response) => response.json())
+        .then((data) => {
+          setResponse(data);
+          if (data.success) {
+            const { domain } = data;
+
+            setWebsites((prev) => ({
+              ...prev,
+              [domain]: { b: false, t: false, bs: false, ts: true },
+            }));
+
+            setTimeout(() => {
+              const section = document.querySelector(
+                `#${domain.replace(/\./g, "_")}`
+              );
+              if (!section) return;
+              section.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 300);
+          }
+        })
+        .catch((error) => console.error(error));
+    },
+    [websites]
+  );
 
   useEffect(() => {
     if (!websites.length) return;
@@ -56,24 +65,26 @@ function ExtensionSetting({ websites, setWebsites }) {
       extensionRef.current.scrollIntoView({
         behavior: "smooth",
         block: "center",
-        inline: "start"
+        inline: "start",
       });
       return;
-    };
+    }
 
-    const isExist = websites.find(website => website.d.replace(/^www\.(.*)$/, "$1") === domain.replace(/^www\.(.*)$/, "$1"));
+    const isExist = websites[domain.replace(/^www\.(.*)$/, "$1")];
 
     if (isExist) {
-      const section = document.querySelector(`#${domain.replace(/^www\.(.*)$/, "$1").replace(/\./g, '_')}`);
+      const section = document.querySelector(
+        `#${domain.replace(/^www\.(.*)$/, "$1").replace(/\./g, "_")}`
+      );
       if (!section) return;
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
       onSubmitUrl(domain);
-    };
+    }
   }, [websites]);
 
-
   const fetchExtensionSettingUpdate = useCallback((d, target, value) => {
+    console.log(d)
     fetch(`${config.server}/account/update/extension-setting-update`, {
       method: "post",
       headers: {
@@ -87,7 +98,6 @@ function ExtensionSetting({ websites, setWebsites }) {
       })
       .catch((error) => console.error(error));
   }, []);
-
 
   return (
     <div className={styles.ExtensionSetting}>
@@ -103,7 +113,9 @@ function ExtensionSetting({ websites, setWebsites }) {
         <div className={styles.BtnPos}>
           <BlobBtn
             name={"SUBMIT"}
-            setClicked={() => { onSubmitUrl() }}
+            setClicked={() => {
+              onSubmitUrl(url);
+            }}
             color1={"#fff"}
             color2={"var(--pink)"}
           />
@@ -111,28 +123,29 @@ function ExtensionSetting({ websites, setWebsites }) {
       </div>
       <div>
         <div className={styles.extensionHeader}>
-        <div>Websites</div>
+          <div>Websites</div>
           <div>Block</div>
-          <div>Block when studying</div>  
+          <div>Block when studying</div>
           <div>Timer</div>
           <div>Timer when studying</div>
         </div>
         <ul ref={extensionRef}>
-          {websites.map(({ d, b, bs, t, ts }, i) => {
+          {Object.keys(websites).map((website, i) => {
+            const { b, bs, t, ts } = websites[website];
             return (
-              <li className={styles.websiteOptions} key={i} id={d.replace(/\./g, '_')}>
+              <li
+                className={styles.websiteOptions}
+                key={i}
+                id={website.replace(/\./g, "_")}
+              >
                 <div>
-                  <p>{d}</p>
+                  <p>{website}</p>
                 </div>
                 <div>
                   <SimpleToggleBtn
                     checked={b}
                     onToggle={(e) => {
-                      fetchExtensionSettingUpdate(
-                        d,
-                        "block",
-                        e.target.checked,
-                      );
+                      fetchExtensionSettingUpdate(website, "block", e.target.checked);
                     }}
                   />
                 </div>
@@ -141,9 +154,9 @@ function ExtensionSetting({ websites, setWebsites }) {
                     checked={bs}
                     onToggle={(e) => {
                       fetchExtensionSettingUpdate(
-                        d,
+                        website,
                         "blockstudy",
-                        e.target.checked,
+                        e.target.checked
                       );
                     }}
                   />
@@ -152,11 +165,7 @@ function ExtensionSetting({ websites, setWebsites }) {
                   <SimpleToggleBtn
                     checked={t}
                     onToggle={(e) => {
-                      fetchExtensionSettingUpdate(
-                        d,
-                        "timer",
-                        e.target.checked,
-                      );
+                      fetchExtensionSettingUpdate(website, "timer", e.target.checked);
                     }}
                   />
                 </div>
@@ -165,9 +174,9 @@ function ExtensionSetting({ websites, setWebsites }) {
                     checked={ts}
                     onToggle={(e) => {
                       fetchExtensionSettingUpdate(
-                        d,
+                        website,
                         "timerstudy",
-                        e.target.checked,
+                        e.target.checked
                       );
                     }}
                   />
@@ -178,7 +187,7 @@ function ExtensionSetting({ websites, setWebsites }) {
         </ul>
       </div>
     </div>
-  )
-};
+  );
+}
 
 export default ExtensionSetting;

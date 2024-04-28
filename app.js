@@ -57,6 +57,7 @@ const sessionMiddleWare = session({
     secure: false,
     httpOnly: true,
     signed: true,
+    sameSite: 'strict'
   },
 });
 

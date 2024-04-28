@@ -30,7 +30,7 @@ function Account() {
 
   const [isSubmitProfile, setIsSubmitProfile] = useState(false);
   const [isSubmitPw, setIsSubmitPw] = useState(false);
-  const [websites, setWebsites] = useState([]);
+  const [websites, setWebsites] = useState({});
 
   const inputRef = useRef(null);
   const readURL = useCallback((input) => {
@@ -130,13 +130,7 @@ function Account() {
           setEmail(userInfo.email);
           setConfirmEmail(userInfo.email);
           setName(userInfo.name);
-          const websites =
-            activity_setting === ""
-              ? []
-              : JSON.parse(
-                activity_setting.replace(/^/, "[").replace(/$/, "]"),
-              );
-          setWebsites(websites);
+          setWebsites(activity_setting);
         }
       })
       .catch((error) => console.error(error));
