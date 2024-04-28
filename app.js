@@ -127,11 +127,11 @@ app.use(sessionMiddleWare);
 app.set('view engine', 'ejs');
 app.set(__dirname + '/views');
 app.set('socketio', io);
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.SECRET_ID));
 app.use(express.static(path.join(__dirname, '/public')));
 app.disable('etag');
+process.env.LOGGER === "true" ? app.use(logger('dev')) : null;
 
 app.use('/', mainRouter);
 

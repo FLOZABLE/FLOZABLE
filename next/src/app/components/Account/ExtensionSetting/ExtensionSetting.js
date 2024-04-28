@@ -29,6 +29,7 @@ function ExtensionSetting({ websites, setWebsites }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ url }),
+        credentials: 'include'
       })
         .then((response) => response.json())
         .then((data) => {
@@ -91,6 +92,7 @@ function ExtensionSetting({ websites, setWebsites }) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ d, target, value }),
+      credentials: 'include'
     })
       .then((response) => response.json())
       .then((data) => {

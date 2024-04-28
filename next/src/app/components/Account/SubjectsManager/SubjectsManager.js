@@ -36,6 +36,7 @@ function SubjectsManager() {
         id,
         tools
       }),
+      credentials: 'include'
     })
       .then((response) => response.json())
       .then((data) => {
@@ -76,7 +77,8 @@ function SubjectsManager() {
         },
         body: JSON.stringify({
           subjectId
-        })
+        }),
+        credentials: 'include'
       }).then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -101,6 +103,7 @@ function SubjectsManager() {
         body: JSON.stringify({
           subjectId: selectedSubject.id
         }),
+        credentials: 'include'
       }).then((response) => response.json())
       .then((data) => {
         if (data.success) {

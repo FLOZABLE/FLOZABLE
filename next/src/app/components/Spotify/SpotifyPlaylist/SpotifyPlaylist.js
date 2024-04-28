@@ -9,7 +9,7 @@ import SpotifyPlayer from "../SpotifyPlayer/SpotifyPlayer";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
 
 function SpotifyPlaylist() {
-  const {setResponse} = useContext(ResponseContext);
+  const { setResponse } = useContext(ResponseContext);
 
   const [playlist, setPlaylist] = useState("");
   const [spotifyLoggedIn, setSpotifyLoggedIn] = useState(false);
@@ -24,21 +24,23 @@ function SpotifyPlaylist() {
         if (urlPaths[1] !== "embed") {
           urlPaths.unshift("embed");
           const modifiedURL = "https://open.spotify.com/" + urlPaths.join("/");
-          setPlaylist(modifiedURL); 
+          setPlaylist(modifiedURL);
         }
-      };
+      }
     } catch (err) {
       console.log(err);
-    };
+    }
   };
 
   const handleLinkInput = (e) => {
     setLink(e.target.value);
   };
 
-
   useEffect(() => {
-    fetch(`${config.server}/playlists/spotify-playlists`, { method: "get" })
+    fetch(`${config.server}/playlists/spotify-playlists`, {
+      method: "get",
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -46,41 +48,37 @@ function SpotifyPlaylist() {
 
           const tempOptions = {};
           data.data.map((choice) => {
-            const modifiedURL = choice.url.replace("https://open.spotify.com", "https://open.spotify.com/embed");
+            const modifiedURL = choice.url.replace(
+              "https://open.spotify.com",
+              "https://open.spotify.com/embed"
+            );
             tempOptions[modifiedURL] = choice.name;
           });
           setDropDownOptions(tempOptions);
-
         }
-      }).catch((err) => {
-        console.log(err);
       })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (
     <div className={styles.PlaylistModal}>
       <div className={styles.authGuide}>
-        {
-          spotifyLoggedIn ?
-            <div></div>
-            :
-            <p>Connect your Spotify account to bring your playlists!</p>
-        }
+        {spotifyLoggedIn ? (
+          <div></div>
+        ) : (
+          <p>Connect your Spotify account to bring your playlists!</p>
+        )}
         <SpotifyAuthBtn redirectURI={`${config.location}/dashboard/study`} />
-        {
-          spotifyLoggedIn ?
-            <DropDownButton
-              options={dropDownOptions}
-              setValue={setPlaylist}
-            />
-            :
-            <div></div>
-        }
+        {spotifyLoggedIn ? (
+          <DropDownButton options={dropDownOptions} setValue={setPlaylist} />
+        ) : (
+          <div></div>
+        )}
       </div>
       <div className={styles.spotifyPlayerWrapper}>
-        <SpotifyPlayer
-          link={playlist}
-        />
+        <SpotifyPlayer link={playlist} />
       </div>
       <CustomInput
         input={link}
@@ -91,7 +89,7 @@ function SpotifyPlaylist() {
         type={"text"}
       />
     </div>
-  )
-};
+  );
+}
 
 export default SpotifyPlaylist;

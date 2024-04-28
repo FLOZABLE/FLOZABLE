@@ -4,7 +4,6 @@ import { WorkersContext } from "@/app/utils/Contexts";
 
 function MyTimer({ run, initialSec }) {
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
-  console.log('gddddd', initialSec)
 
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
@@ -17,12 +16,7 @@ function MyTimer({ run, initialSec }) {
         setTotal(prev => prev + 1);
       };
     };
-    /* console.log('gdddd', worker)
-    worker.addEventListener("message", onMessage);
 
-    return () => {
-      worker.removeEventListener("message", onMessage);
-    }; */
     subjectsTimerWorkerRef?.current?.addEventListener('message', onMessage);
     return () => {
       subjectsTimerWorkerRef?.current?.removeEventListener('message', onMessage);
