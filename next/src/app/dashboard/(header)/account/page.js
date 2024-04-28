@@ -61,6 +61,7 @@ function Account() {
           'Content-Type': 'application/json'
         }, */
         body: formData,
+        credentials: "include",
       })
         .then((response) => response.json())
         .then((data) => {
@@ -82,6 +83,7 @@ function Account() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ name, email, confirmEmail }),
+        credentials: "include",
       })
         .then((response) => response.json())
         .then((data) => {
@@ -102,6 +104,7 @@ function Account() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ password, confirmPassword }),
+        credentials: "include",
       })
         .then((response) => response.json())
         .then((data) => {
@@ -117,11 +120,12 @@ function Account() {
   useEffect(() => {
     if (!userInfo) return;
     setImageSrc(`${config.static_server}/profile-image/${userInfo.user_id}.jpeg`);
-    fetch(`${config.server}/account/activity-settings`, {
+    fetch(`${config.server}/extension/tabs-settings`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: 'include'
     })
       .then((response) => response.json())
       .then((data) => {

@@ -61,28 +61,6 @@ Router.get("/accountinfo", async (req, res) => {
   );
 });
 
-Router.get("/activity-settings", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const connection = pool.promise();
-      const [[userInfo]] = await connection.query(
-        `SELECT activity_setting FROM users WHERE user_id = ?`,
-        [userId]
-      );
-      if (!userInfo)
-        return res.send({ success: false, reason: "No such user" });
-      const { activity_setting } = userInfo;
-      res.send({
-        success: true,
-        activity_setting: JSON.parse(activity_setting),
-      });
-    } catch (err) {
-      console.log(err);
-      res.send({ success: false, reason: "err" });
-    }
-  });
-});
-
 Router.post("/signin-authentication", async (req, res) => {
   const { email, password } = req.body;
 

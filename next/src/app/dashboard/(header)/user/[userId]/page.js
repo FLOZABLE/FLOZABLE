@@ -23,7 +23,7 @@ function User({ params }) {
 
   const [userInfo, setUserInfo] = useState(null);
   const [userSubjects, setUserSubjects] = useState([]);
-  const [statsViewer, setStatsViewer] = useState('Daily');
+  const [statsViewer, setStatsViewer] = useState("Daily");
   const [viewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [userGroups, setUserGroups] = useState([]);
   const [userFriends, setUserFriends] = useState([]);
@@ -31,17 +31,19 @@ function User({ params }) {
   useEffect(() => {
     if (!userId) return;
 
-    fetch(`${config.server}/account/profile/${userId}`, { method: 'get', credentials: 'include' })
+    fetch(`${config.server}/account/profile/${userId}`, {
+      method: "get",
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
-
         if (data.success) {
           const { userInfo, subjectsInfo, friendsInfo } = data;
           setUserInfo(userInfo);
           const sortedSubject = timelineSort(subjectsInfo);
           setUserSubjects(sortedSubject);
-          setUserFriends(friendsInfo)
-        };
+          setUserFriends(friendsInfo);
+        }
       })
       .catch((error) => console.error(error));
   }, [userId]);
@@ -49,7 +51,7 @@ function User({ params }) {
   useEffect(() => {
     if (!userInfo || !userInfo.groups || !groups) return;
 
-    const userGroups = groups.filter(group => {
+    const userGroups = groups.filter((group) => {
       return userInfo.groups.includes(group.group_id);
     });
     setUserGroups(userGroups);
@@ -58,12 +60,18 @@ function User({ params }) {
   return (
     <div>
       <div className={`Main`}>
-        <div className="title">
-          User
-        </div>
+        <div className="title">User</div>
         <div className={styles.User}>
           <div className={styles.searchOpt}>
-            <RadioBtn items={[{ view: 'Daily', value: 'Daily' }, { view: 'Weekly', value: 'Weekly' }, { view: 'Monthly', value: 'Monthly' }]} changeEvent={setStatsViewer} defaultViewer={0} />
+            <RadioBtn
+              items={[
+                { view: "Daily", value: "Daily" },
+                { view: "Weekly", value: "Weekly" },
+                { view: "Monthly", value: "Monthly" },
+              ]}
+              changeEvent={setStatsViewer}
+              defaultViewer={0}
+            />
           </div>
           <div className={styles.profileCard}>
             <div>
@@ -77,31 +85,34 @@ function User({ params }) {
               </div>
             </div>
             <div>
-              Joined at {userInfo ? DateTime.fromSeconds(parseInt(userInfo.datum_point)).toLocaleString(DateTime.DATE_FULL) : null}
+              Joined at{" "}
+              {userInfo
+                ? DateTime.fromSeconds(
+                    parseInt(userInfo.datum_point)
+                  ).toLocaleString(DateTime.DATE_FULL)
+                : null}
             </div>
             <div>
               <FriendRequestBtn userInfo={userInfo} />
-              <DmBtn
-                userInfo={userInfo}
-              />
+              <DmBtn userInfo={userInfo} />
             </div>
             <div className={styles.timezone}>
               Timezone:
-              {userInfo?.timezone ? <>
-                <i>
-                  <CountryViewer timezone={userInfo.timezone} />
-                </i>
-                <p>
-                  {userInfo.timezone}
-                </p>
-              </> : 'UTC'}
+              {userInfo?.timezone ? (
+                <>
+                  <i>
+                    <CountryViewer timezone={userInfo.timezone} />
+                  </i>
+                  <p>{userInfo.timezone}</p>
+                </>
+              ) : (
+                "UTC"
+              )}
             </div>
           </div>
           <div className={styles.boxContainer}>
             <div className={styles.box}>
-              <div className={styles.title}>
-                Study Trend
-              </div>
+              <div className={styles.title}>Study Trend</div>
               <div className={styles.chartContainer}>
                 <StudyTrendChart
                   viewDate={viewDate}
@@ -111,9 +122,7 @@ function User({ params }) {
               </div>
             </div>
             <div className={styles.box}>
-              <div className={styles.title}>
-                Ranking Trend
-              </div>
+              <div className={styles.title}>Ranking Trend</div>
               <div className={styles.chartContainer}>
                 <RankingTrend
                   viewDate={viewDate}
@@ -124,24 +133,17 @@ function User({ params }) {
             </div>
             <div className={styles.box} id={styles.groupBox}>
               <div className={styles.title}>
-                {userInfo ? userInfo.name : ''}&apos;s groups
+                {userInfo ? userInfo.name : ""}&apos;s groups
               </div>
               <div className={`${styles.groupsContainer} customScroll`}>
-                {
-                  userGroups.map((group, i) => {
-                    return (
-                      <GroupContainer
-                        key={i}
-                        groupInfo={group}
-                      />
-                    )
-                  })
-                }
+                {userGroups.map((group, i) => {
+                  return <GroupContainer key={i} groupInfo={group} />;
+                })}
               </div>
             </div>
             <div className={styles.box} id={styles.friendsBox}>
               <div className={styles.title}>
-                {userInfo ? userInfo.name : ''}&apos;s friends
+                {userInfo ? userInfo.name : ""}&apos;s friends
               </div>
               <div className={styles.friendsContainer}>
                 <FriendsViewer friends={userFriends} />
@@ -151,7 +153,7 @@ function User({ params }) {
         </div>
       </div>
     </div>
-  )
-};
+  );
+}
 
 export default User;

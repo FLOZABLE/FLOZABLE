@@ -69,6 +69,7 @@ function EditGroupModal({ isOpen, setIsOpen }) {
           password: password,
           goal_hr: goalHr,
         }),
+        credentials: "include",
       })
         .then((response) => response.json())
         .then((data) => {

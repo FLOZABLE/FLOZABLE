@@ -31,6 +31,7 @@ function SigninWithGoogleBtn({ infoText }) {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
       })
         .then((response) => response.json())
         .then((data) => {
@@ -40,7 +41,7 @@ function SigninWithGoogleBtn({ infoText }) {
             setTutorial(1);
             setTimeout(() => {
               bringAccountInfo();
-            }, 100)
+            }, 100);
           }
         });
     },

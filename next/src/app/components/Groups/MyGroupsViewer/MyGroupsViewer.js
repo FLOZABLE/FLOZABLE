@@ -58,7 +58,8 @@ function MyGroupsViewer({
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ groupId: group.group_id })
+        body: JSON.stringify({ groupId: group.group_id }),
+        credentials: "include",
       }).then((response) => response.json())
       .then((data) => {
         console.log(data);

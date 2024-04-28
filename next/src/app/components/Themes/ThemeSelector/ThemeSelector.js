@@ -5,11 +5,7 @@ import config from "@/app/utils/config";
 import { AllCategories, AllThemes } from "@/app/utils/Themes";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
 
-function ThemeSelector({
-  link,
-  handleLinkInput,
-  setVideoId,
-}) {
+function ThemeSelector({ link, handleLinkInput, setVideoId }) {
   const [themeCategory, setThemeCategory] = useState("");
   const [themeChoices, setThemeChoices] = useState([]);
   const [selectionEl, setSelectionEl] = useState(<p></p>);
@@ -35,6 +31,7 @@ function ThemeSelector({
 
     fetch(`${config.server}/themes/user`, {
       method: "get",
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
@@ -57,6 +54,7 @@ function ThemeSelector({
 
         fetch(`${config.server}/themes/videoIds?searchIds=${allIds}`, {
           method: "get",
+          credentials: "include",
         })
           .then((response) => response.json())
           .then((data) => {
@@ -128,7 +126,7 @@ function ThemeSelector({
               </div>
             );
           })}
-        </div>,
+        </div>
       );
     } else {
       setSelectionEl(
@@ -164,7 +162,7 @@ function ThemeSelector({
             &lt;Back
           </button>
           <button>Load More</button>
-        </div>,
+        </div>
       );
     }
   }, [themeChoices, themeCategory, themesList]);

@@ -107,7 +107,7 @@ function StudySidebar({
           }
           setTimeout(() => {
             bringSubjects();
-          }, 100)
+          }, 100);
         }}
         ref={toHomeBtnRef}
         id="tutorial-10"
