@@ -3,12 +3,17 @@ import styles from "./SigninWithGoogleBtn.module.css";
 import { useGoogleLogin } from "@react-oauth/google";
 import config from "@/app/utils/config";
 import { Google } from "@/app/utils/Svg";
-import { ResponseContext, TutorialsContext } from "@/app/utils/Contexts";
+import {
+  ResponseContext,
+  TutorialsContext,
+  UserInfoContext,
+} from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
 
 function SigninWithGoogleBtn({ infoText }) {
-  const {setResponse} = useContext(ResponseContext);
-  const {setTutorial} = useContext(TutorialsContext);
+  const { setResponse } = useContext(ResponseContext);
+  const { setTutorial } = useContext(TutorialsContext);
+  const { bringAccountInfo } = useContext(UserInfoContext);
 
   const router = useRouter();
 
@@ -31,9 +36,12 @@ function SigninWithGoogleBtn({ infoText }) {
         .then((data) => {
           setResponse(data);
           if (data.success) {
-            router.push('/dashboard?welcome=true');
+            router.push("/dashboard?welcome=true");
             setTutorial(1);
-          };
+            setTimeout(() => {
+              bringAccountInfo();
+            }, 100)
+          }
         });
     },
   });
