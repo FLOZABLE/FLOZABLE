@@ -563,7 +563,7 @@ Router.get('/friends', async (req, res) => {
       console.log(error)
       res.send({ success: false, reason: 'An Error Occured' });
     }
-  }));
+  }), undefined, true);
 });
 
 Router.get('/today', async (req, res) => {

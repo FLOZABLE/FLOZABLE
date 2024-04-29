@@ -6,6 +6,7 @@ const { autoSignin, arraysHaveSameContents, generateRandomId } = require("../too
 const { userCache, websiteUsageCache } = require("../services/redisLoader");
 const { DateTime } = require("luxon");
 const { validateStrictString, validateTimeZone, validateISO } = require("../validate");
+const { responseCodes } = require("../Constant");
 
 Router.post("/auth", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -51,10 +52,10 @@ Router.get("/tabs-settings", async (req, res) => {
 });
 
 Router.get("/usage", async (req, res) => {
-  autoSignin(req, res, (async (userId) => {
+  console.log('gd', req.session.user_id)
+  autoSignin(req, res, (async (userId, timezone) => {
     try {
-      const { date, mode, timezone } = req.query;
-
+      const { date, mode } = req.query;
       const isValidDate = validateISO(date, 'date', 20);
 
       if (!isValidDate.isValid) {
@@ -65,12 +66,6 @@ Router.get("/usage", async (req, res) => {
 
       if (!isValidMode.isValid) {
         return res.send({ success: false, reason: isValidMode.reason });
-      };
-
-      const isValidTimeZone = validateTimeZone(timezone);
-
-      if (!isValidTimeZone.isValid) {
-        return res.send({ success: false, reason: isValidTimeZone.reason });
       };
 
       const viewDateTime = DateTime.fromISO(date).setZone(timezone).startOf("day");
@@ -164,7 +159,7 @@ Router.get("/usage", async (req, res) => {
       console.log(err)
       return res.send({ success: false });
     };
-  }));
+  }), undefined, true);
 });
 
 module.exports = Router;
