@@ -22,30 +22,32 @@ function RankingTrend({ viewDate, statsViewer, setRanking = () => {}, userInfoPr
     const viewDateTime = DateTime.fromJSDate(viewDate);
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    fetch(`${config.server}/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime.toISODate()}&timezone=${timezone}`, {
-      method: 'get',
-      credentials:"include"
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          const rankingTrend = updateRankingTrend(data.rankings, statsViewer);
-          let ranking = 1;
-          if (statsViewer === "Daily") {
-            ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.toISODate());
-          } else if (statsViewer === "Weekly") {
-            ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.startOf('week').toISODate());
-          } else {
-            ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.startOf('month').toISODate());
-          };
-          if (ranking) {
-            setRanking(ranking.ranking);
-          }
-
-          setRankingsTrend(rankingTrend);
-        };
+    setTimeout(() => {
+      fetch(`${config.server}/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime.toISODate()}&timezone=${timezone}`, {
+        method: 'get',
+        credentials:"include"
       })
-      .catch((error) => console.error(error));
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const rankingTrend = updateRankingTrend(data.rankings, statsViewer);
+            let ranking = 1;
+            if (statsViewer === "Daily") {
+              ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.toISODate());
+            } else if (statsViewer === "Weekly") {
+              ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.startOf('week').toISODate());
+            } else {
+              ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.startOf('month').toISODate());
+            };
+            if (ranking) {
+              setRanking(ranking.ranking);
+            }
+  
+            setRankingsTrend(rankingTrend);
+          };
+        })
+        .catch((error) => console.error(error));
+    }, 1900);
   }, [viewDate, statsViewer, userInfo, userInfoProp]);
 
   return (

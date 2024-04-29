@@ -7,46 +7,48 @@ const session = require("express-session");
 const connectRedis = require("connect-redis");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
-const http = require('http');
-const https = require('https');
+const http = require("http");
+const https = require("https");
 const dotenv = require("dotenv");
-const cors = require('cors');
+const cors = require("cors");
 const cron = require("node-cron");
-const fs = require('fs');
-const axios = require('axios');
+const fs = require("fs");
+const axios = require("axios");
 const logger = require("morgan");
 const crypto = require("node:crypto");
 
 const options = {
-  key: fs.readFileSync('./SSL/key.pem', 'utf-8'),
-  cert: fs.readFileSync('./SSL/cert.pem', 'utf-8')
-}
-
-if (process.env.NODE_ENV === 'development') {
-  dotenv.config({ path: '.env.development' });
-} else if (process.env.NODE_ENV === 'production') {
-  dotenv.config({ path: '.env.production' });
-} else {
-  dotenv.config({ path: '.env.test' });
+  key: fs.readFileSync("./SSL/key.pem", "utf-8"),
+  cert: fs.readFileSync("./SSL/cert.pem", "utf-8"),
 };
-const port = process.env.PORT;
 
+if (process.env.NODE_ENV === "development") {
+  dotenv.config({ path: ".env.development" });
+} else if (process.env.NODE_ENV === "production") {
+  dotenv.config({ path: ".env.production" });
+} else {
+  dotenv.config({ path: ".env.test" });
+}
+const port = process.env.PORT;
 
 let server;
 
 if (process.env.isHttps === "true") {
   server = https.createServer(options, app);
-  console.log('https')
+  console.log("https");
 } else {
-  console.log('http')
+  console.log("http");
   server = http.createServer(app);
-};
+}
 
 //redis
-const RedisStore = require('connect-redis').default;
+const RedisStore = require("connect-redis").default;
 const redisClient = require("./model/redis");
 redisClient.connect().catch(console.error);
-const redisStore = new RedisStore({ client: redisClient, ttl: 60 * 60 * 24 * 3 });
+const redisStore = new RedisStore({
+  client: redisClient,
+  ttl: 60 * 60 * 24 * 3,
+});
 
 const sessionMiddleWare = session({
   store: redisStore,
@@ -57,7 +59,7 @@ const sessionMiddleWare = session({
     secure: false,
     httpOnly: true,
     signed: true,
-    sameSite: 'strict'
+    sameSite: "strict",
   },
 });
 
@@ -73,23 +75,25 @@ const groupsAPI = require("./API/groups");
 const planAPI = require("./API/plan");
 const studyAPI = require("./API/study");
 const videoAPI = require("./API/video");
-const rankingAPI = require('./API/ranking');
+const rankingAPI = require("./API/ranking");
 //const AiAPI = require('./API/AI');
-const challengeAPI = require('./API/challenges');
-const friendAPI = require('./API/friend');
-const themesAPI = require('./API/themes');
-const extensionAPI = require('./API/extension');
-const canvasAPI = require('./API/canvas');
-const playlistsAPI = require('./API/playlists');
+const challengeAPI = require("./API/challenges");
+const friendAPI = require("./API/friend");
+const themesAPI = require("./API/themes");
+const extensionAPI = require("./API/extension");
+const canvasAPI = require("./API/canvas");
+const playlistsAPI = require("./API/playlists");
 
 //import socket
 const { io } = require("./sockets/io");
 
 //middlewares
-app.use(cors({
-  origin: process.env.SERVER_CORS.split(", "),
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.SERVER_CORS.split(", "),
+    credentials: true,
+  })
+);
 app.use(helmet.permittedCrossDomainPolicies());
 app.use(helmet.referrerPolicy());
 app.use(helmet.xssFilter());
@@ -106,81 +110,118 @@ app.use((req, res, next) => {
   //console.log(res.locals.cspNonce)
   next();
 });
-app.use(helmet.frameguard({ action: 'SAMEORIGIN' }));
+app.use(helmet.frameguard({ action: "SAMEORIGIN" }));
 
 const cspOptions = {
   directives: {
-    defaultSrc: ["'self'", "*.googleapis.com", "'unsafe-inline'", "*.fonts.gstatic.com", "*.googletagmanager.com", "*.fontawesome.com", "https://www.google-analytics.com"],
-    scriptSrc: ["'self'", "*.swiper-bundle.min.js", "https://unpkg.com/swiper@6.8.4/swiper-bundle.min.js", "*.fontawesome.com", "*.google.com", "*.googletagmanager.com", "'unsafe-inline'", "https://code.jquery.com"],
-    frameSrc: ["'self'", "https://googleads.g.doubleclick.net", "https://*.google.com", "*.googletagmanager.com"],
-    "img-src": ["'self'",  "*.googletagmanager.com"],
-    "form-action": ["'self'", "https://accounts.google.com/o/oauth2/v2/auth"]
-  }
-}
+    defaultSrc: [
+      "'self'",
+      "*.googleapis.com",
+      "'unsafe-inline'",
+      "*.fonts.gstatic.com",
+      "*.googletagmanager.com",
+      "*.fontawesome.com",
+      "https://www.google-analytics.com",
+    ],
+    scriptSrc: [
+      "'self'",
+      "*.swiper-bundle.min.js",
+      "https://unpkg.com/swiper@6.8.4/swiper-bundle.min.js",
+      "*.fontawesome.com",
+      "*.google.com",
+      "*.googletagmanager.com",
+      "'unsafe-inline'",
+      "https://code.jquery.com",
+    ],
+    frameSrc: [
+      "'self'",
+      "https://googleads.g.doubleclick.net",
+      "https://*.google.com",
+      "*.googletagmanager.com",
+    ],
+    "img-src": ["'self'", "*.googletagmanager.com"],
+    "form-action": ["'self'", "https://accounts.google.com/o/oauth2/v2/auth"],
+  },
+};
 
-app.use(helmet.contentSecurityPolicy(cspOptions))
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(helmet.contentSecurityPolicy(cspOptions));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(sessionMiddleWare);
 
 //ejs setting
-app.set('view engine', 'ejs');
-app.set(__dirname + '/views');
-app.set('socketio', io);
+app.set("view engine", "ejs");
+app.set(__dirname + "/views");
+app.set("socketio", io);
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.SECRET_ID));
-app.use(express.static(path.join(__dirname, '/public')));
-app.disable('etag');
-process.env.LOGGER === "true" ? app.use(logger('dev')) : null;
+app.use(express.static(path.join(__dirname, "/public")));
+app.disable("etag");
+process.env.LOGGER === "true" ? app.use(logger("dev")) : null;
 
-app.use('/', mainRouter);
+app.use("/", mainRouter);
 
 //api
-app.use('/account', accountAPI);
-app.use('/chat', chatAPI);
-app.use('/groups', groupsAPI);
-app.use('/plan', planAPI);
-app.use('/study', studyAPI);
-app.use('/video', videoAPI);
-app.use('/ranking', rankingAPI);
+app.use("/account", accountAPI);
+app.use("/chat", chatAPI);
+app.use("/groups", groupsAPI);
+app.use("/plan", planAPI);
+app.use("/study", studyAPI);
+app.use("/video", videoAPI);
+app.use("/ranking", rankingAPI);
 //app.use('/ai', AiAPI);
-app.use('/challenges', challengeAPI);
-app.use('/friend', friendAPI);
-app.use('/themes', themesAPI);
-app.use('/extension', extensionAPI);
-app.use('/playlists', playlistsAPI);
-app.use('/canvas', canvasAPI);
+app.use("/challenges", challengeAPI);
+app.use("/friend", friendAPI);
+app.use("/themes", themesAPI);
+app.use("/extension", extensionAPI);
+app.use("/playlists", playlistsAPI);
+app.use("/canvas", canvasAPI);
 app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 //handle profile images
-app.get('/profile-image/:userId.jpeg', (req, res) => {
+app.get("/profile-image/:userId.jpeg", (req, res) => {
   const { userId } = req.params;
-  const imagePath = path.join(__dirname, 'public/profile-images', `${userId}.jpeg`);
+  const imagePath = path.join(
+    __dirname,
+    "public/profile-images",
+    `${userId}.jpeg`
+  );
   fs.readFile(imagePath, (err, imageData) => {
     if (err) {
       // Handle the case when the image is not found
-      const defaultImagePath = path.join(__dirname, 'public', '/img/default_profile.jpg');
+      const defaultImagePath = path.join(
+        __dirname,
+        "public",
+        "/img/default_profile.jpg"
+      );
       return res.sendFile(defaultImagePath);
     }
 
-    res.setHeader('Content-Type', 'image/jpeg');
+    res.setHeader("Content-Type", "image/jpeg");
     res.send(imageData);
   });
 });
 
 //catch 404
-app.get('*', function (req, res) {
-  res.redirect('/');
+app.get("*", function (req, res) {
+  res.redirect("/");
 });
 
-
-const { createBots, addId, deleteBots, botManager, createGroups, randomFriend, createBotRankings } = require('./Bot/Bot');
+const {
+  createBots,
+  addId,
+  deleteBots,
+  botManager,
+  createGroups,
+  randomFriend,
+  createBotRankings,
+} = require("./Bot/Bot");
 //randomFriend(0, 3);
 //createGroups(10);
 //botManager(57);
 //deleteBots();
 //addId();
-//createBots(50); 
+//createBots(50);
 //createBotRankings();
 
 const { updateRanking, createRankings } = require("./services/rankingUpdate");
@@ -196,19 +237,39 @@ const { cacheManager } = require("./services/redisLoader");
 //createRankings(-7);
 
 //schedulers
-cron.schedule('0 * * * *', () => {
+cron.schedule("0 * * * *", () => {
   //dailyReport(process.env.TESTER_ID);
   extensionManager();
   updateRanking();
   timerUpdate();
-  if (DateTime.now().get('hour') === 1) {
+  if (DateTime.now().get("hour") === 1) {
     cacheManager();
   }
 });
 //cacheManager()
 //create tables
-const { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, groupsChatRoomsGeneration, createChallengesTable, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode, createDevicesTable } = require('./query');
-const { updateSubjectsTimeline, redisUsersCache } = require("./Utils/migration");
+const {
+  createUsersTable,
+  createSubjectsTable,
+  createGroupsTable,
+  createPlansTable,
+  createChatroomsTable,
+  createDailyRankingTable,
+  createWeeklyRankingTable,
+  createMonthlyRankingTable,
+  groupsChatRoomsGeneration,
+  createChallengesTable,
+  createChallengeRoomsTable,
+  createThemesTable,
+  createActivitiesTable,
+  utf8mb4Unicode,
+  createDevicesTable,
+} = require("./query");
+const {
+  updateSubjectsTimeline,
+  redisUsersCache,
+  activitySettingsMigration
+} = require("./Utils/migration");
 const { DateTime } = require("luxon");
 
 //createUsersTable();
@@ -228,6 +289,7 @@ const { DateTime } = require("luxon");
 //createDevicesTable();
 
 //updateSubjectsTimeline(161);
+//activitySettingsMigration();
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
