@@ -7,16 +7,17 @@ import DateSelectorBtn from "@/app/components/Buttons/DateSelectorBtn/DateSelect
 import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
 import SubjectsPie from "@/app/components/Charts/SubjectsPie";
 import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from "@/app/utils/Svg";
-import { SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
+import { SubjectsContext, TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
 import { focusCalculator, secondConverter } from "@/app/utils/Tool";
 import { DateTime } from "luxon";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart";
-import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { PieCustomTooltip } from "@/app/components/Charts/Charts";
 import RankingTrend from "@/app/components/Charts/RankingTrendChart";
+import config from "@/app/utils/config";
+import WebsiteUsageChart from "@/app/components/Charts/WebsiteUsageChart/WebsiteUsageChart";
 
 function Stats({}) {
   const {subjects} = useContext(SubjectsContext);
+  const {userInfo} = useContext(UserInfoContext);
   const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -99,6 +100,33 @@ function Stats({}) {
       setFocus(`${value}${type}`);
     }
   }, [viewDate, statsViewer, subjects]);
+
+  useEffect(() => {
+    if (!userInfo) return;
+    const viewDateTime = DateTime.fromJSDate(viewDate);
+    fetch(`${config.server}/extension/usage?date=${viewDateTime.toISODate()}&mode=${statsViewer}`,
+      {
+        method: "get",
+        credentials: 'include'
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
+          setWebsites(response.websitesData);
+
+          let websitesUsage = 0;
+          let websitesVisit = 0;
+          response.websitesData.map(website => {
+            websitesUsage += website.t;
+            websitesVisit += website.v;
+          });
+          const websitesUsagesDisp = secondConverter(websitesUsage);
+          setWebsitesUsage(`${websitesUsagesDisp.value} ${websitesUsagesDisp.type}`);
+          setWebsitesVisit(`${websitesVisit} times`);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [userInfo, viewDate, statsViewer]);
 
   return (
     <div>
@@ -192,75 +220,9 @@ function Stats({}) {
             </div>
             <div className={styles.bigBox} id={styles.othersUsage}>
               <h3>Website Usage</h3>
-              {websites.length ? (
-                <div className={styles.contents}>
-                  <div className={styles.chartWrapper}>
-                    <h3>Visits</h3>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Tooltip content={<PieCustomTooltip />} />
-                        <Pie
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          data={JSON.parse(JSON.stringify(websites))
-                            .sort((a, b) => b.v - a.v)
-                            .map((website, i) => {
-                              const { v, d } = website;
-                              const labelVal = `${v} times`;
-                              const fill =
-                                coldColorsList[i % coldColorsList.length];
-                              return { ...website, labelVal, name: d, fill };
-                            })}
-                          dataKey={"v"}
-                          outerRadius={200}
-                          innerRadius={150}
-                          fill="green"
-                          label={pieCustomLabel}
-                          minAngle={3}
-                        ></Pie>
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className={styles.chartWrapper}>
-                    <h3>Time</h3>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Tooltip content={<PieCustomTooltip />} />
-                        <Pie
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          data={JSON.parse(JSON.stringify(websites))
-                            .sort((a, b) => b.t - a.t)
-                            .map((website, i) => {
-                              const { t, d } = website;
-                              const { value, type } = secondConverter(t);
-                              const labelVal = `${value} ${type}`;
-                              const fill =
-                                coldColorsList[i % coldColorsList.length];
-                              return { ...website, labelVal, name: d, fill };
-                            })}
-                          dataKey={"t"}
-                          outerRadius={200}
-                          innerRadius={150}
-                          fill="green"
-                          label={pieCustomLabel}
-                          minAngle={3}
-                        ></Pie>
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              ) : (
-                <a
-                  target="blank"
-                  href="https://chromewebstore.google.com/detail/flozable-tab-monitor/cmbdaanokelibhphiidlikongdoandlj"
-                  className={styles.noChart}
-                >
-                  <h3>Use chrome extension to see website usage!</h3>
-                </a>
-              )}
+              <WebsiteUsageChart 
+                websites={websites}
+              />
             </div>
           </div>
         </div>

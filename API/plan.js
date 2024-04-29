@@ -215,7 +215,7 @@ Router.post('/update', async (req, res) => {
       console.error('An error occurred:', error);
       res.send({ success: false, reason: 'An error occurred' });
     };
-  }))
+  }), undefined, true)
 });
 
 Router.post("/status-change", async (req, res) => {

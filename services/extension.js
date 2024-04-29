@@ -2,20 +2,26 @@ const { DateTime } = require("luxon");
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
 const { getMidnightTimezones } = require("../tool");
+const { getActiveUsers } = require("./redisLoader");
 
 async function extensionManager() {
   try {
     const dateTime =  DateTime.now();
-    const [midnightTimezone] = getMidnightTimezones();
-    dateTime.setZone(midnightTimezone);
-    const hour = dateTime.get('hour');
+    const midnightTimezones = getMidnightTimezones();
+    dateTime.setZone(midnightTimezones[0]);
     const date = dateTime.toFormat("M/d/yyyy");
-    const users = await redisClient.zRange(`extensionUsers`, hour, hour);
+    const users = await getActiveUsers('day');
     const connection = pool.promise();
-    users.map(async(user) => {
-      const websitesUsage = await redisClient.zRangeWithScores(`user:${user}:tabs:usage`, 0, -1);
-      const websitesTimer = await redisClient.zRangeWithScores(`user:${user}:tabs:timer`, 0, -1);
+
+    if (!users.length) return;
+
+    const [filteredUsers] = await connection.query(`SELECT user_id FROM users where timezone IN (?) AND user_id IN (?)`, [midnightTimezones, users]);
+    filteredUsers.map(async({user_id}) => {
+      const websitesUsage = await redisClient.zRangeWithScores(`user:${user_id}:tabs:usage`, 0, -1);
+      const websitesTimer = await redisClient.zRangeWithScores(`user:${user_id}:tabs:timer`, 0, -1);
       //console.log(websitesUsage, websitesTimer);
+      if (!websitesUsage.length && !websitesTimer.length) return;
+
       const websiteStats = websitesTimer.map(({value, score}) => {
         let v = 0;
         const websiteUsage = websitesUsage.find(website => {return website.value === value});
@@ -25,13 +31,13 @@ async function extensionManager() {
         return JSON.stringify({d: value, t: score, v});
       });
       const activity = {
-        user_id: user,
+        user_id,
         date,
         data: websiteStats.join(',')
       };
       const update = await connection.query(`INSERT INTO activities set ?`, activity);
-      redisClient.del(`user:${user}:tabs:usage`);
-      redisClient.del(`user:${user}:tabs:timer`);
+      redisClient.del(`user:${user_id}:tabs:usage`);
+      redisClient.del(`user:${user_id}:tabs:timer`);
     });
   } catch (err) {
     console.log(err);

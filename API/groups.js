@@ -609,7 +609,7 @@ Router.get("/members", async (req, res) => {
       console.error("Error performing database queries:", err);
       res.status(500).send({ success: false, reason: "An error occurred" });
     }
-  });
+  }, undefined, true);
 });
 
 Router.post("/modify", async (req, res) => {
