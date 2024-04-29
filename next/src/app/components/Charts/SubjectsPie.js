@@ -8,8 +8,8 @@ import { coldColorsList } from "@/app/utils/Constant";
 import { secondConverter } from "@/app/utils/Tool";
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-function SubjectsPie({viewDate, statsViewer}) {
-  const {subjects} = useContext(SubjectsContext);
+function SubjectsPie({ viewDate, statsViewer }) {
+  const { subjects } = useContext(SubjectsContext);
 
   const [subjectsPie, setSubjectsPie] = useState([]);
 
@@ -31,21 +31,45 @@ function SubjectsPie({viewDate, statsViewer}) {
         return accumulator;
       }, []));
     }, 310); */
-    setSubjectsPie(subjectsPie.reduce((accumulator, data, i) => {
-      const value = data.value;
-      if (value) {
-        const name = data.info.name;
-        const fill = coldColorsList[accumulator.length % (coldColorsList.length)];
-        const labelVal = secondConverter(value);
-        accumulator.push({ value, name, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
-      }
-      return accumulator;
-    }, []));
+    setSubjectsPie(
+      subjectsPie.reduce((accumulator, data, i) => {
+        const value = data.value;
+        if (value) {
+          const name = data.info.name;
+          const fill =
+            coldColorsList[accumulator.length % coldColorsList.length];
+          const labelVal = secondConverter(value);
+          accumulator.push({
+            value,
+            name,
+            fill,
+            labelVal: `${labelVal.value} ${labelVal.type}`,
+          });
+        }
+        return accumulator;
+      }, [])
+    );
   }, [subjects, viewDate, statsViewer]);
 
   return (
     <>
-      {subjectsPie.length ? (
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Tooltip content={<PieCustomTooltip />} />
+          <Pie
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            data={subjectsPie}
+            dataKey={"value"}
+            outerRadius={"100%"}
+            innerRadius={"75%"}
+            fill="green"
+            label={pieCustomLabel}
+          ></Pie>
+        </PieChart>
+      </ResponsiveContainer>
+      {/* {subjectsPie.length ? (
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Tooltip content={<PieCustomTooltip />} />
@@ -66,9 +90,9 @@ function SubjectsPie({viewDate, statsViewer}) {
         <Link href="/dashboard/study">
           <h3>Study to see stats!</h3>
         </Link>
-      )}
+      )} */}
     </>
-  )
-};
+  );
+}
 
 export default SubjectsPie;

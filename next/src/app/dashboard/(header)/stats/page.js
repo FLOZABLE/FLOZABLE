@@ -104,7 +104,8 @@ function Stats({}) {
   useEffect(() => {
     if (!userInfo) return;
     const viewDateTime = DateTime.fromJSDate(viewDate);
-    fetch(`${config.server}/extension/usage?date=${viewDateTime.toISODate()}&mode=${statsViewer}`,
+    setTimeout(() => {
+      fetch(`${config.server}/extension/usage?date=${viewDateTime.toISODate()}&mode=${statsViewer}`,
       {
         method: "get",
         credentials: 'include'
@@ -126,6 +127,7 @@ function Stats({}) {
         }
       })
       .catch((error) => console.error(error));
+    }, 1900);
   }, [userInfo, viewDate, statsViewer]);
 
   return (
@@ -211,7 +213,7 @@ function Stats({}) {
             <div className={styles.bigBox}>
               <h3>Ranking Trend</h3>
               <div className={styles.chartWrapper}>
-                <RankingTrend 
+                <RankingTrend
                   viewDate={viewDate}
                   statsViewer={statsViewer}
                   setRanking={setRanking}
@@ -231,4 +233,4 @@ function Stats({}) {
   );
 }
 
-export default Stats;
+export default Stats;/*  */
