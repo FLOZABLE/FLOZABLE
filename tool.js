@@ -1,15 +1,16 @@
 const crypto = require("crypto");
-const Ajv = require('ajv');
+const Ajv = require("ajv");
 const ajv = new Ajv();
-const { google } = require('googleapis');
+const { google } = require("googleapis");
 const pool = require("./model/pool");
 const { userCache } = require("./services/redisLoader");
 const { DateTime } = require("luxon");
 const { responseCodes } = require("./Constant");
 
 function generateRandomId(length) {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
 
   for (let i = 0; i < length; i++) {
     const randomIndex = Math.floor(Math.random() * characters.length);
@@ -17,56 +18,76 @@ function generateRandomId(length) {
   }
 
   return result;
-};
+}
 
 async function deriveKey(userId, key_salt) {
   return new Promise((resolve, reject) => {
-    crypto.pbkdf2(userId, key_salt, 86736, 32, 'sha256', (err, derivedKey) => {
+    crypto.pbkdf2(userId, key_salt, 86736, 32, "sha256", (err, derivedKey) => {
       if (err) {
         reject(err);
       } else {
-        resolve(derivedKey.toString('hex'));
+        resolve(derivedKey.toString("hex"));
       }
     });
   });
 }
 
 function hashing(password) {
-  let salt = crypto.randomBytes(32).toString('hex')
-  return [salt, crypto.pbkdf2Sync(password, salt, 99097, 32, 'sha512').toString('hex')]
-};
+  let salt = crypto.randomBytes(32).toString("hex");
+  return [
+    salt,
+    crypto.pbkdf2Sync(password, salt, 99097, 32, "sha512").toString("hex"),
+  ];
+}
 
-async function autoSignin(req, res, success = (() => { }), fail = (() => { res.send(responseCodes['no-user']) })) {
-  console.log(req.session.user_id, req.signedCookies.userId)
-  if (req.session.user_id || (process.env.NODE_ENV === 'development' && (req.session.user_id = process.env.TESTER_ID))) {
+async function autoSignin(
+  req,
+  res,
+  success = () => {},
+  fail = () => {
+    res.send(responseCodes["no-user"]);
+  },
+  cache = false
+) {
+  //console.log(req.session.user_id, req.signedCookies.userId, cache);
+  if (
+    req.session.user_id ||
+    (process.env.NODE_ENV === "development" &&
+      (req.session.user_id = process.env.TESTER_ID))
+  ) {
     return success(req.session.user_id, req.session.timezone);
-  };
+  }
 
   if (req.signedCookies.userId) {
-    const userInfo = userCache(req.session.user_id);
+    if (!cache) return success(req.signedCookies.userId);
+
+    const userInfo = userCache(req.signedCookies.userId);
     if (userInfo) {
       req.session.user_id = req.signedCookies.userId;
       return success(req.signedCookies.userId, userInfo.timezone);
     } else {
       return fail();
     }
-  };
+  }
 
   if (req.headers.authorization) {
-    const credentials = req.headers.authorization.split(' ')[1];
+    const credentials = req.headers.authorization.split(" ")[1];
     if (!credentials) return fail();
-    const [deviceId, authKey] = credentials.split('-');
+    const [deviceId, authKey] = credentials.split("-");
     if (!deviceId || !authKey) return fail();
 
     const connection = await pool.promise();
-    const [[device]] = await connection.query(`SELECT user_id FROM devices WHERE device_id = ? AND auth_key = ?`, [deviceId, authKey]);
+    const [[device]] = await connection.query(
+      `SELECT user_id FROM devices WHERE device_id = ? AND auth_key = ?`,
+      [deviceId, authKey]
+    );
     if (device) {
       req.session.user_id = device.user_id;
       return success(device.user_id);
-    };
+    }
   }
   return fail();
-};
+}
 
 function isValidJSON(data, schema) {
   const validate = ajv.compile(schema);
@@ -77,26 +98,27 @@ function isValidJSON(data, schema) {
   } else {
     return true;
   }
-};
-
+}
 
 function isValidTimeZone(timeZone) {
   try {
     Intl.DateTimeFormat(undefined, { timeZone: timeZone });
     return true;
   } catch {
-    return false
+    return false;
   }
 }
 
 function getUserId(req) {
-  return process.env.NODE_ENV === 'development' ? process.env.TESTER_ID : req.session.user_id;
-};
+  return process.env.NODE_ENV === "development"
+    ? process.env.TESTER_ID
+    : req.session.user_id;
+}
 
 function randomIntInRange(min, max) {
   const randomVal = Math.floor(Math.random() * (max - min + 1)) + min;
   return randomVal;
-};
+}
 
 const googleOauth2client = (credential) => {
   const auth = new google.auth.OAuth2(
@@ -106,10 +128,9 @@ const googleOauth2client = (credential) => {
   );
   if (credential) {
     auth.setCredentials(credential);
-  };
+  }
   return auth;
 };
-
 
 const googleYoutubeOauth2client = (credential) => {
   const auth = new google.auth.OAuth2(
@@ -119,7 +140,7 @@ const googleYoutubeOauth2client = (credential) => {
   );
   if (credential) {
     auth.setCredentials(credential);
-  };
+  }
   return auth;
 };
 
@@ -128,7 +149,7 @@ function arraysHaveSameContents(arr1, arr2) {
   const sortedArr2 = arr2.slice().sort();
 
   return JSON.stringify(sortedArr1) === JSON.stringify(sortedArr2);
-};
+}
 
 const hex2rgb = (hex) => {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -139,10 +160,10 @@ const hex2rgb = (hex) => {
 };
 
 /**
- * @param {*} sec 
- * @returns 
+ * @param {*} sec
+ * @returns
  */
-const secondConverter = (sec, options = ['s', 'm', 'h']) => {
+const secondConverter = (sec, options = ["s", "m", "h"]) => {
   let value = sec ? sec : 0;
   let type = 0;
   if (sec >= 60 * 60) {
@@ -151,7 +172,7 @@ const secondConverter = (sec, options = ['s', 'm', 'h']) => {
   } else if (sec > 60) {
     value = Math.floor(sec / 60);
     type = 1;
-  };
+  }
 
   return { value, type: options[type] };
 };
@@ -180,14 +201,14 @@ const timezones24 = [
   "Asia/Irkutsk",
   "Asia/Yakutsk",
   "Australia/Sydney",
-  "Pacific/Noumea"
+  "Pacific/Noumea",
 ];
 
 function getMidnightTimezones() {
   const now = DateTime.utc();
-  const allTimezones = Intl.supportedValuesOf('timeZone');
+  const allTimezones = Intl.supportedValuesOf("timeZone");
   const midnightTimezones = [];
-  allTimezones.forEach(zone => {
+  allTimezones.forEach((zone) => {
     const dtInZone = now.setZone(zone);
     if (dtInZone.hour === 0) {
       midnightTimezones.push(zone);
@@ -196,7 +217,6 @@ function getMidnightTimezones() {
 
   return midnightTimezones;
 }
-
 
 module.exports = {
   generateRandomId,
@@ -213,5 +233,5 @@ module.exports = {
   secondConverter,
   deriveKey,
   timezones24,
-  getMidnightTimezones
+  getMidnightTimezones,
 };
