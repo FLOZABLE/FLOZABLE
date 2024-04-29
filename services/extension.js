@@ -39,7 +39,7 @@ async function extensionManager() {
       const update = await connection.query(`INSERT INTO activities set ?`, activity);
       redisClient.del(`user:${user_id}:tabs:usage`);
       redisClient.del(`user:${user_id}:tabs:timer`);
-      extensionIo.emit('reset');
+      extensionIo.to(user_id).emit('reset');
     });
   } catch (err) {
     console.log(err);
