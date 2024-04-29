@@ -3,6 +3,7 @@ const redisClient = require("../model/redis");
 const pool = require("../model/pool");
 const { getMidnightTimezones } = require("../tool");
 const { getActiveUsers } = require("./redisLoader");
+const { extensionIo } = require("../sockets/extensionIo");
 
 async function extensionManager() {
   try {
@@ -38,6 +39,7 @@ async function extensionManager() {
       const update = await connection.query(`INSERT INTO activities set ?`, activity);
       redisClient.del(`user:${user_id}:tabs:usage`);
       redisClient.del(`user:${user_id}:tabs:timer`);
+      extensionIo.emit('reset');
     });
   } catch (err) {
     console.log(err);
