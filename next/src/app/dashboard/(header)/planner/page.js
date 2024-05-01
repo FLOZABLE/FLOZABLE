@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import styles from "./page.module.css";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import EventPlanner from "@/app/components/Plans/EventPlanner/EventPlanner";
 import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
 import GoogleLoginBtn from "@/app/components/Buttons/GoogleLoginBtn/GoogleLoginBtn";
 import SmallCalendar from "@/app/components/Plans/SmallCalendar/SmallCalendar";
 import PlanTimeline from "@/app/components/Plans/PlanTimeline/PlanTimeline";
-
-const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+import { PlansContext } from "@/app/utils/Contexts";
 
 function Planner({}) {
+  const {bringPlans} = useContext(PlansContext);
+
   const [viewMode, setViewMode] = useState("timeGridWeek");
   const [viewDate, setViewDate] = useState(
-    new Date(new Date().setHours(0, 0, 0, 0)),
+    new Date(new Date().setHours(0, 0, 0, 0))
   );
 
   return (
@@ -44,9 +44,11 @@ function Planner({}) {
               />
             </div>
             <div className={styles.widget}>
-              <GoogleOAuthProvider clientId={googleClientId}>
-                <GoogleLoginBtn />
-              </GoogleOAuthProvider>
+              <GoogleLoginBtn
+                onSuccess={() => {
+                  bringPlans();
+                }}
+              />
               <div className={styles.smallCalendarWrapper}>
                 <SmallCalendar
                   width={"100%"}

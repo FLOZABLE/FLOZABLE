@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styles from "./YouTubePlaylist.module.css";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import GoogleLoginBtn from "@/app/components/Buttons/GoogleLoginBtn/GoogleLoginBtn";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import DropDownButton from "@/app/components/Buttons/DropDownButton/DropDownButton";
@@ -102,11 +101,7 @@ function YouTubePlaylist({}) {
   return (
     <div className={styles.PlaylistModal}>
       <div className={styles.authGuide}>
-        <GoogleOAuthProvider
-          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-        >
-          <GoogleLoginBtn scope="https://www.googleapis.com/auth/youtube.force-ssl" />
-        </GoogleOAuthProvider>
+        <GoogleLoginBtn scope="https://www.googleapis.com/auth/youtube.force-ssl" />
         {youtubeLoggedIn ? (
           <div>
             <DropDownButton
