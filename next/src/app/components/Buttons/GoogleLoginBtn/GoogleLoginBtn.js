@@ -4,7 +4,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import React from 'react';
 import config from "@/app/utils/config";
 
-function GoogleLoginBtn({ scope = "openid email profile https://www.googleapis.com/auth/calendar" }) {
+function GoogleLoginBtn({ scope = "openid email profile https://www.googleapis.com/auth/calendar", onSuccess=()=>{} }) {
 
   const login = useGoogleLogin({
     flow: 'auth-code',
@@ -21,6 +21,9 @@ function GoogleLoginBtn({ scope = "openid email profile https://www.googleapis.c
       })
         .then((response) => response.json())
         .then((data) => {
+          if (data.success) {
+            onSuccess();
+          }
         })
         .catch((error) => console.error(error));
     },
