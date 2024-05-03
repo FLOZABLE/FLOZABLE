@@ -82,7 +82,6 @@ function StudyTimelineBar() {
 
   const zoomTimeline = useCallback((e) => {
     const movement = e.nativeEvent.deltaY;
-    console.log(movement)
     if (movement > 5) {
       timelineRef.current.changeZoom(1.2);
     }
