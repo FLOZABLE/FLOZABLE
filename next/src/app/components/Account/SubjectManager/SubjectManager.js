@@ -38,10 +38,11 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject, deleteSu
         color: selectedColor,
         icon: selectedIcon.name,
         tools: selectedTool,
-        id: subject.id
+        id: subject.id,
+        name: name,
       }));
     }
-  }, [isSelectColor, isSelectIcon, isSelectTool]);
+  }, [isSelectColor, isSelectIcon, isSelectTool, name]);
 
   useEffect(() => {
     if (!selectedSubject || selectedSubject.id !== subject.id) {
@@ -79,7 +80,7 @@ function SubjectManager({ subject, setSelectedSubject, selectedSubject, deleteSu
           <LineInput
             title={""}
             value={name}
-            setValue={(name) => { setName(name); setSelectedSubject(prev => ({ ...prev, id: subject.id })); }}
+            setValue={(name) => { setName(name); }}
             type={"text"}
           />
         </div>
