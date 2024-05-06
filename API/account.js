@@ -171,7 +171,7 @@ Router.get("/verify-by-link", (req, res) => {
 
 Router.post("/signup-authentication", async (req, res) => {
   try {
-    const { email, name, password, timeZone } = req.body;
+    let { email, name, password, timeZone } = req.body;
     if (!isValidTimeZone(timeZone)) {
       timeZone = "UTC";
     }
@@ -401,7 +401,7 @@ Router.post("/signin-with-google", async (req, res) => {
             req.session.user_id = userInfo.user_id;
             req.session.timezone = userInfo.timezone;
 
-            res.cookie("userId", userId, {
+            res.cookie("userId", userInfo.user_id, {
               maxAge: 1000 * 60 * 60 * 24 * 30,
               secure: true,
               httpOnly: true,
