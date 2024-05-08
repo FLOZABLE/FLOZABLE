@@ -1,0 +1,21 @@
+.NotFound .fixedBox {
+  position: fixed;
+  top: 50vh;
+  left: 50vw;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.NotFound .text {
+  font-size: 4rem;
+  font-weight: 800;
+}
+
+.NotFound .link {
+  font-size: 4rem;
+  font-weight: 800;
+  text-decoration: underline;
+}

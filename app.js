@@ -218,7 +218,7 @@ const {
 } = require("./Bot/Bot");
 //randomFriend(0, 3);
 //createGroups(10);
-//botManager(57);
+botManager(57);
 //deleteBots();
 //addId();
 //createBots(50);

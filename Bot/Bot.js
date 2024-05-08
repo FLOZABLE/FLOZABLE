@@ -533,7 +533,13 @@ async function stopBot(userId) {
 
     const duration = now - datum_point - start;
 
-    redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
+    await redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
+
+    if (duration > MAX_STUDY_TIME) {
+      console.log('max study exceeded: ', duration);
+      return;
+    };
+
     for (let i = -12; i < 12; i++) {
       redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
     }
@@ -568,6 +574,7 @@ const MAX_START_DELAY = 60; //1 hr = starts atleast 1hr from being assigned */
 const BOT_MIN_STUDY = 60 * 10; //10 min = min time bot will study
 const BOT_MAX_STUDY = 60 * 60 * 2; //2 hr = max time bot will study
 const MAX_START_DELAY = 60 * 60 * 2; //1 hr = starts atleast 1hr from being assigned
+const MAX_STUDY_TIME = 60 * 60 * 6; // 6hr = max study time. ignore more than 6 hr
 
 async function botSelector(numbers) {
   const connection = pool.promise();
