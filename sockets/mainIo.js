@@ -6,6 +6,8 @@ const { extensionIo } = require('./extensionIo');
 const { io } = require('./io');
 const pool = require('../model/pool');
 
+const MAX_STUDY_TIME = 60 * 60 * 6; // 6hr = max study time. ignore more than 6 hr
+
 const mainIo = io.of('/');
 mainIo.on('connection', (socket) => {
   let session;
@@ -225,9 +227,14 @@ async function stopStudying(userId, mode, subjectId) {
   const duration = now - datum_point - start;
 
   if (mode === 'disconnect') {
-    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
+    await redisClient.hDel(`user:${userId}`, `ActiveSubject`);
   } else {
-    redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
+    await redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
+  };
+
+  if (duration > MAX_STUDY_TIME) {
+    console.log('max study exceeded: ', duration);
+    return;
   };
   
   for (let i = -12; i < 12; i++) {
