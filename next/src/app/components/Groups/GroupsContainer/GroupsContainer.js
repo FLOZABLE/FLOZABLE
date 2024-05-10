@@ -32,7 +32,7 @@ function GroupsContainer({
   }, []);
 
   return (
-    <div className={styles.GroupsContainer}>
+    <div className={`${styles.GroupsContainer} customScroll`}>
       {otherGroups.map((group, i) => {
 
         const tags = JSON.parse(group.tags);

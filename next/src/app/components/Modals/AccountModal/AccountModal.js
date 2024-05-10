@@ -33,6 +33,7 @@ function AccountModal({ }) {
     timeZone: null,
   });
   const [login, setLogin] = useState({ email: "", password: "" });
+  const [isNew, setIsNew] = useState(false);
 
   useEffect(() => {
     try {
@@ -103,6 +104,10 @@ function AccountModal({ }) {
                     if (data.success) {
                       setIsAccountModal(false);
                       bringAccountInfo();
+                      if (isNew) {
+                        router.push('/dashboard?welcome=true');
+                        setTutorial(1);
+                      }
                     }
                   });
               }}
@@ -172,10 +177,10 @@ function AccountModal({ }) {
                 })
                   .then((response) => response.json())
                   .then((data) => {
+                    setResponse(data);
                     if (data.success) {
-                      router.push('/dashboard?welcome=true');
-                      setTutorial(1);
-                      setIsLogin(true);
+                      setIsLogin(false);
+                      setIsNew(true);
                     }
                   })
                   .catch((error) => console.error(error));

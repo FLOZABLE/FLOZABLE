@@ -93,8 +93,12 @@ function User({ params }) {
                 : null}
             </div>
             <div>
-              <FriendRequestBtn userInfo={userInfo} />
-              <DmBtn userInfo={userInfo} />
+              <div className={styles.btnContainer}>
+                <FriendRequestBtn userInfo={userInfo} />
+              </div>
+              <div className={styles.btnContainer}>
+                <DmBtn userInfo={userInfo} />
+              </div>
             </div>
             <div className={styles.timezone}>
               Timezone:

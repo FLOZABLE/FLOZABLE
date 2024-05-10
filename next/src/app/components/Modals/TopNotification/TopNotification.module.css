@@ -1,7 +1,7 @@
 .TopNotification {
   position: fixed;
   top: -6.25rem;
-  width: 50vw;
+  min-width: 50vw;
   left: 50vw;
   transform: translateX(-50%);
   z-index: 10;
@@ -41,6 +41,8 @@
   justify-content: center;
   font-size: 1.875rem;
   font-weight: 800;
+  text-wrap: nowrap;
+  padding: 0rem 2rem;
 }
 
 .TopNotification .notification p {

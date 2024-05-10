@@ -36,25 +36,6 @@ function cacheManager() {
   }
 };
 
-async function groupCache(userId) {
-  try {
-    let groups = await redisClient.hGet(`user:${userId}`, 'groups');
-    if (!groups) {
-      const connection = pool.promise();
-      try {
-        const [[userInfo]] = await connection.query(`SELECT groups FROM users WHERE user_id = ?`, [userId]);
-        groups = userInfo ? userInfo.groups : "";
-      } catch (err) {
-        console.log(err);
-      };
-    };
-    groups = groups.split(',');
-    return groups;
-  } catch (err) {
-    console.log(err);
-  };
-};
-
 async function subjectsCache(userId) {
   try {
     const isCached = await redisClient.exists(`user:${userId}:subjects`);
@@ -172,7 +153,11 @@ async function groupMembersCache(id) {
 async function chatRoomsCache(userId, withMembersInfo = true) {
   try {
     const dmRooms = await dmRoomsCache(userId);
-    const groups = await groupCache(userId);
+    const userInfo = await userCache(userId);
+
+    if (!userInfo) return;
+
+    const {groups} = userInfo;
     const groupRooms = groups.map((group) => {
       return { id: group, type: 0, members: [] };
     });
@@ -182,6 +167,7 @@ async function chatRoomsCache(userId, withMembersInfo = true) {
       return { id: dmRoom, members: membersInfo, type: 1 };
     }));
     const rooms = groupRooms.concat(dmRoomsInfo);
+    console.log(groups,'chattest', dmRoomsInfo, rooms)
     return rooms;
   } catch (err) {
     console.log(err);
@@ -319,8 +305,9 @@ async function userCache(userId, query=true) {
     const isCached = await redisClient.hExists(`user:${userId}`, 'name');
     if (isCached) {
       const userInfo = await redisClient.hGetAll(`user:${userId}`);
-      userInfo.groups = userInfo.groups === "" ? [] : userInfo.groups.split(",");
-      userInfo.friends = userInfo.friends === "" ? [] : userInfo.friends.split(",");
+
+      userInfo.groups = userInfo.groups === "" || !userInfo.groups ? [] : userInfo.groups.split(",");
+      userInfo.friends = userInfo.friends === "" || !userInfo.friends ? [] : userInfo.friends.split(",");
       return {...userInfo, user_id: userId};
     } else {
       if (!query) return false;
@@ -381,8 +368,8 @@ async function cacheUserInfo(userInfo) {
   const { name, email, timezone, datum_point, user_id, groups, friends } = userInfo;
   redisClient.hSet(`user:${user_id}`, 'name', name);
   redisClient.hSet(`user:${user_id}`, 'email', email);
-  redisClient.hSet(`user:${user_id}`, 'groups', groups);
-  redisClient.hSet(`user:${user_id}`, 'friends', friends);
+  redisClient.hSet(`user:${user_id}`, 'groups', groups ? groups : "");
+  redisClient.hSet(`user:${user_id}`, 'friends', friends ? friends : "");
   redisClient.hSet(`user:${user_id}`, 'timezone', timezone);
   redisClient.hSet(`user:${user_id}`, 'datum_point', datum_point);
   redisClient.expire(`user:${user_id}`, 60 * 60 * 10);
@@ -543,7 +530,6 @@ async function zsetIncrAll(key, val = 1) {
 module.exports = {
   flushRedis,
   cacheManager,
-  groupCache,
   subjectsCache,
   subjectCache,
   activeSubjectCache,
@@ -565,5 +551,6 @@ module.exports = {
   zsetIncrAll,
   getActiveUsers,
   addActiveUserCache,
-  removeActiveUserCache
+  removeActiveUserCache,
+  cacheUserInfo
 }

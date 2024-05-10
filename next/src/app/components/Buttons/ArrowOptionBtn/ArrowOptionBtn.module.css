@@ -27,6 +27,7 @@
   border-radius: 0.625rem;
   margin: 0.625rem;
   cursor: pointer;
+  box-shadow: var(--shadow3);
 }
 
 .ArrowOptionBtn .slider .arrow {
