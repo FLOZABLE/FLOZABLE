@@ -5,7 +5,6 @@ import styles from "./PlanTimeline.module.css";
 import parse from "html-react-parser";
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 import { Alert } from "@/app/utils/Svg";
-import { useSearchParams } from "next/navigation";
 import { PlansContext, SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { DateTime } from "luxon";

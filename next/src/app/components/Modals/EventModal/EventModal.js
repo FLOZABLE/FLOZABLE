@@ -421,7 +421,7 @@ function EventModal({
           </div>
           <div className={styles.submit} ref={submitRef}>
             <BlobBtn
-              name={"SUBMIT"}
+              name={"SAVE"}
               setClicked={() => {
                 submit();
               }}

@@ -4,14 +4,9 @@ const fs = require("fs");
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const crypto = require("crypto");
-const {
-  hashing,
-  generateRandomId,
-  autoSignin,
-} = require("../tool");
+const { hashing, generateRandomId, autoSignin } = require("../tool");
 const {
   activeSubjectCache,
-  groupCache,
   userCache,
 } = require("../services/redisLoader");
 const {
@@ -224,6 +219,10 @@ Router.post("/join/:id", async (req, res) => {
       return res.send({ success: false, reason: isValidGroupId.reason });
     }
 
+    const userInfo = await userCache(userId);
+
+    if (!userInfo) return res.send(responseCodes["no-user"]);
+
     const connection = pool.promise();
     try {
       const [[groupInfo]] = await connection.query(
@@ -310,29 +309,23 @@ Router.post("/join/:id", async (req, res) => {
 
       mainIo.emit(`newMember:${groupId}`, userId);
       res.send({ success: true, msg: `Joined group "${groupInfo.name}"` });
-      const groups = await groupCache(userId);
+      const { groups } = userInfo;
       groups.push(groupId);
       redisClient.hSet(`user:${userId}`, "groups", groups.join(","));
       //send user's study information to group members
       const activeSubject = await activeSubjectCache(userId);
-      const userInfo = await userCache(userId);
-      let timezoneOffset = 0;
-      if (userInfo) {
-        const today = DateTime.now().setZone(userInfo.timezone);
-        timezoneOffset = Math.floor(today.offset / 60).toString();
-      }
+      const today = DateTime.now().setZone(userInfo.timezone);
+      const timezoneOffset = Math.floor(today.offset / 60).toString();
       let totalTime = await redisClient.zScore(
         `user:${userId}:dayTotal`,
         timezoneOffset
       );
       totalTime = totalTime === null ? 0 : totalTime;
-      mainIo
-        .to(`chat:${groupId}`)
-        .emit(`newMemberInfo`, groupId, {
-          ...userInfo,
-          totalTime,
-          activeSubject,
-        });
+      mainIo.to(`chat:${groupId}`).emit(`newMemberInfo`, groupId, {
+        ...userInfo,
+        totalTime,
+        activeSubject,
+      });
 
       //update cached value only if it exists
       const isCached = await redisClient.exists(`room:${groupId}`);
@@ -394,6 +387,10 @@ Router.post("/leave-group", async (req, res) => {
   const { groupId } = req.body;
   autoSignin(req, res, async (userId) => {
     try {
+      const userInfo = await userCache(userId);
+
+      if (!userInfo) return res.send(responseCodes["no-user"]);
+
       const connection = pool.promise();
       const [[group]] = await connection.query(
         "SELECT members FROM groups WHERE group_id = ?",
@@ -418,7 +415,7 @@ Router.post("/leave-group", async (req, res) => {
         [newGroups.join(","), userId]
       );
 
-      let groups = await groupCache(userId);
+      let { groups } = userInfo;
       groups = groups.filter((g) => g != groupId);
       redisClient.hSet(`user:${userId}`, "groups", groups.join(","));
 
@@ -437,6 +434,10 @@ Router.post("/remove-member", async (req, res) => {
   const { memberId, groupId } = req.body;
   autoSignin(req, res, async (userId) => {
     try {
+      const userInfo = await userCache(userId);
+
+      if (!userInfo) return res.send(responseCodes["no-user"]);
+
       const connection = pool.promise();
       const [[group]] = await connection.query(
         "SELECT leader, name, members FROM groups WHERE group_id = ?",
@@ -456,7 +457,7 @@ Router.post("/remove-member", async (req, res) => {
           [oldMembers.join(","), groupId]
         );
 
-        let groups = await groupCache(memberId);
+        let {groups} = userInfo;
         groups = groups.filter((g) => g != groupId);
         redisClient.hSet(`user:${memberId}`, "groups", groups.join(","));
 
@@ -566,50 +567,56 @@ Router.post("/like/:id", async (req, res) => {
 });
 
 Router.get("/members", async (req, res) => {
-  autoSignin(req, res, async (userId, timezone) => {
-    const { groupId } = req.query;
+  autoSignin(
+    req,
+    res,
+    async (userId, timezone) => {
+      const { groupId } = req.query;
 
-    const isValidGroupId = validateStrictString(groupId, "group id");
+      const isValidGroupId = validateStrictString(groupId, "group id");
 
-    if (!isValidGroupId.isValid) {
-      return res.send({ success: false, reason: isValidGroupId.reason });
-    }
-
-    const connection = pool.promise();
-    try {
-      const today = DateTime.now().setZone(timezone);
-      const timezoneOffset = Math.floor(today.offset / 60).toString();
-      const [[groupInfo]] = await connection.query(
-        `SELECT visibility, members FROM groups WHERE group_id = ?`,
-        [groupId]
-      );
-      if (!groupInfo)
-        return res.send({ success: false, reason: "No such group" });
-      const { visibility, members } = groupInfo;
-      const membersArr = members === "" ? [] : members.split(",");
-      if (visibility || (membersArr.includes(userId) && membersArr.length)) {
-        const [membersData] = await connection.query(
-          `SELECT name, user_id FROM users WHERE user_id IN (?)`,
-          [membersArr]
-        );
-        const memberStudyDataPromises = membersData.map(async (member) => {
-          const { user_id } = member;
-          let totalTime = await redisClient.zScore(
-            `user:${user_id}:dayTotal`,
-            timezoneOffset
-          );
-          totalTime = totalTime === null ? 0 : totalTime;
-          const activeSubject = await activeSubjectCache(user_id);
-          return { ...member, totalTime, activeSubject };
-        });
-        const memberStudyData = await Promise.all(memberStudyDataPromises);
-        res.send({ success: true, membersData: memberStudyData });
+      if (!isValidGroupId.isValid) {
+        return res.send({ success: false, reason: isValidGroupId.reason });
       }
-    } catch (err) {
-      console.error("Error performing database queries:", err);
-      res.status(500).send({ success: false, reason: "An error occurred" });
-    }
-  }, undefined, true);
+
+      const connection = pool.promise();
+      try {
+        const today = DateTime.now().setZone(timezone);
+        const timezoneOffset = Math.floor(today.offset / 60).toString();
+        const [[groupInfo]] = await connection.query(
+          `SELECT visibility, members FROM groups WHERE group_id = ?`,
+          [groupId]
+        );
+        if (!groupInfo)
+          return res.send({ success: false, reason: "No such group" });
+        const { visibility, members } = groupInfo;
+        const membersArr = members === "" ? [] : members.split(",");
+        if (visibility || (membersArr.includes(userId) && membersArr.length)) {
+          const [membersData] = await connection.query(
+            `SELECT name, user_id FROM users WHERE user_id IN (?)`,
+            [membersArr]
+          );
+          const memberStudyDataPromises = membersData.map(async (member) => {
+            const { user_id } = member;
+            let totalTime = await redisClient.zScore(
+              `user:${user_id}:dayTotal`,
+              timezoneOffset
+            );
+            totalTime = totalTime === null ? 0 : totalTime;
+            const activeSubject = await activeSubjectCache(user_id);
+            return { ...member, totalTime, activeSubject };
+          });
+          const memberStudyData = await Promise.all(memberStudyDataPromises);
+          res.send({ success: true, membersData: memberStudyData });
+        }
+      } catch (err) {
+        console.error("Error performing database queries:", err);
+        res.status(500).send({ success: false, reason: "An error occurred" });
+      }
+    },
+    undefined,
+    true
+  );
 });
 
 Router.post("/modify", async (req, res) => {
