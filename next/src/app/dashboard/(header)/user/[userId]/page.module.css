@@ -20,6 +20,10 @@
   border-radius: 1.875rem;
 }
 
+.User .profileCard .btnContainer {
+  margin-left: 0.5rem;
+}
+
 .User .profileCard>div {
   display: flex;
   align-items: center;

@@ -5,6 +5,8 @@
   gap: 1.25rem;
   width: 100%;
   display: grid;
+  max-height: 200vh;
+  overflow-y: auto;
 }
 
 /* @media (max-width: 87.5rem) {

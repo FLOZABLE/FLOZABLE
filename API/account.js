@@ -28,6 +28,7 @@ const {
   userCache,
   subjectsTimelineCache,
   addActiveUserCache,
+  cacheUserInfo,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
 const { responseCodes } = require("../Constant");
@@ -218,6 +219,7 @@ Router.post("/signup-authentication", async (req, res) => {
       iv: iv,
     };
     connection.query("INSERT INTO users SET ?", user);
+    cacheUserInfo(user);
     //create default subject
     const subjectId = generateRandomId(10);
     const datum_point = Math.floor(new Date().getTime() / 1000);
@@ -452,6 +454,7 @@ Router.post("/signin-with-google", async (req, res) => {
           key_salt: keySalt,
           iv: iv,
         };
+        cacheUserInfo(user);
         connection.query("INSERT INTO users SET ?", user);
         //create default subject
         const subjectId = generateRandomId(10);
@@ -536,11 +539,12 @@ Router.post("/update/info", async (req, res) => {
       const connection = pool.promise();
 
       const [[checkEmail]] = await connection.query(
-        "SELECT email FROM users WHERE email = ?",
+        "SELECT email, user_id FROM users WHERE email = ?",
         email
       );
+      console.log(userId, checkEmail, userId)
 
-      if (checkEmail) {
+      if (checkEmail && checkEmail.user_id !== userId) {
         return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
       }
 
