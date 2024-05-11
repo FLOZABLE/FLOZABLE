@@ -49,6 +49,7 @@ mainIo.on('connection', (socket) => {
 
   socket.on('joinChats', async () => {
     try {
+      if (!userId) return;
       const chatRooms = await chatRoomsCache(userId);
       const chatRoomsId = chatRooms.map(chatRoom => {
         return `chat:${chatRoom.id}`;

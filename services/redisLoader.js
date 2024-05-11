@@ -167,7 +167,6 @@ async function chatRoomsCache(userId, withMembersInfo = true) {
       return { id: dmRoom, members: membersInfo, type: 1 };
     }));
     const rooms = groupRooms.concat(dmRoomsInfo);
-    console.log(groups,'chattest', dmRoomsInfo, rooms)
     return rooms;
   } catch (err) {
     console.log(err);
