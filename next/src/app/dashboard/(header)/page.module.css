@@ -98,6 +98,12 @@
   }
 }
 
+@media (max-width: 1600px) {
+  .Main .boxesContainer:nth-child(2) .box#planTimeline {
+    height: 50%;
+  }
+}
+
 @media (max-width: 1300px) {
   .Main .boxesContainer:nth-child(2) .box#planTimeline {
     height: 50%;

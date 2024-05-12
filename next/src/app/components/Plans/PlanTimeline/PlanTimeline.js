@@ -26,6 +26,7 @@ function PlanTimeline({
   const [filteredPlans, setFilteredPlans] = useState([]);
   //const searchParams = useSearchParams();
   const addBtnRef = useRef(null);
+  const containerRef = useRef(null);
 
   const togglePlan = (plan) => {
     const eventIndex = plans.findIndex((planInfo) => planInfo.id === plan.id);
@@ -115,15 +116,21 @@ function PlanTimeline({
 
   useEffect(() => {
     if (tutorial === 1) {
-      const { width, top, left, height } = addBtnRef.current.getBoundingClientRect();
-      tutorialBoxRef.current.style.left = left - 20 + 'px';
-      tutorialBoxRef.current.style.top = top - 18 + 'px';
-      tutorialBoxRef.current.style.width = width + 40 + 'px';
-      tutorialBoxRef.current.style.height = height + 40 + 'px';
-
-      tutorialTextRef.current.textContent = "First, add an event to your planner!";
-      tutorialTextRef.current.style.left = left - 15 + 'px';
-      tutorialTextRef.current.style.top = top + 80 + 'px'
+      containerRef.current.scroll({
+        top: 200000,
+        behavior: "smooth"
+      });
+      setTimeout(() => {
+        const { width, top, left, height } = addBtnRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left - 20 + 'px';
+        tutorialBoxRef.current.style.top = top - 18 + 'px';
+        tutorialBoxRef.current.style.width = width + 40 + 'px';
+        tutorialBoxRef.current.style.height = height + 40 + 'px';
+  
+        tutorialTextRef.current.textContent = "First, add an event to your planner!";
+        tutorialTextRef.current.style.left = left - 15 + 'px';
+        tutorialTextRef.current.style.top = top + 80 + 'px';
+      }, 1000);
     };
   }, [tutorial]);
 
@@ -132,6 +139,7 @@ function PlanTimeline({
     <div
       className={`hiddenScroll ${styles.PlanTimeline} ${mode === "study" ? styles.studyMode : ""
         }`}
+        ref={containerRef}
     >
       {filteredPlans.length ?
         <div className={styles.chartContainer}>
