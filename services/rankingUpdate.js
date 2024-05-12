@@ -3,6 +3,7 @@ const schedule = require('node-schedule');
 const pool = require('../model/pool');
 const redisClient = require('../model/redis');
 const { getActiveUsers } = require('./redisLoader');
+const { MAX_STUDY_TIME } = require('../Constants');
 
 async function updateRanking() {
   console.log("update ranking")
@@ -39,6 +40,7 @@ async function updateDailyRanking(now, users, timezoneOffset) {
     const filteredUsers = [];
     await Promise.all(users.map(async (userId) => {
       const todayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset);
+      if (todayTotal > MAX_STUDY_TIME) return;
       //update week total, month total
       if (todayTotal) {
         filteredUsers.push({ u: userId, t: todayTotal });

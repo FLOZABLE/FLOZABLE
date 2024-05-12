@@ -3,6 +3,7 @@ const pool = require("../model/pool");
 const { activeSubjectCache, subjectsCache, timerCache } = require("./redisLoader");
 const { getMidnightTimezones } = require("../tool");
 const { mainIo } = require("../sockets/mainIo");
+const { MAX_STUDY_TIME } = require("../Constants");
 
 async function timerUpdate() {
   const now = Math.floor(new Date().getTime() / 1000);
@@ -52,6 +53,12 @@ async function timerUpdate() {
         await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${duration}]`);
         redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
         //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
+
+        if (duration > MAX_STUDY_TIME) {
+          console.log('max study exceeded: ', duration);
+          return;
+        };
+
         for (let i = -12; i < 12; i++) {
           redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
         };
