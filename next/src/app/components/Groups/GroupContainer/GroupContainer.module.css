@@ -34,6 +34,10 @@
   margin-bottom: 1.25rem;
 }
 
+.GroupContainer .name .lock {
+  margin-right: 0.5rem;
+}
+
 .GroupContainer .name div {
   overflow-x: hidden;
   max-width: calc(100% - 2rem);
