@@ -6,6 +6,7 @@ import Link from "next/link";
 import { IconBxHome, IconClipboardOutline, IconGalleryLine, IconPeople16, IconRankingChart, IconStatsChart, IconUserAdd } from "@/app/utils/Svg";
 import Image from "next/image";
 import { TutorialsContext } from "@/app/utils/Contexts";
+import TutorialBtn from "../../Buttons/TutorialBtn/TutorialBtn";
 
 function Sidebar({
 }) {
@@ -185,6 +186,7 @@ function Sidebar({
           </Link>
         </div>
       </div>
+      <TutorialBtn />
     </aside>
   );
 }

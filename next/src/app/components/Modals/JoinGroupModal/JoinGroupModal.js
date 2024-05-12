@@ -88,11 +88,11 @@ function JoinGroupModal() {
       group: groupInfo
     });
 
-    /* const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams);
     params.delete('groupId');
 
-    replace(`${pathname}?${params.toString()}`);
- */
+    router.replace(window.location.pathname, { scroll: false });
+
   }, [otherGroups]);
 
   return (
