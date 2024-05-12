@@ -53,23 +53,7 @@ function SubjectsPie({ viewDate, statsViewer }) {
 
   return (
     <>
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Tooltip content={<PieCustomTooltip />} />
-          <Pie
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            data={subjectsPie}
-            dataKey={"value"}
-            outerRadius={"100%"}
-            innerRadius={"75%"}
-            fill="green"
-            label={pieCustomLabel}
-          ></Pie>
-        </PieChart>
-      </ResponsiveContainer>
-      {/* {subjectsPie.length ? (
+      {subjectsPie.length ? (
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Tooltip content={<PieCustomTooltip />} />
@@ -87,10 +71,16 @@ function SubjectsPie({ viewDate, statsViewer }) {
           </PieChart>
         </ResponsiveContainer>
       ) : (
-        <Link href="/dashboard/study">
-          <h3>Study to see stats!</h3>
-        </Link>
-      )} */}
+        <div style={{
+          alignSelf: 'center',
+          fontSize: '2rem',
+          textDecoration: 'underline'
+        }}>
+          <Link href="/dashboard/study">
+            <h3>Study to see stats!</h3>
+          </Link>
+        </div>
+      )}
     </>
   );
 }

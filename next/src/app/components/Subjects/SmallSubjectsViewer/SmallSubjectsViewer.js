@@ -11,10 +11,9 @@ import { coldColorsList } from "@/app/utils/Constant";
 
 function SmallSubjectsViewer({}) {
   const {subjects} = useContext(SubjectsContext);
-
   return (
     <div className={styles.SmallSubjectsViewer}>
-      {subjects && subjects.daily && subjects.daily.total[subjects.daily.total.length - 1] ?
+      {subjects?.daily?.total[subjects.daily.total.length - 1] ?
         <div className={styles.chartContainer}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
