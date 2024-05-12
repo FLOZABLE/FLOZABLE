@@ -137,4 +137,11 @@ planYearBtn.addEventListener('click', () => {
   planYearBtn.classList.toggle('active');
   planMonth.classList.toggle('active');
   planYear.classList.toggle('active');
+});
+
+const [headerToggleBtn] = document.getElementsByClassName('navbar-toggler');
+const headerList = document.getElementById("navbarCollapse");
+
+headerToggleBtn.addEventListener('click', () => {
+  headerList.classList.toggle("hide");
 })
