@@ -5,8 +5,7 @@ const { generateRandomId } = require('../tool');
 const { extensionIo } = require('./extensionIo');
 const { io } = require('./io');
 const pool = require('../model/pool');
-
-const MAX_STUDY_TIME = 60 * 60 * 6; // 6hr = max study time. ignore more than 6 hr
+const { MAX_STUDY_TIME } = require('../Constants');
 
 const mainIo = io.of('/');
 mainIo.on('connection', (socket) => {

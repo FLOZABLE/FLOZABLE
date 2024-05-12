@@ -22,6 +22,7 @@ const {
   subjectCache,
 } = require("../services/redisLoader");
 const { mainIo } = require("../sockets/mainIo");
+const { MAX_STUDY_TIME } = require("../Constants");
 
 /**create bots */
 async function createBots(length) {
@@ -574,7 +575,6 @@ const MAX_START_DELAY = 60; //1 hr = starts atleast 1hr from being assigned */
 const BOT_MIN_STUDY = 60 * 10; //10 min = min time bot will study
 const BOT_MAX_STUDY = 60 * 60 * 2; //2 hr = max time bot will study
 const MAX_START_DELAY = 60 * 60 * 2; //1 hr = starts atleast 1hr from being assigned
-const MAX_STUDY_TIME = 60 * 60 * 6; // 6hr = max study time. ignore more than 6 hr
 
 async function botSelector(numbers) {
   const connection = pool.promise();
