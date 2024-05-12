@@ -309,6 +309,15 @@ function TutorialsProvider({ children }) {
 
   const [tutorial, setTutorial] = useState(false);
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(document.location.search);
+    const tutorial = searchParams.get("tutorial");
+
+    if (tutorial) {
+      setTutorial(1);
+    };
+  }, []);
+
   return (
     <TutorialsContext.Provider
       value={{
