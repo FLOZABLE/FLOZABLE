@@ -3,6 +3,7 @@ import FriendsRankingViewer from "../../components/Friends/FriendsRankingViewer/
 import RecommendedFriendsViewer from "../../components/Friends/RecommendedFriendsViewer/RecommendedFriendsViewer";
 import PlanTimeline from "../../components/Plans/PlanTimeline/PlanTimeline";
 import SmallSubjectsViewer from "../../components/Subjects/SmallSubjectsViewer/SmallSubjectsViewer";
+import WelcomeModal from "@/app/components/Modals/WelcomeModal/WelcomeModal";
 import { IconStatsChart } from "../../utils/Svg";
 import styles from "./page.module.css";
 
@@ -47,6 +48,7 @@ export default function Dashboard() {
 
   return (
     <div className={`Main`}>
+      <WelcomeModal />
       <div className="title">
         Dashboard
       </div>

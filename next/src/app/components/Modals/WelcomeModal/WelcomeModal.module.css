@@ -1,0 +1,48 @@
+.WelcomeModal {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0rem;
+    left: 0rem;
+    z-index: 6;
+    background-color: #00000050;
+    display: none;
+  }
+  
+  .WelcomeModal.open {
+    display: block;
+  }
+  
+  .WelcomeModal .modal{
+    position: fixed;
+    background-color: #fff;
+    border-radius: 2rem;
+    left: 50vw !important;
+    top: 50vh !important;
+    height: fit-content !important;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 800; 
+    padding: 2rem 3rem;
+  }
+  
+  .WelcomeModal .modal .description {
+    font-size: 1.5rem;
+    padding-top: 10px;
+    color: rgb(29, 29, 29);
+    padding-bottom: 25px;
+  }
+  
+  .WelcomeModal .buttons {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .WelcomeModal .buttons .skipBtn {
+    margin-top: 1rem;
+  }
