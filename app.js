@@ -83,6 +83,7 @@ const themesAPI = require("./API/themes");
 const extensionAPI = require("./API/extension");
 const canvasAPI = require("./API/canvas");
 const playlistsAPI = require("./API/playlists");
+const paymentAPI = require("./API/payment");
 
 //import socket
 const { io } = require("./sockets/io");
@@ -176,6 +177,7 @@ app.use("/themes", themesAPI);
 app.use("/extension", extensionAPI);
 app.use("/playlists", playlistsAPI);
 app.use("/canvas", canvasAPI);
+app.use('/payment', paymentAPI);
 app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 //handle profile images
