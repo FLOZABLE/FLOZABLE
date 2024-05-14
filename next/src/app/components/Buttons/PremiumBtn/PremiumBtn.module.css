@@ -10,6 +10,15 @@
 .PremiumBtn .hoverEl {
   position: absolute;
   bottom: -1rem;
-  right: 0rem;
+  right: 50%;
+  transform: translateX(50%);
   white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
+}
+
+.PremiumBtn:hover .hoverEl {
+  opacity: 1;
+  visibility: visible;
 }

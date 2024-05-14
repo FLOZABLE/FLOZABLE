@@ -30,3 +30,14 @@
   top: 0em;
   transition: .3s ease-in-out left;
 }
+
+.SlidingOptBtn .check {
+  transition: .3s ease-in-out opacity, .3s ease-in-out margin-right;
+  opacity: 0;
+  margin-right: 0rem;
+}
+
+.SlidingOptBtn .check.on {
+  opacity: 1;
+  margin-right: .2rem;
+}
