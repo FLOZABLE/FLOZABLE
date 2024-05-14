@@ -11,7 +11,7 @@ import Link from "next/link";
 import { HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor } from "@/app/utils/Svg";
 import { ModalsContext, NotificationsContext, SubjectsContext, TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
 import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
-import Image from "next/image";
+import PremiumBtn from "../../Buttons/PremiumBtn/PremiumBtn";
 
 function Header({
 }) {
@@ -160,6 +160,9 @@ function Header({
         </div>
       </div>
       <div className={styles.right}>
+        <div className={styles.headerEl}>
+          <PremiumBtn />
+        </div>
         <div className={styles.headerEl} id={styles.chats}
           onClick={() => { setChatModal(prev => ({ ...prev, open: !prev.open })) }}
         >
