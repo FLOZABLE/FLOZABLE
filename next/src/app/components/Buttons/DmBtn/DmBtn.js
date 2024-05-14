@@ -1,47 +1,53 @@
 import styles from "./DmBtn.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
-import React, { useContext } from 'react';
+import React, { useContext } from "react";
 import config from "@/app/utils/config";
 import { ModalsContext, ResponseContext } from "@/app/utils/Contexts";
 import BlobBtn from "../BlobBtn/BlobBtn";
 
 function DmBtn({ userInfo, padding }) {
   const { setResponse } = useContext(ResponseContext);
-  const { setChatModal } = useContext(ModalsContext)
+  const { setChatModal } = useContext(ModalsContext);
 
   const requestChat = () => {
     fetch(`${config.server}/chat/chat-request`, {
       method: "post",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId: userInfo.user_id }),
-      credentials: "include"
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.reason === "DM already created!") {
           console.log(21, data.room);
           setChatModal({ ...data.room, chatRoom: data.room.id, open: true });
-        }
-        else {
+        } else {
           setResponse(data);
         }
       })
       .catch((error) => console.error(error));
-  }
+  };
 
   return (
     <div className={styles.DmBtn}>
       <div className={styles.blobWrapper}>
-        <BlobBtn padding={padding} name={<FontAwesomeIcon icon={faComments} />} setClicked={() => { requestChat() }} opt={2} />
+        <BlobBtn
+          padding={padding}
+          name={<FontAwesomeIcon icon={faComments} />}
+          setClicked={() => {
+            requestChat();
+          }}
+          opt={2}
+        />
       </div>
       <div className={styles.hoverEl}>
-        <p>Chat with {userInfo ? userInfo.name : ''}!</p>
+        <p>Chat with {userInfo ? userInfo.name : ""}!</p>
       </div>
     </div>
   );
-};
+}
 
 export default DmBtn;
