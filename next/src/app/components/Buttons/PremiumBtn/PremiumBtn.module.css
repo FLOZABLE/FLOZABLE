@@ -1,0 +1,15 @@
+.PremiumBtn {
+  position: relative;
+}
+
+.PremiumBtn i {
+  font-size: 2rem;
+  color: rgb(255, 187, 0);
+}
+
+.PremiumBtn .hoverEl {
+  position: absolute;
+  bottom: -1rem;
+  right: 0rem;
+  white-space: nowrap;
+}
