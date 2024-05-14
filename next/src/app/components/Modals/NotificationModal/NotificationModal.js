@@ -5,13 +5,17 @@ import styles from "./NotificationModal.module.css";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
-import { ModalsContext, NotificationsContext, ResponseContext } from "@/app/utils/Contexts";
+import {
+  ModalsContext,
+  NotificationsContext,
+  ResponseContext,
+} from "@/app/utils/Contexts";
 import NotificationContainer from "@/app/components/Notifications/NotificationContainer/NotificationContainer";
 import config from "@/app/utils/config";
 
-function NotificationModal({
-}) {
-  const { isNotificationModal, setIsNotificationModal } = useContext(ModalsContext);
+function NotificationModal({}) {
+  const { isNotificationModal, setIsNotificationModal } =
+    useContext(ModalsContext);
   const { notifications, setNotifications } = useContext(NotificationsContext);
   const { setResponse } = useContext(ResponseContext);
 
@@ -24,7 +28,7 @@ function NotificationModal({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId, accepted }),
-      credentials: "include"
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
@@ -33,7 +37,7 @@ function NotificationModal({
       .catch((error) => console.error(error));
 
     setNotifications(
-      notifications.filter((notif) => notif.i !== notificationId),
+      notifications.filter((notif) => notif.i !== notificationId)
     );
   };
 
@@ -44,7 +48,7 @@ function NotificationModal({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId }),
-      credentials: "include"
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
@@ -53,10 +57,10 @@ function NotificationModal({
       .catch((error) => console.error(error));
 
     setNotifications(
-      notifications.filter((notif) => notif.i !== notificationId),
+      notifications.filter((notif) => notif.i !== notificationId)
     );
   };
-/* 
+  /* 
   const challengeRequestReply = (targetId, accepted, notificationId) => {
     fetch(`${config.server}/challenges/challenge-request-reply`, {
       method: "post",
@@ -84,7 +88,7 @@ function NotificationModal({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId, accepted }),
-      credentials: "include"
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
@@ -93,22 +97,27 @@ function NotificationModal({
       .catch((error) => console.error(error));
 
     setNotifications(
-      notifications.filter((notif) => notif.i !== notificationId),
+      notifications.filter((notif) => notif.i !== notificationId)
     );
   };
 
   return (
     <Draggable nodeRef={moveRef}>
       <div
-        className={`${styles.NotificationModal} ${isNotificationModal ? styles.opened : ""
-          }`}
+        className={`${styles.NotificationModal} ${
+          isNotificationModal ? styles.opened : ""
+        }`}
         ref={moveRef}
       >
-                    <div className={styles.header}>
-              <i onClick={() => {setIsNotificationModal(false)}}>
-                <FontAwesomeIcon icon={faXmark} />
-              </i>
-            </div>
+        <div className={styles.header}>
+          <i
+            onClick={() => {
+              setIsNotificationModal(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </i>
+        </div>
         {notifications.length ? (
           <div className={`${styles.notifications} customScroll`}>
             {notifications.map((notification, i) => {
@@ -119,35 +128,67 @@ function NotificationModal({
 
               if (type === 0) {
                 return (
-                  <NotificationContainer fromProfile={fromId} zIndex={notifications.length - i} buttons={[{
-                    onClick: () => { friendRequestReply(fromId, true, notification.i) },
-                    content: <FontAwesomeIcon icon={faCheck} color={"green"} fontSize="2rem" />,
-                    hoverText: 'Accept'
-                  },
-                  {
-                    onClick: () => { friendRequestReply(fromId, false, notification.i) },
-                    content: <FontAwesomeIcon icon={faXmark} color={"red"} fontSize="2rem" />,
-                    hoverText: 'Decline'
-                  }
-                  ]}
+                  <NotificationContainer
+                    fromProfile={fromId}
+                    zIndex={notifications.length - i}
+                    buttons={[
+                      {
+                        onClick: () => {
+                          friendRequestReply(fromId, true, notification.i);
+                        },
+                        content: (
+                          <FontAwesomeIcon
+                            icon={faCheck}
+                            color={"green"}
+                            fontSize="2rem"
+                          />
+                        ),
+                        hoverText: "Accept",
+                      },
+                      {
+                        onClick: () => {
+                          friendRequestReply(fromId, false, notification.i);
+                        },
+                        content: (
+                          <FontAwesomeIcon
+                            icon={faXmark}
+                            color={"red"}
+                            fontSize="2rem"
+                          />
+                        ),
+                        hoverText: "Decline",
+                      },
+                    ]}
                     key={i}
                   >
                     <p>{fromName} wants to be friends with you!</p>
                   </NotificationContainer>
-                )
+                );
               } else if (type === 1) {
                 return (
-                  <NotificationContainer fromProfile={fromId} zIndex={notifications.length - i} buttons={[{
-                    onClick: () => { deleteFriendNotif(fromId, notification.i) },
-                    content: <FontAwesomeIcon icon={faCheck} color={"green"} fontSize="2rem" />,
-                    hoverText: 'Got it!'
-                  },
-                  ]}
+                  <NotificationContainer
+                    fromProfile={fromId}
+                    zIndex={notifications.length - i}
+                    buttons={[
+                      {
+                        onClick: () => {
+                          deleteFriendNotif(fromId, notification.i);
+                        },
+                        content: (
+                          <FontAwesomeIcon
+                            icon={faCheck}
+                            color={"green"}
+                            fontSize="2rem"
+                          />
+                        ),
+                        hoverText: "Got it!",
+                      },
+                    ]}
                     key={i}
                   >
                     <p>{fromName} and you are now friends!</p>
                   </NotificationContainer>
-                )
+                );
               } /* else if (type === 2) {
                 return (
                   <NotificationContainer fromProfile={fromId} zIndex={notifications.length - i} buttons={[{
@@ -184,26 +225,45 @@ function NotificationModal({
                     <p>{fromName} wants to be friends with you!</p>
                   </NotificationContainer>
                 )
-              }  */else if (type === 4) {
+              }  */ else if (type === 4) {
                 return (
-                  <NotificationContainer fromProfile={fromId} zIndex={notifications.length - i} buttons={[{
-                    onClick: () => { chatRequestReply(fromId, false, notification.i) },
-                    content: <FontAwesomeIcon icon={faCheck} color={"green"} fontSize="2rem" />,
-                    hoverText: 'Accept'
-                  },
-                  {
-                    onClick: () => { chatRequestReply(fromId, false, notification.i) },
-                    content: <FontAwesomeIcon icon={faXmark} color={"red"} fontSize="2rem" />,
-                    hoverText: 'Decline'
-                  }
-                  ]}
+                  <NotificationContainer
+                    fromProfile={fromId}
+                    zIndex={notifications.length - i}
+                    buttons={[
+                      {
+                        onClick: () => {
+                          chatRequestReply(fromId, false, notification.i);
+                        },
+                        content: (
+                          <FontAwesomeIcon
+                            icon={faCheck}
+                            color={"green"}
+                            fontSize="2rem"
+                          />
+                        ),
+                        hoverText: "Accept",
+                      },
+                      {
+                        onClick: () => {
+                          chatRequestReply(fromId, false, notification.i);
+                        },
+                        content: (
+                          <FontAwesomeIcon
+                            icon={faXmark}
+                            color={"red"}
+                            fontSize="2rem"
+                          />
+                        ),
+                        hoverText: "Decline",
+                      },
+                    ]}
                     key={i}
                   >
                     <p>{fromName} wants to chat with you!</p>
                   </NotificationContainer>
-                )
+                );
               }
-
             })}
           </div>
         ) : (
