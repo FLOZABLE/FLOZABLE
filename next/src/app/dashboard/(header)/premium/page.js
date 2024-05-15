@@ -37,27 +37,35 @@ export default function Premium() {
                   <i>
                     <PremiumGold />
                   </i>
+                  <p className={"jost textGradient"} style={
+                    {
+                      "--primary": "#517dff",
+                      "--secondary": "rgb(66, 186, 255)"
+                    }
+                  }>
                   Advance
+                  </p>
+                </div>
+                <div className={`${styles.price} jost`}>
+                  <small>$</small>
+                  2.99
                 </div>
                 {premiumFeatures[0].map((feature, i) => {
                   return (
                     <div className={styles.item} key={i}>
+                      <p>{feature}</p>
                       <i>
                         <FontAwesomeIcon icon={faCheck} />
                       </i>
-                      <p>{feature}</p>
                     </div>
                   );
                 })}
-                <div>
-                  {/* <BlobBtn
-                    padding={padding}
-                    name={<FontAwesomeIcon icon={faComments} />}
+                <div className={styles.blobWrapper}>
+                  <BlobBtn
+                    name={"Get Started"}
                     setClicked={() => {
-                      requestChat();
                     }}
-                    opt={2}
-                  /> */}
+                  />
                 </div>
               </div>
               <div className={styles.itemCard}>
