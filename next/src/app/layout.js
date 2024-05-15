@@ -8,44 +8,50 @@ import ChatModal from "@/app/components/Modals/ChatModal/ChatModal";
 import NotificationModal from "@/app/components/Modals/NotificationModal/NotificationModal";
 import AccountModal from "@/app/components/Modals/AccountModal/AccountModal";
 import Tutorial from "./components/Others/Tutorial/Tutorial";
-import {GoogleAnalytics} from "@next/third-parties/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
+/* import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js"; */
 
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 export const metadata = {
-  title: 'Dashboard - FLOZABLE',
+  title: "Dashboard - FLOZABLE",
   description:
-    'Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.',
+    "Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.",
   openGraph: {
-    type: 'website',
-    url: 'https://flozable.com/dashboard',
-    title: 'Dashboard - FLOZABLE',
+    type: "website",
+    url: "https://flozable.com/dashboard",
+    title: "Dashboard - FLOZABLE",
     description:
-      'Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.',
+      "Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.",
     images: [
       {
-        url: 'https://flozable.com/favicon.ico',
+        url: "https://flozable.com/favicon.ico",
         width: 800,
         height: 600,
-        alt: 'FLOZABLE',
+        alt: "FLOZABLE",
       },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
-    url: 'https://flozable.com/dashboard',
-    title: 'Dashboard - FLOZABLE',
+    card: "summary_large_image",
+    url: "https://flozable.com/dashboard",
+    title: "Dashboard - FLOZABLE",
     description:
-      'Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.',
-    images: ['https://flozable.com/favicon.ico'],
+      "Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.",
+    images: ["https://flozable.com/favicon.ico"],
   },
-  keywords: ['progress tracking', 'study achievements', 'study sessions planning'],
+  keywords: [
+    "progress tracking",
+    "study achievements",
+    "study sessions planning",
+  ],
   robots: {
     index: true,
     follow: true,
   },
   icons: {
-    icon: 'https://flozable.com/favicon.ico',
+    icon: "https://flozable.com/favicon.ico",
   },
 };
 
@@ -55,7 +61,10 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body>
         <AppProvider>

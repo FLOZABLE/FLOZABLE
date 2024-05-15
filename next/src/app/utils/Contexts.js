@@ -13,6 +13,7 @@ import { filterGroups } from "./Tool";
 import { socket } from "./socket";
 import { timelineSort } from "./timelineSorting";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -30,31 +31,35 @@ const ThemesContext = createContext({});
 const WorkersContext = createContext({});
 const ChatsContext = createContext({});
 
+const queryClient = new QueryClient();
+
 function AppProvider({ children }) {
   return (
-    <AccountProvider>
-      <SubjectsProvider>
-        <GroupsProvider>
-          <ModalsProvider>
-            <ResponseProvider>
-              <TutorialsProvider>
-                <CallOptionsProvider>
-                  <ThemesProvider>
-                    <WorkersProvider>
-                      <ChatsProvider>
-                        <GoogleOAuthProvider clientId={googleClientId}>
-                          {children}
-                        </GoogleOAuthProvider>
-                      </ChatsProvider>
-                    </WorkersProvider>
-                  </ThemesProvider>
-                </CallOptionsProvider>
-              </TutorialsProvider>
-            </ResponseProvider>
-          </ModalsProvider>
-        </GroupsProvider>
-      </SubjectsProvider>
-    </AccountProvider>
+    <QueryClientProvider client={queryClient}>
+      <AccountProvider>
+        <SubjectsProvider>
+          <GroupsProvider>
+            <ModalsProvider>
+              <ResponseProvider>
+                <TutorialsProvider>
+                  <CallOptionsProvider>
+                    <ThemesProvider>
+                      <WorkersProvider>
+                        <ChatsProvider>
+                          <GoogleOAuthProvider clientId={googleClientId}>
+                            {children}
+                          </GoogleOAuthProvider>
+                        </ChatsProvider>
+                      </WorkersProvider>
+                    </ThemesProvider>
+                  </CallOptionsProvider>
+                </TutorialsProvider>
+              </ResponseProvider>
+            </ModalsProvider>
+          </GroupsProvider>
+        </SubjectsProvider>
+      </AccountProvider>
+    </QueryClientProvider>
   );
 }
 
@@ -315,7 +320,7 @@ function TutorialsProvider({ children }) {
 
     if (tutorial) {
       setTutorial(1);
-    };
+    }
   }, []);
 
   return (
