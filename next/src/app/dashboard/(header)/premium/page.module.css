@@ -12,28 +12,32 @@
 }
 
 .Premium .cardContainer .itemCard {
-  background-color: #fff;
+  background-color: var(--light-blue1);
   margin: 1rem;
   width: 50%;
   border-radius: .5rem;
   overflow: hidden;
   box-shadow: var(--shadow1);
+  padding: 3rem;
 }
 
 .Premium .cardContainer .itemCard .item {
   display: flex;
-  padding: 0.3rem 2rem;
   font-size: 1.5rem;
 }
 
+.Premium .item i {
+  margin-left: auto;
+  color: #517dff;
+}
+
 .Premium .itemCard .itemHeader {
-  background-color:#e7e6e5;
-  height: 6rem;
   font-size: 3rem;
-  font-weight: 800;
+  font-weight: 600;
   display: flex;
-  justify-content: center;
   align-items: center;
+  border-bottom: 0.1rem solid var(--gray3);
+  padding-bottom: 1rem;
 }
 
 .Premium .itemCard .itemHeader i {
@@ -41,4 +45,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.Premium .itemCard .price small {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.Premium .price {
+  font-size: 3rem;
+  font-weight: 800;
+}
+
+.Premium .cardContainer .blobWrapper {
+  margin-top: 2rem;
 }
