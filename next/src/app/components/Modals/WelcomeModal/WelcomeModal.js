@@ -6,9 +6,10 @@ import BlobBtn from '../../Buttons/BlobBtn/BlobBtn';
 import Confetti from 'react-confetti';
 import { UserInfoContext } from '@/app/utils/Contexts';
 
-function WelcomeModal({  }) {
+function WelcomeModal({ }) {
   const [isModal, setIsModal] = useState(false);
   const { userInfo } = useContext(UserInfoContext);
+  const [confettiEl, setConfettiEl] = useState(null)
 
   const [windowConfiguration, setWindowConfiguration] = useState({ width: 0, height: 0 });
 
@@ -22,29 +23,32 @@ function WelcomeModal({  }) {
     if (isNew.get("welcome") === "true") {
       console.log('new', isNew);
       setIsModal(true);
+      setConfettiEl(
+        <Confetti
+          width={windowConfiguration.width}
+          height={windowConfiguration.height}
+          recycle={false}
+          numberOfPieces={500}
+          confettiSource={{ x: 0, y: -10, w: windowConfiguration.width, h: 0 }}
+        />
+      );
     } else {
       setIsModal(false);
     }
-  }, []);
+  }, [userInfo]);
 
   return (
     <div
       to="/dashboard?tutorial=1"
       className={`${styles.WelcomeModal} ${isModal ? styles.open : ''}`}
     >
-      <Confetti
-        width={windowConfiguration.width}
-        height={windowConfiguration.height}
-        recycle={false}
-        numberOfPieces={500}
-        confettiSource={{ x: 0, y: -10, w: windowConfiguration.width, h: 0 }}
-      />
+      {confettiEl}
       <div className={styles.modal}>
         <p>
           Welcome to FLOZABLE!
         </p>
         <p className={styles.description}>
-          Hey {userInfo?.name}, let's get you all set up with this tutorial
+          Hey {userInfo?.name}, let&apos;s get you all set up with this tutorial
           <br />
           We hope your journey in studying is successful
         </p>
