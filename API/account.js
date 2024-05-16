@@ -410,7 +410,7 @@ Router.post("/signin-with-google", async (req, res) => {
               signed: true,
               sameSite: "strict",
             });
-            res.send({ success: true, msg: "Success" });
+            res.send({ success: true, msg: "Success", newUser: false });
           });
 
           return;
