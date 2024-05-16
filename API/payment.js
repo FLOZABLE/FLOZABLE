@@ -13,12 +13,16 @@ Router.get("/client-secret", async (req, res) => {
       if (!userInfo) return res.send(responseCodes['no-user']);
 
       const {name, email} = userInfo;
-      const customer = await stripe.customers.create({
-        name,
-        email
+      const customer = await stripe.paymentIntents.create({
+        amount: 2000,
+        currency: 'usd',
+        automatic_payment_methods: {
+          enabled: true,
+        },
       });
 
-      console.log(customer, customer.client_secret)
+      console.log(customer, customer.client_secret);
+      res.send({success: true, secret: customer.client_secret});
     } catch (err) {
       console.log(err);
     }
