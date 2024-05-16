@@ -7,6 +7,7 @@ import {
   ResponseContext,
   TutorialsContext,
   UserInfoContext,
+  ModalsContext,
 } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
 
@@ -14,6 +15,7 @@ function SigninWithGoogleBtn({ infoText }) {
   const { setResponse } = useContext(ResponseContext);
   const { setTutorial } = useContext(TutorialsContext);
   const { bringAccountInfo } = useContext(UserInfoContext);
+  const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
 
   const router = useRouter();
 
@@ -37,9 +39,13 @@ function SigninWithGoogleBtn({ infoText }) {
         .then((data) => {
           setResponse(data);
           if (data.success) {
-            router.push("/dashboard?welcome=true");
-            setTutorial(1);
+            console.log(data);
+            if (data.newUser) {
+              router.push("/dashboard?welcome=true");
+              setTutorial(1);
+            }
             setTimeout(() => {
+              setIsAccountModal(false);
               bringAccountInfo();
             }, 100);
           }
