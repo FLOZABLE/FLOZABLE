@@ -8,6 +8,7 @@ const useStripeClientSecret = () => {
     queryFn: () =>
       fetch(`${config.server}/payment/client-secret`).then((res) => res.json()),
   });
+  console.log('gddd', data, error, isPending)
 
   return { isPending, error, data };
 };
