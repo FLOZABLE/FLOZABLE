@@ -249,4 +249,29 @@ Router.post("/status-change", async (req, res) => {
   }));
 });
 
+Router.delete("/", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const connection = pool.promise();
+
+      const {id} = req.body;
+
+      const isValidId = validateStrictString(id, 'plan id', 10, 8);
+
+      if (!isValidId) {
+        return res.send({ success: false, reason: isValidId.reason });
+      };
+
+      const [deletePlan] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [userId, id]);
+      /* if (!deletePlan.affectedRows) {
+
+      } */
+
+      res.send({success: true});
+    } catch (err) {
+      console.log(err);
+    }
+  })
+})
+
 module.exports = Router;

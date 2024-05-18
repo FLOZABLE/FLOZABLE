@@ -113,10 +113,17 @@
   width: 100%;
   align-items: center;
   display: flex;
+  position: relative;
 }
 
 .EventModal .addSubjectWrapper {
   margin-left: auto;
+}
+
+.EventModal .trashcan {
+  font-size: 1.4rem;
+  position: absolute;
+  right: 0.5rem;
 }
 
 @media (max-height: 800px) {
