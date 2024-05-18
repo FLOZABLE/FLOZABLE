@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useCallback, useContext, useEffect, useRef } from "react";
 import styles from "./EventModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,6 +10,7 @@ import {
   faClock,
   faFileLines,
   faRepeat,
+  faTrashCan,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import Draggable from "react-draggable";
@@ -160,6 +161,24 @@ function EventModal({}) {
         }
       })
       .catch((error) => console.error(error));
+  };
+
+  const deletePlan = async () => {
+    const { id } = planModal;
+    if (!id) return;
+    const data = await fetch(`${config.server}/plan`, {
+      method: "delete",
+      body: JSON.stringify({ id }),
+    }).then((res) => res.json());
+
+    if (data.success) {
+      setPlanModal((prev) => ({ ...prev, opened: false }));
+      setPlans(
+        plans.filter((plan) => {
+          plan.id !== id;
+        })
+      );
+    }
   };
 
   useEffect(() => {
@@ -464,6 +483,17 @@ function EventModal({}) {
             >
               SAVE
             </BlobBtn>
+            <div className={styles.trashcan}>
+              <BlobBtn
+                color1="#fff"
+                color2="red"
+                onClick={() => {
+                  deletePlan();
+                }}
+              >
+                <FontAwesomeIcon icon={faTrashCan} />
+              </BlobBtn>
+            </div>
           </div>
         </div>
       </div>
