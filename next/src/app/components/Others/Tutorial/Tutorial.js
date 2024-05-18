@@ -47,15 +47,16 @@ function Tutorial() {
           <p>All done!</p>
           <div className={styles.blobWrapper}>
             <BlobBtn
-              name={"View Rooms for Group-Studying"}
-              setClicked={() => {
+              onClick={() => {
                 router.push("/dashboard/groups");
                 setTutorial(false);
               }}
               color1={"#fff"}
               color2={"var(--purple2)"}
               id="tutorial-13"
-            />
+            >
+              View Rooms for Group-Studying
+            </BlobBtn>
           </div>
         </div>
       ) : (
@@ -72,14 +73,15 @@ function Tutorial() {
           ></div>
           <div className={styles.skipOption}>
             <BlobBtn
-              name={"Skip Tutorial"}
-              setClicked={() => {
+              onClick={() => {
                 skipTutorial();
               }}
               color1={"#fff"}
               color2={"var(--purple2)"}
               id="skipTutorialButton"
-            />
+            >
+              Skip Tutorial
+            </BlobBtn>
           </div>
         </>
       )}

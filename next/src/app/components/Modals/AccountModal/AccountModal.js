@@ -8,15 +8,20 @@ import {
   faUser,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import config from "@/app/utils/config";
-import { ModalsContext, ResponseContext, TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
+import {
+  ModalsContext,
+  ResponseContext,
+  TutorialsContext,
+  UserInfoContext,
+} from "@/app/utils/Contexts";
 import ArrowOptionBtn from "@/app/components/Buttons/ArrowOptionBtn/ArrowOptionBtn";
 import SigninWithGoogleBtn from "@/app/components/Buttons/SigninWithGoogleBtn/SigninWithGoogleBtn";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
 
-function AccountModal({ }) {
+function AccountModal({}) {
   const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
   const { setTutorial } = useContext(TutorialsContext);
   const { bringAccountInfo } = useContext(UserInfoContext);
@@ -46,7 +51,11 @@ function AccountModal({ }) {
   }, []);
 
   return (
-    <div className={`${styles.AccountModal} ${isAccountModal ? styles.opened : ""}`}>
+    <div
+      className={`${styles.AccountModal} ${
+        isAccountModal ? styles.opened : ""
+      }`}
+    >
       <div className={styles.optionsWrapper}>
         <ArrowOptionBtn clicked={isLogin} setClicked={setIsLogin} />
       </div>
@@ -88,15 +97,14 @@ function AccountModal({ }) {
             </div>
             <SigninWithGoogleBtn infoText={"Continue With Google"} />
             <BlobBtn
-              name={"SUBMIT"}
-              setClicked={() => {
+              onClick={() => {
                 fetch(`${config.server}/account/signin-authentication`, {
                   method: "post",
                   headers: {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify(login),
-                  credentials: "include"
+                  credentials: "include",
                 })
                   .then((response) => response.json())
                   .then((data) => {
@@ -105,7 +113,7 @@ function AccountModal({ }) {
                       setIsAccountModal(false);
                       bringAccountInfo();
                       if (isNew) {
-                        router.push('/dashboard?welcome=true');
+                        router.push("/dashboard?welcome=true");
                         setTutorial(1);
                       }
                     }
@@ -113,7 +121,9 @@ function AccountModal({ }) {
               }}
               color1={"#66c8ff"}
               color2={"#fff"}
-            />
+            >
+              SUBMIT
+            </BlobBtn>
           </div>
         </form>
         <form className={styles.container} id={styles.back}>
@@ -165,15 +175,14 @@ function AccountModal({ }) {
             </div>
             <SigninWithGoogleBtn infoText={"Register With Google"} />
             <BlobBtn
-              name={"SUBMIT"}
-              setClicked={() => {
+              onClick={() => {
                 fetch(`${config.server}/account/signup-authentication`, {
                   method: "post",
                   headers: {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify(signUp),
-                  credentials: "include"
+                  credentials: "include",
                 })
                   .then((response) => response.json())
                   .then((data) => {
@@ -187,7 +196,9 @@ function AccountModal({ }) {
               }}
               color1={"#66c8ff"}
               color2={"#fff"}
-            />
+            >
+              SUBMIT
+            </BlobBtn>
           </div>
         </form>
       </div>

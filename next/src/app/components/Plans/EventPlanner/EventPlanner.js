@@ -7,7 +7,6 @@ import styles from "./EventPlanner.module.css";
 import styled from "@emotion/styled";
 import { DateTime } from "luxon";
 import { PlansContext, ResponseContext } from "@/app/utils/Contexts";
-import { useSearchParams } from "next/navigation";
 import config from "@/app/utils/config";
 
 const StyleWrapper = styled.div`

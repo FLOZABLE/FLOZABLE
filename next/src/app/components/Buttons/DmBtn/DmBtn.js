@@ -36,12 +36,12 @@ function DmBtn({ userInfo, padding }) {
       <div className={styles.blobWrapper}>
         <BlobBtn
           padding={padding}
-          name={<FontAwesomeIcon icon={faComments} />}
-          setClicked={() => {
+          onClick={() => {
             requestChat();
           }}
-          opt={2}
-        />
+        >
+          <FontAwesomeIcon icon={faComments} />
+        </BlobBtn>
       </div>
       <div className={styles.hoverEl}>
         <p>Chat with {userInfo ? userInfo.name : ""}!</p>
