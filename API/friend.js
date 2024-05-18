@@ -1,5 +1,10 @@
 const express = require("express");
-const { autoSignin, generateRandomId, randomIntInRange } = require("../tool");
+const {
+  autoSignin,
+  generateRandomId,
+  randomIntInRange,
+  friendRecommendationGen,
+} = require("../tool");
 const {
   NotificationCache,
   userCache,
@@ -323,38 +328,37 @@ Router.post("/checked", async (req, res) => {
 });
 
 Router.get("/recommended", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const userInfo = await userCache(userId);
-      if (!userInfo) {
-        return res.send({ success: false, reason: "No user found" });
-      }
-      const { friends } = userInfo;
-      const userIds = await redisClient.sMembers(`month1`);
-      const users = [];
-      for (let i = 0; i < 100; i++) {
-        if (users.length >= 3) {
-          break;
+  autoSignin(
+    req,
+    res,
+    async (userId) => {
+      try {
+        const userInfo = await userCache(userId);
+        if (!userInfo) {
+          const users = await friendRecommendationGen();
+          return res.send({ success: true, users });
         }
-        const index = randomIntInRange(0, userIds.length - 1);
-        const userId = userIds[index];
-        if (
-          !friends.includes(userId) &&
-          userId !== userInfo.userId &&
-          !users.find((user) => user.user_id === userId)
-        ) {
-          const recommendedUserInfo = await userCache(userId);
-          if (recommendedUserInfo) {
-            users.push(recommendedUserInfo);
-          }
-        }
+        const { friends } = userInfo;
+
+        const excluded = [...friends, userId];
+
+        const users = await friendRecommendationGen(excluded);
+        return res.send({ success: true, users });
+      } catch (error) {
+        console.log(error);
+        res.send({ success: false, reason: "An Error Occured" });
       }
-      res.send({ success: true, users });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "An Error Occured" });
+    },
+    async () => {
+      try {
+        const users = await friendRecommendationGen();
+        console.log("users");
+        return res.send({ success: true, users });
+      } catch (err) {
+        console.log(err);
+      }
     }
-  });
+  );
 });
 
 Router.get("/status", async (req, res) => {

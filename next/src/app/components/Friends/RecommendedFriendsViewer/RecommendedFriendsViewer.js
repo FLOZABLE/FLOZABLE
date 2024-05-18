@@ -3,7 +3,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styles from "./RecommendedFriendsViewer.module.css";
 import Link from 'next/link';
-import { ResponseContext } from '@/app/utils/Contexts';
+import { ResponseContext, UserInfoContext } from '@/app/utils/Contexts';
 import config from '@/app/utils/config';
 import RefreshBtn from '../../Buttons/RefreshBtn/RefreshBtn';
 import ProfileImage from '../../Users/ProfileImage/ProfileImage';
@@ -12,6 +12,8 @@ import FriendRequestBtn from '../../Buttons/FriendRequestBtn/FriendRequestBtn';
 
 
 function RecommendedFriendsViewer({}) {
+  const {userInfo} = useContext(UserInfoContext);
+
   const {setResponse} = useContext(ResponseContext);
   const [refresh, setRefresh] = useState(true);
   const [recommendedFriends, setRecommendedFriends] = useState([]);
@@ -35,6 +37,16 @@ function RecommendedFriendsViewer({}) {
         }
       });
   }, [refresh]);
+
+  useEffect(() => {
+    if (!userInfo) return;
+
+    setRefresh(false);
+
+    setTimeout(() => {
+      setRefresh(true);
+    }, 500);
+  }, [userInfo]);
 
   return (
     <div className={styles.RecommendedFriendsViewer}>

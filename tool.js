@@ -3,9 +3,10 @@ const Ajv = require("ajv");
 const ajv = new Ajv();
 const { google } = require("googleapis");
 const pool = require("./model/pool");
-const { userCache } = require("./services/redisLoader");
+const { userCache, usersCache } = require("./services/redisLoader");
 const { DateTime } = require("luxon");
 const { responseCodes } = require("./Constant");
+const redisClient = require("./model/redis");
 
 function generateRandomId(length) {
   const characters =
@@ -218,6 +219,32 @@ function getMidnightTimezones() {
   return midnightTimezones;
 }
 
+async function friendRecommendationGen(excluded = []) {
+  try {
+    const userIds = await redisClient.sMembers(`month1`);
+    const users = [];
+    for (let i = 0; i < 100; i++) {
+      if (users.length >= 3) {
+        break;
+      }
+      const index = randomIntInRange(0, userIds.length - 1);
+      const userId = userIds[index];
+      if (
+        ![...excluded, ...users].includes(userId)
+      ) {
+        users.push(userId);
+      };
+    };
+
+    const usersInfo = await usersCache(users);
+
+    return usersInfo
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
+}
+
 module.exports = {
   generateRandomId,
   hashing,
@@ -234,4 +261,5 @@ module.exports = {
   deriveKey,
   timezones24,
   getMidnightTimezones,
+  friendRecommendationGen
 };
