@@ -15,6 +15,8 @@ import { DateTime } from "luxon";
 import config from "@/app/utils/config";
 import CircularCheckBox from "@/app/components/Buttons/CircularCheckBox/CircularCheckBox";
 import { subjectIcons } from "@/app/utils/Constant";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
@@ -190,8 +192,7 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {
       )}
       <div id={styles.addBtnWrapper} ref={addBtnRef}>
         <BlobBtn
-          name={"Add a New Plan"}
-          setClicked={() => {
+          onClick={() => {
             setPlanModal((prev) => ({ ...prev, opened: true }));
             if (tutorial === 1) {
               setTutorial(2);
@@ -199,9 +200,10 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {
           }}
           color1={"#fff"}
           color2={"var(--blue2)"}
-          delay={-1}
           id={"tutorial-1"}
-        />
+        >
+          Add a New Plan
+        </BlobBtn>
       </div>
       {filteredPlans.length ? (
         <ul
@@ -258,6 +260,14 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {
                   </p>
                   <div className={`${styles.description} customScroll`}>
                     {plan.description ? parse(plan.description) : ""}
+                  </div>
+                  <div
+                    className={styles.modifyPlan}
+                    onClick={() => {
+                      setPlanModal({ ...plan, opened: true });
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faEllipsis} />
                   </div>
                 </div>
               </li>

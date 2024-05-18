@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useContext,
+} from "react";
 import styles from "./page.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCamera,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import LineInput from "@/app/components/Inputs/LineInput/LineInput";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import LabelMovingInput from "@/app/components/Inputs/LabelMovingInput/LabelMovingInput";
@@ -119,13 +123,15 @@ function Account() {
 
   useEffect(() => {
     if (!userInfo) return;
-    setImageSrc(`${config.static_server}/profile-image/${userInfo.user_id}.jpeg`);
+    setImageSrc(
+      `${config.static_server}/profile-image/${userInfo.user_id}.jpeg`
+    );
     fetch(`${config.server}/extension/tabs-settings`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: 'include'
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
@@ -142,12 +148,8 @@ function Account() {
 
   return (
     <div>
-      <div
-        className={`Main`}
-      >
-        <div className="title">
-          Account
-        </div>
+      <div className={`Main`}>
+        <div className="title">Account</div>
         <div className={styles.Account}>
           <div className={styles.boxContainer}>
             <div className={styles.boxWrapper}>
@@ -176,20 +178,20 @@ function Account() {
                     </form>
                   </div>
                 </div>
-                {userInfo ?
+                {userInfo ? (
                   <div id={styles.welcome}>
-                    <h2>Welcome, {userInfo.name}</h2></div>
-                  : null
-                }
+                    <h2>Welcome, {userInfo.name}</h2>
+                  </div>
+                ) : null}
               </div>
             </div>
             <div className={styles.boxWrapper}>
               <div className={styles.box} id={styles.profile}>
                 <div className={styles.title}>
-                  <h1 >Profile</h1>
+                  <h1>Profile</h1>
                 </div>
                 <div className={styles.contents}>
-                  <div >
+                  <div>
                     <div>
                       <LineInput
                         title={"Name"}
@@ -222,12 +224,14 @@ function Account() {
                   </div>
                   <div className={styles.submitWrapper}>
                     <BlobBtn
-                      name={"SUBMIT"}
-                      setClicked={setIsSubmitProfile}
+                      onClick={() => {
+                        setIsSubmitProfile(true);
+                      }}
                       color1={"#fff"}
                       color2={"var(--pink)"}
-                      delay={-1}
-                    />
+                    >
+                      SUBMIT
+                    </BlobBtn>
                   </div>
                 </div>
               </div>
@@ -246,7 +250,7 @@ function Account() {
                       />
                     </div>
                   </div>
-                  <div >
+                  <div>
                     <div>
                       <LabelMovingInput
                         title={"Confirm Password"}
@@ -256,7 +260,7 @@ function Account() {
                       />
                     </div>
                   </div>
-                  <div >
+                  <div>
                     <div>
                       <div id={styles.passwordReq}>
                         <h3>Password requirements</h3>
@@ -268,11 +272,14 @@ function Account() {
                     </div>
                     <div className={styles.submitWrapper}>
                       <BlobBtn
-                        name={"SUBMIT"}
-                        setClicked={setIsSubmitPw}
+                        onClick={() => {
+                          setIsSubmitPw(true);
+                        }}
                         color1={"#fff"}
                         color2={"var(--pink)"}
-                      />
+                      >
+                        SUBMIT
+                      </BlobBtn>
                     </div>
                   </div>
                 </div>
@@ -288,15 +295,15 @@ function Account() {
                   </div>
                 </div>
               </div>
-
             </div>
             <div className={styles.boxWrapper}>
               <div className={styles.box} id={styles.extension}>
                 <div className={styles.title}>
                   <h1>Chrome Extension</h1>
                   <p>
-                    Here you can setup and manage your chrome extension&apos;s tracking
-                    option (Default option for all websites is all enabled)
+                    Here you can setup and manage your chrome extension&apos;s
+                    tracking option (Default option for all websites is all
+                    enabled)
                   </p>
                 </div>
                 <ExtensionSetting
@@ -309,20 +316,19 @@ function Account() {
               <div className={styles.box} id={styles.accounts}>
                 <div className={styles.title}>
                   <h1>Accounts</h1>
-                  <p>
-                    Here you can setup and manage your integration settings
-                  </p>
+                  <p>Here you can setup and manage your integration settings</p>
                 </div>
                 <div>
                   <div>
                     <div className={styles.iconWrapper}>
                       <GoogleCalendar />
-
                     </div>
                     <div className={styles.explanation}>
                       <p>
-                        You haven&apos;t connected your Google Calendar yet or you aren&apos;t authorized. Please authorize our application to access your Google Calendar
-                        by signing in with your Google account here.
+                        You haven&apos;t connected your Google Calendar yet or
+                        you aren&apos;t authorized. Please authorize our
+                        application to access your Google Calendar by signing in
+                        with your Google account here.
                       </p>
                     </div>
                     <div className={styles.authBtn}>
@@ -332,31 +338,36 @@ function Account() {
                     </div>
                   </div>
 
-                  <div >
+                  <div>
                     <div className={styles.iconWrapper}>
                       <YouTubeIcon />
                     </div>
                     <div className={styles.explanation}>
                       <p>
-                        You haven&apos;t connected your YouTube Account yet or you aren&apos;t authorized. Please authorize our application to access your YouTube Playlists here.
+                        You haven&apos;t connected your YouTube Account yet or
+                        you aren&apos;t authorized. Please authorize our
+                        application to access your YouTube Playlists here.
                       </p>
                     </div>
                     <div className={styles.authBtn}>
                       <GoogleLoginBtn scope="https://www.googleapis.com/auth/youtube.force-ssl" />
                     </div>
                   </div>
-                  <div >
+                  <div>
                     <div className={styles.iconWrapper}>
                       <SpotifyLogo />
-
                     </div>
                     <div className={styles.explanation}>
                       <p>
-                        You haven&apos;t connected your Spotify Account yet or you aren&apos;t authorized. Please authorize our application to access your Spotify Playlists here.
+                        You haven&apos;t connected your Spotify Account yet or
+                        you aren&apos;t authorized. Please authorize our
+                        application to access your Spotify Playlists here.
                       </p>
                     </div>
                     <div className={styles.authBtn}>
-                      <SpotifyAuthBtn redirectURI={`${config.location}/dashboard/account`} />
+                      <SpotifyAuthBtn
+                        redirectURI={`${config.location}/dashboard/account`}
+                      />
                     </div>
                   </div>
                 </div>
@@ -367,6 +378,6 @@ function Account() {
       </div>
     </div>
   );
-};
+}
 
 export default Account;

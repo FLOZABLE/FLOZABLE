@@ -37,13 +37,14 @@ export default function Premium() {
                   <i>
                     <PremiumGold />
                   </i>
-                  <p className={"jost textGradient"} style={
-                    {
+                  <p
+                    className={"jost textGradient"}
+                    style={{
                       "--primary": "#517dff",
-                      "--secondary": "rgb(66, 186, 255)"
-                    }
-                  }>
-                  Advance
+                      "--secondary": "rgb(66, 186, 255)",
+                    }}
+                  >
+                    Advance
                   </p>
                 </div>
                 <div className={`${styles.price} jost`}>
@@ -61,11 +62,7 @@ export default function Premium() {
                   );
                 })}
                 <div className={styles.blobWrapper}>
-                  <BlobBtn
-                    name={"Get Started"}
-                    setClicked={() => {
-                    }}
-                  />
+                  <BlobBtn>Get Started</BlobBtn>
                 </div>
               </div>
               <div className={styles.itemCard}>

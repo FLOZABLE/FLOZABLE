@@ -11,10 +11,7 @@ import GroupsContainer from "@/app/components/Groups/GroupsContainer/GroupsConta
 import EditGroupModal from "@/app/components/Groups/EditGroupModal/EditGroupModal";
 import MemberContextMenu from "@/app/components/Groups/MemberContextMenu/MemberContextMenu";
 
-function Groups({
-  setResponse,
-}) {
-
+function Groups({ setResponse }) {
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
@@ -29,7 +26,10 @@ function Groups({
 
   return (
     <div>
-      <MemberContextMenu MENU_ID="ffffff" rightClickedMember={rightClickedMember}/>
+      <MemberContextMenu
+        MENU_ID="ffffff"
+        rightClickedMember={rightClickedMember}
+      />
       <CreateGroupModal
         isOpen={isCreateNewGroup}
         setIsOpen={setIsCreateNewGroup}
@@ -39,12 +39,8 @@ function Groups({
         setIsOpen={setIsEditGroupModal}
         isOpen={isEditGroupModal}
       />
-      <div
-        className={`Main`}
-      >
-        <div className="title">
-          Groups
-        </div>
+      <div className={`Main`}>
+        <div className="title">Groups</div>
         <div className={styles.Groups}>
           <div className={styles.box}>
             <MyGroupsViewer
@@ -74,20 +70,18 @@ function Groups({
               </div>
               <div>
                 <BlobBtn
-                  name={"+ Create new group"}
-                  setClicked={() => {
+                  onClick={() => {
                     setIsCreateNewGroup(!isCreateNewGroup);
                   }}
                   color1={"#fff"}
                   color2={"var(--purple2)"}
-                />
+                >
+                  + Create new group
+                </BlobBtn>
               </div>
             </div>
             <div className={styles.groupsWrapper}>
-              <GroupsContainer
-                queryTags={tags}
-                searchQuery={searchQuery}
-              />
+              <GroupsContainer queryTags={tags} searchQuery={searchQuery} />
             </div>
           </div>
         </div>

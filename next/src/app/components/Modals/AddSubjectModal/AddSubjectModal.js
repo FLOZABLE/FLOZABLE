@@ -1,11 +1,22 @@
 "use client";
 
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Draggable from "react-draggable";
 import styles from "./AddSubjectModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { ModalsContext, ResponseContext, SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
+import {
+  ModalsContext,
+  ResponseContext,
+  SubjectsContext,
+  TutorialsContext,
+} from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import SelectIcon from "@/app/components/Inputs/SelectIcon/SelectIcon";
@@ -14,12 +25,12 @@ import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import config from "@/app/utils/config";
 import { sortNewSubject } from "@/app/utils/timelineSorting";
 
-function AddSubjectModal({
-}) {
+function AddSubjectModal({}) {
   const { subjects, setSubjects } = useContext(SubjectsContext);
   const { setResponse } = useContext(ResponseContext);
   const { isAddSubjectModal, setIsAddSubjectModal } = useContext(ModalsContext);
-  const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
+    useContext(TutorialsContext);
 
   const [name, setName] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
@@ -58,14 +69,15 @@ function AddSubjectModal({
   useEffect(() => {
     if (tutorial === 4) {
       setTimeout(() => {
-        const { top, left, height } = addSubjectModalRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left + 'px';
-        tutorialBoxRef.current.style.top = top - 25 + 'px';
+        const { top, left, height } =
+          addSubjectModalRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left + "px";
+        tutorialBoxRef.current.style.top = top - 25 + "px";
         tutorialBoxRef.current.style.width = 0;
-        tutorialBoxRef.current.style.height = height + 'px';
+        tutorialBoxRef.current.style.height = height + "px";
 
-        tutorialTextRef.current.style.top = top - 50 + 'px';
-        tutorialTextRef.current.style.left = left + 'px';
+        tutorialTextRef.current.style.top = top - 50 + "px";
+        tutorialTextRef.current.style.left = left + "px";
         tutorialTextRef.current.innerText = "Enter the subject details!";
       }, 500);
     }
@@ -86,7 +98,7 @@ function AddSubjectModal({
         color: selectedColor,
         icon: selectedIcon.name,
       }),
-      credentials:"include"
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
@@ -109,7 +121,7 @@ function AddSubjectModal({
           setName("");
           if (tutorial === 4) {
             setTutorial(5);
-          };
+          }
         }
       })
       .catch((error) => console.error(error));
@@ -118,8 +130,9 @@ function AddSubjectModal({
   return (
     <Draggable nodeRef={addSubjectModalRef} handle=".header">
       <div
-        className={`${styles.AddSubjectModal} modal ${isAddSubjectModal ? "open" : ""
-          }`}
+        className={`${styles.AddSubjectModal} modal ${
+          isAddSubjectModal ? "open" : ""
+        }`}
         ref={addSubjectModalRef}
       >
         <div className={`${styles.header} header`}>
@@ -158,7 +171,9 @@ function AddSubjectModal({
             id="tutorial-4"
           />
           <div className={styles.submit}>
-            <BlobBtn name={"SUBMIT"} setClicked={submit} id="tutorial-4" />
+            <BlobBtn onClick={submit} id="tutorial-4">
+              SUBMIT
+            </BlobBtn>
           </div>
         </div>
       </div>

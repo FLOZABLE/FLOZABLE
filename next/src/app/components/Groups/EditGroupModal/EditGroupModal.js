@@ -269,12 +269,12 @@ function EditGroupModal({ isOpen, setIsOpen }) {
           </div>
           <div className={styles.submit}>
             <BlobBtn
-              name={"SUBMIT"}
-              setClicked={setSubmit}
+              onClick={setSubmit}
               color1={"#fff"}
               color2={"var(--pink)"}
-              delay={2000}
-            />
+            >
+              SUBMIT
+            </BlobBtn>
           </div>
         </div>
       </div>

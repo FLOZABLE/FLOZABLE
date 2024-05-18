@@ -114,13 +114,14 @@ function ExtensionSetting({ websites, setWebsites }) {
         </div>
         <div className={styles.BtnPos}>
           <BlobBtn
-            name={"SUBMIT"}
-            setClicked={() => {
+            onClick={() => {
               onSubmitUrl(url);
             }}
             color1={"#fff"}
             color2={"var(--pink)"}
-          />
+          >
+            SUBMIT
+          </BlobBtn>
         </div>
       </div>
       <div>

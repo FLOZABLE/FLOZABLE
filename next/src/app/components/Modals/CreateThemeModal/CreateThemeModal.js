@@ -103,11 +103,12 @@ function CreateThemeModal({
           </div>
           <div className={styles.submitWrapper}>
             <BlobBtn
-              name={"SUBMIT"}
               color1={"#fff"}
               color2={"var(--purple2)"}
-              setClicked={submit}
-            />
+              onClick={submit}
+            >
+              SUBMIT
+            </BlobBtn>
           </div>
         </div>
       </div>

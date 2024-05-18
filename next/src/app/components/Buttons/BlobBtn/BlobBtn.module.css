@@ -119,17 +119,6 @@
   }
 }
 
-.BlobBtn.opt1 {
-  padding: 0em 0.625rem;
-  white-space: nowrap;
-}
-
-
-.BlobBtn.opt2 {
-  padding: 0.625rem 1.875rem;
-  white-space: nowrap;
-}
-
 @media (max-width: 87.5rem) {
   .BlobBtn {
     padding: 0.625rem 1.25rem;

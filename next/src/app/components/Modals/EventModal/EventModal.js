@@ -13,7 +13,13 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import Draggable from "react-draggable";
-import { ModalsContext, PlansContext, ResponseContext, SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
+import {
+  ModalsContext,
+  PlansContext,
+  ResponseContext,
+  SubjectsContext,
+  TutorialsContext,
+} from "@/app/utils/Contexts";
 import config from "@/app/utils/config";
 import DateSelector from "@/app/components/Plans/DateSelector/DateSelector";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
@@ -22,14 +28,13 @@ import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import SliderAnimation from "@/app/components/Inputs/SliderAnimation/SliderAnimation";
 import { generateRandomId, requestNotification } from "@/app/utils/Tool";
 
-function EventModal({
-}) {
-  const {subjects} = useContext(SubjectsContext);
-  const {plans, setPlans, planModal ,setPlanModal} = useContext(PlansContext);
-  const {setResponse} = useContext(ResponseContext);
-  const {setIsAddSubjectModal} = useContext(ModalsContext);
-  const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
-
+function EventModal({}) {
+  const { subjects } = useContext(SubjectsContext);
+  const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
+  const { setResponse } = useContext(ResponseContext);
+  const { setIsAddSubjectModal } = useContext(ModalsContext);
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
+    useContext(TutorialsContext);
 
   const eventModalRef = useRef(null);
   const titleRef = useRef(null);
@@ -42,25 +47,26 @@ function EventModal({
     if (tutorial === 2) {
       setTimeout(() => {
         if (!planModal.opened) {
-          searchParams.delete('tutorial');
+          searchParams.delete("tutorial");
           setSearchParams(searchParams);
           return;
         }
 
-        setPlanModal(prev => ({
+        setPlanModal((prev) => ({
           ...prev,
-          title: 'example',
-          description: 'example'
-        }))
+          title: "example",
+          description: "example",
+        }));
 
-        const { width, top, left, height, bottom } = eventModalRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left - 25 + 'px';
-        tutorialBoxRef.current.style.top = top - 25 + 'px';
-        tutorialBoxRef.current.style.width = width + 50 + 'px';
-        tutorialBoxRef.current.style.height = height + 50 + 'px';
+        const { width, top, left, height, bottom } =
+          eventModalRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left - 25 + "px";
+        tutorialBoxRef.current.style.top = top - 25 + "px";
+        tutorialBoxRef.current.style.width = width + 50 + "px";
+        tutorialBoxRef.current.style.height = height + 50 + "px";
 
-        tutorialTextRef.current.style.top = top - 70 + 'px';
-        tutorialTextRef.current.style.left = left - 25 + 'px';
+        tutorialTextRef.current.style.top = top - 70 + "px";
+        tutorialTextRef.current.style.left = left - 25 + "px";
         tutorialTextRef.current.innerText = "Enter the event information!";
 
         setTimeout(() => {
@@ -74,45 +80,47 @@ function EventModal({
           return;
         }
 
-        const { width, top, left, height } = addSubjectRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left - 10 + 'px';
-        tutorialBoxRef.current.style.top = top - 9 + 'px';
-        tutorialBoxRef.current.style.width = width + 10 + 'px';
-        tutorialBoxRef.current.style.height = height + 20 + 'px';
+        const { width, top, left, height } =
+          addSubjectRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left - 10 + "px";
+        tutorialBoxRef.current.style.top = top - 9 + "px";
+        tutorialBoxRef.current.style.width = width + 10 + "px";
+        tutorialBoxRef.current.style.height = height + 20 + "px";
 
-        tutorialTextRef.current.style.top = top + height + 20 + 'px';
-        tutorialTextRef.current.style.left = left - 10 + 'px';
+        tutorialTextRef.current.style.top = top + height + 20 + "px";
+        tutorialTextRef.current.style.left = left - 10 + "px";
         tutorialTextRef.current.innerText = "Add a subject!";
       }, 500);
     } else if (tutorial === 5) {
-      submitRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      submitRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
 
       const { left } = submitRef.current.getBoundingClientRect();
-      const eventModalDimmensions = eventModalRef.current.getBoundingClientRect();
+      const eventModalDimmensions =
+        eventModalRef.current.getBoundingClientRect();
       const top2 = eventModalDimmensions.top;
 
-      tutorialTextRef.current.style.top = top2 - 30 + 'px';
-      tutorialTextRef.current.style.left = left + 'px';
+      tutorialTextRef.current.style.top = top2 - 30 + "px";
+      tutorialTextRef.current.style.left = left + "px";
       tutorialTextRef.current.innerText = "Save the plan!";
 
       function moveTutorialBoxes() {
-        const { width, top, left, height } = submitRef.current.getBoundingClientRect();
+        const { width, top, left, height } =
+          submitRef.current.getBoundingClientRect();
 
-        tutorialBoxRef.current.style.left = left + 50 + 'px';
-        tutorialBoxRef.current.style.top = top - 10 + 'px';
-        tutorialBoxRef.current.style.width = width - 100 + 'px';
-        tutorialBoxRef.current.style.height = height + 20 + 'px';
+        tutorialBoxRef.current.style.left = left + 50 + "px";
+        tutorialBoxRef.current.style.top = top - 10 + "px";
+        tutorialBoxRef.current.style.width = width - 100 + "px";
+        tutorialBoxRef.current.style.height = height + 20 + "px";
       }
       setTimeout(moveTutorialBoxes, 2000);
     }
   }, [tutorial]);
 
-
   const submit = () => {
     if (!planModal.editable) {
       setResponse({ success: false, reason: "This event is view only" });
       return;
-    };
+    }
     const startSec = Math.floor(planModal.start.getTime() / (1000 * 60));
     const endSec = Math.floor(planModal.end.getTime() / (1000 * 60));
     const notification = parseInt(planModal.notification);
@@ -123,23 +131,32 @@ function EventModal({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...planModal, start: startSec, end: endSec, completed, notification, repeat }),
-      credentials:"include"
+      body: JSON.stringify({
+        ...planModal,
+        start: startSec,
+        end: endSec,
+        completed,
+        notification,
+        repeat,
+      }),
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
         setResponse(data);
         if (data.success) {
-          const eventIndex = plans.findIndex((event) => event.id === planModal.id);
+          const eventIndex = plans.findIndex(
+            (event) => event.id === planModal.id
+          );
           if (eventIndex !== -1) {
             const updatedEvents = [...plans];
             updatedEvents[eventIndex].saved = true;
             setPlans(updatedEvents);
           }
-          setPlanModal(prev => ({ ...prev, opened: false, id: null }));
+          setPlanModal((prev) => ({ ...prev, opened: false, id: null }));
           if (tutorial === 5) {
             setTutorial(6);
-          };
+          }
         }
       })
       .catch((error) => console.error(error));
@@ -152,13 +169,13 @@ function EventModal({
       delete planInfo.opened;
       planInfo.id = generateRandomId(10);
       setPlanModal((prev) => ({ ...prev, id: planInfo.id }));
-      setPlans(prev => (
-        [...prev, planInfo]
-      ));
+      setPlans((prev) => [...prev, planInfo]);
     } else {
       setPlans((prev) => {
         const foundIndex = prev.findIndex((val) => val.id === planModal.id);
-        const subject = subjects.find(subject => subject.id === planModal.subject);
+        const subject = subjects.find(
+          (subject) => subject.id === planModal.subject
+        );
         const planInfo = { ...planModal };
         if (subject) {
           planInfo.backgroundColor = subject.color;
@@ -172,7 +189,7 @@ function EventModal({
           ];
         } else {
           return [...prev.slice(), planInfo];
-        };
+        }
       });
     }
   }, [planModal, subjects]);
@@ -180,23 +197,21 @@ function EventModal({
   useEffect(() => {
     if (!planModal) return;
     if (!planModal.opened) {
-      setPlanModal(prev => (
-        {
-          ...prev,
-          opened: false,
-          title: '',
-          description: '',
-          start: new Date(),
-          end: new Date(new Date().getTime() + 60 * 1000 * 30),
-          repeat: 0,
-          priority: 50,
-          notification: -1,
-          id: null,
-          saved: false,
-          completed: false,
-          editable: true
-        }
-      ));
+      setPlanModal((prev) => ({
+        ...prev,
+        opened: false,
+        title: "",
+        description: "",
+        start: new Date(),
+        end: new Date(new Date().getTime() + 60 * 1000 * 30),
+        repeat: 0,
+        priority: 50,
+        notification: -1,
+        id: null,
+        saved: false,
+        completed: false,
+        editable: true,
+      }));
       if (!planModal.saved) {
         setPlans((prev) => {
           const foundIndex = prev.findIndex((val) => val.id === planModal.id);
@@ -208,7 +223,7 @@ function EventModal({
           }
           return prev;
         });
-      };
+      }
     }
   }, [planModal.opened]);
 
@@ -220,7 +235,9 @@ function EventModal({
   return (
     <Draggable nodeRef={eventModalRef} handle=".header">
       <div
-        className={`${styles.EventModal} modal ${planModal.opened ? "open" : ""}`}
+        className={`${styles.EventModal} modal ${
+          planModal.opened ? "open" : ""
+        }`}
         ref={eventModalRef}
       >
         <div className={`${styles.header} header`}>
@@ -243,9 +260,15 @@ function EventModal({
                 value={planModal.title}
                 onChange={(e) => {
                   if (!planModal.editable) {
-                    setResponse({ success: false, reason: "This event is view only" });
+                    setResponse({
+                      success: false,
+                      reason: "This event is view only",
+                    });
                   } else {
-                    setPlanModal((prev) => ({ ...prev, title: e.target.value }));
+                    setPlanModal((prev) => ({
+                      ...prev,
+                      title: e.target.value,
+                    }));
                   }
                 }}
               />
@@ -263,7 +286,10 @@ function EventModal({
                 start={planModal.start}
                 setStart={(start) => {
                   if (!planModal.editable) {
-                    setResponse({ success: false, reason: "This event is view only" });
+                    setResponse({
+                      success: false,
+                      reason: "This event is view only",
+                    });
                   } else {
                     setPlanModal((prev) => ({ ...prev, start }));
                   }
@@ -271,7 +297,10 @@ function EventModal({
                 end={planModal.end}
                 setEnd={(end) => {
                   if (!planModal.editable) {
-                    setResponse({ success: false, reason: "This event is view only" });
+                    setResponse({
+                      success: false,
+                      reason: "This event is view only",
+                    });
                   } else {
                     setPlanModal((prev) => ({ ...prev, end }));
                   }
@@ -290,7 +319,10 @@ function EventModal({
               <TextEditor
                 setDescription={(description) => {
                   if (!planModal.editable) {
-                    setResponse({ success: false, reason: "This event is view only" });
+                    setResponse({
+                      success: false,
+                      reason: "This event is view only",
+                    });
                   } else {
                     setPlanModal((prev) => ({ ...prev, description }));
                   }
@@ -309,14 +341,17 @@ function EventModal({
             <div className={styles.contentWrapper}>
               <DropDownButton
                 options={{
-                  "0": "Does not repeat",
-                  "1": "Daily",
-                  "2": "Weekly",
-                  "3": "Monthly"
+                  0: "Does not repeat",
+                  1: "Daily",
+                  2: "Weekly",
+                  3: "Monthly",
                 }}
                 setValue={(repeat) => {
                   if (!planModal.editable) {
-                    setResponse({ success: false, reason: "This event is view only" });
+                    setResponse({
+                      success: false,
+                      reason: "This event is view only",
+                    });
                   } else {
                     setPlanModal((prev) => ({ ...prev, repeat }));
                   }
@@ -325,7 +360,7 @@ function EventModal({
               />
             </div>
           </div>
-          {planModal.editable ?
+          {planModal.editable ? (
             <div className={styles.wrapper}>
               <div className={styles.iconWrapper}>
                 <FontAwesomeIcon icon={faBook} />
@@ -343,10 +378,12 @@ function EventModal({
                     }, {})}
                     setValue={(subject) => {
                       if (!planModal.editable) {
-                        setResponse({ success: false, reason: "This event is view only" });
+                        setResponse({
+                          success: false,
+                          reason: "This event is view only",
+                        });
                       } else {
                         setPlanModal((prev) => ({ ...prev, subject }));
-
                       }
                     }}
                     value={planModal.subject}
@@ -355,21 +392,20 @@ function EventModal({
                 <p>OR</p>
                 <div className={styles.addSubjectWrapper} ref={addSubjectRef}>
                   <BlobBtn
-                    name={"Add Subject"}
-                    setClicked={() => {
+                    onClick={() => {
                       setIsAddSubjectModal(true);
                       if (tutorial === 3) {
                         setTutorial(4);
-                      };
+                      }
                     }}
-                    delay={-1}
                     id="tutorial-3"
-                  />
+                  >
+                    Add Subject
+                  </BlobBtn>
                 </div>
               </div>
             </div>
-            : null
-          }
+          ) : null}
           <div className={styles.wrapper}>
             <div className={styles.iconWrapper}>
               <FontAwesomeIcon icon={faBell} />
@@ -382,10 +418,10 @@ function EventModal({
                 <DropDownButton
                   options={{
                     "-1": "no notification",
-                    "5": "5 minutes before",
-                    "10": "10 minutes before",
-                    "30": "30 minutes before",
-                    "60": "1 hour before"
+                    5: "5 minutes before",
+                    10: "10 minutes before",
+                    30: "30 minutes before",
+                    60: "1 hour before",
                   }}
                   setValue={(notification) => {
                     setPlanModal((prev) => ({ ...prev, notification }));
@@ -421,12 +457,13 @@ function EventModal({
           </div>
           <div className={styles.submit} ref={submitRef}>
             <BlobBtn
-              name={"SAVE"}
-              setClicked={() => {
+              onClick={() => {
                 submit();
               }}
               id="tutorial-5"
-            />
+            >
+              SAVE
+            </BlobBtn>
           </div>
         </div>
       </div>
