@@ -224,11 +224,12 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
           </div>
           <div className={styles.submit}>
             <BlobBtn
-              name={"SUBMIT"}
-              setClicked={submit}
+              onClick={submit}
               color1={"#fff"}
               color2={"var(--pink)"}
-            />
+            >
+              SUBMIT
+            </BlobBtn>
           </div>
         </div>
       </div>

@@ -3,7 +3,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import styles from "./page.module.css";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay, EffectCoverflow } from "swiper/modules";
+import {
+  Navigation,
+  Pagination,
+  Autoplay,
+  EffectCoverflow,
+} from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -18,10 +23,8 @@ import ThemesContainer from "@/app/components/Themes/ThemesContainer/ThemesConta
 import RankedTheme from "@/app/components/Themes/RankedTheme/RankedTheme";
 import { ThemesContext } from "@/app/utils/Contexts";
 
-function Themes({
-  setResponse,
-}) {
-  const {themes} = useContext(ThemesContext);
+function Themes({ setResponse }) {
+  const { themes } = useContext(ThemesContext);
 
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,7 +36,6 @@ function Themes({
   const handleCreatedTagsChange = (tags) => {
     setTags(tags);
   };
-
 
   useEffect(() => {
     if (!themes) return;
@@ -55,15 +57,13 @@ function Themes({
         setResponse={setResponse}
       />
       <div className={`Main`}>
-        <div className="title">
-          Themes
-        </div>
+        <div className="title">Themes</div>
         <div className={styles.Themes}>
           <div className={styles.box} id={styles.likedList}>
             <div className={styles.title}>
               <h1>Theme of the Week!</h1>
             </div>
-            {rankedThemes.length ?
+            {rankedThemes.length ? (
               <Swiper
                 modules={[Pagination, Navigation, Autoplay, EffectCoverflow]}
                 navigation={true}
@@ -72,7 +72,7 @@ function Themes({
                   rotate: -20,
                   stretch: 1,
                   depth: 100,
-                  slideShadows: false
+                  slideShadows: false,
                 }}
                 spaceBetween={30}
                 pagination={{ clickable: true }}
@@ -80,7 +80,8 @@ function Themes({
                 autoplay={{ delay: 1300, disableOnInteraction: true }}
                 speed={500}
                 loop={true}
-                className={styles.Swiper}>
+                className={styles.Swiper}
+              >
                 {rankedThemes.map((theme, i) => {
                   return (
                     <SwiperSlide className={styles.Slide} key={i}>
@@ -90,11 +91,10 @@ function Themes({
                         setIsThemePreview={setIsThemePreview}
                       />
                     </SwiperSlide>
-                  )
+                  );
                 })}
               </Swiper>
-              : null
-            }
+            ) : null}
           </div>
           <div className={styles.box}>
             <div className={styles.searchOptions}>
@@ -112,25 +112,26 @@ function Themes({
                   setSearchQuery={setSearchQuery}
                   searchQuery={searchQuery}
                 />
-                <div>
-                </div>
+                <div></div>
               </div>
               <div className={styles.blobWrapper}>
                 <DropDownButton
                   options={{
-                    "0": "Sort By: Likes",
-                    "1": "Sort By: Usage"
+                    0: "Sort By: Likes",
+                    1: "Sort By: Usage",
                   }}
                   setValue={setSortOpt}
                   value={sortOpt}
                 />
                 <BlobBtn
-                  name={"+ Upload theme!"}
-                  setClicked={setIsCreateThemeModal}
+                  onClick={() => {
+                    setIsCreateThemeModal(!isCreateThemeModal);
+                  }}
                   color1={"#fff"}
                   color2={"var(--purple2)"}
-                  delay={-1}
-                />
+                >
+                  + Upload theme!
+                </BlobBtn>
               </div>
             </div>
             <ThemesContainer

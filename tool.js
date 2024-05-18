@@ -224,7 +224,7 @@ async function friendRecommendationGen(excluded = []) {
     const userIds = await redisClient.sMembers(`month1`);
     const users = [];
     for (let i = 0; i < 100; i++) {
-      if (users.length >= 3) {
+      if (users.length >= 7) {
         break;
       }
       const index = randomIntInRange(0, userIds.length - 1);
