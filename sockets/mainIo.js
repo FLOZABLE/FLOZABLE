@@ -60,6 +60,7 @@ mainIo.on('connection', (socket) => {
   });
 
   socket.on("disconnect", async (reason) => {
+    console.log('disconnection')
     stopStudying(userId, 'disconnect');
     deActiveGroup(userId, socket);
   });
@@ -195,9 +196,10 @@ async function stopStudying(userId, mode, subjectId) {
   const now = Math.floor(new Date().getTime() / 1000);
 
   const activeSubject = await activeSubjectCache(userId);
-  if (!activeSubject) return;
 
-  if (!activeSubject || activeSubject.id === '0') return;
+  if ((!activeSubject || activeSubject.id === '0') && mode === 'disconnect') {
+    return await redisClient.hDel(`user:${userId}`, `ActiveSubject`);
+  };
 
   if (subjectId && activeSubject.id !== subjectId) return;
 
@@ -227,7 +229,6 @@ async function stopStudying(userId, mode, subjectId) {
   const duration = now - datum_point - start;
 
   if (mode === 'disconnect') {
-    await redisClient.hDel(`user:${userId}`, `ActiveSubject`);
   } else {
     await redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
   };

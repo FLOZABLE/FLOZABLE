@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styles from "./FriendsActivityViewer.module.css";
 import { DateTime } from "luxon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,12 +9,17 @@ import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 import UserSubjectViewer from "@/app/components/Users/UserSubjectViewer/UserSubjectViewer";
 import UserGroupViewer from "@/app/components/Users/UserGroupViewer/UserGroupViewer";
+import { UserInfoContext } from "@/app/utils/Contexts";
 
 //mode 0 is for friends page's component, mode 1 is for main page's component
 function FriendsActivityViewer() {
+  const {userInfo} = useContext(UserInfoContext);
+
   const [friends, setFriends] = useState([]);
 
   useEffect(() => {
+    if (!userInfo) return;
+    
     fetch(`${config.server}/friend/status`, {
       method: "get",
       headers: {
@@ -29,19 +34,14 @@ function FriendsActivityViewer() {
         };
       })
       .catch((error) => console.error(error));
-  }, []);
+  }, [userInfo]);
 
   return (
     <div className={`${styles.FriendsActivityViewer} customScroll`}>
       {
         friends.map((friend, i) => {
-          const { timezone, name, totalTime, activeSubject, user_id } = friend;
+          const { timezone, name, user_id } = friend;
           console.log('friend', friend)
-
-          let liveTotal = parseInt(totalTime);
-          if (activeSubject && activeSubject.id) {
-            liveTotal += DateTime.now().toSeconds().toFixed() - activeSubject.time;
-          };
 
           return (
             <div
