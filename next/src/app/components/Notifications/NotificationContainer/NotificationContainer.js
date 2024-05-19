@@ -3,41 +3,26 @@ import styles from "./NotificationContainer.module.css";
 import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import NotificationBtn from "../NotificationBtn/NotificationBtn";
 
-function NotificationContainer({fromProfile, zIndex, children, buttons}) {
+function NotificationContainer({ fromProfile, zIndex, children, buttons }) {
   return (
-    <div
-      className={styles.NotificationContainer}
-      style={{ zIndex }}
-    >
-      {fromProfile ? 
-                  <ProfileImage 
-                  userId={fromProfile}
-                  height="3rem"
-                  width="3rem"
-                />
-        : 
-        null
-      }
-      <div className={styles.content}>
-        {children}
-      </div>
-      {
-        buttons 
-        ?
+    <div className={styles.NotificationContainer} style={{ zIndex }}>
+      {fromProfile ? (
+        <div>
+          <ProfileImage userId={fromProfile} height="3rem" width="3rem" />
+        </div>
+      ) : null}
+      <div className={styles.content}>{children}</div>
+      {buttons ? (
         <div className={styles.buttons}>
           {buttons.map((button, i) => {
-            const {onClick, content, hoverText} = button;
+            const { onClick, content, hoverText } = button;
             return (
-              <NotificationBtn 
-                onClick={onClick}
-                hoverText={hoverText}
-                key={i}
-              >
+              <NotificationBtn onClick={onClick} hoverText={hoverText} key={i}>
                 {content}
               </NotificationBtn>
-            )
+            );
           })}
-        {/* <div className={`${styles.btnWrapper} ${styles.decline}`}>
+          {/* <div className={`${styles.btnWrapper} ${styles.decline}`}>
           <button
             onClick={() => {
               friendRequestReply(fromId, false, notification.i);
@@ -57,12 +42,10 @@ function NotificationContainer({fromProfile, zIndex, children, buttons}) {
           </button>
           <div className={styles.hoverDisp}>Accept</div>
         </div> */}
-      </div>
-        :
-        null
-      }
+        </div>
+      ) : null}
     </div>
   );
-};
+}
 
 export default NotificationContainer;

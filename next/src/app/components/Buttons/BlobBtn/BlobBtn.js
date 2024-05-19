@@ -10,7 +10,7 @@ function BlobBtn({
   children
 }) {
   return (
-    <button
+    <div
       className={styles.BlobBtn}
       onClick={onClick}
       style={{ "--color1": color1, "--color2": color2, padding: padding }}
@@ -25,7 +25,7 @@ function BlobBtn({
           <span className={styles.blobBtnBlob}></span>
         </span>
       </span>
-    </button>
+    </div>
   );
 }
 

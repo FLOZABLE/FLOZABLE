@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import styles from "./page.module.css";
-import { ModalsContext } from "@/app/utils/Contexts";
+import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
 import FriendLinkModal from "@/app/components/Modals/FriendLinkModal/FriendLinkModal";
 import FriendEmailModal from "@/app/components/Modals/FriendEmailModal/FriendEmailModal";
 import { IconEmailOutline, IconStatsChart, IconUser } from "@/app/utils/Svg";
@@ -16,8 +16,8 @@ import FriendsTrendChart from "@/app/components/Charts/FriendsTrendChart";
 
 function Friends({
 }) {
-  const { setJoinGroupModal } = useContext(ModalsContext);
-
+  const {userInfo} = useContext(UserInfoContext);
+  
   const [isFriendLinkModal, setIsFriendLinkModal] = useState(false);
   const [isFriendEmailModal, setIsFriendEmailModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -47,7 +47,7 @@ function Friends({
   }
   useEffect(() => {
     getFriendsRanking();
-  }, []);
+  }, [userInfo]);
 
   return (
     <div>
