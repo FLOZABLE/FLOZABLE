@@ -515,6 +515,7 @@ async function stopBot(userId) {
   try {
     const now = Math.floor(new Date().getTime() / 1000);
 
+    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
     redisClient.sRem("activeBots", userId);
     const activeSubject = await activeSubjectCache(userId);
     if (!activeSubject || activeSubject.id === "0") return;
@@ -533,8 +534,6 @@ async function stopBot(userId) {
     const { datum_point } = subject;
 
     const duration = now - datum_point - start;
-
-    await redisClient.hSet(`user:${userId}`, `ActiveSubject`, `0:${now}`);
 
     if (duration > MAX_STUDY_TIME) {
       console.log('max study exceeded: ', duration);
