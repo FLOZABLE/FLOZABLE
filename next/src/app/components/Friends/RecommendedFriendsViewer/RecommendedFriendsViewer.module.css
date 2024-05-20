@@ -1,5 +1,8 @@
 .RecommendedFriendsViewer {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .RecommendedFriendsViewer .title {
@@ -16,6 +19,12 @@
   padding-left: 0.438rem;
 }
 
+.RecommendedFriendsViewer .recommendedFriends {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+}
+
 .RecommendedFriendsViewer .recommendedFriend {
   display: flex;
   align-items: center;
@@ -28,6 +37,7 @@
 
 .RecommendedFriendsViewer .recommendedFriend .buttons{
   margin-left: auto;
+  margin-right: 3rem;
 }
 
 .RecommendedFriendsViewer .profileImg {

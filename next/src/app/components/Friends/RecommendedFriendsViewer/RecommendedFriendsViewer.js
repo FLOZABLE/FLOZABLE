@@ -57,7 +57,7 @@ function RecommendedFriendsViewer({}) {
           setRefresh={setRefresh}
         />
       </div>
-      <div className={styles.recommendedFriends}>
+      <div className={`${styles.recommendedFriends} customScroll`}>
         {recommendedFriends.map((user, i) => {
           const { user_id, name, timezone } = user;
           return (

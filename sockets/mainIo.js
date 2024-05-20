@@ -195,17 +195,9 @@ async function isInChatRoom(userId, roomId) {
 async function stopStudying(userId, mode, subjectId) {
   const now = Math.floor(new Date().getTime() / 1000);
 
-  const activeSubject = await activeSubjectCache(userId);
-
-  if ((!activeSubject || activeSubject.id === '0') && mode === 'disconnect') {
-    return await redisClient.hDel(`user:${userId}`, `ActiveSubject`);
-  };
-
-  if (subjectId && activeSubject.id !== subjectId) return;
-
-  const subject = await subjectCache(userId, activeSubject.id);
   const userInfo = await userCache(userId);
-  if (!userInfo || !subject) return;
+
+  if (!userInfo) return;
 
   const { groups, friends } = userInfo;
 
@@ -215,6 +207,16 @@ async function stopStudying(userId, mode, subjectId) {
   if (friends.length) {
     mainIo.to(friends).emit(`stopStudying:${userId}`, {status: mode});
   };
+
+  const activeSubject = await activeSubjectCache(userId);
+
+  if ((!activeSubject || activeSubject.id === '0') && mode === 'disconnect') {
+    return await redisClient.hDel(`user:${userId}`, `ActiveSubject`);
+  };
+
+  if (subjectId && activeSubject.id !== subjectId) return;
+
+  const subject = await subjectCache(userId, activeSubject.id);
 
   const activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
 

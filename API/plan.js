@@ -225,7 +225,7 @@ Router.post("/status-change", async (req, res) => {
 
       const isValidId = validateStrictString(id, 'plan id', 10, 8);
 
-      if (!isValidId) {
+      if (!isValidId.isValid) {
         return res.send({ success: false, reason: isValidId.reason });
       };
 
@@ -255,12 +255,15 @@ Router.delete("/", async (req, res) => {
       const connection = pool.promise();
 
       const {id} = req.body;
+      console.log(req.body)
 
       const isValidId = validateStrictString(id, 'plan id', 10, 8);
 
-      if (!isValidId) {
+      if (!isValidId.isValid) {
         return res.send({ success: false, reason: isValidId.reason });
       };
+
+      console.log('gddd', id)
 
       const [deletePlan] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [userId, id]);
       /* if (!deletePlan.affectedRows) {
