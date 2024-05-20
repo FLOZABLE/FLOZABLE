@@ -66,24 +66,24 @@ function Study() {
     setDragPos(
       {
         playlist: {
-          x: parseFloat(localStorage.getItem("playlist_positionX") || 0) * 100 + "vw",
+          x: parseFloat(localStorage.getItem("playlist_positionX") || 0.75) * 100 + "vw",
           y: parseFloat(localStorage.getItem("playlist_positionY") || 0) * 100 + "vh"
         },
         subject: {
-          x: parseFloat(localStorage.getItem("subject_positionX") || 0) * 100 + "vw",
-          y: parseFloat(localStorage.getItem("subject_positionY") || 0) * 100 + "vh"
+          x: parseFloat(localStorage.getItem("subject_positionX") || 0.06) * 100 + "vw",
+          y: parseFloat(localStorage.getItem("subject_positionY") || 0.1) * 100 + "vh"
         },
         theme: {
-          x: parseFloat(localStorage.getItem("theme_positionX") || 0) * 100 + "vw",
-          y: parseFloat(localStorage.getItem("theme_positionY") || 0) * 100 + "vh"
+          x: parseFloat(localStorage.getItem("theme_positionX") || 0.06) * 100 + "vw",
+          y: parseFloat(localStorage.getItem("theme_positionY") || 0.2) * 100 + "vh"
         },
         plan: {
-          x: parseFloat(localStorage.getItem("plan_positionX") || 0) * 100 + "vw",
-          y: parseFloat(localStorage.getItem("plan_positionY") || 0) * 100 + "vh"
+          x: parseFloat(localStorage.getItem("plan_positionX") || 0.8) * 100 + "vw",
+          y: parseFloat(localStorage.getItem("plan_positionY") || 0.15) * 100 + "vh"
         },
         music: {
-          x: parseFloat(localStorage.getItem("music_positionX") || 0) * 100 + "vw",
-          y: parseFloat(localStorage.getItem("music_positionY") || 0) * 100 + "vh"
+          x: parseFloat(localStorage.getItem("music_positionX") || 0.06) * 100 + "vw",
+          y: parseFloat(localStorage.getItem("music_positionY") || 0.2) * 100 + "vh"
         }
       }
     )
