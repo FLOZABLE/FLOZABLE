@@ -41,31 +41,6 @@ function AddSubjectModal({}) {
 
   const addSubjectModalRef = useRef(null);
 
-  /* useEffect(() => {
-    if (router.search.includes('tutorial')) return;
-    setIsAddSubjectModal(false);
-  }, [router]); */
-
-  /* useEffect(() => {
-    if (!searchParams) return;
-
-    const tutorial = searchParams.get("tutorial");
-    if (tutorial && parseInt(tutorial) === 4) {
-
-      setTimeout(() => {
-        const { width, top, left, height, bottom } = addSubjectModalRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left + 'px';
-        tutorialBoxRef.current.style.top = top - 25 + 'px';
-        tutorialBoxRef.current.style.width = 0;
-        tutorialBoxRef.current.style.height = height + 'px';
-
-        tutorialTextRef.current.style.top = top - 50 + 'px';
-        tutorialTextRef.current.style.left = left + 'px';
-        tutorialTextRef.current.innerText = "Enter the subject details!";
-      }, 500);
-    }
-  }, [searchParams]); */
-
   useEffect(() => {
     if (tutorial === 4) {
       setTimeout(() => {
