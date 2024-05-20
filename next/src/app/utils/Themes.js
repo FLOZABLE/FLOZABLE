@@ -17,6 +17,7 @@ const AllCategories = [
   "Lofi:3",
   "Nature:4",
   "Others:5",
+  "Unsave:6",
 ]
 AllCategories.sort((a, b) => {return a.localeCompare(b)});
 

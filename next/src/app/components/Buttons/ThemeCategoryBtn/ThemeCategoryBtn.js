@@ -22,8 +22,8 @@ AllCategories.map((string) => {
 });
 
 function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
-  const {setResponse} = useContext(ResponseContext);
-  const {userThemes, setUserThemes} = useContext(ThemesContext);
+  const { setResponse } = useContext(ResponseContext);
+  const { userThemes, setUserThemes } = useContext(ThemesContext);
 
   const router = useRouter();
 
@@ -33,6 +33,10 @@ function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
 
   const save = useCallback((category) => {
     if (category === -2 || !themeId) return;
+    if (allCategoriesParsed[category] === "Unsave") {
+      unSaveTheme(themeId);
+      return;
+    }
     fetch(`${config.server}/themes/save`, {
       method: "post",
       headers: {
@@ -42,7 +46,7 @@ function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
         themeId,
         category,
       }),
-      credentials:"include"
+      credentials: "include"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -62,7 +66,7 @@ function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
                 ...prev.slice(foundIndex + 1),
               ];
             } else {
-              return [...prev.slice(),                 {
+              return [...prev.slice(), {
                 id: themeId,
                 category: category
               }];
@@ -76,6 +80,25 @@ function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
       })
       .catch((error) => console.error(error));
   }, [themeId]);
+
+  const unSaveTheme = function (themeId) {
+    fetch(`${config.server}/themes/unsave`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        themeId,
+      }),
+      credentials: "include"
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setResponse(data);
+        setDisp("Save");
+        setIsOpen(false);
+      })
+  }
 
   useEffect(() => {
     const themeInfo = userThemes.find(theme => theme.id === themeId);
