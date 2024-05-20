@@ -208,42 +208,6 @@ Router.post("/save", async (req, res) => {
 
       const themeInfo = `${category}:${themeId}`;
       const connection = pool.promise();
-      /* const [update] = await connection.query(
-        `UPDATE users 
-        SET themes = CASE 
-          WHEN themes = '' THEN ?
-          ELSE CONCAT(themes, ',', ?) 
-          END WHERE user_id = ?`,
-        [themeInfo, themeInfo, userId]
-      ); */
-      /* connection.query(
-        `UPDATE users
-         SET themes = CASE
-           WHEN themes = '' THEN ?
-           WHEN themes LIKE ? THEN themes
-
-           WHEN themes LIKE ? OR themes LIKE ? OR themes LIKE ? OR themes LIKE ? OR themes LIKE ? OR themes LIKE ? THEN
-            SUBSTRING_INDEX(themes, ?, -1)
-
-           ELSE CONCAT(themes, ',', ?)
-         END
-         WHERE user_id = ?`,
-        [themeInfo, `%${themeInfo}%`, `%0:${themeId}%`, `%1:${themeId}%`, `%2:${themeId}%`, `%3:${themeId}%`, `%4:${themeId}%`, `%5:${themeId}%`, `` `%${userId},%`, themeInfo, userId],
-      ); */
-      /*       connection.query(
-              `UPDATE users
-               SET themes = CASE
-                 WHEN themes = '' THEN ?
-                 WHEN themes LIKE ? THEN themes
-      
-                 WHEN themes LIKE ? THEN
-                 CONCAT(REPLACE(themes, ?, ?), SUBSTRING_INDEX(themes, ?, -1))
-      
-                 ELSE CONCAT(themes, ',', ?)
-               END
-               WHERE user_id = ?`,
-              [themeInfo, `%${themeInfo}%`,  `%:${themeId}%`, `:${themeId}`, themeInfo, `:${themeId}`, themeInfo, userId],
-            ); */
 
       const [[userInfo]] = await connection.query(
         `SELECT themes from users WHERE user_id = ?`,
@@ -267,6 +231,49 @@ Router.post("/save", async (req, res) => {
       redisClient.zIncrBy(`theme:${themeId}:weekUsage`, 1, weekDay.toString());
       mainIo.emit(`used:${themeId}`);
       res.send({ success: true, msg: "Theme Saved" });
+    } catch (error) {
+      console.log(error);
+      res.send({ success: false, reason: "An Error Occured" });
+    }
+  });
+});
+
+
+Router.post("/unsave", async (req, res) => {
+  autoSignin(req, res, async () => {
+    try {
+      const userId = req.session.user_id;
+      const { themeId } = req.body;
+
+      const isValidThemeId = validateStrictString(themeId, "theme id");
+
+      if (!isValidThemeId.isValid) {
+        return res.send({ success: false, reason: isValidThemeId.reason });
+      }
+
+      const connection = pool.promise();
+
+      const [[userInfo]] = await connection.query(
+        `SELECT themes from users WHERE user_id = ?`,
+        [userId]
+      );
+
+      const themes = userInfo.themes === "" ? [] : userInfo.themes.split(",");
+      const oldThemeIndex = themes.findIndex((theme) =>
+        theme.includes(themeId)
+      );
+      if (oldThemeIndex !== -1) {
+        themes.splice(oldThemeIndex, 1);
+      }
+      await connection.query(`UPDATE users SET themes = ? WHERE user_id = ?`, [
+        themes.join(","),
+        userId,
+      ]);
+
+      const weekDay = DateTime.now().weekday - 1;
+      redisClient.zIncrBy(`theme:${themeId}:weekUsage`, -1, weekDay.toString());
+      mainIo.emit(`used:${themeId}`);
+      res.send({ success: true, msg: "Theme Unsaved" });
     } catch (error) {
       console.log(error);
       res.send({ success: false, reason: "An Error Occured" });
