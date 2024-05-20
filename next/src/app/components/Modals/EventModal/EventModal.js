@@ -168,7 +168,11 @@ function EventModal({}) {
     if (!id) return;
     const data = await fetch(`${config.server}/plan`, {
       method: "delete",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ id }),
+      credentials: 'include'
     }).then((res) => res.json());
 
     if (data.success) {

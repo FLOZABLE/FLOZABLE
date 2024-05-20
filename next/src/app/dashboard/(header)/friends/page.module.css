@@ -3,8 +3,7 @@
   height: calc(100vh - 14rem);
   padding: 1.875rem 3.125rem;
   justify-content: center;
-  margin-left: -1.25rem; 
-  overflow: hidden;
+  margin-left: -1.25rem;
 }
 
 .Friends .container > div:nth-child(1) {
@@ -12,12 +11,12 @@
   padding: 1.25rem;
 }
 
-.Friends .container  > div:nth-child(2) {
+.Friends .container > div:nth-child(2) {
   width: 50%;
   padding: 1.25rem;
 }
 
-.Friends .container  > div:nth-child(3) {
+.Friends .container > div:nth-child(3) {
   width: 25%;
   padding: 1.25rem;
 }
@@ -85,12 +84,12 @@
   .Friends .container > div:nth-child(1) {
     padding: 0.625rem;
   }
-  
-  .Friends .container  > div:nth-child(2) {
+
+  .Friends .container > div:nth-child(2) {
     padding: 0.625rem;
   }
-  
-  .Friends .container  > div:nth-child(3) {
+
+  .Friends .container > div:nth-child(3) {
     padding: 0.625rem;
   }
 
@@ -98,10 +97,10 @@
     margin-bottom: 0.938rem;
     height: calc(50% - 0.4688rem);
   }
-  
+
   .Friends .container > div:nth-child(2) .box > div {
     padding: 0.938rem;
-    height: calc(100% -  3.75rem);
+    height: calc(100% - 3.75rem);
   }
 }
 
@@ -118,12 +117,12 @@
   .Friends .container > div:nth-child(1) {
     width: 30%;
   }
-  
-  .Friends .container  > div:nth-child(2) {
+
+  .Friends .container > div:nth-child(2) {
     width: 40%;
   }
-  
-  .Friends .container  > div:nth-child(3) {
+
+  .Friends .container > div:nth-child(3) {
     width: 30%;
   }
 }
@@ -134,6 +133,6 @@
   padding-left: 3.125rem;
 }
 
-.Friends .box#activeFriends>div h3 {
+.Friends .box#activeFriends > div h3 {
   font-size: 1.8rem;
 }
