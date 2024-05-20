@@ -4,12 +4,13 @@ import React, { useState, useEffect, useContext } from "react";
 import styles from "./WelcomeModal.module.css";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import Confetti from "react-confetti";
-import { UserInfoContext } from "@/app/utils/Contexts";
+import { UserInfoContext, TutorialsContext } from "@/app/utils/Contexts";
 
-function WelcomeModal({}) {
+function WelcomeModal({ }) {
   const [isModal, setIsModal] = useState(false);
   const { userInfo } = useContext(UserInfoContext);
   const [confettiEl, setConfettiEl] = useState(null);
+  const { setTutorial } = useContext(TutorialsContext);
 
   const [windowConfiguration, setWindowConfiguration] = useState({
     width: 0,
@@ -61,7 +62,8 @@ function WelcomeModal({}) {
             <BlobBtn
               onClick={() => {
                 setIsModal(false);
-                navigate("/dashboard?tutorial=1");
+                setTutorial(1);
+                //navigate("/dashboard?tutorial=1");
               }}
               color1={"#fff"}
               color2={"var(--purple2)"}
