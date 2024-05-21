@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useContext } from "react";
 import styles from "./page.module.css";
 import EventPlanner from "@/app/components/Plans/EventPlanner/EventPlanner";
 import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
