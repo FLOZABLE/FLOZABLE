@@ -22,7 +22,7 @@ const {
   subjectCache,
 } = require("../services/redisLoader");
 const { mainIo } = require("../sockets/mainIo");
-const { MAX_STUDY_TIME } = require("../Constants");
+const { MAX_STUDY_TIME } = require("../Constant");
 
 /**create bots */
 async function createBots(length) {

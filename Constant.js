@@ -20,11 +20,26 @@ const colorsList = [
 ];
 
 const responseCodes = {
-  'no-user': {
+  "no-user": {
     success: false,
-    reason: 'Invalid User',
-    code: 401
+    reason: "Invalid User",
+    code: 401,
   },
-}
+};
 
-module.exports = {colorsList, responseCodes};
+const USER_ID_COOKIE_OPTIONS = {
+  maxAge: 1000 * 60 * 60 * 24 * 30,
+  secure: true,
+  httpOnly: true,
+  signed: true,
+  sameSite: "strict",
+};
+
+const MAX_STUDY_TIME = 60 * 60 * 20; // 20hr = max study time. ignore more than 6 hr
+
+module.exports = {
+  colorsList,
+  responseCodes,
+  MAX_STUDY_TIME,
+  USER_ID_COOKIE_OPTIONS,
+};

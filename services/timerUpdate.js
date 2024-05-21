@@ -3,7 +3,7 @@ const pool = require("../model/pool");
 const { activeSubjectCache, subjectsCache, timerCache } = require("./redisLoader");
 const { getMidnightTimezones } = require("../tool");
 const { mainIo } = require("../sockets/mainIo");
-const { MAX_STUDY_TIME } = require("../Constants");
+const { MAX_STUDY_TIME } = require("../Constant");
 
 async function timerUpdate() {
   const now = Math.floor(new Date().getTime() / 1000);
