@@ -2,6 +2,10 @@
   stroke-dashoffset: 0;
 }
 
+.CircularCheckBox.hover .check {
+  stroke-dashoffset: 0;
+}
+
 .CircularCheckBox {
   position: relative;
   display: inline-block;
