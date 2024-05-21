@@ -264,15 +264,15 @@ Router.post("/unsave", async (req, res) => {
       );
       if (oldThemeIndex !== -1) {
         themes.splice(oldThemeIndex, 1);
+        const weekDay = DateTime.now().weekday - 1;
+        redisClient.zIncrBy(`theme:${themeId}:weekUsage`, -1, weekDay.toString());
+        mainIo.emit(`unused:${themeId}`);
       }
       await connection.query(`UPDATE users SET themes = ? WHERE user_id = ?`, [
         themes.join(","),
         userId,
       ]);
 
-      const weekDay = DateTime.now().weekday - 1;
-      redisClient.zIncrBy(`theme:${themeId}:weekUsage`, -1, weekDay.toString());
-      mainIo.emit(`used:${themeId}`);
       res.send({ success: true, msg: "Theme Unsaved" });
     } catch (error) {
       console.log(error);
