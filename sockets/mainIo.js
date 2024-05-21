@@ -5,7 +5,7 @@ const { generateRandomId } = require('../tool');
 const { extensionIo } = require('./extensionIo');
 const { io } = require('./io');
 const pool = require('../model/pool');
-const { MAX_STUDY_TIME } = require('../Constants');
+const { MAX_STUDY_TIME } = require('../Constant');
 
 const mainIo = io.of('/');
 mainIo.on('connection', (socket) => {

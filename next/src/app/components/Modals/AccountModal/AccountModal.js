@@ -8,12 +8,11 @@ import {
   faUser,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import config from "@/app/utils/config";
 import {
   ModalsContext,
   ResponseContext,
-  TutorialsContext,
   UserInfoContext,
 } from "@/app/utils/Contexts";
 import ArrowOptionBtn from "@/app/components/Buttons/ArrowOptionBtn/ArrowOptionBtn";
@@ -23,7 +22,6 @@ import { useRouter } from "next/navigation";
 
 function AccountModal({}) {
   const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
-  const { setTutorial } = useContext(TutorialsContext);
   const { bringAccountInfo } = useContext(UserInfoContext);
   const { setResponse } = useContext(ResponseContext);
 
@@ -114,7 +112,6 @@ function AccountModal({}) {
                       bringAccountInfo();
                       if (isNew) {
                         router.push("/dashboard?welcome=true");
-                        setTutorial(1);
                       }
                     }
                   });

@@ -7,11 +7,10 @@ import config from "@/app/utils/config";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
 
-export default function ({ plan, children }) {
+export default function Plan({ plan, children }) {
   const { plans, setPlanModal, setPlans } = useContext(PlansContext);
 
   const [hover, setHover] = useState(false);
-  const [checked, setChecked] = useState(false);
 
   const togglePlan = useCallback(() => {
     const eventIndex = plans.findIndex((planInfo) => planInfo.id === plan.id);

@@ -3,7 +3,7 @@ const schedule = require('node-schedule');
 const pool = require('../model/pool');
 const redisClient = require('../model/redis');
 const { getActiveUsers } = require('./redisLoader');
-const { MAX_STUDY_TIME } = require('../Constants');
+const { MAX_STUDY_TIME } = require('../Constant');
 
 async function updateRanking() {
   console.log("update ranking")

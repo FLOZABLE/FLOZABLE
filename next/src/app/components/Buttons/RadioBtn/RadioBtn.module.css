@@ -53,10 +53,11 @@
   font-size: 1.1rem;
 }
 
-.RadioBtnContainer .selectorItemRadio:checked+.selectorItemLabel {
+.RadioBtnContainer .selectorItemRadio:checked + .selectorItemLabel {
   background-color: #4169e1;
   color: #fff;
-  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.5), 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.5),
+    0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
   transform: translateY(-0.125rem);
 }
 
@@ -72,10 +73,9 @@
   }
 
   .RadioBtnContainer .selector {
-    height:  3.75rem;
+    height: 3.75rem;
   }
 
   .RadioBtnContainer .selectorItemLabel {
-
   }
 }

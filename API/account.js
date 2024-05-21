@@ -31,10 +31,77 @@ const {
   cacheUserInfo,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
-const { responseCodes } = require("../Constant");
+const { responseCodes, USER_ID_COOKIE_OPTIONS } = require("../Constant");
 const fetch = require("node-fetch");
 const { extensionIo } = require("../sockets/extensionIo");
 const upload = multer();
+
+async function createAccount(name, email, timezone, userInfo) {
+  try {
+    if (!isValidTimeZone(timezone)) {
+      timezone = "UTC";
+    }
+    const userDateTime = DateTime.now().setZone(timezone);
+    // Set the time to 12:00 AM
+    const twelveAmDateTime = userDateTime.set({ millisecond: 0 });
+    // Get the Unix timestamp in seconds
+    const datum_point = twelveAmDateTime.toSeconds();
+    // Sanitize inputs
+    //check email
+    const isValidEmail = validateEmail(email);
+    if (!isValidEmail.isValid) {
+      return { success: false, reason: isValidEmail.reason };
+    }
+    const isValidName = validateStrictString(name, "Name");
+    if (!isValidName.isValid) {
+      return { success: false, reason: isValidName.reason };
+    }
+    const connection = pool.promise();
+    const [[checkEmail]] = await connection.query(
+      "SELECT email FROM users WHERE email = ?",
+      email
+    );
+    if (checkEmail) {
+      return { success: false, reason: "EMAIL ALREADY IN USE" };
+    }
+
+    const user_id = generateRandomId(10);
+    const key_salt = crypto.randomBytes(32).toString("hex");
+    const iv = crypto.randomBytes(16).toString("hex");
+    const user = {
+      name,
+      email,
+      user_id,
+      timezone,
+      datum_point,
+      key_salt,
+      iv,
+      ...userInfo,
+    };
+    connection.query("INSERT INTO users SET ?", user);
+    cacheUserInfo(user);
+    //create default subject
+    const subjectId = generateRandomId(10);
+    const suvject_datum_point = Math.floor(new Date().getTime() / 1000);
+    const subject = {
+      id: subjectId,
+      name: "others",
+      user_id,
+      icon: "others",
+      color: "#000000",
+      datum_point: suvject_datum_point,
+      hidden: -2, //-2 hidden means it's not editable
+    };
+    connection.query(`INSERT INTO subjects SET ?`, subject);
+
+    const authId = generateRandomId(10);
+    await redisClient.setEx(`extension:auth:${authId}`, 10, user_id);
+
+    return { success: true, user_id };
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 Router.get("/accountinfo", async (req, res) => {
   autoSignin(
@@ -173,87 +240,40 @@ Router.get("/verify-by-link", (req, res) => {
 Router.post("/signup-authentication", async (req, res) => {
   try {
     let { email, name, password, timeZone } = req.body;
-    if (!isValidTimeZone(timeZone)) {
-      timeZone = "UTC";
-    }
-    const userDateTime = DateTime.now().setZone(timeZone);
-    // Set the time to 12:00 AM
-    const twelveAmDateTime = userDateTime.set({ millisecond: 0 });
-    // Get the Unix timestamp in seconds
-    const unixTimestamp = twelveAmDateTime.toSeconds();
-    // Sanitize inputs
-    //check email
-    const isValidEmail = validateEmail(email);
-    if (!isValidEmail.isValid) {
-      return res.send({ success: false, reason: isValidEmail.reason });
-    }
-    const isValidName = validateStrictString(name, "Name");
-    if (!isValidName.isValid) {
-      return res.send({ success: false, reason: isValidName.reason });
-    }
+
     const isValidPassword = validatePassword(password, 30);
+
     if (!isValidPassword.isValid) {
       return res.send({ success: false, reason: isValidPassword.reason });
     }
-    const connection = pool.promise();
-    const [[checkEmail]] = await connection.query(
-      "SELECT email FROM users WHERE email = ?",
-      email
-    );
-    if (checkEmail) {
-      return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
-    }
+
     const [salt, hashed_password] = hashing(password);
-    const userId = generateRandomId(10);
-    const keySalt = crypto.randomBytes(32).toString("hex");
-    const iv = crypto.randomBytes(16).toString("hex");
-    const user = {
-      name,
-      email,
-      hashed_password,
+
+    const response = await createAccount(name, email, timeZone, {
       salt,
-      user_id: userId,
-      timezone: timeZone,
-      datum_point: unixTimestamp,
-      key_salt: keySalt,
-      iv: iv,
-    };
-    connection.query("INSERT INTO users SET ?", user);
-    cacheUserInfo(user);
-    //create default subject
-    const subjectId = generateRandomId(10);
-    const datum_point = Math.floor(new Date().getTime() / 1000);
-    const subject = {
-      id: subjectId,
-      name: "others",
-      user_id: userId,
-      icon: "others",
-      color: "#000000",
-      datum_point,
-      hidden: -2, //-2 hidden means it's not editable
-    };
-    connection.query(`INSERT INTO subjects SET ?`, subject);
+      hashed_password,
+    });
+
+    const { success, user_id } = response;
+
+    if (!success) {
+      return res.send(response);
+    }
+
     req.session.regenerate((err) => {
       if (err) {
         console.log("Error regenerating session ID:", err);
         res.send({ success: false, reason: "SESSION ERROR" });
         return;
       }
-      req.session.user_id = userId;
-      req.session.timezone = timeZone;
+      req.session.user_id = user_id;
     });
-    const authId = generateRandomId(10);
-    await redisClient.setEx(`extension:auth:${authId}`, 10, userId);
-    res.cookie("userId", userId, {
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-      secure: true,
-      httpOnly: true,
-      signed: true,
-      sameSite: "strict",
-    });
-    res.send({ success: true });
+
+    res.cookie("userId", user_id, USER_ID_COOKIE_OPTIONS);
+
+    res.send({ success: true, msg: "Login to Your Account!" });
   } catch (err) {
-    res.send({ success: false, reason: "Error" });
+    console.log(err);
   }
 });
 
@@ -365,7 +385,7 @@ Router.get("/google-signin", (req, res) => {
 });
 
 Router.post("/signin-with-google", async (req, res) => {
-  let { access_token, timezone } = req.body;
+  const { access_token, timezone } = req.body;
 
   if (!access_token)
     return res.send({ success: false, reason: "access token required" });
@@ -388,7 +408,7 @@ Router.post("/signin-with-google", async (req, res) => {
         const connection = pool.promise();
 
         const [[userInfo]] = await connection.query(
-          `SELECT user_id, timezone FROM users WHERE email = ?`,
+          `SELECT user_id FROM users WHERE email = ?`,
           [email]
         );
 
@@ -401,91 +421,34 @@ Router.post("/signin-with-google", async (req, res) => {
             }
 
             req.session.user_id = userInfo.user_id;
-            req.session.timezone = userInfo.timezone;
 
-            res.cookie("userId", userInfo.user_id, {
-              maxAge: 1000 * 60 * 60 * 24 * 30,
-              secure: true,
-              httpOnly: true,
-              signed: true,
-              sameSite: "strict",
-            });
+            res.cookie("userId", userInfo.user_id, USER_ID_COOKIE_OPTIONS);
             res.send({ success: true, msg: "Success", newUser: false });
           });
 
           return;
         }
 
-        //No existing user, create account
-        if (!isValidTimeZone(timezone)) {
-          timezone = "UTC";
-        }
-        const userDateTime = DateTime.now().setZone(timezone);
+        //new user
 
-        const twelveAmDateTime = userDateTime.set({ millisecond: 0 });
+        const response = await createAccount(name, email, timezone);
 
-        const unixTimestamp = twelveAmDateTime.toSeconds();
+        const { success, user_id } = response;
 
-        const isValidEmail = validateEmail(email);
-        if (!isValidEmail.isValid) {
-          return res.send({ success: false, reason: isValidEmail.reason });
-        }
-        const isValidName = validateStrictString(name, "Name");
-        if (!isValidName.isValid) {
-          return res.send({ success: false, reason: isValidName.reason });
+        if (!success) {
+          return res.send(response);
         }
 
-        const [[checkEmail]] = await connection.query(
-          "SELECT email FROM users WHERE email = ?",
-          email
-        );
-        if (checkEmail) {
-          return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
-        }
-        const userId = generateRandomId(10);
-        const keySalt = crypto.randomBytes(32).toString("hex");
-        const iv = crypto.randomBytes(16).toString("hex");
-        const user = {
-          name,
-          email,
-          user_id: userId,
-          timezone,
-          datum_point: unixTimestamp,
-          key_salt: keySalt,
-          iv: iv,
-        };
-        cacheUserInfo(user);
-        connection.query("INSERT INTO users SET ?", user);
-        //create default subject
-        const subjectId = generateRandomId(10);
-        const datum_point = Math.floor(new Date().getTime() / 1000);
-        const subject = {
-          id: subjectId,
-          name: "others",
-          user_id: userId,
-          icon: "others",
-          color: "#000000",
-          datum_point,
-        };
-        connection.query(`INSERT INTO subjects SET ?`, subject);
         req.session.regenerate((err) => {
           if (err) {
             console.log("Error regenerating session ID:", err);
             res.send({ success: false, reason: "SESSION ERROR" });
             return;
           }
-          req.session.user_id = userId;
-          req.session.timezone = timezone;
+          req.session.user_id = user_id;
         });
-        const authId = generateRandomId(10);
-        await redisClient.setEx(`extension:auth:${authId}`, 10, userId);
-        res.cookie("userId", userId, {
-          maxAge: 1000 * 60 * 60 * 24 * 30,
-          secure: true,
-          httpOnly: true,
-          signed: true,
-          sameSite: "strict",
-        });
+
+        res.cookie("userId", user_id, USER_ID_COOKIE_OPTIONS);
 
         res.send({ success: true, msg: "Success", newUser: true });
       });
@@ -542,7 +505,7 @@ Router.post("/update/info", async (req, res) => {
         "SELECT email, user_id FROM users WHERE email = ?",
         email
       );
-      console.log(userId, checkEmail, userId)
+      console.log(userId, checkEmail, userId);
 
       if (checkEmail && checkEmail.user_id !== userId) {
         return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
@@ -672,25 +635,25 @@ Router.post("/update/extension-setting-update", async (req, res) => {
       //d: domain, b: block, t: timer
       if (target === "block") {
         activitySettings[d] = {
-          ... activitySettings[d],
+          ...activitySettings[d],
           b: value ? 1 : 0,
         };
       } else if (target === "blockstudy") {
         activitySettings[d] = {
-          ... activitySettings[d],
+          ...activitySettings[d],
           bs: value ? 1 : 0,
         };
       } else if (target === "timer") {
         activitySettings[d] = {
-          ... activitySettings[d],
+          ...activitySettings[d],
           t: value ? 1 : 0,
         };
       } else {
         activitySettings[d] = {
-          ... activitySettings[d],
+          ...activitySettings[d],
           ts: value ? 1 : 0,
         };
-      };
+      }
 
       await connection.query(
         `
