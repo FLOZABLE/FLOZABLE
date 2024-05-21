@@ -18,7 +18,13 @@ export default function Premium() {
       <div className={`Main`}>
         {/* <div className="title"></div> */}
         <div className={styles.Premium}>
-          <div className={styles.quote}>
+          <div
+            className={`${styles.quote} jost textGradient`}
+            style={{
+              "--primary": "#517dff",
+              "--secondary": "rgb(66, 186, 255)",
+            }}
+          >
             Go Premium. Get Better Productivity.
           </div>
           <div>
@@ -50,7 +56,7 @@ export default function Premium() {
                 </div>
                 <div className={`${styles.price} jost`}>
                   <small>$</small>
-                  2.99
+                  {type ? 29.99 : 3.99}
                 </div>
                 {premiumFeatures[0].map((feature, i) => {
                   return (
@@ -83,7 +89,7 @@ export default function Premium() {
                 </div>
                 <div className={`${styles.price} jost`}>
                   <small>$</small>
-                  2.99
+                  {type ? 39.99 : 5.99}
                 </div>
                 {premiumFeatures[0].map((feature, i) => {
                   return (
