@@ -17,52 +17,19 @@ import CircularCheckBox from "@/app/components/Buttons/CircularCheckBox/Circular
 import { subjectIcons } from "@/app/utils/Constant";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Plan from "../Plan/Plan";
 
 function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
   const { subjects } = useContext(SubjectsContext);
-  const { plans, setPlans, setPlanModal } = useContext(PlansContext);
+  const { plans, setPlanModal } = useContext(PlansContext);
 
   const [planSeries, setPlanSeries] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
   //const searchParams = useSearchParams();
   const addBtnRef = useRef(null);
   const containerRef = useRef(null);
-
-  const togglePlan = (plan) => {
-    const eventIndex = plans.findIndex((planInfo) => planInfo.id === plan.id);
-    if (eventIndex !== -1) {
-      const updatedEvents = [...plans];
-      updatedEvents[eventIndex] = {
-        ...updatedEvents[eventIndex],
-        completed: plan.completed ? 0 : 1,
-        className: plan.completed ? "" : "completed",
-      };
-      const planInfo = {
-        id: plan.id,
-        completed: plan.completed ? 0 : 1,
-      };
-
-      delete planInfo.saved;
-      fetch(`${config.server}/plan/status-change`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(planInfo),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            setPlans(updatedEvents);
-            //setPlanModal((prev) => ({...prev, opened: false}));
-          }
-        })
-        .catch((error) => console.error(error));
-    }
-  };
 
   useEffect(() => {
     if (!subjects.length || !filteredPlans.length) return;
@@ -215,63 +182,25 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {
               return subject.id === plan.subject;
             });
 
-            const dispStart = DateTime.fromJSDate(plan.start).toLocaleString(
+            plan.dispStart = DateTime.fromJSDate(plan.start).toLocaleString(
               DateTime.TIME_SIMPLE
             );
-            const dispEnd = DateTime.fromJSDate(plan.end).toLocaleString(
+            plan.dispEnd = DateTime.fromJSDate(plan.end).toLocaleString(
               DateTime.TIME_SIMPLE
             );
+
             let icon;
-            let color = "#fff";
+            plan.color = "#fff";
             if (planSubject) {
-              color = planSubject.color;
+              plan.color = planSubject.color;
               icon = subjectIcons[planSubject.icon];
             }
 
             if (!icon) {
               icon = <Alert />;
             }
-            return (
-              <li className={styles.plan} key={i}>
-                <div className={styles.iconWrapper}>
-                  <div style={{ color }} className={styles.icon}>
-                    {icon}
-                  </div>
-                  <div
-                    className={styles.hoverDisp}
-                    onClick={() => {
-                      togglePlan(plan);
-                    }}
-                  >
-                    <CircularCheckBox checked={plan.completed} />
-                  </div>
-                </div>
-                <div className={styles.content}>
-                  <div className={styles.title}>
-                    <h2>{plan.title}</h2>
-                    <div
-                      className={`${styles.line} ${
-                        plan.completed ? styles.completed : ""
-                      }`}
-                    ></div>
-                  </div>
-                  <p>
-                    ({dispStart}-{dispEnd})
-                  </p>
-                  <div className={`${styles.description} customScroll`}>
-                    {plan.description ? parse(plan.description) : ""}
-                  </div>
-                  <div
-                    className={styles.modifyPlan}
-                    onClick={() => {
-                      setPlanModal({ ...plan, opened: true });
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faEllipsis} />
-                  </div>
-                </div>
-              </li>
-            );
+
+            return <Plan plan={plan} key={i}>{icon}</Plan>;
           })}
         </ul>
       ) : null}
