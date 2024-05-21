@@ -13,7 +13,7 @@ function SubjecTimer({
   selectedSubject,
   setSelectedSubject
 }) {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects, setSubjects } = useContext(SubjectsContext);
   const { setIsAddSubjectModal } = useContext(ModalsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } = useContext(TutorialsContext);
@@ -83,8 +83,10 @@ function SubjecTimer({
   useEffect(() => {
     if (!subjects.length) return;
     setSubjectOptions([...subjects]);
-    setSelectedSubject(subjects[0]);
-    setSubjectTimer({ total: subjects[0].daily.total[subjects[0].daily.total.length - 1] });
+    if (selectedSubject.default) { //is the default object, not previously selected subject
+      setSelectedSubject(subjects[0]);
+      setSubjectTimer({ total: subjects[0].daily.total[subjects[0].daily.total.length - 1] });
+    }
     const timerValueObj = {};
     subjects.map((subject) => {
       timerValueObj[subject.id] = subject.daily.total[subject.daily.total.length - 1];
@@ -94,16 +96,40 @@ function SubjecTimer({
 
   const toggleTimer = (subject) => {
     if (!subject) return;
+    console.log(subjectsTimerWorkerRef?.current);
+    if (!!subjectsTimerWorkerRef?.current) {
+      subjectsTimerWorkerRef.current["subjectId"] = subject.id;
+    }
     if (!timerActive) {
       subjectsTimerWorkerRef?.current?.postMessage({ command: "startSubjectTimer" });
       socket.emit("start", subject.id);
     } else {
       subjectsTimerWorkerRef?.current?.postMessage({ command: "stopSubjectTimer" });
       socket.emit("stop", subject.id);
+      setSubjects((prev) => {
+        const newState = subjects.map((currentSubject) => {
+          if (currentSubject.id === subject.id) {
+            return {
+              ...currentSubject,
+              daily: {
+                ...currentSubject.daily,
+                total: [...currentSubject.daily.total.slice(0, currentSubject.daily.total.length - 1), timerValues[currentSubject.id]]
+              }
+            }
+          }
+          return {
+            ...currentSubject
+          }
+        });
+        newState.daily = prev.daily;
+        newState.weekly = prev.weekly;
+        newState.monthly = prev.monthly;
+
+        return newState;
+      })
     }
     setTimerActive(!timerActive);
   };
-
 
   useEffect(() => {
     const messageHandler = (e) => {
