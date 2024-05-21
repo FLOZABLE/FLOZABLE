@@ -1,10 +1,10 @@
 import styles from "./CircularCheckBox.module.css";
 import React from 'react';
 
-function CircularCheckBox({ checked }) {
+function CircularCheckBox({ checked, hover }) {
   return (
-    <div className={styles.CircularCheckBox}>
-      <input type="checkbox" defaultChecked={checked} />
+    <div className={`${styles.CircularCheckBox} ${hover ? styles.hover : ''}`}>
+      <input type="checkbox" checked={checked} />
       <svg viewBox="0 0 35.6 35.6">
         <circle
           className={styles.background}
