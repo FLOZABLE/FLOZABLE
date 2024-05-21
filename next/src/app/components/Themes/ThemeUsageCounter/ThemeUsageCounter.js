@@ -9,6 +9,9 @@ function ThemeUsageCounter({ initialVal, themeId }) {
     const onUsed = () => {
       setCount((prev) => prev + 1);
     };
+    const onUnused = () => {
+      setCount((prev) => prev - 1);
+    };
 
     /* const onRemoveMember = (userId) => {
       //const newMembers = members
@@ -16,9 +19,11 @@ function ThemeUsageCounter({ initialVal, themeId }) {
     }; */
 
     socket.on(`used:${themeId}`, onUsed);
+    socket.on(`unused:${themeId}`, onUnused);
     //socket.on(`removeMember:${groupId}`, onRemoveMember);
     return () => {
       socket.off(`used:${themeId}`, onUsed);
+      socket.off(`unused:${themeId}`, onUnused);
       //socket.off(`removeMember:${groupId}`, onRemoveMember);
     };
   }, [themeId]);
