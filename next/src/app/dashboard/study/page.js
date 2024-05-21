@@ -18,7 +18,7 @@ import StudySubjectTools from "@/app/components/Study/StudySubjectTools/StudySub
 
 function Study() {
   const [isPlannerModal, setIsPlannerModal] = useState(false);
-  const [selectedSubject, setSelectedSubject] = useState({ daily: { total: [0] }});
+  const [selectedSubject, setSelectedSubject] = useState({ default: true, daily: { total: [0] }});
   const [isTimerModal, setIsTimerModal] = useState(true);
   const [isPlaylistModal, setIsPlaylistModal] = useState(false);
   const [isTemplateModal, setIsTemplateModal] = useState(false);
