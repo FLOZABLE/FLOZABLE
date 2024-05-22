@@ -76,8 +76,17 @@ async function activitySettingsMigration() {
   console.log('activity setting migration complete', Date.now());
 }
 
+async function addStripeId() {
+  const connection = pool.promise();
+  
+  await connection.query(
+    `ALTER TABLE users ADD stripe_id VARCHAR(30);`
+  );
+}
+
 module.exports = {
   updateSubjectsTimeline,
   redisUsersCache,
   activitySettingsMigration,
+  addStripeId
 };
