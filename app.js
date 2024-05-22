@@ -270,7 +270,8 @@ const {
 const {
   updateSubjectsTimeline,
   redisUsersCache,
-  activitySettingsMigration
+  activitySettingsMigration,
+  addStripeId
 } = require("./Utils/migration");
 const { DateTime } = require("luxon");
 
@@ -292,6 +293,7 @@ const { DateTime } = require("luxon");
 
 //updateSubjectsTimeline(161);
 //activitySettingsMigration();
+//addStripeId();
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
