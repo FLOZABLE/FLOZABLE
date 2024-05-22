@@ -7,6 +7,8 @@ const sharp = require("sharp");
 const multer = require("multer");
 const webpush = require("web-push");
 const { DateTime } = require("luxon");
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
+
 const {
   hashing,
   autoSignin,
@@ -63,7 +65,12 @@ async function createAccount(name, email, timezone, userInfo) {
     );
     if (checkEmail) {
       return { success: false, reason: "EMAIL ALREADY IN USE" };
-    }
+    };
+
+    const customer = await stripe.customers.create({
+      name,
+      email,
+    });
 
     const user_id = generateRandomId(10);
     const key_salt = crypto.randomBytes(32).toString("hex");
@@ -77,7 +84,9 @@ async function createAccount(name, email, timezone, userInfo) {
       key_salt,
       iv,
       ...userInfo,
+      stripe_id: customer.id
     };
+    
     connection.query("INSERT INTO users SET ?", user);
     cacheUserInfo(user);
     //create default subject
