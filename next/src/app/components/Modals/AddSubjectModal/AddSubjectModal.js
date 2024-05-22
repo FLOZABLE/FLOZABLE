@@ -16,6 +16,7 @@ import {
   ResponseContext,
   SubjectsContext,
   TutorialsContext,
+  WorkersContext
 } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
@@ -24,13 +25,14 @@ import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import config from "@/app/utils/config";
 import { sortNewSubject } from "@/app/utils/timelineSorting";
+import { socket } from "@/app/utils/socket";
 
-function AddSubjectModal({}) {
+function AddSubjectModal({ }) {
   const { subjects, setSubjects } = useContext(SubjectsContext);
   const { setResponse } = useContext(ResponseContext);
   const { isAddSubjectModal, setIsAddSubjectModal } = useContext(ModalsContext);
-  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
-    useContext(TutorialsContext);
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } = useContext(TutorialsContext);
+  const { subjectsTimerWorkerRef } = useContext(WorkersContext);
 
   const [name, setName] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
@@ -40,6 +42,16 @@ function AddSubjectModal({}) {
   const router = useRouter();
 
   const addSubjectModalRef = useRef(null);
+
+  useEffect(() => {
+    if (isAddSubjectModal) {
+      const subjectId = subjectsTimerWorkerRef?.current?.subjectId;
+      if (subjectId) {
+        subjectsTimerWorkerRef?.current?.postMessage({ command: "stopSubjectTimer" });
+        socket.emit("stop", subjectId);
+      }
+    }
+  }, [isAddSubjectModal]);
 
   useEffect(() => {
     if (tutorial === 4) {
@@ -81,15 +93,15 @@ function AddSubjectModal({}) {
         if (data.success) {
           const newSubject = sortNewSubject(subjects, data.info.subjectInfo);
           setIsAddSubjectModal(false);
-          setSubjects((prevSubjects) => {
-            const newState = [...prevSubjects];
-            newState.push(newSubject);
-            newState.daily = prevSubjects.daily;
-            newState.monthly = prevSubjects.monthly;
-            newState.weekly = prevSubjects.weekly;
 
-            return newState;
-          });
+          let newState;
+          newState = [...subjects];
+          newState.push(newSubject);
+          newState.daily = subjects.daily;
+          newState.monthly = subjects.monthly;
+          newState.weekly = subjects.weekly;
+          setSubjects(newState);
+
           //clear new subject info from modal
           setSelectedColor(null);
           setSelectedIcon({ name: null, el: null });
@@ -100,14 +112,13 @@ function AddSubjectModal({}) {
         }
       })
       .catch((error) => console.error(error));
-  }, [selectedColor, selectedIcon, name, tutorial]);
+  }, [selectedColor, selectedIcon, name, tutorial, subjects]);
 
   return (
     <Draggable nodeRef={addSubjectModalRef} handle=".header">
       <div
-        className={`${styles.AddSubjectModal} modal ${
-          isAddSubjectModal ? "open" : ""
-        }`}
+        className={`${styles.AddSubjectModal} modal ${isAddSubjectModal ? "open" : ""
+          }`}
         ref={addSubjectModalRef}
       >
         <div className={`${styles.header} header`}>
