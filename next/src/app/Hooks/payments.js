@@ -3,13 +3,22 @@
 import { useQuery } from "@tanstack/react-query";
 import config from "../utils/config";
 
-const useStripeClientSecret = () => {
+const useStripeClientSecret = (priceId) => {
   const { isPending, error, data } = useQuery({
     queryFn: () =>
-      fetch(`${config.server}/payment/client-secret`).then((res) => res.json()),
+      fetch(`${config.server}/payment/create-checkout-session`, {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: {
+          priceId
+        }
+      }).then((res) => res.json()),
   });
 
   return { isPending, error, data };
 };
 
-export {useStripeClientSecret};
+export { useStripeClientSecret };
