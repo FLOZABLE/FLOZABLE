@@ -97,30 +97,56 @@ const colorPaletteOptions = [
   },
 ];
 
-const premiumFeatures = [
-  [
-    "Advanced Study Analysis: Monitor productivity and progress.",
-    "Comparison Features: Compare metrics with friends.",
-    "Friend Limit: Up to 10 friends.",
-    "Discount on Study Icons: 20% off.",
-    "Theme Storage: Up to 10 themes.",
-    "Subjects Limit: Track up to 10 subjects.",
-    "Daily Email Report: Get daily progress reports.",
-    "Groups Limit: Join up to 5 groups.",
-  ],
-  [
-    "Priority Support: Faster response times.",
-    "Comparison Features: Compare metrics with a larger user base.",
-    "Friend Limit: Up to 50 friends.",
-    "Access to All Study Icons: Free access to all icons.",
-    "Theme Storage: Up to 30 themes.",
-    "Subjects Limit: Track up to 30 subjects.",
-    "Daily Email Report: Detailed progress reports.",
-    "Groups Limit: Join up to 20 groups.",
-    "Enhanced AI-Driven Learning: Advanced recommendations and personalized plans.",
-    "Advanced Timers and Gamification: Enhanced timers and challenges.",
-    "Comprehensive Analytics: In-depth study and productivity analysis.",
-  ],
+const PREMIUM = [
+  {
+    name: 'Advance',
+    monthly: {
+      cost: 3.99,
+      price_id: "price_1PIvJSKJPV0VFcSQWRF1HwWU",
+      product_id: "prod_Q9Dk1HcaaIq8fr"
+    },
+    yearly: {
+      cost: 29.99,
+      price_id: "price_1PIvKAKJPV0VFcSQFQI9SRIe",
+      product_id: "prod_Q9Dlfo9hR9DlgG"
+    },
+    features: [
+      "Advanced Study Analysis: Monitor productivity and progress.",
+      "Comparison Features: Compare metrics with friends.",
+      "Friend Limit: Up to 10 friends.",
+      "Discount on Study Icons: 20% off.",
+      "Theme Storage: Up to 10 themes.",
+      "Subjects Limit: Track up to 10 subjects.",
+      "Daily Email Report: Get daily progress reports.",
+      "Groups Limit: Join up to 5 groups.",
+    ]
+  },
+  {
+    name: 'Pro',
+    monthly: {
+      cost: 5.99,
+      price_id: "price_1PIvKdKJPV0VFcSQTfpt7cjK",
+      product_id: "prod_Q9Dmwyl0DPJNBW"
+    },
+    yearly: {
+      cost: 39.99,
+      price_id: "price_1PIvKwKJPV0VFcSQX7nl2Q9H",
+      product_id: "prod_Q9DmkG5DQ0hynq"
+    },
+    features:   [
+      "Priority Support: Faster response times.",
+      "Comparison Features: Compare metrics with a larger user base.",
+      "Friend Limit: Up to 50 friends.",
+      "Access to All Study Icons: Free access to all icons.",
+      "Theme Storage: Up to 30 themes.",
+      "Subjects Limit: Track up to 30 subjects.",
+      "Daily Email Report: Detailed progress reports.",
+      "Groups Limit: Join up to 20 groups.",
+      "Enhanced AI-Driven Learning: Advanced recommendations and personalized plans.",
+      "Advanced Timers and Gamification: Enhanced timers and challenges.",
+      "Comprehensive Analytics: In-depth study and productivity analysis.",
+    ]
+  }
 ];
 
 export {
@@ -130,5 +156,5 @@ export {
   coldColorsList,
   warmColorsList,
   colorPaletteOptions,
-  premiumFeatures,
+  PREMIUM,
 };

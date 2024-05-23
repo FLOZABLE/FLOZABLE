@@ -6,11 +6,15 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { PremiumGold, PremiumPremium } from "@/app/utils/Svg";
-import { premiumFeatures } from "@/app/utils/Constant";
+import { PREMIUM } from "@/app/utils/Constant";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
+import { useRouter } from "next/navigation";
 
 export default function Premium() {
+
+  const router = useRouter();
+
   const [type, setType] = useState(1);
 
   return (
@@ -58,7 +62,7 @@ export default function Premium() {
                   <small>$</small>
                   {type ? 29.99 : 3.99}
                 </div>
-                {premiumFeatures[0].map((feature, i) => {
+                {PREMIUM[0].features.map((feature, i) => {
                   return (
                     <div className={styles.item} key={i}>
                       <p>{feature}</p>
@@ -69,7 +73,11 @@ export default function Premium() {
                   );
                 })}
                 <div className={styles.blobWrapper}>
-                  <BlobBtn>Get Started</BlobBtn>
+                  <BlobBtn
+                  onClick={() => {
+                    router.push("/payment?product=")
+                  }}
+                  >Get Started</BlobBtn>
                 </div>
               </div>
               <div className={styles.itemCard}>
@@ -91,7 +99,7 @@ export default function Premium() {
                   <small>$</small>
                   {type ? 39.99 : 5.99}
                 </div>
-                {premiumFeatures[0].map((feature, i) => {
+                {PREMIUM[0].features.map((feature, i) => {
                   return (
                     <div className={styles.item} key={i}>
                       <p>{feature}</p>
