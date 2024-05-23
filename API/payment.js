@@ -1,13 +1,13 @@
-const stripe = require("stripe")(process.env.STRIPE_SECRET);
+//const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const express = require("express");
+const Router = express.Router();
 const { autoSignin } = require("../tool");
 const { responseCodes } = require("../Constant");
 const { userCache } = require("../services/redisLoader");
 const pool = require("../model/pool");
 const { validateString, validateURL } = require("../validate");
-const Router = express.Router();
 
-Router.get("/client-secret", async (req, res) => {
+/* Router.get("/client-secret", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const userInfo = await userCache(userId);
@@ -29,11 +29,18 @@ Router.get("/client-secret", async (req, res) => {
       console.log(err);
     }
   });
-});
+}); */
+
 
 Router.post("/create-checkout-session", async (req, res) => {
+  console.log(';gddddddd')
+})
+
+/* Router.post("/create-checkout-session", async (req, res) => {
+  console.log('gd', req.body)
   const { priceId, success_url, cancel_url } = req.body;
 
+  console.log('price', priceId)
   try {
     const isValidPriceId = validateString(priceId, "price id");
 
@@ -78,9 +85,9 @@ Router.post("/create-checkout-session", async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
-});
+}); */
 
-Router.get("/products", async (req, res) => {
+/* Router.get("/products", async (req, res) => {
   try {
     const prices = await stripe.products.list({
       limit: 10,
@@ -98,6 +105,6 @@ Router.get("/products", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
-});
+}); */
 
 module.exports = Router;

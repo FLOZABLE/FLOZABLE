@@ -2,7 +2,7 @@
 
 import PaymentForm from "@/app/components/Payment/PaymentForm/PaymentForm";
 import styles from "./page.module.css";
-import { Elements } from "@stripe/react-stripe-js";
+import { CustomCheckoutProvider, Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useStripeClientSecret } from "@/app/Hooks/payments";
 import { useState } from "react";
@@ -15,11 +15,15 @@ const appearance = {
 };
 
 export default function Payment() {
-  const { data } = useStripeClientSecret(priceId);
+  const [priceId, setPriceId] = useState(null);
+
+  const stripeClientSecretQuery = useStripeClientSecret(priceId);
+
+  const { data, error, isLoading } = stripeClientSecretQuery;
+
+  console.log('err', error)
 
   const searchParams = useSearchParams();
-
-  const [priceId, setPriceId] = useState(null);
 
 
   useState(() => {
@@ -32,14 +36,17 @@ export default function Payment() {
   return (
     <div className={styles.Payment}>
       <div className={styles.paymentContainer}>
-        {data?.secret ? (
+        {/* {data?.secret ? (
           <Elements
             stripe={stripePromise}
             options={{ clientSecret: data?.secret, appearance }}
           >
             <PaymentForm />
           </Elements>
-        ) : null}
+        ) : null} */}
+        {/* <CustomCheckoutProvider>
+
+        </CustomCheckoutProvider> */}
       </div>
     </div>
   );
