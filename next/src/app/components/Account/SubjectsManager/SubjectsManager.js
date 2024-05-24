@@ -68,31 +68,6 @@ function SubjectsManager() {
       .catch((error) => console.error(error));
   }, [selectedSubject]);
 
-  const restoreSubject = useCallback((subjectId, subjectName) => {
-    fetch(`${config.server}/study/restore-subject`,
-      {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          subjectId
-        }),
-        credentials: 'include'
-      }).then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setResponse({ success: true, msg: `Restored Subject ${subjectName}` });
-          setSubjects(subjects.map((subject) => {
-            if (subject.id === subjectId) {
-              return { ...subject, hidden: -1 };
-            }
-            return { ...subject };
-          }));
-        }
-      })
-  }, [subjects]);
-
   const deleteSubject = useCallback(() => {
     fetch(`${config.server}/study/delete-subject`,
       {
@@ -134,7 +109,7 @@ function SubjectsManager() {
           <div>
             <div className={styles.SubjectSelector}>
               {
-                subjects.filter((s) => s.hidden === -1).map((subject, i) => {
+                subjects.map((subject, i) => {
 
                   const StyleWrapper = styled.div`
                     div {
@@ -161,41 +136,6 @@ function SubjectsManager() {
                 })
               }
             </div>
-
-            <br /> <br />
-
-            {
-              subjects.filter((s) => s.hidden > 0).length ?
-                <div>
-                  <h2>Deleted Subjects</h2>
-                  <br />
-                  <table>
-                    <tbody>
-                      {
-                        subjects.filter((s) => s.hidden > 0).map((subject, i) => {
-                          return (
-                            <tr key={i}>
-                              <td>
-                                <i style={{ color: subject.color, width: "5rem", height: '5rem' }}>
-                                  {subjectIcons[subject.icon]}
-                                </i>
-                              </td>
-                              <td className={styles.restoreSubjectName}>
-                                {subject.name}
-                              </td>
-                              <td className={styles.restoreSubjectBtn} onClick={() => { restoreSubject(subject.id, subject.name) }}>
-                                Restore
-                              </td>
-                            </tr>
-                          );
-                        })
-                      }
-                    </tbody>
-                  </table>
-                </div>
-                :
-                null
-            }
           </div>
       }
     </div>

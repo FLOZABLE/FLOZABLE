@@ -126,8 +126,7 @@ function SubjectManager({
       {deleteConfirm ? (
         <div className={styles.confirmDelete}>
           <p>
-            Note: Deleted subjects will still be visible in stats if you&apos;ve
-            studied the subject today
+            Confirm? This action cannot be undone
           </p>
           <br />
         </div>
