@@ -33,20 +33,16 @@ const { validateString, validateURL } = require("../validate");
 
 
 Router.post("/create-checkout-session", async (req, res) => {
-  console.log(';gddddddd')
-})
-
-/* Router.post("/create-checkout-session", async (req, res) => {
   console.log('gd', req.body)
   const { priceId, success_url, cancel_url } = req.body;
 
   console.log('price', priceId)
   try {
-    const isValidPriceId = validateString(priceId, "price id");
+    /* const isValidPriceId = validateString(priceId, "price id", 200);
 
     if (!isValidPriceId.isValid) {
       return res.send({ success: false, reason: isValidPriceId.reason });
-    }
+    } */
 
     const isValidSuccessUrl = validateURL(
       success_url,
@@ -54,7 +50,7 @@ Router.post("/create-checkout-session", async (req, res) => {
       process.env.SERVER_CORS.split(", ")
     );
 
-    if (!isValidSuccessUrl.isValid) {
+    /* if (!isValidSuccessUrl.isValid) {
       return res.send({ success: false, reason: isValidSuccessUrl.reason });
     }
 
@@ -66,7 +62,7 @@ Router.post("/create-checkout-session", async (req, res) => {
 
     if (!isValidCancelUrl.isValid) {
       return res.send({ success: false, reason: isValidCancelUrl.reason });
-    }
+    } */
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -85,7 +81,7 @@ Router.post("/create-checkout-session", async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
-}); */
+});
 
 /* Router.get("/products", async (req, res) => {
   try {

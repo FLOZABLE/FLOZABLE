@@ -12,7 +12,6 @@ import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
 import { useRouter } from "next/navigation";
 
 export default function Premium() {
-
   const router = useRouter();
 
   const [type, setType] = useState(1);
@@ -74,10 +73,18 @@ export default function Premium() {
                 })}
                 <div className={styles.blobWrapper}>
                   <BlobBtn
-                  onClick={() => {
-                    router.push("/payment?product=")
-                  }}
-                  >Get Started</BlobBtn>
+                    onClick={() => {
+                      router.push(
+                        `/dashboard/payment?priceId=${
+                          type
+                            ? PREMIUM[0].yearly.price_id
+                            : PREMIUM[0].monthly.price_id
+                        }`
+                      );
+                    }}
+                  >
+                    Get Started
+                  </BlobBtn>
                 </div>
               </div>
               <div className={styles.itemCard}>
@@ -99,7 +106,7 @@ export default function Premium() {
                   <small>$</small>
                   {type ? 39.99 : 5.99}
                 </div>
-                {PREMIUM[0].features.map((feature, i) => {
+                {PREMIUM[1].features.map((feature, i) => {
                   return (
                     <div className={styles.item} key={i}>
                       <p>{feature}</p>
@@ -110,7 +117,19 @@ export default function Premium() {
                   );
                 })}
                 <div className={styles.blobWrapper}>
-                  <BlobBtn>Get Started</BlobBtn>
+                  <BlobBtn
+                    onClick={() => {
+                      router.push(
+                        `/dashboard/payment?priceId=${
+                          type
+                            ? PREMIUM[1].yearly.price_id
+                            : PREMIUM[1].monthly.price_id
+                        }`
+                      );
+                    }}
+                  >
+                    Get Started
+                  </BlobBtn>
                 </div>
               </div>
             </div>
