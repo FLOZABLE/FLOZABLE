@@ -120,7 +120,7 @@ function validateURL(url, strict = false, allowedOrigins) {
     }
 
     if (strict && !allowedOrigins.includes(origin)) {
-      return { isValid: false, reason: "Invalid URL" };
+      return { isValid: false, reason: "Invalid Domain" };
     }
 
     return { isValid: true, domain, origin, url };
