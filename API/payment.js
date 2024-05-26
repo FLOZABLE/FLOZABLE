@@ -1,4 +1,4 @@
-//const stripe = require("stripe")(process.env.STRIPE_SECRET);
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const express = require("express");
 const Router = express.Router();
 const { autoSignin } = require("../tool");
@@ -72,14 +72,14 @@ Router.post("/create-checkout-session", async (req, res) => {
           quantity: 1,
         },
       ],
-      mode: "payment",
+      mode: "subscription",
       success_url: success_url,
       cancel_url: cancel_url,
     });
-
-    res.send({ succes: true, client_secret: session.id }); // Returning the session ID (client secret) to the frontend
-  } catch (error) {
-    res.status(500).send(error.message);
+    console.log(session, 'gd')
+    res.send({ success: true, client_secret: session.id }); // Returning the session ID (client secret) to the frontend
+  } catch (err) {
+    console.log(err);
   }
 });
 
