@@ -3,13 +3,13 @@
 import PaymentForm from "@/app/components/Payment/PaymentForm/PaymentForm";
 import styles from "./page.module.css";
 import { CustomCheckoutProvider, Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
 import { useStripeClientSecret } from "@/app/Hooks/payments";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import config from "@/app/utils/config";
+import getStripe from "@/lib/getStripe";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE);
+const stripePromise = getStripe();
 
 const appearance = {
   theme: "stripe",
@@ -30,7 +30,7 @@ export default function Payment() {
   }, [searchParams]);
 
   useEffect(() => {
-    console.log('price', priceId);
+    console.log("price", priceId);
 
     const success_url = window.location.href;
     const cancel_url = window.location.href;
@@ -47,7 +47,7 @@ export default function Payment() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
+        console.log(data.client_secret);
         if (data.success) {
           setStripeSecret(data.client_secret);
         }
@@ -55,20 +55,29 @@ export default function Payment() {
       .catch((error) => console.error(error));
   }, [priceId]);
 
+  console.log(stripeSecret);
+
   return (
     <div className={styles.Payment}>
+      {stripeSecret}
       <div className={styles.paymentContainer}>
-        {stripeSecret ? (
+        {stripeSecret}
+        {/* {stripeSecret ? (
           <Elements
             stripe={stripePromise}
             options={{ clientSecret: stripeSecret, appearance }}
           >
             <PaymentForm />
           </Elements>
+        ) : null} */}
+        {stripeSecret ? (
+          <CustomCheckoutProvider
+            stripe={stripePromise}
+            options={{ clientSecret: stripeSecret }}
+          >
+            <PaymentForm />
+          </CustomCheckoutProvider>
         ) : null}
-        {/* <CustomCheckoutProvider>
-
-        </CustomCheckoutProvider> */}
       </div>
     </div>
   );
