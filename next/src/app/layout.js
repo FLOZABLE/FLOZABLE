@@ -9,6 +9,7 @@ import NotificationModal from "@/app/components/Modals/NotificationModal/Notific
 import AccountModal from "@/app/components/Modals/AccountModal/AccountModal";
 import Tutorial from "./components/Others/Tutorial/Tutorial";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import SubjectsModal from "./components/Modals/SubjectsModal/SubjectsModal";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
 
@@ -75,6 +76,7 @@ export default function RootLayout({ children }) {
           <JoinGroupModal />
           <AddSubjectModal />
           <NotificationModal />
+          <SubjectsModal />
           <Tutorial />
           {children}
         </AppProvider>

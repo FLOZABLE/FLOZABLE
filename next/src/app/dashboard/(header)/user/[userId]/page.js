@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import styles from "./page.module.css";
 import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
 import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRequestBtn";
-import StudyTrendChart from "@/app/components/Charts/StudyTrendChart";
+import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import config from "@/app/utils/config";
 import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import DmBtn from "@/app/components/Buttons/DmBtn/DmBtn";
