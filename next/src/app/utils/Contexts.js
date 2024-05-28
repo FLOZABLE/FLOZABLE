@@ -281,6 +281,8 @@ function ModalsProvider({ children }) {
     group: null,
   });
   const [isAccountModal, setIsAccountModal] = useState(false);
+  const [isSubjectsModal, setIsSubjectsModal] = useState(false);
+  const [isEditSubjectModal, setIsEditSubjectModal] = useState(false);
 
   useEffect(() => {
     if (userInfo === false) {
@@ -301,6 +303,10 @@ function ModalsProvider({ children }) {
         setJoinGroupModal,
         isAccountModal,
         setIsAccountModal,
+        isSubjectsModal,
+        setIsSubjectsModal,
+        isEditSubjectModal,
+        setIsEditSubjectModal
       }}
     >
       {children}

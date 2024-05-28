@@ -31,12 +31,11 @@ const { validateString, validateURL } = require("../validate");
   });
 }); */
 
-
 Router.post("/create-checkout-session", async (req, res) => {
-  console.log('gd', req.body)
+  console.log("gd", req.body);
   const { priceId, success_url, cancel_url } = req.body;
 
-  console.log('price', priceId)
+  console.log("price", priceId);
   try {
     /* const isValidPriceId = validateString(priceId, "price id", 200);
 
@@ -76,31 +75,42 @@ Router.post("/create-checkout-session", async (req, res) => {
       success_url: success_url,
       cancel_url: cancel_url,
     });
-    console.log(session, 'gd')
+    console.log(session, "gd");
     res.send({ success: true, client_secret: session.id }); // Returning the session ID (client secret) to the frontend
   } catch (err) {
     console.log(err);
   }
 });
 
-/* Router.get("/products", async (req, res) => {
+Router.get("/products", async (req, res) => {
   try {
-    const prices = await stripe.products.list({
+    const _products = await stripe.products.list({
       limit: 10,
     });
 
-    console.log(prices)
-
-    const information = prices.data.map((price) => {
-      const { id, active, recurring, product } = price;
-      return { id, active, recurring, product };
+    const _prices = await stripe.prices.list({
+      limit: 10,
     });
 
-    res.send({ success: true, information });
+    const prices = _prices.data.map((price) => {
+      const {product, recurring, unit_amount, id} = price;
+      return {product, recurring, unit_amount, id};
+    })
 
+    console.log(prices);
+
+    const products = _products.data.map((_product) => {
+      const { id, active, recurring, product, name, default_price } = _product;
+      const price = prices.find(price => price.product === id);
+      return { id, active, recurring, product, name, default_price, price };
+    });
+
+    console.log(products)
+
+    res.send({ success: true, data: { products } });
   } catch (err) {
     console.log(err);
   }
-}); */
+});
 
 module.exports = Router;
