@@ -58,6 +58,7 @@
 .Stats .bigBox {
   background-color: var(--blue0);
   padding: 1.875rem 3.125rem;
+  position: relative;
 }
 
 .Stats .bigBox .overflow {

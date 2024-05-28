@@ -1,0 +1,25 @@
+.EditSubjectBtn {
+  position: relative;
+  cursor: pointer;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.EditSubjectBtn .hoverEl {
+  position: absolute;
+  top: 3rem;
+  white-space: nowrap;
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.EditSubjectBtn:hover .hoverEl {
+  visibility: visible;
+  opacity: 1;
+}

@@ -10,7 +10,7 @@ import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from "@/app/uti
 import { SubjectsContext, TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
 import { focusCalculator, secondConverter } from "@/app/utils/Tool";
 import { DateTime } from "luxon";
-import StudyTrendChart from "@/app/components/Charts/StudyTrendChart";
+import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import RankingTrend from "@/app/components/Charts/RankingTrendChart";
 import config from "@/app/utils/config";
 import WebsiteUsageChart from "@/app/components/Charts/WebsiteUsageChart/WebsiteUsageChart";
