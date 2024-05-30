@@ -196,7 +196,7 @@ function SubjectsProvider({ children }) {
   }, [subjects]);
 
   return (
-    <SubjectsContext.Provider value={{ subjects, setSubjects }}>
+    <SubjectsContext.Provider value={{ subjects, setSubjects, bringSubjects }}>
       <PlansContext.Provider
         value={{ plans, setPlans, planModal, setPlanModal, bringPlans }}
       >

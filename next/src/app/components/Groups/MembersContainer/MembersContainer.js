@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext } from "react";
 import styles from "./MembersContainer.module.css";
 import { UserInfoContext } from "@/app/utils/Contexts";
 import MyEl from "../MyEl/MyEl";
