@@ -3,4 +3,25 @@
   height: 30rem;
   background-color: #fff;
   z-index: 3;
+  box-shadow: var(--shadow1);
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+
+.SubjectsModal .header {
+  background-color: var(--blue2);
+  height: 1.875rem;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  color: #fff;
+}
+
+.SubjectsModal .header i {
+  margin-right: 0.625rem;
+  font-size: 1.875rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: right;
+  align-items: center;
 }
