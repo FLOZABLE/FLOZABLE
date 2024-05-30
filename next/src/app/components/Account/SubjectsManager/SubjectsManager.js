@@ -1,14 +1,14 @@
 import React, { useCallback, useContext } from "react";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import styles from "./SubjectsManager.module.css";
 import SubjectManager from "../SubjectManager/SubjectManager";
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 import config from "@/app/utils/config";
 import { ResponseContext, SubjectsContext } from "@/app/utils/Contexts";
 import { subjectIcons } from "@/app/utils/Constant";
 
 function SubjectsManager() {
-  const { subjects, setSubjects } = useContext(SubjectsContext);
+  const { subjects, setSubjects, bringSubjects } = useContext(SubjectsContext);
   const { setResponse } = useContext(ResponseContext);
 
   const [selectedSubject, setSelectedSubject] = useState({
@@ -17,7 +17,7 @@ function SubjectsManager() {
     icon: null,
     name: null,
     id: null,
-    tools: []
+    tools: [],
   });
 
   useEffect(() => {
@@ -34,9 +34,9 @@ function SubjectsManager() {
         color,
         icon,
         id,
-        tools
+        tools,
       }),
-      credentials: 'include'
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
@@ -44,15 +44,19 @@ function SubjectsManager() {
         if (data.success) {
           console.log("updating");
           let tempState = [...subjects];
-          let updatedSubject = tempState.find((subject) => subject.id === data.subjectInfo.id);
-          tempState = tempState.filter((subject) => subject.id !== data.subjectInfo.id);
+          let updatedSubject = tempState.find(
+            (subject) => subject.id === data.subjectInfo.id
+          );
+          tempState = tempState.filter(
+            (subject) => subject.id !== data.subjectInfo.id
+          );
           updatedSubject = {
             ...updatedSubject,
             color: data.subjectInfo.color,
             icon: data.subjectInfo.icon,
             name: data.subjectInfo.name,
             tools: data.subjectInfo.tools,
-          }
+          };
           let newState = subjects;
           // Using {...subjects} results in an error because it would then be an object
           // and no longer have the .reduce() function from Array
@@ -62,38 +66,32 @@ function SubjectsManager() {
           }
           console.log(newState);
           setSubjects(newState);
-        };
-        setSelectedSubject(prev => ({ ...prev, submit: false }))
+        }
+        setSelectedSubject((prev) => ({ ...prev, submit: false }));
       })
       .catch((error) => console.error(error));
   }, [selectedSubject]);
 
   const deleteSubject = useCallback(() => {
-    fetch(`${config.server}/study/delete-subject`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          subjectId: selectedSubject.id
-        }),
-        credentials: 'include'
-      }).then((response) => response.json())
+    fetch(`${config.server}/study/subject`, {
+      method: "delete",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        subjectId: selectedSubject.id,
+      }),
+      credentials: "include",
+    })
+      .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setSubjects(subjects.map((subject) => {
-            if (subject.id === selectedSubject.id) {
-              return { ...subject, hidden: data.deleteTime };
-            }
-            return { ...subject };
-          }));
-          setSelectedSubject({ submit: false, color: null, icon: null, name: null, id: null, tools: [] })
+          bringSubjects();
         }
-      })
+      });
   }, [selectedSubject]);
 
-  return (
+  /* return (
     <div className={`${styles.SubjectsManager} customScroll`}>
       {
         selectedSubject.id !== null ?
@@ -138,6 +136,43 @@ function SubjectsManager() {
             </div>
           </div>
       }
+    </div>
+  ); */
+
+  return (
+    <div className={styles.SubjectsManager}>
+      {selectedSubject.id !== null ? (
+        <SubjectManager
+          subject={selectedSubject}
+          setSelectedSubject={setSelectedSubject}
+          selectedSubject={selectedSubject}
+          deleteSubject={deleteSubject}
+        />
+      ) : (
+        <div className={styles.subjectSelector}>
+          {subjects.map((subject, i) => {
+            let icon = subjectIcons[subject.icon];
+
+            if (!icon) {
+              icon = <Alert />;
+            }
+
+            return (
+              <div
+                key={i}
+                onClick={() => {
+                  setSelectedSubject(subject);
+                }}
+                style={{ backgroundColor: subject.color }}
+                className={styles.subject}
+              >
+                <i>{icon}</i>
+                <p>{subject.name}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
