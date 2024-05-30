@@ -152,13 +152,14 @@ Router.post("/modify-subject", async (req, res) => {
   });
 });
 
-Router.post("/delete-subject", async (req, res) => {
+Router.delete("/subject", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { subjectId } = req.body;
 
       const connection = pool.promise();
-      try {
+
+      /* try {
         const nowSeconds = Math.round(
           DateTime.now({ zone: "utc" }).toSeconds()
         );
@@ -179,7 +180,7 @@ Router.post("/delete-subject", async (req, res) => {
         );
       } catch (err) {
         console.log(err);
-      }
+      } */
     } catch (error) {
       console.log(error);
     }

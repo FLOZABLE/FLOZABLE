@@ -1,4 +1,36 @@
-.SubjectsManager {
+.SubjectsManager .subjectSelector {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 18.75rem);
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  display: flex;
+  margin-top: 1rem;
+}
+
+.SubjectsManager .subject {
+  width: 10rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+  border-radius: 1rem;
+  cursor: pointer;
+}
+
+.SubjectsManager .subject i {
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.SubjectsManager .subject p {
+  font-size: 1.5rem;
+}
+
+/* .SubjectsManager {
   position: relative;
   background-color: transparent;
   margin-left: 2%;
@@ -31,4 +63,5 @@
 
 .SubjectsManager .restoreSubjectName {
   width: 10rem;
-}
+} */
+
