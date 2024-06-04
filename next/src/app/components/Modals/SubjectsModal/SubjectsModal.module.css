@@ -6,6 +6,7 @@
   box-shadow: var(--shadow1);
   border-radius: 1.25rem;
   overflow: hidden;
+  display: flex;
 }
 
 .SubjectsModal .header {
@@ -15,6 +16,10 @@
   justify-content: right;
   align-items: center;
   color: #fff;
+  position: absolute;
+  top: 0rem;
+  width: 100%;
+  z-index: 2;
 }
 
 .SubjectsModal .header i {
@@ -24,4 +29,10 @@
   display: flex;
   justify-content: right;
   align-items: center;
+}
+
+.SubjectsModal .subjectsManager {
+  height: calc(100% - 1.875rem);
+  margin-top: 1.875rem;
+  width: 100%;
 }
