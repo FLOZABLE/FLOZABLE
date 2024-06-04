@@ -25,7 +25,9 @@ export default function SubjectsModal() {
           <FontAwesomeIcon icon={faXmark} />
         </i>
       </div>
-      <SubjectsManager />
+      <div className={styles.subjectsManager}>
+        <SubjectsManager />
+      </div>
     </div>
   );
 }
