@@ -2,10 +2,11 @@ import React, { useCallback, useContext } from "react";
 import { useState, useEffect } from "react";
 import styles from "./SubjectsManager.module.css";
 import SubjectManager from "../SubjectManager/SubjectManager";
-import styled from "@emotion/styled";
 import config from "@/app/utils/config";
 import { ResponseContext, SubjectsContext } from "@/app/utils/Contexts";
 import { subjectIcons } from "@/app/utils/Constant";
+import { Alert } from "@/app/utils/Svg";
+import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 
 function SubjectsManager() {
   const { subjects, setSubjects, bringSubjects } = useContext(SubjectsContext);
@@ -140,7 +141,7 @@ function SubjectsManager() {
   ); */
 
   return (
-    <div className={styles.SubjectsManager}>
+    <div className={`customScroll ${styles.SubjectsManager}`}>
       {selectedSubject.id !== null ? (
         <SubjectManager
           subject={selectedSubject}
@@ -158,16 +159,17 @@ function SubjectsManager() {
             }
 
             return (
-              <div
-                key={i}
-                onClick={() => {
-                  setSelectedSubject(subject);
-                }}
-                style={{ backgroundColor: subject.color }}
-                className={styles.subject}
-              >
-                <i>{icon}</i>
-                <p>{subject.name}</p>
+              <div key={i} className={styles.subject}>
+                <BlobBtn
+                  color2={subject.color}
+                  onClick={() => {
+                    setSelectedSubject(subject);
+                  }}
+                  style={{width: '100%', display: 'flex', justifyContents: 'center'}}
+                >
+                  <i>{icon}</i>
+                  <div className={`overflowDot ${styles.name}`}>{subject.name}</div>
+                </BlobBtn>
               </div>
             );
           })}

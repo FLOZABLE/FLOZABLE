@@ -1,16 +1,22 @@
+.SubjectsManager {
+  overflow: auto;
+  height: 100%;
+}
+
 .SubjectsManager .subjectSelector {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 18.75rem);
+  grid-template-columns: repeat(auto-fill, 10.75rem);
   justify-content: center;
-  flex-wrap: wrap;
   gap: 1.25rem;
-  display: flex;
+  height: 100%;
+  flex-wrap: wrap;
+  width: 100%;
   margin-top: 1rem;
+  align-items: center;
 }
 
 .SubjectsManager .subject {
-  width: 10rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,14 +26,17 @@
 }
 
 .SubjectsManager .subject i {
-  font-size: 2rem;
+  font-size: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.SubjectsManager .subject p {
-  font-size: 1.5rem;
+.SubjectsManager .subject .name {
+  font-size: 1rem;
+  overflow: hidden;
+  max-width: 5rem;
+  margin-left: 0.5rem;
 }
 
 /* .SubjectsManager {
@@ -64,4 +73,3 @@
 .SubjectsManager .restoreSubjectName {
   width: 10rem;
 } */
-

@@ -7,6 +7,8 @@ import ColorPalette from "../../Inputs/ColorPalette/ColorPalette";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import SelectTool from "../../Inputs/SelectTool.js/SelectTool";
 import { subjectIcons } from "@/app/utils/Constant";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
 function SubjectManager({
   subject,
@@ -125,9 +127,7 @@ function SubjectManager({
       </div>
       {deleteConfirm ? (
         <div className={styles.confirmDelete}>
-          <p>
-            Confirm? This action cannot be undone
-          </p>
+          <p>Confirm? This action cannot be undone</p>
           <br />
         </div>
       ) : null}
@@ -177,7 +177,7 @@ function SubjectManager({
             }}
             color2="red"
           >
-            Delete
+            <FontAwesomeIcon icon={faTrashCan} className={styles.deleteIcon} />
           </BlobBtn>
         )}
       </div>
