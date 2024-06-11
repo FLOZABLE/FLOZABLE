@@ -138,8 +138,8 @@ function SubjectsProvider({ children }) {
   });
 
   const bringSubjects = useCallback(() => {
-    fetch(`${config.server}/study/bring-subjects`, {
-      method: "post",
+    fetch(`${config.server}/subjects`, {
+      method: "get",
       credentials: "include",
     })
       .then((response) => response.json())
