@@ -77,7 +77,7 @@ const consumers = {};
           httpOnly: true,
           secure: false
         },
-        user_id: 'EoFObpf612',
+        user_id: process.env.TESTER_ID,
       };
     };
     const userId = session.user_id;

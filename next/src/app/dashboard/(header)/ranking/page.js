@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
 import Search from "@/app/components/Inputs/Search/Search";
-import { useSearchParams } from "next/navigation";
 import { DateTime } from "luxon";
 import config from "@/app/utils/config";
 import CalendarModal from "@/app/components/Modals/CalendarModal/CalendarModal";

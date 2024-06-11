@@ -86,6 +86,15 @@ function SubjectsManager() {
     })
       .then((response) => response.json())
       .then((data) => {
+        setResponse(data);
+        setSelectedSubject({
+          submit: false,
+          color: null,
+          icon: null,
+          name: null,
+          id: null,
+          tools: [],
+        });
         if (data.success) {
           bringSubjects();
         }
@@ -165,10 +174,16 @@ function SubjectsManager() {
                   onClick={() => {
                     setSelectedSubject(subject);
                   }}
-                  style={{width: '100%', display: 'flex', justifyContents: 'center'}}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContents: "center",
+                  }}
                 >
                   <i>{icon}</i>
-                  <div className={`overflowDot ${styles.name}`}>{subject.name}</div>
+                  <div className={`overflowDot ${styles.name}`}>
+                    {subject.name}
+                  </div>
                 </BlobBtn>
               </div>
             );

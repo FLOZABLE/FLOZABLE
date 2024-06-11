@@ -5,7 +5,6 @@ import styles from "./page.module.css";
 import { CustomCheckoutProvider, Elements } from "@stripe/react-stripe-js";
 import { useStripeClientSecret } from "@/app/Hooks/payments";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import config from "@/app/utils/config";
 import getStripe from "@/lib/getStripe";
 
@@ -20,14 +19,25 @@ export default function Payment() {
 
   const [stripeSecret, setStripeSecret] = useState(null);
 
-  const searchParams = useSearchParams();
 
-  useState(() => {
+  /* useEffect(() => {
     if (!searchParams) return;
 
     const priceId = searchParams.get("priceId");
     setPriceId(priceId);
-  }, [searchParams]);
+  }, [searchParams]); */
+
+    
+  useEffect(() => {
+    try {
+    const searchParams = new URLSearchParams(document.location.search);
+      const priceId = searchParams.get("priceId");
+      setPriceId(priceId);
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+ 
 
   useEffect(() => {
     console.log("price", priceId);
