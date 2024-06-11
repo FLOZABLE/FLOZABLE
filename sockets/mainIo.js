@@ -26,7 +26,7 @@ mainIo.on('connection', (socket) => {
         httpOnly: true,
         secure: false
       },
-      user_id: 'EoFObpf612',
+      user_id: process.env.TEST_ID,
     };
   };
   const userId = session.user_id;
