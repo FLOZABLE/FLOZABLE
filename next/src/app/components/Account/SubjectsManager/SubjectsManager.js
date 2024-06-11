@@ -25,8 +25,8 @@ function SubjectsManager() {
     if (!selectedSubject || !selectedSubject.submit) return;
 
     const { id, icon, color, name, tools } = selectedSubject;
-    fetch(`${config.server}/study/modify-subject`, {
-      method: "post",
+    fetch(`${config.server}/subjects`, {
+      method: "patch",
       headers: {
         "Content-Type": "application/json",
       },
@@ -74,7 +74,7 @@ function SubjectsManager() {
   }, [selectedSubject]);
 
   const deleteSubject = useCallback(() => {
-    fetch(`${config.server}/study/subject`, {
+    fetch(`${config.server}/subjects`, {
       method: "delete",
       headers: {
         "Content-Type": "application/json",

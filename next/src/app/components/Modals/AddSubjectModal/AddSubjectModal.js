@@ -75,8 +75,8 @@ function AddSubjectModal({ }) {
   };
 
   const submit = useCallback(() => {
-    fetch(`${config.server}/study/add-subject`, {
-      method: "post",
+    fetch(`${config.server}/subjects`, {
+      method: "put",
       headers: {
         "Content-Type": "application/json",
       },

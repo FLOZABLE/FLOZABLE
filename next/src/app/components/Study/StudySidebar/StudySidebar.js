@@ -1,9 +1,7 @@
 import React, {
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import styles from "./StudySidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -34,8 +32,6 @@ import {
   IconMicFill,
   IconMicMuteFill,
 } from "@/app/utils/Svg";
-import config from "@/app/utils/config";
-import { timelineSort } from "@/app/utils/timelineSorting";
 
 function StudySidebar({
   isPlannerModal,
@@ -57,7 +53,7 @@ function StudySidebar({
 }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
-  const { setSubjects } = useContext(SubjectsContext);
+  const { bringSubjects } = useContext(SubjectsContext);
   const { isMic, setIsMic, isCam, setIsCam, isHeadphone, setIsHeadphone } =
     useContext(CallOptionsContext);
 
@@ -80,20 +76,6 @@ function StudySidebar({
       }, 500);
     }
   }, [tutorial]);
-
-  const bringSubjects = useCallback(() => {
-    fetch(`${config.server}/study/bring-subjects`, {
-      method: "post",
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setSubjects(timelineSort(data.subjects));
-        }
-      })
-      .catch((error) => console.error(error));
-  }, []);
 
   return (
     <div className={styles.StudySidebar}>
