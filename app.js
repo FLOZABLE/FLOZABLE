@@ -231,13 +231,14 @@ const { extensionManager } = require("./services/extension");
 const { dailyReport } = require("./services/notification");
 const { timerUpdate } = require("./services/timerUpdate");
 const { cacheManager } = require("./services/redisLoader");
+const { servicesManager } = require("./services/services");
 
 //scheduler that runs every hour
 //updateRanking();
 
 //all timezones
 //createRankings(-7);
-
+servicesManager();
 //schedulers
 cron.schedule("0 * * * *", () => {
   //dailyReport(process.env.TESTER_ID);
@@ -250,23 +251,7 @@ cron.schedule("0 * * * *", () => {
 });
 //cacheManager()
 //create tables
-const {
-  createUsersTable,
-  createSubjectsTable,
-  createGroupsTable,
-  createPlansTable,
-  createChatroomsTable,
-  createDailyRankingTable,
-  createWeeklyRankingTable,
-  createMonthlyRankingTable,
-  groupsChatRoomsGeneration,
-  createChallengesTable,
-  createChallengeRoomsTable,
-  createThemesTable,
-  createActivitiesTable,
-  utf8mb4Unicode,
-  createDevicesTable,
-} = require("./query");
+
 const {
   updateSubjectsTimeline,
   redisUsersCache,
@@ -275,25 +260,8 @@ const {
 } = require("./Utils/migration");
 const { DateTime } = require("luxon");
 
-//createUsersTable();
-//createSubjectsTable();
-//createGroupsTable();
-//createPlansTable();
-//createChatroomsTable();
-//createChallengesTable();
-//createDailyRankingTable();
-//createWeeklyRankingTable();
-//createMonthlyRankingTable();
-//createChallengeRoomsTable();
-//createThemesTable();
-//groupsChatRoomsGeneration();
-//createActivitiesTable();
-//utf8mb4Unicode();
-//createDevicesTable();
-
 //updateSubjectsTimeline(161);
 //activitySettingsMigration();
-//addStripeId();
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
