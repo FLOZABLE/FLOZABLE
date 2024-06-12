@@ -1,5 +1,5 @@
-const pool = require("./model/pool");
-const redisClient = require("./model/redis");
+const pool = require("../model/pool");
+const redisClient = require("../model/redis");
 
 async function updateUserIds() {
   const connection = pool.promise();

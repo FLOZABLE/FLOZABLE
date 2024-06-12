@@ -1,33 +1,27 @@
-const pool = require('./model/pool');
-const { generateRandomId } = require('./tool');
+const pool = require("../model/pool");
+const { generateRandomId } = require("../tool");
 
-//these functions are only used for initializing the database (used only once)
+//these async functions are only used for initializing the database (used only once)
 
-
-function createUsersTable() {
+async function createUsersTable() {
   const connection = pool.promise();
   connection.query(`
-  CREATE TABLE users (
+  CREATE TABLE IF NOT EXISTS  users (
     users_id INT(255) AUTO_INCREMENT PRIMARY KEY, 
     user_id VARCHAR(20),
-    name VARCHAR(40), 
+    name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;, 
     email VARCHAR(60) DEFAULT '',
     hashed_password VARCHAR(100), 
     salt VARCHAR(100), 
-    myinfo VARCHAR(300), 
     \`groups\` VARCHAR(700) default '', 
-    external_user_id VARCHAR(30),
     timezone VARCHAR(40) DEFAULT '',
     datum_point INT(11),
-    activity TEXT,
     activity_setting TEXT DEFAULT '',
-    language VARCHAR(15) DEFAULT 'English',
     notification_setting TEXT,
     key_salt VARCHAR(64),
     iv VARCHAR(32),
     subscription TINYINT(1) DEFAULT 0,
     type SMALLINT DEFAULT 0,
-    private SMALLINT DEFAULT 0,
     friends VARCHAR(200) DEFAULT '',
     google_refresh_token VARCHAR(150),
     themes VARCHAR(300) DEFAULT '',
@@ -35,28 +29,27 @@ function createUsersTable() {
     notification_keys VARCHAR(500)
   );
   `);
-};
+}
 
-function createSubjectsTable() {
+async function createSubjectsTable() {
   const connection = pool.promise();
   connection.query(`
-  CREATE TABLE subjects (
+  CREATE TABLE IF NOT EXISTS  subjects (
     id CHAR(10) PRIMARY KEY,
-    name CHAR(30),
+    name CHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
     user_id CHAR(15),
     icon CHAR(20),
     color CHAR(7),
     datum_point INT,
     timeline text default '',
-    timeline_sum INT UNSIGNED default 0
   );  
   `);
-};
+}
 
-function createGroupsTable() {
+async function createGroupsTable() {
   const connection = pool.promise();
   connection.query(`
-  CREATE TABLE \`groups\` (
+  CREATE TABLE IF NOT EXISTS  \`groups\` (
   group_id VARCHAR(10) PRIMARY KEY,
   name VARCHAR(50),
   leader VARCHAR(50),
@@ -72,88 +65,75 @@ function createGroupsTable() {
   average_hr SMALLINT DEFAULT 0,
   goal_hr SMALLINT,
   likes VARCHAR(300) DEFAULT '',
-  font SMALLINT
 );
-  `)
+  `);
 }
 
-function createPlansTable() {
+async function createPlansTable() {
   const connection = pool.promise();
   connection.query(`
-  CREATE TABLE plans (
+  CREATE TABLE IF NOT EXISTS  plans (
     id VARCHAR(10),
     user_id VARCHAR(30),
-    title VARCHAR(100),
+    title VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
     start INT,
     end INT,
     \`repeat\` TINYINT UNSIGNED,
-    description VARCHAR(700),
+    description VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
     notification TINYINT SIGNED,
-    subject VARCHAR(10),
+    subject VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
     priority TINYINT UNSIGNED,
     completed TINYINT DEFAULT 0
   );
   `);
 }
 
-function createChatroomsTable() {
+async function createChatroomsTable() {
   const connection = pool.promise();
   connection.query(`
-  CREATE TABLE chatrooms (
+  CREATE TABLE IF NOT EXISTS  chatrooms (
     id VARCHAR(10),
     chats TEXT DEFAULT '',
     type TINYINT DEFAULT 0,
     members VARCHAR(300) DEFAULT ''
   );  
   `);
-};
+}
 
-function createDailyRankingTable() {
+async function createDailyRankingTable() {
   const connection = pool.promise();
   connection.query(`
-  CREATE TABLE dailyRanking (
+  CREATE TABLE IF NOT EXISTS  dailyRanking (
     date INT(11),
     ranking TEXT DEFAULT ''
   );  
   `);
-};
+}
 
-function createWeeklyRankingTable() {
+async function createWeeklyRankingTable() {
   const connection = pool.promise();
   connection.query(`
-  CREATE TABLE weeklyRanking (
+  CREATE TABLE IF NOT EXISTS  weeklyRanking (
     date INT(11),
     ranking TEXT DEFAULT ''
   );  
   `);
-};
+}
 
-function createMonthlyRankingTable() {
+async function createMonthlyRankingTable() {
   const connection = pool.promise();
   connection.query(`
-  CREATE TABLE monthlyRanking (
+  CREATE TABLE IF NOT EXISTS  monthlyRanking (
     date INT(11),
     ranking TEXT DEFAULT ''
   );  
   `);
-};
+}
 
-function createChallengesTable() {
+async function createDevicesTable() {
   const connection = pool.promise();
   connection.query(`
-  CREATE TABLE challenges (
-    id VARCHAR(10),
-    first_user_id VARCHAR(20),
-    second_user_id VARCHAR(20),
-    datum_point INT
-  );
-  `);
-};
-
-function createDevicesTable() {
-  const connection = pool.promise();
-  connection.query(`
-  create table devices (
+  CREATE TABLE IF NOT EXISTS  devices (
     device_id varchar(10),
     last_auth INT(11), 
     name varchar(30), 
@@ -172,67 +152,46 @@ async function groupsChatRoomsGeneration() {
       id: generateRandomId(10),
     };
     connection.query(`INSERT INTO chatrooms SET ?`, roomInfo);
-  })
-};
+  });
+}
 
-function createChallengeRoomsTable() {
+async function createThemesTable() {
   const connection = pool.promise();
   connection.query(`
-  CREATE TABLE challengerooms (
-    id VARCHAR(10),
-    host_id VARCHAR(20),
-    start_date INT,
-    name VARCHAR(30),
-    description VARCHAR(700)
-  );
-  `);
-};
-
-function createThemesTable() {
-  const connection = pool.promise();
-  connection.query(`
-  CREATE TABLE themes (
+  CREATE TABLE IF NOT EXISTS  themes (
     id VARCHAR(10),
     user_id VARCHAR(20),
     likes VARCHAR(300) DEFAULT '',
     video_id VARCHAR(11),
-    name VARCHAR(40),
-    description VARCHAR(200),
+    name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
+    description VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
     tags VARCHAR(300) DEFAULT ''
   );  
   `);
-};
+}
 
-function createActivitiesTable() {
+async function createActivitiesTable() {
   const connection = pool.promise();
   connection.query(`
-  CREATE TABLE activities (
+  CREATE TABLE IF NOT EXISTS  activities (
     user_id VARCHAR(20),
     date VARCHAR(10),
     data TEXT DEFAULT ''
   );
   `);
-};
-
-/**
- * convert columns to utf8mb4_unicode_ci
- */
-async function utf8mb4Unicode() {
-  const connection = pool.promise();
-  await connection.query(`
-  ALTER TABLE plans MODIFY COLUMN title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-  ALTER TABLE plans MODIFY COLUMN description VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-  ALTER TABLE plans MODIFY COLUMN subject VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-  ALTER TABLE users MODIFY COLUMN name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-  ALTER TABLE subjects MODIFY COLUMN name char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-  ALTER TABLE themes MODIFY COLUMN name varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-  ALTER TABLE themes MODIFY COLUMN description varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-  `);
-
-  console.log('migration complete');
 }
 
-module.exports = { createUsersTable, createSubjectsTable, createGroupsTable, createPlansTable, createChatroomsTable, createDailyRankingTable, createWeeklyRankingTable, createMonthlyRankingTable, createChallengesTable, createDevicesTable, groupsChatRoomsGeneration, createChallengeRoomsTable, createThemesTable, createActivitiesTable, utf8mb4Unicode };
+module.exports = {
+  createUsersTable,
+  createSubjectsTable,
+  createGroupsTable,
+  createPlansTable,
+  createChatroomsTable,
+  createDailyRankingTable,
+  createWeeklyRankingTable,
+  createMonthlyRankingTable,
+  createDevicesTable,
+  groupsChatRoomsGeneration,
+  createThemesTable,
+  createActivitiesTable,
+};
