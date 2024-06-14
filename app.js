@@ -1,19 +1,15 @@
 const express = require("express");
 const app = express();
-const ejs = require("ejs");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const connectRedis = require("connect-redis");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const http = require("http");
 const https = require("https");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const cron = require("node-cron");
 const fs = require("fs");
-const axios = require("axios");
 const logger = require("morgan");
 const crypto = require("node:crypto");
 
@@ -177,7 +173,7 @@ app.use("/themes", themesAPI);
 app.use("/extension", extensionAPI);
 app.use("/playlists", playlistsAPI);
 app.use("/canvas", canvasAPI);
-app.use('/payment', paymentAPI);
+app.use("/payment", paymentAPI);
 app.use(express.static(path.join(__dirname, process.env.BUILD)));
 
 //handle profile images
@@ -209,59 +205,11 @@ app.get("*", function (req, res) {
   res.redirect("/");
 });
 
-const {
-  createBots,
-  addId,
-  deleteBots,
-  botManager,
-  createGroups,
-  randomFriend,
-  createBotRankings,
-} = require("./Bot/Bot");
-//randomFriend(0, 3);
-//createGroups(10);
-botManager(57);
-//deleteBots();
-//addId();
-//createBots(50);
-//createBotRankings();
-
-const { updateRanking, createRankings } = require("./services/rankingUpdate");
-const { extensionManager } = require("./services/extension");
-const { dailyReport } = require("./services/notification");
-const { timerUpdate } = require("./services/timerUpdate");
-const { cacheManager } = require("./services/redisLoader");
+const { botManager } = require("./Bot/Bot");
 const { servicesManager } = require("./services/services");
 
-//scheduler that runs every hour
-//updateRanking();
-
-//all timezones
-//createRankings(-7);
+botManager(57);
 servicesManager();
-//schedulers
-cron.schedule("0 * * * *", () => {
-  //dailyReport(process.env.TESTER_ID);
-  extensionManager();
-  updateRanking();
-  timerUpdate();
-  if (DateTime.now().get("hour") === 1) {
-    cacheManager();
-  }
-});
-//cacheManager()
-//create tables
-
-const {
-  updateSubjectsTimeline,
-  redisUsersCache,
-  activitySettingsMigration,
-  addStripeId
-} = require("./Utils/migration");
-const { DateTime } = require("luxon");
-
-//updateSubjectsTimeline(161);
-//activitySettingsMigration();
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
