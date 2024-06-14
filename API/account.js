@@ -112,7 +112,7 @@ async function createAccount(name, email, timezone, userInfo) {
   }
 }
 
-Router.get("/accountinfo", async (req, res) => {
+Router.get("/", async (req, res) => {
   autoSignin(
     req,
     res,
@@ -138,7 +138,7 @@ Router.get("/accountinfo", async (req, res) => {
   );
 });
 
-Router.post("/signin-authentication", async (req, res) => {
+Router.post("/auth", async (req, res) => {
   const { email, password } = req.body;
 
   const isValidEmail = validateEmail(email);
@@ -190,7 +190,7 @@ Router.post("/signin-authentication", async (req, res) => {
   }
 });
 
-Router.post("/send-verification-link", async (req, res) => {
+Router.post("/auth/link/send", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const userInfo = await userCache(userId);
@@ -210,7 +210,7 @@ Router.post("/send-verification-link", async (req, res) => {
   });
 });
 
-Router.post("/verify-by-link", async (req, res) => {
+Router.post("/auth/link", async (req, res) => {
   const { verifyId } = req.body;
   autoSignin(req, res, async (userId) => {
     try {
@@ -237,7 +237,7 @@ Router.post("/verify-by-link", async (req, res) => {
   });
 });
 
-Router.get("/verify-by-link", (req, res) => {
+Router.get("/auth/link", (req, res) => {
   autoSignin(
     req,
     res,
@@ -246,7 +246,7 @@ Router.get("/verify-by-link", (req, res) => {
   );
 });
 
-Router.post("/signup-authentication", async (req, res) => {
+Router.post("/signup", async (req, res) => {
   try {
     let { email, name, password, timeZone } = req.body;
 
@@ -289,7 +289,7 @@ Router.post("/signup-authentication", async (req, res) => {
 //reset password link only available for 24 hr
 const MAX_DURATION = 60 * 60 * 24;
 
-Router.post("/reset-password-request", async (req, res) => {
+Router.post("/password", async (req, res) => {
   try {
     const { email } = req.body;
 
@@ -330,7 +330,7 @@ Router.post("/reset-password-request", async (req, res) => {
   }
 });
 
-Router.post("/reset-password", async (req, res) => {
+Router.patch("/password", async (req, res) => {
   try {
     const { email, resetId, password } = req.body;
 
