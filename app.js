@@ -66,14 +66,14 @@ const mainRouter = require("./Router/main");
 
 //API
 const accountAPI = require("./API/account");
+const authAPI = require("./API/auth");
 const chatAPI = require("./API/chat");
 const groupsAPI = require("./API/groups");
 const planAPI = require("./API/plan");
 const subjectsAPI = require("./API/subjects");
-const videoAPI = require("./API/video");
 const rankingAPI = require("./API/ranking");
 //const AiAPI = require('./API/AI');
-const challengeAPI = require("./API/challenges");
+//const challengeAPI = require("./API/challenges");
 const friendAPI = require("./API/friend");
 const themesAPI = require("./API/themes");
 const extensionAPI = require("./API/extension");
@@ -160,21 +160,20 @@ app.use("/", mainRouter);
 
 //api
 app.use("/account", accountAPI);
+app.use("/auth", authAPI);
 app.use("/chat", chatAPI);
 app.use("/groups", groupsAPI);
 app.use("/plan", planAPI);
 app.use("/subjects", subjectsAPI);
-app.use("/video", videoAPI);
 app.use("/ranking", rankingAPI);
-//app.use('/ai', AiAPI);
-app.use("/challenges", challengeAPI);
 app.use("/friend", friendAPI);
 app.use("/themes", themesAPI);
 app.use("/extension", extensionAPI);
 app.use("/playlists", playlistsAPI);
 app.use("/canvas", canvasAPI);
 app.use("/payment", paymentAPI);
-app.use(express.static(path.join(__dirname, process.env.BUILD)));
+//app.use('/ai', AiAPI);
+//app.use("/challenges", challengeAPI);
 
 //handle profile images
 app.get("/profile-image/:userId.jpeg", (req, res) => {
