@@ -26,7 +26,7 @@ function ChatModal({
   const [msgInput, setMsgInput] = useState("");
 
   useEffect(() => {
-    fetch(`${config.server}/chat/bring-rooms`, { method: "post", credentials: "include" })
+    fetch(`${config.server}/chat/bring-rooms`, { method: "POST", credentials: "include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {

@@ -24,7 +24,7 @@ const dispBlock = document.getElementById('dispBlock');
 
 accountButton.addEventListener('click', async () => {
   if (typeof isLogged && isLogged) {
-    await fetch('/account/logout', {
+    await fetch('/auth/logout', {
       method: 'get',
     })
     window.location.href = window.location.origin;
@@ -46,7 +46,7 @@ signInBtn.addEventListener('click', async () => {
   const email = document.querySelector('.card-front #logemail').value;
   const password = document.querySelector('.card-front #logpass').value;
   console.log(email, password);
-  let response = await fetch('/account/signin-authentication', {
+  let response = await fetch('/auth/signin', {
     method: 'post',
     body: JSON.stringify({ email, password }),
     headers: {
@@ -86,7 +86,7 @@ signUpBtn.addEventListener('click', async () => {
   const password = document.querySelector('.card-back #logpass').value;
   const timeZone = getUserTimezone();
   console.log(name, email, password);
-  let response = await fetch('/account/signup-authentication', {
+  let response = await fetch('/auth/signup', {
     method: 'post',
     body: JSON.stringify({ name, email, password, timeZone }),
     headers: {
@@ -136,8 +136,8 @@ const pwResetBtn = document.getElementById("pwResetBtn");
 pwResetBtn.addEventListener("click", async () => {
   const email = document.querySelector('.card-front #logemail').value;
   console.log(email);
-  fetch('/account/reset-password-request', {
-    method: 'post',
+  fetch('/account/password-email', {
+    method: 'POST',
     body: JSON.stringify({ email }),
     headers: {
       'Content-Type': 'application/json'

@@ -128,7 +128,7 @@ function EventModal({}) {
     const repeat = parseInt(planModal.repeat);
     const completed = planModal.completed ? 1 : 0;
     fetch(`${config.server}/plan/update`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

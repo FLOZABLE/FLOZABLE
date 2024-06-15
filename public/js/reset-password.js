@@ -24,7 +24,7 @@ const dispBlock = document.getElementById('dispBlock');
 
 accountButton.addEventListener('click', async () => {
   if (typeof isLogged && isLogged) {
-    await fetch('/account/logout', {
+    await fetch('/auth/logout', {
       method: 'get',
     })
     window.location.href = window.location.origin;
@@ -46,8 +46,8 @@ signInBtn.addEventListener('click', async () => {
   const searchParams = new URLSearchParams(new URL(window.location.href).search);
   const email = searchParams.get('email');
   const resetId = searchParams.get('resetId');
-  await fetch('/account/reset-password', {
-    method: 'post',
+  await fetch('/account/password', {
+    method: 'PATCH',
     body: JSON.stringify({password, email, resetId}),
     headers: {
       'Content-Type': 'application/json'

@@ -3,8 +3,6 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const crypto = require("crypto");
-const sharp = require("sharp");
-const multer = require("multer");
 const { DateTime } = require("luxon");
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
@@ -14,29 +12,17 @@ const {
   generateRandomId,
   googleOauth2client,
   isValidTimeZone,
-  deriveKey,
 } = require("../tool");
 const {
   validateEmail,
   validateStrictString,
   validatePassword,
-  validateURL,
   validateString,
   validateLength,
 } = require("../validate");
-const {
-  NotificationCache,
-  userCache,
-  subjectsTimelineCache,
-  addActiveUserCache,
-  cacheUserInfo,
-} = require("../services/redisLoader");
+const { userCache, cacheUserInfo } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
-const {
-  responseCodes,
-  USER_ID_COOKIE_OPTIONS,
-  PASSWORD_LINK_EXP,
-} = require("../Constant");
+const { USER_ID_COOKIE_OPTIONS } = require("../Constant");
 const fetch = require("node-fetch");
 
 async function createAccount(name, email, timezone, userInfo) {
@@ -113,7 +99,7 @@ async function createAccount(name, email, timezone, userInfo) {
   }
 }
 
-Router.post("/login", async (req, res) => {
+Router.post("/signin", async (req, res) => {
   const { email, password } = req.body;
 
   const isValidEmail = validateEmail(email);
@@ -124,7 +110,7 @@ Router.post("/login", async (req, res) => {
   const connection = pool.promise();
 
   const [[userInfo]] = await connection.query(
-    "SELECT user_id, salt, hashed_password, email, myinfo, name, timezone, hashed_password FROM users WHERE email = ?",
+    "SELECT user_id, salt, hashed_password, email, name, timezone, hashed_password FROM users WHERE email = ?",
     email
   );
 
@@ -158,7 +144,7 @@ Router.post("/login", async (req, res) => {
   }
 });
 
-Router.post("/login/google", async (req, res) => {
+Router.post("/signin/google", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { data } = req.body;
@@ -191,7 +177,7 @@ Router.post("/login/google", async (req, res) => {
   });
 });
 
-Router.post("/login/youtube", async (req, res) => {
+Router.post("/signin/youtube", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { data } = req.body;

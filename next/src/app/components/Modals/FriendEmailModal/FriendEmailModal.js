@@ -14,7 +14,7 @@ function FriendEmailModal({ isOpen, setIsOpen }) {
     if (!isOpen) return;
 
     fetch(`${config.server}/friend/email-invitation`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -51,7 +51,7 @@ function FriendEmailModal({ isOpen, setIsOpen }) {
         <div className={styles.sendBtnWrapper}>
           <SendBtn onSubmit={() => {
             fetch(`${config.server}/friend/email-invitation`, {
-              method: "post",
+              method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },

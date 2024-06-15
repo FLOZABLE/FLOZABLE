@@ -16,7 +16,7 @@ function FriendLinkModal({ isOpen, setIsOpen }) {
     if (!isOpen || addFriendUrl.length) return;
 
     fetch(`${config.server}/friend/create-link`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

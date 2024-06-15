@@ -26,7 +26,7 @@ function CreateThemeModal({
 
   const submit = () => {
     fetch(`${config.server}/themes/create`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

@@ -11,7 +11,7 @@ function FriendRequestBtn({ userInfo, padding }) {
 
   const requestFriend = () => {
     fetch(`${config.server}/friend/request`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

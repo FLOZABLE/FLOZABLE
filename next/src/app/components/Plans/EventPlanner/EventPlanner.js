@@ -357,7 +357,7 @@ function EventPlanner({
     };
     delete updateInfo.saved;
     fetch(`${config.server}/plan/update`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

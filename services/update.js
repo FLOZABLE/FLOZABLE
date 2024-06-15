@@ -31,7 +31,7 @@ async function updateManager() {
     if (mariadbVersion.version === 0) {
       await initializeMariadb();
     }
-
+    //await mariadbV7();
     if (mariadbVersion.version < 7) {
       await mariadbV7();
     }
@@ -74,41 +74,36 @@ async function initializeMariadb() {
  * removed challengerooms/challenges table
  * added stripe
  * deprecated myinfo, external_user_id, activitym language, private from users table
+ * modified default value for activity_setting of users table
  * deprecated timeline_sum from users table
  * deprecated font from groups table
  * motify character for title, description, subject of plans
  * modify character for name of users
  * modify character for name, description of themes
+ * update all the activity_settings to {}
  */
 async function mariadbV7() {
   try {
     const connection = pool.promise();
 
     await connection.query(`
-    DROP TABLE IF EXISTS challenges;
-    DROP TABLE IF EXISTS challengesrooms;
-
-    ALTER TABLE users
-      ADD COLUMN IF NOT EXISTS stripe_id VARCHAR(30) AFTER some_column_if_needed,
-      DROP COLUMN IF EXISTS myinfo,
-      DROP COLUMN IF EXISTS external_user_id,
-      DROP COLUMN IF EXISTS activity,
-      DROP COLUMN IF EXISTS language,
-      DROP COLUMN IF EXISTS private;
-    
-    ALTER TABLE subjects
-      DROP COLUMN IF EXISTS timeline_sum;
-    
-    ALTER TABLE groups
-      DROP COLUMN IF EXISTS font;
-
       ALTER TABLE plans 
         MODIFY COLUMN title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
         MODIFY COLUMN description VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
         MODIFY COLUMN subject VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
       ALTER TABLE users 
-        MODIFY COLUMN name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+        ADD COLUMN IF NOT EXISTS stripe_id VARCHAR(30) AFTER some_column_if_needed;
+
+      ALTER TABLE users 
+        DROP COLUMN IF EXISTS myinfo,
+        DROP COLUMN IF EXISTS external_user_id,
+        DROP COLUMN IF EXISTS activity,
+        DROP COLUMN IF EXISTS language,
+        DROP COLUMN IF EXISTS private;
+
+      ALTER TABLE users 
+        MODIFY COLUMN activity_setting VARCHAR(500) DEFAULT "{}";
 
       ALTER TABLE subjects 
         MODIFY COLUMN name CHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -116,7 +111,9 @@ async function mariadbV7() {
       ALTER TABLE themes 
         MODIFY COLUMN name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
         MODIFY COLUMN description VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-      `);
+
+      UPDATE users SET activity_setting = "{}"
+    `);
 
     await connection.query(
       `UPDATE versions SET version = 7 WHERE name = "Mariadb"`

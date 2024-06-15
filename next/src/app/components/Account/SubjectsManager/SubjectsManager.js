@@ -26,7 +26,7 @@ function SubjectsManager() {
 
     const { id, icon, color, name, tools } = selectedSubject;
     fetch(`${config.server}/subjects`, {
-      method: "patch",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },

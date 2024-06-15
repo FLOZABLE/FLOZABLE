@@ -11,8 +11,10 @@ const { DateTime } = require("luxon");
 const {
   validateStrictString,
   validateISO,
+  validateURL
 } = require("../validate");
 const { responseCodes } = require("../Constant");
+const { extensionIo } = require("../sockets/extensionIo");
 
 Router.post("/auth", async (req, res) => {
   autoSignin(req, res, async (userId) => {

@@ -68,7 +68,7 @@ function AccountProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
 
   const bringAccountInfo = useCallback(() => {
-    fetch(`${config.server}/account/accountinfo`, {
+    fetch(`${config.server}/account`, {
       method: "get",
       credentials: "include",
     })
@@ -215,7 +215,7 @@ function GroupsProvider({ children }) {
 
   const bringGroups = useCallback(() => {
     fetch(`${config.server}/groups/bring-groups`, {
-      method: "post",
+      method: "POST",
       credentials: "include",
     })
       .then((response) => response.json())
@@ -450,7 +450,7 @@ function ChatsProvider({ children }) {
 
   useEffect(() => {
     fetch(`${config.server}/chat/bring-rooms`, {
-      method: "post",
+      method: "POST",
       credentials: "include",
     })
       .then((response) => response.json())

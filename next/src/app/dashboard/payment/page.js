@@ -48,7 +48,7 @@ export default function Payment() {
     if (!priceId) return;
 
     fetch(`${config.server}/payment/create-checkout-session`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

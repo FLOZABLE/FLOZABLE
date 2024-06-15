@@ -32,7 +32,7 @@ function googleLogin() {
     //window.location.href = "/";
   }
 
-  fetch(`/account/signin-with-google`, {
+  fetch(`/auth/signin/google`, {
     method: "POST",
     body: JSON.stringify({
       access_token,
