@@ -107,9 +107,9 @@
   width: 25rem;
 }
 
-.EventModal .submit {
+.EventModal .buttonsContainer {
   margin-bottom: 1.875rem;
-  justify-content: center;
+  justify-content: space-around;
   width: 100%;
   align-items: center;
   display: flex;
@@ -122,8 +122,10 @@
 
 .EventModal .trashcan {
   font-size: 1.4rem;
-  position: absolute;
-  right: 0.5rem;
+}
+
+.EventModal .shareBtn {
+  font-size: 1.4rem;
 }
 
 @media (max-height: 800px) {

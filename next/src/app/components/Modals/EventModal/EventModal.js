@@ -10,6 +10,7 @@ import {
   faClock,
   faFileLines,
   faRepeat,
+  faShare,
   faTrashCan,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
@@ -128,7 +129,7 @@ function EventModal({}) {
     const repeat = parseInt(planModal.repeat);
     const completed = planModal.completed ? 1 : 0;
     fetch(`${config.server}/plan/update`, {
-      method: "POST",
+      method: "post",
       headers: {
         "Content-Type": "application/json",
       },
@@ -172,7 +173,7 @@ function EventModal({}) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ id }),
-      credentials: 'include'
+      credentials: "include",
     }).then((res) => res.json());
 
     if (data.success) {
@@ -478,7 +479,12 @@ function EventModal({}) {
               </div>
             </div>
           </div>
-          <div className={styles.submit} ref={submitRef}>
+          <div className={styles.buttonsContainer} ref={submitRef}>
+            <div className={styles.shareBtn}>
+              <BlobBtn onClick={() => {}}>
+                <FontAwesomeIcon icon={faShare} />
+              </BlobBtn>
+            </div>
             <BlobBtn
               onClick={() => {
                 submit();

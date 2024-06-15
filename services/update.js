@@ -93,7 +93,7 @@ async function mariadbV7() {
         MODIFY COLUMN subject VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
       ALTER TABLE users 
-        ADD COLUMN IF NOT EXISTS stripe_id VARCHAR(30) AFTER some_column_if_needed;
+        ADD COLUMN IF NOT EXISTS stripe_id VARCHAR(30);
 
       ALTER TABLE users 
         DROP COLUMN IF EXISTS myinfo,
