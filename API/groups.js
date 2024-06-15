@@ -345,7 +345,7 @@ Router.post("/bring-groups", async (req, res) => {
   try {
     const connection = pool.promise();
     const [groups] = await connection.query(
-      "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM `groups`"
+      "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups`"
     );
     /*const allMembersIds = [];
     groups.map((group) => {
@@ -372,7 +372,7 @@ Router.get("/mine", async (req, res) => {
 
       const connection = pool.promise();
       const [groups] = await connection.query(
-        "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM `groups` WHERE group_id IN(?)",
+        "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups` WHERE group_id IN(?)",
         [user.groups]
       );
 

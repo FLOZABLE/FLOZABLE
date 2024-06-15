@@ -8,7 +8,7 @@ const useStripeClientSecret = () => {
     queryKey: ['stripeClientSecret'],
     queryFn: () =>
       fetch(`${config.server}/payment/create-checkout-session`, {
-        method: "post",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },

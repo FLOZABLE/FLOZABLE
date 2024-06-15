@@ -23,7 +23,7 @@ function NotificationModal({}) {
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
     fetch(`${config.server}/friend/request-reply`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -43,7 +43,7 @@ function NotificationModal({}) {
 
   const deleteFriendNotif = (targetId, notificationId) => {
     fetch(`${config.server}/friend/checked`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -63,7 +63,7 @@ function NotificationModal({}) {
   /* 
   const challengeRequestReply = (targetId, accepted, notificationId) => {
     fetch(`${config.server}/challenges/challenge-request-reply`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -83,7 +83,7 @@ function NotificationModal({}) {
 
   const chatRequestReply = (targetId, accepted, notificationId) => {
     fetch(`${config.server}/chat/chat-request-reply`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

@@ -5,39 +5,22 @@ const redisClient = require("../model/redis");
 const crypto = require("crypto");
 const sharp = require("sharp");
 const multer = require("multer");
-const { DateTime } = require("luxon");
-const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
-const {
-  hashing,
-  autoSignin,
-  generateRandomId,
-  googleOauth2client,
-  isValidTimeZone,
-  deriveKey,
-} = require("../tool");
+const { hashing, autoSignin, generateRandomId, deriveKey } = require("../tool");
 const {
   validateEmail,
   validateStrictString,
   validatePassword,
   validateURL,
-  validateString,
-  validateLength,
 } = require("../validate");
 const {
   NotificationCache,
   userCache,
   subjectsTimelineCache,
   addActiveUserCache,
-  cacheUserInfo,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
-const {
-  responseCodes,
-  USER_ID_COOKIE_OPTIONS,
-  PASSWORD_LINK_EXP,
-} = require("../Constant");
-const fetch = require("node-fetch");
+const { responseCodes, PASSWORD_LINK_EXP } = require("../Constant");
 const upload = multer();
 
 Router.get("/", async (req, res) => {
@@ -63,7 +46,7 @@ Router.get("/", async (req, res) => {
   );
 });
 
-Router.post("/password", async (req, res) => {
+Router.post("/password-email", async (req, res) => {
   try {
     const { email } = req.body;
 
@@ -103,7 +86,7 @@ Router.post("/password", async (req, res) => {
   }
 });
 
-Router.patch("/password", async (req, res) => {
+Router.patch("/password/code", async (req, res) => {
   try {
     const { email, resetId, password } = req.body;
 
@@ -143,6 +126,34 @@ Router.patch("/password", async (req, res) => {
     console.log(err);
     res.send({ success: false, reason: "Error" });
   }
+});
+
+Router.patch("/password", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const connection = pool.promise();
+      const { password, confirmPassword } = req.body;
+
+      const isValidPassword = validatePassword(password);
+      if (!isValidPassword.isValid) {
+        return res.send({ success: false, reason: isValidPassword.reason });
+      }
+
+      if (password !== confirmPassword) {
+        return res.send({ success: false, reason: "Password Does Not Match" });
+      }
+
+      const [salt, hashed_password] = hashing(password);
+      const updateInfo = [{ hashed_password, salt }, userId];
+      await connection.query(
+        "UPDATE users set ? WHERE user_id = ?",
+        updateInfo
+      );
+      res.send({ success: true, msg: "Password Updated!" });
+    } catch (error) {
+      res.send({ success: false, reason: "Unsupported File Type" });
+    }
+  });
 });
 
 Router.patch("/image", upload.single("image"), async (req, res) => {
@@ -210,34 +221,6 @@ Router.patch("/info", async (req, res) => {
         updateInfo
       );
       res.send({ success: true, msg: "Updated Your Information!" });
-    } catch (error) {
-      res.send({ success: false, reason: "Unsupported File Type" });
-    }
-  });
-});
-
-Router.patch("/password", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const connection = pool.promise();
-      const { password, confirmPassword } = req.body;
-
-      const isValidPassword = validatePassword(password);
-      if (!isValidPassword.isValid) {
-        return res.send({ success: false, reason: isValidPassword.reason });
-      }
-
-      if (password !== confirmPassword) {
-        return res.send({ success: false, reason: "Password Does Not Match" });
-      }
-
-      const [salt, hashed_password] = hashing(password);
-      const updateInfo = [{ hashed_password, salt }, userId];
-      await connection.query(
-        "UPDATE users set ? WHERE user_id = ?",
-        updateInfo
-      );
-      res.send({ success: true, msg: "Password Updated!" });
     } catch (error) {
       res.send({ success: false, reason: "Unsupported File Type" });
     }

@@ -28,7 +28,7 @@ export default function Plan({ plan, children }) {
 
       delete planInfo.saved;
       fetch(`${config.server}/plan/status-change`, {
-        method: "post",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },

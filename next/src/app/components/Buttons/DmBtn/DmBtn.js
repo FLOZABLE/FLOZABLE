@@ -12,7 +12,7 @@ function DmBtn({ userInfo, padding }) {
 
   const requestChat = () => {
     fetch(`${config.server}/chat/chat-request`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

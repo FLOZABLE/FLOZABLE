@@ -12,7 +12,7 @@ const LikeBtn = ({
 
   const handleLike = () => {
     fetch(url, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

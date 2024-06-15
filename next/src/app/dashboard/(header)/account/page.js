@@ -54,16 +54,11 @@ function Account() {
 
   const uploadImage = useCallback(async (formData) => {
     try {
-      /* let response = await fetch(`${config.server}/account/update/image`, {
-        method: 'POST',
-        body: formData,
-      }); */
-
-      fetch(`${config.server}/account/update/image`, {
-        method: "post",
-        /* headers: {
+      fetch(`${config.server}/account/image`, {
+        method: "PATCH",
+        headers: {
           'Content-Type': 'application/json'
-        }, */
+        },
         body: formData,
         credentials: "include",
       })
@@ -81,8 +76,8 @@ function Account() {
 
   useEffect(() => {
     if (isSubmitProfile) {
-      fetch(`${config.server}/account/update/info`, {
-        method: "post",
+      fetch(`${config.server}/account/info`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -102,8 +97,8 @@ function Account() {
 
   useEffect(() => {
     if (isSubmitPw) {
-      fetch(`${config.server}/account/update/password`, {
-        method: "post",
+      fetch(`${config.server}/account/password`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -126,8 +121,8 @@ function Account() {
     setImageSrc(
       `${config.static_server}/profile-image/${userInfo.user_id}.jpeg`
     );
-    fetch(`${config.server}/extension/tabs-settings`, {
-      method: "get",
+    fetch(`${config.server}/extension/settings`, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },

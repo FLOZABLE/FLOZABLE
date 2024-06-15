@@ -23,13 +23,13 @@ function ExtensionSetting({ websites, setWebsites }) {
 
   const onSubmitUrl = useCallback(
     (url) => {
-      fetch(`${config.server}/account/update/extension-add`, {
-        method: "post",
+      fetch(`${config.server}/extension/settings`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ url }),
-        credentials: 'include'
+        credentials: "include",
       })
         .then((response) => response.json())
         .then((data) => {
@@ -85,14 +85,14 @@ function ExtensionSetting({ websites, setWebsites }) {
   }, [websites]);
 
   const fetchExtensionSettingUpdate = useCallback((d, target, value) => {
-    console.log(d)
-    fetch(`${config.server}/account/update/extension-setting-update`, {
-      method: "post",
+    console.log(d);
+    fetch(`${config.server}/extension/settings`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ d, target, value }),
-      credentials: 'include'
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
@@ -148,7 +148,11 @@ function ExtensionSetting({ websites, setWebsites }) {
                   <SimpleToggleBtn
                     checked={b}
                     onToggle={(e) => {
-                      fetchExtensionSettingUpdate(website, "block", e.target.checked);
+                      fetchExtensionSettingUpdate(
+                        website,
+                        "block",
+                        e.target.checked
+                      );
                     }}
                   />
                 </div>
@@ -168,7 +172,11 @@ function ExtensionSetting({ websites, setWebsites }) {
                   <SimpleToggleBtn
                     checked={t}
                     onToggle={(e) => {
-                      fetchExtensionSettingUpdate(website, "timer", e.target.checked);
+                      fetchExtensionSettingUpdate(
+                        website,
+                        "timer",
+                        e.target.checked
+                      );
                     }}
                   />
                 </div>
