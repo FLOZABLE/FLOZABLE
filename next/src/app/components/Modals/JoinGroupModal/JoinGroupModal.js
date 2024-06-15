@@ -35,7 +35,7 @@ function JoinGroupModal() {
     const groupId = joinGroupModal.group.group_id;
 
     fetch(`${config.server}/groups/join/${groupId}`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

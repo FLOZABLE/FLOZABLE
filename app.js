@@ -88,6 +88,7 @@ const { io } = require("./sockets/io");
 app.use(
   cors({
     origin: process.env.SERVER_CORS.split(", "),
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     credentials: true,
   })
 );

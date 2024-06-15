@@ -1,7 +1,7 @@
 const { config } = require("@/app/utils/config");
 
 async function fetchUserData () {
-  const response = await fetch(`${config.server}/account/accountinfo`);
+  const response = await fetch(`${config.server}/account`);
   if (!response.ok) {
     throw new Error('Failed to fetch user data');
   };

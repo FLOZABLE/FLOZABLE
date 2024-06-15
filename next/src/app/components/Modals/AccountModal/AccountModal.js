@@ -96,8 +96,8 @@ function AccountModal({}) {
             <SigninWithGoogleBtn infoText={"Continue With Google"} />
             <BlobBtn
               onClick={() => {
-                fetch(`${config.server}/account/signin-authentication`, {
-                  method: "post",
+                fetch(`${config.server}/auth/signin`, {
+                  method: "POST",
                   headers: {
                     "Content-Type": "application/json",
                   },
@@ -173,8 +173,8 @@ function AccountModal({}) {
             <SigninWithGoogleBtn infoText={"Register With Google"} />
             <BlobBtn
               onClick={() => {
-                fetch(`${config.server}/account/signup-authentication`, {
-                  method: "post",
+                fetch(`${config.server}/auth/signup`, {
+                  method: "POST",
                   headers: {
                     "Content-Type": "application/json",
                   },

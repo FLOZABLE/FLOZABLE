@@ -38,7 +38,7 @@ function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
       return;
     }
     fetch(`${config.server}/themes/save`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -83,7 +83,7 @@ function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
 
   const unSaveTheme = function (themeId) {
     fetch(`${config.server}/themes/unsave`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

@@ -15,7 +15,7 @@ function SigninWithGoogleBtn({ infoText }) {
   const { setResponse } = useContext(ResponseContext);
   const { setTutorial } = useContext(TutorialsContext);
   const { bringAccountInfo } = useContext(UserInfoContext);
-  const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
+  const { setIsAccountModal } = useContext(ModalsContext);
 
   const router = useRouter();
 
@@ -24,7 +24,7 @@ function SigninWithGoogleBtn({ infoText }) {
     onSuccess: (response) => {
       const { access_token } = response;
       console.log(response);
-      fetch(`${config.server}/account/signin-with-google`, {
+      fetch(`${config.server}/auth/signin/google`, {
         method: "POST",
         body: JSON.stringify({
           access_token,

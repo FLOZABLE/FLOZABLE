@@ -107,7 +107,7 @@ function Stats({}) {
     setTimeout(() => {
       fetch(`${config.server}/extension/usage?date=${viewDateTime.toISODate()}&mode=${statsViewer}`,
       {
-        method: "get",
+        method: "GET",
         credentials: 'include'
       })
       .then((response) => response.json())

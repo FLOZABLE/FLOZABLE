@@ -11,8 +11,8 @@ function GoogleLoginBtn({ scope = "openid email profile https://www.googleapis.c
     select_account: true,
     onSuccess: (response) => {
       const { code } = response;
-      fetch(`${config.server}/account/auth/google`, {
-        method: "post",
+      fetch(`${config.server}/auth/signin/google`, {
+        method: "POST",
         headers: {
           'Content-Type': 'application/json'
         },
