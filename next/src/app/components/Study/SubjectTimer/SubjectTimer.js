@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ModalsContext, SubjectsContext, TutorialsContext, WorkersContext } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
+import PomodoroTimer from '../PomodoroTimer/PomodoroTimer';
 
 function SubjecTimer({
   selectedSubject,
@@ -216,7 +217,7 @@ function SubjecTimer({
             className={styles.option}
           >
             Or Add Subject
-          </li>,
+          </li>
         </ul>
       </div>
       <div className={styles.buttonWrapper}>

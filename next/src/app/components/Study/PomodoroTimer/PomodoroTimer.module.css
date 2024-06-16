@@ -1,0 +1,18 @@
+.PomodoroTimer {
+  width: 100%;
+}
+
+.PomodoroTimer .PomodoroSwitch {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.PomodoroTimer {
+  margin-left: 1rem;
+  margin-top: 0.25rem;
+}
+
+.PomodoroTimer .pomodoroDescription {
+  margin-left: 0.25rem;
+}
