@@ -14,11 +14,12 @@ import StudySubjectTool from "@/app/components/Study/StudySubjectTool/StudySubje
 import StudySidebar from "@/app/components/Study/StudySidebar/StudySidebar";
 import StudyTimelineBar from "@/app/components/Study/StudyTimelineBar/StudyTimelineBar";
 import StudySubjectTools from "@/app/components/Study/StudySubjectTools/StudySubjectTools";
+import PomodoroTimer from "@/app/components/Study/PomodoroTimer/PomodoroTimer";
 
 
 function Study() {
   const [isPlannerModal, setIsPlannerModal] = useState(false);
-  const [selectedSubject, setSelectedSubject] = useState({ default: true, daily: { total: [0] }});
+  const [selectedSubject, setSelectedSubject] = useState({ default: true, daily: { total: [0] } });
   const [isTimerModal, setIsTimerModal] = useState(true);
   const [isPlaylistModal, setIsPlaylistModal] = useState(false);
   const [isTemplateModal, setIsTemplateModal] = useState(false);
@@ -112,10 +113,13 @@ function Study() {
         onDragEnd={(event, dragElement) => { handleStop(event, dragElement, "subject") }}
         isDisp={isTimerModal}
         element={
-          <SubjectTimer 
-            selectedSubject={selectedSubject}
-            setSelectedSubject={setSelectedSubject}
-          />
+          <div>
+            <SubjectTimer
+              selectedSubject={selectedSubject}
+              setSelectedSubject={setSelectedSubject}
+            />
+            <PomodoroTimer />
+          </div>
         }
       />
       <StudyModalContainer
