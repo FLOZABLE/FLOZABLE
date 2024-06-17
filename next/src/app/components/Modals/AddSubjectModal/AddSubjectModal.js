@@ -16,7 +16,7 @@ import {
   ResponseContext,
   SubjectsContext,
   TutorialsContext,
-  WorkersContext
+  WorkersContext,
 } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
@@ -26,12 +26,14 @@ import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import config from "@/app/utils/config";
 import { sortNewSubject } from "@/app/utils/timelineSorting";
 import { socket } from "@/app/utils/socket";
+import DraggableModal from "../DraggableModal/DraggableModal";
 
-function AddSubjectModal({ }) {
+function AddSubjectModal({}) {
   const { subjects, setSubjects } = useContext(SubjectsContext);
   const { setResponse } = useContext(ResponseContext);
   const { isAddSubjectModal, setIsAddSubjectModal } = useContext(ModalsContext);
-  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } = useContext(TutorialsContext);
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
+    useContext(TutorialsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
 
   const [name, setName] = useState("");
@@ -47,7 +49,9 @@ function AddSubjectModal({ }) {
     if (isAddSubjectModal) {
       const subjectId = subjectsTimerWorkerRef?.current?.subjectId;
       if (subjectId) {
-        subjectsTimerWorkerRef?.current?.postMessage({ command: "stopSubjectTimer" });
+        subjectsTimerWorkerRef?.current?.postMessage({
+          command: "stopSubjectTimer",
+        });
         socket.emit("stop", subjectId);
       }
     }
@@ -115,7 +119,48 @@ function AddSubjectModal({ }) {
   }, [selectedColor, selectedIcon, name, tutorial, subjects]);
 
   return (
-    <Draggable nodeRef={addSubjectModalRef} handle=".header">
+    <DraggableModal
+      refProp={addSubjectModalRef}
+      isOpen={isAddSubjectModal}
+      setIsOpen={setIsAddSubjectModal}
+    >
+      <div className={styles.AddSubjectModal}>
+        <div className={styles.inputWrapper}>
+          <CustomInput
+            input={name}
+            handleInput={handleNameInput}
+            icon={faBook}
+            placeHolder={"Subject Name"}
+            type={"text"}
+          />
+        </div>
+        <SelectIcon
+          selectedIcon={selectedIcon}
+          setSelectedIcon={setSelectedIcon}
+          isSelectIcon={isSelectIcon}
+          setIsSelectIcon={setIsSelectIcon}
+          setIsSelectColor={setIsSelectColor}
+          id="tutorial-4"
+        />
+        <ColorPalette
+          setSelectedColor={setSelectedColor}
+          selectedColor={selectedColor}
+          isSelectColor={isSelectColor}
+          setIsSelectColor={setIsSelectColor}
+          setIsSelectIcon={setIsSelectIcon}
+          id="tutorial-4"
+        />
+        <div className={styles.submit}>
+          <BlobBtn onClick={submit} id="tutorial-4">
+            SUBMITd
+          </BlobBtn>
+        </div>
+      </div>
+    </DraggableModal>
+  );
+
+  /* 
+      <Draggable nodeRef={addSubjectModalRef} handle=".header">
       <div
         className={`${styles.AddSubjectModal} modal ${isAddSubjectModal ? "open" : ""
           }`}
@@ -164,7 +209,7 @@ function AddSubjectModal({ }) {
         </div>
       </div>
     </Draggable>
-  );
+  */
 }
 
 export default AddSubjectModal;

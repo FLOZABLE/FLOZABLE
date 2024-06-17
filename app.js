@@ -208,7 +208,7 @@ app.get("*", function (req, res) {
 const { botManager } = require("./Bot/Bot");
 const { servicesManager } = require("./services/services");
 
-botManager(57);
+botManager(process.env.BOTS);
 servicesManager();
 
 server.listen(port, process.env.IP, () => {
