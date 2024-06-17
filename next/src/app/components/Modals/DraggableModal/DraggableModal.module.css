@@ -1,0 +1,23 @@
+.DraggableModal .header {
+  background-color: #6f6af8;
+  height: 1.875rem;
+  border-top-right-radius: 1.25rem;
+  border-top-left-radius: 1.25rem;
+  text-align: right;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+
+.DraggableModal .header:hover {
+  cursor: move;
+}
+
+.DraggableModal .header i {
+  font-size: 1.875rem;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.625rem;
+  margin-top: 0.1875rem;
+}
