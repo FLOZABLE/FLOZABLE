@@ -93,6 +93,11 @@ button:hover {
   transform: translateX(-50%);
   transition: 0.3s ease-in-out opacity, 0.3s ease-in-out visibility,
     0.3s ease-in-out top;
+  background-color: #fff;
+  width: 34.375rem;
+  z-index: 7;
+  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
+  border-radius: 1.25rem;
 }
 
 .modal.open {

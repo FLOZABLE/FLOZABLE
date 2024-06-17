@@ -8,8 +8,9 @@ const { google } = require('googleapis');
 const { DateTime } = require("luxon");
 const { UserRefreshClient } = require("google-auth-library");
 const { validateStrictString, validateInteger, validateLength, validateString } = require("../validate");
-const { googleAccessTokenCache } = require("../services/redisLoader");
+const { googleAccessTokenCache, userCache } = require("../services/redisLoader");
 const schedule = require('node-schedule');
+const { responseCodes } = require("../Constant");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
@@ -277,4 +278,21 @@ Router.delete("/", async (req, res) => {
   })
 })
 
+
+/* Router.post("/share", async (req, res) => {
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const connection = pool.promise();
+
+      const user = await userCache(userId);
+
+      if (!user) return res.send({success: false, reason: responseCodes['no-user']});
+
+      if (user.friends.include)
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false });
+    };
+  }));
+}); */
 module.exports = Router;
