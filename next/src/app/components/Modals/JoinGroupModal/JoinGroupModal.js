@@ -6,20 +6,22 @@ import {
   ResponseContext,
 } from "@/app/utils/Contexts";
 import styles from "./JoinGroupModal.module.css";
-import { faKey, faLock, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useEffect, useState } from "react";
+import { faKey } from "@fortawesome/free-solid-svg-icons";
+import { useContext, useEffect, useRef, useState } from "react";
 import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import config from "@/app/utils/config";
 import { useRouter } from "next/navigation";
+import DraggableModal from "../DraggableModal/DraggableModal";
 
 function JoinGroupModal() {
   const { setResponse } = useContext(ResponseContext);
   const { joinGroupModal, setJoinGroupModal } = useContext(ModalsContext);
   const { setMyGroups, setOtherGroups, otherGroups } =
     useContext(GroupsContext);
+
+  const modalRef = useRef(null);
 
   const router = useRouter();
 
@@ -96,48 +98,43 @@ function JoinGroupModal() {
   }, [otherGroups]);
 
   return (
-    <div
-      className={`${styles.JoinGroupModal} modal ${
-        joinGroupModal.open ? "open" : ""
-      }`}
+    <DraggableModal
+      refProp={modalRef}
+      isOpen={joinGroupModal.open}
+      setIsOpen={() => {
+        setJoinGroupModal((prev) => {
+          return { ...prev, open: false };
+        });
+      }}
     >
-      <div className={styles.header}>
-        <i
-          onClick={() => {
-            setJoinGroupModal((prev) => {
-              return { ...prev, open: false };
-            });
-          }}
-        >
-          <FontAwesomeIcon icon={faXmark} />
-        </i>
-      </div>
-      {joinGroupModal?.group ? (
-        <div className={`${styles.contents} customScroll`}>
-          <div className={styles.text}>Join this group?</div>
-          <div className={styles.groupWrapper}>
-            <GroupContainer groupInfo={joinGroupModal.group} />
-          </div>
-          {!joinGroupModal.group.visibility ? (
-            <div>
-              <CustomInput
-                input={pw}
-                handleInput={handlePwInput}
-                handleEnter={submit}
-                icon={faKey}
-                placeHolder={"Enter the group password to join"}
-                type={"text"}
-              />
+      <div className={`${styles.JoinGroupModal}`}>
+        {joinGroupModal?.group ? (
+          <div className={`${styles.contents} customScroll`}>
+            <div className={styles.text}>Join this group?</div>
+            <div className={styles.groupWrapper}>
+              <GroupContainer groupInfo={joinGroupModal.group} />
             </div>
-          ) : null}
-          <div className={styles.blobWrapper}>
-            <BlobBtn onClick={submit} color1={"#fff"} color2={"var(--pink)"}>
-              Join
-            </BlobBtn>
+            {!joinGroupModal.group.visibility ? (
+              <div>
+                <CustomInput
+                  input={pw}
+                  handleInput={handlePwInput}
+                  handleEnter={submit}
+                  icon={faKey}
+                  placeHolder={"Enter the group password to join"}
+                  type={"text"}
+                />
+              </div>
+            ) : null}
+            <div className={styles.blobWrapper}>
+              <BlobBtn onClick={submit} color1={"#fff"} color2={"var(--pink)"}>
+                Join
+              </BlobBtn>
+            </div>
           </div>
-        </div>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
+    </DraggableModal>
   );
 }
 

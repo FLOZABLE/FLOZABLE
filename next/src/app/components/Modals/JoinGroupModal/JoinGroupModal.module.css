@@ -1,29 +1,8 @@
 .JoinGroupModal {
   width: 31.25rem;
-  z-index: 3;
-  background-color: #fff;
-  overflow: hidden;
-  overflow-y: hidden;
-  border-radius: 1.875rem;
-  box-shadow: var(--shadow3);
   max-height: 60vh;
   display: flex;
   flex-direction: column;
-}
-
-.JoinGroupModal .header {
-  background-color: var(--pink);
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-}
-
-.JoinGroupModal .header i {
-  font-size: 1.875rem;
-  color: #fff;
-  margin-left: auto;
-  margin-right: 0.625rem;
-  cursor: pointer;
 }
 
 .JoinGroupModal .groupWrapper {

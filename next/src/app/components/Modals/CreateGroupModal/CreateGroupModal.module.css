@@ -1,36 +1,5 @@
 .CreateGroupModal {
-  position: fixed;
-  width: 37.5rem;
-  background-color: #fff;
-  z-index: 2;
-  border-radius: 1.25rem;
-  overflow: hidden;
-  box-shadow: rgba(50, 50, 93, 0.25) 0em 0.375rem 0.75rem -0.125rem, rgba(0, 0, 0, 0.3) 0em 0.1875rem 0.4375rem -0.1875rem;
-}
-
-.CreateGroupModal .header {
-  height: 1.875rem;
-  background-color: var(--pink);
-  width: 100%;
-  display: flex;
-  align-items: center;
-  border-top-right-radius: 1.25rem;
-  border-top-left-radius: 1.25rem;
-}
-
-.CreateGroupModal .header .closeBtn {
-  margin-left: auto;
-  margin-right: 0.625rem;
-  font-size:  1.438rem;
-  color: #fff;
-  cursor: pointer;
-}
-
-.CreateGroupModal .header:hover {
-  cursor: move;
-}
-
-.CreateGroupModal .container {
+  width: 30.5rem;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -137,7 +106,7 @@
 }
 
 @media (max-height: 50rem) {
-  .CreateGroupModal .container {
+  .CreateGroupModal {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
