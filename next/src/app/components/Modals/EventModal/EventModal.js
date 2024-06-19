@@ -33,7 +33,8 @@ function EventModal({}) {
   const { subjects } = useContext(SubjectsContext);
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
   const { setResponse } = useContext(ResponseContext);
-  const { setIsAddSubjectModal } = useContext(ModalsContext);
+  const { setIsAddSubjectModal, setIsSharePlanModal } =
+    useContext(ModalsContext);
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
 
@@ -471,7 +472,13 @@ function EventModal({}) {
         </div>
         <div className={styles.buttonsContainer} ref={submitRef}>
           <div className={styles.shareBtn}>
-            <BlobBtn onClick={() => {}}>
+            <BlobBtn
+              onClick={() => {
+
+                console.log('ffffff')
+                setIsSharePlanModal((prev) => !prev);
+              }}
+            >
               <FontAwesomeIcon icon={faShare} />
             </BlobBtn>
           </div>

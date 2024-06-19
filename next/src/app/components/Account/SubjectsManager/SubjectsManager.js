@@ -100,55 +100,7 @@ function SubjectsManager() {
         }
       });
   }, [selectedSubject]);
-
-  /* return (
-    <div className={`${styles.SubjectsManager} customScroll`}>
-      {
-        selectedSubject.id !== null ?
-          <div>
-            <SubjectManager
-              subject={selectedSubject}
-              setSelectedSubject={setSelectedSubject}
-              selectedSubject={selectedSubject}
-              deleteSubject={deleteSubject}
-            />
-          </div>
-          :
-          <div>
-            <div className={styles.SubjectSelector}>
-              {
-                subjects.map((subject, i) => {
-
-                  const StyleWrapper = styled.div`
-                    div {
-                      background-color: ${subject.color};
-                      transition: 0.3s;
-                    }
-                    div:hover {
-                      box-shadow: 5px 5px 5px rgb(100,100,100);
-                      cursor: pointer;
-                    }
-                  `;
-
-                  return (
-                    <StyleWrapper key={i}>
-                      <div className={styles.iconContainer} onClick={() => { setSelectedSubject(subject) }}>
-                        <i style={{ color: subject.color, width: "5rem", height: '5rem' }}>
-                          {subjectIcons[subject.icon]}
-                        </i>
-                        <br />
-                        {subject.name}
-                      </div>
-                    </StyleWrapper>
-                  )
-                })
-              }
-            </div>
-          </div>
-      }
-    </div>
-  ); */
-
+  
   return (
     <div className={`customScroll ${styles.SubjectsManager}`}>
       {selectedSubject.id !== null ? (
