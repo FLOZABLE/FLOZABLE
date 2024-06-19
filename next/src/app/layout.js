@@ -10,6 +10,7 @@ import AccountModal from "@/app/components/Modals/AccountModal/AccountModal";
 import Tutorial from "./components/Others/Tutorial/Tutorial";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import SubjectsModal from "./components/Modals/SubjectsModal/SubjectsModal";
+import SharePlanModal from "./components/Modals/SharePlanModal/SharePlanModal";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
 
@@ -77,6 +78,7 @@ export default function RootLayout({ children }) {
           <AddSubjectModal />
           <NotificationModal />
           <SubjectsModal />
+          <SharePlanModal />
           <Tutorial />
           {children}
         </AppProvider>
