@@ -80,6 +80,7 @@ const extensionAPI = require("./API/extension");
 const canvasAPI = require("./API/canvas");
 const playlistsAPI = require("./API/playlists");
 const paymentAPI = require("./API/payment");
+const notificationsAPI = require("./API/notifications");
 
 //import socket
 const { io } = require("./sockets/io");
@@ -173,6 +174,7 @@ app.use("/extension", extensionAPI);
 app.use("/playlists", playlistsAPI);
 app.use("/canvas", canvasAPI);
 app.use("/payment", paymentAPI);
+app.use("/notifications", notificationsAPI);
 //app.use('/ai', AiAPI);
 //app.use("/challenges", challengeAPI);
 

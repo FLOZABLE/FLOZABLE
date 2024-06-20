@@ -13,7 +13,7 @@ function FriendEmailModal({ isOpen, setIsOpen }) {
   useEffect(() => {
     if (!isOpen) return;
 
-    fetch(`${config.server}/friend/email-invitation`, {
+    fetch(`${config.server}/friend/invitation/email`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +50,7 @@ function FriendEmailModal({ isOpen, setIsOpen }) {
         <input type="text" name="" id="" onChange={(e) => {setEmail(e.target.value)}}/>
         <div className={styles.sendBtnWrapper}>
           <SendBtn onSubmit={() => {
-            fetch(`${config.server}/friend/email-invitation`, {
+            fetch(`${config.server}/friend/invitation/email`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

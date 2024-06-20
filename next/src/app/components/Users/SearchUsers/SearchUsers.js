@@ -12,7 +12,7 @@ function SearchUsers({ searchQuery, setCount, search, setSearch }) {
 
   const fetchServer = () => {
     fetch(`${config.server}/friend/search?query=${searchQuery}`, {
-      method: "get",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },

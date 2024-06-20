@@ -3,7 +3,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./NotificationModal.module.css";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef } from "react";
 import Draggable from "react-draggable";
 import {
   ModalsContext,
@@ -22,7 +22,7 @@ function NotificationModal({}) {
   const moveRef = useRef(null);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${config.server}/friend/request-reply`, {
+    fetch(`${config.server}/friend/request/reply`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -42,7 +42,7 @@ function NotificationModal({}) {
   };
 
   const deleteFriendNotif = (targetId, notificationId) => {
-    fetch(`${config.server}/friend/checked`, {
+    fetch(`${config.server}/notifications/read`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

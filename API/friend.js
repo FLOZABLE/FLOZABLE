@@ -24,7 +24,7 @@ const { DateTime } = require("luxon");
 const { mainIo } = require("../sockets/mainIo");
 const Router = express.Router();
 
-//add friend
+//send friend request
 Router.post("/request", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
@@ -88,7 +88,7 @@ Router.post("/request", async (req, res) => {
   });
 });
 
-Router.post("/request-cancel", async (req, res) => {
+Router.delete("/request", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { targetId } = req.body;
@@ -120,8 +120,8 @@ Router.post("/request-cancel", async (req, res) => {
   });
 });
 
-//accept friend request
-Router.post("/request-reply", async (req, res) => {
+//accept/decline friend request
+Router.post("/request/reply", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { targetId, accepted } = req.body;
@@ -297,36 +297,6 @@ Router.post("/request-reply", async (req, res) => {
   });
 });
 
-/**read notification so clear it from the redis */
-Router.post("/checked", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const { targetId } = req.body;
-
-      const isValidTargetId = validateStrictString(targetId, "user id", 10);
-
-      if (!isValidTargetId.isValid) {
-        return res.send({ success: false, reason: isValidTargetId.reason });
-      }
-
-      const friendRequests = await NotificationCache(userId, 1, false);
-      const friendReq = friendRequests.find((friendReq) => {
-        return friendReq.f === targetId;
-      });
-      if (!friendReq)
-        return res.send({ success: false, reason: "no request found" });
-      redisClient.sRem(
-        `user:${userId}:notifications`,
-        JSON.stringify(friendReq)
-      );
-      res.send({ success: true });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "An Error Occured" });
-    }
-  });
-});
-
 Router.get("/recommended", async (req, res) => {
   autoSignin(
     req,
@@ -457,7 +427,7 @@ async function createFriendLink(userId) {
   }
 }
 
-Router.post("/create-link", async (req, res) => {
+Router.post("/link/create", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     const linkId = await createFriendLink(userId);
     if (linkId) {
@@ -472,7 +442,7 @@ Router.post("/create-link", async (req, res) => {
  * add using link
  */
 
-Router.get("/add", async (req, res) => {
+Router.get("/link/add", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { id } = req.query;
@@ -670,7 +640,7 @@ Router.get("/add", async (req, res) => {
   });
 });
 
-Router.post("/email-invitation", async (req, res) => {
+Router.post("/invitation/email", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { email } = req.body;
