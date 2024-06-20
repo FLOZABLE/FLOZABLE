@@ -21,7 +21,7 @@ function FriendsActivityViewer() {
     if (!userInfo) return;
     
     fetch(`${config.server}/friend/status`, {
-      method: "get",
+      method: "GET",
       headers: {
         'Content-Type': 'application/json'
       },

@@ -35,84 +35,10 @@ function FriendRequestsViewer() {
 
     setFriendRequests(friendRequests);
     setSentRequests(sentRequests);
-    /* 
-    setSentRequestsEl(sentRequests.map((sentRequest, index) => {
-      const { f, i } = sentRequest;
-      const { name, timezone, user_id } = f;
-      return (
-        <div className={styles.friendRequest} style={{zIndex: sentRequests.length - index + 1}} key={i}>
-          <Link to={`/dashboard/user/${user_id}`} >
-            <div className={styles.content}>
-              <div className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${config.server}/profile-images/${user_id}.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}>
-              </div>
-              <p className={`${styles.name} overflowDot`}>{name}</p>
-              <CountryViewer timezone={timezone} />
-            </div>
-          </Link>
-          <div className={styles.buttons}>
-            <div className={`${styles.btnWrapper} ${styles.decline}`}>
-              <button onClick={() => { sentRequestClear(user_id, i) }}>
-                <FontAwesomeIcon icon={faXmark} />
-              </button>
-              <div className={styles.hoverDisp}>
-                Abort
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-    }));
-
-    setFriendRequestEl(friendRequests.map((friendRequest) => {
-      const { f, i } = friendRequest;
-      const { name, timezone, user_id } = f;
-      return (
-        <div className={styles.friendRequest} key={i}>
-          <Link to={`/dashboard/user/{fromId}`} >
-            <div className={styles.content}>
-              <div className={styles.profileImg}
-                style={{
-                  backgroundImage: `url("${config.server}/profile-images/${user_id}.jpeg")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center center',
-                  backgroundRepeat: 'no-repeat',
-                }}>
-              </div>
-              <p className={`${styles.name} overflowDot`}>{name}</p>
-              <CountryViewer timezone={timezone} />
-            </div>
-          </Link>
-          <div className={styles.buttons}>
-            <div className={`${styles.btnWrapper} ${styles.decline}`}>
-              <button onClick={() => {friendRequestReply(user_id, false, i) }}>
-                <FontAwesomeIcon icon={faXmark} />
-              </button>
-              <div className={styles.hoverDisp}>
-                Decline
-              </div>
-            </div>
-            <div className={`${styles.btnWrapper} ${styles.accept}`}>
-              <button onClick={() => {friendRequestReply(user_id, true, i) }}>
-                <FontAwesomeIcon icon={faCheck} />
-              </button>
-              <div className={styles.hoverDisp}>
-                Accept
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-    })) */
   }, [notifications]);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${config.server}/friend/request-reply`, {
+    fetch(`${config.server}/friend/request/reply`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -130,8 +56,8 @@ function FriendRequestsViewer() {
   };
 
   const sentRequestClear = (targetId, notificationId) => {
-    fetch(`${config.server}/friend/request-cancel`, {
-      method: "POST",
+    fetch(`${config.server}/friend/request`, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
