@@ -30,6 +30,7 @@ import SliderAnimation from "@/app/components/Inputs/SliderAnimation/SliderAnima
 import { generateRandomId, requestNotification } from "@/app/utils/Tool";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
+import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 
 function EventModalLayer({ children, icon, hoverEl }) {
   return (
@@ -43,6 +44,29 @@ function EventModalLayer({ children, icon, hoverEl }) {
         ) : null}
       </div>
       <div className={styles.contentWrapper}>{children}</div>
+    </div>
+  );
+}
+
+function UserBox({ userInfo, setPlanModal }) {
+  return (
+    <div
+      className={styles.UserBox}
+      onClick={() => {
+        setPlanModal((prev) => {
+          return {
+            ...prev,
+            share: [
+              ...prev.share.filter(
+                (users) => users.user_id !== userInfo.user_id
+              ),
+            ],
+          };
+        });
+      }}
+    >
+      <ProfileImage userId={userInfo.user_id} />
+      <div className={styles.hoverEl}>Remove {userInfo.name}</div>
     </div>
   );
 }
@@ -146,6 +170,7 @@ function EventModal({}) {
     const notification = parseInt(planModal.notification);
     const repeat = parseInt(planModal.repeat);
     const completed = planModal.completed ? 1 : 0;
+    const share = planModal.share.map(user => user.user_id);
     fetch(`${config.server}/plan/update`, {
       method: "post",
       headers: {
@@ -158,6 +183,7 @@ function EventModal({}) {
         completed,
         notification,
         repeat,
+        share
       }),
       credentials: "include",
     })
@@ -171,6 +197,8 @@ function EventModal({}) {
           if (eventIndex !== -1) {
             const updatedEvents = [...plans];
             updatedEvents[eventIndex].saved = true;
+            updatedEvents[eventIndex].id = data.planData.id;
+            console.log(data.planData.id);
             setPlans(updatedEvents);
           }
           setPlanModal((prev) => ({ ...prev, opened: false, id: null }));
@@ -255,8 +283,31 @@ function EventModal({}) {
           return prev;
         });
       }
+    } else {
+      console.log(planModal.share)
+      if (!planModal.share.length) return;
+
+      if (planModal.share[0]?.user_Id) return;
+
+      fetch(`${config.server}/account/lists`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ids: planModal.share
+        }),
+        credentials: "include",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setPlanModal(prev => {
+            return ({...prev, share: data.users})
+          })
+        })
+        .catch((error) => console.error(error));
     }
-  }, [planModal.opened]);
+  }, [planModal.opened, planModal.id]);
 
   /* useEffect(() => {
     if (router.search.includes('tutorial')) return;
@@ -447,8 +498,14 @@ function EventModal({}) {
           icon={<FontAwesomeIcon icon={faUserGroup} />}
           hoverEl={"Shared Users"}
         >
-          {planModal.shared.map((userInfo) => {
-            return (userInfo.name);
+          {planModal.share.map((userInfo, i) => {
+            return (
+              <UserBox
+                userInfo={userInfo}
+                setPlanModal={setPlanModal}
+                key={i}
+              />
+            );
           })}
         </EventModalLayer>
         <div className={styles.buttonsContainer} ref={submitRef}>
