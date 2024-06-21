@@ -30,11 +30,15 @@ function FriendRequestBtn({ userInfo, padding }) {
       <div className={styles.blobWrapper}>
         <BlobBtn
           padding={padding}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             requestFriend();
           }}
           color1={"#fff"}
           color2={"var(--purple)"}
+          style={{
+            fontSize: '0.9rem'
+          }}
         >
           +<FontAwesomeIcon icon={faUser} />
         </BlobBtn>

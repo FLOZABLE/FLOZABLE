@@ -7,7 +7,7 @@ import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRe
 import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 import ProfileImage from "../ProfileImage/ProfileImage";
 
-function SearchUsers({ searchQuery, setCount, search, setSearch }) {
+function SearchUsers({ searchQuery, search, setSearch, onClick = () => {} }) {
   const [users, setUsers] = useState([]);
 
   const fetchServer = () => {
@@ -22,7 +22,6 @@ function SearchUsers({ searchQuery, setCount, search, setSearch }) {
       .then((data) => {
         if (data.success) {
           setUsers(data.users);
-          setCount(data.users.length);
         }
       })
       .catch((error) => console.error(error));
@@ -49,7 +48,7 @@ function SearchUsers({ searchQuery, setCount, search, setSearch }) {
       {users.map((user, i) => {
         const { user_id, name, timezone } = user;
         return (
-          <div className={styles.user} key={i}>
+          <div className={styles.user} key={i} onClick={() => {onClick(user)}}>
             <Link
               className={styles.userInfo}
               href={`/dashboard/user/${user_id}`}

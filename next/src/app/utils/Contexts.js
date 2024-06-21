@@ -14,6 +14,7 @@ import { socket } from "./socket";
 import { timelineSort } from "./timelineSorting";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { DEFAULT_PLAN } from "./Constant";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -120,22 +121,7 @@ function SubjectsProvider({ children }) {
   const { userInfo } = useContext(UserInfoContext);
   const [subjects, setSubjects] = useState([]);
   const [plans, setPlans] = useState([]);
-  const [planModal, setPlanModal] = useState({
-    opened: false,
-    title: "",
-    description: "",
-    start: new Date(),
-    end: new Date(new Date().getTime() + 60 * 1000 * 30),
-    repeat: 0,
-    priority: 50,
-    notification: -1,
-    subject: null,
-    id: null,
-    saved: false,
-    completed: false,
-    type: "local",
-    editable: true,
-  });
+  const [planModal, setPlanModal] = useState(DEFAULT_PLAN);
 
   const bringSubjects = useCallback(() => {
     fetch(`${config.server}/subjects`, {

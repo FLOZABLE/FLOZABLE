@@ -22,7 +22,6 @@ function Friends({
   const [isFriendEmailModal, setIsFriendEmailModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [suggestionsCount, setSuggestionsCount] = useState(0);
   const [friendsRanking, setFriendsRanking] = useState({});
 
   const [search, setSearch] = useState(false);
@@ -148,7 +147,6 @@ function Friends({
                 />
                 <SearchUsers
                   searchQuery={searchQuery}
-                  setCount={setSuggestionsCount}
                   search={search}
                   setSearch={setSearch}
                 />
