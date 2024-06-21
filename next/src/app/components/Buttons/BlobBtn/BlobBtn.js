@@ -13,7 +13,7 @@ function BlobBtn({
   return (
     <div
       className={styles.BlobBtn}
-      onClick={onClick}
+      onClick={(e)=> {onClick(e)}}
       style={{ "--color1": color1, "--color2": color2, padding: padding, ...style }}
       id={id}
     >

@@ -11,8 +11,6 @@ export default function DraggableModal({
   isOpen,
   setIsOpen,
 }) {
-  console.log(isOpen, "gddddd");
-
   return (
     <Draggable nodeRef={refProp} handle=".header">
       <div
@@ -33,37 +31,3 @@ export default function DraggableModal({
     </Draggable>
   );
 }
-
-/* 
-
-export default function DraggableModal({
-  children,
-  style = {},
-  refProp,
-  isOpen,
-  setIsOpen,
-}) {
-  console.log(refProp, 'gddddd')
-  return (
-    <>
-        <Draggable nodeRef={refProp} handle=".header">
-      <div
-        className={`modal ${styles.DraggableModal} ${isOpen ? "open" : ""}`}
-        style={style}
-        ref={refProp}
-      ></div>
-      <div className={`${styles.header} header`}>
-        <i
-          onClick={() => {
-            setIsOpen(false);
-          }}
-        >
-          <FontAwesomeIcon icon={faXmark} />
-        </i>
-      </div>
-      {children}
-    </Draggable></>
-  );
-}
-
-*/

@@ -12,6 +12,7 @@ import {
   faRepeat,
   faShare,
   faTrashCan,
+  faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   ModalsContext,
@@ -28,6 +29,23 @@ import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import SliderAnimation from "@/app/components/Inputs/SliderAnimation/SliderAnimation";
 import { generateRandomId, requestNotification } from "@/app/utils/Tool";
 import DraggableModal from "../DraggableModal/DraggableModal";
+import { DEFAULT_PLAN } from "@/app/utils/Constant";
+
+function EventModalLayer({ children, icon, hoverEl }) {
+  return (
+    <div className={styles.EventModalLayer}>
+      <div className={styles.iconWrapper}>
+        {icon}
+        {hoverEl ? (
+          <div className={styles.hoverEl}>
+            <p>{hoverEl}</p>
+          </div>
+        ) : null}
+      </div>
+      <div className={styles.contentWrapper}>{children}</div>
+    </div>
+  );
+}
 
 function EventModal({}) {
   const { subjects } = useContext(SubjectsContext);
@@ -223,18 +241,7 @@ function EventModal({}) {
     if (!planModal.opened) {
       setPlanModal((prev) => ({
         ...prev,
-        opened: false,
-        title: "",
-        description: "",
-        start: new Date(),
-        end: new Date(new Date().getTime() + 60 * 1000 * 30),
-        repeat: 0,
-        priority: 50,
-        notification: -1,
-        id: null,
-        saved: false,
-        completed: false,
-        editable: true,
+        ...DEFAULT_PLAN,
       }));
       if (!planModal.saved) {
         setPlans((prev) => {
@@ -265,217 +272,190 @@ function EventModal({}) {
       }}
     >
       <div className={`${styles.EventModal} customScroll`}>
-        <div className={`${styles.wrapper} ${styles.title}`}>
-          <div className={styles.iconWrapper}></div>
-          <div className={styles.contentWrapper}>
-            <input
-              ref={titleRef}
-              type="text"
-              placeholder="Enter title"
-              value={planModal.title}
-              onChange={(e) => {
-                if (!planModal.editable) {
-                  setResponse({
-                    success: false,
-                    reason: "This event is view only",
-                  });
-                } else {
-                  setPlanModal((prev) => ({
-                    ...prev,
-                    title: e.target.value,
-                  }));
-                }
-              }}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faClock} />
-            <div className={styles.hoverEl}>
-              <p>Select Time</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <DateSelector
-              start={planModal.start}
-              setStart={(start) => {
-                if (!planModal.editable) {
-                  setResponse({
-                    success: false,
-                    reason: "This event is view only",
-                  });
-                } else {
-                  setPlanModal((prev) => ({ ...prev, start }));
-                }
-              }}
-              end={planModal.end}
-              setEnd={(end) => {
-                if (!planModal.editable) {
-                  setResponse({
-                    success: false,
-                    reason: "This event is view only",
-                  });
-                } else {
-                  setPlanModal((prev) => ({ ...prev, end }));
-                }
-              }}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faFileLines} />
-            <div className={styles.hoverEl}>
-              <p>Add Description</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <TextEditor
-              setDescription={(description) => {
-                if (!planModal.editable) {
-                  setResponse({
-                    success: false,
-                    reason: "This event is view only",
-                  });
-                } else {
-                  setPlanModal((prev) => ({ ...prev, description }));
-                }
-              }}
-              description={planModal.description}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faRepeat} />
-            <div className={styles.hoverEl}>
-              <p>Repeat</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <DropDownButton
-              options={{
-                0: "Does not repeat",
-                1: "Daily",
-                2: "Weekly",
-                3: "Monthly",
-              }}
-              setValue={(repeat) => {
-                if (!planModal.editable) {
-                  setResponse({
-                    success: false,
-                    reason: "This event is view only",
-                  });
-                } else {
-                  setPlanModal((prev) => ({ ...prev, repeat }));
-                }
-              }}
-              value={planModal.repeat}
-            />
-          </div>
-        </div>
+        <EventModalLayer>
+          <input
+            className={styles.titleInput}
+            ref={titleRef}
+            type="text"
+            placeholder="Enter title"
+            value={planModal.title}
+            onChange={(e) => {
+              if (!planModal.editable) {
+                setResponse({
+                  success: false,
+                  reason: "This event is view only",
+                });
+              } else {
+                setPlanModal((prev) => ({
+                  ...prev,
+                  title: e.target.value,
+                }));
+              }
+            }}
+          />
+        </EventModalLayer>
+        <EventModalLayer
+          icon={<FontAwesomeIcon icon={faClock} />}
+          hoverEl={"Select Time"}
+        >
+          <DateSelector
+            start={planModal.start}
+            setStart={(start) => {
+              if (!planModal.editable) {
+                setResponse({
+                  success: false,
+                  reason: "This event is view only",
+                });
+              } else {
+                setPlanModal((prev) => ({ ...prev, start }));
+              }
+            }}
+            end={planModal.end}
+            setEnd={(end) => {
+              if (!planModal.editable) {
+                setResponse({
+                  success: false,
+                  reason: "This event is view only",
+                });
+              } else {
+                setPlanModal((prev) => ({ ...prev, end }));
+              }
+            }}
+          />
+        </EventModalLayer>
+        <EventModalLayer
+          icon={<FontAwesomeIcon icon={faFileLines} />}
+          hoverEl={"Add Description"}
+        >
+          <TextEditor
+            setDescription={(description) => {
+              if (!planModal.editable) {
+                setResponse({
+                  success: false,
+                  reason: "This event is view only",
+                });
+              } else {
+                setPlanModal((prev) => ({ ...prev, description }));
+              }
+            }}
+            description={planModal.description}
+          />
+        </EventModalLayer>
+        <EventModalLayer
+          icon={<FontAwesomeIcon icon={faRepeat} />}
+          hoverEl={"Repeat"}
+        >
+          <DropDownButton
+            options={{
+              0: "Does not repeat",
+              1: "Daily",
+              2: "Weekly",
+              3: "Monthly",
+            }}
+            setValue={(repeat) => {
+              if (!planModal.editable) {
+                setResponse({
+                  success: false,
+                  reason: "This event is view only",
+                });
+              } else {
+                setPlanModal((prev) => ({ ...prev, repeat }));
+              }
+            }}
+            value={planModal.repeat}
+          />
+        </EventModalLayer>
         {planModal.editable ? (
-          <div className={styles.wrapper}>
-            <div className={styles.iconWrapper}>
-              <FontAwesomeIcon icon={faBook} />
-              <div className={styles.hoverEl}>
-                <p>Select Subject</p>
-              </div>
-            </div>
-            <div className={styles.contentWrapper}>
-              <div className={styles.subjectWrapper}>
-                <DropDownButton
-                  options={subjects.reduce((acc, subject) => {
-                    const { name, id } = subject;
-                    acc[id] = name;
-                    return acc;
-                  }, {})}
-                  setValue={(subject) => {
-                    if (!planModal.editable) {
-                      setResponse({
-                        success: false,
-                        reason: "This event is view only",
-                      });
-                    } else {
-                      setPlanModal((prev) => ({ ...prev, subject }));
-                    }
-                  }}
-                  value={planModal.subject}
-                />
-              </div>
-              <p>OR</p>
-              <div className={styles.addSubjectWrapper} ref={addSubjectRef}>
-                <BlobBtn
-                  onClick={() => {
-                    setIsAddSubjectModal(true);
-                    if (tutorial === 3) {
-                      setTutorial(4);
-                    }
-                  }}
-                  id="tutorial-3"
-                >
-                  Add Subject
-                </BlobBtn>
-              </div>
-            </div>
-          </div>
-        ) : null}
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faBell} />
-            <div className={styles.hoverEl}>
-              <p>Select Notification</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <div className={styles.notificationWrapper}>
+          <EventModalLayer
+            icon={<FontAwesomeIcon icon={faBook} />}
+            hoverEl={"Select Subject"}
+          >
+            <div className={styles.subjectWrapper}>
               <DropDownButton
-                options={{
-                  "-1": "no notification",
-                  5: "5 minutes before",
-                  10: "10 minutes before",
-                  30: "30 minutes before",
-                  60: "1 hour before",
+                options={subjects.reduce((acc, subject) => {
+                  const { name, id } = subject;
+                  acc[id] = name;
+                  return acc;
+                }, {})}
+                setValue={(subject) => {
+                  if (!planModal.editable) {
+                    setResponse({
+                      success: false,
+                      reason: "This event is view only",
+                    });
+                  } else {
+                    setPlanModal((prev) => ({ ...prev, subject }));
+                  }
                 }}
-                setValue={(notification) => {
-                  setPlanModal((prev) => ({ ...prev, notification }));
-                }}
-                value={planModal.notification}
+                value={planModal.subject}
+              />
+            </div>
+            <p>OR</p>
+            <div className={styles.addSubjectWrapper} ref={addSubjectRef}>
+              <BlobBtn
                 onClick={() => {
-                  requestNotification();
+                  setIsAddSubjectModal(true);
+                  if (tutorial === 3) {
+                    setTutorial(4);
+                  }
                 }}
-              />
+                id="tutorial-3"
+              >
+                Add Subject
+              </BlobBtn>
             </div>
+          </EventModalLayer>
+        ) : null}
+        <EventModalLayer
+          icon={<FontAwesomeIcon icon={faBell} />}
+          hoverEl={"Select Notification"}
+        >
+          <DropDownButton
+            options={{
+              "-1": "no notification",
+              5: "5 minutes before",
+              10: "10 minutes before",
+              30: "30 minutes before",
+              60: "1 hour before",
+            }}
+            setValue={(notification) => {
+              setPlanModal((prev) => ({ ...prev, notification }));
+            }}
+            value={planModal.notification}
+            onClick={() => {
+              requestNotification();
+            }}
+          />
+        </EventModalLayer>
+        <EventModalLayer
+          icon={<FontAwesomeIcon icon={faCircleExclamation} />}
+          hoverEl={"Select Importance"}
+        >
+          <div className={styles.notificationWrapper}>
+            <SliderAnimation
+              min={0}
+              max={100}
+              step={1}
+              sliderValue={planModal.priority}
+              setSliderValue={(priority) => {
+                setPlanModal((prev) => ({ ...prev, priority }));
+              }}
+            />
           </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faCircleExclamation} />
-            <div className={styles.hoverEl}>
-              <p>Select Importance</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <div className={styles.notificationWrapper}>
-              <SliderAnimation
-                min={0}
-                max={100}
-                step={1}
-                sliderValue={planModal.priority}
-                setSliderValue={(priority) => {
-                  setPlanModal((prev) => ({ ...prev, priority }));
-                }}
-              />
-            </div>
-          </div>
-        </div>
+        </EventModalLayer>
+        <EventModalLayer
+          icon={<FontAwesomeIcon icon={faUserGroup} />}
+          hoverEl={"Shared Users"}
+        >
+          {planModal.shared.map((userInfo) => {
+            return (userInfo.name);
+          })}
+        </EventModalLayer>
         <div className={styles.buttonsContainer} ref={submitRef}>
           <div className={styles.shareBtn}>
             <BlobBtn
               onClick={() => {
-
-                console.log('ffffff')
+                console.log("ffffff");
                 setIsSharePlanModal((prev) => !prev);
               }}
             >

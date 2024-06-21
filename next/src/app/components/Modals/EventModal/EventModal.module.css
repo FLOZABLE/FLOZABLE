@@ -12,7 +12,16 @@
   align-items: center;
 }
 
-.EventModal .wrapper .iconWrapper {
+.EventModalLayer {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 1.25rem;
+  align-items: center;
+  width: 100%;
+}
+
+
+.EventModalLayer .iconWrapper {
   width: 4.375rem;
   height: 2.5rem;
   display: flex;
@@ -22,12 +31,12 @@
   position: relative;
 }
 
-.EventModal .wrapper .iconWrapper:hover .hoverEl {
+.EventModalLayer .iconWrapper:hover .hoverEl {
   opacity: 1;
   visibility: visible;
 }
 
-.EventModal .wrapper .iconWrapper .hoverEl {
+.EventModalLayer .iconWrapper .hoverEl {
   position: absolute;
   font-size: 1.063rem;
   white-space: nowrap;
@@ -43,23 +52,18 @@
   color: #fff;
 }
 
-.EventModal .title {
-  height: 3.125rem;
-
-}
-
-.EventModal .title input {
-  width: 100%;
-  border: none;
-  height: 100%;
-  font-size: 1.875rem;
-}
-
-.EventModal .wrapper .contentWrapper {
+.EventModalLayer .contentWrapper {
   position: relative;
   width: calc(100% - 4.375rem);
   display: flex;
   align-items: center;
+}
+
+.EventModal .titleInput {
+  width: 100%;
+  border: none;
+  height: 100%;
+  font-size: 1.875rem;
 }
 
 .EventModal .subjectWrapper {
@@ -67,7 +71,8 @@
 }
 
 .EventModal .notificationWrapper {
-  width: 25rem;
+  width: 100%;
+  margin-right: 0.5rem;
 }
 
 .EventModal .buttonsContainer {
