@@ -96,6 +96,34 @@
   font-size: 1.4rem;
 }
 
+.UserBox {
+  width: 3rem;
+  height: 3rem;
+  position: relative;
+  cursor: pointer;
+}
+
+.UserBox .hoverEl {
+  position: absolute;
+  bottom: -0rem;
+  white-space: nowrap;
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s ease-in-out visibility, .3s ease-in-out opacity;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #000000c3;
+  border-radius: 0.25rem;
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 0.1rem 0.3rem;
+}
+
+.UserBox:hover .hoverEl {
+  visibility: visible;
+  opacity: 1;
+}
+
 @media (max-height: 800px) {
   .EventModal {
     height: calc(100% - 18.75rem);
