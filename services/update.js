@@ -76,10 +76,18 @@ async function initializeMariadb() {
  * deprecated myinfo, external_user_id, activitym language, private from users table
  * modified default value for activity_setting of users table
  * deprecated timeline_sum from users table
- * deprecated font from groups table
- * motify character for title, description, subject of plans
  * modify character for name of users
+ * 
+ * deprecated font from groups table
+ * 
+ * add shared column for plans
+ * motify character for title, description, subject of plans
+ * 
+ * modify character for name of subjects
+ * add shared column for subjects
+ * 
  * modify character for name, description of themes
+ * 
  * update all the activity_settings to {}
  */
 async function mariadbV7() {
@@ -91,6 +99,9 @@ async function mariadbV7() {
         MODIFY COLUMN title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
         MODIFY COLUMN description VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
         MODIFY COLUMN subject VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+      ALTER TABLE plans
+        ADD COLUMN IF NOT EXISTS share VARCHAR(100) DEFAULT "";
 
       ALTER TABLE users 
         ADD COLUMN IF NOT EXISTS stripe_id VARCHAR(30);
@@ -107,6 +118,9 @@ async function mariadbV7() {
 
       ALTER TABLE subjects 
         MODIFY COLUMN name CHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+      ALTER TABLE subjects
+        ADD COLUMN IF NOT EXISTS share VARCHAR(100) DEFAULT "";
 
       ALTER TABLE themes 
         MODIFY COLUMN name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,

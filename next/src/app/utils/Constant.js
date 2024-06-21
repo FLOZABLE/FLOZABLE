@@ -149,6 +149,24 @@ const PREMIUM = [
   }
 ];
 
+const DEFAULT_PLAN = {
+  opened: false,
+  title: "",
+  description: "",
+  start: new Date(),
+  end: new Date(new Date().getTime() + 60 * 1000 * 30),
+  repeat: 0,
+  priority: 50,
+  notification: -1,
+  subject: null,
+  id: null,
+  saved: false,
+  completed: false,
+  type: "local",
+  editable: true,
+  shared: []
+}
+
 export {
   colorsList,
   subjectIcons,
@@ -157,4 +175,5 @@ export {
   warmColorsList,
   colorPaletteOptions,
   PREMIUM,
+  DEFAULT_PLAN
 };
