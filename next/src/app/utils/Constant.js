@@ -164,7 +164,7 @@ const DEFAULT_PLAN = {
   completed: false,
   type: "local",
   editable: true,
-  shared: []
+  share: []
 }
 
 export {

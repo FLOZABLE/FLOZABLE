@@ -13,16 +13,18 @@ import SearchUsers from "@/app/components/Users/SearchUsers/SearchUsers";
 import FriendRequestsViewer from "@/app/components/Friends/FriendRequestsViewer/FriendRequestsViewer";
 import config from "@/app/utils/config";
 import FriendsTrendChart from "@/app/components/Charts/FriendsTrendChart";
+import { useRouter } from "next/navigation";
 
-function Friends({
-}) {
-  const {userInfo} = useContext(UserInfoContext);
-  
+function Friends({}) {
+  const { userInfo } = useContext(UserInfoContext);
+
   const [isFriendLinkModal, setIsFriendLinkModal] = useState(false);
   const [isFriendEmailModal, setIsFriendEmailModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [friendsRanking, setFriendsRanking] = useState({});
+
+  const router = useRouter();
 
   const [search, setSearch] = useState(false);
   const [friendsTrends, setFriendsTrends] = useState([]);
@@ -33,7 +35,7 @@ function Friends({
       headers: {
         "Content-Type": "application/json",
       },
-      credentials:"include"
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((response) => {
@@ -41,9 +43,9 @@ function Friends({
           const { day, week, month, dayTrend } = response;
           setFriendsRanking({ day, week, month });
           setFriendsTrends(dayTrend);
-        };
-      })
-  }
+        }
+      });
+  };
   useEffect(() => {
     getFriendsRanking();
   }, [userInfo]);
@@ -58,9 +60,7 @@ function Friends({
         isOpen={isFriendEmailModal}
         setIsOpen={setIsFriendEmailModal}
       />
-      <div
-        className={`Main`}
-      >
+      <div className={`Main`}>
         <div className="title" id={styles.friend}>
           Friends
         </div>
@@ -94,15 +94,14 @@ function Friends({
                     <h3>Friends&apos; Stats</h3>
                   </div>
                   <div className={styles.chartWrapper}>
-                    <FriendsTrendChart
-                      friendsTrends={friendsTrends}
-                    />
+                    <FriendsTrendChart friendsTrends={friendsTrends} />
                   </div>
                 </div>
               </div>
             </div>
             <div>
-              <div className={styles.smallBox}
+              <div
+                className={styles.smallBox}
                 onClick={() => {
                   setIsFriendEmailModal(true);
                 }}
@@ -114,7 +113,8 @@ function Friends({
                   </i>
                 </div>
               </div>
-              <div className={styles.smallBox}
+              <div
+                className={styles.smallBox}
                 onClick={() => {
                   setIsFriendLinkModal(true);
                 }}
@@ -137,25 +137,28 @@ function Friends({
               <div className={styles.smallBox}>
                 <div className={styles.title}>
                   <h3>Search for Friends</h3>
-                  <i>
-                  </i>
+                  <i></i>
                 </div>
                 <SearchBar
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
-                  onEnter={() => { setSearch(true) }}
+                  onEnter={() => {
+                    setSearch(true);
+                  }}
                 />
                 <SearchUsers
                   searchQuery={searchQuery}
                   search={search}
                   setSearch={setSearch}
+                  onClick={(userInfo) => {
+                    router.replace(`/dashboard/user/${userInfo.user_id}`);
+                  }}
                 />
               </div>
               <div className={styles.smallBox}>
                 <div className={styles.title}>
                   <h3>Friend Requests</h3>
-                  <i>
-                  </i>
+                  <i></i>
                 </div>
                 <FriendRequestsViewer />
               </div>

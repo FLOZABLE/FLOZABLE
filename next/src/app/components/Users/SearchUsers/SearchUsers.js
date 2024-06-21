@@ -49,16 +49,15 @@ function SearchUsers({ searchQuery, search, setSearch, onClick = () => {} }) {
         const { user_id, name, timezone } = user;
         return (
           <div className={styles.user} key={i} onClick={() => {onClick(user)}}>
-            <Link
+            <div
               className={styles.userInfo}
-              href={`/dashboard/user/${user_id}`}
             >
               <ProfileImage userId={user_id} />
               <div className={`${styles.name} overflowDot`}>{name}</div>
               <div className={styles.flagWrapper}>
                 <CountryViewer timezone={timezone} />
               </div>
-            </Link>
+            </div>
             <div className={styles.buttons}>
               <div>
                 <DmBtn userInfo={user} padding={"0.3125rem 0.625rem"} />

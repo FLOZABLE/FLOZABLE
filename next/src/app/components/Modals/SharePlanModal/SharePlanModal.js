@@ -41,7 +41,7 @@ export default function SharePlanModal() {
           setSearch={setSearch}
           onClick={(userInfo) => {
             if (
-              planModal.shared.find((user) => user.user_id === userInfo.user_id)
+              planModal.share.find((user) => user.user_id === userInfo.user_id)
             ) {
               return setResponse({success: false, reason: `Already Shared with ${userInfo.name}`});
             };
@@ -50,7 +50,7 @@ export default function SharePlanModal() {
               setPlanModal((prev) => {
                 return {
                   ...prev,
-                  shared: [...prev.shared, userInfo],
+                  share: [...prev.share, userInfo],
                 };
               });
               setResponse({success: true, msg: `Added ${userInfo.name}`})

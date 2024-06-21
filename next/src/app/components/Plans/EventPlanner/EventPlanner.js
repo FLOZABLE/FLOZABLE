@@ -339,6 +339,7 @@ function EventPlanner({
 
   function updateServer(event) {
     const { start, end, completed, editable } = event;
+    console.log(event)
     if (!editable) {
       setResponse({ success: false, reason: "This event is view only" })
       return;

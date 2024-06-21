@@ -7,7 +7,7 @@ const { removePrevNotification, planNotification, planPushNotification } = requi
 const { google } = require('googleapis');
 const { DateTime } = require("luxon");
 const { UserRefreshClient } = require("google-auth-library");
-const { validateStrictString, validateInteger, validateLength, validateString } = require("../validate");
+const { validateStrictString, validateInteger, validateLength, validateString, validateArray } = require("../validate");
 const { googleAccessTokenCache, userCache } = require("../services/redisLoader");
 const schedule = require('node-schedule');
 const { responseCodes } = require("../Constant");
@@ -16,10 +16,12 @@ Router.get("/", async (req, res) => {
   autoSignin(req, res, (async (userId) => {
     try {
       const connection = pool.promise();
-      let [plans] = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed FROM plans where user_id = ?`, [userId]);
+      let [plans] = await connection.query(`SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed, share FROM plans where user_id = ?`, [userId]);
       plans.map(plan => {
         plan.editable = true;
         plan.isEditable = true;
+        plan.share = plan.share === "" ? [] : plan.share.split(",");
+        console.log(plan.share)
       })
       const access_token = await googleAccessTokenCache(userId);
       if (access_token) {
@@ -80,9 +82,9 @@ Router.post('/update', async (req, res) => {
 
       const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds() / 60;
       const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds() / 60;
-      const { title, id, start, end, repeat, description, subject, notification, priority, completed, type } = planInfo;
+      const { title, id, start, end, repeat, description, subject, notification, priority, completed, type, share } = planInfo;
 
-      console.log(type);
+      console.log(share);
       if (type === "google") {
         const access_token = await googleAccessTokenCache(userId);
         if (access_token) {
@@ -169,14 +171,24 @@ Router.post('/update', async (req, res) => {
         return res.send({ success: false, reason: isValidCompleted.reason });
       };
 
+      const isValidSharedUsers = validateArray(share, "Shared Users", 5, 0);
+      if (!isValidSharedUsers.isValid) {
+        return res.send({ success: false, reason: isValidSharedUsers.reason });
+      };
+
       try {
         const connection = pool.promise();
-        const planData = { title, id, start, end, repeat, description, subject, notification, priority, completed };
-        const insertInfo = { ...planData, user_id: userId };
-        const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [userId, planData.id]);
-        if (!deletePrev.affectedRows) {
+        const [sharedUsers] = share.length ? await connection.query(`SELECT user_id FROM users WHERE user_id IN(?)`, [share]) : [[]];
+        const filteredShared = sharedUsers.map(userInfo => userInfo.user_id).toString();
+        const planData = { title, id, start, end, repeat, description, subject, notification, priority, completed, user_id: userId, share: filteredShared };
+        
+        const [deletePrev] = await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [userId, id]);
+        if (deletePrev.affectedRows) {
           schedule.cancelJob(userId + "-" + id);
-        }
+        } else {
+          planData.id = generateRandomId(10);
+        };
+
         const [[userInfo]] = await connection.query(`SELECT key_salt, iv, notification_endpoint, notification_keys from users where user_id = ?`, [userId]);
         const startTime = start * 60;
         //const body = description.replace(/(&nbsp;|<([^>]+)>)/ig, " ");
@@ -206,8 +218,8 @@ Router.post('/update', async (req, res) => {
           planPushNotification(userId + "-" + id,{...userInfo, user_id: userId}, payload, startTime)
         }
         //planNotification(insertInfo, userInfo[0], startTime)
-        const insert = await connection.query(`INSERT INTO plans SET ?`, insertInfo);
-        res.send({ success: true, msg: 'Plan Saved!' })
+        await connection.query(`INSERT INTO plans SET ?`, planData);
+        res.send({ success: true, msg: 'Plan Saved!', planData })
       } catch (error) {
         res.send({ success: false, reason: 'An error occurred' });
         console.log('Mysql Err', error);

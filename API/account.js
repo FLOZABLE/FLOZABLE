@@ -12,12 +12,14 @@ const {
   validateStrictString,
   validatePassword,
   validateURL,
+  validateArray,
 } = require("../validate");
 const {
   NotificationCache,
   userCache,
   subjectsTimelineCache,
   addActiveUserCache,
+  usersCache,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
 const { responseCodes, PASSWORD_LINK_EXP } = require("../Constant");
@@ -231,7 +233,7 @@ Router.get("/profile/:userId", async (req, res) => {
   try {
     const targetUserId = req.params.userId;
 
-    const isValidUserId = validateStrictString(userId, "user id", 10);
+    const isValidUserId = validateStrictString(targetUserId, "user id", 10);
 
     if (!isValidUserId.isValid) {
       return res.send({ success: false, reason: isValidUserId.reason });
@@ -299,6 +301,25 @@ Router.post("/notification-subscribe", async (req, res) => {
       console.log(err);
     }
   });
+});
+
+Router.post("/lists", async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    const isValidIds = validateArray(ids, "ids", 10, 0);
+    console.log(isValidIds, ids)
+    if (!isValidIds.isValid) {
+      return res.send({ success: false, reason: isValidIds.reason });
+    }
+
+    const connection = pool.promise();
+    const users = await usersCache(ids);
+    console.log(users)
+    res.send({ success: true, users });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 module.exports = Router;
