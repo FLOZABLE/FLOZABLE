@@ -6,6 +6,7 @@ import { PlansContext } from "@/app/utils/Contexts";
 import config from "@/app/utils/config";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
+import { DEFAULT_PLAN } from "@/app/utils/Constant";
 
 export default function Plan({ plan, children }) {
   const { plans, setPlanModal, setPlans } = useContext(PlansContext);
@@ -44,7 +45,7 @@ export default function Plan({ plan, children }) {
         .catch((error) => console.error(error));
     }
   }, [plans, plan]);
-  
+
   return (
     <li
       className={styles.Plan}
@@ -90,7 +91,12 @@ export default function Plan({ plan, children }) {
           className={styles.modifyPlan}
           onClick={(e) => {
             e.stopPropagation();
-            setPlanModal({ ...plan, opened: true });
+            setPlanModal(prev => {
+              if (prev.id === plan.id) {
+                return ({ ...DEFAULT_PLAN, ...plan, opened: false });
+              };
+              return ({ ...DEFAULT_PLAN, ...plan, opened: true });
+            });
           }}
         >
           <FontAwesomeIcon icon={faEllipsis} />
