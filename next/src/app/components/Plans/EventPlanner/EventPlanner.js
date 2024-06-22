@@ -348,13 +348,16 @@ function EventPlanner({
     const endSec = Math.floor(end.getTime() / (1000 * 60));
     const notification = parseInt(planModal.notification);
     const repeat = parseInt(planModal.repeat);
+    const share = event.share.map(userInfo => userInfo.user_id);
+    
     const updateInfo = {
       ...event,
       start: startSec,
       end: endSec,
       completed: completed ? 1 : 0,
       notification,
-      repeat
+      repeat,
+      share
     };
     delete updateInfo.saved;
     fetch(`${config.server}/plan/update`, {
