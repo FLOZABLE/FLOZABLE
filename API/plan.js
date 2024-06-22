@@ -8,7 +8,7 @@ const { google } = require('googleapis');
 const { DateTime } = require("luxon");
 const { UserRefreshClient } = require("google-auth-library");
 const { validateStrictString, validateInteger, validateLength, validateString, validateArray } = require("../validate");
-const { googleAccessTokenCache, userCache } = require("../services/redisLoader");
+const { googleAccessTokenCache, userCache, usersCache } = require("../services/redisLoader");
 const schedule = require('node-schedule');
 const { responseCodes } = require("../Constant");
 
@@ -21,7 +21,6 @@ Router.get("/", async (req, res) => {
         plan.editable = true;
         plan.isEditable = true;
         plan.share = plan.share === "" ? [] : plan.share.split(",");
-        console.log(plan.share)
       })
       const access_token = await googleAccessTokenCache(userId);
       if (access_token) {
@@ -288,7 +287,36 @@ Router.delete("/", async (req, res) => {
       console.log(err);
     }
   })
-})
+});
+
+Router.get("/users", async (req, res) => {
+  autoSignin(req, res, (async (userId) => {
+    try {
+      const {id} = req.query;
+
+      const isValidId = validateStrictString(id, 'Id', 10, 10);
+      if (!isValidId.isValid) {
+        return res.send({ success: false, reason: isValidId.reason });
+      };
+
+      const connection = pool.promise();
+
+      const [[plan]] = await connection.query(`SELECT share FROM plans WHERE id = ? AND user_id = ?`, [id, userId]);
+
+      if (!plan) {
+        return res.send({success: false, reason: 'Invalid Plan'});
+      };
+
+      const sharedIds = plan.share === "" ? [] : plan.share.split(",");
+
+      const users = await usersCache(sharedIds);
+      res.send({success: true, users})
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false });
+    };
+  }));
+});
 
 
 /* Router.post("/share", async (req, res) => {

@@ -123,6 +123,7 @@ function SubjectsProvider({ children }) {
   const [plans, setPlans] = useState([]);
   const [planModal, setPlanModal] = useState(DEFAULT_PLAN);
 
+  //console.log(planModal)
   const bringSubjects = useCallback(() => {
     fetch(`${config.server}/subjects`, {
       method: "get",

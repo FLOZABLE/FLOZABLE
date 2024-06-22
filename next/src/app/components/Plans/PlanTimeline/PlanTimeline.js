@@ -2,7 +2,6 @@
 
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./PlanTimeline.module.css";
-import parse from "html-react-parser";
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 import { Alert } from "@/app/utils/Svg";
 import {
@@ -12,11 +11,7 @@ import {
 } from "@/app/utils/Contexts";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { DateTime } from "luxon";
-import config from "@/app/utils/config";
-import CircularCheckBox from "@/app/components/Buttons/CircularCheckBox/CircularCheckBox";
 import { subjectIcons } from "@/app/utils/Constant";
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Plan from "../Plan/Plan";
 
 function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {

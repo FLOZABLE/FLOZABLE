@@ -96,6 +96,11 @@
   font-size: 1.4rem;
 }
 
+.UserBoxes {
+  height: 2rem;
+  display: flex;
+}
+
 .UserBox {
   width: 3rem;
   height: 3rem;

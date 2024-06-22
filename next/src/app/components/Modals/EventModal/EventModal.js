@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useRef } from "react";
+import React, { Suspense, useContext, useEffect, useRef } from "react";
 import styles from "./EventModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -31,6 +31,8 @@ import { generateRandomId, requestNotification } from "@/app/utils/Tool";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
+import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
+import { useQuery } from "@tanstack/react-query";
 
 function EventModalLayer({ children, icon, hoverEl }) {
   return (
@@ -48,7 +50,40 @@ function EventModalLayer({ children, icon, hoverEl }) {
   );
 }
 
-function UserBox({ userInfo, setPlanModal }) {
+async function UserBoxes({ id, planModal }) {
+  if (planModal && planModal?.share[0]?.user_id) {
+    return (
+      <>
+        {planModal?.share.map((userInfo, i) => {
+          return <UserBox userInfo={userInfo} key={i} />;
+        })}
+      </>
+    );
+  };
+
+  const response = await fetch(`${config.server}/plan/users?id=${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  const { success, users } = await response.json();
+
+  if (!success) return <></>;
+
+  return (
+    <>
+      {users.map((userInfo, i) => {
+        return <UserBox userInfo={userInfo} key={i} />;
+      })}
+    </>
+  );
+}
+
+function UserBox({ userInfo }) {
+  const { setPlanModal } = useContext(PlansContext);
   return (
     <div
       className={styles.UserBox}
@@ -75,7 +110,7 @@ function EventModal({}) {
   const { subjects } = useContext(SubjectsContext);
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
   const { setResponse } = useContext(ResponseContext);
-  const { setIsAddSubjectModal, setIsSharePlanModal } =
+  const { setIsAddSubjectModal, setIsSharePlanModal, isSharePlanModal } =
     useContext(ModalsContext);
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
@@ -170,7 +205,7 @@ function EventModal({}) {
     const notification = parseInt(planModal.notification);
     const repeat = parseInt(planModal.repeat);
     const completed = planModal.completed ? 1 : 0;
-    const share = planModal.share.map(user => user.user_id);
+    const share = planModal.share.map((user) => user.user_id);
     fetch(`${config.server}/plan/update`, {
       method: "post",
       headers: {
@@ -183,7 +218,7 @@ function EventModal({}) {
         completed,
         notification,
         repeat,
-        share
+        share,
       }),
       credentials: "include",
     })
@@ -267,6 +302,7 @@ function EventModal({}) {
   useEffect(() => {
     if (!planModal) return;
     if (!planModal.opened) {
+      setIsSharePlanModal(false);
       setPlanModal((prev) => ({
         ...prev,
         ...DEFAULT_PLAN,
@@ -284,26 +320,21 @@ function EventModal({}) {
         });
       }
     } else {
-      console.log(planModal.share)
-      if (!planModal.share.length) return;
-
-      if (planModal.share[0]?.user_Id) return;
-
-      fetch(`${config.server}/account/lists`, {
-        method: "post",
+      fetch(`${config.server}/plan/users?id=${planModal.id}`, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ids: planModal.share
-        }),
         credentials: "include",
       })
         .then((response) => response.json())
         .then((data) => {
-          setPlanModal(prev => {
-            return ({...prev, share: data.users})
-          })
+          console.log(data);
+          if (data.success) {
+            setPlanModal((prev) => {
+              return { ...prev, share: data.users };
+            });
+          }
         })
         .catch((error) => console.error(error));
     }
@@ -498,15 +529,11 @@ function EventModal({}) {
           icon={<FontAwesomeIcon icon={faUserGroup} />}
           hoverEl={"Shared Users"}
         >
-          {planModal.share.map((userInfo, i) => {
-            return (
-              <UserBox
-                userInfo={userInfo}
-                setPlanModal={setPlanModal}
-                key={i}
-              />
-            );
-          })}
+          <div className={styles.UserBoxes}>
+            <Suspense fallback={<CircularLoading />}>
+              <UserBoxes id={planModal.id} planModal={planModal} />
+            </Suspense>
+          </div>
         </EventModalLayer>
         <div className={styles.buttonsContainer} ref={submitRef}>
           <div className={styles.shareBtn}>
