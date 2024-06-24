@@ -33,6 +33,7 @@ import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { useQuery } from "@tanstack/react-query";
+import { postPlanShare } from "@/Api/planApi";
 
 function EventModalLayer({ children, icon, hoverEl }) {
   return (
@@ -263,7 +264,8 @@ function EventModal({}) {
           setPlanModal((prev) => ({ ...prev, opened: false, id: null }));
           if (tutorial === 5) {
             setTutorial(6);
-          }
+          };
+          postPlanShare(share, planModal.id);
         }
       })
       .catch((error) => console.error(error));
