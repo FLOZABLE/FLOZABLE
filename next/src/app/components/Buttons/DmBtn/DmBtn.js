@@ -22,7 +22,6 @@ function DmBtn({ userInfo, padding }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.reason === "DM already created!") {
-          console.log(21, data.room);
           setChatModal({ ...data.room, chatRoom: data.room.id, open: true });
         } else {
           setResponse(data);

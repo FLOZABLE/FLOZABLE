@@ -64,7 +64,6 @@ function StudyTrendChart({ viewDate, statsViewer = "Daily", subjectsProp }) {
       );
       setSubjectsTrend(subjectsTrend);
     }
-    console.log(subjectsTrend);
   }, [subjects, viewDate, statsViewer, subjectsProp]);
 
   return (

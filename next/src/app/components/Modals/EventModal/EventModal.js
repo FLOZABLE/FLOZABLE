@@ -59,7 +59,7 @@ async function UserBoxes({ id, planModal }) {
         })}
       </>
     );
-  };
+  }
 
   const response = await fetch(`${config.server}/plan/users?id=${id}`, {
     method: "GET",
@@ -82,7 +82,7 @@ async function UserBoxes({ id, planModal }) {
   );
 }
 
-function UserBox({ userInfo }) {
+function SharedUserBox({ userInfo }) {
   const { setPlanModal } = useContext(PlansContext);
   return (
     <div
@@ -104,7 +104,32 @@ function UserBox({ userInfo }) {
       <div className={styles.hoverEl}>Remove {userInfo.name}</div>
     </div>
   );
-}
+};
+
+function ShareUserBox({ userInfo }) {
+  const { setPlanModal } = useContext(PlansContext);
+  return (
+    <div
+      className={styles.UserBox}
+      onClick={() => {
+        setPlanModal((prev) => {
+          return {
+            ...prev,
+            share: [
+              ...prev.share.filter(
+                (users) => users.user_id !== userInfo.user_id
+              ),
+            ],
+          };
+        });
+      }}
+      id={styles.share}
+    >
+      <ProfileImage userId={userInfo.user_id} width="2.5rem" height="2.5rem" />
+      <div className={styles.hoverEl}>(Pending) Remove {userInfo.name}</div>
+    </div>
+  );
+};
 
 function EventModal({}) {
   const { subjects } = useContext(SubjectsContext);
@@ -233,7 +258,6 @@ function EventModal({}) {
             const updatedEvents = [...plans];
             updatedEvents[eventIndex].saved = true;
             updatedEvents[eventIndex].id = data.planData.id;
-            console.log(data.planData.id);
             setPlans(updatedEvents);
           }
           setPlanModal((prev) => ({ ...prev, opened: false, id: null }));
@@ -306,6 +330,7 @@ function EventModal({}) {
       setPlanModal((prev) => ({
         ...prev,
         ...DEFAULT_PLAN,
+        subject: prev.subject
       }));
       if (!planModal.saved) {
         setPlans((prev) => {
@@ -319,7 +344,7 @@ function EventModal({}) {
           return prev;
         });
       }
-    } else {
+    } else if (planModal.id) {
       fetch(`${config.server}/plan/users?id=${planModal.id}`, {
         method: "GET",
         headers: {
@@ -329,7 +354,6 @@ function EventModal({}) {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           if (data.success) {
             setPlanModal((prev) => {
               return { ...prev, share: data.users };
@@ -530,16 +554,18 @@ function EventModal({}) {
           hoverEl={"Shared Users"}
         >
           <div className={styles.UserBoxes}>
-            <Suspense fallback={<CircularLoading />}>
+            {/* <Suspense fallback={<CircularLoading />}>
               <UserBoxes id={planModal.id} planModal={planModal} />
-            </Suspense>
+            </Suspense> */}
+            {planModal.share.map((userInfo, i) => {
+              return <ShareUserBox userInfo={userInfo} key={i} />;
+            })}
           </div>
         </EventModalLayer>
         <div className={styles.buttonsContainer} ref={submitRef}>
           <div className={styles.shareBtn}>
             <BlobBtn
               onClick={() => {
-                console.log("ffffff");
                 setIsSharePlanModal((prev) => !prev);
               }}
             >

@@ -31,6 +31,7 @@ async function updateManager() {
     if (mariadbVersion.version === 0) {
       await initializeMariadb();
     }
+    
     //await mariadbV7();
     if (mariadbVersion.version < 7) {
       await mariadbV7();
@@ -98,10 +99,10 @@ async function mariadbV7() {
       ALTER TABLE plans 
         MODIFY COLUMN title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
         MODIFY COLUMN description VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-        MODIFY COLUMN subject VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-      ALTER TABLE plans
-        ADD COLUMN IF NOT EXISTS share VARCHAR(100) DEFAULT "";
+        MODIFY COLUMN subject VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+        
+        ADD COLUMN IF NOT EXISTS share VARCHAR(100) DEFAULT "",
+        ADD COLUMN IF NOT EXISTS shared VARCHAR(100) DEFAULT "";
 
       ALTER TABLE users 
         ADD COLUMN IF NOT EXISTS stripe_id VARCHAR(30);
@@ -117,10 +118,10 @@ async function mariadbV7() {
         MODIFY COLUMN activity_setting VARCHAR(500) DEFAULT "{}";
 
       ALTER TABLE subjects 
-        MODIFY COLUMN name CHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+        MODIFY COLUMN name CHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
 
-      ALTER TABLE subjects
-        ADD COLUMN IF NOT EXISTS share VARCHAR(100) DEFAULT "";
+        ADD COLUMN IF NOT EXISTS share VARCHAR(100) DEFAULT "",
+        ADD COLUMN IF NOT EXISTS shared VARCHAR(100) DEFAULT "";
 
       ALTER TABLE themes 
         MODIFY COLUMN name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,

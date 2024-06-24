@@ -97,7 +97,6 @@ function SubjecTimer({
 
   const toggleTimer = (subject) => {
     if (!subject) return;
-    console.log(subjectsTimerWorkerRef?.current);
     if (!!subjectsTimerWorkerRef?.current) {
       subjectsTimerWorkerRef.current["subjectId"] = subject.id;
     }

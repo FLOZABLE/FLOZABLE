@@ -85,7 +85,6 @@ function ExtensionSetting({ websites, setWebsites }) {
   }, [websites]);
 
   const fetchExtensionSettingUpdate = useCallback((d, target, value) => {
-    console.log(d);
     fetch(`${config.server}/extension/settings`, {
       method: "PATCH",
       headers: {

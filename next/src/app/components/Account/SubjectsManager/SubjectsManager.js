@@ -43,7 +43,6 @@ function SubjectsManager() {
       .then((data) => {
         setResponse(data);
         if (data.success) {
-          console.log("updating");
           let tempState = [...subjects];
           let updatedSubject = tempState.find(
             (subject) => subject.id === data.subjectInfo.id
@@ -65,7 +64,6 @@ function SubjectsManager() {
           for (let i = 0; i < tempState.length; i++) {
             newState[i] = tempState[i];
           }
-          console.log(newState);
           setSubjects(newState);
         }
         setSelectedSubject((prev) => ({ ...prev, submit: false }));

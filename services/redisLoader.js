@@ -379,6 +379,7 @@ async function cacheUserInfo(userInfo) {
  * i: id
  * t: type ex) -1 = all (default),  0 = friend-request, 1 = friend-request-accept, 2 = face-off-request, 3 = face-off-accept, 4 = dm request, 5 = dm accepted, 6 = group-invitation,
  * -2 = ongoing friend req
+ * -3 = ongoing share subject
  * d: date (unix but divided by 1000 * 60 because we  need minute accuracy) 
  * optional:
  * f: from (used for friend-request, friend-accept, group invitation)

@@ -31,7 +31,6 @@ function SubjectManager({
     const { icon, name, color } = subject;
     setSelectedIcon({ el: subjectIcons[icon], name: icon });
     setSelectedColor(color);
-    console.log(subject);
     const tools = Array.isArray(subject.tools)
       ? subject.tools
       : subject.tools.length

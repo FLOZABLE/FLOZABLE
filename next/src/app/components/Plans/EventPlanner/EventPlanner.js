@@ -339,7 +339,6 @@ function EventPlanner({
 
   function updateServer(event) {
     const { start, end, completed, editable } = event;
-    console.log(event)
     if (!editable) {
       setResponse({ success: false, reason: "This event is view only" })
       return;
@@ -381,6 +380,7 @@ function EventPlanner({
   function handleEventClick(data) {
     const { id, start, end, title } = data.event;
     const editable = data.event._def.extendedProps.isEditable;
+    console.log(editable)
     const eventInfo = {
       ...data.event._def.extendedProps,
       id,

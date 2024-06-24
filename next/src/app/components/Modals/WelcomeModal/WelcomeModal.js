@@ -26,9 +26,7 @@ function WelcomeModal({ }) {
 
   useEffect(() => {
     const isNew = new URLSearchParams(window.location.search);
-    console.log(isNew.get("welcome"), isNew.toString());
     if (isNew.get("welcome") === "true") {
-      console.log("new", isNew);
       setIsModal(true);
       setConfettiEl(
         <Confetti

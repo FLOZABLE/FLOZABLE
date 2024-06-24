@@ -113,7 +113,6 @@ function timelineSort(subjects) {
     return;
   });
 
-
   console.log('timelinex', subjects)
   return subjects;
 };

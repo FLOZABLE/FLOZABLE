@@ -135,7 +135,6 @@ function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
                 setCategory(optionIndex);
                 setIsOpen(false);
                 save(optionIndex);
-                console.log('gd')
               }}
             >
               <p>{optionName}</p>
