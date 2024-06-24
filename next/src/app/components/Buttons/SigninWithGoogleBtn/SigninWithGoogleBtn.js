@@ -23,7 +23,6 @@ function SigninWithGoogleBtn({ infoText }) {
     select_account: true,
     onSuccess: (response) => {
       const { access_token } = response;
-      console.log(response);
       fetch(`${config.server}/auth/signin/google`, {
         method: "POST",
         body: JSON.stringify({
@@ -39,7 +38,6 @@ function SigninWithGoogleBtn({ infoText }) {
         .then((data) => {
           setResponse(data);
           if (data.success) {
-            console.log(data);
             if (data.newUser) {
               router.push("/dashboard?welcome=true");
               setTutorial(1);

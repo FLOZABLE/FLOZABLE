@@ -67,7 +67,6 @@ function updateSubjectsTrendChart(subjects, viewDate, type, change) {
 function updateRankingTrend(rankings) {
   const data = [];
   const copiedArr = JSON.parse(JSON.stringify(rankings));
-  console.log(copiedArr)
   copiedArr.data.map(rankingData => {
     const { date, ranking } = rankingData;
     const label = DateTime.fromSeconds(date).toISODate();

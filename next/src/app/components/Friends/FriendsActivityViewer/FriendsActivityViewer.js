@@ -41,7 +41,6 @@ function FriendsActivityViewer() {
       {
         friends.map((friend, i) => {
           const { timezone, name, user_id } = friend;
-          console.log('friend', friend)
 
           return (
             <div
