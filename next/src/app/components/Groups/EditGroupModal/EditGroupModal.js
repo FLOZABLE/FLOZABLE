@@ -75,7 +75,6 @@ function EditGroupModal({ isOpen, setIsOpen }) {
         .then((data) => {
           setResponse(data);
           if (data.success) {
-            console.log(isOpen);
             let tempGroups = [...myGroups];
             tempGroups = tempGroups.map((group) => {
               if (group.group_id === isOpen.group_id){
@@ -94,7 +93,6 @@ function EditGroupModal({ isOpen, setIsOpen }) {
                 return {...group}
               }
             });
-            console.log(tempGroups);
 
             setIsOpen(false);
             setName("");

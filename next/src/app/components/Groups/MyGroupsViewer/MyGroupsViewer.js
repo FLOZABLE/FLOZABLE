@@ -33,10 +33,8 @@ function MyGroupsViewer({
     const searchParams = new URLSearchParams(window.location.search);
     const selectedGroupId = searchParams.get("group");
     if (!selectedGroupId) {
-      console.log('change')
       if (groupsViewerRef.current) {
         setTimeout(() => {
-          console.log('change')
           groupsViewerRef.current.swiper.slideTo(myGroups.length - 1);
         }, 1000);
       };
@@ -62,7 +60,6 @@ function MyGroupsViewer({
         credentials: "include",
       }).then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (data.success) {
           setResponse({ success: true, msg: "You left " + group.name })
         }

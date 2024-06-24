@@ -65,8 +65,6 @@ export default function Payment() {
       .catch((error) => console.error(error));
   }, [priceId]);
 
-  console.log(stripeSecret);
-
   return (
     <div className={styles.Payment}>
       {stripeSecret}

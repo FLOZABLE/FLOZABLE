@@ -4,10 +4,6 @@ import Draggable from "react-draggable";
 
 function StudyModalContainer({ element, isDisp, startPos = {x: 0, y: 0}, onDragEnd }) {
   const ref = useRef();
-  
-  useEffect(() => {
-    //console.log(startPos);
-  }, [startPos]);
 
   return (
     <Draggable

@@ -12,14 +12,12 @@ function GroupMemCounter({ initialMembers, groupId }) {
     };
 
     const onRemoveMember = (userId) => {
-      console.log("removing", userId);
       //const newMembers = members
       setMembers(prev => {return prev.filter((memberId) => {return memberId !== userId})});
     };
 
     socket.on(`newMember:${groupId}`, onNewMember);
     socket.on(`removeMember:${groupId}`, onRemoveMember);
-    console.log(`removeMember:${groupId}`);
     return () => {
       socket.off(`newMember:${groupId}`, onNewMember);
       socket.off(`removeMember:${groupId}`, onRemoveMember);

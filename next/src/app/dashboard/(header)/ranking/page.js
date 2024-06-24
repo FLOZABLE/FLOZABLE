@@ -50,7 +50,6 @@ function Ranking({ }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log(data);
           setAllRankings(data.data);
         }
       })
