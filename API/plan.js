@@ -31,6 +31,7 @@ const {
 } = require("../services/redisLoader");
 const schedule = require("node-schedule");
 const { responseCodes } = require("../Constant");
+const { mainIo } = require("../sockets/mainIo");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -510,7 +511,7 @@ Router.get("/users", async (req, res) => {
   });
 });
 
-Router.post("/share", async (req, res) => {
+/* Router.post("/share", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { targetId } = req.body;
@@ -521,30 +522,68 @@ Router.post("/share", async (req, res) => {
       res.send({ success: false });
     }
   });
-});
+}); */
 
 Router.post("/share", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { users } = req.body;
+      const { users, planId } = req.body;
 
       if (!users.length) return res.send({success: true});
+
+      const userInfo = await userCache(userId);
+
+      if (!userInfo) return res.send({success: false, reason: responseCodes['no-user']});
+
+      const connection = pool.promise();
 
       const existingUsers = (
         await connection.query(
           `SELECT user_id FROM users WHERE user_id IN(?)`,
-          [share]
+          [users]
         )
       )[0].map((userInfo) => userInfo.user_id);
-      console.log(existingUsers, userInfo);
+      console.log(existingUsers,);
 
       const friends = existingUsers.filter((user) =>
         userInfo.friends.includes(user)
       );
 
-      console.log(friends);
+      const [[planInfo]] = await connection.query(`SELECT shared, share, title FROM plans WHERE user_id = ? AND id = ?`, [userId, planId]);
+      
+      if (!planInfo) return res.send({success: false, reason: 'Invalid Plan'});
 
-      console.log(targetId);
+      planInfo.shared = planInfo.shared === "" ? [] : planInfo.shared.split(",");
+      planInfo.shared = [...new Set(planInfo.shared.concat(friends))];
+
+      const nonFriends = existingUsers.filter((user) =>
+        !userInfo.friends.includes(user) && !planInfo.shared.includes(user)
+      );
+
+      planInfo.share = planInfo.share === "" ? [] : planInfo.share.split(",");
+      planInfo.share = [...new Set(planInfo.share.concat(nonFriends))];
+
+      const updateInfo = {
+        shared: planInfo.shared.toString(),
+        share: planInfo.share.toString()
+      }
+      await connection.query(`UPDATE plans SET ? WHERE user_id = ? AND id = ?`, [updateInfo, userId, planId]);
+
+      console.log(friends, nonFriends);
+
+      const date = Math.floor(new Date().getTime() / (1000 * 60));
+      
+      nonFriends.map(async(targetId) => {
+        const id = generateRandomId(5);
+        const notification = { i: id, t: 7, f: userId, d: date, name: planInfo.title };
+        const socketNotif = { i: id, t: 1, f: userInfo, d: date };
+        mainIo.to(targetId).emit("notification", socketNotif);
+        redisClient.sAdd(
+          `user:${targetId}:notifications`,
+          JSON.stringify(notification)
+        );
+      });
+
     } catch (err) {
       console.log(err);
       res.send({ success: false });
