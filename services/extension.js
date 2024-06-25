@@ -1,7 +1,7 @@
 const { DateTime } = require("luxon");
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
-const { getMidnightTimezones } = require("../tool");
+const { getMidnightTimezones } = require("../Utils/tool");
 const { getActiveUsers } = require("./redisLoader");
 const { extensionIo } = require("../sockets/extensionIo");
 

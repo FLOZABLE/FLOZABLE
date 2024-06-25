@@ -8,7 +8,7 @@ const {
   generateRandomId,
   autoSignin,
   googleOauth2client,
-} = require("../tool");
+} = require("../Utils/tool");
 const {
   removePrevNotification,
   planNotification,
@@ -23,7 +23,7 @@ const {
   validateLength,
   validateString,
   validateArray,
-} = require("../validate");
+} = require("../Utils/validate");
 const {
   googleAccessTokenCache,
   userCache,
@@ -575,12 +575,13 @@ Router.post("/share", async (req, res) => {
       
       nonFriends.map(async(targetId) => {
         const id = generateRandomId(5);
-        const notification = { i: id, t: 7, f: userId, d: date, name: planInfo.title };
+        const notification = { t: 7, f: userId, d: date, n: planInfo.title };
         const socketNotif = { i: id, t: 1, f: userInfo, d: date };
         mainIo.to(targetId).emit("notification", socketNotif);
-        redisClient.sAdd(
+        redisClient.hSet(
           `user:${targetId}:notifications`,
-          JSON.stringify(notification)
+          id,
+          notification
         );
       });
 

@@ -12,6 +12,7 @@ import {
 } from "@/app/utils/Contexts";
 import NotificationContainer from "@/app/components/Notifications/NotificationContainer/NotificationContainer";
 import config from "@/app/utils/config";
+import { postPlanShareRespond } from "@/Api/planApi";
 
 function NotificationModal({}) {
   const { isNotificationModal, setIsNotificationModal } =
@@ -234,6 +235,44 @@ function NotificationModal({}) {
                       {
                         onClick: () => {
                           chatRequestReply(fromId, false, notification.i);
+                        },
+                        content: (
+                          <FontAwesomeIcon
+                            icon={faCheck}
+                            color={"green"}
+                            fontSize="2rem"
+                          />
+                        ),
+                        hoverText: "Accept",
+                      },
+                      {
+                        onClick: () => {
+                          chatRequestReply(fromId, false, notification.i);
+                        },
+                        content: (
+                          <FontAwesomeIcon
+                            icon={faXmark}
+                            color={"red"}
+                            fontSize="2rem"
+                          />
+                        ),
+                        hoverText: "Decline",
+                      },
+                    ]}
+                    key={i}
+                  >
+                    <p>{fromName} wants to chat with you!</p>
+                  </NotificationContainer>
+                );
+              } else if (type === 7) {
+                return (
+                  <NotificationContainer
+                    fromProfile={fromId}
+                    zIndex={notifications.length - i}
+                    buttons={[
+                      {
+                        onClick: () => {
+                          postPlanShareRespond(notification, false, notification.i);
                         },
                         content: (
                           <FontAwesomeIcon
