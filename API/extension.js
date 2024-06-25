@@ -5,14 +5,14 @@ const redisClient = require("../model/redis");
 const {
   autoSignin,
   generateRandomId,
-} = require("../tool");
+} = require("../Utils/tool");
 const { websiteUsageCache } = require("../services/redisLoader");
 const { DateTime } = require("luxon");
 const {
   validateStrictString,
   validateISO,
   validateURL
-} = require("../validate");
+} = require("../Utils/validate");
 const { responseCodes } = require("../Constant");
 const { extensionIo } = require("../sockets/extensionIo");
 

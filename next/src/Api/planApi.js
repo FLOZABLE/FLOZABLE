@@ -17,8 +17,8 @@ async function postPlanShare(users, planId, callback = () => {}) {
     .catch((err) => console.error(err));
 
   return response; */
-  console.log(users, planId)
-  if (!users.length || !planId) return callback({success: false});
+  console.log(users, planId);
+  if (!users.length || !planId) return callback({ success: false });
 
   const response = await fetch(`${config.server}/plan/share`, {
     method: "POST",
@@ -26,12 +26,27 @@ async function postPlanShare(users, planId, callback = () => {}) {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify({users, planId})
+    body: JSON.stringify({ users, planId }),
   });
   const data = await response.json();
 
   return data;
 }
 
+async function postPlanShareRespond(planId, accepted, callback = () => {}) {
+  if (!planId) return callback({ success: false });
 
-export {postPlanShare};
+  const response = await fetch(`${config.server}/plan/share/respond`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ planId, accepted }),
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+export { postPlanShare, postPlanShareRespond };

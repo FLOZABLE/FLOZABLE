@@ -1,6 +1,6 @@
 const express = require('express');
 const axios = require("axios");
-const { autoSignin } = require('../tool');
+const { autoSignin } = require('../Utils/tool');
 const Router = express.Router();
 
 Router.get('/auth', async (req, res) => {
