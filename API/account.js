@@ -6,14 +6,14 @@ const crypto = require("crypto");
 const sharp = require("sharp");
 const multer = require("multer");
 
-const { hashing, autoSignin, generateRandomId, deriveKey } = require("../tool");
+const { hashing, autoSignin, generateRandomId, deriveKey } = require("../Utils/tool");
 const {
   validateEmail,
   validateStrictString,
   validatePassword,
   validateURL,
   validateArray,
-} = require("../validate");
+} = require("../Utils/validate");
 const {
   NotificationCache,
   userCache,

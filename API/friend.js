@@ -4,7 +4,7 @@ const {
   generateRandomId,
   randomIntInRange,
   friendRecommendationGen,
-} = require("../tool");
+} = require("../Utils/tool");
 const {
   NotificationCache,
   userCache,
@@ -19,10 +19,227 @@ const {
   validateEmail,
   validateStrictString,
   validateBoolean,
-} = require("../validate");
+} = require("../Utils/validate");
 const { DateTime } = require("luxon");
 const { mainIo } = require("../sockets/mainIo");
+const { responseCodes } = require("../Constant");
 const Router = express.Router();
+
+async function sendFriendRequest(userId, targetId) {
+  try {
+    const isValidTargetId = validateStrictString(targetId, "user id", 10);
+
+    if (!isValidTargetId.isValid) {
+      return { success: false, reason: isValidTargetId.reason };
+    }
+
+    if (userId === targetId)
+      return {
+        success: false,
+        reason: "Cannot send request to yourself",
+      };
+
+    const targetUserInfo = await userCache(targetId);
+    if (!targetUserInfo) return { success: false, reason: "No such user" };
+
+    const { friends, name } = targetUserInfo;
+    if (friends.includes(userId))
+      return {
+        success: false,
+        reason: "You're already friends with this user",
+      };
+
+    const friendRequests = await NotificationCache(targetId, 0, false);
+    console.log(friendRequests);
+    const prevFriendReq = friendRequests.find((friendReq) => {
+      return friendReq.f === userId;
+    });
+    if (prevFriendReq)
+      return {
+        success: false,
+        reason: "You've already sent a request to this user",
+      };
+
+    const id = generateRandomId(5);
+    const date = Math.floor(new Date().getTime() / (1000 * 60));
+    const notificationUser = await userCache(userId);
+    const socketNotif = { i: id, t: 0, f: notificationUser, d: date };
+    const notification = { t: 0, f: userId, d: date };
+    mainIo.to(targetId).emit("notification", socketNotif);
+    //to target user
+    redisClient.hSet(
+      `user:${targetId}:notifications`,
+      id,
+      JSON.stringify(notification)
+    );
+
+    //to me
+    const ongoing = { t: -2, f: targetId };
+    redisClient.hSet(
+      `user:${userId}:notifications`,
+      id,
+      JSON.stringify(ongoing)
+    );
+    ongoing.f = await userCache(targetId);
+    ongoing.i = id;
+    mainIo.to(userId).emit("notification", ongoing);
+    return { success: true, msg: `Sent friend request to ${name}!` };
+  } catch (err) {
+    console.log(err);
+    return { success: false, reason: "Error" };
+  }
+}
+
+async function replyFriendRequest(userId, targetId, accepted) {
+  try {
+    const isValidTargetId = validateStrictString(targetId, "user id", 10);
+
+    if (!isValidTargetId.isValid) {
+      return { success: false, reason: isValidTargetId.reason };
+    }
+
+    const isValidAcceped = validateBoolean(accepted, "accept", true);
+
+    if (!isValidAcceped.isValid) {
+      return { success: false, reason: isValidAcceped.reason };
+    }
+
+    const friendRequests = await NotificationCache(userId, 0, false);
+    const friendReq = friendRequests.find((friendReq) => {
+      return friendReq.f === targetId;
+    });
+    if (!friendReq) return { success: false, reason: "expired request" };
+
+    redisClient.hDel(`user:${userId}:notifications`, friendReq.i);
+    //remove it from ongoing friend req list
+    redisClient.hDel(`user:${targetId}:notifications`, friendReq.i);
+    if (!accepted) {
+      return { success: true, msg: "Declined Friend Request!" };
+    }
+
+    const connection = pool.promise();
+    const userInfo = await userCache(userId);
+
+    if (!userInfo) return { success: false, reason: responseCodes["no-user"] };
+
+    if (userInfo.friends.includes(userId))
+      return {
+        success: true,
+        msg: `You and ${targetInfo.name} were already friends!`,
+      };
+
+    const targetInfo = await userCache(targetId);
+
+    await connection.query(
+      `
+      UPDATE users
+      SET friends = CASE
+        WHEN friends = '' THEN ?
+        ELSE CONCAT(friends, ',', ?)
+      END
+      WHERE user_id = ?
+    `,
+      [targetId, targetId, userId]
+    );
+
+    await connection.query(
+      `
+    UPDATE users
+    SET friends = CASE
+      WHEN friends = '' THEN ?
+      ELSE CONCAT(friends, ',', ?)
+    END
+    WHERE user_id = ?
+  `,
+      [userId, userId, targetId]
+    );
+
+    const id = generateRandomId(5);
+    const date = Math.floor(new Date().getTime() / (1000 * 60));
+    const notification = { t: 1, f: userId, d: date };
+    const notificationUser = await userCache(userId);
+    const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
+    mainIo.to(targetId).emit("notification", socketNotif);
+    redisClient.hSet(`user:${targetId}:notifications`, id, notification);
+
+    //update cached value of user
+    friends.push(targetId);
+    redisClient.hSet(`user:${userId}`, "friends", friends.join(","));
+    targetInfo.friends.push(userId);
+    redisClient.hSet(
+      `user:${targetId}`,
+      "friends",
+      targetInfo.friends.join(",")
+    );
+
+    //create chat only if it does not exist
+    const [[{ record_count }]] = await connection.query(
+      `SELECT COUNT(*) AS record_count
+    FROM chatrooms
+    WHERE 
+      (members LIKE ? AND members LIKE ?)
+      OR
+      (members LIKE ? AND members LIKE ?)
+    LIMIT 1;`,
+      [`%${userId}%`, `%${targetId}%`, `%${targetId}%`, `%${userId}%`]
+    );
+
+    if (!record_count) {
+      const members = [userId, targetId];
+      const roomInfo = {
+        id: generateRandomId(10),
+        type: 1,
+        members: JSON.stringify(members).slice(1, -1).replaceAll(`"`, ""),
+      };
+      await connection.query(
+        `
+      INSERT INTO chatrooms SET ?
+    `,
+        [roomInfo]
+      );
+
+      const myDmRooms = await dmRoomsCache(userId);
+      myDmRooms.push(roomInfo.id);
+      const targetDmRooms = await dmRoomsCache(targetId);
+      targetDmRooms.push(roomInfo.id);
+      redisClient.hSet(`user:${userId}`, "dmRooms", JSON.stringify(myDmRooms));
+      redisClient.hSet(
+        `user:${targetId}`,
+        "dmRooms",
+        JSON.stringify(targetDmRooms)
+      );
+      redisClient.sAdd(`room:${roomInfo.id}`, members);
+
+      mainIo.to(userId).emit("joinChatRoom", roomInfo.id, true);
+      mainIo.to(targetId).emit("joinChatRoom", roomInfo.id, true);
+
+      //remove chat request if any
+      const myChatRequests = await NotificationCache(userId, 4, false);
+      const chatRequest = myChatRequests.find((chatRequest) => {
+        return chatRequest.f === targetId;
+      });
+      if (chatRequest) {
+        redisClient.hDel(`user:${userId}:notifications`, chatRequest.i);
+      }
+
+      const targetChatRequests = await NotificationCache(targetId, 4, false);
+      const targetchatRequest = targetChatRequests.find((chatRequest) => {
+        return chatRequest.f === targetId;
+      });
+      if (targetchatRequest) {
+        redisClient.hDel(`user:${targetId}:notifications`, targetchatRequest.i);
+      }
+
+      return {
+        success: true,
+        msg: `You and ${targetInfo.name} are now friends!`,
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return { success: false, reason: "Error" };
+  }
+}
 
 //send friend request
 Router.post("/request", async (req, res) => {
@@ -30,57 +247,8 @@ Router.post("/request", async (req, res) => {
     try {
       const { targetId } = req.body;
 
-      const isValidTargetId = validateStrictString(targetId, "user id", 10);
-
-      if (!isValidTargetId.isValid) {
-        return res.send({ success: false, reason: isValidTargetId.reason });
-      }
-
-      if (userId === targetId)
-        return res.send({
-          success: false,
-          reason: "Cannot send request to yourself",
-        });
-
-      const targetUserInfo = await userCache(targetId);
-      if (!targetUserInfo)
-        return res.send({ success: false, reason: "No such user" });
-
-      const { friends, name } = targetUserInfo;
-      if (friends.includes(userId))
-        return res.send({
-          success: false,
-          reason: "You're already friends with this user",
-        });
-
-      const friendRequests = await NotificationCache(targetId, 0, false);
-      const prevFriendReq = friendRequests.find((friendReq) => {
-        return friendReq.f === userId;
-      });
-      if (prevFriendReq)
-        return res.send({
-          success: false,
-          reason: "You've already sent a request to this user",
-        });
-
-      const id = generateRandomId(5);
-      const date = Math.floor(new Date().getTime() / (1000 * 60));
-      const notificationUser = await userCache(userId);
-      const socketNotif = { i: id, t: 0, f: notificationUser, d: date };
-      const notification = { i: id, t: 0, f: userId, d: date };
-      mainIo.to(targetId).emit("notification", socketNotif);
-      //to target user
-      redisClient.sAdd(
-        `user:${targetId}:notifications`,
-        JSON.stringify(notification)
-      );
-
-      //to me
-      const ongoing = { i: id, t: -2, f: targetId };
-      redisClient.sAdd(`user:${userId}:notifications`, JSON.stringify(ongoing));
-      ongoing.f = await userCache(targetId);
-      mainIo.to(userId).emit("notification", ongoing);
-      res.send({ success: true, msg: `Sent friend request to ${name}!` });
+      const response = await sendFriendRequest(userId, targetId);
+      return res.send(response);
     } catch (error) {
       console.log(error);
       res.send({ success: false, reason: "An Error Occured" });
@@ -105,13 +273,9 @@ Router.delete("/request", async (req, res) => {
       });
       if (!friendReq)
         return res.send({ success: false, reason: "expired request" });
-      redisClient.sRem(
-        `user:${targetId}:notifications`,
-        JSON.stringify(friendReq)
-      );
+      redisClient.hDel(`user:${targetId}:notifications`, friendReq.i);
       //remove it from ongoing friend req list
-      const ongoing = { i: friendReq.i, t: -2, f: targetId };
-      redisClient.sRem(`user:${userId}:notifications`, JSON.stringify(ongoing));
+      redisClient.hDel(`user:${userId}:notifications`, friendReq.i);
       res.send({ success: true });
     } catch (error) {
       console.log(error);
@@ -126,170 +290,9 @@ Router.post("/request/reply", async (req, res) => {
     try {
       const { targetId, accepted } = req.body;
 
-      const isValidTargetId = validateStrictString(targetId, "user id", 10);
+      const response = await replyFriendRequest(userId, targetId, accepted);
 
-      if (!isValidTargetId.isValid) {
-        return res.send({ success: false, reason: isValidTargetId.reason });
-      }
-
-      const isValidAcceped = validateBoolean(accepted, "accept", true);
-
-      if (!isValidAcceped.isValid) {
-        return res.send({ success: false, reason: isValidAcceped.reason });
-      }
-
-      const friendRequests = await NotificationCache(userId, 0, false);
-      const friendReq = friendRequests.find((friendReq) => {
-        return friendReq.f === targetId;
-      });
-      if (!friendReq)
-        return res.send({ success: false, reason: "expired request" });
-      redisClient.sRem(
-        `user:${userId}:notifications`,
-        JSON.stringify(friendReq)
-      );
-      //remove it from ongoing friend req list
-      const ongoing = { i: friendReq.i, t: -2, f: userId };
-      redisClient.sRem(
-        `user:${targetId}:notifications`,
-        JSON.stringify(ongoing)
-      );
-      if (!accepted) {
-        return res.send({ success: true, msg: "Declined Friend Request!" });
-      }
-
-      const connection = pool.promise();
-      const userInfo = await userCache(userId);
-      const targetInfo = await userCache(targetId);
-      const { friends } = userInfo;
-
-      if (!friends.includes(userId)) {
-        await connection.query(
-          `
-          UPDATE users
-          SET friends = CASE
-            WHEN friends = '' THEN ?
-            ELSE CONCAT(friends, ',', ?)
-          END
-          WHERE user_id = ?
-        `,
-          [targetId, targetId, userId]
-        );
-
-        await connection.query(
-          `
-        UPDATE users
-        SET friends = CASE
-          WHEN friends = '' THEN ?
-          ELSE CONCAT(friends, ',', ?)
-        END
-        WHERE user_id = ?
-      `,
-          [userId, userId, targetId]
-        );
-        res.send({
-          success: true,
-          msg: `You and ${targetInfo.name} are now friends!`,
-        });
-        const id = generateRandomId(5);
-        const date = Math.floor(new Date().getTime() / (1000 * 60));
-        const notification = { i: id, t: 1, f: userId, d: date };
-        const notificationUser = await userCache(userId);
-        const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
-        mainIo.to(targetId).emit("notification", socketNotif);
-        redisClient.sAdd(
-          `user:${targetId}:notifications`,
-          JSON.stringify(notification)
-        );
-
-        //update cached value of user
-        friends.push(targetId);
-        redisClient.hSet(`user:${userId}`, "friends", friends.join(","));
-        targetInfo.friends.push(userId);
-        redisClient.hSet(
-          `user:${targetId}`,
-          "friends",
-          targetInfo.friends.join(",")
-        );
-
-        //create chat only if it does not exist
-        const [[{ record_count }]] = await connection.query(
-          `SELECT COUNT(*) AS record_count
-        FROM chatrooms
-        WHERE 
-          (members LIKE ? AND members LIKE ?)
-          OR
-          (members LIKE ? AND members LIKE ?)
-        LIMIT 1;`,
-          [`%${userId}%`, `%${targetId}%`, `%${targetId}%`, `%${userId}%`]
-        );
-
-        if (!record_count) {
-          const members = [userId, targetId];
-          const roomInfo = {
-            id: generateRandomId(10),
-            type: 1,
-            members: JSON.stringify(members).slice(1, -1).replaceAll(`"`, ""),
-          };
-          await connection.query(
-            `
-          INSERT INTO chatrooms SET ?
-        `,
-            [roomInfo]
-          );
-
-          const myDmRooms = await dmRoomsCache(userId);
-          myDmRooms.push(roomInfo.id);
-          const targetDmRooms = await dmRoomsCache(targetId);
-          targetDmRooms.push(roomInfo.id);
-          redisClient.hSet(
-            `user:${userId}`,
-            "dmRooms",
-            JSON.stringify(myDmRooms)
-          );
-          redisClient.hSet(
-            `user:${targetId}`,
-            "dmRooms",
-            JSON.stringify(targetDmRooms)
-          );
-          redisClient.sAdd(`room:${roomInfo.id}`, members);
-
-          mainIo.to(userId).emit("joinChatRoom", roomInfo.id, true);
-          mainIo.to(targetId).emit("joinChatRoom", roomInfo.id, true);
-
-          //remove chat request if any
-          const myChatRequests = await NotificationCache(userId, 4, false);
-          const chatRequest = myChatRequests.find((chatRequest) => {
-            return chatRequest.f === targetId;
-          });
-          if (chatRequest) {
-            redisClient.sRem(
-              `user:${userId}:notifications`,
-              JSON.stringify(chatRequest)
-            );
-          }
-
-          const targetChatRequests = await NotificationCache(
-            targetId,
-            4,
-            false
-          );
-          const targetchatRequest = targetChatRequests.find((chatRequest) => {
-            return chatRequest.f === targetId;
-          });
-          if (targetchatRequest) {
-            redisClient.sRem(
-              `user:${targetId}:notifications`,
-              JSON.stringify(targetchatRequest)
-            );
-          }
-        }
-      } else {
-        res.send({
-          success: true,
-          msg: `You and ${targetInfo.name} were already friends!`,
-        });
-      }
+      return res.send(response);
     } catch (error) {
       console.log(error);
       res.send({ success: false, reason: "Failed" });
@@ -448,95 +451,20 @@ Router.get("/link/add", async (req, res) => {
       const { id } = req.query;
       const targetId = req.query.user;
 
-      const isValidTargetId = validateStrictString(targetId, "user id", 10);
-
-      if (!isValidTargetId.isValid) {
-        return res.send({ success: false, reason: isValidTargetId.reason });
-      }
-
       const isValidId = validateStrictString(id, "add id", 10);
 
       if (!isValidId.isValid) {
         return res.send({ success: false, reason: isValidId.reason });
       }
 
-      //check if its not user himself
-      if (userId === targetId)
-        return res.send({
-          success: false,
-          reason: "Cannot send request to yourself",
-        });
-
-      const targetUserInfo = await userCache(targetId);
-      if (!targetUserInfo)
-        return res.send({ success: false, reason: "No such user" });
-
-      const myInfo = await userCache(userId);
-      if (myInfo.friends.includes(targetId))
-        return res.send({ success: false, reason: "already friend" });
-
-      //check if its valid linkid
       const linkId = await redisClient.get(`link:friend:${targetId}`);
       console.log(linkId);
       if (!linkId || linkId !== id)
         return res.send({ success: false, reason: "Expired or invalid link" });
 
-      const connection = pool.promise();
+      const response = await replyFriendRequest(userId, targetId, true);
 
-      //update both user & target user friend list
-      await connection.query(
-        `
-        UPDATE users
-        SET friends = CASE
-          WHEN friends = '' THEN ?
-          ELSE CONCAT(friends, ',', ?)
-        END
-        WHERE user_id = ?
-      `,
-        [targetId, targetId, userId]
-      );
-
-      await connection.query(
-        `
-        UPDATE users
-        SET friends = CASE
-          WHEN friends = '' THEN ?
-          ELSE CONCAT(friends, ',', ?)
-        END
-        WHERE user_id = ?
-      `,
-        [userId, userId, targetId]
-      );
-
-      //friend accepted notification
-      const nodificationId = generateRandomId(5);
-      const date = Math.floor(new Date().getTime() / (1000 * 60));
-      const notification = { i: nodificationId, t: 1, f: userId, d: date };
-      const notificationUser = await userCache(userId);
-      const socketNotif = {
-        i: nodificationId,
-        t: 1,
-        f: notificationUser,
-        d: date,
-      };
-      mainIo.to(targetId).emit("notification", socketNotif);
-      redisClient.sAdd(
-        `user:${targetId}:notifications`,
-        JSON.stringify(notification)
-      );
-
-      //update cached value of user
-
-      const targetInfo = await userCache(targetId);
-
-      myInfo.friends.push(targetId);
-      redisClient.hSet(`user:${userId}`, "friends", myInfo.friends.join(","));
-      targetInfo.friends.push(userId);
-      redisClient.hSet(
-        `user:${targetId}`,
-        "friends",
-        targetInfo.friends.join(",")
-      );
+      if (!response.success) return response;
 
       const myNotifications = await NotificationCache(userId, -1, false);
       const targetNotifications = await NotificationCache(targetId, -1, false);
@@ -549,10 +477,7 @@ Router.get("/link/add", async (req, res) => {
         );
       });
       myFriendReqs.map((friendReq) => {
-        redisClient.sRem(
-          `user:${userId}:notifications`,
-          JSON.stringify(friendReq)
-        );
+        redisClient.hDel(`user:${userId}:notifications`, friendReq.i);
       });
 
       const targetFriendReqs = targetNotifications.filter((notification) => {
@@ -562,77 +487,10 @@ Router.get("/link/add", async (req, res) => {
         );
       });
       targetFriendReqs.map((friendReq) => {
-        redisClient.sRem(
-          `user:${targetId}:notifications`,
-          JSON.stringify(friendReq)
-        );
+        redisClient.hDel(`user:${targetId}:notifications`, friendReq.i);
       });
 
-      //create chat only if it does not exist
-
-      const [[{ record_count }]] = await connection.query(
-        `SELECT COUNT(*) AS record_count
-        FROM chatrooms
-        WHERE 
-          (members LIKE ? AND members LIKE ?)
-          OR
-          (members LIKE ? AND members LIKE ?)
-        LIMIT 1;`,
-        [`%${userId}%`, `%${targetId}%`, `%${targetId}%`, `%${userId}%`]
-      );
-
-      if (!record_count) {
-        const members = [userId, targetId];
-        const roomInfo = {
-          id: generateRandomId(10),
-          type: 1,
-          members: JSON.stringify(members).slice(1, -1).replaceAll(`"`, ""),
-        };
-        await connection.query(
-          `
-          INSERT INTO chatrooms SET ?
-        `,
-          [roomInfo]
-        );
-
-        const myDmRooms = await dmRoomsCache(userId);
-        myDmRooms.push(roomInfo.id);
-        const targetDmRooms = await dmRoomsCache(targetId);
-        targetDmRooms.push(roomInfo.id);
-        redisClient.hSet(
-          `user:${userId}`,
-          "dmRooms",
-          JSON.stringify(myDmRooms)
-        );
-        redisClient.hSet(
-          `user:${targetId}`,
-          "dmRooms",
-          JSON.stringify(targetDmRooms)
-        );
-        redisClient.sAdd(`room:${roomInfo.id}`, members);
-
-        //remove chat request if any
-        const chatRequest = myNotifications.find((notification) => {
-          return notification.f === targetId && notification.t === 4;
-        });
-        if (chatRequest) {
-          redisClient.sRem(
-            `user:${userId}:notifications`,
-            JSON.stringify(chatRequest)
-          );
-        }
-
-        const targetchatRequest = targetNotifications.find((notification) => {
-          return notification.f === userId && notification.t === 4;
-        });
-        if (targetchatRequest) {
-          redisClient.sRem(
-            `user:${targetId}:notifications`,
-            JSON.stringify(targetchatRequest)
-          );
-        }
-      }
-      res.send({});
+      res.send(response);
     } catch (error) {
       console.log(error);
       res.send({ success: false, reason: "An Error Occured" });
@@ -671,4 +529,4 @@ Router.post("/invitation/email", async (req, res) => {
   });
 });
 
-module.exports = Router;
+module.exports = { Router, sendFriendRequest, replyFriendRequest };

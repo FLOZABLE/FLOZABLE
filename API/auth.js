@@ -12,14 +12,14 @@ const {
   generateRandomId,
   googleOauth2client,
   isValidTimeZone,
-} = require("../tool");
+} = require("../Utils/tool");
 const {
   validateEmail,
   validateStrictString,
   validatePassword,
   validateString,
   validateLength,
-} = require("../validate");
+} = require("../Utils/validate");
 const { userCache, cacheUserInfo } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
 const { USER_ID_COOKIE_OPTIONS } = require("../Constant");

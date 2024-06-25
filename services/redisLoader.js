@@ -458,9 +458,10 @@ async function cacheUserInfo(userInfo) {
  * @returns {[]} selectedNotifications
  */
 async function NotificationCache(userId, type = -1, processData = true) {
-  const notifications = (
-    await redisClient.sMembers(`user:${userId}:notifications`)
-  ).map(JSON.parse);
+  const notificationsObj = {
+    ...(await redisClient.hGetAll(`user:${userId}:notifications`)),
+  };
+  const notifications = Object.keys(notificationsObj).map((id) => ({i: id, ...JSON.parse(notificationsObj[id])}));
   await Promise.all(
     notifications.map(async (notification) => {
       if (notification.f && processData) {

@@ -2,7 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const fs = require("fs");
 const pool = require("../model/pool");
-const { autoSignin } = require("../tool");
+const { autoSignin } = require("../Utils/tool");
 
 Router.get("/", async (req, res) => {
   autoSignin(

@@ -9,12 +9,12 @@ const {
   getActiveUsers,
 } = require("../services/redisLoader");
 const { promises } = require("fs");
-const { autoSignin } = require("../tool");
+const { autoSignin } = require("../Utils/tool");
 const {
   validateStrictString,
   validateISO,
   validateTimeZone,
-} = require("../validate");
+} = require("../Utils/validate");
 const rankingCache = new NodeCache();
 
 const REFRESH_INTERVAL = 60 * 3; //3min

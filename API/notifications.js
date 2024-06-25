@@ -1,6 +1,6 @@
 const express = require('express');
-const { autoSignin } = require('../tool');
-const { validateStrictString } = require('../validate');
+const { autoSignin } = require('../Utils/tool');
+const { validateStrictString } = require('../Utils/validate');
 const { NotificationCache } = require('../services/redisLoader');
 const Router = express.Router();
 
@@ -21,9 +21,9 @@ Router.post("/read", async (req, res) => {
       });
       if (!friendReq)
         return res.send({ success: false, reason: "no request found" });
-      redisClient.sRem(
+      redisClient.hDel(
         `user:${userId}:notifications`,
-        JSON.stringify(friendReq)
+        friendReq.i
       );
       res.send({ success: true });
     } catch (error) {

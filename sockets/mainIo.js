@@ -1,7 +1,7 @@
 const { DateTime } = require('luxon');
 const redisClient = require('../model/redis');
 const { userCache, chatRoomsCache, msgQueue, subjectCache, dmRoomMembersCache, activeSubjectCache, groupMembersCache } = require('../services/redisLoader');
-const { generateRandomId } = require('../tool');
+const { generateRandomId } = require('../Utils/tool');
 const { extensionIo } = require('./extensionIo');
 const { io } = require('./io');
 const pool = require('../model/pool');

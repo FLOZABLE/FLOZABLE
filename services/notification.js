@@ -1,8 +1,8 @@
 const crypto = require("crypto");
 const { DateTime } = require("luxon");
 const { subjectsTimelineCache, websiteUsageCache } = require("../services/redisLoader");
-const { timelineSort } = require("../timelineSorting");
-const { hex2rgb, secondConverter, deriveKey } = require("../tool");
+const { timelineSort } = require("../Utils/timelineSorting");
+const { hex2rgb, secondConverter, deriveKey } = require("../Utils/tool");
 const webpush = require('web-push');
 const QuickChart = require('quickchart-js');
 const { colorsList } = require("../Constant");

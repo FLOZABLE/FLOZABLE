@@ -1,5 +1,5 @@
 const pool = require("../model/pool");
-const { generateRandomId } = require("../tool");
+const { generateRandomId } = require("./tool");
 
 //these async functions are only used for initializing the database (used only once)
 

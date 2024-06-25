@@ -2,14 +2,14 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { generateRandomId, autoSignin } = require("../tool");
+const { generateRandomId, autoSignin } = require("../Utils/tool");
 const { subjectsTimelineCache } = require("../services/redisLoader");
 const {
   validateString,
   validateHEX,
   validateStrictString,
   validateArray,
-} = require("../validate");
+} = require("../Utils/validate");
 
 Router.put("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {

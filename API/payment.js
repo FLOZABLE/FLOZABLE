@@ -1,11 +1,11 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const express = require("express");
 const Router = express.Router();
-const { autoSignin } = require("../tool");
+const { autoSignin } = require("../Utils/tool");
 const { responseCodes } = require("../Constant");
 const { userCache } = require("../services/redisLoader");
 const pool = require("../model/pool");
-const { validateString, validateURL } = require("../validate");
+const { validateString, validateURL } = require("../Utils/validate");
 
 /* Router.get("/client-secret", async (req, res) => {
   autoSignin(req, res, async (userId) => {

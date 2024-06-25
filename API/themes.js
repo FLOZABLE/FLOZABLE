@@ -1,7 +1,7 @@
 const express = require("express");
 const Router = express.Router();
 const redisClient = require("../model/redis");
-const { autoSignin, generateRandomId, isValidJSON } = require("../tool");
+const { autoSignin, generateRandomId, isValidJSON } = require("../Utils/tool");
 const pool = require("../model/pool");
 const { DateTime } = require("luxon");
 const {
@@ -10,7 +10,7 @@ const {
   validateBoolean,
   validateInteger,
   validateURL,
-} = require("../validate");
+} = require("../Utils/validate");
 const { mainIo } = require("../sockets/mainIo");
 
 Router.get("/", async (req, res) => {

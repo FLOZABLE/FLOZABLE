@@ -2,7 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { autoSignin, generateRandomId } = require("../tool");
+const { autoSignin, generateRandomId } = require("../Utils/tool");
 const {
   NotificationCache,
   userCache,
@@ -13,8 +13,13 @@ const {
   validateStrictString,
   validateBoolean,
   validateInteger,
-} = require("../validate");
+} = require("../Utils/validate");
 const { mainIo } = require("../sockets/mainIo");
+
+/**
+ * WARNING
+ * THIS API IS DEPRECATED FROM V5
+ */
 
 //send challenge
 Router.post("/challenge-request", async (req, res) => {

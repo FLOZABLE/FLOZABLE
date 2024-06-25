@@ -1,7 +1,7 @@
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
 const { activeSubjectCache, subjectsCache, timerCache } = require("./redisLoader");
-const { getMidnightTimezones } = require("../tool");
+const { getMidnightTimezones } = require("../Utils/tool");
 const { mainIo } = require("../sockets/mainIo");
 const { MAX_STUDY_TIME } = require("../Constant");
 
