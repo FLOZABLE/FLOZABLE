@@ -130,6 +130,8 @@ async function replyFriendRequest(userId, targetId, accepted) {
 
     const targetInfo = await userCache(targetId);
 
+    if (!targetInfo) return { success: false, reason: responseCodes["no-user"] };
+
     await connection.query(
       `
       UPDATE users
@@ -160,11 +162,11 @@ async function replyFriendRequest(userId, targetId, accepted) {
     const notificationUser = await userCache(userId);
     const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
     mainIo.to(targetId).emit("notification", socketNotif);
-    redisClient.hSet(`user:${targetId}:notifications`, id, notification);
+    redisClient.hSet(`user:${targetId}:notifications`, id, JSON.stringify(notification));
 
     //update cached value of user
-    friends.push(targetId);
-    redisClient.hSet(`user:${userId}`, "friends", friends.join(","));
+    userInfo.friends.push(targetId);
+    redisClient.hSet(`user:${userId}`, "friends", userInfo.friends.join(","));
     targetInfo.friends.push(userId);
     redisClient.hSet(
       `user:${targetId}`,
@@ -292,6 +294,7 @@ Router.post("/request/reply", async (req, res) => {
 
       const response = await replyFriendRequest(userId, targetId, accepted);
 
+      console.log(response)
       return res.send(response);
     } catch (error) {
       console.log(error);
