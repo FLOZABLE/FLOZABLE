@@ -12,4 +12,17 @@ async function fetchFriendsRanking () {
   return data;
 };
 
-export {fetchFriendsRanking};
+async function getRecommendedFriends() {
+  const response = await fetch(`${config.server}/friend/recommended`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+export {fetchFriendsRanking, getRecommendedFriends};

@@ -1,0 +1,22 @@
+.UserContainer {
+  display: flex;
+  position: relative;
+}
+
+.UserContainer .userInfo {
+  display: flex;
+  align-items: center;
+}
+
+.UserContainer .name {
+  margin: 0rem 0.313rem;
+  max-width: 9rem;
+}
+
+.UserContainer .flag {
+  font-size: 1.5rem;
+}
+
+.UserContainer .buttons {
+  margin: 0rem 1rem 0rem auto;
+}
