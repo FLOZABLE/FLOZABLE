@@ -31,7 +31,23 @@ async function postPlanShare(users, planId, callback = () => {}) {
   const data = await response.json();
 
   return callback(data);
-}
+};
+
+async function deletePlanShare(targetId, planId, callback = () => {}) {
+  if (!targetId || !planId) return callback({ success: false });
+
+  const response = await fetch(`${config.server}/plan/share`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ targetId, planId }),
+  });
+  const data = await response.json();
+
+  return callback(data);
+};
 
 async function postPlanShareRespond(planId, accepted, callback = () => {}) {
   if (!planId) return callback({ success: false });
@@ -49,4 +65,4 @@ async function postPlanShareRespond(planId, accepted, callback = () => {}) {
   return data;
 }
 
-export { postPlanShare, postPlanShareRespond };
+export { postPlanShare, postPlanShareRespond, deletePlanShare };

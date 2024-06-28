@@ -11,12 +11,15 @@ import { secondConverter } from "@/app/utils/Tool";
 import { UserInfoContext } from "@/app/utils/Contexts";
 import { IconStatsChart } from "@/app/utils/Svg";
 import UserContainer from "../../Users/UserContainer/UserContainer";
+import { useRouter } from "next/navigation";
 
 function FriendsRankingViewer({}) {
   const { userInfo } = useContext(UserInfoContext);
 
   const [viewer, setViewer] = useState("day");
   const [friendsRanking, setFriendsRanking] = useState([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!userInfo) return;
@@ -69,55 +72,12 @@ function FriendsRankingViewer({}) {
               style={{ zIndex: friendsRanking[viewer].length - i }}
             >
               <div className={styles.rank}>#{i + 1}</div>
-              <UserContainer userInfo={friend}> </UserContainer>
-              <div className={styles.diff}>
-                {formattedVal.value} {formattedVal.type}
-              </div>
-            </div>
-          );
-        })}
-        {friendsRanking?.[viewer]?.map((friend, i) => {
-          let value = friend.dayTotal;
-          if (viewer === "month") {
-            value = friend.monthTotal;
-          } else if (viewer === "week") {
-            value = friend.weekTotal;
-          }
-
-          const formattedVal = secondConverter(value);
-
-          return (
-            <div
-              className={styles.userContainer}
-              key={i}
-              style={{ zIndex: friendsRanking[viewer].length - i }}
-            >
-              <div className={styles.rank}>#{i + 1}</div>
-              <UserContainer userInfo={friend}> </UserContainer>
-              <div className={styles.diff}>
-                {formattedVal.value} {formattedVal.type}
-              </div>
-            </div>
-          );
-        })}
-        {friendsRanking?.[viewer]?.map((friend, i) => {
-          let value = friend.dayTotal;
-          if (viewer === "month") {
-            value = friend.monthTotal;
-          } else if (viewer === "week") {
-            value = friend.weekTotal;
-          }
-
-          const formattedVal = secondConverter(value);
-
-          return (
-            <div
-              className={styles.userContainer}
-              key={i}
-              style={{ zIndex: friendsRanking[viewer].length - i }}
-            >
-              <div className={styles.rank}>#{i + 1}</div>
-              <UserContainer userInfo={friend}> </UserContainer>
+              <UserContainer
+                userInfo={friend}
+                onClick={() => {
+                  router.replace(`/dashboard/user/${friend.user_id}`);
+                }}
+              ></UserContainer>
               <div className={styles.diff}>
                 {formattedVal.value} {formattedVal.type}
               </div>

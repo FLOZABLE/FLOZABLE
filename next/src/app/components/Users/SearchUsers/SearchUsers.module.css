@@ -1,34 +1,5 @@
-.SearchUsers .user {
-  display: flex;
-  position: relative;
-  cursor: pointer;
-}
-
-.SearchUsers .userInfo {
-  display: flex;
-  align-items: center;
-}
-
-.SearchUsers .name {
-  font-size: 1rem;
-  max-width: 6.25rem;
-  margin-right: 0.625rem;
-}
-
-.SearchUsers .profileImg {
-  height: 1.875rem;
-  width: 1.875rem;
-  border-radius: 1.25rem;
-}
-
-.SearchUsers .buttons {
-  display: flex;
-  align-items: center;
-  position: absolute;
-  right: 0em;
-}
-
-.SearchUsers .buttons > div {
-  display: flex;
-  align-items: center;
+.SearchUsers {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
 }

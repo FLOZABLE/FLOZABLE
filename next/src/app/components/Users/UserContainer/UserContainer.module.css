@@ -6,6 +6,7 @@
 .UserContainer .userInfo {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .UserContainer .name {
@@ -19,4 +20,9 @@
 
 .UserContainer .buttons {
   margin: 0rem 1rem 0rem auto;
+  display: flex;
+}
+
+.UserContainer .buttons > div {
+  margin: 0rem 0.25rem;
 }

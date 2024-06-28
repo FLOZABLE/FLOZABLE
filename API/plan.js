@@ -23,11 +23,13 @@ const {
   validateLength,
   validateString,
   validateArray,
+  validateBoolean,
 } = require("../Utils/validate");
 const {
   googleAccessTokenCache,
   userCache,
   usersCache,
+  NotificationCache,
 } = require("../services/redisLoader");
 const schedule = require("node-schedule");
 const { responseCodes } = require("../Constant");
@@ -350,10 +352,13 @@ Router.post("/update", async (req, res) => {
             `DELETE FROM plans WHERE user_id = ? AND id = ?`,
             [userId, id]
           );
+          let isNew = false;
           if (deletePrev.affectedRows) {
             schedule.cancelJob(userId + "-" + id);
           } else {
+            //new plan
             planData.id = generateRandomId(10);
+            isNew = true;
           }
 
           const startTime = start * 60;
@@ -399,7 +404,7 @@ Router.post("/update", async (req, res) => {
           }
           //planNotification(insertInfo, userInfo[0], startTime)
           await connection.query(`INSERT INTO plans SET ?`, planData);
-          res.send({ success: true, msg: "Plan Saved!", planData });
+          res.send({ success: true, msg: "Plan Saved!", planData, isNew });
         } catch (error) {
           res.send({ success: false, reason: "An error occurred" });
           console.log(error);
@@ -511,29 +516,19 @@ Router.get("/users", async (req, res) => {
   });
 });
 
-/* Router.post("/share", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const { targetId } = req.body;
-
-      console.log(targetId);
-    } catch (err) {
-      console.log(err);
-      res.send({ success: false });
-    }
-  });
-}); */
-
 Router.post("/share", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { users, planId } = req.body;
 
-      if (!users.length) return res.send({success: true});
+      console.log(users, planId);
+
+      if (!users.length) return res.send({ success: true });
 
       const userInfo = await userCache(userId);
 
-      if (!userInfo) return res.send({success: false, reason: responseCodes['no-user']});
+      if (!userInfo)
+        return res.send({ success: false, reason: responseCodes["no-user"] });
 
       const connection = pool.promise();
 
@@ -543,21 +538,27 @@ Router.post("/share", async (req, res) => {
           [users]
         )
       )[0].map((userInfo) => userInfo.user_id);
-      console.log(existingUsers,);
+      console.log(existingUsers);
 
       const friends = existingUsers.filter((user) =>
         userInfo.friends.includes(user)
       );
 
-      const [[planInfo]] = await connection.query(`SELECT shared, share, title FROM plans WHERE user_id = ? AND id = ?`, [userId, planId]);
-      
-      if (!planInfo) return res.send({success: false, reason: 'Invalid Plan'});
+      const [[planInfo]] = await connection.query(
+        `SELECT shared, share, title FROM plans WHERE user_id = ? AND id = ?`,
+        [userId, planId]
+      );
 
-      planInfo.shared = planInfo.shared === "" ? [] : planInfo.shared.split(",");
+      if (!planInfo)
+        return res.send({ success: false, reason: "Invalid Plan" });
+
+      planInfo.shared =
+        planInfo.shared === "" ? [] : planInfo.shared.split(",");
       planInfo.shared = [...new Set(planInfo.shared.concat(friends))];
 
-      const nonFriends = existingUsers.filter((user) =>
-        !userInfo.friends.includes(user) && !planInfo.shared.includes(user)
+      const nonFriends = existingUsers.filter(
+        (user) =>
+          !userInfo.friends.includes(user) && !planInfo.shared.includes(user)
       );
 
       planInfo.share = planInfo.share === "" ? [] : planInfo.share.split(",");
@@ -565,26 +566,98 @@ Router.post("/share", async (req, res) => {
 
       const updateInfo = {
         shared: planInfo.shared.toString(),
-        share: planInfo.share.toString()
-      }
-      await connection.query(`UPDATE plans SET ? WHERE user_id = ? AND id = ?`, [updateInfo, userId, planId]);
+        share: planInfo.share.toString(),
+      };
+      await connection.query(
+        `UPDATE plans SET ? WHERE user_id = ? AND id = ?`,
+        [updateInfo, userId, planId]
+      );
 
       console.log(friends, nonFriends);
 
       const date = Math.floor(new Date().getTime() / (1000 * 60));
-      
-      nonFriends.map(async(targetId) => {
+
+      nonFriends.map(async (targetId) => {
         const id = generateRandomId(5);
-        const notification = { t: 7, f: userId, d: date, n: planInfo.title };
+        const notification = {
+          t: 7,
+          f: userId,
+          d: date,
+          n: planInfo.title,
+          pi: planId,
+        };
         const socketNotif = { i: id, t: 1, f: userInfo, d: date };
         mainIo.to(targetId).emit("notification", socketNotif);
         redisClient.hSet(
           `user:${targetId}:notifications`,
           id,
-          notification
+          JSON.stringify(notification)
         );
       });
+      res.send({ success: true });
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false });
+    }
+  });
+});
 
+Router.delete("/share", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { targetId, planId } = req.body;
+
+      console.log(targetId, planId);
+
+      const isValidTargetId = validateStrictString(targetId, "user id", 10);
+
+      if (!isValidTargetId.isValid) {
+        return { success: false, reason: isValidTargetId.reason };
+      }
+
+      const userInfo = await userCache(userId);
+
+      if (!userInfo)
+        return res.send({ success: false, reason: responseCodes["no-user"] });
+
+      const connection = pool.promise();
+
+      const [[planInfo]] = await connection.query(
+        `SELECT shared, share, title FROM plans WHERE user_id = ? AND id = ?`,
+        [userId, planId]
+      );
+
+      if (!planInfo)
+        return res.send({ success: false, reason: "Invalid Plan" });
+
+      planInfo.shared =
+        planInfo.shared === "" ? [] : planInfo.shared.split(",");
+      planInfo.shared = [
+        ...new Set(planInfo.shared.filter((user) => user !== targetId)),
+      ];
+
+      planInfo.share = planInfo.share === "" ? [] : planInfo.share.split(",");
+      planInfo.share = [
+        ...new Set(planInfo.share.filter((user) => user !== targetId)),
+      ];
+
+      const updateInfo = {
+        shared: planInfo.shared.toString(),
+        share: planInfo.share.toString(),
+      };
+      await connection.query(
+        `UPDATE plans SET ? WHERE user_id = ? AND id = ?`,
+        [updateInfo, userId, planId]
+      );
+
+      const planRequests = await NotificationCache(targetId, 7, false);
+      const planRequest = planRequests.find((planRequest) => {
+        return planRequest.pi === planId;
+      });
+      if (planRequest) {
+        redisClient.hDel(`user:${targetId}:notifications`, planRequest.i);
+      };
+      res.send({ success: true, msg: `Removed user!` });
     } catch (err) {
       console.log(err);
       res.send({ success: false });
@@ -598,27 +671,72 @@ Router.post("/share/respond", async (req, res) => {
       const { planId, accepted } = req.body;
 
       console.log(planId, accepted);
+
+      const isValidPlanId = validateStrictString(targetId, "user id", 10);
+
+      if (!isValidPlanId.isValid) {
+        return { success: false, reason: isValidPlanId.reason };
+      }
+
+      const isValidAcceped = validateBoolean(accepted, "accept", true);
+
+      if (!isValidAcceped.isValid) {
+        return { success: false, reason: isValidAcceped.reason };
+      }
+
+      const planRequests = await NotificationCache(userId, 7, false);
+      const planRequest = planRequests.find((planRequest) => {
+        return planRequest.pi === planId;
+      });
+      if (!planRequest) return { success: false, reason: "expired request" };
+
+      redisClient.hDel(`user:${userId}:notifications`, planRequest.i);
+
+      const connection = pool.promise();
+      const [[planInfo]] = await connection.query(
+        `SELECT share, shared, user_id, title FROM plans WHERE id = ?`,
+        [planId]
+      );
+
+      if (!planInfo)
+        return res.send({ success: false, reason: "Invalid Plan" });
+
+      planInfo.share = planInfo.share === "" ? [] : planInfo.share.split(",");
+      planInfo.shared =
+        planInfo.shared === "" ? [] : planInfo.sharde.split(",");
+
+      if (!planInfo.share.includes(userId))
+        return res.send({ success: false, reason: "expired request" });
+
+      if (!accepted)
+        return res.send({ success: true, msg: "Declined Share Request!" });
+
+      planInfo.share = [
+        ...new Set(planInfo.share.filter((id) => id !== userId)),
+      ];
+      planInfo.shared = [...new Set(planInfo.shared.concat(friends))];
+
+      const id = generateRandomId(5);
+      const date = Math.floor(new Date().getTime() / (1000 * 60));
+
+      const notification = {
+        t: 8,
+        f: userId,
+        d: date,
+        n: planInfo.title,
+        pi: planId,
+      };
+      const socketNotif = { i: id, t: 1, f: userInfo, d: date };
+      mainIo.to(targetId).emit("notification", socketNotif);
+      redisClient.hSet(
+        `user:${targetId}:notifications`,
+        id,
+        JSON.stringify(notification)
+      );
     } catch (err) {
       console.log(err);
       res.send({ success: false });
     }
   });
 });
-
-/* Router.post("/share", async (req, res) => {
-  autoSignin(req, res, (async (userId) => {
-    try {
-      const connection = pool.promise();
-
-      const user = await userCache(userId);
-
-      if (!user) return res.send({success: false, reason: responseCodes['no-user']});
-
-      if (user.friends.include)
-    } catch (err) {
-      console.log(err);
-      res.send({ success: false });
-    };
-  }));
-}); */
 module.exports = Router;

@@ -1,4 +1,8 @@
 .SharePlanModal {
-  width: 30rem;
+  width: 25rem;
   height: 30rem;
+  padding: 1rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }

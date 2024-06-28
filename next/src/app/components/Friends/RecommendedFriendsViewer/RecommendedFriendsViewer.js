@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getRecommendedFriends } from "@/Api/friendsApi";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import UserContainer from "../../Users/UserContainer/UserContainer";
+import { useRouter } from "next/navigation";
 
 function RecommendedFriendsViewer({}) {
   const { userInfo } = useContext(UserInfoContext);
@@ -28,6 +29,8 @@ function RecommendedFriendsViewer({}) {
     queryFn: getRecommendedFriends,
     staleTime: 3000,
   });
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!userInfo || !refresh) return;
@@ -47,7 +50,13 @@ function RecommendedFriendsViewer({}) {
         ) : (
           recommendedFriends.users.map((user, i) => {
             return (
-              <UserContainer key={i} userInfo={user}>
+              <UserContainer
+                key={i}
+                userInfo={user}
+                onClick={() => {
+                  router.replace(`/dashboard/user/${friend.user_id}`);
+                }}
+              >
                 <FriendRequestBtn
                   userInfo={user}
                   setResponse={setResponse}
