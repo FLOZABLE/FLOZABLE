@@ -3,22 +3,26 @@ import ProfileImage from "../ProfileImage/ProfileImage";
 import styles from "./UserContainer.module.css";
 import CountryViewer from "../../Others/CountryViewer/CountryViewer";
 
-export default function UserContainer({ userInfo, children, style = {} }) {
+export default function UserContainer({
+  userInfo,
+  children,
+  style = {},
+  onClick,
+}) {
   return (
     <div className={styles.UserContainer} style={style}>
-      <Link
+      <div
         href={`/dashboard/user/${userInfo.user_id}`}
         className={styles.userInfo}
+        onClick={onClick}
       >
-        <ProfileImage />
+        <ProfileImage userId={userInfo.user_id} />
         <div className={`overflowDot ${styles.name}`}>{userInfo.name}</div>
         <i className={styles.flag}>
-        <CountryViewer timezone={userInfo.timezone} />
+          <CountryViewer timezone={userInfo.timezone} />
         </i>
-      </Link>
-      <div className={styles.buttons}>
-      {children}
       </div>
+      <div className={styles.buttons}>{children}</div>
     </div>
   );
-};
+}
