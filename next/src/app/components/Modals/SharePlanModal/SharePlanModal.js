@@ -10,6 +10,7 @@ import {
 import DraggableModal from "../DraggableModal/DraggableModal";
 import SearchUsers from "../../Users/SearchUsers/SearchUsers";
 import SearchBar from "../../Inputs/SearchBar/SearchBar";
+import { postPlanShare } from "@/Api/planApi";
 
 export default function SharePlanModal() {
   const { isSharePlanModal, setIsSharePlanModal } = useContext(ModalsContext);
@@ -53,6 +54,7 @@ export default function SharePlanModal() {
                   share: [...prev.share, userInfo],
                 };
               });
+              postPlanShare([userInfo.user_id],planModal.id);
               setResponse({success: true, msg: `Added ${userInfo.name}`})
             }
           }}

@@ -6,6 +6,7 @@ import DmBtn from "@/app/components/Buttons/DmBtn/DmBtn";
 import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRequestBtn";
 import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 import ProfileImage from "../ProfileImage/ProfileImage";
+import UserContainer from "../UserContainer/UserContainer";
 
 function SearchUsers({ searchQuery, search, setSearch, onClick = () => {} }) {
   const [users, setUsers] = useState([]);
@@ -44,32 +45,26 @@ function SearchUsers({ searchQuery, search, setSearch, onClick = () => {} }) {
   }, [search]);
 
   return (
-    <div className={styles.SearchUsers}>
-      {users.map((user, i) => {
-        const { user_id, name, timezone } = user;
+    <div className={`customScroll ${styles.SearchUsers}`}>
+      {users.map((userInfo, i) => {
         return (
-          <div className={styles.user} key={i} onClick={() => {onClick(user)}}>
-            <div
-              className={styles.userInfo}
-            >
-              <ProfileImage userId={user_id} />
-              <div className={`${styles.name} overflowDot`}>{name}</div>
-              <div className={styles.flagWrapper}>
-                <CountryViewer timezone={timezone} />
-              </div>
+          <UserContainer
+            key={i}
+            onClick={() => {
+              onClick(userInfo);
+            }}
+            userInfo={userInfo}
+          >
+            <div>
+              <DmBtn userInfo={userInfo} padding={"0.3125rem 0.625rem"} />
             </div>
-            <div className={styles.buttons}>
-              <div>
-                <DmBtn userInfo={user} padding={"0.3125rem 0.625rem"} />
-              </div>
-              <div>
-                <FriendRequestBtn
-                  userInfo={user}
-                  padding={"0.3125rem 0.625rem"}
-                />
-              </div>
+            <div>
+              <FriendRequestBtn
+                userInfo={userInfo}
+                padding={"0.3125rem 0.625rem"}
+              />
             </div>
-          </div>
+          </UserContainer>
         );
       })}
     </div>

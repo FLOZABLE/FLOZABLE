@@ -2,6 +2,7 @@ const express = require('express');
 const { autoSignin } = require('../Utils/tool');
 const { validateStrictString } = require('../Utils/validate');
 const { NotificationCache } = require('../services/redisLoader');
+const redisClient = require('../model/redis');
 const Router = express.Router();
 
 Router.post("/read", async (req, res) => {

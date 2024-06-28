@@ -33,7 +33,7 @@ import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { useQuery } from "@tanstack/react-query";
-import { postPlanShare } from "@/Api/planApi";
+import { deletePlanShare, postPlanShare } from "@/Api/planApi";
 
 function EventModalLayer({ children, icon, hoverEl }) {
   return (
@@ -105,10 +105,10 @@ function SharedUserBox({ userInfo }) {
       <div className={styles.hoverEl}>Remove {userInfo.name}</div>
     </div>
   );
-};
+}
 
 function ShareUserBox({ userInfo }) {
-  const { setPlanModal } = useContext(PlansContext);
+  const { setPlanModal, planModal } = useContext(PlansContext);
   return (
     <div
       className={styles.UserBox}
@@ -123,6 +123,7 @@ function ShareUserBox({ userInfo }) {
             ],
           };
         });
+        deletePlanShare(userInfo.user_id, planModal.id);
       }}
       id={styles.share}
     >
@@ -130,7 +131,7 @@ function ShareUserBox({ userInfo }) {
       <div className={styles.hoverEl}>(Pending) Remove {userInfo.name}</div>
     </div>
   );
-};
+}
 
 function EventModal({}) {
   const { subjects } = useContext(SubjectsContext);
@@ -264,8 +265,11 @@ function EventModal({}) {
           setPlanModal((prev) => ({ ...prev, opened: false, id: null }));
           if (tutorial === 5) {
             setTutorial(6);
-          };
-          postPlanShare(share, planModal.id);
+          }
+          if (data.isNew) {
+            console.log("new");
+            postPlanShare(share, planModal.id);
+          }
         }
       })
       .catch((error) => console.error(error));
@@ -332,7 +336,7 @@ function EventModal({}) {
       setPlanModal((prev) => ({
         ...prev,
         ...DEFAULT_PLAN,
-        subject: prev.subject
+        subject: prev.subject,
       }));
       if (!planModal.saved) {
         setPlans((prev) => {
@@ -561,6 +565,9 @@ function EventModal({}) {
             </Suspense> */}
             {planModal.share.map((userInfo, i) => {
               return <ShareUserBox userInfo={userInfo} key={i} />;
+            })}
+            {planModal.shared.map((userInfo, i) => {
+              return <SharedUserBox userInfo={userInfo} key={i} />;
             })}
           </div>
         </EventModalLayer>
