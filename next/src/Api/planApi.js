@@ -49,8 +49,8 @@ async function deletePlanShare(targetId, planId, callback = () => {}) {
   return callback(data);
 };
 
-async function postPlanShareRespond(planId, accepted, callback = () => {}) {
-  if (!planId) return callback({ success: false });
+async function postPlanShareRespond(planId, accepted) {
+  if (!planId) return ({ success: false });
 
   const response = await fetch(`${config.server}/plan/share/respond`, {
     method: "POST",
@@ -61,6 +61,8 @@ async function postPlanShareRespond(planId, accepted, callback = () => {}) {
     body: JSON.stringify({ planId, accepted }),
   });
   const data = await response.json();
+
+  console.log(data)
 
   return data;
 }

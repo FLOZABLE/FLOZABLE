@@ -34,6 +34,7 @@ const {
 const schedule = require("node-schedule");
 const { responseCodes } = require("../Constant");
 const { mainIo } = require("../sockets/mainIo");
+const { retry } = require("async");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -496,19 +497,23 @@ Router.get("/users", async (req, res) => {
 
       const connection = pool.promise();
 
-      const [[plan]] = await connection.query(
-        `SELECT share FROM plans WHERE id = ? AND user_id = ?`,
+      const [[planInfo]] = await connection.query(
+        `SELECT share, shared FROM plans WHERE id = ? AND user_id = ?`,
         [id, userId]
       );
 
-      if (!plan) {
+      if (!planInfo) {
         return res.send({ success: false, reason: "Invalid Plan" });
       }
 
-      const sharedIds = plan.share === "" ? [] : plan.share.split(",");
+      planInfo.share = planInfo.share === "" ? [] : planInfo.share.split(",");
+      planInfo.shared = planInfo.shared === "" ? [] : planInfo.shared.split(",");
 
-      const users = await usersCache(sharedIds);
-      res.send({ success: true, users });
+      //auery all at once for performance
+      const users = await usersCache([...planInfo.share, ...planInfo.shared]);
+      const share = users.filter(userInfo => planInfo.share.includes(userInfo.user_id));
+      const shared = users.filter(userInfo => planInfo.shared.includes(userInfo.user_id));
+      res.send({ success: true, share, shared });
     } catch (err) {
       console.log(err);
       res.send({ success: false });
@@ -586,7 +591,14 @@ Router.post("/share", async (req, res) => {
           n: planInfo.title,
           pi: planId,
         };
-        const socketNotif = { i: id, t: 1, f: userInfo, d: date };
+        const socketNotif = {
+          i: id,
+          t: 7,
+          f: userInfo,
+          d: date,
+          n: planInfo.title,
+          pi: planId,
+        };
         mainIo.to(targetId).emit("notification", socketNotif);
         redisClient.hSet(
           `user:${targetId}:notifications`,
@@ -612,7 +624,7 @@ Router.delete("/share", async (req, res) => {
       const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
       if (!isValidTargetId.isValid) {
-        return { success: false, reason: isValidTargetId.reason };
+        return res.send({ success: false, reason: isValidTargetId.reason });
       }
 
       const userInfo = await userCache(userId);
@@ -656,7 +668,7 @@ Router.delete("/share", async (req, res) => {
       });
       if (planRequest) {
         redisClient.hDel(`user:${targetId}:notifications`, planRequest.i);
-      };
+      }
       res.send({ success: true, msg: `Removed user!` });
     } catch (err) {
       console.log(err);
@@ -672,23 +684,30 @@ Router.post("/share/respond", async (req, res) => {
 
       console.log(planId, accepted);
 
-      const isValidPlanId = validateStrictString(targetId, "user id", 10);
+      const isValidPlanId = validateStrictString(planId, "user id", 10);
 
       if (!isValidPlanId.isValid) {
-        return { success: false, reason: isValidPlanId.reason };
+        return res.send({ success: false, reason: isValidPlanId.reason });
       }
 
       const isValidAcceped = validateBoolean(accepted, "accept", true);
 
       if (!isValidAcceped.isValid) {
-        return { success: false, reason: isValidAcceped.reason };
+        return res.send({ success: false, reason: isValidAcceped.reason });
       }
 
       const planRequests = await NotificationCache(userId, 7, false);
       const planRequest = planRequests.find((planRequest) => {
         return planRequest.pi === planId;
       });
-      if (!planRequest) return { success: false, reason: "expired request" };
+      console.log(planRequests);
+      if (!planRequest)
+        return res.send({ success: false, reason: "expired request" });
+
+      const userInfo = await userCache(userId);
+
+      if (!userInfo)
+        return res.send({ success: false, reason: responseCodes["no-user"] });
 
       redisClient.hDel(`user:${userId}:notifications`, planRequest.i);
 
@@ -703,36 +722,58 @@ Router.post("/share/respond", async (req, res) => {
 
       planInfo.share = planInfo.share === "" ? [] : planInfo.share.split(",");
       planInfo.shared =
-        planInfo.shared === "" ? [] : planInfo.sharde.split(",");
+        planInfo.shared === "" ? [] : planInfo.shared.split(",");
 
       if (!planInfo.share.includes(userId))
         return res.send({ success: false, reason: "expired request" });
 
-      if (!accepted)
-        return res.send({ success: true, msg: "Declined Share Request!" });
-
       planInfo.share = [
         ...new Set(planInfo.share.filter((id) => id !== userId)),
       ];
-      planInfo.shared = [...new Set(planInfo.shared.concat(friends))];
 
-      const id = generateRandomId(5);
-      const date = Math.floor(new Date().getTime() / (1000 * 60));
+      if (accepted) {
+        planInfo.shared.push(userId);
 
-      const notification = {
-        t: 8,
-        f: userId,
-        d: date,
-        n: planInfo.title,
-        pi: planId,
+        const id = generateRandomId(5);
+        const date = Math.floor(new Date().getTime() / (1000 * 60));
+
+        const notification = {
+          t: 8,
+          f: userId,
+          d: date,
+          n: planInfo.title,
+          pi: planId,
+        };
+        const socketNotif = { i: id, t: 8, f: userInfo, d: date, pi: planId };
+
+        const targetId = planInfo.user_id;
+        mainIo.to(targetId).emit("notification", socketNotif);
+        redisClient.hSet(
+          `user:${targetId}:notifications`,
+          id,
+          JSON.stringify(notification)
+        );
+      } else {
+        planInfo.shared = [
+          ...new Set(planInfo.shared.filter((id) => id !== userId)),
+        ];
+      }
+
+      const updateInfo = {
+        share: planInfo.share.toString(),
+        shared: planInfo.shared.toString(),
       };
-      const socketNotif = { i: id, t: 1, f: userInfo, d: date };
-      mainIo.to(targetId).emit("notification", socketNotif);
-      redisClient.hSet(
-        `user:${targetId}:notifications`,
-        id,
-        JSON.stringify(notification)
-      );
+
+      await connection.query(`UPDATE plans SET ? WHERE id = ?`, [
+        updateInfo,
+        planId,
+      ]);
+
+      if (accepted) {
+        res.send({ success: true, msg: `Accepted share request!` });
+      } else {
+        res.send({ success: true, msg: `Declined share request!` });
+      }
     } catch (err) {
       console.log(err);
       res.send({ success: false });

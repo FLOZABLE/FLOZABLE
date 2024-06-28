@@ -84,7 +84,7 @@ async function UserBoxes({ id, planModal }) {
 }
 
 function SharedUserBox({ userInfo }) {
-  const { setPlanModal } = useContext(PlansContext);
+  const { setPlanModal, planModal } = useContext(PlansContext);
   return (
     <div
       className={styles.UserBox}
@@ -92,13 +92,14 @@ function SharedUserBox({ userInfo }) {
         setPlanModal((prev) => {
           return {
             ...prev,
-            share: [
-              ...prev.share.filter(
+            shared: [
+              ...prev.shared.filter(
                 (users) => users.user_id !== userInfo.user_id
               ),
             ],
           };
         });
+        deletePlanShare(userInfo.user_id, planModal.id);
       }}
     >
       <ProfileImage userId={userInfo.user_id} />
@@ -361,8 +362,9 @@ function EventModal({}) {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
+            const { shared, share } = data;
             setPlanModal((prev) => {
-              return { ...prev, share: data.users };
+              return { ...prev, share, shared };
             });
           }
         })

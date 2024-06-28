@@ -272,7 +272,12 @@ function NotificationModal({}) {
                     buttons={[
                       {
                         onClick: () => {
-                          postPlanShareRespond(notification, false, notification.i);
+                          postPlanShareRespond(notification.pi, true);
+                          setNotifications(
+                            notifications.filter(
+                              (notif) => notif.i !== notification.i
+                            )
+                          );
                         },
                         content: (
                           <FontAwesomeIcon
@@ -285,7 +290,12 @@ function NotificationModal({}) {
                       },
                       {
                         onClick: () => {
-                          chatRequestReply(fromId, false, notification.i);
+                          postPlanShareRespond(notification.pi, false);
+                          setNotifications(
+                            notifications.filter(
+                              (notif) => notif.i !== notification.i
+                            )
+                          );
                         },
                         content: (
                           <FontAwesomeIcon
@@ -299,7 +309,9 @@ function NotificationModal({}) {
                     ]}
                     key={i}
                   >
-                    <p>{fromName} wants to chat with you!</p>
+                    <p>
+                      {fromName} wants to share plan {notification.n}!
+                    </p>
                   </NotificationContainer>
                 );
               }
