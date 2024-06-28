@@ -8,65 +8,63 @@ import styles from "./page.module.css";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 
 export const metadata = {
-  title: 'Dashboard - FLOZABLE',
+  title: "Dashboard - FLOZABLE",
   description:
-    'Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.',
+    "Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.",
   openGraph: {
-    type: 'website',
-    url: 'https://flozable.com/dashboard',
-    title: 'Dashboard - FLOZABLE',
+    type: "website",
+    url: "https://flozable.com/dashboard",
+    title: "Dashboard - FLOZABLE",
     description:
-      'Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.',
+      "Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.",
     images: [
       {
-        url: 'https://flozable.com/favicon.ico',
+        url: "https://flozable.com/favicon.ico",
         width: 800,
         height: 600,
-        alt: 'FLOZABLE',
+        alt: "FLOZABLE",
       },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
-    url: 'https://flozable.com/dashboard',
-    title: 'Dashboard - FLOZABLE',
+    card: "summary_large_image",
+    url: "https://flozable.com/dashboard",
+    title: "Dashboard - FLOZABLE",
     description:
-      'Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.',
-    images: ['https://flozable.com/favicon.ico'],
+      "Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.",
+    images: ["https://flozable.com/favicon.ico"],
   },
-  keywords: ['progress tracking', 'study achievements', 'study sessions planning'],
+  keywords: [
+    "progress tracking",
+    "study achievements",
+    "study sessions planning",
+  ],
   robots: {
     index: true,
     follow: true,
   },
   icons: {
-    icon: 'https://flozable.com/favicon.ico',
+    icon: "https://flozable.com/favicon.ico",
   },
 };
 
 export default function Dashboard() {
-
   return (
     <div className={`Main`}>
       <WelcomeModal />
-      <div className="title">
-        Dashboard
-      </div>
+      <div className="title">Dashboard</div>
       <div className={styles.Main}>
         <div className={styles.boxesWrapper}>
-          <div className={styles.boxesContainer} >
+          <div className={styles.boxesContainer}>
             <div className={styles.box} id={styles.subjectsTrend}>
-              <StudyTrendChart
-                viewDate={new Date()}
-              />
+              <StudyTrendChart viewDate={new Date()} />
             </div>
-            <div className={styles.smallBoxesWrapper}  >
+            <div className={styles.smallBoxesWrapper}>
               <div className={styles.box}>
-                <SmallSubjectsViewer
-                />
+                <SmallSubjectsViewer />
               </div>
-              <div className={styles.box} id={styles.rankingContainer}>
-                <div>
+              <div className={styles.box}>
+                {/* <div>
                   <div className={styles.title}>
                     <h3>Friend Ranking</h3>
                     <i>
@@ -77,7 +75,8 @@ export default function Dashboard() {
                     <FriendsRankingViewer
                     />
                   </div>
-                </div>
+                </div> */}
+                <FriendsRankingViewer />
               </div>
               <div className={styles.box} id={styles.recommendedFriends}>
                 <RecommendedFriendsViewer />
