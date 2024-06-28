@@ -6,7 +6,7 @@ import { CustomCheckoutProvider, Elements } from "@stripe/react-stripe-js";
 import { useStripeClientSecret } from "@/app/Hooks/payments";
 import { useEffect, useState } from "react";
 import config from "@/app/utils/config";
-import getStripe from "@/lib/getStripe";
+import getStripe from "@/app/lib/getStripe";
 
 const stripePromise = getStripe();
 

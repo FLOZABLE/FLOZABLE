@@ -36,7 +36,7 @@ html {
 }
 
 body {
-  margin: 0;
+  margin: 0rem;
   padding: 0rem;
   background-color: #f8f9fa;
   max-width: 100vw;
@@ -105,6 +105,35 @@ button:hover {
   top: 12.5rem;
 }
 
+.Box {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.Box .header {
+  display: flex;
+  font-size: 1.5rem;
+  font-weight: 600;
+  justify-content: center;
+}
+
+.Box .header i {
+  margin-left: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Box .contents {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  width: 100%;
+}
+
 .jost {
   font-family: "Jost", sans-serif;
 }
@@ -141,12 +170,6 @@ button:hover {
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
 }
 
 .Main {

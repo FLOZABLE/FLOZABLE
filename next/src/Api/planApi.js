@@ -30,7 +30,7 @@ async function postPlanShare(users, planId, callback = () => {}) {
   });
   const data = await response.json();
 
-  return data;
+  return callback(data);
 }
 
 async function postPlanShareRespond(planId, accepted, callback = () => {}) {
