@@ -68,15 +68,7 @@ function Friends({}) {
           <div className={styles.container}>
             <div>
               <div className={styles.smallBox}>
-                <div className={styles.title}>
-                  <h3>Friend&apos;s Rank</h3>
-                  <i>
-                    <IconStatsChart />
-                  </i>
-                </div>
-                <div>
-                  <FriendsRankingViewer />
-                </div>
+                <FriendsRankingViewer />
               </div>
             </div>
             <div>
