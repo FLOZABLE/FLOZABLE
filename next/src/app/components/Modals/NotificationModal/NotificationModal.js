@@ -8,6 +8,7 @@ import Draggable from "react-draggable";
 import {
   ModalsContext,
   NotificationsContext,
+  PlansContext,
   ResponseContext,
 } from "@/app/utils/Contexts";
 import NotificationContainer from "@/app/components/Notifications/NotificationContainer/NotificationContainer";
@@ -19,6 +20,7 @@ function NotificationModal({}) {
     useContext(ModalsContext);
   const { notifications, setNotifications } = useContext(NotificationsContext);
   const { setResponse } = useContext(ResponseContext);
+  const { plans } = useContext(PlansContext);
 
   const moveRef = useRef(null);
 
@@ -42,18 +44,17 @@ function NotificationModal({}) {
     );
   };
 
-  const deleteFriendNotif = (targetId, notificationId) => {
+  const deleteNotification = (notificationId) => {
     fetch(`${config.server}/notifications/read`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ targetId }),
+      body: JSON.stringify({ notificationId }),
       credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
-        setResponse(data);
       })
       .catch((error) => console.error(error));
 
@@ -173,7 +174,7 @@ function NotificationModal({}) {
                     buttons={[
                       {
                         onClick: () => {
-                          deleteFriendNotif(fromId, notification.i);
+                          deleteNotification(notification.i);
                         },
                         content: (
                           <FontAwesomeIcon
@@ -311,6 +312,35 @@ function NotificationModal({}) {
                   >
                     <p>
                       {fromName} wants to share plan {notification.n}!
+                    </p>
+                  </NotificationContainer>
+                );
+              } else if (type === 8) {
+                const plan = plans.find((plan) => plan.id === notification.pi);
+                return (
+                  <NotificationContainer
+                    fromProfile={fromId}
+                    zIndex={notifications.length - i}
+                    buttons={[
+                      {
+                        onClick: () => {
+                          deleteNotification(notification.i);
+                        },
+                        content: (
+                          <FontAwesomeIcon
+                            icon={faCheck}
+                            color={"green"}
+                            fontSize="2rem"
+                          />
+                        ),
+                        hoverText: "Got it!",
+                      },
+                    ]}
+                    key={i}
+                  >
+                    <p>
+                      {fromName} can now view plan "
+                      {plan ? plan.title : notification.n}" !
                     </p>
                   </NotificationContainer>
                 );

@@ -12,7 +12,7 @@ function SlidingOptBtn({ options, setValue, value }) {
         {Object.keys(options).map((option, i) => {
           return (
             <div className={styles.option} key={i} onClick={() => { setValue(option) }}>
-              <i className={`${option === value ? styles.on : ''} ${styles.check}`}>
+              <i className={`${parseInt(option) === parseInt(value) ? styles.on : ''} ${styles.check}`}>
               <FontAwesomeIcon icon={faCheck} />
               </i>
               <p>{options[option]}</p>

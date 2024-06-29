@@ -1,31 +1,28 @@
-const express = require('express');
-const { autoSignin } = require('../Utils/tool');
-const { validateStrictString } = require('../Utils/validate');
-const { NotificationCache } = require('../services/redisLoader');
-const redisClient = require('../model/redis');
+const express = require("express");
+const { autoSignin } = require("../Utils/tool");
+const { validateStrictString } = require("../Utils/validate");
+const redisClient = require("../model/redis");
 const Router = express.Router();
 
 Router.post("/read", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { targetId } = req.body;
+      const { notificationId } = req.body;
 
-      const isValidTargetId = validateStrictString(targetId, "user id", 10);
+      const isValidNotificationId = validateStrictString(
+        notificationId,
+        "notification id",
+        5
+      );
 
-      if (!isValidTargetId.isValid) {
-        return res.send({ success: false, reason: isValidTargetId.reason });
+      if (!isValidNotificationId.isValid) {
+        return res.send({
+          success: false,
+          reason: isValidNotificationId.reason,
+        });
       }
 
-      const friendRequests = await NotificationCache(userId, 1, false);
-      const friendReq = friendRequests.find((friendReq) => {
-        return friendReq.f === targetId;
-      });
-      if (!friendReq)
-        return res.send({ success: false, reason: "no request found" });
-      redisClient.hDel(
-        `user:${userId}:notifications`,
-        friendReq.i
-      );
+      redisClient.hDel(`user:${userId}:notifications`, notificationId);
       res.send({ success: true });
     } catch (error) {
       console.log(error);

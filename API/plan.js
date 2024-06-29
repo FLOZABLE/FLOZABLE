@@ -34,15 +34,14 @@ const {
 const schedule = require("node-schedule");
 const { responseCodes } = require("../Constant");
 const { mainIo } = require("../sockets/mainIo");
-const { retry } = require("async");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
       let [plans] = await connection.query(
-        `SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed, share, shared FROM plans where user_id = ?`,
-        [userId]
+        `SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed, share, shared FROM plans WHERE user_id = ? OR shared LIKE ?`,
+        [userId, `%${userId}%`]
       );
       plans.map((plan) => {
         plan.editable = true;
