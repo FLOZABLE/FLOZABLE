@@ -68,17 +68,12 @@ function Friends({}) {
           <div className={styles.container}>
             <div>
               <div className={styles.smallBox}>
-                <FriendsRankingViewer />
+                <FriendsRankingViewer friendsRanking={friendsRanking} />
               </div>
             </div>
             <div>
               <div className={styles.box} id={styles.activeFriends}>
-                <div>
-                  <div className={styles.title}>
-                    <h3>Friends Status</h3>
-                  </div>
-                  <FriendsActivityViewer />
-                </div>
+                <FriendsActivityViewer />
               </div>
               <div className={styles.box} id={styles.friendsStats}>
                 <div>
@@ -118,14 +113,6 @@ function Friends({}) {
                   </i>
                 </div>
               </div>
-              {/* <div className={styles.smallBox}>
-                <div className={styles.title}>
-                  <h3>Challenge URL</h3>
-                  <i>
-                    <IconFire />
-                  </i>
-                </div>
-              </div> */}
               <div className={styles.smallBox}>
                 <div className={styles.title}>
                   <h3>Search for Friends</h3>

@@ -1,4 +1,3 @@
-
 const HeaderBook = (props) => (
   <svg
     height="2.0625rem"
@@ -379,7 +378,6 @@ const HeaderFocus = (props) => (
   </svg>
 );
 
-
 function IconBxHome(props) {
   return (
     <svg
@@ -392,8 +390,7 @@ function IconBxHome(props) {
       <path d="M3 13h1v7c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-7h1a1 1 0 00.707-1.707l-9-9a.999.999 0 00-1.414 0l-9 9A1 1 0 003 13zm7 7v-5h4v5h-4zm2-15.586l6 6V15l.001 5H16v-5c0-1.103-.897-2-2-2h-4c-1.103 0-2 .897-2 2v5H6v-9.586l6-6z" />
     </svg>
   );
-};
-
+}
 
 function IconClipboardOutline(props) {
   return (
@@ -422,7 +419,6 @@ function IconClipboardOutline(props) {
   );
 }
 
-
 function IconGalleryLine(props) {
   return (
     <svg
@@ -436,26 +432,88 @@ function IconGalleryLine(props) {
       <path d="M20 13c-1.678 0-3.249.46-4.593 1.259A14.984 14.984 0 0118.147 19H20v-6zm-3.996 6C14.044 14.302 9.408 11 4 11v8h12.004zM4 9c3.83 0 7.323 1.435 9.974 3.796A10.949 10.949 0 0120 11V3h1.008c.548 0 .992.445.992.993v16.014a1 1 0 01-.992.993H2.992A.993.993 0 012 20.007V3.993A1 1 0 012.992 3H6V1h2v4H4v4zm14-8v4h-8V3h6V1h2zm-1.5 9a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
     </svg>
   );
-};
+}
 
 function IconLeave(props) {
   return (
-    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em">
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+    >
       <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-      <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+      <g
+        id="SVGRepo_tracerCarrier"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></g>
       <g id="SVGRepo_iconCarrier">
-        <path fillRule="evenodd" clipRule="evenodd" d="M15.6666 8L17.75 10.5L15.6666 8Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-        <path fillRule="evenodd" clipRule="evenodd" d="M15.6666 13L17.75 10.5L15.6666 13Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-        <path d="M16.5 10.5L10 10.5" stroke="#000000" strokeWidth="2" strokeLinecap="round"></path> <line x1="4" y1="3.5" x2="13" y2="3.5" stroke="#000000" strokeWidth="2" strokeLinecap="round"></line>
-        <line x1="4" y1="17.5" x2="13" y2="17.5" stroke="#000000" strokeWidth="2" strokeLinecap="round"></line>
-        <path d="M13 3.5V7.5" stroke="#000000" strokeWidth="2" strokeLinecap="round"></path>
-        <path d="M13 13.5V17.5" stroke="#000000" strokeWidth="2" strokeLinecap="round"></path>
-        <path d="M4 3.5L4 17.5" stroke="#000000" strokeWidth="2" strokeLinecap="round"></path>
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M15.6666 8L17.75 10.5L15.6666 8Z"
+          stroke="#000000"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        ></path>
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M15.6666 13L17.75 10.5L15.6666 13Z"
+          stroke="#000000"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        ></path>
+        <path
+          d="M16.5 10.5L10 10.5"
+          stroke="#000000"
+          strokeWidth="2"
+          strokeLinecap="round"
+        ></path>{" "}
+        <line
+          x1="4"
+          y1="3.5"
+          x2="13"
+          y2="3.5"
+          stroke="#000000"
+          strokeWidth="2"
+          strokeLinecap="round"
+        ></line>
+        <line
+          x1="4"
+          y1="17.5"
+          x2="13"
+          y2="17.5"
+          stroke="#000000"
+          strokeWidth="2"
+          strokeLinecap="round"
+        ></line>
+        <path
+          d="M13 3.5V7.5"
+          stroke="#000000"
+          strokeWidth="2"
+          strokeLinecap="round"
+        ></path>
+        <path
+          d="M13 13.5V17.5"
+          stroke="#000000"
+          strokeWidth="2"
+          strokeLinecap="round"
+        ></path>
+        <path
+          d="M4 3.5L4 17.5"
+          stroke="#000000"
+          strokeWidth="2"
+          strokeLinecap="round"
+        ></path>
       </g>
     </svg>
   );
 }
-
 
 function IconPeople16(props) {
   return (
@@ -473,8 +531,6 @@ function IconPeople16(props) {
     </svg>
   );
 }
-
-
 
 function IconRankingChart(props) {
   return (
@@ -505,7 +561,6 @@ function IconRankingChart(props) {
   );
 }
 
-
 function IconStatsChart(props) {
   return (
     <svg
@@ -519,7 +574,6 @@ function IconStatsChart(props) {
     </svg>
   );
 }
-
 
 function IconUserAdd(props) {
   return (
@@ -547,8 +601,7 @@ function IconBook(props) {
       <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 000 2.5v11a.5.5 0 00.707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 00.78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0016 13.5v-11a.5.5 0 00-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z" />
     </svg>
   );
-};
-
+}
 
 function IconMonitor(props) {
   return (
@@ -567,7 +620,7 @@ function IconMonitor(props) {
       <path d="M8 21h8M12 17v4" />
     </svg>
   );
-};
+}
 
 function IconEyeOutline(props) {
   return (
@@ -581,8 +634,7 @@ function IconEyeOutline(props) {
       <path d="M12 9a3 3 0 013 3 3 3 0 01-3 3 3 3 0 01-3-3 3 3 0 013-3m0-4.5c5 0 9.27 3.11 11 7.5-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0017.64 0 9.821 9.821 0 00-17.64 0z" />
     </svg>
   );
-};
-
+}
 
 const Google = (props) => (
   <svg
@@ -639,7 +691,6 @@ const Google = (props) => (
     </g>
   </svg>
 );
-
 
 //user icons
 
@@ -763,7 +814,6 @@ function Alert(props) {
 
 //subject icons end
 
-
 function StudyPerson(props) {
   return (
     <svg
@@ -850,7 +900,6 @@ function RestPerson(props) {
   );
 }
 
-
 function IconTimerOutline(props) {
   return (
     <svg
@@ -880,15 +929,26 @@ const IconMessage = (props) => (
   </svg>
 );
 
-
 const IconPen = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-
-    <g id="SVGRepo_iconCarrier"> <path d="M11 4H7.2C6.0799 4 5.51984 4 5.09202 4.21799C4.71569 4.40974 4.40973 4.7157 4.21799 5.09202C4 5.51985 4 6.0799 4 7.2V16.8C4 17.9201 4 18.4802 4.21799 18.908C4.40973 19.2843 4.71569 19.5903 5.09202 19.782C5.51984 20 6.0799 20 7.2 20H16.8C17.9201 20 18.4802 20 18.908 19.782C19.2843 19.5903 19.5903 19.2843 19.782 18.908C20 18.4802 20 17.9201 20 16.8V12.5M15.5 5.5L18.3284 8.32843M10.7627 10.2373L17.411 3.58902C18.192 2.80797 19.4584 2.80797 20.2394 3.58902C21.0205 4.37007 21.0205 5.6364 20.2394 6.41745L13.3774 13.2794C12.6158 14.0411 12.235 14.4219 11.8012 14.7247C11.4162 14.9936 11.0009 15.2162 10.564 15.3882C10.0717 15.582 9.54378 15.6885 8.48793 15.9016L8 16L8.04745 15.6678C8.21536 14.4925 8.29932 13.9048 8.49029 13.3561C8.65975 12.8692 8.89125 12.4063 9.17906 11.9786C9.50341 11.4966 9.92319 11.0768 10.7627 10.2373Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /> </g>
-
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <g id="SVGRepo_iconCarrier">
+      {" "}
+      <path
+        d="M11 4H7.2C6.0799 4 5.51984 4 5.09202 4.21799C4.71569 4.40974 4.40973 4.7157 4.21799 5.09202C4 5.51985 4 6.0799 4 7.2V16.8C4 17.9201 4 18.4802 4.21799 18.908C4.40973 19.2843 4.71569 19.5903 5.09202 19.782C5.51984 20 6.0799 20 7.2 20H16.8C17.9201 20 18.4802 20 18.908 19.782C19.2843 19.5903 19.5903 19.2843 19.782 18.908C20 18.4802 20 17.9201 20 16.8V12.5M15.5 5.5L18.3284 8.32843M10.7627 10.2373L17.411 3.58902C18.192 2.80797 19.4584 2.80797 20.2394 3.58902C21.0205 4.37007 21.0205 5.6364 20.2394 6.41745L13.3774 13.2794C12.6158 14.0411 12.235 14.4219 11.8012 14.7247C11.4162 14.9936 11.0009 15.2162 10.564 15.3882C10.0717 15.582 9.54378 15.6885 8.48793 15.9016L8 16L8.04745 15.6678C8.21536 14.4925 8.29932 13.9048 8.49029 13.3561C8.65975 12.8692 8.89125 12.4063 9.17906 11.9786C9.50341 11.4966 9.92319 11.0768 10.7627 10.2373Z"
+        stroke="#000000"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />{" "}
+    </g>
   </svg>
 );
-
 
 function IconMicFill(props) {
   return (
@@ -991,7 +1051,7 @@ function IconHeadphoneFill(props) {
       <path d="M4 12h3a2 2 0 012 2v5a2 2 0 01-2 2H4a2 2 0 01-2-2v-7C2 6.477 6.477 2 12 2s10 4.477 10 10v7a2 2 0 01-2 2h-3a2 2 0 01-2-2v-5a2 2 0 012-2h3a8 8 0 10-16 0z" />
     </svg>
   );
-};
+}
 
 function IconSearch(props) {
   return (
@@ -1005,8 +1065,7 @@ function IconSearch(props) {
       <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z" />
     </svg>
   );
-};
-
+}
 
 const FriendLink = (props) => (
   <svg
@@ -1056,7 +1115,6 @@ const FriendLink = (props) => (
     />
   </svg>
 );
-
 
 const EmailInvitation = (props) => (
   <svg
@@ -1135,7 +1193,7 @@ function IconEmailOutline(props) {
       <path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6m-2 0l-8 5-8-5h16m0 12H4V8l8 5 8-5v10z" />
     </svg>
   );
-};
+}
 
 function IconUser(props) {
   return (
@@ -1176,7 +1234,6 @@ const BackArrow = (props) => (
     </g>
   </svg>
 );
-
 
 const SpotifyLogo = (props) => (
   <svg
@@ -1230,7 +1287,7 @@ function YouTubeIcon(props) {
       <path d="M941.3 296.1a112.3 112.3 0 00-79.2-79.3C792.2 198 512 198 512 198s-280.2 0-350.1 18.7A112.12 112.12 0 0082.7 296C64 366 64 512 64 512s0 146 18.7 215.9c10.3 38.6 40.7 69 79.2 79.3C231.8 826 512 826 512 826s280.2 0 350.1-18.8c38.6-10.3 68.9-40.7 79.2-79.3C960 658 960 512 960 512s0-146-18.7-215.9zM423 646V378l232 133-232 135z" />
     </svg>
   );
-};
+}
 
 const GoogleCalendar = (props) => (
   <svg
@@ -1300,7 +1357,7 @@ function IconCalculator(props) {
       <path d="M416 80a48.05 48.05 0 00-48-48H144a48.05 48.05 0 00-48 48v352a48.05 48.05 0 0048 48h224a48.05 48.05 0 0048-48zM168 432a24 24 0 1124-24 24 24 0 01-24 24zm0-80a24 24 0 1124-24 24 24 0 01-24 24zm0-80a24 24 0 1124-24 24 24 0 01-24 24zm88 160a24 24 0 1124-24 24 24 0 01-24 24zm0-80a24 24 0 1124-24 24 24 0 01-24 24zm0-80a24 24 0 1124-24 24 24 0 01-24 24zm112 136a24 24 0 01-48 0v-80a24 24 0 0148 0zm-24-136a24 24 0 1124-24 24 24 0 01-24 24zm19.31-100.69A16 16 0 01352 176H160a16 16 0 01-16-16V96a16 16 0 0116-16h192a16 16 0 0116 16v64a16 16 0 01-4.69 11.31z" />
     </svg>
   );
-};
+}
 
 function IconFileBarGraphFill(props) {
   return (
@@ -1314,7 +1371,7 @@ function IconFileBarGraphFill(props) {
       <path d="M12 0H4a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V2a2 2 0 00-2-2zm-2 11.5v-6a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v6a.5.5 0 01-.5.5h-1a.5.5 0 01-.5-.5zm-2.5.5a.5.5 0 01-.5-.5v-4a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v4a.5.5 0 01-.5.5h-1zm-3 0a.5.5 0 01-.5-.5v-2a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v2a.5.5 0 01-.5.5h-1z" />
     </svg>
   );
-};
+}
 
 function IconPeriodicTable(props) {
   return (
@@ -1328,7 +1385,7 @@ function IconPeriodicTable(props) {
       <path d="M2 4v2h2V4H2m18 0v2h2V4h-2M2 7v2h2V7H2m3 0v2h2V7H5m9 0v2h2V7h-2m3 0v2h2V7h-2m3 0v2h2V7h-2M2 10v2h2v-2H2m3 0v2h2v-2H5m3 0v2h2v-2H8m3 0v2h2v-2h-2m3 0v2h2v-2h-2m3 0v2h2v-2h-2m3 0v2h2v-2h-2M2 13v2h2v-2H2m3 0v2h2v-2H5m3 0v2h2v-2H8m3 0v2h2v-2h-2m3 0v2h2v-2h-2m3 0v2h2v-2h-2m3 0v2h2v-2h-2M5 17v2h2v-2H5m3 0v2h2v-2H8m3 0v2h2v-2h-2m3 0v2h2v-2h-2m3 0v2h2v-2h-2z" />
     </svg>
   );
-};
+}
 
 function IconWhiteboard(props) {
   <svg
@@ -1341,8 +1398,8 @@ function IconWhiteboard(props) {
     <rect x="23.622" y="17.643" width="5.19" height="1.862"></rect>
     <path d="M30.927,29.29v-7.65v-0.309V1.647H0.99v19.2v0.792v7.348H0v1.008h4.139v-1.008H2.284V21.64h27.353v7.65h-1.828v1.008 h4.137V29.29H30.927z M29.637,20.401H2.28V2.937h27.357V20.401L29.637,20.401z"></path>
     <path d="M6.018,7.958C6.37,7.922,6.705,7.864,7.03,7.791c-0.158,0.426-0.204,0.878-0.071,1.35c0.114,0.405,0.412,0.61,0.806,0.695 c-0.163,0.352-0.042,0.846,0.316,1.022c0.274,0.136,1.25,0.542,1.233,0.561c-0.402,0.485-0.2,1.439,0.57,1.376 c0.36-0.03,0.72-0.071,1.079-0.11c-0.079,0.019-0.147,0.038-0.196,0.059c-0.915,0.392-0.196,1.592,0.621,1.473 c1.019-0.148,2.003-0.366,2.993-0.366c-0.587,0.403-1.186,0.788-1.682,1.33c-0.375,0.408-0.275,1.236,0.355,1.347 c1.794,0.315,3.321-0.146,4.83-0.762c0.078,0.055,0.166,0.1,0.276,0.117c2.537,0.393,4.945,0.208,7.466-0.162 c1.024-0.149,0.589-1.703-0.429-1.554c-1.323,0.194-2.616,0.334-3.918,0.345c0.154-0.104,0.307-0.214,0.457-0.342 c0.627-0.53-0.039-1.571-0.783-1.346c-1.812,0.547-3.475,1.696-5.32,2.091c0.432-0.299,0.852-0.612,1.215-1.012 c0.42-0.463,0.23-1.149-0.354-1.347c-0.853-0.289-1.709-0.339-2.567-0.288c0.015-0.074,0.036-0.142,0.042-0.225 c0.02-0.28-0.169-0.558-0.398-0.695c-0.739-0.444-1.596-0.411-2.445-0.311c-0.087-0.483-0.594-0.792-1.266-1.114 c0.694-0.452,1.637-0.686,2.335-0.971c0.766-0.312,0.77-1.684-0.213-1.583c-0.859,0.088-1.643,0.136-2.449,0.486 c-2.082,0.901,0.141-0.863,0.653-1.26c0.791-0.613-0.217-1.586-0.977-1.266C8.191,5.8,7.127,6.142,6.018,6.347 C4.993,6.449,4.983,8.062,6.018,7.958z"></path>
-  </svg>
-};
+  </svg>;
+}
 const PremiumGold = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -1380,6 +1437,21 @@ const PremiumPremium = (props) => (
       d="M22.08 43.38 15 18.42h18l-7.08 25a2 2 0 0 1-3.84-.04Z"
     />
     <path fill="#89d0ef" d="M33 18.42H15l-1-15h20l-1 15z" />
+  </svg>
+);
+
+const Wave = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1em"
+    height="1em"
+    viewBox="0 0 16 16"
+    {...props}
+  >
+    <path
+      fillRule="evenodd"
+      d="M7.051 1.684c.29-.87 1.479-.91 1.85-.119l.048.119 3.05 9.154 1.052-3.154a1 1 0 0 1 .833-.677L14 7h1a1 1 0 0 1 .117 1.993L15 9h-.28l-1.771 5.316c-.29.87-1.479.91-1.85.119l-.048-.119L8 5.161l-2.051 6.155c-.282.844-1.421.915-1.825.168l-.052-.113L2.96 8.596l-.07.087a1 1 0 0 1-.612.31L2.16 9H1a1 1 0 0 1-.117-1.993L1 7h.495l.583-1.387c.33-.786 1.409-.814 1.797-.097l.053.113.986 2.465 2.137-6.41Z"
+    />
   </svg>
 )
 
@@ -1433,5 +1505,6 @@ export {
   IconPeriodicTable,
   IconWhiteboard,
   PremiumGold,
-  PremiumPremium
+  PremiumPremium,
+  Wave
 };

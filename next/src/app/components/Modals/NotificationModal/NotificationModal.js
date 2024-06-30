@@ -339,8 +339,8 @@ function NotificationModal({}) {
                     key={i}
                   >
                     <p>
-                      {fromName} can now view plan "
-                      {plan ? plan.title : notification.n}" !
+                      {fromName} can now view plan &quot;
+                      {plan ? plan.title : notification.n}&quot; !
                     </p>
                   </NotificationContainer>
                 );
