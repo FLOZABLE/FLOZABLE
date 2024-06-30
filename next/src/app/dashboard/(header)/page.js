@@ -17,44 +17,45 @@ import { UserInfoContext } from "@/app/utils/Contexts";
 export default function Dashboard() {
   const { userInfo } = useContext(UserInfoContext);
 
-  const { data: friendsRankingData, isLoading } = useQuery({
+  const { data: friendsRankingData } = useQuery({
     queryKey: [`friendTrend`],
     queryFn: () => getFriendsRanking(),
     enabled: !!userInfo,
   });
-  console.log(friendsRankingData);
+
   return (
     <div className={`Main`}>
       <WelcomeModal />
       {/* <div className="title">Dashboard</div> */}
       <div className={styles.Main}>
         <div className={styles.layer}>
-          <div className={styles.box}>
+          <div className={`${styles.box} BoxContainer`}>
             <StudyTrendChart viewDate={new Date()} />
           </div>
-          <div className={styles.box} id={styles.planTimeline}>
+          <div className={`${styles.box} BoxContainer`} id={styles.planTimeline}>
             <PlanTimeline
               viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
               viewMode={"timeGridDay"}
               mode={"study"}
+              maxHeight="calc(100vh - 2.5rem)"
             />
           </div>
         </div>
         <div className={styles.layer}>
-          <div className={styles.box}>
+          <div className={`${styles.box} BoxContainer`}>
             <FriendsActivityViewer />
           </div>
-          <div className={styles.box}>
+          <div className={`${styles.box} BoxContainer`}>
             <SmallSubjectsViewer />
           </div>
         </div>
-        <div className={styles.layer}>
-          <div className={styles.box}>
-            {friendsRankingData?.success ? (
+        {friendsRankingData?.success ? (
+          <div className={styles.layer}>
+            <div className={`${styles.box} BoxContainer`}>
               <FriendsTrendChart friendsTrends={friendsRankingData.dayTrend} />
-            ) : null}
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </div>
   );
