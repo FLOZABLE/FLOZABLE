@@ -5,6 +5,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-width: 20rem;
 }
 
 .PlanTimeline .chartContainer {

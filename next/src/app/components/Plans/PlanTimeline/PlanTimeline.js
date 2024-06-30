@@ -14,7 +14,7 @@ import { DateTime } from "luxon";
 import { subjectIcons } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
 
-function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {
+function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
   const { subjects } = useContext(SubjectsContext);
@@ -119,6 +119,7 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {
         mode === "study" ? styles.studyMode : ""
       }`}
       ref={containerRef}
+      style={{maxHeight}}
     >
       {filteredPlans.length ? (
         <div className={styles.chartContainer}>
@@ -201,8 +202,10 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {
               </Plan>
             );
           })}
+          
         </ul>
       ) : null}
+      
     </div>
   );
 }

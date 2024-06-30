@@ -2,6 +2,7 @@
   position: relative;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .FriendsActivityViewer .friend {

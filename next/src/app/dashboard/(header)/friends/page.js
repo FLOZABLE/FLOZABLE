@@ -61,85 +61,74 @@ function Friends({}) {
         setIsOpen={setIsFriendEmailModal}
       />
       <div className={`Main`}>
-        <div className="title" id={styles.friend}>
+        {/* <div className="title" id={styles.friend}>
           Friends
-        </div>
+        </div> */}
         <div className={styles.Friends}>
           <div className={styles.container}>
-            <div>
-              <div className={styles.smallBox}>
+            <div className={styles.layer}>
+              <div className={`${styles.box} BoxContainer`}>
                 <FriendsRankingViewer friendsRanking={friendsRanking} />
               </div>
             </div>
-            <div>
-              <div className={styles.box} id={styles.activeFriends}>
+            <div className={styles.layer}>
+              <div className={`${styles.box} BoxContainer`}>
                 <FriendsActivityViewer />
               </div>
-              <div className={styles.box} id={styles.friendsStats}>
-                <div>
-                  <div className={styles.title}>
-                    <h3>Friends&apos; Stats</h3>
-                  </div>
-                  <div className={styles.chartWrapper}>
-                    <FriendsTrendChart friendsTrends={friendsTrends} />
-                  </div>
-                </div>
+              <div className={`${styles.box} BoxContainer`}>
+                <FriendsTrendChart friendsTrends={friendsTrends} />
               </div>
             </div>
-            <div>
-              <div
-                className={styles.smallBox}
-                onClick={() => {
-                  setIsFriendEmailModal(true);
-                }}
-              >
-                <div className={styles.title}>
-                  <h3>Email Invitation</h3>
-                  <i>
-                    <IconEmailOutline />
-                  </i>
+            <div className={styles.layer}>
+              <div className={`${styles.box} BoxContainer`}>
+                <div className="Box">
+                  <div className="header">
+                    <h3>Email Invitation</h3>
+                    <i>
+                      <IconEmailOutline />
+                    </i>
+                  </div>
                 </div>
               </div>
-              <div
-                className={styles.smallBox}
-                onClick={() => {
-                  setIsFriendLinkModal(true);
-                }}
-              >
-                <div className={styles.title}>
-                  <h3>Friend Link</h3>
-                  <i>
-                    <IconUser />
-                  </i>
+              <div className={`${styles.box} BoxContainer`}>
+                <div className="Box">
+                  <div className="header">
+                    <h3>Friend Link</h3>
+                    <i>
+                      <IconUser />
+                    </i>
+                  </div>
                 </div>
               </div>
-              <div className={styles.smallBox}>
-                <div className={styles.title}>
-                  <h3>Search for Friends</h3>
-                  <i></i>
+              <div className={`${styles.box} BoxContainer`}>
+                <div className="Box">
+                  <div className="header">
+                    <h3>Search for Friends</h3>
+                  </div>
+                  <SearchBar
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    onEnter={() => {
+                      setSearch(true);
+                    }}
+                  />
+                  <SearchUsers
+                    searchQuery={searchQuery}
+                    search={search}
+                    setSearch={setSearch}
+                    onClick={(userInfo) => {
+                      router.replace(`/dashboard/user/${userInfo.user_id}`);
+                    }}
+                  />
                 </div>
-                <SearchBar
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  onEnter={() => {
-                    setSearch(true);
-                  }}
-                />
-                <SearchUsers
-                  searchQuery={searchQuery}
-                  search={search}
-                  setSearch={setSearch}
-                  onClick={(userInfo) => {
-                    router.replace(`/dashboard/user/${userInfo.user_id}`);
-                  }}
-                />
               </div>
-              <div className={styles.smallBox}>
-                <div className={styles.title}>
-                  <h3>Friend Requests</h3>
-                  <i></i>
+              <div className={`${styles.box} BoxContainer`}>
+                <div className="Box">
+                  <div className="header">
+                    <h3>Friend Requests</h3>
+                  </div>
+                  <FriendRequestsViewer />
                 </div>
-                <FriendRequestsViewer />
               </div>
             </div>
           </div>

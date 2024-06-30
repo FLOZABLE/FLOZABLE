@@ -134,6 +134,18 @@ button:hover {
   width: 100%;
 }
 
+.BoxContainer {
+  background-color: #fff;
+  margin: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
 .jost {
   font-family: "Jost", sans-serif;
 }
