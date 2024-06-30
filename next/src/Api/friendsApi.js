@@ -1,6 +1,6 @@
 import config from "@/app/utils/config";
 
-async function fetchFriendsRanking () {
+async function getFriendsRanking () {
   const response = await fetch(`${config.server}/ranking/friends`, {
     method: "get",
     headers: {
@@ -25,4 +25,4 @@ async function getRecommendedFriends() {
   return data;
 }
 
-export {fetchFriendsRanking, getRecommendedFriends};
+export {getFriendsRanking, getRecommendedFriends};

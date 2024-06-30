@@ -1,4 +1,4 @@
-const { getRecommendedFriends } = require("@/Api/friendsApi");
+const { getRecommendedFriends, getFriendsRanking } = require("@/Api/friendsApi");
 const { useQuery } = require("@tanstack/react-query");
 
 const useRecommendedFriends = (refresh) => {
@@ -11,4 +11,13 @@ const useRecommendedFriends = (refresh) => {
   return data;
 };
 
-export { useRecommendedFriends };
+async function useFriendsRanking() {
+  const { data, isLoading } = useQuery({
+    queryKey: [`friendTrend`],
+    queryFn: () => getFriendsRanking(),
+  });
+
+  return {data, isLoading};
+};
+
+export { useRecommendedFriends, useFriendsRanking };

@@ -96,7 +96,7 @@ async function subjectCache(userId, subjectId) {
       try {
         const connection = pool.promise();
         const [subjects] = await connection.query(
-          `SELECT id, name, icon, color, tools, datum_point, timeline_sum, hidden FROM subjects where user_id = ?`,
+          `SELECT id, name, icon, color, tools, datum_point, hidden FROM subjects where user_id = ?`,
           [userId]
         );
         subjects.map(async (subject) => {
