@@ -2,7 +2,7 @@
 .Plan {
   display: flex;
   transition: height .3s ease-in-out;
-  margin: 0em 0em 0.625rem 0.625rem;
+  margin: 0.625rem 0em 0rem 0.625rem;
   cursor: pointer;
 }
 

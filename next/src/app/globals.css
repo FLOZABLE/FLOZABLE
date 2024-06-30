@@ -16,6 +16,7 @@
   --opacity-black: #000000c3;
   --shadow1: rgba(100, 100, 111, 0.2) 0rem 0.4375rem 1.8125rem 0rem;
   --shadow3: rgba(0, 0, 0, 0.35) 0rem 0.3125rem 0.9375rem;
+  --shadow4: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   --shadow9: rgba(0, 0, 0, 0.1) 0rem 0.25rem 0.75rem;
   --shadow10: rgba(0, 0, 0, 0.25) 0rem 3.375rem 3.4375rem,
     rgba(0, 0, 0, 0.12) 0rem -0.75rem 1.875rem,
@@ -108,7 +109,6 @@ button:hover {
 .Box {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   width: 100%;
   height: 100%;
 }

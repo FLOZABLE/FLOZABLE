@@ -51,38 +51,6 @@ function EventModalLayer({ children, icon, hoverEl }) {
   );
 }
 
-async function UserBoxes({ id, planModal }) {
-  if (planModal && planModal?.share[0]?.user_id) {
-    return (
-      <>
-        {planModal?.share.map((userInfo, i) => {
-          return <UserBox userInfo={userInfo} key={i} />;
-        })}
-      </>
-    );
-  }
-
-  const response = await fetch(`${config.server}/plan/users?id=${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-
-  const { success, users } = await response.json();
-
-  if (!success) return <></>;
-
-  return (
-    <>
-      {users.map((userInfo, i) => {
-        return <UserBox userInfo={userInfo} key={i} />;
-      })}
-    </>
-  );
-}
-
 function SharedUserBox({ userInfo }) {
   const { setPlanModal, planModal } = useContext(PlansContext);
   return (

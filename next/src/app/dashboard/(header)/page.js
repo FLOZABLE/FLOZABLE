@@ -1,96 +1,58 @@
+"use client";
+
 import FriendsRankingViewer from "../../components/Friends/FriendsRankingViewer/FriendsRankingViewer";
 import RecommendedFriendsViewer from "../../components/Friends/RecommendedFriendsViewer/RecommendedFriendsViewer";
 import PlanTimeline from "../../components/Plans/PlanTimeline/PlanTimeline";
 import SmallSubjectsViewer from "../../components/Subjects/SmallSubjectsViewer/SmallSubjectsViewer";
 import WelcomeModal from "@/app/components/Modals/WelcomeModal/WelcomeModal";
-import { IconStatsChart } from "../../utils/Svg";
 import styles from "./page.module.css";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
-
-export const metadata = {
-  title: "Dashboard - FLOZABLE",
-  description:
-    "Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.",
-  openGraph: {
-    type: "website",
-    url: "https://flozable.com/dashboard",
-    title: "Dashboard - FLOZABLE",
-    description:
-      "Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.",
-    images: [
-      {
-        url: "https://flozable.com/favicon.ico",
-        width: 800,
-        height: 600,
-        alt: "FLOZABLE",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    url: "https://flozable.com/dashboard",
-    title: "Dashboard - FLOZABLE",
-    description:
-      "Stay organized and track your progress with the FLOZABLE Dashboard. Monitor study hours, view achievements, and plan your study sessions efficiently.",
-    images: ["https://flozable.com/favicon.ico"],
-  },
-  keywords: [
-    "progress tracking",
-    "study achievements",
-    "study sessions planning",
-  ],
-  robots: {
-    index: true,
-    follow: true,
-  },
-  icons: {
-    icon: "https://flozable.com/favicon.ico",
-  },
-};
+import FriendsActivityViewer from "@/app/components/Friends/FriendsActivityViewer/FriendsActivityViewer";
+import FriendsTrendChart from "@/app/components/Charts/FriendsTrendChart";
+import { useQuery } from "@tanstack/react-query";
+import { getFriendsRanking } from "@/Api/friendsApi";
+import { useContext } from "react";
+import { UserInfoContext } from "@/app/utils/Contexts";
 
 export default function Dashboard() {
+  const { userInfo } = useContext(UserInfoContext);
+
+  const { data: friendsRankingData, isLoading } = useQuery({
+    queryKey: [`friendTrend`],
+    queryFn: () => getFriendsRanking(),
+    enabled: !!userInfo,
+  });
+  console.log(friendsRankingData);
   return (
     <div className={`Main`}>
       <WelcomeModal />
-      <div className="title">Dashboard</div>
+      {/* <div className="title">Dashboard</div> */}
       <div className={styles.Main}>
-        <div className={styles.boxesWrapper}>
-          <div className={styles.boxesContainer}>
-            <div className={styles.box} id={styles.subjectsTrend}>
-              <StudyTrendChart viewDate={new Date()} />
-            </div>
-            <div className={styles.smallBoxesWrapper}>
-              <div className={styles.box}>
-                <SmallSubjectsViewer />
-              </div>
-              <div className={styles.box}>
-                {/* <div>
-                  <div className={styles.title}>
-                    <h3>Friend Ranking</h3>
-                    <i>
-                      <IconStatsChart />
-                    </i>
-                  </div>
-                  <div className={styles.friendsRankingWrapper}>
-                    <FriendsRankingViewer
-                    />
-                  </div>
-                </div> */}
-                <FriendsRankingViewer />
-              </div>
-              <div className={styles.box} id={styles.recommendedFriends}>
-                <RecommendedFriendsViewer />
-              </div>
-            </div>
+        <div className={styles.layer}>
+          <div className={styles.box}>
+            <StudyTrendChart viewDate={new Date()} />
           </div>
-          <div className={styles.boxesContainer}>
-            <div className={styles.box} id={styles.planTimeline}>
-              <PlanTimeline
-                viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
-                viewMode={"timeGridDay"}
-                mode={"study"}
-              />
-            </div>
+          <div className={styles.box} id={styles.planTimeline}>
+            <PlanTimeline
+              viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
+              viewMode={"timeGridDay"}
+              mode={"study"}
+            />
+          </div>
+        </div>
+        <div className={styles.layer}>
+          <div className={styles.box}>
+            <FriendsActivityViewer />
+          </div>
+          <div className={styles.box}>
+            <SmallSubjectsViewer />
+          </div>
+        </div>
+        <div className={styles.layer}>
+          <div className={styles.box}>
+            {friendsRankingData?.success ? (
+              <FriendsTrendChart friendsTrends={friendsRankingData.dayTrend} />
+            ) : null}
           </div>
         </div>
       </div>

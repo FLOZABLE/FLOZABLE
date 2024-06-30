@@ -4,10 +4,7 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const NodeCache = require("node-cache");
 const { DateTime } = require("luxon");
-const {
-  userCache,
-  getActiveUsers,
-} = require("../services/redisLoader");
+const { userCache, getActiveUsers } = require("../services/redisLoader");
 const { promises } = require("fs");
 const { autoSignin } = require("../Utils/tool");
 const {

@@ -2,6 +2,36 @@
   padding: 0rem 3.125rem;
 }
 
+.Main .layer {
+  margin: 0rem 5% ;
+  height: 30rem;
+  display: flex;
+}
+
+.Main .layer .box {
+  background-color: #fff;
+  margin: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex: 1;
+}
+
+.Main .box#planTimeline {
+  min-width: 20rem;
+  height: max-content;
+  max-height: calc(100vh - 10rem);
+  flex: 0;
+}
+
+.Main .layer:nth-child(2) {
+  width: calc(90% - 22.5rem);
+}
+/* 
 .Main .boxesWrapper {
   display: flex;
   height: calc(100vh - 9.375rem - 1.875rem);
@@ -14,6 +44,7 @@
 
 .Main .boxesContainer:nth-child(2) {
   width: 20%;
+  
 }
 
 .Main .boxesContainer .box {
@@ -94,4 +125,4 @@
   .Main .smallBoxesWrapper {
     width: calc(100% + 230px + 5rem);
   }
-}
+} */

@@ -170,7 +170,7 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {
       {filteredPlans.length ? (
         <ul
           className={`${styles.plans} hiddenScroll`}
-          style={{ maxHeight: maxHeight }}
+          /* style={{ maxHeight: maxHeight }} */
         >
           {filteredPlans.map((plan, i) => {
             const planSubject = subjects.find((subject) => {
@@ -195,7 +195,11 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "18.75rem" }) {
               icon = <Alert />;
             }
 
-            return <Plan plan={plan} key={i}>{icon}</Plan>;
+            return (
+              <Plan plan={plan} key={i}>
+                {icon}
+              </Plan>
+            );
           })}
         </ul>
       ) : null}

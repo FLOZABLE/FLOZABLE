@@ -26,7 +26,7 @@ mainIo.on('connection', (socket) => {
         httpOnly: true,
         secure: false
       },
-      user_id: process.env.TEST_ID,
+      user_id: process.env.TESTER_ID,
     };
   };
   const userId = session.user_id;
@@ -129,7 +129,7 @@ mainIo.on('connection', (socket) => {
     redisClient.hSet(`user:${userId}`, `ActiveGroup`, JSON.stringify({ id: groupId, time: now }));
     if (!friends.length) return;
     const connection = pool.promise();
-    const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM \`groups\` WHERE group_id = ?", [groupId]);
+    const [[groupInfo]] = await connection.query("SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM \`groups\` WHERE group_id = ?", [groupId]);
     if (!groupInfo) return;
     mainIo.to(friends).emit(`activeGroup:${userId}`, { groupInfo, time: now });
   });

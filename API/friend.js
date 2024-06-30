@@ -122,15 +122,16 @@ async function replyFriendRequest(userId, targetId, accepted) {
 
     if (!userInfo) return { success: false, reason: responseCodes["no-user"] };
 
+    const targetInfo = await userCache(targetId);
+
+    if (!targetInfo) return { success: false, reason: responseCodes["no-user"] };
+    
     if (userInfo.friends.includes(userId))
       return {
         success: true,
         msg: `You and ${targetInfo.name} were already friends!`,
       };
 
-    const targetInfo = await userCache(targetId);
-
-    if (!targetInfo) return { success: false, reason: responseCodes["no-user"] };
 
     await connection.query(
       `
