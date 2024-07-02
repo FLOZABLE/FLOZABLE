@@ -22,3 +22,18 @@
 .Main .layer:nth-child(2) {
   width: calc(90% - 22.5rem);
 }
+
+@media (max-width: 2000px) {
+  .Main .layer {
+    margin: 0rem 2%;
+  }
+}
+
+@media (max-width: 1700px) {
+  .Main .layer {
+    margin: 0rem;
+  }
+  .Main {
+    padding: 0rem 2.125rem;
+  }
+}

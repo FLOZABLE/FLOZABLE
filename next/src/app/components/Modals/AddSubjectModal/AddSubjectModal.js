@@ -7,10 +7,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import Draggable from "react-draggable";
 import styles from "./AddSubjectModal.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faBook } from "@fortawesome/free-solid-svg-icons";
 import {
   ModalsContext,
   ResponseContext,
@@ -152,64 +150,12 @@ function AddSubjectModal({}) {
         />
         <div className={styles.submit}>
           <BlobBtn onClick={submit} id="tutorial-4">
-            SUBMITd
+            SUBMIT
           </BlobBtn>
         </div>
       </div>
     </DraggableModal>
   );
-
-  /* 
-      <Draggable nodeRef={addSubjectModalRef} handle=".header">
-      <div
-        className={`${styles.AddSubjectModal} modal ${isAddSubjectModal ? "open" : ""
-          }`}
-        ref={addSubjectModalRef}
-      >
-        <div className={`${styles.header} header`}>
-          <i
-            onClick={() => {
-              setIsAddSubjectModal(false);
-            }}
-          >
-            <FontAwesomeIcon icon={faXmark} />
-          </i>
-        </div>
-        <div className={styles.content}>
-          <div className={styles.inputWrapper}>
-            <CustomInput
-              input={name}
-              handleInput={handleNameInput}
-              icon={faBook}
-              placeHolder={"Subject Name"}
-              type={"text"}
-            />
-          </div>
-          <SelectIcon
-            selectedIcon={selectedIcon}
-            setSelectedIcon={setSelectedIcon}
-            isSelectIcon={isSelectIcon}
-            setIsSelectIcon={setIsSelectIcon}
-            setIsSelectColor={setIsSelectColor}
-            id="tutorial-4"
-          />
-          <ColorPalette
-            setSelectedColor={setSelectedColor}
-            selectedColor={selectedColor}
-            isSelectColor={isSelectColor}
-            setIsSelectColor={setIsSelectColor}
-            setIsSelectIcon={setIsSelectIcon}
-            id="tutorial-4"
-          />
-          <div className={styles.submit}>
-            <BlobBtn onClick={submit} id="tutorial-4">
-              SUBMIT
-            </BlobBtn>
-          </div>
-        </div>
-      </div>
-    </Draggable>
-  */
 }
 
 export default AddSubjectModal;

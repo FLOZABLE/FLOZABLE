@@ -1,24 +1,7 @@
-const { default: config } = require("@/app/utils/config");
-const { useQuery } = require("@tanstack/react-query");
+import config from "@/app/utils/config";
 
-async function postPlanShare(users, planId, callback = () => {}) {
-  /* const { data } = useQuery({
-    queryKey: [`postPlanShare`, users, planId],
-    enabled: users.length && planId !== null,
-    queryFn: () => getGuestInformation(users, planId),
-  });
-
-
-  const response = await fetch(
-    "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
-    options
-  )
-    .then((response) => response.json())
-    .catch((err) => console.error(err));
-
-  return response; */
-  console.log(users, planId);
-  if (!users.length || !planId) return callback({ success: false });
+async function postPlanShare(users, planId) {
+  if (!users.length || !planId) return { success: false };
 
   const response = await fetch(`${config.server}/plan/share`, {
     method: "POST",
@@ -30,11 +13,11 @@ async function postPlanShare(users, planId, callback = () => {}) {
   });
   const data = await response.json();
 
-  return callback(data);
-};
+  return data;
+}
 
-async function deletePlanShare(targetId, planId, callback = () => {}) {
-  if (!targetId || !planId) return callback({ success: false });
+async function deletePlanShare(targetId, planId) {
+  if (!targetId || !planId) return { success: false };
 
   const response = await fetch(`${config.server}/plan/share`, {
     method: "DELETE",
@@ -46,11 +29,11 @@ async function deletePlanShare(targetId, planId, callback = () => {}) {
   });
   const data = await response.json();
 
-  return callback(data);
-};
+  return data;
+}
 
 async function postPlanShareRespond(planId, accepted) {
-  if (!planId) return ({ success: false });
+  if (!planId) return { success: false };
 
   const response = await fetch(`${config.server}/plan/share/respond`, {
     method: "POST",
@@ -61,8 +44,6 @@ async function postPlanShareRespond(planId, accepted) {
     body: JSON.stringify({ planId, accepted }),
   });
   const data = await response.json();
-
-  console.log(data)
 
   return data;
 }
