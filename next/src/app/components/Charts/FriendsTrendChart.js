@@ -1,3 +1,4 @@
+import { coldColorsList, colorsList } from "@/app/utils/Constant";
 import { secondConverter } from "@/app/utils/Tool";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
@@ -35,7 +36,7 @@ function FriendsTrendChart({friendsTrends}) {
       <Legend />
       {friendsTrends.length ? Object.keys(friendsTrends[0].friends).map((friend, i) => {
         return (
-          <Bar name={friendsTrends[0].friends[friend].name} key={i} dataKey={friend} fill="#8884d8" />
+          <Bar name={friendsTrends[0].friends[friend].name} key={i} dataKey={friend} fill={coldColorsList[i % (coldColorsList.length)]} />
         )
       }) : null}
     </BarChart>

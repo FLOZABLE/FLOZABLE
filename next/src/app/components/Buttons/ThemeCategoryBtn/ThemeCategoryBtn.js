@@ -75,7 +75,7 @@ function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
 
           setIsOpen(false);
 
-          router.replace(window.location.pathname, { scroll: false });
+          router.push(window.location.pathname, { scroll: false });
         }
       })
       .catch((error) => console.error(error));

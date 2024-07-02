@@ -9,7 +9,7 @@ import config from "@/app/utils/config";
 import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import DmBtn from "@/app/components/Buttons/DmBtn/DmBtn";
 import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
-import RankingTrend from "@/app/components/Charts/RankingTrendChart";
+import RankingTrendChart from "@/app/components/Charts/RankingTrendChart";
 import { GroupsContext } from "@/app/utils/Contexts";
 import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
 import FriendsViewer from "@/app/components/Friends/FriendsViewer/FriendsViewer";
@@ -128,10 +128,10 @@ function User({ params }) {
             <div className={styles.box}>
               <div className={styles.title}>Ranking Trend</div>
               <div className={styles.chartContainer}>
-                <RankingTrend
+                <RankingTrendChart
                   viewDate={viewDate}
                   statsViewer={statsViewer}
-                  userInfoProp={userInfo}
+                  userInfo={userInfo}
                 />
               </div>
             </div>

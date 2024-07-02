@@ -1,3 +1,9 @@
 .RecommendedFriendsViewer {
   position: relative;
 }
+
+.RecommendedFriendsViewer .user {
+  align-items: center;
+  border-bottom: 0.1rem solid var(--gray3);
+  padding: 0.25rem 0rem;
+}

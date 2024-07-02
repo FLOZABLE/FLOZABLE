@@ -61,7 +61,7 @@ function ExtensionSetting({ websites, setWebsites }) {
 
     const searchParams = new URLSearchParams(document.location.search);
     const domain = searchParams.get("website");
-    router.replace(window.location.pathname, { scroll: false });
+    router.push(window.location.pathname, { scroll: false });
     if (!domain) {
       extensionRef.current.scrollIntoView({
         behavior: "smooth",

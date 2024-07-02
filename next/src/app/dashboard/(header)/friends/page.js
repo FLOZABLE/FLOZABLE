@@ -26,7 +26,6 @@ function Friends({}) {
 
   const router = useRouter();
 
-  const [search, setSearch] = useState(false);
   const [friendsTrends, setFriendsTrends] = useState([]);
 
   const getFriendsRanking = () => {
@@ -108,16 +107,11 @@ function Friends({}) {
                   <SearchBar
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
-                    onEnter={() => {
-                      setSearch(true);
-                    }}
                   />
                   <SearchUsers
                     searchQuery={searchQuery}
-                    search={search}
-                    setSearch={setSearch}
                     onClick={(userInfo) => {
-                      router.replace(`/dashboard/user/${userInfo.user_id}`);
+                      router.push(`/dashboard/user/${userInfo.user_id}`);
                     }}
                   />
                 </div>

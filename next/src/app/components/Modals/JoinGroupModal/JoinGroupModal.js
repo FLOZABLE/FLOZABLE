@@ -65,7 +65,7 @@ function JoinGroupModal() {
             });
           });
 
-          router.replace(window.location.pathname, { scroll: false });
+          router.push(window.location.pathname, { scroll: false });
 
           document.body.scrollIntoView({ behavior: "smooth", block: "start" });
         }
@@ -94,7 +94,7 @@ function JoinGroupModal() {
     const params = new URLSearchParams(searchParams);
     params.delete("groupId");
 
-    router.replace(window.location.pathname, { scroll: false });
+    router.push(window.location.pathname, { scroll: false });
   }, [otherGroups]);
 
   return (

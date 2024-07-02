@@ -55,7 +55,7 @@ function FriendsRankingViewer({ friendsRanking }) {
               <UserContainer
                 userInfo={friend}
                 onClick={() => {
-                  router.replace(`/dashboard/user/${friend.user_id}`);
+                  router.push(`/dashboard/user/${friend.user_id}`);
                 }}
               ></UserContainer>
               <div className={styles.diff}>

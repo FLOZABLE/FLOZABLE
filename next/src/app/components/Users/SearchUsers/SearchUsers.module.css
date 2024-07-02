@@ -3,3 +3,7 @@
   overflow-x: hidden;
   flex: 1;
 }
+
+.SearchUsers .loading {
+  height: 3rem;
+}

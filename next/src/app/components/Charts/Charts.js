@@ -16,8 +16,8 @@ const pieCustomLabel = ({
 
   return (
     <foreignObject
-      width={"3rem"}
-      height={"1.25rem"}
+      width={"3.5rem"}
+      height={"1.5rem"}
       x={x}
       y={y}
       textAnchor={x > cx ? "start" : "end"}
@@ -25,7 +25,7 @@ const pieCustomLabel = ({
       pointerEvents="none"
       filter="url(#solid)"
     >
-      <p style={{backgroundColor: "#ffffff9c", borderRadius: '0.25rem'}}>{`${(percent * 100).toFixed(0)}%`}</p>
+      <p style={{backgroundColor: "#ffffff9c", borderRadius: '0.25rem', fontSize: '1.2rem'}}>{`${(percent * 100).toFixed(0)}%`}</p>
     </foreignObject>
   );
 };
