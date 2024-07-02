@@ -32,7 +32,9 @@ const ThemesContext = createContext({});
 const WorkersContext = createContext({});
 const ChatsContext = createContext({});
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { refetchOnWindowFocus: false } },
+});
 
 function AppProvider({ children }) {
   return (
@@ -293,7 +295,7 @@ function ModalsProvider({ children }) {
         isSubjectsModal,
         setIsSubjectsModal,
         isSharePlanModal,
-        setIsSharePlanModal
+        setIsSharePlanModal,
       }}
     >
       {children}

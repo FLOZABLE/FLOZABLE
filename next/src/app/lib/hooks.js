@@ -20,4 +20,12 @@ async function useFriendsRanking() {
   return {data, isLoading};
 };
 
-export { useRecommendedFriends, useFriendsRanking };
+function useTest(searchQuery) {
+  return useQuery({
+    queryKey: [`searchedUsers`, searchQuery],
+    queryFn: () => getSearchedUsers(searchQuery),
+  });
+}
+
+
+export { useRecommendedFriends, useFriendsRanking, useTest };

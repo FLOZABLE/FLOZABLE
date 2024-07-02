@@ -6,47 +6,63 @@ import { useContext, useEffect, useRef, useState } from "react";
 import DateSelectorBtn from "@/app/components/Buttons/DateSelectorBtn/DateSelectorBtn";
 import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
 import SubjectsPie from "@/app/components/Charts/SubjectsPie";
-import { IconBook, IconEyeOutline, IconMonitor, IconStatsChart } from "@/app/utils/Svg";
-import { SubjectsContext, TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
+import {
+  IconBook,
+  IconEyeOutline,
+  IconMonitor,
+  IconStatsChart,
+} from "@/app/utils/Svg";
+import {
+  SubjectsContext,
+  TutorialsContext,
+  UserInfoContext,
+} from "@/app/utils/Contexts";
 import { focusCalculator, secondConverter } from "@/app/utils/Tool";
 import { DateTime } from "luxon";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
-import RankingTrend from "@/app/components/Charts/RankingTrendChart";
-import config from "@/app/utils/config";
+import RankingTrendChart from "@/app/components/Charts/RankingTrendChart";
 import WebsiteUsageChart from "@/app/components/Charts/WebsiteUsageChart/WebsiteUsageChart";
+import { useExtensionUsage } from "@/Hooks/extensionHooks";
+import CircularLoading from "@/app/components/LoadingScreen/CircularLoading/CircularLoading";
 
 function Stats({}) {
-  const {subjects} = useContext(SubjectsContext);
-  const {userInfo} = useContext(UserInfoContext);
-  const {tutorialBoxRef, tutorialTextRef, tutorial, setTutorial} = useContext(TutorialsContext);
+  const { userInfo } = useContext(UserInfoContext);
+  const { subjects } = useContext(SubjectsContext);
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
+    useContext(TutorialsContext);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
-  const [statsViewer, setStatsViewer] = useState('Daily');
-  
+  const [viewDate, setViewDate] = useState(
+    new Date(new Date().setHours(0, 0, 0, 0))
+  );
+  const [statsViewer, setStatsViewer] = useState("Daily");
+
   const [totalStudy, setTotalStudy] = useState("");
   const [focus, setFocus] = useState("");
   const [ranking, setRanking] = useState(0);
-  const [websites, setWebsites] = useState([]);
 
-  const [websitesUsage, setWebsitesUsage] = useState(0);
+  const [websitesUsage, setWebsitesUsage] = useState("0 s");
   const [websitesVisit, setWebsitesVisit] = useState(0);
 
   const statsRef = useRef(null);
 
+  const { data: websitesData, isLoading: isWebsitesDataLoading } =
+    useExtensionUsage(viewDate, statsViewer);
+
   useEffect(() => {
     if (tutorial === 12) {
-
       setTimeout(() => {
-        const { width, top, left, height } = statsRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left + 'px';
-        tutorialBoxRef.current.style.top = top  + 'px';
-        tutorialBoxRef.current.style.width = width + 'px';
-        tutorialBoxRef.current.style.height = height + 'px';
-  
-        tutorialTextRef.current.style.top = top - 70 + 'px';
-        tutorialTextRef.current.style.left = left + 'px';
-        tutorialTextRef.current.innerText = "You can analyze your study habits here!";
+        const { width, top, left, height } =
+          statsRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left + "px";
+        tutorialBoxRef.current.style.top = top + "px";
+        tutorialBoxRef.current.style.width = width + "px";
+        tutorialBoxRef.current.style.height = height + "px";
+
+        tutorialTextRef.current.style.top = top - 70 + "px";
+        tutorialTextRef.current.style.left = left + "px";
+        tutorialTextRef.current.innerText =
+          "You can analyze your study habits here!";
       }, 500);
 
       setTimeout(() => {
@@ -55,7 +71,6 @@ function Stats({}) {
     }
   }, [tutorial]);
 
-  
   useEffect(() => {
     if (!viewDate || !statsViewer || !subjects) return;
 
@@ -63,12 +78,12 @@ function Stats({}) {
 
     if (!daily) return;
 
-    const now = DateTime.now().startOf('day');
+    const now = DateTime.now().startOf("day");
     const viewDateTime = DateTime.fromJSDate(viewDate);
 
-    if (statsViewer === 'Daily') {
+    if (statsViewer === "Daily") {
       //top box renderer
-      const index = viewDateTime.diff(now, 'days').toObject();
+      const index = viewDateTime.diff(now, "days").toObject();
       const { total, grouped } = daily;
       const actualIndex = grouped.length + index.days - 1;
       const totalStudyDisp = secondConverter(total[actualIndex]);
@@ -76,10 +91,12 @@ function Stats({}) {
       const focus = focusCalculator(grouped[actualIndex]);
       const { value, type } = secondConverter(focus);
       setFocus(`${value}${type}`);
-    } else if (statsViewer === 'Weekly') {
-
+    } else if (statsViewer === "Weekly") {
       //top box renderer
-      const index = viewDateTime.startOf('week').diff(DateTime.now().startOf('week'), 'weeks').toObject();
+      const index = viewDateTime
+        .startOf("week")
+        .diff(DateTime.now().startOf("week"), "weeks")
+        .toObject();
       const { total, grouped } = weekly;
       const actualIndex = grouped.length + index.weeks - 1;
       const totalStudyDisp = secondConverter(total[actualIndex]);
@@ -88,9 +105,11 @@ function Stats({}) {
       const { value, type } = secondConverter(focus);
       setFocus(`${value}${type}`);
     } else {
-
       //top box renderer
-      const index = viewDateTime.startOf('month').diff(DateTime.now().startOf('month'), 'months').toObject();
+      const index = viewDateTime
+        .startOf("month")
+        .diff(DateTime.now().startOf("month"), "months")
+        .toObject();
       const { total, grouped } = monthly;
       const actualIndex = grouped.length + index.months - 1;
       const totalStudyDisp = secondConverter(total[actualIndex]);
@@ -102,33 +121,16 @@ function Stats({}) {
   }, [viewDate, statsViewer, subjects]);
 
   useEffect(() => {
-    if (!userInfo) return;
-    const viewDateTime = DateTime.fromJSDate(viewDate);
-    setTimeout(() => {
-      fetch(`${config.server}/extension/usage?date=${viewDateTime.toISODate()}&mode=${statsViewer}`,
-      {
-        method: "GET",
-        credentials: 'include'
-      })
-      .then((response) => response.json())
-      .then((response) => {
-        if (response.success) {
-          setWebsites(response.websitesData);
+    if (!websitesData?.success || !websitesData.websites.length) return;
 
-          let websitesUsage = 0;
-          let websitesVisit = 0;
-          response.websitesData.map(website => {
-            websitesUsage += website.t;
-            websitesVisit += website.v;
-          });
-          const websitesUsagesDisp = secondConverter(websitesUsage);
-          setWebsitesUsage(`${websitesUsagesDisp.value} ${websitesUsagesDisp.type}`);
-          setWebsitesVisit(`${websitesVisit} times`);
-        }
-      })
-      .catch((error) => console.error(error));
-    }, 1900);
-  }, [userInfo, viewDate, statsViewer]);
+    const websitesUsage = websitesData.websites.reduce((a, b) => a.t + b.t);
+
+    const websitesVisit = websitesData.websites.reduce((a, b) => a.v + b.v);
+
+    const websitesUsagesDisp = secondConverter(websitesUsage);
+    setWebsitesUsage(`${websitesUsagesDisp.value} ${websitesUsagesDisp.type}`);
+    setWebsitesVisit(websitesVisit);
+  }, [websitesData]);
 
   return (
     <div>
@@ -166,10 +168,7 @@ function Stats({}) {
             <div className={styles.bigBox}>
               <div className={styles.contents}>
                 <div className={styles.chartWrapper}>
-                  <SubjectsPie 
-                    statsViewer={statsViewer}
-                    viewDate={viewDate}
-                  />
+                  <SubjectsPie statsViewer={statsViewer} viewDate={viewDate} />
                 </div>
                 <div>
                   <div className={styles.overflow}>
@@ -203,7 +202,7 @@ function Stats({}) {
               <h3>Study Time Trend</h3>
               <div className={styles.contents}>
                 <div className={styles.chartWrapper}>
-                  <StudyTrendChart 
+                  <StudyTrendChart
                     viewDate={viewDate}
                     statsViewer={statsViewer}
                   />
@@ -213,18 +212,21 @@ function Stats({}) {
             <div className={styles.bigBox}>
               <h3>Ranking Trend</h3>
               <div className={styles.chartWrapper}>
-                <RankingTrend
+                <RankingTrendChart
                   viewDate={viewDate}
                   statsViewer={statsViewer}
                   setRanking={setRanking}
+                  userInfo={userInfo}
                 />
               </div>
             </div>
             <div className={styles.bigBox} id={styles.othersUsage}>
               <h3>Website Usage</h3>
-              <WebsiteUsageChart 
-                websites={websites}
-              />
+              {isWebsitesDataLoading || !websitesData?.success ? (
+                <CircularLoading />
+              ) : (
+                <WebsiteUsageChart websites={websitesData.websites} />
+              )}
             </div>
           </div>
         </div>
@@ -233,4 +235,4 @@ function Stats({}) {
   );
 }
 
-export default Stats;/*  */
+export default Stats; /*  */

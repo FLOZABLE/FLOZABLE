@@ -1,54 +1,60 @@
-import { UserInfoContext } from "@/app/utils/Contexts";
+import { useRankingUser } from "@/Hooks/rankingHooks";
 import { updateRankingTrend } from "@/app/utils/StatTools";
-import config from "@/app/utils/config";
 import { DateTime } from "luxon";
-import { useContext, useEffect, useState } from "react";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useEffect, useState } from "react";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
-function RankingTrend({ viewDate, statsViewer, setRanking = () => {}, userInfoProp }) {
-  const {userInfo} = useContext(UserInfoContext);
-
+function RankingTrendChart({
+  viewDate,
+  statsViewer,
+  setRanking = () => {},
+  userInfo,
+}) {
   const [rankingsTrend, setRankingsTrend] = useState([]);
 
+  const { data: rankingUserData } = useRankingUser(
+    userInfo?.user_id,
+    statsViewer,
+    viewDate
+  );
+
   useEffect(() => {
-    if (!viewDate || !statsViewer || !userInfo) return;
+    if (!rankingUserData?.success || !statsViewer || !viewDate) return;
 
-    let user_id = userInfo.user_id;
-
-    if (userInfoProp) {
-      user_id = userInfoProp.user_id;
-    };
-    
     const viewDateTime = DateTime.fromJSDate(viewDate);
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    setTimeout(() => {
-      fetch(`${config.server}/ranking/user?userId=${user_id}&mode=${statsViewer.toLowerCase()}&date=${viewDateTime.toISODate()}&timezone=${timezone}`, {
-        method: 'get',
-        credentials:"include"
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            const rankingTrend = updateRankingTrend(data.rankings, statsViewer);
-            let ranking = 1;
-            if (statsViewer === "Daily") {
-              ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.toISODate());
-            } else if (statsViewer === "Weekly") {
-              ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.startOf('week').toISODate());
-            } else {
-              ranking = rankingTrend.find(ranking => ranking.label === viewDateTime.startOf('month').toISODate());
-            };
-            if (ranking) {
-              setRanking(ranking.ranking);
-            }
-  
-            setRankingsTrend(rankingTrend);
-          };
-        })
-        .catch((error) => console.error(error));
-    }, 1900);
-  }, [viewDate, statsViewer, userInfo, userInfoProp]);
+    const rankingTrend = updateRankingTrend(
+      rankingUserData.rankings,
+      statsViewer
+    );
+    let ranking = 1;
+    if (statsViewer === "Daily") {
+      ranking = rankingTrend.find(
+        (ranking) => ranking.label === viewDateTime.toISODate()
+      );
+    } else if (statsViewer === "Weekly") {
+      ranking = rankingTrend.find(
+        (ranking) => ranking.label === viewDateTime.startOf("week").toISODate()
+      );
+    } else {
+      ranking = rankingTrend.find(
+        (ranking) => ranking.label === viewDateTime.startOf("month").toISODate()
+      );
+    }
+    if (ranking) {
+      setRanking(ranking.ranking);
+    }
+
+    setRankingsTrend(rankingTrend);
+  }, [rankingUserData, viewDate, statsViewer]);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -80,7 +86,7 @@ function RankingTrend({ viewDate, statsViewer, setRanking = () => {}, userInfoPr
         />
       </LineChart>
     </ResponsiveContainer>
-  )
-};
+  );
+}
 
-export default RankingTrend;
+export default RankingTrendChart;

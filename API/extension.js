@@ -2,16 +2,13 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const {
-  autoSignin,
-  generateRandomId,
-} = require("../Utils/tool");
+const { autoSignin, generateRandomId } = require("../Utils/tool");
 const { websiteUsageCache } = require("../services/redisLoader");
 const { DateTime } = require("luxon");
 const {
   validateStrictString,
   validateISO,
-  validateURL
+  validateURL,
 } = require("../Utils/validate");
 const { responseCodes } = require("../Constant");
 const { extensionIo } = require("../sockets/extensionIo");
@@ -297,7 +294,7 @@ Router.get("/usage", async (req, res) => {
 
         return res.send({
           success: true,
-          websitesData: Object.keys(websitesUsage).map((d) => {
+          websites: Object.keys(websitesUsage).map((d) => {
             return { d, ...websitesUsage[d] };
           }),
         });

@@ -19,7 +19,7 @@ function RecommendedFriendsViewer({}) {
   const { userInfo } = useContext(UserInfoContext);
 
   const { setResponse } = useContext(ResponseContext);
-  const [refresh, setRefresh] = useState(true);
+  const [refresh, setRefresh] = useState(false);
   const {
     data: recommendedFriends,
     isLoading,
@@ -50,19 +50,20 @@ function RecommendedFriendsViewer({}) {
         ) : (
           recommendedFriends.users.map((user, i) => {
             return (
-              <UserContainer
-                key={i}
-                userInfo={user}
-                onClick={() => {
-                  router.replace(`/dashboard/user/${friend.user_id}`);
-                }}
-              >
-                <FriendRequestBtn
+              <div className={styles.user} key={i}>
+                <UserContainer
                   userInfo={user}
-                  setResponse={setResponse}
-                  padding={"0.1875rem 0.313rem"}
-                />
-              </UserContainer>
+                  onClick={() => {
+                    router.push(`/dashboard/user/${friend.user_id}`);
+                  }}
+                >
+                  <FriendRequestBtn
+                    userInfo={user}
+                    setResponse={setResponse}
+                    padding={"0.1875rem 0.313rem"}
+                  />
+                </UserContainer>
+              </div>
             );
           })
         )}

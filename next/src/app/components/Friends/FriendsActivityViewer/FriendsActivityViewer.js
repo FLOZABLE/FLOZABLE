@@ -62,7 +62,7 @@ function FriendsActivityViewer() {
                     <UserContainer
                       userInfo={friend}
                       onClick={() => {
-                        router.replace(`/dashboard/user/${friend.user_id}`);
+                        router.push(`/dashboard/user/${friend.user_id}`);
                       }}
                     />
                     <div className={styles.activeInfo}>

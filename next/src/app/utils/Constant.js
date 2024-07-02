@@ -36,7 +36,23 @@ const colorsList = [
   "#00bfa0",
 ];
 
-const coldColorsList = ["#57b9ff", "#0085FF", "#1c41fd"];
+const coldColorsList = [
+  "#b3e5ff", // Light Blue
+  "#80d8ff", // Sky Blue Light
+  "#4fc3f7", // Blue Light
+  "#29b6f6", // Light Bright Blue
+  "#03a9f4", // Light Medium Blue
+  "#57b9ff", // Sky Blue
+  "#039be5", // Medium Blue
+  "#0085FF", // Vivid Blue
+  "#0288d1", // Darker Blue
+  "#0277bd", // Dark Blue
+  "#01579b", // Dark Deep Blue
+  "#1c41fd", // Deep Blue
+  "#0000FF", // Pure Blue
+  "#001f3f", // Dark Navy Blue
+  "#00132d"  // Very Dark Blue
+];
 
 const warmColorsList = ["#fff9eb", "#fe8912", "#f9c051"];
 
@@ -76,7 +92,7 @@ const colorPaletteOptions = [
     colors: ["#FFD151", "#FFEAAF", "#FFE190", "#FFD970"],
   },
   {
-    name: "NamGH",
+    name: "Polaroid",
     colors: ["#9999FF", "#AAC4FF", "#D2DAFF", "#EEF1FF"],
   },
   {
@@ -92,7 +108,7 @@ const colorPaletteOptions = [
     colors: ["#7D5A50", "#B4846C", "#E5B299", "#FCDEC0"],
   },
   {
-    name: "Rainbow",
+    name: "Cream",
     colors: ["#F38181", "#FCE38A", "#EAFFD0", "#95E1D3"],
   },
 ];

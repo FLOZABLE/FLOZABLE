@@ -20,7 +20,6 @@ export default function SharePlanModal() {
   const modalRef = useRef(null);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [search, setSearch] = useState(false);
 
   return (
     <DraggableModal
@@ -32,14 +31,9 @@ export default function SharePlanModal() {
         <SearchBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          onEnter={() => {
-            setSearch(true);
-          }}
         />
         <SearchUsers
           searchQuery={searchQuery}
-          search={search}
-          setSearch={setSearch}
           onClick={(userInfo) => {
             if (
               planModal.share.find((user) => user.user_id === userInfo.user_id)
