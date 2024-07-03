@@ -1,5 +1,18 @@
 import config from "@/app/utils/config";
 
+async function getPlan() {
+  const response = await fetch(`${config.server}/plan`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  const data = await response.json();
+
+  return data;
+}
+
 async function postPlanShare(users, planId) {
   if (!users.length || !planId) return { success: false };
 
@@ -48,4 +61,4 @@ async function postPlanShareRespond(planId, accepted) {
   return data;
 }
 
-export { postPlanShare, postPlanShareRespond, deletePlanShare };
+export { getPlan, postPlanShare, postPlanShareRespond, deletePlanShare };

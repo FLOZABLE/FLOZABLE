@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 
 function AccountModal({}) {
   const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
-  const { bringAccountInfo } = useContext(UserInfoContext);
+  const { refetchUseAccountData } = useContext(UserInfoContext);
   const { setResponse } = useContext(ResponseContext);
 
   const router = useRouter();
@@ -109,7 +109,7 @@ function AccountModal({}) {
                     setResponse(data);
                     if (data.success) {
                       setIsAccountModal(false);
-                      bringAccountInfo();
+                      refetchUseAccountData();
                       if (isNew) {
                         router.push("/dashboard?welcome=true");
                       }

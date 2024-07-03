@@ -15,6 +15,9 @@ import { timelineSort } from "./timelineSorting";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DEFAULT_PLAN } from "./Constant";
+import { useAccount } from "@/Hooks/accountHooks";
+import { useSubjects } from "@/Hooks/subjectsHooks";
+import { usePlan } from "@/Hooks/planHooks";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -70,31 +73,25 @@ function AccountProvider({ children }) {
   const [userInfo, setUserInfo] = useState(null);
   const [notifications, setNotifications] = useState([]);
 
-  const bringAccountInfo = useCallback(() => {
-    fetch(`${config.server}/account`, {
-      method: "get",
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setUserInfo(data.userInfo);
-          setNotifications(data.notifications);
-          setTimeout(() => {
-            socket.connect();
-            socket.emit("joinChats");
-          }, 100);
-        } else if (data.code === 401) {
-          console.log("not user");
-          setUserInfo(false);
-        }
-      })
-      .catch((error) => console.error(error));
-  }, []);
+  const { data: useAccountData, refetch: refetchUseAccountData } = useAccount();
 
   useEffect(() => {
-    bringAccountInfo();
+    if (useAccountData?.code === 401) {
+      setUserInfo(false);
+      return;
+    }
 
+    if (!useAccountData?.success) return;
+
+    setUserInfo(useAccountData.userInfo);
+    setNotifications(useAccountData.notifications);
+    setTimeout(() => {
+      socket.connect();
+      socket.emit("joinChats");
+    }, 100);
+  }, [useAccountData]);
+
+  useEffect(() => {
     const onNotification = (data) => {
       setNotifications((prev) => [...prev, data]);
     };
@@ -108,7 +105,7 @@ function AccountProvider({ children }) {
 
   return (
     <UserInfoContext.Provider
-      value={{ userInfo, setUserInfo, bringAccountInfo }}
+      value={{ userInfo, setUserInfo, refetchUseAccountData }}
     >
       <NotificationsContext.Provider
         value={{ notifications, setNotifications }}
@@ -125,58 +122,38 @@ function SubjectsProvider({ children }) {
   const [plans, setPlans] = useState([]);
   const [planModal, setPlanModal] = useState(DEFAULT_PLAN);
 
-  //console.log(planModal)
-  const bringSubjects = useCallback(() => {
-    fetch(`${config.server}/subjects`, {
-      method: "get",
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setSubjects(timelineSort(data.subjects));
-          bringPlans(data.subjects);
-        } else {
-          bringPlans([]);
-        }
-      })
-      .catch((error) => console.error(error));
-  }, []);
-
-  const bringPlans = useCallback((subjects) => {
-    fetch(`${config.server}/plan`, { method: "get", credentials: "include" })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setPlans(
-            data.plans.map((plan) => {
-              plan.saved = true;
-              plan.start = new Date(plan.start * 1000 * 60);
-              plan.end = new Date(plan.end * 1000 * 60);
-              const subject = subjects.find(
-                (subject) => subject.id === plan.subject
-              );
-              if (subject) {
-                plan.backgroundColor = subject.color;
-                plan.borderColor = subject.color;
-              }
-
-              if (plan.completed) {
-                plan.className = "completed";
-              }
-              return plan;
-            })
-          );
-        }
-      })
-      .catch((error) => console.error(error));
-  }, []);
+  const {data: subjectsData, refetch: refetchSubjectsData} = useSubjects(userInfo);
+  const {data: planData, refetch: refetchPlan} = usePlan(userInfo);
 
   useEffect(() => {
-    if (userInfo) {
-      bringSubjects();
-    }
-  }, [userInfo]);
+    if (!subjectsData?.success) return;
+
+    setSubjects(timelineSort(subjectsData.subjects));
+  }, [subjectsData]);
+
+  useEffect(() => {
+    if (!subjectsData?.success || !planData?.success) return;
+
+    setPlans(
+      planData.plans.map((plan) => {
+        plan.saved = true;
+        plan.start = new Date(plan.start * 1000 * 60);
+        plan.end = new Date(plan.end * 1000 * 60);
+        const subject = subjectsData.subjects.find(
+          (subject) => subject.id === plan.subject
+        );
+        if (subject) {
+          plan.backgroundColor = subject.color;
+          plan.borderColor = subject.color;
+        }
+
+        if (plan.completed) {
+          plan.className = "completed";
+        }
+        return plan;
+      })
+    );
+  }, [subjectsData, planData]);
 
   useEffect(() => {
     if (!subjects.length) return;
@@ -185,9 +162,9 @@ function SubjectsProvider({ children }) {
   }, [subjects]);
 
   return (
-    <SubjectsContext.Provider value={{ subjects, setSubjects, bringSubjects }}>
+    <SubjectsContext.Provider value={{ subjects, setSubjects, refetchSubjectsData }}>
       <PlansContext.Provider
-        value={{ plans, setPlans, planModal, setPlanModal, bringPlans }}
+        value={{ plans, setPlans, planModal, setPlanModal, refetchPlan }}
       >
         {children}
       </PlansContext.Provider>
