@@ -1,7 +1,7 @@
 import config from "@/app/utils/config";
 
-async function getSubjects() {
-  const response = await fetch(`${config.server}/subjects`, {
+async function getGroups() {
+  const response = await fetch(`${config.server}/groups`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -9,7 +9,8 @@ async function getSubjects() {
     credentials: "include",
   });
   const data = await response.json();
+
   return data;
 }
 
-export { getSubjects };
+export { getGroups };
