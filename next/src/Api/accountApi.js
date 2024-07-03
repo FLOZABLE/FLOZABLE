@@ -1,7 +1,7 @@
 import config from "@/app/utils/config";
 
-async function getSubjects() {
-  const response = await fetch(`${config.server}/subjects`, {
+async function getAccount() {
+  const response = await fetch(`${config.server}/account`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -12,4 +12,4 @@ async function getSubjects() {
   return data;
 }
 
-export { getSubjects };
+export { getAccount };

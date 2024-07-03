@@ -9,7 +9,7 @@ import { Alert } from "@/app/utils/Svg";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 
 function SubjectsManager() {
-  const { subjects, setSubjects, bringSubjects } = useContext(SubjectsContext);
+  const { subjects, setSubjects, refetchSubjectsData } = useContext(SubjectsContext);
   const { setResponse } = useContext(ResponseContext);
 
   const [selectedSubject, setSelectedSubject] = useState({
@@ -94,7 +94,7 @@ function SubjectsManager() {
           tools: [],
         });
         if (data.success) {
-          bringSubjects();
+          refetchSubjectsData();
         }
       });
   }, [selectedSubject]);

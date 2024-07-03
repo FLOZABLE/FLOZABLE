@@ -10,7 +10,7 @@ import PlanTimeline from "@/app/components/Plans/PlanTimeline/PlanTimeline";
 import { PlansContext } from "@/app/utils/Contexts";
 
 function Planner({}) {
-  const {bringPlans} = useContext(PlansContext);
+  const {refetchPlans} = useContext(PlansContext);
 
   const [viewMode, setViewMode] = useState("timeGridWeek");
   const [viewDate, setViewDate] = useState(
@@ -46,7 +46,7 @@ function Planner({}) {
             <div className={styles.widget}>
               <GoogleLoginBtn
                 onSuccess={() => {
-                  bringPlans();
+                  refetchPlans();
                 }}
               />
               <div className={styles.smallCalendarWrapper}>

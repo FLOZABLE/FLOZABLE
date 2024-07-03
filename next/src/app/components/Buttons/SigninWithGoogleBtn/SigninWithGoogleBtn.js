@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 function SigninWithGoogleBtn({ infoText }) {
   const { setResponse } = useContext(ResponseContext);
   const { setTutorial } = useContext(TutorialsContext);
-  const { bringAccountInfo } = useContext(UserInfoContext);
+  const { refetchUseAccountData } = useContext(UserInfoContext);
   const { setIsAccountModal } = useContext(ModalsContext);
 
   const router = useRouter();
@@ -44,7 +44,7 @@ function SigninWithGoogleBtn({ infoText }) {
             }
             setTimeout(() => {
               setIsAccountModal(false);
-              bringAccountInfo();
+              refetchUseAccountData();
             }, 100);
           }
         });
