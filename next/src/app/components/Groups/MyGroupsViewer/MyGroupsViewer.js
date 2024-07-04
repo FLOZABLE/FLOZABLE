@@ -50,7 +50,7 @@ function MyGroupsViewer({
   }, [myGroups, groupsViewerRef]);
 
   const leaveGroup = useCallback((group) => {
-    fetch(`${config.server}/groups/leave-group`,
+    fetch(`${config.server}/groups/leave`,
       {
         method: "POST",
         headers: {

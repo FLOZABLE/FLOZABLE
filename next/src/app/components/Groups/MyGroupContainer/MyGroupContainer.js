@@ -66,7 +66,7 @@ function MyGroupContainer({
     const { group_id } = group;
 
     fetch(`${config.server}/groups/members?groupId=${group_id}`, {
-      method: "get",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },

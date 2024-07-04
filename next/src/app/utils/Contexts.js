@@ -180,8 +180,8 @@ function GroupsProvider({ children }) {
   const [otherGroups, setOtherGroups] = useState([]);
 
   const bringGroups = useCallback(() => {
-    fetch(`${config.server}/groups/bring-groups`, {
-      method: "POST",
+    fetch(`${config.server}/groups`, {
+      method: "GET",
       credentials: "include",
     })
       .then((response) => response.json())
