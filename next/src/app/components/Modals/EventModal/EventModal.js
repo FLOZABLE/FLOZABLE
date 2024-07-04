@@ -202,7 +202,7 @@ function EventModal({}) {
     const repeat = parseInt(planModal.repeat);
     const completed = planModal.completed ? 1 : 0;
     const share = planModal.share.map((user) => user.user_id);
-    fetch(`${config.server}/plan/update`, {
+    fetch(`${config.server}/plans/update`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -247,7 +247,7 @@ function EventModal({}) {
   const deletePlan = async () => {
     const { id } = planModal;
     if (!id) return;
-    const data = await fetch(`${config.server}/plan`, {
+    const data = await fetch(`${config.server}/plans`, {
       method: "delete",
       headers: {
         "Content-Type": "application/json",
@@ -320,7 +320,7 @@ function EventModal({}) {
         });
       }
     } else if (planModal.id) {
-      fetch(`${config.server}/plan/users?id=${planModal.id}`, {
+      fetch(`${config.server}/plans/users?id=${planModal.id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

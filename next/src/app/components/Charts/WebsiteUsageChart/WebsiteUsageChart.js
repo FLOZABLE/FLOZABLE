@@ -6,9 +6,12 @@ import { PieCustomTooltip, pieCustomLabel } from "../Charts";
 
 export default function WebsiteUsageChart({ websites }) {
   return (
-    <div className={styles.WebsiteUsageChart}>
+    <div className={`${styles.WebsiteUsageChart} Box`}>
+      <div className="header">
+      <h3>Website Usage</h3>
+      </div>
       {websites.length ? (
-        <div className={styles.contents}>
+        <div className={`${styles.contents}`}>
           <div className={styles.chartWrapper}>
             <h3>Visits</h3>
             <ResponsiveContainer width="100%" height="100%">

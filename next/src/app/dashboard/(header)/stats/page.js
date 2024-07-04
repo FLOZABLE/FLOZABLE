@@ -164,99 +164,64 @@ function Stats({}) {
           />
         </div>
         <div className={styles.layer}>
-          <div className={`${styles.box} BoxContainer`}></div>
-        </div>
-        <div className={styles.layer}>
-          <div className={`${styles.box} BoxContainer`}></div>
-        </div>
-        <div className={styles.layer}>
-          <div className={`${styles.box} BoxContainer`}></div>
-        </div>
-        {/* <div className={styles.optionsHeader}>
-          <div className={styles.dateSelectorWrapper}>
-            <DateSelectorBtn
-              viewMode={statsViewer}
-              className={styles.title}
-              viewDate={viewDate}
-              isCalendarOpen={isCalendarOpen}
-              setIsCalendarOpen={setIsCalendarOpen}
-            ></DateSelectorBtn>
-          </div>
-          <RadioBtn
-            items={[
-              { view: "Daily", value: "Daily" },
-              { view: "Weekly", value: "Weekly" },
-              { view: "Monthly", value: "Monthly" },
-            ]}
-            changeEvent={setStatsViewer}
-            defaultViewer={0}
-          />
-        </div>
-        <div>
-          <div className={styles.bigBox}>
-            <div className={styles.contents}>
-              <div className={styles.chartWrapper}>
-                <SubjectsPie statsViewer={statsViewer} viewDate={viewDate} />
+          <div className={`${styles.box} BoxContainer`}>
+            <div>
+              <SubjectsPie statsViewer={statsViewer} viewDate={viewDate} />
+            </div>
+            <div id={styles.studyInfo}>
+              <div>
+                <i>
+                  <IconBook />
+                </i>
+                Total Study Time {totalStudy}
               </div>
               <div>
-                <div className={styles.overflow}>
-                  <i>
-                    <IconBook />
-                  </i>
-                  Total Study Time {totalStudy}
-                </div>
-                <div className={styles.overflow}>
-                  <i>
-                    <IconMonitor />
-                  </i>
-                  Website Usage Time {websitesUsage} / {websitesVisit} times
-                </div>
-                <div className={styles.overflow}>
-                  <i>
-                    <IconStatsChart />
-                  </i>
-                  Ranking {ranking}
-                </div>
-                <div className={styles.overflow}>
-                  <i>
-                    <IconEyeOutline />
-                  </i>
-                  Focus {focus}
-                </div>
+                <i>
+                  <IconMonitor />
+                </i>
+                Website Usage Time {websitesUsage} / {websitesVisit} times
+              </div>
+              <div>
+                <i>
+                  <IconStatsChart />
+                </i>
+                Ranking {ranking}
+              </div>
+              <div>
+                <i>
+                  <IconEyeOutline />
+                </i>
+                Focus {focus}
               </div>
             </div>
           </div>
-          <div className={styles.bigBox}>
-            <h3>Study Time Trend</h3>
-            <div className={styles.contents}>
-              <div className={styles.chartWrapper}>
-                <StudyTrendChart
-                  viewDate={viewDate}
-                  statsViewer={statsViewer}
-                />
-              </div>
+        </div>
+        <div className={styles.layer}>
+          <div className={`${styles.box} BoxContainer`}>
+            <StudyTrendChart viewDate={viewDate} statsViewer={statsViewer} />
+          </div>
+        </div>
+        <div className={styles.layer}>
+          <div className={`${styles.box} BoxContainer`}>
+            <RankingTrendChart
+              viewDate={viewDate}
+              statsViewer={statsViewer}
+              setRanking={setRanking}
+              userInfo={userInfo}
+            />
+          </div>
+        </div>
+        <div className={styles.layer}>
+          <div className={`${styles.box} BoxContainer`}>
+            <div>
+              {isWebsitesDataLoading || !websitesData?.success ? (
+                <CircularLoading />
+              ) : (
+                <WebsiteUsageChart websites={websitesData.websites} />
+              )}
             </div>
           </div>
-          <div className={styles.bigBox}>
-            <h3>Ranking Trend</h3>
-            <div className={styles.chartWrapper}>
-              <RankingTrendChart
-                viewDate={viewDate}
-                statsViewer={statsViewer}
-                setRanking={setRanking}
-                userInfo={userInfo}
-              />
-            </div>
-          </div>
-          <div className={styles.bigBox} id={styles.othersUsage}>
-            <h3>Website Usage</h3>
-            {isWebsitesDataLoading || !websitesData?.success ? (
-              <CircularLoading />
-            ) : (
-              <WebsiteUsageChart websites={websitesData.websites} />
-            )}
-          </div>
-        </div> */}
+        </div>
       </div>
     </div>
   );
