@@ -60,8 +60,8 @@ function MemberContextMenu({ MENU_ID, rightClickedMember }) {
     if (id === "kick") {
       setKickClicked(true);
     } else if (id === "confirmKick") {
-      fetch(`${config.server}/groups/remove-member`, {
-        method: "POST",
+      fetch(`${config.server}/groups/member`, {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },

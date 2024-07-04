@@ -53,8 +53,8 @@ function EditGroupModal({ isOpen, setIsOpen }) {
 
   useEffect(() => {
     if (submit && groupId) {
-      fetch(`${serverOrigin}/groups/modify`, {
-        method: "POST",
+      fetch(`${serverOrigin}/groups/group`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },

@@ -27,6 +27,10 @@
   .Main .layer {
     margin: 0rem 2%;
   }
+
+  .Main .layer:nth-child(2) {
+    width: calc(96% - 22.5rem);
+  }
 }
 
 @media (max-width: 1700px) {

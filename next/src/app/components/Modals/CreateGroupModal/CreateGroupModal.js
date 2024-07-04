@@ -53,8 +53,8 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
   }, []);
 
   const submit = () => {
-    fetch(`${config.server}/groups/create-validate`, {
-      method: "POST",
+    fetch(`${config.server}/groups/group`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },

@@ -20,7 +20,23 @@ const { DateTime } = require("luxon");
 const { responseCodes } = require("../Constant");
 const { mainIo } = require("../sockets/mainIo");
 
-Router.post("/create-validate", async (req, res) => {
+Router.get("/", async (req, res) => {
+  try {
+    const connection = pool.promise();
+    const [groups] = await connection.query(
+      "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups`"
+    );
+    res.send({ success: true, groups: groups });
+  } catch (err) {
+    console.error("Error performing database queries:", err);
+    res.status(500).send({ success: false, reason: "An error occurred" });
+  }
+});
+
+/**
+ * create group
+ */
+Router.put("/group", async (req, res) => {
   autoSignin(
     req,
     res,
@@ -132,10 +148,7 @@ Router.post("/create-validate", async (req, res) => {
         try {
           const connection = pool.promise();
 
-          await connection.query(
-            "INSERT INTO `groups` SET ?",
-            group
-          );
+          await connection.query("INSERT INTO `groups` SET ?", group);
           await connection.query(
             `
         UPDATE users
@@ -149,10 +162,7 @@ Router.post("/create-validate", async (req, res) => {
             id: group_id,
           };
 
-          connection.query(
-            `INSERT INTO chatrooms SET ?`,
-            roomInfo
-          );
+          connection.query(`INSERT INTO chatrooms SET ?`, roomInfo);
 
           res.send({
             success: true,
@@ -175,6 +185,134 @@ Router.post("/create-validate", async (req, res) => {
   );
 });
 
+/**
+ * modify group
+ */
+Router.patch("/group", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const {
+        group_id,
+        name,
+        explanation,
+        tags,
+        max_members,
+        visibility,
+        password,
+        color,
+        goal_hr,
+      } = req.body;
+
+      const isValidGroupId = validateStrictString(group_id, "group id");
+      if (!isValidGroupId.isValid) {
+        return res.send({ success: false, reason: isValidGroupId.reason });
+      }
+
+      const isValidName = validateString(name, "Name");
+      if (!isValidName.isValid) {
+        return res.send({ success: false, reason: isValidName.reason });
+      }
+
+      const isValidExplanation = validateLength(
+        explanation,
+        "Description",
+        200,
+        1
+      );
+      if (!isValidExplanation.isValid) {
+        return res.send({ success: false, reason: isValidExplanation.reason });
+      }
+
+      const isValidTags = validateArray(tags, "tags", 10);
+      if (!isValidTags.isValid) {
+        return res.send({ success: false, reason: isValidTags.reason });
+      }
+
+      const isValidMembers = validateInteger(
+        max_members,
+        "max members",
+        100,
+        0
+      );
+      if (!isValidMembers.isValid) {
+        return res.send({ success: false, reason: isValidMembers.reason });
+      }
+
+      const isValidVisibility = validateInteger(visibility, "visibility", 1, 0);
+      if (!isValidVisibility.isValid) {
+        return res.send({ success: false, reason: isValidVisibility.reason });
+      }
+
+      const isValidColor = validateHEX(color, "Color");
+      if (!isValidMembers.isValid) {
+        return res.send({ success: false, reason: isValidColor.reason });
+      }
+
+      const isValidGodalHr = validateInteger(goal_hr, "goal time", 10);
+      if (!isValidGodalHr.isValid) {
+        return res.send({ success: false, reason: isValidGodalHr.reason });
+      }
+
+      const connection = pool.promise();
+
+      const groupInfo = await connection.query(
+        `SELECT leader FROM \`groups\` WHERE group_id = ? AND leader = ?`,
+        [group_id, userId]
+      );
+      if (!groupInfo)
+        return res.send({
+          success: false,
+          reason: "You are not the leader of this group",
+        });
+
+      const date = Math.floor(new Date().getTime() / 1000);
+      const stringlifiedTags = JSON.stringify(tags);
+      const group = {
+        date,
+        name,
+        explanation,
+        leader: userId,
+        tags: stringlifiedTags,
+        max_members,
+        visibility,
+        color,
+        goal_hr,
+      };
+
+      if (!visibility && password !== "") {
+        const isValidPassword = validatePassword(password, 30, 4, false);
+        if (!isValidPassword.isValid) {
+          return res.send({ success: false, reason: isValidPassword.reason });
+        }
+        const hashed = hashing(password);
+        group.salt = hashed[0];
+        group.password = hashed[1];
+      }
+
+      try {
+        await connection.query("UPDATE `groups` set ? WHERE group_id = ? ", [
+          group,
+          group_id,
+        ]);
+        res.send({
+          success: true,
+          data: { id: group_id },
+          msg: `Group ${group.name} updated!`,
+        });
+      } catch (error) {
+        console.log(error);
+        res.send({ success: false, reason: "Error" });
+      }
+    } catch (error) {
+      console.log(error);
+      res.send({ success: false, reason: "Error" });
+    }
+  });
+});
+
+/**
+ * join group
+ */
 Router.post("/join/:id", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     const groupId = req.params.id;
@@ -200,35 +338,14 @@ Router.post("/join/:id", async (req, res) => {
       if (groupInfo.members.includes(userId))
         return res.send({ success: false, reason: "Already Joined" });
 
-      if (groupInfo.visibility) {
-        await connection.query(
-          `UPDATE users SET \`groups\` = CASE
-            WHEN \`groups\` = '' THEN ?
-            WHEN \`groups\` LIKE ? THEN \`groups\`
-            ELSE CONCAT(\`groups\`, ',', ?)
-            END
-            WHERE user_id = ?`,
-          [groupId, `%${groupId}%`, groupId, userId]
-        );
+      groupInfo.members =
+        groupInfo.members === "" ? [] : groupInfo.members.split(",");
+      groupInfo.members = [...new Set(groupInfo.members.push(userId))];
 
-        await connection.query(
-          `UPDATE \`groups\` 
-          SET members = CASE 
-              WHEN members = '' THEN ?
-              WHEN members LIKE ? OR members LIKE ? OR members LIKE ? THEN
-                members
-              ELSE CONCAT(members, ',', ?)
-            END WHERE group_id = ?`,
-          [
-            userId,
-            `%,${userId},%`,
-            `${userId},%`,
-            `%,${userId}`,
-            userId,
-            groupId,
-          ]
-        );
-      } else {
+      userInfo.groups = [...new Set(userInfo.groups.push(groupId))];
+
+      //private group
+      if (!groupInfo.visibility) {
         const { password } = req.body;
         const isValidPassword = validateLength(password, "password", 100);
 
@@ -240,37 +357,21 @@ Router.post("/join/:id", async (req, res) => {
           .pbkdf2Sync(password, groupInfo.salt, 99097, 32, "sha512")
           .toString("hex");
         if (hashedPassword == groupInfo.password) {
-          await connection.query(
-            `UPDATE users SET \`groups\` = CASE
-              WHEN \`groups\` = '' THEN ?
-              WHEN \`groups\` LIKE ? THEN \`groups\`
-              ELSE CONCAT(\`groups\`, ',', ?)
-              END
-              WHERE user_id = ?`,
-            [groupId, `%${groupId}%`, groupId, userId]
-          );
-
-          await connection.query(
-            `UPDATE \`groups\` 
-            SET members = CASE 
-              WHEN members = '' THEN ?
-              WHEN members LIKE ? OR members LIKE ? OR members LIKE ? THEN
-                members
-              ELSE CONCAT(members, ',', ?)
-            END WHERE group_id = ?`,
-            [
-              userId,
-              `%,${userId},%`,
-              `${userId},%`,
-              `%,${userId}`,
-              userId,
-              groupId,
-            ]
-          );
-        } else {
           return res.send({ success: false, reason: "Wrong Password" });
         }
       }
+
+      await connection.query(
+        `UPDATE users SET \`groups\` = ?
+          WHERE user_id = ?`,
+        [userInfo.groups.toString(), userId]
+      );
+
+      await connection.query(
+        `UPDATE \`groups\` 
+        SET members = ? WHERE group_id = ?`,
+        [groupInfo.members.toString(), groupId]
+      );
 
       mainIo.emit(`newMember:${groupId}`, userId);
       res.send({ success: true, msg: `Joined group "${groupInfo.name}"` });
@@ -306,42 +407,14 @@ Router.post("/join/:id", async (req, res) => {
   });
 });
 
-Router.post("/bring-groups", async (req, res) => {
-  try {
-    const connection = pool.promise();
-    const [groups] = await connection.query(
-      "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups`"
-    );
-    res.send({ success: true, groups: groups });
-  } catch (err) {
-    console.error("Error performing database queries:", err);
-    res.status(500).send({ success: false, reason: "An error occurred" });
-  }
-});
 
-Router.get("/mine", async (req, res) => {
+/**
+ * leave group
+ */
+Router.post("/leave", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const user = await userCache(userId);
-      if (!user) return res.send({ success: false, reason: "Invalid User" });
-
-      const connection = pool.promise();
-      const [groups] = await connection.query(
-        "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups` WHERE group_id IN(?)",
-        [user.groups]
-      );
-
-      return res.send({ success: true, groups });
-    } catch (err) {
-      console.log(err);
-    }
-  });
-});
-
-Router.post("/leave-group", async (req, res) => {
-  const { groupId } = req.body;
-  autoSignin(req, res, async (userId) => {
-    try {
+      const { groupId } = req.body;
       const userInfo = await userCache(userId);
 
       if (!userInfo) return res.send(responseCodes["no-user"]);
@@ -352,27 +425,26 @@ Router.post("/leave-group", async (req, res) => {
         [groupId]
       );
 
-      let oldMembers = group.members.split(",");
-      oldMembers = oldMembers.filter((mem) => mem != userId);
-      const updateGroup = await connection.query(
+      group.members = group.members.split(",");
+      group.members = [
+        ...new Set(group.members.filter((mem) => mem != userId)),
+      ];
+
+      await connection.query(
         "UPDATE groups SET members = ? WHERE group_id = ?",
-        [oldMembers.join(","), groupId]
+        [group.members.toString(), groupId]
       );
 
-      const [[userGroups]] = await connection.query(
-        "SELECT groups FROM users WHERE user_id = ?",
-        [userId]
-      );
-      let newGroups = !userGroups.groups ? [] : userGroups.groups.split(",");
-      newGroups = newGroups.filter((g) => g != groupId);
-      const updateUserGroups = await connection.query(
-        "UPDATE users SET groups = ? WHERE user_id = ?",
-        [newGroups.join(","), userId]
-      );
+      userInfo.groups = [
+        ...new Set(userInfo.groups.filter((g) => g !== groupId)),
+      ];
 
-      let { groups } = userInfo;
-      groups = groups.filter((g) => g != groupId);
-      redisClient.hSet(`user:${userId}`, "groups", groups.join(","));
+      await connection.query("UPDATE users SET groups = ? WHERE user_id = ?", [
+        userInfo.groups.toString(),
+        userId,
+      ]);
+
+      redisClient.hSet(`user:${userId}`, "groups", userInfo.groups.toString());
 
       redisClient.sRem(`room:${groupId}`, userId);
 
@@ -385,13 +457,13 @@ Router.post("/leave-group", async (req, res) => {
   });
 });
 
-Router.post("/remove-member", async (req, res) => {
+Router.delete("/member", async (req, res) => {
   const { memberId, groupId } = req.body;
   autoSignin(req, res, async (userId) => {
     try {
-      const userInfo = await userCache(userId);
+      const merberInfo = await userCache(memberId);
 
-      if (!userInfo) return res.send(responseCodes["no-user"]);
+      if (!merberInfo) return res.send(responseCodes["no-user"]);
 
       const connection = pool.promise();
       const [[group]] = await connection.query(
@@ -399,28 +471,29 @@ Router.post("/remove-member", async (req, res) => {
         [groupId]
       );
 
-      if (group.leader != userId) {
+      if (group.leader !== userId) {
         return res.send({
           success: false,
           reason: "You do not have the permission to remove members",
         });
-      } else {
-        let oldMembers = group.members.split(",");
-        oldMembers = oldMembers.filter((mem) => mem != memberId);
-        const updateGroup = await connection.query(
-          "UPDATE groups SET members = ? WHERE group_id = ?",
-          [oldMembers.join(","), groupId]
-        );
-
-        let { groups } = userInfo;
-        groups = groups.filter((g) => g != groupId);
-        redisClient.hSet(`user:${memberId}`, "groups", groups.join(","));
-
-        redisClient.sRem(`room:${groupId}`, memberId);
-        mainIo.emit(`removeMember`, groupId, memberId);
-
-        return res.send({ success: true });
       }
+
+      group.members = group.members.split(",");
+      group.members = [
+        ...new Set(group.members.filter((mem) => mem != memberId)),
+      ];
+      await connection.query(
+        "UPDATE groups SET members = ? WHERE group_id = ?",
+        [group.members.toString(), groupId]
+      );
+
+      merberInfo.groups = merberInfo.groups.filter((g) => g != groupId);
+      redisClient.hSet(`user:${memberId}`, "groups", merberInfo.groups.toString());
+
+      redisClient.sRem(`room:${groupId}`, memberId);
+      mainIo.emit(`removeMember`, groupId, memberId);
+
+      return res.send({ success: true });
     } catch (err) {
       console.log(err);
     }
@@ -504,7 +577,7 @@ Router.post("/like/:id", async (req, res) => {
           mainIo.emit(`liked:${groupId}`, userId);
         }
       } else {
-        const [update] = await connection.query(
+        await connection.query(
           `UPDATE \`groups\` 
           SET likes = 
             TRIM(BOTH ',' FROM REPLACE(CONCAT(',', likes, ','), ',${userId},', ','))
@@ -572,150 +645,6 @@ Router.get("/members", async (req, res) => {
     undefined,
     true
   );
-});
-
-Router.post("/modify", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const {
-        group_id,
-        name,
-        explanation,
-        tags,
-        max_members,
-        visibility,
-        password,
-        color,
-        goal_hr,
-      } = req.body;
-
-      const isValidGroupId = validateStrictString(group_id, "group id");
-      if (!isValidGroupId.isValid) {
-        return res.send({ success: false, reason: isValidGroupId.reason });
-      }
-
-      const isValidName = validateString(name, "Name");
-      if (!isValidName.isValid) {
-        return res.send({ success: false, reason: isValidName.reason });
-      }
-
-      const isValidExplanation = validateLength(
-        explanation,
-        "Description",
-        200,
-        1
-      );
-      if (!isValidExplanation.isValid) {
-        return res.send({ success: false, reason: isValidExplanation.reason });
-      }
-
-      const isValidTags = validateArray(tags, "tags", 10);
-      if (!isValidTags.isValid) {
-        return res.send({ success: false, reason: isValidTags.reason });
-      }
-
-      const isValidMembers = validateInteger(
-        max_members,
-        "max members",
-        100,
-        0
-      );
-      if (!isValidMembers.isValid) {
-        return res.send({ success: false, reason: isValidMembers.reason });
-      }
-
-      const isValidVisibility = validateInteger(visibility, "visibility", 1, 0);
-      if (!isValidVisibility.isValid) {
-        return res.send({ success: false, reason: isValidVisibility.reason });
-      }
-
-      const isValidColor = validateHEX(color, "Color");
-      if (!isValidMembers.isValid) {
-        return res.send({ success: false, reason: isValidColor.reason });
-      }
-
-      const isValidGodalHr = validateInteger(goal_hr, "goal time", 10);
-      if (!isValidGodalHr.isValid) {
-        return res.send({ success: false, reason: isValidGodalHr.reason });
-      }
-      /* const schema = {
-        type: 'object',
-        properties: {
-          group_id: { type: 'string', maxLength: 11 },
-          name: { type: 'string', maxLength: 100 },
-          explanation: { type: 'string', maxLength: 100 },
-          tags: { type: 'array', maxItems: 10 },
-          max_members: { type: 'integer', minimum: 0, maximum: 100 },
-          visibility: { type: 'integer', minimum: 0, maximum: 1 },
-          password: { type: 'string', maxLength: 30 },
-          color: { type: 'string', maxLength: 8 },
-          goal_hr: { type: 'integer', maximum: 24 },
-        },
-        required: ['group_id', 'name', 'explanation', 'tags', 'max_members', 'visibility', 'password', 'color', 'goal_hr'],
-        additionalProperties: false
-      };
-
-      const isValid = isValidJSON(group, schema);
-      if (!isValid) {
-        return res.send({ success: false, reason: 'Wrong Information' });
-      } */
-
-      const connection = pool.promise();
-
-      const groupInfo = await connection.query(
-        `SELECT leader FROM \`groups\` WHERE group_id = ? AND leader = ?`,
-        [group_id, userId]
-      );
-      if (!groupInfo)
-        return res.send({
-          success: false,
-          reason: "You are not the leader of this group",
-        });
-
-      const date = Math.floor(new Date().getTime() / 1000);
-      const stringlifiedTags = JSON.stringify(tags);
-      const group = {
-        date,
-        name,
-        explanation,
-        leader: userId,
-        tags: stringlifiedTags,
-        max_members,
-        visibility,
-        color,
-        goal_hr,
-      };
-
-      if (!visibility && password !== "") {
-        const isValidPassword = validatePassword(password, 30, 4, false);
-        if (!isValidPassword.isValid) {
-          return res.send({ success: false, reason: isValidPassword.reason });
-        }
-        const hashed = hashing(password);
-        group.salt = hashed[0];
-        group.password = hashed[1];
-      }
-
-      try {
-        const connection = pool.promise();
-        const updateGroup = await connection.query(
-          "UPDATE `groups` set ? WHERE group_id = ? ",
-          [group, group_id]
-        );
-        res.send({
-          success: true,
-          data: { id: group_id },
-          msg: `Group ${group.name} updated!`,
-        });
-      } catch (error) {
-        console.log(error);
-        res.send({ success: false, reason: "Error" });
-      }
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "Error" });
-    }
-  });
 });
 
 module.exports = Router;
