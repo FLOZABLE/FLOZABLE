@@ -1,7 +1,7 @@
 import config from "@/app/utils/config";
 
 async function getPlan() {
-  const response = await fetch(`${config.server}/plan`, {
+  const response = await fetch(`${config.server}/plans`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -16,7 +16,7 @@ async function getPlan() {
 async function postPlanShare(users, planId) {
   if (!users.length || !planId) return { success: false };
 
-  const response = await fetch(`${config.server}/plan/share`, {
+  const response = await fetch(`${config.server}/plans/share`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -32,7 +32,7 @@ async function postPlanShare(users, planId) {
 async function deletePlanShare(targetId, planId) {
   if (!targetId || !planId) return { success: false };
 
-  const response = await fetch(`${config.server}/plan/share`, {
+  const response = await fetch(`${config.server}/plans/share`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -48,7 +48,7 @@ async function deletePlanShare(targetId, planId) {
 async function postPlanShareRespond(planId, accepted) {
   if (!planId) return { success: false };
 
-  const response = await fetch(`${config.server}/plan/share/respond`, {
+  const response = await fetch(`${config.server}/plans/share/respond`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
