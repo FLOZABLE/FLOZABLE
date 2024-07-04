@@ -1,7 +1,5 @@
 "use client";
 
-import FriendsRankingViewer from "../../components/Friends/FriendsRankingViewer/FriendsRankingViewer";
-import RecommendedFriendsViewer from "../../components/Friends/RecommendedFriendsViewer/RecommendedFriendsViewer";
 import PlanTimeline from "../../components/Plans/PlanTimeline/PlanTimeline";
 import SmallSubjectsViewer from "../../components/Subjects/SmallSubjectsViewer/SmallSubjectsViewer";
 import WelcomeModal from "@/app/components/Modals/WelcomeModal/WelcomeModal";

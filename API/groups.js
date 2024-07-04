@@ -5,10 +5,7 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const crypto = require("crypto");
 const { hashing, generateRandomId, autoSignin } = require("../Utils/tool");
-const {
-  activeSubjectCache,
-  userCache,
-} = require("../services/redisLoader");
+const { activeSubjectCache, userCache } = require("../services/redisLoader");
 const {
   validateArray,
   validateStrictString,
@@ -39,29 +36,8 @@ Router.post("/create-validate", async (req, res) => {
           color,
           goal_hr,
         } = req.body;
-        /* const schema = {
-        type: 'object',
-        properties: {
-          name: { type: 'string', maxLength: 100 },
-          explanation: { type: 'string', maxLength: 100 },
-          tags: { type: 'array', maxItems: 10 },
-          max_members: { type: 'integer', minimum: 0, maximum: 100 },
-          visibility: { type: 'integer', minimum: 0, maximum: 1 },
-          password: { type: 'string', maxLength: 30 },
-          color: { type: 'string', maxLength: 8 },
-          goal_hr: { type: 'integer', maximum: 24 },
-        },
-        required: ['name', 'explanation', 'tags', 'max_members', 'visibility', 'password', 'color', 'goal_hr'],
-        additionalProperties: false
-      };
-
-      const isValid = isValidJSON(group, schema); */
-        /* if (!isValid) {
-        return res.send({ success: false, reason: 'Wrong Information' });
-      } */
 
         const isValidName = validateString(name, "Name");
-        console.log(name);
         if (!isValidName.isValid) {
           return res.send({ success: false, reason: isValidName.reason });
         }
@@ -142,14 +118,6 @@ Router.post("/create-validate", async (req, res) => {
           goal_hr,
         };
 
-        /* group.tags = JSON.stringify(group.tags);
-      group.password = hashed[1];
-      group.salt = hashed[0];
-      group.date = Math.floor(new Date().getTime() / 1000);
-      group.group_id = groupId;
-      group.leader = userId;
-      group.members = userId; */
-
         //update cached values
         const userInfo = await userCache(userId);
         if (!userInfo) {
@@ -159,32 +127,29 @@ Router.post("/create-validate", async (req, res) => {
         const { groups } = userInfo;
 
         groups.push(group_id);
-        redisClient.hSet(`user:${userId}`, "groups", groups.join(","));
+        redisClient.hSet(`user:${userId}`, "groups", groups.toString());
 
         try {
           const connection = pool.promise();
 
-          const updateGroup = await connection.query(
+          await connection.query(
             "INSERT INTO `groups` SET ?",
             group
           );
-          const updateUser = await connection.query(
+          await connection.query(
             `
         UPDATE users
-        SET \`groups\` = CASE
-          WHEN \`groups\` = '' THEN ?
-          ELSE CONCAT(\`groups\`, ',', ?)
-        END
+        SET \`groups\` = ?
         WHERE user_id = ?
       `,
-            [group_id, group_id, userId]
+            [groups.toString(), userId]
           );
 
           const roomInfo = {
             id: group_id,
           };
 
-          const updateRoom = connection.query(
+          connection.query(
             `INSERT INTO chatrooms SET ?`,
             roomInfo
           );
@@ -347,16 +312,6 @@ Router.post("/bring-groups", async (req, res) => {
     const [groups] = await connection.query(
       "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups`"
     );
-    /*const allMembersIds = [];
-    groups.map((group) => {
-      const members = group.members.split(',');
-      members.map((member) => {
-        if (!allMembersIds.includes(member)) {
-          allMembersIds.push(member);
-        };
-      });
-    });*/
-    //let membersInfo = [];
     res.send({ success: true, groups: groups });
   } catch (err) {
     console.error("Error performing database queries:", err);
@@ -457,7 +412,7 @@ Router.post("/remove-member", async (req, res) => {
           [oldMembers.join(","), groupId]
         );
 
-        let {groups} = userInfo;
+        let { groups } = userInfo;
         groups = groups.filter((g) => g != groupId);
         redisClient.hSet(`user:${memberId}`, "groups", groups.join(","));
 

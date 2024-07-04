@@ -2,12 +2,7 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import styles from "./FriendsActivityViewer.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretRight } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
 import config from "@/app/utils/config";
-import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
-import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 import UserSubjectViewer from "@/app/components/Users/UserSubjectViewer/UserSubjectViewer";
 import UserGroupViewer from "@/app/components/Users/UserGroupViewer/UserGroupViewer";
 import { UserInfoContext } from "@/app/utils/Contexts";
