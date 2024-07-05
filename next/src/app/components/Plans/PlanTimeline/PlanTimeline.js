@@ -13,6 +13,8 @@ import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { DateTime } from "luxon";
 import { subjectIcons } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 
 function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
@@ -22,6 +24,8 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
 
   const [planSeries, setPlanSeries] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
+
+  const [isGraph, setIsGraph] = useState(true);
   //const searchParams = useSearchParams();
   const addBtnRef = useRef(null);
   const containerRef = useRef(null);
@@ -119,9 +123,37 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
         mode === "study" ? styles.studyMode : ""
       }`}
       ref={containerRef}
-      style={{maxHeight}}
+      style={{ maxHeight }}
     >
-      {filteredPlans.length ? (
+      <div className={styles.header}>
+        <div className={styles.options}>
+          <div
+            onClick={() => {
+              setIsGraph(!isGraph);
+            }}
+          >
+            Graph
+          </div>
+        </div>
+        <div className={styles.mainViewer}>
+          <h2>Tasks</h2>
+          <div className={styles.buttons}>
+            <div
+              id={styles.addPlan}
+              onClick={() => {
+                setPlanModal((prev) => ({ ...prev, opened: true }));
+                if (tutorial === 1) {
+                  setTutorial(2);
+                }
+              }}
+              ref={addBtnRef}
+            >
+              <FontAwesomeIcon icon={faCirclePlus} />
+            </div>
+          </div>
+        </div>
+      </div>
+      {filteredPlans.length && isGraph ? (
         <div className={styles.chartContainer}>
           <ResponsiveRadialBar
             data={planSeries}
@@ -142,18 +174,33 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
             }}
             circularAxisOuter={null}
             maxValue={100}
-            legends={[]}
+            tracksColor="#fff"
+            legends={[
+              {
+                itemTextColor: "#fff",
+                itemHeight: 18,
+                /* effects: [
+                  {
+                    on: "hover",
+                    style: {
+                      itemTextColor: "#000",
+                    },
+                  },
+                ], */
+              },
+            ]}
             valueFormat={(val) => val + "%"}
           />
         </div>
-      ) : (
+      ) : null}
+      {!filteredPlans.length ? (
         <div className={styles.radialPlaceholder}>
           All done!
           <br />
           There are no plans
         </div>
-      )}
-      <div id={styles.addBtnWrapper} ref={addBtnRef}>
+      ) : null}
+      {/* <div id={styles.addBtnWrapper} ref={addBtnRef}>
         <BlobBtn
           onClick={() => {
             setPlanModal((prev) => ({ ...prev, opened: true }));
@@ -167,7 +214,7 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
         >
           Add a New Plan
         </BlobBtn>
-      </div>
+      </div> */}
       {filteredPlans.length ? (
         <ul
           className={`${styles.plans} hiddenScroll`}
@@ -202,10 +249,8 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
               </Plan>
             );
           })}
-          
         </ul>
       ) : null}
-      
     </div>
   );
 }
