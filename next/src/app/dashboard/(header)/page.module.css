@@ -3,17 +3,29 @@
 }
 
 .Main .layer {
-  margin: 0rem 5%;
   height: 50vh;
   display: flex;
 }
 
 .Main .layer .box {
   flex: 1;
+  color: var(--font-color1);
+  background-color: #000;
+}
+
+.Main .layer:nth-child(1) > div {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.Main .box#studyInfo {
+  flex: 0 1;
 }
 
 .Main .box#planTimeline {
-  min-width: 20rem;
+  min-width: 27rem;
   height: min-content;
   overflow: hidden;
   flex: 0;
@@ -21,23 +33,4 @@
 
 .Main .layer:nth-child(2) {
   width: calc(90% - 22.5rem);
-}
-
-@media (max-width: 2000px) {
-  .Main .layer {
-    margin: 0rem 2%;
-  }
-
-  .Main .layer:nth-child(2) {
-    width: calc(96% - 22.5rem);
-  }
-}
-
-@media (max-width: 1700px) {
-  .Main .layer {
-    margin: 0rem;
-  }
-  .Main {
-    padding: 0rem 2.125rem;
-  }
 }

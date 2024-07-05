@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getFriendsRanking } from "@/Api/friendsApi";
 import { useContext } from "react";
 import { UserInfoContext } from "@/app/utils/Contexts";
+import StudyInfo from "@/app/components/Others/StudyInfo/StudyInfo";
 
 export default function Dashboard() {
   const { userInfo } = useContext(UserInfoContext);
@@ -24,13 +25,21 @@ export default function Dashboard() {
   return (
     <div className={`Main`}>
       <WelcomeModal />
-      {/* <div className="title">Dashboard</div> */}
+      <div className="title">Dashboard</div>
       <div className={styles.Main}>
         <div className={styles.layer}>
-          <div className={`${styles.box} BoxContainer`}>
-            <StudyTrendChart viewDate={new Date()} />
+          <div>
+            <div className={`${styles.box} BoxContainer`} id={styles.studyInfo}>
+              <StudyInfo />
+            </div>
+            <div className={`${styles.box} BoxContainer`}>
+              <StudyTrendChart viewDate={new Date()} />
+            </div>
           </div>
-          <div className={`${styles.box} BoxContainer`} id={styles.planTimeline}>
+          <div
+            className={`${styles.box} BoxContainer`}
+            id={styles.planTimeline}
+          >
             <PlanTimeline
               viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
               viewMode={"timeGridDay"}

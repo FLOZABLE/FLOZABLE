@@ -5,12 +5,51 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  min-width: 20rem;
+  padding: 0.5rem 1rem;
+}
+
+.PlanTimeline .options {
+  display: flex;
+  color: var(--gray1);
+}
+
+.PlanTimeline .options > div {
+  margin: 0rem 0.5rem;
+  padding: 0.15rem 0rem;
+  cursor: pointer;
+}
+
+.PlanTimeline .header .mainViewer {
+  display: flex;
+  height: 6rem;
+  align-items: center;
+}
+
+.PlanTimeline .mainViewer h2 {
+  font-size: 2.5rem;
+}
+
+.PlanTimeline .mainViewer .buttons {
+  display: flex;
+  margin-left: auto;
+}
+
+.PlanTimeline .mainViewer .buttons div {
+  cursor: pointer;
+}
+
+.PlanTimeline .mainViewer .buttons div#addPlan {
+  font-size: 2.5rem;
 }
 
 .PlanTimeline .chartContainer {
   width: 100%;
   height: 30rem;
+  color: #fff;
+}
+
+.PlanTimeline .chartContainer text {
+  fill: #fff !important;
 }
 
 .PlanTimeline .plans {
@@ -20,9 +59,9 @@
   transition: .3s ease-in-out box-shadow;
 }
 
-.PlanTimeline:hover .plans {
+/* .PlanTimeline:hover .plans {
   box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
-}
+} */
 
 
 .PlanTimeline div#addBtnWrapper {

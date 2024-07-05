@@ -3,31 +3,59 @@
   top: 0em;
   left: 0em;
   height: 100vh;
-  width: 8.125rem;
-  background-color: #fff;
+  width: 6.125rem;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
-  border-right: 0.0625rem solid #a1a1a1;
-  z-index: 3;
+  align-items: center;
 }
 
 .Sidebar .logo {
-  position: absolute;
-  top: 0rem;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 6rem;
   width: 6rem;
-  overflow: hidden;
 }
 
-.Sidebar .logo img { 
+.Sidebar .SidebarEl {
+  height: 4rem;
   width: 100%;
+  display: flex;
+  color: var(--gray1);
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
+  margin: 1rem 0rem;
+  cursor: pointer;
+  position: relative;
 }
 
+.Sidebar .SidebarEl .hoverEl {
+  position: absolute;
+  width: calc(100% - 0.5rem);
+  height: 100%;
+  z-index: -1;
+  left: 1rem;
+  border-radius: 1rem 0rem 0rem 1rem;
+  transition: .3s ease-in-out background-color, .3s ease-in-out color;
+}
+
+.Sidebar .SidebarEl i {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Sidebar .SidebarEl#selected {
+  color: #fff;
+}
+
+.Sidebar .SidebarEl#selected .hoverEl {
+  background-color: #000;
+  color: #fff;
+}
+
+/* 
 .Sidebar .sidebarContainer {
   background-color: #ffffff;
   display: flex;
@@ -92,3 +120,4 @@
     padding: 0.5rem 0.5rem;
   }
 }
+ */

@@ -1,7 +1,7 @@
 const HeaderBook = (props) => (
   <svg
-    height="2.0625rem"
-    width="2.0625rem"
+    height="1em"
+    width="1em"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -55,8 +55,8 @@ const HeaderBook = (props) => (
 
 const HeaderMonitor = (props) => (
   <svg
-    height="2rem"
-    width="2rem"
+    height="1em"
+    width="1em"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -172,8 +172,8 @@ const HeaderMonitor = (props) => (
 
 const HeaderMeteor = (props) => (
   <svg
-    height="1.9375rem"
-    width="1.9375rem"
+    height="1em"
+    width="1em"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -271,8 +271,8 @@ const HeaderFocus = (props) => (
     xmlnsXlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 53 53"
     xmlSpace="preserve"
-    width="1.9375rem"
-    height="1.9375rem"
+    width="1em"
+    height="1em"
     fill="#000000"
     {...props}
   >
