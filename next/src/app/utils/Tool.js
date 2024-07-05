@@ -114,6 +114,38 @@ const focusCalculator = (grouped) => {
   return focus;
 };
 
+function streakCalculator(subjects) {
+  let tempStreak = 0;
+  let day = 0;
+  for (let i = 0; i < subjects.length; i++) {
+    day = Math.max(day, subjects[i].daily.grouped.length - 1); //find the latest day
+    // this will find the maximum length in all the daily arrays
+  }
+  while (day >= 0) {
+    let studiedToday = false;
+    for (let i = 0; i < subjects.length; i++) {
+      if (
+        subjects[i].daily.grouped[day] &&
+        subjects[i].daily.grouped[day].length > 0
+      ) {
+        //the user has studied in this subject this day
+        tempStreak += 1;
+        studiedToday = true;
+        break; //to prevent adding streak for other subjects;
+      }
+    }
+    if (!studiedToday) break;
+    day -= 1;
+  }
+  return tempStreak ? tempStreak : 0;
+};
+
+function todayTotalCalculator(subjects) {
+  if (!subjects || !subjects?.daily?.total?.length) return 0;
+  const totalSeconds = subjects.daily.total[subjects.daily.total.length - 1];
+  return totalSeconds ? totalSeconds : 0;
+};
+
 function generateRandomId(length) {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -188,6 +220,8 @@ export {
   randomIntInRange,
   durationFormatter,
   focusCalculator,
+  todayTotalCalculator,
+  streakCalculator,
   generateRandomId,
   requestNotification,
 };

@@ -2,8 +2,11 @@
 .Plan {
   display: flex;
   transition: height .3s ease-in-out;
-  margin: 0.625rem 0em 0rem 0.625rem;
+  margin: 0.625rem 0rem 0.3rem 0rem;
   cursor: pointer;
+  background-color: #141414;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
 }
 
 .Plan:hover .description {
