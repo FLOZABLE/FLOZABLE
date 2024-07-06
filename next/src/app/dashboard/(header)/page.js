@@ -12,6 +12,7 @@ import { getFriendsRanking } from "@/Api/friendsApi";
 import { useContext } from "react";
 import { UserInfoContext } from "@/app/utils/Contexts";
 import StudyInfo from "@/app/components/Others/StudyInfo/StudyInfo";
+import FriendsBar from "@/app/components/Friends/FriendsBar/FriendsBar";
 
 export default function Dashboard() {
   const { userInfo } = useContext(UserInfoContext);
@@ -27,6 +28,9 @@ export default function Dashboard() {
       <WelcomeModal />
       <div className="title">Dashboard</div>
       <div className={styles.Main}>
+        <div className={styles.layer}>
+          <FriendsBar />
+        </div>
         <div className={styles.layer}>
           <div>
             <div className={`${styles.box} BoxContainer`} id={styles.studyInfo}>

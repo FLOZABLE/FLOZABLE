@@ -1455,6 +1455,25 @@ const Wave = (props) => (
   </svg>
 )
 
+const IconFriend = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1em"
+    height="1em"
+    viewBox="0 0 20 20"
+    fill="none"
+    {...props}
+  >
+    <path
+      stroke="#6A7480"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M1 19a7 7 0 0 1 8-6.93m6.498 2.142c-.7-.78-1.867-.989-2.744-.275-.877.713-1 1.906-.311 2.75.388.476 1.312 1.311 2.042 1.948.347.302.52.453.73.515.178.053.387.053.566 0 .21-.061.382-.213.729-.515.73-.637 1.654-1.472 2.043-1.948.688-.844.58-2.044-.312-2.75-.892-.706-2.044-.504-2.743.275ZM12 5a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"
+    />
+  </svg>
+)
+
 export {
   HeaderBook,
   HeaderFocus,
@@ -1506,5 +1525,6 @@ export {
   IconWhiteboard,
   PremiumGold,
   PremiumPremium,
-  Wave
+  Wave,
+  IconFriend
 };
