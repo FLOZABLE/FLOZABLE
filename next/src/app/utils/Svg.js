@@ -1465,7 +1465,7 @@ const IconFriend = (props) => (
     {...props}
   >
     <path
-      stroke="#6A7480"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
