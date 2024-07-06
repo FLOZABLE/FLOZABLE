@@ -11,21 +11,20 @@ import {
   IconPeople16,
   IconRankingChart,
   IconStatsChart,
-  IconUserAdd,
 } from "@/app/utils/Svg";
 import Image from "next/image";
 import { TutorialsContext } from "@/app/utils/Contexts";
 import TutorialBtn from "../../Buttons/TutorialBtn/TutorialBtn";
 import { usePathname } from "next/navigation";
+import { useWindowSize } from "@/Hooks/otherHooks";
 
 function SidebarEl({ pathname, href, children }) {
   return (
     <Link
       href={href}
-      className={styles.SidebarEl}
-      id={href === pathname ? styles.selected : ""}
+      className={`${styles.SidebarEl} ${href === pathname ? styles.activeSidebar : ""}`}
+      id={href === pathname ? "activeSidebar" : ""}
     >
-      <div className={styles.hoverEl}></div>
       {children}
     </Link>
   );
@@ -38,7 +37,11 @@ function Sidebar({}) {
   const toStatsRef = useRef(null);
   const toGroupsRef = useRef(null);
 
+  const focusBackgroundRef = useRef(null);
+
   const pathname = usePathname();
+
+  const windowSize = useWindowSize();
 
   useEffect(() => {
     if (tutorial === 11) {
@@ -58,6 +61,17 @@ function Sidebar({}) {
     }
   }, [tutorial]);
 
+  useEffect(() => {
+    console.log(windowSize)
+    const activeItem = document.getElementById('activeSidebar');
+    if (activeItem && focusBackgroundRef.current) {
+      const itemRect = activeItem.getBoundingClientRect();
+      const sidebarRect = activeItem.parentElement.getBoundingClientRect();
+      const topOffset = itemRect.top - sidebarRect.top;
+      focusBackgroundRef.current.style.transform = `translateY(${topOffset}px)`;
+    }
+  }, [pathname, windowSize]);
+
   return (
     <aside className={styles.Sidebar}>
       <div className={styles.logo}>
@@ -71,6 +85,9 @@ function Sidebar({}) {
             style={{ width: "100%", height: "auto" }}
           />
         </a>
+      </div>
+      <div ref={focusBackgroundRef} id={styles.focusBackground}>
+        test
       </div>
       <SidebarEl pathname={pathname} href={"/dashboard"}>
         <i>
