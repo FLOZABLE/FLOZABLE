@@ -1,0 +1,38 @@
+.FriendsBar {
+  display: flex;
+}
+
+.FriendsBar .OptionBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin: 0rem 0.5rem;
+  padding: 0.5rem 1rem;
+  transition: .3s ease-in-out color;
+  cursor: pointer;
+}
+
+.FriendsBar .OptionBox i {
+  font-size: 2rem;
+  margin-right: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.FriendsBar .OptionBox#selected {
+  color: green;
+}
+
+.FriendsBar .divider {
+  height: calc(100% - 1.5rem);
+  margin-top: 0.75rem;
+  width: 0.15rem;
+  background-color: var(--gray1);
+}
+
+/* .FriendsBar .box:nth-child(1) {
+  border-right: 1px solid var(--gray1);
+  padding-right: 1rem;
+} */
