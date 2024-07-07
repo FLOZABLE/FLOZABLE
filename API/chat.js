@@ -13,9 +13,7 @@ const {
   NotificationCache,
   dmRoomsCache,
   userCache,
-  dmRoomMembersCache,
   groupMembersCache,
-  msgReadCache,
 } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../Utils/validate");
 const { mainIo } = require("../sockets/mainIo");
