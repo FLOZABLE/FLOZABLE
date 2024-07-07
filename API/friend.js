@@ -2,7 +2,6 @@ const express = require("express");
 const {
   autoSignin,
   generateRandomId,
-  randomIntInRange,
   friendRecommendationGen,
 } = require("../Utils/tool");
 const {

@@ -6,40 +6,42 @@ import Link from "next/link";
 import {
   IconBxHome,
   IconClipboardOutline,
+  IconFriend,
   IconGalleryLine,
   IconPeople16,
   IconRankingChart,
   IconStatsChart,
-  IconUserAdd,
 } from "@/app/utils/Svg";
 import Image from "next/image";
 import { TutorialsContext } from "@/app/utils/Contexts";
 import TutorialBtn from "../../Buttons/TutorialBtn/TutorialBtn";
 import { usePathname } from "next/navigation";
+import { useWindowSize } from "@/Hooks/otherHooks";
 
 function SidebarEl({ pathname, href, children }) {
   return (
     <Link
       href={href}
-      className={styles.SidebarEl}
-      id={href === pathname ? styles.selected : ""}
+      className={`${styles.SidebarEl} ${href === pathname ? styles.activeSidebar : ""}`}
+      id={href === pathname ? "activeSidebar" : ""}
     >
-      <div className={styles.hoverEl}>
-        
-      </div>
       {children}
     </Link>
   );
 }
 
 function Sidebar({}) {
-  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
+  const { tutorialBoxRef, tutorialTextRef, tutorial } =
     useContext(TutorialsContext);
 
   const toStatsRef = useRef(null);
   const toGroupsRef = useRef(null);
 
+  const focusBackgroundRef = useRef(null);
+
   const pathname = usePathname();
+
+  const windowSize = useWindowSize();
 
   useEffect(() => {
     if (tutorial === 11) {
@@ -59,6 +61,17 @@ function Sidebar({}) {
     }
   }, [tutorial]);
 
+  useEffect(() => {
+    console.log(windowSize)
+    const activeItem = document.getElementById('activeSidebar');
+    if (activeItem && focusBackgroundRef.current) {
+      const itemRect = activeItem.getBoundingClientRect();
+      const sidebarRect = activeItem.parentElement.getBoundingClientRect();
+      const topOffset = itemRect.top - sidebarRect.top;
+      focusBackgroundRef.current.style.transform = `translateY(${topOffset}px)`;
+    }
+  }, [pathname, windowSize]);
+
   return (
     <aside className={styles.Sidebar}>
       <div className={styles.logo}>
@@ -72,6 +85,9 @@ function Sidebar({}) {
             style={{ width: "100%", height: "auto" }}
           />
         </a>
+      </div>
+      <div ref={focusBackgroundRef} id={styles.focusBackground}>
+        test
       </div>
       <SidebarEl pathname={pathname} href={"/dashboard"}>
         <i>
@@ -100,7 +116,7 @@ function Sidebar({}) {
       </SidebarEl>
       <SidebarEl pathname={pathname} href={"/dashboard/friends"}>
         <i>
-          <IconUserAdd />
+          <IconFriend />
         </i>
       </SidebarEl>
       <SidebarEl pathname={pathname} href={"/dashboard/themes"}>
@@ -108,140 +124,6 @@ function Sidebar({}) {
           <IconGalleryLine />
         </i>
       </SidebarEl>
-      {/* <Link href={"/dashboard"} className={styles.sidebarEl}>
-        <i>
-          <IconBxHome />
-        </i>
-      </Link>
-      <Link href={"/dashboard/stats"} className={styles.sidebarEl}>
-        <i ref={toStatsRef}>
-          <IconStatsChart />
-        </i>
-      </Link>
-      <Link href={"/dashboard/planner"} className={styles.sidebarEl}>
-        <i>
-          <IconClipboardOutline />
-        </i>
-      </Link>
-      <Link href={"/dashboard/ranking"} className={styles.sidebarEl}>
-        <i>
-          <IconRankingChart />
-        </i>
-      </Link>
-      <Link href={"/dashboard/groups"} className={styles.sidebarEl}>
-        <i ref={toGroupsRef}>
-          <IconPeople16 />
-        </i>
-      </Link>
-      <Link href={"/dashboard/friends"} className={styles.sidebarEl}>
-        <i>
-          <IconUserAdd />
-        </i>
-      </Link>
-      <Link href={"/dashboard/themes"} className={styles.sidebarEl}>
-        <i>
-          <IconGalleryLine />
-        </i>
-      </Link> */}
-      {/* <div className={styles.sidebarContainer}>
-        <div>
-          <Link
-            className={styles.sidebarEl}
-            href={"/dashboard"}
-          >
-            <div className={styles.hoverField}>
-              <h4>Dashboard</h4>
-            </div>
-            <i>
-              <IconBxHome />
-            </i>
-          </Link>
-        </div>
-        <div>
-          <Link
-            className={styles.sidebarEl}
-            href="/dashboard/stats"
-            id="tutorial-11"
-            onClick={() => {
-              if (tutorial === 11) {
-                setTutorial(12);
-              };
-            }}
-          >
-            <div className={styles.hoverField}>
-              <h4>Stats</h4>
-            </div>
-            <i ref={toStatsRef}>
-              <IconStatsChart />
-            </i>
-          </Link>
-        </div>
-        <div>
-          <Link
-            className={styles.sidebarEl}
-            href={"/dashboard/planner"}
-          >
-            <div className={styles.hoverField}>
-              <h4>Planner</h4>
-            </div>
-            <i>
-              <IconClipboardOutline />
-            </i>
-          </Link>
-        </div>
-        <div>
-          <Link
-            className={styles.sidebarEl}
-            href={"/dashboard/ranking"}
-          >
-            <div className={styles.hoverField}>
-              <h4>Rank</h4>
-            </div>
-            <i>
-              <IconRankingChart />
-            </i>
-          </Link>
-        </div>
-        <div>
-          <Link
-            className={styles.sidebarEl}
-            href={"/dashboard/groups"}
-          >
-            <div className={styles.hoverField}>
-              <h4>Groups</h4>
-            </div>
-            <i ref={toGroupsRef}>
-              <IconPeople16 />
-            </i>
-          </Link>
-        </div>
-        <div>
-          <Link
-            className={styles.sidebarEl}
-            href={"/dashboard/friends"}
-          >
-            <div className={styles.hoverField}>
-              <h4>Friends</h4>
-            </div>
-            <i>
-              <IconUserAdd />
-            </i>
-          </Link>
-        </div>
-        <div>
-          <Link
-            className={styles.sidebarEl}
-            href={"/dashboard/themes"}
-          >
-            <div className={styles.hoverField}>
-              <h4>Themes</h4>
-            </div>
-            <i>
-              <IconGalleryLine />
-            </i>
-          </Link>
-        </div>
-      </div> */}
       <TutorialBtn />
     </aside>
   );
