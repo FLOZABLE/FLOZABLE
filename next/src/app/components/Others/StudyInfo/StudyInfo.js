@@ -1,6 +1,12 @@
+import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import styles from "./StudyInfo.module.css";
 import { SubjectsContext } from "@/app/utils/Contexts";
-import { HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor } from "@/app/utils/Svg";
+import {
+  HeaderBook,
+  HeaderFocus,
+  HeaderMeteor,
+  HeaderMonitor,
+} from "@/app/utils/Svg";
 import {
   focusCalculator,
   secondConverter,
@@ -17,13 +23,18 @@ export default function StudyInfo() {
   const [longestSession, setLongestSession] = useState("0s");
   const [studyStreak, setStudyStreak] = useState("0 day"); //days of consecutive study
 
+  const { data: websitesData } = useExtensionUsage(
+    new Date(new Date().setHours(0, 0, 0, 0)),
+    "Daily"
+  );
+
   useEffect(() => {
     if (!subjects.daily) return;
 
     //Solve daily
     const todayTotal = todayTotalCalculator(subjects);
     const { value, type } = secondConverter(todayTotal);
-    setTotalStudied(value + " " +type);
+    setTotalStudied(value + " " + type);
 
     //Solve streak
     const streaks = streakCalculator(subjects);
@@ -38,6 +49,16 @@ export default function StudyInfo() {
       setLongestSession(formattedDuration.value + " " + formattedDuration.type);
     }
   }, [subjects]);
+
+  useEffect(() => {
+    if (!websitesData?.success || !websitesData.websites.length) return;
+
+    const totalWebsiteUsage = websitesData.websites.reduce((a, b) => {
+      return a + b;
+    });
+    const { value, type } = secondConverter(totalWebsiteUsage);
+    setAppUsage(value + " " + type);
+  }, [websitesData]);
 
   return (
     <div className={styles.StudyInfo}>

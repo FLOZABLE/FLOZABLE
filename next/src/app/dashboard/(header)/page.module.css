@@ -3,7 +3,6 @@
 }
 
 .Main .layer {
-  height: 50vh;
   display: flex;
 }
 
@@ -13,7 +12,11 @@
   background-color: #000;
 }
 
-.Main .layer:nth-child(1) > div {
+.Main .layer:nth-child(2) {
+  height: 50vh;
+}
+
+.Main .layer:nth-child(2) > div {
   flex: 1;
   height: 100%;
   display: flex;
@@ -31,6 +34,11 @@
   flex: 0;
 }
 
-.Main .layer:nth-child(2) {
-  width: calc(90% - 22.5rem);
+.Main .layer:nth-child(3) {
+  width: calc(100% - 29.5rem);
+  height: 50vh;
+}
+
+.Main .layer:nth-child(4) {
+  height: 50vh;
 }
