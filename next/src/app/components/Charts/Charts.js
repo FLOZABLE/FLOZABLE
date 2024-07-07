@@ -25,7 +25,14 @@ const pieCustomLabel = ({
       pointerEvents="none"
       filter="url(#solid)"
     >
-      <p style={{backgroundColor: "#ffffff9c", borderRadius: '0.25rem', fontSize: '1.2rem'}}>{`${(percent * 100).toFixed(0)}%`}</p>
+      <p
+        style={{
+          backgroundColor: "#ffffff9c",
+          borderRadius: "0.25rem",
+          fontSize: "1.2rem",
+          color: "#000",
+        }}
+      >{`${(percent * 100).toFixed(0)}%`}</p>
     </foreignObject>
   );
 };
@@ -39,6 +46,7 @@ const PieCustomTooltip = ({ active, payload }) => {
           padding: "0.375rem 0.625rem",
           borderRadius: "0.625rem",
           boxShadow: "rgba(149, 157, 165, 0.2) 0em 0.5rem 1.5rem",
+          color: "#000",
         }}
       >
         <p className="label">{`${payload[0].name} : ${payload[0].payload.labelVal}`}</p>

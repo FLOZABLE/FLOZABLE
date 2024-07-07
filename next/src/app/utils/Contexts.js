@@ -18,6 +18,7 @@ import { DEFAULT_PLAN } from "./Constant";
 import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import { usePlan } from "@/Hooks/planHooks";
+import { useGroups } from "@/Hooks/groupsHook";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -122,8 +123,9 @@ function SubjectsProvider({ children }) {
   const [plans, setPlans] = useState([]);
   const [planModal, setPlanModal] = useState(DEFAULT_PLAN);
 
-  const {data: subjectsData, refetch: refetchSubjectsData} = useSubjects(userInfo);
-  const {data: planData, refetch: refetchPlan} = usePlan(userInfo);
+  const { data: subjectsData, refetch: refetchSubjectsData } =
+    useSubjects(userInfo);
+  const { data: planData, refetch: refetchPlan } = usePlan(userInfo);
 
   useEffect(() => {
     if (!subjectsData?.success) return;
@@ -162,7 +164,9 @@ function SubjectsProvider({ children }) {
   }, [subjects]);
 
   return (
-    <SubjectsContext.Provider value={{ subjects, setSubjects, refetchSubjectsData }}>
+    <SubjectsContext.Provider
+      value={{ subjects, setSubjects, refetchSubjectsData }}
+    >
       <PlansContext.Provider
         value={{ plans, setPlans, planModal, setPlanModal, refetchPlan }}
       >
@@ -179,31 +183,26 @@ function GroupsProvider({ children }) {
   const [myGroups, setMyGroups] = useState([]);
   const [otherGroups, setOtherGroups] = useState([]);
 
-  const bringGroups = useCallback(() => {
-    fetch(`${config.server}/groups`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setGroups(data.groups);
-          setOtherGroups(data.groups);
-        }
-      })
-      .catch((error) => console.error(error));
-  }, []);
+  const { data: useGroupsData, refetch: refetchUseGroupsData } = useGroups();
 
   useEffect(() => {
-    bringGroups();
-  }, []);
+    if (!groups.length) return;
 
-  useEffect(() => {
+    if (userInfo === false) {
+      return setOtherGroups(groups);
+    }
+
     if (!userInfo) return;
     const { userGroups, otherGroups } = filterGroups(userInfo, groups);
     setMyGroups(userGroups);
     setOtherGroups(otherGroups);
   }, [userInfo, groups]);
+
+  useEffect(() => {
+    if (!useGroupsData?.success) return;
+
+    setGroups(useGroupsData.groups);
+  }, [useGroupsData]);
 
   return (
     <GroupsContext.Provider
