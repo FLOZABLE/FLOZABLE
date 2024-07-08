@@ -11,7 +11,7 @@ function DmBtn({ userInfo, padding }) {
   const { setChatModal } = useContext(ModalsContext);
 
   const requestChat = () => {
-    fetch(`${config.server}/chat/chat-request`, {
+    fetch(`${config.server}/chat/request`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

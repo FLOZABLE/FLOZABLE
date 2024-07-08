@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./ChatModal.module.css";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { ChatsContext, GroupsContext, ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { GroupsContext, ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
 import { BackArrow } from "@/app/utils/Svg";
 import config from "@/app/utils/config";
 import SendBtn from "@/app/components/Buttons/SendBtn/SendBtn";
@@ -26,7 +26,7 @@ function ChatModal({
   const [msgInput, setMsgInput] = useState("");
 
   useEffect(() => {
-    fetch(`${config.server}/chat/bring-rooms`, { method: "POST", credentials: "include" })
+    fetch(`${config.server}/chat/rooms`, { method: "GET", credentials: "include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -120,7 +120,7 @@ function ChatModal({
       chatRoom.name = name;
       chatRoom.color = color;
 
-      fetch(`${config.server}/chat/members?roomId=${id}`, { method: "get", credentials: "include" })
+      fetch(`${config.server}/chat/members?roomId=${id}`, { method: "GET", credentials: "include" })
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {

@@ -10,8 +10,8 @@ const USER_EXP_DIS = 60 * 60;
 
 const SBJ_EXP = 60 * 60 * 1;
 
-const DM_MEMBERS_EXP = 60 * 60 * 1;
-const GROUP_MEMBERS_EXP = 60 * 60 * 1;
+const DM_MEMBERS_EXP = 60 * 3;
+const GROUP_MEMBERS_EXP = 60 * 3;
 
 async function flushRedis() {
   await redisClient.flushDb();

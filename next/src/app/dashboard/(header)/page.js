@@ -10,12 +10,13 @@ import FriendsTrendChart from "@/app/components/Charts/FriendsTrendChart";
 import { useQuery } from "@tanstack/react-query";
 import { getFriendsRanking } from "@/Api/friendsApi";
 import { useContext } from "react";
-import { UserInfoContext } from "@/app/utils/Contexts";
+import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
 import StudyInfo from "@/app/components/Others/StudyInfo/StudyInfo";
 import FriendsBar from "@/app/components/Friends/FriendsBar/FriendsBar";
 
 export default function Dashboard() {
   const { userInfo } = useContext(UserInfoContext);
+  const { setChatModal } = useContext(ModalsContext);
 
   const { data: friendsRankingData } = useQuery({
     queryKey: [`friendTrend`],
@@ -27,6 +28,13 @@ export default function Dashboard() {
     <div className={`Main`}>
       <WelcomeModal />
       <div className="title">Dashboard</div>
+      <div
+        onClick={() => {
+          setChatModal((prev) => ({ ...prev, open: !prev.open }));
+        }}
+      >
+        dfd
+      </div>
       <div className={styles.Main}>
         <div className={styles.layer}>
           <FriendsBar />

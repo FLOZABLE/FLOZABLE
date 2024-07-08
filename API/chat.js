@@ -11,14 +11,13 @@ const {
   chatRoomsCache,
   usersCache,
   NotificationCache,
-  dmRoomsCache,
   userCache,
   groupMembersCache,
 } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../Utils/validate");
 const { mainIo } = require("../sockets/mainIo");
 
-Router.post("/bring-rooms", async (req, res) => {
+Router.get("/rooms", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     let rooms = await chatRoomsCache(userId);
     const roomPromises = rooms.map(async (room) => {
@@ -31,21 +30,6 @@ Router.post("/bring-rooms", async (req, res) => {
     const readStatus = await redisClient.hGetAll(`user:${userId}:chats`);
     res.send({ success: true, rooms, readStatus });
   });
-});
-
-Router.post("/bring-room", async (req, res) => { //Bring ONE room by ID
-  const { searchId } = req.body;
-  autoSignin(req, res, (async (userId) => {
-    let foundRoom = false;
-    let rooms = await chatRoomsCache(userId);
-    rooms.map(async (room) => {
-      if (room.id === searchId && !foundRoom) {
-        const chats = (await redisClient.lRange(`room:${room.id}:chats`, 0, -1)).map(JSON.parse);
-        res.send({ success: true, room: { ...room, chats } });
-        foundRoom = true;
-      }
-    });
-  }));
 });
 
 Router.get("/members", async (req, res) => {
@@ -66,7 +50,7 @@ Router.get("/members", async (req, res) => {
   });
 });
 
-Router.post("/chat-request", async (req, res) => {
+Router.post("/request", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     const { targetId } = req.body;
     const isValidTargetId = validateStrictString(targetId, "target user", 10);
@@ -127,10 +111,10 @@ Router.post("/chat-request", async (req, res) => {
   });
 });
 
-Router.post("/chat-request-reply", async (req, res) => {
+Router.post("/request/reply", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { targetId, accepted } = req.body;
+      const { targetId, notificationId, accepted } = req.body;
 
       const isValidTargetId = validateStrictString(targetId, "target user", 10);
 
@@ -144,13 +128,22 @@ Router.post("/chat-request-reply", async (req, res) => {
         return res.send({ success: false, reason: isValidAcceped.reason });
       }
 
-      const chatRequests = await NotificationCache(userId, 4, false);
+      /* const chatRequests = await NotificationCache(userId, 4, false);
       const chatReq = chatRequests.find((chatReq) => {
         return chatReq.f === targetId;
-      });
+      }); */
+
+      const chatReq = await redisClient.hGet(
+        `user:${userId}:notifications`,
+        notificationId
+      );
       if (!chatReq)
         return res.send({ success: false, reason: "expired request" });
-      redisClient.hDel(`user:${userId}:notifications`, chatReq.i);
+      const parsedChatReq = JSON.parse(chatReq);
+      if (!parsedChatReq.f === targetId)
+        return res.send({ success: false, reason: "expired request" });
+
+      redisClient.hDel(`user:${userId}:notifications`, notificationId);
       if (!accepted) {
         return res.send({ success: true, msg: `Declined chat request` });
       }
@@ -173,7 +166,10 @@ Router.post("/chat-request-reply", async (req, res) => {
 
       res.send({ success: true, msg: `Accepted chat request!` });
 
-      const myDmRooms = await dmRoomsCache(userId);
+      redisClient.hDel(`user:${userId}`, "dmRooms");
+      redisClient.hDel(`user:${targetId}`, "dmRooms");
+      redisClient.del(`room:${roomInfo.id}`);
+      /* const myDmRooms = await dmRoomsCache(userId);
       myDmRooms.push(roomInfo.id);
       const targetDmRooms = await dmRoomsCache(targetId);
       targetDmRooms.push(roomInfo.id);
@@ -183,7 +179,7 @@ Router.post("/chat-request-reply", async (req, res) => {
         "dmRooms",
         JSON.stringify(targetDmRooms)
       );
-      redisClient.sAdd(`room:${roomInfo.id}`, members);
+      redisClient.sAdd(`room:${roomInfo.id}`, members); */
     } catch (error) {
       console.log(error);
       res.send({ success: false, reason: "Failed" });
