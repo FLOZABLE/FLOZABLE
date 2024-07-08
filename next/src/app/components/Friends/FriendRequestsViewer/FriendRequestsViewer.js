@@ -43,7 +43,7 @@ function FriendRequestsViewer() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ targetId, accepted }),
+      body: JSON.stringify({ targetId, accepted, notificationId }),
       credentials:"include"
     })
       .then((response) => response.json())

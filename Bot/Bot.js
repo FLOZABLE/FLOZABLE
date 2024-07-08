@@ -1,4 +1,8 @@
-const { generateRandomId, hashing, randomIntInRange } = require("../Utils/tool");
+const {
+  generateRandomId,
+  hashing,
+  randomIntInRange,
+} = require("../Utils/tool");
 const fs = require("fs");
 const combinedNameData = require("../data/combinedNames.json");
 const groupsData = require("../data/Groups.json");
@@ -23,7 +27,7 @@ const {
 } = require("../services/redisLoader");
 const { mainIo } = require("../sockets/mainIo");
 const { MAX_STUDY_TIME } = require("../Constant");
-const {fr, sendFriendRequest, replyFriendRequest} = require("../API/friend");
+const { fr, sendFriendRequest, replyFriendRequest } = require("../API/friend");
 
 /**create bots */
 async function createBots(length) {
@@ -292,18 +296,23 @@ async function addFriends(botId, allMembers) {
       const targetId = allMembers[randomIntInRange(0, allMembers.length - 1)];
       const response = await sendFriendRequest(botId, targetId);
       console.log(response);
-    };
+    }
 
     const friendRequests = await NotificationCache(botId, 0, false);
-    friendRequests.map(async(request) => {
+    friendRequests.map(async (request) => {
       const accepted = randomIntInRange(0, 1) === 0 ? false : true;
-      const response = await replyFriendRequest(botId, request.f, accepted );
+      const response = await replyFriendRequest(
+        botId,
+        request.f,
+        accepted,
+        request.i
+      );
       console.log(response);
     });
   } catch (err) {
     console.log(err);
   }
-};
+}
 
 async function startBot(userId) {
   try {
@@ -356,9 +365,9 @@ async function stopBot(userId) {
     const duration = now - datum_point - start;
 
     if (duration > MAX_STUDY_TIME) {
-      console.log('max study exceeded: ', duration);
+      console.log("max study exceeded: ", duration);
       return;
-    };
+    }
 
     for (let i = -12; i < 12; i++) {
       redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
@@ -405,7 +414,6 @@ async function botSelector(numbers) {
 
   const activeBots = await redisClient.sMembers("activeBots");
 
-  
   const allMembers = await getActiveUsers("month");
 
   for (let i = 0; i < numbers; i++) {
