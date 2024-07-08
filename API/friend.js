@@ -89,12 +89,22 @@ async function sendFriendRequest(userId, targetId) {
   }
 }
 
-async function replyFriendRequest(userId, targetId, accepted) {
+async function replyFriendRequest(userId, targetId, accepted, notificationId) {
   try {
     const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
     if (!isValidTargetId.isValid) {
       return { success: false, reason: isValidTargetId.reason };
+    }
+
+    if (notificationId) {
+      const isValidNotificationId = validateStrictString(
+        notificationId,
+        "notification id",
+        10
+      );
+      if (!isValidNotificationId.isValid)
+        return { success: false, reason: isValidNotificationId.reason };
     }
 
     const isValidAcceped = validateBoolean(accepted, "accept", true);
@@ -103,11 +113,24 @@ async function replyFriendRequest(userId, targetId, accepted) {
       return { success: false, reason: isValidAcceped.reason };
     }
 
-    const friendRequests = await NotificationCache(userId, 0, false);
-    const friendReq = friendRequests.find((friendReq) => {
-      return friendReq.f === targetId;
-    });
-    if (!friendReq) return { success: false, reason: "expired request" };
+    let friendReq;
+
+    if (!notificationId) {
+      const friendRequests = await NotificationCache(userId, 0, false);
+      friendReq = friendRequests.find((friendReq) => {
+        return friendReq.f === targetId;
+      });
+
+      if (!friendReq) return { success: false, reason: "expired request" };
+    } else {
+      friendReq = await redisClient.hGet(
+        `user:${userId}:notifications`,
+        notificationId
+      );
+      if (!friendReq) return { success: false, reason: "expired request" };
+
+      friendReq = { id: notificationId, ...JSON.parse(friendReq) };
+    }
 
     redisClient.hDel(`user:${userId}:notifications`, friendReq.i);
     //remove it from ongoing friend req list
@@ -123,14 +146,14 @@ async function replyFriendRequest(userId, targetId, accepted) {
 
     const targetInfo = await userCache(targetId);
 
-    if (!targetInfo) return { success: false, reason: responseCodes["no-user"] };
-    
+    if (!targetInfo)
+      return { success: false, reason: responseCodes["no-user"] };
+
     if (userInfo.friends.includes(userId))
       return {
         success: true,
         msg: `You and ${targetInfo.name} were already friends!`,
       };
-
 
     await connection.query(
       `
@@ -162,7 +185,11 @@ async function replyFriendRequest(userId, targetId, accepted) {
     const notificationUser = await userCache(userId);
     const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
     mainIo.to(targetId).emit("notification", socketNotif);
-    redisClient.hSet(`user:${targetId}:notifications`, id, JSON.stringify(notification));
+    redisClient.hSet(
+      `user:${targetId}:notifications`,
+      id,
+      JSON.stringify(notification)
+    );
 
     //update cached value of user
     userInfo.friends.push(targetId);
@@ -200,7 +227,7 @@ async function replyFriendRequest(userId, targetId, accepted) {
         [roomInfo]
       );
 
-      const myDmRooms = await dmRoomsCache(userId);
+      /* const myDmRooms = await dmRoomsCache(userId);
       myDmRooms.push(roomInfo.id);
       const targetDmRooms = await dmRoomsCache(targetId);
       targetDmRooms.push(roomInfo.id);
@@ -209,14 +236,17 @@ async function replyFriendRequest(userId, targetId, accepted) {
         `user:${targetId}`,
         "dmRooms",
         JSON.stringify(targetDmRooms)
-      );
-      redisClient.sAdd(`room:${roomInfo.id}`, members);
+      ); 
+      redisClient.sAdd(`room:${roomInfo.id}`, members);*/
+
+      redisClient.hDel(`user:${userId}`, "dmRooms");
+      redisClient.hDel(`user:${targetId}`, "dmRooms");
 
       mainIo.to(userId).emit("joinChatRoom", roomInfo.id, true);
       mainIo.to(targetId).emit("joinChatRoom", roomInfo.id, true);
 
       //remove chat request if any
-      const myChatRequests = await NotificationCache(userId, 4, false);
+      /* const myChatRequests = await NotificationCache(userId, 4, false);
       const chatRequest = myChatRequests.find((chatRequest) => {
         return chatRequest.f === targetId;
       });
@@ -230,7 +260,7 @@ async function replyFriendRequest(userId, targetId, accepted) {
       });
       if (targetchatRequest) {
         redisClient.hDel(`user:${targetId}:notifications`, targetchatRequest.i);
-      }
+      } */
 
       return {
         success: true,
@@ -290,11 +320,16 @@ Router.delete("/request", async (req, res) => {
 Router.post("/request/reply", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { targetId, accepted } = req.body;
+      const { targetId, accepted, notificationId } = req.body;
 
-      const response = await replyFriendRequest(userId, targetId, accepted);
+      const response = await replyFriendRequest(
+        userId,
+        targetId,
+        accepted,
+        notificationId
+      );
 
-      console.log(response)
+      console.log(response);
       return res.send(response);
     } catch (error) {
       console.log(error);

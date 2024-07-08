@@ -394,10 +394,10 @@ Router.post("/join/:id", async (req, res) => {
       });
 
       //update cached value only if it exists
-      const isCached = await redisClient.exists(`room:${groupId}`);
+      /* const isCached = await redisClient.exists(`room:${groupId}`);
       if (isCached) {
         redisClient.sAdd(`room:${groupId}`, userId);
-      }
+      } */
 
       mainIo.to(userId).emit("joinChatRoom", groupId);
     } catch (err) {

@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import config from "./config";
 import { filterGroups } from "./Tool";
 import { socket } from "./socket";
@@ -34,7 +27,6 @@ const ModalsContext = createContext({});
 const CallOptionsContext = createContext({});
 const ThemesContext = createContext({});
 const WorkersContext = createContext({});
-const ChatsContext = createContext({});
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
@@ -52,11 +44,9 @@ function AppProvider({ children }) {
                   <CallOptionsProvider>
                     <ThemesProvider>
                       <WorkersProvider>
-                        <ChatsProvider>
-                          <GoogleOAuthProvider clientId={googleClientId}>
-                            {children}
-                          </GoogleOAuthProvider>
-                        </ChatsProvider>
+                        <GoogleOAuthProvider clientId={googleClientId}>
+                          {children}
+                        </GoogleOAuthProvider>
                       </WorkersProvider>
                     </ThemesProvider>
                   </CallOptionsProvider>
@@ -405,45 +395,6 @@ function WorkersProvider({ children }) {
   );
 }
 
-function ChatsProvider({ children }) {
-  const [chatRooms, setChatRooms] = useState([]);
-  const [chatModal, setCHatModal] = useState({
-    open: false,
-    chatRoom: false,
-  });
-  const [readStatus, setReadStatus] = useState({});
-
-  useEffect(() => {
-    fetch(`${config.server}/chat/bring-rooms`, {
-      method: "POST",
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setChatRooms(data.rooms);
-          setReadStatus(data.readStatus);
-        }
-      })
-      .catch((error) => console.error(error));
-  }, []);
-
-  return (
-    <ChatsContext.Provider
-      value={{
-        chatRooms,
-        setChatRooms,
-        chatModal,
-        setCHatModal,
-        readStatus,
-        setReadStatus,
-      }}
-    >
-      {children}
-    </ChatsContext.Provider>
-  );
-}
-
 export {
   AppProvider,
   AuthContext,
@@ -458,5 +409,4 @@ export {
   CallOptionsContext,
   ThemesContext,
   WorkersContext,
-  ChatsContext,
 };

@@ -30,7 +30,7 @@ function NotificationModal({}) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ targetId, accepted }),
+      body: JSON.stringify({ targetId, accepted, notificationId }),
       credentials: "include",
     })
       .then((response) => response.json())
@@ -54,8 +54,7 @@ function NotificationModal({}) {
       credentials: "include",
     })
       .then((response) => response.json())
-      .then((data) => {
-      })
+      .then((data) => {})
       .catch((error) => console.error(error));
 
     setNotifications(
@@ -84,12 +83,12 @@ function NotificationModal({}) {
   }; */
 
   const chatRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${config.server}/chat/chat-request-reply`, {
+    fetch(`${config.server}/chat/request/reply`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ targetId, accepted }),
+      body: JSON.stringify({ targetId, notificationId, accepted }),
       credentials: "include",
     })
       .then((response) => response.json())

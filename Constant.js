@@ -25,6 +25,11 @@ const responseCodes = {
     reason: "Invalid User",
     code: 401,
   },
+  "no-group": {
+    success: false,
+    reason: "Invalid Group",
+    code: 401
+  }
 };
 
 const USER_ID_COOKIE_OPTIONS = {
