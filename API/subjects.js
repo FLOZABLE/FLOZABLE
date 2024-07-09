@@ -61,7 +61,7 @@ Router.put("/", async (req, res) => {
         delete subjectInfo.user_id;
         subjectInfo.timeline_sum = 0;
         subjectInfo.tools = "";
-        redisClient.hSet(
+        redisClient.hset(
           `user:${userId}:subjects`,
           subjectInfo.id,
           JSON.stringify(subjectInfo)
@@ -131,13 +131,13 @@ Router.patch("/", async (req, res) => {
         });
 
         const previousSubject = JSON.parse(
-          await redisClient.hGet(`user:${userId}:subjects`, subjectInfo.id)
+          await redisClient.hget(`user:${userId}:subjects`, subjectInfo.id)
         );
         previousSubject.name = subjectInfo.name;
         previousSubject.icon = subjectInfo.icon;
         previousSubject.color = subjectInfo.color;
         previousSubject.tools = subjectInfo.tools;
-        redisClient.hSet(
+        redisClient.hset(
           `user:${userId}:subjects`,
           subjectInfo.id,
           JSON.stringify(previousSubject)
@@ -182,7 +182,7 @@ Router.delete("/", async (req, res) => {
           });
 
           const todayTimeline = (
-            await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)
+            await redisClient.lrange(`user:${userId}:subject:${id}`, 0, -1)
           ).map(JSON.parse);
           const parsedTimeline = JSON.parse(
             prevTimeline.timeline.replace(/^/, "[").replace(/$/, "]")
@@ -222,7 +222,7 @@ Router.delete("/", async (req, res) => {
       );
 
       await redisClient.del(`user:${userId}:subject:${subjectId}`);
-      await redisClient.hDel(`user:${userId}:subjects`, subjectId);
+      await redisClient.hdel(`user:${userId}:subjects`, subjectId);
 
       console.log("deleted");
 

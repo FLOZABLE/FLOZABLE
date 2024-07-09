@@ -91,7 +91,7 @@ async function createAccount(name, email, timezone, userInfo) {
     connection.query(`INSERT INTO subjects SET ?`, subject);
 
     const authId = generateRandomId(10);
-    await redisClient.setEx(`extension:auth:${authId}`, 10, user_id);
+    await redisClient.setex(`extension:auth:${authId}`, 10, user_id);
 
     return { success: true, user_id };
   } catch (err) {
@@ -232,7 +232,7 @@ Router.post("/link/send", async (req, res) => {
     try {
       const userInfo = await userCache(userId);
       const randomId = generateRandomId(10);
-      await redisClient.setEx(`verify:${userInfo.email}`, 3600, randomId);
+      await redisClient.setex(`verify:${userInfo.email}`, 3600, randomId);
       const params = {
         resetURL: `${process.env.EMAIL_SERVER}/account/verify-by-link?verifyId=${randomId}`,
       };

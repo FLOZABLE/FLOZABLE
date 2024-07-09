@@ -39,7 +39,7 @@ async function updateDailyRanking(now, users, timezoneOffset) {
   try {
     const filteredUsers = [];
     await Promise.all(users.map(async (userId) => {
-      const todayTotal = await redisClient.zScore(`user:${userId}:dayTotal`, timezoneOffset);
+      const todayTotal = await redisClient.zscore(`user:${userId}:dayTotal`, timezoneOffset);
       if (todayTotal > MAX_STUDY_TIME) return;
       //update week total, month total
       if (todayTotal) {
@@ -70,7 +70,7 @@ async function updateWeeklyRanking(now, users, timezoneOffset) {
     const filteredUsers = [];
     await Promise.all(users.map(async (userId) => {
       //const thisWeekTotal = await redisClient.get(`user:${userId}:weekTotal`);
-      const thisWeekTotal = await redisClient.zScore(`user:${userId}:weekTotal`, timezoneOffset);
+      const thisWeekTotal = await redisClient.zscore(`user:${userId}:weekTotal`, timezoneOffset);
       if (thisWeekTotal) {
         filteredUsers.push({ u: userId, t: thisWeekTotal });
       };
@@ -97,7 +97,7 @@ async function updateMonthlyRanking(now, users, timezoneOffset) {
     const filteredUsers = [];
     await Promise.all(users.map(async (userId) => {
       //const thisMonthTotal = await redisClient.get(`user:${userId}:monthTotal`);
-      const thisMonthTotal = await redisClient.zScore(`user:${userId}:monthTotal`, timezoneOffset);
+      const thisMonthTotal = await redisClient.zscore(`user:${userId}:monthTotal`, timezoneOffset);
       if (thisMonthTotal) {
         filteredUsers.push({ u: userId, t: thisMonthTotal });
       }
@@ -185,7 +185,7 @@ async function createRankings(offset) {
 
     await Promise.all(subjects.map(async(subject) => {
       let parsedTimeline = subject.timeline ? JSON.parse(subject.timeline.replace(/^/, "[").replace(/$/, "]")) : [];
-      const todayTimeline = (await redisClient.lRange(`user:${subject.user_id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
+      const todayTimeline = (await redisClient.lrange(`user:${subject.user_id}:subject:${subject.id}`, 0, -1)).map(JSON.parse);
       parsedTimeline = parsedTimeline.concat(todayTimeline);
 
       let timelineSum = 0;

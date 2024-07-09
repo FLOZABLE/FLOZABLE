@@ -599,7 +599,7 @@ Router.post("/share", async (req, res) => {
           pi: planId,
         };
         mainIo.to(targetId).emit("notification", socketNotif);
-        redisClient.hSet(
+        redisClient.hset(
           `user:${targetId}:notifications`,
           id,
           JSON.stringify(notification)
@@ -666,7 +666,7 @@ Router.delete("/share", async (req, res) => {
         return planRequest.pi === planId;
       });
       if (planRequest) {
-        redisClient.hDel(`user:${targetId}:notifications`, planRequest.i);
+        redisClient.hdel(`user:${targetId}:notifications`, planRequest.i);
       }
       res.send({ success: true, msg: `Removed user!` });
     } catch (err) {
@@ -708,7 +708,7 @@ Router.post("/share/respond", async (req, res) => {
       if (!userInfo)
         return res.send({ success: false, reason: responseCodes["no-user"] });
 
-      redisClient.hDel(`user:${userId}:notifications`, planRequest.i);
+      redisClient.hdel(`user:${userId}:notifications`, planRequest.i);
 
       const connection = pool.promise();
       const [[planInfo]] = await connection.query(
@@ -747,7 +747,7 @@ Router.post("/share/respond", async (req, res) => {
 
         const targetId = planInfo.user_id;
         mainIo.to(targetId).emit("notification", socketNotif);
-        redisClient.hSet(
+        redisClient.hset(
           `user:${targetId}:notifications`,
           id,
           JSON.stringify(notification)

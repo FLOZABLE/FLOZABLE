@@ -333,7 +333,7 @@ async function startBot(userId) {
     const { datum_point, id } = subject;
     const start = now - datum_point;
     redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
-    redisClient.hSet(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
+    redisClient.hset(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
     addActiveUserCache(userId);
   } catch (err) {
     console.log(err);
@@ -344,8 +344,8 @@ async function stopBot(userId) {
   try {
     const now = Math.floor(new Date().getTime() / 1000);
 
-    redisClient.hDel(`user:${userId}`, `ActiveSubject`);
-    redisClient.sRem("activeBots", userId);
+    redisClient.hdel(`user:${userId}`, `ActiveSubject`);
+    redisClient.srem("activeBots", userId);
     const activeSubject = await activeSubjectCache(userId);
     if (!activeSubject || activeSubject.id === "0") return;
     const subject = await subjectCache(userId, activeSubject.id);
@@ -412,7 +412,7 @@ async function botSelector(numbers) {
   //const [subjects] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects`)
   const now = DateTime.now();
 
-  const activeBots = await redisClient.sMembers("activeBots");
+  const activeBots = await redisClient.smembers("activeBots");
 
   const allMembers = await getActiveUsers("month");
 
@@ -444,11 +444,11 @@ async function botSelector(numbers) {
   }
 
   //update active bot list in redis
-  redisClient.sAdd("activeBots", activeBots);
+  redisClient.sadd("activeBots", activeBots);
 }
 
 async function botManager(numbers) {
-  const activeBots = await redisClient.sMembers("activeBots");
+  const activeBots = await redisClient.smembers("activeBots");
   await Promise.all(
     activeBots.map(async (botId) => {
       await stopBot(botId);
