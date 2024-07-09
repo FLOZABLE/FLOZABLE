@@ -136,8 +136,9 @@ async function dmRoomsCache(userId) {
     redisClient.hSet(
       `user:${userId}`,
       "dmRooms",
-      dmRooms.map(({ id }) => id).join()
+      dmRooms.map(({ id }) => id).toString()
     );
+    redisClient.expire(`user:${userId}`, DM_MEMBERS_EXP);
 
     return dmRooms;
   }
@@ -390,6 +391,14 @@ async function userCache(userId, query = true) {
   }
 }
 
+async function clearUserCache(userId) {
+  try {
+    return redisClient.del(`user:${userId}`);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 /**
  * upgraded version of user cache, if user is cached, return userCache result, otherwise, combine users that are not cached and handle as one query
  * @param {*} users
@@ -461,7 +470,10 @@ async function NotificationCache(userId, type = -1, processData = true) {
   const notificationsObj = {
     ...(await redisClient.hGetAll(`user:${userId}:notifications`)),
   };
-  const notifications = Object.keys(notificationsObj).map((id) => ({i: id, ...JSON.parse(notificationsObj[id])}));
+  const notifications = Object.keys(notificationsObj).map((id) => ({
+    i: id,
+    ...JSON.parse(notificationsObj[id]),
+  }));
   await Promise.all(
     notifications.map(async (notification) => {
       if (notification.f && processData) {
@@ -508,22 +520,6 @@ async function subjectsTimelineCache(userId) {
 
   const subjects = await Promise.all(subjectPromises);
   return subjects;
-}
-
-async function groupInfoCache(groupId) {
-  const isCached = await redisClient.exists(`group:${groupId}`);
-  if (isCached) {
-    const groupInfo = await redisClient.hGetAll(`group:${groupId}`);
-  } else {
-    const connection = pool.promise();
-    const [[groupInfo]] = await connection.query(
-      "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes, font FROM `groups` WHERE group_id = ?",
-      [groupId]
-    );
-    const { group_id, name, leader, visibility, explanation, date, members } =
-      groupInfo;
-    redisClient.sMembers(`group:${groupId}`, members);
-  }
 }
 
 async function msgReadCache(userId) {
@@ -660,6 +656,7 @@ module.exports = {
   usersCache,
   dmRoomsCache,
   userCache,
+  clearUserCache,
   subjectsTimelineCache,
   activeGroupCache,
   msgReadCache,
