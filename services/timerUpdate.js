@@ -22,7 +22,7 @@ async function timerUpdate() {
         activity = JSON.parse(await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`));
       };
       await Promise.all(subjects.map(async ({ id, timeline_sum }) => {
-        let todayTimeline = (await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
+        let todayTimeline = (await redisClient.lrange(`user:${userId}:subject:${id}`, 0, -1)).map(JSON.parse);
         if (todayTimeline.length) {
           //const insertTimeline = await connection.query(`UPDATE subjects SET timeline = JSON_ARRAY_APPEND(timeline, '$', ?) WHERE id = ?`, [JSON.stringify(todayTimeline), subject])
           //this changes from [[39102,39104],[39105,39109],[39109,39112]] to [39102,39104],[39105,39109],[39109,39112]

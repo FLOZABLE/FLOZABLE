@@ -154,7 +154,7 @@ async function todaySorting(users, timezoneOffset) {
   const filteredUsers = [];
   await Promise.all(
     users.map(async (userId) => {
-      const todayTotal = await redisClient.zScore(
+      const todayTotal = await redisClient.zscore(
         `user:${userId}:dayTotal`,
         timezoneOffset
       );
@@ -172,11 +172,11 @@ async function thisWeekSorting(users, timezoneOffset) {
 
   await Promise.all(
     users.map(async (userId) => {
-      const weekTotal = await redisClient.zScore(
+      const weekTotal = await redisClient.zscore(
         `user:${userId}:weekTotal`,
         timezoneOffset.toString()
       );
-      const todayTotal = await redisClient.zScore(
+      const todayTotal = await redisClient.zscore(
         `user:${userId}:dayTotal`,
         timezoneOffset.toString()
       );
@@ -195,11 +195,11 @@ async function thisMonthSorting(users, timezoneOffset) {
 
   await Promise.all(
     users.map(async (userId) => {
-      const monthTotal = await redisClient.zScore(
+      const monthTotal = await redisClient.zscore(
         `user:${userId}:monthTotal`,
         timezoneOffset.toString()
       );
-      const todayTotal = await redisClient.zScore(
+      const todayTotal = await redisClient.zscore(
         `user:${userId}:dayTotal`,
         timezoneOffset.toString()
       );
@@ -575,15 +575,15 @@ Router.get("/friends", async (req, res) => {
         let today = DateTime.now().setZone(timezone).startOf("day");
         const timezoneOffset = Math.floor(today.offset / 60).toString();
 
-        userInfo.dayTotal = await redisClient.zScore(
+        userInfo.dayTotal = await redisClient.zscore(
           `user:${userId}:dayTotal`,
           timezoneOffset
         );
-        userInfo.weekTotal = await redisClient.zScore(
+        userInfo.weekTotal = await redisClient.zscore(
           `user:${userId}:weekTotal`,
           timezoneOffset
         );
-        userInfo.monthTotal = await redisClient.zScore(
+        userInfo.monthTotal = await redisClient.zscore(
           `user:${userId}:monthTotal`,
           timezoneOffset
         );
@@ -604,15 +604,15 @@ Router.get("/friends", async (req, res) => {
             friend = await userCache(friend);
             if (friend) {
               const userId = friend.user_id;
-              friend.dayTotal = await redisClient.zScore(
+              friend.dayTotal = await redisClient.zscore(
                 `user:${userId}:dayTotal`,
                 timezoneOffset
               );
-              friend.weekTotal = await redisClient.zScore(
+              friend.weekTotal = await redisClient.zscore(
                 `user:${userId}:weekTotal`,
                 timezoneOffset
               );
-              friend.monthTotal = await redisClient.zScore(
+              friend.monthTotal = await redisClient.zscore(
                 `user:${userId}:monthTotal`,
                 timezoneOffset
               );

@@ -39,7 +39,7 @@ async function removeDupedFriends() {
     if (uniqFriends.length !== user.friends.length) {
       console.log('dupe detected')
       const stringFriends = uniqFriends.join(',');
-      redisClient.hSet(`user:${user.user_id}`, 'friends', stringFriends);
+      redisClient.hset(`user:${user.user_id}`, 'friends', stringFriends);
       connection.query(`UPDATE users set friends = ? WHERE user_id = ?`, [stringFriends, user.user_id]);
     }
   })

@@ -22,12 +22,12 @@ Router.get("/rooms", async (req, res) => {
     let rooms = await chatRoomsCache(userId);
     const roomPromises = rooms.map(async (room) => {
       const chats = (
-        await redisClient.lRange(`room:${room.id}:chats`, 0, -1)
+        await redisClient.lrange(`room:${room.id}:chats`, 0, -1)
       ).map(JSON.parse);
       return { ...room, chats };
     });
     rooms = await Promise.all(roomPromises);
-    const readStatus = await redisClient.hGetAll(`user:${userId}:chats`);
+    const readStatus = await redisClient.hgetall(`user:${userId}:chats`);
     res.send({ success: true, rooms, readStatus });
   });
 });
@@ -102,7 +102,7 @@ Router.post("/request", async (req, res) => {
       d: date,
     };
     mainIo.to(targetId).emit("notification", socketNotification);
-    redisClient.hSet(
+    redisClient.hset(
       `user:${targetId}:notifications`,
       id,
       JSON.stringify(notification)
@@ -133,7 +133,7 @@ Router.post("/request/reply", async (req, res) => {
         return chatReq.f === targetId;
       }); */
 
-      const chatReq = await redisClient.hGet(
+      const chatReq = await redisClient.hget(
         `user:${userId}:notifications`,
         notificationId
       );
@@ -143,7 +143,7 @@ Router.post("/request/reply", async (req, res) => {
       if (!parsedChatReq.f === targetId)
         return res.send({ success: false, reason: "expired request" });
 
-      redisClient.hDel(`user:${userId}:notifications`, notificationId);
+      redisClient.hdel(`user:${userId}:notifications`, notificationId);
       if (!accepted) {
         return res.send({ success: true, msg: `Declined chat request` });
       }
@@ -166,20 +166,20 @@ Router.post("/request/reply", async (req, res) => {
 
       res.send({ success: true, msg: `Accepted chat request!` });
 
-      redisClient.hDel(`user:${userId}`, "dmRooms");
-      redisClient.hDel(`user:${targetId}`, "dmRooms");
+      redisClient.hdel(`user:${userId}`, "dmRooms");
+      redisClient.hdel(`user:${targetId}`, "dmRooms");
       redisClient.del(`room:${roomInfo.id}`);
       /* const myDmRooms = await dmRoomsCache(userId);
       myDmRooms.push(roomInfo.id);
       const targetDmRooms = await dmRoomsCache(targetId);
       targetDmRooms.push(roomInfo.id);
-      redisClient.hSet(`user:${userId}`, "dmRooms", JSON.stringify(myDmRooms));
-      redisClient.hSet(
+      redisClient.hset(`user:${userId}`, "dmRooms", JSON.stringify(myDmRooms));
+      redisClient.hset(
         `user:${targetId}`,
         "dmRooms",
         JSON.stringify(targetDmRooms)
       );
-      redisClient.sAdd(`room:${roomInfo.id}`, members); */
+      redisClient.sadd(`room:${roomInfo.id}`, members); */
     } catch (error) {
       console.log(error);
       res.send({ success: false, reason: "Failed" });

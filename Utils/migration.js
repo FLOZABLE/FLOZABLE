@@ -17,7 +17,7 @@ async function updateSubjectsTimeline(limit) {
           ? JSON.parse(subject.timeline.replace(/^/, "[").replace(/$/, "]"))
           : [];
         const todayTimeline = (
-          await redisClient.lRange(
+          await redisClient.lrange(
             `user:${subject.user_id}:subject:${subject.id}`,
             0,
             -1
@@ -54,15 +54,15 @@ async function updateSubjectsTimeline(limit) {
 }
 
 async function redisUsersCache() {
-  const prevAllMembers = await redisClient.sMembers("allMembers");
-  redisClient.sAdd("day1", prevAllMembers);
-  redisClient.sAdd("day2", prevAllMembers);
+  const prevAllMembers = await redisClient.smembers("allMembers");
+  redisClient.sadd("day1", prevAllMembers);
+  redisClient.sadd("day2", prevAllMembers);
 
-  redisClient.sAdd("week1", prevAllMembers);
-  redisClient.sAdd("week2", prevAllMembers);
+  redisClient.sadd("week1", prevAllMembers);
+  redisClient.sadd("week2", prevAllMembers);
 
-  redisClient.sAdd("month1", prevAllMembers);
-  redisClient.sAdd("month2", prevAllMembers);
+  redisClient.sadd("month1", prevAllMembers);
+  redisClient.sadd("month2", prevAllMembers);
 }
 
 async function activitySettingsMigration() {

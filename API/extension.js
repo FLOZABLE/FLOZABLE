@@ -16,7 +16,7 @@ const { extensionIo } = require("../sockets/extensionIo");
 Router.post("/auth", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     const authId = generateRandomId(10);
-    await redisClient.setEx(`extension:auth:${authId}`, 10, userId);
+    await redisClient.setex(`extension:auth:${authId}`, 10, userId);
     return res.send({ success: true, authId });
   });
 });
@@ -162,12 +162,12 @@ Router.patch("/settings", async (req, res) => {
 
 Router.get("/tabs", async (req, res) => {
   autoSignin(req, res, async (userId) => {
-    const tabsTimer = await redisClient.zRangeWithScores(
+    const tabsTimer = await redisClient.zrangewithscores(
       `user:${userId}:tabs:timer`,
       0,
       -1
     );
-    const tabsUsage = await redisClient.zRangeWithScores(
+    const tabsUsage = await redisClient.zrangewithscores(
       `user:${userId}:tabs:usage`,
       0,
       -1

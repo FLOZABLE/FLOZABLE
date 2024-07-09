@@ -22,7 +22,7 @@ Router.post("/read", async (req, res) => {
         });
       }
 
-      redisClient.hDel(`user:${userId}:notifications`, notificationId);
+      redisClient.hdel(`user:${userId}:notifications`, notificationId);
       res.send({ success: true });
     } catch (error) {
       console.log(error);

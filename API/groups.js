@@ -143,7 +143,7 @@ Router.put("/group", async (req, res) => {
         const { groups } = userInfo;
 
         groups.push(group_id);
-        redisClient.hSet(`user:${userId}`, "groups", groups.toString());
+        redisClient.hset(`user:${userId}`, "groups", groups.toString());
 
         try {
           const connection = pool.promise();
@@ -377,12 +377,12 @@ Router.post("/join/:id", async (req, res) => {
       res.send({ success: true, msg: `Joined group "${groupInfo.name}"` });
       const { groups } = userInfo;
       groups.push(groupId);
-      redisClient.hSet(`user:${userId}`, "groups", groups.join(","));
+      redisClient.hset(`user:${userId}`, "groups", groups.join(","));
       //send user's study information to group members
       const activeSubject = await activeSubjectCache(userId);
       const today = DateTime.now().setZone(userInfo.timezone);
       const timezoneOffset = Math.floor(today.offset / 60).toString();
-      let totalTime = await redisClient.zScore(
+      let totalTime = await redisClient.zscore(
         `user:${userId}:dayTotal`,
         timezoneOffset
       );
@@ -396,7 +396,7 @@ Router.post("/join/:id", async (req, res) => {
       //update cached value only if it exists
       /* const isCached = await redisClient.exists(`room:${groupId}`);
       if (isCached) {
-        redisClient.sAdd(`room:${groupId}`, userId);
+        redisClient.sadd(`room:${groupId}`, userId);
       } */
 
       mainIo.to(userId).emit("joinChatRoom", groupId);
@@ -444,9 +444,9 @@ Router.post("/leave", async (req, res) => {
         userId,
       ]);
 
-      redisClient.hSet(`user:${userId}`, "groups", userInfo.groups.toString());
+      redisClient.hset(`user:${userId}`, "groups", userInfo.groups.toString());
 
-      redisClient.sRem(`room:${groupId}`, userId);
+      redisClient.srem(`room:${groupId}`, userId);
 
       mainIo.emit(`removeMember`, groupId, userId);
 
@@ -488,9 +488,9 @@ Router.delete("/member", async (req, res) => {
       );
 
       merberInfo.groups = merberInfo.groups.filter((g) => g != groupId);
-      redisClient.hSet(`user:${memberId}`, "groups", merberInfo.groups.toString());
+      redisClient.hset(`user:${memberId}`, "groups", merberInfo.groups.toString());
 
-      redisClient.sRem(`room:${groupId}`, memberId);
+      redisClient.srem(`room:${groupId}`, memberId);
       mainIo.emit(`removeMember`, groupId, memberId);
 
       return res.send({ success: true });
@@ -626,7 +626,7 @@ Router.get("/members", async (req, res) => {
           );
           const memberStudyDataPromises = membersData.map(async (member) => {
             const { user_id } = member;
-            let totalTime = await redisClient.zScore(
+            let totalTime = await redisClient.zscore(
               `user:${user_id}:dayTotal`,
               timezoneOffset
             );

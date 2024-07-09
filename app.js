@@ -40,7 +40,6 @@ if (process.env.isHttps === "true") {
 //redis
 const RedisStore = require("connect-redis").default;
 const redisClient = require("./model/redis");
-redisClient.connect().catch(console.error);
 const redisStore = new RedisStore({
   client: redisClient,
   ttl: 60 * 60 * 24 * 3,

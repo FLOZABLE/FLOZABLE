@@ -73,7 +73,7 @@ Router.post("/password-email", async (req, res) => {
 
     if (!resetId) {
       resetId = generateRandomId(30);
-      redisClient.setEx(`resetPw:${email}`, PASSWORD_LINK_EXP, resetId);
+      redisClient.setex(`resetPw:${email}`, PASSWORD_LINK_EXP, resetId);
       const params = {
         resetURL: `${process.env.SERVER}/account/reset-password?resetId=${resetId}&email=${email}`,
       };
@@ -216,8 +216,8 @@ Router.patch("/info", async (req, res) => {
         return res.send({ success: false, reason: 'Not Supported Language' });
       } */
       const updateInfo = [{ name: name, email: email }, userId];
-      redisClient.hSet(`user:${userId}`, "name", name);
-      redisClient.hSet(`user:${userId}`, "email", email);
+      redisClient.hset(`user:${userId}`, "name", name);
+      redisClient.hset(`user:${userId}`, "email", email);
       await connection.query(
         "UPDATE users set ? WHERE user_id = ?",
         updateInfo

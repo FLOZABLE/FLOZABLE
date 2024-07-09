@@ -54,7 +54,7 @@ Router.post("/challenge-request", async (req, res) => {
         const socketNotif = { i: id, t: 2, f: notificationUser, d: date };
         const notification = { i: id, t: 2, f: userId, d: date };
         mainIo.to(targetId).emit("notification", socketNotif);
-        redisClient.sAdd(
+        redisClient.sadd(
           `user:${targetId}:notifications`,
           JSON.stringify(notification)
         );
@@ -96,7 +96,7 @@ Router.post("/challenge-request-reply", async (req, res) => {
       });
       if (!challengeReq)
         return res.send({ success: false, reason: "Challenge Expired" });
-      redisClient.sRem(
+      redisClient.srem(
         `user:${userId}:notifications`,
         JSON.stringify(challengeReq)
       );
@@ -117,7 +117,7 @@ Router.post("/challenge-request-reply", async (req, res) => {
       };
       const notification = { i: id, t: 3, f: userId, d: date, c: challengeId };
       mainIo.to(targetId).emit("notification", socketNotif);
-      redisClient.sAdd(
+      redisClient.sadd(
         `user:${targetId}:notifications`,
         JSON.stringify(notification)
       );
@@ -158,7 +158,7 @@ Router.post("/challenge-notif", async (req, res) => {
       const challengeReq = challengeRequests.find((challengeR) => {
         return challengeR.f === targetId;
       });
-      redisClient.sRem(
+      redisClient.srem(
         `user:${targetId}:notifications`,
         JSON.stringify(challengeReq)
       );
@@ -283,13 +283,13 @@ Router.post("/create-challenge", async (req, res) => {
 
       const id = generateRandomId(10);
 
-      await redisClient.hSet(`challenge:${id}`, `hostId`, userId);
-      redisClient.hSet(`challenge:${id}`, `startDate`, startDate);
-      redisClient.hSet(`challenge:${id}`, `name`, title);
-      redisClient.hSet(`challenge:${id}`, `hostId`, userId);
-      redisClient.hSet(`challenge:${id}`, `description`, description);
+      await redisClient.hset(`challenge:${id}`, `hostId`, userId);
+      redisClient.hset(`challenge:${id}`, `startDate`, startDate);
+      redisClient.hset(`challenge:${id}`, `name`, title);
+      redisClient.hset(`challenge:${id}`, `hostId`, userId);
+      redisClient.hset(`challenge:${id}`, `description`, description);
 
-      redisClient.sAdd("allChallenges", id);
+      redisClient.sadd("allChallenges", id);
 
       redisClient.expire(`challenge:${id}`, parseInt(expireSeconds));
 
@@ -339,7 +339,7 @@ Router.post("/join-challenge", async (req, res) => {
         return res.send({ success: false, reason: isValidJoinId.reason });
       }
 
-      const challengeRoom = await redisClient.hGetAll(`challenge:${joinId}`);
+      const challengeRoom = await redisClient.hgetall(`challenge:${joinId}`);
 
       if (!challengeRoom || !challengeRoom.hostId) {
         res.send({ success: false, reason: "Challenge Does Not Exist" });
@@ -349,7 +349,7 @@ Router.post("/join-challenge", async (req, res) => {
       const connection = pool.promise();
 
       const deletedChallenge = redisClient.del(`challenge:${joinId}`);
-      redisClient.sRem("allChallenges", [joinId]);
+      redisClient.srem("allChallenges", [joinId]);
       redisClient.zIncrBy(
         `user:${challengeRoom.hostId}:ratelimit`,
         -1,
@@ -379,7 +379,7 @@ Router.post("/join-challenge", async (req, res) => {
         c: joinId,
       };
       mainIo.to(challengeRoom.host_id).emit("notification", socketNotif);
-      redisClient.sAdd(
+      redisClient.sadd(
         `user:${challengeRoom.hostId}:notifications`,
         JSON.stringify(notification)
       );
