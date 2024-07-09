@@ -67,7 +67,7 @@ async function sendFriendRequest(userId, targetId) {
     const notification = { t: 0, f: userId, d: date };
     mainIo.to(targetId).emit("notification", socketNotif);
     //to target user
-    redisClient.hSet(
+    redisClient.hset(
       `user:${targetId}:notifications`,
       id,
       JSON.stringify(notification)
@@ -75,7 +75,7 @@ async function sendFriendRequest(userId, targetId) {
 
     //to me
     const ongoing = { t: -2, f: targetId };
-    redisClient.hSet(
+    redisClient.hset(
       `user:${userId}:notifications`,
       id,
       JSON.stringify(ongoing)
@@ -124,7 +124,7 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId) {
 
       if (!friendReq) return { success: false, reason: "expired request" };
     } else {
-      friendReq = await redisClient.hGet(
+      friendReq = await redisClient.hget(
         `user:${userId}:notifications`,
         notificationId
       );
@@ -133,9 +133,9 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId) {
       friendReq = { id: notificationId, ...JSON.parse(friendReq) };
     }
 
-    redisClient.hDel(`user:${userId}:notifications`, friendReq.i);
+    redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
     //remove it from ongoing friend req list
-    redisClient.hDel(`user:${targetId}:notifications`, friendReq.i);
+    redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
     if (!accepted) {
       return { success: true, msg: "Declined Friend Request!" };
     }
@@ -186,7 +186,7 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId) {
     const notificationUser = await userCache(userId);
     const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
     mainIo.to(targetId).emit("notification", socketNotif);
-    redisClient.hSet(
+    redisClient.hset(
       `user:${targetId}:notifications`,
       id,
       JSON.stringify(notification)
@@ -194,9 +194,9 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId) {
 
     //update cached value of user
     /* userInfo.friends.push(targetId);
-    redisClient.hSet(`user:${userId}`, "friends", userInfo.friends.join(","));
+    redisClient.hset(`user:${userId}`, "friends", userInfo.friends.join(","));
     targetInfo.friends.push(userId);
-    redisClient.hSet(
+    redisClient.hset(
       `user:${targetId}`,
       "friends",
       targetInfo.friends.join(",")
@@ -234,16 +234,16 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId) {
       myDmRooms.push(roomInfo.id);
       const targetDmRooms = await dmRoomsCache(targetId);
       targetDmRooms.push(roomInfo.id);
-      redisClient.hSet(`user:${userId}`, "dmRooms", JSON.stringify(myDmRooms));
-      redisClient.hSet(
+      redisClient.hset(`user:${userId}`, "dmRooms", JSON.stringify(myDmRooms));
+      redisClient.hset(
         `user:${targetId}`,
         "dmRooms",
         JSON.stringify(targetDmRooms)
       ); 
-      redisClient.sAdd(`room:${roomInfo.id}`, members);*/
+      redisClient.sadd(`room:${roomInfo.id}`, members);*/
 
-      redisClient.hDel(`user:${userId}`, "dmRooms");
-      redisClient.hDel(`user:${targetId}`, "dmRooms");
+      redisClient.hdel(`user:${userId}`, "dmRooms");
+      redisClient.hdel(`user:${targetId}`, "dmRooms");
 
       mainIo.to(userId).emit("joinChatRoom", roomInfo.id, true);
       mainIo.to(targetId).emit("joinChatRoom", roomInfo.id, true);
@@ -254,7 +254,7 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId) {
         return chatRequest.f === targetId;
       });
       if (chatRequest) {
-        redisClient.hDel(`user:${userId}:notifications`, chatRequest.i);
+        redisClient.hdel(`user:${userId}:notifications`, chatRequest.i);
       }
 
       const targetChatRequests = await NotificationCache(targetId, 4, false);
@@ -262,7 +262,7 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId) {
         return chatRequest.f === targetId;
       });
       if (targetchatRequest) {
-        redisClient.hDel(`user:${targetId}:notifications`, targetchatRequest.i);
+        redisClient.hdel(`user:${targetId}:notifications`, targetchatRequest.i);
       } */
 
       return {
@@ -308,9 +308,9 @@ Router.delete("/request", async (req, res) => {
       });
       if (!friendReq)
         return res.send({ success: false, reason: "expired request" });
-      redisClient.hDel(`user:${targetId}:notifications`, friendReq.i);
+      redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
       //remove it from ongoing friend req list
-      redisClient.hDel(`user:${userId}:notifications`, friendReq.i);
+      redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
       res.send({ success: true });
     } catch (error) {
       console.log(error);
@@ -390,7 +390,7 @@ Router.get("/status", async (req, res) => {
         userInfo.friends.map(async (friend) => {
           friend = await userCache(friend);
           if (!friend) return;
-          const totalTime = await redisClient.zScore(
+          const totalTime = await redisClient.zscore(
             `user:${friend.user_id}:dayTotal`,
             timezoneOffset
           );
@@ -462,7 +462,7 @@ async function createFriendLink(userId) {
     let linkId = await redisClient.get(`link:friend:${userId}`);
     if (!linkId) {
       linkId = generateRandomId(5);
-      redisClient.setEx(`link:friend:${userId}`, MAX_DURATION, linkId);
+      redisClient.setex(`link:friend:${userId}`, MAX_DURATION, linkId);
     }
     return linkId;
   } catch (error) {
@@ -518,7 +518,7 @@ Router.get("/link/add", async (req, res) => {
         );
       });
       myFriendReqs.map((friendReq) => {
-        redisClient.hDel(`user:${userId}:notifications`, friendReq.i);
+        redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
       });
 
       const targetFriendReqs = targetNotifications.filter((notification) => {
@@ -528,7 +528,7 @@ Router.get("/link/add", async (req, res) => {
         );
       });
       targetFriendReqs.map((friendReq) => {
-        redisClient.hDel(`user:${targetId}:notifications`, friendReq.i);
+        redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
       });
 
       res.send(response);

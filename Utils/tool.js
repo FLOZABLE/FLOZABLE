@@ -221,7 +221,7 @@ function getMidnightTimezones() {
 
 async function friendRecommendationGen(excluded = []) {
   try {
-    const userIds = await redisClient.sMembers(`month1`);
+    const userIds = await redisClient.smembers(`month1`);
     const users = [];
     for (let i = 0; i < 100; i++) {
       if (users.length >= 7) {

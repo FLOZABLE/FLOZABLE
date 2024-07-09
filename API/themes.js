@@ -19,7 +19,7 @@ Router.get("/", async (req, res) => {
     const [themes] = await connection.query(`SELECT * FROM themes`);
     await Promise.all(
       themes.map(async (theme) => {
-        const weekUsage = await redisClient.zmScore(
+        const weekUsage = await redisClient.zmscore(
           `theme:${theme.id}:weekUsage`,
           ["0", "1", "2", "3", "4", "5", "6"]
         );

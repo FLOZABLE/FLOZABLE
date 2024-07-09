@@ -45,7 +45,7 @@ async function subjectsCache(userId) {
     const isCached = await redisClient.exists(`user:${userId}:subjects`);
     if (isCached) {
       const subjectsObj = {
-        ...(await redisClient.hGetAll(`user:${userId}:subjects`)),
+        ...(await redisClient.hgetall(`user:${userId}:subjects`)),
       };
       const subjectArr = Object.keys(subjectsObj).map((id) => {
         return { ...JSON.parse(subjectsObj[id]), id };
@@ -61,7 +61,7 @@ async function subjectsCache(userId) {
         subjects.map(async (subject) => {
           const redisSubject = { ...subject };
           delete redisSubject.id;
-          redisClient.hSet(
+          redisClient.hset(
             `user:${userId}:subjects`,
             subject.id,
             JSON.stringify(redisSubject)
@@ -81,13 +81,13 @@ async function subjectsCache(userId) {
 async function subjectCache(userId, subjectId) {
   try {
     if (subjectId === "0") return false;
-    const isCached = await redisClient.hExists(
+    const isCached = await redisClient.hexists(
       `user:${userId}:subjects`,
       subjectId
     );
     //console.log('iscached', isCached, userId, subjectId)
     if (isCached) {
-      const subjectInfo = await redisClient.hGet(
+      const subjectInfo = await redisClient.hget(
         `user:${userId}:subjects`,
         subjectId
       );
@@ -102,7 +102,7 @@ async function subjectCache(userId, subjectId) {
         subjects.map(async (subject) => {
           const redisSubject = { ...subject };
           delete redisSubject.id;
-          redisClient.hSet(
+          redisClient.hset(
             `user:${userId}:subjects`,
             subject.id,
             JSON.stringify(redisSubject)
@@ -124,7 +124,7 @@ async function subjectCache(userId, subjectId) {
 }
 
 async function dmRoomsCache(userId) {
-  let dmRooms = await redisClient.hGet(`user:${userId}`, "dmRooms");
+  let dmRooms = await redisClient.hget(`user:${userId}`, "dmRooms");
   if (dmRooms) {
     return dmRooms === "" ? [] : dmRooms.split(",");
   } else {
@@ -133,7 +133,7 @@ async function dmRoomsCache(userId) {
       `SELECT id FROM chatrooms WHERE members LIKE ?`,
       [`%${userId}%`]
     );
-    redisClient.hSet(
+    redisClient.hset(
       `user:${userId}`,
       "dmRooms",
       dmRooms.map(({ id }) => id).toString()
@@ -146,7 +146,7 @@ async function dmRoomsCache(userId) {
 
 async function dmRoomMembersCache(id) {
   try {
-    const members = await redisClient.sMembers(`room:${id}`);
+    const members = await redisClient.smembers(`room:${id}`);
     redisClient.expire(`room:${id}`, DM_MEMBERS_EXP);
     if (members.length) return members;
     const connection = pool.promise();
@@ -158,7 +158,7 @@ async function dmRoomMembersCache(id) {
 
     if (dmRoom.members !== "") {
       dmRoom.members = dmRoom.members.split(",");
-      redisClient.sAdd(`room:${id}`, dmRoom.members);
+      redisClient.sadd(`room:${id}`, dmRoom.members);
       return dmRoom.members;
     }
   } catch (err) {
@@ -169,7 +169,7 @@ async function dmRoomMembersCache(id) {
 
 async function groupMembersCache(id) {
   try {
-    const members = await redisClient.sMembers(`room:${id}`);
+    const members = await redisClient.smembers(`room:${id}`);
     redisClient.expire(`room:${id}`, GROUP_MEMBERS_EXP);
     if (members.length) return members;
     const connection = pool.promise();
@@ -179,7 +179,7 @@ async function groupMembersCache(id) {
     );
     if (group && group.members !== "") {
       group.members = group.members.split(",");
-      redisClient.sAdd(`room:${id}`, group.members);
+      redisClient.sadd(`room:${id}`, group.members);
       return group.members;
     }
     return [];
@@ -247,7 +247,7 @@ async function msgQueue(roomId, msgInfo) {
  */
 async function activeSubjectCache(userId) {
   try {
-    let activeSubject = await redisClient.hGet(
+    let activeSubject = await redisClient.hget(
       `user:${userId}`,
       `ActiveSubject`
     );
@@ -262,7 +262,7 @@ async function activeSubjectCache(userId) {
 
 async function activeGroupCache(userId) {
   try {
-    const activeGroup = await redisClient.hGet(`user:${userId}`, `ActiveGroup`);
+    const activeGroup = await redisClient.hget(`user:${userId}`, `ActiveGroup`);
     if (activeGroup) {
       return JSON.parse(activeGroup);
     } else {
@@ -285,13 +285,13 @@ async function timerCache(
 ) {
   try {
     const isCached = await redisClient;
-    let timer = await redisClient.hGet(`user:${userId}`, "timerInfo");
+    let timer = await redisClient.hget(`user:${userId}`, "timerInfo");
 
     if (timer) {
       timer = JSON.parse(timer);
     } else {
       timer = { dp: now, ts };
-      await redisClient.hSet(
+      await redisClient.hset(
         `user:${userId}`,
         "timerInfo",
         JSON.stringify(timer)
@@ -304,26 +304,26 @@ async function timerCache(
 
 function addActiveUserCache(userId) {
   if (!userId) return;
-  redisClient.sAdd("day1", userId);
-  redisClient.sAdd("day2", userId);
+  redisClient.sadd("day1", userId);
+  redisClient.sadd("day2", userId);
 
-  redisClient.sAdd("week1", userId);
-  redisClient.sAdd("week2", userId);
+  redisClient.sadd("week1", userId);
+  redisClient.sadd("week2", userId);
 
-  redisClient.sAdd("month1", userId);
-  redisClient.sAdd("month2", userId);
+  redisClient.sadd("month1", userId);
+  redisClient.sadd("month2", userId);
 }
 
 function removeActiveUserCache(userId) {
   if (!userId) return;
-  redisClient.sRem("day1", userId);
-  redisClient.sRem("day2", userId);
+  redisClient.srem("day1", userId);
+  redisClient.srem("day2", userId);
 
-  redisClient.sRem("week1", userId);
-  redisClient.sRem("week2", userId);
+  redisClient.srem("week1", userId);
+  redisClient.srem("week2", userId);
 
-  redisClient.sRem("month1", userId);
-  redisClient.sRem("month2", userId);
+  redisClient.srem("month1", userId);
+  redisClient.srem("month2", userId);
 }
 
 /**
@@ -332,18 +332,18 @@ function removeActiveUserCache(userId) {
 async function getActiveUsers(type) {
   try {
     if (type === "day") {
-      const day1 = await redisClient.sMembers("day1");
-      const day2 = await redisClient.sMembers("day2");
+      const day1 = await redisClient.smembers("day1");
+      const day2 = await redisClient.smembers("day2");
       return [...new Set([...day1, ...day2])];
     }
 
     if (type === "week") {
-      const week1 = await redisClient.sMembers("week1");
-      const week2 = await redisClient.sMembers("week2");
+      const week1 = await redisClient.smembers("week1");
+      const week2 = await redisClient.smembers("week2");
       return [...new Set([...week1, ...week2])];
     }
-    const month1 = await redisClient.sMembers("month1");
-    const month2 = await redisClient.sMembers("month2");
+    const month1 = await redisClient.smembers("month1");
+    const month2 = await redisClient.smembers("month2");
     return [...new Set([...month1, ...month2])];
   } catch (err) {
     console.log(err);
@@ -354,9 +354,10 @@ async function getActiveUsers(type) {
 async function userCache(userId, query = true) {
   try {
     if (!userId) return false;
-    const isCached = await redisClient.hExists(`user:${userId}`, "name");
+    const isCached = await redisClient.hexists(`user:${userId}`, "name");
+
     if (isCached) {
-      const userInfo = await redisClient.hGetAll(`user:${userId}`);
+      const userInfo = await redisClient.hgetall(`user:${userId}`);
 
       userInfo.groups =
         userInfo.groups === "" || !userInfo.groups
@@ -367,35 +368,36 @@ async function userCache(userId, query = true) {
           ? []
           : userInfo.friends.split(",");
       return { ...userInfo, user_id: userId };
-    } else {
-      if (!query) return false;
+    }
 
-      const connection = pool.promise();
-      const [[userInfo]] = await connection.query(
-        "SELECT name, email, groups, friends, timezone, datum_point FROM users WHERE user_id = ?",
-        [userId]
+    if (!query) return false;
+
+    const connection = pool.promise();
+    const [results] = await connection.query(
+      `
+        SELECT name, email, timezone, datum_point FROM users WHERE user_id = ?;
+        SELECT group_id FROM user_groups WHERE user_id = ?;
+        SELECT user_id, friend_id FROM friends WHERE user_id = ? OR friend_id = ?;
+        `,
+      [userId, userId, userId, userId]
+    );
+    const userInfo = results[0][0];
+    const userGroups = results[1];
+    const friends = results[2];
+    if (userInfo) {
+      userInfo.groups = userGroups.map((group) => group.group_id);
+      userInfo.friends = friends.map((friend) =>
+        friend.user_id === userId ? friend.friend_id : friend.user_id
       );
-      if (userInfo) {
-        cacheUserInfo(userInfo);
-        userInfo.groups =
-          userInfo.groups === "" ? [] : userInfo.groups.split(",");
-        userInfo.friends =
-          userInfo.friends === "" ? [] : userInfo.friends.split(",");
-        return { ...userInfo, user_id: userId };
-      } else {
-        return false;
-      }
+      userInfo.user_id = userId;
+      cacheUserInfo(userInfo);
+      return userInfo;
+    } else {
+      return false;
     }
   } catch (err) {
     console.log(err);
-  }
-}
-
-async function clearUserCache(userId) {
-  try {
-    return redisClient.del(`user:${userId}`);
-  } catch (err) {
-    console.log(err);
+    return false;
   }
 }
 
@@ -422,36 +424,80 @@ async function usersCache(users, cache) {
 
     const connection = pool.promise();
 
-    const [queriedUsers] = await connection.query(
-      "SELECT name, email, groups, friends, timezone, datum_point, user_id FROM users WHERE user_id IN (?)",
-      [notCached]
+    if (!notCached.length) return usersInfo;
+
+    const [results] = await connection.query(
+      `
+      SELECT name, email, groups, friends, timezone, datum_point, user_id FROM users WHERE user_id IN (?);
+      SELECT group_id, user_id FROM user_groups WHERE user_id IN (?);
+      SELECT user_id, friend_id FROM friends WHERE user_id IN (?) OR friend_id IN (?);
+      `,
+      [notCached, notCached, notCached, notCached]
     );
+    const queriedUsers = results[0];
+    const queriedGroups = results[1];
+    const queriedFriends = results[2];
+
     queriedUsers.map((userInfo) => {
       if (cache) {
         cacheUserInfo(userInfo);
       }
-      userInfo.groups =
-        userInfo.groups === "" ? [] : userInfo.groups.split(",");
-      userInfo.friends =
-        userInfo.friends === "" ? [] : userInfo.friends.split(",");
+
+      userInfo.group = queriedGroups
+        .filter((group) => group.user_id === userInfo.user_id)
+        .map((group) => group.group_id);
+      userInfo.friends = queriedFriends
+        .filter(
+          (friends) =>
+            friends.user_id === userInfo.user_id ||
+            friends.friend_id === userInfo.user_id
+        )
+        .map((friend) =>
+          friend.user_id === userInfo.user_id
+            ? friend.friend_id
+            : friend.user_id
+        );
       usersInfo.push(userInfo);
     });
     return usersInfo;
   } catch (err) {
     console.log(err);
+    return [];
   }
 }
 
 async function cacheUserInfo(userInfo) {
-  const { name, email, timezone, datum_point, user_id, groups, friends } =
-    userInfo;
-  redisClient.hSet(`user:${user_id}`, "name", name);
-  redisClient.hSet(`user:${user_id}`, "email", email);
-  redisClient.hSet(`user:${user_id}`, "groups", groups ? groups : "");
-  redisClient.hSet(`user:${user_id}`, "friends", friends ? friends : "");
-  redisClient.hSet(`user:${user_id}`, "timezone", timezone);
-  redisClient.hSet(`user:${user_id}`, "datum_point", datum_point);
-  redisClient.expire(`user:${user_id}`, 60 * 60 * 10);
+  try {
+    const { name, email, timezone, datum_point, user_id, groups, friends } =
+      userInfo;
+
+    redisClient.hset(
+      `user:${user_id}`,
+      "name",
+      name,
+      "email",
+      email,
+      "groups",
+      groups.toString(),
+      "friends",
+      friends.toString(),
+      "timezone",
+      timezone,
+      "datum_point",
+      datum_point
+    );
+    redisClient.expire(`user:${user_id}`, USER_EXP);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function clearUserCache(userId) {
+  try {
+    return redisClient.del(`user:${userId}`);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 /**
@@ -468,7 +514,7 @@ async function cacheUserInfo(userInfo) {
  */
 async function NotificationCache(userId, type = -1, processData = true) {
   const notificationsObj = {
-    ...(await redisClient.hGetAll(`user:${userId}:notifications`)),
+    ...(await redisClient.hgetall(`user:${userId}:notifications`)),
   };
   const notifications = Object.keys(notificationsObj).map((id) => ({
     i: id,
@@ -504,7 +550,7 @@ async function subjectsTimelineCache(userId) {
     });
 
     const todayTimeline = (
-      await redisClient.lRange(`user:${userId}:subject:${id}`, 0, -1)
+      await redisClient.lrange(`user:${userId}:subject:${id}`, 0, -1)
     ).map(JSON.parse);
     if (prevTimeline) {
       const parsedTimeline = prevTimeline.timeline
@@ -523,7 +569,7 @@ async function subjectsTimelineCache(userId) {
 }
 
 async function msgReadCache(userId) {
-  let readStatus = { ...(await redisClient.hGetAll(`user:${userId}:chats`)) };
+  let readStatus = { ...(await redisClient.hgetall(`user:${userId}:chats`)) };
   readStatus = Object.keys(readStatus).map((id) => {
     //return { ...JSON.parse(readStatus[id]), id };
     const [msgId, time] = readStatus[id].split(":");
@@ -534,15 +580,15 @@ async function msgReadCache(userId) {
 
 async function challengeroomsCache() {
   const allChallenges = [];
-  const allChallengeIds = await redisClient.sMembers("allChallenges");
+  const allChallengeIds = await redisClient.smembers("allChallenges");
 
   await Promise.all(
     allChallengeIds.map(async (challengeId) => {
       if (!(await redisClient.exists(`challenge:${challengeId}`))) {
         console.log("Does not exist");
-        redisClient.sRem("allChallenges", challengeId);
+        redisClient.srem("allChallenges", challengeId);
       } else {
-        const obj = await redisClient.hGetAll(`challenge:${challengeId}`);
+        const obj = await redisClient.hgetall(`challenge:${challengeId}`);
         allChallenges.push({ ...obj, id: challengeId });
       }
     })
@@ -552,12 +598,12 @@ async function challengeroomsCache() {
 }
 
 async function websiteUsageCache(userId) {
-  const websitesUsage = await redisClient.zRangeWithScores(
+  const websitesUsage = await redisClient.zrangewithscores(
     `user:${userId}:tabs:usage`,
     0,
     -1
   );
-  const websitesTimer = await redisClient.zRangeWithScores(
+  const websitesTimer = await redisClient.zrangewithscores(
     `user:${userId}:tabs:timer`,
     0,
     -1
