@@ -10,6 +10,7 @@ const {
   activeSubjectCache,
   subjectCache,
   dmRoomsCache,
+  clearUserCache,
 } = require("../services/redisLoader");
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
@@ -192,14 +193,16 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId) {
     );
 
     //update cached value of user
-    userInfo.friends.push(targetId);
+    /* userInfo.friends.push(targetId);
     redisClient.hSet(`user:${userId}`, "friends", userInfo.friends.join(","));
     targetInfo.friends.push(userId);
     redisClient.hSet(
       `user:${targetId}`,
       "friends",
       targetInfo.friends.join(",")
-    );
+    ); */
+    clearUserCache(userId);
+    clearUserCache(targetId);
 
     //create chat only if it does not exist
     const [[{ record_count }]] = await connection.query(
