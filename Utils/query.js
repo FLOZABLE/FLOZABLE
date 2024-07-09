@@ -36,12 +36,12 @@ async function createSubjectsTable() {
   connection.query(`
   CREATE TABLE IF NOT EXISTS  subjects (
     id CHAR(10) PRIMARY KEY,
-    name CHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
+    name CHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     user_id CHAR(15),
     icon CHAR(20),
     color CHAR(7),
     datum_point INT,
-    timeline text default '',
+    timeline text default ''
   );  
   `);
 }
@@ -64,7 +64,7 @@ async function createGroupsTable() {
   color VARCHAR(20),
   average_hr SMALLINT DEFAULT 0,
   goal_hr SMALLINT,
-  likes VARCHAR(300) DEFAULT '',
+  likes VARCHAR(300) DEFAULT ''
 );
   `);
 }

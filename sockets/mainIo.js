@@ -1,6 +1,6 @@
 const { DateTime } = require('luxon');
 const redisClient = require('../model/redis');
-const { userCache, chatRoomsCache, msgQueue, subjectCache, dmRoomMembersCache, activeSubjectCache, groupMembersCache } = require('../services/redisLoader');
+const { userCache, chatRoomsCache, msgQueue, subjectCache, dmRoomMembersCache, activeSubjectCache, groupMembersCache, dmRoomsCache } = require('../services/redisLoader');
 const { generateRandomId } = require('../Utils/tool');
 const { extensionIo } = require('./extensionIo');
 const { io } = require('./io');
@@ -135,24 +135,28 @@ mainIo.on('connection', (socket) => {
   });
 
   socket.on('readMsg', async ({ roomId, type }) => {
-    if (!roomId) return;
-    //dm
-    let members = [];
-    if (!type) {
-      members = await dmRoomMembersCache(roomId);
-    } else {
-      members = await groupMembersCache(roomId);
-    };
-
-    //user not member of the chatroom
-    if (!members.includes(userId)) return;
-
-    const [lastMsg] = await redisClient.lRange(`room:${roomId}:chats`, -1, -1);
-    if (!lastMsg) return;
-    //i ==  msg id
-    const { i } = JSON.parse(lastMsg);
-    const now = Math.floor(new Date().getTime() / 1000 / 60);
-    redisClient.hSet(`user:${userId}:chats`, roomId, `${i}:${now}`);
+    try {
+      if (!roomId) return;
+      //dm
+      let members = [];
+      if (!type) {
+        members = await dmRoomMembersCache(roomId);
+      } else {
+        members = await groupMembersCache(roomId);
+      };
+  
+      //user not member of the chatroom
+      if (!members.includes(userId)) return;
+  
+      const [lastMsg] = await redisClient.lRange(`room:${roomId}:chats`, -1, -1);
+      if (!lastMsg) return;
+      //i ==  msg id
+      const { i } = JSON.parse(lastMsg);
+      const now = Math.floor(new Date().getTime() / 1000 / 60);
+      redisClient.hSet(`user:${userId}:chats`, roomId, `${i}:${now}`);
+    } catch (err) {
+      console.log(err);
+    }
   });
 
   socket.on("volumeChange", ({ id, volume }) => {
