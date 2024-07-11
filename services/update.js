@@ -1,17 +1,33 @@
+const dotenv = require("dotenv");
+
+if (process.env.NODE_ENV === "development") {
+  dotenv.config({ path: "../.env.development" });
+} else if (process.env.NODE_ENV === "production") {
+  dotenv.config({ path: "../.env.production" });
+} else {
+  dotenv.config({ path: "../.env.test" });
+}
+
 const {
   createUsersTable,
   createSubjectsTable,
+  createSubjectTimelinesTable,
   createGroupsTable,
+  createGroupMembersTable,
+  createFriendsTable,
   createPlansTable,
   createChatroomsTable,
-  createDailyRankingTable,
-  createWeeklyRankingTable,
-  createMonthlyRankingTable,
+  createChatroomMembersTable,
+  createChatroomMessagesTable,
+  createRankingTable,
+  createRankingDetailsTable,
+  createDevicesTable,
   createThemesTable,
   createActivitiesTable,
-  createDevicesTable,
 } = require("../Utils/query");
 const pool = require("../model/pool");
+
+const prompt = require("prompt-sync")({sigint: true});
 
 async function updateManager() {
   const connection = pool.promise();
@@ -33,7 +49,7 @@ async function updateManager() {
     }
 
     //await mariadbV7();
-    await mariadbV7_1(false, false);
+    await mariadbV7_1(true, true);
     if (mariadbVersion.version < 7) {
       await mariadbV7();
     }
@@ -56,15 +72,19 @@ async function initializeMariadb() {
   try {
     await createUsersTable();
     await createSubjectsTable();
+    await createSubjectTimelinesTable();
     await createGroupsTable();
+    await createGroupMembersTable();
+    await createFriendsTable();
     await createPlansTable();
     await createChatroomsTable();
-    await createDailyRankingTable();
-    await createWeeklyRankingTable();
-    await createMonthlyRankingTable();
+    await createChatroomMembersTable();
+    await createChatroomMessagesTable();
+    await createRankingTable();
+    await createRankingDetailsTable();
+    await createDevicesTable();
     await createThemesTable();
     await createActivitiesTable();
-    await createDevicesTable();
 
     console.log("Initialized mariadb");
   } catch (err) {
@@ -106,23 +126,28 @@ async function mariadbV7() {
         ADD COLUMN IF NOT EXISTS shared VARCHAR(100) DEFAULT "";
 
       ALTER TABLE users 
-        ADD COLUMN IF NOT EXISTS stripe_id VARCHAR(30);
+        ADD COLUMN IF NOT EXISTS stripe_id VARCHAR(30),
 
       ALTER TABLE users 
         DROP COLUMN IF EXISTS myinfo,
         DROP COLUMN IF EXISTS external_user_id,
         DROP COLUMN IF EXISTS activity,
         DROP COLUMN IF EXISTS language,
-        DROP COLUMN IF EXISTS private;
+        DROP COLUMN IF EXISTS private,
+        DROP COLUMN IF EXISTS users_id;
 
       ALTER TABLE users 
-        MODIFY COLUMN activity_setting VARCHAR(500) DEFAULT "{}";
+        MODIFY COLUMN activity_setting VARCHAR(500) DEFAULT "{}",
+        MODIFY COLUMN user_id VARCHAR(10) NOT NULL PRIMARY KEY;
 
       ALTER TABLE subjects 
         MODIFY COLUMN name CHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
 
         ADD COLUMN IF NOT EXISTS share VARCHAR(100) DEFAULT "",
         ADD COLUMN IF NOT EXISTS shared VARCHAR(100) DEFAULT "";
+
+      ALTER TABLE groups
+        MODIFY COLUMN group_id VARCHAR(10) NOT NULL;
 
       ALTER TABLE themes 
         MODIFY COLUMN name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
@@ -149,14 +174,29 @@ async function mariadbV7_1(updateFriends, updateGroups) {
     const connection = pool.promise();
 
     await connection.query(`
-      CREATE TABLE IF NOT EXISTS user_groups (
-        user_id VARCHAR(10),
-        group_id VARCHAR(10)
+      CREATE TABLE IF NOT EXISTS group_members (
+        user_id VARCHAR(10) NOT NULL,
+        group_id VARCHAR(10) NOT NULL,
+        PRIMARY KEY (user_id, group_id),
+        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        FOREIGN KEY (group_id) REFERENCES groups(group_id)
       );
-      
+
       CREATE TABLE IF NOT EXISTS friends (
-        user_id VARCHAR(10),
-        friend_id VARCHAR(10)
+        user_id VARCHAR(10) NOT NULL,
+        friend_id VARCHAR(10) NOT NULL,
+        PRIMARY KEY (user_id, friend_id),
+        CHECK (user_id < friend_id),
+        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        FOREIGN KEY (friend_id) REFERENCES users(user_id)
+      );
+
+      CREATE TABLE IF NOT EXISTS  timelines (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        subject_id INT NOT NULL, -- assuming there's a subject table
+        start_time INT NOT NULL,
+        stop_time INT NOT NULL,
+        FOREIGN KEY (subject_id) REFERENCES subjects(id) -- adjust as necessary
       );
     `);
 
@@ -169,24 +209,41 @@ async function mariadbV7_1(updateFriends, updateGroups) {
       users.map((user, i) => {
         if (user.friends !== "") {
           //if (friends.find(existingFriend => JSON.stringify(existingFriend) === JSON.stringify([friend, user.user_id]))) return;
-          const filteredFriends = user.friends.split(",").filter((friend) => {
-            const isIn = friends.find(
-              (existingFriend) =>
-                JSON.stringify(existingFriend) ===
-                JSON.stringify([friend, user.user_id])
-            );
-            return !isIn;
-          });
+          const filteredFriends = [...new Set(user.friends.split(","))].filter(
+            (friend) => {
+              const isIn = friends.find(
+                (existingFriend) =>
+                  JSON.stringify(existingFriend) ===
+                  JSON.stringify([friend, user.user_id])
+              );
+              const isExist = users.find((user) => user.user_id === friend);
+              return !isIn && isExist;
+            }
+          );
           friends.push(
-            ...filteredFriends.map((friend) => [user.user_id, friend])
+            ...filteredFriends.map((friend) =>
+              user.user_id > friend
+                ? [user.user_id, friend]
+                : [friend, user.user_id]
+            )
           );
         }
       });
 
-      await connection.query(
+      console.log(friends.length, JSON.stringify(friends));
+      let iteration = 0;
+      while (friends.slice(iteration * 30, (iteration + 1) * 30).length) {
+        await connection.query(
+          `INSERT INTO friends (user_id, friend_id) VALUES ?`,
+          [friends.slice(iteration * 30, (iteration + 1) * 30)]
+        );
+        iteration += 1;
+      }
+
+      /* await connection.query(
         `INSERT INTO friends (user_id, friend_id) VALUES ?`,
         [friends]
-      );
+      ); */
 
       console.log(`finished friends migration ${friends.length}`);
     }
@@ -217,5 +274,22 @@ async function mariadbV7_1(updateFriends, updateGroups) {
     console.log(err);
   }
 }
+
+
+(async () => {
+  const command = prompt(`
+    type command
+    1)auto
+    2)maria:VERSION_NAME
+  
+    `);
+    /* if (command.includes("maria")) {
+      const version = parseFloat(command.split(":")[1]);
+      console.log(version)
+    } */
+    if (command === "maria:0") {
+      await initializeMariadb();
+    }
+})();
 
 module.exports = { updateManager };
