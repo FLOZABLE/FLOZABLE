@@ -40,14 +40,30 @@ Router.get("/", async (req, res) => {
     try {
       const connection = pool.promise();
       let [plans] = await connection.query(
-        `SELECT id, title, start, end, \`repeat\`, description, notification, subject, priority, completed, share, shared FROM plans WHERE user_id = ? OR shared LIKE ?`,
+        `SELECT 
+          p.plan_id, 
+          p.title, 
+          p.start, 
+          p.end, 
+          p.\`repeat\`, 
+          p.description, 
+          p.notification, 
+          p.subject_id, 
+          p.priority, 
+          p.completed
+        FROM 
+          plans p
+        LEFT JOIN 
+          plan_shared s ON p.plan_id = s.plan_id
+        WHERE 
+          p.user_id = ? OR s.user_id = ?
+        GROUP BY 
+          p.plan_id;`,
         [userId, `%${userId}%`]
       );
       plans.map((plan) => {
         plan.editable = true;
         plan.isEditable = true;
-        plan.share = plan.share === "" ? [] : plan.share.split(",");
-        plan.shared = plan.shared === "" ? [] : plan.shared.split(",");
       });
       const access_token = await googleAccessTokenCache(userId);
       if (access_token) {
@@ -97,7 +113,7 @@ Router.get("/", async (req, res) => {
                   );
                   const editable = calendar.accessRole !== "reader";
                   const newEvent = {
-                    id,
+                    plan_id: id,
                     title: summary,
                     start: startDateTime,
                     end: endDateTime,
@@ -147,287 +163,250 @@ Router.get("/", async (req, res) => {
   });
 });
 
-Router.post("/update", async (req, res) => {
-  autoSignin(
-    req,
-    res,
-    async (userId, timezone) => {
-      try {
-        const planInfo = req.body;
-        if (!planInfo)
-          return res.send({
-            success: false,
-            reason: "Plan information missing",
-          });
+Router.patch("/plan", async (req, res) => {
+  autoSignin(req, res, async (userId, timezone) => {
+    try {
+      const planInfo = req.body;
+      if (!planInfo)
+        return res.send({
+          success: false,
+          reason: "Plan information missing",
+        });
 
-        const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds() / 60;
-        const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds() / 60;
-        const {
+      const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds() / 60;
+      const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds() / 60;
+      const {
+        title,
+        id,
+        start,
+        end,
+        repeat,
+        description,
+        subject_id,
+        notification,
+        priority,
+        completed,
+        type,
+      } = planInfo;
+
+      console.log(planInfo)
+
+      if (type === "google") {
+        const access_token = await googleAccessTokenCache(userId);
+        if (access_token) {
+          try {
+            const auth = googleOauth2client({ access_token });
+            const googleCalendar = google.calendar({
+              version: "v3",
+              auth: auth,
+            });
+
+            const startDateTime = DateTime.fromSeconds(start * 60, {
+              zone: timezone,
+            });
+            const endDateTime = DateTime.fromSeconds(end * 60, {
+              zone: timezone,
+            });
+
+            console.log(subject, id);
+            const updateResults = await googleCalendar.events.update({
+              auth: auth,
+              calendarId: subject,
+              eventId: id,
+              resource: {
+                summary: title,
+                description,
+                start: {
+                  dateTime: startDateTime.toISO(),
+                  timeZone: timezone,
+                },
+                end: { dateTime: endDateTime.toISO(), timeZone: timezone },
+              },
+            });
+
+            if (updateResults.status === 200) {
+              return res.send({ success: true, msg: "Plan updated!" });
+            } else {
+              return res.send({
+                success: false,
+                msg: "You cannot modify this plan",
+              });
+            }
+          } catch (err) {}
+        }
+      }
+
+      const isValidTitle = validateString(title, "Title", 100);
+      if (!isValidTitle.isValid) {
+        return res.send({ success: false, reason: isValidTitle.reason });
+      }
+      const isValidId = validateStrictString(id, "Id", 10, 10);
+      if (!isValidId.isValid) {
+        return res.send({ success: false, reason: isValidId.reason });
+      }
+
+      const isValidStart = validateInteger(
+        start,
+        "Start time",
+        maxPlanTime,
+        minPlanTime
+      );
+      if (!isValidStart.isValid) {
+        return res.send({ success: false, reason: isValidStart.reason });
+      }
+
+      const isValidEnd = validateInteger(end, "End time", maxPlanTime, start);
+      if (!isValidEnd.isValid) {
+        return res.send({ success: false, reason: isValidEnd.reason });
+      }
+
+      const isValidRepeat = validateInteger(repeat, "Repeat", 3, 0);
+      if (!isValidRepeat.isValid) {
+        return res.send({ success: false, reason: isValidRepeat.reason });
+      }
+
+      const isValidDescription = validateLength(
+        description,
+        "Description",
+        300
+      );
+      if (!isValidDescription.isValid) {
+        return res.send({
+          success: false,
+          reason: isValidDescription.reason,
+        });
+      }
+
+      const isValidSubjectId = validateStrictString(subject_id, "Subject", 10, 10);
+      if (!isValidSubjectId.isValid) {
+        return res.send({ success: false, reason: isValidSubjectId.reason });
+      }
+
+      const isValidNotification = validateInteger(
+        notification,
+        "Notification",
+        -1,
+        60
+      );
+      if (!isValidNotification.isValid) {
+        return res.send({
+          success: false,
+          reason: isValidNotification.reason,
+        });
+      }
+
+      const isValidPriority = validateStrictString(priority, "Subject", 10, 10);
+      if (!isValidPriority.isValid) {
+        return res.send({ success: false, reason: isValidPriority.reason });
+      }
+
+      const isValidCompleted = validateInteger(completed, "Completed", 0, 1);
+      if (!isValidCompleted.isValid) {
+        return res.send({ success: false, reason: isValidCompleted.reason });
+      }
+
+      const connection = pool.promise();
+
+      const [[userInfo]] = await connection.query(
+        `SELECT key_salt, iv, notification_endpoint, notification_keys FROM users WHERE user_id = ?`,
+        [userId]
+      );
+
+      if (!userInfo)
+        return res.send({ success: false, reason: responseCodes["no-user"] });
+
+      try {
+        const planData = {
           title,
-          id,
+          plan_id: id,
           start,
           end,
           repeat,
           description,
-          subject,
+          subject_id,
           notification,
           priority,
           completed,
-          type,
-          share,
-          shared,
-        } = planInfo;
+          user_id: userId,
+        };
 
-        console.log(share, shared);
-        if (type === "google") {
-          const access_token = await googleAccessTokenCache(userId);
-          if (access_token) {
-            try {
-              const auth = googleOauth2client({ access_token });
-              const googleCalendar = google.calendar({
-                version: "v3",
-                auth: auth,
-              });
-
-              const startDateTime = DateTime.fromSeconds(start * 60, {
-                zone: timezone,
-              });
-              const endDateTime = DateTime.fromSeconds(end * 60, {
-                zone: timezone,
-              });
-
-              console.log(subject, id);
-              const updateResults = await googleCalendar.events.update({
-                auth: auth,
-                calendarId: subject,
-                eventId: id,
-                resource: {
-                  summary: title,
-                  description,
-                  start: {
-                    dateTime: startDateTime.toISO(),
-                    timeZone: timezone,
-                  },
-                  end: { dateTime: endDateTime.toISO(), timeZone: timezone },
-                },
-              });
-
-              if (updateResults.status === 200) {
-                return res.send({ success: true, msg: "Plan updated!" });
-              } else {
-                return res.send({
-                  success: false,
-                  msg: "You cannot modify this plan",
-                });
-              }
-            } catch (err) {}
-          }
-        }
-
-        const isValidTitle = validateString(title, "Title", 100);
-        if (!isValidTitle.isValid) {
-          return res.send({ success: false, reason: isValidTitle.reason });
-        }
-        const isValidId = validateStrictString(id, "Id", 10, 10);
-        if (!isValidId.isValid) {
-          return res.send({ success: false, reason: isValidId.reason });
-        }
-
-        const isValidStart = validateInteger(
-          start,
-          "Start time",
-          maxPlanTime,
-          minPlanTime
+        const [deletePrev] = await connection.query(
+          `DELETE FROM plans WHERE user_id = ? AND plan_id = ?`,
+          [userId, id]
         );
-        if (!isValidStart.isValid) {
-          return res.send({ success: false, reason: isValidStart.reason });
+        let isNew = false;
+        if (deletePrev.affectedRows) {
+          schedule.cancelJob(userId + "-" + id);
+        } else {
+          //new plan
+          planData.plan_id = generateRandomId(10);
+          isNew = true;
         }
 
-        const isValidEnd = validateInteger(end, "End time", maxPlanTime, start);
-        if (!isValidEnd.isValid) {
-          return res.send({ success: false, reason: isValidEnd.reason });
-        }
+        const startTime = start * 60;
+        //const body = description.replace(/(&nbsp;|<([^>]+)>)/ig, " ");
+        const startDateTime = DateTime.fromSeconds(startTime)
+          .setZone(timezone)
+          .toFormat("h:mm a");
+        const endDateTime = DateTime.fromSeconds(end * 60)
+          .setZone(timezone)
+          .toFormat("h:mm a");
+        const body = `${startDateTime} - ${endDateTime}`;
+        const payload = JSON.stringify({
+          title,
+          body,
+          icon: "https://flozable.com/favicon.ico",
+          actions: [
+            { action: "viewplan", title: "View plan" },
+            { action: "close", title: "Close" },
+          ],
+          data: {
+            link: `${process.env.SERVER}/dashboard/planner?plan=${id}`,
+          },
+        });
 
-        const isValidRepeat = validateInteger(repeat, "Repeat", 3, 0);
-        if (!isValidRepeat.isValid) {
-          return res.send({ success: false, reason: isValidRepeat.reason });
-        }
-
-        const isValidDescription = validateLength(
-          description,
-          "Description",
-          300
-        );
-        if (!isValidDescription.isValid) {
-          return res.send({
-            success: false,
-            reason: isValidDescription.reason,
-          });
-        }
-
-        const isValidSubject = validateStrictString(subject, "Subject", 10, 10);
-        if (!isValidSubject.isValid) {
-          return res.send({ success: false, reason: isValidSubject.reason });
-        }
-
-        const isValidNotification = validateInteger(
-          notification,
-          "Notification",
-          -1,
-          60
-        );
-        if (!isValidNotification.isValid) {
-          return res.send({
-            success: false,
-            reason: isValidNotification.reason,
-          });
-        }
-
-        const isValidPriority = validateStrictString(
-          priority,
-          "Subject",
-          10,
-          10
-        );
-        if (!isValidPriority.isValid) {
-          return res.send({ success: false, reason: isValidPriority.reason });
-        }
-
-        const isValidCompleted = validateInteger(completed, "Completed", 0, 1);
-        if (!isValidCompleted.isValid) {
-          return res.send({ success: false, reason: isValidCompleted.reason });
-        }
-
-        const isValidSharedUsers = validateArray(share, "Shared Users", 5, 0);
-        if (!isValidSharedUsers.isValid) {
-          return res.send({
-            success: false,
-            reason: isValidSharedUsers.reason,
-          });
-        }
-
-        const connection = pool.promise();
-
-        const [[userInfo]] = await connection.query(
-          `SELECT friends, key_salt, iv, notification_endpoint, notification_keys from users where user_id = ?`,
-          [userId]
-        );
-
-        if (!userInfo)
-          return res.send({ success: false, reason: responseCodes["no-user"] });
-
-        try {
-          const planData = {
-            title,
-            id,
-            start,
-            end,
-            repeat,
-            description,
-            subject,
-            notification,
-            priority,
-            completed,
-            user_id: userId,
-          };
-
-          /* if (share.length) {
-            console.log(userInfo);
-            const existingUsers = (
-              await connection.query(
-                `SELECT user_id FROM users WHERE user_id IN(?)`,
-                [share]
-              )
-            )[0].map((userInfo) => userInfo.user_id);
-            console.log(existingUsers, userInfo);
-
-            const friends = existingUsers.filter((user) =>
-              userInfo.friends.includes(user)
-            );
-
-            console.log(friends);
-          } */
-
-          const [deletePrev] = await connection.query(
-            `DELETE FROM plans WHERE user_id = ? AND id = ?`,
-            [userId, id]
-          );
-          let isNew = false;
-          if (deletePrev.affectedRows) {
-            schedule.cancelJob(userId + "-" + id);
-          } else {
-            //new plan
-            planData.id = generateRandomId(10);
-            isNew = true;
-          }
-
-          const startTime = start * 60;
-          //const body = description.replace(/(&nbsp;|<([^>]+)>)/ig, " ");
-          const startDateTime = DateTime.fromSeconds(startTime)
-            .setZone(timezone)
-            .toFormat("h:mm a");
-          const endDateTime = DateTime.fromSeconds(end * 60)
-            .setZone(timezone)
-            .toFormat("h:mm a");
-          const body = `${startDateTime} - ${endDateTime}`;
-          const payload = JSON.stringify({
-            title,
-            body,
-            icon: "https://flozable.com/favicon.ico",
-            actions: [
-              { action: "viewplan", title: "View plan" },
-              { action: "close", title: "Close" },
-            ],
-            data: {
-              link: `${process.env.SERVER}/dashboard/planner?plan=${id}`,
-            },
-          });
-
-          if (notification !== -1) {
-            const subNotificationStart = startTime - notification * 60;
-            if (subNotificationStart > DateTime.now().toSeconds() && userInfo) {
-              planPushNotification(
-                userId + "-" + id,
-                { ...userInfo, user_id: userId },
-                payload,
-                subNotificationStart
-              );
-            }
-          }
-          if (startTime > DateTime.now().toSeconds() && userInfo) {
+        if (notification !== -1) {
+          const subNotificationStart = startTime - notification * 60;
+          if (subNotificationStart > DateTime.now().toSeconds() && userInfo) {
             planPushNotification(
               userId + "-" + id,
               { ...userInfo, user_id: userId },
               payload,
-              startTime
+              subNotificationStart
             );
           }
-          //planNotification(insertInfo, userInfo[0], startTime)
-          await connection.query(`INSERT INTO plans SET ?`, planData);
-          res.send({ success: true, msg: "Plan Saved!", planData, isNew });
-        } catch (error) {
-          res.send({ success: false, reason: "An error occurred" });
-          console.log(error);
         }
+        if (startTime > DateTime.now().toSeconds() && userInfo) {
+          planPushNotification(
+            userId + "-" + id,
+            { ...userInfo, user_id: userId },
+            payload,
+            startTime
+          );
+        }
+        //planNotification(insertInfo, userInfo[0], startTime)
+        await connection.query(`INSERT INTO plans SET ?`, planData);
+        res.send({ success: true, msg: "Plan Saved!", planData, isNew });
       } catch (error) {
-        console.error("An error occurred:", error);
         res.send({ success: false, reason: "An error occurred" });
+        console.log(error);
       }
-    },
-    undefined,
-    true
-  );
+    } catch (error) {
+      console.error("An error occurred:", error);
+      res.send({ success: false, reason: "An error occurred" });
+    }
+  });
 });
 
-Router.post("/status-change", async (req, res) => {
+Router.patch("/plan/status", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { id, completed } = req.body;
+      const { plan_id, completed } = req.body;
 
-      const isValidId = validateStrictString(id, "plan id", 10, 8);
+      const isValidPlanId = validateStrictString(plan_id, "plan id", 10, 8);
 
-      if (!isValidId.isValid) {
-        return res.send({ success: false, reason: isValidId.reason });
+      if (!isValidPlanId.isValid) {
+        return res.send({ success: false, reason: isValidPlanId.reason });
       }
 
       const isValidCompleted = validateInteger(completed, "completed", 1, 0);
@@ -439,8 +418,8 @@ Router.post("/status-change", async (req, res) => {
       const connection = pool.promise();
       try {
         await connection.query(
-          `UPDATE plans SET completed = ? WHERE id = ? AND user_id = ?`,
-          [completed, id, userId]
+          `UPDATE plans SET completed = ? WHERE plan_id = ? AND user_id = ?`,
+          [completed, plan_id, userId]
         );
         res.send({ success: true, msg: "Plan Updated" });
       } catch (err) {
@@ -453,7 +432,7 @@ Router.post("/status-change", async (req, res) => {
   });
 });
 
-Router.delete("/", async (req, res) => {
+Router.delete("/plan", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
@@ -484,7 +463,7 @@ Router.delete("/", async (req, res) => {
   });
 });
 
-Router.get("/users", async (req, res) => {
+Router.get("/plan/users", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { id } = req.query;
@@ -496,22 +475,29 @@ Router.get("/users", async (req, res) => {
 
       const connection = pool.promise();
 
-      const [[planInfo]] = await connection.query(
-        `SELECT share, shared FROM plans WHERE id = ? AND user_id = ?`,
-        [id, userId]
+      const result = await connection.query(
+        `SELECT user_id FROM plan_shared WHERE plan_id = ? AND user_id = ?; SELECT user_id FROM plan_share WHERE plan_id = ? AND user_id = ?;`,
+        [id, userId, id, userId]
       );
+      console.log(result);
+      return;
 
       if (!planInfo) {
         return res.send({ success: false, reason: "Invalid Plan" });
       }
 
       planInfo.share = planInfo.share === "" ? [] : planInfo.share.split(",");
-      planInfo.shared = planInfo.shared === "" ? [] : planInfo.shared.split(",");
+      planInfo.shared =
+        planInfo.shared === "" ? [] : planInfo.shared.split(",");
 
       //auery all at once for performance
       const users = await usersCache([...planInfo.share, ...planInfo.shared]);
-      const share = users.filter(userInfo => planInfo.share.includes(userInfo.user_id));
-      const shared = users.filter(userInfo => planInfo.shared.includes(userInfo.user_id));
+      const share = users.filter((userInfo) =>
+        planInfo.share.includes(userInfo.user_id)
+      );
+      const shared = users.filter((userInfo) =>
+        planInfo.shared.includes(userInfo.user_id)
+      );
       res.send({ success: true, share, shared });
     } catch (err) {
       console.log(err);
@@ -520,7 +506,7 @@ Router.get("/users", async (req, res) => {
   });
 });
 
-Router.post("/share", async (req, res) => {
+Router.post("/plan/share", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { users, planId } = req.body;
@@ -613,7 +599,7 @@ Router.post("/share", async (req, res) => {
   });
 });
 
-Router.delete("/share", async (req, res) => {
+Router.delete("/plan/share", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { targetId, planId } = req.body;
@@ -676,7 +662,7 @@ Router.delete("/share", async (req, res) => {
   });
 });
 
-Router.post("/share/respond", async (req, res) => {
+Router.post("/plan/share/respond", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { planId, accepted } = req.body;
@@ -779,4 +765,5 @@ Router.post("/share/respond", async (req, res) => {
     }
   });
 });
+
 module.exports = Router;

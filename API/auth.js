@@ -34,7 +34,7 @@ async function createAccount(name, email, timezone, userInfo) {
     // Set the time to 12:00 AM
     const twelveAmDateTime = userDateTime.set({ millisecond: 0 });
     // Get the Unix timestamp in seconds
-    const datum_point = twelveAmDateTime.toSeconds();
+    const created_at = twelveAmDateTime.toSeconds();
     // Sanitize inputs
     //check email
     const isValidEmail = validateEmail(email);
@@ -67,26 +67,26 @@ async function createAccount(name, email, timezone, userInfo) {
       email,
       user_id,
       timezone,
-      datum_point,
+      created_at,
       key_salt,
       iv,
       ...userInfo,
       stripe_id: customer.id,
     };
 
-    connection.query("INSERT INTO users SET ?", user);
+    await connection.query("INSERT INTO users SET ?", user);
+
     cacheUserInfo(user);
     //create default subject
-    const subjectId = generateRandomId(10);
-    const suvject_datum_point = Math.floor(new Date().getTime() / 1000);
+    const subject_id = generateRandomId(10);
+    const suvject_created_at = Math.floor(new Date().getTime() / 1000);
     const subject = {
-      id: subjectId,
+      subject_id,
       name: "others",
       user_id,
       icon: "others",
       color: "#000000",
-      datum_point: suvject_datum_point,
-      hidden: -2, //-2 hidden means it's not editable
+      created_at: suvject_created_at,
     };
     connection.query(`INSERT INTO subjects SET ?`, subject);
 

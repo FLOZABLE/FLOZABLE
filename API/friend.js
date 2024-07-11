@@ -416,7 +416,7 @@ Router.get("/status", async (req, res) => {
             const ActiveGroup = JSON.parse(friend.ActiveGroup);
             const connection = pool.promise();
             const [[groupInfo]] = await connection.query(
-              "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups` WHERE group_id = ?",
+              "SELECT group_id, name, leader, visibility, description, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups` WHERE group_id = ?",
               [ActiveGroup.id]
             );
             if (groupInfo) {

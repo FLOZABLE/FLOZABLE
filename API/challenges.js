@@ -128,7 +128,7 @@ Router.post("/challenge-request-reply", async (req, res) => {
         id: challengeId,
         first_user_id: targetId, //the host
         second_user_id: userId, //the recipient
-        datum_point: Math.floor(new Date().getTime() / 1000),
+        created_at: Math.floor(new Date().getTime() / 1000),
       };
       const insertSubject = await connection.query(
         `INSERT INTO challenges SET ?`,
@@ -179,7 +179,7 @@ Router.get("/", async (req, res) => {
       if (isValidSearchId.isValid) {
         //searching by id
         const [[challengeInfo]] = await connection.query(
-          `SELECT first_user_id, second_user_id, datum_point FROM challenges WHERE id = ?`,
+          `SELECT first_user_id, second_user_id, created_at FROM challenges WHERE id = ?`,
           [searchId]
         );
         if (!challengeInfo) {
@@ -201,7 +201,7 @@ Router.get("/", async (req, res) => {
           return res.send({ success: false, reason: isValidSearchId.reason });
         }
         const [challengeInfo] = await connection.query(
-          `SELECT first_user_id, second_user_id, id, datum_point FROM challenges WHERE first_user_id = ? OR second_user_id = ? limit 120`,
+          `SELECT first_user_id, second_user_id, id, created_at FROM challenges WHERE first_user_id = ? OR second_user_id = ? limit 120`,
           [searchUser, searchUser]
         );
         const namePromise = challengeInfo.map(async (challenge) => {
@@ -360,7 +360,7 @@ Router.post("/join-challenge", async (req, res) => {
         id: challengeRoom.id,
         first_user_id: challengeRoom.hostId,
         second_user_id: userId,
-        datum_point: challengeRoom.startDate,
+        created_at: challengeRoom.startDate,
       };
       const insertChallenge = await connection.query(
         `INSERT INTO challenges SET ?`,

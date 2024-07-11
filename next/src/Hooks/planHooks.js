@@ -1,10 +1,10 @@
-import { getPlan } from "@/Api/planApi";
+import { getPlans } from "@/Api/planApi";
 import { useQuery } from "@tanstack/react-query";
 
 function usePlan(userInfo) {
   return useQuery({
     queryKey: [`usePlan`],
-    queryFn: getPlan,
+    queryFn: getPlans,
     staleTime: 1000 * 60,
     enabled: !!userInfo
   });

@@ -19,7 +19,8 @@ async function createUsersTable() {
     subscription TINYINT(1) DEFAULT 0,
     google_refresh_token VARCHAR(150),
     notification_endpoint VARCHAR(500),
-    notification_keys VARCHAR(500)
+    notification_keys VARCHAR(500),
+    stripe_id VARCHAR(25)
   );
   `);
 }
@@ -87,6 +88,19 @@ async function createGroupMembersTable() {
   `);
 }
 
+async function createGroupLikesTable() {
+  const connection = pool.promise();
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS group_likes (
+      group_id VARCHAR(10) NOT NULL,
+      user_id VARCHAR(10) NOT NULL,
+      PRIMARY KEY (user_id, group_id),
+      FOREIGN KEY (user_id) REFERENCES users(user_id),
+      FOREIGN KEY (group_id) REFERENCES groups(group_id)
+    );
+  `);
+}
+
 async function createFriendsTable() {
   const connection = pool.promise();
   await connection.query(`
@@ -121,6 +135,32 @@ async function createPlansTable() {
     CONSTRAINT fk_user_subject
       FOREIGN KEY (user_id, subject_id)
       REFERENCES subjects(user_id, subject_id)
+  );
+  `);
+}
+
+async function createPlanShare() {
+  const connection = pool.promise();
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS plan_share (
+    plan_id VARCHAR(10),
+    user_id VARCHAR(10),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (plan_id) REFERENCES plans(plan_id),
+    PRIMARY KEY (plan_id, user_id)
+  );
+  `);
+}
+
+async function createPlanShared() {
+  const connection = pool.promise();
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS plan_shared (
+    plan_id VARCHAR(10),
+    user_id VARCHAR(10),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (plan_id) REFERENCES plans(plan_id),
+    PRIMARY KEY (plan_id, user_id)
   );
   `);
 }
@@ -197,7 +237,7 @@ async function createRankingDetailsTable() {
 async function createDevicesTable() {
   const connection = pool.promise();
   await connection.query(`
-  CREATE TABLE IF NOT EXISTS  devices (
+  CREATE TABLE IF NOT EXISTS devices (
     device_id varchar(10),
     user_id varchar(10),
     last_auth INT(11), 
@@ -213,7 +253,7 @@ async function createDevicesTable() {
 async function createThemesTable() {
   const connection = pool.promise();
   await connection.query(`
-  CREATE TABLE IF NOT EXISTS  themes (
+  CREATE TABLE IF NOT EXISTS themes (
     theme_id VARCHAR(10) NOT NULL,
     user_id VARCHAR(20),
     video_id VARCHAR(11),
@@ -222,6 +262,19 @@ async function createThemesTable() {
     tags VARCHAR(300) DEFAULT '',
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     PRIMARY KEY (theme_id)
+  );  
+  `);
+}
+
+async function createUserThemesTable() {
+  const connection = pool.promise();
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS user_themes (
+    user_id VARCHAR(20),
+    theme_id VARCHAR(10),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (theme_id) REFERENCES themes(theme_id),
+    PRIMARY KEY (user_id, theme_id)
   );  
   `);
 }
@@ -243,8 +296,11 @@ module.exports = {
   createSubjectTimelinesTable,
   createGroupsTable,
   createGroupMembersTable,
+  createGroupLikesTable,
   createFriendsTable,
   createPlansTable,
+  createPlanShare,
+  createPlanShared,
   createChatroomsTable,
   createChatroomMembersTable,
   createChatroomMessagesTable,
@@ -252,5 +308,6 @@ module.exports = {
   createRankingDetailsTable,
   createDevicesTable,
   createThemesTable,
+  createUserThemesTable,
   createActivitiesTable,
 };

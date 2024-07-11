@@ -7,7 +7,7 @@ async function updateSubjectsTimeline(limit) {
 
   try {
     const [subjects] = await connection.query(
-      `SELECT id, user_id, timeline, datum_point, name FROM subjects WHERE updated = 0 LIMIT ?`,
+      `SELECT id, user_id, timeline, created_at, name FROM subjects WHERE updated = 0 LIMIT ?`,
       [limit]
     );
     const now = DateTime.now().toSeconds();
@@ -33,7 +33,7 @@ async function updateSubjectsTimeline(limit) {
           timelineSum += start + duration;
 
           //filter out future timeline that was generated with err;
-          if (data[0] + duration + subject.datum_point > now) {
+          if (data[0] + duration + subject.created_at > now) {
             return false;
           } else {
             return true;

@@ -24,6 +24,10 @@ const {
   createDevicesTable,
   createThemesTable,
   createActivitiesTable,
+  createUserThemesTable,
+  createGroupLikesTable,
+  createPlanShare,
+  createPlanShared,
 } = require("../Utils/query");
 const pool = require("../model/pool");
 
@@ -75,8 +79,11 @@ async function initializeMariadb() {
     await createSubjectTimelinesTable();
     await createGroupsTable();
     await createGroupMembersTable();
+    await createGroupLikesTable();
     await createFriendsTable();
     await createPlansTable();
+    await createPlanShare();
+    await createPlanShared();
     await createChatroomsTable();
     await createChatroomMembersTable();
     await createChatroomMessagesTable();
@@ -84,6 +91,7 @@ async function initializeMariadb() {
     await createRankingDetailsTable();
     await createDevicesTable();
     await createThemesTable();
+    await createUserThemesTable();
     await createActivitiesTable();
 
     console.log("Initialized mariadb");
