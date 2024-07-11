@@ -43,8 +43,13 @@ Router.get("/user", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const [[themes]] = await connection.query(
-        "SELECT themes from users where user_id = ?",
+      const [themes] = await connection.query(
+        `
+        SELECT t.theme_id, t.video_id, t.name, t.description, t.tags
+        FROM themes t
+        JOIN user_themes ut ON t.theme_id = ut.theme_id
+        WHERE ut.user_id = ?
+        `,
         [userId]
       );
       return res.send({ success: true, themes });

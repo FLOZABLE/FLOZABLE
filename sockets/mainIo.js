@@ -110,8 +110,8 @@ mainIo.on("connection", (socket) => {
       if (friends.length) {
         mainIo.to(friends).emit(`studying:${userId}`, subject);
       }
-      const { datum_point, id } = subject;
-      const start = now - datum_point;
+      const { created_at, id } = subject;
+      const start = now - created_at;
       redisClient.rpush(`user:${userId}:subject:${id}`, `[${start},0]`);
       redisClient.hset(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
       extensionIo.to(userId).emit("studying", { studying: true });
@@ -149,7 +149,7 @@ mainIo.on("connection", (socket) => {
     if (!friends.length) return;
     const connection = pool.promise();
     const [[groupInfo]] = await connection.query(
-      "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups` WHERE group_id = ?",
+      "SELECT group_id, name, leader, visibility, description, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups` WHERE group_id = ?",
       [groupId]
     );
     if (!groupInfo) return;
@@ -259,9 +259,9 @@ async function stopStudying(userId, mode, subjectId) {
 
   const start = activity[0];
 
-  const { datum_point } = subject;
+  const { created_at } = subject;
 
-  const duration = now - datum_point - start;
+  const duration = now - created_at - start;
 
   if (mode === "disconnect") {
   } else {

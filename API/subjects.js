@@ -11,6 +11,17 @@ const {
   validateArray,
 } = require("../Utils/validate");
 
+Router.get("/", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const subjectsInfo = await subjectsTimelineCache(userId);
+      res.send({ success: true, subjects: subjectsInfo });
+    } catch (err) {
+      console.log(err);
+    }
+  });
+});
+
 Router.put("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
@@ -42,13 +53,13 @@ Router.put("/", async (req, res) => {
         name,
         color,
         icon,
-        datum_point: Math.floor(new Date().getTime() / 1000),
-        id: generateRandomId(10),
+        created_at: Math.floor(new Date().getTime() / 1000),
+        subject_id: generateRandomId(10),
         user_id: userId,
       };
       const connection = pool.promise();
       try {
-        const insertSubject = await connection.query(
+        await connection.query(
           `INSERT INTO subjects SET ?`,
           subjectInfo
         );
@@ -159,7 +170,7 @@ Router.delete("/", async (req, res) => {
       const connection = pool.promise();
 
       const [subjects] = await connection.query(
-        `SELECT timeline, datum_point, id, name FROM subjects WHERE user_id = ? AND (id = ? OR name = "others")`,
+        `SELECT timeline, created_at, id, name FROM subjects WHERE user_id = ? AND (id = ? OR name = "others")`,
         [userId, subjectId]
       );
 
@@ -190,7 +201,7 @@ Router.delete("/", async (req, res) => {
           subject.timeline = parsedTimeline.concat(todayTimeline);
 
           subject.timeline = subject.timeline.map(([start, duration]) => {
-            return [subject.datum_point + start, duration];
+            return [subject.created_at + start, duration];
           });
 
           totalTimeline.push(...subject.timeline);
@@ -203,7 +214,7 @@ Router.delete("/", async (req, res) => {
 
       const newTimeline = totalTimeline
         .map(([start, duration]) => {
-          return [start - othersSubject.datum_point, duration];
+          return [start - othersSubject.created_at, duration];
         })
         .filter(([start]) => start >= 0);
 
@@ -229,17 +240,6 @@ Router.delete("/", async (req, res) => {
       res.send({ success: true });
     } catch (error) {
       console.log(error);
-    }
-  });
-});
-
-Router.get("/", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const subjectsInfo = await subjectsTimelineCache(userId);
-      res.send({ success: true, subjects: subjectsInfo });
-    } catch (err) {
-      console.log(err);
     }
   });
 });

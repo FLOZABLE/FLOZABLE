@@ -1,7 +1,7 @@
 [
   {
     "name": "Study Buddies",
-    "explanation": "Let's excel together!",
+    "description": "Let's excel together!",
     "tags": [
       "Study",
       "Learning",
@@ -10,7 +10,7 @@
   },
   {
     "name": "Coding Wizards",
-    "explanation": "Unlock the magic of code.",
+    "description": "Unlock the magic of code.",
     "tags": [
       "Coding",
       "Programming",
@@ -19,7 +19,7 @@
   },
   {
     "name": "Art Enthusiasts",
-    "explanation": "Explore the world of art and creativity.",
+    "description": "Explore the world of art and creativity.",
     "tags": [
       "Art",
       "Creativity",
@@ -28,7 +28,7 @@
   },
   {
     "name": "Science Geeks",
-    "explanation": "Discover the wonders of science.",
+    "description": "Discover the wonders of science.",
     "tags": [
       "Science",
       "Experiment",
@@ -37,7 +37,7 @@
   },
   {
     "name": "History Explorers",
-    "explanation": "Journey through the pages of history.",
+    "description": "Journey through the pages of history.",
     "tags": [
       "History",
       "Historical Analysis",
@@ -46,7 +46,7 @@
   },
   {
     "name": "Language Lovers",
-    "explanation": "Celebrate the beauty of languages.",
+    "description": "Celebrate the beauty of languages.",
     "tags": [
       "Languages",
       "Language Learning",
@@ -55,7 +55,7 @@
   },
   {
     "name": "Math Masters",
-    "explanation": "Solve the mysteries of numbers.",
+    "description": "Solve the mysteries of numbers.",
     "tags": [
       "Math",
       "Problem Solving",
@@ -64,7 +64,7 @@
   },
   {
     "name": "Literary Club",
-    "explanation": "Dive into the world of literature.",
+    "description": "Dive into the world of literature.",
     "tags": [
       "Literature",
       "Reading",
@@ -73,7 +73,7 @@
   },
   {
     "name": "Tech Innovators",
-    "explanation": "Shape the future with technology.",
+    "description": "Shape the future with technology.",
     "tags": [
       "Technology",
       "Innovation",
@@ -82,7 +82,7 @@
   },
   {
     "name": "Healthy Living",
-    "explanation": "Embrace fitness and wellness.",
+    "description": "Embrace fitness and wellness.",
     "tags": [
       "Fitness",
       "Health",
@@ -91,7 +91,7 @@
   },
   {
     "name": "Music Makers",
-    "explanation": "Create music and explore melodies.",
+    "description": "Create music and explore melodies.",
     "tags": [
       "Music",
       "Composition",
@@ -100,7 +100,7 @@
   },
   {
     "name": "Environmental Heroes",
-    "explanation": "Work for a greener planet.",
+    "description": "Work for a greener planet.",
     "tags": [
       "Environment",
       "Sustainability",
@@ -109,7 +109,7 @@
   },
   {
     "name": "Brain Teasers",
-    "explanation": "Challenge your mind with puzzles.",
+    "description": "Challenge your mind with puzzles.",
     "tags": [
       "Puzzles",
       "Brain Teasers",
@@ -118,7 +118,7 @@
   },
   {
     "name": "Travel Enthusiasts",
-    "explanation": "Share travel stories and plans.",
+    "description": "Share travel stories and plans.",
     "tags": [
       "Travel",
       "Adventure",
@@ -127,7 +127,7 @@
   },
   {
     "name": "Philosophy Discussions",
-    "explanation": "Explore the depths of philosophy.",
+    "description": "Explore the depths of philosophy.",
     "tags": [
       "Philosophy",
       "Deep Thinking",
@@ -136,7 +136,7 @@
   },
   {
     "name": "DIY Creations",
-    "explanation": "Get creative with DIY projects.",
+    "description": "Get creative with DIY projects.",
     "tags": [
       "DIY",
       "Crafts",
@@ -145,7 +145,7 @@
   },
   {
     "name": "Bookworms United",
-    "explanation": "Read, discuss, and share books.",
+    "description": "Read, discuss, and share books.",
     "tags": [
       "Books",
       "Reading",
@@ -154,7 +154,7 @@
   },
   {
     "name": "Chess Strategists",
-    "explanation": "Plan your moves and conquer.",
+    "description": "Plan your moves and conquer.",
     "tags": [
       "Chess",
       "Strategy",
@@ -163,7 +163,7 @@
   },
   {
     "name": "Film Buffs Society",
-    "explanation": "Explore the world of cinema.",
+    "description": "Explore the world of cinema.",
     "tags": [
       "Movies",
       "Film Analysis",
@@ -172,7 +172,7 @@
   },
   {
     "name": "Yoga & Meditation",
-    "explanation": "Find inner peace and balance.",
+    "description": "Find inner peace and balance.",
     "tags": [
       "Yoga",
       "Meditation",
@@ -181,7 +181,7 @@
   },
   {
     "name": "Cooking Delights",
-    "explanation": "Share culinary adventures.",
+    "description": "Share culinary adventures.",
     "tags": [
       "Cooking",
       "Recipes",
@@ -190,7 +190,7 @@
   },
   {
     "name": "Nature Explorers",
-    "explanation": "Connect with the great outdoors.",
+    "description": "Connect with the great outdoors.",
     "tags": [
       "Nature",
       "Outdoors",
@@ -199,7 +199,7 @@
   },
   {
     "name": "Startups Hub",
-    "explanation": "Entrepreneurship and innovation.",
+    "description": "Entrepreneurship and innovation.",
     "tags": [
       "Startups",
       "Business",
@@ -208,7 +208,7 @@
   },
   {
     "name": "Astronomy Enthusiasts",
-    "explanation": "Stargazing and cosmic wonders.",
+    "description": "Stargazing and cosmic wonders.",
     "tags": [
       "Astronomy",
       "Stargazing",
@@ -217,7 +217,7 @@
   },
   {
     "name": "Photography World",
-    "explanation": "Capture moments through the lens.",
+    "description": "Capture moments through the lens.",
     "tags": [
       "Photography",
       "Visual Art",
@@ -226,7 +226,7 @@
   },
   {
     "name": "Gaming Guild",
-    "explanation": "Level up and game on!",
+    "description": "Level up and game on!",
     "tags": [
       "Gaming",
       "Video Games",
@@ -235,7 +235,7 @@
   },
   {
     "name": "Pet Lovers' Corner",
-    "explanation": "For furry friends and their owners.",
+    "description": "For furry friends and their owners.",
     "tags": [
       "Pets",
       "Animals",
@@ -244,7 +244,7 @@
   },
   {
     "name": "Film Noir Fans",
-    "explanation": "Dive into the world of film noir.",
+    "description": "Dive into the world of film noir.",
     "tags": [
       "Film Noir",
       "Cinematic Style",
@@ -253,7 +253,7 @@
   },
   {
     "name": "Robotics Revolution",
-    "explanation": "Explore the world of robotics.",
+    "description": "Explore the world of robotics.",
     "tags": [
       "Robotics",
       "Automation",
@@ -262,7 +262,7 @@
   },
   {
     "name": "Fashionistas Lounge",
-    "explanation": "Fashion and style discussions.",
+    "description": "Fashion and style discussions.",
     "tags": [
       "Fashion",
       "Style",
@@ -271,7 +271,7 @@
   },
   {
     "name": "Aeronautics Club",
-    "explanation": "Take flight in the world of aviation.",
+    "description": "Take flight in the world of aviation.",
     "tags": [
       "Aeronautics",
       "Flight",
@@ -280,7 +280,7 @@
   },
   {
     "name": "Comedy Club",
-    "explanation": "Laugh out loud with comedy lovers.",
+    "description": "Laugh out loud with comedy lovers.",
     "tags": [
       "Comedy",
       "Humor",
@@ -289,7 +289,7 @@
   },
   {
     "name": "Tech Gadgets Galore",
-    "explanation": "Explore the latest tech gadgets.",
+    "description": "Explore the latest tech gadgets.",
     "tags": [
       "Tech Gadgets",
       "Electronics",
@@ -298,7 +298,7 @@
   },
   {
     "name": "Hiking Adventures",
-    "explanation": "Discover nature through hiking.",
+    "description": "Discover nature through hiking.",
     "tags": [
       "Hiking",
       "Outdoors",
@@ -307,7 +307,7 @@
   },
   {
     "name": "Gardening Gurus",
-    "explanation": "Grow and tend to your garden.",
+    "description": "Grow and tend to your garden.",
     "tags": [
       "Gardening",
       "Plants",
@@ -316,7 +316,7 @@
   },
   {
     "name": "Creative Writing Circle",
-    "explanation": "Write and share creative stories.",
+    "description": "Write and share creative stories.",
     "tags": [
       "Creative Writing",
       "Stories",
@@ -325,7 +325,7 @@
   },
   {
     "name": "Coffee Connoisseurs",
-    "explanation": "For the love of coffee and caffeine.",
+    "description": "For the love of coffee and caffeine.",
     "tags": [
       "Coffee",
       "Caffeine",
@@ -334,7 +334,7 @@
   },
   {
     "name": "Architectural Wonders",
-    "explanation": "Explore the world of architecture.",
+    "description": "Explore the world of architecture.",
     "tags": [
       "Architecture",
       "Design",
@@ -343,7 +343,7 @@
   },
   {
     "name": "Eco-Friendly Living",
-    "explanation": "Sustainable living and green tips.",
+    "description": "Sustainable living and green tips.",
     "tags": [
       "Sustainability",
       "Eco-Friendly",
@@ -352,7 +352,7 @@
   },
   {
     "name": "Motorsport Madness",
-    "explanation": "For racing and motorsport fans.",
+    "description": "For racing and motorsport fans.",
     "tags": [
       "Motorsport",
       "Racing",
@@ -361,7 +361,7 @@
   },
   {
     "name": "Fitness Fanatics",
-    "explanation": "Combine study breaks with fitness tips and routines.",
+    "description": "Combine study breaks with fitness tips and routines.",
     "tags": [
       "Fitness",
       "Exercise",
@@ -370,7 +370,7 @@
   },
   {
     "name": "Music Masters",
-    "explanation": "Discuss music theory, genres, and artists.",
+    "description": "Discuss music theory, genres, and artists.",
     "tags": [
       "Music",
       "Music Theory",
@@ -379,7 +379,7 @@
   },
   {
     "name": "Sustainable Solutions",
-    "explanation": "Brainstorm eco-friendly ideas for a greener future.",
+    "description": "Brainstorm eco-friendly ideas for a greener future.",
     "tags": [
       "Sustainability",
       "Environment",
@@ -388,7 +388,7 @@
   },
   {
     "name": "Brain Teasers Brigade",
-    "explanation": "Sharpen your mind with puzzles and challenges.",
+    "description": "Sharpen your mind with puzzles and challenges.",
     "tags": [
       "Puzzles",
       "Brain Teasers",
@@ -397,7 +397,7 @@
   },
   {
     "name": "Travel Enthusiasts",
-    "explanation": "Share travel experiences and plan future trips.",
+    "description": "Share travel experiences and plan future trips.",
     "tags": [
       "Travel",
       "Adventure",
@@ -406,7 +406,7 @@
   },
   {
     "name": "Philosophy Circle",
-    "explanation": "Dive into deep philosophical conversations.",
+    "description": "Dive into deep philosophical conversations.",
     "tags": [
       "Philosophy",
       "Discussion",
@@ -415,7 +415,7 @@
   },
   {
     "name": "DIY Innovators",
-    "explanation": "Share DIY projects and innovative ideas.",
+    "description": "Share DIY projects and innovative ideas.",
     "tags": [
       "DIY",
       "Innovation",
@@ -424,7 +424,7 @@
   },
   {
     "name": "Chess Champions",
-    "explanation": "Master the game of chess.",
+    "description": "Master the game of chess.",
     "tags": [
       "Chess",
       "Strategy",
@@ -433,7 +433,7 @@
   },
   {
     "name": "Movie Buffs Club",
-    "explanation": "Discuss and critique movies.",
+    "description": "Discuss and critique movies.",
     "tags": [
       "Movies",
       "Film Analysis",
@@ -442,7 +442,7 @@
   },
   {
     "name": "Culinary Creations",
-    "explanation": "Explore the world of cooking.",
+    "description": "Explore the world of cooking.",
     "tags": [
       "Cooking",
       "Recipes",
@@ -451,7 +451,7 @@
   },
   {
     "name": "Outdoor Adventures",
-    "explanation": "Embrace the great outdoors.",
+    "description": "Embrace the great outdoors.",
     "tags": [
       "Outdoors",
       "Adventure",
@@ -460,7 +460,7 @@
   },
   {
     "name": "Startup Success",
-    "explanation": "Empower your entrepreneurial journey.",
+    "description": "Empower your entrepreneurial journey.",
     "tags": [
       "Startups",
       "Business",
@@ -469,7 +469,7 @@
   },
   {
     "name": "Astronomy Enthusiasts",
-    "explanation": "Stargazing and cosmic wonders.",
+    "description": "Stargazing and cosmic wonders.",
     "tags": [
       "Astronomy",
       "Stargazing",
@@ -478,7 +478,7 @@
   },
   {
     "name": "Photography Passion",
-    "explanation": "Capture moments through the lens.",
+    "description": "Capture moments through the lens.",
     "tags": [
       "Photography",
       "Visual Art",
@@ -487,7 +487,7 @@
   },
   {
     "name": "Gaming Community",
-    "explanation": "Game together and have fun.",
+    "description": "Game together and have fun.",
     "tags": [
       "Gaming",
       "Video Games",
@@ -496,7 +496,7 @@
   },
   {
     "name": "Pet Owners' Paradise",
-    "explanation": "For pet lovers and their pets.",
+    "description": "For pet lovers and their pets.",
     "tags": [
       "Pets",
       "Animals",
@@ -505,7 +505,7 @@
   },
   {
     "name": "Classic Cinema Lovers",
-    "explanation": "Explore classic film gems.",
+    "description": "Explore classic film gems.",
     "tags": [
       "Classic Films",
       "Cinema",
@@ -514,7 +514,7 @@
   },
   {
     "name": "Robotics Enthusiasts",
-    "explanation": "Delve into the world of robotics.",
+    "description": "Delve into the world of robotics.",
     "tags": [
       "Robotics",
       "Automation",
@@ -523,7 +523,7 @@
   },
   {
     "name": "Fashion Forward",
-    "explanation": "Stay updated with fashion trends.",
+    "description": "Stay updated with fashion trends.",
     "tags": [
       "Fashion",
       "Trends",
@@ -532,7 +532,7 @@
   },
   {
     "name": "Aviation Adventures",
-    "explanation": "Fly high in the world of aviation.",
+    "description": "Fly high in the world of aviation.",
     "tags": [
       "Aviation",
       "Flying",
@@ -541,7 +541,7 @@
   },
   {
     "name": "Laughter Lounge",
-    "explanation": "Share a laugh with comedy fans.",
+    "description": "Share a laugh with comedy fans.",
     "tags": [
       "Comedy",
       "Humor",
@@ -550,7 +550,7 @@
   },
   {
     "name": "Tech Gadgets Galore",
-    "explanation": "Discover the latest tech gadgets.",
+    "description": "Discover the latest tech gadgets.",
     "tags": [
       "Tech Gadgets",
       "Gizmos",
@@ -559,7 +559,7 @@
   },
   {
     "name": "Mountain Hikers",
-    "explanation": "Conquer mountains and trails.",
+    "description": "Conquer mountains and trails.",
     "tags": [
       "Hiking",
       "Mountains",
@@ -568,7 +568,7 @@
   },
   {
     "name": "Green Thumbs Club",
-    "explanation": "Grow and nurture plants.",
+    "description": "Grow and nurture plants.",
     "tags": [
       "Gardening",
       "Plants",
@@ -577,7 +577,7 @@
   },
   {
     "name": "Writers' Guild",
-    "explanation": "Craft and share stories.",
+    "description": "Craft and share stories.",
     "tags": [
       "Writing",
       "Stories",
@@ -586,7 +586,7 @@
   },
   {
     "name": "Coffee Enthusiasts",
-    "explanation": "Savor the world of coffee.",
+    "description": "Savor the world of coffee.",
     "tags": [
       "Coffee",
       "Caffeine",
@@ -595,7 +595,7 @@
   },
   {
     "name": "Architectural Marvels",
-    "explanation": "Explore architectural wonders.",
+    "description": "Explore architectural wonders.",
     "tags": [
       "Architecture",
       "Design",
@@ -604,7 +604,7 @@
   },
   {
     "name": "Green Living Advocates",
-    "explanation": "Champion eco-friendly living.",
+    "description": "Champion eco-friendly living.",
     "tags": [
       "Sustainability",
       "Green Living",
@@ -613,7 +613,7 @@
   },
   {
     "name": "Motorsport Mania",
-    "explanation": "Rev up for motorsport action.",
+    "description": "Rev up for motorsport action.",
     "tags": [
       "Motorsport",
       "Racing",
@@ -622,7 +622,7 @@
   },
   {
     "name": "Yogis & Yoginis",
-    "explanation": "Find serenity through yoga.",
+    "description": "Find serenity through yoga.",
     "tags": [
       "Yoga",
       "Meditation",
@@ -631,7 +631,7 @@
   },
   {
     "name": "Culinary Delights",
-    "explanation": "Share and savor culinary delights.",
+    "description": "Share and savor culinary delights.",
     "tags": [
       "Cuisine",
       "Cooking",
@@ -640,7 +640,7 @@
   },
   {
     "name": "Nature Enthusiasts",
-    "explanation": "Connect with the beauty of nature.",
+    "description": "Connect with the beauty of nature.",
     "tags": [
       "Nature",
       "Exploration",
@@ -649,7 +649,7 @@
   },
   {
     "name": "Tech Innovators Hub",
-    "explanation": "Innovate with technology.",
+    "description": "Innovate with technology.",
     "tags": [
       "Technology",
       "Innovation",
@@ -658,7 +658,7 @@
   },
   {
     "name": "Literary Legends",
-    "explanation": "Celebrate the world of literature.",
+    "description": "Celebrate the world of literature.",
     "tags": [
       "Literature",
       "Books",
@@ -667,7 +667,7 @@
   },
   {
     "name": "Space Explorers",
-    "explanation": "Journey to the stars and beyond.",
+    "description": "Journey to the stars and beyond.",
     "tags": [
       "Space",
       "Exploration",
@@ -676,7 +676,7 @@
   },
   {
     "name": "Artistic Visions",
-    "explanation": "Express through art and creativity.",
+    "description": "Express through art and creativity.",
     "tags": [
       "Art",
       "Creativity",
@@ -685,7 +685,7 @@
   },
   {
     "name": "Music Makers' Club",
-    "explanation": "Create and appreciate music.",
+    "description": "Create and appreciate music.",
     "tags": [
       "Music",
       "Composition",
@@ -694,7 +694,7 @@
   },
   {
     "name": "Environmental Warriors",
-    "explanation": "Fight for a greener planet.",
+    "description": "Fight for a greener planet.",
     "tags": [
       "Environment",
       "Sustainability",
@@ -703,7 +703,7 @@
   },
   {
     "name": "Mystery Solvers",
-    "explanation": "Solve puzzles and mysteries.",
+    "description": "Solve puzzles and mysteries.",
     "tags": [
       "Puzzles",
       "Mystery",
@@ -712,7 +712,7 @@
   },
   {
     "name": "Wanderlust Society",
-    "explanation": "Explore the world of travel.",
+    "description": "Explore the world of travel.",
     "tags": [
       "Travel",
       "Adventures",
@@ -721,7 +721,7 @@
   },
   {
     "name": "Philosophical Debates",
-    "explanation": "Delve into philosophical discussions.",
+    "description": "Delve into philosophical discussions.",
     "tags": [
       "Philosophy",
       "Debates",
@@ -730,7 +730,7 @@
   },
   {
     "name": "Innovative DIYers",
-    "explanation": "Create and innovate with DIY projects.",
+    "description": "Create and innovate with DIY projects.",
     "tags": [
       "DIY",
       "Innovation",
@@ -739,7 +739,7 @@
   },
   {
     "name": "Book Club Oasis",
-    "explanation": "Discuss and celebrate books.",
+    "description": "Discuss and celebrate books.",
     "tags": [
       "Books",
       "Reading",
@@ -748,7 +748,7 @@
   },
   {
     "name": "Science Enthusiasts",
-    "explanation": "Dive into the wonders of science.",
+    "description": "Dive into the wonders of science.",
     "tags": [
       "Science",
       "Discovery",
@@ -757,7 +757,7 @@
   },
   {
     "name": "Theatrical Stars",
-    "explanation": "Explore the world of theater.",
+    "description": "Explore the world of theater.",
     "tags": [
       "Theater",
       "Drama",
@@ -766,7 +766,7 @@
   },
   {
     "name": "Healthy Living Squad",
-    "explanation": "Embrace wellness and health.",
+    "description": "Embrace wellness and health.",
     "tags": [
       "Health",
       "Wellness",
@@ -775,7 +775,7 @@
   },
   {
     "name": "Digital Artists Guild",
-    "explanation": "Express through digital art.",
+    "description": "Express through digital art.",
     "tags": [
       "Digital Art",
       "Creativity",
@@ -784,7 +784,7 @@
   },
   {
     "name": "Board Gamers United",
-    "explanation": "Play board games and have fun.",
+    "description": "Play board games and have fun.",
     "tags": [
       "Board Games",
       "Fun",
@@ -793,7 +793,7 @@
   },
   {
     "name": "Animal Lovers Haven",
-    "explanation": "For all animal enthusiasts.",
+    "description": "For all animal enthusiasts.",
     "tags": [
       "Animals",
       "Pets",
@@ -802,7 +802,7 @@
   },
   {
     "name": "Classic Movie Nights",
-    "explanation": "Enjoy classic films together.",
+    "description": "Enjoy classic films together.",
     "tags": [
       "Classic Movies",
       "Cinematic Classics",
@@ -811,7 +811,7 @@
   },
   {
     "name": "Math Wizards Study Group",
-    "explanation": "Unlock the secrets of mathematics.",
+    "description": "Unlock the secrets of mathematics.",
     "tags": [
       "Math",
       "Problem Solving",
@@ -820,7 +820,7 @@
   },
   {
     "name": "Literary Lounge for Scholars",
-    "explanation": "Dive into the world of literature.",
+    "description": "Dive into the world of literature.",
     "tags": [
       "Literature",
       "Reading",
@@ -829,7 +829,7 @@
   },
   {
     "name": "Science Explorers Society",
-    "explanation": "Explore the wonders of science and theories.",
+    "description": "Explore the wonders of science and theories.",
     "tags": [
       "Science",
       "Experiment",
@@ -838,7 +838,7 @@
   },
   {
     "name": "Language Lab for Linguists",
-    "explanation": "Practice languages from around the world.",
+    "description": "Practice languages from around the world.",
     "tags": [
       "Languages",
       "Language Learning",
@@ -847,7 +847,7 @@
   },
   {
     "name": "Coding Collective Collaborative",
-    "explanation": "Collaborate on coding projects and enhance your skills.",
+    "description": "Collaborate on coding projects and enhance your skills.",
     "tags": [
       "Coding",
       "Programming",
@@ -856,7 +856,7 @@
   },
   {
     "name": "History Buffs Discussion Group",
-    "explanation": "Uncover mysteries of the past and historical debates.",
+    "description": "Uncover mysteries of the past and historical debates.",
     "tags": [
       "History",
       "Historical Analysis",
@@ -865,7 +865,7 @@
   },
   {
     "name": "Environmental Studies Think Tank",
-    "explanation": "Brainstorm eco-friendly ideas for a greener future.",
+    "description": "Brainstorm eco-friendly ideas for a greener future.",
     "tags": [
       "Environmental Studies",
       "Sustainability",
@@ -874,7 +874,7 @@
   },
   {
     "name": "Brain Teasers and Puzzles Enthusiasts",
-    "explanation": "Sharpen your mind with puzzles and challenges.",
+    "description": "Sharpen your mind with puzzles and challenges.",
     "tags": [
       "Puzzles",
       "Brain Teasers",
@@ -883,7 +883,7 @@
   },
   {
     "name": "Philosophy Circle for Deep Thinkers",
-    "explanation": "Dive into deep philosophical conversations.",
+    "description": "Dive into deep philosophical conversations.",
     "tags": [
       "Philosophy",
       "Discussion",
@@ -892,7 +892,7 @@
   },
   {
     "name": "DIY Innovators and Makers",
-    "explanation": "Share DIY projects and innovative ideas.",
+    "description": "Share DIY projects and innovative ideas.",
     "tags": [
       "DIY",
       "Innovation",
@@ -901,7 +901,7 @@
   },
   {
     "name": "Study Buddies for Success",
-    "explanation": "Let's excel together in our studies.",
+    "description": "Let's excel together in our studies.",
     "tags": [
       "Study",
       "Learning",
@@ -910,7 +910,7 @@
   },
   {
     "name": "Coding Wizards Academy",
-    "explanation": "Unlock the magic of code and programming.",
+    "description": "Unlock the magic of code and programming.",
     "tags": [
       "Coding",
       "Programming",
@@ -919,7 +919,7 @@
   },
   {
     "name": "Science Geeks Corner",
-    "explanation": "Discover the wonders of science and experimentation.",
+    "description": "Discover the wonders of science and experimentation.",
     "tags": [
       "Science",
       "Experiment",
@@ -928,7 +928,7 @@
   },
   {
     "name": "Language Learners' Haven",
-    "explanation": "Explore the beauty of languages and communication.",
+    "description": "Explore the beauty of languages and communication.",
     "tags": [
       "Languages",
       "Language Learning",
@@ -937,7 +937,7 @@
   },
   {
     "name": "Math Enthusiasts' Forum",
-    "explanation": "Solve mathematical mysteries and problems.",
+    "description": "Solve mathematical mysteries and problems.",
     "tags": [
       "Math",
       "Problem Solving",
@@ -946,7 +946,7 @@
   },
   {
     "name": "Literary Analysis Group",
-    "explanation": "Delve into the depths of literature and reading.",
+    "description": "Delve into the depths of literature and reading.",
     "tags": [
       "Literature",
       "Reading",
@@ -955,7 +955,7 @@
   },
   {
     "name": "Tech Innovators and Developers",
-    "explanation": "Shape the future with technology and innovation.",
+    "description": "Shape the future with technology and innovation.",
     "tags": [
       "Technology",
       "Innovation",
@@ -964,7 +964,7 @@
   },
   {
     "name": "Wellness and Study Balance",
-    "explanation": "Maintain wellness during your studies.",
+    "description": "Maintain wellness during your studies.",
     "tags": [
       "Wellness",
       "Study Balance",
@@ -973,7 +973,7 @@
   },
   {
     "name": "Music Theory Explorers",
-    "explanation": "Dive into music theory and genres.",
+    "description": "Dive into music theory and genres.",
     "tags": [
       "Music",
       "Music Theory",
@@ -982,7 +982,7 @@
   },
   {
     "name": "Sustainable Solutions Lab",
-    "explanation": "Brainstorm eco-friendly solutions for a greener world.",
+    "description": "Brainstorm eco-friendly solutions for a greener world.",
     "tags": [
       "Sustainability",
       "Environment",
@@ -991,7 +991,7 @@
   },
   {
     "name": "Logical Thinkers' Society",
-    "explanation": "Challenge your mind with logic and puzzles.",
+    "description": "Challenge your mind with logic and puzzles.",
     "tags": [
       "Logic",
       "Critical Thinking",
@@ -1000,7 +1000,7 @@
   },
   {
     "name": "World History Enthusiasts",
-    "explanation": "Explore the history of our world and civilizations.",
+    "description": "Explore the history of our world and civilizations.",
     "tags": [
       "World History",
       "Historical Analysis",
@@ -1009,7 +1009,7 @@
   },
   {
     "name": "Yoga for Mind and Study",
-    "explanation": "Find balance and focus through yoga and meditation.",
+    "description": "Find balance and focus through yoga and meditation.",
     "tags": [
       "Yoga",
       "Meditation",
@@ -1018,7 +1018,7 @@
   },
   {
     "name": "Culinary Science Experimenters",
-    "explanation": "Combine cooking and science in your kitchen.",
+    "description": "Combine cooking and science in your kitchen.",
     "tags": [
       "Culinary Science",
       "Cooking Experiments",
@@ -1027,7 +1027,7 @@
   },
   {
     "name": "Nature Learning Adventures",
-    "explanation": "Connect with nature through learning and exploration.",
+    "description": "Connect with nature through learning and exploration.",
     "tags": [
       "Nature",
       "Learning",
@@ -1036,7 +1036,7 @@
   },
   {
     "name": "Startup Success Strategies",
-    "explanation": "Empower your startup journey with strategies and insights.",
+    "description": "Empower your startup journey with strategies and insights.",
     "tags": [
       "Startup Success",
       "Entrepreneurship",
@@ -1045,7 +1045,7 @@
   },
   {
     "name": "Astronomy Enthusiasts Club",
-    "explanation": "Explore the cosmos and stars through astronomy.",
+    "description": "Explore the cosmos and stars through astronomy.",
     "tags": [
       "Astronomy",
       "Stargazing",
@@ -1054,7 +1054,7 @@
   },
   {
     "name": "Creative Writing Workshop",
-    "explanation": "Craft and share creative stories and writing.",
+    "description": "Craft and share creative stories and writing.",
     "tags": [
       "Creative Writing",
       "Stories",
@@ -1063,7 +1063,7 @@
   },
   {
     "name": "Coffee and Study Companions",
-    "explanation": "Enjoy coffee and productive study sessions.",
+    "description": "Enjoy coffee and productive study sessions.",
     "tags": [
       "Coffee",
       "Study Sessions",
@@ -1072,7 +1072,7 @@
   },
   {
     "name": "Architectural Design Studio",
-    "explanation": "Explore architectural design and creativity.",
+    "description": "Explore architectural design and creativity.",
     "tags": [
       "Architecture",
       "Design",
@@ -1081,7 +1081,7 @@
   },
   {
     "name": "Green Living Advocates",
-    "explanation": "Champion eco-friendly and sustainable living.",
+    "description": "Champion eco-friendly and sustainable living.",
     "tags": [
       "Green Living",
       "Sustainability",
@@ -1090,7 +1090,7 @@
   },
   {
     "name": "Motivated Study Group",
-    "explanation": "Stay motivated and focused on your studies.",
+    "description": "Stay motivated and focused on your studies.",
     "tags": [
       "Motivated Study",
       "Focus",
@@ -1099,7 +1099,7 @@
   },
   {
     "name": "Mind and Body Wellness",
-    "explanation": "Balance study with wellness for a healthy life.",
+    "description": "Balance study with wellness for a healthy life.",
     "tags": [
       "Wellness",
       "Healthy Living",
@@ -1108,7 +1108,7 @@
   },
   {
     "name": "Visual Arts Creators",
-    "explanation": "Express through visual arts and creativity.",
+    "description": "Express through visual arts and creativity.",
     "tags": [
       "Visual Arts",
       "Creativity",
@@ -1117,7 +1117,7 @@
   },
   {
     "name": "Logical Board Gamers",
-    "explanation": "Challenge your mind with board games.",
+    "description": "Challenge your mind with board games.",
     "tags": [
       "Board Games",
       "Logic",
@@ -1126,7 +1126,7 @@
   },
   {
     "name": "Literature Appreciation Society",
-    "explanation": "Appreciate the beauty of literature and books.",
+    "description": "Appreciate the beauty of literature and books.",
     "tags": [
       "Literature",
       "Book Lovers",
@@ -1135,7 +1135,7 @@
   },
   {
     "name": "Space and Astronomy Lovers",
-    "explanation": "Explore the cosmos and astronomy wonders.",
+    "description": "Explore the cosmos and astronomy wonders.",
     "tags": [
       "Space",
       "Astronomy",
@@ -1144,7 +1144,7 @@
   },
   {
     "name": "Artistic Creators' Hub",
-    "explanation": "Create and showcase your artistic creations.",
+    "description": "Create and showcase your artistic creations.",
     "tags": [
       "Artistic Creations",
       "Art Showcase",
@@ -1153,7 +1153,7 @@
   },
   {
     "name": "Musical Creators' Community",
-    "explanation": "Compose and create music together.",
+    "description": "Compose and create music together.",
     "tags": [
       "Music Creation",
       "Musical Collaborations",
@@ -1162,7 +1162,7 @@
   },
   {
     "name": "Environmental Warriors for Change",
-    "explanation": "Fight for a greener and sustainable future.",
+    "description": "Fight for a greener and sustainable future.",
     "tags": [
       "Environmental Activism",
       "Sustainability",
@@ -1171,7 +1171,7 @@
   },
   {
     "name": "Puzzle Solvers and Riddlers",
-    "explanation": "Solve puzzles and riddles for fun and challenge.",
+    "description": "Solve puzzles and riddles for fun and challenge.",
     "tags": [
       "Puzzles",
       "Riddles",
@@ -1180,7 +1180,7 @@
   },
   {
     "name": "Explorers of Learning and Discovery",
-    "explanation": "Embark on learning adventures and discoveries.",
+    "description": "Embark on learning adventures and discoveries.",
     "tags": [
       "Learning",
       "Exploration",
@@ -1189,7 +1189,7 @@
   },
   {
     "name": "Philosophical Debates and Conversations",
-    "explanation": "Engage in deep philosophical discussions and debates.",
+    "description": "Engage in deep philosophical discussions and debates.",
     "tags": [
       "Philosophy",
       "Debates",
@@ -1198,7 +1198,7 @@
   },
   {
     "name": "Innovative DIY Projects and Ideas",
-    "explanation": "Share and collaborate on innovative DIY projects.",
+    "description": "Share and collaborate on innovative DIY projects.",
     "tags": [
       "DIY Projects",
       "Innovation",
@@ -1207,7 +1207,7 @@
   },
   {
     "name": "Chemistry Enthusiasts",
-    "explanation": "Explore the world of chemical reactions and elements.",
+    "description": "Explore the world of chemical reactions and elements.",
     "tags": [
       "Chemistry",
       "Science",
@@ -1216,7 +1216,7 @@
   },
   {
     "name": "Debate Club",
-    "explanation": "Engage in intellectual debates and discussions.",
+    "description": "Engage in intellectual debates and discussions.",
     "tags": [
       "Debate",
       "Discussion",
@@ -1225,7 +1225,7 @@
   },
   {
     "name": "Philosophy and Ethics Forum",
-    "explanation": "Delve into philosophical and ethical debates.",
+    "description": "Delve into philosophical and ethical debates.",
     "tags": [
       "Philosophy",
       "Ethics",
@@ -1234,7 +1234,7 @@
   },
   {
     "name": "Study Buddies Alliance",
-    "explanation": "Connect with like-minded study partners.",
+    "description": "Connect with like-minded study partners.",
     "tags": [
       "Study Partners",
       "Collaboration",
@@ -1243,7 +1243,7 @@
   },
   {
     "name": "Literary Critics Society",
-    "explanation": "Analyze and critique literary works.",
+    "description": "Analyze and critique literary works.",
     "tags": [
       "Literary Analysis",
       "Critique",
@@ -1252,7 +1252,7 @@
   },
   {
     "name": "Physics Pioneers",
-    "explanation": "Study the laws of the universe and physics.",
+    "description": "Study the laws of the universe and physics.",
     "tags": [
       "Physics",
       "Science",
@@ -1261,7 +1261,7 @@
   },
   {
     "name": "Language Enthusiasts Network",
-    "explanation": "Learn and practice new languages together.",
+    "description": "Learn and practice new languages together.",
     "tags": [
       "Language Learning",
       "Language Exchange",
@@ -1270,7 +1270,7 @@
   },
   {
     "name": "Code Wizards Guild",
-    "explanation": "Master the art of coding and programming.",
+    "description": "Master the art of coding and programming.",
     "tags": [
       "Coding Mastery",
       "Software Development",
@@ -1279,7 +1279,7 @@
   },
   {
     "name": "Historical Mysteries Group",
-    "explanation": "Unravel the mysteries of the past.",
+    "description": "Unravel the mysteries of the past.",
     "tags": [
       "Historical Mysteries",
       "Research",
@@ -1288,7 +1288,7 @@
   },
   {
     "name": "Study Break Yoga Sessions",
-    "explanation": "Relax and rejuvenate with yoga during study breaks.",
+    "description": "Relax and rejuvenate with yoga during study breaks.",
     "tags": [
       "Yoga Breaks",
       "Relaxation",
@@ -1297,7 +1297,7 @@
   },
   {
     "name": "Creative Writing Workshop",
-    "explanation": "Hone your writing skills and creativity.",
+    "description": "Hone your writing skills and creativity.",
     "tags": [
       "Creative Writing",
       "Writing Workshop",
@@ -1306,7 +1306,7 @@
   },
   {
     "name": "Coffee and Study Partners",
-    "explanation": "Fuel your study sessions with coffee and camaraderie.",
+    "description": "Fuel your study sessions with coffee and camaraderie.",
     "tags": [
       "Coffee Lovers",
       "Study Groups",
@@ -1315,7 +1315,7 @@
   },
   {
     "name": "Eco-conscious Innovators",
-    "explanation": "Brainstorm green solutions for a sustainable future.",
+    "description": "Brainstorm green solutions for a sustainable future.",
     "tags": [
       "Eco-friendly Innovation",
       "Sustainability",
@@ -1324,7 +1324,7 @@
   },
   {
     "name": "Mystery Solvers Society",
-    "explanation": "Solve complex puzzles and unravel mysteries.",
+    "description": "Solve complex puzzles and unravel mysteries.",
     "tags": [
       "Mystery Solving",
       "Puzzle Challenges",
@@ -1333,7 +1333,7 @@
   },
   {
     "name": "Global Explorers Club",
-    "explanation": "Embark on virtual journeys to explore the world.",
+    "description": "Embark on virtual journeys to explore the world.",
     "tags": [
       "Virtual Travel",
       "Exploration",
@@ -1342,7 +1342,7 @@
   },
   {
     "name": "Social Sciences Think Tank",
-    "explanation": "Discuss social issues and research in the social sciences.",
+    "description": "Discuss social issues and research in the social sciences.",
     "tags": [
       "Social Sciences",
       "Research",
@@ -1351,7 +1351,7 @@
   },
   {
     "name": "Botany Enthusiasts",
-    "explanation": "Dive into the world of plants and botany.",
+    "description": "Dive into the world of plants and botany.",
     "tags": [
       "Botany",
       "Plant Science",
@@ -1360,7 +1360,7 @@
   },
   {
     "name": "Study Motivation Squad",
-    "explanation": "Stay motivated and inspired for academic success.",
+    "description": "Stay motivated and inspired for academic success.",
     "tags": [
       "Motivation",
       "Study Success",
@@ -1369,7 +1369,7 @@
   },
   {
     "name": "Music Theory Explorers",
-    "explanation": "Explore the depths of music theory and composition.",
+    "description": "Explore the depths of music theory and composition.",
     "tags": [
       "Music Theory",
       "Composition",
@@ -1378,7 +1378,7 @@
   },
   {
     "name": "Sustainability Champions",
-    "explanation": "Champion sustainability and eco-conscious living.",
+    "description": "Champion sustainability and eco-conscious living.",
     "tags": [
       "Sustainability",
       "Green Living",
@@ -1387,7 +1387,7 @@
   },
   {
     "name": "Riddle and Puzzle Masters",
-    "explanation": "Conquer mind-bending riddles and puzzles.",
+    "description": "Conquer mind-bending riddles and puzzles.",
     "tags": [
       "Riddles",
       "Brain Teasers",
@@ -1396,7 +1396,7 @@
   },
   {
     "name": "Learning and Discovery Society",
-    "explanation": "Embark on a journey of learning and exploration.",
+    "description": "Embark on a journey of learning and exploration.",
     "tags": [
       "Learning Adventures",
       "Educational Discovery",
@@ -1405,7 +1405,7 @@
   },
   {
     "name": "Critical Thinkers Club",
-    "explanation": "Sharpen your critical thinking skills through discussions.",
+    "description": "Sharpen your critical thinking skills through discussions.",
     "tags": [
       "Critical Thinking",
       "Debate",
@@ -1414,7 +1414,7 @@
   },
   {
     "name": "Artistic Creations Showcase",
-    "explanation": "Share and appreciate creative artistic works.",
+    "description": "Share and appreciate creative artistic works.",
     "tags": [
       "Artistic Creations",
       "Visual Arts",
@@ -1423,7 +1423,7 @@
   },
   {
     "name": "Musical Harmony Collective",
-    "explanation": "Create harmonious music together.",
+    "description": "Create harmonious music together.",
     "tags": [
       "Music Creation",
       "Musical Collaborations",
@@ -1432,7 +1432,7 @@
   },
   {
     "name": "Environmental Activists Alliance",
-    "explanation": "Take action for a greener and cleaner planet.",
+    "description": "Take action for a greener and cleaner planet.",
     "tags": [
       "Environmental Activism",
       "Eco Warriors",
@@ -1441,7 +1441,7 @@
   },
   {
     "name": "Mind-Bending Puzzle Lovers",
-    "explanation": "Get lost in the world of mind-bending puzzles.",
+    "description": "Get lost in the world of mind-bending puzzles.",
     "tags": [
       "Mind Puzzles",
       "Riddle Enthusiasts",
@@ -1450,7 +1450,7 @@
   },
   {
     "name": "Explorers of Knowledge",
-    "explanation": "Discover the depths of human knowledge.",
+    "description": "Discover the depths of human knowledge.",
     "tags": [
       "Knowledge Exploration",
       "Learning",
@@ -1459,7 +1459,7 @@
   },
   {
     "name": "Deep Philosophical Debates",
-    "explanation": "Engage in profound philosophical discussions.",
+    "description": "Engage in profound philosophical discussions.",
     "tags": [
       "Philosophical Debates",
       "Intellectual Discourse",
@@ -1468,7 +1468,7 @@
   },
   {
     "name": "Innovative DIY Projects Hub",
-    "explanation": "Explore the world of creative DIY projects.",
+    "description": "Explore the world of creative DIY projects.",
     "tags": [
       "DIY Innovation",
       "Crafting",
@@ -1477,7 +1477,7 @@
   },
   {
     "name": "Literature and Book Club",
-    "explanation": "Celebrate the joy of reading and literary discussions.",
+    "description": "Celebrate the joy of reading and literary discussions.",
     "tags": [
       "Literary Enthusiasts",
       "Book Lovers",
@@ -1486,7 +1486,7 @@
   },
   {
     "name": "Science Enthusiasts Society",
-    "explanation": "Dive into the wonders of science and discovery.",
+    "description": "Dive into the wonders of science and discovery.",
     "tags": [
       "Science Enthusiasts",
       "Scientific Exploration",
@@ -1495,7 +1495,7 @@
   },
   {
     "name": "Theater and Drama Enthusiasts",
-    "explanation": "Explore the world of theater and dramatic arts.",
+    "description": "Explore the world of theater and dramatic arts.",
     "tags": [
       "Theater",
       "Drama",
@@ -1504,7 +1504,7 @@
   },
   {
     "name": "Wellness and Study Balance",
-    "explanation": "Maintain a healthy balance between wellness and academic pursuits.",
+    "description": "Maintain a healthy balance between wellness and academic pursuits.",
     "tags": [
       "Wellness",
       "Study Balance",
@@ -1513,7 +1513,7 @@
   },
   {
     "name": "Digital Art Creators Society",
-    "explanation": "Express your creativity through digital art.",
+    "description": "Express your creativity through digital art.",
     "tags": [
       "Digital Art",
       "Creative Expression",
@@ -1522,7 +1522,7 @@
   },
   {
     "name": "Board Game Enthusiasts Club",
-    "explanation": "Enjoy strategic and fun board games with fellow enthusiasts.",
+    "description": "Enjoy strategic and fun board games with fellow enthusiasts.",
     "tags": [
       "Board Games",
       "Gaming",
@@ -1531,7 +1531,7 @@
   },
   {
     "name": "Animal Lovers' Paradise",
-    "explanation": "For those who adore and appreciate animals.",
+    "description": "For those who adore and appreciate animals.",
     "tags": [
       "Animal Lovers",
       "Pets",
@@ -1540,7 +1540,7 @@
   },
   {
     "name": "Classic Movie Aficionados",
-    "explanation": "Celebrate classic cinematic masterpieces together.",
+    "description": "Celebrate classic cinematic masterpieces together.",
     "tags": [
       "Classic Movies",
       "Film Buffs",
@@ -1549,7 +1549,7 @@
   },
   {
     "name": "Mathematics Marvels",
-    "explanation": "Unleash the power of numbers and mathematical concepts.",
+    "description": "Unleash the power of numbers and mathematical concepts.",
     "tags": [
       "Mathematics",
       "Problem Solving",
@@ -1558,7 +1558,7 @@
   },
   {
     "name": "Literary Analysis Forum",
-    "explanation": "Analyze and dissect literature with fellow bookworms.",
+    "description": "Analyze and dissect literature with fellow bookworms.",
     "tags": [
       "Literary Analysis",
       "Book Discussions",
@@ -1567,7 +1567,7 @@
   },
   {
     "name": "Science Discoveries Collective",
-    "explanation": "Explore the wonders of science and its breakthroughs.",
+    "description": "Explore the wonders of science and its breakthroughs.",
     "tags": [
       "Science Discovery",
       "Scientific Exploration",
@@ -1576,7 +1576,7 @@
   },
   {
     "name": "Language Learning Exchange",
-    "explanation": "Learn and practice languages from around the world.",
+    "description": "Learn and practice languages from around the world.",
     "tags": [
       "Language Learning",
       "Multilingualism",
@@ -1585,7 +1585,7 @@
   },
   {
     "name": "Coding Challenges and Collaborations",
-    "explanation": "Challenge yourself with coding projects and collaborations.",
+    "description": "Challenge yourself with coding projects and collaborations.",
     "tags": [
       "Coding Challenges",
       "Programming",
@@ -1594,7 +1594,7 @@
   },
   {
     "name": "Historical Mysteries Uncovered",
-    "explanation": "Unearth the secrets of history and historical mysteries.",
+    "description": "Unearth the secrets of history and historical mysteries.",
     "tags": [
       "Historical Mysteries",
       "Archaeology",
@@ -1603,7 +1603,7 @@
   },
   {
     "name": "Wellness and Study Balance Center",
-    "explanation": "Achieve a harmonious balance between wellness and academics.",
+    "description": "Achieve a harmonious balance between wellness and academics.",
     "tags": [
       "Wellness",
       "Study-Life Balance",
@@ -1612,7 +1612,7 @@
   },
   {
     "name": "Artistic Creations Gallery",
-    "explanation": "Showcase your artistic creations and inspire creativity.",
+    "description": "Showcase your artistic creations and inspire creativity.",
     "tags": [
       "Artistic Creations",
       "Art Showcase",
@@ -1621,7 +1621,7 @@
   },
   {
     "name": "Music Creators' Collective",
-    "explanation": "Compose and create music together with fellow musicians.",
+    "description": "Compose and create music together with fellow musicians.",
     "tags": [
       "Music Creation",
       "Collaborative Music",
@@ -1630,7 +1630,7 @@
   },
   {
     "name": "Environmental Warriors for Change",
-    "explanation": "Fight for a greener and sustainable future.",
+    "description": "Fight for a greener and sustainable future.",
     "tags": [
       "Environmental Activism",
       "Sustainability",
@@ -1639,7 +1639,7 @@
   },
   {
     "name": "Puzzle Solvers and Riddlers",
-    "explanation": "Solve puzzles and riddles for fun and challenge.",
+    "description": "Solve puzzles and riddles for fun and challenge.",
     "tags": [
       "Puzzles",
       "Riddles",
@@ -1648,7 +1648,7 @@
   },
   {
     "name": "Explorers of Learning and Discovery",
-    "explanation": "Embark on learning adventures and discoveries.",
+    "description": "Embark on learning adventures and discoveries.",
     "tags": [
       "Learning",
       "Exploration",
@@ -1657,7 +1657,7 @@
   },
   {
     "name": "Philosophical Debates and Conversations",
-    "explanation": "Dive into deep philosophical conversations.",
+    "description": "Dive into deep philosophical conversations.",
     "tags": [
       "Philosophy",
       "Discussion",
@@ -1666,7 +1666,7 @@
   },
   {
     "name": "Innovative DIY Projects and Ideas",
-    "explanation": "Share DIY projects and innovative ideas.",
+    "description": "Share DIY projects and innovative ideas.",
     "tags": [
       "DIY",
       "Innovation",
@@ -1675,7 +1675,7 @@
   },
   {
     "name": "Mathematics Puzzles and Challenges",
-    "explanation": "Solve complex math puzzles and engage in mathematical challenges.",
+    "description": "Solve complex math puzzles and engage in mathematical challenges.",
     "tags": [
       "Math Puzzles",
       "Problem-Solving",
@@ -1684,7 +1684,7 @@
   },
   {
     "name": "Book Lovers' Paradise",
-    "explanation": "For those who adore and cherish the world of books.",
+    "description": "For those who adore and cherish the world of books.",
     "tags": [
       "Book Lovers",
       "Literary Enthusiasts",
@@ -1693,7 +1693,7 @@
   },
   {
     "name": "Astronomy Enthusiasts",
-    "explanation": "Explore the mysteries of the cosmos and celestial bodies.",
+    "description": "Explore the mysteries of the cosmos and celestial bodies.",
     "tags": [
       "Astronomy",
       "Space Exploration",
@@ -1702,7 +1702,7 @@
   },
   {
     "name": "Foreign Language Learners",
-    "explanation": "Learn and practice foreign languages with language enthusiasts.",
+    "description": "Learn and practice foreign languages with language enthusiasts.",
     "tags": [
       "Language Learning",
       "Cultural Exchange",
@@ -1711,7 +1711,7 @@
   },
   {
     "name": "Web Development Wizards",
-    "explanation": "Master the art of web development and coding.",
+    "description": "Master the art of web development and coding.",
     "tags": [
       "Web Development",
       "Coding",
@@ -1720,7 +1720,7 @@
   },
   {
     "name": "Ancient History Enthusiasts",
-    "explanation": "Delve into the ancient mysteries and stories of history.",
+    "description": "Delve into the ancient mysteries and stories of history.",
     "tags": [
       "Ancient History",
       "Historical Exploration",
@@ -1729,7 +1729,7 @@
   },
   {
     "name": "Mindfulness and Study Breaks",
-    "explanation": "Relax and rejuvenate with mindfulness during study breaks.",
+    "description": "Relax and rejuvenate with mindfulness during study breaks.",
     "tags": [
       "Mindfulness",
       "Stress Relief",
@@ -1738,7 +1738,7 @@
   },
   {
     "name": "Writers' Workshop and Critique",
-    "explanation": "Hone your writing skills and offer constructive critiques.",
+    "description": "Hone your writing skills and offer constructive critiques.",
     "tags": [
       "Writers' Workshop",
       "Creative Writing",
@@ -1747,7 +1747,7 @@
   },
   {
     "name": "Coffee Lovers' Study Sessions",
-    "explanation": "Boost study sessions with coffee and like-minded company.",
+    "description": "Boost study sessions with coffee and like-minded company.",
     "tags": [
       "Coffee Lovers",
       "Study Groups",
@@ -1756,7 +1756,7 @@
   },
   {
     "name": "Sustainable Solutions Brainstorm",
-    "explanation": "Generate eco-friendly ideas for a greener future.",
+    "description": "Generate eco-friendly ideas for a greener future.",
     "tags": [
       "Sustainability",
       "Eco Solutions",
@@ -1765,7 +1765,7 @@
   },
   {
     "name": "Riddle Enthusiasts Society",
-    "explanation": "Conquer brain-teasing riddles and puzzles.",
+    "description": "Conquer brain-teasing riddles and puzzles.",
     "tags": [
       "Riddles",
       "Mind Games",
@@ -1774,7 +1774,7 @@
   },
   {
     "name": "Learning and Discovery Explorers",
-    "explanation": "Embark on educational journeys of learning and discovery.",
+    "description": "Embark on educational journeys of learning and discovery.",
     "tags": [
       "Learning Adventures",
       "Intellectual Exploration",
@@ -1783,7 +1783,7 @@
   },
   {
     "name": "Intellectual Debates and Dialogue",
-    "explanation": "Engage in intellectual debates and meaningful discussions.",
+    "description": "Engage in intellectual debates and meaningful discussions.",
     "tags": [
       "Intellectual Debates",
       "Thoughtful Conversations",
@@ -1792,7 +1792,7 @@
   },
   {
     "name": "Creative Makerspace Community",
-    "explanation": "Collaborate on innovative DIY projects and creations.",
+    "description": "Collaborate on innovative DIY projects and creations.",
     "tags": [
       "Creative Makerspace",
       "Innovation",
@@ -1801,7 +1801,7 @@
   },
   {
     "name": "Literary Appreciation Circle",
-    "explanation": "Celebrate the beauty of literature and its impact.",
+    "description": "Celebrate the beauty of literature and its impact.",
     "tags": [
       "Literary Enthusiasts",
       "Book Appreciation",
@@ -1810,7 +1810,7 @@
   },
   {
     "name": "Science and Nature Explorers",
-    "explanation": "Discover the wonders of science and the natural world.",
+    "description": "Discover the wonders of science and the natural world.",
     "tags": [
       "Science Enthusiasts",
       "Nature Exploration",
@@ -1819,7 +1819,7 @@
   },
   {
     "name": "Theater and Drama Aficionados",
-    "explanation": "Explore the world of theater, drama, and the performing arts.",
+    "description": "Explore the world of theater, drama, and the performing arts.",
     "tags": [
       "Theater",
       "Drama",
@@ -1828,7 +1828,7 @@
   },
   {
     "name": "Holistic Wellness and Study Balance",
-    "explanation": "Maintain a healthy balance between wellness and academic pursuits.",
+    "description": "Maintain a healthy balance between wellness and academic pursuits.",
     "tags": [
       "Holistic Wellness",
       "Study-Life Balance",
@@ -1837,7 +1837,7 @@
   },
   {
     "name": "Digital Art Creators' Hub",
-    "explanation": "Express your creativity through digital art and design.",
+    "description": "Express your creativity through digital art and design.",
     "tags": [
       "Digital Art",
       "Creative Expression",
@@ -1846,7 +1846,7 @@
   },
   {
     "name": "Board Game Strategy Enthusiasts",
-    "explanation": "Plan and strategize in fun board games with fellow enthusiasts.",
+    "description": "Plan and strategize in fun board games with fellow enthusiasts.",
     "tags": [
       "Board Games",
       "Gaming",
@@ -1855,7 +1855,7 @@
   },
   {
     "name": "Animal Lovers' Oasis",
-    "explanation": "A haven for those who adore and support animals.",
+    "description": "A haven for those who adore and support animals.",
     "tags": [
       "Animal Lovers",
       "Animal Welfare",
@@ -1864,7 +1864,7 @@
   },
   {
     "name": "Classic Movie Connoisseurs",
-    "explanation": "Appreciate and discuss classic cinematic gems.",
+    "description": "Appreciate and discuss classic cinematic gems.",
     "tags": [
       "Classic Movies",
       "Film Connoisseurs",

@@ -54,7 +54,7 @@ async function subjectsCache(userId) {
       try {
         const connection = pool.promise();
         const [subjects] = await connection.query(
-          `SELECT id, name, icon, tools, color, datum_point, hidden FROM subjects where user_id = ?`,
+          `SELECT subject_id, name, icon, tools, color, created_at FROM subjects WHERE user_id = ?`,
           [userId]
         );
         subjects.map(async (subject) => {
@@ -95,7 +95,7 @@ async function subjectCache(userId, subjectId) {
       try {
         const connection = pool.promise();
         const [subjects] = await connection.query(
-          `SELECT id, name, icon, color, tools, datum_point, hidden FROM subjects where user_id = ?`,
+          `SELECT id, name, icon, color, tools, created_at, hidden FROM subjects where user_id = ?`,
           [userId]
         );
         subjects.map(async (subject) => {
@@ -129,15 +129,14 @@ async function dmRoomsCache(userId) {
   } else {
     const connection = pool.promise();
     const [dmRooms] = await connection.query(
-      `SELECT id FROM chatrooms WHERE members LIKE ?`,
-      [`%${userId}%`]
+      `SELECT chatroom_id FROM chatroom_members WHERE user_id = ?`,
+      [userId]
     );
-    redisClient.hset(
-      `user:${userId}`,
-      "dmRooms",
-      dmRooms.map(({ id }) => id).toString()
+    redisClient.sadd(
+      `user:${userId}:dmRooms`,
+      dmRooms.map(({ chatroom_id }) => chatroom_id).toString()
     );
-    redisClient.expire(`user:${userId}`, DM_MEMBERS_EXP);
+    redisClient.expire(`user:${userId}:dmRooms`, DM_MEMBERS_EXP);
 
     return dmRooms;
   }
@@ -374,8 +373,8 @@ async function userCache(userId, query = true) {
     const connection = pool.promise();
     const [results] = await connection.query(
       `
-        SELECT name, email, timezone, datum_point FROM users WHERE user_id = ?;
-        SELECT group_id FROM user_groups WHERE user_id = ?;
+        SELECT name, email, timezone, created_at FROM users WHERE user_id = ?;
+        SELECT group_id FROM group_members WHERE user_id = ?;
         SELECT user_id, friend_id FROM friends WHERE user_id = ? OR friend_id = ?;
         `,
       [userId, userId, userId, userId]
@@ -427,7 +426,7 @@ async function usersCache(users, cache) {
 
     const [results] = await connection.query(
       `
-      SELECT name, email, groups, friends, timezone, datum_point, user_id FROM users WHERE user_id IN (?);
+      SELECT name, email, groups, friends, timezone, created_at, user_id FROM users WHERE user_id IN (?);
       SELECT group_id, user_id FROM user_groups WHERE user_id IN (?);
       SELECT user_id, friend_id FROM friends WHERE user_id IN (?) OR friend_id IN (?);
       `,
@@ -467,7 +466,7 @@ async function usersCache(users, cache) {
 
 async function cacheUserInfo(userInfo) {
   try {
-    const { name, email, timezone, datum_point, user_id, groups, friends } =
+    const { name, email, timezone, created_at, user_id, groups, friends } =
       userInfo;
 
     redisClient.hset(
@@ -482,8 +481,8 @@ async function cacheUserInfo(userInfo) {
       friends.toString(),
       "timezone",
       timezone,
-      "datum_point",
-      datum_point
+      "created_at",
+      created_at
     );
     redisClient.expire(`user:${user_id}`, USER_EXP);
   } catch (err) {
@@ -536,34 +535,40 @@ async function NotificationCache(userId, type = -1, processData = true) {
 }
 
 async function subjectsTimelineCache(userId) {
-  const subjectsInfo = await subjectsCache(userId);
   const connection = pool.promise();
-  const [subjectTimelines] = await connection.query(
-    `SELECT timeline, id FROM subjects WHERE user_id = ?`,
+  const [subjects] = await connection.query(
+    `
+    SELECT 
+      s.subject_id, 
+      s.name,
+      s.icon,
+      s.color,
+      s.created_at,
+      IF(
+          COUNT(st.start_time) > 0, 
+          JSON_ARRAYAGG(
+              JSON_ARRAY(
+                  IFNULL(st.start_time, 0), 
+                  IFNULL(st.stop_time, 0)
+              )
+          ),
+          '[]'
+      ) AS timeline
+      FROM subjects s
+      LEFT JOIN subject_timelines st ON s.subject_id = st.subject_id
+      WHERE s.user_id = ?
+      GROUP BY s.subject_id
+  `,
     [userId]
   );
-  const subjectPromises = subjectsInfo.map(async (subject) => {
-    const { id } = subject;
-    const prevTimeline = subjectTimelines.find((sub) => {
-      return sub.id === id;
-    });
 
+  await Promise.all(subjects.map(async(subject) => {
     const todayTimeline = (
-      await redisClient.lrange(`user:${userId}:subject:${id}`, 0, -1)
+      await redisClient.lrange(`user:${userId}:subject:${subject.od}`, 0, -1)
     ).map(JSON.parse);
-    if (prevTimeline) {
-      const parsedTimeline = prevTimeline.timeline
-        ? JSON.parse(prevTimeline.timeline.replace(/^/, "[").replace(/$/, "]"))
-        : []; //wrapping the string with "[]"
-      subject.timeline = parsedTimeline.concat(todayTimeline);
-    } else {
-      subject.timeline = todayTimeline;
-    }
+    subject.timeline = JSON.parse(subject.timeline).concat(todayTimeline);
+  }))
 
-    return subject;
-  });
-
-  const subjects = await Promise.all(subjectPromises);
   return subjects;
 }
 

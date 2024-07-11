@@ -84,7 +84,7 @@ async function createBots(length) {
       salt: hashed[0],
       user_id: userId,
       timezone: timeZone,
-      datum_point: unixTimestamp,
+      created_at: unixTimestamp,
       key_salt: keySalt,
       iv: iv,
       type: -1,
@@ -177,7 +177,7 @@ async function createBots(length) {
 
     for (let subjectNum = 0; subjectNum < maxSubjects; subjectNum++) {
       const subjectId = generateRandomId(10);
-      const datum_point = unixTimestamp;
+      const created_at = unixTimestamp;
 
       const subjectTimeline = [];
 
@@ -221,7 +221,7 @@ async function createBots(length) {
         color: "#000000",
         timeline: stringTimeline,
         timeline_sum: timelineSum,
-        datum_point,
+        created_at,
       };
       await connection.query(`INSERT INTO subjects SET ?`, [subject]);
     }
@@ -330,8 +330,8 @@ async function startBot(userId) {
     if (friends.length) {
       mainIo.to(friends).emit(`studying:${userId}`, subject);
     }
-    const { datum_point, id } = subject;
-    const start = now - datum_point;
+    const { created_at, id } = subject;
+    const start = now - created_at;
     redisClient.rpush(`user:${userId}:subject:${id}`, `[${start},0]`);
     redisClient.hset(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
     addActiveUserCache(userId);
@@ -360,9 +360,9 @@ async function stopBot(userId) {
 
     const start = activity[0];
 
-    const { datum_point } = subject;
+    const { created_at } = subject;
 
-    const duration = now - datum_point - start;
+    const duration = now - created_at - start;
 
     if (duration > MAX_STUDY_TIME) {
       console.log("max study exceeded: ", duration);
@@ -410,7 +410,7 @@ async function botSelector(numbers) {
     const [bots] = await connection.query(
       `SELECT user_id FROM users WHERE type = -1`
     );
-    //const [subjects] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects`)
+    //const [subjects] = await connection.query(`SELECT timeline, id, timeline_sum, created_at FROM subjects`)
     const now = DateTime.now();
   
     const activeBots = await redisClient.smembers("activeBots");
@@ -430,7 +430,7 @@ async function botSelector(numbers) {
       const startDate = DateTime.fromSeconds(start);
       const stopDate = DateTime.fromSeconds(startDate.toSeconds() + duration);
       //console.log(startDate.toSeconds() - stopDate.toSeconds())
-      //const [[subject]] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects WHERE user_id = ?`, [user_id]);
+      //const [[subject]] = await connection.query(`SELECT timeline, id, timeline_sum, created_at FROM subjects WHERE user_id = ?`, [user_id]);
       const scheduleStart = schedule.scheduleJob(startDate.toJSDate(), () => {
         startBot(user_id);
       });
@@ -576,7 +576,7 @@ async function createGroups(length) {
     const leader = members[0];
     const colorIndex = randomIntInRange(0, colors.length - 1);
     const color = colors[colorIndex];
-    const { name, explanation, tags } = groupData;
+    const { name, description, tags } = groupData;
     const visibility = randomIntInRange(0, 7) <= 1;
 
     const stringlifiedLikes = JSON.stringify(likes)
@@ -590,7 +590,7 @@ async function createGroups(length) {
 
     const groupInfo = {
       name,
-      explanation,
+      description,
       tags: JSON.stringify(tags),
       visibility,
       password: hashed[1],
@@ -677,14 +677,14 @@ async function createBotRankings() {
     botIds.map(async (bot) => {
       const thisBotId = bot.user_id;
       let [othersTimeline] = await connection.query(
-        `SELECT timeline, datum_point FROM subjects WHERE user_id = ?`,
+        `SELECT timeline, created_at FROM subjects WHERE user_id = ?`,
         [thisBotId]
       );
       othersTimeline = othersTimeline.filter((tl) => tl.timeline.length > 0)[0]; //only the first subject will have a timeline
       botUsers.push({
         id: thisBotId,
         timeline: JSON.parse("[" + othersTimeline.timeline + "]"),
-        datum_point: parseInt(othersTimeline.datum_point),
+        created_at: parseInt(othersTimeline.created_at),
       });
     })
   );
@@ -700,7 +700,7 @@ async function createBotRankings() {
     const botStudyByHour = {};
     const botWeeklyTrend = {};
     const botMonthlyTrend = {};
-    const DP = DateTime.fromSeconds(bot.datum_point)
+    const DP = DateTime.fromSeconds(bot.created_at)
       .startOf("hour")
       .toSeconds();
     let botWeekTotal = 0;
