@@ -18,8 +18,8 @@ async function extensionManager() {
 
     const [filteredUsers] = await connection.query(`SELECT user_id FROM users where timezone IN (?) AND user_id IN (?)`, [midnightTimezones, users]);
     filteredUsers.map(async({user_id}) => {
-      const websitesUsage = await redisClient.zrangewithscores(`user:${user_id}:tabs:usage`, 0, -1);
-      const websitesTimer = await redisClient.zrangewithscores(`user:${user_id}:tabs:timer`, 0, -1);
+      const websitesUsage = await redisClient.zrange(`user:${user_id}:tabs:usage`, 0, -1, "WITHSCORES");
+      const websitesTimer = await redisClient.zrange(`user:${user_id}:tabs:timer`, 0, -1, "WITHSCORES");
       //console.log(websitesUsage, websitesTimer);
       if (!websitesUsage.length && !websitesTimer.length) return;
 

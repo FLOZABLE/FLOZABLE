@@ -332,7 +332,7 @@ async function startBot(userId) {
     }
     const { datum_point, id } = subject;
     const start = now - datum_point;
-    redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
+    redisClient.rpush(`user:${userId}:subject:${id}`, `[${start},0]`);
     redisClient.hset(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
     addActiveUserCache(userId);
   } catch (err) {
@@ -373,7 +373,7 @@ async function stopBot(userId) {
       redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
     }
 
-    redisClient.rPush(
+    redisClient.rpush(
       `user:${userId}:subject:${activeSubject.id}`,
       `[${start},${duration}]`
     );
@@ -405,60 +405,68 @@ const BOT_MAX_STUDY = 60 * 60 * 2; //2 hr = max time bot will study
 const MAX_START_DELAY = 60 * 60 * 2; //1 hr = starts atleast 1hr from being assigned
 
 async function botSelector(numbers) {
-  const connection = pool.promise();
-  const [bots] = await connection.query(
-    `SELECT user_id FROM users WHERE type = -1`
-  );
-  //const [subjects] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects`)
-  const now = DateTime.now();
-
-  const activeBots = await redisClient.smembers("activeBots");
-
-  const allMembers = await getActiveUsers("month");
-
-  for (let i = 0; i < numbers; i++) {
-    const index = randomIntInRange(0, bots.length - 1);
-    const { user_id } = bots[index];
-    //this prevents same bot from being added
-    if (activeBots.includes(user_id)) continue;
-    activeBots.push(user_id);
-
-    //determines how long this bot will study
-    const duration = randomIntInRange(BOT_MIN_STUDY, BOT_MAX_STUDY);
-    const start = randomIntInRange(5, MAX_START_DELAY) + now.toSeconds();
-    const startDate = DateTime.fromSeconds(start);
-    const stopDate = DateTime.fromSeconds(startDate.toSeconds() + duration);
-    //console.log(startDate.toSeconds() - stopDate.toSeconds())
-    //const [[subject]] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects WHERE user_id = ?`, [user_id]);
-    const scheduleStart = schedule.scheduleJob(startDate.toJSDate(), () => {
-      startBot(user_id);
-    });
-    const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => {
-      stopBot(user_id);
-    });
-
-    const scheduleFriend = schedule.scheduleJob(startDate.toJSDate(), () => {
-      addFriends(user_id, allMembers);
-    });
-    //Send friend request after finished studying
-  }
-
-  //update active bot list in redis
-  redisClient.sadd("activeBots", activeBots);
+  try {
+    const connection = pool.promise();
+    const [bots] = await connection.query(
+      `SELECT user_id FROM users WHERE type = -1`
+    );
+    //const [subjects] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects`)
+    const now = DateTime.now();
+  
+    const activeBots = await redisClient.smembers("activeBots");
+  
+    const allMembers = await getActiveUsers("month");
+  
+    for (let i = 0; i < numbers; i++) {
+      const index = randomIntInRange(0, bots.length - 1);
+      const { user_id } = bots[index];
+      //this prevents same bot from being added
+      if (activeBots.includes(user_id)) continue;
+      activeBots.push(user_id);
+  
+      //determines how long this bot will study
+      const duration = randomIntInRange(BOT_MIN_STUDY, BOT_MAX_STUDY);
+      const start = randomIntInRange(5, MAX_START_DELAY) + now.toSeconds();
+      const startDate = DateTime.fromSeconds(start);
+      const stopDate = DateTime.fromSeconds(startDate.toSeconds() + duration);
+      //console.log(startDate.toSeconds() - stopDate.toSeconds())
+      //const [[subject]] = await connection.query(`SELECT timeline, id, timeline_sum, datum_point FROM subjects WHERE user_id = ?`, [user_id]);
+      const scheduleStart = schedule.scheduleJob(startDate.toJSDate(), () => {
+        startBot(user_id);
+      });
+      const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => {
+        stopBot(user_id);
+      });
+  
+      const scheduleFriend = schedule.scheduleJob(startDate.toJSDate(), () => {
+        addFriends(user_id, allMembers);
+      });
+      //Send friend request after finished studying
+    }
+  
+    //update active bot list in redis
+    redisClient.sadd("activeBots", activeBots);
+  } catch (err) {
+    console.log(err);
+  };
 }
 
 async function botManager(numbers) {
-  const activeBots = await redisClient.smembers("activeBots");
-  await Promise.all(
-    activeBots.map(async (botId) => {
-      await stopBot(botId);
-    })
-  );
-  botSelector(numbers);
-  schedule.scheduleJob("0 */5 * * *", async () => {
-    console.log("run bot");
+  try {
+    const activeBots = await redisClient.smembers("activeBots");
+    await Promise.all(
+      activeBots.map(async (botId) => {
+        await stopBot(botId);
+      })
+    );
     botSelector(numbers);
-  });
+    schedule.scheduleJob("0 */5 * * *", async () => {
+      console.log("run bot");
+      botSelector(numbers);
+    });
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 async function deleteBots() {
