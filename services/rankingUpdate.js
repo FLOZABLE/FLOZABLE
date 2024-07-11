@@ -36,6 +36,7 @@ async function updateRanking() {
 }
 
 async function updateDailyRanking(now, users, timezoneOffset) {
+  return;
   try {
     const filteredUsers = [];
     await Promise.all(users.map(async (userId) => {
@@ -176,7 +177,7 @@ async function createRankings(offset) {
 
     const connection = pool.promise();
 
-    const [subjects] = await connection.query(`SELECT id, user_id, timeline, datum_point FROM subjects`);
+    const [subjects] = await connection.query(`SELECT id, user_id, timeline, created_at FROM subjects`);
     console.log(subjects.length, zone);
 
     const dailyRankings = {};
@@ -190,7 +191,7 @@ async function createRankings(offset) {
 
       let timelineSum = 0;
       parsedTimeline.map(([start, duration]) => {
-        const startDateTime = DateTime.fromSeconds(subject.datum_point + start + timelineSum).setZone(zone);
+        const startDateTime = DateTime.fromSeconds(subject.created_at + start + timelineSum).setZone(zone);
         const stopDateTime = DateTime.fromSeconds(startDateTime.toSeconds() + duration).setZone(zone);
         timelineSum += start + duration;
 

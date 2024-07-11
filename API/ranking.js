@@ -537,30 +537,6 @@ async function friendsMonthlySorting(dateTime, length, friends, usersLength) {
   return rankings;
 }
 
-/* Router.get('/friends', async (req, res) => {
-  autoSignin(req, res, (async () => {
-    try {
-      const { date } = req.query;
-      const userId = req.session.user_id;
-      const userInfo = await userCache(userId);
-      if (!userInfo) return res.send({ success: false, reason: 'no user found' });
-      let { friends } = userInfo;
-      friends = friends === "" ? [] : friends.split(',');
-      const connection = pool.promise();
-      let [[usersLength]] = await connection.query(`SELECT COUNT(*) FROM users`);
-      const dateTime = DateTime.fromISO(date, { zone: 'utc' });
-      usersLength = Object.values(usersLength)[0];
-      const dailyRankings = await friendsDailySorting(dateTime, 1, [userId, ...friends], friends.length);
-      const weeklyRankings = await friendsWeeklySorting(dateTime, 1, [userId, ...friends], friends.length);
-      const monthlyRankings = await friendsMonthlySorting(dateTime, 1, [userId, ...friends], friends.length);
-      res.send({ success: true, dailyRankings, weeklyRankings, monthlyRankings });
-    } catch (error) {
-      console.log(error)
-      res.send({ success: false, reason: 'An Error Occured' });
-    }
-  }));
-}); */
-
 Router.get("/friends", async (req, res) => {
   autoSignin(
     req,

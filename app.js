@@ -209,10 +209,10 @@ app.get("*", function (req, res) {
 const { botManager, createBots } = require("./Bot/Bot");
 const { servicesManager } = require("./services/services");
 
-botManager(process.env.BOTS);
+//botManager(process.env.BOTS);
 servicesManager();
 
-createBots(300);
+//createBots(300);
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);

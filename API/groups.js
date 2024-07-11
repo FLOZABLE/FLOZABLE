@@ -24,8 +24,27 @@ Router.get("/", async (req, res) => {
   try {
     const connection = pool.promise();
     const [groups] = await connection.query(
-      "SELECT group_id, name, leader, visibility, explanation, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups`"
+      `
+      SELECT 
+        g.group_id, 
+        g.name, 
+        g.leader, 
+        g.visibility, 
+        g.description, 
+        g.created_at, 
+        g.max_members, 
+        g.tags, 
+        g.color, 
+        g.goal_hr, 
+        m.user_id AS members, 
+        l.user_id AS likes
+      FROM \`groups\` g
+      LEFT JOIN group_members m ON g.group_id = m.group_id
+      LEFT JOIN group_likes l ON g.group_id = l.group_id
+      GROUP BY g.group_id
+            `
     );
+    console.log(groups)
     res.send({ success: true, groups: groups });
   } catch (err) {
     console.error("Error performing database queries:", err);
@@ -44,7 +63,7 @@ Router.put("/group", async (req, res) => {
       try {
         const {
           name,
-          explanation,
+          description,
           tags,
           max_members,
           visibility,
@@ -59,7 +78,7 @@ Router.put("/group", async (req, res) => {
         }
 
         const isValidExplanation = validateLength(
-          explanation,
+          description,
           "Description",
           200,
           1
@@ -124,7 +143,7 @@ Router.put("/group", async (req, res) => {
           password: hashed[1],
           date,
           name,
-          explanation,
+          description,
           leader: userId,
           members: userId,
           tags: stringlifiedTags,
@@ -194,7 +213,7 @@ Router.patch("/group", async (req, res) => {
       const {
         group_id,
         name,
-        explanation,
+        description,
         tags,
         max_members,
         visibility,
@@ -214,7 +233,7 @@ Router.patch("/group", async (req, res) => {
       }
 
       const isValidExplanation = validateLength(
-        explanation,
+        description,
         "Description",
         200,
         1
@@ -270,7 +289,7 @@ Router.patch("/group", async (req, res) => {
       const group = {
         date,
         name,
-        explanation,
+        description,
         leader: userId,
         tags: stringlifiedTags,
         max_members,

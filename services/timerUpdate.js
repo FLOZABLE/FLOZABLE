@@ -49,7 +49,7 @@ async function timerUpdate() {
         const start = activity[0];
         const activeSubjectInfo = subjects.find(subject => {return subject.id === activeSubject.id});
         if (!activeSubjectInfo) return;
-        const duration = now - activeSubjectInfo.datum_point - start;
+        const duration = now - activeSubjectInfo.created_at - start;
         await redisClient.rpush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${duration}]`);
         redisClient.rpush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
         //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
