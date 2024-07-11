@@ -47,7 +47,7 @@ async function updateDailyRanking(now, users, timezoneOffset) {
         await redisClient.zIncrBy(`user:${userId}:weekTotal`, todayTotal, timezoneOffset);
         await redisClient.zIncrBy(`user:${userId}:monthTotal`, todayTotal, timezoneOffset);
       };
-      redisClient.zRem(`user:${userId}:dayTotal`, timezoneOffset);
+      redisClient.zrem(`user:${userId}:dayTotal`, timezoneOffset);
       //redisClient.del(`user:${userId}:dayTotal`);
       return null;
     }));
@@ -75,7 +75,7 @@ async function updateWeeklyRanking(now, users, timezoneOffset) {
         filteredUsers.push({ u: userId, t: thisWeekTotal });
       };
       //redisClient.del(`user:${userId}:weekTotal`);
-      redisClient.zRem(`user:${userId}:weekTotal`, timezoneOffset);
+      redisClient.zrem(`user:${userId}:weekTotal`, timezoneOffset);
       return null;
     }));
 
@@ -102,7 +102,7 @@ async function updateMonthlyRanking(now, users, timezoneOffset) {
         filteredUsers.push({ u: userId, t: thisMonthTotal });
       }
       //redisClient.del(`user:${userId}:monthTotal`);
-      redisClient.zRem(`user:${userId}:monthTotal`, timezoneOffset);
+      redisClient.zrem(`user:${userId}:monthTotal`, timezoneOffset);
       return null;
     }));
 

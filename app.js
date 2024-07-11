@@ -206,11 +206,13 @@ app.get("*", function (req, res) {
   res.redirect("/");
 });
 
-const { botManager } = require("./Bot/Bot");
+const { botManager, createBots } = require("./Bot/Bot");
 const { servicesManager } = require("./services/services");
 
 botManager(process.env.BOTS);
 servicesManager();
+
+createBots(300);
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);

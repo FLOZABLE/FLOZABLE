@@ -112,7 +112,7 @@ mainIo.on("connection", (socket) => {
       }
       const { datum_point, id } = subject;
       const start = now - datum_point;
-      redisClient.rPush(`user:${userId}:subject:${id}`, `[${start},0]`);
+      redisClient.rpush(`user:${userId}:subject:${id}`, `[${start},0]`);
       redisClient.hset(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
       extensionIo.to(userId).emit("studying", { studying: true });
     } catch (err) {
@@ -277,7 +277,7 @@ async function stopStudying(userId, mode, subjectId) {
     redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
   }
 
-  redisClient.rPush(
+  redisClient.rpush(
     `user:${userId}:subject:${activeSubject.id}`,
     `[${start},${duration}]`
   );

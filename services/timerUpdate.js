@@ -41,7 +41,7 @@ async function timerUpdate() {
             id
           ]);
         };
-        await redisClient.lTrim(`user:${userId}:subject:${id}`, 1, 0);
+        await redisClient.ltrim(`user:${userId}:subject:${id}`, 1, 0);
         //removeTimeline(userId, now);
       }));
       mainIo.to(userId).emit('reset');
@@ -50,8 +50,8 @@ async function timerUpdate() {
         const activeSubjectInfo = subjects.find(subject => {return subject.id === activeSubject.id});
         if (!activeSubjectInfo) return;
         const duration = now - activeSubjectInfo.datum_point - start;
-        await redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${duration}]`);
-        redisClient.rPush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
+        await redisClient.rpush(`user:${userId}:subject:${activeSubject.id}`, `[${start},${duration}]`);
+        redisClient.rpush(`user:${userId}:subject:${activeSubject.id}`, `[0,0]`);
         //redisClient.incrBy(`user:${userId}:dayTotal`, duration);
 
         if (duration > MAX_STUDY_TIME) {

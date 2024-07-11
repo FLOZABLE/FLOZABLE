@@ -1,30 +1,23 @@
 const pool = require("../model/pool");
-const { generateRandomId } = require("./tool");
 
 //these async functions are only used for initializing the database (used only once)
 
 async function createUsersTable() {
   const connection = pool.promise();
-  connection.query(`
-  CREATE TABLE IF NOT EXISTS  users (
-    users_id INT(255) AUTO_INCREMENT PRIMARY KEY, 
-    user_id VARCHAR(20),
-    name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;, 
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS users (
+    user_id VARCHAR(10) NOT NULL PRIMARY KEY,
+    name VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     email VARCHAR(60) DEFAULT '',
+    timezone VARCHAR(40) DEFAULT '',
+    created_at INT(10),
+    type SMALLINT DEFAULT 0,
+    key_salt VARCHAR(64),
     hashed_password VARCHAR(100), 
     salt VARCHAR(100), 
-    \`groups\` VARCHAR(700) default '', 
-    timezone VARCHAR(40) DEFAULT '',
-    datum_point INT(11),
-    activity_setting TEXT DEFAULT '',
-    notification_setting TEXT,
-    key_salt VARCHAR(64),
     iv VARCHAR(32),
     subscription TINYINT(1) DEFAULT 0,
-    type SMALLINT DEFAULT 0,
-    friends VARCHAR(200) DEFAULT '',
     google_refresh_token VARCHAR(150),
-    themes VARCHAR(300) DEFAULT '',
     notification_endpoint VARCHAR(500),
     notification_keys VARCHAR(500)
   );
@@ -33,146 +26,209 @@ async function createUsersTable() {
 
 async function createSubjectsTable() {
   const connection = pool.promise();
-  connection.query(`
-  CREATE TABLE IF NOT EXISTS  subjects (
-    id CHAR(10) PRIMARY KEY,
-    name CHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-    user_id CHAR(15),
-    icon CHAR(20),
-    color CHAR(7),
-    datum_point INT,
-    timeline text default ''
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS subjects (
+    subject_id VARCHAR(10) NOT NULL,
+    name VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    user_id VARCHAR(10) NOT NULL,
+    icon VARCHAR(20),
+    color VARCHAR(7),
+    created_at INT,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    PRIMARY KEY (subject_id)
   );  
+  `);
+}
+
+async function createSubjectTimelinesTable() {
+  const connection = pool.promise();
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS subject_timelines (
+      subject_id VARCHAR(10),
+      start_time INT NOT NULL,
+      stop_time INT NOT NULL,
+      FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
+      PRIMARY KEY (subject_id)
+    );
   `);
 }
 
 async function createGroupsTable() {
   const connection = pool.promise();
-  connection.query(`
+  await connection.query(`
   CREATE TABLE IF NOT EXISTS  \`groups\` (
-  group_id VARCHAR(10) PRIMARY KEY,
-  name VARCHAR(50),
-  leader VARCHAR(50),
-  visibility SMALLINT DEFAULT 1,
-  password VARCHAR(255) DEFAULT NULL,
-  salt VARCHAR(100) DEFAULT NULL,
-  explanation VARCHAR(300),
-  date VARCHAR(30),
-  members VARCHAR(700) DEFAULT '',
-  max_members SMALLINT,
-  tags VARCHAR(300),
-  color VARCHAR(20),
-  average_hr SMALLINT DEFAULT 0,
-  goal_hr SMALLINT,
-  likes VARCHAR(300) DEFAULT ''
-);
+    group_id VARCHAR(10) NOT NULL,
+    name VARCHAR(50),
+    leader VARCHAR(50),
+    visibility SMALLINT DEFAULT 1,
+    password VARCHAR(255) DEFAULT NULL,
+    salt VARCHAR(100) DEFAULT NULL,
+    description VARCHAR(300),
+    created_at INT,
+    max_members SMALLINT,
+    tags VARCHAR(300),
+    color VARCHAR(20),
+    goal_hr SMALLINT,
+    PRIMARY KEY (group_id)
+  );
+  `);
+}
+
+async function createGroupMembersTable() {
+  const connection = pool.promise();
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS group_members (
+      group_id VARCHAR(10) NOT NULL,
+      user_id VARCHAR(10) NOT NULL,
+      PRIMARY KEY (user_id, group_id),
+      FOREIGN KEY (user_id) REFERENCES users(user_id),
+      FOREIGN KEY (group_id) REFERENCES groups(group_id)
+    );
+  `);
+}
+
+async function createFriendsTable() {
+  const connection = pool.promise();
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS friends (
+      user_id VARCHAR(10) NOT NULL,
+      friend_id VARCHAR(10) NOT NULL,
+      PRIMARY KEY (user_id, friend_id),
+      CHECK (user_id < friend_id),
+      FOREIGN KEY (user_id) REFERENCES users(user_id),
+      FOREIGN KEY (friend_id) REFERENCES users(user_id)
+    );
   `);
 }
 
 async function createPlansTable() {
   const connection = pool.promise();
-  connection.query(`
-  CREATE TABLE IF NOT EXISTS  plans (
-    id VARCHAR(10),
-    user_id VARCHAR(30),
-    title VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS plans (
+    plan_id VARCHAR(10) NOT NULL PRIMARY KEY,
+    user_id VARCHAR(10),
+    subject_id VARCHAR(10),
+    title VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     start INT,
     end INT,
     \`repeat\` TINYINT UNSIGNED,
-    description VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
+    description VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     notification TINYINT SIGNED,
-    subject VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
     priority TINYINT UNSIGNED,
-    completed TINYINT DEFAULT 0
+    completed TINYINT DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
+    CONSTRAINT fk_user_subject
+      FOREIGN KEY (user_id, subject_id)
+      REFERENCES subjects(user_id, subject_id)
   );
   `);
 }
 
 async function createChatroomsTable() {
   const connection = pool.promise();
-  connection.query(`
-  CREATE TABLE IF NOT EXISTS  chatrooms (
-    id VARCHAR(10),
-    chats TEXT DEFAULT '',
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS chatrooms (
+    chatroom_id VARCHAR(10) NOT NULL,
+    name VARCHAR(20),
     type TINYINT DEFAULT 0,
-    members VARCHAR(300) DEFAULT ''
+    PRIMARY KEY(chatroom_id)
   );  
   `);
 }
 
-async function createDailyRankingTable() {
+async function createChatroomMembersTable() {
   const connection = pool.promise();
-  connection.query(`
-  CREATE TABLE IF NOT EXISTS  dailyRanking (
-    date INT(11),
-    ranking TEXT DEFAULT ''
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS chatroom_members (
+    chatroom_id VARCHAR(10),
+    user_id VARCHAR(10),
+    PRIMARY KEY (chatroom_id, user_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (chatroom_id) REFERENCES chatrooms (chatroom_id)
   );  
   `);
 }
 
-async function createWeeklyRankingTable() {
+async function createChatroomMessagesTable() {
   const connection = pool.promise();
-  connection.query(`
-  CREATE TABLE IF NOT EXISTS  weeklyRanking (
-    date INT(11),
-    ranking TEXT DEFAULT ''
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS chatroom_messages (
+    message_id INT AUTO_INCREMENT NOT NULL,
+    chatroom_id VARCHAR(10),
+    user_id VARCHAR(10),
+    message VARCHAR(100),
+    PRIMARY KEY (message_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (chatroom_id) REFERENCES chatrooms (chatroom_id)
   );  
   `);
 }
 
-async function createMonthlyRankingTable() {
+async function createRankingTable() {
   const connection = pool.promise();
-  connection.query(`
-  CREATE TABLE IF NOT EXISTS  monthlyRanking (
-    date INT(11),
-    ranking TEXT DEFAULT ''
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS rankings  (
+    ranking_id VARCHAR(10) NOT NULL,
+    date INT NOT NULL,
+    timezone VARCHAR(40),
+    mode VARCHAR(10) NOT NULL,
+    length INT,
+    PRIMARY KEY (ranking_id)
+  );  
+  `);
+}
+
+async function createRankingDetailsTable() {
+  const connection = pool.promise();
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS ranking_details  (
+    ranking_id VARCHAR(10),
+    user_id VARCHAR(10),
+    rank INT NOT NULL,
+    study_time INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (ranking_id) REFERENCES rankings(ranking_id),
+    PRIMARY KEY (ranking_id, user_id)
   );  
   `);
 }
 
 async function createDevicesTable() {
   const connection = pool.promise();
-  connection.query(`
+  await connection.query(`
   CREATE TABLE IF NOT EXISTS  devices (
     device_id varchar(10),
+    user_id varchar(10),
     last_auth INT(11), 
     name varchar(30), 
     brand varchar(30), 
     auth_key varchar(20), 
-    user_id varchar(20)
+    PRIMARY KEY (device_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
     );
   `);
 }
 
-async function groupsChatRoomsGeneration() {
-  const connection = pool.promise();
-  const [groups] = await connection.query(`SELECT group_id FROM groups`);
-  groups.map(async (group) => {
-    const roomInfo = {
-      id: generateRandomId(10),
-    };
-    connection.query(`INSERT INTO chatrooms SET ?`, roomInfo);
-  });
-}
-
 async function createThemesTable() {
   const connection = pool.promise();
-  connection.query(`
+  await connection.query(`
   CREATE TABLE IF NOT EXISTS  themes (
-    id VARCHAR(10),
+    theme_id VARCHAR(10) NOT NULL,
     user_id VARCHAR(20),
-    likes VARCHAR(300) DEFAULT '',
     video_id VARCHAR(11),
-    name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
-    description VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;,
-    tags VARCHAR(300) DEFAULT ''
+    name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    description VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    tags VARCHAR(300) DEFAULT '',
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    PRIMARY KEY (theme_id)
   );  
   `);
 }
 
 async function createActivitiesTable() {
   const connection = pool.promise();
-  connection.query(`
+  await connection.query(`
   CREATE TABLE IF NOT EXISTS  activities (
     user_id VARCHAR(20),
     date VARCHAR(10),
@@ -184,14 +240,17 @@ async function createActivitiesTable() {
 module.exports = {
   createUsersTable,
   createSubjectsTable,
+  createSubjectTimelinesTable,
   createGroupsTable,
+  createGroupMembersTable,
+  createFriendsTable,
   createPlansTable,
   createChatroomsTable,
-  createDailyRankingTable,
-  createWeeklyRankingTable,
-  createMonthlyRankingTable,
+  createChatroomMembersTable,
+  createChatroomMessagesTable,
+  createRankingTable,
+  createRankingDetailsTable,
   createDevicesTable,
-  groupsChatRoomsGeneration,
   createThemesTable,
   createActivitiesTable,
 };

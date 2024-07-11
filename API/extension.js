@@ -162,15 +162,17 @@ Router.patch("/settings", async (req, res) => {
 
 Router.get("/tabs", async (req, res) => {
   autoSignin(req, res, async (userId) => {
-    const tabsTimer = await redisClient.zrangewithscores(
+    const tabsTimer = await redisClient.zrange(
       `user:${userId}:tabs:timer`,
       0,
-      -1
+      -1,
+
     );
-    const tabsUsage = await redisClient.zrangewithscores(
+    const tabsUsage = await redisClient.zrange(
       `user:${userId}:tabs:usage`,
       0,
-      -1
+      -1,
+      "WITHSCORES"
     );
     const tabs = {};
     tabsTimer.map((tab) => {

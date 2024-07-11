@@ -1,6 +1,5 @@
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
-const { writeLog } = require("../Logger");
 const { UserRefreshClient } = require("google-auth-library");
 const { DateTime } = require("luxon");
 
@@ -222,7 +221,7 @@ async function chatRoomsCache(userId, withMembersInfo = true) {
 //only last 100 msg will be stored inside the redis queue for each groups
 const MAX_QUEUE_LENGTH = 100;
 async function msgQueue(roomId, msgInfo) {
-  redisClient.rPush(`room:${roomId}:chats`, JSON.stringify(msgInfo));
+  redisClient.rpush(`room:${roomId}:chats`, JSON.stringify(msgInfo));
   const queueLength = await redisClient.lLen(`room:${roomId}:chats`);
   if (queueLength >= MAX_QUEUE_LENGTH) {
     const fistMsg = await redisClient.lPop(`room:${roomId}:chats`);
@@ -598,15 +597,17 @@ async function challengeroomsCache() {
 }
 
 async function websiteUsageCache(userId) {
-  const websitesUsage = await redisClient.zrangewithscores(
+  const websitesUsage = await redisClient.zrange(
     `user:${userId}:tabs:usage`,
     0,
-    -1
+    -1,
+    "WITHSCORES"
   );
-  const websitesTimer = await redisClient.zrangewithscores(
+  const websitesTimer = await redisClient.zrange(
     `user:${userId}:tabs:timer`,
     0,
-    -1
+    -1,
+    "WITHSCORES"
   );
   //console.log(websitesUsage, websitesTimer);
   const websiteData = websitesTimer.map(({ value, score }) => {
