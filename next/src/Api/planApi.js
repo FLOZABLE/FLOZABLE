@@ -13,6 +13,64 @@ async function getPlans() {
   return data;
 }
 
+async function patchPlan(planModal) {
+  if (!planModal.editable) {
+    return { success: false, reason: "This event is view only" };
+  }
+
+  planModal.start = Math.floor(planModal.start.getTime() / (1000 * 60));
+  planModal.end = Math.floor(planModal.end.getTime() / (1000 * 60));
+  planModal.notification = parseInt(planModal.notification);
+  planModal.repeat = parseInt(planModal.repeat);
+  planModal.completed = planModal.completed ? 1 : 0;
+
+  const response = await fetch(`${config.server}/plans/plan`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(planModal),
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+async function deletePlan(planId) {
+  const response = await fetch(`${config.server}/plans/plan`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ planId }),
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  return data;
+}
+
+async function patchPlanStatus(planId, completed) {
+  const planInfo = {
+    plan_id: planId,
+    completed: completed ? 0 : 1,
+  };
+  const response = await fetch(`${config.server}/plans/plan/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(planInfo),
+  });
+
+  const data = await response.json();
+
+  return data;
+}
+
 async function postPlanShare(users, planId) {
   if (!users.length || !planId) return { success: false };
 
@@ -61,4 +119,12 @@ async function postPlanShareRespond(planId, accepted) {
   return data;
 }
 
-export { getPlans, postPlanShare, postPlanShareRespond, deletePlanShare };
+export {
+  getPlans,
+  patchPlan,
+  deletePlan,
+  patchPlanStatus,
+  postPlanShare,
+  postPlanShareRespond,
+  deletePlanShare,
+};

@@ -33,7 +33,7 @@ import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { useQuery } from "@tanstack/react-query";
-import { deletePlanShare, postPlanShare } from "@/Api/planApi";
+import { deletePlanShare, patchPlan, postPlanShare } from "@/Api/planApi";
 
 function EventModalLayer({ children, icon, hoverEl }) {
   return (
@@ -67,7 +67,7 @@ function SharedUserBox({ userInfo }) {
             ],
           };
         });
-        deletePlanShare(userInfo.user_id, planModal.id);
+        deletePlanShare(userInfo.user_id, planModal.plan_id);
       }}
     >
       <ProfileImage userId={userInfo.user_id} />
@@ -92,7 +92,7 @@ function ShareUserBox({ userInfo }) {
             ],
           };
         });
-        deletePlanShare(userInfo.user_id, planModal.id);
+        deletePlanShare(userInfo.user_id, planModal.plan_id);
       }}
       id={styles.share}
     >
@@ -191,57 +191,31 @@ function EventModal({}) {
     }
   }, [tutorial]);
 
-  const submit = () => {
+  const submit = async () => {
     if (!planModal.editable) {
       setResponse({ success: false, reason: "This event is view only" });
       return;
     }
-    const startSec = Math.floor(planModal.start.getTime() / (1000 * 60));
-    const endSec = Math.floor(planModal.end.getTime() / (1000 * 60));
-    const notification = parseInt(planModal.notification);
-    const repeat = parseInt(planModal.repeat);
-    const completed = planModal.completed ? 1 : 0;
     const share = planModal.share.map((user) => user.user_id);
-    fetch(`${config.server}/plans/update`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...planModal,
-        start: startSec,
-        end: endSec,
-        completed,
-        notification,
-        repeat,
-        share,
-      }),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-        if (data.success) {
-          const eventIndex = plans.findIndex(
-            (event) => event.id === planModal.id
-          );
-          if (eventIndex !== -1) {
-            const updatedEvents = [...plans];
-            updatedEvents[eventIndex].saved = true;
-            updatedEvents[eventIndex].id = data.planData.id;
-            setPlans(updatedEvents);
-          }
-          setPlanModal((prev) => ({ ...prev, opened: false, id: null }));
-          if (tutorial === 5) {
-            setTutorial(6);
-          }
-          if (data.isNew) {
-            console.log("new");
-            postPlanShare(share, planModal.id);
-          }
-        }
-      })
-      .catch((error) => console.error(error));
+    const data = await patchPlan({ ...planModal });
+    setResponse(data);
+    if (data.success) {
+      const eventIndex = plans.findIndex((event) => event.plan_id === planModal.plan_id);
+      if (eventIndex !== -1) {
+        const updatedEvents = [...plans];
+        updatedEvents[eventIndex].saved = true;
+        updatedEvents[eventIndex].plan_id = data.planData.plan_id;
+        setPlans(updatedEvents);
+      }
+      setPlanModal((prev) => ({ ...prev, opened: false, id: null }));
+      if (tutorial === 5) {
+        setTutorial(6);
+      }
+      if (data.isNew) {
+        console.log("new");
+        postPlanShare(share, planModal.plan_id);
+      }
+    }
   };
 
   const deletePlan = async () => {
@@ -260,7 +234,7 @@ function EventModal({}) {
       setPlanModal((prev) => ({ ...prev, opened: false }));
       setPlans(
         plans.filter((plan) => {
-          plan.id !== id;
+          plan.plan_id !== id;
         })
       );
     }
@@ -268,17 +242,17 @@ function EventModal({}) {
 
   useEffect(() => {
     if (!planModal || !planModal.opened || !subjects) return;
-    if (!planModal.id) {
+    if (!planModal.plan_id) {
       const planInfo = { ...planModal };
       delete planInfo.opened;
-      planInfo.id = generateRandomId(10);
-      setPlanModal((prev) => ({ ...prev, id: planInfo.id }));
+      planInfo.plan_id = generateRandomId(10);
+      setPlanModal((prev) => ({ ...prev, id: planInfo.plan_id }));
       setPlans((prev) => [...prev, planInfo]);
     } else {
       setPlans((prev) => {
-        const foundIndex = prev.findIndex((val) => val.id === planModal.id);
+        const foundIndex = prev.findIndex((val) => val.plan_id === planModal.plan_id);
         const subject = subjects.find(
-          (subject) => subject.id === planModal.subject
+          (subject) => subject.subject_id === planModal.subject_id
         );
         const planInfo = { ...planModal };
         if (subject) {
@@ -305,11 +279,11 @@ function EventModal({}) {
       setPlanModal((prev) => ({
         ...prev,
         ...DEFAULT_PLAN,
-        subject: prev.subject,
+        subject_id: prev.subject_id,
       }));
       if (!planModal.saved) {
         setPlans((prev) => {
-          const foundIndex = prev.findIndex((val) => val.id === planModal.id);
+          const foundIndex = prev.findIndex((val) => val.plan_id === planModal.plan_id);
           if (foundIndex !== -1) {
             return [
               ...prev.slice(0, foundIndex),
@@ -319,8 +293,8 @@ function EventModal({}) {
           return prev;
         });
       }
-    } else if (planModal.id) {
-      fetch(`${config.server}/plans/users?id=${planModal.id}`, {
+    } else if (planModal.plan_id) {
+      fetch(`${config.server}/plans/users?id=${planModal.plan_id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -338,7 +312,7 @@ function EventModal({}) {
         })
         .catch((error) => console.error(error));
     }
-  }, [planModal.opened, planModal.id]);
+  }, [planModal.opened, planModal.plan_id]);
 
   /* useEffect(() => {
     if (router.search.includes('tutorial')) return;
@@ -455,21 +429,21 @@ function EventModal({}) {
             <div className={styles.subjectWrapper}>
               <DropDownButton
                 options={subjects.reduce((acc, subject) => {
-                  const { name, id } = subject;
-                  acc[id] = name;
+                  const { name, subject_id } = subject;
+                  acc[subject_id] = name;
                   return acc;
                 }, {})}
-                setValue={(subject) => {
+                setValue={(subject_id) => {
                   if (!planModal.editable) {
                     setResponse({
                       success: false,
                       reason: "This event is view only",
                     });
                   } else {
-                    setPlanModal((prev) => ({ ...prev, subject }));
+                    setPlanModal((prev) => ({ ...prev, subject_id }));
                   }
                 }}
-                value={planModal.subject}
+                value={planModal.subject_id}
               />
             </div>
             <p>OR</p>
@@ -531,7 +505,7 @@ function EventModal({}) {
         >
           <div className={styles.UserBoxes}>
             {/* <Suspense fallback={<CircularLoading />}>
-              <UserBoxes id={planModal.id} planModal={planModal} />
+              <UserBoxes id={planModal.plan_id} planModal={planModal} />
             </Suspense> */}
             {planModal.share.map((userInfo, i) => {
               return <ShareUserBox userInfo={userInfo} key={i} />;
