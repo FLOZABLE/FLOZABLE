@@ -48,7 +48,7 @@ async function createSubjectTimelinesTable() {
     CREATE TABLE IF NOT EXISTS subject_timelines (
       subject_id VARCHAR(10),
       start_time INT NOT NULL,
-      stop_time INT NOT NULL,
+      duration SMALLINT UNSIGNED NOT NULL,
       FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
       PRIMARY KEY (subject_id)
     );

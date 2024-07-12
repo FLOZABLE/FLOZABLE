@@ -1,4 +1,5 @@
 import { useRankingUser } from "@/Hooks/rankingHooks";
+import { useRankingsUser } from "@/Hooks/rankingsHooks";
 import { updateRankingTrend } from "@/app/utils/StatTools";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
@@ -20,7 +21,7 @@ function RankingTrendChart({
 }) {
   const [rankingsTrend, setRankingsTrend] = useState([]);
 
-  const { data: rankingUserData } = useRankingUser(
+  const { data: rankingUserData } = useRankingsUser(
     userInfo?.user_id,
     statsViewer,
     viewDate
