@@ -65,7 +65,7 @@ function StudyTrendChart({ viewDate, statsViewer = "Daily", subjectsProp }) {
       setSubjectsTrend(subjectsTrend);
     }
   }, [subjects, viewDate, statsViewer, subjectsProp]);
-
+  
   return (
     <>
       <div className={styles.editSubjectWrapper}>
@@ -75,8 +75,8 @@ function StudyTrendChart({ viewDate, statsViewer = "Daily", subjectsProp }) {
         <LineChart
           data={subjectsTrend.map((day, i) => {
             const data = day.data.reduce((accumulator, subject) => {
-              if (!filteredTrends.includes(subject.info.id)) {
-                accumulator[subject.info.id] = subject.value;
+              if (!filteredTrends.includes(subject.info.subject_id)) {
+                accumulator[subject.info.subject_id] = subject.value;
               }
               return accumulator;
             }, {});
@@ -122,8 +122,8 @@ function StudyTrendChart({ viewDate, statsViewer = "Daily", subjectsProp }) {
                   <Line
                     name={subject.info.name}
                     type="monotone"
-                    key={subject.info.id}
-                    dataKey={subject.info.id}
+                    key={subject.info.subject_id}
+                    dataKey={subject.info.subject_id}
                     stroke={colorsList[i % colorsList.length]}
                     activeDot={{ r: 8 }}
                   />

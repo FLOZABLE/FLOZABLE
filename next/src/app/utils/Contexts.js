@@ -127,7 +127,7 @@ function SubjectsProvider({ children }) {
     if (!planData?.success) return;
 
     setPlans(
-      [...planData.plans].map((plan) => {
+      JSON.parse(JSON.stringify(planData.plans)).map((plan) => {
         plan.saved = true;
         plan.start = new Date(plan.start * 1000 * 60);
         plan.end = new Date(plan.end * 1000 * 60);

@@ -246,7 +246,7 @@ function EventModal({}) {
       const planInfo = { ...planModal };
       delete planInfo.opened;
       planInfo.plan_id = generateRandomId(10);
-      setPlanModal((prev) => ({ ...prev, id: planInfo.plan_id }));
+      setPlanModal((prev) => ({ ...prev, plan_id: planInfo.plan_id }));
       setPlans((prev) => [...prev, planInfo]);
     } else {
       setPlans((prev) => {
@@ -258,6 +258,8 @@ function EventModal({}) {
         if (subject) {
           planInfo.backgroundColor = subject.color;
           planInfo.borderColor = subject.color;
+          planInfo.color = subject.color;
+          planInfo.icon = subject.icon;
         }
         if (foundIndex !== -1) {
           return [
