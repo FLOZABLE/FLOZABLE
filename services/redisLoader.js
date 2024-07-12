@@ -543,7 +543,7 @@ async function subjectsTimelineCache(userId) {
           JSON_ARRAYAGG(
               JSON_ARRAY(
                   IFNULL(st.start_time, 0), 
-                  IFNULL(st.stop_time, 0)
+                  IFNULL(st.duration, 0)
               )
           ),
           '[]'
