@@ -128,9 +128,7 @@ function timelineSorter(subject, mode, firstDatumPoint) {
 
   const now = DateTime.now().startOf('day').startOf(mode);
   const expectedLength = now.diff(startDatetime, mode).toObject()[mode + 's'];
-
-  timeline.map(([start, duration]) => {
-    const startUnix = created_at + start;
+  timeline.map(([startUnix, duration]) => {
     const stopUnix = startUnix + duration;
 
     //console.log(DateTime.fromSeconds(startUnix).toFormat('MM/dd HH:ss'), subject.name)

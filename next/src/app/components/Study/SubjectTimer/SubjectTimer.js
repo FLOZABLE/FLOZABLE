@@ -90,7 +90,7 @@ function SubjecTimer({
     }
     const timerValueObj = {};
     subjects.map((subject) => {
-      timerValueObj[subject.id] = subject.daily.total[subject.daily.total.length - 1];
+      timerValueObj[subject.subject_id] = subject.daily.total[subject.daily.total.length - 1];
     })
     setTimerValues(timerValueObj);
   }, [subjects]);
@@ -98,22 +98,22 @@ function SubjecTimer({
   const toggleTimer = (subject) => {
     if (!subject) return;
     if (!!subjectsTimerWorkerRef?.current) {
-      subjectsTimerWorkerRef.current["subjectId"] = subject.id;
+      subjectsTimerWorkerRef.current["subjectId"] = subject.subject_id;
     }
     if (!timerActive) {
       subjectsTimerWorkerRef?.current?.postMessage({ command: "startSubjectTimer" });
-      socket.emit("start", subject.id);
+      socket.emit("start", subject.subject_id);
     } else {
       subjectsTimerWorkerRef?.current?.postMessage({ command: "stopSubjectTimer" });
-      socket.emit("stop", subject.id);
+      socket.emit("stop", subject.subject_id);
       setSubjects((prev) => {
         const newState = subjects.map((currentSubject) => {
-          if (currentSubject.id === subject.id) {
+          if (currentSubject.subject_id === subject.subject_id) {
             return {
               ...currentSubject,
               daily: {
                 ...currentSubject.daily,
-                total: [...currentSubject.daily.total.slice(0, currentSubject.daily.total.length - 1), timerValues[currentSubject.id]]
+                total: [...currentSubject.daily.total.slice(0, currentSubject.daily.total.length - 1), timerValues[currentSubject.subject_id]]
               }
             }
           }
@@ -135,7 +135,7 @@ function SubjecTimer({
     const messageHandler = (e) => {
       if (e.data.command === "updateSubjectTimer") {
         setSubjectTimer((prevTimer) => ({ total: prevTimer.total + 1 }));
-        const subjectId = selectedSubject.id;
+        const subjectId = selectedSubject.subject_id;
         const tempVal = { ...timerValues };
         tempVal[subjectId] += 1;
         setTimerValues(tempVal);
@@ -177,7 +177,7 @@ function SubjecTimer({
         <ul className={`${styles.options} customScroll`} ref={subjectOptionsRef}>
           {
             subjectOptions.map((option, i) => {
-              const timeValue = timerValues[option.id];
+              const timeValue = timerValues[option.subject_id];
               return (
                 <li
                   key={i}
