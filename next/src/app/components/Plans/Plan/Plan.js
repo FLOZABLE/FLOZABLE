@@ -3,10 +3,10 @@ import CircularCheckBox from "../../Buttons/CircularCheckBox/CircularCheckBox";
 import styles from "./Plan.module.css";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { PlansContext } from "@/app/utils/Contexts";
-import config from "@/app/utils/config";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
+import { patchPlanStatus } from "@/Api/planApi";
 
 export default function Plan({ plan, children }) {
   const { plans, setPlanModal, setPlans } = useContext(PlansContext);
@@ -14,36 +14,22 @@ export default function Plan({ plan, children }) {
   const [hover, setHover] = useState(false);
 
   const togglePlan = useCallback(() => {
-    const eventIndex = plans.findIndex((planInfo) => planInfo.id === plan.id);
-    if (eventIndex !== -1) {
+    (async () => {
+      const planIndex = plans.findIndex((planInfo) => planInfo.plan_id === plan.plan_id);
+      if (planIndex === -1) return;
+
       const updatedEvents = [...plans];
-      updatedEvents[eventIndex] = {
-        ...updatedEvents[eventIndex],
+      updatedEvents[planIndex] = {
+        ...updatedEvents[planIndex],
         completed: plan.completed ? 0 : 1,
         className: plan.completed ? "" : "completed",
       };
-      const planInfo = {
-        id: plan.id,
-        completed: plan.completed ? 0 : 1,
-      };
 
-      delete planInfo.saved;
-      fetch(`${config.server}/plans/status-change`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(planInfo),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            setPlans(updatedEvents);
-          }
-        })
-        .catch((error) => console.error(error));
-    }
+      const data = await patchPlanStatus(plan.plan_id, plan.completed);
+      if (data.success) {
+        setPlans(updatedEvents);
+      }
+    })();
   }, [plans, plan]);
 
   return (
@@ -91,11 +77,11 @@ export default function Plan({ plan, children }) {
           className={styles.modifyPlan}
           onClick={(e) => {
             e.stopPropagation();
-            setPlanModal(prev => {
-              if (prev.id === plan.id) {
-                return ({ ...DEFAULT_PLAN, ...plan, opened: false });
-              };
-              return ({ ...DEFAULT_PLAN, ...plan, opened: true });
+            setPlanModal((prev) => {
+              if (prev.plan_id === plan.plan_id) {
+                return { ...DEFAULT_PLAN, ...plan, opened: false };
+              }
+              return { ...DEFAULT_PLAN, ...plan, opened: true };
             });
           }}
         >

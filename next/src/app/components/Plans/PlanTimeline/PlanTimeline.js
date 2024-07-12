@@ -36,10 +36,10 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
     const planSeries = [];
     subjects.map((subject, i) => {
       const subjectPlans = filteredPlans.filter(
-        (plan) => plan.subject === subject.id
+        (plan) => plan.subject_id === subject.subject_id
       );
       if (subjectPlans.length) {
-        const { id, name } = subject;
+        const { name } = subject;
         const total = subjectPlans.length;
         const completed = subjectPlans.filter((plan) => plan.completed).length;
         const ratio = Math.floor((completed / total) * 100);
@@ -221,9 +221,6 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
           /* style={{ maxHeight: maxHeight }} */
         >
           {filteredPlans.map((plan, i) => {
-            const planSubject = subjects.find((subject) => {
-              return subject.id === plan.subject;
-            });
 
             plan.dispStart = DateTime.fromJSDate(plan.start).toLocaleString(
               DateTime.TIME_SIMPLE
@@ -232,12 +229,7 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
               DateTime.TIME_SIMPLE
             );
 
-            let icon;
-            plan.color = "#fff";
-            if (planSubject) {
-              plan.color = planSubject.color;
-              icon = subjectIcons[planSubject.icon];
-            }
+            let icon = subjectIcons[plan.icon];
 
             if (!icon) {
               icon = <Alert />;
