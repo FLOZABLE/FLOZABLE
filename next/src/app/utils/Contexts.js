@@ -124,19 +124,26 @@ function SubjectsProvider({ children }) {
   }, [subjectsData]);
 
   useEffect(() => {
-    if (!subjectsData?.success || !planData?.success) return;
+    if (!planData?.success) return;
 
     setPlans(
-      planData.plans.map((plan) => {
+      [...planData.plans].map((plan) => {
         plan.saved = true;
         plan.start = new Date(plan.start * 1000 * 60);
         plan.end = new Date(plan.end * 1000 * 60);
-        const subject = subjectsData.subjects.find(
-          (subject) => subject.id === plan.subject
+        const subject = subjects.find(
+          (subject) => subject.subject_id === plan.subject_id
         );
+        console.log(subject, 'gd')
         if (subject) {
           plan.backgroundColor = subject.color;
           plan.borderColor = subject.color;
+          plan.color = subject.color;
+          plan.icon = subject.icon;
+        } else {
+          plan.backgroundColor = "#fff";
+          plan.borderColor = "#fff";
+          plan.color = "#fff";
         }
 
         if (plan.completed) {
@@ -145,12 +152,12 @@ function SubjectsProvider({ children }) {
         return plan;
       })
     );
-  }, [subjectsData, planData]);
+  }, [subjects, planData]);
 
   useEffect(() => {
     if (!subjects.length) return;
 
-    setPlanModal((prev) => ({ ...prev, subject: subjects[0].id }));
+    setPlanModal((prev) => ({ ...prev, subject_id: subjects[0].subject_id }));
   }, [subjects]);
 
   return (
