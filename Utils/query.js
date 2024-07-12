@@ -35,6 +35,7 @@ async function createSubjectsTable() {
     icon VARCHAR(20),
     color VARCHAR(7),
     created_at INT,
+    tools VARCHAR(10) DEFAULT '',
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     PRIMARY KEY (subject_id)
   );  

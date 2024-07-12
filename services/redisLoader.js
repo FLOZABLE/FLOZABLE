@@ -91,31 +91,25 @@ async function subjectCache(userId, subjectId) {
         subjectId
       );
       return { ...JSON.parse(subjectInfo), id: subjectId };
-    } else {
-      try {
-        const connection = pool.promise();
-        const [subjects] = await connection.query(
-          `SELECT id, name, icon, color, tools, created_at, hidden FROM subjects where user_id = ?`,
-          [userId]
-        );
-        subjects.map(async (subject) => {
-          const redisSubject = { ...subject };
-          delete redisSubject.id;
-          redisClient.hset(
-            `user:${userId}:subjects`,
-            subject.id,
-            JSON.stringify(redisSubject)
-          );
-        });
-        const subject = subjects.find((subject) => subject.id === subjectId);
-        redisClient.expire(`user:${userId}:subjects`, SBJ_EXP);
-        if (subject) return subject;
-        return false;
-      } catch (err) {
-        console.log(err);
-        return false;
-      }
     }
+    const connection = pool.promise();
+    const [subjects] = await connection.query(
+      `SELECT subject_id, name, icon, color, tools, created_at FROM subjects WHERE user_id = ?`,
+      [userId]
+    );
+    subjects.map(async (subject) => {
+      const redisSubject = { ...subject };
+      delete redisSubject.id;
+      redisClient.hset(
+        `user:${userId}:subjects`,
+        subject.id,
+        JSON.stringify(redisSubject)
+      );
+    });
+    const subject = subjects.find((subject) => subject.subject_id === subjectId);
+    redisClient.expire(`user:${userId}:subjects`, SBJ_EXP);
+    if (subject) return subject;
+    return false;
   } catch (err) {
     console.log(err);
     return false;
@@ -562,12 +556,14 @@ async function subjectsTimelineCache(userId) {
     [userId]
   );
 
-  await Promise.all(subjects.map(async(subject) => {
-    const todayTimeline = (
-      await redisClient.lrange(`user:${userId}:subject:${subject.od}`, 0, -1)
-    ).map(JSON.parse);
-    subject.timeline = JSON.parse(subject.timeline).concat(todayTimeline);
-  }))
+  await Promise.all(
+    subjects.map(async (subject) => {
+      const todayTimeline = (
+        await redisClient.lrange(`user:${userId}:subject:${subject.subject_id}`, 0, -1)
+      ).map(JSON.parse);
+      subject.timeline = JSON.parse(subject.timeline).concat(todayTimeline);
+    })
+  );
 
   return subjects;
 }

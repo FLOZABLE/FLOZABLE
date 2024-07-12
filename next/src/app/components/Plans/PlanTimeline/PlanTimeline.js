@@ -32,7 +32,6 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
 
   useEffect(() => {
     if (!subjects.length || !filteredPlans.length) return;
-
     const planSeries = [];
     subjects.map((subject, i) => {
       const subjectPlans = filteredPlans.filter(
@@ -92,7 +91,9 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
   };
 
   useEffect(() => {
-    setFilteredPlans(plans.filter((plan) => isInViewRange(plan)));
+    if (!viewMode || !viewDate || !subjects) return;
+    const filteredPlans = plans.filter((plan) => isInViewRange(plan));
+    setFilteredPlans(filteredPlans);
   }, [plans, viewMode, viewDate, subjects]);
 
   useEffect(() => {
@@ -221,7 +222,6 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
           /* style={{ maxHeight: maxHeight }} */
         >
           {filteredPlans.map((plan, i) => {
-
             plan.dispStart = DateTime.fromJSDate(plan.start).toLocaleString(
               DateTime.TIME_SIMPLE
             );

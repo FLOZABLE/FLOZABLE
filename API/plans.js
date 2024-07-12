@@ -177,7 +177,7 @@ Router.patch("/plan", async (req, res) => {
       const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds() / 60;
       const {
         title,
-        id,
+        plan_id,
         start,
         end,
         repeat,
@@ -189,7 +189,7 @@ Router.patch("/plan", async (req, res) => {
         type,
       } = planInfo;
 
-      console.log(planInfo)
+      console.log(planInfo);
 
       if (type === "google") {
         const access_token = await googleAccessTokenCache(userId);
@@ -208,11 +208,10 @@ Router.patch("/plan", async (req, res) => {
               zone: timezone,
             });
 
-            console.log(subject, id);
             const updateResults = await googleCalendar.events.update({
               auth: auth,
               calendarId: subject,
-              eventId: id,
+              eventId: plan_id,
               resource: {
                 summary: title,
                 description,
@@ -240,9 +239,9 @@ Router.patch("/plan", async (req, res) => {
       if (!isValidTitle.isValid) {
         return res.send({ success: false, reason: isValidTitle.reason });
       }
-      const isValidId = validateStrictString(id, "Id", 10, 10);
-      if (!isValidId.isValid) {
-        return res.send({ success: false, reason: isValidId.reason });
+      const isValidPlanId = validateStrictString(plan_id, "Id", 10, 10);
+      if (!isValidPlanId.isValid) {
+        return res.send({ success: false, reason: isValidPlanId.reason });
       }
 
       const isValidStart = validateInteger(
@@ -277,7 +276,12 @@ Router.patch("/plan", async (req, res) => {
         });
       }
 
-      const isValidSubjectId = validateStrictString(subject_id, "Subject", 10, 10);
+      const isValidSubjectId = validateStrictString(
+        subject_id,
+        "Subject",
+        10,
+        10
+      );
       if (!isValidSubjectId.isValid) {
         return res.send({ success: false, reason: isValidSubjectId.reason });
       }
@@ -318,7 +322,7 @@ Router.patch("/plan", async (req, res) => {
       try {
         const planData = {
           title,
-          plan_id: id,
+          plan_id,
           start,
           end,
           repeat,
@@ -332,11 +336,11 @@ Router.patch("/plan", async (req, res) => {
 
         const [deletePrev] = await connection.query(
           `DELETE FROM plans WHERE user_id = ? AND plan_id = ?`,
-          [userId, id]
+          [userId, plan_id]
         );
         let isNew = false;
         if (deletePrev.affectedRows) {
-          schedule.cancelJob(userId + "-" + id);
+          schedule.cancelJob(userId + "-" + plan_id);
         } else {
           //new plan
           planData.plan_id = generateRandomId(10);
@@ -361,7 +365,7 @@ Router.patch("/plan", async (req, res) => {
             { action: "close", title: "Close" },
           ],
           data: {
-            link: `${process.env.SERVER}/dashboard/planner?plan=${id}`,
+            link: `${process.env.SERVER}/dashboard/planner?plan=${plan_id}`,
           },
         });
 
@@ -369,7 +373,7 @@ Router.patch("/plan", async (req, res) => {
           const subNotificationStart = startTime - notification * 60;
           if (subNotificationStart > DateTime.now().toSeconds() && userInfo) {
             planPushNotification(
-              userId + "-" + id,
+              userId + "-" + plan_id,
               { ...userInfo, user_id: userId },
               payload,
               subNotificationStart
@@ -378,7 +382,7 @@ Router.patch("/plan", async (req, res) => {
         }
         if (startTime > DateTime.now().toSeconds() && userInfo) {
           planPushNotification(
-            userId + "-" + id,
+            userId + "-" + plan_id,
             { ...userInfo, user_id: userId },
             payload,
             startTime
