@@ -277,7 +277,9 @@ async function stopStudying(userId, mode, subjectId) {
     if (typeof duration !== "number") return;
 
     for (let i = -12; i < 12; i++) {
-      redisClient.zincrby(`user:${userId}:dayTotal`, duration, i.toString());
+      redisClient.zincrby(`users:${i}:dayTotal`, duration, userId);
+      redisClient.zincrby(`users:${i}:weekTotal`, duration, userId);
+      redisClient.zincrby(`users:${i}:monthTotal`, duration, userId);
     }
 
     redisClient.rpush(

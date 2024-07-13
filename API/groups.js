@@ -402,8 +402,8 @@ Router.post("/join/:id", async (req, res) => {
       const today = DateTime.now().setZone(userInfo.timezone);
       const timezoneOffset = Math.floor(today.offset / 60).toString();
       let totalTime = await redisClient.zscore(
-        `user:${userId}:dayTotal`,
-        timezoneOffset
+        `users:${timezoneOffset}:dayTotal`,
+        userId
       );
       totalTime = totalTime === null ? 0 : totalTime;
       mainIo.to(`chat:${groupId}`).emit(`newMemberInfo`, groupId, {
@@ -646,8 +646,8 @@ Router.get("/members", async (req, res) => {
           const memberStudyDataPromises = membersData.map(async (member) => {
             const { user_id } = member;
             let totalTime = await redisClient.zscore(
-              `user:${user_id}:dayTotal`,
-              timezoneOffset
+              `users:${timezoneOffset}:dayTotal`,
+              user_id
             );
             totalTime = totalTime === null ? 0 : totalTime;
             const activeSubject = await activeSubjectCache(user_id);
