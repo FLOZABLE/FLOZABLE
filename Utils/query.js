@@ -49,8 +49,7 @@ async function createSubjectTimelinesTable() {
       subject_id VARCHAR(10),
       start_time INT NOT NULL,
       duration SMALLINT UNSIGNED NOT NULL,
-      FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
-      PRIMARY KEY (subject_id)
+      FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
     );
   `);
 }

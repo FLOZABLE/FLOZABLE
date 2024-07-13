@@ -391,8 +391,8 @@ Router.get("/status", async (req, res) => {
           friend = await userCache(friend);
           if (!friend) return;
           const totalTime = await redisClient.zscore(
-            `user:${friend.user_id}:dayTotal`,
-            timezoneOffset
+            `users:${timezoneOffset}:dayTotal`,
+            friend.user_id
           );
           friend.totalTime = totalTime === null ? 0 : totalTime;
           const activeSubject = await activeSubjectCache(friend.user_id);

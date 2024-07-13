@@ -370,7 +370,9 @@ async function stopBot(userId) {
     }
 
     for (let i = -12; i < 12; i++) {
-      redisClient.zIncrBy(`user:${userId}:dayTotal`, duration, i.toString());
+      redisClient.zincrby(`users:${i}:dayTotal`, duration, userId);
+      redisClient.zincrby(`users:${i}:weekTotal`, duration, userId);
+      redisClient.zincrby(`users:${i}:monthTotal`, duration, userId);
     }
 
     redisClient.rpush(
@@ -485,9 +487,6 @@ async function deleteBots() {
 
   //exit group
   bots.map(async ({ user_id, groups }) => {
-    await redisClient.del(`user:${user_id}:dayTotal`); //remove dayTotal
-    await redisClient.del(`user:${user_id}:weekTotal`); //remove dayTotal
-    await redisClient.del(`user:${user_id}:monthTotal`); //remove dayTotal
     await redisClient.del(`user:${user_id}`); //remove usercache
     await redisClient.del(`user:${user_id}:subjects`); //remove dayTotal
     await removeActiveUserCache(); //remove from daily/weekly/monthly users cache

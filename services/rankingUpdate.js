@@ -18,63 +18,50 @@ async function updateRanking() {
   });
 
   const timezoneOffset = Math.floor(now.offset / 60).toString();
-  const dailyUsers = await getActiveUsers("day");
-  const weeklyUsers = await getActiveUsers("week");
-  const monthlyUsers = await getActiveUsers("month");
 
   const rankingDate = now.minus({ day: 1 }).startOf("day").toSeconds();
-  await updateDailyRanking(rankingDate, dailyUsers, timezoneOffset);
+  await updateDailyRanking(rankingDate, timezoneOffset);
 
-  //remove
   if (now.weekday === 1) {
     const rankingDate = now.minus({ week: 1 }).startOf("week").toSeconds();
-    await updateWeeklyRanking(rankingDate, weeklyUsers, timezoneOffset);
+    await updateWeeklyRanking(rankingDate, timezoneOffset);
   }
 
   if (now.day === 1) {
     const rankingDate = now.minus({ month: 1 }).startOf("month").toSeconds();
-    await updateMonthlyRanking(rankingDate, monthlyUsers, timezoneOffset);
+    await updateMonthlyRanking(rankingDate, timezoneOffset);
   }
 }
 
-async function updateDailyRanking(now, users, timezoneOffset) {
+async function updateDailyRanking(now, timezoneOffset) {
   try {
     const ranking_id = generateRandomId(10);
     const rankings = [];
-    await Promise.all(
-      users.map(async (userId) => {
-        const todayTotal = await redisClient.zscore(
-          `user:${userId}:dayTotal`,
-          timezoneOffset
-        );
-        if (todayTotal > MAX_STUDY_TIME) return;
-        //update week total, month total
-        if (todayTotal) {
-          rankings.push({
-            user_id: userId,
-            study_time: todayTotal,
-            ranking_id,
-          });
-          await redisClient.zincrby(
-            `user:${userId}:weekTotal`,
-            todayTotal,
-            timezoneOffset
-          );
-          await redisClient.zincrby(
-            `user:${userId}:monthTotal`,
-            todayTotal,
-            timezoneOffset
-          );
-        }
-        redisClient.zrem(`user:${userId}:dayTotal`, timezoneOffset);
-        return null;
-      })
+
+    const todayTotal = await redisClient.zrevrange(
+      `users:${timezoneOffset}:dayTotal`,
+      0,
+      -1,
+      "WITHSCORES"
     );
 
-    rankings.sort((a, b) => b.t - a.t);
-    rankings.map((user, i) => {
-      user.rank = i + 1;
-    });
+    for (let i = 0; i < todayTotal.length / 2; i += 1) {
+      const study_time = parseInt(todayTotal[i + 1]);
+      if (study_time) {
+        rankings.push({
+          user_id: todayTotal[i],
+          study_time,
+          rank: i + 1,
+          ranking_id,
+        });
+      }
+    }
+
+    const users = rankings.map(({ user_id }) => user_id);
+    if (users.length) {
+      redisClient.zrem(`users:${timezoneOffset}:dayTotal`, users);
+    }
+
     const connection = pool.promise();
     const insertInfo = {
       ranking_id,
@@ -93,33 +80,35 @@ async function updateDailyRanking(now, users, timezoneOffset) {
   }
 }
 
-async function updateWeeklyRanking(now, users, timezoneOffset) {
+async function updateWeeklyRanking(now, timezoneOffset) {
   try {
     const ranking_id = generateRandomId(10);
     const rankings = [];
-    await Promise.all(
-      users.map(async (userId) => {
-        //const thisWeekTotal = await redisClient.get(`user:${userId}:weekTotal`);
-        const thisWeekTotal = await redisClient.zscore(
-          `user:${userId}:weekTotal`,
-          timezoneOffset
-        );
-        if (thisWeekTotal) {
-          rankings.push({
-            user_id: userId,
-            study_time: thisWeekTotal,
-            ranking_id,
-          });
-        }
-        redisClient.zrem(`user:${userId}:weekTotal`, timezoneOffset);
-        return null;
-      })
+
+    const thisWeekTotal = await redisClient.zrevrange(
+      `users:${timezoneOffset}:weekTotal`,
+      0,
+      -1,
+      "WITHSCORES"
     );
 
-    rankings.sort((a, b) => b.t - a.t);
-    rankings.map((user, i) => {
-      user.rank = i + 1;
-    });
+    for (let i = 0; i < thisWeekTotal.length / 2; i += 1) {
+      const study_time = parseInt(thisWeekTotal[i + 1]);
+      if (study_time) {
+        rankings.push({
+          user_id: thisWeekTotal[i],
+          study_time,
+          rank: i + 1,
+          ranking_id,
+        });
+      }
+    }
+
+    const users = rankings.map(({ user_id }) => user_id);
+    if (users.length) {
+      redisClient.zrem(`users:${timezoneOffset}:weekTotal`, users);
+    }
+
     const connection = pool.promise();
     const insertInfo = {
       ranking_id,
@@ -138,33 +127,35 @@ async function updateWeeklyRanking(now, users, timezoneOffset) {
   }
 }
 
-async function updateMonthlyRanking(now, users, timezoneOffset) {
+async function updateMonthlyRanking(now, timezoneOffset) {
   try {
     const ranking_id = generateRandomId(10);
     const rankings = [];
-    await Promise.all(
-      users.map(async (userId) => {
-        //const thisMonthTotal = await redisClient.get(`user:${userId}:monthTotal`);
-        const thisMonthTotal = await redisClient.zscore(
-          `user:${userId}:monthTotal`,
-          timezoneOffset
-        );
-        if (thisMonthTotal) {
-          rankings.push({
-            user_id: userId,
-            study_time: thisMonthTotal,
-            ranking_id,
-          });
-        }
-        redisClient.zrem(`user:${userId}:monthTotal`, timezoneOffset);
-        return null;
-      })
+
+    const thisMonthTotal = await redisClient.zrevrange(
+      `users:${timezoneOffset}:monthTotal`,
+      0,
+      -1,
+      "WITHSCORES"
     );
 
-    rankings.sort((a, b) => b.t - a.t);
-    rankings.map((user, i) => {
-      user.rank = i + 1;
-    });
+    for (let i = 0; i < thisMonthTotal.length / 2; i += 1) {
+      const study_time = parseInt(thisMonthTotal[i + 1]);
+      if (study_time) {
+        rankings.push({
+          user_id: thisMonthTotal[i],
+          study_time,
+          rank: i + 1,
+          ranking_id,
+        });
+      }
+    }
+
+    const users = rankings.map(({ user_id }) => user_id);
+    if (users.length) {
+      redisClient.zrem(`users:${timezoneOffset}:monthTotal`, users);
+    }
+
     const connection = pool.promise();
     const insertInfo = {
       ranking_id,
