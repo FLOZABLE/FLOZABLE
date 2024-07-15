@@ -6,217 +6,36 @@ import interactionPlugin from "@fullcalendar/interaction";
 import styles from "./EventPlanner.module.css";
 import styled from "@emotion/styled";
 import { DateTime } from "luxon";
-import { PlansContext, ResponseContext } from "@/app/utils/Contexts";
+import {
+  PlansContext,
+  ResponseContext,
+  SubjectsContext,
+} from "@/app/utils/Contexts";
 import config from "@/app/utils/config";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { patchPlan } from "@/Api/planApi";
 
 const StyleWrapper = styled.div`
-  .fc-col-header {
-    width: 100% !important;
-  }
-  .fc-daygrid-body {
-    width: 100% !important;
-  }
-  .fc-scrollgrid-sync-table {
-    width: 100% !important;
-  }
-  .fc-timegrid-body {
-    width: 100% !important;
-  }
-  .fc-timegrid-slots > table {
-    width: 100% !important;
-  }
-  .fc-timegrid-cols > table {
-    width: 100% !important;
-  }
-  .fc-timegrid-cols > table .fc-day-today {
-    background-color: transparent;
-  }
-
-  th.fc-col-header-cell p.weekDay {
-    font-size: 1.25rem;
-    font-weight: 300;
-  }
-
-  .fc-event {
-    transition: .3s ease-in-out all;
-    display: block;
-  }
-  .fc-event.completed i {
-    position: relative;
-  }
-  .fc-event.completed i::before {
-    content: "";
-    background: #000;
-    width: 100%;
-    height: 0.1875rem;
-    display: inline-block;
-    position: absolute;
-    top: 0.5rem;
-  }
-
-  th.fc-col-header-cell p.day {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.875rem;
-    width: 2.6875rem;
-    height: 2.6875rem;
-  }
-
-  th.fc-col-header-cell.fc-day-today .day {
-    width: 2.6875rem;
-    background-color: #4169e1;
-    color: #fff;
-    border-radius: 1.875rem;
-  }
-
-  th.fc-col-header-cell.fc-day-today .weekDay {
-    color: #4169e1;
-  }
-
-  th {
-    border: none !important;
-  }
-
-  table.fc-scrollgrid {
-    border: none !important;
-  }
-
-  .fc-theme-standard table tr td {
-    border: transparent 0.0625rem solid;
-    border-right: 0.0625rem solid #c5c5c6;
-  }
-
-  .fc-theme-standard table tr:nth-of-type(4n) td {
-    border-bottom: 0.0625rem solid #c5c5c6;
-  }
-
-  thead .fc-scroller {
-    overflow: hidden !important;
-    padding-right: 0.75rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .fc-scroller::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 0.375rem rgba(0, 0, 0, 0.3);
-    border-radius: 0.625rem;
-  }
-
-  .fc-scroller::-webkit-scrollbar {
-    width: 0.75rem;
-  }
-
-  .fc-scroller::-webkit-scrollbar-thumb {
-    border-radius: 0.625rem;
-    -webkit-box-shadow: inset 0 0 0.375rem rgba(0, 0, 0, 0.3);
-    background-color: #555555;
-  }
-
-  .fc-timegrid-slot-label-frame {
-    position: relative;
-  }
-
-  .fc-timegrid-slot-label-cushion {
-    position: absolute;
-    top: -1.5625rem;
-    left: 0em;
-    background-color: #f7f9fd;
-  }
-
-  .fc-timegrid-slots {
-    margin-top: 0.625rem;
-  }
-
-  .fc-daygrid-day-top {
-    justify-content: center;
-  }
-
-  .fc .fc-custom-today-button {
-    background-color: #4169e1;
-    padding: 0.625rem 1.875rem;
-    font-size:  1.25rem;
-    border-radius: 1.875rem;
-    border: none;
-    transition: 0.3s background-color ease-in-out;
-  }
-
-  .fc-custom-prev-button {
-    background-color: #4169e1;
-    border: none;
-    transition: 0.3s background-color ease-in-out;
-  }
-
-  .fc-custom-next-button {
-    background-color: #4169e1;
-    border: none;
-    transition: 0.3s background-color ease-in-out;
-  }
-
-  .fc .fc-custom-today-button:hover {
-    background-color: #3788d8;
-  }
-
-  .fc-custom-prev-button:hover {
-    background-color: #3788d8 !important;
-  }
-
-  .fc-custom-next-button:hover {
-    background-color: #3788d8 !important;
-  }
-
-  .fc-toolbar-chunk {
-    display: flex;
-  }
   .fc-view-harness.fc-view-harness-active {
-    height: 100vh !important;
+    height: 100% !important;
+    background-color: #000;
+    border-radius: 1rem;
+    overflow: hidden;
   }
 
-  @media (max-width: 87.5rem) {
-    th.fc-col-header-cell p.day {
-    font-size:  1.25rem;
-    height: 2.125rem;
-    width: 2.125rem !important;
-    }
-
-    th.fc-col-header-cell p.weekDay {
-      font-size: 1.063rem;
-      font-weight: 300;
-    }
-
-    .fc .fc-custom-today-button {
-      padding: 0.313rem 0.625rem;
-      font-size:1.063rem;
-      height: fit-content;
-    }
-
-    .fc-custom-prev-button {
-      height: fit-content;
-    }
-  
-    .fc-custom-next-button {
-      height: fit-content;
-    }
-
-    .fc-toolbar-title {
-      font-size:  1.25rem;
-    }
-
-    div.fc-view.fc-timegrid {
-      height: 100vh;
-    }
+  .fc.fc-media-screen.fc-direction-ltr.fc-theme-standard {
+    height: 100%;
   }
 `;
 
-function EventPlanner({
-  viewMode,
-  viewDate,
-  setViewDate,
-}) {
+function EventPlanner({ viewMode, viewDate, setViewDate }) {
   const PlannerRef = useRef(null);
   const [PlannerApi, setPlannerApi] = useState(null);
-  const {plans, setPlans, planModal, setPlanModal} = useContext(PlansContext);
-  const {setResponse} = useContext(ResponseContext);
+  const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
+  const { setResponse } = useContext(ResponseContext);
 
+  const [dateText, setDateText] = useState(null);
   const [viewText, setViewText] = useState({
     year: "numeric",
     month: "long",
@@ -265,7 +84,7 @@ function EventPlanner({
     if (now - lastClick < 1000) {
       PlannerRef.current.getApi().unselect();
       return;
-    };
+    }
 
     setLastClick(now);
 
@@ -274,13 +93,15 @@ function EventPlanner({
 
     if (!start || !end) return;
 
-    if (!planModal.id) {
+    if (!planModal.plan_id) {
       const planInfo = { ...planModal, start, end };
 
       setPlanModal((prev) => ({ ...prev, ...planInfo, opened: true }));
     } else {
       setPlans((prev) => {
-        const foundIndex = prev.findIndex((val) => val.id === planModal.id);
+        const foundIndex = prev.findIndex(
+          (val) => val.plan_id === planModal.plan_id
+        );
         if (foundIndex !== -1) {
           return [
             ...prev.slice(0, foundIndex),
@@ -292,23 +113,25 @@ function EventPlanner({
         return prev;
       });
       setPlanModal((prev) => ({ ...prev, start, end }));
-    };
-  };
+    }
+  }
 
-  function handleEventDateDrop(data) {
-    const { id, start } = data.event;
+  async function handleEventDateDrop(data) {
+    const { start } = data.event;
+    const { plan_id } = data.event._def.extendedProps;
     if (data.event._def.extendedProps.access === "reader") {
-      setResponse({ success: false, reason: "This event is view only" })
+      setResponse({ success: false, reason: "This event is view only" });
       return;
     }
     const end = data.event.end ? data.event.end : start;
-    const eventIndex = plans.findIndex((event) => event.id == id);
+    const eventIndex = plans.findIndex((event) => event.plan_id == plan_id);
     if (eventIndex !== -1) {
       const updatedEvents = [...plans];
       updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], start, end };
       setPlans(updatedEvents);
       if (updatedEvents[eventIndex].saved) {
-        updateServer({ ...updatedEvents[eventIndex] });
+        const data = await patchPlan({ ...updatedEvents[eventIndex] });
+        setResponse(data);
         setPlanModal((prev) => ({ ...prev, start, end }));
       } else {
         setPlanModal((prev) => ({ ...prev, start, end, opened: true }));
@@ -316,20 +139,22 @@ function EventPlanner({
     }
   }
 
-  function handleEventResize(data) {
-    const { id, start } = data.event;
+  async function handleEventResize(data) {
+    const { start } = data.event;
+    const { plan_id } = data.event._def.extendedProps;
     if (data.event._def.extendedProps.access === "reader") {
-      setResponse({ success: false, reason: "This event is view only" })
+      setResponse({ success: false, reason: "This event is view only" });
       return;
     }
     const end = data.event.end ? data.event.end : start;
-    const eventIndex = plans.findIndex((event) => event.id == id);
+    const eventIndex = plans.findIndex((event) => event.plan_id == plan_id);
     if (eventIndex !== -1) {
       const updatedEvents = [...plans];
       updatedEvents[eventIndex] = { ...updatedEvents[eventIndex], start, end };
       setPlans(updatedEvents);
       if (updatedEvents[eventIndex].saved) {
-        updateServer({ ...updatedEvents[eventIndex] });
+        const data = await patchPlan({ ...updatedEvents[eventIndex] });
+        setResponse(data);
         setPlanModal((prev) => ({ ...prev, start, end }));
       } else {
         setPlanModal((prev) => ({ ...prev, start, end, opened: true }));
@@ -337,18 +162,18 @@ function EventPlanner({
     }
   }
 
-  function updateServer(event) {
+  async function updateServer(event) {
     const { start, end, completed, editable } = event;
     if (!editable) {
-      setResponse({ success: false, reason: "This event is view only" })
+      setResponse({ success: false, reason: "This event is view only" });
       return;
     }
-    const startSec = Math.floor(start.getTime() / (1000 * 60));
+    /* const startSec = Math.floor(start.getTime() / (1000 * 60));
     const endSec = Math.floor(end.getTime() / (1000 * 60));
     const notification = parseInt(planModal.notification);
     const repeat = parseInt(planModal.repeat);
-    const share = event.share.map(userInfo => userInfo.user_id);
-    
+    const share = event.share.map((userInfo) => userInfo.user_id);
+
     const updateInfo = {
       ...event,
       start: startSec,
@@ -356,7 +181,7 @@ function EventPlanner({
       completed: completed ? 1 : 0,
       notification,
       repeat,
-      share
+      share,
     };
     delete updateInfo.saved;
     fetch(`${config.server}/plans/update`, {
@@ -365,7 +190,7 @@ function EventPlanner({
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updateInfo),
-      credentials:"include"
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
@@ -374,50 +199,82 @@ function EventPlanner({
           //setPlanModal(false);
         }
       })
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error)); */
+
+    const data = await patchPlan({ ...planModal });
   }
 
   function handleEventClick(data) {
-    const { id, start, end, title } = data.event;
+    const { start, end, title } = data.event;
+    const { plan_id } = data.event._def.extendedProps;
     const editable = data.event._def.extendedProps.isEditable;
-    console.log(editable)
+    console.log(editable);
     const eventInfo = {
       ...data.event._def.extendedProps,
-      id,
+      plan_id,
       start,
       end: end ? end : start,
       title,
-      editable
+      editable,
     };
-    setPlanModal(prev => ({ ...prev, ...eventInfo, opened: true }));
-  };
+    setPlanModal((prev) => ({ ...prev, ...eventInfo, opened: true }));
+  }
 
   useEffect(() => {
-    if (PlannerApi) {
-      const plannerDateTime = DateTime.fromJSDate(PlannerApi.getDate());
+    if (!PlannerApi) return;
+
+    const plannerDateTime = DateTime.fromJSDate(PlannerApi.getDate());
+    const viewDateTime = DateTime.fromJSDate(viewDate);
+    if (viewMode === "timeGridDay") {
+      if (plannerDateTime.toISODate() !== viewDateTime.toISODate()) {
+        PlannerApi.gotoDate(viewDate);
+      }
+    } else if (viewMode === "timeGridWeek") {
+      if (
+        !(
+          viewDateTime
+            .plus({ days: 1 })
+            .startOf("week")
+            .minus({ days: 1 })
+            .toSeconds() <=
+            plannerDateTime
+              .plus({ days: 1 })
+              .startOf("week")
+              .minus({ days: 1 })
+              .toSeconds() &&
+          plannerDateTime
+            .plus({ days: 1 })
+            .endOf("week")
+            .minus({ days: 1 })
+            .toSeconds() <=
+            viewDateTime
+              .plus({ days: 1 })
+              .endOf("week")
+              .minus({ days: 1 })
+              .toSeconds()
+        )
+      ) {
+        PlannerApi.gotoDate(viewDate);
+      }
+    } else {
       const viewDateTime = DateTime.fromJSDate(viewDate);
-      if (viewMode === 'timeGridDay') {
-        if (plannerDateTime.toISODate() !== viewDateTime.toISODate()) {
-          PlannerApi.gotoDate(viewDate);
-        }
-      } else if (viewMode === 'timeGridWeek') {
-        if (!(viewDateTime.plus({ days: 1 }).startOf("week").minus({ days: 1 }).toSeconds() <= plannerDateTime.plus({ days: 1 }).startOf("week").minus({ days: 1 }).toSeconds()
-          && plannerDateTime.plus({ days: 1 }).endOf("week").minus({ days: 1 }).toSeconds() <= viewDateTime.plus({ days: 1 }).endOf("week").minus({ days: 1 }).toSeconds())) {
-          PlannerApi.gotoDate(viewDate);
-        }
-      } else {
-        if (plannerDateTime.startOf('month').toSeconds() <= viewDateTime.startOf('month').toSeconds() || viewDateTime.endOf('month').toSeconds() <= plannerDateTime.endOf('month').toSeconds()) {
-          PlannerApi.gotoDate(viewDate);
-        }
+      setDateText(viewDateTime.toFormat("MMMM, yyyy"));
+      if (
+        plannerDateTime.startOf("month").toSeconds() <=
+          viewDateTime.startOf("month").toSeconds() ||
+        viewDateTime.endOf("month").toSeconds() <=
+          plannerDateTime.endOf("month").toSeconds()
+      ) {
+        PlannerApi.gotoDate(viewDate);
       }
     }
-  }, [viewDate, viewMode]);
+  }, [viewDate, viewMode, PlannerApi]);
 
   /* useEffect(() => {
     if (!plans.length) return;
     if (!!searchParams.get("plan")) {
       const searchingPlanId = searchParams.get("plan");
-      let chosenEvent = plans.filter((calendarEvent) => calendarEvent.id === searchingPlanId);
+      let chosenEvent = plans.filter((calendarEvent) => calendarEvent.plan_id === searchingPlanId);
       if (chosenEvent.length) {
         setPlanModal({ ...chosenEvent[0], opened: true });
       }
@@ -438,7 +295,7 @@ function EventPlanner({
       const monthStart = new Date(
         viewDate.getFullYear(),
         viewDate.getMonth() - 1,
-        1,
+        1
       );
       PlannerApi.gotoDate(monthStart);
       setViewDate(monthStart);
@@ -453,7 +310,7 @@ function EventPlanner({
       const monthStart = new Date(
         viewDate.getFullYear(),
         viewDate.getMonth() + 1,
-        1,
+        1
       );
       PlannerApi.gotoDate(monthStart);
       setViewDate(monthStart);
@@ -485,64 +342,78 @@ function EventPlanner({
   }, [viewMode]);
 
   return (
-    <div className={`${styles.EventPlanner}`}>
-      <StyleWrapper>
-        <FullCalendar
-          key={"dsader3wt45"}
-          slotDuration={"00:15:00"}
-          slotLabelInterval={{ hours: 1 }}
-          allDaySlot={false}
-          slotLabelFormat={{
-            hour: "numeric",
-            hour12: true,
-          }}
-          headerToolbar={{
-            left: "custom-today custom-prev custom-next title",
-            center: "",
-            right: "",
-          }}
-          titleFormat={viewText}
-          dayHeaderContent={renderHeader}
-          ref={PlannerRef}
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView={viewMode}
-          editable={true}
-          selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          events={plans}
-          eventContent={renderEventContent}
-          dateClick={handleDateSelect}
-          select={handleDateSelect}
-          eventDrop={handleEventDateDrop}
-          eventResize={handleEventResize}
-          eventClick={handleEventClick}
-          eventAdd={(e) => {
-            /*   */
-          }}
-          eventChange={(e) => {
-            /*   */
-          }}
-          eventRemove={(e) => {
-            /*   */
-          }}
-          customButtons={{
-            "custom-prev": {
-              icon: "chevron-left",
-              click: handlePrevBtn,
-            },
-            "custom-next": {
-              icon: "chevron-right",
-              click: handleNextBtn,
-            },
-            "custom-today": {
-              text: "Today",
-              click: handleTodayButtonClick,
-            },
-          }}
-        />
-      </StyleWrapper>
-    </div>
+    <StyleWrapper className={styles.EventPlanner}>
+      <div className={styles.header}>
+        <div className={styles.button} onClick={handlePrevBtn}>
+          <FontAwesomeIcon icon={faAngleLeft} />
+        </div>
+        <div className={styles.date}>{dateText}</div>
+        <div className={styles.button} onClick={handleNextBtn}>
+          <FontAwesomeIcon icon={faAngleRight} />
+        </div>
+      </div>
+      <FullCalendar
+        firstDay={1}
+        key={"dsader3wt45"}
+        slotDuration={"00:15:00"}
+        slotLabelInterval={{ hours: 1 }}
+        allDaySlot={false}
+        slotLabelFormat={{
+          hour: "numeric",
+          hour12: true,
+        }}
+        /* headerToolbar={{
+          left: "custom-prev custom-next title",
+          center: "",
+          right: "",
+        }} */
+        eventColor={(e) => {
+          console.log(e, "gdddd");
+          return "#fff";
+        }}
+        headerToolbar={{ left: "", right: "", center: "" }}
+        titleFormat={viewText}
+        dayHeaderContent={renderHeader}
+        ref={PlannerRef}
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        initialView={viewMode}
+        editable={true}
+        selectable={true}
+        selectMirror={true}
+        dayMaxEvents={true}
+        events={plans}
+        eventContent={renderEventContent}
+        dateClick={handleDateSelect}
+        select={handleDateSelect}
+        eventDrop={handleEventDateDrop}
+        eventResize={handleEventResize}
+        eventClick={handleEventClick}
+        eventDisplay="block"
+        eventAdd={(e) => {
+          /*   */
+        }}
+        eventChange={(e) => {
+          /*   */
+        }}
+        eventRemove={(e) => {
+          /*   */
+        }}
+        /* customButtons={{
+          "custom-prev": {
+            icon: "chevron-left",
+            click: handlePrevBtn,
+          },
+          "custom-next": {
+            icon: "chevron-right",
+            click: handleNextBtn,
+          },
+          "custom-today": {
+            text: "Today",
+            click: handleTodayButtonClick,
+          },
+        }} */
+      />
+    </StyleWrapper>
   );
 }
 
