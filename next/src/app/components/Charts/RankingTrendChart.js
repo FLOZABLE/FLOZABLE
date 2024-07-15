@@ -34,7 +34,7 @@ function RankingTrendChart({
 
     const rankingTrend = updateRankingTrend(
       rankingUserData.rankings,
-      statsViewer
+      rankingUserData.maxLength
     );
     let ranking = 1;
     if (statsViewer === "Daily") {

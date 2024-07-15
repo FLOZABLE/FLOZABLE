@@ -134,11 +134,11 @@ function SubjectsProvider({ children }) {
         const subject = subjects.find(
           (subject) => subject.subject_id === plan.subject_id
         );
-        console.log(subject, 'gd')
         if (subject) {
-          plan.backgroundColor = subject.color;
-          plan.borderColor = subject.color;
+          //plan.backgroundColor = subject.color;
+          //plan.borderColor = subject.color;
           plan.color = subject.color;
+          plan.textColor = subject.color;
           plan.icon = subject.icon;
         } else {
           plan.backgroundColor = "#fff";

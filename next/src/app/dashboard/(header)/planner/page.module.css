@@ -1,4 +1,14 @@
 .Planner {
+  padding: 0rem 3.125rem;
+}
+
+.Planner .planner {
+  height: 80vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* .Planner {
   padding: 0em 3.125rem;
 }
 
@@ -67,3 +77,4 @@
   padding-bottom: -1.25rem;
   padding-left: 3.125rem;
 }
+ */

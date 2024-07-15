@@ -10,9 +10,9 @@ import PlanTimeline from "@/app/components/Plans/PlanTimeline/PlanTimeline";
 import { PlansContext } from "@/app/utils/Contexts";
 
 function Planner({}) {
-  const {refetchPlans} = useContext(PlansContext);
+  const { refetchPlans } = useContext(PlansContext);
 
-  const [viewMode, setViewMode] = useState("timeGridWeek");
+  const [viewMode, setViewMode] = useState("dayGridMonth");
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0))
   );
@@ -22,6 +22,15 @@ function Planner({}) {
       <div className={`Main`}>
         <div className="title">Planner</div>
         <div className={styles.Planner}>
+          <div className={styles.planner}>
+            <EventPlanner
+              viewDate={viewDate}
+              setViewDate={setViewDate}
+              viewMode={viewMode}
+            />
+          </div>
+        </div>
+        {/* <div className={styles.Planner}>
           <div className={styles.header}>
             <div className={styles.modeBtnWrapper}>
               <RadioBtn
@@ -67,7 +76,7 @@ function Planner({}) {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

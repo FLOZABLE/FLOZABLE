@@ -28,13 +28,13 @@ export default function Dashboard() {
     <div className={`Main`}>
       <WelcomeModal />
       <div className="title">Dashboard</div>
-      <div
+      {/* <div
         onClick={() => {
           setChatModal((prev) => ({ ...prev, open: !prev.open }));
         }}
       >
         dfd
-      </div>
+      </div> */}
       <div className={styles.Main}>
         <div className={styles.layer}>
           <FriendsBar />
