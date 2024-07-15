@@ -1,5 +1,6 @@
 import ct from "countries-and-timezones";
 import config from "./config";
+import { DateTime } from "luxon";
 
 function filterGroups(userInfo, groups) {
   const userGroups = [];
@@ -212,6 +213,24 @@ async function subscribeUserToPush() {
   }
 }
 
+function getDates(date, timezone, mode, length) {
+  const dates = [];
+  let dateTime = DateTime.fromISO(date).setZone(timezone).startOf(mode).startOf("day");
+  const now = DateTime.now().setZone(timezone).startOf(mode).startOf("day");
+
+  for (let i = 0; i < length; i++) {
+    if (dateTime.plus({ [mode]: i }) <= now) {
+      dates.push(dateTime.plus({ [mode]: i }));
+    }
+  }
+  while (dates.length < length) {
+    dateTime = dateTime.minus({ [mode]: 1 });
+    dates.unshift(dateTime);
+  }
+
+  return dates;
+}
+
 export {
   cyrb128,
   filterGroups,
@@ -224,4 +243,5 @@ export {
   streakCalculator,
   generateRandomId,
   requestNotification,
+  getDates
 };
