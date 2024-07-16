@@ -46,7 +46,7 @@ export default function Plan({ plan, children }) {
       }}
     >
       <div className={styles.iconWrapper}>
-        <div style={{ color: plan.color }} className={styles.icon}>
+        <div style={{ color: plan.subject_color }} className={styles.icon}>
           {children}
         </div>
         <div

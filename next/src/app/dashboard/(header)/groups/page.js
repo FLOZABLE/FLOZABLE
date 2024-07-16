@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import styles from "./page.module.css";
 import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
 import CreateGroupModal from "@/app/components/Modals/CreateGroupModal/CreateGroupModal";
@@ -25,7 +25,7 @@ function Groups({ setResponse }) {
   };
 
   return (
-    <div>
+    <div className={`Main`}>
       <MemberContextMenu
         MENU_ID="ffffff"
         rightClickedMember={rightClickedMember}
@@ -39,10 +39,12 @@ function Groups({ setResponse }) {
         setIsOpen={setIsEditGroupModal}
         isOpen={isEditGroupModal}
       />
-      <div className={`Main`}>
-        <div className="title">Groups</div>
-        <div className={styles.Groups}>
-          <div className={styles.box}>
+      <div className="title">Groups</div>
+      <div className={styles.Groups}>
+        <div className={styles.groupsWrapper}>
+          <GroupsContainer queryTags={tags} searchQuery={searchQuery} />
+        </div>
+        {/* <div className={styles.box}>
             <MyGroupsViewer
               groupsViewerRef={groupsViewerRef}
               setIsEditGroupModal={setIsEditGroupModal}
@@ -83,8 +85,7 @@ function Groups({ setResponse }) {
             <div className={styles.groupsWrapper}>
               <GroupsContainer queryTags={tags} searchQuery={searchQuery} />
             </div>
-          </div>
-        </div>
+          </div> */}
       </div>
     </div>
   );

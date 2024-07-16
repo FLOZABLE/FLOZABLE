@@ -135,10 +135,10 @@ function SubjectsProvider({ children }) {
           (subject) => subject.subject_id === plan.subject_id
         );
         if (subject) {
-          //plan.backgroundColor = subject.color;
-          //plan.borderColor = subject.color;
-          plan.color = subject.color;
-          plan.textColor = subject.color;
+          plan.backgroundColor = subject.color;
+          plan.borderColor = subject.color;
+          //plan.subject_color = subject.color;
+          //plan.textColor = subject.color;
           plan.icon = subject.icon;
         } else {
           plan.backgroundColor = "#fff";
