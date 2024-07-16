@@ -39,6 +39,8 @@ async function createBots(length) {
     chosenBotIds[obj.user_id] = true; //make sure we don't choose the same id when generating bots
   });
 
+  const newBots = [];
+
   for (let Z = 0; Z < length; Z++) {
     const { name, userId, timeZone, gender, profileImage } =
       combinedNameData[randomIntInRange(0, combinedNameData.length - 1)];
@@ -61,8 +63,8 @@ async function createBots(length) {
       //This will cause server to crash since name is VARCHAR(40)
     }
 
-    const password = "0";
-    let hashed = hashing(password);
+    const password = "thisisbotspassword";
+    const hashed = hashing(password);
 
     const keySalt = crypto.randomBytes(32).toString("hex");
     const iv = crypto.randomBytes(16).toString("hex");
@@ -71,13 +73,7 @@ async function createBots(length) {
     //randomize date
     const subtractedDate = Math.floor(Math.random() * 30) + 20;
     userDateTime = userDateTime.minus({ days: subtractedDate });
-    const twelveAmDateTime = userDateTime.set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    });
-    const unixTimestamp = Math.floor(twelveAmDateTime.toMillis() / 1000);
+    const unixTimestamp =  userDateTime.startOf('day').toSeconds();
     const userInfo = {
       name: name,
       hashed_password: hashed[1],
@@ -90,141 +86,6 @@ async function createBots(length) {
       type: -1,
     };
 
-    await connection.query("INSERT INTO users SET ?", userInfo);
-
-    const maxSubjects = randomIntInRange(1, 5);
-    const possibleSubjects = [
-      ["Math", "Math", "Math", "Math", "Calculus", "Trig"],
-      [
-        "Science",
-        "Science",
-        "Biology",
-        "Environment",
-        "Biology",
-        "Anatomy",
-        "Biology",
-        "Biology",
-      ],
-      [
-        "Science",
-        "Science",
-        "Chemistry",
-        "Chemistry",
-        "Chemistry",
-        "Biochemistry",
-      ],
-      ["Physics", "Physics", "Physics", "Physics 1", "Physics 2", "Physics C"],
-      [
-        "French",
-        "French",
-        "Chinese",
-        "Chinese",
-        "Spanish",
-        "Spanish",
-        "Spanish",
-        "Spanish",
-        "Latin",
-        "Latin",
-      ],
-      [
-        "English",
-        "English",
-        "English",
-        "ELA",
-        "ELA",
-        "Lit",
-        "Literature",
-        "Literature",
-        "Language Arts",
-      ],
-      [
-        "History",
-        "History",
-        "APUSH",
-        "US History",
-        "U.S. History",
-        "Social Studies",
-        "Social Studies",
-      ],
-      [
-        "Reading",
-        "Piano",
-        "Cooking",
-        "Art",
-        "Art",
-        "Reading",
-        "Piano",
-        "Piano",
-        "PE",
-        "Coding",
-      ],
-      [
-        "Astronomy",
-        "Computer Science",
-        "Essays",
-        "Comp Sci",
-        "Engineering",
-        "DE",
-        "College Apps",
-        "Shakespeare",
-        "Essays",
-        "Computer Science",
-        "Music Theory",
-        "Music Theory",
-        "Art",
-      ],
-    ];
-
-    for (let subjectNum = 0; subjectNum < maxSubjects; subjectNum++) {
-      const subjectId = generateRandomId(10);
-      const created_at = unixTimestamp;
-
-      const subjectTimeline = [];
-
-      let timelineSum = 0;
-
-      if (subjectNum === 0) {
-        let prevTime = unixTimestamp;
-        let currTime = unixTimestamp;
-        const timeNow = new Date().getTime() / 1000;
-        const possibleDurations = [
-          0, 0, 0, 60, 120, 180, 240, 360, 1200, 1500, 1800, 2400,
-        ];
-        while (currTime < timeNow - 86400) {
-          //end at yesterday
-          const duration = Math.floor(
-            (1 + Math.random() - 0.5) *
-              possibleDurations[
-                randomIntInRange(0, possibleDurations.length - 1)
-              ]
-          );
-          subjectTimeline.push([currTime - prevTime, duration]);
-          timelineSum += duration + currTime - prevTime;
-          prevTime = currTime + duration;
-          currTime += 3600; //currTime will always be the start of the hour
-        }
-      }
-
-      let stringTimeline = JSON.stringify(subjectTimeline);
-      stringTimeline = stringTimeline.slice(1, stringTimeline.length - 1);
-
-      const subjectCategory = randomIntInRange(0, possibleSubjects.length - 1);
-      let subjectName = possibleSubjects[subjectCategory];
-      subjectName = subjectName[randomIntInRange(0, subjectName.length - 1)];
-      possibleSubjects.splice(subjectCategory, 1);
-
-      const subject = {
-        id: subjectId,
-        name: subjectName,
-        user_id: userId,
-        icon: "others",
-        color: "#000000",
-        timeline: stringTimeline,
-        timeline_sum: timelineSum,
-        created_at,
-      };
-      await connection.query(`INSERT INTO subjects SET ?`, [subject]);
-    }
 
     if (!!profileImage) {
       createChessProfileImg(userId, profileImage);

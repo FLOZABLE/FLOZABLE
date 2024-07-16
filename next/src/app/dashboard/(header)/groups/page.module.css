@@ -2,6 +2,11 @@
   padding: 3.125rem;
 }
 
+.Groups .groupsWrapper {
+  height: 200vh;
+  background-color: red;
+}
+/* 
 .Groups .box {
   margin: 1.875rem 0em;
   background-color: #fff;
@@ -56,4 +61,4 @@
 
 @media (max-width: 75rem) {
 
-}
+} */
