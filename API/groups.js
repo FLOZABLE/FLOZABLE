@@ -134,7 +134,7 @@ Router.put("/group", async (req, res) => {
         }
 
         const hashed = hashing(password);
-        const group_id = generateRandomId(8);
+        const group_id = generateRandomId(10);
         const date = Math.floor(new Date().getTime() / 1000);
         const stringlifiedTags = JSON.stringify(tags);
         const group = {
@@ -145,7 +145,6 @@ Router.put("/group", async (req, res) => {
           name,
           description,
           leader: userId,
-          members: userId,
           tags: stringlifiedTags,
           max_members,
           visibility,
@@ -336,7 +335,7 @@ Router.post("/join/:id", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     const groupId = req.params.id;
 
-    const isValidGroupId = validateStrictString(groupId, "group id", 10, 8);
+    const isValidGroupId = validateStrictString(groupId, "group id", 10, 10);
     if (!isValidGroupId.isValid) {
       return res.send({ success: false, reason: isValidGroupId.reason });
     }
