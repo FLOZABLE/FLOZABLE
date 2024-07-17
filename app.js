@@ -214,7 +214,7 @@ const { servicesManager } = require("./services/services");
 //botManager(process.env.BOTS);
 servicesManager();
 
-//createBots(300);
+//createBots(10);
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);

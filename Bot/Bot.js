@@ -26,75 +26,106 @@ const {
   subjectCache,
 } = require("../services/redisLoader");
 const { mainIo } = require("../sockets/mainIo");
-const { MAX_STUDY_TIME } = require("../Constant");
+const { MAX_STUDY_TIME, possibleBotsSubjects } = require("../Constant");
 const { fr, sendFriendRequest, replyFriendRequest } = require("../API/friend");
 
 /**create bots */
 async function createBots(length) {
-  const connection = pool.promise();
+  try {
+    const connection = pool.promise();
 
-  const chosenBotIds = {};
-  const [allIds] = await connection.query("SELECT user_id from users");
-  allIds.map((obj) => {
-    chosenBotIds[obj.user_id] = true; //make sure we don't choose the same id when generating bots
-  });
+    const chosenBotIds = {};
+    const [allIds] = await connection.query("SELECT user_id from users");
+    allIds.map((obj) => {
+      chosenBotIds[obj.user_id] = true; //make sure we don't choose the same id when generating bots
+    });
 
-  const newBots = [];
+    const newBots = [];
 
-  for (let Z = 0; Z < length; Z++) {
-    const { name, userId, timeZone, gender, profileImage } =
-      combinedNameData[randomIntInRange(0, combinedNameData.length - 1)];
-    if (chosenBotIds.hasOwnProperty(userId)) {
-      // since we're choosing randomly we have to make sure there's no repeats
-      Z--;
-      console.log("Duplicate " + userId + " (skipped)");
-      continue;
-    } else {
-      chosenBotIds[userId] = true;
+    const botsSubjects = [];
+
+    for (let Z = 0; Z < length; Z++) {
+      const { name, userId, timeZone, gender, profileImage } =
+        combinedNameData[randomIntInRange(0, combinedNameData.length - 1)];
+      if (chosenBotIds.hasOwnProperty(userId)) {
+        // since we're choosing randomly we have to make sure there's no repeats
+        Z--;
+        console.log("Duplicate " + userId + " (skipped)");
+        continue;
+      } else {
+        chosenBotIds[userId] = true;
+      }
+
+      if (name.toLowerCase().includes("chess")) {
+        Z--;
+        continue;
+      }
+      if (name.length >= 40) {
+        Z--;
+        continue;
+        //This will cause server to crash since name is VARCHAR(40)
+      }
+
+      const password = "thisisbotspassword";
+      const hashed = hashing(password);
+
+      let userDateTime = DateTime.now().setZone(timeZone);
+      //randomize date
+      const subtractedDate = Math.floor(Math.random() * 30) + 20;
+      userDateTime = userDateTime.minus({ days: subtractedDate });
+      const unixTimestamp = userDateTime.startOf("day").toSeconds();
+      const userInfo = {
+        name: name,
+        hashed_password: hashed[1],
+        salt: hashed[0],
+        user_id: userId,
+        timezone: timeZone,
+        created_at: unixTimestamp,
+        type: -1,
+      };
+
+      if (!!profileImage) {
+        createChessProfileImg(userId, profileImage);
+      } else {
+        createProfileImg(40, userId, gender);
+      }
+
+      newBots.push(userInfo);
+
+      const maxSubjects = randomIntInRange(1, 5);
+
+      for (let subjectNum = 0; subjectNum < maxSubjects; subjectNum++) {
+        const subject_id = generateRandomId(10);
+        const created_at = unixTimestamp;
+
+        const subjectCategory = randomIntInRange(
+          0,
+          possibleBotsSubjects.length - 1
+        );
+        let subjectName = possibleBotsSubjects[subjectCategory];
+        subjectName = subjectName[randomIntInRange(0, subjectName.length - 1)];
+
+        const subject = {
+          subject_id,
+          name: subjectName,
+          user_id: userId,
+          color: "#000000",
+          created_at,
+        };
+
+        botsSubjects.push(subject);
+      }
     }
 
-    if (name.toLowerCase().includes("chess")) {
-      Z--;
-      continue;
-    }
-    if (name.length >= 40) {
-      Z--;
-      continue;
-      //This will cause server to crash since name is VARCHAR(40)
+    if (newBots.length) {
+      await connection.query(`INSERT INTO users SET ?`, newBots);
+      await connection.query(`INSERT INTO subjects SET ?`, botsSubjects);
     }
 
-    const password = "thisisbotspassword";
-    const hashed = hashing(password);
-
-    const keySalt = crypto.randomBytes(32).toString("hex");
-    const iv = crypto.randomBytes(16).toString("hex");
-
-    let userDateTime = DateTime.now().setZone(timeZone);
-    //randomize date
-    const subtractedDate = Math.floor(Math.random() * 30) + 20;
-    userDateTime = userDateTime.minus({ days: subtractedDate });
-    const unixTimestamp =  userDateTime.startOf('day').toSeconds();
-    const userInfo = {
-      name: name,
-      hashed_password: hashed[1],
-      salt: hashed[0],
-      user_id: userId,
-      timezone: timeZone,
-      created_at: unixTimestamp,
-      key_salt: keySalt,
-      iv: iv,
-      type: -1,
-    };
-
-
-    if (!!profileImage) {
-      createChessProfileImg(userId, profileImage);
-    } else {
-      createProfileImg(40, userId, gender);
-    }
+    console.log("BOTS SUCCESSFULLY ADDED!");
+  } catch (err) {
+    console.log(err);
   }
-
-  console.log("BOTS SUCCESSFULLY ADDED!");
 }
 
 /**create profile imggs for each users*/
@@ -275,18 +306,18 @@ async function botSelector(numbers) {
     );
     //const [subjects] = await connection.query(`SELECT timeline, id, timeline_sum, created_at FROM subjects`)
     const now = DateTime.now();
-  
+
     const activeBots = await redisClient.smembers("activeBots");
-  
+
     const allMembers = await getActiveUsers("month");
-  
+
     for (let i = 0; i < numbers; i++) {
       const index = randomIntInRange(0, bots.length - 1);
       const { user_id } = bots[index];
       //this prevents same bot from being added
       if (activeBots.includes(user_id)) continue;
       activeBots.push(user_id);
-  
+
       //determines how long this bot will study
       const duration = randomIntInRange(BOT_MIN_STUDY, BOT_MAX_STUDY);
       const start = randomIntInRange(5, MAX_START_DELAY) + now.toSeconds();
@@ -300,18 +331,18 @@ async function botSelector(numbers) {
       const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => {
         stopBot(user_id);
       });
-  
+
       const scheduleFriend = schedule.scheduleJob(startDate.toJSDate(), () => {
         addFriends(user_id, allMembers);
       });
       //Send friend request after finished studying
     }
-  
+
     //update active bot list in redis
     redisClient.sadd("activeBots", activeBots);
   } catch (err) {
     console.log(err);
-  };
+  }
 }
 
 async function botManager(numbers) {
@@ -560,9 +591,7 @@ async function createBotRankings() {
     const botStudyByHour = {};
     const botWeeklyTrend = {};
     const botMonthlyTrend = {};
-    const DP = DateTime.fromSeconds(bot.created_at)
-      .startOf("hour")
-      .toSeconds();
+    const DP = DateTime.fromSeconds(bot.created_at).startOf("hour").toSeconds();
     let botWeekTotal = 0;
     let botMonthTotal = 0;
     bot.timeline.map((tl, i) => {
