@@ -44,10 +44,94 @@ const MAX_STUDY_TIME = 60 * 60 * 20; // 20hr = max study time. ignore more than 
 
 const PASSWORD_LINK_EXP = 60 * 60 * 24; //reset password link only available for 24 hr
 
+const possibleBotsSubjects = [
+  ["Math", "Math", "Math", "Math", "Calculus", "Trig"],
+  [
+    "Science",
+    "Science",
+    "Biology",
+    "Environment",
+    "Biology",
+    "Anatomy",
+    "Biology",
+    "Biology",
+  ],
+  [
+    "Science",
+    "Science",
+    "Chemistry",
+    "Chemistry",
+    "Chemistry",
+    "Biochemistry",
+  ],
+  ["Physics", "Physics", "Physics", "Physics 1", "Physics 2", "Physics C"],
+  [
+    "French",
+    "French",
+    "Chinese",
+    "Chinese",
+    "Spanish",
+    "Spanish",
+    "Spanish",
+    "Spanish",
+    "Latin",
+    "Latin",
+  ],
+  [
+    "English",
+    "English",
+    "English",
+    "ELA",
+    "ELA",
+    "Lit",
+    "Literature",
+    "Literature",
+    "Language Arts",
+  ],
+  [
+    "History",
+    "History",
+    "APUSH",
+    "US History",
+    "U.S. History",
+    "Social Studies",
+    "Social Studies",
+  ],
+  [
+    "Reading",
+    "Piano",
+    "Cooking",
+    "Art",
+    "Art",
+    "Reading",
+    "Piano",
+    "Piano",
+    "PE",
+    "Coding",
+  ],
+  [
+    "Astronomy",
+    "Computer Science",
+    "Essays",
+    "Comp Sci",
+    "Engineering",
+    "DE",
+    "College Apps",
+    "Shakespeare",
+    "Essays",
+    "Computer Science",
+    "Music Theory",
+    "Music Theory",
+    "Art",
+  ],
+];
+
+
 module.exports = {
   colorsList,
   responseCodes,
   MAX_STUDY_TIME,
   USER_ID_COOKIE_OPTIONS,
-  PASSWORD_LINK_EXP
+  PASSWORD_LINK_EXP,
+  possibleBotsSubjects
 };
