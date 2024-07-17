@@ -19,7 +19,6 @@ const {
   subjectsCache,
   userCache,
   NotificationCache,
-  dmRoomsCache,
   getActiveUsers,
   addActiveUserCache,
   removeActiveUserCache,
@@ -415,96 +414,117 @@ async function deleteBots() {
 }
 
 async function createGroups(length) {
-  const connection = pool.promise();
-  const [bots] = await connection.query(
-    `SELECT user_id, groups FROM users WHERE type = -1`
-  );
-  const [groups] = await connection.query(`SELECT group_id FROM groups`);
+  const connection = await pool.promise();
+  try {
+    const [bots] = await connection.query(
+      `SELECT user_id FROM users WHERE type = -1`
+    );
+    const [prevGroups] = await connection.query(`SELECT group_id FROM groups`);
 
-  console.log("Starting Groups Generation", groups);
-  const groupIds = [];
+    console.log("Starting Groups Generation");
 
-  for (let i = 0; i < length; i++) {
-    const groupId = generateRandomId(8);
-    const index = randomIntInRange(0, groupsData.length - 1);
-    const groupData = groupsData[index];
+    const newGroups = [];
+    const newGroupsMembers = [];
+    const newGroupsLikes = [];
 
-    if (groups.find((group) => group.group_id === groupData.group_id)) {
-      console.log("Duplicated");
-      continue;
-    }
+    for (let i = 0; i < length; i++) {
+      const groupId = generateRandomId(10);
+      const index = randomIntInRange(0, groupsData.length - 1);
+      const groupData = groupsData[index];
 
-    groups.push({ group_id: groupId });
-
-    const hashed = hashing("0");
-    const max_members = randomIntInRange(10, 50);
-    const membersLength = randomIntInRange(10, max_members);
-    const members = [];
-    const likes = [];
-    while (members.length <= membersLength) {
-      const selectedBotIndex = randomIntInRange(0, bots.length - 1);
-      const selectedBot = bots[selectedBotIndex];
-
-      if (!members.includes(selectedBot.user_id)) {
-        members.push(selectedBot.user_id);
-        connection.query(
-          `
-          UPDATE users
-          SET \`groups\` = CASE
-            WHEN \`groups\` = '' THEN ?
-            ELSE CONCAT(\`groups\`, ',', ?)
-          END
-          WHERE user_id = ?
-        `,
-          [groupId, groupId, selectedBot.user_id]
-        );
-        const isLike = randomIntInRange(0, 6);
-        if (!isLike) {
-          likes.push(selectedBot.user_id);
-        }
+      if (prevGroups.find((group) => group.group_id === groupData.group_id)) {
+        console.log("duped group");
+        continue;
       }
+
+      const hashed = hashing("0");
+      const max_members = randomIntInRange(10, 50);
+      const membersLength = randomIntInRange(10, max_members);
+      const members = [];
+      const likes = [];
+      let whileTry = 0;
+
+      while (members.length <= membersLength && whileTry < 100) {
+        const selectedBotIndex = randomIntInRange(0, bots.length - 1);
+        const selectedBot = bots[selectedBotIndex];
+
+        if (!members.includes(selectedBot.user_id)) {
+          members.push(selectedBot.user_id);
+          const isLike = randomIntInRange(0, 6);
+          if (!isLike) {
+            likes.push(selectedBot.user_id);
+          }
+        }
+        whileTry++;
+      }
+
+      newGroupsMembers.push(...members.map((member) => [groupId, member]));
+      newGroupsLikes.push(...likes.map((member) => [groupId, member]));
+
+      const leader = members[0];
+      const colorIndex = randomIntInRange(0, colors.length - 1);
+      const color = colors[colorIndex];
+      const { name, description, tags } = groupData;
+      const visibility = randomIntInRange(0, 7) <= 1;
+      const goal_hr = randomIntInRange(4, 8);
+      const groupInfo = {
+        name,
+        description,
+        tags: JSON.stringify(tags),
+        visibility,
+        password: hashed[1],
+        salt: hashed[0],
+        max_members,
+        created_at: Math.floor(new Date().getTime() / 1000),
+        group_id: groupId,
+        leader: leader,
+        color: color,
+        goal_hr,
+      };
+      newGroups.push([
+        groupInfo.group_id,
+        groupInfo.name,
+        groupInfo.description,
+        groupInfo.tags,
+        groupInfo.visibility,
+        groupInfo.password,
+        groupInfo.salt,
+        groupInfo.max_members,
+        groupInfo.created_at,
+        groupInfo.leader,
+        groupInfo.color,
+        groupInfo.goal_hr,
+      ]);
     }
-    const leader = members[0];
-    const colorIndex = randomIntInRange(0, colors.length - 1);
-    const color = colors[colorIndex];
-    const { name, description, tags } = groupData;
-    const visibility = randomIntInRange(0, 7) <= 1;
+    console.log(newGroups[0]);
 
-    const stringlifiedLikes = JSON.stringify(likes)
-      .slice(1, -1)
-      .replaceAll(`"`, "");
-    const stringlifiedMembers = JSON.stringify(members)
-      .slice(1, -1)
-      .replaceAll(`"`, "");
-    const goal_hr = randomIntInRange(4, 8);
-    const font = randomIntInRange(0, 13);
+    if (newGroups.length) {
+      await connection.query(
+        `
+        INSERT INTO \`groups\`
+        (group_id, name, description, tags, visibility, password, salt, max_members, created_at, leader, color, goal_hr)
+        VALUES ?
+      `,
+        [newGroups]
+      );
+    }
 
-    const groupInfo = {
-      name,
-      description,
-      tags: JSON.stringify(tags),
-      visibility,
-      password: hashed[1],
-      salt: hashed[0],
-      max_members,
-      date: Math.floor(new Date().getTime() / 1000),
-      group_id: groupId,
-      leader: leader,
-      likes: stringlifiedLikes,
-      members: stringlifiedMembers,
-      color: color,
-      average_hr: 0,
-      goal_hr,
-      font,
-    };
-    connection.query(`INSERT INTO \`groups\` SET ?`, groupInfo);
-
-    const roomInfo = {
-      id: generateRandomId(10),
-    };
-    connection.query("INSERT INTO chatrooms set ?", roomInfo);
+    if (newGroupsMembers.length) {
+      await connection.query(
+        `INSERT INTO group_members (group_id, user_id) VALUES ?`,
+        [newGroupsMembers]
+      );
+    }
+    if (newGroupsLikes.length) {
+      await connection.query(
+        `INSERT INTO group_likes (group_id, user_id) VALUES ?`,
+        [newGroupsLikes]
+      );
+    }
+    console.log("Groups generation complete");
+  } catch (err) {
+    console.log(err);
   }
-  console.log("Groups Generation Done");
 }
 
 async function randomFriend(min, max) {

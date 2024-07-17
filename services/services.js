@@ -7,6 +7,7 @@ const cron = require("node-cron");
 
 async function servicesManager() {
   //schedulers
+  timerUpdate();
   cron.schedule("0 * * * *", () => {
     //dailyReport(process.env.TESTER_ID);
     extensionManager();

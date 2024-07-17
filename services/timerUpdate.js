@@ -1,13 +1,6 @@
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
-const {
-  activeSubjectCache,
-  subjectsCache,
-  timerCache,
-} = require("./redisLoader");
 const { getMidnightTimezones } = require("../Utils/tool");
-const { mainIo } = require("../sockets/mainIo");
-const { MAX_STUDY_TIME } = require("../Constant");
 
 async function timerUpdate() {
   const now = Math.floor(new Date().getTime() / 1000);
@@ -31,11 +24,7 @@ async function timerUpdate() {
           )
         ).map(JSON.parse);
         const subjectTimelines = todayTimeline.map((timeline) => {
-          return {
-            subject_id,
-            start_time: timeline[0],
-            duration: timeline[1],
-          };
+          return [subject_id, timeline[0], timeline[1]];
         });
         redisClient.ltrim(`user:${user_id}:subject:${subject_id}`, 1, 0);
         insertInfo.push(...subjectTimelines);
@@ -43,7 +32,10 @@ async function timerUpdate() {
     );
 
     if (insertInfo.length) {
-      await connection.query(`INSERT INTO subject_timelines SET ?`, insertInfo);
+      await connection.query(
+        `INSERT INTO subject_timelines (subject_id, start_time, duration) VALUES ?`,
+        [insertInfo]
+      );
     }
     console.log("timer updated");
   } catch (err) {
