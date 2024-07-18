@@ -208,13 +208,13 @@ app.get("*", function (req, res) {
   res.redirect("/");
 });
 
-const { botManager, createBots, createGroups } = require("./Bot/Bot");
+const { botManager, createBots, createGroups, randomFriend } = require("./Bot/Bot");
 const { servicesManager } = require("./services/services");
 
 //botManager(process.env.BOTS);
 servicesManager();
-
-//createBots(10);
+//randomFriend(0, 3);
+//createBots(100);
 //createGroups(50);
 
 server.listen(port, process.env.IP, () => {

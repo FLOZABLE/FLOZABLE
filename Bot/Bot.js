@@ -43,6 +43,8 @@ async function createBots(length) {
 
     const botsSubjects = [];
 
+    const password = "thisisbotspassword";
+    const hashed = hashing(password);
     for (let Z = 0; Z < length; Z++) {
       const { name, userId, timeZone, gender, profileImage } =
         combinedNameData[randomIntInRange(0, combinedNameData.length - 1)];
@@ -65,19 +67,16 @@ async function createBots(length) {
         //This will cause server to crash since name is VARCHAR(40)
       }
 
-      const password = "thisisbotspassword";
-      const hashed = hashing(password);
-
       let userDateTime = DateTime.now().setZone(timeZone);
       //randomize date
       const subtractedDate = Math.floor(Math.random() * 30) + 20;
       userDateTime = userDateTime.minus({ days: subtractedDate });
       const unixTimestamp = userDateTime.startOf("day").toSeconds();
       const userInfo = {
+        user_id: userId,
         name: name,
         hashed_password: hashed[1],
         salt: hashed[0],
-        user_id: userId,
         timezone: timeZone,
         created_at: unixTimestamp,
         type: -1,
@@ -89,7 +88,7 @@ async function createBots(length) {
         createProfileImg(40, userId, gender);
       }
 
-      newBots.push(userInfo);
+      newBots.push(Object.values(userInfo));
 
       const maxSubjects = randomIntInRange(1, 5);
 
@@ -112,13 +111,13 @@ async function createBots(length) {
           created_at,
         };
 
-        botsSubjects.push(subject);
+        botsSubjects.push(Object.values(subject));
       }
     }
 
     if (newBots.length) {
-      await connection.query(`INSERT INTO users SET ?`, newBots);
-      await connection.query(`INSERT INTO subjects SET ?`, botsSubjects);
+      await connection.query(`INSERT INTO users (user_id, name, hashed_password, salt, timezone, created_at, type) VALUES ?`, [newBots]);
+      await connection.query(`INSERT INTO subjects (subject_id, name, user_id, color, created_at) VALUES ?`, [botsSubjects]);
     }
 
     console.log("BOTS SUCCESSFULLY ADDED!");
@@ -528,53 +527,65 @@ async function createGroups(length) {
 }
 
 async function randomFriend(min, max) {
-  const connection = pool.promise();
-  const [bots] = await connection.query(
-    `SELECT friends, user_id FROM users WHERE type = -1`
-  );
-  const lastBotIndex = bots.length - 1;
-  for (const bot of bots) {
-    const { user_id } = bot;
-    const nFriends = randomIntInRange(min, max);
-    const friends = [];
+  try {
+    const connection = pool.promise();
+    const [bots] = await connection.query(
+      `SELECT user_id FROM users WHERE type = -1`
+    );
 
-    for (let i = 0; i < nFriends; i++) {
-      const friendIndex = randomIntInRange(0, lastBotIndex);
-      const friend = bots[friendIndex].user_id;
-      if (!friends.includes(friend) && !friends.includes(user_id)) {
-        friends.push(friend);
-        await connection.query(
-          `
-          UPDATE users
-          SET friends = CASE
-            WHEN friends = '' THEN ?
-            ELSE CONCAT(friends, ',', ?)
-          END
-          WHERE user_id = ?
-        `,
-          [user_id, user_id, friend]
+    const botIds = bots.map((bot) => bot.user_id);
+
+    const [friends] = await connection.query(
+      `SELECT user_id, friend_id FROM friends WHERE user_id IN (?) OR friend_id IN (?)`,
+      [botIds, botIds]
+    );
+
+    const friendsArr = friends.map((friend) => [
+      friend.user_id,
+      friend.friend_id,
+    ]);
+
+    const newFriends = [];
+    botIds.map((bot) => {
+      const botFriends = friendsArr.filter(
+        (friend) => friend[0] === bot || friend[1] === bot
+      );
+      let whileTry = 0;
+      const realMax = randomIntInRange(min, max);
+
+      while (botFriends.length <= realMax && whileTry < 10) {
+        whileTry++;
+
+        const randomFriendIndex = randomIntInRange(0, botIds.length - 1);
+        const randomFriend = botIds[randomFriendIndex];
+        const newFriend =
+          bot < randomFriend ? [bot, randomFriend] : [randomFriend, bot];
+
+        const isIn = botFriends.find(
+          (existingFriend) =>
+            JSON.stringify(existingFriend) === JSON.stringify(newFriend)
         );
-      }
-    }
 
-    if (friends.length) {
-      const stringlified = JSON.stringify(friends)
-        .slice(1, -1)
-        .replaceAll(`"`, "");
+        if (isIn || bot === randomFriend) continue;
+
+        botFriends.push(newFriend);
+        newFriends.push(newFriend);
+      }
+      friendsArr.push(...botFriends);
+    });
+    console.log("new", newFriends);
+
+    if (newFriends.length) {
       await connection.query(
-        `
-      UPDATE users
-      SET friends = CASE
-        WHEN friends = '' THEN ?
-        ELSE CONCAT(friends, ',', ?)
-      END
-      WHERE user_id = ?
-    `,
-        [stringlified, stringlified, user_id]
+        `INSERT INTO friends (user_id, friend_id) VALUES ?`,
+        [newFriends]
       );
     }
+
+    console.log(`bot friends added`, newFriends.length);
+  } catch (err) {
+    console.log(err);
   }
-  console.log("BOTS FRIENDS ADDED!");
 }
 
 async function createBotRankings() {
