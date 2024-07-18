@@ -7,7 +7,7 @@ async function createUsersTable() {
   await connection.query(`
   CREATE TABLE IF NOT EXISTS users (
     user_id VARCHAR(10) NOT NULL PRIMARY KEY,
-    name VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    name VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     email VARCHAR(60) DEFAULT '',
     timezone VARCHAR(40) DEFAULT '',
     created_at INT(10),
@@ -108,7 +108,6 @@ async function createFriendsTable() {
       user_id VARCHAR(10) NOT NULL,
       friend_id VARCHAR(10) NOT NULL,
       PRIMARY KEY (user_id, friend_id),
-      CHECK (user_id < friend_id),
       FOREIGN KEY (user_id) REFERENCES users(user_id),
       FOREIGN KEY (friend_id) REFERENCES users(user_id)
     );
