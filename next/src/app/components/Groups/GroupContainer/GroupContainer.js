@@ -28,14 +28,28 @@ function GroupContainer({ groupInfo, rankings = [], isSearched = true }) {
 
   useEffect(() => {
     if (!groupInfo) return;
-    setMembers(groupInfo.members.split(",").filter(Boolean));
-    setLikes(groupInfo.likes.split(",").filter(Boolean));
+    setMembers(groupInfo.members);
+    setLikes(groupInfo.likes);
   }, [groupInfo]);
 
   return (
     <div
       className={`${styles.GroupContainer} ${!isSearched ? styles.hidden : ""}`}
     >
+      {/* <div className={styles.groupImage}></div>
+      <div className={styles.info}>
+        <div className={styles.name}></div>
+        <div className={`${styles.tags} hiddenScroll`}>
+          {groupInfo?.tags.map((tag, i) => {
+            return (
+              <div key={i} style={{ backgroundColor: groupInfo.color }}>
+                #{tag}
+              </div>
+            );
+          })}
+        </div>
+        <div className={styles.description}>{parse(groupInfo.description)}</div>
+      </div> */}
       <div className={styles.contents}>
         <div
           className={`${styles.name} overflowDot`}
@@ -51,7 +65,7 @@ function GroupContainer({ groupInfo, rankings = [], isSearched = true }) {
           <div className={`overflowDot`}>{groupInfo?.name}</div>
         </div>
         <div className={`${styles.description} hiddenScroll`}>
-          {groupInfo ? parse(groupInfo.explanation) : null}
+          {groupInfo ? parse(groupInfo.description) : null}
         </div>
         <div className={styles.info}>
           <div>
@@ -90,15 +104,13 @@ function GroupContainer({ groupInfo, rankings = [], isSearched = true }) {
           </div>
         </div>
         <div className={`${styles.tags} hiddenScroll`}>
-          {groupInfo
-            ? JSON.parse(groupInfo.tags).map((tag, i) => {
-                return (
-                  <div key={i} style={{ backgroundColor: groupInfo.color }}>
-                    #{tag}
-                  </div>
-                );
-              })
-            : null}
+          {groupInfo?.tags.map((tag, i) => {
+            return (
+              <div key={i} style={{ backgroundColor: groupInfo.color }}>
+                #{tag}
+              </div>
+            );
+          })}
         </div>
       </div>
       <div className={styles.buttons}>
@@ -114,29 +126,11 @@ function GroupContainer({ groupInfo, rankings = [], isSearched = true }) {
           </Link>
         ) : (
           <div
-            /* href={`/dashboard/groups?joinId=${groupInfo?.group_id}`} */
             onClick={() => {
               setJoinGroupModal({
                 open: true,
                 group: groupInfo,
               });
-              /* setJoinGroupModal(prev => {
-                  if (prev.open) {
-                    return (
-                      {
-                        open: false,
-                        group: null
-                      }
-                    )
-                  } else {
-                    return (
-                      {
-                        open: true,
-                        group: groupInfo
-                      }
-                    )
-                  }
-                }) */
             }}
             className={styles.joinBtn}
           >
@@ -145,7 +139,7 @@ function GroupContainer({ groupInfo, rankings = [], isSearched = true }) {
         )}
         <div className={styles.likeBtnWrapper}>
           <LikeBtn
-            liked={groupInfo?.likes.split(",").includes(userInfo?.user_id)}
+            liked={likes.includes(userInfo?.user_id)}
             id={groupInfo?.group_id}
           />
         </div>

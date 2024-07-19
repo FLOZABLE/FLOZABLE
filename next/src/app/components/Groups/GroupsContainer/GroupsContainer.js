@@ -35,8 +35,6 @@ function GroupsContainer({
     <div className={`${styles.GroupsContainer} customScroll`}>
       {otherGroups.map((group, i) => {
 
-        const tags = JSON.parse(group.tags);
-
         let isSearched = false;
         if (
           !queryTags.length &&
@@ -45,7 +43,7 @@ function GroupsContainer({
           isSearched = true;
         } else if (queryTags.length && searchQuery === "") {
           if (
-            tags.some((element) => queryTags.includes(element.toLowerCase()))
+            group.tags.some((element) => queryTags.includes(element.toLowerCase()))
           ) {
             isSearched = true;
           }

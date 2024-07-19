@@ -28,6 +28,11 @@ const responseCodes = {
   "no-group": {
     success: false,
     reason: "Invalid Group",
+    code: 404
+  },
+  'non-memeber' : {
+    success: false,
+    reason: 'Not a member of this group',
     code: 401
   }
 };
