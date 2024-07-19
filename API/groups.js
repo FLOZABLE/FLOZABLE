@@ -36,16 +36,23 @@ Router.get("/", async (req, res) => {
         g.tags, 
         g.color, 
         g.goal_hr, 
-        m.user_id AS members, 
-        l.user_id AS likes
+      GROUP_CONCAT(DISTINCT m.user_id) AS members, 
+      GROUP_CONCAT(DISTINCT l.user_id) AS likes
       FROM \`groups\` g
       LEFT JOIN group_members m ON g.group_id = m.group_id
       LEFT JOIN group_likes l ON g.group_id = l.group_id
       GROUP BY g.group_id
             `
     );
-    console.log(groups)
-    res.send({ success: true, groups: groups });
+
+    const formattedGroups = groups.map((group) => ({
+      ...group,
+      members: group.members ? group.members.split(",") : [],
+      likes: group.likes ? group.likes.split(",") : [],
+      tags: group.tags ? JSON.parse(group.tags) : [],
+    }));
+    console.log(formattedGroups);
+    res.send({ success: true, groups: formattedGroups });
   } catch (err) {
     console.error("Error performing database queries:", err);
     res.status(500).send({ success: false, reason: "An error occurred" });
@@ -333,21 +340,30 @@ Router.patch("/group", async (req, res) => {
  */
 Router.post("/join/:id", async (req, res) => {
   autoSignin(req, res, async (userId) => {
-    const groupId = req.params.id;
-
-    const isValidGroupId = validateStrictString(groupId, "group id", 10, 10);
-    if (!isValidGroupId.isValid) {
-      return res.send({ success: false, reason: isValidGroupId.reason });
-    }
-
-    const userInfo = await userCache(userId);
-
-    if (!userInfo) return res.send(responseCodes["no-user"]);
-
-    const connection = pool.promise();
     try {
+      const groupId = req.params.id;
+
+      const isValidGroupId = validateStrictString(groupId, "group id", 10, 10);
+      if (!isValidGroupId.isValid) {
+        return res.send({ success: false, reason: isValidGroupId.reason });
+      }
+
+      const userInfo = await userCache(userId);
+
+      if (!userInfo) return res.send(responseCodes["no-user"]);
+
+      const connection = pool.promise();
       const [[groupInfo]] = await connection.query(
-        `SELECT password, salt, visibility, max_members, members, name from \`groups\` where group_id = ?`,
+        `SELECT 
+        g.password, 
+        g.salt, 
+        g.visibility, 
+        g.max_members, 
+        g.name,
+        GROUP_CONCAT(DISTINCT m.user_id) AS members
+        FROM \`groups\` g
+        LEFT JOIN group_members m ON g.group_id = m.group_id
+        WHERE g.group_id = ?`,
         [groupId]
       );
       if (!groupInfo)
@@ -355,12 +371,6 @@ Router.post("/join/:id", async (req, res) => {
 
       if (groupInfo.members.includes(userId))
         return res.send({ success: false, reason: "Already Joined" });
-
-      groupInfo.members =
-        groupInfo.members === "" ? [] : groupInfo.members.split(",");
-      groupInfo.members = [...new Set(groupInfo.members.push(userId))];
-
-      userInfo.groups = [...new Set(userInfo.groups.push(groupId))];
 
       //private group
       if (!groupInfo.visibility) {
@@ -374,22 +384,17 @@ Router.post("/join/:id", async (req, res) => {
         const hashedPassword = crypto
           .pbkdf2Sync(password, groupInfo.salt, 99097, 32, "sha512")
           .toString("hex");
-        if (hashedPassword == groupInfo.password) {
+        if (hashedPassword !== groupInfo.password) {
           return res.send({ success: false, reason: "Wrong Password" });
         }
       }
 
-      await connection.query(
-        `UPDATE users SET \`groups\` = ?
-          WHERE user_id = ?`,
-        [userInfo.groups.toString(), userId]
-      );
+      const newMember = {
+        group_id: groupId,
+        user_id: userId,
+      };
 
-      await connection.query(
-        `UPDATE \`groups\` 
-        SET members = ? WHERE group_id = ?`,
-        [groupInfo.members.toString(), groupId]
-      );
+      await connection.query(`INSERT INTO group_members SET ?`, newMember);
 
       mainIo.emit(`newMember:${groupId}`, userId);
       res.send({ success: true, msg: `Joined group "${groupInfo.name}"` });
@@ -424,7 +429,6 @@ Router.post("/join/:id", async (req, res) => {
     }
   });
 });
-
 
 /**
  * leave group
@@ -506,7 +510,11 @@ Router.delete("/member", async (req, res) => {
       );
 
       merberInfo.groups = merberInfo.groups.filter((g) => g != groupId);
-      redisClient.hset(`user:${memberId}`, "groups", merberInfo.groups.toString());
+      redisClient.hset(
+        `user:${memberId}`,
+        "groups",
+        merberInfo.groups.toString()
+      );
 
       redisClient.srem(`room:${groupId}`, memberId);
       mainIo.emit(`removeMember`, groupId, memberId);
@@ -534,7 +542,7 @@ Router.post("/transfer-ownership", async (req, res) => {
           reason: "You are not the owner of this group",
         });
       } else {
-        const updateGroup = await connection.query(
+        await connection.query(
           "UPDATE groups SET leader = ? WHERE group_id = ?",
           [memberId, groupId]
         );
@@ -566,45 +574,33 @@ Router.post("/like/:id", async (req, res) => {
 
     try {
       const connection = pool.promise();
-      /* const [update] = await connection.query(
-        `UPDATE \`groups\` 
-        SET likes = CASE 
-          WHEN likes = '' THEN ?
-          WHEN likes LIKE ? OR likes LIKE ? OR likes LIKE ? OR likes = ? THEN
-          TRIM(BOTH ',' FROM REPLACE(CONCAT(',', likes, ','), ',${userId},', ','))
-          ELSE CONCAT(likes, ',', ?) 
-          END WHERE group_id = ?`,
-        [userId, `%,${userId},%`, `${userId},%`, `%,${userId}`, userId, userId, groupId]
-      ); */
+
       if (liked) {
-        /* const [[{ verified }]] = await connection.query(`SELECT verified FROM users WHERE user_id = ?`, [userId]);
-        if (!verified) {
-          //return res.send({ success: false, reason: "Please verify your email" });
-        } */
+        const newLike = {
+          user_id: userId,
+          group_id: groupId,
+        };
+
         const [{ changedRows }] = await connection.query(
-          `UPDATE \`groups\` 
-          SET likes = CASE 
-            WHEN likes = '' THEN ?
-            WHEN NOT likes LIKE ? THEN
-            CONCAT(likes, ',', ?)
-            ELSE likes
-            END WHERE group_id = ?`,
-          [userId, `%${userId}%`, userId, groupId]
+          `INSERT INTO group_likes SET ?`,
+          newLike
         );
+
         if (changedRows) {
           mainIo.emit(`liked:${groupId}`, userId);
         }
       } else {
-        await connection.query(
-          `UPDATE \`groups\` 
-          SET likes = 
-            TRIM(BOTH ',' FROM REPLACE(CONCAT(',', likes, ','), ',${userId},', ','))
-            WHERE group_id = ?`,
-          [groupId]
+        const [{ changedRows }] = await connection.query(
+          `DELETE FROM group_likes WHERE user_id = ? AND group_id = ?`,
+          [userId, groupId]
         );
-        mainIo.emit(`unliked:${groupId}`, userId);
+
+        if (changedRows) {
+          mainIo.emit(`liked:${groupId}`, userId);
+        }
       }
-      res.send({ success: true });
+
+      return res.send({ success: true });
     } catch (err) {
       console.error("Error performing database queries:", err);
       res.status(500).send({ success: false, reason: "An error occurred" });
@@ -630,31 +626,44 @@ Router.get("/members", async (req, res) => {
         const today = DateTime.now().setZone(timezone);
         const timezoneOffset = Math.floor(today.offset / 60).toString();
         const [[groupInfo]] = await connection.query(
-          `SELECT visibility, members FROM groups WHERE group_id = ?`,
+          `SELECT 
+            g.visibility, 
+            GROUP_CONCAT(
+              JSON_OBJECT('user_id', u.user_id, 'name', u.name)
+            ) AS members
+          FROM groups g
+          JOIN group_members m ON m.group_id = g.group_id
+          JOIN users u ON u.user_id = m.user_id
+          WHERE g.group_id = ?
+          GROUP BY g.group_id`,
           [groupId]
         );
+
         if (!groupInfo)
           return res.send({ success: false, reason: "No such group" });
-        const { visibility, members } = groupInfo;
-        const membersArr = members === "" ? [] : members.split(",");
-        if (visibility || (membersArr.includes(userId) && membersArr.length)) {
-          const [membersData] = await connection.query(
-            `SELECT name, user_id FROM users WHERE user_id IN (?)`,
-            [membersArr]
+
+        groupInfo.members = JSON.parse(`[${groupInfo.members}]`);
+
+        if (
+          groupInfo.visibility ||
+          groupInfo.members.find((member) => member.user_id === userId)
+        ) {
+          const membersData = await Promise.all(
+            groupInfo.members.map(async (member) => {
+              let totalTime = await redisClient.zscore(
+                `users:${timezoneOffset}:dayTotal`,
+                member.user_id
+              );
+              totalTime = totalTime === null ? 0 : totalTime;
+              const activeSubject = await activeSubjectCache(member.user_id);
+              return { ...member, totalTime, activeSubject };
+            })
           );
-          const memberStudyDataPromises = membersData.map(async (member) => {
-            const { user_id } = member;
-            let totalTime = await redisClient.zscore(
-              `users:${timezoneOffset}:dayTotal`,
-              user_id
-            );
-            totalTime = totalTime === null ? 0 : totalTime;
-            const activeSubject = await activeSubjectCache(user_id);
-            return { ...member, totalTime, activeSubject };
-          });
-          const memberStudyData = await Promise.all(memberStudyDataPromises);
-          res.send({ success: true, membersData: memberStudyData });
+
+          console.log(membersData);
+          return res.send({ success: true, membersData });
         }
+        res.send(responseCodes["non-memeber"]);
       } catch (err) {
         console.error("Error performing database queries:", err);
         res.status(500).send({ success: false, reason: "An error occurred" });

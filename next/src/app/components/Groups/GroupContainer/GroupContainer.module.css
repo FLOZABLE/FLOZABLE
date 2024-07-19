@@ -1,7 +1,7 @@
 .GroupContainer {
-  height: 15.625rem;
-  background-color: #fff;
-  border-radius: 1.25rem;
+  height: 20.625rem;
+  background-color: #000;
+  border-radius: 0.5rem;
   padding: 0.625rem 0.625rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   position: relative;
