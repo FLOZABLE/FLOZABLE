@@ -51,7 +51,6 @@ Router.get("/", async (req, res) => {
       likes: group.likes ? group.likes.split(",") : [],
       tags: group.tags ? JSON.parse(group.tags) : [],
     }));
-    console.log(formattedGroups);
     res.send({ success: true, groups: formattedGroups });
   } catch (err) {
     console.error("Error performing database queries:", err);
@@ -290,10 +289,8 @@ Router.patch("/group", async (req, res) => {
           reason: "You are not the leader of this group",
         });
 
-      const date = Math.floor(new Date().getTime() / 1000);
       const stringlifiedTags = JSON.stringify(tags);
       const group = {
-        date,
         name,
         description,
         leader: userId,
@@ -442,29 +439,17 @@ Router.post("/leave", async (req, res) => {
       if (!userInfo) return res.send(responseCodes["no-user"]);
 
       const connection = pool.promise();
-      const [[group]] = await connection.query(
-        "SELECT members FROM groups WHERE group_id = ?",
-        [groupId]
+
+      const [{ changedRows }] = await connection.query(
+        `DELETE FROM group_members WHERE user_id = ? AND group_id = ?`,
+        [userId, groupId]
       );
 
-      group.members = group.members.split(",");
-      group.members = [
-        ...new Set(group.members.filter((mem) => mem != userId)),
-      ];
-
-      await connection.query(
-        "UPDATE groups SET members = ? WHERE group_id = ?",
-        [group.members.toString(), groupId]
-      );
+      if (!changedRows) return res.send(responseCodes["no-group"]);
 
       userInfo.groups = [
         ...new Set(userInfo.groups.filter((g) => g !== groupId)),
       ];
-
-      await connection.query("UPDATE users SET groups = ? WHERE user_id = ?", [
-        userInfo.groups.toString(),
-        userId,
-      ]);
 
       redisClient.hset(`user:${userId}`, "groups", userInfo.groups.toString());
 
