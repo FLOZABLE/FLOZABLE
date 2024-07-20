@@ -2,8 +2,56 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { autoSignin } = require("../Utils/tool");
 const { DateTime } = require("luxon");
+const { usersCache } = require("../services/redisLoader");
+
+Router.get("/", async (req, res) => {
+  try {
+    const { mode, date, timezone } = req.query;
+
+    const dateTime = DateTime.fromISO(date).setZone(timezone).startOf('day').startOf(mode);
+
+    const now = DateTime.now().setZone(timezone).startOf('day').startOf(mode);
+
+    if (now.toSeconds() === dateTime.toSeconds()) {
+      //today/this week/this month = cached
+      const timezoneOffset = Math.floor(now.offset / 60).toString();
+
+      const rankings = [];
+
+      const studyTotal = await redisClient.zrevrange(
+        `users:${timezoneOffset}:${mode}Total`,
+        0,
+        -1,
+        "WITHSCORES"
+      );
+  
+      for (let i = 0; i < studyTotal.length; i += 2) {
+        const study_time = parseInt(studyTotal[i + 1]);
+        if (study_time) {
+          rankings.push({
+            user_id: studyTotal[i],
+            study_time,
+            rank: Math.floor(i / 2) + 1,
+          });
+        }
+      }
+
+      const users = await usersCache(rankings.map(ranking => ranking.user_id));
+
+      const rankingsUsers = rankings.map(ranking => {
+        const user = users.find(user => user.user_id === ranking.user_id);
+        return {...user, ...ranking};
+      }).filter(ranking => ranking.name);
+
+      return res.send({success: true, rankings: rankingsUsers})
+    }
+    res.send({success: false});
+  } catch (err) {
+    console.log(err);
+    res.send({ success: false });
+  }
+});
 
 Router.get("/ranking/user", async (req, res) => {
   try {
@@ -34,8 +82,6 @@ Router.get("/ranking/user", async (req, res) => {
       `users:${timezoneOffset}:dayTotal`,
       userId
     );
-
-    console.log(dates, "gd");
 
     const rankings = dates.map((date) => {
       if (

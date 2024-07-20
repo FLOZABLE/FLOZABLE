@@ -45,13 +45,13 @@ async function updateDailyRanking(now, timezoneOffset) {
       "WITHSCORES"
     );
 
-    for (let i = 0; i < todayTotal.length / 2; i += 1) {
+    for (let i = 0; i < todayTotal.length; i += 2) {
       const study_time = parseInt(todayTotal[i + 1]);
       if (study_time) {
         rankings.push({
           user_id: todayTotal[i],
           study_time,
-          rank: i + 1,
+          rank: Math.floor(i / 2) + 1,
           ranking_id,
         });
       }
@@ -92,13 +92,13 @@ async function updateWeeklyRanking(now, timezoneOffset) {
       "WITHSCORES"
     );
 
-    for (let i = 0; i < thisWeekTotal.length / 2; i += 1) {
+    for (let i = 0; i < thisWeekTotal.length; i += 2) {
       const study_time = parseInt(thisWeekTotal[i + 1]);
       if (study_time) {
         rankings.push({
           user_id: thisWeekTotal[i],
           study_time,
-          rank: i + 1,
+          rank: Math.floor(i / 2) + 1,
           ranking_id,
         });
       }
@@ -139,13 +139,13 @@ async function updateMonthlyRanking(now, timezoneOffset) {
       "WITHSCORES"
     );
 
-    for (let i = 0; i < thisMonthTotal.length / 2; i += 1) {
+    for (let i = 0; i < thisMonthTotal.length; i += 2) {
       const study_time = parseInt(thisMonthTotal[i + 1]);
       if (study_time) {
         rankings.push({
           user_id: thisMonthTotal[i],
           study_time,
-          rank: i + 1,
+          rank: Math.floor(i / 2) + 1,
           ranking_id,
         });
       }
