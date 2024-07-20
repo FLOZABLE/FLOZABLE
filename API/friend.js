@@ -9,7 +9,6 @@ const {
   userCache,
   activeSubjectCache,
   subjectCache,
-  dmRoomsCache,
   clearUserCache,
 } = require("../services/redisLoader");
 const redisClient = require("../model/redis");
@@ -27,6 +26,7 @@ const Router = express.Router();
 
 async function sendFriendRequest(userId, targetId) {
   try {
+    return;
     const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
     if (!isValidTargetId.isValid) {
@@ -92,6 +92,7 @@ async function sendFriendRequest(userId, targetId) {
 
 async function replyFriendRequest(userId, targetId, accepted, notificationId) {
   try {
+    return;
     const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
     if (!isValidTargetId.isValid) {

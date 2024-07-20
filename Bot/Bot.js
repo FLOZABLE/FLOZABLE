@@ -116,8 +116,14 @@ async function createBots(length) {
     }
 
     if (newBots.length) {
-      await connection.query(`INSERT INTO users (user_id, name, hashed_password, salt, timezone, created_at, type) VALUES ?`, [newBots]);
-      await connection.query(`INSERT INTO subjects (subject_id, name, user_id, color, created_at) VALUES ?`, [botsSubjects]);
+      await connection.query(
+        `INSERT INTO users (user_id, name, hashed_password, salt, timezone, created_at, type) VALUES ?`,
+        [newBots]
+      );
+      await connection.query(
+        `INSERT INTO subjects (subject_id, name, user_id, color, created_at) VALUES ?`,
+        [botsSubjects]
+      );
     }
 
     console.log("BOTS SUCCESSFULLY ADDED!");
@@ -211,19 +217,25 @@ async function startBot(userId) {
     const subjects = await subjectsCache(userId);
     const subject = subjects[randomIntInRange(0, subjects.length - 1)];
     const userInfo = await userCache(userId);
+
     if (!subject || !userInfo) return;
-    const { groups, friends, name } = userInfo;
-    console.log("start", userId, name);
+    const { groups, friends } = userInfo;
+    console.log("bot start", userInfo.name, userInfo.user_id);
     if (groups.length) {
       mainIo.to(groups).emit(`studying:${userId}`, subject);
     }
     if (friends.length) {
       mainIo.to(friends).emit(`studying:${userId}`, subject);
     }
-    const { created_at, id } = subject;
-    const start = now - created_at;
-    redisClient.rpush(`user:${userId}:subject:${id}`, `[${start},0]`);
-    redisClient.hset(`user:${userId}`, `ActiveSubject`, `${id}:${now}`);
+    redisClient.rpush(
+      `user:${userId}:subject:${subject.subject_id}`,
+      `[${now},0]`
+    );
+    redisClient.hset(
+      `user:${userId}`,
+      `ActiveSubject`,
+      `${subject.subject_id}:${now}`
+    );
     addActiveUserCache(userId);
   } catch (err) {
     console.log(err);
@@ -232,32 +244,52 @@ async function startBot(userId) {
 
 async function stopBot(userId) {
   try {
+    redisClient.srem("activeBots", userId);
     const now = Math.floor(new Date().getTime() / 1000);
 
-    redisClient.hdel(`user:${userId}`, `ActiveSubject`);
-    redisClient.srem("activeBots", userId);
-    const activeSubject = await activeSubjectCache(userId);
-    if (!activeSubject || activeSubject.id === "0") return;
-    const subject = await subjectCache(userId, activeSubject.id);
     const userInfo = await userCache(userId);
-    if (!userInfo || !subject) return;
+
+    if (!userInfo) return;
+
+    const { groups, friends } = userInfo;
+
+    if (groups.length) {
+      mainIo
+        .to(groups)
+        .emit(`stopStudying:${userId}`, { status: "disconnect" });
+    }
+    if (friends.length) {
+      mainIo
+        .to(friends)
+        .emit(`stopStudying:${userId}`, { status: "disconnect" });
+    }
+
+    const activeSubject = await activeSubjectCache(userId);
+
+    if (!activeSubject || activeSubject.id === "0") {
+      return await redisClient.hdel(`user:${userId}`, `ActiveSubject`);
+    }
 
     const activity = JSON.parse(
-      await redisClient.rPop(`user:${userId}:subject:${activeSubject.id}`)
+      await redisClient.rpop(`user:${userId}:subject:${activeSubject.id}`)
     );
 
     if (!activity) return;
 
     const start = activity[0];
 
-    const { created_at } = subject;
+    const duration = now - start;
 
-    const duration = now - created_at - start;
+    console.log("bot stop", userId, duration);
+
+    await redisClient.hdel(`user:${userId}`, `ActiveSubject`);
 
     if (duration > MAX_STUDY_TIME) {
       console.log("max study exceeded: ", duration);
       return;
     }
+
+    if (typeof duration !== "number") return;
 
     for (let i = -12; i < 12; i++) {
       redisClient.zincrby(`users:${i}:dayTotal`, duration, userId);
@@ -269,20 +301,6 @@ async function stopBot(userId) {
       `user:${userId}:subject:${activeSubject.id}`,
       `[${start},${duration}]`
     );
-
-    const { groups, friends, name } = userInfo;
-    console.log("stop", userId, name, duration);
-
-    if (groups.length) {
-      mainIo
-        .to(groups)
-        .emit(`stopStudying:${userId}`, { status: "rest", duration });
-    }
-    if (friends.length) {
-      mainIo
-        .to(friends)
-        .emit(`stopStudying:${userId}`, { status: "rest", duration });
-    }
   } catch (err) {
     console.log(err);
   }

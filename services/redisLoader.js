@@ -59,10 +59,10 @@ async function subjectsCache(userId) {
         );
         subjects.map(async (subject) => {
           const redisSubject = { ...subject };
-          delete redisSubject.id;
+          delete redisSubject.subject_id;
           redisClient.hset(
             `user:${userId}:subjects`,
-            subject.id,
+            subject.subject_id,
             JSON.stringify(redisSubject)
           );
         });
@@ -106,7 +106,9 @@ async function subjectCache(userId, subjectId) {
         JSON.stringify(redisSubject)
       );
     });
-    const subject = subjects.find((subject) => subject.subject_id === subjectId);
+    const subject = subjects.find(
+      (subject) => subject.subject_id === subjectId
+    );
     redisClient.expire(`user:${userId}:subjects`, SBJ_EXP);
     if (subject) return subject;
     return false;
@@ -365,23 +367,28 @@ async function userCache(userId, query = true) {
     if (!query) return false;
 
     const connection = pool.promise();
-    const [results] = await connection.query(
+    const [[userInfo]] = await connection.query(
       `
-        SELECT name, email, timezone, created_at FROM users WHERE user_id = ?;
-        SELECT group_id FROM group_members WHERE user_id = ?;
-        SELECT user_id, friend_id FROM friends WHERE user_id = ? OR friend_id = ?;
+      SELECT 
+        u.user_id,
+        u.name,
+        u.email,
+        u.timezone,
+        u.created_at,
+        GROUP_CONCAT(DISTINCT ug.group_id) AS groups,
+        GROUP_CONCAT(DISTINCT IF(f1.user_id IS NOT NULL, f1.friend_id, NULL), ',', IF(f2.friend_id IS NOT NULL, f2.user_id, NULL)) AS friends
+      FROM users u
+      LEFT JOIN group_members ug ON u.user_id = ug.user_id
+      LEFT JOIN friends f1 ON u.user_id = f1.user_id
+      LEFT JOIN friends f2 ON u.user_id = f2.friend_id
+      WHERE u.user_id = ?
         `,
-      [userId, userId, userId, userId]
+      [userId]
     );
-    const userInfo = results[0][0];
-    const userGroups = results[1];
-    const friends = results[2];
+
     if (userInfo) {
-      userInfo.groups = userGroups.map((group) => group.group_id);
-      userInfo.friends = friends.map((friend) =>
-        friend.user_id === userId ? friend.friend_id : friend.user_id
-      );
-      userInfo.user_id = userId;
+      userInfo.groups = userInfo.groups ? userInfo.groups.split(",") : [];
+      userInfo.friends = userInfo.friends ? userInfo.friends.split(",") : [];
       cacheUserInfo(userInfo);
       return userInfo;
     } else {
@@ -397,7 +404,7 @@ async function userCache(userId, query = true) {
  * upgraded version of user cache, if user is cached, return userCache result, otherwise, combine users that are not cached and handle as one query
  * @param {*} users
  */
-async function usersCache(users, cache) {
+async function usersCache(users, cache = false) {
   try {
     if (!users.length) return [];
 
@@ -413,42 +420,39 @@ async function usersCache(users, cache) {
         }
       })
     );
+    notCached.push(...users);
 
     const connection = pool.promise();
 
     if (!notCached.length) return usersInfo;
 
-    const [results] = await connection.query(
+    const [notCachedUsers] = await connection.query(
       `
-      SELECT name, email, groups, friends, timezone, created_at, user_id FROM users WHERE user_id IN (?);
-      SELECT group_id, user_id FROM user_groups WHERE user_id IN (?);
-      SELECT user_id, friend_id FROM friends WHERE user_id IN (?) OR friend_id IN (?);
+      SELECT 
+        u.user_id,
+        u.name,
+        u.email,
+        u.timezone,
+        u.created_at,
+        GROUP_CONCAT(DISTINCT ug.group_id) AS groups,
+        GROUP_CONCAT(DISTINCT IF(f1.user_id IS NOT NULL, f1.friend_id, NULL), ',', IF(f2.friend_id IS NOT NULL, f2.user_id, NULL)) AS friends
+      FROM users u
+      LEFT JOIN group_members ug ON u.user_id = ug.user_id
+      LEFT JOIN friends f1 ON u.user_id = f1.user_id
+      LEFT JOIN friends f2 ON u.user_id = f2.friend_id
+      WHERE u.user_id IN (?)
+      GROUP BY u.user_id
       `,
-      [notCached, notCached, notCached, notCached]
+      [notCached]
     );
-    const queriedUsers = results[0];
-    const queriedGroups = results[1];
-    const queriedFriends = results[2];
 
-    queriedUsers.map((userInfo) => {
+    notCachedUsers.map((userInfo) => {
+      userInfo.groups = userInfo.groups ? userInfo.groups.split(",") : [];
+      userInfo.friends = userInfo.friends ? userInfo.friends.split(",") : [];
+
       if (cache) {
         cacheUserInfo(userInfo);
       }
-
-      userInfo.group = queriedGroups
-        .filter((group) => group.user_id === userInfo.user_id)
-        .map((group) => group.group_id);
-      userInfo.friends = queriedFriends
-        .filter(
-          (friends) =>
-            friends.user_id === userInfo.user_id ||
-            friends.friend_id === userInfo.user_id
-        )
-        .map((friend) =>
-          friend.user_id === userInfo.user_id
-            ? friend.friend_id
-            : friend.user_id
-        );
       usersInfo.push(userInfo);
     });
     return usersInfo;
@@ -492,6 +496,19 @@ async function clearUserCache(userId) {
   }
 }
 
+async function clearUsersCache() {
+  try {
+    const userKeys = (await redisClient.keys("*user:*")).filter(
+      (key) => key.length === 15
+    );
+
+    console.log(userKeys.length)
+    redisClient.del(userKeys);
+  } catch (err) {
+    console.log(err);
+  }
+}
+//clearUsersCache();
 /**
  * notification's key:
  * i: id
@@ -559,7 +576,11 @@ async function subjectsTimelineCache(userId) {
   await Promise.all(
     subjects.map(async (subject) => {
       const todayTimeline = (
-        await redisClient.lrange(`user:${userId}:subject:${subject.subject_id}`, 0, -1)
+        await redisClient.lrange(
+          `user:${userId}:subject:${subject.subject_id}`,
+          0,
+          -1
+        )
       ).map(JSON.parse);
       subject.timeline = JSON.parse(subject.timeline).concat(todayTimeline);
     })

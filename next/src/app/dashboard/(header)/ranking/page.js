@@ -12,17 +12,21 @@ import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import Link from "next/link";
 import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 import { useRouter } from "next/navigation";
+import { useRankings } from "@/Hooks/rankingsHooks";
 
 function Ranking({ }) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [viewDate, setViewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
-  const [viewer, setViewer] = useState('Daily');
+  const [viewer, setViewer] = useState('day');
   const [rankingSearch, setRankingSearch] = useState("");
   const [rankings, setRankings] = useState([]);
   const [allRankings, setAllRankings] = useState([]);
   const [page, setPage] = useState(1);
 
   const router = useRouter();
+
+  const {data: useRankingsData} = useRankings(viewer, viewDate);
+
 
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search);
@@ -37,24 +41,10 @@ function Ranking({ }) {
   }, []);
 
   useEffect(() => {
-    const viewDateTime = DateTime.fromJSDate(viewDate);
+      if (!useRankingsData?.success) return;
 
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    fetch(`${config.server}/ranking/sort?mode=${viewer}&date=${viewDateTime.toISODate()}&timezone=${timezone}`, {
-      method: 'get',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: "include"
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setAllRankings(data.data);
-        }
-      })
-      .catch((error) => console.error(error));
-  }, [viewDate, viewer]);
+      setAllRankings(useRankingsData.rankings)
+  }, [useRankingsData]);
 
   useEffect(() => {
     const newState = [];
@@ -103,9 +93,9 @@ function Ranking({ }) {
                 />
                 <RadioBtn
                   items={[
-                    { view: "Daily", value: "Daily" },
-                    { view: "Weekly", value: "Weekly" },
-                    { view: "Monthly", value: "Monthly" },
+                    { view: "Daily", value: "day" },
+                    { view: "Weekly", value: "week" },
+                    { view: "Monthly", value: "month" },
                   ]}
                   changeEvent={setViewer}
                   defaultViewer={0}
@@ -121,7 +111,7 @@ function Ranking({ }) {
                   <p>Hours</p>
                 </div>
                 <ul>
-                  {rankings.slice((page - 1) * 50, page * 50).map(({ t, name, user_id, timezone, place }, i) => {
+                  {rankings.slice((page - 1) * 50, page * 50).map(({ study_time, name, user_id, timezone, place }, i) => {
                     return (
                       <li key={i}>
                         <div className={styles.circle}>
@@ -136,7 +126,7 @@ function Ranking({ }) {
                             <CountryViewer timezone={timezone} />
                           </Link>
                           <div className={styles.ranking}>
-                            <p>{(t / (60 * 60)).toFixed(2)}hr</p>
+                            <p>{(study_time / (60 * 60)).toFixed(2)}hr</p>
                           </div>
                         </div>
                       </li>

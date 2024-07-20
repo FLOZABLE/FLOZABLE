@@ -3,7 +3,6 @@ const pool = require("../model/pool");
 const { getMidnightTimezones } = require("../Utils/tool");
 
 async function timerUpdate() {
-  const now = Math.floor(new Date().getTime() / 1000);
   const midnightTimezones = getMidnightTimezones();
   const connection = pool.promise();
 
@@ -20,13 +19,13 @@ async function timerUpdate() {
           await redisClient.lrange(
             `user:${user_id}:subject:${subject_id}`,
             0,
-            -1
+            -2
           )
         ).map(JSON.parse);
         const subjectTimelines = todayTimeline.map((timeline) => {
           return [subject_id, timeline[0], timeline[1]];
         });
-        redisClient.ltrim(`user:${user_id}:subject:${subject_id}`, 1, 0);
+        redisClient.ltrim(`user:${user_id}:subject:${subject_id}`, -1, -1);
         insertInfo.push(...subjectTimelines);
       })
     );

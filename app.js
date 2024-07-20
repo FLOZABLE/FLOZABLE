@@ -211,7 +211,7 @@ app.get("*", function (req, res) {
 const { botManager, createBots, createGroups, randomFriend } = require("./Bot/Bot");
 const { servicesManager } = require("./services/services");
 
-//botManager(process.env.BOTS);
+botManager(process.env.BOTS);
 servicesManager();
 //randomFriend(0, 3);
 //createBots(100);
