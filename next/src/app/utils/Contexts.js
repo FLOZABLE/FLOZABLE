@@ -129,15 +129,16 @@ function SubjectsProvider({ children }) {
     setPlans(
       JSON.parse(JSON.stringify(planData.plans)).map((plan) => {
         plan.saved = true;
-        plan.start = new Date(plan.start * 1000 * 60);
-        plan.end = new Date(plan.end * 1000 * 60);
+        plan.start = new Date(plan.start * 1000);
+        plan.end = new Date(plan.end * 1000);
         const subject = subjects.find(
           (subject) => subject.subject_id === plan.subject_id
         );
         if (subject) {
           plan.backgroundColor = subject.color;
           plan.borderColor = subject.color;
-          //plan.subject_color = subject.color;
+          plan.subject_color = subject.color;
+          plan.color = subject.color;
           //plan.textColor = subject.color;
           plan.icon = subject.icon;
         } else {

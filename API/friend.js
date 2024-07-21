@@ -21,12 +21,11 @@ const {
 } = require("../Utils/validate");
 const { DateTime } = require("luxon");
 const { mainIo } = require("../sockets/mainIo");
-const { responseCodes } = require("../Constant");
+const { responseCodes, FRIENDS_LIMIT } = require("../Constant");
 const Router = express.Router();
 
 async function sendFriendRequest(userId, targetId) {
   try {
-    return;
     const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
     if (!isValidTargetId.isValid) {
@@ -50,7 +49,7 @@ async function sendFriendRequest(userId, targetId) {
       };
 
     const friendRequests = await NotificationCache(targetId, 0, false);
-    console.log(friendRequests);
+
     const prevFriendReq = friendRequests.find((friendReq) => {
       return friendReq.f === userId;
     });
@@ -61,7 +60,7 @@ async function sendFriendRequest(userId, targetId) {
       };
 
     const id = generateRandomId(5);
-    const date = Math.floor(new Date().getTime() / (1000 * 60));
+    const date = Math.floor(new Date().getTime() / 1000);
     const notificationUser = await userCache(userId);
     const socketNotif = { i: id, t: 0, f: notificationUser, d: date };
     const notification = { t: 0, f: userId, d: date };
@@ -92,7 +91,6 @@ async function sendFriendRequest(userId, targetId) {
 
 async function replyFriendRequest(userId, targetId, accepted, notificationId) {
   try {
-    return;
     const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
     if (!isValidTargetId.isValid) {
@@ -157,32 +155,23 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId) {
         msg: `You and ${targetInfo.name} were already friends!`,
       };
 
-    await connection.query(
-      `
-      UPDATE users
-      SET friends = CASE
-        WHEN friends = '' THEN ?
-        ELSE CONCAT(friends, ',', ?)
-      END
-      WHERE user_id = ?
-    `,
-      [targetId, targetId, userId]
-    );
+    if (
+      userInfo.friends.length >= FRIENDS_LIMIT ||
+      targetInfo.friends.length >= FRIENDS_LIMIT
+    )
+      return { success: false, reason: "Maximum friends reached" };
 
-    await connection.query(
-      `
-    UPDATE users
-    SET friends = CASE
-      WHEN friends = '' THEN ?
-      ELSE CONCAT(friends, ',', ?)
-    END
-    WHERE user_id = ?
-  `,
-      [userId, userId, targetId]
-    );
+    const date = Math.floor(new Date().getTime() / 1000);
+
+    const newFriend = {
+      user_id: userId,
+      friend_id: targetId,
+      date
+    };
+
+    await connection.query(`INSERT INTO friends SET ?`, newFriend);
 
     const id = generateRandomId(5);
-    const date = Math.floor(new Date().getTime() / (1000 * 60));
     const notification = { t: 1, f: userId, d: date };
     const notificationUser = await userCache(userId);
     const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
@@ -206,29 +195,41 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId) {
     clearUserCache(targetId);
 
     //create chat only if it does not exist
-    const [[{ record_count }]] = await connection.query(
-      `SELECT COUNT(*) AS record_count
-    FROM chatrooms
-    WHERE 
-      (members LIKE ? AND members LIKE ?)
-      OR
-      (members LIKE ? AND members LIKE ?)
-    LIMIT 1;`,
-      [`%${userId}%`, `%${targetId}%`, `%${targetId}%`, `%${userId}%`]
+    const [[chatroom]] = await connection.query(
+      `
+      SELECT c1.chatroom_id
+      FROM chatroom_members c1
+      JOIN chatroom_members c2 ON c1.chatroom_id = c2.chatroom_id
+      WHERE c1.user_id = ? AND c2.user_id = ?
+      `,
+      [userId, targetId]
     );
 
-    if (!record_count) {
-      const members = [userId, targetId];
+    if (!chatroom) {
+      const chatroom_id = generateRandomId(10);
       const roomInfo = {
-        id: generateRandomId(10),
+        chatroom_id,
         type: 1,
-        members: JSON.stringify(members).slice(1, -1).replaceAll(`"`, ""),
       };
       await connection.query(
         `
-      INSERT INTO chatrooms SET ?
-    `,
+          INSERT INTO chatrooms SET ?
+        `,
         [roomInfo]
+      );
+
+      const newMembers = [
+        [userId, chatroom_id],
+        [targetId, chatroom_id],
+      ];
+
+      await connection.query(
+        `
+        INSERT 
+        INTO chatroom_members (user_id, chatroom_id) 
+        VALUES ? 
+        `,
+        [newMembers]
       );
 
       /* const myDmRooms = await dmRoomsCache(userId);

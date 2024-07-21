@@ -38,7 +38,7 @@ function updateTimeUsagePie(subjects, viewDateTime, type) {
 function updateTimeTrend(subjects, mode, sum) {
   const data = [];
   const labels = [];
-  const datumPoint = DateTime.fromSeconds(subjects[mode].datum_point);
+  const datumPoint = DateTime.fromSeconds(subjects[mode].created_at);
   subjects[mode].total.map((val, i) => {
     const date = datumPoint.plus({ [sum]: i });
     const label = `${date.month}/${date.day}`;

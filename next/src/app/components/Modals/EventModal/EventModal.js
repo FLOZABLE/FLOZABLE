@@ -259,6 +259,7 @@ function EventModal({}) {
           planInfo.backgroundColor = subject.color;
           planInfo.borderColor = subject.color;
           planInfo.color = subject.color;
+          planInfo.subject_color = subject.color;
           planInfo.icon = subject.icon;
         }
         if (foundIndex !== -1) {

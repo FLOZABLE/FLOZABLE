@@ -18,8 +18,8 @@ async function patchPlan(planModal) {
     return { success: false, reason: "This event is view only" };
   }
 
-  planModal.start = Math.floor(planModal.start.getTime() / (1000 * 60));
-  planModal.end = Math.floor(planModal.end.getTime() / (1000 * 60));
+  planModal.start = Math.floor(planModal.start.getTime() / 1000);
+  planModal.end = Math.floor(planModal.end.getTime() / 1000);
   planModal.notification = parseInt(planModal.notification);
   planModal.repeat = parseInt(planModal.repeat);
   planModal.completed = planModal.completed ? 1 : 0;

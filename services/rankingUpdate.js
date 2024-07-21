@@ -67,7 +67,7 @@ async function updateDailyRanking(now, timezoneOffset) {
       ranking_id,
       date: now,
       timezone: timezoneOffset,
-      mode: "daily",
+      mode: "day",
       length: rankings.length,
     };
     await connection.query(`INSERT INTO rankings SET ?`, insertInfo);
@@ -114,7 +114,7 @@ async function updateWeeklyRanking(now, timezoneOffset) {
       ranking_id,
       date: now,
       timezone: timezoneOffset,
-      mode: "weekly",
+      mode: "week",
       length: rankings.length,
     };
     await connection.query(`INSERT INTO rankings SET ?`, insertInfo);
@@ -161,7 +161,7 @@ async function updateMonthlyRanking(now, timezoneOffset) {
       ranking_id,
       date: now,
       timezone: timezoneOffset,
-      mode: "monthly",
+      mode: "month",
       length: rankings.length,
     };
     await connection.query(`INSERT INTO rankings SET ?`, insertInfo);

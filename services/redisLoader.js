@@ -514,7 +514,7 @@ async function clearUsersCache() {
  * i: id
  * t: type ex) -1 = all (default),  0 = friend-request, 1 = friend-request-accept, 2 = face-off-request, 3 = face-off-accept, 4 = dm request, 5 = dm accepted, 6 = group-invitation, 7 = plan share invitation, 8 = plan shared notification
  * -2 = ongoing friend req
- * d: date (unix but divided by 1000 * 60 because we  need minute accuracy)
+ * d: date (unix but divided by 1000
  * optional:
  * f: from (used for friend-request, friend-accept, group invitation)
  * @param {*} userId
