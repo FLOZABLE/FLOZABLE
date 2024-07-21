@@ -93,7 +93,7 @@ Router.post("/request", async (req, res) => {
       return res.send({ success: false, reason: "Already sent the request!" });
 
     const id = generateRandomId(5);
-    const date = Math.floor(new Date().getTime() / (1000 * 60));
+    const date = Math.floor(new Date().getTime() / 1000);
     const notification = { t: 4, f: userId, d: date };
     const socketNotification = {
       i: id,

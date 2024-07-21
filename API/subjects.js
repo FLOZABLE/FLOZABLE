@@ -15,6 +15,7 @@ Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const subjectsInfo = await subjectsTimelineCache(userId);
+
       res.send({ success: true, subjects: subjectsInfo });
     } catch (err) {
       console.log(err);

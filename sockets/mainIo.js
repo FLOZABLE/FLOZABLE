@@ -87,7 +87,7 @@ mainIo.on("connection", (socket) => {
     const isIn = await isInChatRoom(userId, roomId);
     if (isIn) {
       const msgId = generateRandomId(6);
-      const time = Math.floor(new Date().getTime() / (1000 * 60));
+      const time = Math.floor(new Date().getTime() / 1000);
       const msgInfo = { u: userId, m: msg, i: msgId, t: time };
       msgQueue(roomId, msgInfo);
       mainIo.to(`chat:${roomId}`).emit("msgReceived", roomId, msgInfo);

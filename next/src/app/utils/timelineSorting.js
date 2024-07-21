@@ -8,8 +8,8 @@
  *    .total: total time divided into daily/weekly/monthly
  *
  * part2
- * .daily/weekly/monthly has {maxlength, datum_point, total}
- * datum_point: the earliest datum_point between all the subjects
+ * .daily/weekly/monthly has {maxlength, created_at, total}
+ * created_at: the earliest created_at between all the subjects
  * maxlength: get the subjects with the earliest datumpoint and return the dates/months/weeks passed from that datumpoint
  * total: add all the subjects' timeline and divide them based on daily/weekly/monthly
  */
@@ -17,32 +17,32 @@ import { DateTime } from "luxon";
 
 function timelineSort(subjects) {
   let firstDatumPoint = Math.floor(new Date().getTime() / 1000);
-  subjects.map(({ datum_point }) => {
+  subjects.map(({ created_at }) => {
     //this code compares the current firstdatumPoint and current looped subject's datumpoint and updtate the firstDatunmPoint with
     //smaller value
     firstDatumPoint =
-      datum_point < firstDatumPoint ? datum_point : firstDatumPoint;
+      created_at < firstDatumPoint ? created_at : firstDatumPoint;
     return;
   });
   subjects.firstDatumPoint = firstDatumPoint;
 
   subjects.daily = {
     maxLength: 0,
-    datum_point: firstDatumPoint,
+    created_at: firstDatumPoint,
     total: [],
     grouped: [],
     focus: [],
   };
   subjects.weekly = {
     maxLength: 0,
-    datum_point: firstDatumPoint,
+    created_at: firstDatumPoint,
     total: [],
     grouped: [],
     focus: [],
   };
   subjects.monthly = {
     maxLength: 0,
-    datum_point: firstDatumPoint,
+    created_at: firstDatumPoint,
     total: [],
     grouped: [],
     focus: [],

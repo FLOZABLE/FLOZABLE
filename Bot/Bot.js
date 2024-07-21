@@ -475,7 +475,9 @@ async function createGroups(length) {
         whileTry++;
       }
 
-      newGroupsMembers.push(...members.map((member) => [groupId, member]));
+      const created_at = Math.floor(new Date().getTime() / 1000)
+
+      newGroupsMembers.push(...members.map((member) => [groupId, member, created_at]));
       newGroupsLikes.push(...likes.map((member) => [groupId, member]));
 
       const leader = members[0];
@@ -492,7 +494,7 @@ async function createGroups(length) {
         password: hashed[1],
         salt: hashed[0],
         max_members,
-        created_at: Math.floor(new Date().getTime() / 1000),
+        created_at,
         group_id: groupId,
         leader: leader,
         color: color,
@@ -524,11 +526,20 @@ async function createGroups(length) {
       `,
         [newGroups]
       );
+
+      await connection.query(
+        `
+        INSERT INTO \`chatrooms\`
+        (chatroom_id, name)
+        VALUES ?
+      `,
+        [newGroups.map((group) => [group[0], group[1]])]
+      );
     }
 
     if (newGroupsMembers.length) {
       await connection.query(
-        `INSERT INTO group_members (group_id, user_id) VALUES ?`,
+        `INSERT INTO group_members (group_id, user_id, joined_at) VALUES ?`,
         [newGroupsMembers]
       );
     }
@@ -563,6 +574,8 @@ async function randomFriend(min, max) {
       friend.friend_id,
     ]);
 
+    const date = Math.floor(new Date().getTime() / 1000);
+
     const newFriends = [];
     botIds.map((bot) => {
       const botFriends = friendsArr.filter(
@@ -595,8 +608,8 @@ async function randomFriend(min, max) {
 
     if (newFriends.length) {
       await connection.query(
-        `INSERT INTO friends (user_id, friend_id) VALUES ?`,
-        [newFriends]
+        `INSERT INTO friends (user_id, friend_id, date) VALUES ?`,
+        [newFriends.map(friend => [...friend, date])]
       );
     }
 

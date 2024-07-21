@@ -9,15 +9,18 @@ Router.get("/", async (req, res) => {
   try {
     const { mode, date, timezone } = req.query;
 
-    const dateTime = DateTime.fromISO(date).setZone(timezone).startOf('day').startOf(mode);
+    const dateTime = DateTime.fromISO(date)
+      .setZone(timezone)
+      .startOf("day")
+      .startOf(mode);
 
-    const now = DateTime.now().setZone(timezone).startOf('day').startOf(mode);
+    const now = DateTime.now().setZone(timezone).startOf("day").startOf(mode);
+
+    const rankings = [];
 
     if (now.toSeconds() === dateTime.toSeconds()) {
       //today/this week/this month = cached
       const timezoneOffset = Math.floor(now.offset / 60).toString();
-
-      const rankings = [];
 
       const studyTotal = await redisClient.zrevrange(
         `users:${timezoneOffset}:${mode}Total`,
@@ -25,7 +28,7 @@ Router.get("/", async (req, res) => {
         -1,
         "WITHSCORES"
       );
-  
+
       for (let i = 0; i < studyTotal.length; i += 2) {
         const study_time = parseInt(studyTotal[i + 1]);
         if (study_time) {
@@ -36,17 +39,38 @@ Router.get("/", async (req, res) => {
           });
         }
       }
+    } else {
+      const connection = pool.promise();
 
-      const users = await usersCache(rankings.map(ranking => ranking.user_id));
+      const [rankingsData] = await connection.query(
+        `
+        SELECT
+        rd.rank,
+        rd.user_id,
+        rd.study_time
+        FROM ranking_details rd
+        JOIN rankings r
+        ON r.ranking_id = rd.ranking_id
+        WHERE r.date = ? AND r.mode = ?
+        ORDER by rd.rank
+      `,
+        [dateTime.toSeconds(), mode]
+      );
 
-      const rankingsUsers = rankings.map(ranking => {
-        const user = users.find(user => user.user_id === ranking.user_id);
-        return {...user, ...ranking};
-      }).filter(ranking => ranking.name);
-
-      return res.send({success: true, rankings: rankingsUsers})
+      rankings.push(...rankingsData);
     }
-    res.send({success: false});
+    console.log(rankings, date);
+
+    const users = await usersCache(rankings.map((ranking) => ranking.user_id));
+
+    const rankingsUsers = rankings
+      .map((ranking) => {
+        const user = users.find((user) => user.user_id === ranking.user_id);
+        return { ...user, ...ranking };
+      })
+      .filter((ranking) => ranking.name);
+
+    res.send({ success: true, rankings: rankingsUsers });
   } catch (err) {
     console.log(err);
     res.send({ success: false });
@@ -118,7 +142,10 @@ Router.get("/ranking/user", async (req, res) => {
 
 function getDates(date, timezone, mode, length = 30) {
   const dates = [];
-  let dateTime = DateTime.fromISO(date).setZone(timezone).startOf(mode).startOf("day");
+  let dateTime = DateTime.fromISO(date)
+    .setZone(timezone)
+    .startOf(mode)
+    .startOf("day");
   const now = DateTime.now().setZone(timezone).startOf(mode).startOf("day");
 
   for (let i = 0; i < length; i++) {
