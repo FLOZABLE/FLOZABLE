@@ -104,12 +104,12 @@ Router.get("/", async (req, res) => {
                   const startDateTime = Math.floor(
                     DateTime.fromISO(start ? start.dateTime : "", {
                       zone: start ? start.timeZone : "",
-                    }).toSeconds() / 60
+                    }).toSeconds()
                   );
                   const endDateTime = Math.floor(
                     DateTime.fromISO(end ? end.dateTime : "", {
                       zone: end ? end.timeZone : "",
-                    }).toSeconds() / 60
+                    }).toSeconds()
                   );
                   const editable = calendar.accessRole !== "reader";
                   const newEvent = {
@@ -173,8 +173,8 @@ Router.patch("/plan", async (req, res) => {
           reason: "Plan information missing",
         });
 
-      const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds() / 60;
-      const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds() / 60;
+      const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds();
+      const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds();
       const {
         title,
         plan_id,
@@ -201,10 +201,10 @@ Router.patch("/plan", async (req, res) => {
               auth: auth,
             });
 
-            const startDateTime = DateTime.fromSeconds(start * 60, {
+            const startDateTime = DateTime.fromSeconds(start, {
               zone: timezone,
             });
-            const endDateTime = DateTime.fromSeconds(end * 60, {
+            const endDateTime = DateTime.fromSeconds(end, {
               zone: timezone,
             });
 
@@ -569,7 +569,7 @@ Router.post("/plan/share", async (req, res) => {
 
       console.log(friends, nonFriends);
 
-      const date = Math.floor(new Date().getTime() / (1000 * 60));
+      const date = Math.floor(new Date().getTime() / 1000);
 
       nonFriends.map(async (targetId) => {
         const id = generateRandomId(5);
@@ -724,7 +724,7 @@ Router.post("/plan/share/respond", async (req, res) => {
         planInfo.shared.push(userId);
 
         const id = generateRandomId(5);
-        const date = Math.floor(new Date().getTime() / (1000 * 60));
+        const date = Math.floor(new Date().getTime() / 1000);
 
         const notification = {
           t: 8,

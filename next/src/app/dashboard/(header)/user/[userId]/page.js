@@ -88,7 +88,7 @@ function User({ params }) {
               Joined at{" "}
               {userInfo
                 ? DateTime.fromSeconds(
-                    parseInt(userInfo.datum_point)
+                    parseInt(userInfo.created_at)
                   ).toLocaleString(DateTime.DATE_FULL)
                 : null}
             </div>

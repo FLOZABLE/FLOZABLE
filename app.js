@@ -73,7 +73,6 @@ const subjectsAPI = require("./API/subjects");
 const rankingAPI = require("./API/ranking");
 const rankingsAPI = require("./API/rankings");
 //const AiAPI = require('./API/AI');
-//const challengeAPI = require("./API/challenges");
 const friendAPI = require("./API/friend").Router;
 const themesAPI = require("./API/themes");
 const extensionAPI = require("./API/extension");
@@ -177,7 +176,6 @@ app.use("/canvas", canvasAPI);
 app.use("/payment", paymentAPI);
 app.use("/notifications", notificationsAPI);
 //app.use('/ai', AiAPI);
-//app.use("/challenges", challengeAPI);
 
 //handle profile images
 app.get("/profile-image/:userId.jpeg", (req, res) => {

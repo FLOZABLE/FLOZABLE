@@ -81,6 +81,7 @@ async function createGroupMembersTable() {
     CREATE TABLE IF NOT EXISTS group_members (
       group_id VARCHAR(10) NOT NULL,
       user_id VARCHAR(10) NOT NULL,
+      joined_at INT,
       PRIMARY KEY (user_id, group_id),
       FOREIGN KEY (user_id) REFERENCES users(user_id),
       FOREIGN KEY (group_id) REFERENCES groups(group_id)
@@ -107,6 +108,7 @@ async function createFriendsTable() {
     CREATE TABLE IF NOT EXISTS friends (
       user_id VARCHAR(10) NOT NULL,
       friend_id VARCHAR(10) NOT NULL,
+      date INT,
       PRIMARY KEY (user_id, friend_id),
       FOREIGN KEY (user_id) REFERENCES users(user_id),
       FOREIGN KEY (friend_id) REFERENCES users(user_id)
@@ -169,7 +171,7 @@ async function createChatroomsTable() {
   await connection.query(`
   CREATE TABLE IF NOT EXISTS chatrooms (
     chatroom_id VARCHAR(10) NOT NULL,
-    name VARCHAR(20),
+    name VARCHAR(50),
     type TINYINT DEFAULT 0,
     PRIMARY KEY(chatroom_id)
   );  
