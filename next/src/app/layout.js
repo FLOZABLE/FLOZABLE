@@ -71,7 +71,7 @@ export default function RootLayout({ children }) {
       <body>
         <AppProvider>
           <EventModal />
-          {/* <ChatModal /> */}
+          <ChatModal />
           <AccountModal />
           <TopNotification />
           <JoinGroupModal />

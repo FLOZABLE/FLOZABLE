@@ -9,6 +9,7 @@ const {
   activeSubjectCache,
   groupMembersCache,
   dmRoomsCache,
+  chatroomMemberCache,
 } = require("../services/redisLoader");
 const { generateRandomId } = require("../Utils/tool");
 const { extensionIo } = require("./extensionIo");
@@ -62,37 +63,13 @@ mainIo.on("connection", (socket) => {
     })();
   }
 
-  socket.on("joinChats", async () => {
+  socket.on("disconnect", async (reason) => {
     try {
-      if (!userId) return;
-      const chatRooms = await chatRoomsCache(userId);
-      const chatRoomsId = chatRooms.map((chatRoom) => {
-        return `chat:${chatRoom.id}`;
-      });
-      socket.join(chatRoomsId);
+      console.log("disconnection");
+      stopStudying(userId, "disconnect");
+      deActiveGroup(userId, socket);
     } catch (err) {
       console.log(err);
-    }
-  });
-
-  socket.on("disconnect", async (reason) => {
-    console.log("disconnection");
-    stopStudying(userId, "disconnect");
-    deActiveGroup(userId, socket);
-  });
-
-  //chat
-
-  socket.on("sendMsg", async (roomId, msg) => {
-    const isIn = await isInChatRoom(userId, roomId);
-    if (isIn) {
-      const msgId = generateRandomId(6);
-      const time = Math.floor(new Date().getTime() / 1000);
-      const msgInfo = { u: userId, m: msg, i: msgId, t: time };
-      msgQueue(roomId, msgInfo);
-      mainIo.to(`chat:${roomId}`).emit("msgReceived", roomId, msgInfo);
-      const now = Math.floor(new Date().getTime() / 1000 / 60);
-      redisClient.hset(`user:${userId}:chats`, roomId, `${msgId}:${now}`);
     }
   });
 
@@ -131,57 +108,62 @@ mainIo.on("connection", (socket) => {
   });
 
   socket.on("changeGroup", async (groupId) => {
-    const userInfo = await userCache(userId);
-    if (!userInfo) return;
-    const { groups, friends } = userInfo;
+    try {
+      const userInfo = await userCache(userId);
+      if (!userInfo) return;
+      const { groups, friends } = userInfo;
 
-    if (!groups.includes(groupId)) return;
-    groups.map((group) => {
-      if (group !== groupId) {
-        socket.leave(group);
-      }
-    });
-    socket.join(groupId);
-    const now = DateTime.now().toSeconds().toFixed();
-    redisClient.hset(
-      `user:${userId}`,
-      `ActiveGroup`,
-      JSON.stringify({ id: groupId, time: now })
-    );
-    if (!friends.length) return;
-    const connection = pool.promise();
-    const [[groupInfo]] = await connection.query(
-      "SELECT group_id, name, leader, visibility, description, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups` WHERE group_id = ?",
-      [groupId]
-    );
-    if (!groupInfo) return;
-    mainIo.to(friends).emit(`activeGroup:${userId}`, { groupInfo, time: now });
+      if (!groups.includes(groupId)) return;
+      groups.map((group) => {
+        if (group !== groupId) {
+          socket.leave(group);
+        }
+      });
+      socket.join(groupId);
+      const now = DateTime.now().toSeconds().toFixed();
+      redisClient.hset(
+        `user:${userId}`,
+        `ActiveGroup`,
+        JSON.stringify({ id: groupId, time: now })
+      );
+      if (!friends.length) return;
+      const connection = pool.promise();
+      const [[groupInfo]] = await connection.query(
+        `
+        SELECT 
+          g.group_id, 
+          g.name, 
+          g.leader, 
+          g.visibility, 
+          g.description, 
+          g.created_at, 
+          g.max_members, 
+          g.tags, 
+          g.color, 
+          g.goal_hr, 
+        GROUP_CONCAT(DISTINCT m.user_id) AS members, 
+        GROUP_CONCAT(DISTINCT l.user_id) AS likes
+        FROM \`groups\` g
+        LEFT JOIN group_members m ON g.group_id = m.group_id
+        LEFT JOIN group_likes l ON g.group_id = l.group_id
+        WHERE group_id = ?
+        GROUP BY g.group_id
+        `,
+        [groupId]
+      );
+      if (!groupInfo) return;
+      mainIo
+        .to(friends)
+        .emit(`activeGroup:${userId}`, { groupInfo, time: now });
+    } catch (err) {
+      console.log(err);
+    }
   });
 
-  socket.on("readMsg", async ({ roomId, type }) => {
+  socket.on("exitSession", async () => {
     try {
-      if (!roomId) return;
-      //dm
-      let members = [];
-      if (!type) {
-        members = await dmRoomMembersCache(roomId);
-      } else {
-        members = await groupMembersCache(roomId);
-      }
-
-      //user not member of the chatroom
-      if (!members.includes(userId)) return;
-
-      const [lastMsg] = await redisClient.lrange(
-        `room:${roomId}:chats`,
-        -1,
-        -1
-      );
-      if (!lastMsg) return;
-      //i ==  msg id
-      const { i } = JSON.parse(lastMsg);
-      const now = Math.floor(new Date().getTime() / 1000 / 60);
-      redisClient.hset(`user:${userId}:chats`, roomId, `${i}:${now}`);
+      deActiveGroup(userId, socket);
+      stopStudying(userId, "rest");
     } catch (err) {
       console.log(err);
     }
@@ -195,31 +177,41 @@ mainIo.on("connection", (socket) => {
     extensionIo.to(userId).emit(`volumeChange`, { id, volume });
   });
 
-  socket.on("exitSession", async () => {
-    deActiveGroup(userId, socket);
-    stopStudying(userId, "rest");
-  });
+  //messages
+
+  socket.on("chat/send", async(roomId, message) => {
+    console.log('gdd', roomId, message)
+    try {
+      const isMember = await chatroomMemberCache(roomId, userId);
+      console.log(isMember);
+
+      if (!isMember) return;
+
+      const t = Math.floor(new Date().getTime() / 1000);
+      const newMsg = {
+        m: message,
+        u: userId,
+        t
+      }
+      msgQueue(roomId, newMsg);
+      mainIo.to(friends).emit(`deActiveGroup:${userId}`);
+    } catch (err) {
+      console.log(err);
+    }
+  })
 });
 
 async function deActiveGroup(userId, socket) {
-  const userInfo = await userCache(userId);
-  if (!userInfo) return;
-  const { groups, friends } = userInfo;
-  groups.map((group) => {
-    socket.leave(group);
-  });
-  redisClient.hdel(`user:${userId}`, `ActiveGroup`);
-  if (!friends.length) return;
-  mainIo.to(friends).emit(`deActiveGroup:${userId}`);
-}
-
-async function isInChatRoom(userId, roomId) {
   try {
-    const rooms = await chatRoomsCache(userId, false);
-    const roomIndex = rooms.findIndex((room) => {
-      return room.id === roomId;
+    const userInfo = await userCache(userId);
+    if (!userInfo) return;
+    const { groups, friends } = userInfo;
+    groups.map((group) => {
+      socket.leave(group);
     });
-    return roomIndex === -1 ? false : true;
+    redisClient.hdel(`user:${userId}`, `ActiveGroup`);
+    if (!friends.length) return;
+    mainIo.to(friends).emit(`deActiveGroup:${userId}`);
   } catch (err) {
     console.log(err);
   }
