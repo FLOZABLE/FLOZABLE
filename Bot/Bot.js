@@ -201,7 +201,8 @@ async function addFriends(botId, allMembers) {
         botId,
         request.f,
         accepted,
-        request.i
+        request.i,
+        false
       );
       console.log(response);
     });
@@ -475,9 +476,11 @@ async function createGroups(length) {
         whileTry++;
       }
 
-      const created_at = Math.floor(new Date().getTime() / 1000)
+      const created_at = Math.floor(new Date().getTime() / 1000);
 
-      newGroupsMembers.push(...members.map((member) => [groupId, member, created_at]));
+      newGroupsMembers.push(
+        ...members.map((member) => [groupId, member, created_at])
+      );
       newGroupsLikes.push(...likes.map((member) => [groupId, member]));
 
       const leader = members[0];
@@ -486,6 +489,8 @@ async function createGroups(length) {
       const { name, description, tags } = groupData;
       const visibility = randomIntInRange(0, 7) <= 1;
       const goal_hr = randomIntInRange(4, 8);
+      const members_length = members.length;
+
       const groupInfo = {
         name,
         description,
@@ -499,6 +504,7 @@ async function createGroups(length) {
         leader: leader,
         color: color,
         goal_hr,
+        members_length,
       };
       newGroups.push([
         groupInfo.group_id,
@@ -513,6 +519,7 @@ async function createGroups(length) {
         groupInfo.leader,
         groupInfo.color,
         groupInfo.goal_hr,
+        groupInfo.members_length,
       ]);
     }
     console.log(newGroups[0]);
@@ -521,7 +528,7 @@ async function createGroups(length) {
       await connection.query(
         `
         INSERT INTO \`groups\`
-        (group_id, name, description, tags, visibility, password, salt, max_members, created_at, leader, color, goal_hr)
+        (group_id, name, description, tags, visibility, password, salt, max_members, created_at, leader, color, goal_hr, members_length )
         VALUES ?
       `,
         [newGroups]
@@ -609,7 +616,7 @@ async function randomFriend(min, max) {
     if (newFriends.length) {
       await connection.query(
         `INSERT INTO friends (user_id, friend_id, date) VALUES ?`,
-        [newFriends.map(friend => [...friend, date])]
+        [newFriends.map((friend) => [...friend, date])]
       );
     }
 

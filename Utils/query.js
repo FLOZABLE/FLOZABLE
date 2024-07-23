@@ -70,6 +70,7 @@ async function createGroupsTable() {
     tags VARCHAR(300),
     color VARCHAR(20),
     goal_hr SMALLINT,
+    members_length SMALLINT unsigned,
     PRIMARY KEY (group_id)
   );
   `);

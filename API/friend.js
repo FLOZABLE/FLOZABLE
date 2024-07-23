@@ -89,7 +89,7 @@ async function sendFriendRequest(userId, targetId) {
   }
 }
 
-async function replyFriendRequest(userId, targetId, accepted, notificationId) {
+async function replyFriendRequest(userId, targetId, accepted, notificationId, createChat = true) {
   try {
     const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
@@ -205,11 +205,13 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId) {
       [userId, targetId]
     );
 
-    if (!chatroom) {
+    if (!chatroom && createChat) {
       const chatroom_id = generateRandomId(10);
+      const chatroomName = userInfo.name + ', ' + targetInfo.name;
       const roomInfo = {
         chatroom_id,
         type: 1,
+        name: chatroomName
       };
       await connection.query(
         `

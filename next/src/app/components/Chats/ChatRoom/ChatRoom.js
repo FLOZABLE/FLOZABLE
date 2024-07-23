@@ -4,89 +4,45 @@ import { DateTime } from "luxon";
 import { socket } from "@/app/utils/socket";
 import { ModalsContext } from "@/app/utils/Contexts";
 
-function ChatRoom({ room, lastMsg, lastRead, setTotalNewMsg, setReadStatus, readStatus }) {
-  const { chatModal, setChatModal } = useContext(ModalsContext);
-
-  const [newMsgs, setNewMsgs] = useState(0);
-
-  useEffect(() => {
-    if (!chatModal) return;
-
-    const onNewMsg = (roomId, msgInfo) => {
-      if (chatModal.chatRoom !== room.id && roomId === room.id) {
-        setNewMsgs((prev) => prev + 1);
-      }
-      if (chatModal.chatRoom === room.id && roomId === room.id) {
-        setTimeout(() => {
-          setNewMsgs(0);
-        }, 100);
-        const tempState = {...readStatus };
-        tempState[room.id] = `${msgInfo.i}:${msgInfo.t}`;
-        setReadStatus(tempState);
-      }
-    };
-
-    socket.on('msgReceived', onNewMsg);
-
-    return () => {
-      socket.off('msgReceived', onNewMsg);
-    }
-  }, [room, chatModal]);
-
-  useEffect(() => {
-    if (!room) return;
-    /* if (!lastRead) {
-      const newMsgs = room.chats.length;
-      setTotalNewMsg(prev => prev + newMsgs);
-      setNewMsgs(newMsgs);
-      return;
-    }; */
-    const [lastReadMsg, lastReadTime] = lastRead ? lastRead.split(":") : [null, null];
-    const lastMsgIndex = room.chats.findIndex(chat => {
-      return chat.i === lastReadMsg;
-    });
-    if (lastMsgIndex === -1) return;
-    const newMsgs = room.chats.length - lastMsgIndex - 1;
-    //setChatModal(prev => ({...prev, totalNewMsg: prev.totalNewMsg + 1}));
-    setNewMsgs(newMsgs);
-  }, [lastRead, room]);
+function ChatRoom({ chatroom }) {
+  const { setChatModal } = useContext(ModalsContext);
 
   return (
     <li
       className={styles.ChatRoom}
       onClick={() => {
+        setChatModal((prev) => ({ ...prev, chatroom: chatroom.chatroom_id }));
+      }}
+      /* onClick={() => {
         setChatModal(prev => ({ ...prev, ...room, totalNewMsg: prev.totalNewMsg - newMsgs, chatRoom: room.id }));
         setNewMsgs(0);
         const tempState = { ...readStatus };
         const finalMessage = room.chats[room.chats.length - 1]; 
         tempState[room.id] = `${finalMessage.i}:${finalMessage.t}`;
         setReadStatus(tempState);
-      }}
+      }} */
     >
-      <div className={styles.imgContainer} style={{ backgroundColor: room?.color }}>
-      </div>
-      <div className={styles.roomInfo}
-      >
+      <div
+        className={styles.imgContainer}
+        style={{ backgroundColor: chatroom.color }}
+      ></div>
+      <div className={styles.roomInfo}>
         <div className={styles.header}>
-          <div className={styles.name}>
-            {room?.name}
-          </div>
-          <strong>({room?.members.length})</strong>
+          <div className={styles.name}>{chatroom.name}</div>
+          <strong>({chatroom.members.length})</strong>
           <div className={styles.msgCount}>
-            {newMsgs ? <div>{newMsgs} new messages</div> : null}
+            {/* {newMsgs ? <div>{newMsgs} new messages</div> : null} */}
           </div>
         </div>
         <div className={styles.msgInfo}>
-          <div className={styles.msg}>
-            {lastMsg?.m}
-          </div>
+          <div className={styles.msg}>{/* {lastMsg?.m} */}</div>
           <div className={styles.time}>
-            {lastMsg && lastMsg.t ? DateTime.fromSeconds(lastMsg.t * 60).toLocaleString(DateTime.TIME_SIMPLE) : null}
+            {/* {lastMsg && lastMsg.t ? DateTime.fromSeconds(lastMsg.t * 60).toLocaleString(DateTime.TIME_SIMPLE) : null} */}
           </div>
         </div>
       </div>
     </li>
   );
-};
+}
 
 export default ChatRoom;

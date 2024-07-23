@@ -232,8 +232,8 @@ function ModalsProvider({ children }) {
   const { userInfo } = useContext(UserInfoContext);
 
   const [chatModal, setChatModal] = useState({
-    chatRoom: null,
-    open: false,
+    chatroom: null,
+    opened: false,
     totalNewMsg: 0,
   });
 

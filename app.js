@@ -80,6 +80,7 @@ const canvasAPI = require("./API/canvas");
 const playlistsAPI = require("./API/playlists");
 const paymentAPI = require("./API/payment");
 const notificationsAPI = require("./API/notifications");
+const chatroomsAPI = require("./API/chatrooms");
 
 //import socket
 const { io } = require("./sockets/io");
@@ -175,6 +176,7 @@ app.use("/playlists", playlistsAPI);
 app.use("/canvas", canvasAPI);
 app.use("/payment", paymentAPI);
 app.use("/notifications", notificationsAPI);
+app.use("/chatrooms", chatroomsAPI);
 //app.use('/ai', AiAPI);
 
 //handle profile images
