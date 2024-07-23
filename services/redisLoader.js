@@ -171,12 +171,12 @@ async function subjectsTimelineCache(userId) {
 const MAX_QUEUE_LENGTH = 100;
 async function msgQueue(roomId, msgInfo) {
   try {
-    redisClient.rpush(`chatroom:${roomId}:chats`, JSON.stringify(msgInfo));
-    const queueLength = await redisClient.lLen(`chatroom:${roomId}:chats`);
+    redisClient.rpush(`chatroom:${roomId}:messages`, JSON.stringify(msgInfo));
+    const queueLength = await redisClient.llen(`chatroom:${roomId}:messages`);
 
     if (queueLength < MAX_QUEUE_LENGTH) return;
 
-    const firstMsg = await redisClient.lPop(`room:${roomId}:chats`);
+    const firstMsg = await redisClient.lPop(`room:${roomId}:messages`);
     if (!firstMsg) return;
     const connection = pool.promise();
     connection.query(
@@ -610,7 +610,7 @@ async function chatroomMemberCache(chatroomId, userId) {
     if (!member) return false;
 
     await redisClient.sadd(`chatroom:${chatroomId}`, userId);
-    redisClient.setex(`chatroom:${chatroomId}`, CHATROOM_MEMBERS_EXP);
+    redisClient.expire(`chatroom:${chatroomId}`, CHATROOM_MEMBERS_EXP);
     console.log(member);
     return true;
   } catch (err) {
