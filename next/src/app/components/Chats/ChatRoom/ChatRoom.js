@@ -7,6 +7,14 @@ import { ModalsContext } from "@/app/utils/Contexts";
 function ChatRoom({ chatroom }) {
   const { setChatModal } = useContext(ModalsContext);
 
+  const [lastMsg, setLastMsg] = useState({});
+
+  useEffect(() => {
+    if (!chatroom?.lastMsg) return;
+
+    setLastMsg(chatroom.lastMsg);
+  }, [chatroom])
+
   return (
     <li
       className={styles.ChatRoom}
@@ -35,9 +43,9 @@ function ChatRoom({ chatroom }) {
           </div>
         </div>
         <div className={styles.msgInfo}>
-          <div className={styles.msg}>{/* {lastMsg?.m} */}</div>
+          <div className={styles.msg}>{lastMsg?.m}</div>
           <div className={styles.time}>
-            {/* {lastMsg && lastMsg.t ? DateTime.fromSeconds(lastMsg.t * 60).toLocaleString(DateTime.TIME_SIMPLE) : null} */}
+            {lastMsg && lastMsg.t ? DateTime.fromSeconds(lastMsg.t * 60).toLocaleString(DateTime.TIME_SIMPLE) : null}
           </div>
         </div>
       </div>

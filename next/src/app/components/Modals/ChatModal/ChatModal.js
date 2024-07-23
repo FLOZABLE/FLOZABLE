@@ -10,53 +10,73 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  GroupsContext,
-  ModalsContext,
-  UserInfoContext,
-} from "@/app/utils/Contexts";
+import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
 import { BackArrow } from "@/app/utils/Svg";
-import config from "@/app/utils/config";
 import SendBtn from "@/app/components/Buttons/SendBtn/SendBtn";
 import { socket } from "@/app/utils/socket";
 import ChatRoom from "@/app/components/Chats/ChatRoom/ChatRoom";
 import { DateTime } from "luxon";
 import ChatContainer from "@/app/components/Chats/ChatContainer/ChatContainer";
 import MyChatContainer from "@/app/components/Chats/MyChatContainer/MyChatContainer";
-import { useGetChatrooms } from "@/Hooks/chatroomsHooks";
+import { useGetChatroomMembers, useGetChatrooms } from "@/Hooks/chatroomsHooks";
+import { getChatroomMessages } from "@/Api/chatroomsApi";
 
 function ChatModal({}) {
   const { userInfo } = useContext(UserInfoContext);
   const { chatModal, setChatModal } = useContext(ModalsContext);
 
-  /* const [selectedRoom, setSelectedRoom] = useState(null);
-  const [chatRooms, setChatRooms] = useState([]);
-  const [readStatus, setReadStatus] = useState({});
-  const [msgInput, setMsgInput] = useState(""); */
-
   const [chatrooms, setChatRooms] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState({
-    members: [],
-    messages: [],
-  });
   const [messages, setMessages] = useState([]);
+  const [members, setMembers] = useState([]);
   const [msgInput, setMsgInput] = useState("");
 
   const moveRef = useRef(null);
   const chatsContainerRef = useRef(null);
 
   const { data: useGetChatroomsData } = useGetChatrooms(userInfo);
+  const { data: useGetChatroomMembersData } = useGetChatroomMembers(
+    chatModal.chatroom
+  );
 
   useEffect(() => {
-    console.log(useGetChatroomsData);
     if (!useGetChatroomsData?.success) return;
 
     setChatRooms(useGetChatroomsData.chatrooms);
   }, [useGetChatroomsData]);
 
   const onSubmit = useCallback(() => {
-    socket.emit("chat/send", chatModal.chatroom, msgInput)
+    socket.emit("chat/send", chatModal.chatroom, msgInput);
   }, [msgInput, chatModal]);
+
+  useEffect(() => {
+    const onChatMessage = (message) => {
+      if (chatModal.chatroom === message.r) {
+        setMessages((prev) => [...prev, message]);
+        //socket.emit("chat/read", message.i);
+      }
+    };
+
+    socket.on("chat/message", onChatMessage);
+
+    return () => {
+      socket.off("chat/message", onChatMessage);
+    };
+  }, [chatrooms, chatModal]);
+
+  useEffect(() => {
+    if (!chatModal?.chatroom) return;
+    (async () => {
+      const data = await getChatroomMessages(chatModal.chatroom);
+      if (!data.success) return;
+      setMessages(data.messages);
+    })();
+  }, [chatModal.chatroom]);
+
+  useEffect(() => {
+    if (!useGetChatroomMembersData?.success) return;
+
+    setMembers(useGetChatroomMembersData.members);
+  }, [useGetChatroomMembersData]);
 
   return (
     <div
@@ -90,36 +110,36 @@ function ChatModal({}) {
           chatModal?.chatroom ? styles.open : ""
         }`}
       >
+        <div className={styles.header}>
+          <i
+            onClick={() => {
+              setChatModal((prev) => ({ ...prev, chatroom: null }));
+            }}
+          >
+            <BackArrow />
+          </i>
+          <p>Messages</p>
+          <i
+            onClick={() => {
+              setChatModal((prev) => ({ ...prev, open: false }));
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </i>
+        </div>
         <ul
           className={`${styles.chatsContainer} customScroll`}
           ref={chatsContainerRef}
         >
-          <div className={styles.header}>
-            <i
-              onClick={() => {
-                setChatModal((prev) => ({ ...prev, chatroom: null }));
-              }}
-            >
-              <BackArrow />
-            </i>
-            <p>Messages</p>
-            <i
-              onClick={() => {
-                setChatModal((prev) => ({ ...prev, open: false }));
-              }}
-            >
-              <FontAwesomeIcon icon={faXmark} />
-            </i>
-          </div>
-          {selectedRoom?.messages?.map((msg) => {
-            const { u, m, i, t } = msg;
+          {messages?.map((msg, index) => {
+            const { u, m, t } = msg;
             const formattedTime = DateTime.fromSeconds(t * 60).toFormat(
               "h:mm a"
             );
             if (u === userInfo.user_id) {
-              return <MyChatContainer time={formattedTime} m={m} key={i} />;
+              return <MyChatContainer time={formattedTime} m={m} key={index} />;
             } else {
-              const user = selectedRoom.members.find((member) => {
+              const user = members.find((member) => {
                 return member.user_id === u;
               });
               return (
@@ -127,7 +147,7 @@ function ChatModal({}) {
                   userInfo={user}
                   time={formattedTime}
                   m={m}
-                  key={i}
+                  key={index}
                 />
               );
             }

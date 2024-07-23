@@ -57,6 +57,18 @@ mainIo.on("connection", (socket) => {
         if (friends.length) {
           mainIo.to(friends).emit(`studying:${userId}`, { id: "0" });
         }
+
+        const connection = pool.promise();
+        const [chatrooms] = await connection.query(
+          `SELECT chatroom_id FROM chatroom_members WHERE user_id = ?`,
+          [userId]
+        );
+        const chatroomIds = chatrooms.map(
+          (chatroom) => "chatroom:" + chatroom.chatroom_id
+        );
+        const groupIds = userInfo.groups.map((group) => "chatroom:" + group);
+
+        socket.join([...chatroomIds, ...groupIds]);
       } catch (err) {
         console.log(err);
       }
@@ -179,8 +191,15 @@ mainIo.on("connection", (socket) => {
 
   //messages
 
-  socket.on("chat/send", async(roomId, message) => {
-    console.log('gdd', roomId, message)
+  socket.join("chat/join", async () => {
+    try {
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  socket.on("chat/send", async (roomId, message) => {
+    console.log("gdd", roomId, message);
     try {
       const isMember = await chatroomMemberCache(roomId, userId);
       console.log(isMember);
@@ -188,15 +207,26 @@ mainIo.on("connection", (socket) => {
       if (!isMember) return;
 
       const t = Math.floor(new Date().getTime() / 1000);
+      const i = generateRandomId(8);
       const newMsg = {
         m: message,
         u: userId,
-        t
-      }
+        t,
+        i
+      };
       msgQueue(roomId, newMsg);
-      mainIo.to(friends).emit(`deActiveGroup:${userId}`);
+      newMsg.r = roomId;
+      mainIo.to(`chatroom:${roomId}`).emit("chat/message", newMsg);
     } catch (err) {
       console.log(err);
+    }
+  });
+
+  socket.on("chat/read", async(messageId) => {
+    try {
+      
+    } catch (err) {
+      console.log(err)
     }
   })
 });
