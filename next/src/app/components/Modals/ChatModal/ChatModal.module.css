@@ -43,13 +43,13 @@
   cursor: pointer;
 }
 
-.ChatModal .chatRoomsContainer {
+.ChatModal .chatroomsContainer {
   overflow-y: auto;
   flex: 1;
   overflow-x: hidden;
 }
 
-.ChatModal .chatsWrapper {
+.ChatModal .chatScreen {
   position: absolute;
   left: 21.875rem;
   height: 100%;
@@ -60,12 +60,12 @@
   flex-direction: column;
 }
 
-.ChatModal .chatsWrapper.open {
+.ChatModal .chatScreen.open {
   left: 0em;
   left: 0em;
 }
 
-.ChatModal .chatsWrapper .chatsContainer {
+.ChatModal .chatScreen .chatsContainer {
   flex: 1;
   overflow-y: auto;
 }
