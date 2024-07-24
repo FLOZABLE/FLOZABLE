@@ -2,6 +2,18 @@
   position: relative;
 }
 
+.FriendsRankingViewer .buttons {
+  z-index: 3;
+}
+
+.FriendsRankingViewer .rankingsContainer {
+  z-index: 1;
+  min-height: 7rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .FriendsRankingViewer .userContainer {
   display: flex;
   margin-bottom: 0.625rem;

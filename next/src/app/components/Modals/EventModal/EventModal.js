@@ -407,9 +407,9 @@ function EventModal({}) {
           <DropDownButton
             options={{
               0: "Does not repeat",
-              1: "Daily",
-              2: "Weekly",
-              3: "Monthly",
+              1: "day",
+              2: "week",
+              3: "month",
             }}
             setValue={(repeat) => {
               if (!planModal.editable) {

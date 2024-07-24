@@ -25,7 +25,7 @@ function NotificationModal({}) {
   const moveRef = useRef(null);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${config.server}/friend/request/reply`, {
+    fetch(`${config.server}/friends/request/reply`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

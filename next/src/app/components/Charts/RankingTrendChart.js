@@ -1,5 +1,4 @@
-import { useRankingUser } from "@/Hooks/rankingHooks";
-import { useRankingsUser } from "@/Hooks/rankingsHooks";
+import { useGetRankingsUser } from "@/Hooks/rankingsHooks";
 import { updateRankingTrend } from "@/app/utils/StatTools";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
@@ -21,7 +20,7 @@ function RankingTrendChart({
 }) {
   const [rankingsTrend, setRankingsTrend] = useState([]);
 
-  const { data: rankingUserData } = useRankingsUser(
+  const { data: rankingUserData } = useGetRankingsUser(
     userInfo?.user_id,
     statsViewer,
     viewDate
@@ -37,19 +36,10 @@ function RankingTrendChart({
       rankingUserData.maxLength
     );
     let ranking = 1;
-    if (statsViewer === "Daily") {
-      ranking = rankingTrend.find(
-        (ranking) => ranking.label === viewDateTime.toISODate()
-      );
-    } else if (statsViewer === "Weekly") {
-      ranking = rankingTrend.find(
-        (ranking) => ranking.label === viewDateTime.startOf("week").toISODate()
-      );
-    } else {
-      ranking = rankingTrend.find(
-        (ranking) => ranking.label === viewDateTime.startOf("month").toISODate()
-      );
-    }
+    ranking = rankingTrend.find(
+      (ranking) =>
+        ranking.label === viewDateTime.startOf(statsViewer).toISODate()
+    );
     if (ranking) {
       setRanking(ranking.ranking);
     }

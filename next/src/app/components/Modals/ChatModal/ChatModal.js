@@ -52,6 +52,12 @@ function ChatModal({}) {
     const onChatMessage = (message) => {
       if (chatModal.chatroom === message.r) {
         setMessages((prev) => [...prev, message]);
+        setTimeout(() => {
+          chatsContainerRef.current.scrollTo({
+            top: chatsContainerRef.current.scrollHeight,
+            behavior: "smooth",
+          });
+        }, 10);
         //socket.emit("chat/read", message.i);
       }
     };

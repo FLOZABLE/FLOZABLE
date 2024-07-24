@@ -34,7 +34,7 @@ export default function Premium() {
             <div className={styles.sliderWrapper}>
               <RadioBtn
                 items={[
-                  { view: "Monthly", value: 0 },
+                  { view: "month", value: 0 },
                   { view: "Yearly", value: 1 },
                 ]}
                 changeEvent={setType}

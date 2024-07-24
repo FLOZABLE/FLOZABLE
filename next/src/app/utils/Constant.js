@@ -133,7 +133,7 @@ const PREMIUM = [
       "Discount on Study Icons: 20% off.",
       "Theme Storage: Up to 10 themes.",
       "Subjects Limit: Track up to 10 subjects.",
-      "Daily Email Report: Get daily progress reports.",
+      "day Email Report: Get daily progress reports.",
       "Groups Limit: Join up to 5 groups.",
     ]
   },
@@ -156,7 +156,7 @@ const PREMIUM = [
       "Access to All Study Icons: Free access to all icons.",
       "Theme Storage: Up to 30 themes.",
       "Subjects Limit: Track up to 30 subjects.",
-      "Daily Email Report: Detailed progress reports.",
+      "day Email Report: Detailed progress reports.",
       "Groups Limit: Join up to 20 groups.",
       "Enhanced AI-Driven Learning: Advanced recommendations and personalized plans.",
       "Advanced Timers and Gamification: Enhanced timers and challenges.",

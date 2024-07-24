@@ -29,7 +29,7 @@ async function getRankingsUser(userId, mode, viewDate) {
   const response = await fetch(
     `${
       config.server
-    }/rankings/ranking/user?userId=${userId}&mode=${mode.toLowerCase()}&date=${viewDateTime.toISODate()}&timezone=${timezone}`,
+    }/rankings/user?userId=${userId}&mode=${mode}&date=${viewDateTime.toISODate()}&timezone=${timezone}`,
     {
       method: "GET",
       headers: {
@@ -43,4 +43,22 @@ async function getRankingsUser(userId, mode, viewDate) {
   return data;
 }
 
-export { getRankings, getRankingsUser };
+async function getRankingsFriends(mode) {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const response = await fetch(
+    `${config.server}/rankings/friends?mode=${mode}&timezone=${timezone}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+  const data = await response.json();
+
+  return data;
+}
+
+export { getRankings, getRankingsUser, getRankingsFriends };

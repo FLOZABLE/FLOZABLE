@@ -7,11 +7,16 @@ import { secondConverter } from "@/app/utils/Tool";
 import { IconStatsChart } from "@/app/utils/Svg";
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
+import { useGetRankingsFriends } from "@/Hooks/rankingsHooks";
+import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
-function FriendsRankingViewer({ friendsRanking }) {
+function FriendsRankingViewer() {
   const [viewer, setViewer] = useState("day");
 
   const router = useRouter();
+
+  const { data: rankingsFriendsData, isLoading: rankingsFriendsIsLoading } =
+    useGetRankingsFriends(viewer);
 
   return (
     <div className={`Box ${styles.FriendsRankingViewer}`}>
@@ -21,7 +26,7 @@ function FriendsRankingViewer({ friendsRanking }) {
           <IconStatsChart />
         </i>
       </div>
-      <div className={styles.Button}>
+      <div className={styles.buttons}>
         <div>
           <DropDownButton
             options={{
@@ -34,36 +39,33 @@ function FriendsRankingViewer({ friendsRanking }) {
           />
         </div>
       </div>
-      <div className={`contents customScroll`}>
-        {friendsRanking?.[viewer]?.map((friend, i) => {
-          let value = friend.dayTotal;
-          if (viewer === "month") {
-            value = friend.monthTotal;
-          } else if (viewer === "week") {
-            value = friend.weekTotal;
-          }
+      <div className={`contents customScroll ${styles.rankingsContainer}`}>
+        {rankingsFriendsIsLoading || !rankingsFriendsData?.success ? (
+          <CircularLoading />
+        ) : (
+          rankingsFriendsData.rankings.map((friend, i) => {
+            const formattedVal = secondConverter(friend.study_time);
 
-          const formattedVal = secondConverter(value);
-
-          return (
-            <div
-              className={styles.userContainer}
-              key={i}
-              style={{ zIndex: friendsRanking[viewer].length - i }}
-            >
-              <div className={styles.rank}>#{i + 1}</div>
-              <UserContainer
-                userInfo={friend}
-                onClick={() => {
-                  router.push(`/dashboard/user/${friend.user_id}`);
-                }}
-              ></UserContainer>
-              <div className={styles.diff}>
-                {formattedVal.value} {formattedVal.type}
+            return (
+              <div
+                className={styles.userContainer}
+                key={i}
+                style={{ zIndex: rankingsFriendsData.rankings.length - i }}
+              >
+                <div className={styles.rank}>#{i + 1}</div>
+                <UserContainer
+                  userInfo={friend}
+                  onClick={() => {
+                    router.push(`/dashboard/user/${friend.user_id}`);
+                  }}
+                ></UserContainer>
+                <div className={styles.diff}>
+                  {formattedVal.value} {formattedVal.type}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );

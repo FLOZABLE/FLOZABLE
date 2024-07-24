@@ -18,7 +18,7 @@ import { secondConverter } from "@/app/utils/Tool";
 import EditSubjectBtn from "../../Buttons/EditSubjectBtn/EditSubjectBtn";
 import styles from "./StudyTrendChart.module.css";
 
-function StudyTrendChart({ viewDate, statsViewer = "Daily", subjectsProp }) {
+function StudyTrendChart({ viewDate, statsViewer = "day", subjectsProp }) {
   const { subjects } = useContext(SubjectsContext);
 
   const [subjectsTrend, setSubjectsTrend] = useState([]);
@@ -33,9 +33,9 @@ function StudyTrendChart({ viewDate, statsViewer = "Daily", subjectsProp }) {
       if (!daily) return;
 
       const change =
-        statsViewer === "Monthly"
+        statsViewer === "month"
           ? "months"
-          : statsViewer === "Weekly"
+          : statsViewer === "week"
           ? "weeks"
           : "days";
       const subjectsTrend = updateSubjectsTrendChart(
@@ -51,9 +51,9 @@ function StudyTrendChart({ viewDate, statsViewer = "Daily", subjectsProp }) {
       if (!daily) return;
 
       const change =
-        statsViewer === "Monthly"
+        statsViewer === "month"
           ? "months"
-          : statsViewer === "Weekly"
+          : statsViewer === "week"
           ? "weeks"
           : "days";
       const subjectsTrend = updateSubjectsTrendChart(

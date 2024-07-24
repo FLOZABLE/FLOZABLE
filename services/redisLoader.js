@@ -305,25 +305,28 @@ async function userCache(userId, query = true) {
         u.email,
         u.timezone,
         u.created_at,
-        GROUP_CONCAT(DISTINCT ug.group_id) AS groups,
-        GROUP_CONCAT(DISTINCT IF(f1.user_id IS NOT NULL, f1.friend_id, NULL), ',', IF(f2.friend_id IS NOT NULL, f2.user_id, NULL)) AS friends
+        IFNULL(GROUP_CONCAT(DISTINCT ug.group_id), '') AS groups,
+        IFNULL(GROUP_CONCAT(DISTINCT 
+          CASE 
+            WHEN f1.friend_id IS NOT NULL THEN f1.friend_id 
+            WHEN f2.user_id IS NOT NULL THEN f2.user_id 
+          END
+        ), '') AS friends
       FROM users u
       LEFT JOIN group_members ug ON u.user_id = ug.user_id
       LEFT JOIN friends f1 ON u.user_id = f1.user_id
       LEFT JOIN friends f2 ON u.user_id = f2.friend_id
       WHERE u.user_id = ?
-        `,
+      GROUP BY u.user_id
+      `,
       [userId]
     );
+    if (!userInfo) return false;
 
-    if (userInfo) {
-      userInfo.groups = userInfo.groups ? userInfo.groups.split(",") : [];
-      userInfo.friends = userInfo.friends ? userInfo.friends.split(",") : [];
-      cacheUserInfo(userInfo);
-      return userInfo;
-    } else {
-      return false;
-    }
+    userInfo.groups = userInfo.groups ? userInfo.groups.split(",") : [];
+    userInfo.friends = userInfo.friends ? userInfo.friends.split(",") : [];
+    cacheUserInfo(userInfo);
+    return userInfo;
   } catch (err) {
     console.log(err);
     return false;
@@ -350,7 +353,6 @@ async function usersCache(users, cache = false) {
         }
       })
     );
-    notCached.push(...users);
 
     const connection = pool.promise();
 
@@ -364,8 +366,13 @@ async function usersCache(users, cache = false) {
         u.email,
         u.timezone,
         u.created_at,
-        GROUP_CONCAT(DISTINCT ug.group_id) AS groups,
-        GROUP_CONCAT(DISTINCT IF(f1.user_id IS NOT NULL, f1.friend_id, NULL), ',', IF(f2.friend_id IS NOT NULL, f2.user_id, NULL)) AS friends
+        IFNULL(GROUP_CONCAT(DISTINCT ug.group_id), '') AS groups,
+        IFNULL(GROUP_CONCAT(DISTINCT 
+          CASE 
+            WHEN f1.friend_id IS NOT NULL THEN f1.friend_id 
+            WHEN f2.user_id IS NOT NULL THEN f2.user_id 
+          END
+        ), '') AS friends
       FROM users u
       LEFT JOIN group_members ug ON u.user_id = ug.user_id
       LEFT JOIN friends f1 ON u.user_id = f1.user_id
@@ -638,5 +645,5 @@ module.exports = {
   addActiveUserCache,
   removeActiveUserCache,
   cacheUserInfo,
-  chatroomMemberCache
+  chatroomMemberCache,
 };

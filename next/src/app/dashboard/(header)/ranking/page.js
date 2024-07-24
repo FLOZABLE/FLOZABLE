@@ -12,7 +12,7 @@ import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import Link from "next/link";
 import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 import { useRouter } from "next/navigation";
-import { useRankings } from "@/Hooks/rankingsHooks";
+import { useGetRankings } from "@/Hooks/rankingsHooks";
 
 function Ranking({ }) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -25,7 +25,7 @@ function Ranking({ }) {
 
   const router = useRouter();
 
-  const {data: useRankingsData} = useRankings(viewer, viewDate);
+  const {data: useRankingsData} = useGetRankings(viewer, viewDate);
 
 
   useEffect(() => {
@@ -93,9 +93,9 @@ function Ranking({ }) {
                 />
                 <RadioBtn
                   items={[
-                    { view: "Daily", value: "day" },
-                    { view: "Weekly", value: "week" },
-                    { view: "Monthly", value: "month" },
+                    { view: "day", value: "day" },
+                    { view: "week", value: "week" },
+                    { view: "month", value: "month" },
                   ]}
                   changeEvent={setViewer}
                   defaultViewer={0}

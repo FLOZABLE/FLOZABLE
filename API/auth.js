@@ -153,7 +153,6 @@ Router.post("/signin/google", async (req, res) => {
       if (response.res.status === 200) {
         const connection = pool.promise();
         const { refresh_token, access_token } = response.tokens;
-        console.log("gd", response.tokens);
         redisClient.set(`user:${userId}:googleAccessToken`, access_token, {
           EX: 3590,
         });
@@ -186,7 +185,6 @@ Router.post("/signin/youtube", async (req, res) => {
       if (response.res.status === 200) {
         const connection = pool.promise();
         const { refresh_token, access_token } = response.tokens;
-        console.log("youtube login", response.tokens);
         redisClient.set(`user:${userId}:youtubeAccessToken`, access_token, {
           EX: 3590,
         });
@@ -251,7 +249,6 @@ Router.post("/app", async (req, res) => {
   try {
     const { email, password, deviceInfo } = req.body;
 
-    console.log(email, password, deviceInfo);
     const connection = pool.promise();
 
     const isValidEmail = validateEmail(email);
@@ -279,7 +276,6 @@ Router.post("/app", async (req, res) => {
       .pbkdf2Sync(password, userInfo.salt, 99097, 32, "sha512")
       .toString("hex");
 
-    console.log(hashedPassword === userInfo.hashed_password);
     if (hashedPassword !== userInfo.hashed_password) {
       return res.send({ success: false, reason: "WRONG PASSWORD" });
     }

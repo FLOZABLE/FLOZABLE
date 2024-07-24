@@ -248,7 +248,7 @@ function EditGroupModal({ isOpen, setIsOpen }) {
             <div className={styles.iconWrapper}>
               <FontAwesomeIcon icon={faStopwatch} />
               <div className={styles.hoverEl}>
-                <p>Daily Group Goal</p>
+                <p>day Group Goal</p>
               </div>
             </div>
             <div className={styles.contentWrapper}>

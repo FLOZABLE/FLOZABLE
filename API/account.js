@@ -110,7 +110,6 @@ Router.patch("/password/code", async (req, res) => {
 
     const matchedResetId = await redisClient.get(`resetPw:${email}`);
 
-    console.log(matchedResetId, resetId);
     if (!matchedResetId || matchedResetId !== resetId) {
       return res.send({ success: false, reason: "Expired or Invalid URL" });
     }
@@ -206,7 +205,6 @@ Router.patch("/info", async (req, res) => {
         "SELECT email, user_id FROM users WHERE email = ?",
         email
       );
-      console.log(userId, checkEmail, userId);
 
       if (checkEmail && checkEmail.user_id !== userId) {
         return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });

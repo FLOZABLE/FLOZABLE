@@ -1,53 +1,24 @@
 "use client";
 
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState } from "react";
 import styles from "./page.module.css";
-import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
 import FriendLinkModal from "@/app/components/Modals/FriendLinkModal/FriendLinkModal";
 import FriendEmailModal from "@/app/components/Modals/FriendEmailModal/FriendEmailModal";
-import { IconEmailOutline, IconStatsChart, IconUser } from "@/app/utils/Svg";
+import { IconEmailOutline, IconUser } from "@/app/utils/Svg";
 import FriendsRankingViewer from "@/app/components/Friends/FriendsRankingViewer/FriendsRankingViewer";
 import FriendsActivityViewer from "@/app/components/Friends/FriendsActivityViewer/FriendsActivityViewer";
 import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
 import SearchUsers from "@/app/components/Users/SearchUsers/SearchUsers";
 import FriendRequestsViewer from "@/app/components/Friends/FriendRequestsViewer/FriendRequestsViewer";
-import config from "@/app/utils/config";
-import FriendsTrendChart from "@/app/components/Charts/FriendsTrendChart";
 import { useRouter } from "next/navigation";
+import FriendsTrendChart from "@/app/components/Charts/FriendsTrendChart";
 
 function Friends({}) {
-  const { userInfo } = useContext(UserInfoContext);
-
   const [isFriendLinkModal, setIsFriendLinkModal] = useState(false);
   const [isFriendEmailModal, setIsFriendEmailModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [friendsRanking, setFriendsRanking] = useState({});
-
   const router = useRouter();
-
-  const [friendsTrends, setFriendsTrends] = useState([]);
-
-  const getFriendsRanking = () => {
-    fetch(`${config.server}/ranking/friends`, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        if (response.success) {
-          const { day, week, month, dayTrend } = response;
-          setFriendsRanking({ day, week, month });
-          setFriendsTrends(dayTrend);
-        }
-      });
-  };
-  useEffect(() => {
-    getFriendsRanking();
-  }, [userInfo]);
 
   return (
     <div>
@@ -67,7 +38,7 @@ function Friends({}) {
           <div className={styles.container}>
             <div className={styles.layer}>
               <div className={`${styles.box} BoxContainer`}>
-                <FriendsRankingViewer friendsRanking={friendsRanking} />
+                <FriendsRankingViewer />
               </div>
             </div>
             <div className={styles.layer}>
@@ -75,7 +46,7 @@ function Friends({}) {
                 <FriendsActivityViewer />
               </div>
               <div className={`${styles.box} BoxContainer`}>
-                <FriendsTrendChart friendsTrends={friendsTrends} />
+                <FriendsTrendChart />
               </div>
             </div>
             <div className={styles.layer}>

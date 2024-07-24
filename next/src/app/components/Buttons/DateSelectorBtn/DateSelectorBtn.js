@@ -16,13 +16,13 @@ function DateSelectorBtn({
     const viewDateTime = DateTime.fromJSDate(viewDate);
     const now = DateTime.now();
 
-    if (viewMode === 'Monthly') {
+    if (viewMode === 'month') {
       if (viewDateTime.hasSame(now, 'month') && viewDateTime.hasSame(now, 'year')) {
         setViewString('This Month');
       } else {
         setViewString(viewDateTime.monthLong);
       };
-    } else if (viewMode === 'Weekly') {
+    } else if (viewMode === 'week') {
       if (viewDateTime.hasSame(now, 'week') && viewDateTime.hasSame(now, 'year')) {
         setViewString('This Week');
       } else {

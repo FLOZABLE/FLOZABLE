@@ -199,12 +199,9 @@ mainIo.on("connection", (socket) => {
   });
 
   socket.on("chat/send", async (roomId, message) => {
-    console.log("gdd", roomId, message);
     try {
       const isMember = await chatroomMemberCache(roomId, userId);
-      console.log(isMember);
-
-      if (!isMember) return;
+      if (!isMember || !message.length) return;
 
       const t = Math.floor(new Date().getTime() / 1000);
       const i = generateRandomId(8);
@@ -224,7 +221,7 @@ mainIo.on("connection", (socket) => {
 
   socket.on("chat/read", async(messageId) => {
     try {
-      
+
     } catch (err) {
       console.log(err)
     }

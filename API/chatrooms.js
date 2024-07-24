@@ -50,7 +50,6 @@ Router.get("/", async (req, res) => {
             -1,
             -1
           )).map(JSON.parse);
-          console.log(chatroom.lastMsg, 'gddd');
         })
       );
 
@@ -68,13 +67,11 @@ Router.get("/messages", async (req, res) => {
 
       const isIn = await chatroomMemberCache(chatroom_id, userId);
 
-      console.log(isIn);
       if (!isIn) return res.send({ success: false, reason: "Not member" });
 
       const messages = (
         await redisClient.lrange(`chatroom:${chatroom_id}:messages`, 0, -1)
       ).map(JSON.parse);
-      console.log(messages);
 
       res.send({ success: true, messages });
     } catch (err) {
@@ -113,8 +110,6 @@ Router.get("/members", async (req, res) => {
         `,
         [chatroom_id, chatroom_id]
       );
-
-      console.log(members);
 
       res.send({ success: true, members });
     } catch (err) {

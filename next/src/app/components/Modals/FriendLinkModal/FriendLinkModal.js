@@ -15,7 +15,7 @@ function FriendLinkModal({ isOpen, setIsOpen }) {
   useEffect(() => {
     if (!isOpen || addFriendUrl.length) return;
 
-    fetch(`${config.server}/friend/link/create`, {
+    fetch(`${config.server}/friends/link/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -25,7 +25,7 @@ function FriendLinkModal({ isOpen, setIsOpen }) {
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          setAddFriendUrl(config.server + `/friend/link/add?user=${userInfo.user_id}&id=${res.linkId}`);
+          setAddFriendUrl(config.server + `/friends/link/add?user=${userInfo.user_id}&id=${res.linkId}`);
         }
       })
       .catch((error) => console.error(error));
