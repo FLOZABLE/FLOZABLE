@@ -3,7 +3,9 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { DateTime } = require("luxon");
-const { usersCache } = require("../services/redisLoader");
+const { usersCache, userCache } = require("../services/redisLoader");
+const { responseCodes } = require("../Constant");
+const { autoSignin, getDates } = require("../Utils/tool");
 
 Router.get("/", async (req, res) => {
   try {
@@ -59,7 +61,6 @@ Router.get("/", async (req, res) => {
 
       rankings.push(...rankingsData);
     }
-    console.log(rankings, date);
 
     const users = await usersCache(rankings.map((ranking) => ranking.user_id));
 
@@ -77,7 +78,7 @@ Router.get("/", async (req, res) => {
   }
 });
 
-Router.get("/ranking/user", async (req, res) => {
+Router.get("/user", async (req, res) => {
   try {
     const { userId, mode, date, timezone } = req.query;
 
@@ -140,25 +141,42 @@ Router.get("/ranking/user", async (req, res) => {
   }
 });
 
-function getDates(date, timezone, mode, length = 30) {
-  const dates = [];
-  let dateTime = DateTime.fromISO(date)
-    .setZone(timezone)
-    .startOf(mode)
-    .startOf("day");
-  const now = DateTime.now().setZone(timezone).startOf(mode).startOf("day");
+Router.get("/friends", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const userInfo = await userCache(userId);
 
-  for (let i = 0; i < length; i++) {
-    if (dateTime.plus({ [mode]: i }) <= now) {
-      dates.push(dateTime.plus({ [mode]: i }));
+      if (!userInfo) return res.send(responseCodes["no-user"]);
+
+      const { mode, timezone } = req.query;
+
+      const dateTime = DateTime.now()
+        .setZone(timezone)
+        .startOf("day")
+        .startOf(mode);
+
+      const timezoneOffset = Math.floor(dateTime.offset / 60).toString();
+
+      const friends = await usersCache(userInfo.friends);
+
+      friends.push(userInfo);
+
+      const studyTotal = await redisClient.zmscore(
+        `users:${timezoneOffset}:${mode}Total`, friends.map(friend => friend.user_id)
+      );
+
+      friends.map((friend, i) => {
+        friend.study_time = studyTotal[i] ? parseInt(studyTotal[i]) : 0;
+      })
+
+      friends.sort((a, b) => b.study_time - a.study_time);
+
+      res.send({ success: true, rankings: friends });
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false, reason: "An Error Occured" });
     }
-  }
-  while (dates.length < length) {
-    dateTime = dateTime.minus({ [mode]: 1 });
-    dates.unshift(dateTime);
-  }
-
-  return dates;
-}
+  });
+});
 
 module.exports = Router;

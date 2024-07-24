@@ -189,7 +189,6 @@ Router.get("/tabs", async (req, res) => {
 });
 
 Router.get("/usage", async (req, res) => {
-  console.log("gd", req.session.user_id);
   autoSignin(
     req,
     res,

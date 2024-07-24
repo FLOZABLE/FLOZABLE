@@ -4,7 +4,7 @@ import { DateTime } from "luxon";
 function updateTimeUsagePie(subjects, viewDateTime, type) {
   const data = [];
   const labels = [];
-  if (type === "Daily") {
+  if (type === "day") {
     subjects.map((subject) => {
       const { daily } = subject;
       const index =
@@ -12,7 +12,7 @@ function updateTimeUsagePie(subjects, viewDateTime, type) {
       const value = daily.total[index] ? daily.total[index] : 0;
       data.push({ value, info: subject });
     });
-  } else if (type === "Weekly") {
+  } else if (type === "week") {
     subjects.map((subject) => {
       const { weekly } = subject;
       const index =

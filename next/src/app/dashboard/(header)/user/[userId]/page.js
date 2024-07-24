@@ -23,7 +23,7 @@ function User({ params }) {
 
   const [userInfo, setUserInfo] = useState(null);
   const [userSubjects, setUserSubjects] = useState([]);
-  const [statsViewer, setStatsViewer] = useState("Daily");
+  const [statsViewer, setStatsViewer] = useState("day");
   const [viewDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
   const [userGroups, setUserGroups] = useState([]);
   const [userFriends, setUserFriends] = useState([]);
@@ -65,9 +65,9 @@ function User({ params }) {
           <div className={styles.searchOpt}>
             <RadioBtn
               items={[
-                { view: "Daily", value: "Daily" },
-                { view: "Weekly", value: "Weekly" },
-                { view: "Monthly", value: "Monthly" },
+                { view: "day", value: "day" },
+                { view: "week", value: "week" },
+                { view: "month", value: "month" },
               ]}
               changeEvent={setStatsViewer}
               defaultViewer={0}

@@ -10,7 +10,7 @@ function FriendRequestBtn({ userInfo, padding }) {
   const { setResponse } = useContext(ResponseContext);
 
   const requestFriend = () => {
-    fetch(`${config.server}/friend/request`, {
+    fetch(`${config.server}/friends/request`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

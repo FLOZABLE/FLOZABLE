@@ -189,8 +189,6 @@ Router.patch("/plan", async (req, res) => {
         type,
       } = planInfo;
 
-      console.log(planInfo);
-
       if (type === "google") {
         const access_token = await googleAccessTokenCache(userId);
         if (access_token) {
@@ -442,7 +440,6 @@ Router.delete("/plan", async (req, res) => {
       const connection = pool.promise();
 
       const { id } = req.body;
-      console.log(req.body);
 
       const isValidId = validateStrictString(id, "plan id", 10, 8);
 
@@ -450,12 +447,10 @@ Router.delete("/plan", async (req, res) => {
         return res.send({ success: false, reason: isValidId.reason });
       }
 
-      console.log("gddd", id);
-
-      const [deletePlan] = await connection.query(
-        `DELETE FROM plans WHERE user_id = ? AND id = ?`,
-        [userId, id]
-      );
+      await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [
+        userId,
+        id,
+      ]);
       /* if (!deletePlan.affectedRows) {
 
       } */
@@ -483,7 +478,6 @@ Router.get("/plan/users", async (req, res) => {
         `SELECT user_id FROM plan_shared WHERE plan_id = ? AND user_id = ?; SELECT user_id FROM plan_share WHERE plan_id = ? AND user_id = ?;`,
         [id, userId, id, userId]
       );
-      console.log(result);
       return;
 
       if (!planInfo) {
@@ -515,8 +509,6 @@ Router.post("/plan/share", async (req, res) => {
     try {
       const { users, planId } = req.body;
 
-      console.log(users, planId);
-
       if (!users.length) return res.send({ success: true });
 
       const userInfo = await userCache(userId);
@@ -532,7 +524,6 @@ Router.post("/plan/share", async (req, res) => {
           [users]
         )
       )[0].map((userInfo) => userInfo.user_id);
-      console.log(existingUsers);
 
       const friends = existingUsers.filter((user) =>
         userInfo.friends.includes(user)
@@ -566,8 +557,6 @@ Router.post("/plan/share", async (req, res) => {
         `UPDATE plans SET ? WHERE user_id = ? AND id = ?`,
         [updateInfo, userId, planId]
       );
-
-      console.log(friends, nonFriends);
 
       const date = Math.floor(new Date().getTime() / 1000);
 
@@ -607,8 +596,6 @@ Router.delete("/plan/share", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { targetId, planId } = req.body;
-
-      console.log(targetId, planId);
 
       const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
@@ -671,8 +658,6 @@ Router.post("/plan/share/respond", async (req, res) => {
     try {
       const { planId, accepted } = req.body;
 
-      console.log(planId, accepted);
-
       const isValidPlanId = validateStrictString(planId, "user id", 10);
 
       if (!isValidPlanId.isValid) {
@@ -689,7 +674,6 @@ Router.post("/plan/share/respond", async (req, res) => {
       const planRequest = planRequests.find((planRequest) => {
         return planRequest.pi === planId;
       });
-      console.log(planRequests);
       if (!planRequest)
         return res.send({ success: false, reason: "expired request" });
 

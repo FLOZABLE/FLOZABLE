@@ -16,7 +16,7 @@ function GroupsContainer({
   useEffect(() => {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    fetch(`${config.server}/ranking/sort?mode=Daily&date=${DateTime.now().toISODate()}&timezone=${timezone}`, {
+    fetch(`${config.server}/ranking/sort?mode=day&date=${DateTime.now().toISODate()}&timezone=${timezone}`, {
       method: 'get',
       headers: {
         'Content-Type': 'application/json'
