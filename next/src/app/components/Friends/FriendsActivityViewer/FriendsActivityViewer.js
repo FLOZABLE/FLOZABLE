@@ -23,7 +23,7 @@ function FriendsActivityViewer() {
   useEffect(() => {
     if (!userInfo) return;
 
-    fetch(`${config.server}/friend/status`, {
+    fetch(`${config.server}/friends/status`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

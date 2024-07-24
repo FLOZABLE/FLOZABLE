@@ -7,22 +7,13 @@ import styles from "./page.module.css";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import FriendsActivityViewer from "@/app/components/Friends/FriendsActivityViewer/FriendsActivityViewer";
 import FriendsTrendChart from "@/app/components/Charts/FriendsTrendChart";
-import { useQuery } from "@tanstack/react-query";
-import { getFriendsRanking } from "@/Api/friendsApi";
 import { useContext } from "react";
 import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
 import StudyInfo from "@/app/components/Others/StudyInfo/StudyInfo";
 import FriendsBar from "@/app/components/Friends/FriendsBar/FriendsBar";
 
 export default function Dashboard() {
-  const { userInfo } = useContext(UserInfoContext);
   const { setChatModal } = useContext(ModalsContext);
-
-  const { data: friendsRankingData } = useQuery({
-    queryKey: [`friendTrend`],
-    queryFn: () => getFriendsRanking(),
-    enabled: !!userInfo,
-  });
 
   return (
     <div className={`Main`}>
@@ -68,13 +59,11 @@ export default function Dashboard() {
             <SmallSubjectsViewer />
           </div>
         </div>
-        {friendsRankingData?.success ? (
-          <div className={styles.layer}>
-            <div className={`${styles.box} BoxContainer`}>
-              <FriendsTrendChart friendsTrends={friendsRankingData.dayTrend} />
-            </div>
+        <div className={styles.layer}>
+          <div className={`${styles.box} BoxContainer`}>
+            <FriendsTrendChart />
           </div>
-        ) : null}
+        </div>
       </div>
     </div>
   );

@@ -35,7 +35,7 @@ function Stats({}) {
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0))
   );
-  const [statsViewer, setStatsViewer] = useState("Daily");
+  const [statsViewer, setStatsViewer] = useState("day");
 
   const [totalStudy, setTotalStudy] = useState("");
   const [focus, setFocus] = useState("");
@@ -81,7 +81,7 @@ function Stats({}) {
     const now = DateTime.now().startOf("day");
     const viewDateTime = DateTime.fromJSDate(viewDate);
 
-    if (statsViewer === "Daily") {
+    if (statsViewer === "day") {
       //top box renderer
       const index = viewDateTime.diff(now, "days").toObject();
       const { total, grouped } = daily;
@@ -91,7 +91,7 @@ function Stats({}) {
       const focus = focusCalculator(grouped[actualIndex]);
       const { value, type } = secondConverter(focus);
       setFocus(`${value}${type}`);
-    } else if (statsViewer === "Weekly") {
+    } else if (statsViewer === "week") {
       //top box renderer
       const index = viewDateTime
         .startOf("week")
@@ -155,9 +155,9 @@ function Stats({}) {
           </div>
           <RadioBtn
             items={[
-              { view: "Daily", value: "Daily" },
-              { view: "Weekly", value: "Weekly" },
-              { view: "Monthly", value: "Monthly" },
+              { view: "day", value: "day" },
+              { view: "week", value: "week" },
+              { view: "month", value: "month" },
             ]}
             changeEvent={setStatsViewer}
             defaultViewer={0}

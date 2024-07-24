@@ -89,7 +89,6 @@ Router.post("/create", async (req, res) => {
     try {
       const userId = req.session.user_id;
       const { name, tags, description, url } = req.body;
-      console.log(name.length, tags, description, url);
 
       const isValidName = validateString(name, "theme name", 40);
 

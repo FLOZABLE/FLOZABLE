@@ -38,7 +38,7 @@ function FriendRequestsViewer() {
   }, [notifications]);
 
   const friendRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${config.server}/friend/request/reply`, {
+    fetch(`${config.server}/friends/request/reply`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -56,7 +56,7 @@ function FriendRequestsViewer() {
   };
 
   const sentRequestClear = (targetId, notificationId) => {
-    fetch(`${config.server}/friend/request`, {
+    fetch(`${config.server}/friends/request`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

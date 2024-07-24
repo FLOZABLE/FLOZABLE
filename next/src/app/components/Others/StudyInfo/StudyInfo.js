@@ -25,7 +25,7 @@ export default function StudyInfo() {
 
   const { data: websitesData } = useExtensionUsage(
     new Date(new Date().setHours(0, 0, 0, 0)),
-    "Daily"
+    "day"
   );
 
   useEffect(() => {

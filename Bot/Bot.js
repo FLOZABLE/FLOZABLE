@@ -22,11 +22,10 @@ const {
   getActiveUsers,
   addActiveUserCache,
   removeActiveUserCache,
-  subjectCache,
 } = require("../services/redisLoader");
 const { mainIo } = require("../sockets/mainIo");
 const { MAX_STUDY_TIME, possibleBotsSubjects } = require("../Constant");
-const { fr, sendFriendRequest, replyFriendRequest } = require("../API/friend");
+const { fr, sendFriendRequest, replyFriendRequest } = require("../API/friends");
 
 /**create bots */
 async function createBots(length) {

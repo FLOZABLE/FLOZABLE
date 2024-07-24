@@ -13,7 +13,19 @@ function ChatRoom({ chatroom }) {
     if (!chatroom?.lastMsg) return;
 
     setLastMsg(chatroom.lastMsg);
-  }, [chatroom])
+
+    const onChatMessage = (message) => {
+      if (chatroom.chatroom_id === message.r) {
+        setLastMsg(message);
+      }
+    };
+
+    socket.on("chat/message", onChatMessage);
+
+    return () => {
+      socket.off("chat/message", onChatMessage);
+    };
+  }, [chatroom]);
 
   return (
     <li
@@ -21,14 +33,6 @@ function ChatRoom({ chatroom }) {
       onClick={() => {
         setChatModal((prev) => ({ ...prev, chatroom: chatroom.chatroom_id }));
       }}
-      /* onClick={() => {
-        setChatModal(prev => ({ ...prev, ...room, totalNewMsg: prev.totalNewMsg - newMsgs, chatRoom: room.id }));
-        setNewMsgs(0);
-        const tempState = { ...readStatus };
-        const finalMessage = room.chats[room.chats.length - 1]; 
-        tempState[room.id] = `${finalMessage.i}:${finalMessage.t}`;
-        setReadStatus(tempState);
-      }} */
     >
       <div
         className={styles.imgContainer}
@@ -45,7 +49,11 @@ function ChatRoom({ chatroom }) {
         <div className={styles.msgInfo}>
           <div className={styles.msg}>{lastMsg?.m}</div>
           <div className={styles.time}>
-            {lastMsg && lastMsg.t ? DateTime.fromSeconds(lastMsg.t * 60).toLocaleString(DateTime.TIME_SIMPLE) : null}
+            {lastMsg && lastMsg.t
+              ? DateTime.fromSeconds(lastMsg.t * 60).toLocaleString(
+                  DateTime.TIME_SIMPLE
+                )
+              : null}
           </div>
         </div>
       </div>

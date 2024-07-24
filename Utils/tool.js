@@ -243,6 +243,27 @@ async function friendRecommendationGen(excluded = []) {
   }
 }
 
+function getDates(date, timezone, mode, length = 30) {
+  const dates = [];
+  let dateTime = DateTime.fromISO(date)
+    .setZone(timezone)
+    .startOf(mode)
+    .startOf("day");
+  const now = DateTime.now().setZone(timezone).startOf(mode).startOf("day");
+
+  for (let i = 0; i < length; i++) {
+    if (dateTime.plus({ [mode]: i }) <= now) {
+      dates.push(dateTime.plus({ [mode]: i }));
+    }
+  }
+  while (dates.length < length) {
+    dateTime = dateTime.minus({ [mode]: 1 });
+    dates.unshift(dateTime);
+  }
+
+  return dates;
+}
+
 module.exports = {
   generateRandomId,
   hashing,
@@ -257,7 +278,7 @@ module.exports = {
   hex2rgb,
   secondConverter,
   deriveKey,
-  timezones24,
   getMidnightTimezones,
   friendRecommendationGen,
+  getDates
 };

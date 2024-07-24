@@ -45,7 +45,6 @@ Router.get("/members", async (req, res) => {
     if (!members.includes(userId))
       return res.send({ success: false, reason: "not in group" });
     const membersInfo = await usersCache(members);
-    console.log(membersInfo);
     res.send({ success: true, membersInfo });
   });
 });

@@ -2,18 +2,13 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./RecommendedFriendsViewer.module.css";
-import Link from "next/link";
 import { ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
-import config from "@/app/utils/config";
 import RefreshBtn from "../../Buttons/RefreshBtn/RefreshBtn";
-import ProfileImage from "../../Users/ProfileImage/ProfileImage";
-import CountryViewer from "../../Others/CountryViewer/CountryViewer";
 import FriendRequestBtn from "../../Buttons/FriendRequestBtn/FriendRequestBtn";
-import { useQuery } from "@tanstack/react-query";
-import { getRecommendedFriends } from "@/Api/friendsApi";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
+import { useGetFriendsRecommended } from "@/Hooks/friendsHooks";
 
 function RecommendedFriendsViewer({}) {
   const { userInfo } = useContext(UserInfoContext);
@@ -24,18 +19,13 @@ function RecommendedFriendsViewer({}) {
     data: recommendedFriends,
     isLoading,
     refetch,
-  } = useQuery({
-    queryKey: ["recommendedFriends"],
-    queryFn: getRecommendedFriends,
-    staleTime: 3000,
-  });
+  } = useGetFriendsRecommended();
 
   const router = useRouter();
 
   useEffect(() => {
     if (!userInfo || !refresh) return;
     refetch();
-    console.log("refetch", refresh, userInfo);
   }, [userInfo, refresh]);
 
   return (
@@ -48,7 +38,7 @@ function RecommendedFriendsViewer({}) {
         {isLoading ? (
           <CircularLoading />
         ) : (
-          recommendedFriends.users.map((user, i) => {
+          recommendedFriends?.users.map((user, i) => {
             return (
               <div className={styles.user} key={i}>
                 <UserContainer

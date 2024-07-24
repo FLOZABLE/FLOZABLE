@@ -32,7 +32,6 @@ const { validateString, validateURL } = require("../Utils/validate");
 }); */
 
 Router.post("/create-checkout-session", async (req, res) => {
-  console.log("gd", req.body);
   const { priceId, success_url, cancel_url } = req.body;
 
   console.log("price", priceId);

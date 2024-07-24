@@ -3,6 +3,7 @@ const {
   autoSignin,
   generateRandomId,
   friendRecommendationGen,
+  getDates,
 } = require("../Utils/tool");
 const {
   NotificationCache,
@@ -10,6 +11,7 @@ const {
   activeSubjectCache,
   subjectCache,
   clearUserCache,
+  usersCache,
 } = require("../services/redisLoader");
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
@@ -89,7 +91,13 @@ async function sendFriendRequest(userId, targetId) {
   }
 }
 
-async function replyFriendRequest(userId, targetId, accepted, notificationId, createChat = true) {
+async function replyFriendRequest(
+  userId,
+  targetId,
+  accepted,
+  notificationId,
+  createChat = true
+) {
   try {
     const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
@@ -129,7 +137,7 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId, cr
       );
       if (!friendReq) return { success: false, reason: "expired request" };
 
-      friendReq = { id: notificationId, ...JSON.parse(friendReq) };
+      friendReq = { i: notificationId, ...JSON.parse(friendReq) };
     }
 
     redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
@@ -166,7 +174,7 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId, cr
     const newFriend = {
       user_id: userId,
       friend_id: targetId,
-      date
+      date,
     };
 
     await connection.query(`INSERT INTO friends SET ?`, newFriend);
@@ -207,11 +215,11 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId, cr
 
     if (!chatroom && createChat) {
       const chatroom_id = generateRandomId(10);
-      const chatroomName = userInfo.name + ', ' + targetInfo.name;
+      const chatroomName = userInfo.name + ", " + targetInfo.name;
       const roomInfo = {
         chatroom_id,
         type: 1,
-        name: chatroomName
+        name: chatroomName,
       };
       await connection.query(
         `
@@ -245,9 +253,6 @@ async function replyFriendRequest(userId, targetId, accepted, notificationId, cr
         JSON.stringify(targetDmRooms)
       ); 
       redisClient.sadd(`room:${roomInfo.id}`, members);*/
-
-      redisClient.hdel(`user:${userId}`, "dmRooms");
-      redisClient.hdel(`user:${targetId}`, "dmRooms");
 
       mainIo.to(userId).emit("joinChatRoom", roomInfo.id, true);
       mainIo.to(targetId).emit("joinChatRoom", roomInfo.id, true);
@@ -370,7 +375,6 @@ Router.get("/recommended", async (req, res) => {
     async () => {
       try {
         const users = await friendRecommendationGen();
-        console.log("users");
         return res.send({ success: true, users });
       } catch (err) {
         console.log(err);
@@ -567,6 +571,100 @@ Router.post("/invitation/email", async (req, res) => {
       const to = [{ email }];
       sendEmail(to, params, 3);
       res.send({ success: true });
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false });
+    }
+  });
+});
+
+Router.get("/trends", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { timezone } = req.query;
+      const mode = "day";
+
+      const userInfo = await userCache(userId);
+
+      if (!userInfo) return res.send(responseCodes["no-user"]);
+
+      const now = DateTime.now().setZone(timezone).startOf("day");
+      const dates = getDates(now.toISO(), timezone, "day", 7);
+
+      const connection = pool.promise();
+
+      const friends = await usersCache(userInfo.friends);
+
+      friends.push(userInfo);
+
+      const [rankings] = await connection.query(
+        `
+        SELECT
+          r.date,
+          CASE 
+            WHEN COUNT(rd.user_id) = 0 THEN '[]'
+            ELSE JSON_ARRAYAGG(JSON_OBJECT('user_id', rd.user_id, 'study_time', rd.study_time))
+          END AS users
+        FROM rankings r
+        LEFT JOIN ranking_details rd ON rd.ranking_id = r.ranking_id AND rd.user_id IN (?)
+        WHERE r.date IN (?) AND r.mode = ?
+        GROUP BY r.date
+      `,
+        [
+          friends.map((friend) => friend.user_id),
+          dates.map((date) => date.toSeconds()),
+          mode,
+        ]
+      );
+
+      rankings.map((ranking) => {
+        ranking.users = JSON.parse(ranking.users);
+      });
+
+      const trends = [];
+
+      await Promise.all(
+        dates.map(async (date) => {
+          if (date.toSeconds() === now.toSeconds()) {
+            const timezoneOffset = Math.floor(now.offset / 60).toString();
+
+            const studyTotal = await redisClient.zmscore(
+              `users:${timezoneOffset}:${mode}Total`,
+              friends.map((friend) => friend.user_id)
+            );
+
+            friends.map((friend, i) => {
+              friend.study_time = studyTotal[i] ? parseInt(studyTotal[i]) : 0;
+            });
+
+            trends.push({ date: date.toSeconds(), friends });
+            return;
+          }
+
+          const dateRankings = rankings.find(
+            (ranking) => ranking.date === date.toSeconds()
+          );
+          if (!dateRankings)
+            return trends.push({
+              date: date.toSeconds(),
+              friends: friends.map((friend) => ({ ...friend, study_time: 0 })),
+            });
+
+          friends.map((friend) => {
+            const studyTime = dateRankings.users.find(
+              (ranking) => ranking.user_id === friend.user_id
+            );
+            friend.study_time = studyTime ? studyTime : 0;
+          });
+
+          trends.push({
+            date: date.toSeconds(),
+            friends,
+          });
+        })
+      );
+
+      return res.send({ success: true, trends });
     } catch (err) {
       console.log(err);
       res.send({ success: false });
