@@ -12,7 +12,6 @@ import {
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import config from "@/app/utils/config";
 import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContainerGen";
 import CreateThemeModal from "@/app/components/Modals/CreateThemeModal/CreateThemeModal";
 import ThemePreview from "@/app/components/Themes/ThemePreview/ThemePreview";

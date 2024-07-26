@@ -55,7 +55,7 @@ async function updateDailyRanking(now, timezoneOffset) {
       }
     }
 
-    const users = rankings.map(({ user_id }) => user_id);
+    const users = rankings.map((ranking) => ranking[1]);
     if (users.length) {
       redisClient.zrem(`users:${timezoneOffset}:dayTotal`, users);
     }
@@ -106,7 +106,7 @@ async function updateWeeklyRanking(now, timezoneOffset) {
       }
     }
 
-    const users = rankings.map(({ user_id }) => user_id);
+    const users = rankings.map((ranking) => ranking[1]);
     if (users.length) {
       redisClient.zrem(`users:${timezoneOffset}:weekTotal`, users);
     }
@@ -157,7 +157,7 @@ async function updateMonthlyRanking(now, timezoneOffset) {
       }
     }
 
-    const users = rankings.map(({ user_id }) => user_id);
+    const users = rankings.map((ranking) => ranking[1]);
     if (users.length) {
       redisClient.zrem(`users:${timezoneOffset}:monthTotal`, users);
     }

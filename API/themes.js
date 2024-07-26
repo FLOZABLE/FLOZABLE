@@ -16,22 +16,32 @@ const { mainIo } = require("../sockets/mainIo");
 Router.get("/", async (req, res) => {
   try {
     const connection = pool.promise();
-    const [themes] = await connection.query(`SELECT * FROM themes`);
-    await Promise.all(
-      themes.map(async (theme) => {
-        const weekUsage = await redisClient.zmscore(
-          `theme:${theme.id}:weekUsage`,
-          ["0", "1", "2", "3", "4", "5", "6"]
-        );
-        theme.weekUsage = 0;
-        await Promise.all(
-          weekUsage.map((dayTotal) => {
-            if (!dayTotal) return;
-            theme.weekUsage += dayTotal;
-          })
-        );
-      })
-    );
+    const [themes] = await connection.query(`
+      SELECT 
+      theme_id, 
+      user_id, 
+      video_id, 
+      name, 
+      description, 
+      tags 
+      FROM themes
+    `);
+
+    themes.map((theme) => {
+      theme.weekUsage = 0;
+    });
+    for (let i = 0; i < 7; i++) {
+      const dayUsage = await redisClient.zmscore(
+        `themes:${i}:usage`,
+        themes.map((theme) => theme.theme_id)
+      );
+
+      themes.map((theme, index) => {
+        if (!dayUsage[index]) return;
+        theme.weekUsage += dayUsage[index];
+      });
+    };
+
     return res.send({ success: true, themes });
   } catch (err) {
     console.log(err);
@@ -118,9 +128,9 @@ Router.post("/create", async (req, res) => {
       if (!videoId)
         return res.send({ success: false, reason: "Invalid Youtube link" });
       const connection = pool.promise();
-      const id = generateRandomId(10);
+      const theme_id = generateRandomId(10);
       const themeInfo = {
-        id,
+        theme_id,
         name,
         description,
         video_id: videoId,
@@ -242,7 +252,6 @@ Router.post("/save", async (req, res) => {
   });
 });
 
-
 Router.post("/unsave", async (req, res) => {
   autoSignin(req, res, async () => {
     try {
@@ -269,7 +278,11 @@ Router.post("/unsave", async (req, res) => {
       if (oldThemeIndex !== -1) {
         themes.splice(oldThemeIndex, 1);
         const weekDay = DateTime.now().weekday - 1;
-        redisClient.zIncrBy(`theme:${themeId}:weekUsage`, -1, weekDay.toString());
+        redisClient.zIncrBy(
+          `theme:${themeId}:weekUsage`,
+          -1,
+          weekDay.toString()
+        );
         mainIo.emit(`unused:${themeId}`);
       }
       await connection.query(`UPDATE users SET themes = ? WHERE user_id = ?`, [
