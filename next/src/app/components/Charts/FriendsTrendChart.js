@@ -34,9 +34,6 @@ function FriendsTrendChart() {
               trend.friends.map((friend) => {
                 friendsData[friend.user_id] = friend.study_time;
               });
-              console.log({
-                friendsData,
-              });
               return friendsData;
             })}
             margin={{
