@@ -12,6 +12,7 @@ import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import { usePlan } from "@/Hooks/planHooks";
 import { useGroups } from "@/Hooks/groupsHook";
+import { useGetThemes } from "@/Hooks/themesHooks";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -324,25 +325,15 @@ function ThemesProvider({ children }) {
   const [themes, setThemes] = useState([]);
   const [userThemes, setUserThemes] = useState([]);
 
-  useEffect(() => {
-    fetch(`${config.server}/themes`, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          data.themes.map((theme) => {
-            theme.likes = theme.likes === "" ? [] : theme.likes.split(",");
-          });
-          setThemes(data.themes);
-        }
-      })
-      .catch((error) => console.error(error));
+  const {data: getThemesData} = useGetThemes();
 
+  useEffect(()=> {
+    if (!getThemesData?.success) return;
+
+    setThemes(getThemesData.themes);
+  }, [getThemesData])
+
+  useEffect(() => {
     fetch(`${config.server}/themes/user`, {
       method: "get",
       headers: {

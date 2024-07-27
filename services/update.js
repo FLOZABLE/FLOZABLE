@@ -28,6 +28,7 @@ const {
   createGroupLikesTable,
   createPlanShare,
   createPlanShared,
+  createThemeLikesTable,
 } = require("../Utils/query");
 const pool = require("../model/pool");
 
@@ -91,6 +92,7 @@ async function initializeMariadb() {
     await createRankingDetailsTable();
     await createDevicesTable();
     await createThemesTable();
+    await createThemeLikesTable();
     await createUserThemesTable();
     await createActivitiesTable();
 

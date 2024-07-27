@@ -11,11 +11,7 @@ import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
 import config from "@/app/utils/config";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 
-function ThemeContainer({
-  theme,
-  isSearched,
-  setIsThemePreview,
-}) {
+function ThemeContainer({ theme, isSearched, setIsThemePreview }) {
   const { userInfo } = useContext(UserInfoContext);
 
   const [liked, setLiked] = useState(false);
@@ -31,24 +27,25 @@ function ThemeContainer({
     <div
       className={`${styles.ThemeContainer} ${isSearched ? "" : styles.hidden}`}
       style={{
-        backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`, backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat',
+        backgroundImage: `url("https://i.ytimg.com/vi/${theme.video_id}/maxresdefault.jpg`,
+        backgroundSize: "cover",
+        backgroundPosition: "center center",
+        backgroundRepeat: "no-repeat",
       }}
       onClick={() => {
         setIsThemePreview((prev) => (!prev ? theme : !prev));
       }}
     >
       <div className={styles.contents}>
-        <h4>{theme?.name}</h4>
+        <h4>{theme.name}</h4>
         <div className={styles.counts}>
           <div>
             <i>
               <FontAwesomeIcon icon={faHeart} />
             </i>
             <GroupLikesCounter
-              initialMembers={(theme?.likes)}
-              groupId={theme?.id}
+              initialMembers={theme.likes}
+              groupId={theme.theme_id}
             />
           </div>
           <div>
@@ -56,29 +53,38 @@ function ThemeContainer({
               <FontAwesomeIcon icon={faPeopleGroup} />
             </i>
             <ThemeUsageCounter
-              initialVal={theme?.weekUsage}
-              themeId={theme?.id}
+              initialVal={theme.weekUsage}
+              themeId={theme.theme_id}
             />
           </div>
         </div>
         <div className={`${styles.description} hiddenScroll`}>
-          {parse(theme?.description)}
+          {parse(theme.description)}
         </div>
         <div className={`${styles.tags} hiddenScroll`}>
-          {(theme?.tags ? theme.tags.split(',') : []).map((tag, i) => (
-            <div className={styles.tag} key={i}>#{tag}</div>
+          {theme.tags.map((tag, i) => (
+            <div className={styles.tag} key={i}>
+              #{tag}
+            </div>
           ))}
         </div>
-        <div className={styles.buttons} onClick={(e) => { e.stopPropagation() }}>
-          <GroupUrlBtn text={`${config.server}/dashboard/themes?id=${theme?.id}`} />
+        <div
+          className={styles.buttons}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <GroupUrlBtn
+            text={`${config.server}/dashboard/themes?id=${theme.theme_id}`}
+          />
           <div>
-            <ThemeCategoryBtn
-              themeId={theme.id}
-            />
+            <ThemeCategoryBtn themeId={theme.theme_id} />
           </div>
           <div>
-            <LikeBtn liked={liked} id={theme?.id}
-              url={`${config.server}/themes/like/${theme?.id}`}
+            <LikeBtn
+              liked={liked}
+              id={theme.theme_id}
+              url={`${config.server}/themes/like/${theme.theme_id}`}
             />
           </div>
         </div>

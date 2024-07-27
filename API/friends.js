@@ -621,10 +621,8 @@ Router.get("/trends", async (req, res) => {
         ranking.users = JSON.parse(ranking.users);
       });
 
-      const trends = [];
-
-      await Promise.all(
-        dates.map(async (date) => {
+      const trends = await Promise.all(
+        dates.map(async (date, index) => {
           if (date.toSeconds() === now.toSeconds()) {
             const timezoneOffset = Math.floor(now.offset / 60).toString();
 
@@ -634,33 +632,37 @@ Router.get("/trends", async (req, res) => {
             );
 
             friends.map((friend, i) => {
-              friend.study_time = studyTotal[i] ? parseInt(studyTotal[i]) : 0;
+              friend.study_time = studyTotal[i] ? parseInt(studyTotal[i]) : 100;
             });
 
-            trends.push({ date: date.toSeconds(), friends });
-            return;
+            return {
+              date: date.toSeconds(),
+              friends: JSON.parse(JSON.stringify(friends)),
+            };
           }
 
           const dateRankings = rankings.find(
             (ranking) => ranking.date === date.toSeconds()
           );
-          if (!dateRankings)
-            return trends.push({
+
+          if (!dateRankings) {
+            return {
               date: date.toSeconds(),
               friends: friends.map((friend) => ({ ...friend, study_time: 0 })),
-            });
+            };
+          }
 
           friends.map((friend) => {
-            const studyTime = dateRankings.users.find(
+            const friendRanking = dateRankings.users.find(
               (ranking) => ranking.user_id === friend.user_id
             );
-            friend.study_time = studyTime ? studyTime : 0;
+            friend.study_time = friendRanking ? friendRanking.study_time : 0;
           });
 
-          trends.push({
+          return {
             date: date.toSeconds(),
-            friends,
-          });
+            friends: JSON.parse(JSON.stringify(friends)),
+          };
         })
       );
 

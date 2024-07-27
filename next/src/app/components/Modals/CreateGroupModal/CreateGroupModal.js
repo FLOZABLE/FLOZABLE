@@ -113,8 +113,8 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
           </div>
           <div className={styles.contentWrapper}>
             <TextEditor
-              setDescription={setDescription}
-              description={description}
+              setValue={setDescription}
+              value={description}
             />
           </div>
         </div>

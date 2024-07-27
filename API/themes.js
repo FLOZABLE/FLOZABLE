@@ -10,6 +10,7 @@ const {
   validateBoolean,
   validateInteger,
   validateURL,
+  validateArray,
 } = require("../Utils/validate");
 const { mainIo } = require("../sockets/mainIo");
 
@@ -18,17 +19,21 @@ Router.get("/", async (req, res) => {
     const connection = pool.promise();
     const [themes] = await connection.query(`
       SELECT 
-      theme_id, 
-      user_id, 
-      video_id, 
-      name, 
-      description, 
-      tags 
-      FROM themes
+      t.theme_id, 
+      t.video_id, 
+      t.name, 
+      t.description, 
+      t.tags,
+      GROUP_CONCAT(DISTINCT tl.user_id) AS likes
+      FROM themes t
+      LEFT JOIN theme_likes tl ON tl.theme_id = t.theme_id
+      GROUP BY t.theme_id
     `);
 
     themes.map((theme) => {
       theme.weekUsage = 0;
+      theme.tags = theme.tags === "" ? [] : theme.tags.split(",");
+      theme.likes = !theme.likes ? [] : theme.likes.split(",");
     });
     for (let i = 0; i < 7; i++) {
       const dayUsage = await redisClient.zmscore(
@@ -40,7 +45,7 @@ Router.get("/", async (req, res) => {
         if (!dayUsage[index]) return;
         theme.weekUsage += dayUsage[index];
       });
-    };
+    }
 
     return res.send({ success: true, themes });
   } catch (err) {
@@ -94,11 +99,11 @@ Router.get("/videoIds", async (req, res) => {
   });
 });
 
-Router.post("/create", async (req, res) => {
-  autoSignin(req, res, async () => {
+Router.put("/theme", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
     try {
-      const userId = req.session.user_id;
       const { name, tags, description, url } = req.body;
+      console.log(req.body);
 
       const isValidName = validateString(name, "theme name", 40);
 
@@ -116,16 +121,22 @@ Router.post("/create", async (req, res) => {
         return res.send({ success: false, reason: isValidDescription.reason });
       }
 
+      const isValidTags = validateArray(tags, "tags", 10);
+
+      if (!isValidTags.isValid) {
+        return res.send({ success: false, reason: isValidTags.reason });
+      }
+
       const isValidURL = validateURL(url);
 
       if (!isValidURL.isValid) {
         return res.send({ success: false, reason: isValidURL.reason });
       }
 
-      const videoId = new URLSearchParams(new URL(isValidURL.url).search).get(
+      const video_id = new URLSearchParams(new URL(isValidURL.url).search).get(
         "v"
       );
-      if (!videoId)
+      if (!video_id)
         return res.send({ success: false, reason: "Invalid Youtube link" });
       const connection = pool.promise();
       const theme_id = generateRandomId(10);
@@ -133,7 +144,7 @@ Router.post("/create", async (req, res) => {
         theme_id,
         name,
         description,
-        video_id: videoId,
+        video_id,
         tags: tags.join(","),
         user_id: userId,
       };
@@ -141,7 +152,7 @@ Router.post("/create", async (req, res) => {
       res.send({
         success: true,
         msg: "New theme uploaded!",
-        themeInfo: { ...themeInfo, likes: "" },
+        newTheme: { ...themeInfo, likes: [] },
       });
     } catch (error) {
       console.log(error);
@@ -171,29 +182,23 @@ Router.post("/like/:id", async (req, res) => {
     try {
       const connection = pool.promise();
       if (liked) {
-        /* const [[{ verified }]] = await connection.query(`SELECT verified FROM users WHERE user_id = ?`, [userId]);
-        if (!verified) {
-          //return res.send({ success: false, reason: "Please verify your email" });
-        } */
-        const [update] = await connection.query(
-          `UPDATE themes 
-          SET likes = CASE 
-            WHEN likes = '' THEN ?
-            ELSE CONCAT(likes, ',', ?) 
-            END WHERE id = ?`,
-          [userId, userId, themeId]
-        );
+        const newLike = {
+          user_id: userId,
+          theme_id: themeId,
+        };
+
+        await connection.query(`INSERT INTO theme_likes SET ?`, newLike);
+
         mainIo.emit(`liked:${themeId}`, userId);
       } else {
-        const [update] = await connection.query(
-          `UPDATE themes 
-          SET likes = 
-            TRIM(BOTH ',' FROM REPLACE(CONCAT(',', likes, ','), ',${userId},', ','))
-            WHERE id = ?`,
-          [themeId]
+        await connection.query(
+          `DELETE FROM theme_likes WHERE user_id = ? AND theme_id = ?`,
+          [userId, themeId]
         );
+
         mainIo.emit(`unliked:${themeId}`, userId);
       }
+
       res.send({ success: true });
     } catch (err) {
       console.error("Error performing database queries:", err);
@@ -202,7 +207,7 @@ Router.post("/like/:id", async (req, res) => {
   });
 });
 
-Router.post("/save", async (req, res) => {
+Router.post("/theme/save", async (req, res) => {
   autoSignin(req, res, async () => {
     try {
       const userId = req.session.user_id;
@@ -252,7 +257,7 @@ Router.post("/save", async (req, res) => {
   });
 });
 
-Router.post("/unsave", async (req, res) => {
+Router.post("/theme/unsave", async (req, res) => {
   autoSignin(req, res, async () => {
     try {
       const userId = req.session.user_id;

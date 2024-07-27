@@ -5,12 +5,9 @@ import "react-quill/dist/quill.snow.css";
 import styled from "@emotion/styled";
 import dynamic from "next/dynamic";
 
-const ReactQuill = dynamic(
-  () => import("react-quill"),
-  {
-    ssr: false,
-  }
-);
+const ReactQuill = dynamic(() => import("react-quill"), {
+  ssr: false,
+});
 
 const StyleWrapper = styled.div`
   .ql-container {
@@ -38,15 +35,11 @@ const StyleWrapper = styled.div`
     background-color: #555555;
   }
 `;
-function TextEditor({ setDescription, description }) {
-  const handleChange = (html) => {
-    setDescription(html);
-  };
-
+function TextEditor({ value, setValue }) {
   return (
     <div className={styles.TextEditor}>
       <StyleWrapper>
-        <ReactQuill theme="snow" onChange={handleChange} value={description} />
+        <ReactQuill theme="snow" onChange={setValue} value={value} />
       </StyleWrapper>
     </div>
   );
