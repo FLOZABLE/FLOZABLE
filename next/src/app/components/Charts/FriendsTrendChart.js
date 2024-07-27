@@ -18,6 +18,8 @@ function FriendsTrendChart() {
   const { data: getFriendsTrendsData, isLoading: getFriendsTrendsIsLoading } =
     useGetFriendsTrends();
 
+    console.log(getFriendsTrendsData)
+
   return (
     <>
       {getFriendsTrendsIsLoading || !getFriendsTrendsData?.success ? (

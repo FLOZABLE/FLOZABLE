@@ -27,7 +27,6 @@ function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
 
   const router = useRouter();
 
-  const [category, setCategory] = useState(-2);
   const [disp, setDisp] = useState("Save");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -132,7 +131,6 @@ function ThemeCategoryBtn({ themeId, bgColor = '#ffffffC0', color = '#000' }) {
               className={styles.option}
               key={i}
               onClick={() => {
-                setCategory(optionIndex);
                 setIsOpen(false);
                 save(optionIndex);
               }}

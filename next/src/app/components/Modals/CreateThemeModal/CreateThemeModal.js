@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useCallback } from "react";
 import styles from "./CreateThemeModal.module.css";
 import { faLink, faPen } from "@fortawesome/free-solid-svg-icons";
 import config from "@/app/utils/config";
@@ -8,46 +8,41 @@ import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContainerGen";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import DraggableModal from "../DraggableModal/DraggableModal";
+import { putThemesTheme } from "@/Api/themesApi";
 
 function CreateThemeModal({ isOpen, setIsOpen }) {
   const { setResponse } = useContext(ResponseContext);
   const { setThemes } = useContext(ThemesContext);
 
-  const [tags, setTags] = useState([]);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [url, setUrl] = useState("");
+  const [newTheme, setNewTheme] = useState({
+    tags: [],
+    name: "",
+    description: "",
+    url: "",
+  });
 
   const modalRef = useRef(null);
 
-  const submit = () => {
-    fetch(`${config.server}/themes/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        tags,
-        description,
-        url,
-      }),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-        if (data.success) {
-          setThemes((prev) => [...prev, data.themeInfo]);
+  const submit = useCallback(() => {
+    (async () => {
+      const data = await putThemesTheme(newTheme);
 
-          setTags([]);
-          setName("");
-          setDescription("");
-          setUrl("");
-          setIsOpen(false);
-        }
-      })
-      .catch((error) => console.error(error));
+      setResponse(data);
+      if (data.success) {
+        setIsOpen(false);
+        setNewTheme({
+          tags: [],
+          name: "",
+          description: "",
+          url: "",
+        });
+        setThemes((prev) => [...prev, data.newTheme]);
+      }
+    })();
+  }, [newTheme]);
+
+  const setValue = (value) => {
+    setNewTheme((prev) => ({ ...prev, ...value }));
   };
 
   return (
@@ -55,9 +50,10 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
       <div className={`${styles.CreateThemeModal} customScroll`}>
         <div className={styles.layer}>
           <CustomInput
-            input={name}
+            input={newTheme.name}
             handleInput={(e) => {
-              setName(e.target.value);
+              const name = e.target.value;
+              setValue({ name });
             }}
             icon={faPen}
             placeHolder={"Theme Name"}
@@ -66,15 +62,18 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
         </div>
         <div className={styles.layer}>
           <TextEditor
-            setDescription={setDescription}
-            description={description}
+            value={newTheme.description}
+            setValue={(description) => {
+              setValue({ description });
+            }}
           />
         </div>
         <div className={styles.layer}>
           <CustomInput
-            input={url}
+            input={newTheme.url}
             handleInput={(e) => {
-              setUrl(e.target.value);
+              const url = e.target.value;
+              setValue({ url });
             }}
             icon={faLink}
             placeHolder={"Youtube Link"}
@@ -84,9 +83,9 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
         <div className={styles.layer}>
           <TagContainerGen
             maxTags={10}
-            setTags={setTags}
+            setTags={newTheme.tags}
             handleCreatedTagsChange={(tags) => {
-              setTags(tags);
+              setValue({ tags });
             }}
           />
         </div>

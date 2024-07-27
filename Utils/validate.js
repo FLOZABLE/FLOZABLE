@@ -156,7 +156,7 @@ function validateTimeZone(timeZone) {
   }
 }
 
-function validateArray(value, type, maxLength, minLength = 1) {
+function validateArray(value, type, maxLength, minLength = 0) {
   if (!value) {
     return { isValid: false, reason: `Please provide ${type}` };
   }

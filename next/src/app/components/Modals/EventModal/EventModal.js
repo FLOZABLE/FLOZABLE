@@ -200,7 +200,9 @@ function EventModal({}) {
     const data = await patchPlan({ ...planModal });
     setResponse(data);
     if (data.success) {
-      const eventIndex = plans.findIndex((event) => event.plan_id === planModal.plan_id);
+      const eventIndex = plans.findIndex(
+        (event) => event.plan_id === planModal.plan_id
+      );
       if (eventIndex !== -1) {
         const updatedEvents = [...plans];
         updatedEvents[eventIndex].saved = true;
@@ -250,7 +252,9 @@ function EventModal({}) {
       setPlans((prev) => [...prev, planInfo]);
     } else {
       setPlans((prev) => {
-        const foundIndex = prev.findIndex((val) => val.plan_id === planModal.plan_id);
+        const foundIndex = prev.findIndex(
+          (val) => val.plan_id === planModal.plan_id
+        );
         const subject = subjects.find(
           (subject) => subject.subject_id === planModal.subject_id
         );
@@ -286,7 +290,9 @@ function EventModal({}) {
       }));
       if (!planModal.saved) {
         setPlans((prev) => {
-          const foundIndex = prev.findIndex((val) => val.plan_id === planModal.plan_id);
+          const foundIndex = prev.findIndex(
+            (val) => val.plan_id === planModal.plan_id
+          );
           if (foundIndex !== -1) {
             return [
               ...prev.slice(0, foundIndex),
@@ -387,7 +393,7 @@ function EventModal({}) {
           hoverEl={"Add Description"}
         >
           <TextEditor
-            setDescription={(description) => {
+            setValue={(description) => {
               if (!planModal.editable) {
                 setResponse({
                   success: false,
@@ -397,7 +403,7 @@ function EventModal({}) {
                 setPlanModal((prev) => ({ ...prev, description }));
               }
             }}
-            description={planModal.description}
+            value={planModal.description}
           />
         </EventModalLayer>
         <EventModalLayer

@@ -32,11 +32,10 @@ function ThemesContainer({
       {
         sortedThemes.map((theme, i) => {
           const { description, name } = theme;
-          const tagsArr = theme.tags === "" ? [] : theme.tags.split(",");
           const isSearched =
             ((description + name + tags).includes(searchQuery) ||
               searchQuery === "") &&
-            (tagsArr.some((element) => tags.includes(element)) || !tags.length);
+            (theme.tags.some((element) => tags.includes(element)) || !tags.length);
 
           return (
             <ThemeContainer

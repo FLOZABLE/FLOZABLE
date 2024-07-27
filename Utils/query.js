@@ -268,6 +268,19 @@ async function createThemesTable() {
   `);
 }
 
+async function createThemeLikesTable() {
+  const connection = pool.promise();
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS theme_likes (
+      theme_id VARCHAR(10) NOT NULL,
+      user_id VARCHAR(10) NOT NULL,
+      PRIMARY KEY (user_id, theme_id),
+      FOREIGN KEY (user_id) REFERENCES users(user_id),
+      FOREIGN KEY (theme_id) REFERENCES themes(theme_id)
+    );
+  `);
+}
+
 async function createUserThemesTable() {
   const connection = pool.promise();
   await connection.query(`
@@ -310,6 +323,7 @@ module.exports = {
   createRankingDetailsTable,
   createDevicesTable,
   createThemesTable,
+  createThemeLikesTable,
   createUserThemesTable,
   createActivitiesTable,
 };

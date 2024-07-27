@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./RankedTheme.module.css";
 import { faHeart, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from "react";
 import { UserInfoContext } from "@/app/utils/Contexts";
 import GroupLikesCounter from "@/app/components/Groups/GroupLikesCounter/GroupLikesCounter";
 import ThemeUsageCounter from "../ThemeUsageCounter/ThemeUsageCounter";
@@ -11,10 +11,7 @@ import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
 import config from "@/app/utils/config";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 
-function RankedTheme({   
-  theme,
-  setIsThemePreview
-}) {
+function RankedTheme({ theme, setIsThemePreview }) {
   const { userInfo } = useContext(UserInfoContext);
 
   const [liked, setLiked] = useState(false);
@@ -27,11 +24,13 @@ function RankedTheme({
   }, [theme, userInfo]);
 
   return (
-    <div className={styles.RankedTheme}
+    <div
+      className={styles.RankedTheme}
       style={{
-        backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`, backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat',
+        backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`,
+        backgroundSize: "cover",
+        backgroundPosition: "center center",
+        backgroundRepeat: "no-repeat",
       }}
       onClick={() => {
         setIsThemePreview((prev) => (!prev ? theme : !prev));
@@ -45,7 +44,7 @@ function RankedTheme({
               <FontAwesomeIcon icon={faHeart} />
             </i>
             <GroupLikesCounter
-              initialMembers={(theme?.likes)}
+              initialMembers={theme?.likes}
               groupId={theme?.id}
             />
           </div>
@@ -63,26 +62,30 @@ function RankedTheme({
           {parse(theme?.description)}
         </div>
         <div className={`${styles.tags} hiddenScroll`}>
-          {(theme?.tags ? theme.tags.split(',') : []).map((tag, i) => (
-            <div className={styles.tag} key={i}>#{tag}</div>
+          {theme?.tags.map((tag, i) => (
+            <div className={styles.tag} key={i}>
+              #{tag}
+            </div>
           ))}
         </div>
         <div className={styles.buttons}>
-          <GroupUrlBtn text={`${config.server}/dashboard/themes?id=${theme?.id}`} />
+          <GroupUrlBtn
+            text={`${config.server}/dashboard/themes?id=${theme?.id}`}
+          />
           <div>
-            <ThemeCategoryBtn
-              themeId={theme?.id}
-            />
+            <ThemeCategoryBtn themeId={theme?.id} />
           </div>
           <div>
-            <LikeBtn liked={liked} id={theme?.id}
+            <LikeBtn
+              liked={liked}
+              id={theme?.id}
               url={`${config.server}/themes/like/${theme?.id}`}
             />
           </div>
         </div>
       </div>
     </div>
-  )
-};
+  );
+}
 
 export default RankedTheme;
