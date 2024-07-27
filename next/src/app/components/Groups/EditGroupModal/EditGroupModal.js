@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState, useRef, useContext } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+} from "react";
 import Draggable from "react-draggable";
 import styles from "./EditGroupModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,9 +29,9 @@ import { GroupsContext, ResponseContext } from "@/app/utils/Contexts";
 const serverOrigin = process.env.NEXT_PUBLIC_SERVER;
 
 function EditGroupModal({ isOpen, setIsOpen }) {
-  const {myGroups, setMyGroups} = useContext(GroupsContext);
-  const {setResponse} = useContext(ResponseContext);
-  
+  const { myGroups, setMyGroups } = useContext(GroupsContext);
+  const { setResponse } = useContext(ResponseContext);
+
   const [name, setName] = useState("");
   const [submit, setSubmit] = useState(false);
   const [maxMembers, setMaxMembers] = useState(10);
@@ -77,20 +83,20 @@ function EditGroupModal({ isOpen, setIsOpen }) {
           if (data.success) {
             let tempGroups = [...myGroups];
             tempGroups = tempGroups.map((group) => {
-              if (group.group_id === isOpen.group_id){
-                return {...group, 
-                  name: name, 
-                  max_members: maxMembers, 
-                  color: color, 
-                  tags: JSON.stringify(tags), 
+              if (group.group_id === isOpen.group_id) {
+                return {
+                  ...group,
+                  name: name,
+                  max_members: maxMembers,
+                  color: color,
+                  tags: JSON.stringify(tags),
                   description: description,
                   visibility: visibility,
                   password: password,
-                  goal_hr: goalHr
-                }
-              }
-              else{
-                return {...group}
+                  goal_hr: goalHr,
+                };
+              } else {
+                return { ...group };
               }
             });
 
@@ -106,16 +112,25 @@ function EditGroupModal({ isOpen, setIsOpen }) {
             setGoalHr(3);
 
             setMyGroups(tempGroups);
-          };
+          }
         })
         .catch((error) => console.error(error));
     }
-  }, [submit, groupId,]);
+  }, [submit, groupId]);
 
   useEffect(() => {
     if (!isOpen) return;
 
-    const { name, max_members, color, tags, explanation, visibility, goal_hr, group_id } = isOpen;
+    const {
+      name,
+      max_members,
+      color,
+      tags,
+      explanation,
+      visibility,
+      goal_hr,
+      group_id,
+    } = isOpen;
 
     setGroupId(group_id);
     setName(name);
@@ -129,8 +144,10 @@ function EditGroupModal({ isOpen, setIsOpen }) {
 
   return (
     <Draggable nodeRef={modalRef} handle=".header">
-      <div className={`${styles.EditGroupModal} modal ${isOpen ? "open" : ""}`}
-        ref={modalRef}>
+      <div
+        className={`${styles.EditGroupModal} modal ${isOpen ? "open" : ""}`}
+        ref={modalRef}
+      >
         <div className={`${styles.header} header`}>
           <i
             className={styles.closeBtn}
@@ -162,10 +179,7 @@ function EditGroupModal({ isOpen, setIsOpen }) {
               </div>
             </div>
             <div className={styles.contentWrapper}>
-              <TextEditor
-                setDescription={setDescription}
-                description={description}
-              />
+              <TextEditor value={description} setValue={setDescription} />
             </div>
           </div>
           <div className={styles.wrapper}>
@@ -232,13 +246,19 @@ function EditGroupModal({ isOpen, setIsOpen }) {
                 id={1}
               />
               <div
-                className={`${styles.inputArea} ${visibility ? "" : styles.open}`}
+                className={`${styles.inputArea} ${
+                  visibility ? "" : styles.open
+                }`}
               >
                 <CustomInput
                   input={password}
                   handleInput={handlePwInput}
                   icon={null}
-                  placeHolder={isOpen.visibility === 0 ? "Change Password" : "Enter Password"}
+                  placeHolder={
+                    isOpen.visibility === 0
+                      ? "Change Password"
+                      : "Enter Password"
+                  }
                   type={"text"}
                 />
               </div>
@@ -266,11 +286,7 @@ function EditGroupModal({ isOpen, setIsOpen }) {
             <div className={styles.contentWrapper}></div>
           </div>
           <div className={styles.submit}>
-            <BlobBtn
-              onClick={setSubmit}
-              color1={"#fff"}
-              color2={"var(--pink)"}
-            >
+            <BlobBtn onClick={setSubmit} color1={"#fff"} color2={"var(--pink)"}>
               SUBMIT
             </BlobBtn>
           </div>

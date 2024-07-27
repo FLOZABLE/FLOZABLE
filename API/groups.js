@@ -566,23 +566,16 @@ Router.post("/like/:id", async (req, res) => {
           group_id: groupId,
         };
 
-        const [{ changedRows }] = await connection.query(
-          `INSERT INTO group_likes SET ?`,
-          newLike
-        );
+        await connection.query(`INSERT INTO group_likes SET ?`, newLike);
 
-        if (changedRows) {
-          mainIo.emit(`liked:${groupId}`, userId);
-        }
+        mainIo.emit(`liked:${groupId}`, userId);
       } else {
-        const [{ changedRows }] = await connection.query(
+        await connection.query(
           `DELETE FROM group_likes WHERE user_id = ? AND group_id = ?`,
           [userId, groupId]
         );
 
-        if (changedRows) {
-          mainIo.emit(`liked:${groupId}`, userId);
-        }
+        mainIo.emit(`unliked:${groupId}`, userId);
       }
 
       return res.send({ success: true });
