@@ -2,17 +2,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./RankedTheme.module.css";
 import { faHeart, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
-import React, { useContext, useEffect, useState } from "react";
-import { UserInfoContext } from "@/app/utils/Contexts";
+import React, { useEffect, useState } from "react";
 import GroupLikesCounter from "@/app/components/Groups/GroupLikesCounter/GroupLikesCounter";
 import ThemeUsageCounter from "../ThemeUsageCounter/ThemeUsageCounter";
 import ThemeCategoryBtn from "@/app/components/Buttons/ThemeCategoryBtn/ThemeCategoryBtn";
 import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
 import config from "@/app/utils/config";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function RankedTheme({ theme, setIsThemePreview }) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { userInfo } = useAccount();
 
   const [liked, setLiked] = useState(false);
 

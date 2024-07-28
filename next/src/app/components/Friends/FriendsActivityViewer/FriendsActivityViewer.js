@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./FriendsActivityViewer.module.css";
 import config from "@/app/utils/config";
 import UserSubjectViewer from "@/app/components/Users/UserSubjectViewer/UserSubjectViewer";
 import UserGroupViewer from "@/app/components/Users/UserGroupViewer/UserGroupViewer";
-import { UserInfoContext } from "@/app/utils/Contexts";
 import RecommendedFriendsViewer from "../RecommendedFriendsViewer/RecommendedFriendsViewer";
 import { Wave } from "@/app/utils/Svg";
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
 import DmBtn from "../../Buttons/DmBtn/DmBtn";
+import { useAccount } from "@/Hooks/accountHooks";
 
 //mode 0 is for friends page's component, mode 1 is for main page's component
 function FriendsActivityViewer() {
-  const { userInfo } = useContext(UserInfoContext);
+  const { userInfo } = useAccount();
 
   const [friends, setFriends] = useState([]);
 

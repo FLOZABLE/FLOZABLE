@@ -208,6 +208,48 @@ Router.post("/like/:id", async (req, res) => {
 });
 
 Router.post("/theme/save", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { themeId, category } = req.body;
+
+      const isValidCategory = validateInteger(category, "category", 10, -1);
+
+      if (!isValidCategory.isValid) {
+        return res.send({ success: false, reason: isValidCategory.reason });
+      }
+
+      const isValidThemeId = validateStrictString(themeId, "theme id");
+
+      if (!isValidThemeId.isValid) {
+        return res.send({ success: false, reason: isValidThemeId.reason });
+      }
+    } catch (error) {
+      console.log(error);
+      res.send({ success: false, reason: "An Error Occured" });
+    }
+  });
+});
+
+Router.post("/theme/unsave", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { themeId } = req.body;
+
+      const isValidThemeId = validateStrictString(themeId, "theme id");
+
+      if (!isValidThemeId.isValid) {
+        return res.send({ success: false, reason: isValidThemeId.reason });
+      }
+
+      const connection = pool.promise();
+    } catch (error) {
+      console.log(error);
+      res.send({ success: false, reason: "An Error Occured" });
+    }
+  });
+});
+
+Router.post("/save", async (req, res) => {
   autoSignin(req, res, async () => {
     try {
       const userId = req.session.user_id;
@@ -257,7 +299,7 @@ Router.post("/theme/save", async (req, res) => {
   });
 });
 
-Router.post("/theme/unsave", async (req, res) => {
+Router.post("/unsave", async (req, res) => {
   autoSignin(req, res, async () => {
     try {
       const userId = req.session.user_id;

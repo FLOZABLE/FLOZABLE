@@ -2,7 +2,7 @@ import styles from "./MyGroupContainer.module.css";
 import React, { useContext, useEffect, useState } from "react";
 import config from "@/app/utils/config";
 import Link from "next/link";
-import { CallOptionsContext, GroupsContext, ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { CallOptionsContext, GroupsContext, ModalsContext } from "@/app/utils/Contexts";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 import {
   IconMessage,
@@ -15,6 +15,7 @@ import MembersContainer from "../MembersContainer/MembersContainer";
 import { mediaSocket } from "@/app/utils/mediaSocket";
 import { Device } from "mediasoup-client";
 import { socket } from "@/app/utils/socket";
+import { useAccount } from "@/Hooks/accountHooks";
 
 const videoParams = {
   encodings: [
@@ -54,7 +55,7 @@ function MyGroupContainer({
   const { isCam, isMic } = useContext(CallOptionsContext);
   const { setChatModal } = useContext(ModalsContext);
   const { setMyGroups } = useContext(GroupsContext);
-  const { userInfo } = useContext(UserInfoContext);
+  const { userInfo } = useAccount();
 
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
