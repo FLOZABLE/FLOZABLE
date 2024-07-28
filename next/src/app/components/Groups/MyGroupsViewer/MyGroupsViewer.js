@@ -6,10 +6,11 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import styles from "./MyGroupsViewer.module.css";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
-import { CallOptionsContext, GroupsContext, ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
+import { CallOptionsContext, GroupsContext, ResponseContext } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
 import { mediaSocket } from "@/app/utils/mediaSocket";
 import config from "@/app/utils/config";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function MyGroupsViewer({
   mode,
@@ -18,7 +19,7 @@ function MyGroupsViewer({
   setRightClickedMember
 }) {
   const { myGroups, setMyGroups } = useContext(GroupsContext);
-  const { userInfo } = useContext(UserInfoContext);
+  const { userInfo } = useAccount();
   const { setResponse } = useContext(ResponseContext);
 
   const { setIsCam, setIsMic } = useContext(CallOptionsContext);

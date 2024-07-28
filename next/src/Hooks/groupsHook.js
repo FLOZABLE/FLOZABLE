@@ -1,12 +1,12 @@
 import { getGroups } from "@/Api/groupsApi";
 import { useQuery } from "@tanstack/react-query";
 
-function useGroups() {
+function useGetGroups() {
   return useQuery({
-    queryKey: [`useGroups`],
+    queryKey: [`getGroups`],
     queryFn: getGroups,
     staleTime: 1000 * 60
   });
 }
 
-export { useGroups };
+export { useGetGroups };

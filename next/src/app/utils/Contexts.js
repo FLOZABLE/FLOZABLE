@@ -11,7 +11,7 @@ import { DEFAULT_PLAN } from "./Constant";
 import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import { usePlan } from "@/Hooks/planHooks";
-import { useGroups } from "@/Hooks/groupsHook";
+import { useGetGroups, useGroups } from "@/Hooks/groupsHook";
 import { useGetThemes } from "@/Hooks/themesHooks";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -182,7 +182,7 @@ function GroupsProvider({ children }) {
   const [myGroups, setMyGroups] = useState([]);
   const [otherGroups, setOtherGroups] = useState([]);
 
-  const { data: useGroupsData, refetch: refetchUseGroupsData } = useGroups();
+  const { data: useGroupsData, refetch: refetchUseGroupsData } = useGetGroups();
 
   useEffect(() => {
     if (!groups.length) return;
@@ -397,7 +397,6 @@ function WorkersProvider({ children }) {
 export {
   AppProvider,
   AuthContext,
-  UserInfoContext,
   NotificationsContext,
   SubjectsContext,
   PlansContext,

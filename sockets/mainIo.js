@@ -158,7 +158,7 @@ mainIo.on("connection", (socket) => {
         FROM \`groups\` g
         LEFT JOIN group_members m ON g.group_id = m.group_id
         LEFT JOIN group_likes l ON g.group_id = l.group_id
-        WHERE group_id = ?
+        WHERE g.group_id = ?
         GROUP BY g.group_id
         `,
         [groupId]

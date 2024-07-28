@@ -4,11 +4,12 @@ import React, { useState, useEffect, useContext } from "react";
 import styles from "./WelcomeModal.module.css";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import Confetti from "react-confetti";
-import { UserInfoContext, TutorialsContext } from "@/app/utils/Contexts";
+import { TutorialsContext } from "@/app/utils/Contexts";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function WelcomeModal({ }) {
   const [isModal, setIsModal] = useState(false);
-  const { userInfo } = useContext(UserInfoContext);
+  const { userInfo } = useAccount();
   const [confettiEl, setConfettiEl] = useState(null);
   const { setTutorial } = useContext(TutorialsContext);
 

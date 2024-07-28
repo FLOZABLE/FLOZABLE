@@ -3,9 +3,8 @@ import {
   getFriendsSearch,
   getFriendsTrends,
 } from "@/Api/friendsApi";
-import { UserInfoContext } from "@/app/utils/Contexts";
 import { useQuery } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useAccount } from "./accountHooks";
 
 function useGetFriendsSearch(searchQuery) {
   return useQuery({
@@ -17,7 +16,7 @@ function useGetFriendsSearch(searchQuery) {
 }
 
 function useGetFriendsTrends() {
-  const { userInfo } = useContext(UserInfoContext);
+  const { userInfo } = useAccount();
 
   return useQuery({
     queryKey: [`getFriendsTrends`],
@@ -27,11 +26,14 @@ function useGetFriendsTrends() {
   });
 }
 
-function useGetFriendsRecommended() {
+function useFriendsRecommended(refresh) {
+  const { userInfo } = useAccount();
+  
   return useQuery({
     queryKey: [`getFriendsRecommended`],
     queryFn: getFriendsRecommended,
+    enabled: !!refresh || !!userInfo,
   });
 }
 
-export { useGetFriendsSearch, useGetFriendsTrends, useGetFriendsRecommended };
+export { useGetFriendsSearch, useGetFriendsTrends, useFriendsRecommended };

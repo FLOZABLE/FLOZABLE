@@ -6,15 +6,15 @@ import { Google } from "@/app/utils/Svg";
 import {
   ResponseContext,
   TutorialsContext,
-  UserInfoContext,
   ModalsContext,
 } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function SigninWithGoogleBtn({ infoText }) {
   const { setResponse } = useContext(ResponseContext);
   const { setTutorial } = useContext(TutorialsContext);
-  const { refetchUseAccountData } = useContext(UserInfoContext);
+  const { useAccountRefetch } = useAccount();
   const { setIsAccountModal } = useContext(ModalsContext);
 
   const router = useRouter();
@@ -44,7 +44,7 @@ function SigninWithGoogleBtn({ infoText }) {
             }
             setTimeout(() => {
               setIsAccountModal(false);
-              refetchUseAccountData();
+              useAccountRefetch();
             }, 100);
           }
         });

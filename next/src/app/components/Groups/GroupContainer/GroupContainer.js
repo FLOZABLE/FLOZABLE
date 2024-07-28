@@ -9,16 +9,17 @@ import {
   faStopwatch,
 } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
-import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { ModalsContext } from "@/app/utils/Contexts";
 import config from "@/app/utils/config";
 import GroupMemCounter from "../GroupMemCounter/GroupMemCounter";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
 import Link from "next/link";
 import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function GroupContainer({ groupInfo, rankings = [], isSearched = true }) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { userInfo } = useAccount();
   const { setJoinGroupModal } = useContext(ModalsContext);
 
   const [members, setMembers] = useState([]);

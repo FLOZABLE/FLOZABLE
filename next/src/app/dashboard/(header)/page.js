@@ -8,7 +8,7 @@ import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendC
 import FriendsActivityViewer from "@/app/components/Friends/FriendsActivityViewer/FriendsActivityViewer";
 import FriendsTrendChart from "@/app/components/Charts/FriendsTrendChart";
 import { useContext } from "react";
-import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { ModalsContext } from "@/app/utils/Contexts";
 import StudyInfo from "@/app/components/Others/StudyInfo/StudyInfo";
 import FriendsBar from "@/app/components/Friends/FriendsBar/FriendsBar";
 

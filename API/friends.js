@@ -386,55 +386,7 @@ Router.get("/recommended", async (req, res) => {
 Router.get("/status", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const userInfo = await userCache(userId);
-      if (!userInfo)
-        return res.send({ success: false, reason: `no such user` });
-      const friendsInfo = [];
-
-      const today = DateTime.now().setZone(userInfo.timezone);
-      const timezoneOffset = Math.floor(today.offset / 60).toString();
-
-      await Promise.all(
-        userInfo.friends.map(async (friend) => {
-          friend = await userCache(friend);
-          if (!friend) return;
-          const totalTime = await redisClient.zscore(
-            `users:${timezoneOffset}:dayTotal`,
-            friend.user_id
-          );
-          friend.totalTime = totalTime === null ? 0 : totalTime;
-          const activeSubject = await activeSubjectCache(friend.user_id);
-          if (activeSubject) {
-            const subject = await subjectCache(
-              friend.user_id,
-              activeSubject.id
-            );
-            if (subject) {
-              friend.activeSubject = {
-                ...subject,
-                total: activeSubject.total,
-                time: activeSubject.time,
-              };
-            } else {
-              friend.activeSubject = activeSubject;
-            }
-          }
-
-          if (friend.ActiveGroup) {
-            const ActiveGroup = JSON.parse(friend.ActiveGroup);
-            const connection = pool.promise();
-            const [[groupInfo]] = await connection.query(
-              "SELECT group_id, name, leader, visibility, description, date, members, max_members, tags, color, goal_hr, average_hr, likes FROM `groups` WHERE group_id = ?",
-              [ActiveGroup.id]
-            );
-            if (groupInfo) {
-              friend.ActiveGroup = { ...groupInfo, time: ActiveGroup.time };
-            }
-          }
-          friendsInfo.push(friend);
-        })
-      );
-      res.send({ success: true, friendsInfo });
+      return res.send({ success: false });
     } catch (error) {
       console.log(error);
       res.send({ success: false, reason: "An Error Occured" });
@@ -632,7 +584,7 @@ Router.get("/trends", async (req, res) => {
             );
 
             friends.map((friend, i) => {
-              friend.study_time = studyTotal[i] ? parseInt(studyTotal[i]) : 100;
+              friend.study_time = studyTotal[i] ? parseInt(studyTotal[i]) : 0;
             });
 
             return {

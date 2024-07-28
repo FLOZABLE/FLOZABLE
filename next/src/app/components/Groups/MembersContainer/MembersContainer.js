@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import styles from "./MembersContainer.module.css";
-import { UserInfoContext } from "@/app/utils/Contexts";
 import MyEl from "../MyEl/MyEl";
 import MemberEl from "../MemberEl/MemberEl";
 import { useContextMenu } from "react-contexify";
+import { useAccount } from "@/Hooks/accountHooks";
+import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
 //window.localStorage.setItem('debug', 'mediasoup-client:WARN* mediasoup-client:ERROR*');
 
@@ -14,9 +15,11 @@ function MembersContainer({
   device,
   videoStream,
   group,
-  setRightClickedMember
+  setRightClickedMember,
 }) {
-  const {userInfo} = useContext(UserInfoContext);
+  const { userInfo } = useAccount();
+
+  if (!userInfo) return <CircularLoading />;
 
   const { show } = useContextMenu({
     id: "ffffff",
@@ -26,7 +29,7 @@ function MembersContainer({
     if (group.leader !== userInfo.user_id) return;
     setRightClickedMember({ ...memberInfo, groupId: group.group_id });
     show({
-      event
+      event,
     });
   }
 
@@ -44,7 +47,12 @@ function MembersContainer({
           );
         } else {
           return (
-            <div onContextMenu={(event) => { handleContextMenu(event, member) }} key={i}>
+            <div
+              onContextMenu={(event) => {
+                handleContextMenu(event, member);
+              }}
+              key={i}
+            >
               <MemberEl
                 memberInfo={member}
                 setStudyingMembers={setStudyingMembers}

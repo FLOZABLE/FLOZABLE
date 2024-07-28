@@ -1,10 +1,9 @@
 import { getExtensionUsage } from "@/Api/extensionApi";
-import { UserInfoContext } from "@/app/utils/Contexts";
 import { useQuery } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useAccount } from "./accountHooks";
 
 function useExtensionUsage(date, mode) {
-  const userInfo = useContext(UserInfoContext);
+  const { userInfo } = useAccount();
   return useQuery({
     queryKey: [`extensionUsage`, date, mode],
     queryFn: () => getExtensionUsage(date, mode),

@@ -19,10 +19,11 @@ import ExtensionSetting from "@/app/components/Account/ExtensionSetting/Extensio
 import config from "@/app/utils/config";
 import SubjectsManager from "@/app/components/Account/SubjectsManager/SubjectsManager";
 import { GoogleCalendar, SpotifyLogo, YouTubeIcon } from "@/app/utils/Svg";
-import { ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
+import { ResponseContext } from "@/app/utils/Contexts";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function Account() {
-  const { userInfo } = useContext(UserInfoContext);
+  const { userInfo } = useAccount();
   const { setResponse } = useContext(ResponseContext);
 
   const [imageSrc, setImageSrc] = useState(null);
