@@ -6,20 +6,19 @@ import { ResponsiveRadialBar } from "@nivo/radial-bar";
 import { Alert } from "@/app/utils/Svg";
 import {
   PlansContext,
-  SubjectsContext,
   TutorialsContext,
 } from "@/app/utils/Contexts";
-import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { DateTime } from "luxon";
 import { subjectIcons } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
   const { plans, setPlanModal } = useContext(PlansContext);
 
   const [planSeries, setPlanSeries] = useState([]);

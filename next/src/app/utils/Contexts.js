@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DEFAULT_PLAN } from "./Constant";
 import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
-import { usePlan } from "@/Hooks/planHooks";
+import { usePlan } from "@/Hooks/plansHooks";
 import { useGetGroups, useGroups } from "@/Hooks/groupsHook";
 import { useGetThemes } from "@/Hooks/themesHooks";
 

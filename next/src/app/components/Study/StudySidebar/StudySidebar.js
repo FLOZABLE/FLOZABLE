@@ -1,8 +1,4 @@
-import React, {
-  useContext,
-  useEffect,
-  useRef,
-} from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import styles from "./StudySidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,11 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { socket } from "@/app/utils/socket";
-import {
-  CallOptionsContext,
-  SubjectsContext,
-  TutorialsContext,
-} from "@/app/utils/Contexts";
+import { CallOptionsContext, TutorialsContext } from "@/app/utils/Contexts";
 import {
   IconCameraVideoFill,
   IconCameraVideoOffFill,
@@ -32,6 +24,7 @@ import {
   IconMicFill,
   IconMicMuteFill,
 } from "@/app/utils/Svg";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function StudySidebar({
   isPlannerModal,
@@ -53,7 +46,7 @@ function StudySidebar({
 }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
-  const { refetchSubjectsData } = useContext(SubjectsContext);
+  const { useSubjectsRefetch } = useSubjects();
   const { isMic, setIsMic, isCam, setIsCam, isHeadphone, setIsHeadphone } =
     useContext(CallOptionsContext);
 
@@ -88,7 +81,7 @@ function StudySidebar({
             setTutorial(11);
           }
           setTimeout(() => {
-            refetchSubjectsData();
+            useSubjectsRefetch();
           }, 100);
         }}
         ref={toHomeBtnRef}
