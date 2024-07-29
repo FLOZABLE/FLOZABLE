@@ -12,7 +12,6 @@ import { faBook } from "@fortawesome/free-solid-svg-icons";
 import {
   ModalsContext,
   ResponseContext,
-  SubjectsContext,
   TutorialsContext,
   WorkersContext,
 } from "@/app/utils/Contexts";
@@ -25,9 +24,11 @@ import config from "@/app/utils/config";
 import { sortNewSubject } from "@/app/utils/timelineSorting";
 import { socket } from "@/app/utils/socket";
 import DraggableModal from "../DraggableModal/DraggableModal";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function AddSubjectModal({}) {
-  const { subjects, setSubjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
+
   const { setResponse } = useContext(ResponseContext);
   const { isAddSubjectModal, setIsAddSubjectModal } = useContext(ModalsContext);
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =

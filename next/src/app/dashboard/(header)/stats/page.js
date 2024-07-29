@@ -12,7 +12,7 @@ import {
   IconMonitor,
   IconStatsChart,
 } from "@/app/utils/Svg";
-import { SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
+import { TutorialsContext } from "@/app/utils/Contexts";
 import { focusCalculator, secondConverter } from "@/app/utils/Tool";
 import { DateTime } from "luxon";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
@@ -21,10 +21,12 @@ import WebsiteUsageChart from "@/app/components/Charts/WebsiteUsageChart/Website
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import CircularLoading from "@/app/components/LoadingScreen/CircularLoading/CircularLoading";
 import { useAccount } from "@/Hooks/accountHooks";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function Stats({}) {
   const { userInfo } = useAccount();
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
+
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
 

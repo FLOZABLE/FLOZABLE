@@ -1,6 +1,5 @@
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import styles from "./StudyInfo.module.css";
-import { SubjectsContext } from "@/app/utils/Contexts";
 import {
   HeaderBook,
   HeaderFocus,
@@ -14,9 +13,10 @@ import {
   todayTotalCalculator,
 } from "@/app/utils/Tool";
 import { useContext, useEffect, useState } from "react";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 export default function StudyInfo() {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
 
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [appUsage, setAppUsage] = useState("0 m");

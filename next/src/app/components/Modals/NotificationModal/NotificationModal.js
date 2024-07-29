@@ -13,7 +13,7 @@ import {
 } from "@/app/utils/Contexts";
 import NotificationContainer from "@/app/components/Notifications/NotificationContainer/NotificationContainer";
 import config from "@/app/utils/config";
-import { postPlanShareRespond } from "@/Api/planApi";
+import { postPlanShareRespond } from "@/Api/plansApi";
 
 function NotificationModal({}) {
   const { isNotificationModal, setIsNotificationModal } =
