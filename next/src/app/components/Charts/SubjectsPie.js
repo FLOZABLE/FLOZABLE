@@ -1,15 +1,15 @@
-import { SubjectsContext } from "@/app/utils/Contexts";
 import { updateTimeUsagePie } from "@/app/utils/StatTools";
 import { DateTime } from "luxon";
 import Link from "next/link";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PieCustomTooltip, pieCustomLabel } from "./Charts";
 import { coldColorsList } from "@/app/utils/Constant";
 import { secondConverter } from "@/app/utils/Tool";
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function SubjectsPie({ viewDate, statsViewer }) {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
 
   const [subjectsPie, setSubjectsPie] = useState([]);
 
@@ -19,18 +19,6 @@ function SubjectsPie({ viewDate, statsViewer }) {
     const viewDateTime = DateTime.fromJSDate(viewDate);
     //subject time usage pie chart
     const subjectsPie = updateTimeUsagePie(subjects, viewDateTime, statsViewer);
-    /* setTimeout(() => {
-      setSubjectsPie(subjectsPie.reduce((accumulator, data, i) => {
-        const value = data.value;
-        if (value) {
-          const name = data.info.name;
-          const fill = coldColorsList[accumulator.length % (coldColorsList.length)];
-          const labelVal = secondConverter(value);
-          accumulator.push({ value, name, fill, labelVal: `${labelVal.value} ${labelVal.type}` });
-        }
-        return accumulator;
-      }, []));
-    }, 310); */
     setSubjectsPie(
       subjectsPie.reduce((accumulator, data, i) => {
         const value = data.value;
@@ -71,11 +59,13 @@ function SubjectsPie({ viewDate, statsViewer }) {
           </PieChart>
         </ResponsiveContainer>
       ) : (
-        <div style={{
-          alignSelf: 'center',
-          fontSize: '2rem',
-          textDecoration: 'underline'
-        }}>
+        <div
+          style={{
+            alignSelf: "center",
+            fontSize: "2rem",
+            textDecoration: "underline",
+          }}
+        >
           <Link href="/dashboard/study">
             <h3>Study to see stats!</h3>
           </Link>

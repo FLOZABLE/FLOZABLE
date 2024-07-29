@@ -10,16 +10,16 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import React, { useContext, useEffect, useState } from "react";
-import { SubjectsContext } from "@/app/utils/Contexts";
+import React, { useEffect, useState } from "react";
 import { updateSubjectsTrendChart } from "@/app/utils/StatTools";
 import { colorsList } from "@/app/utils/Constant";
 import { secondConverter } from "@/app/utils/Tool";
 import EditSubjectBtn from "../../Buttons/EditSubjectBtn/EditSubjectBtn";
 import styles from "./StudyTrendChart.module.css";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function StudyTrendChart({ viewDate, statsViewer = "day", subjectsProp }) {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
 
   const [subjectsTrend, setSubjectsTrend] = useState([]);
   const [filteredTrends, setFilteredTrends] = useState([]);
@@ -65,7 +65,7 @@ function StudyTrendChart({ viewDate, statsViewer = "day", subjectsProp }) {
       setSubjectsTrend(subjectsTrend);
     }
   }, [subjects, viewDate, statsViewer, subjectsProp]);
-  
+
   return (
     <>
       <div className={styles.editSubjectWrapper}>

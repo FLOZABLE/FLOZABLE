@@ -18,7 +18,6 @@ import {
   ModalsContext,
   PlansContext,
   ResponseContext,
-  SubjectsContext,
   TutorialsContext,
 } from "@/app/utils/Contexts";
 import config from "@/app/utils/config";
@@ -31,9 +30,8 @@ import { generateRandomId, requestNotification } from "@/app/utils/Tool";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
-import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
-import { useQuery } from "@tanstack/react-query";
-import { deletePlanShare, patchPlan, postPlanShare } from "@/Api/planApi";
+import { deletePlanShare, patchPlan, postPlanShare } from "@/Api/plansApi";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function EventModalLayer({ children, icon, hoverEl }) {
   return (
@@ -103,7 +101,8 @@ function ShareUserBox({ userInfo }) {
 }
 
 function EventModal({}) {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
+
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
   const { setResponse } = useContext(ResponseContext);
   const { setIsAddSubjectModal, setIsSharePlanModal, isSharePlanModal } =

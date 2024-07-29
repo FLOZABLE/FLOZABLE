@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import styles from "./SubjectsManager.module.css";
 import SubjectManager from "../SubjectManager/SubjectManager";
 import config from "@/app/utils/config";
-import { ResponseContext, SubjectsContext } from "@/app/utils/Contexts";
+import { ResponseContext } from "@/app/utils/Contexts";
 import { subjectIcons } from "@/app/utils/Constant";
 import { Alert } from "@/app/utils/Svg";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function SubjectsManager() {
-  const { subjects, setSubjects, refetchSubjectsData } = useContext(SubjectsContext);
+  const { subjects, setSubjects, useSubjectsRefetch } = useSubjects();
   const { setResponse } = useContext(ResponseContext);
 
   const [selectedSubject, setSelectedSubject] = useState({
@@ -94,11 +95,11 @@ function SubjectsManager() {
           tools: [],
         });
         if (data.success) {
-          refetchSubjectsData();
+          useSubjectsRefetch();
         }
       });
   }, [selectedSubject]);
-  
+
   return (
     <div className={`customScroll ${styles.SubjectsManager}`}>
       {selectedSubject.id !== null ? (

@@ -1,4 +1,4 @@
-import { getPlans } from "@/Api/planApi";
+import { getPlans } from "@/Api/plansApi";
 import { useQuery } from "@tanstack/react-query";
 
 function usePlan(userInfo) {

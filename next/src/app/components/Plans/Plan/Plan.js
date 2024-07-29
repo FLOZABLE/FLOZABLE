@@ -6,7 +6,7 @@ import { PlansContext } from "@/app/utils/Contexts";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
-import { patchPlanStatus } from "@/Api/planApi";
+import { patchPlanStatus } from "@/Api/plansApi";
 
 export default function Plan({ plan, children }) {
   const { plans, setPlanModal, setPlans } = useContext(PlansContext);

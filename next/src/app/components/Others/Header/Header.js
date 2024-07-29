@@ -9,14 +9,16 @@ import styles from "./Header.module.css";
 import { secondConverter } from "../../../utils/Tool";
 import Link from "next/link";
 import { HeaderBook, HeaderFocus, HeaderMeteor, HeaderMonitor } from "@/app/utils/Svg";
-import { ModalsContext, NotificationsContext, SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
+import { ModalsContext, NotificationsContext, TutorialsContext } from "@/app/utils/Contexts";
 import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import PremiumBtn from "../../Buttons/PremiumBtn/PremiumBtn";
 import { useAccount } from "@/Hooks/accountHooks";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function Header({
 }) {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
+
   const { userInfo } = useAccount();
   const { notifications } = useContext(NotificationsContext);
   const { setChatModal, chatModal, setIsNotificationModal } = useContext(ModalsContext);

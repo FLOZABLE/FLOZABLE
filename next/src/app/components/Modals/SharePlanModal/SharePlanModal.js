@@ -10,7 +10,7 @@ import {
 import DraggableModal from "../DraggableModal/DraggableModal";
 import SearchUsers from "../../Users/SearchUsers/SearchUsers";
 import SearchBar from "../../Inputs/SearchBar/SearchBar";
-import { postPlanShare } from "@/Api/planApi";
+import { postPlanShare } from "@/Api/plansApi";
 
 export default function SharePlanModal() {
   const { isSharePlanModal, setIsSharePlanModal } = useContext(ModalsContext);

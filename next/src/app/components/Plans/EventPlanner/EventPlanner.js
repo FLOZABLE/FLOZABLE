@@ -9,12 +9,10 @@ import { DateTime } from "luxon";
 import {
   PlansContext,
   ResponseContext,
-  SubjectsContext,
 } from "@/app/utils/Contexts";
-import config from "@/app/utils/config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import { patchPlan } from "@/Api/planApi";
+import { patchPlan } from "@/Api/plansApi";
 
 const StyleWrapper = styled.div`
   .fc-view-harness.fc-view-harness-active {
