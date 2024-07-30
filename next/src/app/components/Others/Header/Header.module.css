@@ -1,13 +1,13 @@
 .Header {
   height: 5rem;
   width: calc(100vw - 22rem);
-  position: fixed;
-  top: 0rem;
+  position: absolute;
+  top: 1rem;
   left: 22rem;
   display: flex;
   align-items: center;
   z-index: 2;
-  background-color: #fff;
+  background-color: #ffffff;
 }
 
 .Header .left {

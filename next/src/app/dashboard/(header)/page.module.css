@@ -14,9 +14,10 @@
 
 .Main .layer .box .title {
   justify-content: left;
+  font-family: "Poppins" sans-serif;
   width: 100%;
-  font-weight: 700;
-  font-size: 3rem;
+  font-weight: 900;
+  font-size: 2.5rem;
 }
 
 .Main .box#calendar {
