@@ -1,0 +1,81 @@
+.PlansTimeline {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1rem;
+}
+
+.PlansTimeline .header .layer {
+  display: flex;
+}
+
+.PlansTimeline .header h2 {
+  font-size: 2.5rem;
+}
+
+.PlansTimeline .header .layer#notes {
+  color: var(--gray2);
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.PlansTimeline .header .date {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--gray1);
+  margin: 1rem 0rem 0rem 1rem;
+}
+
+.PlansTimeline .header .buttons {
+  display: flex;
+  margin-left: auto;
+}
+
+.PlansTimeline .header .buttons div {
+  cursor: pointer;
+}
+
+.PlansTimeline .header .buttons div#addPlan {
+  font-size: 2.5rem;
+}
+
+.PlansTimeline .subjects {
+  display: flex;
+  margin-top: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.1rem solid var(--gray0);
+}
+
+.PlansTimeline .subjects .subject:first-child {
+  padding-right: 1rem;
+}
+
+.PlansTimeline .subjects .subject:not(:first-child) {
+  border-left: 0.1rem solid var(--gray0);
+  padding: 0rem 1rem;
+}
+
+.PlansTimeline .subjectEl {
+  padding: 0rem 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.PlansTimeline .plansContainer {
+  margin-top: 1rem;
+}
+
+.PlansTimeline .plansContainer .type {
+  font-weight: 600;
+}
+
+.PlansTimeline .plansContainer#donePlans .type {
+  color: #00bf2a;
+}
+
+.PlansTimeline .plansContainer#todoPlans .type {
+  color: #d60000;
+}

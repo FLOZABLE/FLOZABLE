@@ -51,7 +51,7 @@ const coldColorsList = [
   "#1c41fd", // Deep Blue
   "#0000FF", // Pure Blue
   "#001f3f", // Dark Navy Blue
-  "#00132d"  // Very Dark Blue
+  "#00132d", // Very Dark Blue
 ];
 
 const warmColorsList = ["#fff9eb", "#fe8912", "#f9c051"];
@@ -88,43 +88,43 @@ const toolsInfo = [
 
 const colorPaletteOptions = [
   {
-    name: "Mustard",
-    colors: ["#FFD151", "#FFEAAF", "#FFE190", "#FFD970"],
+    name: "Sky Blue",
+    colors: ["#D9F0FF", "#A3D5FF", "#83C9F4", "#6F73D2"],
   },
   {
     name: "Polaroid",
-    colors: ["#9999FF", "#AAC4FF", "#D2DAFF", "#EEF1FF"],
+    colors: ["#F8E16C", "#00C49A", "#FB8F67", "#156064"],
   },
   {
-    name: "Summer",
-    colors: ["#FFF5E4", "#FFE3E1", "#FFD1D1", "#FF9494"],
+    name: "Retro",
+    colors: ["#FCAB10", "#F8333C", "#44AF69", "#2B9EB3"],
   },
   {
     name: "Winter",
-    colors: ["#E3FDFD", "#CBF1F5", "#A6E3E9", "#71C9CE"],
+    colors: ["#393D3F", "#FDFDFF", "#C6C5B9", "#546A7B"],
   },
   {
-    name: "Fall",
-    colors: ["#7D5A50", "#B4846C", "#E5B299", "#FCDEC0"],
+    name: "No man's land",
+    colors: ["#93A3B1", "#7C898B", "#636564", "#4C443C"],
   },
   {
     name: "Cream",
-    colors: ["#F38181", "#FCE38A", "#EAFFD0", "#95E1D3"],
+    colors: ["#4C5760", "#93A8AC", "#D7CEB2", "#A59E8C"],
   },
 ];
 
 const PREMIUM = [
   {
-    name: 'Advance',
+    name: "Advance",
     monthly: {
       cost: 3.99,
       price_id: "price_1PIvJSKJPV0VFcSQWRF1HwWU",
-      product_id: "prod_Q9Dk1HcaaIq8fr"
+      product_id: "prod_Q9Dk1HcaaIq8fr",
     },
     yearly: {
       cost: 29.99,
       price_id: "price_1PIvKAKJPV0VFcSQFQI9SRIe",
-      product_id: "prod_Q9Dlfo9hR9DlgG"
+      product_id: "prod_Q9Dlfo9hR9DlgG",
     },
     features: [
       "Advanced Study Analysis: Monitor productivity and progress.",
@@ -135,21 +135,21 @@ const PREMIUM = [
       "Subjects Limit: Track up to 10 subjects.",
       "day Email Report: Get daily progress reports.",
       "Groups Limit: Join up to 5 groups.",
-    ]
+    ],
   },
   {
-    name: 'Pro',
+    name: "Pro",
     monthly: {
       cost: 5.99,
       price_id: "price_1PIvKdKJPV0VFcSQTfpt7cjK",
-      product_id: "prod_Q9Dmwyl0DPJNBW"
+      product_id: "prod_Q9Dmwyl0DPJNBW",
     },
     yearly: {
       cost: 39.99,
       price_id: "price_1PIvKwKJPV0VFcSQX7nl2Q9H",
-      product_id: "prod_Q9DmkG5DQ0hynq"
+      product_id: "prod_Q9DmkG5DQ0hynq",
     },
-    features:   [
+    features: [
       "Priority Support: Faster response times.",
       "Comparison Features: Compare metrics with a larger user base.",
       "Friend Limit: Up to 50 friends.",
@@ -161,8 +161,8 @@ const PREMIUM = [
       "Enhanced AI-Driven Learning: Advanced recommendations and personalized plans.",
       "Advanced Timers and Gamification: Enhanced timers and challenges.",
       "Comprehensive Analytics: In-depth study and productivity analysis.",
-    ]
-  }
+    ],
+  },
 ];
 
 const DEFAULT_PLAN = {
@@ -181,8 +181,8 @@ const DEFAULT_PLAN = {
   type: "local",
   editable: true,
   share: [],
-  shared: []
-}
+  shared: [],
+};
 
 export {
   colorsList,
@@ -192,5 +192,5 @@ export {
   warmColorsList,
   colorPaletteOptions,
   PREMIUM,
-  DEFAULT_PLAN
+  DEFAULT_PLAN,
 };
