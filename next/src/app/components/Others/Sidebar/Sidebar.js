@@ -4,10 +4,12 @@ import React, { useContext, useEffect, useRef } from "react";
 import styles from "./Sidebar.module.css";
 import Link from "next/link";
 import {
+  Gear,
   IconBxHome,
   IconClipboardOutline,
   IconFriend,
   IconGalleryLine,
+  IconGear,
   IconPeople16,
   IconRankingChart,
   IconStatsChart,
@@ -131,6 +133,12 @@ function Sidebar({}) {
           <IconGalleryLine />
         </i>
         <h3>Themes</h3>
+      </SidebarEl>
+      <SidebarEl pathname={pathname} href={"/dashboard/account"}>
+        <i>
+          <IconGear/>
+        </i>
+        <h3>Settings</h3>
       </SidebarEl>
       <div className={styles.buttons}>
         <LogoutBtn />
