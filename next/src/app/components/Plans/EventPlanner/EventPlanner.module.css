@@ -1,11 +1,9 @@
 .EventPlanner {
   height: 100%;
   width: 100%;
-  color: #fff;
 }
 
 .EventPlanner .header {
-  color: #000;
   display: flex;
   align-items: center;
 }

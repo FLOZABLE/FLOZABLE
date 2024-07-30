@@ -1,0 +1,97 @@
+.BounceCheckBox .cbx {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+.BounceCheckBox .cbx span {
+  display: inline-block;
+  vertical-align: middle;
+  transform: translate3d(0, 0, 0);
+}
+.BounceCheckBox .cbx span:first-child {
+  position: relative;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  transform: scale(1);
+  vertical-align: middle;
+  border: .0625rem solid #B9B8C3;
+  transition: all 0.2s ease;
+}
+.BounceCheckBox .cbx span:first-child svg {
+  position: absolute;
+  z-index: 1;
+  top: .5rem;
+  left: .375rem;
+  fill: none;
+  stroke: white;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1rem;
+  stroke-dashoffset: 1rem;
+  transition: all 0.3s ease;
+  transition-delay: 0.1s;
+  transform: translate3d(0, 0, 0);
+}
+.BounceCheckBox .cbx span:first-child:before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: #506EEC;
+  display: block;
+  transform: scale(0);
+  opacity: 1;
+  border-radius: 50%;
+  transition-delay: 0.2s;
+}
+.BounceCheckBox .cbx span:last-child {
+  margin-left: .5rem;
+}
+.BounceCheckBox .cbx span:last-child:after {
+  content: "";
+  position: absolute;
+  top: 45%;
+  left: 0;
+  height: .0825rem;
+  width: 100%;
+  background: #B9B8C3;
+  transform-origin: 0 0;
+  transform: scaleX(0);
+}
+.BounceCheckBox .cbx:hover span:first-child {
+  border-color: #3c53c7;
+}
+
+.BounceCheckBox .inpCbx {
+  display: none;
+}
+
+.BounceCheckBox .inpCbx:checked + .cbx span:first-child {
+  border-color: #3c53c7;
+  background: #3c53c7;
+  animation: check-15 0.6s ease;
+}
+.BounceCheckBox .inpCbx:checked + .cbx span:first-child svg {
+  stroke-dashoffset: 0;
+}
+.BounceCheckBox .inpCbx:checked + .cbx span:first-child:before {
+  transform: scale(2.2);
+  opacity: 0;
+  transition: all 0.6s ease;
+}
+.BounceCheckBox .inpCbx:checked + .cbx span:last-child {
+  color: #B9B8C3;
+  transition: all 0.3s ease;
+}
+.BounceCheckBox .inpCbx:checked + .cbx span:last-child:after {
+  transform: scaleX(1);
+  transition: all 0.3s ease;
+}
+
+@keyframes check-15 {
+  50% {
+    transform: scale(1.2);
+  }
+}

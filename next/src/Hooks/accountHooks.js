@@ -1,7 +1,9 @@
 import { getAccount } from "@/Api/accountApi";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 function useAccount() {
+  const queryClient = useQueryClient();
+
   const queryResult = useQuery({
     queryKey: [`useAccount`],
     queryFn: getAccount,
@@ -16,11 +18,17 @@ function useAccount() {
 
   const userInfo = useAccountData?.success ? useAccountData.userInfo : false;
 
+  const clearAccountData = () => {
+    queryClient.resetQueries(["useAccount"]);
+    queryClient.removeQueries(['useAccount']);
+  };
+
   return {
     useAccountData,
     useAccountRefetch,
     useAccountIsLoading,
     userInfo,
+    clearAccountData,
     ...queryResult,
   };
 }

@@ -47,7 +47,7 @@ function Layout({children}) {
     <>
     {children}
     <Sidebar />
-    {/* <Header /> */}
+    <Header />
     </>
   )
 };

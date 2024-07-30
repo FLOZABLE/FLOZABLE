@@ -4,10 +4,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./PlanTimeline.module.css";
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 import { Alert } from "@/app/utils/Svg";
-import {
-  PlansContext,
-  TutorialsContext,
-} from "@/app/utils/Contexts";
+import { PlansContext, TutorialsContext } from "@/app/utils/Contexts";
 import { DateTime } from "luxon";
 import { subjectIcons } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
@@ -126,30 +123,22 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
       style={{ maxHeight }}
     >
       <div className={styles.header}>
-        <div className={styles.options}>
+        <h2 className="jost">Tasks</h2>
+        <p className={`jost ${styles.date}`}>
+          {viewDate.getMonth() + 1}/{viewDate.getDate()}
+        </p>
+        <div className={styles.buttons}>
           <div
+            id={styles.addPlan}
             onClick={() => {
-              setIsGraph(!isGraph);
+              setPlanModal((prev) => ({ ...prev, opened: true }));
+              if (tutorial === 1) {
+                setTutorial(2);
+              }
             }}
+            ref={addBtnRef}
           >
-            Graph
-          </div>
-        </div>
-        <div className={styles.mainViewer}>
-          <h2>Tasks</h2>
-          <div className={styles.buttons}>
-            <div
-              id={styles.addPlan}
-              onClick={() => {
-                setPlanModal((prev) => ({ ...prev, opened: true }));
-                if (tutorial === 1) {
-                  setTutorial(2);
-                }
-              }}
-              ref={addBtnRef}
-            >
-              <FontAwesomeIcon icon={faCirclePlus} />
-            </div>
+            <FontAwesomeIcon icon={faCirclePlus} />
           </div>
         </div>
       </div>
@@ -159,10 +148,8 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
             data={planSeries}
             padding={0.4}
             cornerRadius={2}
-            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
             enableRadialGrid={false}
             enableCircularGrid={false}
-            radialAxisStart={{ tickSize: 5, tickPadding: 5, tickRotation: 0 }}
             theme={{
               axis: {
                 ticks: {
@@ -174,11 +161,20 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
             }}
             circularAxisOuter={null}
             maxValue={100}
-            tracksColor="#fff"
+            /* tracksColor="#fff" */
             legends={[
               {
-                itemTextColor: "#fff",
+                anchor: "top left",
+                direction: "column",
+                justify: false,
+                translateX: 0,
+                translateY: 0,
+                itemsSpacing: 6,
+                itemWidth: 100,
                 itemHeight: 18,
+                itemTextColor: "#999",
+                symbolSize: 18,
+                symbolShape: "square",
                 /* effects: [
                   {
                     on: "hover",
@@ -186,7 +182,12 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
                       itemTextColor: "#000",
                     },
                   },
-                ], */
+                ],
+                onClick: (val) => {
+                  if (val.id) {
+
+                  }
+                } */
               },
             ]}
             valueFormat={(val) => val + "%"}
@@ -200,21 +201,6 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
           There are no plans
         </div>
       ) : null}
-      {/* <div id={styles.addBtnWrapper} ref={addBtnRef}>
-        <BlobBtn
-          onClick={() => {
-            setPlanModal((prev) => ({ ...prev, opened: true }));
-            if (tutorial === 1) {
-              setTutorial(2);
-            }
-          }}
-          color1={"#fff"}
-          color2={"var(--blue2)"}
-          id={"tutorial-1"}
-        >
-          Add a New Plan
-        </BlobBtn>
-      </div> */}
       {filteredPlans.length ? (
         <ul
           className={`${styles.plans} hiddenScroll`}
