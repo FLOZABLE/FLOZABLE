@@ -11,8 +11,10 @@ import {
 import {
   HeaderBook,
   HeaderFocus,
+  HeaderGamepad,
   HeaderMeteor,
   HeaderMonitor,
+  HeaderTarget,
 } from "@/app/utils/Svg";
 import {
   TutorialsContext,
@@ -37,9 +39,9 @@ function Header({}) {
   const { tutorialBoxRef, tutorialTextRef, tutorial } =
     useContext(TutorialsContext);
 
-  const [totalStudied, setTotalStudied] = useState("0m"); // string
-  const [appUsage, setAppUsage] = useState("0 m");
-  const [longestSession, setLongestSession] = useState("0s");
+  const [totalStudied, setTotalStudied] = useState("0 minutes"); // string
+  const [appUsage, setAppUsage] = useState("0 minutes");
+  const [longestSession, setLongestSession] = useState("0 seconds");
   const [studyStreak, setStudyStreak] = useState("0 day"); //days of consecutive study
 
   const studyBtnRef = useRef(null);
@@ -108,7 +110,7 @@ function Header({}) {
         <div className={styles.divider}></div>
         <HeaderEl title={"App Usage"} value={appUsage}>
           <i>
-            <HeaderMonitor />
+            <HeaderGamepad />
           </i>
         </HeaderEl>
         <div className={styles.divider}></div>
@@ -120,7 +122,7 @@ function Header({}) {
         <div className={styles.divider}></div>
         <HeaderEl title={"Focus Time"} value={longestSession}>
           <i>
-            <HeaderFocus />
+            <HeaderTarget/>
           </i>
         </HeaderEl>
       </div>
