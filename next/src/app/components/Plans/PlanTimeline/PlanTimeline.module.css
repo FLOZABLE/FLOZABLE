@@ -8,16 +8,6 @@
   padding: 0.5rem 1rem;
 }
 
-/* .PlanTimeline .options {
-  display: flex;
-}
-
-.PlanTimeline .options > div {
-  margin: 0rem 0.5rem;
-  padding: 0.15rem 0rem;
-  cursor: pointer;
-} */
-
 .PlanTimeline .header {
   display: flex;
   align-items: center;
