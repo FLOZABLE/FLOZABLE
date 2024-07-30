@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useContext, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -6,10 +8,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import styles from "./EventPlanner.module.css";
 import styled from "@emotion/styled";
 import { DateTime } from "luxon";
-import {
-  PlansContext,
-  ResponseContext,
-} from "@/app/utils/Contexts";
+import { PlansContext, ResponseContext } from "@/app/utils/Contexts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { patchPlan } from "@/Api/plansApi";
@@ -17,17 +16,20 @@ import { patchPlan } from "@/Api/plansApi";
 const StyleWrapper = styled.div`
   .fc-view-harness.fc-view-harness-active {
     height: 100% !important;
-    background-color: #000;
-    border-radius: 1rem;
     overflow: hidden;
   }
 
   .fc.fc-media-screen.fc-direction-ltr.fc-theme-standard {
     height: 100%;
   }
+
+  .fc-daygrid-day-top {
+    flex-direction: row;
+    margin-left: 0.5rem;
+  }
 `;
 
-function EventPlanner({ viewMode, viewDate, setViewDate }) {
+function EventPlanner({ viewMode, viewDate, setViewDate, controller }) {
   const PlannerRef = useRef(null);
   const [PlannerApi, setPlannerApi] = useState(null);
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
@@ -342,13 +344,17 @@ function EventPlanner({ viewMode, viewDate, setViewDate }) {
   return (
     <StyleWrapper className={styles.EventPlanner}>
       <div className={styles.header}>
-        <div className={styles.button} onClick={handlePrevBtn}>
-          <FontAwesomeIcon icon={faAngleLeft} />
-        </div>
+        {controller ? (
+          <div className={styles.button} onClick={handlePrevBtn}>
+            <FontAwesomeIcon icon={faAngleLeft} />
+          </div>
+        ) : null}
         <div className={styles.date}>{dateText}</div>
-        <div className={styles.button} onClick={handleNextBtn}>
-          <FontAwesomeIcon icon={faAngleRight} />
-        </div>
+        {controller ? (
+          <div className={styles.button} onClick={handleNextBtn}>
+            <FontAwesomeIcon icon={faAngleRight} />
+          </div>
+        ) : null}
       </div>
       <FullCalendar
         firstDay={1}

@@ -1,0 +1,223 @@
+"use client";
+
+import React, { useContext, useEffect, useRef, useState } from "react";
+import styles from "./PlansTimeline.module.css";
+import { Alert } from "@/app/utils/Svg";
+import { PlansContext, TutorialsContext } from "@/app/utils/Contexts";
+import { DateTime } from "luxon";
+import { subjectIcons } from "@/app/utils/Constant";
+import Plan from "../Plan/Plan";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { useSubjects } from "@/Hooks/subjectsHooks";
+
+export default function PlansTimeline({
+  viewMode,
+  viewDate,
+  mode,
+  maxHeight = "50rem",
+}) {
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
+    useContext(TutorialsContext);
+  const { subjects } = useSubjects();
+  const { plans, setPlanModal } = useContext(PlansContext);
+
+  const [removedSubjects, setRemovedSubjects] = useState([]);
+  const [donePlans, setDonePlans] = useState([]);
+  const [todoPlans, setTodoPlans] = useState([]);
+
+  //const searchParams = useSearchParams();
+  const addBtnRef = useRef(null);
+  const containerRef = useRef(null);
+
+  const isInViewRange = (plan) => {
+    const viewDateTime = DateTime.fromJSDate(viewDate);
+    let isInRange = false;
+
+    if (viewMode === "timeGridDay") {
+      if (
+        viewDateTime.startOf("day").toMillis() <= plan.start.getTime() &&
+        plan.start.getTime() <= viewDateTime.endOf("day").toMillis()
+      ) {
+        isInRange = true;
+      }
+    } else if (viewMode === "timeGridWeek") {
+      if (
+        viewDateTime
+          .plus({ days: 1 })
+          .startOf("week")
+          .minus({ days: 1 })
+          .toMillis() <= plan.start.getTime() &&
+        plan.start.getTime() <=
+          viewDateTime
+            .plus({ days: 1 })
+            .endOf("week")
+            .minus({ days: 1 })
+            .toMillis()
+      ) {
+        isInRange = true;
+      }
+    } else {
+      if (viewDate.getMonth() === plan.start.getMonth()) {
+        isInRange = true;
+      }
+    }
+    return isInRange;
+  };
+
+  useEffect(() => {
+    if (!viewMode || !viewDate || !subjects) return;
+    const filteredPlans = plans.filter((plan) => isInViewRange(plan));
+    const donePlans = [];
+    const todoPlans = [];
+    filteredPlans.map((plan) => {
+      if (plan.completed) {
+        donePlans.push(plan);
+      } else {
+        todoPlans.push(plan);
+      }
+    });
+
+    setDonePlans(donePlans);
+    setTodoPlans(todoPlans);
+  }, [plans, viewMode, viewDate, subjects]);
+
+  useEffect(() => {
+    if (tutorial === 1) {
+      containerRef.current.scroll({
+        top: 200000,
+        behavior: "smooth",
+      });
+      setTimeout(() => {
+        const { width, top, left, height } =
+          addBtnRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left - 20 + "px";
+        tutorialBoxRef.current.style.top = top - 18 + "px";
+        tutorialBoxRef.current.style.width = width + 40 + "px";
+        tutorialBoxRef.current.style.height = height + 40 + "px";
+
+        tutorialTextRef.current.textContent =
+          "First, add an event to your planner!";
+        tutorialTextRef.current.style.left = left - 15 + "px";
+        tutorialTextRef.current.style.top = top + 80 + "px";
+      }, 1000);
+    }
+  }, [tutorial]);
+
+  return (
+    <div
+      className={`hiddenScroll ${styles.PlansTimeline} ${
+        mode === "study" ? styles.studyMode : ""
+      }`}
+      ref={containerRef}
+      style={{ maxHeight }}
+    >
+      <div className={styles.header}>
+        <div className={styles.layer}>
+          <h2>Tasks</h2>
+          <p className={styles.date}>
+            {viewDate.getMonth() + 1}/{viewDate.getDate()}
+          </p>
+          <div className={styles.buttons}>
+            <div
+              id={styles.addPlan}
+              onClick={() => {
+                setPlanModal((prev) => ({ ...prev, opened: true }));
+                if (tutorial === 1) {
+                  setTutorial(2);
+                }
+              }}
+              ref={addBtnRef}
+            >
+              <FontAwesomeIcon icon={faCirclePlus} />
+            </div>
+          </div>
+        </div>
+        <div className={styles.layer} id={styles.notes}>
+          <p>Notes: We need to get focused ASAP!</p>
+        </div>
+      </div>
+      <div className={styles.subjects}>
+        {subjects.map((subject, i) => {
+          return (
+            <div
+              className={styles.subject}
+              key={i}
+              onClick={() => {
+                if (removedSubjects.includes(subject.subject_id)) {
+                  setRemovedSubjects(
+                    removedSubjects.filter(
+                      (rSubject) => rSubject !== subject.subject_id
+                    )
+                  );
+                } else {
+                  setRemovedSubjects([...removedSubjects, subject.subject_id]);
+                }
+              }}
+            >
+              <div className={styles.subjectEl}>{subject.name}</div>
+            </div>
+          );
+        })}
+      </div>
+      <div className={styles.plansContainer} id={styles.donePlans}>
+        <p className={styles.type}>Done</p>
+        <div className={styles.plans}>
+          {donePlans.map((plan, i) => {
+            plan.dispStart = DateTime.fromJSDate(plan.start).toLocaleString(
+              DateTime.TIME_SIMPLE
+            );
+            plan.dispEnd = DateTime.fromJSDate(plan.end).toLocaleString(
+              DateTime.TIME_SIMPLE
+            );
+
+            let icon = subjectIcons[plan.icon];
+
+            if (!icon) {
+              icon = <Alert />;
+            }
+
+            if (removedSubjects.includes(plan.subject_id)) {
+              return null;
+            }
+
+            return (
+              <Plan plan={plan} key={i}>
+                {icon}
+              </Plan>
+            );
+          })}
+        </div>
+      </div>
+      <div className={styles.plansContainer} id={styles.todoPlans}>
+        <p className={styles.type}>To-Do</p>
+        <div className={styles.plans}>
+          {todoPlans.map((plan, i) => {
+            plan.dispStart = DateTime.fromJSDate(plan.start).toLocaleString(
+              DateTime.TIME_SIMPLE
+            );
+            plan.dispEnd = DateTime.fromJSDate(plan.end).toLocaleString(
+              DateTime.TIME_SIMPLE
+            );
+
+            let icon = subjectIcons[plan.icon];
+
+            if (!icon) {
+              icon = <Alert />;
+            }
+
+            if (removedSubjects.includes(plan.subject_id)) {
+              return null;
+            }
+
+            return (
+              <Plan plan={plan} key={i}>
+                {icon}
+              </Plan>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}

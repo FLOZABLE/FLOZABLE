@@ -10,9 +10,10 @@
   --light-blue1: #f0f6ff;
   --font-gray: #6a6a6a;
   --dark-gray: #e5e4e5;
-  --gray1: #8c8c8c;
-  --gray2: #989898;
-  --gray3: #dee2e6;
+  --gray0: #e0e0e0;
+  --gray1: #c7c7c7;
+  --gray2: #667a8a;
+  --gray3: #3f4d5a;
   --light-blue: #b3f2ff;
   --opacity-black: #000000c3;
   --shadow1: rgba(100, 100, 111, 0.2) 0rem 0.4375rem 1.8125rem 0rem;
@@ -32,15 +33,12 @@
   font-weight: 700;
   margin-left: 1.875rem;
   margin-bottom: 10px;
-  font-family: "Jost", sans-serif;
 }
 
 .Main {
   position: relative;
-  margin: 3.625rem 0rem 0rem 8.125rem;
-  transition: all 0.2s ease-in-out;
-  width: calc(100vw - 8.75rem);
-  border-radius: 1.25rem;
+  margin: 5rem 0rem 0rem 22rem;
+  width: calc(100vw - 22rem);
 }
 
 html {
@@ -70,7 +68,8 @@ button * {
 div,
 button,
 a {
-  font-family: "Nunito", sans-serif;
+  font-family: "Jost", sans-serif;
+  /* font-family: "Nunito", sans-serif; */
 }
 
 a {
@@ -149,7 +148,7 @@ button:hover {
 .BoxContainer {
   background-color: #fff;
   margin: 0.75rem;
-  padding: 0.5rem;
+  padding: 2rem;
   border-radius: 1rem;
   box-shadow: var(--shadow4);
   display: flex;

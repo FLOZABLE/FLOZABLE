@@ -4,15 +4,33 @@
 
 .Main .layer {
   display: flex;
+  height: 100vh;
 }
 
 .Main .layer .box {
   flex: 1;
-  color: var(--font-color1);
-  background-color: #000;
+  flex-direction: column;
 }
 
-.Main .layer:nth-child(2) {
+.Main .layer .box .title {
+  justify-content: left;
+  width: 100%;
+  font-weight: 700;
+  font-size: 3rem;
+}
+
+.Main .box#calendar {
+  padding: 2rem 5rem;
+}
+
+.Main .box#planTimeline {
+  min-width: 27rem;
+  height: min-content;
+  overflow: hidden;
+  flex: 0;
+}
+
+/* .Main .layer:nth-child(2) {
   height: 50vh;
 }
 
@@ -41,4 +59,4 @@
 
 .Main .layer:nth-child(4) {
   height: 50vh;
-}
+} */

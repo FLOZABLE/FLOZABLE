@@ -3,12 +3,22 @@
   top: 0em;
   left: 0em;
   height: 100vh;
-  width: 6.125rem;
+  width: 22rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  background-color: #fff;
+  box-shadow: var(--shadow3);
+  z-index: 3;
 }
 
+.Sidebar > div {
+  display: flex;
+  align-items: center;
+}
+.Sidebar .logoContainer {
+  font-size: 1.7rem;
+  font-weight: 900;
+}
 .Sidebar .logo {
   display: flex;
   justify-content: center;
@@ -17,45 +27,62 @@
   width: 6rem;
 }
 
-.Sidebar .SidebarEl {
+.Sidebar div#focusBackground {
+  width: calc(100% - 2.5rem);
+  margin-left: 0.5rem;
   height: 4rem;
-  width: 100%;
-  display: flex;
-  color: var(--gray1);
-  justify-content: center;
-  align-items: center;
-  font-size: 2.5rem;
-  margin: 1rem 0rem;
-  cursor: pointer;
-  position: relative;
+  position: absolute;
+  transition: 0.15s ease-in-out transform;
+  background-color: var(--blue0);
+  border-radius: 0.5rem;
 }
 
-.Sidebar .SidebarEl .hoverEl {
-  position: absolute;
-  width: calc(100% - 0.5rem);
-  height: 100%;
-  z-index: -1;
-  left: 1rem;
-  border-radius: 1rem 0rem 0rem 1rem;
-  transition: .3s ease-in-out background-color, .3s ease-in-out color;
+.Sidebar .SidebarEl {
+  height: 4rem;
+  display: flex;
+  color: var(--gray3);
+  align-items: center;
+  font-size: 2.5rem;
+  margin: 1rem 2rem 1rem 0.5rem;
+  cursor: pointer;
+  position: relative;
+  padding: 0.1rem 1rem;
+  border-radius: 0.5rem;
 }
 
 .Sidebar .SidebarEl i {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 2rem;
+  margin-right: 1rem;
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 0.5rem;
+  transition: 0.3s ease-in-out color, 0.3s ease-in-out background-color;
 }
 
-.Sidebar .SidebarEl.activeSidebar {
+.Sidebar .SidebarEl h3 {
+  font-size: 1.5rem;
+  transition: 0.3s ease-in-out color;
+}
+
+/* .Sidebar .SidebarEl.activeSidebar {
+  background-color: var(--blue0);
+} */
+
+.Sidebar .SidebarEl.activeSidebar i {
+  background-color: var(--blue2);
   color: #fff;
 }
 
-.Sidebar div#focusBackground {
-  background-color: #000;
-  width: 100%;
-  margin-left: 2rem;
-  height: 4rem;
+.Sidebar .SidebarEl.activeSidebar h3 {
+  color: var(--blue2);
+}
+
+.Sidebar .buttons {
   position: absolute;
-  transition: .15s ease-in-out transform;
-  border-radius: 1rem 0rem 0rem 1rem;
+  bottom: 0rem;
+  margin: 0.5rem;
+  width: calc(100% - 1rem);
 }
