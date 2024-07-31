@@ -465,38 +465,50 @@ Router.delete("/plan", async (req, res) => {
 Router.get("/plan/users", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { id } = req.query;
+      const { planId } = req.query;
 
-      const isValidId = validateStrictString(id, "Id", 10, 10);
+      const isValidId = validateStrictString(planId, "plan id", 10, 10);
       if (!isValidId.isValid) {
         return res.send({ success: false, reason: isValidId.reason });
       }
 
       const connection = pool.promise();
 
-      const result = await connection.query(
-        `SELECT user_id FROM plan_shared WHERE plan_id = ? AND user_id = ?; SELECT user_id FROM plan_share WHERE plan_id = ? AND user_id = ?;`,
-        [id, userId, id, userId]
+      const [[planInfo]] = await connection.query(
+        `
+        SELECT
+          p.plan_id,
+          p.user_id,
+          JSON_ARRAYAGG(JSON_OBJECT('user_id', u.user_id, 'name', u.name)) AS shared,
+          JSON_ARRAYAGG(JSON_OBJECT('user_id', u2.user_id, 'name', u2.name)) AS share
+        FROM plans p
+        LEFT JOIN plan_shared psd ON psd.plan_id = p.plan_id
+        LEFT JOIN users u ON u.user_id = psd.user_id
+        LEFT JOIN plan_share ps ON ps.plan_id = p.plan_id
+        LEFT JOIN users u2 ON u2.user_id = ps.user_id
+        WHERE p.plan_id = ?
+        GROUP BY p.plan_id
+      `,
+        [planId]
       );
-      return;
 
-      if (!planInfo) {
-        return res.send({ success: false, reason: "Invalid Plan" });
+      planInfo.share = JSON.parse(planInfo.share).filter(
+        (user) => user.user_id
+      );
+      planInfo.shared = JSON.parse(planInfo.shared).filter(
+        (user) => user.user_id
+      );
+
+      const allowedUsers = [
+        ...planInfo.shared,
+        ...planInfo.share,
+        { user_id: planInfo.user_id },
+      ];
+      if (!allowedUsers.find((user) => user.user_id === userId)) {
+        return res.send(responseCodes["non-memeber"]);
       }
 
-      planInfo.share = planInfo.share === "" ? [] : planInfo.share.split(",");
-      planInfo.shared =
-        planInfo.shared === "" ? [] : planInfo.shared.split(",");
-
-      //auery all at once for performance
-      const users = await usersCache([...planInfo.share, ...planInfo.shared]);
-      const share = users.filter((userInfo) =>
-        planInfo.share.includes(userInfo.user_id)
-      );
-      const shared = users.filter((userInfo) =>
-        planInfo.shared.includes(userInfo.user_id)
-      );
-      res.send({ success: true, share, shared });
+      res.send({ success: true, planInfo });
     } catch (err) {
       console.log(err);
       res.send({ success: false });
@@ -518,6 +530,15 @@ Router.post("/plan/share", async (req, res) => {
 
       const connection = pool.promise();
 
+      const [[planInfo]] = await connection.query(
+        `SELECT plan_id FROM plans WHERE user_id = ? AND plan_id = ?`,
+        [userId, planId]
+      );
+
+      if (!planInfo) {
+        return res.send({ success: false, reason: "Invalid Plan" });
+      }
+
       const existingUsers = (
         await connection.query(
           `SELECT user_id FROM users WHERE user_id IN(?)`,
@@ -529,34 +550,31 @@ Router.post("/plan/share", async (req, res) => {
         userInfo.friends.includes(user)
       );
 
-      const [[planInfo]] = await connection.query(
-        `SELECT shared, share, title FROM plans WHERE user_id = ? AND id = ?`,
-        [userId, planId]
-      );
+      const newShared = friends.map((friend) => [planId, friend]);
 
-      if (!planInfo)
-        return res.send({ success: false, reason: "Invalid Plan" });
-
-      planInfo.shared =
-        planInfo.shared === "" ? [] : planInfo.shared.split(",");
-      planInfo.shared = [...new Set(planInfo.shared.concat(friends))];
+      if (newShared.length) {
+        await connection.query(
+          `INSERT IGNORE INTO plan_shared 
+          (plan_id, user_id) 
+          VALUES ?`,
+          [newShared]
+        );
+      }
 
       const nonFriends = existingUsers.filter(
-        (user) =>
-          !userInfo.friends.includes(user) && !planInfo.shared.includes(user)
+        (user) => !userInfo.friends.includes(user)
       );
 
-      planInfo.share = planInfo.share === "" ? [] : planInfo.share.split(",");
-      planInfo.share = [...new Set(planInfo.share.concat(nonFriends))];
+      const newShare = nonFriends.map((friend) => [planId, friend]);
 
-      const updateInfo = {
-        shared: planInfo.shared.toString(),
-        share: planInfo.share.toString(),
-      };
-      await connection.query(
-        `UPDATE plans SET ? WHERE user_id = ? AND id = ?`,
-        [updateInfo, userId, planId]
-      );
+      if (newShare.length) {
+        await connection.query(
+          `INSERT IGNORE INTO plan_share 
+          (plan_id, user_id) 
+          VALUES ?`,
+          [newShare]
+        );
+      }
 
       const date = Math.floor(new Date().getTime() / 1000);
 
@@ -584,6 +602,7 @@ Router.post("/plan/share", async (req, res) => {
           JSON.stringify(notification)
         );
       });
+      console.log("shared");
       res.send({ success: true });
     } catch (err) {
       console.log(err);
@@ -611,31 +630,44 @@ Router.delete("/plan/share", async (req, res) => {
       const connection = pool.promise();
 
       const [[planInfo]] = await connection.query(
-        `SELECT shared, share, title FROM plans WHERE user_id = ? AND id = ?`,
-        [userId, planId]
+        `
+        SELECT
+          p.plan_id,
+          p.user_id,
+          JSON_ARRAYAGG(JSON_OBJECT('user_id', u.user_id, 'name', u.name)) AS shared,
+          JSON_ARRAYAGG(JSON_OBJECT('user_id', u2.user_id, 'name', u2.name)) AS share
+        FROM plans p
+        LEFT JOIN plan_shared psd ON psd.plan_id = p.plan_id
+        LEFT JOIN users u ON u.user_id = psd.user_id
+        LEFT JOIN plan_share ps ON ps.plan_id = p.plan_id
+        LEFT JOIN users u2 ON u2.user_id = ps.user_id
+        WHERE p.plan_id = ?
+        GROUP BY p.plan_id
+      `,
+        [planId]
       );
 
-      if (!planInfo)
-        return res.send({ success: false, reason: "Invalid Plan" });
+      planInfo.share = JSON.parse(planInfo.share).filter(
+        (user) => user.user_id
+      );
+      planInfo.shared = JSON.parse(planInfo.shared).filter(
+        (user) => user.user_id
+      );
 
-      planInfo.shared =
-        planInfo.shared === "" ? [] : planInfo.shared.split(",");
-      planInfo.shared = [
-        ...new Set(planInfo.shared.filter((user) => user !== targetId)),
+      const allowedUsers = [
+        ...planInfo.shared,
+        ...planInfo.share,
+        { user_id: planInfo.user_id },
       ];
+      if (!allowedUsers.find((user) => user.user_id === userId)) {
+        return res.send(responseCodes["non-memeber"]);
+      }
 
-      planInfo.share = planInfo.share === "" ? [] : planInfo.share.split(",");
-      planInfo.share = [
-        ...new Set(planInfo.share.filter((user) => user !== targetId)),
-      ];
-
-      const updateInfo = {
-        shared: planInfo.shared.toString(),
-        share: planInfo.share.toString(),
-      };
       await connection.query(
-        `UPDATE plans SET ? WHERE user_id = ? AND id = ?`,
-        [updateInfo, userId, planId]
+        `
+        DELETE FROM plan_share WHERE plan_id = ? AND user_id = ?;
+        DELETE FROM plan_shared WHERE plan_id = ? AND user_id = ?`,
+        [planId, userId, planId, userId]
       );
 
       const planRequests = await NotificationCache(targetId, 7, false);

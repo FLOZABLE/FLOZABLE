@@ -2,20 +2,18 @@ const { DateTime } = require("luxon");
 const redisClient = require("../model/redis");
 const {
   userCache,
-  chatRoomsCache,
   msgQueue,
   subjectCache,
-  dmRoomMembersCache,
   activeSubjectCache,
-  groupMembersCache,
-  dmRoomsCache,
   chatroomMemberCache,
+  cacheActiveSubject,
+  cacheActiveGroup,
 } = require("../services/redisLoader");
 const { generateRandomId } = require("../Utils/tool");
 const { extensionIo } = require("./extensionIo");
 const { io } = require("./io");
 const pool = require("../model/pool");
-const { MAX_STUDY_TIME } = require("../Constant");
+const { MAX_STUDY_TIME, REDIS_EXP } = require("../Constant");
 
 const mainIo = io.of("/");
 mainIo.on("connection", (socket) => {
@@ -48,7 +46,7 @@ mainIo.on("connection", (socket) => {
     (async () => {
       try {
         const now = Math.floor(new Date().getTime() / 1000);
-        redisClient.hset(`user:${userId}`, `ActiveSubject`, `0:${now}`);
+        cacheActiveSubject(userId, { subject_id: "0", name: "break", now });
         socket.join(userId);
         const userInfo = await userCache(userId);
         if (!userInfo) return;
@@ -100,11 +98,7 @@ mainIo.on("connection", (socket) => {
         mainIo.to(friends).emit(`studying:${userId}`, subject);
       }
       redisClient.rpush(`user:${userId}:subject:${subjectId}`, `[${now},0]`);
-      redisClient.hset(
-        `user:${userId}`,
-        `ActiveSubject`,
-        `${subjectId}:${now}`
-      );
+      cacheActiveSubject(userId, subject, now);
       extensionIo.to(userId).emit("studying", { studying: true });
     } catch (err) {
       console.log(err);
@@ -133,12 +127,10 @@ mainIo.on("connection", (socket) => {
       });
       socket.join(groupId);
       const now = DateTime.now().toSeconds().toFixed();
-      redisClient.hset(
-        `user:${userId}`,
-        `ActiveGroup`,
-        JSON.stringify({ id: groupId, time: now })
-      );
+      cacheActiveGroup(userId, groupId, now);
+
       if (!friends.length) return;
+
       const connection = pool.promise();
       const [[groupInfo]] = await connection.query(
         `
@@ -209,7 +201,7 @@ mainIo.on("connection", (socket) => {
         m: message,
         u: userId,
         t,
-        i
+        i,
       };
       msgQueue(roomId, newMsg);
       newMsg.r = roomId;
@@ -219,13 +211,12 @@ mainIo.on("connection", (socket) => {
     }
   });
 
-  socket.on("chat/read", async(messageId) => {
+  socket.on("chat/read", async (messageId) => {
     try {
-
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  })
+  });
 });
 
 async function deActiveGroup(userId, socket) {
@@ -236,7 +227,7 @@ async function deActiveGroup(userId, socket) {
     groups.map((group) => {
       socket.leave(group);
     });
-    redisClient.hdel(`user:${userId}`, `ActiveGroup`);
+    redisClient.del(`user:${userId}:activeGroup`);
     if (!friends.length) return;
     mainIo.to(friends).emit(`deActiveGroup:${userId}`);
   } catch (err) {
@@ -264,7 +255,7 @@ async function stopStudying(userId, mode, subjectId) {
     const activeSubject = await activeSubjectCache(userId);
 
     if ((!activeSubject || activeSubject.id === "0") && mode === "disconnect") {
-      return await redisClient.hdel(`user:${userId}`, `ActiveSubject`);
+      return await redisClient.del(`user:${userId}:activeSubject`);
     }
 
     if (subjectId && activeSubject.id !== subjectId) return;
@@ -285,7 +276,7 @@ async function stopStudying(userId, mode, subjectId) {
 
     if (mode === "disconnect") {
     } else {
-      await redisClient.hset(`user:${userId}`, `ActiveSubject`, `0:${now}`);
+      cacheActiveSubject(userId, { subject_id: "0", name: "break" }, now);
     }
 
     if (duration > MAX_STUDY_TIME) {

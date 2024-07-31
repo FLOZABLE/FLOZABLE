@@ -1,6 +1,7 @@
 import {
   getFriendsRecommended,
   getFriendsSearch,
+  getFriendsStatus,
   getFriendsTrends,
 } from "@/Api/friendsApi";
 import { useQuery } from "@tanstack/react-query";
@@ -28,7 +29,7 @@ function useGetFriendsTrends() {
 
 function useFriendsRecommended(refresh) {
   const { userInfo } = useAccount();
-  
+
   return useQuery({
     queryKey: [`getFriendsRecommended`],
     queryFn: getFriendsRecommended,
@@ -36,4 +37,24 @@ function useFriendsRecommended(refresh) {
   });
 }
 
-export { useGetFriendsSearch, useGetFriendsTrends, useFriendsRecommended };
+function useFriendsStatus() {
+  const { userInfo } = useAccount();
+
+  const queryResult = useQuery({
+    queryKey: [`getFriendsStatus`],
+    queryFn: getFriendsStatus,
+    enabled: !!userInfo,
+  });
+
+  const { data: useFriendsStatusData, isLoading: useFriendsStatusIsLoading } =
+    queryResult;
+
+  return { useFriendsStatusData, useFriendsStatusIsLoading, ...queryResult };
+}
+
+export {
+  useGetFriendsSearch,
+  useGetFriendsTrends,
+  useFriendsRecommended,
+  useFriendsStatus,
+};

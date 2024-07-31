@@ -4,7 +4,7 @@ const { userCache, activeSubjectCache, addActiveUserCache } = require("../servic
 const { io } = require("./io");
 
 const extensionIo = io.of("/extension");
-
+/* 
 extensionIo.on("connection", (socket) => {
   socket.on("auth", async ({ authId }) => {
     if (!authId) return;
@@ -48,6 +48,6 @@ extensionIo.on("connection", (socket) => {
     if (!socket.userId || !id) return;
     io.to(socket.userId).emit(`volumeChange`, { id, volume });
   });
-});
+}); */
 
 module.exports = { extensionIo };
