@@ -14,9 +14,8 @@
 
 .Main .layer .box .title {
   justify-content: left;
-  font-family: "Poppins" sans-serif;
   width: 100%;
-  font-weight: 900;
+  font-weight: 700;
   font-size: 2.5rem;
 }
 
@@ -30,34 +29,3 @@
   overflow: hidden;
   flex: 0;
 }
-
-/* .Main .layer:nth-child(2) {
-  height: 50vh;
-}
-
-.Main .layer:nth-child(2) > div {
-  flex: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.Main .box#studyInfo {
-  flex: 0 1;
-}
-
-.Main .box#planTimeline {
-  min-width: 27rem;
-  height: min-content;
-  overflow: hidden;
-  flex: 0;
-}
-
-.Main .layer:nth-child(3) {
-  width: calc(100% - 29.5rem);
-  height: 50vh;
-}
-
-.Main .layer:nth-child(4) {
-  height: 50vh;
-} */

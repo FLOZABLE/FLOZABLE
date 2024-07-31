@@ -8,26 +8,26 @@ import ThemeCategoryBtn from "@/app/components/Buttons/ThemeCategoryBtn/ThemeCat
 import { ResponseContext, ThemesContext } from "@/app/utils/Contexts";
 
 function ThemePreview({ isActive, setIsActive }) {
-  const {themes} = useContext(ThemesContext);
-  const {setResponse} = useContext(ResponseContext);
+  const { themes } = useContext(ThemesContext);
+  const { setResponse } = useContext(ResponseContext);
 
   const [volume, setVolume] = useState(0);
   const draggableRef = useRef(null);
 
   useEffect(() => {
     if (!themes.length) return;
-    
+
     const searchParams = new URLSearchParams(window.location.search);
-    const themeId = searchParams.get('id');
+    const themeId = searchParams.get("id");
 
     if (!themeId) return;
-    
-    const theme = themes.find(theme => theme.id === themeId);
+
+    const theme = themes.find((theme) => theme.id === themeId);
 
     if (!theme) {
-      setResponse({success: false, reason: 'Invalid Theme'});
+      setResponse({ success: false, reason: "Invalid Theme" });
       return;
-    };
+    }
 
     setIsActive(theme);
   }, [themes]);
@@ -55,9 +55,7 @@ function ThemePreview({ isActive, setIsActive }) {
                   icon={volume > 0 ? faVolumeHigh : faVolumeXmark}
                 />
               </button>
-              <ThemeCategoryBtn
-                themeId={isActive.id}
-              />
+              <ThemeCategoryBtn theme={isActive} />
             </div>
           </Draggable>
           {!isActive ? (

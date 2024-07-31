@@ -28,10 +28,6 @@
   --font-color1: #fff;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet');
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
 .title {
   font-size: 3.5rem;
   font-weight: 700;
@@ -72,9 +68,12 @@ button * {
 div,
 button,
 a {
+  /* font-family: "Jost", sans-serif; */
+  font-family: "Poppins", sans-serif;
   /* font-family: "Roboto Mono", monospace; */
-  font-family: "Fira Sans", sans-serif;
+  /* font-family: "Fira Sans", sans-serif; */
   font-weight: 600;
+  font-style: normal;
 }
 
 a {
@@ -163,10 +162,6 @@ button:hover {
   justify-content: center;
   align-items: center;
   position: relative;
-}
-
-.jost {
-  font-family: "Poppins" sans-serif;
 }
 
 .overflowDot {
