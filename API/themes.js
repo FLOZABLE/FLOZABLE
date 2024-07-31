@@ -60,7 +60,7 @@ Router.get("/user", async (req, res) => {
       const connection = pool.promise();
       const [themes] = await connection.query(
         `
-        SELECT t.theme_id, t.video_id, t.name, t.description, t.tags
+        SELECT t.theme_id, t.video_id, t.name, t.description, t.tags, ut.category_id
         FROM themes t
         JOIN user_themes ut ON t.theme_id = ut.theme_id
         WHERE ut.user_id = ?
@@ -75,35 +75,10 @@ Router.get("/user", async (req, res) => {
   });
 });
 
-Router.get("/videoIds", async (req, res) => {
-  autoSignin(req, res, async () => {
-    try {
-      const connection = pool.promise();
-      const { searchIds } = req.query;
-
-      const isValidSearchIds = validateString(searchIds, "search ids", 200);
-
-      if (!isValidSearchIds.isValid) {
-        return res.send({ success: false, reason: isValidSearchIds.reason });
-      }
-
-      const [info] = await connection.query(
-        "SELECT video_id, name, id FROM themes WHERE id IN (?)",
-        [searchIds.split(",")]
-      );
-      return res.send({ success: true, info });
-    } catch (err) {
-      console.log(err);
-      res.send({ success: false });
-    }
-  });
-});
-
 Router.put("/theme", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { name, tags, description, url } = req.body;
-      console.log(req.body);
 
       const isValidName = validateString(name, "theme name", 40);
 
@@ -210,55 +185,12 @@ Router.post("/like/:id", async (req, res) => {
 Router.post("/theme/save", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { themeId, category } = req.body;
+      const { themeId, categoryId, categoryName } = req.body;
 
-      const isValidCategory = validateInteger(category, "category", 10, -1);
+      const isValidCategoryId = validateInteger(categoryId, "category", 10, -1);
 
-      if (!isValidCategory.isValid) {
-        return res.send({ success: false, reason: isValidCategory.reason });
-      }
-
-      const isValidThemeId = validateStrictString(themeId, "theme id");
-
-      if (!isValidThemeId.isValid) {
-        return res.send({ success: false, reason: isValidThemeId.reason });
-      }
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "An Error Occured" });
-    }
-  });
-});
-
-Router.post("/theme/unsave", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const { themeId } = req.body;
-
-      const isValidThemeId = validateStrictString(themeId, "theme id");
-
-      if (!isValidThemeId.isValid) {
-        return res.send({ success: false, reason: isValidThemeId.reason });
-      }
-
-      const connection = pool.promise();
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "An Error Occured" });
-    }
-  });
-});
-
-Router.post("/save", async (req, res) => {
-  autoSignin(req, res, async () => {
-    try {
-      const userId = req.session.user_id;
-      const { themeId, category } = req.body;
-
-      const isValidCategory = validateInteger(category, "category", 10, -1);
-
-      if (!isValidCategory.isValid) {
-        return res.send({ success: false, reason: isValidCategory.reason });
+      if (!isValidCategoryId.isValid) {
+        return res.send({ success: false, reason: isValidCategoryId.reason });
       }
 
       const isValidThemeId = validateStrictString(themeId, "theme id");
@@ -267,77 +199,25 @@ Router.post("/save", async (req, res) => {
         return res.send({ success: false, reason: isValidThemeId.reason });
       }
 
-      const themeInfo = `${category}:${themeId}`;
-      const connection = pool.promise();
-
-      const [[userInfo]] = await connection.query(
-        `SELECT themes from users WHERE user_id = ?`,
-        [userId]
-      );
-
-      const themes = userInfo.themes === "" ? [] : userInfo.themes.split(",");
-      const oldThemeIndex = themes.findIndex((theme) =>
-        theme.includes(themeId)
-      );
-      if (oldThemeIndex !== -1) {
-        themes.splice(oldThemeIndex, 1);
-      }
-      themes.push(themeInfo);
-      await connection.query(`UPDATE users SET themes = ? WHERE user_id = ?`, [
-        themes.join(","),
-        userId,
-      ]);
-
-      const weekDay = DateTime.now().weekday - 1;
-      redisClient.zIncrBy(`theme:${themeId}:weekUsage`, 1, weekDay.toString());
-      mainIo.emit(`used:${themeId}`);
-      res.send({ success: true, msg: "Theme Saved" });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "An Error Occured" });
-    }
-  });
-});
-
-Router.post("/unsave", async (req, res) => {
-  autoSignin(req, res, async () => {
-    try {
-      const userId = req.session.user_id;
-      const { themeId } = req.body;
-
-      const isValidThemeId = validateStrictString(themeId, "theme id");
-
-      if (!isValidThemeId.isValid) {
-        return res.send({ success: false, reason: isValidThemeId.reason });
-      }
+      const newUserTheme = {
+        user_id: userId,
+        theme_id: themeId,
+        category_id: categoryId,
+      };
 
       const connection = pool.promise();
 
-      const [[userInfo]] = await connection.query(
-        `SELECT themes from users WHERE user_id = ?`,
-        [userId]
+      await connection.query(
+        `DELETE FROM user_themes WHERE user_id = ? AND theme_id = ?`,
+        [userId, themeId]
       );
 
-      const themes = userInfo.themes === "" ? [] : userInfo.themes.split(",");
-      const oldThemeIndex = themes.findIndex((theme) =>
-        theme.includes(themeId)
-      );
-      if (oldThemeIndex !== -1) {
-        themes.splice(oldThemeIndex, 1);
-        const weekDay = DateTime.now().weekday - 1;
-        redisClient.zIncrBy(
-          `theme:${themeId}:weekUsage`,
-          -1,
-          weekDay.toString()
-        );
-        mainIo.emit(`unused:${themeId}`);
+      if (categoryId !== -1) {
+        connection.query(`INSERT INTO user_themes SET ?`, newUserTheme);
+        return res.send({ success: true, msg: `Theme saved to ${categoryName}` });
       }
-      await connection.query(`UPDATE users SET themes = ? WHERE user_id = ?`, [
-        themes.join(","),
-        userId,
-      ]);
 
-      res.send({ success: true, msg: "Theme Unsaved" });
+      return res.send({ success: true, msg: `Theme unsaved` });
     } catch (error) {
       console.log(error);
       res.send({ success: false, reason: "An Error Occured" });

@@ -78,7 +78,7 @@ function ThemeContainer({ theme, isSearched, setIsThemePreview }) {
             text={`${config.server}/dashboard/themes?id=${theme.theme_id}`}
           />
           <div>
-            <ThemeCategoryBtn themeId={theme.theme_id} />
+            <ThemeCategoryBtn theme={theme} />
           </div>
           <div>
             <LikeBtn

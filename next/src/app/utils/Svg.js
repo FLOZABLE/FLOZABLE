@@ -1,7 +1,7 @@
 const HeaderBook = (props) => (
   <svg
-    height="0.8em"
-    width="0.8em"
+    height="1em"
+    width="1em"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -55,8 +55,8 @@ const HeaderBook = (props) => (
 
 const HeaderMonitor = (props) => (
   <svg
-    height="0.8em"
-    width="0.8em"
+    height="1em"
+    width="1em"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -172,8 +172,8 @@ const HeaderMonitor = (props) => (
 
 const HeaderMeteor = (props) => (
   <svg
-    height="0.8em"
-    width="0.8em"
+    height="1em"
+    width="1em"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -271,8 +271,8 @@ const HeaderFocus = (props) => (
     xmlnsXlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 53 53"
     xmlSpace="preserve"
-    width="0.8em"
-    height="0.8em"
+    width="1em"
+    height="1em"
     fill="#000000"
     {...props}
   >
@@ -430,7 +430,7 @@ function IconGear(props) {
     >
       <path d="M27.526 18.036L27 17.732c-.626-.361-1-1.009-1-1.732s.374-1.371 1-1.732l.526-.304a2.999 2.999 0 001.098-4.098l-1-1.732a3.003 3.003 0 00-4.098-1.098L23 7.339a1.977 1.977 0 01-2 0 1.98 1.98 0 01-1-1.732V5c0-1.654-1.346-3-3-3h-2c-1.654 0-3 1.346-3 3v.608a1.98 1.98 0 01-1 1.732 1.98 1.98 0 01-2 0l-.526-.304a3.005 3.005 0 00-4.099 1.098l-1 1.732a2.998 2.998 0 001.098 4.098l.527.304c.626.361 1 1.009 1 1.732s-.374 1.371-1 1.732l-.526.304a2.998 2.998 0 00-1.098 4.098l1 1.732a3.004 3.004 0 004.098 1.098L9 24.661a1.977 1.977 0 012 0 1.98 1.98 0 011 1.732V27c0 1.654 1.346 3 3 3h2c1.654 0 3-1.346 3-3v-.608c0-.723.374-1.37 1-1.732a1.98 1.98 0 012 0l.526.304a3.005 3.005 0 004.098-1.098l1-1.732a2.998 2.998 0 00-1.098-4.098zM16 21c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" />
     </svg>
-  )
+  );
 }
 function IconGalleryLine(props) {
   return (
@@ -447,7 +447,7 @@ function IconGalleryLine(props) {
         <path d="M16.19 2H7.81C4.17 2 2 4.17 2 7.81v8.38c0 1.09.19 2.04.56 2.84.86 1.9 2.7 2.97 5.25 2.97h8.38c3.64 0 5.81-2.17 5.81-5.81V7.81C22 4.17 19.83 2 16.19 2zm4.18 10.5c-.78-.67-2.04-.67-2.82 0l-4.16 3.57c-.78.67-2.04.67-2.82 0l-.34-.28c-.71-.62-1.84-.68-2.64-.14l-3.74 2.51c-.22-.56-.35-1.21-.35-1.97V7.81c0-2.82 1.49-4.31 4.31-4.31h8.38c2.82 0 4.31 1.49 4.31 4.31v4.8l-.13-.11z" />
       </g>
     </svg>
-  )
+  );
 }
 
 function IconLeave(props) {
@@ -1469,24 +1469,24 @@ const Wave = (props) => (
       d="M7.051 1.684c.29-.87 1.479-.91 1.85-.119l.048.119 3.05 9.154 1.052-3.154a1 1 0 0 1 .833-.677L14 7h1a1 1 0 0 1 .117 1.993L15 9h-.28l-1.771 5.316c-.29.87-1.479.91-1.85.119l-.048-.119L8 5.161l-2.051 6.155c-.282.844-1.421.915-1.825.168l-.052-.113L2.96 8.596l-.07.087a1 1 0 0 1-.612.31L2.16 9H1a1 1 0 0 1-.117-1.993L1 7h.495l.583-1.387c.33-.786 1.409-.814 1.797-.097l.053.113.986 2.465 2.137-6.41Z"
     />
   </svg>
-)
+);
 
 const IconFriend = (props) => (
   <svg
-  viewBox="0 0 24 24"
-  fill="none"
-  xmlns="http://www.w3.org/2000/svg"
-  {...props}
->
-  <path
-    d="M4 12h16m-8-8v16"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  />
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M4 12h16m-8-8v16"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
-)
+);
 
 const IconLogout = (props) => (
   <svg
@@ -1503,13 +1503,13 @@ const IconLogout = (props) => (
       <path d="M14 11a1 1 0 1 1 0 2v-2ZM5.718 11a38.459 38.459 0 0 0 1.027-1.325l.047-.063.012-.017.004-.007L6 9l.808.588a1 1 0 0 0-1.617-1.176l-.003.004-.01.014-.042.057-.16.216c-.14.184-.337.442-.57.736-.472.595-1.068 1.31-1.613 1.854L2.086 12l.707.707c.545.545 1.141 1.26 1.613 1.854a37.88 37.88 0 0 1 .73.952l.042.057.01.014.002.003a1 1 0 0 0 1.619-1.175l-.81.588.81-.588-.005-.007-.012-.017-.047-.063-.172-.23A39.987 39.987 0 0 0 5.718 13H14v-2H5.718Z" />
     </g>
   </svg>
-)
+);
 
 function HeaderTarget(props) {
   return (
     <svg
-      height="0.8em"
-      width="0.8em"
+      height="1em"
+      width="1em"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512.001 512.001"
       xmlSpace="preserve"
@@ -1559,14 +1559,14 @@ function HeaderTarget(props) {
         fill="#ff0c38"
       />
     </svg>
-  )
+  );
 }
 
 function HeaderGamepad(props) {
   return (
     <svg
-      height="0.8em"
-      width="0.8em"
+      height="1em"
+      width="1em"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 511.996 511.996"
       xmlSpace="preserve"
@@ -1630,7 +1630,7 @@ function HeaderGamepad(props) {
         fill="#656d78"
       />
     </svg>
-  )
+  );
 }
 
 export {
@@ -1689,5 +1689,5 @@ export {
   PremiumPremium,
   Wave,
   IconFriend,
-  IconLogout
+  IconLogout,
 };

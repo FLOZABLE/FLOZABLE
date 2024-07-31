@@ -73,7 +73,7 @@ function RankedTheme({ theme, setIsThemePreview }) {
             text={`${config.server}/dashboard/themes?id=${theme?.id}`}
           />
           <div>
-            <ThemeCategoryBtn themeId={theme?.id} />
+            <ThemeCategoryBtn theme={theme} />
           </div>
           <div>
             <LikeBtn

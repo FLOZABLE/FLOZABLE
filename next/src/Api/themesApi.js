@@ -12,6 +12,18 @@ async function getThemes() {
   return data;
 }
 
+async function getThemesUser() {
+  const response = await fetch(`${config.server}/themes/user`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  const data = await response.json();
+  return data;
+}
+
 async function putThemesTheme({ name, tags, description, url }) {
   const response = await fetch(`${config.server}/themes/theme`, {
     method: "PUT",
@@ -25,4 +37,17 @@ async function putThemesTheme({ name, tags, description, url }) {
   return data;
 }
 
-export { getThemes, putThemesTheme };
+async function postThemesThemeSave({ themeId, categoryId, categoryName }) {
+  const response = await fetch(`${config.server}/themes/theme/save`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ themeId, categoryId, categoryName }),
+  });
+  const data = await response.json();
+  return data;
+}
+
+export { getThemes, getThemesUser, putThemesTheme, postThemesThemeSave };

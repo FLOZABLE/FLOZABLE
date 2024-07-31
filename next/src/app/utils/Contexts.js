@@ -12,7 +12,7 @@ import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import { usePlan } from "@/Hooks/plansHooks";
 import { useGetGroups, useGroups } from "@/Hooks/groupsHook";
-import { useGetThemes } from "@/Hooks/themesHooks";
+import { useGetThemes, useThemes, useThemesUser } from "@/Hooks/themesHooks";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -325,41 +325,20 @@ function ThemesProvider({ children }) {
   const [themes, setThemes] = useState([]);
   const [userThemes, setUserThemes] = useState([]);
 
-  const {data: getThemesData} = useGetThemes();
-
-  useEffect(()=> {
-    if (!getThemesData?.success) return;
-
-    setThemes(getThemesData.themes);
-  }, [getThemesData])
+  const { useThemesData } = useThemes();
+  const { useThemesUserData } = useThemesUser();
 
   useEffect(() => {
-    fetch(`${config.server}/themes/user`, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          const userThemes =
-            data.themes.themes === "" ? [] : data.themes.themes.split(",");
-          setUserThemes(
-            userThemes.map((theme) => {
-              const [category, id] = theme.split(":");
+    if (!useThemesData?.success) return;
 
-              return {
-                category,
-                id,
-              };
-            })
-          );
-        }
-      })
-      .catch((error) => console.error(error));
-  }, []);
+    setThemes(useThemesData.themes);
+  }, [useThemesData]);
+
+  useEffect(() => {
+    if (!useThemesUserData?.success) return;
+
+    setUserThemes(useThemesUserData.themes);
+  }, [useThemesUserData]);
 
   return (
     <ThemesContext.Provider

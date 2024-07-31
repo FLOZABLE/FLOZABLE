@@ -1,16 +1,35 @@
-import { getThemes } from "@/Api/themesApi";
+import { getThemes, getThemesUser } from "@/Api/themesApi";
 import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "./accountHooks";
 
-function useGetThemes() {
+function useThemes() {
   const { userInfo } = useAccount();
 
-  return useQuery({
+  const queryResult = useQuery({
     queryKey: [`getThemes`],
     queryFn: getThemes,
     staleTime: 1000 * 60,
     enabled: !!userInfo,
   });
+
+  const { data: useThemesData } = queryResult;
+
+  return { useThemesData, ...queryResult };
 }
 
-export { useGetThemes };
+function useThemesUser() {
+  const { userInfo } = useAccount();
+
+  const queryResult = useQuery({
+    queryKey: [`getThemesUser`],
+    queryFn: getThemesUser,
+    staleTime: 1000 * 60,
+    enabled: !!userInfo,
+  });
+
+  const { data: useThemesUserData } = queryResult;
+
+  return { useThemesUserData, ...queryResult };
+}
+
+export { useThemes, useThemesUser };
