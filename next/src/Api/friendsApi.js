@@ -49,4 +49,27 @@ async function getFriendsTrends() {
   return data;
 }
 
-export { getFriendsRecommended, getFriendsSearch, getFriendsTrends };
+async function getFriendsStatus() {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const response = await fetch(
+    `${config.server}/friends/status?timezone=${timezone}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+  const data = await response.json();
+
+  return data;
+}
+
+export {
+  getFriendsRecommended,
+  getFriendsSearch,
+  getFriendsTrends,
+  getFriendsStatus,
+};

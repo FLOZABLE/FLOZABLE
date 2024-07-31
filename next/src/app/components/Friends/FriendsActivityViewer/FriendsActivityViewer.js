@@ -10,38 +10,25 @@ import { Wave } from "@/app/utils/Svg";
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
 import DmBtn from "../../Buttons/DmBtn/DmBtn";
-import { useAccount } from "@/Hooks/accountHooks";
+import { useFriendsStatus } from "@/Hooks/friendsHooks";
+import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
 //mode 0 is for friends page's component, mode 1 is for main page's component
 function FriendsActivityViewer() {
-  const { userInfo } = useAccount();
-
   const [friends, setFriends] = useState([]);
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (!userInfo) return;
+  const { useFriendsStatusData, useFriendsStatusIsLoading } =
+    useFriendsStatus();
 
-    fetch(`${config.server}/friends/status`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setFriends(data.friendsInfo);
-        }
-      })
-      .catch((error) => console.error(error));
-  }, [userInfo]);
+  if (useFriendsStatusIsLoading || !useFriendsStatusData?.success) {
+    return <CircularLoading />;
+  }
 
   return (
     <div className={`${styles.FriendsActivityViewer} Box`}>
-      {friends.length ? (
+      {useFriendsStatusData.friends.length ? (
         <>
           <div className="header">
             <h3>Friends Status</h3>
@@ -50,7 +37,7 @@ function FriendsActivityViewer() {
             </i>
           </div>
           <div className="contents customScroll">
-            {friends.map((friend, i) => {
+            {useFriendsStatusData.friends.map((friend, i) => {
               return (
                 <div className={styles.friend} key={i}>
                   <div>

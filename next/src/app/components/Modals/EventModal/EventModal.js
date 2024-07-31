@@ -32,6 +32,7 @@ import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import { deletePlanShare, patchPlan, postPlanShare } from "@/Api/plansApi";
 import { useSubjects } from "@/Hooks/subjectsHooks";
+import { usePlansPlanUsers } from "@/Hooks/plansHooks";
 
 function EventModalLayer({ children, icon, hoverEl }) {
   return (
@@ -105,10 +106,13 @@ function EventModal({}) {
 
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
   const { setResponse } = useContext(ResponseContext);
-  const { setIsAddSubjectModal, setIsSharePlanModal, isSharePlanModal } =
+  const { setIsAddSubjectModal, setIsSharePlanModal } =
     useContext(ModalsContext);
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
+
+  const { usePlansPlanUsersData, usePlansPlanUsersIsLoading } =
+    usePlansPlanUsers(planModal?.plan_id);
 
   const eventModalRef = useRef(null);
   const titleRef = useRef(null);
@@ -301,26 +305,18 @@ function EventModal({}) {
           return prev;
         });
       }
-    } else if (planModal.plan_id) {
-      fetch(`${config.server}/plans/users?id=${planModal.plan_id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            const { shared, share } = data;
-            setPlanModal((prev) => {
-              return { ...prev, share, shared };
-            });
-          }
-        })
-        .catch((error) => console.error(error));
     }
   }, [planModal.opened, planModal.plan_id]);
+
+  useEffect(() => {
+    if (!usePlansPlanUsersData?.success) return;
+
+    const { shared, share } = usePlansPlanUsersData.planInfo;
+
+    setPlanModal((prev) => {
+      return { ...prev, share, shared };
+    });
+  }, [usePlansPlanUsersData]);
 
   /* useEffect(() => {
     if (router.search.includes('tutorial')) return;

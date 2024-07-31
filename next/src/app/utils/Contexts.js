@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import config from "./config";
 import { filterGroups } from "./Tool";
 import { socket } from "./socket";
 import { timelineSort } from "./timelineSorting";
@@ -11,8 +10,8 @@ import { DEFAULT_PLAN } from "./Constant";
 import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import { usePlan } from "@/Hooks/plansHooks";
-import { useGetGroups, useGroups } from "@/Hooks/groupsHook";
-import { useGetThemes, useThemes, useThemesUser } from "@/Hooks/themesHooks";
+import { useGetGroups } from "@/Hooks/groupsHook";
+import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 

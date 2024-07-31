@@ -28,13 +28,13 @@ const responseCodes = {
   "no-group": {
     success: false,
     reason: "Invalid Group",
-    code: 404
+    code: 404,
   },
-  'non-memeber' : {
+  "non-memeber": {
     success: false,
-    reason: 'Not a member of this group',
-    code: 401
-  }
+    reason: "Not a member of this group",
+    code: 401,
+  },
 };
 
 const USER_ID_COOKIE_OPTIONS = {
@@ -43,6 +43,11 @@ const USER_ID_COOKIE_OPTIONS = {
   httpOnly: true,
   signed: true,
   sameSite: "strict",
+};
+
+const REDIS_EXP = {
+  ACTIVE_GROUP: 60 * 60 * 12,
+  ACTIVE_SUBJECT: 60 * 60 * 12,
 };
 
 const MAX_STUDY_TIME = 60 * 60 * 20; // 20hr = max study time. ignore more than 6 hr
@@ -63,14 +68,7 @@ const possibleBotsSubjects = [
     "Biology",
     "Biology",
   ],
-  [
-    "Science",
-    "Science",
-    "Chemistry",
-    "Chemistry",
-    "Chemistry",
-    "Biochemistry",
-  ],
+  ["Science", "Science", "Chemistry", "Chemistry", "Chemistry", "Biochemistry"],
   ["Physics", "Physics", "Physics", "Physics 1", "Physics 2", "Physics C"],
   [
     "French",
@@ -133,7 +131,6 @@ const possibleBotsSubjects = [
   ],
 ];
 
-
 module.exports = {
   colorsList,
   responseCodes,
@@ -141,5 +138,6 @@ module.exports = {
   USER_ID_COOKIE_OPTIONS,
   FRIENDS_LIMIT,
   PASSWORD_LINK_EXP,
-  possibleBotsSubjects
+  possibleBotsSubjects,
+  REDIS_EXP,
 };

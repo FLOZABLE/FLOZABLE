@@ -12,6 +12,7 @@ const {
   subjectCache,
   clearUserCache,
   usersCache,
+  activeGroupCache,
 } = require("../services/redisLoader");
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
@@ -386,7 +387,85 @@ Router.get("/recommended", async (req, res) => {
 Router.get("/status", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      return res.send({ success: false });
+      const userInfo = await userCache(userId);
+
+      if (!userInfo) return res.send(responseCodes["no-user"]);
+
+      const { timezone } = req.query;
+
+      const dateTime = DateTime.now().setZone(timezone).startOf("day");
+
+      const timezoneOffset = Math.floor(dateTime.offset / 60).toString();
+
+      const friends = await usersCache(userInfo.friends);
+
+      if (!friends.length) {
+        return res.send({ success: false });
+      }
+
+      const studyTotal = await redisClient.zmscore(
+        `users:${timezoneOffset}:dayTotal`,
+        friends.map((friend) => friend.user_id)
+      );
+
+      const friendGroups = [];
+
+      await Promise.all(
+        friends.map(async (friend, i) => {
+          friend.study_time = studyTotal[i] ? parseInt(studyTotal[i]) : 0;
+
+          const activeSubject = await activeSubjectCache(friend.user_id);
+
+          friend.activeSubject = activeSubject;
+
+          const activeGroup = await activeGroupCache(friend.user_id);
+
+          if (activeGroup) {
+            friendGroups.push(activeGroup.id);
+            friend.activeGroup = { ...activeGroup };
+          }
+        })
+      );
+
+      if (friendGroups.length) {
+        const connection = pool.promise();
+        const [friendGroupsInfo] = await connection.query(
+          `
+          SELECT 
+            g.group_id, 
+            g.name, 
+            g.leader, 
+            g.visibility, 
+            g.description, 
+            g.created_at, 
+            g.max_members, 
+            g.tags, 
+            g.color, 
+            g.goal_hr, 
+          GROUP_CONCAT(DISTINCT m.user_id) AS members, 
+          GROUP_CONCAT(DISTINCT l.user_id) AS likes
+          FROM \`groups\` g
+          LEFT JOIN group_members m ON g.group_id = m.group_id
+          LEFT JOIN group_likes l ON g.group_id = l.group_id
+          WHERE g.group_id IN (?)
+          GROUP BY g.group_id
+          `,
+          [friendGroups]
+        );
+        //console.log(friendGroupsInfo);
+        friends.map((friend) => {
+          if (friend.activeGroup) {
+            const activeGroup = friendGroupsInfo.find(
+              (group) => group.group_id === friend.activeGroup.id
+            );
+            if (activeGroup) {
+              friend.activeGroup = { ...friend.activeGroup, activeGroup };
+            }
+          }
+        });
+      }
+      console.log(friends);
+      return res.send({ success: true, friends });
     } catch (error) {
       console.log(error);
       res.send({ success: false, reason: "An Error Occured" });

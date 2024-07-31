@@ -2,6 +2,7 @@ const redisClient = require("../model/redis");
 const pool = require("../model/pool");
 const { UserRefreshClient } = require("google-auth-library");
 const { DateTime } = require("luxon");
+const { REDIS_EXP } = require("../Constant");
 
 const USER_EXP = 60 * 60 * 3;
 const USER_EXP_PLUS = 60 * 60;
@@ -46,8 +47,8 @@ async function subjectsCache(userId) {
       const subjectsObj = {
         ...(await redisClient.hgetall(`user:${userId}:subjects`)),
       };
-      const subjectArr = Object.keys(subjectsObj).map((id) => {
-        return { ...JSON.parse(subjectsObj[id]), id };
+      const subjectArr = Object.keys(subjectsObj).map((subject_id) => {
+        return { ...JSON.parse(subjectsObj[subject_id]), subject_id };
       });
       return subjectArr;
     } else {
@@ -90,7 +91,7 @@ async function subjectCache(userId, subjectId) {
         `user:${userId}:subjects`,
         subjectId
       );
-      return { ...JSON.parse(subjectInfo), id: subjectId };
+      return { ...JSON.parse(subjectInfo), subject_id: subjectId };
     }
     const connection = pool.promise();
     const [subjects] = await connection.query(
@@ -99,10 +100,10 @@ async function subjectCache(userId, subjectId) {
     );
     subjects.map(async (subject) => {
       const redisSubject = { ...subject };
-      delete redisSubject.id;
+      delete redisSubject.subject_id;
       redisClient.hset(
         `user:${userId}:subjects`,
-        subject.id,
+        subject.subject_id,
         JSON.stringify(redisSubject)
       );
     });
@@ -199,14 +200,35 @@ async function msgQueue(roomId, msgInfo) {
  */
 async function activeSubjectCache(userId) {
   try {
-    let activeSubject = await redisClient.hget(
-      `user:${userId}`,
-      `ActiveSubject`
+    const activeSubject = await redisClient.hgetall(
+      `user:${userId}:activeSubject`
     );
-    activeSubject = activeSubject
-      ? { id: activeSubject.split(":")[0], time: activeSubject.split(":")[1] }
-      : false;
-    return activeSubject;
+    if (activeSubject.id && activeSubject.time) {
+      return activeSubject;
+    }
+    return null;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+async function cacheActiveSubject(userId, subject, time) {
+  try {
+    await redisClient.hset(
+      `user:${userId}:activeSubject`,
+      "id",
+      subject.subject_id,
+      "time",
+      time,
+      "name",
+      subject.name
+    );
+
+    redisClient.expire(
+      `user:${userId}:activeSubject`,
+      REDIS_EXP.ACTIVE_SUBJECT
+    );
   } catch (err) {
     console.log(err);
   }
@@ -214,15 +236,30 @@ async function activeSubjectCache(userId) {
 
 async function activeGroupCache(userId) {
   try {
-    const activeGroup = await redisClient.hget(`user:${userId}`, `ActiveGroup`);
-    if (activeGroup) {
-      return JSON.parse(activeGroup);
-    } else {
-      return false;
+    const activeGroup = await redisClient.hgetall(`user:${userId}:activeGroup`);
+    if (activeGroup.id && activeGroup.time) {
+      return activeGroup;
     }
+    return null;
   } catch (err) {
     console.log(err);
-    return false;
+    return null;
+  }
+}
+
+async function cacheActiveGroup(userId, groupId, time) {
+  try {
+    await redisClient.hset(
+      `user:${userId}:activeGroup`,
+      "id",
+      groupId,
+      "time",
+      time
+    );
+
+    redisClient.expire(`user:${userId}:activeGroup`, REDIS_EXP.ACTIVE_GROUP);
+  } catch (err) {
+    console.log(err);
   }
 }
 
@@ -631,13 +668,15 @@ module.exports = {
   subjectsCache,
   subjectCache,
   activeSubjectCache,
+  cacheActiveSubject,
+  activeGroupCache,
+  cacheActiveGroup,
   NotificationCache,
   msgQueue,
   usersCache,
   userCache,
   clearUserCache,
   subjectsTimelineCache,
-  activeGroupCache,
   websiteUsageCache,
   googleAccessTokenCache,
   zsetIncrAll,
