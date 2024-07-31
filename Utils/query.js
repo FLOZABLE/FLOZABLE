@@ -287,6 +287,7 @@ async function createUserThemesTable() {
   CREATE TABLE IF NOT EXISTS user_themes (
     user_id VARCHAR(20),
     theme_id VARCHAR(10),
+    category_id SMALLINT,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (theme_id) REFERENCES themes(theme_id),
     PRIMARY KEY (user_id, theme_id)
