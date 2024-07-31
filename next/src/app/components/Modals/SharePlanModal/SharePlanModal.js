@@ -28,18 +28,18 @@ export default function SharePlanModal() {
       refProp={modalRef}
     >
       <div className={`${styles.SharePlanModal}`}>
-        <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <SearchUsers
           searchQuery={searchQuery}
           onClick={(userInfo) => {
             if (
               planModal.share.find((user) => user.user_id === userInfo.user_id)
             ) {
-              return setResponse({success: false, reason: `Already Shared with ${userInfo.name}`});
-            };
+              return setResponse({
+                success: false,
+                reason: `Already Shared with ${userInfo.name}`,
+              });
+            }
 
             if (planModal.opened) {
               setPlanModal((prev) => {
@@ -48,8 +48,8 @@ export default function SharePlanModal() {
                   share: [...prev.share, userInfo],
                 };
               });
-              postPlanShare([userInfo.user_id],planModal.id);
-              setResponse({success: true, msg: `Added ${userInfo.name}`})
+              postPlanShare([userInfo.user_id], planModal.plan_id);
+              setResponse({ success: true, msg: `Added ${userInfo.name}` });
             }
           }}
         />

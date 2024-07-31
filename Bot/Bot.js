@@ -22,6 +22,8 @@ const {
   getActiveUsers,
   addActiveUserCache,
   removeActiveUserCache,
+  cacheActiveSubject,
+  cacheActiveGroup,
 } = require("../services/redisLoader");
 const { mainIo } = require("../sockets/mainIo");
 const { MAX_STUDY_TIME, possibleBotsSubjects } = require("../Constant");
@@ -223,6 +225,9 @@ async function startBot(userId) {
     console.log("bot start", userInfo.name, userInfo.user_id);
     if (groups.length) {
       mainIo.to(groups).emit(`studying:${userId}`, subject);
+
+      const groupId = randomIntInRange(0, groups.length - 1);
+      cacheActiveGroup(userId, groupId, now);
     }
     if (friends.length) {
       mainIo.to(friends).emit(`studying:${userId}`, subject);
@@ -231,11 +236,7 @@ async function startBot(userId) {
       `user:${userId}:subject:${subject.subject_id}`,
       `[${now},0]`
     );
-    redisClient.hset(
-      `user:${userId}`,
-      `ActiveSubject`,
-      `${subject.subject_id}:${now}`
-    );
+    cacheActiveSubject(userId, subject, now);
     addActiveUserCache(userId);
   } catch (err) {
     console.log(err);
@@ -245,6 +246,7 @@ async function startBot(userId) {
 async function stopBot(userId) {
   try {
     redisClient.srem("activeBots", userId);
+    redisClient.del(`user:${userId}:activeGroup`);
     const now = Math.floor(new Date().getTime() / 1000);
 
     const userInfo = await userCache(userId);
@@ -267,7 +269,7 @@ async function stopBot(userId) {
     const activeSubject = await activeSubjectCache(userId);
 
     if (!activeSubject || activeSubject.id === "0") {
-      return await redisClient.hdel(`user:${userId}`, `ActiveSubject`);
+      return await redisClient.del(`user:${userId}:activeSubject`);
     }
 
     const activity = JSON.parse(
@@ -282,7 +284,7 @@ async function stopBot(userId) {
 
     console.log("bot stop", userId, duration);
 
-    await redisClient.hdel(`user:${userId}`, `ActiveSubject`);
+    await redisClient.del(`user:${userId}:activeSubject`);
 
     if (duration > MAX_STUDY_TIME) {
       console.log("max study exceeded: ", duration);

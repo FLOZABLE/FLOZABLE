@@ -32,7 +32,7 @@ async function timerUpdate() {
 
     if (insertInfo.length) {
       await connection.query(
-        `INSERT INTO subject_timelines (subject_id, start_time, duration) VALUES ?`,
+        `INSERT IGNORE INTO subject_timelines (subject_id, start_time, duration) VALUES ?`,
         [insertInfo]
       );
     }

@@ -72,7 +72,7 @@ async function updateDailyRanking(now, timezoneOffset) {
 
     if (rankings.length) {
       await connection.query(
-        `INSERT INTO ranking_details (ranking_id, user_id, rank, study_time) VALUES ?`,
+        `INSERT IGNORE INTO ranking_details (ranking_id, user_id, rank, study_time) VALUES ?`,
         [rankings]
       );
     }
@@ -123,7 +123,7 @@ async function updateWeeklyRanking(now, timezoneOffset) {
 
     if (rankings.length) {
       await connection.query(
-        `INSERT INTO ranking_details (ranking_id, user_id, rank, study_time) VALUES ?`,
+        `INSERT IGNORE INTO ranking_details (ranking_id, user_id, rank, study_time) VALUES ?`,
         [rankings]
       );
     }
@@ -174,7 +174,7 @@ async function updateMonthlyRanking(now, timezoneOffset) {
 
     if (rankings.length) {
       await connection.query(
-        `INSERT INTO ranking_details (ranking_id, user_id, rank, study_time) VALUES ?`,
+        `INSERT IGNORE INTO ranking_details (ranking_id, user_id, rank, study_time) VALUES ?`,
         [rankings]
       );
     }

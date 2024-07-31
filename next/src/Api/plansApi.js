@@ -119,6 +119,24 @@ async function postPlanShareRespond(planId, accepted) {
   return data;
 }
 
+async function getPlansPlanUsers(planId) {
+  if (!planId) return { success: false };
+
+  const response = await fetch(
+    `${config.server}/plans/plan/users?planId=${planId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+  const data = await response.json();
+
+  return data;
+}
+
 export {
   getPlans,
   patchPlan,
@@ -127,4 +145,5 @@ export {
   postPlanShare,
   postPlanShareRespond,
   deletePlanShare,
+  getPlansPlanUsers,
 };
