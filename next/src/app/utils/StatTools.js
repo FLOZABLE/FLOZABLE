@@ -1,37 +1,80 @@
 import { DateTime } from "luxon";
+import { coldColorsList, SUBJECTS_PIE_COLORS } from "./Constant";
+import { secondConverter } from "./Tool";
 
 //time usage pie
-function updateTimeUsagePie(subjects, viewDateTime, type) {
+function updateTimeUsagePie(subjects, viewDate, type) {
   const data = [];
-  const labels = [];
+  const now = DateTime.now().startOf("day").startOf(type);
+  const viewDateTime = DateTime.fromJSDate(viewDate)
+    .startOf("day")
+    .startOf(type);
+
   if (type === "day") {
     subjects.map((subject) => {
       const { daily } = subject;
-      const index =
-        daily.total.length + Math.floor(viewDateTime.diffNow("days").days);
-      const value = daily.total[index] ? daily.total[index] : 0;
-      data.push({ value, info: subject });
+      const index = daily.total.length - now.diff(viewDateTime).days - 1;
+      console.log(index, viewDate)
+      const value = daily.total[index];
+      if (value) {
+        const fill =
+          SUBJECTS_PIE_COLORS[data.length % SUBJECTS_PIE_COLORS.length];
+        const labelVal = secondConverter(value, [
+          "seconds",
+          "minutes",
+          "hours",
+        ]);
+        data.push({
+          value,
+          ...subject,
+          fill,
+          labelVal: `${labelVal.value} ${labelVal.type}`,
+        });
+      }
     });
   } else if (type === "week") {
     subjects.map((subject) => {
-      const { weekly } = subject;
-      const index =
-        weekly.total.length +
-        Math.floor(viewDateTime.startOf("week").diffNow("weeks").weeks);
-      const value = weekly.total[index] ? weekly.total[index] : 0;
-      data.push({ value, info: subject });
+      const { daily } = subject;
+      const index = daily.total.length - now.diff(viewDateTime).weeks - 1;
+      const value = daily.total[index];
+      if (value) {
+        const fill =
+          SUBJECTS_PIE_COLORS[data.length % SUBJECTS_PIE_COLORS.length];
+        const labelVal = secondConverter(value, [
+          "seconds",
+          "minutes",
+          "hours",
+        ]);
+        data.push({
+          value,
+          ...subject,
+          fill,
+          labelVal: `${labelVal.value} ${labelVal.type}`,
+        });
+      }
     });
   } else {
     subjects.map((subject) => {
-      const { monthly } = subject;
-      const index =
-        monthly.total.length +
-        Math.floor(viewDateTime.startOf("month").diffNow("months").months);
-      const value = monthly.total[index] ? monthly.total[index] : 0;
-      data.push({ value, info: subject });
+      const { daily } = subject;
+      const index = daily.total.length - now.diff(viewDateTime).months - 1;
+      const value = daily.total[index];
+      if (value) {
+        const fill =
+          SUBJECTS_PIE_COLORS[data.length % SUBJECTS_PIE_COLORS.length];
+        const labelVal = secondConverter(value, [
+          "seconds",
+          "minutes",
+          "hours",
+        ]);
+        data.push({
+          value,
+          ...subject,
+          fill,
+          labelVal: `${labelVal.value} ${labelVal.type}`,
+        });
+      }
     });
   }
-
   return data;
 }
 
@@ -48,18 +91,20 @@ function updateTimeTrend(subjects, mode, sum) {
   return { data, labels };
 }
 
-function updateSubjectsTrendChart(subjects, viewDate, type, change) {
+function updateSubjectsTrendChart(subjects, viewDate, type) {
   const data = [];
-  const now = DateTime.now().startOf(change);
-  let datumPoint = DateTime.fromJSDate(viewDate).startOf(change);
-  const diff = datumPoint.diff(now, change).toObject()[change];
+  const now = DateTime.now().startOf("day").startOf(type);
+  let datumPoint = DateTime.fromJSDate(viewDate).startOf("day").startOf(type);
+  const diff = datumPoint.diff(now, type).toObject()[type + "s"];
   if (diff > -7) {
-    datumPoint = now.minus({ [change]: 6 });
+    datumPoint = now.minus({ [type + "s"]: 6 });
   }
   for (let i = 0; i < 7; i++) {
-    const date = datumPoint.plus({ [change]: i });
+    const date = datumPoint.plus({ [type + "s"]: i });
+    console.log(date)
     const label = `${date.month}/${date.day}`;
-    const subjectData = updateTimeUsagePie(subjects, date, type);
+
+    const subjectData = updateTimeUsagePie(subjects, date.toJSDate(), type);
     const dayObj = {
       data: subjectData,
       label,

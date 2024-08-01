@@ -139,13 +139,13 @@ function streakCalculator(subjects) {
     day -= 1;
   }
   return tempStreak ? tempStreak : 0;
-};
+}
 
 function todayTotalCalculator(subjects) {
   if (!subjects || !subjects?.daily?.total?.length) return 0;
   const totalSeconds = subjects.daily.total[subjects.daily.total.length - 1];
   return totalSeconds ? totalSeconds : 0;
-};
+}
 
 function generateRandomId(length) {
   const characters =
@@ -215,7 +215,10 @@ async function subscribeUserToPush() {
 
 function getDates(date, timezone, mode, length) {
   const dates = [];
-  let dateTime = DateTime.fromISO(date).setZone(timezone).startOf(mode).startOf("day");
+  let dateTime = DateTime.fromISO(date)
+    .setZone(timezone)
+    .startOf(mode)
+    .startOf("day");
   const now = DateTime.now().setZone(timezone).startOf(mode).startOf("day");
 
   for (let i = 0; i < length; i++) {
@@ -231,6 +234,16 @@ function getDates(date, timezone, mode, length) {
   return dates;
 }
 
+function getDatesDisplay(date, mode, format = "LLLL d", length = 1) {
+  const dateTime = DateTime.fromJSDate(date);
+
+  if (mode === "day") {
+    if (length === 1) {
+      return dateTime.toFormat(format);
+    }
+  }
+}
+
 export {
   cyrb128,
   filterGroups,
@@ -243,5 +256,6 @@ export {
   streakCalculator,
   generateRandomId,
   requestNotification,
-  getDates
+  getDates,
+  getDatesDisplay,
 };

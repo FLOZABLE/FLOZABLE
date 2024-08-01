@@ -1,0 +1,66 @@
+.SubjectsPie {
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+}
+
+.SubjectsPie .date {
+  text-align: center;
+  margin: 0.5rem 0rem;
+  color: var(--gray1);
+}
+
+.SubjectsPie .chartContainer {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  position: relative;
+}
+
+.SubjectsPie .totalTime {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.SubjectsPie .totalTime .time {
+  font-size: 1.8rem;
+}
+
+.SubjectsPie .totalTime .text {
+  color: var(--gray1);
+}
+
+.SubjectsPie .labels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 45%);
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.SubjectsPie .labels .label {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-left: 2rem;
+}
+
+.SubjectsPie .labels .label .icon {
+  left: -1.25rem;
+  top: 0.25rem;
+  position: absolute;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.SubjectsPie .labels .label .name {
+  font-size: 0.9rem;
+  color: var(--gray1);
+}
+
+.SubjectsPie .labels .label .time {
+  font-size: 1.1rem;
+}
