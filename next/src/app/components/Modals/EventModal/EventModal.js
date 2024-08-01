@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import styles from "./EventModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -33,6 +33,7 @@ import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import { deletePlanShare, patchPlan, postPlanShare } from "@/Api/plansApi";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import { usePlansPlanUsers } from "@/Hooks/plansHooks";
+import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
 function EventModalLayer({ children, icon, hoverEl }) {
   return (
@@ -508,15 +509,18 @@ function EventModal({}) {
           hoverEl={"Shared Users"}
         >
           <div className={styles.UserBoxes}>
-            {/* <Suspense fallback={<CircularLoading />}>
-              <UserBoxes id={planModal.plan_id} planModal={planModal} />
-            </Suspense> */}
-            {planModal.share.map((userInfo, i) => {
-              return <ShareUserBox userInfo={userInfo} key={i} />;
-            })}
-            {planModal.shared.map((userInfo, i) => {
-              return <SharedUserBox userInfo={userInfo} key={i} />;
-            })}
+            {usePlansPlanUsersIsLoading ? (
+              <CircularLoading />
+            ) : (
+              <>
+                {planModal.share.map((userInfo, i) => {
+                  return <ShareUserBox userInfo={userInfo} key={i} />;
+                })}
+                {planModal.shared.map((userInfo, i) => {
+                  return <SharedUserBox userInfo={userInfo} key={i} />;
+                })}
+              </>
+            )}
           </div>
         </EventModalLayer>
         <div className={styles.buttonsContainer} ref={submitRef}>

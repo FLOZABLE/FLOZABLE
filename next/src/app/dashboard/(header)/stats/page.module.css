@@ -1,47 +1,16 @@
 .Stats {
-  padding: 0.625rem 3.125rem;
-}
-
-.Stats .optionsHeader {
-  position: sticky;
-  top: 6.25rem;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  z-index: 2;
+  padding: 0rem 3.125rem;
 }
 
 .Stats .layer {
+  display: flex;
   height: 50vh;
-  display: flex;
 }
 
-.Stats .box {
-  flex: 1;
-  display: flex;
-}
-
-.Stats .box > div {
-  flex: 1;
-  display: flex;
-  justify-content: center;
+/* .Stats .layer .box {
   flex-direction: column;
-  height: 100%;
-}
+} */
 
-.Stats div#studyInfo {
-  align-items: baseline;
-}
-
-.Stats div#studyInfo > div{
-  display: flex;
-  align-items: center;
-  font-size: 2rem;
-}
-
-.Stats div#studyInfo i {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 0.5rem;
+.Stats .box#subjectsPie {
+  width: 25rem;
 }

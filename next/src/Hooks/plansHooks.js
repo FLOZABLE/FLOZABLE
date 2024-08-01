@@ -14,7 +14,7 @@ function usePlansPlanUsers(planId) {
   const queryResult = useQuery({
     queryKey: [`usePlansPlanUsers`, planId],
     queryFn: () => getPlansPlanUsers(planId),
-    staleTime: 1000 * 0,
+    staleTime: 1000 * 60 * 5,
     enabled: !!planId,
   });
 
