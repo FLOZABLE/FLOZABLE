@@ -1,24 +1,23 @@
 import { DateTime } from "luxon";
 import { coldColorsList, SUBJECTS_PIE_COLORS } from "./Constant";
-import { secondConverter } from "./Tool";
+import { getDates, secondConverter } from "./Tool";
 
 //time usage pie
 function updateTimeUsagePie(subjects, viewDate, type) {
   const data = [];
-  const now = DateTime.now().startOf("day").startOf(type);
   const viewDateTime = DateTime.fromJSDate(viewDate)
     .startOf("day")
     .startOf(type);
 
   if (type === "day") {
     subjects.map((subject) => {
-      const { daily } = subject;
-      const index = daily.total.length - now.diff(viewDateTime).days - 1;
-      console.log(index, viewDate)
-      const value = daily.total[index];
-      if (value) {
+      const date = subject.daily.total.find(
+        (day) => day.date === viewDateTime.toISODate()
+      );
+      if (date) {
         const fill =
           SUBJECTS_PIE_COLORS[data.length % SUBJECTS_PIE_COLORS.length];
+        const value = date.data;
         const labelVal = secondConverter(value, [
           "seconds",
           "minutes",
@@ -34,12 +33,13 @@ function updateTimeUsagePie(subjects, viewDate, type) {
     });
   } else if (type === "week") {
     subjects.map((subject) => {
-      const { daily } = subject;
-      const index = daily.total.length - now.diff(viewDateTime).weeks - 1;
-      const value = daily.total[index];
-      if (value) {
+      const date = subject.weekly.total.find(
+        (day) => day.date === viewDateTime.toISODate()
+      );
+      if (date) {
         const fill =
           SUBJECTS_PIE_COLORS[data.length % SUBJECTS_PIE_COLORS.length];
+        const value = date.data;
         const labelVal = secondConverter(value, [
           "seconds",
           "minutes",
@@ -55,12 +55,13 @@ function updateTimeUsagePie(subjects, viewDate, type) {
     });
   } else {
     subjects.map((subject) => {
-      const { daily } = subject;
-      const index = daily.total.length - now.diff(viewDateTime).months - 1;
-      const value = daily.total[index];
-      if (value) {
+      const date = subject.monthly.total.find(
+        (day) => day.date === viewDateTime.toISODate()
+      );
+      if (date) {
         const fill =
           SUBJECTS_PIE_COLORS[data.length % SUBJECTS_PIE_COLORS.length];
+        const value = date.data;
         const labelVal = secondConverter(value, [
           "seconds",
           "minutes",
@@ -93,24 +94,17 @@ function updateTimeTrend(subjects, mode, sum) {
 
 function updateSubjectsTrendChart(subjects, viewDate, type) {
   const data = [];
-  const now = DateTime.now().startOf("day").startOf(type);
-  let datumPoint = DateTime.fromJSDate(viewDate).startOf("day").startOf(type);
-  const diff = datumPoint.diff(now, type).toObject()[type + "s"];
-  if (diff > -7) {
-    datumPoint = now.minus({ [type + "s"]: 6 });
-  }
-  for (let i = 0; i < 7; i++) {
-    const date = datumPoint.plus({ [type + "s"]: i });
-    console.log(date)
-    const label = `${date.month}/${date.day}`;
+  const dates = getDates(viewDate, type, 7);
 
+  dates.map((date) => {
+    const label = `${date.month}/${date.day}`;
     const subjectData = updateTimeUsagePie(subjects, date.toJSDate(), type);
-    const dayObj = {
+    const day = {
       data: subjectData,
       label,
     };
-    data.push(dayObj);
-  }
+    data.push(day);
+  });
   return data;
 }
 

@@ -1,60 +1,41 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./DateSelectorBtn.module.css";
-import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import React, { useState, useEffect } from "react";
 import { DateTime } from "luxon";
+import { getDatesDisplay } from "@/app/utils/Tool";
 
-function DateSelectorBtn({
-  viewDate,
-  isCalendarOpen,
-  setIsCalendarOpen,
-  viewMode
-}) {
-  const [viewString, setViewString] = useState("");
+function DateSelectorBtn({ viewDate, setViewDate, viewMode }) {
+  const [dateDisp, setDateDisp] = useState("");
 
   useEffect(() => {
-    const viewDateTime = DateTime.fromJSDate(viewDate);
-    const now = DateTime.now();
-
-    if (viewMode === 'month') {
-      if (viewDateTime.hasSame(now, 'month') && viewDateTime.hasSame(now, 'year')) {
-        setViewString('This Month');
-      } else {
-        setViewString(viewDateTime.monthLong);
-      };
-    } else if (viewMode === 'week') {
-      if (viewDateTime.hasSame(now, 'week') && viewDateTime.hasSame(now, 'year')) {
-        setViewString('This Week');
-      } else {
-        setViewString(viewDateTime.startOf('week').month + "/" + viewDateTime.startOf('week').day + " ~ " + viewDateTime.endOf('week').month + "/" + viewDateTime.endOf('week').day);
-      };
-    } else {
-      if (viewDateTime.hasSame(now, 'day')) {
-        setViewString('Today');
-      } else {
-        setViewString(viewDateTime.month + "/" + viewDateTime.day);
-      };
-    };
+    if (!viewDate || !viewMode) return;
+    const dateDisp = getDatesDisplay(viewDate, viewMode);
+    setDateDisp(dateDisp);
   }, [viewDate, viewMode]);
 
+  function onDecr() {
+    let viewDateTime = DateTime.fromJSDate(viewDate);
+
+    viewDateTime = viewDateTime.minus({ [viewMode]: 1 });
+    setViewDate(viewDateTime.toJSDate());
+  }
+
+  function onIncr() {
+    let viewDateTime = DateTime.fromJSDate(viewDate);
+
+    viewDateTime = viewDateTime.plus({ [viewMode]: 1 });
+    setViewDate(viewDateTime.toJSDate());
+  }
+
   return (
-    <button
-      className={`${styles.DateSelectorBtn} ${
-        isCalendarOpen ? styles.open : ""
-      }`}
-      onClick={() => {
-        setIsCalendarOpen(!isCalendarOpen);
-      }}
-    >
-      <p>{viewString}</p>
-      <i>
-        <FontAwesomeIcon
-          icon={faCaretDown}
-          style={{ color: "#545B77" }}
-          className={styles.caret}
-        />
-      </i>
-    </button>
+    <div className={styles.DateSelectorBtn}>
+      <div className={styles.button} onClick={onDecr}>
+        {"<"}
+      </div>
+      <p>{dateDisp}</p>
+      <div className={styles.button} onClick={onIncr}>
+        {">"}
+      </div>
+    </div>
   );
 }
 

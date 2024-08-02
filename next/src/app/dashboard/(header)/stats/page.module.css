@@ -14,3 +14,11 @@
 .Stats .box#subjectsPie {
   width: 25rem;
 }
+
+.Stats .box#studyTrendChart {
+  flex: 1
+}
+
+.Stats .box#RankingsTrendsChart {
+  width: 50%;
+}

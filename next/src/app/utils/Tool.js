@@ -115,35 +115,32 @@ const focusCalculator = (grouped) => {
   return focus;
 };
 
-function streakCalculator(subjects) {
-  let tempStreak = 0;
-  let day = 0;
-  for (let i = 0; i < subjects.length; i++) {
-    day = Math.max(day, subjects[i].daily.grouped.length - 1); //find the latest day
-    // this will find the maximum length in all the daily arrays
-  }
-  while (day >= 0) {
-    let studiedToday = false;
-    for (let i = 0; i < subjects.length; i++) {
-      if (
-        subjects[i].daily.grouped[day] &&
-        subjects[i].daily.grouped[day].length > 0
-      ) {
-        //the user has studied in this subject this day
-        tempStreak += 1;
-        studiedToday = true;
-        break; //to prevent adding streak for other subjects;
-      }
+function streakCalculator(groupedSubjects) {
+  const reversedDaily = groupedSubjects.daily.total.toReversed();
+
+  let streak = 0;
+  reversedDaily.find((day) => {
+    if (day.data) {
+      streak += 1;
+    } else {
+      return true;
     }
-    if (!studiedToday) break;
-    day -= 1;
-  }
-  return tempStreak ? tempStreak : 0;
+  });
+
+  return streak;
 }
 
-function todayTotalCalculator(subjects) {
-  if (!subjects || !subjects?.daily?.total?.length) return 0;
-  const totalSeconds = subjects.daily.total[subjects.daily.total.length - 1];
+function todayTotalCalculator(groupedSubjects) {
+  if (!groupedSubjects || !groupedSubjects?.daily?.total?.length) return 0;
+  const totalSeconds =
+    groupedSubjects.daily.total[groupedSubjects.daily.total.length - 1].data;
+  return totalSeconds ? totalSeconds : 0;
+}
+
+function todayFocusCalculator(groupedSubjects) {
+  if (!groupedSubjects || !groupedSubjects?.daily?.focus?.length) return 0;
+  const totalSeconds =
+    groupedSubjects.daily.focus[groupedSubjects.daily.focus.length - 1].data;
   return totalSeconds ? totalSeconds : 0;
 }
 
@@ -213,13 +210,10 @@ async function subscribeUserToPush() {
   }
 }
 
-function getDates(date, timezone, mode, length) {
+function getDates(date, mode, length) {
   const dates = [];
-  let dateTime = DateTime.fromISO(date)
-    .setZone(timezone)
-    .startOf(mode)
-    .startOf("day");
-  const now = DateTime.now().setZone(timezone).startOf(mode).startOf("day");
+  let dateTime = DateTime.fromJSDate(date).startOf(mode).startOf("day");
+  const now = DateTime.now().startOf(mode).startOf("day");
 
   for (let i = 0; i < length; i++) {
     if (dateTime.plus({ [mode]: i }) <= now) {
@@ -253,6 +247,7 @@ export {
   durationFormatter,
   focusCalculator,
   todayTotalCalculator,
+  todayFocusCalculator,
   streakCalculator,
   generateRandomId,
   requestNotification,

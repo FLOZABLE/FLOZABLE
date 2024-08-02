@@ -1,0 +1,19 @@
+.SubjectsLabels {
+  display: flex;
+  color: var(--gray2);
+  font-weight: 900;
+}
+
+.SubjectsLabels .label {
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.SubjectsLabels .label:first-child {
+  padding-right: 1.5rem;
+}
+
+.SubjectsLabels .label:not(:first-child) {
+  border-left: 0.1rem solid var(--gray0);
+  padding: 0rem 1.5rem;
+}

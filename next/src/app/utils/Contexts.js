@@ -109,19 +109,27 @@ function AccountProvider({ children }) {
 
 function SubjectsProvider({ children }) {
   const { userInfo } = useContext(UserInfoContext);
+
   const [subjects, setSubjects] = useState([]);
+  const [groupedSubjects, setGroupedSubjects] = useState({});
   const [plans, setPlans] = useState([]);
   const [planModal, setPlanModal] = useState(DEFAULT_PLAN);
 
-  const { data: subjectsData, refetch: refetchSubjectsData } =
-    useSubjects(userInfo);
+  const queryResult = useSubjects();
   const { data: planData, refetch: refetchPlan } = usePlan(userInfo);
 
-  useEffect(() => {
-    if (!subjectsData?.success) return;
+  const { useSubjectsData } = queryResult;
 
-    setSubjects(timelineSort(subjectsData.subjects));
-  }, [subjectsData]);
+  useEffect(() => {
+    if (!useSubjectsData?.success) return;
+
+    const { subjects, groupedSubjects } = timelineSort(
+      useSubjectsData.subjects
+    );
+
+    setSubjects(subjects);
+    setGroupedSubjects(groupedSubjects);
+  }, [useSubjectsData]);
 
   useEffect(() => {
     if (!planData?.success) return;
@@ -163,7 +171,13 @@ function SubjectsProvider({ children }) {
 
   return (
     <SubjectsContext.Provider
-      value={{ subjects, setSubjects, refetchSubjectsData }}
+      value={{
+        ...queryResult,
+        subjects,
+        setSubjects,
+        groupedSubjects,
+        setGroupedSubjects,
+      }}
     >
       <PlansContext.Provider
         value={{ plans, setPlans, planModal, setPlanModal, refetchPlan }}
