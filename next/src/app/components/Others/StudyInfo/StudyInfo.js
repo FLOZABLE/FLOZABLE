@@ -13,10 +13,10 @@ import {
   todayTotalCalculator,
 } from "@/app/utils/Tool";
 import { useContext, useEffect, useState } from "react";
-import { useSubjects } from "@/Hooks/subjectsHooks";
+import { SubjectsContext } from "@/app/utils/Contexts";
 
 export default function StudyInfo() {
-  const { subjects } = useSubjects();
+  const { subjects } = useContext(SubjectsContext);
 
   const [totalStudied, setTotalStudied] = useState("0m"); // string
   const [appUsage, setAppUsage] = useState("0 m");

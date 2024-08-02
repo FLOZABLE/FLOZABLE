@@ -3,23 +3,18 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import styles from "./Header.module.css";
 import {
-  focusCalculator,
   secondConverter,
   streakCalculator,
+  todayFocusCalculator,
   todayTotalCalculator,
 } from "../../../utils/Tool";
 import {
   HeaderBook,
-  HeaderFocus,
   HeaderGamepad,
   HeaderMeteor,
-  HeaderMonitor,
   HeaderTarget,
 } from "@/app/utils/Svg";
-import {
-  TutorialsContext,
-} from "@/app/utils/Contexts";
-import { useSubjects } from "@/Hooks/subjectsHooks";
+import { SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
 
 function HeaderEl({ children, value, title }) {
@@ -34,7 +29,7 @@ function HeaderEl({ children, value, title }) {
   );
 }
 function Header({}) {
-  const { subjects } = useSubjects();
+  const { groupedSubjects } = useContext(SubjectsContext);
 
   const { tutorialBoxRef, tutorialTextRef, tutorial } =
     useContext(TutorialsContext);
@@ -68,26 +63,21 @@ function Header({}) {
   );
 
   useEffect(() => {
-    if (!subjects.daily) return;
+    if (!groupedSubjects.daily) return;
 
     //Solve daily
-    const todayTotal = todayTotalCalculator(subjects);
-    const { value, type } = secondConverter(todayTotal);
-    setTotalStudied(value + " " + type);
+    const todayTotal = todayTotalCalculator(groupedSubjects);
+    const formattedTodayTotal = secondConverter(todayTotal);
+    setTotalStudied(formattedTodayTotal.value + " " + formattedTodayTotal.type);
 
     //Solve streak
-    const streaks = streakCalculator(subjects);
+    const streaks = streakCalculator(groupedSubjects);
     setStudyStreak(streaks + " days");
 
-    //Solve focus
-    if (subjects.daily.grouped.length) {
-      const focus = focusCalculator(
-        subjects.daily.grouped[subjects.daily.grouped.length - 1]
-      );
-      const formattedDuration = secondConverter(focus);
-      setLongestSession(formattedDuration.value + " " + formattedDuration.type);
-    }
-  }, [subjects]);
+    const focus = todayFocusCalculator(groupedSubjects);
+    const formattedFocus = secondConverter(focus);
+    setLongestSession(formattedFocus.value + " " + formattedFocus.type);
+  }, [groupedSubjects]);
 
   useEffect(() => {
     if (!websitesData?.success || !websitesData.websites.length) return;
@@ -122,7 +112,7 @@ function Header({}) {
         <div className={styles.divider}></div>
         <HeaderEl title={"Focus Time"} value={longestSession}>
           <i>
-            <HeaderTarget/>
+            <HeaderTarget />
           </i>
         </HeaderEl>
       </div>

@@ -1,37 +1,38 @@
 "use client";
 
+import styles from "./StudyTrendChart.module.css";
 import {
   CartesianGrid,
-  Line,
-  LineChart,
   ResponsiveContainer,
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
+  AreaChart,
+  Area,
 } from "recharts";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { updateSubjectsTrendChart } from "@/app/utils/StatTools";
-import { colorsList } from "@/app/utils/Constant";
+import { STUDY_TREND_COLORS } from "@/app/utils/Constant";
 import { secondConverter } from "@/app/utils/Tool";
-import EditSubjectBtn from "../../Buttons/EditSubjectBtn/EditSubjectBtn";
-import styles from "./StudyTrendChart.module.css";
-import { useSubjects } from "@/Hooks/subjectsHooks";
+import { SubjectsContext } from "@/app/utils/Contexts";
+import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
+import SubjectsLabels from "../SubjectsLabels/SubjectsLabels";
 
-function StudyTrendChart({ viewDate, viewer = "day", subjectsProp }) {
-  const { subjects } = useSubjects();
+function StudyTrendChart({
+  viewDate,
+  setViewDate,
+  viewer = "day",
+  subjectsProp,
+}) {
+  const { subjects } = useContext(SubjectsContext);
 
   const [subjectsTrend, setSubjectsTrend] = useState([]);
-  const [filteredTrends, setFilteredTrends] = useState([]);
+  const [filteredSubjects, setFilteredSubjects] = useState([]);
 
   useEffect(() => {
     if (!subjects || !viewDate || !viewer) return;
 
     if (!subjectsProp) {
-      const { daily } = subjects;
-
-      if (!daily) return;
-
       const subjectsTrend = updateSubjectsTrendChart(
         subjects,
         viewDate,
@@ -39,10 +40,6 @@ function StudyTrendChart({ viewDate, viewer = "day", subjectsProp }) {
       );
       setSubjectsTrend(subjectsTrend);
     } else {
-      const { daily } = subjectsProp;
-
-      if (!daily) return;
-
       const subjectsTrend = updateSubjectsTrendChart(
         subjectsProp,
         viewDate,
@@ -52,80 +49,98 @@ function StudyTrendChart({ viewDate, viewer = "day", subjectsProp }) {
     }
   }, [subjects, viewDate, viewer, subjectsProp]);
 
-  console.log(
-    subjectsTrend.map((day, i) => {
-      const data = day.data.reduce((accumulator, subject) => {
-        if (!filteredTrends.includes(subject.subject_id)) {
-          accumulator[subject.subject_id] = subject.value;
-        }
-        return accumulator;
-      }, {});
-      return { label: day.label, ...data };
-    })
-  );
-
   return (
-    <ResponsiveContainer width="98%" height="98%">
-      <LineChart
-        data={subjectsTrend.map((day, i) => {
-          const data = day.data.reduce((accumulator, subject) => {
-            if (!filteredTrends.includes(subject.subject_id)) {
-              accumulator[subject.subject_id] = subject.value;
-            }
-            return accumulator;
-          }, {});
-          return { label: day.label, ...data };
-        })}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="label" />
-        <YAxis
-          tickFormatter={(data) => {
-            const { value, type } = secondConverter(data);
-            return `${value} ${type}`;
-          }}
+    <div className={`Box ${styles.StudyTrendChart}`}>
+      <div className={`header ${styles.header}`}>
+        <p className={styles.name}>Study Time</p>
+        <DateSelectorBtn
+          viewMode={viewer}
+          viewDate={viewDate}
+          setViewDate={setViewDate}
         />
-        <Tooltip
-          formatter={(data) => {
-            const { value, type } = secondConverter(data);
-            return `${value} ${type}`;
-          }}
+      </div>
+      <div className={styles.subjectsLabels}>
+        <SubjectsLabels
+          subjects={subjects}
+          filteredSubjects={filteredSubjects}
+          setFilteredSubjects={setFilteredSubjects}
         />
-        <Legend
-          onClick={(e) => {
-            if (filteredTrends.includes(e.dataKey)) {
-              setFilteredTrends((prev) => {
-                return prev.filter((item) => item !== e.dataKey);
-              });
-            } else {
-              setFilteredTrends((prev) => {
-                return [...prev, e.dataKey];
-              });
-            }
-          }}
-        />
-        {subjectsTrend.length
-          ? subjectsTrend[0].data.map((subject, i) => {
-              return (
-                <Line
-                  name={subject.name}
-                  type="monotone"
-                  key={subject.subject_id}
-                  dataKey={subject.subject_id}
-                  stroke={colorsList[i % colorsList.length]}
-                  activeDot={{ r: 8 }}
-                />
-              );
-            })
-          : null}
-      </LineChart>
-    </ResponsiveContainer>
+      </div>
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart
+          data={subjectsTrend.map((day, i) => {
+            const data = day.data.reduce((accumulator, subject) => {
+              if (!filteredSubjects.includes(subject.subject_id)) {
+                accumulator[subject.subject_id] = subject.value;
+              }
+              return accumulator;
+            }, {});
+            return { label: day.label, ...data };
+          })}
+        >
+          <defs>
+            {subjectsTrend.length
+              ? subjectsTrend[0].data.map((subject, i) => {
+                  return (
+                    <linearGradient
+                      key={i}
+                      id={subject.subject_id}
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor={
+                          STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]
+                        }
+                        stopOpacity={0.8}
+                      />
+                      <stop
+                        offset="70%"
+                        stopColor={
+                          STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]
+                        }
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                  );
+                })
+              : null}
+          </defs>
+          <CartesianGrid vertical={false} />
+          <XAxis dataKey="label" />
+          <YAxis
+            tickFormatter={(data) => {
+              const { value, type } = secondConverter(data);
+              return `${value} ${type}`;
+            }}
+          />
+          <Tooltip
+            formatter={(data) => {
+              const { value, type } = secondConverter(data);
+              return `${value} ${type}`;
+            }}
+          />
+          {subjectsTrend.length
+            ? subjectsTrend[0].data.map((subject, i) => {
+                return (
+                  <Area
+                    name={subject.name}
+                    type="monotone"
+                    key={subject.subject_id}
+                    dataKey={subject.subject_id}
+                    stroke={STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]}
+                    activeDot={{ r: 8 }}
+                    fill={`url(#${subject.subject_id})`}
+                  />
+                );
+              })
+            : null}
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
 

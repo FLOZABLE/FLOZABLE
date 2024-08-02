@@ -18,6 +18,7 @@ import {
   ModalsContext,
   PlansContext,
   ResponseContext,
+  SubjectsContext,
   TutorialsContext,
 } from "@/app/utils/Contexts";
 import config from "@/app/utils/config";
@@ -31,7 +32,6 @@ import DraggableModal from "../DraggableModal/DraggableModal";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import { deletePlanShare, patchPlan, postPlanShare } from "@/Api/plansApi";
-import { useSubjects } from "@/Hooks/subjectsHooks";
 import { usePlansPlanUsers } from "@/Hooks/plansHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
@@ -103,7 +103,7 @@ function ShareUserBox({ userInfo }) {
 }
 
 function EventModal({}) {
-  const { subjects } = useSubjects();
+  const { subjects } = useContext(SubjectsContext);
 
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
   const { setResponse } = useContext(ResponseContext);

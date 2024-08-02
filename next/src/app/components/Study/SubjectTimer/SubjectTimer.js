@@ -8,15 +8,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
   ModalsContext,
+  SubjectsContext,
   TutorialsContext,
   WorkersContext,
 } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
-import PomodoroTimer from "../PomodoroTimer/PomodoroTimer";
-import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function SubjecTimer({ selectedSubject, setSelectedSubject }) {
-  const { subjects, setSubjects } = useSubjects();
+  const { subjects, setSubjects } = useContext(SubjectsContext);
 
   const { setIsAddSubjectModal } = useContext(ModalsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);

@@ -12,6 +12,7 @@ import { faBook } from "@fortawesome/free-solid-svg-icons";
 import {
   ModalsContext,
   ResponseContext,
+  SubjectsContext,
   TutorialsContext,
   WorkersContext,
 } from "@/app/utils/Contexts";
@@ -21,13 +22,12 @@ import SelectIcon from "@/app/components/Inputs/SelectIcon/SelectIcon";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import config from "@/app/utils/config";
-import { sortNewSubject } from "@/app/utils/timelineSorting";
+/* import { sortNewSubject } from "@/app/utils/timelineSorting"; */
 import { socket } from "@/app/utils/socket";
 import DraggableModal from "../DraggableModal/DraggableModal";
-import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function AddSubjectModal({}) {
-  const { subjects } = useSubjects();
+  const { subjects } = useContext(SubjectsContext);
 
   const { setResponse } = useContext(ResponseContext);
   const { isAddSubjectModal, setIsAddSubjectModal } = useContext(ModalsContext);
@@ -78,7 +78,7 @@ function AddSubjectModal({}) {
   };
 
   const submit = useCallback(() => {
-    fetch(`${config.server}/subjects`, {
+    /* fetch(`${config.server}/subjects`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -114,7 +114,7 @@ function AddSubjectModal({}) {
           }
         }
       })
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error)); */
   }, [selectedColor, selectedIcon, name, tutorial, subjects]);
 
   return (

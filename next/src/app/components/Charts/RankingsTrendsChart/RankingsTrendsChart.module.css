@@ -1,0 +1,18 @@
+.RankingsTrendsChart {
+  width: 100%;
+  height: 100%;
+  padding: 0rem 2rem;
+}
+
+.RankingsTrendsChart .header {
+  justify-content: left;
+  align-items: center;
+}
+
+.RankingsTrendsChart .header .name {
+  margin-right: 1.5rem;
+}
+
+.RankingsTrendsChart .subjectsLabels {
+  margin: 0.5rem 0rem 2rem 0rem;
+}

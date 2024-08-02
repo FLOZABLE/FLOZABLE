@@ -1,15 +1,15 @@
 import styles from "./SubjectsPie.module.css";
 import { updateTimeUsagePie } from "@/app/utils/StatTools";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PieCustomTooltip } from "../Charts";
 import { getDatesDisplay, secondConverter } from "@/app/utils/Tool";
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { useSubjects } from "@/Hooks/subjectsHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
+import { SubjectsContext } from "@/app/utils/Contexts";
 
 function SubjectsPie({ viewDate, viewer }) {
-  const { subjects, useSubjectsIsLoading } = useSubjects();
+  const { subjects, useSubjectsIsLoading } = useContext(SubjectsContext);
 
   const [subjectsPie, setSubjectsPie] = useState([]);
   const [totalTime, setTotalTime] = useState("0 Seconds");
