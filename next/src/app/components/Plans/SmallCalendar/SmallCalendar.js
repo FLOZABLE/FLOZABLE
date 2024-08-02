@@ -5,8 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import styled from "@emotion/styled";
 import { DateTime } from "luxon";
-import { useSubjects } from "@/Hooks/subjectsHooks";
-
+import { SubjectsContext } from "@/app/utils/Contexts";
 
 const StyleWrapper = styled.div`
   .fc td {
@@ -97,25 +96,25 @@ const StyleWrapper = styled.div`
     position: relative;
   }
 
-  .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr{
+  .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr {
     margin-bottom: 10px;
   }
 
   @media (max-width: 1400px) {
     .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr {
-      font-size: 15px
+      font-size: 15px;
     }
 
     .fc-toolbar-chunk button {
       padding: 0px;
     }
 
-    .fc-header-toolbar .fc-toolbar-chunk  {
+    .fc-header-toolbar .fc-toolbar-chunk {
       display: flex;
       font-size: 13px;
     }
 
-    .fc-header-toolbar .fc-toolbar-title  {
+    .fc-header-toolbar .fc-toolbar-title {
       font-size: 15px;
     }
 
@@ -143,8 +142,8 @@ function SmallCalendar({
   setIsOpen,
   showHeatmap = false,
 }) {
-  const { subjects } = useSubjects();
-  
+  const { subjects } = useContext(SubjectsContext);
+
   const [events, setEvents] = useState([]);
   const [smallCalendarApi, setSmallCalendarApi] = useState(null);
 
@@ -157,22 +156,35 @@ function SmallCalendar({
   }, [smallCalendarRef]);
 
   useEffect(() => {
-    const allEvents = [{
-      start: viewDate,
-      end: viewDate,
-      allDay: true,
-      display: "background",
-      title: viewDate.getDate(),
-    }];
+    const allEvents = [
+      {
+        start: viewDate,
+        end: viewDate,
+        allDay: true,
+        display: "background",
+        title: viewDate.getDate(),
+      },
+    ];
 
     if (showHeatmap && subjects && subjects.length) {
       subjects.daily.total.toReversed().map((day, i) => {
         const currentDay = DateTime.now().minus({ days: i });
         const stringDay = currentDay.toFormat("yyyy-MM-dd");
-        if (currentDay.startOf('day').equals(DateTime.fromJSDate(viewDate).startOf('day'))) return;
-        allEvents.push({ title: '', date: stringDay, color: `hsla(212, 100%, ${100 - Math.min(25 * Math.sqrt(day / 3600), 60)}%, 1)` });
+        if (
+          currentDay
+            .startOf("day")
+            .equals(DateTime.fromJSDate(viewDate).startOf("day"))
+        )
+          return;
+        allEvents.push({
+          title: "",
+          date: stringDay,
+          color: `hsla(212, 100%, ${
+            100 - Math.min(25 * Math.sqrt(day / 3600), 60)
+          }%, 1)`,
+        });
         // 0 hours white to 5 dark blue https://www.desmos.com/calculator/sezqjfdbfl
-      })
+      });
     }
 
     setEvents(allEvents);
@@ -182,7 +194,7 @@ function SmallCalendar({
     if (!smallCalendarApi || !viewDate) return;
 
     smallCalendarApi.gotoDate(viewDate);
-  }, [smallCalendarApi, viewDate])
+  }, [smallCalendarApi, viewDate]);
 
   const handleDateClick = (arg) => {
     setViewDate(arg.date);
@@ -205,7 +217,7 @@ function SmallCalendar({
     <StyleWrapper style={{ width: width }}>
       <div className={styles.SmallCalendar} style={{ width: width }}>
         <FullCalendar
-        ref={smallCalendarRef}
+          ref={smallCalendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           titleFormat={{ month: "long", year: "numeric" }}
@@ -214,7 +226,7 @@ function SmallCalendar({
           dateClick={handleDateClick}
           select={handleDateClick}
           events={events}
-          height={'18.75rem'}
+          height={"18.75rem"}
         />
       </div>
     </StyleWrapper>
