@@ -110,11 +110,11 @@ function Sidebar({}) {
         </i>
         <h3>Planner</h3>
       </SidebarEl>
-      <SidebarEl pathname={pathname} href={"/dashboard/ranking"}>
+      <SidebarEl pathname={pathname} href={"/dashboard/leaderboard"}>
         <i>
           <IconRankingChart />
         </i>
-        <h3>Ranking</h3>
+        <h3>Leaderboard</h3>
       </SidebarEl>
       <SidebarEl pathname={pathname} href={"/dashboard/groups"}>
         <i ref={toGroupsRef}>
@@ -143,57 +143,6 @@ function Sidebar({}) {
       <div className={styles.buttons}>
         <LogoutBtn />
       </div>
-      {/* <div className={styles.logo}>
-        <a href="https://flozable.com">
-          <Image
-            src="/logo.png"
-            alt="FLOZABLE"
-            width={0}
-            height={0}
-            sizes="100vw"
-            style={{ width: "100%", height: "auto" }}
-          />
-        </a>
-      </div>
-      <div ref={focusBackgroundRef} id={styles.focusBackground}>
-        test
-      </div>
-      <SidebarEl pathname={pathname} href={"/dashboard"}>
-        <i>
-          <IconBxHome />
-        </i>
-      </SidebarEl>
-      <SidebarEl pathname={pathname} href={"/dashboard/stats"}>
-        <i ref={toStatsRef}>
-          <IconStatsChart />
-        </i>
-      </SidebarEl>
-      <SidebarEl pathname={pathname} href={"/dashboard/planner"}>
-        <i>
-          <IconClipboardOutline />
-        </i>
-      </SidebarEl>
-      <SidebarEl pathname={pathname} href={"/dashboard/ranking"}>
-        <i>
-          <IconRankingChart />
-        </i>
-      </SidebarEl>
-      <SidebarEl pathname={pathname} href={"/dashboard/groups"}>
-        <i ref={toGroupsRef}>
-          <IconPeople16 />
-        </i>
-      </SidebarEl>
-      <SidebarEl pathname={pathname} href={"/dashboard/friends"}>
-        <i>
-          <IconFriend />
-        </i>
-      </SidebarEl>
-      <SidebarEl pathname={pathname} href={"/dashboard/themes"}>
-        <i>
-          <IconGalleryLine />
-        </i>
-      </SidebarEl>
-      <TutorialBtn /> */}
     </aside>
   );
 }

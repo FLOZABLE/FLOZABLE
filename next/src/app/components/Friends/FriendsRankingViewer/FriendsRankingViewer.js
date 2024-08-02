@@ -7,7 +7,7 @@ import { secondConverter } from "@/app/utils/Tool";
 import { IconStatsChart } from "@/app/utils/Svg";
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
-import { useGetRankingsFriends } from "@/Hooks/rankingsHooks";
+import { useRankingsFriends } from "@/Hooks/rankingsHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
 function FriendsRankingViewer() {
@@ -16,7 +16,7 @@ function FriendsRankingViewer() {
   const router = useRouter();
 
   const { data: rankingsFriendsData, isLoading: rankingsFriendsIsLoading } =
-    useGetRankingsFriends(viewer);
+    useRankingsFriends(viewer);
 
   return (
     <div className={`Box ${styles.FriendsRankingViewer}`}>

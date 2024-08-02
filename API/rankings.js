@@ -148,28 +148,58 @@ Router.get("/friends", async (req, res) => {
 
       if (!userInfo) return res.send(responseCodes["no-user"]);
 
-      const { mode, timezone } = req.query;
+      const { mode, timezone, date } = req.query;
 
-      const dateTime = DateTime.now()
-        .setZone(timezone)
-        .startOf("day")
-        .startOf(mode);
+      const now = DateTime.now().setZone(timezone).startOf("day").startOf(mode);
 
-      const timezoneOffset = Math.floor(dateTime.offset / 60).toString();
+      const dateTime = date
+        ? DateTime.fromISO(date).setZone(timezone).startOf("day").startOf(mode)
+        : now;
 
       const friends = await usersCache(userInfo.friends);
 
       friends.push(userInfo);
 
-      const studyTotal = await redisClient.zmscore(
-        `users:${timezoneOffset}:${mode}Total`, friends.map(friend => friend.user_id)
-      );
+      if (now.toSeconds() === dateTime.toSeconds()) {
+        //today/this week/this month = cached
+        const timezoneOffset = Math.floor(now.offset / 60).toString();
 
-      friends.map((friend, i) => {
-        friend.study_time = studyTotal[i] ? parseInt(studyTotal[i]) : 0;
-      })
+        const studyTotal = await redisClient.zmscore(
+          `users:${timezoneOffset}:${mode}Total`,
+          friends.map((friend) => friend.user_id)
+        );
 
-      friends.sort((a, b) => b.study_time - a.study_time);
+        friends.map((friend, i) => {
+          friend.study_time = studyTotal[i] ? parseInt(studyTotal[i]) : 0;
+        });
+
+        friends.sort((a, b) => b.study_time - a.study_time);
+      } else {
+        const connection = pool.promise();
+
+        const [rankingsData] = await connection.query(
+          `
+          SELECT
+          r.length,
+          rd.rank,
+          rd.user_id,
+          rd.study_time
+          FROM ranking_details rd
+          JOIN rankings r
+          ON r.ranking_id = rd.ranking_id
+          WHERE r.date = ? AND r.mode = ? AND rd.user_id IN (?)
+          ORDER by rd.rank
+        `,
+          [dateTime.toSeconds(), mode, friends.map((friend) => friend.user_id)]
+        );
+
+        friends.map((friend) => {
+          const ranking = rankingsData.find(
+            (ranking) => ranking.user_id === friend.user_id
+          );
+          friend = { ...friend, ranking };
+        });
+      }
 
       res.send({ success: true, rankings: friends });
     } catch (err) {
