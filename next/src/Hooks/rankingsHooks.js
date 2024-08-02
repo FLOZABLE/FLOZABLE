@@ -1,13 +1,22 @@
-import { getRankings, getRankingsFriends, getRankingsUser } from "@/Api/rankingsApi";
+import {
+  getRankings,
+  getRankingsFriends,
+  getRankingsUser,
+} from "@/Api/rankingsApi";
 import { useQuery } from "@tanstack/react-query";
 
-function useGetRankings(mode, viewDate) {
-  return useQuery({
+function useRankings(mode, viewDate) {
+  const queryClient = useQuery({
     queryKey: [`getRankings`, mode, viewDate],
     queryFn: () => getRankings(mode, viewDate),
     staleTime: 1000 * 60,
     enabled: !!mode && !!viewDate,
   });
+
+  const { data: useRankingsData, isLoading: useRankingsIsLoading } =
+    queryClient;
+
+  return { useRankingsData, useRankingsIsLoading, ...queryClient };
 }
 
 function useGetRankingsUser(userId, mode, viewDate) {
@@ -19,7 +28,7 @@ function useGetRankingsUser(userId, mode, viewDate) {
   });
 }
 
-function useGetRankingsFriends(mode) {
+function useRankingsFriends(mode) {
   return useQuery({
     queryKey: [`getRankingsFriends`, mode],
     queryFn: () => getRankingsFriends(mode),
@@ -28,4 +37,4 @@ function useGetRankingsFriends(mode) {
   });
 }
 
-export { useGetRankings, useGetRankingsUser, useGetRankingsFriends };
+export { useRankings, useGetRankingsUser, useRankingsFriends };
