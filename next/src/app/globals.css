@@ -17,6 +17,7 @@
   --light-blue: #b3f2ff;
   --opacity-black: #000000c3;
   --shadow1: rgba(100, 100, 111, 0.2) 0rem 0.4375rem 1.8125rem 0rem;
+  --shadow2: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   --shadow3: rgba(0, 0, 0, 0.35) 0rem 0.3125rem 0.9375rem;
   --shadow4: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   --shadow9: rgba(0, 0, 0, 0.1) 0rem 0.25rem 0.75rem;
@@ -37,8 +38,10 @@
 
 .Main {
   position: relative;
-  margin: 5rem 0rem 0rem 22rem;
+  padding: 6rem 0rem 0rem 22rem;
   width: calc(100vw - 22rem);
+  min-height: calc(100vh - 6rem);
+  display: flex;
 }
 
 html {
@@ -145,23 +148,33 @@ button:hover {
 .Box .contents {
   overflow-y: auto;
   overflow-x: hidden;
-  flex: 1;
   width: 100%;
 }
 
 .BoxContainer {
   background-color: #ffffff;
-  margin-top: 1.75rem;
-  margin-left: 1.75rem;
-  margin-right: 0.75rem;
-  margin-bottom: 0.75rem;
+  margin: 0.75rem;
   padding: 2rem;
   border-radius: 30px;
-  border:1px solid #CACACA;
+  border: 1px solid #cacaca;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
+  white-space: nowrap;
+}
+
+.HoverText {
+  position: absolute;
+  background-color: #000000c3;
+  color: #fff;
+  transition: 0.3s ease-in-out opacity, 0.3s ease-in-out bottom;
+  opacity: 0;
+  pointer-events: none;
+  padding: 0.2rem;
+  border-radius: 0.3rem;
+  font-size: 0.75rem;
+  z-index: 2;
 }
 
 .overflowDot {

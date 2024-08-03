@@ -3,10 +3,6 @@
 import React, { useState, useContext } from "react";
 import styles from "./page.module.css";
 import EventPlanner from "@/app/components/Plans/EventPlanner/EventPlanner";
-import RadioBtn from "@/app/components/Buttons/RadioBtn/RadioBtn";
-import GoogleLoginBtn from "@/app/components/Buttons/GoogleLoginBtn/GoogleLoginBtn";
-import SmallCalendar from "@/app/components/Plans/SmallCalendar/SmallCalendar";
-import PlanTimeline from "@/app/components/Plans/PlanTimeline/PlanTimeline";
 import { PlansContext } from "@/app/utils/Contexts";
 
 function Planner({}) {

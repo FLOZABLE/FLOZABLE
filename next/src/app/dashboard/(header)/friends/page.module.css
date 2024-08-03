@@ -1,20 +1,51 @@
-.Friends .container {
+.Friends {
+  flex: 1 1;
   display: flex;
-  margin: 5rem 5%;
+  padding: 0rem 3.125rem;
 }
 
-.Friends .layer:nth-child(1) {
-  flex: 0.25;
+/* .Friends .boxContainer#FriendsActivityViewer {
+  width: 30rem;
+  height: fit-content;
 }
 
-.Friends .layer:nth-child(2) {
-  flex: 0.5;
+.Friends .boxContainer#FriendsTrendChart {
+  flex: 1;
 }
 
-.Friends .layer:nth-child(3) {
-  flex: 0.25;
+.Friends .boxContainer#FriendRequestsViewer {
+  width: 25rem;
+  height: fit-content;
+}
+ */
+
+.Friends .layer {
+  max-height: calc(100vh - 6rem);
+  display: flex;
+  flex-direction: column;
 }
 
-.Friends .layer:nth-child(2) .box {
-  height: 50%;
+.Friends .layer#left {
+  width: 30rem;
+}
+
+.Friends .layer#center {
+  flex: 1;
+}
+
+.Friends .layer#right {
+  width: 30rem;
+}
+
+.Friends .boxContainer {
+  flex: 1;
+}
+
+.Friends .boxContainer#FriendsActivityViewer {
+  max-height: 50%;
+  flex: 0
+}
+
+.Friends .boxContainer#FriendRequestsViewer {
+  max-height: calc(50% - 6rem);
 }

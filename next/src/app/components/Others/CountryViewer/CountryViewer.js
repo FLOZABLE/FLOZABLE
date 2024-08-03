@@ -28,7 +28,7 @@ function CountryViewer({ timezone }) {
   return (
     <div className={styles.CountryViewer}>
       {flag}
-      <div className={styles.hoverEl}>
+      <div className={`HoverText ${styles.hoverText}`}>
         {timezone}
       </div>
     </div>

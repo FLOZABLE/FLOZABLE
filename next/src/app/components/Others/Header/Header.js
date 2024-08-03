@@ -16,6 +16,8 @@ import {
 } from "@/app/utils/Svg";
 import { SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
+import { useAccount } from "@/Hooks/accountHooks";
+import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 
 function HeaderEl({ children, value, title }) {
   return (
@@ -29,6 +31,7 @@ function HeaderEl({ children, value, title }) {
   );
 }
 function Header({}) {
+  const { userInfo } = useAccount();
   const { groupedSubjects } = useContext(SubjectsContext);
 
   const { tutorialBoxRef, tutorialTextRef, tutorial } =
@@ -67,7 +70,11 @@ function Header({}) {
 
     //Solve daily
     const todayTotal = todayTotalCalculator(groupedSubjects);
-    const formattedTodayTotal = secondConverter(todayTotal);
+    const formattedTodayTotal = secondConverter(todayTotal, [
+      "seconds",
+      "minutes",
+      "hours",
+    ]);
     setTotalStudied(formattedTodayTotal.value + " " + formattedTodayTotal.type);
 
     //Solve streak
@@ -75,7 +82,11 @@ function Header({}) {
     setStudyStreak(streaks + " days");
 
     const focus = todayFocusCalculator(groupedSubjects);
-    const formattedFocus = secondConverter(focus);
+    const formattedFocus = secondConverter(focus, [
+      "seconds",
+      "minutes",
+      "hours",
+    ]);
     setLongestSession(formattedFocus.value + " " + formattedFocus.type);
   }, [groupedSubjects]);
 
@@ -85,7 +96,11 @@ function Header({}) {
     const totalWebsiteUsage = websitesData.websites.reduce((a, b) => {
       return a + b;
     });
-    const { value, type } = secondConverter(totalWebsiteUsage);
+    const { value, type } = secondConverter(totalWebsiteUsage, [
+      "seconds",
+      "minutes",
+      "hours",
+    ]);
     setAppUsage(value + " " + type);
   }, [websitesData]);
 
@@ -115,6 +130,23 @@ function Header({}) {
             <HeaderTarget />
           </i>
         </HeaderEl>
+      </div>
+      <div className={styles.right}>
+        {userInfo ? (
+          <div className={styles.userInfo}>
+            <div>
+              <p className={styles.name}>{userInfo.name}</p>
+              <p className={styles.email}>@{userInfo.email.split("@")[0]}</p>
+            </div>
+            <div className={styles.ProfileImage}>
+              <ProfileImage
+                userId={userInfo.user_id}
+                width="100%"
+                height="100%"
+              />
+            </div>
+          </div>
+        ) : null}
       </div>
     </header>
   );

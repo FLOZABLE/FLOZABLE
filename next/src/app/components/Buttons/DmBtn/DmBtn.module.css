@@ -4,7 +4,7 @@
 
 .DmBtn .hoverEl {
   position: absolute;
-  top: 6.25rem;
+  top: 3.25rem;
   font-size: 0.813rem;
   z-index: 2;
   background-color: black;
@@ -29,5 +29,5 @@
 .DmBtn .blobWrapper:hover ~.hoverEl {
   visibility: visible;
   opacity: 1;
-  top: 3.125rem;
+  top: 2.125rem;
 }

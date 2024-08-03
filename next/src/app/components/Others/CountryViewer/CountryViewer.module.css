@@ -5,7 +5,16 @@
   align-items: center;
 }
 
-.CountryViewer .hoverEl {
+.CountryViewer:hover .hoverText {
+  bottom: -1.5rem;
+  opacity: 1;
+}
+
+.CountryViewer .hoverText {
+  bottom: -2rem;
+}
+
+/* .CountryViewer .hoverEl {
   position: absolute;
   top: 3.125rem;
   visibility: hidden;
@@ -25,4 +34,4 @@
   top: 1.25rem;
   visibility: visible;
   opacity: 1;
-}
+} */

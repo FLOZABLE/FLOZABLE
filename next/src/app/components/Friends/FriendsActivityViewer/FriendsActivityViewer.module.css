@@ -1,8 +1,33 @@
-.FriendsActivityViewer {
+.FriendsActivityViewer .header {
+  justify-content: left;
+  align-items: center;
+  border-bottom: 1px solid var(--gray0);
+}
+
+.FriendsActivityViewer div#searchFriendBtn {
+  margin-left: 1rem;
+  padding: 0rem 0.5rem;
+  color: var(--gray1);
+  font-weight: 300;
+  cursor: pointer;
   position: relative;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
+}
+
+.FriendsActivityViewer .hoverText {
+  bottom: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.FriendsActivityViewer div#searchFriendBtn:hover .hoverText {
+  bottom: -1rem;
+  opacity: 1;
+}
+
+.FriendsActivityViewer .friends {
+  min-height: 5rem;
+  align-items: center;
+  justify-content: center;
 }
 
 .FriendsActivityViewer .friend {
@@ -20,4 +45,8 @@
 
 .FriendsActivityViewer .buttons {
   margin: 0rem 1rem 0rem auto;
+}
+
+.FriendsActivityViewer .friend:nth-last-child(1) {
+  margin-bottom: 3rem;
 }

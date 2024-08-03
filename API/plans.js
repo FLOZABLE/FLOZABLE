@@ -492,6 +492,10 @@ Router.get("/plan/users", async (req, res) => {
         [planId]
       );
 
+      if (!planInfo) {
+        return res.send({ success: false, reason: "Invalid Plan" });
+      }
+
       planInfo.share = JSON.parse(planInfo.share).filter(
         (user) => user.user_id
       );
