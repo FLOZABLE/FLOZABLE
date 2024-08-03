@@ -1,134 +1,50 @@
 .FriendRequestsViewer {
   position: relative;
+  overflow: hidden;
 }
 
-.FriendRequestsViewer .title {
-  font-size:  1.25rem;
-  font-weight: 600;
+.FriendRequestsViewer .header {
+  flex-direction: column;
 }
 
-.FriendRequestsViewer .optionsWrapper .buttonsContainer{
+.FriendRequestsViewer .friendRequests {
+  overflow-y: auto;
+}
+
+.FriendRequestContainer {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
 }
 
-.FriendRequestsViewer .optionsWrapper .buttonsContainer button {
-  width: 100%;
+.FriendRequestContainer .buttons {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0.625rem 0em;
+  margin: 0rem 1rem 0rem auto;
 }
 
-.FriendRequestsViewer .optionsWrapper .buttonsContainer .count {
-  background-color: var(--purple);
-  color: #fff;
-  border-radius: 0.625rem;
-  height: 1.875rem;
-  width: 1.875rem;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  margin-left: 0.313rem;
-}
-
-.FriendRequestsViewer .lineContainer {
-  height: 0.125rem;
-  width: 100%;
-  background-color: #fff;
+.FriendRequestContainer .buttons .button {
+  font-size: 1.5rem;
+  margin: 0.2rem;
+  cursor: pointer;
   position: relative;
-}
-
-.FriendRequestsViewer .lineContainer .line {
-  width: 50%;
-  margin-left: 50%;
-  background-color: var(--purple);
-  height: 0.125rem;
-  transition: margin-left .2s ease-in-out;
-}
-
-.FriendRequestsViewer .lineContainer.incoming .line {
-  margin-left: 0%;
-}
-
-.FriendRequestsViewer .name {
-  max-width: 6.25rem;
-  font-size: 1.063rem;
-}
-
-.FriendRequestsViewer .friendRequest .profileImg {
-  height: 2.5rem;
-  width: 2.5rem;
-  border-radius: 1.25rem;
-  margin-right: 0.625rem;
-}
-
-.FriendRequestsViewer .friendRequest {
-  position: relative;
-}
-
-.FriendRequestsViewer .friendRequest .buttons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 0.625rem;
-}
-
-.FriendRequestsViewer .friendRequest .buttons button {
-  background-color: var(--gray);
-  font-size: 1.25rem;
+  box-shadow: var(--shadow4);
   width: 2rem;
   height: 2rem;
-  color: var(--pink);
-  margin: 0em 0.313rem;
-}
-
-.FriendRequestsViewer .friendRequest .content {
-  flex-grow: 1;
   display: flex;
+  justify-content: center;
   align-items: center;
+  border-radius: 0.3rem;
 }
 
-.FriendRequestsViewer .friendRequest .content p {
-  margin-right: 0.313rem;
-}
-
-.FriendRequestsViewer .friendRequest .btnWrapper {
-  position: relative;
-}
-
-.FriendRequestsViewer .friendRequest .btnWrapper.accept:hover {
-  filter: saturate(300%) hue-rotate(90deg);
-}
-
-.FriendRequestsViewer .friendRequest .btnWrapper.decline:hover {
-  filter: saturate(300%);
-}
-
-.FriendRequestsViewer .friendRequest .btnWrapper .hoverDisp {
-  position: absolute;
-  font-size: 0.813rem;
-  white-space: nowrap;
-  top: 1.875rem;
-  left: 50%;
+.FriendRequestContainer .buttons .button .hoverText {
+  bottom: -2rem;
   transform: translateX(-50%);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
-  background-color: var(--opacity-black);
-  padding: 0.313rem 0.625rem;
-  border-radius: 0.4375rem;
-  color: #fff;
-  z-index: 5;
-  visibility: hidden;
+  left: 50%;
 }
 
-.FriendRequestsViewer .friendRequest .btnWrapper:hover .hoverDisp {
+.FriendRequestContainer .buttons .button:hover .hoverText {
   opacity: 1;
-  visibility: visible;
+  bottom: -1rem;
+}
+
+.FriendRequestContainer:nth-last-child(1) {
+  padding-bottom: 2rem;
 }

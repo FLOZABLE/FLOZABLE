@@ -1,10 +1,13 @@
 .Stats {
   padding: 0rem 3.125rem;
+  display: flex;
+  flex: 1 1;
+  flex-direction: column;
 }
 
 .Stats .layer {
   display: flex;
-  height: 50vh;
+  flex: 1;
 }
 
 /* .Stats .layer .box {
@@ -20,5 +23,5 @@
 }
 
 .Stats .box#RankingsTrendsChart {
-  width: 50%;
+  width: 35%;
 }

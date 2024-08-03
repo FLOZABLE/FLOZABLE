@@ -1,6 +1,18 @@
 import config from "@/app/utils/config";
 import { DateTime } from "luxon";
 
+async function getExtensionSettings() {
+  const response = await fetch(`${config.server}/extension/settings`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  const data = await response.json();
+  return data;
+}
+
 async function getExtensionUsage(date, mode) {
   if (!date || !mode) return { success: false };
 
@@ -20,4 +32,4 @@ async function getExtensionUsage(date, mode) {
   return data;
 }
 
-export { getExtensionUsage };
+export { getExtensionUsage, getExtensionSettings };

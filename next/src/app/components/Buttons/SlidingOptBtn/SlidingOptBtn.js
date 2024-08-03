@@ -1,27 +1,42 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./SlidingOptBtn.module.css";
-import React from 'react';
+import React from "react";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 function SlidingOptBtn({ options, setValue, value }) {
   return (
     <div className={styles.SlidingOptBtn}>
-      <div className={styles.focusDisp} style={{ width: `calc(100% / ${Object.keys(options).length})`, left: `calc(100% / ${Object.keys(options).length} * ${value}) ` }} >
-      </div>
+      <div
+        className={styles.focusDisp}
+        style={{
+          width: `calc(100% / ${Object.keys(options).length})`,
+          left: `calc(100% / ${Object.keys(options).length} * ${value}) `,
+        }}
+      ></div>
       <div className={styles.optionsWrapper}>
-        {Object.keys(options).map((option, i) => {
+        {options.map((option, i) => {
           return (
-            <div className={styles.option} key={i} onClick={() => { setValue(option) }}>
-              <i className={`${parseInt(option) === parseInt(value) ? styles.on : ''} ${styles.check}`}>
-              <FontAwesomeIcon icon={faCheck} />
+            <div
+              className={styles.option}
+              key={i}
+              onClick={() => {
+                setValue(option.value);
+              }}
+            >
+              <i
+                className={`${option.value === value ? styles.on : ""} ${
+                  styles.check
+                }`}
+              >
+                <FontAwesomeIcon icon={faCheck} />
               </i>
-              <p>{options[option]}</p>
+              <p>{option.name}</p>
             </div>
-          )
+          );
         })}
       </div>
     </div>
-  )
-};
+  );
+}
 
 export default SlidingOptBtn;

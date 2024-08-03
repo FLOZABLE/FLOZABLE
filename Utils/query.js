@@ -295,13 +295,33 @@ async function createUserThemesTable() {
   `);
 }
 
-async function createActivitiesTable() {
+async function createWebsiteSettingsTable() {
   const connection = pool.promise();
   await connection.query(`
-  CREATE TABLE IF NOT EXISTS  activities (
-    user_id VARCHAR(20),
+  CREATE TABLE IF NOT EXISTS website_settings (
+    user_id VARCHAR(10),
+    website VARCHAR(20),
+    block tinyint(1),
+    study_block tinyint(1),
+    timer tinyint(1),
+    study_timer tinyint(1),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    PRIMARY KEY (user_id, website)
+  );
+  `);
+}
+
+async function createWebsiteUsageTable() {
+  const connection = pool.promise();
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS website_usage (
+    user_id VARCHAR(10),
+    website VARCHAR(20),
+    visits SMALLINT,
+    duration SMALLINT,
     date VARCHAR(10),
-    data TEXT DEFAULT ''
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    PRIMARY KEY (user_id, website)
   );
   `);
 }
@@ -326,5 +346,6 @@ module.exports = {
   createThemesTable,
   createThemeLikesTable,
   createUserThemesTable,
-  createActivitiesTable,
+  createWebsiteSettingsTable,
+  createWebsiteUsageTable,
 };

@@ -25,16 +25,14 @@ Router.get("/settings", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const [[userInfo]] = await connection.query(
-        `SELECT activity_setting FROM users WHERE user_id = ?`,
+      const [websiteSettings] = await connection.query(
+        `SELECT website, block, study_block, timer, study_timer FROM website_settings WHERE user_id = ?`,
         [userId]
       );
-      if (!userInfo)
-        return res.send({ success: false, reason: "No such user" });
-      const { activity_setting } = userInfo;
+
       res.send({
         success: true,
-        activity_setting: JSON.parse(activity_setting),
+        websiteSettings,
       });
     } catch (err) {
       console.log(err);
@@ -43,7 +41,7 @@ Router.get("/settings", async (req, res) => {
   });
 });
 
-Router.put("/settings", async (req, res) => {
+Router.put("/setting", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
@@ -102,7 +100,7 @@ Router.put("/settings", async (req, res) => {
   });
 });
 
-Router.patch("/settings", async (req, res) => {
+Router.patch("/setting", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { d, target, value } = req.body;
@@ -165,8 +163,7 @@ Router.get("/tabs", async (req, res) => {
     const tabsTimer = await redisClient.zrange(
       `user:${userId}:tabs:timer`,
       0,
-      -1,
-
+      -1
     );
     const tabsUsage = await redisClient.zrange(
       `user:${userId}:tabs:usage`,

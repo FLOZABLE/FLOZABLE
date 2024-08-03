@@ -2,15 +2,31 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./FriendRequestsViewer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { NotificationsContext } from "@/app/utils/Contexts";
-import Link from "next/link";
+import { NotificationsContext, ResponseContext } from "@/app/utils/Contexts";
 import config from "@/app/utils/config";
 import SlidingOptBtn from "@/app/components/Buttons/SlidingOptBtn/SlidingOptBtn";
-import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
-import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
+import UserContainer from "../../Users/UserContainer/UserContainer";
+import { useRouter } from "next/navigation";
+
+function FriendRequestContainer({ friendRequest, children, style }) {
+  const router = useRouter();
+
+  return (
+    <div className={styles.FriendRequestContainer} style={style}>
+      <UserContainer
+        userInfo={friendRequest.f}
+        onClick={() => {
+          router.push(`/dashboard/user/${friendRequest.f.user_id}`);
+        }}
+      />
+      {children}
+    </div>
+  );
+}
 
 function FriendRequestsViewer() {
   const { notifications, setNotifications } = useContext(NotificationsContext);
+  const { setResponse } = useContext(ResponseContext);
 
   const [viewer, setViewer] = useState(0);
   const [friendRequests, setFriendRequests] = useState([]);
@@ -29,7 +45,7 @@ function FriendRequestsViewer() {
       } else if (type === -2) {
         sentRequests.push(notification);
         return;
-      };
+      }
       return;
     });
 
@@ -44,7 +60,7 @@ function FriendRequestsViewer() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId, accepted, notificationId }),
-      credentials:"include"
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
@@ -52,7 +68,9 @@ function FriendRequestsViewer() {
       })
       .catch((error) => console.error(error));
 
-    setNotifications(notifications.filter(notif => notif.i !== notificationId));
+    setNotifications(
+      notifications.filter((notif) => notif.i !== notificationId)
+    );
   };
 
   const sentRequestClear = (targetId, notificationId) => {
@@ -62,103 +80,102 @@ function FriendRequestsViewer() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ targetId }),
-      credentials:"include"
+      credentials: "include",
     })
       .then((response) => response.json())
       .catch((error) => console.error(error));
 
-    setNotifications(notifications.filter(notif => notif.i !== notificationId));
+    setNotifications(
+      notifications.filter((notif) => notif.i !== notificationId)
+    );
   };
 
   return (
-    <div className={styles.FriendRequestsViewer}>
-      <SlidingOptBtn
-        options={
-          {
-            0: `Incoming (${friendRequests.length})`,
-            1: `Outgoing (${sentRequests.length})`
-          }
-        }
-        value={viewer}
-        setValue={setViewer}
-      />
-      {parseInt(viewer) ? sentRequests.map((request, index) => {
-        const { f, i } = request;
-        const { name, timezone, user_id } = f;
-        return (
-          <div className={styles.friendRequest} style={{ zIndex: sentRequests.length - index + 1 }} key={i}>
-            <Link href={`/dashboard/user/${user_id}`} >
-              <div className={styles.content}>
-                <ProfileImage
-                  userId={user_id}
-                />
-                <p className={`${styles.name} overflowDot`}>{name}</p>
-                <CountryViewer timezone={timezone} />
-              </div>
-            </Link>
-            <div className={styles.buttons}>
-              <div className={`${styles.btnWrapper} ${styles.decline}`}>
-                <button onClick={() => { sentRequestClear(user_id, i) }}>
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
-                <div className={styles.hoverDisp}>
-                  Abort
-                </div>
-              </div>
-            </div>
-          </div>
-        )
-      }) :
-        friendRequests.map((request, index) => {
-          const { f, i } = request;
-          const { name, timezone, user_id } = f;
-          return (
-            <div className={styles.friendRequest} style={{ zIndex: friendRequests.length - index + 1 }} key={i}>
-              <Link href={`/dashboard/user/${user_id}`} >
-                <div className={styles.content}>
-                  <ProfileImage
-                    userId={user_id}
-                  />
-                  <p className={`${styles.name} overflowDot`}>{name}</p>
-                  <CountryViewer timezone={timezone} />
-                </div>
-              </Link>
-              <div className={styles.buttons}>
-                <div className={`${styles.btnWrapper} ${styles.decline}`}>
-                  <button onClick={() => { friendRequestReply(user_id, false, i) }}>
-                    <FontAwesomeIcon icon={faXmark} />
-                  </button>
-                  <div className={styles.hoverDisp}>
-                    Decline
+    <div className={`Box ${styles.FriendRequestsViewer}`}>
+      <div className={`header ${styles.header}`}>
+        <p>Friend Requests</p>
+        <SlidingOptBtn
+          options={[
+            {
+              name: `Incoming (${friendRequests.length})`,
+              value: 0,
+            },
+            {
+              name: `Outgoing (${sentRequests.length})`,
+              value: 1,
+            },
+          ]}
+          value={viewer}
+          setValue={setViewer}
+        />
+      </div>
+      <div className={`contents ${styles.friendRequests} customScroll`}>
+        {viewer
+          ? sentRequests.map((request, i) => {
+              return (
+                <FriendRequestContainer
+                  friendRequest={request}
+                  key={i}
+                  style={{ zIndex: friendRequests.length - i }}
+                >
+                  <div className={styles.buttons}>
+                    <div
+                      className={styles.button}
+                      onClick={() => {
+                        sentRequestClear(request.f.user_id, request.i);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faXmark} />
+                      <div className={`HoverText ${styles.hoverText}`}>
+                        Abort
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className={`${styles.btnWrapper} ${styles.accept}`}>
-                  <button onClick={() => { friendRequestReply(user_id, true, i) }}>
-                    <FontAwesomeIcon icon={faCheck} />
-                  </button>
-                  <div className={styles.hoverDisp}>
-                    Accept
+                </FriendRequestContainer>
+              );
+            })
+          : friendRequests.map((request, i) => {
+              return (
+                <FriendRequestContainer
+                  friendRequest={request}
+                  key={i}
+                  style={{ zIndex: friendRequests.length - i }}
+                >
+                  <div className={styles.buttons}>
+                    <div
+                      className={styles.button}
+                      onClick={() => {
+                        friendRequestReply(request.f.user_id, false, request.i);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faXmark} />
+                      <div className={`HoverText ${styles.hoverText}`}>
+                        Decline
+                      </div>
+                    </div>
+                    <div
+                      className={styles.button}
+                      onClick={() => {
+                        friendRequestReply(request.f.user_id, true, request.i);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faCheck} />
+                      <div className={`HoverText ${styles.hoverText}`}>
+                        Accept
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          )
-        })
-      }
-      {parseInt(viewer) === 1 && !sentRequests.length ? (
-        <div className={styles.dispMsg}>
-          No outgoing requests
-        </div>
-      ) : (
-        parseInt(viewer) === 0 && !friendRequests.length ? (
-          <div className={styles.dispMsg}>
-            No incoming requests
-          </div>
-        ) : null
-      )}
-
+                </FriendRequestContainer>
+              );
+            })}
+      </div>
+      {viewer === "1" && !sentRequests.length ? (
+        <div className={styles.dispMsg}>No outgoing requests</div>
+      ) : viewer === "0" && !friendRequests.length ? (
+        <div className={styles.dispMsg}>No incoming requests</div>
+      ) : null}
     </div>
-  )
-};
+  );
+}
 
 export default FriendRequestsViewer;
