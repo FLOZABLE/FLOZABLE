@@ -8,6 +8,7 @@
   align-items: center;
   z-index: 2;
   background-color: #ffffff;
+  overflow: hidden;
 }
 
 .Header .left {
@@ -39,4 +40,29 @@
 
 .HeaderEl .value {
   font-size: 1rem;
+}
+
+.Header .right {
+  margin: 0rem 5rem 0rem auto;
+}
+
+.Header .userInfo {
+  display: flex;
+  align-items: center;
+}
+
+.Header .userInfo .ProfileImage {
+  width: 4rem;
+  height: 4rem;
+  margin-left: 1.5rem;
+}
+
+.Header .userInfo .name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  height: 1.5rem;
+}
+
+.Header .userInfo .email {
+  color: var(--gray2);
 }

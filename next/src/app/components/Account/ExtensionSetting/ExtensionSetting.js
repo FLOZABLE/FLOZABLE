@@ -12,8 +12,13 @@ import styles from "./ExtensionSetting.module.css";
 import config from "@/app/utils/config";
 import { ResponseContext } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
+import { useExtensionSettings } from "@/Hooks/extensionHooks";
+import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
-function ExtensionSetting({ websites, setWebsites }) {
+function ExtensionSetting() {
+  const { useExtensionSettingsData, useExtensionSettingsIsLoading } =
+    useExtensionSettings();
+
   const { setResponse } = useContext(ResponseContext);
 
   const router = useRouter();
@@ -21,7 +26,7 @@ function ExtensionSetting({ websites, setWebsites }) {
   const [url, setUrl] = useState("");
   const extensionRef = useRef(null);
 
-  const onSubmitUrl = useCallback(
+  /* const onSubmitUrl = useCallback(
     (url) => {
       fetch(`${config.server}/extension/settings`, {
         method: "PUT",
@@ -82,9 +87,9 @@ function ExtensionSetting({ websites, setWebsites }) {
     } else {
       onSubmitUrl(domain);
     }
-  }, [websites]);
+  }, [websites]); */
 
-  const fetchExtensionSettingUpdate = useCallback((d, target, value) => {
+  /* const fetchExtensionSettingUpdate = useCallback((d, target, value) => {
     fetch(`${config.server}/extension/settings`, {
       method: "PATCH",
       headers: {
@@ -98,7 +103,9 @@ function ExtensionSetting({ websites, setWebsites }) {
         setResponse(data);
       })
       .catch((error) => console.error(error));
-  }, []);
+  }, []); */
+
+  console.log(useExtensionSettingsData);
 
   return (
     <div className={styles.ExtensionSetting}>
@@ -132,7 +139,14 @@ function ExtensionSetting({ websites, setWebsites }) {
           <div>Timer when studying</div>
         </div>
         <ul ref={extensionRef}>
-          {Object.keys(websites).map((website, i) => {
+          {useExtensionSettingsIsLoading ? (
+            <CircularLoading />
+          ) : !useExtensionSettingsData?.success ? null : (
+            useExtensionSettingsData.websiteSettings.map((setting, i) => {
+              return setting.website;
+            })
+          )}
+          {/* {Object.keys(websites).map((website, i) => {
             const { b, bs, t, ts } = websites[website];
             return (
               <li
@@ -193,7 +207,7 @@ function ExtensionSetting({ websites, setWebsites }) {
                 </div>
               </li>
             );
-          })}
+          })} */}
         </ul>
       </div>
     </div>
