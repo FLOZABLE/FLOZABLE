@@ -54,6 +54,22 @@
   border-radius: 0.25rem;
 }
 
+.SubjectTimer .mainDisplay .button#addSubject {
+  font-size: 2.5rem;
+  font-weight: 400;
+  margin-right: 0.5rem;
+  position: relative;
+}
+
+.SubjectTimer .mainDisplay .button#addSubject:hover .hoverText {
+  opacity: 1;
+  bottom: -2rem;
+}
+
+.SubjectTimer .button#addSubject .hoverText {
+  bottom: -3rem;
+}
+
 .SubjectTimer .mainDisplay .button:hover {
   background-color: var(--gray0);
   border-bottom-left-radius: 0rem;
@@ -62,13 +78,14 @@
 .SubjectTimer .subjects {
   position: absolute;
   z-index: 2;
-  background-color: #fff;
+  background-color: var(--gray0);
   width: calc(100% - 3rem);
   max-height: 10rem;
   border-bottom-left-radius: 0.25rem;
   border-bottom-right-radius: 0.25rem;
   font-size: 0rem;
   transition: font-size .3s ease-in-out;
+  overflow-y: auto;
 }
 
 .SubjectTimer .subjects.active {
@@ -79,6 +96,7 @@
   display: flex;
   width: 100%;
   cursor: pointer;
+  align-items: center;
 }
 
 .SubjectTimer .subjects .name {

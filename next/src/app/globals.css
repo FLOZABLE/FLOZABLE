@@ -175,6 +175,7 @@ button:hover {
   border-radius: 0.3rem;
   font-size: 0.75rem;
   z-index: 2;
+  white-space: nowrap;
 }
 
 .overflowDot {

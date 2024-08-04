@@ -25,9 +25,10 @@ import config from "@/app/utils/config";
 /* import { sortNewSubject } from "@/app/utils/timelineSorting"; */
 import { socket } from "@/app/utils/socket";
 import DraggableModal from "../DraggableModal/DraggableModal";
+import { sortNewSubject } from "@/app/utils/timelineSorting";
 
 function AddSubjectModal({}) {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects, setSubjects } = useContext(SubjectsContext);
 
   const { setResponse } = useContext(ResponseContext);
   const { isAddSubjectModal, setIsAddSubjectModal } = useContext(ModalsContext);
@@ -78,7 +79,7 @@ function AddSubjectModal({}) {
   };
 
   const submit = useCallback(() => {
-    /* fetch(`${config.server}/subjects`, {
+    fetch(`${config.server}/subjects`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -94,16 +95,11 @@ function AddSubjectModal({}) {
       .then((data) => {
         setResponse(data);
         if (data.success) {
-          const newSubject = sortNewSubject(subjects, data.info.subjectInfo);
-          setIsAddSubjectModal(false);
-
-          let newState;
-          newState = [...subjects];
-          newState.push(newSubject);
-          newState.daily = subjects.daily;
-          newState.monthly = subjects.monthly;
-          newState.weekly = subjects.weekly;
-          setSubjects(newState);
+          const newSubjects = sortNewSubject(
+            JSON.parse(JSON.stringify(subjects)),
+            data.subjectInfo
+          );
+          setSubjects(newSubjects);
 
           //clear new subject info from modal
           setSelectedColor(null);
@@ -112,9 +108,10 @@ function AddSubjectModal({}) {
           if (tutorial === 4) {
             setTutorial(5);
           }
+          setIsAddSubjectModal(false);
         }
       })
-      .catch((error) => console.error(error)); */
+      .catch((error) => console.error(error));
   }, [selectedColor, selectedIcon, name, tutorial, subjects]);
 
   return (
@@ -133,14 +130,14 @@ function AddSubjectModal({}) {
             type={"text"}
           />
         </div>
-        <SelectIcon
+        {/* <SelectIcon
           selectedIcon={selectedIcon}
           setSelectedIcon={setSelectedIcon}
           isSelectIcon={isSelectIcon}
           setIsSelectIcon={setIsSelectIcon}
           setIsSelectColor={setIsSelectColor}
           id="tutorial-4"
-        />
+        /> */}
         <ColorPalette
           setSelectedColor={setSelectedColor}
           selectedColor={selectedColor}
