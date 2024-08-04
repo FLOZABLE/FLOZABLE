@@ -25,7 +25,7 @@ function MemberTimer({ initialSec = 0, run }) {
 
   useEffect(() => {
     setTotal(Math.floor(initialSec));
-    console.log('initial sec', initialSec)
+    //console.log('initial sec', initialSec)
   }, [initialSec]);
 
   useEffect(() => {
