@@ -6,12 +6,17 @@ import {
   faPause,
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
-import { SubjectsContext, WorkersContext } from "@/app/utils/Contexts";
+import {
+  ModalsContext,
+  SubjectsContext,
+  WorkersContext,
+} from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
 
 function SubjecTimer({ selectedSubject, setSelectedSubject }) {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects, setSubjects } = useContext(SubjectsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
+  const { setIsAddSubjectModal } = useContext(ModalsContext);
 
   const [subjectOptions, setSubjectOptions] = useState([]);
   const [selectNewSubject, setSelectNewSubject] = useState(false);
@@ -28,34 +33,50 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
     setSubjectOptions(subjectOptions);
   }, [subjects]);
 
-  const toggleTimer = useCallback((selectedSubject) => {
-    if (!selectedSubject) return;
+  const toggleTimer = useCallback(
+    (selectedSubject) => {
+      if (!selectedSubject) return;
 
-    const active = !selectedSubject.active;
-    setSelectedSubject({
-      ...selectedSubject,
-      active,
-    });
-
-    if (active) {
-      socket.emit("start", selectedSubject.subject_id);
-      subjectsTimerWorkerRef?.current?.postMessage({
-        command: "startSubjectTimer",
+      const active = !selectedSubject.active;
+      setSelectedSubject({
+        ...selectedSubject,
+        active,
       });
-    } else {
-      socket.emit("stop", selectedSubject.subject_id);
 
-      subjectsTimerWorkerRef?.current?.postMessage({
-        command: "stopSubjectTimer",
-      });
-    }
+      if (active) {
+        socket.emit("start", selectedSubject.subject_id);
+        subjectsTimerWorkerRef?.current?.postMessage({
+          command: "startSubjectTimer",
+        });
+      } else {
+        socket.emit("stop", selectedSubject.subject_id);
+        const selectedSubjectIndex = subjects.findIndex(
+          (subject) => subject.subject_id === selectedSubject.subject_id
+        );
 
-    return () => {
-      subjectsTimerWorkerRef?.current?.postMessage({
-        command: "stopSubjectTimer",
-      });
-    };
-  }, []);
+        subjectsTimerWorkerRef?.current?.postMessage({
+          command: "stopSubjectTimer",
+        });
+
+        if (!selectedSubjectIndex !== -1) {
+          const daily = subjects[selectedSubjectIndex].daily;
+          daily.total[daily.total.length - 1].data = selectedSubject.value;
+          subjects[selectedSubjectIndex] = {
+            ...subjects[selectedSubjectIndex],
+            daily,
+          };
+          setSubjects(subjects);
+        }
+      }
+
+      return () => {
+        subjectsTimerWorkerRef?.current?.postMessage({
+          command: "stopSubjectTimer",
+        });
+      };
+    },
+    [subjects]
+  );
 
   useEffect(() => {
     const messageHandler = (e) => {
@@ -90,6 +111,13 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
   return (
     <div className={styles.SubjectTimer}>
       <div className={styles.mainDisplay}>
+        <div
+          className={styles.button}
+          id={styles.addSubject}
+          onClick={() => setIsAddSubjectModal((prev) => !prev)}
+        >
+          +<p className={`HoverText ${styles.hoverText}`}>Add Subject</p>
+        </div>
         {selectedSubject ? (
           <div
             className={styles.subject}
@@ -102,7 +130,7 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
                 .toString()
                 .padStart(2, "0")}
               :
-              {Math.floor(selectedSubject.value % (60 * 60))
+              {Math.floor(selectedSubject.value % 60)
                 .toString()
                 .padStart(2, "0")}
             </p>
@@ -142,7 +170,14 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
               key={i}
               onClick={() => {
                 setSelectNewSubject(false);
-                setSelectedSubject(subject);
+                if (selectedSubject?.active) {
+                  toggleTimer(selectedSubject);
+                  setTimeout(() => {
+                    setSelectedSubject(subject);
+                  }, 300);
+                } else {
+                  setSelectedSubject(subject);
+                }
               }}
             >
               <p className={styles.name}>{subject.name}</p>
@@ -152,7 +187,7 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
                   .toString()
                   .padStart(2, "0")}
                 :
-                {Math.floor(subject.value % (60 * 60))
+                {Math.floor(subject.value % 60)
                   .toString()
                   .padStart(2, "0")}
               </p>

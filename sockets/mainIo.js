@@ -258,8 +258,9 @@ async function stopStudying(userId, mode, subjectId) {
       return await redisClient.del(`user:${userId}:activeSubject`);
     }
 
-    if (subjectId && activeSubject.id !== subjectId) return;
+    if (!subjectId || (activeSubject.id !== subjectId)) return;
 
+    
     const activity = JSON.parse(
       await redisClient.rpop(`user:${userId}:subject:${activeSubject.id}`)
     );

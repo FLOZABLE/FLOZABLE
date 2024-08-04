@@ -44,38 +44,32 @@ Router.put("/", async (req, res) => {
         return res.send({ success: false, reason: isValidColor.reason });
       }
 
-      const isValidIcon = validateStrictString(icon, "icon name");
+      /* const isValidIcon = validateStrictString(icon, "icon name", 10, 0);
 
       if (!isValidIcon.isValid) {
         return res.send({ success: false, reason: isValidIcon.reason });
       }
-
+ */
       const subjectInfo = {
         name,
         color,
-        icon,
+        /* icon, */
         created_at: Math.floor(new Date().getTime() / 1000),
         subject_id: generateRandomId(10),
         user_id: userId,
       };
       const connection = pool.promise();
       try {
-        await connection.query(
-          `INSERT INTO subjects SET ?`,
-          subjectInfo
-        );
-        subjectInfo.tools = "";
+        await connection.query(`INSERT INTO subjects SET ?`, subjectInfo);
         res.send({
           success: true,
           msg: `Added Subject "${subjectInfo.name}"`,
-          info: { subjectInfo: subjectInfo },
+          subjectInfo,
         });
         delete subjectInfo.user_id;
-        subjectInfo.timeline_sum = 0;
-        subjectInfo.tools = "";
         redisClient.hset(
           `user:${userId}:subjects`,
-          subjectInfo.id,
+          subjectInfo.subject_id,
           JSON.stringify(subjectInfo)
         );
       } catch (err) {

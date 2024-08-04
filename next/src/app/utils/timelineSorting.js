@@ -174,8 +174,73 @@ function timelineSort(subjects) {
     });
   });
 
-  console.log(subjects, groupedSubjects, "gd");
+  console.log(subjects, groupedSubjects, "timelinesorter");
   return { subjects, groupedSubjects };
 }
 
-export { timelineSort };
+function sortNewSubject(subjects, subject) {
+  try {
+    subjects.sort((a, b) => a.created_at - b.created_at);
+
+    const dayDate = DateTime.fromSeconds(subjects[0].created_at).startOf("day");
+    const weekDate = dayDate.startOf("week");
+    const monthDate = dayDate.startOf("month");
+
+    const daysLength = subjects[0].daily.total.length;
+    const weeksLength = subjects[0].weekly.total.length;
+    const monthsLength = subjects[0].monthly.total.length;
+
+    const dailyArray = [];
+    for (let i = 0; i < daysLength; i++) {
+      dailyArray.push({ date: dayDate.plus({ day: i }).toISODate(), data: 0 });
+    }
+
+    const weeklyArray = [];
+    for (let i = 0; i < weeksLength; i++) {
+      weeklyArray.push({
+        date: weekDate.plus({ week: i }).toISODate(),
+        data: 0,
+      });
+    }
+
+    const monthlyArray = [];
+    for (let i = 0; i < monthsLength; i++) {
+      monthlyArray.push({
+        date: monthDate.plus({ month: i }).toISODate(),
+        data: 0,
+      });
+    }
+
+    subject.daily = {
+      timeline: JSON.parse(
+        JSON.stringify(dailyArray.map((val) => ({ ...val, data: [] })))
+      ),
+      total: JSON.parse(JSON.stringify(dailyArray)),
+      focus: JSON.parse(JSON.stringify(dailyArray)),
+    };
+
+    subject.weekly = {
+      timeline: JSON.parse(
+        JSON.stringify(weeklyArray.map((val) => ({ ...val, data: [] })))
+      ),
+      total: JSON.parse(JSON.stringify(weeklyArray)),
+      focus: JSON.parse(JSON.stringify(weeklyArray)),
+    };
+
+    subject.monthly = {
+      timeline: JSON.parse(
+        JSON.stringify(monthlyArray.map((val) => ({ ...val, data: [] })))
+      ),
+      total: JSON.parse(JSON.stringify(monthlyArray)),
+      focus: JSON.parse(JSON.stringify(monthlyArray)),
+    };
+
+    subjects.push(subject);
+    return subjects;
+  } catch (err) {
+    console.log(err);
+    return subjects;
+  }
+}
+
+export { timelineSort, sortNewSubject };
