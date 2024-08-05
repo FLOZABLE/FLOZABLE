@@ -35,21 +35,33 @@ async function sendFriendRequest(userId, targetId) {
       return { success: false, reason: isValidTargetId.reason };
     }
 
-    if (userId === targetId)
+    if (userId === targetId) {
       return {
         success: false,
         reason: "Cannot send request to yourself",
       };
+    }
 
-    const targetUserInfo = await userCache(targetId);
-    if (!targetUserInfo) return { success: false, reason: "No such user" };
+    const usersInfo = await usersCache([userId, targetId], false);
+
+    const userInfo = usersInfo.find((user) => user.user_id === userId);
+
+    const targetUserInfo = usersInfo.find((user) => user.user_id === targetId);
+    if (!targetUserInfo || !userInfo) {
+      return responseCodes["no-user"];
+    }
 
     const { friends, name } = targetUserInfo;
-    if (friends.includes(userId))
+    if (friends.includes(userId)) {
       return {
         success: false,
         reason: "You're already friends with this user",
       };
+    }
+
+    if (userInfo.friends.length > FRIENDS_LIMIT) {
+      return responseCodes["friends-limit-reached"];
+    }
 
     const friendRequests = await NotificationCache(targetId, 0, false);
 
@@ -130,13 +142,13 @@ async function replyFriendRequest(
         return friendReq.f === targetId;
       });
 
-      if (!friendReq) return { success: false, reason: "expired request" };
+      if (!friendReq) return responseCodes["expired-request"];
     } else {
       friendReq = await redisClient.hget(
         `user:${userId}:notifications`,
         notificationId
       );
-      if (!friendReq) return { success: false, reason: "expired request" };
+      if (!friendReq) return responseCodes["expired-request"];
 
       friendReq = { i: notificationId, ...JSON.parse(friendReq) };
     }
@@ -168,7 +180,7 @@ async function replyFriendRequest(
       userInfo.friends.length >= FRIENDS_LIMIT ||
       targetInfo.friends.length >= FRIENDS_LIMIT
     )
-      return { success: false, reason: "Maximum friends reached" };
+      return responseCodes["friends-limit-reached"];
 
     const date = Math.floor(new Date().getTime() / 1000);
 
@@ -316,8 +328,7 @@ Router.delete("/request", async (req, res) => {
       const friendReq = friendRequests.find((friendReq) => {
         return friendReq.f === userId;
       });
-      if (!friendReq)
-        return res.send({ success: false, reason: "expired request" });
+      if (!friendReq) return res.send(responseCodes["expired-request"]);
       redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
       //remove it from ongoing friend req list
       redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
@@ -464,7 +475,7 @@ Router.get("/status", async (req, res) => {
           }
         });
       }
-      console.log(friends);
+      console.log(friends.length, userId);
       return res.send({ success: true, friends });
     } catch (error) {
       console.log(error);

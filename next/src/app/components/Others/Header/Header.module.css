@@ -8,7 +8,6 @@
   align-items: center;
   z-index: 2;
   background-color: #ffffff;
-  overflow: hidden;
 }
 
 .Header .left {
@@ -44,6 +43,12 @@
 
 .Header .right {
   margin: 0rem 5rem 0rem auto;
+  display: flex;
+  align-items: center;
+}
+
+.Header .NotificationsBtn {
+  margin-right: 1rem;
 }
 
 .Header .userInfo {

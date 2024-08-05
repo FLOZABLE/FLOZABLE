@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useContext } from "react";
 import styles from "./FriendsActivityViewer.module.css";
 import UserSubjectViewer from "@/app/components/Users/UserSubjectViewer/UserSubjectViewer";
 import UserGroupViewer from "@/app/components/Users/UserGroupViewer/UserGroupViewer";
@@ -10,23 +10,31 @@ import { useRouter } from "next/navigation";
 import DmBtn from "../../Buttons/DmBtn/DmBtn";
 import { useFriendsStatus } from "@/Hooks/friendsHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
+import { ModalsContext } from "@/app/utils/Contexts";
 
 function FriendsActivityViewer() {
+  const { setIsSearchUsersModal } = useContext(ModalsContext);
+
   const router = useRouter();
 
   const { useFriendsStatusData, useFriendsStatusIsLoading } =
     useFriendsStatus();
 
-  if (useFriendsStatusData && !useFriendsStatusData.success) {
-    <RecommendedFriendsViewer />;
+  if (!useFriendsStatusIsLoading && !useFriendsStatusData?.success) {
+    return <RecommendedFriendsViewer />;
   }
 
   return (
     <div className={`Box ${styles.FriendsActivityViewer}`}>
       <div className={`header ${styles.header}`}>
         <p>Friends</p>
-        <div id={styles.searchFriendBtn}>+
-          <div className={`HoverText ${styles.hoverText}`}>Add friend!</div>
+        <div
+          id={styles.searchFriendBtn}
+          onClick={() => {
+            setIsSearchUsersModal((prev) => !prev);
+          }}
+        >
+          +<div className={`HoverText ${styles.hoverText}`}>Add friend!</div>
         </div>
       </div>
       <div className={`${styles.friends} contents customScroll`}>

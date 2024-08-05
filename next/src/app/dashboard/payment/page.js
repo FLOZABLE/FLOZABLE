@@ -2,7 +2,7 @@
 
 import PaymentForm from "@/app/components/Payment/PaymentForm/PaymentForm";
 import styles from "./page.module.css";
-import { CustomCheckoutProvider, Elements } from "@stripe/react-stripe-js";
+/* import { CustomCheckoutProvider, Elements } from "@stripe/react-stripe-js";
 import { useStripeClientSecret } from "@/app/Hooks/payments";
 import { useEffect, useState } from "react";
 import config from "@/app/utils/config";
@@ -12,12 +12,12 @@ const stripePromise = getStripe();
 
 const appearance = {
   theme: "stripe",
-};
+}; */
 
 export default function Payment() {
-  const [priceId, setPriceId] = useState(null);
+  /* const [priceId, setPriceId] = useState(null);
 
-  const [stripeSecret, setStripeSecret] = useState(null);
+  const [stripeSecret, setStripeSecret] = useState(null); */
 
 
   /* useEffect(() => {
@@ -28,7 +28,7 @@ export default function Payment() {
   }, [searchParams]); */
 
     
-  useEffect(() => {
+  /* useEffect(() => {
     try {
     const searchParams = new URLSearchParams(document.location.search);
       const priceId = searchParams.get("priceId");
@@ -64,20 +64,12 @@ export default function Payment() {
       })
       .catch((error) => console.error(error));
   }, [priceId]);
-
+ */
   return (
     <div className={styles.Payment}>
-      {stripeSecret}
+      {/* {stripeSecret}
       <div className={styles.paymentContainer}>
         {stripeSecret}
-        {/* {stripeSecret ? (
-          <Elements
-            stripe={stripePromise}
-            options={{ clientSecret: stripeSecret, appearance }}
-          >
-            <PaymentForm />
-          </Elements>
-        ) : null} */}
         {stripeSecret ? (
           <CustomCheckoutProvider
             stripe={stripePromise}
@@ -86,7 +78,7 @@ export default function Payment() {
             <PaymentForm />
           </CustomCheckoutProvider>
         ) : null}
-      </div>
+      </div> */}
     </div>
   );
 }

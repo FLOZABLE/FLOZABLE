@@ -5,12 +5,12 @@ import AddSubjectModal from "@/app/components/Modals/AddSubjectModal/AddSubjectM
 import JoinGroupModal from "@/app/components/Modals/JoinGroupModal/JoinGroupModal";
 import TopNotification from "@/app/components/Modals/TopNotification/TopNotification";
 import ChatModal from "@/app/components/Modals/ChatModal/ChatModal";
-import NotificationModal from "@/app/components/Modals/NotificationModal/NotificationModal";
 import AccountModal from "@/app/components/Modals/AccountModal/AccountModal";
 import Tutorial from "./components/Others/Tutorial/Tutorial";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import SubjectsModal from "./components/Modals/SubjectsModal/SubjectsModal";
 import SharePlanModal from "./components/Modals/SharePlanModal/SharePlanModal";
+import SearchUsersModal from "./components/Modals/SearchUsersModal/SearchUsersModal";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
 
@@ -80,9 +80,9 @@ export default function RootLayout({ children }) {
           <TopNotification />
           <JoinGroupModal />
           <AddSubjectModal />
-          <NotificationModal />
           <SubjectsModal />
           <SharePlanModal />
+          <SearchUsersModal />
           <Tutorial />
           {children}
         </AppProvider>

@@ -8,6 +8,7 @@ export default function UserContainer({
   children,
   style = {},
   onClick,
+  maxNameWidht = "9rem",
 }) {
   return (
     <div className={styles.UserContainer} style={style}>
@@ -17,7 +18,12 @@ export default function UserContainer({
         onClick={onClick}
       >
         <ProfileImage userId={userInfo.user_id} />
-        <div className={`overflowDot ${styles.name}`}>{userInfo.name}</div>
+        <div
+          className={`overflowDot ${styles.name}`}
+          style={{ maxWidth: maxNameWidht }}
+        >
+          {userInfo.name}
+        </div>
         <i className={styles.flag}>
           <CountryViewer timezone={userInfo.timezone} />
         </i>
