@@ -18,6 +18,7 @@ import { SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import { useAccount } from "@/Hooks/accountHooks";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
+import NotificationsBtn from "../../Notifications/NotificationsBtn/NotificationsBtn";
 
 function HeaderEl({ children, value, title }) {
   return (
@@ -132,6 +133,9 @@ function Header({}) {
         </HeaderEl>
       </div>
       <div className={styles.right}>
+        <div className={styles.NotificationsBtn}>
+          <NotificationsBtn />
+        </div>
         {userInfo ? (
           <div className={styles.userInfo}>
             <div>

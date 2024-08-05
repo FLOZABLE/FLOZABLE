@@ -1,10 +1,10 @@
-import { getChatroomMembers, getChatrooms } from "@/Api/chatroomsApi";
+import { getChatMembers, getChatRooms } from "@/Api/chatApi";
 import { useQuery } from "@tanstack/react-query";
 
 function useGetChatrooms(userInfo) {
   return useQuery({
     queryKey: [`useGetChatrooms`],
-    queryFn: getChatrooms,
+    queryFn: getChatRooms,
     staleTime: 1000 * 5,
     enabled: !!userInfo,
   });
@@ -13,7 +13,7 @@ function useGetChatrooms(userInfo) {
 function useGetChatroomMembers(chatroomId) {
   return useQuery({
     queryKey: [`useGetChatroomMembers`, chatroomId],
-    queryFn: () => getChatroomMembers(chatroomId),
+    queryFn: () => getChatMembers(chatroomId),
     staleTime: 1000 * 60,
     enabled: !!chatroomId,
   });

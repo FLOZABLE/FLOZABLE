@@ -1,80 +1,33 @@
 .Planner {
   padding: 0rem 3.125rem;
+  flex: 1 1;
+  display: flex;
 }
 
-.Planner .planner {
-  height: 80vh;
-  position: relative;
+.Planner .layer {
+  display: flex;
+  flex: 1 1;
+}
+
+.Planner .layer .box {
+  flex: 1;
+  flex-direction: column;
+}
+
+.Planner .layer .box .title {
+  justify-content: left;
+  width: 100%;
+  font-weight: 700;
+  font-size: 2.5rem;
+}
+
+.Planner .box#calendar {
+  padding: 2rem 5rem;
+}
+
+.Planner .box#planTimeline {
+  min-width: 27rem;
+  height: min-content;
   overflow: hidden;
+  flex: 0;
 }
-
-/* .Planner {
-  padding: 0em 3.125rem;
-}
-
-.Planner .header {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 3.125rem;
-}
-
-.Planner .header .modeBtnWrapper {
-  margin-left: auto;
-}
-
-.Planner .container {
-  display: flex;
-  background-color: #f7f9fd;
-  border-radius: 2.5rem;
-  box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
-  padding: 2.5rem;
-  margin-bottom: 3.125rem;
-
-}
-
-.Planner .container .planner {
-  flex-grow: 1;
-  margin-right: 3.125rem;
-}
-
-.Planner .container .widget {
-  width: fit-content;
-  margin-left: auto;
-}
-
-.Planner .smallCalendarWrapper {
-  display: flex;
-  width: 18.75rem;
-  position: relative;
-  justify-content: center;
-  align-items: center;
-}
-
-.Planner .planTimelineWrapper {
-  width: 18.75rem;
-  margin-top: 1.875rem;
-  transition: width .3s ease-in-out;
-}
-
-@keyframes showScroll {
-  to {
-    overflow-y: auto;
-  }
-}
-
-@media (max-width: 87.5rem) {
-  .Planner .smallCalendarWrapper {
-    width: 15.625rem;
-  }
-
-  .Planner .planTimelineWrapper {
-    width: 15.625rem;
-  }
-}
-
-.title {
-  font-family: "Roboto", sans-serif;
-  padding-bottom: -1.25rem;
-  padding-left: 3.125rem;
-}
- */

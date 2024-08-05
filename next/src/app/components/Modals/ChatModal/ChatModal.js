@@ -19,7 +19,7 @@ import { DateTime } from "luxon";
 import ChatContainer from "@/app/components/Chats/ChatContainer/ChatContainer";
 import MyChatContainer from "@/app/components/Chats/MyChatContainer/MyChatContainer";
 import { useGetChatroomMembers, useGetChatrooms } from "@/Hooks/chatroomsHooks";
-import { getChatroomMessages } from "@/Api/chatroomsApi";
+import { getChatMessages } from "@/Api/chatApi";
 import { useAccount } from "@/Hooks/accountHooks";
 
 function ChatModal({}) {
@@ -73,7 +73,7 @@ function ChatModal({}) {
   useEffect(() => {
     if (!chatModal?.chatroom) return;
     (async () => {
-      const data = await getChatroomMessages(chatModal.chatroom);
+      const data = await getChatMessages(chatModal.chatroom);
       if (!data.success) return;
       setMessages(data.messages);
     })();

@@ -1,78 +1,32 @@
-"use client";
-
-import React, { useState, useContext } from "react";
+import PlansTimeline from "@/app/components/Plans/PlansTimeline/PlansTimeline";
 import styles from "./page.module.css";
 import EventPlanner from "@/app/components/Plans/EventPlanner/EventPlanner";
-import { PlansContext } from "@/app/utils/Contexts";
 
 function Planner({}) {
-  const { refetchPlans } = useContext(PlansContext);
-
-  const [viewMode, setViewMode] = useState("dayGridMonth");
-  const [viewDate, setViewDate] = useState(
-    new Date(new Date().setHours(0, 0, 0, 0))
-  );
-
   return (
-    <div>
-      <div className={`Main`}>
-        <div className="title">Planner</div>
-        <div className={styles.Planner}>
-          <div className={styles.planner}>
+    <div className={`Main`}>
+      <div className={styles.Planner}>
+        <div className={styles.layer}>
+          <div className={`BoxContainer ${styles.box}`} id={styles.calendar}>
+            <div className={styles.title}>Calendar</div>
             <EventPlanner
-              viewDate={viewDate}
-              setViewDate={setViewDate}
-              viewMode={viewMode}
+              viewMode={"dayGridMonth"}
+              viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
+              controller={false}
+            />
+          </div>
+          <div
+            className={`${styles.box} BoxContainer`}
+            id={styles.planTimeline}
+          >
+            <PlansTimeline
+              viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
+              viewMode={"timeGridDay"}
+              mode={"study"}
+              maxHeight="calc(100vh - 2.5rem)"
             />
           </div>
         </div>
-        {/* <div className={styles.Planner}>
-          <div className={styles.header}>
-            <div className={styles.modeBtnWrapper}>
-              <RadioBtn
-                items={[
-                  { view: "Day", value: "timeGridDay" },
-                  { view: "Week", value: "timeGridWeek" },
-                  { view: "Month", value: "dayGridMonth" },
-                ]}
-                changeEvent={setViewMode}
-                defaultViewer={1}
-              />
-            </div>
-          </div>
-          <div className={styles.container}>
-            <div className={styles.planner}>
-              <EventPlanner
-                viewDate={viewDate}
-                setViewDate={setViewDate}
-                viewMode={viewMode}
-              />
-            </div>
-            <div className={styles.widget}>
-              <GoogleLoginBtn
-                onSuccess={() => {
-                  refetchPlans();
-                }}
-              />
-              <div className={styles.smallCalendarWrapper}>
-                <SmallCalendar
-                  width={"100%"}
-                  setViewDate={setViewDate}
-                  viewDate={viewDate}
-                />
-              </div>
-
-              <div className={`${styles.planTimelineWrapper}`}>
-                <PlanTimeline
-                  viewDate={viewDate}
-                  viewMode={viewMode}
-                  mode={"planner"}
-                  maxHeight="25rem"
-                />
-              </div>
-            </div>
-          </div>
-        </div> */}
       </div>
     </div>
   );

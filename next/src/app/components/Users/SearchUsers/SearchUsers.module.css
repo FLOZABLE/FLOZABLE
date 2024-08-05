@@ -7,3 +7,7 @@
 .SearchUsers .loading {
   height: 3rem;
 }
+
+.SearchUsers > div:nth-last-child(1) {
+  margin-bottom: 3rem;
+}
