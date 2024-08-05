@@ -1,7 +1,23 @@
 .Leaderboard {
+  flex: 1;
+  display: flex;
+}
 
+.Leaderboard .layer {
+  display: flex;
+  flex: 1;
+  position: relative;
 }
 
 .Leaderboard .boxContainer#TopLeaderBoard {
   width: 30rem;
 }
+
+.Leaderboard .boxContainer#Leaderboard {
+  flex: 1;
+}
+
+/* .Leaderboard .rankings {
+  display: flex;
+
+} */

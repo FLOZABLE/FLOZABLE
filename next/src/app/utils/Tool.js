@@ -235,6 +235,14 @@ function getDatesDisplay(date, mode, format = "LLLL d", length = 1) {
     if (length === 1) {
       return dateTime.toFormat(format);
     }
+  } else if (mode === "week") {
+    if (length === 1) {
+      return dateTime.toFormat(format);
+    }
+  } else {
+    if (length === 1) {
+      return dateTime.toFormat("kkkk LLLL");
+    }
   }
 }
 
