@@ -2,111 +2,209 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
+const { autoSignin, generateRandomId } = require("../Utils/tool");
 const {
-  autoSignin,
-  arraysHaveSameContents,
-  generateRandomId,
-} = require("../Utils/tool");
-const {
-  chatRoomsCache,
-  usersCache,
   NotificationCache,
   userCache,
-  groupMembersCache,
+  chatroomMemberCache,
 } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../Utils/validate");
 const { mainIo } = require("../sockets/mainIo");
+const { responseCodes } = require("../Constant");
 
 Router.get("/rooms", async (req, res) => {
   autoSignin(req, res, async (userId) => {
-    let rooms = await chatRoomsCache(userId);
-    const roomPromises = rooms.map(async (room) => {
-      const chats = (
-        await redisClient.lrange(`room:${room.id}:chats`, 0, -1)
+    try {
+      const connection = await pool.promise();
+      const [chatrooms] = await connection.query(
+        `
+        SELECT
+          c.chatroom_id,
+          c.type,
+          c.name,
+          GROUP_CONCAT(cm.user_id) AS members
+        FROM chatrooms c
+        JOIN chatroom_members cm ON cm.chatroom_id = c.chatroom_id
+        WHERE c.chatroom_id IN (
+          SELECT chatroom_id FROM chatroom_members WHERE user_id = ?
+        )
+        GROUP BY c.chatroom_id
+  
+        UNION
+  
+        SELECT
+          g.group_id AS chatroom_id,
+          1 AS type,
+          g.name,
+          GROUP_CONCAT(gm.user_id) AS members
+        FROM groups g
+        JOIN group_members gm ON gm.group_id = g.group_id
+        WHERE g.group_id IN (
+          SELECT group_id FROM group_members WHERE user_id = ?
+        )
+        GROUP BY g.group_id;
+      `,
+        [userId, userId]
+      );
+
+      await Promise.all(
+        chatrooms.map(async (chatroom) => {
+          chatroom.members =
+            chatroom.members === "" ? [] : chatroom.members.split(",");
+
+          [chatroom.lastMsg] = (
+            await redisClient.lrange(
+              `chatroom:${chatroom.chatroom_id}:messages`,
+              -1,
+              -1
+            )
+          ).map(JSON.parse);
+        })
+      );
+
+      res.send({ success: true, chatrooms });
+    } catch (err) {
+      console.log(err);
+    }
+  });
+});
+
+Router.get("/messages", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { chatroom_id } = req.query;
+
+      const isIn = await chatroomMemberCache(chatroom_id, userId);
+
+      if (!isIn) return res.send({ success: false, reason: "Not member" });
+
+      const messages = (
+        await redisClient.lrange(`chatroom:${chatroom_id}:messages`, 0, -1)
       ).map(JSON.parse);
-      return { ...room, chats };
-    });
-    rooms = await Promise.all(roomPromises);
-    const readStatus = await redisClient.hgetall(`user:${userId}:chats`);
-    res.send({ success: true, rooms, readStatus });
+
+      res.send({ success: true, messages });
+    } catch (err) {
+      console.log(err);
+    }
   });
 });
 
 Router.get("/members", async (req, res) => {
   autoSignin(req, res, async (userId) => {
-    const { roomId } = req.query;
+    try {
+      const { chatroom_id } = req.query;
 
-    const isValidRoomId = validateStrictString(roomId, "room id", 10);
+      const isIn = await chatroomMemberCache(chatroom_id, userId);
 
-    if (!isValidRoomId.isValid) {
-      return res.send({ success: false, reason: isValidRoomId.reason });
+      if (!isIn) return res.send({ success: false, reason: "Not member" });
+
+      const connection = pool.promise();
+
+      const [members] = await connection.query(
+        `
+        SELECT u.user_id, u.name
+        FROM users u
+        JOIN (
+          SELECT user_id
+          FROM chatroom_members
+          WHERE chatroom_id = ?
+          
+          UNION ALL
+          
+          SELECT gm.user_id
+          FROM group_members gm
+          JOIN chatrooms c ON gm.group_id = c.chatroom_id
+          WHERE c.chatroom_id = ? AND c.type = 0
+        ) AS combined_members ON u.user_id = combined_members.user_id
+        `,
+        [chatroom_id, chatroom_id]
+      );
+
+      res.send({ success: true, members });
+    } catch (err) {
+      console.log(err);
     }
-    const members = await groupMembersCache(roomId);
-    if (!members.includes(userId))
-      return res.send({ success: false, reason: "not in group" });
-    const membersInfo = await usersCache(members);
-    res.send({ success: true, membersInfo });
   });
 });
 
 Router.post("/request", async (req, res) => {
   autoSignin(req, res, async (userId) => {
-    const { targetId } = req.body;
-    const isValidTargetId = validateStrictString(targetId, "target user", 10);
+    try {
+      const { targetId } = req.body;
 
-    if (!isValidTargetId.isValid) {
-      return res.send({ success: false, reason: isValidTargetId.reason });
-    }
+      const isValidTargetId = validateStrictString(targetId, "target user", 10);
 
-    if (userId === targetId)
-      return res.send({ success: false, reason: `Can't chat yourself` });
+      if (!isValidTargetId.isValid) {
+        return res.send({ success: false, reason: isValidTargetId.reason });
+      }
 
-    const chatRooms = await chatRoomsCache(userId);
-    //checks if group with same members exists
-    const isRoomExist = chatRooms.find((chatRoom) => {
-      let { members } = chatRoom;
-      return arraysHaveSameContents(
-        members.map((member) => {
-          return member.user_id;
-        }),
+      if (targetId === userId) {
+        return res.send({ success: false, reason: "Can't chat yourself" });
+      }
+
+      const connection = pool.promise();
+
+      const [[chatroom]] = await connection.query(
+        `
+        SELECT cm1.chatroom_id
+        FROM chatroom_members cm1
+        JOIN chatroom_members cm2 ON cm1.chatroom_id = cm2.chatroom_id
+        WHERE cm1.user_id = ? AND cm2.user_id = ?
+      `,
         [userId, targetId]
       );
-    });
-    if (isRoomExist)
-      return res.send({
-        success: false,
-        reason: "DM already created!",
-        opr: 1,
-        room: isRoomExist,
-      });
 
-    const targetUser = await userCache(targetId);
-    if (!targetUser)
-      return res.send({ success: false, reason: "No such user" });
+      if (chatroom) {
+        return res.send({
+          success: false,
+          reason: "DM already created!",
+          chatroom: chatroom.chatroom_id,
+        });
+      }
 
-    const targetDmRequests = await NotificationCache(targetId, 4);
-    const prevDmRequest = targetDmRequests.find((dmRequest) => {
-      return dmRequest.f.user_id === userId;
-    });
-    if (prevDmRequest)
-      return res.send({ success: false, reason: "Already sent the request!" });
+      const targetUser = await userCache(targetId);
+      if (!targetUser) {
+        return res.send(responseCodes["no-user"]);
+      }
 
-    const id = generateRandomId(5);
-    const date = Math.floor(new Date().getTime() / 1000);
-    const notification = { t: 4, f: userId, d: date };
-    const socketNotification = {
-      i: id,
-      t: 4,
-      f: await userCache(userId),
-      d: date,
-    };
-    mainIo.to(targetId).emit("notification", socketNotification);
-    redisClient.hset(
-      `user:${targetId}:notifications`,
-      id,
-      JSON.stringify(notification)
-    );
-    res.send({ success: true, msg: `DM request sent!` });
+      const userInfo = await userCache(userId);
+      if (!userInfo) {
+        return res.send(responseCodes["no-user"]);
+      }
+
+      const targetDmRequests = await NotificationCache(targetId, 4, false);
+      const prevDmRequest = targetDmRequests.find(
+        (dmRequest) => dmRequest.f === userId
+      );
+
+      if (prevDmRequest) {
+        return res.send({
+          success: false,
+          reason: "Already sent the request!",
+        });
+      }
+
+      const id = generateRandomId(5);
+      const date = Math.floor(new Date().getTime() / 1000);
+      const notification = { t: 4, f: userId, d: date };
+      const socketNotification = {
+        i: id,
+        t: 4,
+        f: userInfo,
+        d: date,
+      };
+      mainIo.to(targetId).emit("notification", socketNotification);
+      redisClient.hset(
+        `user:${targetId}:notifications`,
+        id,
+        JSON.stringify(notification)
+      );
+
+      res.send({ success: true, msg: `Sent request to ${targetUser.name}` });
+    } catch (err) {
+      console.log(err);
+      res.send(responseCodes["error"]);
+    }
   });
 });
 
@@ -127,61 +225,68 @@ Router.post("/request/reply", async (req, res) => {
         return res.send({ success: false, reason: isValidAcceped.reason });
       }
 
-      /* const chatRequests = await NotificationCache(userId, 4, false);
-      const chatReq = chatRequests.find((chatReq) => {
-        return chatReq.f === targetId;
-      }); */
-
       const chatReq = await redisClient.hget(
         `user:${userId}:notifications`,
         notificationId
       );
-      if (!chatReq)
-        return res.send({ success: false, reason: "expired request" });
+      if (!chatReq) {
+        return res.send(responseCodes["expired-request"]);
+      }
+
       const parsedChatReq = JSON.parse(chatReq);
-      if (!parsedChatReq.f === targetId)
-        return res.send({ success: false, reason: "expired request" });
+      if (!parsedChatReq.f === targetId) {
+        return res.send(responseCodes["expired-request"]);
+      }
 
       redisClient.hdel(`user:${userId}:notifications`, notificationId);
+
       if (!accepted) {
         return res.send({ success: true, msg: `Declined chat request` });
       }
       const connection = pool.promise();
       const targetUser = await userCache(targetId);
-      if (!targetUser)
-        return res.send({ success: false, reason: "No such user" });
-      const members = [userId, targetId];
+      if (!targetUser) {
+        return res.send(responseCodes["no-user"]);
+      }
+
+      const userInfo = await userCache(userId);
+      if (!userInfo) {
+        return res.send(responseCodes["no-user"]);
+      }
+
+      const chatroom_id = generateRandomId(10);
+      const chatroomName = userInfo.name + ", " + targetUser.name;
+
       const roomInfo = {
-        id: generateRandomId(10),
+        chatroom_id,
         type: 1,
-        members: JSON.stringify(members).slice(1, -1).replaceAll(`"`, ""),
+        chatroomName,
       };
       await connection.query(
         `
-      INSERT INTO chatrooms SET ?
-    `,
+        INSERT INTO chatrooms SET ?
+      `,
         [roomInfo]
       );
 
-      res.send({ success: true, msg: `Accepted chat request!` });
+      const newMembers = [
+        [userId, chatroom_id],
+        [targetId, chatroom_id],
+      ];
 
-      redisClient.hdel(`user:${userId}`, "dmRooms");
-      redisClient.hdel(`user:${targetId}`, "dmRooms");
-      redisClient.del(`room:${roomInfo.id}`);
-      /* const myDmRooms = await dmRoomsCache(userId);
-      myDmRooms.push(roomInfo.id);
-      const targetDmRooms = await dmRoomsCache(targetId);
-      targetDmRooms.push(roomInfo.id);
-      redisClient.hset(`user:${userId}`, "dmRooms", JSON.stringify(myDmRooms));
-      redisClient.hset(
-        `user:${targetId}`,
-        "dmRooms",
-        JSON.stringify(targetDmRooms)
+      await connection.query(
+        `
+        INSERT 
+        INTO chatroom_members (user_id, chatroom_id) 
+        VALUES ? 
+        `,
+        [newMembers]
       );
-      redisClient.sadd(`room:${roomInfo.id}`, members); */
+
+      res.send({ success: true, msg: `Accepted chat request!` });
     } catch (error) {
       console.log(error);
-      res.send({ success: false, reason: "Failed" });
+      res.send(responseCodes["error"]);
     }
   });
 });

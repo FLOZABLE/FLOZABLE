@@ -6,6 +6,7 @@ import FriendsActivityViewer from "@/app/components/Friends/FriendsActivityViewe
 import FriendRequestsViewer from "@/app/components/Friends/FriendRequestsViewer/FriendRequestsViewer";
 import FriendsTrendChart from "@/app/components/Charts/FriendsTrendChart";
 import TopLeaderBoard from "@/app/components/Leaderboard/TopLeaderBoard/TopLeaderBoard";
+import SearchUsersBox from "@/app/components/Users/SearchUsersBox/SearchUsersBox";
 
 function Friends({}) {
   const [viewDate, setViewDate] = useState(
@@ -23,6 +24,12 @@ function Friends({}) {
             id={styles.FriendsActivityViewer}
           >
             <FriendsActivityViewer />
+          </div>
+          <div
+            className={`BoxContainer ${styles.boxContainer}`}
+            id={styles.FriendsActivityViewer}
+          >
+            <SearchUsersBox />
           </div>
         </div>
         <div className={styles.layer} id={styles.center}>

@@ -6,7 +6,12 @@ const crypto = require("crypto");
 const sharp = require("sharp");
 const multer = require("multer");
 
-const { hashing, autoSignin, generateRandomId, deriveKey } = require("../Utils/tool");
+const {
+  hashing,
+  autoSignin,
+  generateRandomId,
+  deriveKey,
+} = require("../Utils/tool");
 const {
   validateEmail,
   validateStrictString,
@@ -253,6 +258,7 @@ Router.get("/profile/:userId", async (req, res) => {
     res.send({ success: true, userInfo, subjectsInfo, friendsInfo });
   } catch (err) {
     console.log(err);
+    res.send(responseCodes["error"]);
   }
 });
 
@@ -306,14 +312,14 @@ Router.post("/lists", async (req, res) => {
     const { ids } = req.body;
 
     const isValidIds = validateArray(ids, "ids", 10, 0);
-    console.log(isValidIds, ids)
+    console.log(isValidIds, ids);
     if (!isValidIds.isValid) {
       return res.send({ success: false, reason: isValidIds.reason });
     }
 
     const connection = pool.promise();
     const users = await usersCache(ids);
-    console.log(users)
+    console.log(users);
     res.send({ success: true, users });
   } catch (err) {
     console.log(err);

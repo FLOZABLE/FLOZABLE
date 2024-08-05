@@ -75,6 +75,8 @@ async function createAccount(name, email, timezone, userInfo) {
     };
 
     await connection.query("INSERT INTO users SET ?", user);
+    user.groups = [];
+    user.friends = [];
 
     cacheUserInfo(user);
     //create default subject

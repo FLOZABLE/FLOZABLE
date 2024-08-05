@@ -37,14 +37,14 @@ function FriendRequestBtn({ userInfo, padding }) {
           color1={"#fff"}
           color2={"var(--purple)"}
           style={{
-            fontSize: '0.9rem'
+            fontSize: "0.9rem",
           }}
         >
           +<FontAwesomeIcon icon={faUser} />
         </BlobBtn>
       </div>
-      <div className={styles.hoverEl}>
-        <p>Become a friend with {userInfo ? userInfo.name : ""}!</p>
+      <div className={`HoverText ${styles.hoverText}`}>
+        Become a friend with {userInfo?.name}
       </div>
     </div>
   );
