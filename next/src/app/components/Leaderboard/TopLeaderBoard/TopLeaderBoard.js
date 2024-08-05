@@ -4,6 +4,7 @@ import UserContainer from "../../Users/UserContainer/UserContainer";
 import styles from "./TopLeaderBoard.module.css";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { useAccount } from "@/Hooks/accountHooks";
+import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 
 function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
   const { useRankingsData, useRankingsIsLoading } = useRankings(
@@ -47,21 +48,61 @@ function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
   );
 }
 
+function ViewOption({ name, value, viewer, setViewer }) {
+  return (
+    <div
+      className={`${styles.viewOption} ${
+        value === viewer ? styles.active : null
+      } `}
+      onClick={() => {
+        setViewer(value);
+      }}
+    >
+      {name}
+    </div>
+  );
+}
+
 export default function TopLeaderBoard({
   isOnlyFriends,
   setIsOnlyFriends,
   viewDate,
+  setViewDate,
+  viewer,
+  setViewer,
 }) {
   return (
     <div className={`Box ${styles.TopLeaderBoard}`}>
-      <div className={`header ${styles.header}`}>Leaderboard</div>
+      <div className={`header ${styles.header}`}>
+        <p>Leaderboard</p>
+        <DateSelectorBtn
+          viewDate={viewDate}
+          setViewDate={setViewDate}
+          viewMode={viewer}
+        />
+      </div>
       <div className={styles.options}>
         <div className={styles.viewOptions}>
-          <div className={styles.viewOption}>Day</div>
+          <ViewOption
+            name={"Day"}
+            value={"day"}
+            viewer={viewer}
+            setViewer={setViewer}
+          />
           <div className={styles.divider}></div>
-          <div className={styles.viewOption}>Week</div>
+          <ViewOption
+            name={"Week"}
+            value={"week"}
+            viewer={viewer}
+            setViewer={setViewer}
+          />
           <div className={styles.divider}></div>
-          <div className={styles.viewOption}>Month</div>
+          <ViewOption
+            name={"Month"}
+            value={"month"}
+            viewer={viewer}
+            setViewer={setViewer}
+          />
         </div>
         <div
           className={`${styles.friendsBtn} ${

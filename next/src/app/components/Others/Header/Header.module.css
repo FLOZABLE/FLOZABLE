@@ -6,7 +6,7 @@
   left: 22rem;
   display: flex;
   align-items: center;
-  z-index: 2;
+  z-index: 10;
   background-color: #ffffff;
 }
 

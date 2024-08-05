@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import styles from "./page.module.css";
-
-import { useRankings } from "@/Hooks/rankingsHooks";
 import TopLeaderBoard from "@/app/components/Leaderboard/TopLeaderBoard/TopLeaderBoard";
+import Leaderboard from "@/app/components/Leaderboard/Leaderboard/Leaderboard";
 
 function Ranking({}) {
   const [viewDate, setViewDate] = useState(
@@ -14,21 +13,31 @@ function Ranking({}) {
   const [isOnlyFriends, setIsOnlyFriends] = useState(false);
 
   return (
-    <div>
-      <div className={`Main`}>
-        <div className={styles.Leaderboard}>
-          <div className={styles.layer}>
-            <div
-              className={`BoxContainer ${styles.boxContainer}`}
-              id={styles.TopLeaderBoard}
-            >
-              <TopLeaderBoard
-                viewer={viewer}
-                viewDate={viewDate}
-                isOnlyFriends={isOnlyFriends}
-                setIsOnlyFriends={setIsOnlyFriends}
-              />
-            </div>
+    <div className={`Main`}>
+      <div className={styles.Leaderboard}>
+        <div className={styles.layer}>
+          <div
+            className={`BoxContainer ${styles.boxContainer}`}
+            id={styles.Leaderboard}
+          >
+            <Leaderboard
+              viewDate={viewDate}
+              viewer={viewer}
+              isOnlyFriends={isOnlyFriends}
+            />
+          </div>
+          <div
+            className={`BoxContainer ${styles.boxContainer}`}
+            id={styles.TopLeaderBoard}
+          >
+            <TopLeaderBoard
+              viewer={viewer}
+              viewDate={viewDate}
+              setViewDate={setViewDate}
+              setViewer={setViewer}
+              isOnlyFriends={isOnlyFriends}
+              setIsOnlyFriends={setIsOnlyFriends}
+            />
           </div>
         </div>
       </div>

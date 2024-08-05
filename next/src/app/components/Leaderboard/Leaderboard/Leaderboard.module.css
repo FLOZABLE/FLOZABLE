@@ -1,0 +1,31 @@
+.Leaderboard .rankings .userContainer {
+  display: flex;
+  align-items: center;
+  margin: 0.3rem 0rem;
+}
+
+.Leaderboard .userContainer .rank {
+  margin-right: 1rem;
+}
+
+.Leaderboard .userContainer .studyTime {
+  margin-left: auto;
+}
+
+.Leaderboard .pageButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: auto;
+}
+
+.Leaderboard .pageButtons .pageButton {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.7rem;
+  cursor: pointer;
+}
