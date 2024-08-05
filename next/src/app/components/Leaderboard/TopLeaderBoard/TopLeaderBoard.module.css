@@ -16,13 +16,24 @@
   color: var(--gray2);
 }
 
-.TopLeaderBoard .viewOptions .viewOption:nth-child(1) {
+.TopLeaderBoard .viewOptions .viewOption {
+  cursor: pointer;
+  padding: 0rem 0.3rem;
+  border-radius: 0.2rem;
+  transition: .3s ease-in-out background-color;
+}
+
+.TopLeaderBoard .viewOptions .viewOption.active {
+  background-color: var(--gray0);
+}
+
+/* .TopLeaderBoard .viewOptions .viewOption:nth-child(1) {
   padding-right: 0.5rem;
 }
 
 .TopLeaderBoard .viewOptions .viewOption:not(:nth-child(1)) {
   padding-left: 0.5rem;
-}
+} */
 
 .TopLeaderBoard .options .viewOptions .divider {
   width: 0.1rem;
