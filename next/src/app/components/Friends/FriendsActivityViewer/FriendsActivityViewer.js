@@ -33,7 +33,7 @@ function FriendsActivityViewer() {
         {useFriendsStatusIsLoading ? (
           <CircularLoading />
         ) : (
-          useFriendsStatusData?.friends.map((friend, i) => {
+          useFriendsStatusData?.friends?.map((friend, i) => {
             return (
               <div className={styles.friend} key={i}>
                 <div>
