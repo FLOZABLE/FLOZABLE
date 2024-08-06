@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useState,
-  useRef,
-  useContext,
-} from "react";
+import React, { useCallback, useState, useRef, useContext } from "react";
 import styles from "./CreateGroupModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -112,10 +107,7 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <TextEditor
-              setValue={setDescription}
-              value={description}
-            />
+            <TextEditor setValue={setDescription} value={description} />
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -215,9 +207,7 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
           <div className={styles.contentWrapper}></div>
         </div>
         <div className={styles.submit}>
-          <BlobBtn onClick={submit} color1={"#fff"} color2={"var(--pink)"}>
-            SUBMIT
-          </BlobBtn>
+          <BlobBtn onClick={submit}>SUBMIT</BlobBtn>
         </div>
       </div>
     </DraggableModal>

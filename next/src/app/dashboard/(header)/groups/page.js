@@ -8,6 +8,7 @@ import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
 import GroupsContainer from "@/app/components/Groups/GroupsContainer/GroupsContainer";
 import EditGroupModal from "@/app/components/Groups/EditGroupModal/EditGroupModal";
 import MemberContextMenu from "@/app/components/Groups/MemberContextMenu/MemberContextMenu";
+import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 
 function Groups({ setResponse }) {
   const [tags, setTags] = useState([]);
@@ -47,11 +48,17 @@ function Groups({ setResponse }) {
                   handleCreatedTagsChange={setTags}
                 />
               </div>
+              <div className={styles.headerItem} id={styles.CreateGroup}>
+                <BlobBtn
+                  onClick={() => {
+                    setIsCreateNewGroup(!isCreateNewGroup);
+                  }}
+                >
+                  + Create new group
+                </BlobBtn>
+              </div>
             </div>
-            <GroupsContainer 
-              searchQuery={searchQuery}
-              tags={tags}
-            />
+            <GroupsContainer searchQuery={searchQuery} tags={tags} />
           </div>
         </div>
       </div>

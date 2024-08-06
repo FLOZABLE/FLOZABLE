@@ -2,6 +2,7 @@
   flex: 1;
   position: relative;
   display: flex;
+  padding: 0rem 3.125rem;
 }
 
 .User .profileCard {

@@ -125,7 +125,7 @@ function ChatModal({}) {
           >
             <BackArrow />
           </i>
-          <p>Messages</p>
+          <p className={`overflowDot ${styles.name}`}>{chatModal?.name}</p>
           <i
             onClick={() => {
               setChatModal((prev) => ({ ...prev, open: false }));

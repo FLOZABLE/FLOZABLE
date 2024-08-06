@@ -127,9 +127,7 @@ function JoinGroupModal() {
               </div>
             ) : null}
             <div className={styles.blobWrapper}>
-              <BlobBtn onClick={submit} color1={"#fff"} color2={"var(--pink)"}>
-                Join
-              </BlobBtn>
+              <BlobBtn onClick={submit}>Join</BlobBtn>
             </div>
           </div>
         ) : null}

@@ -4,8 +4,7 @@ import styles from "./BlobBtn.module.css";
 function BlobBtn({
   onClick,
   color1 = "#fff",
-  color2 = "#ecbd00",
-  padding,
+  color2 = "var(--gray2)",
   id,
   children,
   style={}
@@ -14,7 +13,7 @@ function BlobBtn({
     <div
       className={styles.BlobBtn}
       onClick={(e)=> {onClick(e)}}
-      style={{ "--color1": color1, "--color2": color2, padding: padding, ...style }}
+      style={{ "--color1": color1, "--color2": color2, ...style }}
       id={id}
     >
       {children}

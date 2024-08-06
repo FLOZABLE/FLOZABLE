@@ -58,7 +58,7 @@ function Account() {
       fetch(`${config.server}/account/image`, {
         method: "PATCH",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: formData,
         credentials: "include",
@@ -223,8 +223,6 @@ function Account() {
                       onClick={() => {
                         setIsSubmitProfile(true);
                       }}
-                      color1={"#fff"}
-                      color2={"var(--pink)"}
                     >
                       SUBMIT
                     </BlobBtn>
@@ -271,8 +269,6 @@ function Account() {
                         onClick={() => {
                           setIsSubmitPw(true);
                         }}
-                        color1={"#fff"}
-                        color2={"var(--pink)"}
                       >
                         SUBMIT
                       </BlobBtn>

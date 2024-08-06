@@ -1,9 +1,9 @@
 .Header {
   height: 5rem;
-  width: calc(100vw - 22rem);
+  width: calc(100vw - 23rem);
   position: absolute;
   top: 1rem;
-  left: 22rem;
+  left: 23rem;
   display: flex;
   align-items: center;
   z-index: 4;
@@ -35,6 +35,7 @@
 
 .HeaderEl .title {
   font-size: 1.2rem;
+  white-space: nowrap;
 }
 
 .HeaderEl .value {

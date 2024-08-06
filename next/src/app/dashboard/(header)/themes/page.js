@@ -45,7 +45,7 @@ function Themes({ setResponse }) {
   }, [themes]);
 
   return (
-    <div>
+    <div className={`Main`}>
       <CreateThemeModal
         isOpen={isCreateThemeModal}
         setIsOpen={setIsCreateThemeModal}
@@ -55,91 +55,86 @@ function Themes({ setResponse }) {
         setIsActive={setIsThemePreview}
         setResponse={setResponse}
       />
-      <div className={`Main`}>
-        <div className="title">Themes</div>
-        <div className={styles.Themes}>
-          <div className={styles.box} id={styles.likedList}>
-            <div className={styles.title}>
-              <h1>Theme of the Week!</h1>
+      <div className={styles.Themes}>
+        <div className={styles.box} id={styles.likedList}>
+          <div className={styles.title}>
+            <h1>Theme of the Week!</h1>
+          </div>
+          {rankedThemes.length ? (
+            <Swiper
+              modules={[Pagination, Navigation, Autoplay, EffectCoverflow]}
+              navigation={true}
+              effect="coverflow"
+              coverflowEffect={{
+                rotate: -20,
+                stretch: 1,
+                depth: 100,
+                slideShadows: false,
+              }}
+              spaceBetween={30}
+              pagination={{ clickable: true }}
+              slidesPerView={3}
+              autoplay={{ delay: 1300, disableOnInteraction: true }}
+              speed={500}
+              loop={true}
+              className={styles.Swiper}
+            >
+              {rankedThemes.map((theme, i) => {
+                return (
+                  <SwiperSlide className={styles.Slide} key={i}>
+                    <RankedTheme
+                      key={i}
+                      theme={theme}
+                      setIsThemePreview={setIsThemePreview}
+                    />
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          ) : null}
+        </div>
+        <div className={styles.box}>
+          <div className={styles.searchOptions}>
+            <div>
+              <div id={styles.tagWrapper}>
+                <TagContainerGen
+                  maxTags={10}
+                  setTags={setTags}
+                  handleCreatedTagsChange={handleCreatedTagsChange}
+                />
+              </div>
             </div>
-            {rankedThemes.length ? (
-              <Swiper
-                modules={[Pagination, Navigation, Autoplay, EffectCoverflow]}
-                navigation={true}
-                effect="coverflow"
-                coverflowEffect={{
-                  rotate: -20,
-                  stretch: 1,
-                  depth: 100,
-                  slideShadows: false,
+            <div>
+              <SearchBar
+                setSearchQuery={setSearchQuery}
+                searchQuery={searchQuery}
+              />
+              <div></div>
+            </div>
+            <div className={styles.blobWrapper}>
+              <DropDownButton
+                options={{
+                  0: "Sort By: Likes",
+                  1: "Sort By: Usage",
                 }}
-                spaceBetween={30}
-                pagination={{ clickable: true }}
-                slidesPerView={3}
-                autoplay={{ delay: 1300, disableOnInteraction: true }}
-                speed={500}
-                loop={true}
-                className={styles.Swiper}
+                setValue={setSortOpt}
+                value={sortOpt}
+              />
+              <BlobBtn
+                onClick={() => {
+                  setIsCreateThemeModal(!isCreateThemeModal);
+                }}
               >
-                {rankedThemes.map((theme, i) => {
-                  return (
-                    <SwiperSlide className={styles.Slide} key={i}>
-                      <RankedTheme
-                        key={i}
-                        theme={theme}
-                        setIsThemePreview={setIsThemePreview}
-                      />
-                    </SwiperSlide>
-                  );
-                })}
-              </Swiper>
-            ) : null}
-          </div>
-          <div className={styles.box}>
-            <div className={styles.searchOptions}>
-              <div>
-                <div id={styles.tagWrapper}>
-                  <TagContainerGen
-                    maxTags={10}
-                    setTags={setTags}
-                    handleCreatedTagsChange={handleCreatedTagsChange}
-                  />
-                </div>
-              </div>
-              <div>
-                <SearchBar
-                  setSearchQuery={setSearchQuery}
-                  searchQuery={searchQuery}
-                />
-                <div></div>
-              </div>
-              <div className={styles.blobWrapper}>
-                <DropDownButton
-                  options={{
-                    0: "Sort By: Likes",
-                    1: "Sort By: Usage",
-                  }}
-                  setValue={setSortOpt}
-                  value={sortOpt}
-                />
-                <BlobBtn
-                  onClick={() => {
-                    setIsCreateThemeModal(!isCreateThemeModal);
-                  }}
-                  color1={"#fff"}
-                  color2={"var(--purple2)"}
-                >
-                  + Upload theme!
-                </BlobBtn>
-              </div>
+                + Upload theme!
+              </BlobBtn>
             </div>
-            <ThemesContainer
-              tags={tags}
-              searchQuery={searchQuery}
-              sortOpt={sortOpt}
-              setIsThemePreview={setIsThemePreview}
-            />
           </div>
+          <ThemesContainer
+            tags={tags}
+            searchQuery={searchQuery}
+            sortOpt={sortOpt}
+            setIsThemePreview={setIsThemePreview}
+          />
         </div>
       </div>
     </div>

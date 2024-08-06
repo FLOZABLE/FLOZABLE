@@ -59,7 +59,7 @@ function StudyTrendChart({
           setViewDate={setViewDate}
         />
       </div>
-      <div className={styles.subjectsLabels}>
+      <div className={`customScroll ${styles.subjectsLabels}`}>
         <SubjectsLabels
           subjects={subjects}
           filteredSubjects={filteredSubjects}
@@ -68,6 +68,9 @@ function StudyTrendChart({
       </div>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
+          margin={{
+            right: 15,
+          }}
           data={subjectsTrend.map((day, i) => {
             const data = day.data.reduce((accumulator, subject) => {
               if (!filteredSubjects.includes(subject.subject_id)) {

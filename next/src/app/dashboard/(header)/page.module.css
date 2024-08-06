@@ -1,12 +1,10 @@
 .Main {
   padding: 0rem 3.125rem;
-  flex: 1 1;
-  display: flex;
 }
 
 .Main .layer {
   display: flex;
-  flex: 1 1;
+  min-height: calc(100vh - 6rem);
 }
 
 .Main .layer .box {
