@@ -232,36 +232,6 @@ Router.patch("/info", async (req, res) => {
   });
 });
 
-Router.get("/profile/:userId", async (req, res) => {
-  try {
-    const targetUserId = req.params.userId;
-
-    const isValidUserId = validateStrictString(targetUserId, "user id", 10);
-
-    if (!isValidUserId.isValid) {
-      return res.send({ success: false, reason: isValidUserId.reason });
-    }
-
-    const userInfo = await userCache(targetUserId);
-    if (!userInfo)
-      return res.send({ success: false, reason: responseCodes["no-user"] });
-    const friendsInfo = [];
-    await Promise.all(
-      userInfo.friends.map(async (friendId) => {
-        const friendInfo = await userCache(friendId);
-        if (friendInfo) {
-          friendsInfo.push(friendInfo);
-        }
-      })
-    );
-    const subjectsInfo = await subjectsTimelineCache(targetUserId);
-    res.send({ success: true, userInfo, subjectsInfo, friendsInfo });
-  } catch (err) {
-    console.log(err);
-    res.send(responseCodes["error"]);
-  }
-});
-
 Router.post("/notification-subscribe", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
@@ -307,22 +277,36 @@ Router.post("/notification-subscribe", async (req, res) => {
   });
 });
 
-Router.post("/lists", async (req, res) => {
+Router.get("/profile", async (req, res) => {
   try {
-    const { ids } = req.body;
+    const { userId } = req.query;
 
-    const isValidIds = validateArray(ids, "ids", 10, 0);
-    console.log(isValidIds, ids);
-    if (!isValidIds.isValid) {
-      return res.send({ success: false, reason: isValidIds.reason });
+    const userInfo = await userCache(userId);
+    if (!userInfo) {
+      return res.send(responseCodes["no-user"]);
     }
 
-    const connection = pool.promise();
-    const users = await usersCache(ids);
-    console.log(users);
-    res.send({ success: true, users });
+    const friends = await usersCache(userInfo.friends, false);
+
+    const subjects = await subjectsTimelineCache(userId);
+
+    return res.send({ success: true, userInfo, friends, subjects });
   } catch (err) {
     console.log(err);
+    return res.send(responseCodes["error"]);
+  }
+});
+
+Router.get("/profile/subjects", async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    const subjectsInfo = await subjectsTimelineCache(userId);
+
+    res.send({ success: true, subjects: subjectsInfo });
+  } catch (err) {
+    console.log(err);
+    res.send(responseCodes["error"]);
   }
 });
 

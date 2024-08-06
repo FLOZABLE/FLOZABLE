@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { postFriendsRequestReply } from "@/Api/friendsApi";
 import { postNotificationsRead } from "@/Api/notificationsApi";
 import { postChatRequestReply } from "@/Api/chatApi";
+import { postPlanShareRespond } from "@/Api/plansApi";
 
 function NotificationContainer({ children, userInfo, title }) {
   const router = useRouter();
@@ -116,6 +117,23 @@ export default function NotificationsBtn() {
     [notifications]
   );
 
+  const planShareRespond = useCallback(
+    (notification, accepted) => {
+      const notificationId = notification?.i;
+
+      (async () => {
+        const data = await postPlanShareRespond(notificationId, accepted);
+
+        setResponse(data);
+      })();
+
+      setNotifications(
+        notifications.filter((notif) => notif.i !== notificationId)
+      );
+    },
+    [notifications]
+  );
+
   return (
     <div className={styles.NotificationsBtn}>
       <div className={styles.bell}>
@@ -155,6 +173,24 @@ export default function NotificationsBtn() {
                 </NotificationBtn>
               </NotificationContainer>
             );
+          } else if (notification.t === 1) {
+            const title = `is now your friend`;
+            return (
+              <NotificationContainer
+                key={i}
+                title={title}
+                userInfo={notification?.f}
+              >
+                <NotificationBtn
+                  hoverText={"Got it"}
+                  onClick={() => {
+                    deleteNotification(notification);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCheck} />
+                </NotificationBtn>
+              </NotificationContainer>
+            );
           } else if (notification.t === 4) {
             const title = `wants to chat!`;
             return (
@@ -175,6 +211,32 @@ export default function NotificationsBtn() {
                   hoverText={"Decline"}
                   onClick={() => {
                     chatRequestReply(notification, false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </NotificationBtn>
+              </NotificationContainer>
+            );
+          } else if (notification.t === 7) {
+            const title = `wants to share a plan`;
+            return (
+              <NotificationContainer
+                key={i}
+                title={title}
+                userInfo={notification?.f}
+              >
+                <NotificationBtn
+                  hoverText={"Accept"}
+                  onClick={() => {
+                    planShareRespond(notification, true);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCheck} />
+                </NotificationBtn>
+                <NotificationBtn
+                  hoverText={"Decline"}
+                  onClick={() => {
+                    planShareRespond(notification, false);
                   }}
                 >
                   <FontAwesomeIcon icon={faXmark} />

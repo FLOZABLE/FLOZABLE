@@ -1,4 +1,8 @@
-import { getAccount } from "@/Api/accountApi";
+import {
+  getAccount,
+  getAccountProfile,
+  getAccountProfileSubjects,
+} from "@/Api/accountApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 function useAccount() {
@@ -20,7 +24,7 @@ function useAccount() {
 
   const clearAccountData = () => {
     queryClient.resetQueries(["useAccount"]);
-    queryClient.removeQueries(['useAccount']);
+    queryClient.removeQueries(["useAccount"]);
   };
 
   return {
@@ -33,4 +37,42 @@ function useAccount() {
   };
 }
 
-export { useAccount };
+function useAccountProfile(userId) {
+  const queryResult = useQuery({
+    queryKey: [`useAccountProfile`, userId],
+    queryFn: () => getAccountProfile(userId),
+    staleTime: 1000 * 60 * 10,
+  });
+
+  const {
+    data: useAccountProfileData,
+    isLoading: useAccountProfileDataIsLoading,
+  } = queryResult;
+
+  return {
+    useAccountProfileData,
+    useAccountProfileDataIsLoading,
+    ...queryResult,
+  };
+}
+
+function useAccountProfileSubjects(userId) {
+  const queryResult = useQuery({
+    queryKey: [`useAccountProfileSubjects`, userId],
+    queryFn: () => getAccountProfileSubjects(userId),
+    staleTime: 1000 * 60 * 10,
+  });
+
+  const {
+    data: useAccountProfileSubjectsData,
+    isLoading: useAccountProfileSubjectsIsLoading,
+  } = queryResult;
+
+  return {
+    useAccountProfileSubjectsData,
+    useAccountProfileSubjectsIsLoading,
+    ...queryResult,
+  };
+}
+
+export { useAccount, useAccountProfile, useAccountProfileSubjects };
