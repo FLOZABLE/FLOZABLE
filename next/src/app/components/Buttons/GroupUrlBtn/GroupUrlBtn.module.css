@@ -5,32 +5,29 @@
   align-items: center;
   width: 3.125rem;
   height: 1.875rem;
-  border-radius: 3.125rem;
+  border-radius: 0.3rem;
   cursor: pointer;
 }
 
 .GroupUrlBtn i {
+  transition: 0.3s ease-in-out color;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: var(--gray2);
 }
 
-.GroupUrlBtn .hoverEl {
-  position: absolute;
-  top: 5rem;
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility .3s ease-in-out, opacity .3s ease-in-out, top .3s ease-in-out;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.1875rem 0.625rem;
-  border-radius: 0.313rem;
-  background-color: #ffffffC0;
+.GroupUrlBtn:hover i {
+  color: #000;
 }
 
-.GroupUrlBtn:hover .hoverEl {
-  visibility: visible;
+.GroupUrlBtn .hoverText {
+  bottom: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.GroupUrlBtn:hover .hoverText {
+  bottom: -1rem;
   opacity: 1;
-  top: 1.875rem;
 }

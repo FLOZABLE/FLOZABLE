@@ -1,18 +1,4 @@
-.middleWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.likeWrapper {
-  display: flex;
-  justify-content: space-around;
-  flex-flow: row wrap;
-  width: 50%;
-}
-
-.likeButton {
+.LikeBtn {
   border: 0.125rem solid #c7c7c7;
   border-radius: 2.5rem;
   padding: 0.45rem 0.75rem;
@@ -30,13 +16,13 @@
   user-select: none;
 }
 
-.likeButton.liked {
+.LikeBtn.liked {
   color: #fd8a8a;
   border-color: currentColor;
   filter: grayscale(0);
 }
 
-.likeButton:hover {
+.LikeBtn:hover {
   border-color: currentColor;
   cursor: pointer;
 }

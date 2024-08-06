@@ -103,8 +103,8 @@ async function deletePlanShare(targetId, planId) {
   return data;
 }
 
-async function postPlanShareRespond(planId, accepted) {
-  if (!planId) return { success: false };
+async function postPlanShareRespond(notificationId, accepted) {
+  if (!notificationId) return { success: false };
 
   const response = await fetch(`${config.server}/plans/plan/share/respond`, {
     method: "POST",
@@ -112,7 +112,7 @@ async function postPlanShareRespond(planId, accepted) {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify({ planId, accepted }),
+    body: JSON.stringify({ notificationId, accepted }),
   });
   const data = await response.json();
 
