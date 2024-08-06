@@ -15,9 +15,12 @@ function DmBtn({ userInfo, padding }) {
       const data = await postChatRequest(userInfo.user_id);
 
       if (data.reason === "DM already created!") {
+        const { name, chatroom_id } = data.chatroom;
+
         setChatModal((prev) => ({
           ...prev,
-          chatroom: data.chatroom,
+          chatroom: chatroom_id,
+          name,
           open: true,
         }));
       } else {
@@ -30,13 +33,13 @@ function DmBtn({ userInfo, padding }) {
     <div className={styles.DmBtn}>
       <div className={styles.blobWrapper}>
         <BlobBtn
-          padding={padding}
           onClick={(e) => {
             e.stopPropagation();
             chatRequest();
           }}
           style={{
             fontSize: "0.9rem",
+            padding,
           }}
         >
           <FontAwesomeIcon icon={faComments} />

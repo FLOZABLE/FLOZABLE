@@ -1,5 +1,6 @@
 .Themes {
-  padding: 1.875rem 3.125rem;
+  padding: 0rem 3.125rem;
+  flex: 1;
 }
 
 .Themes h1 {
@@ -60,7 +61,7 @@
   margin-bottom: 5rem;
 }
 
-.Themes .box .searchOptions > div{
+.Themes .box .searchOptions > div {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -75,7 +76,6 @@
   position: relative;
   width: 18.75rem;
 }
-
 
 @media (max-width: 87.5rem) {
   .Themes .Swiper {

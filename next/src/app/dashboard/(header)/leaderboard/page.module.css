@@ -1,6 +1,7 @@
 .Leaderboard {
   flex: 1;
   display: flex;
+  padding: 0rem 3.125rem;
 }
 
 .Leaderboard .layer {
@@ -16,8 +17,3 @@
 .Leaderboard .boxContainer#Leaderboard {
   flex: 1;
 }
-
-/* .Leaderboard .rankings {
-  display: flex;
-
-} */

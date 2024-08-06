@@ -165,7 +165,6 @@ function SubjectManager({
             onClick={() => {
               deleteSubject(subject.id);
             }}
-            color2="red"
           >
             Confirm
           </BlobBtn>
@@ -174,7 +173,6 @@ function SubjectManager({
             onClick={() => {
               setDeleteConfirm(true);
             }}
-            color2="red"
           >
             <FontAwesomeIcon icon={faTrashCan} className={styles.deleteIcon} />
           </BlobBtn>

@@ -1,5 +1,6 @@
 .SubjectsLabels {
   display: flex;
+  flex-wrap: wrap;
   color: var(--gray2);
   font-weight: 900;
 }

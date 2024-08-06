@@ -31,7 +31,11 @@ function ChatRoom({ chatroom }) {
     <li
       className={styles.ChatRoom}
       onClick={() => {
-        setChatModal((prev) => ({ ...prev, chatroom: chatroom.chatroom_id }));
+        setChatModal((prev) => ({
+          ...prev,
+          chatroom: chatroom.chatroom_id,
+          name: chatroom.name,
+        }));
       }}
     >
       <div

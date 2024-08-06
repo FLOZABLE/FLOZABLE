@@ -123,8 +123,6 @@ function ExtensionSetting() {
             onClick={() => {
               onSubmitUrl(url);
             }}
-            color1={"#fff"}
-            color2={"var(--pink)"}
           >
             SUBMIT
           </BlobBtn>

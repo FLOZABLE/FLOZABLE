@@ -1,25 +1,14 @@
 .Stats {
   padding: 0rem 3.125rem;
-  display: flex;
-  flex: 1 1;
-  flex-direction: column;
 }
 
 .Stats .layer {
   display: flex;
-  flex: 1;
+  height: 50vh;
 }
-
-/* .Stats .layer .box {
-  flex-direction: column;
-} */
 
 .Stats .box#subjectsPie {
   width: 25rem;
-}
-
-.Stats .box#studyTrendChart {
-  flex: 1
 }
 
 .Stats .box#RankingsTrendsChart {

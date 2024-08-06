@@ -286,9 +286,7 @@ function EditGroupModal({ isOpen, setIsOpen }) {
             <div className={styles.contentWrapper}></div>
           </div>
           <div className={styles.submit}>
-            <BlobBtn onClick={setSubmit} color1={"#fff"} color2={"var(--pink)"}>
-              SUBMIT
-            </BlobBtn>
+            <BlobBtn onClick={setSubmit}>SUBMIT</BlobBtn>
           </div>
         </div>
       </div>

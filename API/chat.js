@@ -146,9 +146,12 @@ Router.post("/request", async (req, res) => {
 
       const [[chatroom]] = await connection.query(
         `
-        SELECT cm1.chatroom_id
+        SELECT 
+        cm1.chatroom_id,
+        c.name
         FROM chatroom_members cm1
         JOIN chatroom_members cm2 ON cm1.chatroom_id = cm2.chatroom_id
+        JOIN chatrooms c ON c.chatroom_id = cm1.chatroom_id
         WHERE cm1.user_id = ? AND cm2.user_id = ?
       `,
         [userId, targetId]
@@ -158,7 +161,7 @@ Router.post("/request", async (req, res) => {
         return res.send({
           success: false,
           reason: "DM already created!",
-          chatroom: chatroom.chatroom_id,
+          chatroom: chatroom,
         });
       }
 

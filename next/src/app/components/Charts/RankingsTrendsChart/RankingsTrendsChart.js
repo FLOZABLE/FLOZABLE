@@ -45,7 +45,7 @@ function RankingsTrendsChart({ viewDate, setViewDate, viewer, userInfo }) {
         />
       </div>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={rankingsTrend}>
+        <LineChart data={rankingsTrend} margin={{ right: 15 }}>
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey="label"

@@ -247,6 +247,7 @@ function ModalsProvider({ children }) {
 
   const [chatModal, setChatModal] = useState({
     chatroom: null,
+    name: "",
     opened: false,
     totalNewMsg: 0,
   });

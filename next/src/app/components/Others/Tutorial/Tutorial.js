@@ -51,8 +51,6 @@ function Tutorial() {
                 router.push("/dashboard/groups");
                 setTutorial(false);
               }}
-              color1={"#fff"}
-              color2={"var(--purple2)"}
               id="tutorial-13"
             >
               View Rooms for Group-Studying
@@ -76,8 +74,6 @@ function Tutorial() {
               onClick={() => {
                 skipTutorial();
               }}
-              color1={"#fff"}
-              color2={"var(--purple2)"}
               id="skipTutorialButton"
             >
               Skip Tutorial

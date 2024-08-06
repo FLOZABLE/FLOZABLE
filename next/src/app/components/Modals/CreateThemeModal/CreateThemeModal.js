@@ -90,9 +90,7 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
           />
         </div>
         <div className={styles.submitWrapper}>
-          <BlobBtn color1={"#fff"} color2={"var(--purple2)"} onClick={submit}>
-            SUBMIT
-          </BlobBtn>
+          <BlobBtn onClick={submit}>SUBMIT</BlobBtn>
         </div>
       </div>
     </DraggableModal>

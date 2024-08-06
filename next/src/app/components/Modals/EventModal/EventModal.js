@@ -35,15 +35,13 @@ import { deletePlanShare, patchPlan, postPlanShare } from "@/Api/plansApi";
 import { usePlansPlanUsers } from "@/Hooks/plansHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
-function EventModalLayer({ children, icon, hoverEl }) {
+function EventModalLayer({ children, icon, hoverText }) {
   return (
     <div className={styles.EventModalLayer}>
       <div className={styles.iconWrapper}>
         {icon}
-        {hoverEl ? (
-          <div className={styles.hoverEl}>
-            <p>{hoverEl}</p>
-          </div>
+        {hoverText ? (
+          <div className={`HoverText ${styles.hoverText}`}>{hoverText}</div>
         ) : null}
       </div>
       <div className={styles.contentWrapper}>{children}</div>
@@ -71,7 +69,9 @@ function SharedUserBox({ userInfo }) {
       }}
     >
       <ProfileImage userId={userInfo.user_id} />
-      <div className={styles.hoverEl}>Remove {userInfo.name}</div>
+      <div className={`HoverText ${styles.hoverText}`}>
+        Remove {userInfo.name}
+      </div>
     </div>
   );
 }
@@ -97,7 +97,9 @@ function ShareUserBox({ userInfo }) {
       id={styles.share}
     >
       <ProfileImage userId={userInfo.user_id} width="2.5rem" height="2.5rem" />
-      <div className={styles.hoverEl}>(Pending) Remove {userInfo.name}</div>
+      <div className={`HoverText ${styles.hoverText}`}>
+        (Pending) Remove {userInfo.name}
+      </div>
     </div>
   );
 }
@@ -357,7 +359,7 @@ function EventModal({}) {
         </EventModalLayer>
         <EventModalLayer
           icon={<FontAwesomeIcon icon={faClock} />}
-          hoverEl={"Select Time"}
+          hoverText={"Select Time"}
         >
           <DateSelector
             start={planModal.start}
@@ -386,7 +388,7 @@ function EventModal({}) {
         </EventModalLayer>
         <EventModalLayer
           icon={<FontAwesomeIcon icon={faFileLines} />}
-          hoverEl={"Add Description"}
+          hoverText={"Add Description"}
         >
           <TextEditor
             setValue={(description) => {
@@ -404,7 +406,7 @@ function EventModal({}) {
         </EventModalLayer>
         <EventModalLayer
           icon={<FontAwesomeIcon icon={faRepeat} />}
-          hoverEl={"Repeat"}
+          hoverText={"Repeat"}
         >
           <DropDownButton
             options={{
@@ -429,7 +431,7 @@ function EventModal({}) {
         {planModal.editable ? (
           <EventModalLayer
             icon={<FontAwesomeIcon icon={faBook} />}
-            hoverEl={"Select Subject"}
+            hoverText={"Select Subject"}
           >
             <div className={styles.subjectWrapper}>
               <DropDownButton
@@ -469,7 +471,7 @@ function EventModal({}) {
         ) : null}
         <EventModalLayer
           icon={<FontAwesomeIcon icon={faBell} />}
-          hoverEl={"Select Notification"}
+          hoverText={"Select Notification"}
         >
           <DropDownButton
             options={{
@@ -490,7 +492,7 @@ function EventModal({}) {
         </EventModalLayer>
         <EventModalLayer
           icon={<FontAwesomeIcon icon={faCircleExclamation} />}
-          hoverEl={"Select Importance"}
+          hoverText={"Select Importance"}
         >
           <div className={styles.notificationWrapper}>
             <SliderAnimation
@@ -506,7 +508,7 @@ function EventModal({}) {
         </EventModalLayer>
         <EventModalLayer
           icon={<FontAwesomeIcon icon={faUserGroup} />}
-          hoverEl={"Shared Users"}
+          hoverText={"Shared Users"}
         >
           <div className={styles.UserBoxes}>
             {usePlansPlanUsersIsLoading ? (
@@ -543,8 +545,6 @@ function EventModal({}) {
           </BlobBtn>
           <div className={styles.trashcan}>
             <BlobBtn
-              color1="#fff"
-              color2="red"
               onClick={() => {
                 deletePlan();
               }}

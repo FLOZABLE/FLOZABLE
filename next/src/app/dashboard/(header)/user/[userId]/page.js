@@ -14,7 +14,7 @@ import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 function User({ params }) {
   const { userId } = params;
 
-  const { useAccountProfileData, useAccountProfileDataIsLoading, error } =
+  const { useAccountProfileData } =
     useAccountProfile(userId);
   const { groups } = useContext(GroupsContext);
 

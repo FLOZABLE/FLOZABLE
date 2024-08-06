@@ -40,8 +40,6 @@
   position: relative;
   padding: 6rem 0rem 0rem 22rem;
   width: calc(100vw - 22rem);
-  min-height: calc(100vh - 6rem);
-  display: flex;
 }
 
 html {
@@ -234,6 +232,16 @@ button:hover {
 
 .hiddenScroll::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
+}
+
+@media (max-width: 1900px) {
+  html {
+    font-size: 15px;
+  }
+
+  .modal.open {
+    top: 150px;
+  }
 }
 
 @media (max-width: 1400px) {
