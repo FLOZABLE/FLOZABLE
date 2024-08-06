@@ -113,8 +113,6 @@ function AccountModal({}) {
                     }
                   });
               }}
-              color1={"#66c8ff"}
-              color2={"#fff"}
             >
               SUBMIT
             </BlobBtn>
@@ -188,8 +186,6 @@ function AccountModal({}) {
                   })
                   .catch((error) => console.error(error));
               }}
-              color1={"#66c8ff"}
-              color2={"#fff"}
             >
               SUBMIT
             </BlobBtn>

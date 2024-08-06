@@ -7,7 +7,7 @@ import Confetti from "react-confetti";
 import { TutorialsContext } from "@/app/utils/Contexts";
 import { useAccount } from "@/Hooks/accountHooks";
 
-function WelcomeModal({ }) {
+function WelcomeModal({}) {
   const [isModal, setIsModal] = useState(false);
   const { userInfo } = useAccount();
   const [confettiEl, setConfettiEl] = useState(null);
@@ -64,8 +64,6 @@ function WelcomeModal({ }) {
                 setTutorial(1);
                 //navigate("/dashboard?tutorial=1");
               }}
-              color1={"#fff"}
-              color2={"var(--purple2)"}
             >
               Begin!
             </BlobBtn>

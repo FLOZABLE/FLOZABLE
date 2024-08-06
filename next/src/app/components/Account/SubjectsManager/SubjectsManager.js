@@ -121,7 +121,6 @@ function SubjectsManager() {
             return (
               <div key={i} className={styles.subject}>
                 <BlobBtn
-                  color2={subject.color}
                   onClick={() => {
                     setSelectedSubject(subject);
                   }}

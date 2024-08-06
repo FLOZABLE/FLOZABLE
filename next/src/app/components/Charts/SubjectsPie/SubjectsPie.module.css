@@ -14,6 +14,7 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   position: relative;
+  min-height: 20rem;
 }
 
 .SubjectsPie .totalTime {
@@ -34,10 +35,10 @@
 
 .SubjectsPie .labels {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 45%);
+  grid-template-columns: repeat(auto-fill, 40%);
   justify-content: center;
-  flex-wrap: wrap;
   gap: 2rem;
+  overflow-y: auto;
 }
 
 .SubjectsPie .labels .label {

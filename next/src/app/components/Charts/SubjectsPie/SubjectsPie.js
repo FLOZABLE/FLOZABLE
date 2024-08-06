@@ -18,7 +18,9 @@ function SubjectsPie({ viewDate, viewer }) {
   useEffect(() => {
     if (!subjects || !viewDate || !viewer) return;
 
-    const subjectsPie = updateTimeUsagePie(subjects, viewDate, viewer);
+    const subjectsPie = updateTimeUsagePie(subjects, viewDate, viewer).filter(
+      (subject) => subject.value
+    );
     setSubjectsPie(subjectsPie);
     let totalTime = 0;
     subjectsPie.map((subject) => {
@@ -70,20 +72,10 @@ function SubjectsPie({ viewDate, viewer }) {
           </ResponsiveContainer>
         </div>
       ) : (
-        <div
-          style={{
-            alignSelf: "center",
-            fontSize: "2rem",
-            textDecoration: "underline",
-          }}
-        >
-          <Link href="/dashboard/study">
-            <h3>Study to see stats!</h3>
-          </Link>
-        </div>
+        <div className={styles.chartContainer}></div>
       )}
 
-      <div className={styles.labels}>
+      <div className={`customScroll ${styles.labels}`}>
         {subjectsPie.map((subject, i) => {
           return (
             <div className={styles.label} key={i}>
