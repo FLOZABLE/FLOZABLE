@@ -35,18 +35,14 @@ const LikeBtn = ({
   }, [liked]);
 
   return (
-    <div className={`${styles.middleWrapper}`}>
-      <div className={styles.likeWrapper}>
-        <div
-          className={`${styles.likeButton} ${likedBtn ? styles.liked : ""}`}
-          onClick={handleLike}
-        >
-          <span className={styles.likeIcon}>
-            <div className={styles.heartAnimation1}></div>
-            <div className={styles.heartAnimation2}></div>
-          </span>
-        </div>
-      </div>
+    <div
+      className={`${styles.LikeBtn} ${likedBtn ? styles.liked : ""}`}
+      onClick={handleLike}
+    >
+      <span className={styles.likeIcon}>
+        <div className={styles.heartAnimation1}></div>
+        <div className={styles.heartAnimation2}></div>
+      </span>
     </div>
   );
 };

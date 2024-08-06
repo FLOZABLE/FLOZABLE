@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import styles from "./page.module.css";
-import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
 import CreateGroupModal from "@/app/components/Modals/CreateGroupModal/CreateGroupModal";
 import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContainerGen";
 import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
-import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import GroupsContainer from "@/app/components/Groups/GroupsContainer/GroupsContainer";
 import EditGroupModal from "@/app/components/Groups/EditGroupModal/EditGroupModal";
 import MemberContextMenu from "@/app/components/Groups/MemberContextMenu/MemberContextMenu";
@@ -17,12 +15,6 @@ function Groups({ setResponse }) {
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
   const [isEditGroupModal, setIsEditGroupModal] = useState(false);
   const [rightClickedMember, setRightClickedMember] = useState(null);
-
-  const groupsViewerRef = useRef(null);
-
-  const handleCreatedTagsChange = (tags) => {
-    setTags(tags);
-  };
 
   return (
     <div className={`Main`}>
@@ -39,53 +31,29 @@ function Groups({ setResponse }) {
         setIsOpen={setIsEditGroupModal}
         isOpen={isEditGroupModal}
       />
-      <div className="title">Groups</div>
       <div className={styles.Groups}>
-        <div className={styles.groupsWrapper}>
-          <GroupsContainer queryTags={tags} searchQuery={searchQuery} />
-        </div>
-        {/* <div className={styles.box}>
-            <MyGroupsViewer
-              groupsViewerRef={groupsViewerRef}
-              setIsEditGroupModal={setIsEditGroupModal}
-              setRightClickedMember={setRightClickedMember}
+        <div className={styles.layer}>
+          <div className={`BoxContainer ${styles.boxContainer}`}>
+            <div className={styles.header}>
+              <div className={styles.headerItem} id={styles.SearchBar}>
+                <SearchBar
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                />
+              </div>
+              <div className={styles.headerItem} id={styles.Tags}>
+                <TagContainerGen
+                  maxTags={10}
+                  handleCreatedTagsChange={setTags}
+                />
+              </div>
+            </div>
+            <GroupsContainer 
+              searchQuery={searchQuery}
+              tags={tags}
             />
           </div>
-          <div className={styles.box}>
-            <div className={styles.searchOpt}>
-              <div>
-                <div className={styles.tagContainerWrapper}>
-                  <TagContainerGen
-                    maxTags={10}
-                    setTags={setTags}
-                    handleCreatedTagsChange={handleCreatedTagsChange}
-                  />
-                </div>
-              </div>
-              <div>
-                <div className={styles.searchWrapper}>
-                  <SearchBar
-                    setSearchQuery={setSearchQuery}
-                    searchQuery={searchQuery}
-                  />
-                </div>
-              </div>
-              <div>
-                <BlobBtn
-                  onClick={() => {
-                    setIsCreateNewGroup(!isCreateNewGroup);
-                  }}
-                  color1={"#fff"}
-                  color2={"var(--purple2)"}
-                >
-                  + Create new group
-                </BlobBtn>
-              </div>
-            </div>
-            <div className={styles.groupsWrapper}>
-              <GroupsContainer queryTags={tags} searchQuery={searchQuery} />
-            </div>
-          </div> */}
+        </div>
       </div>
     </div>
   );

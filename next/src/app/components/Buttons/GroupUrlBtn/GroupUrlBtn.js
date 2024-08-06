@@ -3,7 +3,11 @@ import styles from "./GroupUrlBtn.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 
-function GroupUrlBtn({ text, copyText = 'Copy!', copiedText = 'Copied!', bgColor='#ffffffC0', color='#000' }) {
+function GroupUrlBtn({
+  text,
+  copyText = "Copy!",
+  copiedText = "Copied!",
+}) {
   const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
@@ -18,18 +22,21 @@ function GroupUrlBtn({ text, copyText = 'Copy!', copiedText = 'Copied!', bgColor
   }, [isCopied]);
 
   return (
-    <div className={styles.GroupUrlBtn} style={{backgroundColor: bgColor, color}} onClick={() => {
-      navigator.clipboard.writeText(text);
-      setIsCopied(true);
-    }}>
-      <i style={{color}}>
+    <div
+      className={styles.GroupUrlBtn}
+      onClick={() => {
+        navigator.clipboard.writeText(text);
+        setIsCopied(true);
+      }}
+    >
+      <i>
         <FontAwesomeIcon icon={faLink} />
       </i>
-      <div className={styles.hoverEl} style={{color}} >
+      <div className={`HoverText ${styles.hoverText}`}>
         {isCopied ? copiedText : copyText}
       </div>
     </div>
   );
-};
+}
 
 export default GroupUrlBtn;

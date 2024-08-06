@@ -10,6 +10,7 @@ const {
   validateStrictString,
   validateArray,
 } = require("../Utils/validate");
+const { responseCodes } = require("../Constant");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -19,6 +20,7 @@ Router.get("/", async (req, res) => {
       res.send({ success: true, subjects: subjectsInfo });
     } catch (err) {
       console.log(err);
+      responseCodes["error"];
     }
   });
 });

@@ -1,10 +1,39 @@
 .Groups {
+  flex: 1;
+}
+
+/* .Groups .layer {
+  display: flex;
+  flex: 1;
+} */
+
+.Groups .layer .boxContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.Groups .layer .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.Groups .header .headerItem#Tags {
+  width: 20rem;
+}
+
+.Groups .header .headerItem#SearchBar {
+  width: 20rem;
+}
+
+/* .Groups {
   padding: 3.125rem;
 }
 
 .Groups .groupsWrapper {
   height: 200vh;
-}
+} */
 /* 
 .Groups .box {
   margin: 1.875rem 0em;

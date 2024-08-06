@@ -4,65 +4,38 @@ import { GroupsContext } from "@/app/utils/Contexts";
 import GroupContainer from "../GroupContainer/GroupContainer";
 import { DateTime } from "luxon";
 import config from "@/app/utils/config";
+import { useRankings } from "@/Hooks/rankingsHooks";
 
-function GroupsContainer({
-  searchQuery,
-  queryTags,
-}) {
+function GroupsContainer({ searchQuery, tags }) {
   const { otherGroups } = useContext(GroupsContext);
 
+  const { useRankingsData } = useRankings("day", new Date());
   const [rankings, setRankings] = useState([]);
 
   useEffect(() => {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    fetch(`${config.server}/ranking/sort?mode=day&date=${DateTime.now().toISODate()}&timezone=${timezone}`, {
-      method: 'get',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials:"include"
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        if (response.success) {
-          setRankings(response.data);
-        }
-      });
-  }, []);
+    if (!useRankingsData?.success) return;
+    setRankings(useRankingsData.rankings);
+  }, [useRankingsData]);
 
   return (
     <div className={`${styles.GroupsContainer} customScroll`}>
       {otherGroups.map((group, i) => {
-
         let isSearched = false;
-        if (
-          !queryTags.length &&
-          (searchQuery === "" || typeof searchQuery === "undefined")
-        ) {
+
+        const lowecaseTags = group.tags.map((tag) => tag.toLowerCase());
+        if (!tags.length && searchQuery === "") {
           isSearched = true;
-        } else if (queryTags.length && searchQuery === "") {
-          if (
-            group.tags.some((element) => queryTags.includes(element.toLowerCase()))
-          ) {
-            isSearched = true;
-          }
-        } else if (!queryTags.length && searchQuery !== "") {
-          if (
-            group.name.toLowerCase().includes(searchQuery) ||
-            group.tags.includes(searchQuery)
-          ) {
-            isSearched = true;
-          }
+        } else if (searchQuery === "") {
+          isSearched = lowecaseTags.some((tag) =>
+            tags.includes(tag.toLowerCase())
+          );
+        } else if (!tags.length) {
+          isSearched = group.name.toLowerCase().includes(searchQuery);
         } else {
-          if (
-            tags.some((element) => queryTags.includes(element.toLowerCase())) &&
-            (group.name.toLowerCase().includes(searchQuery) ||
-              group.tags.includes(searchQuery))
-          ) {
-            isSearched = true;
-          };
-        };
+          isSearched =
+            lowecaseTags.some((tag) => tags.includes(tag.toLowerCase())) &&
+            group.name.toLowerCase().includes(searchQuery.toLowerCase());
+        }
 
         return (
           <GroupContainer
@@ -71,7 +44,7 @@ function GroupsContainer({
             rankings={rankings}
             isSearched={isSearched}
           />
-        )
+        );
       })}
     </div>
   );
