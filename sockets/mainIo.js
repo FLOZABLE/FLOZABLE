@@ -107,7 +107,7 @@ mainIo.on("connection", (socket) => {
 
   socket.on("stop", async (subjectId) => {
     try {
-      stopStudying(userId, "rest", subjectId);
+      stopStudying(userId, "rest");
     } catch (err) {
       console.log(err);
     }
@@ -235,7 +235,7 @@ async function deActiveGroup(userId, socket) {
   }
 }
 
-async function stopStudying(userId, mode, subjectId) {
+async function stopStudying(userId, mode) {
   try {
     const now = Math.floor(new Date().getTime() / 1000);
 
@@ -258,9 +258,6 @@ async function stopStudying(userId, mode, subjectId) {
       return await redisClient.del(`user:${userId}:activeSubject`);
     }
 
-    if (!subjectId || (activeSubject.id !== subjectId)) return;
-
-    
     const activity = JSON.parse(
       await redisClient.rpop(`user:${userId}:subject:${activeSubject.id}`)
     );

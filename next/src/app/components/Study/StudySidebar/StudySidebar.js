@@ -15,7 +15,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { socket } from "@/app/utils/socket";
-import { CallOptionsContext, SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
+import {
+  CallOptionsContext,
+  SubjectsContext,
+  TutorialsContext,
+} from "@/app/utils/Contexts";
 import {
   IconCameraVideoFill,
   IconCameraVideoOffFill,
@@ -209,7 +213,7 @@ function StudySidebar({
         <div className={styles.hoverEl}>Playlist</div>
       </div>
 
-      <div
+      {/* <div
         className={`${styles.studyTool} ${isToolModal ? styles.clicked : ""}`}
         onClick={() => {
           setIsToolModal((prev) => !prev);
@@ -223,7 +227,7 @@ function StudySidebar({
           )}
         </i>
         <div className={styles.hoverEl}>Tools</div>
-      </div>
+      </div> */}
 
       <div
         className={`${styles.studyTool} ${isZoom ? styles.clicked : ""}`}
