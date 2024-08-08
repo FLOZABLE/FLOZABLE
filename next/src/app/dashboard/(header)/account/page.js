@@ -17,10 +17,10 @@ import GoogleLoginBtn from "@/app/components/Buttons/GoogleLoginBtn/GoogleLoginB
 import SpotifyAuthBtn from "@/app/components/Spotify/SpotifyAuthBtn/SpotifyAuthBtn";
 import ExtensionSetting from "@/app/components/Account/ExtensionSetting/ExtensionSetting";
 import config from "@/app/utils/config";
-import SubjectsManager from "@/app/components/Account/SubjectsManager/SubjectsManager";
 import { GoogleCalendar, SpotifyLogo, YouTubeIcon } from "@/app/utils/Svg";
 import { ResponseContext } from "@/app/utils/Contexts";
 import { useAccount } from "@/Hooks/accountHooks";
+import SubjectsManager from "@/app/components/Subjects/SubjectsManager/SubjectsManager";
 
 function Account() {
   const { userInfo } = useAccount();

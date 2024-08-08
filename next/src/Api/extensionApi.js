@@ -13,6 +13,32 @@ async function getExtensionSettings() {
   return data;
 }
 
+async function putExtensionSetting(url) {
+  const response = await fetch(`${config.server}/extension/setting`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ url }),
+  });
+  const data = await response.json();
+  return data;
+}
+
+async function patchExtensionSetting({ website, mode, value }) {
+  const response = await fetch(`${config.server}/extension/setting`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ website, mode, value }),
+  });
+  const data = await response.json();
+  return data;
+}
+
 async function getExtensionUsage(date, mode) {
   if (!date || !mode) return { success: false };
 
@@ -32,4 +58,9 @@ async function getExtensionUsage(date, mode) {
   return data;
 }
 
-export { getExtensionUsage, getExtensionSettings };
+export {
+  getExtensionUsage,
+  putExtensionSetting,
+  patchExtensionSetting,
+  getExtensionSettings,
+};
