@@ -16,9 +16,7 @@ import {
   TutorialsContext,
   WorkersContext,
 } from "@/app/utils/Contexts";
-import { useRouter } from "next/navigation";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
-import SelectIcon from "@/app/components/Inputs/SelectIcon/SelectIcon";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import config from "@/app/utils/config";
@@ -27,6 +25,7 @@ import { socket } from "@/app/utils/socket";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import { sortNewSubject } from "@/app/utils/timelineSorting";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { putSubjectsSubject } from "@/Api/subjectsApi";
 
 function AddSubjectModal({}) {
   const { subjects, setSubjects } = useContext(SubjectsContext);
@@ -37,12 +36,11 @@ function AddSubjectModal({}) {
     useContext(TutorialsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
 
-  const [name, setName] = useState("");
-  const [selectedColor, setSelectedColor] = useState(null);
+  const [subject, setSubject] = useState({
+    name: "",
+    color: null,
+  });
   const [isSelectColor, setIsSelectColor] = useState(false);
-  const [selectedIcon, setSelectedIcon] = useState({ name: null, el: null });
-  const [isSelectIcon, setIsSelectIcon] = useState(false);
-  const router = useRouter();
 
   const addSubjectModalRef = useRef(null);
 
@@ -75,25 +73,10 @@ function AddSubjectModal({}) {
     }
   }, [tutorial]);
 
-  const handleNameInput = (e) => {
-    setName(e.target.value);
-  };
-
-  const submit = useCallback(() => {
-    fetch(`${config.server}/subjects`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name,
-        color: selectedColor,
-        icon: selectedIcon.name,
-      }),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
+  const onSubmit = useCallback(
+    (subject) => {
+      (async () => {
+        const data = await putSubjectsSubject(subject);
         setResponse(data);
         if (data.success) {
           const newSubjects = sortNewSubject(
@@ -101,19 +84,17 @@ function AddSubjectModal({}) {
             data.subjectInfo
           );
           setSubjects(newSubjects);
-
-          //clear new subject info from modal
-          setSelectedColor(null);
-          setSelectedIcon({ name: null, el: null });
-          setName("");
+          setIsSelectColor(false);
+          setIsAddSubjectModal(false);
+          setSubject({ name: "", color: null });
           if (tutorial === 4) {
             setTutorial(5);
           }
-          setIsAddSubjectModal(false);
         }
-      })
-      .catch((error) => console.error(error));
-  }, [selectedColor, selectedIcon, name, tutorial, subjects]);
+      })();
+    },
+    [tutorial, subjects]
+  );
 
   return (
     <DraggableModal
@@ -124,33 +105,33 @@ function AddSubjectModal({}) {
       <div className={styles.AddSubjectModal}>
         <div className={styles.inputWrapper}>
           <CustomInput
-            input={name}
-            handleInput={handleNameInput}
+            input={subject.name}
+            handleInput={(e) =>
+              setSubject((prev) => ({ ...prev, name: e.target.value }))
+            }
             placeHolder={"Subject Name"}
             type={"text"}
           >
             <FontAwesomeIcon icon={faBook} />
           </CustomInput>
         </div>
-        {/* <SelectIcon
-          selectedIcon={selectedIcon}
-          setSelectedIcon={setSelectedIcon}
-          isSelectIcon={isSelectIcon}
-          setIsSelectIcon={setIsSelectIcon}
-          setIsSelectColor={setIsSelectColor}
-          id="tutorial-4"
-        /> */}
         <ColorPalette
-          setSelectedColor={setSelectedColor}
-          selectedColor={selectedColor}
+          setSelectedColor={(color) => {
+            setSubject((prev) => ({ ...prev, color }));
+          }}
+          selectedColor={subject.color}
           isSelectColor={isSelectColor}
           setIsSelectColor={setIsSelectColor}
-          setIsSelectIcon={setIsSelectIcon}
           id="tutorial-4"
         />
         <div className={styles.submit}>
-          <BlobBtn onClick={submit} id="tutorial-4">
-            SUBMIT
+          <BlobBtn
+            onClick={() => {
+              onSubmit(subject);
+            }}
+            id="tutorial-4"
+          >
+            SAVE
           </BlobBtn>
         </div>
       </div>

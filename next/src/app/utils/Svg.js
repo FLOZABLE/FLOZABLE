@@ -1229,7 +1229,7 @@ const BackArrow = (props) => (
   <svg
     viewBox="0 0 24 24"
     width=" 2.75rem"
-    fill="none"
+    fill="currentColor"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1242,7 +1242,7 @@ const BackArrow = (props) => (
     <g id="SVGRepo_iconCarrier">
       <path
         d="M6 12H18M6 12L11 7M6 12L11 17"
-        stroke="#000000"
+        stroke="currentColor"
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"

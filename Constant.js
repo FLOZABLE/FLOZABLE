@@ -38,18 +38,23 @@ const responseCodes = {
   "friends-limit-reached": {
     success: false,
     reason: "Friends limit reached",
-    code: 300
+    code: 300,
   },
   "expired-request": {
     success: false,
     reason: "Expired Request",
-    code: 404
+    code: 404,
   },
-  "error": {
+  error: {
     success: false,
     reason: "Unexpected Error",
-    code: 500
-  }
+    code: 500,
+  },
+  "invalid-subject": {
+    success: false,
+    reason: "Invalid Subject",
+    code: 401,
+  },
 };
 
 const USER_ID_COOKIE_OPTIONS = {

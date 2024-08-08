@@ -13,6 +13,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: var(--gray1);
+  color: #fff;
 }
 
 .SubjectsModal .header i {
@@ -24,8 +26,15 @@
 
 .SubjectsModal .contents {
   position: relative;
-  overflow-y: auto;
   flex: 1;
+  display: flex;
+  margin: 1rem;
+  overflow: hidden;
+}
+
+.SubjectsModal .SubjectsManager {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .SubjectsModal .editSubject {
@@ -33,8 +42,27 @@
   top: 0rem;
   z-index: 2;
   background-color: #fff;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
+  overflow-y: auto;
+  left: calc(100% + 3rem);
+  transition: .3s ease-in-out left;
+}
+
+.SubjectsModal .editSubject.opened {
+  left: 0rem;
+}
+
+.SubjectsModal .editSubject .inputs {
+  flex: 1;
+}
+
+.SubjectsModal .buttons {
+  display: flex;
+  justify-content: space-between;
+  margin: auto 1rem 0.5rem 1rem;
 }
 
 /* .SubjectsModal {

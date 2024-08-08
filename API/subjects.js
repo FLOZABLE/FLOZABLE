@@ -25,7 +25,7 @@ Router.get("/", async (req, res) => {
   });
 });
 
-Router.put("/", async (req, res) => {
+Router.put("/subject", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { name, color, icon } = req.body;
@@ -83,10 +83,10 @@ Router.put("/", async (req, res) => {
   });
 });
 
-Router.patch("/", async (req, res) => {
+Router.patch("/subject", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { name, color, icon, id, tools } = req.body;
+      const { name, color, subjectId } = req.body;
 
       const isValidName = validateString(name, "subject name");
 
@@ -100,141 +100,148 @@ Router.patch("/", async (req, res) => {
         return res.send({ success: false, reason: isValidColor.reason });
       }
 
-      const isValidIcon = validateStrictString(icon, "icon name");
+      /* const isValidIcon = validateStrictString(icon, "icon name");
 
       if (!isValidIcon.isValid) {
         return res.send({ success: false, reason: isValidIcon.reason });
-      }
+      } */
 
-      const isValidId = validateStrictString(id, "subject id", 10, 10);
+      const isValidId = validateStrictString(subjectId, "subject id", 10, 10);
 
       if (!isValidId.isValid) {
         return res.send({ success: false, reason: isValidId.reason });
       }
 
-      const isValidTools = validateArray(tools, "tools", 10, 0);
-
-      if (!isValidTools.isValid) {
-        return res.send({ success: false, reason: isValidTools.reason });
-      }
-
-      const subjectInfo = {
+      const subject = {
         name,
         color,
-        icon,
-        id,
-        tools: tools.join(","),
       };
 
       const connection = pool.promise();
-      try {
-        const updateSubject = await connection.query(
-          "UPDATE subjects SET ? WHERE id = ? AND user_id = ?",
-          [subjectInfo, id, userId]
-        );
-        res.send({
-          success: true,
-          msg: `Modified Subject "${name}"`,
-          subjectInfo: subjectInfo,
-        });
 
-        const previousSubject = JSON.parse(
-          await redisClient.hget(`user:${userId}:subjects`, subjectInfo.id)
-        );
-        previousSubject.name = subjectInfo.name;
-        previousSubject.icon = subjectInfo.icon;
-        previousSubject.color = subjectInfo.color;
-        previousSubject.tools = subjectInfo.tools;
+      const [{ affectedRows }] = await connection.query(
+        `UPDATE subjects SET ? WHERE subject_id = ? AND user_id = ?`,
+        [subject, subjectId, userId]
+      );
+
+      if (!affectedRows) {
+        return res.send(responseCodes["invalid-subject"]);
+      }
+
+      res.send({
+        success: true,
+        msg: `Modified Subject "${name}"`,
+        subject,
+      });
+
+      const previousSubject = await redisClient.hget(
+        `user:${userId}:subjects`,
+        subjectId
+      );
+
+      if (previousSubject) {
+        previousSubject.color = color;
+        previousSubject.name = name;
         redisClient.hset(
           `user:${userId}:subjects`,
-          subjectInfo.id,
+          subjectId,
           JSON.stringify(previousSubject)
         );
-      } catch (err) {
-        console.log(err);
       }
     } catch (error) {
       console.log(error);
+      res.send(responseCodes["error"]);
     }
   });
 });
 
-Router.delete("/", async (req, res) => {
+Router.delete("/subject", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { subjectId } = req.body;
 
+      console.log(subjectId);
+
       const connection = pool.promise();
 
-      const [subjects] = await connection.query(
-        `SELECT timeline, created_at, id, name FROM subjects WHERE user_id = ? AND (id = ? OR name = "others")`,
+      const [[subject]] = await connection.query(
+        `
+        SELECT 
+          s.subject_id,
+          s.name,
+          IF(
+              COUNT(st.start_time) > 0, 
+              JSON_ARRAYAGG(
+                  JSON_ARRAY(
+                      IFNULL(st.start_time, 0), 
+                      IFNULL(st.duration, 0)
+                  )
+              ),
+              '[]'
+          ) AS timeline
+          FROM subjects s
+          LEFT JOIN subject_timelines st ON s.subject_id = st.subject_id
+          WHERE s.user_id = ? AND s.subject_id = ?
+          GROUP BY s.subject_id
+      `,
         [userId, subjectId]
       );
 
-      const othersSubject = subjects.find((subject) => {
-        return subject.name === "others";
-      });
+      const [[otherSubject]] = await connection.query(
+        `SELECT subject_id FROM subjects WHERE user_id = ? AND name = 'others'`,
+        [userId]
+      );
 
-      if (othersSubject.id === subjectId || subjects.length !== 2)
-        return res.send({
-          success: false,
-          reason: `Can't delete this subject`,
-        });
+      if (!subject || subject.name === "others") {
+        return res.send(responseCodes["invalid-subject"]);
+      }
 
-      const totalTimeline = [];
-      await Promise.all(
-        subjects.map(async (subject) => {
-          const { id } = subject;
-          const prevTimeline = subjects.find((sub) => {
-            return sub.id === id;
-          });
+      if (otherSubject) {
+        await connection.query(
+          `UPDATE plans SET subject_id = ? WHERE subject_id = ?`,
+          [otherSubject.subject_id, subjectId]
+        );
+        const todayTimeline = await redisClient.lrange(
+          `user:${userId}:subject:${subjectId}`,
+          0,
+          -1
+        );
 
-          const todayTimeline = (
-            await redisClient.lrange(`user:${userId}:subject:${id}`, 0, -1)
-          ).map(JSON.parse);
-          const parsedTimeline = JSON.parse(
-            prevTimeline.timeline.replace(/^/, "[").replace(/$/, "]")
+        if (todayTimeline.length) {
+          redisClient.rpush(
+            `user:${userId}:subject:${otherSubject.subject_id}`,
+            todayTimeline
           );
-          subject.timeline = parsedTimeline.concat(todayTimeline);
+        }
+        redisClient.del(`user:${userId}:subject:${subjectId}`);
 
-          subject.timeline = subject.timeline.map(([start, duration]) => {
-            return [subject.created_at + start, duration];
-          });
+        subject.timeline = JSON.parse(subject.timeline);
+        const subjectTimeline = subject.timeline.map((value) => [
+          otherSubject.subject_id,
+          ...value,
+        ]);
+        console.log(subject.timeline);
+        if (subjectTimeline.length) {
+          await connection.query(
+            `INSERT IGNORE INTO subject_timelines (subject_id, start_time, duration) VALUES ?`,
+            [subjectTimeline]
+          );
+        }
+      }
 
-          totalTimeline.push(...subject.timeline);
-
-          return subject;
-        })
-      );
-
-      totalTimeline.sort();
-
-      const newTimeline = totalTimeline
-        .map(([start, duration]) => {
-          return [start - othersSubject.created_at, duration];
-        })
-        .filter(([start]) => start >= 0);
-
-      console.log(newTimeline, "fff");
-
-      //console.log(modifiedTimeline);
       await connection.query(
-        `
-      UPDATE subjects
-      SET timeline = ?
-      WHERE id = ?;
-      
-      DELETE FROM subjects WHERE id = ?
-    `,
-        [JSON.stringify(newTimeline).slice(1, -1), othersSubject.id, subjectId]
+        `DELETE FROM subject_timelines WHERE subject_id = ?`,
+        [subjectId]
       );
 
-      await redisClient.del(`user:${userId}:subject:${subjectId}`);
-      await redisClient.hdel(`user:${userId}:subjects`, subjectId);
+      await connection.query(
+        `DELETE FROM subjects WHERE subject_id = ? AND user_id = ?`,
+        [subjectId, userId]
+      );
 
-      console.log("deleted");
+      redisClient.hdel(`user:${userId}:subjects`, subjectId);
 
-      res.send({ success: true });
+      return res.send({ success: true, msg: `Deleted ${subject.name}` });
     } catch (error) {
       console.log(error);
     }
