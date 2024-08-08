@@ -12,6 +12,8 @@ import {
   WorkersContext,
 } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
+import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
+import PomodoroTimer from "../PomodoroTimer/PomodoroTimer";
 
 function SubjecTimer({ selectedSubject, setSelectedSubject }) {
   const { subjects, setSubjects } = useContext(SubjectsContext);
@@ -20,6 +22,10 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
 
   const [subjectOptions, setSubjectOptions] = useState([]);
   const [selectNewSubject, setSelectNewSubject] = useState(false);
+  const [pomodoro, setPomodoro] = useState({
+    mode: -1,
+    active: false,
+  });
 
   useEffect(() => {
     if (!subjects || !subjects.length) return;
@@ -33,50 +39,52 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
     setSubjectOptions(subjectOptions);
   }, [subjects]);
 
-  const toggleTimer = useCallback(
-    (selectedSubject) => {
-      if (!selectedSubject) return;
+  const toggleTimer = useCallback(() => {
+    if (pomodoro.mode === 1 || pomodoro.mode === 2) {
+      setPomodoro((prev) => ({ ...prev, active: !prev.active }));
+      return;
+    }
 
-      const active = !selectedSubject.active;
-      setSelectedSubject({
-        ...selectedSubject,
-        active,
+    if (!selectedSubject) return;
+
+    const active = !selectedSubject.active;
+    setSelectedSubject({
+      ...selectedSubject,
+      active,
+    });
+
+    if (active) {
+      socket.emit("start", selectedSubject.subject_id);
+      subjectsTimerWorkerRef?.current?.postMessage({
+        command: "startSubjectTimer",
+      });
+    } else {
+      socket.emit("stop", selectedSubject.subject_id);
+      const selectedSubjectIndex = subjects.findIndex(
+        (subject) => subject.subject_id === selectedSubject.subject_id
+      );
+
+      subjectsTimerWorkerRef?.current?.postMessage({
+        command: "stopSubjectTimer",
       });
 
-      if (active) {
-        socket.emit("start", selectedSubject.subject_id);
-        subjectsTimerWorkerRef?.current?.postMessage({
-          command: "startSubjectTimer",
-        });
-      } else {
-        socket.emit("stop", selectedSubject.subject_id);
-        const selectedSubjectIndex = subjects.findIndex(
-          (subject) => subject.subject_id === selectedSubject.subject_id
-        );
-
-        subjectsTimerWorkerRef?.current?.postMessage({
-          command: "stopSubjectTimer",
-        });
-
-        if (!selectedSubjectIndex !== -1) {
-          const daily = subjects[selectedSubjectIndex].daily;
-          daily.total[daily.total.length - 1].data = selectedSubject.value;
-          subjects[selectedSubjectIndex] = {
-            ...subjects[selectedSubjectIndex],
-            daily,
-          };
-          setSubjects(subjects);
-        }
+      if (!selectedSubjectIndex !== -1) {
+        const daily = subjects[selectedSubjectIndex].daily;
+        daily.total[daily.total.length - 1].data = selectedSubject.value;
+        subjects[selectedSubjectIndex] = {
+          ...subjects[selectedSubjectIndex],
+          daily,
+        };
+        setSubjects(subjects);
       }
+    }
 
-      return () => {
-        subjectsTimerWorkerRef?.current?.postMessage({
-          command: "stopSubjectTimer",
-        });
-      };
-    },
-    [subjects]
-  );
+    return () => {
+      subjectsTimerWorkerRef?.current?.postMessage({
+        command: "stopSubjectTimer",
+      });
+    };
+  }, [subjects, pomodoro, selectedSubject]);
 
   useEffect(() => {
     const messageHandler = (e) => {
@@ -110,7 +118,24 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
 
   return (
     <div className={styles.SubjectTimer}>
-      <div className={styles.mainDisplay}>
+      <div className={styles.header}>
+        <div
+          className={`${styles.pomodoroToggle} ${
+            pomodoro.mode !== -1 ? styles.active : null
+          }`}
+        >
+          <SimpleToggleBtn
+            checked={pomodoro.mode !== -1}
+            onToggle={(e) => {
+              if (e.target.checked) {
+                setPomodoro({ mode: 0, active: false });
+              } else {
+                setPomodoro({ mode: -1, active: false });
+              }
+            }}
+          />
+          <p>Pomodoro</p>
+        </div>
         <div
           className={styles.button}
           id={styles.addSubject}
@@ -118,6 +143,8 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
         >
           +<p className={`HoverText ${styles.hoverText}`}>Add Subject</p>
         </div>
+      </div>
+      <div className={styles.mainDisplay}>
         {selectedSubject ? (
           <div
             className={styles.subject}
@@ -146,11 +173,9 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
           <div
             className={styles.button}
             id={styles.start}
-            onClick={() => {
-              toggleTimer(selectedSubject);
-            }}
+            onClick={toggleTimer}
           >
-            {selectedSubject?.active ? (
+            {selectedSubject?.active || pomodoro.active ? (
               <FontAwesomeIcon icon={faPause} />
             ) : (
               <FontAwesomeIcon icon={faPlay} />
@@ -171,7 +196,7 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
               onClick={() => {
                 setSelectNewSubject(false);
                 if (selectedSubject?.active) {
-                  toggleTimer(selectedSubject);
+                  toggleTimer();
                   setTimeout(() => {
                     setSelectedSubject(subject);
                   }, 300);
@@ -194,6 +219,14 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
             </div>
           );
         })}
+      </div>
+      <div className={styles.pomodoroTimer}>
+        <PomodoroTimer
+          pomodoro={pomodoro}
+          setPomodoro={setPomodoro}
+          selectedSubject={selectedSubject}
+          toggleTimer={toggleTimer}
+        />
       </div>
     </div>
   );

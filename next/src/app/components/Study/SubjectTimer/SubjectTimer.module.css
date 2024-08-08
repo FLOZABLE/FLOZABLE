@@ -2,9 +2,29 @@
   position: relative;
 }
 
+.SubjectTimer .header {
+  display: flex;
+}
+
+.SubjectTimer .pomodoroToggle {
+  display: flex;
+  align-items: center;
+}
+
+.SubjectTimer .pomodoroToggle p {
+  margin: 0rem 1rem;
+  color: var(--gray0);
+  transition: .3s ease-in-out color;
+}
+
+.SubjectTimer .pomodoroToggle.active p {
+  color: var(--gray3);
+}
+
 .SubjectTimer .mainDisplay {
   display: flex;
   align-items: center;
+  z-index: 2;
 }
 
 .SubjectTimer .mainDisplay .subject {
@@ -42,7 +62,7 @@
   margin-left: auto;
 }
 
-.SubjectTimer .mainDisplay .button {
+.SubjectTimer .button {
   font-size: 1.5rem;
   width: 2.5rem;
   height: 2.5rem;
@@ -54,14 +74,15 @@
   border-radius: 0.25rem;
 }
 
-.SubjectTimer .mainDisplay .button#addSubject {
+.SubjectTimer .button#addSubject {
   font-size: 2.5rem;
   font-weight: 400;
   margin-right: 0.5rem;
+  margin-left: auto;
   position: relative;
 }
 
-.SubjectTimer .mainDisplay .button#addSubject:hover .hoverText {
+.SubjectTimer .button#addSubject:hover .hoverText {
   opacity: 1;
   bottom: -2rem;
 }
@@ -70,7 +91,7 @@
   bottom: -3rem;
 }
 
-.SubjectTimer .mainDisplay .button:hover {
+.SubjectTimer .button:hover {
   background-color: var(--gray0);
   border-bottom-left-radius: 0rem;
 }
