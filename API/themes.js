@@ -120,10 +120,11 @@ Router.put("/theme", async (req, res) => {
         name,
         description,
         video_id,
-        tags: tags.join(","),
+        tags,
         user_id: userId,
       };
-      connection.query(`INSERT INTO themes SET ?`, themeInfo);
+      const insertInfo = { ...themeInfo, tags: tags.toString() };
+      await connection.query(`INSERT INTO themes SET ?`, [insertInfo]);
       res.send({
         success: true,
         msg: "New theme uploaded!",
@@ -214,7 +215,10 @@ Router.post("/theme/save", async (req, res) => {
 
       if (categoryId !== -1) {
         connection.query(`INSERT INTO user_themes SET ?`, newUserTheme);
-        return res.send({ success: true, msg: `Theme saved to ${categoryName}` });
+        return res.send({
+          success: true,
+          msg: `Theme saved to ${categoryName}`,
+        });
       }
 
       return res.send({ success: true, msg: `Theme unsaved` });

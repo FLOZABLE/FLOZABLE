@@ -1,60 +1,94 @@
 .ThemeSelector {
   width: 31.25rem;
-}
-
-.ThemeSelector .themeContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 12.5rem);
-  justify-content: center;
-  flex-wrap: wrap;
-  overflow-y: auto;
-  max-height: 18.75rem;
-  gap: 1.25rem;
-  margin-bottom: 1.25rem;
-}
-
-.ThemeSelector .video {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  border-radius: 1.25rem;
-  box-shadow: rgba(149, 157, 165, 0.2) 0em 0.5rem 1.5rem;
-  background-color: #00000050;
   position: relative;
   overflow: hidden;
-  height: 6.25rem;
+  height: 20rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.ThemeSelector .categoriesPage {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-top: 0.05rem;
+  margin-right: 0.05rem;
+}
+
+.ThemeSelector .categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, calc(50% - 2.5rem));
+  justify-content: center;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+  overflow-y: auto;
+}
+
+.ThemeSelector .categories .category {
+  height: 7rem;
   cursor: pointer;
 }
 
-.ThemeSelector .video img {
-  height: auto;
+.ThemeSelector .category .name {
+  color: #fff;
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  background-color: var(--opacity-black);
+  width: fit-content;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.4rem;
 }
 
-.ThemeSelector .categoryLabel {
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 0.313rem;
-  width: 90%;
-  text-align: center;
-  margin-top: 0.313rem;
+.ThemeSelector .themesPage {
+  position: absolute;
+  top: 0rem;
+  left: 100%;
+  background-color: #fff;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+  transition: .3s ease-in-out left;
+  display: flex;
+  flex-direction: column;
 }
 
-.ThemeSelector .categoryLabel p {
-  color: white;
+.ThemeSelector .themesPage.opened {
+  left: 0rem;
 }
 
-.ThemeSelector button {
-  background-color: rgb(215, 215, 215);
-  width: 50%;
+.ThemeSelector .themesPage .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 2rem;
 }
 
-.ThemeSelector .nameLabel {
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 0.313rem;
-  width: 90%;
-  text-align: center;
-  margin-top: 0.313rem;
+.ThemeSelector .header i {
+  cursor: pointer;
 }
 
-.ThemeSelector .nameLabel p {
-  color: white;
+.ThemeSelector .themesPage .themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, calc(50% - 2.5rem));
+  justify-content: center;
+  gap: 1.25rem;
+  overflow-y: auto;
+  flex: 1
+}
+
+.ThemeSelector .themesPage .themes .theme {
+  height: 7rem;
+  cursor: pointer;
+}
+
+.ThemeSelector .themesPage .themes .theme .name {
+  color: #fff;
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  background-color: var(--opacity-black);
+  width: fit-content;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.4rem;
 }
