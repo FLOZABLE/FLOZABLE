@@ -10,10 +10,8 @@ import ThemeSelector from "@/app/components/Themes/ThemeSelector/ThemeSelector";
 import MusicModal from "@/app/components/Modals/MusicModal/MusicModal";
 import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
 import YouTubePlayer from "@/app/components/Youtube/YouTubePlayer/YouTubePlayer";
-import StudySubjectTool from "@/app/components/Study/StudySubjectTool/StudySubjectTool";
 import StudySidebar from "@/app/components/Study/StudySidebar/StudySidebar";
 import StudyTimelineBar from "@/app/components/Study/StudyTimelineBar/StudyTimelineBar";
-import StudySubjectTools from "@/app/components/Study/StudySubjectTools/StudySubjectTools";
 import PomodoroTimer from "@/app/components/Study/PomodoroTimer/PomodoroTimer";
 
 function Study() {
@@ -174,26 +172,19 @@ function Study() {
           />
         }
       />
-      <StudySubjectTools
-        startPos={{ x: "50vw", y: "19vh" }}
-        isDisp={isToolModal}
-        subject={selectedSubject}
+      <StudyModalContainer
+        startPos={dragPos.music}
+        onDragEnd={(event, dragElement) => {
+          handleStop(event, dragElement, "music");
+        }}
+        isDisp={isVolumeModal}
+        element={
+          <MusicModal
+            originalVideoVolume={volume}
+            setOriginalVideoVolume={setVolume}
+          />
+        }
       />
-      {
-        <StudyModalContainer
-          startPos={dragPos.music}
-          onDragEnd={(event, dragElement) => {
-            handleStop(event, dragElement, "music");
-          }}
-          isDisp={isVolumeModal}
-          element={
-            <MusicModal
-              originalVideoVolume={volume}
-              setOriginalVideoVolume={setVolume}
-            />
-          }
-        />
-      }
       <StudySidebar
         isPlannerModal={isPlannerModal}
         setIsPlannerModal={setIsPlannerModal}

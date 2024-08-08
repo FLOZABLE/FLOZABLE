@@ -27,7 +27,7 @@ function RankedTheme({ theme, setIsThemePreview }) {
     <div
       className={styles.RankedTheme}
       style={{
-        backgroundImage: `url("https://i.ytimg.com/vi/${theme?.video_id}/maxresdefault.jpg`,
+        backgroundImage: `url("https://i.ytimg.com/vi/${theme.video_id}/maxresdefault.jpg`,
         backgroundSize: "cover",
         backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
@@ -37,15 +37,15 @@ function RankedTheme({ theme, setIsThemePreview }) {
       }}
     >
       <div className={styles.contents}>
-        <h4>{theme?.name}</h4>
+        <h4>{theme.name}</h4>
         <div className={styles.counts}>
           <div>
             <i>
               <FontAwesomeIcon icon={faHeart} />
             </i>
             <GroupLikesCounter
-              initialMembers={theme?.likes}
-              groupId={theme?.id}
+              initialMembers={theme.likes}
+              groupId={theme.id}
             />
           </div>
           <div>
@@ -53,16 +53,16 @@ function RankedTheme({ theme, setIsThemePreview }) {
               <FontAwesomeIcon icon={faPeopleGroup} />
             </i>
             <ThemeUsageCounter
-              initialVal={theme?.weekUsage}
-              themeId={theme?.id}
+              initialVal={theme.weekUsage}
+              themeId={theme.id}
             />
           </div>
         </div>
         <div className={`${styles.description} hiddenScroll`}>
-          {parse(theme?.description)}
+          {parse(theme.description)}
         </div>
         <div className={`${styles.tags} hiddenScroll`}>
-          {theme?.tags.map((tag, i) => (
+          {theme.tags.map((tag, i) => (
             <div className={styles.tag} key={i}>
               #{tag}
             </div>
@@ -70,7 +70,7 @@ function RankedTheme({ theme, setIsThemePreview }) {
         </div>
         <div className={styles.buttons}>
           <GroupUrlBtn
-            text={`${config.server}/dashboard/themes?id=${theme?.id}`}
+            text={`${config.server}/dashboard/themes?id=${theme.id}`}
           />
           <div>
             <ThemeCategoryBtn theme={theme} />
@@ -78,8 +78,8 @@ function RankedTheme({ theme, setIsThemePreview }) {
           <div>
             <LikeBtn
               liked={liked}
-              id={theme?.id}
-              url={`${config.server}/themes/like/${theme?.id}`}
+              id={theme.id}
+              url={`${config.server}/themes/like/${theme.id}`}
             />
           </div>
         </div>
