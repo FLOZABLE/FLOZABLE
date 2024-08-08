@@ -16,7 +16,7 @@
   left: 0.938rem;
   transition: top .3s ease-in-out, left .3s ease-in-out, font-size .3s ease-in-out, background-color .3s ease-in-out, opacity .3s ease-in-out;
   font-size: 1.125rem;
-  font-weight: 100;
+  font-weight: 400;
   color: rgb(95, 95, 95);
   display: flex;
   align-items: center;

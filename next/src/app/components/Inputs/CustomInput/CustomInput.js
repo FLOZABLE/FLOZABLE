@@ -6,9 +6,9 @@ function CustomInput({
   handleEnter = () => {},
   handleInput,
   input,
-  icon,
   type,
   placeHolder,
+  children,
 }) {
   const handleEnterKeyPress = (event) => {
     if (event.key === "Enter") {
@@ -17,9 +17,7 @@ function CustomInput({
   };
   return (
     <div className={styles.CustomInput}>
-      <span className={styles.pwIcon}>
-        <i>{icon ? <FontAwesomeIcon icon={icon} /> : null}</i>
-      </span>
+      <span>{children}</span>
       <input
         className={styles.formField}
         value={input}

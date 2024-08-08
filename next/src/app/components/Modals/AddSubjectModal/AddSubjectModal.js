@@ -26,6 +26,7 @@ import config from "@/app/utils/config";
 import { socket } from "@/app/utils/socket";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import { sortNewSubject } from "@/app/utils/timelineSorting";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function AddSubjectModal({}) {
   const { subjects, setSubjects } = useContext(SubjectsContext);
@@ -125,10 +126,11 @@ function AddSubjectModal({}) {
           <CustomInput
             input={name}
             handleInput={handleNameInput}
-            icon={faBook}
             placeHolder={"Subject Name"}
             type={"text"}
-          />
+          >
+            <FontAwesomeIcon icon={faBook} />
+          </CustomInput>
         </div>
         {/* <SelectIcon
           selectedIcon={selectedIcon}

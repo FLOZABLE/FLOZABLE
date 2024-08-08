@@ -62,6 +62,12 @@ body {
   font-style: normal;
 }
 
+i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 button * {
   pointer-events: none;
 }

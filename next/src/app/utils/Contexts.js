@@ -259,7 +259,10 @@ function ModalsProvider({ children }) {
     group: null,
   });
   const [isAccountModal, setIsAccountModal] = useState(false);
-  const [isSubjectsModal, setIsSubjectsModal] = useState(false);
+  const [isSubjectsModal, setIsSubjectsModal] = useState({
+    opened: false,
+    subject_id: null,
+  });
   const [isSharePlanModal, setIsSharePlanModal] = useState(false);
   const [isSearchUsersModal, setIsSearchUsersModal] = useState(false);
 

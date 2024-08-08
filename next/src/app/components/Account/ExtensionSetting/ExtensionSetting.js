@@ -14,6 +14,7 @@ import { ResponseContext } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
 import { useExtensionSettings } from "@/Hooks/extensionHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
+import { patchExtensionSetting, putExtensionSetting } from "@/Api/extensionApi";
 
 function ExtensionSetting() {
   const { useExtensionSettingsData, useExtensionSettingsIsLoading } =
@@ -24,88 +25,41 @@ function ExtensionSetting() {
   const router = useRouter();
 
   const [url, setUrl] = useState("");
+  const [settings, setSettings] = useState([]);
+
   const extensionRef = useRef(null);
 
-  /* const onSubmitUrl = useCallback(
-    (url) => {
-      fetch(`${config.server}/extension/settings`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url }),
-        credentials: "include",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setResponse(data);
-          if (data.success) {
-            const { domain } = data;
-
-            setWebsites((prev) => ({
-              ...prev,
-              [domain]: { b: false, t: false, bs: false, ts: true },
-            }));
-
-            setTimeout(() => {
-              const section = document.querySelector(
-                `#${domain.replace(/\./g, "_")}`
-              );
-              if (!section) return;
-              section.scrollIntoView({ behavior: "smooth", block: "start" });
-            }, 300);
-          }
-        })
-        .catch((error) => console.error(error));
-    },
-    [websites]
-  );
-
   useEffect(() => {
-    if (!websites.length) return;
+    if (!useExtensionSettingsData?.success) return;
 
-    const searchParams = new URLSearchParams(document.location.search);
-    const domain = searchParams.get("website");
-    router.push(window.location.pathname, { scroll: false });
-    if (!domain) {
-      extensionRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "start",
-      });
-      return;
-    }
+    setSettings(useExtensionSettingsData.websiteSettings);
+  }, [useExtensionSettingsData]);
 
-    const isExist = websites[domain.replace(/^www\.(.*)$/, "$1")];
+  const onSubmitUrl = useCallback(() => {
+    (async () => {
+      const data = await putExtensionSetting(url);
+      setResponse(data);
+      if (data.success) {
+        setSettings((prev) => [...prev, data.setting]);
 
-    if (isExist) {
-      const section = document.querySelector(
-        `#${domain.replace(/^www\.(.*)$/, "$1").replace(/\./g, "_")}`
-      );
-      if (!section) return;
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      onSubmitUrl(domain);
-    }
-  }, [websites]); */
+        setTimeout(() => {
+          const section = document.querySelector(
+            `#${domain.replace(/\./g, "_")}`
+          );
+          if (!section) return;
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 300);
+      }
+    })();
+  }, [url]);
 
-  /* const fetchExtensionSettingUpdate = useCallback((d, target, value) => {
-    fetch(`${config.server}/extension/settings`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ d, target, value }),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-      })
-      .catch((error) => console.error(error));
-  }, []); */
-
-  console.log(useExtensionSettingsData);
+  const settingUpdate = useCallback((website, mode, value) => {
+    (async () => {
+      console.log('gddd')
+      const data = await patchExtensionSetting({ website, mode, value });
+      setResponse(data);
+    })();
+  }, []);
 
   return (
     <div className={styles.ExtensionSetting}>
@@ -140,72 +94,55 @@ function ExtensionSetting() {
           {useExtensionSettingsIsLoading ? (
             <CircularLoading />
           ) : !useExtensionSettingsData?.success ? null : (
-            useExtensionSettingsData.websiteSettings.map((setting, i) => {
-              return setting.website;
+            settings.map((setting, i) => {
+              const { website, timer, study_timer, block, study_block } =
+                setting;
+              return (
+                <li
+                  className={styles.websiteOptions}
+                  key={i}
+                  id={website.replace(/\./g, "_")}
+                >
+                  <div>
+                    <p>{website}</p>
+                  </div>
+                  <div>
+                    <SimpleToggleBtn
+                      checked={block}
+                      onToggle={(e) => {
+                        console.log('gddd')
+                        settingUpdate(website, "block", e.target.checked);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <SimpleToggleBtn
+                      checked={study_block}
+                      onToggle={(e) => {
+                        settingUpdate(website, "study_block", e.target.checked);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <SimpleToggleBtn
+                      checked={timer}
+                      onToggle={(e) => {
+                        settingUpdate(website, "timer", e.target.checked);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <SimpleToggleBtn
+                      checked={study_timer}
+                      onToggle={(e) => {
+                        settingUpdate(website, "study_timer", e.target.checked);
+                      }}
+                    />
+                  </div>
+                </li>
+              );
             })
           )}
-          {/* {Object.keys(websites).map((website, i) => {
-            const { b, bs, t, ts } = websites[website];
-            return (
-              <li
-                className={styles.websiteOptions}
-                key={i}
-                id={website.replace(/\./g, "_")}
-              >
-                <div>
-                  <p>{website}</p>
-                </div>
-                <div>
-                  <SimpleToggleBtn
-                    checked={b}
-                    onToggle={(e) => {
-                      fetchExtensionSettingUpdate(
-                        website,
-                        "block",
-                        e.target.checked
-                      );
-                    }}
-                  />
-                </div>
-                <div>
-                  <SimpleToggleBtn
-                    checked={bs}
-                    onToggle={(e) => {
-                      fetchExtensionSettingUpdate(
-                        website,
-                        "blockstudy",
-                        e.target.checked
-                      );
-                    }}
-                  />
-                </div>
-                <div>
-                  <SimpleToggleBtn
-                    checked={t}
-                    onToggle={(e) => {
-                      fetchExtensionSettingUpdate(
-                        website,
-                        "timer",
-                        e.target.checked
-                      );
-                    }}
-                  />
-                </div>
-                <div>
-                  <SimpleToggleBtn
-                    checked={ts}
-                    onToggle={(e) => {
-                      fetchExtensionSettingUpdate(
-                        website,
-                        "timerstudy",
-                        e.target.checked
-                      );
-                    }}
-                  />
-                </div>
-              </li>
-            );
-          })} */}
         </ul>
       </div>
     </div>

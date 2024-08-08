@@ -165,7 +165,6 @@ function EditGroupModal({ isOpen, setIsOpen }) {
               <CustomInput
                 input={name}
                 handleInput={handleNameInput}
-                icon={null}
                 placeHolder={"Study Group Name"}
                 type={"text"}
               />
@@ -253,7 +252,6 @@ function EditGroupModal({ isOpen, setIsOpen }) {
                 <CustomInput
                   input={password}
                   handleInput={handlePwInput}
-                  icon={null}
                   placeHolder={
                     isOpen.visibility === 0
                       ? "Change Password"
