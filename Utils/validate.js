@@ -191,7 +191,18 @@ function validateHEX(value, type, maxLength = 7, minLength = 7) {
   return { isValid: true };
 }
 
-function validateOption() {}
+function validateOption(value, type, options) {
+  if (!value) {
+    return { isValid: false, reason: `Please provide ${type}` };
+  }
+  if (!options.includes(value)) {
+    return {
+      isValid: false,
+      reason: `${type} should be one of ${options.toString()}`,
+    };
+  }
+  return { isValid: true };
+}
 
 function validateISO(value, type) {
   if (!value) {

@@ -9,6 +9,7 @@ const {
   validateStrictString,
   validateISO,
   validateURL,
+  validateOption,
 } = require("../Utils/validate");
 const { responseCodes } = require("../Constant");
 const { extensionIo } = require("../sockets/extensionIo");
@@ -59,38 +60,38 @@ Router.put("/setting", async (req, res) => {
         return res.send({ success: false, reason: `FLOZABLE can't be added` });
       }
 
-      const [[userInfo]] = await connection.query(
-        `SELECT activity_setting FROM users WHERE user_id = ?`,
-        [userId]
-      );
-
-      if (!userInfo) res.send(responseCodes["no-user"]);
-      const activitySettings = JSON.parse(userInfo.activity_setting);
-      if (activitySettings[domain]) {
-        return res.send({ success: false, reason: "Already Exist" });
-      }
-
-      //d: domain, b: block, t: timer
-      activitySettings[domain] = {
-        b: 0,
-        bs: 0,
-        t: 0,
-        ts: 1,
+      const setting = {
+        website: url,
+        block: 0,
+        study_block: 0,
+        timer: 0,
+        study_timer: 1,
+        user_id: userId,
       };
 
-      await connection.query(
-        `
-      UPDATE users
-      SET activity_setting = ?
-      WHERE user_id = ?
-    `,
-        [JSON.stringify(activitySettings), userId]
-      );
-      extensionIo.to(userId).emit("setting-updated", activitySettings);
+      try {
+        await connection.query(
+          `
+          INSERT INTO website_settings
+          SET ?
+          `,
+          [setting]
+        );
+      } catch (err) {
+        console.log(err);
+        if (err.code === "ER_DUP_ENTRY") {
+          return res.send({
+            success: false,
+            reason: "Already existing website",
+          });
+        }
+      }
+      extensionIo.to(userId).emit("setting-updated", setting);
       res.send({
         success: true,
         origin: origin,
         domain: domain,
+        setting,
         msg: `Added ${domain}`,
       });
     } catch (error) {
@@ -103,54 +104,34 @@ Router.put("/setting", async (req, res) => {
 Router.patch("/setting", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { d, target, value } = req.body;
+      const { website, mode, value } = req.body;
 
-      const connection = pool.promise();
-      const [[userInfo]] = await connection.query(
-        `SELECT activity_setting FROM users WHERE user_id = ?`,
-        [userId]
-      );
-      if (!userInfo) return res.send(responseCodes["no-user"]);
-      const activitySettings = JSON.parse(userInfo.activity_setting);
+      const isValidMode = validateOption(mode, "mode", [
+        "block",
+        "study_block",
+        "timer",
+        "study_timer",
+      ]);
 
-      if (!activitySettings[d]) {
-        return res.send({ success: false, reason: "No Matching Website" });
+      if (!isValidMode.isValid) {
+        return res.send({ success: false, reason: isValidMode.reason });
       }
 
-      //d: domain, b: block, t: timer
-      if (target === "block") {
-        activitySettings[d] = {
-          ...activitySettings[d],
-          b: value ? 1 : 0,
-        };
-      } else if (target === "blockstudy") {
-        activitySettings[d] = {
-          ...activitySettings[d],
-          bs: value ? 1 : 0,
-        };
-      } else if (target === "timer") {
-        activitySettings[d] = {
-          ...activitySettings[d],
-          t: value ? 1 : 0,
-        };
-      } else {
-        activitySettings[d] = {
-          ...activitySettings[d],
-          ts: value ? 1 : 0,
-        };
-      }
+      const setting = {
+        [mode]: value ? 1 : 0,
+      };
+
+      const connection = await pool.promise();
 
       await connection.query(
         `
-              UPDATE users
-              SET activity_setting = ?
-              WHERE user_id = ?
-            `,
-        [JSON.stringify(activitySettings), userId]
+        UPDATE website_settings SET ?
+        WHERE user_id = ? AND website = ?
+      `,
+        [setting, userId, website]
       );
-
       res.send({ success: true, msg: "Setting updated!" });
-      extensionIo.to(userId).emit("setting-updated", activitySettings);
+      extensionIo.to(userId).emit("setting-updated", { ...setting, website });
     } catch (error) {
       console.log(error);
       res.send({ success: false, reason: "Invalid URL or Domain" });

@@ -1,9 +1,75 @@
 .SubjectsModal {
   width: 30rem;
   height: 30rem;
+  position: relative;
+  border-bottom-right-radius: 1.25rem;
+  border-bottom-left-radius: 1.25rem;
+  overflow: hidden;
   display: flex;
+  flex-direction: column;
 }
 
-.SubjectsModal .subjectsManager {
+.SubjectsModal .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.SubjectsModal .header i {
+  font-size: 2rem;
+  width: 3rem;
+  height: 3rem;
+  cursor: pointer;
+}
+
+.SubjectsModal .contents {
+  position: relative;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.SubjectsModal .editSubject {
+  position: absolute;
+  top: 0rem;
+  z-index: 2;
+  background-color: #fff;
+  width: 100%;
+  height: 100%;
+}
+
+/* .SubjectsModal {
+  width: 30rem;
+  height: 30rem;
+  position: relative;
+  overflow: hidden;
+  border-bottom-right-radius: 1.25rem;
+  border-bottom-left-radius: 1.25rem;
+}
+
+.SubjectsModal .SubjectsManager {
   width: 100%;
 }
+
+.SubjectsModal .editSubject {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  left: 0rem;
+  top: 0rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.SubjectsModal .editSubject .contents {
+  padding: 1rem;
+  flex: 1;
+}
+
+.SubjectsModal .buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: auto;
+  margin-bottom: 1rem;
+} */

@@ -10,10 +10,12 @@
   background-color: #f9f9f9;
   font-size:  1.25rem;
   padding: 0.938rem;
+  transition: .3s ease border;
+  border: transparent 0.0625rem solid;
 }
 
 .CustomInput .formField:focus {
-  border: var(--pink) 0.0625rem solid;
+  border: var(--gray0) 0.0625rem solid;
 }
 
 .CustomInput>span,
@@ -62,12 +64,12 @@
   line-height: 1.563rem;
   color: var(--pink);
   background: #EEF4FF;
-  transition: background 0.5s ease, border 0.5s ease, color 0.5s ease;
+  transition: background-color 0.5s ease, border 0.5s ease, color 0.5s ease;
 }
 
 .CustomInput:focus-within>span {
   color: #fff;
-  background: var(--pink);
+  background-color: var(--gray0);
 }
 
 @media (max-width: 87.5rem) {
