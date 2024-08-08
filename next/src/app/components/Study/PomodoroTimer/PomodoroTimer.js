@@ -1,73 +1,98 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./PomodoroTimer.module.css";
-import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
-import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import SlidingOptBtn from "../../Buttons/SlidingOptBtn/SlidingOptBtn";
 
-function PomodoroTimer() {
+const STUDY_DURATION = 60 * 25; //25min
+const SHORT_BREAK_DURATION = 60 * 5; //5min
+const LONG_BREAK_DURATION = 60 * 15; // 15min
 
-  const [pomo, setPomo] = useState(false);
-  const [isBreak, setIsBreak] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [timerDuration, setTimerDuration] = useState(25);
-  const [timerKey, setTimerKey] = useState(0);
-  const [descEl, setDescEl] = useState("Focus");
-  const [color, setColor] = useState("blue")
-
-  const switchTimer = useCallback(() => {
-    setIsBreak(!isBreak);
-  }, [isBreak]);
+function PomodoroTimer({
+  pomodoro,
+  setPomodoro,
+  selectedSubject,
+  toggleTimer,
+}) {
+  const [duration, setDuration] = useState(STUDY_DURATION);
 
   useEffect(() => {
-    if (isBreak) {
-      setTimerKey(timerKey + 1);
-      setTimerDuration(5);
-      setDescEl("Break");
-      setColor("#1c95ff");
+    if (!pomodoro) return;
+
+    if (pomodoro.mode === 0) {
+      setDuration(STUDY_DURATION);
+    } else if (pomodoro.mode === 1) {
+      setDuration(SHORT_BREAK_DURATION);
+    } else {
+      setDuration(LONG_BREAK_DURATION);
     }
-    else {
-      setTimerKey(timerKey + 1);
-      setTimerDuration(25);
-      setDescEl("Focus");
-      setColor("red");
+  }, [selectedSubject, pomodoro]);
+
+  useEffect(() => {
+    if (!selectedSubject || !pomodoro) return;
+
+    if (pomodoro.mode === 0) {
+      setPomodoro((prev) => ({ ...prev, active: selectedSubject.active }));
     }
-  }, [isBreak])
+  }, [selectedSubject, pomodoro]);
+
+  if (pomodoro?.mode === -1) {
+    return null;
+  }
 
   return (
     <div className={styles.PomodoroTimer}>
-      <div className={styles.PomodoroSwitch}>
-        <SimpleToggleBtn
-          onToggle={() => { setPomo(!pomo) }}
-          checked={false}
-          className={styles.toggleBtn}
+      <div className={styles.options}>
+        <SlidingOptBtn
+          options={[
+            {
+              name: `Study`,
+              value: 0,
+            },
+            {
+              name: `Short Break`,
+              value: 1,
+            },
+            {
+              name: `Long Break`,
+              value: 2,
+            },
+          ]}
+          value={pomodoro?.mode}
+          setValue={(mode) => {
+            setPomodoro({ active: false, mode });
+          }}
         />
-        <div className={styles.pomodoroDescription}>
-          Pomodoro
-        </div>
       </div>
-      {pomo &&
+      <div className={styles.timer}>
         <CountdownCircleTimer
-          key={timerKey}
-          isPlaying
-          duration={timerDuration}
-          colors={[color]}
-          colorsTime={[0]}
+          isPlaying={pomodoro?.active}
+          duration={duration}
+          key={pomodoro?.mode}
+          colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+          colorsTime={[7, 5, 2, 0]}
+          size={300}
+          strokeWidth={15}
           onComplete={() => {
-            switchTimer();
-            return { shouldRepeat: true }
+            if (pomodoro.mode === 0) {
+              toggleTimer();
+              setPomodoro({ active: false, mode: 1 });
+            } else {
+              setPomodoro({ active: false, mode: 0 });
+            }
           }}
         >
           {({ remainingTime }) => {
             const minutes = Math.floor((remainingTime % 3600) / 60)
-            const seconds = remainingTime % 60
-            return <div className="time-wrapper">
-              <div className="time">{`${minutes.toString().padStart(2, 0)}:${seconds.toString().padStart(2, 0)}`}</div>
-              <div>{descEl}</div>
-            </div>
+              .toString()
+              .padStart(2, "0");
+            const seconds = (remainingTime % 60).toString().padStart(2, "0");
+
+            return `${minutes}:${seconds}`;
           }}
         </CountdownCircleTimer>
-      }
+      </div>
     </div>
-  )
+  );
 }
 
 export default PomodoroTimer;

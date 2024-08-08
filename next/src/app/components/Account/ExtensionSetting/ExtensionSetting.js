@@ -9,7 +9,6 @@ import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import LabelMovingInput from "../../Inputs/LabelMovingInput/LabelMovingInput";
 import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
 import styles from "./ExtensionSetting.module.css";
-import config from "@/app/utils/config";
 import { ResponseContext } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
 import { useExtensionSettings } from "@/Hooks/extensionHooks";
