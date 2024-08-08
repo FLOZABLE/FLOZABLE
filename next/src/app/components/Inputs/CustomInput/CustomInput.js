@@ -6,7 +6,7 @@ function CustomInput({
   handleEnter = () => {},
   handleInput,
   input,
-  type,
+  type="text",
   placeHolder,
   children,
 }) {

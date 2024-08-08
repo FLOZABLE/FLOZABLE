@@ -30,12 +30,12 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
       setResponse(data);
       if (data.success) {
         setIsOpen(false);
-        setNewTheme({
+        /* setNewTheme({
           tags: [],
           name: "",
           description: "",
           url: "",
-        });
+        }); */
         setThemes((prev) => [...prev, data.newTheme]);
       }
     })();
