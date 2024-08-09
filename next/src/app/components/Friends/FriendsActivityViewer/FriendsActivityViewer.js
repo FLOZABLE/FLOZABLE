@@ -13,7 +13,7 @@ import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading
 import { ModalsContext } from "@/app/utils/Contexts";
 
 function FriendsActivityViewer() {
-  const { setIsSearchUsersModal } = useContext(ModalsContext);
+  const { setSearchUsersModal } = useContext(ModalsContext);
 
   const router = useRouter();
 
@@ -31,7 +31,13 @@ function FriendsActivityViewer() {
         <div
           id={styles.searchFriendBtn}
           onClick={() => {
-            setIsSearchUsersModal((prev) => !prev);
+            setSearchUsersModal((prev) => ({
+              onClick: (userInfo) => {
+                console.log('gdddd', userInfo)
+                router.push(`/dashboard/user/${userInfo.user_id}`);
+              },
+              opened: !prev.opened,
+            }));
           }}
         >
           +<div className={`HoverText ${styles.hoverText}`}>Add friend!</div>

@@ -42,6 +42,32 @@ async function createSubjectsTable() {
   `);
 }
 
+async function createSubjectShareTable() {
+  const connection = pool.promise();
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS subject_share (
+    subject_id VARCHAR(10),
+    user_id VARCHAR(10),
+    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    PRIMARY KEY (subject_id, user_id)
+  );  
+  `);
+}
+
+async function createSubjectSharedTable() {
+  const connection = pool.promise();
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS subject_shared (
+    subject_id VARCHAR(10),
+    user_id VARCHAR(10),
+    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    PRIMARY KEY (subject_id, user_id)
+  );  
+  `);
+}
+
 async function createSubjectTimelinesTable() {
   const connection = pool.promise();
   await connection.query(`
@@ -329,6 +355,8 @@ async function createWebsiteUsageTable() {
 module.exports = {
   createUsersTable,
   createSubjectsTable,
+  createSubjectShareTable,
+  createSubjectSharedTable,
   createSubjectTimelinesTable,
   createGroupsTable,
   createGroupMembersTable,

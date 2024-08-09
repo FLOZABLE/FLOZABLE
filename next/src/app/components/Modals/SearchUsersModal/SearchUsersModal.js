@@ -8,21 +8,22 @@ import SearchBar from "../../Inputs/SearchBar/SearchBar";
 import { ModalsContext } from "@/app/utils/Contexts";
 
 export default function SearchUsersModal() {
-  const { isSearchUsersModal, setIsSearchUsersModal } =
-    useContext(ModalsContext);
+  const { searchUsersModal, setSearchUsersModal } = useContext(ModalsContext);
   const [searchQuery, setSearchQuery] = useState("");
 
   const modalRef = useRef(null);
 
   return (
     <DraggableModal
-      isOpen={isSearchUsersModal}
-      setIsOpen={setIsSearchUsersModal}
+      isOpen={searchUsersModal?.opened}
+      setIsOpen={() => {
+        setSearchUsersModal((prev) => ({ ...prev, opened: false }));
+      }}
       refProp={modalRef}
     >
       <div className={`${styles.SearchUsersModal}`}>
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        <SearchUsers searchQuery={searchQuery} onClick={(userInfo) => {}} />
+        <SearchUsers searchQuery={searchQuery} onClick={searchUsersModal.onClick} />
       </div>
     </DraggableModal>
   );

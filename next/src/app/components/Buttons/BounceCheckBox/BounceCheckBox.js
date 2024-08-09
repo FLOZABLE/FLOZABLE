@@ -12,7 +12,7 @@ export default function BounceCheckBox({ children, id, checked, onClick }) {
       />
       <label className={styles.cbx} htmlFor={id}>
         <span>
-          <svg width="0.75rem" height="0.563rem" viewbox="0 0 12 9">
+          <svg width="0.75rem" height="0.563rem" viewBox="0 0 12 9">
             <polyline points="1 5 4 8 11 1"></polyline>
           </svg>
         </span>

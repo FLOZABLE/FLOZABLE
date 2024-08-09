@@ -128,7 +128,7 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
             checked={pomodoro.mode !== -1}
             onToggle={(e) => {
               if (e.target.checked) {
-                setPomodoro({ mode: 0, active: false });
+                setPomodoro({ mode: 0, active: selectedSubject.active });
               } else {
                 setPomodoro({ mode: -1, active: false });
               }

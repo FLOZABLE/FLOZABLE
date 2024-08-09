@@ -11,6 +11,8 @@ if (process.env.NODE_ENV === "development") {
 const {
   createUsersTable,
   createSubjectsTable,
+  createSubjectShareTable,
+  createSubjectSharedTable,
   createSubjectTimelinesTable,
   createGroupsTable,
   createGroupMembersTable,
@@ -33,7 +35,7 @@ const {
 } = require("../Utils/query");
 const pool = require("../model/pool");
 
-const prompt = require("prompt-sync")({sigint: true});
+const prompt = require("prompt-sync")({ sigint: true });
 
 async function updateManager() {
   const connection = pool.promise();
@@ -78,6 +80,8 @@ async function initializeMariadb() {
   try {
     await createUsersTable();
     await createSubjectsTable();
+    await createSubjectShareTable();
+    await createSubjectSharedTable();
     await createSubjectTimelinesTable();
     await createGroupsTable();
     await createGroupMembersTable();
@@ -287,7 +291,6 @@ async function mariadbV7_1(updateFriends, updateGroups) {
   }
 }
 
-
 (async () => {
   const command = prompt(`
     type command
@@ -295,13 +298,13 @@ async function mariadbV7_1(updateFriends, updateGroups) {
     2)maria:VERSION_NAME
   
     `);
-    /* if (command.includes("maria")) {
+  /* if (command.includes("maria")) {
       const version = parseFloat(command.split(":")[1]);
       console.log(version)
     } */
-    if (command === "maria:0") {
-      await initializeMariadb();
-    }
+  if (command === "maria:0") {
+    await initializeMariadb();
+  }
 })();
 
 module.exports = { updateManager };
