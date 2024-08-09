@@ -3,7 +3,11 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { generateRandomId, autoSignin } = require("../Utils/tool");
-const { subjectsTimelineCache, userCache } = require("../services/redisLoader");
+const {
+  subjectsTimelineCache,
+  userCache,
+  NotificationCache,
+} = require("../services/redisLoader");
 const {
   validateString,
   validateHEX,
@@ -254,7 +258,6 @@ Router.post("/subject/share", async (req, res) => {
     try {
       const { users, subjectId } = req.body;
 
-      console.log(users, subjectId);
       const userInfo = await userCache(userId);
       if (!userInfo) {
         return res.send(responseCodes["no-user"]);
@@ -354,16 +357,17 @@ Router.post("/subject/share", async (req, res) => {
 Router.post("/subject/share/respond", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
+      res.send(responseCodes["error"]);
     }
   });
 });
 
-Router.get("/subject/users", async (req, res) => {
+Router.delete("/subject/share", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { subjectId } = req.query;
+      const { subjectId, targetId } = req.body;
 
       const connection = pool.promise();
       const [[subject]] = await connection.query(
@@ -392,7 +396,72 @@ Router.get("/subject/users", async (req, res) => {
         (user) => user.user_id
       );
 
-      console.log(subject);
+      const allowedUsers = [
+        ...subject.shared,
+        ...subject.share,
+        { user_id: subject.user_id },
+      ];
+      if (!allowedUsers.find((user) => user.user_id === userId)) {
+        return res.send(responseCodes["non-memeber"]);
+      }
+
+      await connection.query(
+        `
+        DELETE FROM subject_share WHERE subject_id = ? AND user_id = ?;
+        DELETE FROM subject_shared WHERE subject_id = ? AND user_id = ?;
+      `,
+        [subjectId, targetId, subjectId, targetId]
+      );
+
+      const subjectRequests = await NotificationCache(targetId, 2, false);
+      const subjectRequest = subjectRequests.find((subjectRequest) => {
+        return subjectRequest.si === subjectId;
+      });
+
+      if (subjectRequest) {
+        redisClient.hdel(`user:${targetId}:notifications`, subjectRequest.i);
+      }
+
+      res.send({ success: true, msg: `Removed user!` });
+    } catch (err) {
+      console.log(err);
+      res.send(responseCodes["error"]);
+    }
+  });
+});
+
+Router.get("/subject/users", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { subjectId } = req.query;
+
+      const connection = pool.promise();
+      const [[subject]] = await connection.query(
+        `SELECT 
+          s.name,
+          s.user_id,
+          JSON_ARRAYAGG(JSON_OBJECT('user_id', u.user_id, 'name', u.name)) AS share,
+          JSON_ARRAYAGG(JSON_OBJECT('user_id', u2.user_id, 'name', u2.name)) AS shared
+          FROM subjects s
+          LEFT JOIN subject_share ss ON ss.subject_id = s.subject_id
+          LEFT JOIN subject_shared ssd ON ssd.subject_id = s.subject_id
+          LEFT JOIN users u ON u.user_id = ss.user_id
+          LEFT JOIN users u2 ON u2.user_id = ssd.user_id
+          WHERE s.user_id = ? AND s.subject_id = ?
+          GROUP BY s.subject_id
+          `,
+        [userId, subjectId]
+      );
+
+      if (!subject) {
+        return res.send(responseCodes["invalid-subject"]);
+      }
+
+      subject.share = JSON.parse(subject.share).filter((user) => user.user_id);
+      subject.shared = JSON.parse(subject.shared).filter(
+        (user) => user.user_id
+      );
+
       const allowedUsers = [
         ...subject.shared,
         ...subject.share,
