@@ -1,5 +1,5 @@
 import { getSubjects, getSubjectUsers } from "@/Api/subjectsApi";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount } from "./accountHooks";
 
 function useSubjects() {
@@ -27,12 +27,18 @@ function useSubjects() {
 }
 
 function useSubjectUsers(subjectId) {
+  const queryClient = useQueryClient();
+
   const queryResult = useQuery({
     queryKey: [`useSubjectUsers`, subjectId],
     queryFn: () => getSubjectUsers(subjectId),
-    staleTime: 1000 * 60 * 0,
+    staleTime: 1000 * 60 * 10,
     enabled: !!subjectId,
   });
+
+  const clearSubjectUsers = () => {
+    queryClient.resetQueries({ queryKey: ["useSubjectUsers", subjectId] });
+  };
 
   const {
     data: useSubjectUsersData,
@@ -44,6 +50,7 @@ function useSubjectUsers(subjectId) {
     useSubjectUsersData,
     useSubjectUsersRefetch,
     useSubjectUsersIsLoading,
+    clearSubjectUsers,
     ...queryResult,
   };
 }

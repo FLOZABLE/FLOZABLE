@@ -21,12 +21,14 @@ import { BackArrow } from "@/app/utils/Svg";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import Draggable from "react-draggable";
 import {
+  deleteSubjectShare,
   deleteSubjectsSubject,
   patchSubjectsSubject,
   postSubjectShare,
 } from "@/Api/subjectsApi";
 import { useSubjectUsers } from "@/Hooks/subjectsHooks";
 import ShareUserBox from "../../Users/ShareUserBox/ShareUserBox";
+import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
 export default function SubjectsModal() {
   const { isSubjectsModal, setIsSubjectsModal, setSearchUsersModal } =
@@ -43,7 +45,8 @@ export default function SubjectsModal() {
   const [shared, setShared] = useState([]);
   const [isSelectColor, setIsSelectColor] = useState(false);
 
-  const { useSubjectUsersData, error } = useSubjectUsers(subject.subject_id);
+  const { useSubjectUsersData, useSubjectUsersIsLoading, clearSubjectUsers } =
+    useSubjectUsers(subject.subject_id);
 
   const modalRef = useRef(null);
 
@@ -75,10 +78,17 @@ export default function SubjectsModal() {
       (async () => {
         const data = await postSubjectShare({ subjectId, users });
         setResponse(data);
-        console.log(data);
+        const filteredUsers = [userInfo].filter(
+          (user) =>
+            ![...share, ...shared].find(
+              (sharedUser) => sharedUser.user_id === user.user_id
+            )
+        );
+        setShare([...share, ...filteredUsers]);
+        clearSubjectUsers();
       })();
     },
-    [subject]
+    [subject, share, shared]
   );
 
   const onSave = useCallback(
@@ -187,7 +197,45 @@ export default function SubjectsModal() {
     [subjects]
   );
 
-  console.log(share, shared);
+  const onUnshare = useCallback(
+    (userInfo) => {
+      (async () => {
+        const targetId = userInfo.user_id;
+        const subjectId = subject.subject_id;
+        const data = await deleteSubjectShare({ subjectId, targetId });
+
+        setResponse(data);
+
+        if (data.success) {
+          clearSubjectUsers();
+          setShare((prev) =>
+            prev.filter((users) => users.user_id !== targetId)
+          );
+        }
+      })();
+    },
+    [subject]
+  );
+
+  const onUnshared = useCallback(
+    (userInfo) => {
+      (async () => {
+        const targetId = userInfo.user_id;
+        const subjectId = subject.subject_id;
+        const data = await deleteSubjectShare({ subjectId, targetId });
+
+        setResponse(data);
+
+        if (data.success) {
+          clearSubjectUsers();
+          setShared((prev) =>
+            prev.filter((users) => users.user_id !== targetId)
+          );
+        }
+      })();
+    },
+    [subject]
+  );
 
   return (
     <Draggable nodeRef={modalRef} handle=".header">
@@ -242,31 +290,40 @@ export default function SubjectsModal() {
                 setIsSelectColor={setIsSelectColor}
               />
               <div className={styles.share}>
-                <div id={styles.share}>
-                  {share.map((userInfo, i) => {
-                    return (
-                      <ShareUserBox
-                        userInfo={userInfo}
-                        key={i}
-                        text={`Remove ${userInfo.name}`}
-                        onClick={() => {
-                          
-                        }}
-                      />
-                    );
-                  })}
-                </div>
-                <div id={styles.shared}>
-                  {shared.map((userInfo, i) => {
-                    return (
-                      <ShareUserBox
-                        userInfo={userInfo}
-                        key={i}
-                        text={`(Pending) Remove ${userInfo.name}`}
-                      />
-                    );
-                  })}
-                </div>
+                {useSubjectUsersIsLoading ? (
+                  <CircularLoading />
+                ) : (
+                  <>
+                    <div id={styles.shared}>
+                      {shared.map((userInfo, i) => {
+                        return (
+                          <ShareUserBox
+                            userInfo={userInfo}
+                            key={i}
+                            text={`Remove ${userInfo.name}`}
+                            onClick={() => {
+                              onUnshared(userInfo);
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                    <div id={styles.share}>
+                      {share.map((userInfo, i) => {
+                        return (
+                          <ShareUserBox
+                            userInfo={userInfo}
+                            key={i}
+                            text={`(Pending) Remove ${userInfo.name}`}
+                            onClick={() => {
+                              onUnshare(userInfo);
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
             <div className={styles.buttons}>

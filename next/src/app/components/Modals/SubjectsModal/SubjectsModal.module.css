@@ -67,9 +67,14 @@
 
 .SubjectsModal .share {
   display: flex;
+  height: 3rem;
 }
 
 .SubjectsModal .share div#shared {
+  display: flex;
+}
+
+.SubjectsModal .share div#share {
   display: flex;
 }
 
