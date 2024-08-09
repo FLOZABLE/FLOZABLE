@@ -45,8 +45,36 @@ async function deleteSubjectsSubject(subjectId) {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify({subjectId})
+    body: JSON.stringify({ subjectId }),
   });
+  const data = await response.json();
+  return data;
+}
+
+async function postSubjectShare({ subjectId, users }) {
+  const response = await fetch(`${config.server}/subjects/subject/share`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ subjectId, users }),
+  });
+  const data = await response.json();
+  return data;
+}
+
+async function getSubjectUsers(subjectId) {
+  const response = await fetch(
+    `${config.server}/subjects/subject/users?subjectId=${subjectId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
   const data = await response.json();
   return data;
 }
@@ -56,4 +84,6 @@ export {
   putSubjectsSubject,
   patchSubjectsSubject,
   deleteSubjectsSubject,
+  postSubjectShare,
+  getSubjectUsers,
 };

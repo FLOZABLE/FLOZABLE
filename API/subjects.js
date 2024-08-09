@@ -3,7 +3,7 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { generateRandomId, autoSignin } = require("../Utils/tool");
-const { subjectsTimelineCache } = require("../services/redisLoader");
+const { subjectsTimelineCache, userCache } = require("../services/redisLoader");
 const {
   validateString,
   validateHEX,
@@ -11,6 +11,7 @@ const {
   validateArray,
 } = require("../Utils/validate");
 const { responseCodes } = require("../Constant");
+const { mainIo } = require("../sockets/mainIo");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -244,6 +245,166 @@ Router.delete("/subject", async (req, res) => {
       return res.send({ success: true, msg: `Deleted ${subject.name}` });
     } catch (error) {
       console.log(error);
+    }
+  });
+});
+
+Router.post("/subject/share", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { users, subjectId } = req.body;
+
+      console.log(users, subjectId);
+      const userInfo = await userCache(userId);
+      if (!userInfo) {
+        return res.send(responseCodes["no-user"]);
+      }
+
+      const connection = pool.promise();
+      const [[subject]] = await connection.query(
+        `SELECT 
+          s.name,
+          GROUP_CONCAT(DISTINCT ss.user_id) AS share,
+          GROUP_CONCAT(DISTINCT ssd.user_id) AS shared
+          FROM subjects s
+          LEFT JOIN subject_share ss ON ss.subject_id = s.subject_id
+          LEFT JOIN subject_shared ssd ON ssd.subject_id = s.subject_id
+          WHERE s.user_id = ? AND s.subject_id = ?`,
+        [userId, subjectId]
+      );
+
+      if (!subject) {
+        return res.send(responseCodes["invalid-subject"]);
+      }
+
+      subject.share = subject.share ? subject.share.split(",") : [];
+      subject.shared = subject.shared ? subject.shared.split(",") : [];
+
+      const filteredUsers = users.filter(
+        (user) =>
+          !subject.share.includes(user) && !subject.shared.includes(user)
+      );
+
+      const friends = filteredUsers.filter((user) =>
+        userInfo.friends.includes(user)
+      );
+
+      if (friends.length) {
+        const newShared = friends.map((friend) => [subjectId, friend]);
+        await connection.query(
+          `
+          INSERT IGNORE INTO subject_shared
+          (subject_id, user_id)
+          VALUES ?
+          `,
+          [newShared]
+        );
+      }
+
+      const nonFriends = filteredUsers.filter(
+        (user) => !userInfo.friends.includes(user)
+      );
+      if (nonFriends.length) {
+        const newShare = nonFriends.map((friend) => [subjectId, friend]);
+        await connection.query(
+          `
+          INSERT IGNORE INTO subject_share
+          (subject_id, user_id)
+          VALUES ?
+          `,
+          [newShare]
+        );
+      }
+
+      const date = Math.floor(new Date().getTime() / 1000);
+
+      nonFriends.map(async (targetId) => {
+        const id = generateRandomId(5);
+        const notification = {
+          t: 2,
+          f: userId,
+          d: date,
+          n: subject.name,
+          si: subjectId,
+        };
+        const socketNotif = {
+          i: id,
+          t: 2,
+          f: userInfo,
+          d: date,
+          n: subject.name,
+          si: subjectId,
+        };
+        mainIo.to(targetId).emit("notification", socketNotif);
+        redisClient.hset(
+          `user:${targetId}:notifications`,
+          id,
+          JSON.stringify(notification)
+        );
+      });
+
+      res.send({ success: true, msg: "Subject shared" });
+    } catch (error) {
+      console.log(error);
+      res.send(responseCodes["error"]);
+    }
+  });
+});
+
+Router.post("/subject/share/respond", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+    } catch (error) {
+      console.log(error);
+    }
+  });
+});
+
+Router.get("/subject/users", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { subjectId } = req.query;
+
+      const connection = pool.promise();
+      const [[subject]] = await connection.query(
+        `SELECT 
+          s.name,
+          s.user_id,
+          JSON_ARRAYAGG(JSON_OBJECT('user_id', u.user_id, 'name', u.name)) AS shared,
+          JSON_ARRAYAGG(JSON_OBJECT('user_id', u2.user_id, 'name', u2.name)) AS share
+          FROM subjects s
+          LEFT JOIN subject_share ss ON ss.subject_id = s.subject_id
+          LEFT JOIN subject_shared ssd ON ssd.subject_id = s.subject_id
+          LEFT JOIN users u ON u.user_id = ss.user_id
+          LEFT JOIN users u2 ON u2.user_id = ssd.user_id
+          WHERE s.user_id = ? AND s.subject_id = ?
+          GROUP BY s.subject_id
+          `,
+        [userId, subjectId]
+      );
+
+      if (!subject) {
+        return res.send(responseCodes["invalid-subject"]);
+      }
+
+      subject.share = JSON.parse(subject.share).filter((user) => user.user_id);
+      subject.shared = JSON.parse(subject.shared).filter(
+        (user) => user.user_id
+      );
+
+      console.log(subject);
+      const allowedUsers = [
+        ...subject.shared,
+        ...subject.share,
+        { user_id: subject.user_id },
+      ];
+      if (!allowedUsers.find((user) => user.user_id === userId)) {
+        return res.send(responseCodes["non-memeber"]);
+      }
+
+      res.send({ success: true, subject });
+    } catch (err) {
+      console.log(err);
     }
   });
 });

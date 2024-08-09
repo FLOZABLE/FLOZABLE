@@ -20,10 +20,17 @@ import ColorPalette from "../../Inputs/ColorPalette/ColorPalette";
 import { BackArrow } from "@/app/utils/Svg";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import Draggable from "react-draggable";
-import { deleteSubjectsSubject, patchSubjectsSubject } from "@/Api/subjectsApi";
+import {
+  deleteSubjectsSubject,
+  patchSubjectsSubject,
+  postSubjectShare,
+} from "@/Api/subjectsApi";
+import { useSubjectUsers } from "@/Hooks/subjectsHooks";
+import ShareUserBox from "../../Users/ShareUserBox/ShareUserBox";
 
 export default function SubjectsModal() {
-  const { isSubjectsModal, setIsSubjectsModal } = useContext(ModalsContext);
+  const { isSubjectsModal, setIsSubjectsModal, setSearchUsersModal } =
+    useContext(ModalsContext);
   const { subjects, setSubjects } = useContext(SubjectsContext);
   const { setResponse } = useContext(ResponseContext);
 
@@ -32,7 +39,11 @@ export default function SubjectsModal() {
     color: null,
     subject_id: null,
   });
+  const [share, setShare] = useState([]);
+  const [shared, setShared] = useState([]);
   const [isSelectColor, setIsSelectColor] = useState(false);
+
+  const { useSubjectUsersData, error } = useSubjectUsers(subject.subject_id);
 
   const modalRef = useRef(null);
 
@@ -49,7 +60,26 @@ export default function SubjectsModal() {
     setSubject({ name, color, subject_id });
   }, [isSubjectsModal, subjects]);
 
-  const onShare = useCallback(() => {}, []);
+  useEffect(() => {
+    if (!useSubjectUsersData?.success) return;
+
+    const { share, shared } = useSubjectUsersData.subject;
+    setShare(share);
+    setShared(shared);
+  }, [useSubjectUsersData]);
+
+  const onShare = useCallback(
+    (userInfo) => {
+      const subjectId = subject.subject_id;
+      const users = [userInfo.user_id];
+      (async () => {
+        const data = await postSubjectShare({ subjectId, users });
+        setResponse(data);
+        console.log(data);
+      })();
+    },
+    [subject]
+  );
 
   const onSave = useCallback(
     (subject) => {
@@ -157,6 +187,8 @@ export default function SubjectsModal() {
     [subjects]
   );
 
+  console.log(share, shared);
+
   return (
     <Draggable nodeRef={modalRef} handle=".header">
       <div
@@ -209,11 +241,48 @@ export default function SubjectsModal() {
                 isSelectColor={isSelectColor}
                 setIsSelectColor={setIsSelectColor}
               />
+              <div className={styles.share}>
+                <div id={styles.share}>
+                  {share.map((userInfo, i) => {
+                    return (
+                      <ShareUserBox
+                        userInfo={userInfo}
+                        key={i}
+                        text={`Remove ${userInfo.name}`}
+                        onClick={() => {
+                          
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+                <div id={styles.shared}>
+                  {shared.map((userInfo, i) => {
+                    return (
+                      <ShareUserBox
+                        userInfo={userInfo}
+                        key={i}
+                        text={`(Pending) Remove ${userInfo.name}`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
             </div>
             <div className={styles.buttons}>
               <BlobBtn
                 onClick={() => {
-                  onShare(subject);
+                  setSearchUsersModal((prev) => ({
+                    opened: !prev.opened,
+                    onClick: (userInfo) => {
+                      /* setSubject((prev) => ({
+                        ...prev,
+                        share: [...prev.share, userInfo],
+                      })); */
+                      //setShare((prev) => [...prev, userInfo]);
+                      onShare(userInfo);
+                    },
+                  }));
                 }}
               >
                 <FontAwesomeIcon icon={faShare} />

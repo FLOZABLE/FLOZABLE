@@ -1,5 +1,5 @@
 import { getPlans, getPlansPlanUsers } from "@/Api/plansApi";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 function usePlan(userInfo) {
   return useQuery({
@@ -11,6 +11,8 @@ function usePlan(userInfo) {
 }
 
 function usePlansPlanUsers(planId) {
+  const queryClient = useQueryClient();
+
   const queryResult = useQuery({
     queryKey: [`usePlansPlanUsers`, planId],
     queryFn: () => getPlansPlanUsers(planId),
@@ -18,10 +20,20 @@ function usePlansPlanUsers(planId) {
     enabled: !!planId,
   });
 
+  const clearPlanUsers = () => {
+    queryClient.resetQueries(["usePlansPlanUsers"]);
+    queryClient.removeQueries(["usePlansPlanUsers"]);
+  };
+
   const { data: usePlansPlanUsersData, isLoading: usePlansPlanUsersIsLoading } =
     queryResult;
 
-  return { usePlansPlanUsersData, usePlansPlanUsersIsLoading, ...queryResult };
+  return {
+    usePlansPlanUsersData,
+    usePlansPlanUsersIsLoading,
+    clearPlanUsers,
+    ...queryResult,
+  };
 }
 
 export { usePlan, usePlansPlanUsers };

@@ -33,7 +33,7 @@ function PomodoroTimer({
     if (pomodoro.mode === 0) {
       setPomodoro((prev) => ({ ...prev, active: selectedSubject.active }));
     }
-  }, [selectedSubject, pomodoro]);
+  }, [selectedSubject]);
 
   if (pomodoro?.mode === -1) {
     return null;
@@ -60,6 +60,9 @@ function PomodoroTimer({
           value={pomodoro?.mode}
           setValue={(mode) => {
             setPomodoro({ active: false, mode });
+            if (mode !== 0 && selectedSubject.active) {
+              toggleTimer();
+            }
           }}
         />
       </div>

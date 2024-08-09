@@ -91,31 +91,12 @@
   align-items: center;
 }
 
-.UserBox {
-  width: 3rem;
-  height: 3rem;
-  position: relative;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.UserBox#share img {
+.UserBoxes div#share img {
   filter: brightness(50%);
 }
 
-.UserBox:hover {
-  z-index: 3;
-}
-
-.UserBox .hoverText {
-  bottom: -2rem;
-}
-
-.UserBox:hover .hoverText {
-  bottom: -1.5rem;
-  opacity: 1;
+.UserBoxes > div {
+  display: flex;
 }
 
 @media (max-height: 800px) {

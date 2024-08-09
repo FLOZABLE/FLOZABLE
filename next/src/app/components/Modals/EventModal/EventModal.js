@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useCallback, useContext, useEffect, useRef } from "react";
 import styles from "./EventModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -34,6 +34,7 @@ import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import { deletePlanShare, patchPlan, postPlanShare } from "@/Api/plansApi";
 import { usePlansPlanUsers } from "@/Hooks/plansHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
+import ShareUserBox from "../../Users/ShareUserBox/ShareUserBox";
 
 function EventModalLayer({ children, icon, hoverText }) {
   return (
@@ -49,61 +50,6 @@ function EventModalLayer({ children, icon, hoverText }) {
   );
 }
 
-function SharedUserBox({ userInfo }) {
-  const { setPlanModal, planModal } = useContext(PlansContext);
-  return (
-    <div
-      className={styles.UserBox}
-      onClick={() => {
-        setPlanModal((prev) => {
-          return {
-            ...prev,
-            shared: [
-              ...prev.shared.filter(
-                (users) => users.user_id !== userInfo.user_id
-              ),
-            ],
-          };
-        });
-        deletePlanShare(userInfo.user_id, planModal.plan_id);
-      }}
-    >
-      <ProfileImage userId={userInfo.user_id} />
-      <div className={`HoverText ${styles.hoverText}`}>
-        Remove {userInfo.name}
-      </div>
-    </div>
-  );
-}
-
-function ShareUserBox({ userInfo }) {
-  const { setPlanModal, planModal } = useContext(PlansContext);
-  return (
-    <div
-      className={styles.UserBox}
-      onClick={() => {
-        setPlanModal((prev) => {
-          return {
-            ...prev,
-            share: [
-              ...prev.share.filter(
-                (users) => users.user_id !== userInfo.user_id
-              ),
-            ],
-          };
-        });
-        deletePlanShare(userInfo.user_id, planModal.plan_id);
-      }}
-      id={styles.share}
-    >
-      <ProfileImage userId={userInfo.user_id} width="2.5rem" height="2.5rem" />
-      <div className={`HoverText ${styles.hoverText}`}>
-        (Pending) Remove {userInfo.name}
-      </div>
-    </div>
-  );
-}
-
 function EventModal({}) {
   const { subjects } = useContext(SubjectsContext);
 
@@ -114,7 +60,7 @@ function EventModal({}) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
 
-  const { usePlansPlanUsersData, usePlansPlanUsersIsLoading } =
+  const { usePlansPlanUsersData, usePlansPlanUsersIsLoading, clearPlanUsers } =
     usePlansPlanUsers(planModal?.plan_id);
 
   const eventModalRef = useRef(null);
@@ -247,6 +193,54 @@ function EventModal({}) {
       );
     }
   };
+
+  const onUnshare = useCallback(
+    (userInfo) => {
+      (async () => {
+        const data = await deletePlanShare(userInfo.user_id, planModal.plan_id);
+        setResponse(data);
+        clearPlanUsers();
+
+        if (data.success) {
+          setPlanModal((prev) => {
+            return {
+              ...prev,
+              share: [
+                ...prev.share.filter(
+                  (users) => users.user_id !== userInfo.user_id
+                ),
+              ],
+            };
+          });
+        }
+      })();
+    },
+    [planModal]
+  );
+
+  const onUnshared = useCallback(
+    (userInfo) => {
+      (async () => {
+        const data = await deletePlanShare(userInfo.user_id, planModal.plan_id);
+        setResponse(data);
+        clearPlanUsers();
+
+        if (data.success) {
+          setPlanModal((prev) => {
+            return {
+              ...prev,
+              shared: [
+                ...prev.shared.filter(
+                  (users) => users.user_id !== userInfo.user_id
+                ),
+              ],
+            };
+          });
+        }
+      })();
+    },
+    [planModal]
+  );
 
   useEffect(() => {
     if (!planModal || !planModal.opened || !subjects) return;
@@ -515,12 +509,34 @@ function EventModal({}) {
               <CircularLoading />
             ) : (
               <>
-                {planModal.share.map((userInfo, i) => {
-                  return <ShareUserBox userInfo={userInfo} key={i} />;
-                })}
-                {planModal.shared.map((userInfo, i) => {
-                  return <SharedUserBox userInfo={userInfo} key={i} />;
-                })}
+                <div id={styles.shared}>
+                  {planModal.shared.map((userInfo, i) => {
+                    return (
+                      <ShareUserBox
+                        userInfo={userInfo}
+                        key={i}
+                        text={`Remove ${userInfo.name}`}
+                        onClick={() => {
+                          onUnshared(userInfo);
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+                <div id={styles.share}>
+                  {planModal.share.map((userInfo, i) => {
+                    return (
+                      <ShareUserBox
+                        userInfo={userInfo}
+                        key={i}
+                        text={`(Pending) Remove ${userInfo.name}`}
+                        onClick={() => {
+                          onUnshare(userInfo);
+                        }}
+                      />
+                    );
+                  })}
+                </div>
               </>
             )}
           </div>

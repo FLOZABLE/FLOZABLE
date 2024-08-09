@@ -9,7 +9,6 @@ const {
   NotificationCache,
   userCache,
   activeSubjectCache,
-  subjectCache,
   clearUserCache,
   usersCache,
   activeGroupCache,
