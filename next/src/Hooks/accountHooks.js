@@ -23,8 +23,7 @@ function useAccount() {
   const userInfo = useAccountData?.success ? useAccountData.userInfo : false;
 
   const clearAccountData = () => {
-    queryClient.resetQueries(["useAccount"]);
-    queryClient.removeQueries(["useAccount"]);
+    queryClient.removeQueries({ queryKey: "useAccount" });
   };
 
   return {

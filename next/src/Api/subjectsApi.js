@@ -79,6 +79,19 @@ async function getSubjectUsers(subjectId) {
   return data;
 }
 
+async function deleteSubjectShare({ subjectId, targetId }) {
+  const response = await fetch(`${config.server}/subjects/subject/share`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ subjectId, targetId }),
+  });
+  const data = await response.json();
+  return data;
+}
+
 export {
   getSubjects,
   putSubjectsSubject,
@@ -86,4 +99,5 @@ export {
   deleteSubjectsSubject,
   postSubjectShare,
   getSubjectUsers,
+  deleteSubjectShare,
 };
