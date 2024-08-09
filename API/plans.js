@@ -526,7 +526,7 @@ Router.post("/plan/share", async (req, res) => {
       const connection = pool.promise();
 
       const [[planInfo]] = await connection.query(
-        `SELECT plan_id FROM plans WHERE user_id = ? AND plan_id = ?`,
+        `SELECT plan_id, title FROM plans WHERE user_id = ? AND plan_id = ?`,
         [userId, planId]
       );
 
@@ -628,7 +628,7 @@ Router.delete("/plan/share", async (req, res) => {
         `
         SELECT
           p.plan_id,
-          p.name,
+          p.title,
           p.user_id,
           JSON_ARRAYAGG(JSON_OBJECT('user_id', u.user_id, 'name', u.name)) AS shared,
           JSON_ARRAYAGG(JSON_OBJECT('user_id', u2.user_id, 'name', u2.name)) AS share
@@ -663,7 +663,7 @@ Router.delete("/plan/share", async (req, res) => {
         `
         DELETE FROM plan_share WHERE plan_id = ? AND user_id = ?;
         DELETE FROM plan_shared WHERE plan_id = ? AND user_id = ?`,
-        [planId, userId, planId, userId]
+        [planId, targetId, planId, targetId]
       );
 
       const planRequests = await NotificationCache(targetId, 7, false);
@@ -673,6 +673,7 @@ Router.delete("/plan/share", async (req, res) => {
       if (planRequest) {
         redisClient.hdel(`user:${targetId}:notifications`, planRequest.i);
       }
+
       res.send({ success: true, msg: `Removed user!` });
     } catch (err) {
       console.log(err);

@@ -7,7 +7,7 @@ import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading
 import { useDebounce } from "use-debounce";
 import { useGetFriendsSearch } from "@/Hooks/friendsHooks";
 
-function SearchUsers({ searchQuery, onClick = () => {} }) {
+function SearchUsers({ searchQuery, onClick }) {
   const [debouncedQuery] = useDebounce(searchQuery, 500);
 
   const { data, isLoading } = useGetFriendsSearch(debouncedQuery);
@@ -20,7 +20,9 @@ function SearchUsers({ searchQuery, onClick = () => {} }) {
             <UserContainer
               key={i}
               onClick={() => {
-                onClick(userInfo);
+                if (onClick) {
+                  onClick(userInfo);
+                }
               }}
               userInfo={userInfo}
             >

@@ -264,7 +264,10 @@ function ModalsProvider({ children }) {
     subject_id: null,
   });
   const [isSharePlanModal, setIsSharePlanModal] = useState(false);
-  const [isSearchUsersModal, setIsSearchUsersModal] = useState(false);
+  const [searchUsersModal, setSearchUsersModal] = useState({
+    opened: false,
+    onClick: null,
+  });
 
   useEffect(() => {
     if (userInfo === false) {
@@ -289,8 +292,8 @@ function ModalsProvider({ children }) {
         setIsSubjectsModal,
         isSharePlanModal,
         setIsSharePlanModal,
-        isSearchUsersModal,
-        setIsSearchUsersModal,
+        searchUsersModal,
+        setSearchUsersModal,
       }}
     >
       {children}

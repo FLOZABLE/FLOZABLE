@@ -65,6 +65,14 @@
   margin: auto 1rem 0.5rem 1rem;
 }
 
+.SubjectsModal .share {
+  display: flex;
+}
+
+.SubjectsModal .share div#shared {
+  display: flex;
+}
+
 /* .SubjectsModal {
   width: 30rem;
   height: 30rem;
