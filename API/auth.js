@@ -5,6 +5,7 @@ const redisClient = require("../model/redis");
 const crypto = require("crypto");
 const { DateTime } = require("luxon");
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
+const querystring = require("node:querystring");
 
 const {
   hashing,
@@ -22,8 +23,9 @@ const {
 } = require("../Utils/validate");
 const { userCache, cacheUserInfo } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
-const { USER_ID_COOKIE_OPTIONS } = require("../Constant");
+const { USER_ID_COOKIE_OPTIONS, responseCodes } = require("../Constant");
 const fetch = require("node-fetch");
+const { request } = require("request");
 
 async function createAccount(name, email, timezone, userInfo) {
   try {
@@ -200,6 +202,124 @@ Router.post("/signin/youtube", async (req, res) => {
   });
 });
 
+Router.get("/signin/spotify", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const state = generateRandomId(10);
+
+      const redirect_uri = process.env.SERVER + "/auth/signin/spotify/callback";
+      const client_id = process.env.SPOTIFY_CLIENT_ID;
+      const scope = "playlist-read-private";
+
+      //prevents csrf
+      await redisClient.setex(`user:${userId}:spotifyState`, 10, state);
+
+      res.redirect(
+        "https://accounts.spotify.com/authorize?" +
+          querystring.stringify({
+            response_type: "code",
+            client_id,
+            scope,
+            redirect_uri,
+            state: `${userId}:${state}`,
+          })
+      );
+    } catch (err) {
+      console.log(err);
+      res.send(responseCodes["error"]);
+    }
+  });
+});
+
+Router.get("/signin/spotify/callback", async (req, res) => {
+  try {
+    const { code } = req.query;
+
+    if (!req.query.state) {
+      return res.redirect(
+        `${process.env.NEXT_SERVER}/dashboard/account?` +
+          querystring.stringify({ success: false, reason: "State mismatch" })
+      );
+    }
+
+    const [userId, state] = req.query.state.split(":");
+
+    if (!state || !userId) {
+      return res.redirect(
+        `${process.env.NEXT_SERVER}/dashboard/account?` +
+          querystring.stringify({ success: false, reason: "State mismatch" })
+      );
+    }
+
+    const storedState = await redisClient.get(`user:${userId}:spotifyState`);
+
+    if (storedState !== state) {
+      return res.redirect(
+        `${process.env.NEXT_SERVER}/dashboard/account?` +
+          querystring.stringify({ success: false, reason: "State mismatch" })
+      );
+    }
+
+    const redirect_uri = process.env.SERVER + "/auth/signin/spotify/callback";
+    const client_id = process.env.SPOTIFY_CLIENT_ID;
+    const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+
+    const body = querystring.stringify({
+      code,
+      redirect_uri: redirect_uri,
+      grant_type: "authorization_code",
+    });
+
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${Buffer.from(
+          `${client_id}:${client_secret}`
+        ).toString("base64")}`,
+      },
+      body,
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      return res.redirect(
+        `${process.env.NEXT_SERVER}/dashboard/account?` +
+          querystring.stringify({
+            success: false,
+            reason: data.error_description,
+          })
+      );
+    }
+
+    const { refresh_token, access_token, expires_in } = data;
+
+    if (refresh_token) {
+      const connection = pool.promise();
+
+      await connection.query(`UPDATE users SET spotify_refresh_token = ?`, [
+        refresh_token,
+      ]);
+    }
+    if (access_token) {
+      redisClient.setex(
+        `user:${userId}:spotifyAccessToken`,
+        expires_in,
+        access_token
+      );
+    }
+
+    return res.redirect(
+      `${process.env.NEXT_SERVER}/dashboard/account?` +
+        querystring.stringify({ success: true, msg: "Success!" })
+    );
+  } catch (err) {
+    console.log(err);
+    res.send(responseCodes["error"]);
+  }
+});
+
 Router.post("/link", async (req, res) => {
   const { verifyId } = req.body;
   autoSignin(req, res, async (userId) => {
@@ -222,7 +342,7 @@ Router.post("/link", async (req, res) => {
       }
     } catch (err) {
       console.log(err);
-      res.send({ success: false, reason: "Error" });
+      responseCodes["error"];
     }
   });
 });
