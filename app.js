@@ -70,17 +70,13 @@ const chatAPI = require("./API/chat");
 const groupsAPI = require("./API/groups");
 const plansAPI = require("./API/plans");
 const subjectsAPI = require("./API/subjects");
-const rankingAPI = require("./API/ranking");
 const rankingsAPI = require("./API/rankings");
-//const AiAPI = require('./API/AI');
 const friensdAPI = require("./API/friends").Router;
 const themesAPI = require("./API/themes");
 const extensionAPI = require("./API/extension");
-const canvasAPI = require("./API/canvas");
 const playlistsAPI = require("./API/playlists");
 const paymentAPI = require("./API/payment");
 const notificationsAPI = require("./API/notifications");
-const chatroomsAPI = require("./API/chatrooms");
 
 //import socket
 const { io } = require("./sockets/io");
@@ -167,17 +163,13 @@ app.use("/chat", chatAPI);
 app.use("/groups", groupsAPI);
 app.use("/plans", plansAPI);
 app.use("/subjects", subjectsAPI);
-app.use("/ranking", rankingAPI);
 app.use("/rankings", rankingsAPI);
 app.use("/friends", friensdAPI);
 app.use("/themes", themesAPI);
 app.use("/extension", extensionAPI);
 app.use("/playlists", playlistsAPI);
-app.use("/canvas", canvasAPI);
 app.use("/payment", paymentAPI);
 app.use("/notifications", notificationsAPI);
-app.use("/chatrooms", chatroomsAPI);
-//app.use('/ai', AiAPI);
 
 //handle profile images
 app.get("/profile-image/:userId.jpeg", (req, res) => {

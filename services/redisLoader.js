@@ -3,6 +3,7 @@ const pool = require("../model/pool");
 const { UserRefreshClient } = require("google-auth-library");
 const { DateTime } = require("luxon");
 const { REDIS_EXP } = require("../Constant");
+const querystring = require("node:querystring");
 
 const USER_EXP = 60 * 60 * 3;
 const USER_EXP_PLUS = 60 * 60;
@@ -662,6 +663,64 @@ async function chatroomMemberCache(chatroomId, userId) {
   }
 }
 
+async function spotifyAuthTokenCache(userId) {
+  try {
+    let accessToken = await redisClient.get(
+      `user:${userId}:spotifyAccessToken`
+    );
+    if (accessToken) return accessToken;
+
+    const connection = pool.promise();
+
+    const [[userInfo]] = await connection.query(
+      `SELECT spotify_refresh_token FROM users WHERE user_id = ?`,
+      [userId]
+    );
+
+    if (!userInfo) return false;
+
+    const client_id = process.env.SPOTIFY_CLIENT_ID;
+    const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+
+    const body = querystring.stringify({
+      grant_type: "refresh_token",
+      refresh_token: userInfo.spotify_refresh_token,
+    });
+
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${Buffer.from(
+          `${client_id}:${client_secret}`
+        ).toString("base64")}`,
+      },
+      body,
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      return false;
+    }
+
+    const { access_token, expires_in } = data;
+
+    if (access_token) {
+      redisClient.setex(
+        `user:${userId}:spotifyAccessToken`,
+        expires_in,
+        access_token
+      );
+    }
+
+    return access_token;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
 module.exports = {
   flushRedis,
   cacheManager,
@@ -685,4 +744,5 @@ module.exports = {
   removeActiveUserCache,
   cacheUserInfo,
   chatroomMemberCache,
+  spotifyAuthTokenCache,
 };

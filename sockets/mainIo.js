@@ -254,7 +254,7 @@ async function stopStudying(userId, mode) {
 
     const activeSubject = await activeSubjectCache(userId);
 
-    if ((!activeSubject || activeSubject.id === "0") && mode === "disconnect") {
+    if (!activeSubject || activeSubject.id === "0") {
       return await redisClient.del(`user:${userId}:activeSubject`);
     }
 
