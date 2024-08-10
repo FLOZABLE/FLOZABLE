@@ -36,6 +36,7 @@ function Account() {
   const [isSubmitProfile, setIsSubmitProfile] = useState(false);
   const [isSubmitPw, setIsSubmitPw] = useState(false);
   const [websites, setWebsites] = useState({});
+  const [redirectURI, setRedirectURI] = useState(null);
 
   const inputRef = useRef(null);
   const readURL = useCallback((input) => {
@@ -122,25 +123,14 @@ function Account() {
     setImageSrc(
       `${config.static_server}/profile-image/${userInfo.user_id}.jpeg`
     );
-    fetch(`${config.server}/extension/settings`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          const { activity_setting } = data;
-          setEmail(userInfo.email);
-          setConfirmEmail(userInfo.email);
-          setName(userInfo.name);
-          setWebsites(activity_setting);
-        }
-      })
-      .catch((error) => console.error(error));
+    setEmail(userInfo.email);
+    setConfirmEmail(userInfo.email);
+    setName(userInfo.name);
   }, [userInfo]);
+
+  useEffect(() => {
+    setRedirectURI(window.location.href);
+  }, []);
 
   return (
     <div>
@@ -357,9 +347,7 @@ function Account() {
                       </p>
                     </div>
                     <div className={styles.authBtn}>
-                      <SpotifyAuthBtn
-                        redirectURI={`${config.location}/dashboard/account`}
-                      />
+                      <SpotifyAuthBtn redirectURI={redirectURI} />
                     </div>
                   </div>
                 </div>

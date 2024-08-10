@@ -19,6 +19,7 @@ import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import { useAccount } from "@/Hooks/accountHooks";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import NotificationsBtn from "../../Notifications/NotificationsBtn/NotificationsBtn";
+import Link from "next/link";
 
 function HeaderEl({ children, value, title }) {
   return (
@@ -137,7 +138,7 @@ function Header({}) {
           <NotificationsBtn />
         </div>
         {userInfo ? (
-          <div className={styles.userInfo}>
+          <Link href={"/dashboard/account"} className={styles.userInfo}>
             <div>
               <p className={styles.name}>{userInfo.name}</p>
               <p className={styles.email}>@{userInfo.email.split("@")[0]}</p>
@@ -149,7 +150,7 @@ function Header({}) {
                 height="100%"
               />
             </div>
-          </div>
+          </Link>
         ) : null}
       </div>
     </header>
