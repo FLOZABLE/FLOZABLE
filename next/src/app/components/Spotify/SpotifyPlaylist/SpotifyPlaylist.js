@@ -2,19 +2,18 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./SpotifyPlaylist.module.css";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { ResponseContext } from "@/app/utils/Contexts";
-import config from "@/app/utils/config";
 import SpotifyAuthBtn from "../SpotifyAuthBtn/SpotifyAuthBtn";
-import DropDownButton from "../../Buttons/DropDownButton/DropDownButton";
 import SpotifyPlayer from "../SpotifyPlayer/SpotifyPlayer";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
+import { usePlaylistsSpotify } from "@/Hooks/playlistHook";
+import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
 function SpotifyPlaylist() {
-  const { setResponse } = useContext(ResponseContext);
+  const { usePlaylistsSpotifyData, usePlaylistsSpotifyIsLoading, error } =
+    usePlaylistsSpotify();
 
-  const [playlist, setPlaylist] = useState("");
-  const [spotifyLoggedIn, setSpotifyLoggedIn] = useState(false);
+  const [playlist, setPlaylist] = useState(null);
   const [link, setLink] = useState("");
-  const [dropDownOptions, setDropDownOptions] = useState({});
 
   const submitURL = () => {
     try {
@@ -32,57 +31,46 @@ function SpotifyPlaylist() {
     }
   };
 
-  const handleLinkInput = (e) => {
-    setLink(e.target.value);
-  };
-
-  useEffect(() => {
-    fetch(`${config.server}/playlists/spotify-playlists`, {
-      method: "get",
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setSpotifyLoggedIn(true);
-
-          const tempOptions = {};
-          data.data.map((choice) => {
-            const modifiedURL = choice.url.replace(
-              "https://open.spotify.com",
-              "https://open.spotify.com/embed"
-            );
-            tempOptions[modifiedURL] = choice.name;
-          });
-          setDropDownOptions(tempOptions);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
   return (
-    <div className={styles.PlaylistModal}>
-      <div className={styles.authGuide}>
-        {spotifyLoggedIn ? (
-          <div></div>
-        ) : (
-          <p>Connect your Spotify account to bring your playlists!</p>
-        )}
-        <SpotifyAuthBtn redirectURI={`${config.location}/dashboard/study`} />
-        {spotifyLoggedIn ? (
-          <DropDownButton options={dropDownOptions} setValue={setPlaylist} />
-        ) : (
-          <div></div>
-        )}
-      </div>
-      <div className={styles.spotifyPlayerWrapper}>
-        <SpotifyPlayer link={playlist} />
-      </div>
+    <div className={styles.SpotifyPlaylist}>
+      <SpotifyPlayer link={playlist} />
+      {usePlaylistsSpotifyIsLoading ? (
+        <CircularLoading />
+      ) : !usePlaylistsSpotifyData?.playlists ? (
+        <SpotifyAuthBtn />
+      ) : (
+        <div className={`customScroll ${styles.playlists}`}>
+          {usePlaylistsSpotifyData.playlists.map((playlist, i) => {
+            return (
+              <div
+                onClick={() => {
+                  const embedUrl = playlist.external_urls.spotify.replace(
+                    "https://open.spotify.com",
+                    "https://open.spotify.com/embed"
+                  );
+
+                  setPlaylist(embedUrl);
+                }}
+                className={styles.playlist}
+                key={i}
+                style={{
+                  backgroundImage: `url(${playlist.images?.[0].url})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center center",
+                  backgroundRepeat: "no-repeat",
+                }}
+              >
+                <p className={`overflowDot ${styles.name}`}>{playlist.name}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
       <CustomInput
         input={link}
-        handleInput={handleLinkInput}
+        handleInput={(e) => {
+          setLink(e.target.value);
+        }}
         handleEnter={submitURL}
         icon={faLink}
         placeHolder={"or Paste a playlist Link!"}

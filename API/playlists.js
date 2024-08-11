@@ -13,7 +13,7 @@ const { UserRefreshClient } = require("google-auth-library");
 const redisClient = require("../model/redis");
 const {
   googleAccessTokenCache,
-  spotifyAuthTokenCache,
+  spotifyAccessTokenCache,
 } = require("../services/redisLoader");
 const { responseCodes } = require("../Constant");
 
@@ -118,7 +118,7 @@ Router.get("/youtube-playlists", async (req, res) => {
 Router.get("/spotify/info", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const accessToken = await spotifyAuthTokenCache(userId);
+      const accessToken = await spotifyAccessTokenCache(userId);
       if (!accessToken) {
         return res.send(responseCodes["no-user"]);
       }
@@ -143,90 +143,32 @@ Router.get("/spotify/info", async (req, res) => {
   });
 });
 
-Router.get("/spotify-playlists", async (req, res) => {
-  async function searchForPlaylists(currentAccessToken) {
-    const accessToken = currentAccessToken;
-    const userPlaylists = [];
+Router.get("/spotify", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const accessToken = await spotifyAccessTokenCache(userId);
 
-    fetch("https://api.spotify.com/v1/me/playlists", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then(async (data) => {
-        if (!!data.items) {
-          data.items.map((playlist) => {
-            userPlaylists.push({
-              name: playlist.name,
-              url: playlist.external_urls.spotify,
-            });
-          });
-          return res.send({ success: true, data: userPlaylists });
-        } else {
-          return res.send({ success: false, reason: "An error occured" });
+      if (!accessToken) {
+        return res.send(responseCodes["no-user"]);
+      }
+
+      const response = await fetch('https://api.spotify.com/v1/me/playlists', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
         }
       });
-  }
+      
+      const data = await response.json();
 
-  autoSignin(req, res, async () => {
-    const connection = pool.promise();
-    try {
-      const userId = req.session.user_id;
-      const oldAccessToken = await redisClient.exists(
-        `user:${userId}:spotifyAccessToken`
-      );
-      let currentAccessToken = "";
-
-      if (!oldAccessToken) {
-        const [[refreshToken]] = await connection.query(
-          `SELECT spotify_refresh_token FROM users WHERE user_id = ?`,
-          [userId]
-        );
-        if (!!refreshToken && refreshToken.spotify_refresh_token.length > 0) {
-          //Generate a new access token from refresh token
-
-          fetch("https://accounts.spotify.com/api/token", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              Authorization: `Basic ${Buffer.from(
-                `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
-              ).toString("base64")}`,
-            },
-            body: `grant_type=refresh_token&refresh_token=${refreshToken.spotify_refresh_token}`,
-          })
-            .then((response) => response.json())
-            .then(async (data) => {
-              if (data.access_token) {
-                await redisClient.set(
-                  `user:${userId}:spotifyAccessToken`,
-                  data.access_token
-                );
-                redisClient.expire(`user:${userId}:spotifyAccessToken`, 3000); //expire in 50 min (10 minute buffer)
-                currentAccessToken = data.access_token;
-                searchForPlaylists(currentAccessToken);
-              } else {
-                return res.send({
-                  success: false,
-                  reason: "Access Token Unable to Refresh",
-                });
-              }
-            })
-            .catch((err) => {
-              console.log(86, err);
-            });
-        } else {
-          return res.send({ success: false, reason: "User not authenticated" }); //the user never auth'ed with spotify
-        }
-      } else {
-        currentAccessToken = await redisClient.get(
-          `user:${userId}:spotifyAccessToken`
-        );
-        searchForPlaylists(currentAccessToken);
+      if (data.error) {
+        return res.send({ success: false, reason: data.error.message });
       }
+
+      res.send({ success: true, playlists: data.items });
+
     } catch (err) {
       console.log(err);
+      res.send(responseCodes["error"]);
     }
   });
 });

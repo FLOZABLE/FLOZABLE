@@ -69,7 +69,7 @@ function StudyTrendChart({
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           margin={{
-            right: 15,
+            right: 20,
           }}
           data={subjectsTrend.map((day, i) => {
             const data = day.data.reduce((accumulator, subject) => {

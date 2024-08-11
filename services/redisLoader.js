@@ -663,7 +663,7 @@ async function chatroomMemberCache(chatroomId, userId) {
   }
 }
 
-async function spotifyAuthTokenCache(userId) {
+async function spotifyAccessTokenCache(userId) {
   try {
     let accessToken = await redisClient.get(
       `user:${userId}:spotifyAccessToken`
@@ -744,5 +744,5 @@ module.exports = {
   removeActiveUserCache,
   cacheUserInfo,
   chatroomMemberCache,
-  spotifyAuthTokenCache,
+  spotifyAccessTokenCache,
 };
