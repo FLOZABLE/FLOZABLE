@@ -2,20 +2,12 @@ import React, { useEffect, useState } from "react";
 import styles from "./SpotifyAuthBtn.module.css";
 import { SpotifyLogo } from "@/app/utils/Svg";
 import config from "@/app/utils/config";
-import { useSpotifyInfo } from "@/Hooks/accountHooks copy";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
+import { useSpotifyInfo } from "@/Hooks/playlistHook";
 
 function SpotifyAuthBtn() {
-  const { useSpotifyInfoData, useSpotifyInfoDataIsLoading } = useSpotifyInfo();
+  const { useSpotifyInfoDataIsLoading, spotifyInfo } = useSpotifyInfo();
 
-  const [spotifyInfo, setSpotifyInfo] = useState(null);
-
-  console.log(useSpotifyInfoData);
-  useEffect(() => {
-    if (!useSpotifyInfoData) return;
-
-    setSpotifyInfo(useSpotifyInfoData.spotifyInfo);
-  }, [useSpotifyInfoData]);
   return (
     <a
       className={styles.SpotifyAuthBtn}

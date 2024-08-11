@@ -2,24 +2,24 @@ import React, { useState } from "react";
 import styles from "./PlaylistModal.module.css";
 import YouTubePlaylist from "../../Youtube/YouTubePlaylist/YouTubePlaylist";
 import SpotifyPlaylist from "../../Spotify/SpotifyPlaylist/SpotifyPlaylist";
+import DropDownButton from "../../Buttons/DropDownButton/DropDownButton";
 
 function PlaylistModal() {
-  const [playlistType, setPlaylistType] = useState(-1);
+  const [playlistType, setPlaylistType] = useState("spotify");
 
   return (
     <div className={styles.PlaylistModal}>
-      <table>
-        <tbody>
-          <tr>
-            <td onClick={() => { setPlaylistType(0) }} className={playlistType === 0 ? styles.selectedPlaylist : ''}> Spotify </td>
-            <td onClick={() => { setPlaylistType(1) }} className={playlistType === 1 ? styles.selectedPlaylist : ''}> YouTube </td>
-            <td onClick={() => { setPlaylistType(2) }} className={playlistType === 2 ? styles.selectedPlaylist : ''}> Apple Music </td>
-          </tr>
-        </tbody>
-      </table>
-      {playlistType === 0 ? <SpotifyPlaylist /> : playlistType === 1 ? <YouTubePlaylist /> : null}
+      <DropDownButton
+        options={{
+          spotify: "Spotify",
+          youtube: "Youtube",
+        }}
+        value={playlistType}
+        setValue={setPlaylistType}
+      />
+      {playlistType === "spotify" ? <SpotifyPlaylist /> : <YouTubePlaylist />}
     </div>
-  )
-};
+  );
+}
 
 export default PlaylistModal;
