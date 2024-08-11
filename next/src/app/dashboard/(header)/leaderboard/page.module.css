@@ -1,13 +1,23 @@
 .Leaderboard {
-  flex: 1;
-  display: flex;
   padding: 0rem 3.125rem;
+  display: flex;
+  position: relative;
 }
 
 .Leaderboard .layer {
   display: flex;
-  flex: 1;
   position: relative;
+  flex-direction: column;
+}
+
+.Leaderboard .layer#left {
+  flex: 1;
+  margin-right: 37.25rem;
+}
+
+.Leaderboard .layer#right {
+  position: fixed;
+  right: 3.15rem;
 }
 
 .Leaderboard .boxContainer#TopLeaderBoard {
@@ -16,4 +26,8 @@
 
 .Leaderboard .boxContainer#Leaderboard {
   flex: 1;
+}
+
+.Leaderboard .boxContainer#RankingsTrendsChart {
+  height: 30rem;
 }

@@ -4,8 +4,12 @@ import { useState } from "react";
 import styles from "./page.module.css";
 import TopLeaderBoard from "@/app/components/Leaderboard/TopLeaderBoard/TopLeaderBoard";
 import Leaderboard from "@/app/components/Leaderboard/Leaderboard/Leaderboard";
+import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/RankingsTrendsChart";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function Ranking({}) {
+  const { userInfo } = useAccount();
+
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0))
   );
@@ -15,7 +19,18 @@ function Ranking({}) {
   return (
     <div className={`Main`}>
       <div className={styles.Leaderboard}>
-        <div className={styles.layer}>
+        <div className={styles.layer} id={styles.left}>
+          <div
+            className={`BoxContainer ${styles.boxContainer}`}
+            id={styles.RankingsTrendsChart}
+          >
+            <RankingsTrendsChart
+              viewDate={viewDate}
+              setViewDate={setViewDate}
+              viewer={viewer}
+              userInfo={userInfo}
+            />
+          </div>
           <div
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.Leaderboard}
@@ -26,6 +41,8 @@ function Ranking({}) {
               isOnlyFriends={isOnlyFriends}
             />
           </div>
+        </div>
+        <div className={styles.layer} id={styles.right}>
           <div
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.TopLeaderBoard}

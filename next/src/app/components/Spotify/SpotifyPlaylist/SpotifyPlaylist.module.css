@@ -1,0 +1,29 @@
+.SpotifyPlaylist  {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.SpotifyPlaylist .playlists{
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, calc(50% - 0.55rem));
+  gap: 0.5rem;
+  max-height: 20rem;
+  overflow-y: auto;
+}
+
+.SpotifyPlaylist .playlists .playlist {
+  height: 9rem;
+  cursor: pointer;
+}
+
+.SpotifyPlaylist .playlist .name {
+  background-color: var(--opacity-black);
+  width: fit-content;
+  padding: 0rem 0.3rem;
+  color: #fff;
+  border-radius: 0.5rem;
+  margin: 0.5rem;
+  max-width: 80%;
+}

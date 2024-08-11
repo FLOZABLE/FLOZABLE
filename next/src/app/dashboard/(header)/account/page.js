@@ -347,7 +347,7 @@ function Account() {
                       </p>
                     </div>
                     <div className={styles.authBtn}>
-                      <SpotifyAuthBtn redirectURI={redirectURI} />
+                      <SpotifyAuthBtn />
                     </div>
                   </div>
                 </div>
