@@ -11,13 +11,13 @@ const {
   autoSignin,
   generateRandomId,
   deriveKey,
+  checkGoogleAccessTokenScopes,
 } = require("../Utils/tool");
 const {
   validateEmail,
   validateStrictString,
   validatePassword,
   validateURL,
-  validateArray,
 } = require("../Utils/validate");
 const {
   NotificationCache,
@@ -25,16 +25,15 @@ const {
   subjectsTimelineCache,
   addActiveUserCache,
   usersCache,
+  googleAccessTokenCache,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
 const { responseCodes, PASSWORD_LINK_EXP } = require("../Constant");
 const upload = multer();
 
 Router.get("/", async (req, res) => {
-  autoSignin(
-    req,
-    res,
-    async (userId) => {
+  autoSignin(req, res, async (userId) => {
+    try {
       const notifications = await NotificationCache(userId);
       const userInfo = await userCache(userId);
       if (!userInfo) {
@@ -46,11 +45,49 @@ Router.get("/", async (req, res) => {
         notifications: notifications,
       });
       addActiveUserCache(userId);
-    },
-    () => {
-      res.send(responseCodes["no-user"]);
+    } catch (err) {
+      console.log(err);
+      res.send(responseCodes["error"]);
     }
-  );
+  });
+});
+
+Router.get("/google", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const googleAccessToken = await googleAccessTokenCache(userId);
+
+      if (!googleAccessToken) {
+        return res.send(responseCodes["not-authed"]);
+      }
+
+      const accessTokenInfo = await checkGoogleAccessTokenScopes(
+        googleAccessToken
+      );
+
+      if (!accessTokenInfo) {
+        return res.send(responseCodes["not-authed"]);
+      }
+
+      const response = await fetch(
+        "https://www.googleapis.com/oauth2/v2/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${googleAccessToken}`,
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      data.scopes = accessTokenInfo.scope.split(" ");
+      return res.send({ success: true, googleInfo: data });
+    } catch (err) {
+      console.log(err);
+      res.send(responseCodes["error"]);
+    }
+  });
 });
 
 Router.post("/password-email", async (req, res) => {
