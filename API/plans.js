@@ -157,13 +157,6 @@ Router.get("/", async (req, res) => {
 Router.patch("/plan", async (req, res) => {
   autoSignin(req, res, async (userId, timezone) => {
     try {
-      const planInfo = req.body;
-      if (!planInfo)
-        return res.send({
-          success: false,
-          reason: "Plan information missing",
-        });
-
       const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds();
       const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds();
       const {
@@ -178,7 +171,7 @@ Router.patch("/plan", async (req, res) => {
         priority,
         completed,
         type,
-      } = planInfo;
+      } = req.body;
 
       if (type === "google") {
         const access_token = await googleAccessTokenCache(userId);
@@ -308,82 +301,76 @@ Router.patch("/plan", async (req, res) => {
       if (!userInfo)
         return res.send({ success: false, reason: responseCodes["no-user"] });
 
-      try {
-        const planData = {
-          title,
-          plan_id,
-          start,
-          end,
-          repeat,
-          description,
-          subject_id,
-          notification,
-          priority,
-          completed,
-          user_id: userId,
-        };
+      const newPlan = {
+        title,
+        start,
+        end,
+        repeat,
+        description,
+        subject_id,
+        notification,
+        priority,
+        completed,
+        user_id: userId,
+      };
 
-        const [deletePrev] = await connection.query(
-          `DELETE FROM plans WHERE user_id = ? AND plan_id = ?`,
-          [userId, plan_id]
+      if (plan_id !== "0000000000") {
+        await connection.query(
+          `UPDATE plans set ? WHERE plan_id = ? AND user_id = ?`,
+          [newPlan, plan_id, userId]
         );
-        let isNew = false;
-        if (deletePrev.affectedRows) {
-          schedule.cancelJob(userId + "-" + plan_id);
-        } else {
-          //new plan
-          planData.plan_id = generateRandomId(10);
-          isNew = true;
-        }
+        newPlan.plan_id = plan_id;
+      } else {
+        newPlan.plan_id = generateRandomId(10);
+        await connection.query(`INSERT INTO plans SET ?`, newPlan);
+      }
 
-        const startTime = start * 60;
-        //const body = description.replace(/(&nbsp;|<([^>]+)>)/ig, " ");
-        const startDateTime = DateTime.fromSeconds(startTime)
-          .setZone(timezone)
-          .toFormat("h:mm a");
-        const endDateTime = DateTime.fromSeconds(end * 60)
-          .setZone(timezone)
-          .toFormat("h:mm a");
-        const body = `${startDateTime} - ${endDateTime}`;
-        const payload = JSON.stringify({
-          title,
-          body,
-          icon: "https://flozable.com/favicon.ico",
-          actions: [
-            { action: "viewplan", title: "View plan" },
-            { action: "close", title: "Close" },
-          ],
-          data: {
-            link: `${process.env.SERVER}/dashboard/planner?plan=${plan_id}`,
-          },
-        });
+      schedule.cancelJob(userId + "-" + plan_id);
 
-        if (notification !== -1) {
-          const subNotificationStart = startTime - notification * 60;
-          if (subNotificationStart > DateTime.now().toSeconds() && userInfo) {
-            planPushNotification(
-              userId + "-" + plan_id,
-              { ...userInfo, user_id: userId },
-              payload,
-              subNotificationStart
-            );
-          }
-        }
-        if (startTime > DateTime.now().toSeconds() && userInfo) {
+      const startTime = start * 60;
+      //const body = description.replace(/(&nbsp;|<([^>]+)>)/ig, " ");
+      const startDateTime = DateTime.fromSeconds(startTime)
+        .setZone(timezone)
+        .toFormat("h:mm a");
+      const endDateTime = DateTime.fromSeconds(end * 60)
+        .setZone(timezone)
+        .toFormat("h:mm a");
+      const body = `${startDateTime} - ${endDateTime}`;
+      const payload = JSON.stringify({
+        title,
+        body,
+        icon: "https://flozable.com/favicon.ico",
+        actions: [
+          { action: "viewplan", title: "View plan" },
+          { action: "close", title: "Close" },
+        ],
+        data: {
+          link: `${process.env.SERVER}/dashboard/planner?plan=${plan_id}`,
+        },
+      });
+
+      if (notification !== -1) {
+        const subNotificationStart = startTime - notification * 60;
+        if (subNotificationStart > DateTime.now().toSeconds() && userInfo) {
           planPushNotification(
             userId + "-" + plan_id,
             { ...userInfo, user_id: userId },
             payload,
-            startTime
+            subNotificationStart
           );
         }
-        //planNotification(insertInfo, userInfo[0], startTime)
-        await connection.query(`INSERT INTO plans SET ?`, planData);
-        res.send({ success: true, msg: "Plan Saved!", planData, isNew });
-      } catch (error) {
-        res.send({ success: false, reason: "An error occurred" });
-        console.log(error);
       }
+      if (startTime > DateTime.now().toSeconds() && userInfo) {
+        planPushNotification(
+          userId + "-" + plan_id,
+          { ...userInfo, user_id: userId },
+          payload,
+          startTime
+        );
+      }
+      //planNotification(insertInfo, userInfo[0], startTime)
+      const isNew = plan_id === "0000000000";
+      res.send({ success: true, msg: "Plan Saved!", plan: newPlan, isNew });
     } catch (error) {
       console.error("An error occurred:", error);
       res.send({ success: false, reason: "An error occurred" });

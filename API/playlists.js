@@ -17,8 +17,6 @@ const {
 } = require("../services/redisLoader");
 const { responseCodes } = require("../Constant");
 
-const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
-const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const YOUTUBE_API_KEY = process.env.GOOGLE_API_KEY;
 
 Router.get("/youtube-playlists", async (req, res) => {
