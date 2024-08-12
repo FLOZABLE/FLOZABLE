@@ -42,4 +42,21 @@ async function getAccountProfileSubjects(userId) {
   return data;
 }
 
-export { getAccount, getAccountProfile, getAccountProfileSubjects };
+async function getAccountGoogle() {
+  const response = await fetch(`${config.server}/account/google`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  const data = await response.json();
+  return data;
+}
+
+export {
+  getAccount,
+  getAccountProfile,
+  getAccountProfileSubjects,
+  getAccountGoogle,
+};
