@@ -158,10 +158,10 @@ function EventModal({}) {
       if (eventIndex !== -1) {
         const updatedEvents = [...plans];
         updatedEvents[eventIndex].saved = true;
-        updatedEvents[eventIndex].plan_id = data.planData.plan_id;
+        updatedEvents[eventIndex].plan_id = data.plan.plan_id;
         setPlans(updatedEvents);
       }
-      setPlanModal((prev) => ({ ...prev, opened: false, id: null }));
+      setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
       if (tutorial === 5) {
         setTutorial(6);
       }
@@ -247,7 +247,7 @@ function EventModal({}) {
     if (!planModal.plan_id) {
       const planInfo = { ...planModal };
       delete planInfo.opened;
-      planInfo.plan_id = generateRandomId(10);
+      planInfo.plan_id = "0000000000";
       setPlanModal((prev) => ({ ...prev, plan_id: planInfo.plan_id }));
       setPlans((prev) => [...prev, planInfo]);
     } else {
