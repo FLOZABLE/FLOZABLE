@@ -567,6 +567,7 @@ async function googleAccessTokenCache(userId) {
       `SELECT google_refresh_token FROM users WHERE user_id = ?`,
       [userId]
     );
+
     if (!userInfo || !userInfo.google_refresh_token) {
       return false;
     }
@@ -578,13 +579,12 @@ async function googleAccessTokenCache(userId) {
     );
     const { res } = await user.getAccessToken();
 
-    if (res.data.access_token) {
-      redisClient.set(
-        `user:${userId}:googleAccessToken`,
-        res.data.access_token,
-        { EX: 3590 }
-      );
-      return res.data.access_token;
+    const { access_token, expiry_date } = res.data;
+    if (access_token) {
+      const now = new Date().getTime();
+      const exp = Math.floor((expiry_date - now) / 1000);
+      redisClient.setex(`user:${userId}:googleAccessToken`, exp, access_token);
+      return access_token;
     }
 
     return false;

@@ -1,5 +1,6 @@
 import {
   getAccount,
+  getAccountGoogle,
   getAccountProfile,
   getAccountProfileSubjects,
 } from "@/Api/accountApi";
@@ -32,6 +33,33 @@ function useAccount() {
     useAccountIsLoading,
     userInfo,
     clearAccountData,
+    ...queryResult,
+  };
+}
+
+function useAccountGoogle() {
+  const { userInfo } = useAccount();
+
+  const queryResult = useQuery({
+    queryKey: [`useAccountGoogle`],
+    queryFn: getAccountGoogle,
+    staleTime: 1000 * 60 * 10,
+    enabled: !!userInfo,
+  });
+
+  const {
+    data: useAccountGoogleData,
+    refetch: useAccountGoogleRefetch,
+    isLoading: useAccountGoogleIsLoading,
+  } = queryResult;
+
+  const googleInfo = useAccountGoogleData?.googleInfo;
+
+  return {
+    googleInfo,
+    useAccountGoogleData,
+    useAccountGoogleRefetch,
+    useAccountGoogleIsLoading,
     ...queryResult,
   };
 }
@@ -74,4 +102,9 @@ function useAccountProfileSubjects(userId) {
   };
 }
 
-export { useAccount, useAccountProfile, useAccountProfileSubjects };
+export {
+  useAccount,
+  useAccountGoogle,
+  useAccountProfile,
+  useAccountProfileSubjects,
+};

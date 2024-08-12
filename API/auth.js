@@ -154,50 +154,23 @@ Router.post("/signin/google", async (req, res) => {
       const { data } = req.body;
       const auth = googleOauth2client();
       const response = await auth.getToken(data);
-      if (response.res.status === 200) {
-        const connection = pool.promise();
-        const { refresh_token, access_token } = response.tokens;
-        redisClient.set(`user:${userId}:googleAccessToken`, access_token, {
-          EX: 3590,
-        });
-        connection.query(
-          `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
-          [refresh_token, userId]
-        );
-        /* const user = new UserRefreshClient(
-          process.env.GOOGLE_CLIENT_ID,
-          process.env.GOOGLE_CLIENT_SECRET,
-          refresh_token,
-        );
-        const { credentials } = await user.refreshAccessToken();
-        console.log('dd', credentials) */
+      if (response.res.status !== 200) {
+        return res.send(responseCodes["error"]);
       }
-      res.send({ success: true, data: response });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "An Error Occured" });
-    }
-  });
-});
+      const connection = pool.promise();
+      const { refresh_token, access_token, expiry_date } = response.tokens;
+      const now = new Date().getTime();
+      const exp = Math.floor((expiry_date - now) / 1000);
+      redisClient.setex(`user:${userId}:googleAccessToken`, exp, access_token);
+      connection.query(
+        `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
+        [refresh_token, userId]
+      );
 
-Router.post("/signin/youtube", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const { data } = req.body;
-      const auth = googleOauth2client(data);
-      const response = await auth.getToken(data);
-      if (response.res.status === 200) {
-        const connection = pool.promise();
-        const { refresh_token, access_token } = response.tokens;
-        redisClient.set(`user:${userId}:youtubeAccessToken`, access_token, {
-          EX: 3590,
-        });
-        //connection.query(`UPDATE users SET google_refresh_token = ? WHERE user_id = ?`, [refresh_token, userId]);
-      }
-      res.send({ success: true, data: response });
+      res.send({ success: true, data: "Success" });
     } catch (error) {
       console.log(error);
-      res.send({ success: false, reason: "An Error Occured" });
+      res.send(responseCodes["error"]);
     }
   });
 });

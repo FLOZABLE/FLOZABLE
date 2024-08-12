@@ -55,6 +55,10 @@ const responseCodes = {
     reason: "Invalid Subject",
     code: 401,
   },
+  "not-authed": {
+    success: false,
+    reason: "Not authed"
+  }
 };
 
 const USER_ID_COOKIE_OPTIONS = {

@@ -97,6 +97,8 @@ function Account() {
     }, 2000);
   }, [isSubmitProfile]);
 
+  const submitPassword = useCallback(() => {});
+
   useEffect(() => {
     if (isSubmitPw) {
       fetch(`${config.server}/account/password`, {
@@ -315,7 +317,12 @@ function Account() {
                     </div>
                     <div className={styles.authBtn}>
                       <div>
-                        <GoogleLoginBtn />
+                        <GoogleLoginBtn
+                          scope={
+                            "email profile https://www.googleapis.com/auth/calendar"
+                          }
+                          required="calendar"
+                        />
                       </div>
                     </div>
                   </div>
@@ -332,7 +339,7 @@ function Account() {
                       </p>
                     </div>
                     <div className={styles.authBtn}>
-                      <GoogleLoginBtn scope="https://www.googleapis.com/auth/youtube.force-ssl" />
+                      <GoogleLoginBtn scope="https://www.googleapis.com/auth/youtube.force-ssl" required="youtube" />
                     </div>
                   </div>
                   <div>

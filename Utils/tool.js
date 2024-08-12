@@ -125,7 +125,7 @@ const googleOauth2client = (credential) => {
   const auth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    process.env.GOOGLE_REDIRECT_URL
+    process.env.GOOGLE_REDIRECT_URI
   );
   if (credential) {
     auth.setCredentials(credential);
@@ -133,16 +133,18 @@ const googleOauth2client = (credential) => {
   return auth;
 };
 
-const googleYoutubeOauth2client = (credential) => {
-  const auth = new google.auth.OAuth2(
-    process.env.YOUTUBE_CLIENT_ID,
-    process.env.YOUTUBE_CLIENT_SECRET,
-    process.env.YOUTUBE_REDIRECT_URL
-  );
-  if (credential) {
-    auth.setCredentials(credential);
+const checkGoogleAccessTokenScopes = async (accessToken) => {
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${accessToken}`
+    );
+
+    const tokenInfo = await response.json();
+    return tokenInfo;
+  } catch (err) {
+    console.log(err);
+    return false;
   }
-  return auth;
 };
 
 function arraysHaveSameContents(arr1, arr2) {
@@ -273,12 +275,12 @@ module.exports = {
   getUserId,
   randomIntInRange,
   googleOauth2client,
-  googleYoutubeOauth2client,
+  checkGoogleAccessTokenScopes,
   arraysHaveSameContents,
   hex2rgb,
   secondConverter,
   deriveKey,
   getMidnightTimezones,
   friendRecommendationGen,
-  getDates
+  getDates,
 };
