@@ -14,7 +14,13 @@ import {
 } from "recharts";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 
-function RankingsTrendsChart({ viewDate, setViewDate, viewer, userInfo }) {
+function RankingsTrendsChart({
+  viewDate,
+  setViewDate,
+  viewer,
+  userInfo,
+  isDateSelector,
+}) {
   const [rankingsTrend, setRankingsTrend] = useState([]);
 
   const { data: rankingUserData } = useGetRankingsUser(
@@ -38,13 +44,15 @@ function RankingsTrendsChart({ viewDate, setViewDate, viewer, userInfo }) {
     <div className={`Box ${styles.RankingsTrendsChart}`}>
       <div className={`header ${styles.header}`}>
         <p className={styles.name}>Ranking Trend</p>
-        <div className={styles.DateSelectorBtn}>
-          <DateSelectorBtn
-            viewMode={viewer}
-            viewDate={viewDate}
-            setViewDate={setViewDate}
-          />
-        </div>
+        {isDateSelector ? (
+          <div className={styles.DateSelectorBtn}>
+            <DateSelectorBtn
+              viewMode={viewer}
+              viewDate={viewDate}
+              setViewDate={setViewDate}
+            />
+          </div>
+        ) : null}
       </div>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={rankingsTrend} margin={{ right: 20 }}>

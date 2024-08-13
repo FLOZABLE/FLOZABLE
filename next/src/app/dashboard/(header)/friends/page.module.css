@@ -20,7 +20,7 @@
  */
 
 .Friends .layer {
-  max-height: calc(100vh - 6rem);
+  height: calc(100vh - 6rem);
   display: flex;
   flex-direction: column;
 }
@@ -41,11 +41,15 @@
   flex: 1;
 }
 
-.Friends .boxContainer#FriendsActivityViewer {
+/* .Friends .boxContainer#FriendsActivityViewer {
+  height: 50%;
+} */
+
+.Friends .boxContainer#FriendsTrendChart {
   max-height: 50%;
-  flex: 0
 }
 
 .Friends .boxContainer#FriendRequestsViewer {
   max-height: calc(50% - 6rem);
 }
+
