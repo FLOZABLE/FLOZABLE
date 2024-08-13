@@ -586,12 +586,10 @@ Router.post("/like/:id", async (req, res) => {
   });
 });
 
-Router.get("/members", async (req, res) => {
-  autoSignin(
-    req,
-    res,
-    async (userId, timezone) => {
-      const { groupId } = req.query;
+Router.get("/group/members", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { groupId, timezone } = req.query;
 
       const isValidGroupId = validateStrictString(groupId, "group id");
 
@@ -600,11 +598,11 @@ Router.get("/members", async (req, res) => {
       }
 
       const connection = pool.promise();
-      try {
-        const today = DateTime.now().setZone(timezone);
-        const timezoneOffset = Math.floor(today.offset / 60).toString();
-        const [[groupInfo]] = await connection.query(
-          `SELECT 
+
+      const today = DateTime.now().setZone(timezone);
+      const timezoneOffset = Math.floor(today.offset / 60).toString();
+      const [[groupInfo]] = await connection.query(
+        `SELECT 
             g.visibility, 
             GROUP_CONCAT(
               JSON_OBJECT('user_id', u.user_id, 'name', u.name)
@@ -614,42 +612,38 @@ Router.get("/members", async (req, res) => {
           JOIN users u ON u.user_id = m.user_id
           WHERE g.group_id = ?
           GROUP BY g.group_id`,
-          [groupId]
+        [groupId]
+      );
+
+      if (!groupInfo)
+        return res.send({ success: false, reason: "No such group" });
+
+      groupInfo.members = JSON.parse(`[${groupInfo.members}]`);
+
+      if (
+        groupInfo.visibility ||
+        groupInfo.members.find((member) => member.user_id === userId)
+      ) {
+        const members = await Promise.all(
+          groupInfo.members.map(async (member) => {
+            let totalTime = await redisClient.zscore(
+              `users:${timezoneOffset}:dayTotal`,
+              member.user_id
+            );
+            totalTime = totalTime === null ? 0 : totalTime;
+            const activeSubject = await activeSubjectCache(member.user_id);
+            return { ...member, totalTime, activeSubject };
+          })
         );
 
-        if (!groupInfo)
-          return res.send({ success: false, reason: "No such group" });
-
-        groupInfo.members = JSON.parse(`[${groupInfo.members}]`);
-
-        if (
-          groupInfo.visibility ||
-          groupInfo.members.find((member) => member.user_id === userId)
-        ) {
-          const membersData = await Promise.all(
-            groupInfo.members.map(async (member) => {
-              let totalTime = await redisClient.zscore(
-                `users:${timezoneOffset}:dayTotal`,
-                member.user_id
-              );
-              totalTime = totalTime === null ? 0 : totalTime;
-              const activeSubject = await activeSubjectCache(member.user_id);
-              return { ...member, totalTime, activeSubject };
-            })
-          );
-
-          console.log(membersData);
-          return res.send({ success: true, membersData });
-        }
-        res.send(responseCodes["non-memeber"]);
-      } catch (err) {
-        console.error("Error performing database queries:", err);
-        res.status(500).send({ success: false, reason: "An error occurred" });
+        return res.send({ success: true, members });
       }
-    },
-    undefined,
-    true
-  );
+      res.send(responseCodes["non-memeber"]);
+    } catch (err) {
+      console.error("Error performing database queries:", err);
+      res.status(500).send({ success: false, reason: "An error occurred" });
+    }
+  });
 });
 
 module.exports = Router;

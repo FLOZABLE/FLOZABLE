@@ -75,11 +75,13 @@ export default function TopLeaderBoard({
     <div className={`Box ${styles.TopLeaderBoard}`}>
       <div className={`header ${styles.header}`}>
         <p>Leaderboard</p>
-        <DateSelectorBtn
-          viewDate={viewDate}
-          setViewDate={setViewDate}
-          viewMode={viewer}
-        />
+        <div className={styles.DateSelectorBtn}>
+          <DateSelectorBtn
+            viewDate={viewDate}
+            setViewDate={setViewDate}
+            viewMode={viewer}
+          />
+        </div>
       </div>
       <div className={styles.options}>
         <div className={styles.viewOptions}>

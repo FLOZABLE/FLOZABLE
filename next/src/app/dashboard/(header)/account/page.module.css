@@ -78,6 +78,10 @@
   left: 1px;
 }
 
+.Account .box#accounts .authBtn {
+  margin-left: auto;
+}
+
 .Account .box#profile .emailWrapper .ProfileConfirm {
   margin-left: 3vh;
 }

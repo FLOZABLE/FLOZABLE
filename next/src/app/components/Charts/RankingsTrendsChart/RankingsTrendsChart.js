@@ -38,11 +38,13 @@ function RankingsTrendsChart({ viewDate, setViewDate, viewer, userInfo }) {
     <div className={`Box ${styles.RankingsTrendsChart}`}>
       <div className={`header ${styles.header}`}>
         <p className={styles.name}>Ranking Trend</p>
-        <DateSelectorBtn
-          viewMode={viewer}
-          viewDate={viewDate}
-          setViewDate={setViewDate}
-        />
+        <div className={styles.DateSelectorBtn}>
+          <DateSelectorBtn
+            viewMode={viewer}
+            viewDate={viewDate}
+            setViewDate={setViewDate}
+          />
+        </div>
       </div>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={rankingsTrend} margin={{ right: 20 }}>

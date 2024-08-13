@@ -5,10 +5,12 @@ import React from "react";
 import config from "@/app/utils/config";
 import { useAccountGoogle } from "@/Hooks/accountHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
+import { usePlans } from "@/Hooks/plansHooks";
 
 function GoogleLoginBtn({ scope, required }) {
   const { googleInfo, useAccountGoogleIsLoading, useAccountGoogleRefetch } =
     useAccountGoogle();
+  const { plansRefetch } = usePlans();
 
   const login = useGoogleLogin({
     flow: "auth-code",
@@ -28,6 +30,7 @@ function GoogleLoginBtn({ scope, required }) {
         .then((data) => {
           if (data.success) {
             useAccountGoogleRefetch();
+            plansRefetch();
           }
         })
         .catch((error) => console.error(error));
@@ -39,7 +42,8 @@ function GoogleLoginBtn({ scope, required }) {
     <div className={styles.GoogleLoginBtn} onClick={login}>
       {useAccountGoogleIsLoading ? (
         <CircularLoading />
-      ) : !googleInfo || !googleInfo?.scopes?.some(scope => scope.includes(required)) ? (
+      ) : !googleInfo ||
+        !googleInfo?.scopes?.some((scope) => scope.includes(required)) ? (
         <p>Login with Google</p>
       ) : (
         <p>Logged in as {googleInfo.name}</p>
