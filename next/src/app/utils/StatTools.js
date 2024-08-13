@@ -100,9 +100,11 @@ function updateSubjectsTrendChart(subjects, viewDate, type) {
     const label = `${date.month}/${date.day}`;
     const subjectData = updateTimeUsagePie(subjects, date.toJSDate(), type);
     const day = {
-      data: subjectData,
       label,
     };
+    subjectData.map(subject => {
+      day[subject.subject_id] = subject.value;
+    })
     data.push(day);
   });
   return data;

@@ -5,6 +5,7 @@ import styles from "./TopLeaderBoard.module.css";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { useAccount } from "@/Hooks/accountHooks";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
+import { useRouter } from "next/navigation";
 
 function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
   const { useRankingsData, useRankingsIsLoading } = useRankings(
@@ -13,6 +14,8 @@ function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
   );
 
   const { userInfo } = useAccount();
+
+  const router = useRouter();
 
   if (useRankingsIsLoading || !useRankingsData?.success) {
     return <CircularLoading />;
@@ -37,7 +40,7 @@ function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
             key={i}
             style={{ zIndex: slicedRanking.length - i }}
           >
-            <UserContainer userInfo={user} />
+            <UserContainer userInfo={user} onClick={() => {router.push(`/dashboard/user/${user.user_id}`)}}/>
             <div className={styles.studyTime}>
               {(user.study_time / (60 * 60)).toFixed(2)}hr
             </div>

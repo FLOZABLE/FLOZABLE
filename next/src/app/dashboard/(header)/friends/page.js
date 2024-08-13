@@ -27,7 +27,6 @@ function Friends({}) {
           </div>
           <div
             className={`BoxContainer ${styles.boxContainer}`}
-            id={styles.FriendsActivityViewer}
           >
             <SearchUsersBox />
           </div>
@@ -41,7 +40,7 @@ function Friends({}) {
           </div>
         </div>
         <div className={styles.layer} id={styles.right}>
-          <div
+          {/* <div
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.FriendRequestsViewer}
           >
@@ -51,7 +50,7 @@ function Friends({}) {
               isOnlyFriends={isOnlyFriends}
               setIsOnlyFriends={setIsOnlyFriends}
             />
-          </div>
+          </div> */}
           <div
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.FriendRequestsViewer}

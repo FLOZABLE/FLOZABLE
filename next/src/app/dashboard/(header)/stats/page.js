@@ -2,13 +2,15 @@
 
 import SubjectsPie from "@/app/components/Charts/SubjectsPie/SubjectsPie";
 import styles from "./page.module.css";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/RankingsTrendsChart";
 import { useAccount } from "@/Hooks/accountHooks";
+import { SubjectsContext } from "@/app/utils/Contexts";
 
 function Stats({}) {
   const { userInfo } = useAccount();
+  const { subjects } = useContext(SubjectsContext);
 
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0))
@@ -19,23 +21,19 @@ function Stats({}) {
     <div className="Main">
       <div className={styles.Stats}>
         <div className={styles.layer}>
-          <div className={`BoxContainer ${styles.box}`} id={styles.subjectsPie}>
-            <SubjectsPie viewDate={viewDate} viewer={viewer} />
-          </div>
           <div
-            className={`BoxContainer ${styles.box}`}
-            id={styles.studyTrendChart}
+            className={`BoxContainer ${styles.boxContainer}`}
+            id={styles.StudyTrendChart}
           >
             <StudyTrendChart
               viewDate={viewDate}
               setViewDate={setViewDate}
               viewer={viewer}
+              subjects={subjects}
             />
           </div>
-        </div>
-        <div className={styles.layer}>
           <div
-            className={`BoxContainer ${styles.box}`}
+            className={`BoxContainer ${styles.boxContainer}`}
             id={styles.RankingsTrendsChart}
           >
             <RankingsTrendsChart
@@ -45,6 +43,23 @@ function Stats({}) {
               userInfo={userInfo}
             />
           </div>
+        </div>
+        <div className={styles.layer}></div>
+        <div className={styles.right}>
+          <div className={styles.SubjectsPie}>
+            <SubjectsPie
+              viewDate={viewDate}
+              setViewDate={setViewDate}
+              viewer={viewer}
+              setViewer={setViewer}
+            />
+          </div>
+          {/*           <SubjectsPie
+            viewDate={viewDate}
+            setViewDate={setViewDate}
+            viewer={viewer}
+            setViewer={setViewer}
+          /> */}
         </div>
       </div>
     </div>
