@@ -4,10 +4,9 @@
   padding: 2rem;
 }
 
-.SubjectsPie .date {
-  text-align: center;
-  margin: 0.5rem 0rem;
-  color: var(--gray1);
+.SubjectsPie .options {
+  display: flex;
+  align-items: center;
 }
 
 .SubjectsPie .chartContainer {
@@ -15,6 +14,15 @@
   aspect-ratio: 1 / 1;
   position: relative;
   min-height: 20rem;
+  margin-bottom: 1rem;
+}
+
+.SubjectsPie .chartContainer#noChart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  text-decoration: underline;
 }
 
 .SubjectsPie .totalTime {

@@ -33,6 +33,7 @@ function User({ params }) {
 
     const { userInfo, friends, subjects } = useAccountProfileData;
 
+    console.log(useAccountProfileData, 'test')
     const sortedSubjects = timelineSort(subjects);
 
     setSubjects(sortedSubjects.subjects);
@@ -76,7 +77,7 @@ function User({ params }) {
               viewDate={viewDate}
               setViewDate={setViewDate}
               viewer={viewer}
-              subjectsProp={subjects}
+              subjects={subjects}
             />
           </div>
           <div className={`BoxContainer ${styles.boxContainer}`}>

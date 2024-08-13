@@ -10,56 +10,43 @@ import {
   AreaChart,
   Area,
 } from "recharts";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { updateSubjectsTrendChart } from "@/app/utils/StatTools";
 import { STUDY_TREND_COLORS } from "@/app/utils/Constant";
 import { secondConverter } from "@/app/utils/Tool";
-import { SubjectsContext } from "@/app/utils/Contexts";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import SubjectsLabels from "../SubjectsLabels/SubjectsLabels";
 
 function StudyTrendChart({
   viewDate,
   setViewDate,
-  viewer = "day",
-  subjectsProp,
+  viewer,
+  subjects,
+  isDateSelector,
 }) {
-  const { subjects } = useContext(SubjectsContext);
-
   const [subjectsTrend, setSubjectsTrend] = useState([]);
   const [filteredSubjects, setFilteredSubjects] = useState([]);
 
   useEffect(() => {
     if (!subjects || !viewDate || !viewer) return;
 
-    if (!subjectsProp) {
-      const subjectsTrend = updateSubjectsTrendChart(
-        subjects,
-        viewDate,
-        viewer
-      );
-      setSubjectsTrend(subjectsTrend);
-    } else {
-      const subjectsTrend = updateSubjectsTrendChart(
-        subjectsProp,
-        viewDate,
-        viewer
-      );
-      setSubjectsTrend(subjectsTrend);
-    }
-  }, [subjects, viewDate, viewer, subjectsProp]);
+    const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, viewer);
+    setSubjectsTrend(subjectsTrend);
+  }, [subjects, viewDate, viewer]);
 
   return (
     <div className={`Box ${styles.StudyTrendChart}`}>
       <div className={`header ${styles.header}`}>
-        <p className={styles.name}>Study Time</p>
-        <div className={styles.DateSelectorBtn}>
-          <DateSelectorBtn
-            viewMode={viewer}
-            viewDate={viewDate}
-            setViewDate={setViewDate}
-          />
-        </div>
+        <p className={styles.name}>Study Trend</p>
+        {isDateSelector ? (
+          <div className={styles.DateSelectorBtn}>
+            <DateSelectorBtn
+              viewMode={viewer}
+              viewDate={viewDate}
+              setViewDate={setViewDate}
+            />
+          </div>
+        ) : null}
       </div>
       <div className={`customScroll ${styles.subjectsLabels}`}>
         <SubjectsLabels
@@ -73,46 +60,36 @@ function StudyTrendChart({
           margin={{
             right: 20,
           }}
-          data={subjectsTrend.map((day, i) => {
-            const data = day.data.reduce((accumulator, subject) => {
-              if (!filteredSubjects.includes(subject.subject_id)) {
-                accumulator[subject.subject_id] = subject.value;
-              }
-              return accumulator;
-            }, {});
-            return { label: day.label, ...data };
-          })}
+          data={subjectsTrend}
         >
           <defs>
-            {subjectsTrend.length
-              ? subjectsTrend[0].data.map((subject, i) => {
-                  return (
-                    <linearGradient
-                      key={i}
-                      id={subject.subject_id}
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="5%"
-                        stopColor={
-                          STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]
-                        }
-                        stopOpacity={0.8}
-                      />
-                      <stop
-                        offset="70%"
-                        stopColor={
-                          STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]
-                        }
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  );
-                })
-              : null}
+            {subjects.map((subject, i) => {
+              return (
+                <linearGradient
+                  key={i}
+                  id={subject.subject_id}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="5%"
+                    stopColor={
+                      STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]
+                    }
+                    stopOpacity={0.8}
+                  />
+                  <stop
+                    offset="70%"
+                    stopColor={
+                      STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]
+                    }
+                    stopOpacity={0}
+                  />
+                </linearGradient>
+              );
+            })}
           </defs>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="label" />
@@ -128,21 +105,19 @@ function StudyTrendChart({
               return `${value} ${type}`;
             }}
           />
-          {subjectsTrend.length
-            ? subjectsTrend[0].data.map((subject, i) => {
-                return (
-                  <Area
-                    name={subject.name}
-                    type="monotone"
-                    key={subject.subject_id}
-                    dataKey={subject.subject_id}
-                    stroke={STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]}
-                    activeDot={{ r: 8 }}
-                    fill={`url(#${subject.subject_id})`}
-                  />
-                );
-              })
-            : null}
+          {subjects.map((subject, i) => {
+            return (
+              <Area
+                name={subject.name}
+                type="monotone"
+                key={subject.subject_id}
+                dataKey={subject.subject_id}
+                stroke={STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]}
+                activeDot={{ r: 8 }}
+                fill={`url(#${subject.subject_id})`}
+              />
+            );
+          })}
         </AreaChart>
       </ResponsiveContainer>
     </div>
