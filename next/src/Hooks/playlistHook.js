@@ -1,5 +1,5 @@
 import { getPlaylistsSpotify, getSpotifyInfo } from "@/Api/playlistsApi";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "./accountHooks";
 
 function useSpotifyInfo() {

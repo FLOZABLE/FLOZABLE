@@ -1,4 +1,10 @@
-import React, { useRef, useState, useEffect, useCallback, useContext } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useContext,
+} from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -6,7 +12,11 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import styles from "./MyGroupsViewer.module.css";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
-import { CallOptionsContext, GroupsContext, ResponseContext } from "@/app/utils/Contexts";
+import {
+  CallOptionsContext,
+  GroupsContext,
+  ResponseContext,
+} from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
 import { mediaSocket } from "@/app/utils/mediaSocket";
 import config from "@/app/utils/config";
@@ -16,7 +26,7 @@ function MyGroupsViewer({
   mode,
   groupsViewerRef,
   setIsEditGroupModal,
-  setRightClickedMember
+  setRightClickedMember,
 }) {
   const { myGroups, setMyGroups } = useContext(GroupsContext);
   const { userInfo } = useAccount();
@@ -38,48 +48,58 @@ function MyGroupsViewer({
         setTimeout(() => {
           groupsViewerRef.current.swiper.slideTo(myGroups.length - 1);
         }, 1000);
-      };
+      }
       return;
-    };
+    }
 
     setTimeout(() => {
-      const groupIndex = myGroups.findIndex(group => group.group_id === selectedGroupId);
+      const groupIndex = myGroups.findIndex(
+        (group) => group.group_id === selectedGroupId
+      );
       if (groupsViewerRef.current && groupIndex !== -1) {
         groupsViewerRef.current.swiper.slideTo(groupIndex);
-      };
+      }
     }, 1000);
   }, [myGroups, groupsViewerRef]);
 
-  const leaveGroup = useCallback((group) => {
-    fetch(`${config.server}/groups/leave`,
-      {
+  const leaveGroup = useCallback(
+    (group) => {
+      fetch(`${config.server}/groups/leave`, {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ groupId: group.group_id }),
         credentials: "include",
-      }).then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setResponse({ success: true, msg: "You left " + group.name })
-        }
       })
-    setMyGroups(myGroups.filter((g) => g.group_id !== group.group_id));
-  }, [myGroups]);
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            setResponse({ success: true, msg: "You left " + group.name });
+          }
+        });
+      setMyGroups(myGroups.filter((g) => g.group_id !== group.group_id));
+    },
+    [myGroups]
+  );
 
   return (
     <div
-      className={`${styles.MyGroupsViewer} ${mode === "study" ? styles.study : ""
-        }`}
+      className={`${styles.MyGroupsViewer} ${
+        mode === "study" ? styles.study : ""
+      }`}
     >
-      {myGroups.length ?
+      {!myGroups.length ? (
+        <div className={styles.noGroup}>
+          You haven&apos;t joined any groups yet!
+        </div>
+      ) : (
         <Swiper
           slidesPerView={1}
           loop={true}
           pagination={{
             clickable: true,
-            dynamicBullets: true
+            dynamicBullets: true,
           }}
           navigation={true}
           modules={[Pagination, Navigation]}
@@ -102,7 +122,7 @@ function MyGroupsViewer({
             }
             return (
               <SwiperSlide key={i} className={styles.groupsWrapper}>
-                {focus ?
+                {focus ? (
                   <MyGroupContainer
                     group={group}
                     leaveGroup={leaveGroup}
@@ -110,15 +130,13 @@ function MyGroupsViewer({
                     mode={mode}
                     isMine={group.leader === userInfo?.user_id}
                     setRightClickedMember={setRightClickedMember}
-                  /> : null
-                }
+                  />
+                ) : null}
               </SwiperSlide>
-            )
+            );
           })}
         </Swiper>
-        :
-        <div className={styles.noGroup}>You haven&apos;t joined any groups yet!</div>
-      }
+      )}
     </div>
   );
 }

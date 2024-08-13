@@ -16,6 +16,7 @@
 import { DateTime } from "luxon";
 
 function timelineSort(subjects) {
+  if (!subjects || !subjects.length) return [];
   subjects.sort((a, b) => a.created_at - b.created_at);
 
   const groupedSubjects = {};

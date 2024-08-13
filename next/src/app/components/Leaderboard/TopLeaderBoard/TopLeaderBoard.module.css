@@ -2,6 +2,11 @@
   justify-content: left;
 }
 
+.TopLeaderBoard .header .DateSelectorBtn {
+  font-size: 0.8rem;
+  display: flex;
+}
+
 .TopLeaderBoard .options {
   display: flex;
   border-bottom: 0.1rem var(--gray0) solid;
