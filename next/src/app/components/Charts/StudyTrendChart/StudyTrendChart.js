@@ -53,11 +53,13 @@ function StudyTrendChart({
     <div className={`Box ${styles.StudyTrendChart}`}>
       <div className={`header ${styles.header}`}>
         <p className={styles.name}>Study Time</p>
-        <DateSelectorBtn
-          viewMode={viewer}
-          viewDate={viewDate}
-          setViewDate={setViewDate}
-        />
+        <div className={styles.DateSelectorBtn}>
+          <DateSelectorBtn
+            viewMode={viewer}
+            viewDate={viewDate}
+            setViewDate={setViewDate}
+          />
+        </div>
       </div>
       <div className={`customScroll ${styles.subjectsLabels}`}>
         <SubjectsLabels

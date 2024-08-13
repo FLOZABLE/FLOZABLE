@@ -9,7 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DEFAULT_PLAN } from "./Constant";
 import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
-import { usePlan } from "@/Hooks/plansHooks";
+import { usePlans } from "@/Hooks/plansHooks";
 import { useGetGroups } from "@/Hooks/groupsHook";
 import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
 
@@ -116,7 +116,7 @@ function SubjectsProvider({ children }) {
   const [planModal, setPlanModal] = useState(DEFAULT_PLAN);
 
   const queryResult = useSubjects();
-  const { data: planData, refetch: refetchPlan } = usePlan(userInfo);
+  const { data: planData, refetch: refetchPlan } = usePlans(userInfo);
 
   const { useSubjectsData } = queryResult;
 

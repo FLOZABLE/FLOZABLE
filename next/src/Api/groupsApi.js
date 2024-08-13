@@ -13,4 +13,22 @@ async function getGroups() {
   return data;
 }
 
-export { getGroups };
+async function getGroupMembers(group_id) {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const response = await fetch(
+    `${config.server}/groups/group/members?groupId=${group_id}&timezone=${timezone}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+  const data = await response.json();
+
+  return data;
+}
+
+export { getGroups, getGroupMembers };

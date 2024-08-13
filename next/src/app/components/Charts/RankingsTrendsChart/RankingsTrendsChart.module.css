@@ -9,6 +9,10 @@
   align-items: center;
 }
 
+.RankingsTrendsChart .header .DateSelectorBtn {
+  font-size: 1rem;
+}
+
 .RankingsTrendsChart .header .name {
   margin-right: 1.5rem;
 }

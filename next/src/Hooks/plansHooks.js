@@ -1,13 +1,22 @@
 import { getPlans, getPlansPlanUsers } from "@/Api/plansApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-function usePlan(userInfo) {
-  return useQuery({
-    queryKey: [`usePlan`],
+function usePlans(userInfo) {
+  const queryResult = useQuery({
+    queryKey: [`usePlans`],
     queryFn: getPlans,
     staleTime: 1000 * 60 * 10,
     enabled: !!userInfo,
   });
+
+  const { data: plansData, isLoading: plansIsLoading, refetch: plansRefetch } = queryResult;
+
+  return {
+    plansData,
+    plansIsLoading,
+    plansRefetch,
+    ...queryResult,
+  };
 }
 
 function usePlansPlanUsers(planId) {
@@ -35,4 +44,4 @@ function usePlansPlanUsers(planId) {
   };
 }
 
-export { usePlan, usePlansPlanUsers };
+export { usePlans, usePlansPlanUsers };

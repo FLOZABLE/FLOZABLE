@@ -19,12 +19,16 @@ import ExtensionSetting from "@/app/components/Account/ExtensionSetting/Extensio
 import config from "@/app/utils/config";
 import { GoogleCalendar, SpotifyLogo, YouTubeIcon } from "@/app/utils/Svg";
 import { ResponseContext } from "@/app/utils/Contexts";
-import { useAccount } from "@/Hooks/accountHooks";
+import { useAccount, useAccountGoogle } from "@/Hooks/accountHooks";
 import SubjectsManager from "@/app/components/Subjects/SubjectsManager/SubjectsManager";
+import { useSpotifyInfo } from "@/Hooks/playlistHook";
 
 function Account() {
   const { userInfo } = useAccount();
   const { setResponse } = useContext(ResponseContext);
+
+  const { googleInfo } = useAccountGoogle();
+  const { spotifyInfo } = useSpotifyInfo();
 
   const [imageSrc, setImageSrc] = useState(null);
   const [name, setName] = useState("");
@@ -308,12 +312,23 @@ function Account() {
                       <GoogleCalendar />
                     </div>
                     <div className={styles.explanation}>
-                      <p>
-                        You haven&apos;t connected your Google Calendar yet or
-                        you aren&apos;t authorized. Please authorize our
-                        application to access your Google Calendar by signing in
-                        with your Google account here.
-                      </p>
+                      {!googleInfo?.scopes?.some((scope) =>
+                        scope.includes("calendar")
+                      ) ? (
+                        <p>
+                          You haven&apos;t connected your Google Calendar yet or
+                          you aren&apos;t authorized. Please authorize our
+                          application to access your Google Calendar by signing
+                          in with your Google account here.
+                        </p>
+                      ) : (
+                        <p>
+                          {`You've successfully connected your Google Calendar!
+                          Our app now has access to your calendar events,
+                          allowing you to seamlessly integrate your schedule
+                          with our platform.`}
+                        </p>
+                      )}
                     </div>
                     <div className={styles.authBtn}>
                       <div>
@@ -332,14 +347,25 @@ function Account() {
                       <YouTubeIcon />
                     </div>
                     <div className={styles.explanation}>
-                      <p>
-                        You haven&apos;t connected your YouTube Account yet or
-                        you aren&apos;t authorized. Please authorize our
-                        application to access your YouTube Playlists here.
-                      </p>
+                      {!googleInfo?.scopes?.some((scope) =>
+                        scope.includes("youtube")
+                      ) ? (
+                        <p>
+                          You haven&apos;t connected your YouTube Account yet or
+                          you aren&apos;t authorized. Please authorize our
+                          application to access your YouTube Playlists here.
+                        </p>
+                      ) : (
+                        <p>
+                          {`Your YouTube account is now connected! You can now access your playlists directly within our app to enhance your experience with personalized content.`}
+                        </p>
+                      )}
                     </div>
                     <div className={styles.authBtn}>
-                      <GoogleLoginBtn scope="https://www.googleapis.com/auth/youtube.force-ssl" required="youtube" />
+                      <GoogleLoginBtn
+                        scope="https://www.googleapis.com/auth/youtube.force-ssl"
+                        required="youtube"
+                      />
                     </div>
                   </div>
                   <div>
@@ -347,11 +373,19 @@ function Account() {
                       <SpotifyLogo />
                     </div>
                     <div className={styles.explanation}>
-                      <p>
-                        You haven&apos;t connected your Spotify Account yet or
-                        you aren&apos;t authorized. Please authorize our
-                        application to access your Spotify Playlists here.
-                      </p>
+                      {!spotifyInfo ? (
+                        <p>
+                          You haven&apos;t connected your Spotify Account yet or
+                          you aren&apos;t authorized. Please authorize our
+                          application to access your Spotify Playlists here.
+                        </p>
+                      ) : (
+                        <p>
+                          Spotify is successfully connected! Enjoy your
+                          playlists within our app and set the perfect mood for
+                          your tasks.
+                        </p>
+                      )}
                     </div>
                     <div className={styles.authBtn}>
                       <SpotifyAuthBtn />
