@@ -1,11 +1,10 @@
 const mysql = require("mysql2");
-
-const database_info = JSON.parse(process.env.DATABASE);
+console.log(process.env.NODE_ENV)
 const pool = mysql.createPool({
-  host: database_info.host,
-  user: database_info.user,
-  password: database_info.password,
-  database: database_info.name,
+  host: process.env.MARIA_HOST,
+  user: process.env.MARIA_USER,
+  password: process.env.MARIA_PASSWORD,
+  database: process.env.MARIA_DATABASE,
   connectTimeout : 10000,
   multipleStatements: true,
   connectionLimit: 100,
