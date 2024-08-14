@@ -6,8 +6,16 @@
 }
 
 .SubjectsLabels .label {
+  transition: .3s ease-in-out color;
+}
+
+.SubjectsLabels .label {
   cursor: pointer;
   font-size: 1.2rem;
+}
+
+.SubjectsLabels .label.filtered {
+  color: var(--gray0);
 }
 
 .SubjectsLabels .label:first-child {
