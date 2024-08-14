@@ -60,7 +60,17 @@ function StudyTrendChart({
           margin={{
             right: 20,
           }}
-          data={subjectsTrend}
+          data={subjectsTrend.map((day) => {
+            const newDay = {};
+            Object.keys(day).map((subjectId) => {
+              if (!filteredSubjects.includes(subjectId)) {
+                newDay[subjectId] = day[subjectId];
+              }
+            });
+            newDay.label = day.label;
+
+            return newDay;
+          })}
         >
           <defs>
             {subjects.map((subject, i) => {
