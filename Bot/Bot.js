@@ -118,11 +118,11 @@ async function createBots(length) {
 
     if (newBots.length) {
       await connection.query(
-        `INSERT INTO users (user_id, name, hashed_password, salt, timezone, created_at, type) VALUES ?`,
+        `INSERT IGNORE INTO users (user_id, name, hashed_password, salt, timezone, created_at, type) VALUES ?`,
         [newBots]
       );
       await connection.query(
-        `INSERT INTO subjects (subject_id, name, user_id, color, created_at) VALUES ?`,
+        `INSERT IGNORE INTO subjects (subject_id, name, user_id, color, created_at) VALUES ?`,
         [botsSubjects]
       );
     }
@@ -357,7 +357,9 @@ async function botSelector(numbers) {
     }
 
     //update active bot list in redis
-    redisClient.sadd("activeBots", activeBots);
+    if (activeBots.length) {
+      redisClient.sadd("activeBots", activeBots);
+    }
   } catch (err) {
     console.log(err);
   }
@@ -528,7 +530,7 @@ async function createGroups(length) {
     if (newGroups.length) {
       await connection.query(
         `
-        INSERT INTO \`groups\`
+        INSERT IGNORE INTO \`groups\`
         (group_id, name, description, tags, visibility, password, salt, max_members, created_at, leader, color, goal_hr, members_length )
         VALUES ?
       `,
@@ -537,7 +539,7 @@ async function createGroups(length) {
 
       await connection.query(
         `
-        INSERT INTO \`chatrooms\`
+        INSERT IGNORE INTO \`chatrooms\`
         (chatroom_id, name)
         VALUES ?
       `,
@@ -547,13 +549,13 @@ async function createGroups(length) {
 
     if (newGroupsMembers.length) {
       await connection.query(
-        `INSERT INTO group_members (group_id, user_id, joined_at) VALUES ?`,
+        `INSERT IGNORE INTO group_members (group_id, user_id, joined_at) VALUES ?`,
         [newGroupsMembers]
       );
     }
     if (newGroupsLikes.length) {
       await connection.query(
-        `INSERT INTO group_likes (group_id, user_id) VALUES ?`,
+        `INSERT IGNORE INTO group_likes (group_id, user_id) VALUES ?`,
         [newGroupsLikes]
       );
     }
@@ -616,7 +618,7 @@ async function randomFriend(min, max) {
 
     if (newFriends.length) {
       await connection.query(
-        `INSERT INTO friends (user_id, friend_id, date) VALUES ?`,
+        `INSERT IGNORE INTO friends (user_id, friend_id, date) VALUES ?`,
         [newFriends.map((friend) => [...friend, date])]
       );
     }
@@ -737,7 +739,7 @@ async function createBotRankings() {
     botDailyRanking[key] = botDailyRanking[key].sort((a, b) => b.t - a.t);
     await connection.query(`DELETE FROM dailyRanking WHERE date = ?`, [key]);
     await connection.query(
-      `INSERT INTO dailyRanking SET date = ?, ranking = ?`,
+      `INSERT IGNORE INTO dailyRanking SET date = ?, ranking = ?`,
       [key, JSON.stringify(botDailyRanking[key])]
     );
   }
@@ -748,7 +750,7 @@ async function createBotRankings() {
     botWeeklyRanking[key] = botWeeklyRanking[key].sort((a, b) => b.t - a.t);
     await connection.query(`DELETE FROM weeklyRanking WHERE date = ?`, [key]);
     await connection.query(
-      `INSERT INTO weeklyRanking SET date = ?, ranking = ?`,
+      `INSERT IGNORE INTO weeklyRanking SET date = ?, ranking = ?`,
       [key, JSON.stringify(botWeeklyRanking[key])]
     );
   }
@@ -759,7 +761,7 @@ async function createBotRankings() {
     botMonthlyRanking[key] = botMonthlyRanking[key].sort((a, b) => b.t - a.t);
     await connection.query(`DELETE FROM monthlyRanking WHERE date = ?`, [key]);
     await connection.query(
-      `INSERT INTO monthlyRanking SET date = ?, ranking = ?`,
+      `INSERT IGNORE INTO monthlyRanking SET date = ?, ranking = ?`,
       [key, JSON.stringify(botMonthlyRanking[key])]
     );
   }

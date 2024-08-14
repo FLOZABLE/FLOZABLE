@@ -160,10 +160,7 @@ async function createPlansTable() {
     priority TINYINT UNSIGNED,
     completed TINYINT DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
-    CONSTRAINT fk_user_subject
-      FOREIGN KEY (user_id, subject_id)
-      REFERENCES subjects(user_id, subject_id)
+    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
   );
   `);
 }
