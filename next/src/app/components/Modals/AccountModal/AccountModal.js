@@ -16,6 +16,7 @@ import SigninWithGoogleBtn from "@/app/components/Buttons/SigninWithGoogleBtn/Si
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
 import { useAccount } from "@/Hooks/accountHooks";
+import GoogleLoginBtn from "../../Buttons/GoogleLoginBtn/GoogleLoginBtn";
 
 function AccountModal({}) {
   const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
@@ -90,7 +91,7 @@ function AccountModal({}) {
                 }}
               />
             </div>
-            <SigninWithGoogleBtn infoText={"Continue With Google"} />
+            <GoogleLoginBtn scope={"email profile"} required={"email"} />
             <BlobBtn
               onClick={() => {
                 fetch(`${config.server}/auth/signin`, {
@@ -165,7 +166,7 @@ function AccountModal({}) {
                 }}
               />
             </div>
-            <SigninWithGoogleBtn infoText={"Register With Google"} />
+            <GoogleLoginBtn scope={"email profile"} required={"email"} />
             <BlobBtn
               onClick={() => {
                 fetch(`${config.server}/auth/signup`, {
