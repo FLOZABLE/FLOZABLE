@@ -71,6 +71,7 @@ Router.get("/", async (req, res) => {
       })
       .filter((ranking) => ranking.name);
 
+      console.log('gdddd')
     res.send({ success: true, rankings: rankingsUsers });
   } catch (err) {
     console.log(err);

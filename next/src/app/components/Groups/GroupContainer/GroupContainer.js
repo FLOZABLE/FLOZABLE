@@ -16,18 +16,33 @@ import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 import { useAccount } from "@/Hooks/accountHooks";
 import GroupJoinBtn from "../../Buttons/GroupJoinBtn/GroupJoinBtn";
+import { secondConverter } from "@/app/utils/Tool";
 
-function GroupContainer({ groupInfo, isSearched = true }) {
+function GroupContainer({ groupInfo, isSearched = true, rankings }) {
   const { userInfo } = useAccount();
 
   const [members, setMembers] = useState([]);
   const [likes, setLikes] = useState([]);
+  const [totalTime, setTotalTime] = useState("0 h");
 
   useEffect(() => {
     if (!groupInfo) return;
     setMembers(groupInfo.members);
     setLikes(groupInfo.likes);
   }, [groupInfo]);
+
+  useEffect(() => {
+    if (!rankings || !members.length) return;
+    const groupMembers = rankings.filter((user) =>
+      members.includes(user.user_id)
+    );
+    const totalTime = groupMembers.reduce(
+      (partialTime, a) => partialTime + a.study_time,
+      0
+    );
+    const { value, type } = secondConverter(totalTime / members.length);
+    setTotalTime(`${value} ${type}`);
+  }, [members, rankings]);
 
   return (
     <div
@@ -70,6 +85,7 @@ function GroupContainer({ groupInfo, isSearched = true }) {
           <i>
             <FontAwesomeIcon icon={faStopwatch} />
           </i>
+          <p>{totalTime}</p>
         </div>
         <div>
           <i>
@@ -101,7 +117,7 @@ function GroupContainer({ groupInfo, isSearched = true }) {
         <GroupJoinBtn groupInfo={groupInfo} />
         <LikeBtn
           liked={likes.includes(userInfo?.user_id)}
-          id={groupInfo?.group_id}
+          id={groupInfo.group_id}
         />
       </div>
     </div>
