@@ -5,17 +5,18 @@ import styles from "./page.module.css";
 import { useContext, useState } from "react";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/RankingsTrendsChart";
-import { useAccount } from "@/Hooks/accountHooks";
-import { SubjectsContext } from "@/app/utils/Contexts";
+import { SubjectsContext, UserInfoContext } from "@/app/utils/Contexts";
 
 function Stats({}) {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
   const { subjects } = useContext(SubjectsContext);
 
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0))
   );
   const [viewer, setViewer] = useState("day");
+
+  console.log(userInfo)
 
   return (
     <div className="Main">

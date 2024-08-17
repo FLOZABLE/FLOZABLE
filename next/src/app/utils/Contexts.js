@@ -15,7 +15,6 @@ import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-const AuthContext = createContext({});
 const SubjectsContext = createContext({});
 const PlansContext = createContext({});
 const UserInfoContext = createContext({});
@@ -64,7 +63,9 @@ function AccountProvider({ children }) {
   const [userInfo, setUserInfo] = useState(null);
   const [notifications, setNotifications] = useState([]);
 
-  const { data: useAccountData, refetch: refetchUseAccountData } = useAccount();
+  const queryResult = useAccount();
+
+  const { useAccountData } = queryResult;
 
   useEffect(() => {
     if (useAccountData?.code === 401) {
@@ -96,7 +97,7 @@ function AccountProvider({ children }) {
 
   return (
     <UserInfoContext.Provider
-      value={{ userInfo, setUserInfo, refetchUseAccountData }}
+      value={{ userInfo, setUserInfo, ...useAccountData }}
     >
       <NotificationsContext.Provider
         value={{ notifications, setNotifications }}
@@ -272,6 +273,8 @@ function ModalsProvider({ children }) {
   useEffect(() => {
     if (userInfo === false) {
       setIsAccountModal(true);
+    } else {
+      setIsAccountModal(false);
     }
   }, [userInfo]);
 
@@ -398,7 +401,7 @@ function WorkersProvider({ children }) {
 
 export {
   AppProvider,
-  AuthContext,
+  UserInfoContext,
   NotificationsContext,
   SubjectsContext,
   PlansContext,

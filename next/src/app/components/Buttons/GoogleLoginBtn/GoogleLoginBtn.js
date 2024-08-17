@@ -3,19 +3,18 @@ import styles from "./GoogleLoginBtn.module.css";
 import { useGoogleLogin } from "@react-oauth/google";
 import React, { useContext } from "react";
 import config from "@/app/utils/config";
-import { useAccount, useAccountGoogle } from "@/Hooks/accountHooks";
+import { useAccountGoogle } from "@/Hooks/accountHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { usePlans } from "@/Hooks/plansHooks";
-import { ResponseContext } from "@/app/utils/Contexts";
+import { ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
 
 function GoogleLoginBtn({ scope, required }) {
-  const {userInfo,useAccountRefetch} = useAccount();
+  const { userInfo, useAccountRefetch } = useContext(UserInfoContext);
   const { googleInfo, useAccountGoogleIsLoading, useAccountGoogleRefetch } =
     useAccountGoogle();
   const { plansRefetch } = usePlans();
 
   const { setResponse } = useContext(ResponseContext);
-
 
   const login = useGoogleLogin({
     flow: "auth-code",
@@ -37,6 +36,7 @@ function GoogleLoginBtn({ scope, required }) {
         .then((data) => {
           setResponse(data);
           if (data.success) {
+            setIsAccountModal(false);
             if (!userInfo) {
               useAccountRefetch();
             }

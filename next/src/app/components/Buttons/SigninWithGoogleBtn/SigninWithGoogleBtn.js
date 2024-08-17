@@ -7,14 +7,14 @@ import {
   ResponseContext,
   TutorialsContext,
   ModalsContext,
+  UserInfoContext,
 } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
-import { useAccount } from "@/Hooks/accountHooks";
 
 function SigninWithGoogleBtn({ infoText }) {
   const { setResponse } = useContext(ResponseContext);
   const { setTutorial } = useContext(TutorialsContext);
-  const { useAccountRefetch } = useAccount();
+  const { useAccountRefetch } = useContext(UserInfoContext);
   const { setIsAccountModal } = useContext(ModalsContext);
 
   const router = useRouter();

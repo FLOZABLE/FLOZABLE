@@ -1,9 +1,10 @@
 import { getThemes, getThemesUser } from "@/Api/themesApi";
 import { useQuery } from "@tanstack/react-query";
-import { useAccount } from "./accountHooks";
+import { UserInfoContext } from "@/app/utils/Contexts";
+import { useContext } from "react";
 
 function useThemes() {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
 
   const queryResult = useQuery({
     queryKey: [`getThemes`],
@@ -18,7 +19,7 @@ function useThemes() {
 }
 
 function useThemesUser() {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
 
   const queryResult = useQuery({
     queryKey: [`getThemesUser`],

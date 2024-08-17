@@ -1,15 +1,16 @@
 import { useRankings } from "@/Hooks/rankingsHooks";
 import styles from "./Leaderboard.module.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import UserContainer from "../../Users/UserContainer/UserContainer";
-import { useAccount } from "@/Hooks/accountHooks";
+import { UserInfoContext } from "@/app/utils/Contexts";
 
 const PAGE_LENGTH = 30;
 
 export default function Leaderboard({ viewer, viewDate, isOnlyFriends }) {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
+  
   const { useRankingsData, useRankingsIsLoading } = useRankings(
     viewer,
     viewDate

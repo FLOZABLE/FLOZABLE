@@ -1,9 +1,10 @@
 import { getSubjects, getSubjectUsers } from "@/Api/subjectsApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAccount } from "./accountHooks";
+import { UserInfoContext } from "@/app/utils/Contexts";
+import { useContext } from "react";
 
 function useSubjects() {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
 
   const queryResult = useQuery({
     queryKey: [`useSubjects`],

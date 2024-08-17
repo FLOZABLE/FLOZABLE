@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./GroupContainer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,12 +14,12 @@ import GroupMemCounter from "../GroupMemCounter/GroupMemCounter";
 import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
 import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
-import { useAccount } from "@/Hooks/accountHooks";
 import GroupJoinBtn from "../../Buttons/GroupJoinBtn/GroupJoinBtn";
 import { secondConverter } from "@/app/utils/Tool";
+import { UserInfoContext } from "@/app/utils/Contexts";
 
 function GroupContainer({ groupInfo, isSearched = true, rankings }) {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
 
   const [members, setMembers] = useState([]);
   const [likes, setLikes] = useState([]);

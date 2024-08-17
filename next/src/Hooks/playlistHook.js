@@ -1,9 +1,10 @@
 import { getPlaylistsSpotify, getSpotifyInfo } from "@/Api/playlistsApi";
 import { useQuery } from "@tanstack/react-query";
-import { useAccount } from "./accountHooks";
+import { UserInfoContext } from "@/app/utils/Contexts";
+import { useContext } from "react";
 
 function useSpotifyInfo() {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
   const queryResult = useQuery({
     queryKey: [`useSpotifyInfo`],
     queryFn: getSpotifyInfo,

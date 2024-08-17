@@ -14,9 +14,8 @@ import {
   HeaderMeteor,
   HeaderTarget,
 } from "@/app/utils/Svg";
-import { SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
+import { SubjectsContext, TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
-import { useAccount } from "@/Hooks/accountHooks";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import NotificationsBtn from "../../Notifications/NotificationsBtn/NotificationsBtn";
 import Link from "next/link";
@@ -33,7 +32,7 @@ function HeaderEl({ children, value, title }) {
   );
 }
 function Header({}) {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
   const { groupedSubjects } = useContext(SubjectsContext);
 
   const { tutorialBoxRef, tutorialTextRef, tutorial } =
