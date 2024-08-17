@@ -3,9 +3,10 @@ import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import styles from "./TopLeaderBoard.module.css";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
-import { useAccount } from "@/Hooks/accountHooks";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import { useRouter } from "next/navigation";
+import { UserInfoContext } from "@/app/utils/Contexts";
+import { useContext } from "react";
 
 function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
   const { useRankingsData, useRankingsIsLoading } = useRankings(
@@ -13,7 +14,7 @@ function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
     viewDate
   );
 
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
 
   const router = useRouter();
 
@@ -40,7 +41,12 @@ function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
             key={i}
             style={{ zIndex: slicedRanking.length - i }}
           >
-            <UserContainer userInfo={user} onClick={() => {router.push(`/dashboard/user/${user.user_id}`)}}/>
+            <UserContainer
+              userInfo={user}
+              onClick={() => {
+                router.push(`/dashboard/user/${user.user_id}`);
+              }}
+            />
             <div className={styles.studyTime}>
               {(user.study_time / (60 * 60)).toFixed(2)}hr
             </div>

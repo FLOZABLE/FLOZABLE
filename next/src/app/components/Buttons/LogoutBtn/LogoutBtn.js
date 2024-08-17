@@ -1,10 +1,11 @@
 import { IconLogout } from "@/app/utils/Svg";
 import styles from "./LogoutBtn.module.css";
-import { useAccount } from "@/Hooks/accountHooks";
 import { getAuthLogout } from "@/Api/authApi";
+import { useContext } from "react";
+import { UserInfoContext } from "@/app/utils/Contexts";
 
 export default function LogoutBtn() {
-  const { clearAccountData } = useAccount();
+  const { clearAccountData } = useContext(UserInfoContext);
 
   return (
     <div

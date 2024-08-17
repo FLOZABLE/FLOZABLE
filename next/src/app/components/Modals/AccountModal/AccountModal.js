@@ -10,17 +10,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useEffect, useState } from "react";
 import config from "@/app/utils/config";
-import { ModalsContext, ResponseContext } from "@/app/utils/Contexts";
+import {
+  ModalsContext,
+  ResponseContext,
+  UserInfoContext,
+} from "@/app/utils/Contexts";
 import ArrowOptionBtn from "@/app/components/Buttons/ArrowOptionBtn/ArrowOptionBtn";
-import SigninWithGoogleBtn from "@/app/components/Buttons/SigninWithGoogleBtn/SigninWithGoogleBtn";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
-import { useAccount } from "@/Hooks/accountHooks";
 import GoogleLoginBtn from "../../Buttons/GoogleLoginBtn/GoogleLoginBtn";
 
 function AccountModal({}) {
   const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
-  const { useAccountRefetch } = useAccount();
+  const { useAccountRefetch } = useContext(UserInfoContext);
   const { setResponse } = useContext(ResponseContext);
 
   const router = useRouter();

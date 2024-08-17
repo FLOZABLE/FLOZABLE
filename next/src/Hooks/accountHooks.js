@@ -4,7 +4,9 @@ import {
   getAccountProfile,
   getAccountProfileSubjects,
 } from "@/Api/accountApi";
+import { UserInfoContext } from "@/app/utils/Contexts";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useContext } from "react";
 
 function useAccount() {
   const queryClient = useQueryClient();
@@ -21,8 +23,6 @@ function useAccount() {
     isLoading: useAccountIsLoading,
   } = queryResult;
 
-  const userInfo = useAccountData?.success ? useAccountData.userInfo : false;
-
   const clearAccountData = () => {
     queryClient.removeQueries({ queryKey: "useAccount" });
   };
@@ -31,14 +31,13 @@ function useAccount() {
     useAccountData,
     useAccountRefetch,
     useAccountIsLoading,
-    userInfo,
     clearAccountData,
     ...queryResult,
   };
 }
 
 function useAccountGoogle() {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
 
   const queryResult = useQuery({
     queryKey: [`useAccountGoogle`],

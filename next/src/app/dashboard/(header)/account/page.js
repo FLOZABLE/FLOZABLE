@@ -18,13 +18,13 @@ import SpotifyAuthBtn from "@/app/components/Spotify/SpotifyAuthBtn/SpotifyAuthB
 import ExtensionSetting from "@/app/components/Account/ExtensionSetting/ExtensionSetting";
 import config from "@/app/utils/config";
 import { GoogleCalendar, SpotifyLogo, YouTubeIcon } from "@/app/utils/Svg";
-import { ResponseContext } from "@/app/utils/Contexts";
-import { useAccount, useAccountGoogle } from "@/Hooks/accountHooks";
+import { ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
+import { useAccountGoogle } from "@/Hooks/accountHooks";
 import SubjectsManager from "@/app/components/Subjects/SubjectsManager/SubjectsManager";
 import { useSpotifyInfo } from "@/Hooks/playlistHook";
 
 function Account() {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
   const { setResponse } = useContext(ResponseContext);
 
   const { googleInfo } = useAccountGoogle();

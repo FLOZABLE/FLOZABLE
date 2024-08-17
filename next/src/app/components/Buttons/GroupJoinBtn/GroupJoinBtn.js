@@ -1,11 +1,10 @@
-import { useAccount } from "@/Hooks/accountHooks";
 import styles from "./GroupJoinBtn.module.css";
-import { ModalsContext } from "@/app/utils/Contexts";
+import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
 import { useContext } from "react";
 import Link from "next/link";
 
 export default function GroupJoinBtn({ groupInfo }) {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
 
   const { setJoinGroupModal } = useContext(ModalsContext);
 
