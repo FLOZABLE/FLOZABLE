@@ -6,6 +6,7 @@
   align-items: center;
   border-radius: 0.5rem;
   padding: 0.5rem 0rem;
+  cursor: pointer;
 }
 
 .LogoutBtn i {

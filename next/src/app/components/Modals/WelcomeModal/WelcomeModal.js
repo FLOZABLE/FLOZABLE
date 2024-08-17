@@ -4,40 +4,23 @@ import React, { useState, useEffect, useContext } from "react";
 import styles from "./WelcomeModal.module.css";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import Confetti from "react-confetti";
-import { TutorialsContext } from "@/app/utils/Contexts";
-import { useAccount } from "@/Hooks/accountHooks";
+import { TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { useWindowSize } from "@/Hooks/otherHooks";
 
 function WelcomeModal({}) {
-  const [isModal, setIsModal] = useState(false);
-  const { userInfo } = useAccount();
-  const [confettiEl, setConfettiEl] = useState(null);
+  const { width, height } = useWindowSize();
+
+  const { userInfo } = useContext(UserInfoContext);
   const { setTutorial } = useContext(TutorialsContext);
 
-  const [windowConfiguration, setWindowConfiguration] = useState({
-    width: 0,
-    height: 0,
-  });
-
-  useEffect(() => {
-    setWindowConfiguration({
-      width: window.screen.width,
-      height: window.screen.height,
-    });
-  }, []);
+  const [isModal, setIsModal] = useState(false);
+  const [isConfetti, setIsConfetti] = useState(false);
 
   useEffect(() => {
     const isNew = new URLSearchParams(window.location.search);
     if (isNew.get("welcome") === "true") {
       setIsModal(true);
-      setConfettiEl(
-        <Confetti
-          width={windowConfiguration.width}
-          height={windowConfiguration.height}
-          recycle={false}
-          numberOfPieces={500}
-          confettiSource={{ x: 0, y: -10, w: windowConfiguration.width, h: 0 }}
-        />
-      );
+      setIsConfetti(true);
     } else {
       setIsModal(false);
     }
@@ -48,7 +31,15 @@ function WelcomeModal({}) {
       to="/dashboard?tutorial=1"
       className={`${styles.WelcomeModal} ${isModal ? styles.open : ""}`}
     >
-      {confettiEl}
+      {!isConfetti ? null : (
+        <Confetti
+          width={width}
+          height={height}
+          recycle={false}
+          numberOfPieces={500}
+          confettiSource={{ x: 0, y: -10, w: width, h: 0 }}
+        />
+      )}
       <div className={styles.modal}>
         <p>Welcome to FLOZABLE!</p>
         <p className={styles.description}>

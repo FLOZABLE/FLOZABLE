@@ -10,7 +10,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ModalsContext } from "@/app/utils/Contexts";
+import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
 import { BackArrow } from "@/app/utils/Svg";
 import SendBtn from "@/app/components/Buttons/SendBtn/SendBtn";
 import { socket } from "@/app/utils/socket";
@@ -20,10 +20,9 @@ import ChatContainer from "@/app/components/Chats/ChatContainer/ChatContainer";
 import MyChatContainer from "@/app/components/Chats/MyChatContainer/MyChatContainer";
 import { useGetChatroomMembers, useGetChatrooms } from "@/Hooks/chatroomsHooks";
 import { getChatMessages } from "@/Api/chatApi";
-import { useAccount } from "@/Hooks/accountHooks";
 
 function ChatModal({}) {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
   const { chatModal, setChatModal } = useContext(ModalsContext);
 
   const [chatrooms, setChatRooms] = useState([]);

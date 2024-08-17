@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./ThemeContainer.module.css";
 import { faHeart, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import parse from "html-react-parser";
 import GroupLikesCounter from "@/app/components/Groups/GroupLikesCounter/GroupLikesCounter";
 import ThemeUsageCounter from "../ThemeUsageCounter/ThemeUsageCounter";
@@ -9,10 +9,10 @@ import ThemeCategoryBtn from "@/app/components/Buttons/ThemeCategoryBtn/ThemeCat
 import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
 import config from "@/app/utils/config";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
-import { useAccount } from "@/Hooks/accountHooks";
+import { UserInfoContext } from "@/app/utils/Contexts";
 
 function ThemeContainer({ theme, isSearched, setIsThemePreview }) {
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
 
   const [liked, setLiked] = useState(false);
 

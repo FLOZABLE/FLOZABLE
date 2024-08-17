@@ -6,6 +6,7 @@ import {
   CallOptionsContext,
   GroupsContext,
   ModalsContext,
+  UserInfoContext,
 } from "@/app/utils/Contexts";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 import {
@@ -19,7 +20,6 @@ import MembersContainer from "../MembersContainer/MembersContainer";
 import { mediaSocket } from "@/app/utils/mediaSocket";
 import { Device } from "mediasoup-client";
 import { socket } from "@/app/utils/socket";
-import { useAccount } from "@/Hooks/accountHooks";
 import { useGroupMembers } from "@/Hooks/groupsHook";
 
 const videoParams = {
@@ -60,7 +60,8 @@ function MyGroupContainer({
   const { isCam, isMic } = useContext(CallOptionsContext);
   const { setChatModal } = useContext(ModalsContext);
   const { setMyGroups } = useContext(GroupsContext);
-  const { userInfo } = useAccount();
+  const { userInfo } = useContext(UserInfoContext);
+
   const { groupMembersData, groupMembersIsLoading } = useGroupMembers(
     group?.group_id
   );
