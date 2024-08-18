@@ -1,52 +1,25 @@
 import { Google } from "@/app/utils/Svg";
 import styles from "./GoogleLoginBtn.module.css";
 import { useGoogleLogin } from "@react-oauth/google";
-import React, { useContext } from "react";
+import React from "react";
 import config from "@/app/utils/config";
 import { useAccountGoogle } from "@/Hooks/accountHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
-import { usePlans } from "@/Hooks/plansHooks";
-import { ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
+
+const redirect_uri = config.server + "/auth/signin/google";
 
 function GoogleLoginBtn({ scope, required }) {
-  const { userInfo, useAccountRefetch } = useContext(UserInfoContext);
-  const { googleInfo, useAccountGoogleIsLoading, useAccountGoogleRefetch } =
-    useAccountGoogle();
-  const { plansRefetch } = usePlans();
+  const { googleInfo, useAccountGoogleIsLoading } = useAccountGoogle();
 
-  const { setResponse } = useContext(ResponseContext);
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const login = useGoogleLogin({
     flow: "auth-code",
     select_account: true,
-    /* redirect_uri: `${config.server}/auth/signin/google/callback`, */
-    onSuccess: (response) => {
-      const { code } = response;
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-      fetch(`${config.server}/auth/signin/google`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code, timezone }),
-        credentials: "include",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setResponse(data);
-          if (data.success) {
-            setIsAccountModal(false);
-            if (!userInfo) {
-              useAccountRefetch();
-            }
-            useAccountGoogleRefetch();
-            plansRefetch();
-          }
-        })
-        .catch((error) => console.error(error));
-    },
+    redirect_uri,
+    ux_mode: "redirect",
     scope,
+    state: JSON.stringify({ timezone }),
   });
 
   return (

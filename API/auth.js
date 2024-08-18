@@ -21,7 +21,11 @@ const {
   validateString,
   validateLength,
 } = require("../Utils/validate");
-const { userCache, cacheUserInfo } = require("../services/redisLoader");
+const {
+  userCache,
+  cacheUserInfo,
+  setGoogleAccessToken,
+} = require("../services/redisLoader");
 const { sendEmail } = require("../email");
 const { USER_ID_COOKIE_OPTIONS, responseCodes } = require("../Constant");
 const fetch = require("node-fetch");
@@ -148,9 +152,10 @@ Router.post("/signin", async (req, res) => {
   }
 });
 
-Router.post("/signin/google", async (req, res) => {
+Router.get("/signin/google", async (req, res) => {
   try {
-    const { code, timezone } = req.body;
+    const { code, state } = req.query;
+
     const auth = googleOauth2client();
     const response = await auth.getToken(code);
     if (response.res.status !== 200) {
@@ -159,13 +164,18 @@ Router.post("/signin/google", async (req, res) => {
     const connection = pool.promise();
     const { refresh_token, access_token, expiry_date } = response.tokens;
 
-    let user_id = null;
-
     await autoSignin(
       req,
       res,
       async (userId) => {
-        user_id = userId;
+        setGoogleAccessToken(userId, access_token, expiry_date);
+
+        connection.query(
+          `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
+          [refresh_token, userId]
+        );
+
+        res.redirect(process.env.NEXT_SERVER + "/dashboard/account");
       },
       async () => {
         //if not logged in = create acc
@@ -182,10 +192,7 @@ Router.post("/signin/google", async (req, res) => {
         const data = await response.json();
         data.name = data.name.replace(/ /g, "");
 
-        console.log(data);
         const { name, email } = data;
-
-        const connection = pool.promise();
 
         const [[userInfo]] = await connection.query(
           `SELECT user_id FROM users WHERE email = ?`,
@@ -194,19 +201,43 @@ Router.post("/signin/google", async (req, res) => {
 
         if (!userInfo) {
           //new user
-          const accountResponse = await createAccount(name, email, timezone);
+          const accountResponse = await createAccount(
+            name,
+            email,
+            state?.timezone
+          );
 
-          console.log(accountResponse);
-          const { success } = accountResponse;
-
-          user_id = accountResponse.user_id;
+          const { success, user_id } = accountResponse;
 
           if (!success) {
-            return res.send(accountResponse);
+            return res.redirect(process.env.NEXT_SERVER + "/dashboard/account");
           }
-        } else {
-          user_id = userInfo.user_id;
+
+          req.session.regenerate((err) => {
+            if (err) {
+              console.log("Error regenerating session ID:", err);
+              res.send({ success: false, reason: "SESSION ERROR" });
+              return;
+            }
+
+            req.session.user_id = user_id;
+          });
+
+          res.cookie("userId", user_id, USER_ID_COOKIE_OPTIONS);
+
+          setGoogleAccessToken(user_id, access_token, expiry_date);
+
+          connection.query(
+            `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
+            [refresh_token, user_id]
+          );
+
+          return res.redirect(
+            process.env.NEXT_SERVER + "/dashboard?welcome=true"
+          );
         }
+
+        const { user_id } = userInfo;
 
         req.session.regenerate((err) => {
           if (err) {
@@ -220,23 +251,19 @@ Router.post("/signin/google", async (req, res) => {
 
         res.cookie("userId", user_id, USER_ID_COOKIE_OPTIONS);
 
-        return res.send({ success: true, msg: "Success", newUser: !!userInfo });
+        setGoogleAccessToken(user_id, access_token, expiry_date);
+
+        connection.query(
+          `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
+          [refresh_token, user_id]
+        );
+
+        return res.redirect(process.env.NEXT_SERVER + "/dashboard/account");
       }
-    );
-
-    console.log(user_id, 'userId')
-
-    if (!user_id) return;
-
-    const now = new Date().getTime();
-    const exp = Math.floor((expiry_date - now) / 1000);
-    redisClient.setex(`user:${user_id}:googleAccessToken`, exp, access_token);
-    connection.query(
-      `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
-      [refresh_token, user_id]
     );
   } catch (err) {
     console.log(err);
+    res.send(responseCodes["error"]);
   }
 });
 
