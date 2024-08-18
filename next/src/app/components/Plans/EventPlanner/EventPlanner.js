@@ -371,10 +371,9 @@ function EventPlanner({ viewMode, viewDate, setViewDate, controller }) {
           center: "",
           right: "",
         }} */
-        eventColor={(e) => {
-          console.log(e, "gdddd");
+        /* eventColor={(e) => {
           return "#fff";
-        }}
+        }} */
         headerToolbar={{ left: "", right: "", center: "" }}
         titleFormat={viewText}
         dayHeaderContent={renderHeader}

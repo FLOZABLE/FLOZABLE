@@ -99,14 +99,17 @@ function validateLength(value, type, max, min = 0) {
 }
 
 function validateURL(url, strict = false, allowedOrigins) {
-  if (!url) {
-    return { isValid: false, reason: "Please provide URL" };
-  }
-  let origin;
-  let domain;
   try {
-    if (!url.includes("https://") || !url.includes("http://")) {
+    if (!url) {
+      return { isValid: false, reason: "Please provide URL" };
+    }
+    let origin;
+    let domain;
+
+    if (!url.includes("https://") && !url.includes("http://")) {
       url = new URL("https://" + url);
+    } else {
+      url = new URL(url);
     }
 
     origin = url.origin;
