@@ -23,7 +23,7 @@ const {
 } = require("../Utils/validate");
 const { DateTime } = require("luxon");
 const { mainIo } = require("../sockets/mainIo");
-const { responseCodes, FRIENDS_LIMIT } = require("../Constant");
+const { RESPONSE_CODES, FRIENDS_LIMIT } = require("../Constant");
 const Router = express.Router();
 
 async function sendFriendRequest(userId, targetId) {
@@ -47,7 +47,7 @@ async function sendFriendRequest(userId, targetId) {
 
     const targetUserInfo = usersInfo.find((user) => user.user_id === targetId);
     if (!targetUserInfo || !userInfo) {
-      return responseCodes["no-user"];
+      return RESPONSE_CODES["no-user"];
     }
 
     const { friends, name } = targetUserInfo;
@@ -59,7 +59,7 @@ async function sendFriendRequest(userId, targetId) {
     }
 
     if (userInfo.friends.length > FRIENDS_LIMIT) {
-      return responseCodes["friends-limit-reached"];
+      return RESPONSE_CODES["friends-limit-reached"];
     }
 
     const friendRequests = await NotificationCache(targetId, 0, false);
@@ -141,13 +141,13 @@ async function replyFriendRequest(
         return friendReq.f === targetId;
       });
 
-      if (!friendReq) return responseCodes["expired-request"];
+      if (!friendReq) return RESPONSE_CODES["expired-request"];
     } else {
       friendReq = await redisClient.hget(
         `user:${userId}:notifications`,
         notificationId
       );
-      if (!friendReq) return responseCodes["expired-request"];
+      if (!friendReq) return RESPONSE_CODES["expired-request"];
 
       friendReq = { i: notificationId, ...JSON.parse(friendReq) };
     }
@@ -162,12 +162,12 @@ async function replyFriendRequest(
     const connection = pool.promise();
     const userInfo = await userCache(userId);
 
-    if (!userInfo) return { success: false, reason: responseCodes["no-user"] };
+    if (!userInfo) return { success: false, reason: RESPONSE_CODES["no-user"] };
 
     const targetInfo = await userCache(targetId);
 
     if (!targetInfo)
-      return { success: false, reason: responseCodes["no-user"] };
+      return { success: false, reason: RESPONSE_CODES["no-user"] };
 
     if (userInfo.friends.includes(userId))
       return {
@@ -179,7 +179,7 @@ async function replyFriendRequest(
       userInfo.friends.length >= FRIENDS_LIMIT ||
       targetInfo.friends.length >= FRIENDS_LIMIT
     )
-      return responseCodes["friends-limit-reached"];
+      return RESPONSE_CODES["friends-limit-reached"];
 
     const date = Math.floor(new Date().getTime() / 1000);
 
@@ -327,7 +327,7 @@ Router.delete("/request", async (req, res) => {
       const friendReq = friendRequests.find((friendReq) => {
         return friendReq.f === userId;
       });
-      if (!friendReq) return res.send(responseCodes["expired-request"]);
+      if (!friendReq) return res.send(RESPONSE_CODES["expired-request"]);
       redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
       //remove it from ongoing friend req list
       redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
@@ -399,7 +399,7 @@ Router.get("/status", async (req, res) => {
     try {
       const userInfo = await userCache(userId);
 
-      if (!userInfo) return res.send(responseCodes["no-user"]);
+      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
       const { timezone } = req.query;
 
@@ -627,7 +627,7 @@ Router.get("/trends", async (req, res) => {
 
       const userInfo = await userCache(userId);
 
-      if (!userInfo) return res.send(responseCodes["no-user"]);
+      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
       const now = DateTime.now().setZone(timezone).startOf("day");
       const dates = getDates(now.toISO(), timezone, "day", 7);

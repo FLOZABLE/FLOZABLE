@@ -14,7 +14,7 @@ const {
   validateStrictString,
   validateArray,
 } = require("../Utils/validate");
-const { responseCodes } = require("../Constant");
+const { RESPONSE_CODES } = require("../Constant");
 const { mainIo } = require("../sockets/mainIo");
 
 Router.get("/", async (req, res) => {
@@ -25,7 +25,7 @@ Router.get("/", async (req, res) => {
       res.send({ success: true, subjects: subjectsInfo });
     } catch (err) {
       console.log(err);
-      responseCodes["error"];
+      RESPONSE_CODES["error"];
     }
   });
 });
@@ -130,7 +130,7 @@ Router.patch("/subject", async (req, res) => {
       );
 
       if (!affectedRows) {
-        return res.send(responseCodes["invalid-subject"]);
+        return res.send(RESPONSE_CODES["no-subject"]);
       }
 
       res.send({
@@ -155,7 +155,7 @@ Router.patch("/subject", async (req, res) => {
       }
     } catch (error) {
       console.log(error);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });
@@ -198,7 +198,7 @@ Router.delete("/subject", async (req, res) => {
       );
 
       if (!subject || subject.name === "others") {
-        return res.send(responseCodes["invalid-subject"]);
+        return res.send(RESPONSE_CODES["no-subject"]);
       }
 
       if (otherSubject) {
@@ -260,7 +260,7 @@ Router.post("/subject/share", async (req, res) => {
 
       const userInfo = await userCache(userId);
       if (!userInfo) {
-        return res.send(responseCodes["no-user"]);
+        return res.send(RESPONSE_CODES["no-user"]);
       }
 
       const connection = pool.promise();
@@ -277,7 +277,7 @@ Router.post("/subject/share", async (req, res) => {
       );
 
       if (!subject) {
-        return res.send(responseCodes["invalid-subject"]);
+        return res.send(RESPONSE_CODES["no-subject"]);
       }
 
       subject.share = subject.share ? subject.share.split(",") : [];
@@ -349,7 +349,7 @@ Router.post("/subject/share", async (req, res) => {
       res.send({ success: true, msg: "Subject shared" });
     } catch (error) {
       console.log(error);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });
@@ -359,7 +359,7 @@ Router.post("/subject/share/respond", async (req, res) => {
     try {
     } catch (err) {
       console.log(err);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });
@@ -388,7 +388,7 @@ Router.delete("/subject/share", async (req, res) => {
       );
 
       if (!subject) {
-        return res.send(responseCodes["invalid-subject"]);
+        return res.send(RESPONSE_CODES["no-subject"]);
       }
 
       subject.share = JSON.parse(subject.share).filter((user) => user.user_id);
@@ -402,7 +402,7 @@ Router.delete("/subject/share", async (req, res) => {
         { user_id: subject.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(responseCodes["non-memeber"]);
+        return res.send(RESPONSE_CODES["non-memeber"]);
       }
 
       await connection.query(
@@ -425,7 +425,7 @@ Router.delete("/subject/share", async (req, res) => {
       res.send({ success: true, msg: `Removed user!` });
     } catch (err) {
       console.log(err);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });
@@ -454,7 +454,7 @@ Router.get("/subject/users", async (req, res) => {
       );
 
       if (!subject) {
-        return res.send(responseCodes["invalid-subject"]);
+        return res.send(RESPONSE_CODES["no-subject"]);
       }
 
       subject.share = JSON.parse(subject.share).filter((user) => user.user_id);
@@ -468,7 +468,7 @@ Router.get("/subject/users", async (req, res) => {
         { user_id: subject.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(responseCodes["non-memeber"]);
+        return res.send(RESPONSE_CODES["non-memeber"]);
       }
 
       res.send({ success: true, subject });

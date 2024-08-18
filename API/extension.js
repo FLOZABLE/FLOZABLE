@@ -11,7 +11,7 @@ const {
   validateURL,
   validateOption,
 } = require("../Utils/validate");
-const { responseCodes } = require("../Constant");
+const { RESPONSE_CODES } = require("../Constant");
 const { extensionIo } = require("../sockets/extensionIo");
 
 Router.post("/auth", async (req, res) => {

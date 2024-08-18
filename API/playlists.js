@@ -15,7 +15,7 @@ const {
   googleAccessTokenCache,
   spotifyAccessTokenCache,
 } = require("../services/redisLoader");
-const { responseCodes } = require("../Constant");
+const { RESPONSE_CODES } = require("../Constant");
 
 const YOUTUBE_API_KEY = process.env.GOOGLE_API_KEY;
 
@@ -118,7 +118,7 @@ Router.get("/spotify/info", async (req, res) => {
     try {
       const accessToken = await spotifyAccessTokenCache(userId);
       if (!accessToken) {
-        return res.send(responseCodes["no-user"]);
+        return res.send(RESPONSE_CODES["no-user"]);
       }
 
       const response = await fetch("https://api.spotify.com/v1/me/", {
@@ -136,7 +136,7 @@ Router.get("/spotify/info", async (req, res) => {
       res.send({ success: true, spotifyInfo: data });
     } catch (err) {
       console.log(err);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });
@@ -147,7 +147,7 @@ Router.get("/spotify", async (req, res) => {
       const accessToken = await spotifyAccessTokenCache(userId);
 
       if (!accessToken) {
-        return res.send(responseCodes["no-user"]);
+        return res.send(RESPONSE_CODES["no-user"]);
       }
 
       const response = await fetch('https://api.spotify.com/v1/me/playlists', {
@@ -166,7 +166,7 @@ Router.get("/spotify", async (req, res) => {
 
     } catch (err) {
       console.log(err);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });

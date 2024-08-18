@@ -4,7 +4,7 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { DateTime } = require("luxon");
 const { usersCache, userCache } = require("../services/redisLoader");
-const { responseCodes } = require("../Constant");
+const { RESPONSE_CODES } = require("../Constant");
 const { autoSignin, getDates } = require("../Utils/tool");
 
 Router.get("/", async (req, res) => {
@@ -147,7 +147,7 @@ Router.get("/friends", async (req, res) => {
     try {
       const userInfo = await userCache(userId);
 
-      if (!userInfo) return res.send(responseCodes["no-user"]);
+      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
       const { mode, timezone, date } = req.query;
 

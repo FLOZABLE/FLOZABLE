@@ -9,7 +9,11 @@ function usePlans(userInfo) {
     enabled: !!userInfo,
   });
 
-  const { data: plansData, isLoading: plansIsLoading, refetch: plansRefetch } = queryResult;
+  const {
+    data: plansData,
+    isLoading: plansIsLoading,
+    refetch: plansRefetch,
+  } = queryResult;
 
   return {
     plansData,
@@ -30,7 +34,7 @@ function usePlansPlanUsers(planId) {
   });
 
   const clearPlanUsers = () => {
-    queryClient.removeQueries({ queryKey: "usePlansPlanUsers" });
+    queryClient.removeQueries({ queryKey: ["usePlansPlanUsers", planId] });
   };
 
   const { data: usePlansPlanUsersData, isLoading: usePlansPlanUsersIsLoading } =
