@@ -2,7 +2,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const express = require("express");
 const Router = express.Router();
 const { autoSignin } = require("../Utils/tool");
-const { responseCodes } = require("../Constant");
+const { RESPONSE_CODES } = require("../Constant");
 const { userCache } = require("../services/redisLoader");
 const pool = require("../model/pool");
 const { validateString, validateURL } = require("../Utils/validate");
@@ -12,7 +12,7 @@ const { validateString, validateURL } = require("../Utils/validate");
     try {
       const userInfo = await userCache(userId);
 
-      if (!userInfo) return res.send(responseCodes["no-user"]);
+      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
       const { name, email } = userInfo;
       const customer = await stripe.paymentIntents.create({

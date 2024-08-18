@@ -28,7 +28,7 @@ const {
   googleAccessTokenCache,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
-const { responseCodes, PASSWORD_LINK_EXP } = require("../Constant");
+const { RESPONSE_CODES, PASSWORD_LINK_EXP } = require("../Constant");
 const upload = multer();
 
 Router.get("/", async (req, res) => {
@@ -37,7 +37,7 @@ Router.get("/", async (req, res) => {
       const notifications = await NotificationCache(userId);
       const userInfo = await userCache(userId);
       if (!userInfo) {
-        return res.send(responseCodes["no-user"]);
+        return res.send(RESPONSE_CODES["no-user"]);
       }
       res.send({
         success: true,
@@ -47,7 +47,7 @@ Router.get("/", async (req, res) => {
       addActiveUserCache(userId);
     } catch (err) {
       console.log(err);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });
@@ -58,7 +58,7 @@ Router.get("/google", async (req, res) => {
       const googleAccessToken = await googleAccessTokenCache(userId);
 
       if (!googleAccessToken) {
-        return res.send(responseCodes["not-authed"]);
+        return res.send(RESPONSE_CODES["not-authed"]);
       }
 
       const accessTokenInfo = await checkGoogleAccessTokenScopes(
@@ -66,7 +66,7 @@ Router.get("/google", async (req, res) => {
       );
 
       if (!accessTokenInfo) {
-        return res.send(responseCodes["not-authed"]);
+        return res.send(RESPONSE_CODES["not-authed"]);
       }
 
       const response = await fetch(
@@ -87,7 +87,7 @@ Router.get("/google", async (req, res) => {
       return res.send({ success: true, googleInfo: data });
     } catch (err) {
       console.log(err);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });
@@ -110,7 +110,7 @@ Router.post("/password-email", async (req, res) => {
     );
 
     if (!user || user.type === -1) {
-      return res.send({ success: false, reason: responseCodes["no-user"] });
+      return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
     }
 
     let resetId = await redisClient.get(`resetPw:${email}`);
@@ -322,7 +322,7 @@ Router.get("/profile", async (req, res) => {
 
     const userInfo = await userCache(userId);
     if (!userInfo) {
-      return res.send(responseCodes["no-user"]);
+      return res.send(RESPONSE_CODES["no-user"]);
     }
 
     const friends = await usersCache(userInfo.friends, false);
@@ -332,7 +332,7 @@ Router.get("/profile", async (req, res) => {
     return res.send({ success: true, userInfo, friends, subjects });
   } catch (err) {
     console.log(err);
-    return res.send(responseCodes["error"]);
+    return res.send(RESPONSE_CODES["error"]);
   }
 });
 
@@ -345,7 +345,7 @@ Router.get("/profile/subjects", async (req, res) => {
     res.send({ success: true, subjects: subjectsInfo });
   } catch (err) {
     console.log(err);
-    res.send(responseCodes["error"]);
+    res.send(RESPONSE_CODES["error"]);
   }
 });
 

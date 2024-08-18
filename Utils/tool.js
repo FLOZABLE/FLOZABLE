@@ -5,7 +5,7 @@ const { google } = require("googleapis");
 const pool = require("../model/pool");
 const { userCache, usersCache } = require("../services/redisLoader");
 const { DateTime } = require("luxon");
-const { responseCodes } = require("../Constant");
+const { RESPONSE_CODES } = require("../Constant");
 const redisClient = require("../model/redis");
 
 function generateRandomId(length) {
@@ -46,7 +46,7 @@ async function autoSignin(
   res,
   success = () => {},
   fail = () => {
-    res.send(responseCodes["no-user"]);
+    res.send(RESPONSE_CODES["no-user"]);
   },
   cache = false
 ) {

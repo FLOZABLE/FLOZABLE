@@ -9,7 +9,6 @@ import AccountModal from "@/app/components/Modals/AccountModal/AccountModal";
 import Tutorial from "./components/Others/Tutorial/Tutorial";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import SubjectsModal from "./components/Modals/SubjectsModal/SubjectsModal";
-import SharePlanModal from "./components/Modals/SharePlanModal/SharePlanModal";
 import SearchUsersModal from "./components/Modals/SearchUsersModal/SearchUsersModal";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
@@ -81,7 +80,6 @@ export default function RootLayout({ children }) {
           <JoinGroupModal />
           <AddSubjectModal />
           <SubjectsModal />
-          <SharePlanModal />
           <SearchUsersModal />
           <Tutorial />
           {children}

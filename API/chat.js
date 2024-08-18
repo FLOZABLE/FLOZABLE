@@ -10,7 +10,7 @@ const {
 } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../Utils/validate");
 const { mainIo } = require("../sockets/mainIo");
-const { responseCodes } = require("../Constant");
+const { RESPONSE_CODES } = require("../Constant");
 
 Router.get("/rooms", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -167,12 +167,12 @@ Router.post("/request", async (req, res) => {
 
       const targetUser = await userCache(targetId);
       if (!targetUser) {
-        return res.send(responseCodes["no-user"]);
+        return res.send(RESPONSE_CODES["no-user"]);
       }
 
       const userInfo = await userCache(userId);
       if (!userInfo) {
-        return res.send(responseCodes["no-user"]);
+        return res.send(RESPONSE_CODES["no-user"]);
       }
 
       const targetDmRequests = await NotificationCache(targetId, 4, false);
@@ -206,7 +206,7 @@ Router.post("/request", async (req, res) => {
       res.send({ success: true, msg: `Sent request to ${targetUser.name}` });
     } catch (err) {
       console.log(err);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });
@@ -233,12 +233,12 @@ Router.post("/request/reply", async (req, res) => {
         notificationId
       );
       if (!chatReq) {
-        return res.send(responseCodes["expired-request"]);
+        return res.send(RESPONSE_CODES["expired-request"]);
       }
 
       const parsedChatReq = JSON.parse(chatReq);
       if (!parsedChatReq.f === targetId) {
-        return res.send(responseCodes["expired-request"]);
+        return res.send(RESPONSE_CODES["expired-request"]);
       }
 
       redisClient.hdel(`user:${userId}:notifications`, notificationId);
@@ -249,12 +249,12 @@ Router.post("/request/reply", async (req, res) => {
       const connection = pool.promise();
       const targetUser = await userCache(targetId);
       if (!targetUser) {
-        return res.send(responseCodes["no-user"]);
+        return res.send(RESPONSE_CODES["no-user"]);
       }
 
       const userInfo = await userCache(userId);
       if (!userInfo) {
-        return res.send(responseCodes["no-user"]);
+        return res.send(RESPONSE_CODES["no-user"]);
       }
 
       const chatroom_id = generateRandomId(10);
@@ -289,7 +289,7 @@ Router.post("/request/reply", async (req, res) => {
       res.send({ success: true, msg: `Accepted chat request!` });
     } catch (error) {
       console.log(error);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });

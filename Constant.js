@@ -1,64 +1,49 @@
-const colorsList = [
-  "#0395f9",
-  "#3fc2ff",
-  "#ff6844",
-  "#82d795",
-  "#705dc1",
-  "#ffee65",
-  "#beb9db",
-  "#fdcce5",
-  "#8bd3c7",
-  "#e60049",
-  "#0bb4ff",
-  "#50e991",
-  "#e6d800",
-  "#9b19f5",
-  "#ffa300",
-  "#dc0ab4",
-  "#b3d4ff",
-  "#00bfa0",
-];
-
-const responseCodes = {
+const RESPONSE_CODES = {
   "no-user": {
     success: false,
     reason: "Invalid User",
-    code: 401,
+    code: 400,
   },
   "no-group": {
     success: false,
     reason: "Invalid Group",
     code: 404,
   },
-  "non-memeber": {
+  "no-subject": {
+    success: false,
+    reason: "Invalid Subject",
+    code: 400,
+  },
+  "no-plan": {
+    success: false,
+    reason: "Invalid Plan",
+    code: 400,
+  },
+  "non-member": {
     success: false,
     reason: "Not a member of this group",
-    code: 401,
+    code: 403,
   },
   "friends-limit-reached": {
     success: false,
     reason: "Friends limit reached",
-    code: 300,
+    code: 409,
   },
   "expired-request": {
     success: false,
     reason: "Expired Request",
-    code: 404,
+    code: 410,
   },
-  error: {
+  "error": {
     success: false,
     reason: "Unexpected Error",
     code: 500,
   },
-  "invalid-subject": {
+  "not-authenticated": {
     success: false,
-    reason: "Invalid Subject",
+    reason: "Not Authenticated",
     code: 401,
   },
-  "not-authed": {
-    success: false,
-    reason: "Not authed"
-  }
 };
 
 const USER_ID_COOKIE_OPTIONS = {
@@ -156,8 +141,7 @@ const possibleBotsSubjects = [
 ];
 
 module.exports = {
-  colorsList,
-  responseCodes,
+  RESPONSE_CODES,
   MAX_STUDY_TIME,
   USER_ID_COOKIE_OPTIONS,
   FRIENDS_LIMIT,

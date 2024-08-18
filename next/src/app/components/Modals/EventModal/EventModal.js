@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useCallback, useContext, useEffect, useRef } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styles from "./EventModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -27,10 +33,9 @@ import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import DropDownButton from "@/app/components/Buttons/DropDownButton/DropDownButton";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import SliderAnimation from "@/app/components/Inputs/SliderAnimation/SliderAnimation";
-import { generateRandomId, requestNotification } from "@/app/utils/Tool";
+import { requestNotification } from "@/app/utils/Tool";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
-import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import { deletePlanShare, patchPlan, postPlanShare } from "@/Api/plansApi";
 import { usePlansPlanUsers } from "@/Hooks/plansHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
@@ -55,7 +60,7 @@ function EventModal({}) {
 
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
   const { setResponse } = useContext(ResponseContext);
-  const { setIsAddSubjectModal, setIsSharePlanModal } =
+  const { setIsAddSubjectModal, setSearchUsersModal } =
     useContext(ModalsContext);
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
@@ -67,6 +72,9 @@ function EventModal({}) {
   const titleRef = useRef(null);
   const addSubjectRef = useRef(null);
   const submitRef = useRef(null);
+
+  const [share, setShare] = useState([]);
+  const [shared, setShared] = useState([]);
 
   useEffect(() => {
     if (!tutorial) return;
@@ -148,7 +156,6 @@ function EventModal({}) {
       setResponse({ success: false, reason: "This event is view only" });
       return;
     }
-    const share = planModal.share.map((user) => user.user_id);
     const data = await patchPlan({ ...planModal });
     setResponse(data);
     if (data.success) {
@@ -166,8 +173,10 @@ function EventModal({}) {
         setTutorial(6);
       }
       if (data.isNew) {
-        console.log("new");
-        postPlanShare(share, planModal.plan_id);
+        const newShare = share.map((user) => user.user_id);
+        const data = await postPlanShare(newShare, planModal.plan_id);
+        console.log(data);
+        clearPlanUsers();
       }
     }
   };
@@ -282,7 +291,7 @@ function EventModal({}) {
   useEffect(() => {
     if (!planModal) return;
     if (!planModal.opened) {
-      setIsSharePlanModal(false);
+      setSearchUsersModal((prev) => ({ ...prev, opened: false }));
       setPlanModal((prev) => ({
         ...prev,
         ...DEFAULT_PLAN,
@@ -310,15 +319,9 @@ function EventModal({}) {
 
     const { shared, share } = usePlansPlanUsersData.planInfo;
 
-    setPlanModal((prev) => {
-      return { ...prev, share, shared };
-    });
+    setShare(share);
+    setShared(shared);
   }, [usePlansPlanUsersData]);
-
-  /* useEffect(() => {
-    if (router.search.includes('tutorial')) return;
-    setPlanModal( {...planModal, opened: false} );
-  }, [router]); */
 
   return (
     <DraggableModal
@@ -510,7 +513,7 @@ function EventModal({}) {
             ) : (
               <>
                 <div id={styles.shared}>
-                  {planModal.shared.map((userInfo, i) => {
+                  {shared.map((userInfo, i) => {
                     return (
                       <ShareUserBox
                         userInfo={userInfo}
@@ -524,7 +527,7 @@ function EventModal({}) {
                   })}
                 </div>
                 <div id={styles.share}>
-                  {planModal.share.map((userInfo, i) => {
+                  {share.map((userInfo, i) => {
                     return (
                       <ShareUserBox
                         userInfo={userInfo}
@@ -545,7 +548,35 @@ function EventModal({}) {
           <div className={styles.shareBtn}>
             <BlobBtn
               onClick={() => {
-                setIsSharePlanModal((prev) => !prev);
+                setSearchUsersModal((prev) => ({
+                  opened: !prev.opened,
+                  onClick: async (userInfo) => {
+                    if (planModal.opened) {
+                      const data = await postPlanShare(
+                        [userInfo.user_id],
+                        planModal.plan_id
+                      );
+                      if (!data.success) {
+                        clearPlanUsers();
+                        setResponse(data);
+                        return;
+                      }
+
+                      if (!data.share.length && !data.shared.length) {
+                        return setResponse({
+                          success: false,
+                          reason: `Already Shared with ${userInfo.name}`,
+                        });
+                      }
+
+                      clearPlanUsers();
+                      setResponse({
+                        success: true,
+                        msg: `Added ${userInfo.name}`,
+                      });
+                    }
+                  },
+                }));
               }}
             >
               <FontAwesomeIcon icon={faShare} />
