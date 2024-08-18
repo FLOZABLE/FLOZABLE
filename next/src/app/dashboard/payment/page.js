@@ -1,43 +1,72 @@
 "use client";
 
-import PaymentForm from "@/app/components/Payment/PaymentForm/PaymentForm";
 import styles from "./page.module.css";
-/* import { CustomCheckoutProvider, Elements } from "@stripe/react-stripe-js";
-import { useStripeClientSecret } from "@/app/Hooks/payments";
-import { useEffect, useState } from "react";
-import config from "@/app/utils/config";
 import getStripe from "@/app/lib/getStripe";
+import {
+  CardElement,
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import config from "@/app/utils/config";
 
 const stripePromise = getStripe();
 
-const appearance = {
-  theme: "stripe",
-}; */
+function PaymentForm({ clientSecret }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!stripe || !elements) return;
+
+    const cardElement = elements.getElement(CardElement);
+
+    const { error, paymentIntent } = await stripe.confirmCardPayment(
+      clientSecret,
+      {
+        payment_method: {
+          card: cardElement,
+        },
+      }
+    );
+
+    if (error) {
+      setError(error.message);
+    } else if (paymentIntent && paymentIntent.status === "succeeded") {
+      // Handle successful subscription
+      console.log("Subscription succeeded!");
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <PaymentElement />
+      <button type="submit" disabled={!stripe}>
+        Subscribe
+      </button>
+      {error && <div>{error}</div>}
+    </form>
+  );
+}
 
 export default function Payment() {
-  /* const [priceId, setPriceId] = useState(null);
+  const [priceId, setPriceId] = useState("");
+  const [clientSecret, setClientSecret] = useState(null);
 
-  const [stripeSecret, setStripeSecret] = useState(null); */
+  const searchParams = useSearchParams();
 
-
-  /* useEffect(() => {
+  useEffect(() => {
     if (!searchParams) return;
 
     const priceId = searchParams.get("priceId");
     setPriceId(priceId);
-  }, [searchParams]); */
-
-    
-  /* useEffect(() => {
-    try {
-    const searchParams = new URLSearchParams(document.location.search);
-      const priceId = searchParams.get("priceId");
-      setPriceId(priceId);
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
- 
+  }, [searchParams]);
 
   useEffect(() => {
     console.log("price", priceId);
@@ -47,7 +76,7 @@ export default function Payment() {
 
     if (!priceId) return;
 
-    fetch(`${config.server}/payment/create-checkout-session`, {
+    fetch(`${config.server}/payment/subscription/initialize`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -57,28 +86,21 @@ export default function Payment() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data.client_secret);
+        console.log(data);
         if (data.success) {
-          setStripeSecret(data.client_secret);
+          setClientSecret(data.clientSecret);
         }
       })
       .catch((error) => console.error(error));
   }, [priceId]);
- */
+
   return (
     <div className={styles.Payment}>
-      {/* {stripeSecret}
-      <div className={styles.paymentContainer}>
-        {stripeSecret}
-        {stripeSecret ? (
-          <CustomCheckoutProvider
-            stripe={stripePromise}
-            options={{ clientSecret: stripeSecret }}
-          >
-            <PaymentForm />
-          </CustomCheckoutProvider>
-        ) : null}
-      </div> */}
+      {clientSecret ? (
+        <Elements stripe={stripePromise} options={{ clientSecret }}>
+          <PaymentForm clientSecret={clientSecret} />
+        </Elements>
+      ) : null}
     </div>
   );
 }

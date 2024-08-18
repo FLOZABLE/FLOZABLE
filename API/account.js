@@ -83,7 +83,6 @@ Router.get("/google", async (req, res) => {
 
       data.scopes = accessTokenInfo.scope.split(" ");
 
-      console.log(data)
       return res.send({ success: true, googleInfo: data });
     } catch (err) {
       console.log(err);

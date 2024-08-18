@@ -33,7 +33,6 @@ function FriendsActivityViewer() {
           onClick={() => {
             setSearchUsersModal((prev) => ({
               onClick: (userInfo) => {
-                console.log('gdddd', userInfo)
                 router.push(`/dashboard/user/${userInfo.user_id}`);
               },
               opened: !prev.opened,
