@@ -23,7 +23,7 @@ const {
   NotificationCache,
 } = require("../services/redisLoader");
 const schedule = require("node-schedule");
-const { responseCodes } = require("../Constant");
+const { RESPONSE_CODES } = require("../Constant");
 const { mainIo } = require("../sockets/mainIo");
 
 Router.get("/", async (req, res) => {
@@ -299,7 +299,7 @@ Router.patch("/plan", async (req, res) => {
       );
 
       if (!userInfo)
-        return res.send({ success: false, reason: responseCodes["no-user"] });
+        return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
 
       const newPlan = {
         title,
@@ -471,7 +471,7 @@ Router.get("/plan/users", async (req, res) => {
       );
 
       if (!planInfo) {
-        return res.send({ success: false, reason: "Invalid Plan" });
+        return res.send(RESPONSE_CODES["no-plan"]);
       }
 
       planInfo.share = JSON.parse(planInfo.share).filter(
@@ -487,7 +487,7 @@ Router.get("/plan/users", async (req, res) => {
         { user_id: planInfo.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(responseCodes["non-memeber"]);
+        return res.send(RESPONSE_CODES["non-memeber"]);
       }
 
       res.send({ success: true, planInfo });
@@ -508,33 +508,44 @@ Router.post("/plan/share", async (req, res) => {
       const userInfo = await userCache(userId);
 
       if (!userInfo)
-        return res.send({ success: false, reason: responseCodes["no-user"] });
+        return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
 
       const connection = pool.promise();
 
-      const [[planInfo]] = await connection.query(
-        `SELECT plan_id, title FROM plans WHERE user_id = ? AND plan_id = ?`,
-        [userId, planId]
+      const [[plan]] = await connection.query(
+        `
+        SELECT
+          p.plan_id,
+          p.title,
+          GROUP_CONCAT(DISTINCT ps.user_id) AS share,
+          GROUP_CONCAT(DISTINCT psd.user_id) AS shared
+        FROM plans p
+        LEFT JOIN plan_shared psd ON psd.plan_id = p.plan_id
+        LEFT JOIN plan_share ps ON ps.plan_id = p.plan_id
+        WHERE p.plan_id = ? AND p.user_id = ?
+        GROUP BY p.plan_id
+        `,
+        [planId, userId]
       );
 
-      if (!planInfo) {
-        return res.send({ success: false, reason: "Invalid Plan" });
+      if (!plan) {
+        return res.send(RESPONSE_CODES["no-plan"]);
       }
 
-      const existingUsers = (
-        await connection.query(
-          `SELECT user_id FROM users WHERE user_id IN(?)`,
-          [users]
-        )
-      )[0].map((userInfo) => userInfo.user_id);
+      plan.share = plan.share ? plan.share.split(",") : [];
+      plan.shared = plan.shared ? plan.shared.split(",") : [];
 
-      const friends = existingUsers.filter((user) =>
+      const filteredUsers = users.filter(
+        (user) => !plan.share.includes(user) && !plan.shared.includes(user)
+      );
+
+      const friends = filteredUsers.filter((user) =>
         userInfo.friends.includes(user)
       );
 
-      const newShared = friends.map((friend) => [planId, friend]);
+      if (friends.length) {
+        const newShared = friends.map((friend) => [planId, friend]);
 
-      if (newShared.length) {
         await connection.query(
           `INSERT IGNORE INTO plan_shared 
           (plan_id, user_id) 
@@ -543,13 +554,13 @@ Router.post("/plan/share", async (req, res) => {
         );
       }
 
-      const nonFriends = existingUsers.filter(
+      const nonFriends = filteredUsers.filter(
         (user) => !userInfo.friends.includes(user)
       );
 
-      const newShare = nonFriends.map((friend) => [planId, friend]);
+      if (nonFriends.length) {
+        const newShare = nonFriends.map((friend) => [planId, friend]);
 
-      if (newShare.length) {
         await connection.query(
           `INSERT IGNORE INTO plan_share 
           (plan_id, user_id) 
@@ -566,7 +577,7 @@ Router.post("/plan/share", async (req, res) => {
           t: 7,
           f: userId,
           d: date,
-          n: planInfo.title,
+          n: plan.title,
           pi: planId,
         };
         const socketNotif = {
@@ -574,7 +585,7 @@ Router.post("/plan/share", async (req, res) => {
           t: 7,
           f: userInfo,
           d: date,
-          n: planInfo.title,
+          n: plan.title,
           pi: planId,
         };
         mainIo.to(targetId).emit("notification", socketNotif);
@@ -584,8 +595,8 @@ Router.post("/plan/share", async (req, res) => {
           JSON.stringify(notification)
         );
       });
-      console.log("shared");
-      res.send({ success: true });
+      console.log("shared", friends, nonFriends);
+      res.send({ success: true, share: nonFriends, shared: friends });
     } catch (err) {
       console.log(err);
       res.send({ success: false });
@@ -607,7 +618,7 @@ Router.delete("/plan/share", async (req, res) => {
       const userInfo = await userCache(userId);
 
       if (!userInfo)
-        return res.send({ success: false, reason: responseCodes["no-user"] });
+        return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
 
       const connection = pool.promise();
 
@@ -643,7 +654,7 @@ Router.delete("/plan/share", async (req, res) => {
         { user_id: planInfo.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(responseCodes["non-memeber"]);
+        return res.send(RESPONSE_CODES["non-memeber"]);
       }
 
       await connection.query(
@@ -685,12 +696,12 @@ Router.post("/plan/share/respond", async (req, res) => {
         notificationId
       );
 
-      if (!notification) return res.send(responseCodes["expired-request"]);
+      if (!notification) return res.send(RESPONSE_CODES["expired-request"]);
 
       const userInfo = await userCache(userId);
 
       if (!userInfo)
-        return res.send({ success: false, reason: responseCodes["no-user"] });
+        return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
 
       const plan_id = JSON.parse(notification).pi;
 
@@ -711,7 +722,7 @@ Router.post("/plan/share/respond", async (req, res) => {
       res.send({ success: true, msg: `Declined share request!` });
     } catch (err) {
       console.log(err);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });

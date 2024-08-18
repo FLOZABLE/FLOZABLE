@@ -17,7 +17,7 @@ const {
   validateString,
 } = require("../Utils/validate");
 const { DateTime } = require("luxon");
-const { responseCodes } = require("../Constant");
+const { RESPONSE_CODES } = require("../Constant");
 const { mainIo } = require("../sockets/mainIo");
 
 Router.get("/", async (req, res) => {
@@ -161,7 +161,7 @@ Router.put("/group", async (req, res) => {
         //update cached values
         const userInfo = await userCache(userId);
         if (!userInfo) {
-          return res.send(responseCodes["no-user"]);
+          return res.send(RESPONSE_CODES["no-user"]);
         }
 
         const { groups } = userInfo;
@@ -347,7 +347,7 @@ Router.post("/join/:id", async (req, res) => {
 
       const userInfo = await userCache(userId);
 
-      if (!userInfo) return res.send(responseCodes["no-user"]);
+      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
       const connection = pool.promise();
       const [[groupInfo]] = await connection.query(
@@ -436,7 +436,7 @@ Router.post("/leave", async (req, res) => {
       const { groupId } = req.body;
       const userInfo = await userCache(userId);
 
-      if (!userInfo) return res.send(responseCodes["no-user"]);
+      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
       const connection = pool.promise();
 
@@ -445,7 +445,7 @@ Router.post("/leave", async (req, res) => {
         [userId, groupId]
       );
 
-      if (!changedRows) return res.send(responseCodes["no-group"]);
+      if (!changedRows) return res.send(RESPONSE_CODES["no-group"]);
 
       userInfo.groups = [
         ...new Set(userInfo.groups.filter((g) => g !== groupId)),
@@ -470,7 +470,7 @@ Router.delete("/member", async (req, res) => {
     try {
       const merberInfo = await userCache(memberId);
 
-      if (!merberInfo) return res.send(responseCodes["no-user"]);
+      if (!merberInfo) return res.send(RESPONSE_CODES["no-user"]);
 
       const connection = pool.promise();
       const [[group]] = await connection.query(
@@ -638,7 +638,7 @@ Router.get("/group/members", async (req, res) => {
 
         return res.send({ success: true, members });
       }
-      res.send(responseCodes["non-memeber"]);
+      res.send(RESPONSE_CODES["non-memeber"]);
     } catch (err) {
       console.error("Error performing database queries:", err);
       res.status(500).send({ success: false, reason: "An error occurred" });

@@ -27,7 +27,7 @@ const {
   setGoogleAccessToken,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
-const { USER_ID_COOKIE_OPTIONS, responseCodes } = require("../Constant");
+const { USER_ID_COOKIE_OPTIONS, RESPONSE_CODES } = require("../Constant");
 const fetch = require("node-fetch");
 const { request } = require("request");
 
@@ -159,7 +159,7 @@ Router.get("/signin/google", async (req, res) => {
     const auth = googleOauth2client();
     const response = await auth.getToken(code);
     if (response.res.status !== 200) {
-      return res.send(responseCodes["error"]);
+      return res.send(RESPONSE_CODES["error"]);
     }
     const connection = pool.promise();
     const { refresh_token, access_token, expiry_date } = response.tokens;
@@ -263,7 +263,7 @@ Router.get("/signin/google", async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.send(responseCodes["error"]);
+    res.send(RESPONSE_CODES["error"]);
   }
 });
 
@@ -291,7 +291,7 @@ Router.get("/signin/spotify", async (req, res) => {
       );
     } catch (err) {
       console.log(err);
-      res.send(responseCodes["error"]);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });
@@ -381,7 +381,7 @@ Router.get("/signin/spotify/callback", async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.send(responseCodes["error"]);
+    res.send(RESPONSE_CODES["error"]);
   }
 });
 
@@ -407,7 +407,7 @@ Router.post("/link", async (req, res) => {
       }
     } catch (err) {
       console.log(err);
-      responseCodes["error"];
+      RESPONSE_CODES["error"];
     }
   });
 });
