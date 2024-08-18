@@ -552,6 +552,12 @@ async function websiteUsageCache(userId) {
   return websiteData;
 }
 
+async function setGoogleAccessToken(user_id, access_token, expiry_date) {
+  const now = new Date().getTime();
+  const exp = Math.floor((expiry_date - now) / 1000);
+  redisClient.setex(`user:${user_id}:googleAccessToken`, exp, access_token);
+}
+
 async function googleAccessTokenCache(userId) {
   try {
     const googleAccessToken = await redisClient.get(
@@ -581,9 +587,7 @@ async function googleAccessTokenCache(userId) {
 
     const { access_token, expiry_date } = res.data;
     if (access_token) {
-      const now = new Date().getTime();
-      const exp = Math.floor((expiry_date - now) / 1000);
-      redisClient.setex(`user:${userId}:googleAccessToken`, exp, access_token);
+      setGoogleAccessToken(userId, access_token, expiry_date);
       return access_token;
     }
 
@@ -737,6 +741,7 @@ module.exports = {
   clearUserCache,
   subjectsTimelineCache,
   websiteUsageCache,
+  setGoogleAccessToken,
   googleAccessTokenCache,
   zsetIncrAll,
   getActiveUsers,
