@@ -60,11 +60,6 @@ async function createAccount(name, email, timezone, userInfo) {
       return { success: false, reason: "EMAIL ALREADY IN USE" };
     }
 
-    const customer = await stripe.customers.create({
-      name,
-      email,
-    });
-
     const user_id = generateRandomId(10);
     const key_salt = crypto.randomBytes(32).toString("hex");
     const iv = crypto.randomBytes(16).toString("hex");
@@ -77,7 +72,6 @@ async function createAccount(name, email, timezone, userInfo) {
       key_salt,
       iv,
       ...userInfo,
-      stripe_id: customer.id,
     };
 
     await connection.query("INSERT INTO users SET ?", user);

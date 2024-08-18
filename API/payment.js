@@ -7,108 +7,64 @@ const { userCache } = require("../services/redisLoader");
 const pool = require("../model/pool");
 const { validateString, validateURL } = require("../Utils/validate");
 
-/* Router.get("/client-secret", async (req, res) => {
+Router.post("/subscription/initialize", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const userInfo = await userCache(userId);
+      const { priceId } = req.body;
 
-      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
+      const connection = pool.promise();
+      const [[userInfo]] = await connection.query(
+        `SELECT name, email, stripe_id FROM users WHERE user_id = ?`,
+        [userId]
+      );
 
-      const { name, email } = userInfo;
-      const customer = await stripe.paymentIntents.create({
-        amount: 2000,
-        currency: "usd",
-        automatic_payment_methods: {
-          enabled: true,
-        },
+      if (!userInfo) {
+        return res.send(RESPONSE_CODES["no-user"]);
+      }
+
+      if (!userInfo.stripe_id) {
+        const customer = await stripe.customers.create({
+          name: userInfo.name,
+          email: userInfo.email,
+        });
+        await connection.query(
+          `UPDATE users SET stripe_id = ? WHERE user_id = ?`,
+          [customer.id, userId]
+        );
+        userInfo.stripe_id = customer.id;
+      }
+
+      if (!userInfo.stripe_id) {
+        return res.send(RESPONSE_CODES["error"]);
+      }
+
+      const subscription = await stripe.subscriptions.create({
+        customer: userInfo.stripe_id,
+        items: [{ price: priceId }],
+        payment_behavior: "default_incomplete",
+        expand: ["latest_invoice.payment_intent"],
       });
-
-      console.log(customer, customer.client_secret);
-      res.send({ success: true, secret: customer.client_secret });
+      const clientSecret =
+        subscription.latest_invoice.payment_intent.client_secret;
+      console.log(clientSecret);
+      res.send({ success: true, clientSecret });
     } catch (err) {
       console.log(err);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
-}); */
-
-Router.post("/create-checkout-session", async (req, res) => {
-  const { priceId, success_url, cancel_url } = req.body;
-
-  console.log("price", priceId);
-  try {
-    /* const isValidPriceId = validateString(priceId, "price id", 200);
-
-    if (!isValidPriceId.isValid) {
-      return res.send({ success: false, reason: isValidPriceId.reason });
-    } */
-
-    const isValidSuccessUrl = validateURL(
-      success_url,
-      true,
-      process.env.SERVER_CORS.split(", ")
-    );
-
-    /* if (!isValidSuccessUrl.isValid) {
-      return res.send({ success: false, reason: isValidSuccessUrl.reason });
-    }
-
-    const isValidCancelUrl = validateURL(
-      cancel_url,
-      true,
-      process.env.SERVER_CORS.split(", ")
-    );
-
-    if (!isValidCancelUrl.isValid) {
-      return res.send({ success: false, reason: isValidCancelUrl.reason });
-    } */
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: "subscription",
-      success_url: success_url,
-      cancel_url: cancel_url,
-    });
-    console.log(session, "gd");
-    res.send({ success: true, client_secret: session.id }); // Returning the session ID (client secret) to the frontend
-  } catch (err) {
-    console.log(err);
-  }
 });
 
-Router.get("/products", async (req, res) => {
+Router.get("/product", async (req, res) => {
   try {
-    const _products = await stripe.products.list({
-      limit: 10,
-    });
+    const { priceId } = req.body;
 
-    const _prices = await stripe.prices.list({
-      limit: 10,
-    });
-
-    const prices = _prices.data.map((price) => {
-      const {product, recurring, unit_amount, id} = price;
-      return {product, recurring, unit_amount, id};
-    })
-
-    console.log(prices);
-
-    const products = _products.data.map((_product) => {
-      const { id, active, recurring, product, name, default_price } = _product;
-      const price = prices.find(price => price.product === id);
-      return { id, active, recurring, product, name, default_price, price };
-    });
-
-    console.log(products)
-
-    res.send({ success: true, data: { products } });
+    const price = await stripe.prices.retrieve(priceId);
+    const product = await stripe.products.retrieve(price.product);
+    console.log(price, product);
   } catch (err) {
     console.log(err);
+    res.send(RESPONSE_CODES["error"]);
   }
 });
 
