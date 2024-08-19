@@ -77,6 +77,7 @@ const extensionAPI = require("./API/extension");
 const playlistsAPI = require("./API/playlists");
 const paymentAPI = require("./API/payment");
 const notificationsAPI = require("./API/notifications");
+const webhooksAPI = require("./API/webhooks");
 
 //import socket
 const { io } = require("./sockets/io");
@@ -85,7 +86,7 @@ const { io } = require("./sockets/io");
 app.use(
   cors({
     origin: process.env.SERVER_CORS.split(", "),
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true,
   })
 );
@@ -105,6 +106,7 @@ app.use((req, res, next) => {
   //console.log(res.locals.cspNonce)
   next();
 });
+app.use('/webhooks', express.raw({ type: 'application/json' }));
 app.use(helmet.frameguard({ action: "SAMEORIGIN" }));
 
 const cspOptions = {
@@ -170,6 +172,7 @@ app.use("/extension", extensionAPI);
 app.use("/playlists", playlistsAPI);
 app.use("/payment", paymentAPI);
 app.use("/notifications", notificationsAPI);
+app.use("/webhooks", webhooksAPI);
 
 //handle profile images
 app.get("/profile-image/:userId.jpeg", (req, res) => {
@@ -200,7 +203,12 @@ app.get("*", function (req, res) {
   res.redirect("/");
 });
 
-const { botManager, createBots, createGroups, randomFriend } = require("./Bot/Bot");
+const {
+  botManager,
+  createBots,
+  createGroups,
+  randomFriend,
+} = require("./Bot/Bot");
 const { servicesManager } = require("./services/services");
 
 botManager(process.env.BOTS);

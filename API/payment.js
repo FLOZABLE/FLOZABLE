@@ -44,7 +44,6 @@ Router.post("/subscription/initialize", async (req, res) => {
       });
       const clientSecret =
         subscription.latest_invoice.payment_intent.client_secret;
-      console.log(clientSecret);
       res.send({ success: true, clientSecret });
     } catch (err) {
       console.log(err);
@@ -57,7 +56,6 @@ Router.get("/product", async (req, res) => {
   try {
     const { priceId } = req.query;
 
-    console.log(priceId, "gddd");
     const price = await stripe.prices.retrieve(priceId);
     const product = await stripe.products.retrieve(price.product);
 
