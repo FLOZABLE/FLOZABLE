@@ -1228,7 +1228,7 @@ function IconUser(props) {
 const BackArrow = (props) => (
   <svg
     viewBox="0 0 24 24"
-    width=" 2.75rem"
+    width="1em"
     fill="currentColor"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
