@@ -7,14 +7,20 @@ function BlobBtn({
   color2 = "var(--gray2)",
   id,
   children,
-  style={}
+  style = {},
+  disabled,
+  type,
 }) {
   return (
-    <div
+    <button
       className={styles.BlobBtn}
-      onClick={(e)=> {onClick(e)}}
+      onClick={(e) => {
+        onClick ? onClick(e) : null;
+      }}
       style={{ "--color1": color1, "--color2": color2, ...style }}
       id={id}
+      disabled={disabled}
+      type={type}
     >
       {children}
       <span className={styles.blobBtnInner}>
@@ -25,7 +31,7 @@ function BlobBtn({
           <span className={styles.blobBtnBlob}></span>
         </span>
       </span>
-    </div>
+    </button>
   );
 }
 

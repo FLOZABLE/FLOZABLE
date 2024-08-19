@@ -3,9 +3,7 @@ const express = require("express");
 const Router = express.Router();
 const { autoSignin } = require("../Utils/tool");
 const { RESPONSE_CODES } = require("../Constant");
-const { userCache } = require("../services/redisLoader");
 const pool = require("../model/pool");
-const { validateString, validateURL } = require("../Utils/validate");
 
 Router.post("/subscription/initialize", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -57,11 +55,13 @@ Router.post("/subscription/initialize", async (req, res) => {
 
 Router.get("/product", async (req, res) => {
   try {
-    const { priceId } = req.body;
+    const { priceId } = req.query;
 
+    console.log(priceId, "gddd");
     const price = await stripe.prices.retrieve(priceId);
     const product = await stripe.products.retrieve(price.product);
-    console.log(price, product);
+
+    res.send({ success: true, price, product });
   } catch (err) {
     console.log(err);
     res.send(RESPONSE_CODES["error"]);
