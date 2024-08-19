@@ -30,6 +30,10 @@ Router.get("/", async (req, res) => {
       GROUP BY t.theme_id
     `);
 
+    if (!themes.length) {
+      return res.send({ success: true, themes });
+    }
+
     themes.map((theme) => {
       theme.weekUsage = 0;
       theme.tags = theme.tags === "" ? [] : theme.tags.split(",");
