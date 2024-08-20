@@ -26,10 +26,12 @@ Router.post("/stripe", async (req, res) => {
   // Handle the event
   switch (event.type) {
     case "invoice.paid":
-      console.log("customer", customer)
-      const [[userInfo]] = await connection.query(`SELECT user_id FROM users WHERE stripe_id = ?`, [customer]);
+      console.log("customer", customer, paymentIntent);
+      const [[userInfo]] = await connection.query(
+        `SELECT user_id FROM users WHERE stripe_id = ?`,
+        [customer]
+      );
 
-      
     /* case "payment_intent.succeeded":
       const paymentIntentSucceeded = event.data.object;
       // Then define and call a function to handle the event payment_intent.succeeded

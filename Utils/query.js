@@ -350,6 +350,34 @@ async function createWebsiteUsageTable() {
   `);
 }
 
+async function createProductsTable() {
+  const connection = pool.promise();
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS products (
+    product_id VARCHAR(30),
+    price_id VARCHAR(30),
+    cost SMALLINT UNSIGNED,
+    \`interval\` VARCHAR(15),
+    name VARCHAR(40),
+    PRIMARY KEY (product_id, price_id)
+  );
+  `);
+}
+async function createPurchasesTable() {
+  const connection = pool.promise();
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS purchases (
+    purchase_id VARCHAR(30) PRIMARY KEY,
+    user_id VARCHAR(10),
+    price_id VARCHAR(30),
+    product_id VARCHAR(30),
+    purchased_at INT(10),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (product_id, price_id) REFERENCES products(product_id, price_id)
+  );
+  `);
+}
+
 module.exports = {
   createUsersTable,
   createSubjectsTable,
@@ -374,4 +402,6 @@ module.exports = {
   createUserThemesTable,
   createWebsiteSettingsTable,
   createWebsiteUsageTable,
+  createProductsTable,
+  createPurchasesTable,
 };

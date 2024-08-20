@@ -32,6 +32,8 @@ const {
   createThemeLikesTable,
   createWebsiteSettingsTable,
   createWebsiteUsageTable,
+  createProductsTable,
+  createPurchasesTable,
 } = require("../Utils/query");
 const pool = require("../model/pool");
 
@@ -101,6 +103,8 @@ async function initializeMariadb() {
     await createUserThemesTable();
     await createWebsiteSettingsTable();
     await createWebsiteUsageTable();
+    await createProductsTable();
+    await createPurchasesTable();
 
     console.log("Initialized mariadb");
   } catch (err) {
