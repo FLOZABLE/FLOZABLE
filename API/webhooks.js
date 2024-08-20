@@ -32,6 +32,15 @@ Router.post("/stripe", async (req, res) => {
         [customer]
       );
 
+      if (userInfo) {
+        /* const purchase = {
+          purchase_id: paymentIntent.id,
+          user_id: userInfo.user_id,
+          price_id: 
+        } */
+        await connection.query(`INSERT INTO purchases SET ?`, [])
+      }
+
     /* case "payment_intent.succeeded":
       const paymentIntentSucceeded = event.data.object;
       // Then define and call a function to handle the event payment_intent.succeeded
