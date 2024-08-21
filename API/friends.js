@@ -12,6 +12,7 @@ const {
   clearUserCache,
   usersCache,
   activeGroupCache,
+  userFriendsCache,
 } = require("../services/redisLoader");
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
@@ -397,7 +398,12 @@ Router.get("/recommended", async (req, res) => {
 Router.get("/status", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const userInfo = await userCache(connection, userId);
+      const connection = pool.promise();
+
+      const [userInfo, friends] = await Promise.all([
+        userCache(connection, userId),
+        userFriendsCache(connection, userId),
+      ]);
 
       if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
@@ -407,9 +413,9 @@ Router.get("/status", async (req, res) => {
 
       const timezoneOffset = Math.floor(dateTime.offset / 60).toString();
 
-      const friends = await usersCache(userInfo.friends);
+      const friendsInfo = await usersCache(friends);
 
-      if (!friends.length) {
+      if (!friendsInfo.length) {
         return res.send({ success: false });
       }
 
@@ -438,7 +444,6 @@ Router.get("/status", async (req, res) => {
       );
 
       if (friendGroups.length) {
-        const connection = pool.promise();
         const [friendGroupsInfo] = await connection.query(
           `
           SELECT 

@@ -34,7 +34,7 @@ const RESPONSE_CODES = {
     reason: "Expired Request",
     code: 410,
   },
-  "error": {
+  error: {
     success: false,
     reason: "Unexpected Error",
     code: 500,
@@ -58,7 +58,9 @@ const REDIS_EXP = {
   ACTIVE_GROUP: 60 * 60 * 12,
   ACTIVE_SUBJECT: 60 * 60 * 12,
   USER_GROUPS: 60 * 10,
-  USER_FRIENDS: 60 * 10
+  USER_FRIENDS: 60 * 10,
+  USERINFO: 60 * 60,
+  SUBJECTS: 60 * 10,
 };
 
 const MAX_STUDY_TIME = 60 * 60 * 20; // 20hr = max study time. ignore more than 6 hr

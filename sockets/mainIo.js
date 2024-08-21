@@ -99,8 +99,11 @@ mainIo.on("connection", (socket) => {
     try {
       const now = Math.floor(new Date().getTime() / 1000);
 
-      const subject = await subjectCache(userId, subjectId);
-      const userInfo = await userCache(connection, userId);
+      const [subject, userInfo] = await Promise.all([
+        subjectCache(connection, userId, subjectId),
+        userCache(connection, userId),
+      ]);
+
       if (!subject || !userInfo) return;
       const { groups, friends } = userInfo;
       if (groups.length) {
@@ -207,6 +210,7 @@ mainIo.on("connection", (socket) => {
 
   socket.on("chat/send", async (roomId, message) => {
     try {
+      const connection = pool.promise();
       const isMember = await chatroomMemberCache(roomId, userId);
       if (!isMember || !message.length) return;
 
@@ -218,7 +222,7 @@ mainIo.on("connection", (socket) => {
         t,
         i,
       };
-      msgQueue(roomId, newMsg);
+      msgQueue(connection, roomId, newMsg);
       newMsg.r = roomId;
       mainIo.to(`chatroom:${roomId}`).emit("chat/message", newMsg);
     } catch (err) {
@@ -255,11 +259,14 @@ async function stopStudying(connection, userId, mode) {
   try {
     const now = Math.floor(new Date().getTime() / 1000);
 
-    const userInfo = await userCache(connection, userId);
+    const [userInfo, groups, friends, activeSubject] = await Promise.all([
+      userCache(connection, userId),
+      userGroupsCache(connection, userId),
+      userFriendsCache(connection, userId),
+      activeSubjectCache(userId),
+    ]);
 
     if (!userInfo) return;
-
-    const { groups, friends } = userInfo;
 
     if (groups.length) {
       mainIo.to(groups).emit(`stopStudying:${userId}`, { status: mode });
@@ -267,8 +274,6 @@ async function stopStudying(connection, userId, mode) {
     if (friends.length) {
       mainIo.to(friends).emit(`stopStudying:${userId}`, { status: mode });
     }
-
-    const activeSubject = await activeSubjectCache(userId);
 
     if (!activeSubject || activeSubject.id === "0") {
       return await redisClient.del(`user:${userId}:activeSubject`);

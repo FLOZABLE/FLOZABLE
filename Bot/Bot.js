@@ -24,6 +24,8 @@ const {
   removeActiveUserCache,
   cacheActiveSubject,
   cacheActiveGroup,
+  userGroupsCache,
+  userFriendsCache,
 } = require("../services/redisLoader");
 const { mainIo } = require("../sockets/mainIo");
 const { MAX_STUDY_TIME, possibleBotsSubjects } = require("../Constant");
@@ -216,10 +218,12 @@ async function startBot(userId) {
   try {
     const now = Math.floor(new Date().getTime() / 1000);
 
-    const subjects = await subjectsCache(userId);
-    const subject = subjects[randomIntInRange(0, subjects.length - 1)];
     const connection = pool.promise();
-    const userInfo = await userCache(connection, userId);
+    const [subjects, userInfo] = await Promise.all([
+      subjectsCache(connection, userId),
+      userCache(connection, userId),
+    ]);
+    const subject = subjects[randomIntInRange(0, subjects.length - 1)];
 
     if (!subject || !userInfo) return;
     const { groups, friends } = userInfo;
@@ -250,11 +254,13 @@ async function stopBot(userId) {
     redisClient.del(`user:${userId}:activeGroup`);
     const now = Math.floor(new Date().getTime() / 1000);
 
-    const userInfo = await userCache(connection, userId);
+    const connection = pool.promise();
 
-    if (!userInfo) return;
-
-    const { groups, friends } = userInfo;
+    const [groups, friends, activeSubject] = await Promise.all([
+      userGroupsCache(connection, userId),
+      userFriendsCache(connection, userId),
+      activeSubjectCache(userId),
+    ]);
 
     if (groups.length) {
       mainIo
@@ -266,8 +272,6 @@ async function stopBot(userId) {
         .to(friends)
         .emit(`stopStudying:${userId}`, { status: "disconnect" });
     }
-
-    const activeSubject = await activeSubjectCache(userId);
 
     if (!activeSubject || activeSubject.id === "0") {
       return await redisClient.del(`user:${userId}:activeSubject`);
@@ -320,44 +324,43 @@ const MAX_START_DELAY = 60 * 60 * 2; //1 hr = starts atleast 1hr from being assi
 async function botSelector(numbers) {
   try {
     const connection = pool.promise();
-    const [bots] = await connection.query(
-      `SELECT user_id FROM users WHERE type = -1`
-    );
-    //const [subjects] = await connection.query(`SELECT timeline, id, timeline_sum, created_at FROM subjects`)
+
+    // Execute these queries in parallel
+    const [bots, activeBots, allMembers] = await Promise.all([
+      connection
+        .query(`SELECT user_id FROM users WHERE type = -1`)
+        .then(([bots]) => bots),
+      redisClient.smembers("activeBots"),
+      getActiveUsers("month"),
+    ]);
+
     const now = DateTime.now();
-
-    const activeBots = await redisClient.smembers("activeBots");
-
-    const allMembers = await getActiveUsers("month");
 
     for (let i = 0; i < numbers; i++) {
       const index = randomIntInRange(0, bots.length - 1);
       const { user_id } = bots[index];
-      //this prevents same bot from being added
+
+      // Prevents the same bot from being added
       if (activeBots.includes(user_id)) continue;
       activeBots.push(user_id);
 
-      //determines how long this bot will study
+      // Determines how long this bot will study
       const duration = randomIntInRange(BOT_MIN_STUDY, BOT_MAX_STUDY);
       const start = randomIntInRange(5, MAX_START_DELAY) + now.toSeconds();
       const startDate = DateTime.fromSeconds(start);
       const stopDate = DateTime.fromSeconds(startDate.toSeconds() + duration);
-      //console.log(startDate.toSeconds() - stopDate.toSeconds())
-      //const [[subject]] = await connection.query(`SELECT timeline, id, timeline_sum, created_at FROM subjects WHERE user_id = ?`, [user_id]);
-      const scheduleStart = schedule.scheduleJob(startDate.toJSDate(), () => {
-        startBot(user_id);
-      });
-      const scheduleStop = schedule.scheduleJob(stopDate.toJSDate(), () => {
-        stopBot(user_id);
-      });
 
-      const scheduleFriend = schedule.scheduleJob(startDate.toJSDate(), () => {
-        addFriends(user_id, allMembers);
-      });
-      //Send friend request after finished studying
+      // Schedule bot start and stop jobs
+      schedule.scheduleJob(startDate.toJSDate(), () => startBot(user_id));
+      schedule.scheduleJob(stopDate.toJSDate(), () => stopBot(user_id));
+
+      // Schedule adding friends after bot start
+      schedule.scheduleJob(startDate.toJSDate(), () =>
+        addFriends(user_id, allMembers)
+      );
     }
 
-    //update active bot list in redis
+    // Update active bot list in Redis if there are new active bots
     if (activeBots.length) {
       redisClient.sadd("activeBots", activeBots);
     }
