@@ -160,7 +160,7 @@ async function replyFriendRequest(
     }
 
     const connection = pool.promise();
-    const userInfo = await userCache(userId);
+    const userInfo = await userCache(connection, userId);
 
     if (!userInfo) return { success: false, reason: RESPONSE_CODES["no-user"] };
 
@@ -367,7 +367,7 @@ Router.get("/recommended", async (req, res) => {
     res,
     async (userId) => {
       try {
-        const userInfo = await userCache(userId);
+        const userInfo = await userCache(connection, userId);
         if (!userInfo) {
           const users = await friendRecommendationGen();
           return res.send({ success: true, users });
@@ -397,7 +397,7 @@ Router.get("/recommended", async (req, res) => {
 Router.get("/status", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
 
       if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
@@ -602,7 +602,7 @@ Router.post("/invitation/email", async (req, res) => {
       const linkId = await createFriendLink(userId);
       if (!linkId) return res.send({ success: false, reason: "Error" });
 
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
       if (!userInfo) return res.send({ success: false, reason: "Error" });
       const params = {
         name: userInfo.name,
@@ -625,7 +625,7 @@ Router.get("/trends", async (req, res) => {
       const { timezone } = req.query;
       const mode = "day";
 
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
 
       if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 

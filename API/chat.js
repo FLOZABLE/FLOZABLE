@@ -170,7 +170,7 @@ Router.post("/request", async (req, res) => {
         return res.send(RESPONSE_CODES["no-user"]);
       }
 
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
       if (!userInfo) {
         return res.send(RESPONSE_CODES["no-user"]);
       }

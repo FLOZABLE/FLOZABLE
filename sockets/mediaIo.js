@@ -83,7 +83,7 @@ const consumers = {};
     const userId = session.user_id;
 
     socket.on("changeGroup", async(groupId) => {
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
       if (!userInfo) return;
       const {groups, friends} = userInfo;
   

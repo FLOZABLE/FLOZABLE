@@ -159,7 +159,7 @@ Router.put("/group", async (req, res) => {
         };
 
         //update cached values
-        const userInfo = await userCache(userId);
+        const userInfo = await userCache(connection, userId);
         if (!userInfo) {
           return res.send(RESPONSE_CODES["no-user"]);
         }
@@ -345,7 +345,7 @@ Router.post("/join/:id", async (req, res) => {
         return res.send({ success: false, reason: isValidGroupId.reason });
       }
 
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
 
       if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
@@ -434,7 +434,7 @@ Router.post("/leave", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { groupId } = req.body;
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
 
       if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 

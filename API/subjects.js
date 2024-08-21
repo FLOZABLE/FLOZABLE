@@ -258,7 +258,7 @@ Router.post("/subject/share", async (req, res) => {
     try {
       const { users, subjectId } = req.body;
 
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
       if (!userInfo) {
         return res.send(RESPONSE_CODES["no-user"]);
       }

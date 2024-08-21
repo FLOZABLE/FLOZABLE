@@ -13,7 +13,7 @@ extensionIo.on("connection", (socket) => {
       const userId = await redisClient.get(`extension:auth:${authId}`);
       //invalid auth id
       if (!userId) return;
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
 
       if (!userInfo) return;
 

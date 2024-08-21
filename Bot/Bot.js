@@ -218,7 +218,8 @@ async function startBot(userId) {
 
     const subjects = await subjectsCache(userId);
     const subject = subjects[randomIntInRange(0, subjects.length - 1)];
-    const userInfo = await userCache(userId);
+    const connection = pool.promise();
+    const userInfo = await userCache(connection, userId);
 
     if (!subject || !userInfo) return;
     const { groups, friends } = userInfo;
@@ -249,7 +250,7 @@ async function stopBot(userId) {
     redisClient.del(`user:${userId}:activeGroup`);
     const now = Math.floor(new Date().getTime() / 1000);
 
-    const userInfo = await userCache(userId);
+    const userInfo = await userCache(connection, userId);
 
     if (!userInfo) return;
 
