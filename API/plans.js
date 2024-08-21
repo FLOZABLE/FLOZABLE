@@ -505,7 +505,7 @@ Router.post("/plan/share", async (req, res) => {
 
       if (!users.length) return res.send({ success: true });
 
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
 
       if (!userInfo)
         return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
@@ -615,7 +615,7 @@ Router.delete("/plan/share", async (req, res) => {
         return res.send({ success: false, reason: isValidTargetId.reason });
       }
 
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
 
       if (!userInfo)
         return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
@@ -698,7 +698,7 @@ Router.post("/plan/share/respond", async (req, res) => {
 
       if (!notification) return res.send(RESPONSE_CODES["expired-request"]);
 
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
 
       if (!userInfo)
         return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });

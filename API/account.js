@@ -26,6 +26,7 @@ const {
   addActiveUserCache,
   usersCache,
   googleAccessTokenCache,
+  userFriendsCache,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
 const { RESPONSE_CODES, PASSWORD_LINK_EXP } = require("../Constant");
@@ -34,8 +35,9 @@ const upload = multer();
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
+      const connection = pool.promise();
       const notifications = await NotificationCache(userId);
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
       if (!userInfo) {
         return res.send(RESPONSE_CODES["no-user"]);
       }
@@ -319,7 +321,8 @@ Router.get("/profile", async (req, res) => {
   try {
     const { userId } = req.query;
 
-    const userInfo = await userCache(userId);
+    const connection = pool.promise();
+    const userInfo = await userCache(connection, userId);
     if (!userInfo) {
       return res.send(RESPONSE_CODES["no-user"]);
     }
