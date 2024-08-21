@@ -20,27 +20,50 @@ Router.post("/stripe", async (req, res) => {
     return;
   }
 
-  const paymentIntent = event.data.object;
-  const customer = paymentIntent.customer;
+  const data = event.data.object;
+  const customer = data.customer;
   const connection = pool.promise();
   // Handle the event
   switch (event.type) {
     case "invoice.paid":
-      console.log("customer", customer, paymentIntent);
+      console.log("customer", customer, data);
       const [[userInfo]] = await connection.query(
         `SELECT user_id FROM users WHERE stripe_id = ?`,
         [customer]
       );
 
-      if (userInfo) {
-        /* const purchase = {
-          purchase_id: paymentIntent.id,
-          user_id: userInfo.user_id,
-          price_id: 
-        } */
-        await connection.query(`INSERT INTO purchases SET ?`, [])
-      }
+      if (!userInfo) return;
 
+      const invoice = await stripe.invoices.retrieve(data.id, {
+        expand: ["lines"],
+      });
+
+      const purchases = [];
+      invoice?.lines?.data.map((item) => {
+        const purchase_id = data.id;
+        const price_id = item.price.id;
+        const product_id = item.price.product;
+        const purchased_at = data.created;
+        purchases.push([
+          purchase_id,
+          userInfo.user_id,
+          price_id,
+          product_id,
+          purchased_at,
+        ]);
+      });
+
+      console.log(invoice.lines.data, "invoice", purchases);
+
+      if (purchases.length) {
+        await connection.query(
+          `INSERT IGNORE INTO purchases 
+          (purchase_id, user_id, price_id, product_id, purchased_at)
+          VALUES ?
+          `,
+          [purchases]
+        );
+      }
     /* case "payment_intent.succeeded":
       const paymentIntentSucceeded = event.data.object;
       // Then define and call a function to handle the event payment_intent.succeeded
