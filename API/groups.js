@@ -345,24 +345,27 @@ Router.post("/join/:id", async (req, res) => {
         return res.send({ success: false, reason: isValidGroupId.reason });
       }
 
-      const userInfo = await userCache(connection, userId);
+      const connection = pool.promise();
+
+      const [userInfo, [[groupInfo]]] = await Promise.all([
+        userCache(connection, userId),
+        connection.query(
+          `SELECT 
+          g.password, 
+          g.salt, 
+          g.visibility, 
+          g.max_members, 
+          g.name,
+          GROUP_CONCAT(DISTINCT m.user_id) AS members
+          FROM \`groups\` g
+          LEFT JOIN group_members m ON g.group_id = m.group_id
+          WHERE g.group_id = ?`,
+          [groupId]
+        ),
+      ]);
 
       if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
-      const connection = pool.promise();
-      const [[groupInfo]] = await connection.query(
-        `SELECT 
-        g.password, 
-        g.salt, 
-        g.visibility, 
-        g.max_members, 
-        g.name,
-        GROUP_CONCAT(DISTINCT m.user_id) AS members
-        FROM \`groups\` g
-        LEFT JOIN group_members m ON g.group_id = m.group_id
-        WHERE g.group_id = ?`,
-        [groupId]
-      );
       if (!groupInfo)
         return res.send({ success: false, reason: `Group does not exist` });
 
@@ -412,12 +415,6 @@ Router.post("/join/:id", async (req, res) => {
         totalTime,
         activeSubject,
       });
-
-      //update cached value only if it exists
-      /* const isCached = await redisClient.exists(`room:${groupId}`);
-      if (isCached) {
-        redisClient.sadd(`room:${groupId}`, userId);
-      } */
 
       mainIo.to(userId).emit("joinChatRoom", groupId);
     } catch (err) {

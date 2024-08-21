@@ -322,32 +322,19 @@ Router.get("/profile", async (req, res) => {
     const { userId } = req.query;
 
     const connection = pool.promise();
-    const userInfo = await userCache(connection, userId);
+    const [userInfo, friends, subjects] = await Promise.all([
+      userCache(connection, userId),
+      userFriendsCache(connection, userId),
+      subjectsTimelineCache(connection, userId),
+    ]);
     if (!userInfo) {
       return res.send(RESPONSE_CODES["no-user"]);
     }
-
-    const friends = await usersCache(userInfo.friends, false);
-
-    const subjects = await subjectsTimelineCache(userId);
 
     return res.send({ success: true, userInfo, friends, subjects });
   } catch (err) {
     console.log(err);
     return res.send(RESPONSE_CODES["error"]);
-  }
-});
-
-Router.get("/profile/subjects", async (req, res) => {
-  try {
-    const { userId } = req.query;
-
-    const subjectsInfo = await subjectsTimelineCache(userId);
-
-    res.send({ success: true, subjects: subjectsInfo });
-  } catch (err) {
-    console.log(err);
-    res.send(RESPONSE_CODES["error"]);
   }
 });
 
