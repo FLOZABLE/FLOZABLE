@@ -18,7 +18,7 @@ const {
   activeSubjectCache,
   subjectsCache,
   userCache,
-  NotificationCache,
+  notificationCache,
   getActiveUsers,
   addActiveUserCache,
   removeActiveUserCache,
@@ -197,7 +197,7 @@ async function addFriends(botId, allMembers) {
       console.log(response);
     }
 
-    const friendRequests = await NotificationCache(botId, 0, false);
+    const friendRequests = await notificationCache(botId, 0, false);
     friendRequests.map(async (request) => {
       const accepted = randomIntInRange(0, 1) === 0 ? false : true;
       const response = await replyFriendRequest(
@@ -219,15 +219,15 @@ async function startBot(userId) {
     const now = Math.floor(new Date().getTime() / 1000);
 
     const connection = pool.promise();
-    const [subjects, userInfo] = await Promise.all([
+    const [subjects, groups, friends] = await Promise.all([
       subjectsCache(connection, userId),
-      userCache(connection, userId),
+      userGroupsCache(connection, userId),
+      userFriendsCache(connection, userId),
     ]);
     const subject = subjects[randomIntInRange(0, subjects.length - 1)];
 
-    if (!subject || !userInfo) return;
-    const { groups, friends } = userInfo;
-    console.log("bot start", userInfo.name, userInfo.user_id);
+    if (!subject) return;
+    console.log("bot start", userId);
     if (groups.length) {
       mainIo.to(groups).emit(`studying:${userId}`, subject);
 

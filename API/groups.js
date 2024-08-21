@@ -5,7 +5,12 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const crypto = require("crypto");
 const { hashing, generateRandomId, autoSignin } = require("../Utils/tool");
-const { activeSubjectCache, userCache } = require("../services/redisLoader");
+const {
+  activeSubjectCache,
+  userCache,
+  userGroupsCache,
+  cacheUserGroups,
+} = require("../services/redisLoader");
 const {
   validateArray,
   validateStrictString,
@@ -158,16 +163,11 @@ Router.put("/group", async (req, res) => {
           goal_hr,
         };
 
-        //update cached values
-        const userInfo = await userCache(connection, userId);
-        if (!userInfo) {
-          return res.send(RESPONSE_CODES["no-user"]);
-        }
-
-        const { groups } = userInfo;
-
-        groups.push(group_id);
-        redisClient.hset(`user:${userId}`, "groups", groups.toString());
+        const newGroupMember = {
+          group_id,
+          member_id: userId,
+          joined_at: date,
+        };
 
         try {
           const connection = pool.promise();
@@ -175,11 +175,9 @@ Router.put("/group", async (req, res) => {
           await connection.query("INSERT INTO `groups` SET ?", group);
           await connection.query(
             `
-        UPDATE users
-        SET \`groups\` = ?
-        WHERE user_id = ?
-      `,
-            [groups.toString(), userId]
+            INSERT INTO group_members SET ?
+            `,
+            [newGroupMember]
           );
 
           const roomInfo = {
@@ -187,6 +185,11 @@ Router.put("/group", async (req, res) => {
           };
 
           connection.query(`INSERT INTO chatrooms SET ?`, roomInfo);
+
+          //update cached values
+          const groups = await userGroupsCache(connection, userId);
+          groups.push(group_id);
+          cacheUserGroups(userId, groups);
 
           res.send({
             success: true,
@@ -444,13 +447,9 @@ Router.post("/leave", async (req, res) => {
 
       if (!changedRows) return res.send(RESPONSE_CODES["no-group"]);
 
-      userInfo.groups = [
-        ...new Set(userInfo.groups.filter((g) => g !== groupId)),
-      ];
+      redisClient.srem(`user:${userId}:groups`, groupId);
 
-      redisClient.hset(`user:${userId}`, "groups", userInfo.groups.toString());
-
-      redisClient.srem(`room:${groupId}`, userId);
+      redisClient.srem(`chatroom:${groupId}`, userId);
 
       mainIo.emit(`removeMember`, groupId, userId);
 
@@ -465,40 +464,34 @@ Router.delete("/member", async (req, res) => {
   const { memberId, groupId } = req.body;
   autoSignin(req, res, async (userId) => {
     try {
-      const merberInfo = await userCache(memberId);
+      const connection = pool.promise();
+
+      const [merberInfo, [[groupInfo]]] = await Promise.all([
+        userCache(memberId),
+        connection.query("SELECT leader, name FROM groups WHERE group_id = ?", [
+          groupId,
+        ]),
+      ]);
 
       if (!merberInfo) return res.send(RESPONSE_CODES["no-user"]);
 
-      const connection = pool.promise();
-      const [[group]] = await connection.query(
-        "SELECT leader, name, members FROM groups WHERE group_id = ?",
-        [groupId]
-      );
+      if (!groupInfo) return res.send(RESPONSE_CODES["no-group"]);
 
-      if (group.leader !== userId) {
+      if (groupInfo.leader !== userId) {
         return res.send({
           success: false,
           reason: "You do not have the permission to remove members",
         });
       }
 
-      group.members = group.members.split(",");
-      group.members = [
-        ...new Set(group.members.filter((mem) => mem != memberId)),
-      ];
       await connection.query(
-        "UPDATE groups SET members = ? WHERE group_id = ?",
-        [group.members.toString(), groupId]
+        `DELETE FROM group_members WHERE group_id = ? AND user_id = ?`,
+        [groupId, userId]
       );
 
-      merberInfo.groups = merberInfo.groups.filter((g) => g != groupId);
-      redisClient.hset(
-        `user:${memberId}`,
-        "groups",
-        merberInfo.groups.toString()
-      );
+      redisClient.srem(`user:${memberId}:groups`, groupId);
 
-      redisClient.srem(`room:${groupId}`, memberId);
+      redisClient.srem(`chatroom:${groupId}`, memberId);
       mainIo.emit(`removeMember`, groupId, memberId);
 
       return res.send({ success: true });

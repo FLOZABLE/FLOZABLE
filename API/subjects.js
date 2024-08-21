@@ -6,7 +6,8 @@ const { generateRandomId, autoSignin } = require("../Utils/tool");
 const {
   subjectsTimelineCache,
   userCache,
-  NotificationCache,
+  notificationCache,
+  userFriendsCache,
 } = require("../services/redisLoader");
 const {
   validateString,
@@ -258,23 +259,26 @@ Router.post("/subject/share", async (req, res) => {
     try {
       const { users, subjectId } = req.body;
 
-      const userInfo = await userCache(connection, userId);
+      const connection = pool.promise();
+
+      const [userInfo, userFriends, [[subject]]] = await Promise.all([
+        userCache(connection, userId),
+        userFriendsCache(connection, userId),
+        connection.query(
+          `SELECT 
+            s.name,
+            GROUP_CONCAT(DISTINCT ss.user_id) AS share,
+            GROUP_CONCAT(DISTINCT ssd.user_id) AS shared
+            FROM subjects s
+            LEFT JOIN subject_share ss ON ss.subject_id = s.subject_id
+            LEFT JOIN subject_shared ssd ON ssd.subject_id = s.subject_id
+            WHERE s.user_id = ? AND s.subject_id = ?`,
+          [userId, subjectId]
+        ),
+      ]);
       if (!userInfo) {
         return res.send(RESPONSE_CODES["no-user"]);
       }
-
-      const connection = pool.promise();
-      const [[subject]] = await connection.query(
-        `SELECT 
-          s.name,
-          GROUP_CONCAT(DISTINCT ss.user_id) AS share,
-          GROUP_CONCAT(DISTINCT ssd.user_id) AS shared
-          FROM subjects s
-          LEFT JOIN subject_share ss ON ss.subject_id = s.subject_id
-          LEFT JOIN subject_shared ssd ON ssd.subject_id = s.subject_id
-          WHERE s.user_id = ? AND s.subject_id = ?`,
-        [userId, subjectId]
-      );
 
       if (!subject) {
         return res.send(RESPONSE_CODES["no-subject"]);
@@ -289,7 +293,7 @@ Router.post("/subject/share", async (req, res) => {
       );
 
       const friends = filteredUsers.filter((user) =>
-        userInfo.friends.includes(user)
+        userFriends.includes(user)
       );
 
       if (friends.length) {
@@ -305,7 +309,7 @@ Router.post("/subject/share", async (req, res) => {
       }
 
       const nonFriends = filteredUsers.filter(
-        (user) => !userInfo.friends.includes(user)
+        (user) => !userFriends.includes(user)
       );
       if (nonFriends.length) {
         const newShare = nonFriends.map((friend) => [subjectId, friend]);
@@ -413,7 +417,7 @@ Router.delete("/subject/share", async (req, res) => {
         [subjectId, targetId, subjectId, targetId]
       );
 
-      const subjectRequests = await NotificationCache(targetId, 2, false);
+      const subjectRequests = await notificationCache(targetId, 2, false);
       const subjectRequest = subjectRequests.find((subjectRequest) => {
         return subjectRequest.si === subjectId;
       });
