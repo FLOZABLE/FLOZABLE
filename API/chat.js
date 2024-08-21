@@ -4,9 +4,10 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { autoSignin, generateRandomId } = require("../Utils/tool");
 const {
-  NotificationCache,
+  notificationCache,
   userCache,
   chatroomMemberCache,
+  usersCache,
 } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../Utils/validate");
 const { mainIo } = require("../sockets/mainIo");
@@ -144,18 +145,21 @@ Router.post("/request", async (req, res) => {
 
       const connection = pool.promise();
 
-      const [[chatroom]] = await connection.query(
-        `
-        SELECT 
-        cm1.chatroom_id,
-        c.name
-        FROM chatroom_members cm1
-        JOIN chatroom_members cm2 ON cm1.chatroom_id = cm2.chatroom_id
-        JOIN chatrooms c ON c.chatroom_id = cm1.chatroom_id
-        WHERE cm1.user_id = ? AND cm2.user_id = ?
-      `,
-        [userId, targetId]
-      );
+      const [usersInfo, [[chatroom]]] = await Promise.all([
+        usersCache(connection, [userId, targetId], false),
+        connection.query(
+          `
+          SELECT 
+          cm1.chatroom_id,
+          c.name
+          FROM chatroom_members cm1
+          JOIN chatroom_members cm2 ON cm1.chatroom_id = cm2.chatroom_id
+          JOIN chatrooms c ON c.chatroom_id = cm1.chatroom_id
+          WHERE cm1.user_id = ? AND cm2.user_id = ?
+        `,
+          [userId, targetId]
+        ),
+      ]);
 
       if (chatroom) {
         return res.send({
@@ -165,17 +169,17 @@ Router.post("/request", async (req, res) => {
         });
       }
 
-      const targetUser = await userCache(targetId);
-      if (!targetUser) {
-        return res.send(RESPONSE_CODES["no-user"]);
+      const userInfo = usersInfo.find((user) => user.user_id === userId);
+
+      const targetUserInfo = usersInfo.find(
+        (user) => user.user_id === targetId
+      );
+
+      if (!targetUserInfo || !userInfo) {
+        return RESPONSE_CODES["no-user"];
       }
 
-      const userInfo = await userCache(connection, userId);
-      if (!userInfo) {
-        return res.send(RESPONSE_CODES["no-user"]);
-      }
-
-      const targetDmRequests = await NotificationCache(targetId, 4, false);
+      const targetDmRequests = await notificationCache(targetId, 4, false);
       const prevDmRequest = targetDmRequests.find(
         (dmRequest) => dmRequest.f === userId
       );
@@ -247,18 +251,20 @@ Router.post("/request/reply", async (req, res) => {
         return res.send({ success: true, msg: `Declined chat request` });
       }
       const connection = pool.promise();
-      const targetUser = await userCache(targetId);
-      if (!targetUser) {
-        return res.send(RESPONSE_CODES["no-user"]);
-      }
 
-      const userInfo = await userCache(userId);
-      if (!userInfo) {
-        return res.send(RESPONSE_CODES["no-user"]);
+      const usersInfo = await usersCache(connection, [userId, targetId], false);
+
+      const userInfo = usersInfo.find((user) => user.user_id === userId);
+
+      const targetUserInfo = usersInfo.find(
+        (user) => user.user_id === targetId
+      );
+      if (!targetUserInfo || !userInfo) {
+        return RESPONSE_CODES["no-user"];
       }
 
       const chatroom_id = generateRandomId(10);
-      const chatroomName = userInfo.name + ", " + targetUser.name;
+      const chatroomName = userInfo.name + ", " + targetUserInfo.name;
 
       const roomInfo = {
         chatroom_id,

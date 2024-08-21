@@ -61,8 +61,8 @@ async function autoSignin(
 
   if (req.signedCookies.userId) {
     if (!cache) return success(req.signedCookies.userId);
-
-    const userInfo = userCache(req.signedCookies.userId);
+    const connection = pool.promise();
+    const userInfo = userCache(connection, req.signedCookies.userId);
     if (userInfo) {
       req.session.user_id = req.signedCookies.userId;
       return success(req.signedCookies.userId, userInfo.timezone);
@@ -221,7 +221,7 @@ function getMidnightTimezones() {
   return midnightTimezones;
 }
 
-async function friendRecommendationGen(excluded = []) {
+async function friendRecommendationGen(connection, excluded = []) {
   try {
     const userIds = await redisClient.smembers(`month1`);
     const users = [];
@@ -236,7 +236,7 @@ async function friendRecommendationGen(excluded = []) {
       }
     }
 
-    const usersInfo = await usersCache(users);
+    const usersInfo = await usersCache(connection, users);
 
     return usersInfo;
   } catch (err) {

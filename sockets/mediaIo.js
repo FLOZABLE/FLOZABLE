@@ -1,20 +1,24 @@
-const mediaSoup = require('mediasoup');
-const { userCache } = require("../services/redisLoader");
-const { io } = require('./io');
-const mediaIo = io.of('/');
+const mediaSoup = require("mediasoup");
+const {
+  userCache,
+  userFriendsCache,
+  userGroupsCache,
+} = require("../services/redisLoader");
+const { io } = require("./io");
+const mediaIo = io.of("/");
 const mediaCodecs = [
   {
-    kind: 'audio',
-    mimeType: 'audio/opus',
+    kind: "audio",
+    mimeType: "audio/opus",
     clockRate: 48000,
     channels: 2,
   },
   {
-    kind: 'video',
-    mimeType: 'video/VP8',
+    kind: "video",
+    mimeType: "video/VP8",
     clockRate: 90000,
     parameters: {
-      'x-google-start-bitrate': 1000,
+      "x-google-start-bitrate": 1000,
     },
   },
 ];
@@ -23,20 +27,20 @@ async function createWorker() {
   const worker = await mediaSoup.createWorker({
     rtcMinPort: 50000,
     rtcMaxPort: 55000,
-    logLevel: 'warn',
+    logLevel: "warn",
     logTags: [
-      'info',
-      'ice',
-      'dtls',
-      'rtp',
-      'srtp',
-      'rtcp',
-      'rtx',
-      'bwe',
-      'score',
-      'simulcast',
-      'svc'
-    ]
+      "info",
+      "ice",
+      "dtls",
+      "rtp",
+      "srtp",
+      "rtcp",
+      "rtx",
+      "bwe",
+      "score",
+      "simulcast",
+      "svc",
+    ],
   });
 
   worker.on("died", () => {
@@ -45,7 +49,7 @@ async function createWorker() {
   });
 
   return worker;
-};
+}
 
 /**
  * {userId:{produce info}, }
@@ -58,44 +62,45 @@ const consumers = {};
 
 (async () => {
   const worker = await createWorker();
-  mediaIo.on('connection', async (socket) => {
+  mediaIo.on("connection", async (socket) => {
     let session;
     let activeGroup;
 
-    if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
+    if (
+      process.env.NODE_ENV === "production" ||
+      process.env.NODE_ENV === "test"
+    ) {
       try {
         session = socket.request.session;
       } catch (err) {
         console.log(err);
-      };
+      }
     } else {
       session = {
         cookie: {
-          path: '/',
+          path: "/",
           _expires: null,
           originalMaxAge: null,
           httpOnly: true,
-          secure: false
+          secure: false,
         },
         user_id: process.env.TESTER_ID,
       };
-    };
+    }
     const userId = session.user_id;
 
-    socket.on("changeGroup", async(groupId) => {
-      const userInfo = await userCache(connection, userId);
-      if (!userInfo) return;
-      const {groups, friends} = userInfo;
-  
+    socket.on("changeGroup", async (groupId) => {
+      const connection = pool.promise();
+      const groups = await userGroupsCache(connection, usreId);
       if (!groups.includes(groupId)) return;
-      groups.map(group => {
+      groups.map((group) => {
         if (group !== groupId) {
           socket.leave(group);
-        };
+        }
       });
       socket.join(groupId);
       activeGroup = groupId;
-    })
+    });
 
     /**
      * Event handler for fetching router RTP capabilities.
@@ -109,12 +114,12 @@ const consumers = {};
 
         const router = await getRouter(activeGroup, worker);
         const rtpCapabilities = router.rtpCapabilities;
-        console.log('SFU: sent router capabilities')
+        console.log("SFU: sent router capabilities");
         // call callback from the client and send back the rtpCapabilities
         callback({ rtpCapabilities });
       } catch (err) {
         console.log(err);
-      };
+      }
     });
 
     /**
@@ -128,8 +133,8 @@ const consumers = {};
       // ... Creating sender/receiver transports ...
       try {
         if (!userId || !activeGroup) return;
-        
-        console.log('SFU: create transport', sender, userId)
+
+        console.log("SFU: create transport", sender, userId);
         const router = await getRouter(activeGroup, worker);
         const { transport, params } = await createWebRtcTransport(router);
         if (sender) {
@@ -137,15 +142,18 @@ const consumers = {};
           addProducerTransport(userId, transport);
         } else {
           addConsumerTransport(userId, transport);
-        };
+        }
         callback({ params });
-        console.log(Object.keys(consumerTransports), Object.keys(producerTransports))
+        console.log(
+          Object.keys(consumerTransports),
+          Object.keys(producerTransports)
+        );
       } catch (err) {
         console.log(err);
-      };
+      }
     });
 
-    socket.on('transport-connect', async ({ dtlsParameters }) => {
+    socket.on("transport-connect", async ({ dtlsParameters }) => {
       try {
         if (!userId) return;
 
@@ -153,130 +161,136 @@ const consumers = {};
 
         if (!producerTransport) return;
 
-        console.log('SFU: transport connect');
+        console.log("SFU: transport connect");
         const connection = await producerTransport.connect({ dtlsParameters });
       } catch (err) {
         console.log(err);
       }
     });
 
-    socket.on('transport-recv-connect', async ({ dtlsParameters }) => {
+    socket.on("transport-recv-connect", async ({ dtlsParameters }) => {
       try {
         if (!userId) return;
 
         const consumerTransport = getConsumerTransport(userId);
-        
+
         if (!consumerTransport) return;
-        
-        console.log('SFU: found consumer transport')
+
+        console.log("SFU: found consumer transport");
         const connection = await consumerTransport.connect({ dtlsParameters });
       } catch (err) {
         console.log(err);
-      };
-    });
-
-    socket.on('transport-produce', async ({ kind, rtpParameters }, callback) => {
-      try {
-        if (!userId || !activeGroup) return;
-
-        const producerTransport = getProducerTransport(userId);
-
-        // Producer not found or already produced
-        if (!producerTransport) return;
-
-        console.log("SFU: transport produce", activeGroup);
-        const producer = await producerTransport.produce({
-          kind,
-          rtpParameters,
-        });
-
-        addProducer(activeGroup, userId, producer, kind);
-
-        producer.on('transportclose', () => {
-          console.log('transportclose close');
-          producer.close();
-        });
-
-        mediaIo.to(activeGroup).emit(`newProducer:${userId}`, kind);
-
-        // Send back to the client the Producer's id
-        callback({ id: producer.id });
-      } catch (err) {
-        console.log(err);
       }
     });
 
-    socket.on('consume', async ({ rtpCapabilities, targetId, kind }, callback) => {
-      try {
-        if (!userId || !activeGroup) return;
+    socket.on(
+      "transport-produce",
+      async ({ kind, rtpParameters }, callback) => {
+        try {
+          if (!userId || !activeGroup) return;
 
-        console.log('SFU: consume start', kind);
-        const producer = getProducer(activeGroup, targetId, kind);
-        if (!producer) return;
+          const producerTransport = getProducerTransport(userId);
 
-        const router = await getRouter(activeGroup, worker);
-        // check if the router can consume the specified producer
-        const canConsume = router.canConsume({
-          producerId: producer.id,
-          rtpCapabilities
-        });
-        console.log("SFU: can consume", canConsume)
-        if (canConsume) {
-          // transport can now consume and return a consumer
-          const consumerTransport = getConsumerTransport(userId);
-          if (!consumerTransport) return;
-          const consumer = await consumerTransport.consume({
-            producerId: producer.id,
-            rtpCapabilities,
-            paused: true,
+          // Producer not found or already produced
+          if (!producerTransport) return;
+
+          console.log("SFU: transport produce", activeGroup);
+          const producer = await producerTransport.produce({
+            kind,
+            rtpParameters,
           });
 
-          addConsumer(activeGroup, userId, targetId, consumer, kind);
+          addProducer(activeGroup, userId, producer, kind);
 
-          consumer.on('transportclose', () => {
-            console.log('transport close from consumer')
-          })
+          producer.on("transportclose", () => {
+            console.log("transportclose close");
+            producer.close();
+          });
 
-          consumer.on('producerclose', () => {
-            console.log('producer of consumer closed')
-          })
+          mediaIo.to(activeGroup).emit(`newProducer:${userId}`, kind);
 
-          // from the consumer extract the following params
-          // to send back to the Client
-          const params = {
-            id: consumer.id,
-            producerId: producer.id,
-            kind: consumer.kind,
-            rtpParameters: consumer.rtpParameters,
-          }
-
-          // send the parameters to the client
-          callback({ params })
+          // Send back to the client the Producer's id
+          callback({ id: producer.id });
+        } catch (err) {
+          console.log(err);
         }
-      } catch (err) {
-        console.log(err.message)
-        callback({
-          params: {
-            error: err
-          }
-        })
       }
-    });
+    );
 
-    socket.on('consumer-resume', async ({ targetId, kind }) => {
+    socket.on(
+      "consume",
+      async ({ rtpCapabilities, targetId, kind }, callback) => {
+        try {
+          if (!userId || !activeGroup) return;
+
+          console.log("SFU: consume start", kind);
+          const producer = getProducer(activeGroup, targetId, kind);
+          if (!producer) return;
+
+          const router = await getRouter(activeGroup, worker);
+          // check if the router can consume the specified producer
+          const canConsume = router.canConsume({
+            producerId: producer.id,
+            rtpCapabilities,
+          });
+          console.log("SFU: can consume", canConsume);
+          if (canConsume) {
+            // transport can now consume and return a consumer
+            const consumerTransport = getConsumerTransport(userId);
+            if (!consumerTransport) return;
+            const consumer = await consumerTransport.consume({
+              producerId: producer.id,
+              rtpCapabilities,
+              paused: true,
+            });
+
+            addConsumer(activeGroup, userId, targetId, consumer, kind);
+
+            consumer.on("transportclose", () => {
+              console.log("transport close from consumer");
+            });
+
+            consumer.on("producerclose", () => {
+              console.log("producer of consumer closed");
+            });
+
+            // from the consumer extract the following params
+            // to send back to the Client
+            const params = {
+              id: consumer.id,
+              producerId: producer.id,
+              kind: consumer.kind,
+              rtpParameters: consumer.rtpParameters,
+            };
+
+            // send the parameters to the client
+            callback({ params });
+          }
+        } catch (err) {
+          console.log(err.message);
+          callback({
+            params: {
+              error: err,
+            },
+          });
+        }
+      }
+    );
+
+    socket.on("consumer-resume", async ({ targetId, kind }) => {
       try {
         if (!userId || !activeGroup) return;
 
         const consumer = getConsumer(activeGroup, userId, targetId, kind);
         if (!consumer) return;
-        console.log('resume', consumer.id, kind)
+        console.log("resume", consumer.id, kind);
         await consumer.resume();
       } catch (err) {
         console.log(err);
-      };
+      }
     });
 
-    socket.on('removeMyProducer', async ({ kind }) => {
+    socket.on("removeMyProducer", async ({ kind }) => {
       try {
         if (!userId || !activeGroup) return;
 
@@ -284,10 +298,10 @@ const consumers = {};
         mediaIo.to(activeGroup).emit(`removeProducer:${userId}`, kind);
       } catch (err) {
         console.log(err);
-      };
+      }
     });
 
-    socket.on('disconnect', async () => {
+    socket.on("disconnect", async () => {
       try {
         if (!userId || !activeGroup) return;
 
@@ -297,30 +311,28 @@ const consumers = {};
         const producerTransport = await getProducerTransport(userId);
         if (producerTransport) {
           producerTransport.close();
-        };
+        }
         const consumerTransport = await getConsumerTransport(userId);
         if (consumerTransport) {
           consumerTransport.close();
-        };
+        }
       } catch (err) {
         console.log(err);
-      };
-    })
+      }
+    });
   });
-
-
 })();
 
 const getRouter = async (roomId, worker) => {
   const room = rooms[roomId];
   if (!room) {
     rooms[roomId] = {};
-  };
+  }
   //if there is no router for the room, create one
   if (!rooms[roomId].router) {
     rooms[roomId].router = await worker.createRouter({ mediaCodecs });
     return rooms[roomId].router;
-  };
+  }
   return rooms[roomId].router;
 };
 
@@ -337,13 +349,14 @@ const getProducerTransport = (userId, produce = false) => {
     const producerTransport = producerTransports[userId];
     if (!producerTransport) return;
 
-    if (!produce || !producerTransport.active) return producerTransport.transport;
+    if (!produce || !producerTransport.active)
+      return producerTransport.transport;
     producerTransport.active = true;
     return producerTransport.transport;
   } catch (err) {
     console.log(err);
     return false;
-  };
+  }
 };
 
 const getConsumerTransport = (userId) => {
@@ -353,22 +366,22 @@ const getConsumerTransport = (userId) => {
   } catch (err) {
     console.log(err);
     return false;
-  };
+  }
 };
 
 const addProducer = async (roomId, userId, producer, kind) => {
-  console.log(producer)
+  console.log(producer);
   if (!producers[roomId]) {
     producers[roomId] = {};
-  };
+  }
   if (!producers[roomId][userId]) {
     producers[roomId][userId] = {};
-  };
+  }
   if (kind === "audio") {
     producers[roomId][userId].audio = producer;
   } else {
     producers[roomId][userId].video = producer;
-  };
+  }
   //producers[roomId][userId] = producer;
 };
 
@@ -376,7 +389,7 @@ const removeProducer = async (roomId, userId, kind = false) => {
   try {
     if (!producers[roomId] || !producers[roomId][userId]) {
       return;
-    };
+    }
 
     if (!kind) {
       //remove both;
@@ -385,57 +398,60 @@ const removeProducer = async (roomId, userId, kind = false) => {
       }
       if (producers[roomId][userId].video) {
         producers[roomId][userId].video.close();
-      };
+      }
       delete producers[roomId][userId];
       return;
-    };
+    }
 
     if (kind === "audio") {
       if (producers[roomId][userId].audio) {
         producers[roomId][userId].audio.close();
-      };
+      }
       delete producers[roomId][userId].audio;
     } else {
       if (producers[roomId][userId].video) {
         producers[roomId][userId].video.close();
-      };
+      }
       delete producers[roomId][userId].video;
-    };
+    }
   } catch (err) {
     console.log(err);
   }
-}
+};
 
 const addConsumer = async (roomId, userId, targetId, consumer, kind) => {
   if (!consumers[roomId]) {
     consumers[roomId] = {};
-  };
+  }
   if (!consumers[roomId][userId]) {
     consumers[roomId][userId] = {};
-  };
+  }
   if (!consumers[roomId][userId][targetId]) {
     consumers[roomId][userId][targetId] = {};
-  };
+  }
   if (kind === "audio") {
     consumers[roomId][userId][targetId].audio = consumer;
   } else {
     consumers[roomId][userId][targetId].video = consumer;
-  };
+  }
   //consumers[roomId][userId][targetId] = consumer;
 };
 
 const removeConsumerTarget = async (roomId, userId, targetId) => {
-  if (consumers[roomId] && consumers[roomId][userId] && consumers[roomId][userId][targetId]) {
+  if (
+    consumers[roomId] &&
+    consumers[roomId][userId] &&
+    consumers[roomId][userId][targetId]
+  ) {
     delete consumers[roomId][userId].targetId;
   }
-}
+};
 
 const removeConsumer = async (roomId, userId) => {
   if (consumers[roomId] && consumers[roomId][userId]) {
     delete consumers[roomId][userId];
   }
-}
-
+};
 
 const getProducer = (roomId, userId, kind) => {
   try {
@@ -445,52 +461,56 @@ const getProducer = (roomId, userId, kind) => {
     const producer = producers[roomId][userId];
     if (kind === "audio") {
       return producer.audio;
-    };
+    }
     return producer.video;
     /* const producer = producers[roomId][userId];
     return producer; */
   } catch (err) {
     console.log(err);
     return false;
-  };
+  }
 };
 
 const getConsumer = (roomId, userId, targetId, kind) => {
   try {
     //not found
-    if (!consumers[roomId] || !consumers[roomId][userId] || !consumers[roomId][userId][targetId]) return false;
+    if (
+      !consumers[roomId] ||
+      !consumers[roomId][userId] ||
+      !consumers[roomId][userId][targetId]
+    )
+      return false;
 
     const consumer = consumers[roomId][userId][targetId];
     if (kind === "audio") {
       return consumer.audio;
-    };
+    }
     return consumer.video;
     //return consumer;
   } catch (err) {
     console.log(err);
     return false;
-  };
+  }
 };
 
 async function createWebRtcTransport(router) {
-
   const transport = await router.createWebRtcTransport({
     listenIps: [
       {
         ip: process.env.WEB_RTC_IP,
         announcedIp: process.env.WEB_RTC_ANNOUNCED_IP,
-      }
+      },
     ],
     enableUdp: true,
     enableTcp: true,
     preferUdp: true,
   });
-  transport.on('dtlsstatechange', dtlsState => {
-    if (dtlsState === 'closed') {
-      console.log("Transport closed due to dtls change")
-      transport.close()
+  transport.on("dtlsstatechange", (dtlsState) => {
+    if (dtlsState === "closed") {
+      console.log("Transport closed due to dtls change");
+      transport.close();
     }
-  })
+  });
 
   return {
     transport,
@@ -501,4 +521,4 @@ async function createWebRtcTransport(router) {
       dtlsParameters: transport.dtlsParameters,
     },
   };
-};
+}

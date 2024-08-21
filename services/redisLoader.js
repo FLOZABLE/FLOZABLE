@@ -373,7 +373,7 @@ async function usersCache(connection, users, cache = false) {
         timezone,
         created_at
       FROM users
-      WHERE user_id = ?
+      WHERE user_id IN (?)
       `,
       [notCached]
     );
@@ -430,25 +430,38 @@ async function userFriendsCache(connection, userId) {
   }
 }
 
-async function userGroupsCache(connection, userId) {
+async function userGroupsCache(connection, userId, query = true, cache = true) {
   try {
     const isCached = await redisClient.exists(`user:${userId}:groups`);
     if (isCached) {
       return await redisClient.smembers(`user:${userId}:groups`);
+    }
+    if (!query) {
+      return null;
     }
     const [groupsData] = await connection.query(
       `SELECT group_id FROM group_members WHERE user_id = ?`,
       [userId]
     );
     const groups = groupsData.map((group) => group.group_id);
-    if (groups.length) {
-      redisClient.sadd(`user:${userId}:groups`, groups);
-      redisClient.expire(`user:${userId}:groups`, REDIS_EXP.USER_FRIENDS);
+    if (cache) {
+      cacheUserGroups(userId, groups);
     }
     return groups;
   } catch (err) {
     console.log(err);
     return [];
+  }
+}
+
+async function cacheUserGroups(userId, groups) {
+  try {
+    if (!groups.length) return;
+
+    redisClient.sadd(`user:${userId}:groups`, groups);
+    redisClient.expire(`user:${userId}:groups`, REDIS_EXP.USER_FRIENDS);
+  } catch (err) {
+    console.log(err);
   }
 }
 
@@ -485,7 +498,7 @@ async function clearUsersCache() {
  * @param {*} type
  * @returns {[]} selectedNotifications
  */
-async function NotificationCache(userId, type = -1, processData = true) {
+async function notificationCache(userId, type = -1, processData = true) {
   try {
     const notificationsObj = {
       ...(await redisClient.hgetall(`user:${userId}:notifications`)),
@@ -718,12 +731,13 @@ module.exports = {
   cacheActiveSubject,
   activeGroupCache,
   cacheActiveGroup,
-  NotificationCache,
+  notificationCache,
   msgQueue,
   usersCache,
   userCache,
   userFriendsCache,
   userGroupsCache,
+  cacheUserGroups,
   clearUserCache,
   subjectsTimelineCache,
   websiteUsageCache,

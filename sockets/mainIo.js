@@ -54,8 +54,7 @@ mainIo.on("connection", (socket) => {
         const connection = pool.promise();
 
         // Use Promise.all to run multiple promises in parallel
-        const [userInfo, friends, chatrooms, groups] = await Promise.all([
-          userCache(connection, userId),
+        const [friends, chatrooms, groups] = await Promise.all([
           userFriendsCache(connection, userId),
           connection
             .query(
@@ -65,8 +64,6 @@ mainIo.on("connection", (socket) => {
             .then(([chatrooms]) => chatrooms),
           userGroupsCache(connection, userId),
         ]);
-
-        if (!userInfo) return;
 
         if (friends.length) {
           mainIo.to(friends).emit(`studying:${userId}`, { id: "0" });
@@ -98,6 +95,8 @@ mainIo.on("connection", (socket) => {
   socket.on("start", async (subjectId) => {
     try {
       const now = Math.floor(new Date().getTime() / 1000);
+
+      const connection = pool.promise();
 
       const [subject, userInfo] = await Promise.all([
         subjectCache(connection, userId, subjectId),
@@ -132,10 +131,11 @@ mainIo.on("connection", (socket) => {
 
   socket.on("changeGroup", async (groupId) => {
     try {
-      const userInfo = await userCache(connection, userId);
-      if (!userInfo) return;
-      const { groups, friends } = userInfo;
-
+      const connection = pool.promise();
+      const [friends, groups] = await Promise.all([
+        userFriendsCache(connection, userId),
+        userGroupsCache(connection, userId),
+      ]);
       if (!groups.includes(groupId)) return;
       groups.map((group) => {
         if (group !== groupId) {
@@ -148,7 +148,6 @@ mainIo.on("connection", (socket) => {
 
       if (!friends.length) return;
 
-      const connection = pool.promise();
       const [[groupInfo]] = await connection.query(
         `
         SELECT 

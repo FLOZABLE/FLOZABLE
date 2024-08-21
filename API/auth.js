@@ -30,6 +30,7 @@ const { sendEmail } = require("../email");
 const { USER_ID_COOKIE_OPTIONS, RESPONSE_CODES } = require("../Constant");
 const fetch = require("node-fetch");
 const { request } = require("request");
+const { userInfo } = require("os");
 
 async function createAccount(name, email, timezone, userInfo) {
   try {
@@ -383,8 +384,17 @@ Router.post("/link", async (req, res) => {
   const { verifyId } = req.body;
   autoSignin(req, res, async (userId) => {
     try {
-      const email = await userCache(userId);
-      const verifyInfo = await redisClient.get(`verify:${email.email}`);
+      const connection = pool.promise();
+      const [[userInfo]] = await connection.query(
+        `SELECT email FROM users WHERE user_id = ?`,
+        [userId]
+      );
+
+      if (!userInfo) {
+        return res.send(RESPONSE_CODES["no-user"]);
+      }
+
+      const verifyInfo = await redisClient.get(`verify:${userInfo.email}`);
       if (!verifyInfo) {
         return res.send({ success: false, reason: "Link expired" });
       }
@@ -394,7 +404,7 @@ Router.post("/link", async (req, res) => {
           "UPDATE users SET verified = true WHERE user_id = ?",
           [userId]
         );
-        await redisClient.del(`verify:${email.email}`);
+        await redisClient.del(`verify:${userInfo.email}`);
         res.send({ success: true, msg: "Verification Success!" });
       } else {
         res.send({ success: false, reason: "Incorrect Data" });

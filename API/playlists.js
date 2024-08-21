@@ -19,7 +19,7 @@ const { RESPONSE_CODES } = require("../Constant");
 
 const YOUTUBE_API_KEY = process.env.GOOGLE_API_KEY;
 
-Router.get("/youtube-playlists", async (req, res) => {
+/* Router.get("/youtube-playlists", async (req, res) => {
   async function getPlaylistVideos(
     playlistId,
     access_token,
@@ -64,7 +64,7 @@ Router.get("/youtube-playlists", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       try {
-        const access_token = await googleAccessTokenCache(userId);
+        const access_token = await googleAccessTokenCache(connection,userId);
 
         fetch(
           `https://youtube.googleapis.com/youtube/v3/playlists?part=id,snippet&fields=items(id,snippet(title,channelId,channelTitle))&maxResults=10&mine=true&key=${YOUTUBE_API_KEY}`,
@@ -111,7 +111,7 @@ Router.get("/youtube-playlists", async (req, res) => {
       res.send({ success: false });
     }
   });
-});
+}); */
 
 Router.get("/spotify/info", async (req, res) => {
   autoSignin(req, res, async (userId) => {
