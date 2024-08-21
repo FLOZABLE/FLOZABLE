@@ -20,13 +20,13 @@ const {
   validateURL,
 } = require("../Utils/validate");
 const {
-  NotificationCache,
+  notificationCache,
   userCache,
   subjectsTimelineCache,
   addActiveUserCache,
-  usersCache,
   googleAccessTokenCache,
   userFriendsCache,
+  userGroupsCache,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
 const { RESPONSE_CODES, PASSWORD_LINK_EXP } = require("../Constant");
@@ -36,11 +36,20 @@ Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const notifications = await NotificationCache(userId);
-      const userInfo = await userCache(connection, userId);
+      const [[[userInfo]], groups, notifications] = await Promise.all([
+        connection.query(
+          `SELECT user_id, name, email, timezone FROM users WHERE user_id = ?`,
+          [userId]
+        ),
+        userGroupsCache(connection, userId),
+        notificationCache(userId),
+      ]);
+
+      console.log(userInfo);
       if (!userInfo) {
         return res.send(RESPONSE_CODES["no-user"]);
       }
+      userInfo.groups = groups;
       res.send({
         success: true,
         userInfo: userInfo,
@@ -57,7 +66,11 @@ Router.get("/", async (req, res) => {
 Router.get("/google", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const googleAccessToken = await googleAccessTokenCache(userId);
+      const connection = pool.promise();
+      const googleAccessToken = await googleAccessTokenCache(
+        connection,
+        userId
+      );
 
       if (!googleAccessToken) {
         return res.send(RESPONSE_CODES["not-authed"]);

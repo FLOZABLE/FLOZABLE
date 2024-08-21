@@ -20,7 +20,8 @@ const {
 const {
   googleAccessTokenCache,
   userCache,
-  NotificationCache,
+  notificationCache,
+  userFriendsCache,
 } = require("../services/redisLoader");
 const schedule = require("node-schedule");
 const { RESPONSE_CODES } = require("../Constant");
@@ -56,7 +57,7 @@ Router.get("/", async (req, res) => {
         plan.editable = true;
         plan.isEditable = true;
       });
-      const access_token = await googleAccessTokenCache(userId);
+      const access_token = await googleAccessTokenCache(connection, userId);
       if (access_token) {
         try {
           const auth = googleOauth2client({ access_token });
@@ -174,7 +175,8 @@ Router.patch("/plan", async (req, res) => {
       } = req.body;
 
       if (type === "google") {
-        const access_token = await googleAccessTokenCache(userId);
+        const connection = pool.promise();
+        const access_token = await googleAccessTokenCache(connection, userId);
         if (access_token) {
           try {
             const auth = googleOauth2client({ access_token });
@@ -505,28 +507,30 @@ Router.post("/plan/share", async (req, res) => {
 
       if (!users.length) return res.send({ success: true });
 
-      const userInfo = await userCache(connection, userId);
+      const connection = pool.promise();
+
+      const [userInfo, userFriends, plan] = await Promise.all([
+        userCache(connection, userId),
+        userFriendsCache(connection, userId),
+        connection.query(
+          `
+          SELECT
+            p.plan_id,
+            p.title,
+            GROUP_CONCAT(DISTINCT ps.user_id) AS share,
+            GROUP_CONCAT(DISTINCT psd.user_id) AS shared
+          FROM plans p
+          LEFT JOIN plan_shared psd ON psd.plan_id = p.plan_id
+          LEFT JOIN plan_share ps ON ps.plan_id = p.plan_id
+          WHERE p.plan_id = ? AND p.user_id = ?
+          GROUP BY p.plan_id
+          `,
+          [planId, userId]
+        ),
+      ]);
 
       if (!userInfo)
         return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
-
-      const connection = pool.promise();
-
-      const [[plan]] = await connection.query(
-        `
-        SELECT
-          p.plan_id,
-          p.title,
-          GROUP_CONCAT(DISTINCT ps.user_id) AS share,
-          GROUP_CONCAT(DISTINCT psd.user_id) AS shared
-        FROM plans p
-        LEFT JOIN plan_shared psd ON psd.plan_id = p.plan_id
-        LEFT JOIN plan_share ps ON ps.plan_id = p.plan_id
-        WHERE p.plan_id = ? AND p.user_id = ?
-        GROUP BY p.plan_id
-        `,
-        [planId, userId]
-      );
 
       if (!plan) {
         return res.send(RESPONSE_CODES["no-plan"]);
@@ -540,7 +544,7 @@ Router.post("/plan/share", async (req, res) => {
       );
 
       const friends = filteredUsers.filter((user) =>
-        userInfo.friends.includes(user)
+        userFriends.includes(user)
       );
 
       if (friends.length) {
@@ -555,7 +559,7 @@ Router.post("/plan/share", async (req, res) => {
       }
 
       const nonFriends = filteredUsers.filter(
-        (user) => !userInfo.friends.includes(user)
+        (user) => !userFriends.includes(user)
       );
 
       if (nonFriends.length) {
@@ -615,11 +619,6 @@ Router.delete("/plan/share", async (req, res) => {
         return res.send({ success: false, reason: isValidTargetId.reason });
       }
 
-      const userInfo = await userCache(connection, userId);
-
-      if (!userInfo)
-        return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
-
       const connection = pool.promise();
 
       const [[planInfo]] = await connection.query(
@@ -664,7 +663,7 @@ Router.delete("/plan/share", async (req, res) => {
         [planId, targetId, planId, targetId]
       );
 
-      const planRequests = await NotificationCache(targetId, 7, false);
+      const planRequests = await notificationCache(targetId, 7, false);
       const planRequest = planRequests.find((planRequest) => {
         return planRequest.pi === planId;
       });
@@ -697,11 +696,6 @@ Router.post("/plan/share/respond", async (req, res) => {
       );
 
       if (!notification) return res.send(RESPONSE_CODES["expired-request"]);
-
-      const userInfo = await userCache(connection, userId);
-
-      if (!userInfo)
-        return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
 
       const plan_id = JSON.parse(notification).pi;
 

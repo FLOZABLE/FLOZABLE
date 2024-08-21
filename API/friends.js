@@ -6,7 +6,7 @@ const {
   getDates,
 } = require("../Utils/tool");
 const {
-  NotificationCache,
+  notificationCache,
   userCache,
   activeSubjectCache,
   clearUserCache,
@@ -42,16 +42,20 @@ async function sendFriendRequest(userId, targetId) {
       };
     }
 
-    const usersInfo = await usersCache([userId, targetId], false);
+    const connection = pool.promise();
+
+    const [usersInfo, friends] = await Promise.all([
+      usersCache(connection, [userId, targetId]),
+      userFriendsCache(connection, userId),
+    ]);
 
     const userInfo = usersInfo.find((user) => user.user_id === userId);
 
-    const targetUserInfo = usersInfo.find((user) => user.user_id === targetId);
-    if (!targetUserInfo || !userInfo) {
+    const targetInfo = usersInfo.find((user) => user.user_id === targetId);
+    if (!targetInfo || !userInfo) {
       return RESPONSE_CODES["no-user"];
     }
 
-    const { friends, name } = targetUserInfo;
     if (friends.includes(userId)) {
       return {
         success: false,
@@ -59,11 +63,11 @@ async function sendFriendRequest(userId, targetId) {
       };
     }
 
-    if (userInfo.friends.length > FRIENDS_LIMIT) {
+    if (friends.length > FRIENDS_LIMIT) {
       return RESPONSE_CODES["friends-limit-reached"];
     }
 
-    const friendRequests = await NotificationCache(targetId, 0, false);
+    const friendRequests = await notificationCache(targetId, 0, false);
 
     const prevFriendReq = friendRequests.find((friendReq) => {
       return friendReq.f === userId;
@@ -76,8 +80,7 @@ async function sendFriendRequest(userId, targetId) {
 
     const id = generateRandomId(5);
     const date = Math.floor(new Date().getTime() / 1000);
-    const notificationUser = await userCache(userId);
-    const socketNotif = { i: id, t: 0, f: notificationUser, d: date };
+    const socketNotif = { i: id, t: 0, f: userInfo, d: date };
     const notification = { t: 0, f: userId, d: date };
     mainIo.to(targetId).emit("notification", socketNotif);
     //to target user
@@ -94,10 +97,10 @@ async function sendFriendRequest(userId, targetId) {
       id,
       JSON.stringify(ongoing)
     );
-    ongoing.f = await userCache(targetId);
+    ongoing.f = targetInfo;
     ongoing.i = id;
     mainIo.to(userId).emit("notification", ongoing);
-    return { success: true, msg: `Sent friend request to ${name}!` };
+    return { success: true, msg: `Sent friend request to ${targetInfo.name}!` };
   } catch (err) {
     console.log(err);
     return { success: false, reason: "Error" };
@@ -137,7 +140,7 @@ async function replyFriendRequest(
     let friendReq;
 
     if (!notificationId) {
-      const friendRequests = await NotificationCache(userId, 0, false);
+      const friendRequests = await notificationCache(userId, 0, false);
       friendReq = friendRequests.find((friendReq) => {
         return friendReq.f === targetId;
       });
@@ -161,24 +164,28 @@ async function replyFriendRequest(
     }
 
     const connection = pool.promise();
-    const userInfo = await userCache(connection, userId);
+    const [usersInfo, userFriends, targetUserFriends] = await Promise.all([
+      usersCache(connection, [userId, targetId]),
+      userFriendsCache(connection, userId),
+      userFriendsCache(connection, targetId),
+    ]);
 
-    if (!userInfo) return { success: false, reason: RESPONSE_CODES["no-user"] };
+    const userInfo = usersInfo.find((user) => user.user_id === userId);
 
-    const targetInfo = await userCache(targetId);
+    const targetInfo = usersInfo.find((user) => user.user_id === targetId);
+    if (!targetInfo || !userInfo) {
+      return RESPONSE_CODES["no-user"];
+    }
 
-    if (!targetInfo)
-      return { success: false, reason: RESPONSE_CODES["no-user"] };
-
-    if (userInfo.friends.includes(userId))
+    if (userFriends.includes(targetId))
       return {
         success: true,
         msg: `You and ${targetInfo.name} were already friends!`,
       };
 
     if (
-      userInfo.friends.length >= FRIENDS_LIMIT ||
-      targetInfo.friends.length >= FRIENDS_LIMIT
+      userFriends.length >= FRIENDS_LIMIT ||
+      targetUserFriends.length >= FRIENDS_LIMIT
     )
       return RESPONSE_CODES["friends-limit-reached"];
 
@@ -194,8 +201,7 @@ async function replyFriendRequest(
 
     const id = generateRandomId(5);
     const notification = { t: 1, f: userId, d: date };
-    const notificationUser = await userCache(userId);
-    const socketNotif = { i: id, t: 1, f: notificationUser, d: date };
+    const socketNotif = { i: id, t: 1, f: userInfo, d: date };
     mainIo.to(targetId).emit("notification", socketNotif);
     redisClient.hset(
       `user:${targetId}:notifications`,
@@ -212,8 +218,6 @@ async function replyFriendRequest(
       "friends",
       targetInfo.friends.join(",")
     ); */
-    clearUserCache(userId);
-    clearUserCache(targetId);
 
     //create chat only if it does not exist
     const [[chatroom]] = await connection.query(
@@ -271,7 +275,7 @@ async function replyFriendRequest(
       mainIo.to(targetId).emit("joinChatRoom", roomInfo.id, true);
 
       //remove chat request if any
-      /* const myChatRequests = await NotificationCache(userId, 4, false);
+      /* const myChatRequests = await notificationCache(userId, 4, false);
       const chatRequest = myChatRequests.find((chatRequest) => {
         return chatRequest.f === targetId;
       });
@@ -279,7 +283,7 @@ async function replyFriendRequest(
         redisClient.hdel(`user:${userId}:notifications`, chatRequest.i);
       }
 
-      const targetChatRequests = await NotificationCache(targetId, 4, false);
+      const targetChatRequests = await notificationCache(targetId, 4, false);
       const targetchatRequest = targetChatRequests.find((chatRequest) => {
         return chatRequest.f === targetId;
       });
@@ -324,7 +328,7 @@ Router.delete("/request", async (req, res) => {
         return res.send({ success: false, reason: isValidTargetId.reason });
       }
 
-      const friendRequests = await NotificationCache(targetId, 0, false);
+      const friendRequests = await notificationCache(targetId, 0, false);
       const friendReq = friendRequests.find((friendReq) => {
         return friendReq.f === userId;
       });
@@ -368,16 +372,12 @@ Router.get("/recommended", async (req, res) => {
     res,
     async (userId) => {
       try {
-        const userInfo = await userCache(connection, userId);
-        if (!userInfo) {
-          const users = await friendRecommendationGen();
-          return res.send({ success: true, users });
-        }
-        const { friends } = userInfo;
+        const connection = pool.promise();
 
+        const friends = await userFriendsCache(connection, userId);
         const excluded = [...friends, userId];
 
-        const users = await friendRecommendationGen(excluded);
+        const users = await friendRecommendationGen(connection, excluded);
         return res.send({ success: true, users });
       } catch (error) {
         console.log(error);
@@ -386,7 +386,8 @@ Router.get("/recommended", async (req, res) => {
     },
     async () => {
       try {
-        const users = await friendRecommendationGen();
+        const connection = pool.promise();
+        const users = await friendRecommendationGen(connection);
         return res.send({ success: true, users });
       } catch (err) {
         console.log(err);
@@ -413,7 +414,7 @@ Router.get("/status", async (req, res) => {
 
       const timezoneOffset = Math.floor(dateTime.offset / 60).toString();
 
-      const friendsInfo = await usersCache(friends);
+      const friendsInfo = await usersCache(connection, friends);
 
       if (!friendsInfo.length) {
         return res.send({ success: false });
@@ -561,8 +562,8 @@ Router.get("/link/add", async (req, res) => {
 
       if (!response.success) return response;
 
-      const myNotifications = await NotificationCache(userId, -1, false);
-      const targetNotifications = await NotificationCache(targetId, -1, false);
+      const myNotifications = await notificationCache(userId, -1, false);
+      const targetNotifications = await notificationCache(targetId, -1, false);
 
       //remove friend request if any from target & me
       const myFriendReqs = myNotifications.filter((notification) => {
@@ -630,16 +631,19 @@ Router.get("/trends", async (req, res) => {
       const { timezone } = req.query;
       const mode = "day";
 
-      const userInfo = await userCache(connection, userId);
+      const connection = pool.promise();
+
+      const [userInfo, userFriends] = await Promise.all([
+        userCache(connection, userId),
+        userFriendsCache(connection, userId),
+      ]);
 
       if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
       const now = DateTime.now().setZone(timezone).startOf("day");
       const dates = getDates(now.toISO(), timezone, "day", 7);
 
-      const connection = pool.promise();
-
-      const friends = await usersCache(userInfo.friends);
+      const friends = await usersCache(connection, userFriends);
 
       friends.push(userInfo);
 

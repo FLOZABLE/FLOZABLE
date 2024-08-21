@@ -3,7 +3,11 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { DateTime } = require("luxon");
-const { usersCache, userCache } = require("../services/redisLoader");
+const {
+  usersCache,
+  userCache,
+  userFriendsCache,
+} = require("../services/redisLoader");
 const { RESPONSE_CODES } = require("../Constant");
 const { autoSignin, getDates } = require("../Utils/tool");
 
@@ -19,6 +23,8 @@ Router.get("/", async (req, res) => {
     const now = DateTime.now().setZone(timezone).startOf("day").startOf(mode);
 
     const rankings = [];
+
+    const connection = pool.promise();
 
     if (now.toSeconds() === dateTime.toSeconds()) {
       //today/this week/this month = cached
@@ -42,8 +48,6 @@ Router.get("/", async (req, res) => {
         }
       }
     } else {
-      const connection = pool.promise();
-
       const [rankingsData] = await connection.query(
         `
         SELECT
@@ -62,7 +66,10 @@ Router.get("/", async (req, res) => {
       rankings.push(...rankingsData);
     }
 
-    const users = await usersCache(rankings.map((ranking) => ranking.user_id));
+    const users = await usersCache(
+      connection,
+      rankings.map((ranking) => ranking.user_id)
+    );
 
     const rankingsUsers = rankings
       .map((ranking) => {
@@ -144,7 +151,12 @@ Router.get("/user", async (req, res) => {
 Router.get("/friends", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const userInfo = await userCache(connection, userId);
+      const connection = pool.promise();
+
+      const [userInfo, userFriends] = await Promise.all([
+        userCache(connection, userId),
+        userFriendsCache(connection, userId),
+      ]);
 
       if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
@@ -156,7 +168,7 @@ Router.get("/friends", async (req, res) => {
         ? DateTime.fromISO(date).setZone(timezone).startOf("day").startOf(mode)
         : now;
 
-      const friends = await usersCache(userInfo.friends);
+      const friends = await usersCache(connection, userFriends);
 
       friends.push(userInfo);
 
@@ -175,8 +187,6 @@ Router.get("/friends", async (req, res) => {
 
         friends.sort((a, b) => b.study_time - a.study_time);
       } else {
-        const connection = pool.promise();
-
         const [rankingsData] = await connection.query(
           `
           SELECT
