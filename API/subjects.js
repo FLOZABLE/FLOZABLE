@@ -12,7 +12,6 @@ const {
   validateString,
   validateHEX,
   validateStrictString,
-  validateArray,
 } = require("../Utils/validate");
 const { RESPONSE_CODES } = require("../Constant");
 const { mainIo } = require("../sockets/mainIo");
@@ -20,7 +19,8 @@ const { mainIo } = require("../sockets/mainIo");
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const subjectsInfo = await subjectsTimelineCache(userId);
+      const connection = pool.promise();
+      const subjectsInfo = await subjectsTimelineCache(connection, userId);
 
       res.send({ success: true, subjects: subjectsInfo });
     } catch (err) {

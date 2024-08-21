@@ -41,7 +41,7 @@ function cacheManager() {
   }
 }
 
-async function subjectsCache(userId) {
+async function subjectsCache(connection, userId) {
   try {
     const isCached = await redisClient.exists(`user:${userId}:subjects`);
     if (isCached) {
@@ -54,9 +54,8 @@ async function subjectsCache(userId) {
       return subjectArr;
     } else {
       try {
-        const connection = pool.promise();
         const [subjects] = await connection.query(
-          `SELECT subject_id, name, icon, color, created_at FROM subjects WHERE user_id = ?`,
+          `SELECT subject_id, name, color, created_at FROM subjects WHERE user_id = ?`,
           [userId]
         );
         subjects.map(async (subject) => {
@@ -68,6 +67,7 @@ async function subjectsCache(userId) {
             JSON.stringify(redisSubject)
           );
         });
+        redisClient.expire(`user:${userId}:subjects`, REDIS_EXP.SUBJECTS);
         return subjects;
       } catch (err) {
         console.log(err);
@@ -79,7 +79,7 @@ async function subjectsCache(userId) {
   }
 }
 
-async function subjectCache(userId, subjectId) {
+async function subjectCache(connection, userId, subjectId) {
   try {
     if (subjectId === "0") return false;
     const isCached = await redisClient.hexists(
@@ -94,9 +94,8 @@ async function subjectCache(userId, subjectId) {
       );
       return { ...JSON.parse(subjectInfo), subject_id: subjectId };
     }
-    const connection = pool.promise();
     const [subjects] = await connection.query(
-      `SELECT subject_id, name, icon, color, created_at FROM subjects WHERE user_id = ?`,
+      `SELECT subject_id, name, color, created_at FROM subjects WHERE user_id = ?`,
       [userId]
     );
     subjects.map(async (subject) => {
@@ -108,10 +107,10 @@ async function subjectCache(userId, subjectId) {
         JSON.stringify(redisSubject)
       );
     });
+    redisClient.expire(`user:${userId}:subjects`, REDIS_EXP.SUBJECTS);
     const subject = subjects.find(
       (subject) => subject.subject_id === subjectId
     );
-    redisClient.expire(`user:${userId}:subjects`, SBJ_EXP);
     if (subject) return subject;
     return false;
   } catch (err) {
@@ -120,15 +119,13 @@ async function subjectCache(userId, subjectId) {
   }
 }
 
-async function subjectsTimelineCache(userId) {
+async function subjectsTimelineCache(connection, userId) {
   try {
-    const connection = pool.promise();
     const [subjects] = await connection.query(
       `
       SELECT 
         s.subject_id, 
         s.name,
-        s.icon,
         s.color,
         s.created_at,
         IF(
@@ -171,7 +168,7 @@ async function subjectsTimelineCache(userId) {
 
 //only last 100 msg will be stored inside the redis queue for each groups
 const MAX_QUEUE_LENGTH = 100;
-async function msgQueue(roomId, msgInfo) {
+async function msgQueue(connection, roomId, msgInfo) {
   try {
     redisClient.rpush(`chatroom:${roomId}:messages`, JSON.stringify(msgInfo));
     const queueLength = await redisClient.llen(`chatroom:${roomId}:messages`);
@@ -180,7 +177,6 @@ async function msgQueue(roomId, msgInfo) {
 
     const firstMsg = await redisClient.lPop(`room:${roomId}:messages`);
     if (!firstMsg) return;
-    const connection = pool.promise();
     connection.query(
       `
       INSERT INTO chatroom_messages SET ?
@@ -316,7 +312,7 @@ async function getActiveUsers(type) {
 async function userCache(connection, userId, query = true) {
   try {
     if (!userId) return false;
-    const isCached = await redisClient.hexists(`user:${userId}`, "name");
+    const isCached = await redisClient.exists(`user:${userId}`);
 
     if (isCached) {
       const userInfo = await redisClient.hgetall(`user:${userId}`);
@@ -331,7 +327,7 @@ async function userCache(connection, userId, query = true) {
         user_id,
         name,
         timezone,
-        created_at,
+        created_at
       FROM users
       WHERE user_id = ?
       `,
@@ -350,7 +346,7 @@ async function userCache(connection, userId, query = true) {
  * upgraded version of user cache, if user is cached, return userCache result, otherwise, combine users that are not cached and handle as one query
  * @param {*} users
  */
-async function usersCache(users, cache = false) {
+async function usersCache(connection, users, cache = false) {
   try {
     if (!users.length) return [];
 
@@ -358,7 +354,7 @@ async function usersCache(users, cache = false) {
     const usersInfo = [];
     await Promise.all(
       users.map(async (userId) => {
-        const userInfo = await userCache(userId, false);
+        const userInfo = await userCache(connection, userId, false);
         if (userInfo) {
           usersInfo.push(userInfo);
         } else {
@@ -367,39 +363,22 @@ async function usersCache(users, cache = false) {
       })
     );
 
-    const connection = pool.promise();
-
     if (!notCached.length) return usersInfo;
 
     const [notCachedUsers] = await connection.query(
       `
       SELECT 
-        u.user_id,
-        u.name,
-        u.email,
-        u.timezone,
-        u.created_at,
-        IFNULL(GROUP_CONCAT(DISTINCT ug.group_id), '') AS groups,
-        IFNULL(GROUP_CONCAT(DISTINCT 
-          CASE 
-            WHEN f1.friend_id IS NOT NULL THEN f1.friend_id 
-            WHEN f2.user_id IS NOT NULL THEN f2.user_id 
-          END
-        ), '') AS friends
-      FROM users u
-      LEFT JOIN group_members ug ON u.user_id = ug.user_id
-      LEFT JOIN friends f1 ON u.user_id = f1.user_id
-      LEFT JOIN friends f2 ON u.user_id = f2.friend_id
-      WHERE u.user_id IN (?)
-      GROUP BY u.user_id
+        user_id,
+        name,
+        timezone,
+        created_at
+      FROM users
+      WHERE user_id = ?
       `,
       [notCached]
     );
 
     notCachedUsers.map((userInfo) => {
-      userInfo.groups = userInfo.groups ? userInfo.groups.split(",") : [];
-      userInfo.friends = userInfo.friends ? userInfo.friends.split(",") : [];
-
       if (cache) {
         cacheUserInfo(userInfo);
       }
@@ -414,25 +393,18 @@ async function usersCache(users, cache = false) {
 
 async function cacheUserInfo(userInfo) {
   try {
-    const { name, email, timezone, created_at, user_id, groups, friends } =
-      userInfo;
+    const { name, timezone, created_at, user_id } = userInfo;
 
     redisClient.hset(
       `user:${user_id}`,
       "name",
       name,
-      "email",
-      email,
-      "groups",
-      groups.toString(),
-      "friends",
-      friends.toString(),
       "timezone",
       timezone,
       "created_at",
       created_at
     );
-    redisClient.expire(`user:${user_id}`, USER_EXP);
+    redisClient.expire(`user:${user_id}`, REDIS_EXP.USERINFO);
   } catch (err) {
     console.log(err);
   }
@@ -575,7 +547,7 @@ async function setGoogleAccessToken(user_id, access_token, expiry_date) {
   redisClient.setex(`user:${user_id}:googleAccessToken`, exp, access_token);
 }
 
-async function googleAccessTokenCache(userId) {
+async function googleAccessTokenCache(connection, userId) {
   try {
     const googleAccessToken = await redisClient.get(
       `user:${userId}:googleAccessToken`
@@ -585,7 +557,6 @@ async function googleAccessTokenCache(userId) {
       return googleAccessToken;
     }
 
-    const connection = pool.promise();
     const [[userInfo]] = await connection.query(
       `SELECT google_refresh_token FROM users WHERE user_id = ?`,
       [userId]
@@ -618,7 +589,6 @@ async function googleAccessTokenCache(userId) {
         err.response.data.error_description ===
           "Token has been expired or revoked.")
     ) {
-      const connection = pool.promise();
       redisClient.del(`user:${userId}:googleAccessToken`);
       connection.query(
         `UPDATE users set google_refresh_token = NULL WHERE user_id = ?`,
@@ -641,11 +611,10 @@ async function zsetIncrAll(key, val = 1) {
   }
 }
 
-async function chatroomMemberCache(chatroomId, userId) {
+async function chatroomMemberCache(connection, chatroomId, userId) {
   try {
     const isIn = await redisClient.sismember(`chatroom:${chatroomId}`, userId);
     if (isIn) return true;
-    const connection = pool.promise();
 
     const [[member]] = await connection.query(
       `
@@ -684,14 +653,12 @@ async function chatroomMemberCache(chatroomId, userId) {
   }
 }
 
-async function spotifyAccessTokenCache(userId) {
+async function spotifyAccessTokenCache(connection, userId) {
   try {
     let accessToken = await redisClient.get(
       `user:${userId}:spotifyAccessToken`
     );
     if (accessToken) return accessToken;
-
-    const connection = pool.promise();
 
     const [[userInfo]] = await connection.query(
       `SELECT spotify_refresh_token FROM users WHERE user_id = ?`,
