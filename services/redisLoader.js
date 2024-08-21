@@ -313,56 +313,31 @@ async function getActiveUsers(type) {
   }
 }
 
-async function userCache(userId, query = true) {
+async function userCache(connection, userId, query = true) {
   try {
     if (!userId) return false;
     const isCached = await redisClient.hexists(`user:${userId}`, "name");
 
     if (isCached) {
       const userInfo = await redisClient.hgetall(`user:${userId}`);
-
-      userInfo.groups =
-        userInfo.groups === "" || !userInfo.groups
-          ? []
-          : userInfo.groups.split(",");
-      userInfo.friends =
-        userInfo.friends === "" || !userInfo.friends
-          ? []
-          : userInfo.friends.split(",");
       return { ...userInfo, user_id: userId };
     }
 
     if (!query) return false;
 
-    const connection = pool.promise();
     const [[userInfo]] = await connection.query(
       `
       SELECT 
-        u.user_id,
-        u.name,
-        u.email,
-        u.timezone,
-        u.created_at,
-        IFNULL(GROUP_CONCAT(DISTINCT ug.group_id), '') AS groups,
-        IFNULL(GROUP_CONCAT(DISTINCT 
-          CASE 
-            WHEN f1.friend_id IS NOT NULL THEN f1.friend_id 
-            WHEN f2.user_id IS NOT NULL THEN f2.user_id 
-          END
-        ), '') AS friends
-      FROM users u
-      LEFT JOIN group_members ug ON u.user_id = ug.user_id
-      LEFT JOIN friends f1 ON u.user_id = f1.user_id
-      LEFT JOIN friends f2 ON u.user_id = f2.friend_id
-      WHERE u.user_id = ?
-      GROUP BY u.user_id
+        user_id,
+        name,
+        timezone,
+        created_at,
+      FROM users
+      WHERE user_id = ?
       `,
       [userId]
     );
     if (!userInfo) return false;
-
-    userInfo.groups = userInfo.groups ? userInfo.groups.split(",") : [];
-    userInfo.friends = userInfo.friends ? userInfo.friends.split(",") : [];
     cacheUserInfo(userInfo);
     return userInfo;
   } catch (err) {
@@ -460,6 +435,48 @@ async function cacheUserInfo(userInfo) {
     redisClient.expire(`user:${user_id}`, USER_EXP);
   } catch (err) {
     console.log(err);
+  }
+}
+
+async function userFriendsCache(connection, userId) {
+  try {
+    const [friendsData] = await connection.query(
+      `SELECT friend_id, user_id FROM friends WHERE user_id = ? OR friend_id = ?`,
+      [userId, userId]
+    );
+    const friends = friendsData.map((friend) => {
+      return friend.friend_id === userId ? friend.friend_id : friend.user_id;
+    });
+    if (friends.length) {
+      redisClient.sadd(`user:${userId}:friends`, friends);
+      redisClient.expire(`user:${userId}:friends`, REDIS_EXP.USER_FRIENDS);
+    }
+    return friends;
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
+}
+
+async function userGroupsCache(connection, userId) {
+  try {
+    const isCached = await redisClient.exists(`user:${userId}:groups`);
+    if (isCached) {
+      return await redisClient.smembers(`user:${userId}:groups`);
+    }
+    const [groupsData] = await connection.query(
+      `SELECT group_id FROM group_members WHERE user_id = ?`,
+      [userId]
+    );
+    const groups = groupsData.map((group) => group.group_id);
+    if (groups.length) {
+      redisClient.sadd(`user:${userId}:groups`, groups);
+      redisClient.expire(`user:${userId}:groups`, REDIS_EXP.USER_FRIENDS);
+    }
+    return groups;
+  } catch (err) {
+    console.log(err);
+    return [];
   }
 }
 
@@ -738,6 +755,8 @@ module.exports = {
   msgQueue,
   usersCache,
   userCache,
+  userFriendsCache,
+  userGroupsCache,
   clearUserCache,
   subjectsTimelineCache,
   websiteUsageCache,

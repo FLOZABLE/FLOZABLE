@@ -409,7 +409,7 @@ Router.post("/link", async (req, res) => {
 Router.post("/link/send", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
       const randomId = generateRandomId(10);
       await redisClient.setex(`verify:${userInfo.email}`, 3600, randomId);
       const params = {

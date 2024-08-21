@@ -8,6 +8,8 @@ const {
   chatroomMemberCache,
   cacheActiveSubject,
   cacheActiveGroup,
+  userFriendsCache,
+  userGroupsCache,
 } = require("../services/redisLoader");
 const { generateRandomId } = require("../Utils/tool");
 const { extensionIo } = require("./extensionIo");
@@ -48,23 +50,32 @@ mainIo.on("connection", (socket) => {
         const now = Math.floor(new Date().getTime() / 1000);
         cacheActiveSubject(userId, { subject_id: "0", name: "break", now });
         socket.join(userId);
-        const userInfo = await userCache(userId);
+
+        const connection = pool.promise();
+
+        // Use Promise.all to run multiple promises in parallel
+        const [userInfo, friends, chatrooms, groups] = await Promise.all([
+          userCache(connection, userId),
+          userFriendsCache(connection, userId),
+          connection
+            .query(
+              `SELECT chatroom_id FROM chatroom_members WHERE user_id = ?`,
+              [userId]
+            )
+            .then(([chatrooms]) => chatrooms),
+          userGroupsCache(connection, userId),
+        ]);
+
         if (!userInfo) return;
 
-        const { friends } = userInfo;
         if (friends.length) {
           mainIo.to(friends).emit(`studying:${userId}`, { id: "0" });
         }
 
-        const connection = pool.promise();
-        const [chatrooms] = await connection.query(
-          `SELECT chatroom_id FROM chatroom_members WHERE user_id = ?`,
-          [userId]
-        );
         const chatroomIds = chatrooms.map(
           (chatroom) => "chatroom:" + chatroom.chatroom_id
         );
-        const groupIds = userInfo.groups.map((group) => "chatroom:" + group);
+        const groupIds = groups.map((group) => "chatroom:" + group);
 
         socket.join([...chatroomIds, ...groupIds]);
       } catch (err) {
@@ -75,9 +86,10 @@ mainIo.on("connection", (socket) => {
 
   socket.on("disconnect", async (reason) => {
     try {
+      const connection = pool.promise();
       console.log("disconnection");
-      stopStudying(userId, "disconnect");
-      deActiveGroup(userId, socket);
+      stopStudying(connection, userId, "disconnect");
+      deActiveGroup(connection, userId, socket);
     } catch (err) {
       console.log(err);
     }
@@ -88,7 +100,7 @@ mainIo.on("connection", (socket) => {
       const now = Math.floor(new Date().getTime() / 1000);
 
       const subject = await subjectCache(userId, subjectId);
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
       if (!subject || !userInfo) return;
       const { groups, friends } = userInfo;
       if (groups.length) {
@@ -107,7 +119,9 @@ mainIo.on("connection", (socket) => {
 
   socket.on("stop", async (subjectId) => {
     try {
-      stopStudying(userId, "rest");
+      const connection = pool.promise();
+
+      stopStudying(connection, userId, "rest");
     } catch (err) {
       console.log(err);
     }
@@ -115,7 +129,7 @@ mainIo.on("connection", (socket) => {
 
   socket.on("changeGroup", async (groupId) => {
     try {
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
       if (!userInfo) return;
       const { groups, friends } = userInfo;
 
@@ -166,8 +180,9 @@ mainIo.on("connection", (socket) => {
 
   socket.on("exitSession", async () => {
     try {
-      deActiveGroup(userId, socket);
-      stopStudying(userId, "rest");
+      const connection = pool.promise();
+      deActiveGroup(connection, userId, socket);
+      stopStudying(connection, userId, "rest");
     } catch (err) {
       console.log(err);
     }
@@ -219,11 +234,12 @@ mainIo.on("connection", (socket) => {
   });
 });
 
-async function deActiveGroup(userId, socket) {
+async function deActiveGroup(connection, userId, socket) {
   try {
-    const userInfo = await userCache(userId);
-    if (!userInfo) return;
-    const { groups, friends } = userInfo;
+    const [groups, friends] = await Promise.all([
+      userGroupsCache(connection, userId),
+      userFriendsCache(connection, userId),
+    ]);
     groups.map((group) => {
       socket.leave(group);
     });
@@ -235,11 +251,11 @@ async function deActiveGroup(userId, socket) {
   }
 }
 
-async function stopStudying(userId, mode) {
+async function stopStudying(connection, userId, mode) {
   try {
     const now = Math.floor(new Date().getTime() / 1000);
 
-    const userInfo = await userCache(userId);
+    const userInfo = await userCache(connection, userId);
 
     if (!userInfo) return;
 

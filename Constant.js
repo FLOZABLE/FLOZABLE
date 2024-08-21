@@ -57,6 +57,8 @@ const USER_ID_COOKIE_OPTIONS = {
 const REDIS_EXP = {
   ACTIVE_GROUP: 60 * 60 * 12,
   ACTIVE_SUBJECT: 60 * 60 * 12,
+  USER_GROUPS: 60 * 10,
+  USER_FRIENDS: 60 * 10
 };
 
 const MAX_STUDY_TIME = 60 * 60 * 20; // 20hr = max study time. ignore more than 6 hr

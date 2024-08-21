@@ -144,7 +144,7 @@ Router.get("/user", async (req, res) => {
 Router.get("/friends", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const userInfo = await userCache(userId);
+      const userInfo = await userCache(connection, userId);
 
       if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
 
