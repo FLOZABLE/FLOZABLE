@@ -24,6 +24,7 @@
 
 .Stats .boxContainer {
   height: 40vh;
+  min-height: 30rem;
 }
 
 /* .Stats .layer {

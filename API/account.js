@@ -37,12 +37,13 @@ Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const [[[userInfo]], groups, notifications] = await Promise.all([
+      const [[[userInfo]], groups, friends, notifications] = await Promise.all([
         connection.query(
           `SELECT user_id, name, email, timezone FROM users WHERE user_id = ?`,
           [userId]
         ),
         userGroupsCache(connection, userId),
+        userFriendsCache(connection, userId),
         notificationCache(userId),
       ]);
 
@@ -62,6 +63,7 @@ Router.get("/", async (req, res) => {
         return res.send(RESPONSE_CODES["no-user"]);
       }
       userInfo.groups = groups;
+      userInfo.friends = friends;
       res.send({
         success: true,
         userInfo: userInfo,

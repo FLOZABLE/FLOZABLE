@@ -23,6 +23,17 @@ import DraggableModal from "../DraggableModal/DraggableModal";
 function CreateGroupModal({ isOpen, setIsOpen }) {
   const { setResponse } = useContext(ResponseContext);
 
+  const [newGroup, setNewGroup] = useState({
+    name: "",
+    maxMembers: 10,
+    color: "#000",
+    tags: [],
+    description: "",
+    visibility: 1,
+    password: "",
+    goalHr: 3,
+  });
+
   const [name, setName] = useState("");
   const [maxMembers, setMaxMembers] = useState(10);
   const [color, setColor] = useState("");
@@ -34,6 +45,10 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
   const [goalHr, setGoalHr] = useState(3);
 
   const modalRef = useRef(null);
+
+  const handleInput = useCallback((key, value) => {
+    setNewGroup((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
   const handleNameInput = useCallback((e) => {
     setName(e.target.value);
@@ -91,8 +106,10 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
           <div className={styles.iconWrapper}></div>
           <div className={styles.contentWrapper}>
             <CustomInput
-              input={name}
-              handleInput={handleNameInput}
+              input={newGroup.name}
+              handleInput={(e) => {
+                handleInput("name", e.target.value);
+              }}
               icon={null}
               placeHolder={"Study Group Name"}
               type={"text"}
@@ -107,7 +124,12 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <TextEditor setValue={setDescription} value={description} />
+            <TextEditor
+              setValue={(value) => {
+                handleInput("description", value);
+              }}
+              value={newGroup.description}
+            />
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -119,8 +141,10 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
           </div>
           <div className={styles.contentWrapper}>
             <ColorPalette
-              setSelectedColor={setColor}
-              selectedColor={color}
+              setSelectedColor={(color) => {
+                handleInput("color", color);
+              }}
+              selectedColor={newGroup.color}
               isSelectColor={isSelectColor}
               setIsSelectColor={setIsSelectColor}
             />
@@ -138,8 +162,10 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
               min={0}
               max={100}
               step={1}
-              sliderValue={maxMembers}
-              setSliderValue={setMaxMembers}
+              sliderValue={newGroup.maxMembers}
+              setSliderValue={(setMaxMembers) => {
+                handleInput("max_members", maxMembers)
+              }}
             />
           </div>
         </div>
@@ -151,11 +177,12 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            <TagContainerGen
+            {/* <TagContainerGen
               maxTags={10}
-              setTags={setTags}
-              handleCreatedTagsChange={handleCreatedTagsChange}
-            />
+              handleCreatedTagsChange={(tags) => {
+                handleInput("tags", tags)
+              }}
+            /> */}
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -169,15 +196,19 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
             <OptionToggleBtn
               opt1={{ val: 0, name: "PRIVATE" }}
               opt2={{ val: 1, name: "PUBLIC" }}
-              value={visibility}
-              setValue={setVisibility}
+              value={newGroup.visibility}
+              setValue={(visibility) => {
+                handleInput("visibility", visibility)
+              }}
             />
             <div
               className={`${styles.inputArea} ${visibility ? "" : styles.open}`}
             >
               <CustomInput
-                input={password}
-                handleInput={handlePwInput}
+                input={newGroup.password}
+                handleInput={(password) => {
+                  handleInput({password})
+                }}
                 icon={null}
                 placeHolder={"Enter Password"}
                 type={"text"}

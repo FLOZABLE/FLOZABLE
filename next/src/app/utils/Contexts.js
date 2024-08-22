@@ -151,9 +151,9 @@ function SubjectsProvider({ children }) {
           //plan.textColor = subject.color;
           plan.icon = subject.icon;
         } else {
-          plan.backgroundColor = "#fff";
-          plan.borderColor = "#fff";
-          plan.color = "#fff";
+          plan.backgroundColor = "#000";
+          plan.borderColor = "#000";
+          plan.color = "#000";
         }
 
         if (plan.completed) {

@@ -40,7 +40,7 @@ function GroupContainer({ groupInfo, isSearched = true, rankings }) {
       (partialTime, a) => partialTime + a.study_time,
       0
     );
-    const { value, type } = secondConverter(totalTime / members.length);
+    const { value, type } = secondConverter((totalTime / members.length).toFixed(2));
     setTotalTime(`${value} ${type}`);
   }, [members, rankings]);
 
