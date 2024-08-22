@@ -177,45 +177,47 @@ Router.patch("/plan", async (req, res) => {
       if (type === "google") {
         const connection = pool.promise();
         const access_token = await googleAccessTokenCache(connection, userId);
-        if (access_token) {
-          try {
-            const auth = googleOauth2client({ access_token });
-            const googleCalendar = google.calendar({
-              version: "v3",
-              auth: auth,
-            });
+        if (!access_token) return res.send(RESPONSE_CODES["not-authenticated"]);
+        try {
+          const auth = googleOauth2client({ access_token });
+          const googleCalendar = google.calendar({
+            version: "v3",
+            auth: auth,
+          });
 
-            const startDateTime = DateTime.fromSeconds(start, {
-              zone: timezone,
-            });
-            const endDateTime = DateTime.fromSeconds(end, {
-              zone: timezone,
-            });
+          const startDateTime = DateTime.fromSeconds(start, {
+            zone: timezone,
+          });
+          const endDateTime = DateTime.fromSeconds(end, {
+            zone: timezone,
+          });
 
-            const updateResults = await googleCalendar.events.update({
-              auth: auth,
-              calendarId: subject,
-              eventId: plan_id,
-              resource: {
-                summary: title,
-                description,
-                start: {
-                  dateTime: startDateTime.toISO(),
-                  timeZone: timezone,
-                },
-                end: { dateTime: endDateTime.toISO(), timeZone: timezone },
+          const updateResults = await googleCalendar.events.update({
+            auth: auth,
+            calendarId: subject,
+            eventId: plan_id,
+            resource: {
+              summary: title,
+              description,
+              start: {
+                dateTime: startDateTime.toISO(),
+                timeZone: timezone,
               },
-            });
+              end: { dateTime: endDateTime.toISO(), timeZone: timezone },
+            },
+          });
 
-            if (updateResults.status === 200) {
-              return res.send({ success: true, msg: "Plan updated!" });
-            } else {
-              return res.send({
-                success: false,
-                msg: "You cannot modify this plan",
-              });
-            }
-          } catch (err) {}
+          if (updateResults.status === 200) {
+            return res.send({ success: true, msg: "Plan updated!" });
+          } else {
+            return res.send({
+              success: false,
+              msg: "You cannot modify this plan",
+            });
+          }
+        } catch (err) {
+          console.log(err);
+          res.send(RESPONSE_CODES["error"]);
         }
       }
 
@@ -663,7 +665,7 @@ Router.delete("/plan/share", async (req, res) => {
         [planId, targetId, planId, targetId]
       );
 
-      const planRequests = await notificationCache(targetId, 7, false);
+      const planRequests = await notificationCache(targetId, 7);
       const planRequest = planRequests.find((planRequest) => {
         return planRequest.pi === planId;
       });
