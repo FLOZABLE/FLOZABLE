@@ -27,6 +27,7 @@ const {
   googleAccessTokenCache,
   userFriendsCache,
   userGroupsCache,
+  usersCache,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
 const { RESPONSE_CODES, PASSWORD_LINK_EXP } = require("../Constant");
@@ -45,7 +46,18 @@ Router.get("/", async (req, res) => {
         notificationCache(userId),
       ]);
 
-      console.log(userInfo);
+      const notificationUserIds = notifications
+        .filter((notification) => notification.f)
+        .map((notification) => notification.f);
+      const notificationUsers = await usersCache(
+        connection,
+        notificationUserIds
+      );
+      notifications.map((notification) => {
+        notification.f = notificationUsers.find(
+          (user) => user.user_id === notification.f
+        );
+      });
       if (!userInfo) {
         return res.send(RESPONSE_CODES["no-user"]);
       }
@@ -76,24 +88,19 @@ Router.get("/google", async (req, res) => {
         return res.send(RESPONSE_CODES["not-authed"]);
       }
 
-      const accessTokenInfo = await checkGoogleAccessTokenScopes(
-        googleAccessToken
-      );
-
-      if (!accessTokenInfo) {
-        return res.send(RESPONSE_CODES["not-authed"]);
-      }
-
-      const response = await fetch(
-        "https://www.googleapis.com/oauth2/v2/userinfo",
-        {
+      const [accessTokenInfo, response] = await Promise.all([
+        checkGoogleAccessTokenScopes(googleAccessToken),
+        fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
           headers: {
             Authorization: `Bearer ${googleAccessToken}`,
             Accept: "application/json",
           },
-        }
-      );
+        }),
+      ]);
 
+      if (!accessTokenInfo) {
+        return res.send(RESPONSE_CODES["not-authed"]);
+      }
       const data = await response.json();
 
       data.scopes = accessTokenInfo.scope.split(" ");
@@ -335,14 +342,17 @@ Router.get("/profile", async (req, res) => {
     const { userId } = req.query;
 
     const connection = pool.promise();
-    const [userInfo, friends, subjects] = await Promise.all([
+    const [userInfo, friends, groups, subjects] = await Promise.all([
       userCache(connection, userId),
       userFriendsCache(connection, userId),
+      userGroupsCache(connection, userId),
       subjectsTimelineCache(connection, userId),
     ]);
     if (!userInfo) {
       return res.send(RESPONSE_CODES["no-user"]);
     }
+
+    userInfo.groups = groups;
 
     return res.send({ success: true, userInfo, friends, subjects });
   } catch (err) {

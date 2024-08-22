@@ -197,7 +197,7 @@ async function addFriends(botId, allMembers) {
       console.log(response);
     }
 
-    const friendRequests = await notificationCache(botId, 0, false);
+    const friendRequests = await notificationCache(botId, 0);
     friendRequests.map(async (request) => {
       const accepted = randomIntInRange(0, 1) === 0 ? false : true;
       const response = await replyFriendRequest(

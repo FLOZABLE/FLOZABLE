@@ -116,7 +116,8 @@ const YOUTUBE_API_KEY = process.env.GOOGLE_API_KEY;
 Router.get("/spotify/info", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const accessToken = await spotifyAccessTokenCache(userId);
+      const connection = pool.promise();
+      const accessToken = await spotifyAccessTokenCache(connection, userId);
       if (!accessToken) {
         return res.send(RESPONSE_CODES["no-user"]);
       }
@@ -144,18 +145,19 @@ Router.get("/spotify/info", async (req, res) => {
 Router.get("/spotify", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const accessToken = await spotifyAccessTokenCache(userId);
+      const connection = pool.promise();
+      const accessToken = await spotifyAccessTokenCache(connection, userId);
 
       if (!accessToken) {
         return res.send(RESPONSE_CODES["no-user"]);
       }
 
-      const response = await fetch('https://api.spotify.com/v1/me/playlists', {
+      const response = await fetch("https://api.spotify.com/v1/me/playlists", {
         headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
-      
+
       const data = await response.json();
 
       if (data.error) {
@@ -163,7 +165,6 @@ Router.get("/spotify", async (req, res) => {
       }
 
       res.send({ success: true, playlists: data.items });
-
     } catch (err) {
       console.log(err);
       res.send(RESPONSE_CODES["error"]);

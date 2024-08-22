@@ -350,8 +350,9 @@ Router.post("/join/:id", async (req, res) => {
 
       const connection = pool.promise();
 
-      const [userInfo, [[groupInfo]]] = await Promise.all([
+      const [userInfo, groups, [[groupInfo]]] = await Promise.all([
         userCache(connection, userId),
+        userGroupsCache(connection, userId),
         connection.query(
           `SELECT 
           g.password, 
@@ -401,9 +402,10 @@ Router.post("/join/:id", async (req, res) => {
 
       mainIo.emit(`newMember:${groupId}`, userId);
       res.send({ success: true, msg: `Joined group "${groupInfo.name}"` });
-      const { groups } = userInfo;
+
       groups.push(groupId);
-      redisClient.hset(`user:${userId}`, "groups", groups.join(","));
+      cacheUserGroups(userId, groups);
+      
       //send user's study information to group members
       const activeSubject = await activeSubjectCache(userId);
       const today = DateTime.now().setZone(userInfo.timezone);
