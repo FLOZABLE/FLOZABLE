@@ -67,7 +67,7 @@ async function sendFriendRequest(userId, targetId) {
       return RESPONSE_CODES["friends-limit-reached"];
     }
 
-    const friendRequests = await notificationCache(targetId, 0, false);
+    const friendRequests = await notificationCache(targetId, 0);
 
     const prevFriendReq = friendRequests.find((friendReq) => {
       return friendReq.f === userId;
@@ -140,7 +140,7 @@ async function replyFriendRequest(
     let friendReq;
 
     if (!notificationId) {
-      const friendRequests = await notificationCache(userId, 0, false);
+      const friendRequests = await notificationCache(userId, 0);
       friendReq = friendRequests.find((friendReq) => {
         return friendReq.f === targetId;
       });
@@ -259,37 +259,8 @@ async function replyFriendRequest(
         [newMembers]
       );
 
-      /* const myDmRooms = await dmRoomsCache(userId);
-      myDmRooms.push(roomInfo.id);
-      const targetDmRooms = await dmRoomsCache(targetId);
-      targetDmRooms.push(roomInfo.id);
-      redisClient.hset(`user:${userId}`, "dmRooms", JSON.stringify(myDmRooms));
-      redisClient.hset(
-        `user:${targetId}`,
-        "dmRooms",
-        JSON.stringify(targetDmRooms)
-      ); 
-      redisClient.sadd(`room:${roomInfo.id}`, members);*/
-
       mainIo.to(userId).emit("joinChatRoom", roomInfo.id, true);
       mainIo.to(targetId).emit("joinChatRoom", roomInfo.id, true);
-
-      //remove chat request if any
-      /* const myChatRequests = await notificationCache(userId, 4, false);
-      const chatRequest = myChatRequests.find((chatRequest) => {
-        return chatRequest.f === targetId;
-      });
-      if (chatRequest) {
-        redisClient.hdel(`user:${userId}:notifications`, chatRequest.i);
-      }
-
-      const targetChatRequests = await notificationCache(targetId, 4, false);
-      const targetchatRequest = targetChatRequests.find((chatRequest) => {
-        return chatRequest.f === targetId;
-      });
-      if (targetchatRequest) {
-        redisClient.hdel(`user:${targetId}:notifications`, targetchatRequest.i);
-      } */
 
       return {
         success: true,
@@ -328,7 +299,7 @@ Router.delete("/request", async (req, res) => {
         return res.send({ success: false, reason: isValidTargetId.reason });
       }
 
-      const friendRequests = await notificationCache(targetId, 0, false);
+      const friendRequests = await notificationCache(targetId, 0);
       const friendReq = friendRequests.find((friendReq) => {
         return friendReq.f === userId;
       });
@@ -401,7 +372,7 @@ Router.get("/status", async (req, res) => {
     try {
       const connection = pool.promise();
 
-      const [userInfo, friends] = await Promise.all([
+      const [userInfo, friendsIds] = await Promise.all([
         userCache(connection, userId),
         userFriendsCache(connection, userId),
       ]);
@@ -414,9 +385,9 @@ Router.get("/status", async (req, res) => {
 
       const timezoneOffset = Math.floor(dateTime.offset / 60).toString();
 
-      const friendsInfo = await usersCache(connection, friends);
+      const friends = await usersCache(connection, friendsIds);
 
-      if (!friendsInfo.length) {
+      if (!friends.length) {
         return res.send({ success: false });
       }
 
@@ -480,7 +451,7 @@ Router.get("/status", async (req, res) => {
           }
         });
       }
-      console.log(friends.length, userId);
+      console.log(friends, userId);
       return res.send({ success: true, friends });
     } catch (error) {
       console.log(error);
@@ -562,8 +533,10 @@ Router.get("/link/add", async (req, res) => {
 
       if (!response.success) return response;
 
-      const myNotifications = await notificationCache(userId, -1, false);
-      const targetNotifications = await notificationCache(targetId, -1, false);
+      const [myNotifications, targetNotifications] = await Promise.all([
+        notificationCache(userId),
+        notificationCache(targetId),
+      ]);
 
       //remove friend request if any from target & me
       const myFriendReqs = myNotifications.filter((notification) => {

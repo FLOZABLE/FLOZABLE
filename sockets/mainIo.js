@@ -98,13 +98,14 @@ mainIo.on("connection", (socket) => {
 
       const connection = pool.promise();
 
-      const [subject, userInfo] = await Promise.all([
+      const [subject, groups, friends] = await Promise.all([
         subjectCache(connection, userId, subjectId),
-        userCache(connection, userId),
+        userGroupsCache(connection, userId),
+        userFriendsCache(connection, userId),
       ]);
 
-      if (!subject || !userInfo) return;
-      const { groups, friends } = userInfo;
+      if (!subject) return;
+      
       if (groups.length) {
         mainIo.to(groups).emit(`studying:${userId}`, subject);
       }
@@ -210,7 +211,7 @@ mainIo.on("connection", (socket) => {
   socket.on("chat/send", async (roomId, message) => {
     try {
       const connection = pool.promise();
-      const isMember = await chatroomMemberCache(roomId, userId);
+      const isMember = await chatroomMemberCache(connection, roomId, userId);
       if (!isMember || !message.length) return;
 
       const t = Math.floor(new Date().getTime() / 1000);

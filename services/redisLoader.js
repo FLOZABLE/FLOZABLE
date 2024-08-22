@@ -412,12 +412,16 @@ async function cacheUserInfo(userInfo) {
 
 async function userFriendsCache(connection, userId) {
   try {
+    const isCached = await redisClient.exists(`user:${userId}:friends`);
+    if (isCached) {
+      return await redisClient.smembers(`user:${userId}:friends`);
+    }
     const [friendsData] = await connection.query(
       `SELECT friend_id, user_id FROM friends WHERE user_id = ? OR friend_id = ?`,
       [userId, userId]
     );
     const friends = friendsData.map((friend) => {
-      return friend.friend_id === userId ? friend.friend_id : friend.user_id;
+      return friend.friend_id !== userId ? friend.friend_id : friend.user_id;
     });
     if (friends.length) {
       redisClient.sadd(`user:${userId}:friends`, friends);
@@ -498,7 +502,7 @@ async function clearUsersCache() {
  * @param {*} type
  * @returns {[]} selectedNotifications
  */
-async function notificationCache(userId, type = -1, processData = true) {
+async function notificationCache(userId, type = -1) {
   try {
     const notificationsObj = {
       ...(await redisClient.hgetall(`user:${userId}:notifications`)),
@@ -507,13 +511,6 @@ async function notificationCache(userId, type = -1, processData = true) {
       i: id,
       ...JSON.parse(notificationsObj[id]),
     }));
-    await Promise.all(
-      notifications.map(async (notification) => {
-        if (notification.f && processData) {
-          notification.f = await userCache(notification.f);
-        }
-      })
-    );
     if (type === -1) {
       return notifications;
     }

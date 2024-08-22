@@ -75,7 +75,8 @@ Router.get("/messages", async (req, res) => {
     try {
       const { chatroom_id } = req.query;
 
-      const isIn = await chatroomMemberCache(chatroom_id, userId);
+      const connection = pool.promise();
+      const isIn = await chatroomMemberCache(connection, chatroom_id, userId);
 
       if (!isIn) return res.send({ success: false, reason: "Not member" });
 
@@ -95,11 +96,11 @@ Router.get("/members", async (req, res) => {
     try {
       const { chatroom_id } = req.query;
 
-      const isIn = await chatroomMemberCache(chatroom_id, userId);
+      const connection = pool.promise();
+
+      const isIn = await chatroomMemberCache(connection, chatroom_id, userId);
 
       if (!isIn) return res.send({ success: false, reason: "Not member" });
-
-      const connection = pool.promise();
 
       const [members] = await connection.query(
         `
@@ -171,15 +172,15 @@ Router.post("/request", async (req, res) => {
 
       const userInfo = usersInfo.find((user) => user.user_id === userId);
 
-      const targetUserInfo = usersInfo.find(
+      const targetUser = usersInfo.find(
         (user) => user.user_id === targetId
       );
 
-      if (!targetUserInfo || !userInfo) {
+      if (!targetUser || !userInfo) {
         return RESPONSE_CODES["no-user"];
       }
 
-      const targetDmRequests = await notificationCache(targetId, 4, false);
+      const targetDmRequests = await notificationCache(targetId, 4);
       const prevDmRequest = targetDmRequests.find(
         (dmRequest) => dmRequest.f === userId
       );
@@ -256,15 +257,15 @@ Router.post("/request/reply", async (req, res) => {
 
       const userInfo = usersInfo.find((user) => user.user_id === userId);
 
-      const targetUserInfo = usersInfo.find(
+      const targetUser = usersInfo.find(
         (user) => user.user_id === targetId
       );
-      if (!targetUserInfo || !userInfo) {
+      if (!targetUser || !userInfo) {
         return RESPONSE_CODES["no-user"];
       }
 
       const chatroom_id = generateRandomId(10);
-      const chatroomName = userInfo.name + ", " + targetUserInfo.name;
+      const chatroomName = userInfo.name + ", " + targetUser.name;
 
       const roomInfo = {
         chatroom_id,

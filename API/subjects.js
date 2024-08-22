@@ -417,7 +417,7 @@ Router.delete("/subject/share", async (req, res) => {
         [subjectId, targetId, subjectId, targetId]
       );
 
-      const subjectRequests = await notificationCache(targetId, 2, false);
+      const subjectRequests = await notificationCache(targetId, 2);
       const subjectRequest = subjectRequests.find((subjectRequest) => {
         return subjectRequest.si === subjectId;
       });
