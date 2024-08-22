@@ -59,6 +59,7 @@ function StudyTrendChart({
         <AreaChart
           margin={{
             right: 20,
+            left: -40,
           }}
           data={subjectsTrend.map((day) => {
             const newDay = {};

@@ -252,7 +252,7 @@ button:hover {
 
 @media (max-width: 1400px) {
   html {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .modal.open {
@@ -262,7 +262,11 @@ button:hover {
 
 @media (max-width: 1300px) {
   html {
-    font-size: 12px;
+    font-size: 10px;
+  }
+
+  .Box .header {
+    font-size: 1.7rem;
   }
 }
 
