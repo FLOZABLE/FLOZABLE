@@ -6,16 +6,15 @@ import { useRef } from "react";
 
 export default function DraggableModal({
   children,
-  style = {},
-  refProp,
   isOpen,
   setIsOpen,
 }) {
+  const ref = useRef(null);
   return (
-    <Draggable nodeRef={refProp} handle=".header">
+    <Draggable nodeRef={ref} handle=".header">
       <div
         className={`modal ${styles.DraggableModal} ${isOpen ? "open" : ""}`}
-        ref={refProp}
+        ref={ref}
       >
         <div className={`${styles.header} header`}>
           <i

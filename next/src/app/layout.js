@@ -1,6 +1,5 @@
 import "./globals.css";
 import { AppProvider } from "@/app/utils/Contexts";
-import EventModal from "@/app/components/Modals/EventModal/EventModal";
 import AddSubjectModal from "@/app/components/Modals/AddSubjectModal/AddSubjectModal";
 import JoinGroupModal from "@/app/components/Modals/JoinGroupModal/JoinGroupModal";
 import TopNotification from "@/app/components/Modals/TopNotification/TopNotification";
@@ -10,6 +9,7 @@ import Tutorial from "./components/Others/Tutorial/Tutorial";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import SubjectsModal from "./components/Modals/SubjectsModal/SubjectsModal";
 import SearchUsersModal from "./components/Modals/SearchUsersModal/SearchUsersModal";
+import PlanModal from "./components/Modals/PlanModal/PlanModal";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
 
@@ -73,7 +73,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AppProvider>
-          <EventModal />
+          {/* <EventModal /> */}
           <ChatModal />
           <AccountModal />
           <TopNotification />
@@ -82,6 +82,7 @@ export default function RootLayout({ children }) {
           <SubjectsModal />
           <SearchUsersModal />
           <Tutorial />
+          <PlanModal />
           {children}
         </AppProvider>
       </body>
