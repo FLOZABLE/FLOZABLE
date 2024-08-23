@@ -9,95 +9,38 @@ import {
   faLock,
   faStopwatch,
 } from "@fortawesome/free-solid-svg-icons";
-import config from "@/app/utils/config";
 import { ResponseContext } from "@/app/utils/Contexts";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
 import SliderAnimation from "@/app/components/Inputs/SliderAnimation/SliderAnimation";
-import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContainerGen";
 import OptionToggleBtn from "@/app/components/Buttons/OptionToggleBtn/OptionToggleBtn";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import DraggableModal from "../DraggableModal/DraggableModal";
+import TagsGenerator from "../../Inputs/TagsGenerator/TagsGenerator";
+import { putGroup } from "@/Api/groupsApi";
+import { DEFAULT_GROUP } from "@/app/utils/Constant";
 
 function CreateGroupModal({ isOpen, setIsOpen }) {
   const { setResponse } = useContext(ResponseContext);
 
-  const [newGroup, setNewGroup] = useState({
-    name: "",
-    maxMembers: 10,
-    color: "#000",
-    tags: [],
-    description: "",
-    visibility: 1,
-    password: "",
-    goalHr: 3,
-  });
+  const [newGroup, setNewGroup] = useState(DEFAULT_GROUP);
 
-  const [name, setName] = useState("");
-  const [maxMembers, setMaxMembers] = useState(10);
-  const [color, setColor] = useState("");
   const [isSelectColor, setIsSelectColor] = useState(false);
-  const [tags, setTags] = useState([]);
-  const [description, setDescription] = useState("");
-  const [visibility, setVisibility] = useState(1);
-  const [password, setPassword] = useState("");
-  const [goalHr, setGoalHr] = useState(3);
 
   const modalRef = useRef(null);
 
-  const handleInput = useCallback((key, value) => {
-    setNewGroup((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  const submit = useCallback(() => {
+    (async () => {
+      const data = await putGroup(newGroup);
+      setResponse(data);
 
-  const handleNameInput = useCallback((e) => {
-    setName(e.target.value);
-  }, []);
-
-  const handlePwInput = useCallback((e) => {
-    setPassword(e.target.value);
-  }, []);
-
-  const handleCreatedTagsChange = useCallback((tags) => {
-    setTags(tags);
-  }, []);
-
-  const submit = () => {
-    fetch(`${config.server}/groups/group`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name,
-        color: color,
-        tags: tags,
-        explanation: description,
-        max_members: maxMembers,
-        visibility: visibility,
-        password: password,
-        goal_hr: goalHr,
-      }),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-        if (data.success) {
-          setIsOpen(false);
-          setName("");
-          setMaxMembers(10);
-          setColor("");
-          setIsSelectColor(false);
-          setTags([]);
-          setDescription("");
-          setVisibility(1);
-          setPassword("");
-          setGoalHr(3);
-        }
-      })
-      .catch((error) => console.error(error));
-  };
+      if (data.success) {
+        setIsOpen(false);
+        setNewGroup(DEFAULT_GROUP);
+      }
+    })();
+  }, [newGroup]);
 
   return (
     <DraggableModal refProp={modalRef} isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -108,7 +51,8 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
             <CustomInput
               input={newGroup.name}
               handleInput={(e) => {
-                handleInput("name", e.target.value);
+                const name = e.target.value;
+                setNewGroup((prev) => ({ ...prev, name }));
               }}
               icon={null}
               placeHolder={"Study Group Name"}
@@ -125,8 +69,8 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
           </div>
           <div className={styles.contentWrapper}>
             <TextEditor
-              setValue={(value) => {
-                handleInput("description", value);
+              setValue={(description) => {
+                setNewGroup((prev) => ({ ...prev, description }));
               }}
               value={newGroup.description}
             />
@@ -142,7 +86,7 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
           <div className={styles.contentWrapper}>
             <ColorPalette
               setSelectedColor={(color) => {
-                handleInput("color", color);
+                setNewGroup((prev) => ({ ...prev, color }));
               }}
               selectedColor={newGroup.color}
               isSelectColor={isSelectColor}
@@ -162,9 +106,9 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
               min={0}
               max={100}
               step={1}
-              sliderValue={newGroup.maxMembers}
-              setSliderValue={(setMaxMembers) => {
-                handleInput("max_members", maxMembers)
+              sliderValue={newGroup.max_members}
+              setSliderValue={(max_members) => {
+                setNewGroup((prev) => ({ ...prev, max_members }));
               }}
             />
           </div>
@@ -177,12 +121,15 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
             </div>
           </div>
           <div className={styles.contentWrapper}>
-            {/* <TagContainerGen
-              maxTags={10}
-              handleCreatedTagsChange={(tags) => {
-                handleInput("tags", tags)
+            <TagsGenerator
+              tags={newGroup.tags}
+              setTags={(tags) => {
+                console.log(tags, "gddd");
+
+                setNewGroup((prev) => ({ ...prev, tags }));
               }}
-            /> */}
+              maxTags={10}
+            />
           </div>
         </div>
         <div className={styles.wrapper}>
@@ -198,16 +145,19 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
               opt2={{ val: 1, name: "PUBLIC" }}
               value={newGroup.visibility}
               setValue={(visibility) => {
-                handleInput("visibility", visibility)
+                setNewGroup((prev) => ({ ...prev, visibility }));
               }}
             />
             <div
-              className={`${styles.inputArea} ${visibility ? "" : styles.open}`}
+              className={`${styles.inputArea} ${
+                newGroup.visibility ? "" : styles.open
+              }`}
             >
               <CustomInput
                 input={newGroup.password}
-                handleInput={(password) => {
-                  handleInput({password})
+                handleInput={(e) => {
+                  const password = e.target.value;
+                  setNewGroup((prev) => ({ ...prev, password }));
                 }}
                 icon={null}
                 placeHolder={"Enter Password"}
@@ -228,8 +178,10 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
               min={0}
               max={10}
               step={1}
-              sliderValue={goalHr}
-              setSliderValue={setGoalHr}
+              sliderValue={newGroup.goal_hr}
+              setSliderValue={(goal_hr) => {
+                setNewGroup((prev) => ({ ...prev, goal_hr }));
+              }}
             />
           </div>
         </div>

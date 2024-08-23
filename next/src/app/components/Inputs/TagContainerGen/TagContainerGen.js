@@ -59,7 +59,6 @@ const TagContainerGen = ({ handleCreatedTagsChange, maxTags }) => {
   return (
     <div className={styles.TagContainerGen}>
       <div className={styles.content}>
-        {/* <p>Press enter after each tag</p> */}
         <ul className={styles.tags}>
           {createTag()}
           <input
