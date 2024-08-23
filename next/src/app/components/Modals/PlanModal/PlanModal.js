@@ -1,8 +1,13 @@
 "use client";
 
-import { PlansContext } from "@/app/utils/Contexts";
+import {
+  ModalsContext,
+  PlansContext,
+  ResponseContext,
+  SubjectsContext,
+} from "@/app/utils/Contexts";
 import styles from "./PlanModal.module.css";
-import { useContext } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
 import DateSelector from "../../Plans/DateSelector/DateSelector";
@@ -14,12 +19,17 @@ import {
   faClock,
   faFileLines,
   faRepeat,
+  faShare,
+  faTrashCan,
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import SliderAnimation from "../../Inputs/SliderAnimation/SliderAnimation";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import TextEditor from "../../Inputs/TextEditor/TextEditor";
 import DropDownButton from "../../Buttons/DropDownButton/DropDownButton";
+import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
+import { usePlansPlanUsers } from "@/Hooks/plansHooks";
+import { deletePlan, patchPlan, postPlanShare } from "@/Api/plansApi";
 
 function PlanModalLayer({ children, icon, hoverText }) {
   return (
@@ -36,9 +46,73 @@ function PlanModalLayer({ children, icon, hoverText }) {
 }
 
 export default function PlanModal() {
+  const { setResponse } = useContext(ResponseContext);
+  const { subjects } = useContext(SubjectsContext);
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
+  const { setIsAddSubjectModal, setSearchUsersModal } =
+    useContext(ModalsContext);
 
-  console.log(planModal);
+  const { usePlansPlanUsersData, usePlansPlanUsersIsLoading, clearPlanUsers } =
+    usePlansPlanUsers(planModal?.plan_id);
+
+  const addSubjectRef = useRef(null);
+
+  const [shared, setShared] = useState([]);
+  const [share, setShare] = useState([]);
+
+  const [planModalss, setPlanModalss] = useState(null);
+
+  useEffect(() => {
+    if (!usePlansPlanUsersData?.success) return;
+
+    const { shared, share } = usePlansPlanUsersData.planInfo;
+
+    setShare(share);
+    setShared(shared);
+  }, [usePlansPlanUsersData]);
+
+  const handleInput = useCallback(
+    (key, value) => {
+      setPlanModal((prev) => ({ ...prev, [key]: value }));
+      const planIndex = plans.findIndex(
+        (plan) => plan.plan_id === planModal.plan_id
+      );
+      if (planIndex === -1) return;
+      const newPlans = [...plans];
+      newPlans[planIndex] = { ...newPlans[planIndex], [key]: value };
+      setPlans(newPlans);
+    },
+    [plans, planModal]
+  );
+
+  const submit = useCallback(() => {
+    (async() => {
+      const data = await patchPlan({ ...planModal });
+      setResponse(data);
+      if (data.success) {
+        const eventIndex = plans.findIndex(
+          (event) => event.plan_id === planModal.plan_id
+        );
+        if (eventIndex !== -1) {
+          const updatedEvents = [...plans];
+          updatedEvents[eventIndex].saved = true;
+          updatedEvents[eventIndex].plan_id = data.plan.plan_id;
+          setPlans(updatedEvents);
+        }
+        setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
+        if (tutorial === 5) {
+          setTutorial(6);
+        }
+        if (data.isNew) {
+          const newShare = share.map((user) => user.user_id);
+          const data = await postPlanShare(newShare, planModal.plan_id);
+          console.log(data);
+          clearPlanUsers();
+        }
+      }
+    })();
+  }, [planModal])
+
   return (
     <DraggableModal
       isOpen={planModal.opened}
@@ -46,14 +120,15 @@ export default function PlanModal() {
         setPlanModal((prev) => ({ ...prev, opened: false }));
       }}
     >
-      <div className={styles.PlanModal}>
+      <div className={`customScroll ${styles.PlanModal}`}>
         <PlanModalLayer>
           <CustomInput
             input={planModal.title}
             handleInput={(e) => {
               const title = e.target.value;
-              setPlanModal((prev) => ({ ...prev, title }));
+              handleInput("title", title);
             }}
+            placeHolder={"Enter title"}
           ></CustomInput>
         </PlanModalLayer>
         <PlanModalLayer
@@ -63,22 +138,21 @@ export default function PlanModal() {
           <DateSelector
             start={planModal.start}
             setStart={(start) => {
-              setPlanModal((prev) => ({ ...prev, start }));
+              handleInput("start", start);
             }}
             end={planModal.end}
             setEnd={(end) => {
-              setPlanModal((prev) => ({ ...prev, end }));
+              handleInput("end", end);
             }}
           />
         </PlanModalLayer>
-
         <PlanModalLayer
           icon={<FontAwesomeIcon icon={faFileLines} />}
           hoverText={"Add Description"}
         >
           <TextEditor
             setValue={(description) => {
-              setPlanModal((prev) => ({ ...prev, description }));
+              handleInput("description", description);
             }}
             value={planModal.description}
           />
@@ -95,12 +169,12 @@ export default function PlanModal() {
               3: "month",
             }}
             setValue={(repeat) => {
-              setPlanModal((prev) => ({ ...prev, repeat }));
+              handleInput("repeat", repeat);
             }}
             value={planModal.repeat}
           />
         </PlanModalLayer>
-        {/* {planModal.editable ? (
+        {planModal.editable ? (
           <PlanModalLayer
             icon={<FontAwesomeIcon icon={faBook} />}
             hoverText={"Select Subject"}
@@ -113,14 +187,7 @@ export default function PlanModal() {
                   return acc;
                 }, {})}
                 setValue={(subject_id) => {
-                  if (!planModal.editable) {
-                    setResponse({
-                      success: false,
-                      reason: "This event is view only",
-                    });
-                  } else {
-                    setPlanModal((prev) => ({ ...prev, subject_id }));
-                  }
+                  handleInput("subject_id", subject_id);
                 }}
                 value={planModal.subject_id}
               />
@@ -130,9 +197,9 @@ export default function PlanModal() {
               <BlobBtn
                 onClick={() => {
                   setIsAddSubjectModal(true);
-                  if (tutorial === 3) {
+                  /* if (tutorial === 3) {
                     setTutorial(4);
-                  }
+                  } */
                 }}
                 id="tutorial-3"
               >
@@ -140,7 +207,7 @@ export default function PlanModal() {
               </BlobBtn>
             </div>
           </PlanModalLayer>
-        ) : null} */}
+        ) : null}
         <PlanModalLayer
           icon={<FontAwesomeIcon icon={faBell} />}
           hoverText={"Select Notification"}
@@ -154,7 +221,7 @@ export default function PlanModal() {
               60: "1 hour before",
             }}
             setValue={(notification) => {
-              setPlanModal((prev) => ({ ...prev, notification }));
+              handleInput("notification", notification);
             }}
             value={planModal.notification}
             onClick={() => {
@@ -173,12 +240,12 @@ export default function PlanModal() {
               step={1}
               sliderValue={planModal.priority}
               setSliderValue={(priority) => {
-                setPlanModal((prev) => ({ ...prev, priority }));
+                handleInput("priority", priority);
               }}
             />
           </div>
         </PlanModalLayer>
-        {/* <PlanModalLayer
+        <PlanModalLayer
           icon={<FontAwesomeIcon icon={faUserGroup} />}
           hoverText={"Shared Users"}
         >
@@ -218,7 +285,59 @@ export default function PlanModal() {
               </>
             )}
           </div>
-        </PlanModalLayer> */}
+        </PlanModalLayer>
+        <div className={styles.buttons}>
+          <BlobBtn
+            onClick={() => {
+              setSearchUsersModal((prev) => ({
+                opened: !prev.opened,
+                onClick: async (userInfo) => {
+                  if (planModal.opened) {
+                    const data = await postPlanShare(
+                      [userInfo.user_id],
+                      planModal.plan_id
+                    );
+                    if (!data.success) {
+                      clearPlanUsers();
+                      setResponse(data);
+                      return;
+                    }
+
+                    if (!data.share.length && !data.shared.length) {
+                      return setResponse({
+                        success: false,
+                        reason: `Already Shared with ${userInfo.name}`,
+                      });
+                    }
+
+                    clearPlanUsers();
+                    setResponse({
+                      success: true,
+                      msg: `Added ${userInfo.name}`,
+                    });
+                  }
+                },
+              }));
+            }}
+          >
+            <FontAwesomeIcon icon={faShare} />
+          </BlobBtn>
+          <BlobBtn
+            onClick={() => {
+              submit();
+            }}
+            id="tutorial-5"
+          >
+            SAVE
+          </BlobBtn>
+          <BlobBtn
+            onClick={() => {
+              deletePlan();
+            }}
+          >
+            <FontAwesomeIcon icon={faTrashCan} />
+          </BlobBtn>
+        </div>
       </div>
     </DraggableModal>
   );
