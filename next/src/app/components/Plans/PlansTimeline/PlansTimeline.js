@@ -125,7 +125,11 @@ export default function PlansTimeline({
             <div
               id={styles.addPlan}
               onClick={() => {
-                setPlanModal((prev) => ({ ...prev, opened: true }));
+                setPlanModal((prev) => ({
+                  ...prev,
+                  plan_id: "0000000000",
+                  opened: true,
+                }));
                 if (tutorial === 1) {
                   setTutorial(2);
                 }

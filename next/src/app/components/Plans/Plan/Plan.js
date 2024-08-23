@@ -36,7 +36,7 @@ export default function Plan({ plan }) {
       onClick={(e) => {
         e.stopPropagation();
         setPlanModal((prev) => {
-          if (prev.plan_id === plan.plan_id) {
+          if (prev.plan_id === plan.plan_id && prev.opened) {
             return { ...DEFAULT_PLAN, ...plan, opened: false };
           }
           return { ...DEFAULT_PLAN, ...plan, opened: true };
@@ -44,13 +44,20 @@ export default function Plan({ plan }) {
       }}
     >
       <div className={styles.layer}>
-        <BounceCheckBox
-          id={plan.plan_id}
-          checked={plan.completed}
-          onClick={togglePlan}
-        >
-          <p className={styles.title}>{plan.title}</p>
-        </BounceCheckBox>
+        {plan.type === "google" ? (
+          <div className={`overflowDot ${styles.title}`}>{plan.title}</div>
+        ) : (
+          <BounceCheckBox
+            id={plan.plan_id}
+            checked={plan.completed}
+            onClick={(e) => {
+              e.stopPropagation();
+              togglePlan();
+            }}
+          >
+            <div className={`overflowDot ${styles.title}`}>{plan.title}</div>
+          </BounceCheckBox>
+        )}
         <div className={styles.date}>{plan.dispStart}</div>
       </div>
       <div className={styles.layer}>
