@@ -9,7 +9,7 @@ import {
   TutorialsContext,
 } from "@/app/utils/Contexts";
 import { DateTime } from "luxon";
-import { subjectIcons } from "@/app/utils/Constant";
+import { DEFAULT_PLAN, subjectIcons } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
@@ -23,7 +23,7 @@ export default function PlansTimeline({
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
   const { subjects } = useContext(SubjectsContext);
-  const { plans, setPlanModal } = useContext(PlansContext);
+  const { plans, setPlans, planModal,setPlanModal } = useContext(PlansContext);
 
   const [removedSubjects, setRemovedSubjects] = useState([]);
   const [donePlans, setDonePlans] = useState([]);
@@ -125,11 +125,19 @@ export default function PlansTimeline({
             <div
               id={styles.addPlan}
               onClick={() => {
-                setPlanModal((prev) => ({
-                  ...prev,
+                if (planModal.plan_id === "0000000000") {
+                  return;
+                }
+                const subject_id = subjects?.[0].subject_id;
+
+                const newPlan = {
+                  ...DEFAULT_PLAN,
                   plan_id: "0000000000",
                   opened: true,
-                }));
+                  subject_id,
+                };
+                setPlanModal(newPlan);
+                setPlans((prev) => [...prev, newPlan]);
                 if (tutorial === 1) {
                   setTutorial(2);
                 }

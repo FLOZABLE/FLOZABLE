@@ -74,6 +74,7 @@ export default function RootLayout({ children }) {
       <body>
         <AppProvider>
           {/* <EventModal /> */}
+          <PlanModal />
           <ChatModal />
           <AccountModal />
           <TopNotification />
@@ -82,7 +83,6 @@ export default function RootLayout({ children }) {
           <SubjectsModal />
           <SearchUsersModal />
           <Tutorial />
-          <PlanModal />
           {children}
         </AppProvider>
       </body>

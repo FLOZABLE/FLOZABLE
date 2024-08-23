@@ -2,7 +2,9 @@
   width: 31.25rem;
   display: flex;
   flex-direction: column;
-  margin: 1.875rem 1.25rem 0em 0em;
+  padding: 1.875rem 1.25rem 0em 0em;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .PlanModalLayer {
@@ -38,4 +40,12 @@
   width: calc(100% - 4.375rem);
   display: flex;
   align-items: center;
+}
+
+.PlanModal .buttons {
+  margin-bottom: 1rem;
+  justify-content: space-around;
+  align-items: center;
+  display: flex;
+  font-size: 1.75rem;
 }

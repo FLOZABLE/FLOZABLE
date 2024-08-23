@@ -164,12 +164,6 @@ function SubjectsProvider({ children }) {
     );
   }, [subjects, planData]);
 
-  useEffect(() => {
-    if (!subjects.length) return;
-
-    setPlanModal((prev) => ({ ...prev, subject_id: subjects[0].subject_id }));
-  }, [subjects]);
-
   return (
     <SubjectsContext.Provider
       value={{
