@@ -184,6 +184,17 @@ const DEFAULT_PLAN = {
   shared: [],
 };
 
+const DEFAULT_GROUP = {
+  name: "",
+  max_members: 10,
+  color: "#000",
+  tags: [],
+  description: "",
+  visibility: 1,
+  password: "",
+  goal_hr: 3,
+};
+
 const SUBJECTS_PIE_COLORS = [
   "#0395f9",
   "#3fc2ff",
@@ -235,6 +246,7 @@ export {
   colorPaletteOptions,
   PREMIUM,
   DEFAULT_PLAN,
+  DEFAULT_GROUP,
   SUBJECTS_PIE_COLORS,
-  STUDY_TREND_COLORS
+  STUDY_TREND_COLORS,
 };

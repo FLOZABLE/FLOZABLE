@@ -146,13 +146,13 @@ Router.put("/group", async (req, res) => {
 
         const hashed = hashing(password);
         const group_id = generateRandomId(10);
-        const date = Math.floor(new Date().getTime() / 1000);
+        const created_at = Math.floor(new Date().getTime() / 1000);
         const stringlifiedTags = JSON.stringify(tags);
         const group = {
           group_id,
           salt: hashed[0],
           password: hashed[1],
-          date,
+          created_at,
           name,
           description,
           leader: userId,
@@ -165,8 +165,8 @@ Router.put("/group", async (req, res) => {
 
         const newGroupMember = {
           group_id,
-          member_id: userId,
-          joined_at: date,
+          user_id: userId,
+          joined_at: created_at,
         };
 
         try {
@@ -181,7 +181,7 @@ Router.put("/group", async (req, res) => {
           );
 
           const roomInfo = {
-            id: group_id,
+            chatroom_id: group_id,
           };
 
           connection.query(`INSERT INTO chatrooms SET ?`, roomInfo);
@@ -405,7 +405,7 @@ Router.post("/join/:id", async (req, res) => {
 
       groups.push(groupId);
       cacheUserGroups(userId, groups);
-      
+
       //send user's study information to group members
       const activeSubject = await activeSubjectCache(userId);
       const today = DateTime.now().setZone(userInfo.timezone);

@@ -31,4 +31,18 @@ async function getGroupMembers(group_id) {
   return data;
 }
 
-export { getGroups, getGroupMembers };
+async function putGroup(newGroup) {
+  const response = await fetch(`${config.server}/groups/group`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(newGroup)
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+export { getGroups, getGroupMembers, putGroup };
