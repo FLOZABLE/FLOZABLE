@@ -30,6 +30,7 @@ import DropDownButton from "../../Buttons/DropDownButton/DropDownButton";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import { usePlansPlanUsers } from "@/Hooks/plansHooks";
 import { deletePlan, patchPlan, postPlanShare } from "@/Api/plansApi";
+import { DEFAULT_PLAN } from "@/app/utils/Constant";
 
 function PlanModalLayer({ children, icon, hoverText }) {
   return (
@@ -59,7 +60,6 @@ export default function PlanModal() {
 
   const [shared, setShared] = useState([]);
   const [share, setShare] = useState([]);
-
   const [planModalss, setPlanModalss] = useState(null);
 
   useEffect(() => {
@@ -71,9 +71,34 @@ export default function PlanModal() {
     setShared(shared);
   }, [usePlansPlanUsersData]);
 
+  useEffect(() => {
+    if (planModal.plan_id === "0000000000") return;
+
+    setPlans((prev) => prev.filter((plan) => plan.plan_id !== "0000000000"));
+    setPlanModalss((prev) => {
+      if (prev?.plan_id === planModal.plan_id) {
+        return prev;
+      }
+      return planModal;
+    });
+  }, [planModal.plan_id]);
+
+  useEffect(() => {
+    if (planModalss?.plan_id !== planModal.plan_id) {
+      setPlans((prev) => {
+        const planIndex = prev.findIndex(
+          (plan) => plan.plan_id === planModalss.plan_id
+        );
+
+        if (planIndex === -1) return prev;
+        prev[planIndex] = planModalss;
+        return prev;
+      });
+    }
+  }, [planModal.plan_id, planModalss]);
+
   const handleInput = useCallback(
     (key, value) => {
-      setPlanModal((prev) => ({ ...prev, [key]: value }));
       const planIndex = plans.findIndex(
         (plan) => plan.plan_id === planModal.plan_id
       );
@@ -81,12 +106,13 @@ export default function PlanModal() {
       const newPlans = [...plans];
       newPlans[planIndex] = { ...newPlans[planIndex], [key]: value };
       setPlans(newPlans);
+      setPlanModal((prev) => ({ ...prev, [key]: value }));
     },
-    [plans, planModal]
+    [plans, planModal, planModalss]
   );
 
   const submit = useCallback(() => {
-    (async() => {
+    (async () => {
       const data = await patchPlan({ ...planModal });
       setResponse(data);
       if (data.success) {
@@ -111,13 +137,13 @@ export default function PlanModal() {
         }
       }
     })();
-  }, [planModal])
+  }, [planModal]);
 
   return (
     <DraggableModal
       isOpen={planModal.opened}
       setIsOpen={() => {
-        setPlanModal((prev) => ({ ...prev, opened: false }));
+        setPlanModal(DEFAULT_PLAN);
       }}
     >
       <div className={`customScroll ${styles.PlanModal}`}>
