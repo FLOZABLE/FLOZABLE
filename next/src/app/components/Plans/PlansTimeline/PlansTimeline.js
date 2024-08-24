@@ -23,7 +23,7 @@ export default function PlansTimeline({
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
   const { subjects } = useContext(SubjectsContext);
-  const { plans, setPlans, planModal,setPlanModal } = useContext(PlansContext);
+  const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
 
   const [removedSubjects, setRemovedSubjects] = useState([]);
   const [donePlans, setDonePlans] = useState([]);
@@ -137,7 +137,9 @@ export default function PlansTimeline({
                   subject_id,
                 };
                 setPlanModal(newPlan);
-                setPlans((prev) => [...prev, newPlan]);
+                setTimeout(() => {
+                  setPlans((prev) => [...prev, newPlan]);
+                }, 50);
                 if (tutorial === 1) {
                   setTutorial(2);
                 }
