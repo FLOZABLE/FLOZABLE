@@ -5,6 +5,7 @@ import {
   PlansContext,
   ResponseContext,
   SubjectsContext,
+  TutorialsContext,
 } from "@/app/utils/Contexts";
 import styles from "./PlanModal.module.css";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -29,8 +30,14 @@ import TextEditor from "../../Inputs/TextEditor/TextEditor";
 import DropDownButton from "../../Buttons/DropDownButton/DropDownButton";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import { usePlansPlanUsers } from "@/Hooks/plansHooks";
-import { deletePlan, patchPlan, postPlanShare } from "@/Api/plansApi";
+import {
+  deletePlan,
+  deletePlanShare,
+  patchPlan,
+  postPlanShare,
+} from "@/Api/plansApi";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
+import ShareUserBox from "../../Users/ShareUserBox/ShareUserBox";
 
 function PlanModalLayer({ children, icon, hoverText }) {
   return (
@@ -52,11 +59,10 @@ export default function PlanModal() {
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
   const { setIsAddSubjectModal, setSearchUsersModal } =
     useContext(ModalsContext);
+  const { tutorial, setTutorial } = useContext(TutorialsContext);
 
   const { usePlansPlanUsersData, usePlansPlanUsersIsLoading, clearPlanUsers } =
     usePlansPlanUsers(planModal?.plan_id);
-
-  const addSubjectRef = useRef(null);
 
   const [shared, setShared] = useState([]);
   const [share, setShare] = useState([]);
@@ -84,6 +90,8 @@ export default function PlanModal() {
   }, [planModal.plan_id]);
 
   useEffect(() => {
+    if (!planModalss?.plan_id) return;
+
     if (planModalss?.plan_id !== planModal.plan_id) {
       setPlans((prev) => {
         const planIndex = prev.findIndex(
@@ -91,11 +99,27 @@ export default function PlanModal() {
         );
 
         if (planIndex === -1) return prev;
+
         prev[planIndex] = planModalss;
+
+        const subject = subjects.find(
+          (subject) => subject.subject_id === prev[planIndex].subject_id
+        );
+        if (subject) {
+          prev[planIndex].backgroundColor = subject.color;
+          prev[planIndex].borderColor = subject.color;
+          prev[planIndex].subject_color = subject.color;
+          prev[planIndex].color = subject.color;
+          //plan.textColor = subject.color;
+        } else {
+          prev[planIndex].backgroundColor = "#000";
+          prev[planIndex].borderColor = "#000";
+          prev[planIndex].color = "#000";
+        }
         return prev;
       });
     }
-  }, [planModal.plan_id, planModalss]);
+  }, [planModal.plan_id, planModalss, subjects]);
 
   const handleInput = useCallback(
     (key, value) => {
@@ -105,10 +129,24 @@ export default function PlanModal() {
       if (planIndex === -1) return;
       const newPlans = [...plans];
       newPlans[planIndex] = { ...newPlans[planIndex], [key]: value };
+      const subject = subjects.find(
+        (subject) => subject.subject_id === newPlans[planIndex].subject_id
+      );
+      if (subject) {
+        newPlans[planIndex].backgroundColor = subject.color;
+        newPlans[planIndex].borderColor = subject.color;
+        newPlans[planIndex].subject_color = subject.color;
+        newPlans[planIndex].color = subject.color;
+        //plan.textColor = subject.color;
+      } else {
+        newPlans[planIndex].backgroundColor = "#000";
+        newPlans[planIndex].borderColor = "#000";
+        newPlans[planIndex].color = "#000";
+      }
       setPlans(newPlans);
       setPlanModal((prev) => ({ ...prev, [key]: value }));
     },
-    [plans, planModal, planModalss]
+    [plans, planModal, planModalss, subjects]
   );
 
   const submit = useCallback(() => {
@@ -116,19 +154,17 @@ export default function PlanModal() {
       const data = await patchPlan({ ...planModal });
       setResponse(data);
       if (data.success) {
-        const eventIndex = plans.findIndex(
+        const planIndex = plans.findIndex(
           (event) => event.plan_id === planModal.plan_id
         );
-        if (eventIndex !== -1) {
+        if (planIndex !== -1) {
           const updatedEvents = [...plans];
-          updatedEvents[eventIndex].saved = true;
-          updatedEvents[eventIndex].plan_id = data.plan.plan_id;
+          updatedEvents[planIndex].saved = true;
+          updatedEvents[planIndex].plan_id = data.plan.plan_id;
           setPlans(updatedEvents);
         }
+        setPlanModalss(null);
         setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
-        if (tutorial === 5) {
-          setTutorial(6);
-        }
         if (data.isNew) {
           const newShare = share.map((user) => user.user_id);
           const data = await postPlanShare(newShare, planModal.plan_id);
@@ -137,7 +173,42 @@ export default function PlanModal() {
         }
       }
     })();
+  }, [planModal, tutorial]);
+
+  const onDeletePlan = useCallback(() => {
+    (async () => {
+      const data = await deletePlan(planModal.plan_id);
+      setResponse(data);
+      if (data.success) {
+        setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
+        setPlans((prev) =>
+          prev.filter((plan) => plan.plan_id !== planModal.plan_id)
+        );
+      }
+    })();
   }, [planModal]);
+
+  const onUnshare = useCallback(
+    (userInfo) => {
+      (async () => {
+        const data = await deletePlanShare(userInfo.user_id, planModal.plan_id);
+        setResponse(data);
+        clearPlanUsers();
+      })();
+    },
+    [planModal]
+  );
+
+  const onUnshared = useCallback(
+    (userInfo) => {
+      (async () => {
+        const data = await deletePlanShare(userInfo.user_id, planModal.plan_id);
+        setResponse(data);
+        clearPlanUsers();
+      })();
+    },
+    [planModal]
+  );
 
   return (
     <DraggableModal
@@ -205,33 +276,29 @@ export default function PlanModal() {
             icon={<FontAwesomeIcon icon={faBook} />}
             hoverText={"Select Subject"}
           >
-            <div className={styles.subjectWrapper}>
-              <DropDownButton
-                options={subjects.reduce((acc, subject) => {
-                  const { name, subject_id } = subject;
-                  acc[subject_id] = name;
-                  return acc;
-                }, {})}
-                setValue={(subject_id) => {
-                  handleInput("subject_id", subject_id);
-                }}
-                value={planModal.subject_id}
-              />
-            </div>
+            <DropDownButton
+              options={subjects.reduce((acc, subject) => {
+                const { name, subject_id } = subject;
+                acc[subject_id] = name;
+                return acc;
+              }, {})}
+              setValue={(subject_id) => {
+                handleInput("subject_id", subject_id);
+              }}
+              value={planModal.subject_id}
+            />
             <p>OR</p>
-            <div className={styles.addSubjectWrapper} ref={addSubjectRef}>
-              <BlobBtn
-                onClick={() => {
-                  setIsAddSubjectModal(true);
-                  /* if (tutorial === 3) {
+            <BlobBtn
+              onClick={() => {
+                setIsAddSubjectModal(true);
+                /* if (tutorial === 3) {
                     setTutorial(4);
                   } */
-                }}
-                id="tutorial-3"
-              >
-                Add Subject
-              </BlobBtn>
-            </div>
+              }}
+              id="tutorial-3"
+            >
+              Add Subject
+            </BlobBtn>
           </PlanModalLayer>
         ) : null}
         <PlanModalLayer
@@ -259,17 +326,15 @@ export default function PlanModal() {
           icon={<FontAwesomeIcon icon={faCircleExclamation} />}
           hoverText={"Select Importance"}
         >
-          <div className={styles.notificationWrapper}>
-            <SliderAnimation
-              min={0}
-              max={100}
-              step={1}
-              sliderValue={planModal.priority}
-              setSliderValue={(priority) => {
-                handleInput("priority", priority);
-              }}
-            />
-          </div>
+          <SliderAnimation
+            min={0}
+            max={100}
+            step={1}
+            sliderValue={planModal.priority}
+            setSliderValue={(priority) => {
+              handleInput("priority", priority);
+            }}
+          />
         </PlanModalLayer>
         <PlanModalLayer
           icon={<FontAwesomeIcon icon={faUserGroup} />}
@@ -358,7 +423,7 @@ export default function PlanModal() {
           </BlobBtn>
           <BlobBtn
             onClick={() => {
-              deletePlan();
+              onDeletePlan();
             }}
           >
             <FontAwesomeIcon icon={faTrashCan} />

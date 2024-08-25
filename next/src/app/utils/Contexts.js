@@ -149,7 +149,6 @@ function SubjectsProvider({ children }) {
           plan.subject_color = subject.color;
           plan.color = subject.color;
           //plan.textColor = subject.color;
-          plan.icon = subject.icon;
         } else {
           plan.backgroundColor = "#000";
           plan.borderColor = "#000";
