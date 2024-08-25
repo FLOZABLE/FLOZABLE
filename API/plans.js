@@ -421,23 +421,32 @@ Router.delete("/plan", async (req, res) => {
     try {
       const connection = pool.promise();
 
-      const { id } = req.body;
+      const { planId } = req.body;
 
-      const isValidId = validateStrictString(id, "plan id", 10, 8);
+      const isValidId = validateStrictString(planId, "plan id", 10, 8);
 
       if (!isValidId.isValid) {
         return res.send({ success: false, reason: isValidId.reason });
       }
 
-      await connection.query(`DELETE FROM plans WHERE user_id = ? AND id = ?`, [
-        userId,
-        id,
-      ]);
-      /* if (!deletePlan.affectedRows) {
+      const [[planInfo]] = await connection.query(
+        `SELECT title FROM plans WHERE plan_id = ? AND user_id = ?`,
+        [planId, userId]
+      );
 
-      } */
+      if (!planInfo) {
+        return res.send(RESPONSE_CODES["no-plan"]);
+      }
 
-      res.send({ success: true });
+      await connection.query(
+        `
+        DELETE FROM plan_share WHERE plan_id = ?;
+        DELETE FROM plan_shared WHERE plan_id = ?;
+        DELETE FROM plans WHERE user_id = ? AND plan_id = ?`,
+        [planId, planId, userId, planId]
+      );
+
+      res.send({ success: true, msg: `Deleted plan ${planInfo.title}` });
     } catch (err) {
       console.log(err);
     }

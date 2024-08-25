@@ -40,6 +40,7 @@
   width: calc(100% - 4.375rem);
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .PlanModal .buttons {
@@ -48,4 +49,19 @@
   align-items: center;
   display: flex;
   font-size: 1.1rem;
+}
+
+.UserBoxes {
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.UserBoxes div#share img {
+  filter: brightness(50%);
+}
+
+.UserBoxes > div {
+  display: flex;
 }
