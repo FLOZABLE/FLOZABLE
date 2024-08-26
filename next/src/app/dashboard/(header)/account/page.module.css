@@ -1,131 +1,35 @@
-.Account .boxContainer {
-  width: 80%;
-  margin-left: 10%;
+.Account {
+  margin: 1rem 3rem;
 }
 
-.Account .boxWrapper {
+.Account .layer {
   display: flex;
 }
 
-.Account .box {
-  background-color: rebeccapurple;
-  width: 100%;
-  padding: 1.25rem;
-  border-radius: 1.25rem;
-  box-shadow: var(--shadow9);
-  background-color:#fff;
-  margin: 1.25rem;
-  position: relative;
+.Account .layer .boxContainer {
+  flex: 1;
 }
 
-.Account .box#extension .title {
-  margin-bottom: 2rem;
-}
-
-.Account .boxWrapper .box#accounts .title p {
-  margin-bottom: 1.2rem;
-}
-
-.Account .submitWrapper {
-  position: absolute;
-  right: 1.875rem;
-  bottom: 1.875rem;
-  margin: 0em !important;
-}
-
-.Account .content #passwordReq {
-  margin-left: 1.25rem;
-}
-
-.Account .content #passwordReq h3{
-  font-weight: 300;
-}
-.Account .box#profile .emailWrapper {
-  display: flex;
-}
-
-.Account .box#profile .emailWrapper>div {
-  width: 100%;
-  margin-top: 0.625rem;
-  justify-content: left;
-} 
-
-.Account .box#accounts > div:nth-child(2) {
-  display: flex;
-  flex-direction: column;
-}
-
-.Account .box#accounts > div:nth-child(2) > div {
-  display: flex;
-  margin-bottom: 1.875rem;
-}
-
-.Account .box#accounts .iconWrapper {
-  margin-left: 1rem;
-  margin-top: 0rem;
-  font-size: 3rem;
-  width: 3rem;
-  display: flex;
-  justify-content: center;
+.Account .layer:nth-child(1) {
   align-items: center;
-}
-
-.Account .box#accounts .explanation {
-  margin-top: 1rem;
-  padding-right: 1.5rem;
-  padding-left: 1rem;
-  max-width: 78%;
-  left: 1px;
-}
-
-.Account .box#accounts .authBtn {
-  margin-left: auto;
-}
-
-.Account .box#profile .emailWrapper .ProfileConfirm {
-  margin-left: 3vh;
-}
-
-.Account .box#profile .contents>div {
-  margin-right: 7%;
-}
-
-.Account .box#profile .contents {
-  margin-right: 6.25rem;
-  width: 100%;
-}
-
-.Account #passwordReq ul li {
-  list-style: disc;
-  margin-left: 1.875rem ;
-}
-
-/* profile pic selector */
-
-.Account .box#profileImg {
-  display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-shadow: none;
-  background-color: transparent;
 }
 
 .Account .imgSelector {
   position: relative;
 }
 
-.Account .profilePic {
+.Account .imgSelector .profilePic {
   width: 12.5rem;
   height: auto;
   object-fit: cover;
 }
 
-.Account .fileUpload {
+.Account .imgSelector .fileUpload {
   display: none;
 }
 
-.Account .circle {
+.Account .imgSelector .circle {
   border-radius: 100% !important;
   overflow: hidden;
   width: 12.5rem;
@@ -138,12 +42,12 @@
   justify-content: center;
 }
 
-.Account .pImage {
+.Account .imgSelector .pImage {
   position: absolute;
   top: 10.625rem;
   left: 10.625rem;
   color: #666666;
-  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   background-color: #fff;
   width: 1.875rem;
   height: 1.875rem;
@@ -153,49 +57,75 @@
   border-radius: 100%;
 }
 
-.Account .pImage:hover {
-  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+.Account .imgSelector .pImage:hover {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.Account .uploadBtn {
+.Account .imgSelector .uploadBtn {
   font-size: 1.2em;
 }
 
-.Account .uploadBtn:hover {
-  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+.Account .imgSelector .uploadBtn:hover {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   color: #999;
 }
 
-
-.Account #welcome {
+.Account div#welcome {
   font-size: 1.875rem;
   margin-top: 2.5rem;
 }
 
-@media (max-width: 87.5rem) {
-  .Account .boxContainer {
-    width: 90%;
-    margin-left: 5%;
-  }
-
-  .Account .box {
-    padding: 0.938rem;
-    margin: 0.938rem;
-  }
+.Account .boxContainer#profile .name {
+  margin: 0.5rem;
 }
 
-@media (max-width: 75rem) {
-  .Account {
-    padding: 1.875rem;
-  }
+.Account .boxContainer#profile .emails {
+  display: flex;
+  margin-bottom: 2rem;
+}
 
-  .Account .boxContainer {
-    width: 100%;
-    margin: 0em;
-  }
+.Account .boxContainer#profile .emails > * {
+  flex: 1;
+  margin: 0.5rem;
+}
 
-  .Account .box {
-    padding: 0.625rem;
-    margin: 0.938rem;
-  }
+.Account .boxContainer .buttons {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  margin-top: auto;
+}
+
+.Account .buttons div#verifyBtn {
+  opacity: 1;
+  transition: 0.3s ease-in-out opacity;
+}
+
+.Account .buttons div#verifyBtn.hidden {
+  opacity: 0;
+}
+
+.Account .app {
+  display: flex;
+}
+
+.Account .app .icon {
+  width: 4rem;
+  height: 4rem;
+  font-size: 2.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.3rem;
+}
+
+
+.Account .app .description p {
+  word-break: break-all;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.Account .app .authBtn {
+  margin-left: auto;
 }

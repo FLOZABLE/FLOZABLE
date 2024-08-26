@@ -61,6 +61,7 @@ const REDIS_EXP = {
   USER_FRIENDS: 60 * 10,
   USERINFO: 60 * 60,
   SUBJECTS: 60 * 10,
+  VERIFY_EMAIL: 60 * 60 * 24 * 7
 };
 
 const MAX_STUDY_TIME = 60 * 60 * 20; // 20hr = max study time. ignore more than 6 hr
