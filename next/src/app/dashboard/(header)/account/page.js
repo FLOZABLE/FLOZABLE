@@ -22,27 +22,42 @@ import { ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
 import { useAccountGoogle } from "@/Hooks/accountHooks";
 import SubjectsManager from "@/app/components/Subjects/SubjectsManager/SubjectsManager";
 import { useSpotifyInfo } from "@/Hooks/playlistHook";
+import { patchAccountInfo, patchAccountPassword } from "@/Api/accountApi";
+import { postAuthVerify } from "@/Api/authApi";
 
 function Account() {
-  const { userInfo } = useContext(UserInfoContext);
+  const { userInfo, setUserInfo } = useContext(UserInfoContext);
   const { setResponse } = useContext(ResponseContext);
 
   const { googleInfo } = useAccountGoogle();
   const { spotifyInfo } = useSpotifyInfo();
 
   const [imageSrc, setImageSrc] = useState(null);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [confirmEmail, setConfirmEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [isSubmitProfile, setIsSubmitProfile] = useState(false);
-  const [isSubmitPw, setIsSubmitPw] = useState(false);
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    confirmEmail: "",
+    verified: false,
+  });
+
+  const [password, setPassword] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+
   const [websites, setWebsites] = useState({});
-  const [redirectURI, setRedirectURI] = useState(null);
 
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (!userInfo) return;
+    const { user_id, name, email, verified } = userInfo;
+
+    setImageSrc(`${config.static_server}/profile-image/${user_id}.jpeg`);
+    setProfile({ name, email, confirmEmail: email, verified });
+  }, [userInfo]);
+
   const readURL = useCallback((input) => {
     if (input.files && input.files[0]) {
       const reader = new FileReader();
@@ -80,317 +95,250 @@ function Account() {
     }
   }, []);
 
-  useEffect(() => {
-    if (isSubmitProfile) {
-      fetch(`${config.server}/account/info`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, confirmEmail }),
-        credentials: "include",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setResponse(data);
-        })
-        .catch((error) => console.error(error));
-    }
-    setTimeout(() => {
-      setIsSubmitProfile(false);
-    }, 2000);
-  }, [isSubmitProfile]);
+  const submitProfile = useCallback(() => {
+    (async () => {
+      const { name, email } = profile;
+      const data = await patchAccountInfo(profile);
+      setResponse(data);
+      if (data.success) {
+        setUserInfo((prev) => ({
+          ...prev,
+          name,
+          email,
+          verified: data.verified,
+        }));
+      }
+    })();
+  }, [profile]);
 
-  const submitPassword = useCallback(() => {});
+  const submitPassword = useCallback(() => {
+    (async () => {
+      const data = await patchAccountPassword(password);
+      setResponse(data);
+    })();
+  }, [password]);
 
-  useEffect(() => {
-    if (isSubmitPw) {
-      fetch(`${config.server}/account/password`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ password, confirmPassword }),
-        credentials: "include",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setResponse(data);
-        })
-        .catch((error) => console.error(error));
-    }
-    setTimeout(() => {
-      setIsSubmitPw(false);
-    }, 2000);
-  }, [isSubmitPw]);
-
-  useEffect(() => {
-    if (!userInfo) return;
-    setImageSrc(
-      `${config.static_server}/profile-image/${userInfo.user_id}.jpeg`
-    );
-    setEmail(userInfo.email);
-    setConfirmEmail(userInfo.email);
-    setName(userInfo.name);
-  }, [userInfo]);
-
-  useEffect(() => {
-    setRedirectURI(window.location.href);
+  const validateEmail = useCallback(() => {
+    (async () => {
+      const data = await postAuthVerify();
+      setResponse(data);
+    })();
   }, []);
 
+  console.log(profile);
+
   return (
-    <div>
-      <div className={`Main`}>
-        <div className="title">Account</div>
-        <div className={styles.Account}>
-          <div className={styles.boxContainer}>
-            <div className={styles.boxWrapper}>
-              <div className={styles.box} id={styles.profileImg}>
-                <div className={styles.imgSelector}>
-                  <div className={styles.circle}>
-                    <img className={styles.profilePic} src={imageSrc} alt="" />
-                  </div>
-                  <div
-                    className={styles.pImage}
-                    onClick={() => {
-                      inputRef.current.click();
-                    }}
-                  >
-                    <i className={styles.uploadBtn}>
-                      <FontAwesomeIcon icon={faCamera} />
-                    </i>
-                    <form>
-                      <input
-                        className={styles.fileUpload}
-                        type="file"
-                        accept="image/*"
-                        ref={inputRef}
-                        onChange={(e) => readURL(e.target)}
-                      />
-                    </form>
-                  </div>
-                </div>
-                {userInfo ? (
-                  <div id={styles.welcome}>
-                    <h2>Welcome, {userInfo.name}</h2>
-                  </div>
-                ) : null}
-              </div>
+    <div className={`Main`}>
+      <div className={styles.Account}>
+        <div className={styles.layer}>
+          <div className={styles.imgSelector}>
+            <div className={styles.circle}>
+              <img className={styles.profilePic} src={imageSrc} alt="" />
             </div>
-            <div className={styles.boxWrapper}>
-              <div className={styles.box} id={styles.profile}>
-                <div className={styles.title}>
-                  <h1>Profile</h1>
-                </div>
-                <div className={styles.contents}>
-                  <div>
-                    <div>
-                      <LineInput
-                        title={"Name"}
-                        value={name}
-                        setValue={setName}
-                        type={"text"}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.emailWrapper}>
-                    {
-                      //<VerifyEmailButton setResponse={setResponse}/>
-                    }
-                    <div>
-                      <LineInput
-                        title={"Email"}
-                        value={email}
-                        setValue={setEmail}
-                        type={"email"}
-                      />
-                    </div>
-                    <div className={styles.ProfileConfirm}>
-                      <LineInput
-                        title={"Confirm Email"}
-                        value={confirmEmail}
-                        setValue={setConfirmEmail}
-                        type={"email"}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.submitWrapper}>
-                    <BlobBtn
-                      onClick={() => {
-                        setIsSubmitProfile(true);
-                      }}
-                    >
-                      SUBMIT
-                    </BlobBtn>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.box}>
-                <div className={styles.title}>
-                  <h1>Change Password</h1>
-                </div>
-                <div className={styles.content}>
-                  <div>
-                    <div>
-                      <LabelMovingInput
-                        title={"Password"}
-                        value={password}
-                        setValue={setPassword}
-                        type={"password"}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div>
-                      <LabelMovingInput
-                        title={"Confirm Password"}
-                        value={confirmPassword}
-                        setValue={setConfirmPassword}
-                        type={"password"}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div>
-                      <div id={styles.passwordReq}>
-                        <h3>Password requirements</h3>
-                        <ul>
-                          <li> One special characters</li>
-                          <li> Minimum 6 characters</li>
-                        </ul>
-                      </div>
-                    </div>
-                    <div className={styles.submitWrapper}>
-                      <BlobBtn
-                        onClick={() => {
-                          setIsSubmitPw(true);
-                        }}
-                      >
-                        SUBMIT
-                      </BlobBtn>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div
+              className={styles.pImage}
+              onClick={() => {
+                inputRef.current.click();
+              }}
+            >
+              <i className={styles.uploadBtn}>
+                <FontAwesomeIcon icon={faCamera} />
+              </i>
+              <form>
+                <input
+                  className={styles.fileUpload}
+                  type="file"
+                  accept="image/*"
+                  ref={inputRef}
+                  onChange={(e) => readURL(e.target)}
+                />
+              </form>
             </div>
-            <div className={styles.boxWrapper}>
-              <div className={styles.box} id={styles.subjects}>
-                <div className={styles.title}>
-                  <h1>Manage Subjects</h1>
-                  <p>Manage your subjects for study</p>
-                  <div className={styles.content}>
-                    <SubjectsManager />
-                  </div>
-                </div>
-              </div>
+          </div>
+          {userInfo ? (
+            <div id={styles.welcome}>
+              <h2>Welcome, {userInfo.name}</h2>
             </div>
-            <div className={styles.boxWrapper}>
-              <div className={styles.box} id={styles.extension}>
-                <div className={styles.title}>
-                  <h1>Chrome Extension</h1>
-                  <p>
-                    Here you can setup and manage your chrome extension&apos;s
-                    tracking option (Default option for all websites is all
-                    enabled)
-                  </p>
-                </div>
-                <ExtensionSetting
-                  websites={websites}
-                  setWebsites={setWebsites}
+          ) : null}
+        </div>
+        <div className={styles.layer}>
+          <div
+            className={`BoxContainer ${styles.boxContainer}`}
+            id={styles.profile}
+          >
+            <div className="Box">
+              <div className="header">Profile</div>
+              <div className={styles.name}>
+                <LineInput
+                  title={"Name"}
+                  value={profile.name}
+                  setValue={(name) => {
+                    setProfile((prev) => ({ ...prev, name }));
+                  }}
+                  type={"text"}
                 />
               </div>
-            </div>
-            <div className={styles.boxWrapper}>
-              <div className={styles.box} id={styles.accounts}>
-                <div className={styles.title}>
-                  <h1>Accounts</h1>
-                  <p>Here you can setup and manage your integration settings</p>
+              <div className={styles.emails}>
+                <LineInput
+                  title={"Email"}
+                  value={profile.email}
+                  setValue={(email) => {
+                    setProfile((prev) => ({ ...prev, email }));
+                  }}
+                  type={"email"}
+                />
+                <LineInput
+                  title={"Confirm Email"}
+                  value={profile.confirmEmail}
+                  setValue={(confirmEmail) => {
+                    setProfile((prev) => ({ ...prev, confirmEmail }));
+                  }}
+                  type={"email"}
+                />
+              </div>
+              <div className={styles.buttons}>
+                <BlobBtn onClick={submitProfile}>SUBMIT</BlobBtn>
+                <div
+                  id={styles.verifyBtn}
+                  className={profile.verified ? styles.hidden : ""}
+                >
+                  <BlobBtn onClick={validateEmail}>Verify Email</BlobBtn>
                 </div>
-                <div>
-                  <div>
-                    <div className={styles.iconWrapper}>
-                      <GoogleCalendar />
-                    </div>
-                    <div className={styles.explanation}>
-                      {!googleInfo?.scopes?.some((scope) =>
-                        scope.includes("calendar")
-                      ) ? (
-                        <p>
-                          You haven&apos;t connected your Google Calendar yet or
-                          you aren&apos;t authorized. Please authorize our
-                          application to access your Google Calendar by signing
-                          in with your Google account here.
-                        </p>
-                      ) : (
-                        <p>
-                          {`You've successfully connected your Google Calendar!
-                          Our app now has access to your calendar events,
-                          allowing you to seamlessly integrate your schedule
-                          with our platform.`}
-                        </p>
-                      )}
-                    </div>
-                    <div className={styles.authBtn}>
-                      <div>
-                        <GoogleLoginBtn
-                          scope={
-                            "email profile https://www.googleapis.com/auth/calendar"
-                          }
-                          required="calendar"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className={styles.iconWrapper}>
-                      <YouTubeIcon />
-                    </div>
-                    <div className={styles.explanation}>
-                      {!googleInfo?.scopes?.some((scope) =>
-                        scope.includes("youtube")
-                      ) ? (
-                        <p>
-                          You haven&apos;t connected your YouTube Account yet or
-                          you aren&apos;t authorized. Please authorize our
-                          application to access your YouTube Playlists here.
-                        </p>
-                      ) : (
-                        <p>
-                          {`Your YouTube account is now connected! You can now access your playlists directly within our app to enhance your experience with personalized content.`}
-                        </p>
-                      )}
-                    </div>
-                    <div className={styles.authBtn}>
-                      <GoogleLoginBtn
-                        scope="https://www.googleapis.com/auth/youtube.force-ssl"
-                        required="youtube"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className={styles.iconWrapper}>
-                      <SpotifyLogo />
-                    </div>
-                    <div className={styles.explanation}>
-                      {!spotifyInfo ? (
-                        <p>
-                          You haven&apos;t connected your Spotify Account yet or
-                          you aren&apos;t authorized. Please authorize our
-                          application to access your Spotify Playlists here.
-                        </p>
-                      ) : (
-                        <p>
-                          Spotify is successfully connected! Enjoy your
-                          playlists within our app and set the perfect mood for
-                          your tasks.
-                        </p>
-                      )}
-                    </div>
-                    <div className={styles.authBtn}>
-                      <SpotifyAuthBtn />
-                    </div>
-                  </div>
+              </div>
+            </div>
+          </div>
+          <div className={`BoxContainer ${styles.boxContainer}`}>
+            <div className="Box">
+              <div className="header">Password</div>
+              <LabelMovingInput
+                title={"Password"}
+                value={password.password}
+                setValue={(password) => {
+                  setPassword((prev) => ({ ...prev, password }));
+                }}
+                type={"password"}
+              />
+              <LabelMovingInput
+                title={"Confirm Password"}
+                value={password.confirmPassword}
+                setValue={(confirmPassword) => {
+                  setPassword((prev) => ({ ...prev, confirmPassword }));
+                }}
+                type={"password"}
+              />
+              <div>
+                <h3>Password requirements</h3>
+                <ul>
+                  <li> One special characters</li>
+                  <li> Minimum 6 characters</li>
+                </ul>
+              </div>
+              <div className={styles.buttons}>
+                <BlobBtn onClick={submitPassword}>SUBMIT</BlobBtn>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles.layer}>
+          <div className={`BoxContainer ${styles.boxContainer}`}>
+            <div className="Box">
+              <div className="header">Manage Subjects</div>
+              <SubjectsManager />
+            </div>
+          </div>
+        </div>
+        <div className={styles.layer}>
+          <div className={`BoxContainer ${styles.boxContainer}`}>
+            <div className="Box">
+              <div className="header">Chrome Extension</div>
+              <p>
+                Here you can setup and manage your chrome extension&apos;s
+                tracking option (Default option for all websites is all enabled)
+              </p>
+              <ExtensionSetting websites={websites} setWebsites={setWebsites} />
+            </div>
+          </div>
+        </div>
+        <div className={styles.layer}>
+          <div className={`BoxContainer ${styles.boxContainer}`}>
+            <div className="Box">
+              <div className="header">Accounts</div>
+              <p>Here you can setup and manage your integration settings</p>
+              <div className={styles.app}>
+                <div className={styles.icon}>
+                  <GoogleCalendar />
+                </div>
+                <div className={styles.description}>
+                  {!googleInfo?.scopes?.some((scope) =>
+                    scope.includes("calendar")
+                  ) ? (
+                    <p>
+                      You haven&apos;t connected your Google Calendar yet or you
+                      aren&apos;t authorized. Please authorize our application
+                      to access your Google Calendar by signing in with your
+                      Google account here.
+                    </p>
+                  ) : (
+                    <p>
+                      {`You've successfully connected your Google Calendar! Our app now has access to your calendar events, allowing you to seamlessly integrate your schedule with our platform.`}
+                    </p>
+                  )}
+                </div>
+                <div className={styles.authBtn}>
+                  <GoogleLoginBtn
+                    scope={
+                      "email profile https://www.googleapis.com/auth/calendar"
+                    }
+                    required="calendar"
+                  />
+                </div>
+              </div>
+              <div className={styles.app}>
+                <div className={styles.icon}>
+                  <YouTubeIcon />
+                </div>
+                <div className={styles.description}>
+                  {!googleInfo?.scopes?.some((scope) =>
+                    scope.includes("youtube")
+                  ) ? (
+                    <p>
+                      You haven&apos;t connected your YouTube Account yet or you
+                      aren&apos;t authorized. Please authorize our application
+                      to access your YouTube Playlists here.
+                    </p>
+                  ) : (
+                    <p>
+                      {`Your YouTube account is now connected! You can now access your playlists directly within our app to enhance your experience with personalized content.`}
+                    </p>
+                  )}
+                </div>
+                <div className={styles.authBtn}>
+                  <GoogleLoginBtn
+                    scope="https://www.googleapis.com/auth/youtube.force-ssl"
+                    required="youtube"
+                  />
+                </div>
+              </div>
+              <div className={styles.app}>
+                <div className={styles.icon}>
+                  <SpotifyLogo />
+                </div>
+                <div className={styles.description}>
+                  {!spotifyInfo ? (
+                    <p>
+                      You haven&apos;t connected your Spotify Account yet or you
+                      aren&apos;t authorized. Please authorize our application
+                      to access your Spotify Playlists here.
+                    </p>
+                  ) : (
+                    <p>
+                      Spotify is successfully connected! Enjoy your playlists
+                      within our app and set the perfect mood for your tasks.
+                    </p>
+                  )}
+                </div>
+                <div className={styles.authBtn}>
+                  <SpotifyAuthBtn />
                 </div>
               </div>
             </div>

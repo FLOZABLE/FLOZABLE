@@ -124,8 +124,6 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
             <TagsGenerator
               tags={newGroup.tags}
               setTags={(tags) => {
-                console.log(tags, "gddd");
-
                 setNewGroup((prev) => ({ ...prev, tags }));
               }}
               maxTags={10}

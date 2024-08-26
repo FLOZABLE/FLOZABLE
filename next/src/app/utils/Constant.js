@@ -187,7 +187,7 @@ const DEFAULT_PLAN = {
 const DEFAULT_GROUP = {
   name: "",
   max_members: 10,
-  color: "#000",
+  color: "#000000",
   tags: [],
   description: "",
   visibility: 1,

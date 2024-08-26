@@ -12,4 +12,16 @@ async function getAuthLogout() {
   return data;
 }
 
-export { getAuthLogout };
+async function postAuthVerify() {
+  const response = await fetch(`${config.server}/auth/verify`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  const data = await response.json();
+  return data;
+}
+
+export { getAuthLogout, postAuthVerify };

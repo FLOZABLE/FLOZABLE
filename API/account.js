@@ -29,7 +29,7 @@ const {
   userGroupsCache,
   usersCache,
 } = require("../services/redisLoader");
-const { sendEmail } = require("../email");
+const {} = require("../email");
 const { RESPONSE_CODES, PASSWORD_LINK_EXP } = require("../Constant");
 const upload = multer();
 
@@ -39,7 +39,7 @@ Router.get("/", async (req, res) => {
       const connection = pool.promise();
       const [[[userInfo]], groups, friends, notifications] = await Promise.all([
         connection.query(
-          `SELECT user_id, name, email, timezone FROM users WHERE user_id = ?`,
+          `SELECT user_id, name, email, timezone, verified FROM users WHERE user_id = ?`,
           [userId]
         ),
         userGroupsCache(connection, userId),
@@ -115,87 +115,6 @@ Router.get("/google", async (req, res) => {
   });
 });
 
-Router.post("/password-email", async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    const isValidEmail = validateEmail(email);
-
-    if (!isValidEmail.isValid) {
-      return res.send({ success: false, reason: isValidEmail.reason });
-    }
-
-    const connection = pool.promise();
-
-    const [[user]] = await connection.query(
-      `SELECT user_id, type FROM users WHERE email = ? LIMIT 1`,
-      [email]
-    );
-
-    if (!user || user.type === -1) {
-      return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
-    }
-
-    let resetId = await redisClient.get(`resetPw:${email}`);
-
-    if (!resetId) {
-      resetId = generateRandomId(30);
-      redisClient.setex(`resetPw:${email}`, PASSWORD_LINK_EXP, resetId);
-      const params = {
-        resetURL: `${process.env.SERVER}/account/reset-password?resetId=${resetId}&email=${email}`,
-      };
-      const to = [{ email }];
-      sendEmail(to, params, 4);
-    }
-
-    res.send({ success: true, msg: "Check your email!" });
-  } catch (err) {
-    console.log(err);
-    res.send({ success: false, reason: "Error" });
-  }
-});
-
-Router.patch("/password/code", async (req, res) => {
-  try {
-    const { email, resetId, password } = req.body;
-
-    const isValidEmail = validateEmail(email);
-
-    if (!isValidEmail.isValid) {
-      return res.send({ success: false, reason: isValidEmail.reason });
-    }
-
-    const isValidPassword = validatePassword(password);
-    if (!isValidPassword.isValid) {
-      return res.send({ success: false, reason: isValidPassword.reason });
-    }
-
-    const isValidResetId = validateStrictString(resetId, "reset id", 30, 30);
-    if (!isValidResetId.isValid) {
-      return res.send({ success: false, reason: isValidResetId.reason });
-    }
-
-    const matchedResetId = await redisClient.get(`resetPw:${email}`);
-
-    if (!matchedResetId || matchedResetId !== resetId) {
-      return res.send({ success: false, reason: "Expired or Invalid URL" });
-    }
-
-    redisClient.del(`resetPw:${email}`);
-
-    const connection = pool.promise();
-
-    const [salt, hashed_password] = hashing(password);
-    const updateInfo = [{ hashed_password, salt }, email];
-    await connection.query("UPDATE users set ? WHERE email = ?", updateInfo);
-
-    res.send({ success: true, msg: "Password reset successful!" });
-  } catch (err) {
-    console.log(err);
-    res.send({ success: false, reason: "Error" });
-  }
-});
-
 Router.patch("/password", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
@@ -254,7 +173,7 @@ Router.patch("/info", async (req, res) => {
         return res.send({ success: false, reason: isValidEmail.reason });
       }
 
-      const isValidName = validateStrictString(name);
+      const isValidName = validateStrictString(name, "Name", 25, 1);
       if (!isValidName.isValid) {
         return res.send({ success: false, reason: isValidName.reason });
       }
@@ -268,26 +187,26 @@ Router.patch("/info", async (req, res) => {
 
       const connection = pool.promise();
 
-      const [[checkEmail]] = await connection.query(
-        "SELECT email, user_id FROM users WHERE email = ?",
-        email
+      const [[userInfo]] = await connection.query(
+        "SELECT email, verified FROM users WHERE user_id = ?",
+        [userId]
       );
 
-      if (checkEmail && checkEmail.user_id !== userId) {
-        return res.send({ success: false, reason: "EMAIL ALREADY IN USE" });
+      if (!userInfo) {
+        return res.send(RESPONSE_CODES["no-user"]);
       }
 
       /* else if (!supportedLanguages.includes(language)) {
         return res.send({ success: false, reason: 'Not Supported Language' });
       } */
-      const updateInfo = [{ name: name, email: email }, userId];
-      redisClient.hset(`user:${userId}`, "name", name);
-      redisClient.hset(`user:${userId}`, "email", email);
-      await connection.query(
-        "UPDATE users set ? WHERE user_id = ?",
-        updateInfo
-      );
-      res.send({ success: true, msg: "Updated Your Information!" });
+      const verified = userInfo.email === email ? userInfo.verified : 0;
+      const newUserInfo = { name, email, verified };
+      redisClient.del(`user:${userId}`);
+      await connection.query("UPDATE users set ? WHERE user_id = ?", [
+        newUserInfo,
+        userId,
+      ]);
+      res.send({ success: true, msg: "Updated Your Information!", verified });
     } catch (error) {
       res.send({ success: false, reason: "Unsupported File Type" });
     }

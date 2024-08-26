@@ -22,15 +22,16 @@ const {
   validateLength,
 } = require("../Utils/validate");
 const {
-  userCache,
   cacheUserInfo,
   setGoogleAccessToken,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
-const { USER_ID_COOKIE_OPTIONS, RESPONSE_CODES } = require("../Constant");
+const {
+  USER_ID_COOKIE_OPTIONS,
+  RESPONSE_CODES,
+  REDIS_EXP,
+} = require("../Constant");
 const fetch = require("node-fetch");
-const { request } = require("request");
-const { userInfo } = require("os");
 
 async function createAccount(name, email, timezone, userInfo) {
   try {
@@ -48,7 +49,7 @@ async function createAccount(name, email, timezone, userInfo) {
     if (!isValidEmail.isValid) {
       return { success: false, reason: isValidEmail.reason };
     }
-    const isValidName = validateStrictString(name, "Name");
+    const isValidName = validateStrictString(name, "Name", 25, 1);
     if (!isValidName.isValid) {
       return { success: false, reason: isValidName.reason };
     }
@@ -380,62 +381,6 @@ Router.get("/signin/spotify/callback", async (req, res) => {
   }
 });
 
-Router.post("/link", async (req, res) => {
-  const { verifyId } = req.body;
-  autoSignin(req, res, async (userId) => {
-    try {
-      const connection = pool.promise();
-      const [[userInfo]] = await connection.query(
-        `SELECT email FROM users WHERE user_id = ?`,
-        [userId]
-      );
-
-      if (!userInfo) {
-        return res.send(RESPONSE_CODES["no-user"]);
-      }
-
-      const verifyInfo = await redisClient.get(`verify:${userInfo.email}`);
-      if (!verifyInfo) {
-        return res.send({ success: false, reason: "Link expired" });
-      }
-      if (verifyId === verifyInfo) {
-        const connection = pool.promise();
-        await connection.query(
-          "UPDATE users SET verified = true WHERE user_id = ?",
-          [userId]
-        );
-        await redisClient.del(`verify:${userInfo.email}`);
-        res.send({ success: true, msg: "Verification Success!" });
-      } else {
-        res.send({ success: false, reason: "Incorrect Data" });
-      }
-    } catch (err) {
-      console.log(err);
-      RESPONSE_CODES["error"];
-    }
-  });
-});
-
-Router.post("/link/send", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const userInfo = await userCache(connection, userId);
-      const randomId = generateRandomId(10);
-      await redisClient.setex(`verify:${userInfo.email}`, 3600, randomId);
-      const params = {
-        resetURL: `${process.env.EMAIL_SERVER}/account/verify-by-link?verifyId=${randomId}`,
-      };
-      const to = [{ email: userInfo.email }];
-      sendEmail(to, params, 4);
-
-      res.send({ success: true, msg: "Link Sent To Email!" });
-    } catch (err) {
-      console.log(err);
-      res.send({ success: false, reason: "Error" });
-    }
-  });
-});
-
 Router.post("/app", async (req, res) => {
   try {
     const { email, password, deviceInfo } = req.body;
@@ -560,6 +505,101 @@ Router.post("/app/validate-tokens", async (req, res) => {
     return res.send({ success: true });
   } catch (err) {
     console.log(err);
+  }
+});
+
+Router.post("/verify", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const connection = pool.promise();
+
+      const [[userInfo]] = await connection.query(
+        `SELECT email FROM users WHERE user_id = ?`,
+        [userId]
+      );
+
+      if (!userInfo) {
+        return res.send(RESPONSE_CODES["no-user"]);
+      }
+
+      const { email } = userInfo;
+
+      const verifyId = generateRandomId(10);
+      redisClient.setex(
+        `verify:${userId}`,
+        REDIS_EXP.VERIFY_EMAIL,
+        `${verifyId}:${email}:`
+      );
+      const params = {
+        verifyURL: `${process.env.SERVER}/auth/verify?user_id=${userId}&verify_id=${verifyId}`,
+      };
+      const to = [{ email }];
+      sendEmail(to, params, 5);
+      res.send({ success: true, msg: "Check your email!" });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES["error"]);
+    }
+  });
+});
+
+Router.get("/verify", async (req, res) => {
+  try {
+    const { user_id, verify_id } = req.query;
+
+    if (!user_id || !verify_id) {
+      return res.redirect(
+        process.env.NEXT_SERVER +
+          "/dashboard?" +
+          querystring.stringify(RESPONSE_CODES["expired-request"])
+      );
+    }
+
+    const verifyInfo = await redisClient.get(`verify:${user_id}`);
+
+    if (!verifyInfo) {
+      return res.redirect(
+        process.env.NEXT_SERVER +
+          "/dashboard?" +
+          querystring.stringify(RESPONSE_CODES["expired-request"])
+      );
+    }
+    const [storedVerifyId, email] = verifyInfo.split(":");
+
+    if (storedVerifyId !== verify_id) {
+      return res.redirect(
+        process.env.NEXT_SERVER +
+          "/dashboard?" +
+          querystring.stringify(RESPONSE_CODES["expired-request"])
+      );
+    }
+
+    const connection = pool.promise();
+
+    const newUserInfo = {
+      email,
+      verified: 1,
+    };
+
+    await connection.query(`UPDATE users SET ? WHERE user_id = ?`, [
+      newUserInfo,
+      user_id,
+    ]);
+
+    redisClient.del(`verify:${user_id}`);
+
+    return res.redirect(
+      process.env.NEXT_SERVER +
+        "/dashboard?" +
+        querystring.stringify({success: true, msg: "Email Verified"})
+    );
+  } catch (err) {
+    console.log(err);
+    return res.redirect(
+      process.env.NEXT_SERVER +
+        "/dashboard?" +
+        querystring.stringify(RESPONSE_CODES["expired-request"])
+    );
   }
 });
 
