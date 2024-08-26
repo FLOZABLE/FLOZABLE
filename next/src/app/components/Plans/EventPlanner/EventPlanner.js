@@ -8,10 +8,15 @@ import interactionPlugin from "@fullcalendar/interaction";
 import styles from "./EventPlanner.module.css";
 import styled from "@emotion/styled";
 import { DateTime } from "luxon";
-import { PlansContext, ResponseContext } from "@/app/utils/Contexts";
+import {
+  PlansContext,
+  ResponseContext,
+  SubjectsContext,
+} from "@/app/utils/Contexts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { patchPlan } from "@/Api/plansApi";
+import { DEFAULT_PLAN } from "@/app/utils/Constant";
 
 const StyleWrapper = styled.div`
   .fc-view-harness.fc-view-harness-active {
@@ -34,6 +39,7 @@ function EventPlanner({ viewMode, viewDate, setViewDate, controller }) {
   const [PlannerApi, setPlannerApi] = useState(null);
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
   const { setResponse } = useContext(ResponseContext);
+  const { subjects } = useContext(SubjectsContext);
 
   const [dateText, setDateText] = useState(null);
   const [viewText, setViewText] = useState({
@@ -94,9 +100,20 @@ function EventPlanner({ viewMode, viewDate, setViewDate, controller }) {
     if (!start || !end) return;
 
     if (!planModal.plan_id) {
-      const planInfo = { ...planModal, start, end };
+      const subject_id = subjects?.[0].subject_id;
 
-      setPlanModal((prev) => ({ ...prev, ...planInfo, opened: true }));
+      const newPlan = {
+        ...DEFAULT_PLAN,
+        plan_id: "0000000000",
+        opened: true,
+        start,
+        end,
+        subject_id,
+      };
+      setPlanModal(newPlan);
+      setTimeout(() => {
+        setPlans((prev) => [...prev, newPlan]);
+      }, 50);
     } else {
       setPlans((prev) => {
         const foundIndex = prev.findIndex(
@@ -160,48 +177,6 @@ function EventPlanner({ viewMode, viewDate, setViewDate, controller }) {
         setPlanModal((prev) => ({ ...prev, start, end, opened: true }));
       }
     }
-  }
-
-  async function updateServer(event) {
-    const { start, end, completed, editable } = event;
-    if (!editable) {
-      setResponse({ success: false, reason: "This event is view only" });
-      return;
-    }
-    /* const startSec = Math.floor(start.getTime() / (1000 * 60));
-    const endSec = Math.floor(end.getTime() / (1000 * 60));
-    const notification = parseInt(planModal.notification);
-    const repeat = parseInt(planModal.repeat);
-    const share = event.share.map((userInfo) => userInfo.user_id);
-
-    const updateInfo = {
-      ...event,
-      start: startSec,
-      end: endSec,
-      completed: completed ? 1 : 0,
-      notification,
-      repeat,
-      share,
-    };
-    delete updateInfo.saved;
-    fetch(`${config.server}/plans/update`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updateInfo),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-        if (data.success) {
-          //setPlanModal(false);
-        }
-      })
-      .catch((error) => console.error(error)); */
-
-    const data = await patchPlan({ ...planModal });
   }
 
   function handleEventClick(data) {
