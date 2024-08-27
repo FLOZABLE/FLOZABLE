@@ -10,6 +10,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import SubjectsModal from "./components/Modals/SubjectsModal/SubjectsModal";
 import SearchUsersModal from "./components/Modals/SearchUsersModal/SearchUsersModal";
 import PlanModal from "./components/Modals/PlanModal/PlanModal";
+import { Suspense } from "react";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
 
@@ -72,19 +73,21 @@ export default function RootLayout({ children }) {
         ></link>
       </head>
       <body>
-        <AppProvider>
-          {/* <EventModal /> */}
-          <PlanModal />
-          <ChatModal />
-          <AccountModal />
-          <TopNotification />
-          <JoinGroupModal />
-          <AddSubjectModal />
-          <SubjectsModal />
-          <SearchUsersModal />
-          <Tutorial />
-          {children}
-        </AppProvider>
+        <Suspense>
+          <AppProvider>
+            {/* <EventModal /> */}
+            <PlanModal />
+            <ChatModal />
+            <AccountModal />
+            <TopNotification />
+            <JoinGroupModal />
+            <AddSubjectModal />
+            <SubjectsModal />
+            <SearchUsersModal />
+            <Tutorial />
+            {children}
+          </AppProvider>
+        </Suspense>
       </body>
       {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
     </html>

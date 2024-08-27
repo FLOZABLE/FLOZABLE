@@ -65,7 +65,7 @@ function AccountProvider({ children }) {
 
   const queryResult = useAccount();
 
-  const { useAccountData } = queryResult;
+  const { useAccountData, accountRefetch } = queryResult;
 
   useEffect(() => {
     if (useAccountData?.code === 401) {
@@ -97,7 +97,7 @@ function AccountProvider({ children }) {
 
   return (
     <UserInfoContext.Provider
-      value={{ ...useAccountData, userInfo, setUserInfo }}
+      value={{ ...useAccountData, accountRefetch, userInfo, setUserInfo }}
     >
       <NotificationsContext.Provider
         value={{ notifications, setNotifications }}

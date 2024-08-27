@@ -15,13 +15,13 @@ function useSubjects() {
 
   const {
     data: useSubjectsData,
-    refetch: useSubjectsRefetch,
+    refetch: subjectsRefetch,
     isLoading: useSubjectsIsLoading,
   } = queryResult;
 
   return {
     useSubjectsData,
-    useSubjectsRefetch,
+    subjectsRefetch,
     useSubjectsIsLoading,
     ...queryResult,
   };

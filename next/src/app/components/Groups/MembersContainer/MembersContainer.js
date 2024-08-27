@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import styles from "./MembersContainer.module.css";
 import MyEl from "../MyEl/MyEl";
 import MemberEl from "../MemberEl/MemberEl";
-import { useContextMenu } from "react-contexify";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { UserInfoContext } from "@/app/utils/Contexts";
 
@@ -21,18 +20,6 @@ function MembersContainer({
 
   if (!userInfo) return <CircularLoading />;
 
-  const { show } = useContextMenu({
-    id: "ffffff",
-  });
-
-  function handleContextMenu(event, memberInfo) {
-    if (group.leader !== userInfo.user_id) return;
-    setRightClickedMember({ ...memberInfo, groupId: group.group_id });
-    show({
-      event,
-    });
-  }
-
   return (
     <div className={styles.MembersContainer}>
       {members.map((member, i) => {
@@ -49,7 +36,6 @@ function MembersContainer({
           return (
             <div
               onContextMenu={(event) => {
-                handleContextMenu(event, member);
               }}
               key={i}
             >

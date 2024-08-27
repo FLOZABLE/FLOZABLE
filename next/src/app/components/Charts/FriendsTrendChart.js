@@ -2,7 +2,7 @@
 
 import { coldColorsList } from "@/app/utils/Constant";
 import { secondConverter } from "@/app/utils/Tool";
-import { useGetFriendsTrends } from "@/Hooks/friendsHooks";
+import { useFriendsTrends } from "@/Hooks/friendsHooks";
 import {
   Bar,
   BarChart,
@@ -18,7 +18,7 @@ import { DateTime } from "luxon";
 
 function FriendsTrendChart() {
   const { data: getFriendsTrendsData, isLoading: getFriendsTrendsIsLoading } =
-    useGetFriendsTrends();
+    useFriendsTrends();
 
   if (getFriendsTrendsIsLoading || !getFriendsTrendsData?.success) {
     return <CircularLoading />;

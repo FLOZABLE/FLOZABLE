@@ -17,15 +17,19 @@ function useGetFriendsSearch(searchQuery) {
   });
 }
 
-function useGetFriendsTrends() {
+function useFriendsTrends() {
   const { userInfo } = useContext(UserInfoContext);
 
-  return useQuery({
+  const queryResult = useQuery({
     queryKey: [`getFriendsTrends`],
     queryFn: () => getFriendsTrends(),
-    staleTime: 1000 * 1,
+    staleTime: 1000 * 60 ,
     enabled: !!userInfo,
   });
+
+  const { refetch: friendsTrendRefetch } = queryResult;
+
+  return { ...queryResult, friendsTrendRefetch };
 }
 
 function useFriendsRecommended(refresh) {
@@ -55,7 +59,7 @@ function useFriendsStatus() {
 
 export {
   useGetFriendsSearch,
-  useGetFriendsTrends,
+  useFriendsTrends,
   useFriendsRecommended,
   useFriendsStatus,
 };
