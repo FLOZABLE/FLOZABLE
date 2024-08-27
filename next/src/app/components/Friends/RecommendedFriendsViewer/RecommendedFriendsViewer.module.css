@@ -2,6 +2,15 @@
   position: relative;
 }
 
+.RecommendedFriendsViewer .header {
+  display: flex;
+  font-size: 1.6rem;
+}
+
+.RecommendedFriendsViewer .header i {
+  margin-left: 0.3rem;
+}
+
 .RecommendedFriendsViewer .user {
   align-items: center;
   border-bottom: 0.1rem solid var(--gray3);
