@@ -19,7 +19,7 @@ function useAccount() {
 
   const {
     data: useAccountData,
-    refetch: useAccountRefetch,
+    refetch: accountRefetch,
     isLoading: useAccountIsLoading,
   } = queryResult;
 
@@ -29,7 +29,7 @@ function useAccount() {
 
   return {
     useAccountData,
-    useAccountRefetch,
+    accountRefetch,
     useAccountIsLoading,
     clearAccountData,
     ...queryResult,

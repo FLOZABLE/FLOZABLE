@@ -22,7 +22,7 @@ import GoogleLoginBtn from "../../Buttons/GoogleLoginBtn/GoogleLoginBtn";
 
 function AccountModal({}) {
   const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
-  const { useAccountRefetch } = useContext(UserInfoContext);
+  const { accountRefetch } = useContext(UserInfoContext);
   const { setResponse } = useContext(ResponseContext);
 
   const router = useRouter();
@@ -109,7 +109,7 @@ function AccountModal({}) {
                     setResponse(data);
                     if (data.success) {
                       setIsAccountModal(false);
-                      useAccountRefetch();
+                      accountRefetch();
                       if (isNew) {
                         router.push("/dashboard?welcome=true");
                       }

@@ -49,7 +49,7 @@ function StudySidebar({
 }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
-  const { useSubjectsRefetch } = useContext(SubjectsContext);
+  const { subjectsRefetch } = useContext(SubjectsContext);
   const { isMic, setIsMic, isCam, setIsCam, isHeadphone, setIsHeadphone } =
     useContext(CallOptionsContext);
 
@@ -84,7 +84,7 @@ function StudySidebar({
             setTutorial(11);
           }
           setTimeout(() => {
-            useSubjectsRefetch();
+            subjectsRefetch();
           }, 100);
         }}
         ref={toHomeBtnRef}
