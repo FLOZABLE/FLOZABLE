@@ -194,11 +194,10 @@ function GroupsProvider({ children }) {
   useEffect(() => {
     if (!groups.length) return;
 
-    if (userInfo === false) {
+    if (!userInfo) {
       return setOtherGroups(groups);
     }
 
-    if (!userInfo) return;
     const { userGroups, otherGroups } = filterGroups(userInfo, groups);
     setMyGroups(userGroups);
     setOtherGroups(otherGroups);
