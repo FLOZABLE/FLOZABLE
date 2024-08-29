@@ -82,9 +82,14 @@ Router.put("/subject", async (req, res) => {
         );
       } catch (err) {
         console.log(err);
+        if (err.errno === 1062) {
+          return res.send({ success: false, reason: "Name already in use" });
+        }
+        return res.send(RESPONSE_CODES["error"]);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES["error"]);
     }
   });
 });

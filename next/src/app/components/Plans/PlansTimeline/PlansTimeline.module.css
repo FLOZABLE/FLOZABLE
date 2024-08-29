@@ -45,22 +45,7 @@
   color: #bebebe;   
 }
 
-.PlansTimeline .subjects {
-  display: flex;
-  margin-top: 1rem;
-  color:#575767 ;
-  padding-bottom: 1rem;
-  border-bottom: 0.1rem solid var(--gray0);
-}
 
-.PlansTimeline .subjects .subject:first-child {
-  padding-right: 1rem;
-}
-
-.PlansTimeline .subjects .subject:not(:first-child) {
-  border-left: 0.1rem solid var(--gray0);
-  padding: 0rem 1rem;
-}
 
 .PlansTimeline .subjectEl {
   padding: 0rem 0.5rem;

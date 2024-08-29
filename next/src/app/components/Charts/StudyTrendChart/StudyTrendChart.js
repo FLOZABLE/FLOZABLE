@@ -48,7 +48,7 @@ function StudyTrendChart({
           </div>
         ) : null}
       </div>
-      <div className={`customScroll ${styles.subjectsLabels}`}>
+      <div className={styles.SubjectsLabels}>
         <SubjectsLabels
           subjects={subjects}
           filteredSubjects={filteredSubjects}
