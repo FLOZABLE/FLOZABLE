@@ -1,8 +1,12 @@
 .SubjectsLabels {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   color: var(--gray2);
   font-weight: 900;
+  height: 2.2rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 1rem;
 }
 
 .SubjectsLabels .label {
