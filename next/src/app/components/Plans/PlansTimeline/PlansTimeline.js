@@ -13,6 +13,7 @@ import { DEFAULT_PLAN, subjectIcons } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import SubjectsLabels from "../../Charts/SubjectsLabels/SubjectsLabels";
 
 export default function PlansTimeline({
   viewMode,
@@ -25,7 +26,7 @@ export default function PlansTimeline({
   const { subjects } = useContext(SubjectsContext);
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
 
-  const [removedSubjects, setRemovedSubjects] = useState([]);
+  const [filteredSubjects, setFilteredSubjects] = useState([]);
   const [donePlans, setDonePlans] = useState([]);
   const [todoPlans, setTodoPlans] = useState([]);
 
@@ -155,27 +156,11 @@ export default function PlansTimeline({
         </div>
       </div>
       <div className={styles.subjects}>
-        {subjects.map((subject, i) => {
-          return (
-            <div
-              className={styles.subject}
-              key={i}
-              onClick={() => {
-                if (removedSubjects.includes(subject.subject_id)) {
-                  setRemovedSubjects(
-                    removedSubjects.filter(
-                      (rSubject) => rSubject !== subject.subject_id
-                    )
-                  );
-                } else {
-                  setRemovedSubjects([...removedSubjects, subject.subject_id]);
-                }
-              }}
-            >
-              <div className={styles.subjectEl}>{subject.name}</div>
-            </div>
-          );
-        })}
+        <SubjectsLabels
+          subjects={subjects}
+          filteredSubjects={filteredSubjects}
+          setFilteredSubjects={setFilteredSubjects}
+        />
       </div>
       <div className={styles.plansContainer} id={styles.donePlans}>
         <p className={styles.type}>Done</p>
@@ -194,7 +179,7 @@ export default function PlansTimeline({
               icon = <Alert />;
             }
 
-            if (removedSubjects.includes(plan.subject_id)) {
+            if (filteredSubjects.includes(plan.subject_id)) {
               return null;
             }
 
@@ -223,7 +208,7 @@ export default function PlansTimeline({
               icon = <Alert />;
             }
 
-            if (removedSubjects.includes(plan.subject_id)) {
+            if (filteredSubjects.includes(plan.subject_id)) {
               return null;
             }
 

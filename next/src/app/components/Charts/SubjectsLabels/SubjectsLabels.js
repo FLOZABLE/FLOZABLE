@@ -6,7 +6,7 @@ export default function SubjectsLabels({
   setFilteredSubjects,
 }) {
   return (
-    <div className={styles.SubjectsLabels}>
+    <div className={`customScroll ${styles.SubjectsLabels}`}>
       {subjects?.map((subject, i) => {
         const { subject_id } = subject;
         return (
