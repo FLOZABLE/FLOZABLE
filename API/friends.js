@@ -13,6 +13,7 @@ const {
   usersCache,
   activeGroupCache,
   userFriendsCache,
+  cacheUserFriends,
 } = require("../services/redisLoader");
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
@@ -209,6 +210,12 @@ async function replyFriendRequest(
       JSON.stringify(notification)
     );
 
+    userFriends.push(targetId);
+    targetUserFriends.push(userId);
+
+    cacheUserFriends(userId, userFriends);
+    cacheUserFriends(targetId, targetUserFriends);
+
     //update cached value of user
     /* userInfo.friends.push(targetId);
     redisClient.hset(`user:${userId}`, "friends", userInfo.friends.join(","));
@@ -261,12 +268,12 @@ async function replyFriendRequest(
 
       mainIo.to(userId).emit("joinChatRoom", roomInfo.id, true);
       mainIo.to(targetId).emit("joinChatRoom", roomInfo.id, true);
-
-      return {
-        success: true,
-        msg: `You and ${targetInfo.name} are now friends!`,
-      };
     }
+
+    return {
+      success: true,
+      msg: `You and ${targetInfo.name} are now friends!`,
+    };
   } catch (error) {
     console.log(error);
     return { success: false, reason: "Error" };
@@ -451,7 +458,6 @@ Router.get("/status", async (req, res) => {
           }
         });
       }
-      console.log(friends, userId);
       return res.send({ success: true, friends });
     } catch (error) {
       console.log(error);

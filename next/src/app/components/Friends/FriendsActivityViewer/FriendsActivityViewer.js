@@ -17,10 +17,10 @@ function FriendsActivityViewer() {
 
   const router = useRouter();
 
-  const { useFriendsStatusData, useFriendsStatusIsLoading } =
+  const { useFriendsStatusData, friendsStatusIsLoading } =
     useFriendsStatus();
 
-  if (!useFriendsStatusIsLoading && !useFriendsStatusData?.success) {
+  if (!friendsStatusIsLoading && !useFriendsStatusData?.success) {
     return <RecommendedFriendsViewer />;
   }
 
@@ -43,7 +43,7 @@ function FriendsActivityViewer() {
         </div>
       </div>
       <div className={`${styles.friends} contents customScroll`}>
-        {useFriendsStatusIsLoading ? (
+        {friendsStatusIsLoading ? (
           <CircularLoading />
         ) : (
           useFriendsStatusData?.friends?.map((friend, i) => {
