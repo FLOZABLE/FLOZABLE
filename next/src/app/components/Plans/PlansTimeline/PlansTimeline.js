@@ -38,14 +38,14 @@ export default function PlansTimeline({
     const viewDateTime = DateTime.fromJSDate(viewDate);
     let isInRange = false;
 
-    if (viewMode === "timeGridDay") {
+    if (viewMode === "day") {
       if (
         viewDateTime.startOf("day").toMillis() <= plan.start.getTime() &&
         plan.start.getTime() <= viewDateTime.endOf("day").toMillis()
       ) {
         isInRange = true;
       }
-    } else if (viewMode === "timeGridWeek") {
+    } else if (viewMode === "week") {
       if (
         viewDateTime
           .plus({ days: 1 })
