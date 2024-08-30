@@ -68,7 +68,7 @@ function AccountProvider({ children }) {
   const { useAccountData, accountRefetch } = queryResult;
 
   useEffect(() => {
-    if (useAccountData?.code === 401) {
+    if (!useAccountData?.success) {
       setUserInfo(false);
       return;
     }
@@ -109,15 +109,13 @@ function AccountProvider({ children }) {
 }
 
 function SubjectsProvider({ children }) {
-  const { userInfo } = useContext(UserInfoContext);
-
   const [subjects, setSubjects] = useState([]);
   const [groupedSubjects, setGroupedSubjects] = useState({});
   const [plans, setPlans] = useState([]);
   const [planModal, setPlanModal] = useState(DEFAULT_PLAN);
 
   const queryResult = useSubjects();
-  const { data: planData, refetch: refetchPlan } = usePlans(userInfo);
+  const { data: planData, refetch: refetchPlan } = usePlans();
 
   const { useSubjectsData } = queryResult;
 
@@ -133,7 +131,9 @@ function SubjectsProvider({ children }) {
   }, [useSubjectsData]);
 
   useEffect(() => {
-    if (!planData?.success) return;
+    if (!planData?.success || !useSubjectsData?.success) return;
+
+    const subjects = useSubjectsData.subjects;
 
     setPlans(
       JSON.parse(JSON.stringify(planData.plans)).map((plan) => {
@@ -161,7 +161,7 @@ function SubjectsProvider({ children }) {
         return plan;
       })
     );
-  }, [subjects, planData]);
+  }, [useSubjectsData, planData]);
 
   return (
     <SubjectsContext.Provider

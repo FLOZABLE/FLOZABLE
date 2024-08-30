@@ -1,4 +1,3 @@
-import Link from "next/link";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import styles from "./UserContainer.module.css";
 import CountryViewer from "../../Others/CountryViewer/CountryViewer";

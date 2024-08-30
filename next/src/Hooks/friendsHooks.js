@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { UserInfoContext } from "@/app/utils/Contexts";
 import { useContext } from "react";
 
-function useGetFriendsSearch(searchQuery) {
+function useFriendsSearch(searchQuery) {
   return useQuery({
     queryKey: [`getFriendsSearch`, searchQuery],
     queryFn: () => getFriendsSearch(searchQuery),
@@ -23,7 +23,7 @@ function useFriendsTrends() {
   const queryResult = useQuery({
     queryKey: [`getFriendsTrends`],
     queryFn: () => getFriendsTrends(),
-    staleTime: 1000 * 60 ,
+    staleTime: 1000 * 60,
     enabled: !!userInfo,
   });
 
@@ -51,14 +51,22 @@ function useFriendsStatus() {
     enabled: !!userInfo,
   });
 
-  const { data: useFriendsStatusData, isLoading: useFriendsStatusIsLoading } =
-    queryResult;
+  const {
+    data: useFriendsStatusData,
+    isLoading: friendsStatusIsLoading,
+    refetch: friendsStatusRefetch,
+  } = queryResult;
 
-  return { useFriendsStatusData, useFriendsStatusIsLoading, ...queryResult };
+  return {
+    ...queryResult,
+    useFriendsStatusData,
+    friendsStatusIsLoading,
+    friendsStatusRefetch,
+  };
 }
 
 export {
-  useGetFriendsSearch,
+  useFriendsSearch,
   useFriendsTrends,
   useFriendsRecommended,
   useFriendsStatus,

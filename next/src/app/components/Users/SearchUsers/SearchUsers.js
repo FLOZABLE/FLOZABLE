@@ -5,12 +5,12 @@ import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRe
 import UserContainer from "../UserContainer/UserContainer";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { useDebounce } from "use-debounce";
-import { useGetFriendsSearch } from "@/Hooks/friendsHooks";
+import { useFriendsSearch } from "@/Hooks/friendsHooks";
 
 function SearchUsers({ searchQuery, onClick }) {
   const [debouncedQuery] = useDebounce(searchQuery, 500);
 
-  const { data, isLoading } = useGetFriendsSearch(debouncedQuery);
+  const { data, isLoading } = useFriendsSearch(debouncedQuery);
 
   return (
     <div className={`customScroll ${styles.SearchUsers}`}>

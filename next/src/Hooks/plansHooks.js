@@ -1,7 +1,11 @@
 import { getPlans, getPlansPlanUsers } from "@/Api/plansApi";
+import { UserInfoContext } from "@/app/utils/Contexts";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useContext } from "react";
 
-function usePlans(userInfo) {
+function usePlans() {
+  const { userInfo } = useContext(UserInfoContext);
+
   const queryResult = useQuery({
     queryKey: [`usePlans`],
     queryFn: getPlans,

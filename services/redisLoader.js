@@ -423,14 +423,22 @@ async function userFriendsCache(connection, userId) {
     const friends = friendsData.map((friend) => {
       return friend.friend_id !== userId ? friend.friend_id : friend.user_id;
     });
-    if (friends.length) {
-      redisClient.sadd(`user:${userId}:friends`, friends);
-      redisClient.expire(`user:${userId}:friends`, REDIS_EXP.USER_FRIENDS);
-    }
+    cacheUserFriends(userId, friends);
     return friends;
   } catch (err) {
     console.log(err);
     return [];
+  }
+}
+
+async function cacheUserFriends(userId, friends) {
+  try {
+    if (!friends.length) return;
+
+    redisClient.sadd(`user:${userId}:friends`, friends);
+    redisClient.expire(`user:${userId}:friends`, REDIS_EXP.USER_FRIENDS);
+  } catch (err) {
+    console.log(err);
   }
 }
 
@@ -463,7 +471,7 @@ async function cacheUserGroups(userId, groups) {
     if (!groups.length) return;
 
     redisClient.sadd(`user:${userId}:groups`, groups);
-    redisClient.expire(`user:${userId}:groups`, REDIS_EXP.USER_FRIENDS);
+    redisClient.expire(`user:${userId}:groups`, REDIS_EXP.USER_GROUPS);
   } catch (err) {
     console.log(err);
   }
@@ -733,6 +741,7 @@ module.exports = {
   usersCache,
   userCache,
   userFriendsCache,
+  cacheUserFriends,
   userGroupsCache,
   cacheUserGroups,
   clearUserCache,
