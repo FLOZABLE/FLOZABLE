@@ -25,7 +25,7 @@ const StyleWrapper = styled.div`
   }
 
   .fc.fc-media-screen.fc-direction-ltr.fc-theme-standard {
-    height: 100%;
+    flex: 1;
   }
 
   .fc-daygrid-day-top {
