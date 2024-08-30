@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import styles from "./FriendRequestsViewer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -7,6 +7,8 @@ import config from "@/app/utils/config";
 import SlidingOptBtn from "@/app/components/Buttons/SlidingOptBtn/SlidingOptBtn";
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
+import { postFriendsRequestReply } from "@/Api/friendsApi";
+import { useFriendsStatus, useFriendsTrends } from "@/Hooks/friendsHooks";
 
 function FriendRequestContainer({ friendRequest, children, style }) {
   const router = useRouter();
@@ -27,6 +29,8 @@ function FriendRequestContainer({ friendRequest, children, style }) {
 function FriendRequestsViewer() {
   const { notifications, setNotifications } = useContext(NotificationsContext);
   const { setResponse } = useContext(ResponseContext);
+  const { friendsStatusRefetch } = useFriendsStatus();
+  const { friendsTrendRefetch } = useFriendsTrends();
 
   const [viewer, setViewer] = useState(0);
   const [friendRequests, setFriendRequests] = useState([]);
@@ -53,25 +57,28 @@ function FriendRequestsViewer() {
     setSentRequests(sentRequests);
   }, [notifications]);
 
-  const friendRequestReply = (targetId, accepted, notificationId) => {
-    fetch(`${config.server}/friends/request/reply`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ targetId, accepted, notificationId }),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-      })
-      .catch((error) => console.error(error));
+  const friendRequestReply = useCallback(
+    (targetId, accepted, notificationId) => {
+      (async () => {
+        const data = await postFriendsRequestReply({
+          targetId,
+          accepted,
+          notificationId,
+        });
 
-    setNotifications(
-      notifications.filter((notif) => notif.i !== notificationId)
-    );
-  };
+        setResponse(data);
+        if (data.success) {
+          friendsStatusRefetch();
+          friendsTrendRefetch();
+        }
+      })();
+
+      setNotifications(
+        notifications.filter((notif) => notif.i !== notificationId)
+      );
+    },
+    [notifications]
+  );
 
   const sentRequestClear = (targetId, notificationId) => {
     fetch(`${config.server}/friends/request`, {

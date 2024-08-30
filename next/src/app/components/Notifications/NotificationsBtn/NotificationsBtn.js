@@ -9,6 +9,7 @@ import { postFriendsRequestReply } from "@/Api/friendsApi";
 import { postNotificationsRead } from "@/Api/notificationsApi";
 import { postChatRequestReply } from "@/Api/chatApi";
 import { postPlanShareRespond } from "@/Api/plansApi";
+import { useFriendsStatus, useFriendsTrends } from "@/Hooks/friendsHooks";
 
 function NotificationContainer({ children, userInfo, title }) {
   const router = useRouter();
@@ -47,6 +48,9 @@ export default function NotificationsBtn() {
   const { notifications, setNotifications } = useContext(NotificationsContext);
   const { setResponse } = useContext(ResponseContext);
 
+  const { friendsStatusRefetch } = useFriendsStatus();
+  const { friendsTrendRefetch } = useFriendsTrends();
+
   const [filteredNotifications, setFilteredNotifications] = useState([]);
 
   useEffect(() => {
@@ -68,6 +72,11 @@ export default function NotificationsBtn() {
           accepted,
           notificationId,
         });
+
+        if (data.success) {
+          friendsStatusRefetch();
+          friendsTrendRefetch();
+        }
 
         setResponse(data);
       })();

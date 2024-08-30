@@ -30,7 +30,7 @@ const {
   usersCache,
 } = require("../services/redisLoader");
 const {} = require("../email");
-const { RESPONSE_CODES, PASSWORD_LINK_EXP } = require("../Constant");
+const { RESPONSE_CODES } = require("../Constant");
 const upload = multer();
 
 Router.get("/", async (req, res) => {

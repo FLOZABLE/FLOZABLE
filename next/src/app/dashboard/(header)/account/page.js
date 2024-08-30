@@ -24,6 +24,7 @@ import SubjectsManager from "@/app/components/Subjects/SubjectsManager/SubjectsM
 import { useSpotifyInfo } from "@/Hooks/playlistHook";
 import { patchAccountInfo, patchAccountPassword } from "@/Api/accountApi";
 import { postAuthVerify } from "@/Api/authApi";
+import Image from "next/image";
 
 function Account() {
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
@@ -125,15 +126,23 @@ function Account() {
     })();
   }, []);
 
-  console.log(profile);
-
   return (
     <div className={`Main`}>
       <div className={styles.Account}>
         <div className={styles.layer}>
           <div className={styles.imgSelector}>
             <div className={styles.circle}>
-              <img className={styles.profilePic} src={imageSrc} alt="" />
+              {imageSrc ? (
+                <Image
+                  sizes="100vw"
+                  style={{ width: "100%", height: "auto" }}
+                  className={styles.profilePic}
+                  src={imageSrc}
+                  alt=""
+                  width={0}
+                  height={0}
+                />
+              ) : null}
             </div>
             <div
               className={styles.pImage}
