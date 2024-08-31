@@ -153,7 +153,7 @@ function Study() {
         element={
           <PlanTimeline
             viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
-            viewMode={"timeGridDay"}
+            viewer={"timeGridDay"}
             mode={"study"}
           />
         }

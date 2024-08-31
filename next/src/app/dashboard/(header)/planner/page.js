@@ -1,6 +1,6 @@
 import PlansTimeline from "@/app/components/Plans/PlansTimeline/PlansTimeline";
 import styles from "./page.module.css";
-import EventPlanner from "@/app/components/Plans/EventPlanner/EventPlanner";
+import { default as EventPlanner } from "@/app/components/Plans/Planner/Planner";
 
 function Planner({}) {
   return (
@@ -9,11 +9,7 @@ function Planner({}) {
         <div className={styles.layer}>
           <div className={`BoxContainer ${styles.box}`} id={styles.calendar}>
             <div className={styles.title}>Calendar</div>
-            <EventPlanner
-              viewMode={"dayGridMonth"}
-              viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
-              controller={false}
-            />
+            <EventPlanner />
           </div>
           <div
             className={`${styles.box} BoxContainer`}
@@ -21,7 +17,7 @@ function Planner({}) {
           >
             <PlansTimeline
               viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
-              viewMode={"timeGridDay"}
+              viewer={"day"}
               mode={"study"}
               maxHeight="calc(100vh - 2.5rem)"
             />
