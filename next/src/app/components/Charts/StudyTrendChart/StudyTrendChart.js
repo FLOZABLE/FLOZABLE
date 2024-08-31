@@ -41,7 +41,7 @@ function StudyTrendChart({
         {isDateSelector ? (
           <div className={styles.DateSelectorBtn}>
             <DateSelectorBtn
-              viewMode={viewer}
+              viewer={viewer}
               viewDate={viewDate}
               setViewDate={setViewDate}
             />

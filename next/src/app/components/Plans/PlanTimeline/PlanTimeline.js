@@ -11,7 +11,7 @@ import Plan from "../Plan/Plan";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 
-function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
+function PlanTimeline({ viewer, viewDate, mode, maxHeight = "50rem" }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
   const { subjects } = useContext(SubjectsContext);
@@ -54,14 +54,14 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
     const viewDateTime = DateTime.fromJSDate(viewDate);
     let isInRange = false;
 
-    if (viewMode === "timeGridDay") {
+    if (viewer === "timeGridDay") {
       if (
         viewDateTime.startOf("day").toMillis() <= plan.start.getTime() &&
         plan.start.getTime() <= viewDateTime.endOf("day").toMillis()
       ) {
         isInRange = true;
       }
-    } else if (viewMode === "timeGridWeek") {
+    } else if (viewer === "timeGridWeek") {
       if (
         viewDateTime
           .plus({ days: 1 })
@@ -86,10 +86,10 @@ function PlanTimeline({ viewMode, viewDate, mode, maxHeight = "50rem" }) {
   };
 
   useEffect(() => {
-    if (!viewMode || !viewDate || !subjects) return;
+    if (!viewer || !viewDate || !subjects) return;
     const filteredPlans = plans.filter((plan) => isInViewRange(plan));
     setFilteredPlans(filteredPlans);
-  }, [plans, viewMode, viewDate, subjects]);
+  }, [plans, viewer, viewDate, subjects]);
 
   useEffect(() => {
     if (tutorial === 1) {

@@ -16,7 +16,7 @@ import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import SubjectsLabels from "../../Charts/SubjectsLabels/SubjectsLabels";
 
 export default function PlansTimeline({
-  viewMode,
+  viewer,
   viewDate,
   mode,
   maxHeight = "50rem",
@@ -38,14 +38,14 @@ export default function PlansTimeline({
     const viewDateTime = DateTime.fromJSDate(viewDate);
     let isInRange = false;
 
-    if (viewMode === "day") {
+    if (viewer === "day") {
       if (
         viewDateTime.startOf("day").toMillis() <= plan.start.getTime() &&
         plan.start.getTime() <= viewDateTime.endOf("day").toMillis()
       ) {
         isInRange = true;
       }
-    } else if (viewMode === "week") {
+    } else if (viewer === "week") {
       if (
         viewDateTime
           .plus({ days: 1 })
@@ -70,7 +70,7 @@ export default function PlansTimeline({
   };
 
   useEffect(() => {
-    if (!viewMode || !viewDate || !subjects) return;
+    if (!viewer || !viewDate || !subjects) return;
     const filteredPlans = plans.filter((plan) => isInViewRange(plan));
     const donePlans = [];
     const todoPlans = [];
@@ -84,7 +84,7 @@ export default function PlansTimeline({
 
     setDonePlans(donePlans);
     setTodoPlans(todoPlans);
-  }, [plans, viewMode, viewDate, subjects]);
+  }, [plans, viewer, viewDate, subjects]);
 
   useEffect(() => {
     if (tutorial === 1) {
@@ -129,8 +129,10 @@ export default function PlansTimeline({
                 if (planModal.plan_id === "0000000000") {
                   return;
                 }
-                const subject_id = subjects?.[0].subject_id;
-
+                const subject = subjects?.[0];
+                const subject_id = subject?.subject_id;
+                const color = subject ? subject.color : "#000000"
+          
                 const newPlan = {
                   ...DEFAULT_PLAN,
                   plan_id: "0000000000",
@@ -138,9 +140,10 @@ export default function PlansTimeline({
                   subject_id,
                 };
                 setPlanModal(newPlan);
-                setTimeout(() => {
-                  setPlans((prev) => [...prev, newPlan]);
-                }, 50);
+                newPlan.backgroundColor = color;
+                newPlan.borderColor = color;
+                setPlans((prev) => [...prev, newPlan]);
+
                 if (tutorial === 1) {
                   setTutorial(2);
                 }
