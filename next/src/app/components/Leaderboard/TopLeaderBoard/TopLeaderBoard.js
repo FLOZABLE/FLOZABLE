@@ -88,7 +88,7 @@ export default function TopLeaderBoard({
           <DateSelectorBtn
             viewDate={viewDate}
             setViewDate={setViewDate}
-            viewMode={viewer}
+            viewer={viewer}
           />
         </div>
       </div>

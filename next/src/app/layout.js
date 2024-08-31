@@ -75,7 +75,6 @@ export default function RootLayout({ children }) {
       <body>
         <Suspense>
           <AppProvider>
-            {/* <EventModal /> */}
             <PlanModal />
             <ChatModal />
             <AccountModal />

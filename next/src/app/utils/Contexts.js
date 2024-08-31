@@ -68,7 +68,7 @@ function AccountProvider({ children }) {
   const { useAccountData, accountRefetch } = queryResult;
 
   useEffect(() => {
-    if (!useAccountData?.success) {
+    if (useAccountData?.success === false) {
       setUserInfo(false);
       return;
     }
@@ -146,13 +146,13 @@ function SubjectsProvider({ children }) {
         if (subject) {
           plan.backgroundColor = subject.color;
           plan.borderColor = subject.color;
-          plan.subject_color = subject.color;
-          plan.color = subject.color;
+          //lan.subject_color = subject.color;
+          //plan.color = subject.color;
           //plan.textColor = subject.color;
         } else {
           plan.backgroundColor = "#000";
           plan.borderColor = "#000";
-          plan.color = "#000";
+          //plan.color = "#000";
         }
 
         if (plan.completed) {

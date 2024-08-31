@@ -43,7 +43,7 @@ function SubjectsPie({ viewDate, setViewDate, viewer, setViewer }) {
           <DateSelectorBtn
             viewDate={viewDate}
             setViewDate={setViewDate}
-            viewMode={viewer}
+            viewer={viewer}
           />
         </div>
         <div className={styles.ViewerSelectorBtn}>
