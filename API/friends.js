@@ -446,14 +446,18 @@ Router.get("/status", async (req, res) => {
           `,
           [friendGroups]
         );
-        //console.log(friendGroupsInfo);
+        friendGroupsInfo.map((group) => {
+          group.members = group.members ? group.members.split(",") : [];
+          group.likes = group.likes ? group.likes.split(",") : [];
+          group.tags = group.tags ? JSON.parse(group.tags) : [];
+        });
         friends.map((friend) => {
           if (friend.activeGroup) {
             const activeGroup = friendGroupsInfo.find(
               (group) => group.group_id === friend.activeGroup.id
             );
             if (activeGroup) {
-              friend.activeGroup = { ...friend.activeGroup, activeGroup };
+              friend.activeGroup = { ...friend.activeGroup, ...activeGroup };
             }
           }
         });

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import styles from "./MyEl.module.css";
 import { DateTime } from "luxon";
 import { RestPerson, StudyPerson } from "@/app/utils/Svg";
@@ -12,38 +12,38 @@ function MyEl({ videoStream, userInfo }) {
 
   useEffect(() => {
     if (!userInfo) return;
-    const { study_time, activeSubject, user_id } = userInfo;
 
-    if (activeSubject) {
-      const { id, time } = activeSubject;
-      if (id !== "0") {
-        setRun(true);
-        const liveTotal =
-          parseInt(study_time) +
-          parseInt(DateTime.now().toSeconds()) -
-          parseInt(time);
-        setTotal(liveTotal);
-      } else {
-        setTotal(parseInt(study_time));
-      }
+    const { study_time, activeSubject } = userInfo;
+
+    if (activeSubject && activeSubject.subject_id !== "0") {
+      setRun(true);
+      const liveTotal =
+        parseInt(study_time) +
+        parseInt(DateTime.now().toSeconds()) -
+        parseInt(activeSubject.time);
+      setTotal(liveTotal);
     } else {
       setTotal(parseInt(study_time));
     }
 
-    const onStudying = () => {
-      setRun(true);
+    const onStudying = (userId, subject) => {
+      if (userId === userInfo.user_id && subject.subject_id !== "0") {
+        setRun(true);
+      }
     };
 
-    const onStopStudying = () => {
-      setRun(false);
+    const onStopStudying = (userId) => {
+      if (userId === userInfo.user_id) {
+        setRun(false);
+      }
     };
 
-    socket.on(`studying:${user_id}`, onStudying);
-    socket.on(`stopStudying:${user_id}`, onStopStudying);
+    socket.on(`studying`, onStudying);
+    socket.on(`stopStudying`, onStopStudying);
 
     return () => {
-      socket.off(`studying:${user_id}`, onStudying);
-      socket.off(`stopStudying:${user_id}`, onStopStudying);
+      socket.off(`studying`, onStudying);
+      socket.off(`stopStudying`, onStopStudying);
     };
   }, [userInfo]);
 

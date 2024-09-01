@@ -487,7 +487,6 @@ Router.post("/group/leave", async (req, res) => {
         [userId, groupId]
       );
 
-
       if (!affectedRows) return res.send(RESPONSE_CODES["no-group"]);
 
       redisClient.srem(`user:${userId}:groups`, groupId);
@@ -496,7 +495,7 @@ Router.post("/group/leave", async (req, res) => {
 
       mainIo.emit(`removeMember`, groupId, userId);
 
-      return res.send({ success: true });
+      return res.send({ success: true, msg: `Left group` });
     } catch (err) {
       console.log(err);
     }

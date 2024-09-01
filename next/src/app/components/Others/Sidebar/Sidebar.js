@@ -136,11 +136,12 @@ function Sidebar({}) {
       </SidebarEl>
       <SidebarEl pathname={pathname} href={"/dashboard/account"}>
         <i>
-          <IconGear/>
+          <IconGear />
         </i>
         <h3>Settings</h3>
       </SidebarEl>
       <div className={styles.buttons}>
+        <Link href={"/dashboard/study"}>Study</Link>
         <LogoutBtn />
       </div>
     </aside>

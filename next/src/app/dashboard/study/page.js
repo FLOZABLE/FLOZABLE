@@ -208,8 +208,9 @@ function Study() {
           className={`${styles.myGroupsViewerWrapper} ${
             isViewGroups ? styles.open : ""
           }`}
+          style={{ "--textColor": "#ffffff" }}
         >
-          <MyGroupsViewer mode={"study"} groupsViewerRef={groupsViewerRef} />
+          <MyGroupsViewer />
         </div>
         <div className={styles.PlanTimelineBarWrapper}>
           {

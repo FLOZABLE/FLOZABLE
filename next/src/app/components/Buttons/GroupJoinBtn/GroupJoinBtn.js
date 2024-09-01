@@ -1,16 +1,16 @@
 import styles from "./GroupJoinBtn.module.css";
-import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { GroupsContext, ModalsContext } from "@/app/utils/Contexts";
 import { useContext } from "react";
 import Link from "next/link";
 
 export default function GroupJoinBtn({ groupInfo }) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { myGroups } = useContext(GroupsContext);
 
   const { setJoinGroupModal } = useContext(ModalsContext);
 
   return (
     <div className={styles.GroupJoinBtn}>
-      {groupInfo.members.includes(userInfo?.user_id) ? (
+      {myGroups.find((group) => group.group_id === groupInfo.group_id) ? (
         <Link
           href={`/dashboard/study?group=${groupInfo.group_id}`}
           className={styles.joinBtn}
