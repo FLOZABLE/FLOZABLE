@@ -48,7 +48,7 @@ mainIo.on("connection", (socket) => {
     (async () => {
       try {
         const now = Math.floor(new Date().getTime() / 1000);
-        cacheActiveSubject(userId, { subject_id: "0", name: "break", now });
+        cacheActiveSubject(userId, { subject_id: "0", name: "break" }, now);
         //join my socket server
         socket.join(userId);
 
@@ -67,7 +67,7 @@ mainIo.on("connection", (socket) => {
         ]);
 
         if (friends.length) {
-          mainIo.to(friends).emit(`studying:${userId}`, { id: "0" });
+          mainIo.to(friends).emit(`studying`, userId, { subject_id: "0" });
         }
 
         const chatroomIds = chatrooms.map(
@@ -175,9 +175,12 @@ mainIo.on("connection", (socket) => {
         [groupId]
       );
       if (!groupInfo) return;
-      mainIo
-        .to(friends)
-        .emit(`activeGroup:${userId}`, { groupInfo, time: now });
+
+      groupInfo.members = groupInfo.members ? groupInfo.members.split(",") : [];
+      groupInfo.likes = groupInfo.likes ? groupInfo.likes.split(",") : [];
+      groupInfo.tags = groupInfo.tags ? JSON.parse(groupInfo.tags) : [];
+
+      mainIo.to(friends).emit(`activeGroup`, userId, groupInfo);
     } catch (err) {
       console.log(err);
     }
@@ -251,7 +254,7 @@ async function deActiveGroup(connection, userId, socket) {
     });
     redisClient.del(`user:${userId}:activeGroup`);
     if (!friends.length) return;
-    mainIo.to(friends).emit(`deActiveGroup:${userId}`);
+    mainIo.to(friends).emit(`deActiveGroup`, userId);
   } catch (err) {
     console.log(err);
   }
@@ -282,7 +285,9 @@ async function stopStudying(connection, userId, mode) {
     }
 
     const activity = JSON.parse(
-      await redisClient.rpop(`user:${userId}:subject:${activeSubject.subject_id}`)
+      await redisClient.rpop(
+        `user:${userId}:subject:${activeSubject.subject_id}`
+      )
     );
 
     extensionIo.to(userId).emit("studying", { studying: false });

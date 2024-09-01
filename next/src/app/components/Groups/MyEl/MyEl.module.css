@@ -9,6 +9,7 @@
   background-color: #00000050;
   position: relative;
   overflow: hidden;
+  color: var(--textColor);
 }
 
 .Member .inner {

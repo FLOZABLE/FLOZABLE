@@ -15,7 +15,7 @@ function useGroupMembers(groupId, isActive) {
   const queryResult = useQuery({
     queryKey: [`useGroupMembers`, groupId],
     queryFn: () => getGroupMembers(groupId),
-    staleTime: 1000 * 60 * 3,
+    staleTime: 1000 * 5,
     enabled: !!groupId && !!isActive,
   });
 

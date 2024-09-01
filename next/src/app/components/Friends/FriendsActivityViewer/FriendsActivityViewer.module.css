@@ -41,6 +41,7 @@
   margin-left: 3rem;
   font-size: 0.9rem;
   display: flex;
+  flex-direction: column;
 }
 
 .FriendsActivityViewer .buttons {
@@ -48,5 +49,5 @@
 }
 
 .FriendsActivityViewer .friend:nth-last-child(1) {
-  margin-bottom: 3rem;
+  margin-bottom: 23rem;
 }

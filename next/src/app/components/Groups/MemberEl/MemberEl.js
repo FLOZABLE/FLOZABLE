@@ -15,9 +15,8 @@ function MemberEl({ memberInfo, device, recvTransport }) {
   useEffect(() => {
     if (!memberInfo) return;
 
-    const { study_time, activeSubject, user_id } = memberInfo;
+    const { study_time, activeSubject } = memberInfo;
 
-    console.log(activeSubject && activeSubject.subject_id !== "0", activeSubject)
     if (activeSubject && activeSubject.subject_id !== "0") {
       setRun(true);
       const liveTotal =

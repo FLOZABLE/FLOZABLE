@@ -1,12 +1,10 @@
 import styles from "./UserSubjectViewer.module.css";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import MemberTimer from "@/app/components/Groups/MemberTimer/MemberTimer";
 import { socket } from "@/app/utils/socket";
 
-function UserSubjectViewer({
-  userInfo
-}) {
+function UserSubjectViewer({ userInfo }) {
   const [isStudying, setIsStudying] = useState(false);
   const [subjectName, setSubjectName] = useState("Offline");
   const [subjectTotal, setSubjectTotal] = useState(0);
@@ -14,11 +12,11 @@ function UserSubjectViewer({
 
   useEffect(() => {
     if (!userInfo) return;
-    const { user_id, activeSubject } = userInfo;
+    const { activeSubject } = userInfo;
 
     if (activeSubject) {
-      const { name, id, time } = activeSubject;
-      if (id !== '0') {
+      const { name, subject_id, time } = activeSubject;
+      if (subject_id !== "0") {
         setSubjectName(`Studying ${name}`);
       } else {
         setSubjectName(`Taking break`);
@@ -28,56 +26,52 @@ function UserSubjectViewer({
       setSubjectTotal(liveTotal);
     }
 
-    const onStudying = (subjectInfo) => {
-      const { name, id } = subjectInfo;
-      if (id !== '0') {
+    const onStudying = (userId, subject) => {
+      if (userId !== userInfo.user_id) return;
+
+      const { name, subject_id } = subject;
+      if (subject_id !== "0") {
         setSubjectName(`Studying ${name}`);
       } else {
         setSubjectName(`Taking break`);
-      };
+      }
       setSubjectTotal(Math.random());
       setIsStudying(true);
       setSubjectStart(DateTime.now().toFormat(DateTime.TIME_SIMPLE));
     };
 
-    const onStopStudying = ({status}) => {
-      if (status === 'disconnect') {
+    const onStopStudying = (userId, { status }) => {
+      if (userId !== userInfo.user_id) return;
+
+      if (status === "disconnect") {
         setIsStudying(false);
         setSubjectName("Offline");
         setSubjectStart("");
         return;
-      };
+      }
 
       //rest
       setSubjectTotal(Math.random());
       setSubjectName(`Taking break`);
       setSubjectStart(DateTime.now().toFormat(DateTime.TIME_SIMPLE));
-      //setSubjectName("taking break");
     };
 
-    socket.on(`studying:${user_id}`, onStudying);
-    socket.on(`stopStudying:${user_id}`, onStopStudying);
+    socket.on(`studying`, onStudying);
+    socket.on(`stopStudying`, onStopStudying);
 
     return () => {
-      socket.off(`studying:${user_id}`, onStudying);
-      socket.off(`stopStudying:${user_id}`, onStopStudying);
+      socket.off(`studying`, onStudying);
+      socket.off(`stopStudying`, onStopStudying);
     };
   }, [userInfo]);
 
   return (
-    <div
-      className={styles.UserSubjectViewer}
-    >
+    <div className={styles.UserSubjectViewer}>
       <p>{subjectName}</p>
       {subjectStart}
-      {isStudying ?
-        <MemberTimer
-          initialSec={subjectTotal}
-          run={isStudying}
-        />
-        :
-        null
-      }
+      {isStudying ? (
+        <MemberTimer initialSec={subjectTotal} run={isStudying} />
+      ) : null}
     </div>
   );
 }
