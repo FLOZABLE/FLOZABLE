@@ -180,7 +180,10 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   };
 
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive) {
+      //clearGroupMembersData();
+      return;
+    }
     getRouterRtpCapabilities();
   }, [isActive]);
 
@@ -394,31 +397,29 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       if (group.group_id !== groupId) return;
 
       setMembers((prev) => [...prev, newUser]);
-      clearGroupMembersData();
     };
 
     const onRemoveMember = (groupId, userId) => {
       if (!group.group_id === groupId) return;
 
       setMembers((prev) => prev.filter((member) => member.user_id !== userId));
-      clearGroupMembersData();
     };
 
     const onStudying = (userId, subject) => {
-      console.log("socket");
-      if (group.members.includes(userId) && !subject.subject_id !== "0") {
+      if (
+        members.find((member) => member.user_id === userId) &&
+        !subject.subject_id !== "0"
+      ) {
         console.log("triggered");
         setStudyingMembers((prev) => [...new Set([...prev, userId])]);
-        clearGroupMembersData();
       }
     };
 
     const onStopStudying = (userId) => {
       console.log("removed");
       setStudyingMembers((prev) =>
-        prev.filter((member) => member.user_id !== userId)
+        prev.filter((memberId) => memberId !== userId)
       );
-      clearGroupMembersData();
     };
 
     socket.on("newMember", onNewMember);
@@ -431,7 +432,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       socket.off("studying", onStudying);
       socket.off("stopStudying", onStopStudying);
     };
-  }, [group, userInfo]);
+  }, [group, userInfo, members]);
 
   return (
     <div className={styles.MyGroupContainer}>
