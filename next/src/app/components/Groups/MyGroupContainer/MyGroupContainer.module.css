@@ -1,4 +1,47 @@
 .MyGroupContainer {
+  background-color: red;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.MyGroupContainer .header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  color: var(--textColor);
+  font-size: 2rem;
+}
+
+.MyGroupContainer .name {
+  max-width: 20rem;
+  overflow: hidden;
+  margin-right: 1rem;
+}
+
+.MyGroupContainer .header .info {
+  display: flex;
+}
+
+.MyGroupContainer .header .info > div {
+  display: flex;
+  margin: 0rem 0.3rem;
+}
+
+.MyGroupContainer .MembersContainer {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.MyGroupContainer .buttons {
+  padding-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* .MyGroupContainer {
   position: relative;
   height: 100%;
   padding: 0.313rem;
@@ -79,4 +122,4 @@
 .MyGroupContainer .membersWrapper {
   height: calc(100% - 6.25rem);
   overflow-y: auto;
-}
+} */

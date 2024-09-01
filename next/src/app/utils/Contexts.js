@@ -256,6 +256,10 @@ function ModalsProvider({ children }) {
     opened: false,
     subject_id: null,
   });
+  const [editGroupModal, setEditGroupModal] = useState({
+    opened: false,
+    group_id: null,
+  });
   const [searchUsersModal, setSearchUsersModal] = useState({
     opened: false,
     onClick: null,
@@ -286,6 +290,8 @@ function ModalsProvider({ children }) {
         setIsSubjectsModal,
         searchUsersModal,
         setSearchUsersModal,
+        editGroupModal,
+        setEditGroupModal,
       }}
     >
       {children}

@@ -30,8 +30,6 @@ export default function TagsGenerator({ tags, setTags, maxTags }) {
     [tags]
   );
 
-  console.log(tags, "tags");
-
   return (
     <div className={styles.TagsGenerator}>
       <div className={styles.content}>

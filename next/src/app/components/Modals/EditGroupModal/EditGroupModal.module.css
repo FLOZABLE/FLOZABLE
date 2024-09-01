@@ -1,4 +1,4 @@
-.CreateGroupModal {
+.EditGroupModal {
   width: 33rem;
   display: flex;
   flex-direction: column;
@@ -6,24 +6,24 @@
   max-height: 31.25rem;
 }
 
-.CreateGroupModal .buttons {
+.EditGroupModal .buttons {
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
 }
 
-.CreateGroupModal .inputArea {
+.EditGroupModal .inputArea {
   width: 100%;
   margin-left: 1.25rem;
   transition: opacity .3s ease-in-out;
   opacity: 0;
 }
 
-.CreateGroupModal .inputArea input {
+.EditGroupModal .inputArea input {
   width: 100%;
   height: 1.25rem;
 }
 
-.CreateGroupModal .inputArea.open {
+.EditGroupModal .inputArea.open {
   opacity: 1;
 }

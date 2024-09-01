@@ -432,7 +432,7 @@ Router.post("/join/:id", async (req, res) => {
 /**
  * leave group
  */
-Router.post("/leave", async (req, res) => {
+Router.post("/group/leave", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { groupId } = req.body;
@@ -613,24 +613,25 @@ Router.get("/group/members", async (req, res) => {
       groupInfo.members = JSON.parse(`[${groupInfo.members}]`);
 
       if (
-        groupInfo.visibility ||
-        groupInfo.members.find((member) => member.user_id === userId)
+        !groupInfo.visibility &&
+        !groupInfo.members.find((member) => member.user_id === userId)
       ) {
-        const members = await Promise.all(
-          groupInfo.members.map(async (member) => {
-            let totalTime = await redisClient.zscore(
-              `users:${timezoneOffset}:dayTotal`,
-              member.user_id
-            );
-            totalTime = totalTime === null ? 0 : totalTime;
-            const activeSubject = await activeSubjectCache(member.user_id);
-            return { ...member, totalTime, activeSubject };
-          })
-        );
-
-        return res.send({ success: true, members });
+        return res.send(RESPONSE_CODES["non-memeber"]);
       }
-      res.send(RESPONSE_CODES["non-memeber"]);
+
+      const members = await Promise.all(
+        groupInfo.members.map(async (member) => {
+          let study_time = await redisClient.zscore(
+            `users:${timezoneOffset}:dayTotal`,
+            member.user_id
+          );
+          study_time = study_time === null ? 0 : parseInt(study_time);
+          const activeSubject = await activeSubjectCache(member.user_id);
+          return { ...member, study_time, activeSubject };
+        })
+      );
+
+      return res.send({ success: true, members });
     } catch (err) {
       console.error("Error performing database queries:", err);
       res.status(500).send({ success: false, reason: "An error occurred" });
