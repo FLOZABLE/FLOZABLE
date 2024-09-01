@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useCallback, useState, useContext } from "react";
-import styles from "./CreateGroupModal.module.css";
+import React, { useCallback, useState, useContext, useEffect } from "react";
+import styles from "./EditGroupModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserGroup,
@@ -11,7 +11,11 @@ import {
   faLock,
   faStopwatch,
 } from "@fortawesome/free-solid-svg-icons";
-import { ResponseContext } from "@/app/utils/Contexts";
+import {
+  GroupsContext,
+  ModalsContext,
+  ResponseContext,
+} from "@/app/utils/Contexts";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
@@ -20,12 +24,14 @@ import OptionToggleBtn from "@/app/components/Buttons/OptionToggleBtn/OptionTogg
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import TagsGenerator from "../../Inputs/TagsGenerator/TagsGenerator";
-import { putGroup } from "@/Api/groupsApi";
+import { patchGroup } from "@/Api/groupsApi";
 import { DEFAULT_GROUP } from "@/app/utils/Constant";
 import ModalLayer from "../ModalLayer/ModalLayer";
 
-function CreateGroupModal({ isOpen, setIsOpen }) {
+function EditGroupModal() {
+  const { editGroupModal, setEditGroupModal } = useContext(ModalsContext);
   const { setResponse } = useContext(ResponseContext);
+  const { groups, myGroups, setGroups } = useContext(GroupsContext);
 
   const [newGroup, setNewGroup] = useState(DEFAULT_GROUP);
 
@@ -33,19 +39,41 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
 
   const submit = useCallback(() => {
     (async () => {
-      const data = await putGroup(newGroup);
+      const data = await patchGroup(newGroup);
       setResponse(data);
 
       if (data.success) {
-        setIsOpen(false);
-        setNewGroup(DEFAULT_GROUP);
+        setEditGroupModal({ group_id: null, opened: false });
+        const newGroups = [...groups];
+        const groupIndex = newGroups.findIndex(
+          (group) => group.group_id === newGroup.group_id
+        );
+        if (groupIndex === -1) return;
+        newGroups[groupIndex] = newGroup;
+        setGroups(newGroups);
       }
     })();
-  }, [newGroup]);
+  }, [newGroup, groups]);
+
+  useEffect(() => {
+    if (!editGroupModal.group_id) return;
+
+    const newGroup = groups.find(
+      (group) => group.group_id === editGroupModal.group_id
+    );
+    if (!newGroup) return;
+
+    setNewGroup((prev) => ({ ...prev, ...newGroup }));
+  }, [editGroupModal.group_id, groups]);
 
   return (
-    <DraggableModal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <div className={`${styles.CreateGroupModal} customScroll`}>
+    <DraggableModal
+      isOpen={editGroupModal.opened}
+      setIsOpen={() => {
+        setEditGroupModal(false);
+      }}
+    >
+      <div className={`${styles.EditGroupModal} customScroll`}>
         <ModalLayer>
           <CustomInput
             input={newGroup.name}
@@ -116,7 +144,6 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
             setValue={(visibility) => {
               setNewGroup((prev) => ({ ...prev, visibility }));
             }}
-            id="80w9er8w9"
           />
           <div
             className={`${styles.inputArea} ${
@@ -157,4 +184,4 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
   );
 }
 
-export default CreateGroupModal;
+export default EditGroupModal;
