@@ -1,82 +1,15 @@
 .CreateGroupModal {
-  width: 30.5rem;
+  width: 33rem;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   max-height: 31.25rem;
 }
 
-.CreateGroupModal .wrapper {
-  display: flex;
-  flex-direction: row;
-  margin-top: 1.875rem;
-  align-items: center;
-}
-
-.CreateGroupModal .wrapper .iconWrapper {
-  width: 4.375rem;
-  height: 2.5rem;
+.CreateGroupModal .buttons {
   display: flex;
   justify-content: center;
-  align-items: center;
-  font-size: 1.688rem;
-  position: relative;
-}
-
-.CreateGroupModal .wrapper .iconWrapper:hover .hoverEl {
-  opacity: 1;
-  visibility: visible;
-}
-
-.CreateGroupModal .wrapper .iconWrapper .hoverEl {
-  position: absolute;
-  font-size: 1.063rem;
-  white-space: nowrap;
-  top: 3.125rem;
-  left: 0em;
-  opacity: 0;
-  transition: opacity .3s ease-in-out, visibility .3s ease-in-out;
-  background-color: #000000c3;
-  padding: 0.313rem 0.625rem;
-  border-radius: 0.4375rem;
-  color: #fff;
-  z-index: 2;
-  visibility: hidden;
-}
-
-.CreateGroupModal .title {
-  height: 3.125rem;
-
-}
-
-.CreateGroupModal .title input {
-  width: 100%;
-  border: none;
-  height: 100%;
-  font-size: 1.875rem;
-}
-
-.CreateGroupModal .wrapper .contentWrapper {
-  position: relative;
-  width: calc(80%);
-  display: flex;
-  align-items: center;
-}
-
-.CreateGroupModal .subjectWrapper {
-  width: 12.5rem;
-}
-
-.CreateGroupModal .submit {
-  margin-bottom: 1.875rem;
-  justify-content: center;
-  width: 100%;
-  align-items: center;
-  display: flex;
-}
-
-.CreateGroupModal .addSubjectWrapper {
-  margin-left: auto;
+  margin-bottom: 1rem;
 }
 
 .CreateGroupModal .inputArea {
@@ -93,35 +26,4 @@
 
 .CreateGroupModal .inputArea.open {
   opacity: 1;
-}
-
-@media (max-width: 87.5rem) {
-  .CreateGroupModal {
-    width: 26.875rem;
-  }
-
-  .CreateGroupModal .title input {
-    font-size: 1.25rem;
-  }
-}
-
-@media (max-height: 50rem) {
-  .CreateGroupModal {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    max-height: calc(100vh - 14.375rem);
-  }
-
-  .CreateGroupModal .wrapper:nth-child(6) .contentWrapper {
-    position: relative;
-    width: calc(80%);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .CreateGroupModal .inputArea {
-    margin-top: 0.625rem;
-    margin-left: 0em;
-  }
 }

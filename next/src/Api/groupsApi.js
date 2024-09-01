@@ -13,11 +13,11 @@ async function getGroups() {
   return data;
 }
 
-async function getGroupMembers(group_id) {
+async function getGroupMembers(groupId) {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const response = await fetch(
-    `${config.server}/groups/group/members?groupId=${group_id}&timezone=${timezone}`,
+    `${config.server}/groups/group/members?groupId=${groupId}&timezone=${timezone}`,
     {
       method: "GET",
       headers: {
@@ -38,11 +38,41 @@ async function putGroup(newGroup) {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify(newGroup)
+    body: JSON.stringify(newGroup),
   });
   const data = await response.json();
 
   return data;
 }
 
-export { getGroups, getGroupMembers, putGroup };
+async function patchGroup(newGroup) {
+  const response = await fetch(`${config.server}/groups/group`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(newGroup),
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+async function postGroupLeave(groupId) {
+  const response = await fetch(
+    `${config.server}/groups/group/leave?groupId=${groupId}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+  const data = await response.json();
+
+  return data;
+}
+
+export { getGroups, getGroupMembers, putGroup, patchGroup, postGroupLeave };

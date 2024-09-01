@@ -2,45 +2,8 @@
   width: 31.25rem;
   display: flex;
   flex-direction: column;
-  padding: 1.875rem 1.25rem 0em 0em;
   max-height: 60vh;
-  overflow: visible;
-}
-
-.PlanModalLayer {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 1.25rem;
-  align-items: center;
-  width: 100%;
-}
-
-.PlanModalLayer .iconWrapper {
-  width: 4.375rem;
-  height: 2.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.688rem;
-  position: relative;
-  color: var(--gray2);
-}
-
-.PlanModalLayer .iconWrapper:hover .hoverText {
-  opacity: 1;
-  bottom: -1.5rem;
-}
-
-.PlanModalLayer .iconWrapper .hoverText {
-  bottom: -2rem;
-}
-
-.PlanModalLayer .contentWrapper {
-  position: relative;
-  width: calc(100% - 4.375rem);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  overflow-y: auto;
 }
 
 .PlanModal .buttons {

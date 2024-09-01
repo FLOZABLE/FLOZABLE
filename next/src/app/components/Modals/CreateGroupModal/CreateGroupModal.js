@@ -1,4 +1,6 @@
-import React, { useCallback, useState, useRef, useContext } from "react";
+"use client";
+
+import React, { useCallback, useState, useContext } from "react";
 import styles from "./CreateGroupModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -20,6 +22,7 @@ import DraggableModal from "../DraggableModal/DraggableModal";
 import TagsGenerator from "../../Inputs/TagsGenerator/TagsGenerator";
 import { putGroup } from "@/Api/groupsApi";
 import { DEFAULT_GROUP } from "@/app/utils/Constant";
+import ModalLayer from "../ModalLayer/ModalLayer";
 
 function CreateGroupModal({ isOpen, setIsOpen }) {
   const { setResponse } = useContext(ResponseContext);
@@ -27,8 +30,6 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
   const [newGroup, setNewGroup] = useState(DEFAULT_GROUP);
 
   const [isSelectColor, setIsSelectColor] = useState(false);
-
-  const modalRef = useRef(null);
 
   const submit = useCallback(() => {
     (async () => {
@@ -43,151 +44,112 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
   }, [newGroup]);
 
   return (
-    <DraggableModal refProp={modalRef} isOpen={isOpen} setIsOpen={setIsOpen}>
+    <DraggableModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={`${styles.CreateGroupModal} customScroll`}>
-        <div className={`${styles.wrapper} ${styles.title}`}>
-          <div className={styles.iconWrapper}></div>
-          <div className={styles.contentWrapper}>
+        <ModalLayer>
+          <CustomInput
+            input={newGroup.name}
+            handleInput={(e) => {
+              const name = e.target.value;
+              setNewGroup((prev) => ({ ...prev, name }));
+            }}
+            icon={null}
+            placeHolder={"Study Group Name"}
+            type={"text"}
+          />
+        </ModalLayer>
+        <ModalLayer
+          hoverText={"Description"}
+          icon={<FontAwesomeIcon icon={faFileLines} />}
+        >
+          <TextEditor
+            setValue={(description) => {
+              setNewGroup((prev) => ({ ...prev, description }));
+            }}
+            value={newGroup.description}
+          />
+        </ModalLayer>
+        <ModalLayer
+          hoverText={"Color"}
+          icon={<FontAwesomeIcon icon={faPalette} />}
+        >
+          <ColorPalette
+            setSelectedColor={(color) => {
+              setNewGroup((prev) => ({ ...prev, color }));
+            }}
+            selectedColor={newGroup.color}
+            isSelectColor={isSelectColor}
+            setIsSelectColor={setIsSelectColor}
+          />
+        </ModalLayer>
+        <ModalLayer
+          hoverText={"Max Members"}
+          icon={<FontAwesomeIcon icon={faUserGroup} />}
+        >
+          <SliderAnimation
+            min={0}
+            max={100}
+            step={1}
+            sliderValue={newGroup.max_members}
+            setSliderValue={(max_members) => {
+              setNewGroup((prev) => ({ ...prev, max_members }));
+            }}
+          />
+        </ModalLayer>
+        <ModalLayer hoverText={"Tags"} icon={<FontAwesomeIcon icon={faTags} />}>
+          <TagsGenerator
+            tags={newGroup.tags}
+            setTags={(tags) => {
+              setNewGroup((prev) => ({ ...prev, tags }));
+            }}
+            maxTags={10}
+          />
+        </ModalLayer>
+        <ModalLayer
+          hoverText={"Visibility"}
+          icon={<FontAwesomeIcon icon={faLock} />}
+        >
+          <OptionToggleBtn
+            opt1={{ val: 0, name: "PRIVATE" }}
+            opt2={{ val: 1, name: "PUBLIC" }}
+            value={newGroup.visibility}
+            setValue={(visibility) => {
+              setNewGroup((prev) => ({ ...prev, visibility }));
+            }}
+            id="80w9er8w9"
+          />
+          <div
+            className={`${styles.inputArea} ${
+              newGroup.visibility ? "" : styles.open
+            }`}
+          >
             <CustomInput
-              input={newGroup.name}
+              input={newGroup.password}
               handleInput={(e) => {
-                const name = e.target.value;
-                setNewGroup((prev) => ({ ...prev, name }));
+                const password = e.target.value;
+                setNewGroup((prev) => ({ ...prev, password }));
               }}
               icon={null}
-              placeHolder={"Study Group Name"}
+              placeHolder={"Enter Password"}
               type={"text"}
             />
           </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faFileLines} />
-            <div className={styles.hoverEl}>
-              <p>Description</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <TextEditor
-              setValue={(description) => {
-                setNewGroup((prev) => ({ ...prev, description }));
-              }}
-              value={newGroup.description}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faPalette} />
-            <div className={styles.hoverEl}>
-              <p>Color</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <ColorPalette
-              setSelectedColor={(color) => {
-                setNewGroup((prev) => ({ ...prev, color }));
-              }}
-              selectedColor={newGroup.color}
-              isSelectColor={isSelectColor}
-              setIsSelectColor={setIsSelectColor}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faUserGroup} />
-            <div className={styles.hoverEl}>
-              <p>Max Members</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <SliderAnimation
-              min={0}
-              max={100}
-              step={1}
-              sliderValue={newGroup.max_members}
-              setSliderValue={(max_members) => {
-                setNewGroup((prev) => ({ ...prev, max_members }));
-              }}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faTags} />
-            <div className={styles.hoverEl}>
-              <p>Tags</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <TagsGenerator
-              tags={newGroup.tags}
-              setTags={(tags) => {
-                setNewGroup((prev) => ({ ...prev, tags }));
-              }}
-              maxTags={10}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faLock} />
-            <div className={styles.hoverEl}>
-              <p>Visibility</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <OptionToggleBtn
-              opt1={{ val: 0, name: "PRIVATE" }}
-              opt2={{ val: 1, name: "PUBLIC" }}
-              value={newGroup.visibility}
-              setValue={(visibility) => {
-                setNewGroup((prev) => ({ ...prev, visibility }));
-              }}
-            />
-            <div
-              className={`${styles.inputArea} ${
-                newGroup.visibility ? "" : styles.open
-              }`}
-            >
-              <CustomInput
-                input={newGroup.password}
-                handleInput={(e) => {
-                  const password = e.target.value;
-                  setNewGroup((prev) => ({ ...prev, password }));
-                }}
-                icon={null}
-                placeHolder={"Enter Password"}
-                type={"text"}
-              />
-            </div>
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}>
-            <FontAwesomeIcon icon={faStopwatch} />
-            <div className={styles.hoverEl}>
-              <p>day Group Goal</p>
-            </div>
-          </div>
-          <div className={styles.contentWrapper}>
-            <SliderAnimation
-              min={0}
-              max={10}
-              step={1}
-              sliderValue={newGroup.goal_hr}
-              setSliderValue={(goal_hr) => {
-                setNewGroup((prev) => ({ ...prev, goal_hr }));
-              }}
-            />
-          </div>
-        </div>
-        <div className={styles.wrapper}>
-          <div className={styles.iconWrapper}></div>
-          <div className={styles.contentWrapper}></div>
-        </div>
-        <div className={styles.submit}>
+        </ModalLayer>
+        <ModalLayer
+          hoverText={"Group's Goal"}
+          icon={<FontAwesomeIcon icon={faStopwatch} />}
+        >
+          <SliderAnimation
+            min={0}
+            max={10}
+            step={1}
+            sliderValue={newGroup.goal_hr}
+            setSliderValue={(goal_hr) => {
+              setNewGroup((prev) => ({ ...prev, goal_hr }));
+            }}
+          />
+        </ModalLayer>
+        <div className={styles.buttons}>
           <BlobBtn onClick={submit}>SUBMIT</BlobBtn>
         </div>
       </div>

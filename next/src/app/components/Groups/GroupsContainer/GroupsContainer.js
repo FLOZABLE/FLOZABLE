@@ -2,8 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./GroupsContainer.module.css";
 import { GroupsContext } from "@/app/utils/Contexts";
 import GroupContainer from "../GroupContainer/GroupContainer";
-import { DateTime } from "luxon";
-import config from "@/app/utils/config";
 import { useRankings } from "@/Hooks/rankingsHooks";
 
 function GroupsContainer({ searchQuery, tags }) {

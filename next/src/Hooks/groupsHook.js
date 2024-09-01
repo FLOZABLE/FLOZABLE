@@ -9,12 +9,12 @@ function useGetGroups() {
   });
 }
 
-function useGroupMembers(groupId) {
+function useGroupMembers(groupId, isActive) {
   const queryResult = useQuery({
     queryKey: [`getGroups`, groupId],
     queryFn: () => getGroupMembers(groupId),
     staleTime: 1000 * 60 * 3,
-    enabled: !!groupId
+    enabled: !!groupId && !!isActive
   });
 
   const { data: groupMembersData, isLoading: groupMembersIsLoading } =

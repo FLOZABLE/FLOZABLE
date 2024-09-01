@@ -21,6 +21,7 @@ import { mediaSocket } from "@/app/utils/mediaSocket";
 import { Device } from "mediasoup-client";
 import { socket } from "@/app/utils/socket";
 import { useGroupMembers } from "@/Hooks/groupsHook";
+import { secondConverter } from "@/app/utils/Tool";
 
 const videoParams = {
   encodings: [
@@ -49,32 +50,38 @@ const audioParams = {
   encodings: [{ maxBitrate: 900000 }],
 };
 
-function MyGroupContainer({
-  group,
-  mode,
-  leaveGroup,
-  setIsEditGroupModal,
-  isMine,
-  setRightClickedMember,
-}) {
+function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   const { isCam, isMic } = useContext(CallOptionsContext);
-  const { setChatModal } = useContext(ModalsContext);
+  const { setChatModal, setEditGroupModal } = useContext(ModalsContext);
   const { setMyGroups } = useContext(GroupsContext);
   const { userInfo } = useContext(UserInfoContext);
 
   const { groupMembersData, groupMembersIsLoading } = useGroupMembers(
-    group?.group_id
+    group?.group_id,
+    isActive
   );
 
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
-  const [groupTotal, setGroupTotal] = useState(0);
+  const [totalTime, setTotalTime] = useState("0 h");
 
   useEffect(() => {
     if (!groupMembersData?.success) return;
 
     setMembers(groupMembersData.members);
   }, [groupMembersData]);
+
+  useEffect(() => {
+    if (!members.length) return;
+    const totalTime = members.reduce(
+      (partialTime, a) => partialTime + a.study_time,
+      0
+    );
+    const { value, type } = secondConverter(
+      (totalTime / members.length).toFixed(2)
+    );
+    setTotalTime(`${value} ${type}`);
+  }, [members]);
 
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
   const [videoStream, setVideoStream] = useState(null);
@@ -389,12 +396,84 @@ function MyGroupContainer({
   }, [group, userInfo]);
 
   return (
-    <div
-      className={`${styles.MyGroupContainer} ${
-        mode === "study" ? styles.study : ""
-      }`}
-    >
+    <div className={styles.MyGroupContainer}>
       <div className={styles.header}>
+        <div className={`${styles.name} overflowDot`}>{group.name}</div>
+        <div className={styles.info}>
+          <div>
+            <i>
+              <StudyPerson />
+            </i>
+            <p>
+              {studyingMembers.length}/{members.length}
+            </p>
+          </div>
+          <div>
+            <i>
+              <IconTimerOutline />
+            </i>
+            <p>{totalTime}</p>
+          </div>
+          <div
+            onClick={() => {
+              setChatModal((prev) => ({
+                ...prev,
+                chatroom: group.group_id,
+                name: group.name,
+                open: true,
+              }));
+            }}
+          >
+            <i>
+              <IconMessage />
+            </i>
+          </div>
+          {isAdmin ? (
+            <div
+              onClick={() => {
+                setEditGroupModal({ opened: true, group_id: group.group_id });
+              }}
+            >
+              <i>
+                <IconPen />
+              </i>
+            </div>
+          ) : (
+            <div
+              onClick={() => {
+                leaveGroup(group);
+              }}
+            >
+              <i>
+                <IconLeave />
+              </i>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className={`hiddenScroll ${styles.MembersContainer}`}>
+        <MembersContainer
+          members={members}
+          group={group}
+          setStudyingMembers={setStudyingMembers}
+          videoStream={videoStream}
+          device={device}
+          recvTransport={recvTransport}
+        />
+      </div>
+      <div className={styles.buttons}>
+        <div>
+          <Link href={`/dashboard/study?group=${group.group_id}`}>
+            Go to Group
+          </Link>
+        </div>
+        <GroupUrlBtn
+          text={`${config.server}/dashboard/groups?joinId=${group.group_id}`}
+          copyText="Share"
+          bgColor="var(--dark-gray)"
+        />
+      </div>
+      {/* <div className={styles.header}>
         <div>
           <div className={`${styles.name} overflowDot`}>{group?.name}</div>
           <div className={styles.info}>
@@ -410,7 +489,7 @@ function MyGroupContainer({
               <i>
                 <IconTimerOutline />
               </i>
-              <p>{Math.round((groupTotal * 100) / 3600) / 100}hr</p>
+              <p>{Math.round((totalTime * 100) / 3600) / 100}hr</p>
             </div>
             <div
               onClick={() => {
@@ -480,9 +559,8 @@ function MyGroupContainer({
           videoStream={videoStream}
           device={device}
           recvTransport={recvTransport}
-          setRightClickedMember={setRightClickedMember}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

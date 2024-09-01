@@ -1,0 +1,37 @@
+.ModalLayer {
+  display: flex;
+  flex-direction: row;
+  margin: 0.625rem 0rem;
+  align-items: center;
+  width: 100%;
+}
+
+.ModalLayer .iconWrapper {
+  width: 4.375rem;
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.688rem;
+  position: relative;
+  color: var(--gray2);
+}
+
+.ModalLayer .iconWrapper:hover .hoverText {
+  opacity: 1;
+  bottom: -1.5rem;
+}
+
+.ModalLayer .iconWrapper .hoverText {
+  bottom: -2rem;
+  left: 0.5rem;
+}
+
+.ModalLayer .contentWrapper {
+  position: relative;
+  width: calc(100% - 4.375rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-right: 1rem;
+}

@@ -6,15 +6,14 @@ import CreateGroupModal from "@/app/components/Modals/CreateGroupModal/CreateGro
 import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContainerGen";
 import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
 import GroupsContainer from "@/app/components/Groups/GroupsContainer/GroupsContainer";
-import EditGroupModal from "@/app/components/Groups/EditGroupModal/EditGroupModal";
 import MemberContextMenu from "@/app/components/Groups/MemberContextMenu/MemberContextMenu";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
+import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
 
 function Groups({ setResponse }) {
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
-  const [isEditGroupModal, setIsEditGroupModal] = useState(false);
   const [rightClickedMember, setRightClickedMember] = useState(null);
 
   return (
@@ -28,11 +27,12 @@ function Groups({ setResponse }) {
         setIsOpen={setIsCreateNewGroup}
         setCreateGroupResponse={setResponse}
       />
-      <EditGroupModal
-        setIsOpen={setIsEditGroupModal}
-        isOpen={isEditGroupModal}
-      />
       <div className={styles.Groups}>
+        <div className={styles.layer}>
+          <div className={`BoxContainer ${styles.boxContainer}`} style={{"--textColor": "blue"}}>
+            <MyGroupsViewer />
+          </div>
+        </div>
         <div className={styles.layer}>
           <div className={`BoxContainer ${styles.boxContainer}`}>
             <div className={styles.header}>

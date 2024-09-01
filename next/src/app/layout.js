@@ -11,6 +11,7 @@ import SubjectsModal from "./components/Modals/SubjectsModal/SubjectsModal";
 import SearchUsersModal from "./components/Modals/SearchUsersModal/SearchUsersModal";
 import PlanModal from "./components/Modals/PlanModal/PlanModal";
 import { Suspense } from "react";
+import EditGroupModal from "./components/Modals/EditGroupModal/EditGroupModal";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
 
@@ -83,6 +84,7 @@ export default function RootLayout({ children }) {
             <AddSubjectModal />
             <SubjectsModal />
             <SearchUsersModal />
+            <EditGroupModal />
             <Tutorial />
             {children}
           </AppProvider>

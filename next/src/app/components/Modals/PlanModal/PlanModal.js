@@ -38,20 +38,7 @@ import {
 } from "@/Api/plansApi";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import ShareUserBox from "../../Users/ShareUserBox/ShareUserBox";
-
-function PlanModalLayer({ children, icon, hoverText }) {
-  return (
-    <div className={styles.PlanModalLayer}>
-      <div className={styles.iconWrapper}>
-        {icon}
-        {hoverText ? (
-          <div className={`HoverText ${styles.hoverText}`}>{hoverText}</div>
-        ) : null}
-      </div>
-      <div className={styles.contentWrapper}>{children}</div>
-    </div>
-  );
-}
+import ModalLayer from "../ModalLayer/ModalLayer";
 
 export default function PlanModal() {
   const { setResponse } = useContext(ResponseContext);
@@ -218,7 +205,7 @@ export default function PlanModal() {
       }}
     >
       <div className={`customScroll ${styles.PlanModal}`}>
-        <PlanModalLayer>
+        <ModalLayer>
           <CustomInput
             input={planModal.title}
             handleInput={(e) => {
@@ -227,8 +214,8 @@ export default function PlanModal() {
             }}
             placeHolder={"Enter title"}
           ></CustomInput>
-        </PlanModalLayer>
-        <PlanModalLayer
+        </ModalLayer>
+        <ModalLayer
           icon={<FontAwesomeIcon icon={faClock} />}
           hoverText={"Select Time"}
         >
@@ -242,8 +229,8 @@ export default function PlanModal() {
               handleInput("end", end);
             }}
           />
-        </PlanModalLayer>
-        <PlanModalLayer
+        </ModalLayer>
+        <ModalLayer
           icon={<FontAwesomeIcon icon={faFileLines} />}
           hoverText={"Add Description"}
         >
@@ -253,8 +240,8 @@ export default function PlanModal() {
             }}
             value={planModal.description}
           />
-        </PlanModalLayer>
-        <PlanModalLayer
+        </ModalLayer>
+        <ModalLayer
           icon={<FontAwesomeIcon icon={faRepeat} />}
           hoverText={"Repeat"}
         >
@@ -270,9 +257,9 @@ export default function PlanModal() {
             }}
             value={planModal.repeat}
           />
-        </PlanModalLayer>
+        </ModalLayer>
         {planModal.editable ? (
-          <PlanModalLayer
+          <ModalLayer
             icon={<FontAwesomeIcon icon={faBook} />}
             hoverText={"Select Subject"}
           >
@@ -299,9 +286,9 @@ export default function PlanModal() {
             >
               Add Subject
             </BlobBtn>
-          </PlanModalLayer>
+          </ModalLayer>
         ) : null}
-        <PlanModalLayer
+        <ModalLayer
           icon={<FontAwesomeIcon icon={faBell} />}
           hoverText={"Select Notification"}
         >
@@ -321,8 +308,8 @@ export default function PlanModal() {
               requestNotification();
             }}
           />
-        </PlanModalLayer>
-        <PlanModalLayer
+        </ModalLayer>
+        <ModalLayer
           icon={<FontAwesomeIcon icon={faCircleExclamation} />}
           hoverText={"Select Importance"}
         >
@@ -335,8 +322,8 @@ export default function PlanModal() {
               handleInput("priority", priority);
             }}
           />
-        </PlanModalLayer>
-        <PlanModalLayer
+        </ModalLayer>
+        <ModalLayer
           icon={<FontAwesomeIcon icon={faUserGroup} />}
           hoverText={"Shared Users"}
         >
@@ -376,7 +363,7 @@ export default function PlanModal() {
               </>
             )}
           </div>
-        </PlanModalLayer>
+        </ModalLayer>
         <div className={styles.buttons}>
           <BlobBtn
             onClick={() => {

@@ -1,10 +1,17 @@
 .MyGroupsViewer {
+  height: 70vh;
+  display: flex;
+  width: 100%;
+}
+
+.MyGroupsViewer .Swiper {
+  padding-bottom: 1.5rem;
+}
+
+/* .MyGroupsViewer {
   -webkit-user-select: none;
-  /* Safari */
   -ms-user-select: none;
-  /* IE 10 and IE 11 */
   user-select: none;
-  /* Standard syntax */
   height: 100%;
 }
 
@@ -37,4 +44,4 @@
 
 .MyGroupsViewer.study *:not(svg, path) {
   color: #fff;
-}
+} */
