@@ -49,6 +49,7 @@ mainIo.on("connection", (socket) => {
       try {
         const now = Math.floor(new Date().getTime() / 1000);
         cacheActiveSubject(userId, { subject_id: "0", name: "break", now });
+        //join my socket server
         socket.join(userId);
 
         const connection = pool.promise();
@@ -74,6 +75,7 @@ mainIo.on("connection", (socket) => {
         );
         const groupIds = groups.map((group) => "chatroom:" + group);
 
+        //join my chatrooms
         socket.join([...chatroomIds, ...groupIds]);
       } catch (err) {
         console.log(err);
@@ -105,12 +107,12 @@ mainIo.on("connection", (socket) => {
       ]);
 
       if (!subject) return;
-      
+
       if (groups.length) {
-        mainIo.to(groups).emit(`studying:${userId}`, subject);
+        mainIo.to(groups).emit(`studying`, userId, subject);
       }
       if (friends.length) {
-        mainIo.to(friends).emit(`studying:${userId}`, subject);
+        mainIo.to(friends).emit(`studying`, userId, subject);
       }
       redisClient.rpush(`user:${userId}:subject:${subjectId}`, `[${now},0]`);
       cacheActiveSubject(userId, subject, now);
@@ -269,18 +271,18 @@ async function stopStudying(connection, userId, mode) {
     if (!userInfo) return;
 
     if (groups.length) {
-      mainIo.to(groups).emit(`stopStudying:${userId}`, { status: mode });
+      mainIo.to(groups).emit(`stopStudying`, userId, { status: mode });
     }
     if (friends.length) {
-      mainIo.to(friends).emit(`stopStudying:${userId}`, { status: mode });
+      mainIo.to(friends).emit(`stopStudying`, userId, { status: mode });
     }
 
-    if (!activeSubject || activeSubject.id === "0") {
+    if (!activeSubject || activeSubject.subject_id === "0") {
       return await redisClient.del(`user:${userId}:activeSubject`);
     }
 
     const activity = JSON.parse(
-      await redisClient.rpop(`user:${userId}:subject:${activeSubject.id}`)
+      await redisClient.rpop(`user:${userId}:subject:${activeSubject.subject_id}`)
     );
 
     extensionIo.to(userId).emit("studying", { studying: false });
@@ -312,7 +314,7 @@ async function stopStudying(connection, userId, mode) {
     }
 
     redisClient.rpush(
-      `user:${userId}:subject:${activeSubject.id}`,
+      `user:${userId}:subject:${activeSubject.subject_id}`,
       `[${start},${duration}]`
     );
   } catch (err) {

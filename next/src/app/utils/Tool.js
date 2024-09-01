@@ -2,20 +2,6 @@ import ct from "countries-and-timezones";
 import config from "./config";
 import { DateTime } from "luxon";
 
-function filterGroups(userInfo, groups) {
-  const userGroups = [];
-  const otherGroups = [];
-  groups.map((group) => {
-    if (userInfo.groups.includes(group.group_id)) {
-      userGroups.push(group);
-    } else {
-      otherGroups.push(group);
-    }
-  });
-
-  return { userGroups, otherGroups };
-}
-
 function getCountryCode(timezone) {
   try {
     const timeZoneData = ct.getTimezone(timezone);
@@ -248,7 +234,6 @@ function getDatesDisplay(date, mode, format = "LLLL d", length = 1) {
 
 export {
   cyrb128,
-  filterGroups,
   getCountryCode,
   secondConverter,
   randomIntInRange,

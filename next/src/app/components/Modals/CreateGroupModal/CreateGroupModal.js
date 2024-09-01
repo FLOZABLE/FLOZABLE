@@ -11,7 +11,7 @@ import {
   faLock,
   faStopwatch,
 } from "@fortawesome/free-solid-svg-icons";
-import { ResponseContext } from "@/app/utils/Contexts";
+import { GroupsContext, ResponseContext } from "@/app/utils/Contexts";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
@@ -26,6 +26,7 @@ import ModalLayer from "../ModalLayer/ModalLayer";
 
 function CreateGroupModal({ isOpen, setIsOpen }) {
   const { setResponse } = useContext(ResponseContext);
+  const { setGroups } = useContext(GroupsContext);
 
   const [newGroup, setNewGroup] = useState(DEFAULT_GROUP);
 
@@ -39,6 +40,8 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
       if (data.success) {
         setIsOpen(false);
         setNewGroup(DEFAULT_GROUP);
+
+        setGroups((prev) => [...prev, data.groupInfo]);
       }
     })();
   }, [newGroup]);

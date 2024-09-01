@@ -6,42 +6,9 @@
 
 .MyGroupsViewer .Swiper {
   padding-bottom: 1.5rem;
+  width: 100%;
 }
 
-/* .MyGroupsViewer {
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  height: 100%;
+.noGroups {
+  font-size: 2rem;
 }
-
-.MyGroupsViewer .noGroup {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-top: 32vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.MyGroupsViewer .Swiper {
-  height: 100%;
-}
-
-.MyGroupsViewer .slide {
-  position: relative;
-}
-
-.MyGroupsViewer .slide .inner {
-  width: 90%;
-  margin-left: 5%;
-}
-
-
-.MyGroupsViewer .groupsWrapper {
-  height: 100%;
-}
-
-.MyGroupsViewer.study *:not(svg, path) {
-  color: #fff;
-} */
