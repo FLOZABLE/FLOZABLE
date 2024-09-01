@@ -14,7 +14,7 @@ function ThemeUsageCounter({ initialVal, themeId }) {
     };
 
     /* const onRemoveMember = (userId) => {
-      //const newMembers = members
+      //const newMember = members
       setCount(prev => {return prev.filter((memberId) => {return memberId !== userId})});
     }; */
 

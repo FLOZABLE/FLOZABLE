@@ -25,7 +25,7 @@ extensionIo.on("connection", (socket) => {
       extensionIo
         .to(userId)
         .emit("studying", {
-          studying: activeSubject && activeSubject.id !== "0" ? true : false,
+          studying: activeSubject && activeSubject.subject_id !== "0" ? true : false,
         });
     } catch (err) {
       console.log(err);

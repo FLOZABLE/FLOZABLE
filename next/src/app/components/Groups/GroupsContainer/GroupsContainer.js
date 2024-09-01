@@ -5,7 +5,7 @@ import GroupContainer from "../GroupContainer/GroupContainer";
 import { useRankings } from "@/Hooks/rankingsHooks";
 
 function GroupsContainer({ searchQuery, tags }) {
-  const { otherGroups } = useContext(GroupsContext);
+  const { groups } = useContext(GroupsContext);
 
   const { useRankingsData } = useRankings(
     "day",
@@ -20,7 +20,7 @@ function GroupsContainer({ searchQuery, tags }) {
 
   return (
     <div className={`${styles.GroupsContainer} customScroll`}>
-      {otherGroups.map((group, i) => {
+      {groups.map((group, i) => {
         let isSearched = false;
 
         const lowecaseTags = group.tags.map((tag) => tag.toLowerCase());

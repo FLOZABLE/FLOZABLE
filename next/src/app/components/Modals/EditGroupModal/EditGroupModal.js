@@ -10,6 +10,7 @@ import {
   faTags,
   faLock,
   faStopwatch,
+  faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   GroupsContext,
@@ -24,20 +25,20 @@ import OptionToggleBtn from "@/app/components/Buttons/OptionToggleBtn/OptionTogg
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import TagsGenerator from "../../Inputs/TagsGenerator/TagsGenerator";
-import { patchGroup } from "@/Api/groupsApi";
+import { deleteGroup, patchGroup } from "@/Api/groupsApi";
 import { DEFAULT_GROUP } from "@/app/utils/Constant";
 import ModalLayer from "../ModalLayer/ModalLayer";
 
 function EditGroupModal() {
   const { editGroupModal, setEditGroupModal } = useContext(ModalsContext);
   const { setResponse } = useContext(ResponseContext);
-  const { groups, myGroups, setGroups } = useContext(GroupsContext);
+  const { groups, setGroups } = useContext(GroupsContext);
 
   const [newGroup, setNewGroup] = useState(DEFAULT_GROUP);
 
   const [isSelectColor, setIsSelectColor] = useState(false);
 
-  const submit = useCallback(() => {
+  const onSubmit = useCallback(() => {
     (async () => {
       const data = await patchGroup(newGroup);
       setResponse(data);
@@ -50,6 +51,20 @@ function EditGroupModal() {
         );
         if (groupIndex === -1) return;
         newGroups[groupIndex] = newGroup;
+        setGroups(newGroups);
+      }
+    })();
+  }, [newGroup, groups]);
+
+  const onDelete = useCallback(() => {
+    (async () => {
+      const groupId = newGroup.group_id;
+      const data = await deleteGroup(groupId);
+      setResponse(data);
+
+      if (data.success) {
+        setEditGroupModal({ group_id: null, opened: false });
+        const newGroups = groups.filter((group) => group.group_id !== groupId);
         setGroups(newGroups);
       }
     })();
@@ -177,7 +192,10 @@ function EditGroupModal() {
           />
         </ModalLayer>
         <div className={styles.buttons}>
-          <BlobBtn onClick={submit}>SUBMIT</BlobBtn>
+          <BlobBtn onClick={onSubmit}>SUBMIT</BlobBtn>
+          <BlobBtn onClick={onDelete}>
+            <FontAwesomeIcon icon={faTrashCan} />
+          </BlobBtn>
         </div>
       </div>
     </DraggableModal>

@@ -7,79 +7,63 @@ import {
 } from "@/app/utils/Contexts";
 import styles from "./JoinGroupModal.module.css";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import config from "@/app/utils/config";
 import { useRouter } from "next/navigation";
 import DraggableModal from "../DraggableModal/DraggableModal";
+import { postGroupJoin } from "@/Api/groupsApi";
 
 function JoinGroupModal() {
   const { setResponse } = useContext(ResponseContext);
   const { joinGroupModal, setJoinGroupModal } = useContext(ModalsContext);
-  const { setMyGroups, setOtherGroups, otherGroups } =
-    useContext(GroupsContext);
-
-  const modalRef = useRef(null);
+  const { setMyGroups, groups } = useContext(GroupsContext);
 
   const router = useRouter();
 
-  const [pw, setPw] = useState("");
+  const [password, setPassword] = useState("");
 
   const handlePwInput = (e) => {
-    setPw(e.target.value);
+    setPassword(e.target.value);
   };
 
-  const submit = () => {
+  const submit = useCallback(() => {
     if (!joinGroupModal.group) return;
 
     const groupId = joinGroupModal.group.group_id;
 
-    fetch(`${config.server}/groups/join/${groupId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ password: pw }),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-        if (data.success) {
-          setJoinGroupModal({
-            open: false,
-            group: null,
-          });
+    (async () => {
+      const data = await postGroupJoin(groupId, password);
+      setResponse(data);
 
-          setPw("");
+      if (data.success) {
+        setJoinGroupModal({
+          open: false,
+          group: null,
+        });
 
-          setMyGroups((prev) => {
-            return [...prev, joinGroupModal.group];
-          });
+        setPassword("");
 
-          setOtherGroups((prev) => {
-            return prev.filter((group) => {
-              return group.group_id != groupId;
-            });
-          });
+        setMyGroups((prev) => {
+          return [...prev, joinGroupModal.group];
+        });
 
-          router.push(window.location.pathname, { scroll: false });
+        router.push(window.location.pathname, { scroll: false });
 
-          document.body.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      })
-      .catch((error) => console.error(error));
-  };
+        document.body.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    })();
+  }, [password, joinGroupModal]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const groupId = searchParams.get("groupId");
 
-    if (!groupId || !otherGroups.length) return;
+    if (!groupId || !groups.length) return;
 
-    const groupInfo = otherGroups.find((group) => group.group_id === groupId);
+    const groupInfo = groups.find((group) => group.group_id === groupId);
 
     if (!groupInfo) {
       setResponse({ success: false, reason: "Group not found" });
@@ -95,11 +79,10 @@ function JoinGroupModal() {
     params.delete("groupId");
 
     router.push(window.location.pathname, { scroll: false });
-  }, [otherGroups]);
+  }, [groups]);
 
   return (
     <DraggableModal
-      refProp={modalRef}
       isOpen={joinGroupModal.open}
       setIsOpen={() => {
         setJoinGroupModal((prev) => {
@@ -117,7 +100,7 @@ function JoinGroupModal() {
             {!joinGroupModal.group.visibility ? (
               <div>
                 <CustomInput
-                  input={pw}
+                  input={password}
                   handleInput={handlePwInput}
                   handleEnter={submit}
                   icon={faKey}

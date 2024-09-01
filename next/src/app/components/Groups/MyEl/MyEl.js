@@ -6,61 +6,36 @@ import { socket } from "@/app/utils/socket";
 import MyCamDisp from "../MyCamDisp/MyCamDisp";
 import MyTimer from "../MyTimer/MyTimer";
 
-function MyEl({ setStudyingMembers, videoStream, userInfo }) {
+function MyEl({ videoStream, userInfo }) {
   const [run, setRun] = useState(0);
   const [total, setTotal] = useState(0);
-  const [studyIcon, setStudyIcon] = useState(
-    <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />,
-  );
 
   useEffect(() => {
     if (!userInfo) return;
-    const { totalTime, activeSubject, user_id } = userInfo;
+    const { study_time, activeSubject, user_id } = userInfo;
 
     if (activeSubject) {
       const { id, time } = activeSubject;
-      if (id !== '0') {
+      if (id !== "0") {
         setRun(true);
-        const liveTotal = parseInt(totalTime) + parseInt(DateTime.now().toSeconds()) - parseInt(time);
+        const liveTotal =
+          parseInt(study_time) +
+          parseInt(DateTime.now().toSeconds()) -
+          parseInt(time);
         setTotal(liveTotal);
-        setStudyIcon(
-          <StudyPerson
-            opt1={"#fff"}
-            opt2={"#fff"}
-            width={"2.5rem"}
-            height={"2.5rem"}
-          />
-        )
       } else {
-        setTotal(parseInt(totalTime));
-      };
+        setTotal(parseInt(study_time));
+      }
     } else {
-      setTotal(parseInt(totalTime));
-    };
+      setTotal(parseInt(study_time));
+    }
 
     const onStudying = () => {
       setRun(true);
-      setStudyIcon(
-        <StudyPerson
-          opt1={"#fff"}
-          opt2={"#fff"}
-          width={"2.5rem"}
-          height={"2.5rem"}
-        />
-      );
-      setStudyingMembers(prev => [...prev, userInfo]);
     };
 
     const onStopStudying = () => {
       setRun(false);
-      setStudyIcon(
-        <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />
-      );
-      setStudyingMembers(prevMembers => {
-        return prevMembers.filter(member => {
-          return member.user_id !== user_id;
-        });
-      });
     };
 
     socket.on(`studying:${user_id}`, onStudying);
@@ -73,16 +48,13 @@ function MyEl({ setStudyingMembers, videoStream, userInfo }) {
   }, [userInfo]);
 
   return (
-    <div className={styles.member}>
+    <div className={styles.Member}>
       <MyCamDisp videoStream={videoStream} />
       <div className={styles.inner}>
         <div className={styles.userName}>{userInfo.name}</div>
-        <div className={styles.icon}>{studyIcon}</div>
+        <i className={styles.icon}>{run ? <StudyPerson /> : <RestPerson />}</i>
         <div className={styles.timer}>
-          <MyTimer
-            run={run}
-            initialSec={total}
-          />
+          <MyTimer run={run} initialSec={total} />
         </div>
       </div>
     </div>

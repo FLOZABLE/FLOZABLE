@@ -279,7 +279,7 @@ Router.post("/request/reply", async (req, res) => {
         [roomInfo]
       );
 
-      const newMembers = [
+      const newMember = [
         [userId, chatroom_id],
         [targetId, chatroom_id],
       ];
@@ -290,7 +290,7 @@ Router.post("/request/reply", async (req, res) => {
         INTO chatroom_members (user_id, chatroom_id) 
         VALUES ? 
         `,
-        [newMembers]
+        [newMember]
       );
 
       res.send({ success: true, msg: `Accepted chat request!` });

@@ -6,88 +6,70 @@ import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
 import { socket } from "@/app/utils/socket";
 import Link from "next/link";
 import MemberTimer from "../MemberTimer/MemberTimer";
+import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 
-function MemberEl({ memberInfo, setStudyingMembers, device, recvTransport }) {
+function MemberEl({ memberInfo, device, recvTransport }) {
   const [run, setRun] = useState(false);
   const [total, setTotal] = useState(0);
-  const [studyIcon, setStudyIcon] = useState(
-    <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />,
-  );
 
   useEffect(() => {
     if (!memberInfo) return;
 
-    const { totalTime, activeSubject, user_id } = memberInfo;
+    const { study_time, activeSubject, user_id } = memberInfo;
 
-    if (activeSubject) {
-      const { id, time } = activeSubject;
-      if (id !== '0') {
-        setRun(true);
-        const liveTotal = parseInt(totalTime) + parseInt(DateTime.now().toSeconds()) - parseInt(time);
-        setTotal(liveTotal);
-        setStudyIcon(
-          <StudyPerson
-            opt1={"#fff"}
-            opt2={"#fff"}
-            width={"2.5rem"}
-            height={"2.5rem"}
-          />
-        )
-      } else {
-        setTotal(parseInt(totalTime));
-      };
-    } else {
-      setTotal(parseInt(totalTime));
-    };
-
-
-    const onStudying = () => {
-      setStudyIcon(
-        <StudyPerson
-          opt1={"#fff"}
-          opt2={"#fff"}
-          width={"2.5rem"}
-          height={"2.5rem"}
-        />
-      );
-      setStudyingMembers(prev => [...prev, memberInfo]);
+    console.log(activeSubject && activeSubject.subject_id !== "0", activeSubject)
+    if (activeSubject && activeSubject.subject_id !== "0") {
       setRun(true);
+      const liveTotal =
+        parseInt(study_time) +
+        parseInt(DateTime.now().toSeconds()) -
+        parseInt(activeSubject.time);
+      setTotal(liveTotal);
+    } else {
+      setTotal(parseInt(study_time));
+    }
+
+    const onStudying = (userId, subject) => {
+      if (userId === memberInfo.user_id && subject.subject_id !== "0") {
+        setRun(true);
+      }
     };
 
-    const onStopStudying = () => {
-      setStudyIcon(
-        <RestPerson width={"2.5rem"} height={"2.5rem"} opt1={"#fff"} />
-      );
-      setStudyingMembers(prevMembers => {
-        return prevMembers.filter(member => {
-          return member.user_id !== user_id;
-        });
-      });
-      setRun(false);
+    const onStopStudying = (userId) => {
+      if (userId === memberInfo.user_id) {
+        setRun(false);
+      }
     };
 
-    socket.on(`studying:${user_id}`, onStudying);
-    socket.on(`stopStudying:${user_id}`, onStopStudying);
+    socket.on(`studying`, onStudying);
+    socket.on(`stopStudying`, onStopStudying);
 
     return () => {
-      socket.off(`studying:${user_id}`, onStudying);
-      socket.off(`stopStudying:${user_id}`, onStopStudying);
+      socket.off(`studying`, onStudying);
+      socket.off(`stopStudying`, onStopStudying);
     };
   }, [memberInfo]);
 
   return (
-    <div className={styles.member}>
-      <MemberCamDisp memberInfo={memberInfo} device={device} recvTransport={recvTransport} />
+    <div className={styles.Member}>
+      <MemberCamDisp
+        memberInfo={memberInfo}
+        device={device}
+        recvTransport={recvTransport}
+      />
       <div className={styles.inner}>
-        <Link href={`/dashboard/user/${memberInfo.user_id}`}>
+        <Link
+          href={`/dashboard/user/${memberInfo.user_id}`}
+          className={styles.userInfo}
+        >
           <div className={styles.userName}>{memberInfo.name}</div>
         </Link>
-        <div className={styles.icon}>{studyIcon}</div>
+        <i className={styles.icon}>{run ? <StudyPerson /> : <RestPerson />}</i>
         <div className={styles.timer}>
-          <MemberTimer
-            initialSec={total}
-            run={run}
-          />
+          <MemberTimer initialSec={total} run={run} />
+        </div>
+        <div className={styles.ProfileImage}>
+          <ProfileImage userId={memberInfo.user_id} />
         </div>
       </div>
     </div>
