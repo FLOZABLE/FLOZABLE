@@ -8,14 +8,16 @@
 
 .EditGroupModal .buttons {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 1.1rem;
   margin-bottom: 1rem;
 }
 
 .EditGroupModal .inputArea {
   width: 100%;
   margin-left: 1.25rem;
-  transition: opacity .3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
   opacity: 0;
 }
 

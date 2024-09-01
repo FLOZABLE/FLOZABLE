@@ -1,28 +1,35 @@
 import { getGroupMembers, getGroups } from "@/Api/groupsApi";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 function useGetGroups() {
   return useQuery({
-    queryKey: [`getGroups`],
+    queryKey: [`useGetGroups`],
     queryFn: getGroups,
     staleTime: 1000 * 60,
   });
 }
 
 function useGroupMembers(groupId, isActive) {
+  const queryClient = useQueryClient();
+
   const queryResult = useQuery({
-    queryKey: [`getGroups`, groupId],
+    queryKey: [`useGroupMembers`, groupId],
     queryFn: () => getGroupMembers(groupId),
     staleTime: 1000 * 60 * 3,
-    enabled: !!groupId && !!isActive
+    enabled: !!groupId && !!isActive,
   });
 
   const { data: groupMembersData, isLoading: groupMembersIsLoading } =
     queryResult;
 
+  const clearGroupMembersData = () => {
+    queryClient.removeQueries({ queryKey: ["useGroupMembers", groupId] });
+  };
+
   return {
     groupMembersData,
     groupMembersIsLoading,
+    clearGroupMembersData,
     ...queryResult,
   };
 }

@@ -252,7 +252,7 @@ async function replyFriendRequest(
         [roomInfo]
       );
 
-      const newMembers = [
+      const newMember = [
         [userId, chatroom_id],
         [targetId, chatroom_id],
       ];
@@ -263,7 +263,7 @@ async function replyFriendRequest(
         INTO chatroom_members (user_id, chatroom_id) 
         VALUES ? 
         `,
-        [newMembers]
+        [newMember]
       );
 
       mainIo.to(userId).emit("joinChatRoom", roomInfo.id, true);

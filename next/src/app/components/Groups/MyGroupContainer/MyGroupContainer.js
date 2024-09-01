@@ -4,7 +4,6 @@ import config from "@/app/utils/config";
 import Link from "next/link";
 import {
   CallOptionsContext,
-  GroupsContext,
   ModalsContext,
   UserInfoContext,
 } from "@/app/utils/Contexts";
@@ -22,6 +21,7 @@ import { Device } from "mediasoup-client";
 import { socket } from "@/app/utils/socket";
 import { useGroupMembers } from "@/Hooks/groupsHook";
 import { secondConverter } from "@/app/utils/Tool";
+import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
 const videoParams = {
   encodings: [
@@ -53,13 +53,10 @@ const audioParams = {
 function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   const { isCam, isMic } = useContext(CallOptionsContext);
   const { setChatModal, setEditGroupModal } = useContext(ModalsContext);
-  const { setMyGroups } = useContext(GroupsContext);
   const { userInfo } = useContext(UserInfoContext);
 
-  const { groupMembersData, groupMembersIsLoading } = useGroupMembers(
-    group?.group_id,
-    isActive
-  );
+  const { groupMembersData, groupMembersIsLoading, clearGroupMembersData } =
+    useGroupMembers(group?.group_id, isActive);
 
   const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -81,6 +78,14 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       (totalTime / members.length).toFixed(2)
     );
     setTotalTime(`${value} ${type}`);
+    const studyingMembers = members
+      .filter(
+        (member) =>
+          member.activeSubject && member.activeSubject.subject_id !== "0"
+      )
+      .map((member) => member.user_id);
+    console.log(studyingMembers, members);
+    setStudyingMembers(studyingMembers);
   }, [members]);
 
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
@@ -175,8 +180,9 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   };
 
   useEffect(() => {
+    if (!isActive) return;
     getRouterRtpCapabilities();
-  }, []);
+  }, [isActive]);
 
   useEffect(() => {
     if (!rtpCapabilities) return;
@@ -303,7 +309,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   };
 
   useEffect(() => {
-    if (isCam) {
+    if (isCam && isActive) {
       try {
         navigator.mediaDevices
           .getUserMedia({
@@ -331,10 +337,18 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       setVideoStream(null);
       mediaSocket.emit("removeMyProducer", { kind: "video" });
     }
-  }, [isCam]);
+
+    return () => {
+      if (videoStream) {
+        videoStream.getTracks().forEach((track) => track.stop());
+      }
+      setVideoStream(null);
+      mediaSocket.emit("removeMyProducer", { kind: "video" });
+    };
+  }, [isCam, isActive]);
 
   useEffect(() => {
-    if (isMic) {
+    if (isMic && isActive) {
       try {
         navigator.mediaDevices
           .getUserMedia({
@@ -353,7 +367,15 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       setAudioStream(null);
       mediaSocket.emit("removeMyProducer", { kind: "audio" });
     }
-  }, [isMic]);
+
+    return () => {
+      if (audioStream) {
+        audioStream.getTracks().forEach((track) => track.stop());
+      }
+      setAudioStream(null);
+      mediaSocket.emit("removeMyProducer", { kind: "audio" });
+    };
+  }, [isMic, isActive]);
 
   useEffect(() => {
     if (!producerTransport || !videoStream) return;
@@ -368,30 +390,46 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   useEffect(() => {
     if (!group || !userInfo) return;
 
-    const memberJoinGroup = (groupId, memberInfo) => {
+    const onNewMember = (groupId, newUser) => {
       if (group.group_id !== groupId) return;
-      setMembers((prev) => {
-        [...prev, memberInfo];
-      });
+
+      setMembers((prev) => [...prev, newUser]);
+      clearGroupMembersData();
     };
 
-    const memberLeaveGroup = (groupId, memberId) => {
-      if (group.group_id !== groupId) return;
+    const onRemoveMember = (groupId, userId) => {
+      if (!group.group_id === groupId) return;
 
-      if (memberId === userInfo.user_id) {
-        setMyGroups((prev) =>
-          prev.filter((group) => group.group_id !== groupId)
-        );
-      } else {
-        setMembers((prev) => prev.filter((user) => user.user_id !== memberId));
+      setMembers((prev) => prev.filter((member) => member.user_id !== userId));
+      clearGroupMembersData();
+    };
+
+    const onStudying = (userId, subject) => {
+      console.log("socket");
+      if (group.members.includes(userId) && !subject.subject_id !== "0") {
+        console.log("triggered");
+        setStudyingMembers((prev) => [...new Set([...prev, userId])]);
+        clearGroupMembersData();
       }
     };
 
-    socket.on(`newMemberInfo`, memberJoinGroup);
-    socket.on(`removeMember`, memberLeaveGroup);
+    const onStopStudying = (userId) => {
+      console.log("removed");
+      setStudyingMembers((prev) =>
+        prev.filter((member) => member.user_id !== userId)
+      );
+      clearGroupMembersData();
+    };
+
+    socket.on("newMember", onNewMember);
+    socket.on("removeMember", onRemoveMember);
+    socket.on("studying", onStudying);
+    socket.on("stopStudying", onStopStudying);
     return () => {
-      socket.off("newMemberInfo", memberJoinGroup);
-      socket.off(`removeMember`, memberLeaveGroup);
+      socket.off("newMember", onNewMember);
+      socket.off("removeMember", onRemoveMember);
+      socket.off("studying", onStudying);
+      socket.off("stopStudying", onStopStudying);
     };
   }, [group, userInfo]);
 
@@ -441,7 +479,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
           ) : (
             <div
               onClick={() => {
-                leaveGroup(group);
+                leaveGroup(group.group_id);
               }}
             >
               <i>
@@ -452,14 +490,17 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
         </div>
       </div>
       <div className={`hiddenScroll ${styles.MembersContainer}`}>
-        <MembersContainer
-          members={members}
-          group={group}
-          setStudyingMembers={setStudyingMembers}
-          videoStream={videoStream}
-          device={device}
-          recvTransport={recvTransport}
-        />
+        {isActive && !groupMembersIsLoading ? (
+          <MembersContainer
+            members={members}
+            group={group}
+            videoStream={videoStream}
+            device={device}
+            recvTransport={recvTransport}
+          />
+        ) : (
+          <CircularLoading />
+        )}
       </div>
       <div className={styles.buttons}>
         <div>
@@ -473,94 +514,6 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
           bgColor="var(--dark-gray)"
         />
       </div>
-      {/* <div className={styles.header}>
-        <div>
-          <div className={`${styles.name} overflowDot`}>{group?.name}</div>
-          <div className={styles.info}>
-            <div>
-              <i>
-                <StudyPerson />
-              </i>
-              <p>
-                {studyingMembers.length}/{members.length}
-              </p>
-            </div>
-            <div>
-              <i>
-                <IconTimerOutline />
-              </i>
-              <p>{Math.round((totalTime * 100) / 3600) / 100}hr</p>
-            </div>
-            <div
-              onClick={() => {
-                setChatModal((prev) => ({
-                  ...prev,
-                  chatroom: group.group_id,
-                  name: group.name,
-                  open: true,
-                }));
-              }}
-            >
-              <i>
-                <IconMessage />
-              </i>
-            </div>
-            {isMine ? (
-              <div />
-            ) : (
-              <div
-                onClick={() => {
-                  leaveGroup(group);
-                }}
-              >
-                <i>
-                  <IconLeave />
-                </i>
-              </div>
-            )}
-          </div>
-          {isMine ? (
-            <div
-              className={styles.editIcon}
-              onClick={() => {
-                setIsEditGroupModal((prev) => {
-                  return prev ? false : group;
-                });
-              }}
-            >
-              <i>
-                <IconPen />
-              </i>
-            </div>
-          ) : (
-            <div />
-          )}
-        </div>
-        <div className={styles.buttons}>
-          <div>
-            <Link href={`/dashboard/study?group=${group.group_id}`}>
-              <button>Go to Group</button>
-            </Link>
-          </div>
-          <div className={styles.urlBtnWrapper}>
-            <GroupUrlBtn
-              text={`${config.server}/dashboard/groups?joinId=${group.group_id}`}
-              copyText="Share"
-              bgColor="var(--dark-gray)"
-            />
-          </div>
-        </div>
-      </div>
-      <div className={`${styles.membersWrapper} customScroll`}>
-        <MembersContainer
-          members={members}
-          group={group}
-          setStudyingMembers={setStudyingMembers}
-          videoStream={videoStream}
-          device={device}
-          recvTransport={recvTransport}
-        />
-      </div> */}
     </div>
   );
 }

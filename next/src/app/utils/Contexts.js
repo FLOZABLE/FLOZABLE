@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { filterGroups } from "./Tool";
 import { socket } from "./socket";
 import { timelineSort } from "./timelineSorting";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -187,20 +186,16 @@ function GroupsProvider({ children }) {
 
   const [groups, setGroups] = useState([]);
   const [myGroups, setMyGroups] = useState([]);
-  const [otherGroups, setOtherGroups] = useState([]);
 
   const { data: useGroupsData, refetch: refetchUseGroupsData } = useGetGroups();
 
   useEffect(() => {
-    if (!groups.length) return;
+    if (!groups.length || !userInfo) return;
 
-    if (!userInfo) {
-      return setOtherGroups(groups);
-    }
-
-    const { userGroups, otherGroups } = filterGroups(userInfo, groups);
-    setMyGroups(userGroups);
-    setOtherGroups(otherGroups);
+    const myGroups = groups.filter((group) =>
+      group.members.includes(userInfo.user_id)
+    );
+    setMyGroups(myGroups);
   }, [userInfo, groups]);
 
   useEffect(() => {
@@ -216,8 +211,6 @@ function GroupsProvider({ children }) {
         setGroups,
         myGroups,
         setMyGroups,
-        otherGroups,
-        setOtherGroups,
       }}
     >
       {children}

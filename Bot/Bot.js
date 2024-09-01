@@ -28,8 +28,12 @@ const {
   userFriendsCache,
 } = require("../services/redisLoader");
 const { mainIo } = require("../sockets/mainIo");
-const { MAX_STUDY_TIME, possibleBotsSubjects } = require("../Constant");
-const { fr, sendFriendRequest, replyFriendRequest } = require("../API/friends");
+const {
+  MAX_STUDY_TIME,
+  possibleBotsSubjects,
+  BOT_OPTIONS,
+} = require("../Constant");
+const { sendFriendRequest, replyFriendRequest } = require("../API/friends");
 
 /**create bots */
 async function createBots(length) {
@@ -229,13 +233,13 @@ async function startBot(userId) {
     if (!subject) return;
     console.log("bot start", userId);
     if (groups.length) {
-      mainIo.to(groups).emit(`studying:${userId}`, subject);
+      mainIo.to(groups).emit(`studying`, userId, subject);
 
       const groupId = randomIntInRange(0, groups.length - 1);
       cacheActiveGroup(userId, groupId, now);
     }
     if (friends.length) {
-      mainIo.to(friends).emit(`studying:${userId}`, subject);
+      mainIo.to(friends).emit(`studying`, userId, subject);
     }
     redisClient.rpush(
       `user:${userId}:subject:${subject.subject_id}`,
@@ -263,22 +267,18 @@ async function stopBot(userId) {
     ]);
 
     if (groups.length) {
-      mainIo
-        .to(groups)
-        .emit(`stopStudying:${userId}`, { status: "disconnect" });
+      mainIo.to(groups).emit(`stopStudying`, userId, { status: "disconnect" });
     }
     if (friends.length) {
-      mainIo
-        .to(friends)
-        .emit(`stopStudying:${userId}`, { status: "disconnect" });
+      mainIo.to(friends).emit(`stopStudying`, userId, { status: "disconnect" });
     }
 
-    if (!activeSubject || activeSubject.id === "0") {
+    if (!activeSubject || activeSubject.subject_id === "0") {
       return await redisClient.del(`user:${userId}:activeSubject`);
     }
 
     const activity = JSON.parse(
-      await redisClient.rpop(`user:${userId}:subject:${activeSubject.id}`)
+      await redisClient.rpop(`user:${userId}:subject:${activeSubject.subject_id}`)
     );
 
     if (!activity) return;
@@ -305,21 +305,13 @@ async function stopBot(userId) {
     }
 
     redisClient.rpush(
-      `user:${userId}:subject:${activeSubject.id}`,
+      `user:${userId}:subject:${activeSubject.subject_id}`,
       `[${start},${duration}]`
     );
   } catch (err) {
     console.log(err);
   }
 }
-
-/* const BOT_MIN_STUDY = 5; //10 min = min time bot will study
-const BOT_MAX_STUDY = 6; //2 hr = max time bot will study
-const MAX_START_DELAY = 60; //1 hr = starts atleast 1hr from being assigned */
-
-const BOT_MIN_STUDY = 60 * 10; //10 min = min time bot will study
-const BOT_MAX_STUDY = 60 * 60 * 2; //2 hr = max time bot will study
-const MAX_START_DELAY = 60 * 60 * 2; //1 hr = starts atleast 1hr from being assigned
 
 async function botSelector(numbers) {
   try {
@@ -345,8 +337,15 @@ async function botSelector(numbers) {
       activeBots.push(user_id);
 
       // Determines how long this bot will study
-      const duration = randomIntInRange(BOT_MIN_STUDY, BOT_MAX_STUDY);
-      const start = randomIntInRange(5, MAX_START_DELAY) + now.toSeconds();
+      const duration = randomIntInRange(
+        BOT_OPTIONS.MIN_STUDY,
+        BOT_OPTIONS.MAX_STUDY
+      );
+      const start =
+        randomIntInRange(
+          BOT_OPTIONS.MIN_START_DELAY,
+          BOT_OPTIONS.MAX_START_DELAY
+        ) + now.toSeconds();
       const startDate = DateTime.fromSeconds(start);
       const stopDate = DateTime.fromSeconds(startDate.toSeconds() + duration);
 

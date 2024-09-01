@@ -7,15 +7,7 @@ import { UserInfoContext } from "@/app/utils/Contexts";
 
 //window.localStorage.setItem('debug', 'mediasoup-client:WARN* mediasoup-client:ERROR*');
 
-function MembersContainer({
-  setStudyingMembers,
-  members,
-  recvTransport,
-  device,
-  videoStream,
-  group,
-  setRightClickedMember,
-}) {
+function MembersContainer({ members, recvTransport, device, videoStream }) {
   const { userInfo } = useContext(UserInfoContext);
 
   if (!userInfo) return <CircularLoading />;
@@ -24,24 +16,12 @@ function MembersContainer({
     <div className={styles.MembersContainer}>
       {members.map((member, i) => {
         if (userInfo.user_id === member.user_id) {
-          return (
-            <MyEl
-              key={i}
-              userInfo={member}
-              setStudyingMembers={setStudyingMembers}
-              videoStream={videoStream}
-            />
-          );
+          return <MyEl key={i} userInfo={member} videoStream={videoStream} />;
         } else {
           return (
-            <div
-              onContextMenu={(event) => {
-              }}
-              key={i}
-            >
+            <div key={i}>
               <MemberEl
                 memberInfo={member}
-                setStudyingMembers={setStudyingMembers}
                 device={device}
                 recvTransport={recvTransport}
               />

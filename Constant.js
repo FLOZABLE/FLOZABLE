@@ -61,7 +61,14 @@ const REDIS_EXP = {
   USER_FRIENDS: 60 * 10,
   USERINFO: 60 * 60,
   SUBJECTS: 60 * 10,
-  VERIFY_EMAIL: 60 * 60 * 24 * 7
+  VERIFY_EMAIL: 60 * 60 * 24 * 7,
+};
+
+const BOT_OPTIONS = {
+  MIN_STUDY: 60 * 10,
+  MAX_STUDY: 60 * 60 * 2,
+  MIN_START_DELAY: 0,
+  MAX_START_DELAY: 60 * 60 * 1,
 };
 
 const MAX_STUDY_TIME = 60 * 60 * 20; // 20hr = max study time. ignore more than 6 hr
@@ -153,4 +160,5 @@ module.exports = {
   PASSWORD_LINK_EXP,
   possibleBotsSubjects,
   REDIS_EXP,
+  BOT_OPTIONS
 };

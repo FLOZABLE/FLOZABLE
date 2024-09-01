@@ -200,7 +200,7 @@ async function activeSubjectCache(userId) {
     const activeSubject = await redisClient.hgetall(
       `user:${userId}:activeSubject`
     );
-    if (activeSubject.id && activeSubject.time) {
+    if (activeSubject.subject_id && activeSubject.time) {
       return activeSubject;
     }
     return null;
@@ -214,7 +214,7 @@ async function cacheActiveSubject(userId, subject, time) {
   try {
     await redisClient.hset(
       `user:${userId}:activeSubject`,
-      "id",
+      "subject_id",
       subject.subject_id,
       "time",
       time,
