@@ -4,6 +4,7 @@ const { timerUpdate } = require("./timerUpdate");
 const { updateRanking } = require("./rankingUpdate");
 const { extensionManager } = require("./extension");
 const cron = require("node-cron");
+const { updateVapidKeys } = require("./notification");
 
 async function servicesManager() {
   //schedulers
@@ -14,6 +15,7 @@ async function servicesManager() {
     timerUpdate();
     if (DateTime.now().get("hour") === 1) {
       cacheManager();
+      updateVapidKeys();
     }
   });
 }

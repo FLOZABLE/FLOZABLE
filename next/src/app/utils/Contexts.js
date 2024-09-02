@@ -372,6 +372,15 @@ function WorkersProvider({ children }) {
     subjectsTimerWorkerRef.current = new Worker(
       "/workers/subjectTimerWorker.js"
     );
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .then((registration) => {
+          console.log("scope is: ", registration.scope);
+        });
+    }
+
     return () => {
       membersTimerWorkerRef.current?.terminate();
       subjectsTimerWorkerRef.current?.terminate();

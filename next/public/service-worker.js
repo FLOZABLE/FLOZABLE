@@ -1,34 +1,44 @@
-console.log('service worker')
+console.log("service worker");
 
-self.addEventListener('push', event => {
-  console.log('event', event)
+/* self.addEventListener('install', () => {
+  console.log('service worker installed')
+});
+
+self.addEventListener('activate', () => {
+  console.log('service worker activated')
+});
+
+self.addEventListener("push", (event) => {
+  console.log("event", event);
   const notificationData = event.data.json();
-  console.log(notificationData)
+  console.log(notificationData);
 
   const notificationOptions = {
     title: notificationData.title,
     body: notificationData.body,
     icon: notificationData.icon,
     actions: [
-      { action: 'viewplan', title: 'View plan' },
-      { action: 'close', title: 'Close' }
+      { action: "viewplan", title: "View plan" },
+      { action: "close", title: "Close" },
     ],
-    data: notificationData.data
+    data: notificationData.data,
   };
 
   event.waitUntil(
-    self.registration.showNotification(notificationData.title, notificationOptions)
+    self.registration.showNotification(
+      notificationData.title,
+      notificationOptions
+    )
   );
 });
 
-self.addEventListener('notificationclick', function(event) {
+self.addEventListener("notificationclick", function (event) {
   const notificationData = event.notification.data;
   const action = event.action;
 
   if (action === "viewplan") {
-    event.waitUntil(
-      clients.openWindow(notificationData.link)
-    );
+    event.waitUntil(clients.openWindow(notificationData.link));
   }
   event.notification.close();
 });
+ */

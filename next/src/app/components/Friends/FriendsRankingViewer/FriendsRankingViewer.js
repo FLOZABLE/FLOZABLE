@@ -29,11 +29,11 @@ function FriendsRankingViewer() {
       <div className={styles.buttons}>
         <div>
           <DropDownButton
-            options={{
-              day: "Today",
-              week: "This Week",
-              month: "This Month",
-            }}
+            options={[
+              { name: "Today", value: "day" },
+              { name: "This Week", value: "week" },
+              { name: "This Month", value: "month" },
+            ]}
             setValue={setViewer}
             value={viewer}
           />

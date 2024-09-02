@@ -18,7 +18,12 @@ import GroupJoinBtn from "../../Buttons/GroupJoinBtn/GroupJoinBtn";
 import { secondConverter } from "@/app/utils/Tool";
 import { UserInfoContext } from "@/app/utils/Contexts";
 
-function GroupContainer({ groupInfo, isSearched = true, rankings }) {
+function GroupContainer({
+  groupInfo,
+  isSearched = true,
+  rankings,
+  style = {},
+}) {
   const { userInfo } = useContext(UserInfoContext);
 
   const [members, setMembers] = useState([]);
@@ -40,13 +45,16 @@ function GroupContainer({ groupInfo, isSearched = true, rankings }) {
       (partialTime, a) => partialTime + a.study_time,
       0
     );
-    const { value, type } = secondConverter((totalTime / members.length).toFixed(2));
+    const { value, type } = secondConverter(
+      (totalTime / members.length).toFixed(2)
+    );
     setTotalTime(`${value} ${type}`);
   }, [members, rankings]);
 
   return (
     <div
       className={`${styles.GroupContainer} ${!isSearched ? styles.hidden : ""}`}
+      style={style}
     >
       <div
         className={styles.layer}
