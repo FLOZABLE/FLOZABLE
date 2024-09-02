@@ -106,7 +106,7 @@ app.use((req, res, next) => {
   //console.log(res.locals.cspNonce)
   next();
 });
-app.use('/webhooks', express.raw({ type: 'application/json' }));
+app.use("/webhooks", express.raw({ type: "application/json" }));
 app.use(helmet.frameguard({ action: "SAMEORIGIN" }));
 
 const cspOptions = {
@@ -203,19 +203,11 @@ app.get("*", function (req, res) {
   res.redirect("/");
 });
 
-const {
-  botManager,
-  createBots,
-  createGroups,
-  randomFriend,
-} = require("./Bot/Bot");
+const { botManager } = require("./Bot/Bot");
 const { servicesManager } = require("./services/services");
 
 botManager(process.env.BOTS);
 servicesManager();
-//randomFriend(0, 3);
-//createBots(100);
-//createGroups(50);
 
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
