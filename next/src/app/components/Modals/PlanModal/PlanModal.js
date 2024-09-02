@@ -39,6 +39,8 @@ import {
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import ShareUserBox from "../../Users/ShareUserBox/ShareUserBox";
 import ModalLayer from "../ModalLayer/ModalLayer";
+import { requestNotification, unsubscribeFromPush } from "@/app/utils/Tool";
+import { useVapidKeys } from "@/Hooks/notificationsHooks";
 
 export default function PlanModal() {
   const { setResponse } = useContext(ResponseContext);
@@ -48,6 +50,7 @@ export default function PlanModal() {
     useContext(ModalsContext);
   const { tutorial, setTutorial } = useContext(TutorialsContext);
 
+  const { vapidKeysData } = useVapidKeys();
   const { usePlansPlanUsersData, usePlansPlanUsersIsLoading, clearPlanUsers } =
     usePlansPlanUsers(planModal?.plan_id);
 
@@ -246,12 +249,12 @@ export default function PlanModal() {
           hoverText={"Repeat"}
         >
           <DropDownButton
-            options={{
-              0: "Does not repeat",
-              1: "day",
-              2: "week",
-              3: "month",
-            }}
+            options={[
+              { value: 0, name: "Does not repeat" },
+              { value: 1, name: "Daily" },
+              { value: 2, name: "Weekly" },
+              { value: 3, name: "Monthly" },
+            ]}
             setValue={(repeat) => {
               handleInput("repeat", repeat);
             }}
@@ -264,11 +267,9 @@ export default function PlanModal() {
             hoverText={"Select Subject"}
           >
             <DropDownButton
-              options={subjects.reduce((acc, subject) => {
-                const { name, subject_id } = subject;
-                acc[subject_id] = name;
-                return acc;
-              }, {})}
+              options={subjects.map(({ subject_id, name }) => {
+                return { value: subject_id, name };
+              })}
               setValue={(subject_id) => {
                 handleInput("subject_id", subject_id);
               }}
@@ -293,19 +294,27 @@ export default function PlanModal() {
           hoverText={"Select Notification"}
         >
           <DropDownButton
-            options={{
-              "-1": "no notification",
-              5: "5 minutes before",
-              10: "10 minutes before",
-              30: "30 minutes before",
-              60: "1 hour before",
-            }}
+            options={[
+              { value: -1, name: "No notification" },
+              { value: 0, name: "0 minutes before" },
+              { value: 5, name: "5 minutes before" },
+              { value: 10, name: "10 minutes before" },
+              { value: 30, name: "30 minutes before" },
+            ]}
             setValue={(notification) => {
               handleInput("notification", notification);
             }}
             value={planModal.notification}
-            onClick={() => {
-              requestNotification();
+            onClick={async () => {
+              if (!vapidKeysData?.success) return;
+
+              const response = await requestNotification(
+                vapidKeysData.publicKey
+              );
+              if (!response.success) {
+                setResponse(response);
+                unsubscribeFromPush();
+              }
             }}
           />
         </ModalLayer>

@@ -1,6 +1,7 @@
 import ct from "countries-and-timezones";
 import config from "./config";
 import { DateTime } from "luxon";
+import { postNotificationsSubscribe } from "@/Api/notificationsApi";
 
 function getCountryCode(timezone) {
   try {
@@ -143,57 +144,91 @@ function generateRandomId(length) {
   return randomId;
 }
 
-function requestNotification() {
-  if (!("serviceWorker" in navigator)) {
-    // Service Worker isn't supported on this browser, disable or hide UI.
-    return;
+async function requestNotification(applicationServerKey) {
+  // Helper function to check if service workers and push are supported
+  function isSupported() {
+    return "serviceWorker" in navigator && "PushManager" in window;
   }
 
-  if (!("PushManager" in window)) {
-    // Push isn't supported on this browser, disable or hide UI.
-    return;
+  // Check if service workers and push notifications are supported
+  if (!isSupported()) {
+    console.log("Service Worker or Push API not supported");
+    return { success: false, reason: "Browser unsupported" };
   }
 
+  // Check if notification permission is already granted
   if (Notification.permission === "granted") {
-    return true;
+    console.log("Notification permission already granted");
+    return { success: true };
   }
 
-  Notification.requestPermission().then(async (permission) => {
+  try {
+    // Wait for the service worker to be ready
+    const registration = await navigator.serviceWorker.ready;
+    console.log("Service worker ready");
+
+    // Request notification permission from the user
+    const permission = await Notification.requestPermission();
+
     if (permission === "granted") {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
-      if (!subscription) {
-        subscribeUserToPush();
-      } else if (permission === "denied") {
-        // User has blocked notifications
-        // Handle this case accordingly
-      }
+      // Subscribe to push notifications
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey,
+      });
+      console.log("Push subscription:", subscription);
+      const p256dh = btoa(
+        String.fromCharCode(...new Uint8Array(subscription.getKey("p256dh")))
+      );
+      const auth = btoa(
+        String.fromCharCode(...new Uint8Array(subscription.getKey("auth")))
+      );
+      const subscriptionObject = {
+        endpoint: subscription.endpoint,
+        keys: {
+          p256dh,
+          auth,
+        },
+      };
+
+      console.log(subscriptionObject);
+
+      // Handle the subscription (e.g., send it to your server)
+      const response = await postNotificationsSubscribe(subscriptionObject);
+      return response;
+    } else {
+      console.log("Push permission denied");
+      return { success: false, reason: "Permission denied" };
     }
-  });
-  return false;
+  } catch (error) {
+    console.error("Error during push subscription:", error);
+    return { success: false, reason: error.message || "Unknown error" };
+  }
 }
 
-async function subscribeUserToPush() {
-  try {
-    navigator.serviceWorker.register("/service-worker.js");
-    const registration = await navigator.serviceWorker.ready;
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey:
-        "BLA00cufFwkKvcgi4-4TEGnZfoKqdQofWox2I4QJk5QCM-7MkTCSjGQE7AhbHAQcx6LbJbuFKe0LDhI4J-krUAY",
-    });
-    const response = await fetch(
-      `${config.server}/account/notification-subscribe`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subscription: subscription }),
-        credentials: "include",
-      }
-    ).then((res) => res.json());
-  } catch (error) {
-    console.error("Error subscribing to push notifications:", error);
+function unsubscribeFromPush() {
+  if (!("serviceWorker" in navigator)) {
+    console.log("Service Worker is not supported");
+    return;
   }
+
+  navigator.serviceWorker.ready
+    .then((registration) => {
+      return registration.pushManager.getSubscription();
+    })
+    .then((subscription) => {
+      if (subscription) {
+        return subscription.unsubscribe();
+      } else {
+        console.log("No subscription found");
+      }
+    })
+    .then(() => {
+      console.log("Successfully unsubscribed from push notifications");
+    })
+    .catch((error) => {
+      console.error("Error unsubscribing from push notifications:", error);
+    });
 }
 
 function getDates(date, mode, length) {
@@ -244,6 +279,7 @@ export {
   streakCalculator,
   generateRandomId,
   requestNotification,
+  unsubscribeFromPush,
   getDates,
   getDatesDisplay,
 };

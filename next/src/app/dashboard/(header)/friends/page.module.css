@@ -4,21 +4,6 @@
   padding: 0rem 3.125rem;
 }
 
-/* .Friends .boxContainer#FriendsActivityViewer {
-  width: 30rem;
-  height: fit-content;
-}
-
-.Friends .boxContainer#FriendsTrendChart {
-  flex: 1;
-}
-
-.Friends .boxContainer#FriendRequestsViewer {
-  width: 25rem;
-  height: fit-content;
-}
- */
-
 .Friends .layer {
   height: calc(100vh - 6rem);
   display: flex;
@@ -38,18 +23,6 @@
 }
 
 .Friends .boxContainer {
-  flex: 1;
-}
-
-/* .Friends .boxContainer#FriendsActivityViewer {
-  height: 50%;
-} */
-
-.Friends .boxContainer#FriendsTrendChart {
-  max-height: 50%;
-}
-
-.Friends .boxContainer#FriendRequestsViewer {
-  max-height: calc(50% - 6rem);
+  height: calc(50% - 6rem);
 }
 
