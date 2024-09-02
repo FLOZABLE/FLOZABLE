@@ -235,8 +235,8 @@ async function startBot(userId) {
     if (groups.length) {
       mainIo.to(groups).emit(`studying`, userId, subject);
 
-      const groupId = randomIntInRange(0, groups.length - 1);
-      cacheActiveGroup(userId, groupId, now);
+      const groupIdIndex = randomIntInRange(0, groups.length - 1);
+      cacheActiveGroup(userId, groups[groupIdIndex], now);
     }
     if (friends.length) {
       mainIo.to(friends).emit(`studying`, userId, subject);

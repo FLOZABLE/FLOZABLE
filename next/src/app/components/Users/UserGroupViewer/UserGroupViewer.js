@@ -4,7 +4,6 @@ import { socket } from "@/app/utils/socket";
 import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
 
 function UserGroupViewer({ userInfo }) {
-  const [groupName, setGroupName] = useState("");
   const [activeGroup, setActiveGroup] = useState(null);
 
   useEffect(() => {
@@ -14,12 +13,10 @@ function UserGroupViewer({ userInfo }) {
     console.log(activeGroup, "activegroup");
     if (activeGroup) {
       setActiveGroup(activeGroup);
-      setGroupName(activeGroup.name);
     }
 
     const onDeActiveGroup = () => {
       setActiveGroup(null);
-      setGroupName("");
     };
 
     const onActiveGroup = (userId, groupInfo) => {
@@ -27,7 +24,6 @@ function UserGroupViewer({ userInfo }) {
 
       console.log(groupInfo);
       setActiveGroup(groupInfo);
-      setGroupName(groupInfo.name);
     };
 
     socket.on(`deActiveGroup`, onDeActiveGroup);
@@ -42,14 +38,16 @@ function UserGroupViewer({ userInfo }) {
   return (
     <div
       className={`${styles.UserGroupViewer} ${
-        activeGroup ? styles.visible : ""
+        activeGroup ? styles.visible : null
       }`}
     >
       <p>
-        inside <strong>{groupName}</strong>
+        inside <strong>{activeGroup?.name}</strong>
       </p>
       <div className={styles.hoverEl}>
-        {activeGroup ? <GroupContainer groupInfo={activeGroup} /> : null}
+        {activeGroup ? (
+          <GroupContainer groupInfo={activeGroup} style={{ height: "13rem" }} />
+        ) : null}
       </div>
     </div>
   );

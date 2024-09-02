@@ -25,9 +25,7 @@ function Friends({}) {
           >
             <FriendsActivityViewer />
           </div>
-          <div
-            className={`BoxContainer ${styles.boxContainer}`}
-          >
+          <div className={`BoxContainer ${styles.boxContainer}`}>
             <SearchUsersBox />
           </div>
         </div>

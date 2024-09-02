@@ -217,7 +217,7 @@ Router.patch("/plan", async (req, res) => {
           }
         } catch (err) {
           console.log(err);
-          res.send(RESPONSE_CODES["error"]);
+          return res.send(RESPONSE_CODES["error"]);
         }
       }
 
@@ -297,14 +297,6 @@ Router.patch("/plan", async (req, res) => {
 
       const connection = pool.promise();
 
-      const [[userInfo]] = await connection.query(
-        `SELECT key_salt, iv, notification_endpoint, notification_keys FROM users WHERE user_id = ?`,
-        [userId]
-      );
-
-      if (!userInfo)
-        return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
-
       const newPlan = {
         title,
         start,
@@ -329,48 +321,11 @@ Router.patch("/plan", async (req, res) => {
         await connection.query(`INSERT INTO plans SET ?`, newPlan);
       }
 
-      schedule.cancelJob(userId + "-" + plan_id);
-
-      const startTime = start * 60;
-      //const body = description.replace(/(&nbsp;|<([^>]+)>)/ig, " ");
-      const startDateTime = DateTime.fromSeconds(startTime)
-        .setZone(timezone)
-        .toFormat("h:mm a");
-      const endDateTime = DateTime.fromSeconds(end * 60)
-        .setZone(timezone)
-        .toFormat("h:mm a");
-      const body = `${startDateTime} - ${endDateTime}`;
-      const payload = JSON.stringify({
-        title,
-        body,
-        icon: "https://flozable.com/favicon.ico",
-        actions: [
-          { action: "viewplan", title: "View plan" },
-          { action: "close", title: "Close" },
-        ],
-        data: {
-          link: `${process.env.SERVER}/dashboard/planner?plan=${plan_id}`,
-        },
-      });
+      const notificationId = userId + "-" + plan_id;
+      schedule.cancelJob(notificationId);
 
       if (notification !== -1) {
-        const subNotificationStart = startTime - notification * 60;
-        if (subNotificationStart > DateTime.now().toSeconds() && userInfo) {
-          planPushNotification(
-            userId + "-" + plan_id,
-            { ...userInfo, user_id: userId },
-            payload,
-            subNotificationStart
-          );
-        }
-      }
-      if (startTime > DateTime.now().toSeconds() && userInfo) {
-        planPushNotification(
-          userId + "-" + plan_id,
-          { ...userInfo, user_id: userId },
-          payload,
-          startTime
-        );
+        planPushNotification(connection, userId, notificationId);
       }
       //planNotification(insertInfo, userInfo[0], startTime)
       const isNew = plan_id === "0000000000";

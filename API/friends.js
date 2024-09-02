@@ -458,6 +458,8 @@ Router.get("/status", async (req, res) => {
             );
             if (activeGroup) {
               friend.activeGroup = { ...friend.activeGroup, ...activeGroup };
+            } else {
+              friend.activeGroup = null;
             }
           }
         });

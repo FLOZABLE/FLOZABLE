@@ -5,11 +5,11 @@ export default function ViewerSelectorBtn({ viewer, setViewer }) {
   return (
     <div className={styles.ViewerSelectorBtn}>
       <DropDownButton
-        options={{
-          day: "Day",
-          week: "Week",
-          month: "Month",
-        }}
+        options={[
+          { name: "Day", value: "day" },
+          { name: "Week", value: "week" },
+          { name: "Month", value: "month" },
+        ]}
         setValue={setViewer}
         value={viewer}
       />

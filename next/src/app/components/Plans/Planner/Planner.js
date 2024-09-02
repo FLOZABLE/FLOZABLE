@@ -99,7 +99,7 @@ export default function Planner() {
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0))
   );
-  const [viewer, setViewer] = useState("day");
+  const [viewer, setViewer] = useState("month");
   const [PlannerApi, setPlannerApi] = useState(null);
   const [lastClick, setLastClick] = useState(new Date().getTime());
 

@@ -727,6 +727,25 @@ async function spotifyAccessTokenCache(connection, userId) {
   }
 }
 
+async function vapidKeysCache() {
+  try {
+    const [publicKey, privateKey] = await redisClient.hmget(
+      `vapidKeys`,
+      "public",
+      "private"
+    );
+
+    if (publicKey && privateKey) {
+      return { publicKey, privateKey };
+    }
+
+    return false;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
 module.exports = {
   flushRedis,
   cacheManager,
@@ -756,4 +775,5 @@ module.exports = {
   cacheUserInfo,
   chatroomMemberCache,
   spotifyAccessTokenCache,
+  vapidKeysCache
 };

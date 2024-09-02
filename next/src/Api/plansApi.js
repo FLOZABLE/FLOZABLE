@@ -20,8 +20,6 @@ async function patchPlan(planModal) {
 
   planModal.start = Math.floor(planModal.start.getTime() / 1000);
   planModal.end = Math.floor(planModal.end.getTime() / 1000);
-  planModal.notification = parseInt(planModal.notification);
-  planModal.repeat = parseInt(planModal.repeat);
   planModal.completed = planModal.completed ? 1 : 0;
 
   const response = await fetch(`${config.server}/plans/plan`, {
