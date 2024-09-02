@@ -146,17 +146,51 @@ Router.get("/spotify", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const accessToken = await spotifyAccessTokenCache(connection, userId);
+      const googleAccessToken = await googleAccessTokenCache(
+        connection,
+        userId
+      );
 
-      if (!accessToken) {
-        return res.send(RESPONSE_CODES["no-user"]);
+      if (!googleAccessToken) {
+        return res.send(RESPONSE_CODES["not-authed"]);
       }
 
       const response = await fetch("https://api.spotify.com/v1/me/playlists", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          Accept: "application/json",
         },
       });
+
+      const data = await response.json();
+
+      if (data.error) {
+        return res.send({ success: false, reason: data.error.message });
+      }
+
+      res.send({ success: true, playlists: data.items });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES["error"]);
+    }
+  });
+});
+
+Router.get("/youtube", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const connection = pool.promise();
+      const accessToken = await googleAccessTokenCache(connection, userId);
+
+      if (!accessToken) {
+        return res.send(RESPONSE_CODES["no-user"]);
+      }
+
+      /* const response = await fetch(`https://youtube.googleapis.com/youtube/v3/playlists?${querystring.}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }); */
 
       const data = await response.json();
 

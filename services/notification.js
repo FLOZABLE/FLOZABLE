@@ -1,14 +1,8 @@
 const crypto = require("crypto");
 const { DateTime } = require("luxon");
-const {
-  subjectsTimelineCache,
-  websiteUsageCache,
-} = require("../services/redisLoader");
-const { timelineSort } = require("../Utils/timelineSorting");
-const { hex2rgb, secondConverter, deriveKey } = require("../Utils/tool");
+const {} = require("../services/redisLoader");
 const webpush = require("web-push");
-const QuickChart = require("quickchart-js");
-const { colorsList, RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_CODES } = require("../Constant");
 const schedule = require("node-schedule");
 const redisClient = require("../model/redis");
 

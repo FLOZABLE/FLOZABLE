@@ -113,10 +113,10 @@ function Themes({ setResponse }) {
             </div>
             <div className={styles.blobWrapper}>
               <DropDownButton
-                options={{
-                  0: "Sort By: Likes",
-                  1: "Sort By: Usage",
-                }}
+                options={[
+                  { value: 0, name: "Sort By: Likes" },
+                  { value: 1, name: "Sort By: Usage" },
+                ]}
                 setValue={setSortOpt}
                 value={sortOpt}
               />

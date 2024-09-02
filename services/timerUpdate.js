@@ -10,10 +10,15 @@ async function timerUpdate() {
   if (process.env.NODE_ENV === "development") {
     midnightTimezones.push("America/Los_Angeles");
   }
-  const now = DateTime.now().minus({ hours: 8 }).toSeconds();
+  const min = DateTime.now().minus({ hours: 8 }).toSeconds();
   try {
     const [subjects] = await connection.query(
-      `SELECT s.subject_id, s.user_id FROM subjects s JOIN users u ON u.timezone IN (?)`,
+      `
+      SELECT DISTINCT s.subject_id, s.user_id 
+      FROM subjects s 
+      LEFT JOIN users u ON u.timezone IN (?) 
+      WHERE s.subject_id IS NOT NULL
+      `,
       [midnightTimezones]
     );
     const insertInfo = [];
@@ -35,7 +40,8 @@ async function timerUpdate() {
          * it means user is still studying
          * requirements: valid last activity, start should be less than 8 hours from now, duration should be 0
          */
-        if (lastActivity && lastActivity[0] > now && lastActivity[1] === 0) {
+        if (lastActivity && lastActivity[0] > min && lastActivity[1] === 0) {
+          console.log("was studying", user_id);
           redisClient.ltrim(`user:${user_id}:subject:${subject_id}`, -1, -1);
           todayTimeline.pop();
         } else {
@@ -45,6 +51,10 @@ async function timerUpdate() {
         const subjectTimelines = todayTimeline.map((timeline) => {
           return [subject_id, timeline[0], timeline[1]];
         });
+
+        /* if (user_id === process.env.TESTER_ID) {
+          console.log(todayTimeline, subject_id);
+        } */
         insertInfo.push(...subjectTimelines);
       })
     );
@@ -60,6 +70,7 @@ async function timerUpdate() {
     console.log(err);
   }
 }
+//timerUpdate();
 
 module.exports = {
   timerUpdate,

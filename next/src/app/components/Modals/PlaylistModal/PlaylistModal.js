@@ -10,10 +10,16 @@ function PlaylistModal() {
   return (
     <div className={styles.PlaylistModal}>
       <DropDownButton
-        options={{
-          spotify: "Spotify",
-          youtube: "Youtube",
-        }}
+        options={[
+          {
+            value: "spotify",
+            name: "Spotify",
+          },
+          {
+            value: "youtube",
+            name: "Youtube",
+          },
+        ]}
         value={playlistType}
         setValue={setPlaylistType}
       />
