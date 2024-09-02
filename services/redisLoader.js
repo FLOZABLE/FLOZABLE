@@ -1,26 +1,11 @@
 const redisClient = require("../model/redis");
-const pool = require("../model/pool");
 const { UserRefreshClient } = require("google-auth-library");
 const { DateTime } = require("luxon");
 const { REDIS_EXP } = require("../Constant");
 const querystring = require("node:querystring");
 
-const USER_EXP = 60 * 60 * 3;
-const USER_EXP_PLUS = 60 * 60;
-const USER_EXP_DIS = 60 * 60;
-
-const SBJ_EXP = 60 * 60 * 1;
-
-const DM_MEMBERS_EXP = 60 * 3;
-const CHATROOM_MEMBERS_EXP = 60 * 3;
-
-async function flushRedis() {
-  await redisClient.flushDb();
-}
-
 function cacheManager() {
   const now = DateTime.now();
-
   const index =
     (now.startOf("day").diff(DateTime.fromISO("2024-04-21"), "days").toObject()
       .days %
@@ -52,28 +37,23 @@ async function subjectsCache(connection, userId) {
         return { ...JSON.parse(subjectsObj[subject_id]), subject_id };
       });
       return subjectArr;
-    } else {
-      try {
-        const [subjects] = await connection.query(
-          `SELECT subject_id, name, color, created_at FROM subjects WHERE user_id = ?`,
-          [userId]
-        );
-        subjects.map(async (subject) => {
-          const redisSubject = { ...subject };
-          delete redisSubject.subject_id;
-          redisClient.hset(
-            `user:${userId}:subjects`,
-            subject.subject_id,
-            JSON.stringify(redisSubject)
-          );
-        });
-        redisClient.expire(`user:${userId}:subjects`, REDIS_EXP.SUBJECTS);
-        return subjects;
-      } catch (err) {
-        console.log(err);
-      }
     }
-    redisClient.expire(`user:${userId}:subjects`, SBJ_EXP);
+
+    const [subjects] = await connection.query(
+      `SELECT subject_id, name, color, created_at FROM subjects WHERE user_id = ?`,
+      [userId]
+    );
+    subjects.map(async (subject) => {
+      const redisSubject = { ...subject };
+      delete redisSubject.subject_id;
+      redisClient.hset(
+        `user:${userId}:subjects`,
+        subject.subject_id,
+        JSON.stringify(redisSubject)
+      );
+    });
+    redisClient.expire(`user:${userId}:subjects`, REDIS_EXP.SUBJECTS);
+    return subjects;
   } catch (err) {
     console.log(err);
   }
@@ -663,8 +643,7 @@ async function chatroomMemberCache(connection, chatroomId, userId) {
     if (!member) return false;
 
     await redisClient.sadd(`chatroom:${chatroomId}`, userId);
-    redisClient.expire(`chatroom:${chatroomId}`, CHATROOM_MEMBERS_EXP);
-    console.log(member);
+    redisClient.expire(`chatroom:${chatroomId}`, REDIS_EXP.CHATROOM_MEMBERS);
     return true;
   } catch (err) {
     console.log(err);
@@ -747,7 +726,6 @@ async function vapidKeysCache() {
 }
 
 module.exports = {
-  flushRedis,
   cacheManager,
   subjectsCache,
   subjectCache,
@@ -775,5 +753,5 @@ module.exports = {
   cacheUserInfo,
   chatroomMemberCache,
   spotifyAccessTokenCache,
-  vapidKeysCache
+  vapidKeysCache,
 };

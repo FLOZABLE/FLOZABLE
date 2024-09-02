@@ -7,6 +7,10 @@ if (process.env.NODE_ENV === "development") {
   dotenv.config({ path: "../.env.test" });
 }
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
+const readline = require("readline").createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 const {
   createUsersTable,
@@ -36,8 +40,37 @@ const {
   createPurchasesTable,
 } = require("../Utils/query");
 const pool = require("../model/pool");
+const { createFriends, createBots, createGroups } = require("../Bot/generator");
 
-const prompt = require("prompt-sync")({ sigint: true });
+//const prompt = require("prompt-sync")({ sigint: true });
+
+readline.question(
+  `
+  type command
+  1) maria:VERSION_NAME
+  2) syncStripeProducts
+  3) createBots:NUMBERS
+  4) createGroups:NUMBERS
+  5) createFriends:MIN:MAX
+  `,
+  async (command) => {
+    if (command === "maria:0") {
+      await initializeMariadb();
+    } else if (command === "syncStripeProducts") {
+      await syncStripeProducts();
+    } else if (command.startsWith("createBots:")) {
+      const numberOfBots = parseInt(command.split(":")[1]);
+      await createBots(numberOfBots);
+    } else if (command.startsWith("createGroups:")) {
+      const numberOfGroups = parseInt(command.split(":")[1]);
+      await createGroups(numberOfGroups);
+    } else if (command.startsWith("createFriends:")) {
+      const [_, min, max] = command.split(":");
+      await createFriends(parseInt(min), parseInt(max));
+    }
+    readline.close();
+  }
+);
 
 async function initializeMariadb() {
   try {
@@ -73,23 +106,19 @@ async function initializeMariadb() {
   }
 }
 
-(async () => {
+/* (async () => {
   const command = prompt(`
     type command
     1)auto
     2)maria:VERSION_NAME
     3)syncStripeProducts
     `);
-  /* if (command.includes("maria")) {
-      const version = parseFloat(command.split(":")[1]);
-      console.log(version)
-    } */
   if (command === "maria:0") {
     await initializeMariadb();
   } else if (command === "syncStripeProducts") {
     await syncStripeProducts();
   }
-})();
+})(); */
 
 async function syncStripeProducts() {
   try {
@@ -123,7 +152,7 @@ async function syncStripeProducts() {
 
     const connection = pool.promise();
 
-    console.log(products)
+    console.log(products);
     if (products.length) {
       await connection.query(
         `

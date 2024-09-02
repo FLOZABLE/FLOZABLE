@@ -7,7 +7,10 @@ const {
   autoSignin,
   googleOauth2client,
 } = require("../Utils/tool");
-const { planPushNotification } = require("../services/notification");
+const {
+  planPushNotification,
+  NOTIFICATION_PAYLOADS,
+} = require("../services/notification");
 const { google } = require("googleapis");
 const { DateTime } = require("luxon");
 const {
@@ -156,7 +159,7 @@ Router.get("/", async (req, res) => {
 });
 
 Router.patch("/plan", async (req, res) => {
-  autoSignin(req, res, async (userId, timezone) => {
+  autoSignin(req, res, async (userId) => {
     try {
       const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds();
       const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds();
@@ -172,6 +175,7 @@ Router.patch("/plan", async (req, res) => {
         priority,
         completed,
         type,
+        timezone,
       } = req.body;
 
       if (type === "google") {
@@ -276,7 +280,7 @@ Router.patch("/plan", async (req, res) => {
         notification,
         "Notification",
         -1,
-        60
+        1800
       );
       if (!isValidNotification.isValid) {
         return res.send({
@@ -324,8 +328,19 @@ Router.patch("/plan", async (req, res) => {
       const notificationId = userId + "-" + plan_id;
       schedule.cancelJob(notificationId);
 
+      const notificationTime = start - notification; //DateTime.now().toSeconds() + 5
+
+      console.log(notificationTime);
+
       if (notification !== -1) {
-        planPushNotification(connection, userId, notificationId);
+        const payload = NOTIFICATION_PAYLOADS["plan"]({ ...newPlan, timezone });
+        planPushNotification(
+          connection,
+          userId,
+          notificationId,
+          notificationTime,
+          payload
+        );
       }
       //planNotification(insertInfo, userInfo[0], startTime)
       const isNew = plan_id === "0000000000";

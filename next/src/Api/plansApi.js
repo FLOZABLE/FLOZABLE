@@ -21,6 +21,7 @@ async function patchPlan(planModal) {
   planModal.start = Math.floor(planModal.start.getTime() / 1000);
   planModal.end = Math.floor(planModal.end.getTime() / 1000);
   planModal.completed = planModal.completed ? 1 : 0;
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const response = await fetch(`${config.server}/plans/plan`, {
     method: "PATCH",
@@ -28,7 +29,7 @@ async function patchPlan(planModal) {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify(planModal),
+    body: JSON.stringify({ ...planModal, timezone }),
   });
   const data = await response.json();
 

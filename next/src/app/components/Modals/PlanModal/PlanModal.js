@@ -41,6 +41,7 @@ import ShareUserBox from "../../Users/ShareUserBox/ShareUserBox";
 import ModalLayer from "../ModalLayer/ModalLayer";
 import { requestNotification, unsubscribeFromPush } from "@/app/utils/Tool";
 import { useVapidKeys } from "@/Hooks/notificationsHooks";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function PlanModal() {
   const { setResponse } = useContext(ResponseContext);
@@ -50,6 +51,9 @@ export default function PlanModal() {
     useContext(ModalsContext);
   const { tutorial, setTutorial } = useContext(TutorialsContext);
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const { vapidKeysData } = useVapidKeys();
   const { usePlansPlanUsersData, usePlansPlanUsersIsLoading, clearPlanUsers } =
     usePlansPlanUsers(planModal?.plan_id);
@@ -57,6 +61,26 @@ export default function PlanModal() {
   const [shared, setShared] = useState([]);
   const [share, setShare] = useState([]);
   const [planModalss, setPlanModalss] = useState(null);
+
+  const planId = searchParams.get("plan");
+
+  useEffect(() => {
+    if (!planId) return;
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete("plan");
+    const plan = plans.find((plan) => plan.plan_id === planId);
+    if (plan) {
+      setPlanModal({ ...plan, opened: true });
+    }
+    setTimeout(() => {
+      router.replace(
+        `${window.location.pathname}?${newSearchParams.toString()}`,
+        {
+          scroll: false,
+        }
+      );
+    }, 1000);
+  }, [planId, searchParams, plans]);
 
   useEffect(() => {
     if (!usePlansPlanUsersData?.success) return;
@@ -297,9 +321,9 @@ export default function PlanModal() {
             options={[
               { value: -1, name: "No notification" },
               { value: 0, name: "0 minutes before" },
-              { value: 5, name: "5 minutes before" },
-              { value: 10, name: "10 minutes before" },
-              { value: 30, name: "30 minutes before" },
+              { value: 5 * 60, name: "5 minutes before" },
+              { value: 10 * 60, name: "10 minutes before" },
+              { value: 30 * 60, name: "30 minutes before" },
             ]}
             setValue={(notification) => {
               handleInput("notification", notification);
