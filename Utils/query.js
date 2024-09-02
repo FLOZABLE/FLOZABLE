@@ -157,7 +157,7 @@ async function createPlansTable() {
     end INT,
     \`repeat\` TINYINT UNSIGNED,
     description VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-    notification TINYINT SIGNED,
+    notification SMALLINT SIGNED,
     priority TINYINT UNSIGNED,
     completed TINYINT DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users(user_id),

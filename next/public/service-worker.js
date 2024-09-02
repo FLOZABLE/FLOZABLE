@@ -1,6 +1,6 @@
 console.log("service worker");
 
-/* self.addEventListener('install', () => {
+self.addEventListener('install', () => {
   console.log('service worker installed')
 });
 
@@ -41,4 +41,3 @@ self.addEventListener("notificationclick", function (event) {
   }
   event.notification.close();
 });
- */

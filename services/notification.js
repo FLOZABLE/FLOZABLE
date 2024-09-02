@@ -58,46 +58,55 @@ async function updateVapidKeys() {
   }
 })();
 
-async function planPushNotification(connection, userId) {
+async function planPushNotification(
+  connection,
+  userId,
+  notificationId,
+  notificationTime,
+  payload
+) {
   try {
     const [[userInfo]] = await connection.query(
       `SELECT key_salt, iv, notification_endpoint, notification_keys FROM users WHERE user_id = ?`,
       [userId]
     );
 
-    if (!userInfo) return RESPONSE_CODES["error"];
+    if (!userInfo) {
+      return RESPONSE_CODES["no-user"];
+    }
 
-    console.log(userInfo);
+    const { notification_endpoint, notification_keys, iv, key_salt } = userInfo;
+
+    if (!notification_endpoint || !notification_keys) {
+      return { success: false, reason: "Permission denied" };
+    }
+
+    const encryptKey = await deriveKey(userId, key_salt);
+    const decipher = crypto.createDecipheriv(
+      "aes-256-cbc",
+      Buffer.from(encryptKey, "hex"),
+      Buffer.from(iv, "hex")
+    );
+    const decryptedEndPoint =
+      decipher.update(notification_endpoint, "base64", "utf8") +
+      decipher.final("utf8");
+
+    console.log(decryptedEndPoint);
+    const credentials = {
+      endpoint: decryptedEndPoint,
+      keys: JSON.parse(notification_keys),
+    };
+
+    schedule.scheduleJob(
+      notificationId,
+      DateTime.fromSeconds(notificationTime).toJSDate(),
+      () => {
+        sendPushNotification(credentials, payload);
+      }
+    );
   } catch (err) {
     console.log(err);
   }
-  /* const { user_id, key_salt, iv, notification_endpoint, notification_keys } = userInfo;
-
-  console.log(notification_endpoint)
-  try {
-    const encryptKey = await deriveKey(user_id, key_salt);
-    const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(encryptKey, 'hex'), Buffer.from(iv, 'hex'));
-    let decryptedEndPoint = decipher.update(notification_endpoint, 'base64', 'utf8');
-
-    decryptedEndPoint += decipher.final('utf8');
-
-    const credentials = {
-      endpoint: decryptedEndPoint,
-      keys: JSON.parse(notification_keys)
-    };
-
-    sendPushNotification(credentials, payload);
-    if (startTime === -1) {
-      sendPushNotification(credentials, payload);
-      return;
-    };
-
-    schedule.scheduleJob(notificationId, DateTime.fromSeconds(startTime).toJSDate(), () => {
-      sendPushNotification(credentials, payload);
-    });
-  } catch (err) {
-    console.log(err);
-  } */
 }
 
 function sendPushNotification(credentials, payload) {
@@ -112,156 +121,32 @@ function sendPushNotification(credentials, payload) {
     });
 }
 
-async function dailyReport(userId, timezone) {
-  const subjects = await subjectsTimelineCache(userId);
-  const websiteUsage = await websiteUsageCache(userId);
-  console.log(websiteUsage, subjects);
-
-  const sortedSubjects = timelineSort(subjects);
-  const subjectsDatasets = sortedSubjects.map((subject) => {
-    const [total] = subject.daily.total.slice(-1);
-    const { r, g, b } = hex2rgb(subject.color);
-    return { name: subject.name, color: `rgb(${r}, ${g}, ${b})`, total };
-  });
-
-  const dailyTrend = subjects.daily.groupedTotal.slice(-7);
-  const now = DateTime.now().setZone(timezone);
-  const dailyTrendLabels = [];
-  for (let i = 0; i < dailyTrend.length; i++) {
-    dailyTrendLabels.push(now.minus({ day: i }).toFormat("M/d"));
-  }
-
-  dailyTrendLabels.reverse();
-
-  const dailyTrendConfig = {
-    type: "line",
-    data: {
-      labels: dailyTrendLabels,
-      datasets: [
-        {
-          label: "Time",
-          data: dailyTrend,
-        },
+const NOTIFICATION_PAYLOADS = {
+  plan: ({ title, start, end, plan_id, timezone }) => {
+    const startDateTime = DateTime.fromSeconds(start)
+      .setZone(timezone)
+      .toFormat("h:mm a");
+    const endDateTime = DateTime.fromSeconds(end)
+      .setZone(timezone)
+      .toFormat("h:mm a");
+    const body = `${startDateTime} - ${endDateTime}`;
+    return JSON.stringify({
+      title,
+      body,
+      icon: "https://flozable.com/favicon.ico",
+      actions: [
+        { action: "viewplan", title: "View plan" },
+        { action: "close", title: "Close" },
       ],
-    },
-    options: {
-      scales: {
-        yAxes: [
-          {
-            ticks: {
-              callback: (sec) => {
-                let value = sec ? sec : 0;
-                let type = "s";
-                if (sec >= 60 * 60) {
-                  value = (sec / (60 * 60)).toFixed(2);
-                  type = "h";
-                } else if (sec > 60) {
-                  value = Math.floor(sec / 60);
-                  type = "m";
-                }
-
-                return value + type;
-              },
-            },
-          },
-        ],
+      data: {
+        link: `${process.env.NEXT_SERVER}/dashboard/planner?plan=${plan_id}`,
       },
-    },
-  };
+    });
+  },
+};
 
-  const subjectsConfig = {
-    type: "pie",
-    data: {
-      datasets: [
-        {
-          data: subjectsDatasets.map((subject) => {
-            return subject.total;
-          }),
-          backgroundColor: subjectsDatasets.map((subject) => {
-            return subject.color;
-          }),
-        },
-      ],
-      labels: subjectsDatasets.map((subject) => {
-        return subject.name;
-      }),
-    },
-    options: {
-      legend: {
-        display: true,
-      },
-      scales: {
-        xAxes: [
-          {
-            display: false,
-          },
-        ],
-        yAxes: [],
-      },
-      plugins: {
-        datalabels: {
-          display: false,
-        },
-      },
-    },
-  };
-
-  const websitesConfig = {
-    type: "pie",
-    data: {
-      datasets: [
-        {
-          data: websiteUsage.map((website) => {
-            return website.t;
-          }),
-          backgroundColor: colorsList,
-        },
-      ],
-      labels: websiteUsage.map((website) => {
-        return website.d;
-      }),
-    },
-    options: {
-      legend: {
-        display: true,
-      },
-      scales: {
-        xAxes: [
-          {
-            display: false,
-          },
-        ],
-        yAxes: [],
-      },
-      plugins: {
-        datalabels: {
-          display: false,
-        },
-      },
-    },
-  };
-  /* const dailyTrendChart = new QuickChart();
-  dailyTrendChart.setConfig(dailyTrendChartConfig);
-
-  console.log(dailyTrendChart.getUrl) */
-  /* const subjectsURL = "https://quickchart.io/chart?c=" + JSON.stringify(subjectsPie);
-  const dailyTrendURL = "https://quickchart.io/chart?c=" + JSON.stringify(dailyTrendChart); */
-
-  const subjectPieChart = new QuickChart();
-  subjectPieChart.setConfig(subjectsConfig);
-
-  const dailyTrendChart = new QuickChart();
-  dailyTrendChart.setConfig(dailyTrendConfig);
-
-  const websiteChart = new QuickChart();
-  websiteChart.setConfig(websitesConfig);
-  websiteChart.setBackgroundColor("transparent");
-
-  /* console.log(subjectPieChart.getUrl())
-  console.log(dailyTrendChart.getUrl()) */
-  //console.log(websiteChart.getUrl())
-}
-
-function weeklyReport() {}
-
-module.exports = { dailyReport, planPushNotification, updateVapidKeys };
+module.exports = {
+  NOTIFICATION_PAYLOADS,
+  planPushNotification,
+  updateVapidKeys,
+};
