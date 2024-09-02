@@ -2,22 +2,17 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const crypto = require("crypto");
 const sharp = require("sharp");
 const multer = require("multer");
-
 const {
   hashing,
   autoSignin,
-  generateRandomId,
-  deriveKey,
   checkGoogleAccessTokenScopes,
 } = require("../Utils/tool");
 const {
   validateEmail,
   validateStrictString,
   validatePassword,
-  validateURL,
 } = require("../Utils/validate");
 const {
   notificationCache,
@@ -29,7 +24,6 @@ const {
   userGroupsCache,
   usersCache,
 } = require("../services/redisLoader");
-const {} = require("../email");
 const { RESPONSE_CODES } = require("../Constant");
 const upload = multer();
 
