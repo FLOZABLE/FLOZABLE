@@ -83,7 +83,13 @@ const StyleWrapper = styled.div`
   }
 `;
 
-export default function DateSelector({ start, setStart, end, setEnd }) {
+export default function DateSelector({
+  start,
+  setStart,
+  end,
+  setEnd,
+  setDate,
+}) {
   const handleDateChange = (newDate) => {
     const updatedStart = DateTime.fromObject({
       year: newDate.year,
@@ -100,8 +106,7 @@ export default function DateSelector({ start, setStart, end, setEnd }) {
       minute: end.getMinutes(),
     });
 
-    setStart(updatedStart.toJSDate());
-    setEnd(updatedEnd.toJSDate());
+    setDate({ start: updatedStart.toJSDate(), end: updatedEnd.toJSDate() });
   };
 
   const handleStartTimeChange = (newTime) => {
