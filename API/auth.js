@@ -4,7 +4,6 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const crypto = require("crypto");
 const { DateTime } = require("luxon");
-const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const querystring = require("node:querystring");
 
 const {
@@ -273,7 +272,7 @@ Router.get("/signin/spotify", async (req, res) => {
       const scope = "playlist-read-private";
 
       //prevents csrf
-      await redisClient.setex(`user:${userId}:spotifyState`, 10, state);
+      await redisClient.setex(`user:${userId}:spotifyState`, 10 * 60, state);
 
       res.redirect(
         "https://accounts.spotify.com/authorize?" +

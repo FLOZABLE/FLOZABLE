@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./SpotifyPlaylist.module.css";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
-import { ResponseContext } from "@/app/utils/Contexts";
 import SpotifyAuthBtn from "../SpotifyAuthBtn/SpotifyAuthBtn";
 import SpotifyPlayer from "../SpotifyPlayer/SpotifyPlayer";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
-import { usePlaylistsSpotify } from "@/Hooks/playlistHook";
+import { usePlaylistsSpotify } from "@/Hooks/playlistHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
 function SpotifyPlaylist() {
