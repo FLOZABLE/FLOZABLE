@@ -6,9 +6,10 @@ import SpotifyPlayer from "../SpotifyPlayer/SpotifyPlayer";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
 import { usePlaylistsSpotify } from "@/Hooks/playlistHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function SpotifyPlaylist() {
-  const { usePlaylistsSpotifyData, usePlaylistsSpotifyIsLoading, error } =
+  const { usePlaylistsSpotifyData, usePlaylistsSpotifyIsLoading } =
     usePlaylistsSpotify();
 
   const [playlist, setPlaylist] = useState(null);
@@ -71,10 +72,11 @@ function SpotifyPlaylist() {
           setLink(e.target.value);
         }}
         handleEnter={submitURL}
-        icon={faLink}
         placeHolder={"or Paste a playlist Link!"}
         type={"text"}
-      />
+      >
+        <FontAwesomeIcon icon={faLink} />
+      </CustomInput>
     </div>
   );
 }

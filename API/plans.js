@@ -2,11 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const {
-  generateRandomId,
-  autoSignin,
-  googleOauth2client,
-} = require("../Utils/tool");
+const { generateRandomId, autoSignin } = require("../Utils/tool");
 const {
   planPushNotification,
   NOTIFICATION_PAYLOADS,
@@ -29,6 +25,7 @@ const {
 const schedule = require("node-schedule");
 const { RESPONSE_CODES } = require("../Constant");
 const { mainIo } = require("../sockets/mainIo");
+const { googleOauth2client } = require("./auth");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {

@@ -90,17 +90,6 @@ async function autoSignin(
   return fail();
 }
 
-function isValidJSON(data, schema) {
-  const validate = ajv.compile(schema);
-  const isValid = validate(data);
-
-  if (!isValid) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
 function isValidTimeZone(timeZone) {
   try {
     Intl.DateTimeFormat(undefined, { timeZone: timeZone });
@@ -121,31 +110,6 @@ function randomIntInRange(min, max) {
   return randomVal;
 }
 
-const googleOauth2client = (credential) => {
-  const auth = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    process.env.GOOGLE_REDIRECT_URI
-  );
-  if (credential) {
-    auth.setCredentials(credential);
-  }
-  return auth;
-};
-
-const checkGoogleAccessTokenScopes = async (accessToken) => {
-  try {
-    const response = await fetch(
-      `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${accessToken}`
-    );
-
-    const tokenInfo = await response.json();
-    return tokenInfo;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-};
 
 function arraysHaveSameContents(arr1, arr2) {
   const sortedArr1 = arr1.slice().sort();
@@ -180,32 +144,6 @@ const secondConverter = (sec, options = ["s", "m", "h"]) => {
   return { value, type: options[type] };
 };
 
-const timezones24 = [
-  "Pacific/Apia",
-  "Pacific/Honolulu",
-  "America/Adak",
-  "America/Anchorage",
-  "America/Phoenix",
-  "America/Denver",
-  "America/Chicago",
-  "America/New_York",
-  "America/Caracas",
-  "America/Miquelon",
-  "Atlantic/Cape_Verde",
-  "Africa/Casablanca",
-  "Africa/Lagos",
-  "Europe/Paris",
-  "Europe/Bucharest",
-  "Europe/Simferopol",
-  "Asia/Aqtau",
-  "Asia/Aqtobe",
-  "Asia/Alma-Ata",
-  "Asia/Krasnoyarsk",
-  "Asia/Irkutsk",
-  "Asia/Yakutsk",
-  "Australia/Sydney",
-  "Pacific/Noumea",
-];
 
 function getMidnightTimezones() {
   const now = DateTime.utc();
@@ -270,12 +208,9 @@ module.exports = {
   generateRandomId,
   hashing,
   autoSignin,
-  isValidJSON,
   isValidTimeZone,
   getUserId,
   randomIntInRange,
-  googleOauth2client,
-  checkGoogleAccessTokenScopes,
   arraysHaveSameContents,
   hex2rgb,
   secondConverter,

@@ -1,16 +1,15 @@
 const express = require("express");
 const Router = express.Router();
-const pool = require("../model/pool");
-const redisClient = require("../model/redis");
 const crypto = require("crypto");
 const { DateTime } = require("luxon");
+const fetch = require("node-fetch");
 const querystring = require("node:querystring");
-
+const pool = require("../model/pool");
+const redisClient = require("../model/redis");
 const {
   hashing,
   autoSignin,
   generateRandomId,
-  googleOauth2client,
   isValidTimeZone,
 } = require("../Utils/tool");
 const {
@@ -30,7 +29,7 @@ const {
   RESPONSE_CODES,
   REDIS_EXP,
 } = require("../Constant");
-const fetch = require("node-fetch");
+const { google } = require("googleapis");
 
 async function createAccount(name, email, timezone, userInfo) {
   try {
@@ -99,6 +98,23 @@ async function createAccount(name, email, timezone, userInfo) {
     return { success: true, user_id };
   } catch (err) {
     console.log(err);
+  }
+}
+
+function googleOauth2client(credential) {
+  try {
+    const auth = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      process.env.GOOGLE_REDIRECT_URI
+    );
+    if (credential) {
+      auth.setCredentials(credential);
+    }
+    return auth;
+  } catch (err) {
+    console.log(err);
+    return false;
   }
 }
 
@@ -174,17 +190,13 @@ Router.get("/signin/google", async (req, res) => {
       },
       async () => {
         //if not logged in = create acc
-        const response = await fetch(
-          "https://www.googleapis.com/oauth2/v2/userinfo",
-          {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
-              Accept: "application/json",
-            },
-          }
-        );
-
-        const data = await response.json();
+        auth.setCredentials(response.tokens);
+        const oauth2 = google.oauth2({
+          auth,
+          version: "v2",
+        });
+        const userInfoResponse = await oauth2.userinfo.get();
+        const data = userInfoResponse.data;
         data.name = data.name.replace(/ /g, "");
 
         const { name, email } = data;
@@ -590,7 +602,7 @@ Router.get("/verify", async (req, res) => {
     return res.redirect(
       process.env.NEXT_SERVER +
         "/dashboard?" +
-        querystring.stringify({success: true, msg: "Email Verified"})
+        querystring.stringify({ success: true, msg: "Email Verified" })
     );
   } catch (err) {
     console.log(err);
@@ -654,4 +666,4 @@ Router.get("/logout", function (req, res) {
   });
 });
 
-module.exports = Router;
+module.exports = { Router, googleOauth2client };

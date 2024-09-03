@@ -61,7 +61,7 @@ function usePlaylistsYoutube() {
   const queryResult = useQuery({
     queryKey: [`usePlaylistsYoutube`],
     queryFn: getPlaylistsYoutube,
-    staleTime: 1000 * 60 * 0,
+    staleTime: 1000 * 60 * 10,
     enabled: !!useAccountGoogleData?.success,
   });
 
@@ -79,7 +79,7 @@ function usePlaylistsYoutubeItems(playlistId) {
   const queryResult = useQuery({
     queryKey: [`usePlaylistsYoutubeItems`, playlistId],
     queryFn: () => getPlaylistsYoutubeItems(playlistId),
-    staleTime: 1000 * 60 * 0,
+    staleTime: 1000 * 60 * 10,
     enabled: !!playlistId,
   });
 

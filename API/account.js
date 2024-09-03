@@ -4,11 +4,7 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const sharp = require("sharp");
 const multer = require("multer");
-const {
-  hashing,
-  autoSignin,
-  checkGoogleAccessTokenScopes,
-} = require("../Utils/tool");
+const { hashing, autoSignin } = require("../Utils/tool");
 const {
   validateEmail,
   validateStrictString,
@@ -25,6 +21,8 @@ const {
   usersCache,
 } = require("../services/redisLoader");
 const { RESPONSE_CODES } = require("../Constant");
+const { checkGoogleAccessTokenScopes, googleOauth2client } = require("./auth");
+const { google } = require("googleapis");
 const upload = multer();
 
 Router.get("/", async (req, res) => {
@@ -84,22 +82,22 @@ Router.get("/google", async (req, res) => {
         return res.send(RESPONSE_CODES["not-authed"]);
       }
 
+      const auth = googleOauth2client({ access_token: googleAccessToken });
+      const oauth2 = google.oauth2({
+        auth,
+        version: "v2",
+      });
       const [accessTokenInfo, response] = await Promise.all([
-        checkGoogleAccessTokenScopes(googleAccessToken),
-        fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-          headers: {
-            Authorization: `Bearer ${googleAccessToken}`,
-            Accept: "application/json",
-          },
-        }),
+        auth.getTokenInfo(googleAccessToken),
+        oauth2.userinfo.get(),
       ]);
 
       if (!accessTokenInfo) {
         return res.send(RESPONSE_CODES["not-authed"]);
       }
-      const data = await response.json();
 
-      data.scopes = accessTokenInfo.scope.split(" ");
+      const data = response.data;
+      data.scopes = accessTokenInfo.scopes;
 
       return res.send({ success: true, googleInfo: data });
     } catch (err) {
