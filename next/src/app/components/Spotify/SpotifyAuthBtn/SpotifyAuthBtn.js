@@ -3,7 +3,7 @@ import styles from "./SpotifyAuthBtn.module.css";
 import { SpotifyLogo } from "@/app/utils/Svg";
 import config from "@/app/utils/config";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
-import { useSpotifyInfo } from "@/Hooks/playlistHook";
+import { useSpotifyInfo } from "@/Hooks/playlistHooks";
 
 function SpotifyAuthBtn() {
   const { useSpotifyInfoDataIsLoading, spotifyInfo } = useSpotifyInfo();
