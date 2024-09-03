@@ -65,7 +65,7 @@ const mainRouter = require("./Router/main");
 
 //API
 const accountAPI = require("./API/account");
-const authAPI = require("./API/auth");
+const authAPI = require("./API/auth").Router;
 const chatAPI = require("./API/chat");
 const groupsAPI = require("./API/groups");
 const plansAPI = require("./API/plans");
