@@ -1,20 +1,14 @@
 const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
-const axios = require("axios");
-const {
-  hashing,
-  autoSignin,
-  generateRandomId,
-  googleOauth2client,
-  isValidTimeZone,
-} = require("../Utils/tool");
+const { autoSignin } = require("../Utils/tool");
 const { UserRefreshClient } = require("google-auth-library");
 const redisClient = require("../model/redis");
 const {
   googleAccessTokenCache,
   spotifyAccessTokenCache,
 } = require("../services/redisLoader");
+const querystring = require("querystring");
 const { RESPONSE_CODES } = require("../Constant");
 
 const YOUTUBE_API_KEY = process.env.GOOGLE_API_KEY;
@@ -146,12 +140,9 @@ Router.get("/spotify", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const googleAccessToken = await googleAccessTokenCache(
-        connection,
-        userId
-      );
+      const accessToken = await spotifyAccessTokenCache(connection, userId);
 
-      if (!googleAccessToken) {
+      if (!accessToken) {
         return res.send(RESPONSE_CODES["not-authed"]);
       }
 
@@ -180,25 +171,96 @@ Router.get("/youtube", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const accessToken = await googleAccessTokenCache(connection, userId);
+      const googleAccessToken = await googleAccessTokenCache(
+        connection,
+        userId
+      );
 
-      if (!accessToken) {
+      if (!googleAccessToken) {
         return res.send(RESPONSE_CODES["no-user"]);
       }
 
-      /* const response = await fetch(`https://youtube.googleapis.com/youtube/v3/playlists?${querystring.}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }); */
+      const response = await fetch(
+        `
+        https://youtube.googleapis.com/youtube/v3/playlists?${querystring.stringify(
+          {
+            part: "snippet,contentDetails",
+            mine: true,
+            maxResults: 25,
+            key: YOUTUBE_API_KEY,
+          }
+        )}
+        `,
+        {
+          headers: {
+            Authorization: `Bearer ${googleAccessToken}`,
+          },
+        }
+      );
 
       const data = await response.json();
+
+      console.log(data.items);
 
       if (data.error) {
         return res.send({ success: false, reason: data.error.message });
       }
 
       res.send({ success: true, playlists: data.items });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES["error"]);
+    }
+  });
+});
+
+Router.get("/youtube/items", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { playlistId } = req.query;
+
+      console.log(playlistId);
+      if (!playlistId) {
+        return res.send({ success: false, reason: "playlistId missing" });
+      }
+
+      const connection = pool.promise();
+      const googleAccessToken = await googleAccessTokenCache(
+        connection,
+        userId
+      );
+
+      if (!googleAccessToken) {
+        return res.send(RESPONSE_CODES["no-user"]);
+      }
+
+      const response = await fetch(
+        `
+        https://youtube.googleapis.com/youtube/v3/playlistItems?${querystring.stringify(
+          {
+            part: "snippet",
+            maxResults: 25,
+            key: YOUTUBE_API_KEY,
+            playlistId,
+          }
+        )}
+        `,
+        {
+          headers: {
+            Authorization: `Bearer ${googleAccessToken}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      console.log(data.items);
+
+      if (data.error) {
+        return res.send({ success: false, reason: data.error.message });
+      }
+
+      res.send({ success: true, items: data.items });
     } catch (err) {
       console.log(err);
       res.send(RESPONSE_CODES["error"]);

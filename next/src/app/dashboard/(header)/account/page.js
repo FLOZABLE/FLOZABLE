@@ -21,7 +21,7 @@ import { GoogleCalendar, SpotifyLogo, YouTubeIcon } from "@/app/utils/Svg";
 import { ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
 import { useAccountGoogle } from "@/Hooks/accountHooks";
 import SubjectsManager from "@/app/components/Subjects/SubjectsManager/SubjectsManager";
-import { useSpotifyInfo } from "@/Hooks/playlistHook";
+import { useSpotifyInfo } from "@/Hooks/playlistHooks";
 import { patchAccountInfo, patchAccountPassword } from "@/Api/accountApi";
 import { postAuthVerify } from "@/Api/authApi";
 import Image from "next/image";
