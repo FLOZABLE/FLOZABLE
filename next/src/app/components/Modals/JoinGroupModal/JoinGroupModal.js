@@ -11,7 +11,6 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
-import config from "@/app/utils/config";
 import { useRouter } from "next/navigation";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import { postGroupJoin } from "@/Api/groupsApi";

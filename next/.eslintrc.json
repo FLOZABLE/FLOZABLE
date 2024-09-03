@@ -6,5 +6,7 @@
 } */
 
 {
-  "extends": ["next/babel","next/core-web-vitals"]
+  "extends": ["next/babel", "next/core-web-vitals"],
+  "parser": "babel-eslint"
 }
+

@@ -136,13 +136,13 @@ export default function PlanModal() {
   }, [planModal.plan_id, planModalss, subjects]);
 
   const handleInput = useCallback(
-    (key, value) => {
+    (newVal) => {
       const planIndex = plans.findIndex(
         (plan) => plan.plan_id === planModal.plan_id
       );
       if (planIndex === -1) return;
       const newPlans = [...plans];
-      newPlans[planIndex] = { ...newPlans[planIndex], [key]: value };
+      newPlans[planIndex] = { ...newPlans[planIndex], ...newVal };
       const subject = subjects.find(
         (subject) => subject.subject_id === newPlans[planIndex].subject_id
       );
@@ -158,7 +158,7 @@ export default function PlanModal() {
         newPlans[planIndex].color = "#000";
       }
       setPlans(newPlans);
-      setPlanModal((prev) => ({ ...prev, [key]: value }));
+      setPlanModal((prev) => ({ ...prev, ...newVal }));
     },
     [plans, planModal, planModalss, subjects]
   );
@@ -237,7 +237,7 @@ export default function PlanModal() {
             input={planModal.title}
             handleInput={(e) => {
               const title = e.target.value;
-              handleInput("title", title);
+              handleInput({ title });
             }}
             placeHolder={"Enter title"}
           ></CustomInput>
@@ -249,11 +249,14 @@ export default function PlanModal() {
           <DateSelector
             start={planModal.start}
             setStart={(start) => {
-              handleInput("start", start);
+              handleInput({ start });
             }}
             end={planModal.end}
             setEnd={(end) => {
-              handleInput("end", end);
+              handleInput({ end });
+            }}
+            setDate={({ start, end }) => {
+              handleInput({ start, end });
             }}
           />
         </ModalLayer>
@@ -263,7 +266,7 @@ export default function PlanModal() {
         >
           <TextEditor
             setValue={(description) => {
-              handleInput("description", description);
+              handleInput({ description });
             }}
             value={planModal.description}
           />
@@ -280,7 +283,7 @@ export default function PlanModal() {
               { value: 3, name: "Monthly" },
             ]}
             setValue={(repeat) => {
-              handleInput("repeat", repeat);
+              handleInput({ repeat });
             }}
             value={planModal.repeat}
           />
@@ -295,7 +298,7 @@ export default function PlanModal() {
                 return { value: subject_id, name };
               })}
               setValue={(subject_id) => {
-                handleInput("subject_id", subject_id);
+                handleInput({ subject_id });
               }}
               value={planModal.subject_id}
             />
@@ -326,7 +329,7 @@ export default function PlanModal() {
               { value: 30 * 60, name: "30 minutes before" },
             ]}
             setValue={(notification) => {
-              handleInput("notification", notification);
+              handleInput({ notification });
             }}
             value={planModal.notification}
             onClick={async () => {
@@ -352,7 +355,7 @@ export default function PlanModal() {
             step={1}
             sliderValue={planModal.priority}
             setSliderValue={(priority) => {
-              handleInput("priority", priority);
+              handleInput({ priority });
             }}
           />
         </ModalLayer>
