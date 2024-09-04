@@ -3,6 +3,7 @@ const { UserRefreshClient } = require("google-auth-library");
 const { DateTime } = require("luxon");
 const { REDIS_EXP } = require("../Constant");
 const querystring = require("node:querystring");
+const { generateRandomId } = require("../Utils/tool");
 
 function cacheManager() {
   const now = DateTime.now();
@@ -725,6 +726,20 @@ async function vapidKeysCache() {
   }
 }
 
+async function cacheExtensionToken(userId) {
+  try {
+    const token = generateRandomId(10);
+    await redisClient.setex(
+      `extension:authToken:${userId}`,
+      REDIS_EXP.EXTENSION_AUTH,
+      token
+    );
+    return token;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   cacheManager,
   subjectsCache,
@@ -754,4 +769,5 @@ module.exports = {
   chatroomMemberCache,
   spotifyAccessTokenCache,
   vapidKeysCache,
+  cacheExtensionToken,
 };

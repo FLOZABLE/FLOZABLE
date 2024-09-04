@@ -8,7 +8,6 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const {
   hashing,
-  autoSignin,
   generateRandomId,
   isValidTimeZone,
 } = require("../Utils/tool");
@@ -30,6 +29,55 @@ const {
   REDIS_EXP,
 } = require("../Constant");
 const { google } = require("googleapis");
+
+async function autoSignin(
+  req,
+  res,
+  success = () => {},
+  fail = () => {
+    res.send(RESPONSE_CODES["no-user"]);
+  },
+  cache = false
+) {
+  //console.log(req.session.user_id, req.signedCookies.userId, cache);
+  if (
+    req.session.user_id ||
+    (process.env.NODE_ENV === "development" &&
+      (req.session.user_id = process.env.TESTER_ID))
+  ) {
+    return success(req.session.user_id, req.session.timezone);
+  }
+
+  if (req.signedCookies.userId) {
+    if (!cache) return success(req.signedCookies.userId);
+    const connection = pool.promise();
+    const userInfo = userCache(connection, req.signedCookies.userId);
+    if (userInfo) {
+      req.session.user_id = req.signedCookies.userId;
+      return success(req.signedCookies.userId, userInfo.timezone);
+    } else {
+      return fail();
+    }
+  }
+
+  if (req.headers.authorization) {
+    const credentials = req.headers.authorization.split(" ")[1];
+    if (!credentials) return fail();
+    const [deviceId, authKey] = credentials.split("-");
+    if (!deviceId || !authKey) return fail();
+
+    const connection = await pool.promise();
+    const [[device]] = await connection.query(
+      `SELECT user_id FROM devices WHERE device_id = ? AND auth_key = ?`,
+      [deviceId, authKey]
+    );
+    if (device) {
+      req.session.user_id = device.user_id;
+      return success(device.user_id);
+    }
+  }
+  return fail();
+}
 
 async function createAccount(name, email, timezone, userInfo) {
   try {
@@ -91,9 +139,6 @@ async function createAccount(name, email, timezone, userInfo) {
       created_at: suvject_created_at,
     };
     connection.query(`INSERT INTO subjects SET ?`, subject);
-
-    const authId = generateRandomId(10);
-    await redisClient.setex(`extension:auth:${authId}`, 10, user_id);
 
     return { success: true, user_id };
   } catch (err) {
@@ -165,7 +210,8 @@ Router.post("/signin", async (req, res) => {
 
 Router.get("/signin/google", async (req, res) => {
   try {
-    const { code, state } = req.query;
+    const { code } = req.query;
+    const state = decodeURIComponent(req.query.state);
 
     const auth = googleOauth2client();
     const response = await auth.getToken(code);
@@ -174,6 +220,8 @@ Router.get("/signin/google", async (req, res) => {
     }
     const connection = pool.promise();
     const { refresh_token, access_token, expiry_date } = response.tokens;
+
+    console.log("gddd", state);
 
     await autoSignin(
       req,
@@ -189,6 +237,7 @@ Router.get("/signin/google", async (req, res) => {
         res.redirect(process.env.NEXT_SERVER + "/dashboard/account");
       },
       async () => {
+        console.log("gddd");
         //if not logged in = create acc
         auth.setCredentials(response.tokens);
         const oauth2 = google.oauth2({
@@ -666,4 +715,4 @@ Router.get("/logout", function (req, res) {
   });
 });
 
-module.exports = { Router, googleOauth2client };
+module.exports = { Router, googleOauth2client, autoSignin };

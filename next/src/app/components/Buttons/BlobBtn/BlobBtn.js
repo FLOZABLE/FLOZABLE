@@ -12,14 +12,14 @@ function BlobBtn({
   type,
 }) {
   return (
-    <button
+    <div
       className={styles.BlobBtn}
       onClick={(e) => {
+        if (disabled) return;
         onClick ? onClick(e) : null;
       }}
       style={{ "--color1": color1, "--color2": color2, ...style }}
       id={id}
-      disabled={disabled}
       type={type}
     >
       {children}
@@ -31,7 +31,7 @@ function BlobBtn({
           <span className={styles.blobBtnBlob}></span>
         </span>
       </span>
-    </button>
+    </div>
   );
 }
 

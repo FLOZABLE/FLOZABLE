@@ -4,7 +4,7 @@ const fs = require("fs");
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const crypto = require("crypto");
-const { hashing, generateRandomId, autoSignin } = require("../Utils/tool");
+const { hashing, generateRandomId } = require("../Utils/tool");
 const {
   activeSubjectCache,
   userCache,
@@ -24,6 +24,7 @@ const {
 const { DateTime } = require("luxon");
 const { RESPONSE_CODES } = require("../Constant");
 const { mainIo } = require("../sockets/mainIo");
+const { autoSignin } = require("./auth");
 
 Router.get("/", async (req, res) => {
   try {

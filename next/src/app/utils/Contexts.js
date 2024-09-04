@@ -9,7 +9,7 @@ import { DEFAULT_PLAN } from "./Constant";
 import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import { usePlans } from "@/Hooks/plansHooks";
-import { useGetGroups } from "@/Hooks/groupsHook";
+import { useGroups } from "@/Hooks/groupsHook";
 import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -192,7 +192,7 @@ function GroupsProvider({ children }) {
   const [groups, setGroups] = useState([]);
   const [myGroups, setMyGroups] = useState([]);
 
-  const { data: useGroupsData, refetch: refetchUseGroupsData } = useGetGroups();
+  const { data: useGroupsData, refetch: refetchUseGroupsData } = useGroups();
 
   useEffect(() => {
     if (!groups.length || !userInfo) return;

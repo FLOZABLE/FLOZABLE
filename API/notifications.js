@@ -1,12 +1,13 @@
 const express = require("express");
 const Router = express.Router();
-const { autoSignin, deriveKey } = require("../Utils/tool");
+const { deriveKey } = require("../Utils/tool");
 const { validateStrictString, validateURL } = require("../Utils/validate");
 const redisClient = require("../model/redis");
 const { RESPONSE_CODES } = require("../Constant");
 const { vapidKeysCache } = require("../services/redisLoader");
 const crypto = require("crypto");
 const pool = require("../model/pool");
+const { autoSignin } = require("./auth");
 
 Router.get("/vapidkeys", async (req, res) => {
   const vapidKeys = await vapidKeysCache();

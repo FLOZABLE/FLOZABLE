@@ -1,14 +1,13 @@
 const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
-const { autoSignin } = require("../Utils/tool");
 const {
   googleAccessTokenCache,
   spotifyAccessTokenCache,
 } = require("../services/redisLoader");
 const querystring = require("querystring");
 const { RESPONSE_CODES } = require("../Constant");
-const { googleOauth2client } = require("./auth");
+const { googleOauth2client, autoSignin } = require("./auth");
 const { google } = require("googleapis");
 
 const YOUTUBE_API_KEY = process.env.GOOGLE_API_KEY;
