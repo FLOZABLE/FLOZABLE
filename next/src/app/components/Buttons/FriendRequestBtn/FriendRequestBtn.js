@@ -1,29 +1,21 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./FriendRequestBtn.module.css";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import React, { useContext } from "react";
-import config from "@/app/utils/config";
+import React, { useCallback, useContext } from "react";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import { ResponseContext } from "@/app/utils/Contexts";
+import { postFriendsRequest } from "@/Api/friendsApi";
 
 function FriendRequestBtn({ userInfo, padding }) {
   const { setResponse } = useContext(ResponseContext);
 
-  const requestFriend = () => {
-    fetch(`${config.server}/friends/request`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ targetId: userInfo.user_id }),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponse(data);
-      })
-      .catch((error) => console.error(error));
-  };
+  const requestFriend = useCallback(() => {
+    (async () => {
+      const targetId = userInfo.user_id;
+      const data = await postFriendsRequest({ targetId });
+      setResponse(data);
+    })();
+  }, [userInfo]);
 
   return (
     <div className={styles.FriendRequestBtn}>
