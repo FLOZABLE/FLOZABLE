@@ -96,7 +96,12 @@ function AccountProvider({ children }) {
 
   return (
     <UserInfoContext.Provider
-      value={{ ...useAccountData, accountRefetch, userInfo, setUserInfo }}
+      value={{
+        ...queryResult,
+        accountRefetch,
+        userInfo,
+        setUserInfo,
+      }}
     >
       <NotificationsContext.Provider
         value={{ notifications, setNotifications }}

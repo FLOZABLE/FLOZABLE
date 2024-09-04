@@ -67,18 +67,29 @@ async function getFriendsStatus() {
   return data;
 }
 
-async function postFriendsRequestReply({targetId, accepted, notificationId}) {
-  const response = await fetch(
-    `${config.server}/friends/request/reply`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ targetId, accepted, notificationId }),
-    }
-  );
+async function postFriendsRequest({ targetId }) {
+  const response = await fetch(`${config.server}/friends/request`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ targetId }),
+  });
+  const data = await response.json();
+
+  return data;
+}
+
+async function postFriendsRequestReply({ targetId, accepted, notificationId }) {
+  const response = await fetch(`${config.server}/friends/request/reply`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ targetId, accepted, notificationId }),
+  });
   const data = await response.json();
 
   return data;
@@ -89,5 +100,6 @@ export {
   getFriendsSearch,
   getFriendsTrends,
   getFriendsStatus,
-  postFriendsRequestReply
+  postFriendsRequest,
+  postFriendsRequestReply,
 };

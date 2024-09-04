@@ -9,7 +9,7 @@
   perspective: 50rem;
   visibility: hidden;
   opacity: 0;
-  transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
+  transition: 0.3s ease-in-out opacity, 0.3s ease-in-out visibility;
   z-index: 101;
 }
 
@@ -87,7 +87,7 @@
   transform: translate3d(0, 0, 2.188rem) perspective(6.25rem);
 }
 
-.AccountModal .contents .inputWrapper{
+.AccountModal .contents .inputWrapper {
   margin: 0.625rem;
   display: flex;
   flex-direction: row;
@@ -109,4 +109,22 @@
 
 .AccountModal .contents .inputWrapper .icon {
   padding: 0em 1.25rem;
+}
+
+.touchBlocker {
+  background-color: #a4afd4bb;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0rem;
+  top: 0rem;
+  z-index: 10;
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
+}
+
+.touchBlocker.opened {
+  opacity: 1;
+  visibility: visible;
 }

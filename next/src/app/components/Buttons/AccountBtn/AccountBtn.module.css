@@ -1,4 +1,4 @@
-.LogoutBtn {
+.AccountBtn {
   background-color: var(--gray2);
   width: 100%;
   color: #fff;
@@ -9,13 +9,13 @@
   cursor: pointer;
 }
 
-.LogoutBtn i {
+.AccountBtn i {
   font-size: 3rem;
   display: flex;
   align-items: center;
   margin: 0rem 1rem;
 }
 
-.LogoutBtn p {
+.AccountBtn p {
   font-size: 1.25rem;
 }
