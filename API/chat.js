@@ -2,16 +2,16 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { autoSignin, generateRandomId } = require("../Utils/tool");
+const { generateRandomId } = require("../Utils/tool");
 const {
   notificationCache,
-  userCache,
   chatroomMemberCache,
   usersCache,
 } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../Utils/validate");
 const { mainIo } = require("../sockets/mainIo");
 const { RESPONSE_CODES } = require("../Constant");
+const { autoSignin } = require("./auth");
 
 Router.get("/rooms", async (req, res) => {
   autoSignin(req, res, async (userId) => {

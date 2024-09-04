@@ -1,12 +1,5 @@
 const crypto = require("crypto");
-const Ajv = require("ajv");
-const ajv = new Ajv();
-const { google } = require("googleapis");
-const pool = require("../model/pool");
-const { userCache, usersCache } = require("../services/redisLoader");
 const { DateTime } = require("luxon");
-const { RESPONSE_CODES } = require("../Constant");
-const redisClient = require("../model/redis");
 
 function generateRandomId(length) {
   const characters =
@@ -41,55 +34,6 @@ function hashing(password) {
   ];
 }
 
-async function autoSignin(
-  req,
-  res,
-  success = () => {},
-  fail = () => {
-    res.send(RESPONSE_CODES["no-user"]);
-  },
-  cache = false
-) {
-  //console.log(req.session.user_id, req.signedCookies.userId, cache);
-  if (
-    req.session.user_id ||
-    (process.env.NODE_ENV === "development" &&
-      (req.session.user_id = process.env.TESTER_ID))
-  ) {
-    return success(req.session.user_id, req.session.timezone);
-  }
-
-  if (req.signedCookies.userId) {
-    if (!cache) return success(req.signedCookies.userId);
-    const connection = pool.promise();
-    const userInfo = userCache(connection, req.signedCookies.userId);
-    if (userInfo) {
-      req.session.user_id = req.signedCookies.userId;
-      return success(req.signedCookies.userId, userInfo.timezone);
-    } else {
-      return fail();
-    }
-  }
-
-  if (req.headers.authorization) {
-    const credentials = req.headers.authorization.split(" ")[1];
-    if (!credentials) return fail();
-    const [deviceId, authKey] = credentials.split("-");
-    if (!deviceId || !authKey) return fail();
-
-    const connection = await pool.promise();
-    const [[device]] = await connection.query(
-      `SELECT user_id FROM devices WHERE device_id = ? AND auth_key = ?`,
-      [deviceId, authKey]
-    );
-    if (device) {
-      req.session.user_id = device.user_id;
-      return success(device.user_id);
-    }
-  }
-  return fail();
-}
-
 function isValidTimeZone(timeZone) {
   try {
     Intl.DateTimeFormat(undefined, { timeZone: timeZone });
@@ -109,7 +53,6 @@ function randomIntInRange(min, max) {
   const randomVal = Math.floor(Math.random() * (max - min + 1)) + min;
   return randomVal;
 }
-
 
 function arraysHaveSameContents(arr1, arr2) {
   const sortedArr1 = arr1.slice().sort();
@@ -144,7 +87,6 @@ const secondConverter = (sec, options = ["s", "m", "h"]) => {
   return { value, type: options[type] };
 };
 
-
 function getMidnightTimezones() {
   const now = DateTime.utc();
   const allTimezones = Intl.supportedValuesOf("timeZone");
@@ -157,30 +99,6 @@ function getMidnightTimezones() {
   });
 
   return midnightTimezones;
-}
-
-async function friendRecommendationGen(connection, excluded = []) {
-  try {
-    const userIds = await redisClient.smembers(`month1`);
-    const users = [];
-    for (let i = 0; i < 100; i++) {
-      if (users.length >= 7) {
-        break;
-      }
-      const index = randomIntInRange(0, userIds.length - 1);
-      const userId = userIds[index];
-      if (![...excluded, ...users].includes(userId)) {
-        users.push(userId);
-      }
-    }
-
-    const usersInfo = await usersCache(connection, users);
-
-    return usersInfo;
-  } catch (err) {
-    console.log(err);
-    return [];
-  }
 }
 
 function getDates(date, timezone, mode, length = 30) {
@@ -207,7 +125,6 @@ function getDates(date, timezone, mode, length = 30) {
 module.exports = {
   generateRandomId,
   hashing,
-  autoSignin,
   isValidTimeZone,
   getUserId,
   randomIntInRange,
@@ -216,6 +133,5 @@ module.exports = {
   secondConverter,
   deriveKey,
   getMidnightTimezones,
-  friendRecommendationGen,
   getDates,
 };

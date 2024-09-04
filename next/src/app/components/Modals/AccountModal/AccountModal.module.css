@@ -9,8 +9,8 @@
   perspective: 50rem;
   visibility: hidden;
   opacity: 0;
-  transition: 0.3s ease-in-out opacity, 0.3s ease-in-out visibility;
-  z-index: 101;
+  transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
+  z-index: 11;
 }
 
 .AccountModal.opened {
@@ -87,7 +87,7 @@
   transform: translate3d(0, 0, 2.188rem) perspective(6.25rem);
 }
 
-.AccountModal .contents .inputWrapper {
+.AccountModal .contents .inputWrapper{
   margin: 0.625rem;
   display: flex;
   flex-direction: row;
@@ -118,7 +118,7 @@
   position: fixed;
   left: 0rem;
   top: 0rem;
-  z-index: 10;
+  z-index: 9;
   visibility: hidden;
   opacity: 0;
   transition: .3s ease-in-out opacity, .3s ease-in-out visibility;

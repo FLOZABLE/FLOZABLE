@@ -4,7 +4,7 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const sharp = require("sharp");
 const multer = require("multer");
-const { hashing, autoSignin } = require("../Utils/tool");
+const { hashing } = require("../Utils/tool");
 const {
   validateEmail,
   validateStrictString,
@@ -21,7 +21,7 @@ const {
   usersCache,
 } = require("../services/redisLoader");
 const { RESPONSE_CODES } = require("../Constant");
-const { checkGoogleAccessTokenScopes, googleOauth2client } = require("./auth");
+const { googleOauth2client, autoSignin } = require("./auth");
 const { google } = require("googleapis");
 const upload = multer();
 

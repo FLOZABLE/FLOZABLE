@@ -1,9 +1,9 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const express = require("express");
 const Router = express.Router();
-const { autoSignin } = require("../Utils/tool");
 const { RESPONSE_CODES } = require("../Constant");
 const pool = require("../model/pool");
+const { autoSignin } = require("./auth");
 
 Router.post("/subscription/initialize", async (req, res) => {
   autoSignin(req, res, async (userId) => {
