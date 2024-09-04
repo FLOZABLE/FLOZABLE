@@ -38,7 +38,7 @@ function RecommendedFriendsViewer({}) {
                 <UserContainer
                   userInfo={user}
                   onClick={() => {
-                    router.push(`/dashboard/user/${friend.user_id}`);
+                    router.push(`/dashboard/user/${user.user_id}`);
                   }}
                 >
                   <FriendRequestBtn

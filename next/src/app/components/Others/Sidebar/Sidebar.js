@@ -19,7 +19,7 @@ import { TutorialsContext } from "@/app/utils/Contexts";
 import TutorialBtn from "../../Buttons/TutorialBtn/TutorialBtn";
 import { usePathname } from "next/navigation";
 import { useWindowSize } from "@/Hooks/otherHooks";
-import LogoutBtn from "../../Buttons/LogoutBtn/LogoutBtn";
+import AccountBtn from "../../Buttons/AccountBtn/AccountBtn";
 
 function SidebarEl({ pathname, href, children }) {
   return (
@@ -142,7 +142,7 @@ function Sidebar({}) {
       </SidebarEl>
       <div className={styles.buttons}>
         <Link href={"/dashboard/study"}>Study</Link>
-        <LogoutBtn />
+        <AccountBtn />
       </div>
     </aside>
   );
