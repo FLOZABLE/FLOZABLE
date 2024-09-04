@@ -1,15 +1,9 @@
 const express = require("express");
-const {
-  autoSignin,
-  generateRandomId,
-  friendRecommendationGen,
-  getDates,
-} = require("../Utils/tool");
+const { generateRandomId, getDates, randomIntInRange } = require("../Utils/tool");
 const {
   notificationCache,
   userCache,
   activeSubjectCache,
-  clearUserCache,
   usersCache,
   activeGroupCache,
   userFriendsCache,
@@ -27,6 +21,7 @@ const { DateTime } = require("luxon");
 const { mainIo } = require("../sockets/mainIo");
 const { RESPONSE_CODES, FRIENDS_LIMIT } = require("../Constant");
 const Router = express.Router();
+const { autoSignin } = require("./auth");
 
 async function sendFriendRequest(userId, targetId) {
   try {
@@ -344,6 +339,30 @@ Router.post("/request/reply", async (req, res) => {
   });
 });
 
+async function getRecommendedFriends(connection, excluded = []) {
+  try {
+    const userIds = await redisClient.smembers(`month1`);
+    const users = [];
+    for (let i = 0; i < 100; i++) {
+      if (users.length >= 7) {
+        break;
+      }
+      const index = randomIntInRange(0, userIds.length - 1);
+      const userId = userIds[index];
+      if (![...excluded, ...users].includes(userId)) {
+        users.push(userId);
+      }
+    }
+
+    const usersInfo = await usersCache(connection, users);
+
+    return usersInfo;
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
+}
+
 Router.get("/recommended", async (req, res) => {
   autoSignin(
     req,
@@ -355,7 +374,7 @@ Router.get("/recommended", async (req, res) => {
         const friends = await userFriendsCache(connection, userId);
         const excluded = [...friends, userId];
 
-        const users = await friendRecommendationGen(connection, excluded);
+        const users = await getRecommendedFriends(connection, excluded);
         return res.send({ success: true, users });
       } catch (error) {
         console.log(error);
@@ -365,7 +384,7 @@ Router.get("/recommended", async (req, res) => {
     async () => {
       try {
         const connection = pool.promise();
-        const users = await friendRecommendationGen(connection);
+        const users = await getRecommendedFriends(connection);
         return res.send({ success: true, users });
       } catch (err) {
         console.log(err);

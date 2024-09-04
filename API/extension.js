@@ -2,8 +2,10 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { autoSignin, generateRandomId } = require("../Utils/tool");
-const { websiteUsageCache } = require("../services/redisLoader");
+const {
+  websiteUsageCache,
+  cacheExtensionToken,
+} = require("../services/redisLoader");
 const { DateTime } = require("luxon");
 const {
   validateStrictString,
@@ -13,12 +15,20 @@ const {
 } = require("../Utils/validate");
 const { RESPONSE_CODES } = require("../Constant");
 const { extensionIo } = require("../sockets/extensionIo");
+const { autoSignin } = require("./auth");
 
 Router.post("/auth", async (req, res) => {
   autoSignin(req, res, async (userId) => {
-    const authId = generateRandomId(10);
-    await redisClient.setex(`extension:auth:${authId}`, 10, userId);
-    return res.send({ success: true, authId });
+    try {
+      const token = await cacheExtensionToken(userId);
+      if (!token) {
+        return res.send(RESPONSE_CODES["error"]);
+      }
+      res.send({ success: true, userId, token });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES["error"]);
+    }
   });
 });
 

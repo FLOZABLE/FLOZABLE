@@ -29,7 +29,7 @@ const port = process.env.PORT;
 
 let server;
 
-if (process.env.isHttps === "true") {
+if (process.env.HTTPS === "true") {
   server = https.createServer(options, app);
   console.log("https");
 } else {
@@ -86,10 +86,24 @@ const { io } = require("./sockets/io");
 app.use(
   cors({
     origin: process.env.SERVER_CORS.split(", "),
-    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
   })
 );
+/* app.use((req, res, next) => {
+  // Log the origin of incoming requests
+  console.log('Request Origin:', req.get('Origin'));
+  next();
+});
+
+// Allow all origins for testing
+app.use(
+  cors({
+    origin: '*', // Allow all origins
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+    credentials: true,
+  })
+); */
 app.use(helmet.permittedCrossDomainPolicies());
 app.use(helmet.referrerPolicy());
 app.use(helmet.xssFilter());

@@ -9,7 +9,8 @@ const {
   userFriendsCache,
 } = require("../services/redisLoader");
 const { RESPONSE_CODES } = require("../Constant");
-const { autoSignin, getDates } = require("../Utils/tool");
+const { getDates } = require("../Utils/tool");
+const { autoSignin } = require("./auth");
 
 Router.get("/", async (req, res) => {
   try {
