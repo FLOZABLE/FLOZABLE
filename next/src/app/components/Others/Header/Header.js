@@ -14,7 +14,11 @@ import {
   HeaderMeteor,
   HeaderTarget,
 } from "@/app/utils/Svg";
-import { SubjectsContext, TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
+import {
+  SubjectsContext,
+  TutorialsContext,
+  UserInfoContext,
+} from "@/app/utils/Contexts";
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import NotificationsBtn from "../../Notifications/NotificationsBtn/NotificationsBtn";
@@ -92,10 +96,9 @@ function Header({}) {
   }, [groupedSubjects]);
 
   useEffect(() => {
-    if (!websitesData?.success || !websitesData.websites.length) return;
-
-    const totalWebsiteUsage = websitesData.websites.reduce((a, b) => {
-      return a + b;
+    if (!websitesData?.success || !websitesData.usage.length) return;
+    const totalWebsiteUsage = websitesData.usage.reduce((a, b) => {
+      return a.duration + b.duration;
     });
     const { value, type } = secondConverter(totalWebsiteUsage, [
       "seconds",

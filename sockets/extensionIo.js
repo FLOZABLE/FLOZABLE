@@ -20,8 +20,8 @@ extensionIo.on("connection", async (socket) => {
     socket.on("updateUsage", ({ domain, duration }) => {
       try {
         console.log(domain, duration);
-        redisClient.zincrby(`user:${userId}:websites:timer`, duration, domain);
-        redisClient.zincrby(`user:${userId}:websitess:usage`, 1, domain);
+        redisClient.zincrby(`user:${userId}:websites:duration`, duration, domain);
+        redisClient.zincrby(`user:${userId}:websites:visits`, 1, domain);
       } catch (err) {
         console.log(err);
       }
@@ -30,7 +30,7 @@ extensionIo.on("connection", async (socket) => {
     socket.on("getUsage", async (domain, callback) => {
       try {
         const usage = await redisClient.zscore(
-          `user:${userId}:websites:timer`,
+          `user:${userId}:websites:duration`,
           domain
         );
         callback(parseInt(usage));

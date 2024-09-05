@@ -42,10 +42,12 @@ async function patchExtensionSetting({ website, mode, value }) {
 async function getExtensionUsage(date, mode) {
   if (!date || !mode) return { success: false };
 
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   const response = await fetch(
     `${config.server}/extension/usage?date=${DateTime.fromJSDate(
       date
-    ).toISODate()}&mode=${mode}`,
+    ).toISODate()}&mode=${mode}&timezone=${timezone}`,
     {
       method: "GET",
       headers: {
