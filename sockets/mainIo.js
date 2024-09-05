@@ -116,7 +116,7 @@ mainIo.on("connection", (socket) => {
       }
       redisClient.rpush(`user:${userId}:subject:${subjectId}`, `[${now},0]`);
       cacheActiveSubject(userId, subject, now);
-      extensionIo.to(userId).emit("studying", { studying: true });
+      extensionIo.to(userId).emit("studying");
     } catch (err) {
       console.log(err);
     }
@@ -290,7 +290,7 @@ async function stopStudying(connection, userId, mode) {
       )
     );
 
-    extensionIo.to(userId).emit("studying", { studying: false });
+    extensionIo.to(userId).emit("stopStudying");
 
     if (!activity) return;
 
