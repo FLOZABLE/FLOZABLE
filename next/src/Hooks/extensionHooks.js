@@ -26,12 +26,13 @@ function useExtensionSettings() {
 
 function useExtensionUsage(date, mode) {
   const { userInfo } = useContext(UserInfoContext);
-  
+
   return useQuery({
     queryKey: [`extensionUsage`, date, mode],
     queryFn: () => getExtensionUsage(date, mode),
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 0,
     enabled: !!userInfo,
+    refetchOnWindowFocus: true,
   });
 }
 
