@@ -76,7 +76,6 @@ Router.put("/setting", async (req, res) => {
         study_block: 0,
         timer: 0,
         study_timer: 1,
-        user_id: userId,
       };
 
       try {
@@ -85,7 +84,7 @@ Router.put("/setting", async (req, res) => {
           INSERT INTO website_settings
           SET ?
           `,
-          [setting]
+          [{ ...setting, user_id: userId }]
         );
       } catch (err) {
         console.log(err);

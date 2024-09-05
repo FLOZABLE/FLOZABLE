@@ -1,10 +1,5 @@
 const { DateTime } = require("luxon");
 const redisClient = require("../model/redis");
-const {
-  userCache,
-  activeSubjectCache,
-  addActiveUserCache,
-} = require("../services/redisLoader");
 const { io } = require("./io");
 
 const extensionIo = io.of("/extension");
@@ -21,6 +16,28 @@ extensionIo.on("connection", async (socket) => {
     console.log("extension authed");
 
     socket.join(userId);
+
+    socket.on("updateUsage", ({ domain, duration }) => {
+      try {
+        console.log(domain, duration);
+        redisClient.zincrby(`user:${userId}:websites:timer`, duration, domain);
+        redisClient.zincrby(`user:${userId}:websitess:usage`, 1, domain);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+    socket.on("getUsage", async (domain, callback) => {
+      try {
+        const usage = await redisClient.zscore(
+          `user:${userId}:websites:timer`,
+          domain
+        );
+        callback(parseInt(usage));
+      } catch (err) {
+        console.log(err);
+      }
+    });
   } catch (err) {
     console.log(err);
   }
