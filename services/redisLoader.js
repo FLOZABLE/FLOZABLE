@@ -740,6 +740,27 @@ async function cacheExtensionToken(userId) {
   }
 }
 
+async function appTokenCache(userId, refresh) {
+  try {
+    const token = await redisClient.get(`user${userId}:app:authToken`);
+    if (token) {
+      redisClient.expire(`user${userId}:app:authToken`, REDIS_EXP.APP_AUTH);
+      return token;
+    }
+    //if refresh is false, it won't regenerate even when token is DNE
+    if (!refresh) return;
+    const newToken = generateRandomId(20);
+    redisClient.setex(
+      `user${userId}:app:authToken`,
+      REDIS_EXP.APP_AUTH,
+      newToken
+    );
+    return newToken;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   cacheManager,
   subjectsCache,
@@ -770,4 +791,5 @@ module.exports = {
   spotifyAccessTokenCache,
   vapidKeysCache,
   cacheExtensionToken,
+  appTokenCache,
 };
