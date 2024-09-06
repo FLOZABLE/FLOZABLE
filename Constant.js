@@ -63,7 +63,8 @@ const REDIS_EXP = {
   SUBJECTS: 60 * 10,
   VERIFY_EMAIL: 60 * 60 * 24 * 7,
   CHATROOM_MEMBERS: 60 * 10,
-  EXTENSION_AUTH: 10
+  EXTENSION_AUTH: 10,
+  APP_AUTH: 60 * 60 * 24 * 7,
 };
 
 const BOT_OPTIONS = {
@@ -162,5 +163,5 @@ module.exports = {
   PASSWORD_LINK_EXP,
   possibleBotsSubjects,
   REDIS_EXP,
-  BOT_OPTIONS
+  BOT_OPTIONS,
 };
