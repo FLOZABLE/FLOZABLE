@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import styles from "./GroupContainer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,12 +11,13 @@ import {
 import parse from "html-react-parser";
 import config from "@/app/utils/config";
 import GroupMemCounter from "../GroupMemCounter/GroupMemCounter";
-import GroupLikesCounter from "../GroupLikesCounter/GroupLikesCounter";
 import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 import GroupJoinBtn from "../../Buttons/GroupJoinBtn/GroupJoinBtn";
 import { secondConverter } from "@/app/utils/Tool";
 import { UserInfoContext } from "@/app/utils/Contexts";
+import { postGroupLike } from "@/Api/groupsApi";
+import SocketCounter from "../../Others/SocketCounter/SocketCounter";
 
 function GroupContainer({
   groupInfo,
@@ -29,6 +30,20 @@ function GroupContainer({
   const [members, setMembers] = useState([]);
   const [likes, setLikes] = useState([]);
   const [totalTime, setTotalTime] = useState("0 h");
+
+  const onLike = useCallback(async () => {
+    if (!userInfo?.user_id) return;
+
+    const like = !likes.includes(userInfo?.user_id);
+    const groupId = groupInfo.group_id;
+    const data = await postGroupLike({ groupId, like });
+    if (!data.success) return;
+    if (like) {
+      setLikes([...new Set([...likes, userInfo.user_id])]);
+    } else {
+      setLikes(likes.filter((like) => like !== userInfo.user_id));
+    }
+  }, [likes, groupInfo, userInfo]);
 
   useEffect(() => {
     if (!groupInfo) return;
@@ -99,9 +114,11 @@ function GroupContainer({
           <i>
             <FontAwesomeIcon icon={faHeart} />
           </i>
-          <GroupLikesCounter
-            initialMembers={likes}
-            groupId={groupInfo.group_id}
+          <SocketCounter
+            id={groupInfo.group_id}
+            events={{ add: "like:group", remove: "unlike:group" }}
+            members={likes}
+            setMembers={setLikes}
           />
         </div>
       </div>
@@ -123,10 +140,7 @@ function GroupContainer({
           text={`${config.server}/dashboard/groups?groupId=${groupInfo.group_id}`}
         />
         <GroupJoinBtn groupInfo={groupInfo} />
-        <LikeBtn
-          liked={likes.includes(userInfo?.user_id)}
-          id={groupInfo.group_id}
-        />
+        <LikeBtn liked={likes.includes(userInfo?.user_id)} onClick={onLike} />
       </div>
     </div>
   );
