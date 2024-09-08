@@ -101,6 +101,20 @@ async function postGroupLeave(groupId) {
   return data;
 }
 
+async function postGroupLike({ groupId, like }) {
+  const response = await fetch(`${config.server}/groups/group/like`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ groupId, like }),
+  });
+  const data = await response.json();
+
+  return data;
+}
+
 export {
   getGroups,
   getGroupMembers,
@@ -109,4 +123,5 @@ export {
   deleteGroup,
   postGroupJoin,
   postGroupLeave,
+  postGroupLike,
 };
