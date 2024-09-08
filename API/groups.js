@@ -573,10 +573,10 @@ Router.post("/transfer-ownership", async (req, res) => {
   });
 });
 
-Router.post("/like/:id", async (req, res) => {
+Router.post("/group/like", async (req, res) => {
   autoSignin(req, res, async (userId) => {
-    const groupId = req.params.id;
-    const { liked } = req.body;
+    const { like, groupId } = req.body;
+    console.log(like);
 
     const isValidGroupId = validateStrictString(groupId, "group id");
 
@@ -584,16 +584,16 @@ Router.post("/like/:id", async (req, res) => {
       return res.send({ success: false, reason: isValidGroupId.reason });
     }
 
-    const isValidLiked = validateBoolean(liked, "like", true);
+    const isValidlike = validateBoolean(like, "like", true);
 
-    if (!isValidLiked.isValid) {
-      return res.send({ success: false, reason: isValidLiked.reason });
+    if (!isValidlike.isValid) {
+      return res.send({ success: false, reason: isValidlike.reason });
     }
 
     try {
       const connection = pool.promise();
 
-      if (liked) {
+      if (like) {
         const newLike = {
           user_id: userId,
           group_id: groupId,
@@ -601,20 +601,20 @@ Router.post("/like/:id", async (req, res) => {
 
         await connection.query(`INSERT INTO group_likes SET ?`, newLike);
 
-        mainIo.emit(`liked:${groupId}`, userId);
+        mainIo.emit(`like:group:${groupId}`, userId);
       } else {
         await connection.query(
           `DELETE FROM group_likes WHERE user_id = ? AND group_id = ?`,
           [userId, groupId]
         );
 
-        mainIo.emit(`unliked:${groupId}`, userId);
+        mainIo.emit(`unlike:group:${groupId}`, userId);
       }
 
       return res.send({ success: true });
     } catch (err) {
-      console.err("Error performing database queries:", err);
-      res.status(500).send({ success: false, reason: "An err occurred" });
+      console.log("Error performing database queries:", err);
+      res.status(500).send(RESPONSE_CODES["error"]);
     }
   });
 });

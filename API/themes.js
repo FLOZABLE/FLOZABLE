@@ -3,7 +3,6 @@ const Router = express.Router();
 const redisClient = require("../model/redis");
 const { generateRandomId } = require("../Utils/tool");
 const pool = require("../model/pool");
-const { DateTime } = require("luxon");
 const {
   validateStrictString,
   validateString,
@@ -142,16 +141,17 @@ Router.put("/theme", async (req, res) => {
   });
 });
 
-Router.post("/like/:id", async (req, res) => {
+Router.post("/theme/like", async (req, res) => {
   autoSignin(req, res, async () => {
-    const themeId = req.params.id;
     const userId = req.session.user_id;
-    const { liked } = req.body;
+    const { like, themeId } = req.body;
 
-    const isValidLiked = validateBoolean(liked, "liked", true);
+    console.log(like);
 
-    if (!isValidLiked.isValid) {
-      return res.send({ success: false, reason: isValidLiked.reason });
+    const isValidlike = validateBoolean(like, "like", true);
+
+    if (!isValidlike.isValid) {
+      return res.send({ success: false, reason: isValidlike.reason });
     }
 
     const isValidThemeId = validateStrictString(themeId, "theme id");
@@ -162,7 +162,7 @@ Router.post("/like/:id", async (req, res) => {
 
     try {
       const connection = pool.promise();
-      if (liked) {
+      if (like) {
         const newLike = {
           user_id: userId,
           theme_id: themeId,
@@ -170,14 +170,14 @@ Router.post("/like/:id", async (req, res) => {
 
         await connection.query(`INSERT INTO theme_likes SET ?`, newLike);
 
-        mainIo.emit(`liked:${themeId}`, userId);
+        mainIo.emit(`like:theme:${themeId}`, userId);
       } else {
         await connection.query(
           `DELETE FROM theme_likes WHERE user_id = ? AND theme_id = ?`,
           [userId, themeId]
         );
 
-        mainIo.emit(`unliked:${themeId}`, userId);
+        mainIo.emit(`unlike:theme:${themeId}`, userId);
       }
 
       res.send({ success: true });

@@ -1,4 +1,5 @@
 import config from "@/app/utils/config";
+import axios from "axios";
 
 async function getThemes() {
   const response = await fetch(`${config.server}/themes`, {
@@ -50,4 +51,18 @@ async function postThemesThemeSave({ themeId, categoryId, categoryName }) {
   return data;
 }
 
-export { getThemes, getThemesUser, putThemesTheme, postThemesThemeSave };
+async function postThemeLike({ themeId, like }) {
+  const response = await axios.post(`${config.server}/themes/theme/like`, {
+    themeId,
+    like,
+  });
+  return response.data;
+}
+
+export {
+  getThemes,
+  getThemesUser,
+  putThemesTheme,
+  postThemesThemeSave,
+  postThemeLike,
+};

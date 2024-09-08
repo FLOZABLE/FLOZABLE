@@ -2,26 +2,39 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./RankedTheme.module.css";
 import { faHeart, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
-import React, { useContext, useEffect, useState } from "react";
-import GroupLikesCounter from "@/app/components/Groups/GroupLikesCounter/GroupLikesCounter";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import ThemeUsageCounter from "../ThemeUsageCounter/ThemeUsageCounter";
 import ThemeCategoryBtn from "@/app/components/Buttons/ThemeCategoryBtn/ThemeCategoryBtn";
 import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
 import config from "@/app/utils/config";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 import { UserInfoContext } from "@/app/utils/Contexts";
+import { postThemeLike } from "@/Api/themesApi";
+import SocketCounter from "../../Others/SocketCounter/SocketCounter";
 
 function RankedTheme({ theme, setIsThemePreview }) {
   const { userInfo } = useContext(UserInfoContext);
 
-  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState([]);
+
+  const onLike = useCallback(async () => {
+    if (!userInfo?.user_id) return;
+
+    const like = !likes.includes(userInfo?.user_id);
+    const themeId = theme.theme_id;
+    const data = await postThemeLike({ themeId, like });
+    if (!data.success) return;
+    if (like) {
+      setLikes([...new Set([...likes, userInfo.user_id])]);
+    } else {
+      setLikes(likes.filter((like) => like !== userInfo.user_id));
+    }
+  }, [likes, theme, userInfo]);
 
   useEffect(() => {
-    if (!theme || !userInfo) return;
-    if (theme.likes.includes(userInfo.user_id)) {
-      setLiked(true);
-    }
-  }, [theme, userInfo]);
+    if (!theme) return;
+    setLikes(theme.likes);
+  }, [theme]);
 
   return (
     <div
@@ -43,9 +56,11 @@ function RankedTheme({ theme, setIsThemePreview }) {
             <i>
               <FontAwesomeIcon icon={faHeart} />
             </i>
-            <GroupLikesCounter
-              initialMembers={theme.likes}
-              groupId={theme.id}
+            <SocketCounter
+              id={theme.theme_id}
+              events={{ add: "like:theme", remove: "unlike:theme" }}
+              members={likes}
+              setMembers={setLikes}
             />
           </div>
           <div>
@@ -54,7 +69,7 @@ function RankedTheme({ theme, setIsThemePreview }) {
             </i>
             <ThemeUsageCounter
               initialVal={theme.weekUsage}
-              themeId={theme.id}
+              themeId={theme.theme_id}
             />
           </div>
         </div>
@@ -77,9 +92,8 @@ function RankedTheme({ theme, setIsThemePreview }) {
           </div>
           <div>
             <LikeBtn
-              liked={liked}
-              id={theme.id}
-              url={`${config.server}/themes/like/${theme.id}`}
+              liked={likes.includes(userInfo?.user_id)}
+              onClick={onLike}
             />
           </div>
         </div>
