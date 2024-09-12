@@ -32,14 +32,24 @@ function useFriendsTrends() {
   return { ...queryResult, friendsTrendRefetch };
 }
 
-function useFriendsRecommended(refresh) {
-  const { userInfo } = useContext(UserInfoContext);
-
-  return useQuery({
-    queryKey: [`getFriendsRecommended`],
+function useFriendsRecommended() {
+  const queryResult = useQuery({
+    queryKey: [`friendsRecommended`],
     queryFn: getFriendsRecommended,
-    enabled: !!refresh || !!userInfo,
   });
+
+  const {
+    data: friendsRecommendedData,
+    isLoading: friendsRecommendedIsLoading,
+    refetch: friendsRecommendedRefetch,
+  } = queryResult;
+
+  return {
+    friendsRecommendedData,
+    friendsRecommendedIsLoading,
+    friendsRecommendedRefetch,
+    ...queryResult,
+  };
 }
 
 function useFriendsStatus() {
