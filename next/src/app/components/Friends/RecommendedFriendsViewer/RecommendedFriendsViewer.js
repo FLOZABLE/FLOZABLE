@@ -12,27 +12,25 @@ import { useFriendsRecommended } from "@/Hooks/friendsHooks";
 
 function RecommendedFriendsViewer({}) {
   const { setResponse } = useContext(ResponseContext);
-  const [refresh, setRefresh] = useState(true);
-  const { data: recommendedFriends, isLoading } =
-    useFriendsRecommended(refresh);
+  const {
+    friendsRecommendedData,
+    friendsRecommendedIsLoading,
+    friendsRecommendedRefetch,
+  } = useFriendsRecommended();
 
   const router = useRouter();
-
-  useEffect(() => {
-    setRefresh(false);
-  }, []);
 
   return (
     <div className={`Box ${styles.RecommendedFriendsViewer}`}>
       <div className={styles.header}>
         <h3>Recommended Friends</h3>
-        <RefreshBtn refresh={refresh} setRefresh={setRefresh} />
+        <RefreshBtn onClick={friendsRecommendedRefetch} />
       </div>
       <div className={`contents customScroll`}>
-        {isLoading ? (
+        {friendsRecommendedIsLoading ? (
           <CircularLoading />
         ) : (
-          recommendedFriends?.users.map((user, i) => {
+          friendsRecommendedData?.users.map((user, i) => {
             return (
               <div className={styles.user} key={i}>
                 <UserContainer
