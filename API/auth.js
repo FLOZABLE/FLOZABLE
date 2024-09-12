@@ -34,15 +34,16 @@ async function autoSignin(
   }
 ) {
   try {
-    if (
-      req.session.user_id ||
-      (process.env.NODE_ENV === "development" &&
-        (req.session.user_id = process.env.TESTER_ID))
-    ) {
-      return success(req.session.user_id, req.session.timezone);
+    if (process.env.NODE_ENV === "development") {
+      req.session.user_id = process.env.TESTER_ID;
+      return success(process.env.TESTER_ID);
+    }
+    if (req.session.user_id) {
+      return success(req.session.user_id);
     }
 
     if (req.signedCookies.userId) {
+      req.session.user_id = req.signedCookies.userId;
       return success(req.signedCookies.userId);
     }
 
@@ -493,10 +494,10 @@ Router.post("/app/validate-tokens", async (req, res) => {
     }
 
     const savedToken = await appTokenCache(userId, false);
-    console.log("token", savedToken, token, userId)
+    console.log("token", savedToken, token, userId);
     if (savedToken !== token) {
       return res.send(RESPONSE_CODES["not-authenticated"]);
-    };
+    }
 
     req.session.user_id = userId;
 
