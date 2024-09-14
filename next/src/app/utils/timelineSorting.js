@@ -3,15 +3,15 @@
  * index 0~n is modified subject info
  * about index:
  * color: original
- * daily/weekly/monthly:
- *    .grouped: timeline divided into daily/weekly/monthly
- *    .total: total time divided into daily/weekly/monthly
+ * day/week/month:
+ *    .grouped: timeline divided into day/week/month
+ *    .total: total time divided into day/week/month
  *
  * part2
- * .daily/weekly/monthly has {maxlength, created_at, total}
+ * .day/week/month has {maxlength, created_at, total}
  * created_at: the earliest created_at between all the subjects
  * maxlength: get the subjects with the earliest datumpoint and return the dates/months/weeks passed from that datumpoint
- * total: add all the subjects' timeline and divide them based on daily/weekly/monthly
+ * total: add all the subjects' timeline and divide them based on day/week/month
  */
 import { DateTime } from "luxon";
 
@@ -53,7 +53,7 @@ function timelineSort(subjects) {
     });
   }
 
-  groupedSubjects.daily = {
+  groupedSubjects.day = {
     created_at: dayDate.toISODate(),
     timeline: JSON.parse(
       JSON.stringify(dailyArray.map((val) => ({ ...val, data: [] })))
@@ -62,7 +62,7 @@ function timelineSort(subjects) {
     focus: JSON.parse(JSON.stringify(dailyArray)),
   };
 
-  groupedSubjects.weekly = {
+  groupedSubjects.week = {
     created_at: weekDate.toISODate(),
     timeline: JSON.parse(
       JSON.stringify(weeklyArray.map((val) => ({ ...val, data: [] })))
@@ -71,7 +71,7 @@ function timelineSort(subjects) {
     focus: JSON.parse(JSON.stringify(weeklyArray)),
   };
 
-  groupedSubjects.monthly = {
+  groupedSubjects.month = {
     created_at: monthDate.toISODate(),
     timeline: JSON.parse(
       JSON.stringify(monthlyArray.map((val) => ({ ...val, data: [] })))
@@ -81,7 +81,7 @@ function timelineSort(subjects) {
   };
 
   subjects.map((subject) => {
-    subject.daily = {
+    subject.day = {
       timeline: JSON.parse(
         JSON.stringify(dailyArray.map((val) => ({ ...val, data: [] })))
       ),
@@ -89,7 +89,7 @@ function timelineSort(subjects) {
       focus: JSON.parse(JSON.stringify(dailyArray)),
     };
 
-    subject.weekly = {
+    subject.week = {
       timeline: JSON.parse(
         JSON.stringify(weeklyArray.map((val) => ({ ...val, data: [] })))
       ),
@@ -97,7 +97,7 @@ function timelineSort(subjects) {
       focus: JSON.parse(JSON.stringify(weeklyArray)),
     };
 
-    subject.monthly = {
+    subject.month = {
       timeline: JSON.parse(
         JSON.stringify(monthlyArray.map((val) => ({ ...val, data: [] })))
       ),
@@ -107,69 +107,69 @@ function timelineSort(subjects) {
 
     subject.timeline.map(([start, duration]) => {
       const startDateTime = DateTime.fromSeconds(start).startOf("day");
-      const dayIndex = subject.daily.timeline.findIndex(
+      const dayIndex = subject.day.timeline.findIndex(
         (day) => day.date === startDateTime.toISODate()
       );
       if (dayIndex !== -1) {
-        subject.daily.timeline[dayIndex].data.push([start, start + duration]);
-        subject.daily.total[dayIndex].data += duration;
-        if (duration > subject.daily.focus[dayIndex].data) {
-          subject.daily.focus[dayIndex].data = duration;
+        subject.day.timeline[dayIndex].data.push([start, start + duration]);
+        subject.day.total[dayIndex].data += duration;
+        if (duration > subject.day.focus[dayIndex].data) {
+          subject.day.focus[dayIndex].data = duration;
         }
 
         //grouped subjects
-        groupedSubjects.daily.timeline[dayIndex].data.push([
+        groupedSubjects.day.timeline[dayIndex].data.push([
           start,
           start + duration,
         ]);
-        groupedSubjects.daily.total[dayIndex].data += duration;
-        if (duration > groupedSubjects.daily.focus[dayIndex].data) {
-          groupedSubjects.daily.focus[dayIndex].data = duration;
+        groupedSubjects.day.total[dayIndex].data += duration;
+        if (duration > groupedSubjects.day.focus[dayIndex].data) {
+          groupedSubjects.day.focus[dayIndex].data = duration;
         }
       }
 
-      const weekIndex = subject.weekly.timeline.findIndex(
+      const weekIndex = subject.week.timeline.findIndex(
         (day) => day.date === startDateTime.startOf("week").toISODate()
       );
       if (weekIndex !== -1) {
-        subject.weekly.timeline[weekIndex].data.push([start, start + duration]);
-        subject.weekly.total[weekIndex].data += duration;
-        if (duration > subject.weekly.focus[weekIndex].data) {
-          subject.weekly.focus[weekIndex].data = duration;
+        subject.week.timeline[weekIndex].data.push([start, start + duration]);
+        subject.week.total[weekIndex].data += duration;
+        if (duration > subject.week.focus[weekIndex].data) {
+          subject.week.focus[weekIndex].data = duration;
         }
 
         //grouped subjects
-        groupedSubjects.weekly.timeline[weekIndex].data.push([
+        groupedSubjects.week.timeline[weekIndex].data.push([
           start,
           start + duration,
         ]);
-        groupedSubjects.weekly.total[weekIndex].data += duration;
-        if (duration > groupedSubjects.weekly.focus[weekIndex].data) {
-          groupedSubjects.weekly.focus[weekIndex].data = duration;
+        groupedSubjects.week.total[weekIndex].data += duration;
+        if (duration > groupedSubjects.week.focus[weekIndex].data) {
+          groupedSubjects.week.focus[weekIndex].data = duration;
         }
       }
 
-      const monthIndex = subject.monthly.timeline.findIndex(
+      const monthIndex = subject.month.timeline.findIndex(
         (day) => day.date === startDateTime.startOf("month").toISODate()
       );
       if (monthIndex !== -1) {
-        subject.monthly.timeline[monthIndex].data.push([
+        subject.month.timeline[monthIndex].data.push([
           start,
           start + duration,
         ]);
-        subject.monthly.total[monthIndex].data += duration;
-        if (duration > subject.monthly.focus[monthIndex].data) {
-          subject.monthly.focus[monthIndex].data = duration;
+        subject.month.total[monthIndex].data += duration;
+        if (duration > subject.month.focus[monthIndex].data) {
+          subject.month.focus[monthIndex].data = duration;
         }
 
         //grouped subjects
-        groupedSubjects.monthly.timeline[monthIndex].data.push([
+        groupedSubjects.month.timeline[monthIndex].data.push([
           start,
           start + duration,
         ]);
-        groupedSubjects.monthly.total[monthIndex].data += duration;
-        if (duration > groupedSubjects.monthly.focus[monthIndex].data) {
-          groupedSubjects.monthly.focus[monthIndex].data = duration;
+        groupedSubjects.month.total[monthIndex].data += duration;
+        if (duration > groupedSubjects.month.focus[monthIndex].data) {
+          groupedSubjects.month.focus[monthIndex].data = duration;
         }
       }
     });
@@ -187,9 +187,9 @@ function sortNewSubject(subjects, subject) {
     const weekDate = dayDate.startOf("week");
     const monthDate = dayDate.startOf("month");
 
-    const daysLength = subjects[0].daily.total.length;
-    const weeksLength = subjects[0].weekly.total.length;
-    const monthsLength = subjects[0].monthly.total.length;
+    const daysLength = subjects[0].day.total.length;
+    const weeksLength = subjects[0].week.total.length;
+    const monthsLength = subjects[0].month.total.length;
 
     const dailyArray = [];
     for (let i = 0; i < daysLength; i++) {
@@ -212,7 +212,7 @@ function sortNewSubject(subjects, subject) {
       });
     }
 
-    subject.daily = {
+    subject.day = {
       timeline: JSON.parse(
         JSON.stringify(dailyArray.map((val) => ({ ...val, data: [] })))
       ),
@@ -220,7 +220,7 @@ function sortNewSubject(subjects, subject) {
       focus: JSON.parse(JSON.stringify(dailyArray)),
     };
 
-    subject.weekly = {
+    subject.week = {
       timeline: JSON.parse(
         JSON.stringify(weeklyArray.map((val) => ({ ...val, data: [] })))
       ),
@@ -228,7 +228,7 @@ function sortNewSubject(subjects, subject) {
       focus: JSON.parse(JSON.stringify(weeklyArray)),
     };
 
-    subject.monthly = {
+    subject.month = {
       timeline: JSON.parse(
         JSON.stringify(monthlyArray.map((val) => ({ ...val, data: [] })))
       ),

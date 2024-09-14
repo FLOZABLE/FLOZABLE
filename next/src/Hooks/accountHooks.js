@@ -68,6 +68,7 @@ function useAccountProfile(userId) {
     queryKey: [`useAccountProfile`, userId],
     queryFn: () => getAccountProfile(userId),
     staleTime: 1000 * 60 * 10,
+    enabled: !!userId,
   });
 
   const {
