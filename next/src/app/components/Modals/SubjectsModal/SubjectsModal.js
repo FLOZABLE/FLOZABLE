@@ -147,38 +147,38 @@ export default function SubjectsModal() {
             (subject) => subject.name === "others"
           );
           if (otherSubjectIndex !== -1 && deletedSubject) {
-            newSubjects[otherSubjectIndex].daily.total.map(
-              (value, i) => (value.data += deletedSubject.daily.total[i].data)
+            newSubjects[otherSubjectIndex].day.total.map(
+              (value, i) => (value.data += deletedSubject.day.total[i].data)
             );
-            newSubjects[otherSubjectIndex].weekly.total.map(
-              (value, i) => (value.data += deletedSubject.weekly.total[i].data)
+            newSubjects[otherSubjectIndex].week.total.map(
+              (value, i) => (value.data += deletedSubject.week.total[i].data)
             );
-            newSubjects[otherSubjectIndex].monthly.total.map(
-              (value, i) => (value.data += deletedSubject.monthly.total[i].data)
+            newSubjects[otherSubjectIndex].month.total.map(
+              (value, i) => (value.data += deletedSubject.month.total[i].data)
             );
 
-            newSubjects[otherSubjectIndex].daily.timeline.map((value, i) => {
-              value.data.push(...deletedSubject.daily.timeline[i].data);
+            newSubjects[otherSubjectIndex].day.timeline.map((value, i) => {
+              value.data.push(...deletedSubject.day.timeline[i].data);
               value.data.sort((a, b) => a[0] - b[0]);
             });
-            newSubjects[otherSubjectIndex].weekly.timeline.map((value, i) => {
-              value.data.push(...deletedSubject.weekly.timeline[i].data);
+            newSubjects[otherSubjectIndex].week.timeline.map((value, i) => {
+              value.data.push(...deletedSubject.week.timeline[i].data);
               value.data.sort((a, b) => a[0] - b[0]);
             });
-            newSubjects[otherSubjectIndex].monthly.timeline.map((value, i) => {
-              value.data.push(...deletedSubject.monthly.timeline[i].data);
+            newSubjects[otherSubjectIndex].month.timeline.map((value, i) => {
+              value.data.push(...deletedSubject.month.timeline[i].data);
               value.data.sort((a, b) => a[0] - b[0]);
             });
 
-            newSubjects[otherSubjectIndex].weekly.focus.map((value, i) => {
-              const deletedSubjectFocus = deletedSubject.weekly.focus[i].data;
+            newSubjects[otherSubjectIndex].week.focus.map((value, i) => {
+              const deletedSubjectFocus = deletedSubject.week.focus[i].data;
               value.data =
                 value.data > deletedSubjectFocus
                   ? value.data
                   : deletedSubjectFocus;
             });
-            newSubjects[otherSubjectIndex].monthly.focus.map((value, i) => {
-              const deletedSubjectFocus = deletedSubject.monthly.focus[i].data;
+            newSubjects[otherSubjectIndex].month.focus.map((value, i) => {
+              const deletedSubjectFocus = deletedSubject.month.focus[i].data;
               value.data =
                 value.data > deletedSubjectFocus
                   ? value.data

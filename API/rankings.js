@@ -90,14 +90,7 @@ Router.get("/user", async (req, res) => {
   try {
     const { userId, mode, date, timezone } = req.query;
 
-    let formattedMode = "day";
-
-    if (mode.toLowerCase() === "weekly") {
-      formattedMode = "week";
-    } else if (mode.toLowerCase() === "monthly") {
-      formattedMode = "month";
-    }
-    const dates = getDates(date, timezone, formattedMode, 7);
+    const dates = getDates(date, timezone, mode, 7);
 
     const connection = pool.promise();
     const [searchedRankings] = await connection.query(

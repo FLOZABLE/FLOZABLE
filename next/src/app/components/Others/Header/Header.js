@@ -71,9 +71,9 @@ function Header({}) {
   );
 
   useEffect(() => {
-    if (!groupedSubjects.daily) return;
+    if (!groupedSubjects.day) return;
 
-    //Solve daily
+    //Solve day
     const todayTotal = todayTotalCalculator(groupedSubjects);
     const formattedTodayTotal = secondConverter(todayTotal, [
       "seconds",

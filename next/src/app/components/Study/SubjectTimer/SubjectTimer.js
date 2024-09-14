@@ -30,7 +30,7 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
   useEffect(() => {
     if (!subjects || !subjects.length) return;
     const subjectOptions = subjects.map((subject) => {
-      const value = subject.daily.total[subject.daily.total.length - 1].data;
+      const value = subject.day.total[subject.day.total.length - 1].data;
       const { subject_id, name } = subject;
       return { subject_id, name, value, active: false };
     });
@@ -69,11 +69,11 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
       });
 
       if (!selectedSubjectIndex !== -1) {
-        const daily = subjects[selectedSubjectIndex].daily;
-        daily.total[daily.total.length - 1].data = selectedSubject.value;
+        const day = subjects[selectedSubjectIndex].day;
+        day.total[day.total.length - 1].data = selectedSubject.value;
         subjects[selectedSubjectIndex] = {
           ...subjects[selectedSubjectIndex],
-          daily,
+          day,
         };
         setSubjects(subjects);
       }
