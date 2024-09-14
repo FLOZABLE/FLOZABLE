@@ -29,9 +29,9 @@ export default function StudyInfo() {
   );
 
   useEffect(() => {
-    if (!subjects.daily) return;
+    if (!subjects.day) return;
 
-    //Solve daily
+    //Solve day
     const todayTotal = todayTotalCalculator(subjects);
     const { value, type } = secondConverter(todayTotal);
     setTotalStudied(value + " " + type);
@@ -41,9 +41,9 @@ export default function StudyInfo() {
     setStudyStreak(streaks + " days");
 
     //Solve focus
-    if (subjects.daily.grouped.length) {
+    if (subjects.day.grouped.length) {
       const focus = focusCalculator(
-        subjects.daily.grouped[subjects.daily.grouped.length - 1]
+        subjects.day.grouped[subjects.day.grouped.length - 1]
       );
       const formattedDuration = secondConverter(focus);
       setLongestSession(formattedDuration.value + " " + formattedDuration.type);

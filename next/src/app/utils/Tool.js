@@ -103,7 +103,7 @@ const focusCalculator = (grouped) => {
 };
 
 function streakCalculator(groupedSubjects) {
-  const reversedDaily = groupedSubjects.daily.total.toReversed();
+  const reversedDaily = groupedSubjects.day.total.toReversed();
 
   let streak = 0;
   reversedDaily.find((day) => {
@@ -118,16 +118,16 @@ function streakCalculator(groupedSubjects) {
 }
 
 function todayTotalCalculator(groupedSubjects) {
-  if (!groupedSubjects || !groupedSubjects?.daily?.total?.length) return 0;
+  if (!groupedSubjects || !groupedSubjects?.day?.total?.length) return 0;
   const totalSeconds =
-    groupedSubjects.daily.total[groupedSubjects.daily.total.length - 1].data;
+    groupedSubjects.day.total[groupedSubjects.day.total.length - 1].data;
   return totalSeconds ? totalSeconds : 0;
 }
 
 function todayFocusCalculator(groupedSubjects) {
-  if (!groupedSubjects || !groupedSubjects?.daily?.focus?.length) return 0;
+  if (!groupedSubjects || !groupedSubjects?.day?.focus?.length) return 0;
   const totalSeconds =
-    groupedSubjects.daily.focus[groupedSubjects.daily.focus.length - 1].data;
+    groupedSubjects.day.focus[groupedSubjects.day.focus.length - 1].data;
   return totalSeconds ? totalSeconds : 0;
 }
 

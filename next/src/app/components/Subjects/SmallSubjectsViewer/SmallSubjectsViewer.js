@@ -17,7 +17,7 @@ function SmallSubjectsViewer({}) {
 
   return (
     <div className={styles.SmallSubjectsViewer}>
-      {subjects?.daily?.total[subjects.daily.total.length - 1] ? (
+      {subjects?.day?.total[subjects.day.total.length - 1] ? (
         <div className={styles.chartContainer}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -28,7 +28,7 @@ function SmallSubjectsViewer({}) {
                 labelLine={false}
                 data={subjects.reduce((arr, subject) => {
                   const value =
-                    subject.daily.total[subject.daily.total.length - 1];
+                    subject.day.total[subject.day.total.length - 1];
                   if (value) {
                     const fill =
                       coldColorsList[arr.length % coldColorsList.length];

@@ -167,7 +167,7 @@ function SmallCalendar({
     ];
 
     if (showHeatmap && subjects && subjects.length) {
-      subjects.daily.total.toReversed().map((day, i) => {
+      subjects.day.total.toReversed().map((day, i) => {
         const currentDay = DateTime.now().minus({ days: i });
         const stringDay = currentDay.toFormat("yyyy-MM-dd");
         if (

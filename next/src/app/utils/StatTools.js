@@ -9,73 +9,24 @@ function updateTimeUsagePie(subjects, viewDate, type) {
     .startOf("day")
     .startOf(type);
 
-  if (type === "day") {
-    subjects.map((subject) => {
-      const date = subject.daily.total.find(
-        (day) => day.date === viewDateTime.toISODate()
-      );
-      if (date) {
-        const fill =
-          SUBJECTS_PIE_COLORS[data.length % SUBJECTS_PIE_COLORS.length];
-        const value = date.data;
-        const labelVal = secondConverter(value, [
-          "seconds",
-          "minutes",
-          "hours",
-        ]);
-        data.push({
-          value,
-          ...subject,
-          fill,
-          labelVal: `${labelVal.value} ${labelVal.type}`,
-        });
-      }
-    });
-  } else if (type === "week") {
-    subjects.map((subject) => {
-      const date = subject.weekly.total.find(
-        (day) => day.date === viewDateTime.toISODate()
-      );
-      if (date) {
-        const fill =
-          SUBJECTS_PIE_COLORS[data.length % SUBJECTS_PIE_COLORS.length];
-        const value = date.data;
-        const labelVal = secondConverter(value, [
-          "seconds",
-          "minutes",
-          "hours",
-        ]);
-        data.push({
-          value,
-          ...subject,
-          fill,
-          labelVal: `${labelVal.value} ${labelVal.type}`,
-        });
-      }
-    });
-  } else {
-    subjects.map((subject) => {
-      const date = subject.monthly.total.find(
-        (day) => day.date === viewDateTime.toISODate()
-      );
-      if (date) {
-        const fill =
-          SUBJECTS_PIE_COLORS[data.length % SUBJECTS_PIE_COLORS.length];
-        const value = date.data;
-        const labelVal = secondConverter(value, [
-          "seconds",
-          "minutes",
-          "hours",
-        ]);
-        data.push({
-          value,
-          ...subject,
-          fill,
-          labelVal: `${labelVal.value} ${labelVal.type}`,
-        });
-      }
-    });
-  }
+  subjects.map((subject) => {
+    const date = subject[type].total.find(
+      (day) => day.date === viewDateTime.toISODate()
+    );
+    if (date) {
+      const fill =
+        SUBJECTS_PIE_COLORS[data.length % SUBJECTS_PIE_COLORS.length];
+      const value = date.data;
+      const labelVal = secondConverter(value, ["seconds", "minutes", "hours"]);
+      data.push({
+        value,
+        ...subject,
+        fill,
+        labelVal: `${labelVal.value} ${labelVal.type}`,
+      });
+    }
+  });
+
   return data;
 }
 
@@ -102,9 +53,9 @@ function updateSubjectsTrendChart(subjects, viewDate, type) {
     const day = {
       label,
     };
-    subjectData.map(subject => {
+    subjectData.map((subject) => {
       day[subject.subject_id] = subject.value;
-    })
+    });
     data.push(day);
   });
   return data;
