@@ -155,6 +155,33 @@ const possibleBotsSubjects = [
   ],
 ];
 
+const subjectColors = [
+  "#D9F0FF",
+  "#A3D5FF",
+  "#83C9F4",
+  "#6F73D2",
+  "#F8E16C",
+  "#00C49A",
+  "#FB8F67",
+  "#156064",
+  "#FCAB10",
+  "#F8333C",
+  "#44AF69",
+  "#2B9EB3",
+  "#393D3F",
+  "#FDFDFF",
+  "#C6C5B9",
+  "#546A7B",
+  "#93A3B1",
+  "#7C898B",
+  "#636564",
+  "#4C443C",
+  "#4C5760",
+  "#93A8AC",
+  "#D7CEB2",
+  "#A59E8C",
+];
+
 module.exports = {
   RESPONSE_CODES,
   MAX_STUDY_TIME,
@@ -164,4 +191,5 @@ module.exports = {
   possibleBotsSubjects,
   REDIS_EXP,
   BOT_OPTIONS,
+  subjectColors,
 };

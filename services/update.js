@@ -40,7 +40,12 @@ const {
   createPurchasesTable,
 } = require("../Utils/query");
 const pool = require("../model/pool");
-const { createFriends, createBots, createGroups } = require("../Bot/generator");
+const {
+  createFriends,
+  createBots,
+  createGroups,
+  updateBotSubjectsColor,
+} = require("../Bot/generator");
 
 //const prompt = require("prompt-sync")({ sigint: true });
 
@@ -52,6 +57,7 @@ readline.question(
   3) createBots:NUMBERS
   4) createGroups:NUMBERS
   5) createFriends:MIN:MAX
+  6) updateBotSubjectColor
   `,
   async (command) => {
     if (command === "maria:0") {
@@ -67,6 +73,8 @@ readline.question(
     } else if (command.startsWith("createFriends:")) {
       const [_, min, max] = command.split(":");
       await createFriends(parseInt(min), parseInt(max));
+    } else if (command === "updateBotSubjectColor") {
+      await updateBotSubjectsColor();
     }
     readline.close();
   }

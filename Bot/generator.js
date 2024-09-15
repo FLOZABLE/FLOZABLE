@@ -4,7 +4,7 @@ const combinedNameData = require("../data/combinedNames.json");
 const groupsData = require("../data/Groups.json");
 const { DateTime } = require("luxon");
 const fs = require("fs");
-const { possibleBotsSubjects } = require("../Constant");
+const { possibleBotsSubjects, subjectColors } = require("../Constant");
 const axios = require("axios");
 const {
   generateRandomId,
@@ -86,12 +86,13 @@ async function createBots(length) {
         );
         let subjectName = possibleBotsSubjects[subjectCategory];
         subjectName = subjectName[randomIntInRange(0, subjectName.length - 1)];
-
+        const color =
+          subjectColors[randomIntInRange(0, subjectColors.length - 1)];
         const subject = {
           subject_id,
           name: subjectName,
           user_id: userId,
-          color: "#000000",
+          color: color,
           created_at,
         };
 
@@ -397,6 +398,32 @@ async function createFriends(min, max) {
   }
 }
 
+async function updateBotSubjectsColor() {
+  try {
+    const connection = pool.promise();
+
+    const [subjects] = await connection.query(
+      `SELECT s.subject_id, u.user_id
+       from users u 
+       LEFT JOIN subjects s 
+       ON s.user_id = u.user_id
+       WHERE u.type = -1 `
+    );
+    await Promise.all(
+      subjects.map(async ({ subject_id, user_id }, i) => {
+        const color = subjectColors[i % subjectColors.length];
+        await connection.query(
+          `UPDATE subjects SET color = ? WHERE subject_id = ? AND user_id = ?`,
+          [color, subject_id, user_id]
+        );
+      })
+    );
+    console.log("subject colos updated", subjects.length);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 async function deleteBots() {
   /* const connection = pool.promise();
 
@@ -438,4 +465,5 @@ module.exports = {
   createGroups,
   createFriends,
   deleteBots,
+  updateBotSubjectsColor,
 };
