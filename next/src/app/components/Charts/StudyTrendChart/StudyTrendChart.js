@@ -57,10 +57,6 @@ function StudyTrendChart({
       </div>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
-          margin={{
-            right: 20,
-            left: -40,
-          }}
           data={subjectsTrend.map((day) => {
             const newDay = {};
             Object.keys(day).map((subjectId) => {

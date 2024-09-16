@@ -10,9 +10,9 @@ function ChatRoom({ chatroom }) {
   const [lastMsg, setLastMsg] = useState({});
 
   useEffect(() => {
-    if (!chatroom?.lastMsg) return;
-
-    setLastMsg(chatroom.lastMsg);
+    if (chatroom.lastMsg) {
+      setLastMsg(chatroom.lastMsg);
+    }
 
     const onChatMessage = (message) => {
       if (chatroom.chatroom_id === message.r) {
@@ -54,7 +54,7 @@ function ChatRoom({ chatroom }) {
           <div className={styles.msg}>{lastMsg?.m}</div>
           <div className={styles.time}>
             {lastMsg && lastMsg.t
-              ? DateTime.fromSeconds(lastMsg.t * 60).toLocaleString(
+              ? DateTime.fromSeconds(lastMsg.t).toLocaleString(
                   DateTime.TIME_SIMPLE
                 )
               : null}

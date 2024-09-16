@@ -19,7 +19,7 @@ function FriendsActivityViewer() {
 
   const { useFriendsStatusData, friendsStatusIsLoading } = useFriendsStatus();
 
-  if (true) {
+  if (!friendsStatusIsLoading && !useFriendsStatusData?.success) {
     return <RecommendedFriendsViewer />;
   }
 
