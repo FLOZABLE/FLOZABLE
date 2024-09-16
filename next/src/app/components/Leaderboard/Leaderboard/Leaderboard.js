@@ -10,7 +10,7 @@ const PAGE_LENGTH = 30;
 
 export default function Leaderboard({ viewer, viewDate, isOnlyFriends }) {
   const { userInfo } = useContext(UserInfoContext);
-  
+
   const { useRankingsData, useRankingsIsLoading } = useRankings(
     viewer,
     viewDate
@@ -65,7 +65,13 @@ export default function Leaderboard({ viewer, viewDate, isOnlyFriends }) {
                 <div className={styles.userContainer} key={i}>
                   <div className={styles.rank}>{ranking.rank}</div>
                   <div className={styles.userInfo}>
-                    <UserContainer userInfo={ranking} maxNameWidht="11rem" />
+                    <UserContainer
+                      userInfo={ranking}
+                      maxNameWidht="11rem"
+                      onClick={() => {
+                        router.push(`/dashboard/user/${ranking.user_id}`);
+                      }}
+                    />
                   </div>
                   <div className={styles.studyTime}>
                     {(ranking.study_time / (60 * 60)).toFixed(2)}hr
