@@ -46,6 +46,7 @@ function ChatModal({}) {
 
   const onSubmit = useCallback(() => {
     socket.emit("chat/send", chatModal.chatroom, msgInput);
+    setMsgInput("");
   }, [msgInput, chatModal]);
 
   useEffect(() => {
@@ -139,9 +140,7 @@ function ChatModal({}) {
         >
           {messages?.map((msg, index) => {
             const { u, m, t } = msg;
-            const formattedTime = DateTime.fromSeconds(t * 60).toFormat(
-              "h:mm a"
-            );
+            const formattedTime = DateTime.fromSeconds(t).toFormat("h:mm a");
             if (u === userInfo.user_id) {
               return <MyChatContainer time={formattedTime} m={m} key={index} />;
             } else {
@@ -169,6 +168,7 @@ function ChatModal({}) {
               }
             }}
             onChange={(e) => setMsgInput(e.target.value)}
+            g
           />
           <SendBtn onSubmit={onSubmit} />
         </div>
