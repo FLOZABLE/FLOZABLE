@@ -1,4 +1,20 @@
 .StudyModalContainer {
+  background-color: var(--opacity-black);
+  z-index: 2;
+  position: fixed;
+  z-index: 2;
+  visibility: hidden;
+  transition: visibility 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 0;
+  width: 30rem;
+}
+
+.StudyModalContainer.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* .StudyModalContainer {
   background-color: #fff;
   padding: 0.625rem;
   border-radius: 1.25rem;
@@ -12,4 +28,4 @@
 .StudyModalContainer.visible {
   visibility: visible;
   opacity: 1;
-}
+} */

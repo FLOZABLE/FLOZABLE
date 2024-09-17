@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from "react";
 import styles from "./StudyModalContainer.module.css";
 import Draggable from "react-draggable";
 
-function StudyModalContainer({ element, isDisp, startPos = {x: 0, y: 0}, onDragEnd }) {
+function StudyModalContainer({ children, isDisp, style = {} }) {
   const ref = useRef();
 
-  return (
+  /* return (
     <Draggable
       positionOffset={{ x: startPos.x, y: startPos.y }}
       nodeRef={ref}
@@ -19,6 +19,16 @@ function StudyModalContainer({ element, isDisp, startPos = {x: 0, y: 0}, onDragE
         <div className={styles.inner}>{element}</div>
       </div>
     </Draggable>
+  ); */
+  return (
+    <div
+      className={`${styles.StudyModalContainer} ${
+        isDisp ? styles.visible : ""
+      }`}
+      style={style}
+    >
+      {children}
+    </div>
   );
 }
 
