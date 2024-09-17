@@ -28,4 +28,5 @@
   height: min-content;
   overflow: hidden;
   flex: 0;
+  display: block;
 }
