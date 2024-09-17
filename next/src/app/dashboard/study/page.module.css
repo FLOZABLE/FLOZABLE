@@ -31,10 +31,25 @@
   display: block;
 }
 
-.Study .PlanTimelineBarWrapper {
+.Study .studyOptions {
   position: fixed;
-  bottom:3.125rem;
-  left: 0em;
-  width: 100vw;
-  z-index: 2;
+  top: 3rem;
+  right: 3rem;
+  z-index: 3;
+  display: flex;
+}
+
+.Study .studyOptions .studyOption {
+  background-color: var(--opacity-black);
+  color: #fff;
+  width: 4em;
+  height: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+.Study .studyOptions .studyOption i {
+  font-size: 3rem;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
 import StudyModalContainer from "@/app/components/Study/StudyModalContainer/StudyModalContainer";
 import PlaylistModal from "@/app/components/Modals/PlaylistModal/PlaylistModal";
@@ -12,22 +12,46 @@ import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewe
 import YouTubePlayer from "@/app/components/Youtube/YouTubePlayer/YouTubePlayer";
 import StudySidebar from "@/app/components/Study/StudySidebar/StudySidebar";
 import StudyTimelineBar from "@/app/components/Study/StudyTimelineBar/StudyTimelineBar";
-import PomodoroTimer from "@/app/components/Study/PomodoroTimer/PomodoroTimer";
+import PlansTimeline from "@/app/components/Plans/PlansTimeline/PlansTimeline";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconBxHome, IconClipboardOutline } from "@/app/utils/Svg";
+import { faHourglass, faUsers } from "@fortawesome/free-solid-svg-icons";
+
+const MODAL_CORDINATES = {
+  timer: {
+    left: "3rem",
+    top: "3rem",
+  },
+  planner: {
+    left: "3rem",
+    bottom: "10rem",
+  },
+};
+
+function StudyOption({ children }) {
+  return <div className={styles.StudyOption}>{children}</div>;
+}
 
 function Study() {
-  const [isPlannerModal, setIsPlannerModal] = useState(false);
+  const [isPlannerModal, setIsPlannerModal] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [isTimerModal, setIsTimerModal] = useState(true);
-  const [isPlaylistModal, setIsPlaylistModal] = useState(false);
-  const [isTemplateModal, setIsTemplateModal] = useState(false);
-  const [isVolumeModal, setIsVolumeModal] = useState(false);
-  const [isZoom, setIsZoom] = useState(false);
-  const [isToolModal, setIsToolModal] = useState(false);
+  const [isPlaylistModal, setIsPlaylistModal] = useState(true);
+  const [isTemplateModal, setIsTemplateModal] = useState(true);
+  const [isVolumeModal, setIsVolumeModal] = useState(true);
+  const [isZoom, setIsZoom] = useState(true);
+  const [isToolModal, setIsToolModal] = useState(true);
   const [isViewGroups, setIsViewGroups] = useState(true);
 
-  const groupsViewerRef = useRef(null);
+  const [studyOptions, setStudyOptions] = useState({
+    planner: false,
+    timer: false,
+    groups: false,
+    playlist: false,
+    music: false,
+  });
 
-  const [videoId, setVideoId] = useState("MYPVQccHhAQ");
+  const [videoId, setVideoId] = useState("_gVrQa_bvm8");
   const [volume, setVolume] = useState(0);
   const [link, setLink] = useState([]);
 
@@ -35,156 +59,78 @@ function Study() {
     setLink(e.target.value);
   };
 
-  //localstorage positions
-  const [dragPos, setDragPos] = useState({
-    playlist: {
-      x: "0vw",
-      y: "0vh",
-    },
-    subject: {
-      x: "0vw",
-      y: "0vh",
-    },
-    theme: {
-      x: "0vw",
-      y: "0vh",
-    },
-    plan: {
-      x: "0vw",
-      y: "0vh",
-    },
-    music: {
-      x: "0vw",
-      y: "0vh",
-    },
-  });
-
-  useEffect(() => {
-    setDragPos({
-      playlist: {
-        x:
-          parseFloat(localStorage.getItem("playlist_positionX") || 0.75) * 100 +
-          "vw",
-        y:
-          parseFloat(localStorage.getItem("playlist_positionY") || 0) * 100 +
-          "vh",
-      },
-      subject: {
-        x:
-          parseFloat(localStorage.getItem("subject_positionX") || 0.06) * 100 +
-          "vw",
-        y:
-          parseFloat(localStorage.getItem("subject_positionY") || 0.1) * 100 +
-          "vh",
-      },
-      theme: {
-        x:
-          parseFloat(localStorage.getItem("theme_positionX") || 0.06) * 100 +
-          "vw",
-        y:
-          parseFloat(localStorage.getItem("theme_positionY") || 0.2) * 100 +
-          "vh",
-      },
-      plan: {
-        x:
-          parseFloat(localStorage.getItem("plan_positionX") || 0.8) * 100 +
-          "vw",
-        y:
-          parseFloat(localStorage.getItem("plan_positionY") || 0.15) * 100 +
-          "vh",
-      },
-      music: {
-        x:
-          parseFloat(localStorage.getItem("music_positionX") || 0.06) * 100 +
-          "vw",
-        y:
-          parseFloat(localStorage.getItem("music_positionY") || 0.2) * 100 +
-          "vh",
-      },
-    });
+  const toggleStudyOption = useCallback((key) => {
+    console.log(key);
+    setStudyOptions((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
-
-  const handleStop = (event, dragElement, name) => {
-    //Calculate global pos instead of relative pos to previous offset
-    const previousX = parseFloat(dragPos[name].x) / 100;
-    const previousY = parseFloat(dragPos[name].y) / 100;
-    localStorage.setItem(
-      name + "_positionX",
-      previousX + dragElement.x / window.innerWidth
-    );
-    localStorage.setItem(
-      name + "_positionY",
-      previousY + dragElement.y / window.innerHeight
-    );
-  };
 
   return (
     <div className={styles.Study}>
+      <div className={styles.studyOptions}>
+        <div
+          className={styles.studyOption}
+          onClick={() => {
+            toggleStudyOption("timer");
+          }}
+        >
+          <i>
+            <FontAwesomeIcon icon={faHourglass} />
+          </i>
+        </div>
+        <div
+          className={styles.studyOption}
+          onClick={() => {
+            toggleStudyOption("planner");
+          }}
+        >
+          <i>
+            <IconClipboardOutline />
+          </i>
+        </div>
+        <div className={styles.studyOption} onClick={() => {}}>
+          <i>
+            <FontAwesomeIcon icon={faUsers} />
+          </i>
+        </div>
+        <div className={styles.studyOption} onClick={() => {}}>
+          <i>
+            <IconBxHome />
+          </i>
+        </div>
+      </div>
+      <StudyModalContainer isDisp={isTimerModal} style={MODAL_CORDINATES.timer}>
+        <SubjectTimer
+          selectedSubject={selectedSubject}
+          setSelectedSubject={setSelectedSubject}
+        />
+      </StudyModalContainer>
       <StudyModalContainer
-        startPos={dragPos.playlist}
-        onDragEnd={(event, dragElement) => {
-          handleStop(event, dragElement, "playlist");
-        }}
-        isDisp={isPlaylistModal}
-        element={<PlaylistModal />}
-      />
-      <StudyModalContainer
-        startPos={dragPos.subject}
-        onDragEnd={(event, dragElement) => {
-          handleStop(event, dragElement, "subject");
-        }}
-        isDisp={isTimerModal}
-        element={
-          <div>
-            <SubjectTimer
-              selectedSubject={selectedSubject}
-              setSelectedSubject={setSelectedSubject}
-            />
-            {/* <PomodoroTimer /> */}
-          </div>
-        }
-      />
-      <StudyModalContainer
-        startPos={dragPos.plan}
-        onDragEnd={(event, dragElement) => {
-          handleStop(event, dragElement, "plan");
-        }}
-        isDisp={isPlannerModal}
-        element={
-          <PlanTimeline
-            viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
-            viewer={"timeGridDay"}
-            mode={"study"}
-          />
-        }
-      />
-      <StudyModalContainer
-        startPos={dragPos.theme}
-        onDragEnd={(event, dragElement) => {
-          handleStop(event, dragElement, "theme");
-        }}
-        isDisp={isTemplateModal}
-        element={
-          <ThemeSelector
-            link={link}
-            handleLinkInput={handleLinkInput}
-            setVideoId={setVideoId}
-          />
-        }
-      />
-      <StudyModalContainer
-        startPos={dragPos.music}
-        onDragEnd={(event, dragElement) => {
-          handleStop(event, dragElement, "music");
-        }}
-        isDisp={isVolumeModal}
-        element={
-          <MusicModal
-            originalVideoVolume={volume}
-            setOriginalVideoVolume={setVolume}
-          />
-        }
-      />
+        isDisp={studyOptions.planner}
+        style={MODAL_CORDINATES.planner}
+      >
+        <PlansTimeline
+          viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
+          viewer={"day"}
+          mode={"study"}
+          maxHeight="calc(100vh - 2.5rem)"
+        />
+      </StudyModalContainer>
+      {/* <StudyModalContainer isDisp={isTemplateModal}>
+        <ThemeSelector
+          link={link}
+          handleLinkInput={handleLinkInput}
+          setVideoId={setVideoId}
+        />
+      </StudyModalContainer>
+      <StudyModalContainer isDisp={isVolumeModal}>
+        <MusicModal
+          originalVideoVolume={volume}
+          setOriginalVideoVolume={setVolume}
+        />
+      </StudyModalContainer>
+      <StudyModalContainer isDisp={isPlaylistModal}>
+        <PlaylistModal />
+      </StudyModalContainer> */}
       <StudySidebar
         isPlannerModal={isPlannerModal}
         setIsPlannerModal={setIsPlannerModal}
