@@ -1,0 +1,23 @@
+.VideoCallController {
+  color: #fff;
+  padding: 1rem;
+  width: 20rem;
+}
+
+.VideoCallController .title {
+  display: flex;
+  justify-content: center;
+}
+
+.VideoCallController .controller {
+  display: flex;
+  padding: 1rem 0rem;
+}
+
+.VideoCallController .controller i {
+  margin-left: auto;
+}
+
+.VideoCallController .controller:not(:nth-last-child(1)) {
+  border-bottom: 0.1rem var(--gray1) solid;
+}

@@ -3,14 +3,6 @@
   margin-top: 0em;
 }
 
-.Study .Main {
-  margin-top: 0em;
-  height: 100vh;
-  z-index: 1;
-  overflow: hidden;
-  margin-left: 6.25rem;
-}
-
 .Study .ytBg {
   position: fixed;
   top: 0em;
@@ -19,23 +11,34 @@
   width: 100vw;
 }
 
-.Study .myGroupsViewerWrapper {
-  margin-top: 3.125rem;
-  display: none;
-  margin-left: 6rem;
-  width: calc(100% - 6rem);
-  height: calc(100vh - 9.375rem);
+.Study .MyGroupsViewer {
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s ease-in-out opacity, 0.3s ease-in-out visibility;
+  position: fixed;
+  width: 60vw;
+  left: 50vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
 }
 
-.Study .myGroupsViewerWrapper.open {
-  display: block;
+.Study .MyGroupsViewer.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.Study .StudyTimelineBar {
+  position: fixed;
+  bottom: 3rem;
+  left: 50vw;
+  transform: translateX(-50%);
+  width: 80vw;
 }
 
 .Study .studyOptions {
   position: fixed;
   top: 3rem;
   right: 3rem;
-  z-index: 3;
   display: flex;
 }
 
@@ -49,7 +52,57 @@
   align-items: center;
   overflow: hidden;
   border-radius: 1rem;
+  margin-left: 0.5rem;
 }
 .Study .studyOptions .studyOption i {
-  font-size: 3rem;
+  font-size: 2rem;
+}
+
+.StudyModalContainer {
+  background-color: var(--opacity-black);
+  z-index: 2;
+  position: fixed;
+  z-index: 2;
+  visibility: hidden;
+  transition: visibility 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 0;
+  max-width: 35rem;
+  border-radius: 1rem;
+}
+
+.StudyModalContainer.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.StudyModalContainer#timer {
+  left: 3rem;
+  top: 3rem;
+}
+
+.StudyModalContainer#planner {
+  left: 3rem;
+  bottom: 8rem;
+}
+
+.StudyModalContainer#media {
+  right: 3rem;
+  top: 10rem;
+}
+
+.StudyModalContainer#AudioController {
+  right: 3rem;
+  bottom: 10rem;
+}
+
+.StudyModalContainer#ThemeSelector {
+  left: 50vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
+}
+
+.StudyModalContainer#PlaylistModal {
+  right: 3rem;
+  top: 50vh;
+  transform: translateY(-50%);
 }
