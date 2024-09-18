@@ -2,11 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
-import StudyModalContainer from "@/app/components/Study/StudyModalContainer/StudyModalContainer";
-import PlaylistModal from "@/app/components/Modals/PlaylistModal/PlaylistModal";
 import SubjectTimer from "@/app/components/Study/SubjectTimer/SubjectTimer";
-import PlanTimeline from "@/app/components/Plans/PlanTimeline/PlanTimeline";
-import ThemeSelector from "@/app/components/Themes/ThemeSelector/ThemeSelector";
 import MusicModal from "@/app/components/Modals/MusicModal/MusicModal";
 import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
 import YouTubePlayer from "@/app/components/Youtube/YouTubePlayer/YouTubePlayer";
@@ -15,7 +11,20 @@ import StudyTimelineBar from "@/app/components/Study/StudyTimelineBar/StudyTimel
 import PlansTimeline from "@/app/components/Plans/PlansTimeline/PlansTimeline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconBxHome, IconClipboardOutline } from "@/app/utils/Svg";
-import { faHourglass, faUsers } from "@fortawesome/free-solid-svg-icons";
+import {
+  faDownLeftAndUpRightToCenter,
+  faHeadphones,
+  faHourglass,
+  faImage,
+  faMusic,
+  faPhone,
+  faUpRightAndDownLeftFromCenter,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
+import VideoCallController from "../(header)/study/VideoCallController/VideoCallController";
+import AudioController from "../(header)/study/AudioController/AudioController";
+import PlaylistModal from "@/app/components/Modals/PlaylistModal/PlaylistModal";
+import ThemeSelector from "@/app/components/Themes/ThemeSelector/ThemeSelector";
 
 const MODAL_CORDINATES = {
   timer: {
@@ -47,17 +56,20 @@ function Study() {
     planner: false,
     timer: false,
     groups: false,
-    playlist: false,
-    music: false,
+    playlists: false,
+    audioController: false,
+    media: false,
+    themeSelector: false,
+    zoom: false,
   });
 
   const [videoId, setVideoId] = useState("_gVrQa_bvm8");
   const [volume, setVolume] = useState(0);
   const [link, setLink] = useState([]);
 
-  const handleLinkInput = (e) => {
+  const handleLinkInput = useCallback(() => {
     setLink(e.target.value);
-  };
+  }, []);
 
   const toggleStudyOption = useCallback((key) => {
     console.log(key);
@@ -66,6 +78,14 @@ function Study() {
 
   return (
     <div className={styles.Study}>
+      <div className={styles.ytBg}>
+        <YouTubePlayer
+          height={"100vh"}
+          width={"100vw"}
+          videoId={videoId}
+          volume={volume}
+        />
+      </div>
       <div className={styles.studyOptions}>
         <div
           className={styles.studyOption}
@@ -87,9 +107,68 @@ function Study() {
             <IconClipboardOutline />
           </i>
         </div>
-        <div className={styles.studyOption} onClick={() => {}}>
+        <div
+          className={styles.studyOption}
+          onClick={() => {
+            toggleStudyOption("groups");
+          }}
+        >
           <i>
             <FontAwesomeIcon icon={faUsers} />
+          </i>
+        </div>
+        <div
+          className={styles.studyOption}
+          onClick={() => {
+            toggleStudyOption("media");
+          }}
+        >
+          <i>
+            <FontAwesomeIcon icon={faPhone} />
+          </i>
+        </div>
+        <div
+          className={styles.studyOption}
+          onClick={() => {
+            toggleStudyOption("audioController");
+          }}
+        >
+          <i>
+            <FontAwesomeIcon icon={faHeadphones} />
+          </i>
+        </div>
+        <div
+          className={styles.studyOption}
+          onClick={() => {
+            toggleStudyOption("playlists");
+          }}
+        >
+          <i>
+            <FontAwesomeIcon icon={faMusic} />
+          </i>
+        </div>
+        <div
+          className={styles.studyOption}
+          onClick={() => {
+            toggleStudyOption("themeSelector");
+          }}
+        >
+          <i>
+            <FontAwesomeIcon icon={faImage} />
+          </i>
+        </div>
+        <div
+          className={styles.studyOption}
+          onClick={() => {
+            toggleStudyOption("zoom");
+          }}
+        >
+          <i>
+            {studyOptions.zoom ? (
+              <FontAwesomeIcon icon={faDownLeftAndUpRightToCenter} />
+            ) : (
+              <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+            )}
           </i>
         </div>
         <div className={styles.studyOption} onClick={() => {}}>
@@ -98,81 +177,76 @@ function Study() {
           </i>
         </div>
       </div>
-      <StudyModalContainer isDisp={isTimerModal} style={MODAL_CORDINATES.timer}>
+      <div
+        className={`${styles.StudyModalContainer} ${
+          studyOptions.timer ? styles.visible : ""
+        }`}
+        id={styles.timer}
+      >
         <SubjectTimer
           selectedSubject={selectedSubject}
           setSelectedSubject={setSelectedSubject}
         />
-      </StudyModalContainer>
-      <StudyModalContainer
-        isDisp={studyOptions.planner}
-        style={MODAL_CORDINATES.planner}
+      </div>
+      <div
+        className={`${styles.StudyModalContainer} ${
+          studyOptions.planner ? styles.visible : ""
+        }`}
+        id={styles.planner}
+        style={{ "--text-color": "#fff" }}
       >
         <PlansTimeline
           viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
           viewer={"day"}
-          mode={"study"}
-          maxHeight="calc(100vh - 2.5rem)"
+          maxHeight="calc(50vh)"
         />
-      </StudyModalContainer>
-      {/* <StudyModalContainer isDisp={isTemplateModal}>
+      </div>
+      <div
+        className={`${styles.StudyModalContainer} ${
+          studyOptions.media ? styles.visible : ""
+        }`}
+        id={styles.media}
+      >
+        <VideoCallController />
+      </div>
+      <div
+        className={`${styles.StudyModalContainer} ${
+          studyOptions.audioController ? styles.visible : ""
+        }`}
+        id={styles.AudioController}
+      >
+        <AudioController />
+      </div>
+      <div
+        className={`${styles.StudyModalContainer} ${
+          studyOptions.playlists ? styles.visible : ""
+        }`}
+        id={styles.PlaylistModal}
+      >
+        <PlaylistModal />
+      </div>
+      <div
+        className={`${styles.StudyModalContainer} ${
+          studyOptions.themeSelector ? styles.visible : ""
+        }`}
+        id={styles.ThemeSelector}
+      >
         <ThemeSelector
           link={link}
           handleLinkInput={handleLinkInput}
           setVideoId={setVideoId}
         />
-      </StudyModalContainer>
-      <StudyModalContainer isDisp={isVolumeModal}>
-        <MusicModal
-          originalVideoVolume={volume}
-          setOriginalVideoVolume={setVolume}
-        />
-      </StudyModalContainer>
-      <StudyModalContainer isDisp={isPlaylistModal}>
-        <PlaylistModal />
-      </StudyModalContainer> */}
-      <StudySidebar
-        isPlannerModal={isPlannerModal}
-        setIsPlannerModal={setIsPlannerModal}
-        setIsPlaylistModal={setIsPlaylistModal}
-        isPlaylistModal={isPlaylistModal}
-        isTimerModal={isTimerModal}
-        isTemplateModal={isTemplateModal}
-        isVolumeModal={isVolumeModal}
-        setIsTimerModal={setIsTimerModal}
-        setIsTemplateModal={setIsTemplateModal}
-        setIsVolumeModal={setIsVolumeModal}
-        isZoom={isZoom}
-        setIsZoom={setIsZoom}
-        isViewGroups={isViewGroups}
-        setIsViewGroups={setIsViewGroups}
-        isToolModal={isToolModal}
-        setIsToolModal={setIsToolModal}
-      />
-      <div className={`StudyMain`}>
-        <div
-          className={`${styles.myGroupsViewerWrapper} ${
-            isViewGroups ? styles.open : ""
-          }`}
-          style={{ "--textColor": "#ffffff" }}
-        >
-          <MyGroupsViewer />
-        </div>
-        <div className={styles.PlanTimelineBarWrapper}>
-          {
-            <div>
-              <StudyTimelineBar />
-            </div>
-          }
-        </div>
       </div>
-      <div className={styles.ytBg}>
-        <YouTubePlayer
-          height={"100vh"}
-          width={"100vw"}
-          videoId={videoId}
-          volume={volume}
-        />
+      <div
+        className={`${styles.MyGroupsViewer} ${
+          studyOptions.groups ? styles.visible : ""
+        }`}
+        style={{ "--textColor": "#ffffff" }}
+      >
+        <MyGroupsViewer />
+      </div>
+      <div className={styles.StudyTimelineBar}>
+        <StudyTimelineBar />
       </div>
     </div>
   );

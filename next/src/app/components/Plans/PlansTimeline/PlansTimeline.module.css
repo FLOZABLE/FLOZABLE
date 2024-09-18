@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   padding: 0.5rem 1rem;
+  color: var(--text-color);
 }
 
 .PlansTimeline .header .layer {
@@ -41,10 +42,8 @@
 
 .PlansTimeline .header .buttons div#addPlan {
   font-size: 2.5rem;
-  color: #bebebe;   
+  color: #bebebe;
 }
-
-
 
 .PlansTimeline .subjectEl {
   padding: 0rem 0.5rem;
@@ -61,7 +60,7 @@
 }
 
 .PlansTimeline .plansContainer#donePlans .type {
-  color: #1BC100;
+  color: #1bc100;
 }
 
 .PlansTimeline .plansContainer#todoPlans .type {
