@@ -22,6 +22,9 @@ import { socket } from "@/app/utils/socket";
 import { useGroupMembers } from "@/Hooks/groupsHook";
 import { secondConverter } from "@/app/utils/Tool";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
+import MembersStatus from "../MembersStatus/MembersStatus";
+import { faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const videoParams = {
   encodings: [
@@ -78,14 +81,6 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       (totalTime / members.length).toFixed(2)
     );
     setTotalTime(`${value} ${type}`);
-    const studyingMembers = members
-      .filter(
-        (member) =>
-          member.activeSubject && member.activeSubject.subject_id !== "0"
-      )
-      .map((member) => member.user_id);
-    console.log(studyingMembers, members);
-    setStudyingMembers(studyingMembers);
   }, [members]);
 
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
@@ -391,7 +386,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   }, [producerTransport, audioStream]);
 
   useEffect(() => {
-    if (!group || !userInfo) return;
+    if (!group) return;
 
     const onNewMember = (groupId, newUser) => {
       if (group.group_id !== groupId) return;
@@ -405,34 +400,13 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       setMembers((prev) => prev.filter((member) => member.user_id !== userId));
     };
 
-    const onStudying = (userId, subject) => {
-      if (
-        members.find((member) => member.user_id === userId) &&
-        !subject.subject_id !== "0"
-      ) {
-        console.log("triggered");
-        setStudyingMembers((prev) => [...new Set([...prev, userId])]);
-      }
-    };
-
-    const onStopStudying = (userId) => {
-      console.log("removed");
-      setStudyingMembers((prev) =>
-        prev.filter((memberId) => memberId !== userId)
-      );
-    };
-
     socket.on("newMember", onNewMember);
     socket.on("removeMember", onRemoveMember);
-    socket.on("studying", onStudying);
-    socket.on("stopStudying", onStopStudying);
     return () => {
       socket.off("newMember", onNewMember);
       socket.off("removeMember", onRemoveMember);
-      socket.off("studying", onStudying);
-      socket.off("stopStudying", onStopStudying);
     };
-  }, [group, userInfo, members]);
+  }, [group]);
 
   return (
     <div className={styles.MyGroupContainer}>
@@ -441,11 +415,9 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
         <div className={styles.info}>
           <div>
             <i>
-              <StudyPerson />
+              <FontAwesomeIcon icon={faPeopleGroup} />
             </i>
-            <p>
-              {studyingMembers.length}/{members.length}
-            </p>
+            <p>{members.length}</p>
           </div>
           <div>
             <i>
@@ -489,6 +461,13 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
             </div>
           )}
         </div>
+      </div>
+      <div className={styles.MembersStatus}>
+        <MembersStatus
+          groupId={group.group_id}
+          members={members}
+          setMembers={setMembers}
+        />
       </div>
       <div className={`hiddenScroll ${styles.MembersContainer}`}>
         {isActive && !groupMembersIsLoading ? (
