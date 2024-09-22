@@ -70,6 +70,10 @@ mainIo.on("connection", (socket) => {
           mainIo.to(friends).emit(`studying`, userId, { subject_id: "0" });
         }
 
+        if (groups.length) {
+          mainIo.to(groups).emit(`studying`, userId, { subject_id: "0" });
+        }
+
         const chatroomIds = chatrooms.map(
           (chatroom) => "chatroom:" + chatroom.chatroom_id
         );
@@ -81,6 +85,8 @@ mainIo.on("connection", (socket) => {
         console.log(err);
       }
     })();
+  } else {
+    return;
   }
 
   socket.on("disconnect", async (reason) => {
@@ -274,10 +280,10 @@ async function stopStudying(connection, userId, mode) {
     if (!userInfo) return;
 
     if (groups.length) {
-      mainIo.to(groups).emit(`stopStudying`, userId, { status: mode });
+      mainIo.to(groups).emit(`stopStudying`, userId, mode);
     }
     if (friends.length) {
-      mainIo.to(friends).emit(`stopStudying`, userId, { status: mode });
+      mainIo.to(friends).emit(`stopStudying`, userId, mode);
     }
 
     if (!activeSubject || activeSubject.subject_id === "0") {
