@@ -16,7 +16,7 @@ function Stats({}) {
   );
   const [viewer, setViewer] = useState("day");
 
-  console.log(userInfo)
+  console.log(userInfo);
 
   return (
     <div className="Main">
@@ -31,6 +31,7 @@ function Stats({}) {
               setViewDate={setViewDate}
               viewer={viewer}
               subjects={subjects}
+              userId={userInfo?.user_id}
             />
           </div>
           <div

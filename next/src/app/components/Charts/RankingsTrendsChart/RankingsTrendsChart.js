@@ -13,6 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
+import AccountWall from "../../Others/AccountWall/AccountWall";
 
 function RankingsTrendsChart({
   viewDate,
@@ -54,27 +55,31 @@ function RankingsTrendsChart({
           </div>
         ) : null}
       </div>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={rankingsTrend} margin={{ right: 20, left: -40 }}>
-          <CartesianGrid vertical={false} />
-          <XAxis
-            dataKey="label"
-            tickFormatter={(data) => {
-              const dateTime = DateTime.fromISO(data);
+      {!userInfo?.user_id ? (
+        <AccountWall />
+      ) : (
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={rankingsTrend} margin={{ right: 20, left: -40 }}>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="label"
+              tickFormatter={(data) => {
+                const dateTime = DateTime.fromISO(data);
 
-              return dateTime.toFormat("M/d");
-            }}
-          />
-          <YAxis reversed={true} />
-          <Tooltip />
-          <Line
-            type="monotone"
-            dataKey={"ranking"}
-            stroke="#8884d8"
-            activeDot={{ r: 8 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+                return dateTime.toFormat("M/d");
+              }}
+            />
+            <YAxis reversed={true} />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey={"ranking"}
+              stroke="#8884d8"
+              activeDot={{ r: 8 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      )}
     </div>
   );
 }

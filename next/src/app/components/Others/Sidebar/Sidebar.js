@@ -141,7 +141,6 @@ function Sidebar({}) {
         <h3>Settings</h3>
       </SidebarEl>
       <div className={styles.buttons}>
-        <Link href={"/dashboard/study"}>Study</Link>
         <AccountBtn />
       </div>
     </aside>
