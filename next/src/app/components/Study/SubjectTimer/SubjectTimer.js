@@ -147,7 +147,7 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
       <div className={styles.mainDisplay}>
         {selectedSubject ? (
           <div
-            className={styles.subject}
+            className={`${styles.subject} ${selectNewSubject ? styles.active : null}`}
             onClick={() => setSelectNewSubject(!selectNewSubject)}
           >
             <p className={styles.name}>{selectedSubject.name}</p>

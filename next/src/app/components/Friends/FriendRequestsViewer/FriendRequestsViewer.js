@@ -114,6 +114,7 @@ function FriendRequestsViewer() {
           ]}
           value={viewer}
           setValue={setViewer}
+          isCheck={true}
         />
       </div>
       <div className={`contents ${styles.friendRequests} customScroll`}>

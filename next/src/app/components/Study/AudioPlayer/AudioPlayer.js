@@ -1,49 +1,57 @@
-import React, { useEffect, useState } from "react";
-import VolumeControl from "../VolumeControl/VolumeControl";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./AudioPlayer.module.css";
-import config from "@/app/utils/config";
-import { socket } from "@/app/utils/socket";
+import SliderAnimation from "../../Inputs/SliderAnimation/SliderAnimation";
 
-function AudioPlayer({ audio }) {
+function AudioPlayer({ audioInfo }) {
   const [volume, setVolume] = useState(0);
+  const audioRef = useRef();
 
   useEffect(() => {
-    if (!audio || (!volume && volume !== 0) || !audio.audio) return;
+    console.log("test");
     try {
-      if (volume > 0) audio.audio.play();
-      audio.audio.volume = volume / 100;
-      audio.audio.loop = true;
+      const audio = new Audio(audioInfo.source);
+      audio.loop = true;
+
+      audioRef.current = audio;
     } catch (err) {
       console.log(err);
-    };
-  }, [audio, volume]);
-
-  const onMouseUp = () => {
-    socket.emit("volumeChange", { id: audio.id, volume });
-  };
-
-  useEffect(() => {
-    const onVolumeChanged = ({ id, volume }) => {
-      if (id !== audio.id) {
-        return;
-      };
-      setVolume(volume);
-    };
-
-    socket.on("volumeChange", onVolumeChanged);
+    }
 
     return () => {
-      socket.off("volumeChange", onVolumeChanged);
+      //remove audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current.src = "";
+        audioRef.current = null;
+      }
     };
-  }, []);
+  }, [audioInfo]);
+
+  useEffect(() => {
+    if (!audioRef?.current) return;
+
+    if (volume > 0) {
+      audioRef.current.play();
+    } else {
+      audioRef.current.pause();
+    }
+
+    audioRef.current.volume = volume / 100;
+  }, [volume]);
 
   return (
     <div className={styles.AudioPlayer}>
-      <div className={styles.volumeWrapper}>
-        <VolumeControl onMouseUp={onMouseUp} volume={volume} setVolume={setVolume} backgroundImage={`url(${config.server}/img/${audio.name}.jpg)`} />
-      </div>
+      <p>{audioInfo.id}</p>
+      <SliderAnimation
+        min={0}
+        max={100}
+        step={1}
+        sliderValue={volume}
+        setSliderValue={setVolume}
+      />
     </div>
-  )
-};
+  );
+}
 
 export default AudioPlayer;

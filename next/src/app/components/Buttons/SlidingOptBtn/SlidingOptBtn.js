@@ -3,7 +3,7 @@ import styles from "./SlidingOptBtn.module.css";
 import React from "react";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
-function SlidingOptBtn({ options, setValue, value }) {
+function SlidingOptBtn({ options, setValue, value, isCheck }) {
   return (
     <div className={styles.SlidingOptBtn}>
       <div
@@ -17,19 +17,19 @@ function SlidingOptBtn({ options, setValue, value }) {
         {options.map((option, i) => {
           return (
             <div
-              className={styles.option}
+              className={`${option.value === value ? styles.on : ""} ${
+                styles.option
+              }`}
               key={i}
               onClick={() => {
                 setValue(option.value);
               }}
             >
-              <i
-                className={`${option.value === value ? styles.on : ""} ${
-                  styles.check
-                }`}
-              >
-                <FontAwesomeIcon icon={faCheck} />
-              </i>
+              {isCheck ? (
+                <i className={styles.check}>
+                  <FontAwesomeIcon icon={faCheck} />
+                </i>
+              ) : null}
               <p>{option.name}</p>
             </div>
           );

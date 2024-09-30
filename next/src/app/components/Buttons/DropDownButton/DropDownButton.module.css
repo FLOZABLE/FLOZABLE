@@ -2,7 +2,7 @@
   position: relative;
   width: fit-content;
   font-weight: 600;
-  transition: .3s ease-in-out background-color;
+  transition: 0.3s ease-in-out background-color;
   padding: 0em 1em;
   border-radius: 0.5em;
   cursor: pointer;
@@ -14,12 +14,10 @@
   overflow-y: auto; */
 }
 
-.DropDownButton.clicked {
-  background-color: var(--dark-gray);
-}
-
+.DropDownButton.clicked,
 .DropDownButton:hover {
   background-color: var(--dark-gray);
+  color: var(--hoverTextColor);
 }
 
 .DropDownButton i {
@@ -46,7 +44,8 @@
   top: 0em;
   border-bottom-left-radius: 0.5em;
   border-bottom-right-radius: 0.5em;
-  transition: visibility .3s ease-in-out, opacity .3s ease-in-out, top .3s ease-in-out;
+  transition: visibility 0.3s ease-in-out, opacity 0.3s ease-in-out,
+    top 0.3s ease-in-out;
   z-index: 2;
   max-height: 5em;
   overflow-y: auto;
@@ -64,7 +63,7 @@
 }
 
 .DropDownButton i svg {
-  transition: .3s ease-in-out transform;
+  transition: 0.3s ease-in-out transform;
 }
 
 .DropDownButton.clicked i svg {
