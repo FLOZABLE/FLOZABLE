@@ -67,7 +67,7 @@
   height: 1.5em;
 }
 
-.slider .sliderValue:before,
+/* .slider .sliderValue:before,
 .slider .sliderValue:after {
   content: "";
   position: absolute;
@@ -85,7 +85,7 @@
   bottom: 0;
   background: linear-gradient(rgba(255, 255, 255, 0), #FFF);
 }
-
+ */
 .slider .sliderValueNumber {
   height: 1em;
   overflow: hidden;

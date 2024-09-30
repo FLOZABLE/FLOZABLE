@@ -3,10 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
 import SubjectTimer from "@/app/components/Study/SubjectTimer/SubjectTimer";
-import MusicModal from "@/app/components/Modals/MusicModal/MusicModal";
 import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
 import YouTubePlayer from "@/app/components/Youtube/YouTubePlayer/YouTubePlayer";
-import StudySidebar from "@/app/components/Study/StudySidebar/StudySidebar";
 import StudyTimelineBar from "@/app/components/Study/StudyTimelineBar/StudyTimelineBar";
 import PlansTimeline from "@/app/components/Plans/PlansTimeline/PlansTimeline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,34 +23,32 @@ import VideoCallController from "../(header)/study/VideoCallController/VideoCall
 import AudioController from "../(header)/study/AudioController/AudioController";
 import PlaylistModal from "@/app/components/Modals/PlaylistModal/PlaylistModal";
 import ThemeSelector from "@/app/components/Themes/ThemeSelector/ThemeSelector";
+import { useRouter } from "next/navigation";
+import { exitFullscreen } from "@/app/utils/Tool";
 
-const MODAL_CORDINATES = {
-  timer: {
-    left: "3rem",
-    top: "3rem",
-  },
-  planner: {
-    left: "3rem",
-    bottom: "10rem",
-  },
-};
-
-function StudyOption({ children }) {
-  return <div className={styles.StudyOption}>{children}</div>;
+function StudyOption({ onClick, children, hoverText }) {
+  return (
+    <div className={styles.studyOption} onClick={onClick}>
+      {children}
+      <div className={`HoverText ${styles.hoverText}`}>{hoverText}</div>
+    </div>
+  );
 }
 
 function Study() {
+  const router = useRouter();
+
   const [selectedSubject, setSelectedSubject] = useState(null);
 
   const [studyOptions, setStudyOptions] = useState({
-    planner: false,
-    timer: false,
-    groups: false,
-    playlists: false,
-    audioController: false,
-    media: false,
-    themeSelector: false,
-    zoom: false,
+    planner: true,
+    timer: true,
+    groups: true,
+    playlists: true,
+    audioController: true,
+    media: true,
+    themeSelector: true,
+    zoom: true,
   });
 
   const [videoId, setVideoId] = useState("_gVrQa_bvm8");
@@ -64,9 +60,20 @@ function Study() {
   }, []);
 
   const toggleStudyOption = useCallback((key) => {
-    console.log(key);
     setStudyOptions((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
+
+  useEffect(() => {
+    if (studyOptions.zoom) {
+      document.body.requestFullscreen();
+    } else {
+      exitFullscreen();
+    }
+
+    return () => {
+      exitFullscreen();
+    };
+  }, [studyOptions.zoom]);
 
   return (
     <div className={styles.Study}>
@@ -79,81 +86,81 @@ function Study() {
         />
       </div>
       <div className={styles.studyOptions}>
-        <div
-          className={styles.studyOption}
+        <StudyOption
           onClick={() => {
             toggleStudyOption("timer");
           }}
+          hoverText={"Timer"}
         >
           <i>
             <FontAwesomeIcon icon={faHourglass} />
           </i>
-        </div>
-        <div
-          className={styles.studyOption}
+        </StudyOption>
+        <StudyOption
           onClick={() => {
             toggleStudyOption("planner");
           }}
+          hoverText={"Planner"}
         >
           <i>
             <IconClipboardOutline />
           </i>
-        </div>
-        <div
-          className={styles.studyOption}
+        </StudyOption>
+        <StudyOption
           onClick={() => {
             toggleStudyOption("groups");
           }}
+          hoverText={"Groups"}
         >
           <i>
             <FontAwesomeIcon icon={faUsers} />
           </i>
-        </div>
-        <div
-          className={styles.studyOption}
+        </StudyOption>
+        <StudyOption
           onClick={() => {
             toggleStudyOption("media");
           }}
+          hoverText={"Media"}
         >
           <i>
             <FontAwesomeIcon icon={faPhone} />
           </i>
-        </div>
-        <div
-          className={styles.studyOption}
+        </StudyOption>
+        <StudyOption
           onClick={() => {
             toggleStudyOption("audioController");
           }}
+          hoverText={"Audio"}
         >
           <i>
             <FontAwesomeIcon icon={faHeadphones} />
           </i>
-        </div>
-        <div
-          className={styles.studyOption}
+        </StudyOption>
+        <StudyOption
           onClick={() => {
             toggleStudyOption("playlists");
           }}
+          hoverText={"Playlists"}
         >
           <i>
             <FontAwesomeIcon icon={faMusic} />
           </i>
-        </div>
-        <div
-          className={styles.studyOption}
+        </StudyOption>
+        <StudyOption
           onClick={() => {
             toggleStudyOption("themeSelector");
           }}
+          hoverText={"Themes"}
         >
           <i>
             <FontAwesomeIcon icon={faImage} />
           </i>
-        </div>
-        <div
-          className={styles.studyOption}
+        </StudyOption>
+        <StudyOption
           onClick={() => {
             toggleStudyOption("zoom");
           }}
+          hoverText={"Zoom"}
         >
           <i>
             {studyOptions.zoom ? (
@@ -162,12 +169,17 @@ function Study() {
               <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
             )}
           </i>
-        </div>
-        <div className={styles.studyOption} onClick={() => {}}>
+        </StudyOption>
+        <StudyOption
+          onClick={() => {
+            router.push("/dashboard");
+          }}
+          hoverText={"Home"}
+        >
           <i>
             <IconBxHome />
           </i>
-        </div>
+        </StudyOption>
       </div>
       <div
         className={`${styles.StudyModalContainer} ${
@@ -207,7 +219,7 @@ function Study() {
         }`}
         id={styles.AudioController}
       >
-        <AudioController />
+        <AudioController themeVolume={volume} setThemeVolume={setVolume} />
       </div>
       <div
         className={`${styles.StudyModalContainer} ${

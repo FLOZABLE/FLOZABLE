@@ -267,6 +267,18 @@ function getDatesDisplay(date, mode, format = "LLLL d", length = 1) {
   }
 }
 
+function exitFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.mozCancelFullScreen) {
+    document.mozCancelFullScreen(); // Firefox
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen(); // Chrome, Safari, and Opera
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen(); // IE/Edge
+  }
+}
+
 export {
   cyrb128,
   getCountryCode,
@@ -282,4 +294,5 @@ export {
   unsubscribeFromPush,
   getDates,
   getDatesDisplay,
+  exitFullscreen
 };

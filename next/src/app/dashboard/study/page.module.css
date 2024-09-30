@@ -53,7 +53,19 @@
   overflow: hidden;
   border-radius: 1rem;
   margin-left: 0.5rem;
+  cursor: pointer;
 }
+
+.Study .studyOptions .studyOption .hoverText {
+  bottom: -2rem;
+}
+
+.Study .studyOptions .studyOption:hover .hoverText {
+  opacity: 1;
+  visibility: visible;
+  bottom: -1rem;
+}
+
 .Study .studyOptions .studyOption i {
   font-size: 2rem;
 }
@@ -78,6 +90,7 @@
 .StudyModalContainer#timer {
   left: 3rem;
   top: 3rem;
+  padding: 0.5rem;
 }
 
 .StudyModalContainer#planner {

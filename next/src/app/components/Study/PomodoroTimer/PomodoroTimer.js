@@ -64,6 +64,7 @@ function PomodoroTimer({
               toggleTimer();
             }
           }}
+          isCheck={false}
         />
       </div>
       <div className={styles.timer}>
