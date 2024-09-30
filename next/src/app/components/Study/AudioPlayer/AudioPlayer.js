@@ -7,7 +7,6 @@ function AudioPlayer({ audioInfo }) {
   const audioRef = useRef();
 
   useEffect(() => {
-    console.log("test");
     try {
       const audio = new Audio(audioInfo.source);
       audio.loop = true;
