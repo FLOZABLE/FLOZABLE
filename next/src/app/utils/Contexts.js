@@ -225,7 +225,14 @@ function GroupsProvider({ children }) {
 
 function ResponseProvider({ children }) {
   const [response, setResponse] = useState(null);
+  const { setIsAccountModal } = useContext(ModalsContext);
 
+  useEffect(() => {
+    if (response?.action === "signin") {
+      setIsAccountModal(true);
+    }
+  }, [response]);
+  
   return (
     <ResponseContext.Provider value={{ response, setResponse }}>
       {children}

@@ -4,24 +4,24 @@ import { socket } from "@/app/utils/socket";
 
 export default function MembersStatus({ groupId, members }) {
   const [studyingMembers, setStudyingMembers] = useState([]);
-  const [steRestMembers, setRestingMembers] = useState([]);
+  const [restMembers, setRestingMembers] = useState([]);
 
   useEffect(() => {
     if (!groupId || !members) return;
 
     const studyingMembers = [];
-    const steRestMembers = [];
+    const restMembers = [];
     members.map((member) => {
       if (!member.activeSubject) return;
       if (member.activeSubject.subject_id === "0") {
-        steRestMembers.push(member.user_id);
+        restMembers.push(member.user_id);
       } else {
         studyingMembers.push(member.user_id);
       }
     });
 
     setStudyingMembers(studyingMembers);
-    setRestingMembers(steRestMembers);
+    setRestingMembers(restMembers);
 
     const onStudying = (userId, subject) => {
       if (!members.find((member) => member.user_id === userId)) return;
@@ -66,7 +66,7 @@ export default function MembersStatus({ groupId, members }) {
       </div>
       <div className={styles.statusContainer} id={styles.resting}>
         <div className={styles.color}></div>
-        <p>{steRestMembers.length} Members resting</p>
+        <p>{restMembers.length} Members resting</p>
       </div>
       <div className={styles.statusContainer} id={styles.offline}>
         <div className={styles.color}></div>
@@ -75,7 +75,7 @@ export default function MembersStatus({ groupId, members }) {
             members.filter(
               (member) =>
                 !studyingMembers.includes(member.user_id) &&
-                !steRestMembers.includes(member.user_id)
+                !restMembers.includes(member.user_id)
             ).length
           }{" "}
           Members offline

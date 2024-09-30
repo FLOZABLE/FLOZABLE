@@ -16,6 +16,7 @@ import { STUDY_TREND_COLORS } from "@/app/utils/Constant";
 import { secondConverter } from "@/app/utils/Tool";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import SubjectsLabels from "../SubjectsLabels/SubjectsLabels";
+import AccountWall from "../../Others/AccountWall/AccountWall";
 
 function StudyTrendChart({
   viewDate,
@@ -23,6 +24,7 @@ function StudyTrendChart({
   viewer,
   subjects,
   isDateSelector,
+  userId,
 }) {
   const [subjectsTrend, setSubjectsTrend] = useState([]);
   const [filteredSubjects, setFilteredSubjects] = useState([]);
@@ -48,85 +50,91 @@ function StudyTrendChart({
           </div>
         ) : null}
       </div>
-      <div className={styles.SubjectsLabels}>
-        <SubjectsLabels
-          subjects={subjects}
-          filteredSubjects={filteredSubjects}
-          setFilteredSubjects={setFilteredSubjects}
-        />
-      </div>
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          data={subjectsTrend.map((day) => {
-            const newDay = {};
-            Object.keys(day).map((subjectId) => {
-              if (!filteredSubjects.includes(subjectId)) {
-                newDay[subjectId] = day[subjectId];
-              }
-            });
-            newDay.label = day.label;
+      {userId ? (
+        <>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={subjectsTrend.map((day) => {
+                const newDay = {};
+                Object.keys(day).map((subjectId) => {
+                  if (!filteredSubjects.includes(subjectId)) {
+                    newDay[subjectId] = day[subjectId];
+                  }
+                });
+                newDay.label = day.label;
 
-            return newDay;
-          })}
-        >
-          <defs>
-            {subjects.map((subject, i) => {
-              return (
-                <linearGradient
-                  key={i}
-                  id={subject.subject_id}
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
-                  <stop
-                    offset="5%"
-                    stopColor={
-                      STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]
-                    }
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="70%"
-                    stopColor={
-                      STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]
-                    }
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-              );
-            })}
-          </defs>
-          <CartesianGrid vertical={false} />
-          <XAxis dataKey="label" />
-          <YAxis
-            tickFormatter={(data) => {
-              const { value, type } = secondConverter(data);
-              return `${value} ${type}`;
-            }}
-          />
-          <Tooltip
-            formatter={(data) => {
-              const { value, type } = secondConverter(data);
-              return `${value} ${type}`;
-            }}
-          />
-          {subjects.map((subject, i) => {
-            return (
-              <Area
-                name={subject.name}
-                type="monotone"
-                key={subject.subject_id}
-                dataKey={subject.subject_id}
-                stroke={STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]}
-                activeDot={{ r: 8 }}
-                fill={`url(#${subject.subject_id})`}
+                return newDay;
+              })}
+            >
+              <defs>
+                {subjects.map((subject, i) => {
+                  return (
+                    <linearGradient
+                      key={i}
+                      id={subject.subject_id}
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor={
+                          STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]
+                        }
+                        stopOpacity={0.8}
+                      />
+                      <stop
+                        offset="70%"
+                        stopColor={
+                          STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]
+                        }
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                  );
+                })}
+              </defs>
+              <CartesianGrid vertical={false} />
+              <XAxis dataKey="label" />
+              <YAxis
+                tickFormatter={(data) => {
+                  const { value, type } = secondConverter(data);
+                  return `${value} ${type}`;
+                }}
               />
-            );
-          })}
-        </AreaChart>
-      </ResponsiveContainer>
+              <Tooltip
+                formatter={(data) => {
+                  const { value, type } = secondConverter(data);
+                  return `${value} ${type}`;
+                }}
+              />
+              {subjects.map((subject, i) => {
+                return (
+                  <Area
+                    name={subject.name}
+                    type="monotone"
+                    key={subject.subject_id}
+                    dataKey={subject.subject_id}
+                    stroke={STUDY_TREND_COLORS[i % STUDY_TREND_COLORS.length]}
+                    activeDot={{ r: 8 }}
+                    fill={`url(#${subject.subject_id})`}
+                  />
+                );
+              })}
+            </AreaChart>
+          </ResponsiveContainer>
+          <div className={styles.SubjectsLabels}>
+            <SubjectsLabels
+              subjects={subjects}
+              filteredSubjects={filteredSubjects}
+              setFilteredSubjects={setFilteredSubjects}
+            />
+          </div>
+        </>
+      ) : (
+        <AccountWall />
+      )}
     </div>
   );
 }

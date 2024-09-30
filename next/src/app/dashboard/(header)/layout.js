@@ -1,3 +1,4 @@
+import StudyBtn from "@/app/components/Buttons/StudyBtn/StudyBtn";
 import Header from "@/app/components/Others/Header/Header";
 import Sidebar from "@/app/components/Others/Sidebar/Sidebar";
 
@@ -42,14 +43,15 @@ export const metadata = {
   },
 };
 
-function Layout({children}) {
+function Layout({ children }) {
   return (
     <>
-    {children}
-    <Sidebar />
-    <Header />
+      {children}
+      <Sidebar />
+      <Header />
+      <StudyBtn />
     </>
-  )
-};
+  );
+}
 
 export default Layout;

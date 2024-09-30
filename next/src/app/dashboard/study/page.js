@@ -42,15 +42,7 @@ function StudyOption({ children }) {
 }
 
 function Study() {
-  const [isPlannerModal, setIsPlannerModal] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState(null);
-  const [isTimerModal, setIsTimerModal] = useState(true);
-  const [isPlaylistModal, setIsPlaylistModal] = useState(true);
-  const [isTemplateModal, setIsTemplateModal] = useState(true);
-  const [isVolumeModal, setIsVolumeModal] = useState(true);
-  const [isZoom, setIsZoom] = useState(true);
-  const [isToolModal, setIsToolModal] = useState(true);
-  const [isViewGroups, setIsViewGroups] = useState(true);
 
   const [studyOptions, setStudyOptions] = useState({
     planner: false,
