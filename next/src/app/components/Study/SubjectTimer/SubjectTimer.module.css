@@ -19,7 +19,7 @@
 }
 
 .SubjectTimer .pomodoroToggle.active p {
-  color: var(--gray3);
+  color: var(--gray0);
 }
 
 .SubjectTimer .mainDisplay {
@@ -36,16 +36,16 @@
   margin-right: 0.5rem;
 }
 
+/* .SubjectTimer .mainDisplay .subject.active, .SubjectTimer .mainDisplay .subject:hover {
+  background-color: var(--gray0);
+} */
+
 .SubjectTimer .mainDisplay .subject .name {
   margin-right: 0.5rem;
 }
 
 .SubjectTimer .mainDisplay .subject .time {
   margin-right: 0.5rem;
-}
-
-.SubjectTimer .mainDisplay .subject:hover {
-  background-color: var(--gray0);
 }
 
 .SubjectTimer .mainDisplay i#caret {
@@ -100,7 +100,7 @@
 .SubjectTimer .subjects {
   position: absolute;
   z-index: 2;
-  background-color: var(--gray0);
+  background-color: var(--opacity-black);
   width: calc(100% - 3rem);
   max-height: 10rem;
   border-bottom-left-radius: 0.25rem;

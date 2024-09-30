@@ -9,3 +9,7 @@
   padding: 1rem;
   font-size: 2rem;
 }
+
+.PomodoroTimer .options {
+  color: #000;
+}

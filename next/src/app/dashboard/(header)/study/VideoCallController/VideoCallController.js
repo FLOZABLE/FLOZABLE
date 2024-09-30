@@ -12,10 +12,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhone } from "@fortawesome/free-solid-svg-icons";
 
-export default function VideoCallController({
-  originalVideoVolume,
-  setOriginalVideoVolume,
-}) {
+export default function VideoCallController({}) {
   const { isMic, setIsMic, isCam, setIsCam, isHeadphone, setIsHeadphone } =
     useContext(CallOptionsContext);
 
