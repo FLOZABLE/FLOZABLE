@@ -90,3 +90,9 @@
   margin: 0.5rem;
   width: calc(100% - 1rem);
 }
+
+@media (max-width: 1900px) {
+  .Sidebar {
+    width: 18rem;
+  }
+}

@@ -59,7 +59,7 @@ function RankingsTrendsChart({
         <AccountWall />
       ) : (
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={rankingsTrend} margin={{ right: 20, left: -40 }}>
+          <LineChart data={rankingsTrend}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="label"
