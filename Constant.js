@@ -3,6 +3,12 @@ const RESPONSE_CODES = {
     success: false,
     reason: "Invalid User",
     code: 400,
+    action: "signin",
+  },
+  "no-target-user": {
+    success: false,
+    reason: "Invalid User",
+    code: 400,
   },
   "no-group": {
     success: false,

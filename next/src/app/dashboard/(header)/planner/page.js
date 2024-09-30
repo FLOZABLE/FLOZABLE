@@ -18,7 +18,6 @@ function Planner({}) {
             <PlansTimeline
               viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
               viewer={"day"}
-              mode={"study"}
               maxHeight="calc(100vh - 2.5rem)"
             />
           </div>

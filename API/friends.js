@@ -1,5 +1,9 @@
 const express = require("express");
-const { generateRandomId, getDates, randomIntInRange } = require("../Utils/tool");
+const {
+  generateRandomId,
+  getDates,
+  randomIntInRange,
+} = require("../Utils/tool");
 const {
   notificationCache,
   userCache,
@@ -48,8 +52,12 @@ async function sendFriendRequest(userId, targetId) {
     const userInfo = usersInfo.find((user) => user.user_id === userId);
 
     const targetInfo = usersInfo.find((user) => user.user_id === targetId);
-    if (!targetInfo || !userInfo) {
+    
+    if (!userInfo) {
       return RESPONSE_CODES["no-user"];
+    }
+    if (!targetInfo) {
+      return RESPONSE_CODES["no-target-user"];
     }
 
     if (friends.includes(userId)) {
@@ -169,8 +177,11 @@ async function replyFriendRequest(
     const userInfo = usersInfo.find((user) => user.user_id === userId);
 
     const targetInfo = usersInfo.find((user) => user.user_id === targetId);
-    if (!targetInfo || !userInfo) {
+    if (!userInfo) {
       return RESPONSE_CODES["no-user"];
+    }
+    if (!targetInfo) {
+      return RESPONSE_CODES["no-target-user"];
     }
 
     if (userFriends.includes(targetId))
@@ -503,7 +514,7 @@ Router.get("/search", async (req, res) => {
 
     const connection = pool.promise();
     const [users] = await connection.query(
-      `SELECT user_id, name, timezone from users where name like ? LIMIT 10`,
+      `SELECT user_id, name, timezone from users where name like ? LIMIT 20`,
       `%${query}%`
     );
     res.send({ success: true, users });

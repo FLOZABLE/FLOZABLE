@@ -14,8 +14,7 @@ import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 function User({ params }) {
   const { userId } = params;
 
-  const { useAccountProfileData } =
-    useAccountProfile(userId);
+  const { useAccountProfileData } = useAccountProfile(userId);
   const { groups } = useContext(GroupsContext);
 
   const [subjects, setSubjects] = useState([]);
@@ -33,7 +32,7 @@ function User({ params }) {
 
     const { userInfo, friends, subjects } = useAccountProfileData;
 
-    console.log(useAccountProfileData, 'test')
+    console.log(useAccountProfileData, "test");
     const sortedSubjects = timelineSort(subjects);
 
     setSubjects(sortedSubjects.subjects);
@@ -63,9 +62,7 @@ function User({ params }) {
             />
           </div>
           <div className={styles.info}>
-            <p className={`overflowDot ${styles.name}`}>
-              {userInfo?.name}
-            </p>
+            <p className={`overflowDot ${styles.name}`}>{userInfo?.name}</p>
             <i>
               <CountryViewer timezone={userInfo.timezone} />
             </i>
@@ -78,6 +75,7 @@ function User({ params }) {
               setViewDate={setViewDate}
               viewer={viewer}
               subjects={subjects}
+              userId={userId}
             />
           </div>
           <div className={`BoxContainer ${styles.boxContainer}`}>

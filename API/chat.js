@@ -176,8 +176,11 @@ Router.post("/request", async (req, res) => {
         (user) => user.user_id === targetId
       );
 
-      if (!targetUser || !userInfo) {
+      if (!userInfo) {
         return RESPONSE_CODES["no-user"];
+      }
+      if (!targetUser) {
+        return RESPONSE_CODES["no-target-user"];
       }
 
       const targetDmRequests = await notificationCache(targetId, 4);
@@ -260,8 +263,11 @@ Router.post("/request/reply", async (req, res) => {
       const targetUser = usersInfo.find(
         (user) => user.user_id === targetId
       );
-      if (!targetUser || !userInfo) {
+      if (!userInfo) {
         return RESPONSE_CODES["no-user"];
+      }
+      if (!targetUser) {
+        return RESPONSE_CODES["no-target-user"];
       }
 
       const chatroom_id = generateRandomId(10);

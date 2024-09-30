@@ -21,6 +21,7 @@ import { postGroupLeave } from "@/Api/groupsApi";
 import { useDebounce } from "use-debounce";
 import { socket } from "@/app/utils/socket";
 import { mediaSocket } from "@/app/utils/mediaSocket";
+import AccountWall from "../../Others/AccountWall/AccountWall";
 
 function MyGroupsViewer({}) {
   const { myGroups, setMyGroups } = useContext(GroupsContext);
