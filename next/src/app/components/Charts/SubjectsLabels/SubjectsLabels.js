@@ -9,14 +9,13 @@ export default function SubjectsLabels({
     <div className={`customScroll ${styles.SubjectsLabels}`}>
       {subjects?.map((subject, i) => {
         const { subject_id } = subject;
+        const isFiltered = filteredSubjects.includes(subject_id);
         return (
           <div
-            className={`${styles.label} ${
-              filteredSubjects.includes(subject_id) ? styles.filtered : null
-            }`}
+            className={`${styles.label} ${isFiltered ? styles.filtered : null}`}
             key={i}
             onClick={() => {
-              if (filteredSubjects.includes(subject_id)) {
+              if (isFiltered) {
                 setFilteredSubjects(
                   filteredSubjects.filter(
                     (subjectId) => subjectId !== subject_id

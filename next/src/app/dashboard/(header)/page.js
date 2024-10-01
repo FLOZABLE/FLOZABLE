@@ -16,6 +16,7 @@ export default function Dashboard() {
           <div
             className={`${styles.box} BoxContainer`}
             id={styles.planTimeline}
+            style={{"--notes-color": "var(--gray2)"}}
           >
             <PlansTimeline
               viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
