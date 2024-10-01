@@ -6,7 +6,7 @@
 }
 
 .User .profileCard {
-  width: 20rem;
+  width: 10vw;
   background-color: #fff;
   position: fixed;
   padding: 1.5rem;
@@ -35,8 +35,8 @@
 
 .User .layer {
   flex: 1;
-  margin-left: 20rem;
-  width: calc(100% - 20rem);
+  margin-left: 10vw;
+  width: calc(100% - 10vw);
 }
 
 .User .layer .boxContainer {

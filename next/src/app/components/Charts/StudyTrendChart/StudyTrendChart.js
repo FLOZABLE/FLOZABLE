@@ -31,7 +31,6 @@ function StudyTrendChart({
 
   useEffect(() => {
     if (!subjects || !viewDate || !viewer) return;
-
     const subjectsTrend = updateSubjectsTrendChart(subjects, viewDate, viewer);
     setSubjectsTrend(subjectsTrend);
   }, [subjects, viewDate, viewer]);

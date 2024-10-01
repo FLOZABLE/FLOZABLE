@@ -16,7 +16,9 @@
 import { DateTime } from "luxon";
 
 function timelineSort(subjects) {
-  if (!subjects || !subjects.length) return [];
+  if (!subjects || !subjects.length)
+    return { subjects: [], groupedSubjects: [] };
+  
   subjects.sort((a, b) => a.created_at - b.created_at);
 
   const groupedSubjects = {};
@@ -153,10 +155,7 @@ function timelineSort(subjects) {
         (day) => day.date === startDateTime.startOf("month").toISODate()
       );
       if (monthIndex !== -1) {
-        subject.month.timeline[monthIndex].data.push([
-          start,
-          start + duration,
-        ]);
+        subject.month.timeline[monthIndex].data.push([start, start + duration]);
         subject.month.total[monthIndex].data += duration;
         if (duration > subject.month.focus[monthIndex].data) {
           subject.month.focus[monthIndex].data = duration;

@@ -44,11 +44,11 @@ function Study() {
     planner: true,
     timer: true,
     groups: true,
-    playlists: true,
+    playlists: false,
     audioController: true,
-    media: true,
-    themeSelector: true,
-    zoom: true,
+    media: false,
+    themeSelector: false,
+    zoom: false,
   });
 
   const [videoId, setVideoId] = useState("_gVrQa_bvm8");
