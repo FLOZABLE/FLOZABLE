@@ -3,7 +3,7 @@
   top: 0em;
   left: 0em;
   height: 100vh;
-  width: 22rem;
+  width: var(--sidebar-offset);
   display: flex;
   flex-direction: column;
   background-color: #fff;
@@ -89,10 +89,4 @@
   bottom: 0rem;
   margin: 0.5rem;
   width: calc(100% - 1rem);
-}
-
-@media (max-width: 1900px) {
-  .Sidebar {
-    width: 18rem;
-  }
 }

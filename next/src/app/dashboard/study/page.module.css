@@ -1,6 +1,9 @@
 .Study {
   background-color: #000;
   margin-top: 0em;
+  --subjectLabelsColor: var(--gray0);
+  --filteredSubjectLabelsColor: var(--gray2);
+  --planDescriptionColor: "#fff";
 }
 
 .Study .ytBg {

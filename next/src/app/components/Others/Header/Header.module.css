@@ -12,6 +12,8 @@
 
 .Header .left {
   display: flex;
+  flex: 1;
+  max-width: 60%;
 }
 
 .Header .divider {
@@ -22,7 +24,8 @@
 .HeaderEl {
   display: flex;
   font-weight: 700;
-  margin: 0rem 5rem;
+  flex: 1;
+  justify-content: center;
 }
 
 .HeaderEl i {

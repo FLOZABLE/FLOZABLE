@@ -46,6 +46,7 @@ function User({ params }) {
       groups.filter((group) => userInfo.groups.includes(group.group_id))
     );
   }, [groups, userInfo]);
+  
   if (!userInfo) {
     return null;
   }
