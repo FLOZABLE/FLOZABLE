@@ -51,12 +51,12 @@ function FriendsTrendChart() {
           });
           return friendsData;
         })}
-        margin={{
+        /* margin={{
           top: 5,
           right: 30,
           left: -20,
           bottom: 5,
-        }}
+        }} */
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />
@@ -80,6 +80,7 @@ function FriendsTrendChart() {
               dataKey={friend.user_id}
               name={friend.name}
               fill={coldColorsList[i % coldColorsList.length]}
+              barSize={40}
             />
           );
         })}

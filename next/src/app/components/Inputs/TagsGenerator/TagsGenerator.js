@@ -3,7 +3,7 @@ import styles from "./TagsGenerator.module.css";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useState } from "react";
 
-export default function TagsGenerator({ tags, setTags, maxTags }) {
+export default function TagsGenerator({ tags, setTags, maxTags = 10 }) {
   const [inputValue, setInputValue] = useState("");
 
   const remove = useCallback(

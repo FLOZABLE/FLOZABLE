@@ -1,5 +1,4 @@
 .FriendsActivityViewer .header {
-  justify-content: left;
   align-items: center;
   border-bottom: 1px solid var(--gray0);
 }
@@ -35,6 +34,11 @@
   align-items: center;
   border-bottom: 0.1rem solid var(--gray3);
   padding: 0.25rem 0rem;
+  position: relative;
+}
+
+.FriendsActivityViewer .friend .info {
+  width: calc(100% - 4rem);
 }
 
 .FriendsActivityViewer .friend .activeInfo {
@@ -45,7 +49,9 @@
 }
 
 .FriendsActivityViewer .buttons {
-  margin: 0rem 1rem 0rem auto;
+  width: 4rem;
+  display: flex;
+  justify-content: center;
 }
 
 .FriendsActivityViewer .friend:nth-last-child(1) {

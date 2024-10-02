@@ -2,7 +2,7 @@
   position: relative;
   grid-template-columns: repeat(auto-fill, 18.75rem);
   justify-content: center;
-  gap: 1.25rem;
+  gap: 2rem;
   width: 100%;
   display: grid;
 }

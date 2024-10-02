@@ -21,6 +21,7 @@ import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import ThemesContainer from "@/app/components/Themes/ThemesContainer/ThemesContainer";
 import RankedTheme from "@/app/components/Themes/RankedTheme/RankedTheme";
 import { ThemesContext } from "@/app/utils/Contexts";
+import TagsGenerator from "@/app/components/Inputs/TagsGenerator/TagsGenerator";
 
 function Themes({ setResponse }) {
   const { themes } = useContext(ThemesContext);
@@ -31,10 +32,6 @@ function Themes({ setResponse }) {
   const [isCreateThemeModal, setIsCreateThemeModal] = useState(false);
   const [rankedThemes, setRankedThemes] = useState([]);
   const [isThemePreview, setIsThemePreview] = useState(false);
-
-  const handleCreatedTagsChange = (tags) => {
-    setTags(tags);
-  };
 
   useEffect(() => {
     if (!themes) return;
@@ -95,14 +92,8 @@ function Themes({ setResponse }) {
         </div>
         <div className={styles.box}>
           <div className={styles.searchOptions}>
-            <div>
-              <div id={styles.tagWrapper}>
-                <TagContainerGen
-                  maxTags={10}
-                  setTags={setTags}
-                  handleCreatedTagsChange={handleCreatedTagsChange}
-                />
-              </div>
+            <div id={styles.TagsGenerator}>
+              <TagsGenerator tags={tags} setTags={setTags} />
             </div>
             <div>
               <SearchBar

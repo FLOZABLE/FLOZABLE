@@ -28,8 +28,8 @@
 
 .TagsGenerator .content {
   margin: 0.625rem 0;
-  height: 100%;
   position: relative;
+  flex: 1;
 }
 
 .TagsGenerator .content .placeHolder {
