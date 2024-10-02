@@ -1,5 +1,5 @@
 .Themes {
-  padding: 0rem 3.125rem 5rem 3.125rem;
+  padding: 1rem 5rem 5rem 5rem;
   flex: 1;
 }
 
@@ -49,7 +49,7 @@
   padding: 1.875rem;
   border-radius: 1.25rem;
   flex-direction: column;
-  margin-bottom: 1.875rem;
+  margin-bottom: 5rem;
   box-shadow: var(--shadow3);
   min-height: 30rem;
 }
@@ -68,13 +68,8 @@
   align-items: center;
 }
 
-.Themes .box .searchOptions#tagWrapper {
-  width: 21.875rem;
-}
-
-.Themes .box .searchOptions .tagContainerWrapper {
-  position: relative;
-  width: 18.75rem;
+.Themes .box .searchOptions div#TagsGenerator > div {
+  width: 21rem;
 }
 
 @media (max-width: 87.5rem) {

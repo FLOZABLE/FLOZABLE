@@ -11,18 +11,25 @@
 }
 
 .Friends .layer#left {
-  width: 30rem;
+  width: 33rem;
 }
 
 .Friends .layer#center {
   flex: 1;
 }
 
-.Friends .layer#right {
-  width: 30rem;
+.Friends .layer#center .boxContainer {
+  flex: 1;
 }
 
-.Friends .boxContainer {
+.Friends .layer#right {
+  width: 35rem;
+}
+
+.Friends .layer#right .boxContainer {
   height: calc(50% - 6rem);
 }
 
+/* .Friends .boxContainer {
+  height: calc(50% - 6rem);
+} */

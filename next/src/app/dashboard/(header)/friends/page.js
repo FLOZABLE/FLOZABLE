@@ -17,17 +17,8 @@ function Friends({}) {
   return (
     <div className={`Main`}>
       <div className={styles.Friends}>
-        <div className={styles.layer} id={styles.left}>
-          <div
-            className={`BoxContainer ${styles.boxContainer}`}
-            id={styles.FriendsActivityViewer}
-          >
-            <FriendsActivityViewer />
-          </div>
-          <div className={`BoxContainer ${styles.boxContainer}`}>
-            <SearchUsersBox />
-          </div>
-        </div>
+        {/* <div className={styles.layer} id={styles.left}>
+        </div> */}
         <div className={styles.layer} id={styles.center}>
           <div
             className={`BoxContainer ${styles.boxContainer}`}
@@ -37,22 +28,17 @@ function Friends({}) {
           </div>
         </div>
         <div className={styles.layer} id={styles.right}>
-          {/* <div
-            className={`BoxContainer ${styles.boxContainer}`}
-            id={styles.FriendRequestsViewer}
-          >
-            <TopLeaderBoard
-              viewer={viewer}
-              viewDate={viewDate}
-              isOnlyFriends={isOnlyFriends}
-              setIsOnlyFriends={setIsOnlyFriends}
-            />
-          </div> */}
           <div
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.FriendRequestsViewer}
           >
             <FriendRequestsViewer />
+          </div>
+          <div
+            className={`BoxContainer ${styles.boxContainer}`}
+            id={styles.FriendsActivityViewer}
+          >
+            <FriendsActivityViewer />
           </div>
         </div>
       </div>

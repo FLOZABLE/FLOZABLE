@@ -52,7 +52,7 @@ function FriendsActivityViewer() {
                 key={i}
                 style={{ zIndex: useFriendsStatusData.friends.length - i }}
               >
-                <div>
+                <div className={styles.info}>
                   <UserContainer
                     userInfo={friend}
                     onClick={() => {

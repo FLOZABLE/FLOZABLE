@@ -5,6 +5,7 @@
 
 .FriendRequestsViewer .header {
   flex-direction: column;
+  align-items: center;
 }
 
 .FriendRequestsViewer .friendRequests {
