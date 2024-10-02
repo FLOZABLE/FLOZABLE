@@ -41,7 +41,7 @@ function UserGroupViewer({ userInfo }) {
         activeGroup ? styles.visible : null
       }`}
     >
-      <p>
+      <p className={"overflowDot"}>
         inside <strong>{activeGroup?.name}</strong>
       </p>
       <div className={styles.hoverEl}>

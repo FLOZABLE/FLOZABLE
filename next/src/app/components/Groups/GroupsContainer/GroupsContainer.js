@@ -24,6 +24,9 @@ function GroupsContainer({ searchQuery, tags }) {
         let isSearched = false;
 
         const lowecaseTags = group.tags.map((tag) => tag.toLowerCase());
+
+        const searchQueryRegex = new RegExp(`${searchQuery}`, "i");
+
         if (!tags.length && searchQuery === "") {
           isSearched = true;
         } else if (searchQuery === "") {
@@ -35,7 +38,7 @@ function GroupsContainer({ searchQuery, tags }) {
         } else {
           isSearched =
             lowecaseTags.some((tag) => tags.includes(tag.toLowerCase())) &&
-            group.name.toLowerCase().includes(searchQuery.toLowerCase());
+            searchQueryRegex.test(group.name + group.description);
         }
 
         return (
