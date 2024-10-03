@@ -34,7 +34,9 @@ const secondConverter = (sec, options = ["s", "m", "h"]) => {
     type = 1;
   }
 
-  return { value, type: options[type] };
+  const formattedValue = `${value} ${options[type]}`;
+
+  return { value, type: options[type], formattedValue };
 };
 
 const durationFormatter = (sec) => {
@@ -294,5 +296,5 @@ export {
   unsubscribeFromPush,
   getDates,
   getDatesDisplay,
-  exitFullscreen
+  exitFullscreen,
 };

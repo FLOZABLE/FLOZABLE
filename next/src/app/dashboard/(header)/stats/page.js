@@ -6,6 +6,7 @@ import { useContext, useState } from "react";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/RankingsTrendsChart";
 import { SubjectsContext, UserInfoContext } from "@/app/utils/Contexts";
+import WebsiteUsageChart from "@/app/components/Charts/WebsiteUsageChart/WebsiteUsageChart";
 
 function Stats({}) {
   const { userInfo } = useContext(UserInfoContext);
@@ -45,8 +46,13 @@ function Stats({}) {
               userInfo={userInfo}
             />
           </div>
+          <div
+            className={`BoxContainer ${styles.boxContainer}`}
+            id={styles.WebsiteUsageChart}
+          >
+            <WebsiteUsageChart viewDate={viewDate} viewer={viewer} />
+          </div>
         </div>
-        <div className={styles.layer}></div>
         <div className={styles.right}>
           <div className={styles.SubjectsPie}>
             <SubjectsPie
@@ -56,12 +62,6 @@ function Stats({}) {
               setViewer={setViewer}
             />
           </div>
-          {/*           <SubjectsPie
-            viewDate={viewDate}
-            setViewDate={setViewDate}
-            viewer={viewer}
-            setViewer={setViewer}
-          /> */}
         </div>
       </div>
     </div>
