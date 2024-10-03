@@ -44,7 +44,7 @@
   margin-right: 0rem;
 }
 
-.SlidingOptBtn.on .check {
+.SlidingOptBtn .option.on .check {
   opacity: 1;
   margin-right: 0.2rem;
 }

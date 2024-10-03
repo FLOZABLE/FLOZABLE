@@ -1,14 +1,13 @@
 import React, { useState, useRef, useContext, useCallback } from "react";
 import styles from "./CreateThemeModal.module.css";
 import { faLink, faPen } from "@fortawesome/free-solid-svg-icons";
-import config from "@/app/utils/config";
 import { ResponseContext, ThemesContext } from "@/app/utils/Contexts";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
-import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContainerGen";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import { putThemesTheme } from "@/Api/themesApi";
+import TagsGenerator from "../../Inputs/TagsGenerator/TagsGenerator";
 
 function CreateThemeModal({ isOpen, setIsOpen }) {
   const { setResponse } = useContext(ResponseContext);
@@ -81,12 +80,9 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
           />
         </div>
         <div className={styles.layer}>
-          <TagContainerGen
-            maxTags={10}
-            setTags={newTheme.tags}
-            handleCreatedTagsChange={(tags) => {
-              setValue({ tags });
-            }}
+          <TagsGenerator
+            tags={newTheme.tags}
+            setTags={(tags) => setNewTheme({ ...newTheme, tags })}
           />
         </div>
         <div className={styles.submitWrapper}>

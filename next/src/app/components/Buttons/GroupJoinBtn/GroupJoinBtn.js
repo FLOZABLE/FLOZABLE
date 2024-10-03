@@ -2,6 +2,8 @@ import styles from "./GroupJoinBtn.module.css";
 import { GroupsContext, ModalsContext } from "@/app/utils/Contexts";
 import { useContext } from "react";
 import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 
 export default function GroupJoinBtn({ groupInfo }) {
   const { myGroups } = useContext(GroupsContext);
@@ -13,7 +15,7 @@ export default function GroupJoinBtn({ groupInfo }) {
       {myGroups.find((group) => group.group_id === groupInfo.group_id) ? (
         <Link
           href={`/dashboard/study?group=${groupInfo.group_id}`}
-          className={styles.joinBtn}
+          className={styles.inner}
         >
           Join the session
         </Link>
@@ -25,8 +27,13 @@ export default function GroupJoinBtn({ groupInfo }) {
               group: groupInfo,
             });
           }}
-          className={styles.joinBtn}
+          className={styles.inner}
         >
+          {!groupInfo.visibility ? (
+            <i className={styles.lock}>
+              <FontAwesomeIcon icon={faLock} />
+            </i>
+          ) : null}
           Join
         </div>
       )}

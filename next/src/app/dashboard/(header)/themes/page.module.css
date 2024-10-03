@@ -1,5 +1,5 @@
 .Themes {
-  padding: 1rem 5rem 5rem 5rem;
+  padding: 1rem 3.125rem;
   flex: 1;
 }
 
@@ -37,63 +37,37 @@
   z-index: 2;
 }
 
-.Themes .box#likedList .title {
-  display: flex;
-  justify-content: center;
-  font-size: 1.875rem;
-}
-
-.Themes .box {
-  display: flex;
-  background-color: #fff;
-  padding: 1.875rem;
-  border-radius: 1.25rem;
-  flex-direction: column;
-  margin-bottom: 5rem;
-  box-shadow: var(--shadow3);
-  min-height: 30rem;
-}
-
-.Themes .box .searchOptions {
+.Themes .searchOptions {
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-bottom: 5rem;
 }
 
-.Themes .box .searchOptions > div {
+.Themes .searchOptions > div {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.Themes .box .searchOptions div#TagsGenerator > div {
+.Themes .searchOptions div#TagsGenerator > div {
   width: 21rem;
 }
 
-@media (max-width: 87.5rem) {
+@media (max-width: 1400px) {
   .Themes .Swiper {
     height: 31.25rem;
   }
-
-  .Themes .box {
-    padding: 1.25rem;
-  }
 }
 
-@media (max-width: 75rem) {
+@media (max-width: 1200px) {
   .Themes .Swiper {
     height: 25rem;
     min-height: 25rem;
   }
 
-  .Themes .box {
-    padding: 0.625rem;
+  .Themes .BoxContainer#rankedThemes {
+    flex-direction: column;
   }
-}
-
-.title {
-  padding-bottom: 0em;
-  padding-left: 3.125rem;
 }
