@@ -1,19 +1,20 @@
 .Stats {
-  padding: 0rem 3.125rem;
+  padding: 1rem 3.125rem;
 }
 
 .Stats .layer {
-  width: calc(100% - 27rem);
+  width: calc(100% - 30rem);
 }
 
 .Stats .right {
   position: fixed;
   top: 6rem;
-  width: 27rem;
+  width: 30rem;
   right: 0rem;
   border-left: 0.1rem solid var(--gray0);
   height: calc(100vh - 12rem);
   display: flex;
+  justify-content: center;
 }
 
 .Stats .right .SubjectsPie {
@@ -25,6 +26,7 @@
 .Stats .boxContainer {
   height: 40vh;
   min-height: 30rem;
+  margin-bottom: 4.5rem;
 }
 
 /* .Stats .layer {

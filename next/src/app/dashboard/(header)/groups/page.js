@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 import styles from "./page.module.css";
 import CreateGroupModal from "@/app/components/Modals/CreateGroupModal/CreateGroupModal";
-import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContainerGen";
 import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
 import GroupsContainer from "@/app/components/Groups/GroupsContainer/GroupsContainer";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
+import TagsGenerator from "@/app/components/Inputs/TagsGenerator/TagsGenerator";
 
 function Groups({ setResponse }) {
   const [tags, setTags] = useState([]);
@@ -33,16 +33,13 @@ function Groups({ setResponse }) {
         <div className={styles.layer}>
           <div className={`BoxContainer ${styles.boxContainer}`}>
             <div className={styles.header}>
+              <div className={styles.headerItem} id={styles.Tags}>
+                <TagsGenerator tags={tags} setTags={setTags} />
+              </div>
               <div className={styles.headerItem} id={styles.SearchBar}>
                 <SearchBar
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
-                />
-              </div>
-              <div className={styles.headerItem} id={styles.Tags}>
-                <TagContainerGen
-                  maxTags={10}
-                  handleCreatedTagsChange={setTags}
                 />
               </div>
               <div className={styles.headerItem} id={styles.CreateGroup}>

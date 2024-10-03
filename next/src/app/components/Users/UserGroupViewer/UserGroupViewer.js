@@ -46,7 +46,7 @@ function UserGroupViewer({ userInfo }) {
       </p>
       <div className={styles.hoverEl}>
         {activeGroup ? (
-          <GroupContainer groupInfo={activeGroup} style={{ height: "13rem" }} />
+          <GroupContainer groupInfo={activeGroup} style={{ height: "15rem" }} />
         ) : null}
       </div>
     </div>

@@ -74,15 +74,15 @@ function GroupContainer({
       <div
         className={styles.layer}
         id={styles.name}
-        style={{
+        /* style={{
           background: `linear-gradient(to left, ${groupInfo?.color}, 70%, ${groupInfo?.color}00)`,
-        }}
+        }} */
       >
-        {!groupInfo.visibility ? (
+        {/* {!groupInfo.visibility ? (
           <i className={styles.lock}>
             <FontAwesomeIcon icon={faLock} />
           </i>
-        ) : null}
+        ) : null} */}
         <p className={`overflowDot`}>{groupInfo?.name}</p>
       </div>
       <div className={`hiddenScroll ${styles.layer}`} id={styles.description}>

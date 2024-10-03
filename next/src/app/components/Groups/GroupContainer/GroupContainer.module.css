@@ -1,7 +1,7 @@
 .GroupContainer {
   height: 20.625rem;
-  border-radius: 0.5rem;
-  padding: 0.625rem 0.625rem;
+  border-radius: 1.5rem;
+  padding: 1rem 1.5rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   position: relative;
   display: flex;
@@ -21,19 +21,18 @@
 }
 
 .GroupContainer .layer#name {
-  margin: 0rem 0.5rem;
-  border-radius: 0.6rem;
-}
-
-.GroupContainer .layer#name i {
-  font-size: 1.2rem;
-  margin-right: 0.3rem;
-  margin-left: 0.3rem;
+  margin: 0rem 0.5rem 1rem 0.5rem;
+  border-radius: 2em;
+  background-color: var(--gray0);
+  padding-left: 0.7rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
 }
 
 .GroupContainer .layer#name p {
   max-width: calc(100% - 3rem);
-  font-size: 1.3rem;
+  font-size: 1.1rem;
 }
 
 .GroupContainer .layer#description {
@@ -49,6 +48,10 @@
   display: flex;
   margin: 0.3rem;
   font-weight: 500;
+}
+
+.GroupContainer .layer#info i {
+  margin-right: 0.2rem;
 }
 
 .GroupContainer .layer#tags {

@@ -1,8 +1,8 @@
 .GroupsContainer {
   position: relative;
-  grid-template-columns: repeat(auto-fill, 16.25rem);
+  grid-template-columns: repeat(auto-fill, 20rem);
   justify-content: center;
-  gap: 1.25rem;
+  gap: 2rem;
   width: 100%;
   display: grid;
   max-height: 200vh;
