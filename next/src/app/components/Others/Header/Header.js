@@ -98,8 +98,8 @@ function Header({}) {
   useEffect(() => {
     if (!websitesData?.success || !websitesData.usage.length) return;
     const totalWebsiteUsage = websitesData.usage.reduce((a, b) => {
-      return a.duration + b.duration;
-    });
+      return a + b.duration;
+    }, 0);
     const { value, type } = secondConverter(totalWebsiteUsage, [
       "seconds",
       "minutes",

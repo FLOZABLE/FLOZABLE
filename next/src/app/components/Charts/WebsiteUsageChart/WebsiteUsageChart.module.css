@@ -1,20 +1,34 @@
 .WebsiteUsageChart {
   height: 100%;
   width: 100%;
-  background-color: 'red';
 }
 
-
-.WebsiteUsageChart .contents {
+.WebsiteUsageChart .chartsContainer {
   display: flex;
-  flex-direction: row;
-  height: 100%;
-  width: 100%;
+  justify-content: space-around;
 }
 
 .WebsiteUsageChart .chartWrapper {
-  width: 100%;
-  height: 100%;
+  aspect-ratio: 1;
+  width: 40%;
+  position: relative;
+}
+
+.WebsiteUsageChart .totalTime {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 0;
+}
+
+.WebsiteUsageChart .totalTime .time {
+  font-size: 1.8rem;
+}
+
+.WebsiteUsageChart .totalTime .text {
+  color: var(--gray1);
 }
 
 .WebsiteUsageChart .noChart {
@@ -24,4 +38,35 @@
   font-size: 2.5rem;
   height: 100%;
   text-decoration: underline;
+}
+
+.WebsiteUsageChart .labels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 10.75rem);
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.WebsiteUsageChart .labels .label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.3s ease-in-out opacity;
+}
+
+.WebsiteUsageChart .label.filtered {
+  opacity: 0.3;
+}
+
+.WebsiteUsageChart .label .color {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 1rem;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.WebsiteUsageChart .label p {
+  overflow-x: hidden;
 }

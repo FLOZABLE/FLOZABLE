@@ -27,13 +27,18 @@ function useExtensionSettings() {
 function useExtensionUsage(date, mode) {
   const { userInfo } = useContext(UserInfoContext);
 
-  return useQuery({
+  const queryResult = useQuery({
     queryKey: [`extensionUsage`, date, mode],
     queryFn: () => getExtensionUsage(date, mode),
     staleTime: 1000 * 0,
     enabled: !!userInfo,
     refetchOnWindowFocus: true,
   });
+
+  const { data: extensionUsageData, isLoading: extensionUsageIsLoading } =
+    queryResult;
+
+  return { extensionUsageData, extensionUsageIsLoading, ...queryResult };
 }
 
 export { useExtensionSettings, useExtensionUsage };
