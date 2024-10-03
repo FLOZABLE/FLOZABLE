@@ -12,7 +12,6 @@ import {
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import TagContainerGen from "@/app/components/Inputs/TagContainerGen/TagContainerGen";
 import CreateThemeModal from "@/app/components/Modals/CreateThemeModal/CreateThemeModal";
 import ThemePreview from "@/app/components/Themes/ThemePreview/ThemePreview";
 import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
@@ -53,7 +52,10 @@ function Themes({ setResponse }) {
         setResponse={setResponse}
       />
       <div className={styles.Themes}>
-        <div className={styles.box} id={styles.likedList}>
+        <div
+          className={`${styles.BoxContainer} BoxContainer`}
+          id={styles.rankedThemes}
+        >
           <div className={styles.title}>
             <h1>Theme of the Week!</h1>
           </div>
@@ -90,42 +92,46 @@ function Themes({ setResponse }) {
             </Swiper>
           ) : null}
         </div>
-        <div className={styles.box}>
-          <div className={styles.searchOptions}>
-            <div id={styles.TagsGenerator}>
-              <TagsGenerator tags={tags} setTags={setTags} />
+        <div className={`${styles.BoxContainer} BoxContainer`}>
+          <div className="Box">
+            <div className={styles.searchOptions}>
+              <div id={styles.TagsGenerator}>
+                <TagsGenerator tags={tags} setTags={setTags} />
+              </div>
+              <div>
+                <SearchBar
+                  setSearchQuery={setSearchQuery}
+                  searchQuery={searchQuery}
+                />
+                <div></div>
+              </div>
+              <div className={styles.blobWrapper}>
+                <DropDownButton
+                  options={[
+                    { value: 0, name: "Sort By: Likes" },
+                    { value: 1, name: "Sort By: Usage" },
+                  ]}
+                  setValue={setSortOpt}
+                  value={sortOpt}
+                />
+                <BlobBtn
+                  onClick={() => {
+                    setIsCreateThemeModal(!isCreateThemeModal);
+                  }}
+                >
+                  + Upload theme!
+                </BlobBtn>
+              </div>
             </div>
-            <div>
-              <SearchBar
-                setSearchQuery={setSearchQuery}
+            <div className="contents customScroll">
+              <ThemesContainer
+                tags={tags}
                 searchQuery={searchQuery}
+                sortOpt={sortOpt}
+                setIsThemePreview={setIsThemePreview}
               />
-              <div></div>
-            </div>
-            <div className={styles.blobWrapper}>
-              <DropDownButton
-                options={[
-                  { value: 0, name: "Sort By: Likes" },
-                  { value: 1, name: "Sort By: Usage" },
-                ]}
-                setValue={setSortOpt}
-                value={sortOpt}
-              />
-              <BlobBtn
-                onClick={() => {
-                  setIsCreateThemeModal(!isCreateThemeModal);
-                }}
-              >
-                + Upload theme!
-              </BlobBtn>
             </div>
           </div>
-          <ThemesContainer
-            tags={tags}
-            searchQuery={searchQuery}
-            sortOpt={sortOpt}
-            setIsThemePreview={setIsThemePreview}
-          />
         </div>
       </div>
     </div>
