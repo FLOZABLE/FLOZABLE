@@ -29,6 +29,10 @@
   margin-bottom: 4.5rem;
 }
 
+.Stats .boxContainer#WebsiteUsageChart {
+  height: fit-content;
+}
+
 /* .Stats .layer {
   display: flex;
   height: 50vh;

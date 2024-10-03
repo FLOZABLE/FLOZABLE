@@ -58,6 +58,10 @@ function SubjectsPie({ viewDate, setViewDate, viewer, setViewer }) {
         </div>
       ) : (
         <div className={styles.chartContainer}>
+          <div className={styles.totalTime}>
+            <p className={styles.time}>{totalTime}</p>
+            <p className={styles.text}>Total</p>
+          </div>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Tooltip content={<PieCustomTooltip />} />
@@ -72,10 +76,6 @@ function SubjectsPie({ viewDate, setViewDate, viewer, setViewer }) {
                 fill="green"
               ></Pie>
             </PieChart>
-            <div className={styles.totalTime}>
-              <p className={styles.time}>{totalTime}</p>
-              <p className={styles.text}>Total</p>
-            </div>
           </ResponsiveContainer>
         </div>
       )}

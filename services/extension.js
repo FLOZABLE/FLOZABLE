@@ -13,9 +13,10 @@ async function extensionManager() {
       `,
       [midnightTimezones]
     );
+    console.log(users);
     users.map(async ({ user_id }) => {
-      redisClient.del(`user:${user_id}:websites:usage`);
-      redisClient.del(`user:${user_id}:websites:timer`);
+      redisClient.del(`user:${user_id}:websites:visits`);
+      redisClient.del(`user:${user_id}:websites:duration`);
     });
   } catch (err) {
     console.log(err);
