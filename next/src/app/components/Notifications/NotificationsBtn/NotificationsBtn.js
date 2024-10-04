@@ -152,7 +152,7 @@ export default function NotificationsBtn() {
             bounce={!!filteredNotifications.length}
           />
         </i>
-        <div id={styles.count}>{filteredNotifications.length}</div>
+        <div className={styles.count}>{filteredNotifications.length}</div>
       </div>
       <div className={`customScroll ${styles.notifications}`}>
         {notifications.map((notification, i) => {

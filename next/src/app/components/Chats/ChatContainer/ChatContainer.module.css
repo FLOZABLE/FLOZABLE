@@ -1,8 +1,7 @@
-
 .ChatContainer {
   border-radius: 1.15rem;
   line-height: 1.25;
-  max-width: 75%;
+  max-width: 55%;
   width: fit-content;
   padding: 0.5rem;
   position: relative;
@@ -11,6 +10,14 @@
   color: #000;
   margin-bottom: 1.25rem;
   margin-left: 2.5rem;
+}
+
+.ChatContainer::before,
+.ChatContainer::after {
+  bottom: -0.2rem;
+  content: "";
+  height: 1rem;
+  position: absolute;
 }
 
 .ChatContainer::before {
@@ -29,31 +36,39 @@
 }
 
 .ChatContainer .profileImg {
-  width: 1.875rem;
-  height: 1.875rem;
-  border-radius: 0.938rem;
   position: absolute;
   left: -2rem;
-  top: 0em;
+  bottom: 0em;
   z-index: 2;
 }
 
-.ChatContainer .name {
+.ChatContainer .info {
   position: absolute;
-  left: -1.25rem;
-  top: 2.25rem;
-  font-size:  0.688rem;
-  width: 2.5rem;
-  overflow-y: hidden;
-  height: 0.6875rem;
+  left: 0rem;
+  bottom: -1.1rem;
+  font-size: 0.688rem;
+  overflow: hidden;
+  display: flex;
 }
 
-.ChatContainer .time {
+.ChatContainer .info .time {
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+.ChatContainer .info .name {
+  max-width: 7rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* .ChatContainer .time {
   position: absolute;
   left: 0rem;
   bottom: -1rem;
-  font-size:  0.688rem;
+  font-size: 0.688rem;
   width: 2.5rem;
   height: 0.6875rem;
   white-space: nowrap;
 }
+ */
