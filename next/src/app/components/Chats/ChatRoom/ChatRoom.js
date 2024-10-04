@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { socket } from "@/app/utils/socket";
 import { ModalsContext } from "@/app/utils/Contexts";
+import ChatRoomCoverImg from "../ChatRoomCoverImg/ChatRoomCoverImg";
 
 function ChatRoom({ chatroom }) {
   const { setChatModal } = useContext(ModalsContext);
@@ -38,10 +39,9 @@ function ChatRoom({ chatroom }) {
         }));
       }}
     >
-      <div
-        className={styles.imgContainer}
-        style={{ backgroundColor: chatroom.color }}
-      ></div>
+      <div className={styles.ChatRoomCoverImg}>
+        <ChatRoomCoverImg members={chatroom.members} />
+      </div>
       <div className={styles.roomInfo}>
         <div className={styles.header}>
           <div className={styles.name}>{chatroom.name}</div>

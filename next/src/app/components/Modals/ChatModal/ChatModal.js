@@ -18,7 +18,7 @@ import ChatRoom from "@/app/components/Chats/ChatRoom/ChatRoom";
 import { DateTime } from "luxon";
 import ChatContainer from "@/app/components/Chats/ChatContainer/ChatContainer";
 import MyChatContainer from "@/app/components/Chats/MyChatContainer/MyChatContainer";
-import { useGetChatroomMembers, useGetChatrooms } from "@/Hooks/chatroomsHooks";
+import { useGetChatroomMembers, useChatRooms } from "@/Hooks/chatroomsHooks";
 import { getChatMessages } from "@/Api/chatApi";
 
 function ChatModal({}) {
@@ -33,16 +33,16 @@ function ChatModal({}) {
   const moveRef = useRef(null);
   const chatsContainerRef = useRef(null);
 
-  const { data: useGetChatroomsData } = useGetChatrooms(userInfo);
+  const { data: useChatRoomsData } = useChatRooms(userInfo);
   const { data: useGetChatroomMembersData } = useGetChatroomMembers(
     chatModal.chatroom
   );
 
   useEffect(() => {
-    if (!useGetChatroomsData?.success) return;
+    if (!useChatRoomsData?.success) return;
 
-    setChatRooms(useGetChatroomsData.chatrooms);
-  }, [useGetChatroomsData]);
+    setChatRooms(useChatRoomsData.chatrooms);
+  }, [useChatRoomsData]);
 
   const onSubmit = useCallback(() => {
     socket.emit("chat/send", chatModal.chatroom, msgInput);
@@ -96,7 +96,7 @@ function ChatModal({}) {
             setChatModal((prev) => ({ ...prev, open: true }));
           }}
         >
-          <BackArrow />
+          {/* <BackArrow /> */}
         </i>
         <p>Messages</p>
         <i
