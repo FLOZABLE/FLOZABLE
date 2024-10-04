@@ -1,12 +1,14 @@
-import styles from "./DmBtn.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import React, { useCallback, useContext } from "react";
 import { ModalsContext, ResponseContext } from "@/app/utils/Contexts";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import { postChatRequest } from "@/Api/chatApi";
+import styles from "./ChatBtn.module.css";
+import { useChatRooms } from "@/Hooks/chatroomsHooks";
 
-function DmBtn({ userInfo, padding }) {
+export default function ChatBtn({ userInfo, padding }) {
+  const { chatRoomsData } = useChatRooms();
   const { setResponse } = useContext(ResponseContext);
   const { setChatModal } = useContext(ModalsContext);
 
@@ -30,11 +32,34 @@ function DmBtn({ userInfo, padding }) {
   }, []);
 
   return (
-    <div className={styles.DmBtn}>
+    <div className={styles.ChatBtn}>
       <div className={styles.blobWrapper}>
         <BlobBtn
           onClick={(e) => {
             e.stopPropagation();
+            if (!userInfo) {
+              return setChatModal((prev) => ({
+                ...prev,
+                open: true,
+                chatroom: null,
+                name: null,
+              }));
+            }
+            const chatroom = chatRoomsData?.chatrooms?.find(
+              (chatroom) =>
+                chatroom.members.sort().join() ===
+                [targetId, userInfo?.user_id].sort().join()
+            );
+
+            if (chatroom) {
+              setChatModal((prev) => ({
+                ...prev,
+                chatroom: chatroom.chatroom_id,
+                name: chatroom.name,
+                open: true,
+              }));
+              return;
+            }
             chatRequest();
           }}
           style={{
@@ -51,5 +76,3 @@ function DmBtn({ userInfo, padding }) {
     </div>
   );
 }
-
-export default DmBtn;

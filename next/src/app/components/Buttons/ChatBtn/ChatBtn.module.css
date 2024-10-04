@@ -1,14 +1,14 @@
-.DmBtn {
+.ChatBtn {
   position: relative;
 }
 
-.DmBtn .blobWrapper:hover ~ .hoverText {
+.ChatBtn .blobWrapper:hover ~ .hoverText {
   visibility: visible;
   opacity: 1;
   bottom: -2rem;
 }
 
-.DmBtn .hoverText {
+.ChatBtn .hoverText {
   bottom: -3rem;
   left: 50%;
   transform: translateX(-50%);

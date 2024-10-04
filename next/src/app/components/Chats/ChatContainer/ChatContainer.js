@@ -5,18 +5,23 @@ import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 function ChatContainer({ userInfo, time, m }) {
   return (
     <li className={styles.ChatContainer}>
-      <Link
-        href={`/dashboard/user/${userInfo?.user_id}`}
-      >
+      <Link href={`/dashboard/user/${userInfo?.user_id}`}>
         <div className={styles.profileImg}>
           <ProfileImage userId={userInfo?.user_id} />
         </div>
       </Link>
-      <p className={styles.name}>{userInfo?.name}</p>
-      <p className={styles.time}>{time}</p>
       <p>{m}</p>
+      <div className={styles.info}>
+        <Link
+          href={`/dashboard/user/${userInfo?.user_id}`}
+          className={`overflowDot ${styles.name}`}
+        >
+          {userInfo?.name}
+        </Link>
+        <p className={styles.time}>{time}</p>
+      </div>
     </li>
   );
-};
+}
 
 export default ChatContainer;

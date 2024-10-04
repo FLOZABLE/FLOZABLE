@@ -51,6 +51,12 @@
   align-items: center;
 }
 
+.Header .ChatBtn {
+  font-size: 2rem;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
 .Header .NotificationsBtn {
   margin-right: 1rem;
 }

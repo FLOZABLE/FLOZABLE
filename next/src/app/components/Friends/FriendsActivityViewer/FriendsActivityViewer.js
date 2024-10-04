@@ -7,10 +7,10 @@ import UserGroupViewer from "@/app/components/Users/UserGroupViewer/UserGroupVie
 import RecommendedFriendsViewer from "../RecommendedFriendsViewer/RecommendedFriendsViewer";
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
-import DmBtn from "../../Buttons/DmBtn/DmBtn";
 import { useFriendsStatus } from "@/Hooks/friendsHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { ModalsContext } from "@/app/utils/Contexts";
+import ChatBtn from "../../Buttons/ChatBtn/ChatBtn";
 
 function FriendsActivityViewer() {
   const { setSearchUsersModal } = useContext(ModalsContext);
@@ -65,7 +65,7 @@ function FriendsActivityViewer() {
                   </div>
                 </div>
                 <div className={styles.buttons}>
-                  <DmBtn userInfo={friend} padding={"0.3rem 0.6rem"} />
+                  <ChatBtn userInfo={friend} padding={"0.3rem 0.6rem"} />
                 </div>
               </div>
             );
