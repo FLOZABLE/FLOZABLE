@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
 import SubjectTimer from "@/app/components/Study/SubjectTimer/SubjectTimer";
 import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
@@ -25,6 +25,7 @@ import PlaylistModal from "@/app/components/Modals/PlaylistModal/PlaylistModal";
 import ThemeSelector from "@/app/components/Themes/ThemeSelector/ThemeSelector";
 import { useRouter } from "next/navigation";
 import { exitFullscreen } from "@/app/utils/Tool";
+import { TutorialsContext } from "@/app/utils/Contexts";
 
 function StudyOption({ onClick, children, hoverText }) {
   return (
@@ -37,6 +38,12 @@ function StudyOption({ onClick, children, hoverText }) {
 
 function Study() {
   const router = useRouter();
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
+    useContext(TutorialsContext);
+
+  const selectSubjectRef = useRef();
+  const switchPomodoroRef = useRef();
+  const startTimerRef = useRef();
 
   const [selectedSubject, setSelectedSubject] = useState(null);
 
@@ -74,6 +81,32 @@ function Study() {
       exitFullscreen();
     };
   }, [studyOptions.zoom]);
+
+  useEffect(() => {
+    if (tutorial === 6) {
+      const { width, top, left, height } =
+        selectSubjectRef.current.getBoundingClientRect();
+      tutorialBoxRef.current.style.left = left - 20 + "px";
+      tutorialBoxRef.current.style.top = top - 20 + "px";
+      tutorialBoxRef.current.style.width = width + 40 + "px";
+      tutorialBoxRef.current.style.height = height + 40 + "px";
+
+      tutorialTextRef.current.textContent = "Choose a subject to study!";
+      tutorialTextRef.current.style.left = left - 15 + "px";
+      tutorialTextRef.current.style.top = top - 100 + "px";
+    } else if (tutorial === 7) {
+      const { width, top, left, height } =
+        startTimerRef.current.getBoundingClientRect();
+      tutorialBoxRef.current.style.left = left - 20 + "px";
+      tutorialBoxRef.current.style.top = top - 20 + "px";
+      tutorialBoxRef.current.style.width = width + 40 + "px";
+      tutorialBoxRef.current.style.height = height + 40 + "px";
+
+      tutorialTextRef.current.textContent = "Click this button to start/stop studying!";
+      tutorialTextRef.current.style.left = left - 15 + "px";
+      tutorialTextRef.current.style.top = top - 100 + "px";
+    }
+  }, [tutorial]);
 
   return (
     <div className={styles.Study}>
@@ -190,6 +223,9 @@ function Study() {
         <SubjectTimer
           selectedSubject={selectedSubject}
           setSelectedSubject={setSelectedSubject}
+          selectSubjectRef={selectSubjectRef}
+          switchPomodoroRef={switchPomodoroRef}
+          startTimerRef={startTimerRef}
         />
       </div>
       <div

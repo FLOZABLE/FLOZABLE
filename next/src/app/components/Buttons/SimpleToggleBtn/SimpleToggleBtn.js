@@ -1,18 +1,29 @@
 import { generateRandomId } from "@/app/utils/Tool";
 import styles from "./SimpleToggleBtn.module.css";
-import React from 'react';
+import React from "react";
 
-function SimpleToggleBtn({ onToggle, checked, id = generateRandomId(10) }) {
+function SimpleToggleBtn({
+  onToggle,
+  checked,
+  id = generateRandomId(10),
+  tutorial,
+}) {
   return (
-    <div className={styles.SimpleToggleBtn}>
+    <div
+      className={styles.SimpleToggleBtn}
+      onClick={onToggle}
+      data-tutorial={tutorial}
+    >
       <input
         className={`${styles.tgl} ${styles.tglIos}`}
         id={id}
         type="checkbox"
-        defaultChecked={checked}
-        onChange={(e) => {
+        checked={checked}
+        /* onChange={(e) => {
           onToggle(e);
-        }}
+          e.stopPropagation();
+        }} */
+        data-tutorial={tutorial}
       />
       <label className={styles.tglBtn} htmlFor={id} />
     </div>

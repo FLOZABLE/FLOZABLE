@@ -139,23 +139,23 @@ function Header({}) {
           </i>
         </HeaderEl>
       </div>
-      <div className={styles.right}>
-        <div
-          className={styles.ChatBtn}
-          onClick={() => {
-            setChatModal((prev) => ({
-              ...prev,
-              chatroom: null,
-              open: !prev.open,
-            }));
-          }}
-        >
-          <FontAwesomeIcon icon={faComment} />
-        </div>
-        <div className={styles.NotificationsBtn}>
-          <NotificationsBtn />
-        </div>
-        {userInfo ? (
+      {userInfo ? (
+        <div className={styles.right}>
+          <div
+            className={styles.ChatBtn}
+            onClick={() => {
+              setChatModal((prev) => ({
+                ...prev,
+                chatroom: null,
+                open: !prev.open,
+              }));
+            }}
+          >
+            <FontAwesomeIcon icon={faComment} />
+          </div>
+          <div className={styles.NotificationsBtn}>
+            <NotificationsBtn />
+          </div>
           <Link href={"/dashboard/account"} className={styles.userInfo}>
             <div>
               <p className={styles.name}>{userInfo.name}</p>
@@ -169,8 +169,8 @@ function Header({}) {
               />
             </div>
           </Link>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </header>
   );
 }
