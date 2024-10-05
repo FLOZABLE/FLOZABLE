@@ -168,7 +168,6 @@ function ChatModal({}) {
               }
             }}
             onChange={(e) => setMsgInput(e.target.value)}
-            g
           />
           <SendBtn onSubmit={onSubmit} />
         </div>

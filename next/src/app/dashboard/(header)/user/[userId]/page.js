@@ -10,6 +10,8 @@ import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/Ran
 import { GroupsContext } from "@/app/utils/Contexts";
 import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
 import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
+import ChatBtn from "@/app/components/Buttons/ChatBtn/ChatBtn";
+import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRequestBtn";
 
 function User({ params }) {
   const { userId } = params;
@@ -46,7 +48,7 @@ function User({ params }) {
       groups.filter((group) => userInfo.groups.includes(group.group_id))
     );
   }, [groups, userInfo]);
-  
+
   if (!userInfo) {
     return null;
   }
@@ -68,6 +70,10 @@ function User({ params }) {
               <CountryViewer timezone={userInfo.timezone} />
             </i>
           </div>
+          <div className={styles.buttons}>
+            <ChatBtn userInfo={userInfo} />
+            <FriendRequestBtn userInfo={userInfo} />
+          </div>
         </div>
         <div className={styles.layer}>
           <div className={`BoxContainer ${styles.boxContainer}`}>
@@ -87,16 +93,18 @@ function User({ params }) {
               userInfo={userInfo}
             />
           </div>
-          <div
-            className={`BoxContainer customScroll ${styles.boxContainer}`}
-            id={styles.GroupsContainer}
-          >
-            {userGroups.map((group, i) => {
-              return (
-                <GroupContainer groupInfo={group} key={i} isSearched={true} />
-              );
-            })}
-          </div>
+          {userGroups.length ? (
+            <div
+              className={`BoxContainer customScroll ${styles.boxContainer}`}
+              id={styles.GroupsContainer}
+            >
+              {userGroups.map((group, i) => {
+                return (
+                  <GroupContainer groupInfo={group} key={i} isSearched={true} />
+                );
+              })}
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

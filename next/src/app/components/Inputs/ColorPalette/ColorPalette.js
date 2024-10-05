@@ -8,20 +8,18 @@ function ColorPalette({
   isSelectColor,
   setIsSelectColor,
   setIsSelectIcon,
-  id = ""
+  tutorial,
 }) {
-
   const selectColor = useCallback((color) => {
     setSelectedColor(color);
     setIsSelectColor(false);
   }, []);
 
-
   return (
     <div className={styles.ColorPalette}>
       <div className={styles.header}>
         <button
-          id={id}
+          data-tutorial={tutorial}
           onClick={() => {
             setIsSelectColor(!isSelectColor);
             if (setIsSelectIcon) {
@@ -34,7 +32,7 @@ function ColorPalette({
           </div>
         </button>
         <div
-          id={id}
+          data-tutorial={tutorial}
           onClick={() => {
             setIsSelectColor(!isSelectColor);
             if (setIsSelectIcon) {
@@ -48,68 +46,66 @@ function ColorPalette({
       <div
         className={`${styles.paletteGrid} ${isSelectColor ? styles.open : ""}`}
       >
-        {
-          colorPaletteOptions.map((colorOption, i) => {
-            return (
-              <div className={styles.palette} key={i}>
-                <div className={styles.paletteColors}>
+        {colorPaletteOptions.map((colorOption, i) => {
+          return (
+            <div className={styles.palette} key={i}>
+              <div className={styles.paletteColors}>
+                <div
+                  data-tutorial={tutorial}
+                  className={styles.paletteColor}
+                  onClick={() => {
+                    selectColor(colorOption.colors[0]);
+                  }}
+                  style={{ "--bg-color": colorOption.colors[0] }}
+                ></div>
+                <div className={styles.paletteShades}>
                   <div
-                    id={id}
-                    className={styles.paletteColor}
+                    data-tutorial={tutorial}
+                    className={styles.paletteShadesItem}
                     onClick={() => {
-                      selectColor(colorOption.colors[0]);
+                      selectColor(colorOption.colors[1]);
                     }}
-                    style={{ "--bg-color": colorOption.colors[0] }}
-                  ></div>
-                  <div className={styles.paletteShades}>
-                    <div
-                      id={id}
-                      className={styles.paletteShadesItem}
-                      onClick={() => {
-                        selectColor(colorOption.colors[1]);
-                      }}
-                      style={{ "--bg-color": colorOption.colors[1] }}
-                    >
-                      {colorOption.colors[1]}
-                    </div>
-                    <div
-                      id={id}
-                      className={styles.paletteShadesItem}
-                      onClick={() => {
-                        selectColor(colorOption.colors[2]);
-                      }}
-                      style={{ "--bg-color": colorOption.colors[2] }}
-                    >
-                      {colorOption.colors[2]}
-                    </div>
-                    <div
-                      id={id}
-                      className={styles.paletteShadesItem}
-                      onClick={() => {
-                        selectColor(colorOption.colors[3]);
-                      }}
-                      style={{ "--bg-color": colorOption.colors[3] }}
-                    >
-                      {colorOption.colors[3]}
-                    </div>
-                  </div>
-                </div>
-                <div className={styles.paletteInfo}>
-                  <div className={styles.paletteInfoName}>{colorOption.name}</div>
-                  <div
-                    id={id}
-                    className={styles.palletteInfoHexcode}
-                    onClick={() => {
-                      setSelectedColor(colorOption.colors[0]);
-                    }}
+                    style={{ "--bg-color": colorOption.colors[1] }}
                   >
-                    {colorOption.colors[0]}
+                    {colorOption.colors[1]}
+                  </div>
+                  <div
+                    data-tutorial={tutorial}
+                    className={styles.paletteShadesItem}
+                    onClick={() => {
+                      selectColor(colorOption.colors[2]);
+                    }}
+                    style={{ "--bg-color": colorOption.colors[2] }}
+                  >
+                    {colorOption.colors[2]}
+                  </div>
+                  <div
+                    data-tutorial={tutorial}
+                    className={styles.paletteShadesItem}
+                    onClick={() => {
+                      selectColor(colorOption.colors[3]);
+                    }}
+                    style={{ "--bg-color": colorOption.colors[3] }}
+                  >
+                    {colorOption.colors[3]}
                   </div>
                 </div>
               </div>
-            );
-          })
-        }
+              <div className={styles.paletteInfo}>
+                <div className={styles.paletteInfoName}>{colorOption.name}</div>
+                <div
+                  data-tutorial={tutorial}
+                  className={styles.palletteInfoHexcode}
+                  onClick={() => {
+                    setSelectedColor(colorOption.colors[0]);
+                  }}
+                >
+                  {colorOption.colors[0]}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

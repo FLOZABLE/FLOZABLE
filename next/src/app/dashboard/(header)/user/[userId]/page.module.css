@@ -33,6 +33,12 @@
   margin-left: 1.5rem;
 }
 
+.User .profileCard .buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+}
+
 .User .layer {
   flex: 1;
   margin-left: 10vw;
