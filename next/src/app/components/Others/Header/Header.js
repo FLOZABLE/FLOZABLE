@@ -53,7 +53,7 @@ function Header({}) {
 
   const studyBtnRef = useRef(null);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (tutorial === 6) {
       const { width, top, left, height } =
         studyBtnRef.current.getBoundingClientRect();
@@ -67,7 +67,7 @@ function Header({}) {
       tutorialTextRef.current.innerText =
         "Click here to start a study session!";
     }
-  }, [tutorial]);
+  }, [tutorial]); */
 
   const { data: websitesData } = useExtensionUsage(
     new Date(new Date().setHours(0, 0, 0, 0)),

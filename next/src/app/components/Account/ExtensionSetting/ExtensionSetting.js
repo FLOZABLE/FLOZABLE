@@ -54,9 +54,17 @@ function ExtensionSetting() {
 
   const settingUpdate = useCallback((website, mode, value) => {
     (async () => {
-      console.log('gddd')
       const data = await patchExtensionSetting({ website, mode, value });
       setResponse(data);
+      if (data.success) {
+        const settingIndex = settings.findIndex(
+          (setting) => setting.website === website
+        );
+        if (settingIndex === -1) return;
+
+        settings[settingIndex][mode] = value;
+        setSettings(settings);
+      }
     })();
   }, []);
 
@@ -109,7 +117,7 @@ function ExtensionSetting() {
                     <SimpleToggleBtn
                       checked={block}
                       onToggle={(e) => {
-                        console.log('gddd')
+                        console.log("gddd");
                         settingUpdate(website, "block", e.target.checked);
                       }}
                     />

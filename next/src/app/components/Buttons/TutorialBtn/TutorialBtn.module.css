@@ -1,15 +1,18 @@
 .TutorialBtn {
-  color: var(--blue1);
-  position: relative;
-  border-radius: 0.5rem;
-  background-color: aliceblue;
-  transition: .3s ease-in-out box-shadow;
-  width: 3rem;
-  height: 3rem;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 2.5rem;
+  background-color: #a4afd4bb;
+  box-shadow: var(--shadow1);
+  right: 1rem;
+  bottom: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  transition: 0.3s ease-in-out box-shadow;
+  flex-shrink: 0;
+  margin-right: 0.5rem;
 }
 
 .TutorialBtn:hover {
@@ -19,14 +22,12 @@
 .TutorialBtn i {
   font-size: 2rem;
 }
-.TutorialBtn .hoverEl {
-  position: absolute;
+.TutorialBtn .hoverText {
   bottom: -2rem;
-  white-space: nowrap;
-  opacity: 0;
-  transition: .3s ease-in-out opacity;
 }
 
-.TutorialBtn:hover .hoverEl {
+.TutorialBtn:hover .hoverText {
   opacity: 1;
+  visibility: visible;
+  bottom: -1rem;
 }

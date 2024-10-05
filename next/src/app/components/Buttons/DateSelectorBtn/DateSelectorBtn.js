@@ -28,13 +28,17 @@ function DateSelectorBtn({ viewDate, setViewDate, viewer }) {
 
   return (
     <div className={styles.DateSelectorBtn}>
-      <div className={styles.button} onClick={onDecr}>
-        {"<"}
-      </div>
+      {setViewDate ? (
+        <div className={styles.button} onClick={onDecr}>
+          {"<"}
+        </div>
+      ) : null}
       <p>{dateDisp}</p>
-      <div className={styles.button} onClick={onIncr}>
-        {">"}
-      </div>
+      {setViewDate ? (
+        <div className={styles.button} onClick={onIncr}>
+          {">"}
+        </div>
+      ) : null}
     </div>
   );
 }
