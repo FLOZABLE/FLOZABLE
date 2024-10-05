@@ -245,6 +245,12 @@ button:hover {
   display: none; /* Safari and Chrome */
 }
 
+svg,
+svg > *,
+[data-tutorial] > * {
+  pointer-events: none;
+}
+
 @media (max-width: 1900px) {
   html {
     font-size: 15px;

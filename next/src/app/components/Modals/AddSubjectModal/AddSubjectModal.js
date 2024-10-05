@@ -59,14 +59,14 @@ function AddSubjectModal({}) {
   useEffect(() => {
     if (tutorial === 4) {
       setTimeout(() => {
-        const { top, left, height } =
+        const { top, left, height, width } =
           addSubjectModalRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left + "px";
-        tutorialBoxRef.current.style.top = top - 25 + "px";
-        tutorialBoxRef.current.style.width = 0;
-        tutorialBoxRef.current.style.height = height + "px";
+        tutorialBoxRef.current.style.left = left - 20 + "px";
+        tutorialBoxRef.current.style.top = top - 40 + "px";
+        tutorialBoxRef.current.style.width = width + 40 + "px";
+        tutorialBoxRef.current.style.height = height + 80 + "px";
 
-        tutorialTextRef.current.style.top = top - 50 + "px";
+        tutorialTextRef.current.style.top = top - 100 + "px";
         tutorialTextRef.current.style.left = left + "px";
         tutorialTextRef.current.innerText = "Enter the subject details!";
       }, 500);
@@ -96,13 +96,11 @@ function AddSubjectModal({}) {
     [tutorial, subjects]
   );
 
+  //setTutorial(0)
+
   return (
-    <DraggableModal
-      refProp={addSubjectModalRef}
-      isOpen={isAddSubjectModal}
-      setIsOpen={setIsAddSubjectModal}
-    >
-      <div className={styles.AddSubjectModal}>
+    <DraggableModal isOpen={isAddSubjectModal} setIsOpen={setIsAddSubjectModal}>
+      <div ref={addSubjectModalRef} className={styles.AddSubjectModal}>
         <div className={styles.inputWrapper}>
           <CustomInput
             input={subject.name}
@@ -122,14 +120,14 @@ function AddSubjectModal({}) {
           selectedColor={subject.color}
           isSelectColor={isSelectColor}
           setIsSelectColor={setIsSelectColor}
-          id="tutorial-4"
+          tutorial={4}
         />
         <div className={styles.submit}>
           <BlobBtn
             onClick={() => {
               onSubmit(subject);
             }}
-            id="tutorial-4"
+            data-tutorial="4"
           >
             SAVE
           </BlobBtn>

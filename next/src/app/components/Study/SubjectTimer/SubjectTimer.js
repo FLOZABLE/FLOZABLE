@@ -9,13 +9,22 @@ import {
 import {
   ModalsContext,
   SubjectsContext,
+  TutorialsContext,
   WorkersContext,
 } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
 import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
 import PomodoroTimer from "../PomodoroTimer/PomodoroTimer";
 
-function SubjecTimer({ selectedSubject, setSelectedSubject }) {
+function SubjecTimer({
+  selectedSubject,
+  setSelectedSubject,
+  selectSubjectRef,
+  switchPomodoroRef,
+  startTimerRef,
+}) {
+  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
+    useContext(TutorialsContext);
   const { subjects, setSubjects } = useContext(SubjectsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
   const { setIsAddSubjectModal } = useContext(ModalsContext);
@@ -123,6 +132,7 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
           className={`${styles.pomodoroToggle} ${
             pomodoro.mode !== -1 ? styles.active : null
           }`}
+          ref={switchPomodoroRef}
         >
           <SimpleToggleBtn
             checked={pomodoro.mode !== -1}
@@ -133,6 +143,7 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
                 setPomodoro({ mode: -1, active: false });
               }
             }}
+            tutorial={8}
           />
           <p>Pomodoro</p>
         </div>
@@ -144,10 +155,13 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
           +<p className={`HoverText ${styles.hoverText}`}>Add Subject</p>
         </div>
       </div>
-      <div className={styles.mainDisplay}>
+      <div className={styles.mainDisplay} ref={selectSubjectRef}>
         {selectedSubject ? (
           <div
-            className={`${styles.subject} ${selectNewSubject ? styles.active : null}`}
+            className={`${styles.subject} ${
+              selectNewSubject ? styles.active : null
+            }`}
+            data-tutorial={6}
             onClick={() => setSelectNewSubject(!selectNewSubject)}
           >
             <p className={styles.name}>{selectedSubject.name}</p>
@@ -173,7 +187,16 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
           <div
             className={styles.button}
             id={styles.start}
-            onClick={toggleTimer}
+            onClick={() => {
+              toggleTimer();
+              if (tutorial === 7) {
+                setTimeout(() => {
+                  setTutorial(8);
+                }, 3000);
+              }
+            }}
+            ref={startTimerRef}
+            data-tutorial={7}
           >
             {selectedSubject?.active || pomodoro.active ? (
               <FontAwesomeIcon icon={faPause} />
@@ -193,6 +216,7 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
             <div
               className={styles.subject}
               key={i}
+              data-tutorial={6}
               onClick={() => {
                 setSelectNewSubject(false);
                 if (selectedSubject?.active) {
@@ -202,6 +226,9 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
                   }, 300);
                 } else {
                   setSelectedSubject(subject);
+                }
+                if (tutorial === 6) {
+                  setTutorial(7);
                 }
               }}
             >

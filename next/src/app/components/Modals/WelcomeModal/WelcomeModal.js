@@ -1,14 +1,17 @@
 "use client";
 
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import styles from "./WelcomeModal.module.css";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import Confetti from "react-confetti";
 import { TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
 import { useWindowSize } from "@/Hooks/otherHooks";
+import { useRouter, useSearchParams } from "next/navigation";
 
 function WelcomeModal({}) {
   const { width, height } = useWindowSize();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const { userInfo } = useContext(UserInfoContext);
   const { setTutorial } = useContext(TutorialsContext);
@@ -25,6 +28,15 @@ function WelcomeModal({}) {
       setIsModal(false);
     }
   }, [userInfo]);
+
+  const skipTutorial = useCallback(() => {
+    setIsModal(false);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete("welcome");
+    router.replace(`/dashboard?${newSearchParams.toString()}`, {
+      scroll: false,
+    });
+  }, [searchParams]);
 
   return (
     <div
@@ -59,12 +71,7 @@ function WelcomeModal({}) {
               Begin!
             </BlobBtn>
           </div>
-          <button
-            className={styles.skipBtn}
-            onClick={() => {
-              setIsModal(false);
-            }}
-          >
+          <button className={styles.skipBtn} onClick={skipTutorial}>
             or Skip Tutorial
           </button>
         </div>

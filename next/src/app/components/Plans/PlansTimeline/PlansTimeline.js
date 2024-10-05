@@ -125,14 +125,22 @@ export default function PlansTimeline({
           <div className={styles.buttons}>
             <div
               id={styles.addPlan}
+              data-tutorial={1}
               onClick={() => {
+                console.log(tutorial, "gffd");
+                if (tutorial === 1) {
+                  setTimeout(() => {
+                    setTutorial(2);
+                  }, 1500);
+                }
+
                 if (planModal.plan_id === "0000000000") {
                   return;
                 }
                 const subject = subjects?.[0];
                 const subject_id = subject?.subject_id;
-                const color = subject ? subject.color : "#000000"
-          
+                const color = subject ? subject.color : "#000000";
+
                 const newPlan = {
                   ...DEFAULT_PLAN,
                   plan_id: "0000000000",
@@ -143,10 +151,6 @@ export default function PlansTimeline({
                 newPlan.backgroundColor = color;
                 newPlan.borderColor = color;
                 setPlans((prev) => [...prev, newPlan]);
-
-                if (tutorial === 1) {
-                  setTutorial(2);
-                }
               }}
               ref={addBtnRef}
             >

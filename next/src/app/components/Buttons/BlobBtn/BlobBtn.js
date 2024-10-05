@@ -10,6 +10,7 @@ function BlobBtn({
   style = {},
   disabled,
   type,
+  ...otherProps
 }) {
   return (
     <div
@@ -21,6 +22,7 @@ function BlobBtn({
       style={{ "--color1": color1, "--color2": color2, ...style }}
       id={id}
       type={type}
+      {...otherProps}
     >
       {children}
       <span className={styles.blobBtnInner}>
