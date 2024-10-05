@@ -6,24 +6,23 @@ import { TutorialsContext } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
 
 export default function TutorialBtn() {
-  const {setTutorial} = useContext(TutorialsContext);
+  const { setTutorial } = useContext(TutorialsContext);
   const router = useRouter();
 
   return (
-    <div onClick={() => {
-      router.push("/dashboard");
-      setTimeout(() => {
-        setTutorial(1);
-      }, 500);
-    }}
+    <div
+      onClick={() => {
+        router.push("/dashboard");
+        setTimeout(() => {
+          setTutorial(1);
+        }, 500);
+      }}
       className={styles.TutorialBtn}
     >
       <i>
-      <FontAwesomeIcon icon={faMap} />
+        <FontAwesomeIcon icon={faMap} />
       </i>
-      <div className={styles.hoverEl}>
-        Start Tutorial!
-      </div>
+      <div className={`${styles.hoverText} HoverText`}>Start Tutorial!</div>
     </div>
-  )
+  );
 }

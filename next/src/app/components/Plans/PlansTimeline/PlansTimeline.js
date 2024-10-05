@@ -14,11 +14,13 @@ import Plan from "../Plan/Plan";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import SubjectsLabels from "../../Charts/SubjectsLabels/SubjectsLabels";
+import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 
 export default function PlansTimeline({
   viewer,
   viewDate,
   mode,
+  setViewDate,
   maxHeight = "50rem",
 }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
@@ -119,9 +121,13 @@ export default function PlansTimeline({
       <div className={styles.header}>
         <div className={styles.layer}>
           <h2>Tasks</h2>
-          <p className={styles.date}>
-            {viewDate.getMonth() + 1}/{viewDate.getDate()}
-          </p>
+          <div className={styles.DateSelectorBtn}>
+            <DateSelectorBtn
+              viewDate={viewDate}
+              setViewDate={setViewDate}
+              viewer={viewer}
+            />
+          </div>
           <div className={styles.buttons}>
             <div
               id={styles.addPlan}

@@ -29,7 +29,7 @@ import { TutorialsContext } from "@/app/utils/Contexts";
 
 function StudyOption({ onClick, children, hoverText }) {
   return (
-    <div className={styles.studyOption} onClick={onClick}>
+    <div className={styles.studyOption} onClick={onClick} data-tutorial={9}>
       {children}
       <div className={`HoverText ${styles.hoverText}`}>{hoverText}</div>
     </div>
@@ -44,6 +44,7 @@ function Study() {
   const selectSubjectRef = useRef();
   const switchPomodoroRef = useRef();
   const startTimerRef = useRef();
+  const studyOptionsHeader = useRef();
 
   const [selectedSubject, setSelectedSubject] = useState(null);
 
@@ -93,7 +94,7 @@ function Study() {
 
       tutorialTextRef.current.textContent = "Choose a subject to study!";
       tutorialTextRef.current.style.left = left - 15 + "px";
-      tutorialTextRef.current.style.top = top - 100 + "px";
+      tutorialTextRef.current.style.top = 0 + "px";
     } else if (tutorial === 7) {
       const { width, top, left, height } =
         startTimerRef.current.getBoundingClientRect();
@@ -102,9 +103,41 @@ function Study() {
       tutorialBoxRef.current.style.width = width + 40 + "px";
       tutorialBoxRef.current.style.height = height + 40 + "px";
 
-      tutorialTextRef.current.textContent = "Click this button to start/stop studying!";
+      tutorialTextRef.current.textContent =
+        "Click this button to start/stop studying!";
       tutorialTextRef.current.style.left = left - 15 + "px";
-      tutorialTextRef.current.style.top = top - 100 + "px";
+      tutorialTextRef.current.style.top = 0 + "px";
+    } else if (tutorial === 8) {
+      const { width, top, left, height } =
+        switchPomodoroRef.current.getBoundingClientRect();
+      tutorialBoxRef.current.style.left = left - 20 + "px";
+      tutorialBoxRef.current.style.top = top - 20 + "px";
+      tutorialBoxRef.current.style.width = width + 40 + "px";
+      tutorialBoxRef.current.style.height = height + 40 + "px";
+
+      tutorialTextRef.current.textContent =
+        "Click this button to switch to pomodoro mode!";
+      tutorialTextRef.current.style.left = left + "px";
+      tutorialTextRef.current.style.top = 0 + "px";
+      setTimeout(() => {
+        setTutorial(9);
+      }, 3500);
+    } else if (tutorial === 9) {
+      const { width, top, left, height } =
+        studyOptionsHeader.current.getBoundingClientRect();
+      tutorialBoxRef.current.style.left = left - 20 + "px";
+      tutorialBoxRef.current.style.top = top - 20 + "px";
+      tutorialBoxRef.current.style.width = width + 40 + "px";
+      tutorialBoxRef.current.style.height = height + 40 + "px";
+
+      tutorialTextRef.current.textContent =
+        "You can select which tools to display!";
+      tutorialTextRef.current.style.left = left + "px";
+      tutorialTextRef.current.style.top = top + 100 + "px";
+      setTimeout(() => {
+        setTutorial(10);
+        router.push("/dashboard");
+      }, 2500);
     }
   }, [tutorial]);
 
@@ -118,7 +151,7 @@ function Study() {
           volume={volume}
         />
       </div>
-      <div className={styles.studyOptions}>
+      <div className={styles.studyOptions} ref={studyOptionsHeader}>
         <StudyOption
           onClick={() => {
             toggleStudyOption("timer");

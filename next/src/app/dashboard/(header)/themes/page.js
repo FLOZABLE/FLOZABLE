@@ -37,7 +37,7 @@ function Themes({ setResponse }) {
 
     const newThemes = JSON.parse(JSON.stringify(themes));
     newThemes.sort((a, b) => b.likes.length - a.likes.length);
-    setRankedThemes(newThemes);
+    setRankedThemes(newThemes.slice(0, 4));
   }, [themes]);
 
   return (

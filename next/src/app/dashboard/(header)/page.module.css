@@ -30,3 +30,12 @@
   flex: 0;
   display: block;
 }
+
+.Main .box#FriendsActivityViewer {
+  max-height: 60vh;
+}
+
+.Main .box#SubjectsPie {
+  max-height: 80vh;
+  max-width: 30rem;
+}

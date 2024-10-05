@@ -94,15 +94,20 @@
   width: 500px !important;
   height: fit-content !important;
   transform: translate(-50%, -50%);
-  font-size: 3rem;
   pointer-events: all;
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-weight: 800;
   padding: 3rem 4rem;
 }
 
 .Tutorial .end p {
   margin-bottom: 2rem;
+  font-size: 3rem;
+  font-weight: 800;
+}
+
+.Tutorial .viewGroups {
+  position: relative;
+  font-size: 1.3rem;
 }

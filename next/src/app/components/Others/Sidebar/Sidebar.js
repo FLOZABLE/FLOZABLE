@@ -141,6 +141,7 @@ function Sidebar({}) {
         <h3>Settings</h3>
       </SidebarEl>
       <div className={styles.buttons}>
+        <TutorialBtn />
         <AccountBtn />
       </div>
     </aside>
