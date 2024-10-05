@@ -10,6 +10,7 @@
 
 .PlansTimeline .header .layer {
   display: flex;
+  align-items: center;
 }
 
 .PlansTimeline .header h2 {
@@ -24,11 +25,9 @@
   font-size: 1.1rem;
 }
 
-.PlansTimeline .header .date {
-  font-size: 1.2rem;
-  font-weight: 600;
+.PlansTimeline .header .DateSelectorBtn {
+  font-size: 0.8rem;
   color: var(--gray1);
-  margin: 1rem 0rem 0rem 1rem;
 }
 
 .PlansTimeline .header .buttons {

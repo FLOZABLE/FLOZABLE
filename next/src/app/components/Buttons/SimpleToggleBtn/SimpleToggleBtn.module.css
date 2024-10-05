@@ -1,10 +1,7 @@
 .SimpleToggleBtn {
-  pointer-events: none;
+  cursor: pointer;
 }
 
-.SimpleToggleBtn input {
-  pointer-events: all;
-}
 .SimpleToggleBtn .tgl {
   display: none;
 }

@@ -19,11 +19,6 @@ function SimpleToggleBtn({
         id={id}
         type="checkbox"
         checked={checked}
-        /* onChange={(e) => {
-          onToggle(e);
-          e.stopPropagation();
-        }} */
-        data-tutorial={tutorial}
       />
       <label className={styles.tglBtn} htmlFor={id} />
     </div>

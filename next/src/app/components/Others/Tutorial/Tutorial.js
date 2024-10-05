@@ -24,7 +24,7 @@ function Tutorial() {
       return;
     }
 
-    if (btnTutorial !== tutorial && btnTutorial !== "-2") {
+    if (btnTutorial !== tutorial && btnTutorial !== -2) {
       e.stopPropagation();
       e.preventDefault();
     }
@@ -56,16 +56,18 @@ function Tutorial() {
 
   return (
     <div className={`${styles.Tutorial} ${tutorial ? styles.open : ""}`}>
-      {tutorial >= 13 ? (
+      {tutorial >= 10 ? (
         <div to="/dashboard/groups" className={styles.end}>
           <p>All done!</p>
-          <div className={styles.blobWrapper}>
+          <div className={styles.viewGroups}>
             <BlobBtn
               onClick={() => {
                 router.push("/dashboard/groups");
                 setTutorial(false);
               }}
-              id="tutorial-13"
+              data-tutorial={-2}
+              color1="white"
+              color2="black"
             >
               View Rooms for Group-Studying
             </BlobBtn>
@@ -87,8 +89,9 @@ function Tutorial() {
             <BlobBtn
               onClick={() => {
                 skipTutorial();
+                setTutorial(false);
               }}
-              id="skipTutorialButton"
+              data-tutorial={-2}
             >
               Skip Tutorial
             </BlobBtn>
