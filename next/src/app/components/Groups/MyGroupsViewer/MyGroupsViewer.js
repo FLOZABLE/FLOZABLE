@@ -52,6 +52,9 @@ function MyGroupsViewer({}) {
     const group = myGroups[debouncedIndex];
     if (!group) return;
 
+    //only in study page
+    if (!window.location.href.includes("study")) return;
+
     socket.emit("changeGroup", group.group_id);
     mediaSocket.emit("changeGroup", group.group_id);
   }, [debouncedIndex, myGroups.length]);

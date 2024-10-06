@@ -2,6 +2,8 @@
   padding: 0rem 3.125rem;
   display: flex;
   position: relative;
+  --topLeaderboardWidth: 30rem;
+  --topLeaderboardOffset: 10rem;
 }
 
 .Leaderboard .layer {
@@ -12,7 +14,7 @@
 
 .Leaderboard .layer#left {
   flex: 1;
-  margin-right: 40.25rem;
+  margin-right: calc(var(--topLeaderboardOffset) + var(--topLeaderboardWidth));
 }
 
 .Leaderboard .layer#right {
@@ -21,7 +23,7 @@
 }
 
 .Leaderboard .boxContainer#TopLeaderBoard {
-  width: 30rem;
+  width: var(--topLeaderboardWidth);
 }
 
 .Leaderboard .boxContainer#Leaderboard {
@@ -30,4 +32,28 @@
 
 .Leaderboard .boxContainer#RankingsTrendsChart {
   height: 30rem;
+}
+
+@media (max-width: 1400px) {
+  .Leaderboard {
+    --topLeaderboardWidth: 25rem;
+    --topLeaderboardOffset: 8rem;
+  }
+
+  .Leaderboard .boxContainer {
+    margin-bottom: 1.25rem;
+    margin-top: 1.25rem;
+  }
+}
+
+@media (max-width: 1000px) {
+  .Leaderboard {
+    --topLeaderboardWidth: 22rem;
+    --topLeaderboardOffset: 7rem;
+  }
+
+  .Leaderboard .boxContainer {
+    margin-bottom: 1.25rem;
+    margin-top: 1.25rem;
+  }
 }
