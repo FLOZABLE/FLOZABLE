@@ -4,7 +4,7 @@
   height: 100vh;
   background-color: #a4afd4bb;
   opacity: 0;
-  transition: opacity .3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
   z-index: -1;
 }
 
@@ -22,7 +22,7 @@
   z-index: 3;
   visibility: hidden;
   opacity: 0;
-  transition: .3s visibility ease-in-out, opacity .3s ease-in-out;
+  transition: 0.3s visibility ease-in-out, opacity 0.3s ease-in-out;
 }
 
 #accountModal.visible {
@@ -31,11 +31,11 @@
 }
 
 #accountModal a {
-	cursor: pointer;
+  cursor: pointer;
   transition: all 200ms linear;
 }
 #accountModal a:hover {
-	text-decoration: none;
+  text-decoration: none;
 }
 #accountModal .link {
   color: #000;
@@ -51,19 +51,19 @@
 #accountModal h4 {
   font-weight: 600;
 }
-#accountModal h6 span{
+#accountModal h6 span {
   padding: 0 20px;
   text-transform: uppercase;
   font-weight: 700;
 }
-#accountModal .section{
+#accountModal .section {
   position: relative;
   width: 100%;
   display: block;
 }
 
 #accountModal [type="checkbox"]:checked,
-#accountModal [type="checkbox"]:not(:checked){
+#accountModal [type="checkbox"]:not(:checked) {
   position: absolute;
   transform: translateX(-50%);
   opacity: 0;
@@ -73,7 +73,7 @@
   cursor: pointer;
 }
 #accountModal .checkbox:checked + label,
-#accountModal .checkbox:not(:checked) + label{
+#accountModal .checkbox:not(:checked) + label {
   position: relative;
   display: block;
   text-align: center;
@@ -86,7 +86,7 @@
   background-color: #fff;
 }
 #accountModal .checkbox:checked + label .arrow,
-#accountModal .checkbox:not(:checked) + label .arrow{
+#accountModal .checkbox:not(:checked) + label .arrow {
   position: absolute;
   display: block;
   width: 36px;
@@ -106,7 +106,6 @@
   transform: translateX(44px) rotate(-270deg);
 }
 
-
 #accountModal .card-3d-wrap {
   position: relative;
   width: 440px;
@@ -120,14 +119,15 @@
 #accountModal .card-3d-wrapper {
   width: 100%;
   height: 100%;
-  position:absolute;    
+  position: absolute;
   top: 0;
-  left: 0;  
+  left: 0;
   -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
-  transition: all 600ms ease-out; 
+  transition: all 600ms ease-out;
 }
-#accountModal .card-front, #accountModal .card-back {
+#accountModal .card-front,
+#accountModal .card-back {
   width: 100%;
   height: 100%;
   background-color: #fff;
@@ -151,23 +151,17 @@
 #accountModal .checkbox:checked ~ .card-3d-wrap .card-3d-wrapper {
   transform: rotateY(180deg);
 }
-#accountModal .center-wrap{
-  position: absolute;
+#accountModal .center-wrap {
   width: 100%;
-  padding: 0 35px;
-  top: 50%;
-  left: 0;
-  transform: translate3d(0, -50%, 35px) perspective(100px);
-  z-index: 20;
+  padding: 20px 35px;
   display: block;
 }
 
-
-#accountModal .form-group{ 
+#accountModal .form-group {
   position: relative;
   display: block;
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 #accountModal .form-style {
   padding: 13px 20px;
@@ -185,13 +179,13 @@
   border: none;
   -webkit-transition: all 200ms linear;
   transition: all 200ms linear;
-  box-shadow: 0 4px 8px 0 rgba(21,21,21,.2);
+  box-shadow: 0 4px 8px 0 rgba(21, 21, 21, 0.2);
 }
 #accountModal .form-style:focus,
 #accountModal .form-style:active {
   border: none;
   outline: none;
-  box-shadow: 0 4px 8px 0 rgba(21,21,21,.2);
+  box-shadow: 0 4px 8px 0 rgba(21, 21, 21, 0.2);
 }
 #accountModal .input-icon {
   position: absolute;
@@ -203,61 +197,61 @@
   text-align: left;
   color: #000;
   -webkit-transition: all 200ms linear;
-    transition: all 200ms linear;
+  transition: all 200ms linear;
 }
 
-#accountModal .form-group input:-ms-input-placeholder  {
+#accountModal .form-group input:-ms-input-placeholder {
   color: #000;
   opacity: 0.7;
   -webkit-transition: all 200ms linear;
-    transition: all 200ms linear;
+  transition: all 200ms linear;
 }
-#accountModal .form-group input::-moz-placeholder  {
+#accountModal .form-group input::-moz-placeholder {
   color: #000;
   opacity: 0.7;
   -webkit-transition: all 200ms linear;
-    transition: all 200ms linear;
+  transition: all 200ms linear;
 }
-#accountModal .form-group input:-moz-placeholder  {
+#accountModal .form-group input:-moz-placeholder {
   color: #000;
   opacity: 0.7;
   -webkit-transition: all 200ms linear;
-    transition: all 200ms linear;
+  transition: all 200ms linear;
 }
-#accountModal .form-group input::-webkit-input-placeholder  {
+#accountModal .form-group input::-webkit-input-placeholder {
   color: #000;
   opacity: 0.7;
   -webkit-transition: all 200ms linear;
-    transition: all 200ms linear;
+  transition: all 200ms linear;
 }
-#accountModal .form-group input:focus:-ms-input-placeholder  {
+#accountModal .form-group input:focus:-ms-input-placeholder {
   opacity: 0;
   -webkit-transition: all 200ms linear;
-    transition: all 200ms linear;
+  transition: all 200ms linear;
 }
-#accountModal .form-group input:focus::-moz-placeholder  {
+#accountModal .form-group input:focus::-moz-placeholder {
   opacity: 0;
   -webkit-transition: all 200ms linear;
-    transition: all 200ms linear;
+  transition: all 200ms linear;
 }
-#accountModal .form-group input:focus:-moz-placeholder  {
+#accountModal .form-group input:focus:-moz-placeholder {
   opacity: 0;
   -webkit-transition: all 200ms linear;
-    transition: all 200ms linear;
+  transition: all 200ms linear;
 }
-#accountModal .form-group input:focus::-webkit-input-placeholder  {
+#accountModal .form-group input:focus::-webkit-input-placeholder {
   opacity: 0;
   -webkit-transition: all 200ms linear;
-    transition: all 200ms linear;
+  transition: all 200ms linear;
 }
 
-#accountModal .btn{  
+#accountModal .btn {
   border-radius: 4px;
   height: 44px;
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  -webkit-transition : all 200ms linear;
+  -webkit-transition: all 200ms linear;
   transition: all 200ms linear;
   padding: 0 30px;
   letter-spacing: 1px;
@@ -277,38 +271,36 @@
   border: none;
   background-color: #66c8ff;
   color: #fff;
-  box-shadow: 0 8px 24px 0 rgba(255,235,167,.2);
+  box-shadow: 0 8px 24px 0 rgba(255, 235, 167, 0.2);
 }
 #accountModal .btn:active,
-#accountModal .btn:focus{  
+#accountModal .btn:focus {
   background-color: #fff;
   color: #66c8ff;
-  box-shadow: 0 8px 24px 0 rgba(16,39,112,.2);
+  box-shadow: 0 8px 24px 0 rgba(16, 39, 112, 0.2);
 }
-#accountModal .btn:hover{  
+#accountModal .btn:hover {
   background-color: #fff;
   color: #66c8ff;
-  box-shadow: 0 8px 24px 0 rgba(16,39,112,.2);
+  box-shadow: 0 8px 24px 0 rgba(16, 39, 112, 0.2);
 }
-
-
-
 
 #accountModal .logo {
-	position: absolute;
-	top: 30px;
-	right: 30px;
-	display: block;
-	z-index: 100;
-	transition: all 250ms linear;
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  display: block;
+  z-index: 100;
+  transition: all 250ms linear;
 }
 #accountModal .logo img {
-	height: 26px;
-	width: auto;
-	display: block;
+  height: 26px;
+  width: auto;
+  display: block;
 }
 
-#tosignin, #tosignup {
+#tosignin,
+#tosignup {
   cursor: pointer;
 }
 
@@ -331,7 +323,7 @@
   box-sizing: border-box;
   color: #1f1f1f;
   cursor: pointer;
-  font-family: 'Roboto', arial, sans-serif;
+  font-family: "Roboto", arial, sans-serif;
   font-size: 14px;
   height: 40px;
   letter-spacing: 0.25px;
@@ -340,8 +332,9 @@
   padding: 0 12px;
   position: relative;
   text-align: center;
-  -webkit-transition: background-color .218s, border-color .218s, box-shadow .218s;
-  transition: background-color .218s, border-color .218s, box-shadow .218s;
+  -webkit-transition: background-color 0.218s, border-color 0.218s,
+    box-shadow 0.218s;
+  transition: background-color 0.218s, border-color 0.218s, box-shadow 0.218s;
   vertical-align: middle;
   white-space: nowrap;
   width: auto;
@@ -374,7 +367,7 @@
 .gsi-material-button .gsi-material-button-contents {
   -webkit-flex-grow: 1;
   flex-grow: 1;
-  font-family: 'Roboto', arial, sans-serif;
+  font-family: "Roboto", arial, sans-serif;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -382,8 +375,8 @@
 }
 
 .gsi-material-button .gsi-material-button-state {
-  -webkit-transition: opacity .218s;
-  transition: opacity .218s;
+  -webkit-transition: opacity 0.218s;
+  transition: opacity 0.218s;
   bottom: 0;
   left: 0;
   opacity: 0;
@@ -406,15 +399,17 @@
   opacity: 38%;
 }
 
-.gsi-material-button:not(:disabled):active .gsi-material-button-state, 
+.gsi-material-button:not(:disabled):active .gsi-material-button-state,
 .gsi-material-button:not(:disabled):focus .gsi-material-button-state {
   background-color: #303030;
   opacity: 12%;
 }
 
 .gsi-material-button:not(:disabled):hover {
-  -webkit-box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+  -webkit-box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
+    0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
+    0 1px 3px 1px rgba(60, 64, 67, 0.15);
 }
 
 .gsi-material-button:not(:disabled):hover .gsi-material-button-state {
@@ -432,7 +427,7 @@
   }
 
   #accountModal .card-3d-wrap {
-    height: 300px;
+    height: 330px;
     margin-top: 20px;
   }
 
