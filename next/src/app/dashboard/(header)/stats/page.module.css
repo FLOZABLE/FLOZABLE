@@ -1,15 +1,16 @@
 .Stats {
   padding: 1rem 3.125rem;
+  --rightWidth: 30rem;
 }
 
 .Stats .layer {
-  width: calc(100% - 30rem);
+  width: calc(100% - var(--rightWidth));
 }
 
 .Stats .right {
   position: fixed;
   top: 6rem;
-  width: 30rem;
+  width: var(--rightWidth);
   right: 0rem;
   border-left: 0.1rem solid var(--gray0);
   height: calc(100vh - 12rem);
@@ -20,7 +21,6 @@
 .Stats .right .SubjectsPie {
   display: flex;
   position: relative;
-  
 }
 
 .Stats .boxContainer {
@@ -45,3 +45,19 @@
 .Stats .box#RankingsTrendsChart {
   width: 35%;
 } */
+@media (max-width: 1400px) {
+  .Stats {
+    --rightWidth: 25rem;
+  }
+
+  .Stats .boxContainer {
+    margin-bottom: 2rem;
+  }
+}
+
+
+@media (max-width: 1000px) {
+  .Stats .boxContainer {
+    margin-bottom: 1.5rem;
+  }
+}

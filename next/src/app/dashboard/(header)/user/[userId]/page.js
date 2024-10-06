@@ -98,11 +98,17 @@ function User({ params }) {
               className={`BoxContainer customScroll ${styles.boxContainer}`}
               id={styles.GroupsContainer}
             >
-              {userGroups.map((group, i) => {
-                return (
-                  <GroupContainer groupInfo={group} key={i} isSearched={true} />
-                );
-              })}
+              <div className="customScroll">
+                {userGroups.map((group, i) => {
+                  return (
+                    <GroupContainer
+                      groupInfo={group}
+                      key={i}
+                      isSearched={true}
+                    />
+                  );
+                })}
+              </div>
             </div>
           ) : null}
         </div>
