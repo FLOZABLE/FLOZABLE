@@ -52,21 +52,23 @@ function ExtensionSetting() {
     })();
   }, [url]);
 
-  const settingUpdate = useCallback((website, mode, value) => {
-    (async () => {
-      const data = await patchExtensionSetting({ website, mode, value });
-      setResponse(data);
-      if (data.success) {
-        const settingIndex = settings.findIndex(
-          (setting) => setting.website === website
-        );
-        if (settingIndex === -1) return;
-
-        settings[settingIndex][mode] = value;
-        setSettings(settings);
-      }
-    })();
-  }, []);
+  const settingUpdate = useCallback(
+    (website, mode, value) => {
+      (async () => {
+        const data = await patchExtensionSetting({ website, mode, value });
+        setResponse(data);
+        if (data.success) {
+          const settingIndex = settings.findIndex(
+            (setting) => setting.website === website
+          );
+          if (settingIndex === -1) return;
+          settings[settingIndex][mode] = value;
+          setSettings(settings);
+        }
+      })();
+    },
+    [settings]
+  );
 
   return (
     <div className={styles.ExtensionSetting}>

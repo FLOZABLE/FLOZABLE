@@ -3,6 +3,10 @@
   width: 100%;
 }
 
+.WebsiteUsageChart svg > * {
+  pointer-events: all;
+}
+
 .WebsiteUsageChart .chartsContainer {
   display: flex;
   justify-content: space-around;
@@ -42,7 +46,7 @@
 
 .WebsiteUsageChart .labels {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 10.75rem);
+  grid-template-columns: repeat(auto-fill, 14rem);
   justify-content: center;
   flex-wrap: wrap;
   gap: 1.25rem;
@@ -67,6 +71,7 @@
   flex-shrink: 0;
 }
 
-.WebsiteUsageChart .label p {
+.WebsiteUsageChart .label .name {
   overflow-x: hidden;
+  margin-right: 0.5rem;
 }

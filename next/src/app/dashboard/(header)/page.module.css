@@ -46,7 +46,7 @@
   }
 
   .Main .box#planTimeline {
-    min-width: 20rem;
+    min-width: 25rem;
     height: min-content;
     overflow: hidden;
     flex: 0;
