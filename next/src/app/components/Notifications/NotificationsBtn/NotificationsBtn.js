@@ -74,8 +74,10 @@ export default function NotificationsBtn() {
         });
 
         if (data.success) {
-          friendsStatusRefetch();
-          friendsTrendRefetch();
+          setTimeout(() => {
+            friendsStatusRefetch();
+            friendsTrendRefetch();
+          }, 500);
         }
 
         setResponse(data);

@@ -4,6 +4,10 @@
   padding: 2rem;
 }
 
+.SubjectsPie svg > * {
+  pointer-events: all;
+}
+
 .SubjectsPie .options {
   display: flex;
   align-items: center;
