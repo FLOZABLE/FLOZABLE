@@ -61,8 +61,6 @@ export default function WebsiteUsageChart({}) {
     setTotalVisits(totalVisits + " times");
   }, [extensionUsageData]);
 
-  console.log("visits", visits);
-
   if (extensionUsageIsLoading) {
     return <CircularLoading />;
   }
@@ -153,7 +151,13 @@ export default function WebsiteUsageChart({}) {
                     className={styles.color}
                     style={{ backgroundColor: duration.fill }}
                   ></div>
-                  <p className="overflowDot">{duration.website}</p>
+                  <p className={`overflowDot ${styles.name}`}>
+                    {duration.website}
+                  </p>
+                  <p>
+                    {secondConverter(duration.duration).formattedValue},{" "}
+                    {duration.visits} times
+                  </p>
                 </div>
               );
             })}
