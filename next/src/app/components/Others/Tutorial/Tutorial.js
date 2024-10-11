@@ -18,6 +18,8 @@ function Tutorial() {
   const onClick = (e) => {
     const btnTutorial = parseInt(e.target.dataset.tutorial);
     console.log("btn tutorial", btnTutorial);
+    setHighlight(false);
+    
     if (!btnTutorial) {
       e.stopPropagation();
       e.preventDefault();
@@ -29,16 +31,18 @@ function Tutorial() {
       e.preventDefault();
     }
 
-    setHighlight(true);
-
+    /* setHighlight(false);
     setTimeout(() => {
       setHighlight(false);
-    }, 5000);
+    }, 1500); */
   };
 
   useEffect(() => {
     if (!tutorial) return;
     document.addEventListener("click", onClick, true);
+    setTimeout(() => {
+      setHighlight(true);
+    }, 500);
 
     return () => {
       document.removeEventListener("click", onClick, true);

@@ -1,6 +1,10 @@
 .AddSubjectModal {
+  --modalWidth: 25rem;
+}
+
+.AddSubjectModal .inner {
   padding: 1.875rem 1.25rem;
-  width: 25rem;
+  width: var(--modalWidth);
 }
 
 .AddSubjectModal .inputWrapper {

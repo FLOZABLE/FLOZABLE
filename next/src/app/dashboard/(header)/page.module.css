@@ -24,7 +24,7 @@
 }
 
 .Main .box#planTimeline {
-  min-width: 25rem;
+  min-width: 26rem;
   height: min-content;
   overflow: hidden;
   flex: 0;
@@ -43,13 +43,5 @@
 @media (max-width: 1800px) {
   .Main .box#SubjectsPie {
     max-width: 25rem;
-  }
-
-  .Main .box#planTimeline {
-    min-width: 25rem;
-    height: min-content;
-    overflow: hidden;
-    flex: 0;
-    display: block;
   }
 }

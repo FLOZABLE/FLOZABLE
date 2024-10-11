@@ -90,7 +90,7 @@ export default function PlanModal() {
   useEffect(() => {
     if (tutorial === 2) {
       modalRef.current.scroll({
-        top: 200000,
+        bottom: 200000,
         behavior: "smooth",
       });
       const { width, top, left, height } =
@@ -107,16 +107,22 @@ export default function PlanModal() {
         setTutorial(3);
       }, 5000);
     } else if (tutorial === 3) {
-      const { width, top, left, height } =
-        addSubjectBtnRef.current.getBoundingClientRect();
-      tutorialBoxRef.current.style.left = left - 20 + "px";
-      tutorialBoxRef.current.style.top = top - 20 + "px";
-      tutorialBoxRef.current.style.width = width + 40 + "px";
-      tutorialBoxRef.current.style.height = height + 40 + "px";
+      modalRef.current.scroll({
+        top: 200000,
+        behavior: "smooth",
+      });
+      setTimeout(() => {
+        const { width, top, left, height } =
+          addSubjectBtnRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left - 20 + "px";
+        tutorialBoxRef.current.style.top = top - 20 + "px";
+        tutorialBoxRef.current.style.width = width + 40 + "px";
+        tutorialBoxRef.current.style.height = height + 40 + "px";
 
-      tutorialTextRef.current.textContent = "Create your first subject!";
-      tutorialTextRef.current.style.left = left - 15 + "px";
-      tutorialTextRef.current.style.top = top - 100 + "px";
+        tutorialTextRef.current.textContent = "Create your first subject!";
+        tutorialTextRef.current.style.left = left - 15 + "px";
+        tutorialTextRef.current.style.top = top - 100 + "px";
+      }, 500);
     } else if (tutorial === 5) {
       const { width, top, left, height } =
         submitBtnRef.current.getBoundingClientRect();

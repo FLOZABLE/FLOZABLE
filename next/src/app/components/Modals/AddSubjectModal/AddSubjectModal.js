@@ -64,7 +64,7 @@ function AddSubjectModal({}) {
         tutorialBoxRef.current.style.left = left - 20 + "px";
         tutorialBoxRef.current.style.top = top - 40 + "px";
         tutorialBoxRef.current.style.width = width + 40 + "px";
-        tutorialBoxRef.current.style.height = height + 80 + "px";
+        tutorialBoxRef.current.style.height = height + 60 + "px";
 
         tutorialTextRef.current.style.top = top - 100 + "px";
         tutorialTextRef.current.style.left = left + "px";
@@ -99,41 +99,46 @@ function AddSubjectModal({}) {
   //setTutorial(0)
 
   return (
-    <DraggableModal isOpen={isAddSubjectModal} setIsOpen={setIsAddSubjectModal}>
-      <div ref={addSubjectModalRef} className={styles.AddSubjectModal}>
-        <div className={styles.inputWrapper}>
-          <CustomInput
-            input={subject.name}
-            handleInput={(e) =>
-              setSubject((prev) => ({ ...prev, name: e.target.value }))
-            }
-            placeHolder={"Subject Name"}
-            type={"text"}
-          >
-            <FontAwesomeIcon icon={faBook} />
-          </CustomInput>
-        </div>
-        <ColorPalette
-          setSelectedColor={(color) => {
-            setSubject((prev) => ({ ...prev, color }));
-          }}
-          selectedColor={subject.color}
-          isSelectColor={isSelectColor}
-          setIsSelectColor={setIsSelectColor}
-          tutorial={4}
-        />
-        <div className={styles.submit}>
-          <BlobBtn
-            onClick={() => {
-              onSubmit(subject);
+    <div ref={addSubjectModalRef} className={styles.AddSubjectModal}>
+      <DraggableModal
+        isOpen={isAddSubjectModal}
+        setIsOpen={setIsAddSubjectModal}
+      >
+        <div className={styles.inner}>
+          <div className={styles.inputWrapper}>
+            <CustomInput
+              input={subject.name}
+              handleInput={(e) =>
+                setSubject((prev) => ({ ...prev, name: e.target.value }))
+              }
+              placeHolder={"Subject Name"}
+              type={"text"}
+            >
+              <FontAwesomeIcon icon={faBook} />
+            </CustomInput>
+          </div>
+          <ColorPalette
+            setSelectedColor={(color) => {
+              setSubject((prev) => ({ ...prev, color }));
             }}
-            data-tutorial="4"
-          >
-            SAVE
-          </BlobBtn>
+            selectedColor={subject.color}
+            isSelectColor={isSelectColor}
+            setIsSelectColor={setIsSelectColor}
+            tutorial={4}
+          />
+          <div className={styles.submit}>
+            <BlobBtn
+              onClick={() => {
+                onSubmit(subject);
+              }}
+              data-tutorial="4"
+            >
+              SAVE
+            </BlobBtn>
+          </div>
         </div>
-      </div>
-    </DraggableModal>
+      </DraggableModal>
+    </div>
   );
 }
 

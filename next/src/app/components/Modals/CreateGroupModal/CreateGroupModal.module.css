@@ -1,5 +1,9 @@
 .CreateGroupModal {
-  width: 33rem;
+  --modalWidth: 33rem;
+}
+
+.CreateGroupModal .inner {
+  width: var(--modalWidth);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -15,7 +19,7 @@
 .CreateGroupModal .inputArea {
   width: 100%;
   margin-left: 1.25rem;
-  transition: opacity .3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
   opacity: 0;
 }
 

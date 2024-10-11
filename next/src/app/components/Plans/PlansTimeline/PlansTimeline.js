@@ -91,7 +91,7 @@ export default function PlansTimeline({
   useEffect(() => {
     if (tutorial === 1) {
       containerRef.current.scroll({
-        top: 200000,
+        bottom: 200000,
         behavior: "smooth",
       });
       setTimeout(() => {
