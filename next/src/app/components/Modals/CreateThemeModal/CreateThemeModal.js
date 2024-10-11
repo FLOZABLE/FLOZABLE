@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useCallback } from "react";
+import React, { useState, useContext, useCallback } from "react";
 import styles from "./CreateThemeModal.module.css";
 import { faLink, faPen } from "@fortawesome/free-solid-svg-icons";
 import { ResponseContext, ThemesContext } from "@/app/utils/Contexts";
@@ -19,8 +19,6 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
     description: "",
     url: "",
   });
-
-  const modalRef = useRef(null);
 
   const submit = useCallback(() => {
     (async () => {
@@ -45,51 +43,53 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
   };
 
   return (
-    <DraggableModal refProp={modalRef} isOpen={isOpen} setIsOpen={setIsOpen}>
-      <div className={`${styles.CreateThemeModal} customScroll`}>
-        <div className={styles.layer}>
-          <CustomInput
-            input={newTheme.name}
-            handleInput={(e) => {
-              const name = e.target.value;
-              setValue({ name });
-            }}
-            icon={faPen}
-            placeHolder={"Theme Name"}
-            type={"text"}
-          />
+    <div className={styles.CreateThemeModal}>
+      <DraggableModal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <div className={`${styles.inner} customScroll`}>
+          <div className={styles.layer}>
+            <CustomInput
+              input={newTheme.name}
+              handleInput={(e) => {
+                const name = e.target.value;
+                setValue({ name });
+              }}
+              icon={faPen}
+              placeHolder={"Theme Name"}
+              type={"text"}
+            />
+          </div>
+          <div className={styles.layer}>
+            <TextEditor
+              value={newTheme.description}
+              setValue={(description) => {
+                setValue({ description });
+              }}
+            />
+          </div>
+          <div className={styles.layer}>
+            <CustomInput
+              input={newTheme.url}
+              handleInput={(e) => {
+                const url = e.target.value;
+                setValue({ url });
+              }}
+              icon={faLink}
+              placeHolder={"Youtube Link"}
+              type={"text"}
+            />
+          </div>
+          <div className={styles.layer}>
+            <TagsGenerator
+              tags={newTheme.tags}
+              setTags={(tags) => setNewTheme({ ...newTheme, tags })}
+            />
+          </div>
+          <div className={styles.submitWrapper}>
+            <BlobBtn onClick={submit}>SUBMIT</BlobBtn>
+          </div>
         </div>
-        <div className={styles.layer}>
-          <TextEditor
-            value={newTheme.description}
-            setValue={(description) => {
-              setValue({ description });
-            }}
-          />
-        </div>
-        <div className={styles.layer}>
-          <CustomInput
-            input={newTheme.url}
-            handleInput={(e) => {
-              const url = e.target.value;
-              setValue({ url });
-            }}
-            icon={faLink}
-            placeHolder={"Youtube Link"}
-            type={"text"}
-          />
-        </div>
-        <div className={styles.layer}>
-          <TagsGenerator
-            tags={newTheme.tags}
-            setTags={(tags) => setNewTheme({ ...newTheme, tags })}
-          />
-        </div>
-        <div className={styles.submitWrapper}>
-          <BlobBtn onClick={submit}>SUBMIT</BlobBtn>
-        </div>
-      </div>
-    </DraggableModal>
+      </DraggableModal>
+    </div>
   );
 }
 

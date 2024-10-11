@@ -1,5 +1,9 @@
 .EditGroupModal {
-  width: 33rem;
+  --modalWidth: 33rem;
+}
+
+.EditGroupModal .inner {
+  width: var(--modalWidth);
   display: flex;
   flex-direction: column;
   overflow-y: auto;

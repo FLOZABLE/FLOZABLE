@@ -81,40 +81,42 @@ function JoinGroupModal() {
   }, [groups]);
 
   return (
-    <DraggableModal
-      isOpen={joinGroupModal.open}
-      setIsOpen={() => {
-        setJoinGroupModal((prev) => {
-          return { ...prev, open: false };
-        });
-      }}
-    >
-      <div className={`${styles.JoinGroupModal}`}>
-        {joinGroupModal?.group ? (
-          <div className={`${styles.contents} customScroll`}>
-            <div className={styles.text}>Join this group?</div>
-            <div className={styles.groupWrapper}>
-              <GroupContainer groupInfo={joinGroupModal.group} />
-            </div>
-            {!joinGroupModal.group.visibility ? (
-              <div>
-                <CustomInput
-                  input={password}
-                  handleInput={handlePwInput}
-                  handleEnter={submit}
-                  icon={faKey}
-                  placeHolder={"Enter the group password to join"}
-                  type={"text"}
-                />
+    <div className={styles.JoinGroupModal}>
+      <DraggableModal
+        isOpen={joinGroupModal.open}
+        setIsOpen={() => {
+          setJoinGroupModal((prev) => {
+            return { ...prev, open: false };
+          });
+        }}
+      >
+        <div className={`${styles.inner}`}>
+          {joinGroupModal?.group ? (
+            <div className={`${styles.contents} customScroll`}>
+              <div className={styles.text}>Join this group?</div>
+              <div className={styles.groupWrapper}>
+                <GroupContainer groupInfo={joinGroupModal.group} />
               </div>
-            ) : null}
-            <div className={styles.blobWrapper}>
-              <BlobBtn onClick={submit}>Join</BlobBtn>
+              {!joinGroupModal.group.visibility ? (
+                <div>
+                  <CustomInput
+                    input={password}
+                    handleInput={handlePwInput}
+                    handleEnter={submit}
+                    icon={faKey}
+                    placeHolder={"Enter the group password to join"}
+                    type={"text"}
+                  />
+                </div>
+              ) : null}
+              <div className={styles.blobWrapper}>
+                <BlobBtn onClick={submit}>Join</BlobBtn>
+              </div>
             </div>
-          </div>
-        ) : null}
-      </div>
-    </DraggableModal>
+          ) : null}
+        </div>
+      </DraggableModal>
+    </div>
   );
 }
 

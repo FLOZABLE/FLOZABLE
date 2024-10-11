@@ -11,6 +11,7 @@ import { useSubjects } from "@/Hooks/subjectsHooks";
 import { usePlans } from "@/Hooks/plansHooks";
 import { useGroups } from "@/Hooks/groupsHook";
 import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
+import { usePathname } from "next/navigation";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -232,7 +233,7 @@ function ResponseProvider({ children }) {
       setIsAccountModal(true);
     }
   }, [response]);
-  
+
   return (
     <ResponseContext.Provider value={{ response, setResponse }}>
       {children}
@@ -277,6 +278,13 @@ function ModalsProvider({ children }) {
       setIsAccountModal(false);
     }
   }, [userInfo]);
+
+  const pathname = usePathname();
+  
+  useEffect(() => {
+    console.log("Page changed to:", pathname);
+    //modal default
+  }, [pathname]);
 
   return (
     <ModalsContext.Provider
