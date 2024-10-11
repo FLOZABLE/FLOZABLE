@@ -8,7 +8,11 @@ function DateSelectorBtn({ viewDate, setViewDate, viewer }) {
 
   useEffect(() => {
     if (!viewDate || !viewer) return;
-    const dateDisp = getDatesDisplay(viewDate, viewer);
+    const dateDisp = getDatesDisplay(viewDate, viewer, {
+      day: "LLL d",
+      week: "LLL d",
+      month: "kkkk LLLL",
+    });
     setDateDisp(dateDisp);
   }, [viewDate, viewer]);
 

@@ -1,5 +1,9 @@
 .JoinGroupModal {
-  width: 31.25rem;
+  --modalWidth: 31.25rem;
+}
+
+.JoinGroupModal .inner {
+  width: var(--modalWidth);
   max-height: 60vh;
   display: flex;
   flex-direction: column;

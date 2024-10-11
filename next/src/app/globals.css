@@ -130,7 +130,6 @@ button:hover {
 .modal.open {
   visibility: visible;
   opacity: 1;
-  top: 12.5rem;
 }
 
 .Box {

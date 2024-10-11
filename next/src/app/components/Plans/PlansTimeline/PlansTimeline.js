@@ -133,7 +133,6 @@ export default function PlansTimeline({
               id={styles.addPlan}
               data-tutorial={1}
               onClick={() => {
-                console.log(tutorial, "gffd");
                 if (tutorial === 1) {
                   setTimeout(() => {
                     setTutorial(2);

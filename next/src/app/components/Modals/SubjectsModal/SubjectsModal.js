@@ -116,6 +116,7 @@ export default function SubjectsModal() {
           };
 
           setSubjects(newSubjects);
+          setIsSubjectsModal((prev) => ({ ...prev, subject_id: null }));
         }
       })();
     },

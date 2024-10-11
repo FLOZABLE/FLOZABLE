@@ -1,5 +1,9 @@
 .CreateThemeModal {
-  width: 31.25rem;
+  --modalWidth: 31.25rem;
+}
+
+.CreateThemeModal .inner {
+  width: var(--modalWidth);
   height: 31.25rem;
   overflow: hidden;
   display: flex;
@@ -7,6 +11,9 @@
   align-items: center;
   padding: 0em 0.625rem;
   overflow-y: auto;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .CreateThemeModal .layer {

@@ -103,6 +103,7 @@ function AddSubjectModal({}) {
       <DraggableModal
         isOpen={isAddSubjectModal}
         setIsOpen={setIsAddSubjectModal}
+        top="15rem"
       >
         <div className={styles.inner}>
           <div className={styles.inputWrapper}>

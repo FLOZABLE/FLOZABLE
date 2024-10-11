@@ -8,6 +8,7 @@ export default function DraggableModal({
   children,
   isOpen,
   setIsOpen,
+  top = "12.5rem",
 }) {
   const ref = useRef(null);
   return (
@@ -15,6 +16,7 @@ export default function DraggableModal({
       <div
         className={`modal ${styles.DraggableModal} ${isOpen ? "open" : ""}`}
         ref={ref}
+        style={{ top: isOpen ? top : "31.25rem" }}
       >
         <div className={`${styles.header} header`}>
           <i

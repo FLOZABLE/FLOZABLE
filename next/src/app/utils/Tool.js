@@ -251,20 +251,25 @@ function getDates(date, mode, length) {
   return dates;
 }
 
-function getDatesDisplay(date, mode, format = "LLLL d", length = 1) {
+function getDatesDisplay(
+  date,
+  mode,
+  formats = { day: "LLLL d", week: "LLLL d", month: "kkkk LLLL" },
+  length = 1
+) {
   const dateTime = DateTime.fromJSDate(date);
 
   if (mode === "day") {
     if (length === 1) {
-      return dateTime.toFormat(format);
+      return dateTime.toFormat(formats.day);
     }
   } else if (mode === "week") {
     if (length === 1) {
-      return dateTime.toFormat(format);
+      return dateTime.toFormat(formats.week);
     }
   } else {
     if (length === 1) {
-      return dateTime.toFormat("kkkk LLLL");
+      return dateTime.toFormat(formats.month);
     }
   }
 }
