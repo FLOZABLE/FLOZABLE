@@ -31,6 +31,7 @@
   --subjectLabelsColor: var(--gray2);
   --filteredSubjectLabelsColor: var(--gray0);
   --planDescriptionColor: var(--gray2);
+  --modalWidth: 18rem;
 }
 
 .title {
@@ -116,8 +117,8 @@ button:hover {
   opacity: 0;
   top: 31.25rem;
   position: fixed;
-  left: 50vw;
-  transform: translateX(-50%);
+  left: calc(50vw - var(--modalWidth) / 2);
+  /* transform: translateX(-50%); */
   transition: 0.3s ease-in-out opacity, 0.3s ease-in-out visibility,
     0.3s ease-in-out top;
   background-color: #fff;
