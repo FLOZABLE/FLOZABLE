@@ -46,7 +46,6 @@
   display: flex;
   color: var(--gray3);
   align-items: center;
-  font-size: 2rem;
   margin: 1rem 2rem -0.5rem 0.5rem;
   cursor: pointer;
   position: relative;
@@ -89,4 +88,16 @@
   bottom: 1rem;
   margin: 0.5rem;
   width: calc(100% - 1rem);
+}
+
+@media (max-height: 500px) {
+  .Sidebar .SidebarEl i {
+    font-size: 1.4rem;
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+
+  .Sidebar .SidebarEl h3 {
+    font-size: 1rem;
+  }
 }
