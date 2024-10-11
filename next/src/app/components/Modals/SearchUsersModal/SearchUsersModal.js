@@ -14,17 +14,25 @@ export default function SearchUsersModal() {
   const modalRef = useRef(null);
 
   return (
-    <DraggableModal
-      isOpen={searchUsersModal?.opened}
-      setIsOpen={() => {
-        setSearchUsersModal((prev) => ({ ...prev, opened: false }));
-      }}
-      refProp={modalRef}
-    >
-      <div className={`${styles.SearchUsersModal}`}>
-        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        <SearchUsers searchQuery={searchQuery} onClick={searchUsersModal.onClick} />
-      </div>
-    </DraggableModal>
+    <div className={styles.SearchUsersModal}>
+      <DraggableModal
+        isOpen={searchUsersModal?.opened}
+        setIsOpen={() => {
+          setSearchUsersModal((prev) => ({ ...prev, opened: false }));
+        }}
+        refProp={modalRef}
+      >
+        <div className={`${styles.inner}`}>
+          <SearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
+          <SearchUsers
+            searchQuery={searchQuery}
+            onClick={searchUsersModal.onClick}
+          />
+        </div>
+      </DraggableModal>
+    </div>
   );
 }

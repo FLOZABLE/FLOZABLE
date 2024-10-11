@@ -2,7 +2,6 @@
 import WelcomeModal from "@/app/components/Modals/WelcomeModal/WelcomeModal";
 import styles from "./page.module.css";
 import PlansTimeline from "@/app/components/Plans/PlansTimeline/PlansTimeline";
-import Planner from "@/app/components/Plans/Planner/Planner";
 import FriendsActivityViewer from "@/app/components/Friends/FriendsActivityViewer/FriendsActivityViewer";
 import SubjectsPie from "@/app/components/Charts/SubjectsPie/SubjectsPie";
 import { useState } from "react";

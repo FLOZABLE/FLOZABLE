@@ -284,238 +284,240 @@ export default function PlanModal() {
   );
 
   return (
-    <DraggableModal
-      isOpen={planModal.opened}
-      setIsOpen={() => {
-        setPlanModal(DEFAULT_PLAN);
-      }}
-    >
-      <div className={`customScroll ${styles.PlanModal}`} ref={modalRef}>
-        <ModalLayer>
-          <CustomInput
-            input={planModal.title}
-            handleInput={(e) => {
-              const title = e.target.value;
-              handleInput({ title });
-            }}
-            placeHolder={"Enter title"}
-          ></CustomInput>
-        </ModalLayer>
-        <ModalLayer
-          icon={<FontAwesomeIcon icon={faClock} />}
-          hoverText={"Select Time"}
-        >
-          <DateSelector
-            start={planModal.start}
-            setStart={(start) => {
-              handleInput({ start });
-            }}
-            end={planModal.end}
-            setEnd={(end) => {
-              handleInput({ end });
-            }}
-            setDate={({ start, end }) => {
-              handleInput({ start, end });
-            }}
-          />
-        </ModalLayer>
-        <ModalLayer
-          icon={<FontAwesomeIcon icon={faFileLines} />}
-          hoverText={"Add Description"}
-        >
-          <TextEditor
-            setValue={(description) => {
-              handleInput({ description });
-            }}
-            value={planModal.description}
-          />
-        </ModalLayer>
-        <ModalLayer
-          icon={<FontAwesomeIcon icon={faRepeat} />}
-          hoverText={"Repeat"}
-        >
-          <DropDownButton
-            options={[
-              { value: 0, name: "Does not repeat" },
-              { value: 1, name: "Daily" },
-              { value: 2, name: "Weekly" },
-              { value: 3, name: "Monthly" },
-            ]}
-            setValue={(repeat) => {
-              handleInput({ repeat });
-            }}
-            value={planModal.repeat}
-          />
-        </ModalLayer>
-        {planModal.editable ? (
+    <div className={styles.PlanModal}>
+      <DraggableModal
+        isOpen={planModal.opened}
+        setIsOpen={() => {
+          setPlanModal(DEFAULT_PLAN);
+        }}
+      >
+        <div className={`customScroll ${styles.inner}`} ref={modalRef}>
+          <ModalLayer>
+            <CustomInput
+              input={planModal.title}
+              handleInput={(e) => {
+                const title = e.target.value;
+                handleInput({ title });
+              }}
+              placeHolder={"Enter title"}
+            ></CustomInput>
+          </ModalLayer>
           <ModalLayer
-            icon={<FontAwesomeIcon icon={faBook} />}
-            hoverText={"Select Subject"}
+            icon={<FontAwesomeIcon icon={faClock} />}
+            hoverText={"Select Time"}
+          >
+            <DateSelector
+              start={planModal.start}
+              setStart={(start) => {
+                handleInput({ start });
+              }}
+              end={planModal.end}
+              setEnd={(end) => {
+                handleInput({ end });
+              }}
+              setDate={({ start, end }) => {
+                handleInput({ start, end });
+              }}
+            />
+          </ModalLayer>
+          <ModalLayer
+            icon={<FontAwesomeIcon icon={faFileLines} />}
+            hoverText={"Add Description"}
+          >
+            <TextEditor
+              setValue={(description) => {
+                handleInput({ description });
+              }}
+              value={planModal.description}
+            />
+          </ModalLayer>
+          <ModalLayer
+            icon={<FontAwesomeIcon icon={faRepeat} />}
+            hoverText={"Repeat"}
           >
             <DropDownButton
-              options={subjects.map(({ subject_id, name }) => {
-                return { value: subject_id, name };
-              })}
-              setValue={(subject_id) => {
-                handleInput({ subject_id });
+              options={[
+                { value: 0, name: "Does not repeat" },
+                { value: 1, name: "Daily" },
+                { value: 2, name: "Weekly" },
+                { value: 3, name: "Monthly" },
+              ]}
+              setValue={(repeat) => {
+                handleInput({ repeat });
               }}
-              value={planModal.subject_id}
+              value={planModal.repeat}
             />
-            <p>OR</p>
-            <div ref={addSubjectBtnRef}>
-              <BlobBtn
-                onClick={() => {
-                  setIsAddSubjectModal(true);
-                  if (tutorial === 3) {
-                    setTutorial(4);
-                  }
+          </ModalLayer>
+          {planModal.editable ? (
+            <ModalLayer
+              icon={<FontAwesomeIcon icon={faBook} />}
+              hoverText={"Select Subject"}
+            >
+              <DropDownButton
+                options={subjects.map(({ subject_id, name }) => {
+                  return { value: subject_id, name };
+                })}
+                setValue={(subject_id) => {
+                  handleInput({ subject_id });
                 }}
-                data-tutorial={3}
-              >
-                Add Subject
-              </BlobBtn>
+                value={planModal.subject_id}
+              />
+              <p>OR</p>
+              <div ref={addSubjectBtnRef}>
+                <BlobBtn
+                  onClick={() => {
+                    setIsAddSubjectModal(true);
+                    if (tutorial === 3) {
+                      setTutorial(4);
+                    }
+                  }}
+                  data-tutorial={3}
+                >
+                  Add Subject
+                </BlobBtn>
+              </div>
+            </ModalLayer>
+          ) : null}
+          <ModalLayer
+            icon={<FontAwesomeIcon icon={faBell} />}
+            hoverText={"Select Notification"}
+          >
+            <DropDownButton
+              options={[
+                { value: -1, name: "No notification" },
+                { value: 0, name: "0 minutes before" },
+                { value: 5 * 60, name: "5 minutes before" },
+                { value: 10 * 60, name: "10 minutes before" },
+                { value: 30 * 60, name: "30 minutes before" },
+              ]}
+              setValue={(notification) => {
+                handleInput({ notification });
+              }}
+              value={planModal.notification}
+              onClick={async () => {
+                if (!vapidKeysData?.success) return;
+
+                const response = await requestNotification(
+                  vapidKeysData.publicKey
+                );
+                if (!response.success) {
+                  setResponse(response);
+                  unsubscribeFromPush();
+                }
+              }}
+            />
+          </ModalLayer>
+          <ModalLayer
+            icon={<FontAwesomeIcon icon={faCircleExclamation} />}
+            hoverText={"Select Importance"}
+          >
+            <SliderAnimation
+              min={0}
+              max={100}
+              step={1}
+              sliderValue={planModal.priority}
+              setSliderValue={(priority) => {
+                handleInput({ priority });
+              }}
+            />
+          </ModalLayer>
+          <ModalLayer
+            icon={<FontAwesomeIcon icon={faUserGroup} />}
+            hoverText={"Shared Users"}
+          >
+            <div className={styles.UserBoxes}>
+              {usePlansPlanUsersIsLoading ? (
+                <CircularLoading />
+              ) : (
+                <>
+                  <div id={styles.shared}>
+                    {shared.map((userInfo, i) => {
+                      return (
+                        <ShareUserBox
+                          userInfo={userInfo}
+                          key={i}
+                          text={`Remove ${userInfo.name}`}
+                          onClick={() => {
+                            onUnshared(userInfo);
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                  <div id={styles.share}>
+                    {share.map((userInfo, i) => {
+                      return (
+                        <ShareUserBox
+                          userInfo={userInfo}
+                          key={i}
+                          text={`(Pending) Remove ${userInfo.name}`}
+                          onClick={() => {
+                            onUnshare(userInfo);
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                </>
+              )}
             </div>
           </ModalLayer>
-        ) : null}
-        <ModalLayer
-          icon={<FontAwesomeIcon icon={faBell} />}
-          hoverText={"Select Notification"}
-        >
-          <DropDownButton
-            options={[
-              { value: -1, name: "No notification" },
-              { value: 0, name: "0 minutes before" },
-              { value: 5 * 60, name: "5 minutes before" },
-              { value: 10 * 60, name: "10 minutes before" },
-              { value: 30 * 60, name: "30 minutes before" },
-            ]}
-            setValue={(notification) => {
-              handleInput({ notification });
-            }}
-            value={planModal.notification}
-            onClick={async () => {
-              if (!vapidKeysData?.success) return;
-
-              const response = await requestNotification(
-                vapidKeysData.publicKey
-              );
-              if (!response.success) {
-                setResponse(response);
-                unsubscribeFromPush();
-              }
-            }}
-          />
-        </ModalLayer>
-        <ModalLayer
-          icon={<FontAwesomeIcon icon={faCircleExclamation} />}
-          hoverText={"Select Importance"}
-        >
-          <SliderAnimation
-            min={0}
-            max={100}
-            step={1}
-            sliderValue={planModal.priority}
-            setSliderValue={(priority) => {
-              handleInput({ priority });
-            }}
-          />
-        </ModalLayer>
-        <ModalLayer
-          icon={<FontAwesomeIcon icon={faUserGroup} />}
-          hoverText={"Shared Users"}
-        >
-          <div className={styles.UserBoxes}>
-            {usePlansPlanUsersIsLoading ? (
-              <CircularLoading />
-            ) : (
-              <>
-                <div id={styles.shared}>
-                  {shared.map((userInfo, i) => {
-                    return (
-                      <ShareUserBox
-                        userInfo={userInfo}
-                        key={i}
-                        text={`Remove ${userInfo.name}`}
-                        onClick={() => {
-                          onUnshared(userInfo);
-                        }}
-                      />
-                    );
-                  })}
-                </div>
-                <div id={styles.share}>
-                  {share.map((userInfo, i) => {
-                    return (
-                      <ShareUserBox
-                        userInfo={userInfo}
-                        key={i}
-                        text={`(Pending) Remove ${userInfo.name}`}
-                        onClick={() => {
-                          onUnshare(userInfo);
-                        }}
-                      />
-                    );
-                  })}
-                </div>
-              </>
-            )}
-          </div>
-        </ModalLayer>
-        <div className={styles.buttons}>
-          <BlobBtn
-            onClick={() => {
-              setSearchUsersModal((prev) => ({
-                opened: !prev.opened,
-                onClick: async (userInfo) => {
-                  if (planModal.opened) {
-                    const data = await postPlanShare(
-                      [userInfo.user_id],
-                      planModal.plan_id
-                    );
-                    if (!data.success) {
-                      clearPlanUsers();
-                      setResponse(data);
-                      return;
-                    }
-
-                    if (!data.share.length && !data.shared.length) {
-                      return setResponse({
-                        success: false,
-                        reason: `Already Shared with ${userInfo.name}`,
-                      });
-                    }
-
-                    clearPlanUsers();
-                    setResponse({
-                      success: true,
-                      msg: `Added ${userInfo.name}`,
-                    });
-                  }
-                },
-              }));
-            }}
-          >
-            <FontAwesomeIcon icon={faShare} />
-          </BlobBtn>
-          <div ref={submitBtnRef}>
+          <div className={styles.buttons}>
             <BlobBtn
               onClick={() => {
-                submit();
+                setSearchUsersModal((prev) => ({
+                  opened: !prev.opened,
+                  onClick: async (userInfo) => {
+                    if (planModal.opened) {
+                      const data = await postPlanShare(
+                        [userInfo.user_id],
+                        planModal.plan_id
+                      );
+                      if (!data.success) {
+                        clearPlanUsers();
+                        setResponse(data);
+                        return;
+                      }
+
+                      if (!data.share.length && !data.shared.length) {
+                        return setResponse({
+                          success: false,
+                          reason: `Already Shared with ${userInfo.name}`,
+                        });
+                      }
+
+                      clearPlanUsers();
+                      setResponse({
+                        success: true,
+                        msg: `Added ${userInfo.name}`,
+                      });
+                    }
+                  },
+                }));
               }}
-              data-tutorial={5}
             >
-              SAVE
+              <FontAwesomeIcon icon={faShare} />
+            </BlobBtn>
+            <div ref={submitBtnRef}>
+              <BlobBtn
+                onClick={() => {
+                  submit();
+                }}
+                data-tutorial={5}
+              >
+                SAVE
+              </BlobBtn>
+            </div>
+            <BlobBtn
+              onClick={() => {
+                onDeletePlan();
+              }}
+            >
+              <FontAwesomeIcon icon={faTrashCan} />
             </BlobBtn>
           </div>
-          <BlobBtn
-            onClick={() => {
-              onDeletePlan();
-            }}
-          >
-            <FontAwesomeIcon icon={faTrashCan} />
-          </BlobBtn>
         </div>
-      </div>
-    </DraggableModal>
+      </DraggableModal>
+    </div>
   );
 }

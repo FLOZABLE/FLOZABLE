@@ -1,5 +1,9 @@
 .PlanModal {
-  width: 31.25rem;
+  --modalWidth: 31.25rem;
+}
+
+.PlanModal .inner {
+  width: var(--modalWidth);
   display: flex;
   flex-direction: column;
   max-height: 60vh;
