@@ -49,7 +49,7 @@ const sessionMiddleWare = session({
   store: redisStore,
   secret: process.env.SECRET_ID,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     secure: false,
     httpOnly: true,
