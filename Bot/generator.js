@@ -11,6 +11,7 @@ const {
   randomIntInRange,
   hashing,
 } = require("../Utils/tool");
+const sharp = require("sharp");
 
 /**create bots */
 async function createBots(length) {
