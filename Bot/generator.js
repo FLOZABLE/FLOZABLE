@@ -140,7 +140,7 @@ function createProfileImg(percentage, userId, gender) {
               .toFormat("jpeg")
               .resize({ width: 800, height: 800 })
               .jpeg({ quality: 40 })
-              .toFile(`./public/profile-images/${userId}.jpeg`);
+              .toFile(`../public/profile-images/${userId}.jpeg`);
           }
         }
       });
@@ -165,7 +165,7 @@ function createChessProfileImg(userId, imgSrc) {
         return sharp(res.data)
           .resize({ width: 800, height: 800 })
           .jpeg({ quality: 40 })
-          .toFile(`./public/profile-images/${userId}.jpeg`);
+          .toFile(`../public/profile-images/${userId}.jpeg`);
       })
       .catch((err) => {
         console.log(`Couldn't process: ${err}`);
