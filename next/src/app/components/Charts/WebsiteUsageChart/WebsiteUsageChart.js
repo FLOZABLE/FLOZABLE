@@ -19,8 +19,6 @@ export default function WebsiteUsageChart({}) {
     "day"
   );
 
-  console.log(extensionUsageData);
-
   useEffect(() => {
     if (!extensionUsageData?.success) return;
 
@@ -169,7 +167,9 @@ export default function WebsiteUsageChart({}) {
           href="https://chromewebstore.google.com/detail/flozable-tab-monitor/cmbdaanokelibhphiidlikongdoandlj"
           className={styles.noChart}
         >
-          <h3>Use chrome extension to see website usage!</h3>
+          <h3 className={styles.chromeExtensionLink}>
+            Use chrome extension to see website usage!
+          </h3>
         </a>
       )}
     </div>
