@@ -75,3 +75,7 @@
   overflow-x: hidden;
   margin-right: 0.5rem;
 }
+
+.WebsiteUsageChart .chromeExtensionLink {
+  font-size: 2rem;
+}

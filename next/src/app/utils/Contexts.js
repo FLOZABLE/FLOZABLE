@@ -168,6 +168,12 @@ function SubjectsProvider({ children }) {
     );
   }, [useSubjectsData, planData]);
 
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setPlanModal(DEFAULT_PLAN);
+  }, [pathname]);
+
   return (
     <SubjectsContext.Provider
       value={{
@@ -280,10 +286,35 @@ function ModalsProvider({ children }) {
   }, [userInfo]);
 
   const pathname = usePathname();
-  
+
   useEffect(() => {
     console.log("Page changed to:", pathname);
     //modal default
+    setChatModal({
+      chatroom: null,
+      name: "",
+      opened: false,
+      totalNewMsg: 0,
+    });
+    setIsNotificationModal(false);
+    setIsAddSubjectModal(false);
+    setJoinGroupModal({
+      open: false,
+      group: null,
+    });
+    setIsAccountModal(false);
+    setIsSubjectsModal({
+      opened: false,
+      subject_id: null,
+    });
+    setEditGroupModal({
+      opened: false,
+      group_id: null,
+    });
+    setSearchUsersModal({
+      opened: false,
+      onClick: null,
+    });
   }, [pathname]);
 
   return (
