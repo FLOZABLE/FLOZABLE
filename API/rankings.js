@@ -16,8 +16,7 @@ Router.get("/", async (req, res) => {
   try {
     const { mode, date, timezone } = req.query;
 
-    const dateTime = DateTime.fromISO(date)
-      .setZone(timezone)
+    const dateTime = DateTime.fromISO(date, { zone: timezone })
       .startOf("day")
       .startOf(mode);
 
@@ -159,7 +158,9 @@ Router.get("/friends", async (req, res) => {
       const now = DateTime.now().setZone(timezone).startOf("day").startOf(mode);
 
       const dateTime = date
-        ? DateTime.fromISO(date).setZone(timezone).startOf("day").startOf(mode)
+        ? DateTime.fromISO(date, { zone: timezone })
+            .startOf("day")
+            .startOf(mode)
         : now;
 
       const friends = await usersCache(connection, userFriends);

@@ -117,12 +117,12 @@ function sendPushNotification(credentials, payload) {
 
 const NOTIFICATION_PAYLOADS = {
   plan: ({ title, start, end, plan_id, timezone }) => {
-    const startDateTime = DateTime.fromSeconds(start)
-      .setZone(timezone)
-      .toFormat("h:mm a");
-    const endDateTime = DateTime.fromSeconds(end)
-      .setZone(timezone)
-      .toFormat("h:mm a");
+    const startDateTime = DateTime.fromSeconds(start, {
+      zone: timezone,
+    }).toFormat("h:mm a");
+    const endDateTime = DateTime.fromSeconds(end, { zone: timezone }).toFormat(
+      "h:mm a"
+    );
     const body = `${startDateTime} - ${endDateTime}`;
     return JSON.stringify({
       title,
