@@ -103,8 +103,7 @@ function getMidnightTimezones() {
 
 function getDates(date, timezone, mode, length = 30) {
   const dates = [];
-  let dateTime = DateTime.fromISO(date)
-    .setZone(timezone)
+  let dateTime = DateTime.fromISO(date, { zone: timezone })
     .startOf(mode)
     .startOf("day");
   const now = DateTime.now().setZone(timezone).startOf(mode).startOf("day");
