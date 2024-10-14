@@ -1,4 +1,4 @@
-const { randomIntInRange } = require("../Utils/tool");
+const { randomIntInRange, isTrueBasedOnPercentage } = require("../Utils/tool");
 const pool = require("../model/pool");
 const { DateTime } = require("luxon");
 const schedule = require("node-schedule");
@@ -96,7 +96,9 @@ async function addFriends(botId, allMembers) {
     //sendFriendRequest(botId);
     if (!allMembers.length) return;
 
-    const isSend = randomIntInRange(0, 9) === 0 ? false : true;
+    const isSend = isTrueBasedOnPercentage(
+      process.env.BOTS_SEND_FRIEND_PERCENTAGE
+    );
 
     if (isSend) {
       const targetId = allMembers[randomIntInRange(0, allMembers.length - 1)];
@@ -106,7 +108,7 @@ async function addFriends(botId, allMembers) {
 
     const friendRequests = await notificationCache(botId, 0);
     friendRequests.map(async (request) => {
-      const accepted = randomIntInRange(0, 1) === 0 ? false : true;
+      const accepted = isTrueBasedOnPercentage(50);
       const response = await replyFriendRequest(
         botId,
         request.f,
