@@ -121,6 +121,11 @@ function getDates(date, timezone, mode, length = 30) {
   return dates;
 }
 
+function isTrueBasedOnPercentage(percentage) {
+  const randomNumber = Math.random() * 100;
+  return randomNumber < percentage;
+}
+
 module.exports = {
   generateRandomId,
   hashing,
@@ -133,4 +138,5 @@ module.exports = {
   deriveKey,
   getMidnightTimezones,
   getDates,
+  isTrueBasedOnPercentage
 };

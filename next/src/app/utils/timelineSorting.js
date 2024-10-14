@@ -18,7 +18,7 @@ import { DateTime } from "luxon";
 function timelineSort(subjects) {
   if (!subjects || !subjects.length)
     return { subjects: [], groupedSubjects: [] };
-  
+
   subjects.sort((a, b) => a.created_at - b.created_at);
 
   const groupedSubjects = {};
@@ -108,9 +108,9 @@ function timelineSort(subjects) {
     };
 
     subject.timeline.map(([start, duration]) => {
-      const startDateTime = DateTime.fromSeconds(start).startOf("day");
+      const endDateTime = DateTime.fromSeconds(start + duration).startOf("day");
       const dayIndex = subject.day.timeline.findIndex(
-        (day) => day.date === startDateTime.toISODate()
+        (day) => day.date === endDateTime.toISODate()
       );
       if (dayIndex !== -1) {
         subject.day.timeline[dayIndex].data.push([start, start + duration]);
@@ -131,7 +131,7 @@ function timelineSort(subjects) {
       }
 
       const weekIndex = subject.week.timeline.findIndex(
-        (day) => day.date === startDateTime.startOf("week").toISODate()
+        (day) => day.date === endDateTime.startOf("week").toISODate()
       );
       if (weekIndex !== -1) {
         subject.week.timeline[weekIndex].data.push([start, start + duration]);
@@ -152,7 +152,7 @@ function timelineSort(subjects) {
       }
 
       const monthIndex = subject.month.timeline.findIndex(
-        (day) => day.date === startDateTime.startOf("month").toISODate()
+        (day) => day.date === endDateTime.startOf("month").toISODate()
       );
       if (monthIndex !== -1) {
         subject.month.timeline[monthIndex].data.push([start, start + duration]);
