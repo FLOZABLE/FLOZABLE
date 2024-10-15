@@ -13,14 +13,18 @@ extensionIo.on("connection", async (socket) => {
     const storedToken = await redisClient.get(`extension:authToken:${userId}`);
     if (!storedToken || storedToken !== token) return;
 
-    console.log("extension authed");
+    console.log("extension authed", userId);
 
     socket.join(userId);
 
     socket.on("updateUsage", ({ domain, duration }) => {
       try {
         console.log(domain, duration);
-        redisClient.zincrby(`user:${userId}:websites:duration`, duration, domain);
+        redisClient.zincrby(
+          `user:${userId}:websites:duration`,
+          duration,
+          domain
+        );
         redisClient.zincrby(`user:${userId}:websites:visits`, 1, domain);
       } catch (err) {
         console.log(err);

@@ -81,7 +81,7 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
           <div className={styles.layer}>
             <TagsGenerator
               tags={newTheme.tags}
-              setTags={(tags) => setNewTheme({ ...newTheme, tags })}
+              setTags={(tags) => setNewTheme((prev) => ({ ...prev, tags }))}
             />
           </div>
           <div className={styles.submitWrapper}>
