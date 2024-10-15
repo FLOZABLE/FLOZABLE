@@ -12,6 +12,7 @@ const { validateStrictString, validateBoolean } = require("../Utils/validate");
 const { mainIo } = require("../sockets/mainIo");
 const { RESPONSE_CODES } = require("../Constant");
 const { autoSignin } = require("./auth");
+const { mediaIo } = require("../sockets/mediaIo");
 
 Router.get("/rooms", async (req, res) => {
   autoSignin(req, res, async (userId) => {

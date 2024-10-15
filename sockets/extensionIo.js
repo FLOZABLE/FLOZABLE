@@ -3,7 +3,6 @@ const redisClient = require("../model/redis");
 const { io } = require("./io");
 
 const extensionIo = io.of("/extension");
-
 extensionIo.on("connection", async (socket) => {
   console.log(socket.handshake.auth);
   try {
