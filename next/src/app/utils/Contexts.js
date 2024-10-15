@@ -12,6 +12,7 @@ import { usePlans } from "@/Hooks/plansHooks";
 import { useGroups } from "@/Hooks/groupsHook";
 import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
 import { usePathname } from "next/navigation";
+import { mediaSocket } from "./mediaSocket";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -78,7 +79,9 @@ function AccountProvider({ children }) {
     setUserInfo(useAccountData.userInfo);
     setNotifications(useAccountData.notifications);
     setTimeout(() => {
+      console.log("gddddd")
       socket.connect();
+      mediaSocket.connect();
       socket.emit("joinChats");
     }, 100);
   }, [useAccountData]);
