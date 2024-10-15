@@ -40,6 +40,7 @@ function ExtensionSetting() {
       setResponse(data);
       if (data.success) {
         setSettings((prev) => [...prev, data.setting]);
+        setUrl("");
 
         setTimeout(() => {
           const section = document.querySelector(
