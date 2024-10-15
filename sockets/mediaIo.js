@@ -5,7 +5,8 @@ const {
   userGroupsCache,
 } = require("../services/redisLoader");
 const { io } = require("./io");
-const mediaIo = io.of("/");
+
+const mediaIo = io.of("/mediaSocket");
 const mediaCodecs = [
   {
     kind: "audio",
@@ -22,6 +23,7 @@ const mediaCodecs = [
     },
   },
 ];
+console.log("gdddd");
 
 async function createWorker() {
   const worker = await mediaSoup.createWorker({
@@ -88,10 +90,13 @@ const consumers = {};
       };
     }
     const userId = session.user_id;
+    console.log("mediasocket joined", userId);
+
+    if (!userId) return;
 
     socket.on("changeGroup", async (groupId) => {
       const connection = pool.promise();
-      const groups = await userGroupsCache(connection, usreId);
+      const groups = await userGroupsCache(connection, userId);
       if (!groups.includes(groupId)) return;
       groups.map((group) => {
         if (group !== groupId) {
@@ -110,7 +115,7 @@ const consumers = {};
      */
     socket.on("getRouterRtpCapabilities", async (callback) => {
       try {
-        if (!userId || !activeGroup) return;
+        if (!activeGroup) return;
 
         const router = await getRouter(activeGroup, worker);
         const rtpCapabilities = router.rtpCapabilities;
@@ -132,7 +137,7 @@ const consumers = {};
     socket.on("createTransport", async ({ sender }, callback) => {
       // ... Creating sender/receiver transports ...
       try {
-        if (!userId || !activeGroup) return;
+        if (!activeGroup) return;
 
         console.log("SFU: create transport", sender, userId);
         const router = await getRouter(activeGroup, worker);
@@ -155,8 +160,6 @@ const consumers = {};
 
     socket.on("transport-connect", async ({ dtlsParameters }) => {
       try {
-        if (!userId) return;
-
         const producerTransport = getProducerTransport(userId);
 
         if (!producerTransport) return;
@@ -170,8 +173,6 @@ const consumers = {};
 
     socket.on("transport-recv-connect", async ({ dtlsParameters }) => {
       try {
-        if (!userId) return;
-
         const consumerTransport = getConsumerTransport(userId);
 
         if (!consumerTransport) return;
@@ -187,7 +188,7 @@ const consumers = {};
       "transport-produce",
       async ({ kind, rtpParameters }, callback) => {
         try {
-          if (!userId || !activeGroup) return;
+          if (!activeGroup) return;
 
           const producerTransport = getProducerTransport(userId);
 
@@ -221,7 +222,7 @@ const consumers = {};
       "consume",
       async ({ rtpCapabilities, targetId, kind }, callback) => {
         try {
-          if (!userId || !activeGroup) return;
+          if (!activeGroup) return;
 
           console.log("SFU: consume start", kind);
           const producer = getProducer(activeGroup, targetId, kind);
@@ -279,7 +280,7 @@ const consumers = {};
 
     socket.on("consumer-resume", async ({ targetId, kind }) => {
       try {
-        if (!userId || !activeGroup) return;
+        if (!activeGroup) return;
 
         const consumer = getConsumer(activeGroup, userId, targetId, kind);
         if (!consumer) return;
@@ -292,7 +293,7 @@ const consumers = {};
 
     socket.on("removeMyProducer", async ({ kind }) => {
       try {
-        if (!userId || !activeGroup) return;
+        if (!activeGroup) return;
 
         removeProducer(activeGroup, userId, kind);
         mediaIo.to(activeGroup).emit(`removeProducer:${userId}`, kind);
@@ -303,7 +304,7 @@ const consumers = {};
 
     socket.on("disconnect", async () => {
       try {
-        if (!userId || !activeGroup) return;
+        if (!activeGroup) return;
 
         mediaIo.to(activeGroup).emit(`removeProducer:${userId}`);
         removeConsumer(activeGroup, userId);
@@ -324,16 +325,20 @@ const consumers = {};
 })();
 
 const getRouter = async (roomId, worker) => {
-  const room = rooms[roomId];
-  if (!room) {
-    rooms[roomId] = {};
-  }
-  //if there is no router for the room, create one
-  if (!rooms[roomId].router) {
-    rooms[roomId].router = await worker.createRouter({ mediaCodecs });
+  try {
+    const room = rooms[roomId];
+    if (!room) {
+      rooms[roomId] = {};
+    }
+    //if there is no router for the room, create one
+    if (!rooms[roomId].router) {
+      rooms[roomId].router = await worker.createRouter({ mediaCodecs });
+      return rooms[roomId].router;
+    }
     return rooms[roomId].router;
+  } catch (err) {
+    console.log(err);
   }
-  return rooms[roomId].router;
 };
 
 const addProducerTransport = async (userId, transport) => {
@@ -370,19 +375,23 @@ const getConsumerTransport = (userId) => {
 };
 
 const addProducer = async (roomId, userId, producer, kind) => {
-  console.log(producer);
-  if (!producers[roomId]) {
-    producers[roomId] = {};
+  try {
+    console.log(producer);
+    if (!producers[roomId]) {
+      producers[roomId] = {};
+    }
+    if (!producers[roomId][userId]) {
+      producers[roomId][userId] = {};
+    }
+    if (kind === "audio") {
+      producers[roomId][userId].audio = producer;
+    } else {
+      producers[roomId][userId].video = producer;
+    }
+    //producers[roomId][userId] = producer;
+  } catch (err) {
+    console.log(err);
   }
-  if (!producers[roomId][userId]) {
-    producers[roomId][userId] = {};
-  }
-  if (kind === "audio") {
-    producers[roomId][userId].audio = producer;
-  } else {
-    producers[roomId][userId].video = producer;
-  }
-  //producers[roomId][userId] = producer;
 };
 
 const removeProducer = async (roomId, userId, kind = false) => {
@@ -420,36 +429,48 @@ const removeProducer = async (roomId, userId, kind = false) => {
 };
 
 const addConsumer = async (roomId, userId, targetId, consumer, kind) => {
-  if (!consumers[roomId]) {
-    consumers[roomId] = {};
+  try {
+    if (!consumers[roomId]) {
+      consumers[roomId] = {};
+    }
+    if (!consumers[roomId][userId]) {
+      consumers[roomId][userId] = {};
+    }
+    if (!consumers[roomId][userId][targetId]) {
+      consumers[roomId][userId][targetId] = {};
+    }
+    if (kind === "audio") {
+      consumers[roomId][userId][targetId].audio = consumer;
+    } else {
+      consumers[roomId][userId][targetId].video = consumer;
+    }
+    //consumers[roomId][userId][targetId] = consumer;
+  } catch (err) {
+    console.log(err);
   }
-  if (!consumers[roomId][userId]) {
-    consumers[roomId][userId] = {};
-  }
-  if (!consumers[roomId][userId][targetId]) {
-    consumers[roomId][userId][targetId] = {};
-  }
-  if (kind === "audio") {
-    consumers[roomId][userId][targetId].audio = consumer;
-  } else {
-    consumers[roomId][userId][targetId].video = consumer;
-  }
-  //consumers[roomId][userId][targetId] = consumer;
 };
 
 const removeConsumerTarget = async (roomId, userId, targetId) => {
-  if (
-    consumers[roomId] &&
-    consumers[roomId][userId] &&
-    consumers[roomId][userId][targetId]
-  ) {
-    delete consumers[roomId][userId].targetId;
+  try {
+    if (
+      consumers[roomId] &&
+      consumers[roomId][userId] &&
+      consumers[roomId][userId][targetId]
+    ) {
+      delete consumers[roomId][userId].targetId;
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 
 const removeConsumer = async (roomId, userId) => {
-  if (consumers[roomId] && consumers[roomId][userId]) {
-    delete consumers[roomId][userId];
+  try {
+    if (consumers[roomId] && consumers[roomId][userId]) {
+      delete consumers[roomId][userId];
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -494,31 +515,38 @@ const getConsumer = (roomId, userId, targetId, kind) => {
 };
 
 async function createWebRtcTransport(router) {
-  const transport = await router.createWebRtcTransport({
-    listenIps: [
-      {
-        ip: process.env.WEB_RTC_IP,
-        announcedIp: process.env.WEB_RTC_ANNOUNCED_IP,
-      },
-    ],
-    enableUdp: true,
-    enableTcp: true,
-    preferUdp: true,
-  });
-  transport.on("dtlsstatechange", (dtlsState) => {
-    if (dtlsState === "closed") {
-      console.log("Transport closed due to dtls change");
-      transport.close();
-    }
-  });
+  try {
+    const transport = await router.createWebRtcTransport({
+      listenIps: [
+        {
+          ip: process.env.WEB_RTC_IP,
+          announcedIp: process.env.WEB_RTC_ANNOUNCED_IP,
+        },
+      ],
+      enableUdp: true,
+      enableTcp: true,
+      preferUdp: true,
+    });
+    transport.on("dtlsstatechange", (dtlsState) => {
+      if (dtlsState === "closed") {
+        console.log("Transport closed due to dtls change");
+        transport.close();
+      }
+    });
 
-  return {
-    transport,
-    params: {
-      id: transport.id,
-      iceParameters: transport.iceParameters,
-      iceCandidates: transport.iceCandidates,
-      dtlsParameters: transport.dtlsParameters,
-    },
-  };
+    return {
+      transport,
+      params: {
+        id: transport.id,
+        iceParameters: transport.iceParameters,
+        iceCandidates: transport.iceCandidates,
+        dtlsParameters: transport.dtlsParameters,
+      },
+    };
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
 }
+
+module.exports = { mediaIo };
