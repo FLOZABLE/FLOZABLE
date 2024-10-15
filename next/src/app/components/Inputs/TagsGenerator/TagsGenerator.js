@@ -38,11 +38,12 @@ export default function TagsGenerator({ tags, setTags, maxTags = 10 }) {
             return (
               <li key={i}>
                 <p className={styles.tags}>{tag}</p>
-                <FontAwesomeIcon
-                  icon={faTimes}
-                  className={styles.closeIcon}
-                  onClick={() => remove(tag)}
-                />
+                <i onClick={() => remove(tag)}>
+                  <FontAwesomeIcon
+                    icon={faTimes}
+                    className={styles.closeIcon}
+                  />
+                </i>
               </li>
             );
           })}
