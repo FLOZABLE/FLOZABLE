@@ -179,7 +179,11 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       //clearGroupMembersData();
       return;
     }
-    getRouterRtpCapabilities();
+    setTimeout(() => {
+      console.log("isactive:", isActive);
+      if (!isActive) return;
+      getRouterRtpCapabilities();
+    }, 5000);
   }, [isActive]);
 
   useEffect(() => {
