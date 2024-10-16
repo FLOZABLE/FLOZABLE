@@ -86,17 +86,25 @@ const consumers = {};
       if (!userId) return;
 
       socket.on("changeGroup", async (groupId) => {
-        const connection = pool.promise();
-        const groups = await userGroupsCache(connection, userId);
-        if (!groups.includes(groupId)) return;
-        groups.map((group) => {
-          if (group !== groupId) {
-            socket.leave(group);
+        try {
+          if (groupId === null) {
+            await onDisconnect();
+            return;
           }
-        });
-        socket.join(groupId);
-        activeGroup = groupId;
-        console.log("changed active group", groupId);
+          const connection = pool.promise();
+          const groups = await userGroupsCache(connection, userId);
+          if (!groups.includes(groupId)) return;
+          groups.map((group) => {
+            if (group !== groupId) {
+              socket.leave(group);
+            }
+          });
+          socket.join(groupId);
+          activeGroup = groupId;
+          console.log("changed active group", groupId);
+        } catch (err) {
+          console.log(err);
+        }
       });
 
       /**
@@ -317,23 +325,7 @@ const consumers = {};
       });
 
       socket.on("disconnect", async () => {
-        try {
-          if (!activeGroup) return;
-
-          mediaIo.to(activeGroup).emit(`removeProducer:${userId}`);
-          removeConsumer(activeGroup, userId);
-          removeProducer(activeGroup, userId);
-          const producerTransport = await getProducerTransport(userId);
-          if (producerTransport) {
-            producerTransport.close();
-          }
-          const consumerTransport = await getConsumerTransport(userId);
-          if (consumerTransport) {
-            consumerTransport.close();
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        onDisconnect(activeGroup, userId);
       });
     });
   } catch (err) {
@@ -357,6 +349,27 @@ const getRouter = async (roomId, worker) => {
     console.log(err);
   }
 };
+
+async function onDisconnect(activeGroup, userId) {
+  try {
+    console.log("media disconnection", activeGroup, userId);
+    if (!activeGroup) return;
+
+    mediaIo.to(activeGroup).emit(`removeProducer:${userId}`);
+    removeConsumer(activeGroup, userId);
+    removeProducer(activeGroup, userId);
+    const producerTransport = await getProducerTransport(userId);
+    if (producerTransport) {
+      producerTransport.close();
+    }
+    const consumerTransport = await getConsumerTransport(userId);
+    if (consumerTransport) {
+      consumerTransport.close();
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 const addProducerTransport = async (userId, transport) => {
   producerTransports[userId] = { transport, active: false };
