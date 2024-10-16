@@ -14,7 +14,7 @@ const {
   userGroupsCache,
   userFriendsCache,
 } = require("../services/redisLoader");
-const { mainIo } = require("../sockets/mainIo");
+const { mainIo } = require("../sockets/io");
 const { MAX_STUDY_TIME, BOT_OPTIONS } = require("../Constant");
 const { sendFriendRequest, replyFriendRequest } = require("../API/friends");
 

@@ -4,9 +4,8 @@ const {
   userFriendsCache,
   userGroupsCache,
 } = require("../services/redisLoader");
-const { io } = require("./io");
+const { mediaIo } = require("./io");
 
-const mediaIo = io.of("/mediaSocket");
 const mediaCodecs = [
   {
     kind: "audio",
@@ -548,5 +547,3 @@ async function createWebRtcTransport(router) {
     return false;
   }
 }
-
-module.exports = { mediaIo };

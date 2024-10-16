@@ -15,8 +15,12 @@ const wrap = (middleware) => (socket, next) =>
 
 io.use(wrap(sessionMiddleWare));
 
-module.exports = { io };
+const mainIo = io.of("/");
+const mediaIo = io.of("/mediaIo");
+const extensionIo = io.of("extensionIo");
 
-/* require('./extensionIo');
-require('./mainIo');
-require('./mediaIo'); */
+module.exports = { io, mainIo, mediaIo, extensionIo };
+
+require("./mainIo")
+require("./mediaIo")
+require("./extensionIo")

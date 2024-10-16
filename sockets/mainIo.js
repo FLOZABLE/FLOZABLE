@@ -12,12 +12,11 @@ const {
   userGroupsCache,
 } = require("../services/redisLoader");
 const { generateRandomId } = require("../Utils/tool");
-const { extensionIo } = require("./extensionIo");
-const { io } = require("./io");
+const { extensionIo, mainIo } = require("../sockets/io");
 const pool = require("../model/pool");
-const { MAX_STUDY_TIME, REDIS_EXP } = require("../Constant");
+const { MAX_STUDY_TIME } = require("../Constant");
+console.log("mainIO")
 
-const mainIo = io.of("/");
 mainIo.on("connection", (socket) => {
   let session;
 
@@ -332,5 +331,3 @@ async function stopStudying(connection, userId, mode) {
     console.log(err);
   }
 }
-
-module.exports = { mainIo };

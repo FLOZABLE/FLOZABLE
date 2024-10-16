@@ -11,7 +11,7 @@ const {
   validateURL,
   validateArray,
 } = require("../Utils/validate");
-const { mainIo } = require("../sockets/mainIo");
+const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
 
 Router.get("/", async (req, res) => {

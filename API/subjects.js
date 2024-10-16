@@ -15,7 +15,7 @@ const {
   validateStrictString,
 } = require("../Utils/validate");
 const { RESPONSE_CODES } = require("../Constant");
-const { mainIo } = require("../sockets/mainIo");
+const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
 
 Router.get("/", async (req, res) => {
