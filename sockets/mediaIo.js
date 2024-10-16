@@ -19,7 +19,6 @@ const mediaCodecs = [
     },
   },
 ];
-console.log("gddddddd");
 
 async function createWorker() {
   const worker = await mediaSoup.createWorker({
@@ -82,6 +81,8 @@ const consumers = {};
       const userId = session?.user_id;
       console.log("mediasocket joined", userId);
 
+      socket.join(userId);
+
       if (!userId) return;
 
       socket.on("changeGroup", async (groupId) => {
@@ -95,6 +96,7 @@ const consumers = {};
         });
         socket.join(groupId);
         activeGroup = groupId;
+        console.log("changed active group", groupId);
       });
 
       /**
@@ -280,6 +282,24 @@ const consumers = {};
           if (!consumer) return;
           console.log("resume", consumer.id, kind);
           await consumer.resume();
+        } catch (err) {
+          console.log(err);
+        }
+      });
+
+      socket.on("getRoomProducers", async () => {
+        try {
+          if (!activeGroup) return;
+
+          const roomProducers = getRoomProducers(activeGroup);
+          console.log("room producers:", roomProducers, activeGroup);
+          if (!roomProducers) return;
+
+          roomProducers.map((producer) => {
+            mediaIo
+              .to(userId)
+              .emit(`newProducer:${producer.user_id}`, producer.kind);
+          });
         } catch (err) {
           console.log(err);
         }
@@ -483,6 +503,24 @@ const getProducer = (roomId, userId, kind) => {
     return producer.video;
     /* const producer = producers[roomId][userId];
     return producer; */
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};
+
+const getRoomProducers = (roomId) => {
+  try {
+    //not found
+    if (!producers[roomId]) return false;
+
+    const roomProducers = Object.keys(producers[roomId]).map((user_id) => ({
+      user_id,
+      kind: producers[roomId][user_id],
+      ...producers[roomId][user_id],
+    }));
+
+    return roomProducers;
   } catch (err) {
     console.log(err);
     return false;

@@ -22,6 +22,7 @@ import { useDebounce } from "use-debounce";
 import { socket } from "@/app/utils/socket";
 import { mediaSocket } from "@/app/utils/mediaSocket";
 import AccountWall from "../../Others/AccountWall/AccountWall";
+import { ACTIVE_GROUP_DEBOUNCE } from "@/app/utils/Constant";
 
 function MyGroupsViewer({}) {
   const { myGroups, setMyGroups } = useContext(GroupsContext);
@@ -30,7 +31,7 @@ function MyGroupsViewer({}) {
 
   const [activeIndex, setActiveIndex] = useState(-1);
 
-  const [debouncedIndex] = useDebounce(activeIndex, 3000);
+  const [debouncedIndex] = useDebounce(activeIndex, ACTIVE_GROUP_DEBOUNCE);
 
   const SwiperRef = useRef(null);
 
@@ -99,7 +100,7 @@ function MyGroupsViewer({}) {
             <SwiperSlide key={i}>
               <MyGroupContainer
                 group={group}
-                isActive={activeIndex === i}
+                isActive={debouncedIndex === i}
                 leaveGroup={leaveGroup}
                 isAdmin={group.leader === userInfo?.user_id}
               />

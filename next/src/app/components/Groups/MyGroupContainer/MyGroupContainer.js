@@ -25,6 +25,7 @@ import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading
 import MembersStatus from "../MembersStatus/MembersStatus";
 import { faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ACTIVE_GROUP_DEBOUNCE } from "@/app/utils/Constant";
 
 const videoParams = {
   encodings: [
@@ -99,9 +100,16 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
    * This information is crucial for ensuring that the Device is compatible with the router.
    */
   const getRouterRtpCapabilities = async () => {
-    mediaSocket.emit("getRouterRtpCapabilities", ({ rtpCapabilities }) => {
-      console.log("SFU: get rtp capabilities", rtpCapabilities);
-      setRtpCapabilities(rtpCapabilities);
+    return new Promise((resolve, reject) => {
+      mediaSocket.emit("getRouterRtpCapabilities", ({ rtpCapabilities }) => {
+        if (rtpCapabilities) {
+          console.log("SFU: get rtp capabilities", rtpCapabilities);
+          setRtpCapabilities(rtpCapabilities);
+          resolve(rtpCapabilities);
+        } else {
+          reject(new Error("Failed to get RTP capabilities"));
+        }
+      });
     });
   };
 
@@ -151,6 +159,9 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
          */
         const transport = await device.createRecvTransport(params);
         console.log("SFU: create recv transport", transport);
+        setTimeout(() => {
+          mediaSocket.emit("getRoomProducers");
+        }, ACTIVE_GROUP_DEBOUNCE + 500);
         await transport.on(
           "connect",
           async ({ dtlsParameters }, callback, errback) => {
@@ -179,11 +190,17 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       //clearGroupMembersData();
       return;
     }
-    setTimeout(() => {
+
+    //retry getting router rtp capabilities every 1 sec until it succeeds.
+    let intervalId = setInterval(async () => {
       console.log("isactive:", isActive);
       if (!isActive) return;
-      getRouterRtpCapabilities();
-    }, 5000);
+      const rtpCapabilities = await getRouterRtpCapabilities();
+
+      if (rtpCapabilities) {
+        clearInterval(intervalId);
+      }
+    }, 1000);
   }, [isActive]);
 
   useEffect(() => {
@@ -196,7 +213,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
     setTimeout(() => {
       createRecvTransport();
       createSendTransport();
-    }, 1000);
+    }, ACTIVE_GROUP_DEBOUNCE + 500);
   }, [device]);
 
   /**

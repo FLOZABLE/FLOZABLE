@@ -1,7 +1,7 @@
 const { DateTime } = require("luxon");
 const redisClient = require("../model/redis");
 const { extensionIo } = require("./io");
-console.log("extensionio")
+
 extensionIo.on("connection", async (socket) => {
   console.log(socket.handshake.auth);
   try {

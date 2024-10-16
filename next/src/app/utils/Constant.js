@@ -237,6 +237,8 @@ const STUDY_TREND_COLORS = [
   "#00bfa0",
 ];
 
+const ACTIVE_GROUP_DEBOUNCE = 1000;
+
 export {
   colorsList,
   subjectIcons,
@@ -249,4 +251,5 @@ export {
   DEFAULT_GROUP,
   SUBJECTS_PIE_COLORS,
   STUDY_TREND_COLORS,
+  ACTIVE_GROUP_DEBOUNCE
 };
