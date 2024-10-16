@@ -24,7 +24,7 @@ const {
 } = require("../services/redisLoader");
 const schedule = require("node-schedule");
 const { RESPONSE_CODES } = require("../Constant");
-const { mainIo } = require("../sockets/mainIo");
+const { mainIo } = require("../sockets/io");
 const { googleOauth2client, autoSignin } = require("./auth");
 
 Router.get("/", async (req, res) => {

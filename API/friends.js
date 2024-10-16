@@ -22,7 +22,7 @@ const {
   validateBoolean,
 } = require("../Utils/validate");
 const { DateTime } = require("luxon");
-const { mainIo } = require("../sockets/mainIo");
+const { mainIo } = require("../sockets/io");
 const { RESPONSE_CODES, FRIENDS_LIMIT } = require("../Constant");
 const Router = express.Router();
 const { autoSignin } = require("./auth");

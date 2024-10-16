@@ -3,18 +3,15 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const {
-  websiteUsageCache,
   cacheExtensionToken,
 } = require("../services/redisLoader");
 const { DateTime } = require("luxon");
 const {
-  validateStrictString,
-  validateISO,
   validateURL,
   validateOption,
 } = require("../Utils/validate");
 const { RESPONSE_CODES } = require("../Constant");
-const { extensionIo } = require("../sockets/extensionIo");
+const { extensionIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
 
 Router.post("/auth", async (req, res) => {
