@@ -15,7 +15,6 @@ const { generateRandomId } = require("../Utils/tool");
 const { extensionIo, mainIo } = require("../sockets/io");
 const pool = require("../model/pool");
 const { MAX_STUDY_TIME } = require("../Constant");
-console.log("mainIO")
 
 mainIo.on("connection", (socket) => {
   let session;
