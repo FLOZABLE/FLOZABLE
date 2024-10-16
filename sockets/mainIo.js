@@ -143,6 +143,16 @@ mainIo.on("connection", (socket) => {
         userFriendsCache(connection, userId),
         userGroupsCache(connection, userId),
       ]);
+      if (groupId === null) {
+        groups.map((group) => {
+          socket.leave(group);
+        });
+        redisClient.del(`user:${userId}:activeGroup`);
+        if (friends.length) {
+          mainIo.to(friends).emit(`deActiveGroup`, userId);
+        }
+        return;
+      }
       if (!groups.includes(groupId)) return;
       groups.map((group) => {
         if (group !== groupId) {
