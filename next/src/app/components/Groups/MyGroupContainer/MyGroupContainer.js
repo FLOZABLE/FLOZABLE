@@ -2,16 +2,11 @@ import styles from "./MyGroupContainer.module.css";
 import React, { useContext, useEffect, useState } from "react";
 import config from "@/app/utils/config";
 import Link from "next/link";
-import {
-  CallOptionsContext,
-  ModalsContext,
-  UserInfoContext,
-} from "@/app/utils/Contexts";
+import { CallOptionsContext, ModalsContext } from "@/app/utils/Contexts";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 import {
   IconMessage,
   IconTimerOutline,
-  StudyPerson,
   IconPen,
   IconLeave,
 } from "@/app/utils/Svg";
@@ -21,11 +16,11 @@ import { Device } from "mediasoup-client";
 import { socket } from "@/app/utils/socket";
 import { useGroupMembers } from "@/Hooks/groupsHook";
 import { secondConverter } from "@/app/utils/Tool";
-import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import MembersStatus from "../MembersStatus/MembersStatus";
 import { faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ACTIVE_GROUP_DEBOUNCE } from "@/app/utils/Constant";
+import Skeleton from "react-loading-skeleton";
 
 const videoParams = {
   encodings: [
@@ -57,12 +52,10 @@ const audioParams = {
 function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   const { isCam, isMic } = useContext(CallOptionsContext);
   const { setChatModal, setEditGroupModal } = useContext(ModalsContext);
-  const { userInfo } = useContext(UserInfoContext);
 
   const { groupMembersData, groupMembersIsLoading, clearGroupMembersData } =
     useGroupMembers(group?.group_id, isActive);
 
-  const [studyingMembers, setStudyingMembers] = useState([]);
   const [members, setMembers] = useState([]);
   const [totalTime, setTotalTime] = useState("0 h");
 
@@ -501,7 +494,11 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
             recvTransport={recvTransport}
           />
         ) : (
-          <CircularLoading />
+          <div className={styles.memberSkeletons}>
+            {group.members.map((member, i) => (
+              <Skeleton key={i} className={styles.memberSkeleton} />
+            ))}
+          </div>
         )}
       </div>
       <div className={styles.buttons}>

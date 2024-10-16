@@ -12,6 +12,7 @@ import SearchUsersModal from "./components/Modals/SearchUsersModal/SearchUsersMo
 import PlanModal from "./components/Modals/PlanModal/PlanModal";
 import { Suspense } from "react";
 import EditGroupModal from "./components/Modals/EditGroupModal/EditGroupModal";
+import "react-loading-skeleton/dist/skeleton.css";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
 
