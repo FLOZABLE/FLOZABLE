@@ -410,6 +410,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
     if (!group) return;
 
     const onNewMember = (groupId, newUser) => {
+      console.log("newMember", groupId, newUser);
       if (group.group_id !== groupId) return;
 
       setMembers((prev) => [...prev, newUser]);

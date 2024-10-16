@@ -430,7 +430,7 @@ async function userGroupsCache(connection, userId, query = true, cache = true) {
       return await redisClient.smembers(`user:${userId}:groups`);
     }
     if (!query) {
-      return null;
+      return [];
     }
     const [groupsData] = await connection.query(
       `SELECT group_id FROM group_members WHERE user_id = ?`,
