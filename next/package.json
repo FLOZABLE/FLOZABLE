@@ -40,6 +40,7 @@
     "react-country-flag": "^3.1.0",
     "react-dom": "^18",
     "react-draggable": "^4.4.6",
+    "react-loading-skeleton": "^3.5.0",
     "react-quill": "^2.0.0",
     "react-youtube": "^10.1.0",
     "recharts": "^2.12.3",
