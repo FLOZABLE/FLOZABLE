@@ -9,6 +9,7 @@ function ChatRoom({ chatroom }) {
   const { setChatModal } = useContext(ModalsContext);
 
   const [lastMsg, setLastMsg] = useState({});
+  const [timeDisp, setTimeDisp] = useState("");
 
   useEffect(() => {
     if (chatroom.lastMsg) {
@@ -28,6 +29,18 @@ function ChatRoom({ chatroom }) {
     };
   }, [chatroom]);
 
+  useEffect(() => {
+    if (!lastMsg?.t) return;
+    const dateTime = DateTime.fromSeconds(lastMsg.t);
+    if (DateTime.now().hasSame(dateTime, "day")) {
+      const timeDisp = dateTime.toLocaleString(DateTime.TIME_SIMPLE);
+      setTimeDisp(timeDisp);
+    } else {
+      const timeDisp = dateTime.toFormat("M/d");
+      setTimeDisp(timeDisp);
+    }
+  }, [lastMsg]);
+
   return (
     <li
       className={styles.ChatRoom}
@@ -46,13 +59,7 @@ function ChatRoom({ chatroom }) {
         <div className={styles.header}>
           <div className={styles.name}>{chatroom.name}</div>
           <strong>({chatroom.members.length})</strong>
-          <div className={styles.time}>
-            {lastMsg && lastMsg.t
-              ? DateTime.fromSeconds(lastMsg.t).toLocaleString(
-                  DateTime.TIME_SIMPLE
-                )
-              : null}
-          </div>
+          <div className={styles.time}>{timeDisp}</div>
         </div>
         <div className={styles.msg}>{lastMsg?.m}</div>
       </div>
