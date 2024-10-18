@@ -8,17 +8,25 @@ export default function ChatRoomCoverImg({ members }) {
         if (i === 0) {
           return (
             <div className={`${styles.profileImg}`} key={i}>
-              <ProfileImage userId={member} key={i} width={30} height={30} />
+              <ProfileImage
+                userId={member}
+                key={i}
+                width="2.5rem"
+                height="2.5rem"
+              />
             </div>
           );
         }
         return (
           <div
             className={`${styles.profileImg}`}
-            style={{ right: "0rem", bottom: "0rem" }}
+            style={{
+              right: "0rem",
+              bottom: "0rem",
+            }}
             key={i}
           >
-            <ProfileImage userId={member} key={i} width={25} height={25} />
+            <ProfileImage userId={member} key={i} />
           </div>
         );
       })}

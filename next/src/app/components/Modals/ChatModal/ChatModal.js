@@ -33,16 +33,16 @@ function ChatModal({}) {
   const moveRef = useRef(null);
   const chatsContainerRef = useRef(null);
 
-  const { data: useChatRoomsData } = useChatRooms(userInfo);
+  const { chatRoomsData } = useChatRooms(userInfo);
   const { data: useGetChatroomMembersData } = useGetChatroomMembers(
     chatModal.chatroom
   );
 
   useEffect(() => {
-    if (!useChatRoomsData?.success) return;
+    if (!chatRoomsData?.success) return;
 
-    setChatRooms(useChatRoomsData.chatrooms);
-  }, [useChatRoomsData]);
+    setChatRooms(chatRoomsData.chatrooms);
+  }, [chatRoomsData]);
 
   const onSubmit = useCallback(() => {
     socket.emit("chat/send", chatModal.chatroom, msgInput);
@@ -51,6 +51,14 @@ function ChatModal({}) {
 
   useEffect(() => {
     const onChatMessage = (message) => {
+      const chatroomIndex = chatrooms.findIndex(
+        (chatroom) => chatroom.chatroom_id === message.r
+      );
+      if (chatroomIndex !== -1) {
+        const chatroom = chatrooms.splice(chatroomIndex, 1)[0];
+        chatrooms.splice(0, 0, chatroom);
+        setChatRooms(chatrooms);
+      }
       if (chatModal.chatroom === message.r) {
         setMessages((prev) => [...prev, message]);
         setTimeout(() => {
@@ -108,9 +116,13 @@ function ChatModal({}) {
         </i>
       </div>
       <ul className={`${styles.chatroomsContainer} customScroll`}>
-        {chatrooms.map((chatroom, i) => {
-          return <ChatRoom key={i} chatroom={chatroom} />;
-        })}
+        {chatrooms.length ? (
+          chatrooms.map((chatroom, i) => {
+            return <ChatRoom key={i} chatroom={chatroom} />;
+          })
+        ) : (
+          <div className={styles.noChatrooms}>No chatrooms!</div>
+        )}
       </ul>
       <div
         className={`${styles.chatScreen} ${
