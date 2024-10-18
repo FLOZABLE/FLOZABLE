@@ -9,7 +9,7 @@ function PlaylistModal() {
 
   return (
     <div className={styles.PlaylistModal}>
-      {/* <div style={{ "--hoverTextColor": "#000" }}>
+      <div style={{ "--hoverTextColor": "#000" }}>
         <DropDownButton
           options={[
             {
@@ -25,7 +25,7 @@ function PlaylistModal() {
           setValue={setPlaylistType}
         />
       </div>
-      {playlistType === "spotify" ? <SpotifyPlaylist /> : <YouTubePlaylist />} */}
+      {playlistType === "spotify" ? <SpotifyPlaylist /> : <YouTubePlaylist />}
     </div>
   );
 }
