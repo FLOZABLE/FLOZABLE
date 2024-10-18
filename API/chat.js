@@ -63,6 +63,8 @@ Router.get("/rooms", async (req, res) => {
         })
       );
 
+      chatrooms.sort((a, b) => b.lastMsg?.t - a.lastMsg?.t);
+
       res.send({ success: true, chatrooms });
     } catch (err) {
       console.log(err);
@@ -172,9 +174,7 @@ Router.post("/request", async (req, res) => {
 
       const userInfo = usersInfo.find((user) => user.user_id === userId);
 
-      const targetUser = usersInfo.find(
-        (user) => user.user_id === targetId
-      );
+      const targetUser = usersInfo.find((user) => user.user_id === targetId);
 
       if (!userInfo) {
         return RESPONSE_CODES["no-user"];
@@ -260,9 +260,7 @@ Router.post("/request/reply", async (req, res) => {
 
       const userInfo = usersInfo.find((user) => user.user_id === userId);
 
-      const targetUser = usersInfo.find(
-        (user) => user.user_id === targetId
-      );
+      const targetUser = usersInfo.find((user) => user.user_id === targetId);
       if (!userInfo) {
         return RESPONSE_CODES["no-user"];
       }

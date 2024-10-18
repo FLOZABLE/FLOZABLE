@@ -56,6 +56,7 @@ function ChatModal({}) {
       );
       if (chatroomIndex !== -1) {
         const chatroom = chatrooms.splice(chatroomIndex, 1)[0];
+        chatroom.lastMsg = message;
         chatrooms.splice(0, 0, chatroom);
         setChatRooms(chatrooms);
       }
