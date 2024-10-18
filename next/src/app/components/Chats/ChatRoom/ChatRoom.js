@@ -46,12 +46,6 @@ function ChatRoom({ chatroom }) {
         <div className={styles.header}>
           <div className={styles.name}>{chatroom.name}</div>
           <strong>({chatroom.members.length})</strong>
-          <div className={styles.msgCount}>
-            {/* {newMsgs ? <div>{newMsgs} new messages</div> : null} */}
-          </div>
-        </div>
-        <div className={styles.msgInfo}>
-          <div className={styles.msg}>{lastMsg?.m}</div>
           <div className={styles.time}>
             {lastMsg && lastMsg.t
               ? DateTime.fromSeconds(lastMsg.t).toLocaleString(
@@ -60,6 +54,7 @@ function ChatRoom({ chatroom }) {
               : null}
           </div>
         </div>
+        <div className={styles.msg}>{lastMsg?.m}</div>
       </div>
     </li>
   );

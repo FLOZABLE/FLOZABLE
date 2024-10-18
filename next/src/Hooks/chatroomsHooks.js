@@ -2,12 +2,16 @@ import { getChatMembers, getChatRooms } from "@/Api/chatApi";
 import { useQuery } from "@tanstack/react-query";
 
 function useChatRooms(userInfo) {
-  return useQuery({
+  const queryResult = useQuery({
     queryKey: [`useChatRooms`],
     queryFn: getChatRooms,
     staleTime: 1000 * 5,
     enabled: !!userInfo,
   });
+
+  const { data: chatRoomsData, refetch: chatRoomsRefetch } = queryResult;
+
+  return { chatRoomsData, chatRoomsRefetch, ...queryResult };
 }
 
 function useGetChatroomMembers(chatroomId) {
