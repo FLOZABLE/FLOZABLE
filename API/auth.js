@@ -407,9 +407,10 @@ Router.get("/signin/spotify/callback", async (req, res) => {
     if (refresh_token) {
       const connection = pool.promise();
 
-      await connection.query(`UPDATE users SET spotify_refresh_token = ?`, [
-        refresh_token,
-      ]);
+      await connection.query(
+        `UPDATE users SET spotify_refresh_token = ? WHERE user_id = ?`,
+        [refresh_token, userId]
+      );
     }
     if (access_token) {
       redisClient.setex(
