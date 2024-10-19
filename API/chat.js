@@ -5,8 +5,8 @@ const redisClient = require("../model/redis");
 const { generateRandomId } = require("../Utils/tool");
 const {
   notificationCache,
-  chatroomMemberCache,
   usersCache,
+  chatroomMembersCache,
 } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../Utils/validate");
 const { mainIo } = require("../sockets/io");
@@ -78,9 +78,11 @@ Router.get("/messages", async (req, res) => {
       const { chatroom_id } = req.query;
 
       const connection = pool.promise();
-      const isIn = await chatroomMemberCache(connection, chatroom_id, userId);
+      const members = await chatroomMembersCache(connection, chatroom_id);
 
-      if (!isIn) return res.send({ success: false, reason: "Not member" });
+      if (!members.includes(userId)) {
+        return res.send({ success: false, reason: "Not member" });
+      }
 
       const messages = (
         await redisClient.lrange(`chatroom:${chatroom_id}:messages`, 0, -1)
@@ -99,10 +101,6 @@ Router.get("/members", async (req, res) => {
       const { chatroom_id } = req.query;
 
       const connection = pool.promise();
-
-      const isIn = await chatroomMemberCache(connection, chatroom_id, userId);
-
-      if (!isIn) return res.send({ success: false, reason: "Not member" });
 
       const [members] = await connection.query(
         `
@@ -123,6 +121,10 @@ Router.get("/members", async (req, res) => {
         `,
         [chatroom_id, chatroom_id]
       );
+
+      if (!members.find((member) => member.user_id === userId)) {
+        return res.send(RESPONSE_CODES["non-member"]);
+      }
 
       res.send({ success: true, members });
     } catch (err) {
