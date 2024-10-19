@@ -5,16 +5,16 @@ const {
   msgQueue,
   subjectCache,
   activeSubjectCache,
-  chatroomMemberCache,
   cacheActiveSubject,
   cacheActiveGroup,
   userFriendsCache,
   userGroupsCache,
+  chatroomMembersCache,
 } = require("../services/redisLoader");
 const { generateRandomId } = require("../Utils/tool");
 const { extensionIo, mainIo } = require("../sockets/io");
 const pool = require("../model/pool");
-const { MAX_STUDY_TIME } = require("../Constant");
+const { MAX_STUDY_TIME, REDIS_EXP } = require("../Constant");
 
 mainIo.on("connection", (socket) => {
   let session;
@@ -230,8 +230,9 @@ mainIo.on("connection", (socket) => {
   socket.on("chat/send", async (roomId, message) => {
     try {
       const connection = pool.promise();
-      const isMember = await chatroomMemberCache(connection, roomId, userId);
-      if (!isMember || !message.length) return;
+      const members = await chatroomMembersCache(connection, roomId);
+      console.log("members", members);
+      if (!members.includes(userId) || !message.length) return;
 
       const t = Math.floor(new Date().getTime() / 1000);
       const i = generateRandomId(8);
@@ -244,12 +245,43 @@ mainIo.on("connection", (socket) => {
       msgQueue(connection, roomId, newMsg);
       newMsg.r = roomId;
       mainIo.to(`chatroom:${roomId}`).emit("chat/message", newMsg);
+
+      /*
+      add unread messages to chatroom members who is not me.
+      room:ROOMID:last_msg stores last message's (current sent message) id
+      room:ROOMID:counter stores total number of unread messages
+      */
+      members
+        .filter((member) => member !== userId)
+        .map((member) => {
+          redisClient.hset(
+            `user:${member}:messages`,
+            `room:${roomId}:last_msg`,
+            i
+          );
+          redisClient.hincrby(
+            `user:${member}:messages`,
+            `room:${roomId}:counter`,
+            1
+          );
+          redisClient.expire(
+            `user:${member}:messages`,
+            REDIS_EXP.USER_CHAT_READS
+          );
+        });
+
+      /**
+       * for me, set last_msg id as same as other members, but hset room:ROOMID:counter as 0 instead of hincryby.
+       */
+      redisClient.hset(`user:${userId}:messages`, `room:${roomId}:last_msg`, i);
+      redisClient.hset(`user:${userId}:messages`, `room:${roomId}:counter`, 0);
+      redisClient.expire(`user:${userId}:messages`, REDIS_EXP.USER_CHAT_READS);
     } catch (err) {
       console.log(err);
     }
   });
 
-  socket.on("chat/read", async (messageId) => {
+  socket.on("chat/read", async (roomId, messageId) => {
     try {
     } catch (err) {
       console.log(err);

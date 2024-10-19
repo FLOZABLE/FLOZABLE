@@ -153,9 +153,18 @@ function ChatModal({}) {
         >
           {messages?.map((msg, index) => {
             const { u, m, t } = msg;
-            const formattedTime = DateTime.fromSeconds(t).toFormat("h:mm a");
+
+            const dateTime = DateTime.fromSeconds(t);
+            let timeDisp;
+
+            if (DateTime.now().hasSame(dateTime, "day")) {
+              timeDisp = dateTime.toFormat("h:mm a");
+            } else {
+              timeDisp = dateTime.toFormat("M/d h:mm a");
+            }
+
             if (u === userInfo.user_id) {
-              return <MyChatContainer time={formattedTime} m={m} key={index} />;
+              return <MyChatContainer time={timeDisp} m={m} key={index} />;
             } else {
               const user = members.find((member) => {
                 return member.user_id === u;
@@ -163,7 +172,7 @@ function ChatModal({}) {
               return (
                 <ChatContainer
                   userInfo={user}
-                  time={formattedTime}
+                  time={timeDisp}
                   m={m}
                   key={index}
                 />

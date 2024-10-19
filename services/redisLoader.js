@@ -610,12 +610,68 @@ async function zsetIncrAll(key, val = 1) {
   }
 }
 
-async function chatroomMemberCache(connection, chatroomId, userId) {
+async function chatroomMembersCache(connection, chatroomId) {
   try {
-    const isIn = await redisClient.sismember(`chatroom:${chatroomId}`, userId);
-    if (isIn) return true;
+    const isCached = await redisClient.exists(`chatroom:${chatroomId}`);
+    if (isCached) {
+      const members = await redisClient.smembers(`chatroom:${chatroomId}`);
+      return members;
+    }
 
-    const [[member]] = await connection.query(
+    const [members] = await connection.query(
+      `
+      SELECT DISTINCT user_id
+      FROM (
+        SELECT user_id
+        FROM chatroom_members
+        WHERE chatroom_id = ?
+        
+        UNION ALL
+        
+        SELECT user_id
+        FROM group_members
+        WHERE group_id = (
+          SELECT chatroom_id
+          FROM chatrooms
+          WHERE chatroom_id = ? AND type = 0
+        )
+      ) AS combined_members
+      `,
+      [chatroomId, chatroomId]
+    );
+
+    const membersUserId = members.map((member) => member.user_id);
+
+    redisClient.sadd(`chatroom:${chatroomId}`, membersUserId);
+
+    await redisClient.expire(
+      `chatroom:${chatroomId}`,
+      REDIS_EXP.CHATROOM_MEMBERS
+    );
+
+    return membersUserId;
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
+}
+
+async function cacheChatroomMembers(
+  connection,
+  chatroomId,
+  userId,
+  forceCache = false
+) {
+  try {
+    const isCached = await redisClient.exists(`chatroom:${chatroomId}`);
+    if (isCached) {
+      redisClient.sadd(`chatroom:${chatroomId}`, userId);
+      return true;
+    }
+
+    if (!forceCache) return;
+
+    const [members] = await connection.query(
       `
       SELECT
         user_id,
@@ -623,28 +679,33 @@ async function chatroomMemberCache(connection, chatroomId, userId) {
       FROM (
         SELECT user_id, chatroom_id, 0 AS is_group
         FROM chatroom_members
-        WHERE user_id = ? AND chatroom_id = ?
+        WHERE chatroom_id = ?
     
         UNION ALL
     
         SELECT user_id, group_id AS chatroom_id, 1 AS is_group
         FROM group_members
-        WHERE user_id = ? AND group_id = (
+        WHERE group_id = (
           SELECT chatroom_id
           FROM chatrooms
           WHERE chatroom_id = ? AND type = 0
         )
       ) AS members
       WHERE chatroom_id = ?
-      LIMIT 1;
       `,
-      [userId, chatroomId, userId, chatroomId, chatroomId]
+      [chatroomId, chatroomId, chatroomId]
     );
 
-    if (!member) return false;
+    if (!members) return false;
 
-    await redisClient.sadd(`chatroom:${chatroomId}`, userId);
-    redisClient.expire(`chatroom:${chatroomId}`, REDIS_EXP.CHATROOM_MEMBERS);
+    members.push(userId);
+    redisClient.sadd(`chatroom:${chatroomId}`, members);
+
+    await redisClient.expire(
+      `chatroom:${chatroomId}`,
+      REDIS_EXP.CHATROOM_MEMBERS
+    );
+
     return true;
   } catch (err) {
     console.log(err);
@@ -787,7 +848,8 @@ module.exports = {
   addActiveUserCache,
   removeActiveUserCache,
   cacheUserInfo,
-  chatroomMemberCache,
+  chatroomMembersCache,
+  cacheChatroomMembers,
   spotifyAccessTokenCache,
   vapidKeysCache,
   cacheExtensionToken,
