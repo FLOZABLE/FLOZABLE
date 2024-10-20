@@ -68,7 +68,14 @@ Router.get("/rooms", async (req, res) => {
         })
       );
 
-      chatrooms.sort((a, b) => b.lastMsg?.t - a.lastMsg?.t);
+      chatrooms.sort((a, b) => {
+        if (!a.lastMsg && !b.lastMsg) return 0;  // Both are null
+        if (!a.lastMsg) return 1;                // a is null, should go to the end
+        if (!b.lastMsg) return -1;               // b is null, should go to the end
+        return b.lastMsg.t - a.lastMsg.t;        // Both have a lastMsg, compare normally
+      });
+
+      console.log(chatrooms.map((chatroom) => chatroom.name));
 
       res.send({ success: true, chatrooms });
     } catch (err) {
@@ -82,8 +89,7 @@ Router.get("/messages", async (req, res) => {
     try {
       const { chatroom_id } = req.query;
 
-      const connection = pool.promise();
-      const members = await chatroomMembersCache(connection, chatroom_id);
+      const members = await chatroomMembersCache(null, chatroom_id);
 
       if (!members.includes(userId)) {
         return res.send({ success: false, reason: "Not member" });

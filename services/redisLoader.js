@@ -4,6 +4,7 @@ const { DateTime } = require("luxon");
 const { REDIS_EXP } = require("../Constant");
 const querystring = require("node:querystring");
 const { generateRandomId } = require("../Utils/tool");
+const pool = require("../model/pool");
 
 function cacheManager() {
   const now = DateTime.now();
@@ -638,11 +639,15 @@ async function zsetIncrAll(key, val = 1) {
 async function chatroomMembersCache(connection, chatroomId) {
   try {
     if (!chatroomId) return [];
-    
+
     const isCached = await redisClient.exists(`chatroom:${chatroomId}`);
     if (isCached) {
       const members = await redisClient.smembers(`chatroom:${chatroomId}`);
       return members;
+    }
+
+    if (!connection) {
+      connection = pool.promise();
     }
 
     const [members] = await connection.query(
