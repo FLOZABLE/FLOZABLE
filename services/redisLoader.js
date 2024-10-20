@@ -157,7 +157,7 @@ async function msgQueue(connection, roomId, msgInfo) {
 
     if (queueLength < MAX_QUEUE_LENGTH) return;
 
-    const firstMsg = await redisClient.lPop(`room:${roomId}:messages`);
+    const firstMsg = await redisClient.lpop(`room:${roomId}:messages`);
     if (!firstMsg) return;
     connection.query(
       `
