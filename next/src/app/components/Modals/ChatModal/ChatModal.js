@@ -117,7 +117,13 @@ function ChatModal({}) {
   }, [chatModal.chatroom, userInfo]);
 
   useEffect(() => {
-    if (!chatModal.chatroom) return;
+    if (!chatModal.chatroom) {
+      chatsContainerRef.current?.scrollTo({
+        top: chatsContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+      return setTargetMessageId(null);
+    }
 
     const newChatrooms = [...chatrooms];
     const chatroomIndex = newChatrooms.findIndex(
@@ -158,7 +164,7 @@ function ChatModal({}) {
     setTimeout(() => {
       if (targetMessageId && messageRefs.current[targetMessageId]) {
         messageRefs.current[targetMessageId].scrollIntoView({
-          behavior: "instant",
+          behavior: "smooth",
           block: "start", // Scroll to the bottom of the last read message
         });
       }
