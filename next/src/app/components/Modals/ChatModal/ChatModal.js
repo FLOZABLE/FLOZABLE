@@ -50,26 +50,59 @@ function ChatModal({}) {
   }, [msgInput, chatModal]);
 
   useEffect(() => {
+    (async () => {
+      if (!chatModal.chatroom) return;
+      
+      const data = await getChatMessages(chatModal.chatroom);
+      if (!data.success) return;
+
+      socket.emit("chat/read", chatModal.chatroom);
+      setMessages(data.messages);
+
+      const newChatrooms = [...chatrooms];
+      const chatroomIndex = newChatrooms.findIndex(
+        (chatroom) => chatroom.chatroom_id === chatModal.chatroom
+      );
+      if (chatroomIndex !== -1) {
+        newChatrooms[chatroomIndex].unreads = 0;
+        setChatRooms(newChatrooms);
+      }
+    })();
+
     const onChatMessage = (message) => {
       const chatroomIndex = chatrooms.findIndex(
         (chatroom) => chatroom.chatroom_id === message.r
       );
+
+      let updatedChatrooms = [...chatrooms];
+
       if (chatroomIndex !== -1) {
-        const chatroom = chatrooms.splice(chatroomIndex, 1)[0];
-        chatroom.lastMsg = message;
-        chatrooms.splice(0, 0, chatroom);
-        setChatRooms(chatrooms);
+        const updatedChatroom = {
+          ...updatedChatrooms[chatroomIndex],
+          lastMsg: message,
+        };
+        updatedChatrooms = [
+          updatedChatroom,
+          ...updatedChatrooms.filter((_, idx) => idx !== chatroomIndex),
+        ];
       }
+
       if (chatModal.chatroom === message.r) {
-        setMessages((prev) => [...prev, message]);
+        setMessages((prevMessages) => [...prevMessages, message]);
+
         setTimeout(() => {
-          chatsContainerRef.current.scrollTo({
-            top: chatsContainerRef.current.scrollHeight,
-            behavior: "smooth",
-          });
+          if (chatsContainerRef.current) {
+            chatsContainerRef.current.scrollTo({
+              top: chatsContainerRef.current.scrollHeight,
+              behavior: "smooth",
+            });
+          }
         }, 10);
-        //socket.emit("chat/read", message.i);
+        socket.emit("chat/read", chatModal.chatroom);
+      } else {
+        updatedChatrooms[0].unreads += 1;
       }
+      setChatRooms(updatedChatrooms);
     };
 
     socket.on("chat/message", onChatMessage);
@@ -77,15 +110,6 @@ function ChatModal({}) {
     return () => {
       socket.off("chat/message", onChatMessage);
     };
-  }, [chatrooms, chatModal]);
-
-  useEffect(() => {
-    if (!chatModal?.chatroom) return;
-    (async () => {
-      const data = await getChatMessages(chatModal.chatroom);
-      if (!data.success) return;
-      setMessages(data.messages);
-    })();
   }, [chatModal.chatroom]);
 
   useEffect(() => {

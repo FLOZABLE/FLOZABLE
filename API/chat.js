@@ -7,6 +7,7 @@ const {
   notificationCache,
   usersCache,
   chatroomMembersCache,
+  userChatroomsCache,
 } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../Utils/validate");
 const { mainIo } = require("../sockets/io");
@@ -48,6 +49,8 @@ Router.get("/rooms", async (req, res) => {
         [userId, userId]
       );
 
+      const chatroomsMessages = await userChatroomsCache(userId);
+
       await Promise.all(
         chatrooms.map(async (chatroom) => {
           chatroom.members =
@@ -60,6 +63,8 @@ Router.get("/rooms", async (req, res) => {
               -1
             )
           ).map(JSON.parse);
+          chatroom.lastRead = chatroomsMessages[chatroom.chatroom_id]?.lastMsg;
+          chatroom.unreads = chatroomsMessages[chatroom.chatroom_id]?.unreads;
         })
       );
 

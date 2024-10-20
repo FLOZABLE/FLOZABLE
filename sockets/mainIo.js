@@ -210,14 +210,6 @@ mainIo.on("connection", (socket) => {
     }
   });
 
-  socket.on("volumeChange", ({ id, volume }) => {
-    if (!id || typeof volume !== "number") {
-      return;
-    }
-    mainIo.to(userId).emit(`volumeChange`, { id, volume });
-    extensionIo.to(userId).emit(`volumeChange`, { id, volume });
-  });
-
   //messages
 
   socket.join("chat/join", async () => {
@@ -248,41 +240,68 @@ mainIo.on("connection", (socket) => {
 
       /*
       add unread messages to chatroom members who is not me.
-      room:ROOMID:last_msg stores last message's (current sent message) id
-      room:ROOMID:counter stores total number of unread messages
+      room:ROOMID:last_read_msg stores last message's (current sent message) id
+      room:ROOMID:unreads stores total number of unread messages
       */
       members
         .filter((member) => member !== userId)
         .map((member) => {
           redisClient.hset(
-            `user:${member}:messages`,
-            `room:${roomId}:last_msg`,
+            `user:${member}:chatrooms`,
+            `room:${roomId}:last_read_msg`,
             i
           );
           redisClient.hincrby(
-            `user:${member}:messages`,
-            `room:${roomId}:counter`,
+            `user:${member}:chatrooms`,
+            `room:${roomId}:unreads`,
             1
           );
           redisClient.expire(
-            `user:${member}:messages`,
+            `user:${member}:chatrooms`,
             REDIS_EXP.USER_CHAT_READS
           );
         });
 
       /**
-       * for me, set last_msg id as same as other members, but hset room:ROOMID:counter as 0 instead of hincryby.
+       * for me, set last_read_msg id as same as other members, but hset room:ROOMID:unreads as 0 instead of hincryby.
        */
-      redisClient.hset(`user:${userId}:messages`, `room:${roomId}:last_msg`, i);
-      redisClient.hset(`user:${userId}:messages`, `room:${roomId}:counter`, 0);
-      redisClient.expire(`user:${userId}:messages`, REDIS_EXP.USER_CHAT_READS);
+      redisClient.hset(
+        `user:${userId}:chatrooms`,
+        `room:${roomId}:last_read_msg`,
+        i
+      );
+      redisClient.hset(`user:${userId}:chatrooms`, `room:${roomId}:unreads`, 0);
+      redisClient.expire(`user:${userId}:chatrooms`, REDIS_EXP.USER_CHAT_READS);
     } catch (err) {
       console.log(err);
     }
   });
 
-  socket.on("chat/read", async (roomId, messageId) => {
+  socket.on("chat/read", async (roomId) => {
     try {
+      if (!userId || !roomId) return;
+
+      const connection = await pool.promise();
+
+      const chatroomMembers = await chatroomMembersCache(connection, roomId);
+
+      if (!chatroomMembers.includes(userId)) {
+        return;
+      }
+
+      const [lastMsg] = (
+        await redisClient.lrange(`chatroom:${roomId}:messages`, -1, -1)
+      ).map(JSON.parse);
+
+      if (lastMsg) {
+        redisClient.hset(
+          `user:${userId}:chatrooms`,
+          `room:${roomId}:last_read_msg`,
+          lastMsg.i
+        );
+      }
+
+      redisClient.hset(`user:${userId}:chatrooms`, `room:${roomId}:unreads`, 0);
     } catch (err) {
       console.log(err);
     }
