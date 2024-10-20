@@ -61,7 +61,14 @@ function ChatRoom({ chatroom }) {
           <strong>({chatroom.members.length})</strong>
           <div className={styles.time}>{timeDisp}</div>
         </div>
-        <div className={styles.msg}>{lastMsg?.m}</div>
+        <div className={styles.msgInfo}>
+          <div className={styles.msg}>{lastMsg?.m}</div>
+          {chatroom.unreads ? (
+            <div className={styles.unreads}>
+              {chatroom.unreads} new messages
+            </div>
+          ) : null}
+        </div>
       </div>
     </li>
   );
