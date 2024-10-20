@@ -70,6 +70,7 @@
 .ChatModal .chatScreen .chatsContainer {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .ChatModal .inputWrapper {
