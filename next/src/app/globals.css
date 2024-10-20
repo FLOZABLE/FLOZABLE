@@ -251,9 +251,9 @@ svg > *,
   pointer-events: none;
 }
 
-@media (max-width: 1900px) {
+@media (max-width: 2000px) {
   html {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .modal.open {
@@ -262,6 +262,12 @@ svg > *,
 
   :root {
     --sidebar-offset: 18rem;
+  }
+}
+
+@media (max-width: 1900px) {
+  html {
+    font-size: 15px;
   }
 }
 
