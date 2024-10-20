@@ -281,9 +281,7 @@ mainIo.on("connection", (socket) => {
     try {
       if (!userId || !roomId) return;
 
-      const connection = await pool.promise();
-
-      const chatroomMembers = await chatroomMembersCache(connection, roomId);
+      const chatroomMembers = await chatroomMembersCache(null, roomId);
 
       if (!chatroomMembers.includes(userId)) {
         return;

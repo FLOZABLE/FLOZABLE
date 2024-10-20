@@ -14,13 +14,18 @@ function useChatRooms(userInfo) {
   return { chatRoomsData, chatRoomsRefetch, ...queryResult };
 }
 
-function useGetChatroomMembers(chatroomId) {
-  return useQuery({
-    queryKey: [`useGetChatroomMembers`, chatroomId],
+function useChatroomMembers(chatroomId) {
+  const queryResult = useQuery({
+    queryKey: [`useChatroomMembers`, chatroomId],
     queryFn: () => getChatMembers(chatroomId),
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 60 * 10,
     enabled: !!chatroomId,
   });
+
+  const { data: chatroomMembersData, refetch: chatroomMembersRefetch } =
+    queryResult;
+
+  return { chatroomMembersData, chatroomMembersRefetch, ...queryResult };
 }
 
-export { useChatRooms, useGetChatroomMembers };
+export { useChatRooms, useChatroomMembers };

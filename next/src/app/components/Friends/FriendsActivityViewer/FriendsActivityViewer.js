@@ -65,7 +65,7 @@ function FriendsActivityViewer() {
                   </div>
                 </div>
                 <div className={styles.buttons}>
-                  <ChatBtn userInfo={friend} padding={"0.3rem 0.6rem"} />
+                  <ChatBtn targetInfo={friend} padding={"0.3rem 0.6rem"} />
                 </div>
               </div>
             );

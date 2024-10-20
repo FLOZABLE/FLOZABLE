@@ -71,7 +71,7 @@ function User({ params }) {
             </i>
           </div>
           <div className={styles.buttons}>
-            <ChatBtn userInfo={userInfo} />
+            <ChatBtn targetInfo={userInfo} />
             <FriendRequestBtn userInfo={userInfo} />
           </div>
         </div>
