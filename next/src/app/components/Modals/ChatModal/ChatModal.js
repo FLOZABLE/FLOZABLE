@@ -72,6 +72,14 @@ function ChatModal({}) {
     })();
 
     const onChatMessage = (message) => {
+      setTimeout(() => {
+        if (chatsContainerRef.current) {
+          chatsContainerRef.current.scrollTo({
+            top: chatsContainerRef.current.scrollHeight,
+            behavior: "smooth",
+          });
+        }
+      }, 10);
       setChatRooms((prevChatrooms) => {
         let updatedChatrooms = [...prevChatrooms];
         const chatroomIndex = updatedChatrooms.findIndex(
@@ -117,13 +125,17 @@ function ChatModal({}) {
     );
     if (chatroomIndex === -1) return;
 
-    console.log("lastread", newChatrooms[chatroomIndex].lastRead);
+    const chatroom = newChatrooms[chatroomIndex];
 
-    if (newChatrooms[chatroomIndex].lastRead) {
-      setTargetMessageId(newChatrooms[chatroomIndex].lastRead);
-      newChatrooms[chatroomIndex].lastRead = null;
+    console.log("lastread", chatroom.lastRead, chatrooms);
+
+    if (chatroom.lastRead) {
+      setTargetMessageId(chatroom.lastRead);
+      newChatrooms[chatroomIndex].lastRead = chatroom.lastMsg?.i;
       setChatRooms(newChatrooms);
-    } /* else {
+    } else {
+      setTargetMessageId(null);
+      console.log("bottom");
       setTimeout(() => {
         if (chatsContainerRef.current) {
           chatsContainerRef.current.scrollTo({
@@ -131,9 +143,9 @@ function ChatModal({}) {
             behavior: "smooth",
           });
         }
-      }, 10);
-    } */
-  }, [chatModal.chatroom, chatrooms]);
+      }, 50);
+    }
+  }, [chatModal.chatroom]);
 
   useEffect(() => {
     if (!chatroomMembersData?.success) return;
@@ -143,13 +155,15 @@ function ChatModal({}) {
 
   useEffect(() => {
     // Scroll to the message with targetMessageId
-    if (targetMessageId && messageRefs.current[targetMessageId]) {
-      messageRefs.current[targetMessageId].scrollIntoView({
-        behavior: "smooth",
-        block: "start", // Scroll to the top of the message
-      });
-    }
-  }, [targetMessageId, messages]);
+    setTimeout(() => {
+      if (targetMessageId && messageRefs.current[targetMessageId]) {
+        messageRefs.current[targetMessageId].scrollIntoView({
+          behavior: "smooth",
+          block: "start", // Scroll to the top of the message
+        });
+      }
+    }, 50);
+  }, [targetMessageId]);
 
   return (
     <div
@@ -222,8 +236,11 @@ function ChatModal({}) {
 
             if (u === userInfo.user_id) {
               return (
-                <div ref={(el) => (messageRefs.current[msg.i] = el)}>
-                  <MyChatContainer time={timeDisp} m={m} key={index} />
+                <div
+                  ref={(el) => (messageRefs.current[msg.i] = el)}
+                  key={index}
+                >
+                  <MyChatContainer time={timeDisp} m={m} />
                 </div>
               );
             } else {
@@ -231,13 +248,11 @@ function ChatModal({}) {
                 return member.user_id === u;
               });
               return (
-                <div ref={(el) => (messageRefs.current[msg.i] = el)}>
-                  <ChatContainer
-                    userInfo={user}
-                    time={timeDisp}
-                    m={m}
-                    key={index}
-                  />
+                <div
+                  ref={(el) => (messageRefs.current[msg.i] = el)}
+                  key={index}
+                >
+                  <ChatContainer userInfo={user} time={timeDisp} m={m} />
                 </div>
               );
             }
