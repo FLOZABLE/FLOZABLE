@@ -512,6 +512,31 @@ async function notificationCache(userId, type = -1) {
   }
 }
 
+async function userChatroomsCache(userId) {
+  try {
+    const chatrooms = await redisClient.hgetall(`user:${userId}:chatrooms`);
+    const formattedChatrooms = {};
+    Object.keys(chatrooms).map((key) => {
+      const chatroomId = key.split(":")[1];
+
+      if (!formattedChatrooms[chatroomId]) {
+        formattedChatrooms[chatroomId] = {};
+      }
+
+      if (key.includes("unreads")) {
+        formattedChatrooms[chatroomId].unreads = parseInt(chatrooms[key]);
+      } else {
+        formattedChatrooms[chatroomId].lastMsg = chatrooms[key];
+      }
+    });
+
+    return formattedChatrooms;
+  } catch (err) {
+    console.log(err);
+    return {};
+  }
+}
+
 async function websiteUsageCache(userId) {
   const websitesUsage = await redisClient.zrange(
     `user:${userId}:tabs:usage`,
@@ -612,6 +637,8 @@ async function zsetIncrAll(key, val = 1) {
 
 async function chatroomMembersCache(connection, chatroomId) {
   try {
+    if (!chatroomId) return [];
+    
     const isCached = await redisClient.exists(`chatroom:${chatroomId}`);
     if (isCached) {
       const members = await redisClient.smembers(`chatroom:${chatroomId}`);
@@ -831,6 +858,7 @@ module.exports = {
   activeGroupCache,
   cacheActiveGroup,
   notificationCache,
+  userChatroomsCache,
   msgQueue,
   usersCache,
   userCache,
