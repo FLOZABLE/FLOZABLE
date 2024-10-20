@@ -73,6 +73,23 @@
   overflow-x: hidden;
 }
 
+.ChatModal .chatScreen .lastRead {
+  display: flex;
+  align-items: center;
+  margin: 0rem 1rem;
+}
+
+.ChatModal .lastRead p {
+  margin-right: 1rem;
+  color: var(--gray2);
+}
+
+.ChatModal .lastRead .line {
+  height: 0.1rem;
+  background-color: var(--gray2);
+  flex: 1;
+}
+
 .ChatModal .inputWrapper {
   display: flex;
   border-radius: 0.938rem;

@@ -158,11 +158,11 @@ function ChatModal({}) {
     setTimeout(() => {
       if (targetMessageId && messageRefs.current[targetMessageId]) {
         messageRefs.current[targetMessageId].scrollIntoView({
-          behavior: "smooth",
-          block: "start", // Scroll to the top of the message
+          behavior: "instant",
+          block: "start", // Scroll to the bottom of the last read message
         });
       }
-    }, 50);
+    }, 100);
   }, [targetMessageId]);
 
   return (
@@ -223,7 +223,7 @@ function ChatModal({}) {
           ref={chatsContainerRef}
         >
           {messages?.map((msg, index) => {
-            const { u, m, t } = msg;
+            const { u, m, t, i } = msg;
 
             const dateTime = DateTime.fromSeconds(t);
             let timeDisp;
@@ -234,12 +234,24 @@ function ChatModal({}) {
               timeDisp = dateTime.toFormat("M/d h:mm a");
             }
 
+            //since targeteMessageId is the last read message id, we have to compare last index's id
+            const isNewLine =
+              targetMessageId && messages[index - 1]?.i === targetMessageId;
+
+            //commented out my lastread line since my chat will never have new indicator since it's the sender
             if (u === userInfo.user_id) {
               return (
                 <div
-                  ref={(el) => (messageRefs.current[msg.i] = el)}
+                  ref={(el) => (messageRefs.current[i] = el)}
                   key={index}
+                  className={styles.chatWrapper}
                 >
+                  {/* {isNewLine ? (
+                    <div className={styles.lastRead}>
+                      <p>New</p>
+                      <div className={styles.line}></div>
+                    </div>
+                  ) : null} */}
                   <MyChatContainer time={timeDisp} m={m} />
                 </div>
               );
@@ -249,9 +261,16 @@ function ChatModal({}) {
               });
               return (
                 <div
-                  ref={(el) => (messageRefs.current[msg.i] = el)}
+                  ref={(el) => (messageRefs.current[i] = el)}
                   key={index}
+                  className={styles.chatWrapper}
                 >
+                  {isNewLine ? (
+                    <div className={styles.lastRead}>
+                      <p>New</p>
+                      <div className={styles.line}></div>
+                    </div>
+                  ) : null}
                   <ChatContainer userInfo={user} time={timeDisp} m={m} />
                 </div>
               );
