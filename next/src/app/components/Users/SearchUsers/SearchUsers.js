@@ -27,7 +27,7 @@ function SearchUsers({ searchQuery, onClick }) {
               userInfo={userInfo}
             >
               <div>
-                <ChatBtn userInfo={userInfo} padding={"0.3125rem 0.625rem"} />
+                <ChatBtn targetInfo={userInfo} padding={"0.3125rem 0.625rem"} />
               </div>
               <div>
                 <FriendRequestBtn
