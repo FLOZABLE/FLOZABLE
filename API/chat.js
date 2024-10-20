@@ -75,8 +75,6 @@ Router.get("/rooms", async (req, res) => {
         return b.lastMsg.t - a.lastMsg.t;        // Both have a lastMsg, compare normally
       });
 
-      console.log(chatrooms.map((chatroom) => chatroom.name));
-
       res.send({ success: true, chatrooms });
     } catch (err) {
       console.log(err);
