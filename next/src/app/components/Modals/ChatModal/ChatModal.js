@@ -29,9 +29,11 @@ function ChatModal({}) {
   const [messages, setMessages] = useState([]);
   const [members, setMembers] = useState([]);
   const [msgInput, setMsgInput] = useState("");
+  const [targetMessageId, setTargetMessageId] = useState("");
 
   const moveRef = useRef(null);
   const chatsContainerRef = useRef(null);
+  const messageRefs = useRef({});
 
   const { chatRoomsData } = useChatRooms(userInfo);
   const { chatroomMembersData } = useChatroomMembers(chatModal.chatroom);
@@ -89,17 +91,9 @@ function ChatModal({}) {
 
         if (chatModal.chatroom === message.r) {
           setMessages((prevMessages) => [...prevMessages, message]);
-
-          setTimeout(() => {
-            if (chatsContainerRef.current) {
-              chatsContainerRef.current.scrollTo({
-                top: chatsContainerRef.current.scrollHeight,
-                behavior: "smooth",
-              });
-            }
-          }, 10);
           socket.emit("chat/read", chatModal.chatroom);
-        } else {
+          updatedChatrooms[chatroomIndex].lastRead = message.i;
+        } else if (message.u !== userInfo?.user_id) {
           updatedChatrooms[0].unreads += 1;
         }
 
@@ -112,13 +106,50 @@ function ChatModal({}) {
     return () => {
       socket.off("chat/message", onChatMessage);
     };
-  }, [chatModal.chatroom]);
+  }, [chatModal.chatroom, userInfo]);
+
+  useEffect(() => {
+    if (!chatModal.chatroom) return;
+
+    const newChatrooms = [...chatrooms];
+    const chatroomIndex = newChatrooms.findIndex(
+      (chatroom) => chatroom.chatroom_id === chatModal.chatroom
+    );
+    if (chatroomIndex === -1) return;
+
+    console.log("lastread", newChatrooms[chatroomIndex].lastRead);
+
+    if (newChatrooms[chatroomIndex].lastRead) {
+      setTargetMessageId(newChatrooms[chatroomIndex].lastRead);
+      newChatrooms[chatroomIndex].lastRead = null;
+      setChatRooms(newChatrooms);
+    } /* else {
+      setTimeout(() => {
+        if (chatsContainerRef.current) {
+          chatsContainerRef.current.scrollTo({
+            top: chatsContainerRef.current.scrollHeight,
+            behavior: "smooth",
+          });
+        }
+      }, 10);
+    } */
+  }, [chatModal.chatroom, chatrooms]);
 
   useEffect(() => {
     if (!chatroomMembersData?.success) return;
 
     setMembers(chatroomMembersData.members);
   }, [chatroomMembersData]);
+
+  useEffect(() => {
+    // Scroll to the message with targetMessageId
+    if (targetMessageId && messageRefs.current[targetMessageId]) {
+      messageRefs.current[targetMessageId].scrollIntoView({
+        behavior: "smooth",
+        block: "start", // Scroll to the top of the message
+      });
+    }
+  }, [targetMessageId, messages]);
 
   return (
     <div
@@ -190,18 +221,24 @@ function ChatModal({}) {
             }
 
             if (u === userInfo.user_id) {
-              return <MyChatContainer time={timeDisp} m={m} key={index} />;
+              return (
+                <div ref={(el) => (messageRefs.current[msg.i] = el)}>
+                  <MyChatContainer time={timeDisp} m={m} key={index} />
+                </div>
+              );
             } else {
               const user = members.find((member) => {
                 return member.user_id === u;
               });
               return (
-                <ChatContainer
-                  userInfo={user}
-                  time={timeDisp}
-                  m={m}
-                  key={index}
-                />
+                <div ref={(el) => (messageRefs.current[msg.i] = el)}>
+                  <ChatContainer
+                    userInfo={user}
+                    time={timeDisp}
+                    m={m}
+                    key={index}
+                  />
+                </div>
               );
             }
           })}
