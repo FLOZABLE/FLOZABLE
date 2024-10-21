@@ -83,7 +83,7 @@ function ChatModal({}) {
       setChatRooms((prevChatrooms) => {
         let updatedChatrooms = [...prevChatrooms];
         const chatroomIndex = updatedChatrooms.findIndex(
-          (chatroom) => chatroom.chatroom_id === message.r
+          (chatroom) => chatroom.chatroom_id === message.chatroom_id
         );
 
         if (chatroomIndex !== -1) {
@@ -97,11 +97,11 @@ function ChatModal({}) {
           ];
         }
 
-        if (chatModal.chatroom === message.r) {
+        if (chatModal.chatroom === message.chatroom_id) {
           setMessages((prevMessages) => [...prevMessages, message]);
           socket.emit("chat/read", chatModal.chatroom);
-          updatedChatrooms[chatroomIndex].lastRead = message.i;
-        } else if (message.u !== userInfo?.user_id) {
+          updatedChatrooms[chatroomIndex].lastRead = message.message_id;
+        } else if (message.user_id !== userInfo?.user_id) {
           updatedChatrooms[0].unreads += 1;
         }
 
@@ -137,7 +137,7 @@ function ChatModal({}) {
 
     if (chatroom.lastRead) {
       setTargetMessageId(chatroom.lastRead);
-      newChatrooms[chatroomIndex].lastRead = chatroom.lastMsg?.i;
+      newChatrooms[chatroomIndex].lastRead = chatroom.lastMsg?.message_id;
       setChatRooms(newChatrooms);
     } else {
       setTargetMessageId(null);
@@ -229,9 +229,9 @@ function ChatModal({}) {
           ref={chatsContainerRef}
         >
           {messages?.map((msg, index) => {
-            const { u, m, t, i } = msg;
+            const { user_id, message, sent_at, message_id } = msg;
 
-            const dateTime = DateTime.fromSeconds(t);
+            const dateTime = DateTime.fromSeconds(sent_at);
             let timeDisp;
 
             if (DateTime.now().hasSame(dateTime, "day")) {
@@ -242,13 +242,14 @@ function ChatModal({}) {
 
             //since targeteMessageId is the last read message id, we have to compare last index's id
             const isNewLine =
-              targetMessageId && messages[index - 1]?.i === targetMessageId;
+              targetMessageId &&
+              messages[index - 1]?.message_id === targetMessageId;
 
             //commented out my lastread line since my chat will never have new indicator since it's the sender
-            if (u === userInfo.user_id) {
+            if (user_id === userInfo.user_id) {
               return (
                 <div
-                  ref={(el) => (messageRefs.current[i] = el)}
+                  ref={(el) => (messageRefs.current[message_id] = el)}
                   key={index}
                   className={styles.chatWrapper}
                 >
@@ -258,16 +259,16 @@ function ChatModal({}) {
                       <div className={styles.line}></div>
                     </div>
                   ) : null} */}
-                  <MyChatContainer time={timeDisp} m={m} />
+                  <MyChatContainer time={timeDisp} message={message} />
                 </div>
               );
             } else {
               const user = members.find((member) => {
-                return member.user_id === u;
+                return member.user_id === user_id;
               });
               return (
                 <div
-                  ref={(el) => (messageRefs.current[i] = el)}
+                  ref={(el) => (messageRefs.current[message_id] = el)}
                   key={index}
                   className={styles.chatWrapper}
                 >
@@ -277,7 +278,11 @@ function ChatModal({}) {
                       <div className={styles.line}></div>
                     </div>
                   ) : null}
-                  <ChatContainer userInfo={user} time={timeDisp} m={m} />
+                  <ChatContainer
+                    userInfo={user}
+                    time={timeDisp}
+                    message={message}
+                  />
                 </div>
               );
             }

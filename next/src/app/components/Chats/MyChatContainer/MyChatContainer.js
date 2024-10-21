@@ -1,12 +1,12 @@
 import styles from "./MyChatContainer.module.css";
 
-function MyChatContainer({time, m}) {
+function MyChatContainer({ time, message }) {
   return (
     <li className={styles.MyChatContainer}>
       <p className={styles.time}>{time}</p>
-      <p>{m}</p>
+      <p>{message}</p>
     </li>
   );
-};
+}
 
 export default MyChatContainer;

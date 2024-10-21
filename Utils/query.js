@@ -221,10 +221,11 @@ async function createChatroomMessagesTable() {
   const connection = pool.promise();
   await connection.query(`
   CREATE TABLE IF NOT EXISTS chatroom_messages (
-    message_id INT AUTO_INCREMENT NOT NULL,
-    chatroom_id VARCHAR(10),
+    message_id VARCHAR(8) NOT NULL,
+    chatroom_id VARCHAR(10) NOT NULL,
     user_id VARCHAR(10),
     message VARCHAR(100),
+    sent_at INT(10),
     PRIMARY KEY (message_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (chatroom_id) REFERENCES chatrooms (chatroom_id)

@@ -8,6 +8,7 @@ const {
   usersCache,
   chatroomMembersCache,
   userChatroomsCache,
+  chatroomMessagesCache,
 } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../Utils/validate");
 const { mainIo } = require("../sockets/io");
@@ -56,23 +57,23 @@ Router.get("/rooms", async (req, res) => {
           chatroom.members =
             chatroom.members === "" ? [] : chatroom.members.split(",");
 
-          [chatroom.lastMsg] = (
-            await redisClient.lrange(
-              `chatroom:${chatroom.chatroom_id}:messages`,
-              -1,
-              -1
-            )
-          ).map(JSON.parse);
+          const [lastMsg] = await chatroomMessagesCache(
+            connection,
+            chatroom.chatroom_id,
+            0,
+            1
+          );
+          chatroom.lastMsg = lastMsg;
           chatroom.lastRead = chatroomsMessages[chatroom.chatroom_id]?.lastMsg;
           chatroom.unreads = chatroomsMessages[chatroom.chatroom_id]?.unreads;
         })
       );
 
       chatrooms.sort((a, b) => {
-        if (!a.lastMsg && !b.lastMsg) return 0;  // Both are null
-        if (!a.lastMsg) return 1;                // a is null, should go to the end
-        if (!b.lastMsg) return -1;               // b is null, should go to the end
-        return b.lastMsg.t - a.lastMsg.t;        // Both have a lastMsg, compare normally
+        if (!a.lastMsg && !b.lastMsg) return 0; // Both are null
+        if (!a.lastMsg) return 1; // a is null, should go to the end
+        if (!b.lastMsg) return -1; // b is null, should go to the end
+        return b.lastMsg.t - a.lastMsg.t; // Both have a lastMsg, compare normally
       });
 
       res.send({ success: true, chatrooms });
@@ -85,7 +86,7 @@ Router.get("/rooms", async (req, res) => {
 Router.get("/messages", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { chatroom_id } = req.query;
+      const { chatroom_id, offset } = req.query;
 
       const members = await chatroomMembersCache(null, chatroom_id);
 
@@ -93,9 +94,13 @@ Router.get("/messages", async (req, res) => {
         return res.send({ success: false, reason: "Not member" });
       }
 
-      const messages = (
+      /* const messages = (
         await redisClient.lrange(`chatroom:${chatroom_id}:messages`, 0, -1)
-      ).map(JSON.parse);
+      ).map(JSON.parse); */
+
+      const messages = await chatroomMessagesCache(null, chatroom_id, 0);
+
+      console.log(messages);
 
       res.send({ success: true, messages });
     } catch (err) {
