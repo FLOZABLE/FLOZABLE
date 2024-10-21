@@ -1,6 +1,6 @@
 .TutorialBtn {
-  width: 4rem;
-  height: 4rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 2.5rem;
   background-color: #a4afd4bb;
   box-shadow: var(--shadow1);
@@ -20,10 +20,11 @@
 }
 
 .TutorialBtn i {
-  font-size: 2rem;
+  font-size: 1rem;
 }
 .TutorialBtn .hoverText {
-  bottom: -2rem;
+  bottom: -2.3rem;
+  margin-left: 7rem
 }
 
 .TutorialBtn:hover .hoverText {

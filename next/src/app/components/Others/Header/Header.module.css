@@ -1,23 +1,25 @@
 .Header {
-  height: 5rem;
-  width: calc(100vw - 23rem);
+  height: 4rem;
+  width: calc(100vw - 19rem);
   position: absolute;
   top: 1rem;
-  left: 23rem;
+  left: 19rem;
   display: flex;
   align-items: center;
   z-index: 4;
-  background-color: #ffffff;
+  background-color: #ffffff00;
 }
 
 .Header .left {
   display: flex;
   flex: 1;
-  max-width: 60%;
+  max-width: 45%;
 }
 
 .Header .divider {
   width: 0.1rem;
+  margin-top: 0.2rem;
+  height: 2.2rem;
   background-color: var(--gray0);
 }
 
@@ -29,7 +31,7 @@
 }
 
 .HeaderEl i {
-  font-size: 3rem;
+  font-size: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -37,47 +39,50 @@
 }
 
 .HeaderEl .title {
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   white-space: nowrap;
 }
 
 .HeaderEl .value {
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
 
 .Header .right {
-  margin: 0rem 5rem 0rem auto;
+  margin: 0rem 2rem 0rem auto;
   display: flex;
   align-items: center;
 }
 
 .Header .ChatBtn {
-  font-size: 2rem;
+  font-size: 1.5rem;
   cursor: pointer;
   margin-right: 1rem;
 }
 
 .Header .NotificationsBtn {
+  margin-top: 1.1rem;
   margin-right: 1rem;
 }
 
 .Header .userInfo {
   display: flex;
   align-items: center;
+  margin-left: 1rem;
 }
 
 .Header .userInfo .ProfileImage {
-  width: 4rem;
-  height: 4rem;
+  width: 3.1rem;
+  height: 3.1rem;
   margin-left: 1.5rem;
 }
 
 .Header .userInfo .name {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   height: 1.5rem;
 }
 
 .Header .userInfo .email {
   color: var(--gray2);
+  font-size: 0.8rem;
 }

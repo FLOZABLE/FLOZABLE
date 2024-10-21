@@ -100,7 +100,7 @@ function Sidebar({}) {
       </SidebarEl>
       <SidebarEl pathname={pathname} href={"/dashboard/stats"}>
         <i ref={toStatsRef}>
-          <IconStatsChart />
+          <IconStatsChart />  
         </i>
         <h3>Statistics</h3>
       </SidebarEl>
@@ -125,7 +125,7 @@ function Sidebar({}) {
       <SidebarEl pathname={pathname} href={"/dashboard/friends"}>
         <i>
           <IconFriend />
-        </i>
+        </i> 
         <h3>Friends</h3>
       </SidebarEl>
       <SidebarEl pathname={pathname} href={"/dashboard/themes"}>
@@ -141,7 +141,6 @@ function Sidebar({}) {
         <h3>Settings</h3>
       </SidebarEl>
       <div className={styles.buttons}>
-        <TutorialBtn />
         <AccountBtn />
       </div>
     </aside>

@@ -53,6 +53,22 @@ const HeaderBook = (props) => (
   </svg>
 );
 
+function NotifBell(props) {
+  return (
+    <Svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <Path
+        d="M10.025 4.75a.75.75 0 000 1.5v-1.5zm3.315 1.5a.75.75 0 000-1.5v1.5zM10.482 17.5a.75.75 0 00-1.5 0h1.5zm3.9 0a.75.75 0 00-1.5 0h1.5zm-2.7-10.174l.022-.75h-.043l.021.75zm4.87 4.432l.747-.064a.786.786 0 00-.005-.044l-.743.108zm.584 3l-.716.221a.75.75 0 00.11.22l.606-.441zm.227 1.912l.652.371a.785.785 0 00.042-.086l-.694-.285zm-1.384.827v.75h.01l-.01-.75zm-8.596 0l-.01.75h.01v-.75zM6 16.67l-.694.286c.013.029.026.057.042.085L6 16.67zm.223-1.909l.608.44a.749.749 0 00.109-.219l-.717-.221zm.585-3l-.742-.107a.773.773 0 00-.005.043l.747.064zm3.218-5.511h3.315v-1.5h-3.315v1.5zM8.982 17.5c0 1.5 1.191 2.75 2.7 2.75v-1.5c-.645 0-1.2-.542-1.2-1.25h-1.5zm2.7 2.75c1.51 0 2.7-1.25 2.7-2.75h-1.5c0 .708-.555 1.25-1.2 1.25v1.5zM11.66 8.076c2.078.06 3.838 1.645 4.15 3.79l1.484-.216c-.413-2.839-2.757-4.99-5.59-5.074l-.044 1.5zm4.144 3.746c.093 1.072.299 2.13.616 3.157l1.433-.442a13.615 13.615 0 01-.554-2.844l-1.495.13zm.726 3.377c.247.34.302.792.14 1.186l1.387.57a2.73 2.73 0 00-.314-2.638l-1.213.882zm.182 1.1a.87.87 0 01-.742.448l.018 1.5a2.37 2.37 0 002.027-1.206l-1.303-.742zm-.733.448H7.383v1.5h8.596v-1.5zm-8.586 0a.87.87 0 01-.742-.448l-1.304.742a2.37 2.37 0 002.027 1.206l.019-1.5zm-.7-.363a1.23 1.23 0 01.137-1.183l-1.215-.88a2.73 2.73 0 00-.31 2.635l1.387-.572zm.246-1.402c.317-1.026.523-2.085.615-3.156l-1.494-.13c-.083.966-.27 1.92-.554 2.844l1.433.442zm.61-3.114c.311-2.148 2.074-3.733 4.154-3.792l-.042-1.5c-2.837.08-5.185 2.235-5.596 5.078l1.484.214z"
+        fill="#000"
+      />
+    </Svg>
+  )
+}
+
 const HeaderMonitor = (props) => (
   <svg
     height="1em"
@@ -381,10 +397,10 @@ const HeaderFocus = (props) => (
 function IconBxHome(props) {
   return (
     <svg
+      width="1em"
+      height="1em"
       viewBox="0 0 24 24"
       fill="currentColor"
-      height="1em"
-      width="1em"
       {...props}
     >
       <path d="M3 13h1v7c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-7h1a1 1 0 00.707-1.707l-9-9a.999.999 0 00-1.414 0l-9 9A1 1 0 003 13zm7 7v-5h4v5h-4zm2-15.586l6 6V15l.001 5H16v-5c0-1.103-.897-2-2-2h-4c-1.103 0-2 .897-2 2v5H6v-9.586l6-6z" />
@@ -422,6 +438,8 @@ function IconClipboardOutline(props) {
 function IconGear(props) {
   return (
     <svg
+      width="1em"
+      height="1em"
       fill="currentColor"
       viewBox="0 0 32 32"
       xmlSpace="preserve"
@@ -436,8 +454,8 @@ function IconGalleryLine(props) {
   return (
     <svg
       viewBox="0 0 24 24"
-      height="1.2em"
-      width="1.2em"
+      height="1em"
+      width="1em"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
@@ -1475,6 +1493,8 @@ const Wave = (props) => (
 
 const IconFriend = (props) => (
   <svg
+    width="1em"
+    height="1em"
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -1712,4 +1732,5 @@ export {
   IconFriend,
   IconLogout,
   IconLogin,
+  NotifBell,
 };
