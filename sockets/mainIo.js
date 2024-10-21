@@ -301,7 +301,7 @@ mainIo.on("connection", (socket) => {
         await redisClient.lrange(`chatroom:${roomId}:messages`, -1, -1)
       ).map(JSON.parse);
 
-      //console.log("last", lastMsg?.message_id);
+      console.log("read", lastMsg?.message_id);
 
       if (lastMsg) {
         redisClient.hset(
