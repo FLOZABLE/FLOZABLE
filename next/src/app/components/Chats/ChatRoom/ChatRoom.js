@@ -10,8 +10,8 @@ function ChatRoom({ chatroom }) {
   const [timeDisp, setTimeDisp] = useState("");
 
   useEffect(() => {
-    if (!chatroom.lastMsg?.t) return;
-    const dateTime = DateTime.fromSeconds(chatroom.lastMsg.t);
+    if (!chatroom.lastMsg?.sent_at) return;
+    const dateTime = DateTime.fromSeconds(chatroom.lastMsg.sent_at);
     if (DateTime.now().hasSame(dateTime, "day")) {
       const timeDisp = dateTime.toLocaleString(DateTime.TIME_SIMPLE);
       setTimeDisp(timeDisp);
@@ -42,7 +42,7 @@ function ChatRoom({ chatroom }) {
           <div className={styles.time}>{timeDisp}</div>
         </div>
         <div className={styles.msgInfo}>
-          <div className={styles.msg}>{chatroom.lastMsg?.m}</div>
+          <div className={styles.msg}>{chatroom.lastMsg?.message}</div>
           {chatroom.unreads ? (
             <div className={styles.unreads}>
               {chatroom.unreads} new messages
