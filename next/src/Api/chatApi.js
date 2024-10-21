@@ -1,4 +1,5 @@
 import config from "@/app/utils/config";
+import queryString from "query-string";
 
 async function getChatRooms() {
   const response = await fetch(`${config.server}/chat/rooms`, {
@@ -13,9 +14,14 @@ async function getChatRooms() {
   return data;
 }
 
-async function getChatMessages(chatroomId) {
+async function getChatMessages({ chatroomId, offset, length, lastMsgId }) {
   const response = await fetch(
-    `${config.server}/chat/messages?chatroom_id=${chatroomId}`,
+    `${config.server}/chat/messages?${queryString.stringify({
+      chatroom_id: chatroomId,
+      offset,
+      length,
+      lastMsgId,
+    })}`,
     {
       method: "GET",
       headers: {
