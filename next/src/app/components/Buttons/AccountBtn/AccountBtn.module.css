@@ -1,7 +1,7 @@
 .AccountBtn {
-  background-color: var(--gray2);
-  width: 100%;
-  color: #fff;
+  background-color: var(--gray0);
+  width: 90%;
+  color: #333333;
   display: flex;
   align-items: center;
   border-radius: 0.5rem;
@@ -9,13 +9,17 @@
   cursor: pointer;
 }
 
+.AccountBtn:hover{
+  box-shadow: var(--shadow3);
+}
+
 .AccountBtn i {
-  font-size: 3rem;
+  font-size: 2rem;
   display: flex;
   align-items: center;
   margin: 0rem 1rem;
 }
 
 .AccountBtn p {
-  font-size: 1.25rem;
+  font-size: 1rem;
 }

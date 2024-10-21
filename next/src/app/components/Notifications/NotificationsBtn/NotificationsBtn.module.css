@@ -5,16 +5,17 @@
 }
 
 .NotificationsBtn .bell i {
-  font-size: 2rem;
+  font-size: 1.6rem;
 }
 
 .NotificationsBtn .count {
   position: absolute;
-  bottom: 0rem;
-  right: -0.5rem;
+  bottom: 1rem;
+  right: 0.1rem;
+  font-size: 0.8rem;
   background-color: rgb(255, 221, 0);
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.2rem;
+  height: 1.2rem;
   border-radius: 1rem;
   display: flex;
   justify-content: center;

@@ -27,7 +27,7 @@
     rgba(0, 0, 0, 0.17) 0rem 0.75rem 0.8125rem,
     rgba(0, 0, 0, 0.09) 0rem -0.1875rem 0.3125rem;
   --font-color1: #fff;
-  --sidebar-offset: 22rem;
+  --sidebar-offset: 18rem;
   --subjectLabelsColor: var(--gray2);
   --filteredSubjectLabelsColor: var(--gray0);
   --planDescriptionColor: var(--gray2);
