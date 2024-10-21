@@ -24,6 +24,7 @@ import {
   useChatRooms,
 } from "@/Hooks/chatHooks";
 import { getChatMessages } from "@/Api/chatApi";
+import { useInView } from "react-intersection-observer";
 
 function ChatModal({}) {
   const { userInfo } = useContext(UserInfoContext);
@@ -36,9 +37,10 @@ function ChatModal({}) {
   const [targetMessageId, setTargetMessageId] = useState(null);
   const [chatDataOptions, setChatDataOptions] = useState({
     offset: 0,
-    length: 10,
+    length: 30,
     lastMsgId: null,
-  });//this part has to be updated
+    chatroomId: null,
+  }); //this part has to be updated
 
   const moveRef = useRef(null);
   const chatsContainerRef = useRef(null);
@@ -47,10 +49,9 @@ function ChatModal({}) {
   const { chatRoomsData } = useChatRooms();
   const { chatroomMembersData } = useChatRoomMembers(chatModal.chatroom);
 
-  const { chatMessagesData } = useChatMessages({
-    chatroomId: chatModal.chatroom,
-    ...chatDataOptions,
-  });
+  const { chatMessagesData } = useChatMessages(chatDataOptions);
+
+  const { ref: inviewRef, inView } = useInView();
 
   //console.log("chatmessage", messages, chatrooms);
 
@@ -60,6 +61,18 @@ function ChatModal({}) {
     setMessages(chatMessagesData.messages);
     console.log("1");
   }, [chatMessagesData]);
+
+  useEffect(() => {
+    console.log("inview", inView, messages.length);
+
+    const lastMsgId = messages[messages.length - 1]?.message_id;
+
+    /* setChatDataOptions((prev) => ({
+      ...prev,
+      offset: messages.length,
+      lastMsgId,
+    })); */
+  }, [inView]);
 
   useEffect(() => {
     if (!chatRoomsData?.success) return;
@@ -151,7 +164,12 @@ function ChatModal({}) {
     const chatroom = newChatrooms[chatroomIndex];
 
     console.log("lastread", chatroom.lastRead, chatrooms);
-
+    setChatDataOptions({
+      chatroomId: chatModal.chatroom,
+      lastMsgId: chatroom.lastMsg?.message_id,
+      offset: 0,
+      length: 30,
+    });
     if (chatroom.lastRead) {
       setTargetMessageId(chatroom.lastRead);
       newChatrooms[chatroomIndex].lastRead = chatroom.lastMsg?.message_id;
@@ -166,7 +184,7 @@ function ChatModal({}) {
             behavior: "smooth",
           });
         }
-      }, 50);
+      }, 100);
     }
   }, [chatModal.chatroom]);
 
@@ -272,7 +290,12 @@ function ChatModal({}) {
             if (user_id === userInfo.user_id) {
               return (
                 <div
-                  ref={(el) => (messageRefs.current[message_id] = el)}
+                  ref={(el) => {
+                    messageRefs.current[message_id] = el;
+                    if (Math.floor(message.length / 3) === index) {
+                      inviewRef(el);
+                    }
+                  }}
                   key={index}
                   className={styles.chatWrapper}
                 >
@@ -291,7 +314,12 @@ function ChatModal({}) {
               });
               return (
                 <div
-                  ref={(el) => (messageRefs.current[message_id] = el)}
+                  ref={(el) => {
+                    messageRefs.current[message_id] = el;
+                    if (Math.floor(message.length / 3) === index) {
+                      inviewRef(el);
+                    }
+                  }}
                   key={index}
                   className={styles.chatWrapper}
                 >

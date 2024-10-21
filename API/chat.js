@@ -103,7 +103,7 @@ Router.get("/messages", async (req, res) => {
         parseInt(length)
       );
 
-      console.log("messages", offset, length, lastMsgId);
+      console.log("messages", offset, length, lastMsgId, messages.length);
 
       res.send({ success: true, messages, chatroom_id });
     } catch (err) {
