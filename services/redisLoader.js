@@ -735,9 +735,9 @@ async function chatroomMessagesCache(connection, roomId, offset, length = 10) {
       )
     ).map(JSON.parse);
 
-    const queryLength = messages.length - length;
+    const queryLength = length - messages.length;
 
-    if (!queryLength) return messages;
+    if (queryLength <= 0) return messages;
 
     if (!connection) {
       connection = pool.promise();
@@ -749,17 +749,19 @@ async function chatroomMessagesCache(connection, roomId, offset, length = 10) {
        WHERE chatroom_id = ? 
        ORDER BY sent_at 
        LIMIT ? OFFSET ?`,
-      [roomId, length, offset]
+      [roomId, queryLength, offset]
     );
 
     if (oldMessages.length && oldMessages.length !== messages.length) {
-      await redisClient.del(`chatroom:${roomId}:messages`);
+      //await redisClient.del(`chatroom:${roomId}:messages`);
       messages.push(...oldMessages);
-      redisClient.rpush(
+      /* redisClient.rpush(
         `chatroom:${roomId}:messages`,
-        messages.map(JSON.stringify)
-      );
+        oldMessages.map(JSON.stringify)
+      ); */
     }
+
+    messages.sort((a, b) => a.sent_at - b.sent_at);
 
     redisClient.expire(
       `chatroom:${roomId}:messages`,
