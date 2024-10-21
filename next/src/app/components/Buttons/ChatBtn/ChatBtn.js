@@ -9,7 +9,7 @@ import {
 import BlobBtn from "../BlobBtn/BlobBtn";
 import { postChatRequest } from "@/Api/chatApi";
 import styles from "./ChatBtn.module.css";
-import { useChatRooms } from "@/Hooks/chatroomsHooks";
+import { useChatRooms } from "@/Hooks/chatHooks";
 
 export default function ChatBtn({ targetInfo, padding }) {
   const { chatRoomsData } = useChatRooms();
