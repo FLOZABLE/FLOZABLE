@@ -73,7 +73,7 @@ Router.get("/rooms", async (req, res) => {
         if (!a.lastMsg && !b.lastMsg) return 0; // Both are null
         if (!a.lastMsg) return 1; // a is null, should go to the end
         if (!b.lastMsg) return -1; // b is null, should go to the end
-        return b.lastMsg.t - a.lastMsg.t; // Both have a lastMsg, compare normally
+        return b.lastMsg.sent_at - a.lastMsg.sent_at; // Both have a lastMsg, compare normally
       });
 
       res.send({ success: true, chatrooms });
@@ -86,7 +86,9 @@ Router.get("/rooms", async (req, res) => {
 Router.get("/messages", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { chatroom_id, offset } = req.query;
+      const { chatroom_id, offset, length, lastMsgId } = req.query;
+
+      console.log(req.query);
 
       const members = await chatroomMembersCache(null, chatroom_id);
 
@@ -94,15 +96,16 @@ Router.get("/messages", async (req, res) => {
         return res.send({ success: false, reason: "Not member" });
       }
 
-      /* const messages = (
-        await redisClient.lrange(`chatroom:${chatroom_id}:messages`, 0, -1)
-      ).map(JSON.parse); */
+      const messages = await chatroomMessagesCache(
+        null,
+        chatroom_id,
+        parseInt(offset),
+        parseInt(length)
+      );
 
-      const messages = await chatroomMessagesCache(null, chatroom_id, 0);
+      console.log("messages", offset, length, lastMsgId);
 
-      console.log(messages);
-
-      res.send({ success: true, messages });
+      res.send({ success: true, messages, chatroom_id });
     } catch (err) {
       console.log(err);
     }
