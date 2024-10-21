@@ -148,28 +148,6 @@ async function subjectsTimelineCache(connection, userId) {
   }
 }
 
-//only last 100 msg will be stored inside the redis queue for each groups
-const MAX_QUEUE_LENGTH = 100;
-async function msgQueue(connection, roomId, msgInfo) {
-  try {
-    redisClient.rpush(`chatroom:${roomId}:messages`, JSON.stringify(msgInfo));
-    const queueLength = await redisClient.llen(`chatroom:${roomId}:messages`);
-
-    if (queueLength < MAX_QUEUE_LENGTH) return;
-
-    const firstMsg = await redisClient.lpop(`room:${roomId}:messages`);
-    if (!firstMsg) return;
-    connection.query(
-      `
-      INSERT INTO chatroom_messages SET ?
-      `,
-      JSON.parse(firstMsg)
-    );
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 /**
  * rest: id = 0
  * offline: null/undefined
@@ -744,6 +722,57 @@ async function cacheChatroomMembers(
   }
 }
 
+async function chatroomMessagesCache(connection, roomId, offset, length = 10) {
+  try {
+    if (!roomId) return;
+
+    //get last LENGTH message from redis
+    const messages = (
+      await redisClient.lrange(
+        `chatroom:${roomId}:messages`,
+        (offset + length) * -1,
+        -1
+      )
+    ).map(JSON.parse);
+
+    const queryLength = messages.length - length;
+
+    if (!queryLength) return messages;
+
+    if (!connection) {
+      connection = pool.promise();
+    }
+
+    const [oldMessages] = await connection.query(
+      `SELECT message_id, user_id, message, sent_at 
+       FROM chatroom_messages 
+       WHERE chatroom_id = ? 
+       ORDER BY sent_at 
+       LIMIT ? OFFSET ?`,
+      [roomId, length, offset]
+    );
+
+    if (oldMessages.length && oldMessages.length !== messages.length) {
+      await redisClient.del(`chatroom:${roomId}:messages`);
+      messages.push(...oldMessages);
+      redisClient.rpush(
+        `chatroom:${roomId}:messages`,
+        messages.map(JSON.stringify)
+      );
+    }
+
+    redisClient.expire(
+      `chatroom:${roomId}:messages`,
+      REDIS_EXP.CHATROOM_MESSAGES
+    );
+
+    return messages;
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
+}
+
 async function spotifyAccessTokenCache(connection, userId) {
   try {
     let accessToken = await redisClient.get(
@@ -864,7 +893,6 @@ module.exports = {
   cacheActiveGroup,
   notificationCache,
   userChatroomsCache,
-  msgQueue,
   usersCache,
   userCache,
   userFriendsCache,
@@ -883,6 +911,7 @@ module.exports = {
   cacheUserInfo,
   chatroomMembersCache,
   cacheChatroomMembers,
+  chatroomMessagesCache,
   spotifyAccessTokenCache,
   vapidKeysCache,
   cacheExtensionToken,

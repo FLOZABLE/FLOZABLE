@@ -2,7 +2,7 @@ import Link from "next/link";
 import styles from "./ChatContainer.module.css";
 import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 
-function ChatContainer({ userInfo, time, m }) {
+function ChatContainer({ userInfo, time, message }) {
   return (
     <li className={styles.ChatContainer}>
       <Link href={`/dashboard/user/${userInfo?.user_id}`}>
@@ -10,7 +10,7 @@ function ChatContainer({ userInfo, time, m }) {
           <ProfileImage userId={userInfo?.user_id} />
         </div>
       </Link>
-      <p>{m}</p>
+      <p>{message}</p>
       <div className={styles.info}>
         <Link
           href={`/dashboard/user/${userInfo?.user_id}`}

@@ -2,7 +2,6 @@ const { DateTime } = require("luxon");
 const redisClient = require("../model/redis");
 const {
   userCache,
-  msgQueue,
   subjectCache,
   activeSubjectCache,
   cacheActiveSubject,
@@ -221,21 +220,32 @@ mainIo.on("connection", (socket) => {
 
   socket.on("chat/send", async (roomId, message) => {
     try {
+      if (!roomId || !message) return;
+
       const connection = pool.promise();
       const members = await chatroomMembersCache(connection, roomId);
-      console.log("members", members);
+
       if (!members.includes(userId) || !message.length) return;
 
-      const t = Math.floor(new Date().getTime() / 1000);
-      const i = generateRandomId(8);
+      const sent_at = Math.floor(new Date().getTime() / 1000);
+      const message_id = generateRandomId(8);
       const newMsg = {
-        m: message,
-        u: userId,
-        t,
-        i,
+        message,
+        user_id: userId,
+        sent_at,
+        message_id,
       };
-      msgQueue(connection, roomId, newMsg);
-      newMsg.r = roomId;
+
+      redisClient.rpush(`chatroom:${roomId}:messages`, JSON.stringify(newMsg));
+
+      newMsg.chatroom_id = roomId;
+      connection.query(
+        `
+        INSERT INTO chatroom_messages SET ?
+        `,
+        newMsg
+      );
+
       mainIo.to(`chatroom:${roomId}`).emit("chat/message", newMsg);
 
       /*
@@ -249,7 +259,7 @@ mainIo.on("connection", (socket) => {
           redisClient.hset(
             `user:${member}:chatrooms`,
             `room:${roomId}:last_read_msg`,
-            i
+            message_id
           );
           redisClient.hincrby(
             `user:${member}:chatrooms`,
@@ -268,7 +278,7 @@ mainIo.on("connection", (socket) => {
       redisClient.hset(
         `user:${userId}:chatrooms`,
         `room:${roomId}:last_read_msg`,
-        i
+        message_id
       );
       redisClient.hset(`user:${userId}:chatrooms`, `room:${roomId}:unreads`, 0);
       redisClient.expire(`user:${userId}:chatrooms`, REDIS_EXP.USER_CHAT_READS);
@@ -295,7 +305,7 @@ mainIo.on("connection", (socket) => {
         redisClient.hset(
           `user:${userId}:chatrooms`,
           `room:${roomId}:last_read_msg`,
-          lastMsg.i
+          lastMsg.message_id
         );
       }
 
