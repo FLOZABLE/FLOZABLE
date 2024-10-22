@@ -13,7 +13,6 @@ import React, {
 import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
 import { BackArrow } from "@/app/utils/Svg";
 import SendBtn from "@/app/components/Buttons/SendBtn/SendBtn";
-import { socket } from "@/app/utils/socket";
 import ChatRoom from "@/app/components/Chats/ChatRoom/ChatRoom";
 import { DateTime } from "luxon";
 import ChatContainer from "@/app/components/Chats/ChatContainer/ChatContainer";
@@ -23,8 +22,7 @@ import {
   useChatRoomMembers,
   useChatRooms,
 } from "@/Hooks/chatHooks";
-import { getChatMessages } from "@/Api/chatApi";
-import { useInView } from "react-intersection-observer";
+import { socket } from "@/app/utils/socket";
 
 function ChatModal({}) {
   const { userInfo } = useContext(UserInfoContext);
@@ -34,14 +32,6 @@ function ChatModal({}) {
   const [messages, setMessages] = useState([]);
   const [members, setMembers] = useState([]);
   const [msgInput, setMsgInput] = useState("");
-  const [targetMessageId, setTargetMessageId] = useState(null);
-  const [chatDataOptions, setChatDataOptions] = useState({
-    offset: 0,
-    length: 30,
-    lastMsgId: null,
-    chatroomId: null,
-  }); //this part has to be updated
-
   const moveRef = useRef(null);
   const chatsContainerRef = useRef(null);
   const messageRefs = useRef({});
@@ -49,144 +39,10 @@ function ChatModal({}) {
   const { chatRoomsData } = useChatRooms();
   const { chatroomMembersData } = useChatRoomMembers(chatModal.chatroom);
 
-  const { chatMessagesData } = useChatMessages(chatDataOptions);
-
-  const { ref: inviewRef, inView } = useInView();
-
-  //console.log("chatmessage", messages, chatrooms);
-
-  useEffect(() => {
-    if (!chatMessagesData?.success) return;
-
-    setMessages(chatMessagesData.messages);
-    console.log("1");
-  }, [chatMessagesData]);
-
-  useEffect(() => {
-    console.log("inview", inView, messages.length);
-
-    const lastMsgId = messages[messages.length - 1]?.message_id;
-
-    /* setChatDataOptions((prev) => ({
-      ...prev,
-      offset: messages.length,
-      lastMsgId,
-    })); */
-  }, [inView]);
-
-  useEffect(() => {
-    if (!chatRoomsData?.success) return;
-
-    setChatRooms(chatRoomsData.chatrooms);
-  }, [chatRoomsData]);
-
   const onSubmit = useCallback(() => {
     socket.emit("chat/send", chatModal.chatroom, msgInput);
     setMsgInput("");
   }, [msgInput, chatModal.chatroom]);
-
-  useEffect(() => {
-    if (chatModal.chatroom) {
-      socket.emit("chat/read", chatModal.chatroom);
-      setChatRooms((prevChatrooms) => {
-        const newChatrooms = [...prevChatrooms];
-        const chatroomIndex = newChatrooms.findIndex(
-          (chatroom) => chatroom.chatroom_id === chatModal.chatroom
-        );
-        if (chatroomIndex !== -1) {
-          newChatrooms[chatroomIndex].unreads = 0;
-        }
-        return newChatrooms;
-      });
-    }
-    console.log("2");
-
-    const onChatMessage = (message) => {
-      setTimeout(() => {
-        if (chatsContainerRef.current) {
-          chatsContainerRef.current.scrollTo({
-            top: chatsContainerRef.current.scrollHeight,
-            behavior: "smooth",
-          });
-        }
-      }, 10);
-      setChatRooms((prevChatrooms) => {
-        let updatedChatrooms = [...prevChatrooms];
-        const chatroomIndex = updatedChatrooms.findIndex(
-          (chatroom) => chatroom.chatroom_id === message.chatroom_id
-        );
-
-        if (chatroomIndex !== -1) {
-          const updatedChatroom = {
-            ...updatedChatrooms[chatroomIndex],
-            lastMsg: message,
-          };
-          updatedChatrooms = [
-            updatedChatroom,
-            ...updatedChatrooms.filter((_, idx) => idx !== chatroomIndex),
-          ];
-        }
-
-        if (chatModal.chatroom === message.chatroom_id) {
-          setMessages((prevMessages) => [...prevMessages, message]);
-          socket.emit("chat/read", chatModal.chatroom);
-          updatedChatrooms[chatroomIndex].lastRead = message.message_id;
-        } else if (message.user_id !== userInfo?.user_id) {
-          updatedChatrooms[0].unreads += 1;
-        }
-
-        return updatedChatrooms;
-      });
-    };
-
-    socket.on("chat/message", onChatMessage);
-
-    return () => {
-      socket.off("chat/message", onChatMessage);
-    };
-  }, [chatModal.chatroom, userInfo]);
-
-  useEffect(() => {
-    if (!chatModal.chatroom) {
-      chatsContainerRef.current?.scrollTo({
-        top: chatsContainerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-      return setTargetMessageId(null);
-    }
-
-    const newChatrooms = [...chatrooms];
-    const chatroomIndex = newChatrooms.findIndex(
-      (chatroom) => chatroom.chatroom_id === chatModal.chatroom
-    );
-    if (chatroomIndex === -1) return;
-
-    const chatroom = newChatrooms[chatroomIndex];
-
-    console.log("lastread", chatroom.lastRead, chatrooms);
-    setChatDataOptions({
-      chatroomId: chatModal.chatroom,
-      lastMsgId: chatroom.lastMsg?.message_id,
-      offset: 0,
-      length: 30,
-    });
-    if (chatroom.lastRead) {
-      setTargetMessageId(chatroom.lastRead);
-      newChatrooms[chatroomIndex].lastRead = chatroom.lastMsg?.message_id;
-      setChatRooms(newChatrooms);
-    } else {
-      setTargetMessageId(null);
-      console.log("bottom");
-      setTimeout(() => {
-        if (chatsContainerRef.current) {
-          chatsContainerRef.current.scrollTo({
-            top: chatsContainerRef.current.scrollHeight,
-            behavior: "smooth",
-          });
-        }
-      }, 100);
-    }
-  }, [chatModal.chatroom]);
 
   useEffect(() => {
     if (!chatroomMembersData?.success) return;
@@ -195,22 +51,26 @@ function ChatModal({}) {
   }, [chatroomMembersData]);
 
   useEffect(() => {
-    // Scroll to the message with targetMessageId
-    setTimeout(() => {
-      console.log(
-        "try scrooll",
-        targetMessageId,
-        messageRefs.current[targetMessageId]
-      );
-      if (targetMessageId && messageRefs.current[targetMessageId]) {
-        console.log("scrooll");
-        messageRefs.current[targetMessageId].scrollIntoView({
-          behavior: "smooth",
-          block: "start", // Scroll to the bottom of the last read message
-        });
-      }
-    }, 200);
-  }, [targetMessageId]);
+    if (!chatRoomsData?.success) return;
+
+    setChatRooms(chatRoomsData.chatrooms);
+  }, [chatRoomsData]);
+
+  useEffect(() => {
+    const onChatMessage = (message) => {
+      console.log(message)
+    };
+
+    socket.on("chat/message", onChatMessage);
+
+    return () => {
+      socket.off("chat/message", onChatMessage);
+    };
+  }, [userInfo]);
+
+  useEffect(() => {
+
+  }, [])
 
   return (
     <div
@@ -281,20 +141,12 @@ function ChatModal({}) {
               timeDisp = dateTime.toFormat("M/d h:mm a");
             }
 
-            //since targeteMessageId is the last read message id, we have to compare last index's id
-            const isNewLine =
-              targetMessageId &&
-              messages[index - 1]?.message_id === targetMessageId;
-
             //commented out my lastread line since my chat will never have new indicator since it's the sender
             if (user_id === userInfo.user_id) {
               return (
                 <div
                   ref={(el) => {
                     messageRefs.current[message_id] = el;
-                    if (Math.floor(message.length / 3) === index) {
-                      inviewRef(el);
-                    }
                   }}
                   key={index}
                   className={styles.chatWrapper}
@@ -316,19 +168,16 @@ function ChatModal({}) {
                 <div
                   ref={(el) => {
                     messageRefs.current[message_id] = el;
-                    if (Math.floor(message.length / 3) === index) {
-                      inviewRef(el);
-                    }
                   }}
                   key={index}
                   className={styles.chatWrapper}
                 >
-                  {isNewLine ? (
+                  {/* {isNewLine ? (
                     <div className={styles.lastRead}>
                       <p>New</p>
                       <div className={styles.line}></div>
                     </div>
-                  ) : null}
+                  ) : null} */}
                   <ChatContainer
                     userInfo={user}
                     time={timeDisp}
