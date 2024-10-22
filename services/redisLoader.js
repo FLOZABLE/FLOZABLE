@@ -722,11 +722,10 @@ async function cacheChatroomMembers(
   }
 }
 
-async function chatroomMessagesCache(connection, roomId, offset, length = 10) {
+async function chatroomMessagesCache(connection, roomId, offset, length) {
   try {
     if (!roomId) return;
 
-    //get last LENGTH message from redis
     const messages = (
       await redisClient.lrange(
         `chatroom:${roomId}:messages`,
@@ -735,40 +734,42 @@ async function chatroomMessagesCache(connection, roomId, offset, length = 10) {
       )
     ).map(JSON.parse);
 
-    const queryLength = length - messages.length;
+    const selectedMessages = messages.slice(offset, offset + length);
 
-    if (queryLength <= 0) return messages;
+    console.log("gd", messages);
 
-    if (!connection) {
-      connection = pool.promise();
-    }
+    const queryLength = length - selectedMessages.length;
+
+    if (queryLength <= 0) return selectedMessages;
 
     const [oldMessages] = await connection.query(
       `SELECT message_id, user_id, message, sent_at 
        FROM chatroom_messages 
        WHERE chatroom_id = ? 
-       ORDER BY sent_at 
+       ORDER BY sent_at DESC
        LIMIT ? OFFSET ?`,
-      [roomId, queryLength, offset]
+      [roomId, queryLength, offset + selectedMessages.length]
     );
 
-    if (oldMessages.length && oldMessages.length !== messages.length) {
-      //await redisClient.del(`chatroom:${roomId}:messages`);
-      messages.push(...oldMessages);
-      /* redisClient.rpush(
+    //add more to cache
+    if (oldMessages.length) {
+      redisClient.lpush(
         `chatroom:${roomId}:messages`,
-        oldMessages.map(JSON.stringify)
-      ); */
+        ...oldMessages.map(JSON.stringify)
+      );
+      redisClient.expire(
+        `chatroom:${roomId}:messages`,
+        REDIS_EXP.CHATROOM_MESSAGES
+      );
     }
 
-    messages.sort((a, b) => a.sent_at - b.sent_at);
+    //console.log("old", oldMessages, roomId, offset, queryLength);
 
-    redisClient.expire(
-      `chatroom:${roomId}:messages`,
-      REDIS_EXP.CHATROOM_MESSAGES
-    );
+    selectedMessages.push(...oldMessages);
 
-    return messages;
+    selectedMessages.sort((a, b) => a.sent_at - b.sent_at);
+
+    return selectedMessages;
   } catch (err) {
     console.log(err);
     return [];
