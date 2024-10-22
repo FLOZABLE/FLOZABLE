@@ -736,11 +736,13 @@ async function chatroomMessagesCache(connection, roomId, offset, length) {
 
     const selectedMessages = messages.slice(offset, offset + length);
 
-    console.log("gd", messages);
-
     const queryLength = length - selectedMessages.length;
 
     if (queryLength <= 0) return selectedMessages;
+
+    if (!connection) {
+      connection = pool.promise();
+    }
 
     const [oldMessages] = await connection.query(
       `SELECT message_id, user_id, message, sent_at 
