@@ -23,6 +23,7 @@ import {
   useChatRooms,
 } from "@/Hooks/chatHooks";
 import { socket } from "@/app/utils/socket";
+import { useInView } from "react-intersection-observer";
 
 function ChatModal({}) {
   const { userInfo } = useContext(UserInfoContext);
@@ -46,7 +47,9 @@ function ChatModal({}) {
 
   const { chatRoomsData } = useChatRooms();
   const { chatroomMembersData } = useChatRoomMembers(chatModal.chatroom);
-  const { chatMessagesData } = useChatMessages(messageDataOptions);
+  const { chatMessagesData, fetchNextPage, hasNextPage } = useChatMessages(messageDataOptions);
+
+  const { ref: inViewRef, inView } = useInView();
 
   const onSubmit = useCallback(() => {
     socket.emit("chat/send", chatModal.chatroom, msgInput);
@@ -66,6 +69,12 @@ function ChatModal({}) {
   }, [chatRoomsData]);
 
   useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, fetchNextPage, hasNextPage]);
+
+  useEffect(() => {
     if (!chatMessagesData?.success) return;
 
     if (messages.chatroomId === chatMessagesData.chatroom_id) {
@@ -82,19 +91,7 @@ function ChatModal({}) {
   }, [chatMessagesData]);
 
   useEffect(() => {
-    /*  setMessageDataOptions((prev) => {
-      const newMessageDataOptions = structuredClone(prev);
-      if (prev.chatroomId === chatModal.chatroom) {
-        newMessageDataOptions.offset += newMessageDataOptions.length;
-        return newMessageDataOptions;
-      }
-      newMessageDataOptions.chatroomId = chatModal.chatroom;
-      newMessageDataOptions.offset = 0;
-      return newMessageDataOptions;
-    }); */
-
     if (chatModal.chatroom) {
-      socket.emit("chat/read", chatModal.chatroom);
       setMessageDataOptions((prev) => {
         const newMessageDataOptions = structuredClone(prev);
         if (prev.chatroomId === chatModal.chatroom) {
@@ -116,15 +113,20 @@ function ChatModal({}) {
 
         newState[chatroomIndex].unreads = 0;
 
+        const lastRead = newState[chatroomIndex].lastRead;
+        if (lastRead) {
+          setLastReadMessageId(lastRead);
+        }
+
         const lastMsg = newState[chatroomIndex].lastMsg;
 
         if (lastMsg) {
           newState[chatroomIndex].lastRead = lastMsg.message_id;
-          setLastReadMessageId(lastMsg.message_id);
         }
 
         return newState;
       });
+      socket.emit("chat/read", chatModal.chatroom);
     }
 
     const onChatMessage = (message) => {
@@ -165,7 +167,7 @@ function ChatModal({}) {
     if (!lastReadMessageId) return;
 
     setTimeout(() => {
-      lastReadMessageRef.current.scrollIntoView({
+      lastReadMessageRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "start", // Scroll to the bottom of the last read message
       });
@@ -245,7 +247,7 @@ function ChatModal({}) {
               lastReadMessageId &&
               messages.messages[index - 1]?.message_id === lastReadMessageId;
 
-            console.log(isNewLine, 'newline', lastReadMessageId)
+            console.log(isNewLine, "newline", lastReadMessageId);
 
             //commented out my lastread line since my chat will never have new indicator since it's the sender
             if (user_id === userInfo.user_id) {
@@ -254,6 +256,9 @@ function ChatModal({}) {
                   ref={(el) => {
                     //messageRefs.current[message_id] = el;
                     lastReadMessageRef.current = el;
+                    if (Math.floor(messages.messages.length / 2) === index) {
+                      inViewRef(el);
+                    }
                   }}
                   key={index}
                   className={styles.chatWrapper}
@@ -276,6 +281,9 @@ function ChatModal({}) {
                   ref={(el) => {
                     //messageRefs.current[message_id] = el;
                     lastReadMessageRef.current = el;
+                    if (Math.floor(messages.messages.length / 2) === index) {
+                      inViewRef(el);
+                    }
                   }}
                   key={index}
                   className={styles.chatWrapper}
