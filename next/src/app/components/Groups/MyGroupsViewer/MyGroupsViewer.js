@@ -22,6 +22,7 @@ import { useDebounce } from "use-debounce";
 import { socket } from "@/app/utils/socket";
 import { mediaSocket } from "@/app/utils/mediaSocket";
 import { ACTIVE_GROUP_DEBOUNCE } from "@/app/utils/Constant";
+import { useRouter, useSearchParams } from "next/navigation";
 
 function MyGroupsViewer({}) {
   const { myGroups, setMyGroups } = useContext(GroupsContext);
@@ -33,6 +34,10 @@ function MyGroupsViewer({}) {
   const [debouncedIndex] = useDebounce(activeIndex, ACTIVE_GROUP_DEBOUNCE);
 
   const SwiperRef = useRef(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const groupId = searchParams.get("group");
 
   const leaveGroup = useCallback((groupId) => {
     (async () => {
@@ -61,7 +66,7 @@ function MyGroupsViewer({}) {
     return () => {
       socket.emit("changeGroup", null);
       mediaSocket.emit("changeGroup", null);
-    }
+    };
   }, [debouncedIndex, myGroups.length]);
 
   useEffect(() => {
@@ -72,6 +77,23 @@ function MyGroupsViewer({}) {
       setResponse(null);
     }, 100);
   }, [response, SwiperRef, myGroups.length]);
+
+  useEffect(() => {
+    if (!groupId) return;
+
+    const groupIndex = myGroups.findIndex(
+      (group) => group.group_id === groupId
+    );
+    if (groupIndex === -1) return;
+
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete("group");
+    router.replace(`${document.location.pathname}?${newSearchParams.toString()}`, {
+      scroll: false,
+    });
+
+    SwiperRef.current.swiper.slideTo(groupIndex);
+  }, [groupId, myGroups]);
 
   if (!myGroups.length) {
     return (

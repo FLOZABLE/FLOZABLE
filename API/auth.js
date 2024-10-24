@@ -258,11 +258,7 @@ Router.get("/signin/google", async (req, res) => {
 
         if (!userInfo) {
           //new user
-          const accountResponse = await createAccount(
-            name,
-            email,
-            state?.timezone
-          );
+          const accountResponse = await createAccount(name, email, timezone);
 
           const { success, user_id } = accountResponse;
 
