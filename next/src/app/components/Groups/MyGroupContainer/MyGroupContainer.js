@@ -495,7 +495,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
           />
         ) : (
           <div className={styles.memberSkeletons}>
-            {group.members.map((member, i) => (
+            {group.members.map((_, i) => (
               <Skeleton key={i} className={styles.memberSkeleton} />
             ))}
           </div>
@@ -508,7 +508,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
           </Link>
         </div>
         <GroupUrlBtn
-          text={`${config.server}/dashboard/groups?joinId=${group.group_id}`}
+          text={`${config.server}/dashboard/groups?groupId=${group.group_id}`}
           copyText="Share"
           bgColor="var(--dark-gray)"
         />
