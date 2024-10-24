@@ -15,6 +15,7 @@ import {
 import { socket } from "@/app/utils/socket";
 import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
 import PomodoroTimer from "../PomodoroTimer/PomodoroTimer";
+import { toTimer } from "@/app/utils/Tool";
 
 function SubjecTimer({
   selectedSubject,
@@ -109,6 +110,16 @@ function SubjecTimer({
         if (subjectIndex === -1) return;
 
         subjectOptions[subjectIndex].value += 1;
+
+        let slicedName = selectedSubject.name.slice(0, 7);
+
+        if (slicedName.length !== selectedSubject.name.length) {
+          slicedName += "...";
+        }
+
+        const timer = toTimer(subjectOptions[subjectIndex].value);
+
+        document.title = `${timer} ${slicedName}`;
 
         setSubjectOptions(subjectOptions);
       }

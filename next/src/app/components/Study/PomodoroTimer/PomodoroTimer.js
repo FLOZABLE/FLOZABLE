@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./PomodoroTimer.module.css";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import SlidingOptBtn from "../../Buttons/SlidingOptBtn/SlidingOptBtn";
+import { toTimer } from "@/app/utils/Tool";
 
 const STUDY_DURATION = 60 * 25; //25min
 const SHORT_BREAK_DURATION = 60 * 5; //5min
@@ -76,6 +77,23 @@ function PomodoroTimer({
           colorsTime={[7, 5, 2, 0]}
           size={300}
           strokeWidth={15}
+          onUpdate={(sec) => {
+            const timer = toTimer(sec);
+            if (pomodoro.active && pomodoro.mode === 1) {
+
+              let slicedName = selectedSubject.name.slice(0, 7);
+
+              if (slicedName.length !== selectedSubject.name.length) {
+                slicedName += "...";
+              }
+
+              document.title = `${timer} ${slicedName}`;
+              
+            } else {
+              document.title = `${timer} break`;
+            }
+            console.log("updated")
+          }}
           onComplete={() => {
             if (pomodoro.mode === 0) {
               toggleTimer();
