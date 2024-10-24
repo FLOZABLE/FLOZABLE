@@ -24,6 +24,7 @@ import {
 } from "@/Hooks/chatHooks";
 import { socket } from "@/app/utils/socket";
 import { useInView } from "react-intersection-observer";
+import { useQueryClient } from "@tanstack/react-query";
 
 function ChatModal({}) {
   const { userInfo } = useContext(UserInfoContext);
@@ -33,7 +34,6 @@ function ChatModal({}) {
   const [messages, setMessages] = useState({ chatroomId: null, messages: [] });
   const [messageDataOptions, setMessageDataOptions] = useState({
     chatroomId: null,
-    offset: 0,
     length: 30,
     lastMsgId: null,
   });
@@ -47,9 +47,23 @@ function ChatModal({}) {
 
   const { chatRoomsData } = useChatRooms();
   const { chatroomMembersData } = useChatRoomMembers(chatModal.chatroom);
-  const { chatMessagesData, fetchNextPage, hasNextPage } = useChatMessages(messageDataOptions);
+  const {
+    chatMessagesData,
+    fetchNextPage,
+    hasNextPage,
+    hasPreviousPage,
+    error,
+  } = useChatMessages(messageDataOptions);
+  const queryClient = useQueryClient();
 
   const { ref: inViewRef, inView } = useInView();
+
+  const scrollToBottom = useCallback(() => {
+    if (chatsContainerRef.current) {
+      chatsContainerRef.current.scrollTop =
+        chatsContainerRef.current.scrollHeight;
+    }
+  }, []);
 
   const onSubmit = useCallback(() => {
     socket.emit("chat/send", chatModal.chatroom, msgInput);
@@ -69,25 +83,25 @@ function ChatModal({}) {
   }, [chatRoomsData]);
 
   useEffect(() => {
+    console.log(inView, "gd", hasNextPage);
     if (inView && hasNextPage) {
+      console.log("fetch");
       fetchNextPage();
     }
   }, [inView, fetchNextPage, hasNextPage]);
 
   useEffect(() => {
-    if (!chatMessagesData?.success) return;
+    if (!chatMessagesData?.pages) return;
 
-    if (messages.chatroomId === chatMessagesData.chatroom_id) {
-      setMessages((prev) => ({
-        ...prev,
-        messages: [...chatMessagesData.messages, ...prev.messages],
-      }));
-    } else {
-      setMessages({
-        chatroomId: chatMessagesData.chatroom_id,
-        messages: chatMessagesData.messages,
-      });
-    }
+    console.log(chatMessagesData);
+    const allMessages = chatMessagesData.pages.reduce((acc, page) => {
+      if (page?.success) {
+        return [...acc, ...page.messages];
+      }
+      return acc;
+    }, []);
+    allMessages.sort((a, b) => a.sent_at - b.sent_at);
+    setMessages((prev) => ({ ...prev, messages: allMessages }));
   }, [chatMessagesData]);
 
   useEffect(() => {
@@ -98,7 +112,6 @@ function ChatModal({}) {
           return prev;
         }
         newMessageDataOptions.chatroomId = chatModal.chatroom;
-        newMessageDataOptions.offset = 0;
         return newMessageDataOptions;
       });
 
@@ -165,7 +178,7 @@ function ChatModal({}) {
 
   useEffect(() => {
     if (!lastReadMessageId) return;
-
+    scrollToBottom();
     setTimeout(() => {
       lastReadMessageRef.current?.scrollIntoView({
         behavior: "smooth",
@@ -256,7 +269,10 @@ function ChatModal({}) {
                   ref={(el) => {
                     //messageRefs.current[message_id] = el;
                     lastReadMessageRef.current = el;
-                    if (Math.floor(messages.messages.length / 2) === index) {
+                    /* if (Math.floor(messages.messages.length / 3) === index) {
+                      inViewRef(el);
+                    } */
+                    if (messages.messages.length - 5 === index) {
                       inViewRef(el);
                     }
                   }}
@@ -281,7 +297,10 @@ function ChatModal({}) {
                   ref={(el) => {
                     //messageRefs.current[message_id] = el;
                     lastReadMessageRef.current = el;
-                    if (Math.floor(messages.messages.length / 2) === index) {
+                    /* if (Math.floor(messages.messages.length / 3) === index) {
+                      inViewRef(el);
+                    } */
+                    if (messages.messages.length - 5 === index) {
                       inViewRef(el);
                     }
                   }}
