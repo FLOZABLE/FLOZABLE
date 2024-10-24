@@ -199,17 +199,31 @@ Router.post("/signin", async (req, res) => {
 Router.get("/signin/google", async (req, res) => {
   try {
     const { code } = req.query;
-    const state = decodeURIComponent(req.query.state);
+    const state = req.query.state ? decodeURIComponent(req.query.state) : "{}";
+    let timezone = "UTC";
 
     const auth = googleOauth2client();
     const response = await auth.getToken(code);
     if (response.res.status !== 200) {
+      console.log("err");
       return res.send(RESPONSE_CODES["error"]);
     }
     const connection = pool.promise();
     const { refresh_token, access_token, expiry_date } = response.tokens;
 
-    console.log("gddd", state);
+    try {
+      const parsedState = JSON.parse(state);
+      if (
+        parsedState &&
+        parsedState.timezone &&
+        isValidTimeZone(parsedState.timezone)
+      ) {
+        timezone = parsedState.timezone;
+        console.log("timezone:", timezone);
+      }
+    } catch (err) {
+      console.error("Error parsing state or validating timezone: ", err);
+    }
 
     await autoSignin(
       req,
@@ -225,7 +239,6 @@ Router.get("/signin/google", async (req, res) => {
         res.redirect(process.env.NEXT_SERVER + "/dashboard/account");
       },
       async () => {
-        console.log("gddd");
         //if not logged in = create acc
         auth.setCredentials(response.tokens);
         const oauth2 = google.oauth2({
