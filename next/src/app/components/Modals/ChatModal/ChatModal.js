@@ -24,6 +24,7 @@ import {
 } from "@/Hooks/chatHooks";
 import { socket } from "@/app/utils/socket";
 import { useInView } from "react-intersection-observer";
+import { useDebounce } from "use-debounce";
 
 function ChatModal({}) {
   const { userInfo } = useContext(UserInfoContext);
@@ -43,6 +44,8 @@ function ChatModal({}) {
   const chatsContainerRef = useRef(null);
   //const messageRefs = useRef({});
   const lastReadMessageRef = useRef(null);
+  const [scrollBottom, setScrollBottom] = useState(0);
+  //const debouncedScrollBottom = useDebounce(scrollBottom, 300);
 
   const { chatRoomsData } = useChatRooms();
   const { chatroomMembersData } = useChatRoomMembers(chatModal.chatroom);
@@ -68,6 +71,11 @@ function ChatModal({}) {
     setMsgInput("");
     scrollToBottom("smooth");
   }, [msgInput, chatModal.chatroom]);
+
+  const onScroll = useCallback((event) => {
+    const scrollBottom = event.target.scrollHeight - event.target.scrollTop;
+    setScrollBottom(scrollBottom);
+  }, []);
 
   useEffect(() => {
     if (!chatroomMembersData?.success) return;
@@ -107,6 +115,18 @@ function ChatModal({}) {
     }, []); */
     allMessages.sort((a, b) => a.sent_at - b.sent_at);
     setMessages((prev) => ({ ...prev, messages: allMessages }));
+    if (chatsContainerRef.current) {
+      console.log(
+        "last scroll",
+        chatsContainerRef.current.scrollHeight - scrollBottom
+      );
+      setTimeout(() => {
+        chatsContainerRef.current.scrollTo({
+          top: chatsContainerRef.current.scrollHeight - scrollBottom,
+          behavior: "smooth",
+        });
+      }, 50);
+    }
   }, [chatMessagesData]);
 
   useEffect(() => {
@@ -260,6 +280,7 @@ function ChatModal({}) {
         <ul
           className={`${styles.chatsContainer} customScroll`}
           ref={chatsContainerRef}
+          onScroll={onScroll}
         >
           {messages.messages?.map((msg, index) => {
             const { user_id, message, sent_at, message_id } = msg;
@@ -294,7 +315,7 @@ function ChatModal({}) {
                     if (index === 5) {
                       setTimeout(() => {
                         inViewRef(el);
-                      }, 300);
+                      }, 100);
                     }
                   }}
                   key={index}
@@ -326,7 +347,7 @@ function ChatModal({}) {
                     if (index === 5) {
                       setTimeout(() => {
                         inViewRef(el);
-                      }, 300);
+                      }, 100);
                     }
                   }}
                   key={index}

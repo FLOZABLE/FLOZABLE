@@ -19,6 +19,24 @@ function getCountryCode(timezone) {
   }
 }
 
+function toTimer(sec) {
+  const hrDisp = Math.floor(sec / 3600)
+    .toString()
+    .padStart(2, "0");
+  const minDisp = Math.floor((sec / 60) % 60)
+    .toString()
+    .padStart(2, "0");
+  const secDisp = Math.floor(sec % 60)
+    .toString()
+    .padStart(2, "0");
+  return `${hrDisp}:${minDisp}:${secDisp}`;
+}
+
+function getTimezone() {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return timezone;
+}
+
 /**
  * @param {*} sec
  * @returns
@@ -289,6 +307,8 @@ function exitFullscreen() {
 export {
   cyrb128,
   getCountryCode,
+  toTimer,
+  getTimezone,
   secondConverter,
   randomIntInRange,
   durationFormatter,
