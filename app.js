@@ -151,7 +151,11 @@ const cspOptions = {
       "*.googletagmanager.com",
     ],
     "img-src": ["'self'", "*.googletagmanager.com"],
-    "form-action": ["'self'", "https://accounts.google.com/o/oauth2/v2/auth"],
+    "form-action": [
+      "'self'",
+      "https://accounts.google.com/o/oauth2/v2/auth",
+      "https://accounts.google.com",
+    ],
   },
 };
 
