@@ -18,26 +18,29 @@ function useChatRooms() {
   return { chatRoomsData, chatRoomsRefetch, ...queryResult };
 }
 
-function useChatMessages({ chatroomId, offset, length, lastMsgId }) {
+function useChatMessages({ chatroomId, length, lastMsgId }) {
   const queryResult = useInfiniteQuery({
-    queryKey: [`useChatMessages`, chatroomId, offset, length],
-    queryFn: () => getChatMessages({ chatroomId, offset, length, lastMsgId }),
+    queryKey: [`useChatMessages`, chatroomId, length],
+    queryFn: ({ pageParam }) =>
+      getChatMessages({ chatroomId, pageParam, length, lastMsgId }),
     staleTime: 1000 * 60 * 10,
     enabled: !!chatroomId,
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       const nextPage =
-        lastPage.length === 30 ? allPages.length * 30 : undefined;
+        lastPage.messages.length === length
+          ? allPages.length * length
+          : undefined;
       return nextPage;
     },
   });
 
   const { data: chatMessagesData, refetch: chatMessagesRefetch } = queryResult;
 
-  // Custom effect to refetch when `lastMsgId` changes if necessary
+  // Refetch when lastMsgId changes
   useEffect(() => {
     if (lastMsgId) {
-      chatMessagesRefetch(); // Manually refetch only when lastMsgId changes
+      chatMessagesRefetch();
     }
   }, [lastMsgId]);
 
