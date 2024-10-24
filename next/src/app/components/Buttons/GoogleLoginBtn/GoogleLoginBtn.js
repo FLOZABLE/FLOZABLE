@@ -12,7 +12,7 @@ function GoogleLoginBtn({ scope, required }) {
   const { googleInfo, useAccountGoogleIsLoading } = useAccountGoogle();
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
+  
   const login = useGoogleLogin({
     flow: "auth-code",
     select_account: true,
