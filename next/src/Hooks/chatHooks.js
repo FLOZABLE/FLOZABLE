@@ -20,7 +20,7 @@ function useChatRooms() {
 
 function useChatMessages({ chatroomId, length, lastMsgId }) {
   const queryResult = useInfiniteQuery({
-    queryKey: [`useChatMessages`, chatroomId, length],
+    queryKey: [`useChatMessages`, chatroomId, length, lastMsgId],
     queryFn: ({ pageParam }) =>
       getChatMessages({ chatroomId, pageParam, length, lastMsgId }),
     staleTime: 1000 * 60 * 10,
@@ -37,12 +37,12 @@ function useChatMessages({ chatroomId, length, lastMsgId }) {
 
   const { data: chatMessagesData, refetch: chatMessagesRefetch } = queryResult;
 
-  // Refetch when lastMsgId changes
+  /* // Refetch when lastMsgId changes
   useEffect(() => {
     if (lastMsgId) {
       chatMessagesRefetch();
     }
-  }, [lastMsgId]);
+  }, [lastMsgId]); */
 
   return { chatMessagesData, chatMessagesRefetch, ...queryResult };
 }

@@ -9,7 +9,7 @@ function useRankings(mode, viewDate) {
   const queryClient = useQuery({
     queryKey: [`getRankings`, mode, viewDate],
     queryFn: () => getRankings(mode, viewDate),
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 60 * 5,
     enabled: !!mode && !!viewDate,
   });
 

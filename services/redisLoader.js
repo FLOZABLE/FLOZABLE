@@ -730,15 +730,13 @@ async function chatroomMessagesCache(connection, roomId, offset, length) {
       await redisClient.lrange(
         `chatroom:${roomId}:messages`,
         (offset + length) * -1,
-        -1
+        offset * -1 - 1
       )
     ).map(JSON.parse);
 
-    const selectedMessages = messages.slice(offset, offset + length);
+    const queryLength = length - messages.length;
 
-    const queryLength = length - selectedMessages.length;
-
-    if (queryLength <= 0) return selectedMessages;
+    if (queryLength <= 0) return messages;
 
     if (!connection) {
       connection = pool.promise();
@@ -750,11 +748,11 @@ async function chatroomMessagesCache(connection, roomId, offset, length) {
        WHERE chatroom_id = ? 
        ORDER BY sent_at DESC
        LIMIT ? OFFSET ?`,
-      [roomId, queryLength, offset + selectedMessages.length]
+      [roomId, queryLength, offset + messages.length]
     );
 
     //add more to cache
-    if (oldMessages.length) {
+    if (oldMessages.length && offset === 0) {
       redisClient.lpush(
         `chatroom:${roomId}:messages`,
         ...oldMessages.map(JSON.stringify)
@@ -767,11 +765,11 @@ async function chatroomMessagesCache(connection, roomId, offset, length) {
 
     //console.log("old", oldMessages, roomId, offset, queryLength);
 
-    selectedMessages.push(...oldMessages);
+    messages.push(...oldMessages);
 
-    selectedMessages.sort((a, b) => a.sent_at - b.sent_at);
+    messages.sort((a, b) => a.sent_at - b.sent_at);
 
-    return selectedMessages;
+    return messages;
   } catch (err) {
     console.log(err);
     return [];
