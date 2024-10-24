@@ -14,11 +14,11 @@ async function getChatRooms() {
   return data;
 }
 
-async function getChatMessages({ chatroomId, offset, length, lastMsgId }) {
+async function getChatMessages({ chatroomId, pageParam, length, lastMsgId }) {
   const response = await fetch(
     `${config.server}/chat/messages?${queryString.stringify({
       chatroom_id: chatroomId,
-      offset,
+      offset: pageParam,
       length,
       lastMsgId,
     })}`,
