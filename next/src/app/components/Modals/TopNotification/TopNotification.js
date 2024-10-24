@@ -65,8 +65,6 @@ function TopNotification() {
     }, 100);
   }, [response]);
 
-  console.log(response);
-
   return (
     <div className={`${styles.TopNotification} ${notify ? styles.notify : ""}`}>
       {notification}
