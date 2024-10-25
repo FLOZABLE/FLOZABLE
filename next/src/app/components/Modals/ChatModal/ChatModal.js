@@ -30,7 +30,7 @@ function ChatModal({}) {
   const { chatModal, setChatModal } = useContext(ModalsContext);
 
   const [chatrooms, setChatRooms] = useState([]);
-  const [messages, setMessages] = useState({ chatroomId: null, messages: [] });
+  const [messages, setMessages] = useState([]);
   const [messageDataOptions, setMessageDataOptions] = useState({
     chatroomId: null,
     length: 30,
@@ -93,7 +93,7 @@ function ChatModal({}) {
   }, [chatRoomsData]);
 
   useEffect(() => {
-    console.log(inView, "gd", hasNextPage);
+    //console.log(inView, "gd", hasNextPage);
     if (inView && hasNextPage) {
       console.log("fetch");
       fetchNextPage();
@@ -122,7 +122,7 @@ function ChatModal({}) {
     const previousScrollHeight = container?.scrollHeight;
     const previousScrollTop = container?.scrollTop;
 
-    setMessages((prev) => ({ ...prev, messages: allMessages }));
+    setMessages(allMessages);
     if (chatsContainerRef.current) {
       console.log(
         "last scroll",
@@ -198,10 +198,7 @@ function ChatModal({}) {
         newChatrooms[chatroomIndex].lastMsg = message;
 
         if (chatModal.chatroom === message.chatroom_id) {
-          setMessages((prev) => ({
-            ...prev,
-            messages: [...prev.messages, message],
-          }));
+          setMessages((prev) => [...prev, message]);
           socket.emit("chat/read", chatModal.chatroom);
           newChatrooms[chatroomIndex].unreads = 0;
           newChatrooms[chatroomIndex].lastRead = message.message_id;
@@ -289,7 +286,7 @@ function ChatModal({}) {
           ref={chatsContainerRef}
           onScroll={onScroll}
         >
-          {messages.messages?.map((msg, index) => {
+          {messages.map((msg, index) => {
             const { user_id, message, sent_at, message_id } = msg;
 
             const dateTime = DateTime.fromSeconds(sent_at);
@@ -303,22 +300,15 @@ function ChatModal({}) {
 
             const isLastRead =
               lastReadMessageId &&
-              messages.messages[index - 1]?.message_id === lastReadMessageId;
+              messages[index - 1]?.message_id === lastReadMessageId;
 
-            //console.log(isNewLine, "newline", lastReadMessageId);
-
-            //commented out my lastread line since my chat will never have new indicator since it's the sender
             if (user_id === userInfo.user_id) {
               return (
                 <div
                   ref={(el) => {
-                    //messageRefs.current[message_id] = el;
                     if (isLastRead) {
                       lastReadMessageRef.current = el;
                     }
-                    /* if (Math.floor(messages.messages.length / 3) === index) {
-                      inViewRef(el);
-                    } */
                     if (index === 5) {
                       setTimeout(() => {
                         inViewRef(el);
@@ -328,12 +318,6 @@ function ChatModal({}) {
                   key={message_id}
                   className={styles.chatWrapper}
                 >
-                  {/* {isLastRead ? (
-                    <div className={styles.lastRead}>
-                      <p>New</p>
-                      <div className={styles.line}></div>
-                    </div>
-                  ) : null} */}
                   <MyChatContainer time={timeDisp} message={message} />
                 </div>
               );
@@ -344,13 +328,9 @@ function ChatModal({}) {
               return (
                 <div
                   ref={(el) => {
-                    //messageRefs.current[message_id] = el;
                     if (isLastRead) {
                       lastReadMessageRef.current = el;
                     }
-                    /* if (Math.floor(messages.messages.length / 3) === index) {
-                      inViewRef(el);
-                    } */
                     if (index === 5) {
                       setTimeout(() => {
                         inViewRef(el);

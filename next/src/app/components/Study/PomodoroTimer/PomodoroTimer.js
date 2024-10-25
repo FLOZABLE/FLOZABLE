@@ -79,8 +79,9 @@ function PomodoroTimer({
           strokeWidth={15}
           onUpdate={(sec) => {
             const timer = toTimer(sec);
-            if (pomodoro.active && pomodoro.mode === 1) {
+            if (!pomodoro.active) return;
 
+            if (pomodoro.mode === 0) {
               let slicedName = selectedSubject.name.slice(0, 7);
 
               if (slicedName.length !== selectedSubject.name.length) {
@@ -88,11 +89,9 @@ function PomodoroTimer({
               }
 
               document.title = `${timer} ${slicedName}`;
-              
             } else {
               document.title = `${timer} break`;
             }
-            console.log("updated")
           }}
           onComplete={() => {
             if (pomodoro.mode === 0) {
