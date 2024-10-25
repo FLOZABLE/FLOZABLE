@@ -52,7 +52,7 @@ function useAccountGoogle() {
     isLoading: useAccountGoogleIsLoading,
   } = queryResult;
 
-  const googleInfo = useAccountGoogleData?.googleInfo;
+  const googleInfo = useAccountGoogleData?.data?.googleInfo;
 
   return {
     googleInfo,
