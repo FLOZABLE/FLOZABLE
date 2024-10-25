@@ -13,6 +13,8 @@ import PlanModal from "./components/Modals/PlanModal/PlanModal";
 import { Suspense } from "react";
 import EditGroupModal from "./components/Modals/EditGroupModal/EditGroupModal";
 import "react-loading-skeleton/dist/skeleton.css";
+import { Bounce, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
 
@@ -88,6 +90,19 @@ export default function RootLayout({ children }) {
             <EditGroupModal />
             <Tutorial />
             {children}
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+              transition={Bounce}
+            />
           </AppProvider>
         </Suspense>
       </body>

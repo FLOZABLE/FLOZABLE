@@ -121,9 +121,10 @@ export default function TopLeaderBoard({
           }`}
         >
           <SimpleToggleBtn
+            id={"onlyFriend"}
             checked={isOnlyFriends}
-            onToggle={(e) => {
-              setIsOnlyFriends(e.target.checked);
+            onToggle={() => {
+              setIsOnlyFriends((prev) => !prev);
             }}
           />
           <p>Friends Only</p>

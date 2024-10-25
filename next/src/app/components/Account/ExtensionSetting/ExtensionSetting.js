@@ -1,27 +1,16 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import LabelMovingInput from "../../Inputs/LabelMovingInput/LabelMovingInput";
 import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
 import styles from "./ExtensionSetting.module.css";
-import { ResponseContext } from "@/app/utils/Contexts";
-import { useRouter } from "next/navigation";
 import { useExtensionSettings } from "@/Hooks/extensionHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { patchExtensionSetting, putExtensionSetting } from "@/Api/extensionApi";
+import { toast } from "react-toastify";
 
 function ExtensionSetting() {
   const { useExtensionSettingsData, useExtensionSettingsIsLoading } =
     useExtensionSettings();
-
-  const { setResponse } = useContext(ResponseContext);
-
-  const router = useRouter();
 
   const [url, setUrl] = useState("");
   const [settings, setSettings] = useState([]);
@@ -37,8 +26,8 @@ function ExtensionSetting() {
   const onSubmitUrl = useCallback(() => {
     (async () => {
       const data = await putExtensionSetting(url);
-      setResponse(data);
       if (data.success) {
+        toast.success(data.msg);
         setSettings((prev) => [...prev, data.setting]);
         setUrl("");
 
@@ -49,6 +38,8 @@ function ExtensionSetting() {
           if (!section) return;
           section.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 300);
+      } else {
+        toast.error(data.reason);
       }
     })();
   }, [url]);
@@ -57,14 +48,17 @@ function ExtensionSetting() {
     (website, mode, value) => {
       (async () => {
         const data = await patchExtensionSetting({ website, mode, value });
-        setResponse(data);
         if (data.success) {
+          toast.success(data.msg);
           const settingIndex = settings.findIndex(
             (setting) => setting.website === website
           );
           if (settingIndex === -1) return;
-          settings[settingIndex][mode] = value;
-          setSettings(settings);
+          const newSettings = [...settings];
+          newSettings[settingIndex][mode] = value;
+          setSettings(newSettings);
+        } else {
+          toast.error(data.reason);
         }
       })();
     },
@@ -119,33 +113,33 @@ function ExtensionSetting() {
                   <div>
                     <SimpleToggleBtn
                       checked={block}
-                      onToggle={(e) => {
+                      onToggle={() => {
                         console.log("gddd");
-                        settingUpdate(website, "block", e.target.checked);
+                        settingUpdate(website, "block", !block);
                       }}
                     />
                   </div>
                   <div>
                     <SimpleToggleBtn
                       checked={study_block}
-                      onToggle={(e) => {
-                        settingUpdate(website, "study_block", e.target.checked);
+                      onToggle={() => {
+                        settingUpdate(website, "study_block", !study_block);
                       }}
                     />
                   </div>
                   <div>
                     <SimpleToggleBtn
                       checked={timer}
-                      onToggle={(e) => {
-                        settingUpdate(website, "timer", e.target.checked);
+                      onToggle={() => {
+                        settingUpdate(website, "timer", !timer);
                       }}
                     />
                   </div>
                   <div>
                     <SimpleToggleBtn
                       checked={study_timer}
-                      onToggle={(e) => {
-                        settingUpdate(website, "study_timer", e.target.checked);
+                      onToggle={() => {
+                        settingUpdate(website, "study_timer", !study_timer);
                       }}
                     />
                   </div>
