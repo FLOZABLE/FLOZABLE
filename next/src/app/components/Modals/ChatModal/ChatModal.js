@@ -24,7 +24,6 @@ import {
 } from "@/Hooks/chatHooks";
 import { socket } from "@/app/utils/socket";
 import { useInView } from "react-intersection-observer";
-import { useDebounce } from "use-debounce";
 
 function ChatModal({}) {
   const { userInfo } = useContext(UserInfoContext);
@@ -73,7 +72,11 @@ function ChatModal({}) {
   }, [msgInput, chatModal.chatroom]);
 
   const onScroll = useCallback((event) => {
-    const scrollBottom = event.target.scrollHeight - event.target.scrollTop;
+    const scrollBottom =
+      event.target.scrollHeight -
+      event.target.scrollTop -
+      event.target.clientHeight;
+
     setScrollBottom(scrollBottom);
   }, []);
 
@@ -114,6 +117,11 @@ function ChatModal({}) {
       return acc;
     }, []); */
     allMessages.sort((a, b) => a.sent_at - b.sent_at);
+
+    const container = chatsContainerRef.current;
+    const previousScrollHeight = container?.scrollHeight;
+    const previousScrollTop = container?.scrollTop;
+
     setMessages((prev) => ({ ...prev, messages: allMessages }));
     if (chatsContainerRef.current) {
       console.log(
@@ -121,11 +129,10 @@ function ChatModal({}) {
         chatsContainerRef.current.scrollHeight - scrollBottom
       );
       setTimeout(() => {
-        chatsContainerRef.current.scrollTo({
-          top: chatsContainerRef.current.scrollHeight - scrollBottom,
-          behavior: "smooth",
-        });
-      }, 50);
+        const newScrollHeight = container.scrollHeight;
+        const heightDifference = newScrollHeight - previousScrollHeight;
+        container.scrollTop = previousScrollTop + heightDifference;
+      }, 0);
     }
   }, [chatMessagesData]);
 
@@ -318,7 +325,7 @@ function ChatModal({}) {
                       }, 100);
                     }
                   }}
-                  key={index}
+                  key={message_id}
                   className={styles.chatWrapper}
                 >
                   {/* {isLastRead ? (
@@ -350,7 +357,7 @@ function ChatModal({}) {
                       }, 100);
                     }
                   }}
-                  key={index}
+                  key={message_id}
                   className={styles.chatWrapper}
                 >
                   {isLastRead ? (
