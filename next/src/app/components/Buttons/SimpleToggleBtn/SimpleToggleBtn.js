@@ -19,8 +19,14 @@ function SimpleToggleBtn({
         id={id}
         type="checkbox"
         checked={checked}
+        onClick={(e) => e.preventDefault()}
+        onChange={() => {}}
       />
-      <label className={styles.tglBtn} htmlFor={id} />
+      <label
+        className={styles.tglBtn}
+        htmlFor={id}
+        onClick={(e) => e.preventDefault()}
+      />
     </div>
   );
 }
