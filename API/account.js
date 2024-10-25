@@ -58,8 +58,11 @@ Router.get("/", async (req, res) => {
       userInfo.friends = friends;
       res.send({
         success: true,
-        userInfo: userInfo,
-        notifications: notifications,
+        status: "success",
+        data: {
+          userInfo: userInfo,
+          notifications: notifications,
+        },
       });
       addActiveUserCache(userId);
     } catch (err) {
@@ -99,7 +102,11 @@ Router.get("/google", async (req, res) => {
       const data = response.data;
       data.scopes = accessTokenInfo.scopes;
 
-      return res.send({ success: true, googleInfo: data });
+      return res.send({
+        success: true,
+        status: "success",
+        data: { googleInfo: data },
+      });
     } catch (err) {
       console.log(err);
       res.send(RESPONSE_CODES["error"]);
@@ -115,11 +122,21 @@ Router.patch("/password", async (req, res) => {
 
       const isValidPassword = validatePassword(password);
       if (!isValidPassword.isValid) {
-        return res.send({ success: false, reason: isValidPassword.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidPassword.reason,
+          error: { reason: isValidPassword.reason },
+        });
       }
 
       if (password !== confirmPassword) {
-        return res.send({ success: false, reason: "Password Does Not Match" });
+        return res.send({
+          success: false,
+          status: "error",
+          message: "Password Does Not Match",
+          error: { reason: "Password Does Not Match" },
+        });
       }
 
       const [salt, hashed_password] = hashing(password);
@@ -128,9 +145,14 @@ Router.patch("/password", async (req, res) => {
         "UPDATE users set ? WHERE user_id = ?",
         updateInfo
       );
-      res.send({ success: true, msg: "Password Updated!" });
-    } catch (error) {
-      res.send({ success: false, reason: "Unsupported File Type" });
+      res.send({
+        success: true,
+        status: "success",
+        message: "Password Updated!",
+      });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -139,7 +161,12 @@ Router.patch("/image", upload.single("image"), async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       if (!req.file) {
-        return res.send({ success: false, reason: "No image file found" });
+        return res.send({
+          success: false,
+          status: "error",
+          message: "No image file found",
+          error: { reason: "No image file found" },
+        });
       }
       const imageBuffer = req.file.buffer; // Get the image buffer from the request
       await sharp(imageBuffer)
@@ -147,10 +174,14 @@ Router.patch("/image", upload.single("image"), async (req, res) => {
         .resize({ width: 800, height: 800 })
         .jpeg({ quality: 40 })
         .toFile(`./public/profile-images/${userId}.jpeg`);
-      res.send({ success: true, msg: "Updated Profile Image!" });
+      res.send({
+        success: true,
+        status: "success",
+        message: "Updated Profile Image!",
+      });
     } catch (err) {
       console.log(err);
-      res.send({ success: false, reason: "Unsupported File Type" });
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -162,18 +193,30 @@ Router.patch("/info", async (req, res) => {
       //const supportedLanguages = ['English', 'Spanish', 'French'];
       const isValidEmail = validateEmail(email);
       if (!isValidEmail.isValid) {
-        return res.send({ success: false, reason: isValidEmail.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidEmail.reason,
+          error: { reason: isValidEmail.reason },
+        });
       }
 
       const isValidName = validateStrictString(name, "Name", 25, 1);
       if (!isValidName.isValid) {
-        return res.send({ success: false, reason: isValidName.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidName.reason,
+          error: { reason: isValidName.reason },
+        });
       }
 
       if (email !== confirmEmail) {
         return res.send({
           success: false,
-          reason: "Email Confirmation Failed",
+          status: "error",
+          message: "Email Confirmation Failed",
+          error: { reason: "Email Confirmation Failed" },
         });
       }
 
@@ -188,9 +231,6 @@ Router.patch("/info", async (req, res) => {
         return res.send(RESPONSE_CODES["no-user"]);
       }
 
-      /* else if (!supportedLanguages.includes(language)) {
-        return res.send({ success: false, reason: 'Not Supported Language' });
-      } */
       const verified = userInfo.email === email ? userInfo.verified : 0;
       const newUserInfo = { name, email, verified };
       redisClient.del(`user:${userId}`);
@@ -198,23 +238,30 @@ Router.patch("/info", async (req, res) => {
         newUserInfo,
         userId,
       ]);
-      res.send({ success: true, msg: "Updated Your Information!", verified });
-    } catch (error) {
-      res.send({ success: false, reason: "Unsupported File Type" });
+
+      res.send({
+        success: true,
+        status: "success",
+        message: "Updated Your Information!",
+        data: { verified },
+      });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
 
 Router.get("/profile", async (req, res) => {
   try {
-    const { userId } = req.query;
+    const { user_id } = req.query;
 
     const connection = pool.promise();
     const [userInfo, friends, groups, subjects] = await Promise.all([
-      userCache(connection, userId),
-      userFriendsCache(connection, userId),
-      userGroupsCache(connection, userId),
-      subjectsTimelineCache(connection, userId),
+      userCache(connection, user_id),
+      userFriendsCache(connection, user_id),
+      userGroupsCache(connection, user_id),
+      subjectsTimelineCache(connection, user_id),
     ]);
     if (!userInfo) {
       return res.send(RESPONSE_CODES["no-user"]);
@@ -222,10 +269,14 @@ Router.get("/profile", async (req, res) => {
 
     userInfo.groups = groups;
 
-    return res.send({ success: true, userInfo, friends, subjects });
+    return res.send({
+      success: true,
+      status: "success",
+      data: { userInfo, friends, subjects },
+    });
   } catch (err) {
     console.log(err);
-    return res.send(RESPONSE_CODES["error"]);
+    return res.send(RESPONSE_CODES.error);
   }
 });
 

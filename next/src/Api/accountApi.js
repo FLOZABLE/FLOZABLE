@@ -1,70 +1,38 @@
+import AxiosInstance from "@/app/utils/axiosInstance";
 import config from "@/app/utils/config";
+import queryString from "query-string";
 
 async function getAccount() {
-  const response = await fetch(`${config.server}/account`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-  return data;
+  const response = await AxiosInstance.get(`/account`);
+  return response.data;
 }
 
 async function getAccountProfile(userId) {
-  const response = await fetch(
-    `${config.server}/account/profile?userId=${userId}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
+  const response = await AxiosInstance.get(
+    `/account/profile?${queryString.stringify({ user_id: userId })}`
   );
-  const data = await response.json();
-  return data;
+  return response.data;
 }
 
 async function getAccountProfileSubjects(userId) {
-  const response = await fetch(
-    `${config.server}/account/profile/subjects?userId=${userId}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
+  const response = await AxiosInstance.get(
+    `/account/profile/subjects?${queryString.stringify({ user_id: userId })}`
   );
-  const data = await response.json();
-  return data;
+  return response.data;
 }
 
 async function getAccountGoogle() {
-  const response = await fetch(`${config.server}/account/google`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-  return data;
+  const response = await AxiosInstance.get(`/account/google`);
+  return response.data;
 }
 
 async function patchAccountInfo({ name, email, confirmEmail }) {
-  const response = await fetch(`${config.server}/account/info`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ name, email, confirmEmail }),
+  const response = await AxiosInstance.patch(`/account/info`, {
+    name,
+    email,
+    confirmEmail,
   });
-  const data = await response.json();
-  return data;
+  return response.data;
 }
 
 async function patchAccountPassword({ password, confirmPassword }) {

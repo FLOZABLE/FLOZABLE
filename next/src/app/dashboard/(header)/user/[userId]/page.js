@@ -32,7 +32,7 @@ function User({ params }) {
   useEffect(() => {
     if (!useAccountProfileData?.success) return;
 
-    const { userInfo, friends, subjects } = useAccountProfileData;
+    const { userInfo, friends, subjects } = useAccountProfileData.data;
 
     console.log(useAccountProfileData, "test");
     const sortedSubjects = timelineSort(subjects);

@@ -76,10 +76,13 @@ function AccountProvider({ children }) {
 
     if (!useAccountData?.success) return;
 
-    setUserInfo(useAccountData.userInfo);
-    setNotifications(useAccountData.notifications);
+    console.log("useaccount", useAccountData)
+
+    const { userInfo, notifications } = useAccountData.data;
+    setUserInfo(userInfo);
+    setNotifications(notifications);
     setTimeout(() => {
-      console.log("gddddd")
+      console.log("gddddd");
       socket.connect();
       mediaSocket.connect();
       socket.emit("joinChats");

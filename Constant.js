@@ -1,54 +1,94 @@
 const RESPONSE_CODES = {
   "no-user": {
     success: false,
-    reason: "Invalid User",
-    code: 400,
+    status: "error",
+    message: "Invalid User",
+    error: {
+      reason: "Invalid User",
+      code: 400,
+    },
     action: "signin",
   },
   "no-target-user": {
     success: false,
-    reason: "Invalid User",
-    code: 400,
+    status: "error",
+    message: "Invalid User",
+    error: {
+      reason: "Invalid User",
+      code: 400,
+    },
   },
   "no-group": {
     success: false,
-    reason: "Invalid Group",
-    code: 404,
+    status: "error",
+    message: "Invalid Group",
+    error: {
+      reason: "Invalid Group",
+      code: 404,
+    },
   },
   "no-subject": {
     success: false,
-    reason: "Invalid Subject",
-    code: 400,
+    status: "error",
+    message: "Invalid Subject",
+    error: {
+      reason: "Invalid Subject",
+      code: 400,
+    },
   },
   "no-plan": {
     success: false,
-    reason: "Invalid Plan",
-    code: 400,
+    status: "error",
+    message: "Invalid Plan",
+    error: {
+      reason: "Invalid Plan",
+      code: 400,
+    },
   },
   "non-member": {
     success: false,
-    reason: "Not a member of this group",
-    code: 403,
+    status: "error",
+    message: "Not a member of this group",
+    error: {
+      reason: "Not a member of this group",
+      code: 403,
+    },
   },
   "friends-limit-reached": {
     success: false,
-    reason: "Friends limit reached",
-    code: 409,
+    status: "error",
+    message: "Friends limit reached",
+    error: {
+      reason: "Friends limit reached",
+      code: 409,
+    },
   },
   "expired-request": {
     success: false,
-    reason: "Expired Request",
-    code: 410,
+    status: "error",
+    message: "Expired Request",
+    error: {
+      reason: "Expired Request",
+      code: 410,
+    },
   },
   error: {
     success: false,
-    reason: "Unexpected Error",
-    code: 500,
+    status: "error",
+    message: "Unexpected Error",
+    error: {
+      reason: "Unexpected Error",
+      code: 500,
+    },
   },
   "not-authenticated": {
     success: false,
-    reason: "Not Authenticated",
-    code: 401,
+    status: "error",
+    message: "Not Authenticated",
+    error: {
+      reason: "Not Authenticated",
+      code: 401,
+    },
   },
 };
 
