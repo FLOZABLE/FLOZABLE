@@ -9,22 +9,17 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useEffect, useState } from "react";
-import config from "@/app/utils/config";
-import {
-  ModalsContext,
-  ResponseContext,
-  UserInfoContext,
-} from "@/app/utils/Contexts";
+import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
 import ArrowOptionBtn from "@/app/components/Buttons/ArrowOptionBtn/ArrowOptionBtn";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
 import GoogleLoginBtn from "../../Buttons/GoogleLoginBtn/GoogleLoginBtn";
 import { postAuthSignin, postAuthSignup } from "@/Api/authApi";
+import { toast } from "react-toastify";
 
 function AccountModal({}) {
   const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
   const { accountRefetch } = useContext(UserInfoContext);
-  const { setResponse } = useContext(ResponseContext);
 
   const router = useRouter();
 
@@ -51,7 +46,11 @@ function AccountModal({}) {
 
   return (
     <>
-      <div className={`${styles.touchBlocker} ${isAccountModal ? styles.opened : ""}`}></div>
+      <div
+        className={`${styles.touchBlocker} ${
+          isAccountModal ? styles.opened : ""
+        }`}
+      ></div>
       <div
         className={`${styles.AccountModal} ${
           isAccountModal ? styles.opened : ""
@@ -99,9 +98,9 @@ function AccountModal({}) {
               <GoogleLoginBtn scope={"email profile"} required={"email"} />
               <BlobBtn
                 onClick={async () => {
-                  const data = await postAuthSignin(login);
-                  setResponse(data);
-                  if (data.success) {
+                  const response = await postAuthSignin(login);
+                  toast(response.message, { type: response.status });
+                  if (response.success) {
                     setIsAccountModal(false);
                     accountRefetch();
                     if (isNew) {
@@ -167,9 +166,9 @@ function AccountModal({}) {
               <GoogleLoginBtn scope={"email profile"} required={"email"} />
               <BlobBtn
                 onClick={async () => {
-                  const data = await postAuthSignup(signUp);
-                  setResponse(data);
-                  if (data.success) {
+                  const response = await postAuthSignup(signUp);
+                  toast(response.message, { type: response.status });
+                  if (response.success) {
                     setIsLogin(false);
                     setIsNew(true);
                   }
