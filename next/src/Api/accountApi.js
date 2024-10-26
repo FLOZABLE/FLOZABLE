@@ -1,5 +1,4 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
-import config from "@/app/utils/config";
 import queryString from "query-string";
 
 async function getAccount() {
@@ -8,16 +7,16 @@ async function getAccount() {
 }
 
 async function getAccountProfile(userId) {
-  const response = await AxiosInstance.get(
-    `/account/profile?${queryString.stringify({ user_id: userId })}`
-  );
+  const response = await AxiosInstance.get(`/account/profile`, {
+    params: { user_id: userId },
+  });
   return response.data;
 }
 
 async function getAccountProfileSubjects(userId) {
-  const response = await AxiosInstance.get(
-    `/account/profile/subjects?${queryString.stringify({ user_id: userId })}`
-  );
+  const response = await AxiosInstance.get(`/account/profile/subjects`, {
+    params: { user_id: userId },
+  });
   return response.data;
 }
 
@@ -35,17 +34,17 @@ async function patchAccountInfo({ name, email, confirmEmail }) {
   return response.data;
 }
 
+async function patchAccountImage(formData) {
+  const response = await AxiosInstance.patch(`/account/image`, formData);
+  return response.data;
+}
+
 async function patchAccountPassword({ password, confirmPassword }) {
-  const response = await fetch(`${config.server}/account/password`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ password, confirmPassword }),
+  const response = await AxiosInstance.patch(`/account/password`, {
+    password,
+    confirmPassword,
   });
-  const data = await response.json();
-  return data;
+  return response.data;
 }
 
 export {
@@ -54,5 +53,6 @@ export {
   getAccountProfileSubjects,
   getAccountGoogle,
   patchAccountInfo,
+  patchAccountImage,
   patchAccountPassword,
 };

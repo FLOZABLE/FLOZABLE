@@ -22,9 +22,14 @@ import { ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
 import { useAccountGoogle } from "@/Hooks/accountHooks";
 import SubjectsManager from "@/app/components/Subjects/SubjectsManager/SubjectsManager";
 import { useSpotifyInfo } from "@/Hooks/playlistHooks";
-import { patchAccountInfo, patchAccountPassword } from "@/Api/accountApi";
+import {
+  patchAccountImage,
+  patchAccountInfo,
+  patchAccountPassword,
+} from "@/Api/accountApi";
 import { postAuthVerify } from "@/Api/authApi";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 function Account() {
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
@@ -75,38 +80,21 @@ function Account() {
   }, []);
 
   const uploadImage = useCallback(async (formData) => {
-    try {
-      fetch(`${config.server}/account/image`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: formData,
-        credentials: "include",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setResponse(data);
-          if (data.success) {
-          }
-        })
-        .catch((error) => console.error(error));
-    } catch (error) {
-      console.error("Error uploading image:", error);
-    }
+    const response = await patchAccountImage(formData);
+    toast(response.message, { type: response.status });
   }, []);
 
   const submitProfile = useCallback(() => {
     (async () => {
       const { name, email } = profile;
-      const data = await patchAccountInfo(profile);
-      setResponse(data);
-      if (data.success) {
+      const response = await patchAccountInfo(profile);
+      toast(response.message, { type: response.status });
+      if (response.success) {
         setUserInfo((prev) => ({
           ...prev,
           name,
           email,
-          verified: data.verified,
+          verified: response.data.verified,
         }));
       }
     })();
@@ -114,15 +102,15 @@ function Account() {
 
   const submitPassword = useCallback(() => {
     (async () => {
-      const data = await patchAccountPassword(password);
-      setResponse(data);
+      const response = await patchAccountPassword(password);
+      toast(response.message, { type: response.status });
     })();
   }, [password]);
 
   const validateEmail = useCallback(() => {
     (async () => {
-      const data = await postAuthVerify();
-      setResponse(data);
+      const response = await postAuthVerify();
+      toast(response.message, { type: response.status });
     })();
   }, []);
 

@@ -50,7 +50,7 @@ export default function ChatBtn({ targetInfo, padding }) {
                 name: null,
               }));
             }
-            const chatroom = chatRoomsData?.chatrooms?.find(
+            const chatroom = chatRoomsData?.data?.chatrooms?.find(
               (chatroom) =>
                 chatroom.members.sort().join() ===
                 [userInfo.user_id, targetInfo?.user_id].sort().join()

@@ -81,19 +81,37 @@ async function createAccount(name, email, timezone, userInfo) {
     //check email
     const isValidEmail = validateEmail(email);
     if (!isValidEmail.isValid) {
-      return { success: false, reason: isValidEmail.reason };
+      return res.send({
+        success: false,
+        status: "error",
+        message: isValidEmail.reason,
+        error: { reason: isValidEmail.reason },
+      });
     }
+
     const isValidName = validateStrictString(name, "Name", 25, 1);
     if (!isValidName.isValid) {
-      return { success: false, reason: isValidName.reason };
+      return res.send({
+        success: false,
+        status: "error",
+        message: isValidName.reason,
+        error: { reason: isValidName.reason },
+      });
     }
     const connection = pool.promise();
+
     const [[checkEmail]] = await connection.query(
       "SELECT email FROM users WHERE email = ?",
       email
     );
+
     if (checkEmail) {
-      return { success: false, reason: "EMAIL ALREADY IN USE" };
+      return res.send({
+        success: false,
+        status: "error",
+        message: "Email already in use",
+        error: { reason: "Email already in use" },
+      });
     }
 
     const user_id = generateRandomId(10);
@@ -128,7 +146,7 @@ async function createAccount(name, email, timezone, userInfo) {
     };
     connection.query(`INSERT INTO subjects SET ?`, subject);
 
-    return { success: true, user_id };
+    return { success: true, message: "Account Created!", data: { user_id } };
   } catch (err) {
     console.log(err);
   }
@@ -152,47 +170,55 @@ function googleOauth2client(credential) {
 }
 
 Router.post("/signin", async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const isValidEmail = validateEmail(email);
-  if (!isValidEmail.isValid) {
-    return res.send({ success: false, reason: isValidEmail.reason });
-  }
+    const isValidEmail = validateEmail(email);
+    if (!isValidEmail.isValid) {
+      return res.send({
+        success: false,
+        status: "error",
+        message: isValidEmail.reason,
+        error: { reason: isValidEmail.reason },
+      });
+    }
 
-  const connection = pool.promise();
+    const connection = pool.promise();
 
-  const [[userInfo]] = await connection.query(
-    "SELECT user_id, salt, hashed_password, email, name, timezone, hashed_password FROM users WHERE email = ?",
-    email
-  );
+    const [[userInfo]] = await connection.query(
+      "SELECT user_id, salt, hashed_password, email, name, timezone, hashed_password FROM users WHERE email = ?",
+      email
+    );
 
-  if (!userInfo) {
-    return res.send({ success: false, reason: "NO SUCH USER" });
-  }
+    if (!userInfo) {
+      return res.send(RESPONSE_CODES["no-user"]);
+    }
 
-  const hashedPassword = crypto
-    .pbkdf2Sync(password, userInfo.salt, 99097, 32, "sha512")
-    .toString("hex");
+    const hashedPassword = crypto
+      .pbkdf2Sync(password, userInfo.salt, 99097, 32, "sha512")
+      .toString("hex");
 
-  if (hashedPassword === userInfo.hashed_password) {
-    const userId = userInfo.user_id;
+    if (hashedPassword !== userInfo.hashed_password) {
+      return res.send(RESPONSE_CODES.wrongPassword);
+    }
 
     // Generate a new session ID
     req.session.regenerate((err) => {
       if (err) {
         console.log("Error regenerating session ID:", err);
-        res.send({ success: false, reason: "SESSION ERROR" });
+        res.send(RESPONSE_CODES.error);
         return;
       }
 
-      req.session.user_id = userId;
+      req.session.user_id = userInfo.user_id;
 
-      res.cookie("userId", userId, USER_ID_COOKIE_OPTIONS);
+      res.cookie("userId", userInfo.user_id, USER_ID_COOKIE_OPTIONS);
 
-      res.send({ success: true, msg: "Success" });
+      res.send({ success: true, status: "success", message: "Success!" });
     });
-  } else {
-    res.send({ success: false, reason: "WRONG PASSWORD" });
+  } catch (err) {
+    console.log(err);
+    res.send(RESPONSE_CODES.error);
   }
 });
 
@@ -260,17 +286,18 @@ Router.get("/signin/google", async (req, res) => {
           //new user
           const accountResponse = await createAccount(name, email, timezone);
 
-          const { success, user_id } = accountResponse;
+          const { success, data } = accountResponse;
 
           if (!success) {
             return res.redirect(process.env.NEXT_SERVER + "/dashboard/account");
           }
 
+          const { user_id } = data;
+
           req.session.regenerate((err) => {
             if (err) {
               console.log("Error regenerating session ID:", err);
-              res.send({ success: false, reason: "SESSION ERROR" });
-              return;
+              return res.send(RESPONSE_CODES.error);
             }
 
             req.session.user_id = user_id;
@@ -295,7 +322,7 @@ Router.get("/signin/google", async (req, res) => {
         req.session.regenerate((err) => {
           if (err) {
             console.log("Error regenerating session ID:", err);
-            res.send({ success: false, reason: "SESSION ERROR" });
+            res.send(RESPONSE_CODES.error);
             return;
           }
 
@@ -316,7 +343,7 @@ Router.get("/signin/google", async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES["error"]);
+    res.send(RESPONSE_CODES.error);
   }
 });
 
@@ -431,11 +458,11 @@ Router.get("/signin/spotify/callback", async (req, res) => {
 
     return res.redirect(
       `${process.env.NEXT_SERVER}/dashboard/account?` +
-        querystring.stringify({ success: true, msg: "Success!" })
+        querystring.stringify({ success: true, message: "Success!" })
     );
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES["error"]);
+    res.send(RESPONSE_CODES.error);
   }
 });
 
@@ -448,11 +475,21 @@ Router.post("/app/signin", async (req, res) => {
     const isValidEmail = validateEmail(email);
 
     if (!isValidEmail.isValid) {
-      return res.send({ success: false, reason: isValidEmail.reason });
+      return res.send({
+        success: false,
+        status: "error",
+        message: isValidEmail.reason,
+        error: { reason: isValidEmail.reason },
+      });
     }
 
     if (!password)
-      return res.send({ success: false, reason: "Password Missing" });
+      return res.send({
+        success: false,
+        status: "error",
+        message: "Password Missing",
+        error: { reason: "Password Missing" },
+      });
 
     const [[userInfo]] = await connection.query(
       "SELECT user_id, salt, hashed_password, email, hashed_password FROM users WHERE email = ?",
@@ -468,7 +505,7 @@ Router.post("/app/signin", async (req, res) => {
       .toString("hex");
 
     if (hashedPassword !== userInfo.hashed_password) {
-      return res.send({ success: false, reason: "WRONG PASSWORD" });
+      return res.send(RESPONSE_CODES.wrongPassword);
     }
 
     const token = await appTokenCache(userInfo.user_id, true);
@@ -477,13 +514,16 @@ Router.post("/app/signin", async (req, res) => {
     console.log(token);
     return res.send({
       success: true,
-      msg: "Authed",
-      token,
-      deviceId,
-      userId: userInfo.user_id,
+      message: "Authed",
+      data: {
+        token,
+        deviceId,
+        userId: userInfo.user_id,
+      },
     });
   } catch (err) {
     console.log(err);
+    res.send(RESPONSE_CODES.error);
   }
 });
 
@@ -494,13 +534,23 @@ Router.post("/app/validate-tokens", async (req, res) => {
     const isValidDeviceId = validateStrictString(userId, "user id", 10, 10);
 
     if (!isValidDeviceId.isValid) {
-      return res.send({ success: false, reason: isValidDeviceId.reason });
+      return res.send({
+        success: false,
+        status: "error",
+        message: isValidDeviceId.reason,
+        error: { reason: isValidDeviceId.reason },
+      });
     }
 
     const isValidToken = validateStrictString(token, "token", 20, 20);
 
     if (!isValidToken.isValid) {
-      return res.send({ success: false, reason: isValidToken.reason });
+      return res.send({
+        success: false,
+        status: "error",
+        message: isValidToken.reason,
+        error: { reason: isValidToken.reason },
+      });
     }
 
     const savedToken = await appTokenCache(userId, false);
@@ -543,11 +593,21 @@ Router.post("/verify", async (req, res) => {
         verifyURL: `${process.env.SERVER}/auth/verify?user_id=${userId}&verify_id=${verifyId}`,
       };
       const to = [{ email }];
-      sendEmail(to, params, 5);
-      res.send({ success: true, msg: "Check your email!" });
+      const response = await sendEmail(to, params, 5);
+
+      if (!response.success) {
+        console.log(response);
+        return res.send(RESPONSE_CODES.error);
+      }
+
+      res.send({
+        success: true,
+        status: "success",
+        message: "Check your email!",
+      });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -600,7 +660,7 @@ Router.get("/verify", async (req, res) => {
     return res.redirect(
       process.env.NEXT_SERVER +
         "/dashboard?" +
-        querystring.stringify({ success: true, msg: "Email Verified" })
+        querystring.stringify({ success: true, message: "Email Verified" })
     );
   } catch (err) {
     console.log(err);
@@ -619,7 +679,12 @@ Router.post("/signup", async (req, res) => {
     const isValidPassword = validatePassword(password, 30);
 
     if (!isValidPassword.isValid) {
-      return res.send({ success: false, reason: isValidPassword.reason });
+      return res.send({
+        success: false,
+        status: "error",
+        message: isValidPassword.reason,
+        error: { reason: isValidPassword.reason },
+      });
     }
 
     const [salt, hashed_password] = hashing(password);
@@ -629,16 +694,18 @@ Router.post("/signup", async (req, res) => {
       hashed_password,
     });
 
-    const { success, user_id } = response;
+    const { success, data } = response;
 
     if (!success) {
       return res.send(response);
     }
 
+    const { user_id } = data;
+
     req.session.regenerate((err) => {
       if (err) {
         console.log("Error regenerating session ID:", err);
-        res.send({ success: false, reason: "SESSION ERROR" });
+        res.send(RESPONSE_CODES.error);
         return;
       }
       req.session.user_id = user_id;
@@ -646,22 +713,30 @@ Router.post("/signup", async (req, res) => {
 
     res.cookie("userId", user_id, USER_ID_COOKIE_OPTIONS);
 
-    res.send({ success: true, msg: "Login to Your Account!" });
+    res.send({
+      success: true,
+      status: "success",
+      message: "Login to Your Account!",
+    });
   } catch (err) {
     console.log(err);
   }
 });
 
 Router.get("/logout", function (req, res) {
-  console.log("logout");
-  req.session.destroy((err) => {
-    if (err) {
-      console.log("Error destroying session:", err);
-    }
-    res.clearCookie("userId");
-    //res.redirect('/');
-    res.send({ success: true });
-  });
+  try {
+    console.log("logout");
+    req.session.destroy((err) => {
+      if (err) {
+        console.log("Error destroying session:", err);
+      }
+      res.clearCookie("userId");
+      //res.redirect('/');
+      res.send({ success: true });
+    });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 module.exports = { Router, googleOauth2client, autoSignin };

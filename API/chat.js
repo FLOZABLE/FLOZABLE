@@ -18,7 +18,7 @@ const { autoSignin } = require("./auth");
 Router.get("/rooms", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const connection = await pool.promise();
+      const connection = pool.promise();
       const [chatrooms] = await connection.query(
         `
         SELECT
@@ -76,9 +76,10 @@ Router.get("/rooms", async (req, res) => {
         return b.lastMsg.sent_at - a.lastMsg.sent_at; // Both have a lastMsg, compare normally
       });
 
-      res.send({ success: true, chatrooms });
+      res.send({ success: true, status: "success", data: { chatrooms } });
     } catch (err) {
       console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -86,14 +87,13 @@ Router.get("/rooms", async (req, res) => {
 Router.get("/messages", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { chatroom_id, offset, length, lastMsgId } = req.query;
+      const { chatroom_id, offset, length } = req.query;
 
-      console.log(req.query);
-
+      console.log(req.query)
       const members = await chatroomMembersCache(null, chatroom_id);
 
       if (!members.includes(userId)) {
-        return res.send({ success: false, reason: "Not member" });
+        return res.send(RESPONSE_CODES["non-member"]);
       }
 
       const messages = await chatroomMessagesCache(
@@ -103,9 +103,11 @@ Router.get("/messages", async (req, res) => {
         parseInt(length)
       );
 
-      console.log("messages", offset, length, lastMsgId, messages.length);
-
-      res.send({ success: true, messages, chatroom_id });
+      res.send({
+        success: true,
+        status: "success",
+        data: { messages, chatroom_id },
+      });
     } catch (err) {
       console.log(err);
     }
@@ -143,9 +145,10 @@ Router.get("/members", async (req, res) => {
         return res.send(RESPONSE_CODES["non-member"]);
       }
 
-      res.send({ success: true, members });
+      res.send({ success: true, status: "success", data: { members } });
     } catch (err) {
       console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -158,11 +161,21 @@ Router.post("/request", async (req, res) => {
       const isValidTargetId = validateStrictString(targetId, "target user", 10);
 
       if (!isValidTargetId.isValid) {
-        return res.send({ success: false, reason: isValidTargetId.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidTargetId.reason,
+          error: { reason: isValidTargetId.reason },
+        });
       }
 
       if (targetId === userId) {
-        return res.send({ success: false, reason: "Can't chat yourself" });
+        return res.send({
+          success: false,
+          status: "error",
+          message: "Can't chat yourself",
+          error: { reason: "Can't chat yourself" },
+        });
       }
 
       const connection = pool.promise();
@@ -186,8 +199,9 @@ Router.post("/request", async (req, res) => {
       if (chatroom) {
         return res.send({
           success: false,
-          reason: "DM already created!",
-          chatroom: chatroom,
+          status: "error",
+          error: { reason: "DM already created!" },
+          data: { chatroom: chatroom },
         });
       }
 
@@ -210,7 +224,9 @@ Router.post("/request", async (req, res) => {
       if (prevDmRequest) {
         return res.send({
           success: false,
-          reason: "Already sent the request!",
+          status: "error",
+          message: "Already sent the request!",
+          error: { reason: "Already sent the request!" },
         });
       }
 
@@ -230,10 +246,14 @@ Router.post("/request", async (req, res) => {
         JSON.stringify(notification)
       );
 
-      res.send({ success: true, msg: `Sent request to ${targetUser.name}` });
+      res.send({
+        success: true,
+        status: "success",
+        message: `Sent request to ${targetUser.name}`,
+      });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -246,13 +266,23 @@ Router.post("/request/reply", async (req, res) => {
       const isValidTargetId = validateStrictString(targetId, "target user", 10);
 
       if (!isValidTargetId.isValid) {
-        return res.send({ success: false, reason: isValidTargetId.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidTargetId.reason,
+          error: { reason: isValidTargetId.reason },
+        });
       }
 
       const isValidAcceped = validateBoolean(accepted, "accept", true);
 
       if (!isValidAcceped.isValid) {
-        return res.send({ success: false, reason: isValidAcceped.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidAcceped.reason,
+          error: { reason: isValidAcceped.reason },
+        });
       }
 
       const chatReq = await redisClient.hget(
@@ -271,7 +301,11 @@ Router.post("/request/reply", async (req, res) => {
       redisClient.hdel(`user:${userId}:notifications`, notificationId);
 
       if (!accepted) {
-        return res.send({ success: true, msg: `Declined chat request` });
+        return res.send({
+          success: true,
+          status: "success",
+          message: `Declined chat request`,
+        });
       }
       const connection = pool.promise();
 
@@ -316,9 +350,13 @@ Router.post("/request/reply", async (req, res) => {
         [newMember]
       );
 
-      res.send({ success: true, msg: `Accepted chat request!` });
-    } catch (error) {
-      console.log(error);
+      res.send({
+        success: true,
+        status: "success",
+        message: `Accepted chat request!`,
+      });
+    } catch (err) {
+      console.log(err);
       res.send(RESPONSE_CODES["error"]);
     }
   });
