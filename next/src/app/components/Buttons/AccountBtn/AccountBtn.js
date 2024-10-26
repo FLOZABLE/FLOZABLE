@@ -13,8 +13,8 @@ export default function AccountBtn() {
       className={styles.AccountBtn}
       onClick={async () => {
         if (userInfo) {
-          const data = await getAuthLogout();
-          if (data.success) {
+          const response = await getAuthLogout();
+          if (response.success) {
             clearAccountData();
             window.location.reload();
           }

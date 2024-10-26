@@ -1,82 +1,44 @@
-import config from "@/app/utils/config";
-import queryString from "query-string";
+import AxiosInstance from "@/app/utils/axiosInstance";
 
 async function getChatRooms() {
-  const response = await fetch(`${config.server}/chat/rooms`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-
-  return data;
+  const response = await AxiosInstance.get(`/chat/rooms`);
+  return response.data;
 }
 
-async function getChatMessages({ chatroomId, pageParam, length, lastMsgId }) {
-  const response = await fetch(
-    `${config.server}/chat/messages?${queryString.stringify({
+async function getChatMessages({ chatroomId, pageParam, length }) {
+  const response = await AxiosInstance.get(`/chat/messages`, {
+    params: {
       chatroom_id: chatroomId,
       offset: pageParam,
       length,
-      lastMsgId,
-    })}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
-
-  return data;
+    },
+  });
+  return response.data;
 }
 
 async function getChatMembers(chatroomId) {
-  const response = await fetch(
-    `${config.server}/chat/members?chatroom_id=${chatroomId}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
-
-  return data;
+  const response = await AxiosInstance.get(`/chat/members`, {
+    params: {
+      chatroom_id: chatroomId,
+    },
+  });
+  return response.data;
 }
 
 async function postChatRequest(targetId) {
-  const response = await fetch(`${config.server}/chat/request`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ targetId }),
+  const response = await AxiosInstance.post(`/chat/request`, {
+    targetId,
   });
-  const data = await response.json();
-
-  return data;
+  return response.data;
 }
 
 async function postChatRequestReply({ targetId, accepted, notificationId }) {
-  const response = await fetch(`${config.server}/chat/request/reply`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ targetId, accepted, notificationId }),
+  const response = await AxiosInstance.post(`/chat/request/reply`, {
+    targetId,
+    accepted,
+    notificationId,
   });
-  const data = await response.json();
-
-  return data;
+  return response.data;
 }
 
 export {

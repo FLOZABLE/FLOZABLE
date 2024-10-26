@@ -90,6 +90,15 @@ const RESPONSE_CODES = {
       code: 401,
     },
   },
+  wrongPassword: {
+    success: false,
+    status: "error",
+    message: "Wrong Password",
+    error: {
+      reason: "Wrong Password",
+      code: 403,
+    },
+  },
 };
 
 const USER_ID_COOKIE_OPTIONS = {

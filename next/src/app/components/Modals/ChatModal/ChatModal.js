@@ -89,7 +89,7 @@ function ChatModal({}) {
   useEffect(() => {
     if (!chatRoomsData?.success) return;
 
-    setChatRooms(chatRoomsData.chatrooms);
+    setChatRooms(chatRoomsData.data.chatrooms);
   }, [chatRoomsData]);
 
   useEffect(() => {
@@ -108,7 +108,7 @@ function ChatModal({}) {
     chatMessagesData.pages.map((page) => {
       if (!page?.success) return;
 
-      allMessages.push(...page.messages);
+      allMessages.push(...page.data.messages);
     });
     /* const allMessages = chatMessagesData.pages.reduce((acc, page) => {
       if (page?.success) {

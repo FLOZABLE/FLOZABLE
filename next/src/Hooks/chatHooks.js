@@ -1,7 +1,7 @@
 import { getChatMembers, getChatMessages, getChatRooms } from "@/Api/chatApi";
 import { UserInfoContext } from "@/app/utils/Contexts";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 
 function useChatRooms() {
   const { userInfo } = useContext(UserInfoContext);
@@ -22,13 +22,13 @@ function useChatMessages({ chatroomId, length, lastMsgId }) {
   const queryResult = useInfiniteQuery({
     queryKey: [`useChatMessages`, chatroomId, length, lastMsgId],
     queryFn: ({ pageParam }) =>
-      getChatMessages({ chatroomId, pageParam, length, lastMsgId }),
+      getChatMessages({ chatroomId, pageParam, length }),
     staleTime: 1000 * 60 * 10,
     enabled: !!chatroomId,
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       const nextPage =
-        lastPage.messages.length === length
+        lastPage?.data?.messages.length === length
           ? allPages.length * length
           : undefined;
       return nextPage;
