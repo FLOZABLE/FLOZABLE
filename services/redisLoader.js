@@ -832,25 +832,6 @@ async function spotifyAccessTokenCache(connection, userId) {
   }
 }
 
-async function vapidKeysCache() {
-  try {
-    const [publicKey, privateKey] = await redisClient.hmget(
-      `vapidKeys`,
-      "public",
-      "private"
-    );
-
-    if (publicKey && privateKey) {
-      return { publicKey, privateKey };
-    }
-
-    return false;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
 async function cacheExtensionToken(userId) {
   try {
     const token = generateRandomId(10);
@@ -916,7 +897,6 @@ module.exports = {
   cacheChatroomMembers,
   chatroomMessagesCache,
   spotifyAccessTokenCache,
-  vapidKeysCache,
   cacheExtensionToken,
   appTokenCache,
 };

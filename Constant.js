@@ -99,6 +99,15 @@ const RESPONSE_CODES = {
       code: 403,
     },
   },
+  forbidden: {
+    success: false,
+    status: "error",
+    message: "You do not have permission to perform this action",
+    error: {
+      reason: "Insufficient Privileges",
+      code: 403,
+    },
+  },
 };
 
 const USER_ID_COOKIE_OPTIONS = {

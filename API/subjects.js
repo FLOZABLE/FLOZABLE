@@ -22,9 +22,9 @@ Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const subjectsInfo = await subjectsTimelineCache(connection, userId);
+      const subjects = await subjectsTimelineCache(connection, userId);
 
-      res.send({ success: true, subjects: subjectsInfo });
+      res.send({ success: true, status: "success", data: { subjects } });
     } catch (err) {
       console.log(err);
       RESPONSE_CODES["error"];
@@ -35,61 +35,51 @@ Router.get("/", async (req, res) => {
 Router.put("/subject", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { name, color, icon } = req.body;
+      const { name, color } = req.body;
 
       const isValidName = validateString(name, "subject name");
 
       if (!isValidName.isValid) {
-        return res.send({ success: false, reason: isValidName.reason });
-      }
-
-      if (name === "others" || name === "other") {
-        return res.send({ success: false, reason: "Others can't be used" });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidName.reason,
+          error: { reason: isValidName.reason },
+        });
       }
 
       const isValidColor = validateHEX(color, "Color");
 
       if (!isValidColor.isValid) {
-        return res.send({ success: false, reason: isValidColor.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidColor.reason,
+          error: { reason: isValidColor.reason },
+        });
       }
 
-      /* const isValidIcon = validateStrictString(icon, "icon name", 10, 0);
-
-      if (!isValidIcon.isValid) {
-        return res.send({ success: false, reason: isValidIcon.reason });
-      }
- */
-      const subjectInfo = {
+      const subject = {
         name,
         color,
-        /* icon, */
         created_at: Math.floor(new Date().getTime() / 1000),
         subject_id: generateRandomId(10),
         user_id: userId,
       };
+
       const connection = pool.promise();
-      try {
-        await connection.query(`INSERT INTO subjects SET ?`, subjectInfo);
-        res.send({
-          success: true,
-          msg: `Added Subject "${subjectInfo.name}"`,
-          subjectInfo,
-        });
-        delete subjectInfo.user_id;
-        redisClient.hset(
-          `user:${userId}:subjects`,
-          subjectInfo.subject_id,
-          JSON.stringify(subjectInfo)
-        );
-      } catch (err) {
-        console.log(err);
-        if (err.errno === 1062) {
-          return res.send({ success: false, reason: "Name already in use" });
-        }
-        return res.send(RESPONSE_CODES["error"]);
-      }
+      await connection.query(`INSERT INTO subjects SET ?`, subject);
+      res.send({
+        success: true,
+        status: "success",
+        message: `Added Subject "${subject.name}"`,
+        data: { subject },
+      });
     } catch (err) {
       console.log(err);
+      if (err.errno === 1062) {
+        return res.send({ success: false, reason: "Name already in use" });
+      }
       res.send(RESPONSE_CODES["error"]);
     }
   });
@@ -98,7 +88,7 @@ Router.put("/subject", async (req, res) => {
 Router.patch("/subject", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { name, color, subjectId } = req.body;
+      const { subject_id: subjectId, name, color } = req.body;
 
       const isValidName = validateString(name, "subject name");
 
@@ -112,16 +102,15 @@ Router.patch("/subject", async (req, res) => {
         return res.send({ success: false, reason: isValidColor.reason });
       }
 
-      /* const isValidIcon = validateStrictString(icon, "icon name");
+      const isValidSubjectId = validateStrictString(
+        subjectId,
+        "subject id",
+        10,
+        10
+      );
 
-      if (!isValidIcon.isValid) {
-        return res.send({ success: false, reason: isValidIcon.reason });
-      } */
-
-      const isValidId = validateStrictString(subjectId, "subject id", 10, 10);
-
-      if (!isValidId.isValid) {
-        return res.send({ success: false, reason: isValidId.reason });
+      if (!isValidSubjectId.isValid) {
+        return res.send({ success: false, reason: isValidSubjectId.reason });
       }
 
       const subject = {
@@ -142,26 +131,12 @@ Router.patch("/subject", async (req, res) => {
 
       res.send({
         success: true,
-        msg: `Modified Subject "${name}"`,
-        subject,
+        status: "success",
+        message: `Modified Subject "${name}"`,
+        data: { subject },
       });
-
-      const previousSubject = await redisClient.hget(
-        `user:${userId}:subjects`,
-        subjectId
-      );
-
-      if (previousSubject) {
-        previousSubject.color = color;
-        previousSubject.name = name;
-        redisClient.hset(
-          `user:${userId}:subjects`,
-          subjectId,
-          JSON.stringify(previousSubject)
-        );
-      }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
       res.send(RESPONSE_CODES["error"]);
     }
   });
@@ -170,9 +145,7 @@ Router.patch("/subject", async (req, res) => {
 Router.delete("/subject", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { subjectId } = req.body;
-
-      console.log(subjectId);
+      const { subject_id: subjectId } = req.body;
 
       const connection = pool.promise();
 
@@ -251,11 +224,14 @@ Router.delete("/subject", async (req, res) => {
         [subjectId, userId]
       );
 
-      redisClient.hdel(`user:${userId}:subjects`, subjectId);
-
-      return res.send({ success: true, msg: `Deleted ${subject.name}` });
-    } catch (error) {
-      console.log(error);
+      return res.send({
+        success: true,
+        status: "success",
+        message: `Deleted ${subject.name}`,
+      });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -263,7 +239,7 @@ Router.delete("/subject", async (req, res) => {
 Router.post("/subject/share", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { users, subjectId } = req.body;
+      const { users, subject_id: subjectId } = req.body;
 
       const connection = pool.promise();
 
@@ -356,9 +332,13 @@ Router.post("/subject/share", async (req, res) => {
         );
       });
 
-      res.send({ success: true, msg: "Subject shared" });
-    } catch (error) {
-      console.log(error);
+      res.send({
+        success: true,
+        status: "success",
+        message: "Subject shared!",
+      });
+    } catch (err) {
+      console.log(err);
       res.send(RESPONSE_CODES["error"]);
     }
   });
@@ -377,7 +357,7 @@ Router.post("/subject/share/respond", async (req, res) => {
 Router.delete("/subject/share", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { subjectId, targetId } = req.body;
+      const { subject_id: subjectId, target_id: targetId } = req.body;
 
       const connection = pool.promise();
       const [[subject]] = await connection.query(
@@ -432,7 +412,7 @@ Router.delete("/subject/share", async (req, res) => {
         redisClient.hdel(`user:${targetId}:notifications`, subjectRequest.i);
       }
 
-      res.send({ success: true, msg: `Removed user!` });
+      res.send({ success: true, status: "success", message: `Removed user!` });
     } catch (err) {
       console.log(err);
       res.send(RESPONSE_CODES["error"]);
@@ -481,9 +461,10 @@ Router.get("/subject/users", async (req, res) => {
         return res.send(RESPONSE_CODES["non-memeber"]);
       }
 
-      res.send({ success: true, subject });
+      res.send({ success: true, status: "success", data: { subject } });
     } catch (err) {
       console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });

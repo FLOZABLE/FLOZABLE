@@ -1,44 +1,22 @@
-import config from "@/app/utils/config";
+import AxiosInstance from "@/app/utils/axiosInstance";
 
 async function getVapidKeys() {
-  const response = await fetch(`${config.server}/notifications/vapidkeys`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-
-  return data;
+  const response = await AxiosInstance.get(`/notifications/vapidkeys`);
+  return response.data;
 }
 
 async function postNotificationsSubscribe({ endpoint, keys }) {
-  const response = await fetch(`${config.server}/notifications/subscribe`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ endpoint, keys }),
+  const response = await AxiosInstance.get(`/notifications/subscribe`, {
+    params: { endpoint, keys },
   });
-  const data = await response.json();
-
-  return data;
+  return response.data;
 }
 
 async function postNotificationsRead(notificationId) {
-  const response = await fetch(`${config.server}/notifications/read`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ notificationId }),
+  const response = await AxiosInstance.get(`/notifications/read`, {
+    notification_id: notificationId,
   });
-  const data = await response.json();
-
-  return data;
+  return response.data;
 }
 
 export { getVapidKeys, postNotificationsSubscribe, postNotificationsRead };

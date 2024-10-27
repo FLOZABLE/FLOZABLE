@@ -4,19 +4,19 @@ const { deriveKey } = require("../Utils/tool");
 const { validateStrictString, validateURL } = require("../Utils/validate");
 const redisClient = require("../model/redis");
 const { RESPONSE_CODES } = require("../Constant");
-const { vapidKeysCache } = require("../services/redisLoader");
 const crypto = require("crypto");
 const pool = require("../model/pool");
 const { autoSignin } = require("./auth");
 
 Router.get("/vapidkeys", async (req, res) => {
-  const vapidKeys = await vapidKeysCache();
+  try {
+    const publicKey = process.env.VAPID_PUBLIC_KEY;
 
-  if (!vapidKeys) {
-    return res.send(RESPONSE_CODES["error"]);
+    res.send({ success: true, status: "success", publicKey });
+  } catch (err) {
+    console.log(err);
+    res.send(RESPONSE_CODES.error);
   }
-
-  res.send({ success: true, publicKey: vapidKeys.publicKey });
 });
 
 Router.post("/subscribe", async (req, res) => {
@@ -26,7 +26,12 @@ Router.post("/subscribe", async (req, res) => {
 
       const isValidEndPoint = validateURL(endpoint);
       if (!isValidEndPoint.isValid) {
-        return res.send({ success: false, reason: isValidEndPoint.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidEndPoint.reason,
+          error: { reason: isValidEndPoint.reason },
+        });
       }
 
       const connection = pool.promise();
@@ -60,7 +65,7 @@ Router.post("/subscribe", async (req, res) => {
         updateInfo,
         userId,
       ]);
-      return res.send({ success: true });
+      return res.send({ success: true, status: "success" });
     } catch (err) {
       console.log(err);
       res.send(RESPONSE_CODES["error"]);
@@ -71,7 +76,7 @@ Router.post("/subscribe", async (req, res) => {
 Router.post("/read", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { notificationId } = req.body;
+      const { notification_id: notificationId } = req.body;
 
       const isValidNotificationId = validateStrictString(
         notificationId,
@@ -82,15 +87,17 @@ Router.post("/read", async (req, res) => {
       if (!isValidNotificationId.isValid) {
         return res.send({
           success: false,
-          reason: isValidNotificationId.reason,
+          status: "error",
+          message: isValidNotificationId.reason,
+          error: { reason: isValidNotificationId.reason },
         });
       }
 
       redisClient.hdel(`user:${userId}:notifications`, notificationId);
-      res.send({ success: true });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "An Error Occured" });
+      res.send({ success: true, status: "success" });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });

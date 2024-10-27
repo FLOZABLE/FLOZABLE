@@ -191,10 +191,7 @@ export default function Planner() {
       }
 
       if (plan_id !== "0000000000") {
-        (async () => {
-          const data = await patchPlan({ ...updatedEvents[planIndex] });
-          setResponse(data);
-        })();
+        patchPlan({ ...updatedEvents[planIndex] });
       }
     },
     [planModal, plans]
@@ -231,10 +228,7 @@ export default function Planner() {
       }
 
       if (plan_id !== "0000000000") {
-        (async () => {
-          const data = await patchPlan({ ...updatedEvents[planIndex] });
-          setResponse(data);
-        })();
+        patchPlan({ ...updatedEvents[planIndex] });
       }
     },
     [planModal]
