@@ -1,8 +1,8 @@
-import { coldColorsList, SUBJECTS_PIE_COLORS } from "@/app/utils/Constant";
+import { SUBJECTS_PIE_COLORS } from "@/app/utils/Constant";
 import { secondConverter } from "@/app/utils/Tool";
 import styles from "./WebsiteUsageChart.module.css";
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { PieCustomTooltip, pieCustomLabel } from "../Charts";
+import { PieCustomTooltip } from "../Charts";
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { useEffect, useState } from "react";
@@ -22,7 +22,7 @@ export default function WebsiteUsageChart({}) {
   useEffect(() => {
     if (!extensionUsageData?.success) return;
 
-    const usage = extensionUsageData.usage.map((website, i) => ({
+    const usage = extensionUsageData.data.usage.map((website, i) => ({
       ...website,
       name: website.website,
       fill: SUBJECTS_PIE_COLORS[i % SUBJECTS_PIE_COLORS.length],

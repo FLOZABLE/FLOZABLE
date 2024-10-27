@@ -22,10 +22,9 @@ import AccountWall from "../Others/AccountWall/AccountWall";
 function FriendsTrendChart() {
   const { userInfo } = useContext(UserInfoContext);
 
-  const { data: getFriendsTrendsData, isLoading: getFriendsTrendsIsLoading } =
-    useFriendsTrends();
+  const { friendsTrendData, friendsTrendsIsLoading } = useFriendsTrends();
 
-  if (getFriendsTrendsIsLoading) {
+  if (friendsTrendsIsLoading) {
     return <CircularLoading />;
   }
 
@@ -33,7 +32,7 @@ function FriendsTrendChart() {
     return <AccountWall />;
   }
 
-  if (!getFriendsTrendsData?.success) {
+  if (!friendsTrendData?.success) {
     return null;
   }
 
@@ -42,7 +41,7 @@ function FriendsTrendChart() {
       <BarChart
         width={500}
         height={300}
-        data={getFriendsTrendsData.trends.map((trend) => {
+        data={friendsTrendData.data.trends.map((trend) => {
           const date = DateTime.fromSeconds(trend.date).toFormat("M/d");
           const friendsData = { date };
 
@@ -73,7 +72,7 @@ function FriendsTrendChart() {
           }}
         />
         <Legend />
-        {getFriendsTrendsData.trends[0].friends.map((friend, i) => {
+        {friendsTrendData.trends[0].friends.map((friend, i) => {
           return (
             <Bar
               key={i}

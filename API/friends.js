@@ -32,13 +32,20 @@ async function sendFriendRequest(userId, targetId) {
     const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
     if (!isValidTargetId.isValid) {
-      return { success: false, reason: isValidTargetId.reason };
+      return {
+        success: false,
+        status: "error",
+        message: isValidTargetId.reason,
+        error: { reason: isValidTargetId.reason },
+      };
     }
 
     if (userId === targetId) {
       return {
         success: false,
-        reason: "Cannot send request to yourself",
+        status: "error",
+        message: "Cannot send request to yourself",
+        error: { reason: "Cannot send request to yourself" },
       };
     }
 
@@ -52,7 +59,7 @@ async function sendFriendRequest(userId, targetId) {
     const userInfo = usersInfo.find((user) => user.user_id === userId);
 
     const targetInfo = usersInfo.find((user) => user.user_id === targetId);
-    
+
     if (!userInfo) {
       return RESPONSE_CODES["no-user"];
     }
@@ -76,11 +83,14 @@ async function sendFriendRequest(userId, targetId) {
     const prevFriendReq = friendRequests.find((friendReq) => {
       return friendReq.f === userId;
     });
-    if (prevFriendReq)
+    if (prevFriendReq) {
       return {
         success: false,
-        reason: "You've already sent a request to this user",
+        status: "error",
+        message: "You've already sent a request to this user",
+        error: { reason: "You've already sent a request to this user" },
       };
+    }
 
     const id = generateRandomId(5);
     const date = Math.floor(new Date().getTime() / 1000);
@@ -104,10 +114,15 @@ async function sendFriendRequest(userId, targetId) {
     ongoing.f = targetInfo;
     ongoing.i = id;
     mainIo.to(userId).emit("notification", ongoing);
-    return { success: true, msg: `Sent friend request to ${targetInfo.name}!` };
+
+    return {
+      success: true,
+      status: "success",
+      message: `Sent friend request to ${targetInfo.name}!`,
+    };
   } catch (err) {
     console.log(err);
-    return { success: false, reason: "Error" };
+    return RESPONSE_CODES.error;
   }
 }
 
@@ -122,7 +137,12 @@ async function replyFriendRequest(
     const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
     if (!isValidTargetId.isValid) {
-      return { success: false, reason: isValidTargetId.reason };
+      return {
+        success: false,
+        status: "error",
+        message: isValidTargetId.reason,
+        error: { reason: isValidTargetId.reason },
+      };
     }
 
     if (notificationId) {
@@ -132,13 +152,23 @@ async function replyFriendRequest(
         10
       );
       if (!isValidNotificationId.isValid)
-        return { success: false, reason: isValidNotificationId.reason };
+        return {
+          success: false,
+          status: "error",
+          message: isValidNotificationId.reason,
+          error: { reason: isValidNotificationId.reason },
+        };
     }
 
     const isValidAcceped = validateBoolean(accepted, "accept", true);
 
     if (!isValidAcceped.isValid) {
-      return { success: false, reason: isValidAcceped.reason };
+      return {
+        success: false,
+        status: "error",
+        message: isValidAcceped.reason,
+        error: { reason: isValidAcceped.reason },
+      };
     }
 
     let friendReq;
@@ -164,7 +194,11 @@ async function replyFriendRequest(
     //remove it from ongoing friend req list
     redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
     if (!accepted) {
-      return { success: true, msg: "Declined Friend Request!" };
+      return {
+        success: true,
+        status: "success",
+        message: "Declined Friend Request!",
+      };
     }
 
     const connection = pool.promise();
@@ -187,14 +221,16 @@ async function replyFriendRequest(
     if (userFriends.includes(targetId))
       return {
         success: true,
-        msg: `You and ${targetInfo.name} were already friends!`,
+        status: "success",
+        message: `You and ${targetInfo.name} were already friends!`,
       };
 
     if (
       userFriends.length >= FRIENDS_LIMIT ||
       targetUserFriends.length >= FRIENDS_LIMIT
-    )
+    ) {
       return RESPONSE_CODES["friends-limit-reached"];
+    }
 
     const date = Math.floor(new Date().getTime() / 1000);
 
@@ -278,11 +314,12 @@ async function replyFriendRequest(
 
     return {
       success: true,
-      msg: `You and ${targetInfo.name} are now friends!`,
+      status: "success",
+      message: `You and ${targetInfo.name} are now friends!`,
     };
-  } catch (error) {
-    console.log(error);
-    return { success: false, reason: "Error" };
+  } catch (err) {
+    console.log(err);
+    return RESPONSE_CODES.error;
   }
 }
 
@@ -290,13 +327,13 @@ async function replyFriendRequest(
 Router.post("/request", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { targetId } = req.body;
+      const { target_id: targetId } = req.body;
 
       const response = await sendFriendRequest(userId, targetId);
       return res.send(response);
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "An Error Occured" });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -309,7 +346,12 @@ Router.delete("/request", async (req, res) => {
       const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
       if (!isValidTargetId.isValid) {
-        return res.send({ success: false, reason: isValidTargetId.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidTargetId.reason,
+          error: { reason: isValidTargetId.reason },
+        });
       }
 
       const friendRequests = await notificationCache(targetId, 0);
@@ -320,10 +362,10 @@ Router.delete("/request", async (req, res) => {
       redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
       //remove it from ongoing friend req list
       redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
-      res.send({ success: true });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "Failed" });
+      res.send({ success: true, status: "success" });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -332,7 +374,11 @@ Router.delete("/request", async (req, res) => {
 Router.post("/request/reply", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { targetId, accepted, notificationId } = req.body;
+      const {
+        target_id: targetId,
+        notification_id: notificationId,
+        accepted,
+      } = req.body;
 
       const response = await replyFriendRequest(
         userId,
@@ -343,9 +389,9 @@ Router.post("/request/reply", async (req, res) => {
 
       console.log(response);
       return res.send(response);
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "Failed" });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -386,19 +432,20 @@ Router.get("/recommended", async (req, res) => {
         const excluded = [...friends, userId];
 
         const users = await getRecommendedFriends(connection, excluded);
-        return res.send({ success: true, users });
-      } catch (error) {
-        console.log(error);
-        res.send({ success: false, reason: "An Error Occured" });
+        return res.send({ success: true, status: "success", data: { users } });
+      } catch (err) {
+        console.log(err);
+        res.send(RESPONSE_CODES.error);
       }
     },
     async () => {
       try {
         const connection = pool.promise();
         const users = await getRecommendedFriends(connection);
-        return res.send({ success: true, users });
+        return res.send({ success: true, data: { users } });
       } catch (err) {
         console.log(err);
+        res.send(RESPONSE_CODES.error);
       }
     }
   );
@@ -425,7 +472,7 @@ Router.get("/status", async (req, res) => {
       const friends = await usersCache(connection, friendsIds);
 
       if (!friends.length) {
-        return res.send({ success: false });
+        return res.send(RESPONSE_CODES.error);
       }
 
       const studyTotal = await redisClient.zmscore(
@@ -494,10 +541,10 @@ Router.get("/status", async (req, res) => {
           }
         });
       }
-      return res.send({ success: true, friends });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "An Error Occured" });
+      return res.send({ success: true, status: "success", data: { friends } });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -509,7 +556,12 @@ Router.get("/search", async (req, res) => {
     const isValidQuery = validateStrictString(query, "query", 10, 2);
 
     if (!isValidQuery.isValid) {
-      return res.send({ success: false, reason: isValidQuery.reason });
+      return res.send({
+        success: false,
+        status: "error",
+        message: isValidQuery.reason,
+        error: { reason: isValidQuery.reason },
+      });
     }
 
     const connection = pool.promise();
@@ -517,9 +569,10 @@ Router.get("/search", async (req, res) => {
       `SELECT user_id, name, timezone from users where name like ? LIMIT 20`,
       `%${query}%`
     );
-    res.send({ success: true, users });
+    res.send({ success: true, status: "success", data: { users } });
   } catch (err) {
     console.log(err);
+    res.send(RESPONSE_CODES.error);
   }
 });
 
@@ -543,9 +596,9 @@ Router.post("/link/create", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     const linkId = await createFriendLink(userId);
     if (linkId) {
-      return res.send({ success: true, linkId });
+      return res.send({ success: true, status: "success", data: { linkId } });
     } else {
-      return res.send({ success: false, reason: "Err" });
+      return res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -731,10 +784,10 @@ Router.get("/trends", async (req, res) => {
         })
       );
 
-      return res.send({ success: true, trends });
+      return res.send({ success: true, status: "success", data: { trends } });
     } catch (err) {
       console.log(err);
-      res.send({ success: false });
+      res.send(RESPONSE_CODES.error);
     }
   });
 });

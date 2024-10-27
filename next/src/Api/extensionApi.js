@@ -1,63 +1,37 @@
-import config from "@/app/utils/config";
+import AxiosInstance from "@/app/utils/axiosInstance";
+import { getTimezone } from "@/app/utils/Tool";
 import { DateTime } from "luxon";
 
 async function getExtensionSettings() {
-  const response = await fetch(`${config.server}/extension/settings`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-  return data;
+  const response = await AxiosInstance.get(`/extension/settings`);
+  return response.data;
 }
 
 async function putExtensionSetting(url) {
-  const response = await fetch(`${config.server}/extension/setting`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ url }),
-  });
-  const data = await response.json();
-  return data;
+  const response = await AxiosInstance.put(`/extension/setting`, { url });
+  return response.data;
 }
 
 async function patchExtensionSetting({ website, mode, value }) {
-  const response = await fetch(`${config.server}/extension/setting`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ website, mode, value }),
+  const response = await AxiosInstance.patch(`/extension/setting`, {
+    website,
+    mode,
+    value,
   });
-  const data = await response.json();
-  return data;
+  return response.data;
 }
 
 async function getExtensionUsage(date, mode) {
-  if (!date || !mode) return { success: false };
+  const timezone = getTimezone();
 
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  const response = await fetch(
-    `${config.server}/extension/usage?date=${DateTime.fromJSDate(
-      date
-    ).toISODate()}&mode=${mode}&timezone=${timezone}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
-  return data;
+  const response = await AxiosInstance.get(`/extension/usage`, {
+    params: {
+      date: DateTime.fromJSDate(date).toISODate(),
+      mode,
+      timezone,
+    },
+  });
+  return response.data;
 }
 
 export {

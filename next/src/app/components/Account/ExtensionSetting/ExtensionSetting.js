@@ -6,7 +6,6 @@ import styles from "./ExtensionSetting.module.css";
 import { useExtensionSettings } from "@/Hooks/extensionHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { patchExtensionSetting, putExtensionSetting } from "@/Api/extensionApi";
-import { toast } from "react-toastify";
 
 function ExtensionSetting() {
   const { useExtensionSettingsData, useExtensionSettingsIsLoading } =
@@ -20,14 +19,13 @@ function ExtensionSetting() {
   useEffect(() => {
     if (!useExtensionSettingsData?.success) return;
 
-    setSettings(useExtensionSettingsData.websiteSettings);
+    setSettings(useExtensionSettingsData.data.websiteSettings);
   }, [useExtensionSettingsData]);
 
   const onSubmitUrl = useCallback(() => {
     (async () => {
-      const data = await putExtensionSetting(url);
-      if (data.success) {
-        toast.success(data.msg);
+      const response = await putExtensionSetting(url);
+      if (response.success) {
         setSettings((prev) => [...prev, data.setting]);
         setUrl("");
 
@@ -38,8 +36,6 @@ function ExtensionSetting() {
           if (!section) return;
           section.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 300);
-      } else {
-        toast.error(data.reason);
       }
     })();
   }, [url]);
@@ -47,9 +43,8 @@ function ExtensionSetting() {
   const settingUpdate = useCallback(
     (website, mode, value) => {
       (async () => {
-        const data = await patchExtensionSetting({ website, mode, value });
-        if (data.success) {
-          toast.success(data.msg);
+        const response = await patchExtensionSetting({ website, mode, value });
+        if (response.success) {
           const settingIndex = settings.findIndex(
             (setting) => setting.website === website
           );
@@ -57,9 +52,7 @@ function ExtensionSetting() {
           const newSettings = [...settings];
           newSettings[settingIndex][mode] = value;
           setSettings(newSettings);
-        } else {
-          toast.error(data.reason);
-        }
+        };
       })();
     },
     [settings]
