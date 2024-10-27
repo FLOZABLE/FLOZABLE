@@ -7,11 +7,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import {
-  PlansContext,
-  ResponseContext,
-  SubjectsContext,
-} from "@/app/utils/Contexts";
+import { PlansContext, SubjectsContext } from "@/app/utils/Contexts";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import { patchPlan } from "@/Api/plansApi";
@@ -92,7 +88,6 @@ function PlanHeader(info, viewer) {
 export default function Planner() {
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
   const { subjects } = useContext(SubjectsContext);
-  const { setResponse } = useContext(ResponseContext);
 
   const plannerRef = useRef(null);
 

@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import styles from "./NotificationsBtn.module.css";
-import { NotificationsContext, ResponseContext } from "@/app/utils/Contexts";
+import { NotificationsContext } from "@/app/utils/Contexts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import UserContainer from "../../Users/UserContainer/UserContainer";
@@ -46,7 +46,6 @@ function NotificationBtn({ children, hoverText, onClick }) {
 }
 export default function NotificationsBtn() {
   const { notifications, setNotifications } = useContext(NotificationsContext);
-  const { setResponse } = useContext(ResponseContext);
 
   const { friendsStatusRefetch } = useFriendsStatus();
   const { friendsTrendRefetch } = useFriendsTrends();
@@ -67,20 +66,17 @@ export default function NotificationsBtn() {
       const notificationId = notification?.i;
 
       (async () => {
-        const data = await postFriendsRequestReply({
+        const response = await postFriendsRequestReply({
           targetId,
           accepted,
           notificationId,
         });
+        if (!response.success) return;
 
-        if (data.success) {
-          setTimeout(() => {
-            friendsStatusRefetch();
-            friendsTrendRefetch();
-          }, 500);
-        }
-
-        setResponse(data);
+        setTimeout(() => {
+          friendsStatusRefetch();
+          friendsTrendRefetch();
+        }, 500);
       })();
 
       setNotifications(
@@ -109,18 +105,18 @@ export default function NotificationsBtn() {
       const notificationId = notification?.i;
 
       (async () => {
-        const data = await postChatRequestReply({
+        const response = await postChatRequestReply({
           targetId,
           accepted,
           notificationId,
         });
 
-        setResponse(data);
-      })();
+        if (!response.success) return;
 
-      setNotifications(
-        notifications.filter((notif) => notif.i !== notificationId)
-      );
+        setNotifications(
+          notifications.filter((notif) => notif.i !== notificationId)
+        );
+      })();
     },
     [notifications]
   );

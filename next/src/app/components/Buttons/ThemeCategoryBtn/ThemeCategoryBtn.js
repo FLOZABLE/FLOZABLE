@@ -1,12 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import styles from "./ThemeCategoryBtn.module.css";
-import { ResponseContext, ThemesContext } from "@/app/utils/Contexts";
+import { ThemesContext } from "@/app/utils/Contexts";
 import { useRouter } from "next/navigation";
 import { postThemesThemeSave } from "@/Api/themesApi";
 import { THEMES_CATEGORIES } from "@/app/utils/Themes";
 
 function ThemeCategoryBtn({ theme, bgColor = "#ffffffC0", color = "#000" }) {
-  const { setResponse } = useContext(ResponseContext);
   const { userThemes, setUserThemes } = useContext(ThemesContext);
 
   const router = useRouter();
@@ -42,7 +41,7 @@ function ThemeCategoryBtn({ theme, bgColor = "#ffffffC0", color = "#000" }) {
     },
     [theme, userThemes]
   );
-  
+
   useEffect(() => {
     const themeInfo = userThemes.find(
       (userTheme) => userTheme.theme_id === theme.theme_id

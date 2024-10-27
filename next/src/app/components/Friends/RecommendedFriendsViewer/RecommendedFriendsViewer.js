@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import styles from "./RecommendedFriendsViewer.module.css";
-import { ResponseContext } from "@/app/utils/Contexts";
 import RefreshBtn from "../../Buttons/RefreshBtn/RefreshBtn";
 import FriendRequestBtn from "../../Buttons/FriendRequestBtn/FriendRequestBtn";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
@@ -11,7 +10,6 @@ import { useRouter } from "next/navigation";
 import { useFriendsRecommended } from "@/Hooks/friendsHooks";
 
 function RecommendedFriendsViewer({}) {
-  const { setResponse } = useContext(ResponseContext);
   const {
     friendsRecommendedData,
     friendsRecommendedIsLoading,
@@ -41,7 +39,6 @@ function RecommendedFriendsViewer({}) {
                 >
                   <FriendRequestBtn
                     userInfo={user}
-                    setResponse={setResponse}
                     padding={"0.1875rem 0.313rem"}
                   />
                 </UserContainer>

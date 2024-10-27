@@ -9,7 +9,7 @@ function FriendRequestBtn({ userInfo, padding }) {
   const requestFriend = useCallback(() => {
     (async () => {
       const targetId = userInfo.user_id;
-      const response = await postFriendsRequest({ targetId });
+      await postFriendsRequest({ targetId });
     })();
   }, [userInfo]);
 

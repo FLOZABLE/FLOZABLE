@@ -5,11 +5,11 @@ import { faVolumeHigh, faVolumeXmark } from "@fortawesome/free-solid-svg-icons";
 import Draggable from "react-draggable";
 import YouTubePlayer from "@/app/components/Youtube/YouTubePlayer/YouTubePlayer";
 import ThemeCategoryBtn from "@/app/components/Buttons/ThemeCategoryBtn/ThemeCategoryBtn";
-import { ResponseContext, ThemesContext } from "@/app/utils/Contexts";
+import { ThemesContext } from "@/app/utils/Contexts";
+import { toast } from "react-toastify";
 
 function ThemePreview({ isActive, setIsActive }) {
   const { themes } = useContext(ThemesContext);
-  const { setResponse } = useContext(ResponseContext);
 
   const [volume, setVolume] = useState(0);
   const draggableRef = useRef(null);
@@ -25,8 +25,7 @@ function ThemePreview({ isActive, setIsActive }) {
     const theme = themes.find((theme) => theme.id === themeId);
 
     if (!theme) {
-      setResponse({ success: false, reason: "Invalid Theme" });
-      return;
+      return toast.error("Invalid Theme");
     }
 
     setIsActive(theme);

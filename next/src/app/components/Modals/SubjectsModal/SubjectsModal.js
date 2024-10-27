@@ -2,11 +2,7 @@
 
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import styles from "./SubjectsModal.module.css";
-import {
-  ModalsContext,
-  ResponseContext,
-  SubjectsContext,
-} from "@/app/utils/Contexts";
+import { ModalsContext, SubjectsContext } from "@/app/utils/Contexts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBook,
@@ -34,7 +30,6 @@ export default function SubjectsModal() {
   const { isSubjectsModal, setIsSubjectsModal, setSearchUsersModal } =
     useContext(ModalsContext);
   const { subjects, setSubjects } = useContext(SubjectsContext);
-  const { setResponse } = useContext(ResponseContext);
 
   const [subject, setSubject] = useState({
     name: "",

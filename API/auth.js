@@ -383,7 +383,7 @@ Router.get("/signin/spotify/callback", async (req, res) => {
     if (!req.query.state) {
       return res.redirect(
         `${process.env.NEXT_SERVER}/dashboard/account?` +
-          querystring.stringify({ success: false, reason: "State mismatch" })
+          querystring.stringify({ success: false, message: "State mismatch" })
       );
     }
 
@@ -392,7 +392,7 @@ Router.get("/signin/spotify/callback", async (req, res) => {
     if (!state || !userId) {
       return res.redirect(
         `${process.env.NEXT_SERVER}/dashboard/account?` +
-          querystring.stringify({ success: false, reason: "State mismatch" })
+          querystring.stringify({ success: false, message: "State mismatch" })
       );
     }
 
@@ -401,7 +401,7 @@ Router.get("/signin/spotify/callback", async (req, res) => {
     if (storedState !== state) {
       return res.redirect(
         `${process.env.NEXT_SERVER}/dashboard/account?` +
-          querystring.stringify({ success: false, reason: "State mismatch" })
+          querystring.stringify({ success: false, message: "State mismatch" })
       );
     }
 
@@ -433,7 +433,7 @@ Router.get("/signin/spotify/callback", async (req, res) => {
         `${process.env.NEXT_SERVER}/dashboard/account?` +
           querystring.stringify({
             success: false,
-            reason: data.error_description,
+            message: data.error_description,
           })
       );
     }
@@ -731,8 +731,7 @@ Router.get("/logout", function (req, res) {
         console.log("Error destroying session:", err);
       }
       res.clearCookie("userId");
-      //res.redirect('/');
-      res.send({ success: true });
+      res.send({ success: true, status: "success" });
     });
   } catch (err) {
     console.log(err);

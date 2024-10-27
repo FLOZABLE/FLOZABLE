@@ -12,11 +12,7 @@ import {
   faStopwatch,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  GroupsContext,
-  ModalsContext,
-  ResponseContext,
-} from "@/app/utils/Contexts";
+import { GroupsContext, ModalsContext } from "@/app/utils/Contexts";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
@@ -31,7 +27,6 @@ import ModalLayer from "../ModalLayer/ModalLayer";
 
 function EditGroupModal() {
   const { editGroupModal, setEditGroupModal } = useContext(ModalsContext);
-  const { setResponse } = useContext(ResponseContext);
   const { groups, setGroups } = useContext(GroupsContext);
 
   const [newGroup, setNewGroup] = useState(DEFAULT_GROUP);
@@ -40,33 +35,31 @@ function EditGroupModal() {
 
   const onSubmit = useCallback(() => {
     (async () => {
-      const data = await patchGroup(newGroup);
-      setResponse(data);
+      const response = await patchGroup(newGroup);
 
-      if (data.success) {
-        setEditGroupModal({ group_id: null, opened: false });
-        const newGroups = [...groups];
-        const groupIndex = newGroups.findIndex(
-          (group) => group.group_id === newGroup.group_id
-        );
-        if (groupIndex === -1) return;
-        newGroups[groupIndex] = newGroup;
-        setGroups(newGroups);
-      }
+      if (!response.success) return;
+
+      setEditGroupModal({ group_id: null, opened: false });
+      const newGroups = [...groups];
+      const groupIndex = newGroups.findIndex(
+        (group) => group.group_id === newGroup.group_id
+      );
+      if (groupIndex === -1) return;
+      newGroups[groupIndex] = newGroup;
+      setGroups(newGroups);
     })();
   }, [newGroup, groups]);
 
   const onDelete = useCallback(() => {
     (async () => {
       const groupId = newGroup.group_id;
-      const data = await deleteGroup(groupId);
-      setResponse(data);
+      const response = await deleteGroup(groupId);
 
-      if (data.success) {
-        setEditGroupModal({ group_id: null, opened: false });
-        const newGroups = groups.filter((group) => group.group_id !== groupId);
-        setGroups(newGroups);
-      }
+      if (!response.success) return;
+
+      setEditGroupModal({ group_id: null, opened: false });
+      const newGroups = groups.filter((group) => group.group_id !== groupId);
+      setGroups(newGroups);
     })();
   }, [newGroup, groups]);
 

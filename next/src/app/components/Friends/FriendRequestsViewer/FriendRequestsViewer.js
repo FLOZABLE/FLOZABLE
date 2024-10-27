@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import styles from "./FriendRequestsViewer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { NotificationsContext, ResponseContext } from "@/app/utils/Contexts";
+import { NotificationsContext } from "@/app/utils/Contexts";
 import config from "@/app/utils/config";
 import SlidingOptBtn from "@/app/components/Buttons/SlidingOptBtn/SlidingOptBtn";
 import UserContainer from "../../Users/UserContainer/UserContainer";
@@ -28,7 +28,6 @@ function FriendRequestContainer({ friendRequest, children, style }) {
 
 function FriendRequestsViewer() {
   const { notifications, setNotifications } = useContext(NotificationsContext);
-  const { setResponse } = useContext(ResponseContext);
   const { friendsStatusRefetch } = useFriendsStatus();
   const { friendsTrendRefetch } = useFriendsTrends();
 

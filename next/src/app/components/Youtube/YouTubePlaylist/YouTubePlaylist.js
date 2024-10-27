@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "./YouTubePlaylist.module.css";
 import {
   usePlaylistsYoutube,
@@ -6,13 +6,12 @@ import {
 } from "@/Hooks/playlistHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import GoogleLoginBtn from "../../Buttons/GoogleLoginBtn/GoogleLoginBtn";
-import { ResponseContext } from "@/app/utils/Contexts";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { toast } from "react-toastify";
 
 function YouTubePlaylist({}) {
-  const { setResponse } = useContext(ResponseContext);
   const { playlistsYoutubeData, playlistsYoutubeIsLoading } =
     usePlaylistsYoutube();
 
@@ -38,12 +37,12 @@ function YouTubePlaylist({}) {
       const params = url.searchParams;
       const playlist = params.get("list");
       if (!playlist) {
-        setResponse({ success: false, reason: "Invalid playlist" });
+        toast.error("Invalid playlist");
       }
       setPlaylist(playlist);
     } catch (err) {
       console.log(err);
-      setResponse({ success: false, reason: "Invalid playlist" });
+      toast.error("Invalid playlist");
     } finally {
       setLink("");
     }

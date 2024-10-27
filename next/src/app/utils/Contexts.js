@@ -11,8 +11,9 @@ import { useSubjects } from "@/Hooks/subjectsHooks";
 import { usePlans } from "@/Hooks/plansHooks";
 import { useGroups } from "@/Hooks/groupsHook";
 import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { mediaSocket } from "./mediaSocket";
+import { toast } from "react-toastify";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -21,7 +22,6 @@ const PlansContext = createContext({});
 const UserInfoContext = createContext({});
 const NotificationsContext = createContext({});
 const TutorialsContext = createContext({});
-const ResponseContext = createContext({});
 const GroupsContext = createContext({});
 const ModalsContext = createContext({});
 const CallOptionsContext = createContext({});
@@ -33,25 +33,48 @@ const queryClient = new QueryClient({
 });
 
 function AppProvider({ children }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const success = searchParams.get("success");
+  const message = searchParams.get("message");
+
+  useEffect(() => {
+    if (!message || !success) return;
+
+    if (success === "true") {
+      toast.success(message);
+    } else {
+      toast.error(message);
+    }
+
+    // Remove URL params once toast is shown
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete("success");
+    newSearchParams.delete("message");
+
+    router.replace(`/dashboard?${newSearchParams.toString()}`, {
+      scroll: false,
+    });
+  }, [success, message]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AccountProvider>
         <SubjectsProvider>
           <GroupsProvider>
             <ModalsProvider>
-              <ResponseProvider>
-                <TutorialsProvider>
-                  <CallOptionsProvider>
-                    <ThemesProvider>
-                      <WorkersProvider>
-                        <GoogleOAuthProvider clientId={googleClientId}>
-                          {children}
-                        </GoogleOAuthProvider>
-                      </WorkersProvider>
-                    </ThemesProvider>
-                  </CallOptionsProvider>
-                </TutorialsProvider>
-              </ResponseProvider>
+              <TutorialsProvider>
+                <CallOptionsProvider>
+                  <ThemesProvider>
+                    <WorkersProvider>
+                      <GoogleOAuthProvider clientId={googleClientId}>
+                        {children}
+                      </GoogleOAuthProvider>
+                    </WorkersProvider>
+                  </ThemesProvider>
+                </CallOptionsProvider>
+              </TutorialsProvider>
             </ModalsProvider>
           </GroupsProvider>
         </SubjectsProvider>
@@ -239,23 +262,6 @@ function GroupsProvider({ children }) {
     >
       {children}
     </GroupsContext.Provider>
-  );
-}
-
-function ResponseProvider({ children }) {
-  const [response, setResponse] = useState(null);
-  const { setIsAccountModal } = useContext(ModalsContext);
-
-  useEffect(() => {
-    if (response?.action === "signin") {
-      setIsAccountModal(true);
-    }
-  }, [response]);
-
-  return (
-    <ResponseContext.Provider value={{ response, setResponse }}>
-      {children}
-    </ResponseContext.Provider>
   );
 }
 
@@ -466,7 +472,6 @@ export {
   SubjectsContext,
   PlansContext,
   GroupsContext,
-  ResponseContext,
   ModalsContext,
   TutorialsContext,
   CallOptionsContext,
