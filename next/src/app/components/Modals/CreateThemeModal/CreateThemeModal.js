@@ -1,7 +1,7 @@
 import React, { useState, useContext, useCallback } from "react";
 import styles from "./CreateThemeModal.module.css";
 import { faLink, faPen } from "@fortawesome/free-solid-svg-icons";
-import { ResponseContext, ThemesContext } from "@/app/utils/Contexts";
+import { ThemesContext } from "@/app/utils/Contexts";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
@@ -10,7 +10,6 @@ import { putThemesTheme } from "@/Api/themesApi";
 import TagsGenerator from "../../Inputs/TagsGenerator/TagsGenerator";
 
 function CreateThemeModal({ isOpen, setIsOpen }) {
-  const { setResponse } = useContext(ResponseContext);
   const { setThemes } = useContext(ThemesContext);
 
   const [newTheme, setNewTheme] = useState({

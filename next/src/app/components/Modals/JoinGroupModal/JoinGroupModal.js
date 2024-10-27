@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  GroupsContext,
-  ModalsContext,
-  ResponseContext,
-} from "@/app/utils/Contexts";
+import { GroupsContext, ModalsContext } from "@/app/utils/Contexts";
 import styles from "./JoinGroupModal.module.css";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useContext, useEffect, useState } from "react";
@@ -14,9 +10,10 @@ import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import { postGroupJoin } from "@/Api/groupsApi";
+import { toast } from "react-toastify";
+import { MittInstance } from "@/app/utils/mittInstance";
 
 function JoinGroupModal() {
-  const { setResponse } = useContext(ResponseContext);
   const { joinGroupModal, setJoinGroupModal } = useContext(ModalsContext);
   const { setMyGroups, groups } = useContext(GroupsContext);
 
@@ -34,25 +31,27 @@ function JoinGroupModal() {
     const groupId = joinGroupModal.group.group_id;
 
     (async () => {
-      const data = await postGroupJoin(groupId, password);
-      setResponse(data);
+      const response = await postGroupJoin(groupId, password);
+      if (!response.success) return;
 
-      if (data.success) {
-        setJoinGroupModal({
-          open: false,
-          group: null,
-        });
+      setJoinGroupModal({
+        open: false,
+        group: null,
+      });
 
-        setPassword("");
+      setPassword("");
 
-        setMyGroups((prev) => {
-          return [...prev, joinGroupModal.group];
-        });
+      setMyGroups((prev) => {
+        return [...prev, joinGroupModal.group];
+      });
 
-        router.push(window.location.pathname, { scroll: false });
+      setTimeout(() => {
+        MittInstance.emit("moveMyGroupsViewer", { groupId });
+      }, 100);
 
-        document.body.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      router.push(window.location.pathname, { scroll: false });
+
+      document.body.scrollIntoView({ behavior: "smooth", block: "start" });
     })();
   }, [password, joinGroupModal]);
 
@@ -65,8 +64,7 @@ function JoinGroupModal() {
     const groupInfo = groups.find((group) => group.group_id === groupId);
 
     if (!groupInfo) {
-      setResponse({ success: false, reason: "Group not found" });
-      return;
+      return toast.error("Group not found");
     }
 
     setJoinGroupModal({

@@ -11,7 +11,7 @@ import {
   faLock,
   faStopwatch,
 } from "@fortawesome/free-solid-svg-icons";
-import { GroupsContext, ResponseContext } from "@/app/utils/Contexts";
+import { GroupsContext } from "@/app/utils/Contexts";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
@@ -23,9 +23,9 @@ import TagsGenerator from "../../Inputs/TagsGenerator/TagsGenerator";
 import { putGroup } from "@/Api/groupsApi";
 import { DEFAULT_GROUP } from "@/app/utils/Constant";
 import ModalLayer from "../ModalLayer/ModalLayer";
+import { MittInstance } from "@/app/utils/mittInstance";
 
 function CreateGroupModal({ isOpen, setIsOpen }) {
-  const { setResponse } = useContext(ResponseContext);
   const { setGroups } = useContext(GroupsContext);
 
   const [newGroup, setNewGroup] = useState(DEFAULT_GROUP);
@@ -34,15 +34,18 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
 
   const submit = useCallback(() => {
     (async () => {
-      const data = await putGroup(newGroup);
-      setResponse(data);
+      const response = await putGroup(newGroup);
+      if (!response.success) return;
 
-      if (data.success) {
-        setIsOpen(false);
-        setNewGroup(DEFAULT_GROUP);
+      const { data } = response;
 
-        setGroups((prev) => [...prev, data.groupInfo]);
-      }
+      setIsOpen(false);
+      setNewGroup(DEFAULT_GROUP);
+      setGroups((prev) => [...prev, data.group]);
+
+      setTimeout(() => {
+        MittInstance.emit("moveMyGroupsViewer");
+      }, 100);
     })();
   }, [newGroup]);
 

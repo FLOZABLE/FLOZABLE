@@ -3,18 +3,17 @@
 import styles from "./page.module.css";
 import getStripe from "@/app/lib/getStripe";
 import {
-  CardElement,
   Elements,
   PaymentElement,
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useProduct, useSubscriptionInitialize } from "@/Hooks/paymentHooks";
 import { BackArrow } from "@/app/utils/Svg";
-import { ResponseContext } from "@/app/utils/Contexts";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
+import { toast } from "react-toastify";
 
 const stripePromise = getStripe();
 
@@ -22,8 +21,6 @@ function PaymentForm() {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
-
-  const { setResponse } = useContext(ResponseContext);
 
   const router = useRouter();
 
@@ -47,10 +44,10 @@ function PaymentForm() {
 
     if (error) {
       console.log(error);
-      setResponse({ success: false, reason: error.message });
+      toast.error(error.message);
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
       // Handle successful subscription
-      setResponse({ success: true, msg: "Subscription succeeded!" });
+      toast.success("Subscription succeeded!");
       router.push("/dashboard");
       console.log("Subscription succeeded!");
     }

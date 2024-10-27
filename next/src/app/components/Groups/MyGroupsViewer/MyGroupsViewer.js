@@ -11,11 +11,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import styles from "./MyGroupsViewer.module.css";
-import {
-  GroupsContext,
-  ResponseContext,
-  UserInfoContext,
-} from "@/app/utils/Contexts";
+import { GroupsContext, UserInfoContext } from "@/app/utils/Contexts";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
 import { postGroupLeave } from "@/Api/groupsApi";
 import { useDebounce } from "use-debounce";
@@ -23,10 +19,10 @@ import { socket } from "@/app/utils/socket";
 import { mediaSocket } from "@/app/utils/mediaSocket";
 import { ACTIVE_GROUP_DEBOUNCE } from "@/app/utils/Constant";
 import { useRouter, useSearchParams } from "next/navigation";
+import { MittInstance } from "@/app/utils/mittInstance";
 
 function MyGroupsViewer({}) {
   const { myGroups, setMyGroups } = useContext(GroupsContext);
-  const { response, setResponse } = useContext(ResponseContext);
   const { userInfo } = useContext(UserInfoContext);
 
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -41,13 +37,10 @@ function MyGroupsViewer({}) {
 
   const leaveGroup = useCallback((groupId) => {
     (async () => {
-      const data = await postGroupLeave(groupId);
-      setResponse(data);
-      if (data.success) {
-        setMyGroups((prev) =>
-          prev.filter((group) => group.group_id !== groupId)
-        );
-      }
+      const response = await postGroupLeave(groupId);
+      if (!response.success) return;
+
+      setMyGroups((prev) => prev.filter((group) => group.group_id !== groupId));
     })();
   }, []);
 
@@ -70,13 +63,14 @@ function MyGroupsViewer({}) {
   }, [debouncedIndex, myGroups.length]);
 
   useEffect(() => {
-    if (response?.action?.code !== 1 || !SwiperRef?.current) return;
-
-    SwiperRef.current.swiper.slideTo(myGroups.length - 1);
-    setTimeout(() => {
-      setResponse(null);
-    }, 100);
-  }, [response, SwiperRef, myGroups.length]);
+    const onMessage = () => {
+      SwiperRef.current.swiper.slideTo(myGroups.length - 1);
+    };
+    MittInstance.on("moveMyGroupsViewer", onMessage);
+    return () => {
+      MittInstance.off("moveMyGroupsViewer", onMessage);
+    };
+  }, [myGroups.length]);
 
   useEffect(() => {
     if (!groupId) return;
@@ -88,9 +82,12 @@ function MyGroupsViewer({}) {
 
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.delete("group");
-    router.replace(`${document.location.pathname}?${newSearchParams.toString()}`, {
-      scroll: false,
-    });
+    router.replace(
+      `${document.location.pathname}?${newSearchParams.toString()}`,
+      {
+        scroll: false,
+      }
+    );
 
     SwiperRef.current.swiper.slideTo(groupIndex);
   }, [groupId, myGroups]);
