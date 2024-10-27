@@ -9,7 +9,7 @@ import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function SpotifyPlaylist() {
-  const { usePlaylistsSpotifyData, usePlaylistsSpotifyIsLoading } =
+  const { playlistsSpotifyData, playlistsSpotifyIsLoading } =
     usePlaylistsSpotify();
 
   const [playlist, setPlaylist] = useState(null);
@@ -34,13 +34,13 @@ function SpotifyPlaylist() {
   return (
     <div className={styles.SpotifyPlaylist}>
       <SpotifyPlayer link={playlist} />
-      {usePlaylistsSpotifyIsLoading ? (
+      {playlistsSpotifyIsLoading ? (
         <CircularLoading />
-      ) : !usePlaylistsSpotifyData?.playlists ? (
+      ) : !playlistsSpotifyData?.data?.playlists ? (
         <SpotifyAuthBtn />
       ) : (
         <div className={`customScroll ${styles.playlists}`}>
-          {usePlaylistsSpotifyData.playlists.map((playlist, i) => {
+          {playlistsSpotifyData.playlists.map((playlist, i) => {
             return (
               <div
                 onClick={() => {

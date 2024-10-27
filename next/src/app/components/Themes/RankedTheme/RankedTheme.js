@@ -22,8 +22,9 @@ function RankedTheme({ theme, setIsThemePreview }) {
 
     const like = !likes.includes(userInfo?.user_id);
     const themeId = theme.theme_id;
-    const data = await postThemeLike({ themeId, like });
-    if (!data.success) return;
+    const response = await postThemeLike({ themeId, like });
+    if (!response.success) return;
+
     if (like) {
       setLikes([...new Set([...likes, userInfo.user_id])]);
     } else {

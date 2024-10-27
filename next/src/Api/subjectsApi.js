@@ -1,95 +1,55 @@
-import config from "@/app/utils/config";
+import AxiosInstance from "@/app/utils/axiosInstance";
 
 async function getSubjects() {
-  const response = await fetch(`${config.server}/subjects`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-  return data;
+  const response = await AxiosInstance.get(`/subjects`);
+  return response.data;
 }
 
 async function putSubjectsSubject({ name, color }) {
-  const response = await fetch(`${config.server}/subjects/subject`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ name, color }),
+  const response = await AxiosInstance.put(`/subjects/subject`, {
+    name,
+    color,
   });
-  const data = await response.json();
-  return data;
+  return response.data;
 }
 
 async function patchSubjectsSubject({ subjectId, name, color }) {
-  const response = await fetch(`${config.server}/subjects/subject`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ subjectId, name, color }),
+  const response = await AxiosInstance.patch(`/subjects`, {
+    subject_id: subjectId,
+    name,
+    color,
   });
-  const data = await response.json();
-  return data;
+  return response.data;
 }
 
 async function deleteSubjectsSubject(subjectId) {
-  const response = await fetch(`${config.server}/subjects/subject`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ subjectId }),
+  const response = await AxiosInstance.delete(`/subjects/subject`, {
+    subject_id: subjectId,
   });
-  const data = await response.json();
-  return data;
-}
-
-async function postSubjectShare({ subjectId, users }) {
-  const response = await fetch(`${config.server}/subjects/subject/share`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ subjectId, users }),
-  });
-  const data = await response.json();
-  return data;
+  return response.data;
 }
 
 async function getSubjectUsers(subjectId) {
-  const response = await fetch(
-    `${config.server}/subjects/subject/users?subjectId=${subjectId}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
-  return data;
+  const response = await AxiosInstance.get(`/subjects/subject/users`, {
+    params: { subject_id: subjectId },
+  });
+  return response.data;
+}
+
+async function postSubjectShare({ subjectId, users }) {
+  const response = await AxiosInstance.post(`/subjects/subject/share`, {
+    subject_id: subjectId,
+    users,
+  });
+  return response.data;
 }
 
 async function deleteSubjectShare({ subjectId, targetId }) {
-  const response = await fetch(`${config.server}/subjects/subject/share`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ subjectId, targetId }),
+  const response = await AxiosInstance.delete(`/subjects/subject/share`, {
+    subject_id: subjectId,
+    target_id: targetId,
   });
-  const data = await response.json();
-  return data;
+  return response.data;
 }
 
 export {
@@ -97,7 +57,7 @@ export {
   putSubjectsSubject,
   patchSubjectsSubject,
   deleteSubjectsSubject,
-  postSubjectShare,
   getSubjectUsers,
+  postSubjectShare,
   deleteSubjectShare,
 };

@@ -23,10 +23,10 @@ function YouTubePlaylist({}) {
   const [link, setLink] = useState("");
 
   useEffect(() => {
-    if (!playlistsYoutubeItemsData?.items?.length) return;
+    if (!playlistsYoutubeItemsData?.data?.items?.length) return;
 
     setVideos(
-      playlistsYoutubeItemsData.items
+      playlistsYoutubeItemsData?.data?.items
         .map((item) => item.snippet.resourceId.videoId)
         .join()
     );
@@ -45,7 +45,7 @@ function YouTubePlaylist({}) {
       console.log(err);
       setResponse({ success: false, reason: "Invalid playlist" });
     } finally {
-      setLink("")
+      setLink("");
     }
   }, [link]);
 
@@ -79,7 +79,7 @@ function YouTubePlaylist({}) {
         </div>
       ) : null}
       <div className={`customScroll ${styles.playlists}`}>
-        {playlistsYoutubeData.playlists.map((playlist, i) => {
+        {playlistsYoutubeData?.data?.playlists.map((playlist, i) => {
           const { thumbnails, title } = playlist.snippet;
           return (
             <div

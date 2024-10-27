@@ -11,10 +11,7 @@ const PAGE_LENGTH = 30;
 export default function Leaderboard({ viewer, viewDate, isOnlyFriends }) {
   const { userInfo } = useContext(UserInfoContext);
 
-  const { useRankingsData, useRankingsIsLoading } = useRankings(
-    viewer,
-    viewDate
-  );
+  const { rankingsData, rankingsIsLoading } = useRankings(viewer, viewDate);
 
   const [page, setPage] = useState(1);
   const [rankings, setRankings] = useState([]);
@@ -37,27 +34,27 @@ export default function Leaderboard({ viewer, viewDate, isOnlyFriends }) {
   }, [page]);
 
   useEffect(() => {
-    if (!useRankingsData?.success) return;
+    if (!rankingsData?.success) return;
 
     if (!isOnlyFriends || !userInfo) {
-      setRankings(useRankingsData.rankings);
+      setRankings(rankingsData.data.rankings);
     } else {
       setRankings(
-        useRankingsData.rankings.filter((ranking) =>
+        rankingsData.data.rankings.filter((ranking) =>
           userInfo.friends.includes(ranking.user_id)
         )
       );
     }
     setPage(1);
-  }, [useRankingsData, isOnlyFriends, userInfo]);
+  }, [rankingsData, isOnlyFriends, userInfo]);
 
   return (
     <div className={`Box ${styles.Leaderboard}`}>
       <div className="header">Leaderboard</div>
       <div className={styles.rankings}>
-        {useRankingsIsLoading ? (
+        {rankingsIsLoading ? (
           <CircularLoading />
-        ) : !useRankingsData?.success ? null : (
+        ) : !rankingsData?.success ? null : (
           rankings
             .slice((page - 1) * PAGE_LENGTH, page * PAGE_LENGTH)
             .map((ranking, i) => {

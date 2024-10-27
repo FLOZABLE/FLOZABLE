@@ -9,27 +9,24 @@ import { UserInfoContext } from "@/app/utils/Contexts";
 import { useContext } from "react";
 
 function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
-  const { useRankingsData, useRankingsIsLoading } = useRankings(
-    viewer,
-    viewDate
-  );
+  const { rankingsData, rankingsIsLoading } = useRankings(viewer, viewDate);
 
   const { userInfo } = useContext(UserInfoContext);
 
   const router = useRouter();
 
-  if (useRankingsIsLoading || !useRankingsData?.success) {
+  if (rankingsIsLoading || !rankingsData?.success) {
     return <CircularLoading />;
   }
 
   let slicedRanking = [];
 
   if (userInfo && isOnlyFriends) {
-    slicedRanking = useRankingsData.rankings
+    slicedRanking = rankingsData.data.rankings
       .filter((ranking) => userInfo.friends.includes(ranking.user_id))
       .slice(0, 3);
   } else {
-    slicedRanking = useRankingsData.rankings.slice(0, 3);
+    slicedRanking = rankingsData.data.rankings.slice(0, 3);
   }
   return (
     <div className={styles.RankingContainer}>

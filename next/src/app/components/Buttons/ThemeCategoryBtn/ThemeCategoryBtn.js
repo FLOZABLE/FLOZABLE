@@ -19,30 +19,30 @@ function ThemeCategoryBtn({ theme, bgColor = "#ffffffC0", color = "#000" }) {
       (async () => {
         const categoryId = category.id;
         const categoryName = category.name;
-        const data = await postThemesThemeSave({
+        const response = await postThemesThemeSave({
           themeId: theme.theme_id,
           categoryId,
           categoryName,
         });
-        setResponse(data);
-        if (data.success) {
-          setIsOpen(false);
-          const newUserThemes = userThemes.filter(
-            (userTheme) => userTheme.theme_id !== theme.theme_id
-          );
+        if (!response.success) return;
 
-          if (categoryId !== -1) {
-            newUserThemes.push({ ...theme, category_id: categoryId });
-          }
+        setIsOpen(false);
+        const newUserThemes = userThemes.filter(
+          (userTheme) => userTheme.theme_id !== theme.theme_id
+        );
 
-          setUserThemes(newUserThemes);
-
-          router.push(window.location.pathname, { scroll: false });
+        if (categoryId !== -1) {
+          newUserThemes.push({ ...theme, category_id: categoryId });
         }
+
+        setUserThemes(newUserThemes);
+
+        router.push(window.location.pathname, { scroll: false });
       })();
     },
     [theme, userThemes]
   );
+  
   useEffect(() => {
     const themeInfo = userThemes.find(
       (userTheme) => userTheme.theme_id === theme.theme_id

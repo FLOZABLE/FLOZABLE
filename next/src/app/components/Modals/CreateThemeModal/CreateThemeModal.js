@@ -22,19 +22,20 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
 
   const submit = useCallback(() => {
     (async () => {
-      const data = await putThemesTheme(newTheme);
+      const response = await putThemesTheme(newTheme);
 
-      setResponse(data);
-      if (data.success) {
-        setIsOpen(false);
-        /* setNewTheme({
-          tags: [],
-          name: "",
-          description: "",
-          url: "",
-        }); */
-        setThemes((prev) => [...prev, data.newTheme]);
-      }
+      if (!response.success) return;
+
+      const { data } = response;
+
+      setIsOpen(false);
+      setNewTheme({
+        tags: [],
+        name: "",
+        description: "",
+        url: "",
+      });
+      setThemes((prev) => [...prev, data.theme]);
     })();
   }, [newTheme]);
 

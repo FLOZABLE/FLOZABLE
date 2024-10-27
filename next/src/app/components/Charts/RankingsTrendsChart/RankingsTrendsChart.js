@@ -1,5 +1,5 @@
 import styles from "./RankingsTrendsChart.module.css";
-import { useGetRankingsUser } from "@/Hooks/rankingsHooks";
+import { useRankingsUser } from "@/Hooks/rankingsHooks";
 import { updateRankingTrend } from "@/app/utils/StatTools";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
@@ -24,22 +24,22 @@ function RankingsTrendsChart({
 }) {
   const [rankingsTrend, setRankingsTrend] = useState([]);
 
-  const { data: rankingUserData } = useGetRankingsUser(
+  const { rankingsUserData } = useRankingsUser(
     userInfo?.user_id,
     viewer,
     viewDate
   );
 
   useEffect(() => {
-    if (!rankingUserData?.success || !viewer || !viewDate) return;
+    if (!rankingsUserData?.success || !viewer || !viewDate) return;
 
     const rankingTrend = updateRankingTrend(
-      rankingUserData.rankings,
-      rankingUserData.maxLength
+      rankingsUserData.data.rankings,
+      rankingsUserData.data.max_length
     );
 
     setRankingsTrend(rankingTrend);
-  }, [rankingUserData, viewDate, viewer]);
+  }, [rankingsUserData, viewDate, viewer]);
 
   return (
     <div className={`Box ${styles.RankingsTrendsChart}`}>

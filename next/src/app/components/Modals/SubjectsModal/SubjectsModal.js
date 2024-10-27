@@ -45,7 +45,7 @@ export default function SubjectsModal() {
   const [shared, setShared] = useState([]);
   const [isSelectColor, setIsSelectColor] = useState(false);
 
-  const { useSubjectUsersData, useSubjectUsersIsLoading, clearSubjectUsers } =
+  const { subjectUsersData, subjectUsersIsLoading, clearSubjectUsers } =
     useSubjectUsers(subject.subject_id);
 
   const modalRef = useRef(null);
@@ -64,20 +64,21 @@ export default function SubjectsModal() {
   }, [isSubjectsModal, subjects]);
 
   useEffect(() => {
-    if (!useSubjectUsersData?.success) return;
+    if (!subjectUsersData?.success) return;
 
-    const { share, shared } = useSubjectUsersData.subject;
+    const { share, shared } = subjectUsersData.data.subject;
     setShare(share);
     setShared(shared);
-  }, [useSubjectUsersData]);
+  }, [subjectUsersData]);
 
   const onShare = useCallback(
     (userInfo) => {
       const subjectId = subject.subject_id;
       const users = [userInfo.user_id];
       (async () => {
-        const data = await postSubjectShare({ subjectId, users });
-        setResponse(data);
+        const response = await postSubjectShare({ subjectId, users });
+        if (!response.success) return;
+
         const filteredUsers = [userInfo].filter(
           (user) =>
             ![...share, ...shared].find(
@@ -95,29 +96,29 @@ export default function SubjectsModal() {
     (subject) => {
       (async () => {
         const { subject_id, name, color } = subject;
-        const data = await patchSubjectsSubject({
+        const response = await patchSubjectsSubject({
           subjectId: subject_id,
           name,
           color,
         });
 
-        setResponse(data);
+        if (!response.success) return;
 
-        if (data.success) {
-          const subjectIndex = subjects.findIndex(
-            (subject) => subject.subject_id === subject_id
-          );
+        const { data } = response;
 
-          if (subjectIndex === -1) return;
-          const newSubjects = JSON.parse(JSON.stringify(subjects));
-          newSubjects[subjectIndex] = {
-            ...newSubjects[subjectIndex],
-            ...data.subject,
-          };
+        const subjectIndex = subjects.findIndex(
+          (subject) => subject.subject_id === subject_id
+        );
 
-          setSubjects(newSubjects);
-          setIsSubjectsModal((prev) => ({ ...prev, subject_id: null }));
-        }
+        if (subjectIndex === -1) return;
+        const newSubjects = [...subjects];
+        newSubjects[subjectIndex] = {
+          ...newSubjects[subjectIndex],
+          ...data.subject,
+        };
+
+        setSubjects(newSubjects);
+        setIsSubjectsModal((prev) => ({ ...prev, subject_id: null }));
       })();
     },
     [subjects]
@@ -127,72 +128,71 @@ export default function SubjectsModal() {
     (subject) => {
       const subjectId = subject.subject_id;
       (async () => {
-        const data = await deleteSubjectsSubject(subjectId);
-        setResponse(data);
+        const response = await deleteSubjectsSubject(subjectId);
 
-        if (data.success) {
-          setIsSubjectsModal((prev) => ({ ...prev, subject_id: null }));
-          const subjectIndex = subjects.findIndex(
-            (subject) => subject.subject_id === subjectId
+        if (!response.success) return;
+
+        setIsSubjectsModal((prev) => ({ ...prev, subject_id: null }));
+        const subjectIndex = subjects.findIndex(
+          (subject) => subject.subject_id === subjectId
+        );
+
+        if (subjectIndex === -1) return;
+        const newSubjects = JSON.parse(JSON.stringify(subjects)).filter(
+          (subject) => subject.subject_id !== subjectId
+        );
+        const deletedSubject = subjects.find(
+          (subject) => subject.subject_id === subjectId
+        );
+
+        const otherSubjectIndex = newSubjects.findIndex(
+          (subject) => subject.name === "others"
+        );
+        if (otherSubjectIndex !== -1 && deletedSubject) {
+          newSubjects[otherSubjectIndex].day.total.map(
+            (value, i) => (value.data += deletedSubject.day.total[i].data)
+          );
+          newSubjects[otherSubjectIndex].week.total.map(
+            (value, i) => (value.data += deletedSubject.week.total[i].data)
+          );
+          newSubjects[otherSubjectIndex].month.total.map(
+            (value, i) => (value.data += deletedSubject.month.total[i].data)
           );
 
-          if (subjectIndex === -1) return;
-          const newSubjects = JSON.parse(JSON.stringify(subjects)).filter(
-            (subject) => subject.subject_id !== subjectId
+          newSubjects[otherSubjectIndex].day.timeline.map((value, i) => {
+            value.data.push(...deletedSubject.day.timeline[i].data);
+            value.data.sort((a, b) => a[0] - b[0]);
+          });
+          newSubjects[otherSubjectIndex].week.timeline.map((value, i) => {
+            value.data.push(...deletedSubject.week.timeline[i].data);
+            value.data.sort((a, b) => a[0] - b[0]);
+          });
+          newSubjects[otherSubjectIndex].month.timeline.map((value, i) => {
+            value.data.push(...deletedSubject.month.timeline[i].data);
+            value.data.sort((a, b) => a[0] - b[0]);
+          });
+
+          newSubjects[otherSubjectIndex].week.focus.map((value, i) => {
+            const deletedSubjectFocus = deletedSubject.week.focus[i].data;
+            value.data =
+              value.data > deletedSubjectFocus
+                ? value.data
+                : deletedSubjectFocus;
+          });
+          newSubjects[otherSubjectIndex].month.focus.map((value, i) => {
+            const deletedSubjectFocus = deletedSubject.month.focus[i].data;
+            value.data =
+              value.data > deletedSubjectFocus
+                ? value.data
+                : deletedSubjectFocus;
+          });
+
+          newSubjects[otherSubjectIndex].timeline.push(
+            ...deletedSubject.timeline
           );
-          const deletedSubject = subjects.find(
-            (subject) => subject.subject_id === subjectId
-          );
-
-          const otherSubjectIndex = newSubjects.findIndex(
-            (subject) => subject.name === "others"
-          );
-          if (otherSubjectIndex !== -1 && deletedSubject) {
-            newSubjects[otherSubjectIndex].day.total.map(
-              (value, i) => (value.data += deletedSubject.day.total[i].data)
-            );
-            newSubjects[otherSubjectIndex].week.total.map(
-              (value, i) => (value.data += deletedSubject.week.total[i].data)
-            );
-            newSubjects[otherSubjectIndex].month.total.map(
-              (value, i) => (value.data += deletedSubject.month.total[i].data)
-            );
-
-            newSubjects[otherSubjectIndex].day.timeline.map((value, i) => {
-              value.data.push(...deletedSubject.day.timeline[i].data);
-              value.data.sort((a, b) => a[0] - b[0]);
-            });
-            newSubjects[otherSubjectIndex].week.timeline.map((value, i) => {
-              value.data.push(...deletedSubject.week.timeline[i].data);
-              value.data.sort((a, b) => a[0] - b[0]);
-            });
-            newSubjects[otherSubjectIndex].month.timeline.map((value, i) => {
-              value.data.push(...deletedSubject.month.timeline[i].data);
-              value.data.sort((a, b) => a[0] - b[0]);
-            });
-
-            newSubjects[otherSubjectIndex].week.focus.map((value, i) => {
-              const deletedSubjectFocus = deletedSubject.week.focus[i].data;
-              value.data =
-                value.data > deletedSubjectFocus
-                  ? value.data
-                  : deletedSubjectFocus;
-            });
-            newSubjects[otherSubjectIndex].month.focus.map((value, i) => {
-              const deletedSubjectFocus = deletedSubject.month.focus[i].data;
-              value.data =
-                value.data > deletedSubjectFocus
-                  ? value.data
-                  : deletedSubjectFocus;
-            });
-
-            newSubjects[otherSubjectIndex].timeline.push(
-              ...deletedSubject.timeline
-            );
-            newSubjects[otherSubjectIndex].timeline.sort((a, b) => a[0] - b[0]);
-          }
-          setSubjects(newSubjects);
+          newSubjects[otherSubjectIndex].timeline.sort((a, b) => a[0] - b[0]);
         }
+        setSubjects(newSubjects);
       })();
     },
     [subjects]
@@ -203,16 +203,12 @@ export default function SubjectsModal() {
       (async () => {
         const targetId = userInfo.user_id;
         const subjectId = subject.subject_id;
-        const data = await deleteSubjectShare({ subjectId, targetId });
+        const response = await deleteSubjectShare({ subjectId, targetId });
 
-        setResponse(data);
+        if (!response.success) return;
 
-        if (data.success) {
-          clearSubjectUsers();
-          setShare((prev) =>
-            prev.filter((users) => users.user_id !== targetId)
-          );
-        }
+        clearSubjectUsers();
+        setShare((prev) => prev.filter((users) => users.user_id !== targetId));
       })();
     },
     [subject]
@@ -223,16 +219,12 @@ export default function SubjectsModal() {
       (async () => {
         const targetId = userInfo.user_id;
         const subjectId = subject.subject_id;
-        const data = await deleteSubjectShare({ subjectId, targetId });
+        const response = await deleteSubjectShare({ subjectId, targetId });
 
-        setResponse(data);
+        if (!response.success) return;
 
-        if (data.success) {
-          clearSubjectUsers();
-          setShared((prev) =>
-            prev.filter((users) => users.user_id !== targetId)
-          );
-        }
+        clearSubjectUsers();
+        setShared((prev) => prev.filter((users) => users.user_id !== targetId));
       })();
     },
     [subject]
@@ -291,7 +283,7 @@ export default function SubjectsModal() {
                 setIsSelectColor={setIsSelectColor}
               />
               <div className={styles.share}>
-                {useSubjectUsersIsLoading ? (
+                {subjectUsersIsLoading ? (
                   <CircularLoading />
                 ) : (
                   <>

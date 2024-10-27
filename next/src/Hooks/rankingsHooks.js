@@ -6,26 +6,30 @@ import {
 import { useQuery } from "@tanstack/react-query";
 
 function useRankings(mode, viewDate) {
-  const queryClient = useQuery({
+  const queryResult = useQuery({
     queryKey: [`getRankings`, mode, viewDate],
     queryFn: () => getRankings(mode, viewDate),
     staleTime: 1000 * 60 * 5,
     enabled: !!mode && !!viewDate,
   });
 
-  const { data: useRankingsData, isLoading: useRankingsIsLoading } =
-    queryClient;
+  const { data: rankingsData, isLoading: rankingsIsLoading } = queryResult;
 
-  return { useRankingsData, useRankingsIsLoading, ...queryClient };
+  return { rankingsData, rankingsIsLoading, ...queryResult };
 }
 
-function useGetRankingsUser(userId, mode, viewDate) {
-  return useQuery({
+function useRankingsUser(userId, mode, viewDate) {
+  const queryResult = useQuery({
     queryKey: [`getRankingsUser`, userId, mode, viewDate],
     queryFn: () => getRankingsUser(userId, mode, viewDate),
     staleTime: 1000 * 60,
     enabled: !!userId && !!mode && !!viewDate,
   });
+
+  const { data: rankingsUserData, isLoading: rankingsUserIsLoading } =
+    queryResult;
+
+  return { rankingsUserData, rankingsUserIsLoading, ...queryResult };
 }
 
 function useRankingsFriends(mode) {
@@ -37,4 +41,4 @@ function useRankingsFriends(mode) {
   });
 }
 
-export { useRankings, useGetRankingsUser, useRankingsFriends };
+export { useRankings, useRankingsUser, useRankingsFriends };
