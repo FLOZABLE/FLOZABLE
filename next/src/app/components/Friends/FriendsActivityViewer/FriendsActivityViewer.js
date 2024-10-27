@@ -17,9 +17,9 @@ function FriendsActivityViewer() {
 
   const router = useRouter();
 
-  const { useFriendsStatusData, friendsStatusIsLoading } = useFriendsStatus();
+  const { friendsStatusData, friendsStatusIsLoading } = useFriendsStatus();
 
-  if (!friendsStatusIsLoading && !useFriendsStatusData?.success) {
+  if (!friendsStatusIsLoading && !friendsStatusData?.success) {
     return <RecommendedFriendsViewer />;
   }
 
@@ -45,12 +45,12 @@ function FriendsActivityViewer() {
         {friendsStatusIsLoading ? (
           <CircularLoading />
         ) : (
-          useFriendsStatusData?.friends?.map((friend, i) => {
+          friendsStatusData?.data?.friends?.map((friend, i) => {
             return (
               <div
                 className={styles.friend}
                 key={i}
-                style={{ zIndex: useFriendsStatusData.friends.length - i }}
+                style={{ zIndex: friendsStatusData.data.friends.length - i }}
               >
                 <div className={styles.info}>
                   <UserContainer

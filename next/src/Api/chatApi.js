@@ -27,16 +27,16 @@ async function getChatMembers(chatroomId) {
 
 async function postChatRequest(targetId) {
   const response = await AxiosInstance.post(`/chat/request`, {
-    targetId,
+    target_id: targetId,
   });
   return response.data;
 }
 
 async function postChatRequestReply({ targetId, accepted, notificationId }) {
   const response = await AxiosInstance.post(`/chat/request/reply`, {
-    targetId,
+    target_id: targetId,
+    notification_id: notificationId,
     accepted,
-    notificationId,
   });
   return response.data;
 }

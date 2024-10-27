@@ -69,7 +69,7 @@ function Header({}) {
     }
   }, [tutorial]); */
 
-  const { data: websitesData } = useExtensionUsage(
+  const { extensionUsageData } = useExtensionUsage(
     new Date(new Date().setHours(0, 0, 0, 0)),
     "day"
   );
@@ -100,8 +100,9 @@ function Header({}) {
   }, [groupedSubjects]);
 
   useEffect(() => {
-    if (!websitesData?.success || !websitesData.usage.length) return;
-    const totalWebsiteUsage = websitesData.usage.reduce((a, b) => {
+    if (!extensionUsageData?.success || !extensionUsageData.data.usage.length)
+      return;
+    const totalWebsiteUsage = extensionUsageData.data.usage.reduce((a, b) => {
       return a + b.duration;
     }, 0);
     const { value, type } = secondConverter(totalWebsiteUsage, [
@@ -110,7 +111,7 @@ function Header({}) {
       "hours",
     ]);
     setAppUsage(value + " " + type);
-  }, [websitesData]);
+  }, [extensionUsageData]);
 
   return (
     <header className={styles.Header}>

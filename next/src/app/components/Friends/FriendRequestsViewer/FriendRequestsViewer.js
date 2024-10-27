@@ -60,14 +60,13 @@ function FriendRequestsViewer() {
   const friendRequestReply = useCallback(
     (targetId, accepted, notificationId) => {
       (async () => {
-        const data = await postFriendsRequestReply({
+        const response = await postFriendsRequestReply({
           targetId,
           accepted,
           notificationId,
         });
 
-        setResponse(data);
-        if (data.success) {
+        if (response.success) {
           friendsStatusRefetch();
           friendsTrendRefetch();
         }

@@ -9,12 +9,17 @@ import { UserInfoContext } from "@/app/utils/Contexts";
 import { useContext } from "react";
 
 function useFriendsSearch(searchQuery) {
-  return useQuery({
+  const queryResult = useQuery({
     queryKey: [`getFriendsSearch`, searchQuery],
     queryFn: () => getFriendsSearch(searchQuery),
     staleTime: 1000 * 10,
     retryDelay: 1000 * 3,
+    enabled: !!searchQuery && searchQuery !== "",
   });
+
+  const { data: friendsSearchData } = queryResult;
+
+  return { friendsSearchData, ...queryResult };
 }
 
 function useFriendsTrends() {
@@ -27,9 +32,18 @@ function useFriendsTrends() {
     enabled: !!userInfo,
   });
 
-  const { refetch: friendsTrendRefetch } = queryResult;
+  const {
+    data: friendsTrendData,
+    isLoading: friendsTrendsIsLoading,
+    refetch: friendsTrendRefetch,
+  } = queryResult;
 
-  return { ...queryResult, friendsTrendRefetch };
+  return {
+    ...queryResult,
+    friendsTrendData,
+    friendsTrendsIsLoading,
+    friendsTrendRefetch,
+  };
 }
 
 function useFriendsRecommended() {
@@ -62,14 +76,14 @@ function useFriendsStatus() {
   });
 
   const {
-    data: useFriendsStatusData,
+    data: friendsStatusData,
     isLoading: friendsStatusIsLoading,
     refetch: friendsStatusRefetch,
   } = queryResult;
 
   return {
     ...queryResult,
-    useFriendsStatusData,
+    friendsStatusData,
     friendsStatusIsLoading,
     friendsStatusRefetch,
   };

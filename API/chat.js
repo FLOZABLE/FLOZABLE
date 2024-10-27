@@ -89,7 +89,7 @@ Router.get("/messages", async (req, res) => {
     try {
       const { chatroom_id, offset, length } = req.query;
 
-      console.log(req.query)
+      console.log(req.query);
       const members = await chatroomMembersCache(null, chatroom_id);
 
       if (!members.includes(userId)) {
@@ -156,7 +156,7 @@ Router.get("/members", async (req, res) => {
 Router.post("/request", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { targetId } = req.body;
+      const targetId = req.body.target_id;
 
       const isValidTargetId = validateStrictString(targetId, "target user", 10);
 
@@ -261,7 +261,11 @@ Router.post("/request", async (req, res) => {
 Router.post("/request/reply", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { targetId, notificationId, accepted } = req.body;
+      const {
+        target_id: targetId,
+        notification_id: notificationId,
+        accepted,
+      } = req.body;
 
       const isValidTargetId = validateStrictString(targetId, "target user", 10);
 
