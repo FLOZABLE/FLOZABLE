@@ -94,10 +94,7 @@ export default function NotificationsBtn() {
     (notification) => {
       const notificationId = notification?.i;
 
-      (async () => {
-        const data = await postNotificationsRead(notificationId);
-        console.log(data);
-      })();
+      postNotificationsRead(notificationId);
 
       setNotifications(
         notifications.filter((notif) => notif.i !== notificationId)
@@ -132,12 +129,7 @@ export default function NotificationsBtn() {
     (notification, accepted) => {
       const notificationId = notification?.i;
 
-      (async () => {
-        const data = await postPlanShareRespond(notificationId, accepted);
-
-        setResponse(data);
-      })();
-
+      postPlanShareRespond(notificationId, accepted);
       setNotifications(
         notifications.filter((notif) => notif.i !== notificationId)
       );

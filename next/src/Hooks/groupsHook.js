@@ -2,11 +2,19 @@ import { getGroupMembers, getGroups } from "@/Api/groupsApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 function useGroups() {
-  return useQuery({
+  const queryResult = useQuery({
     queryKey: [`useGroups`],
     queryFn: getGroups,
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 60 * 5,
   });
+
+  const {
+    data: groupsData,
+    isLoading: groupsIsLoading,
+    refetch: groupsRefetch,
+  } = queryResult;
+
+  return { groupsData, groupsIsLoading, groupsRefetch, ...queryResult };
 }
 
 function useGroupMembers(groupId, isActive) {

@@ -9,6 +9,7 @@ const querystring = require("querystring");
 const { RESPONSE_CODES } = require("../Constant");
 const { googleOauth2client, autoSignin } = require("./auth");
 const { google } = require("googleapis");
+const { validateStrictString } = require("../Utils/validate");
 
 const YOUTUBE_API_KEY = process.env.GOOGLE_API_KEY;
 
@@ -30,10 +31,19 @@ Router.get("/spotify/info", async (req, res) => {
       const data = await response.json();
 
       if (data.error) {
-        return res.send({ success: false, reason: data.error.message });
+        return res.send({
+          success: false,
+          status: "error",
+          message: data.error.message,
+          error: { reason: data.error.message },
+        });
       }
 
-      res.send({ success: true, spotifyInfo: data });
+      res.send({
+        success: true,
+        status: "success",
+        data: { spotifyInfo: data },
+      });
     } catch (err) {
       console.log(err);
       res.send(RESPONSE_CODES["error"]);
@@ -61,10 +71,19 @@ Router.get("/spotify", async (req, res) => {
       const data = await response.json();
 
       if (data.error) {
-        return res.send({ success: false, reason: data.error.message });
+        return res.send({
+          success: false,
+          status: "error",
+          message: data.error.message,
+          error: { reason: data.error.message },
+        });
       }
 
-      res.send({ success: true, playlists: data.items });
+      res.send({
+        success: true,
+        status: "success",
+        data: { playlists: data.items },
+      });
     } catch (err) {
       console.log(err);
       res.send(RESPONSE_CODES["error"]);
@@ -99,7 +118,12 @@ Router.get("/youtube", async (req, res) => {
       });
 
       const playlists = response.data.items;
-      return res.send({ success: true, playlists });
+
+      return res.send({
+        success: true,
+        status: "success",
+        data: { playlists },
+      });
     } catch (err) {
       console.log(err);
       res.send(RESPONSE_CODES["error"]);
@@ -111,10 +135,22 @@ const MAX_LENGTH = 300;
 Router.get("/youtube/items", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { playlistId } = req.query;
+      const { playlist_id: playlistId } = req.query;
 
-      if (!playlistId) {
-        return res.send({ success: false, reason: "playlistId missing" });
+      const isValidPlaylistId = validateStrictString(
+        playlistId,
+        "playlist",
+        11,
+        11
+      );
+
+      if (!isValidPlaylistId) {
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidPlaylistId.reason,
+          error: { reason: isValidPlaylistId.reason },
+        });
       }
 
       const connection = pool.promise();
@@ -149,7 +185,7 @@ Router.get("/youtube/items", async (req, res) => {
         nextPageToken = response.data.nextPageToken;
       } while (nextPageToken && items.length < MAX_LENGTH);
 
-      return res.send({ success: true, items });
+      return res.send({ success: true, status: "success", data: { items } });
     } catch (err) {
       console.log(err);
       res.send(RESPONSE_CODES["error"]);

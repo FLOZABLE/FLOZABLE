@@ -62,7 +62,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   useEffect(() => {
     if (!groupMembersData?.success) return;
 
-    setMembers(groupMembersData.members);
+    setMembers(groupMembersData.data.members);
   }, [groupMembersData]);
 
   useEffect(() => {

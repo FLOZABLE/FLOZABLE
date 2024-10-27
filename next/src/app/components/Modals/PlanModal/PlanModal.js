@@ -3,7 +3,6 @@
 import {
   ModalsContext,
   PlansContext,
-  ResponseContext,
   SubjectsContext,
   TutorialsContext,
 } from "@/app/utils/Contexts";
@@ -29,7 +28,7 @@ import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading
 import TextEditor from "../../Inputs/TextEditor/TextEditor";
 import DropDownButton from "../../Buttons/DropDownButton/DropDownButton";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
-import { usePlansPlanUsers } from "@/Hooks/plansHooks";
+import { usePlanUsers } from "@/Hooks/plansHooks";
 import {
   deletePlan,
   deletePlanShare,
@@ -44,7 +43,6 @@ import { useVapidKeys } from "@/Hooks/notificationsHooks";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function PlanModal() {
-  const { setResponse } = useContext(ResponseContext);
   const { subjects } = useContext(SubjectsContext);
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
   const { setIsAddSubjectModal, setSearchUsersModal } =
@@ -60,8 +58,9 @@ export default function PlanModal() {
   const router = useRouter();
 
   const { vapidKeysData } = useVapidKeys();
-  const { usePlansPlanUsersData, usePlansPlanUsersIsLoading, clearPlanUsers } =
-    usePlansPlanUsers(planModal?.plan_id);
+  const { planUsersData, planUsersIsLoading, clearPlanUsers } = usePlanUsers(
+    planModal?.plan_id
+  );
 
   const [shared, setShared] = useState([]);
   const [share, setShare] = useState([]);
@@ -138,13 +137,13 @@ export default function PlanModal() {
   }, [tutorial]);
 
   useEffect(() => {
-    if (!usePlansPlanUsersData?.success) return;
+    if (!planUsersData?.success) return;
 
-    const { shared, share } = usePlansPlanUsersData.planInfo;
+    const { shared, share } = planUsersData.planInfo;
 
     setShare(share);
     setShared(shared);
-  }, [usePlansPlanUsersData]);
+  }, [planUsersData]);
 
   useEffect(() => {
     if (planModal.plan_id === "0000000000") return;
@@ -220,52 +219,56 @@ export default function PlanModal() {
 
   const submit = useCallback(() => {
     (async () => {
-      const data = await patchPlan({ ...planModal });
-      setResponse(data);
-      if (data.success) {
-        const planIndex = plans.findIndex(
-          (event) => event.plan_id === planModal.plan_id
-        );
-        if (planIndex !== -1) {
-          const updatedEvents = [...plans];
-          updatedEvents[planIndex].saved = true;
-          updatedEvents[planIndex].plan_id = data.plan.plan_id;
-          setPlans(updatedEvents);
-        }
-        setPlanModalss(null);
-        setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
-        if (data.isNew) {
-          const newShare = share.map((user) => user.user_id);
-          const data = await postPlanShare(newShare, planModal.plan_id);
-          console.log(data);
+      const response = await patchPlan({ ...planModal });
+      if (!response.success) return;
+
+      const data = response.data;
+
+      const planIndex = plans.findIndex(
+        (event) => event.plan_id === planModal.plan_id
+      );
+      if (planIndex !== -1) {
+        const updatedEvents = [...plans];
+        updatedEvents[planIndex].saved = true;
+        updatedEvents[planIndex].plan_id = data.plan.plan_id;
+        setPlans(updatedEvents);
+      }
+      setPlanModalss(null);
+      setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
+      if (data.is_new) {
+        const newShare = share.map((user) => user.user_id);
+        const response = await postPlanShare(newShare, planModal.plan_id);
+        if (response.success) {
           clearPlanUsers();
         }
-        if (tutorial === 5) {
-          router.push("/dashboard/study");
-          setTutorial(6);
-        }
+      }
+      if (tutorial === 5) {
+        router.push("/dashboard/study");
+        setTutorial(6);
       }
     })();
   }, [planModal, tutorial]);
 
   const onDeletePlan = useCallback(() => {
     (async () => {
-      const data = await deletePlan(planModal.plan_id);
-      setResponse(data);
-      if (data.success) {
-        setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
-        setPlans((prev) =>
-          prev.filter((plan) => plan.plan_id !== planModal.plan_id)
-        );
-      }
+      const response = await deletePlan(planModal.plan_id);
+      if (!response.success) return;
+
+      setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
+      setPlans((prev) =>
+        prev.filter((plan) => plan.plan_id !== planModal.plan_id)
+      );
     })();
   }, [planModal]);
 
   const onUnshare = useCallback(
     (userInfo) => {
       (async () => {
-        const data = await deletePlanShare(userInfo.user_id, planModal.plan_id);
-        setResponse(data);
+        const response = await deletePlanShare(
+          userInfo.user_id,
+          planModal.plan_id
+        );
+        if (!response.success) return;
         clearPlanUsers();
       })();
     },
@@ -275,8 +278,11 @@ export default function PlanModal() {
   const onUnshared = useCallback(
     (userInfo) => {
       (async () => {
-        const data = await deletePlanShare(userInfo.user_id, planModal.plan_id);
-        setResponse(data);
+        const response = await deletePlanShare(
+          userInfo.user_id,
+          planModal.plan_id
+        );
+        if (!response.success) return;
         clearPlanUsers();
       })();
     },
@@ -398,10 +404,9 @@ export default function PlanModal() {
                 if (!vapidKeysData?.success) return;
 
                 const response = await requestNotification(
-                  vapidKeysData.publicKey
+                  vapidKeysData.data.publicKey
                 );
                 if (!response.success) {
-                  setResponse(response);
                   unsubscribeFromPush();
                 }
               }}
@@ -426,7 +431,7 @@ export default function PlanModal() {
             hoverText={"Shared Users"}
           >
             <div className={styles.UserBoxes}>
-              {usePlansPlanUsersIsLoading ? (
+              {planUsersIsLoading ? (
                 <CircularLoading />
               ) : (
                 <>
@@ -469,28 +474,12 @@ export default function PlanModal() {
                   opened: !prev.opened,
                   onClick: async (userInfo) => {
                     if (planModal.opened) {
-                      const data = await postPlanShare(
+                      await postPlanShare(
                         [userInfo.user_id],
                         planModal.plan_id
                       );
-                      if (!data.success) {
-                        clearPlanUsers();
-                        setResponse(data);
-                        return;
-                      }
-
-                      if (!data.share.length && !data.shared.length) {
-                        return setResponse({
-                          success: false,
-                          reason: `Already Shared with ${userInfo.name}`,
-                        });
-                      }
 
                       clearPlanUsers();
-                      setResponse({
-                        success: true,
-                        msg: `Added ${userInfo.name}`,
-                      });
                     }
                   },
                 }));

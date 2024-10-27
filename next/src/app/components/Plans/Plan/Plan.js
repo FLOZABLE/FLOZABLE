@@ -23,8 +23,8 @@ export default function Plan({ plan }) {
         className: plan.completed ? "" : "completed",
       };
 
-      const data = await patchPlanStatus(plan.plan_id, plan.completed);
-      if (data.success) {
+      const response = await patchPlanStatus(plan.plan_id, plan.completed);
+      if (response.success) {
         setPlans(updatedEvents);
       }
     })();
