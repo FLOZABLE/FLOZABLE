@@ -9,30 +9,6 @@ import { UserInfoContext } from "@/app/utils/Contexts";
 import { useContext } from "react";
 import { useAccountGoogle } from "./accountHooks";
 
-function useSpotifyInfo() {
-  const { userInfo } = useContext(UserInfoContext);
-  const queryResult = useQuery({
-    queryKey: [`useSpotifyInfo`],
-    queryFn: getSpotifyInfo,
-    staleTime: 1000 * 60 * 10,
-    enabled: !!userInfo,
-  });
-
-  const { data: useSpotifyInfoData, isLoading: useSpotifyInfoIsLoading } =
-    queryResult;
-
-  const spotifyInfo = useSpotifyInfoData?.success
-    ? useSpotifyInfoData.spotifyInfo
-    : null;
-
-  return {
-    useSpotifyInfoData,
-    useSpotifyInfoIsLoading,
-    spotifyInfo,
-    ...queryResult,
-  };
-}
-
 function usePlaylistsSpotify() {
   const { spotifyInfo } = useSpotifyInfo();
 
@@ -43,14 +19,36 @@ function usePlaylistsSpotify() {
     enabled: !!spotifyInfo,
   });
 
-  const {
-    data: usePlaylistsSpotifyData,
-    isLoading: usePlansPlanUsersIsLoading,
-  } = queryResult;
+  const { data: playlistsSpotifyData, isLoading: playlistsSpotifyIsLoading } =
+    queryResult;
 
   return {
-    usePlaylistsSpotifyData,
-    usePlansPlanUsersIsLoading,
+    playlistsSpotifyData,
+    playlistsSpotifyIsLoading,
+    ...queryResult,
+  };
+}
+
+function useSpotifyInfo() {
+  const { userInfo } = useContext(UserInfoContext);
+  const queryResult = useQuery({
+    queryKey: [`useSpotifyInfo`],
+    queryFn: getSpotifyInfo,
+    staleTime: 1000 * 60 * 10,
+    enabled: !!userInfo,
+  });
+
+  const { data: spotifyInfoData, isLoading: spotifyInfoIsLoading } =
+    queryResult;
+
+  const spotifyInfo = spotifyInfoData?.success
+    ? spotifyInfoData?.data?.spotifyInfo
+    : null;
+
+  return {
+    spotifyInfoData,
+    spotifyInfoIsLoading,
+    spotifyInfo,
     ...queryResult,
   };
 }

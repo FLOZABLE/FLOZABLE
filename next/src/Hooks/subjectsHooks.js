@@ -42,15 +42,15 @@ function useSubjectUsers(subjectId) {
   };
 
   const {
-    data: useSubjectUsersData,
-    refetch: useSubjectUsersRefetch,
-    isLoading: useSubjectUsersIsLoading,
+    data: subjectUsersData,
+    refetch: subjectUsersRefetch,
+    isLoading: subjectUsersIsLoading,
   } = queryResult;
 
   return {
-    useSubjectUsersData,
-    useSubjectUsersRefetch,
-    useSubjectUsersIsLoading,
+    subjectUsersData,
+    subjectUsersRefetch,
+    subjectUsersIsLoading,
     clearSubjectUsers,
     ...queryResult,
   };

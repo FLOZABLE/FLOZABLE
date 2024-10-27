@@ -6,14 +6,14 @@ import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading
 import { useSpotifyInfo } from "@/Hooks/playlistHooks";
 
 function SpotifyAuthBtn() {
-  const { useSpotifyInfoDataIsLoading, spotifyInfo } = useSpotifyInfo();
+  const { spotifyInfoIsLoading, spotifyInfo } = useSpotifyInfo();
 
   return (
     <a
       className={styles.SpotifyAuthBtn}
       href={`${config.server}/auth/signin/spotify`}
     >
-      {useSpotifyInfoDataIsLoading ? (
+      {spotifyInfoIsLoading ? (
         <CircularLoading />
       ) : spotifyInfo ? (
         <p>Logged in as {spotifyInfo.display_name}</p>

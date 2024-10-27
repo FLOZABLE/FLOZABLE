@@ -7,16 +7,16 @@ import { useRankings } from "@/Hooks/rankingsHooks";
 function GroupsContainer({ searchQuery, tags }) {
   const { groups } = useContext(GroupsContext);
 
-  const { useRankingsData } = useRankings(
+  const { rankingsData } = useRankings(
     "day",
     new Date(new Date().setHours(0, 0, 0, 0))
   );
   const [rankings, setRankings] = useState([]);
 
   useEffect(() => {
-    if (!useRankingsData?.success) return;
-    setRankings(useRankingsData.rankings);
-  }, [useRankingsData]);
+    if (!rankingsData?.success) return;
+    setRankings(rankingsData.data.rankings);
+  }, [rankingsData]);
 
   return (
     <div className={`${styles.GroupsContainer} customScroll`}>

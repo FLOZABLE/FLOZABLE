@@ -5,14 +5,14 @@ import { useContext } from "react";
 
 function useThemes() {
   const queryResult = useQuery({
-    queryKey: [`getThemes`],
+    queryKey: [`useThemes`],
     queryFn: getThemes,
     staleTime: 1000 * 60 * 10,
   });
 
-  const { data: useThemesData } = queryResult;
+  const { data: themesData } = queryResult;
 
-  return { useThemesData, ...queryResult };
+  return { themesData, ...queryResult };
 }
 
 function useThemesUser() {
@@ -21,13 +21,13 @@ function useThemesUser() {
   const queryResult = useQuery({
     queryKey: [`getThemesUser`],
     queryFn: getThemesUser,
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 60 * 10,
     enabled: !!userInfo,
   });
 
-  const { data: useThemesUserData } = queryResult;
+  const { data: themesUserData } = queryResult;
 
-  return { useThemesUserData, ...queryResult };
+  return { themesUserData, ...queryResult };
 }
 
 export { useThemes, useThemesUser };
