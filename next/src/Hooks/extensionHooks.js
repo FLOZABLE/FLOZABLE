@@ -30,7 +30,7 @@ function useExtensionUsage(date, mode) {
   const queryResult = useQuery({
     queryKey: [`extensionUsage`, date, mode],
     queryFn: () => getExtensionUsage(date, mode),
-    staleTime: 1000 * 0,
+    staleTime: 1000 * 10,
     enabled: !!userInfo,
     refetchOnWindowFocus: true,
   });

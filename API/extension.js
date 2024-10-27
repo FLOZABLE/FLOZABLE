@@ -2,14 +2,8 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const {
-  cacheExtensionToken,
-} = require("../services/redisLoader");
-const { DateTime } = require("luxon");
-const {
-  validateURL,
-  validateOption,
-} = require("../Utils/validate");
+const { cacheExtensionToken } = require("../services/redisLoader");
+const { validateURL, validateOption } = require("../Utils/validate");
 const { RESPONSE_CODES } = require("../Constant");
 const { extensionIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
@@ -19,12 +13,12 @@ Router.post("/auth", async (req, res) => {
     try {
       const token = await cacheExtensionToken(userId);
       if (!token) {
-        return res.send(RESPONSE_CODES["error"]);
+        return res.send(RESPONSE_CODES.error);
       }
-      res.send({ success: true, userId, token });
+      res.send({ success: true, status: "success", data: { userId, token } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -40,11 +34,12 @@ Router.get("/settings", async (req, res) => {
 
       res.send({
         success: true,
-        websiteSettings,
+        status: "success",
+        data: { websiteSettings },
       });
     } catch (err) {
       console.log(err);
-      res.send({ success: false, reason: "err" });
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -58,13 +53,23 @@ Router.put("/setting", async (req, res) => {
       const isValidURL = validateURL(url);
 
       if (!isValidURL.isValid) {
-        return res.send({ success: false, reason: isValidURL.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidURL.reason,
+          error: { reason: isValidURL.reason },
+        });
       }
 
       const { domain, origin } = isValidURL;
 
       if (domain.includes("flozable")) {
-        return res.send({ success: false, reason: `FLOZABLE can't be added` });
+        return res.send({
+          success: false,
+          status: "error",
+          message: `FLOZABLE can't be added`,
+          error: { reason: `FLOZABLE can't be added` },
+        });
       }
 
       const setting = {
@@ -88,21 +93,26 @@ Router.put("/setting", async (req, res) => {
         if (err.code === "ER_DUP_ENTRY") {
           return res.send({
             success: false,
-            reason: "Already existing website",
+            status: "error",
+            message: "Already existing website",
+            error: { reason: "Already existing website" },
           });
         }
       }
       extensionIo.to(userId).emit("setting-updated", setting);
       res.send({
         success: true,
-        origin: origin,
-        domain: domain,
-        setting,
-        msg: `Added ${domain}`,
+        status: "success",
+        message: `Added ${domain}`,
+        data: {
+          origin: origin,
+          domain: domain,
+          setting,
+        },
       });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "Invalid URL or Domain" });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -120,7 +130,12 @@ Router.patch("/setting", async (req, res) => {
       ]);
 
       if (!isValidMode.isValid) {
-        return res.send({ success: false, reason: isValidMode.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidMode.reason,
+          error: { reason: isValidMode.reason },
+        });
       }
 
       const setting = {
@@ -136,11 +151,15 @@ Router.patch("/setting", async (req, res) => {
       `,
         [setting, userId, website]
       );
-      res.send({ success: true, msg: "Setting updated!" });
+      res.send({
+        success: true,
+        status: "success",
+        message: "Setting updated!",
+      });
       extensionIo.to(userId).emit("setting-updated", { ...setting, website });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, reason: "Invalid URL or Domain" });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -162,6 +181,7 @@ Router.get("/usage", async (req, res) => {
         "WITHSCORES"
       );
       const usage = [];
+
       for (let i = 0; i < allVisits.length; i += 2) {
         const website = allVisits[i];
         const visits = parseInt(allVisits[i + 1])
@@ -180,10 +200,10 @@ Router.get("/usage", async (req, res) => {
         });
       }
 
-      res.send({ success: true, usage });
+      res.send({ success: true, status: "success", data: { usage } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });

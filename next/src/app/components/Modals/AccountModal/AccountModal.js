@@ -15,7 +15,6 @@ import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
 import GoogleLoginBtn from "../../Buttons/GoogleLoginBtn/GoogleLoginBtn";
 import { postAuthSignin, postAuthSignup } from "@/Api/authApi";
-import { toast } from "react-toastify";
 
 function AccountModal({}) {
   const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
@@ -99,7 +98,6 @@ function AccountModal({}) {
               <BlobBtn
                 onClick={async () => {
                   const response = await postAuthSignin(login);
-                  toast(response.message, { type: response.status });
                   if (response.success) {
                     setIsAccountModal(false);
                     accountRefetch();
@@ -167,7 +165,6 @@ function AccountModal({}) {
               <BlobBtn
                 onClick={async () => {
                   const response = await postAuthSignup(signUp);
-                  toast(response.message, { type: response.status });
                   if (response.success) {
                     setIsLogin(false);
                     setIsNew(true);

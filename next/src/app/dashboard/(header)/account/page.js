@@ -18,7 +18,7 @@ import SpotifyAuthBtn from "@/app/components/Spotify/SpotifyAuthBtn/SpotifyAuthB
 import ExtensionSetting from "@/app/components/Account/ExtensionSetting/ExtensionSetting";
 import config from "@/app/utils/config";
 import { GoogleCalendar, SpotifyLogo, YouTubeIcon } from "@/app/utils/Svg";
-import { ResponseContext, UserInfoContext } from "@/app/utils/Contexts";
+import { UserInfoContext } from "@/app/utils/Contexts";
 import { useAccountGoogle } from "@/Hooks/accountHooks";
 import SubjectsManager from "@/app/components/Subjects/SubjectsManager/SubjectsManager";
 import { useSpotifyInfo } from "@/Hooks/playlistHooks";
@@ -29,11 +29,9 @@ import {
 } from "@/Api/accountApi";
 import { postAuthVerify } from "@/Api/authApi";
 import Image from "next/image";
-import { toast } from "react-toastify";
 
 function Account() {
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
-  const { setResponse } = useContext(ResponseContext);
 
   const { googleInfo } = useAccountGoogle();
   const { spotifyInfo } = useSpotifyInfo();
@@ -81,14 +79,12 @@ function Account() {
 
   const uploadImage = useCallback(async (formData) => {
     const response = await patchAccountImage(formData);
-    toast(response.message, { type: response.status });
   }, []);
 
   const submitProfile = useCallback(() => {
     (async () => {
       const { name, email } = profile;
       const response = await patchAccountInfo(profile);
-      toast(response.message, { type: response.status });
       if (response.success) {
         setUserInfo((prev) => ({
           ...prev,
@@ -103,14 +99,12 @@ function Account() {
   const submitPassword = useCallback(() => {
     (async () => {
       const response = await patchAccountPassword(password);
-      toast(response.message, { type: response.status });
     })();
   }, [password]);
 
   const validateEmail = useCallback(() => {
     (async () => {
       const response = await postAuthVerify();
-      toast(response.message, { type: response.status });
     })();
   }, []);
 

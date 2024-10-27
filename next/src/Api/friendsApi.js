@@ -1,98 +1,53 @@
-import config from "@/app/utils/config";
+import AxiosInstance from "@/app/utils/axiosInstance";
+import { getTimezone } from "@/app/utils/Tool";
 
 async function getFriendsRecommended() {
-  const response = await fetch(`${config.server}/friends/recommended`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-
-  return data;
+  const response = await AxiosInstance.get(`/friends/recommended`);
+  return response.data;
 }
 
 async function getFriendsSearch(searchQuery) {
-  if (!searchQuery || !searchQuery.length) return { success: true, users: [] };
-
-  const response = await fetch(
-    `${config.server}/friends/search?query=${searchQuery}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
-
-  return data;
+  const response = await AxiosInstance.get(`/extension/settings`, {
+    params: {
+      query: searchQuery,
+    },
+  });
+  return response.data;
 }
 
 async function getFriendsTrends() {
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  const response = await fetch(
-    `${config.server}/friends/trends?timezone=${timezone}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
-
-  return data;
+  const timezone = getTimezone();
+  const response = await AxiosInstance.get(`/friends/trends`, {
+    params: {
+      timezone,
+    },
+  });
+  return response.data;
 }
 
 async function getFriendsStatus() {
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const timezone = getTimezone();
 
-  const response = await fetch(
-    `${config.server}/friends/status?timezone=${timezone}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
-
-  return data;
+  const response = await AxiosInstance.get(`/friends/status`, {
+    params: { timezone },
+  });
+  return response.data;
 }
 
 async function postFriendsRequest({ targetId }) {
-  const response = await fetch(`${config.server}/friends/request`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ targetId }),
+  const response = await AxiosInstance.post(`/friends/request`, {
+    target_id: targetId,
   });
-  const data = await response.json();
-
-  return data;
+  return response.data;
 }
 
-async function postFriendsRequestReply({ targetId, accepted, notificationId }) {
-  const response = await fetch(`${config.server}/friends/request/reply`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ targetId, accepted, notificationId }),
+async function postFriendsRequestReply({ targetId, notificationId, accepted }) {
+  const response = await AxiosInstance.get(`/friends/request/reply`, {
+    target_id: targetId,
+    notification_id: notificationId,
+    accepted,
   });
-  const data = await response.json();
-
-  return data;
+  return response.data;
 }
 
 export {
