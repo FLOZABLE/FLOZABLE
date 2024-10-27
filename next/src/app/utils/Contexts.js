@@ -76,7 +76,7 @@ function AccountProvider({ children }) {
 
     if (!useAccountData?.success) return;
 
-    console.log("useaccount", useAccountData)
+    console.log("useaccount", useAccountData);
 
     const { userInfo, notifications } = useAccountData.data;
     setUserInfo(userInfo);
@@ -125,29 +125,28 @@ function SubjectsProvider({ children }) {
   const [plans, setPlans] = useState([]);
   const [planModal, setPlanModal] = useState(DEFAULT_PLAN);
 
-  const queryResult = useSubjects();
-  const { data: planData, refetch: refetchPlan } = usePlans();
+  const subjectsQueryResult = useSubjects();
+  const plansQueryResult = usePlans();
 
-  const { useSubjectsData } = queryResult;
+  const { subjectsData } = subjectsQueryResult;
+  const { plansData } = plansQueryResult;
 
   useEffect(() => {
-    if (!useSubjectsData?.success) return;
+    if (!subjectsData?.success) return;
 
-    const { subjects, groupedSubjects } = timelineSort(
-      useSubjectsData.subjects
-    );
+    const { subjects, groupedSubjects } = timelineSort(subjectsData.subjects);
 
     setSubjects(subjects);
     setGroupedSubjects(groupedSubjects);
-  }, [useSubjectsData]);
+  }, [subjectsData]);
 
   useEffect(() => {
-    if (!planData?.success || !useSubjectsData?.success) return;
+    if (!plansData?.success || !subjectsData?.success) return;
 
-    const subjects = useSubjectsData.subjects;
+    const subjects = subjectsData.subjects;
 
     setPlans(
-      JSON.parse(JSON.stringify(planData.plans)).map((plan) => {
+      JSON.parse(JSON.stringify(plansData.data.plans)).map((plan) => {
         plan.saved = true;
         plan.start = new Date(plan.start * 1000);
         plan.end = new Date(plan.end * 1000);
@@ -172,7 +171,7 @@ function SubjectsProvider({ children }) {
         return plan;
       })
     );
-  }, [useSubjectsData, planData]);
+  }, [subjectsData, plansData]);
 
   const pathname = usePathname();
 
@@ -183,7 +182,7 @@ function SubjectsProvider({ children }) {
   return (
     <SubjectsContext.Provider
       value={{
-        ...queryResult,
+        ...subjectsQueryResult,
         subjects,
         setSubjects,
         groupedSubjects,
@@ -191,7 +190,13 @@ function SubjectsProvider({ children }) {
       }}
     >
       <PlansContext.Provider
-        value={{ plans, setPlans, planModal, setPlanModal, refetchPlan }}
+        value={{
+          plans,
+          setPlans,
+          planModal,
+          setPlanModal,
+          ...plansQueryResult,
+        }}
       >
         {children}
       </PlansContext.Provider>
@@ -205,7 +210,8 @@ function GroupsProvider({ children }) {
   const [groups, setGroups] = useState([]);
   const [myGroups, setMyGroups] = useState([]);
 
-  const { data: useGroupsData, refetch: refetchUseGroupsData } = useGroups();
+  const groupsQueryResult = useGroups();
+  const { groupsData } = groupsQueryResult;
 
   useEffect(() => {
     if (!groups.length || !userInfo) return;
@@ -217,10 +223,10 @@ function GroupsProvider({ children }) {
   }, [userInfo, groups]);
 
   useEffect(() => {
-    if (!useGroupsData?.success) return;
+    if (!groupsData?.success) return;
 
-    setGroups(useGroupsData.groups);
-  }, [useGroupsData]);
+    setGroups(groupsData.data.groups);
+  }, [groupsData]);
 
   return (
     <GroupsContext.Provider

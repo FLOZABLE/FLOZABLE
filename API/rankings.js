@@ -78,16 +78,20 @@ Router.get("/", async (req, res) => {
       })
       .filter((ranking) => ranking.name);
 
-    res.send({ success: true, rankings: rankingsUsers });
+    res.send({
+      success: true,
+      status: "success",
+      data: { rankings: rankingsUsers },
+    });
   } catch (err) {
     console.log(err);
-    res.send({ success: false });
+    res.send(RESPONSE_CODES.error);
   }
 });
 
 Router.get("/user", async (req, res) => {
   try {
-    const { userId, mode, date, timezone } = req.query;
+    const { user_id: userId, mode, date, timezone } = req.query;
 
     const dates = getDates(date, timezone, mode, 7);
 
@@ -132,12 +136,12 @@ Router.get("/user", async (req, res) => {
 
     res.send({
       success: true,
-      rankings,
-      maxLength: Object.values(usersLength)[0],
+      status: "success",
+      data: { rankings, max_length: Object.values(usersLength)[0] },
     });
   } catch (err) {
     console.log(err);
-    res.send({ success: false });
+    res.send(RESPONSE_CODES.error);
   }
 });
 
@@ -206,10 +210,14 @@ Router.get("/friends", async (req, res) => {
         });
       }
 
-      res.send({ success: true, rankings: friends });
+      res.send({
+        success: true,
+        status: "success",
+        data: { rankings: friends },
+      });
     } catch (err) {
       console.log(err);
-      res.send({ success: false, reason: "An Error Occured" });
+      res.send(RESPONSE_CODES.error);
     }
   });
 });

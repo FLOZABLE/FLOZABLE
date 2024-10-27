@@ -31,7 +31,7 @@ Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      let [plans] = await connection.query(
+      const [plans] = await connection.query(
         `SELECT 
           p.plan_id, 
           p.title, 
@@ -58,99 +58,101 @@ Router.get("/", async (req, res) => {
         plan.isEditable = true;
       });
       const access_token = await googleAccessTokenCache(connection, userId);
-      if (access_token) {
-        try {
-          const auth = googleOauth2client({ access_token });
-          const googleCalendar = google.calendar({
-            version: "v3",
-            auth: auth,
-          });
-          const calendars = await googleCalendar.calendarList.list();
-          if (calendars && calendars.data) {
-            const calendarEvents = [];
-            const calendarPromises = calendars.data.items.map(
-              async (calendar) => {
-                // Only bring last 30 days events, future 30 days
-                const timeMin = new Date(
-                  new Date().getTime() - 1000 * 60 * 60 * 24 * 30
-                );
-                const timeMax = new Date(
-                  new Date().getTime() + 1000 * 60 * 60 * 24 * 30
-                );
-                const response = await googleCalendar.events.list({
-                  calendarId: calendar.id,
-                  timeMin,
-                  timeMax,
-                });
-                const events = response.data.items;
-                events.map((event) => {
-                  const {
-                    htmlLink,
-                    id,
-                    summary,
-                    start,
-                    end,
-                    description,
-                    reminders,
-                  } = event;
-                  const startDateTime = Math.floor(
-                    DateTime.fromISO(start ? start.dateTime : "", {
-                      zone: start ? start.timeZone : "",
-                    }).toSeconds()
-                  );
-                  const endDateTime = Math.floor(
-                    DateTime.fromISO(end ? end.dateTime : "", {
-                      zone: end ? end.timeZone : "",
-                    }).toSeconds()
-                  );
-                  const editable = calendar.accessRole !== "reader";
-                  const newEvent = {
-                    plan_id: id,
-                    title: summary,
-                    start: startDateTime,
-                    end: endDateTime,
-                    repeat: 0,
-                    description,
-                    subject: calendar.id,
-                    priority: 5,
-                    completed: 0,
-                    htmlLink,
-                    type: "google",
-                    editable,
-                    isEditable: editable,
-                    color: calendar.backgroundColor,
-                  };
-                  calendarEvents.push(newEvent);
-                  return null;
-                });
-                return null;
-              }
-            );
 
-            await Promise.all(calendarPromises);
-            plans = plans.concat(calendarEvents);
-          }
-        } catch (err) {
-          if (
-            err.response &&
-            err.response &&
-            err.response.data &&
-            (err.response.data.error === "invalid_grant" ||
-              err.response.data.error_description ===
-                "Token has been expired or revoked.")
-          ) {
-            connection.query(
-              `UPDATE users set google_refresh_token = NULL WHERE user_id = ?`,
-              [userId]
-            );
-            redisClient.del(`user:${userId}:googleAccessToken`);
-          }
+      if (!access_token) {
+        return res.send({
+          success: true,
+          status: "success",
+          data: { plans: plans },
+        });
+      }
+
+      try {
+        const auth = googleOauth2client({ access_token });
+        const googleCalendar = google.calendar({
+          version: "v3",
+          auth: auth,
+        });
+        const calendars = await googleCalendar.calendarList.list();
+        if (calendars && calendars.data) {
+          const calendarEvents = [];
+          const calendarPromises = calendars.data.items.map(
+            async (calendar) => {
+              // Only bring last 30 days events, future 30 days
+              const timeMin = new Date(
+                new Date().getTime() - 1000 * 60 * 60 * 24 * 30
+              );
+              const timeMax = new Date(
+                new Date().getTime() + 1000 * 60 * 60 * 24 * 30
+              );
+              const response = await googleCalendar.events.list({
+                calendarId: calendar.id,
+                timeMin,
+                timeMax,
+              });
+              const events = response.data.items;
+              events.map((event) => {
+                const { htmlLink, id, summary, start, end, description } =
+                  event;
+                const startDateTime = Math.floor(
+                  DateTime.fromISO(start ? start.dateTime : "", {
+                    zone: start ? start.timeZone : "",
+                  }).toSeconds()
+                );
+                const endDateTime = Math.floor(
+                  DateTime.fromISO(end ? end.dateTime : "", {
+                    zone: end ? end.timeZone : "",
+                  }).toSeconds()
+                );
+                const editable = calendar.accessRole !== "reader";
+                const newEvent = {
+                  plan_id: id,
+                  title: summary,
+                  start: startDateTime,
+                  end: endDateTime,
+                  repeat: 0,
+                  description,
+                  subject: calendar.id,
+                  priority: 5,
+                  completed: 0,
+                  htmlLink,
+                  type: "google",
+                  editable,
+                  isEditable: editable,
+                  color: calendar.backgroundColor,
+                };
+                calendarEvents.push(newEvent);
+                return null;
+              });
+              return null;
+            }
+          );
+
+          await Promise.all(calendarPromises);
+          plans.push(...calendarEvents);
+        }
+      } catch (err) {
+        if (
+          err?.response?.data?.error === "invalid_grant" ||
+          err?.response?.data?.error_description ===
+            "Token has been expired or revoked."
+        ) {
+          connection.query(
+            `UPDATE users set google_refresh_token = NULL WHERE user_id = ?`,
+            [userId]
+          );
+          redisClient.del(`user:${userId}:googleAccessToken`);
         }
       }
-      res.send({ success: true, plans: plans });
+
+      return res.send({
+        success: true,
+        status: "success",
+        data: { plans: plans },
+      });
     } catch (err) {
       console.log(err);
-      res.send({ success: false });
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -179,6 +181,7 @@ Router.patch("/plan", async (req, res) => {
         const connection = pool.promise();
         const access_token = await googleAccessTokenCache(connection, userId);
         if (!access_token) return res.send(RESPONSE_CODES["not-authenticated"]);
+
         try {
           const auth = googleOauth2client({ access_token });
           const googleCalendar = google.calendar({
@@ -224,11 +227,22 @@ Router.patch("/plan", async (req, res) => {
 
       const isValidTitle = validateString(title, "Title", 100);
       if (!isValidTitle.isValid) {
-        return res.send({ success: false, reason: isValidTitle.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidTitle.reason,
+          error: { reason: isValidTitle.reason },
+        });
       }
+
       const isValidPlanId = validateStrictString(plan_id, "Id", 10, 10);
       if (!isValidPlanId.isValid) {
-        return res.send({ success: false, reason: isValidPlanId.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidPlanId.reason,
+          error: { reason: isValidPlanId.reason },
+        });
       }
 
       const isValidStart = validateInteger(
@@ -238,17 +252,32 @@ Router.patch("/plan", async (req, res) => {
         minPlanTime
       );
       if (!isValidStart.isValid) {
-        return res.send({ success: false, reason: isValidStart.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidStart.reason,
+          error: { reason: isValidStart.reason },
+        });
       }
 
       const isValidEnd = validateInteger(end, "End time", maxPlanTime, start);
       if (!isValidEnd.isValid) {
-        return res.send({ success: false, reason: isValidEnd.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidEnd.reason,
+          error: { reason: isValidEnd.reason },
+        });
       }
 
       const isValidRepeat = validateInteger(repeat, "Repeat", 3, 0);
       if (!isValidRepeat.isValid) {
-        return res.send({ success: false, reason: isValidRepeat.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidRepeat.reason,
+          error: { reason: isValidRepeat.reason },
+        });
       }
 
       const isValidDescription = validateLength(
@@ -259,7 +288,9 @@ Router.patch("/plan", async (req, res) => {
       if (!isValidDescription.isValid) {
         return res.send({
           success: false,
-          reason: isValidDescription.reason,
+          status: "error",
+          message: isValidDescription.reason,
+          error: { reason: isValidDescription.reason },
         });
       }
 
@@ -270,7 +301,12 @@ Router.patch("/plan", async (req, res) => {
         10
       );
       if (!isValidSubjectId.isValid) {
-        return res.send({ success: false, reason: isValidSubjectId.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidSubjectId.reason,
+          error: { reason: isValidSubjectId.reason },
+        });
       }
 
       const isValidNotification = validateInteger(
@@ -282,18 +318,30 @@ Router.patch("/plan", async (req, res) => {
       if (!isValidNotification.isValid) {
         return res.send({
           success: false,
-          reason: isValidNotification.reason,
+          status: "error",
+          message: isValidNotification.reason,
+          error: { reason: isValidNotification.reason },
         });
       }
 
       const isValidPriority = validateStrictString(priority, "Subject", 10, 10);
       if (!isValidPriority.isValid) {
-        return res.send({ success: false, reason: isValidPriority.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidPriority.reason,
+          error: { reason: isValidPriority.reason },
+        });
       }
 
       const isValidCompleted = validateInteger(completed, "Completed", 0, 1);
       if (!isValidCompleted.isValid) {
-        return res.send({ success: false, reason: isValidCompleted.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidCompleted.reason,
+          error: { reason: isValidCompleted.reason },
+        });
       }
 
       const connection = pool.promise();
@@ -340,11 +388,16 @@ Router.patch("/plan", async (req, res) => {
         );
       }
       //planNotification(insertInfo, userInfo[0], startTime)
-      const isNew = plan_id === "0000000000";
-      res.send({ success: true, msg: "Plan Saved!", plan: newPlan, isNew });
-    } catch (error) {
-      console.error("An error occurred:", error);
-      res.send({ success: false, reason: "An error occurred" });
+      const is_new = plan_id === "0000000000";
+      res.send({
+        success: true,
+        status: "success",
+        message: "Plan Saved!",
+        data: { plan: newPlan, is_new },
+      });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -357,28 +410,34 @@ Router.patch("/plan/status", async (req, res) => {
       const isValidPlanId = validateStrictString(plan_id, "plan id", 10, 8);
 
       if (!isValidPlanId.isValid) {
-        return res.send({ success: false, reason: isValidPlanId.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidPlanId.reason,
+          error: { reason: isValidPlanId.reason },
+        });
       }
 
       const isValidCompleted = validateInteger(completed, "completed", 1, 0);
 
       if (!isValidCompleted) {
-        return res.send({ success: false, reason: isValidCompleted.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidCompleted.reason,
+          error: { reason: isValidCompleted.reason },
+        });
       }
 
       const connection = pool.promise();
-      try {
-        await connection.query(
-          `UPDATE plans SET completed = ? WHERE plan_id = ? AND user_id = ?`,
-          [completed, plan_id, userId]
-        );
-        res.send({ success: true, msg: "Plan Updated" });
-      } catch (err) {
-        console.log(err);
-      }
+      await connection.query(
+        `UPDATE plans SET completed = ? WHERE plan_id = ? AND user_id = ?`,
+        [completed, plan_id, userId]
+      );
+      res.send({ success: true, status: "success", message: "Plan Updated" });
     } catch (err) {
       console.log(err);
-      res.send({ success: false, reason: "Err" });
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -388,12 +447,17 @@ Router.delete("/plan", async (req, res) => {
     try {
       const connection = pool.promise();
 
-      const { planId } = req.body;
+      const { plan_id: planId } = req.body;
 
-      const isValidId = validateStrictString(planId, "plan id", 10, 8);
+      const isValidPlanId = validateStrictString(planId, "plan id", 10, 8);
 
-      if (!isValidId.isValid) {
-        return res.send({ success: false, reason: isValidId.reason });
+      if (!isValidPlanId.isValid) {
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidPlanId.reason,
+          error: { reason: isValidPlanId.reason },
+        });
       }
 
       const [[planInfo]] = await connection.query(
@@ -413,9 +477,14 @@ Router.delete("/plan", async (req, res) => {
         [planId, planId, userId, planId]
       );
 
-      res.send({ success: true, msg: `Deleted plan ${planInfo.title}` });
+      res.send({
+        success: true,
+        status: "success",
+        message: `Deleted plan ${planInfo.title}`,
+      });
     } catch (err) {
       console.log(err);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -423,11 +492,17 @@ Router.delete("/plan", async (req, res) => {
 Router.get("/plan/users", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { planId } = req.query;
+      const { plan_id: planId } = req.query;
 
-      const isValidId = validateStrictString(planId, "plan id", 10, 10);
-      if (!isValidId.isValid) {
-        return res.send({ success: false, reason: isValidId.reason });
+      const isValidPlanId = validateStrictString(planId, "plan id", 10, 8);
+
+      if (!isValidPlanId.isValid) {
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidPlanId.reason,
+          error: { reason: isValidPlanId.reason },
+        });
       }
 
       const connection = pool.promise();
@@ -470,10 +545,10 @@ Router.get("/plan/users", async (req, res) => {
         return res.send(RESPONSE_CODES["non-memeber"]);
       }
 
-      res.send({ success: true, planInfo });
+      res.send({ success: true, status: "success", data: { planInfo } });
     } catch (err) {
       console.log(err);
-      res.send({ success: false });
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -481,9 +556,16 @@ Router.get("/plan/users", async (req, res) => {
 Router.post("/plan/share", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { users, planId } = req.body;
+      const { users, plan_id: planId } = req.body;
 
-      if (!users.length) return res.send({ success: true });
+      if (!users.length) {
+        return res.send({
+          success: "false",
+          status: "error",
+          message: "No users selected",
+          error: { reason: "No users selected" },
+        });
+      }
 
       const connection = pool.promise();
 
@@ -578,10 +660,15 @@ Router.post("/plan/share", async (req, res) => {
         );
       });
       console.log("shared", friends, nonFriends);
-      res.send({ success: true, share: nonFriends, shared: friends });
+      res.send({
+        success: true,
+        message: "Plan shared!",
+        status: "success",
+        data: { share: nonFriends, shared: friends },
+      });
     } catch (err) {
       console.log(err);
-      res.send({ success: false });
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -594,7 +681,12 @@ Router.delete("/plan/share", async (req, res) => {
       const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
       if (!isValidTargetId.isValid) {
-        return res.send({ success: false, reason: isValidTargetId.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidTargetId.reason,
+          error: { reason: isValidTargetId.reason },
+        });
       }
 
       const connection = pool.promise();
@@ -649,10 +741,10 @@ Router.delete("/plan/share", async (req, res) => {
         redisClient.hdel(`user:${targetId}:notifications`, planRequest.i);
       }
 
-      res.send({ success: true, msg: `Removed user!` });
+      res.send({ success: true, status: "success", message: `Removed user!` });
     } catch (err) {
       console.log(err);
-      res.send({ success: false });
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -665,7 +757,12 @@ Router.post("/plan/share/respond", async (req, res) => {
       const isValidAcceped = validateBoolean(accepted, "accept", true);
 
       if (!isValidAcceped.isValid) {
-        return res.send({ success: false, reason: isValidAcceped.reason });
+        return res.send({
+          success: false,
+          status: "error",
+          message: isValidAcceped.reason,
+          error: { reason: isValidAcceped.reason },
+        });
       }
 
       const notification = await redisClient.hget(
@@ -691,7 +788,11 @@ Router.post("/plan/share/respond", async (req, res) => {
         return res.send({ success: true, msg: `Accepted share request!` });
       }
 
-      res.send({ success: true, msg: `Declined share request!` });
+      res.send({
+        success: true,
+        status: "success",
+        message: `Declined share request!`,
+      });
     } catch (err) {
       console.log(err);
       res.send(RESPONSE_CODES["error"]);

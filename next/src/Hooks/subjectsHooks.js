@@ -14,13 +14,13 @@ function useSubjects() {
   });
 
   const {
-    data: useSubjectsData,
+    data: subjectsData,
     refetch: subjectsRefetch,
     isLoading: useSubjectsIsLoading,
   } = queryResult;
 
   return {
-    useSubjectsData,
+    subjectsData,
     subjectsRefetch,
     useSubjectsIsLoading,
     ...queryResult,

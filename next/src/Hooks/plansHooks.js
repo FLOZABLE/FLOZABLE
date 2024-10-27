@@ -27,18 +27,18 @@ function usePlans() {
   };
 }
 
-function usePlansPlanUsers(planId) {
+function usePlanUsers(planId) {
   const queryClient = useQueryClient();
 
   const queryResult = useQuery({
-    queryKey: [`usePlansPlanUsers`, planId],
+    queryKey: [`usePlanUsers`, planId],
     queryFn: () => getPlansPlanUsers(planId),
     staleTime: 1000 * 60 * 10,
-    enabled: !!planId,
+    enabled: !!planId && planId !== "0000000000",
   });
 
   const clearPlanUsers = () => {
-    queryClient.removeQueries({ queryKey: ["usePlansPlanUsers", planId] });
+    queryClient.removeQueries({ queryKey: ["usePlanUsers", planId] });
   };
 
   const { data: usePlansPlanUsersData, isLoading: usePlansPlanUsersIsLoading } =
@@ -52,4 +52,4 @@ function usePlansPlanUsers(planId) {
   };
 }
 
-export { usePlans, usePlansPlanUsers };
+export { usePlans, usePlanUsers };
