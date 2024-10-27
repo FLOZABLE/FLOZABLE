@@ -76,12 +76,11 @@ function AddSubjectModal({}) {
   const onSubmit = useCallback(
     (subject) => {
       (async () => {
-        const data = await putSubjectsSubject(subject);
-        setResponse(data);
-        if (data.success) {
+        const response = await putSubjectsSubject(subject);
+        if (response.success) {
           const newSubjects = sortNewSubject(
             JSON.parse(JSON.stringify(subjects)),
-            data.subjectInfo
+            response.data.subject
           );
           setSubjects(newSubjects);
           setIsSelectColor(false);

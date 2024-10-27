@@ -1,54 +1,25 @@
-import config from "@/app/utils/config";
-
-async function getSpotifyInfo() {
-  const response = await fetch(`${config.server}/playlists/spotify/info`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-  return data;
-}
+import AxiosInstance from "@/app/utils/axiosInstance";
 
 async function getPlaylistsSpotify() {
-  const response = await fetch(`${config.server}/playlists/spotify`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-  return data;
+  const response = await AxiosInstance.get(`/playlists/spotify`);
+  return response.data;
+}
+
+async function getSpotifyInfo() {
+  const response = await AxiosInstance.get(`/playlists/spotify/info`);
+  return response.data;
 }
 
 async function getPlaylistsYoutube() {
-  const response = await fetch(`${config.server}/playlists/youtube`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  const data = await response.json();
-  return data;
+  const response = await AxiosInstance.get(`/playlists/youtube`);
+  return response.data;
 }
 
 async function getPlaylistsYoutubeItems(playlistId) {
-  const response = await fetch(
-    `${config.server}/playlists/youtube/items?playlistId=${playlistId}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
-  return data;
+  const response = await AxiosInstance.get(`/playlists`, {
+    params: { playlist_id: playlistId },
+  });
+  return response.data;
 }
 
 export {

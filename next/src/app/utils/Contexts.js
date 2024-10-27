@@ -134,16 +134,16 @@ function SubjectsProvider({ children }) {
   useEffect(() => {
     if (!subjectsData?.success) return;
 
-    const { subjects, groupedSubjects } = timelineSort(subjectsData.subjects);
+    const { subjects, groupedSubjects } = timelineSort(
+      subjectsData.data.subjects
+    );
 
     setSubjects(subjects);
     setGroupedSubjects(groupedSubjects);
   }, [subjectsData]);
 
   useEffect(() => {
-    if (!plansData?.success || !subjectsData?.success) return;
-
-    const subjects = subjectsData.subjects;
+    if (!plansData?.success) return;
 
     setPlans(
       JSON.parse(JSON.stringify(plansData.data.plans)).map((plan) => {
@@ -171,7 +171,7 @@ function SubjectsProvider({ children }) {
         return plan;
       })
     );
-  }, [subjectsData, plansData]);
+  }, [subjects, plansData]);
 
   const pathname = usePathname();
 
@@ -402,20 +402,20 @@ function ThemesProvider({ children }) {
   const [themes, setThemes] = useState([]);
   const [userThemes, setUserThemes] = useState([]);
 
-  const { useThemesData } = useThemes();
-  const { useThemesUserData } = useThemesUser();
+  const { themesData } = useThemes();
+  const { themesUserData } = useThemesUser();
 
   useEffect(() => {
-    if (!useThemesData?.success) return;
+    if (!themesData?.success) return;
 
-    setThemes(useThemesData.themes);
-  }, [useThemesData]);
+    setThemes(themesData.data.themes);
+  }, [themesData]);
 
   useEffect(() => {
-    if (!useThemesUserData?.success) return;
+    if (!themesUserData?.success) return;
 
-    setUserThemes(useThemesUserData.themes);
-  }, [useThemesUserData]);
+    setUserThemes(themesUserData.data.themes);
+  }, [themesUserData]);
 
   return (
     <ThemesContext.Provider
