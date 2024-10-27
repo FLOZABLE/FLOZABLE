@@ -2,7 +2,6 @@ import "./globals.css";
 import { AppProvider } from "@/app/utils/Contexts";
 import AddSubjectModal from "@/app/components/Modals/AddSubjectModal/AddSubjectModal";
 import JoinGroupModal from "@/app/components/Modals/JoinGroupModal/JoinGroupModal";
-import TopNotification from "@/app/components/Modals/TopNotification/TopNotification";
 import ChatModal from "@/app/components/Modals/ChatModal/ChatModal";
 import AccountModal from "@/app/components/Modals/AccountModal/AccountModal";
 import Tutorial from "./components/Others/Tutorial/Tutorial";
@@ -82,7 +81,6 @@ export default function RootLayout({ children }) {
             <PlanModal />
             <ChatModal />
             <AccountModal />
-            <TopNotification />
             <JoinGroupModal />
             <AddSubjectModal />
             <SubjectsModal />

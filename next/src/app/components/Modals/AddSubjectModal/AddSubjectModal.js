@@ -11,7 +11,6 @@ import styles from "./AddSubjectModal.module.css";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
 import {
   ModalsContext,
-  ResponseContext,
   SubjectsContext,
   TutorialsContext,
   WorkersContext,
@@ -19,7 +18,6 @@ import {
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
-import config from "@/app/utils/config";
 /* import { sortNewSubject } from "@/app/utils/timelineSorting"; */
 import { socket } from "@/app/utils/socket";
 import DraggableModal from "../DraggableModal/DraggableModal";
@@ -30,7 +28,6 @@ import { putSubjectsSubject } from "@/Api/subjectsApi";
 function AddSubjectModal({}) {
   const { subjects, setSubjects } = useContext(SubjectsContext);
 
-  const { setResponse } = useContext(ResponseContext);
   const { isAddSubjectModal, setIsAddSubjectModal } = useContext(ModalsContext);
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);

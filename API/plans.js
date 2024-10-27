@@ -212,12 +212,13 @@ Router.patch("/plan", async (req, res) => {
           });
 
           if (updateResults.status === 200) {
-            return res.send({ success: true, msg: "Plan updated!" });
-          } else {
             return res.send({
-              success: false,
-              msg: "You cannot modify this plan",
+              success: true,
+              status: "success",
+              message: "Plan updated!",
             });
+          } else {
+            return res.send(RESPONSE_CODES.error);
           }
         } catch (err) {
           console.log(err);
@@ -785,7 +786,11 @@ Router.post("/plan/share/respond", async (req, res) => {
         };
 
         await connection.query(`INSERT INTO plan_shared SET ?`, [shared]);
-        return res.send({ success: true, msg: `Accepted share request!` });
+        return res.send({
+          success: true,
+          status: "success",
+          message: `Accepted share request!`,
+        });
       }
 
       res.send({
