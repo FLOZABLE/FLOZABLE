@@ -11,7 +11,7 @@ async function getThemesUser() {
 }
 
 async function putThemesTheme({ name, tags, description, url }) {
-  const response = await AxiosInstance.post(`/themes`, {
+  const response = await AxiosInstance.put(`/themes/theme`, {
     name,
     tags,
     description,
@@ -30,7 +30,7 @@ async function postThemesThemeSave({ themeId, categoryId, categoryName }) {
 }
 
 async function postThemeLike({ themeId, like }) {
-  const response = await AxiosInstance.get(`/themes/theme/like`, {
+  const response = await AxiosInstance.post(`/themes/theme/like`, {
     theme_id: themeId,
     like,
   });

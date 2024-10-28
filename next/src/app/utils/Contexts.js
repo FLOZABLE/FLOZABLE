@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DEFAULT_PLAN } from "./Constant";
 import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
-import { usePlans } from "@/Hooks/plansHooks";
+import { usePlans, usePlansGoogle } from "@/Hooks/plansHooks";
 import { useGroups } from "@/Hooks/groupsHook";
 import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -150,9 +150,11 @@ function SubjectsProvider({ children }) {
 
   const subjectsQueryResult = useSubjects();
   const plansQueryResult = usePlans();
+  const plansGoogleQueryResult = usePlansGoogle();
 
   const { subjectsData } = subjectsQueryResult;
   const { plansData } = plansQueryResult;
+  const { plansGoogleData } = plansGoogleQueryResult;
 
   useEffect(() => {
     if (!subjectsData?.success) return;
@@ -166,35 +168,43 @@ function SubjectsProvider({ children }) {
   }, [subjectsData]);
 
   useEffect(() => {
-    if (!plansData?.success) return;
+    if (
+      !plansData?.success ||
+      !plansGoogleData?.success ||
+      !subjectsData?.success
+    )
+      return;
 
-    setPlans(
-      JSON.parse(JSON.stringify(plansData.data.plans)).map((plan) => {
-        plan.saved = true;
-        plan.start = new Date(plan.start * 1000);
-        plan.end = new Date(plan.end * 1000);
-        const subject = subjects.find(
-          (subject) => subject.subject_id === plan.subject_id
-        );
-        if (subject) {
-          plan.backgroundColor = subject.color;
-          plan.borderColor = subject.color;
-          //lan.subject_color = subject.color;
-          //plan.color = subject.color;
-          //plan.textColor = subject.color;
-        } else {
-          plan.backgroundColor = "#000";
-          plan.borderColor = "#000";
-          //plan.color = "#000";
-        }
+    const { subjects } = subjectsData.data;
 
-        if (plan.completed) {
-          plan.className = "completed";
-        }
-        return plan;
-      })
-    );
-  }, [subjects, plansData]);
+    const plans = [...plansData.data.plans, ...plansGoogleData.data.plans];
+
+    plans.map((plan) => {
+      //plan.saved = true;
+      plan.start = new Date(plan.start);
+      plan.end = new Date(plan.end);
+      const subject = subjects.find(
+        (subject) => subject.subject_id === plan.subject_id
+      );
+      if (subject) {
+        plan.backgroundColor = subject.color;
+        plan.borderColor = subject.color;
+        //lan.subject_color = subject.color;
+        //plan.color = subject.color;
+        //plan.textColor = subject.color;
+      } else if (plan.type === "local") {
+        plan.backgroundColor = "#000";
+        plan.borderColor = "#000";
+        //plan.color = "#000";
+      }
+
+      if (plan.completed) {
+        plan.className = "completed";
+      }
+      return plan;
+    });
+    setPlans(plans);
+  }, [subjectsData, plansData, plansGoogleData]);
 
   const pathname = usePathname();
 

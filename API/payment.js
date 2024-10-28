@@ -33,7 +33,7 @@ Router.post("/subscription/initialize", async (req, res) => {
       }
 
       if (!userInfo.stripe_id) {
-        return res.send(RESPONSE_CODES["error"]);
+        return res.send(RESPONSE_CODES.error);
       }
 
       const subscription = await stripe.subscriptions.create({
@@ -47,7 +47,7 @@ Router.post("/subscription/initialize", async (req, res) => {
       res.send({ success: true, clientSecret });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -62,7 +62,7 @@ Router.get("/product", async (req, res) => {
     res.send({ success: true, price, product });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES["error"]);
+    res.send(RESPONSE_CODES.error);
   }
 });
 

@@ -46,7 +46,7 @@ Router.get("/spotify/info", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -86,7 +86,7 @@ Router.get("/spotify", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -106,7 +106,7 @@ Router.get("/youtube", async (req, res) => {
 
       const auth = googleOauth2client({ access_token: googleAccessToken });
       if (!auth) {
-        return res.send(RESPONSE_CODES["error"]);
+        return res.send(RESPONSE_CODES.error);
       }
 
       const youtube = google.youtube({ version: "v3", auth });
@@ -126,7 +126,7 @@ Router.get("/youtube", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -165,7 +165,7 @@ Router.get("/youtube/items", async (req, res) => {
 
       const auth = googleOauth2client({ access_token: googleAccessToken });
       if (!auth) {
-        return res.send(RESPONSE_CODES["error"]);
+        return res.send(RESPONSE_CODES.error);
       }
 
       const youtube = google.youtube({ version: "v3", auth });
@@ -188,7 +188,7 @@ Router.get("/youtube/items", async (req, res) => {
       return res.send({ success: true, status: "success", data: { items } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });

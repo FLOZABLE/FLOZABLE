@@ -1,19 +1,44 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
 import { getTimezone } from "@/app/utils/Tool";
+import { DateTime } from "luxon";
 
 async function getPlans() {
   const response = await AxiosInstance.get(`/plans`);
   return response.data;
 }
 
+async function getPlansGoogle() {
+  const response = await AxiosInstance.get(`/plans/google`);
+  return response.data;
+}
+
 async function patchPlan(planModal) {
-  planModal.start = Math.floor(planModal.start.getTime() / 1000);
-  planModal.end = Math.floor(planModal.end.getTime() / 1000);
-  planModal.completed = planModal.completed ? 1 : 0;
+  const start = Math.floor(planModal.start.getTime() / 1000);
+  const end = Math.floor(planModal.end.getTime() / 1000);
+  const completed = planModal.completed ? 1 : 0;
   const timezone = getTimezone();
 
   const response = await AxiosInstance.patch(`/plans/plan`, {
     ...planModal,
+    start,
+    end,
+    completed,
+    timezone,
+  });
+  return response.data;
+}
+
+async function patchPlanGoogle(planModal) {
+  const start = DateTime.fromJSDate(planModal.start).toISO();
+  const end = DateTime.fromJSDate(planModal.end).toISO();
+  const completed = planModal.completed ? 1 : 0;
+  const timezone = getTimezone();
+
+  const response = await AxiosInstance.patch(`/plans/plan/google`, {
+    ...planModal,
+    start,
+    end,
+    completed,
     timezone,
   });
   return response.data;
@@ -67,7 +92,9 @@ async function getPlansPlanUsers(planId) {
 
 export {
   getPlans,
+  getPlansGoogle,
   patchPlan,
+  patchPlanGoogle,
   deletePlan,
   patchPlanStatus,
   postPlanShare,
