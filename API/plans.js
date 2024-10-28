@@ -35,8 +35,8 @@ Router.get("/", async (req, res) => {
         `SELECT 
           p.plan_id, 
           p.title, 
-          p.start, 
-          p.end, 
+          p.start * 1000 AS start, 
+          p.end  * 1000 AS end, 
           p.\`repeat\`, 
           p.description, 
           p.notification, 
@@ -54,9 +54,28 @@ Router.get("/", async (req, res) => {
         [userId, `%${userId}%`]
       );
       plans.map((plan) => {
+        plan.type = "local";
         plan.editable = true;
         plan.isEditable = true;
       });
+
+      return res.send({
+        success: true,
+        status: "success",
+        data: { plans: plans },
+      });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_CODES.error);
+    }
+  });
+});
+
+Router.get("/google", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    const connection = pool.promise();
+    try {
+      const plans = [];
       const access_token = await googleAccessTokenCache(connection, userId);
 
       if (!access_token) {
@@ -67,83 +86,65 @@ Router.get("/", async (req, res) => {
         });
       }
 
-      try {
-        const auth = googleOauth2client({ access_token });
-        const googleCalendar = google.calendar({
-          version: "v3",
-          auth: auth,
-        });
-        const calendars = await googleCalendar.calendarList.list();
-        if (calendars && calendars.data) {
-          const calendarEvents = [];
-          const calendarPromises = calendars.data.items.map(
-            async (calendar) => {
-              // Only bring last 30 days events, future 30 days
-              const timeMin = new Date(
-                new Date().getTime() - 1000 * 60 * 60 * 24 * 30
-              );
-              const timeMax = new Date(
-                new Date().getTime() + 1000 * 60 * 60 * 24 * 30
-              );
-              const response = await googleCalendar.events.list({
-                calendarId: calendar.id,
-                timeMin,
-                timeMax,
-              });
-              const events = response.data.items;
-              events.map((event) => {
-                const { htmlLink, id, summary, start, end, description } =
-                  event;
-                const startDateTime = Math.floor(
-                  DateTime.fromISO(start ? start.dateTime : "", {
-                    zone: start ? start.timeZone : "",
-                  }).toSeconds()
-                );
-                const endDateTime = Math.floor(
-                  DateTime.fromISO(end ? end.dateTime : "", {
-                    zone: end ? end.timeZone : "",
-                  }).toSeconds()
-                );
-                const editable = calendar.accessRole !== "reader";
-                const newEvent = {
-                  plan_id: id,
-                  title: summary,
-                  start: startDateTime,
-                  end: endDateTime,
-                  repeat: 0,
-                  description,
-                  subject: calendar.id,
-                  priority: 5,
-                  completed: 0,
-                  htmlLink,
-                  type: "google",
-                  editable,
-                  isEditable: editable,
-                  color: calendar.backgroundColor,
-                };
-                calendarEvents.push(newEvent);
-                return null;
-              });
-              return null;
-            }
-          );
+      const auth = googleOauth2client({ access_token });
+      const googleCalendar = google.calendar({
+        version: "v3",
+        auth: auth,
+      });
+      const calendars = await googleCalendar.calendarList.list();
+      if (!calendars?.data) return RESPONSE_CODES.error;
 
-          await Promise.all(calendarPromises);
-          plans.push(...calendarEvents);
-        }
-      } catch (err) {
-        if (
-          err?.response?.data?.error === "invalid_grant" ||
-          err?.response?.data?.error_description ===
-            "Token has been expired or revoked."
-        ) {
-          connection.query(
-            `UPDATE users set google_refresh_token = NULL WHERE user_id = ?`,
-            [userId]
+      await Promise.all(
+        calendars.data.items.map(async (calendar) => {
+          // Only bring last 30 days events, future 30 days
+          const timeMin = new Date(
+            new Date().getTime() - 1000 * 60 * 60 * 24 * 30
           );
-          redisClient.del(`user:${userId}:googleAccessToken`);
-        }
-      }
+          const timeMax = new Date(
+            new Date().getTime() + 1000 * 60 * 60 * 24 * 30
+          );
+          const response = await googleCalendar.events.list({
+            calendarId: calendar.id,
+            timeMin,
+            timeMax,
+          });
+          const events = response.data.items;
+
+          events.map((event) => {
+            const { htmlLink, id, summary, start, end, description } = event;
+            const startDateTime = DateTime.fromISO(
+              start ? start.dateTime : "",
+              {
+                zone: start ? start.timeZone : "",
+              }
+            ).toMillis();
+            const endDateTime = DateTime.fromISO(end ? end.dateTime : "", {
+              zone: end ? end.timeZone : "",
+            }).toMillis();
+            const editable = calendar.accessRole !== "reader";
+            const newEvent = {
+              plan_id: id,
+              title: summary,
+              start: startDateTime,
+              end: endDateTime,
+              repeat: 0,
+              description,
+              subject: calendar.id,
+              priority: 5,
+              completed: 0,
+              htmlLink,
+              type: "google",
+              editable,
+              isEditable: editable,
+              backgroundColor: calendar.backgroundColor,
+              borderColor: calendar.backgroundColor,
+            };
+            plans.push(newEvent);
+            return null;
+          });
+          return null;
+        })
+      );
 
       return res.send({
         success: true,
@@ -152,6 +153,17 @@ Router.get("/", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
+      if (
+        err?.response?.data?.error === "invalid_grant" ||
+        err?.response?.data?.error_description ===
+          "Token has been expired or revoked."
+      ) {
+        connection.query(
+          `UPDATE users set google_refresh_token = NULL WHERE user_id = ?`,
+          [userId]
+        );
+        redisClient.del(`user:${userId}:googleAccessToken`);
+      }
       res.send(RESPONSE_CODES.error);
     }
   });
@@ -173,58 +185,8 @@ Router.patch("/plan", async (req, res) => {
         notification,
         priority,
         completed,
-        type,
         timezone,
       } = req.body;
-
-      if (type === "google") {
-        const connection = pool.promise();
-        const access_token = await googleAccessTokenCache(connection, userId);
-        if (!access_token) return res.send(RESPONSE_CODES["not-authenticated"]);
-
-        try {
-          const auth = googleOauth2client({ access_token });
-          const googleCalendar = google.calendar({
-            version: "v3",
-            auth: auth,
-          });
-
-          const startDateTime = DateTime.fromSeconds(start, {
-            zone: timezone,
-          });
-          const endDateTime = DateTime.fromSeconds(end, {
-            zone: timezone,
-          });
-
-          const updateResults = await googleCalendar.events.update({
-            auth: auth,
-            calendarId: subject,
-            eventId: plan_id,
-            resource: {
-              summary: title,
-              description,
-              start: {
-                dateTime: startDateTime.toISO(),
-                timeZone: timezone,
-              },
-              end: { dateTime: endDateTime.toISO(), timeZone: timezone },
-            },
-          });
-
-          if (updateResults.status === 200) {
-            return res.send({
-              success: true,
-              status: "success",
-              message: "Plan updated!",
-            });
-          } else {
-            return res.send(RESPONSE_CODES.error);
-          }
-        } catch (err) {
-          console.log(err);
-          return res.send(RESPONSE_CODES["error"]);
-        }
-      }
 
       const isValidTitle = validateString(title, "Title", 100);
       if (!isValidTitle.isValid) {
@@ -376,8 +338,6 @@ Router.patch("/plan", async (req, res) => {
 
       const notificationTime = start - notification; //DateTime.now().toSeconds() + 5
 
-      console.log(notificationTime);
-
       if (notification !== -1) {
         const payload = NOTIFICATION_PAYLOADS["plan"]({ ...newPlan, timezone });
         planPushNotification(
@@ -399,6 +359,80 @@ Router.patch("/plan", async (req, res) => {
     } catch (err) {
       console.log(err);
       res.send(RESPONSE_CODES.error);
+    }
+  });
+});
+
+Router.patch("/plan/google", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    const connection = pool.promise();
+
+    try {
+      const { subject, plan_id, title, description, start, end, timezone } =
+        req.body;
+
+      const access_token = await googleAccessTokenCache(connection, userId);
+
+      if (!access_token) {
+        return res.send(RESPONSE_CODES["not-authenticated"]);
+      }
+
+      const auth = googleOauth2client({ access_token });
+      const googleCalendar = google.calendar({
+        version: "v3",
+        auth: auth,
+      });
+
+      const updateResults = await googleCalendar.events.update({
+        auth: auth,
+        calendarId: subject,
+        eventId: plan_id,
+        resource: {
+          summary: title,
+          description,
+          start: {
+            dateTime: start,
+            timeZone: timezone,
+          },
+          end: { dateTime: end, timeZone: timezone },
+        },
+      });
+
+      if (updateResults.status === 200) {
+        return res.send({
+          success: true,
+          status: "success",
+          message: "Plan updated!",
+        });
+      }
+
+      return res.send(RESPONSE_CODES.error);
+    } catch (err) {
+      if (!err?.response?.data?.error) {
+        return res.send(RESPONSE_CODES.error);
+      }
+      if (
+        err.response.data.error === "invalid_grant" ||
+        err.response.data.error_description ===
+          "Token has been expired or revoked."
+      ) {
+        connection.query(
+          `UPDATE users set google_refresh_token = NULL WHERE user_id = ?`,
+          [userId]
+        );
+        redisClient.del(`user:${userId}:googleAccessToken`);
+      } else if (err.response.data.error.message) {
+        console.log(err.response.data.error.message);
+        return res.send({
+          success: false,
+          status: "error",
+          message: err.response.data.error.message,
+          error: {
+            code: err.response.data.error.code,
+            reason: err.response.data.error.message,
+          },
+        });
+      }
     }
   });
 });
@@ -800,7 +834,7 @@ Router.post("/plan/share/respond", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });

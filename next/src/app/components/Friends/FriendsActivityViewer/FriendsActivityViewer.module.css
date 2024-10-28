@@ -1,3 +1,7 @@
+.FriendsActivityViewer {
+  z-index: 0;
+}
+
 .FriendsActivityViewer .header {
   align-items: center;
   border-bottom: 1px solid var(--gray0);
