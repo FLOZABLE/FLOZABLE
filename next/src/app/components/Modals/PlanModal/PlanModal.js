@@ -59,10 +59,8 @@ export default function PlanModal() {
   const router = useRouter();
 
   const { vapidKeysData } = useVapidKeys();
-  const { planUsersData, planUsersIsLoading, clearPlanUsers } = usePlanUsers(
-    planModal?.plan_id,
-    planModal?.isEditable
-  );
+  const { planUsersData, planUsersIsLoading, clearPlanUsers } =
+    usePlanUsers(planModal);
 
   const [shared, setShared] = useState([]);
   const [share, setShare] = useState([]);
@@ -371,7 +369,7 @@ export default function PlanModal() {
               value={planModal.repeat}
             />
           </ModalLayer>
-          {planModal.editable ? (
+          {planModal.type === "local" ? (
             <ModalLayer
               icon={<FontAwesomeIcon icon={faBook} />}
               hoverText={"Select Subject"}
@@ -429,81 +427,87 @@ export default function PlanModal() {
               }}
             />
           </ModalLayer>
-          <ModalLayer
-            icon={<FontAwesomeIcon icon={faCircleExclamation} />}
-            hoverText={"Select Importance"}
-          >
-            <SliderAnimation
-              min={0}
-              max={100}
-              step={1}
-              sliderValue={planModal.priority}
-              setSliderValue={(priority) => {
-                handleInput({ priority });
-              }}
-            />
-          </ModalLayer>
-          <ModalLayer
-            icon={<FontAwesomeIcon icon={faUserGroup} />}
-            hoverText={"Shared Users"}
-          >
-            <div className={styles.UserBoxes}>
-              {planUsersIsLoading ? (
-                <CircularLoading />
-              ) : (
-                <>
-                  <div id={styles.shared}>
-                    {shared.map((userInfo, i) => {
-                      return (
-                        <ShareUserBox
-                          userInfo={userInfo}
-                          key={i}
-                          text={`Remove ${userInfo.name}`}
-                          onClick={() => {
-                            onUnshared(userInfo);
-                          }}
-                        />
-                      );
-                    })}
-                  </div>
-                  <div id={styles.share}>
-                    {share.map((userInfo, i) => {
-                      return (
-                        <ShareUserBox
-                          userInfo={userInfo}
-                          key={i}
-                          text={`(Pending) Remove ${userInfo.name}`}
-                          onClick={() => {
-                            onUnshare(userInfo);
-                          }}
-                        />
-                      );
-                    })}
-                  </div>
-                </>
-              )}
-            </div>
-          </ModalLayer>
-          <div className={styles.buttons}>
-            <BlobBtn
-              onClick={() => {
-                setSearchUsersModal((prev) => ({
-                  opened: !prev.opened,
-                  onClick: async (userInfo) => {
-                    if (planModal.opened) {
-                      await postPlanShare(
-                        [userInfo.user_id],
-                        planModal.plan_id
-                      );
-
-                      clearPlanUsers();
-                    }
-                  },
-                }));
-              }}
+          {planModal.type === "local" ? (
+            <ModalLayer
+              icon={<FontAwesomeIcon icon={faCircleExclamation} />}
+              hoverText={"Select Importance"}
             >
-              <FontAwesomeIcon icon={faShare} />
-            </BlobBtn>
+              <SliderAnimation
+                min={0}
+                max={100}
+                step={1}
+                sliderValue={planModal.priority}
+                setSliderValue={(priority) => {
+                  handleInput({ priority });
+                }}
+              />
+            </ModalLayer>
+          ) : null}
+          {planModal.type === "local" ? (
+            <ModalLayer
+              icon={<FontAwesomeIcon icon={faUserGroup} />}
+              hoverText={"Shared Users"}
+            >
+              <div className={styles.UserBoxes}>
+                {planUsersIsLoading ? (
+                  <CircularLoading />
+                ) : (
+                  <>
+                    <div id={styles.shared}>
+                      {shared.map((userInfo, i) => {
+                        return (
+                          <ShareUserBox
+                            userInfo={userInfo}
+                            key={i}
+                            text={`Remove ${userInfo.name}`}
+                            onClick={() => {
+                              onUnshared(userInfo);
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                    <div id={styles.share}>
+                      {share.map((userInfo, i) => {
+                        return (
+                          <ShareUserBox
+                            userInfo={userInfo}
+                            key={i}
+                            text={`(Pending) Remove ${userInfo.name}`}
+                            onClick={() => {
+                              onUnshare(userInfo);
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+              </div>
+            </ModalLayer>
+          ) : null}
+          <div className={styles.buttons}>
+            {planModal.type === "local" ? (
+              <BlobBtn
+                onClick={() => {
+                  setSearchUsersModal((prev) => ({
+                    opened: !prev.opened,
+                    onClick: async (userInfo) => {
+                      if (planModal.opened) {
+                        await postPlanShare(
+                          [userInfo.user_id],
+                          planModal.plan_id
+                        );
+
+                        clearPlanUsers();
+                      }
+                    },
+                  }));
+                }}
+              >
+                <FontAwesomeIcon icon={faShare} />
+              </BlobBtn>
+            ) : <div> </div>}
             <div ref={submitBtnRef}>
               <BlobBtn
                 onClick={() => {
