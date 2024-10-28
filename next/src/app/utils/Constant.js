@@ -179,7 +179,8 @@ const DEFAULT_PLAN = {
   //saved: false,
   completed: false,
   //type: "local",
-  //editable: true,
+  /* editable: true,
+  isEditable: true, */
   share: [],
   shared: [],
 };
