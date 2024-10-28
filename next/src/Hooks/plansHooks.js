@@ -51,18 +51,19 @@ function usePlansGoogle() {
   };
 }
 
-function usePlanUsers(planId, isEditable) {
+function usePlanUsers({ plan_id, isEditable, type }) {
   const queryClient = useQueryClient();
 
   const queryResult = useQuery({
-    queryKey: [`usePlanUsers`, planId],
-    queryFn: () => getPlansPlanUsers(planId),
+    queryKey: [`usePlanUsers`, plan_id],
+    queryFn: () => getPlansPlanUsers(plan_id),
     staleTime: 1000 * 60 * 10,
-    enabled: !!planId && planId !== "0000000000" && isEditable,
+    enabled:
+      !!plan_id && plan_id !== "0000000000" && isEditable && type !== "google",
   });
 
   const clearPlanUsers = () => {
-    queryClient.removeQueries({ queryKey: ["usePlanUsers", planId] });
+    queryClient.removeQueries({ queryKey: ["usePlanUsers", plan_id] });
   };
 
   const { data: usePlansPlanUsersData, isLoading: usePlansPlanUsersIsLoading } =
