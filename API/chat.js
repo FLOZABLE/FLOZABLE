@@ -361,7 +361,7 @@ Router.post("/request/reply", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });

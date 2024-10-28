@@ -33,6 +33,7 @@ import {
   deletePlan,
   deletePlanShare,
   patchPlan,
+  patchPlanGoogle,
   postPlanShare,
 } from "@/Api/plansApi";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
@@ -59,7 +60,8 @@ export default function PlanModal() {
 
   const { vapidKeysData } = useVapidKeys();
   const { planUsersData, planUsersIsLoading, clearPlanUsers } = usePlanUsers(
-    planModal?.plan_id
+    planModal?.plan_id,
+    planModal?.isEditable
   );
 
   const [shared, setShared] = useState([]);
@@ -162,29 +164,26 @@ export default function PlanModal() {
 
     if (planModalss?.plan_id !== planModal.plan_id) {
       setPlans((prev) => {
-        const planIndex = prev.findIndex(
+        const newPlans = [...prev];
+        const planIndex = newPlans.findIndex(
           (plan) => plan.plan_id === planModalss.plan_id
         );
 
-        if (planIndex === -1) return prev;
+        if (planIndex === -1) return newPlans;
 
-        prev[planIndex] = planModalss;
+        newPlans[planIndex] = { ...newPlans[planIndex], ...planModalss };
 
         const subject = subjects.find(
-          (subject) => subject.subject_id === prev[planIndex].subject_id
+          (subject) => subject.subject_id === newPlans[planIndex].subject_id
         );
         if (subject) {
-          prev[planIndex].backgroundColor = subject.color;
-          prev[planIndex].borderColor = subject.color;
-          prev[planIndex].subject_color = subject.color;
-          prev[planIndex].color = subject.color;
-          //plan.textColor = subject.color;
-        } else {
-          prev[planIndex].backgroundColor = "#000";
-          prev[planIndex].borderColor = "#000";
-          prev[planIndex].color = "#000";
+          newPlans[planIndex].backgroundColor = subject.color;
+          newPlans[planIndex].borderColor = subject.color;
+        } else if (newPlans[planIndex].type === "local") {
+          newPlans[planIndex].backgroundColor = "#000";
+          newPlans[planIndex].borderColor = "#000";
         }
-        return prev;
+        return newPlans;
       });
     }
   }, [planModal.plan_id, planModalss, subjects]);
@@ -203,13 +202,9 @@ export default function PlanModal() {
       if (subject) {
         newPlans[planIndex].backgroundColor = subject.color;
         newPlans[planIndex].borderColor = subject.color;
-        newPlans[planIndex].subject_color = subject.color;
-        newPlans[planIndex].color = subject.color;
-        //plan.textColor = subject.color;
-      } else {
+      } else if (newPlans[planIndex].type === "local") {
         newPlans[planIndex].backgroundColor = "#000";
         newPlans[planIndex].borderColor = "#000";
-        newPlans[planIndex].color = "#000";
       }
       setPlans(newPlans);
       setPlanModal((prev) => ({ ...prev, ...newVal }));
@@ -219,7 +214,29 @@ export default function PlanModal() {
 
   const submit = useCallback(() => {
     (async () => {
-      const response = await patchPlan({ ...planModal });
+      if (planModal.type === "google") {
+        const response = await patchPlanGoogle(planModal);
+        if (!response.success) return;
+
+        /* const planIndex = plans.findIndex(
+          (event) => event.plan_id === planModal.plan_id
+        );
+        if (planIndex !== -1) {
+          const updatedEvents = [...plans];
+          //updatedEvents[planIndex].saved = true;
+          updatedEvents[planIndex].plan_id = data.plan.plan_id;
+          setPlans(updatedEvents);
+        }
+        setPlanModalss(null);
+        setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
+
+        if (tutorial === 5) {
+          router.push("/dashboard/study");
+          setTutorial(6);
+        } */
+        return;
+      }
+      const response = await patchPlan(planModal);
       if (!response.success) return;
 
       const data = response.data;
@@ -229,13 +246,13 @@ export default function PlanModal() {
       );
       if (planIndex !== -1) {
         const updatedEvents = [...plans];
-        updatedEvents[planIndex].saved = true;
+        //updatedEvents[planIndex].saved = true;
         updatedEvents[planIndex].plan_id = data.plan.plan_id;
         setPlans(updatedEvents);
       }
       setPlanModalss(null);
       setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
-      if (data.is_new) {
+      if (data.is_new && share.length) {
         const newShare = share.map((user) => user.user_id);
         const response = await postPlanShare(newShare, planModal.plan_id);
         if (response.success) {

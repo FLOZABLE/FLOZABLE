@@ -176,10 +176,10 @@ const DEFAULT_PLAN = {
   notification: -1,
   subject_id: null,
   plan_id: null,
-  saved: false,
+  //saved: false,
   completed: false,
-  type: "local",
-  editable: true,
+  //type: "local",
+  //editable: true,
   share: [],
   shared: [],
 };
@@ -251,5 +251,5 @@ export {
   DEFAULT_GROUP,
   SUBJECTS_PIE_COLORS,
   STUDY_TREND_COLORS,
-  ACTIVE_GROUP_DEBOUNCE
+  ACTIVE_GROUP_DEBOUNCE,
 };

@@ -27,7 +27,7 @@ Router.get("/", async (req, res) => {
       res.send({ success: true, status: "success", data: { subjects } });
     } catch (err) {
       console.log(err);
-      RESPONSE_CODES["error"];
+      RESPONSE_CODES.error;
     }
   });
 });
@@ -80,7 +80,7 @@ Router.put("/subject", async (req, res) => {
       if (err.errno === 1062) {
         return res.send({ success: false, reason: "Name already in use" });
       }
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -137,7 +137,7 @@ Router.patch("/subject", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -339,7 +339,7 @@ Router.post("/subject/share", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -349,7 +349,7 @@ Router.post("/subject/share/respond", async (req, res) => {
     try {
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -415,7 +415,7 @@ Router.delete("/subject/share", async (req, res) => {
       res.send({ success: true, status: "success", message: `Removed user!` });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -423,7 +423,7 @@ Router.delete("/subject/share", async (req, res) => {
 Router.get("/subject/users", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { subjectId } = req.query;
+      const { subject_id: subjectId } = req.query;
 
       const connection = pool.promise();
       const [[subject]] = await connection.query(

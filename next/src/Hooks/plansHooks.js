@@ -1,4 +1,4 @@
-import { getPlans, getPlansPlanUsers } from "@/Api/plansApi";
+import { getPlans, getPlansGoogle, getPlansPlanUsers } from "@/Api/plansApi";
 import { UserInfoContext } from "@/app/utils/Contexts";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useContext } from "react";
@@ -27,14 +27,38 @@ function usePlans() {
   };
 }
 
-function usePlanUsers(planId) {
+function usePlansGoogle() {
+  const { userInfo } = useContext(UserInfoContext);
+
+  const queryResult = useQuery({
+    queryKey: [`usePlansGoogle`],
+    queryFn: getPlansGoogle,
+    staleTime: 1000 * 60 * 10,
+    enabled: !!userInfo,
+  });
+
+  const {
+    data: plansGoogleData,
+    isLoading: plansDataIsLoading,
+    refetch: plansGoogleRefetch,
+  } = queryResult;
+
+  return {
+    plansGoogleData,
+    plansDataIsLoading,
+    plansGoogleRefetch,
+    ...queryResult,
+  };
+}
+
+function usePlanUsers(planId, isEditable) {
   const queryClient = useQueryClient();
 
   const queryResult = useQuery({
     queryKey: [`usePlanUsers`, planId],
     queryFn: () => getPlansPlanUsers(planId),
     staleTime: 1000 * 60 * 10,
-    enabled: !!planId && planId !== "0000000000",
+    enabled: !!planId && planId !== "0000000000" && isEditable,
   });
 
   const clearPlanUsers = () => {
@@ -52,4 +76,4 @@ function usePlanUsers(planId) {
   };
 }
 
-export { usePlans, usePlanUsers };
+export { usePlans, usePlansGoogle, usePlanUsers };

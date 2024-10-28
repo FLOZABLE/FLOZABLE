@@ -10,7 +10,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { PlansContext, SubjectsContext } from "@/app/utils/Contexts";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
-import { patchPlan } from "@/Api/plansApi";
+import { patchPlan, patchPlanGoogle } from "@/Api/plansApi";
 import ViewerSelectorBtn from "../../Buttons/ViewerSelectorBtn/ViewerSelectorBtn";
 import { DateTime } from "luxon";
 
@@ -154,14 +154,15 @@ export default function Planner() {
         setPlanModal((prev) => ({ ...prev, start, end }));
 
         setPlans((prev) => {
-          const foundIndex = prev.findIndex(
+          const newPlans = [...prev];
+          const foundIndex = newPlans.findIndex(
             (val) => val.plan_id === planModal.plan_id
           );
           if (foundIndex !== -1) {
-            prev[foundIndex] = { ...prev[foundIndex], start, end };
+            newPlans[foundIndex] = { ...newPlans[foundIndex], start, end };
           }
 
-          return prev;
+          return newPlans;
         });
       }
     },
@@ -185,8 +186,14 @@ export default function Planner() {
         setPlanModal((prev) => ({ ...prev, start, end }));
       }
 
-      if (plan_id !== "0000000000") {
-        patchPlan({ ...updatedEvents[planIndex] });
+      if (plan_id === "0000000000") return;
+
+      console.log(updatedEvents[planIndex].type)
+
+      if (updatedEvents[planIndex].type === "google") {
+        patchPlanGoogle(updatedEvents[planIndex]);
+      } else {
+        patchPlan(updatedEvents[planIndex]);
       }
     },
     [planModal, plans]
@@ -202,6 +209,7 @@ export default function Planner() {
       title,
       editable,
     };
+    console.log(planInfo, clickInfo.event);
     setPlanModal((prev) => ({ ...prev, ...planInfo, opened: true }));
   }, []);
 
@@ -222,8 +230,12 @@ export default function Planner() {
         setPlanModal((prev) => ({ ...prev, start, end }));
       }
 
-      if (plan_id !== "0000000000") {
-        patchPlan({ ...updatedEvents[planIndex] });
+      if (plan_id === "0000000000") return;
+
+      if (updatedEvents[planIndex].type === "google") {
+        patchPlanGoogle(updatedEvents[planIndex]);
+      } else {
+        patchPlan(updatedEvents[planIndex]);
       }
     },
     [planModal]

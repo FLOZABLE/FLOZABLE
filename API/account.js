@@ -67,7 +67,7 @@ Router.get("/", async (req, res) => {
       addActiveUserCache(userId);
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
@@ -109,7 +109,7 @@ Router.get("/google", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });

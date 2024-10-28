@@ -68,7 +68,7 @@ Router.post("/subscribe", async (req, res) => {
       return res.send({ success: true, status: "success" });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });

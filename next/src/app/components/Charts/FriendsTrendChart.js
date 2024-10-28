@@ -72,7 +72,7 @@ function FriendsTrendChart() {
           }}
         />
         <Legend />
-        {friendsTrendData.trends[0].friends.map((friend, i) => {
+        {friendsTrendData.data.trends[0].friends.map((friend, i) => {
           return (
             <Bar
               key={i}

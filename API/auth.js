@@ -232,7 +232,7 @@ Router.get("/signin/google", async (req, res) => {
     const response = await auth.getToken(code);
     if (response.res.status !== 200) {
       console.log("err");
-      return res.send(RESPONSE_CODES["error"]);
+      return res.send(RESPONSE_CODES.error);
     }
     const connection = pool.promise();
     const { refresh_token, access_token, expiry_date } = response.tokens;
@@ -371,7 +371,7 @@ Router.get("/signin/spotify", async (req, res) => {
       );
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES["error"]);
+      res.send(RESPONSE_CODES.error);
     }
   });
 });
