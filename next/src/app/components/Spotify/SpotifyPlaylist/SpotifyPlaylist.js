@@ -40,7 +40,7 @@ function SpotifyPlaylist() {
         <SpotifyAuthBtn />
       ) : (
         <div className={`customScroll ${styles.playlists}`}>
-          {playlistsSpotifyData.playlists.map((playlist, i) => {
+          {playlistsSpotifyData.data.playlists.map((playlist, i) => {
             return (
               <div
                 onClick={() => {

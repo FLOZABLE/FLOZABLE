@@ -24,6 +24,7 @@ import {
 } from "@/Hooks/chatHooks";
 import { socket } from "@/app/utils/socket";
 import { useInView } from "react-intersection-observer";
+import { toast } from "react-toastify";
 
 function ChatModal({}) {
   const { userInfo } = useContext(UserInfoContext);
@@ -205,6 +206,13 @@ function ChatModal({}) {
           setLastReadMessageId(message.message_id);
         } else {
           newChatrooms[chatroomIndex].unreads += 1;
+          newChatrooms[chatroomIndex].lastMsg = message;
+          toast.info(
+            <div>
+              {chatrooms[chatroomIndex].name}
+              <br />"{message.message}"
+            </div>
+          );
         }
         return newChatrooms;
       });
