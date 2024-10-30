@@ -89,19 +89,19 @@ function AccountProvider({ children }) {
 
   const queryResult = useAccount();
 
-  const { useAccountData, accountRefetch } = queryResult;
+  const { accountData, accountRefetch } = queryResult;
 
   useEffect(() => {
-    if (useAccountData?.success === false) {
+    if (accountData?.success === false) {
       setUserInfo(false);
       return;
     }
 
-    if (!useAccountData?.success) return;
+    if (!accountData?.success) return;
 
-    console.log("useaccount", useAccountData);
+    console.log("useaccount", accountData);
 
-    const { userInfo, notifications } = useAccountData.data;
+    const { userInfo, notifications } = accountData.data;
     setUserInfo(userInfo);
     setNotifications(notifications);
     setTimeout(() => {
@@ -110,7 +110,7 @@ function AccountProvider({ children }) {
       mediaSocket.connect();
       socket.emit("joinChats");
     }, 100);
-  }, [useAccountData]);
+  }, [accountData]);
 
   useEffect(() => {
     const onNotification = (data) => {

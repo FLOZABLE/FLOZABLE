@@ -87,11 +87,11 @@ signUpBtn.addEventListener("click", async () => {
   const name = document.querySelector(".card-back #logname").value;
   const email = document.querySelector(".card-back #logemail").value;
   const password = document.querySelector(".card-back #logpass").value;
-  const timeZone = getUserTimezone();
+  const timezone = getUserTimezone();
   console.log(name, email, password);
   let response = await fetch("/auth/signup", {
     method: "post",
-    body: JSON.stringify({ name, email, password, timeZone }),
+    body: JSON.stringify({ name, email, password, timezone }),
     headers: {
       "Content-Type": "application/json",
     },

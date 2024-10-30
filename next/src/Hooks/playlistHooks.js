@@ -54,13 +54,13 @@ function useSpotifyInfo() {
 }
 
 function usePlaylistsYoutube() {
-  const { useAccountGoogleData } = useAccountGoogle();
+  const { accountGoogleData } = useAccountGoogle();
 
   const queryResult = useQuery({
     queryKey: [`usePlaylistsYoutube`],
     queryFn: getPlaylistsYoutube,
     staleTime: 1000 * 60 * 10,
-    enabled: !!useAccountGoogleData?.success,
+    enabled: !!accountGoogleData?.success,
   });
 
   const { data: playlistsYoutubeData, isLoading: playlistsYoutubeIsLoading } =

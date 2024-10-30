@@ -9,7 +9,7 @@ import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
 import TagsGenerator from "@/app/components/Inputs/TagsGenerator/TagsGenerator";
 
-function Groups({ setResponse }) {
+function Groups() {
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
@@ -19,7 +19,6 @@ function Groups({ setResponse }) {
       <CreateGroupModal
         isOpen={isCreateNewGroup}
         setIsOpen={setIsCreateNewGroup}
-        setCreateGroupResponse={setResponse}
       />
       <div className={styles.Groups}>
         <div className={styles.layer}>

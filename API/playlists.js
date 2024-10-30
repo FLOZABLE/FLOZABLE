@@ -19,7 +19,11 @@ Router.get("/spotify/info", async (req, res) => {
       const connection = pool.promise();
       const accessToken = await spotifyAccessTokenCache(connection, userId);
       if (!accessToken) {
-        return res.send(RESPONSE_CODES["no-user"]);
+        return res.send({
+          success: false,
+          status: "error",
+          error: { reason: "Auth Required" },
+        });
       }
 
       const response = await fetch("https://api.spotify.com/v1/me/", {

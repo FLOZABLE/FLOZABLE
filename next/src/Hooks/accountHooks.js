@@ -18,9 +18,9 @@ function useAccount() {
   });
 
   const {
-    data: useAccountData,
+    data: accountData,
     refetch: accountRefetch,
-    isLoading: useAccountIsLoading,
+    isLoading: accountIsLoading,
   } = queryResult;
 
   const clearAccountData = () => {
@@ -28,9 +28,9 @@ function useAccount() {
   };
 
   return {
-    useAccountData,
+    accountData,
     accountRefetch,
-    useAccountIsLoading,
+    accountIsLoading,
     clearAccountData,
     ...queryResult,
   };
@@ -47,18 +47,18 @@ function useAccountGoogle() {
   });
 
   const {
-    data: useAccountGoogleData,
-    refetch: useAccountGoogleRefetch,
-    isLoading: useAccountGoogleIsLoading,
+    data: accountGoogleData,
+    refetch: accountGoogleRefetch,
+    isLoading: accountGoogleIsLoading,
   } = queryResult;
 
-  const googleInfo = useAccountGoogleData?.data?.googleInfo;
+  const googleInfo = accountGoogleData?.data?.googleInfo;
 
   return {
     googleInfo,
-    useAccountGoogleData,
-    useAccountGoogleRefetch,
-    useAccountGoogleIsLoading,
+    accountGoogleData,
+    accountGoogleRefetch,
+    accountGoogleIsLoading,
     ...queryResult,
   };
 }
