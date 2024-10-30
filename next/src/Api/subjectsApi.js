@@ -24,7 +24,7 @@ async function patchSubjectsSubject({ subjectId, name, color }) {
 
 async function deleteSubjectsSubject(subjectId) {
   const response = await AxiosInstance.delete(`/subjects/subject`, {
-    subject_id: subjectId,
+    data: { subject_id: subjectId },
   });
   return response.data;
 }
@@ -46,8 +46,7 @@ async function postSubjectShare({ subjectId, users }) {
 
 async function deleteSubjectShare({ subjectId, targetId }) {
   const response = await AxiosInstance.delete(`/subjects/subject/share`, {
-    subject_id: subjectId,
-    target_id: targetId,
+    data: { subject_id: subjectId, target_id: targetId },
   });
   return response.data;
 }

@@ -15,6 +15,7 @@ import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
 import GoogleLoginBtn from "../../Buttons/GoogleLoginBtn/GoogleLoginBtn";
 import { postAuthSignin, postAuthSignup } from "@/Api/authApi";
+import { getTimezone } from "@/app/utils/Tool";
 
 function AccountModal({}) {
   const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
@@ -28,15 +29,15 @@ function AccountModal({}) {
     name: "",
     email: "",
     password: "",
-    timeZone: null,
+    timezone: null,
   });
   const [login, setLogin] = useState({ email: "", password: "" });
   const [isNew, setIsNew] = useState(false);
 
   useEffect(() => {
     try {
-      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      setSignUp((prev) => ({ ...prev, timeZone }));
+      const timezone = getTimezone();
+      setSignUp((prev) => ({ ...prev, timezone }));
     } catch (error) {
       console.error("Intl.DateTimeFormat not supported:", error);
       return "UTC";
