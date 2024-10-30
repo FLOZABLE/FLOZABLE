@@ -30,7 +30,7 @@ async function patchGroup(newGroup) {
 
 async function deleteGroup(groupId) {
   const response = await AxiosInstance.delete(`/groups/group`, {
-    group_id: groupId,
+    data: { group_id: groupId },
   });
   return response.data;
 }

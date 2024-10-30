@@ -46,7 +46,9 @@ async function patchPlanGoogle(planModal) {
 
 async function deletePlan(planId) {
   const response = await AxiosInstance.delete(`/plans/plan`, {
-    plan_id: planId,
+    data: {
+      plan_id: planId,
+    },
   });
   return response.data;
 }
@@ -77,8 +79,7 @@ async function postPlanShareRespond(notificationId, accepted) {
 
 async function deletePlanShare(targetId, planId) {
   const response = await AxiosInstance.delete(`/plans/plan/share`, {
-    target_id: targetId,
-    plan_id: planId,
+    data: { target_id: targetId, plan_id: planId },
   });
   return response.data;
 }

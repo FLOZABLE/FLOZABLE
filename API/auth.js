@@ -674,7 +674,7 @@ Router.get("/verify", async (req, res) => {
 
 Router.post("/signup", async (req, res) => {
   try {
-    const { email, name, password, timeZone } = req.body;
+    const { email, name, password, timezone } = req.body;
 
     const isValidPassword = validatePassword(password, 30);
 
@@ -689,7 +689,7 @@ Router.post("/signup", async (req, res) => {
 
     const [salt, hashed_password] = hashing(password);
 
-    const response = await createAccount(name, email, timeZone, {
+    const response = await createAccount(name, email, timezone, {
       salt,
       hashed_password,
     });

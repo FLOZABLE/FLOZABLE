@@ -74,18 +74,18 @@ function AddSubjectModal({}) {
     (subject) => {
       (async () => {
         const response = await putSubjectsSubject(subject);
-        if (response.success) {
-          const newSubjects = sortNewSubject(
-            JSON.parse(JSON.stringify(subjects)),
-            response.data.subject
-          );
-          setSubjects(newSubjects);
-          setIsSelectColor(false);
-          setIsAddSubjectModal(false);
-          setSubject({ name: "", color: null });
-          if (tutorial === 4) {
-            setTutorial(5);
-          }
+        if (!response.success) return;
+
+        const newSubjects = sortNewSubject(
+          JSON.parse(JSON.stringify(subjects)),
+          response.data.subject
+        );
+        setSubjects(newSubjects);
+        setIsSelectColor(false);
+        setIsAddSubjectModal(false);
+        setSubject({ name: "", color: null });
+        if (tutorial === 4) {
+          setTutorial(5);
         }
       })();
     },

@@ -484,7 +484,9 @@ Router.delete("/plan", async (req, res) => {
 
       const { plan_id: planId } = req.body;
 
-      const isValidPlanId = validateStrictString(planId, "plan id", 10, 8);
+      console.log(req.body)
+
+      const isValidPlanId = validateStrictString(planId, "plan id", 10, 10);
 
       if (!isValidPlanId.isValid) {
         return res.send({

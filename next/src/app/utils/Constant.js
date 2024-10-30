@@ -178,7 +178,7 @@ const DEFAULT_PLAN = {
   plan_id: null,
   //saved: false,
   completed: false,
-  //type: "local",
+  type: "local",
   /* editable: true,
   isEditable: true, */
   share: [],

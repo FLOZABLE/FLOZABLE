@@ -22,7 +22,7 @@ import RankedTheme from "@/app/components/Themes/RankedTheme/RankedTheme";
 import { ThemesContext } from "@/app/utils/Contexts";
 import TagsGenerator from "@/app/components/Inputs/TagsGenerator/TagsGenerator";
 
-function Themes({ setResponse }) {
+function Themes() {
   const { themes } = useContext(ThemesContext);
 
   const [tags, setTags] = useState([]);
@@ -46,11 +46,7 @@ function Themes({ setResponse }) {
         isOpen={isCreateThemeModal}
         setIsOpen={setIsCreateThemeModal}
       />
-      <ThemePreview
-        isActive={isThemePreview}
-        setIsActive={setIsThemePreview}
-        setResponse={setResponse}
-      />
+      <ThemePreview isActive={isThemePreview} setIsActive={setIsThemePreview} />
       <div className={styles.Themes}>
         <div
           className={`${styles.BoxContainer} BoxContainer`}

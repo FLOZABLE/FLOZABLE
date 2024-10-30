@@ -17,7 +17,7 @@ export default function ChatBtn({ targetInfo, padding }) {
       const response = await postChatRequest(targetInfo.user_id);
 
       if (response.message === "DM already created!") {
-        const { name, chatroom_id } = data.chatroom;
+        const { name, chatroom_id } = response.data.chatroom;
 
         setChatModal((prev) => ({
           ...prev,

@@ -265,6 +265,13 @@ export default function PlanModal() {
   }, [planModal, tutorial]);
 
   const onDeletePlan = useCallback(() => {
+    if (planModal.plan_id === "0000000000") {
+      setPlans((prev) =>
+        prev.filter((plan) => plan.plan_id !== planModal.plan_id)
+      );
+      setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
+      return null;
+    }
     (async () => {
       const response = await deletePlan(planModal.plan_id);
       if (!response.success) return;
@@ -507,7 +514,9 @@ export default function PlanModal() {
               >
                 <FontAwesomeIcon icon={faShare} />
               </BlobBtn>
-            ) : <div> </div>}
+            ) : (
+              <div> </div>
+            )}
             <div ref={submitBtnRef}>
               <BlobBtn
                 onClick={() => {

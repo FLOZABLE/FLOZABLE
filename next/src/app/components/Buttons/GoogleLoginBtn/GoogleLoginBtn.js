@@ -5,14 +5,15 @@ import React from "react";
 import config from "@/app/utils/config";
 import { useAccountGoogle } from "@/Hooks/accountHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
+import { getTimezone } from "@/app/utils/Tool";
 
 const redirect_uri = config.server + "/auth/signin/google";
 
 function GoogleLoginBtn({ scope, required }) {
-  const { googleInfo, useAccountGoogleIsLoading } = useAccountGoogle();
+  const { googleInfo, accountGoogleIsLoading } = useAccountGoogle();
 
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  
+  const timezone = getTimezone();
+
   const login = useGoogleLogin({
     flow: "auth-code",
     select_account: true,
@@ -24,7 +25,7 @@ function GoogleLoginBtn({ scope, required }) {
 
   return (
     <div className={styles.GoogleLoginBtn} onClick={login}>
-      {useAccountGoogleIsLoading ? (
+      {accountGoogleIsLoading ? (
         <CircularLoading />
       ) : !googleInfo ||
         !googleInfo?.scopes?.some((scope) => scope.includes(required)) ? (
