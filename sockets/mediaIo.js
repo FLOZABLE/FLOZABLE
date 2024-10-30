@@ -590,6 +590,14 @@ async function createWebRtcTransport(router) {
         iceCandidates: transport.iceCandidates,
         dtlsParameters: transport.dtlsParameters,
       },
+      // Fallback TURN server configuration
+      iceServers: [
+        {
+          urls: `turn:${process.env.WEB_RTC_ANNOUNCED_IP}:3478`,
+          username: process.env.TURN_USERNAME,
+          credential: process.env.TURN_CREDENTIAL,
+        },
+      ],
     };
   } catch (err) {
     console.log(err);
