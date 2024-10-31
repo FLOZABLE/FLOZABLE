@@ -472,7 +472,11 @@ Router.get("/status", async (req, res) => {
       const friends = await usersCache(connection, friendsIds);
 
       if (!friends.length) {
-        return res.send(RESPONSE_CODES.error);
+        return res.send({
+          success: false,
+          status: "error",
+          error: { reason: "No friends" },
+        });
       }
 
       const studyTotal = await redisClient.zmscore(

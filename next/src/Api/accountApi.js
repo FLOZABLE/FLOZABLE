@@ -1,5 +1,4 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
-import queryString from "query-string";
 
 async function getAccount() {
   const response = await AxiosInstance.get(`/account`);

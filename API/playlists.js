@@ -32,6 +32,14 @@ Router.get("/spotify/info", async (req, res) => {
         },
       });
 
+      if (!response.ok) {
+        return res.send({
+          success: false,
+          status: "error",
+          message: response.statusText || "Failed to fetch user info",
+        });
+      }
+
       const data = await response.json();
 
       if (data.error) {

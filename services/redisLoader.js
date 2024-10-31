@@ -517,37 +517,58 @@ async function userChatroomsCache(userId) {
 }
 
 async function websiteUsageCache(userId) {
-  const websitesUsage = await redisClient.zrange(
-    `user:${userId}:tabs:usage`,
-    0,
-    -1,
-    "WITHSCORES"
-  );
-  const websitesTimer = await redisClient.zrange(
-    `user:${userId}:tabs:timer`,
-    0,
-    -1,
-    "WITHSCORES"
-  );
-  //console.log(websitesUsage, websitesTimer);
-  const websiteData = websitesTimer.map(({ value, score }) => {
-    let v = 0;
-    const websiteUsage = websitesUsage.find((website) => {
-      return website.value === value;
+  try {
+    const websitesUsage = await redisClient.zrange(
+      `user:${userId}:tabs:usage`,
+      0,
+      -1,
+      "WITHSCORES"
+    );
+    const websitesTimer = await redisClient.zrange(
+      `user:${userId}:tabs:timer`,
+      0,
+      -1,
+      "WITHSCORES"
+    );
+    //console.log(websitesUsage, websitesTimer);
+    const websiteData = websitesTimer.map(({ value, score }) => {
+      let v = 0;
+      const websiteUsage = websitesUsage.find((website) => {
+        return website.value === value;
+      });
+      if (websiteUsage) {
+        v = websiteUsage.score;
+      }
+      return { d: value, t: score, v };
     });
-    if (websiteUsage) {
-      v = websiteUsage.score;
-    }
-    return { d: value, t: score, v };
-  });
 
-  return websiteData;
+    return websiteData;
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
 }
 
-async function setGoogleAccessToken(user_id, access_token, expiry_date) {
-  const now = new Date().getTime();
-  const exp = Math.floor((expiry_date - now) / 1000);
-  redisClient.setex(`user:${user_id}:googleAccessToken`, exp, access_token);
+async function setGoogleAccessToken(userId, access_token, expiry_date) {
+  try {
+    const now = new Date().getTime();
+    const exp = Math.floor((expiry_date - now) / 1000);
+    redisClient.setex(`user:${userId}:googleAccessToken`, exp, access_token);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function clearGoogleAccessToken(connection, userId) {
+  try {
+    connection.query(
+      `UPDATE users set google_refresh_token = NULL WHERE user_id = ?`,
+      [userId]
+    );
+    redisClient.del(`user:${userId}:googleAccessToken`);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 async function googleAccessTokenCache(connection, userId) {
@@ -887,6 +908,7 @@ module.exports = {
   subjectsTimelineCache,
   websiteUsageCache,
   setGoogleAccessToken,
+  clearGoogleAccessToken,
   googleAccessTokenCache,
   zsetIncrAll,
   getActiveUsers,

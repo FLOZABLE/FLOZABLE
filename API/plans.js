@@ -21,6 +21,7 @@ const {
   userCache,
   notificationCache,
   userFriendsCache,
+  clearGoogleAccessToken,
 } = require("../services/redisLoader");
 const schedule = require("node-schedule");
 const { RESPONSE_CODES } = require("../Constant");
@@ -92,7 +93,9 @@ Router.get("/google", async (req, res) => {
         auth: auth,
       });
       const calendars = await googleCalendar.calendarList.list();
-      if (!calendars?.data) return RESPONSE_CODES.error;
+      if (!calendars?.data) {
+        return res.send(RESPONSE_CODES.error);
+      }
 
       await Promise.all(
         calendars.data.items.map(async (calendar) => {
@@ -153,18 +156,22 @@ Router.get("/google", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      if (
-        err?.response?.data?.error === "invalid_grant" ||
-        err?.response?.data?.error_description ===
-          "Token has been expired or revoked."
-      ) {
-        connection.query(
-          `UPDATE users set google_refresh_token = NULL WHERE user_id = ?`,
-          [userId]
-        );
-        redisClient.del(`user:${userId}:googleAccessToken`);
+      if (!err?.response?.data?.error) {
+        return res.send(RESPONSE_CODES.error);
       }
-      res.send(RESPONSE_CODES.error);
+
+      if (err.response.data.error === "invalid_token") {
+        clearGoogleAccessToken(connection, userId);
+      }
+      
+      return res.send({
+        success: false,
+        status: "error",
+        error: {
+          code: err.response.data.error.code,
+          reason: err.response.data.error.message,
+        },
+      });
     }
   });
 });
@@ -408,31 +415,23 @@ Router.patch("/plan/google", async (req, res) => {
 
       return res.send(RESPONSE_CODES.error);
     } catch (err) {
+      console.log(err);
       if (!err?.response?.data?.error) {
         return res.send(RESPONSE_CODES.error);
       }
-      if (
-        err.response.data.error === "invalid_grant" ||
-        err.response.data.error_description ===
-          "Token has been expired or revoked."
-      ) {
-        connection.query(
-          `UPDATE users set google_refresh_token = NULL WHERE user_id = ?`,
-          [userId]
-        );
-        redisClient.del(`user:${userId}:googleAccessToken`);
-      } else if (err.response.data.error.message) {
-        console.log(err.response.data.error.message);
-        return res.send({
-          success: false,
-          status: "error",
-          message: err.response.data.error.message,
-          error: {
-            code: err.response.data.error.code,
-            reason: err.response.data.error.message,
-          },
-        });
+
+      if (err.response.data.error === "invalid_token") {
+        clearGoogleAccessToken(connection, userId);
       }
+
+      return res.send({
+        success: false,
+        status: "error",
+        error: {
+          code: err.response.data.error.code,
+          reason: err.response.data.error.message,
+        },
+      });
     }
   });
 });
@@ -484,9 +483,7 @@ Router.delete("/plan", async (req, res) => {
 
       const { plan_id: planId } = req.body;
 
-      console.log(req.body)
-
-      const isValidPlanId = validateStrictString(planId, "plan id", 10, 10);
+      const isValidPlanId = validateStrictString(planId, "plan id", 10, 8);
 
       if (!isValidPlanId.isValid) {
         return res.send({
