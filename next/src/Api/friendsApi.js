@@ -42,7 +42,7 @@ async function postFriendsRequest({ targetId }) {
 }
 
 async function postFriendsRequestReply({ targetId, notificationId, accepted }) {
-  const response = await AxiosInstance.get(`/friends/request/reply`, {
+  const response = await AxiosInstance.post(`/friends/request/reply`, {
     target_id: targetId,
     notification_id: notificationId,
     accepted,

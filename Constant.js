@@ -9,6 +9,16 @@ const RESPONSE_CODES = {
     },
     action: "signin",
   },
+  "no-session": {
+    success: false,
+    status: "error",
+    message: "Sign In",
+    error: {
+      reason: "Invalid User",
+      code: 400,
+    },
+    action: "signin",
+  },
   "no-target-user": {
     success: false,
     status: "error",

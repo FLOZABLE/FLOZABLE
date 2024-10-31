@@ -30,7 +30,7 @@ async function autoSignin(
   res,
   success = () => {},
   fail = () => {
-    res.send(RESPONSE_CODES["no-user"]);
+    res.send(RESPONSE_CODES["no-session"]);
   }
 ) {
   try {
