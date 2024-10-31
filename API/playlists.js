@@ -4,6 +4,7 @@ const pool = require("../model/pool");
 const {
   googleAccessTokenCache,
   spotifyAccessTokenCache,
+  clearGoogleAccessToken,
 } = require("../services/redisLoader");
 const querystring = require("querystring");
 const { RESPONSE_CODES } = require("../Constant");
@@ -138,7 +139,22 @@ Router.get("/youtube", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      if (!err?.response?.data?.error) {
+        return res.send(RESPONSE_CODES.error);
+      }
+
+      if (err.response.data.error === "invalid_token") {
+        clearGoogleAccessToken(connection, userId);
+      }
+
+      return res.send({
+        success: false,
+        status: "error",
+        error: {
+          code: err.response.data.error.code,
+          reason: err.response.data.error.message,
+        },
+      });
     }
   });
 });
@@ -200,7 +216,22 @@ Router.get("/youtube/items", async (req, res) => {
       return res.send({ success: true, status: "success", data: { items } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      if (!err?.response?.data?.error) {
+        return res.send(RESPONSE_CODES.error);
+      }
+
+      if (err.response.data.error === "invalid_token") {
+        clearGoogleAccessToken(connection, userId);
+      }
+
+      return res.send({
+        success: false,
+        status: "error",
+        error: {
+          code: err.response.data.error.code,
+          reason: err.response.data.error.message,
+        },
+      });
     }
   });
 });
