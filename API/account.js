@@ -19,6 +19,7 @@ const {
   userFriendsCache,
   userGroupsCache,
   usersCache,
+  clearGoogleAccessToken,
 } = require("../services/redisLoader");
 const { RESPONSE_CODES } = require("../Constant");
 const { googleOauth2client, autoSignin } = require("./auth");
@@ -73,9 +74,10 @@ Router.get("/", async (req, res) => {
 });
 
 Router.get("/google", async (req, res) => {
+  const connection = pool.promise();
+
   autoSignin(req, res, async (userId) => {
     try {
-      const connection = pool.promise();
       const googleAccessToken = await googleAccessTokenCache(
         connection,
         userId
@@ -109,7 +111,22 @@ Router.get("/google", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      if (!err?.response?.data?.error) {
+        return res.send(RESPONSE_CODES.error);
+      }
+
+      if (err.response.data.error === "invalid_token") {
+        clearGoogleAccessToken(connection, userId);
+      }
+
+      return res.send({
+        success: false,
+        status: "error",
+        error: {
+          code: err.response.data.error.code,
+          reason: err.response.data.error.message,
+        },
+      });
     }
   });
 });

@@ -84,7 +84,7 @@ function ChatModal({}) {
   useEffect(() => {
     if (!chatroomMembersData?.success) return;
 
-    setMembers(chatroomMembersData.members);
+    setMembers(chatroomMembersData.data.members);
   }, [chatroomMembersData]);
 
   useEffect(() => {
