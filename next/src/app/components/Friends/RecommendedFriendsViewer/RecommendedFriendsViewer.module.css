@@ -5,10 +5,31 @@
 .RecommendedFriendsViewer .header {
   display: flex;
   font-size: 1.6rem;
+  align-items: center;
 }
 
 .RecommendedFriendsViewer .header i {
   margin-left: 0.3rem;
+}
+
+.RecommendedFriendsViewer div#searchFriendBtn {
+  margin-left: 1rem;
+  padding: 0rem 0.5rem;
+  color: var(--gray1);
+  font-weight: 300;
+  cursor: pointer;
+  position: relative;
+}
+
+.RecommendedFriendsViewer .hoverText {
+  bottom: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.RecommendedFriendsViewer div#searchFriendBtn:hover .hoverText {
+  bottom: -1rem;
+  opacity: 1;
 }
 
 .RecommendedFriendsViewer .user {

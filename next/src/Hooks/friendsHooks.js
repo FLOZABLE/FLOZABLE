@@ -14,7 +14,7 @@ function useFriendsSearch(searchQuery) {
     queryFn: () => getFriendsSearch(searchQuery),
     staleTime: 1000 * 10,
     retryDelay: 1000 * 3,
-    enabled: !!searchQuery && searchQuery !== "",
+    enabled: searchQuery?.length >= 2,
   });
 
   const { data: friendsSearchData } = queryResult;
