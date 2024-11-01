@@ -7,13 +7,17 @@ function GroupMemCounter({ initialMembers, groupId }) {
   useEffect(() => {
     if (!groupId) return;
 
-    const onNewMember = (userId) => {
-      setMembers(prev => [...prev, userId]);
+    const onNewMember = ({ userId }) => {
+      setMembers((prev) => [...prev, userId]);
     };
 
-    const onRemoveMember = (userId) => {
+    const onRemoveMember = ({ userId }) => {
       //const newMember = members
-      setMembers(prev => {return prev.filter((memberId) => {return memberId !== userId})});
+      setMembers((prev) => {
+        return prev.filter((memberId) => {
+          return memberId !== userId;
+        });
+      });
     };
 
     socket.on(`joined:${groupId}`, onNewMember);
@@ -28,9 +32,7 @@ function GroupMemCounter({ initialMembers, groupId }) {
     setMembers(initialMembers);
   }, [initialMembers]);
 
-  return (
-    <p>{members.length}</p>
-  );
-};
+  return <p>{members.length}</p>;
+}
 
 export default GroupMemCounter;

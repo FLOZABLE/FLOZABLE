@@ -542,7 +542,7 @@ Router.post("/group/join", async (req, res) => {
 
       await connection.query(`INSERT INTO group_members SET ?`, joined);
 
-      mainIo.emit(`joined:${groupId}`, userId);
+      mainIo.emit(`joined:${groupId}`, { userId });
 
       groups.push(groupId);
       cacheUserGroups(userId, groups);
@@ -556,10 +556,13 @@ Router.post("/group/join", async (req, res) => {
         userId
       );
       study_time = study_time === null ? 0 : study_time;
-      mainIo.to(groupId).emit(`newMember`, groupId, {
-        ...userInfo,
-        study_time,
-        activeSubject,
+      mainIo.to(groupId).emit(`newMember`, {
+        groupId,
+        userInfo: {
+          ...userInfo,
+          study_time,
+          activeSubject,
+        },
       });
 
       mainIo.to(userId).emit("joinChatRoom", groupId);
@@ -601,7 +604,7 @@ Router.post("/group/leave", async (req, res) => {
 
       redisClient.srem(`chatroom:${groupId}`, userId);
 
-      mainIo.emit(`removeMember`, groupId, userId);
+      mainIo.emit(`removeMember`, { groupId, userId });
 
       return res.send({
         success: true,
@@ -644,7 +647,7 @@ Router.delete("/member", async (req, res) => {
       redisClient.srem(`user:${memberId}:groups`, groupId);
 
       redisClient.srem(`chatroom:${groupId}`, memberId);
-      mainIo.emit(`removeMember`, groupId, memberId);
+      mainIo.emit(`removeMember`, { groupId, memberId });
 
       return res.send({ success: true, status: "success" });
     } catch (err) {
@@ -718,14 +721,14 @@ Router.post("/group/like", async (req, res) => {
 
         await connection.query(`INSERT INTO group_likes SET ?`, newLike);
 
-        mainIo.emit(`like:group:${groupId}`, userId);
+        mainIo.emit(`like:group:${groupId}`, { userId });
       } else {
         await connection.query(
           `DELETE FROM group_likes WHERE user_id = ? AND group_id = ?`,
           [userId, groupId]
         );
 
-        mainIo.emit(`unlike:group:${groupId}`, userId);
+        mainIo.emit(`unlike:group:${groupId}`, { userId });
       }
 
       return res.send({ success: true, status: "success" });

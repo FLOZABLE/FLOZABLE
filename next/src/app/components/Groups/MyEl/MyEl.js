@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./MyEl.module.css";
 import { DateTime } from "luxon";
 import { RestPerson, StudyPerson } from "@/app/utils/Svg";
@@ -26,13 +26,13 @@ function MyEl({ videoStream, userInfo }) {
       setTotal(parseInt(study_time));
     }
 
-    const onStudying = (userId, subject) => {
+    const onStudying = ({ userId, subject }) => {
       if (userId === userInfo.user_id && subject.subject_id !== "0") {
         setRun(true);
       }
     };
 
-    const onStopStudying = (userId) => {
+    const onStopStudying = ({ userId }) => {
       if (userId === userInfo.user_id) {
         setRun(false);
       }

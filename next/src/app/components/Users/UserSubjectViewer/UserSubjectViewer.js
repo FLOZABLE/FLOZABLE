@@ -26,7 +26,7 @@ function UserSubjectViewer({ userInfo }) {
       setSubjectTotal(liveTotal);
     }
 
-    const onStudying = (userId, subject) => {
+    const onStudying = ({ userId, subject }) => {
       if (userId !== userInfo.user_id) return;
 
       const { name, subject_id } = subject;
@@ -40,7 +40,7 @@ function UserSubjectViewer({ userInfo }) {
       setSubjectStart(DateTime.now().toFormat(DateTime.TIME_SIMPLE));
     };
 
-    const onStopStudying = (userId, { status }) => {
+    const onStopStudying = ({ userId, status }) => {
       if (userId !== userInfo.user_id) return;
 
       if (status === "disconnect") {
