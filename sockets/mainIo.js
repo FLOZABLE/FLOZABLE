@@ -63,13 +63,9 @@ mainIo.on("connection", (socket) => {
           userGroupsCache(connection, userId),
         ]);
 
-        if (friends.length) {
-          mainIo.to(friends).emit(`studying`, userId, { subject_id: "0" });
-        }
-
-        if (groups.length) {
-          mainIo.to(groups).emit(`studying`, userId, { subject_id: "0" });
-        }
+        mainIo
+          .to([...friends, ...groups, userId])
+          .emit(`studying`, { userId, subject: { subject_id: "0" } });
 
         const chatroomIds = chatrooms.map(
           (chatroom) => "chatroom:" + chatroom.chatroom_id
@@ -111,12 +107,10 @@ mainIo.on("connection", (socket) => {
 
       if (!subject) return;
 
-      if (groups.length) {
-        mainIo.to(groups).emit(`studying`, userId, subject);
-      }
-      if (friends.length) {
-        mainIo.to(friends).emit(`studying`, userId, subject);
-      }
+      mainIo
+        .to([...friends, ...groups, userId])
+        .emit(`studying`, { userId, subject });
+
       redisClient.rpush(`user:${userId}:subject:${subjectId}`, `[${now},0]`);
       cacheActiveSubject(userId, subject, now);
       extensionIo.to(userId).emit("studying");
@@ -125,7 +119,7 @@ mainIo.on("connection", (socket) => {
     }
   });
 
-  socket.on("stop", async (subjectId) => {
+  socket.on("stop", async () => {
     try {
       const connection = pool.promise();
 
@@ -148,7 +142,7 @@ mainIo.on("connection", (socket) => {
         });
         redisClient.del(`user:${userId}:activeGroup`);
         if (friends.length) {
-          mainIo.to(friends).emit(`deActiveGroup`, userId);
+          mainIo.to(friends).emit(`deActiveGroup`, { userId });
         }
         return;
       }
@@ -164,7 +158,7 @@ mainIo.on("connection", (socket) => {
 
       if (!friends.length) return;
 
-      const [[groupInfo]] = await connection.query(
+      const [[group]] = await connection.query(
         `
         SELECT 
           g.group_id, 
@@ -187,13 +181,13 @@ mainIo.on("connection", (socket) => {
         `,
         [groupId]
       );
-      if (!groupInfo) return;
+      if (!group) return;
 
-      groupInfo.members = groupInfo.members ? groupInfo.members.split(",") : [];
-      groupInfo.likes = groupInfo.likes ? groupInfo.likes.split(",") : [];
-      groupInfo.tags = groupInfo.tags ? JSON.parse(groupInfo.tags) : [];
+      group.members = group.members ? group.members.split(",") : [];
+      group.likes = group.likes ? group.likes.split(",") : [];
+      group.tags = group.tags ? JSON.parse(group.tags) : [];
 
-      mainIo.to(friends).emit(`activeGroup`, userId, groupInfo);
+      mainIo.to(friends).emit(`activeGroup`, { userId, group });
     } catch (err) {
       console.log(err);
     }
@@ -246,7 +240,7 @@ mainIo.on("connection", (socket) => {
         newMsg
       );
 
-      mainIo.to(`chatroom:${roomId}`).emit("chat/message", newMsg);
+      mainIo.to(`chatroom:${roomId}`).emit("chat/message", { message: newMsg });
 
       /*
       add unread messages to chatroom members who is not me.
@@ -329,13 +323,13 @@ async function deActiveGroup(connection, userId, socket) {
     });
     redisClient.del(`user:${userId}:activeGroup`);
     if (!friends.length) return;
-    mainIo.to(friends).emit(`deActiveGroup`, userId);
+    mainIo.to(friends).emit(`deActiveGroup`, { userId });
   } catch (err) {
     console.log(err);
   }
 }
 
-async function stopStudying(connection, userId, mode) {
+async function stopStudying(connection, userId, status) {
   try {
     const now = Math.floor(new Date().getTime() / 1000);
 
@@ -348,12 +342,9 @@ async function stopStudying(connection, userId, mode) {
 
     if (!userInfo) return;
 
-    if (groups.length) {
-      mainIo.to(groups).emit(`stopStudying`, userId, mode);
-    }
-    if (friends.length) {
-      mainIo.to(friends).emit(`stopStudying`, userId, mode);
-    }
+    mainIo
+      .to([...groups, ...friends, userId])
+      .emit(`stopStudying`, { userId, status });
 
     if (!activeSubject || activeSubject.subject_id === "0") {
       return await redisClient.del(`user:${userId}:activeSubject`);
@@ -375,7 +366,7 @@ async function stopStudying(connection, userId, mode) {
 
     console.log(duration);
 
-    if (mode === "disconnect") {
+    if (status === "disconnect") {
     } else {
       cacheActiveSubject(userId, { subject_id: "0", name: "break" }, now);
     }

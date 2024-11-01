@@ -402,14 +402,14 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   useEffect(() => {
     if (!group) return;
 
-    const onNewMember = (groupId, newUser) => {
-      console.log("newMember", groupId, newUser);
+    const onNewMember = ({ groupId, userInfo }) => {
+      console.log("newMember", groupId, userInfo);
       if (group.group_id !== groupId) return;
 
-      setMembers((prev) => [...prev, newUser]);
+      setMembers((prev) => [...prev, userInfo]);
     };
 
-    const onRemoveMember = (groupId, userId) => {
+    const onRemoveMember = ({ groupId, userId }) => {
       if (!group.group_id === groupId) return;
 
       setMembers((prev) => prev.filter((member) => member.user_id !== userId));
